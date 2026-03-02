@@ -15,6 +15,24 @@ var resgrid;
                 $('#Item_End').datetimepicker({ step: 15 });
                 $('#Item_RecurrenceEnd').datetimepicker({ step: 15 });
 
+                // All-day toggle: switch Start/End pickers between datetime and date-only modes.
+                function applyAllDayMode(allDay) {
+                    if (allDay) {
+                        $('#Item_Start').datetimepicker({ timepicker: false, format: 'Y/m/d', step: 15 });
+                        $('#Item_End').datetimepicker({ timepicker: false, format: 'Y/m/d', step: 15 });
+                    } else {
+                        $('#Item_Start').datetimepicker({ timepicker: true, format: 'Y/m/d H:i', step: 15 });
+                        $('#Item_End').datetimepicker({ timepicker: true, format: 'Y/m/d H:i', step: 15 });
+                    }
+                }
+
+                // Apply on page load (for edit mode where IsAllDay may already be true).
+                applyAllDayMode($('#Item_IsAllDay').is(':checked'));
+
+                $('#Item_IsAllDay').on('change', function () {
+                    applyAllDayMode($(this).is(':checked'));
+                });
+
                 $("#Item_RepeatOnDay").kendoNumericTextBox({
                     format: "#",
                     min: 1,

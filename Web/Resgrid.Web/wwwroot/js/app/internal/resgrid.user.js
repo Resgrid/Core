@@ -46,11 +46,23 @@ var resgrid;
             let lanCookieString = RegExp(".AspNetCore.Culture" + "=[^;]+").exec(document.cookie);
             let langCookieValue = decodeURIComponent(!!lanCookieString ? lanCookieString.toString().replace(/^[^=]+./, "") : "");
 
+            const flagMap = {
+                'en': '/images/flags/32/United-States.png',
+                'es': '/images/flags/32/Mexico.png',
+                'sv': '/images/flags/32/Sweden.png',
+                'de': '/images/flags/32/Germany.png',
+                'fr': '/images/flags/32/France.png',
+                'it': '/images/flags/32/Italy.png',
+                'pl': '/images/flags/32/Poland.png',
+                'uk': '/images/flags/32/Ukraine.png'
+            };
+
             if (langCookieValue) {
-                if (langCookieValue.indexOf("c=en") > -1) {
-                    $('#languageDropdownCurrentLang').attr('src', "/images/flags/32/United-States.png");
-                } else if (langCookieValue.indexOf("c=es") > -1) {
-                    $('#languageDropdownCurrentLang').attr('src', "/images/flags/32/Mexico.png");
+                for (const [locale, flag] of Object.entries(flagMap)) {
+                    if (langCookieValue.indexOf('c=' + locale) > -1) {
+                        $('#languageDropdownCurrentLang').attr('src', flag);
+                        break;
+                    }
                 }
             }
 

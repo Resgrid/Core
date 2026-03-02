@@ -1,0 +1,254 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="Name1" xml:space="preserve">
+    <value>this is my long string</value>
+  </data>
+  <data name="Bitmap1" xml:space="preserve">
+    <value>[base64 mime encoded serialized .NET Framework object]</value>
+  </data>
+  <data name="Icon1" xml:space="preserve">
+    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+  </data>
+  <data name="AllDay" xml:space="preserve">
+    <value>Tutto il giorno</value>
+  </data>
+  <data name="CalendarHeader" xml:space="preserve">
+    <value>Calendario</value>
+  </data>
+  <data name="CalendarItemHeader" xml:space="preserve">
+    <value>Event Detail</value>
+  </data>
+  <data name="CalendarTypesDeleteWarning" xml:space="preserve">
+    <value>WARNING: This will permanently delete this type. Are you sure you want to delete the type</value>
+  </data>
+  <data name="CalendarTypesHeader" xml:space="preserve">
+    <value>Tipi di calendario</value>
+  </data>
+  <data name="DaysOfTheWeek" xml:space="preserve">
+    <value>Giorni della settimana</value>
+  </data>
+  <data name="DeleteEvent" xml:space="preserve">
+    <value>Elimina evento</value>
+  </data>
+  <data name="DeleteEventConfirm" xml:space="preserve">
+    <value>Are you sure you want to delete this event? This action cannot be undone.</value>
+  </data>
+  <data name="DeleteEventOccurrences" xml:space="preserve">
+    <value>Delete Event and Occurrences</value>
+  </data>
+  <data name="DeleteEventOccurrencesConfirm" xml:space="preserve">
+    <value>Are you sure you want to delete this event and all its occurrences? This action cannot be undone.</value>
+  </data>
+  <data name="EditCalendarTypeHeader" xml:space="preserve">
+    <value>Modifica tipo di calendario</value>
+  </data>
+  <data name="EditEntryeHeader" xml:space="preserve">
+    <value>Modifica voce di calendario</value>
+  </data>
+  <data name="EditEntryWarning" xml:space="preserve">
+    <value>This is the recurrence parent item. If you check the "Apply to all" checkbox that will update all the recurrence items with the data from this item. If you delete this item all child recurrence items will also be deleted.</value>
+  </data>
+  <data name="EditEvent" xml:space="preserve">
+    <value>Edit Event</value>
+  </data>
+  <data name="EditRecurrenceParent" xml:space="preserve">
+    <value>Edit Parent</value>
+  </data>
+  <data name="EndOnHelp" xml:space="preserve">
+    <value>Lascia vuoto per non scadere mai</value>
+  </data>
+  <data name="EndOnLabel" xml:space="preserve">
+    <value>Termina il</value>
+  </data>
+  <data name="EntitiesToNotify" xml:space="preserve">
+    <value>Entità da notificare</value>
+  </data>
+  <data name="First" xml:space="preserve">
+    <value>first</value>
+  </data>
+  <data name="Forth" xml:space="preserve">
+    <value>forth</value>
+  </data>
+  <data name="Last" xml:space="preserve">
+    <value>last</value>
+  </data>
+  <data name="ManageTypes" xml:space="preserve">
+    <value>Gestisci tipi</value>
+  </data>
+  <data name="ManageTypesHelp" xml:space="preserve">
+    <value>Gestisci tipi di calendario</value>
+  </data>
+  <data name="NewCalendarEntryHeader" xml:space="preserve">
+    <value>Nuova voce di calendario</value>
+  </data>
+  <data name="NewCalendarTypeHeader" xml:space="preserve">
+    <value>Nuovo tipo di calendario</value>
+  </data>
+  <data name="NewEntry" xml:space="preserve">
+    <value>Nuova voce</value>
+  </data>
+  <data name="NewEntryHelp" xml:space="preserve">
+    <value>Add a new calendar entry</value>
+  </data>
+  <data name="NoCustomTypes" xml:space="preserve">
+    <value>Nessun tipo personalizzato</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Nessuno</value>
+  </data>
+  <data name="NoNote" xml:space="preserve">
+    <value>Nessuna nota</value>
+  </data>
+  <data name="NoUpcomingItems" xml:space="preserve">
+    <value>Nessun elemento imminente</value>
+  </data>
+  <data name="RecurrenceChildWarning" xml:space="preserve">
+    <value>This is the recurrence child item. You cannot alter recurrence settings for this item. If you need to change a recurrence pattern for this entry you will need to remove it and re-add from the parent entry.</value>
+  </data>
+  <data name="RecurrenceParentWarning" xml:space="preserve">
+    <value>This is the recurrence parent item. You cannot alter recurrence settings for this item. If you need to change a recurrence pattern you need to first remove then create a new recurrence entry. You can change any of the other details in the entry.</value>
+  </data>
+  <data name="Reminder" xml:space="preserve">
+    <value>Promemoria</value>
+  </data>
+  <data name="RemoveHelp" xml:space="preserve">
+    <value>Rimuovi da questo evento</value>
+  </data>
+  <data name="RemoveMe" xml:space="preserve">
+    <value>Rimuovimi</value>
+  </data>
+  <data name="RepeatOn" xml:space="preserve">
+    <value>Ripeti il</value>
+  </data>
+  <data name="RSVP" xml:space="preserve">
+    <value>RSVP</value>
+  </data>
+  <data name="Second" xml:space="preserve">
+    <value>second</value>
+  </data>
+  <data name="Signup" xml:space="preserve">
+    <value>Registrati (RSVP)</value>
+  </data>
+  <data name="Third" xml:space="preserve">
+    <value>third</value>
+  </data>
+  <data name="TitleCalendarPlaceholder" xml:space="preserve">
+    <value>Titolo della voce di calendario</value>
+  </data>
+  <data name="TitlePlaceholder" xml:space="preserve">
+    <value>Titolo della voce di calendario</value>
+  </data>
+  <data name="TypeColor" xml:space="preserve">
+    <value>Colore tipo</value>
+  </data>
+  <data name="TypeName" xml:space="preserve">
+    <value>Nome tipo</value>
+  </data>
+  <data name="Upcoming" xml:space="preserve">
+    <value>Prossimi</value>
+  </data>
+  <data name="AllDayEvent" xml:space="preserve">
+    <value>Evento tutto il giorno</value>
+  </data>
+  <data name="DateRange" xml:space="preserve">
+    <value>{0} – {1}</value>
+  </data>
+  <data name="DownloadIcs" xml:space="preserve">
+    <value>Scarica .ics</value>
+  </data>
+  <data name="SubscribeCalendar" xml:space="preserve">
+    <value>Iscriviti al calendario</value>
+  </data>
+  <data name="CalendarSyncTitle" xml:space="preserve">
+    <value>Sincronizzazione calendario</value>
+  </data>
+  <data name="CalendarSyncDescription" xml:space="preserve">
+    <value>Subscribe to your department calendar in Google Calendar, Microsoft Outlook, Apple Calendar, or any application that supports iCal feeds.</value>
+  </data>
+  <data name="ActivateCalendarSync" xml:space="preserve">
+    <value>Attiva sincronizzazione calendario</value>
+  </data>
+  <data name="RegenerateCalendarSync" xml:space="preserve">
+    <value>Rigenera chiave di sincronizzazione</value>
+  </data>
+  <data name="CalendarSyncActivateHelp" xml:space="preserve">
+    <value>To sync your department calendar with an external calendar application, you must first activate calendar sync. This generates a unique subscription URL. If the URL is compromised, you can regenerate it to invalidate the old one.</value>
+  </data>
+  <data name="CopyToClipboard" xml:space="preserve">
+    <value>Copia negli appunti</value>
+  </data>
+  <data name="SubscriptionUrl" xml:space="preserve">
+    <value>URL di abbonamento</value>
+  </data>
+  <data name="WebCalLink" xml:space="preserve">
+    <value>Apri nell'app calendario</value>
+  </data>
+  <data name="CalendarSyncActive" xml:space="preserve">
+    <value>Calendar sync is active. Use the URL below to subscribe.</value>
+  </data>
+  <data name="CalendarSyncInactive" xml:space="preserve">
+    <value>Calendar sync is not yet activated. Click the button below to generate your subscription URL.</value>
+  </data>
+  <data name="Types" xml:space="preserve">
+    <value>Tipi</value>
+  </data>
+</root>

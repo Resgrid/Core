@@ -104,7 +104,7 @@ namespace Resgrid.Model
 			set { CalendarItemId = (int)value; }
 		}
 
-		
+
 		[NotMapped]
 		public string TableName => "CalendarItems";
 
@@ -125,6 +125,13 @@ namespace Resgrid.Model
 			return Attendees.Any(x => x.UserId == userId);
 		}
 
+		/// <summary>
+		/// Returns true when the event spans more than one calendar day (Start.Date != End.Date).
+		/// Useful for display logic — multi-day all-day events show a date-range banner.
+		/// </summary>
+		[NotMapped]
+		public bool IsMultiDay => Start.Date != End.Date;
+
 		public TimeSpan GetDifferenceBetweenStartAndEnd()
 		{
 			return End - Start;
@@ -144,6 +151,13 @@ namespace Resgrid.Model
 			 */
 			item.Start = DateTimeHelpers.ConvertToUtc(start, timeZone);
 			item.End = DateTimeHelpers.ConvertToUtc(end, timeZone);
+
+			// For all-day events, normalise to midnight → end-of-day so time components are irrelevant.
+			if (IsAllDay)
+			{
+				item.Start = item.Start.Date;
+				item.End = item.End.Date.AddDays(1).AddTicks(-1);
+			}
 
 			item.IsV2Schedule = true;
 			item.Reminder = Reminder;

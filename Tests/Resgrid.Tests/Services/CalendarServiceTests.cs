@@ -28,6 +28,7 @@ namespace Resgrid.Tests.Services
 			protected readonly Mock<IUserProfileService> _userProfileServiceMock;
 			protected readonly Mock<IDepartmentGroupsService> _departmentGroupsServiceMock;
 			protected readonly Mock<IDepartmentSettingsService> _departmentSettingsServiceMock;
+			protected readonly Mock<IEncryptionService> _encryptionServiceMock;
 
 			protected with_the_calendar_service()
 			{
@@ -39,6 +40,7 @@ namespace Resgrid.Tests.Services
 				_userProfileServiceMock = new Mock<IUserProfileService>();
 				_departmentGroupsServiceMock = new Mock<IDepartmentGroupsService>();
 				_departmentSettingsServiceMock = new Mock<IDepartmentSettingsService>();
+				_encryptionServiceMock = new Mock<IEncryptionService>();
 
 				#region Departments
 				_testDepartment = new Department()
@@ -67,7 +69,8 @@ namespace Resgrid.Tests.Services
 
 				_calendarService = new CalendarService(_calendarItemRepositoryMock.Object, _calendarItemTypeRepositoryMock.Object,
 					_calendarItemAttendeeRepositoryMock.Object, _departmentsServiceMock.Object, _communicationServiceMock.Object,
-					_userProfileServiceMock.Object, _departmentGroupsServiceMock.Object, _departmentSettingsServiceMock.Object);
+					_userProfileServiceMock.Object, _departmentGroupsServiceMock.Object, _departmentSettingsServiceMock.Object,
+					_encryptionServiceMock.Object);
 			}
 		}
 
@@ -151,7 +154,7 @@ namespace Resgrid.Tests.Services
 					dates[0].Value.Day.Should().Be(24);
 					dates[0].Value.Year.Should().Be(2022);
 				}
-				
+
 				dates[1].Should().BeNull();
 				dates[2].Should().BeNull();
 				dates[3].Should().BeNull();
@@ -449,7 +452,6 @@ namespace Resgrid.Tests.Services
 				item.Start = new DateTime(2022, 4, 20, 17, 30, 00, DateTimeKind.Utc);
 				item.End = new DateTime(2022, 4, 20, 21, 30, 00, DateTimeKind.Utc);
 				item.RecurrenceType = (int)RecurrenceTypes.Yearly;
-				//item.RepeatOnMonth = 20;
 
 				var now = new DateTime(2022, 4, 20, 7, 17, 33, DateTimeKind.Utc);
 
@@ -465,6 +467,287 @@ namespace Resgrid.Tests.Services
 				var start = calendarItems[0].Start.TimeConverter(_testDepartment);
 				start.Hour.Should().Be(13);
 				start.Minute.Should().Be(30);
+			}
+		}
+
+		// ── All-day event tests ────────────────────────────────────────────────────
+
+		[TestFixture]
+		public class when_handling_all_day_events : with_the_calendar_service
+		{
+			[Test]
+			public async Task should_normalize_start_to_midnight_when_all_day()
+			{
+				var item = new CalendarItem
+				{
+					DepartmentId = 999,
+					Title = "All Day Event",
+					IsAllDay = true,
+					Start = new DateTime(2024, 6, 10, 14, 30, 0),
+					End = new DateTime(2024, 6, 10, 18, 0, 0)
+				};
+
+				_calendarItemRepositoryMock
+					.Setup(x => x.SaveOrUpdateAsync(It.IsAny<CalendarItem>(), It.IsAny<System.Threading.CancellationToken>(), It.IsAny<bool>()))
+					.ReturnsAsync((CalendarItem ci, System.Threading.CancellationToken _, bool __) => ci);
+
+				var result = await _calendarService.AddNewCalendarItemAsync(item, "UTC");
+
+				result.Start.Hour.Should().Be(0);
+				result.Start.Minute.Should().Be(0);
+				result.Start.Second.Should().Be(0);
+			}
+
+			[Test]
+			public async Task should_normalize_end_to_end_of_day_when_all_day()
+			{
+				var item = new CalendarItem
+				{
+					DepartmentId = 999,
+					Title = "All Day Event",
+					IsAllDay = true,
+					Start = new DateTime(2024, 6, 10, 14, 30, 0),
+					End = new DateTime(2024, 6, 10, 18, 0, 0)
+				};
+
+				_calendarItemRepositoryMock
+					.Setup(x => x.SaveOrUpdateAsync(It.IsAny<CalendarItem>(), It.IsAny<System.Threading.CancellationToken>(), It.IsAny<bool>()))
+					.ReturnsAsync((CalendarItem ci, System.Threading.CancellationToken _, bool __) => ci);
+
+				var result = await _calendarService.AddNewCalendarItemAsync(item, "UTC");
+
+				result.End.Hour.Should().Be(23);
+				result.End.Minute.Should().Be(59);
+				result.End.Second.Should().Be(59);
+			}
+
+			[Test]
+			public void should_allow_same_day_start_and_end_for_all_day()
+			{
+				var item = new CalendarItem
+				{
+					IsAllDay = true,
+					Start = new DateTime(2024, 6, 10, 0, 0, 0),
+					End = new DateTime(2024, 6, 10, 23, 59, 59)
+				};
+
+				item.IsMultiDay.Should().BeFalse();
+			}
+
+			[Test]
+			public async Task should_preserve_is_all_day_flag_through_update()
+			{
+				var existing = new CalendarItem
+				{
+					CalendarItemId = 100,
+					DepartmentId = 999,
+					Title = "Test",
+					IsAllDay = false,
+					Start = new DateTime(2024, 6, 10, 9, 0, 0, DateTimeKind.Utc),
+					End = new DateTime(2024, 6, 10, 17, 0, 0, DateTimeKind.Utc)
+				};
+
+				var update = new CalendarItem
+				{
+					CalendarItemId = 100,
+					DepartmentId = 999,
+					Title = "Test Updated",
+					IsAllDay = true,
+					Start = new DateTime(2024, 6, 10, 9, 0, 0),
+					End = new DateTime(2024, 6, 10, 17, 0, 0)
+				};
+
+				_calendarItemRepositoryMock.Setup(x => x.GetCalendarItemByIdAsync(100)).ReturnsAsync(existing);
+				_calendarItemRepositoryMock
+					.Setup(x => x.SaveOrUpdateAsync(It.IsAny<CalendarItem>(), It.IsAny<System.Threading.CancellationToken>(), It.IsAny<bool>()))
+					.ReturnsAsync((CalendarItem ci, System.Threading.CancellationToken _, bool __) => ci);
+				_calendarItemRepositoryMock
+					.Setup(x => x.GetCalendarItemsByRecurrenceIdAsync(It.IsAny<int>()))
+					.ReturnsAsync(new System.Collections.Generic.List<CalendarItem>());
+
+				var result = await _calendarService.UpdateCalendarItemAsync(update, "UTC");
+
+				result.IsAllDay.Should().BeTrue();
+			}
+		}
+
+		// ── Multi-day event tests ──────────────────────────────────────────────────
+
+		[TestFixture]
+		public class when_handling_multi_day_events : with_the_calendar_service
+		{
+			[Test]
+			public void should_detect_multi_day_event()
+			{
+				var item = new CalendarItem
+				{
+					Start = new DateTime(2024, 6, 10),
+					End = new DateTime(2024, 6, 12)
+				};
+
+				item.IsMultiDay.Should().BeTrue();
+			}
+
+			[Test]
+			public void should_detect_single_day_event()
+			{
+				var item = new CalendarItem
+				{
+					Start = new DateTime(2024, 6, 10, 9, 0, 0),
+					End = new DateTime(2024, 6, 10, 17, 0, 0)
+				};
+
+				item.IsMultiDay.Should().BeFalse();
+			}
+
+			[Test]
+			public void should_create_multi_day_all_day_recurrence_items_with_correct_date_boundaries()
+			{
+				var parent = new CalendarItem
+				{
+					CalendarItemId = 200,
+					DepartmentId = 999,
+					Title = "Multi-day",
+					IsAllDay = true,
+					Start = new DateTime(2024, 6, 10, 0, 0, 0),
+					End = new DateTime(2024, 6, 12, 23, 59, 59),
+					StartTimezone = "UTC",
+					EndTimezone = "UTC"
+				};
+
+				// CreateRecurranceItem uses the local start/end before UTC conversion;
+				// pass UTC dates so no tz shift occurs.
+				var child = parent.CreateRecurranceItem(
+					new DateTime(2024, 7, 10, 0, 0, 0),
+					new DateTime(2024, 7, 12, 23, 59, 59),
+					"UTC");
+
+				child.IsAllDay.Should().BeTrue();
+				child.Start.Hour.Should().Be(0);
+				child.Start.Minute.Should().Be(0);
+				// End should be normalised to 23:59:59 of the end day.
+				child.End.Hour.Should().Be(23);
+				child.End.Minute.Should().Be(59);
+				child.IsMultiDay.Should().BeTrue();
+			}
+		}
+
+		// ── Calendar sync token tests ──────────────────────────────────────────────
+
+		[TestFixture]
+		public class when_managing_calendar_sync_tokens : with_the_calendar_service
+		{
+			private const int TestDeptId = 999;
+			private const string TestUserId = "user-abc-123";
+
+			[SetUp]
+			public void SetupEncryption()
+			{
+				// Stub encrypt/decrypt to use a simple reversible format for testing.
+				_encryptionServiceMock
+					.Setup(x => x.Encrypt(It.IsAny<string>()))
+					.Returns<string>(plain => Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(plain)));
+
+				_encryptionServiceMock
+					.Setup(x => x.Decrypt(It.IsAny<string>()))
+					.Returns<string>(b64 =>
+					{
+						// Handle URL-safe → standard Base64 normalisation the service applies.
+						var std = b64.Replace('-', '+').Replace('_', '/');
+						var padded = std.PadRight(std.Length + (4 - std.Length % 4) % 4, '=');
+						return System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(padded));
+					});
+			}
+
+			[Test]
+			public async Task should_generate_calendar_sync_token()
+			{
+				var profile = new UserProfile { UserId = TestUserId };
+
+				_userProfileServiceMock.Setup(x => x.GetProfileByUserIdAsync(TestUserId, It.IsAny<bool>()))
+					.ReturnsAsync(profile);
+				_userProfileServiceMock.Setup(x => x.SaveProfileAsync(TestDeptId, It.IsAny<UserProfile>(), It.IsAny<System.Threading.CancellationToken>()))
+					.ReturnsAsync(profile);
+
+				var token = await _calendarService.ActivateCalendarSyncAsync(TestDeptId, TestUserId);
+
+				token.Should().NotBeNullOrWhiteSpace();
+				profile.CalendarSyncToken.Should().NotBeNullOrWhiteSpace();
+			}
+
+			[Test]
+			public async Task should_regenerate_calendar_sync_token_and_produce_different_value()
+			{
+				var profile = new UserProfile { UserId = TestUserId, CalendarSyncToken = Guid.NewGuid().ToString("N") };
+				var originalToken = profile.CalendarSyncToken;
+
+				_userProfileServiceMock.Setup(x => x.GetProfileByUserIdAsync(TestUserId, It.IsAny<bool>()))
+					.ReturnsAsync(profile);
+				_userProfileServiceMock.Setup(x => x.SaveProfileAsync(TestDeptId, It.IsAny<UserProfile>(), It.IsAny<System.Threading.CancellationToken>()))
+					.ReturnsAsync(profile);
+
+				var newToken = await _calendarService.RegenerateCalendarSyncAsync(TestDeptId, TestUserId);
+
+				newToken.Should().NotBeNullOrWhiteSpace();
+				profile.CalendarSyncToken.Should().NotBe(originalToken);
+			}
+
+			[Test]
+			public async Task should_validate_correct_token()
+			{
+				var syncGuid = Guid.NewGuid().ToString("N");
+				var profile = new UserProfile { UserId = TestUserId, CalendarSyncToken = syncGuid };
+
+				_userProfileServiceMock.Setup(x => x.GetProfileByUserIdAsync(TestUserId, It.IsAny<bool>()))
+					.ReturnsAsync(profile);
+				_userProfileServiceMock.Setup(x => x.SaveProfileAsync(It.IsAny<int>(), It.IsAny<UserProfile>(), It.IsAny<System.Threading.CancellationToken>()))
+					.ReturnsAsync(profile);
+
+				// Activate to get a real token.
+				var token = await _calendarService.ActivateCalendarSyncAsync(TestDeptId, TestUserId);
+
+				// Re-setup so the syncGuid in profile matches what was set during Activate.
+				_userProfileServiceMock.Setup(x => x.GetProfileByUserIdAsync(TestUserId, It.IsAny<bool>()))
+					.ReturnsAsync(profile);
+
+				var result = await _calendarService.ValidateCalendarFeedTokenAsync(token);
+
+				result.Should().NotBeNull();
+				result.Value.DepartmentId.Should().Be(TestDeptId);
+				result.Value.UserId.Should().Be(TestUserId);
+			}
+
+			[Test]
+			public async Task should_reject_invalid_token()
+			{
+				var result = await _calendarService.ValidateCalendarFeedTokenAsync("this-is-garbage-!!!!");
+
+				result.Should().BeNull();
+			}
+
+			[Test]
+			public async Task should_reject_token_with_stale_guid()
+			{
+				var oldGuid = Guid.NewGuid().ToString("N");
+				var profile = new UserProfile { UserId = TestUserId, CalendarSyncToken = oldGuid };
+
+				_userProfileServiceMock.Setup(x => x.GetProfileByUserIdAsync(TestUserId, It.IsAny<bool>()))
+					.ReturnsAsync(profile);
+				_userProfileServiceMock.Setup(x => x.SaveProfileAsync(It.IsAny<int>(), It.IsAny<UserProfile>(), It.IsAny<System.Threading.CancellationToken>()))
+					.ReturnsAsync(profile);
+
+				// Build a token with the old GUID manually (simulating a previously issued URL).
+				var plainWithOldGuid = $"{TestDeptId}|{TestUserId}|{oldGuid}";
+				var oldToken = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(plainWithOldGuid))
+					.Replace('+', '-').Replace('/', '_').TrimEnd('=');
+
+				// Now regenerate so the profile GUID changes.
+				await _calendarService.RegenerateCalendarSyncAsync(TestDeptId, TestUserId);
+
+				// The profile.CalendarSyncToken is now a NEW guid, so old token must be rejected.
+				var result = await _calendarService.ValidateCalendarFeedTokenAsync(oldToken);
+
+				result.Should().BeNull();
 			}
 		}
 	}

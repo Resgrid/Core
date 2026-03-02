@@ -105,7 +105,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var types = await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var presonnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
-			
+
 			if (items != null && items.Any())
 			{
 				items = items.OrderBy(x => x.Start).ToList();
@@ -151,7 +151,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var types = await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var presonnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
-			
+
 			if (item != null)
 			{
 				if (item.DepartmentId != DepartmentId)
@@ -262,10 +262,25 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var calendarItem = new GetAllCalendarItemResultData();
 			calendarItem.CalendarItemId = item.CalendarItemId.ToString();
 			calendarItem.Title = item.Title;
-			calendarItem.Start = item.Start.TimeConverter(department);
-			calendarItem.StartUtc = item.Start;
-			calendarItem.End = item.End.TimeConverter(department);
-			calendarItem.EndUtc = item.End;
+
+			// All-day and multi-day events are date-only concepts. Applying a timezone conversion to a
+			// midnight-UTC value shifts it to the previous day in timezones behind UTC, causing the mobile
+			// app to display events one day early. Return the date portion as UTC midnight so the client
+			// receives the exact calendar date that was stored, without any offset.
+			if (item.IsAllDay || item.IsMultiDay)
+			{
+				calendarItem.Start = DateTime.SpecifyKind(item.Start.Date, DateTimeKind.Utc);
+				calendarItem.StartUtc = item.Start;
+				calendarItem.End = DateTime.SpecifyKind(item.End.Date, DateTimeKind.Utc);
+				calendarItem.EndUtc = item.End;
+			}
+			else
+			{
+				calendarItem.Start = item.Start.TimeConverter(department);
+				calendarItem.StartUtc = item.Start;
+				calendarItem.End = item.End.TimeConverter(department);
+				calendarItem.EndUtc = item.End;
+			}
 			calendarItem.StartTimezone = item.StartTimezone;
 			calendarItem.EndTimezone = item.EndTimezone;
 			calendarItem.Description = item.Description;
@@ -273,6 +288,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			calendarItem.RecurrenceRule = item.RecurrenceRule;
 			calendarItem.RecurrenceException = item.RecurrenceException;
 			calendarItem.IsAllDay = item.IsAllDay;
+			calendarItem.IsMultiDay = item.IsMultiDay;
 			calendarItem.ItemType = item.ItemType;
 			calendarItem.Location = item.Location;
 			calendarItem.SignupType = item.SignupType;

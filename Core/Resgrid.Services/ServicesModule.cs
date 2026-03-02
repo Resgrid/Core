@@ -1,5 +1,4 @@
 ﻿using Autofac;
-//using Resgrid.Model.Facades.Stripe;
 using Resgrid.Model.Services;
 using Resgrid.Services.CallEmailTemplates;
 
@@ -44,6 +43,7 @@ namespace Resgrid.Services
 			builder.RegisterType<DocumentsService>().As<IDocumentsService>().InstancePerLifetimeScope();
 			//builder.RegisterType<PaymentProviderService>().As<IPaymentProviderService>().InstancePerLifetimeScope();
 			builder.RegisterType<CalendarService>().As<ICalendarService>().InstancePerLifetimeScope();
+			builder.RegisterType<CalendarExportService>().As<ICalendarExportService>().InstancePerLifetimeScope();
 			builder.RegisterType<NotesService>().As<INotesService>().InstancePerLifetimeScope();
 			builder.RegisterType<CertificationService>().As<ICertificationService>().InstancePerLifetimeScope();
 			builder.RegisterType<AffiliateService>().As<IAffiliateService>().InstancePerLifetimeScope();

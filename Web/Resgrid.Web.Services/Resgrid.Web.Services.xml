@@ -81,6 +81,42 @@
              <param name="input"></param>
              <returns></returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.CalendarExportController">
+            <summary>
+            iCal export and external calendar sync endpoints.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CalendarExportController.ExportICalFile(System.Int32)">
+            <summary>
+            Downloads a single calendar event as an .ics (iCal) file.
+            </summary>
+            <param name="calendarItemId">ID of the calendar item to export.</param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CalendarExportController.ExportDepartmentICalFeed">
+            <summary>
+            Downloads all department calendar events as a single .ics (iCal) file.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CalendarExportController.GetCalendarSubscriptionUrl">
+            <summary>
+            Returns (or generates on first call) the encrypted subscription URL token for
+            the authenticated user's department calendar. Used to populate the Subscribe panel.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CalendarExportController.RegenerateCalendarSubscriptionUrl(System.Threading.CancellationToken)">
+            <summary>
+            Regenerates the encrypted subscription token, invalidating all previously issued
+            subscription URLs for the authenticated user.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CalendarExportController.CalendarFeed(System.String)">
+            <summary>
+            Public unauthenticated endpoint for iCal feed subscription.
+            The {token} is an AES-encrypted, URL-safe Base64 payload containing departmentId|userId|syncGuid.
+            Returns the department calendar as text/calendar for import into Google Calendar,
+            Microsoft Outlook, Apple Calendar, or any RFC 5545 compliant application.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CallFilesController">
             <summary>
             Call Priorities, for example Low, Medium, High. Call Priorities can be system provided ones or custom for a department
@@ -3640,6 +3676,11 @@
             Is an all day event
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.GetAllCalendarItemResultData.IsMultiDay">
+            <summary>
+            Is a multi-day event (Start and End fall on different calendar days)
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calendar.GetAllCalendarItemResultData.Location">
             <summary>
             Location for the calendar item
@@ -3783,6 +3824,27 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Calendar.GetCalendarItemResult.Data">
             <summary>
             Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Calendar.GetCalendarSubscriptionUrlResult">
+            <summary>
+            Result containing the external calendar subscription URL for a user.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.GetCalendarSubscriptionUrlResult.SubscriptionUrl">
+            <summary>
+            The HTTPS subscription URL to paste into Google Calendar, Outlook, Apple Calendar, etc.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.GetCalendarSubscriptionUrlResult.WebcalUrl">
+            <summary>
+            The webcal:// version of the URL for direct launch in a calendar application.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.GetCalendarSubscriptionUrlResult.Token">
+            <summary>
+            The raw encrypted URL-safe token embedded in the subscription URL.
+            Store this if you need to construct the URL manually.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calendar.SetCalendarAttendingResult">

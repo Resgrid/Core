@@ -12,6 +12,12 @@ namespace Resgrid.Localization
 						{
 							{"en", "English (United States)"}, //"en-US"
 							{"es", "Spanish (Latin America)"}, //"es-MX"
+							{"sv", "Swedish"},                  //"sv-SE"
+							{"de", "German"},                   //"de-DE"
+							{"fr", "French"},                   //"fr-FR"
+							{"it", "Italian"},                  //"it-IT"
+							{"pl", "Polish"},                   //"pl-PL"
+							{"uk", "Ukrainian"},                //"uk-UA"
 						};
 
 		public static string[] GetSupportedCultures()

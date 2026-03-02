@@ -310,16 +310,21 @@
             <div class="buttons-actions">
                 @if (Model.CanEdit && Model.IsRecurrenceParent == false)
                 {
-                    <a asp-controller="Calendar" asp-action="DeleteCalendarItem" asp-route-area="User" asp-route-itemId="@Model.CalendarItem.CalendarItemId" class="btn btn-danger">@localizer["DeleteEvent"]</a>
+                    <a asp-controller="Calendar" asp-action="DeleteCalendarItem" asp-route-area="User" asp-route-itemId="@Model.CalendarItem.CalendarItemId" class="btn btn-danger" onclick="return confirm('@localizer["DeleteEventConfirm"]');">@localizer["DeleteEvent"]</a>
                 }
                 else if (Model.CanEdit)
                 {
-                    <a asp-controller="Calendar" asp-action="DeleteAllCalendarItems" asp-route-area="User" asp-route-itemId="@Model.CalendarItem.CalendarItemId" class="btn btn-danger">@localizer["DeleteEventOccurrences"]</a>
+                    <a asp-controller="Calendar" asp-action="DeleteAllCalendarItems" asp-route-area="User" asp-route-itemId="@Model.CalendarItem.CalendarItemId" class="btn btn-danger" onclick="return confirm('@localizer["DeleteEventOccurrencesConfirm"]');">@localizer["DeleteEventOccurrences"]</a>
                 }
 
                 @if (Model.CanEdit)
                 {
                     <a asp-controller="Calendar" asp-action="Edit" asp-route-area="User" asp-route-id="@Model.CalendarItem.CalendarItemId" id="addPersonButton" class="btn btn-success">@localizer["EditEvent"]</a>
+                }
+
+                @if (!string.IsNullOrWhiteSpace(Model.ExportIcsUrl))
+                {
+                    <a href="@Model.ExportIcsUrl" class="btn btn-info"><i class="fa fa-download"></i> @localizer["DownloadIcs"]</a>
                 }
             </div>
         </div>
@@ -339,12 +344,37 @@
                                         <span class="day">@Model.CalendarItem.Start.TimeConverter(Model.Department).Day</span>
                                         <span class="month">@DateTimeHelpers.MonthToShortString(Model.CalendarItem.Start.TimeConverter(Model.Department).Month)</span>
                                         <span class="year">@Model.CalendarItem.Start.TimeConverter(Model.Department).Year</span>
-                                        <span class="time">@Model.CalendarItem.Start.TimeConverter(Model.Department).ToShortTimeString()</span>
+                                        @if (!Model.CalendarItem.IsAllDay)
+                                        {
+                                            <span class="time">@Model.CalendarItem.Start.TimeConverter(Model.Department).ToShortTimeString()</span>
+                                        }
+                                        else
+                                        {
+                                            <span class="time">@localizer["AllDayEvent"]</span>
+                                        }
                                     </time>
                                     <div class="info">
                                         <h2 class="title">@Model.CalendarItem.Title</h2>
                                         <p class="desc">@Html.Raw(Model.CalendarItem.Description)</p>
-                                        <p class="desc">@Model.CalendarItem.Start.TimeConverter(Model.Department).ToShortTimeString() - @Model.CalendarItem.End.TimeConverter(Model.Department).ToShortTimeString()</p>
+                                        @if (Model.CalendarItem.IsAllDay)
+                                        {
+                                            if (Model.CalendarItem.IsMultiDay)
+                                            {
+                                                <p class="desc">
+                                                    @string.Format(localizer["DateRange"],
+                                                        Model.CalendarItem.Start.TimeConverter(Model.Department).ToShortDateString(),
+                                                        Model.CalendarItem.End.TimeConverter(Model.Department).ToShortDateString())
+                                                </p>
+                                            }
+                                            else
+                                            {
+                                                <p class="desc">@localizer["AllDayEvent"]</p>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <p class="desc">@Model.CalendarItem.Start.TimeConverter(Model.Department).ToShortTimeString() - @Model.CalendarItem.End.TimeConverter(Model.Department).ToShortTimeString()</p>
+                                        }
                                     </div>
                                 </li>
                             </ul>
@@ -373,11 +403,29 @@
                                                                 </tr>
                                                                 <tr>
                                                                     <td>@commonLocalizer["Start"]</td>
-                                                                    <td>@Model.CalendarItem.Start.TimeConverter(Model.Department).ToString("dd MMMM yyyy HH:mm")</td>
+                                                                    <td>
+                                                                        @if (Model.CalendarItem.IsAllDay)
+                                                                        {
+                                                                            @Model.CalendarItem.Start.TimeConverter(Model.Department).ToString("dd MMMM yyyy")
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            @Model.CalendarItem.Start.TimeConverter(Model.Department).ToString("dd MMMM yyyy HH:mm")
+                                                                        }
+                                                                    </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td>@commonLocalizer["End"]</td>
-                                                                    <td>@Model.CalendarItem.End.TimeConverter(Model.Department).ToString("dd MMMM yyyy HH:mm")</td>
+                                                                    <td>
+                                                                        @if (Model.CalendarItem.IsAllDay)
+                                                                        {
+                                                                            @Model.CalendarItem.End.TimeConverter(Model.Department).ToString("dd MMMM yyyy")
+                                                                        }
+                                                                        else
+                                                                        {
+                                                                            @Model.CalendarItem.End.TimeConverter(Model.Department).ToString("dd MMMM yyyy HH:mm")
+                                                                        }
+                                                                    </td>
                                                                 </tr>
                                                                 <tr>
                                                                     <td>@commonLocalizer["Location"]</td>

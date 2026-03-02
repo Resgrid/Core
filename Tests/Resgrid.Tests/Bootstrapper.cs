@@ -5,6 +5,7 @@ using Resgrid.Providers.Cache;
 using Resgrid.Providers.EmailProvider;
 using Resgrid.Providers.GeoLocationProvider;
 using Resgrid.Providers.Marketing;
+using Resgrid.Providers.Messaging;
 using Resgrid.Providers.NumberProvider;
 using Resgrid.Repositories.DataRepository;
 using Resgrid.Services;
@@ -22,6 +23,7 @@ namespace Resgrid.Tests
 			{
 				var builder = new ContainerBuilder();
 				builder.RegisterModule(new TestingDataModule());
+				builder.RegisterModule(new NoSqlDataModule());
 				builder.RegisterModule(new ServicesModule());
 				builder.RegisterModule(new ProviderModule());
 				builder.RegisterModule(new EmailProviderModule());
@@ -31,6 +33,7 @@ namespace Resgrid.Tests
 				builder.RegisterModule(new NumbersProviderModule());
 				builder.RegisterModule(new CacheProviderModule());
 				builder.RegisterModule(new MarketingModule());
+				builder.RegisterModule(new MessagingProviderModule());
 				builder.RegisterModule(new Resgrid.Providers.Workflow.WorkflowProviderModule());
 
 				_container = builder.Build();

@@ -10,6 +10,8 @@ namespace Resgrid.Model.Services
 	/// </summary>
 	public interface ICalendarService
 	{
+		// ...existing methods...
+
 		Task<List<CalendarItem>> GetAllCalendarItemsForDepartmentAsync(int departmentId);
 
 		Task<List<CalendarItem>> GetAllCalendarItemsForDepartmentAsync(int departmentId, DateTime startDate);
@@ -72,5 +74,35 @@ namespace Resgrid.Model.Services
 		int NotificationTypeToMinutes(int notificationType);
 
 		Task<bool> NotifyNewCalendarItemAsync(CalendarItem calendarItem);
+
+		// ── External calendar sync ─────────────────────────────────────────────────
+
+		/// <summary>
+		/// Activates external calendar sync for the specified user, generating a new sync GUID,
+		/// persisting it on the user's profile, and returning the encrypted URL-safe token
+		/// that should be embedded in the subscription URL.
+		/// </summary>
+		Task<string> ActivateCalendarSyncAsync(int departmentId, string userId,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Regenerates the external calendar sync token for the user, invalidating any
+		/// previously issued subscription URLs.
+		/// </summary>
+		Task<string> RegenerateCalendarSyncAsync(int departmentId, string userId,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Returns the encrypted feed token for a user who has already activated sync,
+		/// without regenerating the underlying GUID. Returns null if sync is not activated.
+		/// </summary>
+		Task<string> GetCalendarFeedTokenAsync(int departmentId, string userId);
+
+		/// <summary>
+		/// Validates an encrypted calendar feed token extracted from a subscription URL.
+		/// Returns (DepartmentId, UserId) if the token is valid and the stored sync GUID matches;
+		/// returns null if the token is invalid, expired, or has been regenerated.
+		/// </summary>
+		Task<(int DepartmentId, string UserId)?> ValidateCalendarFeedTokenAsync(string encryptedToken);
 	}
 }

@@ -1,0 +1,614 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="Name1" xml:space="preserve">
+    <value>this is my long string</value>
+  </data>
+  <data name="Bitmap1" xml:space="preserve">
+    <value>[base64 mime encoded serialized .NET Framework object]</value>
+  </data>
+  <data name="Icon1" xml:space="preserve">
+    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+  </data>
+  <data name="Action" xml:space="preserve">
+    <value>Action</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="Activate" xml:space="preserve">
+    <value>Activer</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Actif</value>
+  </data>
+  <data name="ArchivedCallsPage" xml:space="preserve">
+    <value>Appels archivés</value>
+  </data>
+  <data name="Attachment" xml:space="preserve">
+    <value>Pièce jointe</value>
+  </data>
+  <data name="Attachments" xml:space="preserve">
+    <value>Pièces jointes</value>
+  </data>
+  <data name="AudioPushToTalk" xml:space="preserve">
+    <value>Audio et push-to-talk</value>
+  </data>
+  <data name="Available" xml:space="preserve">
+    <value>Disponible</value>
+  </data>
+  <data name="AvailableAt" xml:space="preserve">
+    <value>Disponible à</value>
+  </data>
+  <data name="AvailableStation" xml:space="preserve">
+    <value>Station disponible</value>
+  </data>
+  <data name="BigBoard" xml:space="preserve">
+    <value>Grand tableau</value>
+  </data>
+  <data name="Blog" xml:space="preserve">
+    <value>Blog</value>
+  </data>
+  <data name="CalendarModule" xml:space="preserve">
+    <value>Calendrier</value>
+  </data>
+  <data name="Call" xml:space="preserve">
+    <value>Appel</value>
+  </data>
+  <data name="CallAddress" xml:space="preserve">
+    <value>Adresse d'appel</value>
+  </data>
+  <data name="CallImportSettings" xml:space="preserve">
+    <value>Paramètres d'importation d'appels</value>
+  </data>
+  <data name="CallsModule" xml:space="preserve">
+    <value>Appels</value>
+  </data>
+  <data name="CallTimestamp" xml:space="preserve">
+    <value>Horodatage d'appel</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="Canceled" xml:space="preserve">
+    <value>Annulé</value>
+  </data>
+  <data name="Certifications" xml:space="preserve">
+    <value>Certifications</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Fermer</value>
+  </data>
+  <data name="Closed" xml:space="preserve">
+    <value>Fermé</value>
+  </data>
+  <data name="Code" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>Couleur</value>
+  </data>
+  <data name="Commands" xml:space="preserve">
+    <value>Commandes</value>
+  </data>
+  <data name="Committed" xml:space="preserve">
+    <value>Engagé</value>
+  </data>
+  <data name="Connect" xml:space="preserve">
+    <value>Connecter</value>
+  </data>
+  <data name="ContactsModule" xml:space="preserve">
+    <value>Contacts</value>
+  </data>
+  <data name="ContactUs" xml:space="preserve">
+    <value>Contactez-nous</value>
+  </data>
+  <data name="CreatedOn" xml:space="preserve">
+    <value>Créé le</value>
+  </data>
+  <data name="CustomStatuses" xml:space="preserve">
+    <value>Statuts personnalisés</value>
+  </data>
+  <data name="Data" xml:space="preserve">
+    <value>Données</value>
+  </data>
+  <data name="Day" xml:space="preserve">
+    <value>Jour</value>
+  </data>
+  <data name="Days" xml:space="preserve">
+    <value>Jours</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>Désactiver</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value>Par défaut</value>
+  </data>
+  <data name="Delayed" xml:space="preserve">
+    <value>Retardé</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="Department" xml:space="preserve">
+    <value>Département</value>
+  </data>
+  <data name="DepartmentSettings" xml:space="preserve">
+    <value>Paramètres du département</value>
+  </data>
+  <data name="DepartmentTypes" xml:space="preserve">
+    <value>Types de département</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Discard" xml:space="preserve">
+    <value>Rejeter</value>
+  </data>
+  <data name="Dispatched" xml:space="preserve">
+    <value>Dépêché</value>
+  </data>
+  <data name="DistributionLists" xml:space="preserve">
+    <value>Listes de distribution</value>
+  </data>
+  <data name="Documents" xml:space="preserve">
+    <value>Documents</value>
+  </data>
+  <data name="DocumentsModule" xml:space="preserve">
+    <value>Documents</value>
+  </data>
+  <data name="Download" xml:space="preserve">
+    <value>Télécharger</value>
+  </data>
+  <data name="End" xml:space="preserve">
+    <value>Fin</value>
+  </data>
+  <data name="EtaColumn" xml:space="preserve">
+    <value>Heure d'arrivée estimée</value>
+  </data>
+  <data name="Event" xml:space="preserve">
+    <value>Événement</value>
+  </data>
+  <data name="Expired" xml:space="preserve">
+    <value>Expiré</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>Exporter</value>
+  </data>
+  <data name="Files" xml:space="preserve">
+    <value>Fichiers</value>
+  </data>
+  <data name="Forms" xml:space="preserve">
+    <value>Formulaires</value>
+  </data>
+  <data name="Friday" xml:space="preserve">
+    <value>Vendredi</value>
+  </data>
+  <data name="General" xml:space="preserve">
+    <value>Général</value>
+  </data>
+  <data name="Groups" xml:space="preserve">
+    <value>Groupes</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>Aide</value>
+  </data>
+  <data name="HelpAndSupport" xml:space="preserve">
+    <value>Aide et support</value>
+  </data>
+  <data name="HomeModule" xml:space="preserve">
+    <value>Accueil</value>
+  </data>
+  <data name="Hour" xml:space="preserve">
+    <value>Heure</value>
+  </data>
+  <data name="Hours" xml:space="preserve">
+    <value>Heures</value>
+  </data>
+  <data name="Id" xml:space="preserve">
+    <value>Id</value>
+  </data>
+  <data name="Images" xml:space="preserve">
+    <value>Images</value>
+  </data>
+  <data name="Info" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="InQuarters" xml:space="preserve">
+    <value>En caserne</value>
+  </data>
+  <data name="Instructors" xml:space="preserve">
+    <value>Instructeurs</value>
+  </data>
+  <data name="InventoryModule" xml:space="preserve">
+    <value>Inventaire</value>
+  </data>
+  <data name="KnowledgeBase" xml:space="preserve">
+    <value>Base de connaissances</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Langue</value>
+  </data>
+  <data name="Links" xml:space="preserve">
+    <value>Liens</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Emplacement</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Déconnexion</value>
+  </data>
+  <data name="LogsModule" xml:space="preserve">
+    <value>Journaux</value>
+  </data>
+  <data name="Mailbox" xml:space="preserve">
+    <value>Boîte aux lettres</value>
+  </data>
+  <data name="Map" xml:space="preserve">
+    <value>Carte</value>
+  </data>
+  <data name="MappingModule" xml:space="preserve">
+    <value>Cartographie</value>
+  </data>
+  <data name="Maybe" xml:space="preserve">
+    <value>Peut-être</value>
+  </data>
+  <data name="Minutes" xml:space="preserve">
+    <value>Minutes</value>
+  </data>
+  <data name="Monday" xml:space="preserve">
+    <value>Lundi</value>
+  </data>
+  <data name="Monthly" xml:space="preserve">
+    <value>Mensuel</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="NameColumn" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="NatureOfCall" xml:space="preserve">
+    <value>Nature de l'appel</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>Jamais</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Non</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Aucun</value>
+  </data>
+  <data name="Note" xml:space="preserve">
+    <value>Note</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="NotesModule" xml:space="preserve">
+    <value>Notes</value>
+  </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
+  <data name="NotResponding" xml:space="preserve">
+    <value>Ne répond pas</value>
+  </data>
+  <data name="Number" xml:space="preserve">
+    <value>Numéro</value>
+  </data>
+  <data name="OnScene" xml:space="preserve">
+    <value>Sur les lieux</value>
+  </data>
+  <data name="OnShift" xml:space="preserve">
+    <value>En service</value>
+  </data>
+  <data name="Optional" xml:space="preserve">
+    <value>Optionnel</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="Order" xml:space="preserve">
+    <value>Commande</value>
+  </data>
+  <data name="Orders" xml:space="preserve">
+    <value>Commandes</value>
+  </data>
+  <data name="Personnel" xml:space="preserve">
+    <value>Personnel</value>
+  </data>
+  <data name="PersonnelModule" xml:space="preserve">
+    <value>Personnel</value>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>Aperçu</value>
+  </data>
+  <data name="Print" xml:space="preserve">
+    <value>Imprimer</value>
+  </data>
+  <data name="Priority" xml:space="preserve">
+    <value>Priorité</value>
+  </data>
+  <data name="Process" xml:space="preserve">
+    <value>Processus</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Profil</value>
+  </data>
+  <data name="Protocols" xml:space="preserve">
+    <value>Protocoles</value>
+  </data>
+  <data name="PushToTalk" xml:space="preserve">
+    <value>Appuyer pour parler</value>
+  </data>
+  <data name="Released" xml:space="preserve">
+    <value>Libéré</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="Repeat" xml:space="preserve">
+    <value>Répéter</value>
+  </data>
+  <data name="ReportsModule" xml:space="preserve">
+    <value>Rapports</value>
+  </data>
+  <data name="Required" xml:space="preserve">
+    <value>Requis</value>
+  </data>
+  <data name="Responding" xml:space="preserve">
+    <value>En intervention</value>
+  </data>
+  <data name="RespondingTo" xml:space="preserve">
+    <value>En route vers</value>
+  </data>
+  <data name="RespondToCall" xml:space="preserve">
+    <value>Répondre à un appel</value>
+  </data>
+  <data name="RespondToStation" xml:space="preserve">
+    <value>Rejoindre une station</value>
+  </data>
+  <data name="Roles" xml:space="preserve">
+    <value>Rôles</value>
+  </data>
+  <data name="Route" xml:space="preserve">
+    <value>Itinéraire</value>
+  </data>
+  <data name="Saturday" xml:space="preserve">
+    <value>Samedi</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Enregistrer</value>
+  </data>
+  <data name="Saving" xml:space="preserve">
+    <value>Enregistrement</value>
+  </data>
+  <data name="SecurityAndPermissions" xml:space="preserve">
+    <value>Sécurité et autorisations</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Envoyer</value>
+  </data>
+  <data name="ShiftsModule" xml:space="preserve">
+    <value>Quarts</value>
+  </data>
+  <data name="Signup" xml:space="preserve">
+    <value>S'inscrire</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Taille</value>
+  </data>
+  <data name="StaffingColumn" xml:space="preserve">
+    <value>Dotation en personnel</value>
+  </data>
+  <data name="StandingBy" xml:space="preserve">
+    <value>En attente</value>
+  </data>
+  <data name="StandingByStation" xml:space="preserve">
+    <value>En attente à la station</value>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>Démarrer</value>
+  </data>
+  <data name="Station" xml:space="preserve">
+    <value>Station</value>
+  </data>
+  <data name="StationAndGroups" xml:space="preserve">
+    <value>Stations et groupes</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Statut</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Statut</value>
+  </data>
+  <data name="StatusPage" xml:space="preserve">
+    <value>État du système</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value>Nouveau formulaire d'appel</value>
+  </data>
+  <data name="SubAndBilling" xml:space="preserve">
+    <value>Abonnement et facturation</value>
+  </data>
+  <data name="Sunday" xml:space="preserve">
+    <value>Dimanche</value>
+  </data>
+  <data name="System" xml:space="preserve">
+    <value>Système</value>
+  </data>
+  <data name="Templates" xml:space="preserve">
+    <value>Modèles</value>
+  </data>
+  <data name="Text" xml:space="preserve">
+    <value>Texte</value>
+  </data>
+  <data name="TextMessaging" xml:space="preserve">
+    <value>Messagerie texte</value>
+  </data>
+  <data name="Thursday" xml:space="preserve">
+    <value>Jeudi</value>
+  </data>
+  <data name="Timestamp" xml:space="preserve">
+    <value>Horodatage</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Titre</value>
+  </data>
+  <data name="Training" xml:space="preserve">
+    <value>Formation</value>
+  </data>
+  <data name="TrainingCode" xml:space="preserve">
+    <value>Course\Training Code</value>
+  </data>
+  <data name="TrainingOrCourse" xml:space="preserve">
+    <value>Course\Training</value>
+  </data>
+  <data name="TrainingsModule" xml:space="preserve">
+    <value>Formations</value>
+  </data>
+  <data name="Tuesday" xml:space="preserve">
+    <value>Mardi</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Types" xml:space="preserve">
+    <value>Types</value>
+  </data>
+  <data name="Unavailable" xml:space="preserve">
+    <value>Indisponible</value>
+  </data>
+  <data name="Unfounded" xml:space="preserve">
+    <value>Non fondé</value>
+  </data>
+  <data name="Units" xml:space="preserve">
+    <value>Unités</value>
+  </data>
+  <data name="UnitsModule" xml:space="preserve">
+    <value>Unités</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>Inconnu</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Mettre à jour</value>
+  </data>
+  <data name="UpgradePlan" xml:space="preserve">
+    <value>Mettre à niveau votre abonnement</value>
+  </data>
+  <data name="UploadedBy" xml:space="preserve">
+    <value>Téléchargé par</value>
+  </data>
+  <data name="UploadedOn" xml:space="preserve">
+    <value>Téléchargé le</value>
+  </data>
+  <data name="UsersHeader" xml:space="preserve">
+    <value>Utilisateurs</value>
+  </data>
+  <data name="Valid" xml:space="preserve">
+    <value>Valide</value>
+  </data>
+  <data name="Video" xml:space="preserve">
+    <value>Vidéo</value>
+  </data>
+  <data name="Videos" xml:space="preserve">
+    <value>Vidéos</value>
+  </data>
+  <data name="View" xml:space="preserve">
+    <value>Voir</value>
+  </data>
+  <data name="ViewCalls" xml:space="preserve">
+    <value>Voir tous les appels</value>
+  </data>
+  <data name="ViewInbox" xml:space="preserve">
+    <value>Voir votre boîte de réception</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Avertissement</value>
+  </data>
+  <data name="Wednesday" xml:space="preserve">
+    <value>Mercredi</value>
+  </data>
+  <data name="Week" xml:space="preserve">
+    <value>Semaine</value>
+  </data>
+  <data name="Weekly" xml:space="preserve">
+    <value>Hebdomadaire</value>
+  </data>
+  <data name="Weeks" xml:space="preserve">
+    <value>Semaines</value>
+  </data>
+  <data name="WorkLog" xml:space="preserve">
+    <value>Journal de travail</value>
+  </data>
+  <data name="Yearly" xml:space="preserve">
+    <value>Annuel</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Oui</value>
+  </data>
+  <data name="YourDepartments" xml:space="preserve">
+    <value>Vos départements</value>
+  </data>
+</root>

@@ -138,8 +138,14 @@
   <data name="DeleteEvent" xml:space="preserve">
     <value>Delete Event</value>
   </data>
+  <data name="DeleteEventConfirm" xml:space="preserve">
+    <value>Are you sure you want to delete this event? This action cannot be undone.</value>
+  </data>
   <data name="DeleteEventOccurrences" xml:space="preserve">
     <value>Delete Event and Occurrences</value>
+  </data>
+  <data name="DeleteEventOccurrencesConfirm" xml:space="preserve">
+    <value>Are you sure you want to delete this event and all its occurrences? This action cannot be undone.</value>
   </data>
   <data name="EditCalendarTypeHeader" xml:space="preserve">
     <value>Edit Calendar Type</value>
@@ -248,5 +254,50 @@
   </data>
   <data name="Upcoming" xml:space="preserve">
     <value>Upcoming</value>
+  </data>
+  <data name="AllDayEvent" xml:space="preserve">
+    <value>All Day Event</value>
+  </data>
+  <data name="DateRange" xml:space="preserve">
+    <value>{0} – {1}</value>
+  </data>
+  <data name="DownloadIcs" xml:space="preserve">
+    <value>Download .ics</value>
+  </data>
+  <data name="SubscribeCalendar" xml:space="preserve">
+    <value>Subscribe to Calendar</value>
+  </data>
+  <data name="CalendarSyncTitle" xml:space="preserve">
+    <value>Calendar Sync</value>
+  </data>
+  <data name="CalendarSyncDescription" xml:space="preserve">
+    <value>Subscribe to your department calendar in Google Calendar, Microsoft Outlook, Apple Calendar, or any application that supports iCal feeds.</value>
+  </data>
+  <data name="ActivateCalendarSync" xml:space="preserve">
+    <value>Activate Calendar Sync</value>
+  </data>
+  <data name="RegenerateCalendarSync" xml:space="preserve">
+    <value>Regenerate Sync Key</value>
+  </data>
+  <data name="CalendarSyncActivateHelp" xml:space="preserve">
+    <value>To sync your department calendar with an external calendar application, you must first activate calendar sync. This generates a unique subscription URL. If the URL is compromised, you can regenerate it to invalidate the old one.</value>
+  </data>
+  <data name="CopyToClipboard" xml:space="preserve">
+    <value>Copy to Clipboard</value>
+  </data>
+  <data name="SubscriptionUrl" xml:space="preserve">
+    <value>Subscription URL</value>
+  </data>
+  <data name="WebCalLink" xml:space="preserve">
+    <value>Open in Calendar App</value>
+  </data>
+  <data name="CalendarSyncActive" xml:space="preserve">
+    <value>Calendar sync is active. Use the URL below to subscribe.</value>
+  </data>
+  <data name="CalendarSyncInactive" xml:space="preserve">
+    <value>Calendar sync is not yet activated. Click the button below to generate your subscription URL.</value>
+  </data>
+  <data name="Types" xml:space="preserve">
+    <value>Types</value>
   </data>
 </root>

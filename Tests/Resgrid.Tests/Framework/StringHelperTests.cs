@@ -14,7 +14,7 @@ namespace Resgrid.Tests.Framework
 		public void TestHtmlSanatizer_OnCallNameWithWordHtml()
 		{
 			var input = "";
-			using (var reader = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + "\\Data\\Strings\\BadWordHtmlCallName.txt"))
+			using (var reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Strings", "BadWordHtmlCallName.txt")))
 			{
 				input = reader.ReadToEnd();
 			}
@@ -29,7 +29,7 @@ namespace Resgrid.Tests.Framework
 		public void TestHtmlSanatizer_OnCallNameWithWordHtml2()
 		{
 			var input = "";
-			using (var reader = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + "\\Data\\Strings\\BadWordHtmlCallName2.txt"))
+			using (var reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Strings", "BadWordHtmlCallName2.txt")))
 			{
 				input = reader.ReadToEnd();
 			}
@@ -44,7 +44,7 @@ namespace Resgrid.Tests.Framework
 		public void TestHtmlSanatizer_OnCallNotesWithWordHtml()
 		{
 			var input = "";
-			using (var reader = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + "\\Data\\Strings\\BadWordHtmlCallNotes.txt"))
+			using (var reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Strings", "BadWordHtmlCallNotes.txt")))
 			{
 				input = reader.ReadToEnd();
 			}
@@ -59,7 +59,7 @@ namespace Resgrid.Tests.Framework
 		public void TestHtmlSanatizer_OnCallNotesWithWordHtmlFromEmailFW()
 		{
 			var input = "";
-			using (var reader = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + "\\Data\\Strings\\BadWordHtmlCallNotesFW.txt"))
+			using (var reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Strings", "BadWordHtmlCallNotesFW.txt")))
 			{
 				input = reader.ReadToEnd();
 			}
@@ -74,7 +74,7 @@ namespace Resgrid.Tests.Framework
 		public void TestHtmlSanatizer_OnCallNotesWithWordHtmlFromEmailFW_NoTitle()
 		{
 			var input = "";
-			using (var reader = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + "\\Data\\Strings\\BadWordHtmlCallNotesFWNoTitle.txt"))
+			using (var reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "Strings", "BadWordHtmlCallNotesFWNoTitle.txt")))
 			{
 				input = reader.ReadToEnd();
 			}

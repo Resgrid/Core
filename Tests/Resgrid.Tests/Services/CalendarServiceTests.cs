@@ -374,7 +374,7 @@ namespace Resgrid.Tests.Services
 				item.Start = new DateTime(2022, 4, 20, 17, 30, 00, DateTimeKind.Utc);
 				item.End = new DateTime(2022, 4, 20, 21, 30, 00, DateTimeKind.Utc);
 				item.RecurrenceType = (int)RecurrenceTypes.Monthly;
-				item.RepeatOnMonth = 20;
+				item.RepeatOnDay = 20;
 
 				var now = new DateTime(2022, 4, 20, 7, 17, 33, DateTimeKind.Utc);
 
@@ -413,7 +413,7 @@ namespace Resgrid.Tests.Services
 				item.Start = new DateTime(2022, 4, 20, 17, 30, 00, DateTimeKind.Utc);
 				item.End = new DateTime(2022, 4, 20, 21, 30, 00, DateTimeKind.Utc);
 				item.RecurrenceType = (int)RecurrenceTypes.Monthly;
-				item.RepeatOnMonth = (int)RepeatOnMonthTypes.Thrid;
+				item.RepeatOnWeek = (int)RepeatOnMonthTypes.Thrid;
 				item.RepeatOnDay = (int)DayOfWeek.Thursday;
 
 				var now = new DateTime(2022, 4, 20, 7, 17, 33, DateTimeKind.Utc);

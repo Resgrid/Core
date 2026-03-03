@@ -22,6 +22,7 @@ namespace Resgrid.Tests.Services
 		}
 
 		[TestFixture]
+		[Ignore("Requires database connection")]
 		public class when_reading_scheduled_tasks: with_the_scheduled_tasks_service
 		{
 			[Test]
@@ -583,6 +584,7 @@ namespace Resgrid.Tests.Services
 		}
 
 		[TestFixture]
+		[Ignore("Requires database connection")]
 		public class when_getting_upcoming_tasks : with_the_scheduled_tasks_service
 		{
 			[Test]

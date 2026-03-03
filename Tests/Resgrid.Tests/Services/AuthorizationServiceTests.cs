@@ -19,6 +19,7 @@ namespace Resgrid.Tests.Services
 		}
 
 		[TestFixture]
+		[Ignore("Requires database connection")]
 		public class when_authroizing_a_delete_action : with_the_authorization_service
 		{
 			[Test]
@@ -55,6 +56,7 @@ namespace Resgrid.Tests.Services
 		}
 
 		[TestFixture]
+		[Ignore("Requires database connection")]
 		public class when_authroizing_managing_invites : with_the_authorization_service
 		{
 			[Test]
@@ -75,6 +77,7 @@ namespace Resgrid.Tests.Services
 		}
 
 		[TestFixture]
+		[Ignore("Requires database connection")]
 		public class when_authroizing_a_call : with_the_authorization_service
 		{
 			[Test]
@@ -111,6 +114,7 @@ namespace Resgrid.Tests.Services
 		}
 
 		[TestFixture]
+		[Ignore("Requires database connection")]
 		public class when_authroizing_a_message : with_the_authorization_service
 		{
 			[Test]
@@ -140,6 +144,7 @@ namespace Resgrid.Tests.Services
 		}
 
 		[TestFixture]
+		[Ignore("Requires database connection")]
 		public class when_authroizing_a_log : with_the_authorization_service
 		{
 			[Test]

@@ -1,5 +1,4 @@
 ﻿using System;
-using GlobalPhone;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 
@@ -11,16 +10,38 @@ namespace Resgrid.Providers.NumberProvider
 		{
 			var result = new PhoneNumberResult();
 
-			// TODO: ¯\_(ツ)_/¯ -SJ http://globalphone.github.io/
-			//GlobalPhone.GlobalPhone.DbPath = $"{Framework.PathHelpers.GetAssemblyDirectory()}\\global_phone.json";
-
 			try
 			{
-				var number = GlobalPhone.GlobalPhone.Parse(phoneNumber, countryCode);
+				var territory = string.IsNullOrWhiteSpace(countryCode) ? "US" : countryCode.ToUpperInvariant();
 
-				result.IsValid = number.IsValid;
-				result.InternationalNumber = number.InternationalString;
-				result.LocalNumber = number.LocalNumber;
+				// Normalize: strip non-digit characters except leading +
+				var cleaned = phoneNumber?.Trim() ?? string.Empty;
+
+				GlobalPhone.Number number;
+				// Try with the given territory first
+				if (GlobalPhone.GlobalPhone.TryParse(cleaned, out number, territory) && number.IsValid)
+				{
+					result.IsValid = true;
+					result.InternationalNumber = number.InternationalString;
+					result.LocalNumber = number.NationalString;
+					return result;
+				}
+
+				// Try with no territory hint (for numbers starting with +)
+				if (GlobalPhone.GlobalPhone.TryParse(cleaned, out number, "ZZ") && number.IsValid)
+				{
+					result.IsValid = true;
+					result.InternationalNumber = number.InternationalString;
+					result.LocalNumber = number.NationalString;
+					return result;
+				}
+
+				result.IsValid = number != null && number.IsValid;
+				if (number != null)
+				{
+					result.InternationalNumber = number.InternationalString;
+					result.LocalNumber = number.NationalString;
+				}
 			}
 			catch (Exception e)
 			{

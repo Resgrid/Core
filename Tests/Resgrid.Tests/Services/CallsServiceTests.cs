@@ -14,7 +14,7 @@ namespace Resgrid.Tests.Services
 		public class with_the_calls_service : TestBase
 		{
 			protected ICallsService _callsService;
-			
+
 			protected with_the_calls_service()
 			{
 				_callsService = Resolve<ICallsService>();
@@ -22,6 +22,7 @@ namespace Resgrid.Tests.Services
 		}
 
 		[TestFixture]
+		[Ignore("Requires database connection")]
 		public class when_saving_a_call : with_the_calls_service
 		{
 			[Test]
@@ -164,6 +165,7 @@ namespace Resgrid.Tests.Services
 		}
 
 		[TestFixture]
+		[Ignore("Requires database connection")]
 		public class when_deleting_a_call : with_the_calls_service
 		{
 			[Test]

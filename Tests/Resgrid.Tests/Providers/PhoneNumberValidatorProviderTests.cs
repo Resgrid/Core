@@ -22,70 +22,70 @@ namespace Resgrid.Tests.Providers
 			[Test]
 			public void should_be_valid_all_flat()
 			{
-				var result = _phoneNumberValidatorProvider.Process("5555555555");
+				var result = _phoneNumberValidatorProvider.Process("2016541234");
 				result.IsValid.Should().BeTrue();
 			}
 
 			[Test]
 			public void should_be_valid_all_flat_with_country_code()
 			{
-				var result = _phoneNumberValidatorProvider.Process("15555555555");
+				var result = _phoneNumberValidatorProvider.Process("12016541234");
 				result.IsValid.Should().BeTrue();
 			}
 
 			[Test]
 			public void should_be_valid_all_flat_with_country_code_plus()
 			{
-				var result = _phoneNumberValidatorProvider.Process("+15555555555");
+				var result = _phoneNumberValidatorProvider.Process("+12016541234");
 				result.IsValid.Should().BeTrue();
 			}
 
 			[Test]
 			public void should_be_valid_formatted()
 			{
-				var result = _phoneNumberValidatorProvider.Process("(555) 555-5555");
+				var result = _phoneNumberValidatorProvider.Process("(201) 654-1234");
 				result.IsValid.Should().BeTrue();
 			}
 
 			[Test]
 			public void should_be_valid_formatted_with_country_code()
 			{
-				var result = _phoneNumberValidatorProvider.Process("1 (555) 555-5555");
+				var result = _phoneNumberValidatorProvider.Process("1 (201) 654-1234");
 				result.IsValid.Should().BeTrue();
 			}
 
 			[Test]
 			public void should_be_valid_formatted_with_country_code_plus()
 			{
-				var result = _phoneNumberValidatorProvider.Process("+1 (555) 555-5555");
+				var result = _phoneNumberValidatorProvider.Process("+1 (201) 654-1234");
 				result.IsValid.Should().BeTrue();
 			}
 
 			[Test]
 			public void should_be_valid_formatted_no_perens()
 			{
-				var result = _phoneNumberValidatorProvider.Process("555-555-5555");
+				var result = _phoneNumberValidatorProvider.Process("201-654-1234");
 				result.IsValid.Should().BeTrue();
 			}
 
 			[Test]
 			public void should_be_invalid_not_enough_numbers()
 			{
-				var result = _phoneNumberValidatorProvider.Process("555555555");
+				var result = _phoneNumberValidatorProvider.Process("201654123");
 				result.IsValid.Should().BeFalse();
 			}
 
 			[Test]
 			public void should_be_valid_periods_with_country_code()
 			{
-				var result = _phoneNumberValidatorProvider.Process("1.555.555.5555");
+				var result = _phoneNumberValidatorProvider.Process("1.201.654.1234");
 				result.IsValid.Should().BeTrue();
 			}
 
 			[Test]
 			public void should_be_valid_periods()
 			{
-				var result = _phoneNumberValidatorProvider.Process("555.555.5555");
+				var result = _phoneNumberValidatorProvider.Process("201.654.1234");
 				result.IsValid.Should().BeTrue();
 			}
 		}

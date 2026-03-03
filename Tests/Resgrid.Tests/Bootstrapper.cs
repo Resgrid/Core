@@ -1,4 +1,6 @@
 ﻿using Autofac;
+using Autofac.Extras.CommonServiceLocator;
+using CommonServiceLocator;
 using Resgrid.Providers.AddressVerification;
 using Resgrid.Providers.Bus;
 using Resgrid.Providers.Cache;
@@ -15,6 +17,7 @@ namespace Resgrid.Tests
 {
 	public static class Bootstrapper
 	{
+		public static AutofacServiceLocator Locator { get; private set; }
 		private static IContainer _container;
 
 		public static void Initialize()
@@ -37,6 +40,9 @@ namespace Resgrid.Tests
 				builder.RegisterModule(new Resgrid.Providers.Workflow.WorkflowProviderModule());
 
 				_container = builder.Build();
+
+				Locator = new AutofacServiceLocator(_container);
+				ServiceLocator.SetLocatorProvider(() => Locator);
 			}
 		}
 

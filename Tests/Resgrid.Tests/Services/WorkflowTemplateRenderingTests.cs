@@ -53,7 +53,7 @@ namespace Resgrid.Tests.Services
 		public void ConditionalLogic_RendersCorrectly()
 		{
 			var context  = BuildSampleContext();
-			var template = Template.Parse("{% if call.is_critical %}CRITICAL{% else %}Normal{% end %}");
+			var template = Template.Parse("{{ if call.is_critical }}CRITICAL{{ else }}Normal{{ end }}");
 			var result   = template.Render(context);
 
 			result.Should().BeOneOf("CRITICAL", "Normal");
@@ -72,8 +72,8 @@ namespace Resgrid.Tests.Services
 		[Test]
 		public void InvalidTemplateSyntax_IsCapturedByParse()
 		{
-			var template = Template.Parse("{{ unclosed");
-			template.HasErrors.Should().BeTrue("unclosed template expression should yield parse errors");
+			var template = Template.Parse("{{ if }}");
+			template.HasErrors.Should().BeTrue("invalid template expression should yield parse errors");
 		}
 
 		[Test]

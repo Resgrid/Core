@@ -47,6 +47,7 @@ public class WorkflowStepData
 	public string ActionConfig { get; set; }
 	public string WorkflowCredentialId { get; set; }
 	public bool IsEnabled { get; set; }
+	public string ConditionExpression { get; set; }
 }
 
 public class CredentialSummaryData
@@ -137,6 +138,7 @@ public class SaveWorkflowStepInput
 	public string ActionConfig { get; set; }
 	public string WorkflowCredentialId { get; set; }
 	public bool IsEnabled { get; set; } = true;
+	public string ConditionExpression { get; set; }
 }
 
 public class SaveCredentialInput
@@ -146,6 +148,20 @@ public class SaveCredentialInput
 	public int CredentialType { get; set; }
 	/// <summary>Plaintext credential JSON — will be AES-encrypted server-side before storage.</summary>
 	[Required] public string PlaintextCredentialJson { get; set; }
+}
+
+public class ValidateConditionInput
+{
+	[Required] public string ConditionExpression { get; set; }
+	public int TriggerEventType { get; set; }
+	public string SamplePayloadJson { get; set; }
+}
+
+public class ValidateConditionResult
+{
+	public bool IsValid { get; set; }
+	public string EvaluatedResult { get; set; }
+	public List<string> ParseErrors { get; set; }
 }
 
 

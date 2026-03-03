@@ -167,6 +167,10 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<ContactNotesRepository>().As<IContactNotesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ContactsRepository>().As<IContactsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ContactCategoryRepository>().As<IContactCategoryRepository>().InstancePerLifetimeScope();
+
+			// SSO Repositories
+			builder.RegisterType<DepartmentSsoConfigRepository>().As<IDepartmentSsoConfigRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<DepartmentSecurityPolicyRepository>().As<IDepartmentSecurityPolicyRepository>().InstancePerLifetimeScope();
 		}
 	}
 }

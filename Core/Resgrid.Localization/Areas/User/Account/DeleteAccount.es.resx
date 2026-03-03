@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="Name1" xml:space="preserve">
+    <value>this is my long string</value>
+  </data>
+  <data name="Bitmap1" xml:space="preserve">
+    <value>[base64 mime encoded serialized .NET Framework object]</value>
+  </data>
+  <data name="Icon1" xml:space="preserve">
+    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+  </data>
+  <data name="CheckToDelete" xml:space="preserve">
+    <value>Marque la casilla de abajo para confirmar que comprende lo anterior y desea eliminar su cuenta.</value>
+  </data>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>Marque la casilla para confirmar</value>
+  </data>
+  <data name="DeleteAccountHeader" xml:space="preserve">
+    <value>Eliminar tu cuenta</value>
+  </data>
+  <data name="DeleteAreYouSure1" xml:space="preserve">
+    <value>Aquí puedes eliminar tu cuenta personal en el sistema Resgrid. Si eres propietario de cuenta en algún departamento, debes eliminar tu cuenta borrando ese departamento o transfiriendo la propiedad a otra persona a través de la configuración del departamento.</value>
+  </data>
+  <data name="DeleteAreYouSure2" xml:space="preserve">
+    <value>Si deseas abandonar un departamento, se recomienda que los administradores del departamento eliminen la cuenta por ti a través de la lista de personal. Pero si eso no es posible, puedes eliminar tu propia cuenta aquí.</value>
+  </data>
+  <data name="DeleteAreYouSure3" xml:space="preserve">
+    <value>Ten en cuenta que los datos suministrados a Resgrid para un departamento son propiedad de ese departamento y pueden estar sujetos a políticas de retención de datos. Eliminar tu cuenta aquí borrará tu información personal (PII) y tu acceso, pero no todos los datos.</value>
+  </data>
+  <data name="DepartmentOwnerError" xml:space="preserve">
+    <value>No puedes eliminar tu cuenta porque eres propietario de un departamento. Si deseas eliminar el departamento, debes acceder a eso a través de la página de configuración del departamento. Si deseas conservar el departamento, elige a otra persona como propietario del departamento y luego intenta eliminar tu cuenta.</value>
+  </data>
+</root>

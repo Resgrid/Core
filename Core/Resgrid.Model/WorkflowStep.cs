@@ -37,6 +37,13 @@ namespace Resgrid.Model
 
 		public bool IsEnabled { get; set; } = true;
 
+		/// <summary>
+		/// Optional Scriban expression evaluated against the template context before the step executes.
+		/// When the rendered result is falsy ("false", empty, or whitespace) the step is skipped.
+		/// Null or empty means "always run".
+		/// </summary>
+		public string ConditionExpression { get; set; }
+
 		[Required]
 		public string CreatedByUserId { get; set; }
 

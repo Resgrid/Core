@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="Name1" xml:space="preserve">
+    <value>this is my long string</value>
+  </data>
+  <data name="Bitmap1" xml:space="preserve">
+    <value>[base64 mime encoded serialized .NET Framework object]</value>
+  </data>
+  <data name="Icon1" xml:space="preserve">
+    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+  </data>
+  <data name="AdminsOnlyLabel" xml:space="preserve">
+    <value>Admins Only</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="DeleteDocumentButton" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="DeleteDocumentWarning" xml:space="preserve">
+    <value>WARNING: This will permanently delete this document. Are you sure you want to delete the document</value>
+  </data>
+  <data name="EditDocumentHeader" xml:space="preserve">
+    <value>Edit Document</value>
+  </data>
+  <data name="EveryoneLabel" xml:space="preserve">
+    <value>Everyone</value>
+  </data>
+  <data name="Images" xml:space="preserve">
+    <value>Images</value>
+  </data>
+  <data name="NewDocumentHeader" xml:space="preserve">
+    <value>New Document</value>
+  </data>
+  <data name="NewDocumentNamePlaceholder" xml:space="preserve">
+    <value>Name of the Document</value>
+  </data>
+  <data name="Presentations" xml:space="preserve">
+    <value>Presentations</value>
+  </data>
+  <data name="Spreadsheets" xml:space="preserve">
+    <value>Spreadsheets</value>
+  </data>
+  <data name="UploadLabel" xml:space="preserve">
+    <value>Téléverser</value>
+  </data>
+  <data name="UploadWarning" xml:space="preserve">
+    <value>Not all files types are allowed! File must be less then 10MB in size and must have one of these extensions (.png, .jpg, .jpeg, .gif, .pdf, .doc, .docx, .txt, .ppt, .pptx, .pps, .ppsx, .odt, .xls, .xlsx, .mp4, .mp3)</value>
+  </data>
+  <data name="ViewableByLabel" xml:space="preserve">
+    <value>Viewable By</value>
+  </data>
+  <data name="ViewDocumentHeader" xml:space="preserve">
+    <value>View Document</value>
+  </data>
+</root>

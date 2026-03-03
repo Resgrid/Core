@@ -6,6 +6,7 @@ using Resgrid.Model.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Twilio.TwiML.Voice;
@@ -22,10 +23,12 @@ namespace Resgrid.Services
 		private readonly IUserProfileService _userProfileService;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
+		private readonly IEncryptionService _encryptionService;
 
 		public CalendarService(ICalendarItemsRepository calendarItemRepository, ICalendarItemTypeRepository calendarItemTypeRepository,
 			ICalendarItemAttendeeRepository calendarItemAttendeeRepository, IDepartmentsService departmentsService, ICommunicationService communicationService,
-			IUserProfileService userProfileService, IDepartmentGroupsService departmentGroupsService, IDepartmentSettingsService departmentSettingsService)
+			IUserProfileService userProfileService, IDepartmentGroupsService departmentGroupsService, IDepartmentSettingsService departmentSettingsService,
+			IEncryptionService encryptionService)
 		{
 			_calendarItemRepository = calendarItemRepository;
 			_calendarItemTypeRepository = calendarItemTypeRepository;
@@ -35,6 +38,7 @@ namespace Resgrid.Services
 			_userProfileService = userProfileService;
 			_departmentGroupsService = departmentGroupsService;
 			_departmentSettingsService = departmentSettingsService;
+			_encryptionService = encryptionService;
 		}
 
 		public async Task<List<CalendarItem>> GetAllCalendarItemsForDepartmentAsync(int departmentId)
@@ -130,11 +134,26 @@ namespace Resgrid.Services
 		{
 			if (item.CalendarItemId == 0) // We haven't saved yet, thus this isn't UTC
 			{
-				item.Start = DateTimeHelpers.ConvertToUtc(item.Start, timeZone);
-				//item.Start = item.Start.ToUniversalTime();
-				item.End = DateTimeHelpers.ConvertToUtc(item.End, timeZone);
-				//item.End = item.End.ToUniversalTime();
+				if (item.IsAllDay)
+				{
+					// For all-day events pin start to 00:00:00 and end to 23:59:59 in the department
+					// timezone before converting to UTC. This ensures the correct calendar date is
+					// preserved regardless of the department's UTC offset.
+					var startOfDay = new DateTime(item.Start.Year, item.Start.Month, item.Start.Day, 0, 0, 0);
+					var endOfDay   = new DateTime(item.End.Year,   item.End.Month,   item.End.Day,   23, 59, 59);
+					item.Start = DateTimeHelpers.ConvertToUtc(startOfDay, timeZone);
+					item.End   = DateTimeHelpers.ConvertToUtc(endOfDay,   timeZone);
+				}
+				else
+				{
+					item.Start = DateTimeHelpers.ConvertToUtc(item.Start, timeZone);
+					item.End   = DateTimeHelpers.ConvertToUtc(item.End,   timeZone);
+				}
+
+				if (item.RecurrenceEnd.HasValue)
+					item.RecurrenceEnd = DateTimeHelpers.ConvertToUtc(item.RecurrenceEnd.Value, timeZone);
 			}
+
 
 			item.IsV2Schedule = true;
 			item.Description = StringHelpers.SanitizeHtmlInString(item.Description);
@@ -160,8 +179,26 @@ namespace Resgrid.Services
 			if (calendarItem == null)
 				return null;
 
-			calendarItem.Start = DateTimeHelpers.ConvertToUtc(item.Start, timeZone);
-			calendarItem.End = DateTimeHelpers.ConvertToUtc(item.End, timeZone);
+			if (item.IsAllDay)
+			{
+				// For all-day events pin start to 00:00:00 and end to 23:59:59 in the department
+				// timezone before converting to UTC so the correct calendar date is always preserved.
+				var startOfDay = new DateTime(item.Start.Year, item.Start.Month, item.Start.Day, 0, 0, 0);
+				var endOfDay   = new DateTime(item.End.Year,   item.End.Month,   item.End.Day,   23, 59, 59);
+				calendarItem.Start = DateTimeHelpers.ConvertToUtc(startOfDay, timeZone);
+				calendarItem.End   = DateTimeHelpers.ConvertToUtc(endOfDay,   timeZone);
+			}
+			else
+			{
+				calendarItem.Start = DateTimeHelpers.ConvertToUtc(item.Start, timeZone);
+				calendarItem.End   = DateTimeHelpers.ConvertToUtc(item.End,   timeZone);
+			}
+
+			if (item.RecurrenceEnd.HasValue)
+				calendarItem.RecurrenceEnd = DateTimeHelpers.ConvertToUtc(item.RecurrenceEnd.Value, timeZone);
+			else
+				calendarItem.RecurrenceEnd = null;
+
 
 			calendarItem.RecurrenceId = item.RecurrenceId;
 			calendarItem.Title = item.Title;
@@ -595,6 +632,88 @@ namespace Resgrid.Services
 			}
 
 			return -1;
+		}
+
+		// ── External calendar sync ─────────────────────────────────────────────────
+
+		public async Task<string> GetCalendarFeedTokenAsync(int departmentId, string userId)
+		{
+			var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
+			if (profile == null || string.IsNullOrWhiteSpace(profile.CalendarSyncToken))
+				return null;
+
+			return BuildEncryptedToken(departmentId, userId, profile.CalendarSyncToken);
+		}
+
+		public async Task<string> ActivateCalendarSyncAsync(int departmentId, string userId,
+			CancellationToken cancellationToken = default)
+		{
+			var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
+			if (profile == null)
+				return null;
+
+			profile.CalendarSyncToken = Guid.NewGuid().ToString("N");
+			await _userProfileService.SaveProfileAsync(departmentId, profile, cancellationToken);
+
+			return BuildEncryptedToken(departmentId, userId, profile.CalendarSyncToken);
+		}
+
+		public async Task<string> RegenerateCalendarSyncAsync(int departmentId, string userId,
+			CancellationToken cancellationToken = default)
+		{
+			// Same logic as Activate — overwrites any existing GUID.
+			return await ActivateCalendarSyncAsync(departmentId, userId, cancellationToken);
+		}
+
+		public async Task<(int DepartmentId, string UserId)?> ValidateCalendarFeedTokenAsync(string encryptedToken)
+		{
+			if (string.IsNullOrWhiteSpace(encryptedToken))
+				return null;
+
+			try
+			{
+				// Restore URL-safe Base64 to standard Base64.
+				var base64 = encryptedToken
+					.Replace('-', '+')
+					.Replace('_', '/')
+					.PadRight(encryptedToken.Length + (4 - encryptedToken.Length % 4) % 4, '=');
+
+				var plain = _encryptionService.Decrypt(base64);
+				var parts = plain.Split('|');
+				if (parts.Length != 3)
+					return null;
+
+				if (!int.TryParse(parts[0], out int deptId))
+					return null;
+
+				var userId = parts[1];
+				var tokenGuid = parts[2];
+
+				var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
+				if (profile == null || profile.CalendarSyncToken != tokenGuid)
+					return null;
+
+				return (deptId, userId);
+			}
+			catch
+			{
+				return null;
+			}
+		}
+
+		/// <summary>
+		/// Builds the URL-safe encrypted token string from the three payload parts.
+		/// </summary>
+		private string BuildEncryptedToken(int departmentId, string userId, string syncGuid)
+		{
+			var plain = $"{departmentId}|{userId}|{syncGuid}";
+			var encrypted = _encryptionService.Encrypt(plain);
+
+			// Convert to URL-safe Base64 (no padding, + → -, / → _).
+			return encrypted
+				.Replace('+', '-')
+				.Replace('/', '_')
+				.TrimEnd('=');
 		}
 	}
 }

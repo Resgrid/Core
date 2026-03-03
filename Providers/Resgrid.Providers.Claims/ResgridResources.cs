@@ -147,5 +147,15 @@
 		public const string WorkflowRun_Update = "WorkflowRun_Update";
 		public const string WorkflowRun_Create = "WorkflowRun_Create";
 		public const string WorkflowRun_Delete = "WorkflowRun_Delete";
+
+		public const string Sso_View = "Sso_View";
+		public const string Sso_Update = "Sso_Update";
+		public const string Sso_Create = "Sso_Create";
+		public const string Sso_Delete = "Sso_Delete";
+
+		public const string Scim_View = "Scim_View";
+		public const string Scim_Update = "Scim_Update";
+		public const string Scim_Create = "Scim_Create";
+		public const string Scim_Delete = "Scim_Delete";
 	}
 }

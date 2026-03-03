@@ -9,6 +9,9 @@
 		TwoFactorDisabled = 4,
 		TwoFactorLoginVerified = 5,
 		TwoFactorRecoveryCodeUsed = 6,
-		TwoFactorStepUpVerified = 7
+		TwoFactorStepUpVerified = 7,
+		SsoLogin = 8,
+		SsoLoginFailed = 9,
+		ScimOperation = 10
 	}
 }

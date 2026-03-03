@@ -170,6 +170,14 @@ namespace Resgrid.Model
 		[ProtoMember(47)]
 		public DateTime? HomeVerificationAttemptsResetDate { get; set; }
 
+		/// <summary>
+		/// The user-specific GUID used to validate encrypted external calendar subscription URLs.
+		/// When null the user has not activated calendar sync. Regenerating this value invalidates
+		/// all previously issued subscription URLs.
+		/// </summary>
+		[ProtoMember(48)]
+		public string CalendarSyncToken { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

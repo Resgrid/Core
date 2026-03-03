@@ -49,9 +49,12 @@ namespace Resgrid.Tests.Services
 
 				DepartmentMembershipHelpers.SetupDisabledAndHiddenUsers(_departmentsServiceMock);
 				_actionLogsRepositoryMock.Setup(m => m.GetAllAsync()).ReturnsAsync(ActionLogsHelpers.CreateActionLogsForDepartment4());
+				_actionLogsRepositoryMock.Setup(m => m.GetAllActionLogsForDepartmentAsync(It.IsAny<int>())).ReturnsAsync((int deptId) => ActionLogsHelpers.CreateActionLogsForDepartment4().Where(l => l.DepartmentId == deptId).ToList());
+				_actionLogsRepositoryMock.Setup(m => m.GetLastActionLogForUserAsync(It.IsAny<string>())).ReturnsAsync((string userId) => ActionLogsHelpers.CreateActionLogsForDepartment4().Where(l => l.UserId == userId).OrderByDescending(l => l.Timestamp).FirstOrDefault());
+				_actionLogsRepositoryMock.Setup(m => m.SaveOrUpdateAsync(It.IsAny<ActionLog>(), It.IsAny<System.Threading.CancellationToken>(), It.IsAny<bool>())).ReturnsAsync((ActionLog al, System.Threading.CancellationToken ct, bool firstLevel) => al);
 				_departmentMembersRepositoryMock.Setup(m => m.GetAllAsync()).ReturnsAsync(DepartmentMembershipHelpers.CreateDepartmentMembershipsForDepartment4());
 				_departmentsServiceMock.Setup(m => m.GetAllMembersForDepartmentAsync(4)).ReturnsAsync(DepartmentMembershipHelpers.CreateDepartmentMembershipsForDepartment4().ToList());
-				_usersServiceMock.Setup(m => m.GetUserById(It.IsAny<string>(), true)).Returns((string v) => UsersHelpers.CreateUser(v));
+				_usersServiceMock.Setup(m => m.GetUserById(It.IsAny<string>(), It.IsAny<bool>())).Returns((string v, bool bypassCache) => UsersHelpers.CreateUser(v));
 
 				_actionLogsService = Resolve<IActionLogsService>();
 				_actionLogsServiceMocked = new ActionLogsService(_actionLogsRepositoryMock.Object, _usersServiceMock.Object, _departmentMembersRepositoryMock.Object, _departmentGroupsServiceMock.Object, _departmentsServiceMock.Object, _departmentSettingsServiceMock.Object, _eventAggregatorMock.Object, _geoServiceMock.Object, _customStateServiceMock.Object, _cacheProviderMock.Object);
@@ -65,7 +68,7 @@ namespace Resgrid.Tests.Services
 			[Test]
 			public async Task should_return_valid_log_on_save()
 			{
-				ActionLog log = await _actionLogsService.SetUserActionAsync(TestData.Users.TestUser1Id, 1, (int)ActionTypes.AvailableStation);
+				ActionLog log = await _actionLogsServiceMocked.SetUserActionAsync(TestData.Users.TestUser1Id, 1, (int)ActionTypes.AvailableStation);
 
 				log.Should().NotBeNull();
 				log.ActionTypeId.Should().Be(4);

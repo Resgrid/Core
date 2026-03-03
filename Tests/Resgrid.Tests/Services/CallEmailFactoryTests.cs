@@ -90,7 +90,7 @@ namespace Resgrid.Tests.Services
 		public class when_importing_a_hancock_county_call : with_the_calls_email_factory
 		{
 			[Test]
-			public async Task<bool> should_work_with_address_with_commas()
+			public async Task should_work_with_address_with_commas()
 			{
 				CallEmail email = new CallEmail();
 				email.MessageId = "100";
@@ -112,12 +112,10 @@ namespace Resgrid.Tests.Services
 				call.Address.Should().Be("521 W MAIN CROSS ST # 108, ARLINGTON, OH 45814");
 				call.NatureOfCall.Should().Be("MEDICAL ALARM SHOWS UNIT IS VACANT NO PX NUMBER FOR ACCOUNT.");
 				call.Name.Should().Be("29-Medical/EMS");
-
-				return true;
 			}
 
 			[Test]
-			public async Task<bool> should_work_with_address_without_commas()
+			public async Task should_work_with_address_without_commas()
 			{
 				CallEmail email = new CallEmail();
 				email.MessageId = "100";
@@ -139,12 +137,10 @@ namespace Resgrid.Tests.Services
 				call.Address.Should().Be("521 W MAIN CROSS ST # 108 ARLINGTON OH 45814");
 				call.NatureOfCall.Should().Be("MEDICAL ALARM SHOWS UNIT IS VACANT NO PX NUMBER FOR ACCOUNT.");
 				call.Name.Should().Be("29-Medical/EMS");
-
-				return true;
 			}
 
 			[Test]
-			public async Task<bool> should_work_with_gps_coordinates_commas()
+			public async Task should_work_with_gps_coordinates_commas()
 			{
 				CallEmail email = new CallEmail();
 				email.MessageId = "100";
@@ -167,8 +163,6 @@ namespace Resgrid.Tests.Services
 				call.GeoLocationData.Should().Be("39.14086268299356,-119.7583809782715");
 				call.NatureOfCall.Should().Be("MEDICAL ALARM SHOWS UNIT IS VACANT NO PX NUMBER FOR ACCOUNT.");
 				call.Name.Should().Be("29-Medical/EMS");
-
-				return true;
 			}
 		}
 
@@ -176,7 +170,7 @@ namespace Resgrid.Tests.Services
 		public class when_importing_a_calfire_scu_call : with_the_calls_email_factory
 		{
 			[Test]
-			public async Task<bool> should_process_elec_haz_email()
+			public async Task should_process_elec_haz_email()
 			{
 				CallEmail email = new CallEmail();
 				email.MessageId = "100";
@@ -201,12 +195,10 @@ namespace Resgrid.Tests.Services
 				call.Name.Should().Be("HAZ, ELECTRICAL");
 				call.MapPage.Should().Be("794_J_6/C41");
 				call.GeoLocationData.Should().Be("37.440316,-121.835281");
-
-				return true;
 			}
 
 			[Test]
-			public async Task<bool> should_process_medial_assist_email()
+			public async Task should_process_medial_assist_email()
 			{
 				CallEmail email = new CallEmail();
 				email.MessageId = "100";
@@ -230,12 +222,10 @@ namespace Resgrid.Tests.Services
 				call.Name.Should().Be("MED, ASSIST");
 				call.MapPage.Should().Be("794_G_5/B40");
 				call.GeoLocationData.Should().Be("37.448472,-121.846455");
-
-				return true;
 			}
 
 			[Test]
-			public async Task<bool> should_process_medial_assist_aid()
+			public async Task should_process_medial_assist_aid()
 			{
 				CallEmail email = new CallEmail();
 				email.MessageId = "100";
@@ -259,12 +249,10 @@ namespace Resgrid.Tests.Services
 				call.Name.Should().Be("MEDICAL AID");
 				call.MapPage.Should().Be("794_G_5/C40");
 				call.GeoLocationData.Should().Be("37.443783,-121.846332");
-
-				return true;
 			}
 
 			[Test]
-			public async Task<bool> should_not_process_close()
+			public async Task should_not_process_close()
 			{
 				CallEmail email = new CallEmail();
 				email.MessageId = "100";
@@ -275,17 +263,15 @@ namespace Resgrid.Tests.Services
 				string mmId = Guid.NewGuid().ToString();
 				var priority = (int)CallPriority.High;
 
-				var call = _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.CalFireSCU, email, mmId, _dispatchUsers, null, null, null, priority, null, null, null);
+				var call = await _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.CalFireSCU, email, mmId, _dispatchUsers, null, null, null, priority, null, null, null);
 
 				call.Should().BeNull();
-
-				return true;
 			}
 		}
 
 		public class when_importing_an_enhanced_parkland_call : with_the_calls_email_factory
 		{
-			public async Task<bool> should_process_initial_callout()
+			public async Task should_process_initial_callout()
 			{
 				CallEmail email = new CallEmail();
 				email.MessageId = "100";
@@ -316,11 +302,9 @@ namespace Resgrid.Tests.Services
 				//call.LoggedOn.Should().BeCloseTo(new DateTime(2018, 5, 14, 15, 53, 16, DateTimeKind.Utc));
 				call.Name.Should().Be("72C01 - Water Rescue / Sinking Vehicle / Vehicle in Floodwater");
 				call.GeoLocationData.Should().Be("54.1425, -115.687");
-
-				return true;
 			}
 
-			public async Task<bool> should_process_second_alarm()
+			public async Task should_process_second_alarm()
 			{
 				CallEmail email = new CallEmail();
 				email.MessageId = "100";
@@ -352,8 +336,6 @@ namespace Resgrid.Tests.Services
 				//call.LoggedOn.Should().BeCloseTo(new DateTime(2018, 5, 14, 15, 53, 16, DateTimeKind.Utc));
 				call.Name.Should().Be("72C01 - Water Rescue/ Sinking Vehicle/Vehicle in Floodwater");
 				call.GeoLocationData.Should().Be("54.1425, -115.687");
-
-				return true;
 			}
 		}
 
@@ -361,7 +343,7 @@ namespace Resgrid.Tests.Services
 		public class when_importing_an_active911_call : with_the_calls_email_factory
 		{
 			[Test]
-			public async Task<bool> should_work_with_normal_email()
+			public async Task should_work_with_normal_email()
 			{
 				CallEmail email = new CallEmail();
 				email.MessageId = "100";
@@ -397,12 +379,10 @@ namespace Resgrid.Tests.Services
 				call.NatureOfCall.Should().NotBeNull();
 				call.Notes.Should().NotBeNull();
 				call.Name.Should().Be("Medical Unknown Problems");
-
-				return true;
 			}
 
 			[Test]
-			public async Task<bool> should_work_for_department_7966()
+			public async Task should_work_for_department_7966()
 			{
 				CallEmail email = new CallEmail();
 				email.MessageId = "100";
@@ -443,12 +423,10 @@ namespace Resgrid.Tests.Services
 				call.Name.Should().Be("Medical Unknown Problems");
 				call.Type.Should().Be("Medical");
 				call.Priority.Should().Be(priority);
-
-				return true;
 			}
 
 			[Test]
-			public async Task<bool> should_work_for_department_7966_withprios()
+			public async Task should_work_for_department_7966_withprios()
 			{
 				CallEmail email = new CallEmail();
 				email.MessageId = "100";
@@ -494,8 +472,6 @@ namespace Resgrid.Tests.Services
 				call.Name.Should().Be("Medical Unknown Problems");
 				call.Type.Should().Be("Medical");
 				call.Priority.Should().Be(501);
-
-				return true;
 			}
 
 			[Test]
@@ -517,7 +493,7 @@ namespace Resgrid.Tests.Services
 				prios.Add(new DepartmentCallPriority { DepartmentCallPriorityId = 501, Name = "MEDICAL" });
 				prios.Add(new DepartmentCallPriority { DepartmentCallPriorityId = 502, Name = "Unknown" });
 
-				var call = await _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.OttawaKingstonToronto, email, mmId, _dispatchUsers, department, null, null, priority, prios, null, null);
+				_ = await _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.OttawaKingstonToronto, email, mmId, _dispatchUsers, department, null, null, priority, prios, null, null);
 
 				//call.Should().NotBeNull();
 				//call.ReportingUserId.Should().Be(mmId);
@@ -531,8 +507,6 @@ namespace Resgrid.Tests.Services
 				//call.Name.Should().Be("Medical Unknown Problems");
 				//call.Type.Should().Be("Medical");
 				//call.Priority.Should().Be(501);
-
-				//return true;
 			}
 		}
 
@@ -558,7 +532,7 @@ namespace Resgrid.Tests.Services
 				prios.Add(new DepartmentCallPriority { DepartmentCallPriorityId = 501, Name = "MEDICAL" });
 				prios.Add(new DepartmentCallPriority { DepartmentCallPriorityId = 502, Name = "Unknown" });
 
-				var call = await _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.OttawaKingstonToronto, email, mmId, _dispatchUsers, department, null, null, priority, prios, null, null);
+				_ = await _callEmailFactory.GenerateCallFromEmailText(CallEmailTypes.OttawaKingstonToronto, email, mmId, _dispatchUsers, department, null, null, priority, prios, null, null);
 
 				//call.Should().NotBeNull();
 				//call.ReportingUserId.Should().Be(mmId);

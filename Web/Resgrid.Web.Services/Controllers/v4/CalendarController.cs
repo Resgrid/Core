@@ -105,7 +105,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var types = await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var presonnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
-			
+
 			if (items != null && items.Any())
 			{
 				items = items.OrderBy(x => x.Start).ToList();
@@ -151,7 +151,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var types = await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var presonnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
-			
+
 			if (item != null)
 			{
 				if (item.DepartmentId != DepartmentId)
@@ -262,10 +262,30 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var calendarItem = new GetAllCalendarItemResultData();
 			calendarItem.CalendarItemId = item.CalendarItemId.ToString();
 			calendarItem.Title = item.Title;
-			calendarItem.Start = item.Start.TimeConverter(department);
-			calendarItem.StartUtc = item.Start;
-			calendarItem.End = item.End.TimeConverter(department);
-			calendarItem.EndUtc = item.End;
+
+			// All-day and multi-day events are date-only concepts. The Kendo scheduler sends End as
+			// an exclusive next-day midnight boundary (e.g. 3/5 all-day → End stored as 3/6 00:00 UTC).
+			// Subtract one day so the API returns the actual inclusive end date to the client.
+			// item.Start and item.End are stored as UTC; convert to the department's local timezone for display.
+			if (item.IsAllDay || item.IsMultiDay)
+			{
+				var localStart = item.Start.TimeConverter(department);
+				calendarItem.Start = localStart.Date;
+				calendarItem.StartUtc = item.Start;
+
+				var localEnd = item.End.TimeConverter(department);
+				calendarItem.End = localEnd.TimeOfDay == TimeSpan.Zero
+					? localEnd.Date.AddDays(-1)
+					: localEnd.Date;
+				calendarItem.EndUtc = item.End;
+			}
+			else
+			{
+				calendarItem.Start = item.Start.TimeConverter(department);
+				calendarItem.StartUtc = item.Start;
+				calendarItem.End = item.End.TimeConverter(department);
+				calendarItem.EndUtc = item.End;
+			}
 			calendarItem.StartTimezone = item.StartTimezone;
 			calendarItem.EndTimezone = item.EndTimezone;
 			calendarItem.Description = item.Description;
@@ -273,6 +293,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			calendarItem.RecurrenceRule = item.RecurrenceRule;
 			calendarItem.RecurrenceException = item.RecurrenceException;
 			calendarItem.IsAllDay = item.IsAllDay;
+			calendarItem.IsMultiDay = item.IsMultiDay;
 			calendarItem.ItemType = item.ItemType;
 			calendarItem.Location = item.Location;
 			calendarItem.SignupType = item.SignupType;

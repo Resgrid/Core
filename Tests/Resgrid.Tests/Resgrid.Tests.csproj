@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Configurations>Debug;Release;Docker</Configurations>
@@ -32,6 +32,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.13.0" />
     <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="NUnit" Version="4.3.2" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
     <PackageReference Include="Scriban" Version="5.12.1" />
   </ItemGroup>
   <ItemGroup>
@@ -50,7 +51,9 @@
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Migrations\Resgrid.Providers.Migrations.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Number\Resgrid.Providers.Number.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Pdf\Resgrid.Providers.Pdf.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Messaging\Resgrid.Providers.Messaging.csproj" />
     <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.DataRepository\Resgrid.Repositories.DataRepository.csproj" />
+    <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.NoSqlRepository\Resgrid.Repositories.NoSqlRepository.csproj" />
     <ProjectReference Include="..\..\Web\Resgrid.Web.Mcp\Resgrid.Web.Mcp.csproj" />
     <ProjectReference Include="..\..\Workers\Resgrid.Workers.Framework\Resgrid.Workers.Framework.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Workflow\Resgrid.Providers.Workflow.csproj" />

@@ -1,0 +1,262 @@
+﻿@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Security.SsoIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["SsoPageTitle"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-6">
+        <h2><i class="fa fa-shield"></i> @localizer["SsoPageHeader"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a></li>
+            <li><a asp-controller="Security" asp-action="Index" asp-route-area="User">Security</a></li>
+            <li class="active"><strong>@localizer["SsoBreadcrumb"]</strong></li>
+        </ol>
+    </div>
+    <div class="col-sm-6">
+        <div class="title-action">
+            <a asp-action="SecurityPolicy" class="btn btn-default">
+                <i class="fa fa-lock"></i> @localizer["SsoSecurityPolicyButton"]
+            </a>
+            @if (!Model.HasOidcConfig)
+            {
+                <a asp-action="SsoNew" asp-route-providerType="oidc" class="btn btn-primary">
+                    <i class="fa fa-plus"></i> @localizer["SsoAddOidcButton"]
+                </a>
+            }
+            @if (!Model.HasSamlConfig)
+            {
+                <a asp-action="SsoNew" asp-route-providerType="saml2" class="btn btn-primary">
+                    <i class="fa fa-plus"></i> @localizer["SsoAddSamlButton"]
+                </a>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+
+    @if (TempData["SsoSuccess"] != null)
+    {
+        <div class="alert alert-success alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+            <i class="fa fa-check-circle"></i> @TempData["SsoSuccess"]
+        </div>
+    }
+
+    <!-- ── Overview panel ─────────────────────────────────────────── -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5><i class="fa fa-info-circle"></i> @localizer["SsoWhatIsSsoHeader"]</h5>
+                    <div class="ibox-tools">
+                        <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h4><i class="fa fa-sign-in text-primary"></i> @localizer["SsoSingleSignOnHeader"]</h4>
+                            <p>@localizer["SsoSingleSignOnDescription"]</p>
+                            <ul>
+                                <li><strong>OIDC</strong> — @localizer["SsoOidcDescription"]</li>
+                                <li><strong>SAML 2.0</strong> — @localizer["SsoSamlDescription"]</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <h4><i class="fa fa-users text-success"></i> @localizer["SsoScimHeader"]</h4>
+                            <p>@localizer["SsoScimDescription"]</p>
+                            <ul>
+                                <li>@localizer["SsoScimAutoCreate"]</li>
+                                <li>@localizer["SsoScimAutoDisable"]</li>
+                                <li>@localizer["SsoScimSyncNames"]</li>
+                            </ul>
+                        </div>
+                        <div class="col-md-4">
+                            <h4><i class="fa fa-shield text-warning"></i> @localizer["SsoSecurityPolicyHeader"]</h4>
+                            <p>@localizer["SsoSecurityPolicyDescription"]</p>
+                            <ul>
+                                <li>@localizer["SsoSecurityPolicyMandateMfa"]</li>
+                                <li>@localizer["SsoSecurityPolicyRestrictLogin"]</li>
+                                <li>@localizer["SsoSecurityPolicyIpRestrict"]</li>
+                                <li>@localizer["SsoSecurityPolicyPasswordRules"]</li>
+                                <li>@localizer["SsoSecurityPolicyDataClassification"]</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <!-- Discovery URL callout -->
+                    <div class="alert alert-info m-t-md">
+                        <strong><i class="fa fa-link"></i> @localizer["SsoDiscoveryUrlCalloutTitle"]</strong>
+                        <p class="m-b-none m-t-xs">@localizer["SsoDiscoveryUrlCalloutDescription"]</p>
+                        <div class="input-group m-t-xs">
+                            <input type="text" class="form-control input-sm font-monospace" id="discoveryUrlField"
+                                   value="@Model.SsoDiscoveryUrl" readonly />
+                            <span class="input-group-btn">
+                                <button class="btn btn-sm btn-default" onclick="copyToClipboard('discoveryUrlField')" type="button">
+                                    <i class="fa fa-copy"></i> @localizer["SsoCopyButton"]
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ── SSO Config list ─────────────────────────────────────────── -->
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5><i class="fa fa-key"></i> @localizer["SsoConfigurationsHeader"]</h5>
+                </div>
+                <div class="ibox-content">
+                    @if (!Model.Configs.Any())
+                    {
+                        <div class="alert alert-warning">
+                            <i class="fa fa-exclamation-triangle"></i>
+                            @localizer["SsoNoConfigurationsWarning"]
+                        </div>
+                    }
+                    else
+                    {
+                        <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>@localizer["SsoTableColProvider"]</th>
+                                    <th>@localizer["SsoTableColIdentifier"]</th>
+                                    <th>@localizer["SsoTableColStatus"]</th>
+                                    <th>@localizer["SsoTableColLocalLogin"]</th>
+                                    <th>@localizer["SsoTableColAutoProvision"]</th>
+                                    <th>@localizer["SsoTableColScim"]</th>
+                                    <th>@localizer["SsoTableColCreated"]</th>
+                                    <th>@localizer["SsoTableColActions"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var c in Model.Configs)
+                                {
+                                    <tr>
+                                        <td>
+                                            <span class="badge badge-@(c.ProviderType == "oidc" ? "primary" : "info")">
+                                                @c.ProviderType.ToUpperInvariant()
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <small>@c.Identifier</small><br />
+                                            <small class="text-muted">@c.EndpointUrl</small>
+                                        </td>
+                                        <td>
+                                            @if (c.IsEnabled)
+                                            {
+                                                <span class="badge badge-success"><i class="fa fa-check"></i> @localizer["SsoStatusEnabled"]</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-danger"><i class="fa fa-times"></i> @localizer["SsoStatusDisabled"]</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (c.AllowLocalLogin)
+                                            {
+                                                @localizer["SsoLocalLoginYes"]
+                                            }
+                                            else
+                                            {
+                                                <span class="badge badge-warning">@localizer["SsoLocalLoginSsoOnly"]</span>
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (c.AutoProvisionUsers)
+                                            {
+                                                <span class="badge badge-success">@localizer["SsoAutoProvisionOn"]</span>
+                                            }
+                                            else
+                                            {
+                                                @localizer["SsoAutoProvisionOff"]
+                                            }
+                                        </td>
+                                        <td>
+                                            @if (c.ScimEnabled && c.HasScimBearerToken)
+                                            {
+                                                <span class="badge badge-success"><i class="fa fa-check"></i> @localizer["SsoScimStatusActive"]</span>
+                                            }
+                                            else if (c.ScimEnabled)
+                                            {
+                                                <span class="badge badge-warning">@localizer["SsoScimStatusNoToken"]</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">@localizer["SsoScimStatusOff"]</span>
+                                            }
+                                        </td>
+                                        <td><small>@c.CreatedOn.ToString("yyyy-MM-dd")</small></td>
+                                        <td>
+                                            <div class="btn-group btn-group-xs">
+                                                <a asp-action="SsoEdit" asp-route-id="@c.DepartmentSsoConfigId"
+                                                   class="btn btn-xs btn-default" title="@localizer["SsoEditButton"]">
+                                                    <i class="fa fa-pencil"></i> @localizer["SsoEditButton"]
+                                                </a>
+                                                <a asp-action="ScimSetup" asp-route-id="@c.DepartmentSsoConfigId"
+                                                   class="btn btn-xs btn-info" title="@localizer["SsoScimSetupButton"]">
+                                                    <i class="fa fa-users"></i> @localizer["SsoScimSetupButton"]
+                                                </a>
+                                                <button type="button" class="btn btn-xs btn-danger"
+                                                        onclick="confirmDelete('@c.DepartmentSsoConfigId', '@c.ProviderType.ToUpperInvariant()')"
+                                                        title="@localizer["SsoDeleteButton"]">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete confirmation modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h4 class="modal-title">@localizer["SsoDeleteConfirmTitle"]</h4>
+            </div>
+            <div class="modal-body">
+                <p id="deleteConfirmText"></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">@localizer["SsoDeleteCancelButton"]</button>
+                <form id="deleteForm" method="post">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-danger">@localizer["SsoDeleteButton"]</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var deleteConfirmTemplate = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["SsoDeleteConfirmMessage"].Value));
+        function confirmDelete(id, provider) {
+            document.getElementById('deleteConfirmText').textContent =
+                deleteConfirmTemplate.replace('{0}', provider);
+            document.getElementById('deleteForm').action = '@Url.Action("SsoDelete", "Security", new { area = "User" })/' + id;
+            $('#deleteModal').modal('show');
+        }
+        function copyToClipboard(fieldId) {
+            var el = document.getElementById(fieldId);
+            el.select();
+            document.execCommand('copy');
+            toastr.success('@localizer["SsoCopiedToClipboard"]');
+        }
+    </script>
+}

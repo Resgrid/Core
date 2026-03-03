@@ -90,6 +90,11 @@ public class GetAllCalendarItemResultData
 	public bool IsAllDay { get; set; }
 
 	/// <summary>
+	/// Is a multi-day event (Start and End fall on different calendar days)
+	/// </summary>
+	public bool IsMultiDay { get; set; }
+
+	/// <summary>
 	/// Location for the calendar item
 	/// </summary>
 	public string Location { get; set; }

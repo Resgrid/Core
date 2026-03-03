@@ -1,0 +1,139 @@
+﻿@model Resgrid.Model.WorkflowRun
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Workflows.Workflows> localizer
+@{
+    ViewData["Title"] = "Resgrid | Run Detail";
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+    var logs = ViewBag.Logs as List<Resgrid.Model.WorkflowRunLog> ?? new List<Resgrid.Model.WorkflowRunLog>();
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-6">
+        <h2>Run Detail</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-action="Index">@localizer["WorkflowsHeader"]</a></li>
+            <li><a asp-action="Runs" asp-route-workflowId="@Model.WorkflowId">@localizer["Runs"]</a></li>
+            <li class="active"><strong>@localizer["Detail"]</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+
+            <!-- ── Run summary ── -->
+            <div class="ibox">
+                <div class="ibox-title"><h5>Run Summary</h5></div>
+                <div class="ibox-content">
+                    @{
+                        var runStatusClass = Model.Status switch {
+                            2 => "badge-success",
+                            3 => "badge-danger",
+                            5 => "badge-warning",
+                            6 => "badge-secondary",
+                            _ => "badge-default"
+                        };
+                    }
+                    <dl class="dl-horizontal">
+                        <dt>Run ID</dt>          <dd><small>@Model.WorkflowRunId</small></dd>
+                        <dt>Status</dt>          <dd><span class="badge @runStatusClass">@((Resgrid.Model.WorkflowRunStatus)Model.Status)</span></dd>
+                        <dt>Started</dt>         <dd>@Model.StartedOn.ToString("yyyy-MM-dd HH:mm:ss UTC")</dd>
+                        <dt>Completed</dt>       <dd>@(Model.CompletedOn?.ToString("yyyy-MM-dd HH:mm:ss UTC") ?? "-")</dd>
+                        <dt>Attempt</dt>         <dd>@Model.AttemptNumber</dd>
+                        @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+                        {
+                            <dt>Error</dt>       <dd class="text-danger">@Model.ErrorMessage</dd>
+                        }
+                    </dl>
+                </div>
+            </div>
+
+            <!-- ── Step logs ── -->
+            <div class="ibox">
+                <div class="ibox-title"><h5>Step Logs</h5></div>
+                <div class="ibox-content">
+                    @if (!logs.Any())
+                    {
+                        <div class="alert alert-info">No step logs recorded for this run.</div>
+                    }
+                    else
+                    {
+                        @foreach (var log in logs)
+                        {
+                            var stepStatusClass = log.Status switch {
+                                2 => "badge-success",
+                                3 => "badge-danger",
+                                5 => "badge-warning",
+                                6 => "badge-secondary",
+                                _ => "badge-default"
+                            };
+                            var isSkipped = log.Status == (int)Resgrid.Model.WorkflowRunStatus.Skipped;
+
+                            <div class="panel @(isSkipped ? "panel-default" : log.Status == 2 ? "panel-success" : log.Status == 3 ? "panel-danger" : "panel-warning")" style="margin-bottom:10px;">
+                                <div class="panel-heading" style="padding:8px 12px;">
+                                    <span class="badge @stepStatusClass">@((Resgrid.Model.WorkflowRunStatus)log.Status)</span>
+                                    <small class="text-muted" style="margin-left:6px;">Step: <code>@log.WorkflowStepId</code></small>
+                                    @if (log.DurationMs.HasValue)
+                                    {
+                                        <span class="pull-right text-muted" style="font-size:11px;">@log.DurationMs ms</span>
+                                    }
+                                </div>
+                                <div class="panel-body" style="padding:10px 12px;">
+
+                                    @if (isSkipped)
+                                    {
+                                        <!-- Skip reason -->
+                                        <div class="alert alert-warning" style="padding:6px 10px; margin-bottom:6px; font-size:12px;">
+                                            <i class="fa fa-filter"></i>
+                                            <strong>Step skipped by condition.</strong>
+                                            @if (!string.IsNullOrWhiteSpace(log.ErrorMessage))
+                                            {
+                                                <span>@log.ErrorMessage</span>
+                                            }
+                                        </div>
+                                        @if (!string.IsNullOrWhiteSpace(log.RenderedOutput))
+                                        {
+                                            <div style="font-size:11px;">
+                                                <strong>Condition evaluated to:</strong>
+                                                <code>@log.RenderedOutput</code>
+                                            </div>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @if (!string.IsNullOrWhiteSpace(log.ErrorMessage))
+                                        {
+                                            <p class="text-danger small" style="margin-bottom:4px;"><strong>Error:</strong> @log.ErrorMessage</p>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(log.ActionResult))
+                                        {
+                                            <p class="text-success small" style="margin-bottom:4px;"><strong>Result:</strong> @log.ActionResult</p>
+                                        }
+                                        @if (!string.IsNullOrWhiteSpace(log.RenderedOutput))
+                                        {
+                                            <details style="margin-top:4px;">
+                                                <summary class="text-muted" style="font-size:11px; cursor:pointer;">Rendered Output</summary>
+                                                <pre class="small" style="margin-top:4px; max-height:150px; overflow:auto;">@(log.RenderedOutput?.Length > 500 ? log.RenderedOutput.Substring(0, 500) + "…" : log.RenderedOutput)</pre>
+                                            </details>
+                                        }
+                                    }
+
+                                    <p class="text-muted" style="font-size:10px; margin-top:6px; margin-bottom:0;">
+                                        Started: @log.StartedOn.ToString("HH:mm:ss.fff UTC")
+                                        @if (log.CompletedOn.HasValue)
+                                        {
+                                            <span>— Completed: @log.CompletedOn.Value.ToString("HH:mm:ss.fff UTC")</span>
+                                        }
+                                    </p>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+

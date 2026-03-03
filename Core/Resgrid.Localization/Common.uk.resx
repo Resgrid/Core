@@ -1,0 +1,614 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="Name1" xml:space="preserve">
+    <value>this is my long string</value>
+  </data>
+  <data name="Bitmap1" xml:space="preserve">
+    <value>[base64 mime encoded serialized .NET Framework object]</value>
+  </data>
+  <data name="Icon1" xml:space="preserve">
+    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+  </data>
+  <data name="Action" xml:space="preserve">
+    <value>Дія</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Дії</value>
+  </data>
+  <data name="Activate" xml:space="preserve">
+    <value>Активувати</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Активний</value>
+  </data>
+  <data name="ArchivedCallsPage" xml:space="preserve">
+    <value>Архівні виклики</value>
+  </data>
+  <data name="Attachment" xml:space="preserve">
+    <value>Вкладення</value>
+  </data>
+  <data name="Attachments" xml:space="preserve">
+    <value>Вкладення</value>
+  </data>
+  <data name="AudioPushToTalk" xml:space="preserve">
+    <value>Аудіо та push-to-talk</value>
+  </data>
+  <data name="Available" xml:space="preserve">
+    <value>Доступний</value>
+  </data>
+  <data name="AvailableAt" xml:space="preserve">
+    <value>Доступний о</value>
+  </data>
+  <data name="AvailableStation" xml:space="preserve">
+    <value>Доступна станція</value>
+  </data>
+  <data name="BigBoard" xml:space="preserve">
+    <value>Велика дошка</value>
+  </data>
+  <data name="Blog" xml:space="preserve">
+    <value>Блог</value>
+  </data>
+  <data name="CalendarModule" xml:space="preserve">
+    <value>Календар</value>
+  </data>
+  <data name="Call" xml:space="preserve">
+    <value>Виклик</value>
+  </data>
+  <data name="CallAddress" xml:space="preserve">
+    <value>Адреса виклику</value>
+  </data>
+  <data name="CallImportSettings" xml:space="preserve">
+    <value>Налаштування імпорту викликів</value>
+  </data>
+  <data name="CallsModule" xml:space="preserve">
+    <value>Виклики</value>
+  </data>
+  <data name="CallTimestamp" xml:space="preserve">
+    <value>Мітка часу виклику</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Скасувати</value>
+  </data>
+  <data name="Canceled" xml:space="preserve">
+    <value>Скасовано</value>
+  </data>
+  <data name="Certifications" xml:space="preserve">
+    <value>Сертифікати</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Закрити</value>
+  </data>
+  <data name="Closed" xml:space="preserve">
+    <value>Закрито</value>
+  </data>
+  <data name="Code" xml:space="preserve">
+    <value>Код</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>Колір</value>
+  </data>
+  <data name="Commands" xml:space="preserve">
+    <value>Команди</value>
+  </data>
+  <data name="Committed" xml:space="preserve">
+    <value>Підтверджено</value>
+  </data>
+  <data name="Connect" xml:space="preserve">
+    <value>Підключити</value>
+  </data>
+  <data name="ContactsModule" xml:space="preserve">
+    <value>Контакти</value>
+  </data>
+  <data name="ContactUs" xml:space="preserve">
+    <value>Зв'яжіться з нами</value>
+  </data>
+  <data name="CreatedOn" xml:space="preserve">
+    <value>Створено</value>
+  </data>
+  <data name="CustomStatuses" xml:space="preserve">
+    <value>Власні статуси</value>
+  </data>
+  <data name="Data" xml:space="preserve">
+    <value>Дані</value>
+  </data>
+  <data name="Day" xml:space="preserve">
+    <value>День</value>
+  </data>
+  <data name="Days" xml:space="preserve">
+    <value>Дні</value>
+  </data>
+  <data name="Deactivate" xml:space="preserve">
+    <value>Деактивувати</value>
+  </data>
+  <data name="Default" xml:space="preserve">
+    <value>За замовчуванням</value>
+  </data>
+  <data name="Delayed" xml:space="preserve">
+    <value>Затримано</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="Department" xml:space="preserve">
+    <value>Підрозділ</value>
+  </data>
+  <data name="DepartmentSettings" xml:space="preserve">
+    <value>Налаштування підрозділу</value>
+  </data>
+  <data name="DepartmentTypes" xml:space="preserve">
+    <value>Типи підрозділів</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Опис</value>
+  </data>
+  <data name="Discard" xml:space="preserve">
+    <value>Відхилити</value>
+  </data>
+  <data name="Dispatched" xml:space="preserve">
+    <value>Відправлено</value>
+  </data>
+  <data name="DistributionLists" xml:space="preserve">
+    <value>Списки розсилки</value>
+  </data>
+  <data name="Documents" xml:space="preserve">
+    <value>Документи</value>
+  </data>
+  <data name="DocumentsModule" xml:space="preserve">
+    <value>Документи</value>
+  </data>
+  <data name="Download" xml:space="preserve">
+    <value>Завантажити</value>
+  </data>
+  <data name="End" xml:space="preserve">
+    <value>Кінець</value>
+  </data>
+  <data name="EtaColumn" xml:space="preserve">
+    <value>Очікуваний час прибуття</value>
+  </data>
+  <data name="Event" xml:space="preserve">
+    <value>Подія</value>
+  </data>
+  <data name="Expired" xml:space="preserve">
+    <value>Прострочено</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>Експортувати</value>
+  </data>
+  <data name="Files" xml:space="preserve">
+    <value>Файли</value>
+  </data>
+  <data name="Forms" xml:space="preserve">
+    <value>Форми</value>
+  </data>
+  <data name="Friday" xml:space="preserve">
+    <value>П'ятниця</value>
+  </data>
+  <data name="General" xml:space="preserve">
+    <value>Загальне</value>
+  </data>
+  <data name="Groups" xml:space="preserve">
+    <value>Групи</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>Допомога</value>
+  </data>
+  <data name="HelpAndSupport" xml:space="preserve">
+    <value>Допомога і підтримка</value>
+  </data>
+  <data name="HomeModule" xml:space="preserve">
+    <value>Головна</value>
+  </data>
+  <data name="Hour" xml:space="preserve">
+    <value>Година</value>
+  </data>
+  <data name="Hours" xml:space="preserve">
+    <value>Години</value>
+  </data>
+  <data name="Id" xml:space="preserve">
+    <value>Id</value>
+  </data>
+  <data name="Images" xml:space="preserve">
+    <value>Зображення</value>
+  </data>
+  <data name="Info" xml:space="preserve">
+    <value>Інфо</value>
+  </data>
+  <data name="InQuarters" xml:space="preserve">
+    <value>В казармі</value>
+  </data>
+  <data name="Instructors" xml:space="preserve">
+    <value>Інструктори</value>
+  </data>
+  <data name="InventoryModule" xml:space="preserve">
+    <value>Інвентар</value>
+  </data>
+  <data name="KnowledgeBase" xml:space="preserve">
+    <value>База знань</value>
+  </data>
+  <data name="Language" xml:space="preserve">
+    <value>Мова</value>
+  </data>
+  <data name="Links" xml:space="preserve">
+    <value>Посилання</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Місцезнаходження</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Вийти</value>
+  </data>
+  <data name="LogsModule" xml:space="preserve">
+    <value>Журнали</value>
+  </data>
+  <data name="Mailbox" xml:space="preserve">
+    <value>Поштова скринька</value>
+  </data>
+  <data name="Map" xml:space="preserve">
+    <value>Карта</value>
+  </data>
+  <data name="MappingModule" xml:space="preserve">
+    <value>Картографування</value>
+  </data>
+  <data name="Maybe" xml:space="preserve">
+    <value>Можливо</value>
+  </data>
+  <data name="Minutes" xml:space="preserve">
+    <value>Хвилини</value>
+  </data>
+  <data name="Monday" xml:space="preserve">
+    <value>Понеділок</value>
+  </data>
+  <data name="Monthly" xml:space="preserve">
+    <value>Щомісяця</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Ім'я</value>
+  </data>
+  <data name="NameColumn" xml:space="preserve">
+    <value>Ім'я</value>
+  </data>
+  <data name="NatureOfCall" xml:space="preserve">
+    <value>Характер виклику</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>Ніколи</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Ні</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Немає</value>
+  </data>
+  <data name="Note" xml:space="preserve">
+    <value>Нотатка</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>Нотатки</value>
+  </data>
+  <data name="NotesModule" xml:space="preserve">
+    <value>Нотатки</value>
+  </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>Сповіщення</value>
+  </data>
+  <data name="NotResponding" xml:space="preserve">
+    <value>Не відповідає</value>
+  </data>
+  <data name="Number" xml:space="preserve">
+    <value>Номер</value>
+  </data>
+  <data name="OnScene" xml:space="preserve">
+    <value>На місці</value>
+  </data>
+  <data name="OnShift" xml:space="preserve">
+    <value>На чергуванні</value>
+  </data>
+  <data name="Optional" xml:space="preserve">
+    <value>Необов'язково</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>Параметри</value>
+  </data>
+  <data name="Order" xml:space="preserve">
+    <value>Замовлення</value>
+  </data>
+  <data name="Orders" xml:space="preserve">
+    <value>Замовлення</value>
+  </data>
+  <data name="Personnel" xml:space="preserve">
+    <value>Персонал</value>
+  </data>
+  <data name="PersonnelModule" xml:space="preserve">
+    <value>Персонал</value>
+  </data>
+  <data name="Preview" xml:space="preserve">
+    <value>Попередній перегляд</value>
+  </data>
+  <data name="Print" xml:space="preserve">
+    <value>Друк</value>
+  </data>
+  <data name="Priority" xml:space="preserve">
+    <value>Пріоритет</value>
+  </data>
+  <data name="Process" xml:space="preserve">
+    <value>Процес</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Профіль</value>
+  </data>
+  <data name="Protocols" xml:space="preserve">
+    <value>Протоколи</value>
+  </data>
+  <data name="PushToTalk" xml:space="preserve">
+    <value>Натисни для розмови</value>
+  </data>
+  <data name="Released" xml:space="preserve">
+    <value>Звільнено</value>
+  </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="Repeat" xml:space="preserve">
+    <value>Повторити</value>
+  </data>
+  <data name="ReportsModule" xml:space="preserve">
+    <value>Звіти</value>
+  </data>
+  <data name="Required" xml:space="preserve">
+    <value>Обов'язково</value>
+  </data>
+  <data name="Responding" xml:space="preserve">
+    <value>Реагує</value>
+  </data>
+  <data name="RespondingTo" xml:space="preserve">
+    <value>Прямує до</value>
+  </data>
+  <data name="RespondToCall" xml:space="preserve">
+    <value>Відповісти на виклик</value>
+  </data>
+  <data name="RespondToStation" xml:space="preserve">
+    <value>Прибути на станцію</value>
+  </data>
+  <data name="Roles" xml:space="preserve">
+    <value>Ролі</value>
+  </data>
+  <data name="Route" xml:space="preserve">
+    <value>Маршрут</value>
+  </data>
+  <data name="Saturday" xml:space="preserve">
+    <value>Субота</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Зберегти</value>
+  </data>
+  <data name="Saving" xml:space="preserve">
+    <value>Збереження</value>
+  </data>
+  <data name="SecurityAndPermissions" xml:space="preserve">
+    <value>Безпека і дозволи</value>
+  </data>
+  <data name="Send" xml:space="preserve">
+    <value>Надіслати</value>
+  </data>
+  <data name="ShiftsModule" xml:space="preserve">
+    <value>Зміни</value>
+  </data>
+  <data name="Signup" xml:space="preserve">
+    <value>Зареєструватися</value>
+  </data>
+  <data name="Size" xml:space="preserve">
+    <value>Розмір</value>
+  </data>
+  <data name="StaffingColumn" xml:space="preserve">
+    <value>Укомплектованість</value>
+  </data>
+  <data name="StandingBy" xml:space="preserve">
+    <value>В очікуванні</value>
+  </data>
+  <data name="StandingByStation" xml:space="preserve">
+    <value>В очікуванні на станції</value>
+  </data>
+  <data name="Start" xml:space="preserve">
+    <value>Початок</value>
+  </data>
+  <data name="Station" xml:space="preserve">
+    <value>Станція</value>
+  </data>
+  <data name="StationAndGroups" xml:space="preserve">
+    <value>Станції і групи</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="StatusPage" xml:space="preserve">
+    <value>Статус системи</value>
+  </data>
+  <data name="String1" xml:space="preserve">
+    <value>Нова форма виклику</value>
+  </data>
+  <data name="SubAndBilling" xml:space="preserve">
+    <value>Підписка і оплата</value>
+  </data>
+  <data name="Sunday" xml:space="preserve">
+    <value>Неділя</value>
+  </data>
+  <data name="System" xml:space="preserve">
+    <value>Система</value>
+  </data>
+  <data name="Templates" xml:space="preserve">
+    <value>Шаблони</value>
+  </data>
+  <data name="Text" xml:space="preserve">
+    <value>Текст</value>
+  </data>
+  <data name="TextMessaging" xml:space="preserve">
+    <value>Текстові повідомлення</value>
+  </data>
+  <data name="Thursday" xml:space="preserve">
+    <value>Четвер</value>
+  </data>
+  <data name="Timestamp" xml:space="preserve">
+    <value>Мітка часу</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Заголовок</value>
+  </data>
+  <data name="Training" xml:space="preserve">
+    <value>Навчання</value>
+  </data>
+  <data name="TrainingCode" xml:space="preserve">
+    <value>Course\Training Code</value>
+  </data>
+  <data name="TrainingOrCourse" xml:space="preserve">
+    <value>Course\Training</value>
+  </data>
+  <data name="TrainingsModule" xml:space="preserve">
+    <value>Навчання</value>
+  </data>
+  <data name="Tuesday" xml:space="preserve">
+    <value>Вівторок</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="Types" xml:space="preserve">
+    <value>Типи</value>
+  </data>
+  <data name="Unavailable" xml:space="preserve">
+    <value>Недоступний</value>
+  </data>
+  <data name="Unfounded" xml:space="preserve">
+    <value>Безпідставний</value>
+  </data>
+  <data name="Units" xml:space="preserve">
+    <value>Одиниці</value>
+  </data>
+  <data name="UnitsModule" xml:space="preserve">
+    <value>Одиниці</value>
+  </data>
+  <data name="Unknown" xml:space="preserve">
+    <value>Невідомо</value>
+  </data>
+  <data name="Update" xml:space="preserve">
+    <value>Оновити</value>
+  </data>
+  <data name="UpgradePlan" xml:space="preserve">
+    <value>Оновіть свій план</value>
+  </data>
+  <data name="UploadedBy" xml:space="preserve">
+    <value>Завантажено ким</value>
+  </data>
+  <data name="UploadedOn" xml:space="preserve">
+    <value>Завантажено</value>
+  </data>
+  <data name="UsersHeader" xml:space="preserve">
+    <value>Користувачі</value>
+  </data>
+  <data name="Valid" xml:space="preserve">
+    <value>Дійсний</value>
+  </data>
+  <data name="Video" xml:space="preserve">
+    <value>Відео</value>
+  </data>
+  <data name="Videos" xml:space="preserve">
+    <value>Відео</value>
+  </data>
+  <data name="View" xml:space="preserve">
+    <value>Переглянути</value>
+  </data>
+  <data name="ViewCalls" xml:space="preserve">
+    <value>Переглянути всі виклики</value>
+  </data>
+  <data name="ViewInbox" xml:space="preserve">
+    <value>Переглянути вхідні повідомлення</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Попередження</value>
+  </data>
+  <data name="Wednesday" xml:space="preserve">
+    <value>Середа</value>
+  </data>
+  <data name="Week" xml:space="preserve">
+    <value>Тиждень</value>
+  </data>
+  <data name="Weekly" xml:space="preserve">
+    <value>Щотижня</value>
+  </data>
+  <data name="Weeks" xml:space="preserve">
+    <value>Тижні</value>
+  </data>
+  <data name="WorkLog" xml:space="preserve">
+    <value>Журнал роботи</value>
+  </data>
+  <data name="Yearly" xml:space="preserve">
+    <value>Щорічно</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Так</value>
+  </data>
+  <data name="YourDepartments" xml:space="preserve">
+    <value>Ваші підрозділи</value>
+  </data>
+</root>

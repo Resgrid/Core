@@ -53,10 +53,11 @@
                                         2 => "badge-success",
                                         3 => "badge-danger",
                                         5 => "badge-warning",
+                                        6 => "badge-secondary",
                                         _ => "badge-default"
                                     };
                                     <tr>
-                                        <td><small>@run.WorkflowRunId</small></td>
+                                        <td><small><a asp-action="RunDetail" asp-route-runId="@run.WorkflowRunId">@run.WorkflowRunId</a></small></td>
                                         <td><span class="badge @statusClass">@((Resgrid.Model.WorkflowRunStatus)run.Status)</span></td>
                                         <td>@run.StartedOn.ToString("yyyy-MM-dd HH:mm:ss")</td>
                                         <td>@(run.CompletedOn?.ToString("yyyy-MM-dd HH:mm:ss") ?? "-")</td>

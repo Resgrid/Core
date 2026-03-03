@@ -117,6 +117,210 @@
 
   <data name="PermViewWorkflowRunsLabel" xml:space="preserve"><value>Who can View Workflow Runs</value></data>
   <data name="PermViewWorkflowRunsNote" xml:space="preserve"><value>This option determines who can view workflow execution history, run logs, and health dashboards. By default only Department Admins can view workflow runs.</value></data>
+
+  <!-- SSO / SCIM — Sso.cshtml page -->
+  <data name="SsoPageTitle" xml:space="preserve"><value>Single Sign-On (SSO) &amp; SCIM</value></data>
+  <data name="SsoPageHeader" xml:space="preserve"><value>Single Sign-On &amp; Identity Provisioning</value></data>
+  <data name="SsoBreadcrumb" xml:space="preserve"><value>SSO / SCIM</value></data>
+  <data name="SsoSecurityPolicyButton" xml:space="preserve"><value>Security Policy</value></data>
+  <data name="SsoAddOidcButton" xml:space="preserve"><value>Add OIDC Config</value></data>
+  <data name="SsoAddSamlButton" xml:space="preserve"><value>Add SAML 2.0 Config</value></data>
+  <data name="SsoWhatIsSsoHeader" xml:space="preserve"><value>What is SSO &amp; SCIM?</value></data>
+  <data name="SsoSingleSignOnHeader" xml:space="preserve"><value>Single Sign-On (SSO)</value></data>
+  <data name="SsoSingleSignOnDescription" xml:space="preserve"><value>Allow department members to log in with their existing corporate identity (Microsoft Entra ID, Okta, Google Workspace, etc.) instead of a separate Resgrid password.</value></data>
+  <data name="SsoOidcDescription" xml:space="preserve"><value>OIDC — Modern protocol, ideal for Entra, Okta, Auth0, Google</value></data>
+  <data name="SsoSamlDescription" xml:space="preserve"><value>SAML 2.0 — Widely supported by government &amp; enterprise IdPs</value></data>
+  <data name="SsoScimHeader" xml:space="preserve"><value>SCIM 2.0 Provisioning</value></data>
+  <data name="SsoScimDescription" xml:space="preserve"><value>Automatically sync users from your identity provider. When you onboard or offboard staff in your corporate directory, Resgrid reflects those changes automatically — no manual invite/remove steps.</value></data>
+  <data name="SsoScimAutoCreate" xml:space="preserve"><value>Auto-create new members when added in your IdP</value></data>
+  <data name="SsoScimAutoDisable" xml:space="preserve"><value>Disable/remove members when deprovisioned</value></data>
+  <data name="SsoScimSyncNames" xml:space="preserve"><value>Keep names &amp; email addresses in sync</value></data>
+  <data name="SsoSecurityPolicyHeader" xml:space="preserve"><value>Security Policy</value></data>
+  <data name="SsoSecurityPolicyDescription" xml:space="preserve"><value>Enforce department-wide compliance controls alongside SSO:</value></data>
+  <data name="SsoSecurityPolicyMandateMfa" xml:space="preserve"><value>Mandate MFA for all members</value></data>
+  <data name="SsoSecurityPolicyRestrictLogin" xml:space="preserve"><value>Restrict login to SSO only (disable passwords)</value></data>
+  <data name="SsoSecurityPolicyIpRestrict" xml:space="preserve"><value>Limit logins to specific IP CIDR ranges</value></data>
+  <data name="SsoSecurityPolicyPasswordRules" xml:space="preserve"><value>Set password expiration &amp; complexity rules</value></data>
+  <data name="SsoSecurityPolicyDataClassification" xml:space="preserve"><value>Classify data level (Unclassified / CUI / Confidential)</value></data>
+  <data name="SsoDiscoveryUrlCalloutTitle" xml:space="preserve"><value>Mobile App Discovery URL</value></data>
+  <data name="SsoDiscoveryUrlCalloutDescription" xml:space="preserve"><value>The Resgrid mobile app uses this URL to discover your SSO settings before showing the login screen. Share it with your mobile team if needed.</value></data>
+  <data name="SsoCopyButton" xml:space="preserve"><value>Copy</value></data>
+  <data name="SsoCopiedToClipboard" xml:space="preserve"><value>Copied to clipboard!</value></data>
+  <data name="SsoConfigurationsHeader" xml:space="preserve"><value>SSO Configurations</value></data>
+  <data name="SsoNoConfigurationsWarning" xml:space="preserve"><value>No SSO configurations yet. Use the buttons above to add OIDC or SAML 2.0.</value></data>
+  <data name="SsoTableColProvider" xml:space="preserve"><value>Provider</value></data>
+  <data name="SsoTableColIdentifier" xml:space="preserve"><value>Identifier / Endpoint</value></data>
+  <data name="SsoTableColStatus" xml:space="preserve"><value>Status</value></data>
+  <data name="SsoTableColLocalLogin" xml:space="preserve"><value>Local Login</value></data>
+  <data name="SsoTableColAutoProvision" xml:space="preserve"><value>Auto-Provision</value></data>
+  <data name="SsoTableColScim" xml:space="preserve"><value>SCIM</value></data>
+  <data name="SsoTableColCreated" xml:space="preserve"><value>Created</value></data>
+  <data name="SsoTableColActions" xml:space="preserve"><value>Actions</value></data>
+  <data name="SsoStatusEnabled" xml:space="preserve"><value>Enabled</value></data>
+  <data name="SsoStatusDisabled" xml:space="preserve"><value>Disabled</value></data>
+  <data name="SsoLocalLoginYes" xml:space="preserve"><value>Yes</value></data>
+  <data name="SsoLocalLoginSsoOnly" xml:space="preserve"><value>SSO Only</value></data>
+  <data name="SsoAutoProvisionOn" xml:space="preserve"><value>On</value></data>
+  <data name="SsoAutoProvisionOff" xml:space="preserve"><value>Off</value></data>
+  <data name="SsoScimStatusActive" xml:space="preserve"><value>Active</value></data>
+  <data name="SsoScimStatusNoToken" xml:space="preserve"><value>No Token</value></data>
+  <data name="SsoScimStatusOff" xml:space="preserve"><value>Off</value></data>
+  <data name="SsoEditButton" xml:space="preserve"><value>Edit</value></data>
+  <data name="SsoScimSetupButton" xml:space="preserve"><value>SCIM</value></data>
+  <data name="SsoDeleteConfirmTitle" xml:space="preserve"><value>Confirm Delete</value></data>
+  <data name="SsoDeleteConfirmMessage" xml:space="preserve"><value>Are you sure you want to delete the {0} SSO configuration? This cannot be undone.</value></data>
+  <data name="SsoDeleteCancelButton" xml:space="preserve"><value>Cancel</value></data>
+  <data name="SsoDeleteButton" xml:space="preserve"><value>Delete</value></data>
+
+  <!-- SSO / SCIM — SsoEdit.cshtml page -->
+  <data name="SsoEditPageTitleNew" xml:space="preserve"><value>New SSO Configuration</value></data>
+  <data name="SsoEditPageTitleEdit" xml:space="preserve"><value>Edit SSO Configuration</value></data>
+  <data name="SsoEditBreadcrumbNew" xml:space="preserve"><value>New</value></data>
+  <data name="SsoEditBreadcrumbEdit" xml:space="preserve"><value>Edit</value></data>
+  <data name="SsoEditStep1Label" xml:space="preserve"><value>Step 1</value></data>
+  <data name="SsoEditStep1Header" xml:space="preserve"><value>Provider &amp; Basic Settings</value></data>
+  <data name="SsoEditProviderTypeLabel" xml:space="preserve"><value>Identity Provider Protocol</value></data>
+  <data name="SsoEditEnableLabel" xml:space="preserve"><value>Enable this SSO configuration</value></data>
+  <data name="SsoEditEnableDescription" xml:space="preserve"><value>Only one configuration per provider type is active at a time.</value></data>
+  <data name="SsoEditAllowLocalLoginLabel" xml:space="preserve"><value>Allow local password login</value></data>
+  <data name="SsoEditAllowLocalLoginDescription" xml:space="preserve"><value>When checked, users can still log in with username &amp; password in addition to SSO. Disable this together with the Security Policy's Require SSO flag to enforce SSO-only login.</value></data>
+  <data name="SsoEditAutoProvisionLabel" xml:space="preserve"><value>Auto-provision new users</value></data>
+  <data name="SsoEditAutoProvisionDescription" xml:space="preserve"><value>Automatically create a Resgrid account when a user authenticates via SSO for the first time and no matching email is found. Leave off to require manual invitation first.</value></data>
+  <data name="SsoEditScimEnableLabel" xml:space="preserve"><value>Enable SCIM 2.0 provisioning</value></data>
+  <data name="SsoEditScimEnableDescription" xml:space="preserve"><value>Allows your IdP to automatically create/update/deactivate members. After saving, go to the SCIM Setup page to generate a bearer token.</value></data>
+  <data name="SsoEditDefaultRankLabel" xml:space="preserve"><value>Default Rank for Auto-Provisioned Users</value></data>
+  <data name="SsoEditDefaultRankDescription" xml:space="preserve"><value>Optional. Applied only when Auto-Provision creates a new member.</value></data>
+  <data name="SsoEditStep2OidcLabel" xml:space="preserve"><value>Step 2 — OIDC</value></data>
+  <data name="SsoEditStep2OidcHeader" xml:space="preserve"><value>OpenID Connect Settings</value></data>
+  <data name="SsoEditOidcInfoAlert" xml:space="preserve"><value>Where to find these values: In your IdP, register Resgrid as a Public Client (PKCE, no client secret required for mobile) or Web App (with secret for server-side flows). Copy the Client ID and Issuer URL from the registered application.</value></data>
+  <data name="SsoEditAuthorityLabel" xml:space="preserve"><value>Authority / Issuer URL</value></data>
+  <data name="SsoEditAuthorityPlaceholder" xml:space="preserve"><value>https://login.microsoftonline.com/{tenant-id}/v2.0</value></data>
+  <data name="SsoEditAuthorityDescription" xml:space="preserve"><value>Examples: Entra ID: https://login.microsoftonline.com/{tenant-id}/v2.0 | Okta: https://{your-domain}.okta.com/oauth2/default | Google: https://accounts.google.com</value></data>
+  <data name="SsoEditClientIdLabel" xml:space="preserve"><value>Client ID</value></data>
+  <data name="SsoEditClientIdPlaceholder" xml:space="preserve"><value>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</value></data>
+  <data name="SsoEditClientIdDescription" xml:space="preserve"><value>The public client identifier assigned by your IdP. Safe to display — not a secret.</value></data>
+  <data name="SsoEditClientSecretLabel" xml:space="preserve"><value>Client Secret</value></data>
+  <data name="SsoEditClientSecretStored" xml:space="preserve"><value>Secret stored</value></data>
+  <data name="SsoEditClientSecretDescription" xml:space="preserve"><value>Encrypted at rest using your department-specific key. Leave blank if using PKCE (mobile/SPA — no secret needed).</value></data>
+  <data name="SsoEditClientSecretKeepExisting" xml:space="preserve"><value>Leave blank to keep the existing secret unchanged.</value></data>
+  <data name="SsoEditStep2SamlLabel" xml:space="preserve"><value>Step 2 — SAML 2.0</value></data>
+  <data name="SsoEditStep2SamlHeader" xml:space="preserve"><value>SAML 2.0 Settings</value></data>
+  <data name="SsoEditSamlInfoAlert" xml:space="preserve"><value>Where to find these values: In your IdP, create a new SAML application. Enter the SP Entity ID and ACS URL shown below into your IdP, then paste the IdP metadata URL or certificate back here.</value></data>
+  <data name="SsoEditSpEntityIdLabel" xml:space="preserve"><value>SP Entity ID (enter this into your IdP)</value></data>
+  <data name="SsoEditAcsUrlLabel" xml:space="preserve"><value>ACS URL (Assertion Consumer Service — enter this into your IdP)</value></data>
+  <data name="SsoEditAcsUrlNote" xml:space="preserve"><value>This URL uses an encrypted department token — never exposes your plain department code.</value></data>
+  <data name="SsoEditEntityIdEditableLabel" xml:space="preserve"><value>SP Entity ID (editable)</value></data>
+  <data name="SsoEditEntityIdEditablePlaceholder" xml:space="preserve"><value>https://app.resgrid.com/saml/DEPT</value></data>
+  <data name="SsoEditEntityIdEditableNote" xml:space="preserve"><value>Must match exactly what you entered in the IdP.</value></data>
+  <data name="SsoEditMetadataUrlLabel" xml:space="preserve"><value>IdP Metadata URL</value></data>
+  <data name="SsoEditMetadataUrlPlaceholder" xml:space="preserve"><value>https://idp.example.com/metadata.xml</value></data>
+  <data name="SsoEditMetadataUrlNote" xml:space="preserve"><value>Resgrid will periodically fetch this URL to stay up to date with IdP certificates.</value></data>
+  <data name="SsoEditAcsUrlStoredLabel" xml:space="preserve"><value>ACS URL (stored)</value></data>
+  <data name="SsoEditAcsUrlStoredNote" xml:space="preserve"><value>Auto-filled from the generated URL above. Modify only if you configured a different ACS URL in your IdP.</value></data>
+  <data name="SsoEditIdpCertLabel" xml:space="preserve"><value>IdP Signing Certificate (PEM)</value></data>
+  <data name="SsoEditIdpCertStored" xml:space="preserve"><value>Certificate stored</value></data>
+  <data name="SsoEditIdpCertNote" xml:space="preserve"><value>Encrypted at rest. Leave blank to keep the existing certificate.</value></data>
+  <data name="SsoEditSigningKeyLabel" xml:space="preserve"><value>SP Signing Key (PEM, optional)</value></data>
+  <data name="SsoEditSigningKeyStored" xml:space="preserve"><value>Key stored</value></data>
+  <data name="SsoEditSigningKeyNote" xml:space="preserve"><value>Encrypted at rest. Leave blank if your IdP does not require signed requests.</value></data>
+  <data name="SsoEditStep3Label" xml:space="preserve"><value>Step 3</value></data>
+  <data name="SsoEditStep3Header" xml:space="preserve"><value>Attribute Mapping</value></data>
+  <data name="SsoEditAttrMapDescription" xml:space="preserve"><value>Map claim names your IdP sends to the Resgrid user fields. Leave blank to use the standard claim URIs automatically. The value is the claim name as emitted by your IdP.</value></data>
+  <data name="SsoEditAttrMapJsonLabel" xml:space="preserve"><value>Attribute Mapping JSON</value></data>
+  <data name="SsoEditAttrMapJsonNote" xml:space="preserve"><value>Must be valid JSON. Use the quick-fill buttons on the right.</value></data>
+  <data name="SsoEditQuickFillHeader" xml:space="preserve"><value>Quick-fill presets</value></data>
+  <data name="SsoEditQuickFillDescription" xml:space="preserve"><value>Click to auto-fill the mapping JSON with known defaults for your IdP.</value></data>
+  <data name="SsoEditFieldMappingHeader" xml:space="preserve"><value>Supported Resgrid field keys</value></data>
+  <data name="SsoEditFieldKeyColumn" xml:space="preserve"><value>Key</value></data>
+  <data name="SsoEditFieldDescColumn" xml:space="preserve"><value>Description</value></data>
+  <data name="SsoEditFieldEmailDesc" xml:space="preserve"><value>User's email address</value></data>
+  <data name="SsoEditFieldFirstNameDesc" xml:space="preserve"><value>Given / first name</value></data>
+  <data name="SsoEditFieldLastNameDesc" xml:space="preserve"><value>Surname / family name</value></data>
+  <data name="SsoEditFieldSubjectDesc" xml:space="preserve"><value>Unique IdP subject (for account linking)</value></data>
+  <data name="SsoEditCreateButton" xml:space="preserve"><value>Create Configuration</value></data>
+  <data name="SsoEditSaveButton" xml:space="preserve"><value>Save Changes</value></data>
+  <data name="SsoEditCancelButton" xml:space="preserve"><value>Cancel</value></data>
+
+  <!-- SSO / SCIM — ScimSetup.cshtml page -->
+  <data name="ScimSetupPageTitle" xml:space="preserve"><value>SCIM 2.0 Setup</value></data>
+  <data name="ScimSetupPageHeader" xml:space="preserve"><value>SCIM 2.0 Provisioning Setup</value></data>
+  <data name="ScimSetupBreadcrumb" xml:space="preserve"><value>SCIM Setup</value></data>
+  <data name="ScimSetupBackButton" xml:space="preserve"><value>Back to SSO</value></data>
+  <data name="ScimSetupTokenWarningTitle" xml:space="preserve"><value>Important — Copy your SCIM Bearer Token Now</value></data>
+  <data name="ScimSetupTokenWarningBody" xml:space="preserve"><value>This token is displayed only once and cannot be retrieved again. Copy it immediately and paste it into your identity provider's SCIM configuration. If you lose it, click Rotate Token to generate a new one.</value></data>
+  <data name="ScimSetupCopyTokenButton" xml:space="preserve"><value>Copy Token</value></data>
+  <data name="ScimSetupTokenEncryptedNote" xml:space="preserve"><value>This token is stored encrypted in the Resgrid database using your department-specific encryption key.</value></data>
+  <data name="ScimSetupStatusHeader" xml:space="preserve"><value>SCIM Status</value></data>
+  <data name="ScimSetupStatusProvider" xml:space="preserve"><value>Provider</value></data>
+  <data name="ScimSetupStatusEnabled" xml:space="preserve"><value>SCIM Enabled</value></data>
+  <data name="ScimSetupStatusEnabledYes" xml:space="preserve"><value>Yes</value></data>
+  <data name="ScimSetupStatusEnabledNo" xml:space="preserve"><value>No</value></data>
+  <data name="ScimSetupStatusBearerToken" xml:space="preserve"><value>Bearer Token</value></data>
+  <data name="ScimSetupStatusTokenConfigured" xml:space="preserve"><value>Configured</value></data>
+  <data name="ScimSetupStatusTokenNotSet" xml:space="preserve"><value>Not Set</value></data>
+  <data name="ScimSetupRotateTokenButton" xml:space="preserve"><value>Rotate SCIM Token</value></data>
+  <data name="ScimSetupGenerateTokenButton" xml:space="preserve"><value>Generate SCIM Token</value></data>
+  <data name="ScimSetupRotateTokenNote" xml:space="preserve"><value>Rotating generates a new token and invalidates the old one.</value></data>
+  <data name="ScimSetupRotateTokenConfirm" xml:space="preserve"><value>Are you sure? Any existing SCIM integration will break until you update the token in your IdP.</value></data>
+  <data name="ScimSetupConnectorHeader" xml:space="preserve"><value>SCIM Connector Settings</value></data>
+  <data name="ScimSetupConnectorDescription" xml:space="preserve"><value>Enter these values into your identity provider's SCIM provisioning configuration.</value></data>
+  <data name="ScimSetupSettingColumn" xml:space="preserve"><value>Setting</value></data>
+  <data name="ScimSetupValueColumn" xml:space="preserve"><value>Value</value></data>
+  <data name="ScimSetupBaseUrlLabel" xml:space="preserve"><value>SCIM Connector Base URL</value></data>
+  <data name="ScimSetupAuthMethodLabel" xml:space="preserve"><value>Authentication Method</value></data>
+  <data name="ScimSetupAuthHeaderLabel" xml:space="preserve"><value>Authorization Header</value></data>
+  <data name="ScimSetupCustomHeaderNameLabel" xml:space="preserve"><value>Custom Header Name</value></data>
+  <data name="ScimSetupCustomHeaderValueLabel" xml:space="preserve"><value>Custom Header Value</value></data>
+  <data name="ScimSetupSupportedResourcesLabel" xml:space="preserve"><value>Supported Resources</value></data>
+  <data name="ScimSetupSupportedUpdateMethodLabel" xml:space="preserve"><value>Supported Update Method</value></data>
+  <data name="ScimSetupGuideHeader" xml:space="preserve"><value>Step-by-Step Setup Guide</value></data>
+  <data name="ScimSetupTabOkta" xml:space="preserve"><value>Okta</value></data>
+  <data name="ScimSetupTabEntra" xml:space="preserve"><value>Microsoft Entra ID</value></data>
+  <data name="ScimSetupTabGoogle" xml:space="preserve"><value>Google Workspace</value></data>
+  <data name="ScimSetupTabGeneric" xml:space="preserve"><value>Other / Generic</value></data>
+  <data name="ScimSetupGenericHeader" xml:space="preserve"><value>Any SCIM 2.0 compatible client can be configured with the following:</value></data>
+  <data name="ScimSetupFieldMappingHeader" xml:space="preserve"><value>Resgrid SCIM field mapping</value></data>
+  <data name="ScimSetupParamColumn" xml:space="preserve"><value>Parameter</value></data>
+  <data name="ScimSetupScimFieldColumn" xml:space="preserve"><value>SCIM field</value></data>
+  <data name="ScimSetupResgridEffectColumn" xml:space="preserve"><value>Resgrid effect</value></data>
+
+  <!-- SSO / SCIM — SecurityPolicy.cshtml page -->
+  <data name="SecurityPolicyPageTitle" xml:space="preserve"><value>Department Security Policy</value></data>
+  <data name="SecurityPolicyPageHeader" xml:space="preserve"><value>Department Security Policy</value></data>
+  <data name="SecurityPolicyBreadcrumb" xml:space="preserve"><value>Security Policy</value></data>
+  <data name="SecurityPolicyBackButton" xml:space="preserve"><value>Back to SSO</value></data>
+  <data name="SecurityPolicySaveSuccess" xml:space="preserve"><value>Security policy saved successfully.</value></data>
+  <data name="SecurityPolicyNoSsoWarning" xml:space="preserve"><value>No active SSO configuration. You can configure password policies below, but Require SSO cannot be enabled until you have an active SSO configuration.</value></data>
+  <data name="SecurityPolicyConfigureSsoLink" xml:space="preserve"><value>Configure SSO →</value></data>
+  <data name="SecurityPolicyAuthControlsHeader" xml:space="preserve"><value>Authentication Controls</value></data>
+  <data name="SecurityPolicyRequireMfaLabel" xml:space="preserve"><value>Require MFA for all members</value></data>
+  <data name="SecurityPolicyRequireMfaNote" xml:space="preserve"><value>Members who have not enrolled in MFA will be prompted to do so on next login.</value></data>
+  <data name="SecurityPolicyRequireSsoLabel" xml:space="preserve"><value>Require SSO — disable password login</value></data>
+  <data name="SecurityPolicyRequiresSsoConfig" xml:space="preserve"><value>Requires active SSO config</value></data>
+  <data name="SecurityPolicyRequireSsoWarning" xml:space="preserve"><value>Warning: Enabling this blocks all username/password logins. Ensure at least one admin has tested SSO login successfully before enabling.</value></data>
+  <data name="SecurityPolicySessionTimeoutLabel" xml:space="preserve"><value>Session Timeout (minutes)</value></data>
+  <data name="SecurityPolicySessionTimeoutNote" xml:space="preserve"><value>0 = use system default. 480 = 8 hours.</value></data>
+  <data name="SecurityPolicyMaxSessionsLabel" xml:space="preserve"><value>Max Concurrent Sessions per User</value></data>
+  <data name="SecurityPolicyMaxSessionsNote" xml:space="preserve"><value>0 = unlimited. Government environments typically set 1.</value></data>
+  <data name="SecurityPolicyIpRangesLabel" xml:space="preserve"><value>Allowed IP Ranges (CIDR)</value></data>
+  <data name="SecurityPolicyIpRangesNote" xml:space="preserve"><value>One CIDR block per line, or comma-separated. Empty = allow all. Logins from outside these ranges will be denied.</value></data>
+  <data name="SecurityPolicyDataClassLabel" xml:space="preserve"><value>Data Classification Level</value></data>
+  <data name="SecurityPolicyDataClassNote" xml:space="preserve"><value>Used for compliance reporting and audit logs.</value></data>
+  <data name="SecurityPolicyPasswordHeader" xml:space="preserve"><value>Password Policy</value></data>
+  <data name="SecurityPolicyPasswordInfoAlert" xml:space="preserve"><value>Password policies apply to local (non-SSO) logins only. If you enable Require SSO above, these settings have no effect.</value></data>
+  <data name="SecurityPolicyPasswordExpirationLabel" xml:space="preserve"><value>Password Expiration (days)</value></data>
+  <data name="SecurityPolicyPasswordExpirationNote" xml:space="preserve"><value>0 = passwords never expire. 90 is typical for CUI environments.</value></data>
+  <data name="SecurityPolicyMinPasswordLengthLabel" xml:space="preserve"><value>Minimum Password Length</value></data>
+  <data name="SecurityPolicyMinPasswordLengthNote" xml:space="preserve"><value>0 = system default (8). NIST recommends 12+; CUI requires 14+.</value></data>
+  <data name="SecurityPolicyPasswordComplexityLabel" xml:space="preserve"><value>Require password complexity</value></data>
+  <data name="SecurityPolicyPasswordComplexityNote" xml:space="preserve"><value>Enforces at least one uppercase letter, one digit, and one special character.</value></data>
+  <data name="SecurityPolicyQuickPresetsHeader" xml:space="preserve"><value>Quick presets</value></data>
+  <data name="SecurityPolicyPresetGovernment" xml:space="preserve"><value>Government / CUI</value></data>
+  <data name="SecurityPolicyPresetEnterprise" xml:space="preserve"><value>Standard Enterprise</value></data>
+  <data name="SecurityPolicyPresetMinimal" xml:space="preserve"><value>Minimal</value></data>
+  <data name="SecurityPolicySaveButton" xml:space="preserve"><value>Save Security Policy</value></data>
+  <data name="SecurityPolicyCancelButton" xml:space="preserve"><value>Cancel</value></data>
+  <data name="SecurityPolicyCannotEnableRequireSso" xml:space="preserve"><value>Cannot enable SSO-only login: no active SSO configuration exists. Create and enable an SSO configuration first.</value></data>
 </root>
 
 

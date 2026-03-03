@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="Name1" xml:space="preserve">
+    <value>this is my long string</value>
+  </data>
+  <data name="Bitmap1" xml:space="preserve">
+    <value>[base64 mime encoded serialized .NET Framework object]</value>
+  </data>
+  <data name="Icon1" xml:space="preserve">
+    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+  </data>
+  <data name="ActionNote" xml:space="preserve">
+    <value>Action Note (Optional)</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Åtgärder</value>
+  </data>
+  <data name="AreYouSureResetAll" xml:space="preserve">
+    <value>Are you sure you want to reset all personnel status to Available?</value>
+  </data>
+  <data name="CollapseGroups" xml:space="preserve">
+    <value>Collapse Groups (Once)</value>
+  </data>
+  <data name="ConfirmSetStandByGroup" xml:space="preserve">
+    <value>CONFIRM: Are you sure you want to reset all the users group to the Standing By state? Group:</value>
+  </data>
+  <data name="ConfirmStatusReset" xml:space="preserve">
+    <value>Confirm Status Reset</value>
+  </data>
+  <data name="DepartmentCode" xml:space="preserve">
+    <value>Department Code:</value>
+  </data>
+  <data name="DepartmentId" xml:space="preserve">
+    <value>Department Id:</value>
+  </data>
+  <data name="DepartmentInfo" xml:space="preserve">
+    <value>Department Info</value>
+  </data>
+  <data name="ResetAll" xml:space="preserve">
+    <value>Reset all to Available</value>
+  </data>
+  <data name="ResetGroupStandingBy" xml:space="preserve">
+    <value>Reset group to Standing By</value>
+  </data>
+  <data name="ResetStatusButton" xml:space="preserve">
+    <value>Reset Status</value>
+  </data>
+  <data name="SetCurrentAction" xml:space="preserve">
+    <value>Set Current Action</value>
+  </data>
+  <data name="SetStaffingLevel" xml:space="preserve">
+    <value>Set Staffing Level</value>
+  </data>
+  <data name="StaffingLevel" xml:space="preserve">
+    <value>Staffing Level</value>
+  </data>
+  <data name="StaffingLevelSubmit" xml:space="preserve">
+    <value>Set Staffing Level</value>
+  </data>
+  <data name="TextNumber" xml:space="preserve">
+    <value>Text Number:</value>
+  </data>
+  <data name="ToggleCollapseGroupsOnce" xml:space="preserve">
+    <value>Toggle Collapse Groups (Saves)</value>
+  </data>
+</root>

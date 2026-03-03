@@ -138,8 +138,14 @@
   <data name="DeleteEvent" xml:space="preserve">
     <value>Evento de eliminación</value>
   </data>
+  <data name="DeleteEventConfirm" xml:space="preserve">
+    <value>¿Está seguro de que desea eliminar este evento? Esta acción no se puede deshacer.</value>
+  </data>
   <data name="DeleteEventOccurrences" xml:space="preserve">
     <value>Eliminar evento y ocurrencias</value>
+  </data>
+  <data name="DeleteEventOccurrencesConfirm" xml:space="preserve">
+    <value>¿Está seguro de que desea eliminar este evento y todas sus ocurrencias? Esta acción no se puede deshacer.</value>
   </data>
   <data name="EditCalendarTypeHeader" xml:space="preserve">
     <value>Editar el tipo de calendario</value>
@@ -245,5 +251,50 @@
   </data>
   <data name="Upcoming" xml:space="preserve">
     <value>Próxima</value>
+  </data>
+  <data name="AllDayEvent" xml:space="preserve">
+    <value>Evento de todo el día</value>
+  </data>
+  <data name="DateRange" xml:space="preserve">
+    <value>{0} – {1}</value>
+  </data>
+  <data name="DownloadIcs" xml:space="preserve">
+    <value>Descargar .ics</value>
+  </data>
+  <data name="SubscribeCalendar" xml:space="preserve">
+    <value>Suscribirse al calendario</value>
+  </data>
+  <data name="CalendarSyncTitle" xml:space="preserve">
+    <value>Sincronización de calendario</value>
+  </data>
+  <data name="CalendarSyncDescription" xml:space="preserve">
+    <value>Suscríbase al calendario de su departamento en Google Calendar, Microsoft Outlook, Apple Calendar o cualquier aplicación que admita fuentes iCal.</value>
+  </data>
+  <data name="ActivateCalendarSync" xml:space="preserve">
+    <value>Activar sincronización de calendario</value>
+  </data>
+  <data name="RegenerateCalendarSync" xml:space="preserve">
+    <value>Regenerar clave de sincronización</value>
+  </data>
+  <data name="CalendarSyncActivateHelp" xml:space="preserve">
+    <value>Para sincronizar el calendario de su departamento con una aplicación de calendario externa, primero debe activar la sincronización del calendario. Esto genera una URL de suscripción única. Si la URL se ve comprometida, puede regenerarla para invalidar la anterior.</value>
+  </data>
+  <data name="CopyToClipboard" xml:space="preserve">
+    <value>Copiar al portapapeles</value>
+  </data>
+  <data name="SubscriptionUrl" xml:space="preserve">
+    <value>URL de suscripción</value>
+  </data>
+  <data name="WebCalLink" xml:space="preserve">
+    <value>Abrir en aplicación de calendario</value>
+  </data>
+  <data name="CalendarSyncActive" xml:space="preserve">
+    <value>La sincronización de calendario está activa. Use la URL a continuación para suscribirse.</value>
+  </data>
+  <data name="CalendarSyncInactive" xml:space="preserve">
+    <value>La sincronización del calendario aún no está activada. Haga clic en el botón a continuación para generar su URL de suscripción.</value>
+  </data>
+  <data name="Types" xml:space="preserve">
+    <value>Tipos</value>
   </data>
 </root>

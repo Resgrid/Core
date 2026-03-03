@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
@@ -32,10 +33,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IGeoLocationProvider _geoLocationProvider;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IAuthorizationService _authorizationService;
+		private readonly IUserProfileService _userProfileService;
 
 		public CalendarController(IDepartmentsService departmentsService, IUsersService usersService, ICalendarService calendarService,
 			IDepartmentGroupsService departmentGroupsService, IGeoLocationProvider geoLocationProvider, IEventAggregator eventAggregator,
-			IAuthorizationService authorizationService)
+			IAuthorizationService authorizationService, IUserProfileService userProfileService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -44,6 +46,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_geoLocationProvider = geoLocationProvider;
 			_eventAggregator = eventAggregator;
 			_authorizationService = authorizationService;
+			_userProfileService = userProfileService;
 		}
 		#endregion Private Members and Constructors
 
@@ -65,6 +68,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.UpcomingItems = new List<CalendarItem>();
 			model.UpcomingItems = await _calendarService.GetUpcomingCalendarItemsAsync(DepartmentId, DateTime.UtcNow);
+
+			// Populate calendar sync token for the subscribe panel.
+			var profile = await _userProfileService.GetProfileByUserIdAsync(UserId);
+			if (profile != null && !String.IsNullOrWhiteSpace(profile.CalendarSyncToken))
+			{
+				model.CalendarSyncToken = profile.CalendarSyncToken;
+				var feedToken = await _calendarService.GetCalendarFeedTokenAsync(DepartmentId, UserId);
+				model.CalendarSubscriptionUrl = $"{SystemBehaviorConfig.ResgridApiBaseUrl}/api/v4/CalendarExport/CalendarFeed/{feedToken}";
+			}
 
 			return View(model);
 		}
@@ -109,6 +121,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ModelState.AddModelError("Item_End", "End date and time cannot be before start date and time.");
 			}
 
+			model.Types = new List<CalendarItemType>();
+			model.Types.Add(new CalendarItemType() {CalendarItemTypeId = 0, Name = "No Type"});
+			model.Types.AddRange(await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId));
+			ViewBag.Types = new SelectList(model.Types, "CalendarItemTypeId", "Name");
+
 			if (ModelState.IsValid)
 			{
 				var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
@@ -138,10 +155,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return RedirectToAction("Index");
 			}
 
-			model.Types = new List<CalendarItemType>();
-			model.Types.Add(new CalendarItemType() { CalendarItemTypeId = 0, Name = "No Type" });
-			model.Types.AddRange(await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId));
-
 			model.Item.Description = StringHelpers.StripHtmlTagsCharArray(model.Item.Description);
 
 			return View(model);
@@ -164,8 +177,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
-			model.StartTime = model.Item.Start.TimeConverter(department);
-			model.EndTime = model.Item.End.TimeConverter(department);
+			// All-day events are stored as UTC (00:00:00 → 23:59:59 local converted to UTC).
+			// Convert back to local time first, then take just the date for the date-only picker.
+			if (model.Item.IsAllDay)
+			{
+				model.StartTime = model.Item.Start.TimeConverter(department).Date;
+				model.EndTime   = model.Item.End.TimeConverter(department).Date;
+			}
+			else
+			{
+				model.StartTime = model.Item.Start.TimeConverter(department);
+				model.EndTime   = model.Item.End.TimeConverter(department);
+			}
+
+			if (model.Item.RecurrenceEnd.HasValue)
+				model.RecurrenceEndLocal = model.Item.RecurrenceEnd.Value.TimeConverter(department);
 
 			var recurrences = await _calendarService.GetAllCalendarItemRecurrencesAsync(model.Item.CalendarItemId);
 			if (recurrences != null && recurrences.Any())
@@ -182,7 +208,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 		public async Task<IActionResult> Edit(EditCalendarEntry model, CancellationToken cancellationToken)
 		{
-			if (model.Item.Start > model.Item.End)
+			if (model.StartTime > model.EndTime)
 			{
 				ModelState.AddModelError("Item_End", "End date and time cannot be before start date and time.");
 			}
@@ -190,7 +216,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if ((model.Item.RecurrenceType == (int)RecurrenceTypes.Weekly
 			     || model.Item.RecurrenceType == (int)RecurrenceTypes.Monthly
 			     || model.Item.RecurrenceType == (int)RecurrenceTypes.Yearly) &&
-			    (model.Item.RecurrenceEnd.HasValue && (model.Item.RecurrenceEnd.Value <= model.Item.Start || model.Item.RecurrenceEnd.Value <= model.Item.End)))
+			    (model.RecurrenceEndLocal.HasValue && (model.RecurrenceEndLocal.Value <= model.StartTime || model.RecurrenceEndLocal.Value <= model.EndTime)))
 			{
 				ModelState.AddModelError("Item_End", "End date and time cannot be before start date and time.");
 			}
@@ -201,6 +227,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				model.Item.Start = model.StartTime;
 				model.Item.End = model.EndTime;
+				model.Item.RecurrenceEnd = model.RecurrenceEndLocal;
 				model.Item.DepartmentId = DepartmentId;
 				model.Item.CreatorUserId = UserId;
 				model.Item.Entities = model.entities;
@@ -247,14 +274,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				//	calendarItem.End = item.End;
 
 				if (!String.IsNullOrWhiteSpace(item.Start))
-					calendarItem.Start = DateTime.Parse(item.Start).ToUniversalTime();
+					calendarItem.Start = DateTimeHelpers.ConvertToUtc(DateTime.Parse(item.Start), timeZone);
 				else
-					calendarItem.Start = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0).ToUniversalTime();
+					calendarItem.Start = DateTimeHelpers.ConvertToUtc(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 0, 0, 0), timeZone);
 
 				if (!String.IsNullOrWhiteSpace(item.End))
-					calendarItem.End = DateTime.Parse(item.End).ToUniversalTime();
+					calendarItem.End = DateTimeHelpers.ConvertToUtc(DateTime.Parse(item.End), timeZone);
 				else
-					calendarItem.Start = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 59, 59).ToUniversalTime();
+					calendarItem.End = DateTimeHelpers.ConvertToUtc(new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 23, 59, 59), timeZone);
 
 				if (!String.IsNullOrWhiteSpace(item.StartTimezone))
 					calendarItem.StartTimezone = item.StartTimezone;
@@ -324,8 +351,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 					//else
 					//	calendarItem.End = item.End;
 
-					calendarItem.Start = DateTime.Parse(item.Start).ToUniversalTime();
-					calendarItem.End = DateTime.Parse(item.End).ToUniversalTime();
+					var updateTimeZone = "Etc/UTC";
+					if (!String.IsNullOrWhiteSpace(department.TimeZone))
+						updateTimeZone = DateTimeHelpers.WindowsToIana(department.TimeZone);
+
+					calendarItem.Start = DateTimeHelpers.ConvertToUtc(DateTime.Parse(item.Start), updateTimeZone);
+					calendarItem.End = DateTimeHelpers.ConvertToUtc(DateTime.Parse(item.End), updateTimeZone);
 
 					calendarItem.StartTimezone = item.StartTimezone;
 					calendarItem.EndTimezone = item.EndTimezone;
@@ -390,7 +421,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				Unauthorized();
 
 			await _calendarService.DeleteCalendarItemByIdAsync(itemId, cancellationToken);
-			
+
 			return RedirectToAction("Index");
 		}
 
@@ -489,8 +520,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var jsonItem = new CalendarItemV2Json();
 				jsonItem.id = item.CalendarItemId;
 				jsonItem.title = item.Title;
-				jsonItem.start = item.Start.TimeConverter(department).ToString();
-				jsonItem.end = item.End.TimeConverter(department).ToString();
+				jsonItem.allDay = item.IsAllDay;
+
+				if (item.IsAllDay)
+				{
+					// All-day events are stored as UTC. Convert back to the department's local time,
+					// then use date-only strings. FullCalendar requires an exclusive end date so add 1 day.
+					var localStart = item.Start.TimeConverter(department);
+					var localEnd   = item.End.TimeConverter(department);
+					jsonItem.start = localStart.ToString("yyyy-MM-dd");
+					jsonItem.end   = localEnd.Date.AddDays(1).ToString("yyyy-MM-dd");
+				}
+				else
+				{
+					jsonItem.start = item.Start.TimeConverter(department).ToString("O");
+					jsonItem.end = item.End.TimeConverter(department).ToString("O");
+				}
+
 				jsonItem.url = $"{GetBaseUrl()}/User/Calendar/View?calendarItemId={item.CalendarItemId}";
 
 				if (item.ItemType != 0)
@@ -546,6 +592,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (model.CalendarItem.DepartmentId != DepartmentId)
 				Unauthorized();
+
+			model.ExportIcsUrl = $"{SystemBehaviorConfig.ResgridApiBaseUrl}/api/v4/CalendarExport/ExportICalFile?calendarItemId={calendarItemId}";
 
 			return View(model);
 		}
@@ -631,7 +679,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (String.IsNullOrWhiteSpace(id))
 				Unauthorized();
-			
+
 			NewTypeView model = new NewTypeView();
 			model.Type = await _calendarService.GetCalendarItemTypeByIdAsync(int.Parse(id));
 
@@ -745,5 +793,33 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			return Json(result);
 		}
+
+		/// <summary>
+		/// Activates external calendar sync for the current user. Generates a new CalendarSyncToken
+		/// on their profile and redirects back to the Index view where the subscription URL is shown.
+		/// </summary>
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Schedule_View)]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> ActivateCalendarSync(CancellationToken cancellationToken)
+		{
+			await _calendarService.ActivateCalendarSyncAsync(DepartmentId, UserId, cancellationToken);
+			return RedirectToAction("Index");
+		}
+
+		/// <summary>
+		/// Regenerates the external calendar sync token, invalidating any previously issued
+		/// subscription URLs, then redirects back to the Index view.
+		/// </summary>
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Schedule_View)]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> RegenerateCalendarSync(CancellationToken cancellationToken)
+		{
+			await _calendarService.RegenerateCalendarSyncAsync(DepartmentId, UserId, cancellationToken);
+			return RedirectToAction("Index");
+		}
+
+		// ── Helpers ──────────────────────────────────────────────────────────────────
 	}
 }

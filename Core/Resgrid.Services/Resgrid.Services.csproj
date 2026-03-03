@@ -10,6 +10,7 @@
     <PackageReference Include="Autofac" Version="8.2.0" />
     <PackageReference Include="CommonServiceLocator" Version="2.0.7" />
     <PackageReference Include="GeoJSON.Net" Version="1.4.1" />
+    <PackageReference Include="Ical.Net" Version="4.2.0" />
     <PackageReference Include="RestSharp.Serializers.NewtonsoftJson" Version="112.1.0" />
     <PackageReference Include="Stripe.net" Version="47.4.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

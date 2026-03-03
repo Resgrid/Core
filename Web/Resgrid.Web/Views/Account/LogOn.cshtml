@@ -99,14 +99,32 @@
                     <input type="hidden" id="returnUrl" name="returnUrl" value="" />
                     <div class="dropdown">
                         <a href="#" id="languageDropdown" data-toggle="dropdown" class="dropdown-toggle" aria-haspopup="true" aria-expanded="false">
-                            <img id="languageDropdownCurrentLang" src="/images/flags/32/United-States.png" width="32" height="32">
+                            <img id="languageDropdownCurrentLang" src="/images/flags/32/United-States.png" width="32" height="32" alt="Language">
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                             <li class="dropdown-item">
-                                <a href="#" class="langDropdownSelection" data-locale="en"><img src="/images/flags/32/United-States.png" width="32" height="32"> English</a>
+                                <a href="#" class="langDropdownSelection" data-locale="en"><img src="/images/flags/32/United-States.png" width="32" height="32" alt="English"> English</a>
                             </li>
-                            <li class="dropdown-item langDropdownSelection">
-                                <a href="#" class="langDropdownSelection" data-locale="es"><img src="/images/flags/32/Mexico.png" width="32" height="32"> Spanish</a>
+                            <li class="dropdown-item">
+                                <a href="#" class="langDropdownSelection" data-locale="es"><img src="/images/flags/32/Mexico.png" width="32" height="32" alt="Spanish"> Spanish</a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="#" class="langDropdownSelection" data-locale="sv"><img src="/images/flags/32/Sweden.png" width="32" height="32" alt="Swedish"> Swedish</a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="#" class="langDropdownSelection" data-locale="de"><img src="/images/flags/32/Germany.png" width="32" height="32" alt="German"> German</a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="#" class="langDropdownSelection" data-locale="fr"><img src="/images/flags/32/France.png" width="32" height="32" alt="French"> French</a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="#" class="langDropdownSelection" data-locale="it"><img src="/images/flags/32/Italy.png" width="32" height="32" alt="Italian"> Italian</a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="#" class="langDropdownSelection" data-locale="pl"><img src="/images/flags/32/Poland.png" width="32" height="32" alt="Polish"> Polish</a>
+                            </li>
+                            <li class="dropdown-item">
+                                <a href="#" class="langDropdownSelection" data-locale="uk"><img src="/images/flags/32/Ukraine.png" width="32" height="32" alt="Ukrainian"> Ukrainian</a>
                             </li>
                         </ul>
                     </div>
@@ -151,11 +169,23 @@
             let lanCookieString = RegExp(".AspNetCore.Culture" + "=[^;]+").exec(document.cookie);
             let langCookieValue = decodeURIComponent(!!lanCookieString ? lanCookieString.toString().replace(/^[^=]+./, "") : "");
 
+            const flagMap = {
+                'en': '/images/flags/32/United-States.png',
+                'es': '/images/flags/32/Mexico.png',
+                'sv': '/images/flags/32/Sweden.png',
+                'de': '/images/flags/32/Germany.png',
+                'fr': '/images/flags/32/France.png',
+                'it': '/images/flags/32/Italy.png',
+                'pl': '/images/flags/32/Poland.png',
+                'uk': '/images/flags/32/Ukraine.png'
+            };
+
             if (langCookieValue) {
-                if (langCookieValue.indexOf("c=en") > -1) {
-                    $('#languageDropdownCurrentLang').attr('src', "/images/flags/32/United-States.png");
-                } else if (langCookieValue.indexOf("c=es") > -1) {
-                    $('#languageDropdownCurrentLang').attr('src', "/images/flags/32/Mexico.png");
+                for (const [locale, flag] of Object.entries(flagMap)) {
+                    if (langCookieValue.indexOf('c=' + locale) > -1) {
+                        $('#languageDropdownCurrentLang').attr('src', flag);
+                        break;
+                    }
                 }
             }
 

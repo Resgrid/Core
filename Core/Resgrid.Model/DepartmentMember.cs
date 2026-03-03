@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Resgrid.Model.Identity;
 using ProtoBuf;
@@ -59,7 +60,19 @@ namespace Resgrid.Model
 
 		public virtual Rank Rank { get; set; }
 
-		
+		/// <summary>
+		/// The subject identifier from the external SSO identity provider (IdP) that is linked
+		/// to this department membership. Null when the user has not been linked via SSO.
+		/// </summary>
+		[MaxLength(512)]
+		public string ExternalSsoId { get; set; }
+
+		/// <summary>Date/time when the external SSO identity was first linked to this membership.</summary>
+		public DateTime? SsoLinkedOn { get; set; }
+
+		/// <summary>Date/time of the most recent successful SSO login for this membership.</summary>
+		public DateTime? LastSsoLoginOn { get; set; }
+
 		[NotMapped]
 		public string TableName => "DepartmentMembers";
 

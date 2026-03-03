@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -6,9 +7,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Services.Models.v4.Workflows;
+using Scriban;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -26,17 +29,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly ISubscriptionsService _subscriptionsService;
+		private readonly IWorkflowTemplateContextBuilder _contextBuilder;
 
 		public WorkflowsController(IWorkflowService workflowService, IDepartmentsService departmentsService,
 			IPermissionsService permissionsService, IDepartmentGroupsService departmentGroupsService,
-			IPersonnelRolesService personnelRolesService, ISubscriptionsService subscriptionsService)
+			IPersonnelRolesService personnelRolesService, ISubscriptionsService subscriptionsService,
+			IWorkflowTemplateContextBuilder contextBuilder)
 		{
-			_workflowService    = workflowService;
-			_departmentsService = departmentsService;
-			_permissionsService = permissionsService;
+			_workflowService         = workflowService;
+			_departmentsService      = departmentsService;
+			_permissionsService      = permissionsService;
 			_departmentGroupsService = departmentGroupsService;
-			_personnelRolesService = personnelRolesService;
-			_subscriptionsService = subscriptionsService;
+			_personnelRolesService   = personnelRolesService;
+			_subscriptionsService    = subscriptionsService;
+			_contextBuilder          = contextBuilder;
 		}
 
 		// ── Workflows ─────────────────────────────────────────────────────────────────
@@ -159,7 +165,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				OutputTemplate       = input.OutputTemplate,
 				ActionConfig         = input.ActionConfig,
 				WorkflowCredentialId = input.WorkflowCredentialId,
-				IsEnabled            = input.IsEnabled
+				IsEnabled            = input.IsEnabled,
+				ConditionExpression  = input.ConditionExpression
 			};
 
 			step = await _workflowService.SaveWorkflowStepAsync(step, ct);
@@ -370,6 +377,60 @@ namespace Resgrid.Web.Services.Controllers.v4
 			});
 		}
 
+		/// <summary>
+		/// Validates a condition expression syntax and optionally evaluates it against a sample payload.
+		/// </summary>
+		[HttpPost("ValidateCondition")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Workflow_Create)]
+		public async Task<ActionResult<ValidateConditionResult>> ValidateCondition(
+			[FromBody] ValidateConditionInput input, CancellationToken ct)
+		{
+			if (!ModelState.IsValid) return BadRequest(ModelState);
+
+			// Step 1: syntax check
+			var parsed = Template.Parse(input.ConditionExpression);
+			if (parsed.HasErrors)
+			{
+				return Ok(new ValidateConditionResult
+				{
+					IsValid     = false,
+					ParseErrors = parsed.Messages.Select(m => m.ToString()).ToList()
+				});
+			}
+
+			// Step 2: optional evaluation against sample payload
+			if (!string.IsNullOrWhiteSpace(input.SamplePayloadJson))
+			{
+				try
+				{
+					var eventType   = (WorkflowTriggerEventType)input.TriggerEventType;
+					var scriptObject = await _contextBuilder.BuildContextAsync(
+						DepartmentId, eventType, input.SamplePayloadJson, ct);
+
+					var context = new Scriban.TemplateContext { StrictVariables = false };
+					context.PushGlobal((Scriban.Runtime.ScriptObject)scriptObject);
+
+					var evaluated = (await parsed.RenderAsync(context))?.Trim() ?? string.Empty;
+					return Ok(new ValidateConditionResult
+					{
+						IsValid         = true,
+						EvaluatedResult = evaluated
+					});
+				}
+				catch (Exception ex)
+				{
+					return Ok(new ValidateConditionResult
+					{
+						IsValid     = false,
+						ParseErrors = new List<string> { $"Evaluation error: {ex.Message}" }
+					});
+				}
+			}
+
+			return Ok(new ValidateConditionResult { IsValid = true });
+		}
+
 		// ── Private Permission Helpers ────────────────────────────────────────────────
 
 		private async Task<bool> CanUserManageWorkflowsAsync()
@@ -438,7 +499,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			OutputTemplate       = s.OutputTemplate,
 			ActionConfig         = s.ActionConfig,
 			WorkflowCredentialId = s.WorkflowCredentialId,
-			IsEnabled            = s.IsEnabled
+			IsEnabled            = s.IsEnabled,
+			ConditionExpression  = s.ConditionExpression
 		};
 
 		private static WorkflowRunData MapRun(WorkflowRun r) => new WorkflowRunData
@@ -490,6 +552,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		};
 	}
 }
+
+
 
 
 

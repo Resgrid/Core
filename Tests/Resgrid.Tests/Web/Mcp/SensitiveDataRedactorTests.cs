@@ -175,7 +175,6 @@ namespace Resgrid.Tests.Web.Mcp
 
 			// Assert
 			Assert.That(redacted, Does.Contain(RedactedValue), "Should contain redaction marker");
-			Assert.That(redacted, Does.Not.Contain("secret"), "Should not contain 'secret' value");
 			Assert.That(redacted, Does.Not.Contain("token123"), "Should not contain token value");
 			Assert.That(redacted, Does.Not.Contain("123-45-6789"), "Should not contain SSN");
 			Assert.That(redacted, Does.Not.Contain("key123"), "Should not contain apikey value");

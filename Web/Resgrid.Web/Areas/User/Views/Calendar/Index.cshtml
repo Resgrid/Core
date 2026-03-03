@@ -1,5 +1,6 @@
 ﻿@using Resgrid.Model.Helpers
 @using Resgrid.Web.Helpers
+@using Resgrid.Framework
 @model Resgrid.Web.Areas.User.Models.Calendar.IndexView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Calendar.Calendar> localizer
 @{
@@ -8,7 +9,10 @@
 }
 
 @section Styles
-    {
+{
+    @* FullCalendar 6.x INSPINIA theme overrides (replaces the old print CSS that no longer ships with FC6) *@
+    <link rel="stylesheet" href="~/css/fullcalendar-inspinia.css" asp-append-version="true" />
+
     <style>
         .k-window {
             top: 50px !important;
@@ -64,25 +68,37 @@
                         {
                             foreach (var item in Model.UpcomingItems)
                             {
-
                                 var itemType = Model.Types.FirstOrDefault(x => x.CalendarItemTypeId == item.ItemType);
+                                var bgColor = itemType?.Color ?? "#1ab394";
+                                var plainDesc = StringHelpers.StripHtmlTagsCharArray(item.Description ?? string.Empty);
+                                var truncatedDesc = plainDesc.Length > 80
+                                    ? plainDesc.Substring(0, 80) + "…"
+                                    : plainDesc;
+                                var dateDisplay = item.IsAllDay
+                                    ? item.Start.ToString("ddd, MMM d")
+                                    : item.Start.ToString("ddd, MMM d") + " " + item.Start.ToString("h:mm tt");
 
-                                if (itemType != null)
-                                {
-                                    <div class='external-event' style="background-color: @itemType.Color;">
-                                        <a asp-controller="Calendar" asp-action="View" asp-route-area="User" asp-route-calendarItemId="@item.CalendarItemId" style="color: white;">
-                                            @item.Title
-                                        </a>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div class='external-event'>
-                                        <a asp-controller="Calendar" asp-action="View" asp-route-area="User" asp-route-calendarItemId="@item.CalendarItemId">
-                                            @item.Title
-                                        </a>
-                                    </div>
-                                }
+                                <div class='external-event' style="background-color: @bgColor; padding: 8px 10px; margin-bottom: 6px; border-radius: 4px;">
+                                    <a asp-controller="Calendar" asp-action="View" asp-route-area="User" asp-route-calendarItemId="@item.CalendarItemId"
+                                       style="color: white; font-weight: 600; display: block; margin-bottom: 3px;">
+                                        @item.Title
+                                    </a>
+                                    <small style="color: rgba(255,255,255,0.9); display: block;">
+                                        <i class="fa fa-clock-o" style="margin-right:3px;"></i>@dateDisplay
+                                    </small>
+                                    @if (!string.IsNullOrWhiteSpace(item.Location))
+                                    {
+                                        <small style="color: rgba(255,255,255,0.9); display: block;">
+                                            <i class="fa fa-map-marker" style="margin-right:3px;"></i>@item.Location
+                                        </small>
+                                    }
+                                    @if (!string.IsNullOrWhiteSpace(truncatedDesc))
+                                    {
+                                        <small style="color: rgba(255,255,255,0.85); display: block; margin-top: 2px; font-style: italic;">
+                                            @truncatedDesc
+                                        </small>
+                                    }
+                                </div>
                             }
                         }
                         else
@@ -116,10 +132,73 @@
                     </div>
                 </div>
             </div>
+
+            @* Calendar Sync Panel *@
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>@localizer["CalendarSyncTitle"]</h5>
+                </div>
+                <div class="ibox-content">
+                    <p class="small text-muted">@localizer["CalendarSyncDescription"]</p>
+                    @if (string.IsNullOrWhiteSpace(Model.CalendarSyncToken))
+                    {
+                        <p>@localizer["CalendarSyncInactive"]</p>
+                        <p class="small text-muted">@localizer["CalendarSyncActivateHelp"]</p>
+                        <form asp-controller="Calendar" asp-action="ActivateCalendarSync" asp-route-area="User" method="post">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-primary btn-sm">
+                                <i class="fa fa-calendar-plus-o"></i> @localizer["ActivateCalendarSync"]
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <p class="text-success"><i class="fa fa-check-circle"></i> @localizer["CalendarSyncActive"]</p>
+
+                        <div class="form-group">
+                            <label class="control-label small">@localizer["SubscriptionUrl"]</label>
+                            <div class="input-group">
+                                <input type="text" id="calSyncUrl" class="form-control input-sm"
+                                       value="@Model.CalendarSubscriptionUrl" readonly />
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default btn-sm" type="button"
+                                            onclick="navigator.clipboard.writeText(document.getElementById('calSyncUrl').value)" title="@localizer["CopyToClipboard"]">
+                                        <i class="fa fa-clipboard"></i>
+                                    </button>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="btn-group btn-group-sm" style="margin-bottom:8px;">
+                            <a href="@Model.CalendarSubscriptionUrl.Replace("https://","webcal://").Replace("http://","webcal://")"
+                               class="btn btn-default btn-sm" title="@localizer["WebCalLink"]">
+                                <i class="fa fa-calendar"></i> @localizer["WebCalLink"]
+                            </a>
+                            <a href="https://calendar.google.com/calendar/r?cid=@Uri.EscapeDataString(Model.CalendarSubscriptionUrl.Replace("https://","webcal://").Replace("http://","webcal://"))"
+                               target="_blank" class="btn btn-default btn-sm" title="Google Calendar">
+                                <i class="fa fa-google"></i> Google
+                            </a>
+                            <a href="https://outlook.live.com/calendar/0/addfromweb?url=@Uri.EscapeDataString(Model.CalendarSubscriptionUrl)"
+                               target="_blank" class="btn btn-default btn-sm" title="Microsoft Outlook">
+                                <i class="fa fa-windows"></i> Outlook
+                            </a>
+                        </div>
+
+                        <form asp-controller="Calendar" asp-action="RegenerateCalendarSync" asp-route-area="User" method="post" style="margin-top:8px;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-warning btn-sm"
+                                    onclick="return confirm('This will invalidate your current subscription URL. Continue?');">
+                                <i class="fa fa-refresh"></i> @localizer["RegenerateCalendarSync"]
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
         </div>
     </div>
 </div>
 @section Scripts
-    {
+{
+    <script src="~/lib/fullcalendar/index.global.min.js" asp-append-version="true"></script>
     <script src="~/js/app/internal/calendar/resgrid.calendar.index.js" type="text/javascript"></script>
 }

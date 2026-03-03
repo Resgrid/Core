@@ -12,7 +12,6 @@ using Resgrid.Providers.Messaging;
 using Resgrid.Providers.NumberProvider;
 using Resgrid.Repositories.DataRepository;
 using Resgrid.Services;
-using Resgrid.Tests.Mocks;
 using Resgrid.Workers.Framework;
 
 namespace Resgrid.Tests
@@ -40,15 +39,6 @@ namespace Resgrid.Tests
 				builder.RegisterModule(new MarketingModule());
 				builder.RegisterModule(new MessagingProviderModule());
 				builder.RegisterModule(new Resgrid.Providers.Workflow.WorkflowProviderModule());
-
-				// Override real repository registrations with in-memory mocks so that
-				// tests do not require a live database connection.
-				builder.RegisterType<MockScheduledTasksRepository>()
-					.As<IScheduledTasksRepository>()
-					.InstancePerLifetimeScope();
-				builder.RegisterType<MockScheduledTaskLogsRepository>()
-					.As<IScheduledTaskLogsRepository>()
-					.InstancePerLifetimeScope();
 
 				_container = builder.Build();
 

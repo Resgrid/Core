@@ -36,7 +36,7 @@ namespace Resgrid.Tests.Framework
 				{
 						object deserializedObject;
 
-						using (var reader = new StreamReader(AppDomain.CurrentDomain.BaseDirectory + "\\Data\\TestCall.json"))
+						using (var reader = new StreamReader(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Data", "TestCall.json")))
 						{
 								deserializedObject = JsonSerializationExtensions.DeserializeStream(reader.BaseStream, typeof (Call));
 						}

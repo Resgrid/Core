@@ -20,13 +20,44 @@ var resgrid;
                 $('#RecurrenceEndLocal').datetimepicker({ step: 15 });
 
                 // All-day toggle: switch Start/End pickers between datetime and date-only modes.
+                // Stores full datetime values so they can be restored when all-day is unchecked.
+                var savedStartValue = '';
+                var savedEndValue = '';
+
+                function stripTimePart(value) {
+                    // Accepts 'Y/m/d H:i' or 'Y/m/d' and returns only the date portion.
+                    if (!value) return '';
+                    return value.split(' ')[0];
+                }
+
+                function ensureTimePart(value) {
+                    // If the value has no time component, append a default time of 00:00.
+                    if (!value) return '';
+                    return value.indexOf(' ') === -1 ? value + ' 00:00' : value;
+                }
+
                 function applyAllDayMode(allDay) {
                     if (allDay) {
+                        // Save current full datetime values before stripping time.
+                        savedStartValue = $('#StartTime').val();
+                        savedEndValue = $('#EndTime').val();
+
                         $('#StartTime').datetimepicker({ timepicker: false, format: 'Y/m/d', step: 15 });
                         $('#EndTime').datetimepicker({ timepicker: false, format: 'Y/m/d', step: 15 });
+
+                        // Update displayed values to date-only.
+                        $('#StartTime').val(stripTimePart(savedStartValue));
+                        $('#EndTime').val(stripTimePart(savedEndValue));
                     } else {
                         $('#StartTime').datetimepicker({ timepicker: true, format: 'Y/m/d H:i', step: 15 });
                         $('#EndTime').datetimepicker({ timepicker: true, format: 'Y/m/d H:i', step: 15 });
+
+                        // Restore the previously saved datetime values, ensuring a time component
+                        // is present so the user can see they need to specify a time.
+                        var startVal = ensureTimePart(savedStartValue || $('#StartTime').val());
+                        var endVal = ensureTimePart(savedEndValue || $('#EndTime').val());
+                        $('#StartTime').val(startVal);
+                        $('#EndTime').val(endVal);
                     }
                 }
 

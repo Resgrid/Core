@@ -1,7 +1,4 @@
 ﻿@using Resgrid.Framework
-@using Resgrid.Model
-@using Resgrid.Model.Helpers
-@using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Calendar.CalendarItemView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Calendar.Calendar> localizer
 @{
@@ -9,286 +6,77 @@
 }
 @section Styles
 {
-
-}
-<style>
-    .user-row {
-        margin-bottom: 14px;
-    }
-
-        .user-row:last-child {
-            margin-bottom: 0;
+    <style>
+        .event-header-panel {
+            border-left: 4px solid #1ab394;
+            padding: 20px 24px;
+            background: #fff;
         }
-
-    .dropdown-user {
-        margin: 13px 0;
-        padding: 5px;
-        height: 100%;
-    }
-
-        .dropdown-user:hover {
-            cursor: pointer;
+        .event-header-panel .event-title {
+            font-size: 24px;
+            font-weight: 600;
+            margin: 0 0 6px;
+            color: #222;
         }
-
-    .table-user-information > tbody > tr {
-        border-top: 1px solid rgb(221, 221, 221);
-    }
-
-        .table-user-information > tbody > tr:first-child {
-            border-top: 0;
+        .event-header-panel .event-meta {
+            color: #888;
+            font-size: 13px;
         }
-
-        .table-user-information > tbody > tr > td {
-            border-top: 0;
+        .event-header-panel .event-meta i {
+            width: 16px;
+            text-align: center;
+            margin-right: 4px;
         }
-
-    .phone {
-        padding: 0;
-    }
-
-        .phone li {
-            display: block;
-        }
-
-    .toppad {
-        margin-top: 20px;
-    }
-
-
-    div.list-group-item {
-        height: auto;
-        min-height: 220px;
-    }
-
-        div.list-group-item.active small {
+        .event-date-badge {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #1ab394;
             color: #fff;
+            border-radius: 6px;
+            width: 72px;
+            min-height: 72px;
+            text-align: center;
+            padding: 8px 4px;
+            flex-shrink: 0;
         }
-
-    .stars {
-        margin: 20px auto 1px;
-    }
-
-    .event-list {
-        list-style: none;
-        font-family: 'Lato', sans-serif;
-        margin: 0px;
-        padding: 0px;
-    }
-
-        .event-list > li {
-            background-color: rgb(255, 255, 255);
-            box-shadow: 0px 0px 5px rgb(51, 51, 51);
-            box-shadow: 0px 0px 5px rgba(51, 51, 51, 0.7);
-            padding: 0px;
-            margin: 0px 0px 20px;
+        .event-date-badge .badge-day {
+            font-size: 30px;
+            font-weight: 700;
+            line-height: 1;
         }
-
-            .event-list > li > time {
-                display: inline-block;
-                width: 100%;
-                color: rgb(255, 255, 255);
-                background-color: rgb(197, 44, 102);
-                padding: 5px;
-                text-align: center;
-                text-transform: uppercase;
-            }
-
-            .event-list > li:nth-child(even) > time {
-                background-color: rgb(165, 82, 167);
-            }
-
-            .event-list > li > time > span {
-                display: none;
-            }
-
-            .event-list > li > time > .day {
-                display: block;
-                font-size: 56pt;
-                font-weight: 100;
-                line-height: 1;
-            }
-
-            .event-list > li time > .month {
-                display: block;
-                font-size: 24pt;
-                font-weight: 900;
-                line-height: 1;
-            }
-
-            .event-list > li > img {
-                width: 100%;
-            }
-
-            .event-list > li > .info {
-                padding-top: 5px;
-                text-align: center;
-            }
-
-                .event-list > li > .info > .title {
-                    font-size: 17pt;
-                    font-weight: 700;
-                    margin: 0px;
-                }
-
-                .event-list > li > .info > .desc {
-                    font-size: 13pt;
-                    font-weight: 300;
-                    margin: 0px;
-                }
-
-                .event-list > li > .info > ul,
-                .event-list > li > .social > ul {
-                    display: table;
-                    list-style: none;
-                    margin: 10px 0px 0px;
-                    padding: 0px;
-                    width: 100%;
-                    text-align: center;
-                }
-
-            .event-list > li > .social > ul {
-                margin: 0px;
-            }
-
-                .event-list > li > .info > ul > li,
-                .event-list > li > .social > ul > li {
-                    display: table-cell;
-                    cursor: pointer;
-                    color: rgb(30, 30, 30);
-                    font-size: 11pt;
-                    font-weight: 300;
-                    padding: 3px 0px;
-                }
-
-                    .event-list > li > .info > ul > li > a {
-                        display: block;
-                        width: 100%;
-                        color: rgb(30, 30, 30);
-                        text-decoration: none;
-                    }
-
-                .event-list > li > .social > ul > li {
-                    padding: 0px;
-                }
-
-                    .event-list > li > .social > ul > li > a {
-                        padding: 3px 0px;
-                    }
-
-                    .event-list > li > .info > ul > li:hover,
-                    .event-list > li > .social > ul > li:hover {
-                        color: rgb(30, 30, 30);
-                        background-color: rgb(200, 200, 200);
-                    }
-
-    .facebook a,
-    .twitter a,
-    .google-plus a {
-        display: block;
-        width: 100%;
-        color: rgb(75, 110, 168) !important;
-    }
-
-    .twitter a {
-        color: rgb(79, 213, 248) !important;
-    }
-
-    .google-plus a {
-        color: rgb(221, 75, 57) !important;
-    }
-
-    .facebook:hover a {
-        color: rgb(255, 255, 255) !important;
-        background-color: rgb(75, 110, 168) !important;
-    }
-
-    .twitter:hover a {
-        color: rgb(255, 255, 255) !important;
-        background-color: rgb(79, 213, 248) !important;
-    }
-
-    .google-plus:hover a {
-        color: rgb(255, 255, 255) !important;
-        background-color: rgb(221, 75, 57) !important;
-    }
-
-    @@media (min-width: 768px) {
-        .event-list > li {
-            position: relative;
-            display: block;
-            width: 100%;
-            height: 120px;
-            padding: 0px;
+        .event-date-badge .badge-month {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            line-height: 1.2;
         }
-
-            .event-list > li > time,
-            .event-list > li > img {
-                display: inline-block;
+        .event-date-badge .badge-year {
+            font-size: 11px;
+            opacity: 0.85;
+            line-height: 1.2;
+        }
+        .event-header-flex {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+        }
+        .event-header-body {
+            flex: 1;
+        }
+        .detail-label {
+            font-weight: 600;
+            color: #555;
+            white-space: nowrap;
+        }
+        @@media (max-width: 767px) {
+            .event-header-flex {
+                flex-direction: column;
             }
-
-            .event-list > li > time,
-            .event-list > li > img {
-                width: 120px;
-                float: left;
-            }
-
-            .event-list > li > .info {
-                background-color: rgb(245, 245, 245);
-                overflow: hidden;
-            }
-
-            .event-list > li > time,
-            .event-list > li > img {
-                width: 120px;
-                height: 120px;
-                padding: 0px;
-                margin: 0px;
-            }
-
-            .event-list > li > .info {
-                position: relative;
-                height: 120px;
-                text-align: left;
-                padding-right: 40px;
-            }
-
-                .event-list > li > .info > .title,
-                .event-list > li > .info > .desc {
-                    padding: 0px 10px;
-                }
-
-                .event-list > li > .info > ul {
-                    position: absolute;
-                    left: 0px;
-                    bottom: 0px;
-                }
-
-            .event-list > li > .social {
-                position: absolute;
-                top: 0px;
-                right: 0px;
-                display: block;
-                width: 40px;
-            }
-
-                .event-list > li > .social > ul {
-                    border-left: 1px solid rgb(230, 230, 230);
-                }
-
-                    .event-list > li > .social > ul > li {
-                        display: block;
-                        padding: 0px;
-                    }
-
-                        .event-list > li > .social > ul > li > a {
-                            display: block;
-                            width: 40px;
-                            padding: 10px 0px 9px;
-                        }
-    }
-</style>
-
-
+        }
+    </style>
+}
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
         <h2>@localizer["CalendarItemHeader"]</h2>
@@ -304,280 +92,281 @@
             </li>
         </ol>
     </div>
-
     <div class="col-sm-8">
         <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
             <div class="buttons-actions">
                 @if (Model.CanEdit && Model.IsRecurrenceParent == false)
                 {
-                    <a asp-controller="Calendar" asp-action="DeleteCalendarItem" asp-route-area="User" asp-route-itemId="@Model.CalendarItem.CalendarItemId" class="btn btn-danger" onclick="return confirm('@localizer["DeleteEventConfirm"]');">@localizer["DeleteEvent"]</a>
+                    <a asp-controller="Calendar" asp-action="DeleteCalendarItem" asp-route-area="User" asp-route-itemId="@Model.CalendarItem.CalendarItemId"
+                       class="btn btn-danger" onclick="return confirm('@localizer["DeleteEventConfirm"]');">
+                        <i class="fa fa-trash"></i> @localizer["DeleteEvent"]
+                    </a>
                 }
                 else if (Model.CanEdit)
                 {
-                    <a asp-controller="Calendar" asp-action="DeleteAllCalendarItems" asp-route-area="User" asp-route-itemId="@Model.CalendarItem.CalendarItemId" class="btn btn-danger" onclick="return confirm('@localizer["DeleteEventOccurrencesConfirm"]');">@localizer["DeleteEventOccurrences"]</a>
+                    <a asp-controller="Calendar" asp-action="DeleteAllCalendarItems" asp-route-area="User" asp-route-itemId="@Model.CalendarItem.CalendarItemId"
+                       class="btn btn-danger" onclick="return confirm('@localizer["DeleteEventOccurrencesConfirm"]');">
+                        <i class="fa fa-trash"></i> @localizer["DeleteEventOccurrences"]
+                    </a>
                 }
-
                 @if (Model.CanEdit)
                 {
-                    <a asp-controller="Calendar" asp-action="Edit" asp-route-area="User" asp-route-id="@Model.CalendarItem.CalendarItemId" id="addPersonButton" class="btn btn-success">@localizer["EditEvent"]</a>
+                    <a asp-controller="Calendar" asp-action="Edit" asp-route-area="User" asp-route-id="@Model.CalendarItem.CalendarItemId"
+                       class="btn btn-success">
+                        <i class="fa fa-pencil"></i> @localizer["EditEvent"]
+                    </a>
                 }
-
                 @if (!string.IsNullOrWhiteSpace(Model.ExportIcsUrl))
                 {
-                    <a href="@Model.ExportIcsUrl" class="btn btn-info"><i class="fa fa-download"></i> @localizer["DownloadIcs"]</a>
+                    <a href="@Model.ExportIcsUrl" class="btn btn-info">
+                        <i class="fa fa-download"></i> @localizer["DownloadIcs"]
+                    </a>
                 }
             </div>
         </div>
     </div>
 </div>
-
-<div class="row">
-    <div class="col-xs-12">
-        <div class="wrapper wrapper-content">
+<div class="wrapper wrapper-content animated fadeInUp">
+    @* Event header *@
+    <div class="row">
+        <div class="col-lg-12">
             <div class="ibox float-e-margins">
+                <div class="ibox-content event-header-panel">
+                    <div class="event-header-flex">
+                        <div class="event-date-badge">
+                            <span class="badge-day">@Model.CalendarItem.Start.TimeConverter(Model.Department).Day</span>
+                            <span class="badge-month">@DateTimeHelpers.MonthToShortString(Model.CalendarItem.Start.TimeConverter(Model.Department).Month)</span>
+                            <span class="badge-year">@Model.CalendarItem.Start.TimeConverter(Model.Department).Year</span>
+                        </div>
+                        <div class="event-header-body">
+                            <h2 class="event-title">@Model.CalendarItem.Title</h2>
+                            <div class="event-meta">
+                                <span class="m-r-md">
+                                    <i class="fa fa-clock-o"></i>
+                                    @if (Model.CalendarItem.IsAllDay)
+                                    {
+                                        if (Model.CalendarItem.IsMultiDay)
+                                        {
+                                            @string.Format(localizer["DateRange"],
+                                                Model.CalendarItem.Start.TimeConverter(Model.Department).ToShortDateString(),
+                                                Model.CalendarItem.End.TimeConverter(Model.Department).ToShortDateString())
+                                        }
+                                        else
+                                        {
+                                            @localizer["AllDayEvent"]
+                                        }
+                                    }
+                                    else
+                                    {
+                                        @Model.CalendarItem.Start.TimeConverter(Model.Department).ToShortTimeString()
+                                        <span> &ndash; </span>
+                                        @Model.CalendarItem.End.TimeConverter(Model.Department).ToShortTimeString()
+                                    }
+                                </span>
+                                @if (!string.IsNullOrWhiteSpace(Model.CalendarItem.Location))
+                                {
+                                    <span class="m-r-md">
+                                        <i class="fa fa-map-marker"></i> @Model.CalendarItem.Location
+                                    </span>
+                                }
+                                @if (Model.CalendarItem.IsAllDay)
+                                {
+                                    <span class="label label-primary">@localizer["AllDayEvent"]</span>
+                                }
+                                @if (Model.IsRecurrenceParent)
+                                {
+                                    <span class="label label-warning m-l-xs"><i class="fa fa-repeat"></i> Recurring</span>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @* Details + Map *@
+    <div class="row">
+        <div class="col-lg-7">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5><i class="fa fa-info-circle"></i> @commonLocalizer["Details"]</h5>
+                </div>
                 <div class="ibox-content">
-                    <div class="row" style="padding-top: 10px;">
-                        <div class="[ col-xs-12 col-sm-offset-2 col-sm-8 ]">
-                            <ul class="event-list">
-                                <li>
-                                    <time datetime="@Model.CalendarItem.Start.TimeConverter(Model.Department).ToShortDateString()">
-                                        <span class="day">@Model.CalendarItem.Start.TimeConverter(Model.Department).Day</span>
-                                        <span class="month">@DateTimeHelpers.MonthToShortString(Model.CalendarItem.Start.TimeConverter(Model.Department).Month)</span>
-                                        <span class="year">@Model.CalendarItem.Start.TimeConverter(Model.Department).Year</span>
-                                        @if (!Model.CalendarItem.IsAllDay)
-                                        {
-                                            <span class="time">@Model.CalendarItem.Start.TimeConverter(Model.Department).ToShortTimeString()</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="time">@localizer["AllDayEvent"]</span>
-                                        }
-                                    </time>
-                                    <div class="info">
-                                        <h2 class="title">@Model.CalendarItem.Title</h2>
-                                        <p class="desc">@Html.Raw(Model.CalendarItem.Description)</p>
-                                        @if (Model.CalendarItem.IsAllDay)
-                                        {
-                                            if (Model.CalendarItem.IsMultiDay)
-                                            {
-                                                <p class="desc">
-                                                    @string.Format(localizer["DateRange"],
-                                                        Model.CalendarItem.Start.TimeConverter(Model.Department).ToShortDateString(),
-                                                        Model.CalendarItem.End.TimeConverter(Model.Department).ToShortDateString())
-                                                </p>
-                                            }
-                                            else
-                                            {
-                                                <p class="desc">@localizer["AllDayEvent"]</p>
-                                            }
-                                        }
-                                        else
-                                        {
-                                            <p class="desc">@Model.CalendarItem.Start.TimeConverter(Model.Department).ToShortTimeString() - @Model.CalendarItem.End.TimeConverter(Model.Department).ToShortTimeString()</p>
-                                        }
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="list-group">
-                                <h3 class="list-group-item-heading">Details</h3>
-                                <div class="list-group-item">
-                                    <div class="row">
-                                        <div class="col-md-6 col-sm-offset-1">
-
-                                            <div class="panel panel-info">
-                                                <div class="panel-body">
-                                                    <div class="row text-center">
-                                                        <table class="table table-bordered table-striped table-hover">
-                                                            <tbody>
-                                                                <tr>
-                                                                    <td>@commonLocalizer["Name"]</td>
-                                                                    <td>@Model.CalendarItem.Title</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>@commonLocalizer["Description"]</td>
-                                                                    <td>@Html.Raw(Model.CalendarItem.Description)</td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>@commonLocalizer["Start"]</td>
-                                                                    <td>
-                                                                        @if (Model.CalendarItem.IsAllDay)
-                                                                        {
-                                                                            @Model.CalendarItem.Start.TimeConverter(Model.Department).ToString("dd MMMM yyyy")
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            @Model.CalendarItem.Start.TimeConverter(Model.Department).ToString("dd MMMM yyyy HH:mm")
-                                                                        }
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>@commonLocalizer["End"]</td>
-                                                                    <td>
-                                                                        @if (Model.CalendarItem.IsAllDay)
-                                                                        {
-                                                                            @Model.CalendarItem.End.TimeConverter(Model.Department).ToString("dd MMMM yyyy")
-                                                                        }
-                                                                        else
-                                                                        {
-                                                                            @Model.CalendarItem.End.TimeConverter(Model.Department).ToString("dd MMMM yyyy HH:mm")
-                                                                        }
-                                                                    </td>
-                                                                </tr>
-                                                                <tr>
-                                                                    <td>@commonLocalizer["Location"]</td>
-                                                                    <td>@Model.CalendarItem.Location</td>
-                                                                </tr>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-md-3">
-                                            <div id="map" name="map" style="position: relative; width: 100%; height: 100%;"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-md-12">
-                            <div class="list-group">
-                                <h3 class="list-group-item-heading">Attendees</h3>
-                                <div class="list-group-item">
-                                    <div class="row">
-                                        <div class="col-md-11 col-sm-offset-1">
-                                            <table class="table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>
-                                                            @commonLocalizer["Name"]
-                                                        </th>
-                                                        <th>
-                                                            @commonLocalizer["Timestamp"]
-                                                        </th>
-                                                        <th>
-                                                            @commonLocalizer["Type"]
-                                                        </th>
-                                                        <th>
-                                                            @commonLocalizer["Note"]
-                                                        </th>
-                                                        <th>
-                                                            @commonLocalizer["Action"]
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach (var attendee in Model.CalendarItem.Attendees)
-                                                    {
-                                                        <tr>
-                                                            <td>
-                                                                @(await UserHelper.GetFullNameForUser(attendee.UserId))
-                                                            </td>
-                                                            <td>
-                                                                @attendee.Timestamp.TimeConverterToString(Model.Department)
-                                                            </td>
-                                                            <td>
-                                                                @if (attendee.AttendeeType == 1)
-                                                                {
-                                                                    <span>@localizer["RSVP"]</span>
-                                                                }
-                                                                else if (attendee.AttendeeType == 1)
-                                                                {
-                                                                    <span>@commonLocalizer["Required"]</span>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <span>@commonLocalizer["Optional"]</span>
-                                                                }
-                                                            </td>
-                                                            <td>
-                                                                @if (!String.IsNullOrWhiteSpace(attendee.Note))
-                                                                {
-                                                                    <span>@attendee.Note</span>
-                                                                }
-                                                                else
-                                                                {
-                                                                    <span>@localizer["NoNote"]</span>
-                                                                }
-                                                            </td>
-                                                            <td>
-                                                                @if (attendee.UserId == ClaimsAuthorizationHelper.GetUserId() && Model.CalendarItem.Start >= DateTime.UtcNow)
-                                                                {
-                                                                    <a title="@localizer["RemoveHelp"]" class="btn btn-xs btn-danger" href="@Url.Action("RemoveFromEvent", "Calendar", new {area = "User", id=attendee.CalendarItemAttendeeId})">@localizer["RemoveMe"]</a>
-                                                                }
-                                                                else if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-                                                                {
-                                                                    <a title="@localizer["RemoveHelp"]" class="btn btn-xs btn-danger" href="@Url.Action("RemoveFromEvent", "Calendar", new {area = "User", id=attendee.CalendarItemAttendeeId})">@commonLocalizer["Remove"]</a>
-                                                                }
-                                                            </td>
-
-
-
-                                                        </tr>
-                                                    }
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    @if (Model.CalendarItem.SignupType != 0 && !Model.CalendarItem.IsUserAttending(Model.UserId) && Model.CalendarItem.Start >= DateTime.UtcNow)
+                    <dl class="dl-horizontal">
+                        <dt class="detail-label">@commonLocalizer["Start"]</dt>
+                        <dd>
+                            @if (Model.CalendarItem.IsAllDay)
+                            {
+                                @Model.CalendarItem.Start.TimeConverter(Model.Department).ToString("dd MMMM yyyy")
+                            }
+                            else
+                            {
+                                @Model.CalendarItem.Start.TimeConverter(Model.Department).ToString("dd MMMM yyyy h:mm tt")
+                            }
+                        </dd>
+                        <dt class="detail-label">@commonLocalizer["End"]</dt>
+                        <dd>
+                            @if (Model.CalendarItem.IsAllDay)
+                            {
+                                @Model.CalendarItem.End.TimeConverter(Model.Department).ToString("dd MMMM yyyy")
+                            }
+                            else
+                            {
+                                @Model.CalendarItem.End.TimeConverter(Model.Department).ToString("dd MMMM yyyy h:mm tt")
+                            }
+                        </dd>
+                        @if (!string.IsNullOrWhiteSpace(Model.CalendarItem.Location))
+                        {
+                            <dt class="detail-label">@commonLocalizer["Location"]</dt>
+                            <dd>@Model.CalendarItem.Location</dd>
+                        }
+                    </dl>
+                    @if (!string.IsNullOrWhiteSpace(Model.CalendarItem.Description))
                     {
-                        <div class="row">
-                            <div class="col-md-12">
-                                <div class="list-group">
-                                    <div class="list-group-item">
-                                        <div class="row">
-                                            <div class="col-md-11 col-sm-offset-1">
-                                                @using (Html.BeginForm("Signup", "Calendar", FormMethod.Post, new { area = "User", @class = "form-horizontal" }))
+                        <hr />
+                        <h4 class="m-t-none m-b-sm">@commonLocalizer["Description"]</h4>
+                        <div class="well well-sm" style="background:#f9f9f9; border:none;">
+                            @Html.Raw(Model.CalendarItem.Description)
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5><i class="fa fa-map-marker"></i> @commonLocalizer["Location"]</h5>
+                </div>
+                <div class="ibox-content" style="padding:0; min-height:220px; overflow:hidden;">
+                    <div id="map" name="map" style="width:100%; height:220px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @* Attendees *@
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5><i class="fa fa-users"></i> Attendees</h5>
+                    <div class="ibox-tools">
+                        <span class="badge">@Model.CalendarItem.Attendees.Count</span>
+                    </div>
+                </div>
+                <div class="ibox-content">
+                    @if (Model.CalendarItem.Attendees.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover no-margins">
+                                <thead>
+                                    <tr>
+                                        <th>@commonLocalizer["Name"]</th>
+                                        <th>@commonLocalizer["Timestamp"]</th>
+                                        <th>@commonLocalizer["Type"]</th>
+                                        <th>@commonLocalizer["Note"]</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var attendee in Model.CalendarItem.Attendees)
+                                    {
+                                        <tr>
+                                            <td>@(await UserHelper.GetFullNameForUser(attendee.UserId))</td>
+                                            <td><small class="text-muted">@attendee.Timestamp.TimeConverterToString(Model.Department)</small></td>
+                                            <td>
+                                                @if (attendee.AttendeeType == 1)
                                                 {
-                                                    @Html.HiddenFor(m => m.CalendarItem.CalendarItemId)
-
-                                                    <div class="form-group">
-                                                        <label class="control-label">
-                                                            @commonLocalizer["Note"]
-                                                        </label>
-                                                        <div class="controls">
-                                                            <div class="row">
-                                                                <div class="col-md-8">
-                                                                    @Html.TextAreaFor(m => m.Note, new { rows = "10", cols = "30", style = "width:450px;height:250px" })
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="form-actions">
-                                                        <input class="btn btn-primary" id="submit_action" name="commit" type="submit" value="@localizer["Signup"]" />
-                                                    </div>
+                                                    <span class="label label-success">@localizer["RSVP"]</span>
                                                 }
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                                                else if (attendee.AttendeeType == 2)
+                                                {
+                                                    <span class="label label-warning">@commonLocalizer["Required"]</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="label label-default">@commonLocalizer["Optional"]</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (!string.IsNullOrWhiteSpace(attendee.Note))
+                                                {
+                                                    <span>@attendee.Note</span>
+                                                }
+                                                else
+                                                {
+                                                    <small class="text-muted">@localizer["NoNote"]</small>
+                                                }
+                                            </td>
+                                            <td class="text-right">
+                                                @if (attendee.UserId == ClaimsAuthorizationHelper.GetUserId() && Model.CalendarItem.Start >= DateTime.UtcNow)
+                                                {
+                                                    <a title="@localizer["RemoveHelp"]" class="btn btn-xs btn-danger"
+                                                       href="@Url.Action("RemoveFromEvent", "Calendar", new { area = "User", id = attendee.CalendarItemAttendeeId })">
+                                                        <i class="fa fa-times"></i> @localizer["RemoveMe"]
+                                                    </a>
+                                                }
+                                                else if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+                                                {
+                                                    <a title="@localizer["RemoveHelp"]" class="btn btn-xs btn-danger"
+                                                       href="@Url.Action("RemoveFromEvent", "Calendar", new { area = "User", id = attendee.CalendarItemAttendeeId })">
+                                                        <i class="fa fa-times"></i> @commonLocalizer["Remove"]
+                                                    </a>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center text-muted" style="padding:30px 0;">
+                            <i class="fa fa-users fa-2x" style="opacity:.3; display:block; margin-bottom:8px;"></i>
+                            No attendees yet.
                         </div>
                     }
                 </div>
             </div>
         </div>
     </div>
+    @* Signup form *@
+    @if (Model.CalendarItem.SignupType != 0 && !Model.CalendarItem.IsUserAttending(Model.UserId) && Model.CalendarItem.Start >= DateTime.UtcNow)
+    {
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5><i class="fa fa-check-square-o"></i> @localizer["Signup"]</h5>
+                    </div>
+                    <div class="ibox-content">
+                        @using (Html.BeginForm("Signup", "Calendar", FormMethod.Post, new { area = "User", @class = "form-horizontal" }))
+                        {
+                            @Html.HiddenFor(m => m.CalendarItem.CalendarItemId)
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">@commonLocalizer["Note"]</label>
+                                <div class="col-sm-9">
+                                    @Html.TextAreaFor(m => m.Note, new { rows = "5", @class = "form-control" })
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-offset-3 col-sm-9">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fa fa-check"></i> @localizer["Signup"]
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 </div>
-
 @section Scripts
 {
     <script type="text/javascript">
         $(document).ready(function () {
-            var marker = null;
-            var map = null;
-
             $.ajax({
                 url: resgrid.absoluteBaseUrl + '/User/Calendar/GetMapDataForItem?calendarItemId=@Model.CalendarItem.CalendarItemId',
                 contentType: 'application/json; charset=utf-8',
@@ -585,7 +374,7 @@
             }).done(function (result) {
                 var data = result;
                 if (data.wasSuccess === true) {
-
+                    // map initialization will go here
                 }
             });
         });

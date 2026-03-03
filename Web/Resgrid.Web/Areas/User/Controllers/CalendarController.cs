@@ -121,6 +121,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ModelState.AddModelError("Item_End", "End date and time cannot be before start date and time.");
 			}
 
+			model.Types = new List<CalendarItemType>();
+			model.Types.Add(new CalendarItemType() {CalendarItemTypeId = 0, Name = "No Type"});
+			model.Types.AddRange(await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId));
+			ViewBag.Types = new SelectList(model.Types, "CalendarItemTypeId", "Name");
+
 			if (ModelState.IsValid)
 			{
 				var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
@@ -149,10 +154,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				return RedirectToAction("Index");
 			}
-
-			model.Types = new List<CalendarItemType>();
-			model.Types.Add(new CalendarItemType() { CalendarItemTypeId = 0, Name = "No Type" });
-			model.Types.AddRange(await _calendarService.GetAllCalendarItemTypesForDepartmentAsync(DepartmentId));
 
 			model.Item.Description = StringHelpers.StripHtmlTagsCharArray(model.Item.Description);
 

@@ -263,15 +263,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 			calendarItem.CalendarItemId = item.CalendarItemId.ToString();
 			calendarItem.Title = item.Title;
 
-			// All-day and multi-day events are date-only concepts. Applying a timezone conversion to a
-			// midnight-UTC value shifts it to the previous day in timezones behind UTC, causing the mobile
-			// app to display events one day early. Return the date portion as UTC midnight so the client
-			// receives the exact calendar date that was stored, without any offset.
+			// All-day and multi-day events are date-only concepts. The Kendo scheduler sends End as
+			// an exclusive next-day midnight boundary (e.g. 3/5 all-day → End stored as 3/6 00:00 UTC).
+			// Subtract one day so the API returns the actual inclusive end date to the client.
+			// item.Start and item.End are stored as UTC; convert to the department's local timezone for display.
 			if (item.IsAllDay || item.IsMultiDay)
 			{
-				calendarItem.Start = DateTime.SpecifyKind(item.Start.Date, DateTimeKind.Utc);
+				var localStart = item.Start.TimeConverter(department);
+				calendarItem.Start = localStart.Date;
 				calendarItem.StartUtc = item.Start;
-				calendarItem.End = DateTime.SpecifyKind(item.End.Date, DateTimeKind.Utc);
+
+				var localEnd = item.End.TimeConverter(department);
+				calendarItem.End = localEnd.TimeOfDay == TimeSpan.Zero
+					? localEnd.Date.AddDays(-1)
+					: localEnd.Date;
 				calendarItem.EndUtc = item.End;
 			}
 			else

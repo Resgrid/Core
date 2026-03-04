@@ -776,6 +776,38 @@
   <data name="ScimSetupResgridEffectColumn" xml:space="preserve">
     <value>Resgrid effect</value>
   </data>
+
+  <!-- SSO / SCIM — Sso.cshtml SCIM section (inline token + API reference) -->
+  <data name="SsoScimSectionHeader" xml:space="preserve"><value>Inicjowanie obsługi SCIM 2.0</value></data>
+  <data name="SsoScimApiReferenceHeader" xml:space="preserve"><value>Dokumentacja API SCIM</value></data>
+  <data name="SsoScimApiReferenceDescription" xml:space="preserve"><value>Dostawca tożsamości wywołuje te punkty końcowe przy użyciu uwierzytelniania HTTP Bearer Token. Każde żądanie musi zawierać nagłówek autoryzacji i nagłówek identyfikatora działu pokazane poniżej.</value></data>
+  <data name="SsoScimEndpointColumn" xml:space="preserve"><value>Punkt końcowy</value></data>
+  <data name="SsoScimMethodColumn" xml:space="preserve"><value>Metoda</value></data>
+  <data name="SsoScimDescriptionColumn" xml:space="preserve"><value>Opis</value></data>
+  <data name="SsoScimBaseUrlLabel" xml:space="preserve"><value>Bazowy adres URL</value></data>
+  <data name="SsoScimAuthHeaderLabel" xml:space="preserve"><value>Nagłówek autoryzacji</value></data>
+  <data name="SsoScimDeptHeaderLabel" xml:space="preserve"><value>Nagłówek działu</value></data>
+  <data name="SsoScimDeptHeaderNote" xml:space="preserve"><value>Wymagany w każdym żądaniu, aby Resgrid mógł kierować do właściwego działu.</value></data>
+  <data name="SsoScimExampleRequestsHeader" xml:space="preserve"><value>Przykładowe żądania</value></data>
+  <data name="SsoScimListUsersDesc" xml:space="preserve"><value>Wylistuj / wyszukaj użytkowników</value></data>
+  <data name="SsoScimGetUserDesc" xml:space="preserve"><value>Pobierz pojedynczego użytkownika po ID SCIM</value></data>
+  <data name="SsoScimCreateUserDesc" xml:space="preserve"><value>Utwórz (zainicjuj) nowego użytkownika</value></data>
+  <data name="SsoScimUpdateUserDesc" xml:space="preserve"><value>Pełna aktualizacja (zastąp wszystkie atrybuty)</value></data>
+  <data name="SsoScimPatchUserDesc" xml:space="preserve"><value>Częściowa aktualizacja (np. dezaktywacja)</value></data>
+  <data name="SsoScimDeleteUserDesc" xml:space="preserve"><value>Usuń / cofnij inicjowanie obsługi użytkownika</value></data>
+  <data name="SsoScimListGroupsDesc" xml:space="preserve"><value>Wylistuj grupy (tylko do odczytu)</value></data>
+  <data name="SsoScimProvisionTokenHeader" xml:space="preserve"><value>Inicjowanie tokenu SCIM</value></data>
+  <data name="SsoScimProvisionTokenDescription" xml:space="preserve"><value>Wygeneruj lub zamień token Bearer używany przez dostawcę tożsamości do uwierzytelniania żądań SCIM. Token jest wyświetlany tylko raz — skopiuj go przed zamknięciem tego okna.</value></data>
+  <data name="SsoScimProvisionTokenButton" xml:space="preserve"><value>Inicjuj token</value></data>
+  <data name="SsoScimRotateTokenButton" xml:space="preserve"><value>Zamień token</value></data>
+  <data name="SsoScimTokenModalTitle" xml:space="preserve"><value>Token Bearer SCIM</value></data>
+  <data name="SsoScimTokenModalWarning" xml:space="preserve"><value>Ten token jest wyświetlany tylko raz i nie można go odzyskać. Skopiuj go teraz i wklej do konfiguracji SCIM dostawcy tożsamości.</value></data>
+  <data name="SsoScimTokenModalRotateConfirm" xml:space="preserve"><value>Zamiana tokenu natychmiast unieważni bieżący token. Każda aktywna synchronizacja SCIM zakończy się niepowodzeniem, dopóki nie zaktualizujesz tokenu w swoim IdP. Kontynuować?</value></data>
+  <data name="SsoScimTokenCopyButton" xml:space="preserve"><value>Kopiuj token</value></data>
+  <data name="SsoScimTokenEncryptedNote" xml:space="preserve"><value>Przechowywany zaszyfrowany w bazie danych Resgrid przy użyciu klucza specyficznego dla działu.</value></data>
+  <data name="SsoScimFullSetupLink" xml:space="preserve"><value>Pełny przewodnik konfiguracji SCIM</value></data>
+  <data name="SsoScimSetupPageNote" xml:space="preserve"><value>Aby uzyskać szczegółowe instrukcje specyficzne dla IdP (Okta, Microsoft Entra ID, Google Workspace) i zarządzanie tokenami, odwiedź stronę konfiguracji SCIM dla każdej konfiguracji.</value></data>
+
   <data name="SecurityPolicyPageTitle" xml:space="preserve">
     <value>Department Security Policy</value>
   </data>

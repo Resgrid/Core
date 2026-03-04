@@ -231,7 +231,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// whether to show the SSO login button, which flow to use (OIDC/SAML), and which
 		/// parameters to pass. Call this before showing the login screen.
 		/// </summary>
-		/// <param name="departmentCode">The department code shown on the department's settings page.</param>
+		/// <param name="departmentToken">An encrypted department token produced by the web UI.</param>
+		/// <param name="departmentCode">The department code (name) shown on the department's settings page.</param>
 		/// <param name="cancellationToken"></param>
 		[HttpGet("sso-config")]
 		[AllowAnonymous]
@@ -292,6 +293,120 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				result.Data.Authority = activeConfig.Authority;
 				result.Data.ClientId = activeConfig.ClientId; // public client ID — safe to expose
+				result.Data.OidcRedirectUri = "resgrid://auth/callback";
+				result.Data.OidcScopes = "openid email profile offline_access";
+			}
+			else if (providerType == SsoProviderType.Saml2)
+			{
+				result.Data.MetadataUrl = activeConfig.MetadataUrl;
+				result.Data.EntityId = activeConfig.EntityId;
+			}
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Returns the SSO configuration for a user's department, resolved by username.
+		/// Intended for the mobile app pre-login screen — call this with just a username
+		/// to discover whether SSO is required before the user enters credentials.
+		/// If <paramref name="departmentId"/> is supplied the lookup is scoped to that
+		/// specific department; otherwise the user's default/active department is used.
+		/// No credentials are required — this endpoint is public (anonymous).
+		/// </summary>
+		/// <param name="username">The user's Resgrid username (or email address).</param>
+		/// <param name="departmentId">
+		/// Optional. When the user belongs to multiple departments, pass this to select
+		/// the specific department whose SSO configuration should be returned.
+		/// </param>
+		/// <param name="cancellationToken"></param>
+		[HttpGet("sso-config-for-user")]
+		[AllowAnonymous]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[Produces("application/json")]
+		public async Task<ActionResult<GetDepartmentSsoConfigResult>> GetSsoConfigForUser(
+			[FromQuery] string username,
+			[FromQuery] int? departmentId,
+			CancellationToken cancellationToken)
+		{
+			var result = new GetDepartmentSsoConfigResult();
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			if (string.IsNullOrWhiteSpace(username))
+			{
+				result.Status = ResponseHelper.Failure;
+				result.PageSize = 0;
+				return BadRequest(result);
+			}
+
+			// Resolve user by username (also supports email as username)
+			var user = await _userManager.FindByNameAsync(username)
+				?? await _userManager.FindByEmailAsync(username);
+
+			if (user == null)
+			{
+				// Return a "no SSO" response without leaking whether the account exists
+				result.Status = ResponseHelper.Success;
+				result.PageSize = 1;
+				result.Data.SsoEnabled = false;
+				result.Data.AllowLocalLogin = true;
+				return Ok(result);
+			}
+
+			Model.Department department;
+
+			if (departmentId.HasValue)
+			{
+				// Caller specified a department — verify the user is actually a member
+				var allMemberships = await _departmentsService.GetAllDepartmentsForUserAsync(user.Id);
+				var membership = allMemberships?.FirstOrDefault(m => m.DepartmentId == departmentId.Value);
+
+				department = membership != null
+					? await _departmentsService.GetDepartmentByIdAsync(departmentId.Value)
+					: null;
+			}
+			else
+			{
+				// No department hint — use the user's default/active department
+				department = await _departmentsService.GetDepartmentByUserIdAsync(user.Id);
+			}
+
+			if (department == null)
+			{
+				ResponseHelper.PopulateV4ResponseNotFound(result);
+				return NotFound(result);
+			}
+
+			// Load SSO configs and security policy — reuse same logic as GetSsoConfig
+			var ssoConfigs = await _departmentSsoService.GetSsoConfigsForDepartmentAsync(department.DepartmentId, cancellationToken);
+			var activeConfig = ssoConfigs?.FirstOrDefault(c => c.IsEnabled);
+			var policy = await _departmentSsoService.GetSecurityPolicyForDepartmentAsync(department.DepartmentId, cancellationToken);
+
+			result.Status = ResponseHelper.Success;
+			result.PageSize = 1;
+
+			if (activeConfig == null)
+			{
+				result.Data.SsoEnabled = false;
+				result.Data.AllowLocalLogin = true;
+				result.Data.RequireSso = false;
+				result.Data.RequireMfa = policy?.RequireMfa ?? false;
+				return Ok(result);
+			}
+
+			var providerType = (SsoProviderType)activeConfig.SsoProviderType;
+
+			result.Data.SsoEnabled = true;
+			result.Data.ProviderType = providerType.ToString().ToLowerInvariant();
+			result.Data.AllowLocalLogin = activeConfig.AllowLocalLogin;
+			result.Data.RequireSso = policy?.RequireSso ?? false;
+			result.Data.RequireMfa = policy?.RequireMfa ?? false;
+
+			if (providerType == SsoProviderType.Oidc)
+			{
+				result.Data.Authority = activeConfig.Authority;
+				result.Data.ClientId = activeConfig.ClientId;
 				result.Data.OidcRedirectUri = "resgrid://auth/callback";
 				result.Data.OidcScopes = "openid email profile offline_access";
 			}

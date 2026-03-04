@@ -1,4 +1,4 @@
-﻿namespace Resgrid.Model
+﻿﻿namespace Resgrid.Model
 {
 	public enum AuditLogTypes
 	{
@@ -93,6 +93,12 @@
 		// SCIM 2.0
 		ScimUserCreated,
 		ScimUserUpdated,
-		ScimUserDeactivated
+		ScimUserDeactivated,
+		ScimUserDeleted,
+		ScimAuthFailed,
+		ScimUserReactivated,
+		ScimGroupListed,
+		ScimUserListed,
+		ScimUserRetrieved
 	}
 }

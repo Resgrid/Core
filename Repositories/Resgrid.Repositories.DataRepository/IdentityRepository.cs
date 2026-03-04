@@ -223,7 +223,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
 				{
-					return db.Query<IdentityUser>(@"SELECT m.* FROM aspnetusers m	
+					return db.Query<IdentityUser>(@"SELECT m.* FROM aspnetusers m
 																						INNER JOIN departmentmembers dm ON dm.userid = m.id
 																						WHERE dm.departmentid = @departmentId AND dm.isdeleted = false", new { departmentId = departmentId }).ToList();
 				}
@@ -232,7 +232,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
-					return db.Query<IdentityUser>(@"SELECT m.* FROM AspNetUsers m	
+					return db.Query<IdentityUser>(@"SELECT m.* FROM AspNetUsers m
 																						INNER JOIN DepartmentMembers dm ON dm.UserId = m.Id
 																						WHERE dm.DepartmentId = @departmentId AND dm.IsDeleted = 0", new { departmentId = departmentId }).ToList();
 				}
@@ -271,7 +271,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
 				{
-					return db.Query<IdentityUser>(@"SELECT u.* 
+					return db.Query<IdentityUser>(@"SELECT u.*
                                                 FROM aspnetusers u
                                                 INNER JOIN departmentgroupmembers dgm ON u.id = dgm.userid
                                                 INNER JOIN departmentmembers dm ON u.id = dm.userid
@@ -283,7 +283,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
-					return db.Query<IdentityUser>(@"SELECT u.* 
+					return db.Query<IdentityUser>(@"SELECT u.*
 												FROM AspNetUsers u
 												INNER JOIN DepartmentGroupMembers dgm ON u.Id = dgm.UserId
 												INNER JOIN DepartmentMembers dm ON u.Id = dm.UserId
@@ -301,7 +301,7 @@ namespace Resgrid.Repositories.DataRepository
 				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
 				{
 					return db.Query<IdentityUser>(@"SELECT u.* FROM aspnetusers u
-												INNER JOIN departmentmembers dm ON dm.userid = u.id 
+												INNER JOIN departmentmembers dm ON dm.userid = u.id
 												WHERE dm.departmentid = @departmentId AND dm.isdeleted = false AND (@retrieveHidden = true OR (dm.ishidden = false OR dm.ishidden IS NULL)) AND (dm.isdisabled = false OR dm.isdisabled IS NULL)",
 								new { departmentId = departmentId, retrieveHidden = retrieveHidden }).ToList();
 				}
@@ -311,7 +311,7 @@ namespace Resgrid.Repositories.DataRepository
 				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
 					return db.Query<IdentityUser>(@"SELECT u.* FROM AspNetUsers u
-												INNER JOIN DepartmentMembers dm ON dm.UserId = u.Id 
+												INNER JOIN DepartmentMembers dm ON dm.UserId = u.Id
 												WHERE dm.DepartmentId = @departmentId AND dm.IsDeleted = 0 AND (@retrieveHidden = 1 OR (dm.IsHidden = 0 OR dm.IsHidden IS NULL)) AND (dm.IsDisabled = 0 OR dm.IsDisabled IS NULL)",
 								new { departmentId = departmentId, retrieveHidden = retrieveHidden }).ToList();
 				}
@@ -327,7 +327,7 @@ namespace Resgrid.Repositories.DataRepository
 				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
 				{
 					var result = await db.QueryAsync<IdentityUser>(@"SELECT u.* FROM aspnetusers u
-												INNER JOIN departmentmembers dm ON dm.userid = u.id 
+												INNER JOIN departmentmembers dm ON dm.userid = u.id
 												WHERE dm.departmentid = @departmentId AND dm.isdeleted = false AND (@retrieveHidden = true OR (dm.ishidden = false OR dm.ishidden IS NULL)) AND (dm.isdisabled = false OR dm.isdisabled IS NULL)",
 						new { departmentId = departmentId, retrieveHidden = retrieveHidden });
 
@@ -339,7 +339,7 @@ namespace Resgrid.Repositories.DataRepository
 				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
 					var result = await db.QueryAsync<IdentityUser>(@"SELECT u.* FROM AspNetUsers u
-												INNER JOIN DepartmentMembers dm ON dm.UserId = u.Id 
+												INNER JOIN DepartmentMembers dm ON dm.UserId = u.Id
 												WHERE dm.DepartmentId = @departmentId AND dm.IsDeleted = 0 AND (@retrieveHidden = 1 OR (dm.IsHidden = 0 OR dm.IsHidden IS NULL)) AND (dm.IsDisabled = 0 OR dm.IsDisabled IS NULL)",
 						new { departmentId = departmentId, retrieveHidden = retrieveHidden });
 
@@ -412,7 +412,7 @@ namespace Resgrid.Repositories.DataRepository
 												(SELECT STUFF((
 														SELECT ', ' +  CONVERT(varchar, pr.Name)
 														FROM PersonnelRoleUsers pru
-														INNER JOIN PersonnelRoles pr ON pr.PersonnelRoleId = pru.PersonnelRoleId 
+														INNER JOIN PersonnelRoles pr ON pr.PersonnelRoleId = pru.PersonnelRoleId
 														WHERE pru.UserId = u.Id AND pru.DepartmentId = @departmentId
 														FOR XML PATH(''), TYPE).value('.', 'NVARCHAR(MAX)'), 1, 1, '')) as 'RoleNames',
 												dg.Name as 'DepartmentGroupName',
@@ -436,7 +436,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				using (IDbConnection db = new NpgsqlConnection(OidcConfig.ConnectionString))
 				{
-					var result = await db.ExecuteAsync(@"DELETE FROM public.openiddicttokens WHERE expirationdate < @timestamp",
+					var result = await db.ExecuteAsync(@"DELETE FROM ""OpenIddictTokens"" WHERE ""ExpirationDate"" < @timestamp",
 									new { timestamp = timestamp });
 				}
 			}
@@ -461,7 +461,7 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					var result = await db.ExecuteAsync(@"UPDATE public.aspnetusers
 													 SET username = @deleteid,
-													 email = @deleteid + '@resgrid.del' 
+													 email = @deleteid + '@resgrid.del'
 													 WHERE id = @userId",
 									new { userId = userId, deleteid = Guid.NewGuid().ToString() });
 				}
@@ -472,7 +472,7 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					var result = await db.ExecuteAsync(@"UPDATE AspNetUsers
 													 SET UserName = @deleteid,
-													 Email = @deleteid + '@resgrid.del' 
+													 Email = @deleteid + '@resgrid.del'
 													 WHERE Id = @userId",
 									new { userId = userId, deleteid = Guid.NewGuid().ToString() });
 				}
@@ -487,7 +487,7 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				using (IDbConnection db = new NpgsqlConnection(OidcConfig.ConnectionString))
 				{
-					var result = await db.ExecuteAsync(@"DELETE FROM public.openiddicttokens WHERE subject = @userId",
+					var result = await db.ExecuteAsync(@"DELETE FROM ""OpenIddictTokens"" WHERE ""Subject"" = @userId",
 									new { userId = userId });
 				}
 			}

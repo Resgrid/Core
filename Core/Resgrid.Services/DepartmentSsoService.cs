@@ -259,6 +259,47 @@ namespace Resgrid.Services
 			}
 		}
 
+		/// <summary>
+		/// Validates the SCIM bearer token against the claimed department and returns the
+		/// owning department ID on success. The returned value is always equal to
+		/// <paramref name="claimedDepartmentId"/> when valid, allowing the controller to
+		/// confirm the token genuinely belongs to that department.
+		/// Returns null when the token is missing, invalid, or belongs to a different department.
+		/// </summary>
+		public async Task<int?> ValidateScimBearerTokenAndGetDepartmentAsync(string bearerToken, int claimedDepartmentId, string departmentCode, CancellationToken cancellationToken = default)
+		{
+			try
+			{
+				if (string.IsNullOrWhiteSpace(bearerToken))
+					return null;
+
+				var configs = await _ssoConfigRepository.GetAllByDepartmentIdAsync(claimedDepartmentId);
+				var scimConfig = configs?.FirstOrDefault(c => c.ScimEnabled && !string.IsNullOrWhiteSpace(c.EncryptedScimBearerToken));
+				if (scimConfig == null)
+					return null;
+
+				// The config was loaded specifically for claimedDepartmentId, so if
+				// the decrypted token matches we know it belongs to that department.
+				var storedToken = _encryptionService.DecryptForDepartment(
+					scimConfig.EncryptedScimBearerToken, claimedDepartmentId, departmentCode);
+
+				if (!string.Equals(storedToken, bearerToken, StringComparison.Ordinal))
+					return null;
+
+				// Double-check: the config's own DepartmentId must equal the claimed ID.
+				// This guards against any accidental data inconsistency.
+				if (scimConfig.DepartmentId != claimedDepartmentId)
+					return null;
+
+				return scimConfig.DepartmentId;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return null;
+			}
+		}
+
 		// ── Optional-feature guards ────────────────────────────────────────────
 
 		public async Task<bool> IsSsoEnabledForDepartmentAsync(int departmentId, CancellationToken cancellationToken = default)

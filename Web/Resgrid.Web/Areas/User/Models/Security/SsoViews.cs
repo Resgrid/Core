@@ -17,6 +17,12 @@ namespace Resgrid.Web.Areas.User.Models.Security
 		public string ScimBaseUrl { get; set; }
 		public string ApiBaseUrl { get; set; }
 		public string SsoDiscoveryUrl { get; set; }
+		/// <summary>Numeric department identifier, used when displaying SCIM API usage examples.</summary>
+		public int DepartmentId { get; set; }
+		/// <summary>One-time plaintext SCIM bearer token shown immediately after generation/rotation on this page.</summary>
+		public string NewScimBearerToken { get; set; }
+		/// <summary>ID of the SSO config whose token was just generated, so the UI can scroll/highlight it.</summary>
+		public string NewScimConfigId { get; set; }
 	}
 
 	public class SsoConfigRowView

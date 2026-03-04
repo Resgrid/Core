@@ -12,7 +12,7 @@
     "Resgrid.Web.ServicesCore": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/v3/Health/GetCurrent",
+      "launchUrl": "api/v4/Health/GetCurrent",
       "environmentVariables": {
         "RESGRID__SystemBehaviorConfig__ResgridBaseUrl": "https://localhost:5002",
         "ASPNETCORE_ENVIRONMENT": "Development"
@@ -22,7 +22,7 @@
     "Docker": {
       "commandName": "Docker",
       "launchBrowser": true,
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/api/v3/Health/GetCurrent",
+      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/api/v4/Health/GetCurrent",
       "publishAllPorts": true,
       "useSSL": true
     }

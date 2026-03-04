@@ -776,6 +776,38 @@
   <data name="ScimSetupResgridEffectColumn" xml:space="preserve">
     <value>Resgrid effect</value>
   </data>
+
+  <!-- SSO / SCIM — Sso.cshtml SCIM section (inline token + API reference) -->
+  <data name="SsoScimSectionHeader" xml:space="preserve"><value>Підготовка SCIM 2.0</value></data>
+  <data name="SsoScimApiReferenceHeader" xml:space="preserve"><value>Довідник API SCIM</value></data>
+  <data name="SsoScimApiReferenceDescription" xml:space="preserve"><value>Ваш постачальник ідентифікаційних даних викликає ці кінцеві точки за допомогою автентифікації HTTP Bearer Token. Усі запити повинні містити заголовок авторизації та заголовок ідентифікатора відділу, наведені нижче.</value></data>
+  <data name="SsoScimEndpointColumn" xml:space="preserve"><value>Кінцева точка</value></data>
+  <data name="SsoScimMethodColumn" xml:space="preserve"><value>Метод</value></data>
+  <data name="SsoScimDescriptionColumn" xml:space="preserve"><value>Опис</value></data>
+  <data name="SsoScimBaseUrlLabel" xml:space="preserve"><value>Базова URL-адреса</value></data>
+  <data name="SsoScimAuthHeaderLabel" xml:space="preserve"><value>Заголовок авторизації</value></data>
+  <data name="SsoScimDeptHeaderLabel" xml:space="preserve"><value>Заголовок відділу</value></data>
+  <data name="SsoScimDeptHeaderNote" xml:space="preserve"><value>Обов'язковий у кожному запиті, щоб Resgrid міг направляти до правильного відділу.</value></data>
+  <data name="SsoScimExampleRequestsHeader" xml:space="preserve"><value>Приклади запитів</value></data>
+  <data name="SsoScimListUsersDesc" xml:space="preserve"><value>Список / пошук користувачів</value></data>
+  <data name="SsoScimGetUserDesc" xml:space="preserve"><value>Отримати одного користувача за SCIM ID</value></data>
+  <data name="SsoScimCreateUserDesc" xml:space="preserve"><value>Створити (підготувати) нового користувача</value></data>
+  <data name="SsoScimUpdateUserDesc" xml:space="preserve"><value>Повне оновлення (замінити всі атрибути)</value></data>
+  <data name="SsoScimPatchUserDesc" xml:space="preserve"><value>Часткове оновлення (наприклад, деактивувати)</value></data>
+  <data name="SsoScimDeleteUserDesc" xml:space="preserve"><value>Видалити / скасувати підготовку користувача</value></data>
+  <data name="SsoScimListGroupsDesc" xml:space="preserve"><value>Список груп (лише читання)</value></data>
+  <data name="SsoScimProvisionTokenHeader" xml:space="preserve"><value>Підготувати токен SCIM</value></data>
+  <data name="SsoScimProvisionTokenDescription" xml:space="preserve"><value>Згенеруйте або поверніть Bearer Token, який ваш постачальник ідентифікаційних даних використовує для автентифікації запитів SCIM. Токен відображається лише один раз — скопіюйте його до закриття цього діалогу.</value></data>
+  <data name="SsoScimProvisionTokenButton" xml:space="preserve"><value>Підготувати токен</value></data>
+  <data name="SsoScimRotateTokenButton" xml:space="preserve"><value>Ротація токена</value></data>
+  <data name="SsoScimTokenModalTitle" xml:space="preserve"><value>SCIM Bearer Token</value></data>
+  <data name="SsoScimTokenModalWarning" xml:space="preserve"><value>Цей токен відображається лише один раз і не може бути відновлений. Скопіюйте його зараз і вставте в конфігурацію SCIM вашого постачальника ідентифікаційних даних.</value></data>
+  <data name="SsoScimTokenModalRotateConfirm" xml:space="preserve"><value>Ротація токена негайно анулює поточний токен. Будь-яка активна синхронізація SCIM буде невдалою, поки ви не оновите токен у своєму IdP. Продовжити?</value></data>
+  <data name="SsoScimTokenCopyButton" xml:space="preserve"><value>Копіювати токен</value></data>
+  <data name="SsoScimTokenEncryptedNote" xml:space="preserve"><value>Зберігається у зашифрованому вигляді в базі даних Resgrid з вашим ключем, специфічним для відділу.</value></data>
+  <data name="SsoScimFullSetupLink" xml:space="preserve"><value>Повний посібник з налаштування SCIM</value></data>
+  <data name="SsoScimSetupPageNote" xml:space="preserve"><value>Для покрокових інструкцій, специфічних для вашого IdP (Okta, Microsoft Entra ID, Google Workspace), та керування токенами відвідайте сторінку налаштування SCIM для кожної конфігурації.</value></data>
+
   <data name="SecurityPolicyPageTitle" xml:space="preserve">
     <value>Department Security Policy</value>
   </data>

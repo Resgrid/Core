@@ -404,7 +404,7 @@ namespace Resgrid.Workers.Console
 				using (var scope = serviceProvider.CreateScope())
 				{
 					UpdateDatabase(scope.ServiceProvider);
-					await UpdateOidcDatabaseAsync(scope.ServiceProvider);
+					await UpdateOidcDatabaseAsync(logger, scope.ServiceProvider);
 				}
 
 				_logger.Log(LogLevel.Information, "Completed updating the Resgrid Database!");
@@ -432,10 +432,22 @@ namespace Resgrid.Workers.Console
 		/// <summary>
 		/// Update the database
 		/// </summary>
-		private static async Task UpdateOidcDatabaseAsync(IServiceProvider serviceProvider)
+		private static async Task UpdateOidcDatabaseAsync(ILogger<Program> logger, IServiceProvider serviceProvider)
 		{
-			var oidcRepository = Bootstrapper.GetKernel().Resolve<IOidcRepository>();
-			bool result = await oidcRepository.UpdateOidcDatabaseAsync();
+			logger.Log(LogLevel.Information, "Starting OIDC Database Upgrade");
+
+			try
+			{
+				var oidcRepository = Bootstrapper.GetKernel().Resolve<IOidcRepository>();
+				bool result = await oidcRepository.UpdateOidcDatabaseAsync();
+			}
+			catch (Exception ex)
+			{
+				logger.Log(LogLevel.Information, "There was an error trying to update the Resgrid Database, see the error output below:");
+				logger.Log(LogLevel.Information, ex.ToString());
+			}
+
+			logger.Log(LogLevel.Information, "Completed updating the OIDC Database!");
 		}
 
 		private static IServiceProvider CreateServices()

@@ -776,6 +776,38 @@
   <data name="ScimSetupResgridEffectColumn" xml:space="preserve">
     <value>Resgrid effect</value>
   </data>
+
+  <!-- SSO / SCIM — Sso.cshtml SCIM section (inline token + API reference) -->
+  <data name="SsoScimSectionHeader" xml:space="preserve"><value>Approvisionnement SCIM 2.0</value></data>
+  <data name="SsoScimApiReferenceHeader" xml:space="preserve"><value>Référence API SCIM</value></data>
+  <data name="SsoScimApiReferenceDescription" xml:space="preserve"><value>Votre fournisseur d'identité appelle ces points de terminaison en utilisant l'authentification par jeton HTTP Bearer. Toutes les requêtes doivent inclure l'en-tête d'autorisation et l'en-tête d'identifiant de département indiqués ci-dessous.</value></data>
+  <data name="SsoScimEndpointColumn" xml:space="preserve"><value>Point de terminaison</value></data>
+  <data name="SsoScimMethodColumn" xml:space="preserve"><value>Méthode</value></data>
+  <data name="SsoScimDescriptionColumn" xml:space="preserve"><value>Description</value></data>
+  <data name="SsoScimBaseUrlLabel" xml:space="preserve"><value>URL de base</value></data>
+  <data name="SsoScimAuthHeaderLabel" xml:space="preserve"><value>En-tête d'autorisation</value></data>
+  <data name="SsoScimDeptHeaderLabel" xml:space="preserve"><value>En-tête de département</value></data>
+  <data name="SsoScimDeptHeaderNote" xml:space="preserve"><value>Requis sur chaque requête pour que Resgrid puisse router vers le bon département.</value></data>
+  <data name="SsoScimExampleRequestsHeader" xml:space="preserve"><value>Exemples de requêtes</value></data>
+  <data name="SsoScimListUsersDesc" xml:space="preserve"><value>Lister / rechercher des utilisateurs</value></data>
+  <data name="SsoScimGetUserDesc" xml:space="preserve"><value>Obtenir un utilisateur par ID SCIM</value></data>
+  <data name="SsoScimCreateUserDesc" xml:space="preserve"><value>Créer (approvisionner) un nouvel utilisateur</value></data>
+  <data name="SsoScimUpdateUserDesc" xml:space="preserve"><value>Mise à jour complète (remplacer tous les attributs)</value></data>
+  <data name="SsoScimPatchUserDesc" xml:space="preserve"><value>Mise à jour partielle (p. ex. désactiver)</value></data>
+  <data name="SsoScimDeleteUserDesc" xml:space="preserve"><value>Supprimer / déprovisionner un utilisateur</value></data>
+  <data name="SsoScimListGroupsDesc" xml:space="preserve"><value>Lister les groupes (lecture seule)</value></data>
+  <data name="SsoScimProvisionTokenHeader" xml:space="preserve"><value>Approvisionner le jeton SCIM</value></data>
+  <data name="SsoScimProvisionTokenDescription" xml:space="preserve"><value>Générez ou faites pivoter le jeton Bearer que votre fournisseur d'identité utilise pour authentifier les requêtes SCIM. Le jeton n'est affiché qu'une seule fois — copiez-le avant de fermer cette boîte de dialogue.</value></data>
+  <data name="SsoScimProvisionTokenButton" xml:space="preserve"><value>Approvisionner le jeton</value></data>
+  <data name="SsoScimRotateTokenButton" xml:space="preserve"><value>Faire pivoter le jeton</value></data>
+  <data name="SsoScimTokenModalTitle" xml:space="preserve"><value>Jeton Bearer SCIM</value></data>
+  <data name="SsoScimTokenModalWarning" xml:space="preserve"><value>Ce jeton n'est affiché qu'une seule fois et ne peut pas être récupéré. Copiez-le maintenant et collez-le dans la configuration SCIM de votre fournisseur d'identité.</value></data>
+  <data name="SsoScimTokenModalRotateConfirm" xml:space="preserve"><value>La rotation du jeton invalidera immédiatement le jeton actuel. Toute synchronisation SCIM active échouera jusqu'à ce que vous mettiez à jour le jeton dans votre IdP. Continuer ?</value></data>
+  <data name="SsoScimTokenCopyButton" xml:space="preserve"><value>Copier le jeton</value></data>
+  <data name="SsoScimTokenEncryptedNote" xml:space="preserve"><value>Stocké chiffré dans la base de données Resgrid avec votre clé spécifique au département.</value></data>
+  <data name="SsoScimFullSetupLink" xml:space="preserve"><value>Guide de configuration SCIM complet</value></data>
+  <data name="SsoScimSetupPageNote" xml:space="preserve"><value>Pour des instructions étape par étape spécifiques à votre IdP (Okta, Microsoft Entra ID, Google Workspace) et la gestion des jetons, consultez la page de configuration SCIM pour chaque configuration.</value></data>
+
   <data name="SecurityPolicyPageTitle" xml:space="preserve">
     <value>Department Security Policy</value>
   </data>

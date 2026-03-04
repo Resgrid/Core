@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -855,6 +855,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+		[RequiresRecentTwoFactor]
 		public async Task<IActionResult> GenerateScimTokenFromSso(string id, CancellationToken cancellationToken)
 		{
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
@@ -871,6 +872,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			System.Security.Cryptography.RandomNumberGenerator.Fill(tokenBytes);
 			var newToken = Convert.ToBase64String(tokenBytes);
 
+			var hadExistingToken = !string.IsNullOrWhiteSpace(config.EncryptedScimBearerToken);
+
 			config.EncryptedScimBearerToken = newToken;
 			config.ScimEnabled = true;
 			config.UpdatedByUserId = UserId;
@@ -879,6 +882,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 			config.EncryptedSigningCertificate = null;
 
 			await _ssoService.SaveSsoConfigAsync(config, department.Code, cancellationToken);
+
+			var scimTokenAuditEvent = new AuditEvent();
+			scimTokenAuditEvent.DepartmentId = DepartmentId;
+			scimTokenAuditEvent.UserId = UserId;
+			scimTokenAuditEvent.Type = hadExistingToken ? AuditLogTypes.ScimBearerTokenRotated : AuditLogTypes.ScimBearerTokenProvisioned;
+			scimTokenAuditEvent.Successful = true;
+			scimTokenAuditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+			scimTokenAuditEvent.ServerName = Environment.MachineName;
+			scimTokenAuditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+			scimTokenAuditEvent.After = System.Text.Json.JsonSerializer.Serialize(new
+			{
+				DepartmentSsoConfigId = id,
+				DepartmentId,
+				DepartmentCode = department.Code,
+				Action = hadExistingToken ? "ScimBearerTokenRotated" : "ScimBearerTokenProvisioned"
+			});
+			_eventAggregator.SendMessage<AuditEvent>(scimTokenAuditEvent);
 
 			// Reload all configs so the page is fully up-to-date
 			configs = await _ssoService.GetSsoConfigsForDepartmentAsync(DepartmentId, cancellationToken);

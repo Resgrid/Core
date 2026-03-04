@@ -418,6 +418,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return false;
 			}
 
+			// If the request targets a specific user, confirm that user is a member of the department.
+			if (!string.IsNullOrEmpty(targetUserId))
+			{
+				var isMember = await _departmentsService.IsMemberOfDepartmentAsync(departmentId, targetUserId);
+				if (!isMember)
+				{
+					await SaveScimAuditAsync(departmentId, targetUserId, AuditLogTypes.ScimAuthFailed,
+						successful: false,
+						data: $"targetUserId={targetUserId} is not a member of dept={departmentId} or does not exist");
+					return false;
+				}
+			}
+
 			return true;
 		}
 

@@ -411,8 +411,8 @@ namespace Resgrid.Workers.Console
 			}
 			catch (Exception ex)
 			{
-				_logger.Log(LogLevel.Information, "There was an error trying to update the Resgrid Database, see the error output below:");
-				_logger.Log(LogLevel.Information, ex.ToString());
+				_logger.Log(LogLevel.Error, ex, "There was an error trying to update the Resgrid Database.");
+				Environment.Exit(1);
 			}
 
 		}
@@ -440,14 +440,17 @@ namespace Resgrid.Workers.Console
 			{
 				var oidcRepository = Bootstrapper.GetKernel().Resolve<IOidcRepository>();
 				bool result = await oidcRepository.UpdateOidcDatabaseAsync();
+
+				if (result)
+					logger.Log(LogLevel.Information, "Completed updating the OIDC Database!");
+				else
+					logger.Log(LogLevel.Warning, "UpdateOidcDatabaseAsync returned false; the OIDC database may not have been fully updated.");
 			}
 			catch (Exception ex)
 			{
-				logger.Log(LogLevel.Information, "There was an error trying to update the Resgrid Database, see the error output below:");
-				logger.Log(LogLevel.Information, ex.ToString());
+				logger.Log(LogLevel.Error, ex, "There was an error trying to update the OIDC Database.");
+				throw;
 			}
-
-			logger.Log(LogLevel.Information, "Completed updating the OIDC Database!");
 		}
 
 		private static IServiceProvider CreateServices()

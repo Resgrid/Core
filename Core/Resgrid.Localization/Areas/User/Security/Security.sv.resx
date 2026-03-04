@@ -789,6 +789,10 @@
   <data name="SsoScimDeptHeaderLabel" xml:space="preserve"><value>Avdelningsrubrik</value></data>
   <data name="SsoScimDeptHeaderNote" xml:space="preserve"><value>Krävs i varje förfrågan så att Resgrid kan dirigera till rätt avdelning.</value></data>
   <data name="SsoScimExampleRequestsHeader" xml:space="preserve"><value>Exempelförfrågningar</value></data>
+  <data name="SsoScimExampleListUsers" xml:space="preserve"><value>Lista användare (GET)</value></data>
+  <data name="SsoScimExampleProvisionUser" xml:space="preserve"><value>Etablera en användare (POST)</value></data>
+  <data name="SsoScimExampleDeactivateUser" xml:space="preserve"><value>Inaktivera en användare (PATCH)</value></data>
+  <data name="SsoScimExampleFullUpdate" xml:space="preserve"><value>Fullständig uppdatering (PUT)</value></data>
   <data name="SsoScimListUsersDesc" xml:space="preserve"><value>Lista / sök användare</value></data>
   <data name="SsoScimGetUserDesc" xml:space="preserve"><value>Hämta en enskild användare via SCIM-ID</value></data>
   <data name="SsoScimCreateUserDesc" xml:space="preserve"><value>Skapa (etablera) en ny användare</value></data>

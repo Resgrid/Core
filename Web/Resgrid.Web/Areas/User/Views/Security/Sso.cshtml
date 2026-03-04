@@ -204,13 +204,13 @@
                     <h5 class="m-t-none"><i class="fa fa-code"></i> @localizer["SsoScimExampleRequestsHeader"]</h5>
                     <div class="row">
                         <div class="col-md-6">
-                            <p><strong>List users (GET)</strong></p>
+                            <p><strong>@localizer["SsoScimExampleListUsers"]</strong></p>
                             <pre class="pre-scrollable small">GET @(Model.ScimBaseUrl)/Users?startIndex=1&amp;count=10
 Authorization: Bearer &lt;your-scim-token&gt;
 @(Resgrid.Config.SsoConfig.ScimDepartmentIdHeaderName): @Model.DepartmentId</pre>
                         </div>
                         <div class="col-md-6">
-                            <p><strong>Provision a user (POST)</strong></p>
+                            <p><strong>@localizer["SsoScimExampleProvisionUser"]</strong></p>
                             <pre class="pre-scrollable small">POST @(Model.ScimBaseUrl)/Users
 Authorization: Bearer &lt;your-scim-token&gt;
 @(Resgrid.Config.SsoConfig.ScimDepartmentIdHeaderName): @Model.DepartmentId
@@ -218,16 +218,16 @@ Content-Type: application/scim+json
 
 {
   "schemas": ["urn:ietf:params:scim:schemas:core:2.0:User"],
-  "userName": "jane.doe@@example.com",
+  "userName": "jane.doe@example.com",
   "name": { "givenName": "Jane", "familyName": "Doe" },
-  "emails": [{ "value": "jane.doe@@example.com", "primary": true }],
+  "emails": [{ "value": "jane.doe@example.com", "primary": true }],
   "active": true
 }</pre>
                         </div>
                     </div>
                     <div class="row m-t-sm">
                         <div class="col-md-6">
-                            <p><strong>Deactivate a user (PATCH)</strong></p>
+                            <p><strong>@localizer["SsoScimExampleDeactivateUser"]</strong></p>
                             <pre class="pre-scrollable small">PATCH @(Model.ScimBaseUrl)/Users/{scim-user-id}
 Authorization: Bearer &lt;your-scim-token&gt;
 @(Resgrid.Config.SsoConfig.ScimDepartmentIdHeaderName): @Model.DepartmentId
@@ -239,7 +239,7 @@ Content-Type: application/scim+json
 }</pre>
                         </div>
                         <div class="col-md-6">
-                            <p><strong>Full update (PUT)</strong></p>
+                            <p><strong>@localizer["SsoScimExampleFullUpdate"]</strong></p>
                             <pre class="pre-scrollable small">PUT @(Model.ScimBaseUrl)/Users/{scim-user-id}
 Authorization: Bearer &lt;your-scim-token&gt;
 @(Resgrid.Config.SsoConfig.ScimDepartmentIdHeaderName): @Model.DepartmentId
@@ -248,9 +248,9 @@ Content-Type: application/scim+json
 {
   "schemas": ["urn:ietf:params:scim:schemas:core:2.0:User"],
   "id": "{scim-user-id}",
-  "userName": "jane.doe@@example.com",
+  "userName": "jane.doe@example.com",
   "name": { "givenName": "Jane", "familyName": "Doe" },
-  "emails": [{ "value": "jane.doe@@example.com", "primary": true }],
+  "emails": [{ "value": "jane.doe@example.com", "primary": true }],
   "active": true
 }</pre>
                         </div>
@@ -472,6 +472,7 @@ Content-Type: application/scim+json
     <script>
         var deleteConfirmTemplate = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["SsoDeleteConfirmMessage"].Value));
         var rotateConfirmMsg = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["SsoScimTokenModalRotateConfirm"].Value));
+        var provisionConfirmMsg = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["SsoScimTokenModalProvisionConfirm"].Value));
         var provisionLabel = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["SsoScimProvisionTokenButton"].Value));
         var rotateLabel = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["SsoScimRotateTokenButton"].Value));
         var newScimConfigId = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.NewScimConfigId ?? ""));
@@ -485,7 +486,7 @@ Content-Type: application/scim+json
 
         function confirmProvisionToken(id, hasToken) {
             var isRotate = hasToken === true || hasToken === 'true';
-            document.getElementById('provisionTokenModalMessage').textContent = rotateConfirmMsg;
+            document.getElementById('provisionTokenModalMessage').textContent = isRotate ? rotateConfirmMsg : provisionConfirmMsg;
             document.getElementById('provisionTokenSubmitLabel').textContent = isRotate ? rotateLabel : provisionLabel;
             document.getElementById('provisionTokenForm').action =
                 '@Url.Action("GenerateScimTokenFromSso", "Security", new { area = "User" })/' + id;

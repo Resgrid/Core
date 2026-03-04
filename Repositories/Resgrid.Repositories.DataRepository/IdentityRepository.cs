@@ -459,11 +459,13 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
 				{
+					var deleteId = Guid.NewGuid().ToString();
+					var maskedEmail = deleteId + "@resgrid.del";
 					var result = await db.ExecuteAsync(@"UPDATE public.aspnetusers
-													 SET username = @deleteid,
-													 email = @deleteid + '@resgrid.del'
+													 SET username = @deleteId,
+													 email = @maskedEmail
 													 WHERE id = @userId",
-									new { userId = userId, deleteid = Guid.NewGuid().ToString() });
+									new { userId = userId, deleteId = deleteId, maskedEmail = maskedEmail });
 				}
 			}
 			else

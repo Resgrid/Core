@@ -789,6 +789,10 @@
   <data name="SsoScimDeptHeaderLabel" xml:space="preserve"><value>Заголовок відділу</value></data>
   <data name="SsoScimDeptHeaderNote" xml:space="preserve"><value>Обов'язковий у кожному запиті, щоб Resgrid міг направляти до правильного відділу.</value></data>
   <data name="SsoScimExampleRequestsHeader" xml:space="preserve"><value>Приклади запитів</value></data>
+  <data name="SsoScimExampleListUsers" xml:space="preserve"><value>Список користувачів (GET)</value></data>
+  <data name="SsoScimExampleProvisionUser" xml:space="preserve"><value>Підготовка користувача (POST)</value></data>
+  <data name="SsoScimExampleDeactivateUser" xml:space="preserve"><value>Деактивувати користувача (PATCH)</value></data>
+  <data name="SsoScimExampleFullUpdate" xml:space="preserve"><value>Повне оновлення (PUT)</value></data>
   <data name="SsoScimListUsersDesc" xml:space="preserve"><value>Список / пошук користувачів</value></data>
   <data name="SsoScimGetUserDesc" xml:space="preserve"><value>Отримати одного користувача за SCIM ID</value></data>
   <data name="SsoScimCreateUserDesc" xml:space="preserve"><value>Створити (підготувати) нового користувача</value></data>

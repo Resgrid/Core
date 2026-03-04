@@ -789,6 +789,10 @@
   <data name="SsoScimDeptHeaderLabel" xml:space="preserve"><value>En-tête de département</value></data>
   <data name="SsoScimDeptHeaderNote" xml:space="preserve"><value>Requis sur chaque requête pour que Resgrid puisse router vers le bon département.</value></data>
   <data name="SsoScimExampleRequestsHeader" xml:space="preserve"><value>Exemples de requêtes</value></data>
+  <data name="SsoScimExampleListUsers" xml:space="preserve"><value>Lister les utilisateurs (GET)</value></data>
+  <data name="SsoScimExampleProvisionUser" xml:space="preserve"><value>Provisionner un utilisateur (POST)</value></data>
+  <data name="SsoScimExampleDeactivateUser" xml:space="preserve"><value>Désactiver un utilisateur (PATCH)</value></data>
+  <data name="SsoScimExampleFullUpdate" xml:space="preserve"><value>Mise à jour complète (PUT)</value></data>
   <data name="SsoScimListUsersDesc" xml:space="preserve"><value>Lister / rechercher des utilisateurs</value></data>
   <data name="SsoScimGetUserDesc" xml:space="preserve"><value>Obtenir un utilisateur par ID SCIM</value></data>
   <data name="SsoScimCreateUserDesc" xml:space="preserve"><value>Créer (approvisionner) un nouvel utilisateur</value></data>

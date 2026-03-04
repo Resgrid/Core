@@ -296,6 +296,10 @@
   <data name="SsoScimDeptHeaderLabel" xml:space="preserve"><value>Department Header</value></data>
   <data name="SsoScimDeptHeaderNote" xml:space="preserve"><value>Required on every request so Resgrid can route to the correct department.</value></data>
   <data name="SsoScimExampleRequestsHeader" xml:space="preserve"><value>Example Requests</value></data>
+  <data name="SsoScimExampleListUsers" xml:space="preserve"><value>List users (GET)</value></data>
+  <data name="SsoScimExampleProvisionUser" xml:space="preserve"><value>Provision a user (POST)</value></data>
+  <data name="SsoScimExampleDeactivateUser" xml:space="preserve"><value>Deactivate a user (PATCH)</value></data>
+  <data name="SsoScimExampleFullUpdate" xml:space="preserve"><value>Full update (PUT)</value></data>
   <data name="SsoScimListUsersDesc" xml:space="preserve"><value>List / search users</value></data>
   <data name="SsoScimGetUserDesc" xml:space="preserve"><value>Get a single user by SCIM ID</value></data>
   <data name="SsoScimCreateUserDesc" xml:space="preserve"><value>Create (provision) a new user</value></data>

@@ -137,7 +137,7 @@ namespace Resgrid.Services
 					return "SCIM Bearer Token Rotated";
 			}
 
-			return "";
+			return $"Unknown ({logType})";
 		}
 	}
 }

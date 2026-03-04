@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -251,6 +251,42 @@
   <data name="ScimSetupParamColumn" xml:space="preserve"><value>Parámetro</value></data>
   <data name="ScimSetupScimFieldColumn" xml:space="preserve"><value>Campo SCIM</value></data>
   <data name="ScimSetupResgridEffectColumn" xml:space="preserve"><value>Efecto en Resgrid</value></data>
+
+  <!-- SSO / SCIM — Sso.cshtml SCIM section (inline token + API reference) -->
+  <data name="SsoScimSectionHeader" xml:space="preserve"><value>Aprovisionamiento SCIM 2.0</value></data>
+  <data name="SsoScimApiReferenceHeader" xml:space="preserve"><value>Referencia de API SCIM</value></data>
+  <data name="SsoScimApiReferenceDescription" xml:space="preserve"><value>Su proveedor de identidad llama a estos endpoints utilizando autenticación de token HTTP Bearer. Todas las solicitudes deben incluir el encabezado de autorización y el encabezado de identificador de departamento que se muestran a continuación.</value></data>
+  <data name="SsoScimEndpointColumn" xml:space="preserve"><value>Endpoint</value></data>
+  <data name="SsoScimMethodColumn" xml:space="preserve"><value>Método</value></data>
+  <data name="SsoScimDescriptionColumn" xml:space="preserve"><value>Descripción</value></data>
+  <data name="SsoScimBaseUrlLabel" xml:space="preserve"><value>URL base</value></data>
+  <data name="SsoScimAuthHeaderLabel" xml:space="preserve"><value>Encabezado de autorización</value></data>
+  <data name="SsoScimDeptHeaderLabel" xml:space="preserve"><value>Encabezado de departamento</value></data>
+  <data name="SsoScimDeptHeaderNote" xml:space="preserve"><value>Requerido en cada solicitud para que Resgrid pueda enrutar al departamento correcto.</value></data>
+  <data name="SsoScimExampleRequestsHeader" xml:space="preserve"><value>Solicitudes de ejemplo</value></data>
+  <data name="SsoScimExampleListUsers" xml:space="preserve"><value>Listar usuarios (GET)</value></data>
+  <data name="SsoScimExampleProvisionUser" xml:space="preserve"><value>Aprovisionar un usuario (POST)</value></data>
+  <data name="SsoScimExampleDeactivateUser" xml:space="preserve"><value>Desactivar un usuario (PATCH)</value></data>
+  <data name="SsoScimExampleFullUpdate" xml:space="preserve"><value>Actualización completa (PUT)</value></data>
+  <data name="SsoScimListUsersDesc" xml:space="preserve"><value>Listar / buscar usuarios</value></data>
+  <data name="SsoScimGetUserDesc" xml:space="preserve"><value>Obtener un usuario por ID SCIM</value></data>
+  <data name="SsoScimCreateUserDesc" xml:space="preserve"><value>Crear (aprovisionar) un nuevo usuario</value></data>
+  <data name="SsoScimUpdateUserDesc" xml:space="preserve"><value>Actualización completa (reemplazar todos los atributos)</value></data>
+  <data name="SsoScimPatchUserDesc" xml:space="preserve"><value>Actualización parcial (p. ej., desactivar)</value></data>
+  <data name="SsoScimDeleteUserDesc" xml:space="preserve"><value>Eliminar / desaprovisionar un usuario</value></data>
+  <data name="SsoScimListGroupsDesc" xml:space="preserve"><value>Listar grupos (solo lectura)</value></data>
+  <data name="SsoScimProvisionTokenHeader" xml:space="preserve"><value>Aprovisionar token SCIM</value></data>
+  <data name="SsoScimProvisionTokenDescription" xml:space="preserve"><value>Genere o rote el token Bearer que su proveedor de identidad usa para autenticar solicitudes SCIM. El token se muestra solo una vez; cópielo antes de cerrar este diálogo.</value></data>
+  <data name="SsoScimProvisionTokenButton" xml:space="preserve"><value>Aprovisionar token</value></data>
+  <data name="SsoScimRotateTokenButton" xml:space="preserve"><value>Rotar token</value></data>
+  <data name="SsoScimTokenModalTitle" xml:space="preserve"><value>Token Bearer SCIM</value></data>
+  <data name="SsoScimTokenModalWarning" xml:space="preserve"><value>Este token se muestra solo una vez y no puede recuperarse. Cópielo ahora y péguelo en la configuración SCIM de su proveedor de identidad.</value></data>
+  <data name="SsoScimTokenModalRotateConfirm" xml:space="preserve"><value>Rotar el token invalidará inmediatamente el token actual. Cualquier sincronización SCIM activa fallará hasta que actualice el token en su IdP. ¿Continuar?</value></data>
+  <data name="SsoScimTokenModalProvisionConfirm" xml:space="preserve"><value>Esto generará un nuevo token SCIM para esta configuración. Cópielo y guárdelo de forma segura — solo se mostrará una vez. ¿Continuar?</value></data>
+  <data name="SsoScimTokenCopyButton" xml:space="preserve"><value>Copiar token</value></data>
+  <data name="SsoScimTokenEncryptedNote" xml:space="preserve"><value>Almacenado cifrado en la base de datos de Resgrid con su clave específica del departamento.</value></data>
+  <data name="SsoScimFullSetupLink" xml:space="preserve"><value>Guía de configuración SCIM completa</value></data>
+  <data name="SsoScimSetupPageNote" xml:space="preserve"><value>Para instrucciones paso a paso específicas del IdP (Okta, Microsoft Entra ID, Google Workspace) y gestión de tokens, visite la página de configuración SCIM para cada configuración.</value></data>
 
   <!-- SSO / SCIM — SecurityPolicy.cshtml page -->
   <data name="SecurityPolicyPageTitle" xml:space="preserve"><value>Política de Seguridad del Departamento</value></data>

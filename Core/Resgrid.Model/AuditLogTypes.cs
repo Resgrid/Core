@@ -93,6 +93,15 @@
 		// SCIM 2.0
 		ScimUserCreated,
 		ScimUserUpdated,
-		ScimUserDeactivated
+		ScimUserDeactivated,
+		ScimUserDeleted,
+		ScimAuthFailed,
+		ScimUserReactivated,
+		ScimGroupListed,
+		ScimUserListed,
+		ScimUserRetrieved,
+		// SCIM bearer token lifecycle
+		ScimBearerTokenProvisioned,
+		ScimBearerTokenRotated
 	}
 }

@@ -87,9 +87,57 @@ namespace Resgrid.Services
 					return "Contact Verification Confirmed";
 				case AuditLogTypes.ContactVerificationFailed:
 					return "Contact Verification Failed";
+				// Two-factor authentication
+				case AuditLogTypes.TwoFactorEnabled:
+					return "Two-Factor Enabled";
+				case AuditLogTypes.TwoFactorDisabled:
+					return "Two-Factor Disabled";
+				case AuditLogTypes.TwoFactorLoginVerified:
+					return "Two-Factor Login Verified";
+				case AuditLogTypes.TwoFactorRecoveryCodeUsed:
+					return "Two-Factor Recovery Code Used";
+				case AuditLogTypes.TwoFactorStepUpVerified:
+					return "Two-Factor Step-Up Verified";
+				// SSO / SAML / OIDC
+				case AuditLogTypes.SsoConfigCreated:
+					return "SSO Config Created";
+				case AuditLogTypes.SsoConfigUpdated:
+					return "SSO Config Updated";
+				case AuditLogTypes.SsoConfigDeleted:
+					return "SSO Config Deleted";
+				case AuditLogTypes.SsoLoginSucceeded:
+					return "SSO Login Succeeded";
+				case AuditLogTypes.SsoLoginFailed:
+					return "SSO Login Failed";
+				case AuditLogTypes.SsoUserProvisioned:
+					return "SSO User Provisioned";
+				// SCIM 2.0
+				case AuditLogTypes.ScimUserCreated:
+					return "SCIM User Created";
+				case AuditLogTypes.ScimUserUpdated:
+					return "SCIM User Updated";
+				case AuditLogTypes.ScimUserDeactivated:
+					return "SCIM User Deactivated";
+				case AuditLogTypes.ScimUserDeleted:
+					return "SCIM User Deleted";
+				case AuditLogTypes.ScimAuthFailed:
+					return "SCIM Auth Failed";
+				case AuditLogTypes.ScimUserReactivated:
+					return "SCIM User Reactivated";
+				case AuditLogTypes.ScimGroupListed:
+					return "SCIM Group Listed";
+				case AuditLogTypes.ScimUserListed:
+					return "SCIM User Listed";
+				case AuditLogTypes.ScimUserRetrieved:
+					return "SCIM User Retrieved";
+				// SCIM bearer token lifecycle
+				case AuditLogTypes.ScimBearerTokenProvisioned:
+					return "SCIM Bearer Token Provisioned";
+				case AuditLogTypes.ScimBearerTokenRotated:
+					return "SCIM Bearer Token Rotated";
 			}
 
-			return "";
+			return $"Unknown ({logType})";
 		}
 	}
 }

@@ -80,6 +80,14 @@ namespace Resgrid.Model.Services
 		/// </summary>
 		Task<bool> ValidateScimBearerTokenAsync(int departmentId, string bearerToken, string departmentCode, CancellationToken cancellationToken = default);
 
+		/// <summary>
+		/// Validates the inbound SCIM bearer token and returns the department ID that
+		/// owns the token. This allows callers to verify that the token actually belongs
+		/// to the department ID supplied in the request header (preventing token reuse
+		/// across departments). Returns null when validation fails.
+		/// </summary>
+		Task<int?> ValidateScimBearerTokenAndGetDepartmentAsync(string bearerToken, int claimedDepartmentId, string departmentCode, CancellationToken cancellationToken = default);
+
 		// ── Optional-feature guards ────────────────────────────────────────────
 
 		/// <summary>

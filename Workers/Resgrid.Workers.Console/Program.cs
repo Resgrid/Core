@@ -404,15 +404,15 @@ namespace Resgrid.Workers.Console
 				using (var scope = serviceProvider.CreateScope())
 				{
 					UpdateDatabase(scope.ServiceProvider);
-					await UpdateOidcDatabaseAsync(scope.ServiceProvider);
+					await UpdateOidcDatabaseAsync(logger, scope.ServiceProvider);
 				}
 
 				_logger.Log(LogLevel.Information, "Completed updating the Resgrid Database!");
 			}
 			catch (Exception ex)
 			{
-				_logger.Log(LogLevel.Information, "There was an error trying to update the Resgrid Database, see the error output below:");
-				_logger.Log(LogLevel.Information, ex.ToString());
+				_logger.Log(LogLevel.Error, ex, "There was an error trying to update the Resgrid Database.");
+				Environment.Exit(1);
 			}
 
 		}
@@ -432,10 +432,25 @@ namespace Resgrid.Workers.Console
 		/// <summary>
 		/// Update the database
 		/// </summary>
-		private static async Task UpdateOidcDatabaseAsync(IServiceProvider serviceProvider)
+		private static async Task UpdateOidcDatabaseAsync(ILogger<Program> logger, IServiceProvider serviceProvider)
 		{
-			var oidcRepository = Bootstrapper.GetKernel().Resolve<IOidcRepository>();
-			bool result = await oidcRepository.UpdateOidcDatabaseAsync();
+			logger.Log(LogLevel.Information, "Starting OIDC Database Upgrade");
+
+			try
+			{
+				var oidcRepository = Bootstrapper.GetKernel().Resolve<IOidcRepository>();
+				bool result = await oidcRepository.UpdateOidcDatabaseAsync();
+
+				if (result)
+					logger.Log(LogLevel.Information, "Completed updating the OIDC Database!");
+				else
+					logger.Log(LogLevel.Warning, "UpdateOidcDatabaseAsync returned false; the OIDC database may not have been fully updated.");
+			}
+			catch (Exception ex)
+			{
+				logger.Log(LogLevel.Error, ex, "There was an error trying to update the OIDC Database.");
+				throw;
+			}
 		}
 
 		private static IServiceProvider CreateServices()

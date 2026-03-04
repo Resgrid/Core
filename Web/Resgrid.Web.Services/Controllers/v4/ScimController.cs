@@ -19,11 +19,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 	/// SCIM 2.0 provisioning endpoint for automated user lifecycle management
 	/// from external identity providers. Authenticate requests with the per-department
 	/// SCIM bearer token configured in DepartmentSsoConfig.
+	/// The bearer token must belong to the same department as the X-Resgrid-Department-Id header;
+	/// mismatches are rejected and audited as <see cref="AuditLogTypes.ScimAuthFailed"/>.
 	/// </summary>
 	[Route("scim/v2")]
 	[ApiExplorerSettings(GroupName = "v4")]
 	[ApiController]
-	[AllowAnonymous] // Auth handled manually via SCIM bearer token
+	[AllowAnonymous] // Auth is handled manually via SCIM bearer token
 	public class ScimController : ControllerBase
 	{
 		private readonly IDepartmentSsoService _ssoService;
@@ -58,7 +60,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			[FromQuery] int count = 100,
 			CancellationToken cancellationToken = default)
 		{
-			if (!await AuthorizeScimRequestAsync(departmentId, cancellationToken))
+			if (!await AuthorizeScimRequestAsync(departmentId, null, cancellationToken))
 				return ScimUnauthorized();
 
 			var users = await _departmentsService.GetAllUsersForDepartment(departmentId, false, true);
@@ -71,6 +73,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			var paged = scimUsers.Skip(startIndex - 1).Take(count).ToList();
+
+			await SaveScimAuditAsync(departmentId, null, AuditLogTypes.ScimUserListed,
+				successful: true,
+				data: $"startIndex={startIndex} count={count} totalResults={scimUsers.Count}");
 
 			return Ok(new
 			{
@@ -94,14 +100,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 			[FromHeader(Name = SsoConfig.ScimDepartmentIdHeader)] int departmentId,
 			CancellationToken cancellationToken = default)
 		{
-			if (!await AuthorizeScimRequestAsync(departmentId, cancellationToken))
+			if (!await AuthorizeScimRequestAsync(departmentId, id, cancellationToken))
 				return ScimUnauthorized();
 
 			var user = await _userManager.FindByIdAsync(id);
 			if (user == null)
+			{
+				await SaveScimAuditAsync(departmentId, id, AuditLogTypes.ScimUserRetrieved,
+					successful: false, data: $"User {id} not found");
 				return ScimNotFound(id);
+			}
 
 			var profile = await _userProfileService.GetProfileByUserIdAsync(id);
+			await SaveScimAuditAsync(departmentId, id, AuditLogTypes.ScimUserRetrieved,
+				successful: true, data: $"userName={user.UserName}");
+
 			return Ok(BuildScimUser(user, profile));
 		}
 
@@ -111,22 +124,31 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpPost("Users")]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status409Conflict)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		public async Task<IActionResult> CreateUser(
 			[FromHeader(Name = SsoConfig.ScimDepartmentIdHeader)] int departmentId,
 			[FromBody] ScimUserResource resource,
 			CancellationToken cancellationToken = default)
 		{
-			if (!await AuthorizeScimRequestAsync(departmentId, cancellationToken))
+			if (!await AuthorizeScimRequestAsync(departmentId, null, cancellationToken))
 				return ScimUnauthorized();
 
 			if (resource == null || string.IsNullOrWhiteSpace(resource.UserName))
+			{
+				await SaveScimAuditAsync(departmentId, null, AuditLogTypes.ScimUserCreated,
+					successful: false, data: "Rejected: userName is required");
 				return ScimBadRequest("userName is required.");
+			}
 
 			var email = resource.Emails?.FirstOrDefault()?.Value ?? resource.UserName;
 			var existing = await _userManager.FindByEmailAsync(email);
 			if (existing != null)
+			{
+				await SaveScimAuditAsync(departmentId, existing.Id, AuditLogTypes.ScimUserCreated,
+					successful: false, data: $"Rejected: duplicate email={email}");
 				return Conflict(ScimError("uniqueness", "A user with this email already exists."));
+			}
 
 			var newUser = new Model.Identity.IdentityUser
 			{
@@ -137,7 +159,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var createResult = await _userManager.CreateAsync(newUser, Guid.NewGuid().ToString("N") + "Aa1!");
 			if (!createResult.Succeeded)
-				return ScimBadRequest(string.Join("; ", createResult.Errors.Select(e => e.Description)));
+			{
+				var errors = string.Join("; ", createResult.Errors.Select(e => e.Description));
+				await SaveScimAuditAsync(departmentId, null, AuditLogTypes.ScimUserCreated,
+					successful: false, data: $"IdentityUser creation failed: {errors}");
+				return ScimBadRequest(errors);
+			}
 
 			// Add to department
 			await _departmentsService.AddUserToDepartmentAsync(departmentId, newUser.Id, false, cancellationToken);
@@ -152,7 +179,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			};
 			await _userProfileService.SaveProfileAsync(departmentId, profile, cancellationToken);
 
-			await SaveScimAuditAsync(departmentId, newUser.Id, AuditLogTypes.ScimUserCreated);
+			await SaveScimAuditAsync(departmentId, newUser.Id, AuditLogTypes.ScimUserCreated,
+				successful: true,
+				data: $"userName={resource.UserName} email={email} externalId={resource.ExternalId}");
 
 			return CreatedAtAction(nameof(GetUser), new { id = newUser.Id, departmentId }, BuildScimUser(newUser, profile));
 		}
@@ -170,14 +199,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 			[FromBody] ScimUserResource resource,
 			CancellationToken cancellationToken = default)
 		{
-			if (!await AuthorizeScimRequestAsync(departmentId, cancellationToken))
+			if (!await AuthorizeScimRequestAsync(departmentId, id, cancellationToken))
 				return ScimUnauthorized();
 
 			var user = await _userManager.FindByIdAsync(id);
 			if (user == null)
+			{
+				await SaveScimAuditAsync(departmentId, id, AuditLogTypes.ScimUserUpdated,
+					successful: false, data: $"User {id} not found");
 				return ScimNotFound(id);
+			}
 
-			// Update active/disabled state
+			// Update active/disabled state and emit a targeted audit entry for the state change
 			if (resource.Active == false)
 			{
 				var member = await _departmentsService.GetDepartmentMemberAsync(id, departmentId);
@@ -185,6 +218,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 				{
 					member.IsDisabled = true;
 					await _departmentsService.SaveDepartmentMemberAsync(member, cancellationToken);
+					await SaveScimAuditAsync(departmentId, id, AuditLogTypes.ScimUserDeactivated,
+						successful: true, data: "active=false via PUT");
+				}
+			}
+			else if (resource.Active == true)
+			{
+				var member = await _departmentsService.GetDepartmentMemberAsync(id, departmentId);
+				if (member is { IsDisabled: true })
+				{
+					member.IsDisabled = false;
+					await _departmentsService.SaveDepartmentMemberAsync(member, cancellationToken);
+					await SaveScimAuditAsync(departmentId, id, AuditLogTypes.ScimUserReactivated,
+						successful: true, data: "active=true via PUT");
 				}
 			}
 
@@ -194,7 +240,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			profile.LastName = resource.Name?.FamilyName ?? profile.LastName;
 			await _userProfileService.SaveProfileAsync(departmentId, profile, cancellationToken);
 
-			await SaveScimAuditAsync(departmentId, id, AuditLogTypes.ScimUserUpdated);
+			await SaveScimAuditAsync(departmentId, id, AuditLogTypes.ScimUserUpdated,
+				successful: true,
+				data: $"firstName={resource.Name?.GivenName} lastName={resource.Name?.FamilyName} active={resource.Active}");
 
 			return Ok(BuildScimUser(user, profile));
 		}
@@ -212,12 +260,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 			[FromBody] ScimPatchRequest patchRequest,
 			CancellationToken cancellationToken = default)
 		{
-			if (!await AuthorizeScimRequestAsync(departmentId, cancellationToken))
+			if (!await AuthorizeScimRequestAsync(departmentId, id, cancellationToken))
 				return ScimUnauthorized();
 
 			var user = await _userManager.FindByIdAsync(id);
 			if (user == null)
+			{
+				await SaveScimAuditAsync(departmentId, id, AuditLogTypes.ScimUserUpdated,
+					successful: false, data: $"User {id} not found");
 				return ScimNotFound(id);
+			}
+
+			var appliedOps = new List<string>();
 
 			foreach (var op in patchRequest?.Operations ?? Enumerable.Empty<ScimPatchOperation>())
 			{
@@ -228,22 +282,29 @@ namespace Resgrid.Web.Services.Controllers.v4
 					if (member != null)
 					{
 						member.IsDisabled = !active;
-						if (!active) member.IsDeleted = false; // deactivate without delete
+						if (!active) member.IsDeleted = false; // deactivate without hard-delete
 						await _departmentsService.SaveDepartmentMemberAsync(member, cancellationToken);
 
-						await SaveScimAuditAsync(departmentId, id, AuditLogTypes.ScimUserDeactivated);
+						var activeAuditType = active ? AuditLogTypes.ScimUserReactivated : AuditLogTypes.ScimUserDeactivated;
+						await SaveScimAuditAsync(departmentId, id, activeAuditType,
+							successful: true, data: $"active={active} op={op.Op}");
+
+						appliedOps.Add($"active={active}");
 					}
 				}
 			}
 
 			var profile = await _userProfileService.GetProfileByUserIdAsync(id);
-			await SaveScimAuditAsync(departmentId, id, AuditLogTypes.ScimUserUpdated);
+			await SaveScimAuditAsync(departmentId, id, AuditLogTypes.ScimUserUpdated,
+				successful: true,
+				data: $"PATCH ops applied: [{string.Join(", ", appliedOps)}]");
+
 			return Ok(BuildScimUser(user, profile));
 		}
 
 		// -- DELETE /scim/v2/Users/{id} ----------------------------------------
 
-		/// <summary>Deactivates (soft-deletes) a user via SCIM.</summary>
+		/// <summary>Soft-deletes (disables and marks deleted) a user via SCIM.</summary>
 		[HttpDelete("Users/{id}")]
 		[ProducesResponseType(StatusCodes.Status204NoContent)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -253,12 +314,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 			[FromHeader(Name = SsoConfig.ScimDepartmentIdHeader)] int departmentId,
 			CancellationToken cancellationToken = default)
 		{
-			if (!await AuthorizeScimRequestAsync(departmentId, cancellationToken))
+			if (!await AuthorizeScimRequestAsync(departmentId, id, cancellationToken))
 				return ScimUnauthorized();
 
 			var user = await _userManager.FindByIdAsync(id);
 			if (user == null)
+			{
+				await SaveScimAuditAsync(departmentId, id, AuditLogTypes.ScimUserDeleted,
+					successful: false, data: $"User {id} not found");
 				return ScimNotFound(id);
+			}
 
 			var member = await _departmentsService.GetDepartmentMemberAsync(id, departmentId);
 			if (member != null)
@@ -268,7 +333,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 				await _departmentsService.SaveDepartmentMemberAsync(member, cancellationToken);
 			}
 
-			await SaveScimAuditAsync(departmentId, id, AuditLogTypes.ScimUserDeactivated);
+			await SaveScimAuditAsync(departmentId, id, AuditLogTypes.ScimUserDeactivated,
+				successful: true, data: "IsDisabled=true IsDeleted=true via DELETE");
+			await SaveScimAuditAsync(departmentId, id, AuditLogTypes.ScimUserDeleted,
+				successful: true, data: $"userName={user.UserName}");
+
 			return NoContent();
 		}
 
@@ -282,10 +351,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			[FromHeader(Name = SsoConfig.ScimDepartmentIdHeader)] int departmentId,
 			CancellationToken cancellationToken = default)
 		{
-			if (!await AuthorizeScimRequestAsync(departmentId, cancellationToken))
+			if (!await AuthorizeScimRequestAsync(departmentId, null, cancellationToken))
 				return ScimUnauthorized();
 
-			// Groups map to DepartmentGroups — return empty list with proper schema for now
+			await SaveScimAuditAsync(departmentId, null, AuditLogTypes.ScimGroupListed, successful: true);
+
+			// Groups map to DepartmentGroups â€” return empty list with proper schema for now
 			return Ok(new
 			{
 				schemas = new[] { "urn:ietf:params:scim:api:messages:2.0:ListResponse" },
@@ -298,18 +369,69 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		// -- Private helpers ---------------------------------------------------
 
-		private async Task<bool> AuthorizeScimRequestAsync(int departmentId, CancellationToken cancellationToken)
+		/// <summary>
+		/// Validates the SCIM bearer token and confirms it is bound to the department
+		/// supplied in the request header. Any mismatch is rejected and recorded as
+		/// <see cref="AuditLogTypes.ScimAuthFailed"/> before returning false.
+		/// </summary>
+		private async Task<bool> AuthorizeScimRequestAsync(int departmentId, string targetUserId, CancellationToken cancellationToken)
 		{
 			var authHeader = Request.Headers["Authorization"].FirstOrDefault();
+
+			// Missing or malformed Authorization header
 			if (string.IsNullOrWhiteSpace(authHeader) || !authHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+			{
+				await SaveScimAuditAsync(departmentId, targetUserId, AuditLogTypes.ScimAuthFailed,
+					successful: false, data: "Missing or malformed Authorization header");
 				return false;
+			}
 
 			var token = authHeader.Substring("Bearer ".Length).Trim();
+
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
 			if (department == null)
+			{
+				// Do not reveal whether the department exists to the caller.
+				await SaveScimAuditAsync(departmentId, targetUserId, AuditLogTypes.ScimAuthFailed,
+					successful: false, data: $"Department {departmentId} not found");
 				return false;
+			}
 
-			return await _ssoService.ValidateScimBearerTokenAsync(departmentId, token, department.Code, cancellationToken);
+			// Validate the token AND confirm it belongs to the claimed department.
+			// Returns null on any failure (invalid token, wrong department, decryption error).
+			var tokenDepartmentId = await _ssoService.ValidateScimBearerTokenAndGetDepartmentAsync(
+				token, departmentId, department.Code, cancellationToken);
+
+			if (tokenDepartmentId == null)
+			{
+				await SaveScimAuditAsync(departmentId, targetUserId, AuditLogTypes.ScimAuthFailed,
+					successful: false, data: "Bearer token invalid or not configured for this department");
+				return false;
+			}
+
+			// Explicit defence-in-depth check: the token's owning department must equal the header value.
+			if (tokenDepartmentId.Value != departmentId)
+			{
+				await SaveScimAuditAsync(departmentId, targetUserId, AuditLogTypes.ScimAuthFailed,
+					successful: false,
+					data: $"Token department mismatch: token belongs to dept={tokenDepartmentId.Value}, header claims dept={departmentId}");
+				return false;
+			}
+
+			// If the request targets a specific user, confirm that user is a member of the department.
+			if (!string.IsNullOrEmpty(targetUserId))
+			{
+				var isMember = await _departmentsService.IsMemberOfDepartmentAsync(departmentId, targetUserId);
+				if (!isMember)
+				{
+					await SaveScimAuditAsync(departmentId, targetUserId, AuditLogTypes.ScimAuthFailed,
+						successful: false,
+						data: $"targetUserId={targetUserId} is not a member of dept={departmentId} or does not exist");
+					return false;
+				}
+			}
+
+			return true;
 		}
 
 		private static object BuildScimUser(Model.Identity.IdentityUser user, UserProfile profile)
@@ -338,17 +460,29 @@ namespace Resgrid.Web.Services.Controllers.v4
 			};
 		}
 
-		private async Task SaveScimAuditAsync(int departmentId, string userId, AuditLogTypes auditType)
+		/// <summary>
+		/// Persists a SCIM system audit record. The <paramref name="data"/> field carries
+		/// structured contextual information about the operation to support forensic review.
+		/// </summary>
+		private async Task SaveScimAuditAsync(
+			int departmentId,
+			string userId,
+			AuditLogTypes auditType,
+			bool successful = true,
+			string data = null)
 		{
 			var audit = new SystemAudit
 			{
 				System = (int)SystemAuditSystems.Api,
 				Type = (int)SystemAuditTypes.ScimOperation,
+				DepartmentId = departmentId,
 				UserId = userId,
-				Successful = true,
+				Successful = successful,
 				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
 				ServerName = Environment.MachineName,
-				Data = $"SCIM {auditType} dept={departmentId}"
+				Data = string.IsNullOrWhiteSpace(data)
+					? $"SCIM {auditType} dept={departmentId}"
+					: $"SCIM {auditType} dept={departmentId} | {data}"
 			};
 			await _systemAuditsService.SaveSystemAuditAsync(audit);
 		}

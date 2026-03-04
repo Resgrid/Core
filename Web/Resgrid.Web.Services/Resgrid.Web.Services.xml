@@ -338,7 +338,24 @@
             whether to show the SSO login button, which flow to use (OIDC/SAML), and which
             parameters to pass. Call this before showing the login screen.
             </summary>
-            <param name="departmentCode">The department code shown on the department's settings page.</param>
+            <param name="departmentToken">An encrypted department token produced by the web UI.</param>
+            <param name="departmentCode">The department code (name) shown on the department's settings page.</param>
+            <param name="cancellationToken"></param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.GetSsoConfigForUser(System.String,System.Nullable{System.Int32},System.Threading.CancellationToken)">
+            <summary>
+            Returns the SSO configuration for a user's department, resolved by username.
+            Intended for the mobile app pre-login screen — call this with just a username
+            to discover whether SSO is required before the user enters credentials.
+            If <paramref name="departmentId"/> is supplied the lookup is scoped to that
+            specific department; otherwise the user's default/active department is used.
+            No credentials are required — this endpoint is public (anonymous).
+            </summary>
+            <param name="username">The user's Resgrid username (or email address).</param>
+            <param name="departmentId">
+            Optional. When the user belongs to multiple departments, pass this to select
+            the specific department whose SSO configuration should be returned.
+            </param>
             <param name="cancellationToken"></param>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.ExternalToken(System.String,System.String,System.String,System.String,System.String,System.Threading.CancellationToken)">
@@ -834,6 +851,8 @@
             SCIM 2.0 provisioning endpoint for automated user lifecycle management
             from external identity providers. Authenticate requests with the per-department
             SCIM bearer token configured in DepartmentSsoConfig.
+            The bearer token must belong to the same department as the X-Resgrid-Department-Id header;
+            mismatches are rejected and audited as <see cref="F:Resgrid.Model.AuditLogTypes.ScimAuthFailed"/>.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ScimController.GetUsers(System.Int32,System.Int32,System.Int32,System.Threading.CancellationToken)">
@@ -852,10 +871,23 @@
             <summary>Applies a partial update to a user (supports active/displayName operations).</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ScimController.DeleteUser(System.String,System.Int32,System.Threading.CancellationToken)">
-            <summary>Deactivates (soft-deletes) a user via SCIM.</summary>
+            <summary>Soft-deletes (disables and marks deleted) a user via SCIM.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ScimController.GetGroups(System.Int32,System.Threading.CancellationToken)">
             <summary>Returns department groups as SCIM Group resources.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ScimController.AuthorizeScimRequestAsync(System.Int32,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Validates the SCIM bearer token and confirms it is bound to the department
+            supplied in the request header. Any mismatch is rejected and recorded as
+            <see cref="F:Resgrid.Model.AuditLogTypes.ScimAuthFailed"/> before returning false.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ScimController.SaveScimAuditAsync(System.Int32,System.String,Resgrid.Model.AuditLogTypes,System.Boolean,System.String)">
+            <summary>
+            Persists a SCIM system audit record. The <paramref name="data"/> field carries
+            structured contextual information about the operation to support forensic review.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ScimUserResource">
             <summary>Minimal SCIM 2.0 User resource for inbound provisioning requests.</summary>

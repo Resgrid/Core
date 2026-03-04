@@ -631,6 +631,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new SsoIndexView
 			{
 				IsAdmin = true,
+				DepartmentId = department.DepartmentId,
 				Configs = configList.Select(c => new SsoConfigRowView
 				{
 					DepartmentSsoConfigId = c.DepartmentSsoConfigId,
@@ -848,6 +849,93 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			TempData["SsoSuccess"] = $"{providerType.ToString().ToUpperInvariant()} SSO configuration deleted.";
 			return RedirectToAction("Sso");
+		}
+
+		// ── Inline SCIM token generation (from SSO index page) ───────────────
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[RequiresRecentTwoFactor]
+		public async Task<IActionResult> GenerateScimTokenFromSso(string id, CancellationToken cancellationToken)
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return RedirectToAction("Index");
+
+			var configs = await _ssoService.GetSsoConfigsForDepartmentAsync(DepartmentId, cancellationToken);
+			var config = configs?.FirstOrDefault(c => c.DepartmentSsoConfigId == id);
+			if (config == null)
+				return NotFound();
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+
+			var tokenBytes = new byte[Config.SsoConfig.ScimBearerTokenByteLength];
+			System.Security.Cryptography.RandomNumberGenerator.Fill(tokenBytes);
+			var newToken = Convert.ToBase64String(tokenBytes);
+
+			var hadExistingToken = !string.IsNullOrWhiteSpace(config.EncryptedScimBearerToken);
+
+			config.EncryptedScimBearerToken = newToken;
+			config.ScimEnabled = true;
+			config.UpdatedByUserId = UserId;
+			config.EncryptedClientSecret = null;
+			config.EncryptedIdpCertificate = null;
+			config.EncryptedSigningCertificate = null;
+
+			await _ssoService.SaveSsoConfigAsync(config, department.Code, cancellationToken);
+
+			var scimTokenAuditEvent = new AuditEvent();
+			scimTokenAuditEvent.DepartmentId = DepartmentId;
+			scimTokenAuditEvent.UserId = UserId;
+			scimTokenAuditEvent.Type = hadExistingToken ? AuditLogTypes.ScimBearerTokenRotated : AuditLogTypes.ScimBearerTokenProvisioned;
+			scimTokenAuditEvent.Successful = true;
+			scimTokenAuditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+			scimTokenAuditEvent.ServerName = Environment.MachineName;
+			scimTokenAuditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+			scimTokenAuditEvent.After = System.Text.Json.JsonSerializer.Serialize(new
+			{
+				DepartmentSsoConfigId = id,
+				DepartmentId,
+				DepartmentCode = department.Code,
+				Action = hadExistingToken ? "ScimBearerTokenRotated" : "ScimBearerTokenProvisioned"
+			});
+			_eventAggregator.SendMessage<AuditEvent>(scimTokenAuditEvent);
+
+			// Reload all configs so the page is fully up-to-date
+			configs = await _ssoService.GetSsoConfigsForDepartmentAsync(DepartmentId, cancellationToken);
+			var configList = configs?.ToList() ?? new System.Collections.Generic.List<DepartmentSsoConfig>();
+
+			var plainToken = $"{department.DepartmentId}:{department.Code}";
+			var encryptedToken = _encryptionService.EncryptForDepartment(plainToken, department.DepartmentId, department.Code);
+			var apiBase = Config.SystemBehaviorConfig.ResgridApiBaseUrl;
+
+			var model = new SsoIndexView
+			{
+				IsAdmin = true,
+				DepartmentId = department.DepartmentId,
+				NewScimBearerToken = newToken,
+				NewScimConfigId = id,
+				Configs = configList.Select(c => new SsoConfigRowView
+				{
+					DepartmentSsoConfigId = c.DepartmentSsoConfigId,
+					ProviderType = ((SsoProviderType)c.SsoProviderType).ToString().ToLowerInvariant(),
+					IsEnabled = c.IsEnabled,
+					Identifier = c.SsoProviderType == (int)SsoProviderType.Oidc ? c.ClientId : c.EntityId,
+					EndpointUrl = c.SsoProviderType == (int)SsoProviderType.Oidc ? c.Authority : c.MetadataUrl,
+					AllowLocalLogin = c.AllowLocalLogin,
+					AutoProvisionUsers = c.AutoProvisionUsers,
+					ScimEnabled = c.ScimEnabled,
+					HasScimBearerToken = !string.IsNullOrWhiteSpace(c.EncryptedScimBearerToken),
+					CreatedOn = c.CreatedOn
+				}).ToList(),
+				HasOidcConfig = configList.Any(c => c.SsoProviderType == (int)SsoProviderType.Oidc),
+				HasSamlConfig = configList.Any(c => c.SsoProviderType == (int)SsoProviderType.Saml2),
+				EncryptedDepartmentToken = Uri.EscapeDataString(encryptedToken),
+				ScimBaseUrl = $"{apiBase}{Config.SsoConfig.ScimBasePath}",
+				ApiBaseUrl = apiBase,
+				SsoDiscoveryUrl = $"{apiBase}{Config.SsoConfig.SsoDiscoveryPath}?departmentToken={Uri.EscapeDataString(encryptedToken)}"
+			};
+
+			return View("Sso", model);
 		}
 
 		// ── SCIM setup ───────────────────────────────────────────────────────

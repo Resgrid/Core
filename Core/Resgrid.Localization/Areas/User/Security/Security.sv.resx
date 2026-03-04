@@ -807,6 +807,7 @@
   <data name="SsoScimTokenModalTitle" xml:space="preserve"><value>SCIM Bearer Token</value></data>
   <data name="SsoScimTokenModalWarning" xml:space="preserve"><value>Denna token visas bara en gång och kan inte hämtas igen. Kopiera den nu och klistra in den i din identitetsleverantörs SCIM-konfiguration.</value></data>
   <data name="SsoScimTokenModalRotateConfirm" xml:space="preserve"><value>Rotation av token gör den aktuella token omedelbart ogiltig. All aktiv SCIM-synkronisering misslyckas tills du uppdaterar token i din IdP. Fortsätta?</value></data>
+  <data name="SsoScimTokenModalProvisionConfirm" xml:space="preserve"><value>Detta genererar en ny SCIM-bärartoken för den här konfigurationen. Kopiera och spara den säkert – den visas bara en gång. Fortsätta?</value></data>
   <data name="SsoScimTokenCopyButton" xml:space="preserve"><value>Kopiera token</value></data>
   <data name="SsoScimTokenEncryptedNote" xml:space="preserve"><value>Lagras krypterat i Resgrid-databasen med din avdelningsspecifika nyckel.</value></data>
   <data name="SsoScimFullSetupLink" xml:space="preserve"><value>Fullständig SCIM-installationsguide</value></data>

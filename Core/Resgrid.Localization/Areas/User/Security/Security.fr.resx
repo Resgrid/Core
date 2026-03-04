@@ -807,6 +807,7 @@
   <data name="SsoScimTokenModalTitle" xml:space="preserve"><value>Jeton Bearer SCIM</value></data>
   <data name="SsoScimTokenModalWarning" xml:space="preserve"><value>Ce jeton n'est affiché qu'une seule fois et ne peut pas être récupéré. Copiez-le maintenant et collez-le dans la configuration SCIM de votre fournisseur d'identité.</value></data>
   <data name="SsoScimTokenModalRotateConfirm" xml:space="preserve"><value>La rotation du jeton invalidera immédiatement le jeton actuel. Toute synchronisation SCIM active échouera jusqu'à ce que vous mettiez à jour le jeton dans votre IdP. Continuer ?</value></data>
+  <data name="SsoScimTokenModalProvisionConfirm" xml:space="preserve"><value>Cela générera un nouveau jeton SCIM pour cette configuration. Copiez-le et conservez-le en lieu sûr — il ne sera affiché qu'une seule fois. Continuer ?</value></data>
   <data name="SsoScimTokenCopyButton" xml:space="preserve"><value>Copier le jeton</value></data>
   <data name="SsoScimTokenEncryptedNote" xml:space="preserve"><value>Stocké chiffré dans la base de données Resgrid avec votre clé spécifique au département.</value></data>
   <data name="SsoScimFullSetupLink" xml:space="preserve"><value>Guide de configuration SCIM complet</value></data>

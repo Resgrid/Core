@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -282,6 +282,7 @@
   <data name="SsoScimTokenModalTitle" xml:space="preserve"><value>Token Bearer SCIM</value></data>
   <data name="SsoScimTokenModalWarning" xml:space="preserve"><value>Este token se muestra solo una vez y no puede recuperarse. Cópielo ahora y péguelo en la configuración SCIM de su proveedor de identidad.</value></data>
   <data name="SsoScimTokenModalRotateConfirm" xml:space="preserve"><value>Rotar el token invalidará inmediatamente el token actual. Cualquier sincronización SCIM activa fallará hasta que actualice el token en su IdP. ¿Continuar?</value></data>
+  <data name="SsoScimTokenModalProvisionConfirm" xml:space="preserve"><value>Esto generará un nuevo token SCIM para esta configuración. Cópielo y guárdelo de forma segura — solo se mostrará una vez. ¿Continuar?</value></data>
   <data name="SsoScimTokenCopyButton" xml:space="preserve"><value>Copiar token</value></data>
   <data name="SsoScimTokenEncryptedNote" xml:space="preserve"><value>Almacenado cifrado en la base de datos de Resgrid con su clave específica del departamento.</value></data>
   <data name="SsoScimFullSetupLink" xml:space="preserve"><value>Guía de configuración SCIM completa</value></data>

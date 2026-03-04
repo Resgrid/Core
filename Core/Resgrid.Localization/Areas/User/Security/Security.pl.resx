@@ -807,6 +807,7 @@
   <data name="SsoScimTokenModalTitle" xml:space="preserve"><value>Token Bearer SCIM</value></data>
   <data name="SsoScimTokenModalWarning" xml:space="preserve"><value>Ten token jest wyświetlany tylko raz i nie można go odzyskać. Skopiuj go teraz i wklej do konfiguracji SCIM dostawcy tożsamości.</value></data>
   <data name="SsoScimTokenModalRotateConfirm" xml:space="preserve"><value>Zamiana tokenu natychmiast unieważni bieżący token. Każda aktywna synchronizacja SCIM zakończy się niepowodzeniem, dopóki nie zaktualizujesz tokenu w swoim IdP. Kontynuować?</value></data>
+  <data name="SsoScimTokenModalProvisionConfirm" xml:space="preserve"><value>Spowoduje to wygenerowanie nowego tokenu SCIM dla tej konfiguracji. Skopiuj go i przechowaj bezpiecznie — zostanie wyświetlony tylko raz. Kontynuować?</value></data>
   <data name="SsoScimTokenCopyButton" xml:space="preserve"><value>Kopiuj token</value></data>
   <data name="SsoScimTokenEncryptedNote" xml:space="preserve"><value>Przechowywany zaszyfrowany w bazie danych Resgrid przy użyciu klucza specyficznego dla działu.</value></data>
   <data name="SsoScimFullSetupLink" xml:space="preserve"><value>Pełny przewodnik konfiguracji SCIM</value></data>

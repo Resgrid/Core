@@ -21,37 +21,35 @@ var resgrid;
                 }).done(function (data) {
                     resgrid.shifts.newshift.roleData = data;
                 });
-                $("#shiftPersonnel").kendoMultiSelect({
+                $("#shiftPersonnel").select2({
                     placeholder: "Select Non-Group Personnel...",
-                    dataTextField: "Name",
-                    dataValueField: "UserId",
-                    autoBind: false,
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForGridWithFilter'
+                    allowClear: true,
+                    multiple: true,
+                    ajax: {
+                        url: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForGridWithFilter',
+                        dataType: 'json',
+                        processResults: function (data) {
+                            return { results: $.map(data, function (u) { return { id: u.UserId, text: u.Name }; }) };
                         }
                     }
                 });
-                $('.groupPersonnelSelect').each(function (i, obj) {
-                    $(this).kendoMultiSelect({
+                $('.groupPersonnelSelect').each(function () {
+                    $(this).select2({
                         placeholder: "Select Personnel for Group...",
-                        dataTextField: "Name",
-                        dataValueField: "UserId",
-                        autoBind: false,
-                        dataSource: {
-                            transport: {
-                                read: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForGridWithFilter'
+                        allowClear: true,
+                        multiple: true,
+                        ajax: {
+                            url: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForGridWithFilter',
+                            dataType: 'json',
+                            processResults: function (data) {
+                                return { results: $.map(data, function (u) { return { id: u.UserId, text: u.Name }; }) };
                             }
                         }
                     });
                 });
                 resgrid.shifts.newshift.groupsCount = 0;
-                $("#Shift_StartTime").kendoTimePicker({
-                    interval: 15
-                });
-                $("#Shift_EndTime").kendoTimePicker({
-                    interval: 15
-                });
+                $("#Shift_StartTime").datetimepicker({ datepicker: false, format: 'H:i', step: 15 });
+                $("#Shift_EndTime").datetimepicker({ datepicker: false, format: 'H:i', step: 15 });
             });
             function addGroup() {
                 resgrid.shifts.newshift.groupsCount++;

@@ -45,18 +45,27 @@ var resgrid;
             }
             shiftStaffing.compareDates = compareDates;
             function initDatePicker() {
-                resgrid.shifts.shiftStaffing.datePicker = $("#shiftDayPicker").kendoDatePicker({
-                    value: new Date(),
-                    disableDates: function (date) {
-                        var now = new Date();
-                        if (date < now)
-                            return true;
-                        if (date && resgrid.shifts.shiftStaffing.compareDates(date, shiftStaffing.shiftDays)) {
-                            return false;
-                        }
-                        else {
-                            return true;
-                        }
+                var now = new Date();
+                resgrid.shifts.shiftStaffing.datePicker = $("#shiftDayPicker").datetimepicker({
+                    timepicker: false,
+                    format: 'm/d/Y',
+                    minDate: now,
+                    scrollMonth: false,
+                    scrollInput: false,
+                    onGenerate: function(ct, input) {
+                        // Disable days not in shiftDays
+                        $(this).find('.xdsoft_date').each(function() {
+                            var $td = $(this);
+                            var y = $td.data('year');
+                            var m = $td.data('month'); // 0-based
+                            var d = $td.data('date');
+                            if (y !== undefined && m !== undefined && d !== undefined) {
+                                var cellDate = new Date(y, m, d);
+                                if (!resgrid.shifts.shiftStaffing.compareDates(cellDate, shiftStaffing.shiftDays)) {
+                                    $td.addClass('xdsoft_disabled');
+                                }
+                            }
+                        });
                     }
                 });
             }
@@ -91,61 +100,48 @@ var resgrid;
                     //}
 
                     if (isAdmin) {
-                        $("#shiftPersonnel").kendoMultiSelect({
+                        $("#shiftPersonnel").select2({
                             placeholder: "Select Non-Group Personnel...",
-                            dataTextField: "Name",
-                            dataValueField: "UserId",
-                            autoBind: false,
-                            dataSource: {
-                                type: "json",
-                                transport: {
-                                    read: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForGridWithFilter'
-                                }
+                            allowClear: true,
+                            multiple: true,
+                            ajax: {
+                                url: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForGridWithFilter',
+                                dataType: 'json',
+                                processResults: function(data) { return { results: $.map(data, function(u) { return { id: u.UserId, text: u.Name }; }) }; }
                             }
                         });
                         $.ajax({
                             url: resgrid.absoluteBaseUrl + '/User/Shifts/GetPersonnelForShift?shiftId=' + $('#ShiftId').val() + '&groupId=0',
-                            contentType: 'application/json',
-                            type: 'GET'
+                            contentType: 'application/json', type: 'GET'
                         }).done(function (data) {
                             if (data) {
-                                var multiSelect = $("#shiftPersonnel").data("kendoMultiSelect");
-                                var valuesToAdd = [];
-                                for (var i = 0; i < data.length; i++) {
-                                    valuesToAdd.push(data[i].UserId);
-                                }
-                                multiSelect.value(valuesToAdd);
+                                var opts = data.map(function(u) { return new Option(u.Name, u.UserId, true, true); });
+                                opts.forEach(function(o) { $('#shiftPersonnel').append(o); });
+                                $('#shiftPersonnel').trigger('change');
                             }
                         });
                     }
                     $('.groupPersonnelSelect').each(function (i, obj) {
                         var that = this;
-                        $(that).kendoMultiSelect({
+                        $(that).select2({
                             placeholder: "Select Personnel for Group...",
-                            dataTextField: "Name",
-                            dataValueField: "UserId",
-                            autoBind: false,
-                            dataSource: {
-                                type: "json",
-                                transport: {
-                                    read: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForGridWithFilter'
-                                }
+                            allowClear: true,
+                            multiple: true,
+                            ajax: {
+                                url: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForGridWithFilter',
+                                dataType: 'json',
+                                processResults: function(data) { return { results: $.map(data, function(u) { return { id: u.UserId, text: u.Name }; }) }; }
                             }
                         });
-                        var groupId = $(that).attr("name");
-                        groupId = groupId.replace('groupPersonnel_', '');
+                        var groupId = $(that).attr("name").replace('groupPersonnel_', '');
                         $.ajax({
                             url: resgrid.absoluteBaseUrl + '/User/Shifts/GetPersonnelForShift?shiftId=' + $('#ShiftId').val() + '&groupId=' + groupId,
-                            contentType: 'application/json',
-                            type: 'GET'
+                            contentType: 'application/json', type: 'GET'
                         }).done(function (userData) {
                             if (userData) {
-                                var multiSelect = $(that).data("kendoMultiSelect");
-                                var valuesToAdd = [];
-                                for (var i = 0; i < userData.length; i++) {
-                                    valuesToAdd.push(userData[i].UserId);
-                                }
-                                multiSelect.value(valuesToAdd);
+                                var opts = userData.map(function(u) { return new Option(u.Name, u.UserId, true, true); });
+                                opts.forEach(function(o) { $(that).append(o); });
+                                $(that).trigger('change');
                             }
                         });
                     });
@@ -183,16 +179,13 @@ var resgrid;
                                     for (var l = 0; l < roleIds.length; l++) {
                                         $(`#unitRole_${data2[j].UnitId}_${roleIds[l]}`).each(function (i, obj) {
                                             var that = this;
-                                            $(that).kendoComboBox({
+                                            $(that).select2({
                                                 placeholder: "Select Person...",
-                                                dataTextField: "Name",
-                                                dataValueField: "UserId",
-                                                autoBind: false,
-                                                dataSource: {
-                                                    type: "json",
-                                                    transport: {
-                                                        read: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForGridWithFilter'
-                                                    }
+                                                allowClear: true,
+                                                ajax: {
+                                                    url: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForGridWithFilter',
+                                                    dataType: 'json',
+                                                    processResults: function(data) { return { results: $.map(data, function(u) { return { id: u.UserId, text: u.Name }; }) }; }
                                                 }
                                             });
                                         });

@@ -32,33 +32,25 @@ var resgrid;
                 if (sameAddress === 'True') {
                     disableMailingAddressControls();
                 }
-                $("#roles").kendoMultiSelect({
+                $("#roles").select2({
                     placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "RoleId",
-                    autoBind: false,
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
+                    allowClear: true,
+                    multiple: true,
+                    ajax: {
+                        url: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles',
+                        dataType: 'json',
+                        processResults: function (data) {
+                            return { results: $.map(data, function (r) { return { id: r.RoleId, text: r.Name }; }) };
                         }
                     }
                 });
                 $.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/Personnel/GetRolesForUser?userId=' + $('#UserId').val(),
-                    contentType: 'application/json',
-                    type: 'GET'
+                    contentType: 'application/json', type: 'GET'
                 }).done(function (data) {
                     if (data) {
-                        var multiSelect = $("#roles").data("kendoMultiSelect");
-
-                        if (multiSelect) {
-                            var valuesToAdd = [];
-                            for (var i = 0; i < data.length; i++) {
-                                valuesToAdd.push(data[i].RoleId);
-                            }
-                            multiSelect.value(valuesToAdd);
-                        }
+                        data.forEach(function (r) { $("#roles").append(new Option(r.Name, r.RoleId, true, true)); });
+                        $("#roles").trigger('change');
                     }
                 });
 

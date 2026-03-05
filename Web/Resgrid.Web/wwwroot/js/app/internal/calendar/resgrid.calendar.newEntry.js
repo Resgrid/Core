@@ -64,12 +64,7 @@ var resgrid;
                     applyAllDayMode($(this).is(':checked'));
                 });
 
-                $("#Item_RepeatOnDay").kendoNumericTextBox({
-                    format: "#",
-                    min: 1,
-                    max: 31,
-                    step: 1
-                });
+                $("#Item_RepeatOnDay").attr({ type: 'number', min: 1, max: 31, step: 1 });
 
                 var quill = new Quill('#editor-container', {
                     placeholder: '',
@@ -82,15 +77,15 @@ var resgrid;
                     return true;
                 });
 
-                $("#entities").kendoMultiSelect({
+                $("#entities").select2({
                     placeholder: "Select department or groups...",
-                    dataTextField: "Name",
-                    dataValueField: "Id",
-                    autoBind: false,
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Calendar/GetDepartmentEnitites'
+                    allowClear: true,
+                    multiple: true,
+                    ajax: {
+                        url: resgrid.absoluteBaseUrl + '/User/Calendar/GetDepartmentEnitites',
+                        dataType: 'json',
+                        processResults: function (data) {
+                            return { results: $.map(data, function (e) { return { id: e.Id, text: e.Name }; }) };
                         }
                     }
                 });

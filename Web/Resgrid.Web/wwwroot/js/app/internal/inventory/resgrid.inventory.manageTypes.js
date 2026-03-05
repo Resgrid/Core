@@ -1,4 +1,3 @@
-
 var resgrid;
 (function (resgrid) {
     var inventory;
@@ -7,43 +6,18 @@ var resgrid;
         (function (manageTypes) {
             $(document).ready(function () {
                 resgrid.common.analytics.track('Inventory - Manage Types');
-                $("#typesIndexList").kendoGrid({
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Inventory/GetTypesList'
-                        },
-                        schema: {
-                            model: {
-                                fields: {
-                                    TypeId: { type: "number" },
-                                    Name: { type: "string" },
-                                    ExpiresDays: { type: "string" }
-                                }
-                            }
-                        },
-                        pageSize: 50
-                    },
-                    //height: 400,
-                    filterable: true,
-                    sortable: true,
-                    scrollable: true,
-                    pageable: {
-                        refresh: true,
-                        pageSizes: true,
-                        buttonCount: 5
-                    },
+                $("#typesIndexList").DataTable({
+                    ajax: { url: resgrid.absoluteBaseUrl + '/User/Inventory/GetTypesList', dataSrc: '' },
+                    pageLength: 50,
                     columns: [
-                        "Name",
+                        { data: 'Name', title: 'Name' },
+                        { data: 'ExpiresDays', title: 'Expires Days' },
                         {
-                            field: "ExpiresDays",
-                            title: "Expires Days"
-                        },
-                        {
-                            field: "TypeId",
-                            title: "Actions",
-                            filterable: false,
-                            template: kendo.template($("#typecommand-template").html())
+                            data: 'TypeId', title: 'Actions', orderable: false,
+                            render: function (data) {
+                                return '<a class="btn btn-xs btn-primary" href="' + resgrid.absoluteBaseUrl + '/User/Inventory/EditType?typeId=' + data + '">Edit</a> ' +
+                                       '<a class="btn btn-xs btn-danger" href="' + resgrid.absoluteBaseUrl + '/User/Inventory/DeleteType?typeId=' + data + '">Delete</a>';
+                            }
                         }
                     ]
                 });

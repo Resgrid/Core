@@ -5,53 +5,25 @@ var resgrid;
         var callsettings;
         (function (callsettings) {
             $(document).ready(function () {
-                var dataSource = new kendo.data.DataSource({
-                    transport: {
-                        read: {
-                            url: resgrid.absoluteBaseUrl + '/User/Department/GetCallEmailTypes',
-                            dataType: "json"
-                        }
-                    },
-                    pageSize: 12
-                });
-                $("#pager").kendoPager({
-                    dataSource: dataSource
-                });
-                $("#listView").kendoListView({
-                    dataSource: dataSource,
-                    selectable: "single",
-                    dataBound: onDataBound,
-                    change: onChange,
-                    template: kendo.template($("#template").html())
-                });
-                function onDataBound() {
-                    SetSelectedByID($("#CallType").val());
-                }
-                ;
-                function onChange() {
-                    var data = dataSource.view(), selected = $.map(this.select(), function (item) {
-                        return data[$(item).index()].Id;
+                // Load call email types and render as a selectable list
+                $.getJSON(resgrid.absoluteBaseUrl + '/User/Department/GetCallEmailTypes', function (data) {
+                    var $list = $("#listView").empty();
+                    $.each(data, function (i, item) {
+                        var checked = item.Id == $("#CallType").val() ? 'checked' : '';
+                        $list.append(
+                            '<div class="list-group-item" style="cursor:pointer">' +
+                            '<label><input type="radio" name="callTypeItem" value="' + item.Id + '" ' + checked + '> ' + item.Name + '</label>' +
+                            '</div>'
+                        );
                     });
-                    $("#CallType").val(selected);
-                }
-                ;
-                function SetSelectedByID(id) {
-                    var data = dataSource.view();
-                    var listView = $("#listView").data("kendoListView");
-                    var children = listView.element.children();
-                    var index = -1;
-                    for (var x = 0; x < data.length; x++) {
-                        if (data[x].Id == id) {
-                            index = x;
-                        }
-                        ;
-                    }
-                    ;
-                    if (index != -1) {
-                        listView.select(children[index]);
-                    }
-                }
-                ;
+                    $list.on('change', 'input[type=radio]', function () {
+                        $("#CallType").val($(this).val());
+                        $list.find('.list-group-item').removeClass('active');
+                        $(this).closest('.list-group-item').addClass('active');
+                    });
+                    // Highlight currently selected
+                    $list.find('input[type=radio]:checked').closest('.list-group-item').addClass('active');
+                });
             });
         })(callsettings = department.callsettings || (department.callsettings = {}));
     })(department = resgrid.department || (resgrid.department = {}));

@@ -6,18 +6,25 @@ var resgrid;
         var textsettings;
         (function (textsettings) {
             $(document).ready(function () {
-                textToCallDataSource = new kendo.data.DataSource({
-                    transport: {
-                        read: {
-                            url: resgrid.absoluteBaseUrl + '/User/Department/GetCallTextTypes',
-                            dataType: "json"
-                        }
-                    },
-                    pageSize: 12
+                // Load call text types and render as a selectable list
+                $.getJSON(resgrid.absoluteBaseUrl + '/User/Department/GetCallTextTypes', function (data) {
+                    var $list = $("#textTypesListView").empty();
+                    $.each(data, function (i, item) {
+                        var checked = item.Id == $("#TextCallType").val() ? 'checked' : '';
+                        $list.append(
+                            '<div class="list-group-item" style="cursor:pointer">' +
+                            '<label><input type="radio" name="textCallTypeItem" value="' + item.Id + '" ' + checked + '> ' + item.Name + '</label>' +
+                            '</div>'
+                        );
+                    });
+                    $list.on('change', 'input[type=radio]', function () {
+                        $("#TextCallType").val($(this).val());
+                        $list.find('.list-group-item').removeClass('active');
+                        $(this).closest('.list-group-item').addClass('active');
+                    });
+                    $list.find('input[type=radio]:checked').closest('.list-group-item').addClass('active');
                 });
-                $("#textTypesPager").kendoPager({
-                    dataSource: textToCallDataSource
-                });
+
                 $("#EnableTextCommand").change(function () {
                     var val = $("#EnableTextCommand").val();
                     if (val)
@@ -25,45 +32,10 @@ var resgrid;
                     else
                         $('#betaWarning').hide();
                 });
-                function onTextDataBound() {
-                    SetSelectedByIDText($("#TextCallType").val());
-                }
-                ;
-                function onTextChange() {
-                    var data = textToCallDataSource.view(), selected = $.map(this.select(), function (item) {
-                        return data[$(item).index()].Id;
-                    });
-                    $("#TextCallType").val(selected);
-                }
-                ;
-                function SetSelectedByIDText(id) {
-                    var data = textToCallDataSource.view();
-                    var listView = $("#textTypesListView").data("kendoListView");
-                    var children = listView.element.children();
-                    var index = -1;
-                    for (var x = 0; x < data.length; x++) {
-                        if (data[x].Id == id) {
-                            index = x;
-                        }
-                        ;
-                    }
-                    ;
-                    if (index != -1) {
-                        listView.select(children[index]);
-                    }
-                }
-                ;
-                $("#textTypesListView").kendoListView({
-                    dataSource: textToCallDataSource,
-                    selectable: "single",
-                    dataBound: onTextDataBound,
-                    change: onTextChange,
-                    template: kendo.template($("#textTemplate").html())
-                });
             });
             $('#searchNumbers').click(function () {
                 if ($('#country').val()) {
-                    kendo.ui.progress($("#phoneNumberTableBody"), true);
+                    resgrid.showProgress($("#phoneNumberTableBody"), true);
                     if ($('#country').val())
                         $.ajax({
                             url: resgrid.absoluteBaseUrl + '/User/Department/GetAvailableNumbers?country=' + $('#country').val() + "&areaCode=" + $('#areaCode').val(),
@@ -79,12 +51,12 @@ var resgrid;
                                 tr += '</tr>';
                                 tableHtml += tr;
                             });
-                            kendo.ui.progress($("#personnelGrid"), false);
+                            resgrid.showProgress($("#personnelGrid"), false);
                             $('#phoneNumberTableBody').html(tableHtml);
                         });
                 }
                 else {
-                    kendo.ui.progress($("#personnelGrid"), false);
+                    resgrid.showProgress($("#personnelGrid"), false);
                     $('#phoneNumberTableBody').empty();
                 }
             });

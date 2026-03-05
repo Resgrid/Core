@@ -49,14 +49,6 @@
 
 @section Scripts
 {
-  <script id="logsCommand-template" type="text/x-kendo-template">
-		<a style="text-decoration:none;" class="btn btn-xs btn-primary" href="@Url.Action("LogReport", "Reports", new { area = "User" })?logId=#=LogId#">@commonLocalizer["View"]</a>
-
-		#if(CanDelete){#
-		<a style="text-decoration:none;" class="btn btn-xs btn-danger" href="@Url.Action("DeleteWorkLog", "Logs", new { area = "User" })?logId=#=LogId#" data-confirm="@localizer["DeleteWarning"]" rel="nofollow"><i class="icon-trash"></i>@commonLocalizer["Delete"]</a>
-		#}#
-  </script>
-
 
   <script src="~/js/app/internal/logs/resgrid.logs.index.js" type="text/javascript"></script>
 }

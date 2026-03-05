@@ -6,24 +6,11 @@ var resgrid;
 		(function (settings) {
 			$(document).ready(function () {
 				$('select').select2();
-				$('#TimeToResetStaffing').kendoTimePicker({
-					interval: 15
-				});
-				$('#TimeToResetStatus').kendoTimePicker({
-					interval: 15
-				});
-				$("#MapZoomLevel").kendoNumericTextBox({
-					format: "#",
-					min: 0,
-					max: 15,
-					step: 1
-				});
-				$("#RefreshTime").kendoNumericTextBox({
-					format: "#",
-					min: 30,
-					max: 900,
-					step: 15
-				});
+				$('#TimeToResetStaffing').datetimepicker({ datepicker: false, format: 'H:i', step: 15 });
+				$('#TimeToResetStatus').datetimepicker({ datepicker: false, format: 'H:i', step: 15 });
+				// Use native number inputs for numeric values
+				if (!$("#MapZoomLevel").attr('type')) { $("#MapZoomLevel").attr({ type: 'number', min: 0, max: 15, step: 1 }); }
+				if (!$("#RefreshTime").attr('type')) { $("#RefreshTime").attr({ type: 'number', min: 30, max: 900, step: 15 }); }
 				$('#Department_Address_Address1').blur(function () {
 					validateDepartmentAddress();
 				});

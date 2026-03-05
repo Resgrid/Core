@@ -158,164 +158,47 @@ var resgrid;
                     });
                     evt.preventDefault();
                 });
-                $("#personnelGrid").kendoGrid({
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForCallGrid?callLat=' + $("#Latitude").val() + '&callLong=' + $("#Longitude").val()
-                        },
-                        schema: {
-                            model: {
-                                fields: {
-                                    UserId: { type: "string" },
-                                    Name: { type: "string" },
-                                    Eta: { type: "string" },
-                                    Status: { type: "string" },
-                                    StatusColor: { type: "string" },
-                                    Staffing: { type: "string" },
-                                    StaffingColor: { type: "string" },
-                                    Group: { type: "string" },
-                                    Roles: { type: "string" }
-                                }
-                            }
-                        },
-                        //pageSize: 50,
-                        serverPaging: false,
-                        serverFiltering: false,
-                        serverSorting: false
-                    },
-                    height: 600,
-                    width: 210,
-                    filterable: true,
-                    sortable: true,
-                    pageable: false,
+                var personnelTable = $("#personnelGrid").DataTable({
+                    ajax: { url: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForCallGrid?callLat=' + $("#Latitude").val() + '&callLong=' + $("#Longitude").val(), dataSrc: '' },
+                    paging: false,
                     columns: [
-                        {
-                            field: "UserId",
-                            title: "",
-                            width: 9,
-                            filterable: false,
-                            sortable: false,
-                            headerTemplate: '<label><input type="checkbox" id="checkAllPersonnel"/></label>',
-                            template: "<input type=\"checkbox\" id=\"dispatchUser_#=UserId#\" name=\"dispatchUser_#=UserId#\" />"
-                        },
-                        {
-                            field: "Name",
-                            title: "Name",
-                            width: 50
-                        },
-                        {
-                            field: "Eta",
-                            title: "Eta",
-                            width: 18
-                        },
-                        {
-                            field: "Status",
-                            title: "Status",
-                            width: 30,
-                            template: "<span style='color:#=StatusColor#;'>#=Status#</span>"
-                        },
-                        {
-                            field: "Staffing",
-                            title: "Staffing",
-                            width: 30,
-                            template: "<span style='color:#=StaffingColor#;'>#=Staffing#</span>"
-                        },
-                        {
-                            field: "Group",
-                            title: "Group",
-                            width: 50
-                        },
-                        {
-                            field: "Roles",
-                            title: "Roles",
-                            width: 100
-                        }
+                        { data: 'UserId', title: '', orderable: false, searchable: false, render: function(data) { return '<input type="checkbox" id="dispatchUser_'+data+'" name="dispatchUser_'+data+'" />'; } },
+                        { data: 'Name', title: 'Name' },
+                        { data: 'Eta', title: 'ETA' },
+                        { data: null, title: 'Status', orderable: false, render: function(d,t,row) { return '<span style="color:'+row.StatusColor+'">'+row.Status+'</span>'; } },
+                        { data: null, title: 'Staffing', orderable: false, render: function(d,t,row) { return '<span style="color:'+row.StaffingColor+'">'+row.Staffing+'</span>'; } },
+                        { data: 'Group', title: 'Group' },
+                        { data: 'Roles', title: 'Roles' }
                     ]
                 });
-                $("#groupsGrid").kendoGrid({
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Groups/GetGroupsForCallGrid'
-                        },
-                        schema: {
-                            model: {
-                                fields: {
-                                    GroupId: { type: "number" },
-                                    Name: { type: "string" },
-                                    Count: { type: "number" }
-                                }
-                            }
-                        },
-                        //pageSize: 50,
-                        serverPaging: false,
-                        serverFiltering: false,
-                        serverSorting: false
-                    },
-                    height: 600,
-                    width: 210,
-                    filterable: true,
-                    sortable: true,
-                    pageable: false,
+                personnelTable.on('draw', function() {
+                    $('#personnelGrid thead th:first').html('<label><input type="checkbox" id="checkAllPersonnel"/></label>');
+                });
+
+                var groupsTable = $("#groupsGrid").DataTable({
+                    ajax: { url: resgrid.absoluteBaseUrl + '/User/Groups/GetGroupsForCallGrid', dataSrc: '' },
+                    paging: false,
                     columns: [
-                        {
-                            field: "GroupId",
-                            title: "",
-                            width: 28,
-                            filterable: false,
-                            sortable: false,
-                            headerTemplate: '<label><input type="checkbox" id="checkAllGroups"/></label>',
-                            template: "<input type=\"checkbox\" id=\"dispatchGroup_#=GroupId#\" name=\"dispatchGroup_#=GroupId#\" />"
-                        },
-                        "Name",
-                        {
-                            field: "Count",
-                            title: "Personnel Count"
-                        }
+                        { data: 'GroupId', title: '', orderable: false, searchable: false, render: function(data) { return '<input type="checkbox" id="dispatchGroup_'+data+'" name="dispatchGroup_'+data+'" />'; } },
+                        { data: 'Name', title: 'Name' },
+                        { data: 'Count', title: 'Personnel Count' }
                     ]
                 });
-                $("#rolesGrid").kendoGrid({
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRolesForCallGrid'
-                        },
-                        schema: {
-                            model: {
-                                fields: {
-                                    RoleId: { type: "number" },
-                                    Name: { type: "string" },
-                                    Count: { type: "number" }
-                                }
-                            }
-                        },
-                        //pageSize: 50,
-                        serverPaging: false,
-                        serverFiltering: false,
-                        serverSorting: false
-                    },
-                    height: 600,
-                    width: 210,
-                    filterable: true,
-                    sortable: true,
-                    pageable: false,
+                groupsTable.on('draw', function() {
+                    $('#groupsGrid thead th:first').html('<label><input type="checkbox" id="checkAllGroups"/></label>');
+                });
+
+                var rolesTable = $("#rolesGrid").DataTable({
+                    ajax: { url: resgrid.absoluteBaseUrl + '/User/Personnel/GetRolesForCallGrid', dataSrc: '' },
+                    paging: false,
                     columns: [
-                        {
-                            field: "RoleId",
-                            title: "",
-                            width: 28,
-                            filterable: false,
-                            sortable: false,
-                            headerTemplate: '<label><input type="checkbox" id="checkAllRoles"/></label>',
-                            template: "<input type=\"checkbox\" id=\"dispatchRole_#=RoleId#\" name=\"dispatchRole_#=RoleId#\" />"
-                        },
-                        "Name",
-                        {
-                            field: "Count",
-                            title: "Personnel Count"
-                        }
+                        { data: 'RoleId', title: '', orderable: false, searchable: false, render: function(data) { return '<input type="checkbox" id="dispatchRole_'+data+'" name="dispatchRole_'+data+'" />'; } },
+                        { data: 'Name', title: 'Name' },
+                        { data: 'Count', title: 'Personnel Count' }
                     ]
+                });
+                rolesTable.on('draw', function() {
+                    $('#rolesGrid thead th:first').html('<label><input type="checkbox" id="checkAllRoles"/></label>');
                 });
 
                 $('#protocolQuestionWindow').on('show.bs.modal', function (event) {
@@ -442,24 +325,10 @@ var resgrid;
                     $('#rolesGrid').find(':checkbox').prop('checked', this.checked);
                 });
                 $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-                    if (e.target && e.target.textContent === "Personnel") {
-                        var personnelsGrid = $('#personnelGrid');
-                        var personnelDataArea = personnelsGrid.find('.k-grid-content');
-                        personnelDataArea.height(556);
-                        personnelsGrid.height(600);
-                    }
-                    else if (e.target && e.target.textContent === "Groups") {
-                        var groupsGrid = $('#groupsGrid');
-                        var groupsDataArea = groupsGrid.find('.k-grid-content');
-                        groupsDataArea.height(556);
-                        groupsGrid.height(600);
-                    }
-                    else if (e.target && e.target.textContent === "Roles") {
-                        var rolesGrid = $('#rolesGrid');
-                        var rolesDataArea = rolesGrid.find('.k-grid-content');
-                        rolesDataArea.height(556);
-                        rolesGrid.height(600);
-                    }
+                    // DataTables adjusts itself; trigger resize for any hidden columns
+                    if (e.target && e.target.textContent === "Personnel") { personnelTable.columns.adjust(); }
+                    else if (e.target && e.target.textContent === "Groups") { groupsTable.columns.adjust(); }
+                    else if (e.target && e.target.textContent === "Roles") { rolesTable.columns.adjust(); }
                 });
                 centerMap();
             });
@@ -541,10 +410,7 @@ var resgrid;
             }
             newcall.findLocation = findLocation;
             function refreshPersonnelGrid() {
-                var personnelGrid = $('#personnelGrid').data('kendoGrid');
-                personnelGrid.dataSource.transport.options.read.url = resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForCallGrid?callLat=' + $("#Latitude").val() + '&callLong=' + $("#Longitude").val();
-                personnelGrid.dataSource.read();
-                personnelGrid.refresh();
+                personnelTable.ajax.url(resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForCallGrid?callLat=' + $("#Latitude").val() + '&callLong=' + $("#Longitude").val()).load();
             }
             newcall.refreshPersonnelGrid = refreshPersonnelGrid;
             function checkAllUnits(gridName, item) {

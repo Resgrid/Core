@@ -1,77 +1,50 @@
-
 var resgrid;
 (function (resgrid) {
     var dispatch;
     (function (dispatch) {
         var archive;
         (function (archive) {
+            var archiveTable;
             $(document).ready(function () {
                 resgrid.common.analytics.track('Dispatch Archive');
 
-                $("#archiveCallsList").kendoGrid({
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: {
-                                url: resgrid.absoluteBaseUrl + '/User/Dispatch/GetArchivedCallsList',
-                                dataType: "json",
-                                data: {
-                                    year: $("#Year").val()
-                                }
-                            }
-                        },
-                        schema: {
-                            model: {
-                                fields: {
-                                    CallId: { type: "number" },
-                                    Number: { type: "string" },
-                                    Priority: { type: "string" },
-                                    Color: { type: "string" },
-                                    Name: { type: "string" },
-                                    State: { type: "string" },
-                                    StateColor: { type: "string" },
-                                    Address: { type: "string" },
-                                    Timestamp: { type: "string" },
-                                    CanDeleteCall: { type: "boolean" }
-                                }
-                            }
-                        },
-                        pageSize: 50
+                archiveTable = $("#archiveCallsList").DataTable({
+                    ajax: {
+                        url: resgrid.absoluteBaseUrl + '/User/Dispatch/GetArchivedCallsList?year=' + $("#Year").val(),
+                        dataSrc: ''
                     },
-                    //height: 400,
-                    filterable: true,
-                    sortable: true,
-                    scrollable: true,
-                    pageable: {
-                        refresh: true,
-                        pageSizes: true,
-                        buttonCount: 5
-                    },
+                    pageLength: 50,
                     columns: [
-                        "Number",
-                        "Name",
-                        "Timestamp",
+                        { data: 'Number', title: 'Number' },
+                        { data: 'Name', title: 'Name' },
+                        { data: 'Timestamp', title: 'Timestamp' },
                         {
-                            field: "Priority",
-                            title: "Priority",
-                            template: kendo.template($("#archiveCallPriority-template").html())
+                            data: null, title: 'Priority', orderable: false,
+                            render: function (data, type, row) {
+                                return '<span style="background-color:' + row.Color + ';color:#fff;padding:2px 6px;border-radius:3px;">' + row.Priority + '</span>';
+                            }
                         },
                         {
-                            field: "State",
-                            title: "State",
-                            template: kendo.template($("#archiveCallState-template").html())
+                            data: null, title: 'State', orderable: false,
+                            render: function (data, type, row) {
+                                return '<span style="background-color:' + row.StateColor + ';color:#fff;padding:2px 6px;border-radius:3px;">' + row.State + '</span>';
+                            }
                         },
                         {
-                            field: "UnitId",
-                            title: "Actions",
-                            filterable: false,
-                            template: kendo.template($("#archiveCallCommand-template").html())
+                            data: 'CallId', title: 'Actions', orderable: false,
+                            render: function (data, type, row) {
+                                var html = '<a class="btn btn-xs btn-primary" href="' + resgrid.absoluteBaseUrl + '/User/Dispatch/CallInfo?callId=' + data + '">View</a> ';
+                                if (row.CanDeleteCall) {
+                                    html += '<a class="btn btn-xs btn-danger" href="' + resgrid.absoluteBaseUrl + '/User/Dispatch/DeleteCall?callId=' + data + '">Delete</a>';
+                                }
+                                return html;
+                            }
                         }
                     ]
                 });
 
                 $("#Year").change(function () {
-                    $("#archiveCallsList").data("kendoGrid").dataSource.read({ year: $("#Year").val() });
+                    archiveTable.ajax.url(resgrid.absoluteBaseUrl + '/User/Dispatch/GetArchivedCallsList?year=' + $(this).val()).load();
                 });
             });
         })(archive = dispatch.archive || (dispatch.archive = {}));

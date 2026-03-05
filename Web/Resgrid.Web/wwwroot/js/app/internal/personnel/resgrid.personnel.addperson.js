@@ -9,15 +9,15 @@ var resgrid;
                 resgrid.common.analytics.track('Add Personnel');
                 $('#Carrier').select2();
                 $('#UserGroup').select2();
-                $("#roles").kendoMultiSelect({
+                $("#roles").select2({
                     placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "RoleId",
-                    autoBind: false,
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
+                    allowClear: true,
+                    multiple: true,
+                    ajax: {
+                        url: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles',
+                        dataType: 'json',
+                        processResults: function (data) {
+                            return { results: $.map(data, function (r) { return { id: r.RoleId, text: r.Name }; }) };
                         }
                     }
                 });

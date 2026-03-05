@@ -1,88 +1,69 @@
-
 var resgrid;
 (function (resgrid) {
     var message;
     (function (message) {
         var inbox;
         (function (inbox) {
+            var inboxTable;
             $(document).ready(function () {
                 resgrid.common.analytics.track('Messaging - Inbox');
-                $("#inboxMailList").kendoGrid({
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Messages/GetInboxMessageList'
-                        },
-                        schema: {
-                            model: {
-                                fields: {
-                                    MessageId: { type: "number" },
-                                    Subject: { type: "string" },
-                                    Body: { type: "string" },
-                                    SentBy: { type: "string" },
-                                    SentOn: { type: "string" },
-                                    ReadOn: { type: "string" },
-                                    Type: { type: "number" },
-                                    SystemGenerated: { type: "boolean" },
-                                    IsDeleted: { type: "boolean" },
-                                    Read: { type: "boolean" }
-                                }
-                            }
-                        },
-                        pageSize: 50
+                inboxTable = $("#inboxMailList").DataTable({
+                    ajax: {
+                        url: resgrid.absoluteBaseUrl + '/User/Messages/GetInboxMessageList',
+                        dataSrc: ''
                     },
-                    //height: 400,
-                    filterable: true,
-                    sortable: true,
-                    scrollable: true,
-                    pageable: {
-                        refresh: true,
-                        pageSizes: true,
-                        buttonCount: 5
-                    },
+                    pageLength: 50,
                     columns: [
                         {
-                            field: "MessageId",
-                            title: "",
-                            width: 28,
-                            filterable: false,
-                            sortable: false,
-                            headerTemplate: '<label><input type="checkbox" id="checkAllMessages"/></label>',
-                            template: "<input type=\"checkbox\" id=\"message\" name=\"message\" value=\"#=MessageId#\" />"
+                            data: 'MessageId',
+                            title: '',
+                            orderable: false,
+                            searchable: false,
+                            render: function (data) {
+                                return '<input type="checkbox" id="message" name="message" value="' + data + '" />';
+                            }
                         },
                         {
-                            field: "Subject",
-                            title: "Subject",
-                            template: "#if(Read){# #=Subject# #}else{# <strong>#=Subject#</strong> #}#"
+                            data: 'Subject',
+                            title: 'Subject',
+                            render: function (data, type, row) {
+                                return row.Read ? data : '<strong>' + data + '</strong>';
+                            }
                         },
                         {
-                            field: "SentBy",
-                            title: "Sent By",
-                            template: "#if(Read){# #=SentBy# #}else{# <strong>#=SentBy#</strong> #}#"
+                            data: 'SentBy',
+                            title: 'Sent By',
+                            render: function (data, type, row) {
+                                return row.Read ? data : '<strong>' + data + '</strong>';
+                            }
                         },
                         {
-                            field: "SentOn",
-                            title: "Sent On",
-                            template: "#if(Read){# #=SentOn# #}else{# <strong>#=SentOn#</strong> #}#"
+                            data: 'SentOn',
+                            title: 'Sent On',
+                            render: function (data, type, row) {
+                                return row.Read ? data : '<strong>' + data + '</strong>';
+                            }
                         },
                         {
-                            field: "MessageId",
-                            title: "Actions",
-                            filterable: false,
-                            sortable: false,
-                            template: kendo.template($("#inboxCommand-template").html())
+                            data: 'MessageId',
+                            title: 'Actions',
+                            orderable: false,
+                            searchable: false,
+                            render: function (data) {
+                                return '<a class="btn btn-sm btn-primary" href="' + resgrid.absoluteBaseUrl + '/User/Messages/View?messageId=' + data + '">View</a>';
+                            }
                         }
                     ]
                 });
-                $('#checkAllMessages').on('click', function () {
-                    $('#inboxMailList').find(':checkbox').prop('checked', this.checked);
+                inboxTable.on('draw', function () {
+                    $('#inboxMailList thead th:first').html('<label><input type="checkbox" id="checkAllMessages"/></label>');
+                });
+                $(document).on('click', '#checkAllMessages', function () {
+                    $('#inboxMailList tbody :checkbox').prop('checked', this.checked);
                 });
             });
             function deleteMessages() {
-                var values = $("input[name=message]:checked").map(function () {
-                    return this.value;
-                }).get().join(",");
-
+                var values = $("input[name=message]:checked").map(function () { return this.value; }).get().join(",");
                 if (values && values.length > 0) {
                     swal({
                         title: "Are you sure?",
@@ -92,28 +73,24 @@ var resgrid;
                         dangerMode: true
                     }).then((willDelete) => {
                         if (willDelete) {
-                            kendo.ui.progress($("#inboxPageList"), true);
+                            resgrid.showProgress('#inboxMailList', true);
                             $.ajax({
                                 url: resgrid.absoluteBaseUrl + '/User/Messages/DeleteMessages?messageIds=' + values,
                                 type: 'DELETE',
-                                success: function (result) {
-                                    kendo.ui.progress($("#inboxPageList"), false);
+                                success: function () {
+                                    resgrid.showProgress('#inboxMailList', false);
                                     window.location.assign(resgrid.absoluteBaseUrl + '/User/Messages/Inbox');
                                 }
                             });
                         }
                     });
-                }
-                else {
+                } else {
                     alert('You have no messages selected to delete');
                 }
             }
             inbox.deleteMessages = deleteMessages;
-
             function markMessagesAsRead() {
-                var values = $("input[name=message]:checked").map(function () {
-                    return this.value;
-                }).get().join(",");
+                var values = $("input[name=message]:checked").map(function () { return this.value; }).get().join(",");
                 if (values && values.length > 0) {
                     swal({
                         title: "Are you sure?",
@@ -123,19 +100,18 @@ var resgrid;
                         dangerMode: true
                     }).then((willDelete) => {
                         if (willDelete) {
-                            kendo.ui.progress($("#inboxPageList"), true);
+                            resgrid.showProgress('#inboxMailList', true);
                             $.ajax({
                                 url: resgrid.absoluteBaseUrl + '/User/Messages/MarkMessagesAsRead?messageIds=' + values,
                                 type: 'PUT',
-                                success: function (result) {
-                                    kendo.ui.progress($("#inboxPageList"), false);
+                                success: function () {
+                                    resgrid.showProgress('#inboxMailList', false);
                                     window.location.assign(resgrid.absoluteBaseUrl + '/User/Messages/Inbox');
                                 }
                             });
                         }
                     });
-                }
-                else {
+                } else {
                     alert('You have no messages selected to mark as read');
                 }
             }

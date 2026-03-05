@@ -10,12 +10,7 @@ var resgrid;
                 $('select').select2();
                 $('#Inventory_GroupId').on("change", function (e) { getUnits(e.val); });
                 getUnits($('#Inventory_GroupId').val());
-                $("#Inventory_Amount").kendoNumericTextBox({
-                    format: "#",
-                    min: -999999999,
-                    max: 999999999,
-                    step: 1
-                });
+                $("#Inventory_Amount").attr({ type: 'number', min: -999999999, max: 999999999, step: 1 });
             });
             function getUnits(stationId) {
                 $.ajax({

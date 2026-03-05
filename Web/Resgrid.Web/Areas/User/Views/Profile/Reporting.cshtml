@@ -45,17 +45,6 @@
 
 @section Scripts
     {
-    <script id="reportingSchedules-template" type="text/x-kendo-template">
-        # if(IsActive == 1) { #
-        <a style="text-decoration:none;" class="k-button k-grid-Edit" href="@Url.Action("EditScheduledReport", "Profile", new { Area = "User" })?scheduleId=#=ScheduleId#">@commonLocalizer["Edit"]</a>
-        <a style="text-decoration:none;" class="k-button k-grid-Edit" onclick="resgrid.profile.reporting.deactivateSchedule(#=ScheduleId#);">@commonLocalizer["Deactivate"]</a>
-        <a style="text-decoration:none;" class="k-button k-grid-Delete" onclick="resgrid.profile.reporting.deleteSchedule(#=ScheduleId#);">@commonLocalizer["Delete"]</a>
-        # } else { #
-        <a style="text-decoration:none;" class="k-button k-grid-Edit" href="@Url.Action("EditScheduledReport", "Profile", new { Area = "User" })?scheduleId=#=ScheduleId#">@commonLocalizer["Edit"]</a>
-        <a style="text-decoration:none;" class="k-button k-grid-Edit" onclick="resgrid.profile.reporting.activateSchedule(#=ScheduleId#);">@commonLocalizer["Activate"]</a>
-        <a style="text-decoration:none;" class="k-button k-grid-Delete" onclick="resgrid.profile.reporting.deleteSchedule(#=ScheduleId#);">@commonLocalizer["Delete"]</a>
-        # } #
-    </script>
 
     <script src="~/js/app/internal/profile/resgrid.profile.reporting.js" type="text/javascript"></script>
 }

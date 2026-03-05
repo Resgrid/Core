@@ -18,30 +18,23 @@ var resgrid;
 					$("#ParentFields").hide();
 					$("#StationAddress").hide();
 				}
-				$("#groupAdmins").kendoMultiSelect({
-					placeholder: "Select group admins...",
-					dataTextField: "Name",
-					dataValueField: "Id",
-					autoBind: false,
-					dataSource: {
-						type: "json",
-						transport: {
-							read: resgrid.absoluteBaseUrl + '/User/Department/GetRecipientsForGrid?filter=3&filterNotInGroup=true'
+				var groupUrl = resgrid.absoluteBaseUrl + '/User/Department/GetRecipientsForGrid?filter=3&filterNotInGroup=true';
+				function initGroupSelect2(selector) {
+					$(selector).select2({
+						placeholder: "Select users...",
+						allowClear: true,
+						multiple: true,
+						ajax: {
+							url: groupUrl,
+							dataType: 'json',
+							processResults: function (data) {
+								return { results: $.map(data, function (u) { return { id: u.Id, text: u.Name }; }) };
+							}
 						}
-					}
-				});
-				$("#groupUsers").kendoMultiSelect({
-					placeholder: "Select group users...",
-					dataTextField: "Name",
-					dataValueField: "Id",
-					autoBind: false,
-					dataSource: {
-						type: "json",
-						transport: {
-							read: resgrid.absoluteBaseUrl + '/User/Department/GetRecipientsForGrid?filter=3&filterNotInGroup=true'
-						}
-					}
-				});
+					});
+				}
+				initGroupSelect2("#groupAdmins");
+				initGroupSelect2("#groupUsers");
 				$("#getPrintersButton").click(function () {
 					if ($('#apiKey').val()) {
 						$.ajax({
@@ -58,7 +51,7 @@ var resgrid;
 								tr += '</tr>';
 								tableHtml += tr;
 							});
-							//kendo.ui.progress($("#personnelGrid"), false);
+							//resgrid.showProgress($("#personnelGrid"), false);
 							$('#printersTableBody').html(tableHtml);
 						});
 					}

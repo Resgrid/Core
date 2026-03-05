@@ -1,4 +1,3 @@
-
 var resgrid;
 (function (resgrid) {
     var inventory;
@@ -7,38 +6,14 @@ var resgrid;
         (function (index) {
             $(document).ready(function () {
                 resgrid.common.analytics.track('Inventory List');
-                $("#inventoryIndexList").kendoGrid({
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Inventory/GetCombinedInventoryList'
-                        },
-                        schema: {
-                            model: {
-                                fields: {
-                                    Name: { type: "string" },
-                                    Group: { type: "string" },
-                                    Unit: { type: "string" },
-                                    Count: { type: "number" }
-                                }
-                            }
-                        },
-                        pageSize: 50
-                    },
-                    //height: 400,
-                    filterable: true,
-                    sortable: true,
-                    scrollable: true,
-                    pageable: {
-                        refresh: true,
-                        pageSizes: true,
-                        buttonCount: 5
-                    },
+                $("#inventoryIndexList").DataTable({
+                    ajax: { url: resgrid.absoluteBaseUrl + '/User/Inventory/GetCombinedInventoryList', dataSrc: '' },
+                    pageLength: 50,
                     columns: [
-                        "Name",
-                        "Group",
-                        "Unit",
-                        "Count"
+                        { data: 'Name', title: 'Name' },
+                        { data: 'Group', title: 'Group' },
+                        { data: 'Unit', title: 'Unit' },
+                        { data: 'Count', title: 'Count' }
                     ]
                 });
             });

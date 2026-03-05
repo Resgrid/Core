@@ -1,4 +1,3 @@
-
 var resgrid;
 (function (resgrid) {
     var security;
@@ -7,65 +6,44 @@ var resgrid;
         (function (audits) {
             $(document).ready(function () {
                 resgrid.common.analytics.track('Security Audits');
-                $("#auditLogsList").kendoGrid({
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Security/GetAuditLogsList'
-                        },
-                        schema: {
-                            model: {
-                                fields: {
-                                    AuditLogId: { type: "number" },
-                                    Type: { type: "string" },
-                                    Timestamp: { type: "string" },
-                                    Message: { type: "string" }
-                                }
-                            }
-                        },
-                        pageSize: 50
+
+                var table = $("#auditLogsList").DataTable({
+                    ajax: {
+                        url: resgrid.absoluteBaseUrl + '/User/Security/GetAuditLogsList',
+                        dataSrc: ''
                     },
-                    //height: 400,
-                    filterable: true,
-                    sortable: true,
-                    scrollable: true,
-                    pageable: {
-                        refresh: true,
-                        pageSizes: true,
-                        buttonCount: 5
-                    },
+                    pageLength: 50,
                     columns: [
                         {
-                            field: "AuditLogId",
-                            title: "",
-                            width: 25,
-                            filterable: false,
-                            sortable: false,
-                            headerTemplate: '<label><input type="checkbox" id="checkAllAuditLogs"/></label>',
-                            template: "<input type=\"checkbox\" id=\"selectAuditLog_#=AuditLogId#\" name=\"selectAuditLog_#=AuditLogId#\" />"
+                            data: 'AuditLogId',
+                            title: '',
+                            orderable: false,
+                            searchable: false,
+                            render: function (data) {
+                                return '<input type="checkbox" id="selectAuditLog_' + data + '" name="selectAuditLog_' + data + '" />';
+                            }
                         },
+                        { data: 'Timestamp', title: 'Timestamp' },
+                        { data: 'Type', title: 'Type' },
+                        { data: 'Message', title: 'Message' },
                         {
-                            field: "Timestamp",
-                            title: "Timestamp",
-                            width: 250
-                        },
-                        {
-                            field: "Type",
-                            title: "Type",
-                            width: 250
-                        },
-                        "Message",
-                        {
-                            field: "AuditLogId",
-                            title: "Actions",
-                            filterable: false,
-                            width: 100,
-                            template: kendo.template($("#auditCommand-template").html())
+                            data: 'AuditLogId',
+                            title: 'Actions',
+                            orderable: false,
+                            searchable: false,
+                            render: function (data) {
+                                return '<a class="btn btn-sm btn-primary" href="' + resgrid.absoluteBaseUrl + '/User/Security/ViewAuditLog?auditLogId=' + data + '">View</a>';
+                            }
                         }
                     ]
                 });
-                $('#checkAllAuditLogs').on('click', function () {
-                    $('#auditLogsList').find(':checkbox').prop('checked', this.checked);
+
+                table.on('draw', function () {
+                    $('#auditLogsList thead th:first').html('<label><input type="checkbox" id="checkAllAuditLogs"/></label>');
+                });
+
+                $(document).on('click', '#checkAllAuditLogs', function () {
+                    $('#auditLogsList tbody :checkbox').prop('checked', this.checked);
                 });
             });
         })(audits = security.audits || (security.audits = {}));

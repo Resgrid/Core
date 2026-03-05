@@ -1,4 +1,3 @@
-
 var resgrid;
 (function (resgrid) {
     var notifications;
@@ -44,408 +43,180 @@ var resgrid;
                 $('#Type').on("change", function (e) { switchType($('#Type').val()); });
                 $('#SelectedUnitType').on("change", function (e) { getUnitStates($('#SelectedUnitType').val()); });
                 setUnitStateDataDropdowns();
-                $("#groups").kendoMultiSelect({
-                    placeholder: "Select groups...",
-                    dataTextField: "Name",
-                    dataValueField: "Id",
-                    autoBind: false,
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Department/GetRecipientsForGrid?filter=1'
-                        }
-                    }
-                });
-                $("#roles").kendoMultiSelect({
-                    placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "Id",
-                    autoBind: false,
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Department/GetRecipientsForGrid?filter=2'
-                        }
-                    }
-                });
-                $("#users").kendoMultiSelect({
-                    placeholder: "Select users...",
-                    dataTextField: "Name",
-                    dataValueField: "Id",
-                    autoBind: false,
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Department/GetRecipientsForGrid?filter=3&filterSelf=true'
-                        }
-                    }
-                });
-                $('#Notification_Everyone').change(function () {
-                    if (this.checked) {
-                        $('#Notification_DepartmentAdmins').prop('checked', false);
-                        $('#Notification_LockToGroup').prop('checked', false);
-                        var usersMulti = $("#users").data("kendoMultiSelect");
-                        usersMulti.value("");
-                        usersMulti.enable(false);
-                        var rolesMulti = $("#roles").data("kendoMultiSelect");
-                        rolesMulti.value("");
-                        rolesMulti.enable(false);
-                        var groupsMulti = $("#groups").data("kendoMultiSelect");
-                        groupsMulti.value("");
-                        groupsMulti.enable(false);
-                    }
-                    else {
-                        var usersMulti = $("#users").data("kendoMultiSelect");
-                        usersMulti.enable(true);
-                        var rolesMulti = $("#roles").data("kendoMultiSelect");
-                        rolesMulti.enable(true);
-                        var groupsMulti = $("#groups").data("kendoMultiSelect");
-                        groupsMulti.enable(true);
-                    }
-                });
-                $('#Notification_DepartmentAdmins').change(function () {
-                    if (this.checked) {
-                        $('#Notification_Everyone').prop('checked', false);
-                        $('#Notification_LockToGroup').prop('checked', false);
-                        var usersMulti = $("#users").data("kendoMultiSelect");
-                        usersMulti.value("");
-                        usersMulti.enable(false);
-                        var rolesMulti = $("#roles").data("kendoMultiSelect");
-                        rolesMulti.value("");
-                        rolesMulti.enable(false);
-                        var groupsMulti = $("#groups").data("kendoMultiSelect");
-                        groupsMulti.value("");
-                        groupsMulti.enable(false);
-                    }
-                    else {
-                        var usersMulti = $("#users").data("kendoMultiSelect");
-                        usersMulti.enable(true);
-                        var rolesMulti = $("#roles").data("kendoMultiSelect");
-                        rolesMulti.enable(true);
-                        var groupsMulti = $("#groups").data("kendoMultiSelect");
-                        groupsMulti.enable(true);
-                    }
-                });
-                $('#Notification_LockToGroup').change(function () {
-                    if (this.checked) {
-                        $('#Notification_Everyone').prop('checked', false);
-                        $('#Notification_DepartmentAdmins').prop('checked', false);
-                        var usersMulti = $("#users").data("kendoMultiSelect");
-                        usersMulti.value("");
-                        usersMulti.enable(false);
-                        var rolesMulti = $("#roles").data("kendoMultiSelect");
-                        rolesMulti.enable(true);
-                        var groupsMulti = $("#groups").data("kendoMultiSelect");
-                        groupsMulti.value("");
-                        groupsMulti.enable(false);
-                    }
-                    else {
-                        var usersMulti = $("#users").data("kendoMultiSelect");
-                        usersMulti.enable(true);
-                        var rolesMulti = $("#roles").data("kendoMultiSelect");
-                        rolesMulti.enable(true);
-                        var groupsMulti = $("#groups").data("kendoMultiSelect");
-                        groupsMulti.enable(true);
-                    }
-                });
-            });
-            function getUnitStates(value) {
-                if (value) {
-                    $('#currentStateMultiControl').empty().append("<select id='currentStates' name='currentStates'></select>");
-                    $("#currentStates").kendoMultiSelect({
-                        placeholder: "Select available unit states...",
-                        dataTextField: "Name",
-                        dataValueField: "Id",
-                        autoBind: false,
-                        dataSource: {
-                            type: "json",
-                            transport: {
-                                read: resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetUnitStatusesLevelsForDepartment?includeAny=False&unitTypeId=' + value
+
+                function initSelect2Multi(selector, placeholder, url, valueField, textField) {
+                    valueField = valueField || 'Id';
+                    textField = textField || 'Name';
+                    $(selector).select2({
+                        placeholder: placeholder,
+                        allowClear: true,
+                        multiple: true,
+                        ajax: {
+                            url: url,
+                            dataType: 'json',
+                            processResults: function (data) {
+                                return { results: $.map(data, function (item) { return { id: item[valueField], text: item[textField] }; }) };
                             }
                         }
                     });
                 }
-            }
-            function setUnitStateDataDropdowns() {
-                $('#beforeStateControl').empty().append('<input id="Notification_BeforeData" name="Notification.BeforeData" />');
-                $('#currentStateControl').empty().append('<input id="Notification_CurrentData" name="Notification.CurrentData" />');
-                $("#Notification_BeforeData").kendoDropDownList({
-                    dataTextField: "Name",
-                    dataValueField: "Id",
-                    index: 0,
-                    autoBind: true,
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetUnitStatusesLevelsForDepartmentCombined?includeAny=True'
-                        }
-                    }
+
+                initSelect2Multi('#groups', 'Select groups...', resgrid.absoluteBaseUrl + '/User/Department/GetRecipientsForGrid?filter=1');
+                initSelect2Multi('#roles', 'Select roles...', resgrid.absoluteBaseUrl + '/User/Department/GetRecipientsForGrid?filter=2');
+                initSelect2Multi('#users', 'Select users...', resgrid.absoluteBaseUrl + '/User/Department/GetRecipientsForGrid?filter=3&filterSelf=true');
+
+                function toggleRecipients(disable) {
+                    ['#users', '#roles', '#groups'].forEach(function (sel) {
+                        $(sel).prop('disabled', disable).val(null).trigger('change');
+                    });
+                }
+                function enableRecipients() {
+                    ['#users', '#roles', '#groups'].forEach(function (sel) { $(sel).prop('disabled', false); });
+                }
+
+                $('#Notification_Everyone').change(function () {
+                    if (this.checked) {
+                        $('#Notification_DepartmentAdmins, #Notification_LockToGroup').prop('checked', false);
+                        toggleRecipients(true);
+                    } else { enableRecipients(); }
                 });
-                $("#Notification_CurrentData").kendoDropDownList({
-                    dataTextField: "Name",
-                    dataValueField: "Id",
-                    index: 0,
-                    autoBind: true,
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetUnitStatusesLevelsForDepartmentCombined?includeAny=True'
-                        }
-                    }
+                $('#Notification_DepartmentAdmins').change(function () {
+                    if (this.checked) {
+                        $('#Notification_Everyone, #Notification_LockToGroup').prop('checked', false);
+                        toggleRecipients(true);
+                    } else { enableRecipients(); }
                 });
-            }
-            function setPersonnelStaffingDataDropdowns() {
-                $('#beforeStateControl').empty().append('<input id="Notification_BeforeData" name="Notification.BeforeData" />');
-                $('#currentStateControl').empty().append('<input id="Notification_CurrentData" name="Notification.CurrentData" />');
-                $("#Notification_BeforeData").kendoDropDownList({
-                    dataTextField: "Name",
-                    dataValueField: "Id",
-                    index: 0,
-                    autoBind: true,
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetPersonnelStaffingLevelsForDepartment?includeAny=True'
-                        }
-                    }
+                $('#Notification_LockToGroup').change(function () {
+                    if (this.checked) {
+                        $('#Notification_Everyone, #Notification_DepartmentAdmins').prop('checked', false);
+                        $('#users').prop('disabled', true).val(null).trigger('change');
+                        $('#groups').prop('disabled', true).val(null).trigger('change');
+                        $('#roles').prop('disabled', false);
+                    } else { enableRecipients(); }
                 });
-                $("#Notification_CurrentData").kendoDropDownList({
-                    dataTextField: "Name",
-                    dataValueField: "Id",
-                    index: 0,
-                    autoBind: true,
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetPersonnelStaffingLevelsForDepartment?includeAny=True'
+            });
+
+            function initCurrentStatesSelect2(url, placeholder) {
+                $('#currentStateMultiControl').empty().append("<select id='currentStates' name='currentStates' multiple='multiple' style='width:100%'></select>");
+                $('#currentStates').select2({
+                    placeholder: placeholder,
+                    allowClear: true,
+                    multiple: true,
+                    ajax: {
+                        url: url,
+                        dataType: 'json',
+                        processResults: function (data) {
+                            return { results: $.map(data, function (item) { return { id: item.Id, text: item.Name }; }) };
                         }
                     }
                 });
             }
-            function setPersonnelStatusDataDropdowns() {
-                $('#beforeStateControl').empty().append('<input id="Notification_BeforeData" name="Notification.BeforeData" />');
-                $('#currentStateControl').empty().append('<input id="Notification_CurrentData" name="Notification.CurrentData" />');
-                $("#Notification_BeforeData").kendoDropDownList({
-                    dataTextField: "Name",
-                    dataValueField: "Id",
-                    index: 0,
-                    autoBind: true,
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetPersonnelStatusesForDepartment?includeAny=True'
-                        }
-                    }
-                });
-                $("#Notification_CurrentData").kendoDropDownList({
-                    dataTextField: "Name",
-                    dataValueField: "Id",
-                    index: 0,
-                    autoBind: true,
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetPersonnelStatusesForDepartment?includeAny=True'
-                        }
-                    }
+
+            function initDropDown(selector, url) {
+                $.getJSON(url, function (data) {
+                    var $sel = $(selector).empty().append('<option value="">-- Any --</option>');
+                    $.each(data, function (i, item) { $sel.append('<option value="' + item.Id + '">' + item.Name + '</option>'); });
                 });
             }
-            function switchType(value) {
+
+            function getUnitStates(value) {
                 if (value) {
-                    $('#usersToNotify').show();
-                    $('#calendarNotice').hide();
-                    $('#shiftNotice').hide();
-                    if (value === "0") {
-                        $('#beforeState').show();
-                        $('#currentState').show();
-                        $('#lockToGroupSection').show();
-                        $('#lowerLimitGroup').hide();
-                        $('#currentStateMulti').hide();
-                        $('#roleToMonitor').hide();
-                        $('#unitTypesToMonitor').hide();
-                        setUnitStateDataDropdowns();
-                    }
-                    else if (value === "1") {
-                        $('#beforeState').show();
-                        $('#currentState').show();
-                        $('#lockToGroupSection').show();
-                        $('#lowerLimitGroup').hide();
-                        $('#currentStateMulti').hide();
-                        $('#roleToMonitor').hide();
-                        $('#unitTypesToMonitor').hide();
-                        setPersonnelStaffingDataDropdowns();
-                    }
-                    else if (value === "2") {
-                        $('#beforeState').show();
-                        $('#currentState').show();
-                        $('#lockToGroupSection').show();
-                        $('#lowerLimitGroup').hide();
-                        $('#currentStateMulti').hide();
-                        $('#roleToMonitor').hide();
-                        $('#unitTypesToMonitor').hide();
-                        setPersonnelStatusDataDropdowns();
-                    }
-                    else if (value === "11") {
-                        $('#beforeState').hide();
-                        $('#currentState').hide();
-                        $('#lockToGroupSection').show();
-                        $('#lowerLimitGroup').show();
-                        $('#roleToMonitor').show();
-                        $('#unitTypesToMonitor').hide();
-                        $('#currentStateMulti').show();
-                        $('#currentStateMultiLabel').empty().append("Available Staffing Levels");
-                        $('#currentStateMultiControl').empty().append("<select id='currentStates' name='currentStates'></select>");
-                        $("#currentStates").kendoMultiSelect({
-                            placeholder: "Select available staffing levels...",
-                            dataTextField: "Name",
-                            dataValueField: "Id",
-                            autoBind: false,
-                            dataSource: {
-                                type: "json",
-                                transport: {
-                                    read: resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetPersonnelStaffingLevelsForDepartment?includeAny=False'
-                                }
-                            }
-                        });
-                        $('#lowerLimitGroupControl').empty().append("<input id='lowerLimit' value='0' />");
-                        $("#lowerLimit").kendoNumericTextBox({
-                            format: "0",
-                            min: 0,
-                            max: 999,
-                            step: 1
-                        });
-                    }
-                    else if (value === "12") {
-                        $('#beforeState').hide();
-                        $('#currentState').hide();
-                        $('#lockToGroupSection').show();
-                        $('#lowerLimitGroup').show();
-                        $('#roleToMonitor').hide();
-                        $('#unitTypesToMonitor').show();
-                        $('#currentStateMulti').show();
-                        $('#currentStateMultiLabel').empty().append("Available Unit States");
-                        $('#currentStateMultiControl').empty().append("<select id='currentStates' name='currentStates'></select>");
-                        $("#currentStates").kendoMultiSelect({
-                            placeholder: "Select available unit states...",
-                            dataTextField: "Name",
-                            dataValueField: "Id",
-                            autoBind: false,
-                            dataSource: {
-                                type: "json",
-                                transport: {
-                                    read: resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetUnitStatusesLevelsForDepartment?includeAny=False&unitTypeId=' + $('#SelectedUnitType').val()
-                                }
-                            }
-                        });
-                        $('#lowerLimitGroupControl').empty().append("<input id='lowerLimit' value='0' />");
-                        $("#lowerLimit").kendoNumericTextBox({
-                            format: "0",
-                            min: 0,
-                            max: 999,
-                            step: 1
-                        });
-                    }
-                    else if (value === "13") {
-                        $('#beforeState').hide();
-                        $('#currentState').hide();
-                        $('#lockToGroupSection').hide();
-                        $('#lowerLimitGroup').show();
-                        $('#roleToMonitor').show();
-                        $('#unitTypesToMonitor').hide();
-                        $('#currentStateMulti').show();
-                        $('#currentStateMultiControl').empty().append("<select id='currentStates' name='currentStates'></select>");
-                        $("#currentStates").kendoMultiSelect({
-                            placeholder: "Select available states...",
-                            dataTextField: "Name",
-                            dataValueField: "Id",
-                            autoBind: false,
-                            dataSource: {
-                                type: "json",
-                                transport: {
-                                    read: resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetPersonnelStaffingLevelsForDepartment?includeAny=False'
-                                }
-                            }
-                        });
-                        $('#lowerLimitGroupControl').empty().append("<input id='lowerLimit' value='0' />");
-                        $("#lowerLimit").kendoNumericTextBox({
-                            format: "0",
-                            min: 0,
-                            max: 999,
-                            step: 1
-                        });
-                        $('#currentStateMultiLabel').empty().append("Available Staffing Levels");
-                    }
-                    else if (value === "14") {
-                        $('#beforeState').hide();
-                        $('#currentState').hide();
-                        $('#lockToGroupSection').hide();
-                        $('#lowerLimitGroup').show();
-                        $('#roleToMonitor').hide();
-                        $('#unitTypesToMonitor').show();
-                        $('#currentStateMulti').show();
-                        $('#currentStateMultiLabel').empty().append("Available Unit States");
-                        $('#currentStateMultiControl').empty().append("<select id='currentStates' name='currentStates'></select>");
-                        $("#currentStates").kendoMultiSelect({
-                            placeholder: "Select available unit states...",
-                            dataTextField: "Name",
-                            dataValueField: "Id",
-                            autoBind: false,
-                            dataSource: {
-                                type: "json",
-                                transport: {
-                                    read: resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetUnitStatusesLevelsForDepartment?includeAny=False&unitTypeId=' + $('#SelectedUnitType').val()
-                                }
-                            }
-                        });
-                        $('#lowerLimitGroupControl').empty().append("<input id='lowerLimit' value='0' />");
-                        $("#lowerLimit").kendoNumericTextBox({
-                            format: "0",
-                            min: 0,
-                            max: 999,
-                            step: 1
-                        });
-                    }
-                    else if (value === "15" || value === "5" || value === "16") {
-                        $('#beforeState').hide();
-                        $('#currentState').hide();
-                        $('#lockToGroupSection').show();
-                        $('#unitTypesToMonitor').hide();
-                        $('#lowerLimitGroup').hide();
-                        $('#roleToMonitor').hide();
-                        $('#currentStateMulti').hide();
-                        $('#usersToNotify').hide();
-                        $('#calendarNotice').show();
-                    }
-                    else if (value === "16" || value === "17" || value === "18") {
-                        $('#beforeState').hide();
-                        $('#currentState').hide();
-                        $('#lockToGroupSection').show();
-                        $('#unitTypesToMonitor').hide();
-                        $('#lowerLimitGroup').hide();
-                        $('#roleToMonitor').hide();
-                        $('#currentStateMulti').hide();
-                        $('#usersToNotify').hide();
-                        $('#shiftNotice').show();
-                    }
-                    else {
-                        $('#beforeState').hide();
-                        $('#currentState').hide();
-                        $('#lockToGroupSection').show();
-                        $('#unitTypesToMonitor').hide();
-                        $('#lowerLimitGroup').hide();
-                        $('#roleToMonitor').hide();
-                        $('#currentStateMulti').hide();
-                    }
+                    initCurrentStatesSelect2(resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetUnitStatusesLevelsForDepartment?includeAny=False&unitTypeId=' + value, 'Select available unit states...');
                 }
             }
+            function setUnitStateDataDropdowns() {
+                $('#beforeStateControl').empty().append('<select id="Notification_BeforeData" name="Notification.BeforeData" style="width:100%"></select>');
+                $('#currentStateControl').empty().append('<select id="Notification_CurrentData" name="Notification.CurrentData" style="width:100%"></select>');
+                var url = resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetUnitStatusesLevelsForDepartmentCombined?includeAny=True';
+                initDropDown('#Notification_BeforeData', url);
+                initDropDown('#Notification_CurrentData', url);
+            }
+            function setPersonnelStaffingDataDropdowns() {
+                $('#beforeStateControl').empty().append('<select id="Notification_BeforeData" name="Notification.BeforeData" style="width:100%"></select>');
+                $('#currentStateControl').empty().append('<select id="Notification_CurrentData" name="Notification.CurrentData" style="width:100%"></select>');
+                var url = resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetPersonnelStaffingLevelsForDepartment?includeAny=True';
+                initDropDown('#Notification_BeforeData', url);
+                initDropDown('#Notification_CurrentData', url);
+            }
+            function setPersonnelStatusDataDropdowns() {
+                $('#beforeStateControl').empty().append('<select id="Notification_BeforeData" name="Notification.BeforeData" style="width:100%"></select>');
+                $('#currentStateControl').empty().append('<select id="Notification_CurrentData" name="Notification.CurrentData" style="width:100%"></select>');
+                var url = resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetPersonnelStatusesForDepartment?includeAny=True';
+                initDropDown('#Notification_BeforeData', url);
+                initDropDown('#Notification_CurrentData', url);
+            }
+
+            function initLowerLimit() {
+                $('#lowerLimitGroupControl').empty().append("<input id='lowerLimit' name='lowerLimit' type='number' class='form-control' value='0' min='0' max='999' step='1' style='width:100px' />");
+            }
+
+            function switchType(value) {
+                if (!value) return;
+                $('#usersToNotify').show();
+                $('#calendarNotice, #shiftNotice').hide();
+                if (value === "0") {
+                    $('#beforeState, #currentState, #lockToGroupSection').show();
+                    $('#lowerLimitGroup, #currentStateMulti, #roleToMonitor, #unitTypesToMonitor').hide();
+                    setUnitStateDataDropdowns();
+                } else if (value === "1") {
+                    $('#beforeState, #currentState, #lockToGroupSection').show();
+                    $('#lowerLimitGroup, #currentStateMulti, #roleToMonitor, #unitTypesToMonitor').hide();
+                    setPersonnelStaffingDataDropdowns();
+                } else if (value === "2") {
+                    $('#beforeState, #currentState, #lockToGroupSection').show();
+                    $('#lowerLimitGroup, #currentStateMulti, #roleToMonitor, #unitTypesToMonitor').hide();
+                    setPersonnelStatusDataDropdowns();
+                } else if (value === "11") {
+                    $('#beforeState, #currentState').hide();
+                    $('#lockToGroupSection, #lowerLimitGroup, #roleToMonitor, #currentStateMulti').show();
+                    $('#unitTypesToMonitor').hide();
+                    $('#currentStateMultiLabel').empty().append("Available Staffing Levels");
+                    initCurrentStatesSelect2(resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetPersonnelStaffingLevelsForDepartment?includeAny=False', 'Select available staffing levels...');
+                    initLowerLimit();
+                } else if (value === "12") {
+                    $('#beforeState, #currentState').hide();
+                    $('#lockToGroupSection, #lowerLimitGroup, #unitTypesToMonitor, #currentStateMulti').show();
+                    $('#roleToMonitor').hide();
+                    $('#currentStateMultiLabel').empty().append("Available Unit States");
+                    initCurrentStatesSelect2(resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetUnitStatusesLevelsForDepartment?includeAny=False&unitTypeId=' + $('#SelectedUnitType').val(), 'Select available unit states...');
+                    initLowerLimit();
+                } else if (value === "13") {
+                    $('#beforeState, #currentState').hide();
+                    $('#lowerLimitGroup, #roleToMonitor, #currentStateMulti').show();
+                    $('#lockToGroupSection, #unitTypesToMonitor').hide();
+                    initCurrentStatesSelect2(resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetPersonnelStaffingLevelsForDepartment?includeAny=False', 'Select available states...');
+                    initLowerLimit();
+                    $('#currentStateMultiLabel').empty().append("Available Staffing Levels");
+                } else if (value === "14") {
+                    $('#beforeState, #currentState').hide();
+                    $('#lowerLimitGroup, #unitTypesToMonitor, #currentStateMulti').show();
+                    $('#lockToGroupSection, #roleToMonitor').hide();
+                    $('#currentStateMultiLabel').empty().append("Available Unit States");
+                    initCurrentStatesSelect2(resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetUnitStatusesLevelsForDepartment?includeAny=False&unitTypeId=' + $('#SelectedUnitType').val(), 'Select available unit states...');
+                    initLowerLimit();
+                } else if (value === "15" || value === "5" || value === "16") {
+                    $('#beforeState, #currentState, #unitTypesToMonitor, #lowerLimitGroup, #roleToMonitor, #currentStateMulti, #usersToNotify').hide();
+                    $('#lockToGroupSection, #calendarNotice').show();
+                } else if (value === "17" || value === "18") {
+                    $('#beforeState, #currentState, #unitTypesToMonitor, #lowerLimitGroup, #roleToMonitor, #currentStateMulti, #usersToNotify').hide();
+                    $('#lockToGroupSection, #shiftNotice').show();
+                } else {
+                    $('#beforeState, #currentState').hide();
+                    $('#lockToGroupSection').show();
+                    $('#unitTypesToMonitor, #lowerLimitGroup, #roleToMonitor, #currentStateMulti').hide();
+                }
+            }
+
             function checkform() {
                 var lockedToGroup = $('#Notification_LockToGroup').is(":checked");
                 var groupAdminsOnly = $('#Notification_SelectedGroupsAdminsOnly').is(":checked");
-                var rolesMulti = $("#roles").data("kendoMultiSelect");
-                var rolesSelected = rolesMulti.value();
+                var rolesSelected = $('#roles').val() || [];
                 if (lockedToGroup && rolesSelected.length === 0 && !groupAdminsOnly) {
                     $('#errorInfo').empty().html('<span class="alert alert-danger">If you want to lock the source group you need to select the roles you want to notify in the group or check "Group Admins Only".</span>');
                     return false;
                 }
-                if ($('#Type').val() === "11" || $('#Type').val() === "12" || $('#Type').val() === "13" || $('#Type').val() === "14") {
-                    if (!$('#currentStates').val()) {
+                if (['11','12','13','14'].indexOf($('#Type').val()) !== -1) {
+                    if (!$('#currentStates').val() || $('#currentStates').val().length === 0) {
                         $('#errorInfo').empty().html('<span class="alert alert-danger">For Availability alerts you need to supply which states are considered available (i.e. Available and Delayed) choose them from the Available States/Staffing multiselect.</span>');
                         return false;
                     }

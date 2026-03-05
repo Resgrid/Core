@@ -1,74 +1,40 @@
-
 var resgrid;
 (function (resgrid) {
     var dispatch;
     (function (dispatch) {
         var smallallcallgrid;
         (function (smallallcallgrid) {
+            var allCallsTable;
             $(document).ready(function () {
-                $("#smallCallsGrid").kendoGrid({
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: '/User/Dispatch/GetAllCallsForGrid'
-                        },
-                        schema: {
-                            model: {
-                                fields: {
-                                    CallId: { type: "int" },
-                                    Priority: { type: "string" },
-                                    Name: { type: "string" },
-                                    State: { type: "string" },
-                                    DispatchTime: { type: "date" }
-                                }
-                            }
-                        },
-                        pageSize: 6,
-                        serverPaging: false,
-                        serverFiltering: false,
-                        serverSorting: false
+                allCallsTable = $("#smallCallsGrid").DataTable({
+                    ajax: {
+                        url: '/User/Dispatch/GetAllCallsForGrid',
+                        dataSrc: ''
                     },
-                    //height: 365,
-                    filterable: true,
-                    sortable: true,
-                    pageable: true,
-                    scrollable: true,
+                    pageLength: 6,
                     columns: [
+                        { data: 'Priority', title: 'Priority' },
+                        { data: 'DispatchTime', title: 'Dispatch Time' },
+                        { data: 'Name', title: 'Name' },
+                        { data: 'State', title: 'State' },
                         {
-                            field: "Priority",
-                            title: "Priority",
-                            width: 85
-                        },
-                        {
-                            field: "DispatchTime",
-                            title: "Dispatch Time",
-                            format: "{0:MM/dd/yyyy hh:mm:ss}",
-                            width: 140
-                        },
-                        {
-                            field: "Name",
-                            title: "Name",
-                            width: 280
-                        },
-                        {
-                            field: "State",
-                            title: "State",
-                            width: 85
-                        },
-                        {
-                            template: kendo.template($("#smallCallRowActionColumnTemplate").html()),
-                            width: 125
+                            data: 'CallId',
+                            title: 'Actions',
+                            orderable: false,
+                            searchable: false,
+                            render: function (data) {
+                                return '<a class="btn btn-success selectCallButton" onclick="resgrid.dispatch.smallallcallgrid.selectCall(' + data + ');">Respond To Call</a>';
+                            }
                         }
                     ]
                 });
             });
             function refreshGrid() {
-                var grid = $("#smallCallsGrid").data("kendoGrid");
-                grid.dataSource.page(1);
-                grid.dataSource.read();
+                if (allCallsTable) { allCallsTable.ajax.reload(); }
             }
             smallallcallgrid.refreshGrid = refreshGrid;
             function selectCall(callId) {
+                var event = {};
                 event['CallId'] = callId;
                 $('.callsWindow').trigger(resgrid.dispatch.smallallcallgrid.selectCallButton, event);
             }

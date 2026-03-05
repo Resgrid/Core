@@ -1,67 +1,38 @@
-
 var resgrid;
 (function (resgrid) {
     var profile;
     (function (profile) {
         var reporting;
         (function (reporting) {
+            var reportingTable;
             $(document).ready(function () {
-                $("#reportingScheduleGrid").kendoGrid({
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Profile/GetScheduledReportingForGrid'
-                        },
-                        schema: {
-                            model: {
-                                fields: {
-                                    ScheduleId: { type: "number" },
-                                    ScheduleType: { type: "string" },
-                                    IsActive: { type: "boolean" },
-                                    SpecifcDate: { type: "date" },
-                                    DaysOfWeek: { type: "string" },
-                                    Data: { type: "string" }
-                                }
-                            }
-                        },
-                        pageSize: 50,
-                        serverPaging: false,
-                        serverFiltering: false,
-                        serverSorting: false
+                reportingTable = $("#reportingScheduleGrid").DataTable({
+                    ajax: {
+                        url: resgrid.absoluteBaseUrl + '/User/Profile/GetScheduledReportingForGrid',
+                        dataSrc: ''
                     },
-                    height: 400,
-                    filterable: true,
-                    sortable: true,
-                    pageable: true,
-                    scrollable: true,
+                    pageLength: 50,
                     columns: [
+                        { data: 'Data', title: 'Report' },
+                        { data: 'ScheduleType', title: 'Type' },
+                        { data: 'IsActive', title: 'Active' },
+                        { data: 'SpecifcDate', title: 'Date' },
+                        { data: 'DaysOfWeek', title: 'Days Of Week' },
                         {
-                            field: "Data",
-                            title: "Report",
-                            width: 75
-                        },
-                        {
-                            field: "ScheduleType",
-                            title: "Type",
-                            width: 60
-                        },
-                        {
-                            field: "IsActive",
-                            title: "Active",
-                            width: 50
-                        },
-                        {
-                            field: "SpecifcDate",
-                            title: "Date",
-                            width: 100
-                        },
-                        {
-                            field: "DaysOfWeek",
-                            title: "Days Of Week",
-                            width: 125
-                        },
-                        {
-                            template: kendo.template($("#reportingSchedules-template").html()),
-                            width: 150
+                            data: null,
+                            title: 'Actions',
+                            orderable: false,
+                            searchable: false,
+                            render: function (data, type, row) {
+                                var html = '<a class="btn btn-sm btn-primary" href="' + resgrid.absoluteBaseUrl + '/User/Profile/EditReportingSchedule?scheduleId=' + row.ScheduleId + '">Edit</a> ';
+                                if (row.IsActive) {
+                                    html += '<a class="btn btn-sm btn-warning" onclick="resgrid.profile.reporting.deactivateSchedule(' + row.ScheduleId + ');">Deactivate</a> ';
+                                } else {
+                                    html += '<a class="btn btn-sm btn-success" onclick="resgrid.profile.reporting.activateSchedule(' + row.ScheduleId + ');">Activate</a> ';
+                                }
+                                html += '<a class="btn btn-sm btn-danger" onclick="resgrid.profile.reporting.deleteSchedule(' + row.ScheduleId + ');">Delete</a>';
+                                return html;
+                            }
                         }
                     ]
                 });
@@ -69,21 +40,12 @@ var resgrid;
                     $('#reportingScheduleGrid').find(':checkbox').prop('checked', this.checked);
                 });
             });
-            function editSchedule(e) {
-                e.preventDefault();
-                var row = $(e.target).closest("tr");
-                var item = $("#reportingScheduleGrid").data("kendoGrid").dataItem(row);
-                window.location.assign(resgrid.absoluteBaseUrl + '/User/Profile/EditStaffingSchedule/' + item.get('ScheduleId'));
-            }
-            reporting.editSchedule = editSchedule;
             function activateSchedule(scheduleId) {
                 $.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/Profile/ActivateSchedule?scheduleId=' + scheduleId,
                     contentType: 'application/json; charset=utf-8',
                     type: 'POST'
-                }).done(function (results) {
-                    refreshGrid();
-                });
+                }).done(function () { refreshGrid(); });
             }
             reporting.activateSchedule = activateSchedule;
             function deactivateSchedule(scheduleId) {
@@ -91,28 +53,23 @@ var resgrid;
                     url: resgrid.absoluteBaseUrl + '/User/Profile/DeactivateSchedule?scheduleId=' + scheduleId,
                     contentType: 'application/json; charset=utf-8',
                     type: 'POST'
-                }).done(function (results) {
-                    refreshGrid();
-                });
+                }).done(function () { refreshGrid(); });
             }
             reporting.deactivateSchedule = deactivateSchedule;
             function deleteSchedule(scheduleId) {
-                var conf = confirm("Are you sure you want to delete this schedule?");
-                if (conf == true) {
+                if (confirm("Are you sure you want to delete this schedule?")) {
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Profile/DeleteSchedule?scheduleId=' + scheduleId,
                         contentType: 'application/json; charset=utf-8',
                         type: 'POST'
-                    }).done(function (results) {
-                        refreshGrid();
-                    });
+                    }).done(function () { refreshGrid(); });
                 }
             }
             reporting.deleteSchedule = deleteSchedule;
             function refreshGrid() {
-                var grid = $("#reportingScheduleGrid").data("kendoGrid");
-                grid.dataSource.page(1);
-                grid.dataSource.read();
+                if (reportingTable) {
+                    reportingTable.ajax.reload();
+                }
             }
             reporting.refreshGrid = refreshGrid;
         })(reporting = profile.reporting || (profile.reporting = {}));

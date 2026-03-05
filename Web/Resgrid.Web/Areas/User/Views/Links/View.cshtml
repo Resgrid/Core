@@ -72,17 +72,6 @@
 
 @section Scripts
 {
-  <script id="callPriority-template" type="text/x-kendo-template">
-    <p style="color: #=Color#;">#=Priority#</p>
-  </script>
-
-  <script id="state-template" type="text/x-kendo-template">
-    #if(StateId <= 25){#
-    <span class='label #=StateColor#'>#=State#</span>
-    #}else{#
-    <span class='label label-default' style="color:#=TextColor#;background-color:#=StateColor#;">#=State#</span>
-    #}#
-  </script>
 
   <script>
 		var linkId = @Model.Link.DepartmentId;

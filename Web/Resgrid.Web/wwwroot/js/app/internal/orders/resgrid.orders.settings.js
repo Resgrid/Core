@@ -5,29 +5,28 @@
 		var settings;
 		(function (settings) {
 			$(document).ready(function () {
-
-				$("#departmentTypes").kendoMultiSelect({
+				$("#departmentTypes").select2({
 					placeholder: "Select allowed department types...",
-					dataTextField: "Text",
-					dataValueField: "Text",
-					autoBind: false,
-					dataSource: {
-						type: "json",
-						transport: {
-							read: resgrid.absoluteBaseUrl + '/User/Department/GetDepartmentTypes'
+					allowClear: true,
+					multiple: true,
+					ajax: {
+						url: resgrid.absoluteBaseUrl + '/User/Department/GetDepartmentTypes',
+						dataType: 'json',
+						processResults: function (data) {
+							return { results: $.map(data, function (t) { return { id: t.Text, text: t.Text }; }) };
 						}
 					}
 				});
 
-				$("#notifyRoles").kendoMultiSelect({
+				$("#notifyRoles").select2({
 					placeholder: "Select roles to notify...",
-					dataTextField: "Name",
-					dataValueField: "RoleId",
-					autoBind: false,
-					dataSource: {
-						type: "json",
-						transport: {
-							read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
+					allowClear: true,
+					multiple: true,
+					ajax: {
+						url: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles',
+						dataType: 'json',
+						processResults: function (data) {
+							return { results: $.map(data, function (r) { return { id: r.RoleId, text: r.Name }; }) };
 						}
 					}
 				});

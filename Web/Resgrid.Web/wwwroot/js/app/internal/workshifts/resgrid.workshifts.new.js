@@ -1,4 +1,3 @@
-
 var resgrid;
 (function (resgrid) {
     var workshifts;
@@ -25,15 +24,18 @@ var resgrid;
                     theme: 'bootstrap'
                 });
 
-                $("#UnitsAssigned").kendoMultiSelect({
+                $("#UnitsAssigned").select2({
                     placeholder: "Select units...",
-                    dataTextField: "Name",
-                    dataValueField: "UnitId",
-                    autoBind: false,
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Units/GetUnitsList'
+                    allowClear: true,
+                    ajax: {
+                        url: resgrid.absoluteBaseUrl + '/User/Units/GetUnitsList',
+                        dataType: 'json',
+                        processResults: function (data) {
+                            return {
+                                results: $.map(data, function (item) {
+                                    return { id: item.UnitId, text: item.Name };
+                                })
+                            };
                         }
                     }
                 });
@@ -45,10 +47,10 @@ var resgrid;
 
                 $(document).on('submit', '#newWorkshiftForm', function () {
                     $('#Shift_Description').val(quillDescription.root.innerHTML);
-                    
+
                     return true;
                 });
             });
-        })(listordering = workshifts.newworkshift || (workshifts.newworkshift = {}));
+        })(newworkshift = workshifts.newworkshift || (workshifts.newworkshift = {}));
     })(workshifts = resgrid.workshifts || (resgrid.workshifts = {}));
 })(resgrid || (resgrid = {}));

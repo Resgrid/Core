@@ -25,53 +25,23 @@ var resgrid;
                 //});
 
                 supressValidation();
-                $('#Call_LoggedOn').kendoDateTimePicker({
-                    interval: 1
-                });
-                $("#Call_LoggedOn").keypress(function (e) {
-                    e.preventDefault();
-                });
-                $('#Log_StartedOn').kendoDateTimePicker({
-                    interval: 1
-                });
-                $("#Log_StartedOn").keypress(function (e) {
-                    e.preventDefault();
-                });
-                $('#Log_EndedOn').kendoDateTimePicker({
-                    interval: 1
-                });
-                $("#Log_EndedOn").keypress(function (e) {
-                    e.preventDefault();
-                });
-                $('#meetingStartedOn').kendoDateTimePicker({
-                    interval: 1
-                });
-                $("#meetingStartedOn").keypress(function (e) {
-                    e.preventDefault();
-                });
-                $('#meetingEndedOn').kendoDateTimePicker({
-                    interval: 1
-                });
-                $("#meetingEndedOn").keypress(function (e) {
-                    e.preventDefault();
-                });
-                $('#workStartTime').kendoDateTimePicker({
-                    interval: 1
-                });
-                $("#workStartTime").keypress(function (e) {
-                    e.preventDefault();
-                });
-                $('#workEndTime').kendoDateTimePicker({
-                    interval: 1
-                });
-                $("#workEndTime").keypress(function (e) {
-                    e.preventDefault();
-                });
-                $('#coronerDate').kendoDatePicker({});
-                $("#coronerDate").keypress(function (e) {
-                    e.preventDefault();
-                    return false;
-                });
+                var dtpOpts = { format: 'm/d/Y H:i', step: 1 };
+                $('#Call_LoggedOn').datetimepicker(dtpOpts);
+                $("#Call_LoggedOn").keypress(function (e) { e.preventDefault(); });
+                $('#Log_StartedOn').datetimepicker(dtpOpts);
+                $("#Log_StartedOn").keypress(function (e) { e.preventDefault(); });
+                $('#Log_EndedOn').datetimepicker(dtpOpts);
+                $("#Log_EndedOn").keypress(function (e) { e.preventDefault(); });
+                $('#meetingStartedOn').datetimepicker(dtpOpts);
+                $("#meetingStartedOn").keypress(function (e) { e.preventDefault(); });
+                $('#meetingEndedOn').datetimepicker(dtpOpts);
+                $("#meetingEndedOn").keypress(function (e) { e.preventDefault(); });
+                $('#workStartTime').datetimepicker(dtpOpts);
+                $("#workStartTime").keypress(function (e) { e.preventDefault(); });
+                $('#workEndTime').datetimepicker(dtpOpts);
+                $("#workEndTime").keypress(function (e) { e.preventDefault(); });
+                $('#coronerDate').datetimepicker({ timepicker: false, format: 'm/d/Y' });
+                $("#coronerDate").keypress(function (e) { e.preventDefault(); return false; });
 
                 quill1 = new Quill('#editor-container', {
                     placeholder: '',
@@ -93,38 +63,23 @@ var resgrid;
                     theme: 'snow'
                 });
 
-                
 
-                $("#files").kendoUpload({
-                    multiple: true,
-                    batch: true,
-                    localization: {
-                        select: "Select File"
-                    }
-                });
+
+                // File upload is a standard multi-file input — no Kendo needed
                 $('.sl2').select2().on("change", function (e) {
                     switchLogs(e.val);
                 });
-                newlog.wndCalls = $("#callsWindow")
-                    .kendoWindow({
-                    title: "Select Call",
-                    modal: true,
-                    visible: false,
-                    resizable: false,
-                    content: '/User/Dispatch/SmallCallGrid',
-                    width: 750,
-                    height: 465
-                }).data("kendoWindow");
-                newlog.wndUnits = $("#unitsWindow")
-                    .kendoWindow({
-                    title: "Select Unit",
-                    modal: true,
-                    visible: false,
-                    resizable: false,
-                    content: '/User/Units/SmallUnitsGrid',
-                    width: 750,
-                    height: 465
-                }).data("kendoWindow");
+                // Bootstrap modal wrappers replacing kendoWindow
+                $('#callsWindow').on('show.bs.modal', function () {
+                    var $b = $(this).find('.modal-body');
+                    if ($b.is(':empty')) { $b.load('/User/Dispatch/SmallCallGrid'); }
+                });
+                $('#unitsWindow').on('show.bs.modal', function () {
+                    var $b = $(this).find('.modal-body');
+                    if ($b.is(':empty')) { $b.load('/User/Units/SmallUnitsGrid'); }
+                });
+                newlog.wndCalls = { center: function() { return this; }, open: function() { $('#callsWindow').modal('show'); }, close: function() { $('#callsWindow').modal('hide'); } };
+                newlog.wndUnits = { center: function() { return this; }, open: function() { $('#unitsWindow').modal('show'); }, close: function() { $('#unitsWindow').modal('hide'); } };
                 switchLogs($('#LogType').select2('data').text);
                 $('.callsWindow').on('selectCall', function (e, data) {
                     newlog.wndCalls.close();
@@ -193,15 +148,15 @@ var resgrid;
                         }
                     }
                 });
-                $("#nonUnitPersonnel").kendoMultiSelect({
+                $("#nonUnitPersonnel").select2({
                     placeholder: "Select Personnel...",
-                    dataTextField: "Name",
-                    dataValueField: "UserId",
-                    autoBind: false,
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForGridWithFilter'
+                    allowClear: true,
+                    multiple: true,
+                    ajax: {
+                        url: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForGridWithFilter',
+                        dataType: 'json',
+                        processResults: function (data) {
+                            return { results: $.map(data, function (u) { return { id: u.UserId, text: u.Name }; }) };
                         }
                     }
                 });
@@ -211,12 +166,10 @@ var resgrid;
                     type: 'GET'
                 }).done(function (data) {
                     if (data) {
-                        var multiSelect = $("#nonUnitPersonnel").data("kendoMultiSelect");
-                        var valuesToAdd = [];
-                        for (var i = 0; i < data.length; i++) {
-                            valuesToAdd.push(data[i].UserId);
-                        }
-                        multiSelect.value(valuesToAdd);
+                        data.forEach(function (u) {
+                            $("#nonUnitPersonnel").append(new Option(u.Name, u.UserId, true, true));
+                        });
+                        $("#nonUnitPersonnel").trigger('change');
                     }
                 });
             });

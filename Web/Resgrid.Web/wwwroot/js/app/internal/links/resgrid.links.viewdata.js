@@ -5,165 +5,63 @@ var resgrid;
 		var viewData;
 		(function (viewData) {
 			$(document).ready(function () {
-				$("#callsList").kendoGrid({
-					dataSource: {
-						transport: {
-							read: resgrid.absoluteBaseUrl + '/User/Links/GetActiveCallsList?linkId=' + linkId
-						},
-						schema: {
-							model: {
-								fields: {
-									CallId: { type: "number" },
-									Number: { type: "string" },
-									Priority: { type: "string" },
-									Color: { type: "string" },
-									Name: { type: "string" },
-									State: { type: "string" },
-									StateColor: { type: "string" },
-									Address: { type: "string" },
-									Timestamp: { type: "string" },
-									CanDeleteCall: { type: "boolean" }
-								}
-							}
-						},
-						pageSize: 50
+				$("#callsList").DataTable({
+					ajax: {
+						url: resgrid.absoluteBaseUrl + '/User/Links/GetActiveCallsList?linkId=' + linkId,
+						dataSrc: ''
 					},
-					//height: 400,
-					filterable: true,
-					sortable: true,
-					scrollable: true,
-					pageable: {
-						refresh: true,
-						pageSizes: true,
-						buttonCount: 5
-					},
+					pageLength: 50,
 					columns: [
+						{ data: 'Number', title: 'Number' },
+						{ data: 'Name', title: 'Name' },
+						{ data: 'Timestamp', title: 'Timestamp' },
 						{
-							field: "Number",
-							title: "Number",
-							width: 100
-						},
-						"Name",
-						{
-							field: "Timestamp",
-							title: "Timestamp",
-							width: 175
-						},
-						{
-							field: "Priority",
-							title: "Priority",
-							width: 100,
-							template: kendo.template($("#callPriority-template").html())
+							data: null,
+							title: 'Priority',
+							orderable: false,
+							render: function (data, type, row) {
+								return '<span style="background-color:' + row.Color + ';color:#fff;padding:2px 6px;border-radius:3px;">' + row.Priority + '</span>';
+							}
 						}
-					]
-				});
-				$("#unitsList").kendoGrid({
-					dataSource: {
-						transport: {
-							read: resgrid.absoluteBaseUrl + '/User/Links/GetUnitsList?linkId=' + linkId
-						},
-						schema: {
-							model: {
-								fields: {
-									UnitId: { type: "number" },
-									Name: { type: "string" },
-									Type: { type: "string" },
-									Station: { type: "string" },
-									StateId: { type: "number" },
-									State: { type: "string" },
-									StateColor: { type: "string" },
-									TextColor: { type: "string" },
-									Timestamp: { type: "string" }
-								}
-							}
-						},
-						pageSize: 50
-					},
-					//height: 400,
-					filterable: true,
-					sortable: true,
-					scrollable: true,
-					pageable: {
-						refresh: true,
-						pageSizes: true,
-						buttonCount: 5
-					},
-					columns: [
-						"Name",
-						"Type",
-						"Station",
-						{
-							field: "State",
-							title: "State",
-							filterable: false,
-							template: kendo.template($("#state-template").html())
-						},
-						"Timestamp"
 					]
 				});
 
-				$("#personnelList").kendoGrid({
-					dataSource: {
-						//type: "json",
-						transport: {
-							read: resgrid.absoluteBaseUrl + '/User/Links/GetPersonnelList?linkId=' + linkId
-						},
-						schema: {
-							model: {
-								fields: {
-									Name: { type: "string" },
-									Group: { type: "string" },
-									State: { type: "string" },
-									Status: { type: "string" },
-									UserId: { type: "string" },
-									Roles: { type: "string" },
-									UpdatedDate: { type: "string" },
-									Eta: { type: "string" }
-								}
+				$("#unitsList").DataTable({
+					ajax: {
+						url: resgrid.absoluteBaseUrl + '/User/Links/GetUnitsList?linkId=' + linkId,
+						dataSrc: ''
+					},
+					pageLength: 50,
+					columns: [
+						{ data: 'Name', title: 'Name' },
+						{ data: 'Type', title: 'Type' },
+						{ data: 'Station', title: 'Station' },
+						{
+							data: null,
+							title: 'State',
+							orderable: false,
+							render: function (data, type, row) {
+								return '<span style="background-color:' + row.StateColor + ';color:' + row.TextColor + ';padding:2px 6px;border-radius:3px;">' + row.State + '</span>';
 							}
 						},
-						pageSize: 50
+						{ data: 'Timestamp', title: 'Timestamp' }
+					]
+				});
+
+				$("#personnelList").DataTable({
+					ajax: {
+						url: resgrid.absoluteBaseUrl + '/User/Links/GetPersonnelList?linkId=' + linkId,
+						dataSrc: ''
 					},
-					filterable: true,
-					sortable: true,
-					scrollable: true,
-					//dataBound: function () {  },
-					pageable: {
-						refresh: true,
-						pageSizes: true,
-						buttonCount: 5
-					},
+					pageLength: 50,
 					columns: [
-						{
-							field: "Name",
-							title: "Name"
-						},
-						{
-							field: "Group",
-							title: "Group"
-						},
-						{
-							field: "Roles",
-							title: "Roles"
-						},
-						{
-							field: "State",
-							title: "Staffing"
-						},
-						{
-							field: "Status",
-							title: "Status",
-							width: 130
-						},
-						{
-							field: "UpdatedDate",
-							title: "Timestamp",
-							width: 160
-						},
-						{
-							field: "Eta",
-							title: "ETA"
-						}
+						{ data: 'Name', title: 'Name' },
+						{ data: 'Group', title: 'Group' },
+						{ data: 'Roles', title: 'Roles' },
+						{ data: 'State', title: 'Staffing' },
+						{ data: 'Status', title: 'Status' },
+						{ data: 'UpdatedDate', title: 'Timestamp' },
+						{ data: 'Eta', title: 'ETA' }
 					]
 				});
 			});

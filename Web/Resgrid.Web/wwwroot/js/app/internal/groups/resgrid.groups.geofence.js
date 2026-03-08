@@ -83,7 +83,7 @@ var resgrid;
                     contentType: 'application/json',
                     cache: false,
                     processData: false,
-                    data: kendo.stringify({
+                    data: JSON.stringify({
                         DepartmentGroupId: $('#Group_DepartmentGroupId').val(),
                         Color: $('#colorPicker').val(),
                         GeoFence: JSON.stringify(polyCoordinates)

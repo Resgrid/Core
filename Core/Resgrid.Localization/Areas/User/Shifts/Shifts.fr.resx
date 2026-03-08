@@ -69,30 +69,504 @@
     <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
   </data>
   <data name="DeleteStaticShiftHeader" xml:space="preserve">
-    <value>Delete Static Shift</value>
+    <value>Supprimer le quart statique</value>
   </data>
   <data name="EditShiftWarning" xml:space="preserve">
-    <value>Editing a static shift will clear out all assignments or sign-ups for this shift and reassign them based on the new settings. If you have any assignments or sign-ups for this shift they will be removed and the new settings will be applied.</value>
+    <value>La modification d'un quart statique effacera toutes les affectations ou inscriptions pour ce quart et les réaffectera selon les nouveaux paramètres.</value>
   </data>
   <data name="EditStaticShiftHeader" xml:space="preserve">
-    <value>Edit Static Shift</value>
+    <value>Modifier le quart statique</value>
   </data>
   <data name="EndDateTime" xml:space="preserve">
-    <value>End Date/Time</value>
+    <value>Date/Heure de fin</value>
   </data>
   <data name="ShiftColorNote" xml:space="preserve">
-    <value>Note the text on the Calendar is black, take that into account when picking a shift color as the color will be used as the background</value>
+    <value>Le texte du calendrier est noir, tenez-en compte lors du choix de la couleur du quart car elle sera utilisée comme arrière-plan.</value>
   </data>
   <data name="ShiftEndNote" xml:space="preserve">
-    <value>The date and time that the shift ends (i.e. back in quarters) where entities under it are considered available.</value>
+    <value>La date et l'heure de fin du quart où les entités sont considérées disponibles.</value>
   </data>
   <data name="ShiftStartNote" xml:space="preserve">
-    <value>The date and time that the shift starts (i.e. start of travel) where entities under it are considered committed.</value>
+    <value>La date et l'heure de début du quart où les entités sont considérées engagées.</value>
   </data>
   <data name="StartDateTime" xml:space="preserve">
-    <value>Start Date/Time</value>
+    <value>Date/Heure de début</value>
   </data>
   <data name="ViewStaticShiftDayHeader" xml:space="preserve">
-    <value>View Static Shift Day</value>
+    <value>Voir le jour de quart statique</value>
+  </data>
+  <data name="ShiftsHeader" xml:space="preserve">
+    <value>Quarts</value>
+  </data>
+  <data name="YourShiftsButton" xml:space="preserve">
+    <value>Vos quarts</value>
+  </data>
+  <data name="ShiftStaffingButton" xml:space="preserve">
+    <value>Effectif du quart</value>
+  </data>
+  <data name="RecurringGroupShifts" xml:space="preserve">
+    <value>Quarts de groupe récurrents</value>
+  </data>
+  <data name="AddRecurringGroupShift" xml:space="preserve">
+    <value>Ajouter un quart de groupe récurrent</value>
+  </data>
+  <data name="NameColumn" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="TypeColumn" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="ScheduleColumn" xml:space="preserve">
+    <value>Horaire</value>
+  </data>
+  <data name="GroupsColumn" xml:space="preserve">
+    <value>Groupes</value>
+  </data>
+  <data name="PersonnelColumn" xml:space="preserve">
+    <value>Personnel</value>
+  </data>
+  <data name="AssignedType" xml:space="preserve">
+    <value>Assigné</value>
+  </data>
+  <data name="SignupType" xml:space="preserve">
+    <value>Inscription</value>
+  </data>
+  <data name="ManualSchedule" xml:space="preserve">
+    <value>Manuel</value>
+  </data>
+  <data name="CustomSchedule" xml:space="preserve">
+    <value>Personnalisé</value>
+  </data>
+  <data name="Schedule48_96" xml:space="preserve">
+    <value>48 dans 96 dehors</value>
+  </data>
+  <data name="Schedule24_48" xml:space="preserve">
+    <value>24 dans 48 dehors</value>
+  </data>
+  <data name="Schedule24_72" xml:space="preserve">
+    <value>24 dans 72 dehors</value>
+  </data>
+  <data name="ViewCalendarButton" xml:space="preserve">
+    <value>Voir le calendrier</value>
+  </data>
+  <data name="EditDetailsButton" xml:space="preserve">
+    <value>Modifier les détails</value>
+  </data>
+  <data name="EditCalendarButton" xml:space="preserve">
+    <value>Modifier le calendrier</value>
+  </data>
+  <data name="EditGroupsButton" xml:space="preserve">
+    <value>Modifier les groupes</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="DeleteShiftWarning" xml:space="preserve">
+    <value>AVERTISSEMENT : Ceci supprimera définitivement ce quart. Êtes-vous sûr de vouloir supprimer le quart ?</value>
+  </data>
+  <data name="CalendarSectionHeader" xml:space="preserve">
+    <value>Calendrier</value>
+  </data>
+  <data name="AddStaticShift" xml:space="preserve">
+    <value>Ajouter un quart statique</value>
+  </data>
+  <data name="NewShiftHeader" xml:space="preserve">
+    <value>Nouveau quart</value>
+  </data>
+  <data name="NewShiftWizardIntro" xml:space="preserve">
+    <value>Bienvenue dans l'assistant de nouveau quart. Cet assistant vous guidera dans la création d'un nouveau quart pour votre département.</value>
+  </data>
+  <data name="NameLabel" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="NamePlaceholder" xml:space="preserve">
+    <value>Nom du quart</value>
+  </data>
+  <data name="NameHelp" xml:space="preserve">
+    <value>Par exemple ("Quart A", "Quart B", "Quart C")</value>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="CodeHelp" xml:space="preserve">
+    <value>Exemple ("A", "B", "C")</value>
+  </data>
+  <data name="AssignmentTypeLabel" xml:space="preserve">
+    <value>Type d'affectation</value>
+  </data>
+  <data name="AssignmentTypeHelp" xml:space="preserve">
+    <value>Pour affecté, vous spécifiez le personnel ; pour inscription, le personnel s'affectera lui-même.</value>
+  </data>
+  <data name="ColorLabel" xml:space="preserve">
+    <value>Couleur</value>
+  </data>
+  <data name="ScheduleTabIntro" xml:space="preserve">
+    <value>Ici, vous spécifiez quels jours le quart sera en service et l'heure de début du quart pour le premier jour.</value>
+  </data>
+  <data name="StartTimeLabel" xml:space="preserve">
+    <value>Heure de début</value>
+  </data>
+  <data name="StartTimeHelp" xml:space="preserve">
+    <value>Quand le quart commence-t-il le premier jour (ou jour unique) ?</value>
+  </data>
+  <data name="EndTimeLabel" xml:space="preserve">
+    <value>Heure de fin</value>
+  </data>
+  <data name="EndTimeHelp" xml:space="preserve">
+    <value>Quand le quart se termine-t-il le dernier jour (ou jour unique) ?</value>
+  </data>
+  <data name="SlotsTabIntro" xml:space="preserve">
+    <value>Ici, vous pouvez configurer les rôles requis pour chaque groupe de votre département pour le quart.</value>
+  </data>
+  <data name="ShiftGroupColumn" xml:space="preserve">
+    <value>Groupe de quart</value>
+  </data>
+  <data name="ShiftRolesColumn" xml:space="preserve">
+    <value>Rôles de quart</value>
+  </data>
+  <data name="AddGroupToShift" xml:space="preserve">
+    <value>Ajouter un groupe au quart</value>
+  </data>
+  <data name="PersonnelTabIntro" xml:space="preserve">
+    <value>Sélectionnez maintenant le personnel qui travaille dans ce quart pour votre département.</value>
+  </data>
+  <data name="NonGroupPersonnelLabel" xml:space="preserve">
+    <value>Personnel hors groupe</value>
+  </data>
+  <data name="NonGroupPersonnelHelp" xml:space="preserve">
+    <value>Personnel affecté au quart mais non directement assigné à une station ou à un groupe organisationnel</value>
+  </data>
+  <data name="FinishTabIntro" xml:space="preserve">
+    <value>Cliquez sur le bouton Terminer pour créer votre nouveau quart.</value>
+  </data>
+  <data name="WizardStart" xml:space="preserve">
+    <value>Début &gt;</value>
+  </data>
+  <data name="WizardSchedule" xml:space="preserve">
+    <value>Horaire &gt;</value>
+  </data>
+  <data name="WizardSlots" xml:space="preserve">
+    <value>Créneaux &gt;</value>
+  </data>
+  <data name="WizardPersonnel" xml:space="preserve">
+    <value>Personnel &gt;</value>
+  </data>
+  <data name="WizardFinish" xml:space="preserve">
+    <value>Terminer</value>
+  </data>
+  <data name="WizardFirst" xml:space="preserve">
+    <value>Premier</value>
+  </data>
+  <data name="WizardPrevious" xml:space="preserve">
+    <value>Précédent</value>
+  </data>
+  <data name="WizardNext" xml:space="preserve">
+    <value>Suivant</value>
+  </data>
+  <data name="ShiftNameRequired" xml:space="preserve">
+    <value>Le nom du quart est obligatoire</value>
+  </data>
+  <data name="ShiftCodeRequired" xml:space="preserve">
+    <value>Le code du quart est obligatoire</value>
+  </data>
+  <data name="ShiftStartTimeRequired" xml:space="preserve">
+    <value>L'heure de début du quart est obligatoire.</value>
+  </data>
+  <data name="EditShiftDetailsHeader" xml:space="preserve">
+    <value>Modifier les détails du quart</value>
+  </data>
+  <data name="CodePlaceholder" xml:space="preserve">
+    <value>Code du quart</value>
+  </data>
+  <data name="NonGroupPersonnelHelpEdit" xml:space="preserve">
+    <value>Personnel faisant partie d'un quart mais non assigné à un groupe</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="UpdateShiftButton" xml:space="preserve">
+    <value>Mettre à jour le quart</value>
+  </data>
+  <data name="EditShiftCalendarHeader" xml:space="preserve">
+    <value>Modifier le calendrier du quart</value>
+  </data>
+  <data name="UpdateShiftDaysButton" xml:space="preserve">
+    <value>Mettre à jour les jours de quart</value>
+  </data>
+  <data name="EditShiftGroupsHeader" xml:space="preserve">
+    <value>Modifier les groupes de quart</value>
+  </data>
+  <data name="SaveShiftGroupsButton" xml:space="preserve">
+    <value>Enregistrer les groupes de quart</value>
+  </data>
+  <data name="CalendarSuffix" xml:space="preserve">
+    <value>Calendrier</value>
+  </data>
+  <data name="ShiftStaffingHeader" xml:space="preserve">
+    <value>Effectif du quart</value>
+  </data>
+  <data name="ShiftLabel" xml:space="preserve">
+    <value>Quart</value>
+  </data>
+  <data name="ShiftSelectHelp" xml:space="preserve">
+    <value>Sélectionnez le quart pour traiter l'effectif.</value>
+  </data>
+  <data name="ShiftDayLabel" xml:space="preserve">
+    <value>Jour de quart</value>
+  </data>
+  <data name="ShiftDayHelp" xml:space="preserve">
+    <value>Sélectionnez le jour pour traiter l'effectif.</value>
+  </data>
+  <data name="NoteLabel" xml:space="preserve">
+    <value>Note</value>
+  </data>
+  <data name="NotePlaceholder" xml:space="preserve">
+    <value>Saisissez une note libre pour le quart</value>
+  </data>
+  <data name="AssignmentsLabel" xml:space="preserve">
+    <value>Affectations</value>
+  </data>
+  <data name="UnitsLabel" xml:space="preserve">
+    <value>Unités</value>
+  </data>
+  <data name="SetShiftDayStaffingButton" xml:space="preserve">
+    <value>Définir l'effectif du jour de quart</value>
+  </data>
+  <data name="SelectNonGroupPersonnel" xml:space="preserve">
+    <value>Sélectionner le personnel hors groupe...</value>
+  </data>
+  <data name="SelectPersonnelForGroup" xml:space="preserve">
+    <value>Sélectionner le personnel pour le groupe...</value>
+  </data>
+  <data name="SelectPerson" xml:space="preserve">
+    <value>Sélectionner une personne...</value>
+  </data>
+  <data name="NonGroupPersonnelStaffing" xml:space="preserve">
+    <value>Personnel hors groupe</value>
+  </data>
+  <data name="YourShiftsHeader" xml:space="preserve">
+    <value>Vos quarts</value>
+  </data>
+  <data name="ShiftColumn" xml:space="preserve">
+    <value>Quart</value>
+  </data>
+  <data name="GroupColumn" xml:space="preserve">
+    <value>Groupe</value>
+  </data>
+  <data name="DayColumn" xml:space="preserve">
+    <value>Jour</value>
+  </data>
+  <data name="ApprovedColumn" xml:space="preserve">
+    <value>Approuvé</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Statut</value>
+  </data>
+  <data name="TimestampColumn" xml:space="preserve">
+    <value>Horodatage</value>
+  </data>
+  <data name="ApprovedNo" xml:space="preserve">
+    <value>Non</value>
+  </data>
+  <data name="ApprovedYes" xml:space="preserve">
+    <value>Oui</value>
+  </data>
+  <data name="TradeComplete" xml:space="preserve">
+    <value>Échange terminé</value>
+  </data>
+  <data name="TradeInProgress" xml:space="preserve">
+    <value>Échange en cours</value>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="For" xml:space="preserve">
+    <value>pour</value>
+  </data>
+  <data name="DeclineShiftDayWarning" xml:space="preserve">
+    <value>AVERTISSEMENT : Cela vous supprimera de ce quart. Êtes-vous sûr de vouloir refuser le quart ?</value>
+  </data>
+  <data name="DeclineShiftDay" xml:space="preserve">
+    <value>Refuser le jour de quart</value>
+  </data>
+  <data name="RequestTrade" xml:space="preserve">
+    <value>Demander un échange</value>
+  </data>
+  <data name="FinishTrade" xml:space="preserve">
+    <value>Finaliser l'échange</value>
+  </data>
+  <data name="YourPendingTrades" xml:space="preserve">
+    <value>Vos échanges en attente</value>
+  </data>
+  <data name="TimeColumn" xml:space="preserve">
+    <value>Heure</value>
+  </data>
+  <data name="ProcessTradeRequest" xml:space="preserve">
+    <value>Traiter la demande d'échange</value>
+  </data>
+  <data name="Declined" xml:space="preserve">
+    <value>Refusé</value>
+  </data>
+  <data name="Accepted" xml:space="preserve">
+    <value>Accepté</value>
+  </data>
+  <data name="Filled" xml:space="preserve">
+    <value>Pourvu</value>
+  </data>
+  <data name="TradeOffered" xml:space="preserve">
+    <value>Échange proposé</value>
+  </data>
+  <data name="ViewShiftHeader" xml:space="preserve">
+    <value>Voir le quart</value>
+  </data>
+  <data name="ShiftStart" xml:space="preserve">
+    <value>Début du quart</value>
+  </data>
+  <data name="ShiftDayDetail" xml:space="preserve">
+    <value>Détail du jour de quart</value>
+  </data>
+  <data name="TypeLabel" xml:space="preserve">
+    <value>Type :</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Statut :</value>
+  </data>
+  <data name="StartLabel" xml:space="preserve">
+    <value>Début :</value>
+  </data>
+  <data name="EndLabel" xml:space="preserve">
+    <value>Fin :</value>
+  </data>
+  <data name="Upcoming" xml:space="preserve">
+    <value>À venir</value>
+  </data>
+  <data name="Completed" xml:space="preserve">
+    <value>Terminé</value>
+  </data>
+  <data name="NoEndTime" xml:space="preserve">
+    <value>Pas d'heure de fin</value>
+  </data>
+  <data name="GroupsSectionHeader" xml:space="preserve">
+    <value>Groupes</value>
+  </data>
+  <data name="RoleColumn" xml:space="preserve">
+    <value>Rôle</value>
+  </data>
+  <data name="RequiredColumn" xml:space="preserve">
+    <value>Requis</value>
+  </data>
+  <data name="OptionalColumn" xml:space="preserve">
+    <value>Optionnel</value>
+  </data>
+  <data name="NeededColumn" xml:space="preserve">
+    <value>Nécessaire</value>
+  </data>
+  <data name="SignupsSectionHeader" xml:space="preserve">
+    <value>Inscriptions</value>
+  </data>
+  <data name="RolesColumn" xml:space="preserve">
+    <value>Rôles</value>
+  </data>
+  <data name="TradesSectionHeader" xml:space="preserve">
+    <value>Échanges</value>
+  </data>
+  <data name="TradeColumn" xml:space="preserve">
+    <value>Échange</value>
+  </data>
+  <data name="TradedWithFormat" xml:space="preserve">
+    <value>{0} a échangé avec {1}</value>
+  </data>
+  <data name="ShiftSignupHeader" xml:space="preserve">
+    <value>Inscription au quart</value>
+  </data>
+  <data name="DeleteShiftSignup" xml:space="preserve">
+    <value>Supprimer l'inscription au quart</value>
+  </data>
+  <data name="SignupForShiftWith" xml:space="preserve">
+    <value>S'inscrire au quart avec</value>
+  </data>
+  <data name="ShiftSignupSuccessHeader" xml:space="preserve">
+    <value>Inscription au quart réussie</value>
+  </data>
+  <data name="SignupSuccessMessage" xml:space="preserve">
+    <value>Vous vous êtes inscrit avec succès pour ce jour de quart. Si vous souhaitez vous inscrire pour d'autres jours, vous devez vous inscrire pour chaque jour individuellement.</value>
+  </data>
+  <data name="StartsAtEndsAt" xml:space="preserve">
+    <value>Commence à {0} et se termine à {1}</value>
+  </data>
+  <data name="StartsAt" xml:space="preserve">
+    <value>Commence à {0}</value>
+  </data>
+  <data name="RequestTradeHeader" xml:space="preserve">
+    <value>Demander un échange</value>
+  </data>
+  <data name="UsersToRequestLabel" xml:space="preserve">
+    <value>Utilisateurs à demander</value>
+  </data>
+  <data name="UsersToRequestHelp" xml:space="preserve">
+    <value>Cliquez dans le champ pour sélectionner à qui demander l'échange</value>
+  </data>
+  <data name="SubmitTradeRequest" xml:space="preserve">
+    <value>Soumettre la demande d'échange</value>
+  </data>
+  <data name="ProcessTradeHeader" xml:space="preserve">
+    <value>Traiter la demande d'échange</value>
+  </data>
+  <data name="DatesToTradeLabel" xml:space="preserve">
+    <value>Dates à échanger</value>
+  </data>
+  <data name="DatesToTradeHelp" xml:space="preserve">
+    <value>Sélectionnez les quarts auxquels vous êtes déjà inscrit pour compléter l'échange.</value>
+  </data>
+  <data name="NoteTradePlaceholder" xml:space="preserve">
+    <value>Une note ou info pour cet échange</value>
+  </data>
+  <data name="RejectTradeRequest" xml:space="preserve">
+    <value>Rejeter la demande d'échange</value>
+  </data>
+  <data name="RejectTradeConfirm" xml:space="preserve">
+    <value>Êtes-vous sûr de vouloir refuser cette demande d'échange ?</value>
+  </data>
+  <data name="ProposeTradeRequest" xml:space="preserve">
+    <value>Proposer un échange</value>
+  </data>
+  <data name="StartsAtLabel" xml:space="preserve">
+    <value>Commence à</value>
+  </data>
+  <data name="FinalizeTradeHeader" xml:space="preserve">
+    <value>Finaliser l'échange</value>
+  </data>
+  <data name="DateColumn" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="NoneValue" xml:space="preserve">
+    <value>Aucun</value>
+  </data>
+  <data name="FinalizeTradeButton" xml:space="preserve">
+    <value>Finaliser l'échange</value>
+  </data>
+  <data name="ShiftRoleColumn" xml:space="preserve">
+    <value>Rôle de quart</value>
+  </data>
+  <data name="RolesCountColumn" xml:space="preserve">
+    <value>Nombre de rôles</value>
+  </data>
+  <data name="AddRoleToGroup" xml:space="preserve">
+    <value>Ajouter un rôle au groupe</value>
+  </data>
+  <data name="AddShiftRolesToGroup" xml:space="preserve">
+    <value>Ajouter des rôles de quart au groupe</value>
+  </data>
+  <data name="RemoveGroup" xml:space="preserve">
+    <value>Supprimer le groupe</value>
+  </data>
+  <data name="RemoveRole" xml:space="preserve">
+    <value>Supprimer le rôle</value>
+  </data>
+  <data name="RemoveRoleFromGroup" xml:space="preserve">
+    <value>Supprimer ce rôle du groupe</value>
+  </data>
+  <data name="RoleCountRequired" xml:space="preserve">
+    <value>Le nombre de rôles est obligatoire</value>
   </data>
 </root>

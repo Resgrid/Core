@@ -7,9 +7,7 @@ var resgrid;
         (function (schedule) {
             $(document).ready(function () {
                 $('#SpecifcDateTime').datetimepicker({ step: 15 });
-                $('#DayOfWeekTime').kendoTimePicker({
-                    interval: 15
-                });
+                $('#DayOfWeekTime').datetimepicker({ datepicker: false, format: 'H:i', step: 15 });
                 var selectedValue = $('#SpecificDatetime').val();
                 if (selectedValue === 'True') {
                     $("#specificdatetimearea").show();
@@ -37,7 +35,7 @@ var resgrid;
                             $("#specificdatetimearea").hide();
                             $("#daysoftheweekarea").show();
                             $("#daysoftheweekarea_time").show();
-                            break;    
+                            break;
                     }
                 });
             });

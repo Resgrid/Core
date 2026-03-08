@@ -1,7 +1,8 @@
-﻿@using Resgrid.Framework
+﻿﻿@using Resgrid.Framework
 @model Resgrid.Web.Areas.User.Models.Shifts.ProcessTradeView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> localizer
 @{
-	ViewBag.Title = "Resgrid | Process Shift Trade Request";
+	ViewBag.Title = "Resgrid | " + localizer["ProcessTradeHeader"];
 	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 @section Styles
@@ -245,19 +246,19 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>Process Trade Request</h2>
+		<h2>@localizer["ProcessTradeHeader"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
 			</li>
 			<li>
-				<a asp-controller="Shifts" asp-action="Index" asp-route-area="User">Shifts</a>
+				<a asp-controller="Shifts" asp-action="Index" asp-route-area="User">@localizer["ShiftsHeader"]</a>
 			</li>
 			<li>
-				<a asp-controller="Shifts" asp-action="YourShifts" asp-route-area="User">Your Shifts</a>
+				<a asp-controller="Shifts" asp-action="YourShifts" asp-route-area="User">@localizer["YourShiftsHeader"]</a>
 			</li>
 			<li class="active">
-				<strong>Process Trade Request</strong>
+				<strong>@localizer["ProcessTradeHeader"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -290,7 +291,7 @@
 										</time>
 										<div class="info">
 											<h2 class="title">@Model.Trade.SourceShiftSignup.Shift.Name</h2>
-											<p class="desc">Starts at @Model.Trade.SourceShiftSignup.Shift.StartTime</p>
+											<p class="desc">@localizer["StartsAtLabel"] @Model.Trade.SourceShiftSignup.Shift.StartTime</p>
 										</div>
 									</li>
 								</ul>
@@ -298,24 +299,24 @@
 						</div>
 
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Dates to Trades</label>
+							<label class="col-sm-2 control-label">@localizer["DatesToTradeLabel"]</label>
 							<div class="col-sm-4">
-								<select id="dates" name="dates"></select>
-								<span class="help-block text-left">Click inside the input to select the shifts you are already on to complete the trade for. If you don't specify any day it's an unbalanced trade.</span>
+								<select id="shifts" name="shifts"></select>
+								<span class="help-block text-left">@localizer["DatesToTradeHelp"]</span>
 							</div>
 						</div>
 
-
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Note</label>
-							<div class="col-sm-10"><textarea cols="30" rows="10" class="form-control" placeholder="A note or FYI for this trade" asp-for="Trade.Note"></textarea></div>
+							<label class="col-sm-2 control-label">@localizer["NoteLabel"]</label>
+							<div class="col-sm-4">
+								<textarea cols="30" rows="5" class="form-control" placeholder="@localizer["NoteTradePlaceholder"]" id="Note" name="Note"></textarea>
+							</div>
 						</div>
 
 						<div class="form-group">
 							<div class="col-sm-4 col-sm-offset-2">
-								<a class="btn btn-white" asp-controller="Shifts" asp-action="YourShifts" asp-route-area="User">Cancel</a>
-								<a id="reject_button" href="#" data-confirm="You sure you want to decline this trade request?" rel="nofollow" class="btn btn-danger">Reject Trade Request</a>
-								<input class="btn btn-primary" id="submit_button" name="commit" type="submit" value="Propose Trade Request" />
+								<a class="btn btn-danger" asp-controller="Shifts" asp-action="RejectTrade" asp-route-area="User" asp-route-shiftSignupTradeId="@Model.Trade.ShiftSignupTradeId" data-confirm="@localizer["RejectTradeConfirm"]" rel="nofollow">@localizer["RejectTradeRequest"]</a>
+								<input class="btn btn-primary" id="submit_button" name="commit" type="submit" value="@localizer["ProposeTradeRequest"]" />
 							</div>
 						</div>
 					</form>
@@ -327,8 +328,5 @@
 
 @section Scripts
 {
-	<script>
-		var shiftTradeId = '@Model.Trade.ShiftSignupTradeId';
-	</script>
 	<script src="~/js/app/internal/shifts/resgrid.shifts.processtrade.js"></script>
 }

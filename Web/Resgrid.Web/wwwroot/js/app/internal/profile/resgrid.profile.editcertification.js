@@ -8,12 +8,7 @@ var resgrid;
             $(document).ready(function () {
                 $('#RecievedOn').datetimepicker({ step: 60 });
                 $('#ExpiresOn').datetimepicker({ step: 60 });
-                $("#fileToUpload").kendoUpload({
-                    multiple: false,
-                    localization: {
-                        select: "Select File"
-                    }
-                });
+                // Native HTML file input is used - no JS initialization needed
             });
         })(editcertification = profile.editcertification || (profile.editcertification = {}));
     })(profile = resgrid.profile || (resgrid.profile = {}));

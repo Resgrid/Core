@@ -25,56 +25,49 @@ var resgrid;
                     return true;
                 });
 
-                $("#Training_ToBeCompletedBy").kendoDatePicker();
-                $("#attachments").kendoUpload();
+                // Date picker - no time needed
+                $('#Training_ToBeCompletedBy').datetimepicker({
+                    timepicker: false,
+                    format: 'm/d/Y',
+                    scrollMonth: false,
+                    scrollInput: false
+                });
+
+                // File upload: use native HTML file input (no Kendo Upload needed)
+
                 $('#SendToAll').change(function () {
                     if (this.checked) {
-                        $('#groupsToAdd').data("kendoMultiSelect").enable(false);
-                        $('#rolesToAdd').data("kendoMultiSelect").enable(false);
-                        $('#usersToAdd').data("kendoMultiSelect").enable(false);
-                    }
-                    else {
-                        $('#groupsToAdd').data("kendoMultiSelect").enable(true);
-                        $('#rolesToAdd').data("kendoMultiSelect").enable(true);
-                        $('#usersToAdd').data("kendoMultiSelect").enable(true);
+                        $('#groupsToAdd').prop('disabled', true).trigger('change.select2');
+                        $('#rolesToAdd').prop('disabled', true).trigger('change.select2');
+                        $('#usersToAdd').prop('disabled', true).trigger('change.select2');
+                    } else {
+                        $('#groupsToAdd').prop('disabled', false).trigger('change.select2');
+                        $('#rolesToAdd').prop('disabled', false).trigger('change.select2');
+                        $('#usersToAdd').prop('disabled', false).trigger('change.select2');
                     }
                 });
-                $("#groupsToAdd").kendoMultiSelect({
-                    placeholder: "Select groups...",
-                    dataTextField: "Name",
-                    dataValueField: "Id",
-                    autoBind: false,
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Department/GetRecipientsForGrid?filter=1'
+
+                function initSelect2(selector, placeholder, url) {
+                    $(selector).select2({
+                        placeholder: placeholder,
+                        allowClear: true,
+                        ajax: {
+                            url: url,
+                            dataType: 'json',
+                            processResults: function (data) {
+                                return {
+                                    results: $.map(data, function (item) {
+                                        return { id: item.Id, text: item.Name };
+                                    })
+                                };
+                            }
                         }
-                    }
-                });
-                $("#rolesToAdd").kendoMultiSelect({
-                    placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "Id",
-                    autoBind: false,
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Department/GetRecipientsForGrid?filter=2'
-                        }
-                    }
-                });
-                $("#usersToAdd").kendoMultiSelect({
-                    placeholder: "Select users...",
-                    dataTextField: "Name",
-                    dataValueField: "Id",
-                    autoBind: false,
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Department/GetRecipientsForGrid?filter=3&filterSelf=true'
-                        }
-                    }
-                });
+                    });
+                }
+
+                initSelect2('#groupsToAdd', 'Select groups...', resgrid.absoluteBaseUrl + '/User/Department/GetRecipientsForGrid?filter=1');
+                initSelect2('#rolesToAdd', 'Select roles...', resgrid.absoluteBaseUrl + '/User/Department/GetRecipientsForGrid?filter=2');
+                initSelect2('#usersToAdd', 'Select users...', resgrid.absoluteBaseUrl + '/User/Department/GetRecipientsForGrid?filter=3&filterSelf=true');
                 resgrid.training.newtraining.questionsCount = 0;
             });
             function addQuestion() {

@@ -8,26 +8,17 @@ var resgrid;
                 resgrid.common.analytics.register(userId, departmentId, fullName, email, departmentName, createdOn);
                 resgrid.common.analytics.track('Dashboard');
                 resgrid.common.signalr.init(null, reloadPersonnelTable, reloadPersonnelTable, null);
-                dashboard.wndCalls = $("#respondToACallWindow")
-                    .kendoWindow({
-                    title: "Respond to Call",
-                    modal: true,
-                    visible: false,
-                    resizable: false,
-                    content: '/User/Dispatch/SmallActiveCallGrid',
-                    width: 750,
-                    height: 465
-                }).data("kendoWindow");
-                dashboard.wndStations = $("#respondToAStationWindow")
-                    .kendoWindow({
-                    title: "Respond to Station",
-                    modal: true,
-                    visible: false,
-                    resizable: false,
-                    content: '/User/Department/SmallStationGroupsGrid',
-                    width: 750,
-                    height: 465
-                }).data("kendoWindow");
+                // Load content into Bootstrap modals
+                $('#respondToACallWindow').on('show.bs.modal', function () {
+                    var $body = $(this).find('.modal-body');
+                    if ($body.is(':empty')) { $body.load('/User/Dispatch/SmallActiveCallGrid'); }
+                });
+                $('#respondToAStationWindow').on('show.bs.modal', function () {
+                    var $body = $(this).find('.modal-body');
+                    if ($body.is(':empty')) { $body.load('/User/Department/SmallStationGroupsGrid'); }
+                });
+                dashboard.wndCalls = { center: function() { return this; }, open: function() { $('#respondToACallWindow').modal('show'); }, close: function() { $('#respondToACallWindow').modal('hide'); } };
+                dashboard.wndStations = { center: function() { return this; }, open: function() { $('#respondToAStationWindow').modal('show'); }, close: function() { $('#respondToAStationWindow').modal('hide'); } };
                 $('.respondToACallWindow').on('respondToCall', function (e, data) {
                     dashboard.wndCalls.close();
                     reloadPersonnelTable();
@@ -46,7 +37,7 @@ var resgrid;
                     dataType: "html",
                     success: function (data) {
                         $('#personnelGrid').html(data);
-                        kendo.ui.progress($("#personnelGrid"), false);
+                        resgrid.showProgress($("#personnelGrid"), false);
                     }
                 });
             }
@@ -72,7 +63,7 @@ var resgrid;
             }
             dashboard.showStations = showStations;
             function actionResponding() {
-                kendo.ui.progress($("#personnelGrid"), true);
+                resgrid.showProgress($("#personnelGrid"), true);
                 $.ajax({
                     url: "/User/Home/SetCustomAction?actionType=2",
                     contentType: 'application/json; charset=utf-8',
@@ -84,7 +75,7 @@ var resgrid;
             }
             dashboard.actionResponding = actionResponding;
             function actionNotResponding() {
-                kendo.ui.progress($("#personnelGrid"), true);
+                resgrid.showProgress($("#personnelGrid"), true);
                 $.ajax({
                     url: '/User/Home/SetCustomAction?actionType=1',
                     contentType: 'application/json; charset=utf-8',
@@ -95,7 +86,7 @@ var resgrid;
             }
             dashboard.actionNotResponding = actionNotResponding;
             function actionAvailable() {
-                kendo.ui.progress($("#personnelGrid"), true);
+                resgrid.showProgress($("#personnelGrid"), true);
                 $.ajax({
                     url: '/User/Home/SetCustomAction?actionType=0',
                     contentType: 'application/json; charset=utf-8',
@@ -106,7 +97,7 @@ var resgrid;
             }
             dashboard.actionAvailable = actionAvailable;
             function actionAvailableStation() {
-                kendo.ui.progress($("#personnelGrid"), true);
+                resgrid.showProgress($("#personnelGrid"), true);
                 $.ajax({
                     url: '/User/Home/SetCustomAction?actionType=4',
                     contentType: 'application/json; charset=utf-8',
@@ -117,7 +108,7 @@ var resgrid;
             }
             dashboard.actionAvailableStation = actionAvailableStation;
             function actionOnScene() {
-                kendo.ui.progress($("#personnelGrid"), true);
+                resgrid.showProgress($("#personnelGrid"), true);
                 $.ajax({
                     url: '/User/Home/SetCustomAction?actionType=3',
                     contentType: 'application/json; charset=utf-8',
@@ -128,7 +119,7 @@ var resgrid;
             }
             dashboard.actionOnScene = actionOnScene;
             function customAction(actionId) {
-                kendo.ui.progress($("#personnelGrid"), true);
+                resgrid.showProgress($("#personnelGrid"), true);
                 var note = $("#actionNote").val();
                 if (note) {
                     note = encodeURIComponent(note);
@@ -150,7 +141,7 @@ var resgrid;
             }
             dashboard.customAction = customAction;
             function customStaffing(userId, staffingLevel) {
-                kendo.ui.progress($("#personnelGrid"), true);
+                resgrid.showProgress($("#personnelGrid"), true);
                 $.ajax({
                     url: '/User/Home/SetCustomStaffing?userId=' + userId + '&staffingLevel=' + staffingLevel,
                     type: 'GET'
@@ -160,7 +151,7 @@ var resgrid;
             }
             dashboard.customStaffing = customStaffing;
             function customUserAction(userId, actionId) {
-                kendo.ui.progress($("#personnelGrid"), true);
+                resgrid.showProgress($("#personnelGrid"), true);
                 $.ajax({
                     url: '/User/Home/SetCustomUserAction?userId=' + userId + '&actionType=' + actionId,
                     type: 'GET'

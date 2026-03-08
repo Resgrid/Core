@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Active" xml:space="preserve">
+    <value>Actif</value>
+  </data>
+  <data name="AddedBy" xml:space="preserve">
+    <value>Ajouté par</value>
+  </data>
+  <data name="AddedOn" xml:space="preserve">
+    <value>Ajouté le</value>
+  </data>
+  <data name="AddInventoryTypeButton" xml:space="preserve">
+    <value>Ajouter un type d'inventaire</value>
+  </data>
+  <data name="AddInventoryTypeHeader" xml:space="preserve">
+    <value>Ajouter un type d'inventaire</value>
+  </data>
+  <data name="AdjustInventory" xml:space="preserve">
+    <value>Ajuster l'inventaire</value>
+  </data>
+  <data name="AdjustInventoryHeader" xml:space="preserve">
+    <value>Ajuster l'inventaire</value>
+  </data>
+  <data name="Amount" xml:space="preserve">
+    <value>Quantité</value>
+  </data>
+  <data name="Batch" xml:space="preserve">
+    <value>Lot</value>
+  </data>
+  <data name="BatchSerialNumber" xml:space="preserve">
+    <value>Numéro de lot/série</value>
+  </data>
+  <data name="BatchSerial" xml:space="preserve">
+    <value>Lot/Série</value>
+  </data>
+  <data name="AddType" xml:space="preserve">
+    <value>Ajouter un type</value>
+  </data>
+  <data name="CreatedBy" xml:space="preserve">
+    <value>Créé par</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Modifier</value>
+  </data>
+  <data name="EditInventoryTypeButton" xml:space="preserve">
+    <value>Modifier le type d'inventaire</value>
+  </data>
+  <data name="EditInventoryTypeHeader" xml:space="preserve">
+    <value>Modifier le type d'inventaire</value>
+  </data>
+  <data name="ForItemsNoExpiry" xml:space="preserve">
+    <value>Pour les articles sans date d'expiration, entrez 0</value>
+  </data>
+  <data name="Group" xml:space="preserve">
+    <value>Groupe</value>
+  </data>
+  <data name="InventoryHistoryHeader" xml:space="preserve">
+    <value>Historique de l'inventaire</value>
+  </data>
+  <data name="InventoryTypesHeader" xml:space="preserve">
+    <value>Types d'inventaire</value>
+  </data>
+  <data name="ItemExpiresDays" xml:space="preserve">
+    <value>Jours d'expiration de l'article</value>
+  </data>
+  <data name="ManageTypes" xml:space="preserve">
+    <value>Gérer les types</value>
+  </data>
+  <data name="NoGroup" xml:space="preserve">
+    <value>Aucun groupe</value>
+  </data>
+  <data name="NoUnit" xml:space="preserve">
+    <value>Aucune unité</value>
+  </data>
+  <data name="Station" xml:space="preserve">
+    <value>Station</value>
+  </data>
+  <data name="TypeName" xml:space="preserve">
+    <value>Nom du type</value>
+  </data>
+  <data name="Types" xml:space="preserve">
+    <value>Types</value>
+  </data>
+  <data name="Unit" xml:space="preserve">
+    <value>Unité</value>
+  </data>
+  <data name="UnitOfMeasure" xml:space="preserve">
+    <value>Unité de mesure</value>
+  </data>
+  <data name="ViewHistory" xml:space="preserve">
+    <value>Voir l'historique</value>
+  </data>
+  <data name="ViewInventoryEntryHeader" xml:space="preserve">
+    <value>Voir l'entrée d'inventaire</value>
+  </data>
+</root>
+

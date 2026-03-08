@@ -38,10 +38,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly Model.Services.IAuthorizationService _authorizationService;
 		private readonly IWorkLogsService _workLogsService;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly IUnitsService _unitsService;
 
 		public LogsController(IDepartmentsService departmentsService, IUsersService usersService, ICallsService callsService,
 			IDepartmentGroupsService departmentGroupsService, ICommunicationService communicationService, IQueueService queueService,
-			Model.Services.IAuthorizationService authorizationService, IWorkLogsService workLogsService, IEventAggregator eventAggregator)
+			Model.Services.IAuthorizationService authorizationService, IWorkLogsService workLogsService, IEventAggregator eventAggregator,
+			IUnitsService unitsService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -52,6 +54,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_authorizationService = authorizationService;
 			_workLogsService = workLogsService;
 			_eventAggregator = eventAggregator;
+			_unitsService = unitsService;
 		}
 		#endregion Private Members and Constructors
 
@@ -366,7 +369,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				logJson.LoggedBy = await UserHelper.GetFullNameForUser(log.LoggedByUserId);
 				logJson.LoggedOn = log.LoggedOn.TimeConverterToString(department);
 
-				if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || log.LoggedByUserId == UserId || (log.StationGroupId.HasValue && ClaimsAuthorizationHelper.IsUserGroupAdmin(log.StationGroupId.Value)))
+				if (ClaimsAuthorizationHelper.CanDeleteLog() &&
+				    (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || log.LoggedByUserId == UserId ||
+				     (log.StationGroupId.HasValue && ClaimsAuthorizationHelper.IsUserGroupAdmin(log.StationGroupId.Value))))
 					logJson.CanDelete = true;
 				else
 					logJson.CanDelete = false;
@@ -387,6 +392,79 @@ namespace Resgrid.Web.Areas.User.Controllers
 			await _workLogsService.DeleteLogAsync(logId, cancellationToken);
 
 			return RedirectToAction("Index");
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Log_View)]
+		public async Task<IActionResult> View(int logId)
+		{
+			var model = new ViewLogsView();
+			model.WorkLog = await _workLogsService.GetWorkLogByIdAsync(logId);
+
+			if (model.WorkLog == null)
+				return RedirectToAction("Index");
+
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			model.Attachments = await _workLogsService.GetAttachmentsForLogAsync(logId);
+			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
+			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
+
+			if (model.WorkLog.Users != null)
+			{
+				foreach (var logUser in model.WorkLog.Users)
+				{
+					if (!model.PersonnelNames.ContainsKey(logUser.UserId))
+						model.PersonnelNames[logUser.UserId] = await UserHelper.GetFullNameForUser(logUser.UserId);
+				}
+			}
+
+			if (!String.IsNullOrWhiteSpace(model.WorkLog.LoggedByUserId) && !model.PersonnelNames.ContainsKey(model.WorkLog.LoggedByUserId))
+				model.PersonnelNames[model.WorkLog.LoggedByUserId] = await UserHelper.GetFullNameForUser(model.WorkLog.LoggedByUserId);
+
+			if (!String.IsNullOrWhiteSpace(model.WorkLog.InvestigatedByUserId) && !model.PersonnelNames.ContainsKey(model.WorkLog.InvestigatedByUserId))
+				model.PersonnelNames[model.WorkLog.InvestigatedByUserId] = await UserHelper.GetFullNameForUser(model.WorkLog.InvestigatedByUserId);
+
+			if (ClaimsAuthorizationHelper.CanDeleteLog())
+			{
+				if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || model.WorkLog.LoggedByUserId == UserId ||
+				    (model.WorkLog.StationGroupId.HasValue && ClaimsAuthorizationHelper.IsUserGroupAdmin(model.WorkLog.StationGroupId.Value)))
+					model.CanDelete = true;
+			}
+
+			return View("ViewLog", model);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Log_View)]
+		public async Task<IActionResult> LogExport(int logId)
+		{
+			var model = new LogExportView();
+			model.WorkLog = await _workLogsService.GetWorkLogByIdAsync(logId);
+
+			if (model.WorkLog == null)
+				return RedirectToAction("Index");
+
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			model.Attachments = await _workLogsService.GetAttachmentsForLogAsync(logId);
+			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
+			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
+
+			if (model.WorkLog.Users != null)
+			{
+				foreach (var logUser in model.WorkLog.Users)
+				{
+					if (!model.PersonnelNames.ContainsKey(logUser.UserId))
+						model.PersonnelNames[logUser.UserId] = await UserHelper.GetFullNameForUser(logUser.UserId);
+				}
+			}
+
+			if (!String.IsNullOrWhiteSpace(model.WorkLog.LoggedByUserId) && !model.PersonnelNames.ContainsKey(model.WorkLog.LoggedByUserId))
+				model.PersonnelNames[model.WorkLog.LoggedByUserId] = await UserHelper.GetFullNameForUser(model.WorkLog.LoggedByUserId);
+
+			if (!String.IsNullOrWhiteSpace(model.WorkLog.InvestigatedByUserId) && !model.PersonnelNames.ContainsKey(model.WorkLog.InvestigatedByUserId))
+				model.PersonnelNames[model.WorkLog.InvestigatedByUserId] = await UserHelper.GetFullNameForUser(model.WorkLog.InvestigatedByUserId);
+
+			return View(model);
 		}
 
 		[HttpGet]

@@ -22,6 +22,11 @@
 			</li>
 		</ol>
 	</div>
+	<div class="col-sm-8">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-info" href="@Url.Action("ViewEvents", "Personnel", new { area = "User", userId = Model.User.Id })">@localizer["ViewEvents"]</a>
+		</div>
+	</div>
 </div>
 
 <div class="row">

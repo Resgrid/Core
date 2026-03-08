@@ -1663,7 +1663,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			foreach (var roleDispatch in call.RoleDispatches)
 			{
 				CallDispatchJson dispatch = new CallDispatchJson();
-				dispatch.DisptachCode = $"#dispatchRole_{roleDispatch.CallDispatchRoleId}";
+				dispatch.DisptachCode = $"#dispatchRole_{roleDispatch.RoleId}";
 
 				dispatchJson.Add(dispatch);
 			}
@@ -1836,6 +1836,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				callJson.State = _callsService.CallStateToString((CallStates)call.State);
 				callJson.StateColor = _callsService.CallStateToColor((CallStates)call.State);
 				callJson.Timestamp = call.LoggedOn.TimeConverterToString(department);
+				callJson.LoggedOn = new DateTimeOffset(DateTime.SpecifyKind(call.LoggedOn, DateTimeKind.Utc)).ToUnixTimeSeconds();
 				callJson.Priority = await _callsService.CallPriorityToStringAsync(call.Priority, DepartmentId);
 				callJson.Color = await _callsService.CallPriorityToColorAsync(call.Priority, DepartmentId);
 				callJson.CanDeleteCall = await _authorizationService.CanUserDeleteCallAsync(UserId, call.CallId, DepartmentId);
@@ -2185,6 +2186,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			types.Add(new CallType { CallTypeId = 0, Type = "No Type" });
 			types.AddRange(await _callsService.GetCallTypesForDepartmentAsync(DepartmentId));
 			model.CallTypes = new SelectList(types, "Type", "Type");
+
+			var templates = await _templatesService.GetAllCallQuickTemplatesForDepartmentAsync(DepartmentId);
+			if (templates != null)
+				model.CallTemplates = new SelectList(templates, "CallQuickTemplateId", "Name");
+
+			var form = await _formsService.GetNewCallFormByDepartmentIdAsync(DepartmentId);
+			if (form != null)
+				model.NewCallFormData = form.Data;
 
 			var allUsers = await _departmentsService.GetAllUsersForDepartmentAsync(model.Department.DepartmentId);
 

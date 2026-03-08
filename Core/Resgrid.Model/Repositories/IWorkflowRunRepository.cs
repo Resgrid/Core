@@ -9,5 +9,6 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<WorkflowRun>> GetPendingAndRunningByDepartmentIdAsync(int departmentId);
 		Task<IEnumerable<WorkflowRun>> GetRunsByWorkflowIdAsync(string workflowId, int page, int pageSize);
 		Task<IEnumerable<WorkflowRun>> GetRunsByDepartmentInMinuteAsync(int departmentId);
+		Task DeleteAllByWorkflowIdAsync(string workflowId);
 	}
 }

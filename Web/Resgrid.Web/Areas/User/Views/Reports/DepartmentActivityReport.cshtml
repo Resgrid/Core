@@ -21,10 +21,6 @@
 				asp-fallback-test-class="hidden"
 				asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
 
-	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.common.min.css" />
-	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.bootstrap.min.css" />
-	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.dataviz.min.css" />
-	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.dataviz.bootstrap.min.css" />
 
 	<style>
 		.table th, .table td {
@@ -97,7 +93,7 @@
 				</table>
 			</div>
 			<div class="col-md-5">
-				<div id="calls-per-week-ytd"></div>
+				<canvas id="calls-per-week-ytd" height="240"></canvas>
 			</div>
 		</div>
 		<div class="row">
@@ -328,7 +324,7 @@
 				</table>
 			</div>
 			<div class="col-md-5">
-				<div id="training-per-month-ytd"></div>
+				<canvas id="training-per-month-ytd" height="240"></canvas>
 			</div>
 		</div>
 		<div class="row">
@@ -384,144 +380,39 @@
 	</div>
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
-	<script> window.jQuery || document.write('<script src="~/Scripts/kendo/jquery.min.js"><\/script>')</script>
-
-	<!-- Latest compiled and minified JavaScript -->
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
-
-
-	<script src="~/clib/flot/jquery.flot.js"></script>
-	<script src="~/clib/flot/jquery.flot.tooltip.min.js"></script>
-	<script src="~/clib/flot/jquery.flot.resize.js"></script>
-	<script src="~/clib/flot/jquery.flot.pie.js"></script>
-	<script src="~/clib/flot/jquery.flot.time.js"></script>
-	<script src="~/clib/flot/jquery.flot.spline.js"></script>
-
-	<script src="~/clib/kendo/js/kendo.all.min.js"></script>
-	<script src="~/clib/kendo/js/kendo.timezones.min.js"></script>
+	<script src="~/lib/chart.js/dist/chart.umd.min.js"></script>
 
 	<script>
 		$(document).ready(function () {
-			$("#calls-per-week-ytd").kendoChart({
-				dataSource: {
-					transport: {
-						read: {
-							url: "@Url.Action("CallsYTD", "Dispatch", new {Area = "User"})",
-							dataType: "json"
-						}
+			// Calls per week YTD chart
+			$.getJSON("@Url.Action("CallsYTD", "Dispatch", new {Area = "User"})", function (data) {
+				data.sort(function (a, b) { return a.WeekNumber - b.WeekNumber; });
+				var labels = data.map(function (d) { return d.WeekNumber; });
+				var counts = data.map(function (d) { return d.Count; });
+				new Chart(document.getElementById('calls-per-week-ytd'), {
+					type: 'bar',
+					data: {
+						labels: labels,
+						datasets: [{ label: 'Calls Per Week', data: counts, backgroundColor: 'rgba(26,179,148,0.7)' }]
 					},
-					sort: {
-						field: "WeekNumber",
-						dir: "asc"
-					}
-				},
-				title: { text: "Calls Per Week" },
-				transitions: false,
-				theme: "Bootstrap",
-				legend: {
-					position: "bottom"
-				},
-				chartArea: {
-					margin: {
-						top: 10,
-						right: 5,
-						bottom: 0,
-						left: 10
-					},
-					height: 240,
-					background: "transparent"
-				},
-				seriesDefaults: {
-					type: "verticalBullet",
-					style: "smooth",
-					stack: true,
-					//width: 2,
-					markers: {
-						//visible: false
-					}
-				},
-				series: [{
-					type: "column",
-					field: "Count"//,
-					//name: "Week #"
-				}],
-				categoryAxis: {
-					field: "WeekNumber",
-					labels: {
-						visible: true
-					},
-					majorGridLines: {
-						visible: false
-					},
-					categories: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18",
-											 "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35",
-											 "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52"]
-				},
-				tooltip: {
-					visible: false//,
-					//template: "#= series.name # <br /> #= category #: #= value #"
-				}
+					options: { responsive: true, plugins: { legend: { display: false }, title: { display: true, text: 'Calls Per Week' } } }
+				});
 			});
 
-			$("#training-per-month-ytd").kendoChart({
-				dataSource: {
-					transport: {
-						read: {
-							url: "@Url.Action("TrainingPerMonth", "Logs", new { Area = "User" })",
-							dataType: "json"
-						}
+			// Training per month YTD chart
+			$.getJSON("@Url.Action("TrainingPerMonth", "Logs", new { Area = "User" })", function (data) {
+				data.sort(function (a, b) { return a.MonthNumber - b.MonthNumber; });
+				var labels = data.map(function (d) { return d.Month; });
+				var counts = data.map(function (d) { return d.Count; });
+				new Chart(document.getElementById('training-per-month-ytd'), {
+					type: 'bar',
+					data: {
+						labels: labels,
+						datasets: [{ label: 'Training Per Month', data: counts, backgroundColor: 'rgba(26,179,148,0.7)' }]
 					},
-					sort: {
-						field: "MonthNumber",
-						dir: "asc"
-					}
-				},
-				title: { text: "Training Per Month" },
-				transitions: false,
-				theme: "Bootstrap",
-				legend: {
-					position: "bottom"
-				},
-				chartArea: {
-					margin: {
-						top: 10,
-						right: 5,
-						bottom: 0,
-						left: 10
-					},
-					height: 240,
-					background: "transparent"
-				},
-				seriesDefaults: {
-					type: "verticalBullet",
-					style: "smooth",
-					stack: true,
-					//width: 2,
-					markers: {
-						//visible: false
-					}
-				},
-				series: [{
-					type: "column",
-					field: "Count"//,
-					//name: "Week #"
-				}],
-				categoryAxis: {
-					field: "Month",
-					labels: {
-						visible: true
-					},
-					majorGridLines: {
-						visible: false
-					}//,
-					//categories: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18",
-					//						 "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35",
-					//						 "36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52"]
-				},
-				tooltip: {
-					visible: false//,
-					//template: "#= series.name # <br /> #= category #: #= value #"
-				}
+					options: { responsive: true, plugins: { legend: { display: false }, title: { display: true, text: 'Training Per Month' } } }
+				});
 			});
 		});
 	</script>

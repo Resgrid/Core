@@ -1,0 +1,650 @@
+﻿@using Resgrid.Model
+@using Resgrid.Model.Helpers
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Logs.ViewLogsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Logs.Logs> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ViewLogHeader"];
+    var logType = Model.WorkLog.LogType.HasValue ? (LogTypes)Model.WorkLog.LogType.Value : LogTypes.Run;
+    var logTypeLabelClass = logType == LogTypes.Run ? "danger"
+        : logType == LogTypes.Training ? "primary"
+        : logType == LogTypes.Work ? "warning"
+        : logType == LogTypes.Meeting ? "info"
+        : logType == LogTypes.Coroner ? "default"
+        : "success";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["ViewLogHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Logs" asp-action="Index" asp-route-area="User">@commonLocalizer["LogsModule"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["ViewLogHeader"]</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-sm-8">
+        <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+            <div class="buttons-actions">
+                <a class="btn btn-info" asp-controller="Logs" asp-action="LogExport" asp-route-area="User" asp-route-logId="@Model.WorkLog.LogId" target="_blank">
+                    <i class="fa fa-print"></i> @localizer["PrintExport"]
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="wrapper wrapper-content animated fadeInUp">
+
+            @* General Information *@
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5><i class="fa fa-info-circle"></i> @localizer["GeneralInformation"]</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="m-b-md">
+                                <a asp-controller="Logs" asp-action="LogExport" asp-route-area="User" asp-route-logId="@Model.WorkLog.LogId" target="_blank" class="btn btn-info btn-xs pull-right">
+                                    @localizer["PrintExportView"]
+                                </a>
+                                <span class="pull-right m-r-sm">
+                                    <span class="label label-@logTypeLabelClass">@logType.ToString()</span>
+                                </span>
+                                <h2>@localizer["LogId"] #@Model.WorkLog.LogId</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl class="dl-horizontal">
+                                <dt>@localizer["LogType"]:</dt>
+                                <dd><strong>@logType.ToString()</strong></dd>
+
+                                <dt>@localizer["LoggedOn"]:</dt>
+                                <dd>@Model.WorkLog.LoggedOn.TimeConverterToString(Model.Department)</dd>
+
+                                <dt>@localizer["LoggedBy"]:</dt>
+                                <dd>
+                                    @if (!String.IsNullOrWhiteSpace(Model.WorkLog.LoggedByUserId) && Model.PersonnelNames.ContainsKey(Model.WorkLog.LoggedByUserId))
+                                    {
+                                        @Model.PersonnelNames[Model.WorkLog.LoggedByUserId]
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">N/A</span>
+                                    }
+                                </dd>
+
+                                <dt>@commonLocalizer["Station"]:</dt>
+                                <dd>
+                                    @if (Model.WorkLog.StationGroup != null)
+                                    {
+                                        @Model.WorkLog.StationGroup.Name
+                                    }
+                                    else if (Model.WorkLog.StationGroupId.HasValue)
+                                    {
+                                        var grp = Model.Groups.FirstOrDefault(g => g.DepartmentGroupId == Model.WorkLog.StationGroupId.Value);
+                                        @(grp != null ? grp.Name : commonLocalizer["Unknown"].Value)
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">@Model.Department.Name</span>
+                                    }
+                                </dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl class="dl-horizontal">
+                                @if (!String.IsNullOrWhiteSpace(Model.WorkLog.ExternalId) && logType != LogTypes.Coroner)
+                                {
+                                    <dt>@localizer["ExternalId"]:</dt>
+                                    <dd>@Model.WorkLog.ExternalId</dd>
+                                }
+
+                                @if (Model.WorkLog.StartedOn.HasValue)
+                                {
+                                    <dt>@commonLocalizer["Start"]:</dt>
+                                    <dd>@Model.WorkLog.StartedOn.Value.TimeConverterToString(Model.Department)</dd>
+                                }
+
+                                @if (Model.WorkLog.EndedOn.HasValue)
+                                {
+                                    <dt>@commonLocalizer["End"]:</dt>
+                                    <dd>@Model.WorkLog.EndedOn.Value.TimeConverterToString(Model.Department)</dd>
+                                }
+
+                                @if (Model.WorkLog.StartedOn.HasValue && Model.WorkLog.EndedOn.HasValue)
+                                {
+                                    var duration = Model.WorkLog.EndedOn.Value - Model.WorkLog.StartedOn.Value;
+                                    <dt>@localizer["Duration"]:</dt>
+                                    <dd>@($"{(int)duration.TotalHours}h {duration.Minutes}m")</dd>
+                                }
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            @* Call Information (Run / Callback log types) *@
+            @if ((logType == LogTypes.Run || logType == LogTypes.Callback) && Model.WorkLog.Call != null)
+            {
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5><i class="fa fa-phone"></i> @localizer["CallInformation"]</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <dl class="dl-horizontal">
+                                    <dt>@localizer["CallName"]:</dt>
+                                    <dd>@Model.WorkLog.Call.Name</dd>
+
+                                    <dt>@localizer["CallNumber"]:</dt>
+                                    <dd>@Model.WorkLog.Call.Number</dd>
+
+                                    @if (!String.IsNullOrWhiteSpace(Model.WorkLog.Call.Type))
+                                    {
+                                        <dt>@commonLocalizer["Type"]:</dt>
+                                        <dd>@Model.WorkLog.Call.Type</dd>
+                                    }
+
+                                    <dt>@localizer["CallPriority"]:</dt>
+                                    <dd>@(((CallPriority)Model.WorkLog.Call.Priority).ToString())</dd>
+                                </dl>
+                            </div>
+                            <div class="col-md-6">
+                                <dl class="dl-horizontal">
+                                    <dt>@localizer["LoggedOn"]:</dt>
+                                    <dd>@Model.WorkLog.Call.LoggedOn.TimeConverterToString(Model.Department)</dd>
+
+                                    @if (!String.IsNullOrWhiteSpace(Model.WorkLog.Call.Address))
+                                    {
+                                        <dt>@localizer["CallAddress"]:</dt>
+                                        <dd>@Model.WorkLog.Call.Address</dd>
+                                    }
+                                </dl>
+                            </div>
+                        </div>
+                        @if (!String.IsNullOrWhiteSpace(Model.WorkLog.Call.NatureOfCall))
+                        {
+                            <div class="row m-t-sm">
+                                <div class="col-lg-12">
+                                    <strong>@localizer["NatureOfCall"]:</strong>
+                                    <div class="well well-sm m-t-xs">@Html.Raw(Model.WorkLog.Call.NatureOfCall)</div>
+                                </div>
+                            </div>
+                        }
+                        <div class="row m-t-xs">
+                            <div class="col-lg-12">
+                                <a class="btn btn-xs btn-default" asp-controller="Dispatch" asp-action="ViewCall" asp-route-area="User" asp-route-callId="@Model.WorkLog.Call.CallId" target="_blank">
+                                    <i class="fa fa-external-link"></i> @localizer["ViewFullCall"]
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            @* Training Information *@
+            @if (logType == LogTypes.Training)
+            {
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5><i class="fa fa-graduation-cap"></i> @localizer["TrainingInformation"]</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <dl class="dl-horizontal">
+                            @if (!String.IsNullOrWhiteSpace(Model.WorkLog.Course))
+                            {
+                                <dt>@commonLocalizer["TrainingOrCourse"]:</dt>
+                                <dd>@Model.WorkLog.Course</dd>
+                            }
+                            @if (!String.IsNullOrWhiteSpace(Model.WorkLog.CourseCode))
+                            {
+                                <dt>@commonLocalizer["TrainingCode"]:</dt>
+                                <dd>@Model.WorkLog.CourseCode</dd>
+                            }
+                            @if (!String.IsNullOrWhiteSpace(Model.WorkLog.Instructors))
+                            {
+                                <dt>@commonLocalizer["Instructors"]:</dt>
+                                <dd>@Model.WorkLog.Instructors</dd>
+                            }
+                            @if (Model.WorkLog.StartedOn.HasValue)
+                            {
+                                <dt>@commonLocalizer["Start"]:</dt>
+                                <dd>@Model.WorkLog.StartedOn.Value.TimeConverterToString(Model.Department)</dd>
+                            }
+                            @if (Model.WorkLog.EndedOn.HasValue)
+                            {
+                                <dt>@commonLocalizer["End"]:</dt>
+                                <dd>@Model.WorkLog.EndedOn.Value.TimeConverterToString(Model.Department)</dd>
+                            }
+                        </dl>
+                    </div>
+                </div>
+            }
+
+            @* Meeting Information *@
+            @if (logType == LogTypes.Meeting)
+            {
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5><i class="fa fa-users"></i> @localizer["MeetingInformation"]</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <dl class="dl-horizontal">
+                            @if (!String.IsNullOrWhiteSpace(Model.WorkLog.Type))
+                            {
+                                <dt>@localizer["MeetingType"]:</dt>
+                                <dd>@Model.WorkLog.Type</dd>
+                            }
+                            @if (!String.IsNullOrWhiteSpace(Model.WorkLog.Location))
+                            {
+                                <dt>@localizer["Location"]:</dt>
+                                <dd>@Model.WorkLog.Location</dd>
+                            }
+                            @if (!String.IsNullOrWhiteSpace(Model.WorkLog.Instructors))
+                            {
+                                <dt>@localizer["Presiding"]:</dt>
+                                <dd>@Model.WorkLog.Instructors</dd>
+                            }
+                            @if (!String.IsNullOrWhiteSpace(Model.WorkLog.OtherPersonnel))
+                            {
+                                <dt>@localizer["OtherAttendees"]:</dt>
+                                <dd>@Model.WorkLog.OtherPersonnel</dd>
+                            }
+                            @if (Model.WorkLog.StartedOn.HasValue)
+                            {
+                                <dt>@commonLocalizer["Start"]:</dt>
+                                <dd>@Model.WorkLog.StartedOn.Value.TimeConverterToString(Model.Department)</dd>
+                            }
+                            @if (Model.WorkLog.EndedOn.HasValue)
+                            {
+                                <dt>@commonLocalizer["End"]:</dt>
+                                <dd>@Model.WorkLog.EndedOn.Value.TimeConverterToString(Model.Department)</dd>
+                            }
+                        </dl>
+                    </div>
+                </div>
+            }
+
+            @* Coroner Information *@
+            @if (logType == LogTypes.Coroner)
+            {
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5><i class="fa fa-file-text-o"></i> @localizer["CoronerInformation"]</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <dl class="dl-horizontal">
+                            @if (!String.IsNullOrWhiteSpace(Model.WorkLog.ExternalId))
+                            {
+                                <dt>@localizer["CaseNumber"]:</dt>
+                                <dd>@Model.WorkLog.ExternalId</dd>
+                            }
+                            @if (Model.WorkLog.StartedOn.HasValue)
+                            {
+                                <dt>@localizer["Date"]:</dt>
+                                <dd>@Model.WorkLog.StartedOn.Value.TimeConverterToString(Model.Department)</dd>
+                            }
+                            @if (!String.IsNullOrWhiteSpace(Model.WorkLog.PronouncedDeceasedBy))
+                            {
+                                <dt>@localizer["PronouncedDeceasedBy"]:</dt>
+                                <dd>@Model.WorkLog.PronouncedDeceasedBy</dd>
+                            }
+                            @if (!String.IsNullOrWhiteSpace(Model.WorkLog.BodyLocation))
+                            {
+                                <dt>@localizer["BodyLocation"]:</dt>
+                                <dd>@Model.WorkLog.BodyLocation</dd>
+                            }
+                            @if (!String.IsNullOrWhiteSpace(Model.WorkLog.Instructors))
+                            {
+                                <dt>@localizer["SeniorOIC"]:</dt>
+                                <dd>@Model.WorkLog.Instructors</dd>
+                            }
+                            @if (!String.IsNullOrWhiteSpace(Model.WorkLog.Location))
+                            {
+                                <dt>@localizer["DestinationLocation"]:</dt>
+                                <dd>@Model.WorkLog.Location</dd>
+                            }
+                            @if (!String.IsNullOrWhiteSpace(Model.WorkLog.OtherPersonnel))
+                            {
+                                <dt>@localizer["OthersHavingContact"]:</dt>
+                                <dd>@Model.WorkLog.OtherPersonnel</dd>
+                            }
+                        </dl>
+                    </div>
+                </div>
+            }
+
+            @* Log Narrative and Details *@
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5><i class="fa fa-file-text"></i> @localizer["LogDetails"]</h5>
+                </div>
+                <div class="ibox-content">
+
+                    @if (!String.IsNullOrWhiteSpace(Model.WorkLog.InitialReport) && (logType == LogTypes.Run || logType == LogTypes.Callback))
+                    {
+                        <div class="form-group">
+                            <label class="control-label"><strong>@localizer["ConditionInitialReport"]:</strong></label>
+                            <div class="well well-sm">@Html.Raw(Model.WorkLog.InitialReport)</div>
+                        </div>
+                    }
+
+                    @if (!String.IsNullOrWhiteSpace(Model.WorkLog.Narrative))
+                    {
+                        <div class="form-group">
+                            <label class="control-label"><strong>@localizer["Narrative"]:</strong></label>
+                            <div class="well well-sm">@Html.Raw(Model.WorkLog.Narrative)</div>
+                        </div>
+                    }
+
+                    @if (!String.IsNullOrWhiteSpace(Model.WorkLog.Cause) && (logType == LogTypes.Run || logType == LogTypes.Callback))
+                    {
+                        <div class="form-group">
+                            <label class="control-label"><strong>@localizer["Cause"]:</strong></label>
+                            <div class="well well-sm">@Html.Raw(Model.WorkLog.Cause)</div>
+                        </div>
+                    }
+
+                    @if (!String.IsNullOrWhiteSpace(Model.WorkLog.InvestigatedByUserId) && (logType == LogTypes.Run || logType == LogTypes.Callback))
+                    {
+                        <div class="form-group">
+                            <label class="control-label"><strong>@localizer["Investigator"]:</strong></label>
+                            <p>
+                                @if (Model.PersonnelNames.ContainsKey(Model.WorkLog.InvestigatedByUserId))
+                                {
+                                    @Model.PersonnelNames[Model.WorkLog.InvestigatedByUserId]
+                                }
+                            </p>
+                        </div>
+                    }
+
+                </div>
+            </div>
+
+            @* Units and Personnel *@
+            @if ((Model.WorkLog.Units != null && Model.WorkLog.Units.Any()) || (Model.WorkLog.Users != null && Model.WorkLog.Users.Any()))
+            {
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5><i class="fa fa-truck"></i> @localizer["UnitsAndPersonnel"]</h5>
+                    </div>
+                    <div class="ibox-content">
+
+                        @if (Model.WorkLog.Units != null && Model.WorkLog.Units.Any())
+                        {
+                            <h4>@localizer["Units"]</h4>
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>@commonLocalizer["Units"]</th>
+                                            <th>@commonLocalizer["Dispatched"]</th>
+                                            <th>@commonLocalizer["Enrotue"]</th>
+                                            <th>@commonLocalizer["OnScene"]</th>
+                                            <th>@commonLocalizer["Released"]</th>
+                                            <th>@commonLocalizer["InQuarters"]</th>
+                                            <th>@localizer["Personnel"]</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var logUnit in Model.WorkLog.Units)
+                                        {
+                                            var unit = Model.Units.FirstOrDefault(u => u.UnitId == logUnit.UnitId);
+                                            var unitPersonnel = Model.WorkLog.Users != null
+                                                ? Model.WorkLog.Users.Where(p => p.UnitId == logUnit.UnitId).ToList()
+                                                : new List<LogUser>();
+                                            <tr>
+                                                <td><strong>@(unit != null ? unit.Name : $"Unit #{logUnit.UnitId}")</strong></td>
+                                                <td>
+                                                    @if (logUnit.Dispatched.HasValue)
+                                                    {
+                                                        @logUnit.Dispatched.Value.TimeConverterToString(Model.Department)
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">&mdash;</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (logUnit.Enroute.HasValue)
+                                                    {
+                                                        @logUnit.Enroute.Value.TimeConverterToString(Model.Department)
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">&mdash;</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (logUnit.OnScene.HasValue)
+                                                    {
+                                                        @logUnit.OnScene.Value.TimeConverterToString(Model.Department)
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">&mdash;</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (logUnit.Released.HasValue)
+                                                    {
+                                                        @logUnit.Released.Value.TimeConverterToString(Model.Department)
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">&mdash;</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (logUnit.InQuarters.HasValue)
+                                                    {
+                                                        @logUnit.InQuarters.Value.TimeConverterToString(Model.Department)
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">&mdash;</span>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (unitPersonnel.Any())
+                                                    {
+                                                        <ul class="list-unstyled m-b-none">
+                                                            @foreach (var p in unitPersonnel)
+                                                            {
+                                                                <li>
+                                                                    @if (Model.PersonnelNames.ContainsKey(p.UserId))
+                                                                    {
+                                                                        @Model.PersonnelNames[p.UserId]
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span class="text-muted">@commonLocalizer["Unknown"]</span>
+                                                                    }
+                                                                </li>
+                                                            }
+                                                        </ul>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span class="text-muted">&mdash;</span>
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+
+                        @{
+                            var nonUnitPersonnel = Model.WorkLog.Users != null
+                                ? Model.WorkLog.Users.Where(p => !p.UnitId.HasValue).ToList()
+                                : new List<LogUser>();
+                        }
+                        @if (nonUnitPersonnel.Any())
+                        {
+                            <h4>@localizer["Personnel"] <small>(@localizer["PersonnelNotAssignedUnit"])</small></h4>
+                            <table class="table table-bordered table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>@commonLocalizer["Name"]</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var p in nonUnitPersonnel)
+                                    {
+                                        <tr>
+                                            <td>
+                                                @if (Model.PersonnelNames.ContainsKey(p.UserId))
+                                                {
+                                                    @Model.PersonnelNames[p.UserId]
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">@commonLocalizer["Unknown"]</span>
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        }
+
+                    </div>
+                </div>
+            }
+
+            @* Attachments *@
+            @if (Model.Attachments != null && Model.Attachments.Any())
+            {
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5><i class="fa fa-paperclip"></i> @localizer["Attachments"]</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th>@commonLocalizer["Name"]</th>
+                                    <th>@commonLocalizer["Type"]</th>
+                                    <th>@commonLocalizer["UploadedBy"]</th>
+                                    <th>@commonLocalizer["Timestamp"]</th>
+                                    <th>@commonLocalizer["Action"]</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var attachment in Model.Attachments)
+                                {
+                                    <tr>
+                                        <td>@attachment.FileName</td>
+                                        <td><span class="label label-default">@attachment.Type</span></td>
+                                        <td>
+                                            @if (!String.IsNullOrWhiteSpace(attachment.UserId) && Model.PersonnelNames.ContainsKey(attachment.UserId))
+                                            {
+                                                @Model.PersonnelNames[attachment.UserId]
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">&mdash;</span>
+                                            }
+                                        </td>
+                                        <td>@attachment.Timestamp.TimeConverterToString(Model.Department)</td>
+                                        <td>
+                                            <a class="btn btn-xs btn-primary" asp-controller="Logs" asp-action="GetAttachment" asp-route-area="User" asp-route-logId="@Model.WorkLog.LogId" asp-route-attachmentId="@attachment.LogAttachmentId">
+                                                <i class="fa fa-download"></i> @commonLocalizer["Download"]
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+
+    @* Sidebar *@
+    <div class="col-lg-4">
+        <div class="wrapper wrapper-content animated fadeInUp">
+
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5><i class="fa fa-bars"></i> @localizer["LogSummary"]</h5>
+                </div>
+                <div class="ibox-content no-padding">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <b>@localizer["LogId"]</b>
+                            <span class="pull-right text-navy">#@Model.WorkLog.LogId</span>
+                        </li>
+                        <li class="list-group-item">
+                            <b>@localizer["LogType"]</b>
+                            <span class="pull-right">
+                                <span class="label label-@logTypeLabelClass">@logType.ToString()</span>
+                            </span>
+                        </li>
+                        <li class="list-group-item">
+                            <b>@localizer["LoggedOn"]</b>
+                            <span class="pull-right">@Model.WorkLog.LoggedOn.TimeConverterToString(Model.Department)</span>
+                        </li>
+                        @if (Model.WorkLog.StartedOn.HasValue && Model.WorkLog.EndedOn.HasValue)
+                        {
+                            var dur = Model.WorkLog.EndedOn.Value - Model.WorkLog.StartedOn.Value;
+                            <li class="list-group-item">
+                                <b>@localizer["Duration"]</b>
+                                <span class="pull-right">@($"{(int)dur.TotalHours}h {dur.Minutes}m")</span>
+                            </li>
+                        }
+                        <li class="list-group-item">
+                            <b>@commonLocalizer["Units"]</b>
+                            <span class="pull-right text-navy">@(Model.WorkLog.Units != null ? Model.WorkLog.Units.Count : 0)</span>
+                        </li>
+                        <li class="list-group-item">
+                            <b>@commonLocalizer["Personnel"]</b>
+                            <span class="pull-right text-navy">@(Model.WorkLog.Users != null ? Model.WorkLog.Users.Count : 0)</span>
+                        </li>
+                        <li class="list-group-item">
+                            <b>@commonLocalizer["Attachments"]</b>
+                            <span class="pull-right text-navy">@(Model.Attachments != null ? Model.Attachments.Count : 0)</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5><i class="fa fa-cog"></i> @commonLocalizer["Actions"]</h5>
+                </div>
+                <div class="ibox-content">
+                    <a class="btn btn-info btn-block m-b-xs" asp-controller="Logs" asp-action="LogExport" asp-route-area="User" asp-route-logId="@Model.WorkLog.LogId" target="_blank">
+                        <i class="fa fa-print"></i> @localizer["PrintExport"]
+                    </a>
+                    @if (Model.CanDelete)
+                    {
+                        <a class="btn btn-danger btn-block" asp-controller="Logs" asp-action="DeleteWorkLog" asp-route-area="User" asp-route-logId="@Model.WorkLog.LogId"
+                           onclick="return confirm('@localizer["DeleteLogConfirm"]');">
+                            <i class="fa fa-trash-o"></i> @localizer["DeleteLog"]
+                        </a>
+                    }
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+

@@ -30,5 +30,8 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		public SelectList ContactsList { get; set; }
 		public string PrimaryContact { get; set; }
 		public List<string> AdditionalContacts { get; set; }
+		public SelectList CallTemplates { get; set; }
+		public int CallTemplateId { get; set; }
+		public string NewCallFormData { get; set; }
 	}
 }

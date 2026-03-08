@@ -5,30 +5,25 @@ var resgrid;
         var editRole;
         (function (editRole) {
             $(document).ready(function () {
-                $("#users").kendoMultiSelect({
+                $("#users").select2({
                     placeholder: "Select Members...",
-                    dataTextField: "Name",
-                    dataValueField: "UserId",
-                    autoBind: false,
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForGridWithFilter'
+                    allowClear: true,
+                    multiple: true,
+                    ajax: {
+                        url: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForGridWithFilter',
+                        dataType: 'json',
+                        processResults: function (data) {
+                            return { results: $.map(data, function (u) { return { id: u.UserId, text: u.Name }; }) };
                         }
                     }
                 });
                 $.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/Personnel/GetMembersForRole?id=' + $('#Role_PersonnelRoleId').val(),
-                    contentType: 'application/json',
-                    type: 'GET'
+                    contentType: 'application/json', type: 'GET'
                 }).done(function (data) {
                     if (data) {
-                        var multiSelect = $("#users").data("kendoMultiSelect");
-                        var valuesToAdd = [];
-                        for (var i = 0; i < data.length; i++) {
-                            valuesToAdd.push(data[i]);
-                        }
-                        multiSelect.value(valuesToAdd);
+                        data.forEach(function (userId) { $("#users").append(new Option(userId, userId, true, true)); });
+                        $("#users").trigger('change');
                     }
                 });
             });

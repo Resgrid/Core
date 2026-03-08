@@ -1,21 +1,22 @@
 ﻿@using Resgrid.Model
 @model Resgrid.Web.Areas.User.Models.Inventory.AdjustView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> localizer
 @{
-	ViewBag.Title = "Resgrid | Adjust Inventory";
+	ViewBag.Title = "Resgrid | " + localizer["AdjustInventoryHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>Adjust Inventory</h2>
+		<h2>@localizer["AdjustInventoryHeader"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
 			</li>
 			<li>
-				<a asp-controller="Inventory" asp-action="Index" asp-route-area="User">Inventory</a>
+				<a asp-controller="Inventory" asp-action="Index" asp-route-area="User">@commonLocalizer["InventoryModule"]</a>
 			</li>
 			<li class="active">
-				<strong>Adjust Inventory</strong>
+				<strong>@localizer["AdjustInventoryHeader"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -43,7 +44,7 @@
 
 						<div class="form-group">
 							<label class="col-sm-2 control-label required">
-								Type
+								@commonLocalizer["Type"]
 							</label>
 							<div class="col-sm-4">
 								@Html.DropDownListFor(m => m.Inventory.TypeId, new SelectList(Model.Types, "InventoryTypeId", "Type"), new { style = "width: 325px" })
@@ -51,7 +52,7 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label required">
-								Station
+								@localizer["Station"]
 							</label>
 							<div class="col-sm-4">
 								@Html.DropDownListFor(m => m.Inventory.GroupId, new SelectList(Model.Stations, "DepartmentGroupId", "Name"), new { style = "width: 265px" })
@@ -59,17 +60,17 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label">
-								Unit
+								@localizer["Unit"]
 							</label>
 							<div class="col-sm-4">
 								<select id="UnitId" name="UnitId" style="width: 265px;">
-									<option value="0">No Unit</option>
+									<option value="0">@localizer["NoUnit"]</option>
 								</select>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label">
-								Note
+								@commonLocalizer["Note"]
 							</label>
 							<div class="col-sm-4">
 								@Html.TextAreaFor(m => m.Inventory.Note, new { @class = "form-control" })
@@ -77,7 +78,7 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label">
-								Batch\Serial Number
+								@localizer["BatchSerialNumber"]
 							</label>
 							<div class="col-sm-2">
 								@Html.TextBoxFor(m => m.Inventory.Batch, new { @class = "form-control" })
@@ -85,7 +86,7 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label">
-								Location
+								@commonLocalizer["Location"]
 							</label>
 							<div class="col-sm-4">
 								@Html.TextBoxFor(m => m.Inventory.Location, new { @class = "form-control" })
@@ -93,7 +94,7 @@
 						</div>
 						<div class="form-group" style="padding-bottom: 12px;">
 							<label class="col-sm-2 control-label required">
-								Amount
+								@localizer["Amount"]
 							</label>
 							<div class="col-sm-2">
 								@Html.TextBoxFor(m => m.Inventory.Amount)
@@ -102,8 +103,8 @@
 
 						<div class="form-group">
 							<div class="col-sm-4 col-sm-offset-2">
-								<a class="btn btn-white" asp-controller="Inventory" asp-action="Index" asp-route-area="User">Cancel</a>
-								<button class="btn btn-primary" type="submit">Save</button>
+								<a class="btn btn-white" asp-controller="Inventory" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+								<button class="btn btn-primary" type="submit">@commonLocalizer["Save"]</button>
 							</div>
 						</div>
 					</form>
@@ -115,5 +116,10 @@
 
 @section Scripts
 {
+	<script type="text/javascript">
+		var inventoryAdjustStrings = {
+			noUnit: '@Html.Raw(localizer["NoUnit"].Value)'
+		};
+	</script>
 	<script src="~/js/app/internal/inventory/resgrid.inventory.adjust.js" type="text/javascript"></script>
 }

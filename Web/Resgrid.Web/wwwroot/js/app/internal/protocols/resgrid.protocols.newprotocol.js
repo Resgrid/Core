@@ -21,7 +21,7 @@ var resgrid;
                 $('#newTriggerStartsOn').datetimepicker({ step: 15 });
                 $('#newTriggerEndsOn').datetimepicker({ step: 15 });
 
-                $("#attachments").kendoUpload();
+                // Native HTML file input is used - no JS initialization needed
 
                 $(document).on('submit', '#newProtocolForm', function () {
                     $('#Protocol_Description').val(quillDescription.root.innerHTML);

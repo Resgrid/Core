@@ -1,8 +1,8 @@
 ﻿@using Resgrid.Framework
-@using RestSharp.Extensions
 @model Resgrid.Web.Areas.User.Models.Shifts.ShiftSignupView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> localizer
 @{
-	ViewBag.Title = "Resgrid | Shift Signup Success";
+	ViewBag.Title = "Resgrid | " + localizer["ShiftSignupSuccessHeader"];
 	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 
@@ -242,16 +242,16 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>Shift Signup Success</h2>
+		<h2>@localizer["ShiftSignupSuccessHeader"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
 			</li>
 			<li>
-				<a asp-controller="Shifts" asp-action="Index" asp-route-area="User">Shifts</a>
+				<a asp-controller="Shifts" asp-action="Index" asp-route-area="User">@localizer["ShiftsHeader"]</a>
 			</li>
 			<li class="active">
-				<strong>Shift Signup Success</strong>
+				<strong>@localizer["ShiftSignupSuccessHeader"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -263,7 +263,7 @@
 			<div class="ibox float-e-margins">
 				<div class="ibox-content">
 					<strong>
-						You have successfully signed up for this shift day. If you want to signup for more days of the shift you need to signup for each individual day.
+						@localizer["SignupSuccessMessage"]
 					</strong>
 					&nbsp;<br /><br />
 					<ul class="event-list">
@@ -279,11 +279,11 @@
 
 								@if (!String.IsNullOrWhiteSpace(Model.Signup.Shift.EndTime))
 								{
-									<p class="desc">Starts at @Model.Signup.Shift.StartTime and Ends at @Model.Signup.Shift.EndTime</p>
+									<p class="desc">@String.Format(localizer["StartsAtEndsAt"].Value, Model.Signup.Shift.StartTime, Model.Signup.Shift.EndTime)</p>
 								}
 								else
 								{
-									<p class="desc">Starts at @Model.Signup.Shift.StartTime</p>
+									<p class="desc">@String.Format(localizer["StartsAt"].Value, Model.Signup.Shift.StartTime)</p>
 								}
 							</div>
 						</li>

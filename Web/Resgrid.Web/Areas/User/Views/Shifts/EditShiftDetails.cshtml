@@ -1,23 +1,23 @@
-﻿
-@using Resgrid.Model
+﻿@using Resgrid.Model
 @model Resgrid.Web.Areas.User.Models.Shifts.EditShiftView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> localizer
 @{
-	ViewBag.Title = "Resgrid | Edit Shift Details";
+	ViewBag.Title = "Resgrid | " + localizer["EditShiftDetailsHeader"];
 	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>Edit Shift Details</h2>
+		<h2>@localizer["EditShiftDetailsHeader"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
 			</li>
 			<li>
-				<a asp-controller="Shifts" asp-action="Index" asp-route-area="User">Shifts</a>
+				<a asp-controller="Shifts" asp-action="Index" asp-route-area="User">@localizer["ShiftsHeader"]</a>
 			</li>
 			<li class="active">
-				<strong>Edit Shift Details</strong>
+				<strong>@localizer["EditShiftDetailsHeader"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -48,45 +48,45 @@
 						</div>
 
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Name</label>
+							<label class="col-sm-2 control-label">@localizer["NameLabel"]</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control" placeholder="Name of the Shift" asp-for="Shift.Name">
-								<span class="help-block m-b-none">For example ("A Shift", "B Shift", "C Shift")</span>
+								<input type="text" class="form-control" placeholder="@localizer["NamePlaceholder"]" asp-for="Shift.Name">
+								<span class="help-block m-b-none">@localizer["NameHelp"]</span>
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Code</label>
+							<label class="col-sm-2 control-label">@localizer["CodeLabel"]</label>
 							<div class="col-sm-10">
-								<input type="text" class="form-control" placeholder="Shift Code" asp-for="Shift.Code">
-								<span class="help-block m-b-none">Example ("A", "B", "C")</span>
+								<input type="text" class="form-control" placeholder="@localizer["CodePlaceholder"]" asp-for="Shift.Code">
+								<span class="help-block m-b-none">@localizer["CodeHelp"]</span>
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Color</label>
+							<label class="col-sm-2 control-label">@localizer["ColorLabel"]</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control"  asp-for="Shift.Color" id="colorPicker">
-								<span class="help-block m-b-none">Note the text on the Calendar is black, take that into account when picking a shift color as the color will be used as the background</span>
+								<span class="help-block m-b-none">@localizer["ShiftColorNote"]</span>
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Start Time</label>
+							<label class="col-sm-2 control-label">@localizer["StartTimeLabel"]</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" asp-for="Shift.StartTime">
-								<span class="help-block m-b-none">When does the shift start for the first day (or only day)</span>
+								<span class="help-block m-b-none">@localizer["StartTimeHelp"]</span>
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">End Time</label>
+							<label class="col-sm-2 control-label">@localizer["EndTimeLabel"]</label>
 							<div class="col-sm-10">
 								<input type="text" class="form-control" asp-for="Shift.EndTime">
-								<span class="help-block m-b-none">When does the shift end for the last day (or only day)</span>
+								<span class="help-block m-b-none">@localizer["EndTimeHelp"]</span>
 							</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Non-Group Personnel</label>
+							<label class="col-sm-2 control-label">@localizer["NonGroupPersonnelLabel"]</label>
 							<div class="col-sm-10">
-								<select id="shiftPersonnel" name="shiftPersonnel"></select>
-								<span class="help-block m-b-none">Personnel that are part of a shift but are not assigned to a group (i.e. floaters or roaming personnel)</span>
+								<select id="shiftPersonnel" name="shiftPersonnel" style="width: 100%;"></select>
+								<span class="help-block m-b-none">@localizer["NonGroupPersonnelHelpEdit"]</span>
 							</div>
 						</div>
 						@foreach (var group in Model.Groups)
@@ -94,15 +94,15 @@
 							<div class="form-group">
 								<label class="col-sm-2 control-label">@group.Name</label>
 								<div class="col-sm-10">
-									<select id="groupPersonnel_@group.DepartmentGroupId" name="groupPersonnel_@group.DepartmentGroupId" class="groupPersonnelSelect"></select>
+									<select id="groupPersonnel_@group.DepartmentGroupId" name="groupPersonnel_@group.DepartmentGroupId" class="groupPersonnelSelect" style="width: 100%;"></select>
 								</div>
 							</div>
 						}
 
 						<div class="form-group">
 							<div class="col-sm-4 col-sm-offset-2">
-								<a class="btn btn-white" asp-controller="Shifts" asp-action="Index" asp-route-area="User">Cancel</a>
-								<button class="btn btn-primary" type="submit">Update Shift</button>
+								<a class="btn btn-white" asp-controller="Shifts" asp-action="Index" asp-route-area="User">@localizer["CancelButton"]</a>
+								<button class="btn btn-primary" type="submit">@localizer["UpdateShiftButton"]</button>
 							</div>
 						</div>
 					</form>

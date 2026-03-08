@@ -1,4 +1,3 @@
-
 var resgrid;
 (function (resgrid) {
     var inventory;
@@ -7,52 +6,25 @@ var resgrid;
         (function (history) {
             $(document).ready(function () {
                 resgrid.common.analytics.track('Inventory - History');
-                $("#inventoryList").kendoGrid({
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Inventory/GetInventoryList'
-                        },
-                        schema: {
-                            model: {
-                                fields: {
-                                    InventoryId: { type: "number" },
-                                    Type: { type: "string" },
-                                    Amount: { type: "number" },
-                                    Group: { type: "string" },
-                                    Unit: { type: "string" },
-                                    Batch: { type: "string" },
-                                    Timestamp: { type: "string" },
-                                    UserName: { type: "string" }
-                                }
-                            }
-                        },
-                        pageSize: 50
-                    },
-                    //height: 400,
-                    filterable: true,
-                    sortable: true,
-                    scrollable: true,
-                    pageable: {
-                        refresh: true,
-                        pageSizes: true,
-                        buttonCount: 5
-                    },
+                var strings = typeof inventoryHistoryStrings !== 'undefined' ? inventoryHistoryStrings : {
+                    type: 'Type', amount: 'Amount', group: 'Group', batch: 'Batch',
+                    timestamp: 'Timestamp', addedBy: 'Added By', actions: 'Actions', view: 'View'
+                };
+                $("#inventoryList").DataTable({
+                    ajax: { url: resgrid.absoluteBaseUrl + '/User/Inventory/GetInventoryList', dataSrc: '' },
+                    pageLength: 50,
                     columns: [
-                        "Type",
-                        "Amount",
-                        "Group",
-                        "Batch",
-                        "Timestamp",
+                        { data: 'Type', title: strings.type },
+                        { data: 'Amount', title: strings.amount },
+                        { data: 'Group', title: strings.group },
+                        { data: 'Batch', title: strings.batch },
+                        { data: 'Timestamp', title: strings.timestamp },
+                        { data: 'UserName', title: strings.addedBy },
                         {
-                            field: "UserName",
-                            title: "Added By"
-                        },
-                        {
-                            field: "InventoryId",
-                            title: "Actions",
-                            filterable: false,
-                            template: kendo.template($("#inventorycommand-template").html())
+                            data: 'InventoryId', title: strings.actions, orderable: false,
+                            render: function (data) {
+                                return '<a class="btn btn-xs btn-primary" href="' + resgrid.absoluteBaseUrl + '/User/Inventory/ViewEntry?inventoryId=' + data + '">' + strings.view + '</a>';
+                            }
                         }
                     ]
                 });

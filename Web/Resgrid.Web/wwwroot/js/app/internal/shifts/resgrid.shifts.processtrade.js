@@ -10,15 +10,15 @@ var resgrid;
                 $('#note').change(function () {
                     $('#reject_button').attr('href', resgrid.absoluteBaseUrl + '/User/Shifts/RejectTrade?shiftTradeId=' + shiftTradeId + '&reason=' + encodeURIComponent($("#note").val()));
                 });
-                $("#dates").kendoMultiSelect({
+                $("#dates").select2({
                     placeholder: "Select dates...",
-                    dataTextField: "Title",
-                    dataValueField: "ShiftSignupId",
-                    autoBind: false,
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Shifts/GetShiftDaysUserIsOn?shiftTradeId=' + shiftTradeId
+                    allowClear: true,
+                    multiple: true,
+                    ajax: {
+                        url: resgrid.absoluteBaseUrl + '/User/Shifts/GetShiftDaysUserIsOn?shiftTradeId=' + shiftTradeId,
+                        dataType: 'json',
+                        processResults: function (data) {
+                            return { results: $.map(data, function (d) { return { id: d.ShiftSignupId, text: d.Title }; }) };
                         }
                     }
                 });

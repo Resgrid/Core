@@ -374,7 +374,7 @@ namespace Resgrid.Web
 				// Internal app style bundle
 				pipeline.AddCssBundle("/css/int-bundle.css",
 					"lib/font-awesome/css/font-awesome.min.css", "lib/metisMenu/dist/metisMenu.min.css", "lib/bootstrap-tour/build/css/bootstrap-tour.min.css",
-					"css/animate.css", "lib/select2/dist/css/select2.min.css", "clib/kendo/styles/kendo.common.min.css", "clib/kendo/styles/kendo.material.min.css",
+					"css/animate.css", "lib/select2/dist/css/select2.min.css",
 					"lib/toastr/toastr.min.css", "lib/jqueryui/themes/cupertino/jquery-ui.css", "lib/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css",
 					"clib/picEdit/css/picedit.min.css", "clib/bootstrap-wizard/bootstrap-wizard.css", "lib/quill/dist/quill.snow.css", "lib/leaflet/dist/leaflet.css",
 					"lib/bstreeview/dist/css/bstreeview.min.css",
@@ -385,14 +385,17 @@ namespace Resgrid.Web
 				// Internal app js bundle
 				pipeline.AddJavaScriptBundle("/js/int-bundle.js",
 					"lib/metisMenu/dist/metisMenu.min.js", "lib/slimScroll/jquery.slimscroll.js", "lib/pace/pace.js",
-					"lib/select2/dist/js/select2.full.js", "clib/kendo/js/kendo.web.min.js", "lib/bootstrap-tour/build/js/bootstrap-tour.min.js", "lib/toastr/toastr.min.js",
+					"lib/select2/dist/js/select2.full.js", "lib/bootstrap-tour/build/js/bootstrap-tour.min.js", "lib/toastr/toastr.min.js",
 					/*"clib/markerwithlabel/markerwithlabel.js",*/ "clib/ujs/jquery-ujs.js", "lib/jquery-validate/dist/jquery.validate.min.js", "lib/jqueryui/jquery-ui.min.js",
 					"lib/jquery-validation-unobtrusive/dist/jquery.validate.unobtrusive.min.js", "lib/signalr/dist/browser/signalr.js", "clib/picEdit/js/picedit.min.js",
 					"lib/sweetalert/dist/sweetalert.min.js", "clib/bootstrap-wizard/bootstrap-wizard.min.js", "lib/quill/dist/quill.min.js", "lib/moment/min/moment.min.js",
 					"lib/leaflet/dist/leaflet.js", "lib/bstreeview/dist/js/bstreeview.min.js",
 					"lib/selectize/selectize/dist/js/standalone/selectize.min.js", "lib/claviska/jquery-minicolors/jquery.minicolors.min.js", "lib/algolia/autocomplete-js/dist/umd/index.production.js",
-					"lib/bootstrap-select/dist/js/bootstrap-select.js", "clib/data-tables/datatables.js", "lib/jquery-datetimepicker/build/jquery.datetimepicker.full.min.js",
-					/*"lib/deltablot/dropzone/dist/dropzone.js",*/
+					"lib/bootstrap-select/dist/js/bootstrap-select.js",
+					"clib/data-tables/DataTables-1.13.5/js/jquery.dataTables.min.js",
+					"clib/data-tables/DataTables-1.13.5/js/dataTables.bootstrap.min.js",
+					"lib/jquery-datetimepicker/build/jquery.datetimepicker.full.min.js",
+					"lib/deltablot/dropzone/dist/dropzone-min.js",
 					"js/site.min.js");
 			});
 

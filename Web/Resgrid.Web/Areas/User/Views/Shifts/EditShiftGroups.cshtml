@@ -1,8 +1,8 @@
-﻿
-@using Resgrid.Model
+﻿@using Resgrid.Model
 @model Resgrid.Web.Areas.User.Models.Shifts.EditShiftView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> localizer
 @{
-	ViewBag.Title = "Resgrid | Edit Shift Groups";
+	ViewBag.Title = "Resgrid | " + localizer["EditShiftGroupsHeader"];
 	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 
@@ -10,16 +10,16 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>Edit Shift Calendar</h2>
+		<h2>@localizer["EditShiftGroupsHeader"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
 			</li>
 			<li>
-				<a asp-controller="Shifts" asp-action="Index" asp-route-area="User">Shifts</a>
+				<a asp-controller="Shifts" asp-action="Index" asp-route-area="User">@localizer["ShiftsHeader"]</a>
 			</li>
 			<li class="active">
-				<strong>Edit Shift Groups</strong>
+				<strong>@localizer["EditShiftGroupsHeader"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -54,9 +54,9 @@
 								<table id="groups" class="table table-striped table-bordered">
 									<thead>
 										<tr>
-											<th style="font-size: 14px;">Shift Group</th>
-											<th style="font-size: 14px;">Shift Roles</th>
-											<th style="font-size: 16px;"><a id="addGroupButton" class="btn btn-success btn-xs" onclick="resgrid.shifts.editshiftgroups.addGroup();" data-original-title="Add Group to Shift"><i class="icon-plus"></i> Add Group to Shift</a></th>
+											<th style="font-size: 14px;">@localizer["ShiftGroupColumn"]</th>
+											<th style="font-size: 14px;">@localizer["ShiftRolesColumn"]</th>
+											<th style="font-size: 16px;"><a id="addGroupButton" class="btn btn-success btn-xs" onclick="resgrid.shifts.editshiftgroups.addGroup();" data-original-title="@localizer["AddGroupToShift"]"><i class="icon-plus"></i> @localizer["AddGroupToShift"]</a></th>
 										</tr>
 									</thead>
 									<tbody></tbody>
@@ -66,8 +66,8 @@
 
 						<div class="form-group">
 							<div class="col-sm-4 col-sm-offset-2">
-								<a class="btn btn-white" asp-controller="Shifts" asp-action="Index" asp-route-area="User">Cancel</a>
-								<button class="btn btn-primary" type="submit">Save Shift Groups</button>
+								<a class="btn btn-white" asp-controller="Shifts" asp-action="Index" asp-route-area="User">@localizer["CancelButton"]</a>
+								<button class="btn btn-primary" type="submit">@localizer["SaveShiftGroupsButton"]</button>
 							</div>
 						</div>
 					</form>
@@ -85,6 +85,18 @@
 			var newField = $(name);
 			$('#editShiftGroupForm').bootstrapValidator('addField', newField);
 		}
+	</script>
+	<script>
+		var resgridShiftsI18n = {
+			shiftRoleColumn: '@localizer["ShiftRoleColumn"]',
+			rolesCountColumn: '@localizer["RolesCountColumn"]',
+			addRoleToGroup: '@localizer["AddRoleToGroup"]',
+			addShiftRolesToGroup: '@localizer["AddShiftRolesToGroup"]',
+			removeGroup: '@localizer["RemoveGroup"]',
+			removeRole: '@localizer["RemoveRole"]',
+			removeRoleFromGroup: '@localizer["RemoveRoleFromGroup"]',
+			roleCountRequired: '@localizer["RoleCountRequired"]'
+		};
 	</script>
 	<script src="~/js/app/internal/shifts/resgrid.shifts.editshiftgroups.js"></script>
 }

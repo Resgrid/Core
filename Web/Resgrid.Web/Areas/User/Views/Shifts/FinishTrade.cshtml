@@ -1,7 +1,8 @@
 ﻿@using Resgrid.Framework
 @model Resgrid.Web.Areas.User.Models.Shifts.FinishTradeView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> localizer
 @{
-	ViewBag.Title = "Resgrid | Finish Trade Request";
+	ViewBag.Title = "Resgrid | " + localizer["FinalizeTradeHeader"];
 	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 @section Styles
@@ -245,19 +246,19 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>Finalize Trade</h2>
+		<h2>@localizer["FinalizeTradeHeader"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
 			</li>
 			<li>
-				<a asp-controller="Shifts" asp-action="Index" asp-route-area="User">Shifts</a>
+				<a asp-controller="Shifts" asp-action="Index" asp-route-area="User">@localizer["ShiftsHeader"]</a>
 			</li>
 			<li>
-				<a asp-controller="Shifts" asp-action="YourShifts" asp-route-area="User">Your Shifts</a>
+				<a asp-controller="Shifts" asp-action="YourShifts" asp-route-area="User">@localizer["YourShiftsHeader"]</a>
 			</li>
 			<li class="active">
-				<strong>Finalize Trade</strong>
+				<strong>@localizer["FinalizeTradeHeader"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -280,131 +281,53 @@
 
 						<div class="form-group">
 							<div class="col-sm-12">
-								<ul class="event-list">
-									<li>
-										<time datetime="@Model.Trade.SourceShiftSignup.ShiftDay.ToShortDateString()">
-											<span class="day">@Model.Trade.SourceShiftSignup.ShiftDay.Day</span>
-											<span class="month">@DateTimeHelpers.MonthToShortString(Model.Trade.SourceShiftSignup.ShiftDay.Month)</span>
-											<span class="year">@Model.Trade.SourceShiftSignup.ShiftDay.Year</span>
-											<span class="time">@Model.Trade.SourceShiftSignup.Shift.StartTime</span>
-										</time>
-										<div class="info">
-											<h2 class="title">@Model.Trade.SourceShiftSignup.Shift.Name</h2>
-											<p class="desc">Starts at @Model.Trade.SourceShiftSignup.Shift.StartTime</p>
-										</div>
-									</li>
-								</ul>
-							</div>
-						</div>
-
-						<div class="form-group">
-							<div class="col-sm-12">
-								<div class="row">
-									<div class="col-xs-12">
-										<table class='table table-bordered table-striped table-hover data-table'>
-											<thead>
-												<tr>
-													<th class='span1'></th>
-													<th>
-														Name
-													</th>
-													<th>
-														Shift
-													</th>
-													<th>
-														Group
-													</th>
-													<th>
-														Date
-													</th>
-													<th>
-														Time
-													</th>
-												</tr>
-											</thead>
-											<tbody>
-												@{		var users = from u in Model.Trade.Users
-																			let profile = Model.Profiles.FirstOrDefault(x => x.UserId == u.UserId)
-																			where u.Declined == false && u.Offered == true
-																			select new
-																			{
-																				Name = profile.FullName.AsFirstNameLastName,
-																				TradeUser = u
-																			};
-												}
-												@foreach (var u in users)
+								<div class="table-responsive">
+									<table class="table table-striped">
+										<thead>
+											<tr>
+												<th>@localizer["NameColumn"]</th>
+												<th>@localizer["DateColumn"]</th>
+												<th>@localizer["ShiftColumn"]</th>
+											</tr>
+										</thead>
+										<tbody>
+											@if (Model.Trade.Users != null)
+											{
+												@foreach (var tradeUser in Model.Trade.Users)
 												{
-													if (u.TradeUser.Declined == false && u.TradeUser.Offered == true)
-													{
-														if (u.TradeUser.Shifts != null && u.TradeUser.Shifts.Any())
-														{
-															foreach (var shift in u.TradeUser.Shifts)
+													var profile = Model.Profiles?.FirstOrDefault(p => p.UserId == tradeUser.UserId);
+													var userShift = tradeUser.Shifts?.FirstOrDefault();
+													<tr>
+														<td>@(profile != null ? profile.FullName.AsFirstNameLastName : tradeUser.UserId)</td>
+														<td>
+															@if (userShift?.ShiftSignup != null)
 															{
-																<tr>
-																	<td style="text-align: center;">
-																		<input type="radio" name="selectedShift" value="@shift.ShiftSignupId">
-																	</td>
-																	<td>
-																		@u.Name
-																	</td>
-																	<td>
-																		@shift.ShiftSignup.Shift.Name
-																	</td>
-																	<td>
-																		@shift.ShiftSignup.Group.Name
-																	</td>
-																	<td>
-																		@shift.ShiftSignup.ShiftDay.ToShortDateString()
-																	</td>
-																	<td>
-																		@shift.ShiftSignup.Shift.StartTime
-																	</td>
-																</tr>
+																@userShift.ShiftSignup.ShiftDay.ToShortDateString()
 															}
-														}
-														else
-														{
-															<tr>
-																<td style="text-align: center;">
-																	<input type="radio" name="selectedShift" value="@u.TradeUser.UserId">
-																</td>
-																<td>
-																	@u.Name
-																</td>
-																<td>
-																	None
-																</td>
-																<td>
-																	None
-																</td>
-																<td>
-																	None
-																</td>
-																<td>
-																	None
-																</td>
-															</tr>
-														}
-													}
+															else
+															{
+																@localizer["NoneValue"]
+															}
+														</td>
+														<td>
+															@if (userShift?.ShiftSignup != null)
+															{
+																@userShift.ShiftSignup.Shift.Name
+															}
+															else
+															{
+																@localizer["NoneValue"]
+															}
+														</td>
+														<td>
+															<input class="btn btn-primary" id="submit_button_@tradeUser.ShiftSignupTradeUserId" name="proposalId" type="submit" value="@tradeUser.ShiftSignupTradeUserId" onclick="this.value='@tradeUser.ShiftSignupTradeUserId';" />
+														</td>
+													</tr>
 												}
-											</tbody>
-										</table>
-									</div>
+											}
+										</tbody>
+									</table>
 								</div>
-							</div>
-						</div>
-
-						<div class="form-group">
-							<div class="col-sm-4 col-sm-offset-2">
-								<a class="btn btn-white" asp-controller="Shifts" asp-action="YourShifts" asp-route-area="User">Cancel</a>
-
-								@{
-									var shifts = Model.Trade.Users.Select(x => x.Shifts).ToList();
-								}
-								@if (Model.Trade.Users.Any() && shifts.Any())
-								{
-									<button class="btn btn-primary" type="submit">Finalize Trade</button>
-								}
 							</div>
 						</div>
 					</form>
@@ -416,8 +339,5 @@
 
 @section Scripts
 {
-	<script>
-		var shiftTradeId = '@Model.Trade.ShiftSignupTradeId';
-	</script>
-	<script src="~/js/app/internal/shifts/resgrid.shifts.processtrade.js"></script>
+
 }

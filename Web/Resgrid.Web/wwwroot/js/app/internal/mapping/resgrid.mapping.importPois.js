@@ -7,12 +7,7 @@ var resgrid;
         (function (importPois) {
             $(document).ready(function () {
                 resgrid.common.analytics.track('Import POIs');
-                $("#fileToUpload").kendoUpload({
-                    multiple: false,
-                    localization: {
-                        select: "Select (KML/KMZ) File"
-                    }
-                });
+                // Native HTML file input is used - no JS initialization needed
             });
         })(importPois = mapping.importPois || (mapping.importPois = {}));
     })(mapping = resgrid.mapping || (resgrid.mapping = {}));

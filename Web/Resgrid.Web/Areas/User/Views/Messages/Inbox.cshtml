@@ -90,10 +90,5 @@
         })();
     </script>
 
-    <script id="inboxCommand-template" type="text/x-kendo-template">
-        <a href="@Url.Action("ViewMessage", "Messages", new { area = "User" })?messageId=#=MessageId#" class="btn btn-primary btn-xs" title="View Message"><i class="icon-inbox"></i> @commonLocalizer["View"]</a>
-        <a href="@Url.Action("DeleteMessage", "Messages", new { area = "User" })?messageId=#=MessageId#" class="btn btn-danger btn-xs" title="Delete Message" data-confirm="@localizer["DeleteMessageWarning"] #=Subject#?" rel="nofollow">@commonLocalizer["Delete"]</a>
-    </script>
-
     <script src="~/js/app/internal/messages/resgrid.messages.inbox.js" type="text/javascript"></script>
 }

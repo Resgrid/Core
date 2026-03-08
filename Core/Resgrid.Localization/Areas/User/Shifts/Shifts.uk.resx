@@ -69,30 +69,504 @@
     <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
   </data>
   <data name="DeleteStaticShiftHeader" xml:space="preserve">
-    <value>Delete Static Shift</value>
+    <value>Видалити статичну зміну</value>
   </data>
   <data name="EditShiftWarning" xml:space="preserve">
-    <value>Editing a static shift will clear out all assignments or sign-ups for this shift and reassign them based on the new settings. If you have any assignments or sign-ups for this shift they will be removed and the new settings will be applied.</value>
+    <value>Редагування статичної зміни видалить усі призначення або реєстрації для цієї зміни та переназначить їх відповідно до нових налаштувань.</value>
   </data>
   <data name="EditStaticShiftHeader" xml:space="preserve">
-    <value>Edit Static Shift</value>
+    <value>Редагувати статичну зміну</value>
   </data>
   <data name="EndDateTime" xml:space="preserve">
-    <value>End Date/Time</value>
+    <value>Дата/час завершення</value>
   </data>
   <data name="ShiftColorNote" xml:space="preserve">
-    <value>Note the text on the Calendar is black, take that into account when picking a shift color as the color will be used as the background</value>
+    <value>Текст у календарі чорний, враховуйте це при виборі кольору зміни, оскільки він використовуватиметься як фон.</value>
   </data>
   <data name="ShiftEndNote" xml:space="preserve">
-    <value>The date and time that the shift ends (i.e. back in quarters) where entities under it are considered available.</value>
+    <value>Дата та час завершення зміни, коли підпорядковані об'єкти вважаються доступними.</value>
   </data>
   <data name="ShiftStartNote" xml:space="preserve">
-    <value>The date and time that the shift starts (i.e. start of travel) where entities under it are considered committed.</value>
+    <value>Дата та час початку зміни, коли підпорядковані об'єкти вважаються зайнятими.</value>
   </data>
   <data name="StartDateTime" xml:space="preserve">
-    <value>Start Date/Time</value>
+    <value>Дата/час початку</value>
   </data>
   <data name="ViewStaticShiftDayHeader" xml:space="preserve">
-    <value>View Static Shift Day</value>
+    <value>Переглянути день статичної зміни</value>
+  </data>
+  <data name="ShiftsHeader" xml:space="preserve">
+    <value>Зміни</value>
+  </data>
+  <data name="YourShiftsButton" xml:space="preserve">
+    <value>Ваші зміни</value>
+  </data>
+  <data name="ShiftStaffingButton" xml:space="preserve">
+    <value>Укомплектування зміни</value>
+  </data>
+  <data name="RecurringGroupShifts" xml:space="preserve">
+    <value>Повторювані групові зміни</value>
+  </data>
+  <data name="AddRecurringGroupShift" xml:space="preserve">
+    <value>Додати повторювану групову зміну</value>
+  </data>
+  <data name="NameColumn" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="TypeColumn" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="ScheduleColumn" xml:space="preserve">
+    <value>Розклад</value>
+  </data>
+  <data name="GroupsColumn" xml:space="preserve">
+    <value>Групи</value>
+  </data>
+  <data name="PersonnelColumn" xml:space="preserve">
+    <value>Персонал</value>
+  </data>
+  <data name="AssignedType" xml:space="preserve">
+    <value>Призначений</value>
+  </data>
+  <data name="SignupType" xml:space="preserve">
+    <value>Реєстрація</value>
+  </data>
+  <data name="ManualSchedule" xml:space="preserve">
+    <value>Ручний</value>
+  </data>
+  <data name="CustomSchedule" xml:space="preserve">
+    <value>Користувацький</value>
+  </data>
+  <data name="Schedule48_96" xml:space="preserve">
+    <value>48 роботи 96 відпочинку</value>
+  </data>
+  <data name="Schedule24_48" xml:space="preserve">
+    <value>24 роботи 48 відпочинку</value>
+  </data>
+  <data name="Schedule24_72" xml:space="preserve">
+    <value>24 роботи 72 відпочинку</value>
+  </data>
+  <data name="ViewCalendarButton" xml:space="preserve">
+    <value>Переглянути календар</value>
+  </data>
+  <data name="EditDetailsButton" xml:space="preserve">
+    <value>Редагувати деталі</value>
+  </data>
+  <data name="EditCalendarButton" xml:space="preserve">
+    <value>Редагувати календар</value>
+  </data>
+  <data name="EditGroupsButton" xml:space="preserve">
+    <value>Редагувати групи</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="DeleteShiftWarning" xml:space="preserve">
+    <value>ПОПЕРЕДЖЕННЯ: Це назавжди видалить цю зміну. Ви впевнені, що хочете видалити зміну?</value>
+  </data>
+  <data name="CalendarSectionHeader" xml:space="preserve">
+    <value>Календар</value>
+  </data>
+  <data name="AddStaticShift" xml:space="preserve">
+    <value>Додати статичну зміну</value>
+  </data>
+  <data name="NewShiftHeader" xml:space="preserve">
+    <value>Нова зміна</value>
+  </data>
+  <data name="NewShiftWizardIntro" xml:space="preserve">
+    <value>Ласкаво просимо до майстра нової зміни. Цей майстер допоможе вам створити нову зміну для вашого підрозділу.</value>
+  </data>
+  <data name="NameLabel" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="NamePlaceholder" xml:space="preserve">
+    <value>Назва зміни</value>
+  </data>
+  <data name="NameHelp" xml:space="preserve">
+    <value>Наприклад ("Зміна А", "Зміна Б", "Зміна В")</value>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>Код</value>
+  </data>
+  <data name="CodeHelp" xml:space="preserve">
+    <value>Приклад ("А", "Б", "В")</value>
+  </data>
+  <data name="AssignmentTypeLabel" xml:space="preserve">
+    <value>Тип призначення</value>
+  </data>
+  <data name="AssignmentTypeHelp" xml:space="preserve">
+    <value>Для призначеного ви визначаєте персонал; для реєстрації персонал призначається самостійно.</value>
+  </data>
+  <data name="ColorLabel" xml:space="preserve">
+    <value>Колір</value>
+  </data>
+  <data name="ScheduleTabIntro" xml:space="preserve">
+    <value>Тут ви вказуєте, в які дні зміна буде на службі, та час початку зміни для першого дня.</value>
+  </data>
+  <data name="StartTimeLabel" xml:space="preserve">
+    <value>Час початку</value>
+  </data>
+  <data name="StartTimeHelp" xml:space="preserve">
+    <value>Коли починається зміна в перший день (або єдиний день)?</value>
+  </data>
+  <data name="EndTimeLabel" xml:space="preserve">
+    <value>Час завершення</value>
+  </data>
+  <data name="EndTimeHelp" xml:space="preserve">
+    <value>Коли закінчується зміна в останній день (або єдиний день)?</value>
+  </data>
+  <data name="SlotsTabIntro" xml:space="preserve">
+    <value>Тут ви можете налаштувати необхідні ролі для кожної групи у вашому підрозділі для зміни.</value>
+  </data>
+  <data name="ShiftGroupColumn" xml:space="preserve">
+    <value>Група зміни</value>
+  </data>
+  <data name="ShiftRolesColumn" xml:space="preserve">
+    <value>Ролі зміни</value>
+  </data>
+  <data name="AddGroupToShift" xml:space="preserve">
+    <value>Додати групу до зміни</value>
+  </data>
+  <data name="PersonnelTabIntro" xml:space="preserve">
+    <value>Тепер виберіть персонал, який працює в цій зміні для вашого підрозділу.</value>
+  </data>
+  <data name="NonGroupPersonnelLabel" xml:space="preserve">
+    <value>Персонал без групи</value>
+  </data>
+  <data name="NonGroupPersonnelHelp" xml:space="preserve">
+    <value>Персонал, призначений до зміни, але не безпосередньо до станції або організаційної групи</value>
+  </data>
+  <data name="FinishTabIntro" xml:space="preserve">
+    <value>Натисніть кнопку Завершити, щоб створити нову зміну.</value>
+  </data>
+  <data name="WizardStart" xml:space="preserve">
+    <value>Початок &gt;</value>
+  </data>
+  <data name="WizardSchedule" xml:space="preserve">
+    <value>Розклад &gt;</value>
+  </data>
+  <data name="WizardSlots" xml:space="preserve">
+    <value>Слоти &gt;</value>
+  </data>
+  <data name="WizardPersonnel" xml:space="preserve">
+    <value>Персонал &gt;</value>
+  </data>
+  <data name="WizardFinish" xml:space="preserve">
+    <value>Завершити</value>
+  </data>
+  <data name="WizardFirst" xml:space="preserve">
+    <value>Перший</value>
+  </data>
+  <data name="WizardPrevious" xml:space="preserve">
+    <value>Попередній</value>
+  </data>
+  <data name="WizardNext" xml:space="preserve">
+    <value>Далі</value>
+  </data>
+  <data name="ShiftNameRequired" xml:space="preserve">
+    <value>Назва зміни є обов'язковою</value>
+  </data>
+  <data name="ShiftCodeRequired" xml:space="preserve">
+    <value>Код зміни є обов'язковим</value>
+  </data>
+  <data name="ShiftStartTimeRequired" xml:space="preserve">
+    <value>Час початку зміни є обов'язковим.</value>
+  </data>
+  <data name="EditShiftDetailsHeader" xml:space="preserve">
+    <value>Редагувати деталі зміни</value>
+  </data>
+  <data name="CodePlaceholder" xml:space="preserve">
+    <value>Код зміни</value>
+  </data>
+  <data name="NonGroupPersonnelHelpEdit" xml:space="preserve">
+    <value>Персонал, який є частиною зміни, але не призначений до групи</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Скасувати</value>
+  </data>
+  <data name="UpdateShiftButton" xml:space="preserve">
+    <value>Оновити зміну</value>
+  </data>
+  <data name="EditShiftCalendarHeader" xml:space="preserve">
+    <value>Редагувати календар зміни</value>
+  </data>
+  <data name="UpdateShiftDaysButton" xml:space="preserve">
+    <value>Оновити дні зміни</value>
+  </data>
+  <data name="EditShiftGroupsHeader" xml:space="preserve">
+    <value>Редагувати групи зміни</value>
+  </data>
+  <data name="SaveShiftGroupsButton" xml:space="preserve">
+    <value>Зберегти групи зміни</value>
+  </data>
+  <data name="CalendarSuffix" xml:space="preserve">
+    <value>Календар</value>
+  </data>
+  <data name="ShiftStaffingHeader" xml:space="preserve">
+    <value>Укомплектування зміни</value>
+  </data>
+  <data name="ShiftLabel" xml:space="preserve">
+    <value>Зміна</value>
+  </data>
+  <data name="ShiftSelectHelp" xml:space="preserve">
+    <value>Виберіть зміну для обробки укомплектування.</value>
+  </data>
+  <data name="ShiftDayLabel" xml:space="preserve">
+    <value>День зміни</value>
+  </data>
+  <data name="ShiftDayHelp" xml:space="preserve">
+    <value>Виберіть день для обробки укомплектування.</value>
+  </data>
+  <data name="NoteLabel" xml:space="preserve">
+    <value>Примітка</value>
+  </data>
+  <data name="NotePlaceholder" xml:space="preserve">
+    <value>Введіть довільну примітку для зміни</value>
+  </data>
+  <data name="AssignmentsLabel" xml:space="preserve">
+    <value>Призначення</value>
+  </data>
+  <data name="UnitsLabel" xml:space="preserve">
+    <value>Підрозділи</value>
+  </data>
+  <data name="SetShiftDayStaffingButton" xml:space="preserve">
+    <value>Встановити укомплектування дня зміни</value>
+  </data>
+  <data name="SelectNonGroupPersonnel" xml:space="preserve">
+    <value>Вибрати персонал без групи...</value>
+  </data>
+  <data name="SelectPersonnelForGroup" xml:space="preserve">
+    <value>Вибрати персонал для групи...</value>
+  </data>
+  <data name="SelectPerson" xml:space="preserve">
+    <value>Вибрати особу...</value>
+  </data>
+  <data name="NonGroupPersonnelStaffing" xml:space="preserve">
+    <value>Персонал без групи</value>
+  </data>
+  <data name="YourShiftsHeader" xml:space="preserve">
+    <value>Ваші зміни</value>
+  </data>
+  <data name="ShiftColumn" xml:space="preserve">
+    <value>Зміна</value>
+  </data>
+  <data name="GroupColumn" xml:space="preserve">
+    <value>Група</value>
+  </data>
+  <data name="DayColumn" xml:space="preserve">
+    <value>День</value>
+  </data>
+  <data name="ApprovedColumn" xml:space="preserve">
+    <value>Затверджено</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="TimestampColumn" xml:space="preserve">
+    <value>Часова мітка</value>
+  </data>
+  <data name="ApprovedNo" xml:space="preserve">
+    <value>Ні</value>
+  </data>
+  <data name="ApprovedYes" xml:space="preserve">
+    <value>Так</value>
+  </data>
+  <data name="TradeComplete" xml:space="preserve">
+    <value>Обмін завершено</value>
+  </data>
+  <data name="TradeInProgress" xml:space="preserve">
+    <value>Обмін в процесі</value>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>Нормальний</value>
+  </data>
+  <data name="For" xml:space="preserve">
+    <value>для</value>
+  </data>
+  <data name="DeclineShiftDayWarning" xml:space="preserve">
+    <value>ПОПЕРЕДЖЕННЯ: Це видалить вас із цієї зміни. Ви впевнені, що хочете відхилити зміну?</value>
+  </data>
+  <data name="DeclineShiftDay" xml:space="preserve">
+    <value>Відхилити день зміни</value>
+  </data>
+  <data name="RequestTrade" xml:space="preserve">
+    <value>Запросити обмін</value>
+  </data>
+  <data name="FinishTrade" xml:space="preserve">
+    <value>Завершити обмін</value>
+  </data>
+  <data name="YourPendingTrades" xml:space="preserve">
+    <value>Ваші очікувані обміни</value>
+  </data>
+  <data name="TimeColumn" xml:space="preserve">
+    <value>Час</value>
+  </data>
+  <data name="ProcessTradeRequest" xml:space="preserve">
+    <value>Обробити запит на обмін</value>
+  </data>
+  <data name="Declined" xml:space="preserve">
+    <value>Відхилено</value>
+  </data>
+  <data name="Accepted" xml:space="preserve">
+    <value>Прийнято</value>
+  </data>
+  <data name="Filled" xml:space="preserve">
+    <value>Виконано</value>
+  </data>
+  <data name="TradeOffered" xml:space="preserve">
+    <value>Обмін запропоновано</value>
+  </data>
+  <data name="ViewShiftHeader" xml:space="preserve">
+    <value>Переглянути зміну</value>
+  </data>
+  <data name="ShiftStart" xml:space="preserve">
+    <value>Початок зміни</value>
+  </data>
+  <data name="ShiftDayDetail" xml:space="preserve">
+    <value>Деталі дня зміни</value>
+  </data>
+  <data name="TypeLabel" xml:space="preserve">
+    <value>Тип:</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Статус:</value>
+  </data>
+  <data name="StartLabel" xml:space="preserve">
+    <value>Початок:</value>
+  </data>
+  <data name="EndLabel" xml:space="preserve">
+    <value>Кінець:</value>
+  </data>
+  <data name="Upcoming" xml:space="preserve">
+    <value>Майбутній</value>
+  </data>
+  <data name="Completed" xml:space="preserve">
+    <value>Завершений</value>
+  </data>
+  <data name="NoEndTime" xml:space="preserve">
+    <value>Немає часу завершення</value>
+  </data>
+  <data name="GroupsSectionHeader" xml:space="preserve">
+    <value>Групи</value>
+  </data>
+  <data name="RoleColumn" xml:space="preserve">
+    <value>Роль</value>
+  </data>
+  <data name="RequiredColumn" xml:space="preserve">
+    <value>Обов'язково</value>
+  </data>
+  <data name="OptionalColumn" xml:space="preserve">
+    <value>Необов'язково</value>
+  </data>
+  <data name="NeededColumn" xml:space="preserve">
+    <value>Потрібно</value>
+  </data>
+  <data name="SignupsSectionHeader" xml:space="preserve">
+    <value>Реєстрації</value>
+  </data>
+  <data name="RolesColumn" xml:space="preserve">
+    <value>Ролі</value>
+  </data>
+  <data name="TradesSectionHeader" xml:space="preserve">
+    <value>Обміни</value>
+  </data>
+  <data name="TradeColumn" xml:space="preserve">
+    <value>Обмін</value>
+  </data>
+  <data name="TradedWithFormat" xml:space="preserve">
+    <value>{0} обмінявся з {1}</value>
+  </data>
+  <data name="ShiftSignupHeader" xml:space="preserve">
+    <value>Реєстрація на зміну</value>
+  </data>
+  <data name="DeleteShiftSignup" xml:space="preserve">
+    <value>Видалити реєстрацію на зміну</value>
+  </data>
+  <data name="SignupForShiftWith" xml:space="preserve">
+    <value>Зареєструватися на зміну з</value>
+  </data>
+  <data name="ShiftSignupSuccessHeader" xml:space="preserve">
+    <value>Реєстрація на зміну успішна</value>
+  </data>
+  <data name="SignupSuccessMessage" xml:space="preserve">
+    <value>Ви успішно зареєструвалися на цей день зміни. Якщо ви хочете зареєструватися на більше днів, вам потрібно реєструватися на кожен день окремо.</value>
+  </data>
+  <data name="StartsAtEndsAt" xml:space="preserve">
+    <value>Починається о {0} і завершується о {1}</value>
+  </data>
+  <data name="StartsAt" xml:space="preserve">
+    <value>Починається о {0}</value>
+  </data>
+  <data name="RequestTradeHeader" xml:space="preserve">
+    <value>Запросити обмін</value>
+  </data>
+  <data name="UsersToRequestLabel" xml:space="preserve">
+    <value>Користувачі для запиту</value>
+  </data>
+  <data name="UsersToRequestHelp" xml:space="preserve">
+    <value>Клацніть у полі, щоб вибрати кому надіслати запит на обмін</value>
+  </data>
+  <data name="SubmitTradeRequest" xml:space="preserve">
+    <value>Надіслати запит на обмін</value>
+  </data>
+  <data name="ProcessTradeHeader" xml:space="preserve">
+    <value>Обробити запит на обмін</value>
+  </data>
+  <data name="DatesToTradeLabel" xml:space="preserve">
+    <value>Дати для обміну</value>
+  </data>
+  <data name="DatesToTradeHelp" xml:space="preserve">
+    <value>Виберіть зміни, на які ви вже зареєстровані, щоб завершити обмін.</value>
+  </data>
+  <data name="NoteTradePlaceholder" xml:space="preserve">
+    <value>Примітка або інформація для цього обміну</value>
+  </data>
+  <data name="RejectTradeRequest" xml:space="preserve">
+    <value>Відхилити запит на обмін</value>
+  </data>
+  <data name="RejectTradeConfirm" xml:space="preserve">
+    <value>Ви впевнені, що хочете відхилити цей запит на обмін?</value>
+  </data>
+  <data name="ProposeTradeRequest" xml:space="preserve">
+    <value>Запропонувати обмін</value>
+  </data>
+  <data name="StartsAtLabel" xml:space="preserve">
+    <value>Починається о</value>
+  </data>
+  <data name="FinalizeTradeHeader" xml:space="preserve">
+    <value>Завершити обмін</value>
+  </data>
+  <data name="DateColumn" xml:space="preserve">
+    <value>Дата</value>
+  </data>
+  <data name="NoneValue" xml:space="preserve">
+    <value>Немає</value>
+  </data>
+  <data name="FinalizeTradeButton" xml:space="preserve">
+    <value>Завершити обмін</value>
+  </data>
+  <data name="ShiftRoleColumn" xml:space="preserve">
+    <value>Роль зміни</value>
+  </data>
+  <data name="RolesCountColumn" xml:space="preserve">
+    <value>Кількість ролей</value>
+  </data>
+  <data name="AddRoleToGroup" xml:space="preserve">
+    <value>Додати роль до групи</value>
+  </data>
+  <data name="AddShiftRolesToGroup" xml:space="preserve">
+    <value>Додати ролі зміни до групи</value>
+  </data>
+  <data name="RemoveGroup" xml:space="preserve">
+    <value>Видалити групу</value>
+  </data>
+  <data name="RemoveRole" xml:space="preserve">
+    <value>Видалити роль</value>
+  </data>
+  <data name="RemoveRoleFromGroup" xml:space="preserve">
+    <value>Видалити цю роль із групи</value>
+  </data>
+  <data name="RoleCountRequired" xml:space="preserve">
+    <value>Кількість ролей є обов'язковою</value>
   </data>
 </root>

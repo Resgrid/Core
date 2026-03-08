@@ -1,79 +1,47 @@
-
 var resgrid;
 (function (resgrid) {
     var dispatch;
     (function (dispatch) {
         var smallcallgrid;
         (function (smallcallgrid) {
+            var callsTable;
             $(document).ready(function () {
-                $("#smallActiveCallsGrid").kendoGrid({
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: '/User/Dispatch/GetActiveCallsForGrid'
-                        },
-                        schema: {
-                            model: {
-                                fields: {
-                                    CallId: { type: "int" },
-                                    Priority: { type: "string" },
-                                    Name: { type: "string" },
-                                    DispatchTime: { type: "date" }
-                                }
-                            }
-                        },
-                        pageSize: 6,
-                        serverPaging: false,
-                        serverFiltering: false,
-                        serverSorting: false
+                callsTable = $("#smallActiveCallsGrid").DataTable({
+                    ajax: {
+                        url: '/User/Dispatch/GetActiveCallsForGrid',
+                        dataSrc: ''
                     },
-                    //height: 365,
-                    filterable: true,
-                    sortable: true,
-                    pageable: true,
-                    scrollable: true,
+                    pageLength: 6,
                     columns: [
+                        { data: 'Priority', title: 'Priority' },
+                        { data: 'DispatchTime', title: 'Dispatch Time' },
+                        { data: 'Name', title: 'Name' },
                         {
-                            field: "Priority",
-                            title: "Priority",
-                            width: 85
-                        },
-                        {
-                            field: "DispatchTime",
-                            title: "Dispatch Time",
-                            format: "{0:MM/dd/yyyy hh:mm:ss}",
-                            width: 140
-                        },
-                        {
-                            field: "Name",
-                            title: "Name",
-                            width: 280
-                        },
-                        {
-                            template: kendo.template($("#smallActiveCallRowActionColumnTemplate").html()),
-                            width: 125
+                            data: 'CallId',
+                            title: 'Actions',
+                            orderable: false,
+                            searchable: false,
+                            render: function (data) {
+                                return '<a class="btn btn-success respondToCallButton" onclick="resgrid.dispatch.smallcallgrid.respondToCall(' + data + ');">Respond To Call</a>';
+                            }
                         }
                     ]
                 });
             });
             function refreshGrid() {
-                var grid = $("#smallActiveCallsGrid").data("kendoGrid");
-                grid.dataSource.page(1);
-                grid.dataSource.read();
+                if (callsTable) { callsTable.ajax.reload(); }
             }
             smallcallgrid.refreshGrid = refreshGrid;
             function respondToCall(callId) {
-                kendo.ui.progress($("#smallActiveCallsGrid"), true);
+                resgrid.showProgress('#smallActiveCallsGrid', true);
                 $.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/Home/UserRespondingToCall?callId=' + callId,
                     contentType: 'application/json; charset=utf-8',
                     type: 'POST'
                 }).done(function (results) {
-                    var event = {
-                        callId: callId
-                    };
+                    var event = { callId: callId };
                     $('.respondToACallWindow').trigger(resgrid.dispatch.smallcallgrid.respondToCallButton, event);
-                    kendo.ui.progress($("#smallActiveCallsGrid"), false);
+                    resgrid.showProgress('#smallActiveCallsGrid', false);
                 });
             }
             smallcallgrid.respondToCall = respondToCall;

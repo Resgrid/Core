@@ -1,25 +1,25 @@
 ﻿@using Resgrid.Model
 @model Resgrid.Web.Areas.User.Models.Inventory.EditTypeView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> localizer
 @{
-	ViewBag.Title = "Resgrid | Edit Inventory Type";
+	ViewBag.Title = "Resgrid | " + localizer["EditInventoryTypeHeader"];
 }
-
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>Edit Inventory Type</h2>
+		<h2>@localizer["EditInventoryTypeHeader"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
 			</li>
 			<li>
-				<a asp-controller="Inventory" asp-action="Index" asp-route-area="User">Inventory</a>
+				<a asp-controller="Inventory" asp-action="Index" asp-route-area="User">@commonLocalizer["InventoryModule"]</a>
 			</li>
 			<li>
-				<a asp-controller="Inventory" asp-action="ManageTypes" asp-route-area="User">Types</a>
+				<a asp-controller="Inventory" asp-action="ManageTypes" asp-route-area="User">@localizer["Types"]</a>
 			</li>
 			<li class="active">
-				<strong>Edit Inventory Type</strong>
+				<strong>@localizer["EditInventoryTypeHeader"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -48,7 +48,7 @@
 
 						<div class="form-group">
 							<label class="col-sm-2 control-label">
-								Type Name
+								@localizer["TypeName"]
 							</label>
 							<div class="col-sm-10">
 								<div class="col-md-4">
@@ -58,7 +58,7 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label">
-								Description
+								@commonLocalizer["Description"]
 							</label>
 							<div class="col-sm-10">
 								<div class="col-md-4">
@@ -68,7 +68,7 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label">
-								Unit Of Measure
+								@localizer["UnitOfMeasure"]
 							</label>
 							<div class="col-sm-10">
 								<div class="col-md-2">
@@ -78,20 +78,20 @@
 						</div>
 						<div class="form-group" style="padding-bottom: 12px;">
 							<label class="col-sm-2 control-label">
-								Item Expires Days
+								@localizer["ItemExpiresDays"]
 							</label>
 							<div class="col-sm-10">
 								<div class="col-md-2">
 									@Html.TextBoxFor(m => m.Type.ExpiresDays, new { onkeydown = "javascript:return false;" })
-									<p class="help-block">For items that don't expire enter 0</p>
+									<p class="help-block">@localizer["ForItemsNoExpiry"]</p>
 								</div>
 							</div>
 						</div>
 
 						<div class="form-group">
 							<div class="col-sm-4 col-sm-offset-2">
-								<a class="btn btn-white" asp-controller="Inventory" asp-action="ManageTypes" asp-route-area="User">Cancel</a>
-								<button class="btn btn-primary" type="submit">Edit Inventory Type</button>
+								<a class="btn btn-white" asp-controller="Inventory" asp-action="ManageTypes" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+								<button class="btn btn-primary" type="submit">@localizer["EditInventoryTypeButton"]</button>
 							</div>
 						</div>
 					</form>

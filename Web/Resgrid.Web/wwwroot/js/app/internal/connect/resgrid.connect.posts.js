@@ -6,46 +6,20 @@ var resgrid;
         (function (posts) {
             $(document).ready(function () {
                 resgrid.common.analytics.track('Connect Posts');
-                $("#postsList").kendoGrid({
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Connect/GetPostsList?departmentProfileId=' + departmentProfileId
-                        },
-                        schema: {
-                            model: {
-                                fields: {
-                                    Id: { type: "number" },
-                                    Title: { type: "string" },
-                                    CreatedOn: { type: "string" },
-                                    ExpiresOn: { type: "string" },
-                                    CreatedBy: { type: "string" }
-                                }
-                            }
-                        },
-                        pageSize: 50
-                    },
-                    //height: 400,
-                    filterable: true,
-                    sortable: true,
-                    scrollable: true,
-                    pageable: {
-                        refresh: true,
-                        pageSizes: true,
-                        buttonCount: 5
-                    },
+                $("#postsList").DataTable({
+                    ajax: { url: resgrid.absoluteBaseUrl + '/User/Connect/GetPostsList?departmentProfileId=' + departmentProfileId, dataSrc: '' },
+                    pageLength: 50,
                     columns: [
-                        "Title",
-                        "CreatedOn",
-                        "ExpiresOn",
-                        "CreatedBy",
+                        { data: 'Title', title: 'Title' },
+                        { data: 'CreatedOn', title: 'Created On' },
+                        { data: 'ExpiresOn', title: 'Expires On' },
+                        { data: 'CreatedBy', title: 'Created By' },
                         {
-                            field: "Id",
-                            title: "Actions",
-                            filterable: false,
-                            sortable: false,
-                            width: 220,
-                            template: kendo.template($("#command-template").html())
+                            data: 'Id', title: 'Actions', orderable: false, searchable: false,
+                            render: function (data) {
+                                return '<a class="btn btn-xs btn-primary" href="' + resgrid.absoluteBaseUrl + '/User/Connect/ViewPost?postId=' + data + '">View</a> ' +
+                                       '<a class="btn btn-xs btn-danger" href="' + resgrid.absoluteBaseUrl + '/User/Connect/DeletePost?postId=' + data + '">Delete</a>';
+                            }
                         }
                     ]
                 });

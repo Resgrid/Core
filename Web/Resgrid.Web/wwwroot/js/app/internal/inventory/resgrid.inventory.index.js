@@ -6,14 +6,17 @@ var resgrid;
         (function (index) {
             $(document).ready(function () {
                 resgrid.common.analytics.track('Inventory List');
+                var strings = typeof inventoryIndexStrings !== 'undefined' ? inventoryIndexStrings : {
+                    name: 'Name', group: 'Group', unit: 'Unit', count: 'Count'
+                };
                 $("#inventoryIndexList").DataTable({
                     ajax: { url: resgrid.absoluteBaseUrl + '/User/Inventory/GetCombinedInventoryList', dataSrc: '' },
                     pageLength: 50,
                     columns: [
-                        { data: 'Name', title: 'Name' },
-                        { data: 'Group', title: 'Group' },
-                        { data: 'Unit', title: 'Unit' },
-                        { data: 'Count', title: 'Count' }
+                        { data: 'Name', title: strings.name },
+                        { data: 'Group', title: strings.group },
+                        { data: 'Unit', title: strings.unit },
+                        { data: 'Count', title: strings.count }
                     ]
                 });
             });

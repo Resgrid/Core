@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
@@ -48,6 +48,52 @@ namespace Resgrid.Repositories.DataRepository
 				}
 				conn = _unitOfWork.CreateOrGetConnection();
 				return await selectFunction(conn);
+			}
+			catch (Exception ex) { Logging.LogException(ex); throw; }
+		}
+
+		public async Task DeleteAllByWorkflowRunIdAsync(string workflowRunId)
+		{
+			try
+			{
+				var deleteFunction = new Func<DbConnection, Task>(async x =>
+				{
+					var dp = new DynamicParametersExtension();
+					dp.Add("WorkflowRunId", workflowRunId);
+					var query = _queryFactory.GetDeleteQuery<DeleteWorkflowRunLogsByWorkflowRunIdQuery>();
+					await x.ExecuteAsync(sql: query, param: dp, transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create()) { await conn.OpenAsync(); await deleteFunction(conn); return; }
+				}
+				conn = _unitOfWork.CreateOrGetConnection();
+				await deleteFunction(conn);
+			}
+			catch (Exception ex) { Logging.LogException(ex); throw; }
+		}
+
+		public async Task DeleteAllByWorkflowIdAsync(string workflowId)
+		{
+			try
+			{
+				var deleteFunction = new Func<DbConnection, Task>(async x =>
+				{
+					var dp = new DynamicParametersExtension();
+					dp.Add("WorkflowId", workflowId);
+					var query = _queryFactory.GetDeleteQuery<DeleteWorkflowRunLogsByWorkflowIdQuery>();
+					await x.ExecuteAsync(sql: query, param: dp, transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create()) { await conn.OpenAsync(); await deleteFunction(conn); return; }
+				}
+				conn = _unitOfWork.CreateOrGetConnection();
+				await deleteFunction(conn);
 			}
 			catch (Exception ex) { Logging.LogException(ex); throw; }
 		}

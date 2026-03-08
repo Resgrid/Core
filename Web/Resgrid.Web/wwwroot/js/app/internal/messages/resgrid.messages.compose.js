@@ -38,6 +38,7 @@ var resgrid;
                     $(selector).select2({
                         placeholder: placeholder,
                         allowClear: true,
+                        multiple: true,
                         ajax: {
                             url: url,
                             dataType: 'json',

@@ -98,4 +98,505 @@
 	<resheader name="writer">
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
+  <data name="DeleteStaticShiftHeader" xml:space="preserve">
+    <value>Eliminar turno estático</value>
+  </data>
+  <data name="EditShiftWarning" xml:space="preserve">
+    <value>Editar un turno estático borrará todas las asignaciones o inscripciones para este turno y las reasignará según la nueva configuración.</value>
+  </data>
+  <data name="EditStaticShiftHeader" xml:space="preserve">
+    <value>Editar turno estático</value>
+  </data>
+  <data name="EndDateTime" xml:space="preserve">
+    <value>Fecha/Hora de fin</value>
+  </data>
+  <data name="ShiftColorNote" xml:space="preserve">
+    <value>El texto en el calendario es negro, téngalo en cuenta al elegir el color del turno, ya que se usará como fondo.</value>
+  </data>
+  <data name="ShiftEndNote" xml:space="preserve">
+    <value>La fecha y hora en que termina el turno, donde las entidades se consideran disponibles.</value>
+  </data>
+  <data name="ShiftStartNote" xml:space="preserve">
+    <value>La fecha y hora en que comienza el turno, donde las entidades se consideran comprometidas.</value>
+  </data>
+  <data name="StartDateTime" xml:space="preserve">
+    <value>Fecha/Hora de inicio</value>
+  </data>
+  <data name="ViewStaticShiftDayHeader" xml:space="preserve">
+    <value>Ver día de turno estático</value>
+  </data>
+  <data name="ShiftsHeader" xml:space="preserve">
+    <value>Turnos</value>
+  </data>
+  <data name="YourShiftsButton" xml:space="preserve">
+    <value>Sus turnos</value>
+  </data>
+  <data name="ShiftStaffingButton" xml:space="preserve">
+    <value>Dotación de turno</value>
+  </data>
+  <data name="RecurringGroupShifts" xml:space="preserve">
+    <value>Turnos de grupo recurrentes</value>
+  </data>
+  <data name="AddRecurringGroupShift" xml:space="preserve">
+    <value>Agregar turno de grupo recurrente</value>
+  </data>
+  <data name="NameColumn" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="TypeColumn" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="ScheduleColumn" xml:space="preserve">
+    <value>Horario</value>
+  </data>
+  <data name="GroupsColumn" xml:space="preserve">
+    <value>Grupos</value>
+  </data>
+  <data name="PersonnelColumn" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="AssignedType" xml:space="preserve">
+    <value>Asignado</value>
+  </data>
+  <data name="SignupType" xml:space="preserve">
+    <value>Inscripción</value>
+  </data>
+  <data name="ManualSchedule" xml:space="preserve">
+    <value>Manual</value>
+  </data>
+  <data name="CustomSchedule" xml:space="preserve">
+    <value>Personalizado</value>
+  </data>
+  <data name="Schedule48_96" xml:space="preserve">
+    <value>48 dentro 96 fuera</value>
+  </data>
+  <data name="Schedule24_48" xml:space="preserve">
+    <value>24 dentro 48 fuera</value>
+  </data>
+  <data name="Schedule24_72" xml:space="preserve">
+    <value>24 dentro 72 fuera</value>
+  </data>
+  <data name="ViewCalendarButton" xml:space="preserve">
+    <value>Ver calendario</value>
+  </data>
+  <data name="EditDetailsButton" xml:space="preserve">
+    <value>Editar detalles</value>
+  </data>
+  <data name="EditCalendarButton" xml:space="preserve">
+    <value>Editar calendario</value>
+  </data>
+  <data name="EditGroupsButton" xml:space="preserve">
+    <value>Editar grupos</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Eliminar</value>
+  </data>
+  <data name="DeleteShiftWarning" xml:space="preserve">
+    <value>ADVERTENCIA: Esto eliminará permanentemente este turno. ¿Está seguro de que desea eliminar el turno?</value>
+  </data>
+  <data name="CalendarSectionHeader" xml:space="preserve">
+    <value>Calendario</value>
+  </data>
+  <data name="AddStaticShift" xml:space="preserve">
+    <value>Agregar turno estático</value>
+  </data>
+  <data name="NewShiftHeader" xml:space="preserve">
+    <value>Nuevo turno</value>
+  </data>
+  <data name="NewShiftWizardIntro" xml:space="preserve">
+    <value>Bienvenido al asistente de nuevo turno. Este asistente le guiará en la creación de un nuevo turno para su departamento.</value>
+  </data>
+  <data name="NameLabel" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="NamePlaceholder" xml:space="preserve">
+    <value>Nombre del turno</value>
+  </data>
+  <data name="NameHelp" xml:space="preserve">
+    <value>Por ejemplo ("Turno A", "Turno B", "Turno C")</value>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>Código</value>
+  </data>
+  <data name="CodeHelp" xml:space="preserve">
+    <value>Ejemplo ("A", "B", "C")</value>
+  </data>
+  <data name="AssignmentTypeLabel" xml:space="preserve">
+    <value>Tipo de asignación</value>
+  </data>
+  <data name="AssignmentTypeHelp" xml:space="preserve">
+    <value>Para asignado, usted especifica el personal; para inscripción, el personal se asignará a sí mismo.</value>
+  </data>
+  <data name="ColorLabel" xml:space="preserve">
+    <value>Color</value>
+  </data>
+  <data name="ScheduleTabIntro" xml:space="preserve">
+    <value>Aquí especifica qué días estará el turno de servicio y la hora de inicio del turno para el primer día.</value>
+  </data>
+  <data name="StartTimeLabel" xml:space="preserve">
+    <value>Hora de inicio</value>
+  </data>
+  <data name="StartTimeHelp" xml:space="preserve">
+    <value>¿Cuándo comienza el turno el primer día (o único día)?</value>
+  </data>
+  <data name="EndTimeLabel" xml:space="preserve">
+    <value>Hora de fin</value>
+  </data>
+  <data name="EndTimeHelp" xml:space="preserve">
+    <value>¿Cuándo termina el turno el último día (o único día)?</value>
+  </data>
+  <data name="SlotsTabIntro" xml:space="preserve">
+    <value>Aquí puede configurar los roles requeridos para cada grupo en su departamento para el turno.</value>
+  </data>
+  <data name="ShiftGroupColumn" xml:space="preserve">
+    <value>Grupo de turno</value>
+  </data>
+  <data name="ShiftRolesColumn" xml:space="preserve">
+    <value>Roles de turno</value>
+  </data>
+  <data name="AddGroupToShift" xml:space="preserve">
+    <value>Agregar grupo al turno</value>
+  </data>
+  <data name="PersonnelTabIntro" xml:space="preserve">
+    <value>Seleccione el personal que trabajará en este turno para su departamento.</value>
+  </data>
+  <data name="NonGroupPersonnelLabel" xml:space="preserve">
+    <value>Personal sin grupo</value>
+  </data>
+  <data name="NonGroupPersonnelHelp" xml:space="preserve">
+    <value>Personal asignado al turno pero no directamente a una estación o grupo organizacional</value>
+  </data>
+  <data name="FinishTabIntro" xml:space="preserve">
+    <value>Haga clic en el botón Finalizar para crear su nuevo turno.</value>
+  </data>
+  <data name="WizardStart" xml:space="preserve">
+    <value>Inicio &gt;</value>
+  </data>
+  <data name="WizardSchedule" xml:space="preserve">
+    <value>Horario &gt;</value>
+  </data>
+  <data name="WizardSlots" xml:space="preserve">
+    <value>Slots &gt;</value>
+  </data>
+  <data name="WizardPersonnel" xml:space="preserve">
+    <value>Personal &gt;</value>
+  </data>
+  <data name="WizardFinish" xml:space="preserve">
+    <value>Finalizar</value>
+  </data>
+  <data name="WizardFirst" xml:space="preserve">
+    <value>Primero</value>
+  </data>
+  <data name="WizardPrevious" xml:space="preserve">
+    <value>Anterior</value>
+  </data>
+  <data name="WizardNext" xml:space="preserve">
+    <value>Siguiente</value>
+  </data>
+  <data name="ShiftNameRequired" xml:space="preserve">
+    <value>El nombre del turno es obligatorio</value>
+  </data>
+  <data name="ShiftCodeRequired" xml:space="preserve">
+    <value>El código del turno es obligatorio</value>
+  </data>
+  <data name="ShiftStartTimeRequired" xml:space="preserve">
+    <value>La hora de inicio del turno es obligatoria.</value>
+  </data>
+  <data name="EditShiftDetailsHeader" xml:space="preserve">
+    <value>Editar detalles del turno</value>
+  </data>
+  <data name="CodePlaceholder" xml:space="preserve">
+    <value>Código del turno</value>
+  </data>
+  <data name="NonGroupPersonnelHelpEdit" xml:space="preserve">
+    <value>Personal que forma parte de un turno pero no está asignado a un grupo</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Cancelar</value>
+  </data>
+  <data name="UpdateShiftButton" xml:space="preserve">
+    <value>Actualizar turno</value>
+  </data>
+  <data name="EditShiftCalendarHeader" xml:space="preserve">
+    <value>Editar calendario de turno</value>
+  </data>
+  <data name="UpdateShiftDaysButton" xml:space="preserve">
+    <value>Actualizar días de turno</value>
+  </data>
+  <data name="EditShiftGroupsHeader" xml:space="preserve">
+    <value>Editar grupos de turno</value>
+  </data>
+  <data name="SaveShiftGroupsButton" xml:space="preserve">
+    <value>Guardar grupos de turno</value>
+  </data>
+  <data name="CalendarSuffix" xml:space="preserve">
+    <value>Calendario</value>
+  </data>
+  <data name="ShiftStaffingHeader" xml:space="preserve">
+    <value>Dotación de turno</value>
+  </data>
+  <data name="ShiftLabel" xml:space="preserve">
+    <value>Turno</value>
+  </data>
+  <data name="ShiftSelectHelp" xml:space="preserve">
+    <value>Seleccione el turno para procesar la dotación.</value>
+  </data>
+  <data name="ShiftDayLabel" xml:space="preserve">
+    <value>Día de turno</value>
+  </data>
+  <data name="ShiftDayHelp" xml:space="preserve">
+    <value>Seleccione el día para procesar la dotación.</value>
+  </data>
+  <data name="NoteLabel" xml:space="preserve">
+    <value>Nota</value>
+  </data>
+  <data name="NotePlaceholder" xml:space="preserve">
+    <value>Ingrese una nota de texto libre para el turno</value>
+  </data>
+  <data name="AssignmentsLabel" xml:space="preserve">
+    <value>Asignaciones</value>
+  </data>
+  <data name="UnitsLabel" xml:space="preserve">
+    <value>Unidades</value>
+  </data>
+  <data name="SetShiftDayStaffingButton" xml:space="preserve">
+    <value>Establecer dotación del día de turno</value>
+  </data>
+  <data name="SelectNonGroupPersonnel" xml:space="preserve">
+    <value>Seleccionar personal sin grupo...</value>
+  </data>
+  <data name="SelectPersonnelForGroup" xml:space="preserve">
+    <value>Seleccionar personal para grupo...</value>
+  </data>
+  <data name="SelectPerson" xml:space="preserve">
+    <value>Seleccionar persona...</value>
+  </data>
+  <data name="NonGroupPersonnelStaffing" xml:space="preserve">
+    <value>Personal sin grupo</value>
+  </data>
+  <data name="YourShiftsHeader" xml:space="preserve">
+    <value>Sus turnos</value>
+  </data>
+  <data name="ShiftColumn" xml:space="preserve">
+    <value>Turno</value>
+  </data>
+  <data name="GroupColumn" xml:space="preserve">
+    <value>Grupo</value>
+  </data>
+  <data name="DayColumn" xml:space="preserve">
+    <value>Día</value>
+  </data>
+  <data name="ApprovedColumn" xml:space="preserve">
+    <value>Aprobado</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="TimestampColumn" xml:space="preserve">
+    <value>Marca de tiempo</value>
+  </data>
+  <data name="ApprovedNo" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="ApprovedYes" xml:space="preserve">
+    <value>Sí</value>
+  </data>
+  <data name="TradeComplete" xml:space="preserve">
+    <value>Intercambio completado</value>
+  </data>
+  <data name="TradeInProgress" xml:space="preserve">
+    <value>Intercambio en progreso</value>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="For" xml:space="preserve">
+    <value>para</value>
+  </data>
+  <data name="DeclineShiftDayWarning" xml:space="preserve">
+    <value>ADVERTENCIA: Esto le eliminará de este turno. ¿Está seguro de que desea rechazar el turno?</value>
+  </data>
+  <data name="DeclineShiftDay" xml:space="preserve">
+    <value>Rechazar día de turno</value>
+  </data>
+  <data name="RequestTrade" xml:space="preserve">
+    <value>Solicitar intercambio</value>
+  </data>
+  <data name="FinishTrade" xml:space="preserve">
+    <value>Finalizar intercambio</value>
+  </data>
+  <data name="YourPendingTrades" xml:space="preserve">
+    <value>Sus intercambios pendientes</value>
+  </data>
+  <data name="TimeColumn" xml:space="preserve">
+    <value>Hora</value>
+  </data>
+  <data name="ProcessTradeRequest" xml:space="preserve">
+    <value>Procesar solicitud de intercambio</value>
+  </data>
+  <data name="Declined" xml:space="preserve">
+    <value>Rechazado</value>
+  </data>
+  <data name="Accepted" xml:space="preserve">
+    <value>Aceptado</value>
+  </data>
+  <data name="Filled" xml:space="preserve">
+    <value>Cubierto</value>
+  </data>
+  <data name="TradeOffered" xml:space="preserve">
+    <value>Intercambio ofrecido</value>
+  </data>
+  <data name="ViewShiftHeader" xml:space="preserve">
+    <value>Ver turno</value>
+  </data>
+  <data name="ShiftStart" xml:space="preserve">
+    <value>Inicio del turno</value>
+  </data>
+  <data name="ShiftDayDetail" xml:space="preserve">
+    <value>Detalle del día de turno</value>
+  </data>
+  <data name="TypeLabel" xml:space="preserve">
+    <value>Tipo:</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Estado:</value>
+  </data>
+  <data name="StartLabel" xml:space="preserve">
+    <value>Inicio:</value>
+  </data>
+  <data name="EndLabel" xml:space="preserve">
+    <value>Fin:</value>
+  </data>
+  <data name="Upcoming" xml:space="preserve">
+    <value>Próximo</value>
+  </data>
+  <data name="Completed" xml:space="preserve">
+    <value>Completado</value>
+  </data>
+  <data name="NoEndTime" xml:space="preserve">
+    <value>Sin hora de fin</value>
+  </data>
+  <data name="GroupsSectionHeader" xml:space="preserve">
+    <value>Grupos</value>
+  </data>
+  <data name="RoleColumn" xml:space="preserve">
+    <value>Rol</value>
+  </data>
+  <data name="RequiredColumn" xml:space="preserve">
+    <value>Requerido</value>
+  </data>
+  <data name="OptionalColumn" xml:space="preserve">
+    <value>Opcional</value>
+  </data>
+  <data name="NeededColumn" xml:space="preserve">
+    <value>Necesario</value>
+  </data>
+  <data name="SignupsSectionHeader" xml:space="preserve">
+    <value>Inscripciones</value>
+  </data>
+  <data name="RolesColumn" xml:space="preserve">
+    <value>Roles</value>
+  </data>
+  <data name="TradesSectionHeader" xml:space="preserve">
+    <value>Intercambios</value>
+  </data>
+  <data name="TradeColumn" xml:space="preserve">
+    <value>Intercambio</value>
+  </data>
+  <data name="TradedWithFormat" xml:space="preserve">
+    <value>{0} intercambió con {1}</value>
+  </data>
+  <data name="ShiftSignupHeader" xml:space="preserve">
+    <value>Inscripción de turno</value>
+  </data>
+  <data name="DeleteShiftSignup" xml:space="preserve">
+    <value>Eliminar inscripción de turno</value>
+  </data>
+  <data name="SignupForShiftWith" xml:space="preserve">
+    <value>Inscribirse en el turno con</value>
+  </data>
+  <data name="ShiftSignupSuccessHeader" xml:space="preserve">
+    <value>Inscripción de turno exitosa</value>
+  </data>
+  <data name="SignupSuccessMessage" xml:space="preserve">
+    <value>Se ha inscrito exitosamente para este día de turno. Si desea inscribirse para más días, debe hacerlo para cada día individualmente.</value>
+  </data>
+  <data name="StartsAtEndsAt" xml:space="preserve">
+    <value>Comienza a las {0} y termina a las {1}</value>
+  </data>
+  <data name="StartsAt" xml:space="preserve">
+    <value>Comienza a las {0}</value>
+  </data>
+  <data name="RequestTradeHeader" xml:space="preserve">
+    <value>Solicitar intercambio</value>
+  </data>
+  <data name="UsersToRequestLabel" xml:space="preserve">
+    <value>Usuarios a solicitar</value>
+  </data>
+  <data name="UsersToRequestHelp" xml:space="preserve">
+    <value>Haga clic en el campo para seleccionar a quién solicitar el intercambio</value>
+  </data>
+  <data name="SubmitTradeRequest" xml:space="preserve">
+    <value>Enviar solicitud de intercambio</value>
+  </data>
+  <data name="ProcessTradeHeader" xml:space="preserve">
+    <value>Procesar solicitud de intercambio</value>
+  </data>
+  <data name="DatesToTradeLabel" xml:space="preserve">
+    <value>Fechas para intercambiar</value>
+  </data>
+  <data name="DatesToTradeHelp" xml:space="preserve">
+    <value>Seleccione los turnos en los que ya está inscrito para completar el intercambio.</value>
+  </data>
+  <data name="NoteTradePlaceholder" xml:space="preserve">
+    <value>Una nota o aviso para este intercambio</value>
+  </data>
+  <data name="RejectTradeRequest" xml:space="preserve">
+    <value>Rechazar solicitud de intercambio</value>
+  </data>
+  <data name="RejectTradeConfirm" xml:space="preserve">
+    <value>¿Está seguro de que desea rechazar esta solicitud de intercambio?</value>
+  </data>
+  <data name="ProposeTradeRequest" xml:space="preserve">
+    <value>Proponer intercambio</value>
+  </data>
+  <data name="StartsAtLabel" xml:space="preserve">
+    <value>Comienza a las</value>
+  </data>
+  <data name="FinalizeTradeHeader" xml:space="preserve">
+    <value>Finalizar intercambio</value>
+  </data>
+  <data name="DateColumn" xml:space="preserve">
+    <value>Fecha</value>
+  </data>
+  <data name="NoneValue" xml:space="preserve">
+    <value>Ninguno</value>
+  </data>
+  <data name="FinalizeTradeButton" xml:space="preserve">
+    <value>Finalizar intercambio</value>
+  </data>
+  <data name="ShiftRoleColumn" xml:space="preserve">
+    <value>Rol de turno</value>
+  </data>
+  <data name="RolesCountColumn" xml:space="preserve">
+    <value>Cantidad de roles</value>
+  </data>
+  <data name="AddRoleToGroup" xml:space="preserve">
+    <value>Agregar rol al grupo</value>
+  </data>
+  <data name="AddShiftRolesToGroup" xml:space="preserve">
+    <value>Agregar roles de turno al grupo</value>
+  </data>
+  <data name="RemoveGroup" xml:space="preserve">
+    <value>Eliminar grupo</value>
+  </data>
+  <data name="RemoveRole" xml:space="preserve">
+    <value>Eliminar rol</value>
+  </data>
+  <data name="RemoveRoleFromGroup" xml:space="preserve">
+    <value>Eliminar este rol del grupo</value>
+  </data>
+  <data name="RoleCountRequired" xml:space="preserve">
+    <value>La cantidad de roles es obligatoria</value>
+  </data>
 </root>

@@ -6,14 +6,20 @@ var resgrid;
         var textsettings;
         (function (textsettings) {
             $(document).ready(function () {
-                // Load call text types and render as a selectable list
+                // Load call text types and render as a selectable list with preview images
                 $.getJSON(resgrid.absoluteBaseUrl + '/User/Department/GetCallTextTypes', function (data) {
-                    var $list = $("#textTypesListView").empty();
+                    var $list = $("#textTypesListView").empty().addClass('call-text-type-list');
                     $.each(data, function (i, item) {
                         var checked = item.Id == $("#TextCallType").val() ? 'checked' : '';
+                        var imgSrc = resgrid.absoluteBaseUrl + '/images/CallTexts/' + item.Code + '.png';
                         $list.append(
-                            '<div class="list-group-item" style="cursor:pointer">' +
-                            '<label><input type="radio" name="textCallTypeItem" value="' + item.Id + '" ' + checked + '> ' + item.Name + '</label>' +
+                            '<div class="list-group-item call-text-type-item" style="cursor:pointer">' +
+                            '<label class="call-text-type-label">' +
+                            '<input type="radio" name="textCallTypeItem" value="' + item.Id + '" ' + checked + '> ' +
+                            '<img class="call-text-type-img" src="' + imgSrc + '" alt="' + item.Name + ' text format preview" ' +
+                            'onerror="this.style.display=\'none\'" /> ' +
+                            '<span class="call-text-type-name">' + item.Name + '</span>' +
+                            '</label>' +
                             '</div>'
                         );
                     });

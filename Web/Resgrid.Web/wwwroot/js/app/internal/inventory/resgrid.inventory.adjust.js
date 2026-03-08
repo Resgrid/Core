@@ -13,6 +13,7 @@ var resgrid;
                 $("#Inventory_Amount").attr({ type: 'number', min: -999999999, max: 999999999, step: 1 });
             });
             function getUnits(stationId) {
+                var noUnitLabel = (typeof inventoryAdjustStrings !== 'undefined' && inventoryAdjustStrings.noUnit) ? inventoryAdjustStrings.noUnit : 'No Unit';
                 $.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/Units/GetUnitsForGroup?groupId=' + stationId,
                     contentType: 'application/json; charset=utf-8',
@@ -20,7 +21,7 @@ var resgrid;
                 }).done(function (data) {
                     if (data) {
                         $('#UnitId').empty();
-                        $('#UnitId').append('<option value="0">No Unit</option>');
+                        $('#UnitId').append('<option value="0">' + noUnitLabel + '</option>');
                         $.each(data, function (index, value) {
                             $('#UnitId').append('<option value="' + data[index].UnitId + '">' + data[index].Name + '</option>');
                         });

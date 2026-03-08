@@ -314,6 +314,30 @@
   <data name="ViewPersonHeader" xml:space="preserve">
     <value>View Person</value>
   </data>
+  <data name="GenerateReport" xml:space="preserve">
+    <value>Згенерувати звіт</value>
+  </data>
+  <data name="ViewPersonEventsHeader" xml:space="preserve">
+    <value>Переглянути події особи</value>
+  </data>
+  <data name="ViewEvents" xml:space="preserve">
+    <value>Переглянути події</value>
+  </data>
+  <data name="EventsFor" xml:space="preserve">
+    <value>Події для</value>
+  </data>
+  <data name="AreYouSurePersonnel" xml:space="preserve">
+    <value>Are you sure you want to permanently delete all statuses for this person?</value>
+  </data>
+  <data name="ClearAllStatuses" xml:space="preserve">
+    <value>Очистити всі статуси</value>
+  </data>
+  <data name="DeleteAll" xml:space="preserve">
+    <value>Видалити все</value>
+  </data>
+  <data name="YesImSure" xml:space="preserve">
+    <value>Так, я впевнений</value>
+  </data>
   <data name="ViewRoleHeader" xml:space="preserve">
     <value>View Role</value>
   </data>

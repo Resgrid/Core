@@ -43,7 +43,9 @@ var resgrid;
             editshiftgroups.processShiftGroups = processShiftGroups;
             function addExistingGroup(group) {
                 resgrid.shifts.editshiftgroups.groupsCount++;
-                $('#groups tbody').first().append("<tr><td>" + resgrid.shifts.editshiftgroups.generateExistingGroupDropdown(group.DepartmentGroupId, editshiftgroups.groupsCount) + "</td><td>" + resgrid.shifts.editshiftgroups.generateRolesTables(editshiftgroups.groupsCount) + "</td><td style='text-align:center;'><a onclick='$(this).parent().parent().remove();' class='btn btn-xs btn-danger' data-original-title='Remove this group'>Remove Group</a></td></tr>");
+                var i18n = (typeof resgridShiftsI18n !== 'undefined') ? resgridShiftsI18n : {};
+                var removeGroupLabel = i18n.removeGroup || 'Remove Group';
+                $('#groups tbody').first().append("<tr><td>" + resgrid.shifts.editshiftgroups.generateExistingGroupDropdown(group.DepartmentGroupId, editshiftgroups.groupsCount) + "</td><td>" + resgrid.shifts.editshiftgroups.generateRolesTables(editshiftgroups.groupsCount) + "</td><td style='text-align:center;'><a onclick='$(this).parent().parent().remove();' class='btn btn-xs btn-danger' data-original-title='" + removeGroupLabel + "'>" + removeGroupLabel + "</a></td></tr>");
                 for (var i = 0; i < group.Roles.length; i++) {
                     addExistingGroupRole(group.Roles[i], resgrid.shifts.editshiftgroups.groupsCount);
                 }
@@ -51,18 +53,28 @@ var resgrid;
             editshiftgroups.addExistingGroup = addExistingGroup;
             function addGroup() {
                 resgrid.shifts.editshiftgroups.groupsCount++;
-                $('#groups tbody').first().append("<tr><td>" + resgrid.shifts.editshiftgroups.generateGroupDropdown(editshiftgroups.groupsCount) + "</td><td>" + resgrid.shifts.editshiftgroups.generateRolesTables(editshiftgroups.groupsCount) + "</td><td style='text-align:center;'><a onclick='$(this).parent().parent().remove();' class='btn btn-xs btn-danger' data-original-title='Remove this group'>Remove Group</a></td></tr>");
+                var i18n = (typeof resgridShiftsI18n !== 'undefined') ? resgridShiftsI18n : {};
+                var removeGroupLabel = i18n.removeGroup || 'Remove Group';
+                $('#groups tbody').first().append("<tr><td>" + resgrid.shifts.editshiftgroups.generateGroupDropdown(editshiftgroups.groupsCount) + "</td><td>" + resgrid.shifts.editshiftgroups.generateRolesTables(editshiftgroups.groupsCount) + "</td><td style='text-align:center;'><a onclick='$(this).parent().parent().remove();' class='btn btn-xs btn-danger' data-original-title='" + removeGroupLabel + "'>" + removeGroupLabel + "</a></td></tr>");
             }
             editshiftgroups.addGroup = addGroup;
             function addGroupRole(count) {
                 var timestamp = new Date();
-                $('#groupRolesTable_' + count + ' tbody').append("<tr><td>" + resgrid.shifts.editshiftgroups.generateRoleDropdown(editshiftgroups.groupsCount) + "</td><td><input type='number' min='1' max='999' data-bv-notempty data-bv-notempty-message='Role count is required' id='groupRole_" + count + "_" + timestamp.getUTCMilliseconds() + "' name='groupRole_" + count + "_" + timestamp.getUTCMilliseconds() + "' style='width:75px;' value='1' onkeypress='resgrid.shifts.editshiftgroups.validate(event)'></td><td style='text-align:center;'><a onclick='$(this).parent().parent().remove();' class='btn btn-xs btn-danger' data-original-title='Remove this role from the group'>Remove Role</a></td></tr>");
+                var i18n = (typeof resgridShiftsI18n !== 'undefined') ? resgridShiftsI18n : {};
+                var removeRoleLabel = i18n.removeRole || 'Remove Role';
+                var removeRoleTitle = i18n.removeRoleFromGroup || 'Remove this role from the group';
+                var roleCountMsg = i18n.roleCountRequired || 'Role count is required';
+                $('#groupRolesTable_' + count + ' tbody').append("<tr><td>" + resgrid.shifts.editshiftgroups.generateRoleDropdown(editshiftgroups.groupsCount) + "</td><td><input type='number' min='1' max='999' data-bv-notempty data-bv-notempty-message='" + roleCountMsg + "' id='groupRole_" + count + "_" + timestamp.getUTCMilliseconds() + "' name='groupRole_" + count + "_" + timestamp.getUTCMilliseconds() + "' style='width:75px;' value='1' onkeypress='resgrid.shifts.editshiftgroups.validate(event)'></td><td style='text-align:center;'><a onclick='$(this).parent().parent().remove();' class='btn btn-xs btn-danger' data-original-title='" + removeRoleTitle + "'>" + removeRoleLabel + "</a></td></tr>");
                 addGroupRoleField('groupRole_' + count + '_' + timestamp.getUTCMilliseconds());
             }
             editshiftgroups.addGroupRole = addGroupRole;
             function addExistingGroupRole(role, count) {
                 var id = generate(4);
-                $('#groupRolesTable_' + count + ' tbody').append("<tr><td>" + resgrid.shifts.editshiftgroups.generateExistingRoleDropdown(role, editshiftgroups.groupsCount, id) + "</td><td><input type='number' min='1' max='999' data-bv-notempty data-bv-notempty-message='Role count is required' id='groupRole_" + count + "_" + id + "' name='groupRole_" + count + "_" + id + "' style='width:75px;' value='" + role.Required + "' onkeypress='resgrid.shifts.editshiftgroups.validate(event)'></td><td style='text-align:center;'><a onclick='$(this).parent().parent().remove();' class='btn btn-xs btn-danger' data-original-title='Remove this role from the group'>Remove Role</a></td></tr>");
+                var i18n = (typeof resgridShiftsI18n !== 'undefined') ? resgridShiftsI18n : {};
+                var removeRoleLabel = i18n.removeRole || 'Remove Role';
+                var removeRoleTitle = i18n.removeRoleFromGroup || 'Remove this role from the group';
+                var roleCountMsg = i18n.roleCountRequired || 'Role count is required';
+                $('#groupRolesTable_' + count + ' tbody').append("<tr><td>" + resgrid.shifts.editshiftgroups.generateExistingRoleDropdown(role, editshiftgroups.groupsCount, id) + "</td><td><input type='number' min='1' max='999' data-bv-notempty data-bv-notempty-message='" + roleCountMsg + "' id='groupRole_" + count + "_" + id + "' name='groupRole_" + count + "_" + id + "' style='width:75px;' value='" + role.Required + "' onkeypress='resgrid.shifts.editshiftgroups.validate(event)'></td><td style='text-align:center;'><a onclick='$(this).parent().parent().remove();' class='btn btn-xs btn-danger' data-original-title='" + removeRoleTitle + "'>" + removeRoleLabel + "</a></td></tr>");
                 addGroupRoleField('groupRole_' + count + '_' + id);
             }
             editshiftgroups.addExistingGroupRole = addExistingGroupRole;
@@ -115,7 +127,12 @@ var resgrid;
             }
             editshiftgroups.generateExistingRoleDropdown = generateExistingRoleDropdown;
             function generateRolesTables(count) {
-                var rolesTable = '<table id="groupRolesTable_' + count + '" class="table table-striped table-bordered"><thead><tr><th style = "font-size: 14px;" > Shift Role</th><th style = "font-size: 14px;" > Roles Count</th><th style = "font-size: 16px;" ><a id="addGroupButton" class="btn btn-success btn-xs" onclick="resgrid.shifts.editshiftgroups.addGroupRole(' + count + ');" data-original-title="Add Shift Roles to Group" ><i class="icon-plus" ></i> Add Role to Group</a></th></tr></thead><tbody></tbody></table>';
+                var i18n = (typeof resgridShiftsI18n !== 'undefined') ? resgridShiftsI18n : {};
+                var shiftRole = i18n.shiftRoleColumn || 'Shift Role';
+                var rolesCount = i18n.rolesCountColumn || 'Roles Count';
+                var addRoleLabel = i18n.addRoleToGroup || 'Add Role to Group';
+                var addShiftRolesToGroupTitle = i18n.addShiftRolesToGroup || 'Add Shift Roles to Group';
+                var rolesTable = '<table id="groupRolesTable_' + count + '" class="table table-striped table-bordered"><thead><tr><th style="font-size: 14px;">' + shiftRole + '</th><th style="font-size: 14px;">' + rolesCount + '</th><th style="font-size: 16px;"><a id="addGroupButton" class="btn btn-success btn-xs" onclick="resgrid.shifts.editshiftgroups.addGroupRole(' + count + ');" data-original-title="' + addShiftRolesToGroupTitle + '"><i class="icon-plus"></i> ' + addRoleLabel + '</a></th></tr></thead><tbody></tbody></table>';
                 return rolesTable;
             }
             editshiftgroups.generateRolesTables = generateRolesTables;

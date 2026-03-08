@@ -1,0 +1,11 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace Resgrid.Localization.Areas.User.Inventory
+{
+	public class Inventory
+	{
+	}
+}
+

@@ -6,6 +6,7 @@ namespace Resgrid.Model.Repositories
 	public interface IWorkflowStepRepository : IRepository<WorkflowStep>
 	{
 		Task<IEnumerable<WorkflowStep>> GetAllByWorkflowIdAsync(string workflowId);
+		Task DeleteAllByWorkflowIdAsync(string workflowId);
 	}
 }
 

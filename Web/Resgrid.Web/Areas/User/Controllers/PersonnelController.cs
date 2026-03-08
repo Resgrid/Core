@@ -16,6 +16,7 @@ using Resgrid.Providers.Bus;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Areas.User.Models;
 using Resgrid.Web.Areas.User.Models.Personnel;
+using Resgrid.Web.Areas.User.Models.Reports.Personnel;
 using Resgrid.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
@@ -52,12 +53,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly UserManager<IdentityUser> _userManager;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly ICallsService _callsService;
+		private readonly IGeoLocationProvider _geoLocationProvider;
 
 		public PersonnelController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IEmailService emailService, IUserProfileService userProfileService, IDeleteService deleteService, Model.Services.IAuthorizationService authorizationService,
 			ILimitsService limitsService, IPersonnelRolesService personnelRolesService, IDepartmentGroupsService departmentGroupsService, IUserStateService userStateService,
 			IEventAggregator eventAggregator, IEmailMarketingProvider emailMarketingProvider, ICertificationService certificationService, ICustomStateService customStateService,
-			IGeoService geoService, UserManager<IdentityUser> userManager, IDepartmentSettingsService departmentSettingsService, ICallsService callsService)
+			IGeoService geoService, UserManager<IdentityUser> userManager, IDepartmentSettingsService departmentSettingsService, ICallsService callsService,
+			IGeoLocationProvider geoLocationProvider)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -78,6 +81,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_userManager = userManager;
 			_departmentSettingsService = departmentSettingsService;
 			_callsService = callsService;
+			_geoLocationProvider = geoLocationProvider;
 		}
 		#endregion Private Members and Constructors
 
@@ -1913,5 +1917,228 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return Json(rolesJson);
 		}
 		#endregion Roles
+
+		#region Personnel Events
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Personnel_View)]
+		public async Task<IActionResult> ViewEvents(string userId)
+		{
+			if (!await _authorizationService.CanUserViewUserAsync(UserId, userId))
+				Unauthorized();
+
+			var model = new ViewPersonEventsView();
+			model.UserId = userId;
+
+			var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
+			model.PersonName = profile != null ? profile.FullName.AsFirstNameLastName : userId;
+
+			model.OSMKey = Config.MappingConfig.OSMKey;
+
+			var address = await _departmentSettingsService.GetBigBoardCenterAddressDepartmentAsync(DepartmentId);
+			var gpsCoordinates = await _departmentSettingsService.GetBigBoardCenterGpsCoordinatesDepartmentAsync(DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+
+			double? centerLat = null;
+			double? centerLon = null;
+
+			if (!String.IsNullOrWhiteSpace(gpsCoordinates))
+			{
+				var coordinates = gpsCoordinates.Split(char.Parse(","));
+				if (coordinates.Length == 2 &&
+					double.TryParse(coordinates[0], out double parsedLat) &&
+					double.TryParse(coordinates[1], out double parsedLon))
+				{
+					centerLat = parsedLat;
+					centerLon = parsedLon;
+				}
+			}
+
+			if (!centerLat.HasValue && !centerLon.HasValue && address != null)
+			{
+				string coordinates = await _geoLocationProvider.GetLatLonFromAddress(string.Format("{0} {1} {2} {3}",
+					address.Address1, address.City, address.State, address.PostalCode));
+
+				if (!String.IsNullOrEmpty(coordinates))
+				{
+					var coordinatesArr = coordinates.Split(char.Parse(","));
+					if (double.TryParse(coordinatesArr[0], out double parsedLat) &&
+						double.TryParse(coordinatesArr[1], out double parsedLon))
+					{
+						centerLat = parsedLat;
+						centerLon = parsedLon;
+					}
+				}
+			}
+
+			if (!centerLat.HasValue && !centerLon.HasValue && department.Address != null)
+			{
+				string coordinates = await _geoLocationProvider.GetLatLonFromAddress(string.Format("{0} {1} {2} {3}",
+					department.Address.Address1, department.Address.City,
+					department.Address.State, department.Address.PostalCode));
+
+				if (!String.IsNullOrEmpty(coordinates))
+				{
+					var coordinatesArr = coordinates.Split(char.Parse(","));
+					if (double.TryParse(coordinatesArr[0], out double parsedLat) &&
+						double.TryParse(coordinatesArr[1], out double parsedLon))
+					{
+						centerLat = parsedLat;
+						centerLon = parsedLon;
+					}
+				}
+			}
+
+			if (!centerLat.HasValue || !centerLon.HasValue)
+			{
+				centerLat = 39.14086268299356;
+				centerLon = -119.7583809782715;
+			}
+
+			model.CenterLat = centerLat.Value;
+			model.CenterLon = centerLon.Value;
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Personnel_Delete)]
+		public async Task<IActionResult> ClearAllPersonnelEvents(ViewPersonEventsView model, CancellationToken cancellationToken)
+		{
+			if (model.ConfirmClearAll)
+				await _actionLogsService.DeleteActionLogsForUserAsync(model.UserId, cancellationToken);
+
+			return RedirectToAction("ViewEvents", new { userId = model.UserId });
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Personnel_View)]
+		public async Task<IActionResult> GeneratePersonnelEventsReport(IFormCollection form)
+		{
+			var eventIds = new List<int>();
+			foreach (var key in form.Keys)
+			{
+				if (key.ToString().StartsWith("selectEvent_"))
+				{
+					var eventId = int.Parse(key.ToString().Replace("selectEvent_", ""));
+					eventIds.Add(eventId);
+				}
+			}
+
+			var model = new PersonnelEventsReportView();
+			model.Rows = new List<PersonnelEventJson>();
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			model.RunOn = DateTime.UtcNow.TimeConverter(model.Department);
+
+			foreach (var eventId in eventIds)
+			{
+				var actionLog = await _actionLogsService.GetActionLogByIdAsync(eventId);
+				if (actionLog == null)
+					continue;
+
+				var personnelEvent = new PersonnelEventJson();
+				personnelEvent.EventId = actionLog.ActionLogId;
+				personnelEvent.UserId = actionLog.UserId;
+
+				var profile = await _userProfileService.GetProfileByUserIdAsync(actionLog.UserId);
+				personnelEvent.PersonName = profile != null ? profile.FullName.AsFirstNameLastName : actionLog.UserId;
+
+				var statusDetail = await CustomStatesHelper.GetCustomPersonnelStatus(DepartmentId, actionLog);
+				personnelEvent.State = statusDetail?.ButtonText;
+				personnelEvent.Timestamp = actionLog.Timestamp.TimeConverterToString(model.Department);
+				personnelEvent.Note = actionLog.Note;
+
+				if (actionLog.DestinationId.HasValue && actionLog.DestinationType.HasValue)
+				{
+					if (actionLog.DestinationType.Value == 1)
+					{
+						var station = await _departmentGroupsService.GetGroupByIdAsync(actionLog.DestinationId.Value, false);
+						personnelEvent.DestinationName = station?.Name ?? "Station Not Found";
+					}
+					else if (actionLog.DestinationType.Value == 2)
+					{
+						var call = await _callsService.GetCallByIdAsync(actionLog.DestinationId.Value, false);
+						personnelEvent.DestinationName = call?.Name ?? "Call Not Found";
+					}
+				}
+
+				var coordinates = actionLog.GetCoordinates();
+				if (coordinates != null)
+				{
+					if (coordinates.Latitude.HasValue)
+						personnelEvent.Latitude = coordinates.Latitude.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+					if (coordinates.Longitude.HasValue)
+						personnelEvent.Longitude = coordinates.Longitude.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+				}
+
+				model.Rows.Add(personnelEvent);
+			}
+
+			return View("~/Areas/User/Views/Reports/PersonnelEventsReport.cshtml", model);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Personnel_View)]
+		public async Task<IActionResult> GetPersonnelEvents(string userId)
+		{
+			if (!await _authorizationService.CanUserViewUserAsync(UserId, userId))
+				Unauthorized();
+
+			var personnelEvents = new List<PersonnelEventJson>();
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
+			var personName = profile != null ? profile.FullName.AsFirstNameLastName : userId;
+			var events = await _actionLogsService.GetAllActionLogsForUser(userId);
+
+			foreach (var actionLog in events)
+			{
+				var personnelEvent = new PersonnelEventJson();
+				personnelEvent.EventId = actionLog.ActionLogId;
+				personnelEvent.UserId = actionLog.UserId;
+				personnelEvent.PersonName = personName;
+
+				var statusDetail = await CustomStatesHelper.GetCustomPersonnelStatus(DepartmentId, actionLog);
+				personnelEvent.State = statusDetail?.ButtonText;
+				personnelEvent.Timestamp = actionLog.Timestamp.TimeConverterToString(department);
+				personnelEvent.Note = actionLog.Note;
+
+				if (actionLog.DestinationId.HasValue && actionLog.DestinationType.HasValue)
+				{
+					if (actionLog.DestinationType.Value == 1) // Station / Group
+					{
+						var station = await _departmentGroupsService.GetGroupByIdAsync(actionLog.DestinationId.Value, false);
+						if (station != null)
+							personnelEvent.DestinationName = station.Name;
+						else
+							personnelEvent.DestinationName = "Station Not Found";
+					}
+					else if (actionLog.DestinationType.Value == 2) // Call
+					{
+						var call = await _callsService.GetCallByIdAsync(actionLog.DestinationId.Value, false);
+						if (call != null)
+							personnelEvent.DestinationName = call.Name;
+						else
+							personnelEvent.DestinationName = "Call Not Found";
+					}
+				}
+
+				var coordinates = actionLog.GetCoordinates();
+				if (coordinates != null)
+				{
+					if (coordinates.Latitude.HasValue)
+						personnelEvent.Latitude = coordinates.Latitude.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+
+					if (coordinates.Longitude.HasValue)
+						personnelEvent.Longitude = coordinates.Longitude.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+				}
+
+				personnelEvents.Add(personnelEvent);
+			}
+
+			return Json(personnelEvents);
+		}
+
+		#endregion Personnel Events
 	}
 }

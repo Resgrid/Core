@@ -1,8 +1,8 @@
-﻿
-@using Resgrid.Model
+﻿@using Resgrid.Model
 @model Resgrid.Web.Areas.User.Models.Shifts.EditShiftView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Shifts.Shifts> localizer
 @{
-	ViewBag.Title = "Resgrid | Edit Shift Calendar";
+	ViewBag.Title = "Resgrid | " + localizer["EditShiftCalendarHeader"];
 	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 
@@ -14,16 +14,16 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>Edit Shift Calendar</h2>
+		<h2>@localizer["EditShiftCalendarHeader"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
 			</li>
 			<li>
-				<a asp-controller="Shifts" asp-action="Index" asp-route-area="User">Shifts</a>
+				<a asp-controller="Shifts" asp-action="Index" asp-route-area="User">@localizer["ShiftsHeader"]</a>
 			</li>
 			<li class="active">
-				<strong>Edit Shift Calendar</strong>
+				<strong>@localizer["EditShiftCalendarHeader"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -60,8 +60,8 @@
 
 						<div class="form-group">
 							<div class="col-sm-4 col-sm-offset-2">
-								<a class="btn btn-white" asp-controller="Shifts" asp-action="Index" asp-route-area="User">Cancel</a>
-								<button class="btn btn-primary" type="submit" onclick="submitForm();">Update Shift Days</button>
+								<a class="btn btn-white" asp-controller="Shifts" asp-action="Index" asp-route-area="User">@localizer["CancelButton"]</a>
+								<button class="btn btn-primary" type="submit" onclick="submitForm();">@localizer["UpdateShiftDaysButton"]</button>
 							</div>
 						</div>
 					</form>

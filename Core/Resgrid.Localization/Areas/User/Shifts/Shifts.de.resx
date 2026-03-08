@@ -69,30 +69,504 @@
     <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
   </data>
   <data name="DeleteStaticShiftHeader" xml:space="preserve">
-    <value>Delete Static Shift</value>
+    <value>Statische Schicht löschen</value>
   </data>
   <data name="EditShiftWarning" xml:space="preserve">
-    <value>Editing a static shift will clear out all assignments or sign-ups for this shift and reassign them based on the new settings. If you have any assignments or sign-ups for this shift they will be removed and the new settings will be applied.</value>
+    <value>Das Bearbeiten einer statischen Schicht löscht alle Zuweisungen oder Anmeldungen für diese Schicht und weist sie basierend auf den neuen Einstellungen neu zu. Wenn Sie Zuweisungen oder Anmeldungen für diese Schicht haben, werden diese entfernt und die neuen Einstellungen werden angewendet.</value>
   </data>
   <data name="EditStaticShiftHeader" xml:space="preserve">
-    <value>Edit Static Shift</value>
+    <value>Statische Schicht bearbeiten</value>
   </data>
   <data name="EndDateTime" xml:space="preserve">
-    <value>End Date/Time</value>
+    <value>Enddatum/-uhrzeit</value>
   </data>
   <data name="ShiftColorNote" xml:space="preserve">
-    <value>Note the text on the Calendar is black, take that into account when picking a shift color as the color will be used as the background</value>
+    <value>Beachten Sie, dass der Text im Kalender schwarz ist. Berücksichtigen Sie dies bei der Auswahl einer Schichtfarbe, da die Farbe als Hintergrund verwendet wird.</value>
   </data>
   <data name="ShiftEndNote" xml:space="preserve">
-    <value>The date and time that the shift ends (i.e. back in quarters) where entities under it are considered available.</value>
+    <value>Das Datum und die Uhrzeit, zu der die Schicht endet (d.h. zurück in der Unterkunft), wo Entitäten darunter als verfügbar gelten.</value>
   </data>
   <data name="ShiftStartNote" xml:space="preserve">
-    <value>The date and time that the shift starts (i.e. start of travel) where entities under it are considered committed.</value>
+    <value>Das Datum und die Uhrzeit, zu der die Schicht beginnt (d.h. Beginn der Fahrt), wo Entitäten darunter als verpflichtet gelten.</value>
   </data>
   <data name="StartDateTime" xml:space="preserve">
-    <value>Start Date/Time</value>
+    <value>Startdatum/-uhrzeit</value>
   </data>
   <data name="ViewStaticShiftDayHeader" xml:space="preserve">
-    <value>View Static Shift Day</value>
+    <value>Statischen Schichttag anzeigen</value>
+  </data>
+  <data name="ShiftsHeader" xml:space="preserve">
+    <value>Schichten</value>
+  </data>
+  <data name="YourShiftsButton" xml:space="preserve">
+    <value>Ihre Schichten</value>
+  </data>
+  <data name="ShiftStaffingButton" xml:space="preserve">
+    <value>Schichtbesetzung</value>
+  </data>
+  <data name="RecurringGroupShifts" xml:space="preserve">
+    <value>Wiederkehrende Gruppenschichten</value>
+  </data>
+  <data name="AddRecurringGroupShift" xml:space="preserve">
+    <value>Wiederkehrende Gruppenschicht hinzufügen</value>
+  </data>
+  <data name="NameColumn" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="TypeColumn" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="ScheduleColumn" xml:space="preserve">
+    <value>Zeitplan</value>
+  </data>
+  <data name="GroupsColumn" xml:space="preserve">
+    <value>Gruppen</value>
+  </data>
+  <data name="PersonnelColumn" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="AssignedType" xml:space="preserve">
+    <value>Zugewiesen</value>
+  </data>
+  <data name="SignupType" xml:space="preserve">
+    <value>Anmeldung</value>
+  </data>
+  <data name="ManualSchedule" xml:space="preserve">
+    <value>Manuell</value>
+  </data>
+  <data name="CustomSchedule" xml:space="preserve">
+    <value>Benutzerdefiniert</value>
+  </data>
+  <data name="Schedule48_96" xml:space="preserve">
+    <value>48 ein 96 aus</value>
+  </data>
+  <data name="Schedule24_48" xml:space="preserve">
+    <value>24 ein 48 aus</value>
+  </data>
+  <data name="Schedule24_72" xml:space="preserve">
+    <value>24 ein 72 aus</value>
+  </data>
+  <data name="ViewCalendarButton" xml:space="preserve">
+    <value>Kalender anzeigen</value>
+  </data>
+  <data name="EditDetailsButton" xml:space="preserve">
+    <value>Details bearbeiten</value>
+  </data>
+  <data name="EditCalendarButton" xml:space="preserve">
+    <value>Kalender bearbeiten</value>
+  </data>
+  <data name="EditGroupsButton" xml:space="preserve">
+    <value>Gruppen bearbeiten</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="DeleteShiftWarning" xml:space="preserve">
+    <value>WARNUNG: Diese Schicht wird dauerhaft gelöscht. Sind Sie sicher, dass Sie die Schicht löschen möchten?</value>
+  </data>
+  <data name="CalendarSectionHeader" xml:space="preserve">
+    <value>Kalender</value>
+  </data>
+  <data name="AddStaticShift" xml:space="preserve">
+    <value>Statische Schicht hinzufügen</value>
+  </data>
+  <data name="NewShiftHeader" xml:space="preserve">
+    <value>Neue Schicht</value>
+  </data>
+  <data name="NewShiftWizardIntro" xml:space="preserve">
+    <value>Willkommen beim Assistenten für neue Schichten. Dieser Assistent führt Sie durch die Erstellung einer neuen Schicht für Ihre Abteilung. Geben Sie unten den Namen, den Code und die optionale Schichtfarbe an. Um fortzufahren, klicken Sie auf die Schaltfläche "Weiter" in der unteren rechten Ecke.</value>
+  </data>
+  <data name="NameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="NamePlaceholder" xml:space="preserve">
+    <value>Name der Schicht</value>
+  </data>
+  <data name="NameHelp" xml:space="preserve">
+    <value>Zum Beispiel ("Schicht A", "Schicht B", "Schicht C")</value>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="CodeHelp" xml:space="preserve">
+    <value>Beispiel ("A", "B", "C")</value>
+  </data>
+  <data name="AssignmentTypeLabel" xml:space="preserve">
+    <value>Zuweisungstyp</value>
+  </data>
+  <data name="AssignmentTypeHelp" xml:space="preserve">
+    <value>Bei "Zugewiesen" legen Sie das Personal für die Schicht fest; bei "Anmeldung" weist sich das Personal selbst zu.</value>
+  </data>
+  <data name="ColorLabel" xml:space="preserve">
+    <value>Farbe</value>
+  </data>
+  <data name="ScheduleTabIntro" xml:space="preserve">
+    <value>Hier legen Sie fest, an welchen Tagen die Schicht Dienst hat und die Startzeit der Schicht für den ersten Tag. Wenn Ihre Schicht zusammenhängend ist, gilt die Startzeit für den ersten Schichttag.</value>
+  </data>
+  <data name="StartTimeLabel" xml:space="preserve">
+    <value>Startzeit</value>
+  </data>
+  <data name="StartTimeHelp" xml:space="preserve">
+    <value>Wann beginnt die Schicht am ersten Tag (oder einzigen Tag)</value>
+  </data>
+  <data name="EndTimeLabel" xml:space="preserve">
+    <value>Endzeit</value>
+  </data>
+  <data name="EndTimeHelp" xml:space="preserve">
+    <value>Wann endet die Schicht am letzten Tag (oder einzigen Tag)</value>
+  </data>
+  <data name="SlotsTabIntro" xml:space="preserve">
+    <value>Hier können Sie die erforderlichen Rollen für jede Gruppe in Ihrer Abteilung für die Schicht konfigurieren.</value>
+  </data>
+  <data name="ShiftGroupColumn" xml:space="preserve">
+    <value>Schichtgruppe</value>
+  </data>
+  <data name="ShiftRolesColumn" xml:space="preserve">
+    <value>Schichtrollen</value>
+  </data>
+  <data name="AddGroupToShift" xml:space="preserve">
+    <value>Gruppe zur Schicht hinzufügen</value>
+  </data>
+  <data name="PersonnelTabIntro" xml:space="preserve">
+    <value>Wählen Sie nun das Personal aus, das in dieser Schicht für Ihre Abteilung arbeitet.</value>
+  </data>
+  <data name="NonGroupPersonnelLabel" xml:space="preserve">
+    <value>Personal ohne Gruppe</value>
+  </data>
+  <data name="NonGroupPersonnelHelp" xml:space="preserve">
+    <value>Personal, das der Schicht zugewiesen ist, aber nicht direkt einer Station oder Organisationsgruppe zugeordnet ist (z.B. Vertretungen)</value>
+  </data>
+  <data name="FinishTabIntro" xml:space="preserve">
+    <value>Klicken Sie auf die Schaltfläche "Fertig stellen" unten, um Ihre neue Schicht zu erstellen.</value>
+  </data>
+  <data name="WizardStart" xml:space="preserve">
+    <value>Start &gt;</value>
+  </data>
+  <data name="WizardSchedule" xml:space="preserve">
+    <value>Zeitplan &gt;</value>
+  </data>
+  <data name="WizardSlots" xml:space="preserve">
+    <value>Slots &gt;</value>
+  </data>
+  <data name="WizardPersonnel" xml:space="preserve">
+    <value>Personal &gt;</value>
+  </data>
+  <data name="WizardFinish" xml:space="preserve">
+    <value>Fertig stellen</value>
+  </data>
+  <data name="WizardFirst" xml:space="preserve">
+    <value>Erste</value>
+  </data>
+  <data name="WizardPrevious" xml:space="preserve">
+    <value>Zurück</value>
+  </data>
+  <data name="WizardNext" xml:space="preserve">
+    <value>Weiter</value>
+  </data>
+  <data name="ShiftNameRequired" xml:space="preserve">
+    <value>Schichtname ist erforderlich</value>
+  </data>
+  <data name="ShiftCodeRequired" xml:space="preserve">
+    <value>Schichtcode ist erforderlich</value>
+  </data>
+  <data name="ShiftStartTimeRequired" xml:space="preserve">
+    <value>Schicht-Startzeit ist erforderlich.</value>
+  </data>
+  <data name="EditShiftDetailsHeader" xml:space="preserve">
+    <value>Schichtdetails bearbeiten</value>
+  </data>
+  <data name="CodePlaceholder" xml:space="preserve">
+    <value>Schichtcode</value>
+  </data>
+  <data name="NonGroupPersonnelHelpEdit" xml:space="preserve">
+    <value>Personal, das Teil einer Schicht ist, aber keiner Gruppe zugeordnet ist</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="UpdateShiftButton" xml:space="preserve">
+    <value>Schicht aktualisieren</value>
+  </data>
+  <data name="EditShiftCalendarHeader" xml:space="preserve">
+    <value>Schichtkalender bearbeiten</value>
+  </data>
+  <data name="UpdateShiftDaysButton" xml:space="preserve">
+    <value>Schichttage aktualisieren</value>
+  </data>
+  <data name="EditShiftGroupsHeader" xml:space="preserve">
+    <value>Schichtgruppen bearbeiten</value>
+  </data>
+  <data name="SaveShiftGroupsButton" xml:space="preserve">
+    <value>Schichtgruppen speichern</value>
+  </data>
+  <data name="CalendarSuffix" xml:space="preserve">
+    <value>Kalender</value>
+  </data>
+  <data name="ShiftStaffingHeader" xml:space="preserve">
+    <value>Schichtbesetzung</value>
+  </data>
+  <data name="ShiftLabel" xml:space="preserve">
+    <value>Schicht</value>
+  </data>
+  <data name="ShiftSelectHelp" xml:space="preserve">
+    <value>Wählen Sie die Schicht aus, für die Sie die Besetzung bearbeiten möchten.</value>
+  </data>
+  <data name="ShiftDayLabel" xml:space="preserve">
+    <value>Schichttag</value>
+  </data>
+  <data name="ShiftDayHelp" xml:space="preserve">
+    <value>Wählen Sie den Tag aus, für den die Besetzung bearbeitet werden soll.</value>
+  </data>
+  <data name="NoteLabel" xml:space="preserve">
+    <value>Hinweis</value>
+  </data>
+  <data name="NotePlaceholder" xml:space="preserve">
+    <value>Geben Sie einen Freitext-Hinweis für die Schicht ein</value>
+  </data>
+  <data name="AssignmentsLabel" xml:space="preserve">
+    <value>Zuweisungen</value>
+  </data>
+  <data name="UnitsLabel" xml:space="preserve">
+    <value>Einheiten</value>
+  </data>
+  <data name="SetShiftDayStaffingButton" xml:space="preserve">
+    <value>Schichttag-Besetzung festlegen</value>
+  </data>
+  <data name="SelectNonGroupPersonnel" xml:space="preserve">
+    <value>Personal ohne Gruppe auswählen...</value>
+  </data>
+  <data name="SelectPersonnelForGroup" xml:space="preserve">
+    <value>Personal für Gruppe auswählen...</value>
+  </data>
+  <data name="SelectPerson" xml:space="preserve">
+    <value>Person auswählen...</value>
+  </data>
+  <data name="NonGroupPersonnelStaffing" xml:space="preserve">
+    <value>Personal ohne Gruppe</value>
+  </data>
+  <data name="YourShiftsHeader" xml:space="preserve">
+    <value>Ihre Schichten</value>
+  </data>
+  <data name="ShiftColumn" xml:space="preserve">
+    <value>Schicht</value>
+  </data>
+  <data name="GroupColumn" xml:space="preserve">
+    <value>Gruppe</value>
+  </data>
+  <data name="DayColumn" xml:space="preserve">
+    <value>Tag</value>
+  </data>
+  <data name="ApprovedColumn" xml:space="preserve">
+    <value>Genehmigt</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="TimestampColumn" xml:space="preserve">
+    <value>Zeitstempel</value>
+  </data>
+  <data name="ApprovedNo" xml:space="preserve">
+    <value>Nein</value>
+  </data>
+  <data name="ApprovedYes" xml:space="preserve">
+    <value>Ja</value>
+  </data>
+  <data name="TradeComplete" xml:space="preserve">
+    <value>Tausch abgeschlossen</value>
+  </data>
+  <data name="TradeInProgress" xml:space="preserve">
+    <value>Tausch in Bearbeitung</value>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="For" xml:space="preserve">
+    <value>für</value>
+  </data>
+  <data name="DeclineShiftDayWarning" xml:space="preserve">
+    <value>WARNUNG: Dies entfernt Sie aus dieser Schicht. Sind Sie sicher, dass Sie die Schicht ablehnen möchten?</value>
+  </data>
+  <data name="DeclineShiftDay" xml:space="preserve">
+    <value>Schichttag ablehnen</value>
+  </data>
+  <data name="RequestTrade" xml:space="preserve">
+    <value>Tausch anfragen</value>
+  </data>
+  <data name="FinishTrade" xml:space="preserve">
+    <value>Tausch abschließen</value>
+  </data>
+  <data name="YourPendingTrades" xml:space="preserve">
+    <value>Ihre ausstehenden Tausche</value>
+  </data>
+  <data name="TimeColumn" xml:space="preserve">
+    <value>Zeit</value>
+  </data>
+  <data name="ProcessTradeRequest" xml:space="preserve">
+    <value>Tauschantrag bearbeiten</value>
+  </data>
+  <data name="Declined" xml:space="preserve">
+    <value>Abgelehnt</value>
+  </data>
+  <data name="Accepted" xml:space="preserve">
+    <value>Akzeptiert</value>
+  </data>
+  <data name="Filled" xml:space="preserve">
+    <value>Besetzt</value>
+  </data>
+  <data name="TradeOffered" xml:space="preserve">
+    <value>Tausch angeboten</value>
+  </data>
+  <data name="ViewShiftHeader" xml:space="preserve">
+    <value>Schicht anzeigen</value>
+  </data>
+  <data name="ShiftStart" xml:space="preserve">
+    <value>Schicht Beginn</value>
+  </data>
+  <data name="ShiftDayDetail" xml:space="preserve">
+    <value>Schichttag Detail</value>
+  </data>
+  <data name="TypeLabel" xml:space="preserve">
+    <value>Typ:</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Status:</value>
+  </data>
+  <data name="StartLabel" xml:space="preserve">
+    <value>Beginn:</value>
+  </data>
+  <data name="EndLabel" xml:space="preserve">
+    <value>Ende:</value>
+  </data>
+  <data name="Upcoming" xml:space="preserve">
+    <value>Bevorstehend</value>
+  </data>
+  <data name="Completed" xml:space="preserve">
+    <value>Abgeschlossen</value>
+  </data>
+  <data name="NoEndTime" xml:space="preserve">
+    <value>Keine Endzeit</value>
+  </data>
+  <data name="GroupsSectionHeader" xml:space="preserve">
+    <value>Gruppen</value>
+  </data>
+  <data name="RoleColumn" xml:space="preserve">
+    <value>Rolle</value>
+  </data>
+  <data name="RequiredColumn" xml:space="preserve">
+    <value>Erforderlich</value>
+  </data>
+  <data name="OptionalColumn" xml:space="preserve">
+    <value>Optional</value>
+  </data>
+  <data name="NeededColumn" xml:space="preserve">
+    <value>Benötigt</value>
+  </data>
+  <data name="SignupsSectionHeader" xml:space="preserve">
+    <value>Anmeldungen</value>
+  </data>
+  <data name="RolesColumn" xml:space="preserve">
+    <value>Rollen</value>
+  </data>
+  <data name="TradesSectionHeader" xml:space="preserve">
+    <value>Tausche</value>
+  </data>
+  <data name="TradeColumn" xml:space="preserve">
+    <value>Tausch</value>
+  </data>
+  <data name="TradedWithFormat" xml:space="preserve">
+    <value>{0} hat mit {1} getauscht</value>
+  </data>
+  <data name="ShiftSignupHeader" xml:space="preserve">
+    <value>Schicht-Anmeldung</value>
+  </data>
+  <data name="DeleteShiftSignup" xml:space="preserve">
+    <value>Schicht-Anmeldung löschen</value>
+  </data>
+  <data name="SignupForShiftWith" xml:space="preserve">
+    <value>Für Schicht anmelden mit</value>
+  </data>
+  <data name="ShiftSignupSuccessHeader" xml:space="preserve">
+    <value>Schicht-Anmeldung erfolgreich</value>
+  </data>
+  <data name="SignupSuccessMessage" xml:space="preserve">
+    <value>Sie haben sich erfolgreich für diesen Schichttag angemeldet. Wenn Sie sich für weitere Tage anmelden möchten, müssen Sie sich für jeden Tag einzeln anmelden.</value>
+  </data>
+  <data name="StartsAtEndsAt" xml:space="preserve">
+    <value>Beginnt um {0} und endet um {1}</value>
+  </data>
+  <data name="StartsAt" xml:space="preserve">
+    <value>Beginnt um {0}</value>
+  </data>
+  <data name="RequestTradeHeader" xml:space="preserve">
+    <value>Tausch anfragen</value>
+  </data>
+  <data name="UsersToRequestLabel" xml:space="preserve">
+    <value>Benutzer anfragen</value>
+  </data>
+  <data name="UsersToRequestHelp" xml:space="preserve">
+    <value>Klicken Sie in das Eingabefeld, um den Tausch anzufragen (nur Benutzer, die die Schichtrollenanforderungen erfüllen, werden angezeigt)</value>
+  </data>
+  <data name="SubmitTradeRequest" xml:space="preserve">
+    <value>Tauschantrag absenden</value>
+  </data>
+  <data name="ProcessTradeHeader" xml:space="preserve">
+    <value>Tauschantrag bearbeiten</value>
+  </data>
+  <data name="DatesToTradeLabel" xml:space="preserve">
+    <value>Tausch-Daten</value>
+  </data>
+  <data name="DatesToTradeHelp" xml:space="preserve">
+    <value>Wählen Sie die Schichten aus, für die Sie bereits eingeteilt sind, um den Tausch abzuschließen.</value>
+  </data>
+  <data name="NoteTradePlaceholder" xml:space="preserve">
+    <value>Ein Hinweis oder Info für diesen Tausch</value>
+  </data>
+  <data name="RejectTradeRequest" xml:space="preserve">
+    <value>Tauschantrag ablehnen</value>
+  </data>
+  <data name="RejectTradeConfirm" xml:space="preserve">
+    <value>Sind Sie sicher, dass Sie diesen Tauschantrag ablehnen möchten?</value>
+  </data>
+  <data name="ProposeTradeRequest" xml:space="preserve">
+    <value>Tausch vorschlagen</value>
+  </data>
+  <data name="StartsAtLabel" xml:space="preserve">
+    <value>Beginnt um</value>
+  </data>
+  <data name="FinalizeTradeHeader" xml:space="preserve">
+    <value>Tausch abschließen</value>
+  </data>
+  <data name="DateColumn" xml:space="preserve">
+    <value>Datum</value>
+  </data>
+  <data name="NoneValue" xml:space="preserve">
+    <value>Keine</value>
+  </data>
+  <data name="FinalizeTradeButton" xml:space="preserve">
+    <value>Tausch abschließen</value>
+  </data>
+  <data name="ShiftRoleColumn" xml:space="preserve">
+    <value>Schichtrolle</value>
+  </data>
+  <data name="RolesCountColumn" xml:space="preserve">
+    <value>Rollenanzahl</value>
+  </data>
+  <data name="AddRoleToGroup" xml:space="preserve">
+    <value>Rolle zur Gruppe hinzufügen</value>
+  </data>
+  <data name="AddShiftRolesToGroup" xml:space="preserve">
+    <value>Schichtrollen zur Gruppe hinzufügen</value>
+  </data>
+  <data name="RemoveGroup" xml:space="preserve">
+    <value>Gruppe entfernen</value>
+  </data>
+  <data name="RemoveRole" xml:space="preserve">
+    <value>Rolle entfernen</value>
+  </data>
+  <data name="RemoveRoleFromGroup" xml:space="preserve">
+    <value>Diese Rolle aus der Gruppe entfernen</value>
+  </data>
+  <data name="RoleCountRequired" xml:space="preserve">
+    <value>Rollenanzahl ist erforderlich</value>
   </data>
 </root>

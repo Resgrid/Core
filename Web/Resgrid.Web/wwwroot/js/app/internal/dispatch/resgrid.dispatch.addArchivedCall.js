@@ -1,4 +1,3 @@
-
 var resgrid;
 (function (resgrid) {
     var dispatch;
@@ -6,29 +5,46 @@ var resgrid;
         var addArchivedCall;
         (function (addArchivedCall) {
             var personnelTable, unitsTable;
+            addArchivedCall.protocolCount = 0;
+            addArchivedCall.protocolData = {};
             $(document).ready(function () {
                 callMarker = null;
                 map = null;
 
-                let quill = new Quill('#editor-container', {
+                let quillNature = new Quill('#nature-container', {
                     placeholder: '',
                     theme: 'snow'
                 });
 
-                let quill2 = new Quill('#editor-container2', {
+                let quillNotes = new Quill('#note-container', {
                     placeholder: '',
                     theme: 'snow'
                 });
 
                 $(document).on('submit', '#addArchivedCallForm', function () {
-                    $('#Call_NatureOfCall').val(quill.root.innerHTML);
-                    $('#Call_Notes').val(quill2.root.innerHTML);
+                    $('#Call_NatureOfCall').val(quillNature.root.innerHTML);
+                    $('#Call_Notes').val(quillNotes.root.innerHTML);
 
                     return true;
                 });
 
+                if (newCallFormData) {
+                    let newCallForm = $('#fb-template').formRender({
+                        dataType: 'json',
+                        formData: newCallFormData
+                    });
+
+                    $("#saveNewCallFrom").click(function (evt) {
+                        var data = JSON.stringify(newCallForm.userData);
+                        $("#Call_CallFormData").val(data);
+                    });
+                }
 
                 $('#Call_LoggedOn').datetimepicker({ step: 5 });
+
+                $('#PrimaryContact').select2();
+                $('#AdditionalContacts').select2();
+
                 $("#Call_Address").bind("keypress", function (event) {
                     if (event.keyCode == 13) {
                         $("#searchButton").click();
@@ -40,6 +56,14 @@ var resgrid;
                         $("#findw3wButton").click();
                         return false;
                     }
+                });
+
+                $("#CallPriority").change(function () {
+                    checkForProtocols();
+                });
+
+                $("#Call_Type").change(function () {
+                    checkForProtocols();
                 });
 
                 const tiles1 = L.tileLayer(
@@ -59,7 +83,6 @@ var resgrid;
 
                     $("#Latitude").val(e.latlng.lat.toString());
                     $("#Longitude").val(e.latlng.lng.toString());
-                    //$("#What3Word").val('');
 
                     map.panTo(e.latlng);
 
@@ -134,6 +157,75 @@ var resgrid;
                     });
                     evt.preventDefault();
                 });
+
+                $('#protocolQuestionWindow').on('show.bs.modal', function (event) {
+                    var protocolId = $(event.relatedTarget).data('protocolid');
+
+                    var protocol = null;
+                    for (var i = 0; i < resgrid.dispatch.addArchivedCall.protocolData.length; i++) {
+                        if (resgrid.dispatch.addArchivedCall.protocolData[i].Id === protocolId) {
+                            protocol = resgrid.dispatch.addArchivedCall.protocolData[i];
+                            break;
+                        }
+                    }
+
+                    var modal = $(this);
+                    modal.find('.modal-title').text(`Questions for ${protocol.Name}`);
+
+                    var questionHtml = "";
+                    for (var t = 0; t < protocol.Questions.length; t++) {
+                        var question = protocol.Questions[t];
+                        questionHtml = questionHtml + `<div class="form-group"><label class=" control-label">${question.Question}</label><div class="controls"><select id="questionAnswer_${question.Id}" name="questionAnswer_${question.Id}">`;
+
+                        for (var r = 0; r < protocol.Questions[t].Answers.length; r++) {
+                            var answer = protocol.Questions[t].Answers[r];
+                            if (r === 0) {
+                                questionHtml = questionHtml + `<option selected="selected" value="${answer.Weight}">${answer.Answer}</option>`;
+                            } else {
+                                questionHtml = questionHtml + `<option value="${answer.Weight}">${answer.Answer}</option>`;
+                            }
+                        }
+
+                        questionHtml = questionHtml + '</select></div></div>';
+                    }
+                    modal.find('.modal-body').empty();
+                    modal.find('.modal-body').append(questionHtml);
+
+                    $('#processQuestionAnswers').removeAttr("data-protocolid");
+                    $('#processQuestionAnswers').attr('data-protocolid', protocol.Id);
+                });
+
+                $('#processQuestionAnswers').click(function () {
+                    var buttonProtocolId = $('#processQuestionAnswers').attr('data-protocolid');
+                    $('#protocolQuestionWindow').modal('hide');
+
+                    var protocol = null;
+                    for (var i = 0; i < resgrid.dispatch.addArchivedCall.protocolData.length; i++) {
+                        if (resgrid.dispatch.addArchivedCall.protocolData[i].Id === Number(buttonProtocolId)) {
+                            protocol = resgrid.dispatch.addArchivedCall.protocolData[i];
+                            break;
+                        }
+                    }
+
+                    var totalAnswerWeight = 0;
+                    for (var t = 0; t < protocol.Questions.length; t++) {
+                        var question = protocol.Questions[t];
+                        var answerWeight = $(`#questionAnswer_${question.Id}`).val();
+                        if (answerWeight) {
+                            totalAnswerWeight = totalAnswerWeight + Number(answerWeight);
+                        }
+                    }
+
+                    $(`#answerProcotolQuestions_${protocol.Id}`).removeClass("btn-warning btn-success btn-inverse");
+
+                    if (totalAnswerWeight >= protocol.MinimumWeight) {
+                        $(`#pendingProtocol_${protocol.Id}`).val('1');
+                        $(`#answerProcotolQuestions_${protocol.Id}`).addClass("btn-success");
+                    } else {
+                        $(`#answerProcotolQuestions_${protocol.Id}`).addClass("btn-inverse");
+                    }
+                });
+
                 $('#addNewLinkedCall').click(function () {
                     var data = $('#selectLinkedCall').select2('data');
 
@@ -141,6 +233,7 @@ var resgrid;
                     $('#selectCallNote').val('');
                     $('#selectLinkedCall').empty();
                 });
+
                 personnelTable = $("#personnelGrid").DataTable({
                     ajax: { url: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForCallGrid?callLat=' + $("#Latitude").val() + '&callLong=' + $("#Longitude").val(), dataSrc: '' },
                     paging: false,
@@ -206,25 +299,30 @@ var resgrid;
                 $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                     if (e.target && e.target.textContent === "Personnel") { personnelTable.columns.adjust(); }
                     else if (e.target && e.target.textContent === "Groups") { groupsTable.columns.adjust(); }
-                    else if (e.target && e.target.textContent === "Units") { unitsTable.columns.adjust(); }
                     else if (e.target && e.target.textContent === "Roles") { rolesTable.columns.adjust(); }
                 });
+
+                checkForProtocols();
                 centerMap();
             });
+
             function centerMap() {
                 if (centerLat && centerLng) {
                     map.panTo(new L.LatLng(centerLat, centerLng));
                 }
             }
             addArchivedCall.centerMap = centerMap;
+
             function foundLocation(position) {
                 map.panTo(new L.LatLng(position.coords.latitude, position.coords.longitude));
             }
             addArchivedCall.foundLocation = foundLocation;
+
             function noLocation() {
                 map.panTo(new L.LatLng(-34.397, 150.644));
             }
             addArchivedCall.noLocation = noLocation;
+
             function setMarkerLocation(lat, lng) {
                 if (callMarker) {
                     callMarker.setLatLng(new L.LatLng(lat, lng));
@@ -238,13 +336,13 @@ var resgrid;
 
                         $("#Latitude").val(position.lat);
                         $("#Longitude").val(position.lng);
-                        //$("#What3Word").val('');
 
                         resgrid.dispatch.addArchivedCall.geocodeCoordinates(position.lat, position.lng);
                     });
                 }
             }
             addArchivedCall.setMarkerLocation = setMarkerLocation;
+
             function geocodeCoordinates(lat, lng) {
                 if (google && google.maps) {
                     let geocoder = new google.maps.Geocoder();
@@ -264,6 +362,7 @@ var resgrid;
                 }
             }
             addArchivedCall.geocodeCoordinates = geocodeCoordinates;
+
             function findLocation(pos) {
                 var geocoder = new google.maps.Geocoder();
                 geocoder.geocode({
@@ -280,11 +379,94 @@ var resgrid;
                 $("#Longitude").val(pos.lng().toString());
             }
             addArchivedCall.findLocation = findLocation;
+
             function refreshPersonnelGrid() {
                 personnelTable.ajax.url(resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForCallGrid?callLat=' + $("#Latitude").val() + '&callLong=' + $("#Longitude").val()).load();
                 unitsTable.ajax.url(resgrid.absoluteBaseUrl + '/User/Units/GetUnitsForCallGrid?callLat=' + $("#Latitude").val() + '&callLong=' + $("#Longitude").val()).load();
             }
             addArchivedCall.refreshPersonnelGrid = refreshPersonnelGrid;
+
+            function fillCallTemplate() {
+                var templateId = $('#CallTemplateId').val();
+
+                if (templateId && templateId > 0) {
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Templates/GetTemplate?id=' + templateId,
+                        contentType: 'application/json',
+                        type: 'GET'
+                    }).done(function (data) {
+                        if (data) {
+                            if (data.CallName && data.CallName.length > 0) {
+                                $('#Call_Name').val(data.CallName);
+                            }
+
+                            if (data.CallNature && data.CallNature.length > 0) {
+                                $('#Call_NatureOfCall').val(data.CallNature);
+                            }
+
+                            if (data.CallType && data.CallType.length > 0) {
+                                $('#Call_Type').val(data.CallType);
+                            }
+
+                            if (data.CallPriority && data.CallPriority >= 0) {
+                                $('#CallPriority').val(data.CallPriority);
+                            }
+                        }
+                    });
+                }
+            }
+            addArchivedCall.fillCallTemplate = fillCallTemplate;
+
+            function checkForProtocols() {
+                var callPriorityVal = $('#CallPriority').val();
+                var callTypeVal = $('#Call_Type').val();
+
+                $("#protocols tr").remove();
+
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + `/User/Protocols/GetProtocolsForPrioType?priority=${callPriorityVal}&type=${callTypeVal}`,
+                    contentType: 'application/json',
+                    type: 'GET'
+                }).done(function (data) {
+                    if (data) {
+                        resgrid.dispatch.addArchivedCall.protocolCount = 0;
+
+                        resgrid.dispatch.addArchivedCall.protocolData = data;
+                        for (var i = 0; i < data.length; i++) {
+                            var pendingProtocol = data[i];
+
+                            if (pendingProtocol.State === 1 || pendingProtocol.State === 2) {
+                                resgrid.dispatch.addArchivedCall.addProtocol(pendingProtocol.Id, pendingProtocol.Name, pendingProtocol.Code, pendingProtocol.State);
+                            }
+                        }
+                    }
+                });
+            }
+            addArchivedCall.checkForProtocols = checkForProtocols;
+
+            function addProtocol(id, name, code, state) {
+                resgrid.dispatch.addArchivedCall.protocolCount++;
+                $('#protocols tbody').first().append(`<tr>
+                    <td style='max-width: 50px;'>${code}</td>
+                    <td>${name}</td>
+                    <td>${resgrid.dispatch.addArchivedCall.getStatusField(id, state, code)}</td>
+                </tr>`);
+            }
+            addArchivedCall.addProtocol = addProtocol;
+
+            function getStatusField(id, state, code) {
+                if (state === 0) {
+                    return "Inactive";
+                } else if (state === 1) {
+                    return `Active <input type='text' id='activeProtocol_${id}' name='activeProtocol_${id}' style='display:none;' value='1'></input><input type='text' id='protocolCode_${id}' name='protocolCode_${id}' style='display:none;' value='${code}'></input>`;
+                } else if (state === 2) {
+                    return `<a id="answerProcotolQuestions_${id}" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#protocolQuestionWindow" data-protocolId="${id}">Answer Questions</a> <input type='text' id='pendingProtocol_${id}' name='pendingProtocol_${id}' style='display:none;' value='0'></input><input type='text' id='protocolCode_${id}' name='protocolCode_${id}' style='display:none;' value='${code}'></input>`;
+                } else {
+                    return "Unknown";
+                }
+            }
+            addArchivedCall.getStatusField = getStatusField;
+
         })(addArchivedCall = dispatch.addArchivedCall || (dispatch.addArchivedCall = {}));
     })(dispatch = resgrid.dispatch || (resgrid.dispatch = {}));
 })(resgrid || (resgrid = {}));

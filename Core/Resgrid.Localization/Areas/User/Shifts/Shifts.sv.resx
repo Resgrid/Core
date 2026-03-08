@@ -69,30 +69,504 @@
     <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
   </data>
   <data name="DeleteStaticShiftHeader" xml:space="preserve">
-    <value>Delete Static Shift</value>
+    <value>Ta bort statiskt skift</value>
   </data>
   <data name="EditShiftWarning" xml:space="preserve">
-    <value>Editing a static shift will clear out all assignments or sign-ups for this shift and reassign them based on the new settings. If you have any assignments or sign-ups for this shift they will be removed and the new settings will be applied.</value>
+    <value>Att redigera ett statiskt skift kommer att rensa alla tilldelningar eller anmälningar för detta skift och tilldela om dem baserat på de nya inställningarna.</value>
   </data>
   <data name="EditStaticShiftHeader" xml:space="preserve">
-    <value>Edit Static Shift</value>
+    <value>Redigera statiskt skift</value>
   </data>
   <data name="EndDateTime" xml:space="preserve">
-    <value>End Date/Time</value>
+    <value>Slutdatum/-tid</value>
   </data>
   <data name="ShiftColorNote" xml:space="preserve">
-    <value>Note the text on the Calendar is black, take that into account when picking a shift color as the color will be used as the background</value>
+    <value>Texten i kalendern är svart, ta hänsyn till det när du väljer skiftfärg eftersom färgen används som bakgrund.</value>
   </data>
   <data name="ShiftEndNote" xml:space="preserve">
-    <value>The date and time that the shift ends (i.e. back in quarters) where entities under it are considered available.</value>
+    <value>Datum och tid när skiftet slutar, där enheter under det anses tillgängliga.</value>
   </data>
   <data name="ShiftStartNote" xml:space="preserve">
-    <value>The date and time that the shift starts (i.e. start of travel) where entities under it are considered committed.</value>
+    <value>Datum och tid när skiftet börjar, där enheter under det anses bundna.</value>
   </data>
   <data name="StartDateTime" xml:space="preserve">
-    <value>Start Date/Time</value>
+    <value>Startdatum/-tid</value>
   </data>
   <data name="ViewStaticShiftDayHeader" xml:space="preserve">
-    <value>View Static Shift Day</value>
+    <value>Visa statisk skiftdag</value>
+  </data>
+  <data name="ShiftsHeader" xml:space="preserve">
+    <value>Skift</value>
+  </data>
+  <data name="YourShiftsButton" xml:space="preserve">
+    <value>Dina skift</value>
+  </data>
+  <data name="ShiftStaffingButton" xml:space="preserve">
+    <value>Skiftbemanning</value>
+  </data>
+  <data name="RecurringGroupShifts" xml:space="preserve">
+    <value>Återkommande gruppskift</value>
+  </data>
+  <data name="AddRecurringGroupShift" xml:space="preserve">
+    <value>Lägg till återkommande gruppskift</value>
+  </data>
+  <data name="NameColumn" xml:space="preserve">
+    <value>Namn</value>
+  </data>
+  <data name="TypeColumn" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="ScheduleColumn" xml:space="preserve">
+    <value>Schema</value>
+  </data>
+  <data name="GroupsColumn" xml:space="preserve">
+    <value>Grupper</value>
+  </data>
+  <data name="PersonnelColumn" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="AssignedType" xml:space="preserve">
+    <value>Tilldelad</value>
+  </data>
+  <data name="SignupType" xml:space="preserve">
+    <value>Anmälan</value>
+  </data>
+  <data name="ManualSchedule" xml:space="preserve">
+    <value>Manuell</value>
+  </data>
+  <data name="CustomSchedule" xml:space="preserve">
+    <value>Anpassad</value>
+  </data>
+  <data name="Schedule48_96" xml:space="preserve">
+    <value>48 på 96 av</value>
+  </data>
+  <data name="Schedule24_48" xml:space="preserve">
+    <value>24 på 48 av</value>
+  </data>
+  <data name="Schedule24_72" xml:space="preserve">
+    <value>24 på 72 av</value>
+  </data>
+  <data name="ViewCalendarButton" xml:space="preserve">
+    <value>Visa kalender</value>
+  </data>
+  <data name="EditDetailsButton" xml:space="preserve">
+    <value>Redigera detaljer</value>
+  </data>
+  <data name="EditCalendarButton" xml:space="preserve">
+    <value>Redigera kalender</value>
+  </data>
+  <data name="EditGroupsButton" xml:space="preserve">
+    <value>Redigera grupper</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Ta bort</value>
+  </data>
+  <data name="DeleteShiftWarning" xml:space="preserve">
+    <value>VARNING: Detta kommer permanent ta bort detta skift. Är du säker på att du vill ta bort skiftet?</value>
+  </data>
+  <data name="CalendarSectionHeader" xml:space="preserve">
+    <value>Kalender</value>
+  </data>
+  <data name="AddStaticShift" xml:space="preserve">
+    <value>Lägg till statiskt skift</value>
+  </data>
+  <data name="NewShiftHeader" xml:space="preserve">
+    <value>Nytt skift</value>
+  </data>
+  <data name="NewShiftWizardIntro" xml:space="preserve">
+    <value>Välkommen till guiden för nytt skift. Denna guide leder dig genom att skapa ett nytt skift för din avdelning.</value>
+  </data>
+  <data name="NameLabel" xml:space="preserve">
+    <value>Namn</value>
+  </data>
+  <data name="NamePlaceholder" xml:space="preserve">
+    <value>Skiftets namn</value>
+  </data>
+  <data name="NameHelp" xml:space="preserve">
+    <value>Till exempel ("Skift A", "Skift B", "Skift C")</value>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>Kod</value>
+  </data>
+  <data name="CodeHelp" xml:space="preserve">
+    <value>Exempel ("A", "B", "C")</value>
+  </data>
+  <data name="AssignmentTypeLabel" xml:space="preserve">
+    <value>Tilldelningstyp</value>
+  </data>
+  <data name="AssignmentTypeHelp" xml:space="preserve">
+    <value>För tilldelad anger du personalen; för anmälan tilldelar sig personalen själv.</value>
+  </data>
+  <data name="ColorLabel" xml:space="preserve">
+    <value>Färg</value>
+  </data>
+  <data name="ScheduleTabIntro" xml:space="preserve">
+    <value>Här anger du vilka dagar skiftet är i tjänst och starttiden för skiftet den första dagen.</value>
+  </data>
+  <data name="StartTimeLabel" xml:space="preserve">
+    <value>Starttid</value>
+  </data>
+  <data name="StartTimeHelp" xml:space="preserve">
+    <value>När börjar skiftet den första dagen (eller enda dagen)?</value>
+  </data>
+  <data name="EndTimeLabel" xml:space="preserve">
+    <value>Sluttid</value>
+  </data>
+  <data name="EndTimeHelp" xml:space="preserve">
+    <value>När slutar skiftet den sista dagen (eller enda dagen)?</value>
+  </data>
+  <data name="SlotsTabIntro" xml:space="preserve">
+    <value>Här kan du konfigurera de roller som krävs för varje grupp i din avdelning för skiftet.</value>
+  </data>
+  <data name="ShiftGroupColumn" xml:space="preserve">
+    <value>Skiftgrupp</value>
+  </data>
+  <data name="ShiftRolesColumn" xml:space="preserve">
+    <value>Skiftroller</value>
+  </data>
+  <data name="AddGroupToShift" xml:space="preserve">
+    <value>Lägg till grupp i skift</value>
+  </data>
+  <data name="PersonnelTabIntro" xml:space="preserve">
+    <value>Välj nu den personal som arbetar i detta skift för din avdelning.</value>
+  </data>
+  <data name="NonGroupPersonnelLabel" xml:space="preserve">
+    <value>Personal utan grupp</value>
+  </data>
+  <data name="NonGroupPersonnelHelp" xml:space="preserve">
+    <value>Personal tilldelad skiftet men inte direkt tilldelad en station eller organisationsgrupp</value>
+  </data>
+  <data name="FinishTabIntro" xml:space="preserve">
+    <value>Klicka på Slutför-knappen nedan för att skapa ditt nya skift.</value>
+  </data>
+  <data name="WizardStart" xml:space="preserve">
+    <value>Start &gt;</value>
+  </data>
+  <data name="WizardSchedule" xml:space="preserve">
+    <value>Schema &gt;</value>
+  </data>
+  <data name="WizardSlots" xml:space="preserve">
+    <value>Slots &gt;</value>
+  </data>
+  <data name="WizardPersonnel" xml:space="preserve">
+    <value>Personal &gt;</value>
+  </data>
+  <data name="WizardFinish" xml:space="preserve">
+    <value>Slutför</value>
+  </data>
+  <data name="WizardFirst" xml:space="preserve">
+    <value>Första</value>
+  </data>
+  <data name="WizardPrevious" xml:space="preserve">
+    <value>Föregående</value>
+  </data>
+  <data name="WizardNext" xml:space="preserve">
+    <value>Nästa</value>
+  </data>
+  <data name="ShiftNameRequired" xml:space="preserve">
+    <value>Skiftnamn krävs</value>
+  </data>
+  <data name="ShiftCodeRequired" xml:space="preserve">
+    <value>Skiftkod krävs</value>
+  </data>
+  <data name="ShiftStartTimeRequired" xml:space="preserve">
+    <value>Skiftets starttid krävs.</value>
+  </data>
+  <data name="EditShiftDetailsHeader" xml:space="preserve">
+    <value>Redigera skiftdetaljer</value>
+  </data>
+  <data name="CodePlaceholder" xml:space="preserve">
+    <value>Skiftkod</value>
+  </data>
+  <data name="NonGroupPersonnelHelpEdit" xml:space="preserve">
+    <value>Personal som är del av ett skift men inte tilldelad en grupp</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Avbryt</value>
+  </data>
+  <data name="UpdateShiftButton" xml:space="preserve">
+    <value>Uppdatera skift</value>
+  </data>
+  <data name="EditShiftCalendarHeader" xml:space="preserve">
+    <value>Redigera skiftkalender</value>
+  </data>
+  <data name="UpdateShiftDaysButton" xml:space="preserve">
+    <value>Uppdatera skiftdagar</value>
+  </data>
+  <data name="EditShiftGroupsHeader" xml:space="preserve">
+    <value>Redigera skiftgrupper</value>
+  </data>
+  <data name="SaveShiftGroupsButton" xml:space="preserve">
+    <value>Spara skiftgrupper</value>
+  </data>
+  <data name="CalendarSuffix" xml:space="preserve">
+    <value>Kalender</value>
+  </data>
+  <data name="ShiftStaffingHeader" xml:space="preserve">
+    <value>Skiftbemanning</value>
+  </data>
+  <data name="ShiftLabel" xml:space="preserve">
+    <value>Skift</value>
+  </data>
+  <data name="ShiftSelectHelp" xml:space="preserve">
+    <value>Välj skiftet för att bearbeta bemanningen.</value>
+  </data>
+  <data name="ShiftDayLabel" xml:space="preserve">
+    <value>Skiftdag</value>
+  </data>
+  <data name="ShiftDayHelp" xml:space="preserve">
+    <value>Välj den dag för vilken bemanningen ska bearbetas.</value>
+  </data>
+  <data name="NoteLabel" xml:space="preserve">
+    <value>Notat</value>
+  </data>
+  <data name="NotePlaceholder" xml:space="preserve">
+    <value>Ange en frihandsnotering för skiftet</value>
+  </data>
+  <data name="AssignmentsLabel" xml:space="preserve">
+    <value>Tilldelningar</value>
+  </data>
+  <data name="UnitsLabel" xml:space="preserve">
+    <value>Enheter</value>
+  </data>
+  <data name="SetShiftDayStaffingButton" xml:space="preserve">
+    <value>Ange skiftdagsbemanning</value>
+  </data>
+  <data name="SelectNonGroupPersonnel" xml:space="preserve">
+    <value>Välj personal utan grupp...</value>
+  </data>
+  <data name="SelectPersonnelForGroup" xml:space="preserve">
+    <value>Välj personal för grupp...</value>
+  </data>
+  <data name="SelectPerson" xml:space="preserve">
+    <value>Välj person...</value>
+  </data>
+  <data name="NonGroupPersonnelStaffing" xml:space="preserve">
+    <value>Personal utan grupp</value>
+  </data>
+  <data name="YourShiftsHeader" xml:space="preserve">
+    <value>Dina skift</value>
+  </data>
+  <data name="ShiftColumn" xml:space="preserve">
+    <value>Skift</value>
+  </data>
+  <data name="GroupColumn" xml:space="preserve">
+    <value>Grupp</value>
+  </data>
+  <data name="DayColumn" xml:space="preserve">
+    <value>Dag</value>
+  </data>
+  <data name="ApprovedColumn" xml:space="preserve">
+    <value>Godkänd</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="TimestampColumn" xml:space="preserve">
+    <value>Tidsstämpel</value>
+  </data>
+  <data name="ApprovedNo" xml:space="preserve">
+    <value>Nej</value>
+  </data>
+  <data name="ApprovedYes" xml:space="preserve">
+    <value>Ja</value>
+  </data>
+  <data name="TradeComplete" xml:space="preserve">
+    <value>Byte slutfört</value>
+  </data>
+  <data name="TradeInProgress" xml:space="preserve">
+    <value>Byte pågår</value>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="For" xml:space="preserve">
+    <value>för</value>
+  </data>
+  <data name="DeclineShiftDayWarning" xml:space="preserve">
+    <value>VARNING: Detta tar bort dig från detta skift. Är du säker på att du vill avböja skiftet?</value>
+  </data>
+  <data name="DeclineShiftDay" xml:space="preserve">
+    <value>Avböj skiftdag</value>
+  </data>
+  <data name="RequestTrade" xml:space="preserve">
+    <value>Begär byte</value>
+  </data>
+  <data name="FinishTrade" xml:space="preserve">
+    <value>Slutför byte</value>
+  </data>
+  <data name="YourPendingTrades" xml:space="preserve">
+    <value>Dina väntande byten</value>
+  </data>
+  <data name="TimeColumn" xml:space="preserve">
+    <value>Tid</value>
+  </data>
+  <data name="ProcessTradeRequest" xml:space="preserve">
+    <value>Behandla bytebegäran</value>
+  </data>
+  <data name="Declined" xml:space="preserve">
+    <value>Avböjd</value>
+  </data>
+  <data name="Accepted" xml:space="preserve">
+    <value>Accepterad</value>
+  </data>
+  <data name="Filled" xml:space="preserve">
+    <value>Fylld</value>
+  </data>
+  <data name="TradeOffered" xml:space="preserve">
+    <value>Byte erbjudet</value>
+  </data>
+  <data name="ViewShiftHeader" xml:space="preserve">
+    <value>Visa skift</value>
+  </data>
+  <data name="ShiftStart" xml:space="preserve">
+    <value>Skiftstart</value>
+  </data>
+  <data name="ShiftDayDetail" xml:space="preserve">
+    <value>Skiftdagsdetalj</value>
+  </data>
+  <data name="TypeLabel" xml:space="preserve">
+    <value>Typ:</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Status:</value>
+  </data>
+  <data name="StartLabel" xml:space="preserve">
+    <value>Start:</value>
+  </data>
+  <data name="EndLabel" xml:space="preserve">
+    <value>Slut:</value>
+  </data>
+  <data name="Upcoming" xml:space="preserve">
+    <value>Kommande</value>
+  </data>
+  <data name="Completed" xml:space="preserve">
+    <value>Slutförd</value>
+  </data>
+  <data name="NoEndTime" xml:space="preserve">
+    <value>Ingen sluttid</value>
+  </data>
+  <data name="GroupsSectionHeader" xml:space="preserve">
+    <value>Grupper</value>
+  </data>
+  <data name="RoleColumn" xml:space="preserve">
+    <value>Roll</value>
+  </data>
+  <data name="RequiredColumn" xml:space="preserve">
+    <value>Krävs</value>
+  </data>
+  <data name="OptionalColumn" xml:space="preserve">
+    <value>Valfri</value>
+  </data>
+  <data name="NeededColumn" xml:space="preserve">
+    <value>Behövs</value>
+  </data>
+  <data name="SignupsSectionHeader" xml:space="preserve">
+    <value>Anmälningar</value>
+  </data>
+  <data name="RolesColumn" xml:space="preserve">
+    <value>Roller</value>
+  </data>
+  <data name="TradesSectionHeader" xml:space="preserve">
+    <value>Byten</value>
+  </data>
+  <data name="TradeColumn" xml:space="preserve">
+    <value>Byte</value>
+  </data>
+  <data name="TradedWithFormat" xml:space="preserve">
+    <value>{0} bytte med {1}</value>
+  </data>
+  <data name="ShiftSignupHeader" xml:space="preserve">
+    <value>Skiftanmälan</value>
+  </data>
+  <data name="DeleteShiftSignup" xml:space="preserve">
+    <value>Ta bort skiftanmälan</value>
+  </data>
+  <data name="SignupForShiftWith" xml:space="preserve">
+    <value>Anmäl dig till skiftet med</value>
+  </data>
+  <data name="ShiftSignupSuccessHeader" xml:space="preserve">
+    <value>Skiftanmälan lyckades</value>
+  </data>
+  <data name="SignupSuccessMessage" xml:space="preserve">
+    <value>Du har framgångsrikt anmält dig för denna skiftdag. Om du vill anmäla dig för fler dagar behöver du anmäla dig för varje dag individuellt.</value>
+  </data>
+  <data name="StartsAtEndsAt" xml:space="preserve">
+    <value>Börjar kl {0} och slutar kl {1}</value>
+  </data>
+  <data name="StartsAt" xml:space="preserve">
+    <value>Börjar kl {0}</value>
+  </data>
+  <data name="RequestTradeHeader" xml:space="preserve">
+    <value>Begär byte</value>
+  </data>
+  <data name="UsersToRequestLabel" xml:space="preserve">
+    <value>Användare att begära</value>
+  </data>
+  <data name="UsersToRequestHelp" xml:space="preserve">
+    <value>Klicka i fältet för att välja vem du vill begära byte med</value>
+  </data>
+  <data name="SubmitTradeRequest" xml:space="preserve">
+    <value>Skicka bytebegäran</value>
+  </data>
+  <data name="ProcessTradeHeader" xml:space="preserve">
+    <value>Behandla bytebegäran</value>
+  </data>
+  <data name="DatesToTradeLabel" xml:space="preserve">
+    <value>Datum att byta</value>
+  </data>
+  <data name="DatesToTradeHelp" xml:space="preserve">
+    <value>Välj de skift du redan är inbokad på för att slutföra bytet.</value>
+  </data>
+  <data name="NoteTradePlaceholder" xml:space="preserve">
+    <value>En notering eller info för detta byte</value>
+  </data>
+  <data name="RejectTradeRequest" xml:space="preserve">
+    <value>Avvisa bytebegäran</value>
+  </data>
+  <data name="RejectTradeConfirm" xml:space="preserve">
+    <value>Är du säker på att du vill avvisa denna bytebegäran?</value>
+  </data>
+  <data name="ProposeTradeRequest" xml:space="preserve">
+    <value>Föreslå byte</value>
+  </data>
+  <data name="StartsAtLabel" xml:space="preserve">
+    <value>Börjar kl</value>
+  </data>
+  <data name="FinalizeTradeHeader" xml:space="preserve">
+    <value>Slutför byte</value>
+  </data>
+  <data name="DateColumn" xml:space="preserve">
+    <value>Datum</value>
+  </data>
+  <data name="NoneValue" xml:space="preserve">
+    <value>Ingen</value>
+  </data>
+  <data name="FinalizeTradeButton" xml:space="preserve">
+    <value>Slutför byte</value>
+  </data>
+  <data name="ShiftRoleColumn" xml:space="preserve">
+    <value>Skiftroll</value>
+  </data>
+  <data name="RolesCountColumn" xml:space="preserve">
+    <value>Antal roller</value>
+  </data>
+  <data name="AddRoleToGroup" xml:space="preserve">
+    <value>Lägg till roll i grupp</value>
+  </data>
+  <data name="AddShiftRolesToGroup" xml:space="preserve">
+    <value>Lägg till skiftroller i grupp</value>
+  </data>
+  <data name="RemoveGroup" xml:space="preserve">
+    <value>Ta bort grupp</value>
+  </data>
+  <data name="RemoveRole" xml:space="preserve">
+    <value>Ta bort roll</value>
+  </data>
+  <data name="RemoveRoleFromGroup" xml:space="preserve">
+    <value>Ta bort denna roll från gruppen</value>
+  </data>
+  <data name="RoleCountRequired" xml:space="preserve">
+    <value>Antal roller krävs</value>
   </data>
 </root>

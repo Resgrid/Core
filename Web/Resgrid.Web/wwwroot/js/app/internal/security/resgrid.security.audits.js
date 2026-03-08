@@ -32,7 +32,7 @@ var resgrid;
                             orderable: false,
                             searchable: false,
                             render: function (data) {
-                                return '<a class="btn btn-sm btn-primary" href="' + resgrid.absoluteBaseUrl + '/User/Security/ViewAuditLog?auditLogId=' + data + '">View</a>';
+                                return '<a class="btn btn-sm btn-primary" href="' + resgrid.absoluteBaseUrl + '/User/Security/ViewAudit?auditLogId=' + data + '">View</a>';
                             }
                         }
                     ]

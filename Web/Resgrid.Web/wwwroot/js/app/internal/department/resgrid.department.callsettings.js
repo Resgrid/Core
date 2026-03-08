@@ -5,14 +5,20 @@ var resgrid;
         var callsettings;
         (function (callsettings) {
             $(document).ready(function () {
-                // Load call email types and render as a selectable list
+                // Load call email types and render as a selectable list with preview images
                 $.getJSON(resgrid.absoluteBaseUrl + '/User/Department/GetCallEmailTypes', function (data) {
-                    var $list = $("#listView").empty();
+                    var $list = $("#listView").empty().addClass('call-email-type-list');
                     $.each(data, function (i, item) {
                         var checked = item.Id == $("#CallType").val() ? 'checked' : '';
+                        var imgSrc = resgrid.absoluteBaseUrl + '/images/CallEmails/' + item.Code + '.png';
                         $list.append(
-                            '<div class="list-group-item" style="cursor:pointer">' +
-                            '<label><input type="radio" name="callTypeItem" value="' + item.Id + '" ' + checked + '> ' + item.Name + '</label>' +
+                            '<div class="list-group-item call-email-type-item" style="cursor:pointer">' +
+                            '<label class="call-email-type-label">' +
+                            '<input type="radio" name="callTypeItem" value="' + item.Id + '" ' + checked + '> ' +
+                            '<img class="call-email-type-img" src="' + imgSrc + '" alt="' + item.Name + ' email format preview" ' +
+                            'onerror="this.style.display=\'none\'" /> ' +
+                            '<span class="call-email-type-name">' + item.Name + '</span>' +
+                            '</label>' +
                             '</div>'
                         );
                     });

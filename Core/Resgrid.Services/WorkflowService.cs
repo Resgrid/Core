@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -87,7 +87,17 @@ namespace Resgrid.Services
 		{
 			var workflow = await _workflowRepository.GetByIdAsync(workflowId);
 			if (workflow == null) return false;
+
+			// Delete child records in dependency order to avoid FK constraint violations:
+			// 1. WorkflowRunLogs (references WorkflowRuns)
+			await _runLogRepository.DeleteAllByWorkflowIdAsync(workflowId);
+			// 2. WorkflowRuns (references Workflows)
+			await _runRepository.DeleteAllByWorkflowIdAsync(workflowId);
+			// 3. WorkflowSteps (references Workflows)
+			await _stepRepository.DeleteAllByWorkflowIdAsync(workflowId);
+			// 4. Workflow itself
 			await _workflowRepository.DeleteAsync(workflow, cancellationToken);
+
 			return true;
 		}
 

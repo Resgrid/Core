@@ -7,7 +7,23 @@ var resgrid;
 		(function (editgroup) {
 			$(document).ready(function () {
 				var groupUrl = resgrid.absoluteBaseUrl + '/User/Department/GetRecipientsForGrid?filter=3&filterNotInGroup=true&ignoreGroupId=' + $('#EditGroup_DepartmentGroupId').val();
-				function initGroupSelect2(selector) {
+
+				function showDuplicateError(userName) {
+					var alertId = 'groupDuplicateAlert';
+					$('#' + alertId).remove();
+					var alertHtml = '<div id="' + alertId + '" class="alert alert-danger alert-dismissible" role="alert">' +
+						'<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>' +
+						'<strong>Error:</strong> ' + $('<span>').text(userName).html() + ' is already added to the other list. A user can only be a member or an admin, not both.' +
+						'</div>';
+					$('.ibox-content form').prepend(alertHtml);
+					$('html, body').animate({ scrollTop: 0 }, 'fast');
+				}
+
+				function getSelectedIds(selector) {
+					return $(selector).val() || [];
+				}
+
+				function initGroupSelect2(selector, otherSelector) {
 					$(selector).select2({
 						placeholder: "Select users...",
 						allowClear: true,
@@ -19,10 +35,20 @@ var resgrid;
 								return { results: $.map(data, function (u) { return { id: u.Id, text: u.Name }; }) };
 							}
 						}
+					}).on('select2:select', function (e) {
+						var selectedId = e.params.data.id;
+						var selectedName = e.params.data.text;
+						var otherIds = getSelectedIds(otherSelector);
+						if (otherIds.indexOf(selectedId) !== -1) {
+							var currentVals = getSelectedIds(selector).filter(function (v) { return v !== selectedId; });
+							$(selector).val(currentVals).trigger('change');
+							showDuplicateError(selectedName);
+						}
 					});
 				}
-				initGroupSelect2("#groupAdmins");
-				initGroupSelect2("#groupUsers");
+
+				initGroupSelect2("#groupAdmins", "#groupUsers");
+				initGroupSelect2("#groupUsers", "#groupAdmins");
 				$.ajax({
 					url: resgrid.absoluteBaseUrl + '/User/Groups/GetMembersForGroup?groupId=' + $('#EditGroup_DepartmentGroupId').val() + '&includeAdmins=true&includeNormal=false',
 					contentType: 'application/json', type: 'GET'

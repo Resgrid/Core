@@ -80,13 +80,14 @@ var resgrid;
                     var ids = new Array();
 
                     if (isAdmin) {
-                        html = '<div class="form-group"><label class="control-label">Non - Group Personnel</label><div class="controls"><div class="col-xs-6"><select id="shiftPersonnel" name="shiftPersonnel"></select></div></div></div>';
+                        var nonGroupLabel = (typeof resgridShiftsI18n !== 'undefined' && resgridShiftsI18n.nonGroupPersonnel) ? resgridShiftsI18n.nonGroupPersonnel : 'Non - Group Personnel';
+                        html = '<div class="form-group"><label class="control-label">' + nonGroupLabel + '</label><div class="controls"><div class="col-xs-6"><select id="shiftPersonnel" name="shiftPersonnel" style="width: 100%;"></select></div></div></div>';
                     }
                     for (var i = 0; i < data.length; i++) {
                         if (isAdmin || data[i].Id == groupId) {
                             var itemHtml = '<div class="form-group"><label class="control-label">' + data[i].Name + '</label><div class="controls"><div class="col-md-6">';
 
-                            itemHtml = itemHtml + '<div class="row"><div class="col-sm-10"><select id="groupPersonnel_' + data[i].Id + '" name="groupPersonnel_' + data[i].Id + '" class="groupPersonnelSelect"></select></div></div>';
+                            itemHtml = itemHtml + '<div class="row"><div class="col-sm-10"><select id="groupPersonnel_' + data[i].Id + '" name="groupPersonnel_' + data[i].Id + '" class="groupPersonnelSelect" style="width: 100%;"></select></div></div>';
                             itemHtml = itemHtml + `<div id="groupUnits_${data[i].Id}"></div></div></div></div>`;
 
                             ids.push(data[i].Id);
@@ -100,8 +101,9 @@ var resgrid;
                     //}
 
                     if (isAdmin) {
+                        var nonGroupPlaceholder = (typeof resgridShiftsI18n !== 'undefined' && resgridShiftsI18n.selectNonGroupPersonnel) ? resgridShiftsI18n.selectNonGroupPersonnel : 'Select Non-Group Personnel...';
                         $("#shiftPersonnel").select2({
-                            placeholder: "Select Non-Group Personnel...",
+                            placeholder: nonGroupPlaceholder,
                             allowClear: true,
                             multiple: true,
                             ajax: {
@@ -123,8 +125,9 @@ var resgrid;
                     }
                     $('.groupPersonnelSelect').each(function (i, obj) {
                         var that = this;
+                        var groupPlaceholder = (typeof resgridShiftsI18n !== 'undefined' && resgridShiftsI18n.selectPersonnelForGroup) ? resgridShiftsI18n.selectPersonnelForGroup : 'Select Personnel for Group...';
                         $(that).select2({
-                            placeholder: "Select Personnel for Group...",
+                            placeholder: groupPlaceholder,
                             allowClear: true,
                             multiple: true,
                             ajax: {
@@ -180,7 +183,7 @@ var resgrid;
                                         $(`#unitRole_${data2[j].UnitId}_${roleIds[l]}`).each(function (i, obj) {
                                             var that = this;
                                             $(that).select2({
-                                                placeholder: "Select Person...",
+                                                placeholder: (typeof resgridShiftsI18n !== 'undefined' && resgridShiftsI18n.selectPerson) ? resgridShiftsI18n.selectPerson : 'Select Person...',
                                                 allowClear: true,
                                                 ajax: {
                                                     url: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForGridWithFilter',

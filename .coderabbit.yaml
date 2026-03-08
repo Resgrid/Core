@@ -1,0 +1,6 @@
+reviews:
+  path_filters:
+    - "!**/*.resx"
+    - "!**/*.Designer.cs"
+    - "!**/bin/**"
+    - "!**/obj/**"

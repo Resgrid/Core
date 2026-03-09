@@ -102,7 +102,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var type = await _mappingService.GetTypeByIdAsync(poiTypeId);
 
-			if (type == null || type.DepartmentId != DepartmentId)
+			if (type == null)
+				return NotFound();
+
+			if (type.DepartmentId != DepartmentId)
 				return Unauthorized();
 
 			model.Type = type;
@@ -210,7 +213,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CenterCoordinates = await _departmentSettingsService.GetMapCenterCoordinatesAsync(model.Department);
 			var layer = await _mappingService.GetMapLayersByIdAsync(layerId);
 
-			if (layer == null || layer.DepartmentId != DepartmentId || layer.IsDeleted)
+			if (layer == null || layer.IsDeleted)
+				return NotFound();
+
+			if (layer.DepartmentId != DepartmentId)
 				return Unauthorized();
 
 			var feature = layer.Data.Convert();
@@ -262,7 +268,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var layer = await _mappingService.GetMapLayersByIdAsync(layerId);
 
-			if (layer == null || layer.DepartmentId != DepartmentId || layer.IsDeleted)
+			if (layer == null || layer.IsDeleted)
+				return NotFound();
+
+			if (layer.DepartmentId != DepartmentId)
 				return Unauthorized();
 
 			layer.IsDeleted = true;
@@ -621,7 +630,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var poiType = await _mappingService.GetTypeByIdAsync(poiTypeId);
 
-			if (poiType == null || poiType.DepartmentId != DepartmentId)
+			if (poiType == null)
+				return NotFound();
+
+			if (poiType.DepartmentId != DepartmentId)
 				return Unauthorized();
 
 			foreach (var poi in poiType.Pois)
@@ -648,7 +660,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var poiType = await _mappingService.GetTypeByIdAsync(poiTypeId);
 
-			if (poiType == null || poiType.DepartmentId != DepartmentId)
+			if (poiType == null)
+				return NotFound();
+
+			if (poiType.DepartmentId != DepartmentId)
 				return Unauthorized();
 
 			foreach (var poi in poiType.Pois)
@@ -700,8 +715,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var station = await _departmentGroupsService.GetGroupByIdAsync(stationId);
 			var call = await _callsService.GetCallByIdAsync(callId);
 
+			if (station == null)
+				return NotFound();
+
 			if (station.DepartmentId != DepartmentId)
 				return Unauthorized();
+
+			if (call == null)
+				return NotFound();
 
 			if (call.DepartmentId != DepartmentId)
 				return Unauthorized();

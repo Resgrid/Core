@@ -76,6 +76,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var document = await _documentsService.GetDocumentByIdAsync(documentId);
 
+			if (document == null)
+				return NotFound();
+
 			if (document.DepartmentId != DepartmentId)
 				return Unauthorized();
 
@@ -93,6 +96,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> DeleteDocument(int documentId, CancellationToken cancellationToken)
 		{
 			var document = await _documentsService.GetDocumentByIdAsync(documentId);
+
+			if (document == null)
+				return NotFound();
 
 			if (document.DepartmentId != DepartmentId)
 				return Unauthorized();
@@ -200,6 +206,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var document = await _documentsService.GetDocumentByIdAsync(documentId);
 
+			if (document == null)
+				return NotFound();
+
 			if (document.DepartmentId != DepartmentId)
 				return Unauthorized();
 
@@ -230,6 +239,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> EditDocument(EditDocumentView model, IFormFile fileToUpload, CancellationToken cancellationToken)
 		{
 			var document = await _documentsService.GetDocumentByIdAsync(model.DocumentId);
+
+			if (document == null)
+				return NotFound();
 
 			if (document.DepartmentId != DepartmentId)
 				return Unauthorized();

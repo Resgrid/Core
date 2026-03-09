@@ -28,46 +28,32 @@ var resgrid;
                     height = "650px";
                     width = "100%";
                 }
-                $("#poisGrid").kendoGrid({
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Mapping/GetPoisForType?poiTypeId=' + poiTypeId
-                        },
-                        schema: {
-                            model: {
-                                fields: {
-                                    PoiId: { type: "number" },
-                                    Latitude: { type: "string" },
-                                    Longitude: { type: "string" },
-                                    Note: { type: "string" }
-                                }
-                            }
-                        },
-                        pageSize: 50,
-                        serverPaging: false,
-                        serverFiltering: false,
-                        serverSorting: false
+                var poisTable = $("#poisGrid").DataTable({
+                    ajax: {
+                        url: resgrid.absoluteBaseUrl + '/User/Mapping/GetPoisForType?poiTypeId=' + poiTypeId,
+                        dataSrc: ''
                     },
-                    height: 650,
-                    width: 210,
-                    filterable: true,
-                    sortable: true,
-                    pageable: true,
+                    pageLength: 50,
                     columns: [
                         {
-                            field: "PoiId",
-                            title: "",
-                            width: 28,
-                            filterable: false,
-                            sortable: false,
-                            headerTemplate: '<label><input type="checkbox" id="checkAllRoles"/></label>',
-                            template: "<input type=\"checkbox\" id=\"dispatchRole_#=PoiId#\" name=\"dispatchRole_#=PoiId#\" />"
+                            data: 'PoiId',
+                            title: '',
+                            orderable: false,
+                            searchable: false,
+                            render: function (data) {
+                                return '<input type="checkbox" id="dispatchRole_' + data + '" name="dispatchRole_' + data + '" />';
+                            }
                         },
-                        "Latitude",
-                        "Longitude",
-                        "Note"
+                        { data: 'Latitude', title: 'Latitude' },
+                        { data: 'Longitude', title: 'Longitude' },
+                        { data: 'Note', title: 'Note' }
                     ]
+                });
+                poisTable.on('draw', function () {
+                    $('#poisGrid thead th:first').html('<label><input type="checkbox" id="checkAllRoles"/></label>');
+                });
+                $(document).on('click', '#checkAllRoles', function () {
+                    $('#poisGrid tbody :checkbox').prop('checked', this.checked);
                 });
                 map = new google.maps.Map(document.getElementById('map'), mapOptions);
                 initMap();

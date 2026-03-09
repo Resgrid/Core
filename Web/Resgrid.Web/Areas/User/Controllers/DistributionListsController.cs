@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -12,6 +12,7 @@ using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Areas.User.Models.DistributionLists;
 using Resgrid.Web.Areas.User.Models.Personnel;
+using Resgrid.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Resgrid.Web.Areas.User.Controllers
@@ -228,14 +229,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var list = await _distributionListsService.GetDistributionListByIdAsync(id);
 
 			if (list.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			var members = await _distributionListsService.GetAllListMembersByListIdAsync(id);
+			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 
 			foreach (var member in members)
 			{
 				var person = new PersonnelForJson();
 				person.UserId = member.UserId;
+				person.Name = await UserHelper.GetFullNameForUser(personnelNames, null, member.UserId);
 
 				personnelJson.Add(person);
 			}

@@ -1,4 +1,3 @@
-
 var resgrid;
 (function (resgrid) {
     var message;
@@ -20,126 +19,83 @@ var resgrid;
                 });
 
                 $('#MessageType').on("change", function (e) { switchInputs(e); });
-                compose.wndRecipients = $("#selectRecipientWindow")
-                    .kendoWindow({
-                    title: "Select Recipient",
-                    modal: true,
-                    visible: false,
-                    resizable: false,
-                    content: '/User/Department/RecipientsGrid',
-                    width: 750,
-                    height: 465
-                }).data("kendoWindow");
-                $('.selectRecipientWindow').on('selectRecipient', function (e, data) {
-                    compose.wndRecipients.close();
+
+                // Replace kendoWindow with Bootstrap modal loaded via AJAX
+                $('#selectRecipientWindow').on('show.bs.modal', function () {
+                    var $body = $(this).find('.modal-body');
+                    if ($body.is(':empty')) {
+                        $body.load('/User/Department/RecipientsGrid', function () {
+                            // listen for selectRecipient events from the loaded content
+                        });
+                    }
                 });
+
+                $(document).on('selectRecipient', function (e, data) {
+                    $('#selectRecipientWindow').modal('hide');
+                });
+
+                function initSelect2(selector, placeholder, url) {
+                    $(selector).select2({
+                        placeholder: placeholder,
+                        allowClear: true,
+                        multiple: true,
+                        ajax: {
+                            url: url,
+                            dataType: 'json',
+                            processResults: function (data) {
+                                return {
+                                    results: $.map(data, function (item) {
+                                        return { id: item.Id, text: item.Name };
+                                    })
+                                };
+                            }
+                        }
+                    });
+                }
+
                 $('#SendToAll').change(function () {
-                    if (this.checked) {
-                        $('#SendToMatchOnly').prop('checked', false);
-                        $('#SendToMatchOnly').prop('disabled', true);
-                        $('#groups').data("kendoMultiSelect").enable(false);
-                        $('#roles').data("kendoMultiSelect").enable(false);
-                        $('#users').data("kendoMultiSelect").enable(false);
-                    }
-                    else {
-                        $('#SendToMatchOnly').prop('disabled', false);
-                        $('#groups').data("kendoMultiSelect").enable(true);
-                        $('#roles').data("kendoMultiSelect").enable(true);
-                        $('#users').data("kendoMultiSelect").enable(true);
-                    }
+                    var disable = this.checked;
+                    $('#SendToMatchOnly').prop('checked', false).prop('disabled', disable);
+                    $('#groups, #roles, #users').prop('disabled', disable).trigger('change.select2');
                 });
+
                 $('#SendToMatchOnly').change(function () {
-                    if (this.checked) {
-                        $('#SendToAll').prop('checked', false);
-                        $('#SendToAll').prop('disabled', true);
-                        $('#groups').data("kendoMultiSelect").enable(true);
-                        $('#roles').data("kendoMultiSelect").enable(true);
-                        $('#users').data("kendoMultiSelect").enable(false);
-                    }
-                    else {
-                        $('#SendToAll').prop('disabled', false);
-                        $('#groups').data("kendoMultiSelect").enable(true);
-                        $('#roles').data("kendoMultiSelect").enable(true);
-                        $('#users').data("kendoMultiSelect").enable(true);
-                    }
+                    var checked = this.checked;
+                    $('#SendToAll').prop('checked', false).prop('disabled', checked);
+                    $('#groups, #roles').prop('disabled', false).trigger('change.select2');
+                    $('#users').prop('disabled', checked).trigger('change.select2');
                 });
-                $("#groups").kendoMultiSelect({
-                    placeholder: "Select groups...",
-                    dataTextField: "Name",
-                    dataValueField: "Id",
-                    autoBind: false,
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Department/GetRecipientsForGrid?filter=1'
-                        }
-                    }
-                });
-                $("#roles").kendoMultiSelect({
-                    placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "Id",
-                    autoBind: false,
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Department/GetRecipientsForGrid?filter=2'
-                        }
-                    }
-                });
-                $("#users").kendoMultiSelect({
-                    placeholder: "Select users...",
-                    dataTextField: "Name",
-                    dataValueField: "Id",
-                    autoBind: false,
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Department/GetRecipientsForGrid?filter=3&filterSelf=true'
-                        }
-                    }
-                });
-                $("#exludedShifts").kendoMultiSelect({
-                    placeholder: "Select shifts to exclude...",
-                    dataTextField: "Name",
-                    dataValueField: "Id",
-                    autoBind: false,
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Shifts/GetShiftsForDepartmentJson'
-                        }
-                    }
-                });
+
+                initSelect2('#groups', 'Select groups...', resgrid.absoluteBaseUrl + '/User/Department/GetRecipientsForGrid?filter=1');
+                initSelect2('#roles', 'Select roles...', resgrid.absoluteBaseUrl + '/User/Department/GetRecipientsForGrid?filter=2');
+                initSelect2('#users', 'Select users...', resgrid.absoluteBaseUrl + '/User/Department/GetRecipientsForGrid?filter=3&filterSelf=true');
+                initSelect2('#exludedShifts', 'Select shifts to exclude...', resgrid.absoluteBaseUrl + '/User/Shifts/GetShiftsForDepartmentJson');
+
                 $('#Message_ExpireOn').datetimepicker({ step: 15 });
-                $("#Message_ExpireOn").keypress(function (e) {
-                    e.preventDefault();
-                });
+                $("#Message_ExpireOn").keypress(function (e) { e.preventDefault(); });
             });
+
             function showRecipients() {
-                compose.wndRecipients.center().open();
+                $('#selectRecipientWindow').modal('show');
             }
             compose.showRecipients = showRecipients;
+
             function switchInputs(v) {
                 var value = $('#MessageType').val();
                 if (value) {
                     if (value == "Normal") {
                         $('#expiresBlock').hide();
                         $('#shiftsBlock').hide();
-                        var multiSelect = $('#exludedShifts').data("kendoMultiSelect");
-                        multiSelect.value([]);
+                        $('#exludedShifts').val(null).trigger('change');
                         $('#Message_ExpireOn').val('');
-                    }
-                    else if (value == "Callback") {
+                    } else if (value == "Callback") {
                         $('#expiresBlock').show();
                         $('#shiftsBlock').show();
-                    }
-                    else if (value == "Poll") {
+                    } else if (value == "Poll") {
                         $('#expiresBlock').show();
                         $('#shiftsBlock').hide();
                         $('#Message_ExpireOn').val('');
-                        var multiSelect = $('#exludedShifts').data("kendoMultiSelect");
-                        multiSelect.value([]);
+                        $('#exludedShifts').val(null).trigger('change');
                     }
                 }
             }

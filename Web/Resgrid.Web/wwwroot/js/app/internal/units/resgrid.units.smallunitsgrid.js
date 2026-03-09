@@ -1,64 +1,37 @@
-
 var resgrid;
 (function (resgrid) {
     var units;
     (function (units) {
         var smallunitsgrid;
         (function (smallunitsgrid) {
+            var unitsTable;
             $(document).ready(function () {
-                $("#smallUnitsGrid").kendoGrid({
-                    dataSource: {
-                        //type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Units/GetUnits'
-                        },
-                        schema: {
-                            model: {
-                                fields: {
-                                    UnitId: { type: "int" },
-                                    Name: { type: "string" },
-                                    Type: { type: "string" },
-                                    Station: { type: "string" }
-                                }
-                            }
-                        },
-                        pageSize: 6,
-                        serverPaging: false,
-                        serverFiltering: false,
-                        serverSorting: false
+                unitsTable = $("#smallUnitsGrid").DataTable({
+                    ajax: {
+                        url: resgrid.absoluteBaseUrl + '/User/Units/GetUnits',
+                        dataSrc: ''
                     },
-                    //height: 365,
-                    filterable: true,
-                    sortable: true,
-                    pageable: true,
-                    scrollable: true,
+                    pageLength: 6,
                     columns: [
+                        { data: 'Name', title: 'Name' },
+                        { data: 'Type', title: 'Type' },
+                        { data: 'Station', title: 'Station' },
                         {
-                            field: "Name",
-                            title: "Name",
-                            width: 150
-                        },
-                        {
-                            field: "Type",
-                            title: "Type",
-                            width: 150
-                        },
-                        {
-                            field: "Station",
-                            title: "Station",
-                            width: 150
-                        },
-                        {
-                            template: kendo.template($("#smallUnitRowActionColumnTemplate").html()),
-                            width: 125
+                            data: 'UnitId',
+                            title: 'Actions',
+                            orderable: false,
+                            searchable: false,
+                            render: function (data, type, row) {
+                                return '<a class="btn btn-sm btn-success" onclick="resgrid.units.smallunitsgrid.selectUnit(' + data + ', \'' + row.Name + '\');">Select Unit</a>';
+                            }
                         }
                     ]
                 });
             });
             function refreshGrid() {
-                var grid = $("#smallUnitsGrid").data("kendoGrid");
-                grid.dataSource.page(1);
-                grid.dataSource.read();
+                if (unitsTable) {
+                    unitsTable.ajax.reload();
+                }
             }
             smallunitsgrid.refreshGrid = refreshGrid;
             function selectUnit(unitId, unitName) {

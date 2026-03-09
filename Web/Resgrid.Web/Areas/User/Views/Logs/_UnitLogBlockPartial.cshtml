@@ -40,15 +40,15 @@
 			$('#unit_releasedtime_@Model.UnitId').datetimepicker({ step: 5 });
 			$('#unit_inquarterstime_@Model.UnitId').datetimepicker({ step: 5 });
 
-			$('#unit_personnel_@Model.UnitId').kendoMultiSelect({
+			$('#unit_personnel_@Model.UnitId').select2({
 				placeholder: "Select Personnel for @Model.UnitName ...",
-				dataTextField: "Name",
-				dataValueField: "UserId",
-				autoBind: false,
-				dataSource: {
-					type: "json",
-					transport: {
-						read: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForGridWithFilter'
+				allowClear: true,
+				multiple: true,
+				ajax: {
+					url: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForGridWithFilter',
+					dataType: 'json',
+					processResults: function (data) {
+						return { results: $.map(data, function (u) { return { id: u.UserId, text: u.Name }; }) };
 					}
 				}
 			});

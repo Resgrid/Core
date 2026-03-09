@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
@@ -322,7 +322,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Unit = await _unitsService.GetUnitByIdAsync(unitId);
 
 			if (!await _authorizationService.CanUserModifyUnitAsync(UserId, unitId))
-				Unauthorized();
+				return Unauthorized();
 
 			model.Types = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
 
@@ -351,7 +351,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
 
 			if (!await _authorizationService.CanUserModifyUnitAsync(UserId, model.Unit.UnitId))
-				Unauthorized();
+				return Unauthorized();
 
 			var unitCheck = await _unitsService.GetUnitByNameDepartmentIdAsync(DepartmentId, model.Unit.Name);
 			if (unitCheck != null && unitCheck.UnitId != model.Unit.UnitId)
@@ -440,7 +440,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> SetUnitState(int unitId, int stateType, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserViewUnitAsync(UserId, unitId))
-				Unauthorized();
+				return Unauthorized();
 
 			var unit = await _unitsService.GetUnitByIdAsync(unitId);
 
@@ -457,7 +457,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> SetUnitStateWithDest(int unitId, int stateType, int type, int destination, string note, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserViewUnitAsync(UserId, unitId))
-				Unauthorized();
+				return Unauthorized();
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			var unit = await _unitsService.GetUnitByIdAsync(unitId);
@@ -501,8 +501,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					var unit = await _unitsService.GetUnitByIdAsync(int.Parse(unitId));
 
-					if (await _authorizationService.CanUserViewUnitAsync(UserId, unit.UnitId))
-						Unauthorized();
+					if (!await _authorizationService.CanUserViewUnitAsync(UserId, unit.UnitId))
+						return Unauthorized();
 
 
 					var state = new UnitState();
@@ -542,7 +542,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					var unit = await _unitsService.GetUnitByIdAsync(int.Parse(unitId));
 
 					if (!await _authorizationService.CanUserViewUnitAsync(UserId, unit.UnitId))
-						Unauthorized();
+						return Unauthorized();
 
 					var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
@@ -572,7 +572,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> DeleteUnit(int unitId, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserModifyUnitAsync(UserId, unitId))
-				Unauthorized();
+				return Unauthorized();
 
 			var unit = await _unitsService.GetUnitByIdAsync(unitId);
 
@@ -600,10 +600,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var unit = await _unitsService.GetUnitByIdAsync(unitId);
 
 			if (unit == null)
-				Unauthorized();
+				return Unauthorized();
 
 			if (!await _authorizationService.CanUserViewUnitAsync(UserId, unitId))
-				Unauthorized();
+				return Unauthorized();
 
 			model.Log = new UnitLog();
 			model.Log.Timestamp = DateTime.UtcNow;
@@ -619,7 +619,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> AddLog(AddLogView model, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserViewUnitAsync(UserId, model.Log.UnitId))
-				Unauthorized();
+				return Unauthorized();
 
 			if (ModelState.IsValid)
 			{
@@ -637,14 +637,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> ViewLogs(int unitId)
 		{
 			if (!await _authorizationService.CanUserViewUnitAsync(UserId, unitId))
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new ViewLogsView();
 			model.Unit = await _unitsService.GetUnitByIdAsync(unitId);
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
 			if (model.Unit == null)
-				Unauthorized();
+				return Unauthorized();
 
 			model.Logs = await _unitsService.GetLogsForUnitAsync(model.Unit.UnitId);
 
@@ -656,7 +656,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> ViewEvents(int unitId)
 		{
 			if (!await _authorizationService.CanUserViewUnitAsync(UserId, unitId))
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new ViewLogsView();
 			model.Unit = await _unitsService.GetUnitByIdAsync(unitId);
@@ -826,7 +826,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var unitEvents = new List<UnitEventJson>();
 
 			if (!await _authorizationService.CanUserViewUnitAsync(UserId, unitId))
-				Unauthorized();
+				return Unauthorized();
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var events = await _unitsService.GetAllStatesForUnitAsync(unitId);
@@ -967,7 +967,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var group = await _departmentGroupsService.GetGroupByIdAsync(groupId);
 
 			if (group == null || group.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			var savedUnits = await _unitsService.GetAllUnitsForGroupAsync(groupId);
 
@@ -996,7 +996,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var group = await _departmentGroupsService.GetGroupByIdAsync(groupId);
 
 			if (group == null || group.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			var savedUnits = await _unitsService.GetAllUnitsForGroupAsync(groupId);
 
@@ -1189,7 +1189,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			string buttonHtml = string.Empty;
 
 			if (!await _authorizationService.CanUserViewUnitAsync(UserId, unitId))
-				Unauthorized();
+				return Unauthorized();
 
 			var unit = await _unitsService.GetUnitByIdAsync(unitId);
 			var type = await _unitsService.GetUnitTypeByNameAsync(DepartmentId, unit.Type);
@@ -1290,7 +1290,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				if (state.DetailType == (int)CustomStateDetailTypes.None)
 				{
-					
+
 				}
 				else if (state.DetailType == (int)CustomStateDetailTypes.Calls)
 				{
@@ -1336,7 +1336,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			string buttonHtml = string.Empty;
 
 			if (!await _authorizationService.CanUserViewUnitAsync(UserId, unitId))
-				Unauthorized();
+				return Unauthorized();
 
 			var unit = await _unitsService.GetUnitByIdAsync(unitId);
 			var type = await _unitsService.GetUnitTypeByNameAsync(DepartmentId, unit.Type);

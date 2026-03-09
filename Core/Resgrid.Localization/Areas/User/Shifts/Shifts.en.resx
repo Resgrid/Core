@@ -144,4 +144,493 @@
   <data name="ViewStaticShiftDayHeader" xml:space="preserve">
     <value>View Static Shift Day</value>
   </data>
+  <!-- Index -->
+  <data name="ShiftsHeader" xml:space="preserve">
+    <value>Shifts</value>
+  </data>
+  <data name="YourShiftsButton" xml:space="preserve">
+    <value>Your Shifts</value>
+  </data>
+  <data name="ShiftStaffingButton" xml:space="preserve">
+    <value>Shift Staffing</value>
+  </data>
+  <data name="RecurringGroupShifts" xml:space="preserve">
+    <value>Recurring Group Shifts</value>
+  </data>
+  <data name="AddRecurringGroupShift" xml:space="preserve">
+    <value>Add Recurring Group Shift</value>
+  </data>
+  <data name="NameColumn" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="TypeColumn" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="ScheduleColumn" xml:space="preserve">
+    <value>Schedule</value>
+  </data>
+  <data name="GroupsColumn" xml:space="preserve">
+    <value>Groups</value>
+  </data>
+  <data name="PersonnelColumn" xml:space="preserve">
+    <value>Personnel</value>
+  </data>
+  <data name="AssignedType" xml:space="preserve">
+    <value>Assigned</value>
+  </data>
+  <data name="SignupType" xml:space="preserve">
+    <value>Signup</value>
+  </data>
+  <data name="ManualSchedule" xml:space="preserve">
+    <value>Manual</value>
+  </data>
+  <data name="CustomSchedule" xml:space="preserve">
+    <value>Custom</value>
+  </data>
+  <data name="Schedule48_96" xml:space="preserve">
+    <value>48 on 96 off</value>
+  </data>
+  <data name="Schedule24_48" xml:space="preserve">
+    <value>24 on 48 off</value>
+  </data>
+  <data name="Schedule24_72" xml:space="preserve">
+    <value>24 on 72 off</value>
+  </data>
+  <data name="ViewCalendarButton" xml:space="preserve">
+    <value>View Calendar</value>
+  </data>
+  <data name="EditDetailsButton" xml:space="preserve">
+    <value>Edit Details</value>
+  </data>
+  <data name="EditCalendarButton" xml:space="preserve">
+    <value>Edit Calendar</value>
+  </data>
+  <data name="EditGroupsButton" xml:space="preserve">
+    <value>Edit Groups</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="DeleteShiftWarning" xml:space="preserve">
+    <value>WARNING: This will permanently delete this shift. Are you sure you want to delete the shift</value>
+  </data>
+  <data name="CalendarSectionHeader" xml:space="preserve">
+    <value>Calendar</value>
+  </data>
+  <data name="AddStaticShift" xml:space="preserve">
+    <value>Add Static Shift</value>
+  </data>
+  <!-- NewShift -->
+  <data name="NewShiftHeader" xml:space="preserve">
+    <value>New Shift</value>
+  </data>
+  <data name="NewShiftWizardIntro" xml:space="preserve">
+    <value>Welcome to the new Shift wizard. This wizard will guide you through creating a new shift for your department. Below specify your shifts name, code and optional shift color. To continue click the "Next" button in the lower right hand corner.</value>
+  </data>
+  <data name="NameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="NamePlaceholder" xml:space="preserve">
+    <value>Name of the Shift</value>
+  </data>
+  <data name="NameHelp" xml:space="preserve">
+    <value>For example ("A Shift", "B Shift", "C Shift")</value>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="CodeHelp" xml:space="preserve">
+    <value>Example ("A", "B", "C")</value>
+  </data>
+  <data name="AssignmentTypeLabel" xml:space="preserve">
+    <value>Assignment Type</value>
+  </data>
+  <data name="AssignmentTypeHelp" xml:space="preserve">
+    <value>For assigned you specify the personnel for the shift, for signup the personnel will assign themselves</value>
+  </data>
+  <data name="ColorLabel" xml:space="preserve">
+    <value>Color</value>
+  </data>
+  <data name="ScheduleTabIntro" xml:space="preserve">
+    <value>Below is where you specify which days the shift will on duty and the start time of shift for the first day. If your shift is contiguous the start time will be for the first shift day (i.e. Day 1 of a 48hour block).</value>
+  </data>
+  <data name="StartTimeLabel" xml:space="preserve">
+    <value>Start Time</value>
+  </data>
+  <data name="StartTimeHelp" xml:space="preserve">
+    <value>When does the shift start for the first day (or only day)</value>
+  </data>
+  <data name="EndTimeLabel" xml:space="preserve">
+    <value>End Time</value>
+  </data>
+  <data name="EndTimeHelp" xml:space="preserve">
+    <value>When does the shift end for the last day (or only day)</value>
+  </data>
+  <data name="SlotsTabIntro" xml:space="preserve">
+    <value>Here you can configure the required roles for each group in your department for the shift. Click the "Add group to shift" button to add a group to the shift, your shift can have many groups both station and orginizational. After you select the group (with the left hand drop down) you can click the "Add role to Group" button to add the required roles for the group.</value>
+  </data>
+  <data name="ShiftGroupColumn" xml:space="preserve">
+    <value>Shift Group</value>
+  </data>
+  <data name="ShiftRolesColumn" xml:space="preserve">
+    <value>Shift Roles</value>
+  </data>
+  <data name="AddGroupToShift" xml:space="preserve">
+    <value>Add Group to Shift</value>
+  </data>
+  <data name="PersonnelTabIntro" xml:space="preserve">
+    <value>Now select the personnel that are working in this shift for your department. These personnel will dynamically fill the group role slot based upon what group they are in if shift group roles were supplied.</value>
+  </data>
+  <data name="NonGroupPersonnelLabel" xml:space="preserve">
+    <value>Non-Group Personnel</value>
+  </data>
+  <data name="NonGroupPersonnelHelp" xml:space="preserve">
+    <value>Personnel assigned to the shift but not directly assigned to a station or organizational group (i.e. floaters or stand-bys)</value>
+  </data>
+  <data name="FinishTabIntro" xml:space="preserve">
+    <value>Click the finish button below to create your new shift. If you need to add more days, or change any details you can always edit the shift later from the Shifts list page.</value>
+  </data>
+  <data name="WizardStart" xml:space="preserve">
+    <value>Start &gt;</value>
+  </data>
+  <data name="WizardSchedule" xml:space="preserve">
+    <value>Schedule &gt;</value>
+  </data>
+  <data name="WizardSlots" xml:space="preserve">
+    <value>Slots &gt;</value>
+  </data>
+  <data name="WizardPersonnel" xml:space="preserve">
+    <value>Personnel &gt;</value>
+  </data>
+  <data name="WizardFinish" xml:space="preserve">
+    <value>Finish</value>
+  </data>
+  <data name="WizardFirst" xml:space="preserve">
+    <value>First</value>
+  </data>
+  <data name="WizardPrevious" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="WizardNext" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="ShiftNameRequired" xml:space="preserve">
+    <value>Shift Name is required</value>
+  </data>
+  <data name="ShiftCodeRequired" xml:space="preserve">
+    <value>Shift Code is required</value>
+  </data>
+  <data name="ShiftStartTimeRequired" xml:space="preserve">
+    <value>Shift start time is required.</value>
+  </data>
+  <!-- EditShiftDetails -->
+  <data name="EditShiftDetailsHeader" xml:space="preserve">
+    <value>Edit Shift Details</value>
+  </data>
+  <data name="CodePlaceholder" xml:space="preserve">
+    <value>Shift Code</value>
+  </data>
+  <data name="NonGroupPersonnelHelpEdit" xml:space="preserve">
+    <value>Personnel that are part of a shift but are not assigned to a group (i.e. floaters or roaming personnel)</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="UpdateShiftButton" xml:space="preserve">
+    <value>Update Shift</value>
+  </data>
+  <!-- EditShiftDays -->
+  <data name="EditShiftCalendarHeader" xml:space="preserve">
+    <value>Edit Shift Calendar</value>
+  </data>
+  <data name="UpdateShiftDaysButton" xml:space="preserve">
+    <value>Update Shift Days</value>
+  </data>
+  <!-- EditShiftGroups -->
+  <data name="EditShiftGroupsHeader" xml:space="preserve">
+    <value>Edit Shift Groups</value>
+  </data>
+  <data name="SaveShiftGroupsButton" xml:space="preserve">
+    <value>Save Shift Groups</value>
+  </data>
+  <!-- ShiftCalendar -->
+  <data name="CalendarSuffix" xml:space="preserve">
+    <value>Calendar</value>
+  </data>
+  <!-- ShiftStaffing -->
+  <data name="ShiftStaffingHeader" xml:space="preserve">
+    <value>Shift Staffing</value>
+  </data>
+  <data name="ShiftLabel" xml:space="preserve">
+    <value>Shift</value>
+  </data>
+  <data name="ShiftSelectHelp" xml:space="preserve">
+    <value>Select the shift to process staffing for. You will only see shifts you have access to (are the Group Admin of, or Department Admin)</value>
+  </data>
+  <data name="ShiftDayLabel" xml:space="preserve">
+    <value>Shift Day</value>
+  </data>
+  <data name="ShiftDayHelp" xml:space="preserve">
+    <value>Select the day to process the staffing for.</value>
+  </data>
+  <data name="NoteLabel" xml:space="preserve">
+    <value>Note</value>
+  </data>
+  <data name="NotePlaceholder" xml:space="preserve">
+    <value>Enter a freehand note for the shift (i.e. personnel staffing, switches mid-shift, etc)</value>
+  </data>
+  <data name="AssignmentsLabel" xml:space="preserve">
+    <value>Assignments</value>
+  </data>
+  <data name="UnitsLabel" xml:space="preserve">
+    <value>Units</value>
+  </data>
+  <data name="SetShiftDayStaffingButton" xml:space="preserve">
+    <value>Set Shift Day Staffing</value>
+  </data>
+  <data name="SelectNonGroupPersonnel" xml:space="preserve">
+    <value>Select Non-Group Personnel...</value>
+  </data>
+  <data name="SelectPersonnelForGroup" xml:space="preserve">
+    <value>Select Personnel for Group...</value>
+  </data>
+  <data name="SelectPerson" xml:space="preserve">
+    <value>Select Person...</value>
+  </data>
+  <data name="NonGroupPersonnelStaffing" xml:space="preserve">
+    <value>Non - Group Personnel</value>
+  </data>
+  <!-- YourShifts -->
+  <data name="YourShiftsHeader" xml:space="preserve">
+    <value>Your Shifts</value>
+  </data>
+  <data name="ShiftColumn" xml:space="preserve">
+    <value>Shift</value>
+  </data>
+  <data name="GroupColumn" xml:space="preserve">
+    <value>Group</value>
+  </data>
+  <data name="DayColumn" xml:space="preserve">
+    <value>Day</value>
+  </data>
+  <data name="ApprovedColumn" xml:space="preserve">
+    <value>Approved</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="TimestampColumn" xml:space="preserve">
+    <value>Timestamp</value>
+  </data>
+  <data name="ApprovedNo" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="ApprovedYes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="TradeComplete" xml:space="preserve">
+    <value>Trade Complete</value>
+  </data>
+  <data name="TradeInProgress" xml:space="preserve">
+    <value>Trade In Progress</value>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="For" xml:space="preserve">
+    <value>for</value>
+  </data>
+  <data name="DeclineShiftDayWarning" xml:space="preserve">
+    <value>WARNING: This will remove yourself from this shift. Are you sure you want to decline the shift</value>
+  </data>
+  <data name="DeclineShiftDay" xml:space="preserve">
+    <value>Decline Shift Day</value>
+  </data>
+  <data name="RequestTrade" xml:space="preserve">
+    <value>Request Trade</value>
+  </data>
+  <data name="FinishTrade" xml:space="preserve">
+    <value>Finish Trade</value>
+  </data>
+  <data name="YourPendingTrades" xml:space="preserve">
+    <value>Your Pending Trades</value>
+  </data>
+  <data name="TimeColumn" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="ProcessTradeRequest" xml:space="preserve">
+    <value>Process Trade Request</value>
+  </data>
+  <data name="Declined" xml:space="preserve">
+    <value>Declined</value>
+  </data>
+  <data name="Accepted" xml:space="preserve">
+    <value>Accepted</value>
+  </data>
+  <data name="Filled" xml:space="preserve">
+    <value>Filled</value>
+  </data>
+  <data name="TradeOffered" xml:space="preserve">
+    <value>Trade Offered</value>
+  </data>
+  <!-- ViewShift / Signup -->
+  <data name="ViewShiftHeader" xml:space="preserve">
+    <value>View Shift</value>
+  </data>
+  <data name="ShiftStart" xml:space="preserve">
+    <value>Shift Start</value>
+  </data>
+  <data name="ShiftDayDetail" xml:space="preserve">
+    <value>Shift Day Detail</value>
+  </data>
+  <data name="TypeLabel" xml:space="preserve">
+    <value>Type:</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Status:</value>
+  </data>
+  <data name="StartLabel" xml:space="preserve">
+    <value>Start:</value>
+  </data>
+  <data name="EndLabel" xml:space="preserve">
+    <value>End:</value>
+  </data>
+  <data name="Upcoming" xml:space="preserve">
+    <value>Upcoming</value>
+  </data>
+  <data name="Completed" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="NoEndTime" xml:space="preserve">
+    <value>No End Time</value>
+  </data>
+  <data name="GroupsSectionHeader" xml:space="preserve">
+    <value>Groups</value>
+  </data>
+  <data name="RoleColumn" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="RequiredColumn" xml:space="preserve">
+    <value>Required</value>
+  </data>
+  <data name="OptionalColumn" xml:space="preserve">
+    <value>Optional</value>
+  </data>
+  <data name="NeededColumn" xml:space="preserve">
+    <value>Needed</value>
+  </data>
+  <data name="SignupsSectionHeader" xml:space="preserve">
+    <value>Signups</value>
+  </data>
+  <data name="RolesColumn" xml:space="preserve">
+    <value>Roles</value>
+  </data>
+  <data name="TradesSectionHeader" xml:space="preserve">
+    <value>Trades</value>
+  </data>
+  <data name="TradeColumn" xml:space="preserve">
+    <value>Trade</value>
+  </data>
+  <data name="TradedWithFormat" xml:space="preserve">
+    <value>{0} traded with {1}</value>
+  </data>
+  <!-- Signup -->
+  <data name="ShiftSignupHeader" xml:space="preserve">
+    <value>Shift Signup</value>
+  </data>
+  <data name="DeleteShiftSignup" xml:space="preserve">
+    <value>Delete Shift Signup</value>
+  </data>
+  <data name="SignupForShiftWith" xml:space="preserve">
+    <value>Signup for Shift with</value>
+  </data>
+  <!-- SignupSuccess -->
+  <data name="ShiftSignupSuccessHeader" xml:space="preserve">
+    <value>Shift Signup Success</value>
+  </data>
+  <data name="SignupSuccessMessage" xml:space="preserve">
+    <value>You have successfully signed up for this shift day. If you want to signup for more days of the shift you need to signup for each individual day.</value>
+  </data>
+  <data name="StartsAtEndsAt" xml:space="preserve">
+    <value>Starts at {0} and Ends at {1}</value>
+  </data>
+  <data name="StartsAt" xml:space="preserve">
+    <value>Starts at {0}</value>
+  </data>
+  <!-- RequestTrade -->
+  <data name="RequestTradeHeader" xml:space="preserve">
+    <value>Request Trade</value>
+  </data>
+  <data name="UsersToRequestLabel" xml:space="preserve">
+    <value>Users to Request</value>
+  </data>
+  <data name="UsersToRequestHelp" xml:space="preserve">
+    <value>Click inside the input to select to request trade for (only users who meet the shift role needs are shown)</value>
+  </data>
+  <data name="SubmitTradeRequest" xml:space="preserve">
+    <value>Submit Trade Request</value>
+  </data>
+  <!-- ProcessTrade -->
+  <data name="ProcessTradeHeader" xml:space="preserve">
+    <value>Process Trade Request</value>
+  </data>
+  <data name="DatesToTradeLabel" xml:space="preserve">
+    <value>Dates to Trade</value>
+  </data>
+  <data name="DatesToTradeHelp" xml:space="preserve">
+    <value>Click inside the input to select the shifts you are already on to complete the trade for. If you don't specify any day it's an unbalanced trade.</value>
+  </data>
+  <data name="NoteTradePlaceholder" xml:space="preserve">
+    <value>A note or FYI for this trade</value>
+  </data>
+  <data name="RejectTradeRequest" xml:space="preserve">
+    <value>Reject Trade Request</value>
+  </data>
+  <data name="RejectTradeConfirm" xml:space="preserve">
+    <value>You sure you want to decline this trade request?</value>
+  </data>
+  <data name="ProposeTradeRequest" xml:space="preserve">
+    <value>Propose Trade Request</value>
+  </data>
+  <data name="StartsAtLabel" xml:space="preserve">
+    <value>Starts at</value>
+  </data>
+  <!-- FinishTrade -->
+  <data name="FinalizeTradeHeader" xml:space="preserve">
+    <value>Finalize Trade</value>
+  </data>
+  <data name="DateColumn" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="NoneValue" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="FinalizeTradeButton" xml:space="preserve">
+    <value>Finalize Trade</value>
+  </data>
+  <!-- JS strings -->
+  <data name="ShiftRoleColumn" xml:space="preserve">
+    <value>Shift Role</value>
+  </data>
+  <data name="RolesCountColumn" xml:space="preserve">
+    <value>Roles Count</value>
+  </data>
+  <data name="AddRoleToGroup" xml:space="preserve">
+    <value>Add Role to Group</value>
+  </data>
+  <data name="AddShiftRolesToGroup" xml:space="preserve">
+    <value>Add Shift Roles to Group</value>
+  </data>
+  <data name="RemoveGroup" xml:space="preserve">
+    <value>Remove Group</value>
+  </data>
+  <data name="RemoveRole" xml:space="preserve">
+    <value>Remove Role</value>
+  </data>
+  <data name="RemoveRoleFromGroup" xml:space="preserve">
+    <value>Remove this role from the group</value>
+  </data>
+  <data name="RoleCountRequired" xml:space="preserve">
+    <value>Role count is required</value>
+  </data>
 </root>

@@ -1,5 +1,4 @@
-﻿using Amazon.SimpleEmail.Model;
-using Resgrid.Model;
+﻿using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
@@ -185,11 +184,22 @@ namespace Resgrid.Services
 		public async Task<ActionLog> SaveActionLogAsync(ActionLog actionLog, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			actionLog.Timestamp = actionLog.Timestamp.ToUniversalTime();
+
 			var saved = await _actionLogsRepository.SaveOrUpdateAsync(actionLog, cancellationToken, true);
 
 			//InvalidateActionLogs(actionLog.DepartmentId);
-			
-			_eventAggregator.SendMessage<UserStatusEvent>(new UserStatusEvent() { Status = actionLog });
+
+			// Look up the predecessor using the persisted ActionLogId so new records (ActionLogId==0 before save) find real predecessors
+			ActionLog previousStatus = null;
+			if (!string.IsNullOrWhiteSpace(saved.UserId))
+				previousStatus = await _actionLogsRepository.GetPreviousActionLogAsync(saved.UserId, saved.ActionLogId);
+
+			_eventAggregator.SendMessage<UserStatusEvent>(new UserStatusEvent()
+			{
+				DepartmentId   = saved.DepartmentId,
+				Status         = saved,
+				PreviousStatus = previousStatus
+			});
 
 			return actionLog;
 		}
@@ -203,7 +213,18 @@ namespace Resgrid.Services
 				foreach (var actionLog in actionLogs)
 				{
 					var saved = await _actionLogsRepository.SaveOrUpdateAsync(actionLog, cancellationToken);
-					_eventAggregator.SendMessage<UserStatusEvent>(new UserStatusEvent() {Status = saved});
+
+					// Look up the predecessor using the persisted ActionLogId so new records (ActionLogId==0 before save) find real predecessors
+					ActionLog previousStatus = null;
+					if (!string.IsNullOrWhiteSpace(saved.UserId))
+						previousStatus = await _actionLogsRepository.GetPreviousActionLogAsync(saved.UserId, saved.ActionLogId);
+
+					_eventAggregator.SendMessage<UserStatusEvent>(new UserStatusEvent()
+					{
+						DepartmentId   = saved.DepartmentId,
+						Status         = saved,
+						PreviousStatus = previousStatus
+					});
 				}
 
 				InvalidateActionLogs(actionLogs[0].DepartmentId);
@@ -361,7 +382,7 @@ namespace Resgrid.Services
 				{
 					await _actionLogsRepository.DeleteAsync(log, cancellationToken);
 				}
-				
+
 				return true;
 			}
 
@@ -378,7 +399,7 @@ namespace Resgrid.Services
 				{
 					await _actionLogsRepository.DeleteAsync(log, cancellationToken);
 				}
-				
+
 				return true;
 			}
 

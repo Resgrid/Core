@@ -5,6 +5,37 @@ var resgrid;
     (function (security) {
         var permissions;
         (function (permissions) {
+            function initPermRoles(selector, permType) {
+                $(selector).select2({
+                    placeholder: "Select roles...",
+                    allowClear: true,
+                    multiple: true,
+                    ajax: {
+                        url: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles',
+                        dataType: 'json',
+                        processResults: function (data) {
+                            return { results: $.map(data, function (i) { return { id: i.RoleId, text: i.Name }; }) };
+                        }
+                    }
+                });
+                $(selector).on('change', function () {
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=' + permType + '&data=' + encodeURIComponent(($(selector).val() || []).join(',')),
+                        type: 'GET'
+                    });
+                });
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=' + permType,
+                    contentType: 'application/json', type: 'GET'
+                }).done(function (data) {
+                    if (data) {
+                        data.split(',').forEach(function (v) {
+                            if (v) { $(selector).append(new Option(v, v, true, true)); }
+                        });
+                        $(selector).trigger('change');
+                    }
+                });
+            }
             $(document).ready(function () {
                 resgrid.common.analytics.track('Security Permissions');
                 $('#AddUsers').change(function () {
@@ -39,35 +70,7 @@ var resgrid;
                     }).done(function (results) {
                     });
                 });
-                $("#callCreateRoles").kendoMultiSelect({
-                    placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "RoleId",
-                    change: function () {
-                        var multiSelect = $("#callCreateRoles").data("kendoMultiSelect");
-                        $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=2&data=' + encodeURIComponent(multiSelect.value()),
-                            type: 'GET'
-                        }).done(function (results) {
-                        });
-                    },
-                    autoBind: false,
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
-                        }
-                    }
-                });
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=2',
-                    contentType: 'application/json',
-                    type: 'GET'
-                }).done(function (data) {
-                    if (data) {
-                        var multiSelect = $("#callCreateRoles").data("kendoMultiSelect");
-                        multiSelect.value(data.split(","));
-                    }
-                });
+                initPermRoles("#callCreateRoles", 2);
                 if ($("#CreateCall").val() === "2") {
                     $('#callCreateNoRolesSpan').hide();
                     $('#callCreateRolesDiv').show();
@@ -100,35 +103,7 @@ var resgrid;
                     $('#trainingCreateNoRolesSpan').show();
                     $('#trainingCreateRolesDiv').hide();
                 }
-                $("#trainingCreateRoles").kendoMultiSelect({
-                    placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "RoleId",
-                    change: function () {
-                        var multiSelect = $("#trainingCreateRoles").data("kendoMultiSelect");
-                        $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=3&data=' + encodeURIComponent(multiSelect.value()),
-                            type: 'GET'
-                        }).done(function (results) {
-                        });
-                    },
-                    autoBind: false,
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
-                        }
-                    }
-                });
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=3',
-                    contentType: 'application/json',
-                    type: 'GET'
-                }).done(function (data) {
-                    if (data) {
-                        var multiSelect = $("#trainingCreateRoles").data("kendoMultiSelect");
-                        multiSelect.value(data.split(","));
-                    }
-                });
+                initPermRoles("#trainingCreateRoles", 3);
                 $('#CreateDocument').change(function () {
                     var val = this.value;
                     $.ajax({
@@ -153,35 +128,7 @@ var resgrid;
                     $('#documentCreateNoRolesSpan').show();
                     $('#documentCreateRolesDiv').hide();
                 }
-                $("#documentCreateRoles").kendoMultiSelect({
-                    placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "RoleId",
-                    change: function () {
-                        var multiSelect = $("#documentCreateRoles").data("kendoMultiSelect");
-                        $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=4&data=' + encodeURIComponent(multiSelect.value()),
-                            type: 'GET'
-                        }).done(function (results) {
-                        });
-                    },
-                    autoBind: false,
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
-                        }
-                    }
-                });
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=4',
-                    contentType: 'application/json',
-                    type: 'GET'
-                }).done(function (data) {
-                    if (data) {
-                        var multiSelect = $("#documentCreateRoles").data("kendoMultiSelect");
-                        multiSelect.value(data.split(","));
-                    }
-                });
+                initPermRoles("#documentCreateRoles", 4);
                 $('#CreateCalendarEntry').change(function () {
                     var val = this.value;
                     $.ajax({
@@ -206,35 +153,7 @@ var resgrid;
                     $('#calendarEntriesCreateNoRolesSpan').show();
                     $('#calendarEntriesCreateRolesDiv').hide();
                 }
-                $("#calendarEntiresCreateRoles").kendoMultiSelect({
-                    placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "RoleId",
-                    change: function () {
-                        var multiSelect = $("#calendarEntiresCreateRoles").data("kendoMultiSelect");
-                        $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=5&data=' + encodeURIComponent(multiSelect.value()),
-                            type: 'GET'
-                        }).done(function (results) {
-                        });
-                    },
-                    autoBind: false,
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
-                        }
-                    }
-                });
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=5',
-                    contentType: 'application/json',
-                    type: 'GET'
-                }).done(function (data) {
-                    if (data) {
-                        var multiSelect = $("#calendarEntiresCreateRoles").data("kendoMultiSelect");
-                        multiSelect.value(data.split(","));
-                    }
-                });
+                initPermRoles("#calendarEntiresCreateRoles", 5);
                 $('#CreateNote').change(function () {
                     var val = this.value;
                     $.ajax({
@@ -259,35 +178,7 @@ var resgrid;
                     $('#noteCreateNoRolesSpan').show();
                     $('#noteCreateRolesDiv').hide();
                 }
-                $("#noteCreateRoles").kendoMultiSelect({
-                    placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "RoleId",
-                    change: function () {
-                        var multiSelect = $("#noteCreateRoles").data("kendoMultiSelect");
-                        $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=6&data=' + encodeURIComponent(multiSelect.value()),
-                            type: 'GET'
-                        }).done(function (results) {
-                        });
-                    },
-                    autoBind: false,
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
-                        }
-                    }
-                });
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=6',
-                    contentType: 'application/json',
-                    type: 'GET'
-                }).done(function (data) {
-                    if (data) {
-                        var multiSelect = $("#noteCreateRoles").data("kendoMultiSelect");
-                        multiSelect.value(data.split(","));
-                    }
-                });
+                initPermRoles("#noteCreateRoles", 6);
                 $('#CreateLog').change(function () {
                     var val = this.value;
                     $.ajax({
@@ -312,35 +203,7 @@ var resgrid;
                     $('#logCreateNoRolesSpan').show();
                     $('#logCreateRolesDiv').hide();
                 }
-                $("#logCreateRoles").kendoMultiSelect({
-                    placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "RoleId",
-                    change: function () {
-                        var multiSelect = $("#logCreateRoles").data("kendoMultiSelect");
-                        $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=7&data=' + encodeURIComponent(multiSelect.value()),
-                            type: 'GET'
-                        }).done(function (results) {
-                        });
-                    },
-                    autoBind: false,
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
-                        }
-                    }
-                });
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=7',
-                    contentType: 'application/json',
-                    type: 'GET'
-                }).done(function (data) {
-                    if (data) {
-                        var multiSelect = $("#logCreateRoles").data("kendoMultiSelect");
-                        multiSelect.value(data.split(","));
-                    }
-                });
+                initPermRoles("#logCreateRoles", 7);
                 $('#CreateShift').change(function () {
                     var val = this.value;
                     $.ajax({
@@ -365,35 +228,7 @@ var resgrid;
                     $('#shiftCreateNoRolesSpan').show();
                     $('#shiftCreateRolesDiv').hide();
                 }
-                $("#shiftCreateRoles").kendoMultiSelect({
-                    placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "RoleId",
-                    change: function () {
-                        var multiSelect = $("#shiftCreateRoles").data("kendoMultiSelect");
-                        $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=8&data=' + encodeURIComponent(multiSelect.value()),
-                            type: 'GET'
-                        }).done(function (results) {
-                        });
-                    },
-                    autoBind: false,
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
-                        }
-                    }
-                });
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=8',
-                    contentType: 'application/json',
-                    type: 'GET'
-                }).done(function (data) {
-                    if (data) {
-                        var multiSelect = $("#shiftCreateRoles").data("kendoMultiSelect");
-                        multiSelect.value(data.split(","));
-                    }
-                });
+                initPermRoles("#shiftCreateRoles", 8);
                 $('#ViewPersonalInfo').change(function () {
                     var val = this.value;
                     $.ajax({
@@ -418,35 +253,7 @@ var resgrid;
                     $('#personalInfooRolesSpan').show();
                     $('#personalInfoRolesDiv').hide();
                 }
-                $("#personalInfoRoles").kendoMultiSelect({
-                    placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "RoleId",
-                    change: function () {
-                        var multiSelect = $("#personalInfoRoles").data("kendoMultiSelect");
-                        $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=9&data=' + encodeURIComponent(multiSelect.value()),
-                            type: 'GET'
-                        }).done(function (results) {
-                        });
-                    },
-                    autoBind: false,
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
-                        }
-                    }
-                });
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=9',
-                    contentType: 'application/json',
-                    type: 'GET'
-                }).done(function (data) {
-                    if (data) {
-                        var multiSelect = $("#personalInfoRoles").data("kendoMultiSelect");
-                        multiSelect.value(data.split(","));
-                    }
-                });
+                initPermRoles("#personalInfoRoles", 9);
                 $('#AdjustInventory').change(function () {
                     var val = this.value;
                     $.ajax({
@@ -471,35 +278,7 @@ var resgrid;
                     $('#adjustInventoryRolesSpan').show();
                     $('#adjustInventoryRolesDiv').hide();
                 }
-                $("#adjustInventoryRoles").kendoMultiSelect({
-                    placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "RoleId",
-                    change: function () {
-                        var multiSelect = $("#adjustInventoryRoles").data("kendoMultiSelect");
-                        $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=10&data=' + encodeURIComponent(multiSelect.value()),
-                            type: 'GET'
-                        }).done(function (results) {
-                        });
-                    },
-                    autoBind: false,
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
-                        }
-                    }
-                });
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=10',
-                    contentType: 'application/json',
-                    type: 'GET'
-                }).done(function (data) {
-                    if (data) {
-                        var multiSelect = $("#adjustInventoryRoles").data("kendoMultiSelect");
-                        multiSelect.value(data.split(","));
-                    }
-                });
+                initPermRoles("#adjustInventoryRoles", 10);
                 $('#ViewPersonnelLocation').change(function () {
                     var val = this.value;
                     $.ajax({
@@ -524,35 +303,7 @@ var resgrid;
                     $('#viewPersonnelLocationRolesSpan').show();
                     $('#viewPersonnelLocationRolesDiv').hide();
                 }
-                $("#viewPersonnelLocationRoles").kendoMultiSelect({
-                    placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "RoleId",
-                    change: function () {
-                        var multiSelect = $("#viewPersonnelLocationRoles").data("kendoMultiSelect");
-                        $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=11&data=' + encodeURIComponent(multiSelect.value()) + '&lockToGroup=' + $('#LockViewPersonneLocationToGroup').is(':checked'),
-                            type: 'GET'
-                        }).done(function (results) {
-                        });
-                    },
-                    autoBind: false,
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
-                        }
-                    }
-                });
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=11',
-                    contentType: 'application/json',
-                    type: 'GET'
-                }).done(function (data) {
-                    if (data) {
-                        var multiSelect = $("#viewPersonnelLocationRoles").data("kendoMultiSelect");
-                        multiSelect.value(data.split(","));
-                    }
-                });
+                initPermRoles("#viewPersonnelLocationRoles", 11);
                 $('#LockViewPersonneLocationToGroup').change(function () {
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=11&perm=' + $('#ViewPersonnelLocation').val() + '&lockToGroup=' + $('#LockViewPersonneLocationToGroup').is(':checked'),
@@ -586,35 +337,7 @@ var resgrid;
                     $('#viewUnitLocationsRolesSpan').show();
                     $('#viewUnitLocationsRolesDiv').hide();
                 }
-                $("#viewUnitLocationsRoles").kendoMultiSelect({
-                    placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "RoleId",
-                    change: function () {
-                        var multiSelect = $("#viewUnitLocationsRoles").data("kendoMultiSelect");
-                        $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=12&data=' + encodeURIComponent(multiSelect.value()),
-                            type: 'GET'
-                        }).done(function (results) {
-                        });
-                    },
-                    autoBind: false,
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
-                        }
-                    }
-                });
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=12',
-                    contentType: 'application/json',
-                    type: 'GET'
-                }).done(function (data) {
-                    if (data) {
-                        var multiSelect = $("#viewUnitLocationsRoles").data("kendoMultiSelect");
-                        multiSelect.value(data.split(","));
-                    }
-                });
+                initPermRoles("#viewUnitLocationsRoles", 12);
                 $('#LockViewUnitLocationToGroup').change(function () {
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=12&perm=' + $('#ViewUnitLocation').val() + '&lockToGroup=' + $('#LockViewUnitLocationToGroup').is(':checked'),
@@ -650,45 +373,7 @@ var resgrid;
                     $('#createMessagesRolesDiv').hide();
                 }
 
-                $("#createMessagesRoles").kendoMultiSelect({
-                    placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "RoleId",
-                    change: function () {
-                        var multiSelect = $("#createMessagesRoles").data("kendoMultiSelect");
-                        $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=13&data=' + encodeURIComponent(multiSelect.value()),
-                            type: 'GET'
-                        }).done(function (results) {
-                        });
-                    },
-                    autoBind: false,
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
-                        }
-                    }
-                });
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=13',
-                    contentType: 'application/json',
-                    type: 'GET'
-                }).done(function (data) {
-                    if (data) {
-                        var multiSelect = $("#createMessagesRoles").data("kendoMultiSelect");
-                        multiSelect.value(data.split(","));
-                    }
-                });
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=13',
-                    contentType: 'application/json',
-                    type: 'GET'
-                }).done(function (data) {
-                    if (data) {
-                        var multiSelect = $("#createMessagesRoles").data("kendoMultiSelect");
-                        multiSelect.value(data.split(","));
-                    }
-                });
+                initPermRoles("#createMessagesRoles", 13);
                 ////////////////////////////////////////////////////////
 
                 // View Group Users
@@ -725,45 +410,7 @@ var resgrid;
                     });
                 });
 
-                $("#viewUsersRoles").kendoMultiSelect({
-                    placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "RoleId",
-                    change: function () {
-                        var multiSelect = $("#viewUsersRoles").data("kendoMultiSelect");
-                        $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=14&data=' + encodeURIComponent(multiSelect.value()),
-                            type: 'GET'
-                        }).done(function (results) {
-                        });
-                    },
-                    autoBind: false,
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
-                        }
-                    }
-                });
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=14',
-                    contentType: 'application/json',
-                    type: 'GET'
-                }).done(function (data) {
-                    if (data) {
-                        var multiSelect = $("#viewUsersRoles").data("kendoMultiSelect");
-                        multiSelect.value(data.split(","));
-                    }
-                });
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=14',
-                    contentType: 'application/json',
-                    type: 'GET'
-                }).done(function (data) {
-                    if (data) {
-                        var multiSelect = $("#viewUsersRoles").data("kendoMultiSelect");
-                        multiSelect.value(data.split(","));
-                    }
-                });
+                initPermRoles("#viewUsersRoles", 14);
                 ////////////////////////////////////////////////////////
 
                 // Delete Call
@@ -792,35 +439,7 @@ var resgrid;
                     $('#deleteCallsRolesSpan').show();
                     $('#deleteCallsRolesDiv').hide();
                 }
-                $("#deleteCallsRoles").kendoMultiSelect({
-                    placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "RoleId",
-                    change: function () {
-                        var multiSelect = $("#deleteCallsRoles").data("kendoMultiSelect");
-                        $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=15&data=' + encodeURIComponent(multiSelect.value()),
-                            type: 'GET'
-                        }).done(function (results) {
-                        });
-                    },
-                    autoBind: false,
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
-                        }
-                    }
-                });
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=15',
-                    contentType: 'application/json',
-                    type: 'GET'
-                }).done(function (data) {
-                    if (data) {
-                        var multiSelect = $("#deleteCallsRoles").data("kendoMultiSelect");
-                        multiSelect.value(data.split(","));
-                    }
-                });
+                initPermRoles("#deleteCallsRoles", 15);
                 $('#LockDeleteCallToGroup').change(function () {
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=15&perm=' + $('#DeleteCall').val() + '&lockToGroup=' + $('#LockDeleteCallToGroup').is(':checked'),
@@ -856,35 +475,7 @@ var resgrid;
                     $('#closeCallsRolesSpan').show();
                     $('#closeCallsRolesDiv').hide();
                 }
-                $("#closeCallsRoles").kendoMultiSelect({
-                    placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "RoleId",
-                    change: function () {
-                        var multiSelect = $("#closeCallsRoles").data("kendoMultiSelect");
-                        $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=16&data=' + encodeURIComponent(multiSelect.value()),
-                            type: 'GET'
-                        }).done(function (results) {
-                        });
-                    },
-                    autoBind: false,
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
-                        }
-                    }
-                });
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=16',
-                    contentType: 'application/json',
-                    type: 'GET'
-                }).done(function (data) {
-                    if (data) {
-                        var multiSelect = $("#closeCallsRoles").data("kendoMultiSelect");
-                        multiSelect.value(data.split(","));
-                    }
-                });
+                initPermRoles("#closeCallsRoles", 16);
                 $('#LockCloseCallToGroup').change(function () {
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=16&perm=' + $('#CloseCall').val() + '&lockToGroup=' + $('#LockCloseCallToGroup').is(':checked'),
@@ -920,35 +511,7 @@ var resgrid;
                     $('#addCallDataRolesSpan').show();
                     $('#addCallDataRolesDiv').hide();
                 }
-                $("#addCallDataRoles").kendoMultiSelect({
-                    placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "RoleId",
-                    change: function () {
-                        var multiSelect = $("#addCallDataRoles").data("kendoMultiSelect");
-                        $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=17&data=' + encodeURIComponent(multiSelect.value()),
-                            type: 'GET'
-                        }).done(function (results) {
-                        });
-                    },
-                    autoBind: false,
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
-                        }
-                    }
-                });
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=17',
-                    contentType: 'application/json',
-                    type: 'GET'
-                }).done(function (data) {
-                    if (data) {
-                        var multiSelect = $("#addCallDataRoles").data("kendoMultiSelect");
-                        multiSelect.value(data.split(","));
-                    }
-                });
+                initPermRoles("#addCallDataRoles", 17);
                 $('#LockAddCallDataToGroup').change(function () {
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=17&perm=' + $('#AddCallData').val() + '&lockToGroup=' + $('#LockAddCallDataToGroup').is(':checked'),
@@ -984,35 +547,7 @@ var resgrid;
                     $('#viewUnitsRolesSpan').show();
                     $('#viewUnitsRolesDiv').hide();
                 }
-                $("#viewUnitsRoles").kendoMultiSelect({
-                    placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "RoleId",
-                    change: function () {
-                        var multiSelect = $("#viewUnitsRoles").data("kendoMultiSelect");
-                        $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=18&data=' + encodeURIComponent(multiSelect.value()),
-                            type: 'GET'
-                        }).done(function (results) {
-                        });
-                    },
-                    autoBind: false,
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
-                        }
-                    }
-                });
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=18',
-                    contentType: 'application/json',
-                    type: 'GET'
-                }).done(function (data) {
-                    if (data) {
-                        var multiSelect = $("#viewUnitsRoles").data("kendoMultiSelect");
-                        multiSelect.value(data.split(","));
-                    }
-                });
+                initPermRoles("#viewUnitsRoles", 18);
                 $('#LockViewGroupsUnitsToGroup').change(function () {
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=18&perm=' + $('#ViewGroupsUnits').val() + '&lockToGroup=' + $('#LockViewGroupsUnitsToGroup').is(':checked'),
@@ -1049,35 +584,7 @@ var resgrid;
                     $('#viewContactsRolesSpan').show();
                     $('#viewContactsRolesDiv').hide();
                 }
-                $("#viewContactsRoles").kendoMultiSelect({
-                    placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "RoleId",
-                    change: function () {
-                        var multiSelect = $("#viewContactsRoles").data("kendoMultiSelect");
-                        $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=19&data=' + encodeURIComponent(multiSelect.value()),
-                            type: 'GET'
-                        }).done(function (results) {
-                        });
-                    },
-                    autoBind: false,
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
-                        }
-                    }
-                });
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=19',
-                    contentType: 'application/json',
-                    type: 'GET'
-                }).done(function (data) {
-                    if (data) {
-                        var multiSelect = $("#viewContactsRoles").data("kendoMultiSelect");
-                        multiSelect.value(data.split(","));
-                    }
-                });
+                initPermRoles("#viewContactsRoles", 19);
                 ////////////////////////////////////////////////////////
 
 
@@ -1107,35 +614,7 @@ var resgrid;
                     $('#editContactsRolesSpan').show();
                     $('#editContactsRolesDiv').hide();
                 }
-                $("#editContactsRoles").kendoMultiSelect({
-                    placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "RoleId",
-                    change: function () {
-                        var multiSelect = $("#editContactsRoles").data("kendoMultiSelect");
-                        $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=20&data=' + encodeURIComponent(multiSelect.value()),
-                            type: 'GET'
-                        }).done(function (results) {
-                        });
-                    },
-                    autoBind: false,
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
-                        }
-                    }
-                });
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=20',
-                    contentType: 'application/json',
-                    type: 'GET'
-                }).done(function (data) {
-                    if (data) {
-                        var multiSelect = $("#editContactsRoles").data("kendoMultiSelect");
-                        multiSelect.value(data.split(","));
-                    }
-                });
+                initPermRoles("#editContactsRoles", 20);
                 ////////////////////////////////////////////////////////
 
 
@@ -1165,35 +644,7 @@ var resgrid;
                     $('#deleteContactsRolesSpan').show();
                     $('#deleteContactsRolesDiv').hide();
                 }
-                $("#deleteContactsRoles").kendoMultiSelect({
-                    placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "RoleId",
-                    change: function () {
-                        var multiSelect = $("#deleteContactsRoles").data("kendoMultiSelect");
-                        $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=21&data=' + encodeURIComponent(multiSelect.value()),
-                            type: 'GET'
-                        }).done(function (results) {
-                        });
-                    },
-                    autoBind: false,
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
-                        }
-                    }
-                });
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=21',
-                    contentType: 'application/json',
-                    type: 'GET'
-                }).done(function (data) {
-                    if (data) {
-                        var multiSelect = $("#deleteContactsRoles").data("kendoMultiSelect");
-                        multiSelect.value(data.split(","));
-                    }
-                });
+                initPermRoles("#deleteContactsRoles", 21);
                 ////////////////////////////////////////////////////////
 
                 // Create/Edit Workflows
@@ -1219,34 +670,7 @@ var resgrid;
                     $('#workflowCreateNoRolesSpan').show();
                     $('#workflowCreateRolesDiv').hide();
                 }
-                $("#workflowCreateRoles").kendoMultiSelect({
-                    placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "RoleId",
-                    change: function () {
-                        var multiSelect = $("#workflowCreateRoles").data("kendoMultiSelect");
-                        $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=22&data=' + encodeURIComponent(multiSelect.value()),
-                            type: 'GET'
-                        }).done(function (results) { });
-                    },
-                    autoBind: false,
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
-                        }
-                    }
-                });
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=22',
-                    contentType: 'application/json',
-                    type: 'GET'
-                }).done(function (data) {
-                    if (data) {
-                        var multiSelect = $("#workflowCreateRoles").data("kendoMultiSelect");
-                        multiSelect.value(data.split(","));
-                    }
-                });
+                initPermRoles("#workflowCreateRoles", 22);
                 ////////////////////////////////////////////////////////
 
                 // Manage Workflow Credentials
@@ -1272,34 +696,7 @@ var resgrid;
                     $('#workflowCredentialsNoRolesSpan').show();
                     $('#workflowCredentialsRolesDiv').hide();
                 }
-                $("#workflowCredentialsRoles").kendoMultiSelect({
-                    placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "RoleId",
-                    change: function () {
-                        var multiSelect = $("#workflowCredentialsRoles").data("kendoMultiSelect");
-                        $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=23&data=' + encodeURIComponent(multiSelect.value()),
-                            type: 'GET'
-                        }).done(function (results) { });
-                    },
-                    autoBind: false,
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
-                        }
-                    }
-                });
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=23',
-                    contentType: 'application/json',
-                    type: 'GET'
-                }).done(function (data) {
-                    if (data) {
-                        var multiSelect = $("#workflowCredentialsRoles").data("kendoMultiSelect");
-                        multiSelect.value(data.split(","));
-                    }
-                });
+                initPermRoles("#workflowCredentialsRoles", 23);
                 ////////////////////////////////////////////////////////
 
                 // View Workflow Runs
@@ -1325,34 +722,7 @@ var resgrid;
                     $('#workflowRunsNoRolesSpan').show();
                     $('#workflowRunsRolesDiv').hide();
                 }
-                $("#workflowRunsRoles").kendoMultiSelect({
-                    placeholder: "Select roles...",
-                    dataTextField: "Name",
-                    dataValueField: "RoleId",
-                    change: function () {
-                        var multiSelect = $("#workflowRunsRoles").data("kendoMultiSelect");
-                        $.ajax({
-                            url: resgrid.absoluteBaseUrl + '/User/Security/SetPermissionData?type=24&data=' + encodeURIComponent(multiSelect.value()),
-                            type: 'GET'
-                        }).done(function (results) { });
-                    },
-                    autoBind: false,
-                    dataSource: {
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetRoles'
-                        }
-                    }
-                });
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Security/GetRolesForPermission?type=24',
-                    contentType: 'application/json',
-                    type: 'GET'
-                }).done(function (data) {
-                    if (data) {
-                        var multiSelect = $("#workflowRunsRoles").data("kendoMultiSelect");
-                        multiSelect.value(data.split(","));
-                    }
-                });
+                initPermRoles("#workflowRunsRoles", 24);
                 ////////////////////////////////////////////////////////
 
             });

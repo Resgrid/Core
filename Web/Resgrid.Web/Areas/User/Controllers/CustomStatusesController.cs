@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -153,7 +153,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var state = await _customStateService.GetCustomSateByIdAsync(id);
 
 			if (!await _authorizationService.CanUserModifyCustomStatusAsync(UserId, state.CustomStateId))
-				Unauthorized();
+				return Unauthorized();
 
 			var auditEvent = new AuditEvent();
 			auditEvent.DepartmentId = DepartmentId;
@@ -176,7 +176,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Edit(int id)
 		{
 			if (!await _authorizationService.CanUserModifyCustomStatusAsync(UserId, id))
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new EditStatusView();
 			model.State = await _customStateService.GetCustomSateByIdAsync(id);
@@ -189,7 +189,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> EditDetail(int stateDetailId)
 		{
 			if (!await _authorizationService.CanUserModifyCustomStateDetailAsync(UserId, stateDetailId))
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new EditDetailView();
 			model.Detail = await _customStateService.GetCustomDetailByIdAsync(stateDetailId);
@@ -213,7 +213,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> EditDetail(EditDetailView model, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserModifyCustomStateDetailAsync(UserId, model.Detail.CustomStateDetailId))
-				Unauthorized();
+				return Unauthorized();
 
 			model.DetailTypes = model.DetailType.ToSelectList();
 			model.NoteTypes = model.NoteType.ToSelectList();
@@ -258,7 +258,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Edit(EditStatusView model, IFormCollection form, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserModifyCustomStatusAsync(UserId, model.State.CustomStateId))
-				Unauthorized();
+				return Unauthorized();
 
 			if (ModelState.IsValid)
 			{

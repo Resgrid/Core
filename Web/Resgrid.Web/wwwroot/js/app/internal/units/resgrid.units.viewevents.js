@@ -1,4 +1,3 @@
-
 var resgrid;
 (function (resgrid) {
     var units;
@@ -14,116 +13,68 @@ var resgrid;
                 }).addTo(viewevents.map);
 
                 markers = [];
-                $("#eventsGrid").kendoGrid({
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Units/GetUnitEvents?UnitId=' + unitId
-                        },
-                        schema: {
-                            model: {
-                                fields: {
-                                    EventId: { type: "number" },
-                                    Name: { type: "string" },
-                                    Action: { type: "string" },
-                                    Timestamp: {
-                                        type: "string"
-                                    }
-                                }
-                            }
-                        },
-                        pageSize: 50,
-                        serverPaging: false,
-                        serverFiltering: false,
-                        serverSorting: false
+
+                var eventsTable = $("#eventsGrid").DataTable({
+                    ajax: {
+                        url: resgrid.absoluteBaseUrl + '/User/Units/GetUnitEvents?UnitId=' + unitId,
+                        dataSrc: ''
                     },
-                    height: 650,
-                    filterable: true,
-                    sortable: true,
-                    pageable: true,
-                    dataBound: onDataBound,
+                    pageLength: 50,
                     columns: [
                         {
-                            field: "EventId",
-                            title: "",
-                            width: 15,
-                            filterable: false,
-                            sortable: false,
-                            headerTemplate: '<label><input type="checkbox" id="checkAllEvents"/></label>',
-                            template: "<input type=\"checkbox\" id=\"selectEvent_#=EventId#\" name=\"selectEvent_#=EventId#\" />"
+                            data: 'EventId',
+                            title: '',
+                            orderable: false,
+                            searchable: false,
+                            render: function (data) {
+                                return '<input type="checkbox" id="selectEvent_' + data + '" name="selectEvent_' + data + '" />';
+                            }
                         },
-                        {
-                            field: "State",
-                            title: "State",
-                            width: 80
-                        },
-                        {
-                            field: "DestinationName",
-                            title: "Destination",
-                            width: 100
-                        },
-                        {
-                            field: "Timestamp",
-                            title: "Timestamp",
-                            width: 100,
-                            format: "{0:MM/dd/yyyy HH:mm:ss}"
-                        },
-                        {
-                            field: "Note",
-                            title: "Note",
-                            width: 100
-                        }
+                        { data: 'State', title: 'State' },
+                        { data: 'DestinationName', title: 'Destination' },
+                        { data: 'Timestamp', title: 'Timestamp' },
+                        { data: 'Note', title: 'Note' }
                     ]
                 });
-                $('#checkAllEvents').on('click', function () {
-                    $('#eventsGrid').find(':checkbox').prop('checked', this.checked);
+
+                // Add check-all header checkbox after table is drawn
+                eventsTable.on('draw', function () {
+                    updateMapMarkers(eventsTable);
                 });
-                function onDataBound() {
-                    var ds = $("#eventsGrid").data("kendoGrid").dataSource;
-                    //var filters = ds.filter();
-                    //var allData = ds.data();
-                    var query = new kendo.data.Query(ds.data());
-                    var filteredData = query.filter(ds.filter()).data;
+
+                $(document).on('click', '#checkAllEvents', function () {
+                    $('#eventsGrid tbody :checkbox').prop('checked', this.checked);
+                });
+
+                // Add the select-all checkbox to the first column header
+                $('#eventsGrid thead th:first').html('<label><input type="checkbox" id="checkAllEvents"/></label>');
+
+                function updateMapMarkers(table) {
                     $.each(viewevents.markers, function (index, item) {
-                        item.setMap(null);
+                        item.setMap && item.setMap(null);
+                        item.remove && item.remove();
                     });
                     viewevents.markers = [];
 
-
-
-
-                    $.each(filteredData, function (index, item) {
+                    var data = table.rows().data();
+                    $.each(data, function (index, item) {
                         if (item.Latitude && item.Latitude.length > 0 && item.Longitude && item.Longitude.length > 0) {
+                            var marker = L.marker([item.Latitude, item.Longitude], {
+                                icon: new L.icon({
+                                    iconUrl: "/images/Mapping/Event.png",
+                                    iconSize: [32, 37],
+                                    iconAnchor: [16, 37]
+                                }),
+                                draggable: false,
+                                title: item.State + ' ' + item.Timestamp,
+                                tooltip: item.State + ' ' + item.Timestamp
+                            }).bindTooltip(item.State + ' ' + item.Timestamp,
+                                {
+                                    permanent: true,
+                                    direction: 'bottom'
+                                }).addTo(viewevents.map);
 
-                           var marker = L.marker([item.Latitude, item.Longitude], {
-                               icon: new L.icon({
-                                   iconUrl: "/images/Mapping/Event.png",
-                                   iconSize: [32, 37],
-                                   iconAnchor: [16, 37]
-                               }),
-                               draggable: false,
-                               title: item.State + ' ' + item.Timestamp,
-                               tooltip: item.State + ' ' + item.Timestamp
-                           }).bindTooltip(item.State + ' ' + item.Timestamp,
-                               {
-                                   permanent: true,
-                                   direction: 'bottom'
-                               }).addTo(viewevents.map);
-
-                           viewevents.markers.push(marker);
-
-
-
-
-                            //var latLng = new google.maps.LatLng(item.Latitude, item.Longitude);
-                            //var marker = new google.maps.Marker({
-                            //    position: latLng,
-                            //    map: map,
-                            //    title: item.State + ' ' + item.Timestamp,
-                            //    //title: "",
-                            //    icon: "/images/Mapping/Event.png"
-                            //});
-                            //markers.push(marker);
+                            viewevents.markers.push(marker);
                         }
                     });
 
@@ -131,16 +82,6 @@ var resgrid;
                         var group = new L.featureGroup(viewevents.markers);
                         viewevents.map.fitBounds(group.getBounds());
                     }
-
-                    //var latlngbounds = new google.maps.LatLngBounds();
-                    //$.each(markers, function (index, item) {
-                    //    var latLng = new google.maps.LatLng(item.getPosition().lat(), item.getPosition().lng());
-                    //    latlngbounds.extend(latLng);
-                    //});
-                    //map.setCenter(latlngbounds.getCenter());
-                    //map.fitBounds(latlngbounds);
-                    //var zoom = map.getZoom();
-                    //map.setZoom(zoom > zoomLevel ? that.zoomLevel : zoom);
                 }
             });
         })(viewevents = units.viewevents || (units.viewevents = {}));

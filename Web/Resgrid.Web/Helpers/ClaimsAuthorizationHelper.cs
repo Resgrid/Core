@@ -159,6 +159,11 @@ namespace Resgrid.Web.Helpers
 			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Create);
 		}
 
+		public static bool CanDeleteLog()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Delete);
+		}
+
 		public static bool CanCreateShift()
 		{
 			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Shift, ResgridClaimTypes.Actions.Create);

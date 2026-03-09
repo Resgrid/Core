@@ -11,13 +11,13 @@ var resgrid;
             });
             function reloadUnreadMessagesList() {
                 $('#unreadMessages').load(resgrid.absoluteBaseUrl + '/User/Messages/GetTopUnreadMessages', function () {
-                    kendo.ui.progress($("#unreadMessages"), false);
+                    resgrid.showProgress($("#unreadMessages"), false);
                 });
             }
             topPartial.reloadUnreadMessagesList = reloadUnreadMessagesList;
             function reloadActiveCallsList() {
                 $('#activeCalls').load(resgrid.absoluteBaseUrl + '/User/Dispatch/GetTopActiveCalls', function () {
-                    kendo.ui.progress($("#activeCalls"), false);
+                    resgrid.showProgress($("#activeCalls"), false);
                 });
             }
             topPartial.reloadActiveCallsList = reloadActiveCallsList;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model;
@@ -116,7 +116,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var link = await _departmentLinksService.GetLinkByIdAsync(linkId);
 
 			if (link.LinkedDepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			link.LinkEnabled = true;
 			link.LinkAccepted = DateTime.UtcNow;
@@ -132,7 +132,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var link = await _departmentLinksService.GetLinkByIdAsync(linkId);
 
 			if (link.LinkedDepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			link.LinkEnabled = false;
 			link.LinkAccepted = null;
@@ -148,7 +148,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var link = await _departmentLinksService.GetLinkByIdAsync(linkId);
 
 			if (link.LinkedDepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new NewLinksView();
 			model.DepartmentId = DepartmentId;
@@ -163,7 +163,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var link = await _departmentLinksService.GetLinkByIdAsync(model.Link.DepartmentLinkId);
 
 			if (link.LinkedDepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			link.DepartmentColor = model.Link.DepartmentColor;
 			link.LinkEnabled = true;
@@ -189,7 +189,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Link = await _departmentLinksService.GetLinkByIdAsync(linkId);
 
 			if (model.Link.DepartmentId != DepartmentId && model.Link.LinkedDepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			return View(model);
 		}
@@ -202,7 +202,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			List<CallListJson> callsJson = new List<CallListJson>();
 
 			if (link.DepartmentId != DepartmentId && link.LinkedDepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			if (link.LinkEnabled && link.DepartmentShareCalls)
 			{
@@ -239,7 +239,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var link = await _departmentLinksService.GetLinkByIdAsync(linkId);
 
 			if (link.DepartmentId != DepartmentId && link.LinkedDepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			List<UnitForListJson> unitsJson = new List<UnitForListJson>();
 
@@ -282,7 +282,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var link = await _departmentLinksService.GetLinkByIdAsync(linkId);
 
 			if (link.DepartmentId != DepartmentId && link.LinkedDepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(link.DepartmentId);
 			var allUsers = await _departmentsService.GetAllUsersForDepartmentAsync(link.DepartmentId);

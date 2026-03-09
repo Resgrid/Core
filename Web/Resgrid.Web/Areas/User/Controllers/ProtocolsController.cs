@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -201,7 +201,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Delete(int id)
 		{
 			if (!await _authorizationService.CanUserModifyProtocolAsync(UserId, id))
-				Unauthorized();
+				return Unauthorized();
 
 			await _protocolsService.DeleteProtocol(id);
 
@@ -222,7 +222,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> View(int id)
 		{
 			if (!await _authorizationService.CanUserViewProtocolAsync(UserId, id))
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new ViewProtocolModel();
 			model.Protocol = await _protocolsService.GetProtocolByIdAsync(id);
@@ -249,14 +249,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Protocol_View)]
-		public async Task<FileResult> GetProtocolAttachment(int protocolAttachmentId)
+		public async Task<IActionResult> GetProtocolAttachment(int protocolAttachmentId)
 		{
 			var attachment = await _protocolsService.GetAttachmentByIdAsync(protocolAttachmentId);
 
 			if (attachment != null)
 			{
 				if (!await _authorizationService.CanUserViewProtocolAsync(UserId, attachment.DispatchProtocolId))
-					Unauthorized();
+					return Unauthorized();
 
 				return new FileContentResult(attachment.Data, attachment.FileType)
 				{
@@ -272,7 +272,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> GetTextForProtocol(int id)
 		{
 			if (!await _authorizationService.CanUserViewProtocolAsync(UserId, id))
-				Unauthorized();
+				return Unauthorized();
 
 
 			var protocol = await _protocolsService.GetProtocolByIdAsync(id);

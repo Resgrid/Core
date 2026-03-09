@@ -7,10 +7,10 @@ using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
 using Resgrid.Model.Identity;
-using System.Transactions;
 
 namespace Resgrid.Services
 {
@@ -29,11 +29,12 @@ namespace Resgrid.Services
 		private readonly IEventAggregator _eventAggregator;
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IIdentityRepository _identityRepository;
+		private readonly IUnitOfWork _unitOfWork;
 
 		public DepartmentGroupsService(IDepartmentGroupsRepository departmentGroupsRepository, IDepartmentGroupMembersRepository departmentGroupMembersRepository,
 			ISubscriptionsService subscriptionsService, IAddressService addressService, IDepartmentsService departmentsService, IGeoLocationProvider geoLocationProvider,
 			IDepartmentSettingsService departmentSettingsService, IEventAggregator eventAggregator, ICacheProvider cacheProvider,
-			IIdentityRepository identityRepository)
+			IIdentityRepository identityRepository, IUnitOfWork unitOfWork)
 		{
 			_departmentGroupsRepository = departmentGroupsRepository;
 			_departmentGroupMembersRepository = departmentGroupMembersRepository;
@@ -45,6 +46,7 @@ namespace Resgrid.Services
 			_eventAggregator = eventAggregator;
 			_cacheProvider = cacheProvider;
 			_identityRepository = identityRepository;
+			_unitOfWork = unitOfWork;
 		}
 
 		public async Task<List<DepartmentGroup>> GetAllAsync()
@@ -59,7 +61,7 @@ namespace Resgrid.Services
 
 		public async Task<DepartmentGroup> SaveAsync(DepartmentGroup departmentGroup, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			// New or Updated Address for this group
+			// New or Updated Address for this group (outside the transaction — address has its own lifecycle)
 			if (departmentGroup.Address != null)
 			{
 				var address = await _addressService.SaveAddressAsync(departmentGroup.Address, cancellationToken);
@@ -69,8 +71,34 @@ namespace Resgrid.Services
 				}
 			}
 
-			var saved = await _departmentGroupsRepository.SaveOrUpdateAsync(departmentGroup, cancellationToken);
-			await InvalidateGroupInCache(departmentGroup.DepartmentGroupId);
+			// Open a shared connection/transaction so the group and its members are committed atomically.
+			_unitOfWork.CreateOrGetConnection();
+
+			DepartmentGroup saved;
+			try
+			{
+				saved = await _departmentGroupsRepository.SaveOrUpdateAsync(departmentGroup, cancellationToken);
+
+				// Members is in IgnoredProperties so the ORM cascade skips it — save each member explicitly.
+				if (departmentGroup.Members != null && departmentGroup.Members.Any())
+				{
+					foreach (var member in departmentGroup.Members)
+					{
+						member.DepartmentGroupId = saved.DepartmentGroupId;
+						await _departmentGroupMembersRepository.SaveOrUpdateAsync(member, cancellationToken);
+					}
+				}
+
+				_unitOfWork.CommitChanges();
+			}
+			catch
+			{
+				_unitOfWork.DiscardChanges();
+				throw;
+			}
+
+			// Invalidate after the transaction commits so the cache is refreshed from the fully consistent state.
+			await InvalidateGroupInCache(saved.DepartmentGroupId);
 
 			return saved;
 		}
@@ -205,25 +233,34 @@ namespace Resgrid.Services
 
 		public async Task<DepartmentGroup> UpdateAsync(DepartmentGroup departmentGroup, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var members =
-				await _departmentGroupMembersRepository.GetAllGroupMembersByGroupIdAsync(departmentGroup
-					.DepartmentGroupId);
+			// Materialize to List immediately to avoid multiple Dapper enumeration re-executions
+			var members = (await _departmentGroupMembersRepository.GetAllGroupMembersByGroupIdAsync(departmentGroup.DepartmentGroupId)).ToList();
 
 			if (departmentGroup.Members != null && departmentGroup.Members.Any())
 			{
-				var membersNoLongerInGroup = members.Where(p => !departmentGroup.Members.Any(p2 => p2.DepartmentGroupMemberId == p.DepartmentGroupMemberId));
+				// Delete members no longer in the group — match by UserId, not DepartmentGroupMemberId
+				// (new members passed in from the controller have DepartmentGroupMemberId = 0)
+				var membersNoLongerInGroup = members.Where(p => !departmentGroup.Members.Any(p2 => p2.UserId == p.UserId)).ToList();
 
 				foreach (var departmentGroupMember in membersNoLongerInGroup)
 				{
 					await _departmentGroupMembersRepository.DeleteAsync(departmentGroupMember, cancellationToken);
 				}
 
-				foreach (var newMember in departmentGroup.Members)
+				foreach (var updatedMember in departmentGroup.Members)
 				{
-					if (!members.Any(x => x.UserId == newMember.UserId))
+					var existingMember = members.FirstOrDefault(x => x.UserId == updatedMember.UserId);
+					if (existingMember == null)
 					{
-						newMember.DepartmentGroupId = departmentGroup.DepartmentGroupId;
-						await _departmentGroupMembersRepository.SaveOrUpdateAsync(newMember, cancellationToken);
+						// New member — insert
+						updatedMember.DepartmentGroupId = departmentGroup.DepartmentGroupId;
+						await _departmentGroupMembersRepository.SaveOrUpdateAsync(updatedMember, cancellationToken);
+					}
+					else if (existingMember.IsAdmin != updatedMember.IsAdmin)
+					{
+						// Existing member whose admin flag changed — update
+						existingMember.IsAdmin = updatedMember.IsAdmin;
+						await _departmentGroupMembersRepository.SaveOrUpdateAsync(existingMember, cancellationToken);
 					}
 				}
 			}

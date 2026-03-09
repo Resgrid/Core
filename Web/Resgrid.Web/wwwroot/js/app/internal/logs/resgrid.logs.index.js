@@ -1,62 +1,40 @@
-
 var resgrid;
 (function (resgrid) {
     var logs;
     (function (logs) {
         var index;
         (function (index) {
+            var logsTable;
             $(document).ready(function () {
                 resgrid.common.analytics.track('Logs List');
-                $("#logsIndexList").kendoGrid({
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: {
-                                url: resgrid.absoluteBaseUrl + '/User/Logs/GetLogsList',
-                                dataType: "json",
-                                data: {
-                                    year: $("#Year").val()
-                                }
-                            }
-                        },
-                        schema: {
-                            model: {
-                                fields: {
-                                    LogId: { type: "number" },
-                                    Type: { type: "string" },
-                                    Group: { type: "string" },
-                                    LoggedOn: { type: "string" },
-                                    LoggedBy: { type: "string" },
-                                    CanDelete: { type: "boolean" }
-                                }
-                            }
-                        },
-                        pageSize: 50
+                logsTable = $("#logsIndexList").DataTable({
+                    ajax: {
+                        url: resgrid.absoluteBaseUrl + '/User/Logs/GetLogsList?year=' + $("#Year").val(),
+                        dataSrc: ''
                     },
-                    //height: 400,
-                    filterable: true,
-                    sortable: true,
-                    scrollable: true,
-                    pageable: {
-                        refresh: true,
-                        pageSizes: true,
-                        buttonCount: 5
-                    },
+                    pageLength: 50,
                     columns: [
-                        "Type",
-                        "Group",
-                        "LoggedBy",
-                        "LoggedOn",
+                        { data: 'Type', title: 'Type' },
+                        { data: 'Group', title: 'Group' },
+                        { data: 'LoggedBy', title: 'Logged By' },
+                        { data: 'LoggedOn', title: 'Logged On' },
                         {
-                            field: "LogId",
-                            title: "Actions",
-                            filterable: false,
-                            template: kendo.template($("#logsCommand-template").html())
+                            data: 'LogId',
+                            title: 'Actions',
+                            orderable: false,
+                            searchable: false,
+                            render: function (data, type, row) {
+                                var html = '<a class="btn btn-sm btn-primary" href="' + resgrid.absoluteBaseUrl + '/User/Logs/View?logId=' + data + '">View</a> ';
+                                if (row.CanDelete) {
+                                    html += '<a class="btn btn-sm btn-danger" href="' + resgrid.absoluteBaseUrl + '/User/Logs/Delete?logId=' + data + '">Delete</a>';
+                                }
+                                return html;
+                            }
                         }
                     ]
                 });
                 $("#Year").change(function () {
-                    $("#logsIndexList").data("kendoGrid").dataSource.read({ year: $("#Year").val() });
+                    logsTable.ajax.url(resgrid.absoluteBaseUrl + '/User/Logs/GetLogsList?year=' + $(this).val()).load();
                 });
             });
         })(index = logs.index || (logs.index = {}));

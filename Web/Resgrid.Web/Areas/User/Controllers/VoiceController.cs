@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -56,7 +56,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var canUseVoice = await _voiceService.CanDepartmentUseVoiceAsync(DepartmentId);
 
 			if (!canUseVoice)
-				Unauthorized();
+				return Unauthorized();
 
 			return View(model);
 		}
@@ -68,7 +68,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var canUseVoice = await _voiceService.CanDepartmentUseVoiceAsync(DepartmentId);
 
 			if (!canUseVoice)
-				Unauthorized();
+				return Unauthorized();
 
 			if (ModelState.IsValid)
 			{
@@ -89,20 +89,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new NewChannelModel();
 
 			if (String.IsNullOrWhiteSpace(id))
-				Unauthorized();
+				return Unauthorized();
 
 			var voiceChannel = await _voiceService.GetVoiceChannelByIdAsync(id);
 
 			if (voiceChannel == null)
-				Unauthorized();
+				return Unauthorized();
 
 			var canUseVoice = await _voiceService.CanDepartmentUseVoiceAsync(DepartmentId);
 
 			if (!canUseVoice)
-				Unauthorized();
+				return Unauthorized();
 
 			if (voiceChannel.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			model.Id = voiceChannel.DepartmentVoiceChannelId;
 			model.ChannelName = voiceChannel.Name;
@@ -118,17 +118,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var canUseVoice = await _voiceService.CanDepartmentUseVoiceAsync(DepartmentId);
 
 			if (!canUseVoice)
-				Unauthorized();
+				return Unauthorized();
 
 			if (ModelState.IsValid)
 			{
 				var voiceChannel = await _voiceService.GetVoiceChannelByIdAsync(model.Id);
 
 				if (voiceChannel == null)
-					Unauthorized();
+					return Unauthorized();
 
 				if (voiceChannel.DepartmentId != DepartmentId)
-					Unauthorized();
+					return Unauthorized();
 
 				voiceChannel.Name = model.ChannelName;
 				voiceChannel.IsDefault = model.IsDefault;
@@ -148,7 +148,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var canUseVoice = await _voiceService.CanDepartmentUseVoiceAsync(DepartmentId);
 
 			if (!canUseVoice)
-				Unauthorized();
+				return Unauthorized();
 
 			var result = await _voiceService.InitializeDepartmentUsersWithVoipProviderAsync(DepartmentId);
 
@@ -162,7 +162,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var canUseVoice = await _voiceService.CanDepartmentUseVoiceAsync(DepartmentId);
 			
 			if (!canUseVoice)
-				Unauthorized();
+				return Unauthorized();
 
 			var channel = await _voiceService.GetDepartmentVoiceChannelByIdAsync(id);
 			if (channel != null && channel.DepartmentId == DepartmentId)
@@ -214,15 +214,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new NewAudioStreamModel();
 
 			if (String.IsNullOrWhiteSpace(id))
-				Unauthorized();
+				return Unauthorized();
 
 			var audio = await _voiceService.GetDepartmentAudioByIdAsync(id);
 
 			if (audio == null)
-				Unauthorized();
+				return Unauthorized();
 
 			if (audio.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			model.Id = audio.DepartmentAudioId;
 			model.Name = audio.Name;
@@ -240,10 +240,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var audio = await _voiceService.GetDepartmentAudioByIdAsync(model.Id);
 
 				if (audio == null)
-					Unauthorized();
+					return Unauthorized();
 
 				if (audio.DepartmentId != DepartmentId)
-					Unauthorized();
+					return Unauthorized();
 
 				audio.Name = model.Name;
 				audio.Data = model.Url;

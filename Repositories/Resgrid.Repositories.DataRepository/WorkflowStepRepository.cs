@@ -55,6 +55,34 @@ namespace Resgrid.Repositories.DataRepository
 			}
 			catch (Exception ex) { Logging.LogException(ex); throw; }
 		}
+
+		public async Task DeleteAllByWorkflowIdAsync(string workflowId)
+		{
+			try
+			{
+				var deleteFunction = new Func<DbConnection, Task>(async x =>
+				{
+					var dp = new DynamicParametersExtension();
+					dp.Add("WorkflowId", workflowId);
+					var query = _queryFactory.GetDeleteQuery<DeleteWorkflowStepsByWorkflowIdQuery>();
+					await x.ExecuteAsync(sql: query, param: dp, transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+						await deleteFunction(conn);
+						return;
+					}
+				}
+				conn = _unitOfWork.CreateOrGetConnection();
+				await deleteFunction(conn);
+			}
+			catch (Exception ex) { Logging.LogException(ex); throw; }
+		}
 	}
 }
 

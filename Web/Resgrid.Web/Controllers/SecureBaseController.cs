@@ -17,9 +17,9 @@ namespace Resgrid.Web
 			return $"{this.Request.Scheme}://{this.Request.Host}{this.Request.PathBase}";
 		}
 
-		public new void Unauthorized()
+		public new IActionResult Unauthorized()
 		{
-			Response.Redirect("/Public/Unauthorized");
+			return Redirect("/Public/Unauthorized");
 		}
 
 		//public new void NotFound()

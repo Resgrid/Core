@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -115,13 +115,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 			allUsers.AddRange(groupAdmins);
 			allUsers.AddRange(groupUsers);
 
-			foreach (var groupUser in allUsers)
+			// Check for users appearing in both admin and member lists
+			var duplicateUsers = groupAdmins.Intersect(groupUsers).ToList();
+			foreach (var duplicateUser in duplicateUsers)
+			{
+				var profile = await _userProfileService.GetProfileByUserIdAsync(duplicateUser);
+				ModelState.AddModelError("", string.Format("{0} cannot be both a Group Admin and a Group Member. Please add them to only one list.", profile.FullName.AsFirstNameLastName));
+			}
+
+			foreach (var groupUser in allUsers.Distinct())
 			{
 				if (await _departmentGroupsService.IsUserInAGroupAsync(groupUser, DepartmentId))
 				{
 					var profile = await _userProfileService.GetProfileByUserIdAsync(groupUser);
 
-					ModelState.AddModelError("", string.Format("{0} Is already in a group. Cannot add to another.", profile.FullName.AsFirstNameLastName));
+					ModelState.AddModelError("", string.Format("{0} is already in a group. Cannot add to another.", profile.FullName.AsFirstNameLastName));
 				}
 			}
 
@@ -260,7 +268,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Group = await _departmentGroupsService.GetGroupByIdAsync(departmentGroupId, true);
 
 			if (model.Group == null || model.Group.DepartmentId != DepartmentId || !await _authorizationService.CanUserEditDepartmentGroupAsync(UserId, departmentGroupId))
-				Unauthorized();
+				return Unauthorized();
 
 			var users = _departmentGroupsService.GetAllUsersForGroup(departmentGroupId);
 			var childGroups = await _departmentGroupsService.GetAllChildDepartmentGroupsAsync(departmentGroupId);
@@ -295,7 +303,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> DeleteGroup(DeleteGroupView model, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserEditDepartmentGroupAsync(UserId, model.Group.DepartmentGroupId))
-				Unauthorized();
+				return Unauthorized();
 
 			var group = await _departmentGroupsService.GetGroupByIdAsync(model.Group.DepartmentGroupId, true);
 
@@ -303,7 +311,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return RedirectToAction("Index", "Groups", new { Area = "User" });
 
 			if (group.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			var users = _departmentGroupsService.GetAllUsersForGroup(model.Group.DepartmentGroupId);
 			var childGroups = await _departmentGroupsService.GetAllChildDepartmentGroupsAsync(model.Group.DepartmentGroupId);
@@ -365,7 +373,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> EditGroup(int departmentGroupId)
 		{
 			if (!await _authorizationService.CanUserEditDepartmentGroupAsync(UserId, departmentGroupId))
-				Unauthorized();
+				return Unauthorized();
 
 			EditGroupView model = new EditGroupView();
 			model.Users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
@@ -407,7 +415,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> EditGroup(EditGroupView model, IFormCollection collection, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserEditDepartmentGroupAsync(UserId, model.EditGroup.DepartmentGroupId))
-				Unauthorized();
+				return Unauthorized();
 
 			model.Users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
 			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
@@ -450,6 +458,24 @@ namespace Resgrid.Web.Areas.User.Controllers
 			allUsers.AddRange(groupAdmins);
 			allUsers.AddRange(groupUsers);
 
+			// Check for users appearing in both admin and member lists
+			var duplicateUsers = groupAdmins.Intersect(groupUsers).ToList();
+			foreach (var duplicateUser in duplicateUsers)
+			{
+				var profile = await _userProfileService.GetProfileByUserIdAsync(duplicateUser);
+				ModelState.AddModelError("", string.Format("{0} cannot be both a Group Admin and a Group Member. Please add them to only one list.", profile.FullName.AsFirstNameLastName));
+			}
+
+			// Check newly added users are not in a *different* group — exclude the group being edited
+			foreach (var groupUser in allUsers.Distinct())
+			{
+				if (await _departmentGroupsService.IsUserInAGroupAsync(groupUser, model.EditGroup.DepartmentGroupId, DepartmentId))
+				{
+					var profile = await _userProfileService.GetProfileByUserIdAsync(groupUser);
+					ModelState.AddModelError("", string.Format("{0} is already in another group. Cannot add to this group.", profile.FullName.AsFirstNameLastName));
+				}
+			}
+
 			if (model.EditGroup.Type.HasValue && model.EditGroup.Type.Value == (int)DepartmentGroupTypes.Station)
 			{
 				if (String.IsNullOrWhiteSpace(model.What3Word))
@@ -491,35 +517,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				model.EditGroup.DepartmentId = DepartmentId;
 
-				foreach (var user in allUsers)
+				// Build desired member list from submitted values — UpdateAsync handles insert/delete/update against the DB
+				var desiredMembers = allUsers.Distinct().Select(user => new DepartmentGroupMember
 				{
-					if (group.Members.All(x => x.UserId != user))
-					{
-						var dgm = new DepartmentGroupMember();
-						dgm.DepartmentId = DepartmentId;
-						dgm.UserId = user;
+					DepartmentId = DepartmentId,
+					UserId = user,
+					IsAdmin = groupAdmins.Contains(user)
+				}).ToList();
 
-						if (groupAdmins.Contains(user))
-							dgm.IsAdmin = true;
-						else
-							dgm.IsAdmin = false;
-
-						group.Members.Add(dgm);
-					}
-				}
-
-				if (allUsers.Count > 0)
-				{
-					var usersToRemove = group.Members.Where(x => !allUsers.Contains(x.UserId)).ToList();
-					foreach (var user in usersToRemove)
-					{
-						group.Members.Remove(user);
-					}
-				}
-				else
-				{
-					group.Members.Clear();
-				}
+				group.Members = desiredMembers;
 
 				if (model.EditGroup.Type.HasValue && model.EditGroup.Type.Value == (int)DepartmentGroupTypes.Station)
 				{
@@ -595,10 +601,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Group = await _departmentGroupsService.GetGroupByIdAsync(departmentGroupId, true);
 
 			if (model.Group == null)
-				Unauthorized();
+				return Unauthorized();
 
 			if (model.Group.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			model.Coordinates = await _departmentGroupsService.GetMapCenterCoordinatesForGroupAsync(departmentGroupId);
 
@@ -628,7 +634,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.GenericGroup_View)]
-		
+
 		public async Task<IActionResult> GetMembersForGroup(int groupId, bool includeAdmins = true, bool includeNormal = true)
 		{
 			var groupsJson = new List<GroupMemberJson>();
@@ -676,7 +682,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.GenericGroup_View)]
-		
+
 		public async Task<IActionResult> GetGroupsForCallGrid()
 		{
 			List<StationJson> groupsJson = new List<StationJson>();

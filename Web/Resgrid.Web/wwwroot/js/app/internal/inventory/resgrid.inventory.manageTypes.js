@@ -1,4 +1,3 @@
-
 var resgrid;
 (function (resgrid) {
     var inventory;
@@ -7,43 +6,21 @@ var resgrid;
         (function (manageTypes) {
             $(document).ready(function () {
                 resgrid.common.analytics.track('Inventory - Manage Types');
-                $("#typesIndexList").kendoGrid({
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Inventory/GetTypesList'
-                        },
-                        schema: {
-                            model: {
-                                fields: {
-                                    TypeId: { type: "number" },
-                                    Name: { type: "string" },
-                                    ExpiresDays: { type: "string" }
-                                }
-                            }
-                        },
-                        pageSize: 50
-                    },
-                    //height: 400,
-                    filterable: true,
-                    sortable: true,
-                    scrollable: true,
-                    pageable: {
-                        refresh: true,
-                        pageSizes: true,
-                        buttonCount: 5
-                    },
+                var strings = typeof inventoryTypesStrings !== 'undefined' ? inventoryTypesStrings : {
+                    name: 'Name', expiresDays: 'Expires Days', actions: 'Actions', edit: 'Edit', delete: 'Delete'
+                };
+                $("#typesIndexList").DataTable({
+                    ajax: { url: resgrid.absoluteBaseUrl + '/User/Inventory/GetTypesList', dataSrc: '' },
+                    pageLength: 50,
                     columns: [
-                        "Name",
+                        { data: 'Name', title: strings.name },
+                        { data: 'ExpiresDays', title: strings.expiresDays },
                         {
-                            field: "ExpiresDays",
-                            title: "Expires Days"
-                        },
-                        {
-                            field: "TypeId",
-                            title: "Actions",
-                            filterable: false,
-                            template: kendo.template($("#typecommand-template").html())
+                            data: 'TypeId', title: strings.actions, orderable: false,
+                            render: function (data) {
+                                return '<a class="btn btn-xs btn-primary" href="' + resgrid.absoluteBaseUrl + '/User/Inventory/EditType?typeId=' + data + '">' + strings.edit + '</a> ' +
+                                       '<a class="btn btn-xs btn-danger" href="' + resgrid.absoluteBaseUrl + '/User/Inventory/DeleteType?typeId=' + data + '">' + strings.delete + '</a>';
+                            }
                         }
                     ]
                 });

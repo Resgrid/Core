@@ -21,10 +21,6 @@
 				asp-fallback-test-class="hidden"
 				asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
 
-	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.common.min.css" />
-	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.bootstrap.min.css" />
-	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.dataviz.min.css" />
-	<link rel="stylesheet" href="~/clib/kendo/styles/kendo.dataviz.bootstrap.min.css" />
 
 	<style>
 		.table th, .table td {
@@ -98,7 +94,7 @@
 				</table>
 			</div>
 			<div class="col-md-5">
-				<div id="calls-types"></div>
+				<canvas id="calls-types" height="240"></canvas>
 			</div>
 		</div>
 		<div class="row">
@@ -143,7 +139,7 @@
 				</table>
 			</div>
 			<div class="col-md-5">
-				<div id="calls-states"></div>
+				<canvas id="calls-states" height="240"></canvas>
 			</div>
 		</div>
 		<div class="row">
@@ -201,147 +197,36 @@
 	</div>
 
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
-	<script> window.jQuery || document.write('<script src="~/Scripts/kendo/jquery.min.js"><\/script>')</script>
-
-	<!-- Latest compiled and minified JavaScript -->
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
-
-
-	<script src="~/clib/flot/jquery.flot.js"></script>
-	<script src="~/clib/flot/jquery.flot.tooltip.min.js"></script>
-	<script src="~/clib/flot/jquery.flot.resize.js"></script>
-	<script src="~/clib/flot/jquery.flot.pie.js"></script>
-	<script src="~/clib/flot/jquery.flot.time.js"></script>
-	<script src="~/clib/flot/jquery.flot.spline.js"></script>
-
-	<script src="~/clib/kendo/js/kendo.all.min.js"></script>
-	<script src="~/clib/kendo/js/kendo.timezones.min.js"></script>
+	<script src="~/lib/chart.js/dist/chart.umd.min.js"></script>
 
 	<script>
 		var startDateString = encodeURIComponent("@Model.Start.ToString()");
 		var endDateString = encodeURIComponent("@Model.End.ToString()");
 
 		$(document).ready(function () {
-			$("#calls-types").kendoChart({
-				dataSource: {
-					transport: {
-						read: {
-							url: `/User/Dispatch/CallsTypesInRange?startDate=${startDateString}&endDate=${endDateString}`,
-							dataType: "json"
-						}
+			$.getJSON('/User/Dispatch/CallsTypesInRange?startDate=' + startDateString + '&endDate=' + endDateString, function (data) {
+				data.sort(function (a, b) { return a.Type < b.Type ? -1 : 1; });
+				new Chart(document.getElementById('calls-types'), {
+					type: 'bar',
+					data: {
+						labels: data.map(function (d) { return d.Type; }),
+						datasets: [{ label: 'Call Types', data: data.map(function (d) { return d.Count; }), backgroundColor: 'rgba(26,179,148,0.7)' }]
 					},
-					sort: {
-						field: "Type",
-						dir: "asc"
-					}
-				},
-				title: { text: "Calls Types" },
-				transitions: false,
-				theme: "Bootstrap",
-				legend: {
-					position: "bottom"
-				},
-				chartArea: {
-					margin: {
-						top: 10,
-						right: 5,
-						bottom: 0,
-						left: 10
-					},
-					height: 240,
-					background: "transparent"
-				},
-				seriesDefaults: {
-					type: "verticalBullet",
-					style: "smooth",
-					stack: true,
-					//width: 2,
-					markers: {
-						//visible: false
-					}
-				},
-				series: [{
-					type: "column",
-					field: "Count"//,
-					//name: "Week #"
-				}],
-				categoryAxis: {
-					field: "Type",
-					labels: {
-						visible: true,
-						rotation: -45,
-						step: 1,
-						skip: 0
-					},
-					majorGridLines: {
-						visible: false
-					}
-				},
-				tooltip: {
-					visible: false//,
-					//template: "#= series.name # <br /> #= category #: #= value #"
-				}
+					options: { responsive: true, plugins: { legend: { display: false }, title: { display: true, text: 'Calls Types' } }, scales: { x: { ticks: { maxRotation: 45 } } } }
+				});
 			});
 
-			$("#calls-states").kendoChart({
-				dataSource: {
-					transport: {
-						read: {
-							url: `/User/Dispatch/CallsStatesInRange?startDate=${startDateString}&endDate=${endDateString}`,
-							dataType: "json"
-						}
+			$.getJSON('/User/Dispatch/CallsStatesInRange?startDate=' + startDateString + '&endDate=' + endDateString, function (data) {
+				data.sort(function (a, b) { return a.Type < b.Type ? -1 : 1; });
+				new Chart(document.getElementById('calls-states'), {
+					type: 'bar',
+					data: {
+						labels: data.map(function (d) { return d.Type; }),
+						datasets: [{ label: 'Call States', data: data.map(function (d) { return d.Count; }), backgroundColor: 'rgba(26,179,148,0.7)' }]
 					},
-					sort: {
-						field: "Type",
-						dir: "asc"
-					}
-				},
-				title: { text: "Calls States" },
-				transitions: false,
-				theme: "Bootstrap",
-				legend: {
-					position: "bottom"
-				},
-				chartArea: {
-					margin: {
-						top: 10,
-						right: 5,
-						bottom: 0,
-						left: 10
-					},
-					height: 240,
-					background: "transparent"
-				},
-				seriesDefaults: {
-					type: "verticalBullet",
-					style: "smooth",
-					stack: true,
-					//width: 2,
-					markers: {
-						//visible: false
-					}
-				},
-				series: [{
-					type: "column",
-					field: "Count"//,
-					//name: "Week #"
-				}],
-				categoryAxis: {
-					field: "Type",
-					labels: {
-						visible: true,
-						rotation: -45,
-						step: 1,
-						skip: 0
-					},
-					majorGridLines: {
-						visible: false
-					}
-				},
-				tooltip: {
-					visible: false//,
-					//template: "#= series.name # <br /> #= category #: #= value #"
-				}
+					options: { responsive: true, plugins: { legend: { display: false }, title: { display: true, text: 'Calls States' } }, scales: { x: { ticks: { maxRotation: 45 } } } }
+				});
 			});
 		});
 	</script>

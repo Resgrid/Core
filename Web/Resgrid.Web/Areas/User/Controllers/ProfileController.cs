@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -810,7 +810,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var cert= await _certificationService.GetCertificationByIdAsync(certId);
 
 			if (cert.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			string userId = cert.UserId;
 
@@ -829,7 +829,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var cert= await _certificationService.GetCertificationByIdAsync(model.CertificationId);
 
 			if (cert.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			if (fileToUpload != null && fileToUpload.Length > 0)
 			{
@@ -888,7 +888,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var cert= await _certificationService.GetCertificationByIdAsync(certId);
 
 			if (cert.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new EditCertificationView();
 			model.CertificationId = cert.PersonnelCertificationId;
@@ -909,12 +909,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Profile_View)]
 
-		public async Task<FileResult> GetCertificationData(int certId)
+		public async Task<IActionResult> GetCertificationData(int certId)
 		{
 			var cert= await _certificationService.GetCertificationByIdAsync(certId);
 
 			if (cert.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			return new FileContentResult(cert.Data, cert.Filetype)
 			{
@@ -953,12 +953,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var department= await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 			if (model.UserId == department.ManagingUserId)
-				Unauthorized();
+				return Unauthorized();
 
 			var userDepartment = await _departmentsService.GetDepartmentByUserIdAsync(model.UserId);
 
 			if (department.DepartmentId != userDepartment.DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			var user = await _userManager.FindByIdAsync(model.UserId);
 			model.Name = await UserHelper.GetFullNameForUser(model.UserId);

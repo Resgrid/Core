@@ -6,12 +6,7 @@ var resgrid;
         var upload;
         (function (upload) {
             $(document).ready(function () {
-               $("#fileToUpload").kendoUpload({
-                    multiple: false,
-                    localization: {
-                        select: "Select File"
-                    }
-                });
+               // Native HTML file input is used - no JS initialization needed
             });
         })(upload = files.upload || (files.upload = {}));
     })(files = resgrid.files || (resgrid.files = {}));

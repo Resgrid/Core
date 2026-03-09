@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -84,7 +84,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						callAttachment.Timestamp = DateTime.UtcNow;
 
 						if (!await _authorizationService.CanUserEditCallAsync(UserId, callAttachment.CallId))
-							Unauthorized();
+							return Unauthorized();
 
 						await _callsService.SaveCallAttachmentAsync(callAttachment, cancellationToken);
 
@@ -101,7 +101,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						callAttachment2.Timestamp = DateTime.UtcNow;
 
 						if (!await _authorizationService.CanUserEditCallAsync(UserId, callAttachment2.CallId))
-							Unauthorized();
+							return Unauthorized();
 
 						await _callsService.SaveCallAttachmentAsync(callAttachment2, cancellationToken);
 

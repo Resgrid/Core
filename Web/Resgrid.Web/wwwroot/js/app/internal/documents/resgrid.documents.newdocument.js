@@ -18,12 +18,7 @@ var resgrid;
                 });
 
 
-                $("#fileToUpload").kendoUpload({
-                    multiple: false,
-                    localization: {
-                        select: "Select File"
-                    }
-                });
+                // Native HTML file input is used - no JS initialization needed
             });
         })(newdocument = documents.newdocument || (documents.newdocument = {}));
     })(documents = resgrid.documents || (resgrid.documents = {}));

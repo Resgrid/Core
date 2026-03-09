@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -102,8 +102,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var type = await _mappingService.GetTypeByIdAsync(poiTypeId);
 
-			if (type == null || type.DepartmentId != DepartmentId)
-				Unauthorized();
+			if (type == null)
+				return NotFound();
+
+			if (type.DepartmentId != DepartmentId)
+				return Unauthorized();
 
 			model.Type = type;
 			var address = await _departmentSettingsService.GetBigBoardCenterAddressDepartmentAsync(DepartmentId);
@@ -146,7 +149,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var model = new LayersView();
 			model.Layers = await _mappingService.GetMapLayersForTypeDepartmentAsync(DepartmentId, MapLayerTypes.TopLevel);
-			
+
 			return View(model);
 		}
 
@@ -204,14 +207,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (String.IsNullOrWhiteSpace(layerId))
 				return RedirectToAction("Layers");
-			
+
 			var model = new EditLayerView();
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.CenterCoordinates = await _departmentSettingsService.GetMapCenterCoordinatesAsync(model.Department);
 			var layer = await _mappingService.GetMapLayersByIdAsync(layerId);
 
-			if (layer == null || layer.DepartmentId != DepartmentId || layer.IsDeleted)
-				Unauthorized();
+			if (layer == null || layer.IsDeleted)
+				return NotFound();
+
+			if (layer.DepartmentId != DepartmentId)
+				return Unauthorized();
 
 			var feature = layer.Data.Convert();
 			model.GeoJson = JsonConvert.SerializeObject(feature);
@@ -262,8 +268,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var layer = await _mappingService.GetMapLayersByIdAsync(layerId);
 
-			if (layer == null || layer.DepartmentId != DepartmentId || layer.IsDeleted)
-				Unauthorized();
+			if (layer == null || layer.IsDeleted)
+				return NotFound();
+
+			if (layer.DepartmentId != DepartmentId)
+				return Unauthorized();
 
 			layer.IsDeleted = true;
 			layer.UpdatedById = UserId;
@@ -369,7 +378,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (type != null)
 			{
 				if (type.DepartmentId != DepartmentId)
-					Unauthorized();
+					return Unauthorized();
 
 				await _mappingService.DeletePOITypeAsync(poiTypeId, cancellationToken);
 			}
@@ -401,7 +410,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			else
 			{
 				if (type.DepartmentId != DepartmentId)
-					Unauthorized();
+					return Unauthorized();
 			}
 
 			if (ModelState.IsValid)
@@ -621,8 +630,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var poiType = await _mappingService.GetTypeByIdAsync(poiTypeId);
 
-			if (poiType == null || poiType.DepartmentId != DepartmentId)
-				Unauthorized();
+			if (poiType == null)
+				return NotFound();
+
+			if (poiType.DepartmentId != DepartmentId)
+				return Unauthorized();
 
 			foreach (var poi in poiType.Pois)
 			{
@@ -648,8 +660,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var poiType = await _mappingService.GetTypeByIdAsync(poiTypeId);
 
-			if (poiType == null || poiType.DepartmentId != DepartmentId)
-				Unauthorized();
+			if (poiType == null)
+				return NotFound();
+
+			if (poiType.DepartmentId != DepartmentId)
+				return Unauthorized();
 
 			foreach (var poi in poiType.Pois)
 			{
@@ -673,8 +688,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var call = await _callsService.GetCallByIdAsync(callId);
 
+			if (call == null)
+				return NotFound();
+
 			if (call.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			string endLat = "";
 			string endLon = "";
@@ -697,11 +715,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var station = await _departmentGroupsService.GetGroupByIdAsync(stationId);
 			var call = await _callsService.GetCallByIdAsync(callId);
 
+			if (station == null)
+				return NotFound();
+
 			if (station.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
+
+			if (call == null)
+				return NotFound();
 
 			if (call.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			string startLat = "";
 			string startLon = "";

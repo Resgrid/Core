@@ -1,21 +1,35 @@
-﻿﻿using System;
+﻿using System;
+using System.Globalization;
 using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.DependencyInjection;
 using Resgrid.Config;
+using Resgrid.Model.Services;
+using Resgrid.Model.TwoFactor;
+using IdentityUser = Resgrid.Model.Identity.IdentityUser;
 
 namespace Resgrid.Web.Attributes
 {
 	/// <summary>
 	/// Action filter that enforces a recent step-up 2FA verification before accessing sensitive operations.
-	/// If the user has 2FA enabled and the last step-up verification is absent or older than
-	/// <see cref="TwoFactorConfig.StepUpVerificationWindowMinutes"/>, redirects to the Verify2FA page.
-	/// Users without 2FA enabled pass through (enrollment enforcement is handled by separate middleware).
+	/// <para>
+	/// All enforcement decisions are delegated to <see cref="TwoFactorEnforcementEvaluator.Evaluate"/>;
+	/// this filter is responsible only for the ASP.NET plumbing (resolving services, reading the session,
+	/// and writing the HTTP result).
+	/// </para>
+	/// <list type="bullet">
+	///   <item><see cref="TwoFactorEnforcementOutcome.NotRequired"/> — pass through.</item>
+	///   <item><see cref="TwoFactorEnforcementOutcome.EnrollmentRequired"/> — redirect to enrollment.</item>
+	///   <item><see cref="TwoFactorEnforcementOutcome.StepUpRequired"/> — redirect to Verify2FA.</item>
+	/// </list>
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Method | AttributeTargets.Class, AllowMultiple = false)]
-	public sealed class RequiresRecentTwoFactorAttribute : ActionFilterAttribute
+	public sealed class RequiresRecentTwoFactorAttribute : Attribute, IAsyncActionFilter
 	{
 		/// <summary>
 		/// Session key whose value is a pipe-delimited string of the form "{userId}|{verifiedAtUtcRoundtrip}".
@@ -24,63 +38,133 @@ namespace Resgrid.Web.Attributes
 		/// </summary>
 		internal const string StepUpSessionKey = "Resgrid2FAVerifiedAt";
 
-		public override void OnActionExecuting(ActionExecutingContext context)
+		public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
 		{
-			var user = context.HttpContext.User;
+			var claimsPrincipal = context.HttpContext.User;
 
-			// Not authenticated — let the framework handle it
-			if (user?.Identity == null || !user.Identity.IsAuthenticated)
+			if (claimsPrincipal?.Identity == null || !claimsPrincipal.Identity.IsAuthenticated)
 			{
-				base.OnActionExecuting(context);
+				await next();
 				return;
 			}
 
-			// Resolve the current user's unique id from the PrimarySid claim (set by ClaimsLogic).
-			var currentUserId = user.FindFirstValue(ClaimTypes.PrimarySid);
+			var services = context.HttpContext.RequestServices;
+			var userManager = services.GetService<UserManager<IdentityUser>>();
+			var departmentsService = services.GetService<IDepartmentsService>();
+			var departmentSettingsService = services.GetService<IDepartmentSettingsService>();
+			var departmentGroupsService = services.GetService<IDepartmentGroupsService>();
 
-			// Check if user has 2FA enabled via the claim set by Identity
-			// TwoFactorEnabled is persisted on the IdentityUser; we check via UserManager
-			// but that requires async — use session flag set during login/step-up instead.
-			// If session key is absent the user must re-verify.
-			var session = context.HttpContext.Session;
-			var sessionValue = session.GetString(StepUpSessionKey);
-
-			if (!string.IsNullOrEmpty(sessionValue))
+			if (userManager == null || departmentsService == null || departmentSettingsService == null)
 			{
-				// Expected format: "{userId}|{verifiedAtUtcRoundtrip}"
-				var separatorIndex = sessionValue.IndexOf('|');
-				if (separatorIndex > 0)
-				{
-					var storedUserId = sessionValue.Substring(0, separatorIndex);
-					var verifiedAtRaw = sessionValue.Substring(separatorIndex + 1);
+				await next();
+				return;
+			}
 
-					// Only accept the step-up proof when it belongs to the currently authenticated user.
-					if (string.Equals(storedUserId, currentUserId, StringComparison.Ordinal) &&
-						DateTime.TryParse(verifiedAtRaw, null, System.Globalization.DateTimeStyles.RoundtripKind, out var verifiedAt))
+			var identityUser = await userManager.GetUserAsync(claimsPrincipal);
+			if (identityUser == null)
+			{
+				await next();
+				return;
+			}
+
+			// ── Gather plain-value inputs ────────────────────────────────────────────
+
+			var currentUserId = claimsPrincipal.FindFirstValue(ClaimTypes.PrimarySid);
+			bool userHas2Fa = await userManager.GetTwoFactorEnabledAsync(identityUser);
+
+			int departmentScope = 0;
+			bool isAdminOrManagingUser = false;
+			bool isGroupAdmin = false;
+
+			try
+			{
+				var department = await departmentsService.GetDepartmentByUserIdAsync(identityUser.Id);
+				if (department != null)
+				{
+					departmentScope = await departmentSettingsService.GetRequire2FAForAdminsAsync(department.DepartmentId);
+					isAdminOrManagingUser = department.IsUserAnAdmin(identityUser.Id)
+					                        || department.ManagingUserId == identityUser.Id;
+
+					if (!isAdminOrManagingUser && departmentScope == 2 && departmentGroupsService != null)
 					{
-						var windowExpiry = verifiedAt.AddMinutes(TwoFactorConfig.StepUpVerificationWindowMinutes);
-						if (DateTime.UtcNow <= windowExpiry)
-						{
-							// Still within the valid step-up window for this user
-							base.OnActionExecuting(context);
-							return;
-						}
+						var group = await departmentGroupsService.GetGroupForUserAsync(identityUser.Id, department.DepartmentId);
+						isGroupAdmin = group != null && group.IsUserGroupAdmin(identityUser.Id);
 					}
 				}
 			}
-
-			// Build the return URL so we can redirect back after verification
-			var request = context.HttpContext.Request;
-			var returnUrl = $"{request.Path}{request.QueryString}";
-
-			context.Result = new RedirectToRouteResult(new RouteValueDictionary
+			catch
 			{
-				{ "area", "User" },
-				{ "controller", "TwoFactor" },
-				{ "action", "Verify2FA" },
-				{ "returnUrl", returnUrl }
-			});
+				// Fail open on department lookup errors
+			}
+
+			DateTime? lastStepUpVerifiedAtUtc = ParseStepUpSession(context.HttpContext.Session, currentUserId);
+
+			// ── Delegate the decision ────────────────────────────────────────────────
+
+			var enforcementContext = new TwoFactorEnforcementContext(
+				UserHas2FaEnabled: userHas2Fa,
+				DepartmentScope: departmentScope,
+				IsAdminOrManagingUser: isAdminOrManagingUser,
+				IsGroupAdmin: isGroupAdmin,
+				LastStepUpVerifiedAtUtc: lastStepUpVerifiedAtUtc,
+				StepUpWindowMinutes: TwoFactorConfig.StepUpVerificationWindowMinutes);
+
+			var decision = TwoFactorEnforcementEvaluator.Evaluate(enforcementContext, DateTime.UtcNow);
+
+			// ── Act on the decision ──────────────────────────────────────────────────
+
+			switch (decision.Outcome)
+			{
+				case TwoFactorEnforcementOutcome.NotRequired:
+					await next();
+					return;
+
+				case TwoFactorEnforcementOutcome.EnrollmentRequired:
+					context.Result = new RedirectResult("/User/TwoFactor/Enable2FA?enforced=1");
+					return;
+
+				case TwoFactorEnforcementOutcome.StepUpRequired:
+				default:
+					var request = context.HttpContext.Request;
+					var returnUrl = $"{request.Path}{request.QueryString}";
+					context.Result = new RedirectToRouteResult(new RouteValueDictionary
+					{
+						{ "area", "User" },
+						{ "controller", "TwoFactor" },
+						{ "action", "Verify2FA" },
+						{ "returnUrl", returnUrl }
+					});
+					return;
+			}
+		}
+
+		// ── private helpers ──────────────────────────────────────────────────────────
+
+		/// <summary>
+		/// Reads and validates the step-up session entry for the given user.
+		/// Returns the UTC timestamp of the last successful verification, or <see langword="null"/>
+		/// if no valid proof exists.
+		/// </summary>
+		private static DateTime? ParseStepUpSession(ISession session, string currentUserId)
+		{
+			var sessionValue = session.GetString(StepUpSessionKey);
+			if (string.IsNullOrEmpty(sessionValue))
+				return null;
+
+			var separatorIndex = sessionValue.IndexOf('|');
+			if (separatorIndex <= 0)
+				return null;
+
+			var storedUserId = sessionValue.Substring(0, separatorIndex);
+			var verifiedAtRaw = sessionValue.Substring(separatorIndex + 1);
+
+			if (!string.Equals(storedUserId, currentUserId, StringComparison.Ordinal))
+				return null;
+
+			if (!DateTime.TryParse(verifiedAtRaw, null, DateTimeStyles.RoundtripKind, out var verifiedAt))
+				return null;
+
+			return verifiedAt;
 		}
 	}
 }
-

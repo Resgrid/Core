@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -342,7 +342,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var departmentMember = await _departmentsService.GetDepartmentMemberAsync(userId, DepartmentId);
 
 			if (!await _authorizationService.CanUserEditProfileAsync(UserId, DepartmentId, userId))
-				Unauthorized();
+				return Unauthorized();
 
 			var groups = new List<DepartmentGroup>();
 			var defaultGroup = new DepartmentGroup();
@@ -457,7 +457,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> EditUserProfile(EditProfileModel model, IFormCollection form, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserEditProfileAsync(UserId, DepartmentId, model.UserId))
-				Unauthorized();
+				return Unauthorized();
 
 			model.User = _usersService.GetUserById(model.UserId);
 			//model.PushUris = await _pushUriService.GetPushUrisByUserId(model.UserId);

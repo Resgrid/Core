@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -104,7 +104,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Template = await _templatesService.GetCallQuickTemplateByIdAsync(id);
 
 			if (model.Template == null || model.Template.DepartmentId != DepartmentId)
-				Unauthorized();	
+				return Unauthorized();	
 
 			var priorites = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(DepartmentId);
 			model.CallPriorities = new SelectList(priorites, "DepartmentCallPriorityId", "Name", priorites.FirstOrDefault(x => x.IsDefault));
@@ -188,7 +188,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Autofill = await _autofillsService.GetAutofillByIdAsync(id);
 
 			if (model.Autofill == null || model.Autofill.DepartmentId != DepartmentId)
-				Unauthorized();	
+				return Unauthorized();	
 
 			return View(model);
 		}
@@ -225,7 +225,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var template = await _templatesService.GetCallQuickTemplateByIdAsync(id);
 
 			if (template == null || template.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			await _templatesService.DeleteCallQuickTemplateAsync(id, cancellationToken);
 
@@ -239,7 +239,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var template = await _autofillsService.GetAutofillByIdAsync(id);
 
 			if (template == null || template.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			await _autofillsService.DeleteAutofillAsync(id, cancellationToken);
 

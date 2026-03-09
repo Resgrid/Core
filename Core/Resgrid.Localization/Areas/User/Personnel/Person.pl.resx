@@ -314,6 +314,30 @@
   <data name="ViewPersonHeader" xml:space="preserve">
     <value>View Person</value>
   </data>
+  <data name="GenerateReport" xml:space="preserve">
+    <value>Wygeneruj raport</value>
+  </data>
+  <data name="ViewPersonEventsHeader" xml:space="preserve">
+    <value>Wyświetl zdarzenia osoby</value>
+  </data>
+  <data name="ViewEvents" xml:space="preserve">
+    <value>Wyświetl zdarzenia</value>
+  </data>
+  <data name="EventsFor" xml:space="preserve">
+    <value>Zdarzenia dla</value>
+  </data>
+  <data name="AreYouSurePersonnel" xml:space="preserve">
+    <value>Are you sure you want to permanently delete all statuses for this person?</value>
+  </data>
+  <data name="ClearAllStatuses" xml:space="preserve">
+    <value>Wyczyść wszystkie statusy</value>
+  </data>
+  <data name="DeleteAll" xml:space="preserve">
+    <value>Usuń wszystko</value>
+  </data>
+  <data name="YesImSure" xml:space="preserve">
+    <value>Tak, jestem pewien</value>
+  </data>
   <data name="ViewRoleHeader" xml:space="preserve">
     <value>View Role</value>
   </data>

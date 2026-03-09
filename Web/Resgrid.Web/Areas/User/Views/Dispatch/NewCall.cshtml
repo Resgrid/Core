@@ -218,13 +218,13 @@
                                     </ul>
                                     <div class="tab-content" style="height: 600px;">
                                         <div role="tabpanel" class="tab-pane active" id="personnelTab">
-                                            <div id="personnelGrid"></div>
+                                            <table id="personnelGrid" class="table table-striped table-bordered table-hover" width="100%"></table>
                                         </div>
                                         <div role="tabpanel" class="tab-pane" id="groupsTab">
-                                            <div id="groupsGrid"></div>
+                                            <table id="groupsGrid" class="table table-striped table-bordered table-hover" width="100%"></table>
                                         </div>
                                         <div role="tabpanel" class="tab-pane" id="rolesTab">
-                                            <div id="rolesGrid"></div>
+                                            <table id="rolesGrid" class="table table-striped table-bordered table-hover" width="100%"></table>
                                         </div>
                                     </div>
 
@@ -489,9 +489,17 @@
                 <h4 class="modal-title" id="alertNotesModalLabel">@localizer["AlertNotesHeader"]</h4>
             </div>
             <div class="modal-body">
-                <!-- Alert notes will be injected here -->
+                <!-- Alert note pager injected here -->
+                <div id="alertNotesPager" style="display:none;">
+                    <div id="alertNoteDisplay"></div>
+                    <div class="text-center" style="margin-top:10px;">
+                        <span id="alertNotesCounter" class="text-muted small"></span>
+                    </div>
+                </div>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-default" id="alertNotesPrev" style="display:none;">&#8249; @commonLocalizer["Previous"]</button>
+                <button type="button" class="btn btn-default" id="alertNotesNext" style="display:none;">@commonLocalizer["Next"] &#8250;</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">@commonLocalizer["Close"]</button>
             </div>
         </div>
@@ -521,85 +529,69 @@
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.newcall.js"></script>
 
     <script type="text/javascript">
-        // Function to call the GetAlertNotesForContact endpoint and show modal if notes exist.
+        var _alertNotes = [];
+        var _alertNoteIndex = 0;
+
+        function buildNoteHtml(note) {
+            var bgStyle = note.TypeColor ? ' style="background-color:' + note.TypeColor + '"' : '';
+            return '<div class="note-card">' +
+                '<div class="ibox">' +
+                '<div class="ibox-content"' + bgStyle + '>' +
+                '<div class="row"><div class="col-md-12">' +
+                '<h4 class="note-title">' + (note.TypeName ? note.TypeName : '') + '</h4>' +
+                '<p class="small text-muted">' +
+                '<i class="fa fa-clock-o"></i> ' + note.AddedOn +
+                (note.AddedBy ? ' | <i class="fa fa-user"></i> ' + note.AddedBy : '') +
+                '</p></div></div>' +
+                '<div class="row"><div class="col-md-12 note-content">' + note.Note + '</div></div>' +
+                '</div></div></div>';
+        }
+
+        function showAlertNote(index) {
+            if (_alertNotes.length === 0) return;
+            _alertNoteIndex = Math.max(0, Math.min(index, _alertNotes.length - 1));
+            $("#alertNoteDisplay").html(buildNoteHtml(_alertNotes[_alertNoteIndex]));
+            $("#alertNotesCounter").text((_alertNoteIndex + 1) + " / " + _alertNotes.length);
+            $("#alertNotesPrev").toggle(_alertNoteIndex > 0);
+            $("#alertNotesNext").toggle(_alertNoteIndex < _alertNotes.length - 1);
+        }
+
         function checkAlertNotes(contactId, iconSelector) {
-            if (contactId) {
-                $.ajax({
-                    url: resgrid.absoluteBaseUrl + "/User/Dispatch/GetAlertNotesForContact",
-                    type: "GET",
-                    data: { contactId: contactId },
-                    success: function(response) {
-                        if (response) {
-                            $(iconSelector).show();
-                            var notesHtml = "";
-                            if ($.isArray(response)) {
-                                $.each(response, function(i, note) {
-
-                                     notesHtml +=`
-                                                        <div class="note-card">
-                                                    <div class="ibox">
-                                                                <div class="ibox-content" style="background-color:${note.TypeColor}">
-                                                            <div class="row">
-                                                                <div class="col-md-12">
-                                                                                    <h4 class="note-title">${note.TypeName ? note.TypeName : ""}</h4>
-                                                                    <p class="small text-muted">
-                                                                                <i class="fa fa-clock-o"></i> ${note.AddedOn}
-                                                                                        ${note.AddedBy ? `| <i class="fa fa-user"></i> ${note.AddedBy}` : ''}
-                                                                    </p>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row">
-                                                                <div class="col-md-12 note-content">
-                                                                            ${note.Note}
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            `;
-
-                                    // notesHtml += '<div class="card mb-2">';
-                                    // notesHtml += `  <div class="card-header">Note from ${note.AddedBy} (${note.AddedOn})</div>`;
-
-                                    // if (note.TypeColor)
-                                    // {
-                                    //     notesHtml += `  <div class="card-body" style="background-color: rgba(${note.TypeColor}, 0.1)">`;
-                                    // }
-                                    // else
-                                    // {
-                                    //     notesHtml += '  <div class="card-body">';
-                                    // }
-                                    // notesHtml += `    <p class="card-text">${note.Note}</p>`;
-                                    // notesHtml += '  </div>';
-                                    // notesHtml += '</div>';
-                                });
-                            }
-
-                            $("#alertNotesModal .modal-body").html(notesHtml);
-                            
-                            $("#alertNotesModal").modal("show");
-                        } else {
-                            $(iconSelector).hide(); // no notes—hide the icon
-                        }
-                    },
-                    error: function() {
-                       
+            if (!contactId) return;
+            $.ajax({
+                url: resgrid.absoluteBaseUrl + "/User/Dispatch/GetAlertNotesForContact",
+                type: "GET",
+                data: { contactId: contactId },
+                success: function(response) {
+                    if (response && $.isArray(response) && response.length > 0) {
+                        _alertNotes = response;
+                        _alertNoteIndex = 0;
+                        $(iconSelector).show();
+                        $("#alertNotesPager").show();
+                        showAlertNote(0);
+                        $("#alertNotesModal").modal("show");
+                    } else {
+                        $(iconSelector).hide();
                     }
-                });
-            }
+                },
+                error: function() {}
+            });
         }
 
         $(document).ready(function () {
-            // Listen for changes on the PrimaryContact select.
+            $("#alertNotesPrev").on("click", function () {
+                showAlertNote(_alertNoteIndex - 1);
+            });
+            $("#alertNotesNext").on("click", function () {
+                showAlertNote(_alertNoteIndex + 1);
+            });
+
             $("#PrimaryContact").on("change", function () {
                 var contactId = $(this).val();
                 checkAlertNotes(contactId, "#primaryNotesIcon");
             });
 
-            // Listen for changes on the AdditionalContacts select.
             $("#AdditionalContacts").on("change", function () {
-                // For multiple selection, you can check for one or more selected contacts.
-                // Here we use the first selected contact as an example.
                 var contactId = $(this).val();
                 if (contactId && contactId.length) {
                     checkAlertNotes(contactId[0], "#additionalNotesIcon");
@@ -608,9 +600,12 @@
                 }
             });
 
-            // Clicking the icons re-shows the alert notes modal if it’s already loaded.
+            // Clicking the icons re-shows the alert notes modal if it's already loaded.
             $("#primaryNotesIcon, #additionalNotesIcon").on("click", function () {
-                $("#alertNotesModal").modal("show");
+                if (_alertNotes.length > 0) {
+                    showAlertNote(_alertNoteIndex);
+                    $("#alertNotesModal").modal("show");
+                }
             });
         });
     </script>

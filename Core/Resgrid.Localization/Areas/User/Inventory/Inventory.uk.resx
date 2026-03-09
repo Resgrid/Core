@@ -1,0 +1,155 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Active" xml:space="preserve">
+    <value>Активний</value>
+  </data>
+  <data name="AddedBy" xml:space="preserve">
+    <value>Додано користувачем</value>
+  </data>
+  <data name="AddedOn" xml:space="preserve">
+    <value>Додано</value>
+  </data>
+  <data name="AddInventoryTypeButton" xml:space="preserve">
+    <value>Додати тип інвентарю</value>
+  </data>
+  <data name="AddInventoryTypeHeader" xml:space="preserve">
+    <value>Додати тип інвентарю</value>
+  </data>
+  <data name="AdjustInventory" xml:space="preserve">
+    <value>Коригувати інвентар</value>
+  </data>
+  <data name="AdjustInventoryHeader" xml:space="preserve">
+    <value>Коригувати інвентар</value>
+  </data>
+  <data name="Amount" xml:space="preserve">
+    <value>Кількість</value>
+  </data>
+  <data name="Batch" xml:space="preserve">
+    <value>Партія</value>
+  </data>
+  <data name="BatchSerialNumber" xml:space="preserve">
+    <value>Номер партії/серії</value>
+  </data>
+  <data name="BatchSerial" xml:space="preserve">
+    <value>Партія/Серія</value>
+  </data>
+  <data name="AddType" xml:space="preserve">
+    <value>Додати тип</value>
+  </data>
+  <data name="CreatedBy" xml:space="preserve">
+    <value>Створено</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Редагувати</value>
+  </data>
+  <data name="EditInventoryTypeButton" xml:space="preserve">
+    <value>Редагувати тип інвентарю</value>
+  </data>
+  <data name="EditInventoryTypeHeader" xml:space="preserve">
+    <value>Редагувати тип інвентарю</value>
+  </data>
+  <data name="ForItemsNoExpiry" xml:space="preserve">
+    <value>Для товарів без строку придатності введіть 0</value>
+  </data>
+  <data name="Group" xml:space="preserve">
+    <value>Група</value>
+  </data>
+  <data name="InventoryHistoryHeader" xml:space="preserve">
+    <value>Історія інвентарю</value>
+  </data>
+  <data name="InventoryTypesHeader" xml:space="preserve">
+    <value>Типи інвентарю</value>
+  </data>
+  <data name="ItemExpiresDays" xml:space="preserve">
+    <value>Дні придатності товару</value>
+  </data>
+  <data name="ManageTypes" xml:space="preserve">
+    <value>Керувати типами</value>
+  </data>
+  <data name="NoGroup" xml:space="preserve">
+    <value>Без групи</value>
+  </data>
+  <data name="NoUnit" xml:space="preserve">
+    <value>Без підрозділу</value>
+  </data>
+  <data name="Station" xml:space="preserve">
+    <value>Станція</value>
+  </data>
+  <data name="TypeName" xml:space="preserve">
+    <value>Назва типу</value>
+  </data>
+  <data name="Types" xml:space="preserve">
+    <value>Типи</value>
+  </data>
+  <data name="Unit" xml:space="preserve">
+    <value>Підрозділ</value>
+  </data>
+  <data name="UnitOfMeasure" xml:space="preserve">
+    <value>Одиниця виміру</value>
+  </data>
+  <data name="ViewHistory" xml:space="preserve">
+    <value>Переглянути історію</value>
+  </data>
+  <data name="ViewInventoryEntryHeader" xml:space="preserve">
+    <value>Переглянути запис інвентарю</value>
+  </data>
+</root>
+

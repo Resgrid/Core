@@ -7,12 +7,7 @@ var resgrid;
         (function (addType) {
             $(document).ready(function () {
                 resgrid.common.analytics.track('Inventory - Add Type');
-                $("#Type_ExpiresDays").kendoNumericTextBox({
-                    format: "#",
-                    min: 0,
-                    max: 1825,
-                    step: 1
-                });
+                $("#Type_ExpiresDays").attr({ type: 'number', min: 0, max: 1825, step: 1 });
             });
         })(addType = inventory.addType || (inventory.addType = {}));
     })(inventory = resgrid.inventory || (resgrid.inventory = {}));

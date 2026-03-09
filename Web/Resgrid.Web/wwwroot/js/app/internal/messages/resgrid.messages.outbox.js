@@ -1,85 +1,59 @@
-
 var resgrid;
 (function (resgrid) {
     var message;
     (function (message) {
         var outbox;
         (function (outbox) {
+            var outboxTable;
             $(document).ready(function () {
                 resgrid.common.analytics.track('Messaging - Outbox');
-                $("#outboxMailList").kendoGrid({
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Messages/GetOutboxMessageList'
-                        },
-                        schema: {
-                            model: {
-                                fields: {
-                                    MessageId: { type: "number" },
-                                    Subject: { type: "string" },
-                                    Body: { type: "string" },
-                                    SentOn: { type: "string" },
-                                    ReadOn: { type: "string" },
-                                    Type: { type: "number" },
-                                    SystemGenerated: { type: "boolean" },
-                                    IsDeleted: { type: "boolean" }
-                                }
-                            }
-                        },
-                        pageSize: 50
+                outboxTable = $("#outboxMailList").DataTable({
+                    ajax: {
+                        url: resgrid.absoluteBaseUrl + '/User/Messages/GetOutboxMessageList',
+                        dataSrc: ''
                     },
-                    //height: 400,
-                    filterable: true,
-                    sortable: true,
-                    scrollable: true,
-                    pageable: {
-                        refresh: true,
-                        pageSizes: true,
-                        buttonCount: 5
-                    },
+                    pageLength: 50,
                     columns: [
                         {
-                            field: "MessageId",
-                            title: "",
-                            width: 28,
-                            filterable: false,
-                            sortable: false,
-                            headerTemplate: '<label><input type="checkbox" id="checkAllMessages"/></label>',
-                            template: "<input type=\"checkbox\" id=\"message\" name=\"message\" value=\"#=MessageId#\" />"
+                            data: 'MessageId',
+                            title: '',
+                            orderable: false,
+                            searchable: false,
+                            render: function (data) {
+                                return '<input type="checkbox" id="message" name="message" value="' + data + '" />';
+                            }
                         },
-                        "Subject",
+                        { data: 'Subject', title: 'Subject' },
+                        { data: 'SentOn', title: 'Sent On' },
                         {
-                            field: "SentOn",
-                            title: "Sent On"
-                        },
-                        {
-                            field: "MessageId",
-                            title: "Actions",
-                            filterable: false,
-                            sortable: false,
-                            template: kendo.template($("#outboxCommand-template").html())
+                            data: 'MessageId',
+                            title: 'Actions',
+                            orderable: false,
+                            searchable: false,
+                            render: function (data) {
+                                return '<a class="btn btn-sm btn-primary" href="' + resgrid.absoluteBaseUrl + '/User/Messages/View?messageId=' + data + '">View</a>';
+                            }
                         }
                     ]
                 });
-                $('#checkAllMessages').on('click', function () {
-                    $('#outboxMailList').find(':checkbox').prop('checked', this.checked);
+                outboxTable.on('draw', function () {
+                    $('#outboxMailList thead th:first').html('<label><input type="checkbox" id="checkAllMessages"/></label>');
+                });
+                $(document).on('click', '#checkAllMessages', function () {
+                    $('#outboxMailList tbody :checkbox').prop('checked', this.checked);
                 });
             });
             function deleteMessages() {
-                var values = $("input[name=message]:checked").map(function () {
-                    return this.value;
-                }).get().join(",");
+                var values = $("input[name=message]:checked").map(function () { return this.value; }).get().join(",");
                 if (values && values.length > 0) {
                     $.ajax({
                         url: resgrid.absoluteBaseUrl + '/User/Messages/DeleteOutboxMessages?messageIds=' + values,
                         type: 'DELETE',
-                        success: function (result) {
+                        success: function () {
                             window.location.assign(resgrid.absoluteBaseUrl + '/User/Messages/Outbox');
                         }
                     });
-                }
-                else {
+                } else {
                     alert('You have no messages selected to delete');
                 }
             }

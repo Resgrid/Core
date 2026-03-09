@@ -299,6 +299,14 @@
       "destination": "wwwroot/lib/deltablot/dropzone/"
     },
     {
+      "library": "chart.js@4.4.3",
+      "destination": "wwwroot/lib/chart.js/",
+      "files": [
+        "dist/chart.umd.min.js",
+        "dist/chart.umd.js"
+      ]
+    },
+    {
       "library": "countly-sdk-web@25.4.1",
       "destination": "wwwroot/lib/countly-sdk-web/",
       "files": [

@@ -9,15 +9,15 @@ var resgrid;
                 $('#List_EmailAddress').blur(function () {
                     validateEmailAddress($('#List_EmailAddress').val());
                 });
-                $("#listMembers").kendoMultiSelect({
+                $("#listMembers").select2({
                     placeholder: "Select Members...",
-                    dataTextField: "Name",
-                    dataValueField: "UserId",
-                    autoBind: false,
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForGridWithFilter'
+                    allowClear: true,
+                    multiple: true,
+                    ajax: {
+                        url: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForGridWithFilter',
+                        dataType: 'json',
+                        processResults: function (data) {
+                            return { results: $.map(data, function (u) { return { id: u.UserId, text: u.Name }; }) };
                         }
                     }
                 });

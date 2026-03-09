@@ -12,15 +12,15 @@ var resgrid;
                 $('#List_EmailAddress').blur(function () {
                     validateEmailAddress($('#List_EmailAddress').val());
                 });
-                $("#listMembers").kendoMultiSelect({
+                $("#listMembers").select2({
                     placeholder: "Select Members...",
-                    dataTextField: "Name",
-                    dataValueField: "UserId",
-                    autoBind: false,
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForGridWithFilter'
+                    allowClear: true,
+                    multiple: true,
+                    ajax: {
+                        url: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForGridWithFilter',
+                        dataType: 'json',
+                        processResults: function (data) {
+                            return { results: $.map(data, function (u) { return { id: u.UserId, text: u.Name }; }) };
                         }
                     }
                 });
@@ -30,12 +30,8 @@ var resgrid;
                     type: 'GET'
                 }).done(function (data) {
                     if (data) {
-                        var multiSelect = $("#listMembers").data("kendoMultiSelect");
-                        var valuesToAdd = [];
-                        for (var i = 0; i < data.length; i++) {
-                            valuesToAdd.push(data[i].UserId);
-                        }
-                        multiSelect.value(valuesToAdd);
+                        data.forEach(function (u) { $("#listMembers").append(new Option(u.Name, u.UserId, true, true)); });
+                        $("#listMembers").trigger('change');
                     }
                 });
             });

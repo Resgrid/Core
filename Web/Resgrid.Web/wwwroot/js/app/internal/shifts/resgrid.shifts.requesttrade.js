@@ -7,15 +7,17 @@ var resgrid;
         (function (requesttrade) {
             $(document).ready(function () {
                 resgrid.common.analytics.track('Shifts - Request Trade');
-                $("#users").kendoMultiSelect({
+                var shiftSignupId = $('#Signup_ShiftSignupId').val();
+                var shiftDayId = $('#ShiftDayId').val();
+                $("#users").select2({
                     placeholder: "Select users...",
-                    dataTextField: "Name",
-                    dataValueField: "UserId",
-                    autoBind: false,
-                    dataSource: {
-                        type: "json",
-                        transport: {
-                            read: resgrid.absoluteBaseUrl + '/User/Shifts/GetPersonnelNotOnShiftDay?shiftSignupId=' + shiftSignupId + '&shiftDayId=' + shiftDayId
+                    allowClear: true,
+                    multiple: true,
+                    ajax: {
+                        url: resgrid.absoluteBaseUrl + '/User/Shifts/GetPersonnelNotOnShiftDay?shiftSignupId=' + shiftSignupId + '&shiftDayId=' + shiftDayId,
+                        dataType: 'json',
+                        processResults: function (data) {
+                            return { results: $.map(data, function (u) { return { id: u.UserId, text: u.Name }; }) };
                         }
                     }
                 });

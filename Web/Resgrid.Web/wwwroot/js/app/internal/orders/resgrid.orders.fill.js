@@ -13,28 +13,27 @@
 			function addItem(element) {
 				$('#' + element).first().append("<div class='col-md-2'><dl><dt>Contact Name</dt><dd><input type='text' class='form-control' placeholder='Contact name' id='contactName_" + fill.itemCount + "' name='contactName_" + fill.itemCount + "'></dd></dl></div><div class='col-md-2'><dl><dt>Contact Info</dt><dd><input type='text' class='form-control' placeholder='Contact number' id='contactNumber_" + fill.itemCount + "' name='contactNumber_" + fill.itemCount + "'></dd></dl></div><div class='col-md-3'><dl><dt>Note</dt><dd><input type='text' class='form-control' placeholder='Note for this fill' id='note_" + fill.itemCount + "' name='note_" + fill.itemCount + "'></dd></dl></div><div class='col-md-2'><dl><dt>Lead User</dt><dd><select id='leadUser_" + fill.itemCount + "' name='leadUser_" + fill.itemCount + "' style='padding-left: 0; width: 100%;'></select></dd></dl></div><div class='col-md-2'><dl><dt>Fill Units</dt><dd><select id='units_" + fill.itemCount + "' name='units_" + fill.itemCount + "'></select></dd></dl></div><div class='col-md-1'><dl><dt>&nbsp;</dt><dd><a class='btn btn-xs btn-success' onclick='resgrid.orders.fill.saveFill(event, " + fill.itemCount + ");'>Submit Fill</a></dd></dl></div>");
 
-				$("#" + "units_" + fill.itemCount).kendoMultiSelect({
+				$("#" + "units_" + fill.itemCount).select2({
 					placeholder: "Select units to fill in this item...",
-					dataTextField: "Name",
-					dataValueField: "UnitId",
-					autoBind: false,
-					dataSource: {
-						type: "json",
-						transport: {
-							read: resgrid.absoluteBaseUrl + '/User/Units/GetUnits'
+					allowClear: true,
+					multiple: true,
+					ajax: {
+						url: resgrid.absoluteBaseUrl + '/User/Units/GetUnits',
+						dataType: 'json',
+						processResults: function (data) {
+							return { results: $.map(data, function (u) { return { id: u.UnitId, text: u.Name }; }) };
 						}
 					}
 				});
 
-				$("#" + "leadUser_" + fill.itemCount).kendoDropDownList({
+				$("#" + "leadUser_" + fill.itemCount).select2({
 					placeholder: "Select the lead User...",
-					dataTextField: "Name",
-					dataValueField: "UserId",
-					autoBind: false,
-					dataSource: {
-						type: "json",
-						transport: {
-							read: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForGrid'
+					allowClear: true,
+					ajax: {
+						url: resgrid.absoluteBaseUrl + '/User/Personnel/GetPersonnelForGrid',
+						dataType: 'json',
+						processResults: function (data) {
+							return { results: $.map(data, function (u) { return { id: u.UserId, text: u.Name }; }) };
 						}
 					}
 				});

@@ -7,10 +7,10 @@ using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Bus;
 using Resgrid.Model.Identity;
-using System.Transactions;
 
 namespace Resgrid.Services
 {
@@ -29,11 +29,12 @@ namespace Resgrid.Services
 		private readonly IEventAggregator _eventAggregator;
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IIdentityRepository _identityRepository;
+		private readonly IUnitOfWork _unitOfWork;
 
 		public DepartmentGroupsService(IDepartmentGroupsRepository departmentGroupsRepository, IDepartmentGroupMembersRepository departmentGroupMembersRepository,
 			ISubscriptionsService subscriptionsService, IAddressService addressService, IDepartmentsService departmentsService, IGeoLocationProvider geoLocationProvider,
 			IDepartmentSettingsService departmentSettingsService, IEventAggregator eventAggregator, ICacheProvider cacheProvider,
-			IIdentityRepository identityRepository)
+			IIdentityRepository identityRepository, IUnitOfWork unitOfWork)
 		{
 			_departmentGroupsRepository = departmentGroupsRepository;
 			_departmentGroupMembersRepository = departmentGroupMembersRepository;
@@ -45,6 +46,7 @@ namespace Resgrid.Services
 			_eventAggregator = eventAggregator;
 			_cacheProvider = cacheProvider;
 			_identityRepository = identityRepository;
+			_unitOfWork = unitOfWork;
 		}
 
 		public async Task<List<DepartmentGroup>> GetAllAsync()
@@ -59,7 +61,7 @@ namespace Resgrid.Services
 
 		public async Task<DepartmentGroup> SaveAsync(DepartmentGroup departmentGroup, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			// New or Updated Address for this group
+			// New or Updated Address for this group (outside the transaction — address has its own lifecycle)
 			if (departmentGroup.Address != null)
 			{
 				var address = await _addressService.SaveAddressAsync(departmentGroup.Address, cancellationToken);
@@ -69,18 +71,34 @@ namespace Resgrid.Services
 				}
 			}
 
-			var saved = await _departmentGroupsRepository.SaveOrUpdateAsync(departmentGroup, cancellationToken);
-			await InvalidateGroupInCache(saved.DepartmentGroupId);
+			// Open a shared connection/transaction so the group and its members are committed atomically.
+			_unitOfWork.CreateOrGetConnection();
 
-			// Save members separately — Members is in IgnoredProperties so the ORM cascade skips it
-			if (departmentGroup.Members != null && departmentGroup.Members.Any())
+			DepartmentGroup saved;
+			try
 			{
-				foreach (var member in departmentGroup.Members)
+				saved = await _departmentGroupsRepository.SaveOrUpdateAsync(departmentGroup, cancellationToken);
+
+				// Members is in IgnoredProperties so the ORM cascade skips it — save each member explicitly.
+				if (departmentGroup.Members != null && departmentGroup.Members.Any())
 				{
-					member.DepartmentGroupId = saved.DepartmentGroupId;
-					await _departmentGroupMembersRepository.SaveOrUpdateAsync(member, cancellationToken);
+					foreach (var member in departmentGroup.Members)
+					{
+						member.DepartmentGroupId = saved.DepartmentGroupId;
+						await _departmentGroupMembersRepository.SaveOrUpdateAsync(member, cancellationToken);
+					}
 				}
+
+				_unitOfWork.CommitChanges();
 			}
+			catch
+			{
+				_unitOfWork.DiscardChanges();
+				throw;
+			}
+
+			// Invalidate after the transaction commits so the cache is refreshed from the fully consistent state.
+			await InvalidateGroupInCache(saved.DepartmentGroupId);
 
 			return saved;
 		}

@@ -274,6 +274,7 @@
 							<div class="col-md-8 col-md-offset-1">
 								@Html.AntiForgeryToken()
 								@Html.HiddenFor(m => m.Signup.ShiftSignupId)
+								<input type="hidden" id="ShiftDayId" name="ShiftDayId" value="@Model.ShiftDay.ShiftDayId" />
 								<div asp-validation-summary="All" class="text-danger"></div>
 							</div>
 						</div>

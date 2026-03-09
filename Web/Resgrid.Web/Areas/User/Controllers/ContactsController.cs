@@ -92,7 +92,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> View(string contactId)
 		{
 			if (String.IsNullOrWhiteSpace(contactId))
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new ViewContactView();
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
@@ -104,10 +104,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.NoteTypes = noteTypes;
 
 			if (model.Contact == null)
-				Unauthorized();
+				return Unauthorized();
 
 			if (model.Contact.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			// Load physical address if it exists
 			if (model.Contact.PhysicalAddressId.HasValue)
@@ -300,9 +300,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return BadRequest();
 
 			if (model.Contact.DepartmentId != DepartmentId)
-				Unauthorized();
-
-			if (!String.IsNullOrWhiteSpace(model.Contact.EntranceGpsCoordinates))
+				return Unauthorized();
 			{
 				var entranceGpsCoordinates = model.Contact.EntranceGpsCoordinates.Split(',');
 				model.LocationGpsLatitude = entranceGpsCoordinates[0];
@@ -533,10 +531,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return NotFound();
 
 			if (contact.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			if (!(await _authorizationService.CanUserDeleteContactAsync(UserId, DepartmentId)))
-				Unauthorized();
+				return Unauthorized();
 
 			var result = await _contactsService.DeleteContactAsync(contactId, UserId, DepartmentId, IpAddressHelper.GetRequestIP(Request, true), $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}", cancellationToken);
 
@@ -634,17 +632,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> ViewCategory(string categoryId)
 		{
 			if (String.IsNullOrWhiteSpace(categoryId))
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new AddCategoryView();
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.Category = await _contactsService.GetContactCategoryByIdAsync(categoryId);
 
 			if (model.Category == null)
-				Unauthorized();
+				return Unauthorized();
 
 			if (model.Category.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			return View(model);
 		}
@@ -654,17 +652,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> EditCategory(string categoryId)
 		{
 			if (String.IsNullOrWhiteSpace(categoryId))
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new AddCategoryView();
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.Category = await _contactsService.GetContactCategoryByIdAsync(categoryId);
 
 			if (model.Category == null)
-				Unauthorized();
+				return Unauthorized();
 
 			if (model.Category.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			return View(model);
 		}
@@ -681,7 +679,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var category = await _contactsService.GetContactCategoryByIdAsync(model.Category.ContactCategoryId);
 
 				if (category == null || category.DepartmentId != DepartmentId)
-					Unauthorized();
+					return Unauthorized();
 
 				var auditEvent = new AuditEvent();
 				auditEvent.DepartmentId = DepartmentId;
@@ -714,15 +712,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> DeleteCategory(string categoryId)
 		{
 			if (String.IsNullOrWhiteSpace(categoryId))
-				Unauthorized();
+				return Unauthorized();
 
 			var category = await _contactsService.GetContactCategoryByIdAsync(categoryId);
 
 			if (category == null)
-				Unauthorized();
+				return Unauthorized();
 
 			if (category.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			if (category.Contacts != null && category.Contacts.Any())
 				return RedirectToAction("Categories", "Contacts", new { Area = "User" });

@@ -31,7 +31,7 @@ var resgrid;
             }
             smallstationsgrid.refreshGrid = refreshGrid;
             function respondToStation(groupId) {
-                resgrid.showProgress('#smallStationGroupsGrid', true);
+                resgrid.showProgress('#smallStationGroupsGridContainer', true);
                 $.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/Home/UserRespondingToStation?stationId=' + groupId,
                     contentType: 'application/json; charset=utf-8',
@@ -39,7 +39,7 @@ var resgrid;
                 }).done(function (results) {
                     var event = { stationId: groupId };
                     $('.respondToAStationWindow').trigger(resgrid.department.smallstationsgrid.respondToStationButton, event);
-                    resgrid.showProgress('#smallStationGroupsGrid', false);
+                    resgrid.showProgress('#smallStationGroupsGridContainer', false);
                 });
             }
             smallstationsgrid.respondToStation = respondToStation;

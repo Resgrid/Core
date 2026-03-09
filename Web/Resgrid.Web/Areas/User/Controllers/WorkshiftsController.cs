@@ -24,7 +24,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IUnitsService _unitsService;
 		private readonly IUsersService _usersService;
-		
+
 		public WorkshiftsController(IWorkShiftsService workShiftsService, IAuthorizationService authorizationService,
 			IDepartmentsService departmentsService, IUnitsService unitsService, IUsersService usersService)
 		{
@@ -82,7 +82,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				return RedirectToAction("Index", "Shifts");
 			}
-			
+
 			return View(model);
 		}
 
@@ -94,10 +94,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Shift = await _workShiftsService.GetWorkshiftByIdAsync(shiftId);
 
 			if (model.Shift == null)
-				Unauthorized();
+				return Unauthorized();
 
 			if (model.Shift.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			var dep = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.Shift.Start = model.Shift.Start.TimeConverter(dep);

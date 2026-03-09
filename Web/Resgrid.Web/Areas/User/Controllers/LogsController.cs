@@ -387,7 +387,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> DeleteWorkLog(int logId, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserDeleteWorkLogAsync(UserId, logId))
-				Unauthorized();
+				return Unauthorized();
 
 			await _workLogsService.DeleteLogAsync(logId, cancellationToken);
 
@@ -519,12 +519,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Log_View)]
-		public async Task<FileResult> GetAttachment(int logId, int attachmentId)
+		public async Task<IActionResult> GetAttachment(int logId, int attachmentId)
 		{
 			var attachment = await _workLogsService.GetAttachmentByIdAsync(attachmentId);
 
 			if (attachment.LogId != logId)
-				Unauthorized();
+				return Unauthorized();
 
 			return new FileContentResult(attachment.Data, attachment.Type)
 			{

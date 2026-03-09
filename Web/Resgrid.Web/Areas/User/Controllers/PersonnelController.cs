@@ -297,7 +297,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> AddPerson()
 		{
 			if (!await _authorizationService.CanUserAddNewUserAsync(DepartmentId, UserId))
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new AddPersonModel();
 			model.Department = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
@@ -343,7 +343,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> ViewPerson(string userId)
 		{
 			if (!await _authorizationService.CanUserViewUserAsync(UserId, userId))
-				Unauthorized();
+				return Unauthorized();
 
 			ViewPersonView model = new ViewPersonView();
 			model.Profile = await _userProfileService.GetProfileByUserIdAsync(userId, true);
@@ -404,7 +404,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> AddPerson(AddPersonModel model, IFormCollection form, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserAddNewUserAsync(DepartmentId, UserId))
-				Unauthorized();
+				return Unauthorized();
 
 			ModelState.Remove("Profile.UserId");
 
@@ -564,7 +564,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> DeletePerson(string userId)
 		{
 			if (!await _authorizationService.CanUserDeleteUserAsync(DepartmentId, UserId, userId))
-				Unauthorized();
+				return Unauthorized();
 
 			DeletePersonModel model = new DeletePersonModel();
 			model.Department = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
@@ -581,7 +581,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> DeletePerson(DeletePersonModel model, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserDeleteUserAsync(DepartmentId, UserId, model.UserId))
-				Unauthorized();
+				return Unauthorized();
 
 			model.Department = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
 			model.User = _usersService.GetUserById(model.UserId);
@@ -1247,7 +1247,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> SetActionForUser(string userId, int actionType, int destination, string note, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserViewPersonAsync(UserId, userId, DepartmentId))
-				Unauthorized();
+				return Unauthorized();
 
 			var status = new ActionLog();
 			status.UserId = userId;
@@ -1282,7 +1282,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				foreach (var userId in userIds.Split(char.Parse("|")))
 				{
 					if (!await _authorizationService.CanUserViewPersonAsync(UserId, userId, DepartmentId))
-						Unauthorized();
+						return Unauthorized();
 
 					var status = new ActionLog();
 					status.UserId = userId;
@@ -1315,7 +1315,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> SetStaffingForUser(string userId, int staffing, string note, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserViewPersonAsync(UserId, userId, DepartmentId))
-				Unauthorized();
+				return Unauthorized();
 
 			string staffingNote = String.Empty;
 			if (!String.IsNullOrWhiteSpace(note))
@@ -1346,7 +1346,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				foreach (var userId in userIds.Split(char.Parse("|")))
 				{
 					if (!await _authorizationService.CanUserViewPersonAsync(UserId, userId, DepartmentId))
-						Unauthorized();
+						return Unauthorized();
 
 					try
 					{
@@ -1767,7 +1767,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> EditRole(int roleId)
 		{
 			if (!await _authorizationService.CanUserEditRoleAsync(UserId, roleId))
-				Unauthorized();
+				return Unauthorized();
 
 			EditRoleModel model = new EditRoleModel();
 			model.Role = await _personnelRolesService.GetRoleByIdAsync(roleId);
@@ -1781,7 +1781,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> EditRole(EditRoleModel model, IFormCollection collection, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserEditRoleAsync(UserId, model.Role.PersonnelRoleId))
-				Unauthorized();
+				return Unauthorized();
 
 			var role = await _personnelRolesService.GetRoleByIdAsync(model.Role.PersonnelRoleId);
 			role.Name = model.Role.Name;
@@ -1837,7 +1837,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> DeleteRole(int roleId, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserEditRoleAsync(UserId, roleId))
-				Unauthorized();
+				return Unauthorized();
 
 			await _personnelRolesService.DeleteRoleByIdAsync(roleId, cancellationToken);
 
@@ -1849,7 +1849,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> ViewRole(int roleId)
 		{
 			if (!await _authorizationService.CanUserViewRoleAsync(UserId, roleId))
-				Unauthorized();
+				return Unauthorized();
 
 			ViewRoleModel model = new ViewRoleModel();
 			model.Role = await _personnelRolesService.GetRoleByIdAsync(roleId);
@@ -1925,7 +1925,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> ViewEvents(string userId)
 		{
 			if (!await _authorizationService.CanUserViewUserAsync(UserId, userId))
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new ViewPersonEventsView();
 			model.UserId = userId;
@@ -2005,6 +2005,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Personnel_Delete)]
 		public async Task<IActionResult> ClearAllPersonnelEvents(ViewPersonEventsView model, CancellationToken cancellationToken)
 		{
+			if (!await _authorizationService.CanUserDeleteUserAsync(DepartmentId, UserId, model.UserId))
+				return Unauthorized();
+
 			if (model.ConfirmClearAll)
 				await _actionLogsService.DeleteActionLogsForUserAsync(model.UserId, cancellationToken);
 
@@ -2034,6 +2037,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				var actionLog = await _actionLogsService.GetActionLogByIdAsync(eventId);
 				if (actionLog == null)
+					continue;
+
+				if (actionLog.DepartmentId != DepartmentId)
+					continue;
+
+				if (!await _authorizationService.CanUserViewPersonAsync(UserId, actionLog.UserId, DepartmentId))
 					continue;
 
 				var personnelEvent = new PersonnelEventJson();
@@ -2083,7 +2092,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> GetPersonnelEvents(string userId)
 		{
 			if (!await _authorizationService.CanUserViewUserAsync(UserId, userId))
-				Unauthorized();
+				return Unauthorized();
 
 			var personnelEvents = new List<PersonnelEventJson>();
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);

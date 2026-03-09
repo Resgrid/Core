@@ -7,6 +7,8 @@ var resgrid;
         (function (requesttrade) {
             $(document).ready(function () {
                 resgrid.common.analytics.track('Shifts - Request Trade');
+                var shiftSignupId = $('#Signup_ShiftSignupId').val();
+                var shiftDayId = $('#ShiftDayId').val();
                 $("#users").select2({
                     placeholder: "Select users...",
                     allowClear: true,

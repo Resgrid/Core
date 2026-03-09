@@ -3,16 +3,12 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Framework;
 using Resgrid.Model;
-using Resgrid.Model.Events;
 using Resgrid.Model.Helpers;
-using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
-using Resgrid.Services;
 using Resgrid.Web.Helpers;
 using Resgrid.Web.Services.Controllers.Version3.Models.BigBoard.BigBoardX;
 using Resgrid.Web.Services.Helpers;
-using Resgrid.Web.Services.Models.v4.Calls;
 using Resgrid.Web.Services.Models.v4.UnitStatus;
 using System;
 using System.Collections.Generic;
@@ -38,15 +34,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IActionLogsService _actionLogsService;
-		private readonly IEventAggregator _eventAggregator;
 
 		public UnitStatusController(
 			ICallsService callsService,
 			IUnitsService unitsService,
 			IDepartmentGroupsService departmentGroupsService,
 			IDepartmentSettingsService departmentSettingsService,
-			IActionLogsService actionLogsService,
-			IEventAggregator eventAggregator
+			IActionLogsService actionLogsService
 			)
 		{
 			_callsService = callsService;
@@ -54,7 +48,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_departmentGroupsService = departmentGroupsService;
 			_departmentSettingsService = departmentSettingsService;
 			_actionLogsService = actionLogsService;
-			_eventAggregator = eventAggregator;
 		}
 		#endregion Members and Constructors
 
@@ -309,7 +302,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 					//OutboundEventProvider.UnitStatusTopicHandler handler = new OutboundEventProvider.UnitStatusTopicHandler();
 					//handler.Handle(new UnitStatusEvent() { DepartmentId = DepartmentId, Status = savedState });
-					_eventAggregator.SendMessage<UnitStatusEvent>(new UnitStatusEvent() { DepartmentId = DepartmentId, Status = savedState });
+					// NOTE: UnitStatusEvent is now fired inside SetUnitStateAsync with PreviousStatus populated.
 
 					if (savedState.UnitStateId > 0)
 					{

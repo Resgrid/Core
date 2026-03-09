@@ -178,7 +178,7 @@ namespace Resgrid.Services
 
 			if (state != null)
 				return state;
-			
+
 
 			state = new UnitState();
 			state.UnitId = unitId;
@@ -290,6 +290,8 @@ namespace Resgrid.Services
 
 		public async Task<UnitState> SetUnitStateAsync(int unitId, int unitStateType, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			var previousState = await GetLastUnitStateByUnitIdAsync(unitId);
+
 			var state = new UnitState();
 			state.UnitId = unitId;
 			state.State = unitStateType;
@@ -312,13 +314,15 @@ namespace Resgrid.Services
 
 			var saved = await _unitStatesRepository.SaveOrUpdateAsync(state, cancellationToken);
 
-			_eventAggregator.SendMessage<UnitStatusEvent>(new UnitStatusEvent { DepartmentId = departmentId, Status = saved });
+			_eventAggregator.SendMessage<UnitStatusEvent>(new UnitStatusEvent { DepartmentId = departmentId, Status = saved, PreviousStatus = previousState });
 
 			return saved;
 		}
 
 		public async Task<UnitState> SetUnitStateAsync(UnitState state, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			var previousState = await GetLastUnitStateByUnitIdAsync(state.UnitId);
+
 			if (state.Accuracy > 100000)
 				state.Accuracy = 100000;
 
@@ -342,8 +346,8 @@ namespace Resgrid.Services
 
 			var saved = await _unitStatesRepository.SaveOrUpdateAsync(state, cancellationToken);
 
-			_eventAggregator.SendMessage<UnitStatusEvent>(new UnitStatusEvent { DepartmentId = departmentId, Status = saved });
-			
+			_eventAggregator.SendMessage<UnitStatusEvent>(new UnitStatusEvent { DepartmentId = departmentId, Status = saved, PreviousStatus = previousState });
+
 			return state;
 		}
 
@@ -420,7 +424,7 @@ namespace Resgrid.Services
 				unit.StationGroupId = null;
 				unit.StationGroup = null;
 
-				
+
 				await _unitsRepository.SaveOrUpdateAsync(unit, cancellationToken);
 			}
 

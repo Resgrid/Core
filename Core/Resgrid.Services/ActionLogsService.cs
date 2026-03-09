@@ -185,11 +185,22 @@ namespace Resgrid.Services
 		public async Task<ActionLog> SaveActionLogAsync(ActionLog actionLog, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			actionLog.Timestamp = actionLog.Timestamp.ToUniversalTime();
+
+			// Capture previous status before persisting the new one so the workflow event has full context
+			ActionLog previousStatus = null;
+			if (!string.IsNullOrWhiteSpace(actionLog.UserId))
+				previousStatus = await GetPreviousActionLogAsync(actionLog.UserId, actionLog.ActionLogId);
+
 			var saved = await _actionLogsRepository.SaveOrUpdateAsync(actionLog, cancellationToken, true);
 
 			//InvalidateActionLogs(actionLog.DepartmentId);
-			
-			_eventAggregator.SendMessage<UserStatusEvent>(new UserStatusEvent() { Status = actionLog });
+
+			_eventAggregator.SendMessage<UserStatusEvent>(new UserStatusEvent()
+			{
+				DepartmentId   = saved.DepartmentId,
+				Status         = saved,
+				PreviousStatus = previousStatus
+			});
 
 			return actionLog;
 		}
@@ -202,8 +213,17 @@ namespace Resgrid.Services
 
 				foreach (var actionLog in actionLogs)
 				{
+					ActionLog previousStatus = null;
+					if (!string.IsNullOrWhiteSpace(actionLog.UserId))
+						previousStatus = await GetPreviousActionLogAsync(actionLog.UserId, actionLog.ActionLogId);
+
 					var saved = await _actionLogsRepository.SaveOrUpdateAsync(actionLog, cancellationToken);
-					_eventAggregator.SendMessage<UserStatusEvent>(new UserStatusEvent() {Status = saved});
+					_eventAggregator.SendMessage<UserStatusEvent>(new UserStatusEvent()
+					{
+						DepartmentId   = saved.DepartmentId,
+						Status         = saved,
+						PreviousStatus = previousStatus
+					});
 				}
 
 				InvalidateActionLogs(actionLogs[0].DepartmentId);
@@ -361,7 +381,7 @@ namespace Resgrid.Services
 				{
 					await _actionLogsRepository.DeleteAsync(log, cancellationToken);
 				}
-				
+
 				return true;
 			}
 
@@ -378,7 +398,7 @@ namespace Resgrid.Services
 				{
 					await _actionLogsRepository.DeleteAsync(log, cancellationToken);
 				}
-				
+
 				return true;
 			}
 

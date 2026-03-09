@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -60,7 +60,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Index()
 		{
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new PermissionsView();
 
@@ -368,7 +368,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			viewWorkflowRunsPermissions.Add(new { Id = 3, Name = "Everyone" });
 			model.ViewWorkflowRunsPermissions = new SelectList(viewWorkflowRunsPermissions, "Id", "Name");
 
-			// 2FA enforcement scope — only managingUser can change this
+			// 2FA enforcement scope � only managingUser can change this
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.IsManagingUser = department.ManagingUserId == UserId;
 			model.Require2FAForAdmins = await _departmentSettingsService.GetRequire2FAForAdminsAsync(DepartmentId);
@@ -391,7 +391,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Audits()
 		{
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-				Unauthorized();
+				return Unauthorized();
 
 			return View();
 		}
@@ -425,7 +425,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> ViewAudit(int auditLogId)
 		{
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new ViewAuditLogView();
 			model.AuditLog = await _auditService.GetAuditLogByIdAsync(auditLogId);
@@ -433,7 +433,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Type = (AuditLogTypes)model.AuditLog.LogType;
 
 			if (model.AuditLog.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 
 			return View(model);
@@ -609,7 +609,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		#region SSO / SCIM Management
 
-		// ── SSO Index ────────────────────────────────────────────────────────
+		// -- SSO Index --------------------------------------------------------
 
 		[HttpGet]
 		public async Task<IActionResult> Sso(CancellationToken cancellationToken)
@@ -656,7 +656,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		// ── Create SSO config ────────────────────────────────────────────────
+		// -- Create SSO config ------------------------------------------------
 
 		[HttpGet]
 		public async Task<IActionResult> SsoNew(string providerType, CancellationToken cancellationToken)
@@ -742,7 +742,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Sso");
 		}
 
-		// ── Edit SSO config ──────────────────────────────────────────────────
+		// -- Edit SSO config --------------------------------------------------
 
 		[HttpGet]
 		public async Task<IActionResult> SsoEdit(string id, CancellationToken cancellationToken)
@@ -830,7 +830,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Sso");
 		}
 
-		// ── Delete SSO config ────────────────────────────────────────────────
+		// -- Delete SSO config ------------------------------------------------
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
@@ -851,7 +851,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Sso");
 		}
 
-		// ── Inline SCIM token generation (from SSO index page) ───────────────
+		// -- Inline SCIM token generation (from SSO index page) ---------------
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
@@ -938,7 +938,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View("Sso", model);
 		}
 
-		// ── SCIM setup ───────────────────────────────────────────────────────
+		// -- SCIM setup -------------------------------------------------------
 
 		[HttpGet]
 		public async Task<IActionResult> ScimSetup(string id, CancellationToken cancellationToken)
@@ -1016,7 +1016,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View("ScimSetup", model);
 		}
 
-		// ── Security policy ──────────────────────────────────────────────────
+		// -- Security policy --------------------------------------------------
 
 		[HttpGet]
 		public async Task<IActionResult> SecurityPolicy(CancellationToken cancellationToken)
@@ -1034,7 +1034,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				DataClassificationLevels = new SelectList(new[]
 				{
 					new { Id = 0, Name = "Unclassified" },
-					new { Id = 1, Name = "CUI — Controlled Unclassified Information" },
+					new { Id = 1, Name = "CUI � Controlled Unclassified Information" },
 					new { Id = 2, Name = "Confidential" }
 				}, "Id", "Name", policy?.DataClassificationLevel ?? 0)
 			};
@@ -1073,7 +1073,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.DataClassificationLevels = new SelectList(new[]
 			{
 				new { Id = 0, Name = "Unclassified" },
-				new { Id = 1, Name = "CUI — Controlled Unclassified Information" },
+				new { Id = 1, Name = "CUI � Controlled Unclassified Information" },
 				new { Id = 2, Name = "Confidential" }
 			}, "Id", "Name", model.DataClassificationLevel);
 
@@ -1108,18 +1108,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("SecurityPolicy");
 		}
 
-		// ── Private helpers ──────────────────────────────────────────────────
+		// -- Private helpers --------------------------------------------------
 
 		private static SelectList BuildProviderTypeList(string selected) =>
 			new SelectList(new[]
 			{
-				new { Id = "oidc", Name = "OIDC (OpenID Connect) — Microsoft Entra, Okta, Google, Auth0" },
-				new { Id = "saml2", Name = "SAML 2.0 — Most enterprise / government IdPs" }
+				new { Id = "oidc", Name = "OIDC (OpenID Connect) � Microsoft Entra, Okta, Google, Auth0" },
+				new { Id = "saml2", Name = "SAML 2.0 � Most enterprise / government IdPs" }
 			}, "Id", "Name", selected);
 
 		private async Task<SelectList> BuildRankListAsync(int? selectedRankId)
 		{
-			// Ranks are not currently implemented as a standalone service — return empty with placeholder
+			// Ranks are not currently implemented as a standalone service � return empty with placeholder
 			await Task.CompletedTask;
 			return new SelectList(
 				new[] { new { Id = (int?)null, Name = "(No default rank)" } },

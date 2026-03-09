@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -107,7 +107,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Inventory = await _inventoryService.GetInventoryByIdAsync(inventoryId);
 			
 			if (model.Inventory == null || model.Inventory.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			var profile = await _userProfileService.GetProfileByUserIdAsync(model.Inventory.AddedByUserId);
 
@@ -129,7 +129,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return RedirectToAction("ManageTypes");
 
 			if (type.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			await _inventoryService.DeleteTypeAsync(typeId);
 
@@ -146,7 +146,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return RedirectToAction("ManageTypes");
 
 			if (type.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new EditTypeView();
 			model.Type = type;

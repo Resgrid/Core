@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -72,7 +72,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Index()
 		{
 			if (!await _authorizationService.CanUserManageSubscriptionAsync(UserId, DepartmentId))
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new SubscriptionView();
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
@@ -231,7 +231,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> UpdateBillingInfo()
 		{
 			if (!await _authorizationService.CanUserManageSubscriptionAsync(UserId, DepartmentId))
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new BuyNowView();
 
@@ -250,7 +250,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> UpdateBillingInfo(IFormCollection form, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserManageSubscriptionAsync(UserId, DepartmentId))
-				Unauthorized();
+				return Unauthorized();
 
 			try
 			{
@@ -343,7 +343,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Cancel()
 		{
 			if (!await _authorizationService.CanUserManageSubscriptionAsync(UserId, DepartmentId))
-				Unauthorized();
+				return Unauthorized();
 
 			CancelView model = new CancelView();
 			model.Payment = await _subscriptionsService.GetCurrentPaymentForDepartmentAsync((await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId);
@@ -375,7 +375,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Cancel(CancelView model, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserManageSubscriptionAsync(UserId, DepartmentId))
-				Unauthorized();
+				return Unauthorized();
 
 			if (!model.Confirm)
 				ModelState.AddModelError("Confirm", "You must check the confirm box to cancel the subscription.");
@@ -718,7 +718,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> ViewInvoice(int paymentId)
 		{
 			if (!await _authorizationService.CanUserViewPaymentAsync(UserId, paymentId))
-				Unauthorized();
+				return Unauthorized();
 
 			ViewInvoiceView model = new ViewInvoiceView();
 			model.Payment = await _subscriptionsService.GetPaymentByIdAsync(paymentId);

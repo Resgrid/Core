@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -104,7 +104,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var shift = await _shiftsService.GetShiftByIdAsync(shiftId);
 
 			if (shift.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			shift = await _shiftsService.PopulateShiftData(shift, true, true, true, true, true);
 
@@ -390,7 +390,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var shift = await _shiftsService.GetShiftByIdAsync(shiftId);
 
 			if (shift.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			model.Shift = shift;
 
@@ -404,7 +404,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var shift = await _shiftsService.GetShiftByIdAsync(model.Shift.ShiftId);
 
 			if (shift.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			var days = new List<ShiftDay>();
 			if (!String.IsNullOrWhiteSpace(model.Dates))
@@ -447,7 +447,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var shift = await _shiftsService.GetShiftByIdAsync(shiftId);
 
 			if (shift.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			shift = await _shiftsService.PopulateShiftData(shift, true, true, true, true, true);
 
@@ -463,7 +463,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var shift = await _shiftsService.GetShiftByIdAsync(model.Shift.ShiftId);
 
 			if (shift.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			model.Shift = shift;
 			var shiftGroups = await _shiftsService.GetShiftGroupsByGroupIdAsync(model.Shift.ShiftId);
@@ -538,7 +538,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var shift = await _shiftsService.GetShiftByIdAsync(shiftId);
 
 			if (shift.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			await _shiftsService.DeleteShift(shift, cancellationToken);
 
@@ -553,7 +553,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Day = await _shiftsService.GetShiftDayByIdAsync(shiftDayId);
 
 			if (model.Day.Shift.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			model.Day.Shift = await _shiftsService.GetShiftByIdAsync(model.Day.ShiftId);
 			model.Roles = await _personnelRolesService.GetRolesForUserAsync(UserId, DepartmentId);
@@ -588,7 +588,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Day = await _shiftsService.GetShiftDayByIdAsync(shiftDayId);
 
 			if (model.Day.Shift.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			model.Day.Shift = await _shiftsService.GetShiftByIdAsync(model.Day.ShiftId); //await _shiftsService.PopulateShiftData(model.Day.Shift, true, true, true, true, true);
 
@@ -609,7 +609,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var day = await _shiftsService.GetShiftDayByIdAsync(shiftDayId);
 
 			if (day.Shift.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			var signup = await _shiftsService.SignupForShiftDayAsync(day.ShiftId, day.Day, groupId, UserId, cancellationToken);
 
@@ -631,10 +631,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return RedirectToAction("Signup", new { shiftDayId = shiftDayId });
 
 			if (shift.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			if (!(await _authorizationService.CanUserDeleteShiftSignupAsync(UserId, DepartmentId, shiftSignupId)))
-				Unauthorized();
+				return Unauthorized();
 
 			await _shiftsService.DeleteShiftSignupAsync(signup, cancellationToken);
 
@@ -671,7 +671,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var signup = await _shiftsService.GetShiftSignupByIdAsync(shiftSignupId);
 
 			if (signup.Shift.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			await _shiftsService.DeleteShiftSignupAsync(signup, cancellationToken);
 
@@ -1260,7 +1260,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (shift != null && shift.Groups != null)
 			{
 				if (shift.DepartmentId != DepartmentId)
-					Unauthorized();
+					return Unauthorized();
 
 				foreach (var group in shift.Groups)
 				{
@@ -1285,7 +1285,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (shift != null && shift.Days != null)
 			{
 				if (shift.DepartmentId != DepartmentId)
-					Unauthorized();
+					return Unauthorized();
 
 				foreach (var day in shift.Days)
 				{

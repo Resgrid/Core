@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -56,7 +56,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> NewDocument()
 		{
 			if (!ClaimsAuthorizationHelper.CanCreateDocument())
-				Unauthorized();
+				return Unauthorized();
 
 			NewDocumentView model = new NewDocumentView();
 			model.Categories = new SelectList(await _documentsService.GetAllCategoriesByDepartmentIdAsync(DepartmentId), "Name", "Name");
@@ -72,15 +72,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[Authorize(Policy = ResgridResources.Documents_View)]
-		public async Task<FileResult> GetDocument(int documentId)
+		public async Task<IActionResult> GetDocument(int documentId)
 		{
 			var document = await _documentsService.GetDocumentByIdAsync(documentId);
 
 			if (document.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			if (document.AdminsOnly && !ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-				Unauthorized();
+				return Unauthorized();
 
 			return new FileContentResult(document.Data, document.Type)
 			{
@@ -95,10 +95,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var document = await _documentsService.GetDocumentByIdAsync(documentId);
 
 			if (document.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || document.UserId != UserId)
-				Unauthorized();
+				return Unauthorized();
 
 			var auditEvent = new AuditEvent();
 			auditEvent.DepartmentId = DepartmentId;
@@ -122,7 +122,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> NewDocument(NewDocumentView model, IFormFile fileToUpload, CancellationToken cancellationToken)
 		{
 			if (!ClaimsAuthorizationHelper.CanCreateDocument())
-				Unauthorized();
+				return Unauthorized();
 
 			if (fileToUpload == null || fileToUpload.Length <= 0)
 				ModelState.AddModelError("fileToUpload", "You must select a document to add.");
@@ -201,13 +201,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var document = await _documentsService.GetDocumentByIdAsync(documentId);
 
 			if (document.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			if (document.AdminsOnly && !ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-				Unauthorized();
+				return Unauthorized();
 
 			if (!ClaimsAuthorizationHelper.CanCreateDocument())
-				Unauthorized();
+				return Unauthorized();
 
 			List<DocumentCategory> noteCategories = new List<DocumentCategory>();
 			noteCategories.Add(new DocumentCategory { Name = "None" });
@@ -232,13 +232,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var document = await _documentsService.GetDocumentByIdAsync(model.DocumentId);
 
 			if (document.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			if (document.AdminsOnly && !ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-				Unauthorized();
+				return Unauthorized();
 
 			if (!ClaimsAuthorizationHelper.CanCreateDocument())
-				Unauthorized();
+				return Unauthorized();
 
 			if (fileToUpload != null && fileToUpload.Length > 0)
 			{

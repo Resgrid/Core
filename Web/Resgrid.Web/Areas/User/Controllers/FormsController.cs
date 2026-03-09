@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
@@ -110,7 +110,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (form != null)
 			{
 				if (form.DepartmentId != DepartmentId)
-					Unauthorized();
+					return Unauthorized();
 
 				model.Form = form;
 				return View(model);
@@ -128,7 +128,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (form != null)
 			{
 				if (form.DepartmentId != DepartmentId)
-					Unauthorized();
+					return Unauthorized();
 
 				await _formsService.EnableFormByIdAsync(id);
 			}
@@ -145,7 +145,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (form != null)
 			{
 				if (form.DepartmentId != DepartmentId)
-					Unauthorized();
+					return Unauthorized();
 
 				await _formsService.DisableFormByIdAsync(id);
 			}
@@ -162,7 +162,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (form != null)
 			{
 				if (form.DepartmentId != DepartmentId)
-					Unauthorized();
+					return Unauthorized();
 
 				await _formsService.DeleteForm(id, cancellationToken);
 			}

@@ -1,4 +1,4 @@
-ï»¿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -268,7 +268,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Group = await _departmentGroupsService.GetGroupByIdAsync(departmentGroupId, true);
 
 			if (model.Group == null || model.Group.DepartmentId != DepartmentId || !await _authorizationService.CanUserEditDepartmentGroupAsync(UserId, departmentGroupId))
-				Unauthorized();
+				return Unauthorized();
 
 			var users = _departmentGroupsService.GetAllUsersForGroup(departmentGroupId);
 			var childGroups = await _departmentGroupsService.GetAllChildDepartmentGroupsAsync(departmentGroupId);
@@ -303,7 +303,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> DeleteGroup(DeleteGroupView model, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserEditDepartmentGroupAsync(UserId, model.Group.DepartmentGroupId))
-				Unauthorized();
+				return Unauthorized();
 
 			var group = await _departmentGroupsService.GetGroupByIdAsync(model.Group.DepartmentGroupId, true);
 
@@ -311,7 +311,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return RedirectToAction("Index", "Groups", new { Area = "User" });
 
 			if (group.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			var users = _departmentGroupsService.GetAllUsersForGroup(model.Group.DepartmentGroupId);
 			var childGroups = await _departmentGroupsService.GetAllChildDepartmentGroupsAsync(model.Group.DepartmentGroupId);
@@ -373,7 +373,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> EditGroup(int departmentGroupId)
 		{
 			if (!await _authorizationService.CanUserEditDepartmentGroupAsync(UserId, departmentGroupId))
-				Unauthorized();
+				return Unauthorized();
 
 			EditGroupView model = new EditGroupView();
 			model.Users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
@@ -415,7 +415,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> EditGroup(EditGroupView model, IFormCollection collection, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserEditDepartmentGroupAsync(UserId, model.EditGroup.DepartmentGroupId))
-				Unauthorized();
+				return Unauthorized();
 
 			model.Users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
 			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
@@ -466,7 +466,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ModelState.AddModelError("", string.Format("{0} cannot be both a Group Admin and a Group Member. Please add them to only one list.", profile.FullName.AsFirstNameLastName));
 			}
 
-			// Check newly added users are not in a *different* group â€” exclude the group being edited
+			// Check newly added users are not in a *different* group — exclude the group being edited
 			foreach (var groupUser in allUsers.Distinct())
 			{
 				if (await _departmentGroupsService.IsUserInAGroupAsync(groupUser, model.EditGroup.DepartmentGroupId, DepartmentId))
@@ -517,7 +517,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				model.EditGroup.DepartmentId = DepartmentId;
 
-				// Build desired member list from submitted values â€” UpdateAsync handles insert/delete/update against the DB
+				// Build desired member list from submitted values — UpdateAsync handles insert/delete/update against the DB
 				var desiredMembers = allUsers.Distinct().Select(user => new DepartmentGroupMember
 				{
 					DepartmentId = DepartmentId,
@@ -601,10 +601,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Group = await _departmentGroupsService.GetGroupByIdAsync(departmentGroupId, true);
 
 			if (model.Group == null)
-				Unauthorized();
+				return Unauthorized();
 
 			if (model.Group.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			model.Coordinates = await _departmentGroupsService.GetMapCenterCoordinatesForGroupAsync(departmentGroupId);
 

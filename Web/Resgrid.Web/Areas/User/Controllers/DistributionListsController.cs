@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -229,7 +229,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var list = await _distributionListsService.GetDistributionListByIdAsync(id);
 
 			if (list.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			var members = await _distributionListsService.GetAllListMembersByListIdAsync(id);
 			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);

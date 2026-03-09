@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -235,7 +235,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> ViewMessage(int messageId, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserViewMessageAsync(UserId, messageId))
-				Unauthorized();
+				return Unauthorized();
 
 			ViewMessageView model = new ViewMessageView();
 			model.User = _usersService.GetUserById(UserId);
@@ -271,7 +271,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> DeleteMessage(int messageId, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserViewMessageAsync(UserId, messageId))
-				Unauthorized();
+				return Unauthorized();
 
 			await _messageService.MarkMessagesAsDeletedAsync(UserId, new List<string>() { messageId.ToString() }, cancellationToken);
 
@@ -289,7 +289,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var id = int.Parse(messageId);
 
 				if (!await _authorizationService.CanUserViewMessageAsync(UserId, id))
-					Unauthorized();
+					return Unauthorized();
 			}
 
 			await _messageService.MarkMessagesAsDeletedAsync(UserId, messages.ToList(), cancellationToken);
@@ -308,7 +308,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var id = int.Parse(messageId);
 
 				if (!await _authorizationService.CanUserViewMessageAsync(UserId, id))
-					Unauthorized();
+					return Unauthorized();
 			}
 
 			await _messageService.MarkMessagesAsReadAsync(UserId, messages.ToList(), cancellationToken);
@@ -321,7 +321,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> DeleteOutboxMessage(int messageId)
 		{
 			if (!await _authorizationService.CanUserViewMessageAsync(UserId, messageId))
-				Unauthorized();
+				return Unauthorized();
 
 			await _messageService.MarkMessageAsDeletedAsync(messageId);
 
@@ -339,7 +339,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var id = int.Parse(messageId);
 
 				if (!await _authorizationService.CanUserViewMessageAsync(UserId, id))
-					Unauthorized();
+					return Unauthorized();
 
 				await _messageService.MarkMessageAsDeletedAsync(id, cancellationToken);
 			}

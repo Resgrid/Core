@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -44,7 +44,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> NewNote()
 		{
 			if (!await _authorizationService.CanUserAddNoteAsync(UserId))
-				Unauthorized();
+				return Unauthorized();
 
 			NewNoteView model = new NewNoteView();
 
@@ -60,7 +60,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> NewNote(NewNoteView model, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserAddNoteAsync(UserId))
-				Unauthorized();
+				return Unauthorized();
 
 			if (ModelState.IsValid)
 			{
@@ -112,7 +112,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var note = await _notesService.GetNoteByIdAsync(noteId);
 
 			if (note.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			model.Note = note;
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(note.DepartmentId);
@@ -128,7 +128,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var note = await _notesService.GetNoteByIdAsync(noteId);
 
 			if (!await _authorizationService.CanUserEditNoteAsync(UserId, noteId))
-				Unauthorized();
+				return Unauthorized();
 
 			List<NoteCategory> noteCategories = new List<NoteCategory>();
 			noteCategories.Add(new NoteCategory { Name = "None" });
@@ -152,7 +152,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var savedNote = await _notesService.GetNoteByIdAsync(model.NoteId);
 
 				if (savedNote.DepartmentId != DepartmentId)
-					Unauthorized();
+					return Unauthorized();
 
 				var auditEvent = new AuditEvent();
 				auditEvent.Before = savedNote.CloneJsonToString();
@@ -202,7 +202,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var note = await _notesService.GetNoteByIdAsync(noteId);
 
 			if (!await _authorizationService.CanUserEditNoteAsync(UserId, noteId))
-				Unauthorized();
+				return Unauthorized();
 
 			var auditEvent = new AuditEvent();
 			auditEvent.DepartmentId = DepartmentId;

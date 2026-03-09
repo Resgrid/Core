@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
@@ -168,7 +168,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new EditCalendarEntry();
 
 			if (!await _authorizationService.CanUserModifyCalendarEntryAsync(UserId, id))
-				Unauthorized();
+				return Unauthorized();
 
 			model.Item = await _calendarService.GetCalendarItemByIdAsync(id);
 			model.Types = new List<CalendarItemType>();
@@ -177,7 +177,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
-			// All-day events are stored as UTC (00:00:00 → 23:59:59 local converted to UTC).
+			// All-day events are stored as UTC (00:00:00 ? 23:59:59 local converted to UTC).
 			// Convert back to local time first, then take just the date for the date-only picker.
 			if (model.Item.IsAllDay)
 			{
@@ -395,14 +395,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Schedule_Delete)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
-		public async Task<JsonResult> DeleteCalendarItem([FromBody]CalendarItemJson item, CancellationToken cancellationToken)
+		public async Task<IActionResult> DeleteCalendarItem([FromBody]CalendarItemJson item, CancellationToken cancellationToken)
 		{
 			if (ModelState.IsValid)
 			{
 				var calandarItem = await _calendarService.GetCalendarItemByIdAsync(item.CalendarItemId);
 
 				if (calandarItem == null || calandarItem.DepartmentId != DepartmentId)
-					Unauthorized();
+					return Unauthorized();
 
 				await _calendarService.DeleteCalendarItemByIdAsync(item.CalendarItemId, cancellationToken);
 			}
@@ -418,7 +418,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var calandarItem = await _calendarService.GetCalendarItemByIdAsync(itemId);
 
 			if (calandarItem == null || calandarItem.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			await _calendarService.DeleteCalendarItemByIdAsync(itemId, cancellationToken);
 
@@ -431,7 +431,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> DeleteAllCalendarItems(int itemId, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserModifyCalendarEntryAsync(UserId, itemId))
-				Unauthorized();
+				return Unauthorized();
 
 			await _calendarService.DeleteCalendarItemAndRecurrences(itemId, cancellationToken);
 
@@ -574,10 +574,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CalendarItem = await _calendarService.GetCalendarItemByIdAsync(calendarItemId);
 
 			if (model.CalendarItem == null)
-				Unauthorized();
+				return Unauthorized();
 
 			if (model.CalendarItem.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			model.CalendarItem.Description = StringHelpers.SanitizeHtmlInString(model.CalendarItem.Description);
 
@@ -591,7 +591,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CanEdit = await _authorizationService.CanUserModifyCalendarEntryAsync(UserId, calendarItemId);
 
 			if (model.CalendarItem.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			model.ExportIcsUrl = $"{SystemBehaviorConfig.ResgridApiBaseUrl}/api/v4/CalendarExport/ExportICalFile?calendarItemId={calendarItemId}";
 
@@ -678,13 +678,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> EditType(string id)
 		{
 			if (String.IsNullOrWhiteSpace(id))
-				Unauthorized();
+				return Unauthorized();
 
 			NewTypeView model = new NewTypeView();
 			model.Type = await _calendarService.GetCalendarItemTypeByIdAsync(int.Parse(id));
 
 			if (model.Type.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			return View(model);
 		}
@@ -698,10 +698,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var savedType = await _calendarService.GetCalendarItemTypeByIdAsync(model.Type.CalendarItemTypeId);
 
 				if (savedType == null)
-					Unauthorized();
+					return Unauthorized();
 
 				if (savedType.DepartmentId != DepartmentId)
-					Unauthorized();
+					return Unauthorized();
 
 				savedType.Name = model.Type.Name;
 				savedType.Color = model.Type.Color;
@@ -720,7 +720,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var type = await _calendarService.GetCalendarItemTypeByIdAsync(typeId);
 
 			if (type.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			await _calendarService.DeleteCalendarItemTypeAsync(type, cancellationToken);
 
@@ -820,6 +820,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Index");
 		}
 
-		// ── Helpers ──────────────────────────────────────────────────────────────────
+		// -- Helpers ------------------------------------------------------------------
 	}
 }

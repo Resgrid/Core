@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -231,7 +231,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> LogReport(int logId)
 		{
 			if (!await _authorizationService.CanUserViewAndEditWorkLogAsync(UserId, logId))
-				Unauthorized();
+				return Unauthorized();
 
 			return View(await CreateLogReportModel(logId));
 		}

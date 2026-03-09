@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -103,7 +103,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var type = await _mappingService.GetTypeByIdAsync(poiTypeId);
 
 			if (type == null || type.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			model.Type = type;
 			var address = await _departmentSettingsService.GetBigBoardCenterAddressDepartmentAsync(DepartmentId);
@@ -211,7 +211,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var layer = await _mappingService.GetMapLayersByIdAsync(layerId);
 
 			if (layer == null || layer.DepartmentId != DepartmentId || layer.IsDeleted)
-				Unauthorized();
+				return Unauthorized();
 
 			var feature = layer.Data.Convert();
 			model.GeoJson = JsonConvert.SerializeObject(feature);
@@ -263,7 +263,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var layer = await _mappingService.GetMapLayersByIdAsync(layerId);
 
 			if (layer == null || layer.DepartmentId != DepartmentId || layer.IsDeleted)
-				Unauthorized();
+				return Unauthorized();
 
 			layer.IsDeleted = true;
 			layer.UpdatedById = UserId;
@@ -369,7 +369,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (type != null)
 			{
 				if (type.DepartmentId != DepartmentId)
-					Unauthorized();
+					return Unauthorized();
 
 				await _mappingService.DeletePOITypeAsync(poiTypeId, cancellationToken);
 			}
@@ -401,7 +401,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			else
 			{
 				if (type.DepartmentId != DepartmentId)
-					Unauthorized();
+					return Unauthorized();
 			}
 
 			if (ModelState.IsValid)
@@ -622,7 +622,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var poiType = await _mappingService.GetTypeByIdAsync(poiTypeId);
 
 			if (poiType == null || poiType.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			foreach (var poi in poiType.Pois)
 			{
@@ -649,7 +649,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var poiType = await _mappingService.GetTypeByIdAsync(poiTypeId);
 
 			if (poiType == null || poiType.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			foreach (var poi in poiType.Pois)
 			{
@@ -674,7 +674,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var call = await _callsService.GetCallByIdAsync(callId);
 
 			if (call.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			string endLat = "";
 			string endLon = "";
@@ -698,10 +698,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var call = await _callsService.GetCallByIdAsync(callId);
 
 			if (station.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			if (call.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			string startLat = "";
 			string startLon = "";

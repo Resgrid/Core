@@ -2023,8 +2023,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				if (key.ToString().StartsWith("selectEvent_"))
 				{
-					var eventId = int.Parse(key.ToString().Replace("selectEvent_", ""));
-					eventIds.Add(eventId);
+					var suffix = key.ToString().Replace("selectEvent_", "");
+					if (int.TryParse(suffix, out var eventId))
+						eventIds.Add(eventId);
 				}
 			}
 

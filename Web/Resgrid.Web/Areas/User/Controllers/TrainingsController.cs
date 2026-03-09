@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -227,7 +227,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CreatorUserName = await UserHelper.GetFullNameForUser(model.Training.CreatedByUserId);
 
 			if (model.Training.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			await _trainingService.SetTrainingAsViewedAsync(trainingId, UserId);
 
@@ -252,7 +252,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Training = await _trainingService.GetTrainingByIdAsync(trainingId);
 
 			if (model.Training.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			await _trainingService.SetTrainingAsViewedAsync(trainingId, UserId, cancellationToken);
 
@@ -296,7 +296,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Training = await _trainingService.GetTrainingByIdAsync(trainingId);
 
 			if (model.Training.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			await _trainingService.DeleteTrainingAsync(trainingId);
 
@@ -310,7 +310,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Training = await _trainingService.GetTrainingByIdAsync(trainingId);
 
 			if (model.Training.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			await _trainingService.ResetUserAsync(trainingId, userId);
 
@@ -326,7 +326,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
 			if (model.Training.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			foreach (var user in model.Training.Users)
 			{

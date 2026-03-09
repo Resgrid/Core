@@ -401,7 +401,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new ViewLogsView();
 			model.WorkLog = await _workLogsService.GetWorkLogByIdAsync(logId);
 
-			if (model.WorkLog == null)
+			if (model.WorkLog == null || model.WorkLog.DepartmentId != DepartmentId)
 				return RedirectToAction("Index");
 
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
@@ -441,7 +441,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new LogExportView();
 			model.WorkLog = await _workLogsService.GetWorkLogByIdAsync(logId);
 
-			if (model.WorkLog == null)
+			if (model.WorkLog == null || model.WorkLog.DepartmentId != DepartmentId)
 				return RedirectToAction("Index");
 
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
@@ -523,7 +523,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var attachment = await _workLogsService.GetAttachmentByIdAsync(attachmentId);
 
-			if (attachment.LogId != logId)
+			if (attachment == null || attachment.LogId != logId)
+				return Unauthorized();
+
+			var log = await _workLogsService.GetWorkLogByIdAsync(logId);
+
+			if (log == null || log.DepartmentId != DepartmentId)
 				return Unauthorized();
 
 			return new FileContentResult(attachment.Data, attachment.Type)

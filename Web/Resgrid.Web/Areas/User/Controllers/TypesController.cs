@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model;
@@ -59,7 +59,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> NewUnitType()
 		{
 			if (!await _authorizationService.CanUserAddUnitTypeAsync(UserId))
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new EditUnitTypeView();
 			model.UnitType = new UnitType();
@@ -81,7 +81,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> DeleteUnitType(int unitTypeId, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserEditUnitTypeAsync(UserId, unitTypeId))
-				Unauthorized();
+				return Unauthorized();
 
 			var unitType = await _unitsService.GetUnitTypeByIdAsync(unitTypeId);
 
@@ -106,7 +106,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> NewUnitType(EditUnitTypeView model, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserAddUnitTypeAsync(UserId))
-				Unauthorized();
+				return Unauthorized();
 
 			if (String.IsNullOrWhiteSpace(model.UnitType.Type))
 				ModelState.AddModelError("NewUnitType", "You Must specify the new unit type.");
@@ -138,7 +138,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> EditUnitType(int unitTypeId)
 		{
 			if (!await _authorizationService.CanUserEditUnitTypeAsync(UserId, unitTypeId))
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new EditUnitTypeView();
 			model.UnitType = await _unitsService.GetUnitTypeByIdAsync(unitTypeId);
@@ -162,7 +162,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> EditUnitType(EditUnitTypeView model, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserEditUnitTypeAsync(UserId, model.UnitType.UnitTypeId))
-				Unauthorized();
+				return Unauthorized();
 
 			var states = new List<CustomState>();
 			states.Add(new CustomState
@@ -222,7 +222,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> NewCallType()
 		{
 			if (!await _authorizationService.CanUserAddCallTypeAsync(UserId))
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new EditCallTypeView();
 			model.CallType = new CallType();
@@ -239,7 +239,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ModelState.AddModelError("NewCallType", "You Must specify the new call type.");
 
 			if (!await _authorizationService.CanUserAddCallTypeAsync(UserId))
-				Unauthorized();
+				return Unauthorized();
 
 			if (ModelState.IsValid)
 			{
@@ -272,7 +272,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> EditCallType(int callTypeId)
 		{
 			if (!await _authorizationService.CanUserModifyCallTypeAsync(UserId, callTypeId))
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new EditCallTypeView();
 			model.CallType = await _callsService.GetCallTypeByIdAsync(callTypeId);
@@ -295,7 +295,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var callType = await _callsService.GetCallTypeByIdAsync(model.CallType.CallTypeId);
 
 				if (!await _authorizationService.CanUserModifyCallTypeAsync(UserId, model.CallType.CallTypeId))
-					Unauthorized();
+					return Unauthorized();
 
 				auditEvent.Before = callType.CloneJsonToString();
 				callType.Type = model.CallType.Type;
@@ -331,7 +331,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var callType = await _callsService.GetCallTypeByIdAsync(callTypeId);
 			if (!await _authorizationService.CanUserModifyCallTypeAsync(UserId, callTypeId))
-				Unauthorized();
+				return Unauthorized();
 
 			var auditEvent = new AuditEvent();
 			auditEvent.DepartmentId = DepartmentId;
@@ -358,7 +358,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> NewCallPriority()
 		{
 			if (!await _authorizationService.CanUserAddCallPriorityAsync(UserId))
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new NewCallPriorityView();
 			model.CallPriority = new DepartmentCallPriority();
@@ -373,7 +373,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserAddCallPriorityAsync(UserId))
-				Unauthorized();
+				return Unauthorized();
 
 			var priotiries = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(DepartmentId, true);
 
@@ -495,7 +495,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> DeleteCallPriority(int priorityId, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserDeleteCallPriorityAsync(UserId, priorityId))
-				Unauthorized();
+				return Unauthorized();
 
 			var priority = await _callsService.GetCallPrioritiesByIdAsync(DepartmentId, priorityId, true);
 
@@ -526,13 +526,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> EditCallPriority(int priorityId)
 		{
 			if (!await _authorizationService.CanUserEditCallPriorityAsync(UserId, priorityId))
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new EditCallPriorityView();
 			model.CallPriority = await _callsService.GetCallPrioritiesByIdAsync(DepartmentId, priorityId, true);
 
 			if (model.CallPriority == null || model.CallPriority.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			model.AlertSounds = model.AudioType.ToSelectListInt();
 
@@ -545,7 +545,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserEditCallPriorityAsync(UserId, model.CallPriority.DepartmentCallPriorityId))
-				Unauthorized();
+				return Unauthorized();
 
 			var priotiries = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(DepartmentId, true);
 			if (model.CallPriority.IsDefault && priotiries.Any(x => x.IsDefault && x.DepartmentCallPriorityId != model.CallPriority.DepartmentCallPriorityId))
@@ -671,7 +671,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return RedirectToAction("Types", "Department", new { Area = "User" });
 
 			if (!await _authorizationService.CanUserDeleteCertificationTypeAsync(UserId, certificationTypeId))
-				Unauthorized();
+				return Unauthorized();
 
 			var type = await _certificationService.GetCertificationTypeByIdAsync(certificationTypeId);
 
@@ -696,7 +696,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> NewCertificationType()
 		{
 			if (!await _authorizationService.CanUserAddCertificationTypeAsync(UserId))
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new NewCertificationTypeView();
 			model.Type = new DepartmentCertificationType();
@@ -709,7 +709,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> NewCertificationType(NewCertificationTypeView model, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserAddCertificationTypeAsync(UserId))
-				Unauthorized();
+				return Unauthorized();
 
 			if (String.IsNullOrEmpty(model.Type.Type))
 				ModelState.AddModelError("NewCertificationType", "You Must specify the new certification type.");
@@ -747,7 +747,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> NewDocumentType()
 		{
 			if (!await _authorizationService.CanUserAddDocumentTypeAsync(UserId))
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new NewDocumentCategoryView();
 
@@ -759,7 +759,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> NewDocumentType(NewDocumentCategoryView model, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserAddDocumentTypeAsync(UserId))
-				Unauthorized();
+				return Unauthorized();
 
 			if (String.IsNullOrEmpty(model.Name))
 				ModelState.AddModelError("Name", "You Must specify the new document category name.");
@@ -802,7 +802,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return RedirectToAction("Types", "Department", new { Area = "User" });
 
 			if (!await _authorizationService.CanUserDeleteDocumentTypeAsync(UserId, documentTypeId))
-				Unauthorized();
+				return Unauthorized();
 
 			var type = await _documentsService.GetDocumentCategoryByIdAsync(documentTypeId);
 
@@ -831,7 +831,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> NewNoteType()
 		{
 			if (!await _authorizationService.CanUserAddNoteTypeAsync(UserId))
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new NewNoteCategoryView();
 
@@ -843,7 +843,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> NewNoteType(NewNoteCategoryView model, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserAddNoteTypeAsync(UserId))
-				Unauthorized();
+				return Unauthorized();
 
 			if (String.IsNullOrEmpty(model.Name))
 				ModelState.AddModelError("Name", "You Must specify the new note category name.");
@@ -886,7 +886,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return RedirectToAction("Types", "Department", new { Area = "User" });
 
 			if (!await _authorizationService.CanUserDeleteNoteTypeAsync(UserId, noteTypeId))
-				Unauthorized();
+				return Unauthorized();
 
 			var type = await _notesService.GetNoteCategoryByIdAsync(noteTypeId);
 
@@ -991,7 +991,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> NewContactNoteType()
 		{
 			if (!await _authorizationService.CanUserAddNoteTypeAsync(UserId))
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new NewContactNoteCategoryView();
 
@@ -1003,7 +1003,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> NewContactNoteType(NewContactNoteCategoryView model, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserAddNoteTypeAsync(UserId))
-				Unauthorized();
+				return Unauthorized();
 
 			if (String.IsNullOrEmpty(model.Name))
 				ModelState.AddModelError("Name", "You Must specify the new contact note type name.");
@@ -1047,7 +1047,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return RedirectToAction("Types", "Department", new { Area = "User" });
 
 			if (!await _authorizationService.CanUserDeleteContactNoteTypeAsync(UserId, contactNoteTypeId))
-				Unauthorized();
+				return Unauthorized();
 
 			var type = await _contactsService.GetContactNoteTypeByIdAsync(contactNoteTypeId);
 
@@ -1072,12 +1072,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> EditContactNoteType(string typeId)
 		{
 			if (!await _authorizationService.CanUserAddNoteTypeAsync(UserId))
-				Unauthorized();
+				return Unauthorized();
 
 			var type = await _contactsService.GetContactNoteTypeByIdAsync(typeId);
 
 			if (!await _authorizationService.CanUserEditContactNoteTypeAsync(UserId, typeId))
-				Unauthorized();
+				return Unauthorized();
 
 			var model = new NewContactNoteCategoryView();
 			model.TypeId = type.ContactNoteTypeId;
@@ -1092,7 +1092,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> EditContactNoteType(NewContactNoteCategoryView model, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserEditContactNoteTypeAsync(UserId, model.TypeId))
-				Unauthorized();
+				return Unauthorized();
 
 			if (String.IsNullOrEmpty(model.Name))
 				ModelState.AddModelError("Name", "You Must specify the new contact note type name.");

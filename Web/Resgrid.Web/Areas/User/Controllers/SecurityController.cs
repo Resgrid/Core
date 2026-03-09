@@ -368,7 +368,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			viewWorkflowRunsPermissions.Add(new { Id = 3, Name = "Everyone" });
 			model.ViewWorkflowRunsPermissions = new SelectList(viewWorkflowRunsPermissions, "Id", "Name");
 
-			// 2FA enforcement scope — only managingUser can change this
+			// 2FA enforcement scope ï¿½ only managingUser can change this
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.IsManagingUser = department.ManagingUserId == UserId;
 			model.Require2FAForAdmins = await _departmentSettingsService.GetRequire2FAForAdminsAsync(DepartmentId);
@@ -1034,7 +1034,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				DataClassificationLevels = new SelectList(new[]
 				{
 					new { Id = 0, Name = "Unclassified" },
-					new { Id = 1, Name = "CUI — Controlled Unclassified Information" },
+					new { Id = 1, Name = "CUI - Controlled Unclassified Information" },
 					new { Id = 2, Name = "Confidential" }
 				}, "Id", "Name", policy?.DataClassificationLevel ?? 0)
 			};
@@ -1073,7 +1073,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.DataClassificationLevels = new SelectList(new[]
 			{
 				new { Id = 0, Name = "Unclassified" },
-				new { Id = 1, Name = "CUI — Controlled Unclassified Information" },
+				new { Id = 1, Name = "CUI - Controlled Unclassified Information" },
 				new { Id = 2, Name = "Confidential" }
 			}, "Id", "Name", model.DataClassificationLevel);
 
@@ -1113,13 +1113,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private static SelectList BuildProviderTypeList(string selected) =>
 			new SelectList(new[]
 			{
-				new { Id = "oidc", Name = "OIDC (OpenID Connect) — Microsoft Entra, Okta, Google, Auth0" },
-				new { Id = "saml2", Name = "SAML 2.0 — Most enterprise / government IdPs" }
+				new { Id = "oidc", Name = "OIDC (OpenID Connect) ï¿½ Microsoft Entra, Okta, Google, Auth0" },
+				new { Id = "saml2", Name = "SAML 2.0 ï¿½ Most enterprise / government IdPs" }
 			}, "Id", "Name", selected);
 
 		private async Task<SelectList> BuildRankListAsync(int? selectedRankId)
 		{
-			// Ranks are not currently implemented as a standalone service — return empty with placeholder
+			// Ranks are not currently implemented as a standalone service ï¿½ return empty with placeholder
 			await Task.CompletedTask;
 			return new SelectList(
 				new[] { new { Id = (int?)null, Name = "(No default rank)" } },

@@ -1,5 +1,4 @@
-﻿using Amazon.SimpleEmail.Model;
-using Resgrid.Model;
+﻿using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
@@ -186,14 +185,14 @@ namespace Resgrid.Services
 		{
 			actionLog.Timestamp = actionLog.Timestamp.ToUniversalTime();
 
-			// Capture previous status before persisting the new one so the workflow event has full context
-			ActionLog previousStatus = null;
-			if (!string.IsNullOrWhiteSpace(actionLog.UserId))
-				previousStatus = await GetPreviousActionLogAsync(actionLog.UserId, actionLog.ActionLogId);
-
 			var saved = await _actionLogsRepository.SaveOrUpdateAsync(actionLog, cancellationToken, true);
 
 			//InvalidateActionLogs(actionLog.DepartmentId);
+
+			// Look up the predecessor using the persisted ActionLogId so new records (ActionLogId==0 before save) find real predecessors
+			ActionLog previousStatus = null;
+			if (!string.IsNullOrWhiteSpace(saved.UserId))
+				previousStatus = await _actionLogsRepository.GetPreviousActionLogAsync(saved.UserId, saved.ActionLogId);
 
 			_eventAggregator.SendMessage<UserStatusEvent>(new UserStatusEvent()
 			{
@@ -213,11 +212,13 @@ namespace Resgrid.Services
 
 				foreach (var actionLog in actionLogs)
 				{
-					ActionLog previousStatus = null;
-					if (!string.IsNullOrWhiteSpace(actionLog.UserId))
-						previousStatus = await GetPreviousActionLogAsync(actionLog.UserId, actionLog.ActionLogId);
-
 					var saved = await _actionLogsRepository.SaveOrUpdateAsync(actionLog, cancellationToken);
+
+					// Look up the predecessor using the persisted ActionLogId so new records (ActionLogId==0 before save) find real predecessors
+					ActionLog previousStatus = null;
+					if (!string.IsNullOrWhiteSpace(saved.UserId))
+						previousStatus = await _actionLogsRepository.GetPreviousActionLogAsync(saved.UserId, saved.ActionLogId);
+
 					_eventAggregator.SendMessage<UserStatusEvent>(new UserStatusEvent()
 					{
 						DepartmentId   = saved.DepartmentId,

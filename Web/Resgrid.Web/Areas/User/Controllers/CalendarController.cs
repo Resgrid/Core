@@ -678,13 +678,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> EditType(string id)
 		{
 			if (String.IsNullOrWhiteSpace(id))
+				return BadRequest();
+
+			if (!int.TryParse(id, out int parsedId))
+				return BadRequest();
+
+			var calendarItemType = await _calendarService.GetCalendarItemTypeByIdAsync(parsedId);
+
+			if (calendarItemType == null)
+				return NotFound();
+
+			if (calendarItemType.DepartmentId != DepartmentId)
 				return Unauthorized();
 
 			NewTypeView model = new NewTypeView();
-			model.Type = await _calendarService.GetCalendarItemTypeByIdAsync(int.Parse(id));
-
-			if (model.Type.DepartmentId != DepartmentId)
-				return Unauthorized();
+			model.Type = calendarItemType;
 
 			return View(model);
 		}
@@ -718,6 +726,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> DeleteType(int typeId, CancellationToken cancellationToken)
 		{
 			var type = await _calendarService.GetCalendarItemTypeByIdAsync(typeId);
+
+			if (type is null)
+				return NotFound();
 
 			if (type.DepartmentId != DepartmentId)
 				return Unauthorized();

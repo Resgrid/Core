@@ -501,7 +501,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					var unit = await _unitsService.GetUnitByIdAsync(int.Parse(unitId));
 
-					if (await _authorizationService.CanUserViewUnitAsync(UserId, unit.UnitId))
+					if (!await _authorizationService.CanUserViewUnitAsync(UserId, unit.UnitId))
 						return Unauthorized();
 
 
@@ -1290,7 +1290,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				if (state.DetailType == (int)CustomStateDetailTypes.None)
 				{
-					
+
 				}
 				else if (state.DetailType == (int)CustomStateDetailTypes.Calls)
 				{

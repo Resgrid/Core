@@ -97,7 +97,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (document.DepartmentId != DepartmentId)
 				return Unauthorized();
 
-			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || document.UserId != UserId)
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && document.UserId != UserId)
 				return Unauthorized();
 
 			var auditEvent = new AuditEvent();

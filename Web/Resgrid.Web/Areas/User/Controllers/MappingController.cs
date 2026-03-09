@@ -146,7 +146,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var model = new LayersView();
 			model.Layers = await _mappingService.GetMapLayersForTypeDepartmentAsync(DepartmentId, MapLayerTypes.TopLevel);
-			
+
 			return View(model);
 		}
 
@@ -204,7 +204,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (String.IsNullOrWhiteSpace(layerId))
 				return RedirectToAction("Layers");
-			
+
 			var model = new EditLayerView();
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.CenterCoordinates = await _departmentSettingsService.GetMapCenterCoordinatesAsync(model.Department);
@@ -672,6 +672,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			StationRoutingView model = new StationRoutingView();
 
 			var call = await _callsService.GetCallByIdAsync(callId);
+
+			if (call == null)
+				return NotFound();
 
 			if (call.DepartmentId != DepartmentId)
 				return Unauthorized();

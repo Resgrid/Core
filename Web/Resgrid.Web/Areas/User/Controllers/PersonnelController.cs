@@ -2090,6 +2090,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
+		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 		public async Task<IActionResult> GetPersonnelEvents(string userId)
 		{
 			if (!await _authorizationService.CanUserViewUserAsync(UserId, userId))
@@ -2099,7 +2100,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
 			var personName = profile != null ? profile.FullName.AsFirstNameLastName : userId;
-			var events = await _actionLogsService.GetAllActionLogsForUser(userId);
+			var allEvents = await _actionLogsService.GetAllActionLogsForUser(userId);
+			var events = allEvents.Where(al => al.DepartmentId == DepartmentId).ToList();
 
 			foreach (var actionLog in events)
 			{

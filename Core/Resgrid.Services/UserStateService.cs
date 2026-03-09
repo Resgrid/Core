@@ -69,8 +69,6 @@ namespace Resgrid.Services
 
 		public async Task<UserState> CreateUserState(string userId, int departmentId, int userStateType, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var previousStaffing = await GetLastUserStateByUserIdAsync(userId);
-
 			var us = new UserState();
 			us.UserId = userId;
 			us.DepartmentId = departmentId;
@@ -78,6 +76,8 @@ namespace Resgrid.Services
 			us.Timestamp = DateTime.Now.ToUniversalTime();
 
 			var saved = await _userStateRepository.SaveOrUpdateAsync(us, cancellationToken);
+
+			var previousStaffing = await _userStateRepository.GetPreviousUserStateByUserIdAsync(userId, saved.UserStateId);
 			_eventAggregator.SendMessage<UserStaffingEvent>(new UserStaffingEvent() { DepartmentId = departmentId, Staffing = saved, PreviousStaffing = previousStaffing });
 			InvalidateLatestStatesForDepartmentCache(departmentId);
 
@@ -86,8 +86,6 @@ namespace Resgrid.Services
 
 		public async Task<UserState> CreateUserState(string userId, int departmentId, int userStateType, string note, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var previousStaffing = await GetLastUserStateByUserIdAsync(userId);
-
 			var us = new UserState();
 			us.UserId = userId;
 			us.DepartmentId = departmentId;
@@ -96,6 +94,8 @@ namespace Resgrid.Services
 			us.Note = note;
 
 			var saved = await _userStateRepository.SaveOrUpdateAsync(us, cancellationToken);
+
+			var previousStaffing = await _userStateRepository.GetPreviousUserStateByUserIdAsync(userId, saved.UserStateId);
 			_eventAggregator.SendMessage<UserStaffingEvent>(new UserStaffingEvent() { DepartmentId = departmentId, Staffing = saved, PreviousStaffing = previousStaffing });
 			InvalidateLatestStatesForDepartmentCache(departmentId);
 
@@ -104,8 +104,6 @@ namespace Resgrid.Services
 
 		public async Task<UserState> CreateUserStateAsync(string userId, int departmentId, int userStateType, string note, DateTime timeStamp, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var previousStaffing = await GetLastUserStateByUserIdAsync(userId);
-
 			var us = new UserState();
 			us.UserId = userId;
 			us.DepartmentId = departmentId;
@@ -114,6 +112,8 @@ namespace Resgrid.Services
 			us.Note = note;
 
 			var saved = await _userStateRepository.SaveOrUpdateAsync(us, cancellationToken);
+
+			var previousStaffing = await _userStateRepository.GetPreviousUserStateByUserIdAsync(userId, saved.UserStateId);
 			_eventAggregator.SendMessage<UserStaffingEvent>(new UserStaffingEvent() { DepartmentId = departmentId, Staffing = saved, PreviousStaffing = previousStaffing });
 			InvalidateLatestStatesForDepartmentCache(departmentId);
 

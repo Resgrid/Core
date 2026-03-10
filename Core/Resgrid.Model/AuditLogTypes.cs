@@ -102,6 +102,14 @@
 		ScimUserRetrieved,
 		// SCIM bearer token lifecycle
 		ScimBearerTokenProvisioned,
-		ScimBearerTokenRotated
+		ScimBearerTokenRotated,
+		// User Defined Fields
+		UdfDefinitionCreated,
+		UdfDefinitionUpdated,
+		UdfDefinitionDeleted,
+		UdfFieldAdded,
+		UdfFieldUpdated,
+		UdfFieldRemoved,
+		UdfFieldValueSaved
 	}
 }

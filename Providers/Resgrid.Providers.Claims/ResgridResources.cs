@@ -157,5 +157,10 @@
 		public const string Scim_Update = "Scim_Update";
 		public const string Scim_Create = "Scim_Create";
 		public const string Scim_Delete = "Scim_Delete";
+
+		public const string Udf_View = "Udf_View";
+		public const string Udf_Update = "Udf_Update";
+		public const string Udf_Create = "Udf_Create";
+		public const string Udf_Delete = "Udf_Delete";
 	}
 }

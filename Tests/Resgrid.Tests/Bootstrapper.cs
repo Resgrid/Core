@@ -2,6 +2,7 @@
 using Autofac.Extras.CommonServiceLocator;
 using CommonServiceLocator;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Providers.AddressVerification;
 using Resgrid.Providers.Bus;
 using Resgrid.Providers.Cache;
@@ -48,6 +49,22 @@ namespace Resgrid.Tests
 					.InstancePerLifetimeScope();
 				builder.RegisterType<MockScheduledTaskLogsRepository>()
 					.As<IScheduledTaskLogsRepository>()
+					.InstancePerLifetimeScope();
+
+				// No-op unit of work — prevents real SQL transaction usage in tests
+				builder.RegisterType<MockUnitOfWork>()
+					.As<IUnitOfWork>()
+					.InstancePerLifetimeScope();
+
+				// UDF mock repositories
+				builder.RegisterType<MockUdfDefinitionRepository>()
+					.As<IUdfDefinitionRepository>()
+					.InstancePerLifetimeScope();
+				builder.RegisterType<MockUdfFieldRepository>()
+					.As<IUdfFieldRepository>()
+					.InstancePerLifetimeScope();
+				builder.RegisterType<MockUdfFieldValueRepository>()
+					.As<IUdfFieldValueRepository>()
 					.InstancePerLifetimeScope();
 
 				_container = builder.Build();

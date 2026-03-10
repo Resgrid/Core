@@ -27,6 +27,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Resgrid.Web.Areas.User.Models.Personnel;
 using IdentityUser = Resgrid.Model.Identity.IdentityUser;
 using SixLabors.ImageSharp.Formats;
+using Microsoft.Extensions.Localization;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -46,11 +47,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IEmailService _emailService;
 		private readonly UserManager<IdentityUser> _userManager;
 		private readonly SignInManager<IdentityUser> _signInManager;
+		private readonly IDepartmentSsoService _departmentSsoService;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> _secLocalizer;
 
 		public ProfileController(IDepartmentsService departmentsService, IUsersService usersService, Model.Services.IAuthorizationService authorizationService,
 			IUserProfileService userProfileService, IScheduledTasksService scheduledTasksService, ICertificationService certificationService,
 			ICustomStateService customStateService, IImageService imageService, IOptions<AppOptions> appOptionsAccessor,
-			IEmailService emailService, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager)
+			IEmailService emailService, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager,
+			IDepartmentSsoService departmentSsoService,
+			IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> secLocalizer)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -64,8 +69,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_emailService = emailService;
 			_userManager = userManager;
 			_signInManager = signInManager;
+			_departmentSsoService = departmentSsoService;
+			_secLocalizer = secLocalizer;
 		}
 		#endregion Private Members and Constructors
+
+		/// <summary>Resolves a password-error key returned by ValidatePasswordAgainstPolicyAsync into a localised message.</summary>
+		private string ResolvePwdError(string key)
+		{
+			if (string.IsNullOrEmpty(key)) return key;
+			// PwdErrorTooShort carries the min-length as "PwdErrorTooShort:N"
+			if (key.StartsWith("PwdErrorTooShort:", StringComparison.Ordinal))
+			{
+				var minLen = key.Substring("PwdErrorTooShort:".Length);
+				return string.Format(_secLocalizer["PwdErrorTooShort"], minLen);
+			}
+			return _secLocalizer[key];
+		}
 
 		#region Reporting
 		[HttpGet]
@@ -941,6 +961,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Name = await UserHelper.GetFullNameForUser(userId);
 			model.Email = user.Email;
 			model.Username = user.UserName;
+			model.MinPasswordLength = await _departmentSsoService.GetEffectiveMinPasswordLengthAsync(DepartmentId);
 
 			return View(model);
 		}
@@ -964,13 +985,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Name = await UserHelper.GetFullNameForUser(model.UserId);
 			model.Email = user.Email;
 
-			var profile = await _userProfileService.GetProfileByUserIdAsync(model.UserId);
+			// Validate new password against system-enforced complexity and department min-length policy
+			var policyError = await _departmentSsoService.ValidatePasswordAgainstPolicyAsync(DepartmentId, model.Password);
+			if (policyError != null)
+			{
+				ModelState.AddModelError("Password", ResolvePwdError(policyError));
+				return View(model);
+			}
 
 			var token = await _userManager.GeneratePasswordResetTokenAsync(user);
 			var result = await _userManager.ResetPasswordAsync(user, token, model.Password);
 
 			if (result.Succeeded)
 			{
+				await _departmentSsoService.RecordPasswordChangedAsync(DepartmentId, model.UserId);
+
 				if (model.EmailUser)
 					await _emailService.SendPasswordResetEmail(model.Email, model.Name, user.UserName, model.Password, userDepartment.Name);
 

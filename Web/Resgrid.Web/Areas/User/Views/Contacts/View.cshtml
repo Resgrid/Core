@@ -1,4 +1,4 @@
-﻿@model Resgrid.Web.Areas.User.Models.Contacts.ViewContactView
+@model Resgrid.Web.Areas.User.Models.Contacts.ViewContactView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Contacts.Contacts> localizer
 @{
     ViewBag.Title = "Resgrid | " + @localizer["ViewContactHeader"];
@@ -27,6 +27,14 @@
                         <i class="fa fa-phone"></i> @localizer["Calls"]
                     </a>
                 </li>
+                @if (!string.IsNullOrEmpty(Model.UdfReadOnlyHtml))
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#customfields" role="tab">
+                            <i class="fa fa-list-alt"></i> Custom Fields
+                        </a>
+                    </li>
+                }
             </ul>
 
             <!-- Header Cards -->
@@ -438,10 +446,21 @@
                                 </div>
                             </div>
                         </div>
+                        @if (!string.IsNullOrEmpty(Model.UdfReadOnlyHtml))
+                        {
+                            <div class="tab-pane fade" id="customfields" role="tabpanel">
+                                <div class="row m-t-sm">
+                                    <div class="col-md-12">
+                                        <div class="panel-body">
+                                            @Html.Raw(Model.UdfReadOnlyHtml)
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>

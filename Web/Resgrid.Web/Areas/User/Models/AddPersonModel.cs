@@ -10,6 +10,7 @@ namespace Resgrid.Web.Areas.User.Models
 {
 	public class AddPersonModel: BaseUserModel
 	{
+		public string UdfFormHtml { get; set; }
 		public Department Department { get; set; }
 		public IdentityUser User { get; set; }
 		public UserProfile Profile { get; set; }

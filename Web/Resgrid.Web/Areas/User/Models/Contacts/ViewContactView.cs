@@ -5,6 +5,7 @@ namespace Resgrid.Web.Areas.User.Models.Contacts
 {
 	public class ViewContactView
 	{
+		public string UdfReadOnlyHtml { get; set; }
 		public Contact Contact { get; set; }
 		public Department Department { get; set; }
 		public Address PhysicalAddress { get; set; }

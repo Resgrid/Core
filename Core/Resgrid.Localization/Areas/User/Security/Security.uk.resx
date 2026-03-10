@@ -921,4 +921,10 @@
   <data name="SecurityPolicyCannotEnableRequireSso" xml:space="preserve">
     <value>Cannot enable SSO-only login: no active SSO configuration exists. Create and enable an SSO configuration first.</value>
   </data>
+  <data name="PwdErrorEmpty" xml:space="preserve"><value>Пароль не може бути порожнім.</value></data>
+  <data name="PwdErrorNoDigit" xml:space="preserve"><value>Пароль повинен містити щонайменше одну цифру.</value></data>
+  <data name="PwdErrorNoUppercase" xml:space="preserve"><value>Пароль повинен містити щонайменше одну велику літеру.</value></data>
+  <data name="PwdErrorNoLowercase" xml:space="preserve"><value>Пароль повинен містити щонайменше одну малу літеру.</value></data>
+  <data name="PwdErrorTooShort" xml:space="preserve"><value>Пароль повинен містити щонайменше {0} символів.</value></data>
+  <data name="PwdMinLengthTooLow" xml:space="preserve"><value>Мінімальна довжина пароля не може бути меншою за системний мінімум — 8 символів.</value></data>
 </root>

@@ -27,6 +27,7 @@ using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext
 using PostHog;
 using Microsoft.Extensions.DependencyInjection;
 using Resgrid.Web.Attributes;
+using Microsoft.Extensions.Localization;
 
 namespace Resgrid.Web.Controllers
 {
@@ -50,13 +51,16 @@ namespace Resgrid.Web.Controllers
 		private readonly ISystemAuditsService _systemAuditsService;
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IServiceProvider _serviceProvider;
-
+		private readonly IDepartmentSsoService _departmentSsoService;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> _secLocalizer;
 
 		public AccountController(
 						UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager,
 						IDepartmentsService departmentsService, IUsersService usersService, IEmailService emailService, IInvitesService invitesService, IUserProfileService userProfileService,
 						ISubscriptionsService subscriptionsService, IAffiliateService affiliateService, IEventAggregator eventAggregator, IEmailMarketingProvider emailMarketingProvider,
-						ISystemAuditsService systemAuditsService, ICacheProvider cacheProvider, IServiceProvider serviceProvider)
+						ISystemAuditsService systemAuditsService, ICacheProvider cacheProvider, IServiceProvider serviceProvider,
+						IDepartmentSsoService departmentSsoService,
+						IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> secLocalizer)
 		{
 			_userManager = userManager;
 			_signInManager = signInManager;
@@ -72,8 +76,22 @@ namespace Resgrid.Web.Controllers
 			_systemAuditsService = systemAuditsService;
 			_cacheProvider = cacheProvider;
 			_serviceProvider = serviceProvider;
+			_departmentSsoService = departmentSsoService;
+			_secLocalizer = secLocalizer;
 		}
 		#endregion Private Members and Constructors
+
+		/// <summary>Resolves a password-error key returned by ValidatePasswordAgainstPolicyAsync into a localised message.</summary>
+		private string ResolvePwdError(string key)
+		{
+			if (string.IsNullOrEmpty(key)) return key;
+			if (key.StartsWith("PwdErrorTooShort:", StringComparison.Ordinal))
+			{
+				var minLen = key.Substring("PwdErrorTooShort:".Length);
+				return string.Format(_secLocalizer["PwdErrorTooShort"], minLen);
+			}
+			return _secLocalizer[key];
+		}
 
 		//
 		// GET: /Account/Login
@@ -135,6 +153,36 @@ namespace Resgrid.Web.Controllers
 								});
 
 							await SetupUserSessionAsync(model.Username, model.Password);
+
+							// Check whether the department's password expiration policy has been exceeded.
+							// Only check for password-based logins (SSO users are unaffected).
+							try
+							{
+								var identityUser = await _userManager.FindByNameAsync(model.Username);
+								if (identityUser != null)
+								{
+									var department = await _departmentsService.GetDepartmentForUserAsync(model.Username);
+									if (department != null)
+									{
+										var policy = await _departmentSsoService.GetSecurityPolicyForDepartmentAsync(department.DepartmentId, cancellationToken);
+										if (policy != null && policy.PasswordExpirationDays > 0)
+										{
+											var member = await _departmentsService.GetDepartmentMemberAsync(identityUser.Id, department.DepartmentId);
+											if (_departmentSsoService.IsPasswordExpired(policy, member?.PasswordLastSetOn))
+											{
+												HttpContext.Session.SetString("ForcePasswordChangeUserId", identityUser.Id);
+												HttpContext.Session.SetString("ForcePasswordChangeDeptId", department.DepartmentId.ToString());
+												return RedirectToAction(nameof(ForcePasswordChange));
+											}
+										}
+									}
+								}
+							}
+							catch (Exception ex)
+							{
+								Logging.LogException(ex);
+								// Don't block login on a policy-check error — fail open.
+							}
 
 							if (!String.IsNullOrWhiteSpace(returnUrl))
 								return RedirectToLocal(returnUrl);
@@ -438,6 +486,65 @@ namespace Resgrid.Web.Controllers
 			return View(model);
 		}
 
+		// ── Forced Password Change (expired password) ─────────────────────────
+
+		[HttpGet]
+		public async Task<IActionResult> ForcePasswordChange(CancellationToken cancellationToken)
+		{
+			var userId = HttpContext.Session.GetString("ForcePasswordChangeUserId");
+			var deptIdStr = HttpContext.Session.GetString("ForcePasswordChangeDeptId");
+
+			// If there's no pending forced-change session key the user shouldn't be here.
+			if (string.IsNullOrWhiteSpace(userId) || !int.TryParse(deptIdStr, out int deptId))
+				return RedirectToAction("Dashboard", "Home", new { Area = "User" });
+
+			var minLength = await _departmentSsoService.GetEffectiveMinPasswordLengthAsync(deptId, cancellationToken);
+			return View(new ForcePasswordChangeViewModel { MinPasswordLength = minLength });
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> ForcePasswordChange(ForcePasswordChangeViewModel model, CancellationToken cancellationToken)
+		{
+			var userId = HttpContext.Session.GetString("ForcePasswordChangeUserId");
+			var deptIdStr = HttpContext.Session.GetString("ForcePasswordChangeDeptId");
+
+			if (string.IsNullOrWhiteSpace(userId) || !int.TryParse(deptIdStr, out int deptId))
+				return RedirectToAction("Dashboard", "Home", new { Area = "User" });
+
+			model.MinPasswordLength = await _departmentSsoService.GetEffectiveMinPasswordLengthAsync(deptId, cancellationToken);
+
+			if (!ModelState.IsValid)
+				return View(model);
+
+			// Validate against system complexity + department min-length policy
+			var policyError = await _departmentSsoService.ValidatePasswordAgainstPolicyAsync(deptId, model.NewPassword, cancellationToken);
+			if (policyError != null)
+			{
+				ModelState.AddModelError("NewPassword", ResolvePwdError(policyError));
+				return View(model);
+			}
+
+			var user = await _userManager.FindByIdAsync(userId);
+			if (user == null)
+				return RedirectToAction("LogOn");
+
+			var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+			if (!result.Succeeded)
+			{
+				foreach (var error in result.Errors)
+					ModelState.AddModelError(string.Empty, error.Description);
+				return View(model);
+			}
+
+			// Record the password change and clear the forced-change session flags
+			await _departmentSsoService.RecordPasswordChangedAsync(deptId, userId, cancellationToken);
+			HttpContext.Session.Remove("ForcePasswordChangeUserId");
+			HttpContext.Session.Remove("ForcePasswordChangeDeptId");
+
+			return RedirectToAction("Dashboard", "Home", new { Area = "User" });
+		}
+
 		//
 		// POST: /Account/LogOff
 		[HttpGet]
@@ -490,6 +597,7 @@ namespace Resgrid.Web.Controllers
 
 				if (result.Succeeded)
 				{
+					await _departmentSsoService.RecordPasswordChangedAsync(department.DepartmentId, user.Id, cancellationToken);
 					await _emailService.SendPasswordResetEmail(user.Email, profile.FullName.AsFirstNameLastName, user.UserName, newPassword, department.Name);
 				}
 

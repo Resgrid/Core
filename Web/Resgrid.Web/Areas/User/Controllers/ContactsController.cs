@@ -34,9 +34,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IEventAggregator _eventAggregator;
 		private readonly ICallsService _callsService;
 		private readonly IAuthorizationService _authorizationService;
+		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
+		private readonly IUdfRenderingService _udfRenderingService;
+		private readonly IDepartmentGroupsService _departmentGroupsService;
 
 		public ContactsController(IContactsService contactsService, IDepartmentsService departmentsService, IUserProfileService userProfileService,
-			IAddressService addressService, IEventAggregator eventAggregator, ICallsService callsService, IAuthorizationService authorizationService)
+			IAddressService addressService, IEventAggregator eventAggregator, ICallsService callsService, IAuthorizationService authorizationService,
+			IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService,
+			IDepartmentGroupsService departmentGroupsService)
 		{
 			_contactsService = contactsService;
 			_departmentsService = departmentsService;
@@ -45,6 +50,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_eventAggregator = eventAggregator;
 			_callsService = callsService;
 			_authorizationService = authorizationService;
+			_userDefinedFieldsService = userDefinedFieldsService;
+			_udfRenderingService = udfRenderingService;
+			_departmentGroupsService = departmentGroupsService;
 		}
 
 		#endregion Private Members and Constructors
@@ -120,6 +128,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.Notes = await _contactsService.GetContactNotesByContactIdAsync(contactId, DepartmentId);
 
+			var udfDefinition = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Contact);
+			if (udfDefinition != null)
+			{
+				bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+				bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+				var udfFields = await _userDefinedFieldsService.GetVisibleFieldsForActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Contact, isDeptAdmin, isGroupAdmin);
+				var udfValues = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Contact, contactId);
+				var visibleFieldIds = udfFields.Select(f => f.UdfFieldId).ToHashSet();
+				var filteredValues = (udfValues ?? new List<UdfFieldValue>()).Where(v => visibleFieldIds.Contains(v.UdfFieldId)).ToList();
+				model.UdfReadOnlyHtml = _udfRenderingService.GenerateReadOnlyHtml(udfDefinition, udfFields, filteredValues);
+			}
+
 			return View(model);
 		}
 
@@ -134,6 +154,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ViewBag.Countries = new SelectList(Countries.CountryNames);
 			ViewBag.TimeZones = new SelectList(TimeZones.Zones, "Key", "Value");
 			ViewBag.Languages = new SelectList(SupportedLocales.SupportedLanguagesMap, "Key", "Value");
+
+			var udfDefinition = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Contact);
+			if (udfDefinition != null)
+			{
+				bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+				bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+				var udfFields = await _userDefinedFieldsService.GetVisibleFieldsForActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Contact, isDeptAdmin, isGroupAdmin);
+				model.UdfFormHtml = _udfRenderingService.GenerateHtmlFormFields(udfDefinition, udfFields, new List<UdfFieldValue>());
+			}
 
 			return View(model);
 		}
@@ -276,6 +305,35 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				await _contactsService.SaveContactAsync(model.Contact, cancellationToken);
 
+				// Save UDF field values for the new contact
+				var udfDefinitionForCreate = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Contact);
+				var udfValues = Request.Form.Keys
+					.Where(k => k.StartsWith("udf_") && !k.EndsWith("_exists"))
+					.Select(k => new UdfFieldValue
+					{
+						UdfFieldId = k.Substring(4),
+						UdfDefinitionId = udfDefinitionForCreate?.UdfDefinitionId,
+						Value = Request.Form[k]
+					}).ToList();
+
+				if (udfValues.Any())
+				{
+					bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+					bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+					var validationErrors = await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Contact, model.Contact.ContactId, udfValues, UserId, isDeptAdmin, isGroupAdmin, cancellationToken);
+
+					if (validationErrors.Count > 0)
+					{
+						foreach (var kvp in validationErrors)
+						{
+							foreach (var errorMessage in kvp.Value)
+								ModelState.AddModelError(kvp.Key, errorMessage);
+						}
+
+						return View(model);
+					}
+				}
+
 				auditEvent.After = model.Contact.CloneJsonToString();
 				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
@@ -345,6 +403,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ViewBag.Countries = new SelectList(Countries.CountryNames);
 			ViewBag.TimeZones = new SelectList(TimeZones.Zones, "Key", "Value");
 			ViewBag.Languages = new SelectList(SupportedLocales.SupportedLanguagesMap, "Key", "Value");
+
+			var udfDefinitionEdit = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Contact);
+			if (udfDefinitionEdit != null)
+			{
+				bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+				bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+				var udfFieldsEdit = await _userDefinedFieldsService.GetVisibleFieldsForActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Contact, isDeptAdmin, isGroupAdmin);
+				var udfValuesEdit = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Contact, contactId);
+				var visibleFieldIds = udfFieldsEdit.Select(f => f.UdfFieldId).ToHashSet();
+				var filteredValues = (udfValuesEdit ?? new List<UdfFieldValue>()).Where(v => visibleFieldIds.Contains(v.UdfFieldId)).ToList();
+				model.UdfFormHtml = _udfRenderingService.GenerateHtmlFormFields(udfDefinitionEdit, udfFieldsEdit, filteredValues);
+			}
 
 			return View(model);
 		}
@@ -508,6 +578,35 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Contact.AddedOn = DateTime.UtcNow;
 
 				await _contactsService.SaveContactAsync(model.Contact, cancellationToken);
+
+				// Save UDF field values for the updated contact
+				var udfDefinitionForEdit = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Contact);
+				var udfValues = Request.Form.Keys
+					.Where(k => k.StartsWith("udf_") && !k.EndsWith("_exists"))
+					.Select(k => new UdfFieldValue
+					{
+						UdfFieldId = k.Substring(4),
+						UdfDefinitionId = udfDefinitionForEdit?.UdfDefinitionId,
+						Value = Request.Form[k]
+					}).ToList();
+
+				if (udfValues.Any())
+				{
+					bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+					bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+					var validationErrors = await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Contact, model.Contact.ContactId, udfValues, UserId, isDeptAdmin, isGroupAdmin, cancellationToken);
+
+					if (validationErrors.Count > 0)
+					{
+						foreach (var kvp in validationErrors)
+						{
+							foreach (var errorMessage in kvp.Value)
+								ModelState.AddModelError(kvp.Key, errorMessage);
+						}
+
+						return View(model);
+					}
+				}
 
 				auditEvent.After = model.Contact.CloneJsonToString();
 				_eventAggregator.SendMessage<AuditEvent>(auditEvent);

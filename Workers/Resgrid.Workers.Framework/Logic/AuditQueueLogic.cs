@@ -683,7 +683,100 @@ namespace Resgrid.Workers.Framework.Logic
 								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} deleted a Workflow Credential.";
 							}
 							break;
-					}
+
+						// ── User Defined Fields ───────────────────────────────────────────────
+						case AuditLogTypes.UdfDefinitionCreated:
+							if (!String.IsNullOrWhiteSpace(auditEvent.After))
+							{
+								var udfDefCreated = JsonConvert.DeserializeObject<dynamic>(auditEvent.After);
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} created UDF Definition v{udfDefCreated?.Version} for entity type {udfDefCreated?.EntityType}";
+								auditLog.Data = $"UdfDefinitionId: {udfDefCreated?.UdfDefinitionId}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} created a UDF Definition.";
+							}
+							break;
+
+						case AuditLogTypes.UdfDefinitionUpdated:
+							if (!String.IsNullOrWhiteSpace(auditEvent.After))
+							{
+								var udfDefUpdated = JsonConvert.DeserializeObject<dynamic>(auditEvent.After);
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated UDF Definition — new version v{udfDefUpdated?.Version} for entity type {udfDefUpdated?.EntityType}";
+								auditLog.Data = $"UdfDefinitionId: {udfDefUpdated?.UdfDefinitionId}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated a UDF Definition.";
+							}
+							break;
+
+						case AuditLogTypes.UdfDefinitionDeleted:
+							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
+							{
+								var udfDefDeleted = JsonConvert.DeserializeObject<dynamic>(auditEvent.Before);
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} deleted UDF Definition v{udfDefDeleted?.Version} for entity type {udfDefDeleted?.EntityType}";
+								auditLog.Data = $"UdfDefinitionId: {udfDefDeleted?.UdfDefinitionId}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} deleted a UDF Definition.";
+							}
+							break;
+
+						case AuditLogTypes.UdfFieldAdded:
+							if (!String.IsNullOrWhiteSpace(auditEvent.After))
+							{
+								var udfFieldAdded = JsonConvert.DeserializeObject<dynamic>(auditEvent.After);
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added UDF field '{udfFieldAdded?.Label}' to definition {udfFieldAdded?.UdfDefinitionId}";
+								auditLog.Data = $"UdfFieldId: {udfFieldAdded?.UdfFieldId}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} added a UDF field.";
+							}
+							break;
+
+						case AuditLogTypes.UdfFieldUpdated:
+							if (!String.IsNullOrWhiteSpace(auditEvent.After))
+							{
+								var udfFieldUpdated = JsonConvert.DeserializeObject<dynamic>(auditEvent.After);
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated UDF field '{udfFieldUpdated?.Label}'";
+								auditLog.Data = $"UdfFieldId: {udfFieldUpdated?.UdfFieldId}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} updated a UDF field.";
+							}
+							break;
+
+						case AuditLogTypes.UdfFieldRemoved:
+							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
+							{
+								var udfFieldRemoved = JsonConvert.DeserializeObject<dynamic>(auditEvent.Before);
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed UDF field '{udfFieldRemoved?.Label}' from definition {udfFieldRemoved?.UdfDefinitionId}";
+								auditLog.Data = $"UdfFieldId: {udfFieldRemoved?.UdfFieldId}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} removed a UDF field.";
+							}
+							break;
+
+						case AuditLogTypes.UdfFieldValueSaved:
+							if (!String.IsNullOrWhiteSpace(auditEvent.After))
+							{
+								var udfValueSaved = JsonConvert.DeserializeObject<dynamic>(auditEvent.After);
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} saved UDF values for {udfValueSaved?.EntityType} entity {udfValueSaved?.EntityId}";
+								auditLog.Data = $"UdfDefinitionId: {udfValueSaved?.UdfDefinitionId}, EntityId: {udfValueSaved?.EntityId}";
+							}
+							else
+							{
+								auditLog.Message = $"{profile.FullName.AsFirstNameLastName} saved UDF field values.";
+							}
+							break;
+
+					} // end switch
 
 					if (String.IsNullOrWhiteSpace(auditLog.Data))
 						auditLog.Data = "No Data";

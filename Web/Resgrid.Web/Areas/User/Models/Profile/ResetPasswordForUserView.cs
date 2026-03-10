@@ -12,6 +12,9 @@ namespace Resgrid.Web.Areas.User.Models.Profile
 		public string UserId { get; set; }
 		public bool EmailUser { get; set; }
 
+		/// <summary>Effective minimum password length from the department policy (≥ 8). Shown as a hint in the view.</summary>
+		public int MinPasswordLength { get; set; } = 8;
+
 		[Required]
 		[StringLength(100, ErrorMessage = "The {0} must be at least 8 characters long.", MinimumLength = 8)]
 		[DataType(DataType.Password)]

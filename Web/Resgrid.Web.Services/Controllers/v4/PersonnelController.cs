@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Resgrid.Web.Services.Models.v4.Forms;
 using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.Personnel;
+using Resgrid.Web.Services.Models.v4.UserDefinedFields;
 using Resgrid.Model;
 using Resgrid.Model.Identity;
 using System;
@@ -39,6 +40,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly Model.Services.IAuthorizationService _authorizationService;
 		private readonly ICustomStateService _customStateService;
+		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
 
 		public PersonnelController(
 			IUsersService usersService,
@@ -50,7 +52,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IPersonnelRolesService personnelRolesService,
 			IDepartmentSettingsService departmentSettingsService,
 			Model.Services.IAuthorizationService authorizationService,
-			ICustomStateService customStateService
+			ICustomStateService customStateService,
+			IUserDefinedFieldsService userDefinedFieldsService
 			)
 		{
 			_usersService = usersService;
@@ -63,6 +66,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_departmentSettingsService = departmentSettingsService;
 			_authorizationService = authorizationService;
 			_customStateService = customStateService;
+			_userDefinedFieldsService = userDefinedFieldsService;
 		}
 		#endregion Members and Constructors
 
@@ -112,6 +116,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var canViewPII = await _authorizationService.CanUserViewPIIAsync(UserId, DepartmentId);
 
 			result.Data = await ConvertPersonnelInfo(user, department, profile, group, roles, action, userState, canViewPII);
+
+			var udfValues = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Personnel, user.UserId);
+			if (udfValues != null && udfValues.Any())
+			{
+				result.Data.UdfValues = udfValues.Select(v => new UdfFieldValueResultData
+				{
+					UdfFieldValueId = v.UdfFieldValueId,
+					UdfFieldId = v.UdfFieldId,
+					UdfDefinitionId = v.UdfDefinitionId,
+					EntityId = v.EntityId,
+					EntityType = v.EntityType,
+					Value = v.Value
+				}).ToList();
+			}
 
 			return Ok(result);
 		}

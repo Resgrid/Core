@@ -26,7 +26,8 @@
 		ContactDelete,
 		CreateWorkflow = 22,
 		ManageWorkflowCredentials = 23,
-		ViewWorkflowRuns = 24
+		ViewWorkflowRuns = 24,
+		ViewUdfFields = 25
 	}
 
 }

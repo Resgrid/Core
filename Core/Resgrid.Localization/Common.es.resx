@@ -648,6 +648,9 @@
   <data name="Yes" xml:space="preserve">
     <value>Sí</value>
   </data>
+  <data name="UserDefinedFields" xml:space="preserve">
+    <value>User Defined Fields</value>
+  </data>
   <data name="YourDepartments" xml:space="preserve">
     <value>Tus Departamentos</value>
   </data>

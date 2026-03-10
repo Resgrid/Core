@@ -1,0 +1,295 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Index -->
+  <data name="PageHeader" xml:space="preserve">
+    <value>User Defined Fields</value>
+  </data>
+  <data name="PageSubHeader" xml:space="preserve">
+    <value>Manage custom fields for department entities</value>
+  </data>
+  <data name="EntityType" xml:space="preserve">
+    <value>Entity Type</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="FieldCount" xml:space="preserve">
+    <value>Fields</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="NoDefinition" xml:space="preserve">
+    <value>Not configured</value>
+  </data>
+  <data name="Configure" xml:space="preserve">
+    <value>Configure</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="DeleteDefinitionConfirm" xml:space="preserve">
+    <value>Delete all UDF configuration for {0}? This cannot be undone.</value>
+  </data>
+  <data name="UdfSummaryTitle" xml:space="preserve">
+    <value>UDF Definitions by Entity</value>
+  </data>
+  <!-- Edit / New Definition -->
+  <data name="EditDefinitionHeader" xml:space="preserve">
+    <value>Configure Fields — {0}</value>
+  </data>
+  <data name="NewDefinitionHeader" xml:space="preserve">
+    <value>Configure Fields — {0}</value>
+  </data>
+  <data name="FieldsSection" xml:space="preserve">
+    <value>Field Definitions</value>
+  </data>
+  <data name="AddField" xml:space="preserve">
+    <value>Add Field</value>
+  </data>
+  <data name="NoFieldsAdded" xml:space="preserve">
+    <value>No fields have been added yet. Click "Add Field" to define the first field.</value>
+  </data>
+  <data name="FieldName" xml:space="preserve">
+    <value>Machine Name</value>
+  </data>
+  <data name="FieldLabel" xml:space="preserve">
+    <value>Label</value>
+  </data>
+  <data name="FieldDataType" xml:space="preserve">
+    <value>Data Type</value>
+  </data>
+  <data name="FieldRequired" xml:space="preserve">
+    <value>Required</value>
+  </data>
+  <data name="FieldEnabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="FieldVisibleMobile" xml:space="preserve">
+    <value>Mobile</value>
+  </data>
+  <data name="FieldVisibleReports" xml:space="preserve">
+    <value>Reports</value>
+  </data>
+  <data name="FieldOrder" xml:space="preserve">
+    <value>Order</value>
+  </data>
+  <data name="RemoveField" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="RemoveFieldConfirm" xml:space="preserve">
+    <value>Remove this field?</value>
+  </data>
+  <data name="SaveDefinition" xml:space="preserve">
+    <value>Save Definition</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <!-- Field modal / form labels -->
+  <data name="FieldModalTitle" xml:space="preserve">
+    <value>Field Details</value>
+  </data>
+  <data name="FieldNameHelp" xml:space="preserve">
+    <value>Internal identifier (letters, digits, underscores; must start with a letter or underscore). Must be unique within this entity type.</value>
+  </data>
+  <data name="FieldLabelHelp" xml:space="preserve">
+    <value>Human-readable label shown to users.</value>
+  </data>
+  <data name="FieldDescription" xml:space="preserve">
+    <value>Description / Tooltip</value>
+  </data>
+  <data name="FieldPlaceholder" xml:space="preserve">
+    <value>Placeholder Text</value>
+  </data>
+  <data name="FieldDefaultValue" xml:space="preserve">
+    <value>Default Value</value>
+  </data>
+  <data name="FieldGroupName" xml:space="preserve">
+    <value>Group / Section</value>
+  </data>
+  <data name="FieldIsReadOnly" xml:space="preserve">
+    <value>Read-Only</value>
+  </data>
+  <data name="FieldIsReadOnlyHelp" xml:space="preserve">
+    <value>When enabled, the field is displayed but cannot be edited by users.</value>
+  </data>
+  <data name="ValidationSection" xml:space="preserve">
+    <value>Validation Rules</value>
+  </data>
+  <data name="ValidationMinLength" xml:space="preserve">
+    <value>Min Length</value>
+  </data>
+  <data name="ValidationMaxLength" xml:space="preserve">
+    <value>Max Length</value>
+  </data>
+  <data name="ValidationMinValue" xml:space="preserve">
+    <value>Min Value</value>
+  </data>
+  <data name="ValidationMaxValue" xml:space="preserve">
+    <value>Max Value</value>
+  </data>
+  <data name="ValidationRegex" xml:space="preserve">
+    <value>Regex Pattern</value>
+  </data>
+  <data name="ValidationRegexError" xml:space="preserve">
+    <value>Regex Error Message</value>
+  </data>
+  <data name="DropdownOptions" xml:space="preserve">
+    <value>Options (Key=Label, one per line)</value>
+  </data>
+  <data name="DropdownOptionsHelp" xml:space="preserve">
+    <value>Enter one option per line in Key=Label format, e.g. "yes=Yes" or "no=No".</value>
+  </data>
+  <!-- Field visibility -->
+  <data name="FieldVisibility" xml:space="preserve">
+    <value>Who Can See This Field?</value>
+  </data>
+  <data name="VisibilityEveryone" xml:space="preserve">
+    <value>Everyone</value>
+  </data>
+  <data name="VisibilityGroupAdmins" xml:space="preserve">
+    <value>Department &amp; Group Admins</value>
+  </data>
+  <data name="VisibilityDeptAdmins" xml:space="preserve">
+    <value>Department Admins Only</value>
+  </data>
+  <data name="FieldVisibilityHelp" xml:space="preserve">
+    <value>Controls who can see and fill this field. Users who don't meet the requirement will not see it when adding or viewing records.</value>
+  </data>
+  <data name="ModalSave" xml:space="preserve">
+    <value>Add Field</value>
+  </data>
+  <data name="ModalClose" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <!-- Breadcrumb / shared -->
+  <data name="Home" xml:space="preserve">
+    <value>Home</value>
+  </data>
+  <data name="New" xml:space="preserve">
+    <value>New</value>
+  </data>
+  <data name="UdfModule" xml:space="preserve">
+    <value>User Defined Fields</value>
+  </data>
+  <!-- Entity type names -->
+  <data name="EntityCall" xml:space="preserve">
+    <value>Call</value>
+  </data>
+  <data name="EntityPersonnel" xml:space="preserve">
+    <value>Personnel</value>
+  </data>
+  <data name="EntityUnit" xml:space="preserve">
+    <value>Unit</value>
+  </data>
+  <data name="EntityContact" xml:space="preserve">
+    <value>Contact</value>
+  </data>
+  <!-- Preview -->
+  <data name="Preview" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="PreviewModalTitle" xml:space="preserve">
+    <value>Field Preview — {0}</value>
+  </data>
+  <data name="PreviewWarningTitle" xml:space="preserve">
+    <value>Preview Only</value>
+  </data>
+  <data name="PreviewWarningBody" xml:space="preserve">
+    <value>This is a sample of how the fields will look and render on the page. No data will be saved.</value>
+  </data>
+  <data name="PreviewNoFields" xml:space="preserve">
+    <value>No enabled fields to preview.</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <!-- Notifications -->
+  <data name="DefinitionSaved" xml:space="preserve">
+    <value>Field definition saved successfully.</value>
+  </data>
+  <data name="DefinitionDeleted" xml:space="preserve">
+    <value>Field definition deleted.</value>
+  </data>
+  <data name="ValidationErrors" xml:space="preserve">
+    <value>Please correct the errors below before saving.</value>
+  </data>
+  <data name="ValidationMachineNameRequired" xml:space="preserve">
+    <value>Machine name is required.</value>
+  </data>
+  <data name="ValidationMachineNamePattern" xml:space="preserve">
+    <value>Use letters, digits, and underscores only, starting with a letter or underscore.</value>
+  </data>
+  <data name="ValidationDuplicateMachineNames" xml:space="preserve">
+    <value>Duplicate machine name(s): {0}. Each machine name must be unique within this entity type.</value>
+  </data>
+</root>
+

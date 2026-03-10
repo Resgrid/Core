@@ -124,6 +124,7 @@ namespace Resgrid.Providers.Claims
 			ClaimsLogic.AddWorkflowClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
 			ClaimsLogic.AddWorkflowCredentialClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
 			ClaimsLogic.AddWorkflowRunClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
+			ClaimsLogic.AddUdfClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
 
 			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtConfig.Key));
 			var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);

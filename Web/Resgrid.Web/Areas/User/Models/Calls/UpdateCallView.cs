@@ -7,6 +7,7 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 {
 	public class UpdateCallView: BaseUserModel
 	{
+		public string UdfFormHtml { get; set; }
 		public Department Department { get; set; }
 		public IdentityUser User { get; set; }
 		public Call Call { get; set; }

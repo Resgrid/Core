@@ -85,6 +85,11 @@ namespace Resgrid.Services
 			builder.RegisterType<ContactsService>().As<IContactsService>().SingleInstance();
 
 
+			// UDF Services
+			builder.RegisterType<UserDefinedFieldsService>().As<IUserDefinedFieldsService>().InstancePerLifetimeScope();
+			builder.RegisterType<UdfRenderingService>().As<IUdfRenderingService>().InstancePerLifetimeScope();
+
+
 			// Stripe Services
 			//builder.RegisterType<StripeSubscriptionServiceFacade>().As<IStripeSubscriptionServiceFacade>().InstancePerLifetimeScope();
 			//builder.RegisterType<StripeInvoiceServiceFacade>().As<IStripeInvoiceServiceFacade>().InstancePerLifetimeScope();

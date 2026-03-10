@@ -151,20 +151,20 @@
                                 @localizer["SecurityPolicyMinPasswordLengthLabel"]
                             </label>
                             @Html.TextBoxFor(m => m.MinPasswordLength,
-                                new { @class = "form-control", type = "number", min = "0", max = "128" })
+                                new { @class = "form-control", type = "number", min = "8", max = "128" })
                             <small class="text-muted">@localizer["SecurityPolicyMinPasswordLengthNote"]</small>
                             <span asp-validation-for="MinPasswordLength" class="text-danger"></span>
                         </div>
 
                         <div class="form-group">
-                            <div class="checkbox">
-                                <label>
-                                    @Html.CheckBoxFor(m => m.RequirePasswordComplexity)
-                                    <strong>@localizer["SecurityPolicyPasswordComplexityLabel"]</strong>
-                                </label>
-                                <small class="text-muted d-block m-l-lg">
-                                    @localizer["SecurityPolicyPasswordComplexityNote"]
-                                </small>
+                            <div class="well well-sm m-b-none">
+                                <strong><i class="fa fa-lock"></i> @localizer["SecurityPolicySystemComplexityHeader"]</strong>
+                                <p class="m-t-xs m-b-none">@localizer["SecurityPolicySystemComplexityNote"]</p>
+                                <ul class="m-t-xs m-b-none">
+                                    <li>@localizer["SecurityPolicyComplexityRule1"]</li>
+                                    <li>@localizer["SecurityPolicyComplexityRule2"]</li>
+                                    <li>@localizer["SecurityPolicyComplexityRule3"]</li>
+                                </ul>
                             </div>
                         </div>
 
@@ -204,17 +204,17 @@
             cui: {
                 requireMfa: true, requireSso: @(Model.HasActiveSsoConfig ? "true" : "false"),
                 sessionTimeout: 240, maxSessions: 1, passwordExpiry: 60,
-                minLength: 14, complexity: true, classification: 1
+                minLength: 14, classification: 1
             },
             enterprise: {
                 requireMfa: true, requireSso: false,
                 sessionTimeout: 480, maxSessions: 5, passwordExpiry: 90,
-                minLength: 12, complexity: true, classification: 0
+                minLength: 12, classification: 0
             },
             minimal: {
                 requireMfa: false, requireSso: false,
                 sessionTimeout: 0, maxSessions: 0, passwordExpiry: 0,
-                minLength: 8, complexity: false, classification: 0
+                minLength: 8, classification: 0
             }
         };
 
@@ -227,7 +227,6 @@
             document.getElementById('MaxConcurrentSessions').value = p.maxSessions;
             document.getElementById('PasswordExpirationDays').value = p.passwordExpiry;
             document.getElementById('MinPasswordLength').value = p.minLength;
-            document.getElementById('RequirePasswordComplexity').checked = p.complexity;
             document.getElementById('DataClassificationLevel').value = p.classification;
         }
     </script>

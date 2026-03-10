@@ -415,6 +415,11 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactsController.IsCallerGroupAdmin">
+            <summary>
+            Returns true if the current caller holds a group-admin claim for any group.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ContactVerificationController">
             <summary>
             Endpoints for sending and confirming contact-method verification codes.
@@ -546,7 +551,7 @@
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.FormsController">
             <summary>
-            User generated forms that are dispayed to get custom information for New Calls, Unit Checks, etc
+            User generated forms that are displayed to get custom information for New Calls, Unit Checks, etc
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.FormsController.GetNewCallForm">
@@ -554,6 +559,20 @@
             Gets the Department Form that can be used for the new call process (i.e. call intake/triage form)
             </summary>
             <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.FormsController.GetAllForms">
+            <summary>
+            Gets all active (non-deleted) forms for the department. Used by mobile apps to
+            retrieve available forms for calls and other entities.
+            </summary>
+            <returns>Array of FormResultData for each active form in the department</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.FormsController.GetFormById(System.String)">
+            <summary>
+            Gets a specific form by its identifier
+            </summary>
+            <param name="formId">The form identifier</param>
+            <returns>A FormResultData for the requested form</returns>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.GroupsController">
             <summary>
@@ -1047,6 +1066,13 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TemplatesController.GetAllCallQuickTemplates">
+            <summary>
+            Gets all call quick templates for the department. Call quick templates are used to
+            rapidly dispatch pre-configured calls from mobile apps.
+            </summary>
+            <returns>Array of CallQuickTemplateResultData for each active call quick template</returns>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.UnitLocationController">
             <summary>
             Operations involving the location of a unit setting the real-time location or getting the latest location for a unit.
@@ -1140,6 +1166,38 @@
             </summary>
             <param name="statusInput">StatusInput object with the Status/Action to set.</param>
             <returns>Returns HttpStatusCode Created if successful, BadRequest otherwise.</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.UserDefinedFieldsController">
+            <summary>
+            User Defined Fields — allows departments to create custom fields for Calls,
+            Personnel, Units and Contacts.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UserDefinedFieldsController.GetDefinition(System.Int32,System.Threading.CancellationToken)">
+            <summary>Gets the active UDF definition and fields for the given entity type, filtered by the caller's role.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UserDefinedFieldsController.SaveDefinition(Resgrid.Web.Services.Models.v4.UserDefinedFields.SaveUdfDefinitionInput,System.Threading.CancellationToken)">
+            <summary>Creates or updates a UDF definition (triggers a new immutable version). Department admins only.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UserDefinedFieldsController.GetFieldValues(System.Int32,System.String,System.Threading.CancellationToken)">
+            <summary>Gets all UDF field values for a specific entity, restricted to fields visible to the caller.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UserDefinedFieldsController.SaveFieldValues(Resgrid.Web.Services.Models.v4.UserDefinedFields.SaveUdfFieldValuesInput,System.Threading.CancellationToken)">
+            <summary>Saves UDF field values for a specific entity (validates server-side). Only values for fields visible to the caller are accepted.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UserDefinedFieldsController.DeleteField(System.String,System.Threading.CancellationToken)">
+            <summary>Removes a field from the active definition (creates a new version without it). Department admins only.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UserDefinedFieldsController.GetSchema(System.Int32,System.Threading.CancellationToken)">
+            <summary>Returns the React Native JSON schema for the active UDF definition (empty form), filtered by caller role.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UserDefinedFieldsController.GetSchemaForEntity(System.Int32,System.String,System.Threading.CancellationToken)">
+            <summary>Returns the React Native JSON schema pre-populated with an entity's existing values, filtered by caller role.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.UserDefinedFieldsController.IsCallerGroupAdmin">
+            <summary>
+            Returns true if the current caller holds a group-admin claim for any group.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.VoiceController">
             <summary>
@@ -4374,6 +4432,11 @@
             Active Protocols for this call
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.UdfValues">
+            <summary>
+            User Defined Field values for this call
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.CloseCallInput">
             <summary>
             Input information to close a call
@@ -4499,6 +4562,11 @@
             Should all the entities attached to the call be re-notified
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.UdfValues">
+            <summary>
+            User Defined Field values for this call
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.GetCallResult">
             <summary>
             Gets the calls current active, been dispatched and not closed or deleted
@@ -4597,6 +4665,11 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.CallFormData">
             <summary>
             Call Intake form JSON
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.UdfValues">
+            <summary>
+            User Defined Field values for this call
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.ScheduledCallsResult">
@@ -4917,6 +4990,11 @@
         <member name="T:Resgrid.Web.Services.Models.v4.CallTypes.ContactResultData">
             <summary>
             A contact
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactResultData.UdfValues">
+            <summary>
+            User Defined Field values for this contact
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Configs.GetConfigResult">
@@ -5537,6 +5615,21 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Forms.FormDataAutomationResult.OperationValue">
             <summary>
             Automation operation value
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Forms.FormsResult">
+            <summary>
+            Multiple forms result
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Forms.FormsResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Forms.FormsResult.#ctor">
+            <summary>
+            Default constructor
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Groups.GroupResult">
@@ -6709,6 +6802,11 @@
             Sorting weight for the user
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Personnel.PersonnelInfoResultData.UdfValues">
+            <summary>
+            User Defined Field values for this personnel record
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Protocols.GetAllProtocolsResult">
             <summary>
             Result containing all the data required to populate the New Call form
@@ -7708,6 +7806,71 @@
             Who added this note template
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Templates.CallQuickTemplatesResult">
+            <summary>
+            Multiple call quick template result
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Templates.CallQuickTemplatesResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Templates.CallQuickTemplatesResult.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Templates.CallQuickTemplateResultData">
+            <summary>
+            A call quick template used for rapidly dispatching pre-configured calls
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Templates.CallQuickTemplateResultData.Id">
+            <summary>
+            Call Quick Template Id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Templates.CallQuickTemplateResultData.IsDisabled">
+            <summary>
+            Is the template disabled
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Templates.CallQuickTemplateResultData.Name">
+            <summary>
+            Display name of the template
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Templates.CallQuickTemplateResultData.CallName">
+            <summary>
+            Name pre-filled for the call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Templates.CallQuickTemplateResultData.CallNature">
+            <summary>
+            Nature/description pre-filled for the call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Templates.CallQuickTemplateResultData.CallType">
+            <summary>
+            Type pre-filled for the call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Templates.CallQuickTemplateResultData.CallPriority">
+            <summary>
+            Priority pre-filled for the call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Templates.CallQuickTemplateResultData.CreatedByUserId">
+            <summary>
+            The user id of who created the template
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Templates.CallQuickTemplateResultData.CreatedOn">
+            <summary>
+            When the template was created (UTC)
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationInput">
             <summary>
             A GPS location for a point in time of a specificed unit
@@ -8275,6 +8438,11 @@
             Current user provide status note
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Units.UnitResultData.UdfValues">
+            <summary>
+            User Defined Field values for this unit
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Units.UnitRoleData">
             <summary>
             Unit role information for roles on a unit
@@ -8448,6 +8616,50 @@
         <member name="M:Resgrid.Web.Services.Models.v4.Units.UnitsResult.#ctor">
             <summary>
             Default constructor
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.UserDefinedFields.SaveUdfDefinitionInput">
+            <summary>Input for creating or updating a UDF definition (creates a new version).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UserDefinedFields.SaveUdfDefinitionInput.EntityType">
+            <summary>Entity type: Call=0, Personnel=1, Unit=2, Contact=3</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UserDefinedFields.UdfFieldInput.UdfFieldId">
+            <summary>Leave empty to create a new field; provide existing ID to carry it forward.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UserDefinedFields.UdfFieldInput.FieldDataType">
+            <summary>See UdfFieldDataType enum: Text=0, Number=1, Decimal=2, Boolean=3, Date=4, DateTime=5, Dropdown=6, MultiSelect=7, Email=8, Phone=9, Url=10</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UserDefinedFields.UdfFieldInput.ValidationRules">
+            <summary>JSON-serialized UdfValidationRules.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UserDefinedFields.UdfFieldInput.Visibility">
+            <summary>
+            Visibility setting for this field. 0=Everyone, 1=DepartmentAndGroupAdmins, 2=DepartmentAdminsOnly.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.UserDefinedFields.SaveUdfFieldValuesInput">
+            <summary>Input for saving UDF field values for a specific entity.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.UserDefinedFields.UdfDefinitionResult">
+            <summary>Response containing the active UDF definition and its fields.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UserDefinedFields.UdfFieldResultData.Visibility">
+            <summary>
+            Visibility setting for this field. 0=Everyone, 1=DepartmentAndGroupAdmins, 2=DepartmentAdminsOnly.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.UserDefinedFields.UdfFieldValuesResult">
+            <summary>Response containing UDF field values for an entity.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.UserDefinedFields.UdfSchemaResult">
+            <summary>Response containing the React Native JSON schema for UDF fields.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UserDefinedFields.UdfSchemaResult.Data">
+            <summary>
+            JSON string produced by IUdfRenderingService.GenerateReactNativeSchema.
+            Contains definitionId, entityType, version, and the fields array with
+            type, label, placeholder, validation rules, current value, and options.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Voice.CanConnectToVoiceSessionResult">

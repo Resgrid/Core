@@ -22,6 +22,9 @@ namespace Resgrid.Tests.Services
 			protected Mock<IDepartmentsService> DepartmentsServiceMock;
 			protected Mock<IDepartmentSettingsService> DepartmentSettingsServiceMock;
 			protected Mock<IUserProfileService> UserProfileServiceMock;
+			protected Mock<IDepartmentGroupsService> DepartmentGroupsServiceMock;
+			protected Mock<IPersonnelRolesService> PersonnelRolesServiceMock;
+			protected Mock<IUnitsService> UnitsServiceMock;
 
 			protected Department TestDepartment;
 			protected UserProfile TestProfile;
@@ -47,11 +50,41 @@ namespace Resgrid.Tests.Services
 				UserProfileServiceMock
 					.Setup(s => s.GetProfileByUserIdAsync(It.IsAny<string>(), It.IsAny<bool>()))
 					.ReturnsAsync(TestProfile);
+				UserProfileServiceMock
+					.Setup(s => s.GetSelectedUserProfilesAsync(It.IsAny<System.Collections.Generic.List<string>>()))
+					.ReturnsAsync(new System.Collections.Generic.List<UserProfile>());
+
+				DepartmentGroupsServiceMock = new Mock<IDepartmentGroupsService>();
+				DepartmentGroupsServiceMock
+					.Setup(s => s.GetGroupForUserAsync(It.IsAny<string>(), It.IsAny<int>()))
+					.ReturnsAsync((DepartmentGroup)null);
+				DepartmentGroupsServiceMock
+					.Setup(s => s.GetGroupByIdAsync(It.IsAny<int>(), It.IsAny<bool>()))
+					.ReturnsAsync((DepartmentGroup)null);
+
+				PersonnelRolesServiceMock = new Mock<IPersonnelRolesService>();
+				PersonnelRolesServiceMock
+					.Setup(s => s.GetRolesForDepartmentAsync(It.IsAny<int>()))
+					.ReturnsAsync(new System.Collections.Generic.List<PersonnelRole>());
+				PersonnelRolesServiceMock
+					.Setup(s => s.GetRolesForUserAsync(It.IsAny<string>(), It.IsAny<int>()))
+					.ReturnsAsync(new System.Collections.Generic.List<PersonnelRole>());
+				PersonnelRolesServiceMock
+					.Setup(s => s.GetRoleByIdAsync(It.IsAny<int>()))
+					.ReturnsAsync((PersonnelRole)null);
+
+				UnitsServiceMock = new Mock<IUnitsService>();
+				UnitsServiceMock
+					.Setup(s => s.GetUnitByIdAsync(It.IsAny<int>()))
+					.ReturnsAsync((Unit)null);
 
 				Sut = new WorkflowTemplateContextBuilder(
 					DepartmentsServiceMock.Object,
 					DepartmentSettingsServiceMock.Object,
-					UserProfileServiceMock.Object);
+					UserProfileServiceMock.Object,
+					DepartmentGroupsServiceMock.Object,
+					PersonnelRolesServiceMock.Object,
+					UnitsServiceMock.Object);
 			}
 
 			protected async Task<ScriptObject> BuildContext(WorkflowTriggerEventType eventType, object payload)

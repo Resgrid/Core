@@ -178,6 +178,11 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<WorkflowRunRepository>().As<IWorkflowRunRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkflowRunLogRepository>().As<IWorkflowRunLogRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkflowDailyUsageRepository>().As<IWorkflowDailyUsageRepository>().InstancePerLifetimeScope();
+
+			// UDF Repositories
+			builder.RegisterType<UdfDefinitionRepository>().As<IUdfDefinitionRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<UdfFieldRepository>().As<IUdfFieldRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<UdfFieldValueRepository>().As<IUdfFieldValueRepository>().InstancePerLifetimeScope();
 		}
 	}
 }

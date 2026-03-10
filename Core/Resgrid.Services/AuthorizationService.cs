@@ -335,13 +335,34 @@ namespace Resgrid.Services
 			var department = await _departmentsService.GetDepartmentByUserIdAsync(viewerUserId);
 			var department1 = await _departmentsService.GetDepartmentByUserIdAsync(targetUserId);
 
-			if (department == null || department1 == null)
+			// If we resolved both departments via member records, do a direct comparison
+			if (department != null && department1 != null)
+			{
+				return department.DepartmentId == department1.DepartmentId;
+			}
+
+			// Fall back: one or both users may be a department managing user without an active
+			// DepartmentMember record. Resolve the department from whichever side returned a result
+			// and verify the other user belongs to that same department.
+			int? resolvedDepartmentId = department?.DepartmentId ?? department1?.DepartmentId;
+
+			if (resolvedDepartmentId == null)
 				return false;
 
-			if (department.DepartmentId != department1.DepartmentId)
+			var resolvedDepartment = await _departmentsService.GetDepartmentByIdAsync(resolvedDepartmentId.Value);
+
+			if (resolvedDepartment == null)
 				return false;
 
-			return true;
+			// The managing user always belongs to their own department; confirm the other user is also a member
+			if (resolvedDepartment.ManagingUserId == viewerUserId || resolvedDepartment.ManagingUserId == targetUserId)
+			{
+				string otherUserId = resolvedDepartment.ManagingUserId == viewerUserId ? targetUserId : viewerUserId;
+				return await _departmentsService.IsMemberOfDepartmentAsync(resolvedDepartmentId.Value, otherUserId)
+				       || resolvedDepartment.ManagingUserId == otherUserId;
+			}
+
+			return false;
 		}
 
 		public async Task<bool> CanGroupAdminsAddUsersAsync(int departmentId)

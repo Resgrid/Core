@@ -1,0 +1,203 @@
+﻿
+@using System.Text.Json
+@model Resgrid.Web.Areas.User.Models.UserDefinedFields.UdfPreviewModel
+@{
+    // No layout — this is loaded as a partial inside a modal
+}
+
+<div class="alert alert-warning" role="alert">
+    <i class="fa fa-exclamation-triangle"></i>
+    <strong>@Model.PreviewWarningTitle</strong> — @Model.PreviewWarningBody
+</div>
+
+@if (!Model.Fields.Any())
+{
+    <p class="text-muted text-center" style="padding: 20px 0;">@Model.NoFieldsMessage</p>
+}
+else
+{
+    var groups = Model.Fields
+        .Where(f => f.IsEnabled)
+        .OrderBy(f => f.SortOrder)
+        .GroupBy(f => string.IsNullOrWhiteSpace(f.GroupName) ? null : f.GroupName)
+        .ToList();
+
+    foreach (var group in groups)
+    {
+        if (group.Key != null)
+        {
+            <h5 class="udf-preview-section-heading">@group.Key</h5>
+            <hr class="udf-preview-section-hr" />
+        }
+
+        foreach (var field in group)
+        {
+            var dataType = (UdfFieldDataType)field.FieldDataType;
+
+            // Parse validation rules for dropdown options
+            UdfValidationRules rules = null;
+            if (!string.IsNullOrWhiteSpace(field.ValidationRules))
+            {
+                try { rules = JsonSerializer.Deserialize<UdfValidationRules>(field.ValidationRules); }
+                catch { /* ignore */ }
+            }
+
+            <div class="form-group">
+                <label>
+                    @field.Label
+                    @if (field.IsRequired)
+                    {
+                        <span class="text-danger" title="Required">*</span>
+                    }
+                    @if (field.IsReadOnly)
+                    {
+                        <span class="label label-default" style="font-size:10px; vertical-align:middle; margin-left:4px;">Read-Only</span>
+                    }
+                </label>
+
+                @if (dataType == UdfFieldDataType.Text)
+                {
+                    <input type="text"
+                           class="form-control"
+                           placeholder="@field.Placeholder"
+                           value="@field.DefaultValue"
+                           @(field.IsReadOnly ? "readonly" : "")
+                           disabled="disabled" />
+                }
+                else if (dataType == UdfFieldDataType.Number)
+                {
+                    <input type="number"
+                           class="form-control"
+                           placeholder="@field.Placeholder"
+                           value="@field.DefaultValue"
+                           @(field.IsReadOnly ? "readonly" : "")
+                           disabled="disabled" />
+                }
+                else if (dataType == UdfFieldDataType.Decimal)
+                {
+                    <input type="number" step="any"
+                           class="form-control"
+                           placeholder="@field.Placeholder"
+                           value="@field.DefaultValue"
+                           @(field.IsReadOnly ? "readonly" : "")
+                           disabled="disabled" />
+                }
+                else if (dataType == UdfFieldDataType.Boolean)
+                {
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox"
+                                   @(field.DefaultValue == "true" ? "checked" : "")
+                                   @(field.IsReadOnly ? "readonly" : "")
+                                   disabled="disabled" />
+                            @(string.IsNullOrWhiteSpace(field.Description) ? field.Label : field.Description)
+                        </label>
+                    </div>
+                }
+                else if (dataType == UdfFieldDataType.Date)
+                {
+                    <input type="date"
+                           class="form-control"
+                           placeholder="@field.Placeholder"
+                           value="@field.DefaultValue"
+                           @(field.IsReadOnly ? "readonly" : "")
+                           disabled="disabled" />
+                }
+                else if (dataType == UdfFieldDataType.DateTime)
+                {
+                    <input type="datetime-local"
+                           class="form-control"
+                           placeholder="@field.Placeholder"
+                           value="@field.DefaultValue"
+                           @(field.IsReadOnly ? "readonly" : "")
+                           disabled="disabled" />
+                }
+                else if (dataType == UdfFieldDataType.Dropdown)
+                {
+                    <select class="form-control" @(field.IsReadOnly ? "readonly" : "") disabled="disabled">
+                        <option value="">@(string.IsNullOrWhiteSpace(field.Placeholder) ? "— Select —" : field.Placeholder)</option>
+                        @if (rules?.Options != null)
+                        {
+                            foreach (var opt in rules.Options)
+                            {
+                                var isSelected = field.DefaultValue == opt.Key;
+                                if (isSelected)
+                                {
+                                    <option value="@opt.Key" selected="selected">@opt.Label</option>
+                                }
+                                else
+                                {
+                                    <option value="@opt.Key">@opt.Label</option>
+                                }
+                            }
+                        }
+                    </select>
+                }
+                else if (dataType == UdfFieldDataType.MultiSelect)
+                {
+                    <select class="form-control" multiple="multiple" @(field.IsReadOnly ? "readonly" : "") disabled="disabled">
+                        @if (rules?.Options != null)
+                        {
+                            foreach (var opt in rules.Options)
+                            {
+                                <option value="@opt.Key">@opt.Label</option>
+                            }
+                        }
+                    </select>
+                }
+                else if (dataType == UdfFieldDataType.Email)
+                {
+                    <input type="email"
+                           class="form-control"
+                           placeholder="@(string.IsNullOrWhiteSpace(field.Placeholder) ? "email@example.com" : field.Placeholder)"
+                           value="@field.DefaultValue"
+                           @(field.IsReadOnly ? "readonly" : "")
+                           disabled="disabled" />
+                }
+                else if (dataType == UdfFieldDataType.Phone)
+                {
+                    <input type="tel"
+                           class="form-control"
+                           placeholder="@(string.IsNullOrWhiteSpace(field.Placeholder) ? "+1 (555) 000-0000" : field.Placeholder)"
+                           value="@field.DefaultValue"
+                           @(field.IsReadOnly ? "readonly" : "")
+                           disabled="disabled" />
+                }
+                else if (dataType == UdfFieldDataType.Url)
+                {
+                    <input type="url"
+                           class="form-control"
+                           placeholder="@(string.IsNullOrWhiteSpace(field.Placeholder) ? "https://example.com" : field.Placeholder)"
+                           value="@field.DefaultValue"
+                           @(field.IsReadOnly ? "readonly" : "")
+                           disabled="disabled" />
+                }
+                else
+                {
+                    <input type="text"
+                           class="form-control"
+                           placeholder="@field.Placeholder"
+                           value="@field.DefaultValue"
+                           disabled="disabled" />
+                }
+
+                @if (!string.IsNullOrWhiteSpace(field.Description) && dataType != UdfFieldDataType.Boolean)
+                {
+                    <small class="help-block text-muted">@field.Description</small>
+                }
+            </div>
+        }
+    }
+}
+
+<style>
+    .udf-preview-section-heading { margin-top: 18px; color: #676a6c; font-weight: 600; }
+    .udf-preview-section-hr { margin-top: 4px; margin-bottom: 12px; border-top: 1px solid #e7eaec; }
+    #udfPreviewModal .modal-body .form-control[disabled] { background-color: #f5f5f5; cursor: not-allowed; opacity: 0.9; }
+    #udfPreviewModal .modal-body .checkbox input[disabled] { cursor: not-allowed; }
+</style>
+
+
+
+
+

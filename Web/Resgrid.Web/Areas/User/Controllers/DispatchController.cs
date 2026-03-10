@@ -473,17 +473,40 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 				var call = await _callsService.SaveCallAsync(model.Call, cancellationToken);
 
-				// Save UDF field values for the new call
+				// Save UDF field values for the new call.
+				// Keys named "udf_<id>" carry the submitted value; keys named "udf_<id>_exists"
+				// are hidden sentinels posted for every rendered UDF field regardless of whether
+				// the user filled it in. When only the sentinel is present (no "udf_<id>" key),
+				// we must still emit an entry with Value = empty so the service clears any
+				// previously stored value.
 				var udfValues = collection.Keys
 					.Where(k => k.StartsWith("udf_") && !k.EndsWith("_exists"))
 					.Select(k => new UdfFieldValue
 					{
 						UdfFieldId = k.Substring(4),
 						Value = collection[k]
-					}).ToList();
+					})
+					.ToList();
+
+				// For every sentinel whose "udf_<id>" key was NOT posted, add a clearing entry.
+				var submittedIds = new HashSet<string>(udfValues.Select(v => v.UdfFieldId));
+				var clearingValues = collection.Keys
+					.Where(k => k.StartsWith("udf_") && k.EndsWith("_exists"))
+					.Select(k => k.Substring(4, k.Length - 4 - "_exists".Length))
+					.Where(id => !submittedIds.Contains(id))
+					.Select(id => new UdfFieldValue
+					{
+						UdfFieldId = id,
+						Value = string.Empty
+					});
+				udfValues.AddRange(clearingValues);
 
 				if (udfValues.Any())
-					await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Call, call.CallId.ToString(), udfValues, UserId, cancellationToken);
+				{
+					bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+					bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+					await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Call, call.CallId.ToString(), udfValues, UserId, isDeptAdmin, isGroupAdmin, cancellationToken);
+				}
 
 				if (autoSetStatusForShiftPersonnel && shiftUserIds.Any())
 				{
@@ -793,19 +816,43 @@ namespace Resgrid.Web.Areas.User.Controllers
 				call.Contacts = contacts;
 
 				await _callsService.SaveCallAsync(call, cancellationToken);
-				_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent() { DepartmentId = DepartmentId, Call = call });
 
-				// Save UDF field values for the updated call
+				// Save UDF field values for the updated call.
+				// Keys named "udf_<id>" carry the submitted value; keys named "udf_<id>_exists"
+				// are hidden sentinels posted for every rendered UDF field regardless of whether
+				// the user filled it in. When only the sentinel is present (no "udf_<id>" key),
+				// we must still emit an entry with Value = empty so the service clears any
+				// previously stored value.
 				var udfValues = collection.Keys
 					.Where(k => k.StartsWith("udf_") && !k.EndsWith("_exists"))
 					.Select(k => new UdfFieldValue
 					{
 						UdfFieldId = k.Substring(4),
 						Value = collection[k]
-					}).ToList();
+					})
+					.ToList();
+
+				// For every sentinel whose "udf_<id>" key was NOT posted, add a clearing entry.
+				var submittedIds = new HashSet<string>(udfValues.Select(v => v.UdfFieldId));
+				var clearingValues = collection.Keys
+					.Where(k => k.StartsWith("udf_") && k.EndsWith("_exists"))
+					.Select(k => k.Substring(4, k.Length - 4 - "_exists".Length))
+					.Where(id => !submittedIds.Contains(id))
+					.Select(id => new UdfFieldValue
+					{
+						UdfFieldId = id,
+						Value = string.Empty
+					});
+				udfValues.AddRange(clearingValues);
 
 				if (udfValues.Any())
-					await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Call, call.CallId.ToString(), udfValues, UserId, cancellationToken);
+				{
+					bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+					bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+					await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Call, call.CallId.ToString(), udfValues, UserId, isDeptAdmin, isGroupAdmin, cancellationToken);
+				}
+
+				_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent() { DepartmentId = DepartmentId, Call = call });
 
 				if (model.RebroadcastCall)
 				{
@@ -1078,19 +1125,43 @@ namespace Resgrid.Web.Areas.User.Controllers
 					catch { /* If No addy, no addy */ }
 				}
 				var call = await _callsService.SaveCallAsync(model.Call, cancellationToken);
-				_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = DepartmentId, Call = call });
 
-				// Save UDF field values for the archived call
+				// Save UDF field values for the archived call.
+				// Keys named "udf_<id>" carry the submitted value; keys named "udf_<id>_exists"
+				// are hidden sentinels posted for every rendered UDF field regardless of whether
+				// the user filled it in. When only the sentinel is present (no "udf_<id>" key),
+				// we must still emit an entry with Value = empty so the service clears any
+				// previously stored value.
 				var udfValues = collection.Keys
 					.Where(k => k.StartsWith("udf_") && !k.EndsWith("_exists"))
 					.Select(k => new UdfFieldValue
 					{
 						UdfFieldId = k.Substring(4),
 						Value = collection[k]
-					}).ToList();
+					})
+					.ToList();
+
+				// For every sentinel whose "udf_<id>" key was NOT posted, add a clearing entry.
+				var submittedIds = new HashSet<string>(udfValues.Select(v => v.UdfFieldId));
+				var clearingValues = collection.Keys
+					.Where(k => k.StartsWith("udf_") && k.EndsWith("_exists"))
+					.Select(k => k.Substring(4, k.Length - 4 - "_exists".Length))
+					.Where(id => !submittedIds.Contains(id))
+					.Select(id => new UdfFieldValue
+					{
+						UdfFieldId = id,
+						Value = string.Empty
+					});
+				udfValues.AddRange(clearingValues);
 
 				if (udfValues.Any())
-					await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Call, call.CallId.ToString(), udfValues, UserId, cancellationToken);
+				{
+					bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+					bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+					await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Call, call.CallId.ToString(), udfValues, UserId, isDeptAdmin, isGroupAdmin, cancellationToken);
+				}
+
+				_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = DepartmentId, Call = call });
 
 				if (model.ReCalcuateCallNumbers)
 				{

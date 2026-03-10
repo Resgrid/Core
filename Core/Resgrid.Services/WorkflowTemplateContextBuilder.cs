@@ -458,8 +458,35 @@ namespace Resgrid.Services
 				profileMap = profiles?.ToDictionary(p => p.UserId, p => p) ?? new Dictionary<string, UserProfile>();
 			}
 
-			// Pre-fetch roles for department so we can look up role names for each dispatch user
-			List<PersonnelRole> allDeptRoles = null;
+			// Pre-fetch department roles once (used for role-name enrichment below)
+			List<PersonnelRole> allDeptRoles = dispatchUserIds.Count > 0
+				? await _personnelRolesService.GetRolesForDepartmentAsync(departmentId) ?? new List<PersonnelRole>()
+				: new List<PersonnelRole>();
+
+			// Pre-fetch per-user group membership in parallel to avoid N+1
+			Dictionary<string, DepartmentGroup> userGroupMap = new Dictionary<string, DepartmentGroup>();
+			if (dispatchUserIds.Count > 0)
+			{
+				var groupTasks = dispatchUserIds.Select(uid =>
+					_departmentGroupsService.GetGroupForUserAsync(uid, departmentId)
+						.ContinueWith(t => (UserId: uid, Group: t.Result), TaskContinuationOptions.ExecuteSynchronously));
+				var groupResults = await Task.WhenAll(groupTasks);
+				foreach (var (uid, grp) in groupResults)
+					if (grp != null)
+						userGroupMap[uid] = grp;
+			}
+
+			// Pre-fetch per-user role assignments in parallel to avoid N+1
+			Dictionary<string, List<PersonnelRole>> userRolesMap = new Dictionary<string, List<PersonnelRole>>();
+			if (dispatchUserIds.Count > 0)
+			{
+				var roleTasks = dispatchUserIds.Select(uid =>
+					_personnelRolesService.GetRolesForUserAsync(uid, departmentId)
+						.ContinueWith(t => (UserId: uid, Roles: t.Result), TaskContinuationOptions.ExecuteSynchronously));
+				var roleResults = await Task.WhenAll(roleTasks);
+				foreach (var (uid, roles) in roleResults)
+					userRolesMap[uid] = roles ?? new List<PersonnelRole>();
+			}
 
 			var dispatches = new ScriptArray();
 			if (call.Dispatches != null)
@@ -491,12 +518,11 @@ namespace Resgrid.Services
 						item["identification_number"] = string.Empty;
 					}
 
-					// Enrich with group membership
-					if (!string.IsNullOrWhiteSpace(d.UserId))
+					// Enrich with group membership (synchronous lookup from preloaded map)
+					if (!string.IsNullOrWhiteSpace(d.UserId) && userGroupMap.TryGetValue(d.UserId, out var userGroup))
 					{
-						var userGroup = await _departmentGroupsService.GetGroupForUserAsync(d.UserId, departmentId);
-						item["group_id"] = userGroup?.DepartmentGroupId ?? 0;
-						item["group_name"] = userGroup?.Name ?? string.Empty;
+						item["group_id"] = userGroup.DepartmentGroupId;
+						item["group_name"] = userGroup.Name ?? string.Empty;
 					}
 					else
 					{
@@ -504,14 +530,10 @@ namespace Resgrid.Services
 						item["group_name"] = string.Empty;
 					}
 
-					// Enrich with role names
-					if (!string.IsNullOrWhiteSpace(d.UserId))
+					// Enrich with role names (synchronous lookup from preloaded map)
+					if (!string.IsNullOrWhiteSpace(d.UserId) && userRolesMap.TryGetValue(d.UserId, out var userRoles))
 					{
-						if (allDeptRoles == null)
-							allDeptRoles = await _personnelRolesService.GetRolesForDepartmentAsync(departmentId) ?? new List<PersonnelRole>();
-
-						var userRoles = await _personnelRolesService.GetRolesForUserAsync(d.UserId, departmentId);
-						var roleNames = userRoles?.Select(r => r.Name ?? string.Empty).ToList() ?? new List<string>();
+						var roleNames = userRoles.Select(r => r.Name ?? string.Empty).ToList();
 						item["role_names"] = string.Join(", ", roleNames);
 
 						var roleArray = new ScriptArray();

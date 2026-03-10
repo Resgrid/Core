@@ -22,6 +22,7 @@ using Resgrid.Model.Events;
 using Resgrid.Model.Queue;
 using Resgrid.Web.Services.Models.v4.CallProtocols;
 using Resgrid.Web.Helpers;
+using Resgrid.Web.ServicesCore.Helpers;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -820,12 +821,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// Save UDF field values if supplied
 			if (newCallInput.UdfValues != null && newCallInput.UdfValues.Any())
 			{
+				bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+				bool isGroupAdmin = HttpContext.User.Claims
+					.Any(c => c.Type.StartsWith(ResgridClaimTypes.Resources.Group + "/", StringComparison.Ordinal)
+						&& c.Value == ResgridClaimTypes.Actions.Update);
+
 				var udfValues = newCallInput.UdfValues.Select(v => new UdfFieldValue
 				{
 					UdfFieldId = v.UdfFieldId,
 					Value = v.Value
 				}).ToList();
-				await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Call, savedCall.CallId.ToString(), udfValues, UserId, cancellationToken);
+				await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Call, savedCall.CallId.ToString(), udfValues, UserId, isDeptAdmin, isGroupAdmin, cancellationToken);
 			}
 
 			result.Id = savedCall.CallId.ToString();
@@ -1124,12 +1130,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// Save UDF field values if supplied
 			if (editCallInput.UdfValues != null && editCallInput.UdfValues.Any())
 			{
+				bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+				bool isGroupAdmin = HttpContext.User.Claims
+					.Any(c => c.Type.StartsWith(ResgridClaimTypes.Resources.Group + "/", StringComparison.Ordinal)
+						&& c.Value == ResgridClaimTypes.Actions.Update);
+
 				var udfValues = editCallInput.UdfValues.Select(v => new UdfFieldValue
 				{
 					UdfFieldId = v.UdfFieldId,
 					Value = v.Value
 				}).ToList();
-				await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Call, call.CallId.ToString(), udfValues, UserId, cancellationToken);
+				await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Call, call.CallId.ToString(), udfValues, UserId, isDeptAdmin, isGroupAdmin, cancellationToken);
 			}
 
 			result.Id = call.CallId.ToString();

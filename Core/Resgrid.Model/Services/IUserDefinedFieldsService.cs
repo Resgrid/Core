@@ -46,10 +46,15 @@ namespace Resgrid.Model.Services
 
 		/// <summary>
 		/// Validates and saves field values for an entity against the active definition.
+		/// Only fields visible to the caller (based on <paramref name="isDepartmentAdmin"/> and
+		/// <paramref name="isGroupAdmin"/>) are accepted; values submitted for non-visible fields are
+		/// rejected with an error entry.
 		/// Returns a dictionary of fieldId → error list; empty dict means all values are valid and were saved.
 		/// </summary>
 		Task<Dictionary<string, List<string>>> SaveFieldValuesForEntityAsync(int departmentId, int entityType,
-			string entityId, List<UdfFieldValue> values, string userId, CancellationToken cancellationToken = default);
+			string entityId, List<UdfFieldValue> values, string userId,
+			bool isDepartmentAdmin = false, bool isGroupAdmin = false,
+			CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Creates a new definition version without the specified field, preserving history.

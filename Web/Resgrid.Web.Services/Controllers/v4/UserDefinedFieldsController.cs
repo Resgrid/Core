@@ -162,12 +162,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
 			bool isGroupAdmin = IsCallerGroupAdmin();
-			var visibleFields = await _udfService.GetVisibleFieldsForActiveDefinitionAsync(DepartmentId, input.EntityType, isDeptAdmin, isGroupAdmin);
-			var visibleFieldIds = visibleFields.Select(f => f.UdfFieldId).ToHashSet();
 
-			// Only accept values for fields the caller can see — silently discard the rest.
 			var values = input.Values?
-				.Where(v => visibleFieldIds.Contains(v.UdfFieldId))
 				.Select(v => new UdfFieldValue
 				{
 					UdfFieldId = v.UdfFieldId,
@@ -175,7 +171,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}).ToList() ?? new List<UdfFieldValue>();
 
 			var errors = await _udfService.SaveFieldValuesForEntityAsync(
-				DepartmentId, input.EntityType, input.EntityId, values, UserId, cancellationToken);
+				DepartmentId, input.EntityType, input.EntityId, values, UserId,
+				isDeptAdmin, isGroupAdmin, cancellationToken);
 
 			if (errors.Count > 0)
 				return BadRequest(errors);

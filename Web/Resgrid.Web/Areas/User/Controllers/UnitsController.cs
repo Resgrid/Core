@@ -309,17 +309,57 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 				await _novuProvider.CreateUnitSubscriber(model.Unit.UnitId, department.Code, DepartmentId, model.Unit.Name, null);
 
-				// Save UDF field values for the new unit
-				var udfValues = form.Keys
-					.Where(k => k.StartsWith("udf_") && !k.EndsWith("_exists"))
-					.Select(k => new UdfFieldValue
-					{
-						UdfFieldId = k.Substring(4),
-						Value = form[k]
-					}).ToList();
+				// Detect whether the UDF section was included in this POST via the hidden "_exists" sentinel
+				// keys emitted by UdfRenderingService. Using the sentinel rather than value-keys alone ensures
+				// we still call SaveFieldValuesForEntityAsync even when every visible field was cleared to an
+				// empty string (so the service can delete existing/stale values).
+				bool udfSectionWasPosted = form.Keys.Any(k => k.StartsWith("udf_") && k.EndsWith("_exists"));
 
-				if (udfValues.Any())
-					await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Unit, model.Unit.UnitId.ToString(), udfValues, UserId, cancellationToken);
+				if (udfSectionWasPosted)
+				{
+					var udfValues = form.Keys
+						.Where(k => k.StartsWith("udf_") && !k.EndsWith("_exists"))
+						.Select(k => new UdfFieldValue
+						{
+							UdfFieldId = k.Substring(4),
+							Value = form[k]
+						}).ToList();
+
+					bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+					bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+					var udfValidationErrors = await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Unit, model.Unit.UnitId.ToString(), udfValues, UserId, isDeptAdmin, isGroupAdmin, cancellationToken);
+
+					if (udfValidationErrors != null && udfValidationErrors.Count > 0)
+					{
+						foreach (var kvp in udfValidationErrors)
+						{
+							foreach (var errorMessage in kvp.Value)
+								ModelState.AddModelError(kvp.Key, errorMessage);
+						}
+					}
+				}
+
+				if (!ModelState.IsValid)
+				{
+					// UDF validation failed — re-display the form with errors.
+					var udfDefinitionOnError = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Unit);
+					if (udfDefinitionOnError != null)
+					{
+						bool isDeptAdminOnError = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+						bool isGroupAdminOnError = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+						var udfFieldsOnError = await _userDefinedFieldsService.GetVisibleFieldsForActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Unit, isDeptAdminOnError, isGroupAdminOnError);
+						var submittedUdfValues = form.Keys
+							.Where(k => k.StartsWith("udf_") && !k.EndsWith("_exists"))
+							.Select(k => new UdfFieldValue
+							{
+								UdfFieldId = k.Substring(4),
+								Value = form[k]
+							}).ToList();
+						model.UdfFormHtml = _udfRenderingService.GenerateHtmlFormFields(udfDefinitionOnError, udfFieldsOnError, submittedUdfValues);
+					}
+
+					return View(model);
+				}
 
 				var auditEvent = new AuditEvent();
 				auditEvent.DepartmentId = DepartmentId;
@@ -335,6 +375,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 				_eventAggregator.SendMessage<UnitAddedEvent>(new UnitAddedEvent() { DepartmentId = DepartmentId, Unit = model.Unit });
 
 				return RedirectToAction("Index");
+			}
+
+			var udfDefinition = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Unit);
+			if (udfDefinition != null)
+			{
+				bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+				bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+				var udfFields = await _userDefinedFieldsService.GetVisibleFieldsForActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Unit, isDeptAdmin, isGroupAdmin);
+				var submittedUdfValues = form.Keys
+					.Where(k => k.StartsWith("udf_") && !k.EndsWith("_exists"))
+					.Select(k => new UdfFieldValue
+					{
+						UdfFieldId = k.Substring(4),
+						Value = form[k]
+					}).ToList();
+				model.UdfFormHtml = _udfRenderingService.GenerateHtmlFormFields(udfDefinition, udfFields, submittedUdfValues);
 			}
 
 			return View(model);
@@ -450,17 +506,67 @@ namespace Resgrid.Web.Areas.User.Controllers
 				else
 					await _unitsService.ClearRolesForUnitAsync(unit.UnitId, cancellationToken);
 
-				// Save UDF field values for the updated unit
-				var udfValues = form.Keys
-					.Where(k => k.StartsWith("udf_") && !k.EndsWith("_exists"))
-					.Select(k => new UdfFieldValue
-					{
-						UdfFieldId = k.Substring(4),
-						Value = form[k]
-					}).ToList();
+				// Detect whether the UDF section was included in this POST via the hidden "_exists" sentinel
+				// keys emitted by UdfRenderingService. Using the sentinel rather than value-keys alone ensures
+				// we still call SaveFieldValuesForEntityAsync even when every visible field was cleared to an
+				// empty string (so the service can delete existing/stale values).
+				bool udfSectionWasPosted = form.Keys.Any(k => k.StartsWith("udf_") && k.EndsWith("_exists"));
 
-				if (udfValues.Any())
-					await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Unit, unit.UnitId.ToString(), udfValues, UserId, cancellationToken);
+				if (udfSectionWasPosted)
+				{
+					var udfValues = form.Keys
+						.Where(k => k.StartsWith("udf_") && !k.EndsWith("_exists"))
+						.Select(k => new UdfFieldValue
+						{
+							UdfFieldId = k.Substring(4),
+							Value = form[k]
+						}).ToList();
+
+					bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+					bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+					var udfValidationErrors = await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Unit, unit.UnitId.ToString(), udfValues, UserId, isDeptAdmin, isGroupAdmin, cancellationToken);
+
+					if (udfValidationErrors != null && udfValidationErrors.Count > 0)
+					{
+						foreach (var kvp in udfValidationErrors)
+						{
+							foreach (var errorMessage in kvp.Value)
+								ModelState.AddModelError(kvp.Key, errorMessage);
+						}
+					}
+				}
+
+				if (!ModelState.IsValid)
+				{
+					// UDF validation failed — re-display the form with errors.
+					model.Unit = await _unitsService.GetUnitByIdAsync(model.Unit.UnitId);
+					model.Types = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
+
+					var groupsOnUdfError = new List<DepartmentGroup>();
+					groupsOnUdfError.Add(new DepartmentGroup { Name = "No Station" });
+					groupsOnUdfError.AddRange(await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId));
+					model.Stations = groupsOnUdfError;
+
+					model.UnitRoles = await _unitsService.GetRolesForUnitAsync(model.Unit.UnitId);
+
+					var udfDefinitionOnError = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Unit);
+					if (udfDefinitionOnError != null)
+					{
+						bool isDeptAdminOnError = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+						bool isGroupAdminOnError = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+						var udfFieldsOnError = await _userDefinedFieldsService.GetVisibleFieldsForActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Unit, isDeptAdminOnError, isGroupAdminOnError);
+						var submittedUdfValues = form.Keys
+							.Where(k => k.StartsWith("udf_") && !k.EndsWith("_exists"))
+							.Select(k => new UdfFieldValue
+							{
+								UdfFieldId = k.Substring(4),
+								Value = form[k]
+							}).ToList();
+						model.UdfFormHtml = _udfRenderingService.GenerateHtmlFormFields(udfDefinitionOnError, udfFieldsOnError, submittedUdfValues);
+					}
+
+					return View(model);
+				}
 
 				auditEvent.After = unit.CloneJsonToString();
 				_eventAggregator.SendMessage<AuditEvent>(auditEvent);

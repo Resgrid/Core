@@ -318,7 +318,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (udfValues.Any())
 				{
-					var validationErrors = await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Contact, model.Contact.ContactId, udfValues, UserId, cancellationToken);
+					bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+					bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+					var validationErrors = await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Contact, model.Contact.ContactId, udfValues, UserId, isDeptAdmin, isGroupAdmin, cancellationToken);
 
 					if (validationErrors.Count > 0)
 					{
@@ -590,7 +592,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (udfValues.Any())
 				{
-					var validationErrors = await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Contact, model.Contact.ContactId, udfValues, UserId, cancellationToken);
+					bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+					bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+					var validationErrors = await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Contact, model.Contact.ContactId, udfValues, UserId, isDeptAdmin, isGroupAdmin, cancellationToken);
 
 					if (validationErrors.Count > 0)
 					{

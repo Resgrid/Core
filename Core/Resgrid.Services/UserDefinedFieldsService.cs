@@ -62,7 +62,7 @@ namespace Resgrid.Services
 				UdfFieldVisibility.Everyone => true,
 				UdfFieldVisibility.DepartmentAndGroupAdmins => isDepartmentAdmin || isGroupAdmin,
 				UdfFieldVisibility.DepartmentAdminsOnly => isDepartmentAdmin,
-				_ => true
+				_ => false
 			};
 		}
 
@@ -107,17 +107,16 @@ namespace Resgrid.Services
 				await _definitionRepository.SaveOrUpdateAsync(definition, cancellationToken);
 
 				// Save fields linked to the new definition version.
-				// When a caller supplies an explicit UdfFieldId (e.g. tests or migrations that need
-				// stable IDs), it is preserved. When the ID is absent the repository will assign a
-				// fresh GUID, ensuring each definition version owns independent field records.
+				// Always assign a fresh ID regardless of any incoming UdfFieldId so that
+				// every new definition version owns completely independent field records.
+				// Stable/deterministic IDs for tests or migrations should be seeded via a
+				// separate seeding path, not through this production save path.
 				if (fields != null)
 				{
 					for (int i = 0; i < fields.Count; i++)
 					{
 						var field = fields[i];
-						// Only clear the ID when it was not explicitly provided.
-						if (string.IsNullOrEmpty(field.UdfFieldId))
-							field.UdfFieldId = null; // let RepositoryBase/mock assign a new GUID
+						field.UdfFieldId = null; // always let RepositoryBase assign a new GUID
 						field.UdfDefinitionId = definition.UdfDefinitionId;
 						field.SortOrder = i;
 						await _fieldRepository.SaveOrUpdateAsync(field, cancellationToken);
@@ -160,7 +159,9 @@ namespace Resgrid.Services
 		}
 
 		public async Task<Dictionary<string, List<string>>> SaveFieldValuesForEntityAsync(int departmentId, int entityType,
-			string entityId, List<UdfFieldValue> values, string userId, CancellationToken cancellationToken = default)
+			string entityId, List<UdfFieldValue> values, string userId,
+			bool isDepartmentAdmin = false, bool isGroupAdmin = false,
+			CancellationToken cancellationToken = default)
 		{
 			var definition = await _definitionRepository.GetActiveDefinitionByDepartmentAndEntityTypeAsync(departmentId, entityType);
 			if (definition == null)
@@ -174,16 +175,33 @@ namespace Resgrid.Services
 			if (errors.Count > 0)
 				return errors;
 
-			// Build a whitelist of enabled field IDs so unknown or disabled fields are never persisted.
-			var allowedFieldIds = fields
-				.Where(f => !string.IsNullOrEmpty(f.UdfFieldId))
+			// Build a whitelist of field IDs that are both enabled AND visible to the caller.
+			// Submitting a value for a field the caller cannot see is treated as an authorization
+			// error and returned as a validation failure rather than silently persisted or dropped.
+			var visibleFieldIds = fields
+				.Where(f => !string.IsNullOrEmpty(f.UdfFieldId) && IsFieldVisibleToRole(f, isDepartmentAdmin, isGroupAdmin))
 				.Select(f => f.UdfFieldId)
 				.ToHashSet(StringComparer.Ordinal);
+
+			// Reject any submitted field IDs that are not in the visible set.
+			var visibilityErrors = (values ?? Enumerable.Empty<UdfFieldValue>())
+				.Where(v => !string.IsNullOrEmpty(v.UdfFieldId) && !visibleFieldIds.Contains(v.UdfFieldId))
+				.Select(v => v.UdfFieldId)
+				.Distinct(StringComparer.Ordinal)
+				.ToList();
+
+			if (visibilityErrors.Count > 0)
+			{
+				var rejectionErrors = new Dictionary<string, List<string>>();
+				foreach (var fieldId in visibilityErrors)
+					rejectionErrors[fieldId] = new List<string> { "Field is not visible to the current caller." };
+				return rejectionErrors;
+			}
 
 			// Normalize: drop null/unknown field IDs, then deduplicate by keeping the last
 			// occurrence of each UdfFieldId (deterministic: last value submitted wins).
 			var normalizedValues = (values ?? Enumerable.Empty<UdfFieldValue>())
-				.Where(v => !string.IsNullOrEmpty(v.UdfFieldId) && allowedFieldIds.Contains(v.UdfFieldId))
+				.Where(v => !string.IsNullOrEmpty(v.UdfFieldId) && visibleFieldIds.Contains(v.UdfFieldId))
 				.GroupBy(v => v.UdfFieldId, StringComparer.Ordinal)
 				.Select(g => g.Last())
 				.ToList();

@@ -582,7 +582,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 						}).ToList();
 
 					if (udfValues.Any())
-						await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Personnel, user.UserId, udfValues, UserId, cancellationToken);
+					{
+						bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+						bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+						await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Personnel, user.UserId, udfValues, UserId, isDeptAdmin, isGroupAdmin, cancellationToken);
+					}
 
 					return RedirectToAction("Index", "Personnel", new { area = "User" });
 				}
@@ -593,6 +597,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			// If we got this far, something failed, redisplay form
+			var udfDefinitionOnError = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Personnel);
+			if (udfDefinitionOnError != null)
+			{
+				bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+				bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+				var udfFields = await _userDefinedFieldsService.GetVisibleFieldsForActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Personnel, isDeptAdmin, isGroupAdmin);
+				var postedUdfValues = form.Keys
+					.Where(k => k.StartsWith("udf_") && !k.EndsWith("_exists"))
+					.Select(k => new UdfFieldValue
+					{
+						UdfFieldId = k.Substring(4),
+						Value = form[k]
+					}).ToList();
+				model.UdfFormHtml = _udfRenderingService.GenerateHtmlFormFields(udfDefinitionOnError, udfFields, postedUdfValues);
+			}
+
 			return View(model);
 		}
 

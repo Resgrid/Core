@@ -806,17 +806,57 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
-				// Save UDF field values for personnel
-				var udfValues = form.Keys
-					.Where(k => k.StartsWith("udf_") && !k.EndsWith("_exists"))
-					.Select(k => new UdfFieldValue
-					{
-						UdfFieldId = k.Substring(4),
-						Value = form[k]
-					}).ToList();
+				// Save UDF field values for personnel.
+				// Detect whether the UDF section was included in this POST via the hidden "_exists" sentinel
+				// keys emitted by UdfRenderingService (one per rendered field). Using the sentinel rather
+				// than value-keys alone ensures we still call SaveFieldValuesForEntityAsync even when every
+				// visible field was cleared to an empty string (so the service can delete existing values).
+				bool udfSectionWasPosted = form.Keys.Any(k => k.StartsWith("udf_") && k.EndsWith("_exists"));
 
-				if (udfValues.Any())
-					await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Personnel, model.UserId, udfValues, UserId, cancellationToken);
+				if (udfSectionWasPosted)
+				{
+					var udfValues = form.Keys
+						.Where(k => k.StartsWith("udf_") && !k.EndsWith("_exists"))
+						.Select(k => new UdfFieldValue
+						{
+							UdfFieldId = k.Substring(4),
+							Value = form[k]
+						}).ToList();
+
+					bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+					bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+					var udfValidationErrors = await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Personnel, model.UserId, udfValues, UserId, isDeptAdmin, isGroupAdmin, cancellationToken);
+
+					if (udfValidationErrors != null && udfValidationErrors.Count > 0)
+					{
+						foreach (var kvp in udfValidationErrors)
+						{
+							foreach (var errorMessage in kvp.Value)
+								ModelState.AddModelError(kvp.Key, errorMessage);
+						}
+					}
+				}
+
+				if (!ModelState.IsValid)
+				{
+					// UDF (or other late) validation failed — re-display the form with errors.
+					var udfDefinitionOnUdfError = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Personnel);
+					if (udfDefinitionOnUdfError != null)
+					{
+						bool isDeptAdminOnUdfError = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+						bool isGroupAdminOnUdfError = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+						var udfFieldsOnUdfError = await _userDefinedFieldsService.GetVisibleFieldsForActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Personnel, isDeptAdminOnUdfError, isGroupAdminOnUdfError);
+						var udfValuesOnUdfError = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Personnel, model.UserId);
+						var visibleFieldIdsOnUdfError = udfFieldsOnUdfError.Select(f => f.UdfFieldId).ToHashSet();
+						var filteredValuesOnUdfError = (udfValuesOnUdfError ?? new List<UdfFieldValue>()).Where(v => visibleFieldIdsOnUdfError.Contains(v.UdfFieldId)).ToList();
+						model.UdfFormHtml = _udfRenderingService.GenerateHtmlFormFields(udfDefinitionOnUdfError, udfFieldsOnUdfError, filteredValuesOnUdfError);
+					}
+
+					if (model.IsOwnProfile)
+						model.MinPasswordLength = await _departmentSsoService.GetEffectiveMinPasswordLengthAsync(DepartmentId);
+
+					return View(model);
+				}
 
 				_userProfileService.ClearUserProfileFromCache(model.UserId);
 				_userProfileService.ClearAllUserProfilesFromCache(model.Department.DepartmentId);
@@ -837,6 +877,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			// If we got this far, something failed, redisplay form
+			// Repopulate fields that are not round-tripped via the form
+			var udfDefinitionOnFailure = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Personnel);
+			if (udfDefinitionOnFailure != null)
+			{
+				bool isDeptAdminOnFailure = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+				bool isGroupAdminOnFailure = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+				var udfFieldsOnFailure = await _userDefinedFieldsService.GetVisibleFieldsForActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Personnel, isDeptAdminOnFailure, isGroupAdminOnFailure);
+				var udfValuesOnFailure = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Personnel, model.UserId);
+				var visibleFieldIdsOnFailure = udfFieldsOnFailure.Select(f => f.UdfFieldId).ToHashSet();
+				var filteredValuesOnFailure = (udfValuesOnFailure ?? new List<UdfFieldValue>()).Where(v => visibleFieldIdsOnFailure.Contains(v.UdfFieldId)).ToList();
+				model.UdfFormHtml = _udfRenderingService.GenerateHtmlFormFields(udfDefinitionOnFailure, udfFieldsOnFailure, filteredValuesOnFailure);
+			}
+
+			if (model.IsOwnProfile)
+				model.MinPasswordLength = await _departmentSsoService.GetEffectiveMinPasswordLengthAsync(DepartmentId);
+
 			return View(model);
 		}
 		#endregion Edit User Profile

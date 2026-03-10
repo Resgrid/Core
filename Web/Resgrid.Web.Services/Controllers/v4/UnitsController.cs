@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.Units;
+using Resgrid.Web.Services.Models.v4.UserDefinedFields;
 using Resgrid.Model;
 using Resgrid.Model.Helpers;
 using Resgrid.Web.Services.Models.v4.Personnel;
@@ -31,16 +32,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly Model.Services.IAuthorizationService _authorizationService;
 		private readonly ICustomStateService _customStateService;
 		private readonly IDepartmentsService _departmentsService;
+		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
 
 		public UnitsController(IUnitsService unitsService, IDepartmentGroupsService departmentGroupsService,
 			ICustomStateService customStateService, Model.Services.IAuthorizationService authorizationService,
-			IDepartmentsService departmentsService)
+			IDepartmentsService departmentsService, IUserDefinedFieldsService userDefinedFieldsService)
 		{
 			_unitsService = unitsService;
 			_departmentGroupsService = departmentGroupsService;
 			_customStateService = customStateService;
 			_authorizationService = authorizationService;
 			_departmentsService = departmentsService;
+			_userDefinedFieldsService = userDefinedFieldsService;
 		}
 		#endregion Members and Constructors
 
@@ -71,7 +74,23 @@ namespace Resgrid.Web.Services.Controllers.v4
 					if (types != null && types.Any())
 						type = types.FirstOrDefault(x => x.Type == unit.Type);
 
-					result.Data.Add(ConvertUnitsData(unit, unitStatuses.FirstOrDefault(x => x.UnitId == unit.UnitId), type, TimeZone));
+					var unitData = ConvertUnitsData(unit, unitStatuses.FirstOrDefault(x => x.UnitId == unit.UnitId), type, TimeZone);
+
+					var udfValues = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Unit, unit.UnitId.ToString());
+					if (udfValues != null && udfValues.Any())
+					{
+						unitData.UdfValues = udfValues.Select(v => new UdfFieldValueResultData
+						{
+							UdfFieldValueId = v.UdfFieldValueId,
+							UdfFieldId = v.UdfFieldId,
+							UdfDefinitionId = v.UdfDefinitionId,
+							EntityId = v.EntityId,
+							EntityType = v.EntityType,
+							Value = v.Value
+						}).ToList();
+					}
+
+					result.Data.Add(unitData);
 				}
 
 				result.PageSize = result.Data.Count;

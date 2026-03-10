@@ -1489,5 +1489,51 @@ namespace Resgrid.Providers.Claims
 				}
 			}
 		}
+
+		/// <summary>
+		/// Grants Udf resource claims based on the department's ViewUdfFields permission setting.
+		/// Department admins always receive full access (View + Update + Create + Delete).
+		/// Group admins receive View + Update when the permission is DepartmentAndGroupAdmins or Everyone.
+		/// Regular users receive View + Update only when the permission is Everyone.
+		/// Default (no permission record): Everyone — backwards compatible.
+		/// </summary>
+		public static void AddUdfClaims(ClaimsIdentity identity, bool isAdmin, List<Permission> permissions, bool isGroupAdmin, List<PersonnelRole> roles)
+		{
+			// Department admins always get full UDF management access.
+			if (isAdmin)
+			{
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.View));
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.Update));
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.Create));
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.Delete));
+				return;
+			}
+
+			if (permissions != null && permissions.Any(x => x.PermissionType == (int)PermissionTypes.ViewUdfFields))
+			{
+				var permission = permissions.First(x => x.PermissionType == (int)PermissionTypes.ViewUdfFields);
+
+				if (permission.Action == (int)PermissionActions.DepartmentAdminsOnly)
+				{
+					// Non-admins get no UDF claims — all fields are hidden.
+				}
+				else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && isGroupAdmin)
+				{
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.View));
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.Update));
+				}
+				else if (permission.Action == (int)PermissionActions.Everyone)
+				{
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.View));
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.Update));
+				}
+			}
+			else
+			{
+				// Default: everyone can view and fill UDF fields.
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.View));
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.Update));
+			}
+		}
 	}
 }

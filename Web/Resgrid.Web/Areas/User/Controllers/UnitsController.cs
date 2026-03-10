@@ -43,10 +43,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IGeoLocationProvider _geoLocationProvider;
 		private readonly INovuProvider _novuProvider;
+		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
+		private readonly IUdfRenderingService _udfRenderingService;
 
 		public UnitsController(IDepartmentsService departmentsService, IUsersService usersService, IUnitsService unitsService, Model.Services.IAuthorizationService authorizationService,
 			ILimitsService limitsService, IDepartmentGroupsService departmentGroupsService, ICallsService callsService, IEventAggregator eventAggregator, ICustomStateService customStateService,
-			IGeoService geoService, IDepartmentSettingsService departmentSettingsService, IGeoLocationProvider geoLocationProvider, INovuProvider novuProvider)
+			IGeoService geoService, IDepartmentSettingsService departmentSettingsService, IGeoLocationProvider geoLocationProvider, INovuProvider novuProvider,
+			IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -61,6 +64,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_departmentSettingsService = departmentSettingsService;
 			_geoLocationProvider = geoLocationProvider;
 			_novuProvider = novuProvider;
+			_userDefinedFieldsService = userDefinedFieldsService;
+			_udfRenderingService = udfRenderingService;
 		}
 		#endregion Private Members and Constructors
 
@@ -240,6 +245,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			groups.AddRange(await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId));
 			model.Stations = groups;
 
+			var udfDefinition = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Unit);
+			if (udfDefinition != null)
+			{
+				bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+				bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+				var udfFields = await _userDefinedFieldsService.GetVisibleFieldsForActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Unit, isDeptAdmin, isGroupAdmin);
+				model.UdfFormHtml = _udfRenderingService.GenerateHtmlFormFields(udfDefinition, udfFields, new List<UdfFieldValue>());
+			}
+
 			return View(model);
 		}
 
@@ -295,6 +309,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 				await _novuProvider.CreateUnitSubscriber(model.Unit.UnitId, department.Code, DepartmentId, model.Unit.Name, null);
 
+				// Save UDF field values for the new unit
+				var udfValues = form.Keys
+					.Where(k => k.StartsWith("udf_"))
+					.Select(k => new UdfFieldValue
+					{
+						UdfFieldId = k.Substring(4),
+						Value = form[k]
+					}).ToList();
+
+				if (udfValues.Any())
+					await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Unit, model.Unit.UnitId.ToString(), udfValues, UserId, cancellationToken);
+
 				var auditEvent = new AuditEvent();
 				auditEvent.DepartmentId = DepartmentId;
 				auditEvent.UserId = UserId;
@@ -338,6 +364,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			await _novuProvider.CreateUnitSubscriber(model.Unit.UnitId, department.Code, DepartmentId, model.Unit.Name, null);
+
+			var udfDefinition = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Unit);
+			if (udfDefinition != null)
+			{
+				bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+				bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+				var udfFields = await _userDefinedFieldsService.GetVisibleFieldsForActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Unit, isDeptAdmin, isGroupAdmin);
+				var udfValues = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Unit, unitId.ToString());
+				var visibleFieldIds = udfFields.Select(f => f.UdfFieldId).ToHashSet();
+				var filteredValues = (udfValues ?? new List<UdfFieldValue>()).Where(v => visibleFieldIds.Contains(v.UdfFieldId)).ToList();
+				model.UdfFormHtml = _udfRenderingService.GenerateHtmlFormFields(udfDefinition, udfFields, filteredValues);
+			}
 
 			return View(model);
 		}
@@ -412,6 +450,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 				else
 					await _unitsService.ClearRolesForUnitAsync(unit.UnitId, cancellationToken);
 
+				// Save UDF field values for the updated unit
+				var udfValues = form.Keys
+					.Where(k => k.StartsWith("udf_"))
+					.Select(k => new UdfFieldValue
+					{
+						UdfFieldId = k.Substring(4),
+						Value = form[k]
+					}).ToList();
+
+				if (udfValues.Any())
+					await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Unit, unit.UnitId.ToString(), udfValues, UserId, cancellationToken);
+
 				auditEvent.After = unit.CloneJsonToString();
 				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
@@ -431,6 +481,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Stations = groups;
 
 			model.UnitRoles = await _unitsService.GetRolesForUnitAsync(model.Unit.UnitId);
+
+			var udfDefinitionEdit = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Unit);
+			if (udfDefinitionEdit != null)
+			{
+				bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+				bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+				var udfFieldsEdit = await _userDefinedFieldsService.GetVisibleFieldsForActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Unit, isDeptAdmin, isGroupAdmin);
+				var udfValuesEdit = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Unit, model.Unit.UnitId.ToString());
+				var visibleFieldIds = udfFieldsEdit.Select(f => f.UdfFieldId).ToHashSet();
+				var filteredValues = (udfValuesEdit ?? new List<UdfFieldValue>()).Where(v => visibleFieldIds.Contains(v.UdfFieldId)).ToList();
+				model.UdfFormHtml = _udfRenderingService.GenerateHtmlFormFields(udfDefinitionEdit, udfFieldsEdit, filteredValues);
+			}
 
 			return View(model);
 		}

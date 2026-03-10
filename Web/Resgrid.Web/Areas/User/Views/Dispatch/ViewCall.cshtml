@@ -185,6 +185,10 @@
                                             {
                                                 <li class=""><a href="#tab-10" data-toggle="tab" aria-expanded="false">@localizer["CallFormLabel"]</a></li>
                                             }
+                                            @if (!string.IsNullOrEmpty(Model.UdfReadOnlyHtml))
+                                            {
+                                                <li class=""><a href="#tab-udf" data-toggle="tab" aria-expanded="false">Custom Fields</a></li>
+                                            }
                                         </ul>
                                     </div>
                                 </div>
@@ -682,6 +686,12 @@
                                         {
                                             <div class="tab-pane" id="tab-10">
                                                 <div id="fb-template"></div>
+                                            </div>
+                                        }
+                                        @if (!string.IsNullOrEmpty(Model.UdfReadOnlyHtml))
+                                        {
+                                            <div class="tab-pane" id="tab-udf">
+                                                @Html.Raw(Model.UdfReadOnlyHtml)
                                             </div>
                                         }
                                     </div>

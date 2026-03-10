@@ -7,6 +7,7 @@ using Resgrid.Providers.Claims;
 using System.Threading.Tasks;
 using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.CallTypes;
+using Resgrid.Web.Services.Models.v4.UserDefinedFields;
 using System.Linq;
 using Resgrid.Model;
 using Resgrid.Web.Services.Models.v4.Contacts;
@@ -29,13 +30,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IUserProfileService _userProfileService;
 		private readonly Model.Services.IAuthorizationService _authorizationService;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
 
 		public ContactsController(
 			IContactsService contactsService,
 			IDepartmentsService departmentsService,
 			IUserProfileService userProfileService,
 			Model.Services.IAuthorizationService authorizationService,
-			IEventAggregator eventAggregator
+			IEventAggregator eventAggregator,
+			IUserDefinedFieldsService userDefinedFieldsService
 			)
 		{
 			_contactsService = contactsService;
@@ -43,6 +46,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_userProfileService = userProfileService;
 			_authorizationService = authorizationService;
 			_eventAggregator = eventAggregator;
+			_userDefinedFieldsService = userDefinedFieldsService;
 		}
 		#endregion Members and Constructors
 
@@ -151,6 +155,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 					editedPerson = await _userProfileService.GetProfileByUserIdAsync(contact.AddedByUserId);
 
 				result.Data = ConvertContactData(contact, department, addedOnPerson, editedPerson);
+
+				var udfValues = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Contact, contactId);
+				if (udfValues != null && udfValues.Any())
+				{
+					result.Data.UdfValues = udfValues.Select(v => new UdfFieldValueResultData
+					{
+						UdfFieldValueId = v.UdfFieldValueId,
+						UdfFieldId = v.UdfFieldId,
+						UdfDefinitionId = v.UdfDefinitionId,
+						EntityId = v.EntityId,
+						EntityType = v.EntityType,
+						Value = v.Value
+					}).ToList();
+				}
 
 				result.PageSize = 1;
 				result.Status = ResponseHelper.Success;

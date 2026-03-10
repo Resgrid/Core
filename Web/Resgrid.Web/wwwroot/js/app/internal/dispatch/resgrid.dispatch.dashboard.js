@@ -12,7 +12,7 @@ var resgrid;
                 activeCallsTable = $("#activeCallsList").DataTable({
                     ajax: { url: resgrid.absoluteBaseUrl + '/User/Dispatch/GetActiveCallsList', dataSrc: '' },
                     pageLength: 50,
-                    order: [[2, 'desc']],
+                    order: [[3, 'desc']],
                     columns: [
                         { data: 'Number', title: 'Number' },
                         { data: 'Name', title: 'Name' },

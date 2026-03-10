@@ -1410,6 +1410,37 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%TABLENAME%
 					WHERE CallId = %CALLID%";
 			#endregion Contacts
+
+			#region User Defined Fields
+			UdfDefinitionsTableName = "UdfDefinitions";
+			UdfFieldsTableName = "UdfFields";
+			UdfFieldValuesTableName = "UdfFieldValues";
+			SelectActiveUdfDefinitionByDeptAndTypeQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE DepartmentId = %DID% AND EntityType = %ENTITYTYPE% AND IsActive = true";
+			SelectUdfDefinitionsByDeptAndTypeQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE DepartmentId = %DID% AND EntityType = %ENTITYTYPE%
+					ORDER BY Version DESC";
+			SelectUdfFieldsByDefinitionIdQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE UdfDefinitionId = %DEFINITIONID%
+					ORDER BY SortOrder ASC";
+			SelectUdfFieldValuesByEntityQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE EntityType = %ENTITYTYPE% AND EntityId = %ENTITYID% AND UdfDefinitionId = %DEFINITIONID%";
+			UpdateUdfDefinitionsToInactiveQuery = @"
+					UPDATE %SCHEMA%.%TABLENAME%
+					SET IsActive = false
+					WHERE DepartmentId = %DID% AND EntityType = %ENTITYTYPE% AND IsActive = true";
+			DeleteUdfFieldValuesByEntityAndDefinitionQuery = @"
+					DELETE FROM %SCHEMA%.%TABLENAME%
+					WHERE EntityType = %ENTITYTYPE% AND EntityId = %ENTITYID% AND UdfDefinitionId = %DEFINITIONID%";
+			#endregion User Defined Fields
 		}
 	}
 }

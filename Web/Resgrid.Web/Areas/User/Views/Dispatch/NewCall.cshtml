@@ -1,4 +1,4 @@
-﻿@model Resgrid.Web.Areas.User.Models.Calls.NewCallView
+@model Resgrid.Web.Areas.User.Models.Calls.NewCallView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> localizer
 @{
     ViewBag.Title = "Resgrid | " + @localizer["NewCallHeader"];
@@ -371,6 +371,14 @@
                             </div>
                         </div>
 
+                        @if (!string.IsNullOrEmpty(Model.UdfFormHtml))
+                        {
+                            <div class="hr-line-dashed"></div>
+                            <h3>Custom Fields</h3>
+                            @Html.Raw(Model.UdfFormHtml)
+                            <div class="hr-line-dashed"></div>
+                        }
+
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
                                 <a class="btn btn-white" asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Cancel"]</a>
@@ -378,7 +386,6 @@
                             </div>
                         </div>
                     </form>
-                </div>
             </div>
         </div>
     </div>

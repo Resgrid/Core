@@ -129,6 +129,23 @@
 		</div>
 	</div>
 </div>
+@if (!string.IsNullOrEmpty(Model.UdfReadOnlyHtml))
+{
+    <div class="row">
+        <div class="col-xs-12">
+            <div class="wrapper wrapper-content">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>Custom Fields</h5>
+                    </div>
+                    <div class="ibox-content">
+                        @Html.Raw(Model.UdfReadOnlyHtml)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @section Scripts
 {

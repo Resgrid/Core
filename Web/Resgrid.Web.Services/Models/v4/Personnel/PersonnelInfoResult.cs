@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Resgrid.Web.Services.Models.v4.UserDefinedFields;
 
 namespace Resgrid.Web.Services.Models.v4.Personnel
 {
@@ -128,5 +129,10 @@ namespace Resgrid.Web.Services.Models.v4.Personnel
 		/// Sorting weight for the user
 		/// </summary>
 		public int Weight { get; set; }
+
+		/// <summary>
+		/// User Defined Field values for this personnel record
+		/// </summary>
+		public List<UdfFieldValueResultData> UdfValues { get; set; }
 	}
 }

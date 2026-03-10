@@ -50,6 +50,17 @@ namespace Resgrid.Tests
 					.As<IScheduledTaskLogsRepository>()
 					.InstancePerLifetimeScope();
 
+				// UDF mock repositories
+				builder.RegisterType<MockUdfDefinitionRepository>()
+					.As<IUdfDefinitionRepository>()
+					.InstancePerLifetimeScope();
+				builder.RegisterType<MockUdfFieldRepository>()
+					.As<IUdfFieldRepository>()
+					.InstancePerLifetimeScope();
+				builder.RegisterType<MockUdfFieldValueRepository>()
+					.As<IUdfFieldValueRepository>()
+					.InstancePerLifetimeScope();
+
 				_container = builder.Build();
 
 				Locator = new AutofacServiceLocator(_container);

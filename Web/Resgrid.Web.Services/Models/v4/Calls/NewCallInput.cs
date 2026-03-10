@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Resgrid.Web.Services.Models.v4.UserDefinedFields;
 
 namespace Resgrid.Web.Services.Models.v4.Calls
 {
@@ -95,5 +97,10 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// Call Intake form JSON
 		/// </summary>
 		public string CallFormData { get; set; }
+
+		/// <summary>
+		/// User Defined Field values for this call
+		/// </summary>
+		public List<UdfFieldValueInput> UdfValues { get; set; }
 	}
 }

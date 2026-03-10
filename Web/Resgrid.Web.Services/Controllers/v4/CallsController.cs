@@ -7,6 +7,7 @@ using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Services.Models.v4.Calls;
+using Resgrid.Web.Services.Models.v4.UserDefinedFields;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -49,6 +50,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly ICustomStateService _customStateService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IShiftsService _shiftsService;
+		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
 
 		public CallsController(
 			ICallsService callsService,
@@ -66,7 +68,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IEventAggregator eventAggregator,
 			ICustomStateService customStateService,
 			IDepartmentSettingsService departmentSettingsService,
-			IShiftsService shiftsService
+			IShiftsService shiftsService,
+			IUserDefinedFieldsService userDefinedFieldsService
 			)
 		{
 			_callsService = callsService;
@@ -85,6 +88,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_customStateService = customStateService;
 			_departmentSettingsService = departmentSettingsService;
 			_shiftsService = shiftsService;
+			_userDefinedFieldsService = userDefinedFieldsService;
 		}
 		#endregion Members and Constructors
 
@@ -186,6 +190,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			result.Data = ConvertCall(c, protocols, address, TimeZone);
+
+			// Populate UDF values
+			var udfValues = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Call, c.CallId.ToString());
+			if (udfValues != null && udfValues.Any())
+			{
+				result.Data.UdfValues = udfValues.Select(v => new UdfFieldValueResultData
+				{
+					UdfFieldValueId = v.UdfFieldValueId,
+					UdfFieldId = v.UdfFieldId,
+					UdfDefinitionId = v.UdfDefinitionId,
+					EntityId = v.EntityId,
+					EntityType = v.EntityType,
+					Value = v.Value
+				}).ToList();
+			}
 
 			result.PageSize = 1;
 			result.Status = ResponseHelper.Success;
@@ -798,6 +817,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!savedCall.DispatchOn.HasValue || savedCall.DispatchOn.Value <= DateTime.UtcNow)
 				await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
 
+			// Save UDF field values if supplied
+			if (newCallInput.UdfValues != null && newCallInput.UdfValues.Any())
+			{
+				var udfValues = newCallInput.UdfValues.Select(v => new UdfFieldValue
+				{
+					UdfFieldId = v.UdfFieldId,
+					Value = v.Value
+				}).ToList();
+				await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Call, savedCall.CallId.ToString(), udfValues, UserId, cancellationToken);
+			}
+
 			result.Id = savedCall.CallId.ToString();
 			result.PageSize = 0;
 			result.Status = ResponseHelper.Created;
@@ -1090,6 +1120,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent() { DepartmentId = DepartmentId, Call = call });
+
+			// Save UDF field values if supplied
+			if (editCallInput.UdfValues != null && editCallInput.UdfValues.Any())
+			{
+				var udfValues = editCallInput.UdfValues.Select(v => new UdfFieldValue
+				{
+					UdfFieldId = v.UdfFieldId,
+					Value = v.Value
+				}).ToList();
+				await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Call, call.CallId.ToString(), udfValues, UserId, cancellationToken);
+			}
 
 			result.Id = call.CallId.ToString();
 			result.PageSize = 0;

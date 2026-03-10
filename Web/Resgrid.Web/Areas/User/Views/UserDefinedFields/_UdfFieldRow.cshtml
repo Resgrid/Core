@@ -1,0 +1,243 @@
+﻿@model Resgrid.Web.Areas.User.Models.UserDefinedFields.UdfFieldFormModel
+@{
+    // Index can be an int (server-rendered rows) or the sentinel string "__FIELD_IDX__" (template row)
+    var rawIndex = ViewData["Index"];
+    string indexStr = rawIndex is int intIdx ? intIdx.ToString() : (rawIndex?.ToString() ?? "0");
+    var dataTypes = ViewData["DataTypes"] as IEnumerable<SelectListItem> ?? Enumerable.Empty<SelectListItem>();
+    var localizer = ViewData["Localizer"] as Microsoft.Extensions.Localization.IStringLocalizer;
+    string prefix = $"Fields[{indexStr}]";
+    string fieldDataTypeVal = Model.FieldDataType.ToString();
+}
+
+<div class="field-row udf-field-row">
+    <div class="field-row-summary">
+        <span class="field-drag-handle"><i class="fa fa-bars"></i></span>
+
+        <span class="badge badge-default badge-type field-type-badge">
+            @{
+                var dtName = ((UdfFieldDataType)Model.FieldDataType).ToString();
+            }
+            @dtName
+        </span>
+
+        <strong class="field-display-label">@(string.IsNullOrWhiteSpace(Model.Label) ? "(new field)" : Model.Label)</strong>
+        <small class="text-muted field-display-name">@Model.Name</small>
+
+        @if (Model.IsRequired)
+        {
+            <span class="label label-warning" style="font-size:10px;">Required</span>
+        }
+        @if (!Model.IsEnabled)
+        {
+            <span class="label label-default" style="font-size:10px;">Disabled</span>
+        }
+
+        <div class="field-row-actions">
+            <button type="button" class="btn btn-xs btn-default field-expand-btn">
+                <i class="fa fa-chevron-down"></i>
+            </button>
+            <button type="button" class="btn btn-xs btn-danger btn-remove-field">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Hidden inputs for basic data -->
+    <input type="hidden" name="@(prefix).UdfFieldId" value="@Model.UdfFieldId" />
+    <input type="hidden" name="@(prefix).SortOrder" value="@Model.SortOrder" />
+
+    <div class="field-detail">
+        <div class="row">
+            <!-- Left column: core settings -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label>@(localizer?["FieldName"] ?? "Machine Name") <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control"
+                           name="@(prefix).Name"
+                           value="@Model.Name"
+                           placeholder="e.g. incident_number"
+                           pattern="^[a-zA-Z_][a-zA-Z0-9_]*$"
+                           title="Letters, digits, and underscores only — must start with a letter or underscore."
+                           required />
+                    <small class="help-block">@(localizer?["FieldNameHelp"] ?? "Internal name (no spaces). Use letters, digits, and underscores only.")</small>
+                </div>
+                <div class="form-group">
+                    <label>@(localizer?["FieldLabel"] ?? "Label") <span class="text-danger">*</span></label>
+                    <input type="text" class="form-control"
+                           name="@(prefix).Label"
+                           value="@Model.Label"
+                           required
+                           oninput="this.closest('.udf-field-row').querySelector('.field-display-label').textContent = this.value || '(new field)'" />
+                </div>
+                <div class="form-group">
+                    <label>@(localizer?["FieldDataType"] ?? "Data Type")</label>
+                    <select class="form-control" name="@(prefix).FieldDataType"
+                            onchange="this.closest('.udf-field-row').querySelector('.field-type-badge').textContent = this.options[this.selectedIndex].text">
+                        @foreach (var dt in dataTypes)
+                        {
+                            if (dt.Value == fieldDataTypeVal)
+                            {
+                                <option value="@dt.Value" selected="selected">@dt.Text</option>
+                            }
+                            else
+                            {
+                                <option value="@dt.Value">@dt.Text</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>@(localizer?["FieldDescription"] ?? "Description / Tooltip")</label>
+                    <input type="text" class="form-control" name="@(prefix).Description" value="@Model.Description" />
+                </div>
+                <div class="form-group">
+                    <label>@(localizer?["FieldPlaceholder"] ?? "Placeholder Text")</label>
+                    <input type="text" class="form-control" name="@(prefix).Placeholder" value="@Model.Placeholder" />
+                </div>
+                <div class="row-default-value form-group">
+                    <label>@(localizer?["FieldDefaultValue"] ?? "Default Value")</label>
+                    <input type="text" class="form-control" name="@(prefix).DefaultValue" value="@Model.DefaultValue" />
+                </div>
+                <div class="form-group">
+                    <label>@(localizer?["FieldGroupName"] ?? "Group / Section")</label>
+                    <input type="text" class="form-control" name="@(prefix).GroupName" value="@Model.GroupName" />
+                </div>
+            </div>
+
+            <!-- Right column: flags + validation -->
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="@(prefix).IsRequired" value="true" @(Model.IsRequired ? "checked" : "") />
+                            @(localizer?["FieldRequired"] ?? "Required")
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="@(prefix).IsEnabled" value="true" @(Model.IsEnabled ? "checked" : "") />
+                            @(localizer?["FieldEnabled"] ?? "Enabled")
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="@(prefix).IsReadOnly" value="true" @(Model.IsReadOnly ? "checked" : "") />
+                            @(localizer?["FieldIsReadOnly"] ?? "Read-Only")
+                            <small class="text-muted d-block">@(localizer?["FieldIsReadOnlyHelp"] ?? "Displayed but not editable by users.")</small>
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="@(prefix).IsVisibleOnMobile" value="true" @(Model.IsVisibleOnMobile ? "checked" : "") />
+                            @(localizer?["FieldVisibleMobile"] ?? "Visible on Mobile")
+                        </label>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="@(prefix).IsVisibleOnReports" value="true" @(Model.IsVisibleOnReports ? "checked" : "") />
+                            @(localizer?["FieldVisibleReports"] ?? "Visible on Reports")
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>@(localizer?["FieldVisibility"] ?? "Who Can See This Field?")</label>
+                    <select class="form-control" name="@(prefix).Visibility">
+                        @if (Model.Visibility == 0)
+                        {
+                            <option value="0" selected="selected">@(localizer?["VisibilityEveryone"] ?? "Everyone")</option>
+                        }
+                        else
+                        {
+                            <option value="0">@(localizer?["VisibilityEveryone"] ?? "Everyone")</option>
+                        }
+                        @if (Model.Visibility == 1)
+                        {
+                            <option value="1" selected="selected">@(localizer?["VisibilityGroupAdmins"] ?? "Department &amp; Group Admins")</option>
+                        }
+                        else
+                        {
+                            <option value="1">@(localizer?["VisibilityGroupAdmins"] ?? "Department &amp; Group Admins")</option>
+                        }
+                        @if (Model.Visibility == 2)
+                        {
+                            <option value="2" selected="selected">@(localizer?["VisibilityDeptAdmins"] ?? "Department Admins Only")</option>
+                        }
+                        else
+                        {
+                            <option value="2">@(localizer?["VisibilityDeptAdmins"] ?? "Department Admins Only")</option>
+                        }
+                    </select>
+                    <small class="help-block">@(localizer?["FieldVisibilityHelp"] ?? "Controls who can see and fill this field. Users who don't meet the requirement will not see it when adding or viewing records.")</small>
+                </div>
+
+                <hr />
+                <h6>@(localizer?["ValidationSection"] ?? "Validation Rules")</h6>
+
+                <div class="row-validation-text">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label>@(localizer?["ValidationMinLength"] ?? "Min Length")</label>
+                                <input type="number" class="form-control input-sm" min="0"
+                                       name="@(prefix).MinLength" value="@Model.MinLength" />
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label>@(localizer?["ValidationMaxLength"] ?? "Max Length")</label>
+                                <input type="number" class="form-control input-sm" min="0"
+                                       name="@(prefix).MaxLength" value="@Model.MaxLength" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row-validation-numeric" style="display:none">
+                    <div class="row">
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label>@(localizer?["ValidationMinValue"] ?? "Min Value")</label>
+                                <input type="number" class="form-control input-sm" step="any"
+                                       name="@(prefix).MinValue" value="@Model.MinValue" />
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="form-group">
+                                <label>@(localizer?["ValidationMaxValue"] ?? "Max Value")</label>
+                                <input type="number" class="form-control input-sm" step="any"
+                                       name="@(prefix).MaxValue" value="@Model.MaxValue" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row-validation-regex">
+                    <div class="form-group">
+                        <label>@(localizer?["ValidationRegex"] ?? "Regex Pattern")</label>
+                        <input type="text" class="form-control input-sm"
+                               name="@(prefix).Regex" value="@Model.Regex"
+                               placeholder="e.g. ^[A-Z]{3}\d+$" />
+                    </div>
+                    <div class="form-group">
+                        <label>@(localizer?["ValidationRegexError"] ?? "Regex Error Message")</label>
+                        <input type="text" class="form-control input-sm"
+                               name="@(prefix).RegexErrorMessage" value="@Model.RegexErrorMessage" />
+                    </div>
+                </div>
+
+                <div class="row-validation-options" style="display:none">
+                    <div class="form-group">
+                        <label>@(localizer?["DropdownOptions"] ?? "Options (Key=Label, one per line)")</label>
+                        <textarea class="form-control input-sm" rows="5"
+                                  name="@(prefix).DropdownOptionsRaw"
+                                  placeholder="yes=Yes&#10;no=No">@Model.DropdownOptionsRaw</textarea>
+                        <small class="help-block">@(localizer?["DropdownOptionsHelp"] ?? "Enter one option per line in Key=Label format.")</small>
+                    </div>
+                </div>
+
+            </div>
+        </div><!-- /row -->
+    </div><!-- /field-detail -->
+</div><!-- /field-row -->
+

@@ -1,0 +1,277 @@
+﻿@model Resgrid.Web.Areas.User.Models.UserDefinedFields.UdfDefinitionEditModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.UserDefinedFields.UserDefinedFields> localizer
+@{
+    ViewData["Title"] = "Resgrid | " + string.Format(localizer["EditDefinitionHeader"].Value, Model.EntityTypeName);
+    Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+
+    var dataTypes = Enum.GetValues(typeof(Resgrid.Model.UdfFieldDataType))
+        .Cast<Resgrid.Model.UdfFieldDataType>()
+        .Select(dt => new SelectListItem
+        {
+            Value = ((int)dt).ToString(),
+            Text  = dt.ToString()
+        })
+        .ToList();
+}
+
+@section Styles {
+    <style>
+        #fieldList .udf-field-row { background: #fff; border: 1px solid #e7eaec; border-radius: 4px; padding: 10px 14px; margin-bottom: 8px; }
+        #fieldList .udf-field-row:hover { border-color: #1ab394; }
+        .field-drag-handle { cursor: grab; color: #aaa; margin-right: 8px; }
+        .field-row-summary { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+        .field-row-actions { margin-left: auto; }
+        .field-expand-btn { background: none; border: none; padding: 0 6px; cursor: pointer; color: #676a6c; }
+        .field-detail { display: none; border-top: 1px dashed #e7eaec; margin-top: 10px; padding-top: 10px; }
+        .field-detail.open { display: block; }
+        .field-sort-placeholder { background: #f0faf8; border: 2px dashed #1ab394; border-radius: 4px; height: 48px; margin-bottom: 8px; }
+        .badge-type { font-size: 11px; font-weight: normal; }
+    </style>
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-8">
+        <h2>@string.Format(localizer["EditDefinitionHeader"].Value, Model.EntityTypeName)</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-action="Index">@localizer["UdfModule"]</a></li>
+            <li class="active"><strong>@Model.EntityTypeName</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-10 col-lg-offset-1">
+
+            <form id="udfEditForm" asp-action="Edit" asp-controller="UserDefinedFields" asp-route-area="User" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="EntityType" />
+                <input type="hidden" asp-for="EntityTypeName" />
+                <input type="hidden" asp-for="ExistingDefinitionId" />
+
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger" style="display:@(ViewData.ModelState.IsValid ? "none" : "block")">
+                </div>
+                <div id="serverError" class="alert alert-danger" style="display:none"></div>
+
+                <div class="ibox">
+                    <div class="ibox-title">
+                        <h5>@localizer["FieldsSection"]</h5>
+                        <div class="ibox-tools">
+                            <button type="button" id="btnAddField" class="btn btn-primary btn-sm">
+                                <i class="fa fa-plus"></i> @localizer["AddField"]
+                            </button>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+
+                        <div id="fieldList">
+                            @if (!Model.Fields.Any())
+                            {
+                                <div id="emptyState" class="alert alert-info">
+                                    @localizer["NoFieldsAdded"]
+                                </div>
+                            }
+
+                            @for (int i = 0; i < Model.Fields.Count; i++)
+                            {
+                                var f = Model.Fields[i];
+                                var vd = new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData);
+                                vd["Index"]     = i;
+                                vd["DataTypes"] = dataTypes;
+                                vd["Localizer"] = localizer;
+                                @Html.Partial("_UdfFieldRow", f, vd)
+                            }
+                        </div>
+
+                        <!-- Hidden template for new rows (injected via JS) -->
+                        <div id="fieldRowTemplate" style="display:none">
+                            @{
+                                var emptyField = new Resgrid.Web.Areas.User.Models.UserDefinedFields.UdfFieldFormModel { IsEnabled = true, IsVisibleOnMobile = true, IsVisibleOnReports = true };
+                                var tvd = new Microsoft.AspNetCore.Mvc.ViewFeatures.ViewDataDictionary(ViewData);
+                                tvd["Index"]     = "__FIELD_IDX__";
+                                tvd["DataTypes"] = dataTypes;
+                                tvd["Localizer"] = localizer;
+                            }
+                            @Html.Partial("_UdfFieldRow", emptyField, tvd)
+                        </div>
+
+                    </div>
+                    <div class="ibox-footer">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fa fa-save"></i> @localizer["SaveDefinition"]
+                        </button>
+                        <a asp-action="Index" class="btn btn-default">@localizer["Cancel"]</a>
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        (function ($) {
+            'use strict';
+
+            var SENTINEL   = '__FIELD_IDX__';
+            var $fieldList  = $('#fieldList');
+            var $template   = $('#fieldRowTemplate');
+            var fieldIndex  = @(Model.Fields.Count);   // next available index
+
+            // ── jQuery UI drag-and-drop ───────────────────────────────────────────
+            $fieldList.sortable({
+                handle: '.field-drag-handle',
+                items: '.udf-field-row',          // only sort actual field rows
+                placeholder: 'field-sort-placeholder',
+                update: reindexSortOrders
+            });
+
+            function reindexSortOrders() {
+                $fieldList.find('.udf-field-row').each(function (idx) {
+                    $(this).find('input[name$=".SortOrder"]').val(idx);
+                });
+            }
+
+            // ── Add field ────────────────────────────────────────────────────────
+            $('#btnAddField').on('click', function () {
+                // Replace the sentinel token with the real index (exact match, global)
+                var re  = new RegExp(SENTINEL.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+                var html = $template.html().replace(re, fieldIndex);
+
+                // Parse the HTML; the partial renders a single root <div>
+                var $newRow = $($.parseHTML($.trim(html))).filter('.udf-field-row');
+                if (!$newRow.length) {
+                    // fallback: take first element regardless
+                    $newRow = $($.parseHTML($.trim(html))).first();
+                }
+
+                $fieldList.append($newRow);
+                wireRow($newRow[0]);
+                fieldIndex++;
+
+                // Hide empty-state notice if visible
+                $fieldList.find('#emptyState').hide();
+
+                // Auto-expand
+                $newRow.find('.field-detail').addClass('open');
+                $newRow.find('.field-expand-btn i').removeClass('fa-chevron-down').addClass('fa-chevron-up');
+            });
+
+            // ── Wire existing rows ────────────────────────────────────────────────
+            $fieldList.find('.udf-field-row').each(function () { wireRow(this); });
+
+            function wireRow(row) {
+                var $row = $(row);
+
+                // Expand / collapse
+                $row.find('.field-expand-btn').on('click', function () {
+                    var $detail = $row.find('.field-detail');
+                    $detail.toggleClass('open');
+                    var $icon = $(this).find('i');
+                    if ($detail.hasClass('open')) {
+                        $icon.removeClass('fa-chevron-down').addClass('fa-chevron-up');
+                    } else {
+                        $icon.removeClass('fa-chevron-up').addClass('fa-chevron-down');
+                    }
+                });
+
+                // Remove
+                $row.find('.btn-remove-field').on('click', function () {
+                    if (confirm('@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(localizer["RemoveFieldConfirm"].Value))')) {
+                        $row.remove();
+                        reindexSortOrders();
+                        if ($fieldList.find('.udf-field-row').length === 0) {
+                            $fieldList.find('#emptyState').show();
+                        }
+                    }
+                });
+
+                // Show/hide validation rows based on data type
+                var $dtSel = $row.find('select[name$=".FieldDataType"]');
+                if ($dtSel.length) {
+                    $dtSel.on('change', function () { updateValidationVisibility(row, parseInt(this.value, 10)); });
+                    updateValidationVisibility(row, parseInt($dtSel.val(), 10));
+                }
+            }
+
+            function updateValidationVisibility(row, dataType) {
+                // 0=Text,1=Number,2=Decimal,3=Boolean,4=Date,5=DateTime,6=Dropdown,7=MultiSelect,8=Email,9=Phone,10=Url
+                var textTypes    = [0, 8, 9, 10];
+                var numericTypes = [1, 2];
+                var optionTypes  = [6, 7];
+
+                toggle(row, '.row-validation-text',    textTypes.indexOf(dataType)    >= 0);
+                toggle(row, '.row-validation-numeric', numericTypes.indexOf(dataType) >= 0);
+                toggle(row, '.row-validation-options', optionTypes.indexOf(dataType)  >= 0);
+                toggle(row, '.row-validation-regex',   textTypes.indexOf(dataType)    >= 0);
+                toggle(row, '.row-default-value',      optionTypes.indexOf(dataType)  < 0);
+            }
+
+            function toggle(row, selector, show) {
+                $(row).find(selector).toggle(show);
+            }
+
+            // ── Client-side validation before submit ──────────────────────────────
+            // Must match UdfValidationHelper.MachineNameRegex: ^[a-zA-Z_][a-zA-Z0-9_]*$
+            var MACHINE_NAME_PATTERN = /^[a-zA-Z_][a-zA-Z0-9_]*$/;
+
+            $('#udfEditForm').on('submit', function (e) {
+                var names   = [];
+                var valid   = true;
+                var $errBox = $('#serverError');
+                $errBox.hide();
+
+                $fieldList.find('.udf-field-row').each(function () {
+                    var $nameInput = $(this).find('input[name$=".Name"]');
+                    if (!$nameInput.length) return;
+
+                    var val = $.trim($nameInput.val());
+                    var $hint = $nameInput.siblings('.name-hint');
+                    if (!$hint.length) {
+                        $hint = $('<small class="text-danger name-hint" style="display:none"></small>');
+                        $nameInput.after($hint);
+                    }
+
+                    if (!val) {
+                        $nameInput.addClass('is-invalid');
+                        $hint.text('Machine name is required.').show();
+                        valid = false;
+                    } else if (!MACHINE_NAME_PATTERN.test(val)) {
+                        $nameInput.addClass('is-invalid');
+                        $hint.text('Use letters, digits, and underscores only, starting with a letter or underscore.').show();
+                        valid = false;
+                    } else {
+                        $nameInput.removeClass('is-invalid');
+                        $hint.hide();
+                        names.push(val.toLowerCase());
+                    }
+                });
+
+                // Duplicate check
+                var seen = {};
+                var dupes = [];
+                $.each(names, function (_, n) {
+                    if (seen[n]) { if (dupes.indexOf(n) === -1) dupes.push(n); }
+                    else seen[n] = true;
+                });
+                if (dupes.length) {
+                    $errBox.text('Duplicate machine name(s): ' + dupes.join(', ') + '. Each machine name must be unique within this entity type.').show();
+                    valid = false;
+                }
+
+                if (!valid) e.preventDefault();
+            });
+
+        }(jQuery));
+    </script>
+}
+
+
+
+
+
+
+

@@ -54,13 +54,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly ICallsService _callsService;
 		private readonly IGeoLocationProvider _geoLocationProvider;
+		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
+		private readonly IUdfRenderingService _udfRenderingService;
 
 		public PersonnelController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IEmailService emailService, IUserProfileService userProfileService, IDeleteService deleteService, Model.Services.IAuthorizationService authorizationService,
 			ILimitsService limitsService, IPersonnelRolesService personnelRolesService, IDepartmentGroupsService departmentGroupsService, IUserStateService userStateService,
 			IEventAggregator eventAggregator, IEmailMarketingProvider emailMarketingProvider, ICertificationService certificationService, ICustomStateService customStateService,
 			IGeoService geoService, UserManager<IdentityUser> userManager, IDepartmentSettingsService departmentSettingsService, ICallsService callsService,
-			IGeoLocationProvider geoLocationProvider)
+			IGeoLocationProvider geoLocationProvider, IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -82,6 +84,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_departmentSettingsService = departmentSettingsService;
 			_callsService = callsService;
 			_geoLocationProvider = geoLocationProvider;
+			_userDefinedFieldsService = userDefinedFieldsService;
+			_udfRenderingService = udfRenderingService;
 		}
 		#endregion Private Members and Constructors
 
@@ -335,6 +339,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.GroupName = group.Name;
 			}
 
+			var udfDefinition = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Personnel);
+			if (udfDefinition != null)
+			{
+				bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+				bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+				var udfFields = await _userDefinedFieldsService.GetVisibleFieldsForActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Personnel, isDeptAdmin, isGroupAdmin);
+				model.UdfFormHtml = _udfRenderingService.GenerateHtmlFormFields(udfDefinition, udfFields, new List<UdfFieldValue>());
+			}
+
 			return View(model);
 		}
 
@@ -342,7 +355,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 		public async Task<IActionResult> ViewPerson(string userId)
 		{
-			if (!await _authorizationService.CanUserViewUserAsync(UserId, userId))
 				return Unauthorized();
 
 			ViewPersonView model = new ViewPersonView();
@@ -393,6 +405,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.UserState = await _userStateService.GetLastUserStateByUserIdAsync(userId);
 			model.ActionLog = await _actionLogsService.GetLastActionLogForUserAsync(userId, DepartmentId);
+
+			var udfDefinition = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Personnel);
+			if (udfDefinition != null)
+			{
+				bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+				bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+				var udfFields = await _userDefinedFieldsService.GetVisibleFieldsForActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Personnel, isDeptAdmin, isGroupAdmin);
+				var udfValues = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Personnel, userId);
+				var visibleFieldIds = udfFields.Select(f => f.UdfFieldId).ToHashSet();
+				var filteredValues = (udfValues ?? new List<UdfFieldValue>()).Where(v => visibleFieldIds.Contains(v.UdfFieldId)).ToList();
+				model.UdfReadOnlyHtml = _udfRenderingService.GenerateReadOnlyHtml(udfDefinition, udfFields, filteredValues);
+			}
 
 			return View(model);
 		}
@@ -546,6 +570,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 						await _emailService.SendWelcomeEmail(model.Department.Name, model.FirstName + " " + model.LastName, user.Email, user.UserName, model.ConfirmPassword, DepartmentId);
 
 					await _emailMarketingProvider.SubscribeUserToUsersList(model.FirstName, model.LastName, user.Email);
+
+					// Save UDF field values for the new personnel
+					var udfValues = form.Keys
+						.Where(k => k.StartsWith("udf_"))
+						.Select(k => new UdfFieldValue
+						{
+							UdfFieldId = k.Substring(4),
+							Value = form[k]
+						}).ToList();
+
+					if (udfValues.Any())
+						await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Personnel, user.UserId, udfValues, UserId, cancellationToken);
 
 					return RedirectToAction("Index", "Personnel", new { area = "User" });
 				}

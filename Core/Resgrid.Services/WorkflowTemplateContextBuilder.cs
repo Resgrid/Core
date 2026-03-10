@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -20,15 +21,24 @@ namespace Resgrid.Services
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IUserProfileService _userProfileService;
+		private readonly IDepartmentGroupsService _departmentGroupsService;
+		private readonly IPersonnelRolesService _personnelRolesService;
+		private readonly IUnitsService _unitsService;
 
 		public WorkflowTemplateContextBuilder(
 			IDepartmentsService departmentsService,
 			IDepartmentSettingsService departmentSettingsService,
-			IUserProfileService userProfileService)
+			IUserProfileService userProfileService,
+			IDepartmentGroupsService departmentGroupsService,
+			IPersonnelRolesService personnelRolesService,
+			IUnitsService unitsService)
 		{
 			_departmentsService = departmentsService;
 			_departmentSettingsService = departmentSettingsService;
 			_userProfileService = userProfileService;
+			_departmentGroupsService = departmentGroupsService;
+			_personnelRolesService = personnelRolesService;
+			_unitsService = unitsService;
 		}
 
 		public async Task<object> BuildContextAsync(
@@ -59,7 +69,7 @@ namespace Resgrid.Services
 					           ?? TryDeserialize<CallClosedEvent>(eventPayloadJson)?.Call;
 					if (call != null)
 					{
-						MapCallVariables(scriptObject, call);
+						await MapCallVariablesAsync(scriptObject, call, departmentId, cancellationToken);
 						triggeringUserId = call.ReportingUserId;
 					}
 					break;
@@ -401,8 +411,9 @@ namespace Resgrid.Services
 
 		// ── Event-Specific Mappers ────────────────────────────────────────────────────
 
-		private static void MapCallVariables(ScriptObject obj, Call call)
+		private async Task MapCallVariablesAsync(ScriptObject obj, Call call, int departmentId, CancellationToken cancellationToken = default)
 		{
+			cancellationToken.ThrowIfCancellationRequested();
 			var c = new ScriptObject();
 			c["id"] = call.CallId;
 			c["number"] = call.Number ?? string.Empty;
@@ -434,102 +445,199 @@ namespace Resgrid.Services
 			c["is_deleted"] = call.IsDeleted;
 			c["deleted_reason"] = call.DeletedReason ?? string.Empty;
 
-			// ── Enumerable collections ───────────────────────────────────────────────
+			// ── Personnel dispatches ──────────────────────────────────────────────────
+			// Pre-fetch all user profiles and group/role data needed for enrichment
+			var dispatchUserIds = call.Dispatches != null
+				? call.Dispatches.Where(d => !string.IsNullOrWhiteSpace(d.UserId)).Select(d => d.UserId).Distinct().ToList()
+				: new List<string>();
 
-			// Personnel dispatches: call.dispatches[n].{ user_id, dispatch_count, dispatched_on }
-			var dispatches = new Scriban.Runtime.ScriptArray();
+			Dictionary<string, UserProfile> profileMap = new Dictionary<string, UserProfile>();
+			if (dispatchUserIds.Count > 0)
+			{
+				var profiles = await _userProfileService.GetSelectedUserProfilesAsync(dispatchUserIds);
+				profileMap = profiles?.ToDictionary(p => p.UserId, p => p) ?? new Dictionary<string, UserProfile>();
+			}
+
+			// Pre-fetch roles for department so we can look up role names for each dispatch user
+			List<PersonnelRole> allDeptRoles = null;
+
+			var dispatches = new ScriptArray();
 			if (call.Dispatches != null)
 			{
 				foreach (var d in call.Dispatches)
 				{
 					var item = new ScriptObject();
-					item["user_id"]        = d.UserId ?? string.Empty;
+					item["user_id"] = d.UserId ?? string.Empty;
 					item["dispatch_count"] = d.DispatchCount;
-					item["dispatched_on"]  = d.DispatchedOn;
+					item["dispatched_on"] = d.DispatchedOn;
+
+					// Enrich with profile data
+					if (!string.IsNullOrWhiteSpace(d.UserId) && profileMap.TryGetValue(d.UserId, out var profile))
+					{
+						item["first_name"] = profile.FirstName ?? string.Empty;
+						item["last_name"] = profile.LastName ?? string.Empty;
+						item["full_name"] = profile.FullName?.AsFirstNameLastName ?? string.Empty;
+						item["email"] = profile.MembershipEmail ?? string.Empty;
+						item["mobile_number"] = profile.MobileNumber ?? string.Empty;
+						item["identification_number"] = profile.IdentificationNumber ?? string.Empty;
+					}
+					else
+					{
+						item["first_name"] = string.Empty;
+						item["last_name"] = string.Empty;
+						item["full_name"] = string.Empty;
+						item["email"] = string.Empty;
+						item["mobile_number"] = string.Empty;
+						item["identification_number"] = string.Empty;
+					}
+
+					// Enrich with group membership
+					if (!string.IsNullOrWhiteSpace(d.UserId))
+					{
+						var userGroup = await _departmentGroupsService.GetGroupForUserAsync(d.UserId, departmentId);
+						item["group_id"] = userGroup?.DepartmentGroupId ?? 0;
+						item["group_name"] = userGroup?.Name ?? string.Empty;
+					}
+					else
+					{
+						item["group_id"] = 0;
+						item["group_name"] = string.Empty;
+					}
+
+					// Enrich with role names
+					if (!string.IsNullOrWhiteSpace(d.UserId))
+					{
+						if (allDeptRoles == null)
+							allDeptRoles = await _personnelRolesService.GetRolesForDepartmentAsync(departmentId) ?? new List<PersonnelRole>();
+
+						var userRoles = await _personnelRolesService.GetRolesForUserAsync(d.UserId, departmentId);
+						var roleNames = userRoles?.Select(r => r.Name ?? string.Empty).ToList() ?? new List<string>();
+						item["role_names"] = string.Join(", ", roleNames);
+
+						var roleArray = new ScriptArray();
+						foreach (var roleName in roleNames)
+							roleArray.Add(roleName);
+						item["roles"] = roleArray;
+					}
+					else
+					{
+						item["role_names"] = string.Empty;
+						item["roles"] = new ScriptArray();
+					}
+
 					dispatches.Add(item);
 				}
 			}
 			c["dispatches"] = dispatches;
 
-			// Unit dispatches: call.unit_dispatches[n].{ unit_id, unit_name, dispatch_count, dispatched_on }
-			var unitDispatches = new Scriban.Runtime.ScriptArray();
+			// ── Unit dispatches ──────────────────────────────────────────────────────
+			var unitDispatches = new ScriptArray();
 			if (call.UnitDispatches != null)
 			{
 				foreach (var d in call.UnitDispatches)
 				{
 					var item = new ScriptObject();
-					item["unit_id"]        = d.UnitId;
-					item["unit_name"]      = d.Unit?.Name ?? string.Empty;
+					item["unit_id"] = d.UnitId;
 					item["dispatch_count"] = d.DispatchCount;
-					item["dispatched_on"]  = d.DispatchedOn;
+					item["dispatched_on"] = d.DispatchedOn;
+
+					// Resolve unit name – prefer navigation property, fall back to service lookup
+					Unit unit = d.Unit;
+					if (unit == null && d.UnitId > 0)
+						unit = await _unitsService.GetUnitByIdAsync(d.UnitId);
+
+					item["unit_name"] = unit?.Name ?? string.Empty;
+					item["unit_type"] = unit?.Type ?? string.Empty;
+					item["vin"] = unit?.VIN ?? string.Empty;
+					item["plate_number"] = unit?.PlateNumber ?? string.Empty;
+					item["station_group_id"] = unit?.StationGroupId ?? 0;
+
 					unitDispatches.Add(item);
 				}
 			}
 			c["unit_dispatches"] = unitDispatches;
 
-			// Group dispatches: call.group_dispatches[n].{ group_id, group_name, dispatch_count, dispatched_on }
-			var groupDispatches = new Scriban.Runtime.ScriptArray();
+			// ── Group dispatches ──────────────────────────────────────────────────────
+			var groupDispatches = new ScriptArray();
 			if (call.GroupDispatches != null)
 			{
 				foreach (var d in call.GroupDispatches)
 				{
 					var item = new ScriptObject();
-					item["group_id"]       = d.DepartmentGroupId;
-					item["group_name"]     = d.Group?.Name ?? string.Empty;
+					item["group_id"] = d.DepartmentGroupId;
 					item["dispatch_count"] = d.DispatchCount;
-					item["dispatched_on"]  = d.DispatchedOn;
+					item["dispatched_on"] = d.DispatchedOn;
+
+					// Resolve group name – prefer navigation property, fall back to service lookup
+					DepartmentGroup group = d.Group;
+					if (group == null && d.DepartmentGroupId > 0)
+						group = await _departmentGroupsService.GetGroupByIdAsync(d.DepartmentGroupId);
+
+					item["group_name"] = group?.Name ?? string.Empty;
+					item["group_type"] = group?.Type ?? 0;
+					item["dispatch_email"] = group?.DispatchEmail ?? string.Empty;
+					item["latitude"] = group?.Latitude ?? string.Empty;
+					item["longitude"] = group?.Longitude ?? string.Empty;
+
 					groupDispatches.Add(item);
 				}
 			}
 			c["group_dispatches"] = groupDispatches;
 
-			// Role dispatches: call.role_dispatches[n].{ role_id, role_name, dispatch_count, dispatched_on }
-			var roleDispatches = new Scriban.Runtime.ScriptArray();
+			// ── Role dispatches ──────────────────────────────────────────────────────
+			var roleDispatches = new ScriptArray();
 			if (call.RoleDispatches != null)
 			{
 				foreach (var d in call.RoleDispatches)
 				{
 					var item = new ScriptObject();
-					item["role_id"]        = d.RoleId;
-					item["role_name"]      = d.Role?.Name ?? string.Empty;
+					item["role_id"] = d.RoleId;
 					item["dispatch_count"] = d.DispatchCount;
-					item["dispatched_on"]  = d.DispatchedOn;
+					item["dispatched_on"] = d.DispatchedOn;
+
+					// Resolve role name – prefer navigation property, fall back to service lookup
+					PersonnelRole role = d.Role;
+					if (role == null && d.RoleId > 0)
+						role = await _personnelRolesService.GetRoleByIdAsync(d.RoleId);
+
+					item["role_name"] = role?.Name ?? string.Empty;
+					item["role_description"] = role?.Description ?? string.Empty;
+
 					roleDispatches.Add(item);
 				}
 			}
 			c["role_dispatches"] = roleDispatches;
 
-			// Call notes: call.notes_list[n].{ note, source, timestamp, user_id }
-			var notesList = new Scriban.Runtime.ScriptArray();
+			// ── Call notes ──────────────────────────────────────────────────────
+			var notesList = new ScriptArray();
 			if (call.CallNotes != null)
 			{
 				foreach (var n in call.CallNotes)
 				{
 					var item = new ScriptObject();
-					item["note"]      = n.Note ?? string.Empty;
-					item["source"]    = n.Source.ToString();
+					item["note"] = n.Note ?? string.Empty;
+					item["source"] = n.Source.ToString();
 					item["timestamp"] = n.Timestamp;
-					item["user_id"]   = n.UserId ?? string.Empty;
+					item["user_id"] = n.UserId ?? string.Empty;
 					notesList.Add(item);
 				}
 			}
 			c["notes_list"] = notesList;
 
-			// Contacts: call.contacts[n].{ contact_id, contact_type }
-			var contacts = new Scriban.Runtime.ScriptArray();
+			// ── Contacts ──────────────────────────────────────────────────────
+			var contacts = new ScriptArray();
 			if (call.Contacts != null)
 			{
 				foreach (var ct in call.Contacts)
 				{
 					var item = new ScriptObject();
-					item["contact_id"]   = ct.ContactId ?? string.Empty;
+					item["contact_id"] = ct.ContactId ?? string.Empty;
 					item["contact_type"] = ct.GetContactTypeName();
 					contacts.Add(item);
 				}
 			}
 			c["contacts"] = contacts;
 
-			// ── End enumerable collections ───────────────────────────────────────────
 
 			obj["call"] = c;
 		}

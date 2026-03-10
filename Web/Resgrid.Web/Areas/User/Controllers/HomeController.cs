@@ -808,7 +808,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				// Save UDF field values for personnel
 				var udfValues = form.Keys
-					.Where(k => k.StartsWith("udf_"))
+					.Where(k => k.StartsWith("udf_") && !k.EndsWith("_exists"))
 					.Select(k => new UdfFieldValue
 					{
 						UdfFieldId = k.Substring(4),

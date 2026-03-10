@@ -475,7 +475,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				// Save UDF field values for the new call
 				var udfValues = collection.Keys
-					.Where(k => k.StartsWith("udf_"))
+					.Where(k => k.StartsWith("udf_") && !k.EndsWith("_exists"))
 					.Select(k => new UdfFieldValue
 					{
 						UdfFieldId = k.Substring(4),
@@ -797,7 +797,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				// Save UDF field values for the updated call
 				var udfValues = collection.Keys
-					.Where(k => k.StartsWith("udf_"))
+					.Where(k => k.StartsWith("udf_") && !k.EndsWith("_exists"))
 					.Select(k => new UdfFieldValue
 					{
 						UdfFieldId = k.Substring(4),
@@ -1082,7 +1082,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				// Save UDF field values for the archived call
 				var udfValues = collection.Keys
-					.Where(k => k.StartsWith("udf_"))
+					.Where(k => k.StartsWith("udf_") && !k.EndsWith("_exists"))
 					.Select(k => new UdfFieldValue
 					{
 						UdfFieldId = k.Substring(4),

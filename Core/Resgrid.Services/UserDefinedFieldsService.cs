@@ -169,10 +169,24 @@ namespace Resgrid.Services
 			var fields = (await _fieldRepository.GetFieldsByDefinitionIdAsync(definition.UdfDefinitionId))
 				?.Where(f => f.IsEnabled).ToList() ?? new List<UdfField>();
 
-			// Validate all values
+			// Validate all values first (against the raw input so callers see all errors)
 			var errors = UdfValidationHelper.ValidateAllFieldValues(fields, values);
 			if (errors.Count > 0)
 				return errors;
+
+			// Build a whitelist of enabled field IDs so unknown or disabled fields are never persisted.
+			var allowedFieldIds = fields
+				.Where(f => !string.IsNullOrEmpty(f.UdfFieldId))
+				.Select(f => f.UdfFieldId)
+				.ToHashSet(StringComparer.Ordinal);
+
+			// Normalize: drop null/unknown field IDs, then deduplicate by keeping the last
+			// occurrence of each UdfFieldId (deterministic: last value submitted wins).
+			var normalizedValues = (values ?? Enumerable.Empty<UdfFieldValue>())
+				.Where(v => !string.IsNullOrEmpty(v.UdfFieldId) && allowedFieldIds.Contains(v.UdfFieldId))
+				.GroupBy(v => v.UdfFieldId, StringComparer.Ordinal)
+				.Select(g => g.Last())
+				.ToList();
 
 			// Delete existing values for this entity + definition version, then re-insert.
 			// Wrap both operations in a single transaction so a failed insert cannot leave
@@ -185,7 +199,7 @@ namespace Resgrid.Services
 					entityType, entityId, definition.UdfDefinitionId, cancellationToken);
 
 				var now = DateTime.UtcNow;
-				foreach (var value in values ?? Enumerable.Empty<UdfFieldValue>())
+				foreach (var value in normalizedValues)
 				{
 					value.UdfFieldValueId = null;             // let RepositoryBase assign a new GUID
 					value.UdfDefinitionId = definition.UdfDefinitionId;
@@ -218,6 +232,12 @@ namespace Resgrid.Services
 
 			var owningDefinition = await _definitionRepository.GetByIdAsync(fieldToRemove.UdfDefinitionId) as UdfDefinition;
 			if (owningDefinition == null)
+				return null;
+
+			// Verify the definition belongs to the caller's department and is currently active.
+			// Operating on a definition from another department or a superseded version would
+			// silently corrupt data, so we abort and return null in either case.
+			if (owningDefinition.DepartmentId != departmentId || !owningDefinition.IsActive)
 				return null;
 
 			var allFields = (await _fieldRepository.GetFieldsByDefinitionIdAsync(owningDefinition.UdfDefinitionId))?.ToList()

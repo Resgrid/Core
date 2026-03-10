@@ -308,7 +308,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				// Save UDF field values for the new contact
 				var udfDefinitionForCreate = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Contact);
 				var udfValues = Request.Form.Keys
-					.Where(k => k.StartsWith("udf_"))
+					.Where(k => k.StartsWith("udf_") && !k.EndsWith("_exists"))
 					.Select(k => new UdfFieldValue
 					{
 						UdfFieldId = k.Substring(4),
@@ -580,7 +580,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				// Save UDF field values for the updated contact
 				var udfDefinitionForEdit = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Contact);
 				var udfValues = Request.Form.Keys
-					.Where(k => k.StartsWith("udf_"))
+					.Where(k => k.StartsWith("udf_") && !k.EndsWith("_exists"))
 					.Select(k => new UdfFieldValue
 					{
 						UdfFieldId = k.Substring(4),

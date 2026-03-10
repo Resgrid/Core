@@ -50,6 +50,8 @@ namespace Resgrid.Tests.Mocks
 
 		public Task<UdfDefinition> InsertAsync(UdfDefinition entity, CancellationToken cancellationToken, bool firstLevelOnly = false)
 		{
+			if (string.IsNullOrEmpty(entity.UdfDefinitionId))
+				entity.UdfDefinitionId = Guid.NewGuid().ToString();
 			_definitions.Add(entity);
 			return Task.FromResult(entity);
 		}
@@ -64,6 +66,8 @@ namespace Resgrid.Tests.Mocks
 
 		public Task<UdfDefinition> SaveOrUpdateAsync(UdfDefinition entity, CancellationToken cancellationToken, bool firstLevelOnly = false)
 		{
+			if (string.IsNullOrEmpty(entity.UdfDefinitionId))
+				entity.UdfDefinitionId = Guid.NewGuid().ToString();
 			var existing = _definitions.FirstOrDefault(d => d.UdfDefinitionId == entity.UdfDefinitionId);
 			if (existing != null) _definitions.Remove(existing);
 			_definitions.Add(entity);

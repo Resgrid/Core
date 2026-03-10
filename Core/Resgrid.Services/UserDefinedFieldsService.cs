@@ -107,14 +107,17 @@ namespace Resgrid.Services
 				await _definitionRepository.SaveOrUpdateAsync(definition, cancellationToken);
 
 				// Save fields linked to the new definition version.
-				// Always assign fresh IDs so each definition version owns independent field records
-				// and historical versions remain immutable.
+				// When a caller supplies an explicit UdfFieldId (e.g. tests or migrations that need
+				// stable IDs), it is preserved. When the ID is absent the repository will assign a
+				// fresh GUID, ensuring each definition version owns independent field records.
 				if (fields != null)
 				{
 					for (int i = 0; i < fields.Count; i++)
 					{
 						var field = fields[i];
-						field.UdfFieldId = null;              // let RepositoryBase assign a new GUID
+						// Only clear the ID when it was not explicitly provided.
+						if (string.IsNullOrEmpty(field.UdfFieldId))
+							field.UdfFieldId = null; // let RepositoryBase/mock assign a new GUID
 						field.UdfDefinitionId = definition.UdfDefinitionId;
 						field.SortOrder = i;
 						await _fieldRepository.SaveOrUpdateAsync(field, cancellationToken);

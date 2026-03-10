@@ -30,10 +30,9 @@ namespace Resgrid.Services
 			{
 				if (!string.IsNullOrWhiteSpace(group.Key))
 				{
-					// Use Bootstrap 3 panel to visually separate named groups
-					sb.AppendLine($"  <div class=\"panel panel-default udf-group\">");
-					sb.AppendLine($"    <div class=\"panel-heading\"><h5 class=\"panel-title\">{HtmlEncode(group.Key)}</h5></div>");
-					sb.AppendLine($"    <div class=\"panel-body\">");
+					// Use a <fieldset> to semantically group related fields
+					sb.AppendLine($"  <fieldset class=\"udf-group\">");
+					sb.AppendLine($"    <legend class=\"udf-group-legend\">{HtmlEncode(group.Key)}</legend>");
 				}
 
 				foreach (var field in group)
@@ -44,8 +43,7 @@ namespace Resgrid.Services
 
 				if (!string.IsNullOrWhiteSpace(group.Key))
 				{
-					sb.AppendLine($"    </div>");
-					sb.AppendLine($"  </div>");
+					sb.AppendLine($"  </fieldset>");
 				}
 			}
 

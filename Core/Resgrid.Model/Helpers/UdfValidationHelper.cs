@@ -245,8 +245,8 @@ namespace Resgrid.Model.Helpers
 
 			if (rules.MinLength.HasValue) attrs["minlength"] = rules.MinLength.Value.ToString();
 			if (rules.MaxLength.HasValue) attrs["maxlength"] = rules.MaxLength.Value.ToString();
-			if (rules.MinValue.HasValue) attrs["min"] = rules.MinValue.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
-			if (rules.MaxValue.HasValue) attrs["max"] = rules.MaxValue.Value.ToString(System.Globalization.CultureInfo.InvariantCulture);
+			if (rules.MinValue.HasValue) attrs["min"] = rules.MinValue.Value.ToString("G29", System.Globalization.CultureInfo.InvariantCulture);
+			if (rules.MaxValue.HasValue) attrs["max"] = rules.MaxValue.Value.ToString("G29", System.Globalization.CultureInfo.InvariantCulture);
 			if (!string.IsNullOrWhiteSpace(rules.Regex)) attrs["pattern"] = rules.Regex;
 
 			return attrs;

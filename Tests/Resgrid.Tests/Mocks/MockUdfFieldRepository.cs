@@ -1,5 +1,6 @@
 ﻿using Resgrid.Model;
 using Resgrid.Model.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -30,6 +31,8 @@ namespace Resgrid.Tests.Mocks
 
 		public Task<UdfField> InsertAsync(UdfField entity, CancellationToken cancellationToken, bool firstLevelOnly = false)
 		{
+			if (string.IsNullOrEmpty(entity.UdfFieldId))
+				entity.UdfFieldId = Guid.NewGuid().ToString();
 			_fields.Add(entity);
 			return Task.FromResult(entity);
 		}
@@ -44,6 +47,8 @@ namespace Resgrid.Tests.Mocks
 
 		public Task<UdfField> SaveOrUpdateAsync(UdfField entity, CancellationToken cancellationToken, bool firstLevelOnly = false)
 		{
+			if (string.IsNullOrEmpty(entity.UdfFieldId))
+				entity.UdfFieldId = Guid.NewGuid().ToString();
 			var existing = _fields.FirstOrDefault(f => f.UdfFieldId == entity.UdfFieldId);
 			if (existing != null) _fields.Remove(existing);
 			_fields.Add(entity);

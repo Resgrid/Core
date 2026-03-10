@@ -47,7 +47,15 @@ namespace Resgrid.Tests.Mocks
 			return Task.FromResult(entity);
 		}
 
-		public Task<UdfFieldValue> UpdateAsync(UdfFieldValue entity, CancellationToken cancellationToken, bool firstLevelOnly = false) => Task.FromResult(entity);
+		public Task<UdfFieldValue> UpdateAsync(UdfFieldValue entity, CancellationToken cancellationToken, bool firstLevelOnly = false)
+		{
+			var index = _values.FindIndex(v => v.UdfFieldValueId == entity.UdfFieldValueId);
+			if (index < 0)
+				return Task.FromResult<UdfFieldValue>(null);
+
+			_values[index] = entity;
+			return Task.FromResult(entity);
+		}
 
 		public Task<bool> DeleteAsync(UdfFieldValue entity, CancellationToken cancellationToken)
 		{

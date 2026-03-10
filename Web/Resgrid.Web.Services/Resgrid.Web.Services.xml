@@ -551,7 +551,7 @@
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.FormsController">
             <summary>
-            User generated forms that are dispayed to get custom information for New Calls, Unit Checks, etc
+            User generated forms that are displayed to get custom information for New Calls, Unit Checks, etc
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.FormsController.GetNewCallForm">
@@ -559,6 +559,20 @@
             Gets the Department Form that can be used for the new call process (i.e. call intake/triage form)
             </summary>
             <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.FormsController.GetAllForms">
+            <summary>
+            Gets all active (non-deleted) forms for the department. Used by mobile apps to
+            retrieve available forms for calls and other entities.
+            </summary>
+            <returns>Array of FormResultData for each active form in the department</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.FormsController.GetFormById(System.String)">
+            <summary>
+            Gets a specific form by its identifier
+            </summary>
+            <param name="formId">The form identifier</param>
+            <returns>A FormResultData for the requested form</returns>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.GroupsController">
             <summary>
@@ -1051,6 +1065,13 @@
             Gets all call note Templates for the department
             </summary>
             <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.TemplatesController.GetAllCallQuickTemplates">
+            <summary>
+            Gets all call quick templates for the department. Call quick templates are used to
+            rapidly dispatch pre-configured calls from mobile apps.
+            </summary>
+            <returns>Array of CallQuickTemplateResultData for each active call quick template</returns>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.UnitLocationController">
             <summary>
@@ -5596,6 +5617,21 @@
             Automation operation value
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Forms.FormsResult">
+            <summary>
+            Multiple forms result
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Forms.FormsResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Forms.FormsResult.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Groups.GroupResult">
             <summary>
             A group in the Resgrid system
@@ -7768,6 +7804,71 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Templates.CallNoteTemplateResultData.AddedByUserId">
             <summary>
             Who added this note template
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Templates.CallQuickTemplatesResult">
+            <summary>
+            Multiple call quick template result
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Templates.CallQuickTemplatesResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Templates.CallQuickTemplatesResult.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Templates.CallQuickTemplateResultData">
+            <summary>
+            A call quick template used for rapidly dispatching pre-configured calls
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Templates.CallQuickTemplateResultData.Id">
+            <summary>
+            Call Quick Template Id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Templates.CallQuickTemplateResultData.IsDisabled">
+            <summary>
+            Is the template disabled
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Templates.CallQuickTemplateResultData.Name">
+            <summary>
+            Display name of the template
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Templates.CallQuickTemplateResultData.CallName">
+            <summary>
+            Name pre-filled for the call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Templates.CallQuickTemplateResultData.CallNature">
+            <summary>
+            Nature/description pre-filled for the call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Templates.CallQuickTemplateResultData.CallType">
+            <summary>
+            Type pre-filled for the call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Templates.CallQuickTemplateResultData.CallPriority">
+            <summary>
+            Priority pre-filled for the call
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Templates.CallQuickTemplateResultData.CreatedByUserId">
+            <summary>
+            The user id of who created the template
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Templates.CallQuickTemplateResultData.CreatedOn">
+            <summary>
+            When the template was created (UTC)
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.UnitLocation.UnitLocationInput">

@@ -106,7 +106,7 @@ namespace Resgrid.Web.Areas.User.Models.Security
 		/// Minimum password length the department enforces. Must be 0 (use system default of 8)
 		/// or ≥ 8. Values 1–7 are invalid and will be rejected at validation.
 		/// </summary>
-		[Range(0, 128, ErrorMessage = "Must be between 0 and 128.")]
+		[MinPasswordLength]
 		public int MinPasswordLength { get; set; } = 8;
 
 

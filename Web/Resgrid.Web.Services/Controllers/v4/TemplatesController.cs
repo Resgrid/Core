@@ -6,7 +6,6 @@ using Resgrid.Providers.Claims;
 using System.Linq;
 using System.Threading.Tasks;
 using Resgrid.Web.Services.Helpers;
-using Resgrid.Web.Services.Models.v4.Statuses;
 using Resgrid.Model;
 using Resgrid.Web.Services.Models.v4.Templates;
 
@@ -23,10 +22,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 	{
 		#region Members and Constructors
 		private readonly IAutofillsService _autofillsService;
+		private readonly ITemplatesService _templatesService;
 
-		public TemplatesController(IAutofillsService autofillsService)
+		public TemplatesController(IAutofillsService autofillsService, ITemplatesService templatesService)
 		{
 			_autofillsService = autofillsService;
+			_templatesService = templatesService;
 		}
 		#endregion Members and Constructors
 
@@ -66,7 +67,41 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return result;
 		}
 
-		
+		/// <summary>
+		/// Gets all call quick templates for the department. Call quick templates are used to
+		/// rapidly dispatch pre-configured calls from mobile apps.
+		/// </summary>
+		/// <returns>Array of CallQuickTemplateResultData for each active call quick template</returns>
+		[HttpGet("GetAllCallQuickTemplates")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<CallQuickTemplatesResult>> GetAllCallQuickTemplates()
+		{
+			var result = new CallQuickTemplatesResult();
+
+			var templates = await _templatesService.GetAllCallQuickTemplatesForDepartmentAsync(DepartmentId);
+
+			if (templates != null && templates.Any())
+			{
+				foreach (var template in templates)
+				{
+					result.Data.Add(ConvertCallQuickTemplateResultData(template));
+				}
+
+				result.PageSize = result.Data.Count;
+				result.Status = ResponseHelper.Success;
+			}
+			else
+			{
+				result.PageSize = 0;
+				result.Status = ResponseHelper.NotFound;
+			}
+
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
 		public static CallNoteTemplateResultData ConvertCallNoteTemplateResultData(Autofill template)
 		{
 			var callNoteTemplateResultData = new CallNoteTemplateResultData();
@@ -79,6 +114,22 @@ namespace Resgrid.Web.Services.Controllers.v4
 			callNoteTemplateResultData.AddedByUserId = template.AddedByUserId;
 
 			return callNoteTemplateResultData;
+		}
+
+		public static CallQuickTemplateResultData ConvertCallQuickTemplateResultData(CallQuickTemplate template)
+		{
+			return new CallQuickTemplateResultData
+			{
+				Id = template.CallQuickTemplateId.ToString(),
+				IsDisabled = template.IsDisabled,
+				Name = template.Name,
+				CallName = template.CallName,
+				CallNature = template.CallNature,
+				CallType = template.CallType,
+				CallPriority = template.CallPriority,
+				CreatedByUserId = template.CreatedByUserId,
+				CreatedOn = template.CreatedOn
+			};
 		}
 	}
 }

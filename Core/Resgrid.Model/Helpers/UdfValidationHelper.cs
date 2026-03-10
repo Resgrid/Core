@@ -203,7 +203,10 @@ namespace Resgrid.Model.Helpers
 			IEnumerable<UdfFieldValue> values)
 		{
 			var errors = new Dictionary<string, List<string>>();
-			var valueMap = values?.ToDictionary(v => v.UdfFieldId, v => v.Value) ?? new Dictionary<string, string>();
+			var valueMap = values?
+				.GroupBy(v => v.UdfFieldId)
+				.ToDictionary(g => g.Key, g => g.Last().Value)
+				?? new Dictionary<string, string>();
 
 			foreach (var field in fields ?? Enumerable.Empty<UdfField>())
 			{

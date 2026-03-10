@@ -171,20 +171,35 @@ namespace Resgrid.Services
 			if (errors.Count > 0)
 				return errors;
 
-			// Delete existing values for this entity + definition version, then re-insert
-			await _valueRepository.DeleteFieldValuesByEntityAndDefinitionAsync(entityType, entityId, definition.UdfDefinitionId, cancellationToken);
+			// Delete existing values for this entity + definition version, then re-insert.
+			// Wrap both operations in a single transaction so a failed insert cannot leave
+			// the entity with no field values (partial data loss).
+			_unitOfWork.CreateOrGetConnection();
 
-			var now = DateTime.UtcNow;
-			foreach (var value in values ?? Enumerable.Empty<UdfFieldValue>())
+			try
 			{
-				value.UdfFieldValueId = null;             // let RepositoryBase assign a new GUID
-				value.UdfDefinitionId = definition.UdfDefinitionId;
-				value.EntityId = entityId;
-				value.EntityType = entityType;
-				value.CreatedOn = now;
-				value.CreatedBy = userId;
+				await _valueRepository.DeleteFieldValuesByEntityAndDefinitionAsync(
+					entityType, entityId, definition.UdfDefinitionId, cancellationToken);
 
-				await _valueRepository.SaveOrUpdateAsync(value, cancellationToken);
+				var now = DateTime.UtcNow;
+				foreach (var value in values ?? Enumerable.Empty<UdfFieldValue>())
+				{
+					value.UdfFieldValueId = null;             // let RepositoryBase assign a new GUID
+					value.UdfDefinitionId = definition.UdfDefinitionId;
+					value.EntityId = entityId;
+					value.EntityType = entityType;
+					value.CreatedOn = now;
+					value.CreatedBy = userId;
+
+					await _valueRepository.SaveOrUpdateAsync(value, cancellationToken);
+				}
+
+				_unitOfWork.CommitChanges();
+			}
+			catch
+			{
+				_unitOfWork.DiscardChanges();
+				throw;
 			}
 
 			return new Dictionary<string, List<string>>();

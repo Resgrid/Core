@@ -64,13 +64,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly UserManager<IdentityUser> _userManager;
 		private readonly ISubscriptionsService _subscriptionsService;
 		private readonly IContactVerificationService _contactVerificationService;
+		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
+		private readonly IUdfRenderingService _udfRenderingService;
+		private readonly IDepartmentSsoService _departmentSsoService;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> _secLocalizer;
 
 		public HomeController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IUserStateService userStateService, IDepartmentGroupsService departmentGroupsService, Resgrid.Model.Services.IAuthorizationService authorizationService,
 			IUserProfileService userProfileService, ICallsService callsService, IGeoLocationProvider geoLocationProvider, IDepartmentSettingsService departmentSettingsService,
 			IUnitsService unitsService, IAddressService addressService, IPersonnelRolesService personnelRolesService, IPushService pushService, ILimitsService limitsService,
 			ICustomStateService customStateService, IEventAggregator eventAggregator, IOptions<AppOptions> appOptionsAccessor, UserManager<IdentityUser> userManager,
-			IStringLocalizerFactory factory, ISubscriptionsService subscriptionsService, IContactVerificationService contactVerificationService)
+			IStringLocalizerFactory factory, ISubscriptionsService subscriptionsService, IContactVerificationService contactVerificationService,
+			IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService, IDepartmentSsoService departmentSsoService,
+			IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> secLocalizer)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -93,10 +99,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_userManager = userManager;
 			_subscriptionsService = subscriptionsService;
 			_contactVerificationService = contactVerificationService;
+			_userDefinedFieldsService = userDefinedFieldsService;
+			_udfRenderingService = udfRenderingService;
+			_departmentSsoService = departmentSsoService;
+			_secLocalizer = secLocalizer;
 
 			_localizer = factory.Create("Home.Dashboard", new AssemblyName(typeof(SupportedLocales).GetTypeInfo().Assembly.FullName).Name);
 		}
 		#endregion Private Members and Constructors
+
+		/// <summary>Resolves a password-error key returned by ValidatePasswordAgainstPolicyAsync into a localised message.</summary>
+		private string ResolvePwdError(string key)
+		{
+			if (string.IsNullOrEmpty(key)) return key;
+			if (key.StartsWith("PwdErrorTooShort:", StringComparison.Ordinal))
+			{
+				var minLen = key.Substring("PwdErrorTooShort:".Length);
+				return string.Format(_secLocalizer["PwdErrorTooShort"], minLen);
+			}
+			return _secLocalizer[key];
+		}
 
 		[Authorize(Policy = ResgridResources.Department_View)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
@@ -448,6 +470,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (String.IsNullOrWhiteSpace(model.Profile.Language))
 				model.Profile.Language = "en";
 
+			var udfDefinition = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Personnel);
+			if (udfDefinition != null)
+			{
+				bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+				bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+				var udfFields = await _userDefinedFieldsService.GetVisibleFieldsForActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Personnel, isDeptAdmin, isGroupAdmin);
+				var udfValues = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Personnel, userId);
+				var visibleFieldIds = udfFields.Select(f => f.UdfFieldId).ToHashSet();
+				var filteredValues = (udfValues ?? new List<UdfFieldValue>()).Where(v => visibleFieldIds.Contains(v.UdfFieldId)).ToList();
+				model.UdfFormHtml = _udfRenderingService.GenerateHtmlFormFields(udfDefinition, udfFields, filteredValues);
+			}
+
+			if (model.IsOwnProfile)
+				model.MinPasswordLength = await _departmentSsoService.GetEffectiveMinPasswordLengthAsync(DepartmentId);
+
 			return View(model);
 		}
 
@@ -572,6 +609,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 					if (!checkPasswordSuccess)
 					{
 						ModelState.AddModelError("", "The current password is incorrect or the new password is invalid.");
+					}
+					else
+					{
+						// Validate new password against system-enforced complexity and department min-length policy
+						var policyError = await _departmentSsoService.ValidatePasswordAgainstPolicyAsync(DepartmentId, model.NewPassword);
+						if (policyError != null)
+							ModelState.AddModelError("NewPassword", ResolvePwdError(policyError));
 					}
 				}
 
@@ -752,6 +796,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					{
 						var identityUser = await _userManager.FindByIdAsync(model.User.Id);
 						var result = await _userManager.ChangePasswordAsync(identityUser, model.OldPassword, model.NewPassword);
+						if (result.Succeeded)
+							await _departmentSsoService.RecordPasswordChangedAsync(DepartmentId, model.User.Id, cancellationToken);
 					}
 
 					if (!string.IsNullOrWhiteSpace(model.NewUsername))
@@ -759,6 +805,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 						await _usersService.UpdateUsername(model.User.UserName, model.NewUsername);
 					}
 				}
+
+				// Save UDF field values for personnel
+				var udfValues = form.Keys
+					.Where(k => k.StartsWith("udf_"))
+					.Select(k => new UdfFieldValue
+					{
+						UdfFieldId = k.Substring(4),
+						Value = form[k]
+					}).ToList();
+
+				if (udfValues.Any())
+					await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Personnel, model.UserId, udfValues, UserId, cancellationToken);
 
 				_userProfileService.ClearUserProfileFromCache(model.UserId);
 				_userProfileService.ClearAllUserProfilesFromCache(model.Department.DepartmentId);

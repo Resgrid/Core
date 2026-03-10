@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
@@ -110,6 +111,37 @@ namespace Resgrid.Model.Services
 		/// Departments that have never saved a policy always return false.
 		/// </summary>
 		Task<bool> IsRequireMfaPolicyActiveAsync(int departmentId, CancellationToken cancellationToken = default);
+
+		// ── Password Policy helpers ────────────────────────────────────────────
+
+		/// <summary>
+		/// Returns the effective minimum password length for a department.
+		/// The system-wide default is 8. Department policies may only increase this value.
+		/// </summary>
+		Task<int> GetEffectiveMinPasswordLengthAsync(int departmentId, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Validates <paramref name="newPassword"/> against the system-enforced complexity
+		/// standard (≥8 chars, at least one digit, one uppercase, one lowercase) and the
+		/// department's configured <see cref="DepartmentSecurityPolicy.MinPasswordLength"/>.
+		/// Returns null on success, or a human-readable failure reason.
+		/// </summary>
+		Task<string> ValidatePasswordAgainstPolicyAsync(int departmentId, string newPassword, CancellationToken cancellationToken = default);
+
+		/// <summary>
+		/// Returns true when the user's password has expired according to the department's
+		/// <see cref="DepartmentSecurityPolicy.PasswordExpirationDays"/> setting.
+		/// Always returns false when: the policy is 0 (disabled), no policy exists, or
+		/// <paramref name="passwordLastSetOn"/> is null (password pre-dates tracking).
+		/// </summary>
+		bool IsPasswordExpired(DepartmentSecurityPolicy policy, DateTime? passwordLastSetOn);
+
+		/// <summary>
+		/// Records the current UTC time as the <c>PasswordLastSetOn</c> for a department member,
+		/// identified by department ID and user ID.
+		/// Should be called whenever a user's password is successfully changed or reset.
+		/// </summary>
+		Task RecordPasswordChangedAsync(int departmentId, string userId, CancellationToken cancellationToken = default);
 	}
 }
 

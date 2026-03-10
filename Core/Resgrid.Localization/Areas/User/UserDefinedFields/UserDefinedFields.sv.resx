@@ -74,4 +74,13 @@
   <data name="FieldVisibilityHelp" xml:space="preserve">
     <value>Styr vem som kan se och fylla i det här fältet. Användare som inte uppfyller kravet ser det inte när de lägger till eller visar poster.</value>
   </data>
+  <data name="ValidationMachineNameRequired" xml:space="preserve">
+    <value>Machine name is required.</value>
+  </data>
+  <data name="ValidationMachineNamePattern" xml:space="preserve">
+    <value>Use letters, digits, and underscores only, starting with a letter or underscore.</value>
+  </data>
+  <data name="ValidationDuplicateMachineNames" xml:space="preserve">
+    <value>Duplicate machine name(s): {0}. Each machine name must be unique within this entity type.</value>
+  </data>
 </root>

@@ -347,7 +347,12 @@
   <data name="SecurityPolicyPasswordExpirationLabel" xml:space="preserve"><value>Password Expiration (days)</value></data>
   <data name="SecurityPolicyPasswordExpirationNote" xml:space="preserve"><value>0 = passwords never expire. 90 is typical for CUI environments.</value></data>
   <data name="SecurityPolicyMinPasswordLengthLabel" xml:space="preserve"><value>Minimum Password Length</value></data>
-  <data name="SecurityPolicyMinPasswordLengthNote" xml:space="preserve"><value>0 = system default (8). NIST recommends 12+; CUI requires 14+.</value></data>
+  <data name="SecurityPolicyMinPasswordLengthNote" xml:space="preserve"><value>Minimum 8 (system default). Department policies may only increase this. NIST recommends 12+; CUI requires 14+.</value></data>
+  <data name="SecurityPolicySystemComplexityHeader" xml:space="preserve"><value>System-Enforced Password Complexity</value></data>
+  <data name="SecurityPolicySystemComplexityNote" xml:space="preserve"><value>All Resgrid accounts are required to meet the following password complexity standard. This cannot be disabled by department policy.</value></data>
+  <data name="SecurityPolicyComplexityRule1" xml:space="preserve"><value>At least 8 characters (or the department minimum length above)</value></data>
+  <data name="SecurityPolicyComplexityRule2" xml:space="preserve"><value>At least one digit (number)</value></data>
+  <data name="SecurityPolicyComplexityRule3" xml:space="preserve"><value>At least one uppercase and one lowercase letter</value></data>
   <data name="SecurityPolicyPasswordComplexityLabel" xml:space="preserve"><value>Require password complexity</value></data>
   <data name="SecurityPolicyPasswordComplexityNote" xml:space="preserve"><value>Enforces at least one uppercase letter, one digit, and one special character.</value></data>
   <data name="SecurityPolicyQuickPresetsHeader" xml:space="preserve"><value>Quick presets</value></data>
@@ -357,6 +362,14 @@
   <data name="SecurityPolicySaveButton" xml:space="preserve"><value>Save Security Policy</value></data>
   <data name="SecurityPolicyCancelButton" xml:space="preserve"><value>Cancel</value></data>
   <data name="SecurityPolicyCannotEnableRequireSso" xml:space="preserve"><value>Cannot enable SSO-only login: no active SSO configuration exists. Create and enable an SSO configuration first.</value></data>
+
+  <!-- Password validation error messages (returned as keys by ValidatePasswordAgainstPolicyAsync) -->
+  <data name="PwdErrorEmpty" xml:space="preserve"><value>Password cannot be empty.</value></data>
+  <data name="PwdErrorNoDigit" xml:space="preserve"><value>Password must contain at least one digit (number).</value></data>
+  <data name="PwdErrorNoUppercase" xml:space="preserve"><value>Password must contain at least one uppercase letter.</value></data>
+  <data name="PwdErrorNoLowercase" xml:space="preserve"><value>Password must contain at least one lowercase letter.</value></data>
+  <data name="PwdErrorTooShort" xml:space="preserve"><value>Password must be at least {0} characters long.</value></data>
+  <data name="PwdMinLengthTooLow" xml:space="preserve"><value>Minimum password length cannot be less than the system default of 8 characters.</value></data>
 </root>
 
 

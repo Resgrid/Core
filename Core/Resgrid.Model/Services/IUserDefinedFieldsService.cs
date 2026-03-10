@@ -38,6 +38,13 @@ namespace Resgrid.Model.Services
 		Task<List<UdfFieldValue>> GetFieldValuesForEntityAsync(int departmentId, int entityType, string entityId);
 
 		/// <summary>
+		/// Batch-fetches all stored UDF field values for multiple entities of the same type under the active definition.
+		/// Results are returned as a flat list; callers should group by <see cref="UdfFieldValue.EntityId"/> as needed.
+		/// Returns an empty list when no active definition exists or <paramref name="entityIds"/> is empty.
+		/// </summary>
+		Task<List<UdfFieldValue>> GetFieldValuesForEntitiesAsync(int departmentId, int entityType, IEnumerable<string> entityIds);
+
+		/// <summary>
 		/// Validates and saves field values for an entity against the active definition.
 		/// Returns a dictionary of fieldId → error list; empty dict means all values are valid and were saved.
 		/// </summary>

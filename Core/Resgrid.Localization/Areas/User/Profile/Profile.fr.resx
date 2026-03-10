@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -239,4 +239,10 @@
   <data name="YourDepartmentsHeader" xml:space="preserve">
     <value>Vos départements</value>
   </data>
+
+  <!-- Password requirements box -->
+  <data name="PasswordRequirementsHeader" xml:space="preserve"><value>Exigences du mot de passe</value></data>
+  <data name="PasswordRequirementsLength" xml:space="preserve"><value>Au moins {0} caractères</value></data>
+  <data name="PasswordRequirementsDigit" xml:space="preserve"><value>Au moins un chiffre</value></data>
+  <data name="PasswordRequirementsCase" xml:space="preserve"><value>Au moins une lettre majuscule et une minuscule</value></data>
 </root>

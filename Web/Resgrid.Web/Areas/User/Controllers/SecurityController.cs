@@ -1048,8 +1048,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.MaxConcurrentSessions = policy.MaxConcurrentSessions;
 				model.AllowedIpRanges = policy.AllowedIpRanges;
 				model.PasswordExpirationDays = policy.PasswordExpirationDays;
-				model.MinPasswordLength = policy.MinPasswordLength > 0 ? policy.MinPasswordLength : 8;
-				model.RequirePasswordComplexity = policy.RequirePasswordComplexity;
+				model.MinPasswordLength = policy.MinPasswordLength >= 8 ? policy.MinPasswordLength : 8;
 				model.DataClassificationLevel = policy.DataClassificationLevel;
 			}
 			else
@@ -1086,6 +1085,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return View(model);
 			}
 
+			// Enforce system minimum — department policies cannot be weaker than 8 chars.
+			if (model.MinPasswordLength > 0 && model.MinPasswordLength < 8)
+			{
+				ModelState.AddModelError("MinPasswordLength", _secLocalizer["PwdMinLengthTooLow"].Value);
+				return View(model);
+			}
+
 			var existing = await _ssoService.GetSecurityPolicyForDepartmentAsync(DepartmentId, cancellationToken);
 			var policy = existing ?? new DepartmentSecurityPolicy
 			{
@@ -1099,8 +1105,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			policy.MaxConcurrentSessions = model.MaxConcurrentSessions;
 			policy.AllowedIpRanges = model.AllowedIpRanges;
 			policy.PasswordExpirationDays = model.PasswordExpirationDays;
-			policy.MinPasswordLength = model.MinPasswordLength;
-			policy.RequirePasswordComplexity = model.RequirePasswordComplexity;
+			// Ensure stored value is never below the system minimum of 8.
+			policy.MinPasswordLength = model.MinPasswordLength >= 8 ? model.MinPasswordLength : 8;
+			// Complexity is always system-enforced (digit + uppercase + lowercase); do not store a weaker override.
+			policy.RequirePasswordComplexity = true;
 			policy.DataClassificationLevel = model.DataClassificationLevel;
 
 			await _ssoService.SaveSecurityPolicyAsync(policy, cancellationToken);

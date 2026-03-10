@@ -73,6 +73,13 @@ namespace Resgrid.Model
 		/// <summary>Date/time of the most recent successful SSO login for this membership.</summary>
 		public DateTime? LastSsoLoginOn { get; set; }
 
+		/// <summary>
+		/// Date/time (UTC) when the member last set or changed their password.
+		/// Used to enforce the department's <see cref="DepartmentSecurityPolicy.PasswordExpirationDays"/> policy.
+		/// Null means the password has never been explicitly changed since the column was added (treated as never-expired unless a policy is active).
+		/// </summary>
+		public DateTime? PasswordLastSetOn { get; set; }
+
 		[NotMapped]
 		public string TableName => "DepartmentMembers";
 

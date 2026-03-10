@@ -28,7 +28,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.Udf
 
 		public string GetQuery<TEntity>() where TEntity : class, IEntity
 		{
-			throw new System.NotImplementedException();
+			return GetQuery();
 		}
 	}
 }

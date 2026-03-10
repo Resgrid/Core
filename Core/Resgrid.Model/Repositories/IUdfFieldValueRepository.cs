@@ -15,6 +15,12 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<UdfFieldValue>> GetFieldValuesByEntityAsync(int entityType, string entityId, string definitionId);
 
 		/// <summary>
+		/// Gets all field values for a set of entities of the same type pinned to a given definition version.
+		/// Returns values for all supplied <paramref name="entityIds"/> in a single query (batch fetch).
+		/// </summary>
+		Task<IEnumerable<UdfFieldValue>> GetFieldValuesByEntitiesAsync(int entityType, IEnumerable<string> entityIds, string definitionId);
+
+		/// <summary>
 		/// Deletes all field values for an entity under a specific definition version.
 		/// Used when re-saving values to replace the set cleanly.
 		/// </summary>

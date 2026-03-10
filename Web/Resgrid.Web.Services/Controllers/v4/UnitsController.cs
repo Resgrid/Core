@@ -64,6 +64,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				var unitStatuses = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId);
 
+				// Batch-fetch all UDF values for every unit in one query, then group by EntityId
+				// so each unit can look up its own values without an extra round-trip (avoids N+1).
+				var unitEntityIds = units.Select(u => u.UnitId.ToString()).ToList();
+				var allUdfValues = await _userDefinedFieldsService.GetFieldValuesForEntitiesAsync(
+					DepartmentId, (int)UdfEntityType.Unit, unitEntityIds);
+				var udfValuesByEntityId = allUdfValues
+					.GroupBy(v => v.EntityId)
+					.ToDictionary(g => g.Key, g => g.ToList());
+
 				foreach (var unit in units)
 				{
 					if (!await _authorizationService.CanUserViewUnitViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
@@ -76,10 +85,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 					var unitData = ConvertUnitsData(unit, unitStatuses.FirstOrDefault(x => x.UnitId == unit.UnitId), type, TimeZone);
 
-					var udfValues = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Unit, unit.UnitId.ToString());
-					if (udfValues != null && udfValues.Any())
+					if (udfValuesByEntityId.TryGetValue(unit.UnitId.ToString(), out var unitUdfValues) && unitUdfValues.Any())
 					{
-						unitData.UdfValues = udfValues.Select(v => new UdfFieldValueResultData
+						unitData.UdfValues = unitUdfValues.Select(v => new UdfFieldValueResultData
 						{
 							UdfFieldValueId = v.UdfFieldValueId,
 							UdfFieldId = v.UdfFieldId,

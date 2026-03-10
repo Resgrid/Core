@@ -411,4 +411,10 @@
   <data name="VerificationRateLimited" xml:space="preserve">
     <value>Too many verification attempts. Please try again later.</value>
   </data>
+
+  <!-- Password requirements box -->
+  <data name="PasswordRequirementsHeader" xml:space="preserve"><value>Password Requirements</value></data>
+  <data name="PasswordRequirementsLength" xml:space="preserve"><value>At least {0} characters long</value></data>
+  <data name="PasswordRequirementsDigit" xml:space="preserve"><value>At least one digit (number)</value></data>
+  <data name="PasswordRequirementsCase" xml:space="preserve"><value>At least one uppercase and one lowercase letter</value></data>
 </root>

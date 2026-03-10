@@ -288,4 +288,10 @@
   <data name="YourDepartmentsHeader" xml:space="preserve">
     <value>Tus departamentos</value>
   </data>
+
+  <!-- Password requirements box -->
+  <data name="PasswordRequirementsHeader" xml:space="preserve"><value>Requisitos de contraseña</value></data>
+  <data name="PasswordRequirementsLength" xml:space="preserve"><value>Al menos {0} caracteres</value></data>
+  <data name="PasswordRequirementsDigit" xml:space="preserve"><value>Al menos un dígito (número)</value></data>
+  <data name="PasswordRequirementsCase" xml:space="preserve"><value>Al menos una letra mayúscula y una minúscula</value></data>
 </root>

@@ -179,12 +179,16 @@ namespace Resgrid.Model.Helpers
 			{
 				try
 				{
-					if (!Regex.IsMatch(value, rules.Regex))
+					if (!Regex.IsMatch(value, rules.Regex, RegexOptions.None, TimeSpan.FromMilliseconds(200)))
 						errors.Add(rules.RegexErrorMessage ?? $"{field.Label} does not match the required format.");
 				}
-				catch
+				catch (RegexMatchTimeoutException)
 				{
-					// Invalid regex pattern in rules — skip silently
+					errors.Add(rules.RegexErrorMessage ?? $"{field.Label} validation timed out; the value could not be validated against the required format.");
+				}
+				catch (ArgumentException)
+				{
+					errors.Add(rules.RegexErrorMessage ?? $"{field.Label} could not be validated due to an invalid pattern configuration.");
 				}
 			}
 

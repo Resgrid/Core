@@ -415,6 +415,11 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ContactsController.IsCallerGroupAdmin">
+            <summary>
+            Returns true if the current caller holds a group-admin claim for any group.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ContactVerificationController">
             <summary>
             Endpoints for sending and confirming contact-method verification codes.

@@ -17,6 +17,13 @@ namespace Resgrid.Tests.Mocks
 			return Task.FromResult<IEnumerable<UdfFieldValue>>(result.ToList());
 		}
 
+		public Task<IEnumerable<UdfFieldValue>> GetFieldValuesByEntitiesAsync(int entityType, IEnumerable<string> entityIds, string definitionId)
+		{
+			var idSet = new HashSet<string>(entityIds);
+			var result = _values.Where(v => v.EntityType == entityType && idSet.Contains(v.EntityId) && v.UdfDefinitionId == definitionId);
+			return Task.FromResult<IEnumerable<UdfFieldValue>>(result.ToList());
+		}
+
 		public Task<bool> DeleteFieldValuesByEntityAndDefinitionAsync(int entityType, string entityId, string definitionId, CancellationToken cancellationToken)
 		{
 			_values.RemoveAll(v => v.EntityType == entityType && v.EntityId == entityId && v.UdfDefinitionId == definitionId);

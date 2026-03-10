@@ -355,6 +355,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Personnel_View)]
 		public async Task<IActionResult> ViewPerson(string userId)
 		{
+			if (!await _authorizationService.CanUserViewUserAsync(UserId, userId))
 				return Unauthorized();
 
 			ViewPersonView model = new ViewPersonView();

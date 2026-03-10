@@ -102,10 +102,13 @@ namespace Resgrid.Web.Areas.User.Models.Security
 		[Range(0, 3650)]
 		public int PasswordExpirationDays { get; set; }
 
-		[Range(0, 128)]
+		/// <summary>
+		/// Minimum password length the department enforces. Must be 0 (use system default of 8)
+		/// or ≥ 8. Values 1–7 are invalid and will be rejected at validation.
+		/// </summary>
+		[Range(0, 128, ErrorMessage = "Must be between 0 and 128.")]
 		public int MinPasswordLength { get; set; } = 8;
 
-		public bool RequirePasswordComplexity { get; set; }
 
 		public int DataClassificationLevel { get; set; }
 		public SelectList DataClassificationLevels { get; set; }

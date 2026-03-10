@@ -13,6 +13,7 @@ using Resgrid.Model;
 using Resgrid.Web.Services.Models.v4.Contacts;
 using System;
 using Resgrid.Model.Helpers;
+using Resgrid.Web.ServicesCore.Helpers;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -159,15 +160,22 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var udfValues = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Contact, contactId);
 				if (udfValues != null && udfValues.Any())
 				{
-					result.Data.UdfValues = udfValues.Select(v => new UdfFieldValueResultData
-					{
-						UdfFieldValueId = v.UdfFieldValueId,
-						UdfFieldId = v.UdfFieldId,
-						UdfDefinitionId = v.UdfDefinitionId,
-						EntityId = v.EntityId,
-						EntityType = v.EntityType,
-						Value = v.Value
-					}).ToList();
+					bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+					bool isGroupAdmin = IsCallerGroupAdmin();
+					var visibleFields = await _userDefinedFieldsService.GetVisibleFieldsForActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Contact, isDeptAdmin, isGroupAdmin);
+					var visibleFieldIds = visibleFields.Select(f => f.UdfFieldId).ToHashSet();
+
+					result.Data.UdfValues = udfValues
+						.Where(v => visibleFieldIds.Contains(v.UdfFieldId))
+						.Select(v => new UdfFieldValueResultData
+						{
+							UdfFieldValueId = v.UdfFieldValueId,
+							UdfFieldId = v.UdfFieldId,
+							UdfDefinitionId = v.UdfDefinitionId,
+							EntityId = v.EntityId,
+							EntityType = v.EntityType,
+							Value = v.Value
+						}).ToList();
 				}
 
 				result.PageSize = 1;
@@ -229,6 +237,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ResponseHelper.PopulateV4ResponseData(result);
 
 			return result;
+		}
+
+		// ── Private helpers ──────────────────────────────────────────────────────
+
+		/// <summary>
+		/// Returns true if the current caller holds a group-admin claim for any group.
+		/// </summary>
+		private bool IsCallerGroupAdmin()
+		{
+			return HttpContext.User.Claims
+				.Any(c => c.Type.StartsWith(ResgridClaimTypes.Resources.Group + "/", StringComparison.Ordinal)
+					&& c.Value == ResgridClaimTypes.Actions.Update);
 		}
 
 		public static ContactCategoryResultData ConvertCategoryData(ContactCategory category, Department department, UserProfile addedProfile, UserProfile editedProfile)

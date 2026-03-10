@@ -325,6 +325,12 @@
   <data name="SecurityPolicySaveButton" xml:space="preserve"><value>Guardar Política de Seguridad</value></data>
   <data name="SecurityPolicyCancelButton" xml:space="preserve"><value>Cancelar</value></data>
   <data name="SecurityPolicyCannotEnableRequireSso" xml:space="preserve"><value>No se puede habilitar el inicio de sesión solo SSO: no existe una configuración SSO activa. Cree y habilite una configuración SSO primero.</value></data>
+  <data name="PwdErrorEmpty" xml:space="preserve"><value>La contraseña no puede estar vacía.</value></data>
+  <data name="PwdErrorNoDigit" xml:space="preserve"><value>La contraseña debe contener al menos un dígito (número).</value></data>
+  <data name="PwdErrorNoUppercase" xml:space="preserve"><value>La contraseña debe contener al menos una letra mayúscula.</value></data>
+  <data name="PwdErrorNoLowercase" xml:space="preserve"><value>La contraseña debe contener al menos una letra minúscula.</value></data>
+  <data name="PwdErrorTooShort" xml:space="preserve"><value>La contraseña debe tener al menos {0} caracteres.</value></data>
+  <data name="PwdMinLengthTooLow" xml:space="preserve"><value>La longitud mínima de la contraseña no puede ser menor que el valor predeterminado del sistema de 8 caracteres.</value></data>
 </root>
 
 

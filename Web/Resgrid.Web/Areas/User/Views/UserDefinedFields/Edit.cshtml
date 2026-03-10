@@ -121,6 +121,11 @@
             var $template   = $('#fieldRowTemplate');
             var fieldIndex  = @(Model.Fields.Count);   // next available index
 
+            // Localised validation messages (rendered server-side)
+            var MSG_NAME_REQUIRED = '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(localizer["ValidationMachineNameRequired"].Value))';
+            var MSG_NAME_PATTERN  = '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(localizer["ValidationMachineNamePattern"].Value))';
+            var MSG_DUPLICATES    = '@Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(localizer["ValidationDuplicateMachineNames"].Value))';
+
             // ── jQuery UI drag-and-drop ───────────────────────────────────────────
             $fieldList.sortable({
                 handle: '.field-drag-handle',
@@ -131,8 +136,30 @@
 
             function reindexSortOrders() {
                 $fieldList.find('.udf-field-row').each(function (idx) {
-                    $(this).find('input[name$=".SortOrder"]').val(idx);
+                    var $row = $(this);
+
+                    // Update every input, select, and textarea: rewrite name and id
+                    $row.find('input, select, textarea').each(function () {
+                        var $el = $(this);
+                        var name = $el.attr('name');
+                        var id   = $el.attr('id');
+                        if (name) $el.attr('name', name.replace(/Fields\[\d+]/, 'Fields[' + idx + ']'));
+                        if (id)   $el.attr('id',   id.replace(/Fields_\d+__/, 'Fields_' + idx + '__'));
+                    });
+
+                    // Update every label's for attribute
+                    $row.find('label[for]').each(function () {
+                        var $lbl = $(this);
+                        var forAttr = $lbl.attr('for');
+                        if (forAttr) $lbl.attr('for', forAttr.replace(/Fields_\d+__/, 'Fields_' + idx + '__'));
+                    });
+
+                    // Always keep SortOrder in sync with visual position
+                    $row.find('input[name$=".SortOrder"]').val(idx);
                 });
+
+                // Keep fieldIndex pointing at the next available contiguous index
+                fieldIndex = $fieldList.find('.udf-field-row').length;
             }
 
             // ── Add field ────────────────────────────────────────────────────────
@@ -237,11 +264,11 @@
 
                     if (!val) {
                         $nameInput.addClass('is-invalid');
-                        $hint.text('Machine name is required.').show();
+                        $hint.text(MSG_NAME_REQUIRED).show();
                         valid = false;
                     } else if (!MACHINE_NAME_PATTERN.test(val)) {
                         $nameInput.addClass('is-invalid');
-                        $hint.text('Use letters, digits, and underscores only, starting with a letter or underscore.').show();
+                        $hint.text(MSG_NAME_PATTERN).show();
                         valid = false;
                     } else {
                         $nameInput.removeClass('is-invalid');
@@ -258,7 +285,7 @@
                     else seen[n] = true;
                 });
                 if (dupes.length) {
-                    $errBox.text('Duplicate machine name(s): ' + dupes.join(', ') + '. Each machine name must be unique within this entity type.').show();
+                    $errBox.text(MSG_DUPLICATES.replace('{0}', dupes.join(', '))).show();
                     valid = false;
                 }
 

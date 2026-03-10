@@ -921,4 +921,10 @@
   <data name="SecurityPolicyCannotEnableRequireSso" xml:space="preserve">
     <value>Cannot enable SSO-only login: no active SSO configuration exists. Create and enable an SSO configuration first.</value>
   </data>
+  <data name="PwdErrorEmpty" xml:space="preserve"><value>Le mot de passe ne peut pas être vide.</value></data>
+  <data name="PwdErrorNoDigit" xml:space="preserve"><value>Le mot de passe doit contenir au moins un chiffre.</value></data>
+  <data name="PwdErrorNoUppercase" xml:space="preserve"><value>Le mot de passe doit contenir au moins une lettre majuscule.</value></data>
+  <data name="PwdErrorNoLowercase" xml:space="preserve"><value>Le mot de passe doit contenir au moins une lettre minuscule.</value></data>
+  <data name="PwdErrorTooShort" xml:space="preserve"><value>Le mot de passe doit comporter au moins {0} caractères.</value></data>
+  <data name="PwdMinLengthTooLow" xml:space="preserve"><value>La longueur minimale du mot de passe ne peut pas être inférieure à la valeur par défaut du système de 8 caractères.</value></data>
 </root>

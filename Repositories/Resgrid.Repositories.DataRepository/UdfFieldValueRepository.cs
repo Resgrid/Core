@@ -10,6 +10,7 @@ using Resgrid.Repositories.DataRepository.Queries.Udf;
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -47,6 +48,50 @@ namespace Resgrid.Repositories.DataRepository
 
 					return await x.QueryAsync<UdfFieldValue>(sql: query,
 						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				throw;
+			}
+		}
+
+		public async Task<IEnumerable<UdfFieldValue>> GetFieldValuesByEntitiesAsync(int entityType, IEnumerable<string> entityIds, string definitionId)
+		{
+			try
+			{
+				var idList = entityIds?.ToList() ?? new List<string>();
+				if (idList.Count == 0)
+					return Enumerable.Empty<UdfFieldValue>();
+
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<UdfFieldValue>>>(async x =>
+				{
+					var schema = _sqlConfiguration.SchemaName;
+					var table = _sqlConfiguration.UdfFieldValuesTableName;
+
+					// Build an inline SQL statement that leverages Dapper's native IN-list expansion.
+					// The @EntityIds parameter is expanded by Dapper into the correct number of bind variables.
+					var sql = $"SELECT * FROM {schema}.{table} WHERE EntityType = @EntityType AND EntityId IN @EntityIds AND UdfDefinitionId = @UdfDefinitionId";
+
+					return await x.QueryAsync<UdfFieldValue>(sql: sql,
+						param: new { EntityType = entityType, EntityIds = idList, UdfDefinitionId = definitionId },
 						transaction: _unitOfWork.Transaction);
 				});
 

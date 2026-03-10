@@ -10,6 +10,7 @@ namespace Resgrid.Web.Areas.User.Models
 	public class EditProfileModel: BaseUserModel
 	{
 		public string ApiUrl { get; set; }
+		public string UdfFormHtml { get; set; }
 		public Department Department { get; set; }
 		public IdentityUser User { get; set; }
 		public bool Self { get; set; }
@@ -65,6 +66,9 @@ namespace Resgrid.Web.Areas.User.Models
 		public bool IsDisabled { get; set; }
 		public bool IsHidden { get; set; }
 		public bool AreYouSure { get; set; }
+
+		/// <summary>Effective minimum password length for the department (≥ 8). Shown as a hint on password-change fields.</summary>
+		public int MinPasswordLength { get; set; } = 8;
 
 
 		[MaxLength(100)]

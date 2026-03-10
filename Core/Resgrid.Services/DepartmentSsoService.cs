@@ -341,6 +341,77 @@ namespace Resgrid.Services
 			}
 		}
 
+		// ── Password Policy helpers ────────────────────────────────────────────
+
+		/// <summary>The platform-enforced minimum password length. Department policies may not go below this.</summary>
+		private const int SystemMinPasswordLength = 8;
+
+		public async Task<int> GetEffectiveMinPasswordLengthAsync(int departmentId, CancellationToken cancellationToken = default)
+		{
+			try
+			{
+				var policy = await _securityPolicyRepository.GetByDepartmentIdAsync(departmentId);
+				if (policy == null || policy.MinPasswordLength <= SystemMinPasswordLength)
+					return SystemMinPasswordLength;
+
+				return policy.MinPasswordLength;
+			}
+			catch
+			{
+				return SystemMinPasswordLength;
+			}
+		}
+
+		public async Task<string> ValidatePasswordAgainstPolicyAsync(int departmentId, string newPassword, CancellationToken cancellationToken = default)
+		{
+			if (string.IsNullOrEmpty(newPassword))
+				return "PwdErrorEmpty";
+
+			// System-enforced complexity: digit, uppercase, lowercase
+			if (!newPassword.Any(char.IsDigit))
+				return "PwdErrorNoDigit";
+			if (!newPassword.Any(char.IsUpper))
+				return "PwdErrorNoUppercase";
+			if (!newPassword.Any(char.IsLower))
+				return "PwdErrorNoLowercase";
+
+			var minLength = await GetEffectiveMinPasswordLengthAsync(departmentId, cancellationToken);
+			if (newPassword.Length < minLength)
+				return $"PwdErrorTooShort:{minLength}";
+
+			return null;
+		}
+
+		public bool IsPasswordExpired(DepartmentSecurityPolicy policy, DateTime? passwordLastSetOn)
+		{
+			if (policy == null || policy.PasswordExpirationDays <= 0)
+				return false;
+
+			// If the user has never changed their password since tracking began, don't force expiry —
+			// they'll be required to update on the next natural change. This avoids a mass lockout.
+			if (passwordLastSetOn == null)
+				return false;
+
+			return DateTime.UtcNow > passwordLastSetOn.Value.AddDays(policy.PasswordExpirationDays);
+		}
+
+		public async Task RecordPasswordChangedAsync(int departmentId, string userId, CancellationToken cancellationToken = default)
+		{
+			try
+			{
+				var member = await _departmentMembersRepository.GetDepartmentMemberByDepartmentIdAndUserIdAsync(departmentId, userId);
+				if (member == null)
+					return;
+
+				member.PasswordLastSetOn = DateTime.UtcNow;
+				await _departmentMembersRepository.SaveOrUpdateAsync(member, cancellationToken);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
+		}
+
 		// ── Private helpers ───────────────────────────────────────────────────
 
 		private ClaimsPrincipal ValidateOidcToken(string idToken, DepartmentSsoConfig config, string departmentCode)

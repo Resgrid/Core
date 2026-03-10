@@ -7,6 +7,7 @@ using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Helpers;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -16,15 +17,18 @@ namespace Resgrid.Services
 		private readonly IUdfDefinitionRepository _definitionRepository;
 		private readonly IUdfFieldRepository _fieldRepository;
 		private readonly IUdfFieldValueRepository _valueRepository;
+		private readonly IUnitOfWork _unitOfWork;
 
 		public UserDefinedFieldsService(
 			IUdfDefinitionRepository definitionRepository,
 			IUdfFieldRepository fieldRepository,
-			IUdfFieldValueRepository valueRepository)
+			IUdfFieldValueRepository valueRepository,
+			IUnitOfWork unitOfWork)
 		{
 			_definitionRepository = definitionRepository;
 			_fieldRepository = fieldRepository;
 			_valueRepository = valueRepository;
+			_unitOfWork = unitOfWork;
 		}
 
 		public async Task<UdfDefinition> GetActiveDefinitionAsync(int departmentId, int entityType)
@@ -74,39 +78,55 @@ namespace Resgrid.Services
 					throw new InvalidOperationException(string.Join(" | ", nameErrors));
 			}
 
-			// Determine next version number
-			var existing = await _definitionRepository.GetActiveDefinitionByDepartmentAndEntityTypeAsync(departmentId, entityType);
-			var nextVersion = (existing?.Version ?? 0) + 1;
+			// Open a shared connection/transaction so the read, deactivation, and all inserts
+			// are atomic. This prevents two concurrent callers from computing the same
+			// nextVersion and/or leaving duplicate active definitions.
+			_unitOfWork.CreateOrGetConnection();
 
-			// Mark all current active definitions for this dept+type as inactive
-			await _definitionRepository.DeactivateDefinitionsByDepartmentAndEntityTypeAsync(departmentId, entityType, cancellationToken);
-
-			// Create new definition version
-			var definition = new UdfDefinition
+			UdfDefinition definition;
+			try
 			{
-				DepartmentId = departmentId,
-				EntityType = entityType,
-				Version = nextVersion,
-				IsActive = true,
-				CreatedOn = DateTime.UtcNow,
-				CreatedBy = userId
-			};
+				// Determine next version number (inside the transaction to get a consistent read)
+				var existing = await _definitionRepository.GetActiveDefinitionByDepartmentAndEntityTypeAsync(departmentId, entityType);
+				var nextVersion = (existing?.Version ?? 0) + 1;
 
-			await _definitionRepository.SaveOrUpdateAsync(definition, cancellationToken);
+				// Mark all current active definitions for this dept+type as inactive
+				await _definitionRepository.DeactivateDefinitionsByDepartmentAndEntityTypeAsync(departmentId, entityType, cancellationToken);
 
-			// Save fields linked to the new definition version.
-			// Always assign fresh IDs so each definition version owns independent field records
-			// and historical versions remain immutable.
-			if (fields != null)
-			{
-				for (int i = 0; i < fields.Count; i++)
+				// Create new definition version
+				definition = new UdfDefinition
 				{
-					var field = fields[i];
-					field.UdfFieldId = null;              // let RepositoryBase assign a new GUID
-					field.UdfDefinitionId = definition.UdfDefinitionId;
-					field.SortOrder = i;
-					await _fieldRepository.SaveOrUpdateAsync(field, cancellationToken);
+					DepartmentId = departmentId,
+					EntityType = entityType,
+					Version = nextVersion,
+					IsActive = true,
+					CreatedOn = DateTime.UtcNow,
+					CreatedBy = userId
+				};
+
+				await _definitionRepository.SaveOrUpdateAsync(definition, cancellationToken);
+
+				// Save fields linked to the new definition version.
+				// Always assign fresh IDs so each definition version owns independent field records
+				// and historical versions remain immutable.
+				if (fields != null)
+				{
+					for (int i = 0; i < fields.Count; i++)
+					{
+						var field = fields[i];
+						field.UdfFieldId = null;              // let RepositoryBase assign a new GUID
+						field.UdfDefinitionId = definition.UdfDefinitionId;
+						field.SortOrder = i;
+						await _fieldRepository.SaveOrUpdateAsync(field, cancellationToken);
+					}
 				}
+
+				_unitOfWork.CommitChanges();
+			}
+			catch
+			{
+				_unitOfWork.DiscardChanges();
+				throw;
 			}
 
 			return definition;
@@ -119,6 +139,20 @@ namespace Resgrid.Services
 				return new List<UdfFieldValue>();
 
 			var values = await _valueRepository.GetFieldValuesByEntityAsync(entityType, entityId, definition.UdfDefinitionId);
+			return values?.ToList() ?? new List<UdfFieldValue>();
+		}
+
+		public async Task<List<UdfFieldValue>> GetFieldValuesForEntitiesAsync(int departmentId, int entityType, IEnumerable<string> entityIds)
+		{
+			var idList = entityIds?.ToList() ?? new List<string>();
+			if (idList.Count == 0)
+				return new List<UdfFieldValue>();
+
+			var definition = await _definitionRepository.GetActiveDefinitionByDepartmentAndEntityTypeAsync(departmentId, entityType);
+			if (definition == null)
+				return new List<UdfFieldValue>();
+
+			var values = await _valueRepository.GetFieldValuesByEntitiesAsync(entityType, idList, definition.UdfDefinitionId);
 			return values?.ToList() ?? new List<UdfFieldValue>();
 		}
 

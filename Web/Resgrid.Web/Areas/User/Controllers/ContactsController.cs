@@ -306,16 +306,31 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _contactsService.SaveContactAsync(model.Contact, cancellationToken);
 
 				// Save UDF field values for the new contact
+				var udfDefinitionForCreate = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Contact);
 				var udfValues = Request.Form.Keys
 					.Where(k => k.StartsWith("udf_"))
 					.Select(k => new UdfFieldValue
 					{
 						UdfFieldId = k.Substring(4),
+						UdfDefinitionId = udfDefinitionForCreate?.UdfDefinitionId,
 						Value = Request.Form[k]
 					}).ToList();
 
 				if (udfValues.Any())
-					await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Contact, model.Contact.ContactId, udfValues, UserId, cancellationToken);
+				{
+					var validationErrors = await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Contact, model.Contact.ContactId, udfValues, UserId, cancellationToken);
+
+					if (validationErrors.Count > 0)
+					{
+						foreach (var kvp in validationErrors)
+						{
+							foreach (var errorMessage in kvp.Value)
+								ModelState.AddModelError(kvp.Key, errorMessage);
+						}
+
+						return View(model);
+					}
+				}
 
 				auditEvent.After = model.Contact.CloneJsonToString();
 				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
@@ -563,16 +578,31 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _contactsService.SaveContactAsync(model.Contact, cancellationToken);
 
 				// Save UDF field values for the updated contact
+				var udfDefinitionForEdit = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Contact);
 				var udfValues = Request.Form.Keys
 					.Where(k => k.StartsWith("udf_"))
 					.Select(k => new UdfFieldValue
 					{
 						UdfFieldId = k.Substring(4),
+						UdfDefinitionId = udfDefinitionForEdit?.UdfDefinitionId,
 						Value = Request.Form[k]
 					}).ToList();
 
 				if (udfValues.Any())
-					await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Contact, model.Contact.ContactId, udfValues, UserId, cancellationToken);
+				{
+					var validationErrors = await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Contact, model.Contact.ContactId, udfValues, UserId, cancellationToken);
+
+					if (validationErrors.Count > 0)
+					{
+						foreach (var kvp in validationErrors)
+						{
+							foreach (var errorMessage in kvp.Value)
+								ModelState.AddModelError(kvp.Key, errorMessage);
+						}
+
+						return View(model);
+					}
+				}
 
 				auditEvent.After = model.Contact.CloneJsonToString();
 				_eventAggregator.SendMessage<AuditEvent>(auditEvent);

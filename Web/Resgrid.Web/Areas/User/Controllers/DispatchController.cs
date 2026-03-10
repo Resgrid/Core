@@ -63,6 +63,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IFormsService _formsService;
 		private readonly IShiftsService _shiftsService;
 		private readonly IContactsService _contactsService;
+		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
+		private readonly IUdfRenderingService _udfRenderingService;
 
 		public DispatchController(IDepartmentsService departmentsService, IUsersService usersService, ICallsService callsService,
 			IDepartmentGroupsService departmentGroupsService, ICommunicationService communicationService, IQueueService queueService,
@@ -70,7 +72,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 						IPersonnelRolesService personnelRolesService, IDepartmentSettingsService departmentSettingsService, IUserProfileService userProfileService,
 						IUnitsService unitsService, IActionLogsService actionLogsService, IEventAggregator eventAggregator, ICustomStateService customStateService,
 						ITemplatesService templatesService, IPdfProvider pdfProvider, IProtocolsService protocolsService, IFormsService formsService,
-						IShiftsService shiftsService, IContactsService contactsService)
+						IShiftsService shiftsService, IContactsService contactsService,
+						IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -94,6 +97,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_formsService = formsService;
 			_shiftsService = shiftsService;
 			_contactsService = contactsService;
+			_userDefinedFieldsService = userDefinedFieldsService;
+			_udfRenderingService = udfRenderingService;
 		}
 		#endregion Private Members and Constructors
 
@@ -468,6 +473,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 				var call = await _callsService.SaveCallAsync(model.Call, cancellationToken);
 
+				// Save UDF field values for the new call
+				var udfValues = collection.Keys
+					.Where(k => k.StartsWith("udf_"))
+					.Select(k => new UdfFieldValue
+					{
+						UdfFieldId = k.Substring(4),
+						Value = collection[k]
+					}).ToList();
+
+				if (udfValues.Any())
+					await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Call, call.CallId.ToString(), udfValues, UserId, cancellationToken);
+
 				if (autoSetStatusForShiftPersonnel && shiftUserIds.Any())
 				{
 					if (shiftDispatchStatus < 0)
@@ -778,6 +795,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _callsService.SaveCallAsync(call, cancellationToken);
 				_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent() { DepartmentId = DepartmentId, Call = call });
 
+				// Save UDF field values for the updated call
+				var udfValues = collection.Keys
+					.Where(k => k.StartsWith("udf_"))
+					.Select(k => new UdfFieldValue
+					{
+						UdfFieldId = k.Substring(4),
+						Value = collection[k]
+					}).ToList();
+
+				if (udfValues.Any())
+					await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Call, call.CallId.ToString(), udfValues, UserId, cancellationToken);
+
 				if (model.RebroadcastCall)
 				{
 					var cqi = new CallQueueItem();
@@ -1050,6 +1079,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 				var call = await _callsService.SaveCallAsync(model.Call, cancellationToken);
 				_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = DepartmentId, Call = call });
+
+				// Save UDF field values for the archived call
+				var udfValues = collection.Keys
+					.Where(k => k.StartsWith("udf_"))
+					.Select(k => new UdfFieldValue
+					{
+						UdfFieldId = k.Substring(4),
+						Value = collection[k]
+					}).ToList();
+
+				if (udfValues.Any())
+					await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Call, call.CallId.ToString(), udfValues, UserId, cancellationToken);
 
 				if (model.ReCalcuateCallNumbers)
 				{
@@ -2166,6 +2207,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 				//model.ContactsList = new SelectList(model.Contacts, "ContactId", "Name");
 			}
 
+			var udfDefinition = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Call);
+			if (udfDefinition != null)
+			{
+				bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+				bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+				var udfFields = await _userDefinedFieldsService.GetVisibleFieldsForActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Call, isDeptAdmin, isGroupAdmin);
+				model.UdfFormHtml = _udfRenderingService.GenerateHtmlFormFields(udfDefinition, udfFields, new List<UdfFieldValue>());
+			}
+
 			return model;
 		}
 
@@ -2248,6 +2298,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 			}
 
+			if (model.Call != null && model.Call.CallId > 0)
+			{
+				var udfDefinition = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Call);
+				if (udfDefinition != null)
+				{
+					bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+					bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+					var udfFields = await _userDefinedFieldsService.GetVisibleFieldsForActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Call, isDeptAdmin, isGroupAdmin);
+					var udfValues = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Call, model.Call.CallId.ToString());
+					var visibleFieldIds = udfFields.Select(f => f.UdfFieldId).ToHashSet();
+					var filteredValues = (udfValues ?? new List<UdfFieldValue>()).Where(v => visibleFieldIds.Contains(v.UdfFieldId)).ToList();
+					model.UdfFormHtml = _udfRenderingService.GenerateHtmlFormFields(udfDefinition, udfFields, filteredValues);
+				}
+			}
+
 			return model;
 		}
 
@@ -2300,6 +2365,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Contacts = contacts;
 			else
 				model.Contacts = new List<Contact>();
+
+			var udfDefinition = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Call);
+			if (udfDefinition != null)
+			{
+				bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+				bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+				var udfFields = await _userDefinedFieldsService.GetVisibleFieldsForActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Call, isDeptAdmin, isGroupAdmin);
+				var udfValues = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Call, model.Call.CallId.ToString());
+				var visibleFieldIds = udfFields.Select(f => f.UdfFieldId).ToHashSet();
+				var filteredValues = (udfValues ?? new List<UdfFieldValue>()).Where(v => visibleFieldIds.Contains(v.UdfFieldId)).ToList();
+				model.UdfReadOnlyHtml = _udfRenderingService.GenerateReadOnlyHtml(udfDefinition, udfFields, filteredValues);
+			}
 
 			return model;
 		}

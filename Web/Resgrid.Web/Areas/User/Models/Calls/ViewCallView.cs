@@ -8,6 +8,7 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 {
 	public class ViewCallView: BaseUserModel
 	{
+		public string UdfReadOnlyHtml { get; set; }
 		public Department Department { get; set; }
 		public IdentityUser User { get; set; }
 		public Call Call { get; set; }

@@ -866,6 +866,52 @@ namespace Resgrid.Providers.Claims
 			}
 		}
 
+		/// <summary>
+		/// Grants the Udf resource claims based on the department's ViewUdfFields permission setting.
+		/// Department admins always receive full access (View + Update).
+		/// Group admins receive access when the permission is DepartmentAndGroupAdmins or Everyone.
+		/// Regular users receive access only when the permission is Everyone.
+		/// When no explicit permission record exists the default is Everyone (backwards compatible).
+		/// </summary>
+		public void AddUdfClaims(bool isAdmin, List<Permission> permissions, bool isGroupAdmin, List<PersonnelRole> roles)
+		{
+			// Department admins always have full UDF access regardless of the permission setting.
+			if (isAdmin)
+			{
+				AddClaim(new Claim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.View));
+				AddClaim(new Claim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.Update));
+				AddClaim(new Claim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.Create));
+				AddClaim(new Claim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.Delete));
+				return;
+			}
+
+			if (permissions != null && permissions.Any(x => x.PermissionType == (int)PermissionTypes.ViewUdfFields))
+			{
+				var permission = permissions.First(x => x.PermissionType == (int)PermissionTypes.ViewUdfFields);
+
+				if (permission.Action == (int)PermissionActions.DepartmentAdminsOnly)
+				{
+					// Non-admins get no UDF claims — fields stay hidden.
+				}
+				else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && isGroupAdmin)
+				{
+					AddClaim(new Claim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.View));
+					AddClaim(new Claim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.Update));
+				}
+				else if (permission.Action == (int)PermissionActions.Everyone)
+				{
+					AddClaim(new Claim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.View));
+					AddClaim(new Claim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.Update));
+				}
+			}
+			else
+			{
+				// Default: everyone can view and update UDF field values.
+				AddClaim(new Claim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.View));
+				AddClaim(new Claim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.Update));
+			}
+		}
+
 		public void AddContactsClaims(bool isAdmin, List<Permission> permissions, bool isGroupAdmin, List<PersonnelRole> roles)
 		{
 			if (permissions != null && permissions.Any(x => x.PermissionType == (int)PermissionTypes.ContactView))

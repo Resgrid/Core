@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using Resgrid.Web.Services.Models.v4.UserDefinedFields;
 
 namespace Resgrid.Web.Services.Models.v4.Calls
 {
@@ -100,5 +102,10 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// Should all the entities attached to the call be re-notified
 		/// </summary>
 		public bool RebroadcastCall { get; set; }
+
+		/// <summary>
+		/// User Defined Field values for this call
+		/// </summary>
+		public List<UdfFieldValueInput> UdfValues { get; set; }
 	}
 }

@@ -1,4 +1,5 @@
 ﻿using Resgrid.Web.Services.Models.v4.CallProtocols;
+using Resgrid.Web.Services.Models.v4.UserDefinedFields;
 using System;
 using System.Collections.Generic;
 
@@ -161,5 +162,10 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// Active Protocols for this call
 		/// </summary>
 		public List<CallProtocolResultData> Protocols { get; set; }
+
+		/// <summary>
+		/// User Defined Field values for this call
+		/// </summary>
+		public List<UdfFieldValueResultData> UdfValues { get; set; }
 	}
 }

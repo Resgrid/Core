@@ -135,6 +135,21 @@ namespace Resgrid.Services
 					return "SCIM Bearer Token Provisioned";
 				case AuditLogTypes.ScimBearerTokenRotated:
 					return "SCIM Bearer Token Rotated";
+				// User Defined Fields
+				case AuditLogTypes.UdfDefinitionCreated:
+					return "UDF Definition Created";
+				case AuditLogTypes.UdfDefinitionUpdated:
+					return "UDF Definition Updated";
+				case AuditLogTypes.UdfDefinitionDeleted:
+					return "UDF Definition Deleted";
+				case AuditLogTypes.UdfFieldAdded:
+					return "UDF Field Added";
+				case AuditLogTypes.UdfFieldUpdated:
+					return "UDF Field Updated";
+				case AuditLogTypes.UdfFieldRemoved:
+					return "UDF Field Removed";
+				case AuditLogTypes.UdfFieldValueSaved:
+					return "UDF Field Values Saved";
 			}
 
 			return $"Unknown ({logType})";

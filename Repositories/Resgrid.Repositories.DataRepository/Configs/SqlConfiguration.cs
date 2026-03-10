@@ -450,6 +450,18 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectAllCallContactsByCallIdQuery { get; set; }
 		#endregion Contacts
 
+		#region User Defined Fields
+		public string UdfDefinitionsTableName { get; set; }
+		public string UdfFieldsTableName { get; set; }
+		public string UdfFieldValuesTableName { get; set; }
+		public string SelectActiveUdfDefinitionByDeptAndTypeQuery { get; set; }
+		public string SelectUdfDefinitionsByDeptAndTypeQuery { get; set; }
+		public string SelectUdfFieldsByDefinitionIdQuery { get; set; }
+		public string SelectUdfFieldValuesByEntityQuery { get; set; }
+		public string UpdateUdfDefinitionsToInactiveQuery { get; set; }
+		public string DeleteUdfFieldValuesByEntityAndDefinitionQuery { get; set; }
+		#endregion User Defined Fields
+
 		// Identity
 
 		#region Table Names

@@ -1,4 +1,5 @@
 ﻿using Resgrid.Model;
+using Resgrid.Web.Services.Models.v4.UserDefinedFields;
 using System;
 using System.Collections.Generic;
 
@@ -109,5 +110,10 @@ namespace Resgrid.Web.Services.Models.v4.CallTypes
 		public string EditedByUserId { get; set; }
 
 		public string EditedByUserName { get; set; }
+
+		/// <summary>
+		/// User Defined Field values for this contact
+		/// </summary>
+		public List<UdfFieldValueResultData> UdfValues { get; set; }
 	}
 }

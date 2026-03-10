@@ -5,6 +5,7 @@ namespace Resgrid.Web.Areas.User.Models.Contacts;
 
 public class EditContactView
 {
+	public string UdfFormHtml { get; set; }
 	public string Message { get; set; }
 
 	public Department Department { get; set; }

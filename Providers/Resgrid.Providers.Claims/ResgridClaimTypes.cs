@@ -62,6 +62,7 @@
 			public const string WorkflowRun = "WorkflowRun";
 			public const string Sso = "Sso";
 			public const string Scim = "Scim";
+			public const string Udf = "Udf";
 		}
 
 		public static string CreateDepartmentClaimTypeString(int departmentId)

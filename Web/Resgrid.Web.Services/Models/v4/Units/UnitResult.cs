@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using Resgrid.Web.Services.Models.v4.UserDefinedFields;
 
 namespace Resgrid.Web.Services.Models.v4.Units
 {
@@ -107,5 +109,10 @@ namespace Resgrid.Web.Services.Models.v4.Units
 		/// Current user provide status note
 		/// </summary>
 		public string Note { get; set; }
+
+		/// <summary>
+		/// User Defined Field values for this unit
+		/// </summary>
+		public List<UdfFieldValueResultData> UdfValues { get; set; }
 	}
 }

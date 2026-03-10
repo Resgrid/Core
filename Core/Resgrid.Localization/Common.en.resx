@@ -657,6 +657,9 @@
   <data name="Yes" xml:space="preserve">
     <value>Yes</value>
   </data>
+  <data name="UserDefinedFields" xml:space="preserve">
+    <value>User Defined Fields</value>
+  </data>
   <data name="YourDepartments" xml:space="preserve">
     <value>Your Departments</value>
   </data>

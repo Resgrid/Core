@@ -5,6 +5,7 @@ namespace Resgrid.Web.Areas.User.Models.Personnel
 {
 	public class ViewPersonView
 	{
+		public string UdfReadOnlyHtml { get; set; }
 		public IdentityUser User { get; set; }
 		public UserProfile Profile { get; set; }
 		public DepartmentGroup Group { get; set; }

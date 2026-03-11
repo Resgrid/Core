@@ -378,9 +378,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			Department d = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			auditEvent.Before = d.CloneJsonToString();
 
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, d.DepartmentId))
+				return Unauthorized();
+
 			d.TimeZone = model.Department.TimeZone;
 			d.Name = model.Department.Name;
-			d.ManagingUserId = model.Department.ManagingUserId;
 			d.Use24HourTime = model.Use24HourTime;
 
 			ViewBag.Countries = new SelectList(Countries.CountryNames);
@@ -421,12 +423,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 			Address departmentAddress = null;
 			if (model.Department.Address.AddressId != 0)
 			{
-				departmentAddress = await _addressService.GetAddressByIdAsync(model.Department.Address.AddressId);
-				departmentAddress.Address1 = model.Department.Address.Address1;
-				departmentAddress.City = model.Department.Address.City;
-				departmentAddress.State = model.Department.Address.State;
-				departmentAddress.PostalCode = model.Department.Address.PostalCode;
-				departmentAddress.Country = model.Department.Address.Country;
+				// IDOR fix: verify the submitted address ID belongs to the authenticated user's department
+				if (d.AddressId.HasValue && d.AddressId.Value == model.Department.Address.AddressId)
+				{
+					departmentAddress = await _addressService.GetAddressByIdAsync(model.Department.Address.AddressId);
+					departmentAddress.Address1 = model.Department.Address.Address1;
+					departmentAddress.City = model.Department.Address.City;
+					departmentAddress.State = model.Department.Address.State;
+					departmentAddress.PostalCode = model.Department.Address.PostalCode;
+					departmentAddress.Country = model.Department.Address.Country;
+				}
+				else
+				{
+					// The submitted AddressId does not belong to this department; treat as a new address
+					departmentAddress = model.Department.Address;
+					departmentAddress.AddressId = 0;
+				}
 			}
 			else
 				departmentAddress = model.Department.Address;
@@ -579,17 +591,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 					task.Friday = true;
 					task.Saturday = true;
 					task.Sunday = true;
-					task.UserId = model.Department.ManagingUserId;
-					task.DepartmentId = model.Department.DepartmentId;
+					// IDOR fix: use server-authoritative values, not model-bound ones
+					task.UserId = d.ManagingUserId;
+					task.DepartmentId = DepartmentId;
 
-					await _scheduledTasksService.DeleteDepartmentStaffingResetJobAsync(model.Department.DepartmentId, cancellationToken);
+					await _scheduledTasksService.DeleteDepartmentStaffingResetJobAsync(DepartmentId, cancellationToken);
 					await _scheduledTasksService.SaveScheduledTaskAsync(task, cancellationToken);
 				}
 				else
 				{
 					model.ResetStaffingTo = (int)UserStateTypes.Available;
 					model.TimeToResetStaffing = String.Empty;
-					await _scheduledTasksService.DeleteDepartmentStaffingResetJobAsync(model.Department.DepartmentId, cancellationToken);
+					await _scheduledTasksService.DeleteDepartmentStaffingResetJobAsync(DepartmentId, cancellationToken);
 				}
 
 				if (model.EnableStatusReset)
@@ -607,17 +620,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 					task.Friday = true;
 					task.Saturday = true;
 					task.Sunday = true;
-					task.UserId = model.Department.ManagingUserId;
-					task.DepartmentId = model.Department.DepartmentId;
+					// IDOR fix: use server-authoritative values, not model-bound ones
+					task.UserId = d.ManagingUserId;
+					task.DepartmentId = DepartmentId;
 
-					await _scheduledTasksService.DeleteDepartmentStatusResetJob(model.Department.DepartmentId, cancellationToken);
+					await _scheduledTasksService.DeleteDepartmentStatusResetJob(DepartmentId, cancellationToken);
 					await _scheduledTasksService.SaveScheduledTaskAsync(task, cancellationToken);
 				}
 				else
 				{
 					model.ResetStatusTo = (int)ActionTypes.StandingBy;
 					model.TimeToResetStatus = String.Empty;
-					await _scheduledTasksService.DeleteDepartmentStatusResetJob(model.Department.DepartmentId, cancellationToken);
+					await _scheduledTasksService.DeleteDepartmentStatusResetJob(DepartmentId, cancellationToken);
 				}
 
 				_eventAggregator.SendMessage<DepartmentSettingsChangedEvent>(new DepartmentSettingsChangedEvent() { DepartmentId = DepartmentId });
@@ -651,6 +665,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> ProvisionApiKey(CancellationToken cancellationToken)
 		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
 			DepartmentSettingsModel model = new DepartmentSettingsModel();
 
 			Department d = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
@@ -666,6 +683,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> ProvisionApiKeyAsync(CancellationToken cancellationToken)
 		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
 			Department d = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			d.ApiKey = Guid.NewGuid().ToString("N");
 			await _departmentsService.UpdateDepartmentAsync(d, cancellationToken);
@@ -677,6 +697,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> ProvisionActiveCallRssKey(CancellationToken cancellationToken)
 		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
 			await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, Guid.NewGuid().ToString("N"), DepartmentSettingTypes.RssFeedKeyForActiveCalls,
 				cancellationToken);
 
@@ -706,10 +729,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> Address(SettingsAddressModel model, CancellationToken cancellationToken)
 		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			// IDOR fix: always load the department from the server using the authenticated user's DepartmentId
+			var currentDepartment = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+
 			Address address = null;
 
 			if (model.Department.Address.AddressId != 0)
 			{
+				// IDOR fix: only allow editing the address if its ID matches the one stored on the department record
+				if (!currentDepartment.AddressId.HasValue || currentDepartment.AddressId.Value != model.Department.Address.AddressId)
+					return Unauthorized();
+
 				address = await _addressService.GetAddressByIdAsync(model.Department.Address.AddressId);
 				address.AddressId = model.Department.Address.AddressId;
 				address.Address1 = model.Department.Address.Address1;
@@ -721,7 +754,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			else
 				address = model.Department.Address;
 
-			model.Department = await _departmentsService.GetDepartmentByUserIdAsync(UserId);
+			model.Department = currentDepartment;
 			model.User = _usersService.GetUserById(UserId);
 
 
@@ -833,6 +866,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> CallSettings(CallSettingsView model, CancellationToken cancellationToken)
 		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
 			model.CallTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
@@ -1166,6 +1202,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> TextSettings(TextSetupModel model, CancellationToken cancellationToken)
 		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
 			model.CanProvisionNumber = await _limitsService.CanDepartmentProvisionNumberAsync(DepartmentId);
 			model.DepartmentTextToCallNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
 
@@ -1498,6 +1537,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> SubmitSetupWizard([FromBody] SetupWizardFormPayload payload, CancellationToken cancellationToken)
 		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
 			var formCollection = JsonConvert.DeserializeObject<Dictionary<string, string>>(payload.setupWizardForm);
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
@@ -1596,6 +1638,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> ShiftSettings(ShiftSettingsView model, CancellationToken cancellationToken)
 		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
 			if (ModelState.IsValid)
 			{
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.AllowSignupsForMultipleShiftGroups.ToString(),
@@ -1651,6 +1696,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> DispatchSettings(DispatchSettingsView model, CancellationToken cancellationToken)
 		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
 			var actionLogs = await _customStateService.GetActivePersonnelStateForDepartmentAsync(DepartmentId);
 			if (actionLogs == null)
 			{
@@ -1717,6 +1765,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> MappingSettings(MappingSettingsView model, CancellationToken cancellationToken)
 		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
 			if (ModelState.IsValid)
 			{
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.PersonnelLocationTTL.ToString(),
@@ -1760,6 +1811,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> DeleteDepartment(DeleteDepartmentView model, CancellationToken cancellationToken)
 		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
 			if (model.AreYouSure == false)
 				ModelState.AddModelError("AreYouSure", "You need to confirm the delete.");
 
@@ -1847,6 +1901,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> ModuleSettings(DepartmentModulesSettingView model, CancellationToken cancellationToken)
 		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
 			if (ModelState.IsValid)
 			{
 				var modules = await _departmentSettingsService.GetDepartmentModuleSettingsAsync(DepartmentId);

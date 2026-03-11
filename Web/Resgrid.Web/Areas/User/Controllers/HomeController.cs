@@ -493,8 +493,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_View)]
 		public async Task<IActionResult> EditUserProfile(EditProfileModel model, IFormCollection form, CancellationToken cancellationToken)
 		{
+			// Re-derive the target user identity server-side; never trust the model-bound UserId
+			// if it was not explicitly provided (e.g. editing own profile via direct navigation).
+			if (string.IsNullOrWhiteSpace(model.UserId))
+				model.UserId = UserId;
+
 			if (!await _authorizationService.CanUserEditProfileAsync(UserId, DepartmentId, model.UserId))
 				return Unauthorized();
+
+			// SECURITY: Derive IsOwnProfile server-side — never trust the form-posted value.
+			// An attacker could submit IsOwnProfile=true to gain access to the password/username
+			// change code paths while targeting another user's profile.
+			model.IsOwnProfile = model.UserId == UserId;
+
+			// Determine the caller's privilege level server-side for use throughout this action.
+			bool callerIsDepartmentAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+			bool callerIsGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
 
 			model.User = _usersService.GetUserById(model.UserId);
 			//model.PushUris = await _pushUriService.GetPushUrisByUserId(model.UserId);
@@ -574,10 +588,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (model.User.Email != model.Email)
 			{
-				var currentEmail = _usersService.GetUserByEmail(model.Email);
+				// SECURITY: Email changes are high-privilege — only the account owner or a department
+				// admin may change an email address.  A group admin must NOT be able to change a
+				// member's email because that enables account-takeover via the password-reset flow.
+				if (!model.IsOwnProfile && !callerIsDepartmentAdmin)
+				{
+					ModelState.AddModelError("Email", "You do not have permission to change this user's email address.");
+				}
+				else
+				{
+					var currentEmail = _usersService.GetUserByEmail(model.Email);
 
-				if (currentEmail != null && currentEmail.Id != model.User.UserId.ToString())
-					ModelState.AddModelError("Email", "Email Address Already in Use. Please use another one.");
+					if (currentEmail != null && currentEmail.Id != model.User.UserId.ToString())
+						ModelState.AddModelError("Email", "Email Address Already in Use. Please use another one.");
+				}
 			}
 
 			if (model.Profile.VoiceForCall)
@@ -691,7 +715,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					savedProfile.VoiceCallMobile = false;
 				}
 
-				if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				if (callerIsDepartmentAdmin)
 				{
 					var currentGroup = await _departmentGroupsService.GetGroupForUserAsync(model.UserId, DepartmentId);
 					if (model.UserGroup != 0 && (currentGroup == null || currentGroup.DepartmentGroupId != model.UserGroup))
@@ -776,18 +800,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var depMember = await _departmentsService.GetDepartmentMemberAsync(model.UserId, DepartmentId);
 				if (depMember != null)
 				{
-					// Users Department Admin status changes, invalid the department object in cache.
-					if (model.IsDepartmentAdmin != depMember.IsAdmin)
-						_departmentsService.InvalidateDepartmentInCache(depMember.DepartmentId);
+					// SECURITY: Only department admins may change administrative flags on a member.
+					// Group admins can edit profile data but must not be able to promote/demote
+					// department admins, disable users, or hide them from the roster.
+					if (callerIsDepartmentAdmin)
+					{
+						// Users Department Admin status changes, invalid the department object in cache.
+						if (model.IsDepartmentAdmin != depMember.IsAdmin)
+							_departmentsService.InvalidateDepartmentInCache(depMember.DepartmentId);
 
-					depMember.IsAdmin = model.IsDepartmentAdmin;
-					depMember.IsDisabled = model.IsDisabled;
-					depMember.IsHidden = model.IsHidden;
+						depMember.IsAdmin = model.IsDepartmentAdmin;
+						depMember.IsDisabled = model.IsDisabled;
+						depMember.IsHidden = model.IsHidden;
+					}
 
 					await _departmentsService.SaveDepartmentMemberAsync(depMember, cancellationToken);
 				}
 
-				_usersService.UpdateEmail(model.User.Id, model.Email);
+				// SECURITY: Only the account owner or a department admin may update the email address.
+				if (model.IsOwnProfile || callerIsDepartmentAdmin)
+					_usersService.UpdateEmail(model.User.Id, model.Email);
 
 				if (model.IsOwnProfile)
 				{
@@ -823,8 +855,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 							Value = form[k]
 						}).ToList();
 
-					bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
-					bool isGroupAdmin = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+					bool isDeptAdmin = callerIsDepartmentAdmin;
+					bool isGroupAdmin = callerIsGroupAdmin;
 					var udfValidationErrors = await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Personnel, model.UserId, udfValues, UserId, isDeptAdmin, isGroupAdmin, cancellationToken);
 
 					if (udfValidationErrors != null && udfValidationErrors.Count > 0)
@@ -843,8 +875,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					var udfDefinitionOnUdfError = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Personnel);
 					if (udfDefinitionOnUdfError != null)
 					{
-						bool isDeptAdminOnUdfError = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
-						bool isGroupAdminOnUdfError = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+						bool isDeptAdminOnUdfError = callerIsDepartmentAdmin;
+						bool isGroupAdminOnUdfError = callerIsGroupAdmin;
 						var udfFieldsOnUdfError = await _userDefinedFieldsService.GetVisibleFieldsForActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Personnel, isDeptAdminOnUdfError, isGroupAdminOnUdfError);
 						var udfValuesOnUdfError = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Personnel, model.UserId);
 						var visibleFieldIdsOnUdfError = udfFieldsOnUdfError.Select(f => f.UdfFieldId).ToHashSet();
@@ -881,8 +913,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var udfDefinitionOnFailure = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Personnel);
 			if (udfDefinitionOnFailure != null)
 			{
-				bool isDeptAdminOnFailure = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
-				bool isGroupAdminOnFailure = await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId);
+				bool isDeptAdminOnFailure = callerIsDepartmentAdmin;
+				bool isGroupAdminOnFailure = callerIsGroupAdmin;
 				var udfFieldsOnFailure = await _userDefinedFieldsService.GetVisibleFieldsForActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Personnel, isDeptAdminOnFailure, isGroupAdminOnFailure);
 				var udfValuesOnFailure = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Personnel, model.UserId);
 				var visibleFieldIdsOnFailure = udfFieldsOnFailure.Select(f => f.UdfFieldId).ToHashSet();

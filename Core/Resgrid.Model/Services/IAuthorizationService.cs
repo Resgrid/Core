@@ -332,5 +332,15 @@ namespace Resgrid.Model.Services
 		Task<bool> CanUserManageWorkflowCredentialAsync(string userId, int departmentId);
 
 		Task<bool> CanUserViewWorkflowRunsAsync(string userId, int departmentId);
+
+		/// <summary>
+		/// Determines whether the specified user is a department admin or managing member of the given department.
+		/// Both <paramref name="userId"/> and <paramref name="departmentId"/> must be explicitly supplied by the
+		/// caller so the check is performed against the actual resource being modified, not just claims values.
+		/// </summary>
+		/// <param name="userId">The user identifier to verify.</param>
+		/// <param name="departmentId">The department identifier of the resource being modified.</param>
+		/// <returns><c>true</c> if the user is the managing member or a department admin; otherwise <c>false</c>.</returns>
+		Task<bool> CanUserModifyDepartmentAsync(string userId, int departmentId);
 	}
 }

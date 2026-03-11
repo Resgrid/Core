@@ -149,6 +149,11 @@ namespace Resgrid.Web.Helpers
 			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Documents, ResgridClaimTypes.Actions.Create);
 		}
 
+		public static bool CanDeleteDocument()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Documents, ResgridClaimTypes.Actions.Delete);
+		}
+
 		public static bool CanCreateNote()
 		{
 			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Notes, ResgridClaimTypes.Actions.Create);

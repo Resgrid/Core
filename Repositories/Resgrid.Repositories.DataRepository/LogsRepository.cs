@@ -201,7 +201,7 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("DepartmentId", departmentId);
-					dynamicParameters.Add("Year", int.Parse(year));
+					dynamicParameters.Add("Year", int.TryParse(year, out var parsedYear) ? parsedYear : DateTime.UtcNow.Year);
 
 					var query = _queryFactory.GetQuery<SelecAllLogsByDidYearQuery>();
 

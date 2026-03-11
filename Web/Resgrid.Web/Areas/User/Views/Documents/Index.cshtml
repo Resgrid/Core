@@ -74,44 +74,20 @@
                                         <small>@commonLocalizer["Added"]: @doc.AddedOn.TimeConverterToString(Model.Department)</small>
                                     </div>
                                 </a>
+                                @if (ClaimsAuthorizationHelper.CanDeleteDocument() && (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || doc.UserId == Model.UserId))
+                                {
+                                    <form asp-controller="Documents" asp-action="DeleteDocument" asp-route-area="User" method="post"
+                                          onsubmit="return confirm('WARNING: This will permanently delete the document \'@doc.Name\'. Are you sure?');"
+                                          style="display:inline;">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="documentId" value="@doc.DocumentId" />
+                                        <button type="submit" class="btn btn-xs btn-danger" title="Delete document">
+                                            <i class="fa fa-trash"></i> Delete
+                                        </button>
+                                    </form>
+                                }
                             </div>
                         </div>
-
-                        @*<tr>
-                    <td>
-                    <a href="@Url.Action("GetDocument", "Documents", new {Area="User", documentId = doc.DocumentId})">@doc.Name</a>
-                    </td>
-                    <td>
-                    @doc.Category
-                    </td>
-                    <td>
-                    @Html.TimeConverterToString(doc.AddedOn, Model.Department)
-                    </td>
-                    <td>
-                    <div class='btn-group'>
-                    <a class='btn btn-xs btn-primary dropdown-toggle' data-toggle='dropdown' href='#'><i class='icon-cog'></i> <span class='caret'></span></a>
-                    <ul class='dropdown-menu pull-right'>
-                    <li>
-                    <a href="@Url.Action("GetDocument", "Documents", new { area = "User", documentId = doc.DocumentId })">
-                    <i class='icon-download'></i> Download
-                    </a>
-                    </li>
-                    @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || doc.UserId != Model.UserId)
-                    {
-                    <li>
-                    <a href="@Url.Action("EditDocument", "Documents", new {area = "User", documentId = doc.DocumentId})">
-                    <i class='icon-edit'></i> Edit
-                    </a>
-                    </li>
-                    <li>
-                    <a href="@Url.Action("DeleteDocument", "Documents", new {area = "User", documentId = doc.DocumentId})" data-confirm="WARNING: This will permanently delete this document. Are you sure you want to delete the document @doc.Name?" rel="nofollow"><i class="icon-trash"></i>&nbsp;Delete</a>
-                    </li>
-                    }
-                    </ul>
-                    </div>
-
-                    </td>
-                    </tr>*@
                     }
 
 
@@ -121,3 +97,4 @@
         </div>
     </div>
 </div>
+}

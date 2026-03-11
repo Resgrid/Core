@@ -1516,5 +1516,15 @@ namespace Resgrid.Services
 			return _permissionsService.IsUserAllowed(permission, department != null && department.IsUserAnAdmin(userId), isGroupAdmin, roles);
 		}
 
+		public async Task<bool> CanUserModifyDepartmentAsync(string userId, int departmentId)
+		{
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
+
+			if (department == null)
+				return false;
+
+			return department.IsUserAnAdmin(userId);
+		}
+
 	}
 }

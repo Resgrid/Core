@@ -91,7 +91,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			};
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Documents_Delete)]
 		public async Task<IActionResult> DeleteDocument(int documentId, CancellationToken cancellationToken)
 		{

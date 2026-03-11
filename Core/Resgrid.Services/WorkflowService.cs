@@ -88,15 +88,11 @@ namespace Resgrid.Services
 			var workflow = await _workflowRepository.GetByIdAsync(workflowId);
 			if (workflow == null) return false;
 
-			// Delete child records in dependency order to avoid FK constraint violations:
-			// 1. WorkflowRunLogs (references WorkflowRuns)
-			await _runLogRepository.DeleteAllByWorkflowIdAsync(workflowId);
-			// 2. WorkflowRuns (references Workflows)
-			await _runRepository.DeleteAllByWorkflowIdAsync(workflowId);
-			// 3. WorkflowSteps (references Workflows)
-			await _stepRepository.DeleteAllByWorkflowIdAsync(workflowId);
-			// 4. Workflow itself
-			await _workflowRepository.DeleteAsync(workflow, cancellationToken);
+			// Atomically delete all child records (WorkflowRunLogs → WorkflowRuns → WorkflowSteps)
+			// and the workflow itself within a single database transaction. This prevents the
+			// FK_WorkflowRuns_Workflows constraint violation that occurs when a background worker
+			// inserts a new WorkflowRun between the sequential per-table deletes.
+			await _workflowRepository.DeleteWorkflowWithAllDependenciesAsync(workflowId);
 
 			return true;
 		}
@@ -172,6 +168,14 @@ namespace Resgrid.Services
 				step.CreatedOn = DateTime.UtcNow;
 				return await _stepRepository.InsertAsync(step, cancellationToken);
 			}
+
+			// Fetch the existing record to preserve immutable audit fields (CreatedOn, CreatedByUserId).
+			var existing = await _stepRepository.GetByIdAsync(step.WorkflowStepId);
+			if (existing == null)
+				throw new KeyNotFoundException($"WorkflowStep '{step.WorkflowStepId}' was not found. It may have been deleted or the ID is stale.");
+
+			step.CreatedOn = existing.CreatedOn;
+			step.CreatedByUserId = existing.CreatedByUserId;
 			step.UpdatedOn = DateTime.UtcNow;
 			await _stepRepository.UpdateAsync(step, cancellationToken);
 			return step;

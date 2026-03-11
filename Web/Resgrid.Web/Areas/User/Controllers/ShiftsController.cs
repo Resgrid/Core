@@ -1088,7 +1088,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var calendarItems = new List<ShiftCalendarItemJson>();
 			var shift = await _shiftsService.GetShiftByIdAsync(shiftId);
 
-			if (shift == null || shift.Days == null || !shift.Days.Any())
+			if (shift == null || shift.DepartmentId != DepartmentId || shift.Days == null || !shift.Days.Any())
 				return Json(calendarItems);
 
 			var allGroups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);

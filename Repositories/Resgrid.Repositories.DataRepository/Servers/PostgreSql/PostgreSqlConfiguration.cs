@@ -88,7 +88,8 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 							SELECT a1.*, u.*
 							FROM %SCHEMA%.%ACTIONLOGSTABLE% a1
 							INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% u ON u.Id = a1.UserId
-							WHERE a1.UserId = %USERID% AND a1.ActionLogId < %ACTIONLOGID%";
+							WHERE a1.UserId = %USERID% AND a1.ActionLogId < %ACTIONLOGID%
+							ORDER BY a1.ActionLogId DESC LIMIT 1";
 			SelectLastActionLogByUserIdQuery = @"
 							SELECT a1.*, u.*
 							FROM %SCHEMA%.%ACTIONLOGSTABLE% a1

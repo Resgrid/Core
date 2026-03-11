@@ -39,7 +39,7 @@ namespace Resgrid.Providers.Cache
 					catch (Exception deserializeEx)
 					{
 						Logging.LogException(deserializeEx);
-						Remove(SetCacheKeyForEnv(cacheKey));
+						Remove(cacheKey);
 						data = null;
 					}
 
@@ -115,7 +115,7 @@ namespace Resgrid.Providers.Cache
 					catch (Exception deserializeEx)
 					{
 						Logging.LogException(deserializeEx);
-						await RemoveAsync(SetCacheKeyForEnv(cacheKey));
+						await RemoveAsync(cacheKey);
 						data = null;
 					}
 

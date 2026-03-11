@@ -1,4 +1,4 @@
-﻿﻿using Resgrid.Model;
+﻿using Resgrid.Model;
 using Resgrid.Model.Repositories.Queries.Contracts;
 using Resgrid.Repositories.DataRepository.Configs;
 using Resgrid.Repositories.DataRepository.Extensions;

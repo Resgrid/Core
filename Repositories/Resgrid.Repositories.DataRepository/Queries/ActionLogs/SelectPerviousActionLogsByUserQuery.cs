@@ -21,7 +21,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.ActionLogs
 					_sqlConfiguration.ParameterNotation,
 					new string[] {
 						"%USERID%",
-						"%ACTIONLOGID"
+						"%ACTIONLOGID%"
 					},
 					new string[] {
 						"UserId",
@@ -29,7 +29,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.ActionLogs
 					},
 					new string[] {
 						"%ACTIONLOGSTABLE%",
-						"%USERSTABLE%"
+						"%ASPNETUSERSTABLE%"
 					},
 					new string[] {
 						_sqlConfiguration.ActionLogsTable,

@@ -36,10 +36,11 @@ namespace Resgrid.Providers.Cache
 						if (cacheValue.HasValue)
 							data = ObjectSerialization.Deserialize<T>(cacheValue);
 					}
-					catch
+					catch (Exception deserializeEx)
 					{
+						Logging.LogException(deserializeEx);
 						Remove(SetCacheKeyForEnv(cacheKey));
-						throw;
+						data = null;
 					}
 
 					if (data != null)
@@ -111,10 +112,11 @@ namespace Resgrid.Providers.Cache
 						if (cacheValue.HasValue)
 							data = ObjectSerialization.Deserialize<T>(cacheValue);
 					}
-					catch
+					catch (Exception deserializeEx)
 					{
+						Logging.LogException(deserializeEx);
 						await RemoveAsync(SetCacheKeyForEnv(cacheKey));
-						throw;
+						data = null;
 					}
 
 					if (data != null)
@@ -157,7 +159,7 @@ namespace Resgrid.Providers.Cache
 			if (Config.SystemBehaviorConfig.CacheEnabled && _connection != null && _connection.IsConnected)
 			{
 				cache = _connection.GetDatabase();
-				
+
 				if (value != null && cache != null)
 				{
 					try

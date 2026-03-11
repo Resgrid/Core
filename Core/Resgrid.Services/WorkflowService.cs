@@ -169,20 +169,13 @@ namespace Resgrid.Services
 				return await _stepRepository.InsertAsync(step, cancellationToken);
 			}
 
-			// Fetch the existing record to preserve immutable audit fields (CreatedOn, CreatedByUserId)
-			// so that DateTime.MinValue is never passed to SQL Server.
+			// Fetch the existing record to preserve immutable audit fields (CreatedOn, CreatedByUserId).
 			var existing = await _stepRepository.GetByIdAsync(step.WorkflowStepId);
-			if (existing != null)
-			{
-				step.CreatedOn = existing.CreatedOn;
-				step.CreatedByUserId = existing.CreatedByUserId;
-			}
-			else if (step.CreatedOn == default)
-			{
-				// Fallback: prevents SqlDateTime overflow when existing record is not found
-				step.CreatedOn = DateTime.UtcNow;
-			}
+			if (existing == null)
+				throw new KeyNotFoundException($"WorkflowStep '{step.WorkflowStepId}' was not found. It may have been deleted or the ID is stale.");
 
+			step.CreatedOn = existing.CreatedOn;
+			step.CreatedByUserId = existing.CreatedByUserId;
 			step.UpdatedOn = DateTime.UtcNow;
 			await _stepRepository.UpdateAsync(step, cancellationToken);
 			return step;

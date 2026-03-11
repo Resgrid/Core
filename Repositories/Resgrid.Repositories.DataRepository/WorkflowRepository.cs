@@ -140,44 +140,84 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			try
 			{
-				using (var conn = _connectionProvider.Create())
+				var dp = new DynamicParametersExtension();
+				dp.Add("WorkflowId", workflowId);
+
+				// Lock SQL: acquired inside the transaction before child deletes so that no
+				// concurrent WorkflowRun INSERT can slip in between the child deletes and the
+				// parent delete, which would cause an FK violation.
+				string lockWorkflowSql;
+				string deleteWorkflowSql;
+				if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
 				{
-					await conn.OpenAsync();
+					lockWorkflowSql   = $"SELECT workflowid FROM {_sqlConfiguration.SchemaName}.workflows WHERE workflowid = {_sqlConfiguration.ParameterNotation}WorkflowId FOR UPDATE";
+					deleteWorkflowSql = $"DELETE FROM {_sqlConfiguration.SchemaName}.workflows WHERE workflowid = {_sqlConfiguration.ParameterNotation}WorkflowId";
+				}
+				else
+				{
+					lockWorkflowSql   = $"SELECT [WorkflowId] FROM {_sqlConfiguration.SchemaName}.[Workflows] WITH (UPDLOCK, HOLDLOCK) WHERE [WorkflowId] = {_sqlConfiguration.ParameterNotation}WorkflowId";
+					deleteWorkflowSql = $"DELETE FROM {_sqlConfiguration.SchemaName}.[Workflows] WHERE [WorkflowId] = {_sqlConfiguration.ParameterNotation}WorkflowId";
+				}
 
-					using (var transaction = conn.BeginTransaction(IsolationLevel.ReadCommitted))
+				if (_unitOfWork?.Connection != null)
+				{
+					// Enlist in the caller's ambient unit-of-work — reuse its connection and
+					// transaction so the deletes participate in the same transaction scope and
+					// do not commit independently.
+					var conn = _unitOfWork.CreateOrGetConnection();
+					var transaction = _unitOfWork.Transaction;
+
+					// Lock the parent row before touching any child tables so that concurrent
+					// run inserts targeting this workflow are blocked for the duration of the
+					// transaction, preventing FK constraint violations.
+					await conn.ExecuteAsync(sql: lockWorkflowSql, param: dp, transaction: transaction);
+
+					var deleteRunLogsQuery = _queryFactory.GetDeleteQuery<DeleteWorkflowRunLogsByWorkflowIdQuery>();
+					await conn.ExecuteAsync(sql: deleteRunLogsQuery, param: dp, transaction: transaction);
+
+					var deleteRunsQuery = _queryFactory.GetDeleteQuery<DeleteWorkflowRunsByWorkflowIdQuery>();
+					await conn.ExecuteAsync(sql: deleteRunsQuery, param: dp, transaction: transaction);
+
+					var deleteStepsQuery = _queryFactory.GetDeleteQuery<DeleteWorkflowStepsByWorkflowIdQuery>();
+					await conn.ExecuteAsync(sql: deleteStepsQuery, param: dp, transaction: transaction);
+
+					await conn.ExecuteAsync(sql: deleteWorkflowSql, param: dp, transaction: transaction);
+				}
+				else
+				{
+					// No ambient unit-of-work — open a dedicated connection and manage a local
+					// transaction to keep the multi-step delete atomic.
+					using (var conn = _connectionProvider.Create())
 					{
-						try
+						await conn.OpenAsync();
+
+						using (var transaction = conn.BeginTransaction(IsolationLevel.ReadCommitted))
 						{
-							var dp = new DynamicParametersExtension();
-							dp.Add("WorkflowId", workflowId);
+							try
+							{
+								// Lock the parent row before touching any child tables so that
+								// concurrent run inserts targeting this workflow are blocked for
+								// the duration of this transaction, preventing FK violations.
+								await conn.ExecuteAsync(sql: lockWorkflowSql, param: dp, transaction: transaction);
 
-							// 1. Delete WorkflowRunLogs (child of WorkflowRuns)
-							var deleteRunLogsQuery = _queryFactory.GetDeleteQuery<DeleteWorkflowRunLogsByWorkflowIdQuery>();
-							await conn.ExecuteAsync(sql: deleteRunLogsQuery, param: dp, transaction: transaction);
+								var deleteRunLogsQuery = _queryFactory.GetDeleteQuery<DeleteWorkflowRunLogsByWorkflowIdQuery>();
+								await conn.ExecuteAsync(sql: deleteRunLogsQuery, param: dp, transaction: transaction);
 
-							// 2. Delete WorkflowRuns (child of Workflows) — deleted after logs so no FK violations
-							var deleteRunsQuery = _queryFactory.GetDeleteQuery<DeleteWorkflowRunsByWorkflowIdQuery>();
-							await conn.ExecuteAsync(sql: deleteRunsQuery, param: dp, transaction: transaction);
+								var deleteRunsQuery = _queryFactory.GetDeleteQuery<DeleteWorkflowRunsByWorkflowIdQuery>();
+								await conn.ExecuteAsync(sql: deleteRunsQuery, param: dp, transaction: transaction);
 
-							// 3. Delete WorkflowSteps (child of Workflows)
-							var deleteStepsQuery = _queryFactory.GetDeleteQuery<DeleteWorkflowStepsByWorkflowIdQuery>();
-							await conn.ExecuteAsync(sql: deleteStepsQuery, param: dp, transaction: transaction);
+								var deleteStepsQuery = _queryFactory.GetDeleteQuery<DeleteWorkflowStepsByWorkflowIdQuery>();
+								await conn.ExecuteAsync(sql: deleteStepsQuery, param: dp, transaction: transaction);
 
-							// 4. Delete the Workflow itself
-							string deleteWorkflowSql;
-							if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
-								deleteWorkflowSql = $"DELETE FROM {_sqlConfiguration.SchemaName}.workflows WHERE workflowid = {_sqlConfiguration.ParameterNotation}WorkflowId";
-							else
-								deleteWorkflowSql = $"DELETE FROM {_sqlConfiguration.SchemaName}.[Workflows] WHERE [WorkflowId] = {_sqlConfiguration.ParameterNotation}WorkflowId";
+								await conn.ExecuteAsync(sql: deleteWorkflowSql, param: dp, transaction: transaction);
 
-							await conn.ExecuteAsync(sql: deleteWorkflowSql, param: dp, transaction: transaction);
-
-							transaction.Commit();
-						}
-						catch
-						{
-							transaction.Rollback();
-							throw;
+								transaction.Commit();
+							}
+							catch
+							{
+								transaction.Rollback();
+								throw;
+							}
 						}
 					}
 				}

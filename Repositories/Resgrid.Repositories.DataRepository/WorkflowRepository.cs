@@ -9,6 +9,8 @@ using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Connection;
 using Resgrid.Model.Repositories.Queries;
 using Resgrid.Repositories.DataRepository.Configs;
+using System.Data;
+using Resgrid.Config;
 using Resgrid.Repositories.DataRepository.Queries.Workflows;
 
 namespace Resgrid.Repositories.DataRepository
@@ -124,6 +126,60 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					conn = _unitOfWork.CreateOrGetConnection();
 					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				throw;
+			}
+		}
+
+		/// <inheritdoc />
+		public async Task DeleteWorkflowWithAllDependenciesAsync(string workflowId)
+		{
+			try
+			{
+				using (var conn = _connectionProvider.Create())
+				{
+					await conn.OpenAsync();
+
+					using (var transaction = conn.BeginTransaction(IsolationLevel.ReadCommitted))
+					{
+						try
+						{
+							var dp = new DynamicParametersExtension();
+							dp.Add("WorkflowId", workflowId);
+
+							// 1. Delete WorkflowRunLogs (child of WorkflowRuns)
+							var deleteRunLogsQuery = _queryFactory.GetDeleteQuery<DeleteWorkflowRunLogsByWorkflowIdQuery>();
+							await conn.ExecuteAsync(sql: deleteRunLogsQuery, param: dp, transaction: transaction);
+
+							// 2. Delete WorkflowRuns (child of Workflows) — deleted after logs so no FK violations
+							var deleteRunsQuery = _queryFactory.GetDeleteQuery<DeleteWorkflowRunsByWorkflowIdQuery>();
+							await conn.ExecuteAsync(sql: deleteRunsQuery, param: dp, transaction: transaction);
+
+							// 3. Delete WorkflowSteps (child of Workflows)
+							var deleteStepsQuery = _queryFactory.GetDeleteQuery<DeleteWorkflowStepsByWorkflowIdQuery>();
+							await conn.ExecuteAsync(sql: deleteStepsQuery, param: dp, transaction: transaction);
+
+							// 4. Delete the Workflow itself
+							string deleteWorkflowSql;
+							if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
+								deleteWorkflowSql = $"DELETE FROM {_sqlConfiguration.SchemaName}.workflows WHERE workflowid = {_sqlConfiguration.ParameterNotation}WorkflowId";
+							else
+								deleteWorkflowSql = $"DELETE FROM {_sqlConfiguration.SchemaName}.[Workflows] WHERE [WorkflowId] = {_sqlConfiguration.ParameterNotation}WorkflowId";
+
+							await conn.ExecuteAsync(sql: deleteWorkflowSql, param: dp, transaction: transaction);
+
+							transaction.Commit();
+						}
+						catch
+						{
+							transaction.Rollback();
+							throw;
+						}
+					}
 				}
 			}
 			catch (Exception ex)

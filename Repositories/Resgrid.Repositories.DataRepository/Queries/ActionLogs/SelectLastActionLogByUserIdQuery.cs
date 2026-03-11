@@ -1,4 +1,4 @@
-﻿using Resgrid.Model;
+﻿﻿using Resgrid.Model;
 using Resgrid.Model.Repositories.Queries.Contracts;
 using Resgrid.Repositories.DataRepository.Configs;
 using Resgrid.Repositories.DataRepository.Extensions;
@@ -27,7 +27,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.ActionLogs
 					},
 					new string[] {
 						"%ACTIONLOGSTABLE%",
-						"%USERSTABLE%"
+						"%ASPNETUSERSTABLE%"
 					},
 					new string[] {
 						_sqlConfiguration.ActionLogsTable,

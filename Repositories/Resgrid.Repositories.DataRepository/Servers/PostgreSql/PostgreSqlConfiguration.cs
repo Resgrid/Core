@@ -85,16 +85,16 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 							INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% u ON u.Id = al.UserId
 							WHERE al.DestinationId = %CALLID%  AND (al.ActionTypeId IS NULL OR al.ActionTypeId IN (%TYPES%))";
 			SelectPreviousActionLogsByUserQuery = @"
-							SELECT %SCHEMA%.%ACTIONLOGSTABLE%.*, %SCHEMA%.%ASPNETUSERSTABLE%.*
+							SELECT a1.*, u.*
 							FROM %SCHEMA%.%ACTIONLOGSTABLE% a1
-							INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% ON %SCHEMA%.%ASPNETUSERSTABLE%.Id = %SCHEMA%.%ACTIONLOGSTABLE%.UserId
-							WHERE a1.UserId = %USERID% AND ActionLogId < %ACTIONLOGID%";
+							INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% u ON u.Id = a1.UserId
+							WHERE a1.UserId = %USERID% AND a1.ActionLogId < %ACTIONLOGID%";
 			SelectLastActionLogByUserIdQuery = @"
-							SELECT %SCHEMA%.%ACTIONLOGSTABLE%.*, %SCHEMA%.%ASPNETUSERSTABLE%.*
+							SELECT a1.*, u.*
 							FROM %SCHEMA%.%ACTIONLOGSTABLE% a1
-							INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% ON %SCHEMA%.%ASPNETUSERSTABLE%.Id = %SCHEMA%.%ACTIONLOGSTABLE%.UserId
+							INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% u ON u.Id = a1.UserId
 							WHERE a1.UserId = %USERID%
-							ORDER BY ActionLogId DESC limit 1";
+							ORDER BY a1.ActionLogId DESC limit 1";
 			SelectActionLogsByCallIdQuery = @"
 					SELECT al.*, u.*
 					FROM %SCHEMA%.%ACTIONLOGSTABLE% al

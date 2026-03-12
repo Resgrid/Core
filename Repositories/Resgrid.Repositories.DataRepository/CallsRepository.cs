@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
@@ -164,7 +164,7 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("DepartmentId", departmentId);
-					dynamicParameters.Add("Year", int.Parse(year));
+					dynamicParameters.Add("Year", int.Parse(year.Trim()));
 
 					var query = _queryFactory.GetQuery<SelectAllClosedCallsByDidYearQuery>();
 

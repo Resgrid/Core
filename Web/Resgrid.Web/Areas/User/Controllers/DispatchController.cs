@@ -1972,10 +1972,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			List<CallListJson> callsJson = new List<CallListJson>();
 
 			List<Resgrid.Model.Call> calls;
-			if (String.IsNullOrWhiteSpace(year))
+			var normalizedYear = string.IsNullOrWhiteSpace(year) || year.Trim().Equals("null", StringComparison.OrdinalIgnoreCase) ? null : year.Trim();
+			if (normalizedYear == null)
 				calls = await _callsService.GetClosedCallsByDepartmentAsync(DepartmentId);
 			else
-				calls = await _callsService.GetClosedCallsByDepartmentYearAsync(DepartmentId, year);
+				calls = await _callsService.GetClosedCallsByDepartmentYearAsync(DepartmentId, normalizedYear);
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 

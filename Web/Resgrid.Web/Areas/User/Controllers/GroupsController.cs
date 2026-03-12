@@ -466,7 +466,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ModelState.AddModelError("", string.Format("{0} cannot be both a Group Admin and a Group Member. Please add them to only one list.", profile.FullName.AsFirstNameLastName));
 			}
 
-			// Check newly added users are not in a *different* group — exclude the group being edited
+			// Check newly added users are not in a *different* group ï¿½ exclude the group being edited
 			foreach (var groupUser in allUsers.Distinct())
 			{
 				if (await _departmentGroupsService.IsUserInAGroupAsync(groupUser, model.EditGroup.DepartmentGroupId, DepartmentId))
@@ -517,7 +517,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				model.EditGroup.DepartmentId = DepartmentId;
 
-				// Build desired member list from submitted values — UpdateAsync handles insert/delete/update against the DB
+				// Build desired member list from submitted values ï¿½ UpdateAsync handles insert/delete/update against the DB
 				var desiredMembers = allUsers.Distinct().Select(user => new DepartmentGroupMember
 				{
 					DepartmentId = DepartmentId,
@@ -617,26 +617,36 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var group = await _departmentGroupsService.GetGroupByIdAsync(model.DepartmentGroupId);
 
-			if (group != null)
-			{
-				group.GeofenceColor = model.Color;
-				group.Geofence = model.GeoFence;
+			if (group == null)
+				return new StatusCodeResult((int)HttpStatusCode.BadRequest);
 
-				await _departmentGroupsService.SaveAsync(group, cancellationToken);
-				model.Success = true;
-				model.Message = "Station response area geofence has been saved.";
+			if (group.DepartmentId != DepartmentId)
+				return Unauthorized();
 
-				return Json(model);
-			}
+			if (!await _authorizationService.CanUserEditDepartmentGroupAsync(UserId, model.DepartmentGroupId))
+				return Unauthorized();
 
-			return new StatusCodeResult((int)HttpStatusCode.BadRequest);
+			group.GeofenceColor = model.Color;
+			group.Geofence = model.GeoFence;
+
+			await _departmentGroupsService.SaveAsync(group, cancellationToken);
+			model.Success = true;
+			model.Message = "Station response area geofence has been saved.";
+
+			return Json(model);
 		}
+
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.GenericGroup_View)]
 
 		public async Task<IActionResult> GetMembersForGroup(int groupId, bool includeAdmins = true, bool includeNormal = true)
 		{
+			var ownerGroup = await _departmentGroupsService.GetGroupByIdAsync(groupId);
+
+			if (ownerGroup == null || ownerGroup.DepartmentId != DepartmentId)
+				return Unauthorized();
+
 			var groupsJson = new List<GroupMemberJson>();
 			var groups = await _departmentGroupsService.GetAllMembersForGroupAsync(groupId);
 

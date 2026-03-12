@@ -421,43 +421,52 @@ namespace Resgrid.Services
 			Coordinates coordinates = null;
 
 			var departmentGroup = await GetGroupByIdAsync(departmentGroupId);
+
+			if (departmentGroup == null)
+				return null;
+
 			var department = await _departmentsService.GetDepartmentByIdAsync(departmentGroup.DepartmentId);
 
 			if (departmentGroup.Address != null)
 			{
-				coordinates = new Coordinates();
 				string coordinateString = await _geoLocationProvider.GetLatLonFromAddress(string.Format("{0} {1} {2} {3} {4}", departmentGroup.Address.Address1,
 				departmentGroup.Address.City, departmentGroup.Address.State, departmentGroup.Address.PostalCode,
 				departmentGroup.Address.Country));
 
-				var coords = coordinateString.Split(char.Parse(","));
-				coordinates.Latitude = double.Parse(coords[0]);
-				coordinates.Longitude = double.Parse(coords[1]);
+				coordinates = ParseCoordinates(coordinateString);
 			}
 
-			if (coordinates == null && department.Address != null)
+			if (coordinates == null && department?.Address != null)
 			{
-				coordinates = new Coordinates();
 				string coordinateString = await _geoLocationProvider.GetLatLonFromAddress(string.Format("{0} {1} {2} {3} {4}", department.Address.Address1,
 				department.Address.City, department.Address.State, department.Address.PostalCode, department.Address.Country));
 
-				var coords = coordinateString.Split(char.Parse(","));
-				coordinates.Latitude = double.Parse(coords[0]);
-				coordinates.Longitude = double.Parse(coords[1]);
+				coordinates = ParseCoordinates(coordinateString);
 			}
 
 			var gpsCoordinates = await _departmentSettingsService.GetBigBoardCenterGpsCoordinatesDepartmentAsync(departmentGroup.DepartmentId);
 			if (coordinates == null && !string.IsNullOrWhiteSpace(gpsCoordinates))
 			{
-				coordinates = new Coordinates();
-
-				var coords = gpsCoordinates.Split(char.Parse(","));
-				coordinates.Latitude = double.Parse(coords[0]);
-				coordinates.Longitude = double.Parse(coords[1]);
+				coordinates = ParseCoordinates(gpsCoordinates);
 			}
 
-
 			return coordinates;
+		}
+
+		private static Coordinates ParseCoordinates(string coordinateString)
+		{
+			if (string.IsNullOrWhiteSpace(coordinateString))
+				return null;
+
+			var coords = coordinateString.Split(',');
+			if (coords.Length < 2)
+				return null;
+
+			if (!double.TryParse(coords[0], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double latitude) ||
+			    !double.TryParse(coords[1], System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double longitude))
+				return null;
+
+			return new Coordinates { Latitude = latitude, Longitude = longitude };
 		}
 
 		public async Task<DepartmentGroupMember> MoveUserIntoGroupAsync(string userId, int groupId, bool isAdmin, int departmentId, CancellationToken cancellationToken = default(CancellationToken))

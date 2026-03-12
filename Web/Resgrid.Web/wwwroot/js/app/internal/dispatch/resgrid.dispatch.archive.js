@@ -33,7 +33,7 @@ var resgrid;
                         {
                             data: 'CallId', title: 'Actions', orderable: false,
                             render: function (data, type, row) {
-                                var html = '<a class="btn btn-xs btn-primary" href="' + resgrid.absoluteBaseUrl + '/User/Dispatch/CallInfo?callId=' + data + '">View</a> ';
+                                var html = '<a class="btn btn-xs btn-primary" href="' + resgrid.absoluteBaseUrl + '/User/Dispatch/ViewCall?callId=' + data + '">View</a> ';
                                 if (row.CanDeleteCall) {
                                     html += '<a class="btn btn-xs btn-danger" href="' + resgrid.absoluteBaseUrl + '/User/Dispatch/DeleteCall?callId=' + data + '">Delete</a>';
                                 }

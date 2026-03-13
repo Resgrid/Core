@@ -72,11 +72,11 @@ var resgrid;
                 // Bootstrap modal wrappers replacing kendoWindow
                 $('#callsWindow').on('show.bs.modal', function () {
                     var $b = $(this).find('.modal-body');
-                    if ($b.is(':empty')) { $b.load('/User/Dispatch/SmallCallGrid'); }
+                    if ($.trim($b.html()) === '') { $b.load(resgrid.absoluteBaseUrl + '/User/Dispatch/SmallCallGrid'); }
                 });
                 $('#unitsWindow').on('show.bs.modal', function () {
                     var $b = $(this).find('.modal-body');
-                    if ($b.is(':empty')) { $b.load('/User/Units/SmallUnitsGrid'); }
+                    if ($.trim($b.html()) === '') { $b.load(resgrid.absoluteBaseUrl + '/User/Units/SmallUnitsGrid'); }
                 });
                 newlog.wndCalls = { center: function() { return this; }, open: function() { $('#callsWindow').modal('show'); }, close: function() { $('#callsWindow').modal('hide'); } };
                 newlog.wndUnits = { center: function() { return this; }, open: function() { $('#unitsWindow').modal('show'); }, close: function() { $('#unitsWindow').modal('hide'); } };

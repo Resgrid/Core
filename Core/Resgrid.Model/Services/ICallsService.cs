@@ -219,6 +219,27 @@ namespace Resgrid.Model.Services
 		Task<CallNote> SaveCallNoteAsync(CallNote note, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
+		/// Gets all flagged call notes for a department asynchronous.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;List&lt;CallNote&gt;&gt;.</returns>
+		Task<List<CallNote>> GetFlaggedCallNotesByDepartmentIdAsync(int departmentId);
+
+		/// <summary>
+		/// Gets all flagged call images for a department asynchronous.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;List&lt;CallAttachment&gt;&gt;.</returns>
+		Task<List<CallAttachment>> GetFlaggedCallImagesByDepartmentIdAsync(int departmentId);
+
+		/// <summary>
+		/// Gets all flagged call files (audio, files, video) for a department asynchronous.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;List&lt;CallAttachment&gt;&gt;.</returns>
+		Task<List<CallAttachment>> GetFlaggedCallFilesByDepartmentIdAsync(int departmentId);
+
+		/// <summary>
 		/// Gets the call attachment asynchronous.
 		/// </summary>
 		/// <param name="callAttachmentId">The call attachment identifier.</param>

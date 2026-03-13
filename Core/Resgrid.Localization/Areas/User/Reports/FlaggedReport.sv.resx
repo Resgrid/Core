@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="ReportTitle" xml:space="preserve">
+    <value>Rapport över flaggade samtalnoteringar, bilder och filer</value>
+  </data>
+  <data name="ReportIndexDescription" xml:space="preserve">
+    <value>Den här rapporten visar alla flaggade samtalsnoteringar, bilder och filer för avdelningen, inklusive tillhörande samtalsinformation, innehåll eller filnamn, flaggningsdetaljer och anledningen till att varje objekt flaggades.</value>
+  </data>
+  <data name="ReportStartDate" xml:space="preserve">
+    <value>Rapportens startdatum</value>
+  </data>
+  <data name="ReportEndDate" xml:space="preserve">
+    <value>Rapportens slutdatum</value>
+  </data>
+  <data name="RunReport" xml:space="preserve">
+    <value>Kör rapport</value>
+  </data>
+  <data name="DateFilterApplied" xml:space="preserve">
+    <value>Datumfilter tillämpat</value>
+  </data>
+  <data name="FlaggedNotesSection" xml:space="preserve">
+    <value>Flaggade noteringar</value>
+  </data>
+  <data name="FlaggedImagesSection" xml:space="preserve">
+    <value>Flaggade bilder</value>
+  </data>
+  <data name="FlaggedFilesSection" xml:space="preserve">
+    <value>Flaggade filer</value>
+  </data>
+  <data name="FlaggedCountSuffix" xml:space="preserve">
+    <value>flaggad(e)</value>
+  </data>
+  <data name="NoFlaggedNotesFound" xml:space="preserve">
+    <value>Inga flaggade samtalsnoteringar hittades för denna avdelning.</value>
+  </data>
+  <data name="NoFlaggedImagesFound" xml:space="preserve">
+    <value>Inga flaggade samtalsbilder hittades för denna avdelning.</value>
+  </data>
+  <data name="NoFlaggedFilesFound" xml:space="preserve">
+    <value>Inga flaggade samtalsfiler hittades för denna avdelning.</value>
+  </data>
+  <data name="CallNumberHeader" xml:space="preserve">
+    <value>Samtal #</value>
+  </data>
+  <data name="CallNameHeader" xml:space="preserve">
+    <value>Samtalsnamn</value>
+  </data>
+  <data name="CallTypeHeader" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="CallAddressHeader" xml:space="preserve">
+    <value>Adress</value>
+  </data>
+  <data name="CallLoggedOnHeader" xml:space="preserve">
+    <value>Samtal loggat</value>
+  </data>
+  <data name="NoteHeader" xml:space="preserve">
+    <value>Notering</value>
+  </data>
+  <data name="NoteByHeader" xml:space="preserve">
+    <value>Notering av</value>
+  </data>
+  <data name="NoteTimestampHeader" xml:space="preserve">
+    <value>Noteringens tidsstämpel</value>
+  </data>
+  <data name="FlagInfoHeader" xml:space="preserve">
+    <value>Flagginfo</value>
+  </data>
+  <data name="FileNameHeader" xml:space="preserve">
+    <value>Filnamn</value>
+  </data>
+  <data name="ImageByHeader" xml:space="preserve">
+    <value>Bild av</value>
+  </data>
+  <data name="ImageTimestampHeader" xml:space="preserve">
+    <value>Bildens tidsstämpel</value>
+  </data>
+  <data name="FileTypeHeader" xml:space="preserve">
+    <value>Filtyp</value>
+  </data>
+  <data name="FileByHeader" xml:space="preserve">
+    <value>Fil av</value>
+  </data>
+  <data name="FileTimestampHeader" xml:space="preserve">
+    <value>Filens tidsstämpel</value>
+  </data>
+  <data name="FlaggedByLabel" xml:space="preserve">
+    <value>Flaggad av</value>
+  </data>
+  <data name="FlaggedOnLabel" xml:space="preserve">
+    <value>Flaggad den</value>
+  </data>
+  <data name="ReasonLabel" xml:space="preserve">
+    <value>Anledning</value>
+  </data>
+  <data name="DateRangeLabel" xml:space="preserve">
+    <value>Datumintervall</value>
+  </data>
+  <data name="ReportGeneratedLabel" xml:space="preserve">
+    <value>Rapport genererad</value>
+  </data>
+</root>
+
+

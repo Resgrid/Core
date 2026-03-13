@@ -470,6 +470,20 @@
                                                                     <span><a style="text-decoration:none;" class="btn btn-xs btn-success" asp-controller="Dispatch" asp-action="GetCallFile" asp-route-area="User" asp-route-callAttachmentId="@file.CallAttachmentId">@commonLocalizer["Download"]</a></span>
                                                                 }
                                                             </td>
+                                                            <td>
+                                                                @if (file.IsFlagged)
+                                                                {
+                                                                    <a class="btn btn-xs btn-danger" href="@Url.Action("FlagCallFile", "Dispatch", new { Area = "User", callId = file.CallId, callAttachmentId = file.CallAttachmentId })">
+                                                                        <i class="fa fa-flag"></i> @localizer["FlagFile"]
+                                                                    </a>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <a class="btn btn-xs btn-default" href="@Url.Action("FlagCallFile", "Dispatch", new { Area = "User", callId = file.CallId, callAttachmentId = file.CallAttachmentId })">
+                                                                        <i class="fa fa-flag-o"></i> @localizer["FlagFile"]
+                                                                    </a>
+                                                                }
+                                                            </td>
                                                         </tr>
                                                     }
                                                 </tbody>
@@ -482,8 +496,8 @@
                                                 {
                                                     <div>
                                                         <div class="ibox-content">
-                                                            <div>
-                                                                <dl class="dl-horizontal">
+                                                            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                                                                <dl class="dl-horizontal" style="flex: 1;">
                                                                     <dt>@commonLocalizer["Name"]:</dt>
                                                                     <dd>@image.Name</dd>
                                                                     <dt>@commonLocalizer["Timestamp"]:</dt>
@@ -498,7 +512,20 @@
                                                                     <dt>@commonLocalizer["Location"]:</dt>
                                                                     <dd>@commonLocalizer["Unknown"]</dd>
                                                                 </dl>
-
+                                                                <div style="margin-left: 10px;">
+                                                                    @if (image.IsFlagged)
+                                                                    {
+                                                                        <a class="btn btn-xs btn-danger" href="@Url.Action("FlagCallImage", "Dispatch", new { Area = "User", callId = image.CallId, callAttachmentId = image.CallAttachmentId })">
+                                                                            <i class="fa fa-flag"></i> @localizer["FlagImage"]
+                                                                        </a>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <a class="btn btn-xs btn-default" href="@Url.Action("FlagCallImage", "Dispatch", new { Area = "User", callId = image.CallId, callAttachmentId = image.CallAttachmentId })">
+                                                                            <i class="fa fa-flag-o"></i> @localizer["FlagImage"]
+                                                                        </a>
+                                                                    }
+                                                                </div>
                                                             </div>
                                                             <div>
                                                                 <img style="max-width:300px;" src="@Url.Action("GetCallImage", "Dispatch", new {Area = "User", callId = image.CallId, attachmentId = image.CallAttachmentId})" />

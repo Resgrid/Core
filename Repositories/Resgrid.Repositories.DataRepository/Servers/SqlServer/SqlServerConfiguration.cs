@@ -1099,6 +1099,24 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					FROM %SCHEMA%.%CALLSTABLE% c
 					INNER JOIN %SCHEMA%.%CALLCONTACTSTABLE% cc ON cc.CallId = c.CallId
 					WHERE cc.ContactId = %CONTACTID% AND c.IsDeleted = 0 AND c.DepartmentId = %DID%";
+			SelectFlaggedCallNotesByDepartmentIdQuery = @"
+					SELECT cn.*
+					FROM %SCHEMA%.%CALLNOTESTABLE% cn
+					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON c.[CallId] = cn.[CallId]
+					WHERE cn.[IsFlagged] = 1 AND c.[DepartmentId] = %DID%
+					ORDER BY cn.[FlaggedOn] DESC";
+			SelectFlaggedCallImagesByDepartmentIdQuery = @"
+					SELECT ca.*
+					FROM %SCHEMA%.%CALLATTACHMENTSTABLE% ca
+					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON c.[CallId] = ca.[CallId]
+					WHERE ca.[IsFlagged] = 1 AND ca.[CallAttachmentType] = 2 AND c.[DepartmentId] = %DID%
+					ORDER BY ca.[FlaggedOn] DESC";
+			SelectFlaggedCallFilesByDepartmentIdQuery = @"
+					SELECT ca.*
+					FROM %SCHEMA%.%CALLATTACHMENTSTABLE% ca
+					INNER JOIN %SCHEMA%.%CALLSTABLE% c ON c.[CallId] = ca.[CallId]
+					WHERE ca.[IsFlagged] = 1 AND ca.[CallAttachmentType] IN (1, 3, 4) AND c.[DepartmentId] = %DID%
+					ORDER BY ca.[FlaggedOn] DESC";
 
 			#endregion Calls
 

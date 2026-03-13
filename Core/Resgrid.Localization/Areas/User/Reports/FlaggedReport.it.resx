@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="ReportTitle" xml:space="preserve">
+    <value>Rapporto di note, immagini e file di chiamata segnalati</value>
+  </data>
+  <data name="ReportIndexDescription" xml:space="preserve">
+    <value>Questo rapporto mostra tutte le note di chiamata, le immagini e i file segnalati del dipartimento, incluse le informazioni sulla chiamata associata, il contenuto o il nome del file, i dettagli della segnalazione e il motivo per cui ogni elemento è stato segnalato.</value>
+  </data>
+  <data name="ReportStartDate" xml:space="preserve">
+    <value>Data inizio rapporto</value>
+  </data>
+  <data name="ReportEndDate" xml:space="preserve">
+    <value>Data fine rapporto</value>
+  </data>
+  <data name="RunReport" xml:space="preserve">
+    <value>Esegui rapporto</value>
+  </data>
+  <data name="DateFilterApplied" xml:space="preserve">
+    <value>Filtro data applicato</value>
+  </data>
+  <data name="FlaggedNotesSection" xml:space="preserve">
+    <value>Note segnalate</value>
+  </data>
+  <data name="FlaggedImagesSection" xml:space="preserve">
+    <value>Immagini segnalate</value>
+  </data>
+  <data name="FlaggedFilesSection" xml:space="preserve">
+    <value>File segnalati</value>
+  </data>
+  <data name="FlaggedCountSuffix" xml:space="preserve">
+    <value>segnalato/i</value>
+  </data>
+  <data name="NoFlaggedNotesFound" xml:space="preserve">
+    <value>Nessuna nota di chiamata segnalata trovata per questo dipartimento.</value>
+  </data>
+  <data name="NoFlaggedImagesFound" xml:space="preserve">
+    <value>Nessuna immagine di chiamata segnalata trovata per questo dipartimento.</value>
+  </data>
+  <data name="NoFlaggedFilesFound" xml:space="preserve">
+    <value>Nessun file di chiamata segnalato trovato per questo dipartimento.</value>
+  </data>
+  <data name="CallNumberHeader" xml:space="preserve">
+    <value>Chiamata #</value>
+  </data>
+  <data name="CallNameHeader" xml:space="preserve">
+    <value>Nome chiamata</value>
+  </data>
+  <data name="CallTypeHeader" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="CallAddressHeader" xml:space="preserve">
+    <value>Indirizzo</value>
+  </data>
+  <data name="CallLoggedOnHeader" xml:space="preserve">
+    <value>Chiamata registrata il</value>
+  </data>
+  <data name="NoteHeader" xml:space="preserve">
+    <value>Nota</value>
+  </data>
+  <data name="NoteByHeader" xml:space="preserve">
+    <value>Nota di</value>
+  </data>
+  <data name="NoteTimestampHeader" xml:space="preserve">
+    <value>Timestamp nota</value>
+  </data>
+  <data name="FlagInfoHeader" xml:space="preserve">
+    <value>Info segnalazione</value>
+  </data>
+  <data name="FileNameHeader" xml:space="preserve">
+    <value>Nome file</value>
+  </data>
+  <data name="ImageByHeader" xml:space="preserve">
+    <value>Immagine di</value>
+  </data>
+  <data name="ImageTimestampHeader" xml:space="preserve">
+    <value>Timestamp immagine</value>
+  </data>
+  <data name="FileTypeHeader" xml:space="preserve">
+    <value>Tipo file</value>
+  </data>
+  <data name="FileByHeader" xml:space="preserve">
+    <value>File di</value>
+  </data>
+  <data name="FileTimestampHeader" xml:space="preserve">
+    <value>Timestamp file</value>
+  </data>
+  <data name="FlaggedByLabel" xml:space="preserve">
+    <value>Segnalato da</value>
+  </data>
+  <data name="FlaggedOnLabel" xml:space="preserve">
+    <value>Segnalato il</value>
+  </data>
+  <data name="ReasonLabel" xml:space="preserve">
+    <value>Motivo</value>
+  </data>
+  <data name="DateRangeLabel" xml:space="preserve">
+    <value>Intervallo date</value>
+  </data>
+  <data name="ReportGeneratedLabel" xml:space="preserve">
+    <value>Rapporto generato</value>
+  </data>
+</root>
+
+

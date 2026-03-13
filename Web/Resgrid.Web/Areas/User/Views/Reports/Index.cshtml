@@ -1,7 +1,9 @@
 ﻿@using Resgrid.Framework
 @using Resgrid.Model
 @using Resgrid.Web.Helpers
+@using Microsoft.Extensions.Localization
 @model Resgrid.Web.Areas.User.Models.Logs.LogsIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Reports.FlaggedReport> flaggedReportLocalizer
 @{
     ViewBag.Title = "Resgrid | Reports";
 }
@@ -159,6 +161,20 @@
                                     <a href="@Url.Action("ActiveCallsResourcesReport", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> View Report</a>
                                 </td>
                             </tr>
+                            @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+                            {
+                                <tr>
+                                    <td>
+                                        <a href="@Url.Action("FlaggedCallNotesReportParams", "Reports", new { Area = "User" })">@flaggedReportLocalizer["ReportTitle"]</a>
+                                    </td>
+                                    <td>
+                                        @flaggedReportLocalizer["ReportIndexDescription"]
+                                    </td>
+                                    <td>
+                                        <a href="@Url.Action("FlaggedCallNotesReportParams", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> View Report</a>
+                                    </td>
+                                </tr>
+                            }
                             </tbody>
                         </table>
                     </div>

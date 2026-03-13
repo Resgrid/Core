@@ -1,0 +1,162 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ReportTitle" xml:space="preserve">
+    <value>Flagged Call Notes, Images &amp; Files Report</value>
+  </data>
+  <data name="ReportIndexDescription" xml:space="preserve">
+    <value>This report shows all flagged call notes, flagged call images, and flagged call files for the department, including the associated call information, content or file name, flag details, and the reason each item was flagged.</value>
+  </data>
+  <data name="ReportStartDate" xml:space="preserve">
+    <value>Report Start Date</value>
+  </data>
+  <data name="ReportEndDate" xml:space="preserve">
+    <value>Report End Date</value>
+  </data>
+  <data name="RunReport" xml:space="preserve">
+    <value>Run Report</value>
+  </data>
+  <data name="DateFilterApplied" xml:space="preserve">
+    <value>Date Filter Applied</value>
+  </data>
+  <data name="FlaggedNotesSection" xml:space="preserve">
+    <value>Flagged Notes</value>
+  </data>
+  <data name="FlaggedImagesSection" xml:space="preserve">
+    <value>Flagged Images</value>
+  </data>
+  <data name="FlaggedFilesSection" xml:space="preserve">
+    <value>Flagged Files</value>
+  </data>
+  <data name="FlaggedCountSuffix" xml:space="preserve">
+    <value>flagged</value>
+  </data>
+  <data name="NoFlaggedNotesFound" xml:space="preserve">
+    <value>No flagged call notes were found for this department.</value>
+  </data>
+  <data name="NoFlaggedImagesFound" xml:space="preserve">
+    <value>No flagged call images were found for this department.</value>
+  </data>
+  <data name="NoFlaggedFilesFound" xml:space="preserve">
+    <value>No flagged call files were found for this department.</value>
+  </data>
+  <data name="CallNumberHeader" xml:space="preserve">
+    <value>Call #</value>
+  </data>
+  <data name="CallNameHeader" xml:space="preserve">
+    <value>Call Name</value>
+  </data>
+  <data name="CallTypeHeader" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="CallAddressHeader" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="CallLoggedOnHeader" xml:space="preserve">
+    <value>Call Logged On</value>
+  </data>
+  <data name="NoteHeader" xml:space="preserve">
+    <value>Note</value>
+  </data>
+  <data name="NoteByHeader" xml:space="preserve">
+    <value>Note By</value>
+  </data>
+  <data name="NoteTimestampHeader" xml:space="preserve">
+    <value>Note Timestamp</value>
+  </data>
+  <data name="FlagInfoHeader" xml:space="preserve">
+    <value>Flag Info</value>
+  </data>
+  <data name="FileNameHeader" xml:space="preserve">
+    <value>File Name</value>
+  </data>
+  <data name="ImageByHeader" xml:space="preserve">
+    <value>Image By</value>
+  </data>
+  <data name="ImageTimestampHeader" xml:space="preserve">
+    <value>Image Timestamp</value>
+  </data>
+  <data name="FileTypeHeader" xml:space="preserve">
+    <value>File Type</value>
+  </data>
+  <data name="FileByHeader" xml:space="preserve">
+    <value>File By</value>
+  </data>
+  <data name="FileTimestampHeader" xml:space="preserve">
+    <value>File Timestamp</value>
+  </data>
+  <data name="FlaggedByLabel" xml:space="preserve">
+    <value>Flagged By</value>
+  </data>
+  <data name="FlaggedOnLabel" xml:space="preserve">
+    <value>Flagged On</value>
+  </data>
+  <data name="ReasonLabel" xml:space="preserve">
+    <value>Reason</value>
+  </data>
+  <data name="DateRangeLabel" xml:space="preserve">
+    <value>Date range</value>
+  </data>
+  <data name="ReportGeneratedLabel" xml:space="preserve">
+    <value>Report generated</value>
+  </data>
+</root>
+
+

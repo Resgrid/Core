@@ -368,6 +368,36 @@ namespace Resgrid.Services
 			return await _callNotesRepository.SaveOrUpdateAsync(note, cancellationToken);
 		}
 
+		public async Task<List<CallNote>> GetFlaggedCallNotesByDepartmentIdAsync(int departmentId)
+		{
+			var notes = await _callNotesRepository.GetFlaggedCallNotesByDepartmentIdAsync(departmentId);
+
+			if (notes != null && notes.Any())
+				return notes.ToList();
+
+			return new List<CallNote>();
+		}
+
+		public async Task<List<CallAttachment>> GetFlaggedCallImagesByDepartmentIdAsync(int departmentId)
+		{
+			var images = await _callAttachmentRepository.GetFlaggedCallImagesByDepartmentIdAsync(departmentId);
+
+			if (images != null && images.Any())
+				return images.ToList();
+
+			return new List<CallAttachment>();
+		}
+
+		public async Task<List<CallAttachment>> GetFlaggedCallFilesByDepartmentIdAsync(int departmentId)
+		{
+			var files = await _callAttachmentRepository.GetFlaggedCallFilesByDepartmentIdAsync(departmentId);
+
+			if (files != null && files.Any())
+				return files.ToList();
+
+			return new List<CallAttachment>();
+		}
+
 		public async Task<CallAttachment> GetCallAttachmentAsync(int callAttachmentId)
 		{
 			var attachment = await _callAttachmentRepository.GetByIdAsync(callAttachmentId);

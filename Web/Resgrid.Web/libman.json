@@ -314,6 +314,15 @@
         "lib/countly.js",
         "lib/countly.min.js"
       ]
+    },
+    {
+      "provider": "filesystem",
+      "library": "vendor/sentry/",
+      "destination": "wwwroot/lib/sentry/",
+      "files": [
+        "bundle.min.js",
+        "bundle.min.js.map"
+      ]
     }
   ]
 }

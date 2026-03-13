@@ -34,17 +34,16 @@
 
     @if (Resgrid.Config.ExternalErrorConfig.SentryPerfSampleRate > 0 && !String.IsNullOrWhiteSpace(Resgrid.Config.ExternalErrorConfig.ExternalErrorServiceUrlForWebsite))
     {
-        <script src="https://browser.sentry-cdn.com/7.116.0/bundle.min.js"></script>
+        <script src="~/lib/sentry/bundle.min.js"></script>
         <script>
             if (window["Sentry"] && Sentry) {
                 Sentry.init({
                     dsn: '@Resgrid.Config.ExternalErrorConfig.ExternalErrorServiceUrlForWebsite',
-                    integrations: [new Sentry.Integrations.Breadcrumbs({ console: false })],
+                    integrations: [Sentry.breadcrumbsIntegration({ console: false })],
                     tracesSampleRate: @Resgrid.Config.ExternalErrorConfig.SentryPerfSampleRate
-                        });
+                });
             }
         </script>
-        <script src="https://sentry.resgrid.net/js-sdk-loader/8a935a7e61f257ce1a3b9131600ecb29.min.js" crossorigin="anonymous"></script>
     }
 
     @if (!String.IsNullOrWhiteSpace(Resgrid.Config.TelemetryConfig.PostHogUrl) && !String.IsNullOrWhiteSpace(Resgrid.Config.TelemetryConfig.PostHogApiKey))

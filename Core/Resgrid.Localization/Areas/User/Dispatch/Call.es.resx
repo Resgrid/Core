@@ -297,6 +297,30 @@
   <data name="FlagCallNoteHeader" xml:space="preserve">
     <value>Marcar nota de llamada</value>
   </data>
+  <data name="FlagCallImageHeader" xml:space="preserve">
+    <value>Marcar imagen del incidente</value>
+  </data>
+  <data name="FlagCallFileHeader" xml:space="preserve">
+    <value>Marcar archivo del incidente</value>
+  </data>
+  <data name="CallImageAddedByLabel" xml:space="preserve">
+    <value>Imagen añadida por</value>
+  </data>
+  <data name="CallImageTimestampLabel" xml:space="preserve">
+    <value>Marca de tiempo de imagen</value>
+  </data>
+  <data name="CallFileAddedByLabel" xml:space="preserve">
+    <value>Archivo añadido por</value>
+  </data>
+  <data name="CallFileTimestampLabel" xml:space="preserve">
+    <value>Marca de tiempo de archivo</value>
+  </data>
+  <data name="FlagImage" xml:space="preserve">
+    <value>Marcar imagen</value>
+  </data>
+  <data name="FlagFile" xml:space="preserve">
+    <value>Marcar archivo</value>
+  </data>
   <data name="FlaggedReasonLabel" xml:space="preserve">
     <value>Motivo marcado</value>
   </data>

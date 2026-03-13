@@ -1324,14 +1324,205 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					note.FlaggedReason = model.FlagNote;
 					note.FlaggedOn = DateTime.UtcNow;
+					note.FlaggedByUserId = UserId;
 				}
 				else
 				{
 					note.FlaggedReason = null;
 					note.FlaggedOn = null;
+					note.FlaggedByUserId = null;
 				}
 
 				await _callsService.SaveCallNoteAsync(note, cancellationToken);
+
+				return RedirectToAction("ViewCall", "Dispatch", new { Area = "User", callId = model.CallId });
+			}
+
+			return View(model);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Call_Update)]
+		public async Task<IActionResult> FlagCallImage(int callId, int callAttachmentId)
+		{
+			if (!await _authorizationService.CanUserEditCallAsync(UserId, callId))
+				return Unauthorized();
+
+			var call = await _callsService.GetCallByIdAsync(callId);
+
+			if (call == null)
+				return Unauthorized();
+
+			call = await _callsService.PopulateCallData(call, false, true, false, false, false, false, false, false, false);
+			var department = await _departmentsService.GetDepartmentByIdAsync(call.DepartmentId);
+
+			if (call.Attachments == null || !call.Attachments.Any())
+				return Unauthorized();
+
+			var attachment = call.Attachments.FirstOrDefault(x => x.CallAttachmentId == callAttachmentId);
+
+			if (attachment == null)
+				return Unauthorized();
+
+			var names = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, false, false, false);
+
+			var model = new FlagCallImageView();
+			model.CallId = call.CallId;
+			model.CallAttachmentId = attachment.CallAttachmentId;
+			model.FileName = attachment.FileName;
+			model.IsFlagged = attachment.IsFlagged;
+			model.FlagNote = attachment.FlaggedReason;
+			model.AddedOn = attachment.Timestamp.HasValue
+				? attachment.Timestamp.Value.FormatForDepartment(department)
+				: string.Empty;
+			model.AddedBy = names.FirstOrDefault(x => x.UserId == attachment.UserId)?.Name;
+
+			if (attachment.IsFlagged)
+			{
+				model.FlaggedOn = attachment.FlaggedOn.HasValue
+					? attachment.FlaggedOn.Value.FormatForDepartment(department)
+					: string.Empty;
+				model.FlaggedBy = names.FirstOrDefault(x => x.UserId == attachment.FlaggedByUserId)?.Name;
+			}
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Call_Update)]
+		public async Task<IActionResult> FlagCallImage(FlagCallImageView model, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserEditCallAsync(UserId, model.CallId))
+				return Unauthorized();
+
+			var call = await _callsService.GetCallByIdAsync(model.CallId);
+
+			if (call == null)
+				return Unauthorized();
+
+			call = await _callsService.PopulateCallData(call, false, true, false, false, false, false, false, false, false);
+
+			if (call.Attachments == null || !call.Attachments.Any())
+				return Unauthorized();
+
+			var attachment = call.Attachments.FirstOrDefault(x => x.CallAttachmentId == model.CallAttachmentId);
+
+			if (attachment == null)
+				return Unauthorized();
+
+			if (ModelState.IsValid)
+			{
+				attachment.IsFlagged = model.IsFlagged;
+
+				if (attachment.IsFlagged)
+				{
+					attachment.FlaggedReason = model.FlagNote;
+					attachment.FlaggedOn = DateTime.UtcNow;
+					attachment.FlaggedByUserId = UserId;
+				}
+				else
+				{
+					attachment.FlaggedReason = null;
+					attachment.FlaggedOn = null;
+					attachment.FlaggedByUserId = null;
+				}
+
+				await _callsService.SaveCallAttachmentAsync(attachment, cancellationToken);
+
+				return RedirectToAction("ViewCall", "Dispatch", new { Area = "User", callId = model.CallId });
+			}
+
+			return View(model);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Call_Update)]
+		public async Task<IActionResult> FlagCallFile(int callId, int callAttachmentId)
+		{
+			if (!await _authorizationService.CanUserEditCallAsync(UserId, callId))
+				return Unauthorized();
+
+			var call = await _callsService.GetCallByIdAsync(callId);
+
+			if (call == null)
+				return Unauthorized();
+
+			call = await _callsService.PopulateCallData(call, false, true, false, false, false, false, false, false, false);
+			var department = await _departmentsService.GetDepartmentByIdAsync(call.DepartmentId);
+
+			if (call.Attachments == null || !call.Attachments.Any())
+				return Unauthorized();
+
+			var attachment = call.Attachments.FirstOrDefault(x => x.CallAttachmentId == callAttachmentId && (x.CallAttachmentType == 1 || x.CallAttachmentType == 3 || x.CallAttachmentType == 4));
+
+			if (attachment == null)
+				return Unauthorized();
+
+			var names = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, false, false, false);
+
+			var model = new FlagCallFileView();
+			model.CallId = call.CallId;
+			model.CallAttachmentId = attachment.CallAttachmentId;
+			model.FileName = attachment.FileName;
+			model.FileType = attachment.CallAttachmentType;
+			model.IsFlagged = attachment.IsFlagged;
+			model.FlagNote = attachment.FlaggedReason;
+			model.AddedOn = attachment.Timestamp.HasValue
+				? attachment.Timestamp.Value.FormatForDepartment(department)
+				: string.Empty;
+			model.AddedBy = names.FirstOrDefault(x => x.UserId == attachment.UserId)?.Name;
+
+			if (attachment.IsFlagged)
+			{
+				model.FlaggedOn = attachment.FlaggedOn.HasValue
+					? attachment.FlaggedOn.Value.FormatForDepartment(department)
+					: string.Empty;
+				model.FlaggedBy = names.FirstOrDefault(x => x.UserId == attachment.FlaggedByUserId)?.Name;
+			}
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Call_Update)]
+		public async Task<IActionResult> FlagCallFile(FlagCallFileView model, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserEditCallAsync(UserId, model.CallId))
+				return Unauthorized();
+
+			var call = await _callsService.GetCallByIdAsync(model.CallId);
+
+			if (call == null)
+				return Unauthorized();
+
+			call = await _callsService.PopulateCallData(call, false, true, false, false, false, false, false, false, false);
+
+			if (call.Attachments == null || !call.Attachments.Any())
+				return Unauthorized();
+
+			var attachment = call.Attachments.FirstOrDefault(x => x.CallAttachmentId == model.CallAttachmentId && (x.CallAttachmentType == 1 || x.CallAttachmentType == 3 || x.CallAttachmentType == 4));
+
+			if (attachment == null)
+				return Unauthorized();
+
+			if (ModelState.IsValid)
+			{
+				attachment.IsFlagged = model.IsFlagged;
+
+				if (attachment.IsFlagged)
+				{
+					attachment.FlaggedReason = model.FlagNote;
+					attachment.FlaggedOn = DateTime.UtcNow;
+					attachment.FlaggedByUserId = UserId;
+				}
+				else
+				{
+					attachment.FlaggedReason = null;
+					attachment.FlaggedOn = null;
+					attachment.FlaggedByUserId = null;
+				}
+
+				await _callsService.SaveCallAttachmentAsync(attachment, cancellationToken);
 
 				return RedirectToAction("ViewCall", "Dispatch", new { Area = "User", callId = model.CallId });
 			}

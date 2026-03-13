@@ -24,5 +24,19 @@ namespace Resgrid.Model.Repositories
 		/// <param name="callId">The call identifier.</param>
 		/// <returns>Task&lt;IEnumerable&lt;CallAttachment&gt;&gt;.</returns>
 		Task<IEnumerable<CallAttachment>> GetCallDispatchesByCallIdAsync(int callId);
+
+		/// <summary>
+		/// Gets all flagged call images for a department asynchronous.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;IEnumerable&lt;CallAttachment&gt;&gt;.</returns>
+		Task<IEnumerable<CallAttachment>> GetFlaggedCallImagesByDepartmentIdAsync(int departmentId);
+
+		/// <summary>
+		/// Gets all flagged call files (audio, files, video) for a department asynchronous.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;IEnumerable&lt;CallAttachment&gt;&gt;.</returns>
+		Task<IEnumerable<CallAttachment>> GetFlaggedCallFilesByDepartmentIdAsync(int departmentId);
 	}
 }

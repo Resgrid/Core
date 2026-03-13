@@ -503,6 +503,41 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			return View(await ActiveCallsResourcesReportModel(DepartmentId));
 		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Reports_View)]
+		public async Task<IActionResult> FlaggedCallNotesReport(DateTime? start, DateTime? end)
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Unauthorized();
+
+			return View(await FlaggedCallNotesReportModel(DepartmentId, start, end));
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Reports_View)]
+		public async Task<IActionResult> FlaggedCallNotesReportParams()
+		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Unauthorized();
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+
+			var model = new FlaggedCallNotesReportParams
+			{
+				Start = TimeConverterHelper.TimeConverter(new DateTime(DateTime.UtcNow.Year, 1, 1, 0, 0, 1), department),
+				End = TimeConverterHelper.TimeConverter(new DateTime(DateTime.UtcNow.Year, 12, 31, 23, 59, 59), department)
+			};
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Reports_View)]
+		public IActionResult FlaggedCallNotesReportParams(FlaggedCallNotesReportParams model)
+		{
+			return RedirectToAction("FlaggedCallNotesReport", new { start = model.Start, end = model.End });
+		}
 		#endregion Views
 
 		[HttpGet]
@@ -1761,7 +1796,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var personnel = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, false, false, false);
 			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
 			var activeRoles = await _unitsService.GetAllActiveRolesForUnitsByDepartmentIdAsync(DepartmentId);
-			
+
 			foreach (var call in calls)
 			{
 				var summary = new OpenCallResource();
@@ -1835,6 +1870,176 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 					model.Calls.Add(summary);
 				}
+			}
+
+			return model;
+		}
+
+		private async Task<FlaggedCallNotesReportView> FlaggedCallNotesReportModel(int departmentId, DateTime? start = null, DateTime? end = null)
+		{
+			var model = new FlaggedCallNotesReportView();
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
+			model.RunOn = DateTime.UtcNow.TimeConverter(model.Department);
+
+			if (start.HasValue && end.HasValue)
+			{
+				model.Start = start.Value;
+				model.End = end.Value;
+			}
+
+			var flaggedNotes = await _callsService.GetFlaggedCallNotesByDepartmentIdAsync(departmentId);
+			var flaggedImages = await _callsService.GetFlaggedCallImagesByDepartmentIdAsync(departmentId);
+			var flaggedFiles = await _callsService.GetFlaggedCallFilesByDepartmentIdAsync(departmentId);
+
+			if (start.HasValue && end.HasValue)
+			{
+				flaggedNotes = flaggedNotes
+					.Where(n => n.FlaggedOn.HasValue &&
+					            n.FlaggedOn.Value.TimeConverter(model.Department) >= start.Value &&
+					            n.FlaggedOn.Value.TimeConverter(model.Department) <= end.Value)
+					.ToList();
+				flaggedImages = flaggedImages
+					.Where(i => i.FlaggedOn.HasValue &&
+					            i.FlaggedOn.Value.TimeConverter(model.Department) >= start.Value &&
+					            i.FlaggedOn.Value.TimeConverter(model.Department) <= end.Value)
+					.ToList();
+				flaggedFiles = flaggedFiles
+					.Where(f => f.FlaggedOn.HasValue &&
+					            f.FlaggedOn.Value.TimeConverter(model.Department) >= start.Value &&
+					            f.FlaggedOn.Value.TimeConverter(model.Department) <= end.Value)
+					.ToList();
+			}
+
+			var allCallIds = flaggedNotes.Select(n => n.CallId)
+				.Concat(flaggedImages.Select(i => i.CallId))
+				.Concat(flaggedFiles.Select(f => f.CallId))
+				.Distinct()
+				.ToList();
+
+			var calls = new Dictionary<int, Call>();
+			foreach (var callId in allCallIds)
+			{
+				var call = await _callsService.GetCallByIdAsync(callId);
+				if (call != null)
+					calls[callId] = call;
+			}
+
+			var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(departmentId);
+
+			foreach (var note in flaggedNotes)
+			{
+				var row = new FlaggedCallNoteRow();
+
+				if (calls.TryGetValue(note.CallId, out var call))
+				{
+					row.CallNumber = call.Number;
+					row.CallName = call.Name;
+					row.CallType = string.IsNullOrWhiteSpace(call.Type) ? "None" : call.Type;
+					row.CallAddress = call.Address;
+					row.CallLoggedOn = call.LoggedOn.TimeConverter(model.Department);
+				}
+
+				row.CallNoteId = note.CallNoteId;
+				row.NoteText = note.Note;
+				row.NoteTimestamp = note.Timestamp.TimeConverter(model.Department);
+
+				if (!string.IsNullOrWhiteSpace(note.UserId) && profiles.TryGetValue(note.UserId, out var authorProfile))
+					row.NoteAuthorName = authorProfile.FullName.AsFirstNameLastName;
+				else
+					row.NoteAuthorName = "Unknown";
+
+				row.FlaggedOn = note.FlaggedOn.HasValue
+					? note.FlaggedOn.Value.TimeConverter(model.Department)
+					: null;
+				row.FlaggedReason = note.FlaggedReason;
+
+				if (!string.IsNullOrWhiteSpace(note.FlaggedByUserId) && profiles.TryGetValue(note.FlaggedByUserId, out var flaggedByProfile))
+					row.FlaggedByName = flaggedByProfile.FullName.AsFirstNameLastName;
+				else
+					row.FlaggedByName = "Unknown";
+
+				model.Notes.Add(row);
+			}
+
+			foreach (var image in flaggedImages)
+			{
+				var row = new FlaggedCallImageRow();
+
+				if (calls.TryGetValue(image.CallId, out var call))
+				{
+					row.CallNumber = call.Number;
+					row.CallName = call.Name;
+					row.CallType = string.IsNullOrWhiteSpace(call.Type) ? "None" : call.Type;
+					row.CallAddress = call.Address;
+					row.CallLoggedOn = call.LoggedOn.TimeConverter(model.Department);
+				}
+
+				row.CallAttachmentId = image.CallAttachmentId;
+				row.FileName = image.FileName;
+				row.ImageTimestamp = image.Timestamp.HasValue
+					? image.Timestamp.Value.TimeConverter(model.Department)
+					: null;
+
+				if (!string.IsNullOrWhiteSpace(image.UserId) && profiles.TryGetValue(image.UserId, out var authorProfile))
+					row.ImageAuthorName = authorProfile.FullName.AsFirstNameLastName;
+				else
+					row.ImageAuthorName = "Unknown";
+
+				row.FlaggedOn = image.FlaggedOn.HasValue
+					? image.FlaggedOn.Value.TimeConverter(model.Department)
+					: null;
+				row.FlaggedReason = image.FlaggedReason;
+
+				if (!string.IsNullOrWhiteSpace(image.FlaggedByUserId) && profiles.TryGetValue(image.FlaggedByUserId, out var flaggedByProfile))
+					row.FlaggedByName = flaggedByProfile.FullName.AsFirstNameLastName;
+				else
+					row.FlaggedByName = "Unknown";
+
+				model.Images.Add(row);
+			}
+
+			foreach (var file in flaggedFiles)
+			{
+				var row = new FlaggedCallFileRow();
+
+				if (calls.TryGetValue(file.CallId, out var call))
+				{
+					row.CallNumber = call.Number;
+					row.CallName = call.Name;
+					row.CallType = string.IsNullOrWhiteSpace(call.Type) ? "None" : call.Type;
+					row.CallAddress = call.Address;
+					row.CallLoggedOn = call.LoggedOn.TimeConverter(model.Department);
+				}
+
+				row.CallAttachmentId = file.CallAttachmentId;
+				row.FileName = file.FileName;
+				row.FileTypeName = file.CallAttachmentType switch
+				{
+					1 => "Dispatch Audio",
+					3 => "File",
+					4 => "Video",
+					_ => "Unknown"
+				};
+				row.FileTimestamp = file.Timestamp.HasValue
+					? file.Timestamp.Value.TimeConverter(model.Department)
+					: null;
+
+				if (!string.IsNullOrWhiteSpace(file.UserId) && profiles.TryGetValue(file.UserId, out var fileAuthorProfile))
+					row.FileAuthorName = fileAuthorProfile.FullName.AsFirstNameLastName;
+				else
+					row.FileAuthorName = "Unknown";
+
+				row.FlaggedOn = file.FlaggedOn.HasValue
+					? file.FlaggedOn.Value.TimeConverter(model.Department)
+					: null;
+				row.FlaggedReason = file.FlaggedReason;
+
+				if (!string.IsNullOrWhiteSpace(file.FlaggedByUserId) && profiles.TryGetValue(file.FlaggedByUserId, out var flaggedByFileProfile))
+					row.FlaggedByName = flaggedByFileProfile.FullName.AsFirstNameLastName;
+				else
+					row.FlaggedByName = "Unknown";
+
+				model.Files.Add(row);
 			}
 
 			return model;

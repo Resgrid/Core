@@ -16,5 +16,12 @@ namespace Resgrid.Model.Repositories
 		/// <param name="callId">The call identifier.</param>
 		/// <returns>Task&lt;IEnumerable&lt;CallNote&gt;&gt;.</returns>
 		Task<IEnumerable<CallNote>> GetCallNotesByCallIdAsync(int callId);
+
+		/// <summary>
+		/// Gets all flagged call notes for a department asynchronous.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;IEnumerable&lt;CallNote&gt;&gt;.</returns>
+		Task<IEnumerable<CallNote>> GetFlaggedCallNotesByDepartmentIdAsync(int departmentId);
 	}
 }

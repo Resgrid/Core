@@ -509,7 +509,7 @@
 						</label>
 						<div class="col-sm-10">
 							<div class="col-md-6" style="padding-left: 0;">
-								<select id="nonUnitPersonnel" name="nonUnitPersonnel"></select>
+								<select id="nonUnitPersonnel" name="nonUnitPersonnel" style="width: 100%;"></select>
 								<br />
 							</div>
 						</div>
@@ -597,8 +597,37 @@
 
 }
 
-<div class="callsWindow" id="callsWindow"></div>
-<div class="unitsWindow" id="unitsWindow"></div>
+<div class="modal fade callsWindow" id="callsWindow" tabindex="-1" role="dialog" aria-labelledby="callsWindowLabel">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="callsWindowLabel">@localizer["SelectCall"]</h4>
+			</div>
+			<div class="modal-body">
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">@commonLocalizer["Close"]</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade unitsWindow" id="unitsWindow" tabindex="-1" role="dialog" aria-labelledby="unitsWindowLabel">
+	<div class="modal-dialog modal-lg" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="unitsWindowLabel">@localizer["AddUnitsToLog"]</h4>
+			</div>
+			<div class="modal-body">
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">@commonLocalizer["Close"]</button>
+			</div>
+		</div>
+	</div>
+</div>
 
 @section Scripts
 {

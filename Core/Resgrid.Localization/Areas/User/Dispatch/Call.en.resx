@@ -297,6 +297,30 @@
   <data name="FlagCallNoteHeader" xml:space="preserve">
     <value>Flag Call Note</value>
   </data>
+  <data name="FlagCallImageHeader" xml:space="preserve">
+    <value>Flag Call Image</value>
+  </data>
+  <data name="FlagCallFileHeader" xml:space="preserve">
+    <value>Flag Call File</value>
+  </data>
+  <data name="CallImageAddedByLabel" xml:space="preserve">
+    <value>Image Added By</value>
+  </data>
+  <data name="CallImageTimestampLabel" xml:space="preserve">
+    <value>Image Timestamp</value>
+  </data>
+  <data name="CallFileAddedByLabel" xml:space="preserve">
+    <value>File Added By</value>
+  </data>
+  <data name="CallFileTimestampLabel" xml:space="preserve">
+    <value>File Timestamp</value>
+  </data>
+  <data name="FlagImage" xml:space="preserve">
+    <value>Flag Image</value>
+  </data>
+  <data name="FlagFile" xml:space="preserve">
+    <value>Flag File</value>
+  </data>
   <data name="FlaggedReasonLabel" xml:space="preserve">
     <value>Flagged Reason</value>
   </data>

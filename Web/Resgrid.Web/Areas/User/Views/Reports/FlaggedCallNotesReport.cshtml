@@ -1,0 +1,319 @@
+﻿@using Resgrid.Model.Helpers
+@using Resgrid.Web
+@using Resgrid.Web.Helpers
+@using Microsoft.Extensions.Localization
+@model Resgrid.Web.Areas.User.Models.Reports.Calls.FlaggedCallNotesReportView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Reports.FlaggedReport> localizer
+@{
+	Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<title>@localizer["ReportTitle"]</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="@localizer["ReportTitle"]">
+	<meta name="author" content="Resgrid">
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+		  crossorigin="anonymous"
+		  asp-fallback-href="~/lib/bootstrap/dist/css/bootstrap.min.css"
+		  asp-fallback-test-class="hidden"
+		  asp-fallback-test-property="visibility" asp-fallback-test-value="hidden" />
+
+	<style>
+		.table th, .table td {
+			padding: 8px !important;
+			line-height: 20px !important;
+			text-align: left !important;
+			vertical-align: top !important;
+		}
+
+		.flag-header {
+			background-color: #f8d7da;
+		}
+
+		.section-divider {
+			border-top: 2px solid #d9534f;
+			margin-top: 4px;
+			margin-bottom: 4px;
+		}
+
+		.label-flag {
+			background-color: #d9534f;
+			color: #fff;
+			padding: 2px 6px;
+			border-radius: 3px;
+			font-size: 11px;
+		}
+	</style>
+
+	<!--[if lt IE 9]>
+		<script src="https://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<link rel="shortcut icon" href="@Url.Content("~/favicon.ico")" />
+	<link rel="apple-touch-icon" href="@Url.Content("~/apple-touch-icon-iphone.png")" />
+	<link rel="apple-touch-icon" sizes="72x72" href="@Url.Content("~/apple-touch-icon-ipad.png")" />
+	<link rel="apple-touch-icon" sizes="114x114" href="@Url.Content("~/apple-touch-icon-iphone4.png")" />
+	<link rel="apple-touch-icon" sizes="144x144" href="@Url.Content("~/apple-touch-icon-ipad3.png")" />
+</head>
+<body>
+	<div class="content">
+		<div class="row">
+			<div class="col-md-4 col-md-offset-1">
+				<img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
+			</div>
+			<div class="col-md-6" style="text-align: right;">
+				<h3 style="margin-top: 10px;">@localizer["ReportTitle"]</h3>
+				<span>@Model.Department.Name</span>
+			</div>
+		</div>
+
+		@* ===== DATE RANGE FILTER BANNER ===== *@
+		@if (Model.Start.HasValue && Model.End.HasValue)
+		{
+			<div class="row" style="margin-top: 10px;">
+				<div class="col-md-10 col-md-offset-1">
+					<div class="alert" style="background-color:#d9edf7; border-color:#bce8f1; color:#31708f; padding: 8px 15px;">
+						<strong>@localizer["DateFilterApplied"]:</strong>
+						@Model.Start.Value.FormatForDepartment(Model.Department) &ndash; @Model.End.Value.FormatForDepartment(Model.Department)
+					</div>
+				</div>
+			</div>
+		}
+
+		@* ===== FLAGGED NOTES SECTION ===== *@
+		<div class="row" style="margin-top: 20px;">
+			<div class="col-md-10 col-md-offset-1">
+				<h4>@localizer["FlaggedNotesSection"] <span class="label-flag">@Model.Notes.Count @localizer["FlaggedCountSuffix"]</span></h4>
+				<hr class="section-divider" />
+			</div>
+		</div>
+
+		@if (!Model.Notes.Any())
+		{
+			<div class="row">
+				<div class="col-md-10 col-md-offset-1">
+					<div class="alert alert-info">
+						@localizer["NoFlaggedNotesFound"]
+					</div>
+				</div>
+			</div>
+		}
+		else
+		{
+			<div class="row">
+				<div class="col-md-10 col-md-offset-1">
+					<table class="table table-condensed table-bordered">
+						<thead>
+							<tr class="flag-header">
+								<th>@localizer["CallNumberHeader"]</th>
+								<th>@localizer["CallNameHeader"]</th>
+								<th>@localizer["CallTypeHeader"]</th>
+								<th>@localizer["CallAddressHeader"]</th>
+								<th>@localizer["CallLoggedOnHeader"]</th>
+								<th>@localizer["NoteHeader"]</th>
+								<th>@localizer["NoteByHeader"]</th>
+								<th>@localizer["NoteTimestampHeader"]</th>
+								<th>@localizer["FlagInfoHeader"]</th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (var row in Model.Notes)
+							{
+								<tr>
+									<td style="white-space: nowrap;">@row.CallNumber</td>
+									<td>@row.CallName</td>
+									<td>@row.CallType</td>
+									<td>@row.CallAddress</td>
+									<td style="white-space: nowrap;">@row.CallLoggedOn.FormatForDepartment(Model.Department)</td>
+									<td style="max-width: 250px; word-wrap: break-word;">@row.NoteText</td>
+									<td style="white-space: nowrap;">@row.NoteAuthorName</td>
+									<td style="white-space: nowrap;">@row.NoteTimestamp.FormatForDepartment(Model.Department)</td>
+									<td>
+										<strong>@localizer["FlaggedByLabel"]:</strong> @row.FlaggedByName<br />
+										@if (row.FlaggedOn.HasValue)
+										{
+											<strong>@localizer["FlaggedOnLabel"]:</strong>
+											@row.FlaggedOn.Value.FormatForDepartment(Model.Department)<br />
+										}
+										@if (!string.IsNullOrWhiteSpace(row.FlaggedReason))
+										{
+											<strong>@localizer["ReasonLabel"]:</strong> @row.FlaggedReason
+										}
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		}
+
+		@* ===== FLAGGED IMAGES SECTION ===== *@
+		<div class="row" style="margin-top: 30px;">
+			<div class="col-md-10 col-md-offset-1">
+				<h4>@localizer["FlaggedImagesSection"] <span class="label-flag">@Model.Images.Count @localizer["FlaggedCountSuffix"]</span></h4>
+				<hr class="section-divider" />
+			</div>
+		</div>
+
+		@if (!Model.Images.Any())
+		{
+			<div class="row">
+				<div class="col-md-10 col-md-offset-1">
+					<div class="alert alert-info">
+						@localizer["NoFlaggedImagesFound"]
+					</div>
+				</div>
+			</div>
+		}
+		else
+		{
+			<div class="row">
+				<div class="col-md-10 col-md-offset-1">
+					<table class="table table-condensed table-bordered">
+						<thead>
+							<tr class="flag-header">
+								<th>@localizer["CallNumberHeader"]</th>
+								<th>@localizer["CallNameHeader"]</th>
+								<th>@localizer["CallTypeHeader"]</th>
+								<th>@localizer["CallAddressHeader"]</th>
+								<th>@localizer["CallLoggedOnHeader"]</th>
+								<th>@localizer["FileNameHeader"]</th>
+								<th>@localizer["ImageByHeader"]</th>
+								<th>@localizer["ImageTimestampHeader"]</th>
+								<th>@localizer["FlagInfoHeader"]</th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (var row in Model.Images)
+							{
+								<tr>
+									<td style="white-space: nowrap;">@row.CallNumber</td>
+									<td>@row.CallName</td>
+									<td>@row.CallType</td>
+									<td>@row.CallAddress</td>
+									<td style="white-space: nowrap;">@row.CallLoggedOn.FormatForDepartment(Model.Department)</td>
+									<td style="max-width: 250px; word-wrap: break-word;">@row.FileName</td>
+									<td style="white-space: nowrap;">@row.ImageAuthorName</td>
+									<td style="white-space: nowrap;">
+										@if (row.ImageTimestamp.HasValue)
+										{
+											@row.ImageTimestamp.Value.FormatForDepartment(Model.Department)
+										}
+									</td>
+									<td>
+										<strong>@localizer["FlaggedByLabel"]:</strong> @row.FlaggedByName<br />
+										@if (row.FlaggedOn.HasValue)
+										{
+											<strong>@localizer["FlaggedOnLabel"]:</strong>
+											@row.FlaggedOn.Value.FormatForDepartment(Model.Department)<br />
+										}
+										@if (!string.IsNullOrWhiteSpace(row.FlaggedReason))
+										{
+											<strong>@localizer["ReasonLabel"]:</strong> @row.FlaggedReason
+										}
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		}
+
+		@* ===== FLAGGED FILES SECTION ===== *@
+		<div class="row" style="margin-top: 30px;">
+			<div class="col-md-10 col-md-offset-1">
+				<h4>@localizer["FlaggedFilesSection"] <span class="label-flag">@Model.Files.Count @localizer["FlaggedCountSuffix"]</span></h4>
+				<hr class="section-divider" />
+			</div>
+		</div>
+
+		@if (!Model.Files.Any())
+		{
+			<div class="row">
+				<div class="col-md-10 col-md-offset-1">
+					<div class="alert alert-info">
+						@localizer["NoFlaggedFilesFound"]
+					</div>
+				</div>
+			</div>
+		}
+		else
+		{
+			<div class="row">
+				<div class="col-md-10 col-md-offset-1">
+					<table class="table table-condensed table-bordered">
+						<thead>
+							<tr class="flag-header">
+								<th>@localizer["CallNumberHeader"]</th>
+								<th>@localizer["CallNameHeader"]</th>
+								<th>@localizer["CallTypeHeader"]</th>
+								<th>@localizer["CallAddressHeader"]</th>
+								<th>@localizer["CallLoggedOnHeader"]</th>
+								<th>@localizer["FileNameHeader"]</th>
+								<th>@localizer["FileTypeHeader"]</th>
+								<th>@localizer["FileByHeader"]</th>
+								<th>@localizer["FileTimestampHeader"]</th>
+								<th>@localizer["FlagInfoHeader"]</th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (var row in Model.Files)
+							{
+								<tr>
+									<td style="white-space: nowrap;">@row.CallNumber</td>
+									<td>@row.CallName</td>
+									<td>@row.CallType</td>
+									<td>@row.CallAddress</td>
+									<td style="white-space: nowrap;">@row.CallLoggedOn.FormatForDepartment(Model.Department)</td>
+									<td style="max-width: 200px; word-wrap: break-word;">@row.FileName</td>
+									<td style="white-space: nowrap;">@row.FileTypeName</td>
+									<td style="white-space: nowrap;">@row.FileAuthorName</td>
+									<td style="white-space: nowrap;">
+										@if (row.FileTimestamp.HasValue)
+										{
+											@row.FileTimestamp.Value.FormatForDepartment(Model.Department)
+										}
+									</td>
+									<td>
+										<strong>@localizer["FlaggedByLabel"]:</strong> @row.FlaggedByName<br />
+										@if (row.FlaggedOn.HasValue)
+										{
+											<strong>@localizer["FlaggedOnLabel"]:</strong>
+											@row.FlaggedOn.Value.FormatForDepartment(Model.Department)<br />
+										}
+										@if (!string.IsNullOrWhiteSpace(row.FlaggedReason))
+										{
+											<strong>@localizer["ReasonLabel"]:</strong> @row.FlaggedReason
+										}
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+			</div>
+		}
+
+		<div class="row" style="margin-top: 20px;">
+			<div class="col-md-10 col-md-offset-1" style="text-align: right;">
+				@if (Model.Start.HasValue && Model.End.HasValue)
+				{
+					<small>@localizer["DateRangeLabel"]: @Model.Start.Value.FormatForDepartment(Model.Department) &ndash; @Model.End.Value.FormatForDepartment(Model.Department) &nbsp;|&nbsp;</small>
+				}
+				<small>@localizer["ReportGeneratedLabel"]: @Model.RunOn.FormatForDepartment(Model.Department)</small>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.3/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" crossorigin="anonymous"></script>
+</body>
+</html>
+

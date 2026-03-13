@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="ReportTitle" xml:space="preserve">
+    <value>Bericht über markierte Anrufnotizen, Bilder und Dateien</value>
+  </data>
+  <data name="ReportIndexDescription" xml:space="preserve">
+    <value>Dieser Bericht zeigt alle markierten Anrufnotizen, Bilder und Dateien der Abteilung, einschließlich der zugehörigen Anrufinformationen, Inhalte, Dateinamen, Markierungsdetails und des Grundes für die Markierung.</value>
+  </data>
+  <data name="ReportStartDate" xml:space="preserve">
+    <value>Berichtsstartdatum</value>
+  </data>
+  <data name="ReportEndDate" xml:space="preserve">
+    <value>Berichtsenddatum</value>
+  </data>
+  <data name="RunReport" xml:space="preserve">
+    <value>Bericht ausführen</value>
+  </data>
+  <data name="DateFilterApplied" xml:space="preserve">
+    <value>Datumsfilter angewendet</value>
+  </data>
+  <data name="FlaggedNotesSection" xml:space="preserve">
+    <value>Markierte Notizen</value>
+  </data>
+  <data name="FlaggedImagesSection" xml:space="preserve">
+    <value>Markierte Bilder</value>
+  </data>
+  <data name="FlaggedFilesSection" xml:space="preserve">
+    <value>Markierte Dateien</value>
+  </data>
+  <data name="FlaggedCountSuffix" xml:space="preserve">
+    <value>markiert</value>
+  </data>
+  <data name="NoFlaggedNotesFound" xml:space="preserve">
+    <value>Keine markierten Anrufnotizen für diese Abteilung gefunden.</value>
+  </data>
+  <data name="NoFlaggedImagesFound" xml:space="preserve">
+    <value>Keine markierten Anrufbilder für diese Abteilung gefunden.</value>
+  </data>
+  <data name="NoFlaggedFilesFound" xml:space="preserve">
+    <value>Keine markierten Anrufdateien für diese Abteilung gefunden.</value>
+  </data>
+  <data name="CallNumberHeader" xml:space="preserve">
+    <value>Anruf-Nr.</value>
+  </data>
+  <data name="CallNameHeader" xml:space="preserve">
+    <value>Anrufname</value>
+  </data>
+  <data name="CallTypeHeader" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="CallAddressHeader" xml:space="preserve">
+    <value>Adresse</value>
+  </data>
+  <data name="CallLoggedOnHeader" xml:space="preserve">
+    <value>Anruf protokolliert am</value>
+  </data>
+  <data name="NoteHeader" xml:space="preserve">
+    <value>Notiz</value>
+  </data>
+  <data name="NoteByHeader" xml:space="preserve">
+    <value>Notiz von</value>
+  </data>
+  <data name="NoteTimestampHeader" xml:space="preserve">
+    <value>Notiz-Zeitstempel</value>
+  </data>
+  <data name="FlagInfoHeader" xml:space="preserve">
+    <value>Markierungsinfo</value>
+  </data>
+  <data name="FileNameHeader" xml:space="preserve">
+    <value>Dateiname</value>
+  </data>
+  <data name="ImageByHeader" xml:space="preserve">
+    <value>Bild von</value>
+  </data>
+  <data name="ImageTimestampHeader" xml:space="preserve">
+    <value>Bild-Zeitstempel</value>
+  </data>
+  <data name="FileTypeHeader" xml:space="preserve">
+    <value>Dateityp</value>
+  </data>
+  <data name="FileByHeader" xml:space="preserve">
+    <value>Datei von</value>
+  </data>
+  <data name="FileTimestampHeader" xml:space="preserve">
+    <value>Datei-Zeitstempel</value>
+  </data>
+  <data name="FlaggedByLabel" xml:space="preserve">
+    <value>Markiert von</value>
+  </data>
+  <data name="FlaggedOnLabel" xml:space="preserve">
+    <value>Markiert am</value>
+  </data>
+  <data name="ReasonLabel" xml:space="preserve">
+    <value>Grund</value>
+  </data>
+  <data name="DateRangeLabel" xml:space="preserve">
+    <value>Datumsbereich</value>
+  </data>
+  <data name="ReportGeneratedLabel" xml:space="preserve">
+    <value>Bericht erstellt</value>
+  </data>
+</root>
+
+

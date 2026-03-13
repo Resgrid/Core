@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <data name="ReportTitle" xml:space="preserve">
+    <value>Informe de notas, imágenes y archivos de llamadas marcadas</value>
+  </data>
+  <data name="ReportIndexDescription" xml:space="preserve">
+    <value>Este informe muestra todas las notas de llamada, imágenes y archivos marcados del departamento, incluida la información de llamada asociada, el contenido o nombre de archivo, los detalles de la marca y el motivo por el que se marcó cada elemento.</value>
+  </data>
+  <data name="ReportStartDate" xml:space="preserve">
+    <value>Fecha de inicio del informe</value>
+  </data>
+  <data name="ReportEndDate" xml:space="preserve">
+    <value>Fecha de fin del informe</value>
+  </data>
+  <data name="RunReport" xml:space="preserve">
+    <value>Ejecutar informe</value>
+  </data>
+  <data name="DateFilterApplied" xml:space="preserve">
+    <value>Filtro de fecha aplicado</value>
+  </data>
+  <data name="FlaggedNotesSection" xml:space="preserve">
+    <value>Notas marcadas</value>
+  </data>
+  <data name="FlaggedImagesSection" xml:space="preserve">
+    <value>Imágenes marcadas</value>
+  </data>
+  <data name="FlaggedFilesSection" xml:space="preserve">
+    <value>Archivos marcados</value>
+  </data>
+  <data name="FlaggedCountSuffix" xml:space="preserve">
+    <value>marcado(s)</value>
+  </data>
+  <data name="NoFlaggedNotesFound" xml:space="preserve">
+    <value>No se encontraron notas de llamada marcadas para este departamento.</value>
+  </data>
+  <data name="NoFlaggedImagesFound" xml:space="preserve">
+    <value>No se encontraron imágenes de llamada marcadas para este departamento.</value>
+  </data>
+  <data name="NoFlaggedFilesFound" xml:space="preserve">
+    <value>No se encontraron archivos de llamada marcados para este departamento.</value>
+  </data>
+  <data name="CallNumberHeader" xml:space="preserve">
+    <value>Llamada #</value>
+  </data>
+  <data name="CallNameHeader" xml:space="preserve">
+    <value>Nombre de llamada</value>
+  </data>
+  <data name="CallTypeHeader" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="CallAddressHeader" xml:space="preserve">
+    <value>Dirección</value>
+  </data>
+  <data name="CallLoggedOnHeader" xml:space="preserve">
+    <value>Llamada registrada el</value>
+  </data>
+  <data name="NoteHeader" xml:space="preserve">
+    <value>Nota</value>
+  </data>
+  <data name="NoteByHeader" xml:space="preserve">
+    <value>Nota de</value>
+  </data>
+  <data name="NoteTimestampHeader" xml:space="preserve">
+    <value>Marca de tiempo de nota</value>
+  </data>
+  <data name="FlagInfoHeader" xml:space="preserve">
+    <value>Info de marca</value>
+  </data>
+  <data name="FileNameHeader" xml:space="preserve">
+    <value>Nombre de archivo</value>
+  </data>
+  <data name="ImageByHeader" xml:space="preserve">
+    <value>Imagen de</value>
+  </data>
+  <data name="ImageTimestampHeader" xml:space="preserve">
+    <value>Marca de tiempo de imagen</value>
+  </data>
+  <data name="FileTypeHeader" xml:space="preserve">
+    <value>Tipo de archivo</value>
+  </data>
+  <data name="FileByHeader" xml:space="preserve">
+    <value>Archivo de</value>
+  </data>
+  <data name="FileTimestampHeader" xml:space="preserve">
+    <value>Marca de tiempo de archivo</value>
+  </data>
+  <data name="FlaggedByLabel" xml:space="preserve">
+    <value>Marcado por</value>
+  </data>
+  <data name="FlaggedOnLabel" xml:space="preserve">
+    <value>Marcado el</value>
+  </data>
+  <data name="ReasonLabel" xml:space="preserve">
+    <value>Motivo</value>
+  </data>
+  <data name="DateRangeLabel" xml:space="preserve">
+    <value>Rango de fechas</value>
+  </data>
+  <data name="ReportGeneratedLabel" xml:space="preserve">
+    <value>Informe generado</value>
+  </data>
+</root>
+
+

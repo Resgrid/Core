@@ -248,6 +248,30 @@
   <data name="FlagCallNoteHeader" xml:space="preserve">
     <value>Flag Call Note</value>
   </data>
+  <data name="FlagCallImageHeader" xml:space="preserve">
+    <value>Signaler l'image de l'appel</value>
+  </data>
+  <data name="FlagCallFileHeader" xml:space="preserve">
+    <value>Signaler le fichier de l'appel</value>
+  </data>
+  <data name="CallImageAddedByLabel" xml:space="preserve">
+    <value>Image ajoutée par</value>
+  </data>
+  <data name="CallImageTimestampLabel" xml:space="preserve">
+    <value>Horodatage de l'image</value>
+  </data>
+  <data name="CallFileAddedByLabel" xml:space="preserve">
+    <value>Fichier ajouté par</value>
+  </data>
+  <data name="CallFileTimestampLabel" xml:space="preserve">
+    <value>Horodatage du fichier</value>
+  </data>
+  <data name="FlagImage" xml:space="preserve">
+    <value>Signaler l'image</value>
+  </data>
+  <data name="FlagFile" xml:space="preserve">
+    <value>Signaler le fichier</value>
+  </data>
   <data name="FlaggedReasonLabel" xml:space="preserve">
     <value>Flagged Reason</value>
   </data>

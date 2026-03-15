@@ -1,0 +1,407 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddFloor" xml:space="preserve">
+    <value>Додати поверх</value>
+  </data>
+  <data name="AddLayer" xml:space="preserve">
+    <value>Додати шар</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Застосувати</value>
+  </data>
+  <data name="BackToFloors" xml:space="preserve">
+    <value>Повернутися до поверхів</value>
+  </data>
+  <data name="BackToMaps" xml:space="preserve">
+    <value>Повернутися до карт</value>
+  </data>
+  <data name="BottomRight" xml:space="preserve">
+    <value>Правий нижній</value>
+  </data>
+  <data name="CreateFirstMap" xml:space="preserve">
+    <value>Створити першу карту</value>
+  </data>
+  <data name="CreateMap" xml:space="preserve">
+    <value>Створити карту</value>
+  </data>
+  <data name="CurrentBoundsHint" xml:space="preserve">
+    <value>Відображаються поточні межі. Ви можете намалювати новий прямокутник, щоб замінити їх.</value>
+  </data>
+  <data name="CustomMapsModule" xml:space="preserve">
+    <value>Власні карти</value>
+  </data>
+  <data name="DefaultFloorHint" xml:space="preserve">
+    <value>Поверх за замовчуванням відображається першим при перегляді цієї карти.</value>
+  </data>
+  <data name="DefaultZoom" xml:space="preserve">
+    <value>Масштаб за замовчуванням</value>
+  </data>
+  <data name="DeleteFloorConfirm" xml:space="preserve">
+    <value>Ви впевнені, що хочете видалити цей поверх і всі його зони?</value>
+  </data>
+  <data name="Dispatchable" xml:space="preserve">
+    <value>Диспетчеризується</value>
+  </data>
+  <data name="DrawEditZones" xml:space="preserve">
+    <value>Малювати/Редагувати зони</value>
+  </data>
+  <data name="EditCustomMap" xml:space="preserve">
+    <value>Редагувати власну карту</value>
+  </data>
+  <data name="EditLayer" xml:space="preserve">
+    <value>Редагувати шар</value>
+  </data>
+  <data name="EditZone" xml:space="preserve">
+    <value>Редагувати зону</value>
+  </data>
+  <data name="Elevation" xml:space="preserve">
+    <value>Висота</value>
+  </data>
+  <data name="ElevationHint" xml:space="preserve">
+    <value>Використовується для операцій у висотних будівлях та SAR.</value>
+  </data>
+  <data name="ElevationMeters" xml:space="preserve">
+    <value>Висота (метри)</value>
+  </data>
+  <data name="EventEndsOn" xml:space="preserve">
+    <value>Подія закінчується</value>
+  </data>
+  <data name="EventStartsOn" xml:space="preserve">
+    <value>Подія починається</value>
+  </data>
+  <data name="FloorName" xml:space="preserve">
+    <value>Назва поверху</value>
+  </data>
+  <data name="FloorNamePlaceholder" xml:space="preserve">
+    <value>напр. Перший поверх, Поверх 1, Підвал</value>
+  </data>
+  <data name="FloorNumber" xml:space="preserve">
+    <value>Поверх #</value>
+  </data>
+  <data name="FloorPlanImage" xml:space="preserve">
+    <value>Зображення плану поверху</value>
+  </data>
+  <data name="FloorPlanImageHint" xml:space="preserve">
+    <value>Завантажте зображення плану поверху (JPG, PNG, SVG, макс. 20 МБ). Це зображення буде накладено на карту для малювання зон.</value>
+  </data>
+  <data name="Floors" xml:space="preserve">
+    <value>Поверхи</value>
+  </data>
+  <data name="FloorsLevels" xml:space="preserve">
+    <value>Поверхи / Рівні</value>
+  </data>
+  <data name="GeoBoundsDrawHint" xml:space="preserve">
+    <value>Намалюйте прямокутник на карті, щоб визначити географічну область, яку охоплює ваше зображення власної карти. Межі будуть збережені автоматично.</value>
+  </data>
+  <data name="GeographicBounds" xml:space="preserve">
+    <value>Географічні межі</value>
+  </data>
+  <data name="HowToUse" xml:space="preserve">
+    <value>Як використовувати:</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>Зображення</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>Неактивний</value>
+  </data>
+  <data name="IsActive" xml:space="preserve">
+    <value>Активний</value>
+  </data>
+  <data name="IsDefaultFloor" xml:space="preserve">
+    <value>Поверх за замовчуванням</value>
+  </data>
+  <data name="IsDestination" xml:space="preserve">
+    <value>Є пунктом призначення</value>
+  </data>
+  <data name="IsDestinationHint" xml:space="preserve">
+    <value>Це дозволить пошуку адрес використовувати координати з цього шару. Без точок для пошуку не позначайте як доступний для пошуку, оскільки це може сповільнити диспетчеризацію.</value>
+  </data>
+  <data name="IsVisibleByDefault" xml:space="preserve">
+    <value>Видимий за замовчуванням</value>
+  </data>
+  <data name="IsVisibleByDefaultHint" xml:space="preserve">
+    <value>Чи хочете ви, щоб цей шар був видимий щоразу при завантаженні карти? Занадто багато видимих шарів за замовчуванням ускладнить карту.</value>
+  </data>
+  <data name="ItemCount" xml:space="preserve">
+    <value>Кількість елементів</value>
+  </data>
+  <data name="LayerElements" xml:space="preserve">
+    <value>Елементи шару</value>
+  </data>
+  <data name="Layers" xml:space="preserve">
+    <value>Шари</value>
+  </data>
+  <data name="MakeMapVisible" xml:space="preserve">
+    <value>Зробити цю карту видимою для членів підрозділу.</value>
+  </data>
+  <data name="ManageFloors" xml:space="preserve">
+    <value>Управління поверхами</value>
+  </data>
+  <data name="ManageLayers" xml:space="preserve">
+    <value>Управління шарами</value>
+  </data>
+  <data name="ManageZones" xml:space="preserve">
+    <value>Управління зонами</value>
+  </data>
+  <data name="ManageZonesHowTo" xml:space="preserve">
+    <value>Використовуйте інструмент Малювати полігон (ліва панель інструментів), щоб намалювати зону на карті. Виберіть зону на бічній панелі, щоб встановити назву та тип. Натисніть Зберегти всі зони, коли закінчите.</value>
+  </data>
+  <data name="MapName" xml:space="preserve">
+    <value>Назва карти</value>
+  </data>
+  <data name="MapOptions" xml:space="preserve">
+    <value>Параметри карти</value>
+  </data>
+  <data name="MapType" xml:space="preserve">
+    <value>Тип карти</value>
+  </data>
+  <data name="Max" xml:space="preserve">
+    <value>Макс</value>
+  </data>
+  <data name="MetadataHint" xml:space="preserve">
+    <value>Необов'язкові пари ключ-значення JSON (інформація про небезпечні матеріали, нотатки попереднього плану тощо)</value>
+  </data>
+  <data name="Min" xml:space="preserve">
+    <value>Мін</value>
+  </data>
+  <data name="NewCustomMap" xml:space="preserve">
+    <value>Нова власна карта</value>
+  </data>
+  <data name="NewLayer" xml:space="preserve">
+    <value>Новий шар</value>
+  </data>
+  <data name="NoCustomMapsCreated" xml:space="preserve">
+    <value>Власні карти ще не створено.</value>
+  </data>
+  <data name="NoFloorsYet" xml:space="preserve">
+    <value>Поверхи ще не додані. Використовуйте форму праворуч, щоб додати перший поверх.</value>
+  </data>
+  <data name="NoZonesYet" xml:space="preserve">
+    <value>Зон ще немає. Намалюйте полігон на карті, щоб створити зону.</value>
+  </data>
+  <data name="NotesMetadata" xml:space="preserve">
+    <value>Нотатки / Метадані</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>Не встановлено</value>
+  </data>
+  <data name="SaveAllZones" xml:space="preserve">
+    <value>Зберегти всі зони</value>
+  </data>
+  <data name="SaveChanges" xml:space="preserve">
+    <value>Зберегти зміни</value>
+  </data>
+  <data name="SearchableDispatchable" xml:space="preserve">
+    <value>Доступний для пошуку / Диспетчеризується</value>
+  </data>
+  <data name="SearchableZoneHint" xml:space="preserve">
+    <value>Дозвольте цій зоні відображатися як місце виклику.</value>
+  </data>
+  <data name="Set" xml:space="preserve">
+    <value>Встановлено</value>
+  </data>
+  <data name="ShowCalls" xml:space="preserve">
+    <value>Показати виклики</value>
+  </data>
+  <data name="ShowGeofences" xml:space="preserve">
+    <value>Показати геозони</value>
+  </data>
+  <data name="ShowPersonnel" xml:space="preserve">
+    <value>Показати персонал</value>
+  </data>
+  <data name="ShowPOIs" xml:space="preserve">
+    <value>Показати POI</value>
+  </data>
+  <data name="ShowStations" xml:space="preserve">
+    <value>Показати станції</value>
+  </data>
+  <data name="ShowUnits" xml:space="preserve">
+    <value>Показати підрозділи</value>
+  </data>
+  <data name="SortOrder" xml:space="preserve">
+    <value>Порядок сортування</value>
+  </data>
+  <data name="TopLeft" xml:space="preserve">
+    <value>Лівий верхній</value>
+  </data>
+  <data name="UnnamedZone" xml:space="preserve">
+    <value>Безіменна зона</value>
+  </data>
+  <data name="ZoneDefaultName" xml:space="preserve">
+    <value>Зона</value>
+  </data>
+  <data name="ZoneName" xml:space="preserve">
+    <value>Назва зони</value>
+  </data>
+  <data name="ZoneNamePlaceholder" xml:space="preserve">
+    <value>напр. Будівля 1, Кімната 405а</value>
+  </data>
+  <data name="ZoneType" xml:space="preserve">
+    <value>Тип зони</value>
+  </data>
+  <data name="ZoneTypeCheckpoint" xml:space="preserve">
+    <value>Контрольний пункт</value>
+  </data>
+  <data name="ZoneTypeCustom" xml:space="preserve">
+    <value>Власний</value>
+  </data>
+  <data name="ZoneTypeElevator" xml:space="preserve">
+    <value>Ліфт</value>
+  </data>
+  <data name="ZoneTypeExit" xml:space="preserve">
+    <value>Вихід</value>
+  </data>
+  <data name="ZoneTypeGate" xml:space="preserve">
+    <value>Ворота</value>
+  </data>
+  <data name="ZoneTypeHallway" xml:space="preserve">
+    <value>Коридор</value>
+  </data>
+  <data name="ZoneTypeHazard" xml:space="preserve">
+    <value>Небезпека</value>
+  </data>
+  <data name="ZoneTypeMusterPoint" xml:space="preserve">
+    <value>Місце збору</value>
+  </data>
+  <data name="ZoneTypeParking" xml:space="preserve">
+    <value>Парковка</value>
+  </data>
+  <data name="ZoneTypeRoom" xml:space="preserve">
+    <value>Кімната</value>
+  </data>
+  <data name="ZoneTypeStagingArea" xml:space="preserve">
+    <value>Зона збору сил</value>
+  </data>
+  <data name="ZoneTypeStairWell" xml:space="preserve">
+    <value>Сходова клітка</value>
+  </data>
+  <data name="ZoneTypes" xml:space="preserve">
+    <value>Типи зон</value>
+  </data>
+  <data name="Zones" xml:space="preserve">
+    <value>Зони</value>
+  </data>
+  <data name="AddPOI" xml:space="preserve">
+    <value>Додати POI</value>
+  </data>
+  <data name="AddPOIType" xml:space="preserve">
+    <value>Додати тип POI</value>
+  </data>
+  <data name="DeletePOITypeConfirm" xml:space="preserve">
+    <value>Це назавжди видалить тип POI {0} і всі його позиції. Ви впевнені?</value>
+  </data>
+  <data name="Icon" xml:space="preserve">
+    <value>Значок</value>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>Імпортувати</value>
+  </data>
+  <data name="ImportPOIs" xml:space="preserve">
+    <value>Імпортувати POI</value>
+  </data>
+  <data name="InformationTab" xml:space="preserve">
+    <value>Інформація</value>
+  </data>
+  <data name="IsDestinationPOIHint" xml:space="preserve">
+    <value>Для позначення потенційного місця призначення для підрозділу/особи. Наприклад офіс, місце збору, лікарня, точка доступу тощо.</value>
+  </data>
+  <data name="Latitude" xml:space="preserve">
+    <value>Широта</value>
+  </data>
+  <data name="LatitudeHint" xml:space="preserve">
+    <value>Широта (Десяткова нотація: напр. 39.1517)</value>
+  </data>
+  <data name="ListTab" xml:space="preserve">
+    <value>Список</value>
+  </data>
+  <data name="LiveRouting" xml:space="preserve">
+    <value>Жива навігація</value>
+  </data>
+  <data name="Longitude" xml:space="preserve">
+    <value>Довгота</value>
+  </data>
+  <data name="LongitudeHint" xml:space="preserve">
+    <value>Довгота (Десяткова нотація: напр. -119.4571)</value>
+  </data>
+  <data name="MapTab" xml:space="preserve">
+    <value>Карта</value>
+  </data>
+  <data name="Marker" xml:space="preserve">
+    <value>Маркер</value>
+  </data>
+  <data name="PointCount" xml:space="preserve">
+    <value>Кількість точок</value>
+  </data>
+  <data name="POIsModule" xml:space="preserve">
+    <value>POI</value>
+  </data>
+  <data name="StationRouting" xml:space="preserve">
+    <value>Маршрут до станції</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Завантажити</value>
+  </data>
+  <data name="ViewPOIType" xml:space="preserve">
+    <value>Переглянути тип POI</value>
+  </data>
+</root>
+

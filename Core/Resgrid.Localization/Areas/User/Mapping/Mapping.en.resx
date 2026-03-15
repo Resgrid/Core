@@ -1,0 +1,470 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddFloor" xml:space="preserve">
+    <value>Add Floor</value>
+  </data>
+  <data name="AddLayer" xml:space="preserve">
+    <value>Add Layer</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="BackToFloors" xml:space="preserve">
+    <value>Back to Floors</value>
+  </data>
+  <data name="BackToMaps" xml:space="preserve">
+    <value>Back to Maps</value>
+  </data>
+  <data name="BottomRight" xml:space="preserve">
+    <value>Bottom-Right</value>
+  </data>
+  <data name="CreateFirstMap" xml:space="preserve">
+    <value>Create your first map</value>
+  </data>
+  <data name="CreateMap" xml:space="preserve">
+    <value>Create Map</value>
+  </data>
+  <data name="CurrentBoundsHint" xml:space="preserve">
+    <value>The current bounds are shown. You can draw a new rectangle to replace them.</value>
+  </data>
+  <data name="CustomMapsModule" xml:space="preserve">
+    <value>Custom Maps</value>
+  </data>
+  <data name="DefaultFloorHint" xml:space="preserve">
+    <value>The default floor is shown first when viewing this map.</value>
+  </data>
+  <data name="DefaultZoom" xml:space="preserve">
+    <value>Default Zoom</value>
+  </data>
+  <data name="DeleteFloorConfirm" xml:space="preserve">
+    <value>Are you sure you want to delete this floor and all its zones?</value>
+  </data>
+  <data name="Dispatchable" xml:space="preserve">
+    <value>Dispatchable</value>
+  </data>
+  <data name="DrawEditZones" xml:space="preserve">
+    <value>Draw/Edit Zones</value>
+  </data>
+  <data name="EditCustomMap" xml:space="preserve">
+    <value>Edit Custom Map</value>
+  </data>
+  <data name="EditLayer" xml:space="preserve">
+    <value>Edit Layer</value>
+  </data>
+  <data name="EditZone" xml:space="preserve">
+    <value>Edit Zone</value>
+  </data>
+  <data name="Elevation" xml:space="preserve">
+    <value>Elevation</value>
+  </data>
+  <data name="ElevationHint" xml:space="preserve">
+    <value>Used for high-rise and SAR operations.</value>
+  </data>
+  <data name="ElevationMeters" xml:space="preserve">
+    <value>Elevation (meters)</value>
+  </data>
+  <data name="EventEndsOn" xml:space="preserve">
+    <value>Event Ends On</value>
+  </data>
+  <data name="EventStartsOn" xml:space="preserve">
+    <value>Event Starts On</value>
+  </data>
+  <data name="FloorName" xml:space="preserve">
+    <value>Floor Name</value>
+  </data>
+  <data name="FloorNamePlaceholder" xml:space="preserve">
+    <value>e.g. Ground Floor, Level 1, Basement</value>
+  </data>
+  <data name="FloorNumber" xml:space="preserve">
+    <value>Floor #</value>
+  </data>
+  <data name="FloorPlanImage" xml:space="preserve">
+    <value>Floor Plan Image</value>
+  </data>
+  <data name="FloorPlanImageHint" xml:space="preserve">
+    <value>Upload a floor plan image (JPG, PNG, SVG, max 20 MB). This image will be overlaid on the map to allow drawing zones.</value>
+  </data>
+  <data name="Floors" xml:space="preserve">
+    <value>Floors</value>
+  </data>
+  <data name="FloorsLevels" xml:space="preserve">
+    <value>Floors / Levels</value>
+  </data>
+  <data name="GeoBoundsDrawHint" xml:space="preserve">
+    <value>Draw a rectangle on the map below to define the geographic area your custom map image will cover. The bounds will be saved automatically.</value>
+  </data>
+  <data name="GeographicBounds" xml:space="preserve">
+    <value>Geographic Bounds</value>
+  </data>
+  <data name="HowToUse" xml:space="preserve">
+    <value>How to use:</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>Image</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>Inactive</value>
+  </data>
+  <data name="IsActive" xml:space="preserve">
+    <value>Is Active</value>
+  </data>
+  <data name="IsDefaultFloor" xml:space="preserve">
+    <value>Is Default Floor</value>
+  </data>
+  <data name="IsDestination" xml:space="preserve">
+    <value>Is Destination</value>
+  </data>
+  <data name="IsDestinationHint" xml:space="preserve">
+    <value>This will allow address searching to use coordinates from this layer in the search. Note, if you don't have searchable points (text fields) don't mark as searchable as it can slow down dispatching.</value>
+  </data>
+  <data name="IsVisibleByDefault" xml:space="preserve">
+    <value>Is Visible By Default</value>
+  </data>
+  <data name="IsVisibleByDefaultHint" xml:space="preserve">
+    <value>Do you want this layer to be visible every time a map loads? Note: Having too many layers visible by default will complicate the map. Users can turn layers on if they want to see them in the map control.</value>
+  </data>
+  <data name="ItemCount" xml:space="preserve">
+    <value>Item Count</value>
+  </data>
+  <data name="LayerElements" xml:space="preserve">
+    <value>Layer Elements</value>
+  </data>
+  <data name="Layers" xml:space="preserve">
+    <value>Layers</value>
+  </data>
+  <data name="MakeMapVisible" xml:space="preserve">
+    <value>Make this map visible to department members.</value>
+  </data>
+  <data name="ManageFloors" xml:space="preserve">
+    <value>Manage Floors</value>
+  </data>
+  <data name="ManageLayers" xml:space="preserve">
+    <value>Manage Layers</value>
+  </data>
+  <data name="ManageZones" xml:space="preserve">
+    <value>Manage Zones</value>
+  </data>
+  <data name="ManageZonesHowTo" xml:space="preserve">
+    <value>Use the Draw Polygon tool (left toolbar) to draw a zone on the map. After drawing, select the zone in the sidebar to set its name and type. Click Save All Zones when finished.</value>
+  </data>
+  <data name="MapName" xml:space="preserve">
+    <value>Map Name</value>
+  </data>
+  <data name="MapOptions" xml:space="preserve">
+    <value>Map Options</value>
+  </data>
+  <data name="MapType" xml:space="preserve">
+    <value>Map Type</value>
+  </data>
+  <data name="Max" xml:space="preserve">
+    <value>Max</value>
+  </data>
+  <data name="MetadataHint" xml:space="preserve">
+    <value>Optional JSON key-value pairs (hazmat info, pre-plan notes, etc.)</value>
+  </data>
+  <data name="Min" xml:space="preserve">
+    <value>Min</value>
+  </data>
+  <data name="NewCustomMap" xml:space="preserve">
+    <value>New Custom Map</value>
+  </data>
+  <data name="NewLayer" xml:space="preserve">
+    <value>New Layer</value>
+  </data>
+  <data name="NoCustomMapsCreated" xml:space="preserve">
+    <value>No custom maps have been created yet.</value>
+  </data>
+  <data name="NoFloorsYet" xml:space="preserve">
+    <value>No floors have been added yet. Use the form on the right to add the first floor.</value>
+  </data>
+  <data name="NoZonesYet" xml:space="preserve">
+    <value>No zones yet. Draw a polygon on the map to create one.</value>
+  </data>
+  <data name="NotesMetadata" xml:space="preserve">
+    <value>Notes / Metadata</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>Not set</value>
+  </data>
+  <data name="SaveAllZones" xml:space="preserve">
+    <value>Save All Zones</value>
+  </data>
+  <data name="SaveChanges" xml:space="preserve">
+    <value>Save Changes</value>
+  </data>
+  <data name="SearchableDispatchable" xml:space="preserve">
+    <value>Searchable / Dispatchable</value>
+  </data>
+  <data name="SearchableZoneHint" xml:space="preserve">
+    <value>Allow this zone to appear as a call location.</value>
+  </data>
+  <data name="Set" xml:space="preserve">
+    <value>Set</value>
+  </data>
+  <data name="ShowCalls" xml:space="preserve">
+    <value>Show Calls</value>
+  </data>
+  <data name="ShowGeofences" xml:space="preserve">
+    <value>Show Geofences</value>
+  </data>
+  <data name="ShowPersonnel" xml:space="preserve">
+    <value>Show Personnel</value>
+  </data>
+  <data name="ShowPOIs" xml:space="preserve">
+    <value>Show POIs</value>
+  </data>
+  <data name="ShowStations" xml:space="preserve">
+    <value>Show Stations</value>
+  </data>
+  <data name="ShowUnits" xml:space="preserve">
+    <value>Show Units</value>
+  </data>
+  <data name="SortOrder" xml:space="preserve">
+    <value>Sort Order</value>
+  </data>
+  <data name="TopLeft" xml:space="preserve">
+    <value>Top-Left</value>
+  </data>
+  <data name="UnnamedZone" xml:space="preserve">
+    <value>Unnamed Zone</value>
+  </data>
+  <data name="ZoneDefaultName" xml:space="preserve">
+    <value>Zone</value>
+  </data>
+  <data name="ZoneName" xml:space="preserve">
+    <value>Zone Name</value>
+  </data>
+  <data name="ZoneNamePlaceholder" xml:space="preserve">
+    <value>e.g. Building 1, Room 405a</value>
+  </data>
+  <data name="ZoneType" xml:space="preserve">
+    <value>Zone Type</value>
+  </data>
+  <data name="ZoneTypeCheckpoint" xml:space="preserve">
+    <value>Checkpoint</value>
+  </data>
+  <data name="ZoneTypeCustom" xml:space="preserve">
+    <value>Custom</value>
+  </data>
+  <data name="ZoneTypeElevator" xml:space="preserve">
+    <value>Elevator</value>
+  </data>
+  <data name="ZoneTypeExit" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="ZoneTypeGate" xml:space="preserve">
+    <value>Gate</value>
+  </data>
+  <data name="ZoneTypeHallway" xml:space="preserve">
+    <value>Hallway</value>
+  </data>
+  <data name="ZoneTypeHazard" xml:space="preserve">
+    <value>Hazard</value>
+  </data>
+  <data name="ZoneTypeMusterPoint" xml:space="preserve">
+    <value>Muster Point</value>
+  </data>
+  <data name="ZoneTypeParking" xml:space="preserve">
+    <value>Parking</value>
+  </data>
+  <data name="ZoneTypeRoom" xml:space="preserve">
+    <value>Room</value>
+  </data>
+  <data name="ZoneTypeStagingArea" xml:space="preserve">
+    <value>Staging Area</value>
+  </data>
+  <data name="ZoneTypeStairWell" xml:space="preserve">
+    <value>Stairwell</value>
+  </data>
+  <data name="ZoneTypes" xml:space="preserve">
+    <value>Zone types</value>
+  </data>
+  <data name="Zones" xml:space="preserve">
+    <value>Zones</value>
+  </data>
+  <data name="AddPOI" xml:space="preserve">
+    <value>Add POI</value>
+  </data>
+  <data name="AddPOIType" xml:space="preserve">
+    <value>Add POI Type</value>
+  </data>
+  <data name="DeletePOITypeConfirm" xml:space="preserve">
+    <value>This will permanently delete the {0} POI Type and all its positions. Are you sure?</value>
+  </data>
+  <data name="Icon" xml:space="preserve">
+    <value>Icon</value>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="ImportPOIs" xml:space="preserve">
+    <value>Import POIs</value>
+  </data>
+  <data name="InformationTab" xml:space="preserve">
+    <value>Information</value>
+  </data>
+  <data name="IsDestinationPOIHint" xml:space="preserve">
+    <value>To denote a potential destination for a unit/person. For example an office, rally point, hospital, access point, etc.</value>
+  </data>
+  <data name="Latitude" xml:space="preserve">
+    <value>Latitude</value>
+  </data>
+  <data name="LatitudeHint" xml:space="preserve">
+    <value>Latitude (Decimal Notation: i.e. 39.1517)</value>
+  </data>
+  <data name="ListTab" xml:space="preserve">
+    <value>List</value>
+  </data>
+  <data name="LiveRouting" xml:space="preserve">
+    <value>Live Routing</value>
+  </data>
+  <data name="Longitude" xml:space="preserve">
+    <value>Longitude</value>
+  </data>
+  <data name="LongitudeHint" xml:space="preserve">
+    <value>Longitude (Decimal Notation: i.e. -119.4571)</value>
+  </data>
+  <data name="MapTab" xml:space="preserve">
+    <value>Map</value>
+  </data>
+  <data name="Marker" xml:space="preserve">
+    <value>Marker</value>
+  </data>
+  <data name="PointCount" xml:space="preserve">
+    <value>Point Count</value>
+  </data>
+  <data name="POIsModule" xml:space="preserve">
+    <value>POIs</value>
+  </data>
+  <data name="StationRouting" xml:space="preserve">
+    <value>Station Routing</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Upload</value>
+  </data>
+  <data name="ViewPOIType" xml:space="preserve">
+    <value>View POI Type</value>
+  </data>
+  <data name="UploadFloorImage" xml:space="preserve">
+    <value>Upload Map Image</value>
+  </data>
+  <data name="UploadFloorImageHint" xml:space="preserve">
+    <value>Upload a background image for this map layer. JPG, PNG, and TIFF are supported. Files up to 500 MB are accepted — large images are automatically converted to a tile pyramid for fast loading.</value>
+  </data>
+  <data name="CurrentImage" xml:space="preserve">
+    <value>Current Image</value>
+  </data>
+  <data name="NoImageUploaded" xml:space="preserve">
+    <value>No image has been uploaded for this layer yet.</value>
+  </data>
+  <data name="StorageType" xml:space="preserve">
+    <value>Storage</value>
+  </data>
+  <data name="StorageTypeNone" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="StorageTypeDatabaseBlob" xml:space="preserve">
+    <value>Direct</value>
+  </data>
+  <data name="StorageTypeTiledPyramid" xml:space="preserve">
+    <value>Tiled</value>
+  </data>
+  <data name="ImageDimensions" xml:space="preserve">
+    <value>Dimensions</value>
+  </data>
+  <data name="TileZoomLevels" xml:space="preserve">
+    <value>Zoom Levels</value>
+  </data>
+  <data name="SelectImageFile" xml:space="preserve">
+    <value>Select Image File</value>
+  </data>
+  <data name="UploadImage" xml:space="preserve">
+    <value>Upload Image</value>
+  </data>
+  <data name="ReplaceImage" xml:space="preserve">
+    <value>Replace Image</value>
+  </data>
+  <data name="DeleteImage" xml:space="preserve">
+    <value>Remove Image</value>
+  </data>
+  <data name="DeleteImageConfirm" xml:space="preserve">
+    <value>Are you sure you want to remove the background image from this layer? This cannot be undone.</value>
+  </data>
+  <data name="ImageStorageInfo" xml:space="preserve">
+    <value>Images ≤ {0} MB are stored directly. Larger images are sliced into a tile pyramid for efficient loading on all devices.</value>
+  </data>
+  <data name="TiledStorageNote" xml:space="preserve">
+    <value>This image is stored as a tile pyramid ({0} zoom levels). It will load progressively based on map zoom.</value>
+  </data>
+  <data name="DirectStorageNote" xml:space="preserve">
+    <value>This image is stored as a single file and loaded as a full overlay.</value>
+  </data>
+  <data name="UploadProcessing" xml:space="preserve">
+    <value>Processing image, please wait…</value>
+  </data>
+  <data name="LayerLabel" xml:space="preserve">
+    <value>Layer</value>
+  </data>
+  <data name="LayersLabel" xml:space="preserve">
+    <value>Layers</value>
+  </data>
+</root>
+

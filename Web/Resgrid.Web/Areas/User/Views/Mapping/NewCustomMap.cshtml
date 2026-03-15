@@ -1,0 +1,238 @@
+﻿@model Resgrid.Web.Areas.User.Models.Mapping.NewCustomMapView
+@{
+	ViewBag.Title = "Resgrid | " + mappingLocalizer["NewCustomMap"].Value;
+}
+
+@section Styles
+{
+	<link rel="stylesheet" href="~/lib/geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css" />
+	<style>
+		#boundsMap { height: 450px; }
+	</style>
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>@mappingLocalizer["NewCustomMap"]</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">@commonLocalizer["MappingModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="CustomMaps" asp-route-area="User">@mappingLocalizer["CustomMapsModule"]</a>
+			</li>
+			<li class="active">
+				<strong>@mappingLocalizer["NewCustomMap"]</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<form id="newCustomMapForm" class="form-horizontal" role="form"
+						  asp-controller="Mapping" asp-action="NewCustomMap" asp-route-area="User" method="post">
+
+						@Html.AntiForgeryToken()
+						<div asp-validation-summary="All" class="text-danger"></div>
+
+						@if (!string.IsNullOrWhiteSpace(Model.Message))
+						{
+							<div class="alert alert-info">@Model.Message</div>
+						}
+
+						@Html.HiddenFor(m => m.BoundsTopLeftLat)
+						@Html.HiddenFor(m => m.BoundsTopLeftLng)
+						@Html.HiddenFor(m => m.BoundsBottomRightLat)
+						@Html.HiddenFor(m => m.BoundsBottomRightLng)
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">@mappingLocalizer["MapName"]</label>
+							<div class="col-md-6">
+								@Html.TextBoxFor(m => m.Name, new { @class = "form-control", placeholder = mappingLocalizer["MapName"].Value })
+								@Html.ValidationMessageFor(m => m.Name, "", new { @class = "text-danger" })
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label">@commonLocalizer["Description"]</label>
+							<div class="col-md-6">
+								@Html.TextAreaFor(m => m.Description, 3, 0, new { @class = "form-control" })
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">@mappingLocalizer["MapType"]</label>
+							<div class="col-md-4">
+								@Html.DropDownListFor(m => m.Type, Model.MapTypes, new { @class = "form-control" })
+								@Html.ValidationMessageFor(m => m.Type, "", new { @class = "text-danger" })
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label">@mappingLocalizer["IsActive"]</label>
+							<div class="col-md-6">
+								@Html.CheckBoxFor(m => m.IsActive)
+								<span class="help-inline">@mappingLocalizer["MakeMapVisible"]</span>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">@mappingLocalizer["DefaultZoom"]</label>
+							<div class="col-md-2">
+								@Html.TextBoxFor(m => m.DefaultZoom, new { @class = "form-control", type = "number", min = "1", max = "22" })
+							</div>
+							<label class="col-sm-1 control-label">@mappingLocalizer["Min"]</label>
+							<div class="col-md-2">
+								@Html.TextBoxFor(m => m.MinZoom, new { @class = "form-control", type = "number", min = "1", max = "22" })
+							</div>
+							<label class="col-sm-1 control-label">@mappingLocalizer["Max"]</label>
+							<div class="col-md-2">
+								@Html.TextBoxFor(m => m.MaxZoom, new { @class = "form-control", type = "number", min = "1", max = "22" })
+							</div>
+						</div>
+
+						<div id="eventFields" style="display:none;">
+							<div class="form-group">
+								<label class="col-sm-2 control-label">@mappingLocalizer["EventStartsOn"]</label>
+								<div class="col-md-4">
+									@Html.TextBoxFor(m => m.EventStartsOn, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+								</div>
+								<label class="col-sm-2 control-label">@mappingLocalizer["EventEndsOn"]</label>
+								<div class="col-md-4">
+									@Html.TextBoxFor(m => m.EventEndsOn, "{0:yyyy-MM-dd}", new { @class = "form-control", type = "date" })
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="col-sm-2 control-label required">@mappingLocalizer["GeographicBounds"]</label>
+							<div class="col-md-10">
+								<p class="help-block">
+									<i class="fa fa-info-circle"></i>
+									@mappingLocalizer["GeoBoundsDrawHint"]
+								</p>
+								<div id="boundsMap"></div>
+								<div class="row" style="margin-top:8px;">
+									<div class="col-md-6">
+										<small class="text-muted">
+											@mappingLocalizer["TopLeft"]:
+											<span id="lblTopLeft">@mappingLocalizer["NotSet"]</span>
+										</small>
+									</div>
+									<div class="col-md-6">
+										<small class="text-muted">
+											@mappingLocalizer["BottomRight"]:
+											<span id="lblBottomRight">@mappingLocalizer["NotSet"]</span>
+										</small>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<div class="col-sm-4 col-sm-offset-2">
+								<a class="btn btn-white" asp-controller="Mapping" asp-action="CustomMaps" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+								<button type="submit" class="btn btn-primary">
+									<i class="fa fa-save"></i> @mappingLocalizer["CreateMap"]
+								</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	@if (Model.CenterCoordinates != null && Model.CenterCoordinates.Latitude.HasValue && Model.CenterCoordinates.Longitude.HasValue)
+	{
+		<script>
+			var centerLat = @(Model.CenterCoordinates.Latitude.Value);
+			var centerLng = @(Model.CenterCoordinates.Longitude.Value);
+		</script>
+	}
+	else
+	{
+		<script>
+			var centerLat = 39.5;
+			var centerLng = -98.35;
+		</script>
+	}
+
+	<script>
+		var i18n = {
+			notSet: '@Html.Raw(mappingLocalizer["NotSet"].Value)'
+		};
+	</script>
+
+	<script src="~/lib/geoman-io/leaflet-geoman-free/dist/leaflet-geoman.min.js"></script>
+	<script>
+		$(document).ready(function () {
+			var mapType = $('#Type');
+
+			function toggleEventFields() {
+				$('#eventFields').toggle(mapType.val() === '3');
+			}
+
+			mapType.on('change', toggleEventFields);
+			toggleEventFields();
+
+			var boundsMap = L.map('boundsMap').setView([centerLat, centerLng], 13);
+
+			L.tileLayer('@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()', {
+				maxZoom: 19,
+				attribution: '@Resgrid.Config.MappingConfig.LeafletAttribution'
+			}).addTo(boundsMap);
+
+			boundsMap.pm.addControls({
+				drawMarker: false, drawCircle: false, drawPolyline: false,
+				drawPolygon: false, drawCircleMarker: false, drawText: false,
+				drawRectangle: true, editMode: true, dragMode: false,
+				cutPolygon: false, removalMode: true, rotateMode: false
+			});
+
+			var currentRect = null;
+
+			function updateBoundsFromLayer(layer) {
+				var bounds = layer.getBounds();
+				var nw = bounds.getNorthWest();
+				var se = bounds.getSouthEast();
+				$('#BoundsTopLeftLat').val(nw.lat.toFixed(7));
+				$('#BoundsTopLeftLng').val(nw.lng.toFixed(7));
+				$('#BoundsBottomRightLat').val(se.lat.toFixed(7));
+				$('#BoundsBottomRightLng').val(se.lng.toFixed(7));
+				$('#lblTopLeft').text(nw.lat.toFixed(5) + ', ' + nw.lng.toFixed(5));
+				$('#lblBottomRight').text(se.lat.toFixed(5) + ', ' + se.lng.toFixed(5));
+			}
+
+			boundsMap.on('pm:create', function (e) {
+				if (e.shape !== 'Rectangle') return;
+				if (currentRect) boundsMap.removeLayer(currentRect);
+				currentRect = e.layer;
+				updateBoundsFromLayer(currentRect);
+				currentRect.on('pm:edit', function () { updateBoundsFromLayer(currentRect); });
+			});
+
+			boundsMap.on('pm:remove', function (e) {
+				if (currentRect === e.layer) {
+					currentRect = null;
+					$('#BoundsTopLeftLat').val('0');
+					$('#BoundsTopLeftLng').val('0');
+					$('#BoundsBottomRightLat').val('0');
+					$('#BoundsBottomRightLng').val('0');
+					$('#lblTopLeft').text(i18n.notSet);
+					$('#lblBottomRight').text(i18n.notSet);
+				}
+			});
+		});
+	</script>
+}

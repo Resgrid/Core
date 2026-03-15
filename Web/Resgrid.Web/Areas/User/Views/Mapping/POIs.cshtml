@@ -1,22 +1,22 @@
 ﻿@using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Mapping.POIsView
 @{
-	ViewBag.Title = "Resgrid | POIs";
+	ViewBag.Title = "Resgrid | " + mappingLocalizer["POIsModule"].Value;
 }
 
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>POIs</h2>
+		<h2>@mappingLocalizer["POIsModule"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
 			</li>
 			<li>
-				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">Mapping</a>
+				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">@commonLocalizer["MappingModule"]</a>
 			</li>
 			<li class="active">
-				<strong>POIs</strong>
+				<strong>@mappingLocalizer["POIsModule"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -24,7 +24,7 @@
 	{
 		<div class="col-sm-8">
 			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-				<a title="Add a POI Type" class="btn btn-success" asp-controller="Mapping" asp-action="AddPOIType" asp-route-area="User">Add POI Type</a>
+				<a title="@mappingLocalizer["AddPOIType"].Value" class="btn btn-success" asp-controller="Mapping" asp-action="AddPOIType" asp-route-area="User">@mappingLocalizer["AddPOIType"]</a>
 			</div>
 		</div>
 	}
@@ -39,40 +39,26 @@
 						<table class="table table-striped">
 							<thead>
 								<tr>
-									<th>
-										Name
-									</th>
-									<th>
-										Color
-									</th>
-									<th>
-										Point Count
-									</th>
-									<th class='span1'>
-									</th>
+									<th>@commonLocalizer["Name"]</th>
+									<th>@commonLocalizer["Color"]</th>
+									<th>@mappingLocalizer["PointCount"]</th>
+									<th class='span1'></th>
 								</tr>
 							</thead>
 							<tbody>
 								@foreach (var u in Model.Types)
 								{
 									<tr>
+										<td>@u.Name</td>
+										<td><span style="color:@u.Color;">@u.Color</span></td>
+										<td>@u.Pois.Count</td>
 										<td>
-											@u.Name
-										</td>
-										<td>
-											<span style="color:@u.Color;">@u.Color</span>
-										</td>
-										<td>
-											@u.Pois.Count
-										</td>
-										<td>
-											<a asp-controller="Mapping" asp-action="ViewType" asp-route-area="User" asp-route-poiTypeId="@u.PoiTypeId" class="btn btn-xs btn-primary">View</a>
-
+											<a asp-controller="Mapping" asp-action="ViewType" asp-route-area="User" asp-route-poiTypeId="@u.PoiTypeId" class="btn btn-xs btn-primary">@commonLocalizer["View"]</a>
 @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 {
-											<a asp-controller="Mapping" asp-action="AddPOI" asp-route-area="User" asp-route-poiTypeId="@u.PoiTypeId" class="btn btn-xs btn-info">Add</a>
-											<a asp-controller="Mapping" asp-action="ImportPOIs" asp-route-area="User" asp-route-poiTypeId="@u.PoiTypeId" class="btn btn-xs btn-warning">Import</a>
-											<a asp-controller="Mapping" asp-action="DeletePOIType" asp-route-area="User" asp-route-poiTypeId="@u.PoiTypeId" class="btn btn-xs btn-danger" data-confirm="WARNING: This will permanently delete this POI Type and all it's positions. Are you sure you want to delete the @u.Name POI Type?" rel="nofollow">Delete</a>
+											<a asp-controller="Mapping" asp-action="AddPOI" asp-route-area="User" asp-route-poiTypeId="@u.PoiTypeId" class="btn btn-xs btn-info">@mappingLocalizer["AddPOI"]</a>
+											<a asp-controller="Mapping" asp-action="ImportPOIs" asp-route-area="User" asp-route-poiTypeId="@u.PoiTypeId" class="btn btn-xs btn-warning">@mappingLocalizer["Import"]</a>
+											<a asp-controller="Mapping" asp-action="DeletePOIType" asp-route-area="User" asp-route-poiTypeId="@u.PoiTypeId" class="btn btn-xs btn-danger" data-confirm="@string.Format(mappingLocalizer["DeletePOITypeConfirm"].Value, u.Name)" rel="nofollow">@commonLocalizer["Delete"]</a>
 }
 										</td>
 									</tr>

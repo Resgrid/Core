@@ -1,0 +1,11 @@
+﻿-- =============================================================================
+-- This file is superseded by the FluentMigrator migration classes:
+--
+--   SQL Server : Resgrid.Providers.Migrations\Migrations\M0052_AddingCustomMapImageStorage.cs
+--   PostgreSQL : Resgrid.Providers.MigrationsPg\Migrations\M0052_AddingCustomMapImageStoragePg.cs
+--
+-- Those files are executed automatically by the application at startup via
+-- FluentMigrator and do NOT need to be run manually.
+--
+-- This .sql file is kept only for historical reference.
+-- =============================================================================

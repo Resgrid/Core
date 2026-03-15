@@ -387,6 +387,15 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string POITypesTableName { get; set; }
 		public string SelectPoiTypesByDIdQuery { get; set; }
 		public string SelectPoiTypeByIdQuery { get; set; }
+
+		public string CustomMapsTableName { get; set; }
+		public string CustomMapFloorsTableName { get; set; }
+		public string CustomMapZonesTableName { get; set; }
+		public string SelectCustomMapsByDIdQuery { get; set; }
+		public string SelectCustomMapByIdQuery { get; set; }
+		public string SelectCustomMapFloorsByMapIdQuery { get; set; }
+		public string SelectCustomMapZonesByFloorIdQuery { get; set; }
+		public string SelectSearchableCustomMapZonesByMapIdQuery { get; set; }
 		#endregion Mapping
 
 		#region Notes

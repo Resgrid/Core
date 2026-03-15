@@ -440,6 +440,79 @@
             Confirms a verification code previously sent to the specified contact method.
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.CustomMapsController">
+            <summary>
+            Custom Maps — department-owned indoor/satellite/schematic map management.
+            Provides CRUD for maps, floors, and polygon zones; also resolves GPS coordinates
+            to human-readable zone names for use as call locations.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CustomMapsController.GetCustomMaps">
+            <summary>
+            Gets all custom maps for the caller's department.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CustomMapsController.GetCustomMap(System.String)">
+            <summary>
+            Gets a single custom map by id, including its floors and zones.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CustomMapsController.SaveCustomMap(Resgrid.Web.Services.Models.v4.Mapping.SaveCustomMapInput)">
+            <summary>
+            Creates a new custom map for the department.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CustomMapsController.UpdateCustomMap(Resgrid.Web.Services.Models.v4.Mapping.SaveCustomMapInput)">
+            <summary>
+            Updates an existing custom map.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CustomMapsController.DeleteCustomMap(System.String)">
+            <summary>
+            Deletes a custom map and all its floors/zones.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CustomMapsController.GetFloors(System.String)">
+            <summary>
+            Gets all floors for a custom map.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CustomMapsController.SaveFloor(Resgrid.Web.Services.Models.v4.Mapping.SaveCustomMapFloorInput)">
+            <summary>
+            Creates or updates a floor on a custom map.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CustomMapsController.DeleteFloor(System.String)">
+            <summary>
+            Deletes a floor and all its zones.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CustomMapsController.GetZones(System.String)">
+            <summary>
+            Gets all zones for a specific floor.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CustomMapsController.SaveZone(Resgrid.Web.Services.Models.v4.Mapping.SaveCustomMapZoneInput)">
+            <summary>
+            Creates or updates a polygon zone on a floor.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CustomMapsController.DeleteZone(System.String)">
+            <summary>
+            Deletes a polygon zone.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CustomMapsController.ResolveCoordinate(Resgrid.Web.Services.Models.v4.Mapping.ResolveCoordinateInput)">
+            <summary>
+            Resolves a geo-projected (lat/lng) coordinate to a zone name using
+            point-in-polygon. Useful for auto-filling call locations from GPS.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CustomMapsController.GetSearchableZones(System.String)">
+            <summary>
+            Gets all searchable zones across all floors of a map (for name/coordinate search).
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CustomStatusesController">
             <summary>
             Custom statuses
@@ -5726,6 +5799,24 @@
             <summary>
             Can the API services talk to the cache
             </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetAllCustomMapsResult.Data">
+            <summary>Response data</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetCustomMapResult.Data">
+            <summary>Response data</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.CustomMapResultData.Type">
+            <summary>CustomMapType integer value</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.CustomMapFloorResultData.TileBaseUrl">
+            <summary>Tile base URL when the image has been processed into a tile pyramid</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.CustomMapZoneResultData.ZoneType">
+            <summary>CustomMapZoneType integer value</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.CustomMapZoneResultData.PolygonGeoJson">
+            <summary>GeoJSON polygon in geo-projected (lat/lng) coordinates</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetMapDataResult.Data">
             <summary>

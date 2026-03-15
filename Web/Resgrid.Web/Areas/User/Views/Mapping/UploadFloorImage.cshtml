@@ -1,0 +1,304 @@
+﻿@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Mapping.UploadFloorImageView
+@{
+	ViewBag.Title = "Resgrid | " + mappingLocalizer["UploadFloorImage"].Value;
+	bool hasImage = Model.CurrentStorageType != CustomMapFloorStorageType.None;
+	bool isTiled = Model.CurrentStorageType == CustomMapFloorStorageType.TiledPyramid;
+	bool isDirect = Model.CurrentStorageType == CustomMapFloorStorageType.DatabaseBlob;
+}
+
+@section Styles
+{
+	<style>
+		.drop-zone {
+			border: 3px dashed #1ab394;
+			border-radius: 8px;
+			padding: 40px 20px;
+			text-align: center;
+			cursor: pointer;
+			transition: background 0.2s;
+			background: #f8fdfb;
+		}
+
+		.drop-zone:hover,
+		.drop-zone.dragover {
+			background: #e8f8f3;
+		}
+
+		.drop-zone .drop-icon {
+			font-size: 48px;
+			color: #1ab394;
+			margin-bottom: 10px;
+		}
+
+		.drop-zone input[type=file] {
+			display: none;
+		}
+
+		#filePreview {
+			display: none;
+			margin-top: 16px;
+		}
+
+		#previewImg {
+			max-width: 100%;
+			max-height: 300px;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+		}
+
+		.storage-badge {
+			font-size: 13px;
+			padding: 4px 10px;
+			border-radius: 12px;
+		}
+
+		.storage-badge.direct {
+			background: #1ab394;
+			color: #fff;
+		}
+
+		.storage-badge.tiled {
+			background: #1c84c6;
+			color: #fff;
+		}
+
+		.storage-badge.none {
+			background: #aaa;
+			color: #fff;
+		}
+	</style>
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-6">
+		<h2>@mappingLocalizer["UploadFloorImage"]</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">@commonLocalizer["MappingModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="CustomMaps" asp-route-area="User">@mappingLocalizer["CustomMapsModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="ManageFloors" asp-route-area="User" asp-route-customMapId="@Model.CustomMapId">@Model.CustomMapName</a>
+			</li>
+			<li class="active">
+				<strong>@Model.FloorName — @mappingLocalizer["UploadFloorImage"]</strong>
+			</li>
+		</ol>
+	</div>
+	<div class="col-sm-6">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-default"
+			   asp-controller="Mapping" asp-action="ManageFloors"
+			   asp-route-area="User" asp-route-customMapId="@Model.CustomMapId">
+				<i class="fa fa-arrow-left"></i> @mappingLocalizer["BackToFloors"]
+			</a>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<!-- Upload form -->
+	<div class="col-md-7">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5><i class="fa fa-upload"></i>
+						@(hasImage ? mappingLocalizer["ReplaceImage"].Value : mappingLocalizer["UploadImage"].Value)
+					</h5>
+				</div>
+				<div class="ibox-content">
+					@if (!string.IsNullOrWhiteSpace(Model.Message))
+					{
+						<div class="alert alert-danger"><i class="fa fa-exclamation-triangle"></i> @Model.Message</div>
+					}
+
+					<div class="alert alert-info">
+						<i class="fa fa-info-circle"></i>
+						@string.Format(mappingLocalizer["ImageStorageInfo"].Value, Model.ThresholdMb)
+					</div>
+
+					<form id="uploadForm" method="post" enctype="multipart/form-data"
+					      asp-controller="Mapping" asp-action="UploadFloorImage" asp-route-area="User">
+						@Html.AntiForgeryToken()
+						@Html.HiddenFor(m => m.CustomMapFloorId)
+						@Html.HiddenFor(m => m.CustomMapId)
+
+						<!-- Drag-and-drop zone -->
+						<div class="drop-zone" id="dropZone">
+							<div class="drop-icon"><i class="fa fa-cloud-upload"></i></div>
+							<p style="margin:0; font-size:16px; font-weight:600;">
+								@mappingLocalizer["SelectImageFile"]
+							</p>
+							<p class="text-muted" style="margin:4px 0 12px;">
+								JPG &bull; PNG &bull; TIFF &mdash; up to 500 MB
+							</p>
+							<button type="button" class="btn btn-primary" onclick="document.getElementById('floorImageFile').click()">
+								<i class="fa fa-folder-open"></i> Browse…
+							</button>
+							<input type="file" id="floorImageFile" name="floorImageFile" accept=".jpg,.jpeg,.png,.tif,.tiff" />
+						</div>
+
+						<!-- Inline preview -->
+						<div id="filePreview">
+							<hr />
+							<div class="row">
+								<div class="col-sm-8">
+									<img id="previewImg" src="#" alt="Preview" />
+								</div>
+								<div class="col-sm-4">
+									<p><strong id="previewName"></strong></p>
+									<p class="text-muted" id="previewSize"></p>
+									<p id="previewStorageHint" class="text-muted" style="font-size:12px;"></p>
+								</div>
+							</div>
+						</div>
+
+						<div style="margin-top:16px;">
+							<button type="submit" id="btnUpload" class="btn btn-primary btn-lg btn-block" disabled>
+								<i class="fa fa-upload"></i>
+								<span id="btnLabel">@mappingLocalizer["UploadImage"]</span>
+							</button>
+						</div>
+
+						<div id="processingAlert" class="alert alert-warning" style="display:none; margin-top:12px;">
+							<i class="fa fa-spinner fa-spin"></i> @mappingLocalizer["UploadProcessing"]
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Current image info -->
+	<div class="col-md-5">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5><i class="fa fa-image"></i> @mappingLocalizer["CurrentImage"]</h5>
+				</div>
+				<div class="ibox-content">
+					@if (!hasImage)
+					{
+						<div class="alert alert-info">
+							<i class="fa fa-info-circle"></i> @mappingLocalizer["NoImageUploaded"]
+						</div>
+					}
+					else
+					{
+						<table class="table table-condensed">
+							<tr>
+								<td><strong>@mappingLocalizer["StorageType"]</strong></td>
+								<td>
+									@if (isDirect)
+									{
+										<span class="storage-badge direct"><i class="fa fa-file-image-o"></i> @mappingLocalizer["StorageTypeDatabaseBlob"]</span>
+										<small class="text-muted" style="display:block; margin-top:4px;">@mappingLocalizer["DirectStorageNote"]</small>
+									}
+									else if (isTiled)
+									{
+										<span class="storage-badge tiled"><i class="fa fa-th"></i> @mappingLocalizer["StorageTypeTiledPyramid"]</span>
+										<small class="text-muted" style="display:block; margin-top:4px;">
+											@string.Format(mappingLocalizer["TiledStorageNote"].Value, Model.TileZoomLevels)
+										</small>
+									}
+								</td>
+							</tr>
+							@if (Model.ImageWidthPx.HasValue && Model.ImageHeightPx.HasValue)
+							{
+								<tr>
+									<td><strong>@mappingLocalizer["ImageDimensions"]</strong></td>
+									<td>@Model.ImageWidthPx × @Model.ImageHeightPx px</td>
+								</tr>
+							}
+							@if (isTiled && Model.TileZoomLevels.HasValue)
+							{
+								<tr>
+									<td><strong>@mappingLocalizer["TileZoomLevels"]</strong></td>
+									<td>@Model.TileZoomLevels (zoom 0–@(Model.TileZoomLevels - 1))</td>
+								</tr>
+							}
+						</table>
+
+						@if (isDirect && !string.IsNullOrWhiteSpace(Model.CurrentImageUrl))
+						{
+							<div style="margin-bottom:12px;">
+								<img src="@Model.CurrentImageUrl" style="max-width:100%; max-height:200px; border:1px solid #ddd; border-radius:4px;" alt="Current image" />
+							</div>
+						}
+
+						<a class="btn btn-danger btn-sm"
+						   asp-controller="Mapping" asp-action="DeleteFloorImage"
+						   asp-route-area="User" asp-route-customMapFloorId="@Model.CustomMapFloorId"
+						   data-confirm="@mappingLocalizer["DeleteImageConfirm"].Value"
+						   rel="nofollow">
+							<i class="fa fa-trash"></i> @mappingLocalizer["DeleteImage"]
+						</a>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script>
+		var thresholdBytes = @(Model.ThresholdMb * 1024 * 1024);
+		var tileHint = '@Html.Raw(mappingLocalizer["StorageTypeTiledPyramid"].Value + " — " + mappingLocalizer["TiledStorageNote"].Value.Replace("{0}", "auto"))';
+		var directHint = '@Html.Raw(mappingLocalizer["StorageTypeDatabaseBlob"].Value + " — " + mappingLocalizer["DirectStorageNote"].Value)';
+
+		function formatBytes(bytes) {
+			if (bytes < 1024) return bytes + ' B';
+			if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+			return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+		}
+
+		document.getElementById('floorImageFile').addEventListener('change', function () {
+			handleFile(this.files[0]);
+		});
+
+		var dropZone = document.getElementById('dropZone');
+		dropZone.addEventListener('dragover', function (e) { e.preventDefault(); dropZone.classList.add('dragover'); });
+		dropZone.addEventListener('dragleave', function () { dropZone.classList.remove('dragover'); });
+		dropZone.addEventListener('drop', function (e) {
+			e.preventDefault();
+			dropZone.classList.remove('dragover');
+			var file = e.dataTransfer.files[0];
+			if (file) {
+				document.getElementById('floorImageFile').files = e.dataTransfer.files;
+				handleFile(file);
+			}
+		});
+
+		function handleFile(file) {
+			if (!file) return;
+
+			document.getElementById('previewName').textContent = file.name;
+			document.getElementById('previewSize').textContent = formatBytes(file.size);
+			document.getElementById('previewStorageHint').textContent = file.size > thresholdBytes ? tileHint : directHint;
+
+			var reader = new FileReader();
+			reader.onload = function (e) {
+				var img = document.getElementById('previewImg');
+				img.src = e.target.result;
+				document.getElementById('filePreview').style.display = 'block';
+			};
+			reader.readAsDataURL(file);
+
+			document.getElementById('btnUpload').removeAttribute('disabled');
+		}
+
+		document.getElementById('uploadForm').addEventListener('submit', function () {
+			document.getElementById('processingAlert').style.display = 'block';
+			document.getElementById('btnUpload').setAttribute('disabled', 'disabled');
+		});
+	</script>
+}
+

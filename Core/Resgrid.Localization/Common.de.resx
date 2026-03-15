@@ -614,5 +614,206 @@
   <data name="YourDepartments" xml:space="preserve">
     <value>Ihre Abteilungen</value>
   </data>
+  <data name="AddFloor" xml:space="preserve">
+    <value>Etage hinzufügen</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Übernehmen</value>
+  </data>
+  <data name="BackToFloors" xml:space="preserve">
+    <value>Zurück zu den Etagen</value>
+  </data>
+  <data name="BackToMaps" xml:space="preserve">
+    <value>Zurück zu den Karten</value>
+  </data>
+  <data name="BottomRight" xml:space="preserve">
+    <value>Unten rechts</value>
+  </data>
+  <data name="CreateFirstMap" xml:space="preserve">
+    <value>Erstellen Sie Ihre erste Karte</value>
+  </data>
+  <data name="CreateMap" xml:space="preserve">
+    <value>Karte erstellen</value>
+  </data>
+  <data name="CurrentBoundsHint" xml:space="preserve">
+    <value>Die aktuellen Grenzen werden angezeigt. Sie können ein neues Rechteck zeichnen, um sie zu ersetzen.</value>
+  </data>
+  <data name="CustomMapsModule" xml:space="preserve">
+    <value>Benutzerdefinierte Karten</value>
+  </data>
+  <data name="DefaultFloorHint" xml:space="preserve">
+    <value>Die Standard-Etage wird beim Anzeigen dieser Karte zuerst angezeigt.</value>
+  </data>
+  <data name="DefaultZoom" xml:space="preserve">
+    <value>Standard-Zoom</value>
+  </data>
+  <data name="EditCustomMap" xml:space="preserve">
+    <value>Benutzerdefinierte Karte bearbeiten</value>
+  </data>
+  <data name="EditZone" xml:space="preserve">
+    <value>Zone bearbeiten</value>
+  </data>
+  <data name="Elevation" xml:space="preserve">
+    <value>Höhe</value>
+  </data>
+  <data name="ElevationMeters" xml:space="preserve">
+    <value>Höhe (Meter)</value>
+  </data>
+  <data name="EventEndsOn" xml:space="preserve">
+    <value>Veranstaltung endet am</value>
+  </data>
+  <data name="EventStartsOn" xml:space="preserve">
+    <value>Veranstaltung beginnt am</value>
+  </data>
+  <data name="FloorName" xml:space="preserve">
+    <value>Etagenname</value>
+  </data>
+  <data name="FloorNumber" xml:space="preserve">
+    <value>Etage #</value>
+  </data>
+  <data name="FloorPlanImage" xml:space="preserve">
+    <value>Grundrissbild</value>
+  </data>
+  <data name="FloorPlanImageHint" xml:space="preserve">
+    <value>Laden Sie ein Grundrissbild hoch (JPG, PNG, SVG, max. 20 MB). Dieses Bild wird über der Karte überlagert, um das Zeichnen von Zonen zu ermöglichen.</value>
+  </data>
+  <data name="Floors" xml:space="preserve">
+    <value>Etagen</value>
+  </data>
+  <data name="FloorsLevels" xml:space="preserve">
+    <value>Etagen / Ebenen</value>
+  </data>
+  <data name="GeoBoundsDrawHint" xml:space="preserve">
+    <value>Zeichnen Sie unten auf der Karte ein Rechteck, um den geografischen Bereich Ihres benutzerdefinierten Kartenbildes festzulegen. Die Grenzen werden automatisch gespeichert.</value>
+  </data>
+  <data name="GeographicBounds" xml:space="preserve">
+    <value>Geografische Grenzen</value>
+  </data>
+  <data name="HowToUse" xml:space="preserve">
+    <value>Anleitung:</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>Bild</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>Inaktiv</value>
+  </data>
+  <data name="IsActive" xml:space="preserve">
+    <value>Aktiv</value>
+  </data>
+  <data name="IsDefaultFloor" xml:space="preserve">
+    <value>Standard-Etage</value>
+  </data>
+  <data name="MakeMapVisible" xml:space="preserve">
+    <value>Diese Karte für Abteilungsmitglieder sichtbar machen.</value>
+  </data>
+  <data name="ManageFloors" xml:space="preserve">
+    <value>Etagen verwalten</value>
+  </data>
+  <data name="ManageZones" xml:space="preserve">
+    <value>Zonen verwalten</value>
+  </data>
+  <data name="ManageZonesHowTo" xml:space="preserve">
+    <value>Verwenden Sie das Werkzeug Polygon zeichnen (linke Symbolleiste), um eine Zone auf der Karte zu zeichnen. Wählen Sie nach dem Zeichnen die Zone in der Seitenleiste aus, um Name und Typ festzulegen. Klicken Sie auf Alle Zonen speichern, wenn Sie fertig sind.</value>
+  </data>
+  <data name="MapName" xml:space="preserve">
+    <value>Kartenname</value>
+  </data>
+  <data name="MapType" xml:space="preserve">
+    <value>Kartentyp</value>
+  </data>
+  <data name="Max" xml:space="preserve">
+    <value>Max</value>
+  </data>
+  <data name="MetadataHint" xml:space="preserve">
+    <value>Optionale JSON-Schlüssel-Wert-Paare (Gefahrstoffinfo, Vorplanungsnotizen usw.)</value>
+  </data>
+  <data name="Min" xml:space="preserve">
+    <value>Min</value>
+  </data>
+  <data name="NewCustomMap" xml:space="preserve">
+    <value>Neue benutzerdefinierte Karte</value>
+  </data>
+  <data name="NoCustomMapsCreated" xml:space="preserve">
+    <value>Es wurden noch keine benutzerdefinierten Karten erstellt.</value>
+  </data>
+  <data name="NoFloorsYet" xml:space="preserve">
+    <value>Es wurden noch keine Etagen hinzugefügt. Verwenden Sie das Formular auf der rechten Seite, um die erste Etage hinzuzufügen.</value>
+  </data>
+  <data name="NoZonesYet" xml:space="preserve">
+    <value>Noch keine Zonen vorhanden. Zeichnen Sie ein Polygon auf der Karte, um eine zu erstellen.</value>
+  </data>
+  <data name="NotesMetadata" xml:space="preserve">
+    <value>Notizen / Metadaten</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>Nicht gesetzt</value>
+  </data>
+  <data name="SaveAllZones" xml:space="preserve">
+    <value>Alle Zonen speichern</value>
+  </data>
+  <data name="SaveChanges" xml:space="preserve">
+    <value>Änderungen speichern</value>
+  </data>
+  <data name="SearchableDispatchable" xml:space="preserve">
+    <value>Durchsuchbar / Disponierbar</value>
+  </data>
+  <data name="SearchableZoneHint" xml:space="preserve">
+    <value>Diese Zone als Einsatzort anzeigen.</value>
+  </data>
+  <data name="SortOrder" xml:space="preserve">
+    <value>Sortierreihenfolge</value>
+  </data>
+  <data name="TopLeft" xml:space="preserve">
+    <value>Oben links</value>
+  </data>
+  <data name="ZoneName" xml:space="preserve">
+    <value>Zonenname</value>
+  </data>
+  <data name="ZoneType" xml:space="preserve">
+    <value>Zonentyp</value>
+  </data>
+  <data name="ZoneTypeCheckpoint" xml:space="preserve">
+    <value>Kontrollpunkt</value>
+  </data>
+  <data name="ZoneTypeCustom" xml:space="preserve">
+    <value>Benutzerdefiniert</value>
+  </data>
+  <data name="ZoneTypeElevator" xml:space="preserve">
+    <value>Aufzug</value>
+  </data>
+  <data name="ZoneTypeExit" xml:space="preserve">
+    <value>Ausgang</value>
+  </data>
+  <data name="ZoneTypeGate" xml:space="preserve">
+    <value>Tor</value>
+  </data>
+  <data name="ZoneTypeHallway" xml:space="preserve">
+    <value>Flur</value>
+  </data>
+  <data name="ZoneTypeHazard" xml:space="preserve">
+    <value>Gefahr</value>
+  </data>
+  <data name="ZoneTypeMusterPoint" xml:space="preserve">
+    <value>Sammelstelle</value>
+  </data>
+  <data name="ZoneTypeParking" xml:space="preserve">
+    <value>Parkplatz</value>
+  </data>
+  <data name="ZoneTypeRoom" xml:space="preserve">
+    <value>Raum</value>
+  </data>
+  <data name="ZoneTypeStagingArea" xml:space="preserve">
+    <value>Bereitstellungsraum</value>
+  </data>
+  <data name="ZoneTypeStairWell" xml:space="preserve">
+    <value>Treppenhaus</value>
+  </data>
+  <data name="ZoneTypes" xml:space="preserve">
+    <value>Zonentypen</value>
+  </data>
+  <data name="Zones" xml:space="preserve">
+    <value>Zonen</value>
+  </data>
 </root>
 

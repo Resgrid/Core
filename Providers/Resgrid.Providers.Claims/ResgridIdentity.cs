@@ -1038,5 +1038,20 @@ namespace Resgrid.Providers.Claims
 				AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Delete));
 			}
 		}
+
+		/// <summary>
+		/// Adds CustomMap claims. Admins receive full CRUD; all other authenticated members receive View.
+		/// </summary>
+		public void AddCustomMapClaims(bool isAdmin)
+		{
+			AddClaim(new Claim(ResgridClaimTypes.Resources.CustomMap, ResgridClaimTypes.Actions.View));
+
+			if (isAdmin)
+			{
+				AddClaim(new Claim(ResgridClaimTypes.Resources.CustomMap, ResgridClaimTypes.Actions.Update));
+				AddClaim(new Claim(ResgridClaimTypes.Resources.CustomMap, ResgridClaimTypes.Actions.Create));
+				AddClaim(new Claim(ResgridClaimTypes.Resources.CustomMap, ResgridClaimTypes.Actions.Delete));
+			}
+		}
 	}
 }

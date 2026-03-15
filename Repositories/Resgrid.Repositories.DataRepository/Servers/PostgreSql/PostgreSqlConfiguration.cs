@@ -1277,6 +1277,39 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					LEFT JOIN %SCHEMA%.%POISTABLE% p ON pt.PoiTypeId = p.PoiTypeId
 					WHERE pt.PoiTypeId = %POITYPEID%";
 
+			CustomMapsTableName = "CustomMaps";
+			CustomMapFloorsTableName = "CustomMapFloors";
+			CustomMapZonesTableName = "CustomMapZones";
+			SelectCustomMapsByDIdQuery = @"
+					SELECT cm.*, cmf.*
+					FROM %SCHEMA%.%CUSTOMMAPSTABLE% cm
+					LEFT JOIN %SCHEMA%.%CUSTOMMAPFLOORSTABLE% cmf ON cmf.CustomMapId = cm.CustomMapId
+					WHERE cm.DepartmentId = %DID%
+					ORDER BY cm.CustomMapId, cmf.SortOrder";
+			SelectCustomMapByIdQuery = @"
+					SELECT cm.*, cmf.*
+					FROM %SCHEMA%.%CUSTOMMAPSTABLE% cm
+					LEFT JOIN %SCHEMA%.%CUSTOMMAPFLOORSTABLE% cmf ON cmf.CustomMapId = cm.CustomMapId
+					WHERE cm.CustomMapId = %CUSTOMMAPID%
+					ORDER BY cmf.SortOrder";
+			SelectCustomMapFloorsByMapIdQuery = @"
+					SELECT cmf.*, cmz.*
+					FROM %SCHEMA%.%CUSTOMMAPFLOORSTABLE% cmf
+					LEFT JOIN %SCHEMA%.%CUSTOMMAPZONESTABLE% cmz ON cmz.CustomMapFloorId = cmf.CustomMapFloorId
+					WHERE cmf.CustomMapId = %CUSTOMMAPID%
+					ORDER BY cmf.SortOrder, cmz.CustomMapZoneId";
+			SelectCustomMapZonesByFloorIdQuery = @"
+					SELECT cmz.*
+					FROM %SCHEMA%.%CUSTOMMAPZONESTABLE% cmz
+					WHERE cmz.CustomMapFloorId = %CUSTOMMAPFLOORID%
+					ORDER BY cmz.CustomMapZoneId";
+			SelectSearchableCustomMapZonesByMapIdQuery = @"
+					SELECT cmz.*
+					FROM %SCHEMA%.%CUSTOMMAPZONESTABLE% cmz
+					INNER JOIN %SCHEMA%.%CUSTOMMAPFLOORSTABLE% cmf ON cmf.CustomMapFloorId = cmz.CustomMapFloorId
+					WHERE cmf.CustomMapId = %CUSTOMMAPID% AND cmz.IsSearchable = true AND cmz.IsActive = true
+					ORDER BY cmz.Name";
+
 			#endregion Mapping
 
 			#region Notes

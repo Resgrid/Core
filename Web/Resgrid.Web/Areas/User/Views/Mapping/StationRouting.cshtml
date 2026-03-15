@@ -1,6 +1,6 @@
 ﻿@model Resgrid.WebCore.Areas.User.Models.Mapping.StationRoutingView
 @{
-  ViewBag.Title = "Resgrid | Station Navigation";
+  ViewBag.Title = "Resgrid | " + mappingLocalizer["StationRouting"].Value;
 }
 
 @section Styles
@@ -16,16 +16,16 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
-    <h2>Station Routing</h2>
+    <h2>@mappingLocalizer["StationRouting"]</h2>
     <ol class="breadcrumb">
       <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
       </li>
       <li>
-        <a asp-controller="Mapping" asp-action="Index" asp-route-area="User">Mapping</a>
+        <a asp-controller="Mapping" asp-action="Index" asp-route-area="User">@commonLocalizer["MappingModule"]</a>
       </li>
       <li class="active">
-        <strong>Station Routing</strong>
+        <strong>@mappingLocalizer["StationRouting"]</strong>
       </li>
     </ol>
   </div>

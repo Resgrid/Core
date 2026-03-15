@@ -409,6 +409,11 @@ namespace Resgrid.Web.ServicesCore
 				options.AddPolicy(ResgridResources.Udf_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.Update));
 				options.AddPolicy(ResgridResources.Udf_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.Create));
 				options.AddPolicy(ResgridResources.Udf_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.Delete));
+
+				options.AddPolicy(ResgridResources.CustomMap_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.CustomMap, ResgridClaimTypes.Actions.View));
+				options.AddPolicy(ResgridResources.CustomMap_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.CustomMap, ResgridClaimTypes.Actions.Update));
+				options.AddPolicy(ResgridResources.CustomMap_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.CustomMap, ResgridClaimTypes.Actions.Create));
+				options.AddPolicy(ResgridResources.CustomMap_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.CustomMap, ResgridClaimTypes.Actions.Delete));
 			});
 			#endregion Auth Roles
 

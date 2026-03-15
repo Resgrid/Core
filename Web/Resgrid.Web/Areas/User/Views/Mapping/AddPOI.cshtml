@@ -1,6 +1,6 @@
 ﻿@model Resgrid.Web.Areas.User.Models.Mapping.AddPOIView
 @{
-	ViewBag.Title = "Resgrid | Add POI";
+	ViewBag.Title = "Resgrid | " + mappingLocalizer["AddPOI"].Value;
 }
 
 @section Styles
@@ -29,16 +29,19 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>New Role</h2>
+		<h2>@mappingLocalizer["AddPOI"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
 			</li>
 			<li>
-				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">Mapping</a>
+				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">@commonLocalizer["MappingModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="POIs" asp-route-area="User">@mappingLocalizer["POIsModule"]</a>
 			</li>
 			<li class="active">
-				<strong>New Role</strong>
+				<strong>@mappingLocalizer["AddPOI"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -67,25 +70,25 @@
 
 						<div class="form-group">
 							<label class="col-sm-2 control-label required">
-								Latitude
+								@mappingLocalizer["Latitude"]
 							</label>
 							<div class="col-sm-6">
 								@Html.TextBoxFor(x => x.Poi.Latitude, new { @class = "form-control" })
-								<span class="help-inline">Latitude (Decimal Notation: i.e. 39.1517)</span>
+								<span class="help-inline">@mappingLocalizer["LatitudeHint"]</span>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label required">
-								Longitude
+								@mappingLocalizer["Longitude"]
 							</label>
 							<div class="col-sm-6">
 								@Html.TextBoxFor(x => x.Poi.Longitude, new { @class = "form-control" })
-								<span class="help-inline">Longitude (Decimal Notation: i.e. -119.4571)</span>
+								<span class="help-inline">@mappingLocalizer["LongitudeHint"]</span>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label">
-								Note
+								@commonLocalizer["Note"]
 							</label>
 							<div class="col-sm-6">
 								@Html.TextBoxFor(x => x.Poi.Note, new { @class = "form-control" })
@@ -94,8 +97,8 @@
 
 						<div class="form-group">
 							<div class="col-sm-4 col-sm-offset-2">
-								<a class="btn btn-white" asp-controller="Mapping" asp-action="POIs" asp-route-area="User">Cancel</a>
-								<button class="btn btn-primary" type="submit">Add POI</button>
+								<a class="btn btn-white" asp-controller="Mapping" asp-action="POIs" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+								<button class="btn btn-primary" type="submit">@mappingLocalizer["AddPOI"]</button>
 							</div>
 						</div>
 					</form>

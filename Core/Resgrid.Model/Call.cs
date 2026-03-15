@@ -175,6 +175,13 @@ namespace Resgrid.Model
 
 		public DateTime? DeletedOn { get; set; }
 
+		/// <summary>
+		/// Optional reference to a CustomMapZone so a call location can resolve to a human-readable
+		/// zone name (e.g. "Building 1, Room 405a") on an indoor/custom map.
+		/// </summary>
+		[MaxLength(36)]
+		public string CustomMapZoneId { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

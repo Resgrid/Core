@@ -1,4 +1,5 @@
 ﻿<nav class="navbar-default navbar-static-side" role="navigation">
+@inject Microsoft.Extensions.Localization.IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> mappingLocalizer
 	<div class="sidebar-collapse">
 		<ul class="nav" id="side-menu">
 			<li class="nav-header">
@@ -46,7 +47,7 @@
 			}
 			@if (SettingsHelper.IsMappingEnabled())
 			{
-				<li class="@Html.IsSelected(controller: "Mapping")">
+				<li class="@Html.IsSelected(controller: "Mapping", action: "Index")">
 					<a asp-controller="Mapping" asp-action="Index" asp-route-area="User"><i class="fa fa-map-marker"></i> <span class="nav-label" data-i18n="nav.mapping">@commonLocalizer["MappingModule"]</span></a>
 				</li>
 			}

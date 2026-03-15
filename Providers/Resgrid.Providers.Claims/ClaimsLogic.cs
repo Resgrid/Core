@@ -1535,5 +1535,22 @@ namespace Resgrid.Providers.Claims
 				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.Update));
 			}
 		}
+
+		/// <summary>
+		/// Adds CustomMap claims to the identity.
+		/// Department admins receive full CRUD; all other authenticated members receive View so they
+		/// can see and use custom maps during dispatch and incident response.
+		/// </summary>
+		public static void AddCustomMapClaims(ClaimsIdentity identity, bool isAdmin)
+		{
+			identity.AddClaim(new Claim(ResgridClaimTypes.Resources.CustomMap, ResgridClaimTypes.Actions.View));
+
+			if (isAdmin)
+			{
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.CustomMap, ResgridClaimTypes.Actions.Update));
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.CustomMap, ResgridClaimTypes.Actions.Create));
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.CustomMap, ResgridClaimTypes.Actions.Delete));
+			}
+		}
 	}
 }

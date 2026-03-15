@@ -1,21 +1,21 @@
 ﻿@using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Mapping.LayersView
 @{
-    ViewBag.Title = "Resgrid | Layers";
+    ViewBag.Title = "Resgrid | " + mappingLocalizer["Layers"].Value;
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-        <h2>Layers</h2>
+        <h2>@mappingLocalizer["Layers"]</h2>
         <ol class="breadcrumb">
             <li>
-                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
             </li>
             <li>
-                <a asp-controller="Mapping" asp-action="Index" asp-route-area="User">Mapping</a>
+                <a asp-controller="Mapping" asp-action="Index" asp-route-area="User">@commonLocalizer["MappingModule"]</a>
             </li>
             <li class="active">
-                <strong>Layers</strong>
+                <strong>@mappingLocalizer["Layers"]</strong>
             </li>
         </ol>
     </div>
@@ -23,7 +23,7 @@
     {
         <div class="col-sm-8">
             <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-                <a title="New Layer" class="btn btn-success" asp-controller="Mapping" asp-action="NewLayer" asp-route-area="User">New Layer</a>
+                <a title="@mappingLocalizer["NewLayer"].Value" class="btn btn-success" asp-controller="Mapping" asp-action="NewLayer" asp-route-area="User">@mappingLocalizer["NewLayer"]</a>
             </div>
         </div>
     }
@@ -38,35 +38,22 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>
-                                        Name
-                                    </th>
-                                    <th>
-                                        Color
-                                    </th>
-                                    <th>
-                                        Item Count
-                                    </th>
-                                    <th class='span1'>
-                                    </th>
+                                    <th>@commonLocalizer["Name"]</th>
+                                    <th>@commonLocalizer["Color"]</th>
+                                    <th>@mappingLocalizer["ItemCount"]</th>
+                                    <th class='span1'></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var layer in Model.Layers)
                                 {
                                     <tr>
+                                        <td>@layer.Name</td>
+                                        <td style="color: @layer.Color;">@layer.Color</td>
+                                        <td>@layer.Data.Features.Count</td>
                                         <td>
-                                            @layer.Name
-                                        </td>
-                                        <td style="color: @layer.Color;">
-                                            @layer.Color
-                                        </td>
-                                        <td>
-                                            @layer.Data.Features.Count
-                                        </td>
-                                        <td>
-                                            <a class="btn btn-xs btn-primary" asp-controller="Mapping" asp-action="EditLayer" asp-route-area="User" asp-route-layerId="@layer.Id">Edit</a>
-                                            <a class="btn btn-xs btn-danger" asp-controller="Mapping" asp-action="DeleteLayer" asp-route-area="User" asp-route-layerId="@layer.Id">Delete</a>
+                                            <a class="btn btn-xs btn-primary" asp-controller="Mapping" asp-action="EditLayer" asp-route-area="User" asp-route-layerId="@layer.Id">@commonLocalizer["Edit"]</a>
+                                            <a class="btn btn-xs btn-danger" asp-controller="Mapping" asp-action="DeleteLayer" asp-route-area="User" asp-route-layerId="@layer.Id">@commonLocalizer["Delete"]</a>
                                         </td>
                                     </tr>
                                 }

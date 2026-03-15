@@ -614,5 +614,205 @@
   <data name="YourDepartments" xml:space="preserve">
     <value>Twoje oddziały</value>
   </data>
+    <data name="AddFloor" xml:space="preserve">
+    <value>Dodaj piętro</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Zastosuj</value>
+  </data>
+  <data name="BackToFloors" xml:space="preserve">
+    <value>Powrót do pięter</value>
+  </data>
+  <data name="BackToMaps" xml:space="preserve">
+    <value>Powrót do map</value>
+  </data>
+  <data name="BottomRight" xml:space="preserve">
+    <value>Prawy dolny</value>
+  </data>
+  <data name="CreateFirstMap" xml:space="preserve">
+    <value>Utwórz swoją pierwszą mapę</value>
+  </data>
+  <data name="CreateMap" xml:space="preserve">
+    <value>Utwórz mapę</value>
+  </data>
+  <data name="CurrentBoundsHint" xml:space="preserve">
+    <value>Wyświetlane są bieżące granice. Możesz narysować nowy prostokąt, aby je zastąpić.</value>
+  </data>
+  <data name="CustomMapsModule" xml:space="preserve">
+    <value>Mapy niestandardowe</value>
+  </data>
+  <data name="DefaultFloorHint" xml:space="preserve">
+    <value>Domyślne piętro jest wyświetlane jako pierwsze podczas przeglądania tej mapy.</value>
+  </data>
+  <data name="DefaultZoom" xml:space="preserve">
+    <value>Domyślny zoom</value>
+  </data>
+  <data name="EditCustomMap" xml:space="preserve">
+    <value>Edytuj mapę niestandardową</value>
+  </data>
+  <data name="EditZone" xml:space="preserve">
+    <value>Edytuj strefę</value>
+  </data>
+  <data name="Elevation" xml:space="preserve">
+    <value>Wysokość</value>
+  </data>
+  <data name="ElevationMeters" xml:space="preserve">
+    <value>Wysokość (metry)</value>
+  </data>
+  <data name="EventEndsOn" xml:space="preserve">
+    <value>Wydarzenie kończy się dnia</value>
+  </data>
+  <data name="EventStartsOn" xml:space="preserve">
+    <value>Wydarzenie rozpoczyna się dnia</value>
+  </data>
+  <data name="FloorName" xml:space="preserve">
+    <value>Nazwa piętra</value>
+  </data>
+  <data name="FloorNumber" xml:space="preserve">
+    <value>Piętro #</value>
+  </data>
+  <data name="FloorPlanImage" xml:space="preserve">
+    <value>Obraz rzutu piętra</value>
+  </data>
+  <data name="FloorPlanImageHint" xml:space="preserve">
+    <value>Prześlij obraz rzutu piętra (JPG, PNG, SVG, maks. 20 MB). Ten obraz zostanie nałożony na mapę, aby umożliwić rysowanie stref.</value>
+  </data>
+  <data name="Floors" xml:space="preserve">
+    <value>Piętra</value>
+  </data>
+  <data name="FloorsLevels" xml:space="preserve">
+    <value>Piętra / Poziomy</value>
+  </data>
+  <data name="GeoBoundsDrawHint" xml:space="preserve">
+    <value>Narysuj prostokąt na poniższej mapie, aby zdefiniować obszar geograficzny, który będzie pokrywał obraz mapy. Granice zostaną zapisane automatycznie.</value>
+  </data>
+  <data name="GeographicBounds" xml:space="preserve">
+    <value>Granice geograficzne</value>
+  </data>
+  <data name="HowToUse" xml:space="preserve">
+    <value>Jak używać:</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>Obraz</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>Nieaktywny</value>
+  </data>
+  <data name="IsActive" xml:space="preserve">
+    <value>Jest aktywny</value>
+  </data>
+  <data name="IsDefaultFloor" xml:space="preserve">
+    <value>Domyślne piętro</value>
+  </data>
+  <data name="MakeMapVisible" xml:space="preserve">
+    <value>Udostępnij tę mapę członkom departamentu.</value>
+  </data>
+  <data name="ManageFloors" xml:space="preserve">
+    <value>Zarządzaj piętrami</value>
+  </data>
+  <data name="ManageZones" xml:space="preserve">
+    <value>Zarządzaj strefami</value>
+  </data>
+  <data name="ManageZonesHowTo" xml:space="preserve">
+    <value>Użyj narzędzia Rysuj wielokąt, aby narysować strefę na mapie. Po narysowaniu wybierz strefę na pasku bocznym, aby ustawić jej nazwę i typ. Kliknij Zapisz wszystkie strefy, gdy skończysz.</value>
+  </data>
+  <data name="MapName" xml:space="preserve">
+    <value>Nazwa mapy</value>
+  </data>
+  <data name="MapType" xml:space="preserve">
+    <value>Typ mapy</value>
+  </data>
+  <data name="Max" xml:space="preserve">
+    <value>Maks</value>
+  </data>
+  <data name="MetadataHint" xml:space="preserve">
+    <value>Opcjonalne pary klucz-wartość JSON (informacje o materiałach niebezpiecznych, notatki pre-planistyczne itp.)</value>
+  </data>
+  <data name="Min" xml:space="preserve">
+    <value>Min</value>
+  </data>
+  <data name="NewCustomMap" xml:space="preserve">
+    <value>Nowa mapa niestandardowa</value>
+  </data>
+  <data name="NoCustomMapsCreated" xml:space="preserve">
+    <value>Nie utworzono jeszcze żadnych niestandardowych map.</value>
+  </data>
+  <data name="NoFloorsYet" xml:space="preserve">
+    <value>Nie dodano jeszcze żadnych pięter. Użyj formularza po prawej stronie, aby dodać pierwsze piętro.</value>
+  </data>
+  <data name="NoZonesYet" xml:space="preserve">
+    <value>Brak stref. Narysuj wielokąt na mapie, aby je utworzyć.</value>
+  </data>
+  <data name="NotesMetadata" xml:space="preserve">
+    <value>Notatki / Metadane</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>Nie ustawiono</value>
+  </data>
+  <data name="SaveAllZones" xml:space="preserve">
+    <value>Zapisz wszystkie strefy</value>
+  </data>
+  <data name="SaveChanges" xml:space="preserve">
+    <value>Zapisz zmiany</value>
+  </data>
+  <data name="SearchableDispatchable" xml:space="preserve">
+    <value>Wyszukiwalna / Dysponowalna</value>
+  </data>
+  <data name="SearchableZoneHint" xml:space="preserve">
+    <value>Pozwól, aby ta strefa pojawiała się jako lokalizacja zgłoszenia.</value>
+  </data>
+  <data name="SortOrder" xml:space="preserve">
+    <value>Kolejność sortowania</value>
+  </data>
+  <data name="TopLeft" xml:space="preserve">
+    <value>Lewy górny</value>
+  </data>
+  <data name="ZoneName" xml:space="preserve">
+    <value>Nazwa strefy</value>
+  </data>
+  <data name="ZoneType" xml:space="preserve">
+    <value>Typ strefy</value>
+  </data>
+  <data name="ZoneTypeCheckpoint" xml:space="preserve">
+    <value>Punkt kontrolny</value>
+  </data>
+  <data name="ZoneTypeCustom" xml:space="preserve">
+    <value>Niestandardowy</value>
+  </data>
+  <data name="ZoneTypeElevator" xml:space="preserve">
+    <value>Winda</value>
+  </data>
+  <data name="ZoneTypeExit" xml:space="preserve">
+    <value>Wyjście</value>
+  </data>
+  <data name="ZoneTypeGate" xml:space="preserve">
+    <value>Brama</value>
+  </data>
+  <data name="ZoneTypeHallway" xml:space="preserve">
+    <value>Korytarz</value>
+  </data>
+  <data name="ZoneTypeHazard" xml:space="preserve">
+    <value>Zagrożenie</value>
+  </data>
+  <data name="ZoneTypeMusterPoint" xml:space="preserve">
+    <value>Punkt zbiórki</value>
+  </data>
+  <data name="ZoneTypeParking" xml:space="preserve">
+    <value>Parking</value>
+  </data>
+  <data name="ZoneTypeRoom" xml:space="preserve">
+    <value>Pokój</value>
+  </data>
+  <data name="ZoneTypeStagingArea" xml:space="preserve">
+    <value>Strefa przygotowawcza</value>
+  </data>
+  <data name="ZoneTypeStairWell" xml:space="preserve">
+    <value>Klatka schodowa</value>
+  </data>
+  <data name="ZoneTypes" xml:space="preserve">
+    <value>Typy stref</value>
+  </data>
+  <data name="Zones" xml:space="preserve">
+    <value>Strefy</value>
+  </data>
 </root>
-

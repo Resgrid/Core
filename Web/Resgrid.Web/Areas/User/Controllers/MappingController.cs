@@ -7,8 +7,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using GeoJSON.Net.Feature;
 using GeoJSON.Net.Geometry;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using MongoDB.Bson;
 using Newtonsoft.Json;
 using Resgrid.Framework;
@@ -37,12 +39,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IKmlProvider _kmlProvider;
 		private readonly IPermissionsService _permissionsService;
 		private readonly IPersonnelRolesService _personnelRolesService;
+		private readonly ICustomMapsService _customMapsService;
+		private readonly IFileService _fileService;
+		private readonly ICustomMapImageService _customMapImageService;
+		private readonly IWebHostEnvironment _webHostEnvironment;
+
+		// Physical root directory for tiled map storage under wwwroot
+		private string TileBasePath => Path.Combine(_webHostEnvironment.WebRootPath, "custommaps");
 
 		public MappingController(IDepartmentSettingsService departmentSettingsService,
 			IGeoLocationProvider geoLocationProvider, ICallsService callsService,
 			IDepartmentsService departmentsService, IDepartmentGroupsService departmentGroupsService,
 			IActionLogsService actionLogsService, IUnitsService unitsService, IMappingService mappingService,
-			IKmlProvider kmlProvider, IPermissionsService permissionsService, IPersonnelRolesService personnelRolesService)
+			IKmlProvider kmlProvider, IPermissionsService permissionsService, IPersonnelRolesService personnelRolesService,
+			ICustomMapsService customMapsService, IFileService fileService,
+			ICustomMapImageService customMapImageService, IWebHostEnvironment webHostEnvironment)
 		{
 			_departmentSettingsService = departmentSettingsService;
 			_geoLocationProvider = geoLocationProvider;
@@ -55,6 +66,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_kmlProvider = kmlProvider;
 			_permissionsService = permissionsService;
 			_personnelRolesService = personnelRolesService;
+			_customMapsService = customMapsService;
+			_fileService = fileService;
+			_customMapImageService = customMapImageService;
+			_webHostEnvironment = webHostEnvironment;
 		}
 
 		public async Task<IActionResult> Index()
@@ -759,6 +774,597 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.EndLon = endLon;
 
 			return View(model);
+		}
+
+		// ── Custom Maps ──────────────────────────────────────────────────────────
+
+		[HttpGet]
+		public async Task<IActionResult> CustomMaps()
+		{
+			var model = new CustomMapsView();
+			model.CustomMaps = await _customMapsService.GetCustomMapsForDepartmentAsync(DepartmentId);
+
+			return View(model);
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> NewCustomMap()
+		{
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var centerCoordinates = await _departmentSettingsService.GetMapCenterCoordinatesAsync(department);
+
+			var model = new NewCustomMapView
+			{
+				CenterCoordinates = centerCoordinates,
+				MapTypes = BuildMapTypeSelectList()
+			};
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> NewCustomMap(NewCustomMapView model, CancellationToken cancellationToken)
+		{
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.CenterCoordinates = await _departmentSettingsService.GetMapCenterCoordinatesAsync(department);
+			model.MapTypes = BuildMapTypeSelectList();
+
+			if (ModelState.IsValid)
+			{
+				var customMap = new CustomMap
+				{
+					DepartmentId = DepartmentId,
+					Name = model.Name,
+					Description = model.Description,
+					Type = model.Type,
+					IsActive = model.IsActive,
+					DefaultZoom = model.DefaultZoom,
+					MinZoom = model.MinZoom,
+					MaxZoom = model.MaxZoom,
+					BoundsTopLeftLat = model.BoundsTopLeftLat,
+					BoundsTopLeftLng = model.BoundsTopLeftLng,
+					BoundsBottomRightLat = model.BoundsBottomRightLat,
+					BoundsBottomRightLng = model.BoundsBottomRightLng,
+					EventStartsOn = model.EventStartsOn,
+					EventEndsOn = model.EventEndsOn,
+					AddedById = UserId,
+					AddedOn = DateTime.UtcNow
+				};
+
+				await _customMapsService.SaveCustomMapAsync(customMap, cancellationToken);
+				return RedirectToAction("CustomMaps");
+			}
+
+			return View(model);
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> EditCustomMap(string customMapId)
+		{
+			if (string.IsNullOrWhiteSpace(customMapId))
+				return RedirectToAction("CustomMaps");
+
+			var customMap = await _customMapsService.GetCustomMapByIdAsync(customMapId);
+			if (customMap == null)
+				return NotFound();
+
+			if (customMap.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var centerCoordinates = await _departmentSettingsService.GetMapCenterCoordinatesAsync(department);
+
+			var model = new EditCustomMapView
+			{
+				CustomMapId = customMap.CustomMapId,
+				Name = customMap.Name,
+				Description = customMap.Description,
+				Type = customMap.Type,
+				IsActive = customMap.IsActive,
+				DefaultZoom = customMap.DefaultZoom,
+				MinZoom = customMap.MinZoom,
+				MaxZoom = customMap.MaxZoom,
+				BoundsTopLeftLat = customMap.BoundsTopLeftLat,
+				BoundsTopLeftLng = customMap.BoundsTopLeftLng,
+				BoundsBottomRightLat = customMap.BoundsBottomRightLat,
+				BoundsBottomRightLng = customMap.BoundsBottomRightLng,
+				EventStartsOn = customMap.EventStartsOn,
+				EventEndsOn = customMap.EventEndsOn,
+				CenterCoordinates = centerCoordinates,
+				MapTypes = BuildMapTypeSelectList()
+			};
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> EditCustomMap(EditCustomMapView model, CancellationToken cancellationToken)
+		{
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.CenterCoordinates = await _departmentSettingsService.GetMapCenterCoordinatesAsync(department);
+			model.MapTypes = BuildMapTypeSelectList();
+
+			if (ModelState.IsValid)
+			{
+				var customMap = await _customMapsService.GetCustomMapByIdAsync(model.CustomMapId);
+				if (customMap == null)
+					return NotFound();
+
+				if (customMap.DepartmentId != DepartmentId)
+					return Unauthorized();
+
+				customMap.Name = model.Name;
+				customMap.Description = model.Description;
+				customMap.Type = model.Type;
+				customMap.IsActive = model.IsActive;
+				customMap.DefaultZoom = model.DefaultZoom;
+				customMap.MinZoom = model.MinZoom;
+				customMap.MaxZoom = model.MaxZoom;
+				customMap.BoundsTopLeftLat = model.BoundsTopLeftLat;
+				customMap.BoundsTopLeftLng = model.BoundsTopLeftLng;
+				customMap.BoundsBottomRightLat = model.BoundsBottomRightLat;
+				customMap.BoundsBottomRightLng = model.BoundsBottomRightLng;
+				customMap.EventStartsOn = model.EventStartsOn;
+				customMap.EventEndsOn = model.EventEndsOn;
+				customMap.UpdatedOn = DateTime.UtcNow;
+				customMap.UpdatedById = UserId;
+
+				await _customMapsService.SaveCustomMapAsync(customMap, cancellationToken);
+				return RedirectToAction("CustomMaps");
+			}
+
+			return View(model);
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> DeleteCustomMap(string customMapId, CancellationToken cancellationToken)
+		{
+			if (string.IsNullOrWhiteSpace(customMapId))
+				return RedirectToAction("CustomMaps");
+
+			var customMap = await _customMapsService.GetCustomMapByIdAsync(customMapId);
+			if (customMap == null)
+				return NotFound();
+
+			if (customMap.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			await _customMapsService.DeleteCustomMapAsync(customMapId, cancellationToken);
+			return RedirectToAction("CustomMaps");
+		}
+
+		// ── Floors ───────────────────────────────────────────────────────────────
+
+		[HttpGet]
+		public async Task<IActionResult> ManageFloors(string customMapId)
+		{
+			if (string.IsNullOrWhiteSpace(customMapId))
+				return RedirectToAction("CustomMaps");
+
+			var customMap = await _customMapsService.GetCustomMapByIdAsync(customMapId);
+			if (customMap == null)
+				return NotFound();
+
+			if (customMap.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			var model = new ManageFloorsView
+			{
+				CustomMapId = customMapId,
+				CustomMapName = customMap.Name,
+				Floors = await _customMapsService.GetFloorsForMapAsync(customMapId)
+			};
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> AddFloor(ManageFloorsView model, IFormFile floorImage, CancellationToken cancellationToken)
+		{
+			var customMap = await _customMapsService.GetCustomMapByIdAsync(model.CustomMapId);
+			if (customMap == null)
+				return NotFound();
+
+			if (customMap.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			if (string.IsNullOrWhiteSpace(model.NewFloorName))
+				ModelState.AddModelError("NewFloorName", "Floor name is required.");
+
+			if (!ModelState.IsValid)
+				return RedirectToAction("ManageFloors", new { customMapId = model.CustomMapId });
+
+			var floor = new CustomMapFloor
+			{
+				CustomMapId = model.CustomMapId,
+				Name = model.NewFloorName,
+				FloorNumber = model.NewFloorNumber,
+				SortOrder = model.NewSortOrder,
+				IsDefault = model.NewIsDefault,
+				Elevation = model.NewElevation,
+				StorageType = (int)CustomMapFloorStorageType.None
+			};
+
+			await _customMapsService.SaveFloorAsync(floor, cancellationToken);
+
+			// If an image was supplied, upload it immediately
+			if (floorImage != null && floorImage.Length > 0)
+			{
+				var (valid, error) = ValidateImageUpload(floorImage);
+				if (valid)
+				{
+					await _customMapsService.UploadFloorImageAsync(
+						floor.CustomMapFloorId, floorImage, DepartmentId,
+						TileBasePath,
+						BuildTileUrlTemplate(floor.CustomMapFloorId),
+						BuildImageUrlTemplate(),
+						cancellationToken);
+				}
+			}
+
+			return RedirectToAction("ManageFloors", new { customMapId = model.CustomMapId });
+		}
+
+		// ── Floor Image Management ───────────────────────────────────────────────
+
+		/// <summary>GET: Upload/replace image for a floor (dedicated full-page form).</summary>
+		[HttpGet]
+		public async Task<IActionResult> UploadFloorImage(string customMapFloorId)
+		{
+			if (string.IsNullOrWhiteSpace(customMapFloorId))
+				return RedirectToAction("CustomMaps");
+
+			var floor = await _customMapsService.GetFloorByIdAsync(customMapFloorId);
+			if (floor == null) return NotFound();
+
+			var customMap = await _customMapsService.GetCustomMapByIdAsync(floor.CustomMapId);
+			if (customMap == null || customMap.DepartmentId != DepartmentId) return Unauthorized();
+
+			var model = new UploadFloorImageView
+			{
+				CustomMapFloorId = customMapFloorId,
+				CustomMapId = floor.CustomMapId,
+				CustomMapName = customMap.Name,
+				FloorName = floor.Name,
+				CurrentImageUrl = floor.ImageUrl,
+				CurrentStorageType = (CustomMapFloorStorageType)floor.StorageType,
+				ImageWidthPx = floor.ImageWidthPx,
+				ImageHeightPx = floor.ImageHeightPx,
+				TileZoomLevels = floor.TileZoomLevels,
+				ThresholdMb = _customMapImageService.TiledThresholdBytes / (1024 * 1024)
+			};
+
+			return View(model);
+		}
+
+		/// <summary>POST: Process the uploaded image for a floor.</summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[RequestSizeLimit(524_288_000)] // 500 MB max
+		public async Task<IActionResult> UploadFloorImage(UploadFloorImageView model, IFormFile floorImageFile, CancellationToken cancellationToken)
+		{
+			if (string.IsNullOrWhiteSpace(model.CustomMapFloorId))
+				return RedirectToAction("CustomMaps");
+
+			var floor = await _customMapsService.GetFloorByIdAsync(model.CustomMapFloorId);
+			if (floor == null) return NotFound();
+
+			var customMap = await _customMapsService.GetCustomMapByIdAsync(floor.CustomMapId);
+			if (customMap == null || customMap.DepartmentId != DepartmentId) return Unauthorized();
+
+			if (floorImageFile == null || floorImageFile.Length == 0)
+			{
+				ModelState.AddModelError("floorImageFile", "Please select an image file.");
+				model.FloorName = floor.Name;
+				model.CustomMapName = customMap.Name;
+				model.ThresholdMb = _customMapImageService.TiledThresholdBytes / (1024 * 1024);
+				return View(model);
+			}
+
+			var (valid, error) = ValidateImageUpload(floorImageFile);
+			if (!valid)
+			{
+				ModelState.AddModelError("floorImageFile", error);
+				model.FloorName = floor.Name;
+				model.CustomMapName = customMap.Name;
+				model.ThresholdMb = _customMapImageService.TiledThresholdBytes / (1024 * 1024);
+				return View(model);
+			}
+
+			var updated = await _customMapsService.UploadFloorImageAsync(
+				model.CustomMapFloorId, floorImageFile, DepartmentId,
+				TileBasePath,
+				BuildTileUrlTemplate(model.CustomMapFloorId),
+				BuildImageUrlTemplate(),
+				cancellationToken);
+
+			if (updated == null)
+			{
+				ModelState.AddModelError("", "There was an error saving the image. Please try again.");
+				model.FloorName = floor.Name;
+				model.CustomMapName = customMap.Name;
+				model.ThresholdMb = _customMapImageService.TiledThresholdBytes / (1024 * 1024);
+				return View(model);
+			}
+
+			return RedirectToAction("ManageFloors", new { customMapId = floor.CustomMapId });
+		}
+
+		/// <summary>GET: Removes the stored image for a floor.</summary>
+		[HttpGet]
+		public async Task<IActionResult> DeleteFloorImage(string customMapFloorId, CancellationToken cancellationToken)
+		{
+			if (string.IsNullOrWhiteSpace(customMapFloorId))
+				return RedirectToAction("CustomMaps");
+
+			var floor = await _customMapsService.GetFloorByIdAsync(customMapFloorId);
+			if (floor == null) return NotFound();
+
+			var customMap = await _customMapsService.GetCustomMapByIdAsync(floor.CustomMapId);
+			if (customMap == null || customMap.DepartmentId != DepartmentId) return Unauthorized();
+
+			await _customMapsService.DeleteFloorImageAsync(customMapFloorId, TileBasePath, cancellationToken);
+
+			return RedirectToAction("ManageFloors", new { customMapId = floor.CustomMapId });
+		}
+
+		/// <summary>GET: Serves the raw image bytes for a DatabaseBlob floor image.</summary>
+		[HttpGet]
+		public async Task<IActionResult> GetFloorImage(int fileId)
+		{
+			var file = await _fileService.GetFileByIdAsync(fileId);
+			if (file == null || file.DepartmentId != DepartmentId)
+				return NotFound();
+
+			Response.Headers["Cache-Control"] = "public, max-age=86400";
+			return File(file.Data, file.FileType ?? "image/png");
+		}
+
+		/// <summary>GET: Serves a single tile from a TiledPyramid floor.</summary>
+		[HttpGet]
+		[ResponseCache(Duration = 86400, Location = ResponseCacheLocation.Any)]
+		public async Task<IActionResult> GetFloorTile(string floorId, int z, int x, int y)
+		{
+			if (string.IsNullOrWhiteSpace(floorId))
+				return NotFound();
+
+			var floor = await _customMapsService.GetFloorByIdAsync(floorId);
+			if (floor == null) return NotFound();
+
+			var customMap = await _customMapsService.GetCustomMapByIdAsync(floor.CustomMapId);
+			if (customMap == null || customMap.DepartmentId != DepartmentId) return Unauthorized();
+
+			var tilePath = _customMapImageService.GetTilePath(TileBasePath, floorId, z, x, y);
+			if (tilePath == null) return NotFound();
+
+			return PhysicalFile(tilePath, "image/png");
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> DeleteFloor(string customMapFloorId, string customMapId, CancellationToken cancellationToken)
+		{
+			if (string.IsNullOrWhiteSpace(customMapFloorId))
+				return RedirectToAction("CustomMaps");
+
+			var floor = await _customMapsService.GetFloorByIdAsync(customMapFloorId);
+			if (floor == null)
+				return NotFound();
+
+			var customMap = await _customMapsService.GetCustomMapByIdAsync(floor.CustomMapId);
+			if (customMap == null || customMap.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			// Clean up stored image assets before deleting the floor
+			if (floor.StorageType != (int)CustomMapFloorStorageType.None)
+				await _customMapsService.DeleteFloorImageAsync(customMapFloorId, TileBasePath, cancellationToken);
+
+			await _customMapsService.DeleteFloorAsync(customMapFloorId, cancellationToken);
+			return RedirectToAction("ManageFloors", new { customMapId = floor.CustomMapId });
+		}
+
+		// ── Zones ────────────────────────────────────────────────────────────────
+
+		[HttpGet]
+		public async Task<IActionResult> ManageZones(string customMapFloorId)
+		{
+			if (string.IsNullOrWhiteSpace(customMapFloorId))
+				return RedirectToAction("CustomMaps");
+
+			var floor = await _customMapsService.GetFloorByIdAsync(customMapFloorId);
+			if (floor == null)
+				return NotFound();
+
+			var customMap = await _customMapsService.GetCustomMapByIdAsync(floor.CustomMapId);
+			if (customMap == null || customMap.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			var zones = await _customMapsService.GetZonesForFloorAsync(customMapFloorId);
+
+			var featureCollection = BuildZoneFeatureCollection(zones);
+			var zonesGeoJson = JsonConvert.SerializeObject(featureCollection);
+
+			var model = new ManageZonesView
+			{
+				CustomMapFloorId = customMapFloorId,
+				CustomMapId = customMap.CustomMapId,
+				CustomMapName = customMap.Name,
+				FloorName = floor.Name,
+				ImageUrl = floor.ImageUrl,
+				TileBaseUrl = floor.TileBaseUrl,
+				StorageType = (CustomMapFloorStorageType)floor.StorageType,
+				TileZoomLevels = floor.TileZoomLevels ?? 1,
+				BoundsTopLeftLat = customMap.BoundsTopLeftLat,
+				BoundsTopLeftLng = customMap.BoundsTopLeftLng,
+				BoundsBottomRightLat = customMap.BoundsBottomRightLat,
+				BoundsBottomRightLng = customMap.BoundsBottomRightLng,
+				DefaultZoom = customMap.DefaultZoom,
+				Zones = zones,
+				ZonesGeoJson = zonesGeoJson,
+				ZoneTypes = BuildZoneTypeSelectList()
+			};
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> SaveZones(string customMapFloorId, string zonesGeoJson, CancellationToken cancellationToken)
+		{
+			if (string.IsNullOrWhiteSpace(customMapFloorId))
+				return RedirectToAction("CustomMaps");
+
+			var floor = await _customMapsService.GetFloorByIdAsync(customMapFloorId);
+			if (floor == null)
+				return NotFound();
+
+			var customMap = await _customMapsService.GetCustomMapByIdAsync(floor.CustomMapId);
+			if (customMap == null || customMap.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			if (!string.IsNullOrWhiteSpace(zonesGeoJson))
+			{
+				try
+				{
+					var existingZones = await _customMapsService.GetZonesForFloorAsync(customMapFloorId);
+					var featureCollection = JsonConvert.DeserializeObject<FeatureCollection>(zonesGeoJson);
+
+					if (featureCollection?.Features != null)
+					{
+						var incomingIds = new HashSet<string>();
+
+						foreach (var feature in featureCollection.Features)
+						{
+							var zoneId = feature.Properties.ContainsKey("zoneId") ? feature.Properties["zoneId"]?.ToString() : null;
+
+							var existingZone = !string.IsNullOrWhiteSpace(zoneId)
+								? existingZones.FirstOrDefault(z => z.CustomMapZoneId == zoneId)
+								: null;
+
+							// Only mark as "keep" when we actually found it in the DB — new zones
+							// have no DB record yet so they don't need to be guarded from deletion.
+							if (existingZone != null)
+								incomingIds.Add(zoneId);
+
+							// Reuse the existing zone entity for updates; create a bare new one (no
+							// pre-assigned ID) for inserts so SaveOrUpdateAsync routes correctly.
+							var zone = existingZone ?? new CustomMapZone { CustomMapFloorId = customMapFloorId };
+
+							zone.Name = feature.Properties.ContainsKey("name") ? feature.Properties["name"]?.ToString() ?? "Zone" : "Zone";
+							zone.ZoneType = feature.Properties.ContainsKey("zoneType") && int.TryParse(feature.Properties["zoneType"]?.ToString(), out var zt) ? zt : 0;
+							zone.Color = feature.Properties.ContainsKey("color") ? feature.Properties["color"]?.ToString() ?? "#3388ff" : "#3388ff";
+							zone.IsSearchable = feature.Properties.ContainsKey("isSearchable") && bool.TryParse(feature.Properties["isSearchable"]?.ToString(), out var isSrch) && isSrch;
+							zone.IsActive = !feature.Properties.ContainsKey("isActive") || bool.TryParse(feature.Properties["isActive"]?.ToString(), out var isAct) && isAct;
+							zone.Metadata = feature.Properties.ContainsKey("metadata") ? feature.Properties["metadata"]?.ToString() : null;
+							zone.PolygonGeoJson = JsonConvert.SerializeObject(feature.Geometry);
+
+							await _customMapsService.SaveZoneAsync(zone, cancellationToken);
+						}
+
+						foreach (var existing in existingZones.Where(z => !incomingIds.Contains(z.CustomMapZoneId)))
+							await _customMapsService.DeleteZoneAsync(existing.CustomMapZoneId, cancellationToken);
+					}
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+				}
+			}
+
+			return RedirectToAction("ManageZones", new { customMapFloorId });
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> DeleteZone(string customMapZoneId, string customMapFloorId, CancellationToken cancellationToken)
+		{
+			if (string.IsNullOrWhiteSpace(customMapZoneId))
+				return RedirectToAction("CustomMaps");
+
+			var zone = await _customMapsService.GetZoneByIdAsync(customMapZoneId);
+			if (zone == null)
+				return NotFound();
+
+			var floor = await _customMapsService.GetFloorByIdAsync(zone.CustomMapFloorId);
+			if (floor == null)
+				return NotFound();
+
+			var customMap = await _customMapsService.GetCustomMapByIdAsync(floor.CustomMapId);
+			if (customMap == null || customMap.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			await _customMapsService.DeleteZoneAsync(customMapZoneId, cancellationToken);
+			return RedirectToAction("ManageZones", new { customMapFloorId = zone.CustomMapFloorId });
+		}
+
+		// ── Helpers ──────────────────────────────────────────────────────────────
+
+		/// <summary>
+		/// Validates an uploaded image file (extension + size).
+		/// Returns (true, null) on success or (false, errorMessage) on failure.
+		/// Large files are allowed — the service chooses tiling automatically.
+		/// </summary>
+		private static (bool Valid, string Error) ValidateImageUpload(IFormFile file)
+		{
+			var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+			if (extension != ".jpg" && extension != ".jpeg" && extension != ".png" && extension != ".tif" && extension != ".tiff")
+				return (false, "Only JPG, PNG, and TIFF images are accepted.");
+
+			if (file.Length > 524_288_000) // 500 MB absolute ceiling
+				return (false, "Image must be smaller than 500 MB.");
+
+			return (true, null);
+		}
+
+		/// <summary>Returns the tile URL template for a given floor.</summary>
+		private string BuildTileUrlTemplate(string floorId) =>
+			Url.Action("GetFloorTile", "Mapping", new { area = "User", floorId, z = "{z}", x = "{x}", y = "{y}" });
+
+		/// <summary>Returns the imageUrl template for a DatabaseBlob floor image (placeholder {fileId}).</summary>
+		private string BuildImageUrlTemplate() =>
+			Url.Action("GetFloorImage", "Mapping", new { area = "User", fileId = "__FILEID__" })
+				?.Replace("__FILEID__", "{fileId}");
+
+		private static List<SelectListItem> BuildMapTypeSelectList() =>
+			Enum.GetValues<CustomMapType>()
+				.Select(t => new SelectListItem(t.ToString(), ((int)t).ToString()))
+				.ToList();
+
+		private static List<SelectListItem> BuildZoneTypeSelectList() =>
+			Enum.GetValues<CustomMapZoneType>()
+				.Select(t => new SelectListItem(t.ToString(), ((int)t).ToString()))
+				.ToList();
+
+		private static object BuildZoneFeatureCollection(List<CustomMapZone> zones)
+		{
+			var features = zones.Select(z =>
+			{
+				object geometry = null;
+				if (!string.IsNullOrWhiteSpace(z.PolygonGeoJson))
+				{
+					try { geometry = JsonConvert.DeserializeObject(z.PolygonGeoJson); }
+					catch { geometry = null; }
+				}
+
+				return new
+				{
+					type = "Feature",
+					geometry,
+					properties = new
+					{
+						zoneId = z.CustomMapZoneId,
+						name = z.Name,
+						zoneType = z.ZoneType,
+						color = z.Color,
+						isSearchable = z.IsSearchable,
+						isActive = z.IsActive,
+						metadata = z.Metadata
+					}
+				};
+			}).ToList();
+
+			return new { type = "FeatureCollection", features };
 		}
 	}
 }

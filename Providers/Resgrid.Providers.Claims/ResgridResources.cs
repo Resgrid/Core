@@ -162,5 +162,10 @@
 		public const string Udf_Update = "Udf_Update";
 		public const string Udf_Create = "Udf_Create";
 		public const string Udf_Delete = "Udf_Delete";
+
+		public const string CustomMap_View = "CustomMap_View";
+		public const string CustomMap_Update = "CustomMap_Update";
+		public const string CustomMap_Create = "CustomMap_Create";
+		public const string CustomMap_Delete = "CustomMap_Delete";
 	}
 }

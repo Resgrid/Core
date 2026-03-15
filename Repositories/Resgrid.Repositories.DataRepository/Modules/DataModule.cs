@@ -79,6 +79,9 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<InventoryTypesRepository>().As<IInventoryTypesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<PoisRepository>().As<IPoisRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<PoiTypesRepository>().As<IPoiTypesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CustomMapsRepository>().As<ICustomMapsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CustomMapFloorsRepository>().As<ICustomMapFloorsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CustomMapZonesRepository>().As<ICustomMapZonesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<QueueItemsRepository>().As<IQueueItemsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CallQuickTemplateRepository>().As<ICallQuickTemplateRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<InboundMessageEventRepository>().As<IInboundMessageEventRepository>().InstancePerLifetimeScope();

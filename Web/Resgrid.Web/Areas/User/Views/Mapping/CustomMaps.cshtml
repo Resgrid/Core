@@ -1,0 +1,125 @@
+﻿@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Mapping.CustomMapsView
+@{
+	ViewBag.Title = "Resgrid | " + mappingLocalizer["CustomMapsModule"].Value;
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>@mappingLocalizer["CustomMapsModule"]</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">@commonLocalizer["MappingModule"]</a>
+			</li>
+			<li class="active">
+				<strong>@mappingLocalizer["CustomMapsModule"]</strong>
+			</li>
+		</ol>
+	</div>
+	@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+	{
+		<div class="col-sm-8">
+			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+				<a title="@mappingLocalizer["NewCustomMap"].Value" class="btn btn-success"
+				   asp-controller="Mapping" asp-action="NewCustomMap" asp-route-area="User">
+					<i class="fa fa-plus"></i> @mappingLocalizer["NewCustomMap"]
+				</a>
+			</div>
+		</div>
+	}
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					@if (!Model.CustomMaps.Any())
+					{
+						<div class="alert alert-info">
+							<i class="fa fa-info-circle"></i>
+							@mappingLocalizer["NoCustomMapsCreated"]
+							@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+							{
+								<text> <a asp-controller="Mapping" asp-action="NewCustomMap" asp-route-area="User">@mappingLocalizer["CreateFirstMap"]</a>.</text>
+							}
+						</div>
+					}
+					else
+					{
+						<div class="table-responsive">
+							<table class="table table-striped table-hover">
+								<thead>
+									<tr>
+										<th>@commonLocalizer["Name"]</th>
+										<th>@commonLocalizer["Type"]</th>
+										<th>@mappingLocalizer["Floors"]</th>
+										<th>@commonLocalizer["Status"]</th>
+										<th class="text-center">@commonLocalizer["Actions"]</th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var map in Model.CustomMaps)
+									{
+										<tr>
+											<td>
+												<strong>@map.Name</strong>
+												@if (!string.IsNullOrWhiteSpace(map.Description))
+												{
+													<br /><small class="text-muted">@map.Description</small>
+												}
+											</td>
+											<td>
+												@{
+													var typeName = ((Resgrid.Model.CustomMapType)map.Type).ToString();
+												}
+												<span class="label label-default">@typeName</span>
+											</td>
+											<td>@(map.Floors?.Count ?? 0)</td>
+											<td>
+												@if (map.IsActive)
+												{
+													<span class="label label-success">@commonLocalizer["Active"]</span>
+												}
+												else
+												{
+													<span class="label label-warning">@mappingLocalizer["Inactive"]</span>
+												}
+											</td>
+											<td class="text-center">
+												<a class="btn btn-xs btn-primary"
+												   asp-controller="Mapping" asp-action="ManageFloors"
+												   asp-route-area="User" asp-route-customMapId="@map.CustomMapId">
+													<i class="fa fa-building"></i> @mappingLocalizer["Floors"]
+												</a>
+												@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+												{
+													<a class="btn btn-xs btn-info"
+													   asp-controller="Mapping" asp-action="EditCustomMap"
+													   asp-route-area="User" asp-route-customMapId="@map.CustomMapId">
+														<i class="fa fa-pencil"></i> @commonLocalizer["Update"]
+													</a>
+													<a class="btn btn-xs btn-danger"
+													   asp-controller="Mapping" asp-action="DeleteCustomMap"
+													   asp-route-area="User" asp-route-customMapId="@map.CustomMapId"
+													   data-confirm="@string.Format(commonLocalizer["Warning"].Value + ": {0}", map.Name)"
+													   rel="nofollow">
+														<i class="fa fa-trash"></i> @commonLocalizer["Delete"]
+													</a>
+												}
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+

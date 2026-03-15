@@ -614,5 +614,205 @@
   <data name="YourDepartments" xml:space="preserve">
     <value>Dina avdelningar</value>
   </data>
+    <data name="AddFloor" xml:space="preserve">
+    <value>Lägg till våning</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Tillämpa</value>
+  </data>
+  <data name="BackToFloors" xml:space="preserve">
+    <value>Tillbaka till våningar</value>
+  </data>
+  <data name="BackToMaps" xml:space="preserve">
+    <value>Tillbaka till kartor</value>
+  </data>
+  <data name="BottomRight" xml:space="preserve">
+    <value>Nere till höger</value>
+  </data>
+  <data name="CreateFirstMap" xml:space="preserve">
+    <value>Skapa din första karta</value>
+  </data>
+  <data name="CreateMap" xml:space="preserve">
+    <value>Skapa karta</value>
+  </data>
+  <data name="CurrentBoundsHint" xml:space="preserve">
+    <value>De aktuella gränserna visas. Du kan rita en ny rektangel för att ersätta dem.</value>
+  </data>
+  <data name="CustomMapsModule" xml:space="preserve">
+    <value>Anpassade kartor</value>
+  </data>
+  <data name="DefaultFloorHint" xml:space="preserve">
+    <value>Standardvåningen visas först när du visar denna karta.</value>
+  </data>
+  <data name="DefaultZoom" xml:space="preserve">
+    <value>Standardzoom</value>
+  </data>
+  <data name="EditCustomMap" xml:space="preserve">
+    <value>Redigera anpassad karta</value>
+  </data>
+  <data name="EditZone" xml:space="preserve">
+    <value>Redigera zon</value>
+  </data>
+  <data name="Elevation" xml:space="preserve">
+    <value>Höjd</value>
+  </data>
+  <data name="ElevationMeters" xml:space="preserve">
+    <value>Höjd (meter)</value>
+  </data>
+  <data name="EventEndsOn" xml:space="preserve">
+    <value>Eventet slutar den</value>
+  </data>
+  <data name="EventStartsOn" xml:space="preserve">
+    <value>Eventet börjar den</value>
+  </data>
+  <data name="FloorName" xml:space="preserve">
+    <value>Våningsnamn</value>
+  </data>
+  <data name="FloorNumber" xml:space="preserve">
+    <value>Våning #</value>
+  </data>
+  <data name="FloorPlanImage" xml:space="preserve">
+    <value>Planlösningsbild</value>
+  </data>
+  <data name="FloorPlanImageHint" xml:space="preserve">
+    <value>Ladda upp en planlösningsbild (JPG, PNG, SVG, max 20 MB). Denna bild läggs över kartan för att möjliggöra ritning av zoner.</value>
+  </data>
+  <data name="Floors" xml:space="preserve">
+    <value>Våningar</value>
+  </data>
+  <data name="FloorsLevels" xml:space="preserve">
+    <value>Våningar / Nivåer</value>
+  </data>
+  <data name="GeoBoundsDrawHint" xml:space="preserve">
+    <value>Rita ett rektangel på kartan nedan för att definiera det geografiska område som din anpassade kartbild ska täcka. Gränserna sparas automatiskt.</value>
+  </data>
+  <data name="GeographicBounds" xml:space="preserve">
+    <value>Geografiska gränser</value>
+  </data>
+  <data name="HowToUse" xml:space="preserve">
+    <value>Hur man använder:</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>Bild</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>Inaktiv</value>
+  </data>
+  <data name="IsActive" xml:space="preserve">
+    <value>Är aktiv</value>
+  </data>
+  <data name="IsDefaultFloor" xml:space="preserve">
+    <value>Är standardvåning</value>
+  </data>
+  <data name="MakeMapVisible" xml:space="preserve">
+    <value>Gör denna karta synlig för avdelningsmedlemmar.</value>
+  </data>
+  <data name="ManageFloors" xml:space="preserve">
+    <value>Hantera våningar</value>
+  </data>
+  <data name="ManageZones" xml:space="preserve">
+    <value>Hantera zoner</value>
+  </data>
+  <data name="ManageZonesHowTo" xml:space="preserve">
+    <value>Använd verktyget Rita polygon för att rita en zon på kartan. Välj zonen i sidefaltet för att ange dess namn och typ. Klicka på Spara alla zoner när du är klar.</value>
+  </data>
+  <data name="MapName" xml:space="preserve">
+    <value>Kartnamn</value>
+  </data>
+  <data name="MapType" xml:space="preserve">
+    <value>Karttyp</value>
+  </data>
+  <data name="Max" xml:space="preserve">
+    <value>Max</value>
+  </data>
+  <data name="MetadataHint" xml:space="preserve">
+    <value>Valfria JSON-nyckel-värdepar (farligtgods-info, förplaneringsanteckningar, etc.)</value>
+  </data>
+  <data name="Min" xml:space="preserve">
+    <value>Min</value>
+  </data>
+  <data name="NewCustomMap" xml:space="preserve">
+    <value>Ny anpassad karta</value>
+  </data>
+  <data name="NoCustomMapsCreated" xml:space="preserve">
+    <value>Inga anpassade kartor har skapats ännu.</value>
+  </data>
+  <data name="NoFloorsYet" xml:space="preserve">
+    <value>Inga våningar har lagts till ännu. Använd formuläret till höger för att lägga till den första våningen.</value>
+  </data>
+  <data name="NoZonesYet" xml:space="preserve">
+    <value>Inga zoner ännu. Rita en polygon på kartan för att skapa en.</value>
+  </data>
+  <data name="NotesMetadata" xml:space="preserve">
+    <value>Anteckningar / Metadata</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>Ej inställt</value>
+  </data>
+  <data name="SaveAllZones" xml:space="preserve">
+    <value>Spara alla zoner</value>
+  </data>
+  <data name="SaveChanges" xml:space="preserve">
+    <value>Spara ändringar</value>
+  </data>
+  <data name="SearchableDispatchable" xml:space="preserve">
+    <value>Sökbar / Disponderbar</value>
+  </data>
+  <data name="SearchableZoneHint" xml:space="preserve">
+    <value>Tillåt denna zon att visas som en händelseplats.</value>
+  </data>
+  <data name="SortOrder" xml:space="preserve">
+    <value>Sorteringsordning</value>
+  </data>
+  <data name="TopLeft" xml:space="preserve">
+    <value>Uppe till vänster</value>
+  </data>
+  <data name="ZoneName" xml:space="preserve">
+    <value>Zonnamn</value>
+  </data>
+  <data name="ZoneType" xml:space="preserve">
+    <value>Zontyp</value>
+  </data>
+  <data name="ZoneTypeCheckpoint" xml:space="preserve">
+    <value>Kontrollpunkt</value>
+  </data>
+  <data name="ZoneTypeCustom" xml:space="preserve">
+    <value>Anpassad</value>
+  </data>
+  <data name="ZoneTypeElevator" xml:space="preserve">
+    <value>Hiss</value>
+  </data>
+  <data name="ZoneTypeExit" xml:space="preserve">
+    <value>Utgång</value>
+  </data>
+  <data name="ZoneTypeGate" xml:space="preserve">
+    <value>Grind</value>
+  </data>
+  <data name="ZoneTypeHallway" xml:space="preserve">
+    <value>Korridor</value>
+  </data>
+  <data name="ZoneTypeHazard" xml:space="preserve">
+    <value>Fara</value>
+  </data>
+  <data name="ZoneTypeMusterPoint" xml:space="preserve">
+    <value>Samlingsplats</value>
+  </data>
+  <data name="ZoneTypeParking" xml:space="preserve">
+    <value>Parkering</value>
+  </data>
+  <data name="ZoneTypeRoom" xml:space="preserve">
+    <value>Rum</value>
+  </data>
+  <data name="ZoneTypeStagingArea" xml:space="preserve">
+    <value>Uppsamlingsplats</value>
+  </data>
+  <data name="ZoneTypeStairWell" xml:space="preserve">
+    <value>Trapphus</value>
+  </data>
+  <data name="ZoneTypes" xml:space="preserve">
+    <value>Zontyper</value>
+  </data>
+  <data name="Zones" xml:space="preserve">
+    <value>Zoner</value>
+  </data>
 </root>
-

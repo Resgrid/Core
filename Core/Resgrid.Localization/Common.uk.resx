@@ -614,5 +614,205 @@
   <data name="YourDepartments" xml:space="preserve">
     <value>Ваші підрозділи</value>
   </data>
+    <data name="AddFloor" xml:space="preserve">
+    <value>Додати поверх</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Застосувати</value>
+  </data>
+  <data name="BackToFloors" xml:space="preserve">
+    <value>Назад до поверхів</value>
+  </data>
+  <data name="BackToMaps" xml:space="preserve">
+    <value>Назад до карт</value>
+  </data>
+  <data name="BottomRight" xml:space="preserve">
+    <value>Нижній правий</value>
+  </data>
+  <data name="CreateFirstMap" xml:space="preserve">
+    <value>Створіть свою першу карту</value>
+  </data>
+  <data name="CreateMap" xml:space="preserve">
+    <value>Створити карту</value>
+  </data>
+  <data name="CurrentBoundsHint" xml:space="preserve">
+    <value>Показано поточні межі. Ви можете намалювати новий прямокутник, щоб їх замінити.</value>
+  </data>
+  <data name="CustomMapsModule" xml:space="preserve">
+    <value>Спеціальні карти</value>
+  </data>
+  <data name="DefaultFloorHint" xml:space="preserve">
+    <value>Поверх за замовчуванням відображається першим при перегляді цієї карти.</value>
+  </data>
+  <data name="DefaultZoom" xml:space="preserve">
+    <value>Масштаб за замовчуванням</value>
+  </data>
+  <data name="EditCustomMap" xml:space="preserve">
+    <value>Редагувати спеціальну карту</value>
+  </data>
+  <data name="EditZone" xml:space="preserve">
+    <value>Редагувати зону</value>
+  </data>
+  <data name="Elevation" xml:space="preserve">
+    <value>Висота</value>
+  </data>
+  <data name="ElevationMeters" xml:space="preserve">
+    <value>Висота (метри)</value>
+  </data>
+  <data name="EventEndsOn" xml:space="preserve">
+    <value>Подія закінчується</value>
+  </data>
+  <data name="EventStartsOn" xml:space="preserve">
+    <value>Подія починається</value>
+  </data>
+  <data name="FloorName" xml:space="preserve">
+    <value>Назва поверху</value>
+  </data>
+  <data name="FloorNumber" xml:space="preserve">
+    <value>Поверх #</value>
+  </data>
+  <data name="FloorPlanImage" xml:space="preserve">
+    <value>Зображення поверхового плану</value>
+  </data>
+  <data name="FloorPlanImageHint" xml:space="preserve">
+    <value>Завантажте зображення поверхового плану (JPG, PNG, SVG, макс. 20 МБ). Це зображення буде накладено на карту для можливості малювання зон.</value>
+  </data>
+  <data name="Floors" xml:space="preserve">
+    <value>Поверхи</value>
+  </data>
+  <data name="FloorsLevels" xml:space="preserve">
+    <value>Поверхи / Рівні</value>
+  </data>
+  <data name="GeoBoundsDrawHint" xml:space="preserve">
+    <value>Намалюйте прямокутник на карті, щоб визначити географічну область. Межі збережуться автоматично.</value>
+  </data>
+  <data name="GeographicBounds" xml:space="preserve">
+    <value>Географічні межі</value>
+  </data>
+  <data name="HowToUse" xml:space="preserve">
+    <value>Як використовувати:</value>
+  </data>
+  <data name="Image" xml:space="preserve">
+    <value>Зображення</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>Неактивний</value>
+  </data>
+  <data name="IsActive" xml:space="preserve">
+    <value>Активний</value>
+  </data>
+  <data name="IsDefaultFloor" xml:space="preserve">
+    <value>Поверх за замовчуванням</value>
+  </data>
+  <data name="MakeMapVisible" xml:space="preserve">
+    <value>Зробити цю карту видимою для членів підрозділу.</value>
+  </data>
+  <data name="ManageFloors" xml:space="preserve">
+    <value>Управління поверхами</value>
+  </data>
+  <data name="ManageZones" xml:space="preserve">
+    <value>Управління зонами</value>
+  </data>
+  <data name="ManageZonesHowTo" xml:space="preserve">
+    <value>Використовуйте інструмент Малювати полігон, щоб намалювати зону на карті. Після малювання виберіть зону на бічній панелі. Натисніть Зберегти всі зони, коли закінчите.</value>
+  </data>
+  <data name="MapName" xml:space="preserve">
+    <value>Назва карти</value>
+  </data>
+  <data name="MapType" xml:space="preserve">
+    <value>Тип карти</value>
+  </data>
+  <data name="Max" xml:space="preserve">
+    <value>Макс</value>
+  </data>
+  <data name="MetadataHint" xml:space="preserve">
+    <value>Необовʼязкові пари ключ-значення JSON (інфо про небезпечні матеріали, нотатки попереднього планування тощо)</value>
+  </data>
+  <data name="Min" xml:space="preserve">
+    <value>Мін</value>
+  </data>
+  <data name="NewCustomMap" xml:space="preserve">
+    <value>Нова спеціальна карта</value>
+  </data>
+  <data name="NoCustomMapsCreated" xml:space="preserve">
+    <value>Спеціальних карт ще не створено.</value>
+  </data>
+  <data name="NoFloorsYet" xml:space="preserve">
+    <value>Поверхів ще не додано. Використайте форму праворуч, щоб додати перший поверх.</value>
+  </data>
+  <data name="NoZonesYet" xml:space="preserve">
+    <value>Зон ще немає. Намалюйте полігон на карті, щоб створити зону.</value>
+  </data>
+  <data name="NotesMetadata" xml:space="preserve">
+    <value>Нотатки / Метадані</value>
+  </data>
+  <data name="NotSet" xml:space="preserve">
+    <value>Не встановлено</value>
+  </data>
+  <data name="SaveAllZones" xml:space="preserve">
+    <value>Зберегти всі зони</value>
+  </data>
+  <data name="SaveChanges" xml:space="preserve">
+    <value>Зберегти зміни</value>
+  </data>
+  <data name="SearchableDispatchable" xml:space="preserve">
+    <value>Пошукова / Відправна</value>
+  </data>
+  <data name="SearchableZoneHint" xml:space="preserve">
+    <value>Дозволити цій зоні відображатись як місце виклику.</value>
+  </data>
+  <data name="SortOrder" xml:space="preserve">
+    <value>Порядок сортування</value>
+  </data>
+  <data name="TopLeft" xml:space="preserve">
+    <value>Верхній лівий</value>
+  </data>
+  <data name="ZoneName" xml:space="preserve">
+    <value>Назва зони</value>
+  </data>
+  <data name="ZoneType" xml:space="preserve">
+    <value>Тип зони</value>
+  </data>
+  <data name="ZoneTypeCheckpoint" xml:space="preserve">
+    <value>Контрольно-пропускний пункт</value>
+  </data>
+  <data name="ZoneTypeCustom" xml:space="preserve">
+    <value>Нестандартний</value>
+  </data>
+  <data name="ZoneTypeElevator" xml:space="preserve">
+    <value>Ліфт</value>
+  </data>
+  <data name="ZoneTypeExit" xml:space="preserve">
+    <value>Вихід</value>
+  </data>
+  <data name="ZoneTypeGate" xml:space="preserve">
+    <value>Ворота</value>
+  </data>
+  <data name="ZoneTypeHallway" xml:space="preserve">
+    <value>Коридор</value>
+  </data>
+  <data name="ZoneTypeHazard" xml:space="preserve">
+    <value>Небезпека</value>
+  </data>
+  <data name="ZoneTypeMusterPoint" xml:space="preserve">
+    <value>Місце збору</value>
+  </data>
+  <data name="ZoneTypeParking" xml:space="preserve">
+    <value>Парковка</value>
+  </data>
+  <data name="ZoneTypeRoom" xml:space="preserve">
+    <value>Кімната</value>
+  </data>
+  <data name="ZoneTypeStagingArea" xml:space="preserve">
+    <value>Зона підготовки</value>
+  </data>
+  <data name="ZoneTypeStairWell" xml:space="preserve">
+    <value>Сходова клітка</value>
+  </data>
+  <data name="ZoneTypes" xml:space="preserve">
+    <value>Типи зон</value>
+  </data>
+  <data name="Zones" xml:space="preserve">
+    <value>Зони</value>
+  </data>
 </root>
-

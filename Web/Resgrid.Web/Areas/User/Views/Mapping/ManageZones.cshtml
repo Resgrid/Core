@@ -1,0 +1,579 @@
+﻿@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Mapping.ManageZonesView
+@{
+	ViewBag.Title = "Resgrid | " + mappingLocalizer["ManageZones"].Value;
+}
+
+@section Styles
+{
+	<link rel="stylesheet" href="~/lib/geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css" />
+	<style>
+		#zonesMap {
+			height: 600px;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+		}
+
+		#zonesSidebar {
+			height: 600px;
+			overflow-y: auto;
+			border: 1px solid #ddd;
+			border-radius: 4px;
+			background: #fff;
+		}
+
+		.zone-card {
+			border: 1px solid #e7eaec;
+			border-radius: 4px;
+			margin: 8px;
+			padding: 10px;
+			cursor: pointer;
+			transition: background 0.15s;
+		}
+
+		.zone-card:hover,
+		.zone-card.selected {
+			background: #f5f7fa;
+			border-color: #1ab394;
+		}
+
+		.zone-card .zone-color-dot {
+			display: inline-block;
+			width: 12px;
+			height: 12px;
+			border-radius: 50%;
+			margin-right: 6px;
+			vertical-align: middle;
+		}
+
+		.zone-type-badge {
+			font-size: 10px;
+			padding: 2px 6px;
+		}
+
+		#zoneEditPanel {
+			display: none;
+			border-top: 2px solid #1ab394;
+			padding: 12px;
+			background: #f8f9fa;
+		}
+
+		.legend-item {
+			display: inline-flex;
+			align-items: center;
+			margin-right: 10px;
+			font-size: 11px;
+		}
+
+		.legend-swatch {
+			width: 14px;
+			height: 14px;
+			border-radius: 3px;
+			margin-right: 4px;
+			border: 1px solid rgba(0,0,0,.15);
+		}
+	</style>
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-6">
+		<h2>@mappingLocalizer["ManageZones"]</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">@commonLocalizer["MappingModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="CustomMaps" asp-route-area="User">@mappingLocalizer["CustomMapsModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="ManageFloors"
+				   asp-route-area="User" asp-route-customMapId="@Model.CustomMapId">@Model.CustomMapName</a>
+			</li>
+			<li class="active">
+				<strong>@Model.FloorName — @mappingLocalizer["Zones"]</strong>
+			</li>
+		</ol>
+	</div>
+	<div class="col-sm-6">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-default"
+			   asp-controller="Mapping" asp-action="ManageFloors"
+			   asp-route-area="User" asp-route-customMapId="@Model.CustomMapId">
+				<i class="fa fa-arrow-left"></i> @mappingLocalizer["BackToFloors"]
+			</a>
+			<button id="btnSaveZones" class="btn btn-primary">
+				<i class="fa fa-save"></i> @mappingLocalizer["SaveAllZones"]
+			</button>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content" style="padding-top:10px;">
+
+			<!-- Save form (submitted via JS) -->
+			<form id="saveZonesForm" method="post"
+				  asp-controller="Mapping" asp-action="SaveZones" asp-route-area="User">
+				@Html.AntiForgeryToken()
+				<input type="hidden" name="customMapFloorId" value="@Model.CustomMapFloorId" />
+				<input type="hidden" name="zonesGeoJson" id="hdnZonesGeoJson" value="@Model.ZonesGeoJson" />
+			</form>
+
+			<!-- Instructions bar -->
+			<div class="alert alert-info" style="margin-bottom:10px;">
+				<strong><i class="fa fa-info-circle"></i> @mappingLocalizer["HowToUse"]</strong>
+				@mappingLocalizer["ManageZonesHowTo"]
+				@if (!string.IsNullOrWhiteSpace(Model.Message))
+				{
+					<span class="text-success"><i class="fa fa-check-circle"></i> @Model.Message</span>
+				}
+			</div>
+
+			<div class="row">
+				<!-- Map panel -->
+				<div class="col-md-9">
+					<div id="zonesMap"></div>
+					<!-- Zone type legend -->
+					<div style="margin-top:6px; padding:4px 0;">
+						<small class="text-muted">@mappingLocalizer["ZoneTypes"]:&nbsp;</small>
+						<span class="legend-item"><span class="legend-swatch" style="background:#4CAF50;"></span>@mappingLocalizer["ZoneTypeRoom"]</span>
+						<span class="legend-item"><span class="legend-swatch" style="background:#9E9E9E;"></span>@mappingLocalizer["ZoneTypeHallway"]</span>
+						<span class="legend-item"><span class="legend-swatch" style="background:#2196F3;"></span>@mappingLocalizer["ZoneTypeStairWell"]</span>
+						<span class="legend-item"><span class="legend-swatch" style="background:#FF9800;"></span>@mappingLocalizer["ZoneTypeElevator"]</span>
+						<span class="legend-item"><span class="legend-swatch" style="background:#F44336;"></span>@mappingLocalizer["ZoneTypeHazard"]</span>
+						<span class="legend-item"><span class="legend-swatch" style="background:#9C27B0;"></span>@mappingLocalizer["ZoneTypeStagingArea"]</span>
+						<span class="legend-item"><span class="legend-swatch" style="background:#00BCD4;"></span>@mappingLocalizer["ZoneTypeMusterPoint"]</span>
+						<span class="legend-item"><span class="legend-swatch" style="background:#8BC34A;"></span>@mappingLocalizer["ZoneTypeExit"]</span>
+						<span class="legend-item"><span class="legend-swatch" style="background:#607D8B;"></span>@mappingLocalizer["ZoneTypeParking"]</span>
+						<span class="legend-item"><span class="legend-swatch" style="background:#FF5722;"></span>@mappingLocalizer["ZoneTypeGate"]</span>
+						<span class="legend-item"><span class="legend-swatch" style="background:#795548;"></span>@mappingLocalizer["ZoneTypeCustom"]</span>
+					</div>
+				</div>
+
+				<!-- Zones sidebar -->
+				<div class="col-md-3">
+					<div id="zonesSidebar">
+						<div style="padding:10px; border-bottom:1px solid #eee; background:#f5f7fa;">
+							<strong><i class="fa fa-list"></i> @mappingLocalizer["Zones"]</strong>
+							<span id="zoneCount" class="badge" style="margin-left:5px;">0</span>
+						</div>
+						<div id="zonesListContainer">
+							<p class="text-muted" style="padding:12px; font-size:12px;">
+								@mappingLocalizer["NoZonesYet"]
+							</p>
+						</div>
+
+						<!-- Zone editor panel -->
+						<div id="zoneEditPanel">
+							<h5 style="margin-top:0;"><i class="fa fa-pencil"></i> @mappingLocalizer["EditZone"]</h5>
+
+							<div class="form-group">
+								<label class="control-label" style="font-size:12px;">@mappingLocalizer["ZoneName"] <span class="text-danger">*</span></label>
+								<input type="text" id="edtZoneName" class="form-control input-sm"
+									   placeholder="@mappingLocalizer["ZoneNamePlaceholder"].Value" />
+							</div>
+
+							<div class="form-group">
+								<label class="control-label" style="font-size:12px;">@mappingLocalizer["ZoneType"]</label>
+								<select id="edtZoneType" class="form-control input-sm">
+									@foreach (var item in Model.ZoneTypes)
+									{
+										<option value="@item.Value">@item.Text</option>
+									}
+								</select>
+							</div>
+
+							<div class="form-group">
+								<label class="control-label" style="font-size:12px;">@commonLocalizer["Color"]</label>
+								<input type="color" id="edtZoneColor" class="form-control input-sm" value="#3388ff" style="height:34px;" />
+							</div>
+
+							<div class="form-group">
+								<label class="control-label" style="font-size:12px;">
+									<input type="checkbox" id="edtIsSearchable" /> @mappingLocalizer["SearchableDispatchable"]
+								</label>
+								<span class="help-block" style="font-size:11px;">@mappingLocalizer["SearchableZoneHint"]</span>
+							</div>
+
+							<div class="form-group">
+								<label class="control-label" style="font-size:12px;">
+									<input type="checkbox" id="edtIsActive" checked /> @commonLocalizer["Active"]
+								</label>
+							</div>
+
+							<div class="form-group">
+								<label class="control-label" style="font-size:12px;">@mappingLocalizer["NotesMetadata"]</label>
+								<textarea id="edtMetadata" class="form-control input-sm" rows="3"
+										  placeholder='{"hazmat":"Class B","panel":"North Wall"}'></textarea>
+								<span class="help-block" style="font-size:11px;">@mappingLocalizer["MetadataHint"]</span>
+							</div>
+
+							<div class="btn-group btn-group-sm" style="width:100%;">
+								<button id="btnApplyZone" class="btn btn-success" style="width:60%;">
+									<i class="fa fa-check"></i> @mappingLocalizer["Apply"]
+								</button>
+								<button id="btnCancelEdit" class="btn btn-default" style="width:40%;">
+									@commonLocalizer["Cancel"]
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script>
+		var floorImageUrl = '@Html.Raw(Model.ImageUrl ?? "")';
+		var floorTileBaseUrl = '@Html.Raw(Model.TileBaseUrl ?? "")';
+		var floorStorageType = @((int)Model.StorageType); // 0=None, 1=DatabaseBlob, 2=TiledPyramid
+		var floorTileZoomLevels = @Model.TileZoomLevels;
+		var mapBounds = {
+			topLeftLat: @Model.BoundsTopLeftLat,
+			topLeftLng: @Model.BoundsTopLeftLng,
+			bottomRightLat: @Model.BoundsBottomRightLat,
+			bottomRightLng: @Model.BoundsBottomRightLng
+		};
+		var defaultZoom = @Model.DefaultZoom;
+		var existingZonesJson = @Html.Raw(Model.ZonesGeoJson ?? "null");
+
+		var i18n = {
+			noZonesYet: '@Html.Raw(mappingLocalizer["NoZonesYet"].Value)',
+			unnamedZone: '@Html.Raw(mappingLocalizer["UnnamedZone"].Value)',
+			dispatchable: '@Html.Raw(mappingLocalizer["Dispatchable"].Value)',
+			zoneDefaultName: '@Html.Raw(mappingLocalizer["ZoneDefaultName"].Value)',
+			zoneTypeNames: {
+				0: '@Html.Raw(mappingLocalizer["ZoneTypeRoom"].Value)',
+				1: '@Html.Raw(mappingLocalizer["ZoneTypeHallway"].Value)',
+				2: '@Html.Raw(mappingLocalizer["ZoneTypeStairWell"].Value)',
+				3: '@Html.Raw(mappingLocalizer["ZoneTypeElevator"].Value)',
+				4: '@Html.Raw(mappingLocalizer["ZoneTypeHazard"].Value)',
+				5: '@Html.Raw(mappingLocalizer["ZoneTypeStagingArea"].Value)',
+				6: '@Html.Raw(mappingLocalizer["ZoneTypeMusterPoint"].Value)',
+				7: '@Html.Raw(mappingLocalizer["ZoneTypeExit"].Value)',
+				8: '@Html.Raw(mappingLocalizer["ZoneTypeParking"].Value)',
+				9: '@Html.Raw(mappingLocalizer["ZoneTypeGate"].Value)',
+				10: '@Html.Raw(mappingLocalizer["ZoneTypeCheckpoint"].Value)',
+				11: '@Html.Raw(mappingLocalizer["ZoneTypeCustom"].Value)'
+			}
+		};
+	</script>
+
+	<script src="~/lib/geoman-io/leaflet-geoman-free/dist/leaflet-geoman.min.js"></script>
+	<script>
+		$(document).ready(function () {
+
+			// ─── Zone type colours ───────────────────────────────────────────────────
+			var zoneTypeColors = {
+				0: '#4CAF50',  // Room
+				1: '#9E9E9E',  // Hallway
+				2: '#2196F3',  // StairWell
+				3: '#FF9800',  // Elevator
+				4: '#F44336',  // Hazard
+				5: '#9C27B0',  // StagingArea
+				6: '#00BCD4',  // MusterPoint
+				7: '#8BC34A',  // Exit
+				8: '#607D8B',  // Parking
+				9: '#FF5722',  // Gate
+				10: '#795548', // Checkpoint
+				11: '#795548'  // Custom
+			};
+
+			var zoneTypeNames = i18n.zoneTypeNames;
+
+			// ─── Map setup ───────────────────────────────────────────────────────────
+			var nw = L.latLng(mapBounds.topLeftLat, mapBounds.topLeftLng);
+			var se = L.latLng(mapBounds.bottomRightLat, mapBounds.bottomRightLng);
+			var imageBounds = [nw, se];
+			var mapCenter = [(mapBounds.topLeftLat + mapBounds.bottomRightLat) / 2,
+				(mapBounds.topLeftLng + mapBounds.bottomRightLng) / 2];
+
+			var zonesMap = L.map('zonesMap').setView(mapCenter, defaultZoom);
+
+			// Base tile layer (for orientation)
+			L.tileLayer('@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()', {
+				maxZoom: 22,
+				attribution: '@Resgrid.Config.MappingConfig.LeafletAttribution',
+				opacity: 0.4
+			}).addTo(zonesMap);
+
+			// Floor plan image overlay — strategy depends on StorageType
+			// 1 = DatabaseBlob: single image overlay
+			// 2 = TiledPyramid: custom grid layer that loads 256×256 tiles
+			if (floorStorageType === 1 && floorImageUrl) {
+				// DatabaseBlob: direct image overlay (works well up to ~10 MB)
+				L.imageOverlay(floorImageUrl, imageBounds, { opacity: 0.85 }).addTo(zonesMap);
+			} else if (floorStorageType === 2 && floorTileBaseUrl) {
+				// TiledPyramid: load tiles from the server, fitted within the geographic bounds
+				// We use a custom GridLayer that maps (z,x,y) tile coords to image tiles.
+				var FloorTileLayer = L.GridLayer.extend({
+					createTile: function (coords) {
+						var tile = document.createElement('img');
+						tile.style.width = '256px';
+						tile.style.height = '256px';
+
+						// Clamp z to available zoom levels (0 to floorTileZoomLevels-1)
+						var z = Math.min(coords.z - (zonesMap.getZoom() - floorTileZoomLevels + 1),
+							floorTileZoomLevels - 1);
+						z = Math.max(0, z);
+
+						// Build tile URL; template uses {z}/{x}/{y}
+						var url = floorTileBaseUrl
+							.replace('{z}', z)
+							.replace('{x}', coords.x)
+							.replace('{y}', coords.y);
+						tile.src = url;
+						tile.onerror = function () { tile.style.display = 'none'; };
+						return tile;
+					}
+				});
+
+				new FloorTileLayer({
+					tileSize: 256,
+					minZoom: zonesMap.getMinZoom(),
+					maxZoom: zonesMap.getMaxZoom(),
+					bounds: imageBounds,
+					opacity: 0.85
+				}).addTo(zonesMap);
+			}
+
+			// Fit to bounds
+			if (mapBounds.topLeftLat !== 0 || mapBounds.topLeftLng !== 0) {
+				zonesMap.fitBounds(imageBounds);
+			}
+
+			// ─── Geoman drawing tools ────────────────────────────────────────────────
+			zonesMap.pm.addControls({
+				drawMarker: false,
+				drawCircle: false,
+				drawPolyline: false,
+				drawCircleMarker: false,
+				drawText: false,
+				drawRectangle: false,
+				drawPolygon: true,
+				editMode: true,
+				dragMode: true,
+				cutPolygon: false,
+				removalMode: true,
+				rotateMode: false
+			});
+
+			// ─── Zone state ──────────────────────────────────────────────────────────
+			var zones = {};        // keyed by tempId → { layer, props }
+			var selectedZoneId = null;
+
+			function generateId() {
+				return 'new_' + Math.random().toString(36).substr(2, 9);
+			}
+
+			function zoneColor(props) {
+				return props.color || zoneTypeColors[props.zoneType] || '#3388ff';
+			}
+
+			function applyLayerStyle(layer, props) {
+				layer.setStyle({
+					color: zoneColor(props),
+					fillColor: zoneColor(props),
+					fillOpacity: 0.35,
+					weight: 2
+				});
+			}
+
+			function renderSidebar() {
+				var keys = Object.keys(zones);
+				$('#zoneCount').text(keys.length);
+
+				if (keys.length === 0) {
+					$('#zonesListContainer').html(
+						'<p class="text-muted" style="padding:12px;font-size:12px;">' + i18n.noZonesYet + '</p>'
+					);
+					return;
+				}
+
+				var html = '';
+				keys.forEach(function (id) {
+					var z = zones[id];
+					var color = zoneColor(z.props);
+					var typeName = zoneTypeNames[z.props.zoneType] || i18n.zoneTypeNames[11];
+					var isSelected = id === selectedZoneId;
+					html += '<div class="zone-card' + (isSelected ? ' selected' : '') + '" data-id="' + id + '">';
+					html += '<span class="zone-color-dot" style="background:' + color + ';"></span>';
+					html += '<strong>' + (z.props.name || '<em>' + i18n.unnamedZone + '</em>') + '</strong>';
+					html += '<br/><span class="badge zone-type-badge" style="background:' + color + ';">' + typeName + '</span>';
+					if (z.props.isSearchable) {
+						html += ' <span class="label label-info" style="font-size:10px;">' + i18n.dispatchable + '</span>';
+					}
+					html += '</div>';
+				});
+				$('#zonesListContainer').html(html);
+
+				$('.zone-card').on('click', function () {
+					selectZone($(this).data('id'));
+				});
+			}
+
+			function selectZone(id) {
+				// Deselect previous
+				if (selectedZoneId && zones[selectedZoneId]) {
+					applyLayerStyle(zones[selectedZoneId].layer, zones[selectedZoneId].props);
+				}
+
+				selectedZoneId = id;
+				var z = zones[id];
+				if (!z) return;
+
+				// Highlight layer
+				z.layer.setStyle({ color: '#ff6600', fillColor: '#ff6600', fillOpacity: 0.4, weight: 3 });
+
+				// Populate editor
+				$('#edtZoneName').val(z.props.name || '');
+				$('#edtZoneType').val(z.props.zoneType || 0);
+				$('#edtZoneColor').val(z.props.color || zoneTypeColors[z.props.zoneType] || '#3388ff');
+				$('#edtIsSearchable').prop('checked', !!z.props.isSearchable);
+				$('#edtIsActive').prop('checked', z.props.isActive !== false);
+				$('#edtMetadata').val(z.props.metadata || '');
+
+				$('#zoneEditPanel').slideDown(150);
+				renderSidebar();
+			}
+
+			function addZone(layer, existingProps) {
+				var id = (existingProps && existingProps.zoneId) ? existingProps.zoneId : generateId();
+				var zoneType = (existingProps && existingProps.zoneType != null) ? existingProps.zoneType : 0;
+				var props = {
+					zoneId: id,
+					name: (existingProps && existingProps.name) ? existingProps.name : '',
+					zoneType: parseInt(zoneType),
+					color: (existingProps && existingProps.color) ? existingProps.color : zoneTypeColors[zoneType],
+					isSearchable: !!(existingProps && existingProps.isSearchable),
+					isActive: existingProps ? existingProps.isActive !== false : true,
+					metadata: (existingProps && existingProps.metadata) ? existingProps.metadata : ''
+				};
+
+				zones[id] = { layer: layer, props: props };
+				applyLayerStyle(layer, props);
+
+				// Click to select
+				layer.on('click', function () { selectZone(id); });
+
+				// Add tooltip
+				if (props.name) {
+					layer.bindTooltip(props.name, { permanent: false, sticky: true });
+				}
+
+				renderSidebar();
+				selectZone(id);
+			}
+
+			// ─── Geoman events ───────────────────────────────────────────────────────
+			zonesMap.on('pm:create', function (e) {
+				if (e.shape !== 'Polygon') return;
+				addZone(e.layer);
+			});
+
+			zonesMap.on('pm:remove', function (e) {
+				var idToRemove = null;
+				Object.keys(zones).forEach(function (id) {
+					if (zones[id].layer === e.layer) idToRemove = id;
+				});
+				if (idToRemove) {
+					if (selectedZoneId === idToRemove) {
+						selectedZoneId = null;
+						$('#zoneEditPanel').slideUp(150);
+					}
+					delete zones[idToRemove];
+					renderSidebar();
+				}
+			});
+
+			// ─── Load existing zones ──────────────────────────────────────────────────
+			if (existingZonesJson && existingZonesJson.features) {
+				existingZonesJson.features.forEach(function (feature) {
+					if (!feature.geometry) return;
+					try {
+						var layer = L.geoJSON(feature).getLayers()[0];
+						if (layer) {
+							zonesMap.addLayer(layer);
+							layer.pm.enable({ allowSelfIntersection: false });
+							addZone(layer, feature.properties);
+						}
+					} catch (ex) {
+						console.warn('Failed to load zone:', ex);
+					}
+				});
+			}
+
+			// ─── Zone type auto-color on change ──────────────────────────────────────
+			$('#edtZoneType').on('change', function () {
+				var typeVal = parseInt($(this).val());
+				$('#edtZoneColor').val(zoneTypeColors[typeVal] || '#3388ff');
+			});
+
+			// ─── Apply zone edits ────────────────────────────────────────────────────
+			$('#btnApplyZone').on('click', function () {
+				if (!selectedZoneId || !zones[selectedZoneId]) return;
+
+				var z = zones[selectedZoneId];
+				z.props.name = $('#edtZoneName').val().trim() || i18n.zoneDefaultName;
+				z.props.zoneType = parseInt($('#edtZoneType').val());
+				z.props.color = $('#edtZoneColor').val();
+				z.props.isSearchable = $('#edtIsSearchable').is(':checked');
+				z.props.isActive = $('#edtIsActive').is(':checked');
+				z.props.metadata = $('#edtMetadata').val().trim();
+
+				applyLayerStyle(z.layer, z.props);
+
+				// Update tooltip
+				z.layer.unbindTooltip();
+				if (z.props.name) {
+					z.layer.bindTooltip(z.props.name, { permanent: false, sticky: true });
+				}
+
+				$('#zoneEditPanel').slideUp(150);
+				selectedZoneId = null;
+				renderSidebar();
+			});
+
+			$('#btnCancelEdit').on('click', function () {
+				if (selectedZoneId && zones[selectedZoneId]) {
+					applyLayerStyle(zones[selectedZoneId].layer, zones[selectedZoneId].props);
+				}
+				selectedZoneId = null;
+				$('#zoneEditPanel').slideUp(150);
+				renderSidebar();
+			});
+
+			// ─── Save zones ───────────────────────────────────────────────────────────
+			$('#btnSaveZones').on('click', function () {
+				var features = Object.keys(zones).map(function (id) {
+					var z = zones[id];
+					var geoJson = z.layer.toGeoJSON();
+					geoJson.properties = {
+						zoneId: z.props.zoneId,
+						name: z.props.name,
+						zoneType: z.props.zoneType,
+						color: z.props.color,
+						isSearchable: z.props.isSearchable,
+						isActive: z.props.isActive,
+						metadata: z.props.metadata
+					};
+					return geoJson;
+				});
+
+				var featureCollection = { type: 'FeatureCollection', features: features };
+				$('#hdnZonesGeoJson').val(JSON.stringify(featureCollection));
+				$('#saveZonesForm').submit();
+			});
+
+			// Initial sidebar render
+			renderSidebar();
+		});
+	</script>
+}

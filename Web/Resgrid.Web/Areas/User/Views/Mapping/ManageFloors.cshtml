@@ -1,0 +1,228 @@
+﻿@using Resgrid.Model
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Mapping.ManageFloorsView
+@{
+	ViewBag.Title = "Resgrid | " + mappingLocalizer["ManageFloors"].Value;
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>@mappingLocalizer["ManageFloors"]</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">@commonLocalizer["MappingModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="CustomMaps" asp-route-area="User">@mappingLocalizer["CustomMapsModule"]</a>
+			</li>
+			<li class="active">
+				<strong>@Model.CustomMapName — @mappingLocalizer["Floors"]</strong>
+			</li>
+		</ol>
+	</div>
+	<div class="col-sm-8">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-default" asp-controller="Mapping" asp-action="CustomMaps" asp-route-area="User">
+				<i class="fa fa-arrow-left"></i> @mappingLocalizer["BackToMaps"]
+			</a>
+		</div>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-md-8">
+		<div class="wrapper wrapper-content">
+			<!-- Current Floors -->
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5><i class="fa fa-building-o"></i> @mappingLocalizer["FloorsLevels"]</h5>
+					<div class="ibox-tools">
+						<a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+					</div>
+				</div>
+				<div class="ibox-content">
+					@if (!string.IsNullOrWhiteSpace(Model.Message))
+					{
+						<div class="alert alert-success">@Model.Message</div>
+					}
+
+					@if (!Model.Floors.Any())
+					{
+						<div class="alert alert-info">
+							<i class="fa fa-info-circle"></i>
+							@mappingLocalizer["NoFloorsYet"]
+						</div>
+					}
+					else
+					{
+						<div class="table-responsive">
+							<table class="table table-striped table-hover" id="floorsTable">
+								<thead>
+									<tr>
+										<th>@commonLocalizer["Order"]</th>
+										<th>@mappingLocalizer["FloorNumber"]</th>
+										<th>@commonLocalizer["Name"]</th>
+										<th>@mappingLocalizer["Elevation"]</th>
+										<th>@commonLocalizer["Default"]</th>
+										<th>@mappingLocalizer["Image"]</th>
+										<th class="text-center">@commonLocalizer["Actions"]</th>
+									</tr>
+								</thead>
+								<tbody>
+									@foreach (var floor in Model.Floors.OrderBy(f => f.SortOrder))
+									{
+										var storageType = (CustomMapFloorStorageType)floor.StorageType;
+										var hasImage = storageType != CustomMapFloorStorageType.None;
+
+										<tr>
+											<td>@floor.SortOrder</td>
+											<td>@floor.FloorNumber</td>
+											<td><strong>@floor.Name</strong></td>
+											<td>@(floor.Elevation.HasValue ? $"{floor.Elevation.Value:F1} m" : "—")</td>
+											<td>
+												@if (floor.IsDefault)
+												{
+													<span class="label label-primary">@commonLocalizer["Default"]</span>
+												}
+											</td>
+											<td>
+												@if (storageType == CustomMapFloorStorageType.TiledPyramid)
+												{
+													<span class="label label-info" title="@mappingLocalizer["TiledStorageNote"].Value">
+														<i class="fa fa-th"></i> @mappingLocalizer["StorageTypeTiledPyramid"]
+													</span>
+													@if (floor.ImageWidthPx.HasValue)
+													{
+														<small class="text-muted" style="display:block;">@floor.ImageWidthPx×@floor.ImageHeightPx px</small>
+													}
+												}
+												else if (storageType == CustomMapFloorStorageType.DatabaseBlob)
+												{
+													<span class="label label-success" title="@mappingLocalizer["DirectStorageNote"].Value">
+														<i class="fa fa-file-image-o"></i> @mappingLocalizer["StorageTypeDatabaseBlob"]
+													</span>
+													@if (floor.ImageWidthPx.HasValue)
+													{
+														<small class="text-muted" style="display:block;">@floor.ImageWidthPx×@floor.ImageHeightPx px</small>
+													}
+												}
+												else
+												{
+													<span class="label label-default">@commonLocalizer["None"]</span>
+												}
+											</td>
+											<td class="text-center">
+												<div class="btn-group btn-group-xs">
+													<a class="btn btn-primary"
+													   asp-controller="Mapping" asp-action="ManageZones"
+													   asp-route-area="User" asp-route-customMapFloorId="@floor.CustomMapFloorId"
+													   title="@mappingLocalizer["DrawEditZones"].Value">
+														<i class="fa fa-draw-polygon"></i> @mappingLocalizer["Zones"]
+													</a>
+													<a class="btn btn-@(hasImage ? "warning" : "success")"
+													   asp-controller="Mapping" asp-action="UploadFloorImage"
+													   asp-route-area="User" asp-route-customMapFloorId="@floor.CustomMapFloorId"
+													   title="@(hasImage ? mappingLocalizer["ReplaceImage"].Value : mappingLocalizer["UploadImage"].Value)">
+														<i class="fa fa-upload"></i> @(hasImage ? mappingLocalizer["ReplaceImage"] : mappingLocalizer["UploadImage"])
+													</a>
+													@if (hasImage)
+													{
+														<a class="btn btn-default"
+														   asp-controller="Mapping" asp-action="DeleteFloorImage"
+														   asp-route-area="User" asp-route-customMapFloorId="@floor.CustomMapFloorId"
+														   data-confirm="@mappingLocalizer["DeleteImageConfirm"].Value"
+														   rel="nofollow"
+														   title="@mappingLocalizer["DeleteImage"].Value">
+															<i class="fa fa-times"></i>
+														</a>
+													}
+													<a class="btn btn-danger"
+													   asp-controller="Mapping" asp-action="DeleteFloor"
+													   asp-route-area="User"
+													   asp-route-customMapFloorId="@floor.CustomMapFloorId"
+													   asp-route-customMapId="@Model.CustomMapId"
+													   data-confirm="@mappingLocalizer["DeleteFloorConfirm"].Value"
+													   rel="nofollow">
+														<i class="fa fa-trash"></i> @commonLocalizer["Delete"]
+													</a>
+												</div>
+											</td>
+										</tr>
+									}
+								</tbody>
+							</table>
+						</div>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Add Floor Form -->
+	<div class="col-md-4">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5><i class="fa fa-plus-circle"></i> @mappingLocalizer["AddFloor"]</h5>
+				</div>
+				<div class="ibox-content">
+					<form class="form-vertical" role="form" enctype="multipart/form-data"
+						  asp-controller="Mapping" asp-action="AddFloor" asp-route-area="User" method="post">
+
+						@Html.AntiForgeryToken()
+						@Html.HiddenFor(m => m.CustomMapId)
+
+						<div class="form-group">
+							<label class="control-label required">@mappingLocalizer["FloorName"]</label>
+							@Html.TextBoxFor(m => m.NewFloorName, new { @class = "form-control", placeholder = mappingLocalizer["FloorNamePlaceholder"].Value })
+						</div>
+
+						<div class="row">
+							<div class="col-xs-6">
+								<div class="form-group">
+									<label class="control-label">@mappingLocalizer["FloorNumber"]</label>
+									@Html.TextBoxFor(m => m.NewFloorNumber, new { @class = "form-control", type = "number" })
+								</div>
+							</div>
+							<div class="col-xs-6">
+								<div class="form-group">
+									<label class="control-label">@mappingLocalizer["SortOrder"]</label>
+									@Html.TextBoxFor(m => m.NewSortOrder, new { @class = "form-control", type = "number" })
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label class="control-label">@mappingLocalizer["ElevationMeters"]</label>
+							@Html.TextBoxFor(m => m.NewElevation, new { @class = "form-control", type = "number", step = "0.1", placeholder = commonLocalizer["Optional"].Value })
+							<span class="help-block">@mappingLocalizer["ElevationHint"]</span>
+						</div>
+
+						<div class="form-group">
+							<label class="control-label">
+								<input type="checkbox" name="NewIsDefault" value="true" /> @mappingLocalizer["IsDefaultFloor"]
+							</label>
+							<span class="help-block">@mappingLocalizer["DefaultFloorHint"]</span>
+						</div>
+
+						<div class="form-group">
+							<label class="control-label">@mappingLocalizer["FloorPlanImage"]</label>
+							<input type="file" name="floorImage" accept=".jpg,.jpeg,.png,.tif,.tiff" class="form-control-file" />
+							<span class="help-block">@mappingLocalizer["FloorPlanImageHint"] — @mappingLocalizer["UploadFloorImageHint"]</span>
+						</div>
+
+						<div class="form-group">
+							<button type="submit" class="btn btn-primary btn-block">
+								<i class="fa fa-plus"></i> @mappingLocalizer["AddFloor"]
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+

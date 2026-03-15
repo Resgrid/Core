@@ -663,4 +663,7 @@
   <data name="YourDepartments" xml:space="preserve">
     <value>Your Departments</value>
   </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
 </root>

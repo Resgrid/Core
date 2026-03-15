@@ -2,7 +2,7 @@
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Mapping.ViewTypeView
 @{
-	ViewBag.Title = "Resgrid | View Type";
+	ViewBag.Title = "Resgrid | " + mappingLocalizer["ViewPOIType"].Value;
 	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 
@@ -27,19 +27,19 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>View Type</h2>
+		<h2>@mappingLocalizer["ViewPOIType"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
 			</li>
 			<li>
-				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">Mapping</a>
+				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">@commonLocalizer["MappingModule"]</a>
 			</li>
 			<li>
-				<a asp-controller="Mapping" asp-action="POIs" asp-route-area="User">POIs</a>
+				<a asp-controller="Mapping" asp-action="POIs" asp-route-area="User">@mappingLocalizer["POIsModule"]</a>
 			</li>
 			<li class="active">
-				<strong>View Type</strong>
+				<strong>@mappingLocalizer["ViewPOIType"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -49,9 +49,9 @@
 	<div class="col-xs-12">
 			<div class="tabs-container">
 				<ul class="nav nav-tabs">
-					<li class="active"><a data-toggle="tab" href="#tab-1">Map</a></li>
-					<li class=""><a data-toggle="tab" href="#tab-2">Information</a></li>
-					<li class=""><a data-toggle="tab" href="#tab-3">List</a></li>
+					<li class="active"><a data-toggle="tab" href="#tab-1">@mappingLocalizer["MapTab"]</a></li>
+					<li class=""><a data-toggle="tab" href="#tab-2">@mappingLocalizer["InformationTab"]</a></li>
+					<li class=""><a data-toggle="tab" href="#tab-3">@mappingLocalizer["ListTab"]</a></li>
 				</ul>
 				<div class="tab-content">
 					<div id="tab-1" class="tab-pane active">
@@ -65,7 +65,7 @@
 								<form class="form-horizontal">
 									<div class="form-group">
 										<label class="control-label required">
-											Name
+											@commonLocalizer["Name"]
 										</label>
 										<div class="controls">
 											<div class="col-md-6">
@@ -75,24 +75,24 @@
 									</div>
 									<div class="form-group">
 										<label class="control-label required">
-											Is Destination
+											@mappingLocalizer["IsDestination"]
 										</label>
 										<div class="controls">
 											<div class="col-md-6">
 												@if (Model.Type.IsDestination)
 												{
-													<span>True</span>
+													<span>@commonLocalizer["Yes"]</span>
 												}
 												else
 												{
-													<span>False</span>
+													<span>@commonLocalizer["No"]</span>
 												}
 											</div>
 										</div>
 									</div>
 									<div class="form-group">
 										<label class="control-label required">
-											Color
+											@commonLocalizer["Color"]
 										</label>
 										<div class="controls">
 											<div class="col-md-6">

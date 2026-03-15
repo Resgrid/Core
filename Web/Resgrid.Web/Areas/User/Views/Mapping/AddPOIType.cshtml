@@ -1,7 +1,6 @@
-﻿
-@model Resgrid.Web.Areas.User.Models.Mapping.AddPOITypeView
+﻿@model Resgrid.Web.Areas.User.Models.Mapping.AddPOITypeView
 @{
-	ViewBag.Title = "Resgrid | Add POI Type";
+	ViewBag.Title = "Resgrid | " + mappingLocalizer["AddPOIType"].Value;
 }
 
 @section Styles
@@ -33,16 +32,19 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>Add POI Type</h2>
+		<h2>@mappingLocalizer["AddPOIType"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
 			</li>
 			<li>
-				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">Mapping</a>
+				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">@commonLocalizer["MappingModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="Mapping" asp-action="POIs" asp-route-area="User">@mappingLocalizer["POIsModule"]</a>
 			</li>
 			<li class="active">
-				<strong>Add POI Type</strong>
+				<strong>@mappingLocalizer["AddPOIType"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -71,7 +73,7 @@
 
 						<div class="form-group">
 							<label class="col-sm-2 control-label required">
-								Name
+								@commonLocalizer["Name"]
 							</label>
 							<div class="controls">
 								<div class="col-md-6">
@@ -81,18 +83,18 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label required">
-								Is Destination
+								@mappingLocalizer["IsDestination"]
 							</label>
 							<div class="controls">
 								<div class="col-md-6">
 									@Html.CheckBoxFor(x => x.Type.IsDestination)
-									<span class="help-inline">To denote a potential destination for a unit/person. For example an office, rally point, hospital, access point, etc.</span>
+									<span class="help-inline">@mappingLocalizer["IsDestinationPOIHint"]</span>
 								</div>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label required">
-								Color
+								@commonLocalizer["Color"]
 							</label>
 							<div class="controls">
 								<div class="col-md-6">
@@ -102,7 +104,7 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label required">
-								Marker
+								@mappingLocalizer["Marker"]
 							</label>
 							<div class="col-md-10">
 								<div class="row">
@@ -137,10 +139,10 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label required">
-								Icon
+								@mappingLocalizer["Icon"]
 							</label>
 							<div class="col-md-10">
-								<span>None: @Html.RadioButtonFor(m => m.Type.Image, "")</span>
+								<span>@commonLocalizer["None"]: @Html.RadioButtonFor(m => m.Type.Image, "")</span>
 								<ul class="icons">
 									<li>
 										<span class="map-icon map-icon-art-gallery"></span>
@@ -388,8 +390,8 @@
 
 						<div class="form-group">
 							<div class="col-sm-4 col-sm-offset-2">
-								<a class="btn btn-white" asp-controller="Mapping" asp-action="POIs" asp-route-area="User">Cancel</a>
-								<button class="btn btn-primary" type="submit">Add POI</button>
+								<a class="btn btn-white" asp-controller="Mapping" asp-action="POIs" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+								<button class="btn btn-primary" type="submit">@mappingLocalizer["AddPOIType"]</button>
 							</div>
 						</div>
 					</form>

@@ -88,6 +88,8 @@ namespace Resgrid.Model
 			switch ((EventTypes)EventType)
 			{
 				case EventTypes.UnitStatusChanged:
+					if (string.IsNullOrWhiteSpace(BeforeData))
+						return "Any";
 					if (BeforeData == "-1")
 						return "Any";
 					else
@@ -115,6 +117,8 @@ namespace Resgrid.Model
 					}
 					break;
 				case EventTypes.PersonnelStaffingChanged:
+					if (string.IsNullOrWhiteSpace(BeforeData))
+						return "Any";
 					if (BeforeData == "-1")
 						return "Any";
 					else
@@ -142,6 +146,8 @@ namespace Resgrid.Model
 					}
 					break;
 				case EventTypes.PersonnelStatusChanged:
+					if (string.IsNullOrWhiteSpace(BeforeData))
+						return "None";
 					if (BeforeData == "-1")
 						return "Any";
 					else
@@ -202,6 +208,8 @@ namespace Resgrid.Model
 			switch ((EventTypes)EventType)
 			{
 				case EventTypes.UnitStatusChanged:
+					if (string.IsNullOrWhiteSpace(CurrentData))
+						return "None";
 					if (CurrentData == "-1")
 						return "Any";
 					else
@@ -229,6 +237,8 @@ namespace Resgrid.Model
 					}
 					break;
 				case EventTypes.PersonnelStaffingChanged:
+					if (string.IsNullOrWhiteSpace(CurrentData))
+						return "None";
 					if (CurrentData == "-1")
 						return "Any";
 					else
@@ -256,6 +266,8 @@ namespace Resgrid.Model
 					}
 					break;
 				case EventTypes.PersonnelStatusChanged:
+					if (string.IsNullOrWhiteSpace(CurrentData))
+						return "None";
 					if (CurrentData == "-1")
 						return "Any";
 					else

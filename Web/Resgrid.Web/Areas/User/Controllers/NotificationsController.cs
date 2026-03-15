@@ -99,9 +99,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 							var user = _usersService.GetUserById(userId);
 
 							if (sb.Length > 0)
-								sb.Append("," + UserHelper.GetFullNameForUser(user.UserId));
+								sb.Append("," + await UserHelper.GetFullNameForUser(user.UserId));
 							else
-								sb.Append(UserHelper.GetFullNameForUser(user.UserId));
+								sb.Append(await UserHelper.GetFullNameForUser(user.UserId));
 						}
 					}
 

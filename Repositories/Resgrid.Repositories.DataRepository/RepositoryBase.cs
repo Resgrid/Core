@@ -308,7 +308,11 @@ namespace Resgrid.Repositories.DataRepository
 			if (((IEntity)entity).IdValue != null)
 				didParse = int.TryParse(entity.IdValue.ToString(), out idValue);
 
-			if (((IEntity)entity).IdValue == null || (didParse && idValue == 0))
+			bool isNewEntity = ((IEntity)entity).IdValue == null
+				|| (didParse && idValue == 0)
+				|| (((IEntity)entity).IdType == 1 && string.IsNullOrWhiteSpace(((IEntity)entity).IdValue?.ToString()));
+
+			if (isNewEntity)
 			{
 				if (((IEntity)entity).IdType == 1)
 					((IEntity)entity).IdValue = Guid.NewGuid().ToString();

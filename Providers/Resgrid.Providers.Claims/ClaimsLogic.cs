@@ -1535,5 +1535,57 @@ namespace Resgrid.Providers.Claims
 				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Udf, ResgridClaimTypes.Actions.Update));
 			}
 		}
+
+		/// <summary>
+		/// Adds Route claims based on department role.
+		/// Department admins always receive full access (View + Update + Create + Delete).
+		/// Group admins receive View + Update when the permission is DepartmentAndGroupAdmins or Everyone.
+		/// Regular users receive View only when the permission is Everyone.
+		/// Default (no permission record): Everyone — all users can view routes.
+		/// </summary>
+		public static void AddRouteClaims(ClaimsIdentity identity, bool isAdmin, List<Permission> permissions, bool isGroupAdmin, List<PersonnelRole> roles)
+		{
+			if (isAdmin)
+			{
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Route, ResgridClaimTypes.Actions.View));
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Route, ResgridClaimTypes.Actions.Update));
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Route, ResgridClaimTypes.Actions.Create));
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Route, ResgridClaimTypes.Actions.Delete));
+				return;
+			}
+
+			if (permissions != null && permissions.Any(x => x.PermissionType == (int)PermissionTypes.ManageRoutes))
+			{
+				var permission = permissions.First(x => x.PermissionType == (int)PermissionTypes.ManageRoutes);
+
+				if (permission.Action == (int)PermissionActions.DepartmentAdminsOnly)
+				{
+					// Non-admins get no route claims.
+				}
+				else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && isGroupAdmin)
+				{
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Route, ResgridClaimTypes.Actions.View));
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Route, ResgridClaimTypes.Actions.Update));
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Route, ResgridClaimTypes.Actions.Create));
+				}
+				else if (permission.Action == (int)PermissionActions.Everyone)
+				{
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Route, ResgridClaimTypes.Actions.View));
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Route, ResgridClaimTypes.Actions.Update));
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Route, ResgridClaimTypes.Actions.Create));
+				}
+			}
+			else
+			{
+				// Default: everyone can view routes, admins and group admins can manage.
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Route, ResgridClaimTypes.Actions.View));
+
+				if (isGroupAdmin)
+				{
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Route, ResgridClaimTypes.Actions.Update));
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Route, ResgridClaimTypes.Actions.Create));
+				}
+			}
+		}
 	}
 }

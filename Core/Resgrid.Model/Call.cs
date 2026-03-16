@@ -175,6 +175,10 @@ namespace Resgrid.Model
 
 		public DateTime? DeletedOn { get; set; }
 
+		public string IndoorMapZoneId { get; set; }
+
+		public string IndoorMapFloorId { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

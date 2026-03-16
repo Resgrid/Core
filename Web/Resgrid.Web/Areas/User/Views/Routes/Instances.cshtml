@@ -1,0 +1,57 @@
+@model Resgrid.Web.Areas.User.Models.Routes.RouteInstancesView
+@{
+    ViewBag.Title = "Resgrid | Route History";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-12">
+        <h2>Route History - @Model.Plan.Name</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a></li>
+            <li><a asp-controller="Routes" asp-action="Index" asp-route-area="User">Routes</a></li>
+            <li class="active"><strong>History</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="instancesTable">
+                            <thead>
+                            <tr>
+                                <th>Status</th>
+                                <th>Unit</th>
+                                <th>Started</th>
+                                <th>Ended</th>
+                                <th>Stops</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var instance in Model.Instances)
+                            {
+                                <tr>
+                                    <td>@((Resgrid.Model.RouteInstanceStatus)instance.Status)</td>
+                                    <td>@instance.UnitId</td>
+                                    <td>@(instance.ActualStartOn?.ToString("yyyy-MM-dd HH:mm") ?? "-")</td>
+                                    <td>@(instance.ActualEndOn?.ToString("yyyy-MM-dd HH:mm") ?? "-")</td>
+                                    <td>@instance.StopsCompleted / @instance.StopsTotal</td>
+                                    <td>
+                                        <a class="btn btn-xs btn-primary" asp-controller="Routes" asp-action="InstanceDetail" asp-route-instanceId="@instance.RouteInstanceId" asp-route-area="User">
+                                            <i class="fa fa-eye"></i> Detail
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

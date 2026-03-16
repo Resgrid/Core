@@ -27,7 +27,9 @@
 		CreateWorkflow = 22,
 		ManageWorkflowCredentials = 23,
 		ViewWorkflowRuns = 24,
-		ViewUdfFields = 25
+		ViewUdfFields = 25,
+		CreateRoute = 26,
+		ManageRoutes = 27
 	}
 
 }

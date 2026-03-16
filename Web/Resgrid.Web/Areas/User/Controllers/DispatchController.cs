@@ -227,6 +227,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (!String.IsNullOrEmpty(model.Latitude) && !String.IsNullOrEmpty(model.Longitude))
 					model.Call.GeoLocationData = string.Format("{0},{1}", model.Latitude, model.Longitude);
 
+				// Indoor map zone
+				var indoorMapZoneId = collection["IndoorMapZoneId"].FirstOrDefault();
+				var indoorMapFloorId = collection["IndoorMapFloorId"].FirstOrDefault();
+				if (!String.IsNullOrWhiteSpace(indoorMapZoneId))
+				{
+					model.Call.IndoorMapZoneId = indoorMapZoneId;
+					model.Call.IndoorMapFloorId = indoorMapFloorId;
+				}
+
 				List<string> dispatchingUserIds = new List<string>();
 				List<int> dispatchingGroupIds = new List<int>();
 				List<int> dispatchingUnitIds = new List<int>();
@@ -607,6 +616,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (!String.IsNullOrEmpty(model.Latitude) && !String.IsNullOrEmpty(model.Longitude))
 					call.GeoLocationData = string.Format("{0},{1}", model.Latitude, model.Longitude);
+
+				// Indoor map zone
+				var indoorMapZoneId = collection["IndoorMapZoneId"].FirstOrDefault();
+				var indoorMapFloorId = collection["IndoorMapFloorId"].FirstOrDefault();
+				if (!String.IsNullOrWhiteSpace(indoorMapZoneId))
+				{
+					call.IndoorMapZoneId = indoorMapZoneId;
+					call.IndoorMapFloorId = indoorMapFloorId;
+				}
 
 				List<CallDispatch> existingDispatches = new List<CallDispatch>(call.Dispatches);
 

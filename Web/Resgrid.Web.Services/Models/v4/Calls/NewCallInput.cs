@@ -102,5 +102,15 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// User Defined Field values for this call
 		/// </summary>
 		public List<UdfFieldValueInput> UdfValues { get; set; }
+
+		/// <summary>
+		/// Indoor Map Zone Id for the call location
+		/// </summary>
+		public string IndoorMapZoneId { get; set; }
+
+		/// <summary>
+		/// Indoor Map Floor Id for the call location
+		/// </summary>
+		public string IndoorMapFloorId { get; set; }
 	}
 }

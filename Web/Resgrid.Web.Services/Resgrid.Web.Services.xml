@@ -630,6 +630,85 @@
             </summary>
             <returns>GetMapLayersResult object</returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetIndoorMaps">
+            <summary>
+            Gets all indoor maps for the department.
+            </summary>
+            <returns>GetIndoorMapsResult object with list of indoor maps</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetIndoorMap(System.String)">
+            <summary>
+            Gets a specific indoor map with its floors.
+            </summary>
+            <param name="id">Indoor map id</param>
+            <returns>GetIndoorMapResult object with map and floor data</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetIndoorMapFloor(System.String)">
+            <summary>
+            Gets a specific indoor map floor with its zones.
+            </summary>
+            <param name="floorId">Indoor map floor id</param>
+            <returns>GetIndoorMapFloorResult object with floor and zone data</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetIndoorMapFloorImage(System.String)">
+            <summary>
+            Gets the image for a specific indoor map floor.
+            </summary>
+            <param name="floorId">Indoor map floor id</param>
+            <returns>Floor image file</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.SearchIndoorLocations(System.String)">
+            <summary>
+            Searches for indoor map zones matching the specified term.
+            </summary>
+            <param name="term">Search term</param>
+            <returns>SearchIndoorLocationsResult object with matching zones</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetCustomMaps(System.Nullable{System.Int32})">
+            <summary>
+            Gets all custom maps for the department, with optional type filter.
+            </summary>
+            <param name="type">Optional map type filter (0=Indoor, 1=Outdoor, 2=Event, 3=Custom)</param>
+            <returns>GetCustomMapsResult object</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetCustomMap(System.String)">
+            <summary>
+            Gets a specific custom map with its layers.
+            </summary>
+            <param name="id">Custom map id</param>
+            <returns>GetCustomMapResult object</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetCustomMapLayer(System.String)">
+            <summary>
+            Gets a specific custom map layer with its regions.
+            </summary>
+            <param name="layerId">Layer id</param>
+            <returns>GetCustomMapLayerResult object</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetCustomMapTile(System.String,System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Gets a tile image for a specific custom map layer.
+            </summary>
+            <param name="layerId">Layer id</param>
+            <param name="z">Zoom level</param>
+            <param name="x">Tile X</param>
+            <param name="y">Tile Y</param>
+            <returns>Tile image file</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetCustomMapLayerImage(System.String)">
+            <summary>
+            Gets the full image for a non-tiled custom map layer.
+            </summary>
+            <param name="layerId">Layer id</param>
+            <returns>Layer image file</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.SearchCustomMapRegions(System.String)">
+            <summary>
+            Searches for custom map regions matching the specified term.
+            </summary>
+            <param name="term">Search term</param>
+            <returns>SearchCustomMapRegionsResult object</returns>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.MessagesController">
             <summary>
             Messaging system interaction
@@ -864,6 +943,116 @@
             Gets the Department Form that can be used for the new call process (i.e. call intake/triage form)
             </summary>
             <returns></returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.RoutesController">
+            <summary>
+            Route planning operations
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetRoutePlans">
+            <summary>
+            Gets all route plans for the department
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetRoutePlansForUnit(System.Int32)">
+            <summary>
+            Gets route plans for a specific unit
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetRoutePlan(System.String)">
+            <summary>
+            Gets a single route plan with stops and schedules
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.CreateRoutePlan(Resgrid.Web.Services.Models.v4.Routes.NewRoutePlanInput)">
+            <summary>
+            Creates a new route plan with stops
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.UpdateRoutePlan(Resgrid.Web.Services.Models.v4.Routes.UpdateRoutePlanInput)">
+            <summary>
+            Updates an existing route plan with stops
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.DeleteRoutePlan(System.String)">
+            <summary>
+            Soft-deletes a route plan
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.StartRoute(Resgrid.Web.Services.Models.v4.Routes.StartRouteInput)">
+            <summary>
+            Starts a route instance
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.EndRoute(Resgrid.Web.Services.Models.v4.Routes.EndRouteInput)">
+            <summary>
+            Ends a route instance
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.PauseRoute(Resgrid.Web.Services.Models.v4.Routes.PauseRouteInput)">
+            <summary>
+            Pauses a route instance
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.ResumeRoute(Resgrid.Web.Services.Models.v4.Routes.ResumeRouteInput)">
+            <summary>
+            Resumes a paused route instance
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.CancelRoute(Resgrid.Web.Services.Models.v4.Routes.CancelRouteInput)">
+            <summary>
+            Cancels a route instance
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetActiveRouteForUnit(System.Int32)">
+            <summary>
+            Gets the active route instance for a unit
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetActiveRoutes">
+            <summary>
+            Gets all active route instances for the department
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetRouteHistory(System.String)">
+            <summary>
+            Gets route instance history for a plan
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetRouteProgress(System.String)">
+            <summary>
+            Gets progress for a route instance
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.CheckInAtStop(Resgrid.Web.Services.Models.v4.Routes.CheckInInput)">
+            <summary>
+            Check in at a stop
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.CheckOutFromStop(Resgrid.Web.Services.Models.v4.Routes.CheckOutInput)">
+            <summary>
+            Check out from a stop
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.SkipStop(Resgrid.Web.Services.Models.v4.Routes.SkipStopInput)">
+            <summary>
+            Skip a stop with reason
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GeofenceCheckIn(Resgrid.Web.Services.Models.v4.Routes.GeofenceCheckInInput)">
+            <summary>
+            Auto check-in from geofence proximity
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetUnacknowledgedDeviations">
+            <summary>
+            Gets unacknowledged deviations for the department
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.AcknowledgeDeviation(System.String)">
+            <summary>
+            Acknowledge a deviation
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ScimController">
             <summary>
@@ -4672,6 +4861,16 @@
             User Defined Field values for this call
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.IndoorMapZoneId">
+            <summary>
+            Indoor Map Zone Id for the call location
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.IndoorMapFloorId">
+            <summary>
+            Indoor Map Floor Id for the call location
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.ScheduledCallsResult">
             <summary>
             Gets the calls current scheduled but not yet dispatched
@@ -5725,6 +5924,46 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Health.HealthResultData.CacheOnline">
             <summary>
             Can the API services talk to the cache
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetIndoorMapsResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Mapping.GetIndoorMapsResult.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetIndoorMapResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Mapping.GetIndoorMapResult.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetIndoorMapFloorResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Mapping.GetIndoorMapFloorResult.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.SearchIndoorLocationsResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Mapping.SearchIndoorLocationsResult.#ctor">
+            <summary>
+            Default constructor
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetMapDataResult.Data">

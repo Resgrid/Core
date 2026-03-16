@@ -45,8 +45,12 @@
         <a title="Archived Calls" class="btn btn-info" asp-controller="Dispatch" asp-action="ArchivedCalls" asp-route-area="User">@localizer["ArchivedCalls"]</a>
         @if (ClaimsAuthorizationHelper.CanCreateCall())
 		{
-          <a id="addPersonButton" title="@localizer["NewCallHelp"]" class="btn btn-success" href="@Url.Action("NewCall", "Dispatch", new { area = "User" })">@localizer["NewCall"]</a>
+          <a id="newCallButton" title="@localizer["NewCallHelp"]" class="btn btn-success" href="@Url.Action("NewCall", "Dispatch", new { area = "User" })">@localizer["NewCall"]</a>
 		}
+        @if (ClaimsAuthorizationHelper.CanViewRoutes())
+        {
+          <a id="routesButton" class="btn btn-inverse" asp-controller="Routes" asp-action="Index" asp-route-area="User">Routes</a>
+        }
       </div>
     </div>
   </div>

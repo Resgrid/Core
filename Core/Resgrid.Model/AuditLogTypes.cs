@@ -110,6 +110,20 @@
 		UdfFieldAdded,
 		UdfFieldUpdated,
 		UdfFieldRemoved,
-		UdfFieldValueSaved
+		UdfFieldValueSaved,
+		// Route Planning
+		RouteCreated,
+		RouteUpdated,
+		RouteDeleted,
+		RouteStarted,
+		RouteCompleted,
+		RouteCancelled,
+		RoutePaused,
+		RouteResumed,
+		RouteStopCheckedIn,
+		RouteStopCheckedOut,
+		RouteStopSkipped,
+		RouteDeviationDetected,
+		RouteDeviationAcknowledged
 	}
 }

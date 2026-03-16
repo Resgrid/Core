@@ -1,0 +1,138 @@
+@model Resgrid.Web.Areas.User.Models.CustomMaps.CustomMapRegionEditorView
+@using Resgrid.Model
+@{
+    ViewBag.Title = "Resgrid | Region Editor - " + Model.Layer.Name;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/@@geoman-io/leaflet-geoman-free@2.16.0/dist/leaflet-geoman.css" />
+    <style>
+        #regionMap { height: 600px; width: 100%; }
+        .region-panel { max-height: 600px; overflow-y: auto; }
+        .region-item { padding: 8px; border-bottom: 1px solid #eee; cursor: pointer; }
+        .region-item:hover { background: #f5f5f5; }
+    </style>
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-6">
+        <h2>Region Editor - @Model.Map.Name > @Model.Layer.Name</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a></li>
+            <li><a asp-controller="CustomMaps" asp-action="Index" asp-route-area="User">Custom Maps</a></li>
+            <li><a asp-controller="CustomMaps" asp-action="Layers" asp-route-id="@Model.Map.IndoorMapId" asp-route-area="User">Layers</a></li>
+            <li class="active"><strong>Region Editor</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-9">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content" style="padding:0;">
+                    <div id="regionMap"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Regions</h5>
+                </div>
+                <div class="ibox-content region-panel" id="regionList">
+                    @if (Model.Regions != null)
+                    {
+                        foreach (var region in Model.Regions)
+                        {
+                            <div class="region-item" data-region-id="@region.IndoorMapZoneId">
+                                <strong>@region.Name</strong>
+                                <span class="pull-right">
+                                    <button class="btn btn-xs btn-danger delete-region" data-region-id="@region.IndoorMapZoneId"><i class="fa fa-trash"></i></button>
+                                </span>
+                                <br /><small class="text-muted">@((IndoorMapZoneType)region.ZoneType)</small>
+                                @if (region.IsDispatchable)
+                                {
+                                    <span class="label label-success label-sm">Dispatchable</span>
+                                }
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Region Properties</h5>
+                </div>
+                <div class="ibox-content" id="regionProperties" style="display:none;">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" class="form-control" id="regionName" />
+                    </div>
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select class="form-control" id="regionType">
+                            <option value="0">Room</option>
+                            <option value="1">Wing</option>
+                            <option value="2">Corridor</option>
+                            <option value="3">Stairwell</option>
+                            <option value="4">Elevator</option>
+                            <option value="5">Hazard Zone</option>
+                            <option value="6">Assembly Point</option>
+                            <option value="7">Staging Area</option>
+                            <option value="8">Access Point</option>
+                            <option value="9">Utility</option>
+                            <option value="10">Search Grid</option>
+                            <option value="11">Stage</option>
+                            <option value="12">Gate</option>
+                            <option value="13">Entrance</option>
+                            <option value="14">Parking Area</option>
+                            <option value="15">Vendor Area</option>
+                            <option value="16">Emergency Lane</option>
+                            <option value="17">District</option>
+                            <option value="99">Custom</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Color</label>
+                        <input type="color" class="form-control" id="regionColor" value="#3388ff" />
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea class="form-control" id="regionDescription" rows="2"></textarea>
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" id="regionSearchable" checked /> Searchable in dispatch</label>
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" id="regionDispatchable" checked /> Dispatchable</label>
+                    </div>
+                    <button class="btn btn-primary btn-block" id="saveRegionBtn">Save Region</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/@@geoman-io/leaflet-geoman-free@2.16.0/dist/leaflet-geoman.min.js"></script>
+    <script>
+        var layerId = '@Model.Layer.IndoorMapFloorId';
+        var isTiled = @(Model.Layer.IsTiled ? "true" : "false");
+        var tileMinZoom = @(Model.Layer.TileMinZoom ?? 0);
+        var tileMaxZoom = @(Model.Layer.TileMaxZoom ?? 5);
+        var layerImageUrl = '@Url.Action("GetLayerImage", "CustomMaps", new { id = Model.Layer.IndoorMapFloorId, area = "User" })';
+        var tileUrlTemplate = '@Url.Action("GetLayerTile", "CustomMaps", new { id = Model.Layer.IndoorMapFloorId, z = 0, x = 0, y = 0, area = "User" })'.replace('/0/0/0', '/{z}/{x}/{y}');
+        var boundsNE = [@(Model.Layer.BoundsNELat ?? Model.Map.BoundsNELat), @(Model.Layer.BoundsNELon ?? Model.Map.BoundsNELon)];
+        var boundsSW = [@(Model.Layer.BoundsSWLat ?? Model.Map.BoundsSWLat), @(Model.Layer.BoundsSWLon ?? Model.Map.BoundsSWLon)];
+        var centerLat = @Model.Map.CenterLatitude;
+        var centerLon = @Model.Map.CenterLongitude;
+        var existingRegions = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Regions ?? new System.Collections.Generic.List<Resgrid.Model.IndoorMapZone>()));
+        var saveRegionUrl = '@Url.Action("SaveRegion", "CustomMaps", new { area = "User" })';
+        var deleteRegionUrl = '@Url.Action("DeleteRegion", "CustomMaps", new { area = "User" })';
+    </script>
+    <script src="~/js/app/internal/custommaps/resgrid.custommaps.regioneditor.js" asp-append-version="true"></script>
+}

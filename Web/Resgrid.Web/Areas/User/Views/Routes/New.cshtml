@@ -1,0 +1,133 @@
+@model Resgrid.Web.Areas.User.Models.Routes.RouteNewView
+@{
+    ViewBag.Title = "Resgrid | New Route";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-12">
+        <h2>New Route Plan</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a></li>
+            <li><a asp-controller="Routes" asp-action="Index" asp-route-area="User">Routes</a></li>
+            <li class="active"><strong>New</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Route Details</h5>
+                </div>
+                <div class="ibox-content">
+                    <form asp-controller="Routes" asp-action="New" asp-route-area="User" method="post" class="form-horizontal">
+                        @Html.AntiForgeryToken()
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" asp-for="Plan.Name" required />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Description</label>
+                            <div class="col-sm-10">
+                                <textarea class="form-control" asp-for="Plan.Description" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Unit</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" asp-for="Plan.UnitId">
+                                    <option value="">-- Assign at start time --</option>
+                                    @foreach (var unit in Model.Units)
+                                    {
+                                        <option value="@unit.UnitId">@unit.Name</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Status</label>
+                            <div class="col-sm-10">
+                                <select class="form-control" asp-for="Plan.RouteStatus">
+                                    <option value="0">Draft</option>
+                                    <option value="1">Active</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Route Color</label>
+                            <div class="col-sm-4">
+                                <input type="color" class="form-control" asp-for="Plan.RouteColor" value="#3388ff" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Route Profile</label>
+                            <div class="col-sm-4">
+                                <select class="form-control" asp-for="Plan.MapboxRouteProfile">
+                                    <option value="driving">Driving</option>
+                                    <option value="walking">Walking</option>
+                                    <option value="cycling">Cycling</option>
+                                    <option value="driving-traffic">Driving (Traffic)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Geofence Radius (m)</label>
+                            <div class="col-sm-4">
+                                <input type="number" class="form-control" asp-for="Plan.GeofenceRadiusMeters" value="100" />
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-2"></div>
+                            <div class="col-sm-10">
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" asp-for="Plan.UseStationAsStart" checked /> Use Station as Start
+                                </label>
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" asp-for="Plan.UseStationAsEnd" checked /> Use Station as End
+                                </label>
+                                <label class="checkbox-inline">
+                                    <input type="checkbox" asp-for="Plan.OptimizeStopOrder" /> Optimize Stop Order
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="hr-line-dashed"></div>
+
+                        <h4>Map & Stops</h4>
+                        <p class="text-muted">Stops can be managed after creating the route via the API or edit form.</p>
+                        <div id="routeMap" style="height:400px;margin-bottom:20px;border:1px solid #ddd;"></div>
+
+                        <div class="hr-line-dashed"></div>
+
+                        <div class="form-group">
+                            <div class="col-sm-offset-2 col-sm-10">
+                                <a class="btn btn-white" asp-controller="Routes" asp-action="Index" asp-route-area="User">Cancel</a>
+                                <button type="submit" class="btn btn-primary">Create Route</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var osmTileUrl = '@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()';
+        var osmTileAttribution = '@Resgrid.Config.MappingConfig.LeafletAttribution';
+    </script>
+    <script src="~/js/app/internal/routes/resgrid.routes.new.js"></script>
+}

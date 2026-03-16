@@ -202,6 +202,7 @@ namespace Resgrid.Providers.Claims
 				ClaimsLogic.AddWorkflowCredentialClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
 				ClaimsLogic.AddWorkflowRunClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
 				ClaimsLogic.AddUdfClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
+				ClaimsLogic.AddRouteClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
 				}
 			}
 

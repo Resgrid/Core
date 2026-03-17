@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="AddUnitsToLog" xml:space="preserve"><value>إضافة وحدات إلى السجل</value></data>
+  <data name="Attachments" xml:space="preserve"><value>المرفقات</value></data>
+  <data name="BodyLocation" xml:space="preserve"><value>موقع الجثة</value></data>
+  <data name="CallAddress" xml:space="preserve"><value>عنوان البلاغ</value></data>
+  <data name="CallName" xml:space="preserve"><value>اسم البلاغ</value></data>
+  <data name="CallPriority" xml:space="preserve"><value>أولوية البلاغ</value></data>
+  <data name="DeleteWarning" xml:space="preserve"><value>تحذير: سيؤدي هذا الإجراء إلى حذف هذا السجل نهائياً. هل أنت متأكد من حذف السجل</value></data>
+  <data name="LogsHeader" xml:space="preserve"><value>سجلات التشغيل</value></data>
+  <data name="NewLog" xml:space="preserve"><value>سجل جديد</value></data>
+  <data name="Narrative" xml:space="preserve"><value>السرد</value></data>
+  <data name="NatureOfCall" xml:space="preserve"><value>طبيعة البلاغ</value></data>
+  <data name="Personnel" xml:space="preserve"><value>الأفراد</value></data>
+  <data name="ViewLogHeader" xml:space="preserve"><value>عرض سجل التشغيل</value></data>
+  <data name="BackToLogs" xml:space="preserve"><value>العودة إلى السجلات</value></data>
+  <data name="GeneralInformation" xml:space="preserve"><value>المعلومات العامة</value></data>
+  <data name="LogSummary" xml:space="preserve"><value>ملخص السجل</value></data>
+  <data name="LogId" xml:space="preserve"><value>معرف السجل</value></data>
+  <data name="LogType" xml:space="preserve"><value>نوع السجل</value></data>
+  <data name="Duration" xml:space="preserve"><value>المدة</value></data>
+  <data name="CallInformation" xml:space="preserve"><value>معلومات البلاغ</value></data>
+  <data name="ViewFullCall" xml:space="preserve"><value>عرض البلاغ الكامل</value></data>
+  <data name="TrainingInformation" xml:space="preserve"><value>معلومات التدريب</value></data>
+  <data name="MeetingInformation" xml:space="preserve"><value>معلومات الاجتماع</value></data>
+  <data name="CoronerInformation" xml:space="preserve"><value>معلومات الطب الشرعي</value></data>
+  <data name="WorkLogInformation" xml:space="preserve"><value>معلومات سجل العمل</value></data>
+  <data name="Units" xml:space="preserve"><value>الوحدات</value></data>
+  <data name="Station" xml:space="preserve"><value>المحطة</value></data>
+  <data name="Cause" xml:space="preserve"><value>السبب</value></data>
+  <data name="TrainingCourse" xml:space="preserve"><value>دورة التدريب</value></data>
+  <data name="TrainingType" xml:space="preserve"><value>نوع التدريب</value></data>
+  <data name="Hours" xml:space="preserve"><value>الساعات</value></data>
+  <data name="MeetingType" xml:space="preserve"><value>نوع الاجتماع</value></data>
+  <data name="MeetingLocation" xml:space="preserve"><value>موقع الاجتماع</value></data>
+  <data name="Manner" xml:space="preserve"><value>الأسلوب</value></data>
+  <data name="Sex" xml:space="preserve"><value>الجنس</value></data>
+  <data name="Age" xml:space="preserve"><value>العمر</value></data>
+  <data name="Race" xml:space="preserve"><value>العرق</value></data>
+  <data name="WorkType" xml:space="preserve"><value>نوع العمل</value></data>
+  <data name="WorkLocation" xml:space="preserve"><value>موقع العمل</value></data>
+  <data name="NewLogHeader" xml:space="preserve"><value>سجل تشغيل جديد</value></data>
+  <data name="EditLogHeader" xml:space="preserve"><value>تعديل سجل التشغيل</value></data>
+  <data name="StartDate" xml:space="preserve"><value>تاريخ البدء</value></data>
+  <data name="EndDate" xml:space="preserve"><value>تاريخ الانتهاء</value></data>
+  <data name="LogDate" xml:space="preserve"><value>تاريخ السجل</value></data>
+  <data name="Actions" xml:space="preserve"><value>الإجراءات</value></data>
+  <data name="AddPersonnelToLog" xml:space="preserve"><value>إضافة أفراد إلى السجل</value></data>
+  <data name="NoPersonnel" xml:space="preserve"><value>لا يوجد أفراد</value></data>
+  <data name="NoUnits" xml:space="preserve"><value>لا توجد وحدات</value></data>
+  <data name="Close" xml:space="preserve"><value>إغلاق</value></data>
+  <data name="Save" xml:space="preserve"><value>حفظ</value></data>
+  <data name="Cancel" xml:space="preserve"><value>إلغاء</value></data>
+</root>

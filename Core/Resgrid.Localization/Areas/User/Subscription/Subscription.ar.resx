@@ -1,0 +1,471 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="BillingUpdateSuccessHeader" xml:space="preserve">
+    <value>تم تحديث معلومات الفواتير بنجاح</value>
+  </data>
+  <data name="BillingUpdateSuccessInfo" xml:space="preserve">
+    <value>شكراً لتحديث معلومات الفواتير. لن تُحسَب رسوم على بطاقتك الجديدة الآن، بل ستُستخدَم عند تجديد الاشتراك في موعده المعتاد.</value>
+  </data>
+  <data name="BuyAddonHeader" xml:space="preserve">
+    <value>شراء إضافة</value>
+  </data>
+  <data name="BuyAddonInfo1" xml:space="preserve">
+    <value>أنت تشتري الإضافة التالية</value>
+  </data>
+  <data name="BuyAddonInfo2" xml:space="preserve">
+    <value>ستُضاف الإضافة المشتراة إلى اشتراكك الحالي وسيتم احتساب حصة نسبية للمدة المتبقية من دورة الفوترة الحالية. سيتم خصم المبلغ من البطاقة المسجلة لديك، لذا تأكد من تحديثها لتجنب أي انقطاع في الخدمة.</value>
+  </data>
+  <data name="BuyAddonWarning" xml:space="preserve">
+    <value>تحذير</value>
+  </data>
+  <data name="BuyAddonWarningText" xml:space="preserve">
+    <value>لديك إضافة ملغاة من هذا النوع لا تزال فيها مدة متبقية. لتجنب الازدواجية في الفوترة، يُرجى الانتظار حتى نهاية تلك المدة قبل إضافة هذه الإضافة مرة أخرى. إذا كنت لا ترغب في الانتظار، يمكنك الإضافة الآن وقد تُحتسب نسبة من المدة المتبقية. تنتهي مدتك المتبقية في</value>
+  </data>
+  <data name="BuyNow" xml:space="preserve">
+    <value>اشترِ الآن</value>
+  </data>
+  <data name="BuyNowHeader" xml:space="preserve">
+    <value>اشترِ الآن</value>
+  </data>
+  <data name="BuyFollowingHeader" xml:space="preserve">
+    <value>أنت تشتري الخطة التالية</value>
+  </data>
+  <data name="For" xml:space="preserve">
+    <value>مقابل</value>
+  </data>
+  <data name="Year" xml:space="preserve">
+    <value>سنة</value>
+  </data>
+  <data name="Month" xml:space="preserve">
+    <value>شهر</value>
+  </data>
+  <data name="NextPaymentWIllBeOn" xml:space="preserve">
+    <value>موعد دفعتك القادمة</value>
+  </data>
+  <data name="SwitchingFromYearly" xml:space="preserve">
+    <value>أنت تتحول من خطة سنوية إلى خطة شهرية وستحتفظ بالرصيد المتبقي من خطتك السنوية. بعد استنفاد هذا الرصيد سيتم الفوترة وفق الجدول الشهري المعتاد.</value>
+  </data>
+  <data name="EstimatedTotal" xml:space="preserve">
+    <value>الإجمالي التقديري للترقية</value>
+  </data>
+  <data name="EstimatedTotalWarning" xml:space="preserve">
+    <value>تكلفة تقديرية، قد تختلف التكلفة الفعلية قليلاً.</value>
+  </data>
+  <data name="CreditCardBillingHeader" xml:space="preserve">
+    <value>عنوان فوترة بطاقة الائتمان</value>
+  </data>
+  <data name="BillingStreet" xml:space="preserve">
+    <value>عنوان الشارع للفوترة ببطاقة الائتمان</value>
+  </data>
+  <data name="BillingStreetWarning" xml:space="preserve">
+    <value>يجب أن يتطابق مع عنوان الشارع الذي ترسل إليه كشوفات بطاقة الائتمان</value>
+  </data>
+  <data name="BillingPostalCode" xml:space="preserve">
+    <value>الرمز البريدي للفوترة</value>
+  </data>
+  <data name="BillingCountry" xml:space="preserve">
+    <value>دولة الفوترة</value>
+  </data>
+  <data name="SSLInfo" xml:space="preserve">
+    <value>معلومات الدفع مؤمّنة بتشفير SSL. &lt;b&gt;لا تحتفظ Resgrid بأي معلومات دفع.&lt;/b&gt;</value>
+  </data>
+  <data name="FirstNameCard" xml:space="preserve">
+    <value>الاسم الأول على البطاقة</value>
+  </data>
+  <data name="LastNameCard" xml:space="preserve">
+    <value>اسم العائلة على البطاقة</value>
+  </data>
+  <data name="CCNumber" xml:space="preserve">
+    <value>رقم بطاقة الائتمان كاملاً</value>
+  </data>
+  <data name="CCVCode" xml:space="preserve">
+    <value>رمز CVV/CVC</value>
+  </data>
+  <data name="CCVCodeInfo" xml:space="preserve">
+    <value>رقم مكوّن من 3 أو 4 أرقام على البطاقة</value>
+  </data>
+  <data name="CCVCodeMoreInfo" xml:space="preserve">
+    <value>مزيد من المعلومات</value>
+  </data>
+  <data name="CCExpiration" xml:space="preserve">
+    <value>تاريخ انتهاء صلاحية بطاقة الائتمان</value>
+  </data>
+  <data name="CancelSubscriptionHeader" xml:space="preserve">
+    <value>إلغاء الاشتراك</value>
+  </data>
+  <data name="CancelSubscriptionInfo1" xml:space="preserve">
+    <value>يؤسفنا إلغاء اشتراكك. يُرجى ملء النموذج أدناه لإتمام طلب إلغاء الاشتراك. حقل السبب اختياري، تأكد من تحديد مربع التأكيد ثم اضغط موافق عند ظهور نافذة التأكيد في المتصفح.</value>
+  </data>
+  <data name="CancelSubscriptionInfoData" xml:space="preserve">
+    <value>لن يتم حذف قسمك أو بياناتك، بل سيتوقف فقط تجديد اشتراكك. خلال المدة المتبقية من اشتراكك ستتمكن من الوصول إلى الميزات المتاحة ضمن الخطة الحالية.</value>
+  </data>
+  <data name="Plan" xml:space="preserve">
+    <value>الخطة</value>
+  </data>
+  <data name="CurrentPlan" xml:space="preserve">
+    <value>الخطة الحالية</value>
+  </data>
+  <data name="BoughtOn" xml:space="preserve">
+    <value>تاريخ الشراء</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>تأكيد</value>
+  </data>
+  <data name="Reason" xml:space="preserve">
+    <value>السبب</value>
+  </data>
+  <data name="BackToSubs" xml:space="preserve">
+    <value>العودة إلى الاشتراكات</value>
+  </data>
+  <data name="CancelSub" xml:space="preserve">
+    <value>إلغاء الاشتراك</value>
+  </data>
+  <data name="CancelSubWarning" xml:space="preserve">
+    <value>تحذير: سيؤدي هذا الإجراء إلى إلغاء اشتراكك النشط. هل أنت متأكد؟</value>
+  </data>
+  <data name="CancelFailureHeader" xml:space="preserve">
+    <value>فشل الإلغاء</value>
+  </data>
+  <data name="CancelFailureInfo" xml:space="preserve">
+    <value>تعذّر علينا إلغاء اشتراكك. قد يكون ذلك لأنك لا تملك اشتراكاً نشطاً (أي أنك على الخطة المجانية) أو بسبب مشكلة مؤقتة في معالج الدفع. يُرجى المحاولة مرة أخرى بعد بضع دقائق. إذا استمرت المشكلة، يُرجى التواصل معنا.</value>
+  </data>
+  <data name="CancelSuccessHeader" xml:space="preserve">
+    <value>تم إلغاء الاشتراك</value>
+  </data>
+  <data name="CancelSuccessInfo" xml:space="preserve">
+    <value>تم إلغاء اشتراكك. قد يستغرق النظام بضع دقائق لتطبيق هذا التغيير، لكن لن يتم خصم أي مبالغ من بطاقتك بعد الآن. سنحتفظ ببياناتك في حال رغبت في العودة أو استخدام خطة Resgrid المجانية.</value>
+  </data>
+  <data name="SubscriptionHeader" xml:space="preserve">
+    <value>خطة الاشتراك والفواتير</value>
+  </data>
+  <data name="ViewPaymentHistory" xml:space="preserve">
+    <value>عرض سجل الدفعات</value>
+  </data>
+  <data name="ChangeBillingInfo" xml:space="preserve">
+    <value>تغيير معلومات الفواتير</value>
+  </data>
+  <data name="Canceled" xml:space="preserve">
+    <value>ملغى</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>نشط</value>
+  </data>
+  <data name="PlanExpires" xml:space="preserve">
+    <value>تاريخ انتهاء الخطة</value>
+  </data>
+  <data name="PlanRenews" xml:space="preserve">
+    <value>تاريخ تجديد الخطة</value>
+  </data>
+  <data name="Personnel" xml:space="preserve">
+    <value>الأفراد</value>
+  </data>
+  <data name="Groups" xml:space="preserve">
+    <value>المجموعات</value>
+  </data>
+  <data name="Units" xml:space="preserve">
+    <value>الوحدات</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>تحذير</value>
+  </data>
+  <data name="Standard" xml:space="preserve">
+    <value>قياسي</value>
+  </data>
+  <data name="Premium" xml:space="preserve">
+    <value>مميز</value>
+  </data>
+  <data name="Professional" xml:space="preserve">
+    <value>احترافي</value>
+  </data>
+  <data name="Ultimate" xml:space="preserve">
+    <value>شامل</value>
+  </data>
+  <data name="Enterprise" xml:space="preserve">
+    <value>مؤسسي</value>
+  </data>
+  <data name="Unified" xml:space="preserve">
+    <value>موحّد</value>
+  </data>
+  <data name="InboundTexting" xml:space="preserve">
+    <value>استقبال الرسائل النصية</value>
+  </data>
+  <data name="TelephoneAlerting" xml:space="preserve">
+    <value>التنبيه الهاتفي</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>السعر</value>
+  </data>
+  <data name="PerYear" xml:space="preserve">
+    <value>في السنة</value>
+  </data>
+  <data name="PerMonth" xml:space="preserve">
+    <value>في الشهر</value>
+  </data>
+  <data name="Amount" xml:space="preserve">
+    <value>المبلغ</value>
+  </data>
+  <data name="BuyingFollowingPlan" xml:space="preserve">
+    <value>أنت تشتري الخطة التالية</value>
+  </data>
+  <data name="BuyMonthly" xml:space="preserve">
+    <value>اشتراك شهري</value>
+  </data>
+  <data name="BuyNowContact1" xml:space="preserve">
+    <value>تتوفر أيضاً خطط أكبر واستضافة خاصة ودعم ذو أولوية ودعم المصدر المفتوح وخدمات التنفيذ.</value>
+  </data>
+  <data name="BuyNowContact2" xml:space="preserve">
+    <value>لمزيد من المعلومات.</value>
+  </data>
+  <data name="BuyYearly" xml:space="preserve">
+    <value>اشتراك سنوي</value>
+  </data>
+  <data name="ChangePlanBody" xml:space="preserve">
+    <value>إذا كنت ترغب في تغيير اشتراكك، اضغط على زر "تغيير الخطة" أدناه. سيحسب مزود الدفع الحصة النسبية للمدة المتبقية من خطتك الحالية ويحدد المبلغ المستحق ويخصمه من بطاقتك المسجلة (إذا لزم الأمر). ستتلقى بريداً إلكترونياً بالتفاصيل بعد معالجة التغيير.</value>
+  </data>
+  <data name="ContactUs" xml:space="preserve">
+    <value>تواصل معنا</value>
+  </data>
+  <data name="Cost" xml:space="preserve">
+    <value>التكلفة</value>
+  </data>
+  <data name="Customer" xml:space="preserve">
+    <value>العميل</value>
+  </data>
+  <data name="Department" xml:space="preserve">
+    <value>القسم</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>الوصف</value>
+  </data>
+  <data name="EndDate" xml:space="preserve">
+    <value>تاريخ الانتهاء</value>
+  </data>
+  <data name="Invoice" xml:space="preserve">
+    <value>الفاتورة</value>
+  </data>
+  <data name="InvoiceDate" xml:space="preserve">
+    <value>تاريخ الفاتورة</value>
+  </data>
+  <data name="Method" xml:space="preserve">
+    <value>طريقة الدفع</value>
+  </data>
+  <data name="PaymentCompleteBody" xml:space="preserve">
+    <value>شكراً لشرائك. اكتملت عملية الدفع وستكون الإضافة أو ترقية الخطة متاحة قريباً. قد تحتاج إلى تسجيل الخروج وإعادة الدخول لرؤية التغييرات.</value>
+  </data>
+  <data name="PaymentCompleteHeader" xml:space="preserve">
+    <value>اكتمل الدفع</value>
+  </data>
+  <data name="PaymentFailedBody" xml:space="preserve">
+    <value>نأسف، حدثت مشكلة أثناء معالجة دفعتك. اضغط زر الرجوع في المتصفح وتحقق من معلومات الدفع (الرمز البريدي، رقم CVV، تاريخ الانتهاء).</value>
+  </data>
+  <data name="PaymentFailedHeader" xml:space="preserve">
+    <value>فشل الدفع</value>
+  </data>
+  <data name="PaymentHistoryHeader" xml:space="preserve">
+    <value>سجل الدفعات</value>
+  </data>
+  <data name="PaymentPendingBody" xml:space="preserve">
+    <value>نظراً للحجم الكبير من المعاملات، دفعتك في طابور الانتظار حالياً. يمكنك مغادرة هذه الصفحة ومواصلة استخدام Resgrid بشكل طبيعي. بعد معالجة الدفع سيتم ترقية حسابك وستتلقى رسالة بريد إلكتروني منّا. إذا لم تتلقَّ الرسالة خلال 30 دقيقة، يُرجى التواصل معنا على team@resgrid.com.</value>
+  </data>
+  <data name="PaymentPendingHeader" xml:space="preserve">
+    <value>الدفع قيد الانتظار</value>
+  </data>
+  <data name="PaymentProcessingBody" xml:space="preserve">
+    <value>شكراً لشرائك. جارٍ معالجة دفعتك حالياً. يُرجى الانتظار حتى ينتهي معالج الدفع وسيتم ترقية قسمك.</value>
+  </data>
+  <data name="PaymentProcessingHeader" xml:space="preserve">
+    <value>جارٍ معالجة الدفع</value>
+  </data>
+  <data name="PayPal" xml:space="preserve">
+    <value>PayPal</value>
+  </data>
+  <data name="Period" xml:space="preserve">
+    <value>الفترة</value>
+  </data>
+  <data name="Processor" xml:space="preserve">
+    <value>معالج الدفع</value>
+  </data>
+  <data name="PurchaseDate" xml:space="preserve">
+    <value>تاريخ الشراء</value>
+  </data>
+  <data name="StartDate" xml:space="preserve">
+    <value>تاريخ البدء</value>
+  </data>
+  <data name="Stripe" xml:space="preserve">
+    <value>Stripe</value>
+  </data>
+  <data name="StripeBillingInfoUpdateSuccessBody" xml:space="preserve">
+    <value>شكراً لتحديث معلومات الفواتير. لن تُحسَب رسوم على بطاقتك الجديدة الآن، بل ستُستخدَم عند تجديد الاشتراك في موعده المعتاد.</value>
+  </data>
+  <data name="StripeBillingInfoUpdateSuccessHeader" xml:space="preserve">
+    <value>تم تحديث معلومات الفواتير بنجاح</value>
+  </data>
+  <data name="StripePaymentProcessingBody" xml:space="preserve">
+    <value>شكراً لشرائك. جارٍ معالجة دفعتك من خلال Stripe. يُرجى الانتظار حتى ينتهي معالج الدفع وسيتم ترقية قسمك.</value>
+  </data>
+  <data name="StripePaymentProcessingHeader" xml:space="preserve">
+    <value>جارٍ معالجة الدفع</value>
+  </data>
+  <data name="System" xml:space="preserve">
+    <value>النظام</value>
+  </data>
+  <data name="Thanks" xml:space="preserve">
+    <value>شكراً لك!</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>الإجمالي</value>
+  </data>
+  <data name="Transaction" xml:space="preserve">
+    <value>المعاملة</value>
+  </data>
+  <data name="TransactionId" xml:space="preserve">
+    <value>رقم المعاملة</value>
+  </data>
+  <data name="UnableToPurchaseBody" xml:space="preserve">
+    <value>شكراً لاهتمامك بشراء خطة لخدمة Resgrid. لديك خطة قادمة بالفعل لقسمك ولا يُسمح بأكثر من خطة واحدة قادمة لكل عميل. إذا كنت ترغب في شراء عدة سنوات، لا تتردد في التواصل معنا وسنسعد بمساعدتك.</value>
+  </data>
+  <data name="UnableToPurchaseHeader" xml:space="preserve">
+    <value>تعذّر الشراء</value>
+  </data>
+  <data name="UpcomingPlan" xml:space="preserve">
+    <value>الخطة القادمة</value>
+  </data>
+  <data name="UpdateBillingInfoHeader" xml:space="preserve">
+    <value>تحديث معلومات الفواتير</value>
+  </data>
+  <data name="UpgradePlanHeader" xml:space="preserve">
+    <value>تغيير الخطة</value>
+  </data>
+  <data name="ViewInvoice" xml:space="preserve">
+    <value>عرض الفاتورة</value>
+  </data>
+  <data name="YourCurrentPlan" xml:space="preserve">
+    <value>أنت مشترك حالياً في الخطة التالية</value>
+  </data>
+  <data name="BuyPTTAddonInfo1" xml:space="preserve">
+    <value>أنت تدير إضافة PTT</value>
+  </data>
+  <data name="BuyPTTAddonInfo2" xml:space="preserve">
+    <value>في مربع الرقم أدناه، حدد عدد حزم 10 مستخدمين للضغط للتحدث المتزامنين التي ترغب في اشتراكها شهرياً. إذا زدت العدد سيتم الخصم فوراً، وإذا خفّضت العدد سيكون التجديد بالعدد المنخفض. إذا أدخلت صفراً لن يتم الفوترة (لن يتجدد PTT). ستُستخدم البطاقة المسجلة لاشتراك Resgrid القياسي لهذا الاشتراك الإضافي.</value>
+  </data>
+  <data name="ManageYourSubscription" xml:space="preserve">
+    <value>إدارة اشتراكك</value>
+  </data>
+</root>

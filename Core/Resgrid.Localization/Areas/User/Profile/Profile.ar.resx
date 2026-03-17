@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="AddCertification" xml:space="preserve"><value>إضافة شهادة</value></data>
+  <data name="AddCertificationHeader" xml:space="preserve"><value>إضافة شهادة</value></data>
+  <data name="AddCertificationHelp" xml:space="preserve"><value>أدخل المعلومات أدناه لتعديل شهادة في ملفك الشخصي. تشمل الشهادات مثلاً شهادات EMT وCPR/BLS والمواد الخطرة وغيرها. تتبع الشهادات مفيد لضمان تجديدها قبل انتهاء صلاحيتها وإعلام القسم بالمؤهلات. الحقول بـ &lt;span class="required"&gt;خط أزرق مائل&lt;/span&gt; مطلوبة.</value></data>
+  <data name="AddScheduledReport" xml:space="preserve"><value>إضافة تقرير مجدوَل</value></data>
+  <data name="AddStaffingSchedule" xml:space="preserve"><value>إضافة جدول تأمين</value></data>
+  <data name="CertificationDeleteWarning" xml:space="preserve"><value>تحذير: سيؤدي هذا الإجراء إلى حذف هذه الشهادة نهائياً. هل أنت متأكد من حذف الشهادة؟</value></data>
+  <data name="CertificationId" xml:space="preserve"><value>رقم الهوية \ رقم الشهادة</value></data>
+  <data name="CertificationIdPlaceholder" xml:space="preserve"><value>رقم الهوية \ رقم الشهادة</value></data>
+  <data name="CertificationNamePlaceholder" xml:space="preserve"><value>اسم الشهادة</value></data>
+  <data name="CertificationsHeader" xml:space="preserve"><value>الشهادات</value></data>
+  <data name="ChangePassword" xml:space="preserve"><value>تغيير كلمة المرور</value></data>
+  <data name="ChangePasswordHeader" xml:space="preserve"><value>تغيير كلمة مرور المستخدم</value></data>
+  <data name="ChangePasswordInfo" xml:space="preserve"><value>يمكنك هنا تغيير كلمة مرور المستخدم يدوياً. أدخل كلمة المرور الجديدة وأكّدها. يجب أن تتكون كلمة المرور من 6 أحرف على الأقل. لن يُشعر Resgrid المستخدم بهذا التغيير. الحقول بـ &lt;span class="required"&gt;خط أزرق مائل&lt;/span&gt; مطلوبة.</value></data>
+  <data name="ChangeStaffingTo" xml:space="preserve"><value>تغيير التأمين إلى</value></data>
+  <data name="ConfirmPassword" xml:space="preserve"><value>تأكيد كلمة المرور</value></data>
+  <data name="ConfirmPasswordPlaceholder" xml:space="preserve"><value>أكّد كلمة مرور هذا المستخدم</value></data>
+  <data name="DaysOfWeek" xml:space="preserve"><value>أيام الأسبوع</value></data>
+  <data name="DepartmentCode" xml:space="preserve"><value>رمز القسم</value></data>
+  <data name="DepartmentId" xml:space="preserve"><value>معرف القسم</value></data>
+  <data name="EditCertificationInfo" xml:space="preserve"><value>أدخل المعلومات أدناه لتعديل شهادة في ملفك الشخصي. تشمل الشهادات مثلاً شهادات EMT وCPR/BLS والمواد الخطرة وغيرها. تتبع الشهادات مفيد لضمان تجديدها قبل انتهاء صلاحيتها. الحقول بـ &lt;span class="required"&gt;خط أزرق مائل&lt;/span&gt; مطلوبة.</value></data>
+  <data name="EditCertificationsHeader" xml:space="preserve"><value>تعديل الشهادة</value></data>
+  <data name="EditProfile" xml:space="preserve"><value>تعديل الملف الشخصي</value></data>
+  <data name="EditScheduledReportHeader" xml:space="preserve"><value>تعديل التقرير المجدوَل</value></data>
+  <data name="EditStaffingScheduleHeader" xml:space="preserve"><value>تعديل جدول التأمين</value></data>
+  <data name="EmailUser" xml:space="preserve"><value>إرسال بريد إلكتروني للمستخدم؟</value></data>
+  <data name="EmailUserInfo" xml:space="preserve"><value>حدد هذا المربع إذا أردت إرسال بريد إلكتروني للمستخدم يحتوي على اسم المستخدم وكلمة المرور الجديدة.</value></data>
+  <data name="ExpiresOn" xml:space="preserve"><value>تنتهي في</value></data>
+  <data name="ExpiresOnLabel" xml:space="preserve"><value>تنتهي في</value></data>
+  <data name="IssuedByLabel" xml:space="preserve"><value>صادرة عن</value></data>
+  <data name="IssuedByPlaceholder" xml:space="preserve"><value>اسم الجهة المُصدِرة</value></data>
+  <data name="IssuedOnLabel" xml:space="preserve"><value>صادرة في</value></data>
+  <data name="JoinDepartment" xml:space="preserve"><value>الانضمام لقسم</value></data>
+  <data name="JoinDepartmentHeader" xml:space="preserve"><value>الانضمام لقسم</value></data>
+  <data name="JoinDepartmentInfo" xml:space="preserve"><value>يجب عليك تقديم معرف القسم ورمزه الحالي للقسم الذي تريد الانضمام إليه في Resgrid.</value></data>
+  <data name="NewPassword" xml:space="preserve"><value>كلمة المرور الجديدة</value></data>
+  <data name="NewPasswordPlaceholder" xml:space="preserve"><value>كلمة المرور الجديدة لهذا المستخدم</value></data>
+  <data name="NewPasswordReq" xml:space="preserve"><value>يجب أن تتكون كلمة المرور من 8 أحرف أو أكثر وتتضمن رقماً وحرفاً كبيراً وحرفاً صغيراً</value></data>
+  <data name="NewScheduledReportHeader" xml:space="preserve"><value>تقرير مجدوَل جديد</value></data>
+  <data name="NewStaffingScheduleHeader" xml:space="preserve"><value>جدول تأمين جديد</value></data>
+  <data name="RemoveFromDepartmentWarning" xml:space="preserve"><value>تحذير: سيؤدي هذا الإجراء إلى إزالتك من هذا القسم. هل أنت متأكد؟</value></data>
+  <data name="RemoveYourself" xml:space="preserve"><value>إزالة نفسك من القسم</value></data>
+  <data name="ReportDeliveryHeader" xml:space="preserve"><value>تسليم التقارير</value></data>
+  <data name="ReportDeliverySchedulesHeader" xml:space="preserve"><value>جداول تسليم التقارير</value></data>
+  <data name="ReportToRun" xml:space="preserve"><value>التقرير المراد تشغيله</value></data>
+  <data name="Schedules" xml:space="preserve"><value>الجداول</value></data>
+  <data name="SetAsActive" xml:space="preserve"><value>تعيين كنشط</value></data>
+  <data name="SetAsActiveWarning" xml:space="preserve"><value>تحذير: سيؤدي هذا الإجراء إلى تغيير قسمك النشط الحالي، ولا يمكنك تسجيل الدخول إلى أكثر من قسم في نفس الوقت. هل أنت متأكد؟</value></data>
+  <data name="SetAsDefault" xml:space="preserve"><value>تعيين كافتراضي</value></data>
+  <data name="SetAsDefaultWarning" xml:space="preserve"><value>تحذير: سيؤدي هذا الإجراء إلى تغيير قسمك الافتراضي، وإذا أردت عرض هذا القسم ستحتاج إلى تفعيله بعد ذلك.</value></data>
+  <data name="SpecificDate" xml:space="preserve"><value>تاريخ محدد</value></data>
+  <data name="SpecificDateTime" xml:space="preserve"><value>تاريخ ووقت محدد</value></data>
+  <data name="StaffingSchedule" xml:space="preserve"><value>جدول التأمين</value></data>
+  <data name="StaffingSchedulesHeader" xml:space="preserve"><value>جدول التأمين</value></data>
+  <data name="TimeToRun" xml:space="preserve"><value>وقت التشغيل</value></data>
+  <data name="ValidAreaLabel" xml:space="preserve"><value>المنطقة الصالحة</value></data>
+  <data name="ValidAreaPlaceholder" xml:space="preserve"><value>المنطقة التي تسري فيها الشهادة</value></data>
+  <data name="YourDepartmentsHeader" xml:space="preserve"><value>أقسامك</value></data>
+  <data name="PasswordRequirementsHeader" xml:space="preserve"><value>متطلبات كلمة المرور</value></data>
+  <data name="PasswordRequirementsLength" xml:space="preserve"><value>على الأقل {0} أحرف</value></data>
+  <data name="PasswordRequirementsDigit" xml:space="preserve"><value>رقم واحد على الأقل</value></data>
+  <data name="PasswordRequirementsCase" xml:space="preserve"><value>حرف كبير وحرف صغير على الأقل</value></data>
+</root>

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <!-- Mapping Index -->
+  <data name="MappingHeader" xml:space="preserve"><value>الخرائط</value></data>
+  <data name="ManageLayers" xml:space="preserve"><value>إدارة الطبقات</value></data>
+  <data name="CustomMaps" xml:space="preserve"><value>الخرائط المخصصة</value></data>
+  <data name="MapOptionsTitle" xml:space="preserve"><value>خيارات الخريطة</value></data>
+  <data name="ShowCalls" xml:space="preserve"><value>إظهار البلاغات</value></data>
+  <data name="ShowPersonnel" xml:space="preserve"><value>إظهار الأفراد</value></data>
+  <data name="ShowUnits" xml:space="preserve"><value>إظهار الوحدات</value></data>
+  <data name="ShowStations" xml:space="preserve"><value>إظهار المحطات</value></data>
+  <data name="ShowGeofences" xml:space="preserve"><value>إظهار السياجات الجغرافية</value></data>
+  <data name="ShowPOIs" xml:space="preserve"><value>إظهار نقاط الاهتمام</value></data>
+  <data name="Close" xml:space="preserve"><value>إغلاق</value></data>
+  <data name="Save" xml:space="preserve"><value>حفظ</value></data>
+  <data name="Cancel" xml:space="preserve"><value>إلغاء</value></data>
+
+  <!-- AddPOI -->
+  <data name="AddPOIPageTitle" xml:space="preserve"><value>إضافة نقطة اهتمام</value></data>
+  <data name="AddPOIHeader" xml:space="preserve"><value>إضافة نقطة اهتمام</value></data>
+  <data name="Latitude" xml:space="preserve"><value>خط العرض</value></data>
+  <data name="LatitudeHelp" xml:space="preserve"><value>خط العرض (بالترميز العشري، مثال: 39.1517)</value></data>
+  <data name="Longitude" xml:space="preserve"><value>خط الطول</value></data>
+  <data name="LongitudeHelp" xml:space="preserve"><value>خط الطول (بالترميز العشري، مثال: -119.4571)</value></data>
+  <data name="Note" xml:space="preserve"><value>ملاحظة</value></data>
+
+  <!-- AddPOIType -->
+  <data name="AddPOITypePageTitle" xml:space="preserve"><value>إضافة نوع نقطة اهتمام</value></data>
+  <data name="AddPOITypeHeader" xml:space="preserve"><value>إضافة نوع نقطة اهتمام</value></data>
+  <data name="Name" xml:space="preserve"><value>الاسم</value></data>
+  <data name="IsDestination" xml:space="preserve"><value>وجهة</value></data>
+  <data name="IsDestinationHelp" xml:space="preserve"><value>للدلالة على وجهة محتملة لوحدة أو شخص، مثل مكتب أو نقطة تجمع أو مستشفى أو نقطة دخول.</value></data>
+  <data name="Color" xml:space="preserve"><value>اللون</value></data>
+  <data name="Marker" xml:space="preserve"><value>العلامة</value></data>
+  <data name="Icon" xml:space="preserve"><value>الأيقونة</value></data>
+  <data name="None" xml:space="preserve"><value>لا شيء</value></data>
+
+  <!-- EditLayer / NewLayer -->
+  <data name="EditLayerPageTitle" xml:space="preserve"><value>تعديل الطبقة</value></data>
+  <data name="EditLayerHeader" xml:space="preserve"><value>تعديل الطبقة</value></data>
+  <data name="NewLayerPageTitle" xml:space="preserve"><value>طبقة جديدة</value></data>
+  <data name="NewLayerHeader" xml:space="preserve"><value>طبقة جديدة</value></data>
+  <data name="IsVisibleByDefault" xml:space="preserve"><value>مرئية افتراضياً</value></data>
+  <data name="IsVisibleByDefaultHelp" xml:space="preserve"><value>هل تريد إظهار هذه الطبقة في كل مرة يتم فيها تحميل الخريطة؟ ملاحظة: كثرة الطبقات المرئية افتراضياً ستُعقّد الخريطة. يمكن للمستخدمين تفعيل الطبقات يدوياً من عناصر التحكم في الخريطة.</value></data>
+  <data name="IsSearchable" xml:space="preserve"><value>وجهة</value></data>
+  <data name="IsSearchableHelp" xml:space="preserve"><value>سيتيح هذا استخدام الإحداثيات من هذه الطبقة في البحث عن العناوين. ملاحظة: إذا لم تكن لديك نقاط قابلة للبحث (حقول نصية) فلا تحدد هذا الخيار لأنه قد يُبطئ عملية الإرسال.</value></data>
+  <data name="LayerElements" xml:space="preserve"><value>عناصر الطبقة</value></data>
+  <data name="EditLayerButton" xml:space="preserve"><value>تعديل الطبقة</value></data>
+  <data name="AddLayerButton" xml:space="preserve"><value>إضافة طبقة</value></data>
+
+  <!-- ImportPOIs -->
+  <data name="ImportPOIsPageTitle" xml:space="preserve"><value>استيراد نقاط الاهتمام</value></data>
+  <data name="ImportPOIsHeader" xml:space="preserve"><value>استيراد نقاط الاهتمام</value></data>
+  <data name="Upload" xml:space="preserve"><value>رفع</value></data>
+  <data name="ImportPOIsButton" xml:space="preserve"><value>استيراد نقاط الاهتمام</value></data>
+
+  <!-- Layers -->
+  <data name="LayersPageTitle" xml:space="preserve"><value>الطبقات</value></data>
+  <data name="LayersHeader" xml:space="preserve"><value>الطبقات</value></data>
+  <data name="NewLayer" xml:space="preserve"><value>طبقة جديدة</value></data>
+  <data name="ItemCount" xml:space="preserve"><value>عدد العناصر</value></data>
+  <data name="Edit" xml:space="preserve"><value>تعديل</value></data>
+  <data name="Delete" xml:space="preserve"><value>حذف</value></data>
+
+  <!-- LiveRouting -->
+  <data name="LiveRoutingPageTitle" xml:space="preserve"><value>التنقل المباشر</value></data>
+  <data name="LiveRoutingHeader" xml:space="preserve"><value>التوجيه المباشر</value></data>
+
+  <!-- POIs -->
+  <data name="POIsPageTitle" xml:space="preserve"><value>نقاط الاهتمام</value></data>
+  <data name="POIsHeader" xml:space="preserve"><value>نقاط الاهتمام</value></data>
+  <data name="AddPOIType" xml:space="preserve"><value>إضافة نوع نقطة اهتمام</value></data>
+  <data name="PointCount" xml:space="preserve"><value>عدد النقاط</value></data>
+  <data name="View" xml:space="preserve"><value>عرض</value></data>
+  <data name="Add" xml:space="preserve"><value>إضافة</value></data>
+  <data name="Import" xml:space="preserve"><value>استيراد</value></data>
+  <data name="DeletePOITypeConfirm" xml:space="preserve"><value>تحذير: سيؤدي هذا إلى حذف نوع نقطة الاهتمام هذا وجميع مواقعه بشكل دائم. هل أنت متأكد من حذف</value></data>
+  <data name="DeletePOITypeSuffix" xml:space="preserve"><value>نوع نقطة الاهتمام؟</value></data>
+
+  <!-- StationRouting -->
+  <data name="StationRoutingPageTitle" xml:space="preserve"><value>التنقل إلى المحطة</value></data>
+  <data name="StationRoutingHeader" xml:space="preserve"><value>التوجيه إلى المحطة</value></data>
+  <data name="DistanceLabel" xml:space="preserve"><value>المسافة:</value></data>
+  <data name="DurationLabel" xml:space="preserve"><value>المدة:</value></data>
+
+  <!-- ViewType -->
+  <data name="ViewTypePageTitle" xml:space="preserve"><value>نوع العرض</value></data>
+  <data name="ViewTypeHeader" xml:space="preserve"><value>نوع العرض</value></data>
+  <data name="TabMap" xml:space="preserve"><value>خريطة</value></data>
+  <data name="TabInformation" xml:space="preserve"><value>معلومات</value></data>
+  <data name="TabList" xml:space="preserve"><value>قائمة</value></data>
+  <data name="True" xml:space="preserve"><value>صحيح</value></data>
+  <data name="False" xml:space="preserve"><value>خطأ</value></data>
+</root>

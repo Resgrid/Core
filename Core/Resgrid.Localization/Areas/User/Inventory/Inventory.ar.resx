@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="Active" xml:space="preserve"><value>نشط</value></data>
+  <data name="AddedBy" xml:space="preserve"><value>أضيف بواسطة</value></data>
+  <data name="AddedOn" xml:space="preserve"><value>أضيف في</value></data>
+  <data name="AddInventoryTypeButton" xml:space="preserve"><value>إضافة نوع مخزون</value></data>
+  <data name="AdjustInventory" xml:space="preserve"><value>تعديل المخزون</value></data>
+  <data name="Amount" xml:space="preserve"><value>الكمية</value></data>
+  <data name="Batch" xml:space="preserve"><value>الدفعة</value></data>
+  <data name="BatchSerialNumber" xml:space="preserve"><value>الرقم التسلسلي للدفعة</value></data>
+  <data name="CreatedBy" xml:space="preserve"><value>أنشأه</value></data>
+  <data name="Edit" xml:space="preserve"><value>تعديل</value></data>
+  <data name="EditInventoryTypeButton" xml:space="preserve"><value>تعديل نوع المخزون</value></data>
+  <data name="ForItemsNoExpiry" xml:space="preserve"><value>للعناصر التي لا تنتهي صلاحيتها</value></data>
+  <data name="Group" xml:space="preserve"><value>المجموعة</value></data>
+  <data name="InventoryHistoryHeader" xml:space="preserve"><value>سجل المخزون</value></data>
+  <data name="InventoryTypesHeader" xml:space="preserve"><value>أنواع المخزون</value></data>
+  <data name="ItemExpiresDays" xml:space="preserve"><value>تنتهي صلاحية العنصر بعد (أيام)</value></data>
+  <data name="ManageTypes" xml:space="preserve"><value>إدارة الأنواع</value></data>
+  <data name="NoGroup" xml:space="preserve"><value>بدون مجموعة</value></data>
+  <data name="NoUnit" xml:space="preserve"><value>بدون وحدة</value></data>
+  <data name="Station" xml:space="preserve"><value>المحطة</value></data>
+  <data name="TypeName" xml:space="preserve"><value>اسم النوع</value></data>
+  <data name="Types" xml:space="preserve"><value>الأنواع</value></data>
+  <data name="Unit" xml:space="preserve"><value>الوحدة</value></data>
+  <data name="UnitOfMeasure" xml:space="preserve"><value>وحدة القياس</value></data>
+  <data name="ViewHistory" xml:space="preserve"><value>عرض السجل</value></data>
+  <data name="ViewInventoryEntryHeader" xml:space="preserve"><value>عرض إدخال المخزون</value></data>
+</root>

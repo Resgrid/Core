@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <!-- Shared -->
+  <data name="Cancel" xml:space="preserve"><value>إلغاء</value></data>
+  <data name="Save" xml:space="preserve"><value>حفظ</value></data>
+  <data name="Name" xml:space="preserve"><value>الاسم</value></data>
+  <data name="Description" xml:space="preserve"><value>الوصف</value></data>
+  <data name="Edit" xml:space="preserve"><value>تعديل</value></data>
+  <data name="Delete" xml:space="preserve"><value>حذف</value></data>
+  <data name="Created" xml:space="preserve"><value>تاريخ الإنشاء</value></data>
+  <data name="Yes" xml:space="preserve"><value>نعم</value></data>
+  <data name="No" xml:space="preserve"><value>لا</value></data>
+
+  <!-- Index -->
+  <data name="IndoorMapsPageTitle" xml:space="preserve"><value>الخرائط الداخلية</value></data>
+  <data name="IndoorMapsHeader" xml:space="preserve"><value>الخرائط الداخلية</value></data>
+  <data name="NewIndoorMap" xml:space="preserve"><value>خريطة داخلية جديدة</value></data>
+  <data name="Floors" xml:space="preserve"><value>الطوابق</value></data>
+  <data name="DeleteIndoorMapConfirm" xml:space="preserve"><value>هل أنت متأكد من حذف هذه الخريطة الداخلية؟</value></data>
+
+  <!-- New -->
+  <data name="NewIndoorMapPageTitle" xml:space="preserve"><value>خريطة داخلية جديدة</value></data>
+  <data name="NewIndoorMapHeader" xml:space="preserve"><value>خريطة داخلية جديدة</value></data>
+  <data name="NewBreadcrumb" xml:space="preserve"><value>جديد</value></data>
+  <data name="NamePlaceholder" xml:space="preserve"><value>مثال: المستشفى الرئيسي</value></data>
+  <data name="DescriptionPlaceholder" xml:space="preserve"><value>وصف اختياري</value></data>
+  <data name="CenterLatitude" xml:space="preserve"><value>خط العرض المركزي</value></data>
+  <data name="CenterLongitude" xml:space="preserve"><value>خط الطول المركزي</value></data>
+  <data name="CenterLatPlaceholder" xml:space="preserve"><value>مثال: 39.7392</value></data>
+  <data name="CenterLonPlaceholder" xml:space="preserve"><value>مثال: -104.9903</value></data>
+  <data name="NEBoundLat" xml:space="preserve"><value>حد الشمال الشرقي (خط العرض)</value></data>
+  <data name="NEBoundLon" xml:space="preserve"><value>حد الشمال الشرقي (خط الطول)</value></data>
+  <data name="SWBoundLat" xml:space="preserve"><value>حد الجنوب الغربي (خط العرض)</value></data>
+  <data name="SWBoundLon" xml:space="preserve"><value>حد الجنوب الغربي (خط الطول)</value></data>
+
+  <!-- Edit -->
+  <data name="EditIndoorMapPageTitle" xml:space="preserve"><value>تعديل الخريطة الداخلية</value></data>
+  <data name="EditIndoorMapHeader" xml:space="preserve"><value>تعديل الخريطة الداخلية</value></data>
+  <data name="EditBreadcrumb" xml:space="preserve"><value>تعديل</value></data>
+
+  <!-- Floors -->
+  <data name="FloorsPageTitlePrefix" xml:space="preserve"><value>الطوابق</value></data>
+  <data name="FloorsBreadcrumb" xml:space="preserve"><value>الطوابق</value></data>
+  <data name="AddFloorTitle" xml:space="preserve"><value>إضافة طابق</value></data>
+  <data name="FloorName" xml:space="preserve"><value>اسم الطابق</value></data>
+  <data name="FloorNamePlaceholder" xml:space="preserve"><value>مثال: الطابق 1، القبو، السطح</value></data>
+  <data name="Order" xml:space="preserve"><value>الترتيب</value></data>
+  <data name="FloorPlanImage" xml:space="preserve"><value>صورة مخطط الطابق</value></data>
+  <data name="AddFloorButton" xml:space="preserve"><value>إضافة طابق</value></data>
+  <data name="FloorsTableTitle" xml:space="preserve"><value>الطوابق</value></data>
+  <data name="HasImage" xml:space="preserve"><value>يحتوي على صورة</value></data>
+  <data name="ZoneEditor" xml:space="preserve"><value>محرر المناطق</value></data>
+  <data name="DeleteFloorConfirm" xml:space="preserve"><value>هل تريد حذف هذا الطابق؟</value></data>
+
+  <!-- ZoneEditor -->
+  <data name="ZoneEditorPageTitlePrefix" xml:space="preserve"><value>محرر المناطق</value></data>
+  <data name="ZoneEditorBreadcrumb" xml:space="preserve"><value>محرر المناطق</value></data>
+  <data name="ZonesTitle" xml:space="preserve"><value>المناطق</value></data>
+  <data name="ZonePropertiesTitle" xml:space="preserve"><value>خصائص المنطقة</value></data>
+  <data name="ZoneNameLabel" xml:space="preserve"><value>الاسم</value></data>
+  <data name="ZoneTypeLabel" xml:space="preserve"><value>النوع</value></data>
+  <data name="ZoneTypeRoom" xml:space="preserve"><value>غرفة</value></data>
+  <data name="ZoneTypeWing" xml:space="preserve"><value>جناح</value></data>
+  <data name="ZoneTypeCorridor" xml:space="preserve"><value>ممر</value></data>
+  <data name="ZoneTypeStairwell" xml:space="preserve"><value>بئر الدرج</value></data>
+  <data name="ZoneTypeElevator" xml:space="preserve"><value>مصعد</value></data>
+  <data name="ZoneTypeHazardZone" xml:space="preserve"><value>منطقة خطر</value></data>
+  <data name="ZoneTypeAssemblyPoint" xml:space="preserve"><value>نقطة التجمع</value></data>
+  <data name="ZoneTypeStagingArea" xml:space="preserve"><value>منطقة التجهيز</value></data>
+  <data name="ZoneTypeAccessPoint" xml:space="preserve"><value>نقطة الدخول</value></data>
+  <data name="ZoneTypeUtility" xml:space="preserve"><value>مرافق</value></data>
+  <data name="ZoneTypeSearchGrid" xml:space="preserve"><value>شبكة البحث</value></data>
+  <data name="ZoneTypeCustom" xml:space="preserve"><value>مخصص</value></data>
+  <data name="ZoneColorLabel" xml:space="preserve"><value>اللون</value></data>
+  <data name="ZoneDescriptionLabel" xml:space="preserve"><value>الوصف</value></data>
+  <data name="ZoneSearchable" xml:space="preserve"><value>قابل للبحث في الإرسال</value></data>
+  <data name="SaveZone" xml:space="preserve"><value>حفظ المنطقة</value></data>
+</root>

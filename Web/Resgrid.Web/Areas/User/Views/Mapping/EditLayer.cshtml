@@ -131,7 +131,7 @@
 						<div class="form-group">
 							<div class="col-sm-4 col-sm-offset-2">
 								<a class="btn btn-white" asp-controller="Mapping" asp-action="Layers" asp-route-area="User">@localizer["Cancel"]</a>
-								<a id="addLayerButton" class="btn btn-primary">@localizer["EditLayerButton"]</a>
+								<button type="submit" id="addLayerButton" class="btn btn-primary">@localizer["EditLayerButton"]</button>
 							</div>
 						</div>
 					</form>
@@ -192,11 +192,9 @@
 				removalMode: true,
 			});
 
-			$('#addLayerButton').click(function () {
-				var form$ = $("#newLayerForm");
-				let fg = L.featureGroup();
-				let layers = map.pm.getGeomanLayers();//getGeomanDrawLayers(); // or getGeomanLayers()
-
+			$('#newLayerForm').on('submit', function (e) {
+				e.preventDefault();
+				let layers = map.pm.getGeomanLayers();
 
 				const features = layers.map((layer) => {
 					const geo = layer.toGeoJSON();
@@ -207,8 +205,7 @@
 
 					switch (geo.properties.shape) {
 						case "Circle": {
-							//const circle = layer as L.Circle;
-							geo.properties.radius = layer.getRadius(); //circle.getRadius();
+							geo.properties.radius = layer.getRadius();
 							break;
 						}
 						case "Text":
@@ -217,7 +214,7 @@
 						default:
 					}
 
-                    return geo;
+					return geo;
 				});
 
 				const featureCollection = {
@@ -225,11 +222,9 @@
 					features,
 				};
 
-				const json = JSON.stringify(featureCollection);
+				$('#GeoJson').val(JSON.stringify(featureCollection));
 
-				$('#GeoJson').val(json);
-
-				$("#newLayerForm").submit();
+				this.submit();
 			});
 		});
 	</script>

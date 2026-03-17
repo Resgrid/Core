@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="AccountInfoHeader" xml:space="preserve"><value>معلومات الحساب</value></data>
+  <data name="AddressLabel" xml:space="preserve"><value>العنوان</value></data>
+  <data name="AddressPlaceholder" xml:space="preserve"><value>العنوان الفعلي للشارع</value></data>
+  <data name="CallEmailLabel" xml:space="preserve"><value>البريد الإلكتروني</value></data>
+  <data name="CallOptionsHeader" xml:space="preserve"><value>خيارات البلاغات</value></data>
+  <data name="CallPushlLabel" xml:space="preserve"><value>إشعار فوري</value></data>
+  <data name="CallTextlLabel" xml:space="preserve"><value>رسالة نصية</value></data>
+  <data name="Certifications" xml:space="preserve"><value>الشهادات</value></data>
+  <data name="ChangeUserPassword" xml:space="preserve"><value>تغيير كلمة مرور المستخدم</value></data>
+  <data name="CityLabel" xml:space="preserve"><value>المدينة</value></data>
+  <data name="CityPlaceholder" xml:space="preserve"><value>المدينة الفعلية</value></data>
+  <data name="ConfirmPasswordHelp" xml:space="preserve"><value>إذا كنت تغير كلمة مرورك يجب عليك إعادة إدخال كلمة المرور الجديدة هنا</value></data>
+  <data name="ConfirmPasswordLabel" xml:space="preserve"><value>تأكيد كلمة المرور</value></data>
+  <data name="CountryLabel" xml:space="preserve"><value>الدولة</value></data>
+  <data name="CurrentPasswordHelp" xml:space="preserve"><value>إذا كنت تغير كلمة مرورك يجب عليك إدخال كلمة مرورك الحالية (وليس الجديدة) هنا</value></data>
+  <data name="CurrentPasswordLabel" xml:space="preserve"><value>كلمة المرور الحالية</value></data>
+  <data name="DeleteUserAccount" xml:space="preserve"><value>حذف حسابك</value></data>
+  <data name="DeleteUserAccountInfo" xml:space="preserve"><value>حذف حساب Resgrid الخاص بك في جميع الأقسام التي تنتمي إليها</value></data>
+  <data name="DepartmentAdminLabel" xml:space="preserve"><value>مدير القسم</value></data>
+  <data name="DepartmentSettingsHeader" xml:space="preserve"><value>إعدادات القسم</value></data>
+  <data name="DisableUserLabel" xml:space="preserve"><value>تعطيل المستخدم</value></data>
+  <data name="EditTitle" xml:space="preserve"><value>تعديل</value></data>
+  <data name="EmailAddressHelper" xml:space="preserve"><value>يجب أن تكون عناوين البريد الإلكتروني فريدة</value></data>
+  <data name="EmailAddressLabel" xml:space="preserve"><value>عنوان البريد الإلكتروني</value></data>
+  <data name="EmailAddressPlaceholder" xml:space="preserve"><value>عنوان البريد الإلكتروني</value></data>
+  <data name="ErrorSpan" xml:space="preserve"><value>توجد أخطاء في الملف الشخصي أدناه ولم يمكن حفظه. يُرجى تصحيح الأخطاء أدناه والمحاولة مجدداً.</value></data>
+  <data name="FirstNameLabel" xml:space="preserve"><value>الاسم الأول</value></data>
+  <data name="FirstNamePlaceholder" xml:space="preserve"><value>الاسم الأول</value></data>
+  <data name="GroupLabel" xml:space="preserve"><value>المجموعة</value></data>
+  <data name="HideUserLabel" xml:space="preserve"><value>إخفاء المستخدم</value></data>
+  <data name="HomeNumberLabel" xml:space="preserve"><value>رقم المنزل</value></data>
+  <data name="HomeNumberPlaceholder" xml:space="preserve"><value>رقم هاتف المنزل</value></data>
+  <data name="IDNumberLabel" xml:space="preserve"><value>رقم الهوية</value></data>
+  <data name="IDNumberPlaceholder" xml:space="preserve"><value>رقم التعريف المخصص</value></data>
+  <data name="IsGroupAdminLabel" xml:space="preserve"><value>مدير المجموعة؟</value></data>
+  <data name="LanguagesHelp" xml:space="preserve"><value>ملاحظة: دعم تعدد اللغات في Resgrid غير مكتمل بالكامل. بعض أجزاء الموقع ستظل باللغة الإنجليزية ونعمل على ترجمة كل شيء. خدمات الدعم والوثائق متاحة باللغة الإنجليزية فقط.</value></data>
+  <data name="LastNameLabel" xml:space="preserve"><value>اسم العائلة</value></data>
+  <data name="LastNamePlaceholder" xml:space="preserve"><value>اسم العائلة</value></data>
+  <data name="MailingAddressLabel" xml:space="preserve"><value>العنوان</value></data>
+  <data name="MailingAddressPlaceholder" xml:space="preserve"><value>عنوان البريد</value></data>
+  <data name="MailingCityLabel" xml:space="preserve"><value>المدينة</value></data>
+  <data name="MailingCityPlaceholder" xml:space="preserve"><value>مدينة البريد</value></data>
+  <data name="MailingCountryLabel" xml:space="preserve"><value>الدولة</value></data>
+  <data name="MailingPostalCodeLabel" xml:space="preserve"><value>الرمز البريدي</value></data>
+  <data name="MailingPostalCodePlaceholder" xml:space="preserve"><value>الرمز البريدي للبريد</value></data>
+  <data name="MailingStateLabel" xml:space="preserve"><value>الولاية/المنطقة</value></data>
+  <data name="MailingStatePlaceholder" xml:space="preserve"><value>ولاية/مقاطعة البريد</value></data>
+  <data name="MessageEmailLabel" xml:space="preserve"><value>البريد الإلكتروني</value></data>
+  <data name="MessageOptionsHeader" xml:space="preserve"><value>خيارات الرسائل</value></data>
+  <data name="MessagePushLabel" xml:space="preserve"><value>إشعار فوري</value></data>
+  <data name="MessageTextLabel" xml:space="preserve"><value>رسالة نصية</value></data>
+  <data name="MobileCarrierLabel" xml:space="preserve"><value>شركة الاتصالات</value></data>
+  <data name="MobileCarrierPlaceholder" xml:space="preserve"><value></value></data>
+  <data name="MobileNumberLabel" xml:space="preserve"><value>رقم الجوال</value></data>
+  <data name="MobileNumberPlaceholder" xml:space="preserve"><value>رقم الهاتف الجوال</value></data>
+  <data name="NewPasswordHelp" xml:space="preserve"><value>اتركه فارغاً إذا لم تكن تريد تغيير كلمة مرورك</value></data>
+  <data name="NewPasswordLabel" xml:space="preserve"><value>كلمة المرور الجديدة</value></data>
+  <data name="NewsletterLabel" xml:space="preserve"><value>عدم استلام النشرات الإخبارية</value></data>
+  <data name="NewUsernameHelp" xml:space="preserve"><value>اتركه فارغاً إذا لم تكن تريد تغيير اسم المستخدم الخاص بك</value></data>
+  <data name="NewUsernameLabel" xml:space="preserve"><value>اسم المستخدم الجديد</value></data>
+  <data name="NormalUserLabel" xml:space="preserve"><value>مستخدم عادي</value></data>
+  <data name="NotificationEmailLabel" xml:space="preserve"><value>البريد الإلكتروني</value></data>
+  <data name="NotificationHeader" xml:space="preserve"><value>خيارات الإشعارات</value></data>
+  <data name="NotificationOtherHeader" xml:space="preserve"><value>خيارات الإشعارات الأخرى</value></data>
+  <data name="NotificationPushLabel" xml:space="preserve"><value>إشعار فوري</value></data>
+  <data name="PhysicalAddressHeader" xml:space="preserve"><value>العنوان الفعلي</value></data>
+  <data name="PostalCodeLabel" xml:space="preserve"><value>الرمز البريدي</value></data>
+  <data name="PostalCodePlaceholder" xml:space="preserve"><value>الرمز البريدي الفعلي</value></data>
+  <data name="ProfileTitle" xml:space="preserve"><value>الملف الشخصي</value></data>
+  <data name="ReportDelivery" xml:space="preserve"><value>تسليم التقارير</value></data>
+  <data name="RolesLabel" xml:space="preserve"><value>الأدوار</value></data>
+  <data name="SameAsPhysical" xml:space="preserve"><value>نفس العنوان الفعلي؟</value></data>
+  <data name="SetPictureHelpText" xml:space="preserve"><value>قد يستغرق تغيير الصورة ما يصل إلى 24 ساعة</value></data>
+  <data name="SetPictureLabel" xml:space="preserve"><value>انقر هنا لتعيين صورة</value></data>
+  <data name="StaffingSchedule" xml:space="preserve"><value>جداول التأمين</value></data>
+  <data name="StateLabel" xml:space="preserve"><value>الولاية/المنطقة</value></data>
+  <data name="StatePlaceholder" xml:space="preserve"><value>الولاية/المقاطعة الفعلية</value></data>
+  <data name="TelephoneCallHome" xml:space="preserve"><value>الاتصال بالمنزل</value></data>
+  <data name="TelephoneCallMobile" xml:space="preserve"><value>الاتصال بالجوال</value></data>
+  <data name="TelephoneEnable" xml:space="preserve"><value>مفعّل</value></data>
+  <data name="TelephoneHeader" xml:space="preserve"><value>خيارات الهاتف (الصوت)</value></data>
+  <data name="TelephoneWrongPlanHeader" xml:space="preserve"><value>الخطة غير مناسبة</value></data>
+  <data name="TelephoneWrongPlanText" xml:space="preserve"><value>خطة قسمك الحالية لا تدعم التنبيه الهاتفي الصوتي. رقّ خطتك إلى Ultimate أو أعلى للحصول على هذه الميزة.</value></data>
+  <data name="TimeZoneLabel" xml:space="preserve"><value>المنطقة الزمنية</value></data>
+  <data name="Title" xml:space="preserve"><value>تعديل الملف الشخصي</value></data>
+  <data name="UserTypeLabel" xml:space="preserve"><value>نوع المستخدم</value></data>
+  <data name="EmailNotVerifiedWarning" xml:space="preserve"><value>لم يتم التحقق من عنوان بريدك الإلكتروني. تحقق منه لضمان استلام التنبيهات والإشعارات.</value></data>
+  <data name="MobileNotVerifiedWarning" xml:space="preserve"><value>لم يتم التحقق من رقم جوالك. تحقق منه لضمان استلام تنبيهات الرسائل النصية والإشعارات.</value></data>
+  <data name="HomeNotVerifiedWarning" xml:space="preserve"><value>لم يتم التحقق من رقم منزلك. تحقق منه لضمان استلام تنبيهات المكالمات الصوتية.</value></data>
+  <data name="GrandfatheredEmailWarning" xml:space="preserve"><value>نوصي بالتحقق من عنوان بريدك الإلكتروني لضمان استمرار تسليم التنبيهات والإشعارات.</value></data>
+  <data name="GrandfatheredMobileWarning" xml:space="preserve"><value>نوصي بالتحقق من رقم جوالك لضمان استمرار تسليم تنبيهات الرسائل النصية والإشعارات.</value></data>
+  <data name="GrandfatheredHomeWarning" xml:space="preserve"><value>نوصي بالتحقق من رقم منزلك لضمان استمرار تسليم تنبيهات المكالمات الصوتية.</value></data>
+  <data name="VerifyButtonLabel" xml:space="preserve"><value>تحقق</value></data>
+  <data name="VerificationCodePlaceholder" xml:space="preserve"><value>أدخل رمز التحقق</value></data>
+  <data name="VerificationCodeSent" xml:space="preserve"><value>تم إرسال رمز التحقق.</value></data>
+  <data name="VerificationSuccessful" xml:space="preserve"><value>نجح التحقق.</value></data>
+  <data name="VerificationFailed" xml:space="preserve"><value>فشل التحقق. يُرجى التحقق من الرمز والمحاولة مجدداً.</value></data>
+  <data name="VerificationRateLimited" xml:space="preserve"><value>محاولات تحقق كثيرة جداً. يُرجى المحاولة لاحقاً.</value></data>
+  <data name="PasswordRequirementsHeader" xml:space="preserve"><value>متطلبات كلمة المرور</value></data>
+  <data name="PasswordRequirementsLength" xml:space="preserve"><value>على الأقل {0} أحرف</value></data>
+  <data name="PasswordRequirementsDigit" xml:space="preserve"><value>رقم واحد على الأقل</value></data>
+  <data name="PasswordRequirementsCase" xml:space="preserve"><value>حرف كبير وحرف صغير على الأقل</value></data>
+</root>

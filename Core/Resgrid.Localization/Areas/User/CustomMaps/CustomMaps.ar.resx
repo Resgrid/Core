@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <!-- Shared -->
+  <data name="Cancel" xml:space="preserve"><value>إلغاء</value></data>
+  <data name="Save" xml:space="preserve"><value>حفظ</value></data>
+  <data name="Name" xml:space="preserve"><value>الاسم</value></data>
+  <data name="Description" xml:space="preserve"><value>الوصف</value></data>
+  <data name="Edit" xml:space="preserve"><value>تعديل</value></data>
+  <data name="Delete" xml:space="preserve"><value>حذف</value></data>
+  <data name="Import" xml:space="preserve"><value>استيراد</value></data>
+  <data name="Type" xml:space="preserve"><value>النوع</value></data>
+  <data name="Created" xml:space="preserve"><value>تاريخ الإنشاء</value></data>
+  <data name="Order" xml:space="preserve"><value>الترتيب</value></data>
+  <data name="Yes" xml:space="preserve"><value>نعم</value></data>
+  <data name="No" xml:space="preserve"><value>لا</value></data>
+
+  <!-- Index -->
+  <data name="CustomMapsPageTitle" xml:space="preserve"><value>الخرائط المخصصة</value></data>
+  <data name="CustomMapsHeader" xml:space="preserve"><value>الخرائط المخصصة</value></data>
+  <data name="NewCustomMap" xml:space="preserve"><value>خريطة مخصصة جديدة</value></data>
+  <data name="TabAll" xml:space="preserve"><value>الكل</value></data>
+  <data name="TabIndoor" xml:space="preserve"><value>داخلية</value></data>
+  <data name="TabOutdoor" xml:space="preserve"><value>خارجية</value></data>
+  <data name="TabEvent" xml:space="preserve"><value>حدث</value></data>
+  <data name="TabCustom" xml:space="preserve"><value>مخصص</value></data>
+  <data name="Layers" xml:space="preserve"><value>الطبقات</value></data>
+  <data name="DeleteMapConfirm" xml:space="preserve"><value>هل أنت متأكد من حذف هذه الخريطة؟</value></data>
+
+  <!-- New -->
+  <data name="NewCustomMapPageTitle" xml:space="preserve"><value>خريطة مخصصة جديدة</value></data>
+  <data name="NewCustomMapHeader" xml:space="preserve"><value>خريطة مخصصة جديدة</value></data>
+  <data name="NewBreadcrumb" xml:space="preserve"><value>جديد</value></data>
+  <data name="MapType" xml:space="preserve"><value>نوع الخريطة</value></data>
+  <data name="MapTypeIndoor" xml:space="preserve"><value>داخلية</value></data>
+  <data name="MapTypeOutdoor" xml:space="preserve"><value>خارجية</value></data>
+  <data name="MapTypeEvent" xml:space="preserve"><value>حدث</value></data>
+  <data name="MapTypeCustom" xml:space="preserve"><value>مخصص</value></data>
+  <data name="NamePlaceholder" xml:space="preserve"><value>مثال: المستشفى الرئيسي، مكان الحفل</value></data>
+  <data name="DescriptionPlaceholder" xml:space="preserve"><value>وصف اختياري</value></data>
+  <data name="DrawBounds" xml:space="preserve"><value>رسم الحدود</value></data>
+  <data name="DrawBoundsHelp" xml:space="preserve"><value>ارسم مستطيلاً على الخريطة أدناه لتحديد الحدود. انقر على الخريطة لتحديد نقطة المركز.</value></data>
+  <data name="DrawBoundsEditHelp" xml:space="preserve"><value>ارسم مستطيلاً على الخريطة أدناه لتحديث الحدود. انقر على الخريطة لتحديد نقطة المركز.</value></data>
+
+  <!-- Edit -->
+  <data name="EditCustomMapPageTitle" xml:space="preserve"><value>تعديل الخريطة المخصصة</value></data>
+  <data name="EditCustomMapHeader" xml:space="preserve"><value>تعديل الخريطة المخصصة</value></data>
+  <data name="EditBreadcrumb" xml:space="preserve"><value>تعديل</value></data>
+
+  <!-- Layers -->
+  <data name="LayersPageTitlePrefix" xml:space="preserve"><value>الطبقات</value></data>
+  <data name="LayersHeaderPrefix" xml:space="preserve"><value>الطبقات</value></data>
+  <data name="LayersBreadcrumb" xml:space="preserve"><value>الطبقات</value></data>
+  <data name="AddLayerTitle" xml:space="preserve"><value>إضافة طبقة</value></data>
+  <data name="LayerName" xml:space="preserve"><value>اسم الطبقة</value></data>
+  <data name="LayerNamePlaceholder" xml:space="preserve"><value>مثال: الطابق 1، الخريطة الأساسية، البنية التحتية</value></data>
+  <data name="LayerOrder" xml:space="preserve"><value>الترتيب</value></data>
+  <data name="LayerType" xml:space="preserve"><value>النوع</value></data>
+  <data name="LayerTypeFloorPlan" xml:space="preserve"><value>مخطط الطابق</value></data>
+  <data name="LayerTypeOverlay" xml:space="preserve"><value>طبقة تراكبية</value></data>
+  <data name="LayerTypeDataLayer" xml:space="preserve"><value>طبقة بيانات</value></data>
+  <data name="LayerTypeInfrastructure" xml:space="preserve"><value>بنية تحتية</value></data>
+  <data name="LayerImage" xml:space="preserve"><value>صورة الطبقة</value></data>
+  <data name="LayerImageHelp" xml:space="preserve"><value>سيتم تجزئة الصور الأكبر من 2048 بكسل تلقائياً.</value></data>
+  <data name="AddLayerButton" xml:space="preserve"><value>إضافة طبقة</value></data>
+  <data name="HasImage" xml:space="preserve"><value>يحتوي على صورة</value></data>
+  <data name="Tiled" xml:space="preserve"><value>مجزأة</value></data>
+  <data name="RegionEditor" xml:space="preserve"><value>محرر المناطق</value></data>
+  <data name="DeleteLayerConfirm" xml:space="preserve"><value>هل تريد حذف هذه الطبقة؟</value></data>
+
+  <!-- RegionEditor -->
+  <data name="RegionEditorPageTitlePrefix" xml:space="preserve"><value>محرر المناطق</value></data>
+  <data name="RegionEditorBreadcrumb" xml:space="preserve"><value>محرر المناطق</value></data>
+  <data name="RegionsTitle" xml:space="preserve"><value>المناطق</value></data>
+  <data name="RegionPropertiesTitle" xml:space="preserve"><value>خصائص المنطقة</value></data>
+  <data name="RegionNameLabel" xml:space="preserve"><value>الاسم</value></data>
+  <data name="RegionTypeLabel" xml:space="preserve"><value>النوع</value></data>
+  <data name="RegionTypeRoom" xml:space="preserve"><value>غرفة</value></data>
+  <data name="RegionTypeWing" xml:space="preserve"><value>جناح</value></data>
+  <data name="RegionTypeCorridor" xml:space="preserve"><value>ممر</value></data>
+  <data name="RegionTypeStairwell" xml:space="preserve"><value>بئر الدرج</value></data>
+  <data name="RegionTypeElevator" xml:space="preserve"><value>مصعد</value></data>
+  <data name="RegionTypeHazardZone" xml:space="preserve"><value>منطقة خطر</value></data>
+  <data name="RegionTypeAssemblyPoint" xml:space="preserve"><value>نقطة التجمع</value></data>
+  <data name="RegionTypeStagingArea" xml:space="preserve"><value>منطقة التجهيز</value></data>
+  <data name="RegionTypeAccessPoint" xml:space="preserve"><value>نقطة الدخول</value></data>
+  <data name="RegionTypeUtility" xml:space="preserve"><value>مرافق</value></data>
+  <data name="RegionTypeSearchGrid" xml:space="preserve"><value>شبكة البحث</value></data>
+  <data name="RegionTypeStage" xml:space="preserve"><value>منصة</value></data>
+  <data name="RegionTypeGate" xml:space="preserve"><value>بوابة</value></data>
+  <data name="RegionTypeEntrance" xml:space="preserve"><value>مدخل</value></data>
+  <data name="RegionTypeParkingArea" xml:space="preserve"><value>موقف السيارات</value></data>
+  <data name="RegionTypeVendorArea" xml:space="preserve"><value>منطقة البائعين</value></data>
+  <data name="RegionTypeEmergencyLane" xml:space="preserve"><value>ممر الطوارئ</value></data>
+  <data name="RegionTypeDistrict" xml:space="preserve"><value>حي</value></data>
+  <data name="RegionTypeCustom" xml:space="preserve"><value>مخصص</value></data>
+  <data name="RegionColorLabel" xml:space="preserve"><value>اللون</value></data>
+  <data name="RegionDescriptionLabel" xml:space="preserve"><value>الوصف</value></data>
+  <data name="RegionSearchable" xml:space="preserve"><value>قابل للبحث في الإرسال</value></data>
+  <data name="RegionDispatchable" xml:space="preserve"><value>قابل للإرسال</value></data>
+  <data name="SaveRegion" xml:space="preserve"><value>حفظ المنطقة</value></data>
+  <data name="Dispatchable" xml:space="preserve"><value>قابل للإرسال</value></data>
+
+  <!-- Import -->
+  <data name="ImportPageTitlePrefix" xml:space="preserve"><value>استيراد</value></data>
+  <data name="ImportHeaderPrefix" xml:space="preserve"><value>استيراد</value></data>
+  <data name="ImportBreadcrumb" xml:space="preserve"><value>استيراد</value></data>
+  <data name="ImportGeospatialTitle" xml:space="preserve"><value>استيراد البيانات الجيومكانية</value></data>
+  <data name="TargetLayer" xml:space="preserve"><value>الطبقة المستهدفة</value></data>
+  <data name="File" xml:space="preserve"><value>الملف</value></data>
+  <data name="ImportFileHelp" xml:space="preserve"><value>الصيغ المدعومة: GeoJSON ‏(.geojson, .json)، KML ‏(.kml)، KMZ ‏(.kmz)</value></data>
+  <data name="ImportButton" xml:space="preserve"><value>استيراد</value></data>
+  <data name="ImportHistoryTitle" xml:space="preserve"><value>سجل الاستيراد</value></data>
+  <data name="Status" xml:space="preserve"><value>الحالة</value></data>
+  <data name="Date" xml:space="preserve"><value>التاريخ</value></data>
+  <data name="Error" xml:space="preserve"><value>خطأ</value></data>
+</root>

@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="DeleteStaticShiftHeader" xml:space="preserve"><value>حذف الوردية الثابتة</value></data>
+  <data name="EditShiftWarning" xml:space="preserve"><value>تعديل وردية ثابتة سيؤدي إلى مسح جميع التكليفات أو التسجيلات لهذه الوردية وإعادة توزيعها وفقاً للإعدادات الجديدة. إذا كانت لديك أي تكليفات أو تسجيلات لهذه الوردية فستُحذف وتُطبّق الإعدادات الجديدة.</value></data>
+  <data name="EditStaticShiftHeader" xml:space="preserve"><value>تعديل الوردية الثابتة</value></data>
+  <data name="EndDateTime" xml:space="preserve"><value>تاريخ/وقت الانتهاء</value></data>
+  <data name="ShiftColorNote" xml:space="preserve"><value>ملاحظة: نص التقويم باللون الأسود، يُرجى مراعاة ذلك عند اختيار لون الوردية إذ سيُستخدم اللون خلفيةً للنص.</value></data>
+  <data name="ShiftEndNote" xml:space="preserve"><value>التاريخ والوقت اللذان تنتهي فيهما الوردية (أي العودة إلى المقر) حيث تُعتبر الجهات التابعة لها متاحة.</value></data>
+  <data name="ShiftStartNote" xml:space="preserve"><value>التاريخ والوقت اللذان تبدأ فيهما الوردية (أي بداية التنقل) حيث تُعتبر الجهات التابعة لها ملتزمة.</value></data>
+  <data name="StartDateTime" xml:space="preserve"><value>تاريخ/وقت البدء</value></data>
+  <data name="ViewStaticShiftDayHeader" xml:space="preserve"><value>عرض يوم الوردية الثابتة</value></data>
+  <data name="ShiftsHeader" xml:space="preserve"><value>الورديات</value></data>
+  <data name="YourShiftsButton" xml:space="preserve"><value>ورردياتك</value></data>
+  <data name="ShiftStaffingButton" xml:space="preserve"><value>تأمين الوردية</value></data>
+  <data name="RecurringGroupShifts" xml:space="preserve"><value>ورديات المجموعات المتكررة</value></data>
+  <data name="AddRecurringGroupShift" xml:space="preserve"><value>إضافة وردية مجموعة متكررة</value></data>
+  <data name="NameColumn" xml:space="preserve"><value>الاسم</value></data>
+  <data name="TypeColumn" xml:space="preserve"><value>النوع</value></data>
+  <data name="ScheduleColumn" xml:space="preserve"><value>الجدول الزمني</value></data>
+  <data name="GroupsColumn" xml:space="preserve"><value>المجموعات</value></data>
+  <data name="PersonnelColumn" xml:space="preserve"><value>الأفراد</value></data>
+  <data name="AssignedType" xml:space="preserve"><value>مُكلَّف</value></data>
+  <data name="SignupType" xml:space="preserve"><value>تسجيل</value></data>
+  <data name="ManualSchedule" xml:space="preserve"><value>يدوي</value></data>
+  <data name="CustomSchedule" xml:space="preserve"><value>مخصص</value></data>
+  <data name="Schedule48_96" xml:space="preserve"><value>48 عمل / 96 راحة</value></data>
+  <data name="Schedule24_48" xml:space="preserve"><value>24 عمل / 48 راحة</value></data>
+  <data name="Schedule24_72" xml:space="preserve"><value>24 عمل / 72 راحة</value></data>
+  <data name="ViewCalendarButton" xml:space="preserve"><value>عرض التقويم</value></data>
+  <data name="EditDetailsButton" xml:space="preserve"><value>تعديل التفاصيل</value></data>
+  <data name="EditCalendarButton" xml:space="preserve"><value>تعديل التقويم</value></data>
+  <data name="EditGroupsButton" xml:space="preserve"><value>تعديل المجموعات</value></data>
+  <data name="DeleteButton" xml:space="preserve"><value>حذف</value></data>
+  <data name="DeleteShiftWarning" xml:space="preserve"><value>تحذير: سيؤدي هذا الإجراء إلى حذف هذه الوردية نهائياً. هل أنت متأكد من حذف الوردية</value></data>
+  <data name="CalendarSectionHeader" xml:space="preserve"><value>التقويم</value></data>
+  <data name="AddStaticShift" xml:space="preserve"><value>إضافة وردية ثابتة</value></data>
+  <data name="NewShiftHeader" xml:space="preserve"><value>وردية جديدة</value></data>
+  <data name="NewShiftWizardIntro" xml:space="preserve"><value>مرحباً بك في معالج الوردية الجديدة. سيرشدك هذا المعالج خلال خطوات إنشاء وردية جديدة لقسمك. أدخل اسم الوردية ورمزها ولونها الاختياري أدناه. للمتابعة انقر على زر "التالي" في الزاوية السفلية اليمنى.</value></data>
+  <data name="NameLabel" xml:space="preserve"><value>الاسم</value></data>
+  <data name="NamePlaceholder" xml:space="preserve"><value>اسم الوردية</value></data>
+  <data name="NameHelp" xml:space="preserve"><value>مثال: ("وردية أ"، "وردية ب"، "وردية ج")</value></data>
+  <data name="CodeLabel" xml:space="preserve"><value>الرمز</value></data>
+  <data name="CodeHelp" xml:space="preserve"><value>مثال: ("أ"، "ب"، "ج")</value></data>
+  <data name="AssignmentTypeLabel" xml:space="preserve"><value>نوع التكليف</value></data>
+  <data name="AssignmentTypeHelp" xml:space="preserve"><value>في حالة التكليف تحدد الأفراد للوردية، وفي حالة التسجيل يقوم الأفراد بتسجيل أنفسهم.</value></data>
+  <data name="ColorLabel" xml:space="preserve"><value>اللون</value></data>
+  <data name="ScheduleTabIntro" xml:space="preserve"><value>هنا تحدد الأيام التي ستكون فيها الوردية في الخدمة ووقت بدء الوردية لأول يوم. إذا كانت الوردية متواصلة فسيكون وقت البدء لأول يوم في الوردية (أي اليوم الأول من فترة 48 ساعة).</value></data>
+  <data name="StartTimeLabel" xml:space="preserve"><value>وقت البدء</value></data>
+  <data name="StartTimeHelp" xml:space="preserve"><value>متى تبدأ الوردية في اليوم الأول (أو اليوم الوحيد)</value></data>
+  <data name="EndTimeLabel" xml:space="preserve"><value>وقت الانتهاء</value></data>
+  <data name="EndTimeHelp" xml:space="preserve"><value>متى تنتهي الوردية في آخر يوم (أو اليوم الوحيد)</value></data>
+  <data name="SlotsTabIntro" xml:space="preserve"><value>يمكنك هنا تهيئة الأدوار المطلوبة لكل مجموعة في قسمك للوردية. انقر على زر "إضافة مجموعة للوردية" لإضافة مجموعة، ويمكن أن تحتوي الوردية على مجموعات متعددة. بعد اختيار المجموعة انقر على "إضافة دور للمجموعة" لإضافة الأدوار المطلوبة.</value></data>
+  <data name="ShiftGroupColumn" xml:space="preserve"><value>مجموعة الوردية</value></data>
+  <data name="ShiftRolesColumn" xml:space="preserve"><value>أدوار الوردية</value></data>
+  <data name="AddGroupToShift" xml:space="preserve"><value>إضافة مجموعة للوردية</value></data>
+  <data name="PersonnelTabIntro" xml:space="preserve"><value>الآن اختر الأفراد العاملين في هذه الوردية. سيملؤون فتحات الأدوار في المجموعة بشكل ديناميكي بناءً على مجموعاتهم إذا كانت أدوار مجموعات الوردية محددة.</value></data>
+  <data name="NonGroupPersonnelLabel" xml:space="preserve"><value>الأفراد غير المنتمين لمجموعة</value></data>
+  <data name="NonGroupPersonnelHelp" xml:space="preserve"><value>الأفراد المكلفون بالوردية ولكن غير مكلفين بمحطة أو مجموعة تنظيمية مباشرة (أي المتنقلون أو الاحتياطيون)</value></data>
+  <data name="FinishTabIntro" xml:space="preserve"><value>انقر على زر الإنهاء أدناه لإنشاء الوردية الجديدة. يمكنك دائماً تعديل الوردية لاحقاً من صفحة قائمة الورديات.</value></data>
+  <data name="WizardStart" xml:space="preserve"><value>بدء &gt;</value></data>
+  <data name="WizardSchedule" xml:space="preserve"><value>الجدول &gt;</value></data>
+  <data name="WizardSlots" xml:space="preserve"><value>الفتحات &gt;</value></data>
+  <data name="WizardPersonnel" xml:space="preserve"><value>الأفراد &gt;</value></data>
+  <data name="WizardFinish" xml:space="preserve"><value>إنهاء</value></data>
+  <data name="WizardFirst" xml:space="preserve"><value>الأول</value></data>
+  <data name="WizardPrevious" xml:space="preserve"><value>السابق</value></data>
+  <data name="WizardNext" xml:space="preserve"><value>التالي</value></data>
+  <data name="ShiftNameRequired" xml:space="preserve"><value>اسم الوردية مطلوب</value></data>
+  <data name="ShiftCodeRequired" xml:space="preserve"><value>رمز الوردية مطلوب</value></data>
+  <data name="ShiftStartTimeRequired" xml:space="preserve"><value>وقت بدء الوردية مطلوب.</value></data>
+  <data name="EditShiftDetailsHeader" xml:space="preserve"><value>تعديل تفاصيل الوردية</value></data>
+  <data name="CodePlaceholder" xml:space="preserve"><value>رمز الوردية</value></data>
+  <data name="NonGroupPersonnelHelpEdit" xml:space="preserve"><value>الأفراد المنتمون للوردية لكن غير مكلفين بمجموعة (أي المتنقلون أو الجوالون)</value></data>
+  <data name="CancelButton" xml:space="preserve"><value>إلغاء</value></data>
+  <data name="UpdateShiftButton" xml:space="preserve"><value>تحديث الوردية</value></data>
+  <data name="EditShiftCalendarHeader" xml:space="preserve"><value>تعديل تقويم الوردية</value></data>
+  <data name="UpdateShiftDaysButton" xml:space="preserve"><value>تحديث أيام الوردية</value></data>
+  <data name="EditShiftGroupsHeader" xml:space="preserve"><value>تعديل مجموعات الوردية</value></data>
+  <data name="SaveShiftGroupsButton" xml:space="preserve"><value>حفظ مجموعات الوردية</value></data>
+  <data name="CalendarSuffix" xml:space="preserve"><value>التقويم</value></data>
+  <data name="ShiftStaffingHeader" xml:space="preserve"><value>تأمين الوردية</value></data>
+  <data name="ShiftLabel" xml:space="preserve"><value>الوردية</value></data>
+  <data name="ShiftSelectHelp" xml:space="preserve"><value>اختر الوردية لمعالجة تأمينها. ستظهر فقط الورديات التي لديك صلاحية الوصول إليها (مدير المجموعة أو مدير القسم).</value></data>
+  <data name="ShiftDayLabel" xml:space="preserve"><value>يوم الوردية</value></data>
+  <data name="ShiftDayHelp" xml:space="preserve"><value>اختر اليوم لمعالجة تأمينه.</value></data>
+  <data name="NoteLabel" xml:space="preserve"><value>ملاحظة</value></data>
+  <data name="NotePlaceholder" xml:space="preserve"><value>أدخل ملاحظة حرة للوردية (مثل تأمين الأفراد، التبديلات خلال الوردية، إلخ)</value></data>
+  <data name="AssignmentsLabel" xml:space="preserve"><value>التكليفات</value></data>
+  <data name="UnitsLabel" xml:space="preserve"><value>الوحدات</value></data>
+  <data name="SetShiftDayStaffingButton" xml:space="preserve"><value>تعيين تأمين يوم الوردية</value></data>
+  <data name="SelectNonGroupPersonnel" xml:space="preserve"><value>اختر الأفراد غير المنتمين لمجموعة...</value></data>
+  <data name="SelectPersonnelForGroup" xml:space="preserve"><value>اختر الأفراد للمجموعة...</value></data>
+  <data name="SelectPerson" xml:space="preserve"><value>اختر شخصاً...</value></data>
+  <data name="NonGroupPersonnelStaffing" xml:space="preserve"><value>الأفراد غير المنتمين لمجموعة</value></data>
+  <data name="YourShiftsHeader" xml:space="preserve"><value>ورردياتك</value></data>
+  <data name="ShiftColumn" xml:space="preserve"><value>الوردية</value></data>
+  <data name="GroupColumn" xml:space="preserve"><value>المجموعة</value></data>
+  <data name="DayColumn" xml:space="preserve"><value>اليوم</value></data>
+  <data name="ApprovedColumn" xml:space="preserve"><value>موافق عليه</value></data>
+  <data name="StatusColumn" xml:space="preserve"><value>الحالة</value></data>
+  <data name="TimestampColumn" xml:space="preserve"><value>الطابع الزمني</value></data>
+  <data name="ApprovedNo" xml:space="preserve"><value>لا</value></data>
+  <data name="ApprovedYes" xml:space="preserve"><value>نعم</value></data>
+  <data name="TradeComplete" xml:space="preserve"><value>التبادل مكتمل</value></data>
+  <data name="TradeInProgress" xml:space="preserve"><value>التبادل جارٍ</value></data>
+  <data name="Normal" xml:space="preserve"><value>عادي</value></data>
+  <data name="For" xml:space="preserve"><value>لـ</value></data>
+  <data name="DeclineShiftDayWarning" xml:space="preserve"><value>تحذير: سيؤدي هذا الإجراء إلى إزالتك من هذه الوردية. هل أنت متأكد من رفض الوردية</value></data>
+  <data name="DeclineShiftDay" xml:space="preserve"><value>رفض يوم الوردية</value></data>
+  <data name="RequestTrade" xml:space="preserve"><value>طلب تبادل</value></data>
+  <data name="FinishTrade" xml:space="preserve"><value>إتمام التبادل</value></data>
+  <data name="YourPendingTrades" xml:space="preserve"><value>طلبات التبادل المعلقة</value></data>
+  <data name="TimeColumn" xml:space="preserve"><value>الوقت</value></data>
+  <data name="ProcessTradeRequest" xml:space="preserve"><value>معالجة طلب التبادل</value></data>
+  <data name="Declined" xml:space="preserve"><value>مرفوض</value></data>
+  <data name="Accepted" xml:space="preserve"><value>مقبول</value></data>
+  <data name="Filled" xml:space="preserve"><value>مكتمل</value></data>
+  <data name="TradeOffered" xml:space="preserve"><value>عرض تبادل</value></data>
+  <data name="ViewShiftHeader" xml:space="preserve"><value>عرض الوردية</value></data>
+  <data name="ShiftStart" xml:space="preserve"><value>بدء الوردية</value></data>
+  <data name="ShiftDayDetail" xml:space="preserve"><value>تفاصيل يوم الوردية</value></data>
+  <data name="TypeLabel" xml:space="preserve"><value>النوع:</value></data>
+  <data name="StatusLabel" xml:space="preserve"><value>الحالة:</value></data>
+  <data name="StartLabel" xml:space="preserve"><value>البداية:</value></data>
+  <data name="EndLabel" xml:space="preserve"><value>النهاية:</value></data>
+  <data name="Upcoming" xml:space="preserve"><value>القادم</value></data>
+  <data name="Completed" xml:space="preserve"><value>مكتملة</value></data>
+  <data name="NoEndTime" xml:space="preserve"><value>لا يوجد وقت انتهاء</value></data>
+  <data name="GroupsSectionHeader" xml:space="preserve"><value>المجموعات</value></data>
+  <data name="RoleColumn" xml:space="preserve"><value>الدور</value></data>
+  <data name="RequiredColumn" xml:space="preserve"><value>مطلوب</value></data>
+  <data name="OptionalColumn" xml:space="preserve"><value>اختياري</value></data>
+  <data name="NeededColumn" xml:space="preserve"><value>مطلوب</value></data>
+  <data name="SignupsSectionHeader" xml:space="preserve"><value>التسجيلات</value></data>
+  <data name="RolesColumn" xml:space="preserve"><value>الأدوار</value></data>
+  <data name="TradesSectionHeader" xml:space="preserve"><value>التبادلات</value></data>
+  <data name="TradeColumn" xml:space="preserve"><value>التبادل</value></data>
+  <data name="TradedWithFormat" xml:space="preserve"><value>{0} تبادل مع {1}</value></data>
+  <data name="ShiftSignupHeader" xml:space="preserve"><value>التسجيل في الوردية</value></data>
+  <data name="DeleteShiftSignup" xml:space="preserve"><value>حذف تسجيل الوردية</value></data>
+  <data name="SignupForShiftWith" xml:space="preserve"><value>التسجيل في الوردية مع</value></data>
+  <data name="ShiftSignupSuccessHeader" xml:space="preserve"><value>نجح التسجيل في الوردية</value></data>
+  <data name="SignupSuccessMessage" xml:space="preserve"><value>لقد سجّلت بنجاح في هذا اليوم من الوردية. إذا أردت التسجيل في أيام أخرى من الوردية يجب عليك التسجيل لكل يوم بشكل منفصل.</value></data>
+  <data name="StartsAtEndsAt" xml:space="preserve"><value>يبدأ في {0} وينتهي في {1}</value></data>
+  <data name="StartsAt" xml:space="preserve"><value>يبدأ في {0}</value></data>
+  <data name="RequestTradeHeader" xml:space="preserve"><value>طلب تبادل</value></data>
+  <data name="UsersToRequestLabel" xml:space="preserve"><value>المستخدمون المطلوب منهم</value></data>
+  <data name="UsersToRequestHelp" xml:space="preserve"><value>انقر داخل الحقل لاختيار المستخدمين لطلب التبادل منهم (تظهر فقط المستخدمون الذين يستوفون متطلبات دور الوردية)</value></data>
+  <data name="SubmitTradeRequest" xml:space="preserve"><value>إرسال طلب التبادل</value></data>
+  <data name="ProcessTradeHeader" xml:space="preserve"><value>معالجة طلب التبادل</value></data>
+  <data name="DatesToTradeLabel" xml:space="preserve"><value>التواريخ المراد تبادلها</value></data>
+  <data name="DatesToTradeHelp" xml:space="preserve"><value>انقر داخل الحقل لاختيار الورديات التي أنت مكلف بها لإتمام التبادل. إذا لم تحدد أي يوم فسيكون التبادل غير متوازن.</value></data>
+  <data name="NoteTradePlaceholder" xml:space="preserve"><value>ملاحظة أو معلومة لهذا التبادل</value></data>
+  <data name="RejectTradeRequest" xml:space="preserve"><value>رفض طلب التبادل</value></data>
+  <data name="RejectTradeConfirm" xml:space="preserve"><value>هل أنت متأكد من رفض طلب التبادل هذا؟</value></data>
+  <data name="ProposeTradeRequest" xml:space="preserve"><value>اقتراح طلب تبادل</value></data>
+  <data name="StartsAtLabel" xml:space="preserve"><value>يبدأ في</value></data>
+  <data name="FinalizeTradeHeader" xml:space="preserve"><value>إتمام التبادل</value></data>
+  <data name="DateColumn" xml:space="preserve"><value>التاريخ</value></data>
+  <data name="NoneValue" xml:space="preserve"><value>لا شيء</value></data>
+  <data name="FinalizeTradeButton" xml:space="preserve"><value>إتمام التبادل</value></data>
+  <data name="ShiftRoleColumn" xml:space="preserve"><value>دور الوردية</value></data>
+  <data name="RolesCountColumn" xml:space="preserve"><value>عدد الأدوار</value></data>
+  <data name="AddRoleToGroup" xml:space="preserve"><value>إضافة دور للمجموعة</value></data>
+  <data name="AddShiftRolesToGroup" xml:space="preserve"><value>إضافة أدوار الوردية للمجموعة</value></data>
+  <data name="RemoveGroup" xml:space="preserve"><value>إزالة المجموعة</value></data>
+  <data name="RemoveRole" xml:space="preserve"><value>إزالة الدور</value></data>
+  <data name="RemoveRoleFromGroup" xml:space="preserve"><value>إزالة هذا الدور من المجموعة</value></data>
+  <data name="RoleCountRequired" xml:space="preserve"><value>عدد الدور مطلوب</value></data>
+</root>

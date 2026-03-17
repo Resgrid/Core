@@ -114,7 +114,7 @@ var resgrid;
                     fetch(resgrid.absoluteApiBaseUrl + '/api/v4/Geocoding/ForwardGeocode?address=' + encodeURIComponent(where), { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('RgWebApp.auth-tokens') } })
                         .then(function(r) { return r.json(); })
                         .then(function(result) {
-                            if (result && result.Data && result.Data.Latitude && result.Data.Longitude) {
+                            if (result && result.Data && result.Data.Latitude != null && result.Data.Longitude != null) {
                                 var lat = result.Data.Latitude;
                                 var lng = result.Data.Longitude;
                                 map.panTo(new L.LatLng(lat, lng));
@@ -137,7 +137,7 @@ var resgrid;
                         contentType: 'application/json',
                         type: 'GET'
                     }).done(function (data) {
-                        if (data && data.Latitude && data.Longitude) {
+                        if (data && data.Latitude != null && data.Longitude != null) {
                             map.panTo(new L.LatLng(data.Latitude, data.Longitude));
 
                             $("#Latitude").val(data.Latitude);

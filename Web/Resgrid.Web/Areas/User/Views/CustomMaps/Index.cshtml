@@ -1,6 +1,8 @@
 @model Resgrid.Web.Areas.User.Models.CustomMaps.CustomMapIndexView
 @using Resgrid.Model
+@using System.Text.Encodings.Web
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.CustomMaps.CustomMaps> localizer
+@inject JavaScriptEncoder JsEncoder
 @{
     ViewBag.Title = "Resgrid | " + localizer["CustomMapsPageTitle"];
 }
@@ -71,7 +73,7 @@
                                                 <a class="btn btn-primary btn-xs" asp-controller="CustomMaps" asp-action="Layers" asp-route-id="@map.IndoorMapId" asp-route-area="User"><i class="fa fa-layer-group"></i> @localizer["Layers"]</a>
                                                 <a class="btn btn-warning btn-xs" asp-controller="CustomMaps" asp-action="Import" asp-route-id="@map.IndoorMapId" asp-route-area="User"><i class="fa fa-upload"></i> @localizer["Import"]</a>
                                                 <a class="btn btn-info btn-xs" asp-controller="CustomMaps" asp-action="Edit" asp-route-id="@map.IndoorMapId" asp-route-area="User"><i class="fa fa-pencil"></i> @localizer["Edit"]</a>
-                                                <a class="btn btn-danger btn-xs" asp-controller="CustomMaps" asp-action="Delete" asp-route-id="@map.IndoorMapId" asp-route-area="User" onclick="return confirm('@localizer["DeleteMapConfirm"]');"><i class="fa fa-trash"></i> @localizer["Delete"]</a>
+                                                <a class="btn btn-danger btn-xs" asp-controller="CustomMaps" asp-action="Delete" asp-route-id="@map.IndoorMapId" asp-route-area="User" onclick="return confirm('@JsEncoder.Encode(localizer["DeleteMapConfirm"])');"><i class="fa fa-trash"></i> @localizer["Delete"]</a>
                                             </td>
                                         </tr>
                                     }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -18,6 +18,7 @@ namespace Resgrid.Localization
 							{"it", "Italian"},                  //"it-IT"
 							{"pl", "Polish"},                   //"pl-PL"
 							{"uk", "Ukrainian"},                //"uk-UA"
+							{"ar", "Arabic"},                   //"ar"
 						};
 
 		public static string[] GetSupportedCultures()

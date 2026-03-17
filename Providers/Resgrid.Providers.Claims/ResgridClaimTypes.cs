@@ -63,6 +63,7 @@
 			public const string Sso = "Sso";
 			public const string Scim = "Scim";
 			public const string Udf = "Udf";
+			public const string Route = "Route";
 		}
 
 		public static string CreateDepartmentClaimTypeString(int departmentId)

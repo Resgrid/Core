@@ -83,7 +83,9 @@ namespace Resgrid.Services
 			builder.RegisterType<CoreEventService>().As<ICoreEventService>().SingleInstance();
 			builder.RegisterType<WorkShiftsService>().As<IWorkShiftsService>().SingleInstance();
 			builder.RegisterType<ContactsService>().As<IContactsService>().SingleInstance();
-
+			builder.RegisterType<IndoorMapService>().As<IIndoorMapService>().SingleInstance();
+			builder.RegisterType<CustomMapService>().As<ICustomMapService>().SingleInstance();
+			builder.RegisterType<RouteService>().As<IRouteService>().SingleInstance();
 
 			// UDF Services
 			builder.RegisterType<UserDefinedFieldsService>().As<IUserDefinedFieldsService>().InstancePerLifetimeScope();

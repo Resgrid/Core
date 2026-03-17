@@ -1,0 +1,88 @@
+@model Resgrid.Web.Areas.User.Models.IndoorMaps.IndoorMapNewView
+@{
+    ViewBag.Title = "Resgrid | Edit Indoor Map";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>Edit Indoor Map</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a></li>
+            <li><a asp-controller="IndoorMaps" asp-action="Index" asp-route-area="User">Indoor Maps</a></li>
+            <li class="active"><strong>Edit</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    @if (!string.IsNullOrWhiteSpace(Model.Message))
+                    {
+                        <div class="alert alert-danger">@Model.Message</div>
+                    }
+                    <form asp-action="Edit" asp-controller="IndoorMaps" asp-route-area="User" method="post" class="form-horizontal">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="IndoorMap.IndoorMapId" />
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" asp-for="IndoorMap.Name" placeholder="e.g. Main Hospital" required />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Description</label>
+                            <div class="col-sm-10">
+                                <textarea class="form-control" asp-for="IndoorMap.Description" rows="3" placeholder="Optional description"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Center Latitude</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" asp-for="IndoorMap.CenterLatitude" placeholder="e.g. 39.7392" />
+                            </div>
+                            <label class="col-sm-2 control-label">Center Longitude</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" asp-for="IndoorMap.CenterLongitude" placeholder="e.g. -104.9903" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">NE Bound Lat</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" asp-for="IndoorMap.BoundsNELat" />
+                            </div>
+                            <label class="col-sm-2 control-label">NE Bound Lon</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" asp-for="IndoorMap.BoundsNELon" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">SW Bound Lat</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" asp-for="IndoorMap.BoundsSWLat" />
+                            </div>
+                            <label class="col-sm-2 control-label">SW Bound Lon</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" asp-for="IndoorMap.BoundsSWLon" />
+                            </div>
+                        </div>
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <a class="btn btn-white" asp-controller="IndoorMaps" asp-action="Index" asp-route-area="User">Cancel</a>
+                                <button class="btn btn-primary" type="submit">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                    <div id="boundsMap" style="height: 400px; margin-top: 15px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/app/internal/indoormaps/resgrid.indoormaps.editor.js" asp-append-version="true"></script>
+}

@@ -1,0 +1,119 @@
+@model Resgrid.Web.Areas.User.Models.IndoorMaps.IndoorMapZoneEditorView
+@{
+    ViewBag.Title = "Resgrid | Zone Editor - " + Model.Floor.Name;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/@@geoman-io/leaflet-geoman-free@2.16.0/dist/leaflet-geoman.css" />
+    <style>
+        #zoneMap { height: 600px; width: 100%; }
+        .zone-panel { max-height: 600px; overflow-y: auto; }
+        .zone-item { padding: 8px; border-bottom: 1px solid #eee; cursor: pointer; }
+        .zone-item:hover { background: #f5f5f5; }
+    </style>
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-6">
+        <h2>Zone Editor - @Model.IndoorMap.Name > @Model.Floor.Name</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a></li>
+            <li><a asp-controller="IndoorMaps" asp-action="Index" asp-route-area="User">Indoor Maps</a></li>
+            <li><a asp-controller="IndoorMaps" asp-action="Floors" asp-route-id="@Model.IndoorMap.IndoorMapId" asp-route-area="User">Floors</a></li>
+            <li class="active"><strong>Zone Editor</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-9">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content" style="padding:0;">
+                    <div id="zoneMap"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Zones</h5>
+                </div>
+                <div class="ibox-content zone-panel" id="zoneList">
+                    @if (Model.Zones != null)
+                    {
+                        foreach (var zone in Model.Zones)
+                        {
+                            <div class="zone-item" data-zone-id="@zone.IndoorMapZoneId">
+                                <strong>@zone.Name</strong>
+                                <span class="pull-right">
+                                    <button class="btn btn-xs btn-danger delete-zone" data-zone-id="@zone.IndoorMapZoneId"><i class="fa fa-trash"></i></button>
+                                </span>
+                                <br /><small class="text-muted">@((IndoorMapZoneType)zone.ZoneType)</small>
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Zone Properties</h5>
+                </div>
+                <div class="ibox-content" id="zoneProperties" style="display:none;">
+                    <div class="form-group">
+                        <label>Name</label>
+                        <input type="text" class="form-control" id="zoneName" />
+                    </div>
+                    <div class="form-group">
+                        <label>Type</label>
+                        <select class="form-control" id="zoneType">
+                            <option value="0">Room</option>
+                            <option value="1">Wing</option>
+                            <option value="2">Corridor</option>
+                            <option value="3">Stairwell</option>
+                            <option value="4">Elevator</option>
+                            <option value="5">Hazard Zone</option>
+                            <option value="6">Assembly Point</option>
+                            <option value="7">Staging Area</option>
+                            <option value="8">Access Point</option>
+                            <option value="9">Utility</option>
+                            <option value="10">Search Grid</option>
+                            <option value="99">Custom</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Color</label>
+                        <input type="color" class="form-control" id="zoneColor" value="#3388ff" />
+                    </div>
+                    <div class="form-group">
+                        <label>Description</label>
+                        <textarea class="form-control" id="zoneDescription" rows="2"></textarea>
+                    </div>
+                    <div class="checkbox">
+                        <label><input type="checkbox" id="zoneSearchable" checked /> Searchable in dispatch</label>
+                    </div>
+                    <button class="btn btn-primary btn-block" id="saveZoneBtn">Save Zone</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/@@geoman-io/leaflet-geoman-free@2.16.0/dist/leaflet-geoman.min.js"></script>
+    <script>
+        var floorId = '@Model.Floor.IndoorMapFloorId';
+        var floorImageUrl = '@Url.Action("GetFloorImage", "IndoorMaps", new { id = Model.Floor.IndoorMapFloorId, area = "User" })';
+        var boundsNE = [@(Model.Floor.BoundsNELat ?? Model.IndoorMap.BoundsNELat), @(Model.Floor.BoundsNELon ?? Model.IndoorMap.BoundsNELon)];
+        var boundsSW = [@(Model.Floor.BoundsSWLat ?? Model.IndoorMap.BoundsSWLat), @(Model.Floor.BoundsSWLon ?? Model.IndoorMap.BoundsSWLon)];
+        var centerLat = @Model.IndoorMap.CenterLatitude;
+        var centerLon = @Model.IndoorMap.CenterLongitude;
+        var existingZones = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Zones ?? new System.Collections.Generic.List<Resgrid.Model.IndoorMapZone>()));
+        var saveZoneUrl = '@Url.Action("SaveZone", "IndoorMaps", new { area = "User" })';
+        var deleteZoneUrl = '@Url.Action("DeleteZone", "IndoorMaps", new { area = "User" })';
+    </script>
+    <script src="~/js/app/internal/indoormaps/resgrid.indoormaps.zoneeditor.js" asp-append-version="true"></script>
+}

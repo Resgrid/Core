@@ -1038,5 +1038,10 @@ namespace Resgrid.Providers.Claims
 				AddClaim(new Claim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Delete));
 			}
 		}
+
+		public void AddRouteClaims(bool isAdmin, List<Permission> permissions, bool isGroupAdmin, List<PersonnelRole> roles)
+		{
+			ClaimsLogic.AddRouteClaims(this, isAdmin, permissions, isGroupAdmin, roles);
+		}
 	}
 }

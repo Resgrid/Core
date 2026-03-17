@@ -576,6 +576,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!string.IsNullOrWhiteSpace(newCallInput.CallFormData))
 				call.CallFormData = newCallInput.CallFormData;
 
+			if (!string.IsNullOrWhiteSpace(newCallInput.IndoorMapZoneId))
+				call.IndoorMapZoneId = newCallInput.IndoorMapZoneId;
+
+			if (!string.IsNullOrWhiteSpace(newCallInput.IndoorMapFloorId))
+				call.IndoorMapFloorId = newCallInput.IndoorMapFloorId;
+
 			if (newCallInput.DispatchOn.HasValue)
 			{
 				call.DispatchOn = DateTimeHelpers.ConvertToUtc(newCallInput.DispatchOn.Value, department.TimeZone);

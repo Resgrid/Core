@@ -1,0 +1,84 @@
+@model Resgrid.Web.Areas.User.Models.Routes.RouteDetailView
+@{
+    ViewBag.Title = "Resgrid | Route Detail";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-12">
+        <h2>@Model.Plan.Name</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a></li>
+            <li><a asp-controller="Routes" asp-action="Index" asp-route-area="User">Routes</a></li>
+            <li class="active"><strong>View</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>Route Map</h5></div>
+                <div class="ibox-content">
+                    <div id="routeMap" style="height:500px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>Details</h5></div>
+                <div class="ibox-content">
+                    <dl class="dl-horizontal">
+                        <dt>Status</dt>
+                        <dd>@((Resgrid.Model.RouteStatus)Model.Plan.RouteStatus)</dd>
+                        <dt>Profile</dt>
+                        <dd>@(Model.Plan.MapboxRouteProfile ?? "driving")</dd>
+                        <dt>Geofence</dt>
+                        <dd>@Model.Plan.GeofenceRadiusMeters m</dd>
+                        @if (Model.Plan.EstimatedDistanceMeters.HasValue)
+                        {
+                            <dt>Distance</dt>
+                            <dd>@(Math.Round(Model.Plan.EstimatedDistanceMeters.Value / 1000, 1)) km</dd>
+                        }
+                        @if (Model.Plan.EstimatedDurationSeconds.HasValue)
+                        {
+                            <dt>Duration</dt>
+                            <dd>@(Math.Round(Model.Plan.EstimatedDurationSeconds.Value / 60, 0)) min</dd>
+                        }
+                    </dl>
+                </div>
+            </div>
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>Stops (@Model.Stops.Count)</h5></div>
+                <div class="ibox-content">
+                    <div class="feed-activity-list">
+                        @foreach (var stop in Model.Stops.OrderBy(s => s.StopOrder))
+                        {
+                            <div class="feed-element">
+                                <div class="media-body">
+                                    <strong>@(stop.StopOrder + 1). @stop.Name</strong>
+                                    @if (!string.IsNullOrEmpty(stop.Address))
+                                    {
+                                        <br /><small class="text-muted">@stop.Address</small>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var osmTileUrl = '@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()';
+        var osmTileAttribution = '@Resgrid.Config.MappingConfig.LeafletAttribution';
+        var routeStops = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Stops.OrderBy(s => s.StopOrder).Select(s => new { s.Name, lat = s.Latitude, lng = s.Longitude })));
+        var routeGeometry = '@Html.Raw(Model.Plan.MapboxRouteGeometry ?? "")';
+        var routeColor = '@Html.Raw(Model.Plan.RouteColor ?? "#3388ff")';
+    </script>
+    <script src="~/js/app/internal/routes/resgrid.routes.view.js"></script>
+}

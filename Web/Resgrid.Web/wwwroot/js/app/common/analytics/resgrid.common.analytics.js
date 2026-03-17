@@ -13,9 +13,9 @@ var resgrid;
                         );
                     }
 
-                    if (typeof Countly !== "undefined") {
-                        Countly.q.push(['set_id', userId]);
-                        Countly.q.push(['user_details', {
+                    if (window.Countly && typeof window.Countly.set_id === 'function') {
+                        window.Countly.set_id(userId);
+                        window.Countly.user_details({
                             "name": name,
                             "email": email,
                             "organization": departmentName,
@@ -23,9 +23,8 @@ var resgrid;
                                 "createdOn": new Date(createdOn * 1000),
                                 "departmentId": departmentId
                             }
-                        }]);
-                        Countly.q.push(['track_sessions']);
-                        Countly.q.push(['track_pageview']);
+                        });
+                        // Note: track_sessions and track_pageview are already configured in Countly.init()
                     }
                 }
             }
@@ -40,10 +39,10 @@ var resgrid;
                         Aptabase.trackEvent(event);
                     }
 
-                    if (typeof Countly !== 'undefined') {
-                        Countly.q.push(['add_event', {
+                    if (window.Countly && typeof window.Countly.add_event === 'function') {
+                        window.Countly.add_event({
                             "key": event
-                        }]);
+                        });
                     }
                 }
             }

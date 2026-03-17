@@ -41,6 +41,7 @@ namespace Resgrid.Services
 		private readonly IDepartmentsService _departmentsService;
 		private readonly ICallReferencesRepository _callReferencesRepository;
 		private readonly ICallContactsRepository _callContactsRepository;
+		private readonly IIndoorMapService _indoorMapService;
 
 		public CallsService(ICallsRepository callsRepository, ICommunicationService communicationService,
 			ICallDispatchesRepository callDispatchesRepository, ICallTypesRepository callTypesRepository, ICallEmailFactory callEmailFactory,
@@ -49,7 +50,8 @@ namespace Resgrid.Services
 			ICallDispatchUnitRepository callDispatchUnitRepository, ICallDispatchRoleRepository callDispatchRoleRepository,
 			IDepartmentCallPriorityRepository departmentCallPriorityRepository, IShortenUrlProvider shortenUrlProvider,
 			ICallProtocolsRepository callProtocolsRepository, IGeoLocationProvider geoLocationProvider, IDepartmentsService departmentsService,
-			ICallReferencesRepository callReferencesRepository, ICallContactsRepository callContactsRepository)
+			ICallReferencesRepository callReferencesRepository, ICallContactsRepository callContactsRepository,
+			IIndoorMapService indoorMapService)
 		{
 			_callsRepository = callsRepository;
 			_communicationService = communicationService;
@@ -69,6 +71,7 @@ namespace Resgrid.Services
 			_departmentsService = departmentsService;
 			_callReferencesRepository = callReferencesRepository;
 			_callContactsRepository = callContactsRepository;
+			_indoorMapService = indoorMapService;
 		}
 
 		public async Task<Call> SaveCallAsync(Call call, CancellationToken cancellationToken = default(CancellationToken))
@@ -82,6 +85,23 @@ namespace Resgrid.Services
 			// Got some bad data where geolocation is "," which passes some checks.
 			if (!String.IsNullOrWhiteSpace(call.GeoLocationData) && call.GeoLocationData.Length == 1)
 				call.GeoLocationData = "";
+
+			// Enrich call with indoor zone data if an indoor zone is selected
+			if (!String.IsNullOrWhiteSpace(call.IndoorMapZoneId))
+			{
+				var zone = await _indoorMapService.GetZoneByIdAsync(call.IndoorMapZoneId);
+				if (zone != null)
+				{
+					if (String.IsNullOrWhiteSpace(call.IndoorMapFloorId))
+						call.IndoorMapFloorId = zone.IndoorMapFloorId;
+
+					if (String.IsNullOrWhiteSpace(call.Address))
+						call.Address = await _indoorMapService.GetZoneDisplayNameAsync(call.IndoorMapZoneId);
+
+					if (String.IsNullOrWhiteSpace(call.GeoLocationData) && zone.CenterLatitude != 0 && zone.CenterLongitude != 0)
+						call.GeoLocationData = $"{zone.CenterLatitude},{zone.CenterLongitude}";
+				}
+			}
 
 			if (call.Dispatches != null && call.Dispatches.Any())
 			{

@@ -1430,6 +1430,138 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					WHERE CallId = %CALLID%";
 			#endregion Contacts
 
+			#region IndoorMaps
+			IndoorMapsTableName = "IndoorMaps";
+			IndoorMapFloorsTableName = "IndoorMapFloors";
+			IndoorMapZonesTableName = "IndoorMapZones";
+			SelectIndoorMapsByDepartmentIdQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE DepartmentId = %DID% AND IsDeleted = false";
+			SelectIndoorMapFloorsByMapIdQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE IndoorMapId = %MAPID% AND IsDeleted = false
+					ORDER BY FloorOrder";
+			SelectIndoorMapZonesByFloorIdQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE IndoorMapFloorId = %FLOORID% AND IsDeleted = false";
+			SearchIndoorMapZonesQuery = @"
+					SELECT z.*
+					FROM %SCHEMA%.indoormapzones z
+					INNER JOIN %SCHEMA%.indoormapfloors f ON z.IndoorMapFloorId = f.IndoorMapFloorId
+					INNER JOIN %SCHEMA%.indoormaps m ON f.IndoorMapId = m.IndoorMapId
+					WHERE m.DepartmentId = %DID%
+					AND z.IsSearchable = true
+					AND z.IsDeleted = false
+					AND f.IsDeleted = false
+					AND m.IsDeleted = false
+					AND z.Name ILIKE '%' || %TERM% || '%'";
+			#endregion IndoorMaps
+
+			#region CustomMaps
+			CustomMapTilesTableName = "CustomMapTiles";
+			CustomMapImportsTableName = "CustomMapImports";
+			SelectCustomMapTileQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE CustomMapLayerId = %LAYERID% AND ZoomLevel = %ZOOM% AND TileX = %TX% AND TileY = %TY%";
+			SelectCustomMapTilesForLayerQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE CustomMapLayerId = %LAYERID%";
+			DeleteCustomMapTilesForLayerQuery = @"
+					DELETE FROM %SCHEMA%.%TABLENAME%
+					WHERE CustomMapLayerId = %LAYERID%";
+			SelectCustomMapImportsForMapQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE CustomMapId = %MAPID%
+					ORDER BY ImportedOn DESC";
+			SelectPendingCustomMapImportsQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE Status = 0
+					ORDER BY ImportedOn";
+			#endregion CustomMaps
+
+			#region Routes
+			RoutePlansTableName = "RoutePlans";
+			RouteStopsTableName = "RouteStops";
+			RouteSchedulesTableName = "RouteSchedules";
+			RouteInstancesTableName = "RouteInstances";
+			RouteInstanceStopsTableName = "RouteInstanceStops";
+			RouteDeviationsTableName = "RouteDeviations";
+
+			SelectRoutePlansByDepartmentIdQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE DepartmentId = %DID% AND IsDeleted = false";
+			SelectRoutePlansByUnitIdQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE UnitId = %UNITID% AND IsDeleted = false";
+			SelectActiveRoutePlansByDepartmentIdQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE DepartmentId = %DID% AND RouteStatus = 1 AND IsDeleted = false";
+			SelectRouteStopsByRoutePlanIdQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE RoutePlanId = %RPID% AND IsDeleted = false
+					ORDER BY StopOrder";
+			SelectRouteStopsByCallIdQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE CallId = %CALLID% AND IsDeleted = false";
+			SelectRouteSchedulesByRoutePlanIdQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE RoutePlanId = %RPID%";
+			SelectActiveSchedulesDueQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE IsActive = true AND EffectiveFrom <= %ASOF%
+					AND (EffectiveTo IS NULL OR EffectiveTo >= %ASOF%)";
+			SelectRouteInstancesByDepartmentIdQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE DepartmentId = %DID%
+					ORDER BY AddedOn DESC";
+			SelectActiveRouteInstancesByUnitIdQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE UnitId = %UNITID% AND Status = 1";
+			SelectRouteInstancesByRoutePlanIdQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE RoutePlanId = %RPID%
+					ORDER BY AddedOn DESC";
+			SelectRouteInstancesByDateRangeQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE DepartmentId = %DID%
+					AND AddedOn >= %STARTDATE% AND AddedOn <= %ENDDATE%
+					ORDER BY AddedOn DESC";
+			SelectRouteInstanceStopsByRouteInstanceIdQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE RouteInstanceId = %RIID%
+					ORDER BY StopOrder";
+			SelectRouteDeviationsByRouteInstanceIdQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE RouteInstanceId = %RIID%
+					ORDER BY DetectedOn DESC";
+			SelectUnacknowledgedRouteDeviationsByDepartmentQuery = @"
+					SELECT d.*
+					FROM %SCHEMA%.RouteDeviations d
+					INNER JOIN %SCHEMA%.RouteInstances i ON d.RouteInstanceId = i.RouteInstanceId
+					WHERE i.DepartmentId = %DID% AND d.IsAcknowledged = false
+					ORDER BY d.DetectedOn DESC";
+			#endregion Routes
+
 			#region User Defined Fields
 			UdfDefinitionsTableName = "UdfDefinitions";
 			UdfFieldsTableName = "UdfFields";

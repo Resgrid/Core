@@ -208,5 +208,25 @@ namespace Resgrid.Web.Helpers
 		{
 			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Contacts, ResgridClaimTypes.Actions.Delete);
 		}
+
+		public static bool CanViewRoutes()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Route, ResgridClaimTypes.Actions.View);
+		}
+
+		public static bool CanCreateRoutes()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Route, ResgridClaimTypes.Actions.Create);
+		}
+
+		public static bool CanEditRoutes()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Route, ResgridClaimTypes.Actions.Update);
+		}
+
+		public static bool CanDeleteRoutes()
+		{
+			return GetClaimsPrincipal().HasClaim(ResgridClaimTypes.Resources.Route, ResgridClaimTypes.Actions.Delete);
+		}
 	}
 }

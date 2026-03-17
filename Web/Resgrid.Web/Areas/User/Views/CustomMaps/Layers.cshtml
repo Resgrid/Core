@@ -1,0 +1,113 @@
+@model Resgrid.Web.Areas.User.Models.CustomMaps.CustomMapLayersView
+@using Resgrid.Model
+@{
+    ViewBag.Title = "Resgrid | Layers - " + Model.Map.Name;
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>Layers - @Model.Map.Name</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a></li>
+            <li><a asp-controller="CustomMaps" asp-action="Index" asp-route-area="User">Custom Maps</a></li>
+            <li class="active"><strong>Layers</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Add Layer</h5>
+                </div>
+                <div class="ibox-content">
+                    <form asp-action="NewLayer" asp-controller="CustomMaps" asp-route-area="User" method="post" enctype="multipart/form-data" class="form-horizontal">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="indoorMapId" value="@Model.Map.IndoorMapId" />
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Layer Name</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" name="name" placeholder="e.g. Floor 1, Base Map, Infrastructure" required />
+                            </div>
+                            <label class="col-sm-1 control-label">Order</label>
+                            <div class="col-sm-2">
+                                <input type="number" class="form-control" name="floorOrder" value="0" />
+                            </div>
+                            <label class="col-sm-1 control-label">Type</label>
+                            <div class="col-sm-2">
+                                <select class="form-control" name="layerType">
+                                    <option value="0">Floor Plan</option>
+                                    <option value="1">Overlay</option>
+                                    <option value="2">Data Layer</option>
+                                    <option value="3">Infrastructure</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Layer Image</label>
+                            <div class="col-sm-6">
+                                <input type="file" name="layerImage" accept="image/*" />
+                                <span class="help-block">Images larger than 2048px will be automatically tiled.</span>
+                            </div>
+                            <div class="col-sm-2">
+                                <button class="btn btn-primary" type="submit">Add Layer</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>Layers</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Order</th>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Has Image</th>
+                                    <th>Tiled</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Layers != null)
+                                {
+                                    foreach (var layer in Model.Layers)
+                                    {
+                                        <tr>
+                                            <td>@layer.FloorOrder</td>
+                                            <td>@layer.Name</td>
+                                            <td>@((CustomMapLayerType)layer.LayerType)</td>
+                                            <td>@(layer.ImageData != null || layer.IsTiled ? "Yes" : "No")</td>
+                                            <td>
+                                                @if (layer.IsTiled)
+                                                {
+                                                    <span class="label label-info">Tiled (z@(layer.TileMinZoom)-@(layer.TileMaxZoom))</span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="text-muted">No</span>
+                                                }
+                                            </td>
+                                            <td style="text-align:right;">
+                                                <a class="btn btn-primary btn-xs" asp-controller="CustomMaps" asp-action="RegionEditor" asp-route-id="@layer.IndoorMapFloorId" asp-route-area="User"><i class="fa fa-pencil"></i> Region Editor</a>
+                                                <a class="btn btn-danger btn-xs" asp-controller="CustomMaps" asp-action="DeleteLayer" asp-route-id="@layer.IndoorMapFloorId" asp-route-area="User" onclick="return confirm('Delete this layer?');"><i class="fa fa-trash"></i> Delete</a>
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

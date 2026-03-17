@@ -1,0 +1,98 @@
+@model Resgrid.Web.Areas.User.Models.CustomMaps.CustomMapNewView
+@using Resgrid.Model
+@{
+    ViewBag.Title = "Resgrid | New Custom Map";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>New Custom Map</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a></li>
+            <li><a asp-controller="CustomMaps" asp-action="Index" asp-route-area="User">Custom Maps</a></li>
+            <li class="active"><strong>New</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    @if (!string.IsNullOrWhiteSpace(Model.Message))
+                    {
+                        <div class="alert alert-danger">@Model.Message</div>
+                    }
+                    <form asp-action="New" asp-controller="CustomMaps" asp-route-area="User" method="post" class="form-horizontal">
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Map Type</label>
+                            <div class="col-sm-4">
+                                <select class="form-control" asp-for="Map.MapType">
+                                    <option value="0">Indoor</option>
+                                    <option value="1">Outdoor</option>
+                                    <option value="2">Event</option>
+                                    <option value="3">Custom</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Name</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" asp-for="Map.Name" placeholder="e.g. Main Hospital, Concert Venue" required />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Description</label>
+                            <div class="col-sm-10">
+                                <textarea class="form-control" asp-for="Map.Description" rows="3" placeholder="Optional description"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">Draw Bounds</label>
+                            <div class="col-sm-10">
+                                <p class="help-block">Draw a rectangle on the map below to define the bounds. Click the map to set the center point.</p>
+                            </div>
+                        </div>
+
+                        <div id="boundsMap" style="height: 450px; margin-bottom: 15px;"></div>
+
+                        <input type="hidden" asp-for="Map.CenterLatitude" id="Map_CenterLatitude" />
+                        <input type="hidden" asp-for="Map.CenterLongitude" id="Map_CenterLongitude" />
+                        <input type="hidden" asp-for="Map.BoundsNELat" id="Map_BoundsNELat" />
+                        <input type="hidden" asp-for="Map.BoundsNELon" id="Map_BoundsNELon" />
+                        <input type="hidden" asp-for="Map.BoundsSWLat" id="Map_BoundsSWLat" />
+                        <input type="hidden" asp-for="Map.BoundsSWLon" id="Map_BoundsSWLon" />
+                        <input type="hidden" asp-for="Map.BoundsGeoJson" id="Map_BoundsGeoJson" />
+
+                        <div class="hr-line-dashed"></div>
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <a class="btn btn-white" asp-controller="CustomMaps" asp-action="Index" asp-route-area="User">Cancel</a>
+                                <button class="btn btn-primary" type="submit">Save</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+    <script>
+        var initialLat = @(Model.Map.CenterLatitude != 0 ? Model.Map.CenterLatitude.ToString() : "39.7392");
+        var initialLon = @(Model.Map.CenterLongitude != 0 ? Model.Map.CenterLongitude.ToString() : "-104.9903");
+    </script>
+    <script src="~/js/app/internal/custommaps/resgrid.custommaps.editor.js" asp-append-version="true"></script>
+}

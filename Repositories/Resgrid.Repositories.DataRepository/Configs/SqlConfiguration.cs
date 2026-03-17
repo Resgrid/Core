@@ -453,6 +453,26 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectAllCallContactsByCallIdQuery { get; set; }
 		#endregion Contacts
 
+		#region IndoorMaps
+		public string IndoorMapsTableName { get; set; }
+		public string IndoorMapFloorsTableName { get; set; }
+		public string IndoorMapZonesTableName { get; set; }
+		public string SelectIndoorMapsByDepartmentIdQuery { get; set; }
+		public string SelectIndoorMapFloorsByMapIdQuery { get; set; }
+		public string SelectIndoorMapZonesByFloorIdQuery { get; set; }
+		public string SearchIndoorMapZonesQuery { get; set; }
+		#endregion IndoorMaps
+
+		#region CustomMaps
+		public string CustomMapTilesTableName { get; set; }
+		public string CustomMapImportsTableName { get; set; }
+		public string SelectCustomMapTileQuery { get; set; }
+		public string SelectCustomMapTilesForLayerQuery { get; set; }
+		public string DeleteCustomMapTilesForLayerQuery { get; set; }
+		public string SelectCustomMapImportsForMapQuery { get; set; }
+		public string SelectPendingCustomMapImportsQuery { get; set; }
+		#endregion CustomMaps
+
 		#region User Defined Fields
 		public string UdfDefinitionsTableName { get; set; }
 		public string UdfFieldsTableName { get; set; }
@@ -464,6 +484,29 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string UpdateUdfDefinitionsToInactiveQuery { get; set; }
 		public string DeleteUdfFieldValuesByEntityAndDefinitionQuery { get; set; }
 		#endregion User Defined Fields
+
+		#region Routes
+		public string RoutePlansTableName { get; set; }
+		public string RouteStopsTableName { get; set; }
+		public string RouteSchedulesTableName { get; set; }
+		public string RouteInstancesTableName { get; set; }
+		public string RouteInstanceStopsTableName { get; set; }
+		public string RouteDeviationsTableName { get; set; }
+		public string SelectRoutePlansByDepartmentIdQuery { get; set; }
+		public string SelectRoutePlansByUnitIdQuery { get; set; }
+		public string SelectActiveRoutePlansByDepartmentIdQuery { get; set; }
+		public string SelectRouteStopsByRoutePlanIdQuery { get; set; }
+		public string SelectRouteStopsByCallIdQuery { get; set; }
+		public string SelectRouteSchedulesByRoutePlanIdQuery { get; set; }
+		public string SelectActiveSchedulesDueQuery { get; set; }
+		public string SelectRouteInstancesByDepartmentIdQuery { get; set; }
+		public string SelectActiveRouteInstancesByUnitIdQuery { get; set; }
+		public string SelectRouteInstancesByRoutePlanIdQuery { get; set; }
+		public string SelectRouteInstancesByDateRangeQuery { get; set; }
+		public string SelectRouteInstanceStopsByRouteInstanceIdQuery { get; set; }
+		public string SelectRouteDeviationsByRouteInstanceIdQuery { get; set; }
+		public string SelectUnacknowledgedRouteDeviationsByDepartmentQuery { get; set; }
+		#endregion Routes
 
 		// Identity
 

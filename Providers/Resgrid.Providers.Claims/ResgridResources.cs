@@ -162,5 +162,10 @@
 		public const string Udf_Update = "Udf_Update";
 		public const string Udf_Create = "Udf_Create";
 		public const string Udf_Delete = "Udf_Delete";
+
+		public const string Route_View = "Route_View";
+		public const string Route_Update = "Route_Update";
+		public const string Route_Create = "Route_Create";
+		public const string Route_Delete = "Route_Delete";
 	}
 }

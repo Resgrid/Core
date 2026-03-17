@@ -359,6 +359,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (model.Contact.DepartmentId != DepartmentId)
 				return Unauthorized();
+
+			if (!String.IsNullOrWhiteSpace(model.Contact.EntranceGpsCoordinates))
 			{
 				var entranceGpsCoordinates = model.Contact.EntranceGpsCoordinates.Split(',');
 				model.LocationGpsLatitude = entranceGpsCoordinates[0];

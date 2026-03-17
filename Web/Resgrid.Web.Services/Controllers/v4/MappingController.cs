@@ -43,6 +43,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IGeoLocationProvider _geoLocationProvider;
 		private readonly IMappingService _mappingService;
 		private readonly Model.Services.IAuthorizationService _authorizationService;
+		private readonly IIndoorMapService _indoorMapService;
+		private readonly ICustomMapService _customMapService;
 
 		public MappingController(
 			IUsersService usersService,
@@ -58,7 +60,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IDepartmentSettingsService departmentSettingsService,
 			IGeoLocationProvider geoLocationProvider,
 			IMappingService mappingService,
-			Model.Services.IAuthorizationService authorizationService
+			Model.Services.IAuthorizationService authorizationService,
+			IIndoorMapService indoorMapService,
+			ICustomMapService customMapService
 			)
 		{
 			_usersService = usersService;
@@ -75,6 +79,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_geoLocationProvider = geoLocationProvider;
 			_mappingService = mappingService;
 			_authorizationService = authorizationService;
+			_indoorMapService = indoorMapService;
+			_customMapService = customMapService;
 		}
 		#endregion Members and Constructors
 
@@ -509,6 +515,531 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data.Features = layer.Data.Convert();
 
 			return result;
+		}
+
+		/// <summary>
+		/// Gets all indoor maps for the department.
+		/// </summary>
+		/// <returns>GetIndoorMapsResult object with list of indoor maps</returns>
+		[HttpGet("GetIndoorMaps")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<GetIndoorMapsResult>> GetIndoorMaps()
+		{
+			var result = new GetIndoorMapsResult();
+
+			var maps = await _indoorMapService.GetIndoorMapsForDepartmentAsync(DepartmentId);
+
+			if (maps != null && maps.Count > 0)
+			{
+				foreach (var m in maps)
+				{
+					result.Data.Add(new IndoorMapResultData
+					{
+						IndoorMapId = m.IndoorMapId,
+						Name = m.Name,
+						Description = m.Description,
+						CenterLatitude = m.CenterLatitude,
+						CenterLongitude = m.CenterLongitude,
+						BoundsNELat = m.BoundsNELat,
+						BoundsNELon = m.BoundsNELon,
+						BoundsSWLat = m.BoundsSWLat,
+						BoundsSWLon = m.BoundsSWLon,
+						DefaultFloorId = m.DefaultFloorId
+					});
+				}
+			}
+
+			result.PageSize = result.Data.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Gets a specific indoor map with its floors.
+		/// </summary>
+		/// <param name="id">Indoor map id</param>
+		/// <returns>GetIndoorMapResult object with map and floor data</returns>
+		[HttpGet("GetIndoorMap/{id}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<GetIndoorMapResult>> GetIndoorMap(string id)
+		{
+			var result = new GetIndoorMapResult();
+
+			var map = await _indoorMapService.GetIndoorMapByIdAsync(id);
+
+			if (map == null || map.DepartmentId != DepartmentId)
+				return NotFound();
+
+			result.Data.Map = new IndoorMapResultData
+			{
+				IndoorMapId = map.IndoorMapId,
+				Name = map.Name,
+				Description = map.Description,
+				CenterLatitude = map.CenterLatitude,
+				CenterLongitude = map.CenterLongitude,
+				BoundsNELat = map.BoundsNELat,
+				BoundsNELon = map.BoundsNELon,
+				BoundsSWLat = map.BoundsSWLat,
+				BoundsSWLon = map.BoundsSWLon,
+				DefaultFloorId = map.DefaultFloorId
+			};
+
+			var floors = await _indoorMapService.GetFloorsForMapAsync(id);
+
+			if (floors != null && floors.Count > 0)
+			{
+				foreach (var f in floors)
+				{
+					result.Data.Floors.Add(new IndoorMapFloorResultData
+					{
+						IndoorMapFloorId = f.IndoorMapFloorId,
+						IndoorMapId = f.IndoorMapId,
+						Name = f.Name,
+						FloorOrder = f.FloorOrder,
+						HasImage = f.ImageData != null && f.ImageData.Length > 0,
+						BoundsNELat = f.BoundsNELat,
+						BoundsNELon = f.BoundsNELon,
+						BoundsSWLat = f.BoundsSWLat,
+						BoundsSWLon = f.BoundsSWLon,
+						Opacity = f.Opacity
+					});
+				}
+			}
+
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Gets a specific indoor map floor with its zones.
+		/// </summary>
+		/// <param name="floorId">Indoor map floor id</param>
+		/// <returns>GetIndoorMapFloorResult object with floor and zone data</returns>
+		[HttpGet("GetIndoorMapFloor/{floorId}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<GetIndoorMapFloorResult>> GetIndoorMapFloor(string floorId)
+		{
+			var result = new GetIndoorMapFloorResult();
+
+			var floor = await _indoorMapService.GetFloorByIdAsync(floorId);
+
+			if (floor == null)
+				return NotFound();
+
+			var map = await _indoorMapService.GetIndoorMapByIdAsync(floor.IndoorMapId);
+
+			if (map == null || map.DepartmentId != DepartmentId)
+				return NotFound();
+
+			result.Data = new IndoorMapFloorResultData
+			{
+				IndoorMapFloorId = floor.IndoorMapFloorId,
+				IndoorMapId = floor.IndoorMapId,
+				Name = floor.Name,
+				FloorOrder = floor.FloorOrder,
+				HasImage = floor.ImageData != null && floor.ImageData.Length > 0,
+				BoundsNELat = floor.BoundsNELat,
+				BoundsNELon = floor.BoundsNELon,
+				BoundsSWLat = floor.BoundsSWLat,
+				BoundsSWLon = floor.BoundsSWLon,
+				Opacity = floor.Opacity,
+				Zones = new List<IndoorMapZoneResultData>()
+			};
+
+			var zones = await _indoorMapService.GetZonesForFloorAsync(floorId);
+
+			if (zones != null && zones.Count > 0)
+			{
+				foreach (var z in zones)
+				{
+					result.Data.Zones.Add(new IndoorMapZoneResultData
+					{
+						IndoorMapZoneId = z.IndoorMapZoneId,
+						IndoorMapFloorId = z.IndoorMapFloorId,
+						Name = z.Name,
+						Description = z.Description,
+						ZoneType = z.ZoneType,
+						PixelGeometry = z.PixelGeometry,
+						GeoGeometry = z.GeoGeometry,
+						CenterPixelX = z.CenterPixelX,
+						CenterPixelY = z.CenterPixelY,
+						CenterLatitude = z.CenterLatitude,
+						CenterLongitude = z.CenterLongitude,
+						Color = z.Color,
+						Metadata = z.Metadata,
+						IsSearchable = z.IsSearchable
+					});
+				}
+			}
+
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Gets the image for a specific indoor map floor.
+		/// </summary>
+		/// <param name="floorId">Indoor map floor id</param>
+		/// <returns>Floor image file</returns>
+		[HttpGet("GetIndoorMapFloorImage/{floorId}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<IActionResult> GetIndoorMapFloorImage(string floorId)
+		{
+			var floor = await _indoorMapService.GetFloorByIdAsync(floorId);
+
+			if (floor == null)
+				return NotFound();
+
+			var map = await _indoorMapService.GetIndoorMapByIdAsync(floor.IndoorMapId);
+
+			if (map == null || map.DepartmentId != DepartmentId)
+				return NotFound();
+
+			if (floor.ImageData == null || floor.ImageData.Length == 0)
+				return NotFound();
+
+			return File(floor.ImageData, floor.ImageContentType ?? "image/png");
+		}
+
+		/// <summary>
+		/// Searches for indoor map zones matching the specified term.
+		/// </summary>
+		/// <param name="term">Search term</param>
+		/// <returns>SearchIndoorLocationsResult object with matching zones</returns>
+		[HttpGet("SearchIndoorLocations")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<SearchIndoorLocationsResult>> SearchIndoorLocations(string term)
+		{
+			var result = new SearchIndoorLocationsResult();
+
+			if (!string.IsNullOrWhiteSpace(term))
+			{
+				var zones = await _indoorMapService.SearchZonesAsync(DepartmentId, term);
+
+				if (zones != null && zones.Count > 0)
+				{
+					foreach (var z in zones)
+					{
+						result.Data.Add(new IndoorMapZoneResultData
+						{
+							IndoorMapZoneId = z.IndoorMapZoneId,
+							IndoorMapFloorId = z.IndoorMapFloorId,
+							Name = z.Name,
+							Description = z.Description,
+							ZoneType = z.ZoneType,
+							PixelGeometry = z.PixelGeometry,
+							GeoGeometry = z.GeoGeometry,
+							CenterPixelX = z.CenterPixelX,
+							CenterPixelY = z.CenterPixelY,
+							CenterLatitude = z.CenterLatitude,
+							CenterLongitude = z.CenterLongitude,
+							Color = z.Color,
+							Metadata = z.Metadata,
+							IsSearchable = z.IsSearchable
+						});
+					}
+				}
+			}
+
+			result.PageSize = result.Data.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Gets all custom maps for the department, with optional type filter.
+		/// </summary>
+		/// <param name="type">Optional map type filter (0=Indoor, 1=Outdoor, 2=Event, 3=Custom)</param>
+		/// <returns>GetCustomMapsResult object</returns>
+		[HttpGet("GetCustomMaps")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<GetCustomMapsResult>> GetCustomMaps(int? type)
+		{
+			var result = new GetCustomMapsResult();
+
+			CustomMapType? filterType = type.HasValue ? (CustomMapType)type.Value : null;
+			var maps = await _customMapService.GetCustomMapsForDepartmentAsync(DepartmentId, filterType);
+
+			if (maps != null && maps.Count > 0)
+			{
+				foreach (var m in maps)
+				{
+					result.Data.Add(new CustomMapResultData
+					{
+						IndoorMapId = m.IndoorMapId,
+						Name = m.Name,
+						Description = m.Description,
+						MapType = m.MapType,
+						CenterLatitude = m.CenterLatitude,
+						CenterLongitude = m.CenterLongitude,
+						BoundsNELat = m.BoundsNELat,
+						BoundsNELon = m.BoundsNELon,
+						BoundsSWLat = m.BoundsSWLat,
+						BoundsSWLon = m.BoundsSWLon,
+						BoundsGeoJson = m.BoundsGeoJson,
+						DefaultFloorId = m.DefaultFloorId
+					});
+				}
+			}
+
+			result.PageSize = result.Data.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Gets a specific custom map with its layers.
+		/// </summary>
+		/// <param name="id">Custom map id</param>
+		/// <returns>GetCustomMapResult object</returns>
+		[HttpGet("GetCustomMap/{id}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<GetCustomMapResult>> GetCustomMap(string id)
+		{
+			var result = new GetCustomMapResult();
+
+			var map = await _customMapService.GetCustomMapByIdAsync(id);
+			if (map == null || map.DepartmentId != DepartmentId)
+				return NotFound();
+
+			result.Data.Map = new CustomMapResultData
+			{
+				IndoorMapId = map.IndoorMapId,
+				Name = map.Name,
+				Description = map.Description,
+				MapType = map.MapType,
+				CenterLatitude = map.CenterLatitude,
+				CenterLongitude = map.CenterLongitude,
+				BoundsNELat = map.BoundsNELat,
+				BoundsNELon = map.BoundsNELon,
+				BoundsSWLat = map.BoundsSWLat,
+				BoundsSWLon = map.BoundsSWLon,
+				BoundsGeoJson = map.BoundsGeoJson,
+				DefaultFloorId = map.DefaultFloorId
+			};
+
+			var layers = await _customMapService.GetLayersForMapAsync(id);
+			if (layers != null && layers.Count > 0)
+			{
+				foreach (var l in layers)
+				{
+					result.Data.Layers.Add(new CustomMapLayerResultData
+					{
+						IndoorMapFloorId = l.IndoorMapFloorId,
+						IndoorMapId = l.IndoorMapId,
+						Name = l.Name,
+						FloorOrder = l.FloorOrder,
+						LayerType = l.LayerType,
+						HasImage = (l.ImageData != null && l.ImageData.Length > 0) || l.IsTiled,
+						IsTiled = l.IsTiled,
+						TileMinZoom = l.TileMinZoom,
+						TileMaxZoom = l.TileMaxZoom,
+						BoundsNELat = l.BoundsNELat,
+						BoundsNELon = l.BoundsNELon,
+						BoundsSWLat = l.BoundsSWLat,
+						BoundsSWLon = l.BoundsSWLon,
+						Opacity = l.Opacity
+					});
+				}
+			}
+
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Gets a specific custom map layer with its regions.
+		/// </summary>
+		/// <param name="layerId">Layer id</param>
+		/// <returns>GetCustomMapLayerResult object</returns>
+		[HttpGet("GetCustomMapLayer/{layerId}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<GetCustomMapLayerResult>> GetCustomMapLayer(string layerId)
+		{
+			var result = new GetCustomMapLayerResult();
+
+			var layer = await _customMapService.GetLayerByIdAsync(layerId);
+			if (layer == null)
+				return NotFound();
+
+			var map = await _customMapService.GetCustomMapByIdAsync(layer.IndoorMapId);
+			if (map == null || map.DepartmentId != DepartmentId)
+				return NotFound();
+
+			result.Data = new CustomMapLayerResultData
+			{
+				IndoorMapFloorId = layer.IndoorMapFloorId,
+				IndoorMapId = layer.IndoorMapId,
+				Name = layer.Name,
+				FloorOrder = layer.FloorOrder,
+				LayerType = layer.LayerType,
+				HasImage = (layer.ImageData != null && layer.ImageData.Length > 0) || layer.IsTiled,
+				IsTiled = layer.IsTiled,
+				TileMinZoom = layer.TileMinZoom,
+				TileMaxZoom = layer.TileMaxZoom,
+				BoundsNELat = layer.BoundsNELat,
+				BoundsNELon = layer.BoundsNELon,
+				BoundsSWLat = layer.BoundsSWLat,
+				BoundsSWLon = layer.BoundsSWLon,
+				Opacity = layer.Opacity,
+				Regions = new System.Collections.Generic.List<CustomMapRegionResultData>()
+			};
+
+			var regions = await _customMapService.GetRegionsForLayerAsync(layerId);
+			if (regions != null && regions.Count > 0)
+			{
+				foreach (var r in regions)
+				{
+					result.Data.Regions.Add(new CustomMapRegionResultData
+					{
+						IndoorMapZoneId = r.IndoorMapZoneId,
+						IndoorMapFloorId = r.IndoorMapFloorId,
+						Name = r.Name,
+						Description = r.Description,
+						ZoneType = r.ZoneType,
+						PixelGeometry = r.PixelGeometry,
+						GeoGeometry = r.GeoGeometry,
+						CenterPixelX = r.CenterPixelX,
+						CenterPixelY = r.CenterPixelY,
+						CenterLatitude = r.CenterLatitude,
+						CenterLongitude = r.CenterLongitude,
+						Color = r.Color,
+						Metadata = r.Metadata,
+						IsSearchable = r.IsSearchable,
+						IsDispatchable = r.IsDispatchable
+					});
+				}
+			}
+
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Gets a tile image for a specific custom map layer.
+		/// </summary>
+		/// <param name="layerId">Layer id</param>
+		/// <param name="z">Zoom level</param>
+		/// <param name="x">Tile X</param>
+		/// <param name="y">Tile Y</param>
+		/// <returns>Tile image file</returns>
+		[HttpGet("GetCustomMapTile/{layerId}/{z}/{x}/{y}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<IActionResult> GetCustomMapTile(string layerId, int z, int x, int y)
+		{
+			var tile = await _customMapService.GetTileAsync(layerId, z, x, y);
+
+			if (tile == null)
+				return NotFound();
+
+			return File(tile.TileData, tile.TileContentType ?? "image/png");
+		}
+
+		/// <summary>
+		/// Gets the full image for a non-tiled custom map layer.
+		/// </summary>
+		/// <param name="layerId">Layer id</param>
+		/// <returns>Layer image file</returns>
+		[HttpGet("GetCustomMapLayerImage/{layerId}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<IActionResult> GetCustomMapLayerImage(string layerId)
+		{
+			var layer = await _customMapService.GetLayerByIdAsync(layerId);
+			if (layer == null)
+				return NotFound();
+
+			var map = await _customMapService.GetCustomMapByIdAsync(layer.IndoorMapId);
+			if (map == null || map.DepartmentId != DepartmentId)
+				return NotFound();
+
+			if (layer.ImageData == null || layer.ImageData.Length == 0)
+				return NotFound();
+
+			return File(layer.ImageData, layer.ImageContentType ?? "image/png");
+		}
+
+		/// <summary>
+		/// Searches for custom map regions matching the specified term.
+		/// </summary>
+		/// <param name="term">Search term</param>
+		/// <returns>SearchCustomMapRegionsResult object</returns>
+		[HttpGet("SearchCustomMapRegions")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<SearchCustomMapRegionsResult>> SearchCustomMapRegions(string term)
+		{
+			var result = new SearchCustomMapRegionsResult();
+
+			if (!string.IsNullOrWhiteSpace(term))
+			{
+				var regions = await _customMapService.SearchRegionsAsync(DepartmentId, term);
+
+				if (regions != null && regions.Count > 0)
+				{
+					foreach (var r in regions)
+					{
+						result.Data.Add(new CustomMapRegionResultData
+						{
+							IndoorMapZoneId = r.IndoorMapZoneId,
+							IndoorMapFloorId = r.IndoorMapFloorId,
+							Name = r.Name,
+							Description = r.Description,
+							ZoneType = r.ZoneType,
+							PixelGeometry = r.PixelGeometry,
+							GeoGeometry = r.GeoGeometry,
+							CenterPixelX = r.CenterPixelX,
+							CenterPixelY = r.CenterPixelY,
+							CenterLatitude = r.CenterLatitude,
+							CenterLongitude = r.CenterLongitude,
+							Color = r.Color,
+							Metadata = r.Metadata,
+							IsSearchable = r.IsSearchable,
+							IsDispatchable = r.IsDispatchable
+						});
+					}
+				}
+			}
+
+			result.PageSize = result.Data.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
 		}
 	}
 }

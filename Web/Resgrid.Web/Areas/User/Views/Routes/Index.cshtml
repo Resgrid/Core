@@ -1,0 +1,84 @@
+@model Resgrid.Web.Areas.User.Models.Routes.RouteIndexView
+@using Resgrid.Model
+@{
+    ViewBag.Title = "Resgrid | Routes";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>Routes</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+            </li>
+            <li class="active">
+                <strong>Routes</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-sm-8">
+        <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+            <a class="btn btn-success" asp-controller="Routes" asp-action="New" asp-route-area="User">New Route</a>
+            <a class="btn btn-info" asp-controller="Routes" asp-action="ActiveRoutes" asp-route-area="User">Active Routes</a>
+        </div>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped" id="routePlansTable">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Status</th>
+                                <th>Stops</th>
+                                <th>Profile</th>
+                                <th>Created</th>
+                                <th style="width:200px;">Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            @foreach (var plan in Model.Plans)
+                            {
+                                <tr>
+                                    <td>@plan.Name</td>
+                                    <td>@((RouteStatus)plan.RouteStatus)</td>
+                                    <td>-</td>
+                                    <td>@(plan.MapboxRouteProfile ?? "driving")</td>
+                                    <td>@plan.AddedOn.ToString("yyyy-MM-dd")</td>
+                                    <td>
+                                        <a class="btn btn-xs btn-primary" asp-controller="Routes" asp-action="View" asp-route-id="@plan.RoutePlanId" asp-route-area="User">
+                                            <i class="fa fa-eye"></i> View
+                                        </a>
+                                        <a class="btn btn-xs btn-warning" asp-controller="Routes" asp-action="Edit" asp-route-id="@plan.RoutePlanId" asp-route-area="User">
+                                            <i class="fa fa-pencil"></i> Edit
+                                        </a>
+                                        <a class="btn btn-xs btn-info" asp-controller="Routes" asp-action="Instances" asp-route-routePlanId="@plan.RoutePlanId" asp-route-area="User">
+                                            <i class="fa fa-history"></i> History
+                                        </a>
+                                        <form asp-controller="Routes" asp-action="Delete" asp-route-area="User" method="post" style="display:inline;">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@plan.RoutePlanId" />
+                                            <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('Delete this route plan?');">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/app/internal/routes/resgrid.routes.index.js"></script>
+}

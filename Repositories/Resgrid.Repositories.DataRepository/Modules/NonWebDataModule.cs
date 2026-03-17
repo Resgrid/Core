@@ -167,6 +167,23 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<ContactsRepository>().As<IContactsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ContactCategoryRepository>().As<IContactCategoryRepository>().InstancePerLifetimeScope();
 
+			// Indoor Maps Repositories
+			builder.RegisterType<IndoorMapsRepository>().As<IIndoorMapsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<IndoorMapFloorsRepository>().As<IIndoorMapFloorsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<IndoorMapZonesRepository>().As<IIndoorMapZonesRepository>().InstancePerLifetimeScope();
+
+			// Custom Maps Repositories
+			builder.RegisterType<CustomMapTilesRepository>().As<ICustomMapTilesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CustomMapImportsRepository>().As<ICustomMapImportsRepository>().InstancePerLifetimeScope();
+
+			// Route Planning Repositories
+			builder.RegisterType<RoutePlansRepository>().As<IRoutePlansRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RouteStopsRepository>().As<IRouteStopsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RouteSchedulesRepository>().As<IRouteSchedulesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RouteInstancesRepository>().As<IRouteInstancesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RouteInstanceStopsRepository>().As<IRouteInstanceStopsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RouteDeviationsRepository>().As<IRouteDeviationsRepository>().InstancePerLifetimeScope();
+
 			// SSO Repositories
 			builder.RegisterType<DepartmentSsoConfigRepository>().As<IDepartmentSsoConfigRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentSecurityPolicyRepository>().As<IDepartmentSecurityPolicyRepository>().InstancePerLifetimeScope();

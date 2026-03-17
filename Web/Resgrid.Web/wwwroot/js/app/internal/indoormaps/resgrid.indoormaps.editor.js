@@ -4,9 +4,9 @@ $(document).ready(function () {
         var lon = parseFloat($('#IndoorMap_CenterLongitude').val()) || -104.9903;
 
         var map = L.map('boundsMap').setView([lat, lon], 16);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        L.tileLayer(osmTileUrl, {
             maxZoom: 22,
-            attribution: '© OpenStreetMap'
+            attribution: osmTileAttribution
         }).addTo(map);
 
         var rect = null;

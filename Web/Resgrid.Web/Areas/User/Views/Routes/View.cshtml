@@ -1,15 +1,16 @@
 @model Resgrid.Web.Areas.User.Models.Routes.RouteDetailView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Routes.Routes> localizer
 @{
-    ViewBag.Title = "Resgrid | Route Detail";
+    ViewBag.Title = "Resgrid | " + localizer["RouteDetailPageTitle"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-12">
         <h2>@Model.Plan.Name</h2>
         <ol class="breadcrumb">
-            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a></li>
-            <li><a asp-controller="Routes" asp-action="Index" asp-route-area="User">Routes</a></li>
-            <li class="active"><strong>View</strong></li>
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="Routes" asp-action="Index" asp-route-area="User">@localizer["RoutesHeader"]</a></li>
+            <li class="active"><strong>@localizer["ViewBreadcrumb"]</strong></li>
         </ol>
     </div>
 </div>
@@ -18,7 +19,7 @@
     <div class="row">
         <div class="col-lg-8">
             <div class="ibox float-e-margins">
-                <div class="ibox-title"><h5>Route Map</h5></div>
+                <div class="ibox-title"><h5>@localizer["RouteMapTitle"]</h5></div>
                 <div class="ibox-content">
                     <div id="routeMap" style="height:500px;"></div>
                 </div>
@@ -26,23 +27,23 @@
         </div>
         <div class="col-lg-4">
             <div class="ibox float-e-margins">
-                <div class="ibox-title"><h5>Details</h5></div>
+                <div class="ibox-title"><h5>@localizer["DetailsTitle"]</h5></div>
                 <div class="ibox-content">
                     <dl class="dl-horizontal">
-                        <dt>Status</dt>
+                        <dt>@localizer["StatusLabel"]</dt>
                         <dd>@((Resgrid.Model.RouteStatus)Model.Plan.RouteStatus)</dd>
-                        <dt>Profile</dt>
+                        <dt>@localizer["ProfileLabel"]</dt>
                         <dd>@(Model.Plan.MapboxRouteProfile ?? "driving")</dd>
-                        <dt>Geofence</dt>
+                        <dt>@localizer["GeofenceLabel"]</dt>
                         <dd>@Model.Plan.GeofenceRadiusMeters m</dd>
                         @if (Model.Plan.EstimatedDistanceMeters.HasValue)
                         {
-                            <dt>Distance</dt>
+                            <dt>@localizer["DistanceLabel"]</dt>
                             <dd>@(Math.Round(Model.Plan.EstimatedDistanceMeters.Value / 1000, 1)) km</dd>
                         }
                         @if (Model.Plan.EstimatedDurationSeconds.HasValue)
                         {
-                            <dt>Duration</dt>
+                            <dt>@localizer["DurationLabel"]</dt>
                             <dd>@(Math.Round(Model.Plan.EstimatedDurationSeconds.Value / 60, 0)) min</dd>
                         }
                     </dl>
@@ -50,7 +51,7 @@
             </div>
 
             <div class="ibox float-e-margins">
-                <div class="ibox-title"><h5>Stops (@Model.Stops.Count)</h5></div>
+                <div class="ibox-title"><h5>@localizer["Stops"] (@Model.Stops.Count)</h5></div>
                 <div class="ibox-content">
                     <div class="feed-activity-list">
                         @foreach (var stop in Model.Stops.OrderBy(s => s.StopOrder))
@@ -77,8 +78,8 @@
         var osmTileUrl = '@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()';
         var osmTileAttribution = '@Resgrid.Config.MappingConfig.LeafletAttribution';
         var routeStops = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Stops.OrderBy(s => s.StopOrder).Select(s => new { s.Name, lat = s.Latitude, lng = s.Longitude })));
-        var routeGeometry = '@Html.Raw(Model.Plan.MapboxRouteGeometry ?? "")';
-        var routeColor = '@Html.Raw(Model.Plan.RouteColor ?? "#3388ff")';
+        var routeGeometry = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Plan.MapboxRouteGeometry ?? ""));
+        var routeColor = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Plan.RouteColor ?? "#3388ff"));
     </script>
     <script src="~/js/app/internal/routes/resgrid.routes.view.js"></script>
 }

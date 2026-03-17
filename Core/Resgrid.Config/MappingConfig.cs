@@ -59,6 +59,12 @@
 
 		public static string LeafletAttribution = "© OpenStreetMap contributors CC-BY-SA";
 
+		/***********************************
+		 * Geocoding and Routing Service URLs
+		 ***********************************/
+		public static string NominatimUrl = "https://nominatim.openstreetmap.org";
+		public static string OsrmUrl = "https://router.project-osrm.org";
+
 		public static string GetWebsiteOSMUrl()
 		{
 			if (!string.IsNullOrWhiteSpace(WebsiteOSMKey))

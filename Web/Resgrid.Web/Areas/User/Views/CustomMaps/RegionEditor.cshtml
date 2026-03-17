@@ -1,12 +1,12 @@
 @model Resgrid.Web.Areas.User.Models.CustomMaps.CustomMapRegionEditorView
 @using Resgrid.Model
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.CustomMaps.CustomMaps> localizer
 @{
-    ViewBag.Title = "Resgrid | Region Editor - " + Model.Layer.Name;
+    ViewBag.Title = "Resgrid | " + localizer["RegionEditorPageTitlePrefix"] + " - " + Model.Layer.Name;
 }
 
 @section Styles {
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://unpkg.com/@@geoman-io/leaflet-geoman-free@2.16.0/dist/leaflet-geoman.css" />
+    <link rel="stylesheet" href="~/lib/geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css" />
     <style>
         #regionMap { height: 600px; width: 100%; }
         .region-panel { max-height: 600px; overflow-y: auto; }
@@ -17,12 +17,12 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-6">
-        <h2>Region Editor - @Model.Map.Name > @Model.Layer.Name</h2>
+        <h2>@localizer["RegionEditorBreadcrumb"] - @Model.Map.Name > @Model.Layer.Name</h2>
         <ol class="breadcrumb">
-            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a></li>
-            <li><a asp-controller="CustomMaps" asp-action="Index" asp-route-area="User">Custom Maps</a></li>
-            <li><a asp-controller="CustomMaps" asp-action="Layers" asp-route-id="@Model.Map.IndoorMapId" asp-route-area="User">Layers</a></li>
-            <li class="active"><strong>Region Editor</strong></li>
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="CustomMaps" asp-action="Index" asp-route-area="User">@localizer["CustomMapsHeader"]</a></li>
+            <li><a asp-controller="CustomMaps" asp-action="Layers" asp-route-id="@Model.Map.IndoorMapId" asp-route-area="User">@localizer["LayersBreadcrumb"]</a></li>
+            <li class="active"><strong>@localizer["RegionEditorBreadcrumb"]</strong></li>
         </ol>
     </div>
 </div>
@@ -39,7 +39,7 @@
         <div class="col-lg-3">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h5>Regions</h5>
+                    <h5>@localizer["RegionsTitle"]</h5>
                 </div>
                 <div class="ibox-content region-panel" id="regionList">
                     @if (Model.Regions != null)
@@ -54,7 +54,7 @@
                                 <br /><small class="text-muted">@((IndoorMapZoneType)region.ZoneType)</small>
                                 @if (region.IsDispatchable)
                                 {
-                                    <span class="label label-success label-sm">Dispatchable</span>
+                                    <span class="label label-success label-sm">@localizer["Dispatchable"]</span>
                                 }
                             </div>
                         }
@@ -64,52 +64,52 @@
 
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h5>Region Properties</h5>
+                    <h5>@localizer["RegionPropertiesTitle"]</h5>
                 </div>
                 <div class="ibox-content" id="regionProperties" style="display:none;">
                     <div class="form-group">
-                        <label>Name</label>
+                        <label>@localizer["RegionNameLabel"]</label>
                         <input type="text" class="form-control" id="regionName" />
                     </div>
                     <div class="form-group">
-                        <label>Type</label>
+                        <label>@localizer["RegionTypeLabel"]</label>
                         <select class="form-control" id="regionType">
-                            <option value="0">Room</option>
-                            <option value="1">Wing</option>
-                            <option value="2">Corridor</option>
-                            <option value="3">Stairwell</option>
-                            <option value="4">Elevator</option>
-                            <option value="5">Hazard Zone</option>
-                            <option value="6">Assembly Point</option>
-                            <option value="7">Staging Area</option>
-                            <option value="8">Access Point</option>
-                            <option value="9">Utility</option>
-                            <option value="10">Search Grid</option>
-                            <option value="11">Stage</option>
-                            <option value="12">Gate</option>
-                            <option value="13">Entrance</option>
-                            <option value="14">Parking Area</option>
-                            <option value="15">Vendor Area</option>
-                            <option value="16">Emergency Lane</option>
-                            <option value="17">District</option>
-                            <option value="99">Custom</option>
+                            <option value="0">@localizer["RegionTypeRoom"]</option>
+                            <option value="1">@localizer["RegionTypeWing"]</option>
+                            <option value="2">@localizer["RegionTypeCorridor"]</option>
+                            <option value="3">@localizer["RegionTypeStairwell"]</option>
+                            <option value="4">@localizer["RegionTypeElevator"]</option>
+                            <option value="5">@localizer["RegionTypeHazardZone"]</option>
+                            <option value="6">@localizer["RegionTypeAssemblyPoint"]</option>
+                            <option value="7">@localizer["RegionTypeStagingArea"]</option>
+                            <option value="8">@localizer["RegionTypeAccessPoint"]</option>
+                            <option value="9">@localizer["RegionTypeUtility"]</option>
+                            <option value="10">@localizer["RegionTypeSearchGrid"]</option>
+                            <option value="11">@localizer["RegionTypeStage"]</option>
+                            <option value="12">@localizer["RegionTypeGate"]</option>
+                            <option value="13">@localizer["RegionTypeEntrance"]</option>
+                            <option value="14">@localizer["RegionTypeParkingArea"]</option>
+                            <option value="15">@localizer["RegionTypeVendorArea"]</option>
+                            <option value="16">@localizer["RegionTypeEmergencyLane"]</option>
+                            <option value="17">@localizer["RegionTypeDistrict"]</option>
+                            <option value="99">@localizer["RegionTypeCustom"]</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Color</label>
+                        <label>@localizer["RegionColorLabel"]</label>
                         <input type="color" class="form-control" id="regionColor" value="#3388ff" />
                     </div>
                     <div class="form-group">
-                        <label>Description</label>
+                        <label>@localizer["RegionDescriptionLabel"]</label>
                         <textarea class="form-control" id="regionDescription" rows="2"></textarea>
                     </div>
                     <div class="checkbox">
-                        <label><input type="checkbox" id="regionSearchable" checked /> Searchable in dispatch</label>
+                        <label><input type="checkbox" id="regionSearchable" checked /> @localizer["RegionSearchable"]</label>
                     </div>
                     <div class="checkbox">
-                        <label><input type="checkbox" id="regionDispatchable" checked /> Dispatchable</label>
+                        <label><input type="checkbox" id="regionDispatchable" checked /> @localizer["RegionDispatchable"]</label>
                     </div>
-                    <button class="btn btn-primary btn-block" id="saveRegionBtn">Save Region</button>
+                    <button class="btn btn-primary btn-block" id="saveRegionBtn">@localizer["SaveRegion"]</button>
                 </div>
             </div>
         </div>
@@ -117,19 +117,20 @@
 </div>
 
 @section Scripts {
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/@@geoman-io/leaflet-geoman-free@2.16.0/dist/leaflet-geoman.min.js"></script>
+    <script src="~/lib/geoman-io/leaflet-geoman-free/dist/leaflet-geoman.min.js"></script>
     <script>
+        var osmTileUrl = '@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()';
+        var osmTileAttribution = '@Resgrid.Config.MappingConfig.LeafletAttribution';
         var layerId = '@Model.Layer.IndoorMapFloorId';
         var isTiled = @(Model.Layer.IsTiled ? "true" : "false");
         var tileMinZoom = @(Model.Layer.TileMinZoom ?? 0);
         var tileMaxZoom = @(Model.Layer.TileMaxZoom ?? 5);
         var layerImageUrl = '@Url.Action("GetLayerImage", "CustomMaps", new { id = Model.Layer.IndoorMapFloorId, area = "User" })';
         var tileUrlTemplate = '@Url.Action("GetLayerTile", "CustomMaps", new { id = Model.Layer.IndoorMapFloorId, z = 0, x = 0, y = 0, area = "User" })'.replace('/0/0/0', '/{z}/{x}/{y}');
-        var boundsNE = [@(Model.Layer.BoundsNELat ?? Model.Map.BoundsNELat), @(Model.Layer.BoundsNELon ?? Model.Map.BoundsNELon)];
-        var boundsSW = [@(Model.Layer.BoundsSWLat ?? Model.Map.BoundsSWLat), @(Model.Layer.BoundsSWLon ?? Model.Map.BoundsSWLon)];
-        var centerLat = @Model.Map.CenterLatitude;
-        var centerLon = @Model.Map.CenterLongitude;
+        var boundsNE = [@((Model.Layer.BoundsNELat ?? Model.Map.BoundsNELat).ToString("G", System.Globalization.CultureInfo.InvariantCulture)), @((Model.Layer.BoundsNELon ?? Model.Map.BoundsNELon).ToString("G", System.Globalization.CultureInfo.InvariantCulture))];
+        var boundsSW = [@((Model.Layer.BoundsSWLat ?? Model.Map.BoundsSWLat).ToString("G", System.Globalization.CultureInfo.InvariantCulture)), @((Model.Layer.BoundsSWLon ?? Model.Map.BoundsSWLon).ToString("G", System.Globalization.CultureInfo.InvariantCulture))];
+        var centerLat = @Model.Map.CenterLatitude.ToString("G", System.Globalization.CultureInfo.InvariantCulture);
+        var centerLon = @Model.Map.CenterLongitude.ToString("G", System.Globalization.CultureInfo.InvariantCulture);
         var existingRegions = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Regions ?? new System.Collections.Generic.List<Resgrid.Model.IndoorMapZone>()));
         var saveRegionUrl = '@Url.Action("SaveRegion", "CustomMaps", new { area = "User" })';
         var deleteRegionUrl = '@Url.Action("DeleteRegion", "CustomMaps", new { area = "User" })';

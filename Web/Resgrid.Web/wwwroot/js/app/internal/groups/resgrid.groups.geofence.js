@@ -5,11 +5,11 @@ var resgrid;
     (function (groups) {
         var geofence;
         (function (geofence) {
+            var map;
+            var drawnLayer = null;
+
             $(document).ready(function () {
                 resgrid.common.analytics.track('Group Geofence');
-                boundaryColor = '#f70c16'; // initialize color of polyline
-                count = 0;
-                paths = [];
 
                 $("#colorPicker").minicolors({
                     animationSpeed: 50,
@@ -24,58 +24,76 @@ var resgrid;
                     theme: 'bootstrap'
                 });
 
-                // Initializing a map
-                var latlng = new google.maps.LatLng(latitude, longitude);
-                var myOptions = {
-                    zoom: 9,
-                    center: latlng,
-                    mapTypeId: google.maps.MapTypeId.ROADMAP
-                };
-                // Draw a map on DIV "map_canvas"
-                map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
-                // Listen Click Event to draw Polygon
-                google.maps.event.addListener(map, 'click', function (event) {
-                    //polyCoordinates[count] = event.latLng;
-                    polyCoordinates[count] = event.latLng; //new google.maps.LatLng(event.da.x, event.da.y)
-                    createPolyline(polyCoordinates);
-                    count++;
+                map = L.map('map_canvas').setView([parseFloat(latitude) || 39.7392, parseFloat(longitude) || -104.9903], 13);
+                L.tileLayer(osmTileUrl, {
+                    maxZoom: 22,
+                    attribution: osmTileAttribution
+                }).addTo(map);
+
+                map.pm.addControls({
+                    position: 'topleft',
+                    drawMarker: false,
+                    drawPolyline: false,
+                    drawCircle: false,
+                    drawCircleMarker: false,
+                    drawRectangle: false,
+                    drawText: false,
+                    cutPolygon: false,
+                    rotateMode: false,
+                    drawPolygon: true,
+                    editMode: true,
+                    dragMode: false,
+                    removalMode: true
                 });
-                if (polyCoordinates == null)
-                    polyCoordinates = [];
-                else {
-                    for (var i = 0; i < polyCoordinates.length; i++) {
-                        polyCoordinates[i] = new google.maps.LatLng(polyCoordinates[i].k, polyCoordinates[i].A);
+
+                // Load existing geofence
+                if (polyCoordinates && polyCoordinates.length > 0) {
+                    try {
+                        var latLngs = polyCoordinates.map(function (c) {
+                            // Handle new format {lat, lng} or old Google Maps format {k, A}
+                            if (c.lat !== undefined && c.lng !== undefined) {
+                                return [c.lat, c.lng];
+                            } else if (c.k !== undefined && c.A !== undefined) {
+                                return [c.k, c.A];
+                            }
+                            return null;
+                        }).filter(function (c) { return c !== null; });
+
+                        if (latLngs.length > 0) {
+                            drawnLayer = L.polygon(latLngs, {
+                                color: $('#colorPicker').val() || '#f70c16',
+                                fillOpacity: 0.3
+                            }).addTo(map);
+                            map.fitBounds(drawnLayer.getBounds());
+                        }
+                    } catch (e) {
+                        console.error('Failed to load existing geofence', e);
                     }
-                    count = polyCoordinates.length - 1;
-                    createPolyline(polyCoordinates);
                 }
-            });
-            function createPolyline(polyC) {
-                path = new google.maps.Polyline({
-                    path: polyC,
-                    strokeColor: boundaryColor,
-                    strokeOpacity: 1.0,
-                    strokeWeight: 2
+
+                map.on('pm:create', function (e) {
+                    if (drawnLayer) {
+                        map.removeLayer(drawnLayer);
+                    }
+                    drawnLayer = e.layer;
                 });
-                path.setMap(map);
-                paths.push(path);
-            }
-            geofence.createPolyline = createPolyline;
-            function connectPoints() {
-                //var point_add = []; // initialize an array
-                var start = polyCoordinates[0]; // storing start point
-                var end = polyCoordinates[(polyCoordinates.length - 1)]; // storing end point
-                // pushing start and end point to an array
-                //point_add.push(start);
-                //point_add.push(end);
-                polyCoordinates.push(start);
-                polyCoordinates.push(end);
-                //createPolyline(point_add); // function to join points
-                createPolyline(polyCoordinates);
-            }
-            geofence.connectPoints = connectPoints;
+
+                map.on('pm:remove', function (e) {
+                    if (drawnLayer === e.layer) {
+                        drawnLayer = null;
+                    }
+                });
+            });
+
             function saveGeofence() {
-                connectPoints();
+                var coords = [];
+                if (drawnLayer) {
+                    var latLngs = drawnLayer.getLatLngs()[0];
+                    coords = latLngs.map(function (ll) {
+                        return { lat: ll.lat, lng: ll.lng };
+                    });
+                }
+
                 $.ajax({
                     type: "POST",
                     async: true,
@@ -86,7 +104,7 @@ var resgrid;
                     data: JSON.stringify({
                         DepartmentGroupId: $('#Group_DepartmentGroupId').val(),
                         Color: $('#colorPicker').val(),
-                        GeoFence: JSON.stringify(polyCoordinates)
+                        GeoFence: JSON.stringify(coords)
                     })
                 }).done(function (data) {
                     $('#successArea').html('<p>Your geofence has been saved.</p>');
@@ -99,19 +117,15 @@ var resgrid;
                 });
             }
             geofence.saveGeofence = saveGeofence;
+
             function resetGeofence() {
-                for (var i = 0; i < paths.length; i++) {
-                    if (paths[i]) {
-                        paths[i].setMap(null);
-                        paths[i] = null;
-                    }
+                if (drawnLayer) {
+                    map.removeLayer(drawnLayer);
+                    drawnLayer = null;
                 }
-                paths = [];
-                path = null;
-                polyCoordinates = [];
-                count = 0;
             }
             geofence.resetGeofence = resetGeofence;
+
         })(geofence = groups.geofence || (groups.geofence = {}));
     })(groups = resgrid.groups || (resgrid.groups = {}));
 })(resgrid || (resgrid = {}));

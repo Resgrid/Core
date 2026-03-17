@@ -1,15 +1,16 @@
 @model Resgrid.Web.Areas.User.Models.Routes.RouteNewView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Routes.Routes> localizer
 @{
-    ViewBag.Title = "Resgrid | New Route";
+    ViewBag.Title = "Resgrid | " + localizer["NewRoutePageTitle"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-12">
-        <h2>New Route Plan</h2>
+        <h2>@localizer["NewRoutePlanHeader"]</h2>
         <ol class="breadcrumb">
-            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a></li>
-            <li><a asp-controller="Routes" asp-action="Index" asp-route-area="User">Routes</a></li>
-            <li class="active"><strong>New</strong></li>
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="Routes" asp-action="Index" asp-route-area="User">@localizer["RoutesHeader"]</a></li>
+            <li class="active"><strong>@localizer["NewBreadcrumb"]</strong></li>
         </ol>
     </div>
 </div>
@@ -19,31 +20,31 @@
         <div class="col-lg-12">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h5>Route Details</h5>
+                    <h5>@localizer["RouteDetailsTitle"]</h5>
                 </div>
                 <div class="ibox-content">
                     <form asp-controller="Routes" asp-action="New" asp-route-area="User" method="post" class="form-horizontal">
                         @Html.AntiForgeryToken()
 
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Name</label>
+                            <label class="col-sm-2 control-label">@localizer["Name"]</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" asp-for="Plan.Name" required />
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Description</label>
+                            <label class="col-sm-2 control-label">@localizer["Description"]</label>
                             <div class="col-sm-10">
                                 <textarea class="form-control" asp-for="Plan.Description" rows="3"></textarea>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Unit</label>
+                            <label class="col-sm-2 control-label">@localizer["UnitField"]</label>
                             <div class="col-sm-10">
                                 <select class="form-control" asp-for="Plan.UnitId">
-                                    <option value="">-- Assign at start time --</option>
+                                    <option value="">@localizer["UnitAssignAtStart"]</option>
                                     @foreach (var unit in Model.Units)
                                     {
                                         <option value="@unit.UnitId">@unit.Name</option>
@@ -53,36 +54,36 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Status</label>
+                            <label class="col-sm-2 control-label">@localizer["Status"]</label>
                             <div class="col-sm-10">
                                 <select class="form-control" asp-for="Plan.RouteStatus">
-                                    <option value="0">Draft</option>
-                                    <option value="1">Active</option>
+                                    <option value="0">@localizer["StatusDraft"]</option>
+                                    <option value="1">@localizer["StatusActive"]</option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Route Color</label>
+                            <label class="col-sm-2 control-label">@localizer["RouteColor"]</label>
                             <div class="col-sm-4">
                                 <input type="color" class="form-control" asp-for="Plan.RouteColor" value="#3388ff" />
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Route Profile</label>
+                            <label class="col-sm-2 control-label">@localizer["RouteProfile"]</label>
                             <div class="col-sm-4">
                                 <select class="form-control" asp-for="Plan.MapboxRouteProfile">
-                                    <option value="driving">Driving</option>
-                                    <option value="walking">Walking</option>
-                                    <option value="cycling">Cycling</option>
-                                    <option value="driving-traffic">Driving (Traffic)</option>
+                                    <option value="driving">@localizer["ProfileDriving"]</option>
+                                    <option value="walking">@localizer["ProfileWalking"]</option>
+                                    <option value="cycling">@localizer["ProfileCycling"]</option>
+                                    <option value="driving-traffic">@localizer["ProfileDrivingTraffic"]</option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Geofence Radius (m)</label>
+                            <label class="col-sm-2 control-label">@localizer["GeofenceRadius"]</label>
                             <div class="col-sm-4">
                                 <input type="number" class="form-control" asp-for="Plan.GeofenceRadiusMeters" value="100" />
                             </div>
@@ -92,29 +93,29 @@
                             <div class="col-sm-2"></div>
                             <div class="col-sm-10">
                                 <label class="checkbox-inline">
-                                    <input type="checkbox" asp-for="Plan.UseStationAsStart" checked /> Use Station as Start
+                                    <input type="checkbox" asp-for="Plan.UseStationAsStart" checked /> @localizer["UseStationAsStart"]
                                 </label>
                                 <label class="checkbox-inline">
-                                    <input type="checkbox" asp-for="Plan.UseStationAsEnd" checked /> Use Station as End
+                                    <input type="checkbox" asp-for="Plan.UseStationAsEnd" checked /> @localizer["UseStationAsEnd"]
                                 </label>
                                 <label class="checkbox-inline">
-                                    <input type="checkbox" asp-for="Plan.OptimizeStopOrder" /> Optimize Stop Order
+                                    <input type="checkbox" asp-for="Plan.OptimizeStopOrder" /> @localizer["OptimizeStopOrder"]
                                 </label>
                             </div>
                         </div>
 
                         <div class="hr-line-dashed"></div>
 
-                        <h4>Map & Stops</h4>
-                        <p class="text-muted">Stops can be managed after creating the route via the API or edit form.</p>
+                        <h4>@localizer["MapAndStopsTitle"]</h4>
+                        <p class="text-muted">@localizer["MapAndStopsHelp"]</p>
                         <div id="routeMap" style="height:400px;margin-bottom:20px;border:1px solid #ddd;"></div>
 
                         <div class="hr-line-dashed"></div>
 
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10">
-                                <a class="btn btn-white" asp-controller="Routes" asp-action="Index" asp-route-area="User">Cancel</a>
-                                <button type="submit" class="btn btn-primary">Create Route</button>
+                                <a class="btn btn-white" asp-controller="Routes" asp-action="Index" asp-route-area="User">@localizer["Cancel"]</a>
+                                <button type="submit" class="btn btn-primary">@localizer["CreateRoute"]</button>
                             </div>
                         </div>
                     </form>

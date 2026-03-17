@@ -1,7 +1,8 @@
-﻿
+
 @model Resgrid.Web.Areas.User.Models.Mapping.NewLayerView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> localizer
 @{
-	ViewBag.Title = "Resgrid | New Layer";
+	ViewBag.Title = "Resgrid | " + localizer["NewLayerPageTitle"];
 }
 
 @section Styles
@@ -39,16 +40,16 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-			<h2>New Layer</h2>
+			<h2>@localizer["NewLayerHeader"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
 			</li>
 			<li>
-				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">Mapping</a>
+				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">@localizer["MappingHeader"]</a>
 			</li>
 			<li class="active">
-					<strong>New Layer</strong>
+					<strong>@localizer["NewLayerHeader"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -78,7 +79,7 @@
 
 						<div class="form-group">
 							<label class="col-sm-2 control-label required">
-								Name
+								@localizer["Name"]
 							</label>
 							<div class="controls">
 								<div class="col-md-6">
@@ -88,29 +89,29 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label">
-								Is Visible By Default
+								@localizer["IsVisibleByDefault"]
 							</label>
 							<div class="controls">
 								<div class="col-md-6">
 									@Html.CheckBoxFor(x => x.IsOnByDefault)
-									<span class="help-inline">Do you want this layer to be visible every time a map loads? Note: Having too many layers visible by default will complicate the map. Users can turn layers on if they want to see them in the map control.</span>
+									<span class="help-inline">@localizer["IsVisibleByDefaultHelp"]</span>
 								</div>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label">
-								Is Destination
+								@localizer["IsSearchable"]
 							</label>
 							<div class="controls">
 								<div class="col-md-6">
 									@Html.CheckBoxFor(x => x.IsSearchable)
-									<span class="help-inline">This will allow address searching to use coordinates from this layer in the search. Note, if you don't have searchable points (text fields) don't mark as searchable as it can slow down dispatching.'</span>
+									<span class="help-inline">@localizer["IsSearchableHelp"]</span>
 								</div>
 							</div>
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label required">
-								Color
+								@localizer["Color"]
 							</label>
 							<div class="controls">
 								<div class="col-md-6">
@@ -120,7 +121,7 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label required">
-								Layer Elements
+								@localizer["LayerElements"]
 							</label>
 							<div class="col-md-12">
 								<div class="map" id="mapContainer"></div>
@@ -128,8 +129,8 @@
 						</div>
 						<div class="form-group">
 							<div class="col-sm-4 col-sm-offset-2">
-								<a class="btn btn-white" asp-controller="Mapping" asp-action="Layers" asp-route-area="User">Cancel</a>
-								<a id="addLayerButton" class="btn btn-primary">Add Layer</a>
+								<a class="btn btn-white" asp-controller="Mapping" asp-action="Layers" asp-route-area="User">@localizer["Cancel"]</a>
+								<a id="addLayerButton" class="btn btn-primary">@localizer["AddLayerButton"]</a>
 							</div>
 						</div>
 					</form>
@@ -207,7 +208,7 @@
 							break;
 						default:
 					}
-                    
+
                     return geo;
 				});
 
@@ -216,30 +217,8 @@
 					features,
 				};
 
-				//for (let i = 0; i < layers.length; i++) {
-
-				//	const geo = layers[i].toGeoJSON();
-				//	geo.properties.shape = layers[i].pm.getShape();
-				//	geo.properties.color = $('#Color').val();
-				//	geo.properties.name = $('#Name').val();
-				//	geo.properties.category = "default";
-
-				//	switch (geo.properties.shape) {
-				//		case "Text":
-				//			geo.properties.text = layer.pm.getText().trim();
-				//			break;
-				//		default:
-				//	}
-                    
-				//	//layers[i].setStyle({ color: $('#Color').val() });
-				//	fg.addLayer(layers[i]);
-				//}
-
-                //const geojson = fg.toGeoJSON();
-				//const json = JSON.stringify(geojson);
 				const json = JSON.stringify(featureCollection);
-                
-				//const json = JSON.stringify(map.pm.getGeomanLayers(true).toGeoJSON());
+
 				$('#GeoJson').val(json);
 
 				$("#newLayerForm").submit();

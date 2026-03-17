@@ -8,26 +8,10 @@ var resgrid;
             'use strict';
             var map;
             var markers = [];
-            var svgMarkers = [];
-            var paths = [];
-            var zoomLevel = 9;
-            var height;
-            var width;
+
             $(document).ready(function () {
                 resgrid.common.analytics.track('Mapping - View Type');
-                var mapCenter = new google.maps.LatLng(centerLat, centerLon);
-                var mapOptions = {
-                    zoom: zoomLevel,
-                    center: mapCenter
-                };
-                var mapDom = document.getElementById('map');
-                if (mapDom) {
-                    //var widget = document.getElementById('map').parentNode.parentNode.parentNode.parentNode.parentNode;
-                    //var tempHeight = widget.clientHeight - 70;
-                    //height = tempHeight + "px";
-                    height = "650px";
-                    width = "100%";
-                }
+
                 var poisTable = $("#poisGrid").DataTable({
                     ajax: {
                         url: resgrid.absoluteBaseUrl + '/User/Mapping/GetPoisForType?poiTypeId=' + poiTypeId,
@@ -55,9 +39,24 @@ var resgrid;
                 $(document).on('click', '#checkAllRoles', function () {
                     $('#poisGrid tbody :checkbox').prop('checked', this.checked);
                 });
-                map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+                map = L.map('map').setView([parseFloat(centerLat) || 39.7392, parseFloat(centerLon) || -104.9903], 9);
+                L.tileLayer(osmTileUrl, { maxZoom: 19, attribution: osmTileAttribution }).addTo(map);
+
                 initMap();
             });
+
+            function createMarkerIcon(poi) {
+                var iconClass = poi.ImagePath || 'map-icon-map-pin';
+                var color = poi.Color || '#3388ff';
+                return L.divIcon({
+                    className: '',
+                    html: '<span class="map-icon ' + iconClass + '" style="color:' + color + '; font-size: 24px;"></span>',
+                    iconSize: [24, 24],
+                    iconAnchor: [12, 24]
+                });
+            }
+
             function initMap() {
                 $.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/Mapping/GetTypesMapData?poiTypeId=' + poiTypeId,
@@ -66,108 +65,21 @@ var resgrid;
                 }).done(function (data) {
                     if (data && data.Pois) {
                         data.Pois.forEach(function (poi) {
-                            var marker;
-                            if (poi.Marker === "MAP_PIN") {
-                                marker = new Marker({
-                                    map: map,
-                                    position: new google.maps.LatLng(poi.Latitude, poi.Longitude),
-                                    icon: {
-                                        path: MAP_PIN,
-                                        fillColor: poi.Color,
-                                        fillOpacity: 1,
-                                        strokeColor: '',
-                                        strokeWeight: 0
-                                    },
-                                    map_icon_label: '<span class="map-icon ' + poi.ImagePath + '"></span>'
-                                });
-                            }
-                            else if (poi.Marker === "SQUARE_PIN") {
-                                marker = new Marker({
-                                    map: map,
-                                    position: new google.maps.LatLng(poi.Latitude, poi.Longitude),
-                                    icon: {
-                                        path: SQUARE_PIN,
-                                        fillColor: poi.Color,
-                                        fillOpacity: 1,
-                                        strokeColor: '',
-                                        strokeWeight: 0
-                                    },
-                                    map_icon_label: '<span class="map-icon ' + poi.ImagePath + '"></span>'
-                                });
-                            }
-                            else if (poi.Marker === "SHIELD") {
-                                marker = new Marker({
-                                    map: map,
-                                    position: new google.maps.LatLng(poi.Latitude, poi.Longitude),
-                                    icon: {
-                                        path: SHIELD,
-                                        fillColor: poi.Color,
-                                        fillOpacity: 1,
-                                        strokeColor: '',
-                                        strokeWeight: 0
-                                    },
-                                    map_icon_label: '<span class="map-icon ' + poi.ImagePath + '"></span>'
-                                });
-                            }
-                            else if (poi.Marker === "ROUTE") {
-                                marker = new Marker({
-                                    map: map,
-                                    position: new google.maps.LatLng(poi.Latitude, poi.Longitude),
-                                    icon: {
-                                        path: ROUTE,
-                                        fillColor: poi.Color,
-                                        fillOpacity: 1,
-                                        strokeColor: '',
-                                        strokeWeight: 0
-                                    },
-                                    map_icon_label: '<span class="map-icon ' + poi.ImagePath + '"></span>'
-                                });
-                            }
-                            else if (poi.Marker === "SQUARE") {
-                                marker = new Marker({
-                                    map: map,
-                                    position: new google.maps.LatLng(poi.Latitude, poi.Longitude),
-                                    icon: {
-                                        path: SQUARE,
-                                        fillColor: poi.Color,
-                                        fillOpacity: 1,
-                                        strokeColor: '',
-                                        strokeWeight: 0
-                                    },
-                                    map_icon_label: '<span class="map-icon ' + poi.ImagePath + '"></span>'
-                                });
-                            }
-                            else if (poi.Marker === "SQUARE_ROUNDED") {
-                                marker = new Marker({
-                                    map: map,
-                                    position: new google.maps.LatLng(poi.Latitude, poi.Longitude),
-                                    icon: {
-                                        path: SQUARE_ROUNDED,
-                                        fillColor: poi.Color,
-                                        fillOpacity: 1,
-                                        strokeColor: '',
-                                        strokeWeight: 0
-                                    },
-                                    map_icon_label: '<span class="map-icon ' + poi.ImagePath + '"></span>'
-                                });
-                            }
-                            svgMarkers.push(marker);
+                            var marker = L.marker([poi.Latitude, poi.Longitude], {
+                                icon: createMarkerIcon(poi)
+                            }).addTo(map);
+                            markers.push(marker);
                         });
+
+                        if (markers.length > 0) {
+                            var group = new L.featureGroup(markers);
+                            map.fitBounds(group.getBounds(), { padding: [20, 20] });
+                        }
                     }
                 });
             }
             viewType.initMap = initMap;
-            function createPolyline(polyC, boundaryColor) {
-                var path = new google.maps.Polyline({
-                    path: polyC,
-                    strokeColor: boundaryColor,
-                    strokeOpacity: 1.0,
-                    strokeWeight: 2
-                });
-                path.setMap(map);
-                paths.push(path);
-            }
-            viewType.createPolyline = createPolyline;
+
             function boolToCheckbox(boolean) {
                 if (boolean === true)
                     return "on";
@@ -175,6 +87,7 @@ var resgrid;
                     return "off";
             }
             viewType.boolToCheckbox = boolToCheckbox;
+
             function checkboxToBool(checkbox) {
                 if (checkbox === "on")
                     return true;
@@ -182,6 +95,7 @@ var resgrid;
                     return false;
             }
             viewType.checkboxToBool = checkboxToBool;
+
         })(viewType = mapping.viewType || (mapping.viewType = {}));
     })(mapping = resgrid.mapping || (resgrid.mapping = {}));
 })(resgrid || (resgrid = {}));

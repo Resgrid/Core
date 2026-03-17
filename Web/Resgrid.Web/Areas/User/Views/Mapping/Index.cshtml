@@ -1,8 +1,9 @@
-﻿@using Resgrid.Model
+@using Resgrid.Model
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Mapping.MapIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> localizer
 @{
-	ViewBag.Title = "Resgrid | Mapping";
+	ViewBag.Title = "Resgrid | " + localizer["MappingHeader"];
 }
 @section Styles
 {
@@ -23,17 +24,15 @@
 	</style>
 }
 
-<script src="https://maps.googleapis.com/maps/api/js?key=@Resgrid.Config.MappingConfig.GoogleMapsJSKey"></script>
-
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>Mapping</h2>
+		<h2>@localizer["MappingHeader"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
 			</li>
 			<li class="active">
-				<strong>Mapping</strong>
+				<strong>@localizer["MappingHeader"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -41,10 +40,10 @@
 	{
 		<div class="col-sm-8">
 			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-				<a title="Manage Layers" class="btn btn-success" asp-controller="Mapping" asp-action="Layers" asp-route-area="User">Manage Layers</a>
+				<a title="@localizer["ManageLayers"]" class="btn btn-success" asp-controller="Mapping" asp-action="Layers" asp-route-area="User">@localizer["ManageLayers"]</a>
 			</div>
 			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-				<a title="Manage POIs" class="btn btn-inverse" asp-controller="CustomMaps" asp-action="Index" asp-route-area="User">Custom Maps</a>
+				<a title="@localizer["CustomMaps"]" class="btn btn-inverse" asp-controller="CustomMaps" asp-action="Index" asp-route-area="User">@localizer["CustomMaps"]</a>
 			</div>
 		</div>
 	}
@@ -68,17 +67,17 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-				<h4 class="modal-title" id="layersModalLabel">Map Options</h4>
+				<h4 class="modal-title" id="layersModalLabel">@localizer["MapOptionsTitle"]</h4>
 			</div>
 			<div class="modal-body">
 				<div class="row">
-					<div class="col-md-3">Show Calls</div>
+					<div class="col-md-3">@localizer["ShowCalls"]</div>
 					<div class="col-md-1"><input id="showCalls" type="checkbox"/>
 					</div>
-					<div class="col-md-3">Show Personnel</div>
+					<div class="col-md-3">@localizer["ShowPersonnel"]</div>
 					<div class="col-md-1"><input id="showPersonnel" type="checkbox"/>
 					</div>
-					<div class="col-md-3">Show Units</div>
+					<div class="col-md-3">@localizer["ShowUnits"]</div>
 					<div class="col-md-1"><input id="showUnits" type="checkbox"/>
 					</div>
 				</div>
@@ -86,17 +85,17 @@
 					<div class="col-md-12">&nbsp;</div>
 				</div>
 				<div class="row">
-					<div class="col-md-3">Show Stations</div>
+					<div class="col-md-3">@localizer["ShowStations"]</div>
 					<div class="col-md-1"><input id="showStations" type="checkbox" /></div>
-					<div class="col-md-3">Show Geofences</div>
+					<div class="col-md-3">@localizer["ShowGeofences"]</div>
 					<div class="col-md-1"><input id="showDistricts" type="checkbox" /></div>
-					<div class="col-md-3">Show POIs</div>
+					<div class="col-md-3">@localizer["ShowPOIs"]</div>
 					<div class="col-md-1"><input id="showPOIs" type="checkbox" /></div>
 				</div>
 			</div>
 			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				<button id="saveMapOptionButtons" type="button" class="btn btn-primary" data-dismiss="modal">Save</button>
+				<button type="button" class="btn btn-default" data-dismiss="modal">@localizer["Close"]</button>
+				<button id="saveMapOptionButtons" type="button" class="btn btn-primary" data-dismiss="modal">@localizer["Save"]</button>
 			</div>
 		</div>
 	</div>

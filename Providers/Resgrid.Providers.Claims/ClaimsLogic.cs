@@ -1539,9 +1539,10 @@ namespace Resgrid.Providers.Claims
 		/// <summary>
 		/// Adds Route claims based on department role.
 		/// Department admins always receive full access (View + Update + Create + Delete).
-		/// Group admins receive View + Update when the permission is DepartmentAndGroupAdmins or Everyone.
-		/// Regular users receive View only when the permission is Everyone.
-		/// Default (no permission record): Everyone — all users can view routes.
+		/// DepartmentAdminsOnly: non-admins receive no claims.
+		/// DepartmentAndGroupAdmins: group admins receive View + Update + Create; regular users receive no claims.
+		/// Everyone: all users receive View + Update + Create.
+		/// Default (no permission record): all users receive View; group admins additionally receive Update + Create.
 		/// </summary>
 		public static void AddRouteClaims(ClaimsIdentity identity, bool isAdmin, List<Permission> permissions, bool isGroupAdmin, List<PersonnelRole> roles)
 		{

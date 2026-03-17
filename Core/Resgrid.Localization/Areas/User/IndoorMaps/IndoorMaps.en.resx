@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Shared -->
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Created" xml:space="preserve">
+    <value>Created</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <!-- Index -->
+  <data name="IndoorMapsPageTitle" xml:space="preserve">
+    <value>Indoor Maps</value>
+  </data>
+  <data name="IndoorMapsHeader" xml:space="preserve">
+    <value>Indoor Maps</value>
+  </data>
+  <data name="NewIndoorMap" xml:space="preserve">
+    <value>New Indoor Map</value>
+  </data>
+  <data name="Floors" xml:space="preserve">
+    <value>Floors</value>
+  </data>
+  <data name="DeleteIndoorMapConfirm" xml:space="preserve">
+    <value>Are you sure you want to delete this indoor map?</value>
+  </data>
+  <!-- New -->
+  <data name="NewIndoorMapPageTitle" xml:space="preserve">
+    <value>New Indoor Map</value>
+  </data>
+  <data name="NewIndoorMapHeader" xml:space="preserve">
+    <value>New Indoor Map</value>
+  </data>
+  <data name="NewBreadcrumb" xml:space="preserve">
+    <value>New</value>
+  </data>
+  <data name="NamePlaceholder" xml:space="preserve">
+    <value>e.g. Main Hospital</value>
+  </data>
+  <data name="DescriptionPlaceholder" xml:space="preserve">
+    <value>Optional description</value>
+  </data>
+  <data name="CenterLatitude" xml:space="preserve">
+    <value>Center Latitude</value>
+  </data>
+  <data name="CenterLongitude" xml:space="preserve">
+    <value>Center Longitude</value>
+  </data>
+  <data name="CenterLatPlaceholder" xml:space="preserve">
+    <value>e.g. 39.7392</value>
+  </data>
+  <data name="CenterLonPlaceholder" xml:space="preserve">
+    <value>e.g. -104.9903</value>
+  </data>
+  <data name="NEBoundLat" xml:space="preserve">
+    <value>NE Bound Lat</value>
+  </data>
+  <data name="NEBoundLon" xml:space="preserve">
+    <value>NE Bound Lon</value>
+  </data>
+  <data name="SWBoundLat" xml:space="preserve">
+    <value>SW Bound Lat</value>
+  </data>
+  <data name="SWBoundLon" xml:space="preserve">
+    <value>SW Bound Lon</value>
+  </data>
+  <!-- Edit -->
+  <data name="EditIndoorMapPageTitle" xml:space="preserve">
+    <value>Edit Indoor Map</value>
+  </data>
+  <data name="EditIndoorMapHeader" xml:space="preserve">
+    <value>Edit Indoor Map</value>
+  </data>
+  <data name="EditBreadcrumb" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <!-- Floors -->
+  <data name="FloorsPageTitlePrefix" xml:space="preserve">
+    <value>Floors</value>
+  </data>
+  <data name="FloorsBreadcrumb" xml:space="preserve">
+    <value>Floors</value>
+  </data>
+  <data name="AddFloorTitle" xml:space="preserve">
+    <value>Add Floor</value>
+  </data>
+  <data name="FloorName" xml:space="preserve">
+    <value>Floor Name</value>
+  </data>
+  <data name="FloorNamePlaceholder" xml:space="preserve">
+    <value>e.g. Floor 1, Basement, Roof</value>
+  </data>
+  <data name="Order" xml:space="preserve">
+    <value>Order</value>
+  </data>
+  <data name="FloorPlanImage" xml:space="preserve">
+    <value>Floor Plan Image</value>
+  </data>
+  <data name="AddFloorButton" xml:space="preserve">
+    <value>Add Floor</value>
+  </data>
+  <data name="FloorsTableTitle" xml:space="preserve">
+    <value>Floors</value>
+  </data>
+  <data name="HasImage" xml:space="preserve">
+    <value>Has Image</value>
+  </data>
+  <data name="ZoneEditor" xml:space="preserve">
+    <value>Zone Editor</value>
+  </data>
+  <data name="DeleteFloorConfirm" xml:space="preserve">
+    <value>Delete this floor?</value>
+  </data>
+  <!-- ZoneEditor -->
+  <data name="ZoneEditorPageTitlePrefix" xml:space="preserve">
+    <value>Zone Editor</value>
+  </data>
+  <data name="ZoneEditorBreadcrumb" xml:space="preserve">
+    <value>Zone Editor</value>
+  </data>
+  <data name="ZonesTitle" xml:space="preserve">
+    <value>Zones</value>
+  </data>
+  <data name="ZonePropertiesTitle" xml:space="preserve">
+    <value>Zone Properties</value>
+  </data>
+  <data name="ZoneNameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ZoneTypeLabel" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="ZoneTypeRoom" xml:space="preserve">
+    <value>Room</value>
+  </data>
+  <data name="ZoneTypeWing" xml:space="preserve">
+    <value>Wing</value>
+  </data>
+  <data name="ZoneTypeCorridor" xml:space="preserve">
+    <value>Corridor</value>
+  </data>
+  <data name="ZoneTypeStairwell" xml:space="preserve">
+    <value>Stairwell</value>
+  </data>
+  <data name="ZoneTypeElevator" xml:space="preserve">
+    <value>Elevator</value>
+  </data>
+  <data name="ZoneTypeHazardZone" xml:space="preserve">
+    <value>Hazard Zone</value>
+  </data>
+  <data name="ZoneTypeAssemblyPoint" xml:space="preserve">
+    <value>Assembly Point</value>
+  </data>
+  <data name="ZoneTypeStagingArea" xml:space="preserve">
+    <value>Staging Area</value>
+  </data>
+  <data name="ZoneTypeAccessPoint" xml:space="preserve">
+    <value>Access Point</value>
+  </data>
+  <data name="ZoneTypeUtility" xml:space="preserve">
+    <value>Utility</value>
+  </data>
+  <data name="ZoneTypeSearchGrid" xml:space="preserve">
+    <value>Search Grid</value>
+  </data>
+  <data name="ZoneTypeCustom" xml:space="preserve">
+    <value>Custom</value>
+  </data>
+  <data name="ZoneColorLabel" xml:space="preserve">
+    <value>Color</value>
+  </data>
+  <data name="ZoneDescriptionLabel" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="ZoneSearchable" xml:space="preserve">
+    <value>Searchable in dispatch</value>
+  </data>
+  <data name="SaveZone" xml:space="preserve">
+    <value>Save Zone</value>
+  </data>
+</root>

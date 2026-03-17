@@ -625,6 +625,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 					call.IndoorMapZoneId = indoorMapZoneId;
 					call.IndoorMapFloorId = indoorMapFloorId;
 				}
+				else
+				{
+					call.IndoorMapZoneId = null;
+					call.IndoorMapFloorId = null;
+				}
 
 				List<CallDispatch> existingDispatches = new List<CallDispatch>(call.Dispatches);
 

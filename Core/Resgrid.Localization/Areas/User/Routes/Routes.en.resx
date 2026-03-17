@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Shared -->
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <!-- Index -->
+  <data name="RoutesPageTitle" xml:space="preserve">
+    <value>Routes</value>
+  </data>
+  <data name="RoutesHeader" xml:space="preserve">
+    <value>Routes</value>
+  </data>
+  <data name="NewRoute" xml:space="preserve">
+    <value>New Route</value>
+  </data>
+  <data name="ActiveRoutes" xml:space="preserve">
+    <value>Active Routes</value>
+  </data>
+  <data name="Stops" xml:space="preserve">
+    <value>Stops</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="Created" xml:space="preserve">
+    <value>Created</value>
+  </data>
+  <data name="View" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>History</value>
+  </data>
+  <data name="DeleteRoutePlanConfirm" xml:space="preserve">
+    <value>Delete this route plan?</value>
+  </data>
+  <!-- Instances -->
+  <data name="RouteHistoryPageTitle" xml:space="preserve">
+    <value>Route History</value>
+  </data>
+  <data name="RouteHistoryHeaderPrefix" xml:space="preserve">
+    <value>Route History</value>
+  </data>
+  <data name="HistoryBreadcrumb" xml:space="preserve">
+    <value>History</value>
+  </data>
+  <data name="Unit" xml:space="preserve">
+    <value>Unit</value>
+  </data>
+  <data name="Started" xml:space="preserve">
+    <value>Started</value>
+  </data>
+  <data name="Ended" xml:space="preserve">
+    <value>Ended</value>
+  </data>
+  <data name="Detail" xml:space="preserve">
+    <value>Detail</value>
+  </data>
+  <!-- ActiveRoutes -->
+  <data name="ActiveRoutesPageTitle" xml:space="preserve">
+    <value>Active Routes</value>
+  </data>
+  <data name="ActiveRoutesHeader" xml:space="preserve">
+    <value>Active Routes</value>
+  </data>
+  <data name="ActiveBreadcrumb" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="NoActiveRoutes" xml:space="preserve">
+    <value>No Active Routes</value>
+  </data>
+  <data name="NoActiveRoutesMessage" xml:space="preserve">
+    <value>There are no route instances currently in progress.</value>
+  </data>
+  <data name="UnitLabel" xml:space="preserve">
+    <value>Unit</value>
+  </data>
+  <data name="StopsLabel" xml:space="preserve">
+    <value>Stops</value>
+  </data>
+  <data name="StartedLabel" xml:space="preserve">
+    <value>Started</value>
+  </data>
+  <data name="ViewDetails" xml:space="preserve">
+    <value>View Details</value>
+  </data>
+  <!-- New -->
+  <data name="NewRoutePageTitle" xml:space="preserve">
+    <value>New Route</value>
+  </data>
+  <data name="NewRoutePlanHeader" xml:space="preserve">
+    <value>New Route Plan</value>
+  </data>
+  <data name="NewBreadcrumb" xml:space="preserve">
+    <value>New</value>
+  </data>
+  <data name="RouteDetailsTitle" xml:space="preserve">
+    <value>Route Details</value>
+  </data>
+  <data name="UnitField" xml:space="preserve">
+    <value>Unit</value>
+  </data>
+  <data name="UnitAssignAtStart" xml:space="preserve">
+    <value>-- Assign at start time --</value>
+  </data>
+  <data name="StatusDraft" xml:space="preserve">
+    <value>Draft</value>
+  </data>
+  <data name="StatusActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="StatusPaused" xml:space="preserve">
+    <value>Paused</value>
+  </data>
+  <data name="StatusArchived" xml:space="preserve">
+    <value>Archived</value>
+  </data>
+  <data name="RouteColor" xml:space="preserve">
+    <value>Route Color</value>
+  </data>
+  <data name="RouteProfile" xml:space="preserve">
+    <value>Route Profile</value>
+  </data>
+  <data name="ProfileDriving" xml:space="preserve">
+    <value>Driving</value>
+  </data>
+  <data name="ProfileWalking" xml:space="preserve">
+    <value>Walking</value>
+  </data>
+  <data name="ProfileCycling" xml:space="preserve">
+    <value>Cycling</value>
+  </data>
+  <data name="ProfileDrivingTraffic" xml:space="preserve">
+    <value>Driving (Traffic)</value>
+  </data>
+  <data name="GeofenceRadius" xml:space="preserve">
+    <value>Geofence Radius (m)</value>
+  </data>
+  <data name="UseStationAsStart" xml:space="preserve">
+    <value>Use Station as Start</value>
+  </data>
+  <data name="UseStationAsEnd" xml:space="preserve">
+    <value>Use Station as End</value>
+  </data>
+  <data name="OptimizeStopOrder" xml:space="preserve">
+    <value>Optimize Stop Order</value>
+  </data>
+  <data name="MapAndStopsTitle" xml:space="preserve">
+    <value>Map &amp; Stops</value>
+  </data>
+  <data name="MapAndStopsHelp" xml:space="preserve">
+    <value>Stops can be managed after creating the route via the API or edit form.</value>
+  </data>
+  <data name="CreateRoute" xml:space="preserve">
+    <value>Create Route</value>
+  </data>
+  <!-- Edit -->
+  <data name="EditRoutePageTitle" xml:space="preserve">
+    <value>Edit Route</value>
+  </data>
+  <data name="EditRoutePlanHeader" xml:space="preserve">
+    <value>Edit Route Plan</value>
+  </data>
+  <data name="EditBreadcrumb" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="StopsTableHash" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="StopType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Address</value>
+  </data>
+  <data name="Priority" xml:space="preserve">
+    <value>Priority</value>
+  </data>
+  <data name="SaveChanges" xml:space="preserve">
+    <value>Save Changes</value>
+  </data>
+  <!-- View -->
+  <data name="RouteDetailPageTitle" xml:space="preserve">
+    <value>Route Detail</value>
+  </data>
+  <data name="ViewBreadcrumb" xml:space="preserve">
+    <value>View</value>
+  </data>
+  <data name="RouteMapTitle" xml:space="preserve">
+    <value>Route Map</value>
+  </data>
+  <data name="DetailsTitle" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ProfileLabel" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="GeofenceLabel" xml:space="preserve">
+    <value>Geofence</value>
+  </data>
+  <data name="DistanceLabel" xml:space="preserve">
+    <value>Distance</value>
+  </data>
+  <data name="DurationLabel" xml:space="preserve">
+    <value>Duration</value>
+  </data>
+  <!-- InstanceDetail -->
+  <data name="RouteInstanceDetailPageTitle" xml:space="preserve">
+    <value>Route Instance Detail</value>
+  </data>
+  <data name="RouteInstanceHeaderPrefix" xml:space="preserve">
+    <value>Route Instance</value>
+  </data>
+  <data name="InstanceDetailBreadcrumb" xml:space="preserve">
+    <value>Instance Detail</value>
+  </data>
+  <data name="InstanceInfoTitle" xml:space="preserve">
+    <value>Instance Info</value>
+  </data>
+  <data name="StartedDt" xml:space="preserve">
+    <value>Started</value>
+  </data>
+  <data name="EndedDt" xml:space="preserve">
+    <value>Ended</value>
+  </data>
+  <data name="Progress" xml:space="preserve">
+    <value>Progress</value>
+  </data>
+  <data name="StopTimelineTitle" xml:space="preserve">
+    <value>Stop Timeline</value>
+  </data>
+  <data name="StopStatusPending" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="StopStatusCheckedIn" xml:space="preserve">
+    <value>Checked In</value>
+  </data>
+  <data name="StopStatusCompleted" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="StopStatusSkipped" xml:space="preserve">
+    <value>Skipped</value>
+  </data>
+  <data name="StopStatusUnknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="StopInPrefix" xml:space="preserve">
+    <value>In:</value>
+  </data>
+  <data name="StopOutPrefix" xml:space="preserve">
+    <value>Out:</value>
+  </data>
+  <data name="StopDwellPrefix" xml:space="preserve">
+    <value>Dwell:</value>
+  </data>
+  <data name="StopSkipPrefix" xml:space="preserve">
+    <value>Skip:</value>
+  </data>
+  <data name="StopLabel" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+</root>

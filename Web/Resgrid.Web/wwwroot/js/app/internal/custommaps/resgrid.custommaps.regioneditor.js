@@ -9,9 +9,9 @@ $(document).ready(function () {
             maxZoom: Math.max(tileMaxZoom, 22)
         });
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        L.tileLayer(osmTileUrl, {
             maxZoom: 22,
-            attribution: '&copy; OpenStreetMap'
+            attribution: osmTileAttribution
         }).addTo(map);
 
         // Add custom tile layer overlay
@@ -30,9 +30,9 @@ $(document).ready(function () {
             maxZoom: 22
         });
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        L.tileLayer(osmTileUrl, {
             maxZoom: 22,
-            attribution: '&copy; OpenStreetMap'
+            attribution: osmTileAttribution
         }).addTo(map);
 
         L.imageOverlay(layerImageUrl, imageBounds, {

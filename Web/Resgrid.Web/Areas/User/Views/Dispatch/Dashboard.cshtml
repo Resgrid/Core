@@ -25,8 +25,6 @@
   </style>
 }
 
-<script src="https://maps.googleapis.com/maps/api/js?key=@Resgrid.Config.MappingConfig.GoogleMapsJSKey"></script>
-
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
     <h2>@commonLocalizer["CallsModule"]</h2>
@@ -42,14 +40,14 @@
   <div class="col-sm-8">
     <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
       <div class="buttons-actions">
-        <a title="Archived Calls" class="btn btn-info" asp-controller="Dispatch" asp-action="ArchivedCalls" asp-route-area="User">@localizer["ArchivedCalls"]</a>
-        @if (ClaimsAuthorizationHelper.CanCreateCall())
-		{
-          <a id="newCallButton" title="@localizer["NewCallHelp"]" class="btn btn-success" href="@Url.Action("NewCall", "Dispatch", new { area = "User" })">@localizer["NewCall"]</a>
-		}
         @if (ClaimsAuthorizationHelper.CanViewRoutes())
         {
           <a id="routesButton" class="btn btn-inverse" asp-controller="Routes" asp-action="Index" asp-route-area="User">Routes</a>
+        }
+        <a title="Archived Calls" class="btn btn-info" asp-controller="Dispatch" asp-action="ArchivedCalls" asp-route-area="User">@localizer["ArchivedCalls"]</a>
+        @if (ClaimsAuthorizationHelper.CanCreateCall())
+        {
+          <a id="newCallButton" title="@localizer["NewCallHelp"]" class="btn btn-success" href="@Url.Action("NewCall", "Dispatch", new { area = "User" })">@localizer["NewCall"]</a>
         }
       </div>
     </div>

@@ -17,7 +17,7 @@ $(document).ready(function () {
             var group = [];
 
             instanceStops.forEach(function (stop, index) {
-                if (stop.lat && stop.lng) {
+                if (stop.lat != null && stop.lng != null && Number.isFinite(Number(stop.lat)) && Number.isFinite(Number(stop.lng))) {
                     var statusText = ['Pending', 'Checked In', 'Completed', 'Skipped'][stop.Status] || 'Unknown';
                     var marker = L.marker([stop.lat, stop.lng]).addTo(map);
                     marker.bindPopup('<strong>Stop ' + (stop.StopOrder + 1) + '</strong><br/>' + statusText);

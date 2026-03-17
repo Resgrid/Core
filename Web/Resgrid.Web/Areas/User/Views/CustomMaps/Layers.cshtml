@@ -1,16 +1,17 @@
 @model Resgrid.Web.Areas.User.Models.CustomMaps.CustomMapLayersView
 @using Resgrid.Model
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.CustomMaps.CustomMaps> localizer
 @{
-    ViewBag.Title = "Resgrid | Layers - " + Model.Map.Name;
+    ViewBag.Title = "Resgrid | " + localizer["LayersPageTitlePrefix"] + " - " + Model.Map.Name;
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-        <h2>Layers - @Model.Map.Name</h2>
+        <h2>@localizer["LayersHeaderPrefix"] - @Model.Map.Name</h2>
         <ol class="breadcrumb">
-            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a></li>
-            <li><a asp-controller="CustomMaps" asp-action="Index" asp-route-area="User">Custom Maps</a></li>
-            <li class="active"><strong>Layers</strong></li>
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="CustomMaps" asp-action="Index" asp-route-area="User">@localizer["CustomMapsHeader"]</a></li>
+            <li class="active"><strong>@localizer["LayersBreadcrumb"]</strong></li>
         </ol>
     </div>
 </div>
@@ -20,39 +21,39 @@
         <div class="col-lg-12">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h5>Add Layer</h5>
+                    <h5>@localizer["AddLayerTitle"]</h5>
                 </div>
                 <div class="ibox-content">
                     <form asp-action="NewLayer" asp-controller="CustomMaps" asp-route-area="User" method="post" enctype="multipart/form-data" class="form-horizontal">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="indoorMapId" value="@Model.Map.IndoorMapId" />
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Layer Name</label>
+                            <label class="col-sm-2 control-label">@localizer["LayerName"]</label>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control" name="name" placeholder="e.g. Floor 1, Base Map, Infrastructure" required />
+                                <input type="text" class="form-control" name="name" placeholder="@localizer["LayerNamePlaceholder"]" required />
                             </div>
-                            <label class="col-sm-1 control-label">Order</label>
+                            <label class="col-sm-1 control-label">@localizer["LayerOrder"]</label>
                             <div class="col-sm-2">
                                 <input type="number" class="form-control" name="floorOrder" value="0" />
                             </div>
-                            <label class="col-sm-1 control-label">Type</label>
+                            <label class="col-sm-1 control-label">@localizer["LayerType"]</label>
                             <div class="col-sm-2">
                                 <select class="form-control" name="layerType">
-                                    <option value="0">Floor Plan</option>
-                                    <option value="1">Overlay</option>
-                                    <option value="2">Data Layer</option>
-                                    <option value="3">Infrastructure</option>
+                                    <option value="0">@localizer["LayerTypeFloorPlan"]</option>
+                                    <option value="1">@localizer["LayerTypeOverlay"]</option>
+                                    <option value="2">@localizer["LayerTypeDataLayer"]</option>
+                                    <option value="3">@localizer["LayerTypeInfrastructure"]</option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Layer Image</label>
+                            <label class="col-sm-2 control-label">@localizer["LayerImage"]</label>
                             <div class="col-sm-6">
                                 <input type="file" name="layerImage" accept="image/*" />
-                                <span class="help-block">Images larger than 2048px will be automatically tiled.</span>
+                                <span class="help-block">@localizer["LayerImageHelp"]</span>
                             </div>
                             <div class="col-sm-2">
-                                <button class="btn btn-primary" type="submit">Add Layer</button>
+                                <button class="btn btn-primary" type="submit">@localizer["AddLayerButton"]</button>
                             </div>
                         </div>
                     </form>
@@ -61,18 +62,18 @@
 
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h5>Layers</h5>
+                    <h5>@localizer["LayersBreadcrumb"]</h5>
                 </div>
                 <div class="ibox-content">
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>Order</th>
-                                    <th>Name</th>
-                                    <th>Type</th>
-                                    <th>Has Image</th>
-                                    <th>Tiled</th>
+                                    <th>@localizer["Order"]</th>
+                                    <th>@localizer["Name"]</th>
+                                    <th>@localizer["Type"]</th>
+                                    <th>@localizer["HasImage"]</th>
+                                    <th>@localizer["Tiled"]</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -85,7 +86,7 @@
                                             <td>@layer.FloorOrder</td>
                                             <td>@layer.Name</td>
                                             <td>@((CustomMapLayerType)layer.LayerType)</td>
-                                            <td>@(layer.ImageData != null || layer.IsTiled ? "Yes" : "No")</td>
+                                            <td>@(layer.ImageData != null || layer.IsTiled ? localizer["Yes"].Value : localizer["No"].Value)</td>
                                             <td>
                                                 @if (layer.IsTiled)
                                                 {
@@ -93,12 +94,12 @@
                                                 }
                                                 else
                                                 {
-                                                    <span class="text-muted">No</span>
+                                                    <span class="text-muted">@localizer["No"]</span>
                                                 }
                                             </td>
                                             <td style="text-align:right;">
-                                                <a class="btn btn-primary btn-xs" asp-controller="CustomMaps" asp-action="RegionEditor" asp-route-id="@layer.IndoorMapFloorId" asp-route-area="User"><i class="fa fa-pencil"></i> Region Editor</a>
-                                                <a class="btn btn-danger btn-xs" asp-controller="CustomMaps" asp-action="DeleteLayer" asp-route-id="@layer.IndoorMapFloorId" asp-route-area="User" onclick="return confirm('Delete this layer?');"><i class="fa fa-trash"></i> Delete</a>
+                                                <a class="btn btn-primary btn-xs" asp-controller="CustomMaps" asp-action="RegionEditor" asp-route-id="@layer.IndoorMapFloorId" asp-route-area="User"><i class="fa fa-pencil"></i> @localizer["RegionEditor"]</a>
+                                                <a class="btn btn-danger btn-xs" asp-controller="CustomMaps" asp-action="DeleteLayer" asp-route-id="@layer.IndoorMapFloorId" asp-route-area="User" onclick="return confirm('@localizer["DeleteLayerConfirm"]');"><i class="fa fa-trash"></i> @localizer["Delete"]</a>
                                             </td>
                                         </tr>
                                     }

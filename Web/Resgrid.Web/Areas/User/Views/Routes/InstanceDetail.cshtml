@@ -1,15 +1,16 @@
 @model Resgrid.Web.Areas.User.Models.Routes.RouteInstanceDetailView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Routes.Routes> localizer
 @{
-    ViewBag.Title = "Resgrid | Route Instance Detail";
+    ViewBag.Title = "Resgrid | " + localizer["RouteInstanceDetailPageTitle"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-12">
-        <h2>Route Instance - @Model.Plan.Name</h2>
+        <h2>@localizer["RouteInstanceHeaderPrefix"] - @Model.Plan.Name</h2>
         <ol class="breadcrumb">
-            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a></li>
-            <li><a asp-controller="Routes" asp-action="Index" asp-route-area="User">Routes</a></li>
-            <li class="active"><strong>Instance Detail</strong></li>
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="Routes" asp-action="Index" asp-route-area="User">@localizer["RoutesHeader"]</a></li>
+            <li class="active"><strong>@localizer["InstanceDetailBreadcrumb"]</strong></li>
         </ol>
     </div>
 </div>
@@ -18,7 +19,7 @@
     <div class="row">
         <div class="col-lg-8">
             <div class="ibox float-e-margins">
-                <div class="ibox-title"><h5>Route Map</h5></div>
+                <div class="ibox-title"><h5>@localizer["RouteMapTitle"]</h5></div>
                 <div class="ibox-content">
                     <div id="instanceMap" style="height:500px;"></div>
                 </div>
@@ -26,18 +27,18 @@
         </div>
         <div class="col-lg-4">
             <div class="ibox float-e-margins">
-                <div class="ibox-title"><h5>Instance Info</h5></div>
+                <div class="ibox-title"><h5>@localizer["InstanceInfoTitle"]</h5></div>
                 <div class="ibox-content">
                     <dl class="dl-horizontal">
-                        <dt>Status</dt>
+                        <dt>@localizer["StatusLabel"]</dt>
                         <dd><span class="label label-primary">@((Resgrid.Model.RouteInstanceStatus)Model.Instance.Status)</span></dd>
-                        <dt>Unit</dt>
+                        <dt>@localizer["Unit"]</dt>
                         <dd>@Model.Instance.UnitId</dd>
-                        <dt>Started</dt>
+                        <dt>@localizer["StartedDt"]</dt>
                         <dd>@(Model.Instance.ActualStartOn?.ToString("yyyy-MM-dd HH:mm") ?? "-")</dd>
-                        <dt>Ended</dt>
+                        <dt>@localizer["EndedDt"]</dt>
                         <dd>@(Model.Instance.ActualEndOn?.ToString("yyyy-MM-dd HH:mm") ?? "-")</dd>
-                        <dt>Progress</dt>
+                        <dt>@localizer["Progress"]</dt>
                         <dd>@Model.Instance.StopsCompleted / @Model.Instance.StopsTotal</dd>
                     </dl>
                     <div class="progress progress-striped active">
@@ -50,35 +51,35 @@
             </div>
 
             <div class="ibox float-e-margins">
-                <div class="ibox-title"><h5>Stop Timeline</h5></div>
+                <div class="ibox-title"><h5>@localizer["StopTimelineTitle"]</h5></div>
                 <div class="ibox-content">
                     <div id="vertical-timeline" class="vertical-container light-timeline">
                         @foreach (var stop in Model.Stops.OrderBy(s => s.StopOrder))
                         {
                             var statusClass = stop.Status switch { 1 => "lazur-bg", 2 => "navy-bg", 3 => "warning-bg", _ => "default-bg" };
-                            var statusText = stop.Status switch { 0 => "Pending", 1 => "Checked In", 2 => "Completed", 3 => "Skipped", _ => "Unknown" };
+                            var statusText = stop.Status switch { 0 => localizer["StopStatusPending"].Value, 1 => localizer["StopStatusCheckedIn"].Value, 2 => localizer["StopStatusCompleted"].Value, 3 => localizer["StopStatusSkipped"].Value, _ => localizer["StopStatusUnknown"].Value };
                             <div class="vertical-timeline-block">
                                 <div class="vertical-timeline-icon @statusClass">
                                     <i class="fa fa-map-marker"></i>
                                 </div>
                                 <div class="vertical-timeline-content">
-                                    <h2>Stop @(stop.StopOrder + 1)</h2>
+                                    <h2>@localizer["StopLabel"] @(stop.StopOrder + 1)</h2>
                                     <p><strong>@statusText</strong></p>
                                     @if (stop.CheckInOn.HasValue)
                                     {
-                                        <p>In: @stop.CheckInOn.Value.ToString("HH:mm:ss")</p>
+                                        <p>@localizer["StopInPrefix"] @stop.CheckInOn.Value.ToString("HH:mm:ss")</p>
                                     }
                                     @if (stop.CheckOutOn.HasValue)
                                     {
-                                        <p>Out: @stop.CheckOutOn.Value.ToString("HH:mm:ss")</p>
+                                        <p>@localizer["StopOutPrefix"] @stop.CheckOutOn.Value.ToString("HH:mm:ss")</p>
                                     }
                                     @if (stop.DwellSeconds.HasValue)
                                     {
-                                        <p>Dwell: @(stop.DwellSeconds.Value / 60)m @(stop.DwellSeconds.Value % 60)s</p>
+                                        <p>@localizer["StopDwellPrefix"] @(stop.DwellSeconds.Value / 60)m @(stop.DwellSeconds.Value % 60)s</p>
                                     }
                                     @if (!string.IsNullOrEmpty(stop.SkipReason))
                                     {
-                                        <p class="text-danger">Skip: @stop.SkipReason</p>
+                                        <p class="text-danger">@localizer["StopSkipPrefix"] @stop.SkipReason</p>
                                     }
                                 </div>
                             </div>

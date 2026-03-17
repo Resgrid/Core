@@ -4,7 +4,7 @@
 }
 @section Styles
 {
-
+    <link rel="stylesheet" href="~/lib/geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css" />
 }
 
 
@@ -70,24 +70,26 @@
 
 @section Scripts
 {
-	<script src="https://maps.googleapis.com/maps/api/js?key=@Resgrid.Config.MappingConfig.GoogleMapsJSKey"></script>
-	@if (Model.Group == null || String.IsNullOrWhiteSpace(Model.Group.Geofence))
-	{
-		<script type="text/javascript">
-			var polyCoordinates = [];
-		</script>
-	}
-	else
-	{
-		<script type="text/javascript">
-			var polyCoordinates = JSON.parse('@(Html.Raw(Model.Group.Geofence))');
-		</script>
-	}
+    <script src="~/lib/geoman-io/leaflet-geoman-free/dist/leaflet-geoman.min.js"></script>
+    @if (Model.Group == null || String.IsNullOrWhiteSpace(Model.Group.Geofence))
+    {
+        <script type="text/javascript">
+            var polyCoordinates = [];
+        </script>
+    }
+    else
+    {
+        <script type="text/javascript">
+            var polyCoordinates = JSON.parse('@(Html.Raw(Model.Group.Geofence))');
+        </script>
+    }
 
-	<script type="text/javascript">
-		var latitude = '@(Model.Coordinates.Latitude)';
-		var longitude = '@(Model.Coordinates.Longitude)';
-	</script>
+    <script type="text/javascript">
+        var latitude = '@(Model.Coordinates.Latitude)';
+        var longitude = '@(Model.Coordinates.Longitude)';
+        var osmTileUrl = '@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()';
+        var osmTileAttribution = '@Resgrid.Config.MappingConfig.LeafletAttribution';
+    </script>
 
-	<script src="~/js/app/internal/groups/resgrid.groups.geofence.js"></script>
+    <script src="~/js/app/internal/groups/resgrid.groups.geofence.js"></script>
 }

@@ -1,6 +1,7 @@
-﻿@model Resgrid.WebCore.Areas.User.Models.Mapping.StationRoutingView
+@model Resgrid.WebCore.Areas.User.Models.Mapping.StationRoutingView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> localizer
 @{
-    ViewBag.Title = "Resgrid | Live Navigation";
+    ViewBag.Title = "Resgrid | " + localizer["LiveRoutingPageTitle"];
 }
 
 @section Styles
@@ -14,16 +15,16 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-        <h2>Live Routing</h2>
+        <h2>@localizer["LiveRoutingHeader"]</h2>
         <ol class="breadcrumb">
             <li>
-                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
             </li>
             <li>
-                <a asp-controller="Mapping" asp-action="Index" asp-route-area="User">Mapping</a>
+                <a asp-controller="Mapping" asp-action="Index" asp-route-area="User">@localizer["MappingHeader"]</a>
             </li>
             <li class="active">
-                <strong>Live Routing</strong>
+                <strong>@localizer["LiveRoutingHeader"]</strong>
             </li>
         </ol>
     </div>
@@ -57,71 +58,67 @@
 
 @section Scripts
 {
-    <script src="https://maps.googleapis.com/maps/api/js?key=@Resgrid.Config.MappingConfig.GoogleMapsJSKey"></script>
     <script type="text/javascript">
-        var unit;
-        var destination;
-        var directionsDisplay;
-        var directionsService;
+        var osmTileUrl = '@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()';
+        var osmTileAttribution = '@Resgrid.Config.MappingConfig.LeafletAttribution';
+        var osrmUrl = '@Resgrid.Config.MappingConfig.OsrmUrl';
+        var endLat = @Model.EndLat;
+        var endLon = @Model.EndLon;
 
-        function route() {
-            var call = new google.maps.LatLng(@Model.EndLat, @Model.EndLon);
+        function route(startLat, startLon) {
+            var map = L.map('dvMap').setView([startLat, startLon], 9);
+            L.tileLayer(osmTileUrl, { maxZoom: 19, attribution: osmTileAttribution }).addTo(map);
 
-            var mapOptions = {
-                zoom: 9,
-                center: unit
-            };
-            map = new google.maps.Map(document.getElementById('dvMap'), mapOptions);
-            directionsDisplay.setMap(map);
-            directionsDisplay.setPanel(document.getElementById('dvPanel'));
+            L.marker([startLat, startLon]).addTo(map);
+            L.marker([endLat, endLon]).addTo(map);
 
-            var request = {
-                origin: unit,
-                destination: call,
-                travelMode: google.maps.TravelMode.DRIVING
-            };
-            directionsService.route(request, function (response, status) {
-                if (status == google.maps.DirectionsStatus.OK) {
-                    directionsDisplay.setDirections(response);
-                }
-            });
+            var url = osrmUrl + '/route/v1/driving/' +
+                startLon + ',' + startLat + ';' + endLon + ',' + endLat +
+                '?steps=true&overview=full&geometries=geojson';
 
+            fetch(url)
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    if (data.code === 'Ok' && data.routes.length > 0) {
+                        var routeData = data.routes[0];
 
-            var service = new google.maps.DistanceMatrixService();
-            service.getDistanceMatrix({
-                origins: [unit],
-                destinations: [call],
-                travelMode: google.maps.TravelMode.DRIVING,
-                unitSystem: google.maps.UnitSystem.METRIC,
-                avoidHighways: false,
-                avoidTolls: false
-            }, function (response, status) {
-                if (status == google.maps.DistanceMatrixStatus.OK && response.rows[0].elements[0].status != "ZERO_RESULTS") {
-                    var distance = response.rows[0].elements[0].distance.text;
-                    var duration = response.rows[0].elements[0].duration.text;
-                    var dvDistance = document.getElementById("dvDistance");
-                    dvDistance.innerHTML = "";
-                    dvDistance.innerHTML += "Distance Is: " + distance + "<br />";
-                    dvDistance.innerHTML += "Duration Is: " + duration;
-                    //alert(dvDistance.innerHTML);
-                } else {
-                    alert("Your Request For Distance Not Available");
-                }
-            });
+                        var routeLayer = L.geoJSON(routeData.geometry, {
+                            style: { color: '#0066cc', weight: 4, opacity: 0.8 }
+                        }).addTo(map);
+                        map.fitBounds(routeLayer.getBounds(), { padding: [20, 20] });
+
+                        var distKm = (routeData.distance / 1000).toFixed(1);
+                        var durationMin = Math.round(routeData.duration / 60);
+                        var dvDistance = document.getElementById('dvDistance');
+                        dvDistance.innerHTML = '@localizer["DistanceLabel"] ' + distKm + ' km<br />@localizer["DurationLabel"] ' + durationMin + ' min';
+
+                        if (routeData.legs.length > 0) {
+                            var steps = routeData.legs[0].steps;
+                            var html = '<ol style="padding-left:20px;">';
+                            for (var i = 0; i < steps.length; i++) {
+                                var s = steps[i];
+                                if (s.maneuver && s.maneuver.type !== 'arrive') {
+                                    html += '<li>' + s.maneuver.type + (s.name ? ' onto ' + s.name : '') +
+                                        ' (' + (s.distance / 1000).toFixed(1) + ' km)</li>';
+                                }
+                            }
+                            html += '</ol>';
+                            document.getElementById('dvPanel').innerHTML = html;
+                        }
+                    }
+                })
+                .catch(function (err) { console.error('Routing error:', err); });
         }
+
         function foundLocation(position) {
-            unit = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-            route();
+            route(position.coords.latitude, position.coords.longitude);
         }
 
         function noLocation() {
-
+            console.log('Geolocation not available');
         }
 
         $(document).ready(function () {
-            directionsService = new google.maps.DirectionsService();
-            directionsDisplay = new google.maps.DirectionsRenderer({ 'draggable': true });
-
             navigator.geolocation.getCurrentPosition(foundLocation, noLocation, { timeout: 5000 });
         });
     </script>

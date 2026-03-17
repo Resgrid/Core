@@ -1,7 +1,8 @@
-﻿
+
 @model Resgrid.Web.Areas.User.Models.Mapping.ImportPOIsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> localizer
 @{
-	ViewBag.Title = "Resgrid | Import POIs";
+	ViewBag.Title = "Resgrid | " + localizer["ImportPOIsPageTitle"];
 }
 
 @section Styles
@@ -11,16 +12,16 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2> Import POIs</h2>
+		<h2>@localizer["ImportPOIsHeader"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
 			</li>
 			<li>
-				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">Mapping</a>
+				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">@localizer["MappingHeader"]</a>
 			</li>
 			<li class="active">
-				<strong> Import POIs</strong>
+				<strong>@localizer["ImportPOIsHeader"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -49,7 +50,7 @@
 
 						<div class="form-group">
 							<label class="col-sm-2 control-label">
-								Upload
+								@localizer["Upload"]
 							</label>
 							<div class="col-sm-10">
 								<input name="fileToUpload" id="fileToUpload" type="file" />
@@ -58,8 +59,8 @@
 
 						<div class="form-group">
 							<div class="col-sm-4 col-sm-offset-2">
-								<a class="btn btn-white" asp-controller="Mapping" asp-action="POIs" asp-route-area="User">Cancel</a>
-								<button class="btn btn-primary" type="submit">Import POIs</button>
+								<a class="btn btn-white" asp-controller="Mapping" asp-action="POIs" asp-route-area="User">@localizer["Cancel"]</a>
+								<button class="btn btn-primary" type="submit">@localizer["ImportPOIsButton"]</button>
 							</div>
 						</div>
 					</form>

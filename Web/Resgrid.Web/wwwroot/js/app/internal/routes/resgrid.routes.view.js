@@ -1,4 +1,13 @@
 $(document).ready(function () {
+    function escapeHtml(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
     if (document.getElementById('routeMap')) {
         var tiles = L.tileLayer(
             osmTileUrl,
@@ -31,9 +40,9 @@ $(document).ready(function () {
             var group = [];
 
             routeStops.forEach(function (stop, index) {
-                if (stop.lat && stop.lng) {
+                if (stop.lat != null && stop.lng != null && Number.isFinite(Number(stop.lat)) && Number.isFinite(Number(stop.lng))) {
                     var marker = L.marker([stop.lat, stop.lng]).addTo(map);
-                    marker.bindPopup('<strong>' + (index + 1) + '. ' + stop.Name + '</strong>');
+                    marker.bindPopup('<strong>' + (index + 1) + '. ' + escapeHtml(stop.Name) + '</strong>');
                     group.push(marker);
                 }
             });

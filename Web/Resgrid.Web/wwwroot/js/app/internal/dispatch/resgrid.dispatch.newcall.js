@@ -111,26 +111,21 @@ var resgrid;
                     if (where.length < 1)
                         return;
 
-                    if (google && google.maps) {
-                        var geocoder = new google.maps.Geocoder();
-
-                        if (geocoder) {
-                            geocoder.geocode({ 'address': where }, function (results, status) {
-                                if (status == google.maps.GeocoderStatus.OK && results && results.length >= 0) {
-
-                                    map.panTo(new L.LatLng(results[0].geometry.location.lat(), results[0].geometry.location.lng()));
-
-                                    $("#Latitude").val(results[0].geometry.location.lat().toString());
-                                    $("#Longitude").val(results[0].geometry.location.lng().toString());
-
-                                    resgrid.dispatch.newcall.setMarkerLocation(results[0].geometry.location.lat(), results[0].geometry.location.lng());
-                                }
-                                else {
-                                    console.log("Geocode was not successful for the following reason: " + status);
-                                }
-                            });
-                        }
-                    }
+                    fetch(resgrid.absoluteApiBaseUrl + '/api/v4/Geocoding/ForwardGeocode?address=' + encodeURIComponent(where), { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('RgWebApp.auth-tokens') } })
+                        .then(function(r) { return r.json(); })
+                        .then(function(result) {
+                            if (result && result.Data && result.Data.Latitude && result.Data.Longitude) {
+                                var lat = result.Data.Latitude;
+                                var lng = result.Data.Longitude;
+                                map.panTo(new L.LatLng(lat, lng));
+                                $("#Latitude").val(lat.toString());
+                                $("#Longitude").val(lng.toString());
+                                resgrid.dispatch.newcall.setMarkerLocation(lat, lng);
+                            } else {
+                                console.log("Geocode returned no results for: " + where);
+                            }
+                        })
+                        .catch(function(err) { console.error("Geocode error:", err); });
                     evt.preventDefault();
                 });
                 $("#findw3wButton").click(function (evt) {
@@ -367,46 +362,27 @@ var resgrid;
             }
             newcall.setMarkerLocation = setMarkerLocation;
             function geocodeCoordinates(lat, lng) {
-                if (google && google.maps) {
-                    let geocoder = new google.maps.Geocoder();
-
-                    if (geocoder) {
-                        geocoder.geocode({
-                            latLng: new google.maps.LatLng(lat, lng)
-                        }, function (results, status) {
-                            if (status == google.maps.GeocoderStatus.OK && results && results.length >= 0) {
-                                if (!userSuppliedAddress) {
-                                    $("#Call_Address").val(results[0].formatted_address);
-                                }
-                            }
-                            else {
-                                console.log("Geocode was not successful for the following reason: " + status);
-                            }
-                        });
-                    }
-                }
+                fetch(resgrid.absoluteApiBaseUrl + '/api/v4/Geocoding/ReverseGeocode?lat=' + lat + '&lon=' + lng, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('RgWebApp.auth-tokens') } })
+                    .then(function(r) { return r.json(); })
+                    .then(function(result) {
+                        if (result && result.Data && result.Data.Address && !userSuppliedAddress) {
+                            $("#Call_Address").val(result.Data.Address);
+                        }
+                    })
+                    .catch(function(err) { console.error("Reverse geocode error:", err); });
             }
             newcall.geocodeCoordinates = geocodeCoordinates;
             function findLocation(pos) {
-                if (google && google.maps) {
-                    var geocoder = new google.maps.Geocoder();
-
-                    if (geocoder) {
-                        geocoder.geocode({
-                            latLng: pos
-                        }, function (results, status) {
-                            if (status == google.maps.GeocoderStatus.OK) {
-                                $("#Call_Address").val(results[0].formatted_address);
-                            }
-                            else {
-                                alert("Geocode was not successful for the following reason: " + status);
-                            }
-                        });
-                    }
-
-                    $("#Latitude").val(pos.lat().toString());
-                    $("#Longitude").val(pos.lng().toString());
-                }
+                fetch(resgrid.absoluteApiBaseUrl + '/api/v4/Geocoding/ReverseGeocode?lat=' + pos.lat + '&lon=' + pos.lng, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('RgWebApp.auth-tokens') } })
+                    .then(function(r) { return r.json(); })
+                    .then(function(result) {
+                        if (result && result.Data && result.Data.Address) {
+                            $("#Call_Address").val(result.Data.Address);
+                        }
+                    })
+                    .catch(function(err) { console.error("Reverse geocode error:", err); });
+                $("#Latitude").val(pos.lat.toString());
+                $("#Longitude").val(pos.lng.toString());
             }
             newcall.findLocation = findLocation;
             function refreshPersonnelGrid() {

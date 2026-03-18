@@ -13,11 +13,33 @@ namespace Resgrid.Web.Areas.User.Models.Routes
 	{
 		public RoutePlan Plan { get; set; }
 		public List<Unit> Units { get; set; }
+		public List<Contact> Contacts { get; set; }
+		public string PendingStopsJson { get; set; }
 		public RouteNewView()
 		{
 			Plan = new RoutePlan();
 			Units = new List<Unit>();
+			Contacts = new List<Contact>();
 		}
+	}
+
+	public class PendingStopDto
+	{
+		public string Name { get; set; }
+		public string Description { get; set; }
+		public int StopType { get; set; }
+		public int Priority { get; set; }
+		public decimal Latitude { get; set; }
+		public decimal Longitude { get; set; }
+		public string Address { get; set; }
+		public int? CallId { get; set; }
+		public string PlannedArrival { get; set; }
+		public string PlannedDeparture { get; set; }
+		public int? DwellMinutes { get; set; }
+		public string ContactName { get; set; }
+		public string ContactNumber { get; set; }
+		public string ContactId { get; set; }
+		public string Notes { get; set; }
 	}
 
 	public class RouteEditView : BaseUserModel
@@ -26,12 +48,14 @@ namespace Resgrid.Web.Areas.User.Models.Routes
 		public List<RouteStop> Stops { get; set; }
 		public List<RouteSchedule> Schedules { get; set; }
 		public List<Unit> Units { get; set; }
+		public List<Contact> Contacts { get; set; }
 		public RouteEditView()
 		{
 			Plan = new RoutePlan();
 			Stops = new List<RouteStop>();
 			Schedules = new List<RouteSchedule>();
 			Units = new List<Unit>();
+			Contacts = new List<Contact>();
 		}
 	}
 

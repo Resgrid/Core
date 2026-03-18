@@ -17,6 +17,7 @@ namespace Resgrid.Model.Services
 		// Route Stop CRUD
 		Task<RouteStop> SaveRouteStopAsync(RouteStop routeStop, CancellationToken cancellationToken = default);
 		Task<List<RouteStop>> GetRouteStopsForPlanAsync(string routePlanId);
+		Task<List<RouteStop>> GetRouteStopsForContactAsync(string contactId, int departmentId);
 		Task<bool> ReorderRouteStopsAsync(string routePlanId, List<string> orderedStopIds, CancellationToken cancellationToken = default);
 		Task<bool> DeleteRouteStopAsync(string routeStopId, CancellationToken cancellationToken = default);
 

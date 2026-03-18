@@ -1,5 +1,7 @@
 @model Resgrid.Web.Areas.User.Models.IndoorMaps.IndoorMapFloorsView
+@using System.Text.Encodings.Web
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.IndoorMaps.IndoorMaps> localizer
+@inject JavaScriptEncoder JsEncoder
 @{
     ViewBag.Title = "Resgrid | " + localizer["FloorsPageTitlePrefix"] + " - " + Model.IndoorMap.Name;
 }
@@ -77,7 +79,7 @@
                                                 <a class="btn btn-primary btn-xs" asp-controller="IndoorMaps" asp-action="ZoneEditor" asp-route-id="@floor.IndoorMapFloorId" asp-route-area="User"><i class="fa fa-pencil"></i> @localizer["ZoneEditor"]</a>
                                                 <form asp-controller="IndoorMaps" asp-action="DeleteFloor" asp-route-area="User" method="post" style="display:inline;">
                                                     <input type="hidden" name="id" value="@floor.IndoorMapFloorId" />
-                                                    <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('@localizer["DeleteFloorConfirm"]');"><i class="fa fa-trash"></i> @localizer["Delete"]</button>
+                                                    <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('@JsEncoder.Encode(localizer["DeleteFloorConfirm"])');"><i class="fa fa-trash"></i> @localizer["Delete"]</button>
                                                 </form>
                                             </td>
                                         </tr>

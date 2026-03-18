@@ -2,6 +2,20 @@ $(document).ready(function () {
     var map, stopPickerMap, stopMarker, pickerMarker;
     var antiForgeryToken = $('input[name="__RequestVerificationToken"]').first().val();
 
+    function getAuthToken() {
+        try {
+            for (var i = 0; i < localStorage.length; i++) {
+                var val = localStorage.getItem(localStorage.key(i));
+                if (!val || val.charAt(0) !== '{') continue;
+                var obj = JSON.parse(val);
+                if (obj && typeof obj.access_token === 'string' && obj.access_token.length > 0) {
+                    return obj.access_token;
+                }
+            }
+        } catch (e) {}
+        return '';
+    }
+
     function escapeHtml(str) {
         return String(str)
             .replace(/&/g, '&amp;')
@@ -73,7 +87,7 @@ $(document).ready(function () {
     }
 
     function reverseGeocodeStop(lat, lng) {
-        fetch(resgrid.absoluteApiBaseUrl + '/api/v4/Geocoding/ReverseGeocode?lat=' + lat + '&lon=' + lng, { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('RgWebApp.auth-tokens') } })
+        fetch(resgrid.absoluteApiBaseUrl + '/api/v4/Geocoding/ReverseGeocode?lat=' + lat + '&lon=' + lng, { headers: { 'Authorization': 'Bearer ' + getAuthToken() } })
             .then(function (r) { return r.json(); })
             .then(function (result) {
                 if (result && result.Data && result.Data.Address) {
@@ -83,9 +97,35 @@ $(document).ready(function () {
             .catch(function (err) { console.error('Stop reverse geocode error:', err); });
     }
 
+    // ── Populate contact picker ───────────────────────────────────────────────
+    function populateContactPicker() {
+        var $sel = $('#stopContactPicker');
+        if ($sel.find('option').length > 1) return;
+        if (typeof availableContacts !== 'undefined' && availableContacts.length > 0) {
+            $.each(availableContacts, function (i, c) {
+                $sel.append($('<option>').val(c.id).text(c.name));
+            });
+        }
+    }
+
+    $('#stopContactPicker').on('change', function () {
+        var id = $(this).val();
+        if (!id) {
+            $('#stopContactId').val('');
+            return;
+        }
+        $('#stopContactId').val(id);
+        var contact = (typeof availableContacts !== 'undefined') ? availableContacts.find(function (c) { return c.id === id; }) : null;
+        if (contact) {
+            $('#stopContactName').val(contact.name);
+            if (contact.phone) $('#stopContactNumber').val(contact.phone);
+        }
+    });
+
     // ── Initialise picker map when modal is shown ─────────────────────────────
     $('#addStopModal').on('shown.bs.modal', function () {
         initStopPickerMap();
+        populateContactPicker();
     });
 
     // ── Reset modal when closed ───────────────────────────────────────────────
@@ -100,6 +140,8 @@ $(document).ready(function () {
         $('#stopPlannedArrival').val('');
         $('#stopPlannedDeparture').val('');
         $('#stopDwellMinutes').val('');
+        $('#stopContactPicker').val('');
+        $('#stopContactId').val('');
         $('#stopContactName').val('');
         $('#stopContactNumber').val('');
         $('#stopNotes').val('');
@@ -141,7 +183,7 @@ $(document).ready(function () {
         evt.preventDefault();
         var where = $.trim($('#stopAddress').val());
         if (!where) return;
-        fetch(resgrid.absoluteApiBaseUrl + '/api/v4/Geocoding/ForwardGeocode?address=' + encodeURIComponent(where), { headers: { 'Authorization': 'Bearer ' + localStorage.getItem('RgWebApp.auth-tokens') } })
+        fetch(resgrid.absoluteApiBaseUrl + '/api/v4/Geocoding/ForwardGeocode?address=' + encodeURIComponent(where), { headers: { 'Authorization': 'Bearer ' + getAuthToken() } })
             .then(function (r) { return r.json(); })
             .then(function (result) {
                 if (result && result.Data && result.Data.Latitude && result.Data.Longitude) {
@@ -207,6 +249,7 @@ $(document).ready(function () {
                 dwellMinutes:     $('#stopDwellMinutes').val() || null,
                 contactName:      $('#stopContactName').val(),
                 contactNumber:    $('#stopContactNumber').val(),
+                contactId:        $('#stopContactId').val() || null,
                 notes:            $('#stopNotes').val()
             },
             success: function (result) {

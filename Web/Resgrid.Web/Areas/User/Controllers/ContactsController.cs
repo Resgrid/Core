@@ -37,11 +37,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
 		private readonly IUdfRenderingService _udfRenderingService;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
+		private readonly IRouteService _routeService;
 
 		public ContactsController(IContactsService contactsService, IDepartmentsService departmentsService, IUserProfileService userProfileService,
 			IAddressService addressService, IEventAggregator eventAggregator, ICallsService callsService, IAuthorizationService authorizationService,
 			IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService,
-			IDepartmentGroupsService departmentGroupsService)
+			IDepartmentGroupsService departmentGroupsService, IRouteService routeService)
 		{
 			_contactsService = contactsService;
 			_departmentsService = departmentsService;
@@ -53,6 +54,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_userDefinedFieldsService = userDefinedFieldsService;
 			_udfRenderingService = udfRenderingService;
 			_departmentGroupsService = departmentGroupsService;
+			_routeService = routeService;
 		}
 
 		#endregion Private Members and Constructors
@@ -127,6 +129,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.MailingAddress = await _addressService.GetAddressByIdAsync(model.Contact.MailingAddressId.Value);
 
 			model.Notes = await _contactsService.GetContactNotesByContactIdAsync(contactId, DepartmentId);
+
+			model.RouteStops = await _routeService.GetRouteStopsForContactAsync(contactId, DepartmentId);
+			if (model.RouteStops.Count > 0)
+			{
+				var planIds = model.RouteStops.Select(s => s.RoutePlanId).Distinct().ToList();
+				var allPlans = await _routeService.GetRoutePlansForDepartmentAsync(DepartmentId);
+				model.RoutePlans = allPlans.Where(p => planIds.Contains(p.RoutePlanId)).ToList();
+			}
+			else
+			{
+				model.RoutePlans = new List<RoutePlan>();
+			}
 
 			var udfDefinition = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Contact);
 			if (udfDefinition != null)

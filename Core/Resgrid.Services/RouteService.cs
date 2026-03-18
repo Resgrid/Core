@@ -84,6 +84,18 @@ namespace Resgrid.Services
 			return stops?.Where(x => !x.IsDeleted).OrderBy(x => x.StopOrder).ToList() ?? new List<RouteStop>();
 		}
 
+		public async Task<List<RouteStop>> GetRouteStopsForContactAsync(string contactId, int departmentId)
+		{
+			var stops = await _routeStopsRepository.GetStopsByContactIdAsync(contactId);
+			if (stops == null)
+				return new List<RouteStop>();
+
+			var plans = await _routePlansRepository.GetRoutePlansByDepartmentIdAsync(departmentId);
+			var planIds = plans?.Where(p => !p.IsDeleted).Select(p => p.RoutePlanId).ToHashSet() ?? new HashSet<string>();
+
+			return stops.Where(s => !s.IsDeleted && planIds.Contains(s.RoutePlanId)).ToList();
+		}
+
 		public async Task<bool> ReorderRouteStopsAsync(string routePlanId, List<string> orderedStopIds, CancellationToken cancellationToken = default)
 		{
 			var stops = await _routeStopsRepository.GetStopsByRoutePlanIdAsync(routePlanId);

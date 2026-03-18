@@ -1479,6 +1479,10 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT *
 					FROM %SCHEMA%.%TABLENAME%
 					WHERE [CallId] = %CALLID% AND [IsDeleted] = 0";
+			SelectRouteStopsByContactIdQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE [ContactId] = %CONTACTID% AND [IsDeleted] = 0";
 			SelectRouteSchedulesByRoutePlanIdQuery = @"
 					SELECT *
 					FROM %SCHEMA%.%TABLENAME%

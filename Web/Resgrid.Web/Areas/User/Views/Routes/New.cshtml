@@ -106,9 +106,33 @@
 
                         <div class="hr-line-dashed"></div>
 
+                        <div class="clearfix" style="margin-bottom:10px;">
+                            <h4 style="display:inline;">@localizer["Stops"] (<span id="stopCount">0</span>)</h4>
+                            <button type="button" class="btn btn-sm btn-primary pull-right" data-toggle="modal" data-target="#addStopModal">
+                                <i class="fa fa-plus"></i> Add Stop
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="stopsTable">
+                                <thead>
+                                <tr>
+                                    <th>@localizer["StopsTableHash"]</th>
+                                    <th>@localizer["Name"]</th>
+                                    <th>@localizer["StopType"]</th>
+                                    <th>@localizer["Address"]</th>
+                                    <th>@localizer["Priority"]</th>
+                                    <th></th>
+                                </tr>
+                                </thead>
+                                <tbody id="stopsTableBody"></tbody>
+                            </table>
+                        </div>
+
                         <h4>@localizer["MapAndStopsTitle"]</h4>
                         <p class="text-muted">@localizer["MapAndStopsHelp"]</p>
                         <div id="routeMap" style="height:400px;margin-bottom:20px;border:1px solid #ddd;"></div>
+
+                        <input type="hidden" asp-for="PendingStopsJson" id="PendingStopsJson" />
 
                         <div class="hr-line-dashed"></div>
 
@@ -125,10 +149,136 @@
     </div>
 </div>
 
+<!-- Add Stop Modal -->
+<div class="modal fade" id="addStopModal" tabindex="-1" role="dialog" aria-labelledby="addStopModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="addStopModalLabel">Add Stop</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Name <span class="text-danger">*</span></label>
+                        <div class="col-sm-9"><input type="text" id="stopName" class="form-control" /></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Type</label>
+                        <div class="col-sm-9">
+                            <select id="stopType" class="form-control">
+                                <option value="0">Manual</option>
+                                <option value="1">Scheduled Call</option>
+                                <option value="3">Waypoint</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" id="linkedCallGroup" style="display:none;">
+                        <label class="col-sm-3 control-label">Linked Call</label>
+                        <div class="col-sm-9">
+                            <select id="linkedCallId" class="form-control">
+                                <option value="">-- Loading calls... --</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Priority</label>
+                        <div class="col-sm-9">
+                            <select id="stopPriority" class="form-control">
+                                <option value="0">Normal</option>
+                                <option value="1">High</option>
+                                <option value="2">Critical</option>
+                                <option value="3">Optional</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Address</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="text" id="stopAddress" class="form-control" placeholder="Enter address" />
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-info" id="geocodeStopBtn">Find</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">What3Words</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="text" id="stopW3W" class="form-control" placeholder="what.three.words" />
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-info" id="findStopW3WBtn">Find</button>
+                                </span>
+                            </div>
+                            <span class="help-inline">Find location via <a href="https://what3words.com/about/" target="_blank">What3Words</a></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Location <span class="text-danger">*</span></label>
+                        <div class="col-sm-9">
+                            <p class="text-muted small" style="margin-bottom:5px;">Click the map to set location, or use address / What3Words above.</p>
+                            <div id="stopPickerMap" style="height:280px;border:1px solid #ddd;border-radius:4px;"></div>
+                            <div class="row" style="margin-top:5px;">
+                                <div class="col-sm-6">
+                                    <input type="text" id="stopLat" class="form-control" placeholder="Latitude" readonly />
+                                </div>
+                                <div class="col-sm-6">
+                                    <input type="text" id="stopLng" class="form-control" placeholder="Longitude" readonly />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Planned Arrival</label>
+                        <div class="col-sm-9"><input type="datetime-local" id="stopPlannedArrival" class="form-control" /></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Planned Departure</label>
+                        <div class="col-sm-9"><input type="datetime-local" id="stopPlannedDeparture" class="form-control" /></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Est. Dwell (min)</label>
+                        <div class="col-sm-9"><input type="number" id="stopDwellMinutes" class="form-control" min="0" /></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Select Contact</label>
+                        <div class="col-sm-9">
+                            <select id="stopContactPicker" class="form-control">
+                                <option value="">-- Type manually or select existing --</option>
+                            </select>
+                            <input type="hidden" id="stopContactId" />
+                            <span class="help-block" style="font-size:11px;">Selecting a contact auto-fills name and number below.</span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Contact Name</label>
+                        <div class="col-sm-9"><input type="text" id="stopContactName" class="form-control" /></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Contact Number</label>
+                        <div class="col-sm-9"><input type="text" id="stopContactNumber" class="form-control" /></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Notes</label>
+                        <div class="col-sm-9"><textarea id="stopNotes" class="form-control" rows="2"></textarea></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveStopBtn">Add Stop</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         var osmTileUrl = '@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()';
         var osmTileAttribution = '@Resgrid.Config.MappingConfig.LeafletAttribution';
+        var availableContacts = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Contacts.Select(c => new { id = c.ContactId, name = c.GetName(), phone = c.CellPhoneNumber ?? c.OfficePhoneNumber ?? c.HomePhoneNumber ?? "" })));
     </script>
     <script src="~/js/app/internal/routes/resgrid.routes.new.js"></script>
 }

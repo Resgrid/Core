@@ -27,7 +27,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var zones = await _indoorMapService.SearchZonesAsync(DepartmentId, term);
 
-			var results = zones.Select(z => new
+			var results = (zones ?? Enumerable.Empty<Resgrid.Model.IndoorMapZone>()).Select(z => new
 			{
 				id = z.IndoorMapZoneId,
 				text = z.Name,

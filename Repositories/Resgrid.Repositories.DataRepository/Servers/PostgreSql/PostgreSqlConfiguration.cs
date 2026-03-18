@@ -1515,6 +1515,10 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT *
 					FROM %SCHEMA%.%TABLENAME%
 					WHERE CallId = %CALLID% AND IsDeleted = false";
+			SelectRouteStopsByContactIdQuery = @"
+					SELECT *
+					FROM %SCHEMA%.%TABLENAME%
+					WHERE ContactId = %CONTACTID% AND IsDeleted = false";
 			SelectRouteSchedulesByRoutePlanIdQuery = @"
 					SELECT *
 					FROM %SCHEMA%.%TABLENAME%

@@ -497,6 +497,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectActiveRoutePlansByDepartmentIdQuery { get; set; }
 		public string SelectRouteStopsByRoutePlanIdQuery { get; set; }
 		public string SelectRouteStopsByCallIdQuery { get; set; }
+		public string SelectRouteStopsByContactIdQuery { get; set; }
 		public string SelectRouteSchedulesByRoutePlanIdQuery { get; set; }
 		public string SelectActiveSchedulesDueQuery { get; set; }
 		public string SelectRouteInstancesByDepartmentIdQuery { get; set; }

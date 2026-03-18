@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -17,12 +18,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IRouteService _routeService;
 		private readonly IUnitsService _unitsService;
 		private readonly ICallsService _callsService;
+		private readonly IContactsService _contactsService;
 
-		public RoutesController(IRouteService routeService, IUnitsService unitsService, ICallsService callsService)
+		public RoutesController(IRouteService routeService, IUnitsService unitsService, ICallsService callsService, IContactsService contactsService)
 		{
 			_routeService = routeService;
 			_unitsService = unitsService;
 			_callsService = callsService;
+			_contactsService = contactsService;
 		}
 
 		[HttpGet]
@@ -40,6 +43,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var model = new RouteNewView();
 			model.Units = (await _unitsService.GetUnitsForDepartmentAsync(DepartmentId)).ToList();
+			model.Contacts = (await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId)).ToList();
 			return View(model);
 		}
 
@@ -57,10 +61,51 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				await _routeService.SaveRoutePlanAsync(model.Plan, cancellationToken);
 
+				if (!string.IsNullOrWhiteSpace(model.PendingStopsJson))
+				{
+					var options = new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+					var pendingStops = System.Text.Json.JsonSerializer.Deserialize<List<PendingStopDto>>(model.PendingStopsJson, options);
+					if (pendingStops != null)
+					{
+						for (int i = 0; i < pendingStops.Count; i++)
+						{
+							var ps = pendingStops[i];
+							var stop = new RouteStop
+							{
+								RoutePlanId = model.Plan.RoutePlanId,
+								Name = ps.Name,
+								Description = ps.Description,
+								StopType = ps.StopType,
+								Priority = ps.Priority,
+								Latitude = ps.Latitude,
+								Longitude = ps.Longitude,
+								Address = ps.Address,
+								CallId = ps.CallId,
+								EstimatedDwellMinutes = ps.DwellMinutes,
+								ContactName = ps.ContactName,
+								ContactNumber = ps.ContactNumber,
+								ContactId = ps.ContactId,
+								Notes = ps.Notes,
+								StopOrder = i + 1,
+								AddedOn = DateTime.UtcNow,
+								IsDeleted = false
+							};
+
+							if (!string.IsNullOrWhiteSpace(ps.PlannedArrival) && DateTime.TryParse(ps.PlannedArrival, out var arrivalDt))
+								stop.PlannedArrivalTime = arrivalDt.ToUniversalTime();
+							if (!string.IsNullOrWhiteSpace(ps.PlannedDeparture) && DateTime.TryParse(ps.PlannedDeparture, out var departureDt))
+								stop.PlannedDepartureTime = departureDt.ToUniversalTime();
+
+							await _routeService.SaveRouteStopAsync(stop, cancellationToken);
+						}
+					}
+				}
+
 				return RedirectToAction("Index");
 			}
 
 			model.Units = (await _unitsService.GetUnitsForDepartmentAsync(DepartmentId)).ToList();
+			model.Contacts = (await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId)).ToList();
 			return View(model);
 		}
 
@@ -77,6 +122,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Stops = await _routeService.GetRouteStopsForPlanAsync(id);
 			model.Schedules = await _routeService.GetSchedulesForPlanAsync(id);
 			model.Units = (await _unitsService.GetUnitsForDepartmentAsync(DepartmentId)).ToList();
+			model.Contacts = (await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId)).ToList();
 			return View(model);
 		}
 
@@ -103,6 +149,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			model.Units = (await _unitsService.GetUnitsForDepartmentAsync(DepartmentId)).ToList();
+			model.Contacts = (await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId)).ToList();
 			return View(model);
 		}
 
@@ -175,12 +222,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return Json(all);
 		}
 
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Route_View)]
+		public async Task<IActionResult> GetContactsForStop()
+		{
+			var contacts = await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId);
+			var result = contacts.OrderBy(c => c.GetName()).Select(c => new
+			{
+				id = c.ContactId,
+				name = c.GetName(),
+				phone = c.CellPhoneNumber ?? c.OfficePhoneNumber ?? c.HomePhoneNumber ?? string.Empty
+			}).ToList();
+			return Json(result);
+		}
+
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Route_Update)]
 		public async Task<IActionResult> AddStop(string routePlanId, string name, string description, int stopType, int priority,
 			decimal latitude, decimal longitude, string address, int? callId, int? geofenceRadius,
-			string plannedArrival, string plannedDeparture, int? dwellMinutes, string contactName, string contactNumber, string notes,
+			string plannedArrival, string plannedDeparture, int? dwellMinutes, string contactName, string contactNumber, string contactId, string notes,
 			CancellationToken cancellationToken)
 		{
 			var plan = await _routeService.GetRoutePlanByIdAsync(routePlanId);
@@ -203,6 +264,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				EstimatedDwellMinutes = dwellMinutes,
 				ContactName = contactName,
 				ContactNumber = contactNumber,
+				ContactId = contactId,
 				Notes = notes,
 				StopOrder = existingStops.Count + 1,
 				AddedOn = DateTime.UtcNow,
@@ -257,5 +319,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Stops = stops;
 			return View(model);
 		}
+
 	}
 }

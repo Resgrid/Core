@@ -12,5 +12,7 @@ namespace Resgrid.Web.Areas.User.Models.Contacts
 		public Address MailingAddress { get; set; }
 		public List<ContactNote> Notes { get; set; }
 		public List<ContactNoteType> NoteTypes { get; set; }
+		public List<RouteStop> RouteStops { get; set; }
+		public List<RoutePlan> RoutePlans { get; set; }
 	}
 }

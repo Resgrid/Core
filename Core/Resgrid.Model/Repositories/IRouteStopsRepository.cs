@@ -7,5 +7,6 @@ namespace Resgrid.Model.Repositories
 	{
 		Task<IEnumerable<RouteStop>> GetStopsByRoutePlanIdAsync(string routePlanId);
 		Task<IEnumerable<RouteStop>> GetStopsByCallIdAsync(int callId);
+		Task<IEnumerable<RouteStop>> GetStopsByContactIdAsync(string contactId);
 	}
 }

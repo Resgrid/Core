@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CompletedInviteHeader" xml:space="preserve">
+    <value>الدعوة المكتملة</value>
+  </data>
+  <data name="CompleteInviteHeader" xml:space="preserve">
+    <value>إكمال الدعوة</value>
+  </data>
+  <data name="CompleteInviteText1" xml:space="preserve">
+    <value>قدّم المعلومات لإنشاء حسابك الخاص في Resgrid والانضمام</value>
+  </data>
+  <data name="CompleteInviteText2" xml:space="preserve">
+    <value>المعلومات التي تقدمها تُستخدم لإنشاء حسابك في Resgrid. إذا كان لديك حساب بالفعل، فسيتم ربط حسابك الحالي بالقسم كجزء من هذه الدعوة.</value>
+  </data>
+  <data name="CompleteInviteText3" xml:space="preserve">
+    <value>إذا واجهتك صعوبة في إكمال الدعوة أو صادفت مشكلات، يُرجى التواصل مع مسؤول القسم للحصول على المساعدة. يمكنه إضافة حسابك يدويًا إذا لزم الأمر.</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>تأكيد كلمة المرور</value>
+  </data>
+  <data name="CreateAccount" xml:space="preserve">
+    <value>إنشاء حساب</value>
+  </data>
+  <data name="DepartmentName" xml:space="preserve">
+    <value>اسم القسم</value>
+  </data>
+  <data name="DontHaveAccount" xml:space="preserve">
+    <value>ليس لديك حساب؟</value>
+  </data>
+  <data name="EmailAddress" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+  </data>
+  <data name="FirstName" xml:space="preserve">
+    <value>الاسم الأول</value>
+  </data>
+  <data name="ForgotPassword" xml:space="preserve">
+    <value>نسيت اسم المستخدم أو كلمة المرور؟</value>
+  </data>
+  <data name="GoBack" xml:space="preserve">
+    <value>العودة</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>الرئيسية</value>
+  </data>
+  <data name="InviteCompletedInfo" xml:space="preserve">
+    <value>يبدو أن هذه الدعوة قد اكتملت بالفعل. إذا كان هذا خطأً، تواصل مع قسمك أو مؤسستك للحصول على دعوة أخرى، وإلا يمكنك تسجيل الدخول باسم المستخدم وكلمة المرور.</value>
+  </data>
+  <data name="InviteCompletedNotice" xml:space="preserve">
+    <value>تمت الدعوة إلى Resgrid بالفعل</value>
+  </data>
+  <data name="LastName" xml:space="preserve">
+    <value>اسم العائلة</value>
+  </data>
+  <data name="LockedOutHeader" xml:space="preserve">
+    <value>الحساب مقفل</value>
+  </data>
+  <data name="LockedOutText" xml:space="preserve">
+    <value>تم تأمين هذا الحساب، يُرجى المحاولة مرة أخرى بعد 30 دقيقة. تجدر الإشارة إلى أن الدعم لا يمكنه إلغاء تأمين الحساب نيابةً عنك.</value>
+  </data>
+  <data name="LogIn" xml:space="preserve">
+    <value>تسجيل الدخول</value>
+  </data>
+  <data name="LoginMessage1" xml:space="preserve">
+    <value>أدخل اسم المستخدم وكلمة المرور لتسجيل الدخول.</value>
+  </data>
+  <data name="LoginMessage2" xml:space="preserve">
+    <value>إذا كان قسمك قد سجّل بالفعل، اطلب من مسؤول ذلك القسم إرسال دعوة لك.</value>
+  </data>
+  <data name="LoginMessage3" xml:space="preserve">
+    <value>إذا لم يسجّل قسمك في Resgrid بعد، يمكنك إنشاء حساب جديد سيؤدي إلى إنشاء القسم تلقائيًا.</value>
+  </data>
+  <data name="LoginMessage4" xml:space="preserve">
+    <value>تُجرى الصيانة أسبوعيًا كل سبت ابتداءً من الساعة 20:00 بتوقيت المحيط الهادئ.</value>
+  </data>
+  <data name="LogOnHeader" xml:space="preserve">
+    <value>تسجيل الدخول</value>
+  </data>
+  <data name="MissingInviteBody" xml:space="preserve">
+    <value>نأسف لعدم تمكننا من العثور على دعوتك إلى Resgrid. حاول أن يرسل لك قسمك أو مؤسستك دعوةً أخرى. إذا كان لديك حساب Resgrid بالفعل، يمكنك تسجيل الدخول أدناه.</value>
+  </data>
+  <data name="MissingInviteHeader" xml:space="preserve">
+    <value>الدعوة مفقودة</value>
+  </data>
+  <data name="MissingInviteTopText" xml:space="preserve">
+    <value>تعذّر العثور على دعوتك إلى Resgrid</value>
+  </data>
+  <data name="Notice" xml:space="preserve">
+    <value>إشعار</value>
+  </data>
+  <data name="Password" xml:space="preserve">
+    <value>كلمة المرور</value>
+  </data>
+  <data name="PasswordHelp" xml:space="preserve">
+    <value>يجب أن تكون كلمة المرور 8 أحرف على الأقل وتشمل رقمًا وحرفًا كبيرًا وحرفًا صغيرًا</value>
+  </data>
+  <data name="PrivacyPolicy" xml:space="preserve">
+    <value>سياسة الخصوصية</value>
+  </data>
+  <data name="RecoverAccountSuccess" xml:space="preserve">
+    <value>إذا كان عنوان بريدك الإلكتروني صحيحًا، فقد أعدنا تعيين كلمة مرورك وأرسلنا اسم المستخدم وكلمة المرور الجديدة إلى العنوان المُدخَل. قد يتأخر تسليم البريد الإلكتروني حتى 15 دقيقة، &lt;b&gt;تحقق أيضًا من مجلد البريد غير الهام إذا لم يصل البريد&lt;/b&gt; بحلول ذلك الوقت.</value>
+  </data>
+  <data name="RecoverAccountText" xml:space="preserve">
+    <value>قدّم عنوان البريد الإلكتروني المرتبط بحساب Resgrid الخاص بك. سنرسل لك بريدًا إلكترونيًا يحتوي على اسم المستخدم وكلمة مرور جديدة لتسجيل الدخول.</value>
+  </data>
+  <data name="RecoveryAccountHeader" xml:space="preserve">
+    <value>استرداد الحساب</value>
+  </data>
+  <data name="RegisterHeader" xml:space="preserve">
+    <value>التسجيل</value>
+  </data>
+  <data name="RegisterText1" xml:space="preserve">
+    <value>التسجيل في Resgrid سهل كالعد من 1 إلى 3!</value>
+  </data>
+  <data name="RegisterText2" xml:space="preserve">
+    <value>أن يملأ شخص واحد من مؤسستك هذا النموذج</value>
+  </data>
+  <data name="RegisterText3" xml:space="preserve">
+    <value>بعد التسجيل، يمكنك دعوة أشخاص أو إضافتهم من صفحة الموظفين داخل التطبيق</value>
+  </data>
+  <data name="RegisterText4" xml:space="preserve">
+    <value>هذا كل شيء! يحتاج شخص واحد فقط إلى تسجيل المؤسسة</value>
+  </data>
+  <data name="RegisterText5" xml:space="preserve">
+    <value>إذا كان شخص في مؤسستك &lt;b&gt;يمتلك حسابًا بالفعل في Resgrid&lt;/b&gt;، اطلب منه دعوتك إلى قسمه بدلًا من إنشاء قسم جديد، إذا أردت استخدام Resgrid معه.</value>
+  </data>
+  <data name="Resgister" xml:space="preserve">
+    <value>تسجيل</value>
+  </data>
+  <data name="SignUpTerms1" xml:space="preserve">
+    <value>بالتسجيل، تقبل</value>
+  </data>
+  <data name="TermsOfUse" xml:space="preserve">
+    <value>شروط الاستخدام</value>
+  </data>
+  <data name="Username" xml:space="preserve">
+    <value>اسم المستخدم</value>
+  </data>
+</root>

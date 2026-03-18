@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="PageTitle" xml:space="preserve"><value>المصادقة الثنائية</value></data>
+  <data name="SetupPageTitle" xml:space="preserve"><value>تفعيل المصادقة الثنائية</value></data>
+  <data name="DisablePageTitle" xml:space="preserve"><value>تعطيل المصادقة الثنائية</value></data>
+  <data name="RecoveryCodesPageTitle" xml:space="preserve"><value>رموز الاسترداد</value></data>
+  <data name="VerifyPageTitle" xml:space="preserve"><value>التحقق من الهوية</value></data>
+  <data name="BreadcrumbTwoFactor" xml:space="preserve"><value>المصادقة الثنائية</value></data>
+  <data name="BreadcrumbSetup" xml:space="preserve"><value>الإعداد</value></data>
+  <data name="BreadcrumbDisable" xml:space="preserve"><value>تعطيل</value></data>
+  <data name="BreadcrumbRecoveryCodes" xml:space="preserve"><value>رموز الاسترداد</value></data>
+  <data name="AuthenticatorAppHeader" xml:space="preserve"><value>تطبيق المصادقة (TOTP)</value></data>
+  <data name="TwoFactorEnabledAlert" xml:space="preserve"><value>المصادقة الثنائية &lt;strong&gt;مفعّلة&lt;/strong&gt; على حسابك.</value></data>
+  <data name="TwoFactorDisabledAlert" xml:space="preserve"><value>المصادقة الثنائية &lt;strong&gt;غير مفعّلة&lt;/strong&gt;. فعّلها الآن لتأمين حسابك بتطبيق مصادقة مثل Google Authenticator أو Microsoft Authenticator أو Authy.</value></data>
+  <data name="RecoveryCodesRemainingText" xml:space="preserve"><value>لديك {0} رمز (رموز) استرداد متبقية.</value></data>
+  <data name="RecoveryCodesWarningText" xml:space="preserve"><value>لديك {0} رمز (رموز) استرداد فقط متبقية. أنشئ رموز استرداد جديدة قبل نفادها.</value></data>
+  <data name="RegenerateRecoveryCodesButton" xml:space="preserve"><value>إعادة إنشاء رموز الاسترداد</value></data>
+  <data name="Disable2FAButton" xml:space="preserve"><value>تعطيل المصادقة الثنائية</value></data>
+  <data name="EnableAuthenticatorButton" xml:space="preserve"><value>تفعيل تطبيق المصادقة</value></data>
+  <data name="SetupHeader" xml:space="preserve"><value>إعداد تطبيق المصادقة</value></data>
+  <data name="EnforcedWarning" xml:space="preserve"><value>يشترط قسمك المصادقة الثنائية للمسؤولين. يُرجى إكمال الإعداد قبل المتابعة.</value></data>
+  <data name="SetupInstructions" xml:space="preserve"><value>لاستخدام تطبيق المصادقة، اتّبع الخطوات التالية:</value></data>
+  <data name="SetupStep1" xml:space="preserve"><value>نزّل تطبيق مصادقة مثل {0} أو {1} أو {2}.</value></data>
+  <data name="SetupStep2QR" xml:space="preserve"><value>امسح رمز QR أدناه باستخدام تطبيقك، أو أدخل المفتاح يدوياً:</value></data>
+  <data name="SetupStep3" xml:space="preserve"><value>بعد المسح، أدخل الرمز المكوّن من 6 أرقام الظاهر في تطبيق المصادقة:</value></data>
+  <data name="VerificationCodeLabel" xml:space="preserve"><value>رمز التحقق</value></data>
+  <data name="VerificationCodePlaceholder" xml:space="preserve"><value>000000</value></data>
+  <data name="VerifyAndEnableButton" xml:space="preserve"><value>تحقق وفعّل</value></data>
+  <data name="InvalidCodeError" xml:space="preserve"><value>رمز التحقق غير صالح. يُرجى التحقق من تطبيق المصادقة والمحاولة مجدداً.</value></data>
+  <data name="SaveRecoveryCodesHeader" xml:space="preserve"><value>احفظ رموز الاسترداد</value></data>
+  <data name="SaveRecoveryCodesWarning" xml:space="preserve"><value>مهم: احتفظ بهذه الرموز في مكان آمن. يمكن استخدام كل رمز مرة واحدة فقط. إذا فقدت الوصول إلى تطبيق المصادقة، يمكنك استخدام رمز استرداد لتسجيل الدخول.</value></data>
+  <data name="DoneButton" xml:space="preserve"><value>تم</value></data>
+  <data name="DisableWarning" xml:space="preserve"><value>تعطيل المصادقة الثنائية سيقلل من أمان حسابك. سيتم إعادة تعيين مفتاح المصادقة الخاص بك.</value></data>
+  <data name="DisableConfirmationText" xml:space="preserve"><value>أدخل رمز المصادقة الحالي لتأكيد رغبتك في تعطيل المصادقة الثنائية:</value></data>
+  <data name="AuthenticatorCodeLabel" xml:space="preserve"><value>رمز المصادقة</value></data>
+  <data name="Disable2FAConfirmButton" xml:space="preserve"><value>تعطيل المصادقة الثنائية</value></data>
+  <data name="VerifyIdentityHeader" xml:space="preserve"><value>تأكيد هويتك</value></data>
+  <data name="VerifyIdentityDescription" xml:space="preserve"><value>تتطلب هذه العملية التحقق الثنائي الحديث. يُرجى إدخال الرمز الحالي من تطبيق المصادقة.</value></data>
+  <data name="VerifyButton" xml:space="preserve"><value>تحقق</value></data>
+  <data name="LoginTwoFactorHeader" xml:space="preserve"><value>المصادقة الثنائية</value></data>
+  <data name="LoginTwoFactorDescription" xml:space="preserve"><value>تسجيل دخولك محمي بتطبيق مصادقة. أدخل الرمز المكوّن من 6 أرقام من تطبيقك أدناه.</value></data>
+  <data name="AuthenticatorCodeInputLabel" xml:space="preserve"><value>رمز المصادقة</value></data>
+  <data name="RememberBrowserLabel" xml:space="preserve"><value>لا تسألني مجدداً على هذا الجهاز لمدة 30 يوماً</value></data>
+  <data name="VerifyCodeButton" xml:space="preserve"><value>تحقق من الرمز</value></data>
+  <data name="UseRecoveryCodeLink" xml:space="preserve"><value>فقدت الوصول إلى تطبيقك؟ استخدم رمز استرداد</value></data>
+  <data name="RecoveryCodeLoginHeader" xml:space="preserve"><value>تسجيل الدخول برمز الاسترداد</value></data>
+  <data name="RecoveryCodeLoginDescription" xml:space="preserve"><value>لقد فقدت الوصول إلى تطبيق المصادقة. أدخل أحد رموز الاسترداد أدناه. يمكن استخدام كل رمز مرة واحدة فقط.</value></data>
+  <data name="RecoveryCodeInputLabel" xml:space="preserve"><value>رمز الاسترداد</value></data>
+  <data name="RecoveryCodePlaceholder" xml:space="preserve"><value>xxxx-xxxx-xxxx</value></data>
+  <data name="LoginWithRecoveryCodeButton" xml:space="preserve"><value>تسجيل الدخول برمز الاسترداد</value></data>
+  <data name="UseAuthenticatorAppLink" xml:space="preserve"><value>استخدام تطبيق المصادقة بدلاً من ذلك</value></data>
+  <data name="InvalidCodeLogin" xml:space="preserve"><value>رمز المصادقة غير صالح.</value></data>
+  <data name="InvalidRecoveryCode" xml:space="preserve"><value>رمز الاسترداد غير صالح.</value></data>
+</root>

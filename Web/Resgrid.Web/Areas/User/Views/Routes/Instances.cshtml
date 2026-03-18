@@ -1,15 +1,16 @@
 @model Resgrid.Web.Areas.User.Models.Routes.RouteInstancesView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Routes.Routes> localizer
 @{
-    ViewBag.Title = "Resgrid | Route History";
+    ViewBag.Title = "Resgrid | " + localizer["RouteHistoryPageTitle"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-12">
-        <h2>Route History - @Model.Plan.Name</h2>
+        <h2>@localizer["RouteHistoryHeaderPrefix"] - @Model.Plan.Name</h2>
         <ol class="breadcrumb">
-            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a></li>
-            <li><a asp-controller="Routes" asp-action="Index" asp-route-area="User">Routes</a></li>
-            <li class="active"><strong>History</strong></li>
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="Routes" asp-action="Index" asp-route-area="User">@localizer["RoutesHeader"]</a></li>
+            <li class="active"><strong>@localizer["HistoryBreadcrumb"]</strong></li>
         </ol>
     </div>
 </div>
@@ -23,12 +24,12 @@
                         <table class="table table-striped" id="instancesTable">
                             <thead>
                             <tr>
-                                <th>Status</th>
-                                <th>Unit</th>
-                                <th>Started</th>
-                                <th>Ended</th>
-                                <th>Stops</th>
-                                <th>Actions</th>
+                                <th>@localizer["Status"]</th>
+                                <th>@localizer["Unit"]</th>
+                                <th>@localizer["Started"]</th>
+                                <th>@localizer["Ended"]</th>
+                                <th>@localizer["Stops"]</th>
+                                <th>@localizer["Actions"]</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -42,7 +43,7 @@
                                     <td>@instance.StopsCompleted / @instance.StopsTotal</td>
                                     <td>
                                         <a class="btn btn-xs btn-primary" asp-controller="Routes" asp-action="InstanceDetail" asp-route-instanceId="@instance.RouteInstanceId" asp-route-area="User">
-                                            <i class="fa fa-eye"></i> Detail
+                                            <i class="fa fa-eye"></i> @localizer["Detail"]
                                         </a>
                                     </td>
                                 </tr>

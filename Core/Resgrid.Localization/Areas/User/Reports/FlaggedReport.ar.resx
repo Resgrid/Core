@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="ReportTitle" xml:space="preserve"><value>تقرير الملاحظات والصور والملفات المُعلَّمة للبلاغات</value></data>
+  <data name="ReportIndexDescription" xml:space="preserve"><value>يعرض هذا التقرير جميع الملاحظات والصور والملفات المُعلَّمة للبلاغات في القسم، بما في ذلك معلومات البلاغ المرتبط والمحتوى أو اسم الملف وتفاصيل التعليم وسبب تعليم كل عنصر.</value></data>
+  <data name="ReportStartDate" xml:space="preserve"><value>تاريخ بداية التقرير</value></data>
+  <data name="ReportEndDate" xml:space="preserve"><value>تاريخ نهاية التقرير</value></data>
+  <data name="RunReport" xml:space="preserve"><value>تشغيل التقرير</value></data>
+  <data name="DateFilterApplied" xml:space="preserve"><value>تم تطبيق فلتر التاريخ</value></data>
+  <data name="FlaggedNotesSection" xml:space="preserve"><value>الملاحظات المُعلَّمة</value></data>
+  <data name="FlaggedImagesSection" xml:space="preserve"><value>الصور المُعلَّمة</value></data>
+  <data name="FlaggedFilesSection" xml:space="preserve"><value>الملفات المُعلَّمة</value></data>
+  <data name="FlaggedCountSuffix" xml:space="preserve"><value>مُعلَّم</value></data>
+  <data name="NoFlaggedNotesFound" xml:space="preserve"><value>لم يتم العثور على ملاحظات بلاغات مُعلَّمة لهذا القسم.</value></data>
+  <data name="NoFlaggedImagesFound" xml:space="preserve"><value>لم يتم العثور على صور بلاغات مُعلَّمة لهذا القسم.</value></data>
+  <data name="NoFlaggedFilesFound" xml:space="preserve"><value>لم يتم العثور على ملفات بلاغات مُعلَّمة لهذا القسم.</value></data>
+  <data name="CallNumberHeader" xml:space="preserve"><value>رقم البلاغ</value></data>
+  <data name="CallNameHeader" xml:space="preserve"><value>اسم البلاغ</value></data>
+  <data name="CallTypeHeader" xml:space="preserve"><value>النوع</value></data>
+  <data name="CallAddressHeader" xml:space="preserve"><value>العنوان</value></data>
+  <data name="CallLoggedOnHeader" xml:space="preserve"><value>تاريخ تسجيل البلاغ</value></data>
+  <data name="NoteHeader" xml:space="preserve"><value>الملاحظة</value></data>
+  <data name="NoteByHeader" xml:space="preserve"><value>الملاحظة بواسطة</value></data>
+  <data name="NoteTimestampHeader" xml:space="preserve"><value>طابع وقت الملاحظة</value></data>
+  <data name="FlagInfoHeader" xml:space="preserve"><value>معلومات التعليم</value></data>
+  <data name="FileNameHeader" xml:space="preserve"><value>اسم الملف</value></data>
+  <data name="ImageByHeader" xml:space="preserve"><value>الصورة بواسطة</value></data>
+  <data name="ImageTimestampHeader" xml:space="preserve"><value>طابع وقت الصورة</value></data>
+  <data name="FileTypeHeader" xml:space="preserve"><value>نوع الملف</value></data>
+  <data name="FileByHeader" xml:space="preserve"><value>الملف بواسطة</value></data>
+  <data name="FileTimestampHeader" xml:space="preserve"><value>طابع وقت الملف</value></data>
+  <data name="FlaggedByLabel" xml:space="preserve"><value>عُلِّم بواسطة</value></data>
+  <data name="FlaggedOnLabel" xml:space="preserve"><value>عُلِّم في</value></data>
+  <data name="ReasonLabel" xml:space="preserve"><value>السبب</value></data>
+  <data name="DateRangeLabel" xml:space="preserve"><value>نطاق التاريخ</value></data>
+  <data name="ReportGeneratedLabel" xml:space="preserve"><value>أُنشئ التقرير</value></data>
+</root>

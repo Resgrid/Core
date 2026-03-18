@@ -1,15 +1,16 @@
 @model Resgrid.Web.Areas.User.Models.Routes.ActiveRoutesView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Routes.Routes> localizer
 @{
-    ViewBag.Title = "Resgrid | Active Routes";
+    ViewBag.Title = "Resgrid | " + localizer["ActiveRoutesPageTitle"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-12">
-        <h2>Active Routes</h2>
+        <h2>@localizer["ActiveRoutesHeader"]</h2>
         <ol class="breadcrumb">
-            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a></li>
-            <li><a asp-controller="Routes" asp-action="Index" asp-route-area="User">Routes</a></li>
-            <li class="active"><strong>Active</strong></li>
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="Routes" asp-action="Index" asp-route-area="User">@localizer["RoutesHeader"]</a></li>
+            <li class="active"><strong>@localizer["ActiveBreadcrumb"]</strong></li>
         </ol>
     </div>
 </div>
@@ -21,8 +22,8 @@
             <div class="col-lg-12">
                 <div class="ibox float-e-margins">
                     <div class="ibox-content text-center">
-                        <h3>No Active Routes</h3>
-                        <p class="text-muted">There are no route instances currently in progress.</p>
+                        <h3>@localizer["NoActiveRoutes"]</h3>
+                        <p class="text-muted">@localizer["NoActiveRoutesMessage"]</p>
                     </div>
                 </div>
             </div>
@@ -40,11 +41,11 @@
                     <div class="ibox-content">
                         <div class="row">
                             <div class="col-xs-6">
-                                <small class="stats-label">Unit</small>
+                                <small class="stats-label">@localizer["UnitLabel"]</small>
                                 <h4>@instance.UnitId</h4>
                             </div>
                             <div class="col-xs-6">
-                                <small class="stats-label">Stops</small>
+                                <small class="stats-label">@localizer["StopsLabel"]</small>
                                 <h4>@instance.StopsCompleted / @instance.StopsTotal</h4>
                             </div>
                         </div>
@@ -52,10 +53,10 @@
                             <div class="progress-bar" style="width: @(pct)%"></div>
                         </div>
                         <div class="m-t-sm small">
-                            Started: @(instance.ActualStartOn?.ToString("HH:mm") ?? "-")
+                            @localizer["StartedLabel"]: @(instance.ActualStartOn?.ToString("HH:mm") ?? "-")
                         </div>
                         <a class="btn btn-xs btn-primary m-t-sm" asp-controller="Routes" asp-action="InstanceDetail" asp-route-instanceId="@instance.RouteInstanceId" asp-route-area="User">
-                            View Details
+                            @localizer["ViewDetails"]
                         </a>
                     </div>
                 </div>

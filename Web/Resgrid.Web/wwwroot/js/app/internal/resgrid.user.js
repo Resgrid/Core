@@ -54,7 +54,8 @@ var resgrid;
                 'fr': '/images/flags/32/France.png',
                 'it': '/images/flags/32/Italy.png',
                 'pl': '/images/flags/32/Poland.png',
-                'uk': '/images/flags/32/Ukraine.png'
+                'uk': '/images/flags/32/Ukraine.png',
+                'ar': '/images/flags/32/Saudi-Arabia.png'
             };
 
             if (langCookieValue) {

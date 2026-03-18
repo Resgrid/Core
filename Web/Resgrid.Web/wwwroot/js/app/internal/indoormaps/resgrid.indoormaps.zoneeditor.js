@@ -17,9 +17,9 @@ $(document).ready(function () {
             maxZoom: 22
         });
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        L.tileLayer(osmTileUrl, {
             maxZoom: 22,
-            attribution: '© OpenStreetMap'
+            attribution: osmTileAttribution
         }).addTo(map);
 
         imageBounds = [boundsSW, boundsNE];

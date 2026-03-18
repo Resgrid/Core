@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="Action" xml:space="preserve"><value>إجراء</value></data>
+  <data name="Actions" xml:space="preserve"><value>الإجراءات</value></data>
+  <data name="Activate" xml:space="preserve"><value>تفعيل</value></data>
+  <data name="Active" xml:space="preserve"><value>نشط</value></data>
+  <data name="ArchivedCallsPage" xml:space="preserve"><value>البلاغات المؤرشفة</value></data>
+  <data name="Attachment" xml:space="preserve"><value>مرفق</value></data>
+  <data name="Attachments" xml:space="preserve"><value>المرفقات</value></data>
+  <data name="AudioPushToTalk" xml:space="preserve"><value>الصوت &amp; الضغط للتحدث</value></data>
+  <data name="Available" xml:space="preserve"><value>متاح</value></data>
+  <data name="AvailableAt" xml:space="preserve"><value>متاح في</value></data>
+  <data name="AvailableStation" xml:space="preserve"><value>المحطة المتاحة</value></data>
+  <data name="BigBoard" xml:space="preserve"><value>اللوحة الكبيرة</value></data>
+  <data name="Blog" xml:space="preserve"><value>المدونة</value></data>
+  <data name="CalendarModule" xml:space="preserve"><value>التقويم</value></data>
+  <data name="Call" xml:space="preserve"><value>بلاغ</value></data>
+  <data name="CallAddress" xml:space="preserve"><value>عنوان البلاغ</value></data>
+  <data name="CallImportSettings" xml:space="preserve"><value>إعدادات استيراد البلاغات</value></data>
+  <data name="CallsModule" xml:space="preserve"><value>البلاغات</value></data>
+  <data name="CallTimestamp" xml:space="preserve"><value>طابع وقت البلاغ</value></data>
+  <data name="Cancel" xml:space="preserve"><value>إلغاء</value></data>
+  <data name="Canceled" xml:space="preserve"><value>مُلغى</value></data>
+  <data name="Certifications" xml:space="preserve"><value>الشهادات</value></data>
+  <data name="Close" xml:space="preserve"><value>إغلاق</value></data>
+  <data name="Closed" xml:space="preserve"><value>مغلق</value></data>
+  <data name="Code" xml:space="preserve"><value>الرمز</value></data>
+  <data name="Color" xml:space="preserve"><value>اللون</value></data>
+  <data name="Commands" xml:space="preserve"><value>الأوامر</value></data>
+  <data name="Committed" xml:space="preserve"><value>ملتزم</value></data>
+  <data name="Connect" xml:space="preserve"><value>اتصال</value></data>
+  <data name="ContactsModule" xml:space="preserve"><value>جهات الاتصال</value></data>
+  <data name="ContactUs" xml:space="preserve"><value>اتصل بنا</value></data>
+  <data name="CreatedOn" xml:space="preserve"><value>أُنشئ في</value></data>
+  <data name="CustomStatuses" xml:space="preserve"><value>الحالات المخصصة</value></data>
+  <data name="Data" xml:space="preserve"><value>البيانات</value></data>
+  <data name="Day" xml:space="preserve"><value>يوم</value></data>
+  <data name="Days" xml:space="preserve"><value>أيام</value></data>
+  <data name="Deactivate" xml:space="preserve"><value>إلغاء التفعيل</value></data>
+  <data name="Default" xml:space="preserve"><value>افتراضي</value></data>
+  <data name="Delayed" xml:space="preserve"><value>متأخر</value></data>
+  <data name="Delete" xml:space="preserve"><value>حذف</value></data>
+  <data name="Department" xml:space="preserve"><value>القسم</value></data>
+  <data name="DepartmentSettings" xml:space="preserve"><value>إعدادات القسم</value></data>
+  <data name="DepartmentTypes" xml:space="preserve"><value>أنواع الأقسام</value></data>
+  <data name="Description" xml:space="preserve"><value>الوصف</value></data>
+  <data name="Discard" xml:space="preserve"><value>تجاهل</value></data>
+  <data name="Dispatched" xml:space="preserve"><value>مُرسَل</value></data>
+  <data name="DistributionLists" xml:space="preserve"><value>قوائم التوزيع</value></data>
+  <data name="Documents" xml:space="preserve"><value>المستندات</value></data>
+  <data name="DocumentsModule" xml:space="preserve"><value>المستندات</value></data>
+  <data name="Download" xml:space="preserve"><value>تنزيل</value></data>
+  <data name="End" xml:space="preserve"><value>نهاية</value></data>
+  <data name="EtaColumn" xml:space="preserve"><value>وقت الوصول المتوقع</value></data>
+  <data name="Event" xml:space="preserve"><value>حدث</value></data>
+  <data name="Expired" xml:space="preserve"><value>منتهي الصلاحية</value></data>
+  <data name="Export" xml:space="preserve"><value>تصدير</value></data>
+  <data name="Files" xml:space="preserve"><value>الملفات</value></data>
+  <data name="Forms" xml:space="preserve"><value>النماذج</value></data>
+  <data name="Friday" xml:space="preserve"><value>الجمعة</value></data>
+  <data name="General" xml:space="preserve"><value>عام</value></data>
+  <data name="Groups" xml:space="preserve"><value>المجموعات</value></data>
+  <data name="Help" xml:space="preserve"><value>مساعدة</value></data>
+  <data name="HelpAndSupport" xml:space="preserve"><value>المساعدة &amp; الدعم</value></data>
+  <data name="HomeModule" xml:space="preserve"><value>الرئيسية</value></data>
+  <data name="Hour" xml:space="preserve"><value>ساعة</value></data>
+  <data name="Hours" xml:space="preserve"><value>ساعات</value></data>
+  <data name="Id" xml:space="preserve"><value>المعرف</value></data>
+  <data name="Images" xml:space="preserve"><value>الصور</value></data>
+  <data name="Info" xml:space="preserve"><value>معلومات</value></data>
+  <data name="InQuarters" xml:space="preserve"><value>في المقر</value></data>
+  <data name="Instructors" xml:space="preserve"><value>المدربون</value></data>
+  <data name="InventoryModule" xml:space="preserve"><value>المخزون</value></data>
+  <data name="KnowledgeBase" xml:space="preserve"><value>قاعدة المعرفة</value></data>
+  <data name="Language" xml:space="preserve"><value>اللغة</value></data>
+  <data name="Links" xml:space="preserve"><value>الروابط</value></data>
+  <data name="Location" xml:space="preserve"><value>الموقع</value></data>
+  <data name="Logout" xml:space="preserve"><value>تسجيل الخروج</value></data>
+  <data name="LogsModule" xml:space="preserve"><value>السجلات</value></data>
+  <data name="Mailbox" xml:space="preserve"><value>صندوق البريد</value></data>
+  <data name="Map" xml:space="preserve"><value>الخريطة</value></data>
+  <data name="MappingModule" xml:space="preserve"><value>الخرائط</value></data>
+  <data name="Maybe" xml:space="preserve"><value>ربما</value></data>
+  <data name="Minutes" xml:space="preserve"><value>دقائق</value></data>
+  <data name="Monday" xml:space="preserve"><value>الاثنين</value></data>
+  <data name="Monthly" xml:space="preserve"><value>شهري</value></data>
+  <data name="Name" xml:space="preserve"><value>الاسم</value></data>
+  <data name="NameColumn" xml:space="preserve"><value>الاسم</value></data>
+  <data name="NatureOfCall" xml:space="preserve"><value>طبيعة البلاغ</value></data>
+  <data name="Never" xml:space="preserve"><value>أبداً</value></data>
+  <data name="No" xml:space="preserve"><value>لا</value></data>
+  <data name="None" xml:space="preserve"><value>لا شيء</value></data>
+  <data name="Note" xml:space="preserve"><value>ملاحظة</value></data>
+  <data name="Notes" xml:space="preserve"><value>الملاحظات</value></data>
+  <data name="NotesModule" xml:space="preserve"><value>الملاحظات</value></data>
+  <data name="Notifications" xml:space="preserve"><value>الإشعارات</value></data>
+  <data name="NotResponding" xml:space="preserve"><value>لا يستجيب</value></data>
+  <data name="Number" xml:space="preserve"><value>الرقم</value></data>
+  <data name="OnScene" xml:space="preserve"><value>في الموقع</value></data>
+  <data name="OnShift" xml:space="preserve"><value>في الوردية</value></data>
+  <data name="Optional" xml:space="preserve"><value>اختياري</value></data>
+  <data name="Options" xml:space="preserve"><value>الخيارات</value></data>
+  <data name="Order" xml:space="preserve"><value>الترتيب</value></data>
+  <data name="Orders" xml:space="preserve"><value>الأوامر</value></data>
+  <data name="Personnel" xml:space="preserve"><value>الأفراد</value></data>
+  <data name="PersonnelModule" xml:space="preserve"><value>الأفراد</value></data>
+  <data name="Preview" xml:space="preserve"><value>معاينة</value></data>
+  <data name="Print" xml:space="preserve"><value>طباعة</value></data>
+  <data name="Priority" xml:space="preserve"><value>الأولوية</value></data>
+  <data name="Process" xml:space="preserve"><value>معالجة</value></data>
+  <data name="Profile" xml:space="preserve"><value>الملف الشخصي</value></data>
+  <data name="Protocols" xml:space="preserve"><value>البروتوكولات</value></data>
+  <data name="PushToTalk" xml:space="preserve"><value>الضغط للتحدث</value></data>
+  <data name="Released" xml:space="preserve"><value>مُفرَج عنه</value></data>
+  <data name="Remove" xml:space="preserve"><value>إزالة</value></data>
+  <data name="Repeat" xml:space="preserve"><value>تكرار</value></data>
+  <data name="ReportsModule" xml:space="preserve"><value>التقارير</value></data>
+  <data name="Required" xml:space="preserve"><value>مطلوب</value></data>
+  <data name="Responding" xml:space="preserve"><value>يستجيب</value></data>
+  <data name="RespondingTo" xml:space="preserve"><value>يستجيب لـ</value></data>
+  <data name="RespondToCall" xml:space="preserve"><value>الاستجابة لبلاغ</value></data>
+  <data name="RespondToStation" xml:space="preserve"><value>الاستجابة لمحطة</value></data>
+  <data name="Roles" xml:space="preserve"><value>الأدوار</value></data>
+  <data name="Route" xml:space="preserve"><value>المسار</value></data>
+  <data name="Saturday" xml:space="preserve"><value>السبت</value></data>
+  <data name="Save" xml:space="preserve"><value>حفظ</value></data>
+  <data name="Saving" xml:space="preserve"><value>جارٍ الحفظ</value></data>
+  <data name="SecurityAndPermissions" xml:space="preserve"><value>الأمان &amp; الصلاحيات</value></data>
+  <data name="Send" xml:space="preserve"><value>إرسال</value></data>
+  <data name="ShiftsModule" xml:space="preserve"><value>الورديات</value></data>
+  <data name="Signup" xml:space="preserve"><value>التسجيل</value></data>
+  <data name="Size" xml:space="preserve"><value>الحجم</value></data>
+  <data name="StaffingColumn" xml:space="preserve"><value>التأمين</value></data>
+  <data name="StandingBy" xml:space="preserve"><value>في الانتظار</value></data>
+  <data name="StandingByStation" xml:space="preserve"><value>في الانتظار بالمحطة</value></data>
+  <data name="Start" xml:space="preserve"><value>بداية</value></data>
+  <data name="Station" xml:space="preserve"><value>المحطة</value></data>
+  <data name="StationAndGroups" xml:space="preserve"><value>المحطات &amp; المجموعات</value></data>
+  <data name="Status" xml:space="preserve"><value>الحالة</value></data>
+  <data name="StatusColumn" xml:space="preserve"><value>الحالة</value></data>
+  <data name="StatusPage" xml:space="preserve"><value>حالة النظام</value></data>
+  <data name="String1" xml:space="preserve"><value>نموذج بلاغ جديد</value></data>
+  <data name="SubAndBilling" xml:space="preserve"><value>الاشتراك &amp; الفواتير</value></data>
+  <data name="Sunday" xml:space="preserve"><value>الأحد</value></data>
+  <data name="System" xml:space="preserve"><value>النظام</value></data>
+  <data name="Templates" xml:space="preserve"><value>القوالب</value></data>
+  <data name="Text" xml:space="preserve"><value>نص</value></data>
+  <data name="TextMessaging" xml:space="preserve"><value>الرسائل النصية</value></data>
+  <data name="Thursday" xml:space="preserve"><value>الخميس</value></data>
+  <data name="Timestamp" xml:space="preserve"><value>الطابع الزمني</value></data>
+  <data name="Title" xml:space="preserve"><value>العنوان</value></data>
+  <data name="Training" xml:space="preserve"><value>التدريب</value></data>
+  <data name="TrainingCode" xml:space="preserve"><value>رمز الدورة\التدريب</value></data>
+  <data name="TrainingOrCourse" xml:space="preserve"><value>الدورة\التدريب</value></data>
+  <data name="TrainingsModule" xml:space="preserve"><value>التدريبات</value></data>
+  <data name="Tuesday" xml:space="preserve"><value>الثلاثاء</value></data>
+  <data name="Type" xml:space="preserve"><value>النوع</value></data>
+  <data name="Types" xml:space="preserve"><value>الأنواع</value></data>
+  <data name="Unavailable" xml:space="preserve"><value>غير متاح</value></data>
+  <data name="Unfounded" xml:space="preserve"><value>غير مؤسس</value></data>
+  <data name="Units" xml:space="preserve"><value>الوحدات</value></data>
+  <data name="UnitsModule" xml:space="preserve"><value>الوحدات</value></data>
+  <data name="Unknown" xml:space="preserve"><value>غير معروف</value></data>
+  <data name="Update" xml:space="preserve"><value>تحديث</value></data>
+  <data name="UpgradePlan" xml:space="preserve"><value>ترقية خطتك</value></data>
+  <data name="UploadedBy" xml:space="preserve"><value>رُفع بواسطة</value></data>
+  <data name="UploadedOn" xml:space="preserve"><value>رُفع في</value></data>
+  <data name="UsersHeader" xml:space="preserve"><value>المستخدمون</value></data>
+  <data name="Valid" xml:space="preserve"><value>صالح</value></data>
+  <data name="Video" xml:space="preserve"><value>فيديو</value></data>
+  <data name="Videos" xml:space="preserve"><value>مقاطع الفيديو</value></data>
+  <data name="View" xml:space="preserve"><value>عرض</value></data>
+  <data name="ViewCalls" xml:space="preserve"><value>عرض جميع البلاغات</value></data>
+  <data name="ViewInbox" xml:space="preserve"><value>عرض صندوق الوارد</value></data>
+  <data name="Warning" xml:space="preserve"><value>تحذير</value></data>
+  <data name="Wednesday" xml:space="preserve"><value>الأربعاء</value></data>
+  <data name="Week" xml:space="preserve"><value>أسبوع</value></data>
+  <data name="Weekly" xml:space="preserve"><value>أسبوعي</value></data>
+  <data name="Weeks" xml:space="preserve"><value>أسابيع</value></data>
+  <data name="WorkLog" xml:space="preserve"><value>سجل العمل</value></data>
+  <data name="Yearly" xml:space="preserve"><value>سنوي</value></data>
+  <data name="Yes" xml:space="preserve"><value>نعم</value></data>
+  <data name="UserDefinedFields" xml:space="preserve"><value>الحقول المعرَّفة من قبل المستخدم</value></data>
+  <data name="YourDepartments" xml:space="preserve"><value>أقسامك</value></data>
+</root>

@@ -1,23 +1,24 @@
 @model Resgrid.Web.Areas.User.Models.IndoorMaps.IndoorMapIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IndoorMaps.IndoorMaps> localizer
 @{
-    ViewBag.Title = "Resgrid | Indoor Maps";
+    ViewBag.Title = "Resgrid | " + localizer["IndoorMapsPageTitle"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-        <h2>Indoor Maps</h2>
+        <h2>@localizer["IndoorMapsHeader"]</h2>
         <ol class="breadcrumb">
             <li>
-                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
             </li>
             <li class="active">
-                <strong>Indoor Maps</strong>
+                <strong>@localizer["IndoorMapsHeader"]</strong>
             </li>
         </ol>
     </div>
     <div class="col-sm-8">
         <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-            <a class="btn btn-success" asp-controller="IndoorMaps" asp-action="New" asp-route-area="User">New Indoor Map</a>
+            <a class="btn btn-success" asp-controller="IndoorMaps" asp-action="New" asp-route-area="User">@localizer["NewIndoorMap"]</a>
         </div>
     </div>
 </div>
@@ -31,9 +32,9 @@
                         <table class="table table-striped" id="indoorMapsTable">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Description</th>
-                                    <th>Created</th>
+                                    <th>@localizer["Name"]</th>
+                                    <th>@localizer["Description"]</th>
+                                    <th>@localizer["Created"]</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -47,9 +48,9 @@
                                             <td>@map.Description</td>
                                             <td>@map.AddedOn.ToString("g")</td>
                                             <td style="text-align:right;">
-                                                <a class="btn btn-primary btn-xs" asp-controller="IndoorMaps" asp-action="Floors" asp-route-id="@map.IndoorMapId" asp-route-area="User"><i class="fa fa-layer-group"></i> Floors</a>
-                                                <a class="btn btn-info btn-xs" asp-controller="IndoorMaps" asp-action="Edit" asp-route-id="@map.IndoorMapId" asp-route-area="User"><i class="fa fa-pencil"></i> Edit</a>
-                                                <a class="btn btn-danger btn-xs" asp-controller="IndoorMaps" asp-action="Delete" asp-route-id="@map.IndoorMapId" asp-route-area="User" onclick="return confirm('Are you sure you want to delete this indoor map?');"><i class="fa fa-trash"></i> Delete</a>
+                                                <a class="btn btn-primary btn-xs" asp-controller="IndoorMaps" asp-action="Floors" asp-route-id="@map.IndoorMapId" asp-route-area="User"><i class="fa fa-layer-group"></i> @localizer["Floors"]</a>
+                                                <a class="btn btn-info btn-xs" asp-controller="IndoorMaps" asp-action="Edit" asp-route-id="@map.IndoorMapId" asp-route-area="User"><i class="fa fa-pencil"></i> @localizer["Edit"]</a>
+                                                <a class="btn btn-danger btn-xs" asp-controller="IndoorMaps" asp-action="Delete" asp-route-id="@map.IndoorMapId" asp-route-area="User" onclick="return confirm('@localizer["DeleteIndoorMapConfirm"]');"><i class="fa fa-trash"></i> @localizer["Delete"]</a>
                                             </td>
                                         </tr>
                                     }
@@ -64,11 +65,5 @@
 </div>
 
 @section Scripts {
-    <script>
-        $(document).ready(function () {
-            $('#indoorMapsTable').DataTable({
-                pageLength: 25
-            });
-        });
-    </script>
+    <script src="~/js/app/internal/indoormaps/resgrid.indoormaps.index.js" asp-append-version="true"></script>
 }

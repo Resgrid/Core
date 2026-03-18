@@ -1,25 +1,26 @@
 @model Resgrid.Web.Areas.User.Models.Routes.RouteIndexView
 @using Resgrid.Model
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Routes.Routes> localizer
 @{
-    ViewBag.Title = "Resgrid | Routes";
+    ViewBag.Title = "Resgrid | " + localizer["RoutesPageTitle"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-        <h2>Routes</h2>
+        <h2>@localizer["RoutesHeader"]</h2>
         <ol class="breadcrumb">
             <li>
-                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
             </li>
             <li class="active">
-                <strong>Routes</strong>
+                <strong>@localizer["RoutesHeader"]</strong>
             </li>
         </ol>
     </div>
     <div class="col-sm-8">
         <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-            <a class="btn btn-success" asp-controller="Routes" asp-action="New" asp-route-area="User">New Route</a>
-            <a class="btn btn-info" asp-controller="Routes" asp-action="ActiveRoutes" asp-route-area="User">Active Routes</a>
+            <a class="btn btn-success" asp-controller="Routes" asp-action="New" asp-route-area="User">@localizer["NewRoute"]</a>
+            <a class="btn btn-info" asp-controller="Routes" asp-action="ActiveRoutes" asp-route-area="User">@localizer["ActiveRoutes"]</a>
         </div>
     </div>
 </div>
@@ -33,12 +34,12 @@
                         <table class="table table-striped" id="routePlansTable">
                             <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Status</th>
-                                <th>Stops</th>
-                                <th>Profile</th>
-                                <th>Created</th>
-                                <th style="width:200px;">Actions</th>
+                                <th>@localizer["Name"]</th>
+                                <th>@localizer["Status"]</th>
+                                <th>@localizer["Stops"]</th>
+                                <th>@localizer["Profile"]</th>
+                                <th>@localizer["Created"]</th>
+                                <th style="width:200px;">@localizer["Actions"]</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -52,18 +53,18 @@
                                     <td>@plan.AddedOn.ToString("yyyy-MM-dd")</td>
                                     <td>
                                         <a class="btn btn-xs btn-primary" asp-controller="Routes" asp-action="View" asp-route-id="@plan.RoutePlanId" asp-route-area="User">
-                                            <i class="fa fa-eye"></i> View
+                                            <i class="fa fa-eye"></i> @localizer["View"]
                                         </a>
                                         <a class="btn btn-xs btn-warning" asp-controller="Routes" asp-action="Edit" asp-route-id="@plan.RoutePlanId" asp-route-area="User">
-                                            <i class="fa fa-pencil"></i> Edit
+                                            <i class="fa fa-pencil"></i> @localizer["Edit"]
                                         </a>
                                         <a class="btn btn-xs btn-info" asp-controller="Routes" asp-action="Instances" asp-route-routePlanId="@plan.RoutePlanId" asp-route-area="User">
-                                            <i class="fa fa-history"></i> History
+                                            <i class="fa fa-history"></i> @localizer["History"]
                                         </a>
                                         <form asp-controller="Routes" asp-action="Delete" asp-route-area="User" method="post" style="display:inline;">
                                             @Html.AntiForgeryToken()
                                             <input type="hidden" name="id" value="@plan.RoutePlanId" />
-                                            <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('Delete this route plan?');">
+                                            <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["DeleteRoutePlanConfirm"]');">
                                                 <i class="fa fa-trash"></i>
                                             </button>
                                         </form>

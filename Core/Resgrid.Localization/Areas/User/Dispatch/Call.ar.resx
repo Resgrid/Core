@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="ActiveCalls" xml:space="preserve"><value>البلاغات النشطة</value></data>
+  <data name="ActiveCallsHelp" xml:space="preserve"><value>إضافة بلاغ نشط</value></data>
+  <data name="AddArchivedCall" xml:space="preserve"><value>إضافة بلاغ مؤرشف</value></data>
+  <data name="AddArchivedCallHeader" xml:space="preserve"><value>إضافة بلاغ مؤرشف</value></data>
+  <data name="AddArchivedCallHelp" xml:space="preserve"><value>إضافة بلاغ مؤرشف</value></data>
+  <data name="AddedBy" xml:space="preserve"><value>أضيف بواسطة</value></data>
+  <data name="AddFile" xml:space="preserve"><value>إضافة ملف</value></data>
+  <data name="AddFilePlaceholder" xml:space="preserve"><value>أدخل اسم المرفق</value></data>
+  <data name="AddImage" xml:space="preserve"><value>إضافة صورة</value></data>
+  <data name="AdditionalContactLabel" xml:space="preserve"><value>جهات اتصال إضافية</value></data>
+  <data name="AddLinkedCall" xml:space="preserve"><value>إضافة بلاغ مرتبط</value></data>
+  <data name="AddNote" xml:space="preserve"><value>إضافة ملاحظة</value></data>
+  <data name="AddNotePlaceholder" xml:space="preserve"><value>أدخل الملاحظة هنا...</value></data>
+  <data name="AlertNotesHeader" xml:space="preserve"><value>ملاحظات تنبيه لجهة الاتصال</value></data>
+  <data name="ArchivedCallsHeader" xml:space="preserve"><value>البلاغات المؤرشفة</value></data>
+  <data name="AttachedImages" xml:space="preserve"><value>الصور المرفقة</value></data>
+  <data name="CallContactType" xml:space="preserve"><value>نوع اتصال البلاغ</value></data>
+  <data name="CallDocumentsHeader" xml:space="preserve"><value>مستندات البلاغ</value></data>
+  <data name="CallExportHeader" xml:space="preserve"><value>تصدير بلاغ Resgrid</value></data>
+  <data name="CallForm" xml:space="preserve"><value>نموذج البلاغ</value></data>
+  <data name="CallFormLabel" xml:space="preserve"><value>نموذج البلاغ</value></data>
+  <data name="CallIdentifierLabel" xml:space="preserve"><value>معرف البلاغ</value></data>
+  <data name="CallIdentifierPlaceholder" xml:space="preserve"><value>معرف CAD أو معرف نظام الاتصال الوارد</value></data>
+  <data name="CallIdLabel" xml:space="preserve"><value>المعرف</value></data>
+  <data name="CallLinksLabel" xml:space="preserve"><value>روابط البلاغ</value></data>
+  <data name="CallNatureLabel" xml:space="preserve"><value>طبيعة البلاغ</value></data>
+  <data name="CallNaturePlaceholder" xml:space="preserve"><value>وصف لطبيعة البلاغ</value></data>
+  <data name="CallNoteAddedByLabel" xml:space="preserve"><value>أضيفت الملاحظة بواسطة</value></data>
+  <data name="CallNoteAddedOnLabel" xml:space="preserve"><value>أضيفت الملاحظة في</value></data>
+  <data name="CallNotesHeader" xml:space="preserve"><value>ملاحظات البلاغ</value></data>
+  <data name="CallNoteTextLabel" xml:space="preserve"><value>نص الملاحظة</value></data>
+  <data name="CallNumber" xml:space="preserve"><value>رقم البلاغ</value></data>
+  <data name="CallNumberLabel" xml:space="preserve"><value>الرقم</value></data>
+  <data name="CallsLinkedFromThisHeader" xml:space="preserve"><value>البلاغات المرتبطة من (البلاغات الأصل)</value></data>
+  <data name="CallsLinkedToThisHeader" xml:space="preserve"><value>البلاغات المرتبطة بـ (البلاغات الفرعية)</value></data>
+  <data name="CallTemplatesLabel" xml:space="preserve"><value>قوالب البلاغات</value></data>
+  <data name="CloseCall" xml:space="preserve"><value>إغلاق البلاغ</value></data>
+  <data name="CloseCallHeader" xml:space="preserve"><value>إغلاق البلاغ</value></data>
+  <data name="ClosedByLabel" xml:space="preserve"><value>أغلق بواسطة</value></data>
+  <data name="ClosedOnLabel" xml:space="preserve"><value>أغلق في</value></data>
+  <data name="CompletedNotesLabel" xml:space="preserve"><value>ملاحظات الإغلاق</value></data>
+  <data name="CompletedNotesPlaceholder" xml:space="preserve"><value>ملاحظات حول إغلاق البلاغ أو سبب الإغلاق</value></data>
+  <data name="CompletedTypeLabel" xml:space="preserve"><value>نوع الإنجاز</value></data>
+  <data name="Contacts" xml:space="preserve"><value>جهات الاتصال</value></data>
+  <data name="CreateCall" xml:space="preserve"><value>إنشاء وإرسال البلاغ</value></data>
+  <data name="DeleteCall" xml:space="preserve"><value>حذف البلاغ</value></data>
+  <data name="DeleteCallHeader" xml:space="preserve"><value>حذف البلاغ</value></data>
+  <data name="DeleteReasonLabel" xml:space="preserve"><value>سبب الحذف</value></data>
+  <data name="DeleteReasonPlaceholder" xml:space="preserve"><value>السبب وراء حذف البلاغ</value></data>
+  <data name="DispatchAudio" xml:space="preserve"><value>صوت الإرسال</value></data>
+  <data name="DispatchedPersonnel" xml:space="preserve"><value>الأفراد المُرسَلون</value></data>
+  <data name="DispatchedUnits" xml:space="preserve"><value>الوحدات المُرسَلة</value></data>
+  <data name="DispatchLabel" xml:space="preserve"><value>إرسال</value></data>
+  <data name="DrivingDirections" xml:space="preserve"><value>اتجاهات القيادة من</value></data>
+  <data name="ExportUnauthHeader" xml:space="preserve"><value>هذه صفحة غير مصادق عليها لعرض هذا البلاغ فقط. أنت لست مسجّلاً في Resgrid. لا تشارك هذا الرابط.</value></data>
+  <data name="FileName" xml:space="preserve"><value>اسم الملف</value></data>
+  <data name="FileType" xml:space="preserve"><value>نوع الملف</value></data>
+  <data name="FindAddress" xml:space="preserve"><value>البحث عن عنوان</value></data>
+  <data name="FindW3wLocation" xml:space="preserve"><value>البحث عن موقع w3w</value></data>
+  <data name="FlagCallNoteHeader" xml:space="preserve"><value>تعليم ملاحظة البلاغ</value></data>
+  <data name="FlagCallImageHeader" xml:space="preserve"><value>تعليم صورة البلاغ</value></data>
+  <data name="FlagCallFileHeader" xml:space="preserve"><value>تعليم ملف البلاغ</value></data>
+  <data name="CallImageAddedByLabel" xml:space="preserve"><value>أضيفت الصورة بواسطة</value></data>
+  <data name="CallImageTimestampLabel" xml:space="preserve"><value>طابع وقت الصورة</value></data>
+  <data name="CallFileAddedByLabel" xml:space="preserve"><value>أضيف الملف بواسطة</value></data>
+  <data name="CallFileTimestampLabel" xml:space="preserve"><value>طابع وقت الملف</value></data>
+  <data name="FlagImage" xml:space="preserve"><value>تعليم الصورة</value></data>
+  <data name="FlagFile" xml:space="preserve"><value>تعليم الملف</value></data>
+  <data name="FlaggedReasonLabel" xml:space="preserve"><value>سبب التعليم</value></data>
+  <data name="FlaggedReasonPlaceholder" xml:space="preserve"><value>سبب التعليم</value></data>
+  <data name="GPSLabel" xml:space="preserve"><value>GPS</value></data>
+  <data name="IncidentIdLabel" xml:space="preserve"><value>معرف الحادثة</value></data>
+  <data name="IncidentIdPlaceholder" xml:space="preserve"><value>معرف الحادثة الخارجي الرئيسي أو الأصل</value></data>
+  <data name="IsFlaggedLabel" xml:space="preserve"><value>مُعلَّم</value></data>
+  <data name="LearnMore" xml:space="preserve"><value>اعرف المزيد.</value></data>
+  <data name="LinkedCalls" xml:space="preserve"><value>البلاغات المرتبطة</value></data>
+  <data name="LocationLabel" xml:space="preserve"><value>الموقع</value></data>
+  <data name="LocationPlaceholder" xml:space="preserve"><value>العنوان الكامل للبلاغ (الشارع، المدينة، الولاية، الرمز البريدي)</value></data>
+  <data name="LoggedByLabel" xml:space="preserve"><value>سجّله</value></data>
+  <data name="LoggedOnLabel" xml:space="preserve"><value>سُجِّل في</value></data>
+  <data name="MapPageLabel" xml:space="preserve"><value>صفحة الخريطة</value></data>
+  <data name="MapPagePlaceholder" xml:space="preserve"><value>صفحة كتاب الخرائط</value></data>
+  <data name="NameLabel" xml:space="preserve"><value>الاسم</value></data>
+  <data name="NamePlaceholder" xml:space="preserve"><value>اسم البلاغ</value></data>
+  <data name="NewCallFormHeader" xml:space="preserve"><value>نموذج بلاغ جديد</value></data>
+  <data name="NewCallHeader" xml:space="preserve"><value>بلاغ جديد</value></data>
+  <data name="NoAttachments" xml:space="preserve"><value>لا توجد مرفقات</value></data>
+  <data name="NoFiles" xml:space="preserve"><value>لا توجد ملفات مرفقة بهذا البلاغ</value></data>
+  <data name="NotClosed" xml:space="preserve"><value>لم يُغلق</value></data>
+  <data name="Note" xml:space="preserve"><value>ملاحظة</value></data>
+  <data name="NotesLabel" xml:space="preserve"><value>الملاحظات</value></data>
+  <data name="NotesPlaceholder" xml:space="preserve"><value>ملاحظات للبلاغ</value></data>
+  <data name="NotSupplied" xml:space="preserve"><value>غير مُقدَّم</value></data>
+  <data name="NoType" xml:space="preserve"><value>لا يوجد نوع</value></data>
+  <data name="PersonnelActivityLabel" xml:space="preserve"><value>نشاط الأفراد</value></data>
+  <data name="PersonnelDispatchLabel" xml:space="preserve"><value>الأفراد</value></data>
+  <data name="PersonnelEvents" xml:space="preserve"><value>أحداث الأفراد</value></data>
+  <data name="PrimaryContactLabel" xml:space="preserve"><value>جهة الاتصال الرئيسية</value></data>
+  <data name="PrioirtyLabel" xml:space="preserve"><value>الأولوية</value></data>
+  <data name="ProtocolQuestionHeader" xml:space="preserve"><value>الإجابة على أسئلة البروتوكول</value></data>
+  <data name="ProtocolsLabel" xml:space="preserve"><value>البروتوكولات</value></data>
+  <data name="ProtocolText" xml:space="preserve"><value>نص البروتوكول</value></data>
+  <data name="RedispatchCallHelp" xml:space="preserve"><value>إذا أردت إعادة بث هذا البلاغ حدد هذا المربع. سيُرسَل البلاغ إلى جميع المستخدمين المحددين بغض النظر عن مشاركتهم في الإرسال الأول أم لا.</value></data>
+  <data name="RedispatchCallLabel" xml:space="preserve"><value>إعادة الإرسال</value></data>
+  <data name="ReferenceIdLabel" xml:space="preserve"><value>معرف المرجع</value></data>
+  <data name="ReferenceIdPlaceholder" xml:space="preserve"><value>رقم الشريك أو المرجع</value></data>
+  <data name="RegenerateCallLabel" xml:space="preserve"><value>إعادة إنشاء أرقام البلاغات</value></data>
+  <data name="RegenerateCallWarning" xml:space="preserve"><value>تحذير: ستُحدَّث جميع أرقام بلاغات Resgrid (مثل 16-55) بناءً على التاريخ. هذه العملية غير قابلة للتراجع.</value></data>
+  <data name="ReopenCall" xml:space="preserve"><value>إعادة فتح البلاغ</value></data>
+  <data name="ReportContactLabel" xml:space="preserve"><value>معلومات الاتصال بالمبلّغ</value></data>
+  <data name="ReportContactPlaceholder" xml:space="preserve"><value>رقم هاتف أو بريد إلكتروني للمبلّغ</value></data>
+  <data name="ReportNameLabel" xml:space="preserve"><value>اسم المبلّغ</value></data>
+  <data name="ReportNamePlaceholder" xml:space="preserve"><value>اسم الشخص الذي أبلغ عن البلاغ</value></data>
+  <data name="SelectCallLabel" xml:space="preserve"><value>اختر البلاغ</value></data>
+  <data name="SelectCallNoteLabel" xml:space="preserve"><value>ملاحظة للرابط (اختياري)</value></data>
+  <data name="SelectCallTemplateHeader" xml:space="preserve"><value>اختر قالب البلاغ</value></data>
+  <data name="SelectCallToLinkHeader" xml:space="preserve"><value>اختر البلاغ المراد ربطه</value></data>
+  <data name="SendNotificationLabel" xml:space="preserve"><value>إرسال إشعار</value></data>
+  <data name="SetTemplateButton" xml:space="preserve"><value>تعيين القالب</value></data>
+  <data name="StateLabel" xml:space="preserve"><value>الولاية/المنطقة</value></data>
+  <data name="Template" xml:space="preserve"><value>القالب</value></data>
+  <data name="TimestampLabel" xml:space="preserve"><value>الطابع الزمني</value></data>
+  <data name="TypeLabel" xml:space="preserve"><value>النوع</value></data>
+  <data name="UnitActivityLabel" xml:space="preserve"><value>نشاط الوحدة</value></data>
+  <data name="UnitEvents" xml:space="preserve"><value>أحداث الوحدة</value></data>
+  <data name="UnitsDispatchLabel" xml:space="preserve"><value>الوحدات</value></data>
+  <data name="UpdateCallHeader" xml:space="preserve"><value>تحديث البلاغ</value></data>
+  <data name="ViewCallHeader" xml:space="preserve"><value>عرض البلاغ</value></data>
+  <data name="ViewText" xml:space="preserve"><value>عرض النص</value></data>
+  <data name="W3wHelp" xml:space="preserve"><value>هذا عنوان what3words.</value></data>
+</root>

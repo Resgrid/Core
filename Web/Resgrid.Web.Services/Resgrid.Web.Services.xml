@@ -574,6 +574,28 @@
             <param name="formId">The form identifier</param>
             <returns>A FormResultData for the requested form</returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.GeocodingController">
+            <summary>
+            Forward and reverse geocoding operations. Requests are proxied through the
+            server-side geocoding provider so that external API keys are never exposed
+            to the client, and so that all calls pass through the configured rate limiter.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.GeocodingController.ForwardGeocode(System.String)">
+            <summary>
+            Converts a human-readable address string into geographic coordinates.
+            </summary>
+            <param name="address">Address string to geocode.</param>
+            <returns>ForwardGeocodeResult with Latitude/Longitude, or nulls if not found.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.GeocodingController.ReverseGeocode(System.Double,System.Double)">
+            <summary>
+            Converts geographic coordinates into a human-readable address string.
+            </summary>
+            <param name="lat">Latitude of the location to reverse-geocode.</param>
+            <param name="lon">Longitude of the location to reverse-geocode.</param>
+            <returns>ReverseGeocodeResult with Address, or empty string if not found.</returns>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.GroupsController">
             <summary>
             User generated forms that are dispayed to get custom information for New Calls, Unit Checks, etc
@@ -5830,6 +5852,31 @@
             <summary>
             Default constructor
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Geocoding.ForwardGeocodeResult">
+            <summary>
+            Result of a forward geocode (address → coordinates) request.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Geocoding.ForwardGeocodeResult.Data">
+            <summary>Response data</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Geocoding.ForwardGeocodeData.Latitude">
+            <summary>Latitude of the geocoded location, or null if not found.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Geocoding.ForwardGeocodeData.Longitude">
+            <summary>Longitude of the geocoded location, or null if not found.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Geocoding.ReverseGeocodeResult">
+            <summary>
+            Result of a reverse geocode (coordinates → address) request.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Geocoding.ReverseGeocodeResult.Data">
+            <summary>Response data</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Geocoding.ReverseGeocodeData.Address">
+            <summary>Human-readable address for the supplied coordinates, or empty if not found.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Groups.GroupResult">
             <summary>

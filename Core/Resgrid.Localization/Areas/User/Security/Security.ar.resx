@@ -1,0 +1,328 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="SecurityPermissionsHeader" xml:space="preserve"><value>الأمان والصلاحيات</value></data>
+  <data name="SecurityPermissionsDescription" xml:space="preserve"><value>يمكنك هنا تعيين الصلاحيات لقسمك، مثل تحديد من يمكنه إنشاء البلاغات أو من هو مخوّل بإنشاء المستخدمين وإزالتهم. ستسري التغييرات على الصلاحيات عند تسجيل الدخول التالي إلى تطبيق Resgrid.</value></data>
+  <data name="AuditLogsButton" xml:space="preserve"><value>سجلات التدقيق</value></data>
+  <data name="PermissionColumn" xml:space="preserve"><value>الصلاحية</value></data>
+  <data name="NoteColumn" xml:space="preserve"><value>ملاحظة</value></data>
+  <data name="ValueColumn" xml:space="preserve"><value>القيمة</value></data>
+  <data name="RolesColumn" xml:space="preserve"><value>الأدوار</value></data>
+  <data name="TwoFactorEnforcementHeader" xml:space="preserve"><value>إلزامية المصادقة الثنائية (2FA)</value></data>
+  <data name="TwoFactorEnforcementDescription" xml:space="preserve"><value>اشترط المصادقة الثنائية عبر تطبيق المصادقة للمستخدمين الإداريين. عند التفعيل سيُعاد توجيه المسؤولين الذين لم يُعدّوا المصادقة الثنائية للتسجيل قبل الوصول إلى الميزات الإدارية.</value></data>
+  <data name="Require2FAForAdminsLabel" xml:space="preserve"><value>اشتراط المصادقة الثنائية للمسؤولين</value></data>
+  <data name="Require2FAForAdminsDescription" xml:space="preserve"><value>يتحكم في المستخدمين الإداريين الذين يجب عليهم التسجيل في المصادقة الثنائية عبر تطبيق المصادقة (Google Authenticator أو Microsoft Authenticator أو Authy وغيرها).</value></data>
+  <data name="Require2FADisabled" xml:space="preserve"><value>معطّل (لا اشتراط)</value></data>
+  <data name="Require2FADeptAdmins" xml:space="preserve"><value>مدراء القسم + المستخدم المُدير</value></data>
+  <data name="Require2FAAllAdmins" xml:space="preserve"><value>مدراء القسم + المستخدم المُدير + مدراء المجموعات</value></data>
+  <data name="Require2FASettingSaved" xml:space="preserve"><value>تم حفظ إعداد إلزامية المصادقة الثنائية.</value></data>
+  <data name="Require2FASettingFailed" xml:space="preserve"><value>فشل حفظ إعداد إلزامية المصادقة الثنائية.</value></data>
+  <data name="Require2FACannotEnableNoManagingUser2FA" xml:space="preserve"><value>لا يمكن تفعيل إلزامية المصادقة الثنائية: المستخدم المُدير لهذا القسم لم يُفعّل المصادقة الثنائية على حسابه. يجب على المستخدم المُدير تفعيل المصادقة الثنائية أولاً قبل تشغيل هذا الإعداد.</value></data>
+  <data name="Require2FACannotEnableNoCurrentUser2FA" xml:space="preserve"><value>لا يمكن تفعيل إلزامية المصادقة الثنائية: لم تُفعّل المصادقة الثنائية على حسابك. يجب عليك تفعيلها أولاً قبل اشتراطها على الآخرين.</value></data>
+  <data name="Require2FABothMustEnable" xml:space="preserve"><value>لا يمكن تفعيل إلزامية المصادقة الثنائية: لم يُفعّل كلٌّ منك ومن المستخدم المُدير المصادقة الثنائية. يجب على كليهما تفعيلها قبل تشغيل هذا الإعداد.</value></data>
+  <data name="Require2FASettingLocked" xml:space="preserve"><value>هذا الإعداد مقفل حتى تتحقق الشروط المذكورة أعلاه.</value></data>
+  <data name="PermissionNameColumn" xml:space="preserve"><value>الصلاحية</value></data>
+  <data name="PermissionNoteColumn" xml:space="preserve"><value>ملاحظة</value></data>
+  <data name="PermissionSelectionColumn" xml:space="preserve"><value>الاختيار</value></data>
+  <data name="PermissionGroupOnlyColumn" xml:space="preserve"><value>المجموعة فقط</value></data>
+  <data name="PermissionRolesColumn" xml:space="preserve"><value>الأدوار</value></data>
+  <data name="PermissionNoRoles" xml:space="preserve"><value>لا توجد أدوار</value></data>
+  <data name="PermissionNA" xml:space="preserve"><value>غير قابل للتطبيق</value></data>
+  <data name="BreadcrumbSecurity" xml:space="preserve"><value>الأمان والصلاحيات</value></data>
+  <data name="SecurityDescription" xml:space="preserve"><value>يمكنك هنا تعيين الصلاحيات لقسمك، مثل تحديد من يمكنه إنشاء البلاغات أو من هو مخوّل بإنشاء المستخدمين وإزالتهم. ستسري التغييرات على الصلاحيات عند تسجيل الدخول التالي إلى تطبيق Resgrid.</value></data>
+  <data name="PermAddUsersLabel" xml:space="preserve"><value>من يمكنه إضافة مستخدمين</value></data>
+  <data name="PermAddUsersNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه إضافة مستخدمين/أفراد للقسم. افتراضياً يستطيع مدراء القسم فقط (والعضو المُدير) إضافة مستخدمين. يمكن السماح لمدراء المجموعات أيضاً بإضافة مستخدمين (مقيّد بالمجموعة التي يديرونها فقط).</value></data>
+  <data name="PermRemoveUsersLabel" xml:space="preserve"><value>من يمكنه إزالة مستخدمين</value></data>
+  <data name="PermRemoveUsersNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه إزالة مستخدمين/أفراد من القسم. افتراضياً يستطيع مدراء القسم فقط (والعضو المُدير) إزالة مستخدمين. يمكن السماح لمدراء المجموعات بإزالة مستخدمين في مجموعاتهم فقط.</value></data>
+  <data name="PermCreateCallLabel" xml:space="preserve"><value>من يمكنه إنشاء بلاغات</value></data>
+  <data name="PermCreateCallNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه إنشاء بلاغات يدوياً من نظام Resgrid. افتراضياً يمكن للجميع إنشاء بلاغات.</value></data>
+  <data name="PermDeleteCallLabel" xml:space="preserve"><value>من يمكنه حذف بلاغات</value></data>
+  <data name="PermDeleteCallNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه حذف بلاغات من نظام Resgrid. افتراضياً يمكن للجميع حذف البلاغات.</value></data>
+  <data name="PermCloseCallLabel" xml:space="preserve"><value>من يمكنه إغلاق بلاغات</value></data>
+  <data name="PermCloseCallNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه إغلاق بلاغات من نظام Resgrid. افتراضياً يمكن للجميع إغلاق البلاغات.</value></data>
+  <data name="PermAddCallDataLabel" xml:space="preserve"><value>من يمكنه إضافة بيانات للبلاغات</value></data>
+  <data name="PermAddCallDataNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه إضافة بيانات كالصور والملاحظات والملفات للبلاغات. افتراضياً يمكن للجميع إضافة بيانات للبلاغات.</value></data>
+  <data name="PermCreateTrainingLabel" xml:space="preserve"><value>من يمكنه إنشاء تدريبات</value></data>
+  <data name="PermCreateTrainingNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه إنشاء تدريبات. افتراضياً يستطيع مدراء القسم فقط إنشاء التدريبات.</value></data>
+  <data name="PermCreateDocumentLabel" xml:space="preserve"><value>من يمكنه إضافة مستندات</value></data>
+  <data name="PermCreateDocumentNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه إضافة مستندات. افتراضياً يمكن للجميع إضافة مستندات.</value></data>
+  <data name="PermCreateCalendarEntryLabel" xml:space="preserve"><value>من يمكنه إنشاء إدخالات تقويم</value></data>
+  <data name="PermCreateCalendarEntryNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه إنشاء إدخالات تقويم. افتراضياً يمكن للجميع إنشاء إدخالات تقويم.</value></data>
+  <data name="PermCreateNoteLabel" xml:space="preserve"><value>من يمكنه إنشاء ملاحظات</value></data>
+  <data name="PermCreateNoteNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه إنشاء ملاحظات. افتراضياً يمكن للجميع إنشاء ملاحظات.</value></data>
+  <data name="PermCreateLogLabel" xml:space="preserve"><value>من يمكنه إضافة إدخالات سجل</value></data>
+  <data name="PermCreateLogNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه إضافة إدخالات سجل. افتراضياً يمكن للجميع إضافة إدخالات سجل.</value></data>
+  <data name="PermCreateShiftLabel" xml:space="preserve"><value>من يمكنه إنشاء ورديات</value></data>
+  <data name="PermCreateShiftNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه إنشاء الورديات وتعديلها. افتراضياً يستطيع مدراء القسم فقط إنشاء الورديات وتعديلها.</value></data>
+  <data name="PermViewPersonalInfoLabel" xml:space="preserve"><value>من يمكنه عرض المعلومات الشخصية</value></data>
+  <data name="PermViewPersonalInfoNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه عرض المعلومات الشخصية (البيانات التعريفية) عن الأفراد في النظام، مثل عناوين البريد الإلكتروني وأرقام الهاتف. افتراضياً يمكن للجميع عرض هذه المعلومات.</value></data>
+  <data name="PermAdjustInventoryLabel" xml:space="preserve"><value>من يمكنه تعديل المخزون</value></data>
+  <data name="PermAdjustInventoryNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه تعديل مستويات المخزون في النظام. افتراضياً يمكن للجميع تعديل المخزون.</value></data>
+  <data name="PermViewPersonnelLocationLabel" xml:space="preserve"><value>من يمكنه رؤية موقع الأفراد</value></data>
+  <data name="PermViewPersonnelLocationNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه رؤية موقع الأفراد على الخرائط. لتقييد الخيار على مدراء المجموعات والأدوار داخل المجموعة يجب تحديد خيار المجموعة فقط.</value></data>
+  <data name="PermViewUnitLocationLabel" xml:space="preserve"><value>من يمكنه رؤية موقع الوحدات</value></data>
+  <data name="PermViewUnitLocationNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه رؤية موقع الوحدات على الخرائط. لتقييد الخيار على مدراء المجموعات والأدوار داخل المجموعة يجب تحديد خيار المجموعة فقط.</value></data>
+  <data name="PermCreateMessageLabel" xml:space="preserve"><value>من يمكنه إرسال رسائل</value></data>
+  <data name="PermCreateMessageNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه إنشاء الرسائل الداخلية وإرسالها. افتراضياً يمكن للجميع إنشاء الرسائل وإرسالها.</value></data>
+  <data name="PermViewGroupsUsersLabel" xml:space="preserve"><value>من يمكنه عرض المستخدمين</value></data>
+  <data name="PermViewGroupsUsersNote" xml:space="preserve"><value>افتراضياً يمكن لجميع المستخدمين رؤية بقية المستخدمين في النظام. يتيح هذا الخيار تقييد من يمكنه رؤية المستخدمين.</value></data>
+  <data name="PermViewGroupsUnitsLabel" xml:space="preserve"><value>من يمكنه عرض الوحدات</value></data>
+  <data name="PermViewGroupsUnitsNote" xml:space="preserve"><value>افتراضياً يمكن لجميع المستخدمين رؤية جميع الوحدات في النظام. يتيح هذا الخيار تقييد من يمكنه عرض الوحدات.</value></data>
+  <data name="PermViewContactsLabel" xml:space="preserve"><value>من يمكنه عرض جهات الاتصال</value></data>
+  <data name="PermViewContactsNote" xml:space="preserve"><value>افتراضياً يمكن لجميع المستخدمين رؤية جميع جهات الاتصال في النظام. يتيح هذا الخيار تقييد من يمكنه عرض جهات الاتصال. المستخدمون الذين لا يمكنهم عرض جهات الاتصال لن يتمكنوا من إضافتها لبلاغ.</value></data>
+  <data name="PermEditContactsLabel" xml:space="preserve"><value>من يمكنه تعديل أو إنشاء جهات الاتصال</value></data>
+  <data name="PermEditContactsNote" xml:space="preserve"><value>افتراضياً يمكن لجميع المستخدمين إنشاء جهات الاتصال وتعديلها. يتيح هذا الخيار تقييد من يمكنه إنشاء جهات الاتصال أو تعديلها.</value></data>
+  <data name="PermDeleteContactsLabel" xml:space="preserve"><value>من يمكنه حذف جهات الاتصال</value></data>
+  <data name="PermDeleteContactsNote" xml:space="preserve"><value>افتراضياً يمكن لجميع المستخدمين حذف جهات الاتصال. يتيح هذا الخيار تقييد من يمكنه حذف جهات الاتصال.</value></data>
+  <data name="PermCreateWorkflowLabel" xml:space="preserve"><value>من يمكنه إنشاء/تعديل سير العمل</value></data>
+  <data name="PermCreateWorkflowNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه إنشاء سير العمل وتعديلها وحذفها وخطواتها. افتراضياً يستطيع مدراء القسم فقط إدارة سير العمل.</value></data>
+  <data name="PermManageWorkflowCredentialsLabel" xml:space="preserve"><value>من يمكنه إدارة بيانات اعتماد سير العمل</value></data>
+  <data name="PermManageWorkflowCredentialsNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه إنشاء بيانات الاعتماد المشفرة وتعديلها وحذفها المستخدمة في إجراءات سير العمل. افتراضياً يستطيع مدراء القسم فقط إدارة بيانات الاعتماد.</value></data>
+  <data name="PermViewWorkflowRunsLabel" xml:space="preserve"><value>من يمكنه عرض تشغيلات سير العمل</value></data>
+  <data name="PermViewWorkflowRunsNote" xml:space="preserve"><value>يحدد هذا الخيار من يمكنه عرض سجل تنفيذ سير العمل وسجلات التشغيل ولوحات صحة النظام. افتراضياً يستطيع مدراء القسم فقط عرض تشغيلات سير العمل.</value></data>
+  <data name="SsoPageTitle" xml:space="preserve"><value>تسجيل الدخول الموحد (SSO) وSCIM</value></data>
+  <data name="SsoPageHeader" xml:space="preserve"><value>تسجيل الدخول الموحد وإدارة الهويات</value></data>
+  <data name="SsoBreadcrumb" xml:space="preserve"><value>SSO / SCIM</value></data>
+  <data name="SsoSecurityPolicyButton" xml:space="preserve"><value>سياسة الأمان</value></data>
+  <data name="SsoAddOidcButton" xml:space="preserve"><value>إضافة إعداد OIDC</value></data>
+  <data name="SsoAddSamlButton" xml:space="preserve"><value>إضافة إعداد SAML 2.0</value></data>
+  <data name="SsoWhatIsSsoHeader" xml:space="preserve"><value>ما هو SSO وSCIM؟</value></data>
+  <data name="SsoSingleSignOnHeader" xml:space="preserve"><value>تسجيل الدخول الموحد (SSO)</value></data>
+  <data name="SsoSingleSignOnDescription" xml:space="preserve"><value>يتيح لأعضاء القسم تسجيل الدخول بهوياتهم المؤسسية الحالية (Microsoft Entra ID أو Okta أو Google Workspace وغيرها) بدلاً من كلمة مرور Resgrid منفصلة.</value></data>
+  <data name="SsoOidcDescription" xml:space="preserve"><value>OIDC — بروتوكول حديث، مثالي لـ Entra وOkta وAuth0 وGoogle</value></data>
+  <data name="SsoSamlDescription" xml:space="preserve"><value>SAML 2.0 — مدعوم على نطاق واسع من الجهات الحكومية والمؤسسية</value></data>
+  <data name="SsoScimHeader" xml:space="preserve"><value>إدارة هويات SCIM 2.0</value></data>
+  <data name="SsoScimDescription" xml:space="preserve"><value>مزامنة تلقائية للمستخدمين من موفر هويتك. عند إضافة أو إزالة موظفين في دليلك المؤسسي يعكس Resgrid هذه التغييرات تلقائياً دون خطوات دعوة/إزالة يدوية.</value></data>
+  <data name="SsoScimAutoCreate" xml:space="preserve"><value>إنشاء أعضاء جدد تلقائياً عند إضافتهم في موفر الهوية</value></data>
+  <data name="SsoScimAutoDisable" xml:space="preserve"><value>تعطيل/إزالة الأعضاء عند إلغاء تزويدهم</value></data>
+  <data name="SsoScimSyncNames" xml:space="preserve"><value>مزامنة الأسماء وعناوين البريد الإلكتروني</value></data>
+  <data name="SsoSecurityPolicyHeader" xml:space="preserve"><value>سياسة الأمان</value></data>
+  <data name="SsoSecurityPolicyDescription" xml:space="preserve"><value>تطبيق ضوابط الامتثال على مستوى القسم إلى جانب تسجيل الدخول الموحد:</value></data>
+  <data name="SsoSecurityPolicyMandateMfa" xml:space="preserve"><value>إلزام المصادقة متعددة العوامل لجميع الأعضاء</value></data>
+  <data name="SsoSecurityPolicyRestrictLogin" xml:space="preserve"><value>تقييد تسجيل الدخول على SSO فقط (تعطيل كلمات المرور)</value></data>
+  <data name="SsoSecurityPolicyIpRestrict" xml:space="preserve"><value>تقييد تسجيل الدخول على نطاقات IP CIDR محددة</value></data>
+  <data name="SsoSecurityPolicyPasswordRules" xml:space="preserve"><value>تعيين قواعد انتهاء صلاحية كلمة المرور وتعقيدها</value></data>
+  <data name="SsoSecurityPolicyDataClassification" xml:space="preserve"><value>تصنيف مستوى البيانات (غير مصنّف / CUI / سري)</value></data>
+  <data name="SsoDiscoveryUrlCalloutTitle" xml:space="preserve"><value>رابط الاكتشاف لتطبيق الجوال</value></data>
+  <data name="SsoDiscoveryUrlCalloutDescription" xml:space="preserve"><value>يستخدم تطبيق Resgrid للجوال هذا الرابط لاكتشاف إعدادات SSO الخاصة بك قبل عرض شاشة تسجيل الدخول. شاركه مع فريق الجوال إذا لزم الأمر.</value></data>
+  <data name="SsoCopyButton" xml:space="preserve"><value>نسخ</value></data>
+  <data name="SsoCopiedToClipboard" xml:space="preserve"><value>تم النسخ إلى الحافظة!</value></data>
+  <data name="SsoConfigurationsHeader" xml:space="preserve"><value>إعدادات SSO</value></data>
+  <data name="SsoNoConfigurationsWarning" xml:space="preserve"><value>لا توجد إعدادات SSO بعد. استخدم الأزرار أعلاه لإضافة OIDC أو SAML 2.0.</value></data>
+  <data name="SsoTableColProvider" xml:space="preserve"><value>الموفر</value></data>
+  <data name="SsoTableColIdentifier" xml:space="preserve"><value>المعرّف / نقطة النهاية</value></data>
+  <data name="SsoTableColStatus" xml:space="preserve"><value>الحالة</value></data>
+  <data name="SsoTableColLocalLogin" xml:space="preserve"><value>تسجيل الدخول المحلي</value></data>
+  <data name="SsoTableColAutoProvision" xml:space="preserve"><value>التزويد التلقائي</value></data>
+  <data name="SsoTableColScim" xml:space="preserve"><value>SCIM</value></data>
+  <data name="SsoTableColCreated" xml:space="preserve"><value>تاريخ الإنشاء</value></data>
+  <data name="SsoTableColActions" xml:space="preserve"><value>الإجراءات</value></data>
+  <data name="SsoStatusEnabled" xml:space="preserve"><value>مفعّل</value></data>
+  <data name="SsoStatusDisabled" xml:space="preserve"><value>معطّل</value></data>
+  <data name="SsoLocalLoginYes" xml:space="preserve"><value>نعم</value></data>
+  <data name="SsoLocalLoginSsoOnly" xml:space="preserve"><value>SSO فقط</value></data>
+  <data name="SsoAutoProvisionOn" xml:space="preserve"><value>مفعّل</value></data>
+  <data name="SsoAutoProvisionOff" xml:space="preserve"><value>معطّل</value></data>
+  <data name="SsoScimStatusActive" xml:space="preserve"><value>نشط</value></data>
+  <data name="SsoScimStatusNoToken" xml:space="preserve"><value>لا يوجد رمز</value></data>
+  <data name="SsoScimStatusOff" xml:space="preserve"><value>معطّل</value></data>
+  <data name="SsoEditButton" xml:space="preserve"><value>تعديل</value></data>
+  <data name="SsoScimSetupButton" xml:space="preserve"><value>SCIM</value></data>
+  <data name="SsoDeleteConfirmTitle" xml:space="preserve"><value>تأكيد الحذف</value></data>
+  <data name="SsoDeleteConfirmMessage" xml:space="preserve"><value>هل أنت متأكد من حذف إعداد SSO الخاص بـ {0}؟ لا يمكن التراجع عن هذا الإجراء.</value></data>
+  <data name="SsoDeleteCancelButton" xml:space="preserve"><value>إلغاء</value></data>
+  <data name="SsoDeleteButton" xml:space="preserve"><value>حذف</value></data>
+  <data name="SsoEditPageTitleNew" xml:space="preserve"><value>إعداد SSO جديد</value></data>
+  <data name="SsoEditPageTitleEdit" xml:space="preserve"><value>تعديل إعداد SSO</value></data>
+  <data name="SsoEditBreadcrumbNew" xml:space="preserve"><value>جديد</value></data>
+  <data name="SsoEditBreadcrumbEdit" xml:space="preserve"><value>تعديل</value></data>
+  <data name="SsoEditStep1Label" xml:space="preserve"><value>الخطوة 1</value></data>
+  <data name="SsoEditStep1Header" xml:space="preserve"><value>الموفر والإعدادات الأساسية</value></data>
+  <data name="SsoEditProviderTypeLabel" xml:space="preserve"><value>بروتوكول موفر الهوية</value></data>
+  <data name="SsoEditEnableLabel" xml:space="preserve"><value>تفعيل إعداد SSO هذا</value></data>
+  <data name="SsoEditEnableDescription" xml:space="preserve"><value>يكون إعداد واحد فقط لكل نوع موفر نشطاً في وقت واحد.</value></data>
+  <data name="SsoEditAllowLocalLoginLabel" xml:space="preserve"><value>السماح بتسجيل الدخول بكلمة مرور محلية</value></data>
+  <data name="SsoEditAllowLocalLoginDescription" xml:space="preserve"><value>عند التحديد يمكن للمستخدمين تسجيل الدخول باسم المستخدم وكلمة المرور بالإضافة إلى SSO. عطّل هذا مع إعداد سياسة الأمان "اشتراط SSO" لفرض تسجيل الدخول عبر SSO فقط.</value></data>
+  <data name="SsoEditAutoProvisionLabel" xml:space="preserve"><value>التزويد التلقائي للمستخدمين الجدد</value></data>
+  <data name="SsoEditAutoProvisionDescription" xml:space="preserve"><value>إنشاء حساب Resgrid تلقائياً عندما يتحقق مستخدم عبر SSO لأول مرة ولا يوجد بريد إلكتروني مطابق. اتركه معطّلاً لاشتراط الدعوة اليدوية أولاً.</value></data>
+  <data name="SsoEditScimEnableLabel" xml:space="preserve"><value>تفعيل إدارة هويات SCIM 2.0</value></data>
+  <data name="SsoEditScimEnableDescription" xml:space="preserve"><value>يتيح لموفر هويتك إنشاء/تحديث/تعطيل الأعضاء تلقائياً. بعد الحفظ انتقل إلى صفحة إعداد SCIM لإنشاء رمز الحامل.</value></data>
+  <data name="SsoEditDefaultRankLabel" xml:space="preserve"><value>الرتبة الافتراضية للمستخدمين المُزوَّدين تلقائياً</value></data>
+  <data name="SsoEditDefaultRankDescription" xml:space="preserve"><value>اختياري. يُطبّق فقط عند إنشاء عضو جديد عبر التزويد التلقائي.</value></data>
+  <data name="SsoEditStep2OidcLabel" xml:space="preserve"><value>الخطوة 2 — OIDC</value></data>
+  <data name="SsoEditStep2OidcHeader" xml:space="preserve"><value>إعدادات OpenID Connect</value></data>
+  <data name="SsoEditOidcInfoAlert" xml:space="preserve"><value>أين تجد هذه القيم: في موفر هويتك سجّل Resgrid كعميل عام (PKCE، لا يلزم سر العميل للجوال) أو تطبيق ويب (مع سر للتدفقات من جانب الخادم). انسخ معرف العميل ورابط الجهة المُصدِرة من التطبيق المسجّل.</value></data>
+  <data name="SsoEditAuthorityLabel" xml:space="preserve"><value>رابط الجهة / الجهة المُصدِرة</value></data>
+  <data name="SsoEditAuthorityPlaceholder" xml:space="preserve"><value>https://login.microsoftonline.com/{tenant-id}/v2.0</value></data>
+  <data name="SsoEditAuthorityDescription" xml:space="preserve"><value>أمثلة: Entra ID: https://login.microsoftonline.com/{tenant-id}/v2.0 | Okta: https://{your-domain}.okta.com/oauth2/default | Google: https://accounts.google.com</value></data>
+  <data name="SsoEditClientIdLabel" xml:space="preserve"><value>معرف العميل</value></data>
+  <data name="SsoEditClientIdPlaceholder" xml:space="preserve"><value>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</value></data>
+  <data name="SsoEditClientIdDescription" xml:space="preserve"><value>المعرف العام للعميل المُعيَّن من موفر هويتك. آمن للعرض — ليس سراً.</value></data>
+  <data name="SsoEditClientSecretLabel" xml:space="preserve"><value>سر العميل</value></data>
+  <data name="SsoEditClientSecretStored" xml:space="preserve"><value>السر مخزّن</value></data>
+  <data name="SsoEditClientSecretDescription" xml:space="preserve"><value>مشفّر في حالة السكون باستخدام مفتاح خاص بقسمك. اتركه فارغاً إذا كنت تستخدم PKCE (جوال/SPA — لا يلزم سر).</value></data>
+  <data name="SsoEditClientSecretKeepExisting" xml:space="preserve"><value>اتركه فارغاً للاحتفاظ بالسر الحالي دون تغيير.</value></data>
+  <data name="SsoEditStep2SamlLabel" xml:space="preserve"><value>الخطوة 2 — SAML 2.0</value></data>
+  <data name="SsoEditStep2SamlHeader" xml:space="preserve"><value>إعدادات SAML 2.0</value></data>
+  <data name="SsoEditSamlInfoAlert" xml:space="preserve"><value>أين تجد هذه القيم: في موفر هويتك أنشئ تطبيق SAML جديداً. أدخل معرف كيان SP ورابط ACS المُعروضَين أدناه في موفر هويتك ثم الصق رابط بيانات تعريف IdP أو شهادته هنا.</value></data>
+  <data name="SsoEditSpEntityIdLabel" xml:space="preserve"><value>معرف كيان SP (أدخله في موفر هويتك)</value></data>
+  <data name="SsoEditAcsUrlLabel" xml:space="preserve"><value>رابط ACS (خدمة المستهلك للتأكيدات — أدخله في موفر هويتك)</value></data>
+  <data name="SsoEditAcsUrlNote" xml:space="preserve"><value>يستخدم هذا الرابط رمز قسم مشفّراً ولا يكشف أبداً رمز قسمك العادي.</value></data>
+  <data name="SsoEditEntityIdEditableLabel" xml:space="preserve"><value>معرف كيان SP (قابل للتعديل)</value></data>
+  <data name="SsoEditEntityIdEditablePlaceholder" xml:space="preserve"><value>https://app.resgrid.com/saml/DEPT</value></data>
+  <data name="SsoEditEntityIdEditableNote" xml:space="preserve"><value>يجب أن يتطابق تماماً مع ما أدخلته في موفر الهوية.</value></data>
+  <data name="SsoEditMetadataUrlLabel" xml:space="preserve"><value>رابط بيانات تعريف IdP</value></data>
+  <data name="SsoEditMetadataUrlPlaceholder" xml:space="preserve"><value>https://idp.example.com/metadata.xml</value></data>
+  <data name="SsoEditMetadataUrlNote" xml:space="preserve"><value>سيجلب Resgrid هذا الرابط بشكل دوري للبقاء محدّثاً بشهادات IdP.</value></data>
+  <data name="SsoEditAcsUrlStoredLabel" xml:space="preserve"><value>رابط ACS (المخزّن)</value></data>
+  <data name="SsoEditAcsUrlStoredNote" xml:space="preserve"><value>يُملأ تلقائياً من الرابط المُنشأ أعلاه. عدّله فقط إذا أعددت رابط ACS مختلفاً في موفر هويتك.</value></data>
+  <data name="SsoEditIdpCertLabel" xml:space="preserve"><value>شهادة توقيع IdP (PEM)</value></data>
+  <data name="SsoEditIdpCertStored" xml:space="preserve"><value>الشهادة مخزّنة</value></data>
+  <data name="SsoEditIdpCertNote" xml:space="preserve"><value>مشفّرة في حالة السكون. اتركها فارغة للاحتفاظ بالشهادة الحالية.</value></data>
+  <data name="SsoEditSigningKeyLabel" xml:space="preserve"><value>مفتاح توقيع SP (PEM، اختياري)</value></data>
+  <data name="SsoEditSigningKeyStored" xml:space="preserve"><value>المفتاح مخزّن</value></data>
+  <data name="SsoEditSigningKeyNote" xml:space="preserve"><value>مشفّر في حالة السكون. اتركه فارغاً إذا لم يشترط موفر هويتك الطلبات الموقّعة.</value></data>
+  <data name="SsoEditStep3Label" xml:space="preserve"><value>الخطوة 3</value></data>
+  <data name="SsoEditStep3Header" xml:space="preserve"><value>تعيين السمات</value></data>
+  <data name="SsoEditAttrMapDescription" xml:space="preserve"><value>عيّن أسماء المطالبات التي يرسلها موفر هويتك إلى حقول مستخدم Resgrid. اتركه فارغاً لاستخدام أسماء URI القياسية تلقائياً.</value></data>
+  <data name="SsoEditAttrMapJsonLabel" xml:space="preserve"><value>JSON تعيين السمات</value></data>
+  <data name="SsoEditAttrMapJsonNote" xml:space="preserve"><value>يجب أن يكون JSON صالحاً. استخدم أزرار الملء السريع على اليمين.</value></data>
+  <data name="SsoEditQuickFillHeader" xml:space="preserve"><value>الإعدادات المسبقة للملء السريع</value></data>
+  <data name="SsoEditQuickFillDescription" xml:space="preserve"><value>انقر للملء التلقائي لـ JSON التعيين بالإعدادات الافتراضية لموفر هويتك.</value></data>
+  <data name="SsoEditFieldMappingHeader" xml:space="preserve"><value>مفاتيح حقول Resgrid المدعومة</value></data>
+  <data name="SsoEditFieldKeyColumn" xml:space="preserve"><value>المفتاح</value></data>
+  <data name="SsoEditFieldDescColumn" xml:space="preserve"><value>الوصف</value></data>
+  <data name="SsoEditFieldEmailDesc" xml:space="preserve"><value>عنوان البريد الإلكتروني للمستخدم</value></data>
+  <data name="SsoEditFieldFirstNameDesc" xml:space="preserve"><value>الاسم الأول</value></data>
+  <data name="SsoEditFieldLastNameDesc" xml:space="preserve"><value>اسم العائلة</value></data>
+  <data name="SsoEditFieldSubjectDesc" xml:space="preserve"><value>موضوع موفر الهوية الفريد (لربط الحسابات)</value></data>
+  <data name="SsoEditCreateButton" xml:space="preserve"><value>إنشاء الإعداد</value></data>
+  <data name="SsoEditSaveButton" xml:space="preserve"><value>حفظ التغييرات</value></data>
+  <data name="SsoEditCancelButton" xml:space="preserve"><value>إلغاء</value></data>
+  <data name="ScimSetupPageTitle" xml:space="preserve"><value>إعداد SCIM 2.0</value></data>
+  <data name="ScimSetupPageHeader" xml:space="preserve"><value>إعداد إدارة هويات SCIM 2.0</value></data>
+  <data name="ScimSetupBreadcrumb" xml:space="preserve"><value>إعداد SCIM</value></data>
+  <data name="ScimSetupBackButton" xml:space="preserve"><value>العودة إلى SSO</value></data>
+  <data name="ScimSetupTokenWarningTitle" xml:space="preserve"><value>مهم — انسخ رمز حامل SCIM الآن</value></data>
+  <data name="ScimSetupTokenWarningBody" xml:space="preserve"><value>يُعرض هذا الرمز مرة واحدة فقط ولا يمكن استرجاعه مجدداً. انسخه فوراً والصقه في إعداد SCIM لموفر هويتك. إذا فقدته انقر على "تدوير الرمز" لإنشاء رمز جديد.</value></data>
+  <data name="ScimSetupCopyTokenButton" xml:space="preserve"><value>نسخ الرمز</value></data>
+  <data name="ScimSetupTokenEncryptedNote" xml:space="preserve"><value>يُخزَّن هذا الرمز مشفّراً في قاعدة بيانات Resgrid باستخدام مفتاح تشفير خاص بقسمك.</value></data>
+  <data name="ScimSetupStatusHeader" xml:space="preserve"><value>حالة SCIM</value></data>
+  <data name="ScimSetupStatusProvider" xml:space="preserve"><value>الموفر</value></data>
+  <data name="ScimSetupStatusEnabled" xml:space="preserve"><value>SCIM مفعّل</value></data>
+  <data name="ScimSetupStatusEnabledYes" xml:space="preserve"><value>نعم</value></data>
+  <data name="ScimSetupStatusEnabledNo" xml:space="preserve"><value>لا</value></data>
+  <data name="ScimSetupStatusBearerToken" xml:space="preserve"><value>رمز الحامل</value></data>
+  <data name="ScimSetupStatusTokenConfigured" xml:space="preserve"><value>مُعدَّ</value></data>
+  <data name="ScimSetupStatusTokenNotSet" xml:space="preserve"><value>غير مُعيَّن</value></data>
+  <data name="ScimSetupRotateTokenButton" xml:space="preserve"><value>تدوير رمز SCIM</value></data>
+  <data name="ScimSetupGenerateTokenButton" xml:space="preserve"><value>إنشاء رمز SCIM</value></data>
+  <data name="ScimSetupRotateTokenNote" xml:space="preserve"><value>التدوير ينشئ رمزاً جديداً ويُبطل القديم.</value></data>
+  <data name="ScimSetupRotateTokenConfirm" xml:space="preserve"><value>هل أنت متأكد؟ أي تكامل SCIM نشط سيتوقف حتى تُحدّث الرمز في موفر هويتك.</value></data>
+  <data name="ScimSetupConnectorHeader" xml:space="preserve"><value>إعدادات موصّل SCIM</value></data>
+  <data name="ScimSetupConnectorDescription" xml:space="preserve"><value>أدخل هذه القيم في إعداد إدارة هويات SCIM لموفر هويتك.</value></data>
+  <data name="ScimSetupSettingColumn" xml:space="preserve"><value>الإعداد</value></data>
+  <data name="ScimSetupValueColumn" xml:space="preserve"><value>القيمة</value></data>
+  <data name="ScimSetupBaseUrlLabel" xml:space="preserve"><value>رابط الأساس لموصّل SCIM</value></data>
+  <data name="ScimSetupAuthMethodLabel" xml:space="preserve"><value>طريقة المصادقة</value></data>
+  <data name="ScimSetupAuthHeaderLabel" xml:space="preserve"><value>ترويسة التفويض</value></data>
+  <data name="ScimSetupCustomHeaderNameLabel" xml:space="preserve"><value>اسم الترويسة المخصصة</value></data>
+  <data name="ScimSetupCustomHeaderValueLabel" xml:space="preserve"><value>قيمة الترويسة المخصصة</value></data>
+  <data name="ScimSetupSupportedResourcesLabel" xml:space="preserve"><value>الموارد المدعومة</value></data>
+  <data name="ScimSetupSupportedUpdateMethodLabel" xml:space="preserve"><value>طريقة التحديث المدعومة</value></data>
+  <data name="ScimSetupGuideHeader" xml:space="preserve"><value>دليل الإعداد خطوة بخطوة</value></data>
+  <data name="ScimSetupTabOkta" xml:space="preserve"><value>Okta</value></data>
+  <data name="ScimSetupTabEntra" xml:space="preserve"><value>Microsoft Entra ID</value></data>
+  <data name="ScimSetupTabGoogle" xml:space="preserve"><value>Google Workspace</value></data>
+  <data name="ScimSetupTabGeneric" xml:space="preserve"><value>أخرى / عام</value></data>
+  <data name="ScimSetupGenericHeader" xml:space="preserve"><value>يمكن تهيئة أي عميل SCIM 2.0 متوافق بالمعلومات التالية:</value></data>
+  <data name="ScimSetupFieldMappingHeader" xml:space="preserve"><value>تعيين حقول SCIM في Resgrid</value></data>
+  <data name="ScimSetupParamColumn" xml:space="preserve"><value>المعامل</value></data>
+  <data name="ScimSetupScimFieldColumn" xml:space="preserve"><value>حقل SCIM</value></data>
+  <data name="ScimSetupResgridEffectColumn" xml:space="preserve"><value>التأثير في Resgrid</value></data>
+  <data name="SsoScimSectionHeader" xml:space="preserve"><value>إدارة هويات SCIM 2.0</value></data>
+  <data name="SsoScimApiReferenceHeader" xml:space="preserve"><value>مرجع SCIM API</value></data>
+  <data name="SsoScimApiReferenceDescription" xml:space="preserve"><value>يستدعي موفر هويتك هذه نقاط النهاية باستخدام مصادقة رمز حامل HTTP. يجب أن تتضمن جميع الطلبات ترويسة التفويض وترويسة معرف القسم الموضّحة أدناه.</value></data>
+  <data name="SsoScimEndpointColumn" xml:space="preserve"><value>نقطة النهاية</value></data>
+  <data name="SsoScimMethodColumn" xml:space="preserve"><value>الطريقة</value></data>
+  <data name="SsoScimDescriptionColumn" xml:space="preserve"><value>الوصف</value></data>
+  <data name="SsoScimBaseUrlLabel" xml:space="preserve"><value>رابط الأساس</value></data>
+  <data name="SsoScimAuthHeaderLabel" xml:space="preserve"><value>ترويسة التفويض</value></data>
+  <data name="SsoScimDeptHeaderLabel" xml:space="preserve"><value>ترويسة القسم</value></data>
+  <data name="SsoScimDeptHeaderNote" xml:space="preserve"><value>مطلوبة في كل طلب حتى يتمكن Resgrid من التوجيه إلى القسم الصحيح.</value></data>
+  <data name="SsoScimExampleRequestsHeader" xml:space="preserve"><value>أمثلة على الطلبات</value></data>
+  <data name="SsoScimExampleListUsers" xml:space="preserve"><value>قائمة المستخدمين (GET)</value></data>
+  <data name="SsoScimExampleProvisionUser" xml:space="preserve"><value>تزويد مستخدم (POST)</value></data>
+  <data name="SsoScimExampleDeactivateUser" xml:space="preserve"><value>تعطيل مستخدم (PATCH)</value></data>
+  <data name="SsoScimExampleFullUpdate" xml:space="preserve"><value>تحديث كامل (PUT)</value></data>
+  <data name="SsoScimListUsersDesc" xml:space="preserve"><value>سرد / البحث عن مستخدمين</value></data>
+  <data name="SsoScimGetUserDesc" xml:space="preserve"><value>الحصول على مستخدم واحد بمعرف SCIM</value></data>
+  <data name="SsoScimCreateUserDesc" xml:space="preserve"><value>إنشاء (تزويد) مستخدم جديد</value></data>
+  <data name="SsoScimUpdateUserDesc" xml:space="preserve"><value>تحديث كامل (استبدال جميع السمات)</value></data>
+  <data name="SsoScimPatchUserDesc" xml:space="preserve"><value>تحديث جزئي (مثل التعطيل)</value></data>
+  <data name="SsoScimDeleteUserDesc" xml:space="preserve"><value>حذف / إلغاء تزويد مستخدم</value></data>
+  <data name="SsoScimListGroupsDesc" xml:space="preserve"><value>سرد المجموعات (للقراءة فقط)</value></data>
+  <data name="SsoScimProvisionTokenHeader" xml:space="preserve"><value>تزويد رمز SCIM</value></data>
+  <data name="SsoScimProvisionTokenDescription" xml:space="preserve"><value>أنشئ أو دوّر رمز الحامل الذي يستخدمه موفر هويتك للمصادقة على طلبات SCIM. يُعرض الرمز مرة واحدة فقط — انسخه قبل إغلاق هذا الحوار.</value></data>
+  <data name="SsoScimProvisionTokenButton" xml:space="preserve"><value>تزويد الرمز</value></data>
+  <data name="SsoScimRotateTokenButton" xml:space="preserve"><value>تدوير الرمز</value></data>
+  <data name="SsoScimTokenModalTitle" xml:space="preserve"><value>رمز حامل SCIM</value></data>
+  <data name="SsoScimTokenModalWarning" xml:space="preserve"><value>يُعرض هذا الرمز مرة واحدة فقط ولا يمكن استرجاعه. انسخه الآن والصقه في إعداد SCIM لموفر هويتك.</value></data>
+  <data name="SsoScimTokenModalRotateConfirm" xml:space="preserve"><value>تدوير الرمز سيُبطل الرمز الحالي فوراً. أي مزامنة SCIM نشطة ستفشل حتى تُحدّث الرمز في موفر هويتك. هل تريد المتابعة؟</value></data>
+  <data name="SsoScimTokenModalProvisionConfirm" xml:space="preserve"><value>سيُنشئ هذا رمز حامل SCIM جديداً لهذا الإعداد. انسخه واحتفظ به بأمان — لن يُعرض إلا مرة واحدة. هل تريد المتابعة؟</value></data>
+  <data name="SsoScimTokenCopyButton" xml:space="preserve"><value>نسخ الرمز</value></data>
+  <data name="SsoScimTokenEncryptedNote" xml:space="preserve"><value>مخزّن مشفّراً في قاعدة بيانات Resgrid باستخدام مفتاح خاص بقسمك.</value></data>
+  <data name="SsoScimFullSetupLink" xml:space="preserve"><value>دليل إعداد SCIM الكامل</value></data>
+  <data name="SsoScimSetupPageNote" xml:space="preserve"><value>للحصول على تعليمات خطوة بخطوة خاصة بكل موفر (Okta وMicrosoft Entra ID وGoogle Workspace) وإدارة الرموز، يُرجى زيارة صفحة إعداد SCIM لكل إعداد.</value></data>
+  <data name="SecurityPolicyPageTitle" xml:space="preserve"><value>سياسة أمان القسم</value></data>
+  <data name="SecurityPolicyPageHeader" xml:space="preserve"><value>سياسة أمان القسم</value></data>
+  <data name="SecurityPolicyBreadcrumb" xml:space="preserve"><value>سياسة الأمان</value></data>
+  <data name="SecurityPolicyBackButton" xml:space="preserve"><value>العودة إلى SSO</value></data>
+  <data name="SecurityPolicySaveSuccess" xml:space="preserve"><value>تم حفظ سياسة الأمان بنجاح.</value></data>
+  <data name="SecurityPolicyNoSsoWarning" xml:space="preserve"><value>لا يوجد إعداد SSO نشط. يمكنك تهيئة سياسات كلمة المرور أدناه، لكن لا يمكن تفعيل "اشتراط SSO" حتى يكون لديك إعداد SSO نشط.</value></data>
+  <data name="SecurityPolicyConfigureSsoLink" xml:space="preserve"><value>تهيئة SSO ←</value></data>
+  <data name="SecurityPolicyAuthControlsHeader" xml:space="preserve"><value>ضوابط المصادقة</value></data>
+  <data name="SecurityPolicyRequireMfaLabel" xml:space="preserve"><value>اشتراط المصادقة متعددة العوامل لجميع الأعضاء</value></data>
+  <data name="SecurityPolicyRequireMfaNote" xml:space="preserve"><value>الأعضاء الذين لم يسجّلوا في المصادقة متعددة العوامل سيُطلب منهم الاشتراك عند تسجيل الدخول التالي.</value></data>
+  <data name="SecurityPolicyRequireSsoLabel" xml:space="preserve"><value>اشتراط SSO — تعطيل تسجيل الدخول بكلمة المرور</value></data>
+  <data name="SecurityPolicyRequiresSsoConfig" xml:space="preserve"><value>يتطلب إعداد SSO نشطاً</value></data>
+  <data name="SecurityPolicyRequireSsoWarning" xml:space="preserve"><value>تحذير: تفعيل هذا يحجب جميع تسجيلات الدخول باسم المستخدم/كلمة المرور. تأكد من أن مسؤولاً واحداً على الأقل اختبر تسجيل الدخول عبر SSO بنجاح قبل التفعيل.</value></data>
+  <data name="SecurityPolicySessionTimeoutLabel" xml:space="preserve"><value>مهلة الجلسة (بالدقائق)</value></data>
+  <data name="SecurityPolicySessionTimeoutNote" xml:space="preserve"><value>0 = استخدام الإعداد الافتراضي للنظام. 480 = 8 ساعات.</value></data>
+  <data name="SecurityPolicyMaxSessionsLabel" xml:space="preserve"><value>الحد الأقصى للجلسات المتزامنة لكل مستخدم</value></data>
+  <data name="SecurityPolicyMaxSessionsNote" xml:space="preserve"><value>0 = غير محدود. عادةً تُعيّن البيئات الحكومية القيمة 1.</value></data>
+  <data name="SecurityPolicyIpRangesLabel" xml:space="preserve"><value>نطاقات IP المسموح بها (CIDR)</value></data>
+  <data name="SecurityPolicyIpRangesNote" xml:space="preserve"><value>كتلة CIDR واحدة لكل سطر أو مفصولة بفواصل. فارغ = السماح للجميع. سيُرفض تسجيل الدخول من خارج هذه النطاقات.</value></data>
+  <data name="SecurityPolicyDataClassLabel" xml:space="preserve"><value>مستوى تصنيف البيانات</value></data>
+  <data name="SecurityPolicyDataClassNote" xml:space="preserve"><value>يُستخدم لتقارير الامتثال وسجلات التدقيق.</value></data>
+  <data name="SecurityPolicyPasswordHeader" xml:space="preserve"><value>سياسة كلمة المرور</value></data>
+  <data name="SecurityPolicyPasswordInfoAlert" xml:space="preserve"><value>تنطبق سياسات كلمة المرور على تسجيلات الدخول المحلية (غير SSO) فقط. إذا فعّلت "اشتراط SSO" أعلاه فهذه الإعدادات لن يكون لها تأثير.</value></data>
+  <data name="SecurityPolicyPasswordExpirationLabel" xml:space="preserve"><value>انتهاء صلاحية كلمة المرور (بالأيام)</value></data>
+  <data name="SecurityPolicyPasswordExpirationNote" xml:space="preserve"><value>0 = كلمات المرور لا تنتهي صلاحيتها. 90 يوماً نموذجي لبيئات CUI.</value></data>
+  <data name="SecurityPolicyMinPasswordLengthLabel" xml:space="preserve"><value>الحد الأدنى لطول كلمة المرور</value></data>
+  <data name="SecurityPolicyMinPasswordLengthNote" xml:space="preserve"><value>الحد الأدنى 8 (الافتراضي للنظام). سياسات القسم يمكنها فقط زيادة هذا الحد. تُوصي NIST بـ 12+ وتشترط CUI 14+.</value></data>
+  <data name="SecurityPolicySystemComplexityHeader" xml:space="preserve"><value>تعقيد كلمة المرور المُطبَّق من النظام</value></data>
+  <data name="SecurityPolicySystemComplexityNote" xml:space="preserve"><value>تُلزَم جميع حسابات Resgrid باستيفاء معيار تعقيد كلمة المرور التالي. لا يمكن تعطيل هذا المعيار بسياسة القسم.</value></data>
+  <data name="SecurityPolicyComplexityRule1" xml:space="preserve"><value>8 أحرف على الأقل (أو الحد الأدنى لطول القسم أعلاه)</value></data>
+  <data name="SecurityPolicyComplexityRule2" xml:space="preserve"><value>رقم واحد على الأقل</value></data>
+  <data name="SecurityPolicyComplexityRule3" xml:space="preserve"><value>حرف كبير وحرف صغير على الأقل</value></data>
+  <data name="SecurityPolicyPasswordComplexityLabel" xml:space="preserve"><value>اشتراط تعقيد كلمة المرور</value></data>
+  <data name="SecurityPolicyPasswordComplexityNote" xml:space="preserve"><value>يُلزم بوجود حرف كبير واحد على الأقل ورقم واحد وحرف خاص واحد.</value></data>
+  <data name="SecurityPolicyQuickPresetsHeader" xml:space="preserve"><value>الإعدادات المسبقة السريعة</value></data>
+  <data name="SecurityPolicyPresetGovernment" xml:space="preserve"><value>حكومي / CUI</value></data>
+  <data name="SecurityPolicyPresetEnterprise" xml:space="preserve"><value>مؤسسي قياسي</value></data>
+  <data name="SecurityPolicyPresetMinimal" xml:space="preserve"><value>الحد الأدنى</value></data>
+  <data name="SecurityPolicySaveButton" xml:space="preserve"><value>حفظ سياسة الأمان</value></data>
+  <data name="SecurityPolicyCancelButton" xml:space="preserve"><value>إلغاء</value></data>
+  <data name="SecurityPolicyCannotEnableRequireSso" xml:space="preserve"><value>لا يمكن تفعيل تسجيل الدخول عبر SSO فقط: لا يوجد إعداد SSO نشط. أنشئ إعداد SSO وفعّله أولاً.</value></data>
+  <data name="PwdErrorEmpty" xml:space="preserve"><value>لا يمكن أن تكون كلمة المرور فارغة.</value></data>
+  <data name="PwdErrorNoDigit" xml:space="preserve"><value>يجب أن تحتوي كلمة المرور على رقم واحد على الأقل.</value></data>
+  <data name="PwdErrorNoUppercase" xml:space="preserve"><value>يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل.</value></data>
+  <data name="PwdErrorNoLowercase" xml:space="preserve"><value>يجب أن تحتوي كلمة المرور على حرف صغير واحد على الأقل.</value></data>
+  <data name="PwdErrorTooShort" xml:space="preserve"><value>يجب أن تتكون كلمة المرور من {0} أحرف على الأقل.</value></data>
+  <data name="PwdMinLengthTooLow" xml:space="preserve"><value>لا يمكن أن يكون الحد الأدنى لطول كلمة المرور أقل من الإعداد الافتراضي للنظام وهو 8 أحرف.</value></data>
+</root>

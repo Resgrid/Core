@@ -25,8 +25,6 @@
     </style>
 }
 
-<script src="https://maps.googleapis.com/maps/api/js?key=@Resgrid.Config.MappingConfig.GoogleMapsJSKey"></script>
-
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
         <h2>@localizer["AddArchivedCallHeader"]</h2>
@@ -400,6 +398,8 @@
         var newCallFormData = '@Html.Raw(Model.NewCallFormData)';
         var osmTileUrl = '@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()';
         var osmTileAttribution = '@Resgrid.Config.MappingConfig.LeafletAttribution';
+        var nominatimUrl = '@Resgrid.Config.MappingConfig.NominatimUrl';
+        var osrmUrl = '@Resgrid.Config.MappingConfig.OsrmUrl';
     </script>
 
     @if (Model.CenterCoordinates != null && Model.CenterCoordinates.Latitude.HasValue && Model.CenterCoordinates.Longitude.HasValue)

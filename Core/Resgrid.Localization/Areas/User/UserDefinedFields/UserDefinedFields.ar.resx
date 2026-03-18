@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="PageHeader" xml:space="preserve"><value>الحقول المعرّفة من المستخدم</value></data>
+  <data name="PageSubHeader" xml:space="preserve"><value>إدارة الحقول المخصصة لكيانات القسم</value></data>
+  <data name="EntityType" xml:space="preserve"><value>نوع الكيان</value></data>
+  <data name="Version" xml:space="preserve"><value>الإصدار</value></data>
+  <data name="FieldCount" xml:space="preserve"><value>الحقول</value></data>
+  <data name="Status" xml:space="preserve"><value>الحالة</value></data>
+  <data name="Actions" xml:space="preserve"><value>الإجراءات</value></data>
+  <data name="Active" xml:space="preserve"><value>نشط</value></data>
+  <data name="NoDefinition" xml:space="preserve"><value>غير مُهيَّأ</value></data>
+  <data name="Configure" xml:space="preserve"><value>تهيئة</value></data>
+  <data name="Edit" xml:space="preserve"><value>تعديل</value></data>
+  <data name="Delete" xml:space="preserve"><value>حذف</value></data>
+  <data name="DeleteDefinitionConfirm" xml:space="preserve"><value>حذف جميع إعدادات الحقول المعرّفة من المستخدم لـ {0}؟ لا يمكن التراجع عن هذا الإجراء.</value></data>
+  <data name="UdfSummaryTitle" xml:space="preserve"><value>تعريفات الحقول حسب الكيان</value></data>
+  <data name="EditDefinitionHeader" xml:space="preserve"><value>تهيئة الحقول — {0}</value></data>
+  <data name="NewDefinitionHeader" xml:space="preserve"><value>تهيئة الحقول — {0}</value></data>
+  <data name="FieldsSection" xml:space="preserve"><value>تعريفات الحقول</value></data>
+  <data name="AddField" xml:space="preserve"><value>إضافة حقل</value></data>
+  <data name="NoFieldsAdded" xml:space="preserve"><value>لم تُضَف أي حقول بعد. انقر على "إضافة حقل" لتعريف الحقل الأول.</value></data>
+  <data name="FieldName" xml:space="preserve"><value>الاسم الآلي</value></data>
+  <data name="FieldLabel" xml:space="preserve"><value>التسمية</value></data>
+  <data name="FieldDataType" xml:space="preserve"><value>نوع البيانات</value></data>
+  <data name="FieldRequired" xml:space="preserve"><value>مطلوب</value></data>
+  <data name="FieldEnabled" xml:space="preserve"><value>مُفعَّل</value></data>
+  <data name="FieldVisibleMobile" xml:space="preserve"><value>الجوال</value></data>
+  <data name="FieldVisibleReports" xml:space="preserve"><value>التقارير</value></data>
+  <data name="FieldOrder" xml:space="preserve"><value>الترتيب</value></data>
+  <data name="RemoveField" xml:space="preserve"><value>إزالة</value></data>
+  <data name="RemoveFieldConfirm" xml:space="preserve"><value>إزالة هذا الحقل؟</value></data>
+  <data name="SaveDefinition" xml:space="preserve"><value>حفظ التعريف</value></data>
+  <data name="Cancel" xml:space="preserve"><value>إلغاء</value></data>
+  <data name="FieldModalTitle" xml:space="preserve"><value>تفاصيل الحقل</value></data>
+  <data name="FieldNameHelp" xml:space="preserve"><value>المعرّف الداخلي (أحرف وأرقام وشرطات سفلية؛ يجب أن يبدأ بحرف أو شرطة سفلية). يجب أن يكون فريداً ضمن نوع الكيان هذا.</value></data>
+  <data name="FieldLabelHelp" xml:space="preserve"><value>التسمية المقروءة التي تظهر للمستخدمين.</value></data>
+  <data name="FieldDescription" xml:space="preserve"><value>الوصف / تلميح الأداة</value></data>
+  <data name="FieldPlaceholder" xml:space="preserve"><value>نص العنصر النائب</value></data>
+  <data name="FieldDefaultValue" xml:space="preserve"><value>القيمة الافتراضية</value></data>
+  <data name="FieldGroupName" xml:space="preserve"><value>المجموعة / القسم</value></data>
+  <data name="FieldIsReadOnly" xml:space="preserve"><value>للقراءة فقط</value></data>
+  <data name="FieldIsReadOnlyHelp" xml:space="preserve"><value>عند التفعيل يُعرض الحقل ولكن لا يمكن للمستخدمين تعديله.</value></data>
+  <data name="ValidationSection" xml:space="preserve"><value>قواعد التحقق</value></data>
+  <data name="ValidationMinLength" xml:space="preserve"><value>الحد الأدنى للطول</value></data>
+  <data name="ValidationMaxLength" xml:space="preserve"><value>الحد الأقصى للطول</value></data>
+  <data name="ValidationMinValue" xml:space="preserve"><value>الحد الأدنى للقيمة</value></data>
+  <data name="ValidationMaxValue" xml:space="preserve"><value>الحد الأقصى للقيمة</value></data>
+  <data name="ValidationRegex" xml:space="preserve"><value>نمط التعبير النمطي</value></data>
+  <data name="ValidationRegexError" xml:space="preserve"><value>رسالة خطأ التعبير النمطي</value></data>
+  <data name="DropdownOptions" xml:space="preserve"><value>الخيارات (مفتاح=تسمية، خيار واحد في كل سطر)</value></data>
+  <data name="DropdownOptionsHelp" xml:space="preserve"><value>أدخل خياراً واحداً في كل سطر بصيغة مفتاح=تسمية، مثل "yes=نعم" أو "no=لا".</value></data>
+  <data name="FieldVisibility" xml:space="preserve"><value>من يمكنه رؤية هذا الحقل؟</value></data>
+  <data name="VisibilityEveryone" xml:space="preserve"><value>الجميع</value></data>
+  <data name="VisibilityGroupAdmins" xml:space="preserve"><value>مدراء القسم والمجموعة</value></data>
+  <data name="VisibilityDeptAdmins" xml:space="preserve"><value>مدراء القسم فقط</value></data>
+  <data name="FieldVisibilityHelp" xml:space="preserve"><value>يتحكم في من يمكنه رؤية هذا الحقل وملؤه. المستخدمون الذين لا يستوفون المتطلبات لن يروه عند إضافة السجلات أو عرضها.</value></data>
+  <data name="ModalSave" xml:space="preserve"><value>إضافة حقل</value></data>
+  <data name="ModalClose" xml:space="preserve"><value>إغلاق</value></data>
+  <data name="Home" xml:space="preserve"><value>الرئيسية</value></data>
+  <data name="New" xml:space="preserve"><value>جديد</value></data>
+  <data name="UdfModule" xml:space="preserve"><value>الحقول المعرّفة من المستخدم</value></data>
+  <data name="EntityCall" xml:space="preserve"><value>بلاغ</value></data>
+  <data name="EntityPersonnel" xml:space="preserve"><value>الأفراد</value></data>
+  <data name="EntityUnit" xml:space="preserve"><value>وحدة</value></data>
+  <data name="EntityContact" xml:space="preserve"><value>جهة اتصال</value></data>
+  <data name="Preview" xml:space="preserve"><value>معاينة</value></data>
+  <data name="PreviewModalTitle" xml:space="preserve"><value>معاينة الحقل — {0}</value></data>
+  <data name="PreviewWarningTitle" xml:space="preserve"><value>معاينة فقط</value></data>
+  <data name="PreviewWarningBody" xml:space="preserve"><value>هذا نموذج لكيفية ظهور الحقول وعرضها في الصفحة. لن يتم حفظ أي بيانات.</value></data>
+  <data name="PreviewNoFields" xml:space="preserve"><value>لا توجد حقول مفعّلة للمعاينة.</value></data>
+  <data name="Close" xml:space="preserve"><value>إغلاق</value></data>
+  <data name="DefinitionSaved" xml:space="preserve"><value>تم حفظ تعريف الحقل بنجاح.</value></data>
+  <data name="DefinitionDeleted" xml:space="preserve"><value>تم حذف تعريف الحقل.</value></data>
+  <data name="ValidationErrors" xml:space="preserve"><value>يُرجى تصحيح الأخطاء أدناه قبل الحفظ.</value></data>
+  <data name="ValidationMachineNameRequired" xml:space="preserve"><value>الاسم الآلي مطلوب.</value></data>
+  <data name="ValidationMachineNamePattern" xml:space="preserve"><value>استخدم أحرفاً وأرقاماً وشرطات سفلية فقط، تبدأ بحرف أو شرطة سفلية.</value></data>
+  <data name="ValidationDuplicateMachineNames" xml:space="preserve"><value>أسماء آلية مكررة: {0}. يجب أن يكون كل اسم آلي فريداً ضمن نوع الكيان هذا.</value></data>
+</root>

@@ -1,0 +1,556 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="WorkflowsHeader" xml:space="preserve">
+    <value>سير العمل</value>
+  </data>
+  <data name="DepartmentWorkflows" xml:space="preserve">
+    <value>سير عمل القسم</value>
+  </data>
+  <data name="NewWorkflow" xml:space="preserve">
+    <value>سير عمل جديد</value>
+  </data>
+  <data name="Credentials" xml:space="preserve">
+    <value>بيانات الاعتماد</value>
+  </data>
+  <data name="PendingRuns" xml:space="preserve">
+    <value>التشغيلات المعلّقة</value>
+  </data>
+  <data name="NoWorkflowsCreated" xml:space="preserve">
+    <value>لم يتم إنشاء أي سير عمل بعد.</value>
+  </data>
+  <data name="CreateFirstWorkflow" xml:space="preserve">
+    <value>أنشئ سير عملك الأول.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="TriggerEvent" xml:space="preserve">
+    <value>حدث التشغيل</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="Created" xml:space="preserve">
+    <value>تاريخ الإنشاء</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>الإجراءات</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>مفعّل</value>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>معطّل</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="Runs" xml:space="preserve">
+    <value>التشغيلات</value>
+  </data>
+  <data name="Health" xml:space="preserve">
+    <value>الصحة</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="DeleteWorkflowConfirm" xml:space="preserve">
+    <value>حذف سير العمل {0}؟</value>
+  </data>
+  <data name="NewWorkflowHeader" xml:space="preserve">
+    <value>سير عمل جديد</value>
+  </data>
+  <data name="CreateWorkflow" xml:space="preserve">
+    <value>إنشاء سير عمل</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>الوصف</value>
+  </data>
+  <data name="MaxRetryCount" xml:space="preserve">
+    <value>الحد الأقصى لعدد المحاولات</value>
+  </data>
+  <data name="RetryBackoffBaseSeconds" xml:space="preserve">
+    <value>قاعدة التراجع للمحاولة (ثانية)</value>
+  </data>
+  <data name="NamePlaceholder" xml:space="preserve">
+    <value>مثلاً: إشعار Slack عند بلاغ جديد</value>
+  </data>
+  <data name="DescriptionPlaceholder" xml:space="preserve">
+    <value>وصف اختياري</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="EditWorkflowHeader" xml:space="preserve">
+    <value>تعديل سير العمل</value>
+  </data>
+  <data name="WorkflowSettings" xml:space="preserve">
+    <value>إعدادات سير العمل</value>
+  </data>
+  <data name="MaxRetries" xml:space="preserve">
+    <value>الحد الأقصى للمحاولات</value>
+  </data>
+  <data name="BackoffSeconds" xml:space="preserve">
+    <value>التراجع (ث)</value>
+  </data>
+  <data name="SaveChanges" xml:space="preserve">
+    <value>حفظ التغييرات</value>
+  </data>
+  <data name="Steps" xml:space="preserve">
+    <value>الخطوات</value>
+  </data>
+  <data name="AddStep" xml:space="preserve">
+    <value>إضافة خطوة</value>
+  </data>
+  <data name="ActionType" xml:space="preserve">
+    <value>نوع الإجراء</value>
+  </data>
+  <data name="Order" xml:space="preserve">
+    <value>الترتيب</value>
+  </data>
+  <data name="TemplatePeek" xml:space="preserve">
+    <value>القالب (أول 120 حرفاً)</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>نعم</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>لا</value>
+  </data>
+  <data name="DeleteStepConfirm" xml:space="preserve">
+    <value>هل أنت متأكد من حذف هذه الخطوة؟ لا يمكن التراجع عن هذا الإجراء.</value>
+  </data>
+  <data name="DeleteStep" xml:space="preserve">
+    <value>حذف الخطوة</value>
+  </data>
+  <data name="TemplateVariables" xml:space="preserve">
+    <value>متغيرات القالب</value>
+  </data>
+  <data name="CommonVariables" xml:space="preserve">
+    <value>المتغيرات المشتركة (متاحة دائماً):</value>
+  </data>
+  <data name="CallEventVariables" xml:space="preserve">
+    <value>متغيرات حدث البلاغ:</value>
+  </data>
+  <data name="WorkflowCredentialsHeader" xml:space="preserve">
+    <value>بيانات اعتماد سير العمل</value>
+  </data>
+  <data name="StoredCredentials" xml:space="preserve">
+    <value>بيانات الاعتماد المخزّنة</value>
+  </data>
+  <data name="AddCredential" xml:space="preserve">
+    <value>إضافة بيانات اعتماد</value>
+  </data>
+  <data name="NoCredentialsConfigured" xml:space="preserve">
+    <value>لا توجد بيانات اعتماد مهيّأة. أضف بيانات اعتماد لاستخدامها مع خطوات إجراءات سير العمل.</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="SecretData" xml:space="preserve">
+    <value>البيانات السرية</value>
+  </data>
+  <data name="DeleteCredentialConfirm" xml:space="preserve">
+    <value>حذف بيانات الاعتماد {0}؟</value>
+  </data>
+  <data name="ValidationErrorHeader" xml:space="preserve">
+    <value>يُرجى تصحيح الأخطاء التالية قبل الحفظ.</value>
+  </data>
+  <data name="AddCredentialHeader" xml:space="preserve">
+    <value>إضافة بيانات اعتماد</value>
+  </data>
+  <data name="EditCredentialHeader" xml:space="preserve">
+    <value>تعديل بيانات الاعتماد</value>
+  </data>
+  <data name="CredentialDetails" xml:space="preserve">
+    <value>تفاصيل بيانات الاعتماد</value>
+  </data>
+  <data name="CredentialType" xml:space="preserve">
+    <value>النوع</value>
+  </data>
+  <data name="SaveCredential" xml:space="preserve">
+    <value>حفظ بيانات الاعتماد</value>
+  </data>
+  <data name="ExistingSecretsInfo" xml:space="preserve">
+    <value>البيانات السرية الموجودة مخزّنة مشفّرة ولا يمكن عرضها. أدخل البيانات في الحقول أدناه لاستبدالها، أو اتركها فارغة للاحتفاظ بالبيانات الحالية.</value>
+  </data>
+  <data name="SmtpSettings" xml:space="preserve">
+    <value>إعدادات SMTP</value>
+  </data>
+  <data name="SmtpHost" xml:space="preserve">
+    <value>المضيف</value>
+  </data>
+  <data name="SmtpPort" xml:space="preserve">
+    <value>المنفذ</value>
+  </data>
+  <data name="SmtpUsername" xml:space="preserve">
+    <value>اسم المستخدم</value>
+  </data>
+  <data name="SmtpPassword" xml:space="preserve">
+    <value>كلمة المرور</value>
+  </data>
+  <data name="SmtpUseSsl" xml:space="preserve">
+    <value>استخدام SSL/TLS</value>
+  </data>
+  <data name="SmtpFromAddress" xml:space="preserve">
+    <value>عنوان المُرسِل</value>
+  </data>
+  <data name="SmtpFromAddressHelp" xml:space="preserve">
+    <value>عنوان البريد الإلكتروني الذي سيظهر في حقل "من" للرسائل المُرسَلة.</value>
+  </data>
+  <data name="TwilioSettings" xml:space="preserve">
+    <value>إعدادات Twilio</value>
+  </data>
+  <data name="TwilioAccountSid" xml:space="preserve">
+    <value>معرّف الحساب SID</value>
+  </data>
+  <data name="TwilioAuthToken" xml:space="preserve">
+    <value>رمز المصادقة</value>
+  </data>
+  <data name="TwilioFromNumber" xml:space="preserve">
+    <value>رقم المُرسِل</value>
+  </data>
+  <data name="TwilioFromNumberHelp" xml:space="preserve">
+    <value>بصيغة E.164، مثلاً +15551234567</value>
+  </data>
+  <data name="FtpSettings" xml:space="preserve">
+    <value>إعدادات FTP</value>
+  </data>
+  <data name="FtpHost" xml:space="preserve">
+    <value>المضيف</value>
+  </data>
+  <data name="FtpPort" xml:space="preserve">
+    <value>المنفذ</value>
+  </data>
+  <data name="FtpUsername" xml:space="preserve">
+    <value>اسم المستخدم</value>
+  </data>
+  <data name="FtpPassword" xml:space="preserve">
+    <value>كلمة المرور</value>
+  </data>
+  <data name="FtpPassiveMode" xml:space="preserve">
+    <value>استخدام الوضع السلبي</value>
+  </data>
+  <data name="SftpSettings" xml:space="preserve">
+    <value>إعدادات SFTP</value>
+  </data>
+  <data name="SftpHost" xml:space="preserve">
+    <value>المضيف</value>
+  </data>
+  <data name="SftpPort" xml:space="preserve">
+    <value>المنفذ</value>
+  </data>
+  <data name="SftpUsername" xml:space="preserve">
+    <value>اسم المستخدم</value>
+  </data>
+  <data name="SftpPassword" xml:space="preserve">
+    <value>كلمة المرور</value>
+  </data>
+  <data name="SftpPrivateKey" xml:space="preserve">
+    <value>المفتاح الخاص (PEM)</value>
+  </data>
+  <data name="SftpPrivateKeyHelp" xml:space="preserve">
+    <value>أدخل إما كلمة مرور أو مفتاحاً خاصاً (أو كليهما إذا كان المفتاح محمياً بعبارة مرور).</value>
+  </data>
+  <data name="AwsS3Settings" xml:space="preserve">
+    <value>إعدادات AWS S3</value>
+  </data>
+  <data name="AwsAccessKeyId" xml:space="preserve">
+    <value>معرّف مفتاح الوصول</value>
+  </data>
+  <data name="AwsSecretAccessKey" xml:space="preserve">
+    <value>مفتاح الوصول السري</value>
+  </data>
+  <data name="AwsRegion" xml:space="preserve">
+    <value>المنطقة</value>
+  </data>
+  <data name="AwsBucketName" xml:space="preserve">
+    <value>اسم الحاوية</value>
+  </data>
+  <data name="HttpBearerSettings" xml:space="preserve">
+    <value>رمز HTTP Bearer</value>
+  </data>
+  <data name="HttpBearerToken" xml:space="preserve">
+    <value>رمز Bearer</value>
+  </data>
+  <data name="HttpBearerHelp" xml:space="preserve">
+    <value>يُرسَل كـ Authorization: Bearer &lt;token&gt;</value>
+  </data>
+  <data name="HttpBasicSettings" xml:space="preserve">
+    <value>HTTP Basic Auth</value>
+  </data>
+  <data name="HttpBasicUsername" xml:space="preserve">
+    <value>اسم المستخدم</value>
+  </data>
+  <data name="HttpBasicPassword" xml:space="preserve">
+    <value>كلمة المرور</value>
+  </data>
+  <data name="HttpApiKeySettings" xml:space="preserve">
+    <value>مفتاح HTTP API</value>
+  </data>
+  <data name="ApiKeyHeaderName" xml:space="preserve">
+    <value>اسم الترويسة</value>
+  </data>
+  <data name="ApiKeyHeaderNameHelp" xml:space="preserve">
+    <value>اسم ترويسة HTTP التي تحمل مفتاح API.</value>
+  </data>
+  <data name="ApiKeyValue" xml:space="preserve">
+    <value>مفتاح API</value>
+  </data>
+  <data name="TeamsSettings" xml:space="preserve">
+    <value>Microsoft Teams Webhook</value>
+  </data>
+  <data name="TeamsWebhookUrl" xml:space="preserve">
+    <value>رابط Webhook الوارد</value>
+  </data>
+  <data name="TeamsWebhookHelp" xml:space="preserve">
+    <value>أنشئ موصّل Incoming Webhook داخل قناة Teams المطلوبة.</value>
+  </data>
+  <data name="SlackSettings" xml:space="preserve">
+    <value>Slack</value>
+  </data>
+  <data name="SlackWebhookUrl" xml:space="preserve">
+    <value>رابط Webhook الوارد</value>
+  </data>
+  <data name="SlackBotToken" xml:space="preserve">
+    <value>رمز Bot</value>
+  </data>
+  <data name="SlackHelp" xml:space="preserve">
+    <value>أدخل رابط webhook أو رمز bot أو كليهما.</value>
+  </data>
+  <data name="DiscordSettings" xml:space="preserve">
+    <value>Discord</value>
+  </data>
+  <data name="DiscordWebhookUrl" xml:space="preserve">
+    <value>رابط Webhook</value>
+  </data>
+  <data name="DiscordBotToken" xml:space="preserve">
+    <value>رمز Bot</value>
+  </data>
+  <data name="DiscordHelp" xml:space="preserve">
+    <value>أدخل رابط webhook أو رمز bot أو كليهما.</value>
+  </data>
+  <data name="AzureBlobSettings" xml:space="preserve">
+    <value>Azure Blob Storage</value>
+  </data>
+  <data name="AzureConnectionString" xml:space="preserve">
+    <value>سلسلة الاتصال</value>
+  </data>
+  <data name="AzureContainerName" xml:space="preserve">
+    <value>اسم الحاوية</value>
+  </data>
+  <data name="BoxSettings" xml:space="preserve">
+    <value>Box</value>
+  </data>
+  <data name="BoxClientId" xml:space="preserve">
+    <value>معرّف العميل</value>
+  </data>
+  <data name="BoxClientSecret" xml:space="preserve">
+    <value>سر العميل</value>
+  </data>
+  <data name="BoxEnterpriseId" xml:space="preserve">
+    <value>معرّف المؤسسة</value>
+  </data>
+  <data name="BoxPublicKeyId" xml:space="preserve">
+    <value>معرّف المفتاح العام</value>
+  </data>
+  <data name="BoxPrivateKey" xml:space="preserve">
+    <value>المفتاح الخاص (PEM)</value>
+  </data>
+  <data name="BoxPrivateKeyHelp" xml:space="preserve">
+    <value>المفتاح الخاص RSA من تهيئة تطبيق Box JWT (بصيغة PEM).</value>
+  </data>
+  <data name="BoxPrivateKeyPassword" xml:space="preserve">
+    <value>عبارة مرور المفتاح الخاص</value>
+  </data>
+  <data name="BoxPrivateKeyPasswordHelp" xml:space="preserve">
+    <value>عبارة مرور اختيارية لفكّ تشفير المفتاح الخاص إذا كان محمياً.</value>
+  </data>
+  <data name="DropboxSettings" xml:space="preserve">
+    <value>Dropbox</value>
+  </data>
+  <data name="DropboxRefreshToken" xml:space="preserve">
+    <value>رمز التحديث</value>
+  </data>
+  <data name="DropboxRefreshTokenHelp" xml:space="preserve">
+    <value>رمز تحديث OAuth2 طويل الأمد من تدفق تفويض Dropbox OAuth2.</value>
+  </data>
+  <data name="DropboxAppKey" xml:space="preserve">
+    <value>مفتاح التطبيق</value>
+  </data>
+  <data name="DropboxAppSecret" xml:space="preserve">
+    <value>سر التطبيق</value>
+  </data>
+  <data name="PendingRunningWorkflows" xml:space="preserve">
+    <value>سير العمل المعلّقة / الجارية</value>
+  </data>
+  <data name="ActiveRuns" xml:space="preserve">
+    <value>التشغيلات النشطة</value>
+  </data>
+  <data name="ClearAllPending" xml:space="preserve">
+    <value>مسح جميع المعلّقات</value>
+  </data>
+  <data name="ClearAllPendingConfirm" xml:space="preserve">
+    <value>إلغاء جميع التشغيلات المعلّقة لهذا القسم؟</value>
+  </data>
+  <data name="NoPendingRuns" xml:space="preserve">
+    <value>لا توجد تشغيلات معلّقة أو جارية.</value>
+  </data>
+  <data name="RunId" xml:space="preserve">
+    <value>معرّف التشغيل</value>
+  </data>
+  <data name="Workflow" xml:space="preserve">
+    <value>سير العمل</value>
+  </data>
+  <data name="Queued" xml:space="preserve">
+    <value>في قائمة الانتظار</value>
+  </data>
+  <data name="Attempt" xml:space="preserve">
+    <value>المحاولة</value>
+  </data>
+  <data name="CancelRun" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="CancelRunConfirm" xml:space="preserve">
+    <value>إلغاء هذه التشغيلة؟</value>
+  </data>
+  <data name="WorkflowRunsHeader" xml:space="preserve">
+    <value>تشغيلات سير العمل</value>
+  </data>
+  <data name="RunHistory" xml:space="preserve">
+    <value>سجل التشغيلات</value>
+  </data>
+  <data name="NoRunsFound" xml:space="preserve">
+    <value>لا توجد تشغيلات لسير العمل هذا.</value>
+  </data>
+  <data name="Started" xml:space="preserve">
+    <value>بدأ</value>
+  </data>
+  <data name="Completed" xml:space="preserve">
+    <value>اكتمل</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>خطأ</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>السابق</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>التالي</value>
+  </data>
+  <data name="WorkflowHealthHeader" xml:space="preserve">
+    <value>صحة سير العمل</value>
+  </data>
+  <data name="NoHealthData" xml:space="preserve">
+    <value>لا تتوفر بيانات صحية لسير العمل هذا بعد.</value>
+  </data>
+  <data name="Last24Hours" xml:space="preserve">
+    <value>آخر 24 ساعة</value>
+  </data>
+  <data name="Last7Days" xml:space="preserve">
+    <value>آخر 7 أيام</value>
+  </data>
+  <data name="Last30Days" xml:space="preserve">
+    <value>آخر 30 يوماً</value>
+  </data>
+  <data name="Successful" xml:space="preserve">
+    <value>ناجح</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>فاشل</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>الإجمالي</value>
+  </data>
+  <data name="SuccessRate" xml:space="preserve">
+    <value>معدل النجاح</value>
+  </data>
+  <data name="Performance" xml:space="preserve">
+    <value>الأداء</value>
+  </data>
+  <data name="AvgDuration" xml:space="preserve">
+    <value>متوسط المدة</value>
+  </data>
+  <data name="LastRun" xml:space="preserve">
+    <value>آخر تشغيل</value>
+  </data>
+  <data name="LastError" xml:space="preserve">
+    <value>آخر خطأ</value>
+  </data>
+  <data name="ViewRuns" xml:space="preserve">
+    <value>عرض التشغيلات</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>أبداً</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>لا شيء</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>الرئيسية</value>
+  </data>
+  <data name="New" xml:space="preserve">
+    <value>جديد</value>
+  </data>
+  <data name="Pending" xml:space="preserve">
+    <value>معلّق</value>
+  </data>
+</root>

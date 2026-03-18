@@ -1,0 +1,510 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="DeleteDepartmentSettingsInfo" xml:space="preserve">
+    <value>طلب حذف قسمك. هذه عملية دائمة وغير قابلة للتراجع تستغرق 25 يوماً وتُنفَّذ خارج ساعات العمل. خلال فترة الانتظار يمكنك إلغاء الطلب إذا رغبت.</value>
+  </data>
+  <data name="RequestDepartmentDeletion" xml:space="preserve">
+    <value>طلب حذف القسم</value>
+  </data>
+  <data name="DeleteDepartmentCurrentlyPendingInfo" xml:space="preserve">
+    <value>لقسمك طلب حذف معلّق حالياً. إذا أردت المضي قدماً لا يلزمك فعل أي شيء؛ بعد الطابع الزمني أدناه (خلال عملية الليل اليومية) سيُحذف قسمك وجميع بياناته. إذا أردت إلغاء الطلب والإبقاء على القسم اضغط زر "إلغاء حذف القسم" أدناه. يُرجى ملاحظة أن أي تغييرات على المسؤولين والملّاك ستمنع اكتمال العملية، ويُنصح باستخدام النظام بوضع القراءة فقط لتنزيل البيانات التي تريد حفظها.</value>
+  </data>
+  <data name="MappingSettingsHeader" xml:space="preserve">
+    <value>إعدادات الخرائط</value>
+  </data>
+  <data name="SavedMappingSettings" xml:space="preserve">
+    <value>تم حفظ إعدادات الخرائط بنجاح.</value>
+  </data>
+  <data name="MappingSettingsPersonnelHeader" xml:space="preserve">
+    <value>إعدادات خرائط الأفراد</value>
+  </data>
+  <data name="MappingSettingsUnitsHeader" xml:space="preserve">
+    <value>إعدادات خرائط الوحدات</value>
+  </data>
+  <data name="MappingSettingsPersonnelAllowOverwriteLabel" xml:space="preserve">
+    <value>السماح لحالة بدون بيانات موقع بإخفاء الموقع السابق</value>
+  </data>
+  <data name="MappingSettingsPersonnelTTLLabel" xml:space="preserve">
+    <value>مدة صلاحية مواقع الأفراد (بالدقائق)</value>
+  </data>
+  <data name="MappingSettingsUnitAllowOverwriteLabel" xml:space="preserve">
+    <value>السماح لحالة وحدة بدون بيانات موقع بإخفاء الموقع السابق</value>
+  </data>
+  <data name="MappingSettingsUnitTTLLabel" xml:space="preserve">
+    <value>مدة صلاحية مواقع الوحدات (بالدقائق)</value>
+  </data>
+  <data name="PersonnelAllowOverwriteHelp" xml:space="preserve">
+    <value>إذا تم التفعيل وأُرسلت حالة للمستخدم (مثل الانتظار) بدون إحداثيات جغرافية، سيُخفى موقعه على الخريطة. وإلا سيُعرض آخر موقع للمستخدم حتى لو كان قديماً.</value>
+  </data>
+  <data name="UnitAllowOverwriteHelp" xml:space="preserve">
+    <value>إذا تم التفعيل وأُرسلت حالة للوحدة (مثل في المقر) بدون إحداثيات جغرافية، سيُخفى موقعها على الخريطة. وإلا سيُعرض آخر موقع للوحدة حتى لو كان قديماً.</value>
+  </data>
+  <data name="PersonnelTTLHelp" xml:space="preserve">
+    <value>بالدقائق، المدة التي تبقى خلالها المواقع صالحة للعرض على الخريطة. مثلاً قيمة 60 تعني عرض علامة الشخص على الخريطة لمدة 60 دقيقة ثم تختفي. القيمة 0 تعطّل TTL ويُعرض الموقع بغض النظر عن قِدَمه.</value>
+  </data>
+  <data name="UnitTTLHelp" xml:space="preserve">
+    <value>بالدقائق، المدة التي تبقى خلالها المواقع صالحة للعرض على الخريطة. مثلاً قيمة 60 تعني عرض علامة الوحدة على الخريطة لمدة 60 دقيقة ثم تختفي. القيمة 0 تعطّل TTL ويُعرض الموقع بغض النظر عن قِدَمه.</value>
+  </data>
+  <data name="GroupDispatchSettingsHeader" xml:space="preserve">
+    <value>إعدادات توزيع المجموعات</value>
+  </data>
+  <data name="UnitDispatchSettingsHeader" xml:space="preserve">
+    <value>إعدادات توزيع الوحدات</value>
+  </data>
+  <data name="UnitDispatchAlsoDispatchToAssignedPersonnelLabel" xml:space="preserve">
+    <value>التوزيع أيضاً على الأفراد المعيّنين</value>
+  </data>
+  <data name="UnitDispatchAlsoDispatchToGroupLabel" xml:space="preserve">
+    <value>التوزيع أيضاً على المجموعة بأكملها</value>
+  </data>
+  <data name="ShiftSettingsHeader" xml:space="preserve">
+    <value>إعدادات الورديات</value>
+  </data>
+  <data name="SaveShiftSettingsText" xml:space="preserve">
+    <value>تم حفظ إعدادات الورديات بنجاح.</value>
+  </data>
+  <data name="ShiftSignupSettingsHeader" xml:space="preserve">
+    <value>إعدادات التسجيل في الورديات</value>
+  </data>
+  <data name="ShiftSignupsMultipleGroupsHeader" xml:space="preserve">
+    <value>السماح بالتسجيل في مجموعات متعددة</value>
+  </data>
+  <data name="PersonnelOnUnitSetUnitStatusLabel" xml:space="preserve">
+    <value>الأفراد على الوحدة يُعيّنون حالة الوحدة</value>
+  </data>
+  <data name="AccountOwner" xml:space="preserve">
+    <value>مالك الحساب</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="AddressError" xml:space="preserve">
+    <value>تعذّر التحقق من العنوان المقدم. تحقق من صحته قبل المتابعة.</value>
+  </data>
+  <data name="AddressHelp" xml:space="preserve">
+    <value>هذا هو عنوان قسمك؛ يمكن أن يكون عنوان محطة واحدة أو مكتبك الإقليمي. يُستخدَم هذا العنوان لتحديد نطاقك وموقعك كمرجع احتياطي لبعض العمليات (مثل توسيط اللوحة الرئيسية).</value>
+  </data>
+  <data name="ApiRssSettings" xml:space="preserve">
+    <value>إعدادات API وRSS</value>
+  </data>
+  <data name="ApiSettingsHeader" xml:space="preserve">
+    <value>إعدادات API</value>
+  </data>
+  <data name="CallSettingsHeader" xml:space="preserve">
+    <value>إعدادات استيراد البلاغات</value>
+  </data>
+  <data name="CallSorting" xml:space="preserve">
+    <value>ترتيب البلاغات</value>
+  </data>
+  <data name="City" xml:space="preserve">
+    <value>المدينة</value>
+  </data>
+  <data name="CityLabel" xml:space="preserve">
+    <value>المدينة</value>
+  </data>
+  <data name="CompletedOn" xml:space="preserve">
+    <value>اكتمل في</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>الدولة</value>
+  </data>
+  <data name="CountryLabel" xml:space="preserve">
+    <value>الدولة</value>
+  </data>
+  <data name="DefaultMapCenterLabel" xml:space="preserve">
+    <value>إحداثيات GPS لمركز الخريطة الافتراضي</value>
+  </data>
+  <data name="DeleteInvite" xml:space="preserve">
+    <value>حذف الدعوة</value>
+  </data>
+  <data name="DeleteInviteWarning" xml:space="preserve">
+    <value>تحذير: سيؤدي هذا الإجراء إلى حذف هذه الدعوة نهائياً والرابط الموجود في البريد الإلكتروني للمستخدم سيُفضي إلى خطأ. هل أنت متأكد من حذف الدعوة؟</value>
+  </data>
+  <data name="DepartmentAddressHeader" xml:space="preserve">
+    <value>عنوان القسم</value>
+  </data>
+  <data name="DepartmentName" xml:space="preserve">
+    <value>اسم القسم</value>
+  </data>
+  <data name="DepartmentSettingsHeader" xml:space="preserve">
+    <value>إعدادات القسم</value>
+  </data>
+  <data name="DisableAutoAvailable" xml:space="preserve">
+    <value>تعطيل الإتاحة التلقائية</value>
+  </data>
+  <data name="DisableAutoAvailableHelp" xml:space="preserve">
+    <value>تعطيل تعيين حالة الأفراد إلى "متاح" تلقائياً بعد ساعة</value>
+  </data>
+  <data name="DispatchImportEmail" xml:space="preserve">
+    <value>بريد إلكتروني لاستيراد التوزيع</value>
+  </data>
+  <data name="DispatchImportEmailHelp" xml:space="preserve">
+    <value>هذا هو عنوان بريدك الإلكتروني للإرسال الشامل؛ سيتلقى جميع مستخدمي قسمك (الذين فعّلوا إشعارات البلاغات) تنبيه البلاغ</value>
+  </data>
+  <data name="DispatchSettings" xml:space="preserve">
+    <value>إعدادات التوزيع</value>
+  </data>
+  <data name="DispatchSettingsHeader" xml:space="preserve">
+    <value>إعدادات التوزيع</value>
+  </data>
+  <data name="EmailAddress" xml:space="preserve">
+    <value>البريد الإلكتروني</value>
+  </data>
+  <data name="EmailAddresses" xml:space="preserve">
+    <value>عناوين البريد الإلكتروني</value>
+  </data>
+  <data name="EmailAddressesHelp" xml:space="preserve">
+    <value>أدخل عناوين البريد الإلكتروني مفصولة بفواصل (مثلاً: "test1@test.com, test2@test.com")</value>
+  </data>
+  <data name="EmailType" xml:space="preserve">
+    <value>نوع البريد الإلكتروني</value>
+  </data>
+  <data name="ForceDepartmentUpdate" xml:space="preserve">
+    <value>فرض تحديث القسم</value>
+  </data>
+  <data name="ForceDepartmentUpdateInfo" xml:space="preserve">
+    <value>يخزّن Resgrid بعض بيانات القسم مؤقتاً لتحسين الأداء. من أمثلة البيانات المخزنة: مستويات التأهيل وإعدادات القسم وأدوار الأفراد ومجموعاتهم وأسماؤهم. إذا كانت بعض بيانات القسم غير صحيحة قد تحتاج إلى مسح ذاكرة التخزين المؤقت لقسمك.</value>
+  </data>
+  <data name="InvitesHeader" xml:space="preserve">
+    <value>الدعوات</value>
+  </data>
+  <data name="LatitudePlaceholder" xml:space="preserve">
+    <value>خط عرض مركز الخريطة</value>
+  </data>
+  <data name="LatitudePlaceholderHelp" xml:space="preserve">
+    <value>خط العرض (بالتدوين العشري: مثلاً 39.1517)</value>
+  </data>
+  <data name="LongitudePlaceholder" xml:space="preserve">
+    <value>خط طول مركز الخريطة</value>
+  </data>
+  <data name="LongitudePlaceholderHelp" xml:space="preserve">
+    <value>خط الطول (بالتدوين العشري: مثلاً -119.4571)</value>
+  </data>
+  <data name="MinutesToKeepOpen" xml:space="preserve">
+    <value>الدقائق للإبقاء على البلاغ مفتوحاً</value>
+  </data>
+  <data name="MinutesToKeepOpenHelp" xml:space="preserve">
+    <value>القيمة أعلاه تبقي البلاغات المستوردة بالبريد الإلكتروني مفتوحة لتلك المدة ثم تُغلق. يجب أيضاً تحديد مربع الاختصار للإغلاق التلقائي.</value>
+  </data>
+  <data name="Pending" xml:space="preserve">
+    <value>معلّق</value>
+  </data>
+  <data name="PersonCallDispatchStatusLabel" xml:space="preserve">
+    <value>حالة الشخص عند توزيع البلاغ</value>
+  </data>
+  <data name="PersonCallReleaseStatusLabel" xml:space="preserve">
+    <value>حالة الشخص عند إغلاق البلاغ</value>
+  </data>
+  <data name="PersonnelSorting" xml:space="preserve">
+    <value>ترتيب الأفراد</value>
+  </data>
+  <data name="PersonnelStaffingResetHeader" xml:space="preserve">
+    <value>إعادة تعيين تأهيل الأفراد</value>
+  </data>
+  <data name="PersonnelStaffingResetInfo" xml:space="preserve">
+    <value>إذا احتجت إلى إعادة تعيين مستوى تأهيل جميع الأفراد يومياً، يمكنك ضبط ذلك هنا. مثلاً إعادة تعيين التأهيل إلى "غير متاح" كل يوم للتأكد من أن الأفراد المعلّمين كمتاحين قد تأهّلوا بعد إعادة التعيين.</value>
+  </data>
+  <data name="PersonnelStatusResetHeader" xml:space="preserve">
+    <value>إعادة تعيين حالات الأفراد</value>
+  </data>
+  <data name="PersonnelStatusResetInfo" xml:space="preserve">
+    <value>إذا احتجت إلى إعادة تعيين حالات جميع الأفراد يومياً، يمكنك ضبط ذلك هنا. مثلاً إعادة تعيين الحالة إلى "في الانتظار" كل يوم للتأكد من تحديث حالة الأفراد.</value>
+  </data>
+  <data name="PostalCodeLabel" xml:space="preserve">
+    <value>الرمز البريدي</value>
+  </data>
+  <data name="Provision" xml:space="preserve">
+    <value>تزويد روابط RSS\Atom</value>
+  </data>
+  <data name="ProvisionFailureBody" xml:space="preserve">
+    <value>تعذّر على Resgrid تزويد الرقم المطلوب، يُرجى إعادة المحاولة برقم آخر. إذا لم تتمكن من التزويد، يُرجى التواصل معنا.</value>
+  </data>
+  <data name="ProvisionFailureHeader" xml:space="preserve">
+    <value>فشل التزويد</value>
+  </data>
+  <data name="PruneCalls" xml:space="preserve">
+    <value>تقليم (إغلاق تلقائي) البلاغات</value>
+  </data>
+  <data name="PruneCallsHelp" xml:space="preserve">
+    <value>سيُغلق هذا البلاغات التي أُنشئت تلقائياً (مثلاً عبر بريد إلكتروني أو رسالة نصية أو استيراد صوتي)</value>
+  </data>
+  <data name="Regenerate" xml:space="preserve">
+    <value>إعادة إنشاء روابط RSS</value>
+  </data>
+  <data name="RegenerateWarning" xml:space="preserve">
+    <value>تحذير: إعادة إنشاء روابط RSS\Atom ستتطلب من جميع القراء/المستهلكين التحديث إلى رابط جديد. هل أنت متأكد من إعادة الإنشاء؟</value>
+  </data>
+  <data name="ResendInvite" xml:space="preserve">
+    <value>إعادة إرسال الدعوة</value>
+  </data>
+  <data name="ResendInviteWarning" xml:space="preserve">
+    <value>تحذير: سيؤدي هذا الإجراء إلى إعادة إرسال الدعوة إلى عنوان البريد الإلكتروني للمدعو وإعادة تعيين تاريخ الإرسال. هل أنت متأكد من إعادة الإرسال؟</value>
+  </data>
+  <data name="ResetStaffingDaily" xml:space="preserve">
+    <value>إعادة تعيين التأهيل يومياً؟</value>
+  </data>
+  <data name="ResetStaffingLevelTo" xml:space="preserve">
+    <value>إعادة تعيين مستوى التأهيل إلى</value>
+  </data>
+  <data name="ResetStatusDaily" xml:space="preserve">
+    <value>إعادة تعيين الحالة يومياً؟</value>
+  </data>
+  <data name="ResetStatusDailyTime" xml:space="preserve">
+    <value>وقت إعادة تعيين الحالة</value>
+  </data>
+  <data name="ResetStatusDailyTo" xml:space="preserve">
+    <value>إعادة تعيين الحالة إلى</value>
+  </data>
+  <data name="RssActiveCallFeedHeader" xml:space="preserve">
+    <value>تغذية RSS للبلاغات النشطة</value>
+  </data>
+  <data name="RssActiveCallFeedInfo" xml:space="preserve">
+    <value>يتيح Resgrid الوصول إلى البلاغات النشطة لقسمك عبر تغذية RSS. يسمح ذلك لأي قارئ تغذية (مثل قارئ المدوّنات أو Microsoft Outlook) بعرض البلاغات الجديدة والتنبيه بها. لأقصى توافق سيُنشئ Resgrid رابطاً فريداً لقراء RSS 2.0. هذا الرابط لا يحمي نفسه (لا اسم مستخدم أو كلمة مرور)، لذا من المهم عدم مشاركته علناً إذا كنت لا تريد أن تكون بيانات البلاغات النشطة عامة.</value>
+  </data>
+  <data name="RssActiveCallNoFeedInfo" xml:space="preserve">
+    <value>لا يمتلك قسمك روابط RSS مزوّدة. اضغط الزر أدناه لتزويد روابط RSS. زوّد روابط RSS\Atom فقط عند حاجة قسمك إليها.</value>
+  </data>
+  <data name="SavedDispatchSettings" xml:space="preserve">
+    <value>تم حفظ إعدادات التوزيع بنجاح.</value>
+  </data>
+  <data name="SendInvites" xml:space="preserve">
+    <value>إرسال الدعوات</value>
+  </data>
+  <data name="SentOn" xml:space="preserve">
+    <value>أُرسل في</value>
+  </data>
+  <data name="SetStatusforShiftPersonnelOnDispatchLabel" xml:space="preserve">
+    <value>تعيين حالة أفراد الوردية عند التوزيع</value>
+  </data>
+  <data name="ShiftSettings" xml:space="preserve">
+    <value>إعدادات الورديات</value>
+  </data>
+  <data name="State" xml:space="preserve">
+    <value>المحافظة/الولاية</value>
+  </data>
+  <data name="StateLabel" xml:space="preserve">
+    <value>المحافظة/الولاية</value>
+  </data>
+  <data name="Street" xml:space="preserve">
+    <value>الشارع</value>
+  </data>
+  <data name="StreetLabel" xml:space="preserve">
+    <value>الشارع</value>
+  </data>
+  <data name="TimeResetStaffingDaily" xml:space="preserve">
+    <value>وقت إعادة تعيين التأهيل</value>
+  </data>
+  <data name="TimeZone" xml:space="preserve">
+    <value>المنطقة الزمنية</value>
+  </data>
+  <data name="UnitSorting" xml:space="preserve">
+    <value>ترتيب الوحدات</value>
+  </data>
+  <data name="Use24HourTime" xml:space="preserve">
+    <value>استخدام التوقيت بنظام 24 ساعة</value>
+  </data>
+  <data name="UseShiftForGroupDispatchLabel" xml:space="preserve">
+    <value>استخدام الوردية لتوزيع المجموعات</value>
+  </data>
+  <data name="Zip" xml:space="preserve">
+    <value>الرمز البريدي</value>
+  </data>
+  <data name="DeleteDepartmentHeader" xml:space="preserve">
+    <value>حذف القسم</value>
+  </data>
+  <data name="DeleteDepartmentInfo" xml:space="preserve">
+    <value>يمكنك هنا طلب حذف قسمك. يحق لمالك الحساب فقط طلب حذف القسم. سيُحذف جميع المستخدمين والبيانات المرتبطة بقسمك من نظام Resgrid بعد اكتمال العملية. هذه العملية غير قابلة للتراجع! يمكنك إلغاء الطلب في أي وقت قبل اكتمال العملية والاحتفاظ ببياناتك. سيُحذف قسمك بعد 25 يوماً من تقديم الطلب.</value>
+  </data>
+  <data name="RequestDeletion" xml:space="preserve">
+    <value>طلب الحذف</value>
+  </data>
+  <data name="CheckToDelete" xml:space="preserve">
+    <value>ضع علامة في المربع أدناه لتأكيد طلب الحذف</value>
+  </data>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>أفهم وأوافق على عملية الحذف</value>
+  </data>
+  <data name="CancelDepartmentDeletion" xml:space="preserve">
+    <value>إلغاء حذف القسم</value>
+  </data>
+  <data name="DeleteDepartmentSettingsHeader" xml:space="preserve">
+    <value>حذف قسمك</value>
+  </data>
+  <data name="EnableSupressStaffings" xml:space="preserve">
+    <value>تفعيل كتم مستويات التأهيل</value>
+  </data>
+  <data name="SupressStaffingsHeader" xml:space="preserve">
+    <value>كتم (صامت) لهذه المستويات من التأهيل</value>
+  </data>
+  <data name="SupressStaffingsInfo" xml:space="preserve">
+    <value>حدد مستويات تأهيل الأفراد أدناه التي لن تتلقى أي إشعارات أو توزيع أو تنبيهات أو رسائل أو أي تواصل آخر. الأكثر شيوعاً هي مستويات "خارج الخدمة" أو "في إجازة".</value>
+  </data>
+  <data name="AddContact" xml:space="preserve">
+    <value>إضافة جهة اتصال</value>
+  </data>
+  <data name="ContactTypeLabel" xml:space="preserve">
+    <value>نوع جهة الاتصال</value>
+  </data>
+  <data name="DepartmentModuleSettingsInfo" xml:space="preserve">
+    <value>يمكنك هنا التحكم في معلومات رفيعة المستوى حول كل وحدة في نظام Resgrid. ستُضاف خيارات وحدات رفيعة المستوى جديدة هنا. هذه الإعدادات في مراحلها الأولى وقد لا تنتشر بعد إلى جميع أجزاء نظام Resgrid.</value>
+  </data>
+  <data name="DisabledCalendarLabel" xml:space="preserve">
+    <value>التقويم</value>
+  </data>
+  <data name="DisabledInventoryLabel" xml:space="preserve">
+    <value>المخزون</value>
+  </data>
+  <data name="DisabledLogsLabel" xml:space="preserve">
+    <value>السجلات</value>
+  </data>
+  <data name="DisabledMaintenanceLabel" xml:space="preserve">
+    <value>الصيانة</value>
+  </data>
+  <data name="DisabledNotesLabel" xml:space="preserve">
+    <value>الملاحظات</value>
+  </data>
+  <data name="DisabledReportsLabel" xml:space="preserve">
+    <value>التقارير</value>
+  </data>
+  <data name="DisabledTrainingLabel" xml:space="preserve">
+    <value>التدريب</value>
+  </data>
+  <data name="DisableMappingLabel" xml:space="preserve">
+    <value>الخرائط</value>
+  </data>
+  <data name="DisableMessagingLabel" xml:space="preserve">
+    <value>المراسلة</value>
+  </data>
+  <data name="DisableShiftsLabel" xml:space="preserve">
+    <value>الورديات</value>
+  </data>
+  <data name="DispatchSettingsModuleHeader" xml:space="preserve">
+    <value>وحدات القسم</value>
+  </data>
+  <data name="ReportsDocumentsLabel" xml:space="preserve">
+    <value>تعطيل الوثائق</value>
+  </data>
+  <data name="SavedModuleSettings" xml:space="preserve">
+    <value>تم حفظ إعدادات وحدات القسم</value>
+  </data>
+  <data name="PersonnelOnUnitSetUnitStatusHelp" xml:space="preserve">
+    <value>عند إرسال وحدة لحالة وكان المستخدمون معيّنون على أدوار، ستُعيَّن حالة المستخدمين إلى "على الوحدة".</value>
+  </data>
+</root>

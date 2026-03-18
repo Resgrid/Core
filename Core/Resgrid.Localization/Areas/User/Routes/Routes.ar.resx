@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <!-- Shared -->
+  <data name="Cancel" xml:space="preserve"><value>إلغاء</value></data>
+  <data name="Save" xml:space="preserve"><value>حفظ</value></data>
+  <data name="Name" xml:space="preserve"><value>الاسم</value></data>
+  <data name="Description" xml:space="preserve"><value>الوصف</value></data>
+  <data name="Status" xml:space="preserve"><value>الحالة</value></data>
+  <data name="Actions" xml:space="preserve"><value>الإجراءات</value></data>
+
+  <!-- Index -->
+  <data name="RoutesPageTitle" xml:space="preserve"><value>المسارات</value></data>
+  <data name="RoutesHeader" xml:space="preserve"><value>المسارات</value></data>
+  <data name="NewRoute" xml:space="preserve"><value>مسار جديد</value></data>
+  <data name="ActiveRoutes" xml:space="preserve"><value>المسارات النشطة</value></data>
+  <data name="Stops" xml:space="preserve"><value>المحطات</value></data>
+  <data name="Profile" xml:space="preserve"><value>الملف الشخصي</value></data>
+  <data name="Created" xml:space="preserve"><value>تاريخ الإنشاء</value></data>
+  <data name="View" xml:space="preserve"><value>عرض</value></data>
+  <data name="Edit" xml:space="preserve"><value>تعديل</value></data>
+  <data name="History" xml:space="preserve"><value>السجل</value></data>
+  <data name="DeleteRoutePlanConfirm" xml:space="preserve"><value>هل تريد حذف خطة المسار هذه؟</value></data>
+
+  <!-- Instances -->
+  <data name="RouteHistoryPageTitle" xml:space="preserve"><value>سجل المسار</value></data>
+  <data name="RouteHistoryHeaderPrefix" xml:space="preserve"><value>سجل المسار</value></data>
+  <data name="HistoryBreadcrumb" xml:space="preserve"><value>السجل</value></data>
+  <data name="Unit" xml:space="preserve"><value>الوحدة</value></data>
+  <data name="Started" xml:space="preserve"><value>بدأ</value></data>
+  <data name="Ended" xml:space="preserve"><value>انتهى</value></data>
+  <data name="Detail" xml:space="preserve"><value>التفاصيل</value></data>
+
+  <!-- ActiveRoutes -->
+  <data name="ActiveRoutesPageTitle" xml:space="preserve"><value>المسارات النشطة</value></data>
+  <data name="ActiveRoutesHeader" xml:space="preserve"><value>المسارات النشطة</value></data>
+  <data name="ActiveBreadcrumb" xml:space="preserve"><value>نشط</value></data>
+  <data name="NoActiveRoutes" xml:space="preserve"><value>لا توجد مسارات نشطة</value></data>
+  <data name="NoActiveRoutesMessage" xml:space="preserve"><value>لا توجد نسخ مسارات قيد التنفيذ حالياً.</value></data>
+  <data name="UnitLabel" xml:space="preserve"><value>الوحدة</value></data>
+  <data name="StopsLabel" xml:space="preserve"><value>المحطات</value></data>
+  <data name="StartedLabel" xml:space="preserve"><value>بدأ</value></data>
+  <data name="ViewDetails" xml:space="preserve"><value>عرض التفاصيل</value></data>
+
+  <!-- New -->
+  <data name="NewRoutePageTitle" xml:space="preserve"><value>مسار جديد</value></data>
+  <data name="NewRoutePlanHeader" xml:space="preserve"><value>خطة مسار جديدة</value></data>
+  <data name="NewBreadcrumb" xml:space="preserve"><value>جديد</value></data>
+  <data name="RouteDetailsTitle" xml:space="preserve"><value>تفاصيل المسار</value></data>
+  <data name="UnitField" xml:space="preserve"><value>الوحدة</value></data>
+  <data name="UnitAssignAtStart" xml:space="preserve"><value>-- تعيين عند وقت البدء --</value></data>
+  <data name="StatusDraft" xml:space="preserve"><value>مسودة</value></data>
+  <data name="StatusActive" xml:space="preserve"><value>نشط</value></data>
+  <data name="StatusPaused" xml:space="preserve"><value>متوقف مؤقتاً</value></data>
+  <data name="StatusArchived" xml:space="preserve"><value>مؤرشف</value></data>
+  <data name="RouteColor" xml:space="preserve"><value>لون المسار</value></data>
+  <data name="RouteProfile" xml:space="preserve"><value>ملف تعريف المسار</value></data>
+  <data name="ProfileDriving" xml:space="preserve"><value>قيادة</value></data>
+  <data name="ProfileWalking" xml:space="preserve"><value>مشياً</value></data>
+  <data name="ProfileCycling" xml:space="preserve"><value>دراجة</value></data>
+  <data name="ProfileDrivingTraffic" xml:space="preserve"><value>قيادة (مع الحركة المرورية)</value></data>
+  <data name="GeofenceRadius" xml:space="preserve"><value>نطاق السياج الجغرافي (م)</value></data>
+  <data name="UseStationAsStart" xml:space="preserve"><value>استخدام المحطة كنقطة بداية</value></data>
+  <data name="UseStationAsEnd" xml:space="preserve"><value>استخدام المحطة كنقطة نهاية</value></data>
+  <data name="OptimizeStopOrder" xml:space="preserve"><value>تحسين ترتيب المحطات</value></data>
+  <data name="MapAndStopsTitle" xml:space="preserve"><value>الخريطة &amp; المحطات</value></data>
+  <data name="MapAndStopsHelp" xml:space="preserve"><value>يمكن إدارة المحطات بعد إنشاء المسار عبر واجهة برمجة التطبيقات أو نموذج التعديل.</value></data>
+  <data name="CreateRoute" xml:space="preserve"><value>إنشاء المسار</value></data>
+
+  <!-- Edit -->
+  <data name="EditRoutePageTitle" xml:space="preserve"><value>تعديل المسار</value></data>
+  <data name="EditRoutePlanHeader" xml:space="preserve"><value>تعديل خطة المسار</value></data>
+  <data name="EditBreadcrumb" xml:space="preserve"><value>تعديل</value></data>
+  <data name="StopsTableHash" xml:space="preserve"><value>#</value></data>
+  <data name="StopType" xml:space="preserve"><value>النوع</value></data>
+  <data name="Address" xml:space="preserve"><value>العنوان</value></data>
+  <data name="Priority" xml:space="preserve"><value>الأولوية</value></data>
+  <data name="SaveChanges" xml:space="preserve"><value>حفظ التغييرات</value></data>
+
+  <!-- View -->
+  <data name="RouteDetailPageTitle" xml:space="preserve"><value>تفاصيل المسار</value></data>
+  <data name="ViewBreadcrumb" xml:space="preserve"><value>عرض</value></data>
+  <data name="RouteMapTitle" xml:space="preserve"><value>خريطة المسار</value></data>
+  <data name="DetailsTitle" xml:space="preserve"><value>التفاصيل</value></data>
+  <data name="StatusLabel" xml:space="preserve"><value>الحالة</value></data>
+  <data name="ProfileLabel" xml:space="preserve"><value>الملف الشخصي</value></data>
+  <data name="GeofenceLabel" xml:space="preserve"><value>السياج الجغرافي</value></data>
+  <data name="DistanceLabel" xml:space="preserve"><value>المسافة</value></data>
+  <data name="DurationLabel" xml:space="preserve"><value>المدة</value></data>
+
+  <!-- InstanceDetail -->
+  <data name="RouteInstanceDetailPageTitle" xml:space="preserve"><value>تفاصيل نسخة المسار</value></data>
+  <data name="RouteInstanceHeaderPrefix" xml:space="preserve"><value>نسخة المسار</value></data>
+  <data name="InstanceDetailBreadcrumb" xml:space="preserve"><value>تفاصيل النسخة</value></data>
+  <data name="InstanceInfoTitle" xml:space="preserve"><value>معلومات النسخة</value></data>
+  <data name="StartedDt" xml:space="preserve"><value>بدأ</value></data>
+  <data name="EndedDt" xml:space="preserve"><value>انتهى</value></data>
+  <data name="Progress" xml:space="preserve"><value>التقدم</value></data>
+  <data name="StopTimelineTitle" xml:space="preserve"><value>الجدول الزمني للمحطات</value></data>
+  <data name="StopStatusPending" xml:space="preserve"><value>معلق</value></data>
+  <data name="StopStatusCheckedIn" xml:space="preserve"><value>تم الوصول</value></data>
+  <data name="StopStatusCompleted" xml:space="preserve"><value>مكتمل</value></data>
+  <data name="StopStatusSkipped" xml:space="preserve"><value>تم التخطي</value></data>
+  <data name="StopStatusUnknown" xml:space="preserve"><value>غير معروف</value></data>
+  <data name="StopInPrefix" xml:space="preserve"><value>وصول:</value></data>
+  <data name="StopOutPrefix" xml:space="preserve"><value>مغادرة:</value></data>
+  <data name="StopDwellPrefix" xml:space="preserve"><value>مكوث:</value></data>
+  <data name="StopSkipPrefix" xml:space="preserve"><value>تخطي:</value></data>
+  <data name="StopLabel" xml:space="preserve"><value>محطة</value></data>
+</root>

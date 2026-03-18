@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -9,7 +10,6 @@ using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Web.Areas.User.Models.CustomMaps;
 using Resgrid.Web.Helpers;
-using System.Collections.Generic;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -209,6 +209,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> SaveRegion([FromBody] IndoorMapZone region, CancellationToken cancellationToken)
 		{
 			var layer = await _customMapService.GetLayerByIdAsync(region.IndoorMapFloorId);
@@ -231,6 +232,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeleteRegion([FromBody] DeleteRegionRequest request, CancellationToken cancellationToken)
 		{
 			var region = await _customMapService.GetRegionByIdAsync(request.RegionId);
@@ -336,6 +338,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		public async Task<IActionResult> GetLayerTile(string id, int z, int x, int y)
 		{
+			var layer = await _customMapService.GetLayerByIdAsync(id);
+			if (layer == null)
+				return NotFound();
+
+			var map = await _customMapService.GetCustomMapByIdAsync(layer.IndoorMapId);
+			if (map == null || map.DepartmentId != DepartmentId)
+				return NotFound();
+
 			var tile = await _customMapService.GetTileAsync(id, z, x, y);
 			if (tile == null)
 				return NotFound();

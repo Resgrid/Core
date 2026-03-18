@@ -1,15 +1,16 @@
 @model Resgrid.Web.Areas.User.Models.Routes.RouteEditView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Routes.Routes> localizer
 @{
-    ViewBag.Title = "Resgrid | Edit Route";
+    ViewBag.Title = "Resgrid | " + localizer["EditRoutePageTitle"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-12">
-        <h2>Edit Route Plan</h2>
+        <h2>@localizer["EditRoutePlanHeader"]</h2>
         <ol class="breadcrumb">
-            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a></li>
-            <li><a asp-controller="Routes" asp-action="Index" asp-route-area="User">Routes</a></li>
-            <li class="active"><strong>Edit</strong></li>
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="Routes" asp-action="Index" asp-route-area="User">@localizer["RoutesHeader"]</a></li>
+            <li class="active"><strong>@localizer["EditBreadcrumb"]</strong></li>
         </ol>
     </div>
 </div>
@@ -18,31 +19,31 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="ibox float-e-margins">
-                <div class="ibox-title"><h5>Route Details</h5></div>
+                <div class="ibox-title"><h5>@localizer["RouteDetailsTitle"]</h5></div>
                 <div class="ibox-content">
                     <form asp-controller="Routes" asp-action="Edit" asp-route-area="User" method="post" class="form-horizontal">
                         @Html.AntiForgeryToken()
                         <input type="hidden" asp-for="Plan.RoutePlanId" />
 
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Name</label>
+                            <label class="col-sm-2 control-label">@localizer["Name"]</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" asp-for="Plan.Name" required />
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Description</label>
+                            <label class="col-sm-2 control-label">@localizer["Description"]</label>
                             <div class="col-sm-10">
                                 <textarea class="form-control" asp-for="Plan.Description" rows="3"></textarea>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Unit</label>
+                            <label class="col-sm-2 control-label">@localizer["UnitField"]</label>
                             <div class="col-sm-10">
                                 <select class="form-control" asp-for="Plan.UnitId">
-                                    <option value="">-- Assign at start time --</option>
+                                    <option value="">@localizer["UnitAssignAtStart"]</option>
                                     @foreach (var unit in Model.Units)
                                     {
                                         <option value="@unit.UnitId" selected="@(Model.Plan.UnitId == unit.UnitId)">@unit.Name</option>
@@ -52,38 +53,38 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Status</label>
+                            <label class="col-sm-2 control-label">@localizer["Status"]</label>
                             <div class="col-sm-10">
                                 <select class="form-control" asp-for="Plan.RouteStatus">
-                                    <option value="0">Draft</option>
-                                    <option value="1">Active</option>
-                                    <option value="2">Paused</option>
-                                    <option value="3">Archived</option>
+                                    <option value="0">@localizer["StatusDraft"]</option>
+                                    <option value="1">@localizer["StatusActive"]</option>
+                                    <option value="2">@localizer["StatusPaused"]</option>
+                                    <option value="3">@localizer["StatusArchived"]</option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Route Color</label>
+                            <label class="col-sm-2 control-label">@localizer["RouteColor"]</label>
                             <div class="col-sm-4">
                                 <input type="color" class="form-control" asp-for="Plan.RouteColor" />
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Route Profile</label>
+                            <label class="col-sm-2 control-label">@localizer["RouteProfile"]</label>
                             <div class="col-sm-4">
                                 <select class="form-control" asp-for="Plan.MapboxRouteProfile">
-                                    <option value="driving">Driving</option>
-                                    <option value="walking">Walking</option>
-                                    <option value="cycling">Cycling</option>
-                                    <option value="driving-traffic">Driving (Traffic)</option>
+                                    <option value="driving">@localizer["ProfileDriving"]</option>
+                                    <option value="walking">@localizer["ProfileWalking"]</option>
+                                    <option value="cycling">@localizer["ProfileCycling"]</option>
+                                    <option value="driving-traffic">@localizer["ProfileDrivingTraffic"]</option>
                                 </select>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Geofence Radius (m)</label>
+                            <label class="col-sm-2 control-label">@localizer["GeofenceRadius"]</label>
                             <div class="col-sm-4">
                                 <input type="number" class="form-control" asp-for="Plan.GeofenceRadiusMeters" />
                             </div>
@@ -93,40 +94,51 @@
                             <div class="col-sm-2"></div>
                             <div class="col-sm-10">
                                 <label class="checkbox-inline">
-                                    <input type="checkbox" asp-for="Plan.UseStationAsStart" /> Use Station as Start
+                                    <input type="checkbox" asp-for="Plan.UseStationAsStart" /> @localizer["UseStationAsStart"]
                                 </label>
                                 <label class="checkbox-inline">
-                                    <input type="checkbox" asp-for="Plan.UseStationAsEnd" /> Use Station as End
+                                    <input type="checkbox" asp-for="Plan.UseStationAsEnd" /> @localizer["UseStationAsEnd"]
                                 </label>
                                 <label class="checkbox-inline">
-                                    <input type="checkbox" asp-for="Plan.OptimizeStopOrder" /> Optimize Stop Order
+                                    <input type="checkbox" asp-for="Plan.OptimizeStopOrder" /> @localizer["OptimizeStopOrder"]
                                 </label>
                             </div>
                         </div>
 
                         <div class="hr-line-dashed"></div>
 
-                        <h4>Stops (@Model.Stops.Count)</h4>
+                        <div class="clearfix" style="margin-bottom:10px;">
+                            <h4 style="display:inline;">@localizer["Stops"] (<span id="stopCount">@Model.Stops.Count</span>)</h4>
+                            <button type="button" class="btn btn-sm btn-primary pull-right" data-toggle="modal" data-target="#addStopModal">
+                                <i class="fa fa-plus"></i> Add Stop
+                            </button>
+                        </div>
                         <div class="table-responsive">
                             <table class="table table-striped" id="stopsTable">
                                 <thead>
                                 <tr>
-                                    <th>#</th>
-                                    <th>Name</th>
-                                    <th>Type</th>
-                                    <th>Address</th>
-                                    <th>Priority</th>
+                                    <th>@localizer["StopsTableHash"]</th>
+                                    <th>@localizer["Name"]</th>
+                                    <th>@localizer["StopType"]</th>
+                                    <th>@localizer["Address"]</th>
+                                    <th>@localizer["Priority"]</th>
+                                    <th></th>
                                 </tr>
                                 </thead>
-                                <tbody>
+                                <tbody id="stopsTableBody">
                                 @foreach (var stop in Model.Stops)
                                 {
-                                    <tr>
+                                    <tr id="stopRow_@stop.RouteStopId">
                                         <td>@stop.StopOrder</td>
                                         <td>@stop.Name</td>
                                         <td>@((Resgrid.Model.RouteStopType)stop.StopType)</td>
                                         <td>@stop.Address</td>
                                         <td>@((Resgrid.Model.RouteStopPriority)stop.Priority)</td>
+                                        <td>
+                                            <button type="button" class="btn btn-xs btn-danger delete-stop-btn" data-stop-id="@stop.RouteStopId">
+                                                <i class="fa fa-trash"></i>
+                                            </button>
+                                        </td>
                                     </tr>
                                 }
                                 </tbody>
@@ -139,8 +151,8 @@
 
                         <div class="form-group">
                             <div class="col-sm-offset-2 col-sm-10">
-                                <a class="btn btn-white" asp-controller="Routes" asp-action="Index" asp-route-area="User">Cancel</a>
-                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                                <a class="btn btn-white" asp-controller="Routes" asp-action="Index" asp-route-area="User">@localizer["Cancel"]</a>
+                                <button type="submit" class="btn btn-primary">@localizer["SaveChanges"]</button>
                             </div>
                         </div>
                     </form>
@@ -150,11 +162,127 @@
     </div>
 </div>
 
+<!-- Add Stop Modal -->
+<div class="modal fade" id="addStopModal" tabindex="-1" role="dialog" aria-labelledby="addStopModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="addStopModalLabel">Add Stop</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Name <span class="text-danger">*</span></label>
+                        <div class="col-sm-9"><input type="text" id="stopName" class="form-control" /></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Type</label>
+                        <div class="col-sm-9">
+                            <select id="stopType" class="form-control">
+                                <option value="0">Manual</option>
+                                <option value="1">Scheduled Call</option>
+                                <option value="3">Waypoint</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group" id="linkedCallGroup" style="display:none;">
+                        <label class="col-sm-3 control-label">Linked Call</label>
+                        <div class="col-sm-9">
+                            <select id="linkedCallId" class="form-control">
+                                <option value="">-- Loading calls... --</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Priority</label>
+                        <div class="col-sm-9">
+                            <select id="stopPriority" class="form-control">
+                                <option value="0">Normal</option>
+                                <option value="1">High</option>
+                                <option value="2">Critical</option>
+                                <option value="3">Optional</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Address</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="text" id="stopAddress" class="form-control" placeholder="Enter address" />
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-info" id="geocodeStopBtn">Find</button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">What3Words</label>
+                        <div class="col-sm-9">
+                            <div class="input-group">
+                                <input type="text" id="stopW3W" class="form-control" placeholder="what.three.words" />
+                                <span class="input-group-btn">
+                                    <button type="button" class="btn btn-info" id="findStopW3WBtn">Find</button>
+                                </span>
+                            </div>
+                            <span class="help-inline">Find location via <a href="https://what3words.com/about/" target="_blank">What3Words</a></span>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Location <span class="text-danger">*</span></label>
+                        <div class="col-sm-9">
+                            <p class="text-muted small" style="margin-bottom:5px;">Click the map to set location, or use address / What3Words above.</p>
+                            <div id="stopPickerMap" style="height:280px;border:1px solid #ddd;border-radius:4px;"></div>
+                            <div class="row" style="margin-top:5px;">
+                                <div class="col-sm-6">
+                                    <input type="text" id="stopLat" class="form-control" placeholder="Latitude" readonly />
+                                </div>
+                                <div class="col-sm-6">
+                                    <input type="text" id="stopLng" class="form-control" placeholder="Longitude" readonly />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Planned Arrival</label>
+                        <div class="col-sm-9"><input type="datetime-local" id="stopPlannedArrival" class="form-control" /></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Planned Departure</label>
+                        <div class="col-sm-9"><input type="datetime-local" id="stopPlannedDeparture" class="form-control" /></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Est. Dwell (min)</label>
+                        <div class="col-sm-9"><input type="number" id="stopDwellMinutes" class="form-control" min="0" /></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Contact Name</label>
+                        <div class="col-sm-9"><input type="text" id="stopContactName" class="form-control" /></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Contact Number</label>
+                        <div class="col-sm-9"><input type="text" id="stopContactNumber" class="form-control" /></div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Notes</label>
+                        <div class="col-sm-9"><textarea id="stopNotes" class="form-control" rows="2"></textarea></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-white" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="saveStopBtn">Add Stop</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script>
         var osmTileUrl = '@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()';
         var osmTileAttribution = '@Resgrid.Config.MappingConfig.LeafletAttribution';
-        var editStops = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Stops.OrderBy(s => s.StopOrder).Select(s => new { s.Name, lat = s.Latitude, lng = s.Longitude })));
+        var editStops =@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Stops.OrderBy(s => s.StopOrder).Select(s => new { id = s.RouteStopId, s.Name, lat = s.Latitude, lng = s.Longitude })));
+        var routePlanId = '@Model.Plan.RoutePlanId';
     </script>
     <script src="~/js/app/internal/routes/resgrid.routes.edit.js"></script>
 }

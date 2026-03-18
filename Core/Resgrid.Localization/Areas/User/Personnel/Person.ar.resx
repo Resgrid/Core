@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <data name="AccountInformationHeader" xml:space="preserve"><value>معلومات الحساب</value></data>
+  <data name="AddAPerson" xml:space="preserve"><value>إضافة شخص</value></data>
+  <data name="AddAPersonHelp" xml:space="preserve"><value>إضافة شخص واحد</value></data>
+  <data name="AddExistingUserHeader" xml:space="preserve"><value>تمت إضافة مستخدم موجود</value></data>
+  <data name="AddPersonHeader" xml:space="preserve"><value>إضافة شخص</value></data>
+  <data name="AddRank" xml:space="preserve"><value>إضافة رتبة</value></data>
+  <data name="AddRoleHeader" xml:space="preserve"><value>إضافة دور</value></data>
+  <data name="CallOptionsLabel" xml:space="preserve"><value>خيارات البلاغات</value></data>
+  <data name="ChangePassword" xml:space="preserve"><value>تغيير كلمة المرور</value></data>
+  <data name="CheckToDelete" xml:space="preserve"><value>انقر على مربع الاختيار أدناه لحذف هذا المستخدم.</value></data>
+  <data name="ConfirmDelete" xml:space="preserve"><value>تأكيد الحذف؟</value></data>
+  <data name="ConfirmPasswordHelp" xml:space="preserve"><value>أكّد كلمة مرور المستخدم (يجب أن تتطابق مع الكلمة أعلاه)</value></data>
+  <data name="ConfirmPasswordLabel" xml:space="preserve"><value>تأكيد كلمة المرور</value></data>
+  <data name="ContactDetailsHeader" xml:space="preserve"><value>بيانات الاتصال</value></data>
+  <data name="DeleteAreYouSure" xml:space="preserve"><value>هل أنت متأكد من حذف هذا المستخدم؟</value></data>
+  <data name="DeleteAreYouSure2" xml:space="preserve"><value>إذا اخترت حذف هذا المستخدم فستُحذف المعلومات الموضحة أدناه بشكل نهائي. يُوصى بتعطيل المستخدم إذا غادر القسم أو المنظمة. لا تحذف المستخدم إلا بعد مرور وقت كافٍ، أو إذا كان الحساب خطأً أو لم يُستخدم قط.</value></data>
+  <data name="DeletePersonHeader" xml:space="preserve"><value>حذف الشخص</value></data>
+  <data name="EditRoleHeader" xml:space="preserve"><value>تعديل الدور</value></data>
+  <data name="Email" xml:space="preserve"><value>البريد الإلكتروني</value></data>
+  <data name="EmailAddressHelp" xml:space="preserve"><value>يجب أن تكون عناوين البريد الإلكتروني فريدة</value></data>
+  <data name="EmailAddressLabel" xml:space="preserve"><value>عنوان البريد الإلكتروني</value></data>
+  <data name="EmailAddressPlaceholder" xml:space="preserve"><value>عنوان البريد الإلكتروني (يجب أن يكون فريداً)</value></data>
+  <data name="ExistingUserHelp1" xml:space="preserve"><value>هذا المستخدم</value></data>
+  <data name="ExistingUserHelp2" xml:space="preserve"><value>، بناءً على عنوان البريد الإلكتروني، كان لديه حساب Resgrid في قسم آخر. تمت إضافة حساب المستخدم &lt;b&gt;بإعدادات ملفه الشخصي السابقة (الاسم، أرقام الهاتف، التفضيلات، إلخ)&lt;/b&gt; إلى القسم. نظراً لكون المستخدم في أقسام متعددة، يجب عليه تفعيل هذا القسم لرؤية معلوماته من خلال خيار "عرض أقسامك" ضمن قائمة الملف الشخصي.</value></data>
+  <data name="FirstNameLabel" xml:space="preserve"><value>الاسم الأول</value></data>
+  <data name="FirstNamePlaceholder" xml:space="preserve"><value>الاسم الأول</value></data>
+  <data name="GroupLabel" xml:space="preserve"><value>المجموعة</value></data>
+  <data name="Home" xml:space="preserve"><value>الرئيسية</value></data>
+  <data name="IDNumberLabel" xml:space="preserve"><value>رقم الهوية</value></data>
+  <data name="IDNumberPlaceholder" xml:space="preserve"><value>رقم التعريف المخصص</value></data>
+  <data name="IsGroupAdminLabel" xml:space="preserve"><value>مدير المجموعة؟</value></data>
+  <data name="LastNameLabel" xml:space="preserve"><value>اسم العائلة</value></data>
+  <data name="LastNamePlaceholder" xml:space="preserve"><value>اسم العائلة</value></data>
+  <data name="ManageInvites" xml:space="preserve"><value>إدارة الدعوات</value></data>
+  <data name="ManageInvitesHelp" xml:space="preserve"><value>دعوة عدة أشخاص</value></data>
+  <data name="ManageRoles" xml:space="preserve"><value>إدارة الأدوار</value></data>
+  <data name="MessageOptionsLabel" xml:space="preserve"><value>خيارات الرسائل</value></data>
+  <data name="Mobile" xml:space="preserve"><value>الجوال</value></data>
+  <data name="MobileCarrierLabel" xml:space="preserve"><value>شركة الاتصالات</value></data>
+  <data name="MobileNumberLabel" xml:space="preserve"><value>رقم الجوال</value></data>
+  <data name="MobileNumberPlaceholder" xml:space="preserve"><value>رقم الهاتف الجوال</value></data>
+  <data name="NewPasswordHelp" xml:space="preserve"><value>يجب أن تتكون كلمة المرور من 8 أحرف أو أكثر وتتضمن رقماً وحرفاً كبيراً وحرفاً صغيراً</value></data>
+  <data name="NewPasswordLabel" xml:space="preserve"><value>كلمة المرور الجديدة</value></data>
+  <data name="NoPersonnelInDepartment" xml:space="preserve"><value>لا يوجد أفراد في القسم</value></data>
+  <data name="NoPersonnelInThisGroup" xml:space="preserve"><value>لا يوجد أفراد في هذه المجموعة</value></data>
+  <data name="NotificationOptionsLabel" xml:space="preserve"><value>خيارات الإشعارات</value></data>
+  <data name="NotifyUser" xml:space="preserve"><value>إشعار المستخدم؟</value></data>
+  <data name="NotifyWarning" xml:space="preserve"><value>أزل التحديد إذا كنت لا تريد من Resgrid إشعار المستخدم بإنشاء هذا الحساب.</value></data>
+  <data name="NoUnGroupedPersonnel" xml:space="preserve"><value>لا يوجد أفراد غير منتمين لمجموعة</value></data>
+  <data name="PersonnelHeader" xml:space="preserve"><value>الأفراد</value></data>
+  <data name="PhoneNumbers" xml:space="preserve"><value>أرقام الهاتف</value></data>
+  <data name="Push" xml:space="preserve"><value>إشعار فوري</value></data>
+  <data name="RankDeleteWarning" xml:space="preserve"><value>تحذير: سيؤدي هذا الإجراء إلى حذف هذه الرتبة نهائياً. هل أنت متأكد من حذف الرتبة</value></data>
+  <data name="RanksHeader" xml:space="preserve"><value>رتب الأفراد</value></data>
+  <data name="ReactivatePersonHeader" xml:space="preserve"><value>إعادة تفعيل الشخص</value></data>
+  <data name="ReactivatePersonText1" xml:space="preserve"><value>هذا المستخدم</value></data>
+  <data name="ReactivatePersonText2" xml:space="preserve"><value>بناءً على عنوان البريد الإلكتروني، كان لديه حساب في قسم</value></data>
+  <data name="ReactivatePersonText3" xml:space="preserve"><value>لكنه حُذف سابقاً. تمت إعادة تفعيل حساب المستخدم داخل هذا القسم وسيظهر &lt;b&gt;بإعدادات ملفه الشخصي السابقة (الاسم، أرقام الهاتف، التفضيلات، إلخ)&lt;/b&gt; في القسم.</value></data>
+  <data name="RoleDeleteWarning" xml:space="preserve"><value>تحذير: سيؤدي هذا الإجراء إلى حذف هذا الدور نهائياً. هل أنت متأكد من حذف الدور</value></data>
+  <data name="RoleDescriptionPlaceholder" xml:space="preserve"><value>وصف الدور</value></data>
+  <data name="RoleNamePlaceholder" xml:space="preserve"><value>اسم الدور</value></data>
+  <data name="RolesHeader" xml:space="preserve"><value>أدوار الأفراد</value></data>
+  <data name="RolesLabel" xml:space="preserve"><value>الأدوار</value></data>
+  <data name="SetPersonStaffingHeader" xml:space="preserve"><value>تعيين تأمين الشخص</value></data>
+  <data name="SetPersonStatusHeader" xml:space="preserve"><value>تعيين حالة الشخص</value></data>
+  <data name="SetStaffing" xml:space="preserve"><value>تعيين التأمين</value></data>
+  <data name="SetStaffingForSelectedPersonnel" xml:space="preserve"><value>تعيين التأمين للأفراد المحددين</value></data>
+  <data name="SetStatus" xml:space="preserve"><value>تعيين الحالة</value></data>
+  <data name="SetStatusForSelectedPersonnel" xml:space="preserve"><value>تعيين الحالة للأفراد المحددين</value></data>
+  <data name="SpecialNote" xml:space="preserve"><value>ملاحظة خاصة</value></data>
+  <data name="SpecialNoteText" xml:space="preserve"><value>تُحتفظ ببيانات المستخدم الأساسية في النظام للحفاظ على السجلات والتقارير والتاريخ. يُوصى بتعديل جميع البيانات الشخصية في حساب المستخدم قبل حذفه، مثل أرقام الهاتف والعناوين وغيرها.</value></data>
+  <data name="Staffing" xml:space="preserve"><value>التأمين</value></data>
+  <data name="State" xml:space="preserve"><value>الولاية/المنطقة</value></data>
+  <data name="Text" xml:space="preserve"><value>رسالة نصية</value></data>
+  <data name="TextWarning" xml:space="preserve"><value>قد تتحمل رسوماً إضافية مقابل الرسائل النصية القصيرة (SMS) وفقاً لخطة اتصالاتك.</value></data>
+  <data name="User" xml:space="preserve"><value>المستخدم</value></data>
+  <data name="UserDetailHeader" xml:space="preserve"><value>تفاصيل المستخدم</value></data>
+  <data name="UsernameHelp" xml:space="preserve"><value>يجب أن يكون اسم المستخدم فريداً</value></data>
+  <data name="UsernameLabel" xml:space="preserve"><value>اسم المستخدم</value></data>
+  <data name="UsersInRank" xml:space="preserve"><value>المستخدمون في الرتبة</value></data>
+  <data name="UsersInRole" xml:space="preserve"><value>المستخدمون في الدور</value></data>
+  <data name="ViewPersonHeader" xml:space="preserve"><value>عرض الشخص</value></data>
+  <data name="GenerateReport" xml:space="preserve"><value>إنشاء تقرير</value></data>
+  <data name="ViewPersonEventsHeader" xml:space="preserve"><value>عرض أحداث الشخص</value></data>
+  <data name="ViewEvents" xml:space="preserve"><value>عرض الأحداث</value></data>
+  <data name="EventsFor" xml:space="preserve"><value>الأحداث الخاصة بـ</value></data>
+  <data name="AreYouSurePersonnel" xml:space="preserve"><value>هل أنت متأكد من حذف جميع حالات هذا الشخص نهائياً؟</value></data>
+  <data name="ClearAllStatuses" xml:space="preserve"><value>مسح جميع الحالات لهذا الشخص</value></data>
+  <data name="DeleteAll" xml:space="preserve"><value>حذف الكل</value></data>
+  <data name="YesImSure" xml:space="preserve"><value>نعم، أنا متأكد</value></data>
+  <data name="ViewRoleHeader" xml:space="preserve"><value>عرض الدور</value></data>
+</root>

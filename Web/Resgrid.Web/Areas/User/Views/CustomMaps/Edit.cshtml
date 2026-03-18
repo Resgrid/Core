@@ -1,21 +1,21 @@
 @model Resgrid.Web.Areas.User.Models.CustomMaps.CustomMapNewView
 @using Resgrid.Model
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.CustomMaps.CustomMaps> localizer
 @{
-    ViewBag.Title = "Resgrid | Edit Custom Map";
+    ViewBag.Title = "Resgrid | " + localizer["EditCustomMapPageTitle"];
 }
 
 @section Styles {
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.css" />
+    <link rel="stylesheet" href="~/lib/geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css" />
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-        <h2>Edit Custom Map</h2>
+        <h2>@localizer["EditCustomMapHeader"]</h2>
         <ol class="breadcrumb">
-            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a></li>
-            <li><a asp-controller="CustomMaps" asp-action="Index" asp-route-area="User">Custom Maps</a></li>
-            <li class="active"><strong>Edit</strong></li>
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="CustomMaps" asp-action="Index" asp-route-area="User">@localizer["CustomMapsHeader"]</a></li>
+            <li class="active"><strong>@localizer["EditBreadcrumb"]</strong></li>
         </ol>
     </div>
 </div>
@@ -33,34 +33,34 @@
                         @Html.AntiForgeryToken()
                         <input type="hidden" asp-for="Map.IndoorMapId" />
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Map Type</label>
+                            <label class="col-sm-2 control-label">@localizer["MapType"]</label>
                             <div class="col-sm-4">
                                 <select class="form-control" asp-for="Map.MapType">
-                                    <option value="0">Indoor</option>
-                                    <option value="1">Outdoor</option>
-                                    <option value="2">Event</option>
-                                    <option value="3">Custom</option>
+                                    <option value="0">@localizer["MapTypeIndoor"]</option>
+                                    <option value="1">@localizer["MapTypeOutdoor"]</option>
+                                    <option value="2">@localizer["MapTypeEvent"]</option>
+                                    <option value="3">@localizer["MapTypeCustom"]</option>
                                 </select>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Name</label>
+                            <label class="col-sm-2 control-label">@localizer["Name"]</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" asp-for="Map.Name" placeholder="e.g. Main Hospital, Concert Venue" required />
+                                <input type="text" class="form-control" asp-for="Map.Name" placeholder="@localizer["NamePlaceholder"]" required />
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Description</label>
+                            <label class="col-sm-2 control-label">@localizer["Description"]</label>
                             <div class="col-sm-10">
-                                <textarea class="form-control" asp-for="Map.Description" rows="3" placeholder="Optional description"></textarea>
+                                <textarea class="form-control" asp-for="Map.Description" rows="3" placeholder="@localizer["DescriptionPlaceholder"]"></textarea>
                             </div>
                         </div>
 
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Draw Bounds</label>
+                            <label class="col-sm-2 control-label">@localizer["DrawBounds"]</label>
                             <div class="col-sm-10">
-                                <p class="help-block">Draw a rectangle on the map below to update the bounds. Click the map to set the center point.</p>
+                                <p class="help-block">@localizer["DrawBoundsEditHelp"]</p>
                             </div>
                         </div>
 
@@ -77,8 +77,8 @@
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
-                                <a class="btn btn-white" asp-controller="CustomMaps" asp-action="Index" asp-route-area="User">Cancel</a>
-                                <button class="btn btn-primary" type="submit">Save</button>
+                                <a class="btn btn-white" asp-controller="CustomMaps" asp-action="Index" asp-route-area="User">@localizer["Cancel"]</a>
+                                <button class="btn btn-primary" type="submit">@localizer["Save"]</button>
                             </div>
                         </div>
                     </form>
@@ -89,11 +89,12 @@
 </div>
 
 @section Scripts {
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script src="https://unpkg.com/leaflet-draw@1.0.4/dist/leaflet.draw.js"></script>
+    <script src="~/lib/geoman-io/leaflet-geoman-free/dist/leaflet-geoman.min.js"></script>
     <script>
-        var initialLat = @Model.Map.CenterLatitude;
-        var initialLon = @Model.Map.CenterLongitude;
+        var osmTileUrl = '@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()';
+        var osmTileAttribution = '@Resgrid.Config.MappingConfig.LeafletAttribution';
+        var initialLat = @Model.Map.CenterLatitude.ToString("G", System.Globalization.CultureInfo.InvariantCulture);
+        var initialLon = @Model.Map.CenterLongitude.ToString("G", System.Globalization.CultureInfo.InvariantCulture);
     </script>
     <script src="~/js/app/internal/custommaps/resgrid.custommaps.editor.js" asp-append-version="true"></script>
 }

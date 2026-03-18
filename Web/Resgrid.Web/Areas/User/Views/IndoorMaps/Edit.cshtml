@@ -1,15 +1,16 @@
 @model Resgrid.Web.Areas.User.Models.IndoorMaps.IndoorMapNewView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IndoorMaps.IndoorMaps> localizer
 @{
-    ViewBag.Title = "Resgrid | Edit Indoor Map";
+    ViewBag.Title = "Resgrid | " + localizer["EditIndoorMapPageTitle"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-        <h2>Edit Indoor Map</h2>
+        <h2>@localizer["EditIndoorMapHeader"]</h2>
         <ol class="breadcrumb">
-            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a></li>
-            <li><a asp-controller="IndoorMaps" asp-action="Index" asp-route-area="User">Indoor Maps</a></li>
-            <li class="active"><strong>Edit</strong></li>
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="IndoorMaps" asp-action="Index" asp-route-area="User">@localizer["IndoorMapsHeader"]</a></li>
+            <li class="active"><strong>@localizer["EditBreadcrumb"]</strong></li>
         </ol>
     </div>
 </div>
@@ -27,43 +28,43 @@
                         @Html.AntiForgeryToken()
                         <input type="hidden" asp-for="IndoorMap.IndoorMapId" />
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Name</label>
+                            <label class="col-sm-2 control-label">@localizer["Name"]</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" asp-for="IndoorMap.Name" placeholder="e.g. Main Hospital" required />
+                                <input type="text" class="form-control" asp-for="IndoorMap.Name" placeholder="@localizer["NamePlaceholder"]" required />
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Description</label>
+                            <label class="col-sm-2 control-label">@localizer["Description"]</label>
                             <div class="col-sm-10">
-                                <textarea class="form-control" asp-for="IndoorMap.Description" rows="3" placeholder="Optional description"></textarea>
+                                <textarea class="form-control" asp-for="IndoorMap.Description" rows="3" placeholder="@localizer["DescriptionPlaceholder"]"></textarea>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Center Latitude</label>
+                            <label class="col-sm-2 control-label">@localizer["CenterLatitude"]</label>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control" asp-for="IndoorMap.CenterLatitude" placeholder="e.g. 39.7392" />
+                                <input type="text" class="form-control" asp-for="IndoorMap.CenterLatitude" placeholder="@localizer["CenterLatPlaceholder"]" />
                             </div>
-                            <label class="col-sm-2 control-label">Center Longitude</label>
+                            <label class="col-sm-2 control-label">@localizer["CenterLongitude"]</label>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control" asp-for="IndoorMap.CenterLongitude" placeholder="e.g. -104.9903" />
+                                <input type="text" class="form-control" asp-for="IndoorMap.CenterLongitude" placeholder="@localizer["CenterLonPlaceholder"]" />
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">NE Bound Lat</label>
+                            <label class="col-sm-2 control-label">@localizer["NEBoundLat"]</label>
                             <div class="col-sm-4">
                                 <input type="text" class="form-control" asp-for="IndoorMap.BoundsNELat" />
                             </div>
-                            <label class="col-sm-2 control-label">NE Bound Lon</label>
+                            <label class="col-sm-2 control-label">@localizer["NEBoundLon"]</label>
                             <div class="col-sm-4">
                                 <input type="text" class="form-control" asp-for="IndoorMap.BoundsNELon" />
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">SW Bound Lat</label>
+                            <label class="col-sm-2 control-label">@localizer["SWBoundLat"]</label>
                             <div class="col-sm-4">
                                 <input type="text" class="form-control" asp-for="IndoorMap.BoundsSWLat" />
                             </div>
-                            <label class="col-sm-2 control-label">SW Bound Lon</label>
+                            <label class="col-sm-2 control-label">@localizer["SWBoundLon"]</label>
                             <div class="col-sm-4">
                                 <input type="text" class="form-control" asp-for="IndoorMap.BoundsSWLon" />
                             </div>
@@ -71,8 +72,8 @@
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
-                                <a class="btn btn-white" asp-controller="IndoorMaps" asp-action="Index" asp-route-area="User">Cancel</a>
-                                <button class="btn btn-primary" type="submit">Save</button>
+                                <a class="btn btn-white" asp-controller="IndoorMaps" asp-action="Index" asp-route-area="User">@localizer["Cancel"]</a>
+                                <button class="btn btn-primary" type="submit">@localizer["Save"]</button>
                             </div>
                         </div>
                     </form>
@@ -84,5 +85,9 @@
 </div>
 
 @section Scripts {
+    <script>
+        var osmTileUrl = '@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()';
+        var osmTileAttribution = '@Resgrid.Config.MappingConfig.LeafletAttribution';
+    </script>
     <script src="~/js/app/internal/indoormaps/resgrid.indoormaps.editor.js" asp-append-version="true"></script>
 }

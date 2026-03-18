@@ -1,24 +1,27 @@
 @model Resgrid.Web.Areas.User.Models.CustomMaps.CustomMapIndexView
 @using Resgrid.Model
+@using System.Text.Encodings.Web
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.CustomMaps.CustomMaps> localizer
+@inject JavaScriptEncoder JsEncoder
 @{
-    ViewBag.Title = "Resgrid | Custom Maps";
+    ViewBag.Title = "Resgrid | " + localizer["CustomMapsPageTitle"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-        <h2>Custom Maps</h2>
+        <h2>@localizer["CustomMapsHeader"]</h2>
         <ol class="breadcrumb">
             <li>
-                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
             </li>
             <li class="active">
-                <strong>Custom Maps</strong>
+                <strong>@localizer["CustomMapsHeader"]</strong>
             </li>
         </ol>
     </div>
     <div class="col-sm-8">
         <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-            <a class="btn btn-success" asp-controller="CustomMaps" asp-action="New" asp-route-area="User">New Custom Map</a>
+            <a class="btn btn-success" asp-controller="CustomMaps" asp-action="New" asp-route-area="User">@localizer["NewCustomMap"]</a>
         </div>
     </div>
 </div>
@@ -30,29 +33,29 @@
                 <div class="ibox-content">
                     <ul class="nav nav-tabs" style="margin-bottom:15px;">
                         <li class="@(Model.FilterType == null ? "active" : "")">
-                            <a asp-controller="CustomMaps" asp-action="Index" asp-route-area="User">All</a>
+                            <a asp-controller="CustomMaps" asp-action="Index" asp-route-area="User">@localizer["TabAll"]</a>
                         </li>
                         <li class="@(Model.FilterType == CustomMapType.Indoor ? "active" : "")">
-                            <a asp-controller="CustomMaps" asp-action="Index" asp-route-area="User" asp-route-type="0">Indoor</a>
+                            <a asp-controller="CustomMaps" asp-action="Index" asp-route-area="User" asp-route-type="0">@localizer["TabIndoor"]</a>
                         </li>
                         <li class="@(Model.FilterType == CustomMapType.Outdoor ? "active" : "")">
-                            <a asp-controller="CustomMaps" asp-action="Index" asp-route-area="User" asp-route-type="1">Outdoor</a>
+                            <a asp-controller="CustomMaps" asp-action="Index" asp-route-area="User" asp-route-type="1">@localizer["TabOutdoor"]</a>
                         </li>
                         <li class="@(Model.FilterType == CustomMapType.Event ? "active" : "")">
-                            <a asp-controller="CustomMaps" asp-action="Index" asp-route-area="User" asp-route-type="2">Event</a>
+                            <a asp-controller="CustomMaps" asp-action="Index" asp-route-area="User" asp-route-type="2">@localizer["TabEvent"]</a>
                         </li>
                         <li class="@(Model.FilterType == CustomMapType.Custom ? "active" : "")">
-                            <a asp-controller="CustomMaps" asp-action="Index" asp-route-area="User" asp-route-type="3">Custom</a>
+                            <a asp-controller="CustomMaps" asp-action="Index" asp-route-area="User" asp-route-type="3">@localizer["TabCustom"]</a>
                         </li>
                     </ul>
                     <div class="table-responsive">
                         <table class="table table-striped" id="customMapsTable">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Type</th>
-                                    <th>Description</th>
-                                    <th>Created</th>
+                                    <th>@localizer["Name"]</th>
+                                    <th>@localizer["Type"]</th>
+                                    <th>@localizer["Description"]</th>
+                                    <th>@localizer["Created"]</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -67,10 +70,10 @@
                                             <td>@map.Description</td>
                                             <td>@map.AddedOn.ToString("g")</td>
                                             <td style="text-align:right;">
-                                                <a class="btn btn-primary btn-xs" asp-controller="CustomMaps" asp-action="Layers" asp-route-id="@map.IndoorMapId" asp-route-area="User"><i class="fa fa-layer-group"></i> Layers</a>
-                                                <a class="btn btn-warning btn-xs" asp-controller="CustomMaps" asp-action="Import" asp-route-id="@map.IndoorMapId" asp-route-area="User"><i class="fa fa-upload"></i> Import</a>
-                                                <a class="btn btn-info btn-xs" asp-controller="CustomMaps" asp-action="Edit" asp-route-id="@map.IndoorMapId" asp-route-area="User"><i class="fa fa-pencil"></i> Edit</a>
-                                                <a class="btn btn-danger btn-xs" asp-controller="CustomMaps" asp-action="Delete" asp-route-id="@map.IndoorMapId" asp-route-area="User" onclick="return confirm('Are you sure you want to delete this map?');"><i class="fa fa-trash"></i> Delete</a>
+                                                <a class="btn btn-primary btn-xs" asp-controller="CustomMaps" asp-action="Layers" asp-route-id="@map.IndoorMapId" asp-route-area="User"><i class="fa fa-layer-group"></i> @localizer["Layers"]</a>
+                                                <a class="btn btn-warning btn-xs" asp-controller="CustomMaps" asp-action="Import" asp-route-id="@map.IndoorMapId" asp-route-area="User"><i class="fa fa-upload"></i> @localizer["Import"]</a>
+                                                <a class="btn btn-info btn-xs" asp-controller="CustomMaps" asp-action="Edit" asp-route-id="@map.IndoorMapId" asp-route-area="User"><i class="fa fa-pencil"></i> @localizer["Edit"]</a>
+                                                <a class="btn btn-danger btn-xs" asp-controller="CustomMaps" asp-action="Delete" asp-route-id="@map.IndoorMapId" asp-route-area="User" onclick="return confirm('@JsEncoder.Encode(localizer["DeleteMapConfirm"])');"><i class="fa fa-trash"></i> @localizer["Delete"]</a>
                                             </td>
                                         </tr>
                                     }

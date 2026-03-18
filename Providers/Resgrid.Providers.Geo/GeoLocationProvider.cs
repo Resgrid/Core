@@ -107,7 +107,7 @@ namespace Resgrid.Providers.GeoLocationProvider
 						coordinates = string.Format("{0},{1}", firstAddress.Coordinates.Latitude, firstAddress.Coordinates.Longitude);
 					}
 				}
-				catch { /* Don't report on GeoLocation failures */ }
+				catch (Exception ex) { var test = ex; /* Don't report on GeoLocation failures */ }
 
 				if (string.IsNullOrWhiteSpace(coordinates))
 				{

@@ -1,15 +1,16 @@
 @model Resgrid.Web.Areas.User.Models.IndoorMaps.IndoorMapFloorsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.IndoorMaps.IndoorMaps> localizer
 @{
-    ViewBag.Title = "Resgrid | Floors - " + Model.IndoorMap.Name;
+    ViewBag.Title = "Resgrid | " + localizer["FloorsPageTitlePrefix"] + " - " + Model.IndoorMap.Name;
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-        <h2>Floors - @Model.IndoorMap.Name</h2>
+        <h2>@localizer["FloorsPageTitlePrefix"] - @Model.IndoorMap.Name</h2>
         <ol class="breadcrumb">
-            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a></li>
-            <li><a asp-controller="IndoorMaps" asp-action="Index" asp-route-area="User">Indoor Maps</a></li>
-            <li class="active"><strong>Floors</strong></li>
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="IndoorMaps" asp-action="Index" asp-route-area="User">@localizer["IndoorMapsHeader"]</a></li>
+            <li class="active"><strong>@localizer["FloorsBreadcrumb"]</strong></li>
         </ol>
     </div>
 </div>
@@ -19,29 +20,29 @@
         <div class="col-lg-12">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h5>Add Floor</h5>
+                    <h5>@localizer["AddFloorTitle"]</h5>
                 </div>
                 <div class="ibox-content">
                     <form asp-action="NewFloor" asp-controller="IndoorMaps" asp-route-area="User" method="post" enctype="multipart/form-data" class="form-horizontal">
                         @Html.AntiForgeryToken()
                         <input type="hidden" name="indoorMapId" value="@Model.IndoorMap.IndoorMapId" />
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Floor Name</label>
+                            <label class="col-sm-2 control-label">@localizer["FloorName"]</label>
                             <div class="col-sm-4">
-                                <input type="text" class="form-control" name="name" placeholder="e.g. Floor 1, Basement, Roof" required />
+                                <input type="text" class="form-control" name="name" placeholder="@localizer["FloorNamePlaceholder"]" required />
                             </div>
-                            <label class="col-sm-2 control-label">Order</label>
+                            <label class="col-sm-2 control-label">@localizer["Order"]</label>
                             <div class="col-sm-2">
                                 <input type="number" class="form-control" name="floorOrder" value="0" />
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Floor Plan Image</label>
+                            <label class="col-sm-2 control-label">@localizer["FloorPlanImage"]</label>
                             <div class="col-sm-6">
                                 <input type="file" name="floorImage" accept="image/*" />
                             </div>
                             <div class="col-sm-2">
-                                <button class="btn btn-primary" type="submit">Add Floor</button>
+                                <button class="btn btn-primary" type="submit">@localizer["AddFloorButton"]</button>
                             </div>
                         </div>
                     </form>
@@ -50,16 +51,16 @@
 
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h5>Floors</h5>
+                    <h5>@localizer["FloorsTableTitle"]</h5>
                 </div>
                 <div class="ibox-content">
                     <div class="table-responsive">
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>Order</th>
-                                    <th>Name</th>
-                                    <th>Has Image</th>
+                                    <th>@localizer["Order"]</th>
+                                    <th>@localizer["Name"]</th>
+                                    <th>@localizer["HasImage"]</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -71,10 +72,13 @@
                                         <tr>
                                             <td>@floor.FloorOrder</td>
                                             <td>@floor.Name</td>
-                                            <td>@(floor.ImageData != null ? "Yes" : "No")</td>
+                                            <td>@(floor.ImageData != null ? localizer["Yes"].Value : localizer["No"].Value)</td>
                                             <td style="text-align:right;">
-                                                <a class="btn btn-primary btn-xs" asp-controller="IndoorMaps" asp-action="ZoneEditor" asp-route-id="@floor.IndoorMapFloorId" asp-route-area="User"><i class="fa fa-pencil"></i> Zone Editor</a>
-                                                <a class="btn btn-danger btn-xs" asp-controller="IndoorMaps" asp-action="DeleteFloor" asp-route-id="@floor.IndoorMapFloorId" asp-route-area="User" onclick="return confirm('Delete this floor?');"><i class="fa fa-trash"></i> Delete</a>
+                                                <a class="btn btn-primary btn-xs" asp-controller="IndoorMaps" asp-action="ZoneEditor" asp-route-id="@floor.IndoorMapFloorId" asp-route-area="User"><i class="fa fa-pencil"></i> @localizer["ZoneEditor"]</a>
+                                                <form asp-controller="IndoorMaps" asp-action="DeleteFloor" asp-route-area="User" method="post" style="display:inline;">
+                                                    <input type="hidden" name="id" value="@floor.IndoorMapFloorId" />
+                                                    <button type="submit" class="btn btn-danger btn-xs" onclick="return confirm('@localizer["DeleteFloorConfirm"]');"><i class="fa fa-trash"></i> @localizer["Delete"]</button>
+                                                </form>
                                             </td>
                                         </tr>
                                     }

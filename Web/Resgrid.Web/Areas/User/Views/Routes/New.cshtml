@@ -109,7 +109,7 @@
                         <div class="clearfix" style="margin-bottom:10px;">
                             <h4 style="display:inline;">@localizer["Stops"] (<span id="stopCount">0</span>)</h4>
                             <button type="button" class="btn btn-sm btn-primary pull-right" data-toggle="modal" data-target="#addStopModal">
-                                <i class="fa fa-plus"></i> Add Stop
+                                <i class="fa fa-plus"></i> @localizer["AddStop"]
                             </button>
                         </div>
                         <div class="table-responsive">
@@ -155,70 +155,70 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" id="addStopModalLabel">Add Stop</h4>
+                <h4 class="modal-title" id="addStopModalLabel">@localizer["AddStop"]</h4>
             </div>
             <div class="modal-body">
                 <div class="form-horizontal">
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Name <span class="text-danger">*</span></label>
+                        <label class="col-sm-3 control-label">@localizer["Name"] <span class="text-danger">*</span></label>
                         <div class="col-sm-9"><input type="text" id="stopName" class="form-control" /></div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Type</label>
+                        <label class="col-sm-3 control-label">@localizer["StopType"]</label>
                         <div class="col-sm-9">
                             <select id="stopType" class="form-control">
-                                <option value="0">Manual</option>
-                                <option value="1">Scheduled Call</option>
-                                <option value="3">Waypoint</option>
+                                <option value="0">@localizer["StopTypeManual"]</option>
+                                <option value="1">@localizer["StopTypeScheduledCall"]</option>
+                                <option value="3">@localizer["StopTypeWaypoint"]</option>
                             </select>
                         </div>
                     </div>
                     <div class="form-group" id="linkedCallGroup" style="display:none;">
-                        <label class="col-sm-3 control-label">Linked Call</label>
+                        <label class="col-sm-3 control-label">@localizer["LinkedCall"]</label>
                         <div class="col-sm-9">
                             <select id="linkedCallId" class="form-control">
-                                <option value="">-- Loading calls... --</option>
+                                <option value="">@localizer["LoadingCalls"]</option>
                             </select>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Priority</label>
+                        <label class="col-sm-3 control-label">@localizer["Priority"]</label>
                         <div class="col-sm-9">
                             <select id="stopPriority" class="form-control">
-                                <option value="0">Normal</option>
-                                <option value="1">High</option>
-                                <option value="2">Critical</option>
-                                <option value="3">Optional</option>
+                                <option value="0">@localizer["PriorityNormal"]</option>
+                                <option value="1">@localizer["PriorityHigh"]</option>
+                                <option value="2">@localizer["PriorityCritical"]</option>
+                                <option value="3">@localizer["PriorityOptional"]</option>
                             </select>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Address</label>
+                        <label class="col-sm-3 control-label">@localizer["Address"]</label>
                         <div class="col-sm-9">
                             <div class="input-group">
                                 <input type="text" id="stopAddress" class="form-control" placeholder="Enter address" />
                                 <span class="input-group-btn">
-                                    <button type="button" class="btn btn-info" id="geocodeStopBtn">Find</button>
+                                    <button type="button" class="btn btn-info" id="geocodeStopBtn">@localizer["Find"]</button>
                                 </span>
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">What3Words</label>
+                        <label class="col-sm-3 control-label">@localizer["What3Words"]</label>
                         <div class="col-sm-9">
                             <div class="input-group">
                                 <input type="text" id="stopW3W" class="form-control" placeholder="what.three.words" />
                                 <span class="input-group-btn">
-                                    <button type="button" class="btn btn-info" id="findStopW3WBtn">Find</button>
+                                    <button type="button" class="btn btn-info" id="findStopW3WBtn">@localizer["Find"]</button>
                                 </span>
                             </div>
                             <span class="help-inline">Find location via <a href="https://what3words.com/about/" target="_blank">What3Words</a></span>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Location <span class="text-danger">*</span></label>
+                        <label class="col-sm-3 control-label">@localizer["Location"] <span class="text-danger">*</span></label>
                         <div class="col-sm-9">
-                            <p class="text-muted small" style="margin-bottom:5px;">Click the map to set location, or use address / What3Words above.</p>
+                            <p class="text-muted small" style="margin-bottom:5px;">@localizer["ClickMapToSetLocation"]</p>
                             <div id="stopPickerMap" style="height:280px;border:1px solid #ddd;border-radius:4px;"></div>
                             <div class="row" style="margin-top:5px;">
                                 <div class="col-sm-6">
@@ -231,44 +231,44 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Planned Arrival</label>
+                        <label class="col-sm-3 control-label">@localizer["PlannedArrival"]</label>
                         <div class="col-sm-9"><input type="datetime-local" id="stopPlannedArrival" class="form-control" /></div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Planned Departure</label>
+                        <label class="col-sm-3 control-label">@localizer["PlannedDeparture"]</label>
                         <div class="col-sm-9"><input type="datetime-local" id="stopPlannedDeparture" class="form-control" /></div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Est. Dwell (min)</label>
+                        <label class="col-sm-3 control-label">@localizer["EstDwellMinutes"]</label>
                         <div class="col-sm-9"><input type="number" id="stopDwellMinutes" class="form-control" min="0" /></div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Select Contact</label>
+                        <label class="col-sm-3 control-label">@localizer["SelectContact"]</label>
                         <div class="col-sm-9">
                             <select id="stopContactPicker" class="form-control">
-                                <option value="">-- Type manually or select existing --</option>
+                                <option value="">@localizer["SelectContactPlaceholder"]</option>
                             </select>
                             <input type="hidden" id="stopContactId" />
-                            <span class="help-block" style="font-size:11px;">Selecting a contact auto-fills name and number below.</span>
+                            <span class="help-block" style="font-size:11px;">@localizer["ContactAutofillHelp"]</span>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Contact Name</label>
+                        <label class="col-sm-3 control-label">@localizer["ContactName"]</label>
                         <div class="col-sm-9"><input type="text" id="stopContactName" class="form-control" /></div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Contact Number</label>
+                        <label class="col-sm-3 control-label">@localizer["ContactNumber"]</label>
                         <div class="col-sm-9"><input type="text" id="stopContactNumber" class="form-control" /></div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label">Notes</label>
+                        <label class="col-sm-3 control-label">@localizer["Notes"]</label>
                         <div class="col-sm-9"><textarea id="stopNotes" class="form-control" rows="2"></textarea></div>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-white" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="saveStopBtn">Add Stop</button>
+                <button type="button" class="btn btn-white" data-dismiss="modal">@localizer["Cancel"]</button>
+                <button type="button" class="btn btn-primary" id="saveStopBtn">@localizer["AddStop"]</button>
             </div>
         </div>
     </div>
@@ -278,7 +278,7 @@
     <script>
         var osmTileUrl = '@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()';
         var osmTileAttribution = '@Resgrid.Config.MappingConfig.LeafletAttribution';
-        var availableContacts = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Contacts.Select(c => new { id = c.ContactId, name = c.GetName(), phone = c.CellPhoneNumber ?? c.OfficePhoneNumber ?? c.HomePhoneNumber ?? "" })));
+        var availableContacts = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject((Model.Contacts ?? Enumerable.Empty<Resgrid.Model.Contact>()).Select(c => new { id = c.ContactId ?? "", name = c.GetName() ?? "", phone = c.CellPhoneNumber ?? c.OfficePhoneNumber ?? c.HomePhoneNumber ?? "" }), new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
     </script>
     <script src="~/js/app/internal/routes/resgrid.routes.new.js"></script>
 }

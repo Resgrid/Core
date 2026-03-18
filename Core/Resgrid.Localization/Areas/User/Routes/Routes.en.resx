@@ -339,4 +339,74 @@
   <data name="StopLabel" xml:space="preserve">
     <value>Stop</value>
   </data>
+  <!-- Add Stop Modal -->
+  <data name="AddStop" xml:space="preserve">
+    <value>Add Stop</value>
+  </data>
+  <data name="StopTypeManual" xml:space="preserve">
+    <value>Manual</value>
+  </data>
+  <data name="StopTypeScheduledCall" xml:space="preserve">
+    <value>Scheduled Call</value>
+  </data>
+  <data name="StopTypeWaypoint" xml:space="preserve">
+    <value>Waypoint</value>
+  </data>
+  <data name="LinkedCall" xml:space="preserve">
+    <value>Linked Call</value>
+  </data>
+  <data name="LoadingCalls" xml:space="preserve">
+    <value>Loading calls...</value>
+  </data>
+  <data name="PriorityNormal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="PriorityHigh" xml:space="preserve">
+    <value>High</value>
+  </data>
+  <data name="PriorityCritical" xml:space="preserve">
+    <value>Critical</value>
+  </data>
+  <data name="PriorityOptional" xml:space="preserve">
+    <value>Optional</value>
+  </data>
+  <data name="Find" xml:space="preserve">
+    <value>Find</value>
+  </data>
+  <data name="What3Words" xml:space="preserve">
+    <value>What3Words</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="ClickMapToSetLocation" xml:space="preserve">
+    <value>Click the map to set location, or use address / What3Words above.</value>
+  </data>
+  <data name="PlannedArrival" xml:space="preserve">
+    <value>Planned Arrival</value>
+  </data>
+  <data name="PlannedDeparture" xml:space="preserve">
+    <value>Planned Departure</value>
+  </data>
+  <data name="EstDwellMinutes" xml:space="preserve">
+    <value>Est. Dwell (min)</value>
+  </data>
+  <data name="SelectContact" xml:space="preserve">
+    <value>Select Contact</value>
+  </data>
+  <data name="SelectContactPlaceholder" xml:space="preserve">
+    <value>-- Type manually or select existing --</value>
+  </data>
+  <data name="ContactAutofillHelp" xml:space="preserve">
+    <value>Selecting a contact auto-fills name and number below.</value>
+  </data>
+  <data name="ContactName" xml:space="preserve">
+    <value>Contact Name</value>
+  </data>
+  <data name="ContactNumber" xml:space="preserve">
+    <value>Contact Number</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>Notes</value>
+  </data>
 </root>

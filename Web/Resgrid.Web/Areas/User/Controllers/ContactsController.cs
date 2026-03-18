@@ -130,7 +130,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.Notes = await _contactsService.GetContactNotesByContactIdAsync(contactId, DepartmentId);
 
-			model.RouteStops = await _routeService.GetRouteStopsForContactAsync(contactId, DepartmentId);
+			model.RouteStops = await _routeService.GetRouteStopsForContactAsync(contactId, DepartmentId) ?? new List<RouteStop>();
 			if (model.RouteStops.Count > 0)
 			{
 				var planIds = model.RouteStops.Select(s => s.RoutePlanId).Distinct().ToList();

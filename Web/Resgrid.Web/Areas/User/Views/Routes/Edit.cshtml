@@ -293,7 +293,7 @@
         var osmTileAttribution = '@Resgrid.Config.MappingConfig.LeafletAttribution';
         var editStops =@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Stops.OrderBy(s => s.StopOrder).Select(s => new { id = s.RouteStopId, s.Name, lat = s.Latitude, lng = s.Longitude })));
         var routePlanId = '@Model.Plan.RoutePlanId';
-        var availableContacts = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Contacts.Select(c => new { id = c.ContactId, name = c.GetName(), phone = c.CellPhoneNumber ?? c.OfficePhoneNumber ?? c.HomePhoneNumber ?? "" })));
+        var availableContacts = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject((Model.Contacts ?? Enumerable.Empty<Resgrid.Model.Contact>()).Select(c => new { id = c.ContactId ?? "", name = c.GetName() ?? "", phone = c.CellPhoneNumber ?? c.OfficePhoneNumber ?? c.HomePhoneNumber ?? "" }), new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
     </script>
     <script src="~/js/app/internal/routes/resgrid.routes.edit.js"></script>
 }

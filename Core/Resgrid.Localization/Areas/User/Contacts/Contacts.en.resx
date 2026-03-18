@@ -483,4 +483,25 @@
   <data name="EditContact" xml:space="preserve">
     <value>Edit Contact</value>
   </data>
+  <data name="Routes" xml:space="preserve">
+    <value>Routes</value>
+  </data>
+  <data name="Route" xml:space="preserve">
+    <value>Route</value>
+  </data>
+  <data name="StopName" xml:space="preserve">
+    <value>Stop Name</value>
+  </data>
+  <data name="PriorityNormal" xml:space="preserve">
+    <value>Normal</value>
+  </data>
+  <data name="PriorityHigh" xml:space="preserve">
+    <value>High</value>
+  </data>
+  <data name="PriorityCritical" xml:space="preserve">
+    <value>Critical</value>
+  </data>
+  <data name="PriorityOptional" xml:space="preserve">
+    <value>Optional</value>
+  </data>
 </root>

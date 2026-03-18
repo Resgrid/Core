@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
+using Resgrid.Framework;
 using Resgrid.Web.Areas.User.Models.Routes;
 
 namespace Resgrid.Web.Areas.User.Controllers
@@ -19,13 +20,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IUnitsService _unitsService;
 		private readonly ICallsService _callsService;
 		private readonly IContactsService _contactsService;
+		private readonly IDepartmentsService _departmentsService;
 
-		public RoutesController(IRouteService routeService, IUnitsService unitsService, ICallsService callsService, IContactsService contactsService)
+		public RoutesController(IRouteService routeService, IUnitsService unitsService, ICallsService callsService, IContactsService contactsService, IDepartmentsService departmentsService)
 		{
 			_routeService = routeService;
 			_unitsService = unitsService;
 			_callsService = callsService;
 			_contactsService = contactsService;
+			_departmentsService = departmentsService;
 		}
 
 		[HttpGet]
@@ -52,6 +55,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Route_Create)]
 		public async Task<IActionResult> New(RouteNewView model, CancellationToken cancellationToken)
 		{
+			// Deserialize stops before saving anything so a bad payload does not leave an orphaned plan.
+			List<PendingStopDto> pendingStops = null;
+			if (!string.IsNullOrWhiteSpace(model.PendingStopsJson))
+			{
+				try
+				{
+					var options = new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+					pendingStops = System.Text.Json.JsonSerializer.Deserialize<List<PendingStopDto>>(model.PendingStopsJson, options);
+				}
+				catch (System.Text.Json.JsonException)
+				{
+					ModelState.AddModelError(nameof(model.PendingStopsJson), "Stop data is invalid and could not be parsed.");
+				}
+			}
+
 			if (ModelState.IsValid)
 			{
 				model.Plan.DepartmentId = DepartmentId;
@@ -61,43 +79,52 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				await _routeService.SaveRoutePlanAsync(model.Plan, cancellationToken);
 
-				if (!string.IsNullOrWhiteSpace(model.PendingStopsJson))
+				var dept = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+				var deptTimeZone = !string.IsNullOrWhiteSpace(dept?.TimeZone)
+					? DateTimeHelpers.WindowsToIana(dept.TimeZone)
+					: "UTC";
+
+				if (pendingStops != null)
 				{
-					var options = new System.Text.Json.JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-					var pendingStops = System.Text.Json.JsonSerializer.Deserialize<List<PendingStopDto>>(model.PendingStopsJson, options);
-					if (pendingStops != null)
+					for (int i = 0; i < pendingStops.Count; i++)
 					{
-						for (int i = 0; i < pendingStops.Count; i++)
+						var ps = pendingStops[i];
+
+						string resolvedContactId = null;
+						if (!string.IsNullOrWhiteSpace(ps.ContactId))
 						{
-							var ps = pendingStops[i];
-							var stop = new RouteStop
-							{
-								RoutePlanId = model.Plan.RoutePlanId,
-								Name = ps.Name,
-								Description = ps.Description,
-								StopType = ps.StopType,
-								Priority = ps.Priority,
-								Latitude = ps.Latitude,
-								Longitude = ps.Longitude,
-								Address = ps.Address,
-								CallId = ps.CallId,
-								EstimatedDwellMinutes = ps.DwellMinutes,
-								ContactName = ps.ContactName,
-								ContactNumber = ps.ContactNumber,
-								ContactId = ps.ContactId,
-								Notes = ps.Notes,
-								StopOrder = i + 1,
-								AddedOn = DateTime.UtcNow,
-								IsDeleted = false
-							};
-
-							if (!string.IsNullOrWhiteSpace(ps.PlannedArrival) && DateTime.TryParse(ps.PlannedArrival, out var arrivalDt))
-								stop.PlannedArrivalTime = arrivalDt.ToUniversalTime();
-							if (!string.IsNullOrWhiteSpace(ps.PlannedDeparture) && DateTime.TryParse(ps.PlannedDeparture, out var departureDt))
-								stop.PlannedDepartureTime = departureDt.ToUniversalTime();
-
-							await _routeService.SaveRouteStopAsync(stop, cancellationToken);
+							var contact = await _contactsService.GetContactByIdAsync(ps.ContactId);
+							if (contact != null && contact.DepartmentId == DepartmentId)
+								resolvedContactId = ps.ContactId;
 						}
+
+						var stop = new RouteStop
+						{
+							RoutePlanId = model.Plan.RoutePlanId,
+							Name = ps.Name,
+							Description = ps.Description,
+							StopType = ps.StopType,
+							Priority = ps.Priority,
+							Latitude = ps.Latitude,
+							Longitude = ps.Longitude,
+							Address = ps.Address,
+							CallId = ps.CallId,
+							EstimatedDwellMinutes = ps.DwellMinutes,
+							ContactName = ps.ContactName,
+							ContactNumber = ps.ContactNumber,
+							ContactId = resolvedContactId,
+							Notes = ps.Notes,
+							StopOrder = i + 1,
+							AddedOn = DateTime.UtcNow,
+							IsDeleted = false
+						};
+
+						if (!string.IsNullOrWhiteSpace(ps.PlannedArrival) && DateTime.TryParse(ps.PlannedArrival, out var arrivalDt))
+							stop.PlannedArrivalTime = DateTimeHelpers.ConvertToUtc(DateTime.SpecifyKind(arrivalDt, DateTimeKind.Unspecified), deptTimeZone);
+						if (!string.IsNullOrWhiteSpace(ps.PlannedDeparture) && DateTime.TryParse(ps.PlannedDeparture, out var departureDt))
+							stop.PlannedDepartureTime = DateTimeHelpers.ConvertToUtc(DateTime.SpecifyKind(departureDt, DateTimeKind.Unspecified), deptTimeZone);
+
+						await _routeService.SaveRouteStopAsync(stop, cancellationToken);
 					}
 				}
 
@@ -249,6 +276,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return Json(new { success = false, message = "Not found" });
 
 			var existingStops = await _routeService.GetRouteStopsForPlanAsync(routePlanId);
+
+			string resolvedContactId = null;
+			if (!string.IsNullOrWhiteSpace(contactId))
+			{
+				var contact = await _contactsService.GetContactByIdAsync(contactId);
+				if (contact != null && contact.DepartmentId == DepartmentId)
+					resolvedContactId = contactId;
+			}
+
 			var stop = new RouteStop
 			{
 				RoutePlanId = routePlanId,
@@ -264,17 +300,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 				EstimatedDwellMinutes = dwellMinutes,
 				ContactName = contactName,
 				ContactNumber = contactNumber,
-				ContactId = contactId,
+				ContactId = resolvedContactId,
 				Notes = notes,
 				StopOrder = existingStops.Count + 1,
 				AddedOn = DateTime.UtcNow,
 				IsDeleted = false
 			};
 
+			var dept2 = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var deptTimeZone2 = !string.IsNullOrWhiteSpace(dept2?.TimeZone)
+				? DateTimeHelpers.WindowsToIana(dept2.TimeZone)
+				: "UTC";
+
 			if (!string.IsNullOrWhiteSpace(plannedArrival) && DateTime.TryParse(plannedArrival, out var arrivalDt))
-				stop.PlannedArrivalTime = arrivalDt.ToUniversalTime();
+				stop.PlannedArrivalTime = DateTimeHelpers.ConvertToUtc(DateTime.SpecifyKind(arrivalDt, DateTimeKind.Unspecified), deptTimeZone2);
 			if (!string.IsNullOrWhiteSpace(plannedDeparture) && DateTime.TryParse(plannedDeparture, out var departureDt))
-				stop.PlannedDepartureTime = departureDt.ToUniversalTime();
+				stop.PlannedDepartureTime = DateTimeHelpers.ConvertToUtc(DateTime.SpecifyKind(departureDt, DateTimeKind.Unspecified), deptTimeZone2);
 
 			await _routeService.SaveRouteStopAsync(stop, cancellationToken);
 			return Json(new { success = true });

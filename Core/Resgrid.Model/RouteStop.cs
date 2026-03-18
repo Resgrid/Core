@@ -41,6 +41,8 @@ namespace Resgrid.Model
 
 		public string ContactNumber { get; set; }
 
+		public string ContactId { get; set; }
+
 		public string Notes { get; set; }
 
 		public bool IsDeleted { get; set; }

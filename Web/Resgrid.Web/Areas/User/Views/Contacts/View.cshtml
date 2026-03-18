@@ -1,5 +1,6 @@
 @model Resgrid.Web.Areas.User.Models.Contacts.ViewContactView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Contacts.Contacts> localizer
+@using System.Linq
 @{
     ViewBag.Title = "Resgrid | " + @localizer["ViewContactHeader"];
 }
@@ -27,6 +28,14 @@
                         <i class="fa fa-phone"></i> @localizer["Calls"]
                     </a>
                 </li>
+                @if (Model.RouteStops != null && Model.RouteStops.Count > 0)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#routes" role="tab">
+                            <i class="fa fa-map-signs"></i> @localizer["Routes"]
+                        </a>
+                    </li>
+                }
                 @if (!string.IsNullOrEmpty(Model.UdfReadOnlyHtml))
                 {
                     <li class="nav-item">
@@ -446,6 +455,54 @@
                                 </div>
                             </div>
                         </div>
+                        @if (Model.RouteStops != null && Model.RouteStops.Count > 0)
+                        {
+                            <div class="tab-pane fade" id="routes" role="tabpanel">
+                                <div class="row m-t-sm">
+                                    <div class="col-md-12">
+                                        <div class="panel-body">
+                                            <table class="table table-striped table-hover">
+                                                <thead>
+                                                    <tr>
+                                                        <th>@localizer["Route"]</th>
+                                                        <th>@localizer["StopName"]</th>
+                                                        <th>@localizer["AddressLabel"]</th>
+                                                        <th>@localizer["Priority"]</th>
+                                                        <th>@localizer["Notes"]</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var stop in Model.RouteStops.OrderBy(s => s.AddedOn))
+                                                    {
+                                                        var plan = Model.RoutePlans?.FirstOrDefault(p => p.RoutePlanId == stop.RoutePlanId);
+                                                        <tr>
+                                                            <td>
+                                                                @if (plan != null)
+                                                                {
+                                                                    <a asp-controller="Routes" asp-action="View" asp-route-id="@plan.RoutePlanId" asp-route-area="User">@plan.Name</a>
+                                                                }
+                                                            </td>
+                                                            <td>@stop.Name</td>
+                                                            <td>@stop.Address</td>
+                                                            <td>
+                                                                @switch (stop.Priority)
+                                                                {
+                                                                    case 1: <text>@localizer["PriorityHigh"]</text> break;
+                                                                    case 2: <text>@localizer["PriorityCritical"]</text> break;
+                                                                    case 3: <text>@localizer["PriorityOptional"]</text> break;
+                                                                    default: <text>@localizer["PriorityNormal"]</text> break;
+                                                                }
+                                                            </td>
+                                                            <td>@stop.Notes</td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
                         @if (!string.IsNullOrEmpty(Model.UdfReadOnlyHtml))
                         {
                             <div class="tab-pane fade" id="customfields" role="tabpanel">

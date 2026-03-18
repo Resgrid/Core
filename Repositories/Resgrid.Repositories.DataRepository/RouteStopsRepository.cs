@@ -102,5 +102,41 @@ namespace Resgrid.Repositories.DataRepository
 				throw;
 			}
 		}
+
+		public async Task<IEnumerable<RouteStop>> GetStopsByContactIdAsync(string contactId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<RouteStop>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParametersExtension();
+					dynamicParameters.Add("ContactId", contactId);
+
+					var query = _queryFactory.GetQuery<SelectRouteStopsByContactIdQuery>();
+
+					return await x.QueryAsync<RouteStop>(sql: query, param: dynamicParameters, transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				throw;
+			}
+		}
 	}
 }

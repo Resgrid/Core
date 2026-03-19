@@ -37,6 +37,7 @@ $(document).ready(function () {
             editStops.forEach(function (stop, index) {
                 if (stop.lat != null && stop.lng != null && Number.isFinite(Number(stop.lat)) && Number.isFinite(Number(stop.lng))) {
                     var m = L.marker([stop.lat, stop.lng]).addTo(map);
+                    m.bindTooltip((index + 1) + '. ' + escapeHtml(stop.Name), { permanent: true, direction: 'right' });
                     m.bindPopup('<strong>' + (index + 1) + '. ' + escapeHtml(stop.Name) + '</strong>');
                     group.push(m);
                 }
@@ -288,8 +289,9 @@ $(document).ready(function () {
                         editStops = editStops.filter(function (s) { return s.id !== stopId; });
                         editStops.forEach(function (stop, index) {
                             if (stop.lat != null && stop.lng != null && Number.isFinite(Number(stop.lat)) && Number.isFinite(Number(stop.lng))) {
-                                L.marker([stop.lat, stop.lng]).addTo(map)
-                                 .bindPopup('<strong>' + (index + 1) + '. ' + escapeHtml(stop.Name) + '</strong>');
+                                var m = L.marker([stop.lat, stop.lng]).addTo(map);
+                                m.bindTooltip((index + 1) + '. ' + escapeHtml(stop.Name), { permanent: true, direction: 'right' });
+                                m.bindPopup('<strong>' + (index + 1) + '. ' + escapeHtml(stop.Name) + '</strong>');
                             }
                         });
                     }

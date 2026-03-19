@@ -115,7 +115,7 @@ var resgrid;
                             if (result && result.Data && result.Data.Latitude && result.Data.Longitude) {
                                 var lat = result.Data.Latitude;
                                 var lng = result.Data.Longitude;
-                                map.panTo(new L.LatLng(lat, lng));
+                                map.setView(new L.LatLng(lat, lng), 16);
                                 $("#Latitude").val(lat.toString());
                                 $("#Longitude").val(lng.toString());
                                 resgrid.dispatch.addArchivedCall.setMarkerLocation(lat, lng);
@@ -124,6 +124,17 @@ var resgrid;
                             }
                         })
                         .catch(function(err) { console.error("Geocode error:", err); });
+                    evt.preventDefault();
+                });
+                $("#setPinButton").click(function (evt) {
+                    var lat = parseFloat($("#Latitude").val());
+                    var lng = parseFloat($("#Longitude").val());
+                    if (isNaN(lat) || isNaN(lng)) {
+                        alert("Please enter valid numeric latitude and longitude values.");
+                        return false;
+                    }
+                    map.setView(new L.LatLng(lat, lng), 16);
+                    resgrid.dispatch.addArchivedCall.setMarkerLocation(lat, lng);
                     evt.preventDefault();
                 });
                 $("#findw3wButton").click(function (evt) {
@@ -136,7 +147,7 @@ var resgrid;
                         type: 'GET'
                     }).done(function (data) {
                         if (data && data.Latitude && data.Longitude) {
-                            map.panTo(new L.LatLng(data.Latitude, data.Longitude));
+                            map.setView(new L.LatLng(data.Latitude, data.Longitude), 16);
 
                             $("#Latitude").val(data.Latitude);
                             $("#Longitude").val(data.Longitude);

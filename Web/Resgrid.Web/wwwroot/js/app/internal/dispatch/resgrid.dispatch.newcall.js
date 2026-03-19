@@ -120,7 +120,7 @@ var resgrid;
                             if (result && result.Data && result.Data.Latitude != null && result.Data.Longitude != null) {
                                 var lat = result.Data.Latitude;
                                 var lng = result.Data.Longitude;
-                                map.panTo(new L.LatLng(lat, lng));
+                                map.setView(new L.LatLng(lat, lng), 16);
                                 $("#Latitude").val(lat.toString());
                                 $("#Longitude").val(lng.toString());
                                 resgrid.dispatch.newcall.setMarkerLocation(lat, lng);
@@ -141,7 +141,7 @@ var resgrid;
                         type: 'GET'
                     }).done(function (data) {
                         if (data && data.Latitude != null && data.Longitude != null) {
-                            map.panTo(new L.LatLng(data.Latitude, data.Longitude));
+                            map.setView(new L.LatLng(data.Latitude, data.Longitude), 16);
 
                             $("#Latitude").val(data.Latitude);
                             $("#Longitude").val(data.Longitude);
@@ -154,6 +154,17 @@ var resgrid;
                             alert("What3Words was unable to find a location for those words. Ensure its 3 words separated by periods.");
                         }
                     });
+                    evt.preventDefault();
+                });
+                $("#setPinButton").click(function (evt) {
+                    var lat = parseFloat($("#Latitude").val());
+                    var lng = parseFloat($("#Longitude").val());
+                    if (isNaN(lat) || isNaN(lng)) {
+                        alert("Please enter valid numeric latitude and longitude values.");
+                        return false;
+                    }
+                    map.setView(new L.LatLng(lat, lng), 16);
+                    resgrid.dispatch.newcall.setMarkerLocation(lat, lng);
                     evt.preventDefault();
                 });
                 var personnelTable = $("#personnelGrid").DataTable({

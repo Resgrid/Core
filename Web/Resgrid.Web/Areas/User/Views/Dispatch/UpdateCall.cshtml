@@ -63,8 +63,6 @@
                         <div class="row">
                             <div class="col-md-8 col-md-offset-1">
                                 @Html.AntiForgeryToken()
-                                @Html.HiddenFor(m => m.Latitude)
-                                @Html.HiddenFor(m => m.Longitude)
                                 @Html.HiddenFor(m => m.Call.CallId)
                                 @Html.HiddenFor(m => m.Call.ReportingUserId)
                                 @Html.HiddenFor(m => m.Call.CallFormData)
@@ -175,7 +173,20 @@
                                         <span class="help-inline">@localizer["W3wHelp"] <a href="https://what3words.com/about/" target="_blank">@localizer["LearnMore"]</a></span>
                                     </div>
                                 </div>
-                                <div id="callMap" name="callMap" style="position: relative; width: 90%; height: 500px;"></div>
+                                <div class="row" style="margin-top: 8px;">
+                                    <div class="col-md-11">
+                                        <div class="input-group input-group-sm">
+                                            <span class="input-group-addon">Lat</span>
+                                            <input type="text" class="form-control" asp-for="Latitude" placeholder="Latitude">
+                                            <span class="input-group-addon">Lng</span>
+                                            <input type="text" class="form-control" asp-for="Longitude" placeholder="Longitude">
+                                            <span class="input-group-btn">
+                                                <a id="setPinButton" href="#" class="btn btn-warning">Set Pin on Map</a>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div id="callMap" name="callMap" style="position: relative; width: 90%; height: 500px; margin-top: 8px;"></div>
                             </div>
                         </div>
                         <div class="form-group">

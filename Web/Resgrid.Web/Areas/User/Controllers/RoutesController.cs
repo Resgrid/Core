@@ -381,8 +381,24 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (plan.RouteStatus != (int)RouteStatus.Active)
 				return RedirectToAction("View", new { id = model.RoutePlanId });
 
-			var instance = await _routeService.StartRouteAsync(model.RoutePlanId, model.SelectedUnitId, UserId, cancellationToken);
-			return RedirectToAction("InstanceDetail", new { instanceId = instance.RouteInstanceId });
+			try
+			{
+				var instance = await _routeService.StartRouteAsync(model.RoutePlanId, model.SelectedUnitId, UserId, cancellationToken);
+				return RedirectToAction("InstanceDetail", new { instanceId = instance.RouteInstanceId });
+			}
+			catch (InvalidOperationException ex)
+			{
+				// Unit already has an active route — let the user pick a different unit.
+				ModelState.AddModelError(nameof(model.SelectedUnitId), ex.Message);
+				model.Plan = plan;
+				model.Units = (await _unitsService.GetUnitsForDepartmentAsync(DepartmentId)).ToList();
+				return View(model);
+			}
+			catch (ArgumentException)
+			{
+				// Route plan disappeared between validation and start — redirect to Index.
+				return RedirectToAction("Index");
+			}
 		}
 
 		[HttpGet]

@@ -252,6 +252,34 @@
   <data name="CreateRoute" xml:space="preserve">
     <value>Create Route</value>
   </data>
+  <!-- StartRoute -->
+  <data name="StartRoutePageTitle" xml:space="preserve">
+    <value>Start Route</value>
+  </data>
+  <data name="StartRouteHeader" xml:space="preserve">
+    <value>Start Route</value>
+  </data>
+  <data name="StartRouteBreadcrumb" xml:space="preserve">
+    <value>Start Route</value>
+  </data>
+  <data name="AssignUnit" xml:space="preserve">
+    <value>Assign Unit</value>
+  </data>
+  <data name="SelectUnitPlaceholder" xml:space="preserve">
+    <value>-- Select a Unit --</value>
+  </data>
+  <data name="AssignUnitHelp" xml:space="preserve">
+    <value>Select the unit that will execute this route.</value>
+  </data>
+  <data name="RouteInfoLabel" xml:space="preserve">
+    <value>Route Info</value>
+  </data>
+  <data name="MinEstimated" xml:space="preserve">
+    <value>min estimated</value>
+  </data>
+  <data name="StartRouteNow" xml:space="preserve">
+    <value>Start Route Now</value>
+  </data>
   <!-- Edit -->
   <data name="EditRoutePageTitle" xml:space="preserve">
     <value>Edit Route</value>

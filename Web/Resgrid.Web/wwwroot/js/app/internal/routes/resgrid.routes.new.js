@@ -105,7 +105,7 @@ $(document).ready(function () {
                           .addLayer(tiles);
         startPickerMap.on('click', function (e) { setStartLocation(e.latlng.lat, e.latlng.lng); });
         startPickerInitialized = true;
-        if (initialLat && initialLng) { setStartLocation(initialLat, initialLng); }
+        if (Number.isFinite(Number(initialLat)) && Number.isFinite(Number(initialLng))) { setStartLocation(initialLat, initialLng); }
     }
 
     function setStartLocation(lat, lng) {
@@ -138,7 +138,7 @@ $(document).ready(function () {
                         .addLayer(tiles);
         endPickerMap.on('click', function (e) { setEndLocation(e.latlng.lat, e.latlng.lng); });
         endPickerInitialized = true;
-        if (initialLat && initialLng) { setEndLocation(initialLat, initialLng); }
+        if (Number.isFinite(Number(initialLat)) && Number.isFinite(Number(initialLng))) { setEndLocation(initialLat, initialLng); }
     }
 
     function setEndLocation(lat, lng) {
@@ -163,15 +163,23 @@ $(document).ready(function () {
     function updateLocationPickerVisibility() {
         if (!$('#chkUseStationAsStart').prop('checked')) {
             $('#startLocationGroup').show();
+            $('#startLat').prop('disabled', false);
+            $('#startLng').prop('disabled', false);
             initStartPickerMap();
         } else {
             $('#startLocationGroup').hide();
+            $('#startLat').val('').prop('disabled', true);
+            $('#startLng').val('').prop('disabled', true);
         }
         if (!$('#chkUseStationAsEnd').prop('checked')) {
             $('#endLocationGroup').show();
+            $('#endLat').prop('disabled', false);
+            $('#endLng').prop('disabled', false);
             initEndPickerMap();
         } else {
             $('#endLocationGroup').hide();
+            $('#endLat').val('').prop('disabled', true);
+            $('#endLng').val('').prop('disabled', true);
         }
     }
 
@@ -187,7 +195,7 @@ $(document).ready(function () {
         fetch(resgrid.absoluteApiBaseUrl + '/api/v4/Geocoding/ForwardGeocode?address=' + encodeURIComponent(where), { headers: { 'Authorization': 'Bearer ' + getAuthToken() } })
             .then(function (r) { return r.json(); })
             .then(function (result) {
-                if (result && result.Data && result.Data.Latitude && result.Data.Longitude) {
+                if (result && result.Data && result.Data.Latitude != null && result.Data.Longitude != null) {
                     setStartLocation(result.Data.Latitude, result.Data.Longitude);
                 } else { alert('Address not found.'); }
             })
@@ -202,7 +210,7 @@ $(document).ready(function () {
         if (!word) return;
         $.ajax({ url: resgrid.absoluteBaseUrl + '/User/Dispatch/GetCoordinatesFromW3W?words=' + encodeURIComponent(word), type: 'GET' })
             .done(function (data) {
-                if (data && data.Latitude && data.Longitude) { setStartLocation(data.Latitude, data.Longitude); }
+                if (data && data.Latitude != null && data.Longitude != null) { setStartLocation(data.Latitude, data.Longitude); }
                 else { alert('What3Words was unable to find a location for those words.'); }
             });
     });
@@ -224,7 +232,7 @@ $(document).ready(function () {
         fetch(resgrid.absoluteApiBaseUrl + '/api/v4/Geocoding/ForwardGeocode?address=' + encodeURIComponent(where), { headers: { 'Authorization': 'Bearer ' + getAuthToken() } })
             .then(function (r) { return r.json(); })
             .then(function (result) {
-                if (result && result.Data && result.Data.Latitude && result.Data.Longitude) {
+                if (result && result.Data && result.Data.Latitude != null && result.Data.Longitude != null) {
                     setEndLocation(result.Data.Latitude, result.Data.Longitude);
                 } else { alert('Address not found.'); }
             })
@@ -239,7 +247,7 @@ $(document).ready(function () {
         if (!word) return;
         $.ajax({ url: resgrid.absoluteBaseUrl + '/User/Dispatch/GetCoordinatesFromW3W?words=' + encodeURIComponent(word), type: 'GET' })
             .done(function (data) {
-                if (data && data.Latitude && data.Longitude) { setEndLocation(data.Latitude, data.Longitude); }
+                if (data && data.Latitude != null && data.Longitude != null) { setEndLocation(data.Latitude, data.Longitude); }
                 else { alert('What3Words was unable to find a location for those words.'); }
             });
     });

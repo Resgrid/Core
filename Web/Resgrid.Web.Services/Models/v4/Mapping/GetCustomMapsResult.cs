@@ -52,4 +52,12 @@ namespace Resgrid.Web.Services.Models.v4.Mapping
 			Data = new List<CustomMapRegionResultData>();
 		}
 	}
+
+	public class GetCustomMapRegionsGeoJSONResult : StandardApiResponseV4Base
+	{
+		/// <summary>
+		/// GeoJSON FeatureCollection string ready for direct rnmapbox ShapeSource consumption
+		/// </summary>
+		public string GeoJson { get; set; }
+	}
 }

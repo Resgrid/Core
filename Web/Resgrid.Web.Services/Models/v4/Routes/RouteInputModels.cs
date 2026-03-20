@@ -138,4 +138,11 @@ namespace Resgrid.Web.Services.Models.v4.Routes
 		public double DistanceMeters { get; set; }
 		public double DurationSeconds { get; set; }
 	}
+
+	public class UpdateStopNotesInput
+	{
+		[Required]
+		public string RouteInstanceStopId { get; set; }
+		public string Notes { get; set; }
+	}
 }

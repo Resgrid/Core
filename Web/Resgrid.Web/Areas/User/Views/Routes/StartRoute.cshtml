@@ -1,0 +1,84 @@
+@model Resgrid.Web.Areas.User.Models.Routes.RouteStartView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Routes.Routes> localizer
+@{
+    ViewBag.Title = "Resgrid | Start Route";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-8">
+        <h2>Start Route &mdash; @Model.Plan.Name</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="Routes" asp-action="Index" asp-route-area="User">@localizer["RoutesHeader"]</a></li>
+            <li><a asp-controller="Routes" asp-action="View" asp-route-id="@Model.Plan.RoutePlanId" asp-route-area="User">@Model.Plan.Name</a></li>
+            <li class="active"><strong>Start Route</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5><i class="fa fa-play"></i> Start Route: @Model.Plan.Name</h5>
+                </div>
+                <div class="ibox-content">
+                    <form asp-controller="Routes" asp-action="StartRoute" asp-route-area="User" method="post" class="form-horizontal">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="RoutePlanId" value="@Model.Plan.RoutePlanId" />
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Assign Unit</label>
+                            <div class="col-sm-9">
+                                <select name="SelectedUnitId" class="form-control" required>
+                                    <option value="">-- Select a Unit --</option>
+                                    @foreach (var unit in Model.Units)
+                                    {
+                                        <option value="@unit.UnitId">@unit.Name</option>
+                                    }
+                                </select>
+                                <span class="help-block">Select the unit that will execute this route.</span>
+                            </div>
+                        </div>
+
+                        @if (Model.Plan.EstimatedDistanceMeters.HasValue || Model.Plan.EstimatedDurationSeconds.HasValue)
+                        {
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">Route Info</label>
+                                <div class="col-sm-9">
+                                    @if (Model.Plan.EstimatedDistanceMeters.HasValue)
+                                    {
+                                        <span class="label label-info">
+                                            <i class="fa fa-road"></i>
+                                            @(Math.Round(Model.Plan.EstimatedDistanceMeters.Value / 1000, 1)) km
+                                        </span>
+                                        <span>&nbsp;</span>
+                                    }
+                                    @if (Model.Plan.EstimatedDurationSeconds.HasValue)
+                                    {
+                                        <span class="label label-info">
+                                            <i class="fa fa-clock-o"></i>
+                                            @(Math.Round(Model.Plan.EstimatedDurationSeconds.Value / 60, 0)) min estimated
+                                        </span>
+                                    }
+                                </div>
+                            </div>
+                        }
+
+                        <div class="form-group">
+                            <div class="col-sm-offset-3 col-sm-9">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fa fa-play"></i> Start Route Now
+                                </button>
+                                <a asp-controller="Routes" asp-action="View" asp-route-id="@Model.Plan.RoutePlanId" asp-route-area="User" class="btn btn-default">
+                                    Cancel
+                                </a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

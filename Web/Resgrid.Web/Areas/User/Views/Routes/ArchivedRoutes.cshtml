@@ -1,0 +1,73 @@
+@model Resgrid.Web.Areas.User.Models.Routes.ArchivedRouteIndexView
+@using Resgrid.Model
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Routes.Routes> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ArchivedRoutesPageTitle"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["ArchivedRoutesHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Routes" asp-action="Index" asp-route-area="User">@localizer["RoutesHeader"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["ArchivedBreadcrumb"]</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    @if (Model.Plans.Count == 0)
+                    {
+                        <div class="text-center p-lg">
+                            <h3>@localizer["NoArchivedRoutes"]</h3>
+                            <p class="text-muted">@localizer["NoArchivedRoutesMessage"]</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped" id="archivedRoutePlansTable">
+                                <thead>
+                                <tr>
+                                    <th>@localizer["Name"]</th>
+                                    <th>@localizer["Stops"]</th>
+                                    <th>@localizer["Profile"]</th>
+                                    <th>@localizer["Created"]</th>
+                                    <th style="width:80px;">@localizer["Actions"]</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (var plan in Model.Plans)
+                                {
+                                    <tr>
+                                        <td>@plan.Name</td>
+                                        <td>@(Model.StopCounts.TryGetValue(plan.RoutePlanId, out var sc) ? sc.ToString() : "0")</td>
+                                        <td>@(plan.MapboxRouteProfile ?? "driving")</td>
+                                        <td>@plan.AddedOn.ToString("yyyy-MM-dd")</td>
+                                        <td>
+                                            <a class="btn btn-xs btn-primary" asp-controller="Routes" asp-action="ArchivedView" asp-route-id="@plan.RoutePlanId" asp-route-area="User">
+                                                <i class="fa fa-eye"></i> @localizer["View"]
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

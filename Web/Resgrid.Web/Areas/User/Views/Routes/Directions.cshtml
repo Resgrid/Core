@@ -1,0 +1,223 @@
+@model Resgrid.Web.Areas.User.Models.Routes.RouteDirectionsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Routes.Routes> localizer
+@{
+    ViewBag.Title = "Resgrid | Directions - " + Model.Plan.Name;
+}
+
+<style>
+    @@media print {
+        .no-print { display: none !important; }
+        .wrapper-content { padding: 0 !important; }
+        .ibox { border: 1px solid #ccc !important; box-shadow: none !important; }
+        #routeMap { height: 350px !important; }
+        body { font-size: 12px; }
+        .direction-step { page-break-inside: avoid; }
+    }
+    .direction-step {
+        padding: 8px 12px;
+        border-left: 3px solid #1ab394;
+        margin-bottom: 6px;
+        background: #f9f9f9;
+    }
+    .direction-step .step-num {
+        display: inline-block;
+        width: 28px;
+        height: 28px;
+        line-height: 28px;
+        text-align: center;
+        background: #1ab394;
+        color: #fff;
+        border-radius: 50%;
+        font-weight: bold;
+        margin-right: 8px;
+    }
+    .direction-step .step-dist {
+        float: right;
+        color: #888;
+        font-size: 0.85em;
+        margin-top: 4px;
+    }
+    .stop-header {
+        background: #1c84c6;
+        color: #fff;
+        padding: 8px 12px;
+        margin: 12px 0 4px 0;
+        font-weight: bold;
+        border-radius: 3px;
+    }
+    .stop-header .stop-num {
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        line-height: 24px;
+        text-align: center;
+        background: #fff;
+        color: #1c84c6;
+        border-radius: 50%;
+        font-weight: bold;
+        margin-right: 8px;
+    }
+    #directionsLoading { display: none; }
+    #directionsError { display: none; }
+</style>
+
+<div class="row wrapper border-bottom white-bg page-heading no-print">
+    <div class="col-sm-8">
+        <h2><i class="fa fa-map-signs"></i> Directions &mdash; @Model.Plan.Name</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="Routes" asp-action="Index" asp-route-area="User">@localizer["RoutesHeader"]</a></li>
+            <li><a asp-controller="Routes" asp-action="View" asp-route-id="@Model.Plan.RoutePlanId" asp-route-area="User">@Model.Plan.Name</a></li>
+            <li class="active"><strong>Directions</strong></li>
+        </ol>
+    </div>
+    <div class="col-sm-4">
+        <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+            <button class="btn btn-primary" onclick="window.print();">
+                <i class="fa fa-print"></i> Print
+            </button>
+            <a class="btn btn-success" asp-controller="Routes" asp-action="StartRoute" asp-route-id="@Model.Plan.RoutePlanId" asp-route-area="User">
+                <i class="fa fa-play"></i> Start Route
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>@Model.Plan.Name</h5>
+                    <span id="routeSummary" style="color:#888;margin-left:12px;"></span>
+                </div>
+                <div class="ibox-content" style="padding:0;">
+                    <div id="routeMap" style="height:420px;width:100%;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5><i class="fa fa-list"></i> Turn-by-Turn Directions</h5>
+                </div>
+                <div class="ibox-content">
+                    <div id="directionsLoading" style="text-align:center;padding:20px;">
+                        <i class="fa fa-spinner fa-spin fa-2x"></i>
+                        <p>Calculating route&hellip;</p>
+                    </div>
+                    <div id="directionsError" class="alert alert-warning">
+                        <i class="fa fa-exclamation-triangle"></i>
+                        Could not retrieve driving directions. The stop addresses or coordinates may not be reachable by road.
+                        The stops are listed below in order.
+                    </div>
+                    <div id="directionsContainer"></div>
+
+                    @* Fallback stop list — always shown below directions *@
+                    <hr />
+                    <h4>Stop Summary</h4>
+                    <table class="table table-condensed table-bordered">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Stop Name</th>
+                                <th>Address</th>
+                                @if (Model.Stops.Any(s => s.PlannedArrivalTime.HasValue))
+                                {
+                                    <th>Planned Arrival</th>
+                                }
+                                @if (Model.Stops.Any(s => s.EstimatedDwellMinutes.HasValue))
+                                {
+                                    <th>Dwell (min)</th>
+                                }
+                                @if (Model.Stops.Any(s => !string.IsNullOrEmpty(s.ContactName)))
+                                {
+                                    <th>Contact</th>
+                                }
+                                @if (Model.Stops.Any(s => !string.IsNullOrEmpty(s.Notes)))
+                                {
+                                    <th>Notes</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{ int stopNum = 0; }
+                            @foreach (var stop in Model.Stops)
+                            {
+                                stopNum++;
+                                <tr>
+                                    <td><strong>@stopNum</strong></td>
+                                    <td>@stop.Name</td>
+                                    <td>@(stop.Address ?? $"{stop.Latitude}, {stop.Longitude}")</td>
+                                    @if (Model.Stops.Any(s => s.PlannedArrivalTime.HasValue))
+                                    {
+                                        <td>@(stop.PlannedArrivalTime?.ToString("yyyy-MM-dd HH:mm") ?? "-")</td>
+                                    }
+                                    @if (Model.Stops.Any(s => s.EstimatedDwellMinutes.HasValue))
+                                    {
+                                        <td>@(stop.EstimatedDwellMinutes?.ToString() ?? "-")</td>
+                                    }
+                                    @if (Model.Stops.Any(s => !string.IsNullOrEmpty(s.ContactName)))
+                                    {
+                                        <td>
+                                            @if (!string.IsNullOrEmpty(stop.ContactName))
+                                            {
+                                                @stop.ContactName
+                                                if (!string.IsNullOrEmpty(stop.ContactNumber))
+                                                {
+                                                    <br /><small>@stop.ContactNumber</small>
+                                                }
+                                            }
+                                            else { <span>-</span> }
+                                        </td>
+                                    }
+                                    @if (Model.Stops.Any(s => !string.IsNullOrEmpty(s.Notes)))
+                                    {
+                                        <td><small>@(stop.Notes ?? "-")</small></td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var osmTileUrl = '@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()';
+        var osmTileAttribution = '@Resgrid.Config.MappingConfig.LeafletAttribution';
+        var routeStops = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
+            Model.Stops.Select(s => new {
+                name = s.Name,
+                address = s.Address ?? "",
+                lat = s.Latitude,
+                lng = s.Longitude,
+                dwell = s.EstimatedDwellMinutes,
+                plannedArrival = s.PlannedArrivalTime.HasValue ? s.PlannedArrivalTime.Value.ToString("yyyy-MM-dd HH:mm") : null,
+                contactName = s.ContactName ?? "",
+                contactNumber = s.ContactNumber ?? "",
+                notes = s.Notes ?? ""
+            })
+        ));
+        var routeColor = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Plan.RouteColor ?? "#1c84c6"));
+        var routeProfile = '@(Model.Plan.MapboxRouteProfile ?? "driving")';
+        @{
+            // Use the plan's explicit start point as the routing origin if coordinates are set.
+            // Falls back to null, which causes the JS to start routing from the first stop.
+            object startPoint = null;
+            if (Model.Plan.StartLatitude.HasValue && Model.Plan.StartLongitude.HasValue &&
+                Model.Plan.StartLatitude.Value != 0 && Model.Plan.StartLongitude.Value != 0)
+            {
+                startPoint = new { lat = Model.Plan.StartLatitude.Value, lng = Model.Plan.StartLongitude.Value, name = "Start" };
+            }
+        }
+        var startPoint = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(startPoint));
+    </script>
+    <script src="~/js/app/internal/routes/resgrid.routes.directions.js"></script>
+}

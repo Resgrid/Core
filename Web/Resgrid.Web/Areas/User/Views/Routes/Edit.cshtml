@@ -94,14 +94,66 @@
                             <div class="col-sm-2"></div>
                             <div class="col-sm-10">
                                 <label class="checkbox-inline">
-                                    <input type="checkbox" asp-for="Plan.UseStationAsStart" /> @localizer["UseStationAsStart"]
+                                    <input type="checkbox" asp-for="Plan.UseStationAsStart" id="chkUseStationAsStart" /> @localizer["UseStationAsStart"]
                                 </label>
                                 <label class="checkbox-inline">
-                                    <input type="checkbox" asp-for="Plan.UseStationAsEnd" /> @localizer["UseStationAsEnd"]
+                                    <input type="checkbox" asp-for="Plan.UseStationAsEnd" id="chkUseStationAsEnd" /> @localizer["UseStationAsEnd"]
                                 </label>
                                 <label class="checkbox-inline">
                                     <input type="checkbox" asp-for="Plan.OptimizeStopOrder" /> @localizer["OptimizeStopOrder"]
                                 </label>
+                            </div>
+                        </div>
+
+                        <!-- Start location picker (shown when Use Station as Start is unchecked) -->
+                        <div id="startLocationGroup" style="display:none;">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">Start Location <span class="text-danger">*</span></label>
+                                <div class="col-sm-10">
+                                    <div class="input-group" style="margin-bottom:5px;">
+                                        <input type="text" id="startAddress" class="form-control" placeholder="Enter address" />
+                                        <span class="input-group-btn"><button type="button" class="btn btn-info" id="geocodeStartBtn">Find</button></span>
+                                    </div>
+                                    <div class="input-group" style="margin-bottom:5px;">
+                                        <input type="text" id="startW3W" class="form-control" placeholder="what.three.words" />
+                                        <span class="input-group-btn"><button type="button" class="btn btn-info" id="findStartW3WBtn">Find</button></span>
+                                    </div>
+                                    <div class="row" style="margin-bottom:5px;">
+                                        <div class="col-xs-5"><input type="text" id="startLatDisplay" class="form-control" placeholder="Latitude" /></div>
+                                        <div class="col-xs-5"><input type="text" id="startLngDisplay" class="form-control" placeholder="Longitude" /></div>
+                                        <div class="col-xs-2"><button type="button" class="btn btn-default btn-block" id="applyStartLatLngBtn">Apply</button></div>
+                                    </div>
+                                    <p class="text-muted small">Click the map to set the start location, or use address / What3Words / coordinates above.</p>
+                                    <div id="startPickerMap" style="height:250px;border:1px solid #ddd;border-radius:4px;margin-bottom:5px;"></div>
+                                    <input type="hidden" asp-for="Plan.StartLatitude" id="startLat" />
+                                    <input type="hidden" asp-for="Plan.StartLongitude" id="startLng" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- End location picker (shown when Use Station as End is unchecked) -->
+                        <div id="endLocationGroup" style="display:none;">
+                            <div class="form-group">
+                                <label class="col-sm-2 control-label">End Location <span class="text-danger">*</span></label>
+                                <div class="col-sm-10">
+                                    <div class="input-group" style="margin-bottom:5px;">
+                                        <input type="text" id="endAddress" class="form-control" placeholder="Enter address" />
+                                        <span class="input-group-btn"><button type="button" class="btn btn-info" id="geocodeEndBtn">Find</button></span>
+                                    </div>
+                                    <div class="input-group" style="margin-bottom:5px;">
+                                        <input type="text" id="endW3W" class="form-control" placeholder="what.three.words" />
+                                        <span class="input-group-btn"><button type="button" class="btn btn-info" id="findEndW3WBtn">Find</button></span>
+                                    </div>
+                                    <div class="row" style="margin-bottom:5px;">
+                                        <div class="col-xs-5"><input type="text" id="endLatDisplay" class="form-control" placeholder="Latitude" /></div>
+                                        <div class="col-xs-5"><input type="text" id="endLngDisplay" class="form-control" placeholder="Longitude" /></div>
+                                        <div class="col-xs-2"><button type="button" class="btn btn-default btn-block" id="applyEndLatLngBtn">Apply</button></div>
+                                    </div>
+                                    <p class="text-muted small">Click the map to set the end location, or use address / What3Words / coordinates above.</p>
+                                    <div id="endPickerMap" style="height:250px;border:1px solid #ddd;border-radius:4px;margin-bottom:5px;"></div>
+                                    <input type="hidden" asp-for="Plan.EndLatitude" id="endLat" />
+                                    <input type="hidden" asp-for="Plan.EndLongitude" id="endLng" />
+                                </div>
                             </div>
                         </div>
 
@@ -294,6 +346,10 @@
         var editStops =@Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Stops.OrderBy(s => s.StopOrder).Select(s => new { id = s.RouteStopId, s.Name, lat = s.Latitude, lng = s.Longitude })));
         var routePlanId = '@Model.Plan.RoutePlanId';
         var availableContacts = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject((Model.Contacts ?? Enumerable.Empty<Resgrid.Model.Contact>()).Select(c => new { id = c.ContactId ?? "", name = c.GetName() ?? "", phone = c.CellPhoneNumber ?? c.OfficePhoneNumber ?? c.HomePhoneNumber ?? "" }), new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
+        var existingStartLat = @(Model.Plan.StartLatitude.HasValue ? Model.Plan.StartLatitude.Value.ToString(System.Globalization.CultureInfo.InvariantCulture) : "null");
+        var existingStartLng = @(Model.Plan.StartLongitude.HasValue ? Model.Plan.StartLongitude.Value.ToString(System.Globalization.CultureInfo.InvariantCulture) : "null");
+        var existingEndLat = @(Model.Plan.EndLatitude.HasValue ? Model.Plan.EndLatitude.Value.ToString(System.Globalization.CultureInfo.InvariantCulture) : "null");
+        var existingEndLng = @(Model.Plan.EndLongitude.HasValue ? Model.Plan.EndLongitude.Value.ToString(System.Globalization.CultureInfo.InvariantCulture) : "null");
     </script>
     <script src="~/js/app/internal/routes/resgrid.routes.edit.js"></script>
 }

@@ -16,6 +16,7 @@ using Resgrid.Web.Services.Models.v4.Roles;
 using GeoJSON.Net;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using GeoJSON.Net.Feature;
 
 namespace Resgrid.Web.Services.Controllers.v4
@@ -724,7 +725,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("SearchIndoorLocations")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Call_View)]
-		public async Task<ActionResult<SearchIndoorLocationsResult>> SearchIndoorLocations(string term)
+		public async Task<ActionResult<SearchIndoorLocationsResult>> SearchIndoorLocations(string term, string mapId = null)
 		{
 			var result = new SearchIndoorLocationsResult();
 
@@ -734,8 +735,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				if (zones != null && zones.Count > 0)
 				{
+					HashSet<string> floorIdsForMap = null;
+					if (!string.IsNullOrWhiteSpace(mapId))
+					{
+						var floors = await _indoorMapService.GetFloorsForMapAsync(mapId);
+						floorIdsForMap = floors?.Select(f => f.IndoorMapFloorId).ToHashSet() ?? new HashSet<string>();
+					}
+
 					foreach (var z in zones)
 					{
+						if (floorIdsForMap != null && !floorIdsForMap.Contains(z.IndoorMapFloorId))
+							continue;
+
 						result.Data.Add(new IndoorMapZoneResultData
 						{
 							IndoorMapZoneId = z.IndoorMapZoneId,
@@ -1001,7 +1012,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("SearchCustomMapRegions")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Call_View)]
-		public async Task<ActionResult<SearchCustomMapRegionsResult>> SearchCustomMapRegions(string term)
+		public async Task<ActionResult<SearchCustomMapRegionsResult>> SearchCustomMapRegions(string term, string layerId = null)
 		{
 			var result = new SearchCustomMapRegionsResult();
 
@@ -1013,6 +1024,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 				{
 					foreach (var r in regions)
 					{
+						if (!string.IsNullOrWhiteSpace(layerId) && r.IndoorMapFloorId != layerId)
+							continue;
+
 						result.Data.Add(new CustomMapRegionResultData
 						{
 							IndoorMapZoneId = r.IndoorMapZoneId,
@@ -1040,6 +1054,277 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ResponseHelper.PopulateV4ResponseData(result);
 
 			return Ok(result);
+		}
+
+		/// <summary>
+		/// Returns raw GeoJSON FeatureCollection for a MapLayer (legacy vector layers).
+		/// </summary>
+		/// <param name="layerId">Map layer id</param>
+		[HttpGet("GetMapLayerGeoJSON/{layerId}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<IActionResult> GetMapLayerGeoJSON(string layerId)
+		{
+			var layer = await _mappingService.GetMapLayersByIdAsync(layerId);
+			if (layer == null || layer.DepartmentId != DepartmentId)
+				return NotFound();
+
+			var fc = layer.Data?.Convert() ?? new FeatureCollection();
+			var geoJson = JsonConvert.SerializeObject(fc);
+
+			return Content(geoJson, "application/geo+json");
+		}
+
+		/// <summary>
+		/// Returns a summary of all map layers that are on by default for the department.
+		/// </summary>
+		[HttpGet("GetAllActiveLayers")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<GetAllActiveLayersResult>> GetAllActiveLayers()
+		{
+			var result = new GetAllActiveLayersResult();
+
+			var mapLayers = await _mappingService.GetMapLayersForTypeDepartmentAsync(DepartmentId, MapLayerTypes.TopLevel);
+			if (mapLayers != null)
+			{
+				foreach (var layer in mapLayers.Where(l => !l.IsDeleted && l.IsOnByDefault))
+				{
+					result.Data.Add(new ActiveLayerResultData
+					{
+						Id = layer.GetId(),
+						Name = layer.Name,
+						LayerSource = "maplayer",
+						Type = layer.Type,
+						Color = layer.Color,
+						IsSearchable = layer.IsSearchable,
+						IsOnByDefault = layer.IsOnByDefault
+					});
+				}
+			}
+
+			result.PageSize = result.Data.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Unified search across indoor zones and custom map regions.
+		/// </summary>
+		/// <param name="term">Search term</param>
+		/// <param name="type">Filter: "all" (default), "indoor", or "custom"</param>
+		[HttpGet("SearchAllMapFeatures")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<SearchAllMapFeaturesResult>> SearchAllMapFeatures(string term, string type = "all")
+		{
+			var result = new SearchAllMapFeaturesResult();
+
+			if (string.IsNullOrWhiteSpace(term))
+			{
+				result.Status = ResponseHelper.Success;
+				ResponseHelper.PopulateV4ResponseData(result);
+				return Ok(result);
+			}
+
+			if (type == "all" || type == "indoor")
+			{
+				var zones = await _indoorMapService.SearchZonesAsync(DepartmentId, term);
+				if (zones != null)
+				{
+					foreach (var z in zones)
+					{
+						var floor = await _indoorMapService.GetFloorByIdAsync(z.IndoorMapFloorId);
+						var map = floor != null ? await _indoorMapService.GetIndoorMapByIdAsync(floor.IndoorMapId) : null;
+
+						result.Data.Add(new MapFeatureResultData
+						{
+							FeatureType = "indoor_zone",
+							Id = z.IndoorMapZoneId,
+							Name = z.Name,
+							Description = z.Description,
+							MapId = map?.IndoorMapId,
+							MapName = map?.Name,
+							FloorOrLayerId = z.IndoorMapFloorId,
+							FloorOrLayerName = floor?.Name,
+							CenterLatitude = z.CenterLatitude,
+							CenterLongitude = z.CenterLongitude,
+							IsDispatchable = z.IsDispatchable
+						});
+					}
+				}
+			}
+
+			if (type == "all" || type == "custom")
+			{
+				var regions = await _customMapService.SearchRegionsAsync(DepartmentId, term);
+				if (regions != null)
+				{
+					foreach (var r in regions)
+					{
+						var layer = await _customMapService.GetLayerByIdAsync(r.IndoorMapFloorId);
+						var map = layer != null ? await _customMapService.GetCustomMapByIdAsync(layer.IndoorMapId) : null;
+
+						result.Data.Add(new MapFeatureResultData
+						{
+							FeatureType = "custom_region",
+							Id = r.IndoorMapZoneId,
+							Name = r.Name,
+							Description = r.Description,
+							MapId = map?.IndoorMapId,
+							MapName = map?.Name,
+							FloorOrLayerId = r.IndoorMapFloorId,
+							FloorOrLayerName = layer?.Name,
+							CenterLatitude = r.CenterLatitude,
+							CenterLongitude = r.CenterLongitude,
+							IsDispatchable = r.IsDispatchable
+						});
+					}
+				}
+			}
+
+			result.PageSize = result.Data.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Returns indoor maps whose bounding box is within radiusMeters of the given lat/lon.
+		/// </summary>
+		/// <param name="lat">Latitude</param>
+		/// <param name="lon">Longitude</param>
+		/// <param name="radiusMeters">Search radius in meters</param>
+		[HttpGet("GetNearbyIndoorMaps")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<GetIndoorMapsResult>> GetNearbyIndoorMaps(double lat, double lon, double radiusMeters = 200)
+		{
+			var result = new GetIndoorMapsResult();
+
+			var maps = await _indoorMapService.GetIndoorMapsForDepartmentAsync(DepartmentId);
+			if (maps != null)
+			{
+				foreach (var m in maps)
+				{
+					if (IsPointNearBounds(lat, lon, radiusMeters, m.BoundsNELat, m.BoundsNELon, m.BoundsSWLat, m.BoundsSWLon))
+					{
+						result.Data.Add(new IndoorMapResultData
+						{
+							IndoorMapId = m.IndoorMapId,
+							Name = m.Name,
+							Description = m.Description,
+							CenterLatitude = m.CenterLatitude,
+							CenterLongitude = m.CenterLongitude,
+							BoundsNELat = m.BoundsNELat,
+							BoundsNELon = m.BoundsNELon,
+							BoundsSWLat = m.BoundsSWLat,
+							BoundsSWLon = m.BoundsSWLon,
+							DefaultFloorId = m.DefaultFloorId
+						});
+					}
+				}
+			}
+
+			result.PageSize = result.Data.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Returns all zones for an indoor map floor as a GeoJSON FeatureCollection for direct rnmapbox consumption.
+		/// </summary>
+		/// <param name="floorId">Indoor map floor id</param>
+		[HttpGet("GetIndoorMapZonesGeoJSON/{floorId}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<IActionResult> GetIndoorMapZonesGeoJSON(string floorId)
+		{
+			var floor = await _indoorMapService.GetFloorByIdAsync(floorId);
+			if (floor == null)
+				return NotFound();
+
+			var map = await _indoorMapService.GetIndoorMapByIdAsync(floor.IndoorMapId);
+			if (map == null || map.DepartmentId != DepartmentId)
+				return NotFound();
+
+			var zones = await _indoorMapService.GetZonesForFloorAsync(floorId);
+			var geoJson = BuildZonesGeoJson(zones ?? new List<Model.IndoorMapZone>());
+
+			return Content(geoJson, "application/geo+json");
+		}
+
+		/// <summary>
+		/// Returns all regions for a custom map layer as a GeoJSON FeatureCollection for direct rnmapbox consumption.
+		/// </summary>
+		/// <param name="layerId">Custom map layer id</param>
+		[HttpGet("GetCustomMapRegionsGeoJSON/{layerId}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<IActionResult> GetCustomMapRegionsGeoJSON(string layerId)
+		{
+			var layer = await _customMapService.GetLayerByIdAsync(layerId);
+			if (layer == null)
+				return NotFound();
+
+			var map = await _customMapService.GetCustomMapByIdAsync(layer.IndoorMapId);
+			if (map == null || map.DepartmentId != DepartmentId)
+				return NotFound();
+
+			var regions = await _customMapService.GetRegionsForLayerAsync(layerId);
+			var geoJson = BuildZonesGeoJson(regions ?? new List<Model.IndoorMapZone>());
+
+			return Content(geoJson, "application/geo+json");
+		}
+
+		private static string BuildZonesGeoJson(List<Model.IndoorMapZone> zones)
+		{
+			var features = zones
+				.Where(z => !z.IsDeleted && !string.IsNullOrWhiteSpace(z.GeoGeometry))
+				.Select(z =>
+				{
+					JToken geometry;
+					try { geometry = JToken.Parse(z.GeoGeometry); }
+					catch { geometry = JValue.CreateNull(); }
+
+					return new
+					{
+						type = "Feature",
+						id = z.IndoorMapZoneId,
+						geometry,
+						properties = new
+						{
+							id = z.IndoorMapZoneId,
+							name = z.Name,
+							description = z.Description,
+							zoneType = z.ZoneType,
+							color = z.Color,
+							isSearchable = z.IsSearchable,
+							isDispatchable = z.IsDispatchable,
+							metadata = z.Metadata
+						}
+					};
+				})
+				.ToList();
+
+			return JsonConvert.SerializeObject(new { type = "FeatureCollection", features });
+		}
+
+		private static bool IsPointNearBounds(double lat, double lon, double radiusMeters,
+			decimal boundsNELat, decimal boundsNELon, decimal boundsSWLat, decimal boundsSWLon)
+		{
+			// ~111,320 meters per degree of latitude
+			double pad = radiusMeters / 111320.0;
+			return lat <= (double)boundsNELat + pad && lat >= (double)boundsSWLat - pad
+				&& lon <= (double)boundsNELon + pad && lon >= (double)boundsSWLon - pad;
 		}
 	}
 }

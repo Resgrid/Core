@@ -1,5 +1,7 @@
 $(document).ready(function () {
     var map, stopPickerMap, pickerMarker;
+    var startPickerMap, startMarker, startPickerInitialized = false;
+    var endPickerMap, endMarker, endPickerInitialized = false;
     var pendingStops = [];
     var stopIdCounter = 0;
 
@@ -74,8 +76,7 @@ $(document).ready(function () {
                 reverseGeocodeStop(pos.lat, pos.lng);
             });
         }
-        stopPickerMap.panTo(new L.LatLng(lat, lng));
-        stopPickerMap.setZoom(15);
+        stopPickerMap.setView(new L.LatLng(lat, lng), 15);
         if (reverseGeocode) {
             reverseGeocodeStop(lat, lng);
         }
@@ -91,6 +92,176 @@ $(document).ready(function () {
             })
             .catch(function (err) { console.error('Stop reverse geocode error:', err); });
     }
+
+    // ── Start/End location pickers ────────────────────────────────────────────
+    function initStartPickerMap(initialLat, initialLng) {
+        if (startPickerInitialized) {
+            setTimeout(function () { startPickerMap.invalidateSize(); }, 50);
+            return;
+        }
+        var tiles = L.tileLayer(osmTileUrl, { maxZoom: 19, attribution: osmTileAttribution });
+        startPickerMap = L.map('startPickerMap', { scrollWheelZoom: false })
+                          .setView([39.8283, -98.5795], 4)
+                          .addLayer(tiles);
+        startPickerMap.on('click', function (e) { setStartLocation(e.latlng.lat, e.latlng.lng); });
+        startPickerInitialized = true;
+        if (Number.isFinite(Number(initialLat)) && Number.isFinite(Number(initialLng))) { setStartLocation(initialLat, initialLng); }
+    }
+
+    function setStartLocation(lat, lng) {
+        var latStr = parseFloat(lat).toFixed(6);
+        var lngStr = parseFloat(lng).toFixed(6);
+        $('#startLat').val(latStr);
+        $('#startLng').val(lngStr);
+        $('#startLatDisplay').val(latStr);
+        $('#startLngDisplay').val(lngStr);
+        if (startMarker) {
+            startMarker.setLatLng(new L.LatLng(lat, lng));
+        } else {
+            startMarker = L.marker(new L.LatLng(lat, lng), { draggable: true }).addTo(startPickerMap);
+            startMarker.on('dragend', function (event) {
+                var pos = event.target.getLatLng();
+                setStartLocation(pos.lat, pos.lng);
+            });
+        }
+        startPickerMap.setView(new L.LatLng(lat, lng), 15);
+    }
+
+    function initEndPickerMap(initialLat, initialLng) {
+        if (endPickerInitialized) {
+            setTimeout(function () { endPickerMap.invalidateSize(); }, 50);
+            return;
+        }
+        var tiles = L.tileLayer(osmTileUrl, { maxZoom: 19, attribution: osmTileAttribution });
+        endPickerMap = L.map('endPickerMap', { scrollWheelZoom: false })
+                        .setView([39.8283, -98.5795], 4)
+                        .addLayer(tiles);
+        endPickerMap.on('click', function (e) { setEndLocation(e.latlng.lat, e.latlng.lng); });
+        endPickerInitialized = true;
+        if (Number.isFinite(Number(initialLat)) && Number.isFinite(Number(initialLng))) { setEndLocation(initialLat, initialLng); }
+    }
+
+    function setEndLocation(lat, lng) {
+        var latStr = parseFloat(lat).toFixed(6);
+        var lngStr = parseFloat(lng).toFixed(6);
+        $('#endLat').val(latStr);
+        $('#endLng').val(lngStr);
+        $('#endLatDisplay').val(latStr);
+        $('#endLngDisplay').val(lngStr);
+        if (endMarker) {
+            endMarker.setLatLng(new L.LatLng(lat, lng));
+        } else {
+            endMarker = L.marker(new L.LatLng(lat, lng), { draggable: true }).addTo(endPickerMap);
+            endMarker.on('dragend', function (event) {
+                var pos = event.target.getLatLng();
+                setEndLocation(pos.lat, pos.lng);
+            });
+        }
+        endPickerMap.setView(new L.LatLng(lat, lng), 15);
+    }
+
+    function updateLocationPickerVisibility() {
+        if (!$('#chkUseStationAsStart').prop('checked')) {
+            $('#startLocationGroup').show();
+            $('#startLat').prop('disabled', false);
+            $('#startLng').prop('disabled', false);
+            initStartPickerMap();
+        } else {
+            $('#startLocationGroup').hide();
+            $('#startLat').val('').prop('disabled', true);
+            $('#startLng').val('').prop('disabled', true);
+        }
+        if (!$('#chkUseStationAsEnd').prop('checked')) {
+            $('#endLocationGroup').show();
+            $('#endLat').prop('disabled', false);
+            $('#endLng').prop('disabled', false);
+            initEndPickerMap();
+        } else {
+            $('#endLocationGroup').hide();
+            $('#endLat').val('').prop('disabled', true);
+            $('#endLng').val('').prop('disabled', true);
+        }
+    }
+
+    $('#chkUseStationAsStart').on('change', updateLocationPickerVisibility);
+    $('#chkUseStationAsEnd').on('change', updateLocationPickerVisibility);
+
+    // Start – address geocode
+    $('#startAddress').on('keypress', function (e) { if (e.keyCode === 13) { $('#geocodeStartBtn').click(); return false; } });
+    $('#geocodeStartBtn').on('click', function (evt) {
+        evt.preventDefault();
+        var where = $.trim($('#startAddress').val());
+        if (!where) return;
+        fetch(resgrid.absoluteApiBaseUrl + '/api/v4/Geocoding/ForwardGeocode?address=' + encodeURIComponent(where), { headers: { 'Authorization': 'Bearer ' + getAuthToken() } })
+            .then(function (r) { return r.json(); })
+            .then(function (result) {
+                if (result && result.Data && result.Data.Latitude != null && result.Data.Longitude != null) {
+                    setStartLocation(result.Data.Latitude, result.Data.Longitude);
+                } else { alert('Address not found.'); }
+            })
+            .catch(function (err) { console.error('Geocode error:', err); });
+    });
+
+    // Start – What3Words
+    $('#startW3W').on('keypress', function (e) { if (e.keyCode === 13) { $('#findStartW3WBtn').click(); return false; } });
+    $('#findStartW3WBtn').on('click', function (evt) {
+        evt.preventDefault();
+        var word = $.trim($('#startW3W').val());
+        if (!word) return;
+        $.ajax({ url: resgrid.absoluteBaseUrl + '/User/Dispatch/GetCoordinatesFromW3W?words=' + encodeURIComponent(word), type: 'GET' })
+            .done(function (data) {
+                if (data && data.Latitude != null && data.Longitude != null) { setStartLocation(data.Latitude, data.Longitude); }
+                else { alert('What3Words was unable to find a location for those words.'); }
+            });
+    });
+
+    // Start – manual lat/lng
+    $('#applyStartLatLngBtn').on('click', function () {
+        var lat = parseFloat($('#startLatDisplay').val());
+        var lng = parseFloat($('#startLngDisplay').val());
+        if (isNaN(lat) || isNaN(lng)) { alert('Please enter valid coordinates.'); return; }
+        setStartLocation(lat, lng);
+    });
+
+    // End – address geocode
+    $('#endAddress').on('keypress', function (e) { if (e.keyCode === 13) { $('#geocodeEndBtn').click(); return false; } });
+    $('#geocodeEndBtn').on('click', function (evt) {
+        evt.preventDefault();
+        var where = $.trim($('#endAddress').val());
+        if (!where) return;
+        fetch(resgrid.absoluteApiBaseUrl + '/api/v4/Geocoding/ForwardGeocode?address=' + encodeURIComponent(where), { headers: { 'Authorization': 'Bearer ' + getAuthToken() } })
+            .then(function (r) { return r.json(); })
+            .then(function (result) {
+                if (result && result.Data && result.Data.Latitude != null && result.Data.Longitude != null) {
+                    setEndLocation(result.Data.Latitude, result.Data.Longitude);
+                } else { alert('Address not found.'); }
+            })
+            .catch(function (err) { console.error('Geocode error:', err); });
+    });
+
+    // End – What3Words
+    $('#endW3W').on('keypress', function (e) { if (e.keyCode === 13) { $('#findEndW3WBtn').click(); return false; } });
+    $('#findEndW3WBtn').on('click', function (evt) {
+        evt.preventDefault();
+        var word = $.trim($('#endW3W').val());
+        if (!word) return;
+        $.ajax({ url: resgrid.absoluteBaseUrl + '/User/Dispatch/GetCoordinatesFromW3W?words=' + encodeURIComponent(word), type: 'GET' })
+            .done(function (data) {
+                if (data && data.Latitude != null && data.Longitude != null) { setEndLocation(data.Latitude, data.Longitude); }
+                else { alert('What3Words was unable to find a location for those words.'); }
+            });
+    });
+
+    // End – manual lat/lng
+    $('#applyEndLatLngBtn').on('click', function () {
+        var lat = parseFloat($('#endLatDisplay').val());
+        var lng = parseFloat($('#endLngDisplay').val());
+        if (isNaN(lat) || isNaN(lng)) { alert('Please enter valid coordinates.'); return; }
+        setEndLocation(lat, lng);
+    });
+
+    // Initialise visibility on page load
+    updateLocationPickerVisibility();
 
     function renderStopsTable() {
         var $body = $('#stopsTableBody');
@@ -119,6 +290,7 @@ $(document).ready(function () {
         pendingStops.forEach(function (stop, index) {
             if (stop.latitude && stop.longitude) {
                 var m = L.marker([stop.latitude, stop.longitude]).addTo(map);
+                m.bindTooltip((index + 1) + '. ' + escapeHtml(stop.name), { permanent: true, direction: 'right' });
                 m.bindPopup('<strong>' + (index + 1) + '. ' + escapeHtml(stop.name) + '</strong>');
                 group.push(m);
             }

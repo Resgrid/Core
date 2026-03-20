@@ -88,7 +88,10 @@
     <value>New Route</value>
   </data>
   <data name="ActiveRoutes" xml:space="preserve">
-    <value>Active Routes</value>
+    <value>In Progress</value>
+  </data>
+  <data name="ArchivedRoutes" xml:space="preserve">
+    <value>Archived Routes</value>
   </data>
   <data name="Stops" xml:space="preserve">
     <value>Stops</value>
@@ -135,19 +138,37 @@
   </data>
   <!-- ActiveRoutes -->
   <data name="ActiveRoutesPageTitle" xml:space="preserve">
-    <value>Active Routes</value>
+    <value>In Progress Routes</value>
   </data>
   <data name="ActiveRoutesHeader" xml:space="preserve">
-    <value>Active Routes</value>
+    <value>In Progress Routes</value>
   </data>
   <data name="ActiveBreadcrumb" xml:space="preserve">
-    <value>Active</value>
+    <value>In Progress</value>
   </data>
   <data name="NoActiveRoutes" xml:space="preserve">
-    <value>No Active Routes</value>
+    <value>No Routes In Progress</value>
   </data>
   <data name="NoActiveRoutesMessage" xml:space="preserve">
     <value>There are no route instances currently in progress.</value>
+  </data>
+  <data name="ArchivedRoutesPageTitle" xml:space="preserve">
+    <value>Archived Routes</value>
+  </data>
+  <data name="ArchivedRoutesHeader" xml:space="preserve">
+    <value>Archived Routes</value>
+  </data>
+  <data name="ArchivedBreadcrumb" xml:space="preserve">
+    <value>Archived</value>
+  </data>
+  <data name="NoArchivedRoutes" xml:space="preserve">
+    <value>No Archived Routes</value>
+  </data>
+  <data name="NoArchivedRoutesMessage" xml:space="preserve">
+    <value>There are no archived route plans.</value>
+  </data>
+  <data name="ArchivedRouteDetailPageTitle" xml:space="preserve">
+    <value>Archived Route Detail</value>
   </data>
   <data name="UnitLabel" xml:space="preserve">
     <value>Unit</value>
@@ -230,6 +251,34 @@
   </data>
   <data name="CreateRoute" xml:space="preserve">
     <value>Create Route</value>
+  </data>
+  <!-- StartRoute -->
+  <data name="StartRoutePageTitle" xml:space="preserve">
+    <value>Start Route</value>
+  </data>
+  <data name="StartRouteHeader" xml:space="preserve">
+    <value>Start Route</value>
+  </data>
+  <data name="StartRouteBreadcrumb" xml:space="preserve">
+    <value>Start Route</value>
+  </data>
+  <data name="AssignUnit" xml:space="preserve">
+    <value>Assign Unit</value>
+  </data>
+  <data name="SelectUnitPlaceholder" xml:space="preserve">
+    <value>-- Select a Unit --</value>
+  </data>
+  <data name="AssignUnitHelp" xml:space="preserve">
+    <value>Select the unit that will execute this route.</value>
+  </data>
+  <data name="RouteInfoLabel" xml:space="preserve">
+    <value>Route Info</value>
+  </data>
+  <data name="MinEstimated" xml:space="preserve">
+    <value>min estimated</value>
+  </data>
+  <data name="StartRouteNow" xml:space="preserve">
+    <value>Start Route Now</value>
   </data>
   <!-- Edit -->
   <data name="EditRoutePageTitle" xml:space="preserve">

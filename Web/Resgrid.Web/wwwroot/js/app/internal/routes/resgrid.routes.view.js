@@ -42,6 +42,7 @@ $(document).ready(function () {
             routeStops.forEach(function (stop, index) {
                 if (stop.lat != null && stop.lng != null && Number.isFinite(Number(stop.lat)) && Number.isFinite(Number(stop.lng))) {
                     var marker = L.marker([stop.lat, stop.lng]).addTo(map);
+                    marker.bindTooltip((index + 1) + '. ' + escapeHtml(stop.Name), { permanent: true, direction: 'right' });
                     marker.bindPopup('<strong>' + (index + 1) + '. ' + escapeHtml(stop.Name) + '</strong>');
                     group.push(marker);
                 }

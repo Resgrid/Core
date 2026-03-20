@@ -54,5 +54,10 @@ namespace Resgrid.Model.Services
 
 		// Geofence
 		Task<RouteInstanceStop> CheckGeofenceProximityAsync(int unitId, decimal latitude, decimal longitude);
+
+		// Single-record lookups
+		Task<RouteStop> GetRouteStopByIdAsync(string routeStopId);
+		Task<RouteInstanceStop> GetInstanceStopByIdAsync(string routeInstanceStopId);
+		Task<RouteInstanceStop> UpdateInstanceStopNotesAsync(string routeInstanceStopId, string notes, CancellationToken cancellationToken = default);
 	}
 }

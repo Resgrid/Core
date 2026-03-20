@@ -1,36 +1,18 @@
 @model Resgrid.Web.Areas.User.Models.Routes.RouteDetailView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Routes.Routes> localizer
 @{
-    ViewBag.Title = "Resgrid | " + localizer["RouteDetailPageTitle"];
+    ViewBag.Title = "Resgrid | " + localizer["ArchivedRouteDetailPageTitle"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
-    <div class="col-sm-6">
+    <div class="col-sm-12">
         <h2>@Model.Plan.Name</h2>
         <ol class="breadcrumb">
             <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
             <li><a asp-controller="Routes" asp-action="Index" asp-route-area="User">@localizer["RoutesHeader"]</a></li>
+            <li><a asp-controller="Routes" asp-action="ArchivedRoutes" asp-route-area="User">@localizer["ArchivedBreadcrumb"]</a></li>
             <li class="active"><strong>@localizer["ViewBreadcrumb"]</strong></li>
         </ol>
-    </div>
-    <div class="col-sm-6">
-        <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-            @if (Model.Plan.RouteStatus == (int)Resgrid.Model.RouteStatus.Active)
-            {
-                <a class="btn btn-success" asp-controller="Routes" asp-action="StartRoute" asp-route-id="@Model.Plan.RoutePlanId" asp-route-area="User">
-                    <i class="fa fa-play"></i> Start Route
-                </a>
-            }
-            @if (Model.Plan.RouteStatus != (int)Resgrid.Model.RouteStatus.Archived)
-            {
-                <a class="btn btn-info" asp-controller="Routes" asp-action="Directions" asp-route-id="@Model.Plan.RoutePlanId" asp-route-area="User">
-                    <i class="fa fa-map-signs"></i> Directions
-                </a>
-                <a class="btn btn-warning" asp-controller="Routes" asp-action="Edit" asp-route-id="@Model.Plan.RoutePlanId" asp-route-area="User">
-                    <i class="fa fa-pencil"></i> @localizer["Edit"]
-                </a>
-            }
-        </div>
     </div>
 </div>
 
@@ -48,6 +30,9 @@
             <div class="ibox float-e-margins">
                 <div class="ibox-title"><h5>@localizer["DetailsTitle"]</h5></div>
                 <div class="ibox-content">
+                    <div class="alert alert-warning">
+                        <i class="fa fa-archive"></i> This route is archived and cannot be started, edited, or deleted.
+                    </div>
                     <dl class="dl-horizontal">
                         <dt>@localizer["StatusLabel"]</dt>
                         <dd>@((Resgrid.Model.RouteStatus)Model.Plan.RouteStatus)</dd>
@@ -86,6 +71,17 @@
                             </div>
                         }
                     </div>
+                </div>
+            </div>
+
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <a asp-controller="Routes" asp-action="ArchivedRoutes" asp-route-area="User" class="btn btn-default btn-block">
+                        <i class="fa fa-arrow-left"></i> Back to Archived Routes
+                    </a>
+                    <a asp-controller="Routes" asp-action="Instances" asp-route-routePlanId="@Model.Plan.RoutePlanId" asp-route-area="User" class="btn btn-info btn-block m-t-sm">
+                        <i class="fa fa-history"></i> @localizer["History"]
+                    </a>
                 </div>
             </div>
         </div>

@@ -679,7 +679,7 @@
             <param name="floorId">Indoor map floor id</param>
             <returns>Floor image file</returns>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.SearchIndoorLocations(System.String)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.SearchIndoorLocations(System.String,System.String)">
             <summary>
             Searches for indoor map zones matching the specified term.
             </summary>
@@ -724,12 +724,50 @@
             <param name="layerId">Layer id</param>
             <returns>Layer image file</returns>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.SearchCustomMapRegions(System.String)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.SearchCustomMapRegions(System.String,System.String)">
             <summary>
             Searches for custom map regions matching the specified term.
             </summary>
             <param name="term">Search term</param>
             <returns>SearchCustomMapRegionsResult object</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetMapLayerGeoJSON(System.String)">
+            <summary>
+            Returns raw GeoJSON FeatureCollection for a MapLayer (legacy vector layers).
+            </summary>
+            <param name="layerId">Map layer id</param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetAllActiveLayers">
+            <summary>
+            Returns a summary of all map layers that are on by default for the department.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.SearchAllMapFeatures(System.String,System.String)">
+            <summary>
+            Unified search across indoor zones and custom map regions.
+            </summary>
+            <param name="term">Search term</param>
+            <param name="type">Filter: "all" (default), "indoor", or "custom"</param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetNearbyIndoorMaps(System.Double,System.Double,System.Double)">
+            <summary>
+            Returns indoor maps whose bounding box is within radiusMeters of the given lat/lon.
+            </summary>
+            <param name="lat">Latitude</param>
+            <param name="lon">Longitude</param>
+            <param name="radiusMeters">Search radius in meters</param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetIndoorMapZonesGeoJSON(System.String)">
+            <summary>
+            Returns all zones for an indoor map floor as a GeoJSON FeatureCollection for direct rnmapbox consumption.
+            </summary>
+            <param name="floorId">Indoor map floor id</param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MappingController.GetCustomMapRegionsGeoJSON(System.String)">
+            <summary>
+            Returns all regions for a custom map layer as a GeoJSON FeatureCollection for direct rnmapbox consumption.
+            </summary>
+            <param name="layerId">Custom map layer id</param>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.MessagesController">
             <summary>
@@ -1074,6 +1112,48 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.AcknowledgeDeviation(System.String)">
             <summary>
             Acknowledge a deviation
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetStopsForInstance(System.String)">
+            <summary>
+            Gets all stops for an active route instance, merging plan data with execution state
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetStopContact(System.String)">
+            <summary>
+            Gets the full contact record for a route stop's assigned contact
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetRouteContacts(System.String)">
+            <summary>
+            Gets all unique contacts attached to stops on a route plan
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetDirections(System.String)">
+            <summary>
+            Gets the stored route geometry and waypoints for a route plan
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetInstanceDirections(System.String,System.Nullable{System.Decimal},System.Nullable{System.Decimal})">
+            <summary>
+            Gets the route geometry and remaining waypoints for an active route instance.
+            Pass the unit's current latitude and longitude as query parameters to route from
+            the current position rather than the first remaining stop.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.UpdateStopNotes(Resgrid.Web.Services.Models.v4.Routes.UpdateStopNotesInput)">
+            <summary>
+            Updates notes on an active route instance stop
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetActiveRouteInstances">
+            <summary>
+            Gets all active route instances across the department with progress details
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.RoutesController.GetScheduledRoutes">
+            <summary>
+            Gets all active schedules for the department's route plans
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ScimController">
@@ -5973,6 +6053,11 @@
             Can the API services talk to the cache
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetCustomMapRegionsGeoJSONResult.GeoJson">
+            <summary>
+            GeoJSON FeatureCollection string ready for direct rnmapbox ShapeSource consumption
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetIndoorMapsResult.Data">
             <summary>
             Response Data
@@ -6013,6 +6098,11 @@
             Default constructor
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetIndoorMapZonesGeoJSONResult.GeoJson">
+            <summary>
+            GeoJSON FeatureCollection string ready for direct rnmapbox ShapeSource consumption
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetMapDataResult.Data">
             <summary>
             Response Data
@@ -6042,6 +6132,9 @@
             <summary>
             Map Layers
             </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapFeatureResultData.FeatureType">
+            <summary>"indoor_zone" or "custom_region"</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Messages.DeleteMessageResult">
             <summary>
@@ -7232,6 +7325,15 @@
             <summary>
             Response Data
             </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteDirectionsResultData.RouteProfile">
+            <summary>Route profile to use for turn-by-turn navigation: driving, walking, cycling, driving-traffic.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteDirectionsResultData.OriginLatitude">
+            <summary>Origin latitude supplied by the caller (unit's current location). Null means start from the first waypoint.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Routes.RouteDirectionsResultData.OriginLongitude">
+            <summary>Origin longitude supplied by the caller (unit's current location). Null means start from the first waypoint.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Security.DepartmentRightsResult.Data">
             <summary>

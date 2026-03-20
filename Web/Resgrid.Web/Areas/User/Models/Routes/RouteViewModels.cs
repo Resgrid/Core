@@ -6,7 +6,23 @@ namespace Resgrid.Web.Areas.User.Models.Routes
 	public class RouteIndexView : BaseUserModel
 	{
 		public List<RoutePlan> Plans { get; set; }
-		public RouteIndexView() { Plans = new List<RoutePlan>(); }
+		public Dictionary<string, int> StopCounts { get; set; }
+		public RouteIndexView()
+		{
+			Plans = new List<RoutePlan>();
+			StopCounts = new Dictionary<string, int>();
+		}
+	}
+
+	public class ArchivedRouteIndexView : BaseUserModel
+	{
+		public List<RoutePlan> Plans { get; set; }
+		public Dictionary<string, int> StopCounts { get; set; }
+		public ArchivedRouteIndexView()
+		{
+			Plans = new List<RoutePlan>();
+			StopCounts = new Dictionary<string, int>();
+		}
 	}
 
 	public class RouteNewView : BaseUserModel
@@ -102,6 +118,30 @@ namespace Resgrid.Web.Areas.User.Models.Routes
 			Instance = new RouteInstance();
 			Plan = new RoutePlan();
 			Stops = new List<RouteInstanceStop>();
+		}
+	}
+
+	public class RouteStartView : BaseUserModel
+	{
+		public RoutePlan Plan { get; set; }
+		public List<Unit> Units { get; set; }
+		public string RoutePlanId { get; set; }
+		public int SelectedUnitId { get; set; }
+		public RouteStartView()
+		{
+			Plan = new RoutePlan();
+			Units = new List<Unit>();
+		}
+	}
+
+	public class RouteDirectionsView : BaseUserModel
+	{
+		public RoutePlan Plan { get; set; }
+		public List<RouteStop> Stops { get; set; }
+		public RouteDirectionsView()
+		{
+			Plan = new RoutePlan();
+			Stops = new List<RouteStop>();
 		}
 	}
 }

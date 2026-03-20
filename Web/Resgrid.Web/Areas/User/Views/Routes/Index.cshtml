@@ -21,6 +21,7 @@
         <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
             <a class="btn btn-success" asp-controller="Routes" asp-action="New" asp-route-area="User">@localizer["NewRoute"]</a>
             <a class="btn btn-info" asp-controller="Routes" asp-action="ActiveRoutes" asp-route-area="User">@localizer["ActiveRoutes"]</a>
+            <a class="btn btn-default" asp-controller="Routes" asp-action="ArchivedRoutes" asp-route-area="User">@localizer["ArchivedRoutes"]</a>
         </div>
     </div>
 </div>
@@ -48,7 +49,7 @@
                                 <tr>
                                     <td>@plan.Name</td>
                                     <td>@((RouteStatus)plan.RouteStatus)</td>
-                                    <td>-</td>
+                                    <td>@(Model.StopCounts.TryGetValue(plan.RoutePlanId, out var sc) ? sc.ToString() : "0")</td>
                                     <td>@(plan.MapboxRouteProfile ?? "driving")</td>
                                     <td>@plan.AddedOn.ToString("yyyy-MM-dd")</td>
                                     <td>
@@ -57,6 +58,15 @@
                                         </a>
                                         <a class="btn btn-xs btn-warning" asp-controller="Routes" asp-action="Edit" asp-route-id="@plan.RoutePlanId" asp-route-area="User">
                                             <i class="fa fa-pencil"></i> @localizer["Edit"]
+                                        </a>
+                                        @if (plan.RouteStatus == (int)RouteStatus.Active)
+                                        {
+                                            <a class="btn btn-xs btn-success" asp-controller="Routes" asp-action="StartRoute" asp-route-id="@plan.RoutePlanId" asp-route-area="User">
+                                                <i class="fa fa-play"></i> Start
+                                            </a>
+                                        }
+                                        <a class="btn btn-xs btn-default" asp-controller="Routes" asp-action="Directions" asp-route-id="@plan.RoutePlanId" asp-route-area="User">
+                                            <i class="fa fa-map-signs"></i> Directions
                                         </a>
                                         <a class="btn btn-xs btn-info" asp-controller="Routes" asp-action="Instances" asp-route-routePlanId="@plan.RoutePlanId" asp-route-area="User">
                                             <i class="fa fa-history"></i> @localizer["History"]

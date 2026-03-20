@@ -36,7 +36,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Index()
 		{
 			var model = new RouteIndexView();
-			model.Plans = await _routeService.GetRoutePlansForDepartmentAsync(DepartmentId);
+			var allPlans = await _routeService.GetRoutePlansForDepartmentAsync(DepartmentId);
+			model.Plans = allPlans.Where(p => p.RouteStatus != (int)RouteStatus.Archived).ToList();
+			foreach (var plan in model.Plans)
+			{
+				var stops = await _routeService.GetRouteStopsForPlanAsync(plan.RoutePlanId);
+				model.StopCounts[plan.RoutePlanId] = stops.Count;
+			}
 			return View(model);
 		}
 
@@ -143,6 +149,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var plan = await _routeService.GetRoutePlanByIdAsync(id);
 			if (plan == null || plan.DepartmentId != DepartmentId)
 				return RedirectToAction("Index");
+			if (plan.RouteStatus == (int)RouteStatus.Archived)
+				return RedirectToAction("ArchivedView", new { id });
 
 			var model = new RouteEditView();
 			model.Plan = plan;
@@ -163,6 +171,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var existing = await _routeService.GetRoutePlanByIdAsync(model.Plan.RoutePlanId);
 				if (existing == null || existing.DepartmentId != DepartmentId)
 					return RedirectToAction("Index");
+				if (existing.RouteStatus == (int)RouteStatus.Archived)
+					return RedirectToAction("ArchivedView", new { id = model.Plan.RoutePlanId });
 
 				model.Plan.DepartmentId = DepartmentId;
 				model.Plan.UpdatedById = UserId;
@@ -186,7 +196,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
 		{
 			var plan = await _routeService.GetRoutePlanByIdAsync(id);
-			if (plan != null && plan.DepartmentId == DepartmentId)
+			if (plan != null && plan.DepartmentId == DepartmentId && plan.RouteStatus != (int)RouteStatus.Archived)
 			{
 				await _routeService.DeleteRoutePlanAsync(id, cancellationToken);
 			}
@@ -341,6 +351,99 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return Json(new { success = deleted });
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Route_Update)]
+		public async Task<IActionResult> StartRoute(string id)
+		{
+			var plan = await _routeService.GetRoutePlanByIdAsync(id);
+			if (plan == null || plan.DepartmentId != DepartmentId)
+				return RedirectToAction("Index");
+			if (plan.RouteStatus != (int)RouteStatus.Active)
+				return RedirectToAction("View", new { id });
+
+			var model = new RouteStartView();
+			model.Plan = plan;
+			model.RoutePlanId = id;
+			model.Units = (await _unitsService.GetUnitsForDepartmentAsync(DepartmentId)).ToList();
+			return View(model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Route_Update)]
+		public async Task<IActionResult> StartRoute(RouteStartView model, CancellationToken cancellationToken)
+		{
+			var plan = await _routeService.GetRoutePlanByIdAsync(model.RoutePlanId);
+			if (plan == null || plan.DepartmentId != DepartmentId)
+				return RedirectToAction("Index");
+			if (plan.RouteStatus != (int)RouteStatus.Active)
+				return RedirectToAction("View", new { id = model.RoutePlanId });
+
+			try
+			{
+				var instance = await _routeService.StartRouteAsync(model.RoutePlanId, model.SelectedUnitId, UserId, cancellationToken);
+				return RedirectToAction("InstanceDetail", new { instanceId = instance.RouteInstanceId });
+			}
+			catch (InvalidOperationException ex)
+			{
+				// Unit already has an active route — let the user pick a different unit.
+				ModelState.AddModelError(nameof(model.SelectedUnitId), ex.Message);
+				model.Plan = plan;
+				model.Units = (await _unitsService.GetUnitsForDepartmentAsync(DepartmentId)).ToList();
+				return View(model);
+			}
+			catch (ArgumentException)
+			{
+				// Route plan disappeared between validation and start — redirect to Index.
+				return RedirectToAction("Index");
+			}
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Route_View)]
+		public async Task<IActionResult> Directions(string id)
+		{
+			var plan = await _routeService.GetRoutePlanByIdAsync(id);
+			if (plan == null || plan.DepartmentId != DepartmentId)
+				return RedirectToAction("Index");
+			if (plan.RouteStatus == (int)RouteStatus.Archived)
+				return RedirectToAction("ArchivedView", new { id });
+
+			var model = new RouteDirectionsView();
+			model.Plan = plan;
+			model.Stops = (await _routeService.GetRouteStopsForPlanAsync(id)).OrderBy(s => s.StopOrder).ToList();
+			return View(model);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Route_View)]
+		public async Task<IActionResult> ArchivedRoutes()
+		{
+			var model = new ArchivedRouteIndexView();
+			var allPlans = await _routeService.GetRoutePlansForDepartmentAsync(DepartmentId);
+			model.Plans = allPlans.Where(p => p.RouteStatus == (int)RouteStatus.Archived).ToList();
+			foreach (var plan in model.Plans)
+			{
+				var stops = await _routeService.GetRouteStopsForPlanAsync(plan.RoutePlanId);
+				model.StopCounts[plan.RoutePlanId] = stops.Count;
+			}
+			return View(model);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Route_View)]
+		public async Task<IActionResult> ArchivedView(string id)
+		{
+			var plan = await _routeService.GetRoutePlanByIdAsync(id);
+			if (plan == null || plan.DepartmentId != DepartmentId || plan.RouteStatus != (int)RouteStatus.Archived)
+				return RedirectToAction("ArchivedRoutes");
+
+			var model = new RouteDetailView();
+			model.Plan = plan;
+			model.Stops = await _routeService.GetRouteStopsForPlanAsync(id);
+			return View(model);
 		}
 
 		[HttpGet]

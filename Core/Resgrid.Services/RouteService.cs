@@ -415,6 +415,31 @@ namespace Resgrid.Services
 
 		#endregion Mapbox Integration
 
+		#region Single-record lookups
+
+		public async Task<RouteStop> GetRouteStopByIdAsync(string routeStopId)
+		{
+			return await _routeStopsRepository.GetByIdAsync(routeStopId);
+		}
+
+		public async Task<RouteInstanceStop> GetInstanceStopByIdAsync(string routeInstanceStopId)
+		{
+			return await _routeInstanceStopsRepository.GetByIdAsync(routeInstanceStopId);
+		}
+
+		public async Task<RouteInstanceStop> UpdateInstanceStopNotesAsync(string routeInstanceStopId, string notes, CancellationToken cancellationToken = default)
+		{
+			var instanceStop = await _routeInstanceStopsRepository.GetByIdAsync(routeInstanceStopId);
+			if (instanceStop == null)
+				throw new ArgumentException("Route instance stop not found.", nameof(routeInstanceStopId));
+
+			instanceStop.Notes = notes;
+			await _routeInstanceStopsRepository.SaveOrUpdateAsync(instanceStop, cancellationToken);
+			return instanceStop;
+		}
+
+		#endregion Single-record lookups
+
 		#region Geofence
 
 		public async Task<RouteInstanceStop> CheckGeofenceProximityAsync(int unitId, decimal latitude, decimal longitude)

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
+using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.Routes;
 using System;
 using System.Collections.Generic;
@@ -21,10 +22,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 	public class RoutesController : V4AuthenticatedApiControllerbase
 	{
 		private readonly IRouteService _routeService;
+		private readonly IContactsService _contactsService;
 
-		public RoutesController(IRouteService routeService)
+		public RoutesController(IRouteService routeService, IContactsService contactsService)
 		{
 			_routeService = routeService;
+			_contactsService = contactsService;
 		}
 
 		/// <summary>
@@ -58,6 +61,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			result.PageSize = result.Data.Count;
+			ResponseHelper.PopulateV4ResponseData(result);
 			return Ok(result);
 		}
 
@@ -74,6 +78,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			foreach (var plan in plans.Where(p => p.DepartmentId == DepartmentId))
 			{
+				var stops = await _routeService.GetRouteStopsForPlanAsync(plan.RoutePlanId);
 				result.Data.Add(new RoutePlanResultData
 				{
 					RoutePlanId = plan.RoutePlanId,
@@ -82,12 +87,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 					UnitId = plan.UnitId,
 					RouteStatus = plan.RouteStatus,
 					RouteColor = plan.RouteColor,
+					StopsCount = stops.Count,
 					MapboxRouteProfile = plan.MapboxRouteProfile,
 					AddedOn = plan.AddedOn
 				});
 			}
 
 			result.PageSize = result.Data.Count;
+			ResponseHelper.PopulateV4ResponseData(result);
 			return Ok(result);
 		}
 
@@ -146,6 +153,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					PlannedArrivalTime = s.PlannedArrivalTime,
 					PlannedDepartureTime = s.PlannedDepartureTime,
 					EstimatedDwellMinutes = s.EstimatedDwellMinutes,
+					ContactId = s.ContactId,
 					ContactName = s.ContactName,
 					ContactNumber = s.ContactNumber,
 					Notes = s.Notes
@@ -164,6 +172,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}).ToList()
 			};
 
+			ResponseHelper.PopulateV4ResponseData(result);
 			return Ok(result);
 		}
 
@@ -251,8 +260,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 			}
 
-			return CreatedAtAction(nameof(GetRoutePlan), new { id = plan.RoutePlanId },
-				new SaveRoutePlanResult { Id = plan.RoutePlanId, Status = "Created" });
+			var createResult = new SaveRoutePlanResult { Id = plan.RoutePlanId, Status = "Created" };
+			ResponseHelper.PopulateV4ResponseData(createResult);
+			return CreatedAtAction(nameof(GetRoutePlan), new { id = plan.RoutePlanId }, createResult);
 		}
 
 		/// <summary>
@@ -287,7 +297,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			await _routeService.SaveRoutePlanAsync(plan);
 
-			return Ok(new SaveRoutePlanResult { Id = plan.RoutePlanId, Status = "Updated" });
+			var updateResult = new SaveRoutePlanResult { Id = plan.RoutePlanId, Status = "Updated" };
+			ResponseHelper.PopulateV4ResponseData(updateResult);
+			return Ok(updateResult);
 		}
 
 		/// <summary>
@@ -319,6 +331,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var result = new GetRouteInstanceResult();
 			result.Data = MapInstanceToResult(instance);
+			ResponseHelper.PopulateV4ResponseData(result);
 			return Ok(result);
 		}
 
@@ -334,6 +347,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var result = new GetRouteInstanceResult();
 			result.Data = MapInstanceToResult(instance);
+			ResponseHelper.PopulateV4ResponseData(result);
 			return Ok(result);
 		}
 
@@ -349,6 +363,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var result = new GetRouteInstanceResult();
 			result.Data = MapInstanceToResult(instance);
+			ResponseHelper.PopulateV4ResponseData(result);
 			return Ok(result);
 		}
 
@@ -364,6 +379,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var result = new GetRouteInstanceResult();
 			result.Data = MapInstanceToResult(instance);
+			ResponseHelper.PopulateV4ResponseData(result);
 			return Ok(result);
 		}
 
@@ -379,6 +395,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var result = new GetRouteInstanceResult();
 			result.Data = MapInstanceToResult(instance);
+			ResponseHelper.PopulateV4ResponseData(result);
 			return Ok(result);
 		}
 
@@ -395,7 +412,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (instance == null || instance.DepartmentId != DepartmentId)
 				return NotFound();
 
-			return Ok(await BuildProgressResult(instance));
+			var result = await BuildProgressResult(instance);
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
 		}
 
 		/// <summary>
@@ -416,6 +435,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			result.PageSize = result.Data.Count;
+			ResponseHelper.PopulateV4ResponseData(result);
 			return Ok(result);
 		}
 
@@ -443,6 +463,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			result.PageSize = result.Data.Count;
+			ResponseHelper.PopulateV4ResponseData(result);
 			return Ok(result);
 		}
 
@@ -459,7 +480,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (instance == null || instance.DepartmentId != DepartmentId)
 				return NotFound();
 
-			return Ok(await BuildProgressResult(instance));
+			var result = await BuildProgressResult(instance);
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
 		}
 
 		/// <summary>
@@ -540,6 +563,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}).ToList();
 
 			result.PageSize = result.Data.Count;
+			ResponseHelper.PopulateV4ResponseData(result);
 			return Ok(result);
 		}
 
@@ -555,7 +579,395 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return Ok();
 		}
 
+		/// <summary>
+		/// Gets all stops for an active route instance, merging plan data with execution state
+		/// </summary>
+		[HttpGet("GetStopsForInstance/{instanceId}")]
+		[Authorize(Policy = ResgridResources.Route_View)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<GetRouteStopsWithDetailsResult>> GetStopsForInstance(string instanceId)
+		{
+			var instance = await _routeService.GetInstanceByIdAsync(instanceId);
+			if (instance == null || instance.DepartmentId != DepartmentId)
+				return NotFound();
+
+			var planStops = await _routeService.GetRouteStopsForPlanAsync(instance.RoutePlanId);
+			var instanceStops = await _routeService.GetInstanceStopsAsync(instanceId);
+			var instanceStopLookup = instanceStops.ToDictionary(s => s.RouteStopId);
+
+			var result = new GetRouteStopsWithDetailsResult();
+			foreach (var stop in planStops.OrderBy(s => s.StopOrder))
+			{
+				instanceStopLookup.TryGetValue(stop.RouteStopId, out var iStop);
+
+				var data = new RouteStopWithDetailsResultData
+				{
+					RouteStopId = stop.RouteStopId,
+					RoutePlanId = stop.RoutePlanId,
+					StopOrder = stop.StopOrder,
+					Name = stop.Name,
+					Description = stop.Description,
+					StopType = stop.StopType,
+					CallId = stop.CallId,
+					Latitude = stop.Latitude,
+					Longitude = stop.Longitude,
+					Address = stop.Address,
+					GeofenceRadiusMeters = stop.GeofenceRadiusMeters,
+					Priority = stop.Priority,
+					PlannedArrivalTime = stop.PlannedArrivalTime,
+					PlannedDepartureTime = stop.PlannedDepartureTime,
+					EstimatedDwellMinutes = stop.EstimatedDwellMinutes,
+					ContactId = stop.ContactId,
+					ContactName = stop.ContactName,
+					ContactNumber = stop.ContactNumber,
+					PlanNotes = stop.Notes
+				};
+
+				if (iStop != null)
+				{
+					data.RouteInstanceStopId = iStop.RouteInstanceStopId;
+					data.RouteInstanceId = iStop.RouteInstanceId;
+					data.Status = iStop.Status;
+					data.CheckInOn = iStop.CheckInOn;
+					data.CheckInType = iStop.CheckInType;
+					data.CheckInLatitude = iStop.CheckInLatitude;
+					data.CheckInLongitude = iStop.CheckInLongitude;
+					data.CheckOutOn = iStop.CheckOutOn;
+					data.CheckOutLatitude = iStop.CheckOutLatitude;
+					data.CheckOutLongitude = iStop.CheckOutLongitude;
+					data.DwellSeconds = iStop.DwellSeconds;
+					data.SkipReason = iStop.SkipReason;
+					data.InstanceNotes = iStop.Notes;
+					data.EstimatedArrivalOn = iStop.EstimatedArrivalOn;
+					data.ActualArrivalDeviation = iStop.ActualArrivalDeviation;
+				}
+
+				result.Data.Add(data);
+			}
+
+			result.PageSize = result.Data.Count;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Gets the full contact record for a route stop's assigned contact
+		/// </summary>
+		[HttpGet("GetStopContact/{routeStopId}")]
+		[Authorize(Policy = ResgridResources.Route_View)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<GetStopContactResult>> GetStopContact(string routeStopId)
+		{
+			var stop = await _routeService.GetRouteStopByIdAsync(routeStopId);
+			if (stop == null)
+				return NotFound();
+
+			var plan = await _routeService.GetRoutePlanByIdAsync(stop.RoutePlanId);
+			if (plan == null || plan.DepartmentId != DepartmentId)
+				return NotFound();
+
+			if (string.IsNullOrWhiteSpace(stop.ContactId))
+				return NotFound();
+
+			var contact = await _contactsService.GetContactByIdAsync(stop.ContactId);
+			if (contact == null || contact.DepartmentId != DepartmentId)
+				return NotFound();
+
+			var result = new GetStopContactResult
+			{
+				Data = MapContactToResult(contact, stop.RouteStopId, stop.Name)
+			};
+
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Gets all unique contacts attached to stops on a route plan
+		/// </summary>
+		[HttpGet("GetRouteContacts/{routePlanId}")]
+		[Authorize(Policy = ResgridResources.Route_View)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<GetRouteContactsResult>> GetRouteContacts(string routePlanId)
+		{
+			var plan = await _routeService.GetRoutePlanByIdAsync(routePlanId);
+			if (plan == null || plan.DepartmentId != DepartmentId)
+				return NotFound();
+
+			var stops = await _routeService.GetRouteStopsForPlanAsync(routePlanId);
+			var result = new GetRouteContactsResult();
+
+			var seenContactIds = new HashSet<string>();
+			foreach (var stop in stops.Where(s => !string.IsNullOrWhiteSpace(s.ContactId)))
+			{
+				if (!seenContactIds.Add(stop.ContactId))
+					continue;
+
+				var contact = await _contactsService.GetContactByIdAsync(stop.ContactId);
+				if (contact != null && contact.DepartmentId == DepartmentId)
+					result.Data.Add(MapContactToResult(contact, stop.RouteStopId, stop.Name));
+			}
+
+			result.PageSize = result.Data.Count;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Gets the stored route geometry and waypoints for a route plan
+		/// </summary>
+		[HttpGet("GetDirections/{routePlanId}")]
+		[Authorize(Policy = ResgridResources.Route_View)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<GetRouteDirectionsResult>> GetDirections(string routePlanId)
+		{
+			var plan = await _routeService.GetRoutePlanByIdAsync(routePlanId);
+			if (plan == null || plan.DepartmentId != DepartmentId)
+				return NotFound();
+
+			var stops = await _routeService.GetRouteStopsForPlanAsync(routePlanId);
+
+			var result = new GetRouteDirectionsResult
+			{
+				Data = new RouteDirectionsResultData
+				{
+					RoutePlanId = routePlanId,
+					Geometry = plan.MapboxRouteGeometry,
+					EstimatedDistanceMeters = plan.EstimatedDistanceMeters,
+					EstimatedDurationSeconds = plan.EstimatedDurationSeconds,
+					RouteProfile = plan.MapboxRouteProfile ?? "driving",
+					Waypoints = stops.OrderBy(s => s.StopOrder).Select(s => new RouteDirectionWaypointData
+					{
+						RouteStopId = s.RouteStopId,
+						StopOrder = s.StopOrder,
+						Name = s.Name,
+						Latitude = s.Latitude,
+						Longitude = s.Longitude,
+						Address = s.Address,
+						Status = 0
+					}).ToList()
+				}
+			};
+
+			result.PageSize = 1;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Gets the route geometry and remaining waypoints for an active route instance.
+		/// Pass the unit's current latitude and longitude as query parameters to route from
+		/// the current position rather than the first remaining stop.
+		/// </summary>
+		[HttpGet("GetInstanceDirections/{instanceId}")]
+		[Authorize(Policy = ResgridResources.Route_View)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<GetRouteDirectionsResult>> GetInstanceDirections(
+			string instanceId,
+			[FromQuery] decimal? latitude = null,
+			[FromQuery] decimal? longitude = null)
+		{
+			var instance = await _routeService.GetInstanceByIdAsync(instanceId);
+			if (instance == null || instance.DepartmentId != DepartmentId)
+				return NotFound();
+
+			var plan = await _routeService.GetRoutePlanByIdAsync(instance.RoutePlanId);
+			var planStops = await _routeService.GetRouteStopsForPlanAsync(instance.RoutePlanId);
+			var instanceStops = await _routeService.GetInstanceStopsAsync(instanceId);
+			var instanceStopLookup = instanceStops.ToDictionary(s => s.RouteStopId);
+
+			var waypoints = planStops.OrderBy(s => s.StopOrder)
+				.Select(s =>
+				{
+					instanceStopLookup.TryGetValue(s.RouteStopId, out var iStop);
+					return new RouteDirectionWaypointData
+					{
+						RouteStopId = s.RouteStopId,
+						RouteInstanceStopId = iStop?.RouteInstanceStopId,
+						StopOrder = s.StopOrder,
+						Name = s.Name,
+						Latitude = s.Latitude,
+						Longitude = s.Longitude,
+						Address = s.Address,
+						Status = iStop?.Status ?? 0
+					};
+				})
+				.Where(w => w.Status == 0 || w.Status == 1) // Pending or CheckedIn only
+				.ToList();
+
+			// When the caller provides a current position, record it as the origin so
+			// clients can route from the live location instead of the first stop.
+			decimal? originLat = null;
+			decimal? originLng = null;
+			if (latitude.HasValue && longitude.HasValue &&
+			    latitude.Value != 0 && longitude.Value != 0)
+			{
+				originLat = latitude.Value;
+				originLng = longitude.Value;
+			}
+
+			var result = new GetRouteDirectionsResult
+			{
+				Data = new RouteDirectionsResultData
+				{
+					RoutePlanId = instance.RoutePlanId,
+					RouteInstanceId = instanceId,
+					Geometry = plan?.MapboxRouteGeometry,
+					EstimatedDistanceMeters = plan?.EstimatedDistanceMeters,
+					EstimatedDurationSeconds = plan?.EstimatedDurationSeconds,
+					RouteProfile = plan?.MapboxRouteProfile ?? "driving",
+					OriginLatitude = originLat,
+					OriginLongitude = originLng,
+					Waypoints = waypoints
+				}
+			};
+
+			result.PageSize = 1;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Updates notes on an active route instance stop
+		/// </summary>
+		[HttpPost("UpdateStopNotes")]
+		[Authorize(Policy = ResgridResources.Route_Update)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult> UpdateStopNotes([FromBody] UpdateStopNotesInput input)
+		{
+			var instanceStop = await _routeService.GetInstanceStopByIdAsync(input.RouteInstanceStopId);
+			if (instanceStop == null)
+				return NotFound();
+
+			var instance = await _routeService.GetInstanceByIdAsync(instanceStop.RouteInstanceId);
+			if (instance == null || instance.DepartmentId != DepartmentId)
+				return NotFound();
+
+			await _routeService.UpdateInstanceStopNotesAsync(input.RouteInstanceStopId, input.Notes);
+			return Ok();
+		}
+
+		/// <summary>
+		/// Gets all active route instances across the department with progress details
+		/// </summary>
+		[HttpGet("GetActiveRouteInstances")]
+		[Authorize(Policy = ResgridResources.Route_View)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<ActionResult<GetActiveRouteInstancesResult>> GetActiveRouteInstances()
+		{
+			var instances = await _routeService.GetInstancesForDepartmentAsync(DepartmentId);
+			var active = instances.Where(i => i.Status == (int)RouteInstanceStatus.InProgress || i.Status == (int)RouteInstanceStatus.Paused);
+
+			var result = new GetActiveRouteInstancesResult();
+			foreach (var instance in active)
+			{
+				var plan = await _routeService.GetRoutePlanByIdAsync(instance.RoutePlanId);
+				var instanceStops = await _routeService.GetInstanceStopsAsync(instance.RouteInstanceId);
+
+				var currentStop = instanceStops.Where(s => s.Status == 0 || s.Status == 1)
+					.OrderBy(s => s.StopOrder).FirstOrDefault();
+				string currentStopName = null;
+				if (currentStop != null)
+				{
+					var routeStop = await _routeService.GetRouteStopByIdAsync(currentStop.RouteStopId);
+					currentStopName = routeStop?.Name;
+				}
+
+				int progressPercent = instance.StopsTotal > 0
+					? (int)Math.Round((double)instance.StopsCompleted / instance.StopsTotal * 100)
+					: 0;
+
+				result.Data.Add(new ActiveRouteInstanceResultData
+				{
+					RouteInstanceId = instance.RouteInstanceId,
+					RoutePlanId = instance.RoutePlanId,
+					RoutePlanName = plan?.Name,
+					UnitId = instance.UnitId,
+					Status = instance.Status,
+					ActualStartOn = instance.ActualStartOn,
+					StopsCompleted = instance.StopsCompleted,
+					StopsTotal = instance.StopsTotal,
+					ProgressPercent = progressPercent,
+					CurrentStopIndex = currentStop?.StopOrder ?? -1,
+					CurrentStopName = currentStopName
+				});
+			}
+
+			result.PageSize = result.Data.Count;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Gets all active schedules for the department's route plans
+		/// </summary>
+		[HttpGet("GetScheduledRoutes")]
+		[Authorize(Policy = ResgridResources.Route_View)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<ActionResult<GetScheduledRoutesResult>> GetScheduledRoutes()
+		{
+			var plans = await _routeService.GetRoutePlansForDepartmentAsync(DepartmentId);
+			var result = new GetScheduledRoutesResult();
+
+			foreach (var plan in plans)
+			{
+				var schedules = await _routeService.GetSchedulesForPlanAsync(plan.RoutePlanId);
+				foreach (var schedule in schedules.Where(s => s.IsActive))
+				{
+					result.Data.Add(new ScheduledRouteResultData
+					{
+						RouteScheduleId = schedule.RouteScheduleId,
+						RoutePlanId = plan.RoutePlanId,
+						RoutePlanName = plan.Name,
+						UnitId = plan.UnitId,
+						RecurrenceType = schedule.RecurrenceType,
+						RecurrenceCron = schedule.RecurrenceCron,
+						DaysOfWeek = schedule.DaysOfWeek,
+						DayOfMonth = schedule.DayOfMonth,
+						ScheduledStartTime = schedule.ScheduledStartTime,
+						EffectiveFrom = schedule.EffectiveFrom,
+						EffectiveTo = schedule.EffectiveTo,
+						IsActive = schedule.IsActive
+					});
+				}
+			}
+
+			result.PageSize = result.Data.Count;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
 		#region Helpers
+
+		private static RouteStopContactResultData MapContactToResult(Contact contact, string routeStopId, string stopName)
+		{
+			return new RouteStopContactResultData
+			{
+				ContactId = contact.ContactId,
+				RouteStopId = routeStopId,
+				StopName = stopName,
+				ContactType = contact.ContactType,
+				FirstName = contact.FirstName,
+				LastName = contact.LastName,
+				CompanyName = contact.CompanyName,
+				Email = contact.Email,
+				HomePhoneNumber = contact.HomePhoneNumber,
+				CellPhoneNumber = contact.CellPhoneNumber,
+				OfficePhoneNumber = contact.OfficePhoneNumber,
+				Website = contact.Website,
+				LocationGpsCoordinates = contact.LocationGpsCoordinates,
+				EntranceGpsCoordinates = contact.EntranceGpsCoordinates,
+				ExitGpsCoordinates = contact.ExitGpsCoordinates,
+				LocationGeofence = contact.LocationGeofence,
+				Description = contact.Description
+			};
+		}
 
 		private RouteInstanceResultData MapInstanceToResult(RouteInstance instance)
 		{

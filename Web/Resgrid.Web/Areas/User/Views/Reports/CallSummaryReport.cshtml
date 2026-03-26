@@ -1,7 +1,9 @@
-﻿@using Resgrid.Model.Helpers
+@using Resgrid.Model.Helpers
 @using Resgrid.Web
 @using Resgrid.Web.Helpers
+@using Microsoft.Extensions.Localization
 @model Resgrid.Web.Areas.User.Models.Reports.Calls.CallSummaryView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Reports.Reports> localizer
 @{
 	Layout = null;
 }
@@ -10,9 +12,9 @@
 
 <html lang="en">
 <head>
-	<title>Call Summary Report</title>
+	<title>@localizer["CallSummaryReportName"]</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="Call Summary Report">
+	<meta name="description" content="@localizer["CallSummaryReportName"]">
 	<meta name="author" content="Resgrid">
 
 	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"
@@ -48,13 +50,13 @@
 				<img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
 			</div>
 			<div class="col-md-6" style="text-align: right;">
-				<h3 style="margin-top: 10px;">Call Summary Report</h3>
+				<h3 style="margin-top: 10px;">@localizer["CallSummaryReportName"]</h3>
 				<span>@Model.Start.FormatForDepartment(Model.Department)</span><span>-</span><span>@Model.End.FormatForDepartment(Model.Department)</span>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-10 col-md-offset-1">
-				<h4>Call Types</h4>
+				<h4>@localizer["CallTypes"]</h4>
 			</div>
 		</div>
 		<div class="row">
@@ -62,9 +64,9 @@
 				<table class="table table-condensed">
 					<thead>
 						<tr>
-							<th>Type</th>
-							<th>Count</th>
-							<th>%</th>
+							<th>@localizer["TypeHeader"]</th>
+							<th>@localizer["CountHeader"]</th>
+							<th>@localizer["PercentHeader"]</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -99,7 +101,7 @@
 		</div>
 		<div class="row">
 			<div class="col-md-10 col-md-offset-1">
-				<h4>Call States</h4>
+				<h4>@localizer["CallStates"]</h4>
 			</div>
 		</div>
 		<div class="row">
@@ -107,9 +109,9 @@
 				<table class="table table-condensed">
 					<thead>
 						<tr>
-							<th>State</th>
-							<th>Count</th>
-							<th>%</th>
+							<th>@localizer["StateHeader"]</th>
+							<th>@localizer["CountHeader"]</th>
+							<th>@localizer["PercentHeader"]</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -144,7 +146,7 @@
 		</div>
 		<div class="row">
 			<div class="col-md-10 col-md-offset-1">
-				<h4>Calls</h4>
+				<h4>@localizer["Calls"]</h4>
 			</div>
 		</div>
 		<div class="row">
@@ -152,15 +154,15 @@
 				<table class="table table-condensed">
 					<thead>
 						<tr>
-							<th>Number</th>
-							<th>Name</th>
-							<th>Type</th>
-							<th>Logged On</th>
-							<th>Closed On</th>
-							<th>Call Length</th>
-							<th>OnScene Time</th>
-							<th>Units</th>
-							<th>Personnel</th>
+							<th>@localizer["NumberHeader"]</th>
+							<th>@localizer["NameHeader"]</th>
+							<th>@localizer["TypeHeader"]</th>
+							<th>@localizer["LoggedOnHeader"]</th>
+							<th>@localizer["ClosedOnHeader"]</th>
+							<th>@localizer["CallLengthHeader"]</th>
+							<th>@localizer["OnSceneTimeHeader"]</th>
+							<th>@localizer["UnitsHeader"]</th>
+							<th>@localizer["PersonnelHeader"]</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -177,7 +179,7 @@
 								}
 								else
 								{
-									<td>Open</td>
+									<td>@localizer["OpenStatus"]</td>
 								}
 								<td>@callState.GetCallLength()</td>
 								<td>@callState.GetOnSceneTime()</td>

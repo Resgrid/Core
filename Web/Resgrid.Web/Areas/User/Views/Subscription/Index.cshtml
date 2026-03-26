@@ -212,7 +212,11 @@
     {
         <div class="col-sm-8">
             <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-                @if (!string.IsNullOrWhiteSpace(Model.StripeCustomer))
+                @if (Model.IsPaddleDepartment)
+                {
+                    <a title="Cancel" class="btn btn-danger" href="@Url.Action("Cancel", "Subscription", new { Area = "User" })">@localizer["CancelSub"]</a>
+                }
+                else if (!string.IsNullOrWhiteSpace(Model.StripeCustomer))
                 {
                     <a title="Manage Your Sub" class="btn btn-info" href="@Model.StripeCustomerPortalUrl">@localizer["ManageYourSubscription"]</a>
                 }
@@ -361,10 +365,18 @@
                                                             <hr class="style">
                                                             <div class="form-group total">
                                                                 <div class="col-sm-6 text-center">
-                                                                    <a id="buyYearlyButton" title="@localizer["BuyYearly"]" class="btn btn-primary" href="#" onclick="stripeCheckout(36);">@localizer["BuyYearly"]</a>
+                                                                    @if (Model.IsPaddleDepartment) {
+                                                                        <a id="buyYearlyButton" title="@localizer["BuyYearly"]" class="btn btn-primary" href="#" onclick="paddleCheckout(36);">@localizer["BuyYearly"]</a>
+                                                                    } else {
+                                                                        <a id="buyYearlyButton" title="@localizer["BuyYearly"]" class="btn btn-primary" href="#" onclick="stripeCheckout(36);">@localizer["BuyYearly"]</a>
+                                                                    }
                                                                 </div>
                                                                 <div class="col-sm-6 text-center">
-                                                                    <a id="buyMonthlyButton" title="@localizer["BuyMonthly"]" class="btn btn-primary" href="#" onclick="stripeCheckout(37);">@localizer["BuyMonthly"]</a>
+                                                                    @if (Model.IsPaddleDepartment) {
+                                                                        <a id="buyMonthlyButton" title="@localizer["BuyMonthly"]" class="btn btn-primary" href="#" onclick="paddleCheckout(37);">@localizer["BuyMonthly"]</a>
+                                                                    } else {
+                                                                        <a id="buyMonthlyButton" title="@localizer["BuyMonthly"]" class="btn btn-primary" href="#" onclick="stripeCheckout(37);">@localizer["BuyMonthly"]</a>
+                                                                    }
                                                                 </div>
                                                             </div>
 
@@ -382,7 +394,11 @@
                                                 </div>
 
                                                 <div class="text-center">
-                                                    @if (!string.IsNullOrWhiteSpace(Model.StripeCustomer))
+                                                    @if (Model.IsPaddleDepartment)
+                                                    {
+                                                        <a title="Cancel" class="btn btn-danger" href="@Url.Action("Cancel", "Subscription", new { Area = "User" })">@localizer["CancelSub"]</a>
+                                                    }
+                                                    else if (!string.IsNullOrWhiteSpace(Model.StripeCustomer))
                                                     {
                                                         <a title="Manage Your Sub" class="btn btn-info" href="@Model.StripeCustomerPortalUrl">@localizer["ManageYourSubscription"]</a>
                                                     }
@@ -451,7 +467,14 @@
                                                     </div>
                                                     <div class="col-sm-5 col-md-5">
                                                         <p style="color: #676a6c; padding-top: 10px;">The Push-To-Talk Addon is only available on paid plans. You can buy as many 10 user packs as you wish, and they are billed monthly separately from your Resgrid bill. Allowing you to size up and down as you need. You can have up to 50 active people per channel. Push-To-Talk requires devices with an active Internet (data) connection and uses VOIP technology.</p>
-                                                        <a asp-controller="Subscription" asp-action="ManagePTTAddon" asp-route-area="User" class="btn btn-sm btn-primary">Manage PTT</a>
+                                                        @if (Model.IsPaddleDepartment)
+                                                        {
+                                                            <a asp-controller="Subscription" asp-action="ManagePaddlePTTAddon" asp-route-area="User" class="btn btn-sm btn-primary">Manage PTT</a>
+                                                        }
+                                                        else
+                                                        {
+                                                            <a asp-controller="Subscription" asp-action="ManagePTTAddon" asp-route-area="User" class="btn btn-sm btn-primary">Manage PTT</a>
+                                                        }
                                                     </div>
                                                 </div>
                                             </div>
@@ -474,10 +497,20 @@
 
         @section Scripts
         {
-            <script src="https://js.stripe.com/v3/"></script>
+            @if (Model.IsPaddleDepartment) {
+                <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+                <script>
+                    Paddle.Environment.set('@Model.PaddleEnvironment');
+                    Paddle.Initialize({ token: '@Model.PaddleClientToken' });
+                </script>
+            } else {
+                <script src="https://js.stripe.com/v3/"></script>
+            }
 
             <script>
-                var stripe = Stripe('@Model.StripeKey');
+                @if (!Model.IsPaddleDepartment) {
+                    <text>var stripe = Stripe('@Model.StripeKey');</text>
+                }
 
                 function stripeCheckout(id) {
                     const amount = slider == 1 ? val : $("#amount").val();
@@ -539,6 +572,57 @@
                             }
                         }
                     });
+                }
+
+                function paddleCheckout(id) {
+                    const amount = slider == 1 ? val : $("#amount").val();
+
+                    if (amount && amount > 10) {
+                        const packs = (amount / 10) - 1;
+
+                        $.ajax({
+                            url: resgrid.absoluteBaseUrl + '/User/Subscription/GetPaddleCheckout?id=' + id + '&count=' + packs,
+                            contentType: 'application/json',
+                            type: 'GET'
+                        }).done(function (data) {
+                            if (data) {
+                                if (data.HasActiveSub) {
+                                    swal({
+                                        title: "Active Subscription",
+                                        text: "You already have an active subscription. Please manage your existing subscription instead.",
+                                        icon: "warning",
+                                        buttons: true,
+                                        dangerMode: false
+                                    });
+                                    return;
+                                }
+
+                                var checkoutSettings = {
+                                    settings: {
+                                        successUrl: resgrid.absoluteBaseUrl + '/User/Subscription/PaddleProcessing?planId=' + id
+                                    },
+                                    items: [{
+                                        priceId: data.PriceId,
+                                        quantity: packs
+                                    }]
+                                };
+
+                                if (data.CustomerId) {
+                                    checkoutSettings.customer = { id: data.CustomerId };
+                                }
+
+                                Paddle.Checkout.open(checkoutSettings);
+                            }
+                        });
+                    } else {
+                        swal({
+                            title: "Cannot Purchase",
+                            text: "Resgrid includes 10 entities for free for all departments. Please select a entity count greater then 10 to purchase.",
+                            icon: "warning",
+                            buttons: true,
+                            dangerMode: false
+                        });
+                    }
                 }
 
 

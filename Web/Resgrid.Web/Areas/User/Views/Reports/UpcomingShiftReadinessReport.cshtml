@@ -1,4 +1,6 @@
-﻿@model Resgrid.Web.Areas.User.Models.Reports.Shifts.UpcomingShiftReadinessView
+@using Microsoft.Extensions.Localization
+@model Resgrid.Web.Areas.User.Models.Reports.Shifts.UpcomingShiftReadinessView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Reports.Reports> localizer
 @{
 	Layout = null;
 }
@@ -7,9 +9,9 @@
 
 <html lang="en">
 <head>
-	<title>Resgrid Upcoming Shift Readiness Report</title>
+	<title>@localizer["UpcomingShiftReadinessReportTitle"]</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="Resgrid Personnel Report">
+	<meta name="description" content="@localizer["UpcomingShiftReadinessReportTitle"]">
 	<meta name="author" content="Resgrid">
 
 	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"
@@ -43,7 +45,7 @@
 				<img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
 			</div>
 			<div class="col-md-5" style="text-align: right;">
-				<h3 style="margin-top: 10px;">Upcoming Shift Readiness Report</h3>
+				<h3 style="margin-top: 10px;">@localizer["UpcomingShiftReadinessReportTitle"]</h3>
 			</div>
 		</div>
 		<div class="row">
@@ -51,10 +53,10 @@
 				<table class="table table-bordered">
 					<thead>
 						<tr>
-							<th>Name</th>
-							<th>Type</th>
-							<th>Date</th>
-							<th>Status</th>
+							<th>@localizer["NameHeader"]</th>
+							<th>@localizer["TypeHeader"]</th>
+							<th>@localizer["DateHeader"]</th>
+							<th>@localizer["StatusHeader"]</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -67,11 +69,11 @@
 								<td>
 									@if (row.Ready)
 									{
-										<span class='label label-success'>Ready</span>
+										<span class='label label-success'>@localizer["ShiftReadyLabel"]</span>
 									}
 									else
 									{
-										<span class='label label-danger'>Not Ready</span>
+										<span class='label label-danger'>@localizer["ShiftNotReadyLabel"]</span>
 									}
 								</td>
 							</tr>
@@ -87,10 +89,10 @@
 														<table class="table">
 															<thead>
 																<tr>
-																	<th>Role</th>
-																	<th>Required</th>
-																	<th>Optional</th>
-																	<th>Delta</th>
+																	<th>@localizer["RoleHeader"]</th>
+																	<th>@localizer["RequiredHeader"]</th>
+																	<th>@localizer["OptionalHeader"]</th>
+																	<th>@localizer["DeltaHeader"]</th>
 																</tr>
 															</thead>
 															<tbody>
@@ -114,8 +116,8 @@
 														<table class="table">
 															<thead>
 																<tr>
-																	<th>Signup Name</th>
-																	<th>Roles</th>
+																	<th>@localizer["SignupNameHeader"]</th>
+																	<th>@localizer["RolesHeader"]</th>
 																</tr>
 															</thead>
 															<tbody>

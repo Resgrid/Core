@@ -43,6 +43,11 @@ namespace Resgrid.Web.Areas.User.Models.Subscription
 		public DateTime? AddonEndingOn { get; set; }
 		public string StripeCustomerPortalUrl { get; set; }
 
+		public string PaddleCustomer { get; set; }
+		public string PaddleEnvironment { get; set; }
+		public bool IsPaddleDepartment { get; set; }
+		public string PaddleClientToken { get; set; }
+
 
 		public string IsEntitiesTabActive()
 		{

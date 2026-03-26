@@ -1,22 +1,23 @@
-﻿@using Resgrid.Framework
+@using Resgrid.Framework
 @using Resgrid.Model
 @using Resgrid.Model.Events
 @using Resgrid.Web.Extensions
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Notifications.NotificationIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Notifications.Notifications> localizer
 @{
-	ViewBag.Title = "Resgrid | Notifications";
+	ViewBag.Title = "Resgrid | " + localizer["PageTitle"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>Notifications</h2>
+		<h2>@localizer["Notifications"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a>
 			</li>
 			<li class="active">
-				<strong>Notifications</strong>
+				<strong>@localizer["Notifications"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -24,7 +25,7 @@
 	{
 		<div class="col-sm-8">
 			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-				<a title="Add a new department link" class="btn btn-success" asp-controller="Notifications" asp-action="New" asp-route-area="User">New Notification</a>
+				<a title="Add a new department link" class="btn btn-success" asp-controller="Notifications" asp-action="New" asp-route-area="User">@localizer["NewNotification"]</a>
 			</div>
 		</div>
 	}
@@ -39,12 +40,12 @@
 						<table class="table table-striped">
 							<thead>
 								<tr>
-									<th>Type</th>
-									<th>Data</th>
-									<th>Before State</th>
-									<th>Current State</th>
-									<th>Notify</th>
-									<th>Actions</th>
+									<th>@commonLocalizer["Type"]</th>
+									<th>@commonLocalizer["Data"]</th>
+									<th>@localizer["BeforeState"]</th>
+									<th>@localizer["CurrentState"]</th>
+									<th>@localizer["Notify"]</th>
+									<th>@commonLocalizer["Actions"]</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -62,7 +63,7 @@
 											}
 											else
 											{
-												<span>None</span>
+												<span>@localizer["None"]</span>
 											}
 										</td>
 										<td>
@@ -77,7 +78,7 @@
 										<td>
 											@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 											{
-												<a style="text-decoration: none;" class="btn btn-xs btn-danger" href="@Url.Action("Delete", "Notifications", new { area = "User", notificationId = n.DepartmentNotificationId })" data-confirm="WARNING: This will permanently delete this notification. are you sure you want to continue?" rel="nofollow"><i class="icon-trash"></i> Delete</a>
+												<a style="text-decoration: none;" class="btn btn-xs btn-danger" href="@Url.Action("Delete", "Notifications", new { area = "User", notificationId = n.DepartmentNotificationId })" data-confirm="@localizer["DeleteNotificationConfirm"]" rel="nofollow"><i class="icon-trash"></i> @localizer["Delete"]</a>
 											}
 										</td>
 									</tr>

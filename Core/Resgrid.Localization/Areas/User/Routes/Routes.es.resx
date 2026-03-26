@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <!-- Shared -->
+  <data name="Cancel" xml:space="preserve"><value>Cancelar</value></data>
+  <data name="Save" xml:space="preserve"><value>Guardar</value></data>
+  <data name="Name" xml:space="preserve"><value>Nombre</value></data>
+  <data name="Description" xml:space="preserve"><value>Descripción</value></data>
+  <data name="Status" xml:space="preserve"><value>Estado</value></data>
+  <data name="Actions" xml:space="preserve"><value>Acciones</value></data>
+
+  <!-- Index -->
+  <data name="RoutesPageTitle" xml:space="preserve"><value>Rutas</value></data>
+  <data name="RoutesHeader" xml:space="preserve"><value>Rutas</value></data>
+  <data name="NewRoute" xml:space="preserve"><value>Nueva ruta</value></data>
+  <data name="ActiveRoutes" xml:space="preserve"><value>En progreso</value></data>
+  <data name="ArchivedRoutes" xml:space="preserve"><value>Rutas archivadas</value></data>
+  <data name="Stops" xml:space="preserve"><value>Paradas</value></data>
+  <data name="Profile" xml:space="preserve"><value>Perfil</value></data>
+  <data name="Created" xml:space="preserve"><value>Creado</value></data>
+  <data name="View" xml:space="preserve"><value>Ver</value></data>
+  <data name="Edit" xml:space="preserve"><value>Editar</value></data>
+  <data name="History" xml:space="preserve"><value>Historial</value></data>
+  <data name="DeleteRoutePlanConfirm" xml:space="preserve"><value>¿Eliminar este plan de ruta?</value></data>
+
+  <!-- Instances -->
+  <data name="RouteHistoryPageTitle" xml:space="preserve"><value>Historial de ruta</value></data>
+  <data name="RouteHistoryHeaderPrefix" xml:space="preserve"><value>Historial de ruta</value></data>
+  <data name="HistoryBreadcrumb" xml:space="preserve"><value>Historial</value></data>
+  <data name="Unit" xml:space="preserve"><value>Unidad</value></data>
+  <data name="Started" xml:space="preserve"><value>Iniciado</value></data>
+  <data name="Ended" xml:space="preserve"><value>Finalizado</value></data>
+  <data name="Detail" xml:space="preserve"><value>Detalle</value></data>
+
+  <!-- ActiveRoutes -->
+  <data name="ActiveRoutesPageTitle" xml:space="preserve"><value>Rutas en progreso</value></data>
+  <data name="ActiveRoutesHeader" xml:space="preserve"><value>Rutas en progreso</value></data>
+  <data name="ActiveBreadcrumb" xml:space="preserve"><value>En progreso</value></data>
+  <data name="NoActiveRoutes" xml:space="preserve"><value>No hay rutas en progreso</value></data>
+  <data name="NoActiveRoutesMessage" xml:space="preserve"><value>No hay instancias de rutas actualmente en progreso.</value></data>
+  <data name="ArchivedRoutesPageTitle" xml:space="preserve"><value>Rutas archivadas</value></data>
+  <data name="ArchivedRoutesHeader" xml:space="preserve"><value>Rutas archivadas</value></data>
+  <data name="ArchivedBreadcrumb" xml:space="preserve"><value>Archivado</value></data>
+  <data name="NoArchivedRoutes" xml:space="preserve"><value>No hay rutas archivadas</value></data>
+  <data name="NoArchivedRoutesMessage" xml:space="preserve"><value>No hay planes de rutas archivados.</value></data>
+  <data name="ArchivedRouteDetailPageTitle" xml:space="preserve"><value>Detalle de ruta archivada</value></data>
+  <data name="UnitLabel" xml:space="preserve"><value>Unidad</value></data>
+  <data name="StopsLabel" xml:space="preserve"><value>Paradas</value></data>
+  <data name="StartedLabel" xml:space="preserve"><value>Iniciado</value></data>
+  <data name="ViewDetails" xml:space="preserve"><value>Ver detalles</value></data>
+
+  <!-- New -->
+  <data name="NewRoutePageTitle" xml:space="preserve"><value>Nueva ruta</value></data>
+  <data name="NewRoutePlanHeader" xml:space="preserve"><value>Nuevo plan de ruta</value></data>
+  <data name="NewBreadcrumb" xml:space="preserve"><value>Nuevo</value></data>
+  <data name="RouteDetailsTitle" xml:space="preserve"><value>Detalles de la ruta</value></data>
+  <data name="UnitField" xml:space="preserve"><value>Unidad</value></data>
+  <data name="UnitAssignAtStart" xml:space="preserve"><value>-- Asignar al iniciar --</value></data>
+  <data name="StatusDraft" xml:space="preserve"><value>Borrador</value></data>
+  <data name="StatusActive" xml:space="preserve"><value>Activo</value></data>
+  <data name="StatusPaused" xml:space="preserve"><value>Pausado</value></data>
+  <data name="StatusArchived" xml:space="preserve"><value>Archivado</value></data>
+  <data name="RouteColor" xml:space="preserve"><value>Color de ruta</value></data>
+  <data name="RouteProfile" xml:space="preserve"><value>Perfil de ruta</value></data>
+  <data name="ProfileDriving" xml:space="preserve"><value>Conduciendo</value></data>
+  <data name="ProfileWalking" xml:space="preserve"><value>Caminando</value></data>
+  <data name="ProfileCycling" xml:space="preserve"><value>En bicicleta</value></data>
+  <data name="ProfileDrivingTraffic" xml:space="preserve"><value>Conduciendo (con tráfico)</value></data>
+  <data name="GeofenceRadius" xml:space="preserve"><value>Radio de geocerca (m)</value></data>
+  <data name="UseStationAsStart" xml:space="preserve"><value>Usar estación como inicio</value></data>
+  <data name="UseStationAsEnd" xml:space="preserve"><value>Usar estación como fin</value></data>
+  <data name="OptimizeStopOrder" xml:space="preserve"><value>Optimizar orden de paradas</value></data>
+  <data name="MapAndStopsTitle" xml:space="preserve"><value>Mapa y paradas</value></data>
+  <data name="MapAndStopsHelp" xml:space="preserve"><value>Las paradas se pueden gestionar después de crear la ruta mediante la API o el formulario de edición.</value></data>
+  <data name="CreateRoute" xml:space="preserve"><value>Crear ruta</value></data>
+
+  <!-- StartRoute -->
+  <data name="StartRoutePageTitle" xml:space="preserve"><value>Iniciar ruta</value></data>
+  <data name="StartRouteHeader" xml:space="preserve"><value>Iniciar ruta</value></data>
+  <data name="StartRouteBreadcrumb" xml:space="preserve"><value>Iniciar ruta</value></data>
+  <data name="AssignUnit" xml:space="preserve"><value>Asignar unidad</value></data>
+  <data name="SelectUnitPlaceholder" xml:space="preserve"><value>-- Seleccionar una unidad --</value></data>
+  <data name="AssignUnitHelp" xml:space="preserve"><value>Seleccione la unidad que ejecutará esta ruta.</value></data>
+  <data name="RouteInfoLabel" xml:space="preserve"><value>Información de ruta</value></data>
+  <data name="MinEstimated" xml:space="preserve"><value>min estimado</value></data>
+  <data name="StartRouteNow" xml:space="preserve"><value>Iniciar ruta ahora</value></data>
+
+  <!-- Edit -->
+  <data name="EditRoutePageTitle" xml:space="preserve"><value>Editar ruta</value></data>
+  <data name="EditRoutePlanHeader" xml:space="preserve"><value>Editar plan de ruta</value></data>
+  <data name="EditBreadcrumb" xml:space="preserve"><value>Editar</value></data>
+  <data name="StopsTableHash" xml:space="preserve"><value>#</value></data>
+  <data name="StopType" xml:space="preserve"><value>Tipo</value></data>
+  <data name="Address" xml:space="preserve"><value>Dirección</value></data>
+  <data name="Priority" xml:space="preserve"><value>Prioridad</value></data>
+  <data name="SaveChanges" xml:space="preserve"><value>Guardar cambios</value></data>
+
+  <!-- View -->
+  <data name="RouteDetailPageTitle" xml:space="preserve"><value>Detalle de ruta</value></data>
+  <data name="ViewBreadcrumb" xml:space="preserve"><value>Ver</value></data>
+  <data name="RouteMapTitle" xml:space="preserve"><value>Mapa de ruta</value></data>
+  <data name="DetailsTitle" xml:space="preserve"><value>Detalles</value></data>
+  <data name="StatusLabel" xml:space="preserve"><value>Estado</value></data>
+  <data name="ProfileLabel" xml:space="preserve"><value>Perfil</value></data>
+  <data name="GeofenceLabel" xml:space="preserve"><value>Geocerca</value></data>
+  <data name="DistanceLabel" xml:space="preserve"><value>Distancia</value></data>
+  <data name="DurationLabel" xml:space="preserve"><value>Duración</value></data>
+
+  <!-- InstanceDetail -->
+  <data name="RouteInstanceDetailPageTitle" xml:space="preserve"><value>Detalle de instancia de ruta</value></data>
+  <data name="RouteInstanceHeaderPrefix" xml:space="preserve"><value>Instancia de ruta</value></data>
+  <data name="InstanceDetailBreadcrumb" xml:space="preserve"><value>Detalle de instancia</value></data>
+  <data name="InstanceInfoTitle" xml:space="preserve"><value>Información de instancia</value></data>
+  <data name="StartedDt" xml:space="preserve"><value>Iniciado</value></data>
+  <data name="EndedDt" xml:space="preserve"><value>Finalizado</value></data>
+  <data name="Progress" xml:space="preserve"><value>Progreso</value></data>
+  <data name="StopTimelineTitle" xml:space="preserve"><value>Cronograma de paradas</value></data>
+  <data name="StopStatusPending" xml:space="preserve"><value>Pendiente</value></data>
+  <data name="StopStatusCheckedIn" xml:space="preserve"><value>Registrado</value></data>
+  <data name="StopStatusCompleted" xml:space="preserve"><value>Completado</value></data>
+  <data name="StopStatusSkipped" xml:space="preserve"><value>Omitido</value></data>
+  <data name="StopStatusUnknown" xml:space="preserve"><value>Desconocido</value></data>
+  <data name="StopInPrefix" xml:space="preserve"><value>Entrada:</value></data>
+  <data name="StopOutPrefix" xml:space="preserve"><value>Salida:</value></data>
+  <data name="StopDwellPrefix" xml:space="preserve"><value>Espera:</value></data>
+  <data name="StopSkipPrefix" xml:space="preserve"><value>Omitido:</value></data>
+  <data name="StopLabel" xml:space="preserve"><value>Parada</value></data>
+
+  <!-- Add Stop Modal -->
+  <data name="AddStop" xml:space="preserve"><value>Agregar parada</value></data>
+  <data name="StopTypeManual" xml:space="preserve"><value>Manual</value></data>
+  <data name="StopTypeScheduledCall" xml:space="preserve"><value>Llamada programada</value></data>
+  <data name="StopTypeWaypoint" xml:space="preserve"><value>Punto de ruta</value></data>
+  <data name="LinkedCall" xml:space="preserve"><value>Llamada vinculada</value></data>
+  <data name="LoadingCalls" xml:space="preserve"><value>Cargando llamadas...</value></data>
+  <data name="PriorityNormal" xml:space="preserve"><value>Normal</value></data>
+  <data name="PriorityHigh" xml:space="preserve"><value>Alta</value></data>
+  <data name="PriorityCritical" xml:space="preserve"><value>Crítica</value></data>
+  <data name="PriorityOptional" xml:space="preserve"><value>Opcional</value></data>
+  <data name="Find" xml:space="preserve"><value>Buscar</value></data>
+  <data name="What3Words" xml:space="preserve"><value>What3Words</value></data>
+  <data name="Location" xml:space="preserve"><value>Ubicación</value></data>
+  <data name="ClickMapToSetLocation" xml:space="preserve"><value>Haga clic en el mapa para establecer la ubicación, o use la dirección / What3Words arriba.</value></data>
+  <data name="PlannedArrival" xml:space="preserve"><value>Llegada planificada</value></data>
+  <data name="PlannedDeparture" xml:space="preserve"><value>Salida planificada</value></data>
+  <data name="EstDwellMinutes" xml:space="preserve"><value>Espera est. (min)</value></data>
+  <data name="SelectContact" xml:space="preserve"><value>Seleccionar contacto</value></data>
+  <data name="SelectContactPlaceholder" xml:space="preserve"><value>-- Escriba manualmente o seleccione uno existente --</value></data>
+  <data name="ContactAutofillHelp" xml:space="preserve"><value>Seleccionar un contacto rellena automáticamente el nombre y el número.</value></data>
+  <data name="ContactName" xml:space="preserve"><value>Nombre del contacto</value></data>
+  <data name="ContactNumber" xml:space="preserve"><value>Número del contacto</value></data>
+  <data name="Notes" xml:space="preserve"><value>Notas</value></data>
+
+  <!-- Directions -->
+  <data name="Directions" xml:space="preserve"><value>Instrucciones de ruta</value></data>
+  <data name="Print" xml:space="preserve"><value>Imprimir</value></data>
+  <data name="StartRoute" xml:space="preserve"><value>Iniciar ruta</value></data>
+  <data name="TurnByTurnDirections" xml:space="preserve"><value>Instrucciones paso a paso</value></data>
+  <data name="CalculatingRoute" xml:space="preserve"><value>Calculando ruta&#x2026;</value></data>
+  <data name="DirectionsError" xml:space="preserve"><value>No se pudieron obtener las instrucciones de conducción. Las direcciones o coordenadas de las paradas pueden no ser accesibles por carretera. Las paradas se muestran a continuación en orden.</value></data>
+  <data name="StopSummary" xml:space="preserve"><value>Resumen de paradas</value></data>
+  <data name="StopName" xml:space="preserve"><value>Nombre de parada</value></data>
+  <data name="DwellMin" xml:space="preserve"><value>Espera (min)</value></data>
+  <data name="Contact" xml:space="preserve"><value>Contacto</value></data>
+
+  <!-- ArchivedView -->
+  <data name="RouteIsArchived" xml:space="preserve"><value>Esta ruta está archivada y no se puede iniciar, editar ni eliminar.</value></data>
+  <data name="BackToArchivedRoutes" xml:space="preserve"><value>Volver a rutas archivadas</value></data>
+
+  <!-- Edit form location pickers -->
+  <data name="StartLocation" xml:space="preserve"><value>Ubicación de inicio</value></data>
+  <data name="EndLocation" xml:space="preserve"><value>Ubicación de fin</value></data>
+  <data name="EnterAddress" xml:space="preserve"><value>Ingrese dirección</value></data>
+  <data name="ClickMapToSetStartLocation" xml:space="preserve"><value>Haga clic en el mapa para establecer la ubicación de inicio, o use la dirección / What3Words / coordenadas arriba.</value></data>
+  <data name="ClickMapToSetEndLocation" xml:space="preserve"><value>Haga clic en el mapa para establecer la ubicación de fin, o use la dirección / What3Words / coordenadas arriba.</value></data>
+  <data name="Apply" xml:space="preserve"><value>Aplicar</value></data>
+  <data name="Latitude" xml:space="preserve"><value>Latitud</value></data>
+  <data name="Longitude" xml:space="preserve"><value>Longitud</value></data>
+  <data name="FindLocationVia" xml:space="preserve"><value>Buscar ubicación mediante</value></data>
+</root>

@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="IndexPageTitle" xml:space="preserve">
+    <value>Grupos del Departamento</value>
+  </data>
+  <data name="GroupsHeading" xml:space="preserve">
+    <value>Grupos</value>
+  </data>
+  <data name="AddNewGroup" xml:space="preserve">
+    <value>Agregar Nuevo Grupo</value>
+  </data>
+  <data name="AddNewGroupTitle" xml:space="preserve">
+    <value>Agregar un nuevo Grupo</value>
+  </data>
+  <data name="GroupName" xml:space="preserve">
+    <value>Nombre del Grupo</value>
+  </data>
+  <data name="Parent" xml:space="preserve">
+    <value>Principal</value>
+  </data>
+  <data name="DispatchEmail" xml:space="preserve">
+    <value>Correo de Despacho</value>
+  </data>
+  <data name="MessageEmail" xml:space="preserve">
+    <value>Correo de Mensajes</value>
+  </data>
+  <data name="Members" xml:space="preserve">
+    <value>Miembros</value>
+  </data>
+  <data name="Organizational" xml:space="preserve">
+    <value>Organizacional</value>
+  </data>
+  <data name="Station" xml:space="preserve">
+    <value>Estación</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Ninguno</value>
+  </data>
+  <data name="Geofence" xml:space="preserve">
+    <value>Geocerca</value>
+  </data>
+  <data name="DeleteGroupPageTitle" xml:space="preserve">
+    <value>Eliminar Grupo</value>
+  </data>
+  <data name="DeleteGroupHeading" xml:space="preserve">
+    <value>Eliminar Grupo</value>
+  </data>
+  <data name="DeleteGroupConfirmQuestion" xml:space="preserve">
+    <value>¿Está seguro de que desea eliminar este grupo?</value>
+  </data>
+  <data name="DeleteGroupWarning" xml:space="preserve">
+    <value>Si elige eliminar este grupo, la información del grupo, por ejemplo, las direcciones de despacho y mensajes se eliminarán con el grupo y no podrán usarse nuevamente.</value>
+  </data>
+  <data name="DeleteGroupActiveUsersWarning" xml:space="preserve">
+    <value>Este grupo tiene usuarios activos debajo de él, debe mover o eliminar los usuarios para poder eliminar el grupo.</value>
+  </data>
+  <data name="DeleteGroupChildGroupsWarning" xml:space="preserve">
+    <value>Este grupo tiene grupos secundarios debajo. Deberá mover o eliminar el grupo secundario antes de eliminar el grupo.</value>
+  </data>
+  <data name="DeleteGroupUnitsWarning" xml:space="preserve">
+    <value>Este grupo tiene unidades asignadas. Deberá mover la unidad a otro Grupo de Estación o eliminar la unidad para poder eliminar el grupo.</value>
+  </data>
+  <data name="DeleteGroupShiftsWarning" xml:space="preserve">
+    <value>Este grupo tiene grupos de turnos asignados. Deberá eliminar esos grupos de turnos, Turnos asignados a una Estación\Grupo, para poder eliminar el grupo.</value>
+  </data>
+  <data name="DeleteGroupCheckboxHint" xml:space="preserve">
+    <value>Haga clic en la casilla de verificación a continuación para eliminar este grupo.</value>
+  </data>
+  <data name="DeleteGroupPermanentWarning" xml:space="preserve">
+    <value>Si elige eliminar este grupo, la información a continuación se eliminará permanentemente. Esta operación no se puede deshacer.</value>
+  </data>
+  <data name="DeleteGroupDataDeleted" xml:space="preserve">
+    <value>Datos que se Eliminan</value>
+  </data>
+  <data name="DeleteGroupDataGroupData" xml:space="preserve">
+    <value>Datos del Grupo</value>
+  </data>
+  <data name="DeleteGroupDataPersonnelMemberships" xml:space="preserve">
+    <value>Membresías de Grupo de Personal</value>
+  </data>
+  <data name="DeleteGroupDataUnitMemberships" xml:space="preserve">
+    <value>Membresías de Grupo de Unidades</value>
+  </data>
+  <data name="DeleteGroupDataInventory" xml:space="preserve">
+    <value>Inventario del Grupo</value>
+  </data>
+  <data name="DeleteGroupDataShiftData" xml:space="preserve">
+    <value>Datos de Turno del Grupo</value>
+  </data>
+  <data name="ConfirmDeleteLabel" xml:space="preserve">
+    <value>¿Confirmar Eliminación?</value>
+  </data>
+  <data name="DeleteGroupButton" xml:space="preserve">
+    <value>Eliminar Grupo</value>
+  </data>
+  <data name="NewGroupPageTitle" xml:space="preserve">
+    <value>Nuevo Grupo</value>
+  </data>
+  <data name="NewGroupHeading" xml:space="preserve">
+    <value>Nuevo Grupo</value>
+  </data>
+  <data name="GroupType" xml:space="preserve">
+    <value>Tipo de Grupo</value>
+  </data>
+  <data name="OrganizationalGroup" xml:space="preserve">
+    <value>Grupo Organizacional</value>
+  </data>
+  <data name="StationGroup" xml:space="preserve">
+    <value>Grupo de Estación</value>
+  </data>
+  <data name="ParentGroup" xml:space="preserve">
+    <value>Grupo Principal</value>
+  </data>
+  <data name="StationAddress" xml:space="preserve">
+    <value>Dirección de la Estación</value>
+  </data>
+  <data name="StationAddressDescription" xml:space="preserve">
+    <value>Los grupos de estación requieren una ubicación física (ya que el personal y las unidades pueden responder a ellos). Por favor ingrese una Dirección, Coordenadas GPS o una dirección what3words.</value>
+  </data>
+  <data name="Street" xml:space="preserve">
+    <value>Calle</value>
+  </data>
+  <data name="City" xml:space="preserve">
+    <value>Ciudad</value>
+  </data>
+  <data name="StateProvince" xml:space="preserve">
+    <value>Estado/Provincia</value>
+  </data>
+  <data name="ZipPostalCode" xml:space="preserve">
+    <value>Código Postal</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>País</value>
+  </data>
+  <data name="Or" xml:space="preserve">
+    <value>O</value>
+  </data>
+  <data name="GpsCoordinates" xml:space="preserve">
+    <value>Coordenadas GPS</value>
+  </data>
+  <data name="LatitudeHint" xml:space="preserve">
+    <value>Latitud (Notación Decimal: ej. 39.1517)</value>
+  </data>
+  <data name="LongitudeHint" xml:space="preserve">
+    <value>Longitud (Notación Decimal: ej. -119.4571)</value>
+  </data>
+  <data name="What3WordsAddress" xml:space="preserve">
+    <value>Dirección what3words</value>
+  </data>
+  <data name="What3WordsHint" xml:space="preserve">
+    <value>Dirección w3w (ej. humble.echo.sticky)</value>
+  </data>
+  <data name="PrintNodePrinter" xml:space="preserve">
+    <value>Impresora PrintNode</value>
+  </data>
+  <data name="PrintNodeDescription" xml:space="preserve">
+    <value>PrintNode es un servicio que nos permite enviar trabajos de impresión a una computadora o servidor local en su red a una impresora específica. Debe tener una cuenta activa de PrintNode y su software configurado con la impresora activa.</value>
+  </data>
+  <data name="SelectPrinter" xml:space="preserve">
+    <value>Seleccionar Impresora</value>
+  </data>
+  <data name="UsersOneGroupNote" xml:space="preserve">
+    <value>Los usuarios solo pueden estar en un grupo a la vez. Si no ve su usuario en la lista, ya está en un grupo.</value>
+  </data>
+  <data name="GroupAdmins" xml:space="preserve">
+    <value>Administradores del Grupo</value>
+  </data>
+  <data name="GroupUsers" xml:space="preserve">
+    <value>Usuarios del Grupo</value>
+  </data>
+  <data name="SaveGroup" xml:space="preserve">
+    <value>Guardar Grupo</value>
+  </data>
+  <data name="ApiKey" xml:space="preserve">
+    <value>Clave API:</value>
+  </data>
+  <data name="GetPrinters" xml:space="preserve">
+    <value>Obtener Impresoras</value>
+  </data>
+  <data name="Printer" xml:space="preserve">
+    <value>Impresora</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Cerrar</value>
+  </data>
+  <data name="EditGroupPageTitle" xml:space="preserve">
+    <value>Editar Grupo</value>
+  </data>
+  <data name="EditGroupHeading" xml:space="preserve">
+    <value>Editar Grupo</value>
+  </data>
+  <data name="PrintCallsToPrinter" xml:space="preserve">
+    <value>Imprimir Llamadas en Impresora</value>
+  </data>
+  <data name="PrintCallsToPrinterHint" xml:space="preserve">
+    <value>Habilitar esta opción imprimirá una llamada en la impresora seleccionada cuando una unidad o persona de este grupo sea adjuntada (despachada) a una llamada</value>
+  </data>
+  <data name="GeofencePageTitle" xml:space="preserve">
+    <value>Geocerca de Estación</value>
+  </data>
+  <data name="GeofenceHeading" xml:space="preserve">
+    <value>Geocerca de Estación</value>
+  </data>
+  <data name="GeofenceStationBreadcrumb" xml:space="preserve">
+    <value>Geocerca de Estación</value>
+  </data>
+  <data name="GeofenceDescription" xml:space="preserve">
+    <value>A continuación puede crear una geocerca para su estación. Los campos en cursiva azul son obligatorios. Las geocercas le permiten crear un límite en el mapa que es el área de respuesta de esta estación. Se usará para enrutar automáticamente las llamadas y determinar las respuestas.</value>
+  </data>
+  <data name="DistrictColor" xml:space="preserve">
+    <value>Color del Distrito</value>
+  </data>
+  <data name="SaveGeofence" xml:space="preserve">
+    <value>Guardar Geocerca</value>
+  </data>
+  <data name="ClearGeofence" xml:space="preserve">
+    <value>Limpiar Geocerca</value>
+  </data>
+</root>

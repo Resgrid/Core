@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="ReportingTitle" xml:space="preserve"><value>Raporty</value></data>
+  <data name="ViewReport" xml:space="preserve"><value>Wyświetl Raport</value></data>
+  <data name="Reports" xml:space="preserve"><value>Raporty</value></data>
+  <data name="PersonnelStatusHistoryReportName" xml:space="preserve"><value>Raport Historii Statusu Personelu</value></data>
+  <data name="PersonnelStatusHistoryReportDescription" xml:space="preserve"><value>Ten raport pokaże całą historię statusu personelu (dzienniki działań) dostarczoną przez wybrany personel</value></data>
+  <data name="PersonnelReportName" xml:space="preserve"><value>Raport Personelu</value></data>
+  <data name="PersonnelReportDescription" xml:space="preserve"><value>Wyświetl cały personel w swoim dziale, ich role i podstawowe informacje kontaktowe.</value></data>
+  <data name="StaffingReportName" xml:space="preserve"><value>Raport Obsady</value></data>
+  <data name="StaffingReportDescription" xml:space="preserve"><value>Wyświetl cały personel i ich aktualny status, poziom obsady i następną zaplanowaną zmianę poziomu obsady.</value></data>
+  <data name="CertificationsReportName" xml:space="preserve"><value>Raport Certyfikatów</value></data>
+  <data name="CertificationsReportDescription" xml:space="preserve"><value>Wyświetl wszystkie certyfikaty każdej osoby w dziale.</value></data>
+  <data name="ShiftReadinessReportName" xml:space="preserve"><value>Raport Gotowości Zmiany</value></data>
+  <data name="ShiftReadinessReportDescription" xml:space="preserve"><value>Ten raport pokaże gotowość zmiany dla nadchodzących dni zmianowych dla każdej zmiany.</value></data>
+  <data name="DepartmentActivityReportName" xml:space="preserve"><value>Roczny Raport Aktywności Działu</value></data>
+  <data name="DepartmentActivityReportDescription" xml:space="preserve"><value>Ten raport pokaże aktywność zgłoszeń, dzienników, szkoleń i personelu działu w liczbach od początku roku.</value></data>
+  <data name="PersonnelHoursReportName" xml:space="preserve"><value>Raport Godzin Dziennika Personelu</value></data>
+  <data name="PersonnelHoursReportDescription" xml:space="preserve"><value>Ten raport pokaże liczbę godzin, które personel działu pracował, szkolił się i reagował na zgłoszenia według wpisów w dzienniku.</value></data>
+  <data name="CallSummaryReportName" xml:space="preserve"><value>Raport Podsumowania Zgłoszeń</value></data>
+  <data name="CallSummaryReportDescription" xml:space="preserve"><value>Ten raport pokaże szczegóły wszystkich zgłoszeń w wybranym zakresie dat</value></data>
+  <data name="PersonnelStaffingHistoryReportName" xml:space="preserve"><value>Raport Historii Obsady Personelu</value></data>
+  <data name="PersonnelStaffingHistoryReportDescription" xml:space="preserve"><value>Ten raport pokaże całą historię obsady dostarczoną przez wybrany personel</value></data>
+  <data name="UnitStateHistoryReportName" xml:space="preserve"><value>Raport Historii Stanu Jednostki</value></data>
+  <data name="UnitStateHistoryReportDescription" xml:space="preserve"><value>Pokazuje stany jednostki dla jednej jednostki, wszystkich lub jednostek w grupie dla zakresu czasu zdefiniowanego przez użytkownika</value></data>
+  <data name="ActiveCallsResourcesReportName" xml:space="preserve"><value>Raport Aktywnych Zgłoszeń i Zasobów</value></data>
+  <data name="ActiveCallsResourcesReportDescription" xml:space="preserve"><value>Raport szczegółowo opisuje aktualnie otwarte zgłoszenia w czasie uruchamiania raportu oraz jednostki i personel aktualnie przypisane do tych zgłoszeń</value></data>
+  <data name="ReportStartTime" xml:space="preserve"><value>Czas Rozpoczęcia Raportu</value></data>
+  <data name="ReportEndTime" xml:space="preserve"><value>Czas Zakończenia Raportu</value></data>
+  <data name="RunReport" xml:space="preserve"><value>Uruchom Raport</value></data>
+  <data name="SelectType" xml:space="preserve"><value>Typ</value></data>
+  <data name="GroupOrUsers" xml:space="preserve"><value>Grupa lub Użytkownik(cy)</value></data>
+  <data name="Group" xml:space="preserve"><value>Grupa</value></data>
+  <data name="GroupLabel" xml:space="preserve"><value>Grupa</value></data>
+  <data name="UsersLabel" xml:space="preserve"><value>Użytkownik(cy)</value></data>
+  <data name="UnitsLabel" xml:space="preserve"><value>Jednostka(i)</value></data>
+  <data name="GroupOrUnits" xml:space="preserve"><value>Grupa lub Jednostka(i)</value></data>
+  <data name="IdHeader" xml:space="preserve"><value>ID</value></data>
+  <data name="NameHeader" xml:space="preserve"><value>Nazwa</value></data>
+  <data name="GroupHeader" xml:space="preserve"><value>Grupa</value></data>
+  <data name="TotalHeader" xml:space="preserve"><value>Łącznie</value></data>
+  <data name="CountHeader" xml:space="preserve"><value>Liczba</value></data>
+  <data name="TypeHeader" xml:space="preserve"><value>Typ</value></data>
+  <data name="StateHeader" xml:space="preserve"><value>Stan</value></data>
+  <data name="StatusHeader" xml:space="preserve"><value>Status</value></data>
+  <data name="TimestampHeader" xml:space="preserve"><value>Sygnatura Czasowa</value></data>
+  <data name="NoteHeader" xml:space="preserve"><value>Notatka</value></data>
+  <data name="HoursHeader" xml:space="preserve"><value>Godziny</value></data>
+  <data name="NumberHeader" xml:space="preserve"><value>Numer</value></data>
+  <data name="StartHeader" xml:space="preserve"><value>Początek</value></data>
+  <data name="EndHeader" xml:space="preserve"><value>Koniec</value></data>
+  <data name="DateHeader" xml:space="preserve"><value>Data</value></data>
+  <data name="RolesHeader" xml:space="preserve"><value>Role</value></data>
+  <data name="LocationHeader" xml:space="preserve"><value>Lokalizacja</value></data>
+  <data name="StatusChanges" xml:space="preserve"><value>Zmiany Statusu</value></data>
+  <data name="TotalStaffingChanges" xml:space="preserve"><value>Łącznie</value></data>
+  <data name="CallTypes" xml:space="preserve"><value>Typy Zgłoszeń</value></data>
+  <data name="CallStates" xml:space="preserve"><value>Stany Zgłoszeń</value></data>
+  <data name="Calls" xml:space="preserve"><value>Zgłoszenia</value></data>
+  <data name="LoggedOnHeader" xml:space="preserve"><value>Zalogowano</value></data>
+  <data name="ClosedOnHeader" xml:space="preserve"><value>Zamknięto</value></data>
+  <data name="CallLengthHeader" xml:space="preserve"><value>Długość Zgłoszenia</value></data>
+  <data name="OnSceneTimeHeader" xml:space="preserve"><value>Czas na Miejscu</value></data>
+  <data name="UnitsHeader" xml:space="preserve"><value>Jednostki</value></data>
+  <data name="PersonnelHeader" xml:space="preserve"><value>Personel</value></data>
+  <data name="OpenStatus" xml:space="preserve"><value>Otwarte</value></data>
+  <data name="PercentHeader" xml:space="preserve"><value>%</value></data>
+  <data name="CertificationsReportTitle" xml:space="preserve"><value>Raport Certyfikatów Resgrid</value></data>
+  <data name="CertNumberHeader" xml:space="preserve"><value>Numer</value></data>
+  <data name="IssuedByHeader" xml:space="preserve"><value>Wydane Przez</value></data>
+  <data name="AreaHeader" xml:space="preserve"><value>Obszar</value></data>
+  <data name="ExpiresHeader" xml:space="preserve"><value>Wygasa</value></data>
+  <data name="YtdDepartmentActivityReportTitle" xml:space="preserve"><value>Roczny Raport Aktywności Działu</value></data>
+  <data name="PersonnelResponseDetail" xml:space="preserve"><value>Szczegóły Odpowiedzi Personelu</value></data>
+  <data name="Trainings" xml:space="preserve"><value>Szkolenia</value></data>
+  <data name="PersonnelTrainingDetail" xml:space="preserve"><value>Szczegóły Szkolenia Personelu</value></data>
+  <data name="DispatchedHeader" xml:space="preserve"><value>Wysłany</value></data>
+  <data name="AttendedHeader" xml:space="preserve"><value>Uczestniczył</value></data>
+  <data name="January" xml:space="preserve"><value>Styczeń</value></data>
+  <data name="February" xml:space="preserve"><value>Luty</value></data>
+  <data name="March" xml:space="preserve"><value>Marzec</value></data>
+  <data name="April" xml:space="preserve"><value>Kwiecień</value></data>
+  <data name="May" xml:space="preserve"><value>Maj</value></data>
+  <data name="June" xml:space="preserve"><value>Czerwiec</value></data>
+  <data name="July" xml:space="preserve"><value>Lipiec</value></data>
+  <data name="August" xml:space="preserve"><value>Sierpień</value></data>
+  <data name="September" xml:space="preserve"><value>Wrzesień</value></data>
+  <data name="October" xml:space="preserve"><value>Październik</value></data>
+  <data name="November" xml:space="preserve"><value>Listopad</value></data>
+  <data name="December" xml:space="preserve"><value>Grudzień</value></data>
+  <data name="PersonnelEventsReportTitle" xml:space="preserve"><value>Raport Zdarzeń Personelu Resgrid</value></data>
+  <data name="DestinationCallHeader" xml:space="preserve"><value>Cel\Zgłoszenie</value></data>
+  <data name="PersonnelHoursReportTitle" xml:space="preserve"><value>Raport Godzin Personelu</value></data>
+  <data name="PersonnelHoursDetailReportTitle" xml:space="preserve"><value>Szczegółowy Raport Godzin Personelu</value></data>
+  <data name="CallHours" xml:space="preserve"><value>Godziny Zgłoszeń</value></data>
+  <data name="WorkHours" xml:space="preserve"><value>Godziny Pracy</value></data>
+  <data name="TrainingHours" xml:space="preserve"><value>Godziny Szkoleń</value></data>
+  <data name="WorkLogs" xml:space="preserve"><value>Dzienniki Pracy</value></data>
+  <data name="PersonnelReportTitle" xml:space="preserve"><value>Raport Personelu Resgrid</value></data>
+  <data name="UsernameHeader" xml:space="preserve"><value>Nazwa Użytkownika</value></data>
+  <data name="EmailHeader" xml:space="preserve"><value>Email</value></data>
+  <data name="MobileNumberHeader" xml:space="preserve"><value>Numer Telefonu</value></data>
+  <data name="MailingAddressHeader" xml:space="preserve"><value>Adres Korespondencyjny</value></data>
+  <data name="PersonnelStaffingHistoryReportTitle" xml:space="preserve"><value>Raport Historii Obsady Personelu</value></data>
+  <data name="StaffingChanges" xml:space="preserve"><value>Zmiany Obsady</value></data>
+  <data name="StaffingHeader" xml:space="preserve"><value>Obsada</value></data>
+  <data name="ScheduledHeader" xml:space="preserve"><value>Zaplanowany</value></data>
+  <data name="StaffingReportTitle" xml:space="preserve"><value>Raport Obsady Resgrid</value></data>
+  <data name="StaffingTimestampHeader" xml:space="preserve"><value>Sygnatura Czasowa Obsady</value></data>
+  <data name="NextChangeHeader" xml:space="preserve"><value>Następna Zmiana</value></data>
+  <data name="NextStaffingHeader" xml:space="preserve"><value>Następna Obsada</value></data>
+  <data name="StaffingAvailable" xml:space="preserve"><value>Dostępny</value></data>
+  <data name="StaffingDelayed" xml:space="preserve"><value>Opóźniony</value></data>
+  <data name="StaffingUnavailable" xml:space="preserve"><value>Niedostępny</value></data>
+  <data name="StaffingCommitted" xml:space="preserve"><value>Zaangażowany</value></data>
+  <data name="StaffingOnShift" xml:space="preserve"><value>Na Zmianie</value></data>
+  <data name="StaffingUnknown" xml:space="preserve"><value>Nieznany</value></data>
+  <data name="UnitEventsReportTitle" xml:space="preserve"><value>Raport Zdarzeń Jednostki Resgrid</value></data>
+  <data name="UnitStateHistoryReportTitle" xml:space="preserve"><value>Raport Historii Stanu Jednostki</value></data>
+  <data name="StateChanges" xml:space="preserve"><value>Zmiany Stanu</value></data>
+  <data name="TotalStatesHeader" xml:space="preserve"><value>Łączne Stany</value></data>
+  <data name="UpcomingShiftReadinessReportTitle" xml:space="preserve"><value>Raport Gotowości Nadchodzącej Zmiany</value></data>
+  <data name="ShiftReadyLabel" xml:space="preserve"><value>Gotowy</value></data>
+  <data name="ShiftNotReadyLabel" xml:space="preserve"><value>Niegotowy</value></data>
+  <data name="RequiredHeader" xml:space="preserve"><value>Wymagany</value></data>
+  <data name="OptionalHeader" xml:space="preserve"><value>Opcjonalny</value></data>
+  <data name="DeltaHeader" xml:space="preserve"><value>Delta</value></data>
+  <data name="RoleHeader" xml:space="preserve"><value>Rola</value></data>
+  <data name="SignupNameHeader" xml:space="preserve"><value>Nazwa Rejestracji</value></data>
+  <data name="ActiveCallsResourcesReportTitle" xml:space="preserve"><value>Raport Aktywnych Zgłoszeń i Zasobów</value></data>
+  <data name="CallNameHeader" xml:space="preserve"><value>Nazwa Zgłoszenia</value></data>
+  <data name="UnitsOnCallHeader" xml:space="preserve"><value>Jednostki przy Zgłoszeniu</value></data>
+  <data name="PersonnelOnCallHeader" xml:space="preserve"><value>Personel przy Zgłoszeniu</value></data>
+  <data name="UnitNameHeader" xml:space="preserve"><value>Nazwa Jednostki</value></data>
+  <data name="PersonNameHeader" xml:space="preserve"><value>Imię i Nazwisko</value></data>
+  <data name="GroupNameHeader" xml:space="preserve"><value>Nazwa Grupy</value></data>
+  <data name="DispatchedOnHeader" xml:space="preserve"><value>Wysłany</value></data>
+  <data name="FourteenDayMarkHeader" xml:space="preserve"><value>Oznaczenie 14 Dni</value></data>
+  <data name="TwentyOneDayMarkHeader" xml:space="preserve"><value>Oznaczenie 21 Dni</value></data>
+  <data name="LogReportTitle" xml:space="preserve"><value>Dziennik Resgrid</value></data>
+  <data name="DistrictLabel" xml:space="preserve"><value>Dzielnica</value></data>
+  <data name="DepartmentLabel" xml:space="preserve"><value>Dział</value></data>
+  <data name="TypeLabel" xml:space="preserve"><value>Typ</value></data>
+  <data name="LoggedOnLabel" xml:space="preserve"><value>Zalogowano</value></data>
+  <data name="LoggedByLabel" xml:space="preserve"><value>Zalogowane Przez</value></data>
+  <data name="StartedOnLabel" xml:space="preserve"><value>Rozpoczęto</value></data>
+  <data name="EndedOnLabel" xml:space="preserve"><value>Zakończono</value></data>
+  <data name="PersonnelLabel" xml:space="preserve"><value>Personel</value></data>
+  <data name="NarrativeLabel" xml:space="preserve"><value>Opis</value></data>
+  <data name="NotSupplied" xml:space="preserve"><value>Nie Podano</value></data>
+  <data name="WorkLogType" xml:space="preserve"><value>Praca</value></data>
+  <data name="IdLabel" xml:space="preserve"><value>Id</value></data>
+  <data name="StationHeader" xml:space="preserve"><value>Stacja</value></data>
+  <data name="UnitsLabel" xml:space="preserve"><value>Jednostki</value></data>
+  <data name="ConditionLabel" xml:space="preserve"><value>Stan</value></data>
+  <data name="CallNameLabel" xml:space="preserve"><value>Nazwa Zgłoszenia</value></data>
+  <data name="CallTypeLabel" xml:space="preserve"><value>Typ Zgłoszenia</value></data>
+  <data name="NoTypeLabel" xml:space="preserve"><value>Brak Typu</value></data>
+  <data name="PriorityLabel" xml:space="preserve"><value>Priorytet</value></data>
+  <data name="CallAddressLabel" xml:space="preserve"><value>Adres Zgłoszenia</value></data>
+  <data name="DispatchedLabel" xml:space="preserve"><value>Wysłany</value></data>
+  <data name="EnrouteLabel" xml:space="preserve"><value>W Drodze</value></data>
+  <data name="OnSceneLabel" xml:space="preserve"><value>Na Miejscu</value></data>
+  <data name="ReleasedLabel" xml:space="preserve"><value>Zwolniony</value></data>
+  <data name="InQuartersLabel" xml:space="preserve"><value>W Koszarach</value></data>
+  <data name="AuditHeader" xml:space="preserve"><value>Audyt</value></data>
+  <data name="TrainingCourseLabel" xml:space="preserve"><value>Szkolenie\Kurs</value></data>
+  <data name="CodeLabel" xml:space="preserve"><value>Kod</value></data>
+  <data name="InstructorsLabel" xml:space="preserve"><value>Instruktorzy</value></data>
+  <data name="AttendanceLabel" xml:space="preserve"><value>Frekwencja</value></data>
+  <data name="TotalTimeLabel" xml:space="preserve"><value>Łączny Czas</value></data>
+  <data name="MeetingTypeLabel" xml:space="preserve"><value>Typ Spotkania</value></data>
+  <data name="LogTypeLabel" xml:space="preserve"><value>Typ Dziennika</value></data>
+  <data name="MeetingLogType" xml:space="preserve"><value>Spotkanie</value></data>
+  <data name="LocationLabel" xml:space="preserve"><value>Lokalizacja</value></data>
+  <data name="PresidingLabel" xml:space="preserve"><value>Przewodniczący</value></data>
+  <data name="OtherAttendeesLabel" xml:space="preserve"><value>Inni Uczestnicy</value></data>
+  <data name="MeetingMinutesLabel" xml:space="preserve"><value>Protokół Spotkania</value></data>
+  <data name="CaseNumberLabel" xml:space="preserve"><value>Sprawa #</value></data>
+  <data name="OicLabel" xml:space="preserve"><value>OIC</value></data>
+  <data name="DestinationLabel" xml:space="preserve"><value>Cel</value></data>
+  <data name="PronouncedByLabel" xml:space="preserve"><value>Stwierdzono Przez</value></data>
+  <data name="BodyLocationLabel" xml:space="preserve"><value>Miejsce Znalezienia Ciała</value></data>
+  <data name="CallIdLabel" xml:space="preserve"><value>Id Zgłoszenia</value></data>
+  <data name="CallNumberLabel" xml:space="preserve"><value>Numer Zgłoszenia</value></data>
+  <data name="IncidentIdLabel" xml:space="preserve"><value>Id Zdarzenia</value></data>
+  <data name="ReferenceIdLabel" xml:space="preserve"><value>Id Referencji</value></data>
+  <data name="NoneLabel" xml:space="preserve"><value>Brak</value></data>
+  <data name="CallbackLogType" xml:space="preserve"><value>Oddzwonienie</value></data>
+</root>

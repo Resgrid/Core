@@ -1,0 +1,376 @@
+@using Resgrid.Config
+@model Resgrid.Web.Areas.User.Models.Subscription.SelectRegistrationPlanView
+@{
+    ViewBag.Title = "Resgrid | Select Your Plan";
+}
+
+@section Styles
+{
+    <link rel="stylesheet" href="~/css/pricing/pricing-tables-internal.css">
+
+    <style>
+        .price-box {
+            margin: 0 auto;
+            background: #E9E9E9;
+            border-radius: 10px;
+            padding: 40px 15px;
+            width: 500px;
+        }
+
+        .ui-widget-content {
+            border: 1px solid #bdc3c7;
+            background: #e1e1e1;
+            color: #222222;
+            margin-top: 4px;
+        }
+
+        .ui-slider .ui-slider-handle {
+            position: absolute;
+            z-index: 2;
+            width: 5.2em;
+            height: 2.2em;
+            cursor: default;
+            margin: 0 -40px auto !important;
+            text-align: center;
+            line-height: 30px;
+            color: #FFFFFF;
+            font-size: 15px;
+        }
+
+            .ui-slider .ui-slider-handle .fa {
+                color: #FFFFFF;
+                margin: 0 3px;
+                font-size: 11px;
+                opacity: 0.5;
+            }
+
+        .ui-corner-all {
+            border-radius: 20px;
+        }
+
+        .ui-slider-horizontal .ui-slider-handle {
+            top: -.9em;
+        }
+
+        .ui-state-default,
+        .ui-widget-content .ui-state-default {
+            border: 1px solid #f9f9f9;
+            background: #2980b9;
+            font-weight: normal;
+            color: #454545;
+        }
+
+        .hr.style {
+            border: 0;
+            border-top: 3px solid #bbb;
+            margin-bottom: 1.5em;
+        }
+
+        .price-form {
+            width: 100%;
+            padding-top: 10px;
+        }
+
+        .price-slider {
+            width: 100%;
+            padding-bottom: 20px;
+        }
+    </style>
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-8">
+        <h2>Select Your Plan</h2>
+        <ol class="breadcrumb">
+            <li class="active">
+                <strong>Plan Selection</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+
+                    <div class="alert alert-warning">
+                        <strong>A paid plan is required to activate your account on this server.</strong>
+                        Free tier signups are not available on this Resgrid instance. Please select a plan below to complete your registration.
+                    </div>
+
+                    <p>Move the slider below to select the number of Entities (Users + Units) you require. Your first 10 entities are included at no charge — each additional pack of 10 entities is billed at the rate shown. Select <strong>Buy Yearly</strong> or <strong>Buy Monthly</strong> to proceed to the Stripe checkout page.</p>
+
+                    <div class="price-box">
+                        <form class="form-horizontal form-pricing" role="form">
+                            <div class="price-slider">
+                                <h4 class="great">Entities</h4>
+                                <span>Users or Units sold in packs of 10</span>
+                                <div class="col-sm-12">
+                                    <div id="slider">
+                                        <div id="custom-handle" class="ui-slider-handle">
+                                            <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                                            <span id="handle-text"></span>
+                                            <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="price-form">
+                                <div class="form-group">
+                                    <div class="col-sm-12 text-center">
+                                        <input id="amount-input" type="number" pattern="[0-9]" min="20" max="2000" step="10" value="20" /> <span>Entities</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="amount" class="col-sm-6 control-label">Monthly ($): </label>
+                                    <span class="help-text">Monthly billing amount</span>
+                                    <div class="col-sm-6">
+                                        <input type="hidden" id="amount" class="form-control">
+                                        <p class="price lead" id="monthly-label"></p>
+                                        <span class="price">.00</span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="duration" class="col-sm-6 control-label">Yearly ($): </label>
+                                    <span class="help-text">Yearly (annual) billing amount</span>
+                                    <div class="col-sm-6">
+                                        <input type="hidden" id="duration" class="form-control">
+                                        <p class="price lead" id="yearly-label"></p>
+                                        <span class="price">.00</span>
+                                    </div>
+                                </div>
+                                <hr class="style">
+                                <div class="form-group total">
+                                    <div class="col-sm-6 text-center">
+                                        @if (Model.IsPaddleDepartment) {
+                                            <a id="buyYearlyButton" title="Buy Yearly" class="btn btn-primary" href="#" onclick="paddleCheckout(36);">Buy Yearly</a>
+                                        } else {
+                                            <a id="buyYearlyButton" title="Buy Yearly" class="btn btn-primary" href="#" onclick="stripeCheckout(36);">Buy Yearly</a>
+                                        }
+                                    </div>
+                                    <div class="col-sm-6 text-center">
+                                        @if (Model.IsPaddleDepartment) {
+                                            <a id="buyMonthlyButton" title="Buy Monthly" class="btn btn-primary" href="#" onclick="paddleCheckout(37);">Buy Monthly</a>
+                                        } else {
+                                            <a id="buyMonthlyButton" title="Buy Monthly" class="btn btn-primary" href="#" onclick="stripeCheckout(37);">Buy Monthly</a>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    @if (!string.IsNullOrWhiteSpace(Model.DiscountCode))
+                    {
+                        <div class="alert alert-success" style="margin-top: 20px;">
+                            <strong>Discount Code Applied:</strong> @Model.DiscountCode
+                        </div>
+                    }
+
+                    <div class="alert alert-info" style="margin-top: 20px;">
+                        <strong>Need help choosing?</strong> Contact us at <a href="@SystemBehaviorConfig.ContactUsUrl">@SystemBehaviorConfig.ContactUsUrl</a> and we can help find the right plan for your organization.
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    @if (Model.IsPaddleDepartment) {
+        <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+        <script>
+            Paddle.Environment.set('@Model.PaddleEnvironment');
+            Paddle.Initialize({ token: '@Model.PaddleClientToken' });
+        </script>
+    } else {
+        <script src="https://js.stripe.com/v3/"></script>
+    }
+
+    <script>
+        @if (!Model.IsPaddleDepartment) {
+            <text>var stripe = Stripe('@Model.StripeKey');</text>
+        }
+        var slider = 0;
+        var val = 20;
+        var discountCode = '@Html.Raw(Model.DiscountCode ?? "")';
+
+        function stripeCheckout(id) {
+            const amount = slider == 1 ? val : $("#amount").val();
+
+            if (amount && amount > 10) {
+                const packs = (amount / 10) - 1;
+
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + '/User/Subscription/GetStripeSession?id=' + id + '&count=' + packs + (discountCode ? '&discountCode=' + encodeURIComponent(discountCode) : ''),
+                    contentType: 'application/json',
+                    type: 'GET'
+                }).done(function (data) {
+                    if (data) {
+                        if (data.SessionId) {
+                            stripe.redirectToCheckout({
+                                sessionId: data.SessionId
+                            }).then(function (result) {
+                                swal({
+                                    title: "Purchase Error",
+                                    text: "Error redirecting to Stripe for checkout. Stripe error: " + result.error.message,
+                                    icon: "error",
+                                    buttons: true,
+                                    dangerMode: false
+                                });
+                            });
+                        }
+                    }
+                });
+            } else {
+                swal({
+                    title: "Cannot Purchase",
+                    text: "Please select more than 10 entities to purchase a plan.",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: false
+                });
+            }
+        }
+
+        function paddleCheckout(id) {
+            const amount = slider == 1 ? val : $("#amount").val();
+
+            if (amount && amount > 10) {
+                const packs = (amount / 10) - 1;
+
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + '/User/Subscription/GetPaddleCheckout?id=' + id + '&count=' + packs + (discountCode ? '&discountCode=' + encodeURIComponent(discountCode) : ''),
+                    contentType: 'application/json',
+                    type: 'GET'
+                }).done(function (data) {
+                    if (data) {
+                        if (data.HasActiveSub) {
+                            swal({
+                                title: "Active Subscription",
+                                text: "You already have an active subscription. Please manage your existing subscription instead.",
+                                icon: "warning",
+                                buttons: true,
+                                dangerMode: false
+                            });
+                            return;
+                        }
+
+                        var checkoutSettings = {
+                            settings: {
+                                successUrl: resgrid.absoluteBaseUrl + '/User/Subscription/PaddleProcessing?planId=' + id
+                            },
+                            items: [{
+                                priceId: data.PriceId,
+                                quantity: packs
+                            }]
+                        };
+
+                        if (data.CustomerId) {
+                            checkoutSettings.customer = { id: data.CustomerId };
+                        }
+
+                        Paddle.Checkout.open(checkoutSettings);
+                    }
+                });
+            } else {
+                swal({
+                    title: "Cannot Purchase",
+                    text: "Please select more than 10 entities to purchase a plan.",
+                    icon: "warning",
+                    buttons: true,
+                    dangerMode: false
+                });
+            }
+        }
+
+        $(document).ready(function () {
+            $("#slider").slider({
+                animate: true,
+                value: 20,
+                min: 20,
+                max: 2000,
+                step: 10,
+                create: function () {
+                    let handle = $("#handle-text");
+                    handle.text($(this).slider("value"));
+                },
+                slide: function (event, ui) {
+                    slider = 1;
+                    val = ui.value;
+                    update(1, ui.value);
+                }
+            });
+
+            $("#amount").val(20);
+            $("#amount-input").val(20);
+            update();
+        });
+
+        function update(sliderVal, uiVal) {
+            let handle = $("#handle-text");
+            var $amount = sliderVal == 1 ? uiVal : $("#amount").val();
+
+            handle.text($amount);
+            $("#amount").val($amount);
+            $("#amount-input").val($amount);
+
+            if ($amount > 10) {
+                const totalCostMonthly = calculateCostFromUsers($amount, true);
+                const totalCostYearly = calculateCostFromUsers($amount, false);
+
+                $("#monthly-label").text(totalCostMonthly);
+                $("#yearly-label").text(totalCostYearly);
+
+                $("#buyYearlyButton").show();
+                $("#buyMonthlyButton").show();
+            } else {
+                $("#monthly-label").text(0);
+                $("#yearly-label").text(0);
+
+                $("#buyYearlyButton").hide();
+                $("#buyMonthlyButton").hide();
+            }
+        }
+
+        const calculateCostFromUsers = (totalNumUsers, isMonthly) => {
+            const pricingTiersMonthly = [
+                { tier: 0, marginalUserSlots: 5, costPerUser: 20.0 },
+                { tier: 1, marginalUserSlots: 100, costPerUser: 2.0 },
+                { tier: 2, marginalUserSlots: 1000, costPerUser: 1.5 },
+                { tier: 3, marginalUserSlots: 5000, costPerUser: 1.0 },
+                { tier: 4, marginalUserSlots: 999999999, costPerUser: 0.5 },
+            ];
+
+            const pricingTiersYearly = [
+                { tier: 0, marginalUserSlots: 5, costPerUser: 200.0 },
+                { tier: 1, marginalUserSlots: 100, costPerUser: 20.0 },
+                { tier: 2, marginalUserSlots: 1000, costPerUser: 15.0 },
+                { tier: 3, marginalUserSlots: 1000, costPerUser: 10.0 },
+                { tier: 4, marginalUserSlots: 999999999, costPerUser: 5.0 },
+            ];
+
+            let finalCost = 0.0;
+            let remainingUsers = (totalNumUsers / 10) - 1;
+            let pricingTiers = isMonthly ? pricingTiersMonthly : pricingTiersYearly;
+
+            for (let i = 0; i < pricingTiers.length; i++) {
+                let tier = pricingTiers[i];
+                if (tier.marginalUserSlots < remainingUsers) {
+                    finalCost += tier.marginalUserSlots * tier.costPerUser;
+                    remainingUsers -= tier.marginalUserSlots;
+                } else {
+                    finalCost += tier.costPerUser * remainingUsers;
+                    remainingUsers = 0;
+                }
+            }
+
+            return finalCost;
+        };
+    </script>
+}

@@ -552,6 +552,43 @@
     <value>Новий</value>
   </data>
   <data name="Pending" xml:space="preserve">
-    <value>Pending</value>
+    <value>Очікує</value>
+  </data>
+  <!-- Run Detail -->
+  <data name="RunDetailPageTitle" xml:space="preserve">
+    <value>Деталі запуску</value>
+  </data>
+  <data name="RunSummary" xml:space="preserve">
+    <value>Зведення запуску</value>
+  </data>
+  <data name="StepLogs" xml:space="preserve">
+    <value>Журнали кроків</value>
+  </data>
+  <data name="NoStepLogs" xml:space="preserve">
+    <value>Для цього запуску не записано журналів кроків.</value>
+  </data>
+  <data name="StepPrefix" xml:space="preserve">
+    <value>Крок:</value>
+  </data>
+  <data name="StepSkippedByCondition" xml:space="preserve">
+    <value>Крок пропущено через умову.</value>
+  </data>
+  <data name="ConditionEvaluatedTo" xml:space="preserve">
+    <value>Умова оцінена як:</value>
+  </data>
+  <data name="Result" xml:space="preserve">
+    <value>Результат</value>
+  </data>
+  <data name="RenderedOutput" xml:space="preserve">
+    <value>Відрендерений вивід</value>
+  </data>
+  <data name="AllEventTypesUsed" xml:space="preserve">
+    <value>Усі доступні типи подій-тригерів вже мають налаштований робочий процес. Видаліть наявний робочий процес, щоб звільнити його тип події.</value>
+  </data>
+  <data name="TriggerEventHelp" xml:space="preserve">
+    <value>Кожен тип події може мати лише один робочий процес. Відображаються лише невикористані типи подій.</value>
+  </data>
+  <data name="Detail" xml:space="preserve">
+    <value>Деталі</value>
   </data>
 </root>

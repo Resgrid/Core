@@ -1,24 +1,26 @@
-﻿@using Resgrid.Framework
+@using Resgrid.Framework
 @using Resgrid.Model
 @using Resgrid.Web.Helpers
+@using Microsoft.Extensions.Localization
 @model Resgrid.Web.Areas.User.Models.Reports.Params.PersonnelStaffingHistoryReportParams
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Reports.Reports> localizer
 @{
-	ViewBag.Title = "Resgrid | Personnel Staffing History Report Params";
+	ViewBag.Title = "Resgrid | " + localizer["PersonnelStaffingHistoryReportName"];
 }
 
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>Personnel Staffing History Report</h2>
+		<h2>@localizer["PersonnelStaffingHistoryReportName"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a>
 			</li>
 			<li>
-				<a asp-controller="Reports" asp-action="Index" asp-route-area="User">Reports</a>
+				<a asp-controller="Reports" asp-action="Index" asp-route-area="User">@localizer["Reports"]</a>
 			</li>
 			<li class="active">
-				<strong>Personnel Staffing History Report</strong>
+				<strong>@localizer["PersonnelStaffingHistoryReportName"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -40,15 +42,15 @@
 
 						<div class="form-group">
 							<label class="col-sm-2 control-label required">
-								Type
+								@localizer["SelectType"]
 							</label>
 							<div class="col-sm-10">
-								Group @Html.RadioButtonFor(m => m.GroupSelect, true) or User(s) @Html.RadioButtonFor(m => m.GroupSelect, false)
+								@localizer["Group"] @Html.RadioButtonFor(m => m.GroupSelect, true) or @localizer["UsersLabel"] @Html.RadioButtonFor(m => m.GroupSelect, false)
 							</div>
 						</div>
 						<div class="form-group" id="usersSelect">
 							<label class="col-sm-2 control-label required">
-								User(s)
+								@localizer["UsersLabel"]
 							</label>
 							<div class="col-sm-10">
 								@Html.DropDownListFor(m => m.UserId, Model.Users, new { @style = "width: 450px;" })
@@ -56,7 +58,7 @@
 						</div>
 						<div class="form-group" style="display: none;" id="groupSelect">
 							<label class="col-sm-2 control-label required">
-								Group
+								@localizer["GroupLabel"]
 							</label>
 							<div class="col-sm-10">
 								@Html.DropDownListFor(m => m.GroupId, Model.Groups, new { @style = "width: 450px;" })
@@ -64,7 +66,7 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label required">
-								Report Start Time
+								@localizer["ReportStartTime"]
 							</label>
 							<div class="col-sm-10">
 								@Html.TextBoxFor(m => m.Start, new { style = "width:250px;", onkeydown = "javascript:return false;" })
@@ -72,7 +74,7 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label required">
-								Report End Time
+								@localizer["ReportEndTime"]
 							</label>
 							<div class="col-sm-10">
 								@Html.TextBoxFor(m => m.End, new { style = "width:250px;", onkeydown = "javascript:return false;" })
@@ -81,8 +83,8 @@
 
 						<div class="form-group">
 							<div class="col-sm-4 col-sm-offset-2">
-								<a class="btn btn-white" asp-controller="Reports" asp-action="Index" asp-route-area="User">Cancel</a>
-								<button class="btn btn-primary" type="submit">Run Report</button>
+								<a class="btn btn-white" asp-controller="Reports" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+								<button class="btn btn-primary" type="submit">@localizer["RunReport"]</button>
 							</div>
 						</div>
 					</form>

@@ -1,19 +1,20 @@
-﻿@using Resgrid.Model
+@using Resgrid.Model
 @using Resgrid.Web.Helpers
 @model Resgrid.WebCore.Areas.User.Models.Protocols.ProtocolIndexModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
 @{
-  ViewBag.Title = "Resgrid | Protocols";
+  ViewBag.Title = "Resgrid | " + localizer["ProtocolsHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
-    <h2>Protocols</h2>
+    <h2>@localizer["ProtocolsHeader"]</h2>
     <ol class="breadcrumb">
       <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a>
       </li>
       <li class="active">
-        <strong>Protocols</strong>
+        <strong>@localizer["ProtocolsHeader"]</strong>
       </li>
     </ol>
   </div>
@@ -21,7 +22,7 @@
   {
     <div class="col-sm-8">
       <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-        <a title="Create Protocol" class="btn btn-success" asp-controller="Protocols" asp-action="New" asp-route-area="User">New Protocol</a>
+        <a title="@localizer["NewProtocolButton"]" class="btn btn-success" asp-controller="Protocols" asp-action="New" asp-route-area="User">@localizer["NewProtocolButton"]</a>
       </div>
     </div>
   }
@@ -37,16 +38,16 @@
               <thead>
                 <tr>
                   <th>
-                    Name
+                    @commonLocalizer["Name"]
                   </th>
                   <th>
-                    Type
+                    @commonLocalizer["Type"]
                   </th>
                   <th>
-                    Created On
+                    @localizer["CreatedOnColumn"]
                   </th>
                   <th>
-                    Action
+                    @commonLocalizer["Action"]
                   </th>
                 </tr>
               </thead>
@@ -58,7 +59,7 @@
                       @t.Name
                     </td>
                     <td>
-                      Dispatch Protocol
+                      @localizer["DispatchProtocolLabel"]
                     </td>
                     <td>
                       @Html.Raw(t.CreatedOn.ToShortDateString())
@@ -66,13 +67,13 @@
                     <td>
                       <a href="@Url.Action("View", "Protocols", new { area = "User", id = t.DispatchProtocolId })" class='btn btn-xs btn-info'>
                         <i class="icon-eye-open">
-                        </i> View
+                        </i> @localizer["ViewButton"]
                       </a>
                       @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
                       {
-                        <a href="@Url.Action("Delete", "Protocols", new { area = "User", id = t.DispatchProtocolId })" class='btn btn-xs btn-danger' data-confirm="WARNING: This will permanently delete this protocol. Are you sure you want to delete the protocol @t.Name ?" rel="nofollow">
+                        <a href="@Url.Action("Delete", "Protocols", new { area = "User", id = t.DispatchProtocolId })" class='btn btn-xs btn-danger' data-confirm="@localizer["DeleteProtocolWarning"] @t.Name ?" rel="nofollow">
                           <i class="icon-trash">
-                          </i> Delete
+                          </i> @localizer["DeleteButton"]
                         </a>
                       }
                     </td>

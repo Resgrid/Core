@@ -552,6 +552,43 @@
     <value>Nowy</value>
   </data>
   <data name="Pending" xml:space="preserve">
-    <value>Pending</value>
+    <value>Oczekujące</value>
+  </data>
+  <!-- Run Detail -->
+  <data name="RunDetailPageTitle" xml:space="preserve">
+    <value>Szczegóły uruchomienia</value>
+  </data>
+  <data name="RunSummary" xml:space="preserve">
+    <value>Podsumowanie uruchomienia</value>
+  </data>
+  <data name="StepLogs" xml:space="preserve">
+    <value>Dzienniki kroków</value>
+  </data>
+  <data name="NoStepLogs" xml:space="preserve">
+    <value>Brak zapisanych dzienników kroków dla tego uruchomienia.</value>
+  </data>
+  <data name="StepPrefix" xml:space="preserve">
+    <value>Krok:</value>
+  </data>
+  <data name="StepSkippedByCondition" xml:space="preserve">
+    <value>Krok pominięty przez warunek.</value>
+  </data>
+  <data name="ConditionEvaluatedTo" xml:space="preserve">
+    <value>Warunek oceniony na:</value>
+  </data>
+  <data name="Result" xml:space="preserve">
+    <value>Wynik</value>
+  </data>
+  <data name="RenderedOutput" xml:space="preserve">
+    <value>Wyrenderowane wyjście</value>
+  </data>
+  <data name="AllEventTypesUsed" xml:space="preserve">
+    <value>Wszystkie dostępne typy zdarzeń wyzwalacza mają już skonfigurowany przepływ pracy. Usuń istniejący przepływ pracy, aby zwolnić jego typ zdarzenia.</value>
+  </data>
+  <data name="TriggerEventHelp" xml:space="preserve">
+    <value>Każdy typ zdarzenia może mieć tylko jeden przepływ pracy. Wyświetlane są tylko nieużywane typy zdarzeń.</value>
+  </data>
+  <data name="Detail" xml:space="preserve">
+    <value>Szczegóły</value>
   </data>
 </root>

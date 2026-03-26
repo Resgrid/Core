@@ -1,6 +1,7 @@
-﻿@model Resgrid.Web.Areas.User.Models.Groups.GeofenceView
+@model Resgrid.Web.Areas.User.Models.Groups.GeofenceView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Groups.Groups> localizer
 @{
-	ViewBag.Title = "Resgrid | Geofence Station";
+	ViewBag.Title = "Resgrid | " + localizer["GeofencePageTitle"];
 }
 @section Styles
 {
@@ -11,17 +12,17 @@
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
 		<h2>
-			GeoFence Station
+			@localizer["GeofenceHeading"]
 		</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a>
 			</li>
 			<li>
-				<a asp-controller="Groups" asp-action="Index" asp-route-area="User">Groups</a>
+				<a asp-controller="Groups" asp-action="Index" asp-route-area="User">@localizer["GroupsHeading"]</a>
 			</li>
 			<li class="active">
-				<strong>Geofence Station</strong>
+				<strong>@localizer["GeofenceStationBreadcrumb"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -34,7 +35,7 @@
 				<div class="ibox-content">
 					<div class="row">
 						<div class="col-md-offset-2 col-md-10">
-							<p>Below you can create a geofence for your station. Fields in <span class="required">blue italics</span> are required. Geofences allow you to create a boundary on the map that is this stations response area. This will be used to automatically route calls and determine responses. To create the Geofence first click on the map to create your start point then click again to draw a line, keep drawing lines until you have encircled the response area.</p>
+							<p>@localizer["GeofenceDescription"]</p>
 						</div>
 					</div>
 					<form id="edit_user" class="form-horizontal" role="form" asp-controller="Groups" asp-action="Geofence" asp-route-area="User" method="post">
@@ -43,22 +44,22 @@
 						<div asp-validation-summary="All" class="text-danger"></div>
 
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Name</label>
+							<label class="col-sm-2 control-label">@commonLocalizer["Name"]</label>
 							<div class="col-sm-10">@Model.Group.Name</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">District Color</label>
+							<label class="col-sm-2 control-label">@localizer["DistrictColor"]</label>
 							<div class="col-sm-2">@Html.TextBoxFor(m => m.Group.GeofenceColor, new { @class = "form-control", id = "colorPicker" })</div>
 						</div>
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Geofence</label>
+							<label class="col-sm-2 control-label">@localizer["Geofence"]</label>
 							<div class="col-sm-10"><div id="map_canvas" name="map_canvas" style="position: relative; width: 500px; height: 500px;"></div></div>
 						</div>
 
 						<div class="form-group">
 							<div class="col-sm-4 col-sm-offset-2">
-								<a class="btn btn-primary" id="submit_action" name="commit" onclick="resgrid.groups.geofence.saveGeofence();">Save Geofence</a>
-								<a class="btn btn-danger" id="reset_action" name="reset_action" onclick="resgrid.groups.geofence.resetGeofence();">Clear Geofence</a>
+								<a class="btn btn-primary" id="submit_action" name="commit" onclick="resgrid.groups.geofence.saveGeofence();">@localizer["SaveGeofence"]</a>
+								<a class="btn btn-danger" id="reset_action" name="reset_action" onclick="resgrid.groups.geofence.resetGeofence();">@localizer["ClearGeofence"]</a>
 							</div>
 						</div>
 					</form>

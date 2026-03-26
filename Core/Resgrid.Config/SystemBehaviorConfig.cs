@@ -36,6 +36,12 @@ namespace Resgrid.Config
 		public static string BillingApiBaseUrl = "";
 
 		/// <summary>
+		/// When true, new accounts must select and pay for a plan during registration.
+		/// Free tier signups are not allowed. Intended for EU-Central deployments.
+		/// </summary>
+		public static bool RequirePlanSelectionDuringSignup = false;
+
+		/// <summary>
 		/// This will prevent the system from sending any outbound messages, for example
 		/// email, push, text or call. Allows for testing the system without risk of sending
 		/// out a broadcast to unknowing users.

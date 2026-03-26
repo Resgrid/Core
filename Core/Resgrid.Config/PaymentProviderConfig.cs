@@ -25,6 +25,17 @@
 		public static string TenEntityPackage = "6f4c5f8b-584d-4291-8a7d-29bf97ae6aa9";
 		public static string TenEntityPackageTest = "6f4c5f8b-584d-4291-8a7d-29bf97ae6aa9";
 
+		public static string PaddleProductionApiKey = "";
+		public static string PaddleTestApiKey = "";
+		public static string PaddleProductionBillingWebhookSigningKey = "";
+		public static string PaddleTestBillingWebhookSigningKey = "";
+		public static string PaddlePTT10UserAddonPackage = "";
+		public static string PaddlePTT10UserAddonPackageTest = "";
+		public static string PaddleProductionEnvironment = "production";
+		public static string PaddleTestEnvironment = "sandbox";
+		public static string PaddleProductionClientToken = "";
+		public static string PaddleTestClientToken = "";
+
 		public static string GetStripeClientKey()
 		{
 			if (IsTestMode)
@@ -71,6 +82,46 @@
 				return TenEntityPackageTest;
 			else
 				return TenEntityPackage;
+		}
+
+		public static string GetPaddleApiKey()
+		{
+			if (IsTestMode)
+				return PaddleTestApiKey;
+			else
+				return PaddleProductionApiKey;
+		}
+
+		public static string GetPaddleBillingWebhookSigningKey()
+		{
+			if (IsTestMode)
+				return PaddleTestBillingWebhookSigningKey;
+			else
+				return PaddleProductionBillingWebhookSigningKey;
+		}
+
+		public static string GetPaddlePTT10UserAddonPackageId()
+		{
+			if (IsTestMode)
+				return PaddlePTT10UserAddonPackageTest;
+			else
+				return PaddlePTT10UserAddonPackage;
+		}
+
+		public static string GetPaddleEnvironment()
+		{
+			if (IsTestMode)
+				return PaddleTestEnvironment;
+			else
+				return PaddleProductionEnvironment;
+		}
+
+		public static string GetPaddleClientToken()
+		{
+			if (IsTestMode)
+				return PaddleTestClientToken;
+			else
+				return PaddleProductionClientToken;
 		}
 	}
 }

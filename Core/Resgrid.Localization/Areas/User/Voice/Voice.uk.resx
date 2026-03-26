@@ -59,56 +59,71 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 
-  <data name="Name1" xml:space="preserve">
-    <value>this is my long string</value>
-  </data>
-  <data name="Bitmap1" xml:space="preserve">
-    <value>[base64 mime encoded serialized .NET Framework object]</value>
-  </data>
-  <data name="Icon1" xml:space="preserve">
-    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-  </data>
   <data name="AddAudio" xml:space="preserve">
-    <value>New Audio Stream</value>
+    <value>Новий аудіопотік</value>
   </data>
   <data name="AddAudioButton" xml:space="preserve">
-    <value>Add Audio Stream</value>
+    <value>Додати аудіопотік</value>
+  </data>
+  <data name="AddPTTChannel" xml:space="preserve">
+    <value>Додати PTT-канал</value>
   </data>
   <data name="AddVoice" xml:space="preserve">
-    <value>New Voice Channel</value>
+    <value>Новий голосовий канал</value>
+  </data>
+  <data name="AudioStream" xml:space="preserve">
+    <value>Аудіопотік</value>
   </data>
   <data name="AudioStreamNameLabel" xml:space="preserve">
-    <value>Audio Stream Name</value>
+    <value>Назва аудіопотоку</value>
   </data>
   <data name="AudioStreams" xml:space="preserve">
-    <value>Audio Streams</value>
+    <value>Аудіопотоки</value>
   </data>
   <data name="AudioStreamUrlLabel" xml:space="preserve">
-    <value>Audio Stream Url</value>
+    <value>URL аудіопотоку</value>
   </data>
   <data name="ChannelName" xml:space="preserve">
-    <value>Channel Name</value>
+    <value>Назва каналу</value>
+  </data>
+  <data name="DefaultChannelWarning" xml:space="preserve">
+    <value>Одночасно може бути встановлено лише 1 канал за замовчуванням. Щоб зробити інший канал типовим, спочатку потрібно вимкнути параметр типового каналу.</value>
   </data>
   <data name="EditAudio" xml:space="preserve">
-    <value>Edit Audio Stream</value>
+    <value>Редагувати аудіопотік</value>
+  </data>
+  <data name="EditPTTChannelHeader" xml:space="preserve">
+    <value>Редагувати канал Push-To-Talk</value>
   </data>
   <data name="IsDefault" xml:space="preserve">
-    <value>Is Default</value>
+    <value>За замовчуванням</value>
+  </data>
+  <data name="IsDefaultHelp" xml:space="preserve">
+    <value>Зверніть увагу, що одночасно може бути лише один типовий канал; вибір нового типового каналу вимкне типовий для існуючого.</value>
+  </data>
+  <data name="NewPTTChannelHeader" xml:space="preserve">
+    <value>Новий канал Push-To-Talk</value>
   </data>
   <data name="Participants" xml:space="preserve">
-    <value>Participants</value>
+    <value>Учасники</value>
   </data>
   <data name="PTTNotPurchased" xml:space="preserve">
-    <value>Push-To-Talk Addon Not Purchased</value>
+    <value>Доповнення Push-To-Talk не придбано</value>
   </data>
   <data name="PTTNotPurchasedInfo" xml:space="preserve">
-    <value>Your department has not purchased the Push-To-Talk addon. Your departments Managing Member can purchase the addon from the Subscription and Billing page. Push-To-Talk allows your department to enable real-time voice communications though the Resgrid applications.</value>
+    <value>Ваш підрозділ не придбав доповнення Push-To-Talk. Керуючий член вашого підрозділу може придбати доповнення на сторінці Підписки та Виставлення рахунків. Push-To-Talk дозволяє вашому підрозділу активувати голосовий зв'язок у реальному часі через програми Resgrid.</value>
+  </data>
+  <data name="PushToTalk" xml:space="preserve">
+    <value>Push-To-Talk</value>
   </data>
   <data name="SaveEditAudioButton" xml:space="preserve">
-    <value>Save Audio Stream</value>
+    <value>Зберегти аудіопотік</value>
+  </data>
+  <data name="SavePTTChannel" xml:space="preserve">
+    <value>Зберегти PTT-канал</value>
   </data>
   <data name="VoiceChannels" xml:space="preserve">
-    <value>Voice (PTT) Channels</value>
+    <value>Голосові канали (PTT)</value>
   </data>
   <data name="VoiceHeader" xml:space="preserve">
     <value>Аудіо та push-to-talk</value>

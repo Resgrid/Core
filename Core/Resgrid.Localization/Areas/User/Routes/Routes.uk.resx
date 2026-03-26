@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <!-- Shared -->
+  <data name="Cancel" xml:space="preserve"><value>Скасувати</value></data>
+  <data name="Save" xml:space="preserve"><value>Зберегти</value></data>
+  <data name="Name" xml:space="preserve"><value>Назва</value></data>
+  <data name="Description" xml:space="preserve"><value>Опис</value></data>
+  <data name="Status" xml:space="preserve"><value>Статус</value></data>
+  <data name="Actions" xml:space="preserve"><value>Дії</value></data>
+
+  <!-- Index -->
+  <data name="RoutesPageTitle" xml:space="preserve"><value>Маршрути</value></data>
+  <data name="RoutesHeader" xml:space="preserve"><value>Маршрути</value></data>
+  <data name="NewRoute" xml:space="preserve"><value>Новий маршрут</value></data>
+  <data name="ActiveRoutes" xml:space="preserve"><value>В процесі</value></data>
+  <data name="ArchivedRoutes" xml:space="preserve"><value>Архівні маршрути</value></data>
+  <data name="Stops" xml:space="preserve"><value>Зупинки</value></data>
+  <data name="Profile" xml:space="preserve"><value>Профіль</value></data>
+  <data name="Created" xml:space="preserve"><value>Створено</value></data>
+  <data name="View" xml:space="preserve"><value>Перегляд</value></data>
+  <data name="Edit" xml:space="preserve"><value>Редагувати</value></data>
+  <data name="History" xml:space="preserve"><value>Історія</value></data>
+  <data name="DeleteRoutePlanConfirm" xml:space="preserve"><value>Видалити цей план маршруту?</value></data>
+
+  <!-- Instances -->
+  <data name="RouteHistoryPageTitle" xml:space="preserve"><value>Історія маршруту</value></data>
+  <data name="RouteHistoryHeaderPrefix" xml:space="preserve"><value>Історія маршруту</value></data>
+  <data name="HistoryBreadcrumb" xml:space="preserve"><value>Історія</value></data>
+  <data name="Unit" xml:space="preserve"><value>Підрозділ</value></data>
+  <data name="Started" xml:space="preserve"><value>Розпочато</value></data>
+  <data name="Ended" xml:space="preserve"><value>Завершено</value></data>
+  <data name="Detail" xml:space="preserve"><value>Деталі</value></data>
+
+  <!-- ActiveRoutes -->
+  <data name="ActiveRoutesPageTitle" xml:space="preserve"><value>Маршрути в процесі</value></data>
+  <data name="ActiveRoutesHeader" xml:space="preserve"><value>Маршрути в процесі</value></data>
+  <data name="ActiveBreadcrumb" xml:space="preserve"><value>В процесі</value></data>
+  <data name="NoActiveRoutes" xml:space="preserve"><value>Немає активних маршрутів</value></data>
+  <data name="NoActiveRoutesMessage" xml:space="preserve"><value>Наразі немає маршрутів у процесі виконання.</value></data>
+  <data name="ArchivedRoutesPageTitle" xml:space="preserve"><value>Архівні маршрути</value></data>
+  <data name="ArchivedRoutesHeader" xml:space="preserve"><value>Архівні маршрути</value></data>
+  <data name="ArchivedBreadcrumb" xml:space="preserve"><value>Архівний</value></data>
+  <data name="NoArchivedRoutes" xml:space="preserve"><value>Немає архівних маршрутів</value></data>
+  <data name="NoArchivedRoutesMessage" xml:space="preserve"><value>Немає архівних планів маршрутів.</value></data>
+  <data name="ArchivedRouteDetailPageTitle" xml:space="preserve"><value>Деталі архівного маршруту</value></data>
+  <data name="UnitLabel" xml:space="preserve"><value>Підрозділ</value></data>
+  <data name="StopsLabel" xml:space="preserve"><value>Зупинки</value></data>
+  <data name="StartedLabel" xml:space="preserve"><value>Розпочато</value></data>
+  <data name="ViewDetails" xml:space="preserve"><value>Переглянути деталі</value></data>
+
+  <!-- New -->
+  <data name="NewRoutePageTitle" xml:space="preserve"><value>Новий маршрут</value></data>
+  <data name="NewRoutePlanHeader" xml:space="preserve"><value>Новий план маршруту</value></data>
+  <data name="NewBreadcrumb" xml:space="preserve"><value>Новий</value></data>
+  <data name="RouteDetailsTitle" xml:space="preserve"><value>Деталі маршруту</value></data>
+  <data name="UnitField" xml:space="preserve"><value>Підрозділ</value></data>
+  <data name="UnitAssignAtStart" xml:space="preserve"><value>-- Призначити при старті --</value></data>
+  <data name="StatusDraft" xml:space="preserve"><value>Чернетка</value></data>
+  <data name="StatusActive" xml:space="preserve"><value>Активний</value></data>
+  <data name="StatusPaused" xml:space="preserve"><value>На паузі</value></data>
+  <data name="StatusArchived" xml:space="preserve"><value>Архівний</value></data>
+  <data name="RouteColor" xml:space="preserve"><value>Колір маршруту</value></data>
+  <data name="RouteProfile" xml:space="preserve"><value>Профіль маршруту</value></data>
+  <data name="ProfileDriving" xml:space="preserve"><value>На автомобілі</value></data>
+  <data name="ProfileWalking" xml:space="preserve"><value>Пішки</value></data>
+  <data name="ProfileCycling" xml:space="preserve"><value>На велосипеді</value></data>
+  <data name="ProfileDrivingTraffic" xml:space="preserve"><value>На автомобілі (з трафіком)</value></data>
+  <data name="GeofenceRadius" xml:space="preserve"><value>Радіус геозони (м)</value></data>
+  <data name="UseStationAsStart" xml:space="preserve"><value>Використати станцію як початок</value></data>
+  <data name="UseStationAsEnd" xml:space="preserve"><value>Використати станцію як кінець</value></data>
+  <data name="OptimizeStopOrder" xml:space="preserve"><value>Оптимізувати порядок зупинок</value></data>
+  <data name="MapAndStopsTitle" xml:space="preserve"><value>Карта та зупинки</value></data>
+  <data name="MapAndStopsHelp" xml:space="preserve"><value>Зупинками можна керувати після створення маршруту через API або форму редагування.</value></data>
+  <data name="CreateRoute" xml:space="preserve"><value>Створити маршрут</value></data>
+
+  <!-- StartRoute -->
+  <data name="StartRoutePageTitle" xml:space="preserve"><value>Почати маршрут</value></data>
+  <data name="StartRouteHeader" xml:space="preserve"><value>Почати маршрут</value></data>
+  <data name="StartRouteBreadcrumb" xml:space="preserve"><value>Почати маршрут</value></data>
+  <data name="AssignUnit" xml:space="preserve"><value>Призначити підрозділ</value></data>
+  <data name="SelectUnitPlaceholder" xml:space="preserve"><value>-- Виберіть підрозділ --</value></data>
+  <data name="AssignUnitHelp" xml:space="preserve"><value>Виберіть підрозділ, який буде виконувати цей маршрут.</value></data>
+  <data name="RouteInfoLabel" xml:space="preserve"><value>Інформація про маршрут</value></data>
+  <data name="MinEstimated" xml:space="preserve"><value>хв розрахункових</value></data>
+  <data name="StartRouteNow" xml:space="preserve"><value>Почати маршрут зараз</value></data>
+
+  <!-- Edit -->
+  <data name="EditRoutePageTitle" xml:space="preserve"><value>Редагувати маршрут</value></data>
+  <data name="EditRoutePlanHeader" xml:space="preserve"><value>Редагувати план маршруту</value></data>
+  <data name="EditBreadcrumb" xml:space="preserve"><value>Редагувати</value></data>
+  <data name="StopsTableHash" xml:space="preserve"><value>#</value></data>
+  <data name="StopType" xml:space="preserve"><value>Тип</value></data>
+  <data name="Address" xml:space="preserve"><value>Адреса</value></data>
+  <data name="Priority" xml:space="preserve"><value>Пріоритет</value></data>
+  <data name="SaveChanges" xml:space="preserve"><value>Зберегти зміни</value></data>
+
+  <!-- View -->
+  <data name="RouteDetailPageTitle" xml:space="preserve"><value>Деталі маршруту</value></data>
+  <data name="ViewBreadcrumb" xml:space="preserve"><value>Перегляд</value></data>
+  <data name="RouteMapTitle" xml:space="preserve"><value>Карта маршруту</value></data>
+  <data name="DetailsTitle" xml:space="preserve"><value>Деталі</value></data>
+  <data name="StatusLabel" xml:space="preserve"><value>Статус</value></data>
+  <data name="ProfileLabel" xml:space="preserve"><value>Профіль</value></data>
+  <data name="GeofenceLabel" xml:space="preserve"><value>Геозона</value></data>
+  <data name="DistanceLabel" xml:space="preserve"><value>Відстань</value></data>
+  <data name="DurationLabel" xml:space="preserve"><value>Тривалість</value></data>
+
+  <!-- InstanceDetail -->
+  <data name="RouteInstanceDetailPageTitle" xml:space="preserve"><value>Деталі екземпляра маршруту</value></data>
+  <data name="RouteInstanceHeaderPrefix" xml:space="preserve"><value>Екземпляр маршруту</value></data>
+  <data name="InstanceDetailBreadcrumb" xml:space="preserve"><value>Деталі екземпляра</value></data>
+  <data name="InstanceInfoTitle" xml:space="preserve"><value>Інформація про екземпляр</value></data>
+  <data name="StartedDt" xml:space="preserve"><value>Розпочато</value></data>
+  <data name="EndedDt" xml:space="preserve"><value>Завершено</value></data>
+  <data name="Progress" xml:space="preserve"><value>Прогрес</value></data>
+  <data name="StopTimelineTitle" xml:space="preserve"><value>Хронологія зупинок</value></data>
+  <data name="StopStatusPending" xml:space="preserve"><value>Очікує</value></data>
+  <data name="StopStatusCheckedIn" xml:space="preserve"><value>Зареєстровано</value></data>
+  <data name="StopStatusCompleted" xml:space="preserve"><value>Завершено</value></data>
+  <data name="StopStatusSkipped" xml:space="preserve"><value>Пропущено</value></data>
+  <data name="StopStatusUnknown" xml:space="preserve"><value>Невідомо</value></data>
+  <data name="StopInPrefix" xml:space="preserve"><value>Вхід:</value></data>
+  <data name="StopOutPrefix" xml:space="preserve"><value>Вихід:</value></data>
+  <data name="StopDwellPrefix" xml:space="preserve"><value>Зупинка:</value></data>
+  <data name="StopSkipPrefix" xml:space="preserve"><value>Пропущено:</value></data>
+  <data name="StopLabel" xml:space="preserve"><value>Зупинка</value></data>
+
+  <!-- Add Stop Modal -->
+  <data name="AddStop" xml:space="preserve"><value>Додати зупинку</value></data>
+  <data name="StopTypeManual" xml:space="preserve"><value>Вручну</value></data>
+  <data name="StopTypeScheduledCall" xml:space="preserve"><value>Запланований виклик</value></data>
+  <data name="StopTypeWaypoint" xml:space="preserve"><value>Проміжна точка</value></data>
+  <data name="LinkedCall" xml:space="preserve"><value>Пов'язаний виклик</value></data>
+  <data name="LoadingCalls" xml:space="preserve"><value>Завантаження викликів...</value></data>
+  <data name="PriorityNormal" xml:space="preserve"><value>Звичайний</value></data>
+  <data name="PriorityHigh" xml:space="preserve"><value>Високий</value></data>
+  <data name="PriorityCritical" xml:space="preserve"><value>Критичний</value></data>
+  <data name="PriorityOptional" xml:space="preserve"><value>Необов'язковий</value></data>
+  <data name="Find" xml:space="preserve"><value>Знайти</value></data>
+  <data name="What3Words" xml:space="preserve"><value>What3Words</value></data>
+  <data name="Location" xml:space="preserve"><value>Місце</value></data>
+  <data name="ClickMapToSetLocation" xml:space="preserve"><value>Натисніть на карту, щоб встановити місце, або використайте адресу / What3Words вище.</value></data>
+  <data name="PlannedArrival" xml:space="preserve"><value>Запланований прибуток</value></data>
+  <data name="PlannedDeparture" xml:space="preserve"><value>Запланований від'їзд</value></data>
+  <data name="EstDwellMinutes" xml:space="preserve"><value>Розрах. зупинка (хв)</value></data>
+  <data name="SelectContact" xml:space="preserve"><value>Виберіть контакт</value></data>
+  <data name="SelectContactPlaceholder" xml:space="preserve"><value>-- Введіть вручну або виберіть існуючий --</value></data>
+  <data name="ContactAutofillHelp" xml:space="preserve"><value>Вибір контакту автоматично заповнює ім'я та номер нижче.</value></data>
+  <data name="ContactName" xml:space="preserve"><value>Ім'я контакту</value></data>
+  <data name="ContactNumber" xml:space="preserve"><value>Номер контакту</value></data>
+  <data name="Notes" xml:space="preserve"><value>Нотатки</value></data>
+
+  <!-- Directions -->
+  <data name="Directions" xml:space="preserve"><value>Маршрут</value></data>
+  <data name="Print" xml:space="preserve"><value>Друкувати</value></data>
+  <data name="StartRoute" xml:space="preserve"><value>Почати маршрут</value></data>
+  <data name="TurnByTurnDirections" xml:space="preserve"><value>Покрокові вказівки</value></data>
+  <data name="CalculatingRoute" xml:space="preserve"><value>Обчислення маршруту&#x2026;</value></data>
+  <data name="DirectionsError" xml:space="preserve"><value>Не вдалося отримати маршрут руху. Адреси або координати зупинок можуть бути недоступні по дорозі. Зупинки перераховані нижче в порядку.</value></data>
+  <data name="StopSummary" xml:space="preserve"><value>Зведення зупинок</value></data>
+  <data name="StopName" xml:space="preserve"><value>Назва зупинки</value></data>
+  <data name="DwellMin" xml:space="preserve"><value>Зупинка (хв)</value></data>
+  <data name="Contact" xml:space="preserve"><value>Контакт</value></data>
+
+  <!-- ArchivedView -->
+  <data name="RouteIsArchived" xml:space="preserve"><value>Цей маршрут архівований і не може бути запущений, відредагований або видалений.</value></data>
+  <data name="BackToArchivedRoutes" xml:space="preserve"><value>Назад до архівних маршрутів</value></data>
+
+  <!-- Edit form location pickers -->
+  <data name="StartLocation" xml:space="preserve"><value>Місце початку</value></data>
+  <data name="EndLocation" xml:space="preserve"><value>Місце завершення</value></data>
+  <data name="EnterAddress" xml:space="preserve"><value>Введіть адресу</value></data>
+  <data name="ClickMapToSetStartLocation" xml:space="preserve"><value>Натисніть на карту, щоб встановити місце початку, або використайте адресу / What3Words / координати вище.</value></data>
+  <data name="ClickMapToSetEndLocation" xml:space="preserve"><value>Натисніть на карту, щоб встановити місце завершення, або використайте адресу / What3Words / координати вище.</value></data>
+  <data name="Apply" xml:space="preserve"><value>Застосувати</value></data>
+  <data name="Latitude" xml:space="preserve"><value>Широта</value></data>
+  <data name="Longitude" xml:space="preserve"><value>Довгота</value></data>
+  <data name="FindLocationVia" xml:space="preserve"><value>Знайти місце через</value></data>
+</root>

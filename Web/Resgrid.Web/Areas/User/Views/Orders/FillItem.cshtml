@@ -1,19 +1,20 @@
-﻿@using Resgrid.Model
+@using Resgrid.Model
 
 @model Resgrid.Web.Areas.User.Models.Orders.FillItemView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Orders.Orders> localizer
 @{
-  ViewBag.Title = "Resgrid | Fill Order Result";
+  ViewBag.Title = "Resgrid | " + localizer["FillOrderResultHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
-    <h2>Fill Order Result</h2>
+    <h2>@localizer["FillOrderResultHeader"]</h2>
     <ol class="breadcrumb">
       <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a>
       </li>
       <li class="active">
-        <strong>Fill Order Result</strong>
+        <strong>@localizer["FillOrderResultHeader"]</strong>
       </li>
     </ol>
   </div>
@@ -27,10 +28,10 @@
         <div class="ibox float-e-margins">
           <div class="ibox-content">
             <h2>
-              Fill Failed
+              @localizer["FillFailedHeader"]
             </h2>
             <p>
-              There was an error trying to fulfil your request. Please view the error below for more detail.
+              @localizer["FillFailedMessage"]
             </p>
             <div class="alert alert-error">
               @Model.ErrorMessage
@@ -49,13 +50,13 @@ else if (Model.Fill.Accepted)
 				<div class="ibox float-e-margins">
 					<div class="ibox-content">
 						<h2>
-						  Fill Added and Accepted
+						  @localizer["FillAcceptedHeader"]
 						</h2>
 						<p>
-							Your fill was added into the system and has been accepted automatically. 
+							@localizer["FillAcceptedMessage"]
 						</p>
 						<div class="alert alert-warning">
-							You may want to reach out to the Point of Contact for the order to ensure if there are any other details that need to be worked out.
+							@localizer["FillAcceptedWarning"]
 						</div>
 					</div>
 				</div>
@@ -72,10 +73,10 @@ else
         <div class="ibox-content">
           <h2></h2>
           <p>
-            Fill Proposed
+            @localizer["FillProposedHeader"]
           </p>
           <div class="alert alert-warning">
-            Your fill has been logged with the system and marked as pending. The creator of the resource request will need to manually review your fill request and approve it. You will receive a notification when that action occurs. 
+            @localizer["FillProposedMessage"]
           </div>
         </div>
       </div>

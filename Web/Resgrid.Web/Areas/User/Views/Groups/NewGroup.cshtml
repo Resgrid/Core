@@ -1,22 +1,23 @@
-﻿
+
 @using Resgrid.Model
 @model Resgrid.Web.Areas.User.Models.Groups.NewGroupView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Groups.Groups> localizer
 @{
-  ViewBag.Title = "Resgrid | New Group";
+  ViewBag.Title = "Resgrid | " + localizer["NewGroupPageTitle"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
-    <h2>New Group</h2>
+    <h2>@localizer["NewGroupHeading"]</h2>
     <ol class="breadcrumb">
       <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a>
       </li>
       <li>
-        <a asp-controller="Groups" asp-action="Index" asp-route-area="User">Groups</a>
+        <a asp-controller="Groups" asp-action="Index" asp-route-area="User">@localizer["GroupsHeading"]</a>
       </li>
       <li class="active">
-        <strong>New Group</strong>
+        <strong>@localizer["NewGroupHeading"]</strong>
       </li>
     </ol>
   </div>
@@ -42,40 +43,40 @@
             @Html.HiddenFor(m => m.PrinterApiKey)
 
             <div class="form-group">
-              <label class="col-sm-2 control-label" style="padding-top:0px;">Group type</label>
+              <label class="col-sm-2 control-label" style="padding-top:0px;">@localizer["GroupType"]</label>
               <div class="col-sm-10">
                 <div class="row">
                   <div class="col-sm-12">
-                    <label class="col-sm-2 control-label">Organizational Group</label>
-                    <input type="radio" asp-for="NewGroup.Type" value="1" id="groupTypeOrgRadio" onclick="resgrid.groups.newgroup.showParentFields();" title="Organizational Group">
+                    <label class="col-sm-2 control-label">@localizer["OrganizationalGroup"]</label>
+                    <input type="radio" asp-for="NewGroup.Type" value="1" id="groupTypeOrgRadio" onclick="resgrid.groups.newgroup.showParentFields();" title="@localizer["OrganizationalGroup"]">
                   </div>
                 </div>
                 <div class="row">
                   <div class="col-sm-12">
-                    <label class="col-sm-2 control-label" style="padding-top:0px;">Station Group</label>
-                    <input type="radio" asp-for="NewGroup.Type" value="2" id="groupTypeStationRadio" onclick="resgrid.groups.newgroup.showAddressFields();" title="Station Group">
+                    <label class="col-sm-2 control-label" style="padding-top:0px;">@localizer["StationGroup"]</label>
+                    <input type="radio" asp-for="NewGroup.Type" value="2" id="groupTypeStationRadio" onclick="resgrid.groups.newgroup.showAddressFields();" title="@localizer["StationGroup"]">
                   </div>
                 </div>
               </div>
             </div>
             <div class="form-group">
-              <label class="col-sm-2 control-label required">Group Name</label>
+              <label class="col-sm-2 control-label required">@localizer["GroupName"]</label>
               <div class="col-sm-10"><input type="text" asp-for="NewGroup.Name" class="form-control" /></div>
             </div>
             <div class="form-group">
-              <label class="col-sm-2 control-label">Parent Group</label>
+              <label class="col-sm-2 control-label">@localizer["ParentGroup"]</label>
               <div class="col-sm-10">@Html.DropDownListFor(m => m.NewGroup.ParentDepartmentGroupId, Model.StationGroups)</div>
             </div>
             <div class="form-group" id="StationAddress">
               <label class="col-sm-2 control-label">
-                Station Address
+                @localizer["StationAddress"]
               </label>
               <div class="col-sm-10">
                 <div class="well">
-                  <span>Station groups require a physical location (as personnel and units can respond to them). Please enter an Address or GPS Coordinates or a <a href="https://what3words.com/about/" target="_blank">what3words address.</a></span>
+                  <span>@localizer["StationAddressDescription"] <a href="https://what3words.com/about/" target="_blank">what3words address.</a></span>
                   <div class="form-group">
                     <label class="col-sm-2 control-label required">
-                      Street
+                      @localizer["Street"]
                     </label>
                     <div class="col-sm-10">
                       @Html.TextBoxFor(m => m.Address1, new { @class = "form-control" })
@@ -83,7 +84,7 @@
                   </div>
                   <div class="form-group">
                     <label class="col-sm-2 control-label required">
-                      City
+                      @localizer["City"]
                     </label>
                     <div class="col-sm-10">
                       @Html.TextBoxFor(m => m.City, new { @class = "form-control" })
@@ -91,7 +92,7 @@
                   </div>
                   <div class="form-group">
                     <label class="col-sm-2 control-label required">
-                      State/Province
+                      @localizer["StateProvince"]
                     </label>
                     <div class="col-sm-10">
                       @Html.TextBoxFor(m => m.State, new { @class = "form-control" })
@@ -99,7 +100,7 @@
                   </div>
                   <div class="form-group">
                     <label class="col-sm-2 control-label required">
-                      Zip/Postal Code
+                      @localizer["ZipPostalCode"]
                     </label>
                     <div class="col-sm-10">
                       @Html.TextBoxFor(m => m.PostalCode, new { @class = "form-control" })
@@ -107,41 +108,41 @@
                   </div>
                   <div class="form-group">
                     <label class="col-sm-2 control-label required">
-                      Country
+                      @localizer["Country"]
                     </label>
                     <div class="col-sm-10">
                       @Html.DropDownListFor(m => m.Country, new SelectList(Countries.CountryNames), new { @class = "form-control", style = "width: 300px" })
                     </div>
                   </div>
                   <div style="text-align: center;">
-                    <h4>Or</h4>
+                    <h4>@localizer["Or"]</h4>
                   </div>
                   <div class="form-group">
                     <label class="col-sm-2 control-label">
-                      Gps Coordinates
+                      @localizer["GpsCoordinates"]
                     </label>
                     <div class="controls">
                       <div class="col-md-4">
                         @Html.TextBoxFor(m => m.Latitude, new { @class = "form-control" })
-                        <span class="help-inline">Latitude (Decimal Notation: i.e. 39.1517)</span>
+                        <span class="help-inline">@localizer["LatitudeHint"]</span>
                       </div>
                       <div class="col-md-4">
                         @Html.TextBoxFor(m => m.Longitude, new { @class = "form-control" })
-                        <span class="help-inline">Longitude (Decimal Notation: i.e. -119.4571)</span>
+                        <span class="help-inline">@localizer["LongitudeHint"]</span>
                       </div>
                     </div>
                   </div>
                   <div style="text-align: center;">
-                    <h4>Or</h4>
+                    <h4>@localizer["Or"]</h4>
                   </div>
                   <div class="form-group">
                     <label class="control-label">
-                      what3words Address
+                      @localizer["What3WordsAddress"]
                     </label>
                     <div class="controls">
                       <div class="col-md-8">
                         @Html.TextBoxFor(m => m.What3Word, new { @class = "form-control", @style = "width:250px;", autocomplete = "off", placeholder = "what.three.words", tabindex = "8" })
-                        <span class="help-inline">w3w Address (i.e. humble.echo.sticky)</span>
+                        <span class="help-inline">@localizer["What3WordsHint"]</span>
                       </div>
                     </div>
                   </div>
@@ -150,17 +151,17 @@
             </div>
             <div class="form-group">
               <label class="col-sm-2 control-label">
-                <a href="https://www.printnode.com">PrintNode</a> Printer
+                <a href="https://www.printnode.com">PrintNode</a> @localizer["PrintNodePrinter"]
               </label>
               <div class="col-sm-10">
                 <div class="row">
                   <div class="col-xs-4">
-                    <a class="btn btn-sm btn-inverse" href="#selectPrinterModal" data-toggle="modal" id="selectPrinter">Select Printer</a>
+                    <a class="btn btn-sm btn-inverse" href="#selectPrinterModal" data-toggle="modal" id="selectPrinter">@localizer["SelectPrinter"]</a>
                   </div>
                 </div>
                 <div class="row">
                   <div class="col-md-10">
-                    <p><a href="https://www.printnode.com">PrintNode</a> is a service that allows us to submit print jobs to a local computer or server on your network to a specific printer. You must have an active PrintNode account and it's software setup with the printer active.</p>
+                    <p><a href="https://www.printnode.com">PrintNode</a> @localizer["PrintNodeDescription"]</p>
                   </div>
                 </div>
                 <div class="row">
@@ -172,12 +173,12 @@
             </div>
             <div class="row">
               <div class="col-md-10 col-md-offset-2">
-                <p>Users can only be in one group at a time. If you don't see your user in the list they are already in a group.</p>
+                <p>@localizer["UsersOneGroupNote"]</p>
               </div>
             </div>
             <div class="form-group">
               <label class="col-sm-2 control-label">
-                Group Admins
+                @localizer["GroupAdmins"]
               </label>
               <div class="col-sm-10">
                 <div class="row">
@@ -187,7 +188,7 @@
             </div>
             <div class="form-group">
               <label class="col-sm-2 control-label">
-                Group Users
+                @localizer["GroupUsers"]
               </label>
               <div class="col-sm-10">
                 <select id="groupUsers" name="groupUsers" multiple="multiple" style="width: 100%;"></select>
@@ -196,8 +197,8 @@
 
             <div class="form-group">
               <div class="col-sm-4 col-sm-offset-2">
-                <a class="btn btn-white" asp-controller="Groups" asp-action="Index" asp-route-area="User">Cancel</a>
-                <button class="btn btn-primary" type="submit">Save Group</button>
+                <a class="btn btn-white" asp-controller="Groups" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                <button class="btn btn-primary" type="submit">@localizer["SaveGroup"]</button>
               </div>
             </div>
           </form>
@@ -212,20 +213,20 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="exampleModalLabel">Select Printer</h4>
+        <h4 class="modal-title" id="exampleModalLabel">@localizer["SelectPrinter"]</h4>
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label for="assignment-name" class="control-label">Api Key:</label>
+          <label for="assignment-name" class="control-label">@localizer["ApiKey"]</label>
           <input type="text" class="form-control" id="apiKey">
         </div>
         <div class="form-group">
-          <button type="button" class="btn btn-inverse" id="getPrintersButton">Get Printers</button>
+          <button type="button" class="btn btn-inverse" id="getPrintersButton">@localizer["GetPrinters"]</button>
         </div>
         <table class="table table-bordered table-striped table-hover data-table">
           <thead>
             <tr>
-              <th>Printer</th>
+              <th>@localizer["Printer"]</th>
               <th>&nbsp;</th>
             </tr>
           </thead>
@@ -233,7 +234,7 @@
         </table>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">@localizer["Close"]</button>
       </div>
     </div>
   </div>

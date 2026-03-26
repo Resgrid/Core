@@ -458,4 +458,70 @@
   <data name="Notes" xml:space="preserve">
     <value>Notes</value>
   </data>
+  <!-- Directions -->
+  <data name="Directions" xml:space="preserve">
+    <value>Directions</value>
+  </data>
+  <data name="Print" xml:space="preserve">
+    <value>Print</value>
+  </data>
+  <data name="StartRoute" xml:space="preserve">
+    <value>Start Route</value>
+  </data>
+  <data name="TurnByTurnDirections" xml:space="preserve">
+    <value>Turn-by-Turn Directions</value>
+  </data>
+  <data name="CalculatingRoute" xml:space="preserve">
+    <value>Calculating route&#x2026;</value>
+  </data>
+  <data name="DirectionsError" xml:space="preserve">
+    <value>Could not retrieve driving directions. The stop addresses or coordinates may not be reachable by road. The stops are listed below in order.</value>
+  </data>
+  <data name="StopSummary" xml:space="preserve">
+    <value>Stop Summary</value>
+  </data>
+  <data name="StopName" xml:space="preserve">
+    <value>Stop Name</value>
+  </data>
+  <data name="DwellMin" xml:space="preserve">
+    <value>Dwell (min)</value>
+  </data>
+  <data name="Contact" xml:space="preserve">
+    <value>Contact</value>
+  </data>
+  <!-- ArchivedView -->
+  <data name="RouteIsArchived" xml:space="preserve">
+    <value>This route is archived and cannot be started, edited, or deleted.</value>
+  </data>
+  <data name="BackToArchivedRoutes" xml:space="preserve">
+    <value>Back to Archived Routes</value>
+  </data>
+  <!-- Edit form location pickers -->
+  <data name="StartLocation" xml:space="preserve">
+    <value>Start Location</value>
+  </data>
+  <data name="EndLocation" xml:space="preserve">
+    <value>End Location</value>
+  </data>
+  <data name="EnterAddress" xml:space="preserve">
+    <value>Enter address</value>
+  </data>
+  <data name="ClickMapToSetStartLocation" xml:space="preserve">
+    <value>Click the map to set the start location, or use address / What3Words / coordinates above.</value>
+  </data>
+  <data name="ClickMapToSetEndLocation" xml:space="preserve">
+    <value>Click the map to set the end location, or use address / What3Words / coordinates above.</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="Latitude" xml:space="preserve">
+    <value>Latitude</value>
+  </data>
+  <data name="Longitude" xml:space="preserve">
+    <value>Longitude</value>
+  </data>
+  <data name="FindLocationVia" xml:space="preserve">
+    <value>Find location via</value>
+  </data>
 </root>

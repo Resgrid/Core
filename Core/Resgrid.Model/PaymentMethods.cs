@@ -7,6 +7,7 @@
 		Invoice = 3,
 		System = 4,
 		BrainTree = 5,
-		Wave = 6
+		Wave = 6,
+		Paddle = 7
 	}
 }

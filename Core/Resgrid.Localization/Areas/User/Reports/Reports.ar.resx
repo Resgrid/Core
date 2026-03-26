@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="ReportingTitle" xml:space="preserve"><value>التقارير</value></data>
+  <data name="ViewReport" xml:space="preserve"><value>عرض التقرير</value></data>
+  <data name="Reports" xml:space="preserve"><value>التقارير</value></data>
+  <data name="PersonnelStatusHistoryReportName" xml:space="preserve"><value>تقرير سجل حالة الموظفين</value></data>
+  <data name="PersonnelStatusHistoryReportDescription" xml:space="preserve"><value>سيعرض هذا التقرير سجل حالة الموظفين بالكامل (سجلات الإجراءات) المقدم من الموظفين المحددين</value></data>
+  <data name="PersonnelReportName" xml:space="preserve"><value>تقرير الموظفين</value></data>
+  <data name="PersonnelReportDescription" xml:space="preserve"><value>عرض جميع الموظفين في قسمك وأدوارهم ومعلومات الاتصال الأساسية.</value></data>
+  <data name="StaffingReportName" xml:space="preserve"><value>تقرير التوظيف</value></data>
+  <data name="StaffingReportDescription" xml:space="preserve"><value>عرض جميع الموظفين وحالتهم الحالية ومستوى التوظيف والتغيير التالي المجدول لمستوى التوظيف.</value></data>
+  <data name="CertificationsReportName" xml:space="preserve"><value>تقرير الشهادات</value></data>
+  <data name="CertificationsReportDescription" xml:space="preserve"><value>عرض جميع الشهادات لكل شخص في القسم.</value></data>
+  <data name="ShiftReadinessReportName" xml:space="preserve"><value>تقرير جاهزية المناوبة</value></data>
+  <data name="ShiftReadinessReportDescription" xml:space="preserve"><value>سيعرض هذا التقرير جاهزية المناوبة لأيام المناوبة القادمة لكل مناوبة.</value></data>
+  <data name="DepartmentActivityReportName" xml:space="preserve"><value>تقرير نشاط القسم السنوي</value></data>
+  <data name="DepartmentActivityReportDescription" xml:space="preserve"><value>سيعرض هذا التقرير نشاط المكالمات والسجلات والتدريب والموظفين في القسم بأرقام من بداية العام.</value></data>
+  <data name="PersonnelHoursReportName" xml:space="preserve"><value>تقرير ساعات سجل الموظفين</value></data>
+  <data name="PersonnelHoursReportDescription" xml:space="preserve"><value>سيعرض هذا التقرير عدد الساعات التي عمل فيها موظفو القسم وتدربوا وردوا على المكالمات وفقاً لإدخالات السجل.</value></data>
+  <data name="CallSummaryReportName" xml:space="preserve"><value>تقرير ملخص المكالمات</value></data>
+  <data name="CallSummaryReportDescription" xml:space="preserve"><value>سيعرض هذا التقرير تفاصيل جميع المكالمات في نطاق تاريخ محدد</value></data>
+  <data name="PersonnelStaffingHistoryReportName" xml:space="preserve"><value>تقرير سجل توظيف الموظفين</value></data>
+  <data name="PersonnelStaffingHistoryReportDescription" xml:space="preserve"><value>سيعرض هذا التقرير سجل التوظيف بالكامل المقدم من الموظفين المحددين</value></data>
+  <data name="UnitStateHistoryReportName" xml:space="preserve"><value>تقرير سجل حالة الوحدة</value></data>
+  <data name="UnitStateHistoryReportDescription" xml:space="preserve"><value>يعرض حالات الوحدة لوحدة واحدة أو جميع الوحدات أو وحدات في مجموعة لنطاق زمني محدد من قبل المستخدم</value></data>
+  <data name="ActiveCallsResourcesReportName" xml:space="preserve"><value>تقرير المكالمات النشطة والموارد</value></data>
+  <data name="ActiveCallsResourcesReportDescription" xml:space="preserve"><value>يوضح التقرير المكالمات المفتوحة حالياً وقت تشغيل التقرير والوحدات والموظفين المرفقين بهذه المكالمات</value></data>
+  <data name="ReportStartTime" xml:space="preserve"><value>وقت بدء التقرير</value></data>
+  <data name="ReportEndTime" xml:space="preserve"><value>وقت انتهاء التقرير</value></data>
+  <data name="RunReport" xml:space="preserve"><value>تشغيل التقرير</value></data>
+  <data name="SelectType" xml:space="preserve"><value>النوع</value></data>
+  <data name="GroupOrUsers" xml:space="preserve"><value>مجموعة أو مستخدم/مستخدمون</value></data>
+  <data name="Group" xml:space="preserve"><value>مجموعة</value></data>
+  <data name="GroupLabel" xml:space="preserve"><value>مجموعة</value></data>
+  <data name="UsersLabel" xml:space="preserve"><value>مستخدم/مستخدمون</value></data>
+  <data name="UnitsLabel" xml:space="preserve"><value>وحدة/وحدات</value></data>
+  <data name="GroupOrUnits" xml:space="preserve"><value>مجموعة أو وحدة/وحدات</value></data>
+  <data name="IdHeader" xml:space="preserve"><value>المعرف</value></data>
+  <data name="NameHeader" xml:space="preserve"><value>الاسم</value></data>
+  <data name="GroupHeader" xml:space="preserve"><value>المجموعة</value></data>
+  <data name="TotalHeader" xml:space="preserve"><value>المجموع</value></data>
+  <data name="CountHeader" xml:space="preserve"><value>العدد</value></data>
+  <data name="TypeHeader" xml:space="preserve"><value>النوع</value></data>
+  <data name="StateHeader" xml:space="preserve"><value>الحالة</value></data>
+  <data name="StatusHeader" xml:space="preserve"><value>الحالة</value></data>
+  <data name="TimestampHeader" xml:space="preserve"><value>الطابع الزمني</value></data>
+  <data name="NoteHeader" xml:space="preserve"><value>ملاحظة</value></data>
+  <data name="HoursHeader" xml:space="preserve"><value>الساعات</value></data>
+  <data name="NumberHeader" xml:space="preserve"><value>الرقم</value></data>
+  <data name="StartHeader" xml:space="preserve"><value>البداية</value></data>
+  <data name="EndHeader" xml:space="preserve"><value>النهاية</value></data>
+  <data name="DateHeader" xml:space="preserve"><value>التاريخ</value></data>
+  <data name="RolesHeader" xml:space="preserve"><value>الأدوار</value></data>
+  <data name="LocationHeader" xml:space="preserve"><value>الموقع</value></data>
+  <data name="StatusChanges" xml:space="preserve"><value>تغييرات الحالة</value></data>
+  <data name="TotalStaffingChanges" xml:space="preserve"><value>المجموع</value></data>
+  <data name="CallTypes" xml:space="preserve"><value>أنواع المكالمات</value></data>
+  <data name="CallStates" xml:space="preserve"><value>حالات المكالمات</value></data>
+  <data name="Calls" xml:space="preserve"><value>المكالمات</value></data>
+  <data name="LoggedOnHeader" xml:space="preserve"><value>تم التسجيل في</value></data>
+  <data name="ClosedOnHeader" xml:space="preserve"><value>تم الإغلاق في</value></data>
+  <data name="CallLengthHeader" xml:space="preserve"><value>مدة المكالمة</value></data>
+  <data name="OnSceneTimeHeader" xml:space="preserve"><value>وقت الوصول للموقع</value></data>
+  <data name="UnitsHeader" xml:space="preserve"><value>الوحدات</value></data>
+  <data name="PersonnelHeader" xml:space="preserve"><value>الموظفون</value></data>
+  <data name="OpenStatus" xml:space="preserve"><value>مفتوح</value></data>
+  <data name="PercentHeader" xml:space="preserve"><value>%</value></data>
+  <data name="CertificationsReportTitle" xml:space="preserve"><value>تقرير شهادات Resgrid</value></data>
+  <data name="CertNumberHeader" xml:space="preserve"><value>الرقم</value></data>
+  <data name="IssuedByHeader" xml:space="preserve"><value>صادر من</value></data>
+  <data name="AreaHeader" xml:space="preserve"><value>المنطقة</value></data>
+  <data name="ExpiresHeader" xml:space="preserve"><value>تنتهي في</value></data>
+  <data name="YtdDepartmentActivityReportTitle" xml:space="preserve"><value>تقرير نشاط القسم السنوي</value></data>
+  <data name="PersonnelResponseDetail" xml:space="preserve"><value>تفاصيل استجابة الموظفين</value></data>
+  <data name="Trainings" xml:space="preserve"><value>التدريبات</value></data>
+  <data name="PersonnelTrainingDetail" xml:space="preserve"><value>تفاصيل تدريب الموظفين</value></data>
+  <data name="DispatchedHeader" xml:space="preserve"><value>تم الإيفاد</value></data>
+  <data name="AttendedHeader" xml:space="preserve"><value>حضر</value></data>
+  <data name="January" xml:space="preserve"><value>يناير</value></data>
+  <data name="February" xml:space="preserve"><value>فبراير</value></data>
+  <data name="March" xml:space="preserve"><value>مارس</value></data>
+  <data name="April" xml:space="preserve"><value>أبريل</value></data>
+  <data name="May" xml:space="preserve"><value>مايو</value></data>
+  <data name="June" xml:space="preserve"><value>يونيو</value></data>
+  <data name="July" xml:space="preserve"><value>يوليو</value></data>
+  <data name="August" xml:space="preserve"><value>أغسطس</value></data>
+  <data name="September" xml:space="preserve"><value>سبتمبر</value></data>
+  <data name="October" xml:space="preserve"><value>أكتوبر</value></data>
+  <data name="November" xml:space="preserve"><value>نوفمبر</value></data>
+  <data name="December" xml:space="preserve"><value>ديسمبر</value></data>
+  <data name="PersonnelEventsReportTitle" xml:space="preserve"><value>تقرير أحداث الموظفين Resgrid</value></data>
+  <data name="DestinationCallHeader" xml:space="preserve"><value>الوجهة\المكالمة</value></data>
+  <data name="PersonnelHoursReportTitle" xml:space="preserve"><value>تقرير ساعات الموظفين</value></data>
+  <data name="PersonnelHoursDetailReportTitle" xml:space="preserve"><value>تقرير تفصيلي لساعات الموظفين</value></data>
+  <data name="CallHours" xml:space="preserve"><value>ساعات المكالمات</value></data>
+  <data name="WorkHours" xml:space="preserve"><value>ساعات العمل</value></data>
+  <data name="TrainingHours" xml:space="preserve"><value>ساعات التدريب</value></data>
+  <data name="WorkLogs" xml:space="preserve"><value>سجلات العمل</value></data>
+  <data name="PersonnelReportTitle" xml:space="preserve"><value>تقرير موظفي Resgrid</value></data>
+  <data name="UsernameHeader" xml:space="preserve"><value>اسم المستخدم</value></data>
+  <data name="EmailHeader" xml:space="preserve"><value>البريد الإلكتروني</value></data>
+  <data name="MobileNumberHeader" xml:space="preserve"><value>رقم الجوال</value></data>
+  <data name="MailingAddressHeader" xml:space="preserve"><value>عنوان البريد</value></data>
+  <data name="PersonnelStaffingHistoryReportTitle" xml:space="preserve"><value>تقرير سجل توظيف الموظفين</value></data>
+  <data name="StaffingChanges" xml:space="preserve"><value>تغييرات التوظيف</value></data>
+  <data name="StaffingHeader" xml:space="preserve"><value>التوظيف</value></data>
+  <data name="ScheduledHeader" xml:space="preserve"><value>مجدول</value></data>
+  <data name="StaffingReportTitle" xml:space="preserve"><value>تقرير توظيف Resgrid</value></data>
+  <data name="StaffingTimestampHeader" xml:space="preserve"><value>طابع زمني للتوظيف</value></data>
+  <data name="NextChangeHeader" xml:space="preserve"><value>التغيير التالي</value></data>
+  <data name="NextStaffingHeader" xml:space="preserve"><value>التوظيف التالي</value></data>
+  <data name="StaffingAvailable" xml:space="preserve"><value>متاح</value></data>
+  <data name="StaffingDelayed" xml:space="preserve"><value>متأخر</value></data>
+  <data name="StaffingUnavailable" xml:space="preserve"><value>غير متاح</value></data>
+  <data name="StaffingCommitted" xml:space="preserve"><value>ملتزم</value></data>
+  <data name="StaffingOnShift" xml:space="preserve"><value>في المناوبة</value></data>
+  <data name="StaffingUnknown" xml:space="preserve"><value>غير معروف</value></data>
+  <data name="UnitEventsReportTitle" xml:space="preserve"><value>تقرير أحداث الوحدة Resgrid</value></data>
+  <data name="UnitStateHistoryReportTitle" xml:space="preserve"><value>تقرير سجل حالة الوحدة</value></data>
+  <data name="StateChanges" xml:space="preserve"><value>تغييرات الحالة</value></data>
+  <data name="TotalStatesHeader" xml:space="preserve"><value>إجمالي الحالات</value></data>
+  <data name="UpcomingShiftReadinessReportTitle" xml:space="preserve"><value>تقرير جاهزية المناوبة القادمة</value></data>
+  <data name="ShiftReadyLabel" xml:space="preserve"><value>جاهز</value></data>
+  <data name="ShiftNotReadyLabel" xml:space="preserve"><value>غير جاهز</value></data>
+  <data name="RequiredHeader" xml:space="preserve"><value>مطلوب</value></data>
+  <data name="OptionalHeader" xml:space="preserve"><value>اختياري</value></data>
+  <data name="DeltaHeader" xml:space="preserve"><value>الفرق</value></data>
+  <data name="RoleHeader" xml:space="preserve"><value>الدور</value></data>
+  <data name="SignupNameHeader" xml:space="preserve"><value>اسم التسجيل</value></data>
+  <data name="ActiveCallsResourcesReportTitle" xml:space="preserve"><value>تقرير المكالمات النشطة والموارد</value></data>
+  <data name="CallNameHeader" xml:space="preserve"><value>اسم المكالمة</value></data>
+  <data name="UnitsOnCallHeader" xml:space="preserve"><value>الوحدات في المكالمة</value></data>
+  <data name="PersonnelOnCallHeader" xml:space="preserve"><value>الموظفون في المكالمة</value></data>
+  <data name="UnitNameHeader" xml:space="preserve"><value>اسم الوحدة</value></data>
+  <data name="PersonNameHeader" xml:space="preserve"><value>اسم الشخص</value></data>
+  <data name="GroupNameHeader" xml:space="preserve"><value>اسم المجموعة</value></data>
+  <data name="DispatchedOnHeader" xml:space="preserve"><value>تم الإيفاد في</value></data>
+  <data name="FourteenDayMarkHeader" xml:space="preserve"><value>علامة 14 يوم</value></data>
+  <data name="TwentyOneDayMarkHeader" xml:space="preserve"><value>علامة 21 يوم</value></data>
+  <data name="LogReportTitle" xml:space="preserve"><value>سجل Resgrid</value></data>
+  <data name="DistrictLabel" xml:space="preserve"><value>المنطقة</value></data>
+  <data name="DepartmentLabel" xml:space="preserve"><value>القسم</value></data>
+  <data name="TypeLabel" xml:space="preserve"><value>النوع</value></data>
+  <data name="LoggedOnLabel" xml:space="preserve"><value>تم التسجيل في</value></data>
+  <data name="LoggedByLabel" xml:space="preserve"><value>سجل بواسطة</value></data>
+  <data name="StartedOnLabel" xml:space="preserve"><value>بدأ في</value></data>
+  <data name="EndedOnLabel" xml:space="preserve"><value>انتهى في</value></data>
+  <data name="PersonnelLabel" xml:space="preserve"><value>الموظفون</value></data>
+  <data name="NarrativeLabel" xml:space="preserve"><value>السرد</value></data>
+  <data name="NotSupplied" xml:space="preserve"><value>غير متوفر</value></data>
+  <data name="WorkLogType" xml:space="preserve"><value>عمل</value></data>
+  <data name="IdLabel" xml:space="preserve"><value>المعرف</value></data>
+  <data name="StationHeader" xml:space="preserve"><value>المحطة</value></data>
+  <data name="UnitsLabel" xml:space="preserve"><value>الوحدات</value></data>
+  <data name="ConditionLabel" xml:space="preserve"><value>الحالة</value></data>
+  <data name="CallNameLabel" xml:space="preserve"><value>اسم المكالمة</value></data>
+  <data name="CallTypeLabel" xml:space="preserve"><value>نوع المكالمة</value></data>
+  <data name="NoTypeLabel" xml:space="preserve"><value>بلا نوع</value></data>
+  <data name="PriorityLabel" xml:space="preserve"><value>الأولوية</value></data>
+  <data name="CallAddressLabel" xml:space="preserve"><value>عنوان المكالمة</value></data>
+  <data name="DispatchedLabel" xml:space="preserve"><value>تم الإيفاد</value></data>
+  <data name="EnrouteLabel" xml:space="preserve"><value>في الطريق</value></data>
+  <data name="OnSceneLabel" xml:space="preserve"><value>في الموقع</value></data>
+  <data name="ReleasedLabel" xml:space="preserve"><value>تم الإطلاق</value></data>
+  <data name="InQuartersLabel" xml:space="preserve"><value>في الثكنة</value></data>
+  <data name="AuditHeader" xml:space="preserve"><value>التدقيق</value></data>
+  <data name="TrainingCourseLabel" xml:space="preserve"><value>تدريب\دورة</value></data>
+  <data name="CodeLabel" xml:space="preserve"><value>الرمز</value></data>
+  <data name="InstructorsLabel" xml:space="preserve"><value>المدربون</value></data>
+  <data name="AttendanceLabel" xml:space="preserve"><value>الحضور</value></data>
+  <data name="TotalTimeLabel" xml:space="preserve"><value>الوقت الإجمالي</value></data>
+  <data name="MeetingTypeLabel" xml:space="preserve"><value>نوع الاجتماع</value></data>
+  <data name="LogTypeLabel" xml:space="preserve"><value>نوع السجل</value></data>
+  <data name="MeetingLogType" xml:space="preserve"><value>اجتماع</value></data>
+  <data name="LocationLabel" xml:space="preserve"><value>الموقع</value></data>
+  <data name="PresidingLabel" xml:space="preserve"><value>يترأس</value></data>
+  <data name="OtherAttendeesLabel" xml:space="preserve"><value>حاضرون آخرون</value></data>
+  <data name="MeetingMinutesLabel" xml:space="preserve"><value>محضر الاجتماع</value></data>
+  <data name="CaseNumberLabel" xml:space="preserve"><value>رقم القضية</value></data>
+  <data name="OicLabel" xml:space="preserve"><value>ضابط المناوبة</value></data>
+  <data name="DestinationLabel" xml:space="preserve"><value>الوجهة</value></data>
+  <data name="PronouncedByLabel" xml:space="preserve"><value>أعلن بواسطة</value></data>
+  <data name="BodyLocationLabel" xml:space="preserve"><value>موقع الجثة</value></data>
+  <data name="CallIdLabel" xml:space="preserve"><value>معرف المكالمة</value></data>
+  <data name="CallNumberLabel" xml:space="preserve"><value>رقم المكالمة</value></data>
+  <data name="IncidentIdLabel" xml:space="preserve"><value>معرف الحادثة</value></data>
+  <data name="ReferenceIdLabel" xml:space="preserve"><value>معرف المرجع</value></data>
+  <data name="NoneLabel" xml:space="preserve"><value>لا شيء</value></data>
+  <data name="CallbackLogType" xml:space="preserve"><value>رد اتصال</value></data>
+</root>

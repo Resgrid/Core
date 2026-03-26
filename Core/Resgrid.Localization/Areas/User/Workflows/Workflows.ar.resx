@@ -553,4 +553,41 @@
   <data name="Pending" xml:space="preserve">
     <value>معلّق</value>
   </data>
+  <!-- Run Detail -->
+  <data name="RunDetailPageTitle" xml:space="preserve">
+    <value>تفاصيل التشغيل</value>
+  </data>
+  <data name="RunSummary" xml:space="preserve">
+    <value>ملخص التشغيل</value>
+  </data>
+  <data name="StepLogs" xml:space="preserve">
+    <value>سجلات الخطوات</value>
+  </data>
+  <data name="NoStepLogs" xml:space="preserve">
+    <value>لم يتم تسجيل أي سجلات للخطوات لهذا التشغيل.</value>
+  </data>
+  <data name="StepPrefix" xml:space="preserve">
+    <value>خطوة:</value>
+  </data>
+  <data name="StepSkippedByCondition" xml:space="preserve">
+    <value>تم تخطي الخطوة بسبب الشرط.</value>
+  </data>
+  <data name="ConditionEvaluatedTo" xml:space="preserve">
+    <value>تم تقييم الشرط إلى:</value>
+  </data>
+  <data name="Result" xml:space="preserve">
+    <value>النتيجة</value>
+  </data>
+  <data name="RenderedOutput" xml:space="preserve">
+    <value>المخرجات المعروضة</value>
+  </data>
+  <data name="AllEventTypesUsed" xml:space="preserve">
+    <value>جميع أنواع أحداث التشغيل المتاحة لها بالفعل سير عمل مُكوَّن. احذف سير عمل موجوداً لتحرير نوع حدثه.</value>
+  </data>
+  <data name="TriggerEventHelp" xml:space="preserve">
+    <value>يمكن لكل نوع حدث أن يكون له سير عمل واحد فقط. يتم عرض أنواع الأحداث غير المستخدمة فقط.</value>
+  </data>
+  <data name="Detail" xml:space="preserve">
+    <value>تفاصيل</value>
+  </data>
 </root>

@@ -1,21 +1,22 @@
-﻿@using Resgrid.Model
+@using Resgrid.Model
 @model Resgrid.WebCore.Areas.User.Models.Forms.NewFormModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Forms.Forms> localizer
 @{
-  ViewBag.Title = "Resgrid | New Form";
+  ViewBag.Title = "Resgrid | " + localizer["NewFormPageTitle"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
-    <h2>New Form</h2>
+    <h2>@localizer["NewFormHeading"]</h2>
     <ol class="breadcrumb">
       <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
       </li>
       <li>
-        <a asp-controller="Forms" asp-action="Index" asp-route-area="User">Forms</a>
+        <a asp-controller="Forms" asp-action="Index" asp-route-area="User">@localizer["FormsHeading"]</a>
       </li>
       <li class="active">
-        <strong>New Form</strong>
+        <strong>@localizer["NewFormHeading"]</strong>
       </li>
     </ol>
   </div>
@@ -44,7 +45,7 @@
 
             <div class="form-group">
               <label class="col-sm-2 control-label required">
-                Form Name
+                @localizer["FormNameLabel"]
               </label>
               <div class="col-sm-6">
                 @Html.TextBoxFor(m => m.FormName, new { @class = "form-control", autofocus = "autofocus" })
@@ -52,7 +53,7 @@
             </div>
             <div class="form-group">
               <label class="col-sm-2 control-label required">
-                Form Type
+                @localizer["FormTypeLabel"]
               </label>
               <div class="col-sm-3">
                 @Html.DropDownListFor(m => m.FormType, Model.FormTypes)
@@ -60,7 +61,7 @@
             </div>
             <div class="form-group">
               <label class="col-sm-2 control-label required">
-                Form Designer
+                @localizer["FormDesignerLabel"]
               </label>
             </div>
             <div class="col-sm-12">
@@ -68,11 +69,11 @@
             </div>
             <div id="callAutomationBlock" class="control-group">
               <label class="col-sm-2 control-label">
-                Call Automations
+                @localizer["CallAutomationsLabel"]
               </label>
               <div class="col-sm-10">
                 <div class="row">
-                  <div class="col-xs-10">You will need to match the field names specificed above with the fields you want to operate on. Leave the field value blank for any value.<br /></div>
+                  <div class="col-xs-10">@localizer["CallAutomationsDescription"]<br /></div>
                 </div>
                 <div class="row">
                   <div class="col-xs-12">
@@ -80,14 +81,14 @@
                       <thead>
                         <tr>
                           <th></th>
-                          <th style="max-width: 200px;font-size: 14px;">Field Name</th>
+                          <th style="max-width: 200px;font-size: 14px;">@localizer["FieldNameColumn"]</th>
                           <th></th>
-                          <th style="max-width: 200px;font-size: 14px;">Field Value</th>
+                          <th style="max-width: 200px;font-size: 14px;">@localizer["FieldValueColumn"]</th>
                           <th></th>
-                          <th style="max-width: 200px;font-size: 14px;">Operation</th>
+                          <th style="max-width: 200px;font-size: 14px;">@localizer["OperationColumn"]</th>
                           <th></th>
-                          <th style="max-width: 200px;font-size: 14px;">Call Value</th>
-                          <th style="max-width: 90px;font-size: 16px;"><a id="addCallAutomationButton" class="btn btn-success btn-xs"><i class="icon-plus"></i> Add Automation</a></th>
+                          <th style="max-width: 200px;font-size: 14px;">@localizer["CallValueColumn"]</th>
+                          <th style="max-width: 90px;font-size: 16px;"><a id="addCallAutomationButton" class="btn btn-success btn-xs"><i class="icon-plus"></i> @localizer["AddAutomationButton"]</a></th>
                         </tr>
                       </thead>
                       <tbody></tbody>
@@ -98,8 +99,8 @@
             </div>
             <div class="form-group">
               <div class="col-sm-4 col-sm-offset-2">
-                <a class="btn btn-white" asp-controller="Forms" asp-action="Index" asp-route-area="User">Cancel</a>
-                <button class="btn btn-primary" type="submit">Add Form</button>
+                <a class="btn btn-white" asp-controller="Forms" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                <button class="btn btn-primary" type="submit">@localizer["AddFormButton"]</button>
               </div>
             </div>
           </form>

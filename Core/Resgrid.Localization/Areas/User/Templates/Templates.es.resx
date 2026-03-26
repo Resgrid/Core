@@ -98,4 +98,21 @@
 	<resheader name="writer">
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
+	<data name="AddCallNoteTemplate" xml:space="preserve"><value>Agregar plantilla de nota de llamada</value></data>
+	<data name="CallNameToSetLabel" xml:space="preserve"><value>Nombre de llamada a establecer</value></data>
+	<data name="CallNatureToSetLabel" xml:space="preserve"><value>Naturaleza de llamada a establecer</value></data>
+	<data name="CallNotes" xml:space="preserve"><value>Notas de llamada</value></data>
+	<data name="CallNoteTemplateHeader" xml:space="preserve"><value>Plantillas de nota de llamada</value></data>
+	<data name="CallPriorityToSetLabel" xml:space="preserve"><value>Prioridad de llamada a establecer</value></data>
+	<data name="CallTypeToSetLabel" xml:space="preserve"><value>Tipo de llamada a establecer</value></data>
+	<data name="EditCallNote" xml:space="preserve"><value>Editar nota de llamada</value></data>
+	<data name="EditCallNoteTemplateHeader" xml:space="preserve"><value>Editar plantilla de nota de llamada</value></data>
+	<data name="EditTemplateHeader" xml:space="preserve"><value>Editar plantilla</value></data>
+	<data name="NewCallNoteTemplateHeader" xml:space="preserve"><value>Nueva plantilla de nota de llamada</value></data>
+	<data name="NewTemplateHeader" xml:space="preserve"><value>Nueva plantilla</value></data>
+	<data name="NoteTextLabel" xml:space="preserve"><value>Texto de la nota</value></data>
+	<data name="TemplateNameLabel" xml:space="preserve"><value>Nombre de la plantilla</value></data>
+	<data name="AddTemplateButton" xml:space="preserve"><value>Agregar plantilla</value></data>
+	<data name="CallNoteType" xml:space="preserve"><value>Nota de llamada</value></data>
+	<data name="CallQuickTemplateType" xml:space="preserve"><value>Plantilla rápida de llamada</value></data>
 </root>

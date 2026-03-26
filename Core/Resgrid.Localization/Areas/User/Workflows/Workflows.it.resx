@@ -552,6 +552,43 @@
     <value>Nuovo</value>
   </data>
   <data name="Pending" xml:space="preserve">
-    <value>Pending</value>
+    <value>In sospeso</value>
+  </data>
+  <!-- Run Detail -->
+  <data name="RunDetailPageTitle" xml:space="preserve">
+    <value>Dettaglio esecuzione</value>
+  </data>
+  <data name="RunSummary" xml:space="preserve">
+    <value>Riepilogo esecuzione</value>
+  </data>
+  <data name="StepLogs" xml:space="preserve">
+    <value>Log dei passaggi</value>
+  </data>
+  <data name="NoStepLogs" xml:space="preserve">
+    <value>Nessun log di passaggio registrato per questa esecuzione.</value>
+  </data>
+  <data name="StepPrefix" xml:space="preserve">
+    <value>Passaggio:</value>
+  </data>
+  <data name="StepSkippedByCondition" xml:space="preserve">
+    <value>Passaggio saltato per condizione.</value>
+  </data>
+  <data name="ConditionEvaluatedTo" xml:space="preserve">
+    <value>La condizione è stata valutata a:</value>
+  </data>
+  <data name="Result" xml:space="preserve">
+    <value>Risultato</value>
+  </data>
+  <data name="RenderedOutput" xml:space="preserve">
+    <value>Output renderizzato</value>
+  </data>
+  <data name="AllEventTypesUsed" xml:space="preserve">
+    <value>Tutti i tipi di evento trigger disponibili hanno già un workflow configurato. Elimina un workflow esistente per liberare il suo tipo di evento.</value>
+  </data>
+  <data name="TriggerEventHelp" xml:space="preserve">
+    <value>Ogni tipo di evento può avere un solo workflow. Vengono mostrati solo i tipi di evento non utilizzati.</value>
+  </data>
+  <data name="Detail" xml:space="preserve">
+    <value>Dettaglio</value>
   </data>
 </root>

@@ -97,12 +97,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data.NovuBackendApiUrl = ChatConfig.NovuBackendUrl;
 			result.Data.NovuSocketUrl = ChatConfig.NovuSocketUrl;
 
-			result.Data.AnalyticsApiKey = TelemetryConfig.GetAnalyticsKey();
-
-			if (TelemetryConfig.ExporterType == TelemetryExporters.PostHog)
-				result.Data.AnalyticsHost = TelemetryConfig.PostHogUrl;
-			else if (TelemetryConfig.ExporterType == TelemetryExporters.Aptabase)
-				result.Data.AnalyticsHost = TelemetryConfig.AptabaseUrl;
+			result.Data.AnalyticsApiKey = "";
+			result.Data.AnalyticsHost = "";
 
 			result.PageSize = 1;
 			result.Status = ResponseHelper.Success;

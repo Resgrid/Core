@@ -1,20 +1,21 @@
-﻿@model Resgrid.Web.Areas.User.Models.Groups.DeleteGroupView
+@model Resgrid.Web.Areas.User.Models.Groups.DeleteGroupView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Groups.Groups> localizer
 @{
-    ViewBag.Title = "Resgrid | Delete Group";
+    ViewBag.Title = "Resgrid | " + localizer["DeleteGroupPageTitle"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-        <h2>Delete Group</h2>
+        <h2>@localizer["DeleteGroupHeading"]</h2>
         <ol class="breadcrumb">
             <li>
-                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a>
             </li>
             <li>
-                <a asp-controller="Groups" asp-action="Index" asp-route-area="User">Groups</a>
+                <a asp-controller="Groups" asp-action="Index" asp-route-area="User">@localizer["GroupsHeading"]</a>
             </li>
             <li class="active">
-                <strong>Delete Group</strong>
+                <strong>@localizer["DeleteGroupHeading"]</strong>
             </li>
         </ol>
     </div>
@@ -33,18 +34,18 @@
 
                         <div class='page-header'>
                             <h3>
-                                Delete @Model.Group.Name
+                                @localizer["DeleteGroupHeading"] @Model.Group.Name
                             </h3>
                         </div>
                         <div class="alert alert-error">
-                            <strong>Are you sure you want to delete this group?</strong> If you choose to delete this group the groups information, for example dispatch and message addresses will be removed with the group and won't be able to be used again.
+                            <strong>@localizer["DeleteGroupConfirmQuestion"]</strong> @localizer["DeleteGroupWarning"]
                             <br />
                         </div>
                         @if (Model.UserCount > 0)
                         {
                             <hr />
                             <div class="alert alert-danger">
-                                This group has active users underneath it, you must move or delete the users to be able to delete the group.
+                                @localizer["DeleteGroupActiveUsersWarning"]
                             </div>
                         }
 
@@ -52,7 +53,7 @@
                         {
                             <hr />
                             <div class='alert alert-danger'>
-                                This group has child groups under it. You will need to move or delete the child group before deleting the group.
+                                @localizer["DeleteGroupChildGroupsWarning"]
                             </div>
                         }
 
@@ -60,7 +61,7 @@
                         {
                             <hr />
                             <div class='alert alert-danger'>
-                                >This group has units assigned to it. You will need to move the unit to another Station Group or delete the unit to be able to delete the group.
+                                @localizer["DeleteGroupUnitsWarning"]
                             </div>
                         }
 
@@ -68,7 +69,7 @@
                         {
                             <hr />
                             <div class='alert alert-danger'>
-                                This group has shift groups assigned to it. You will need to remove those shift groups, Shifts assigned to a Station\Group, to be able to delete the group.
+                                @localizer["DeleteGroupShiftsWarning"]
                             </div>
                         }
 
@@ -76,24 +77,24 @@
                         {
                             <hr />
                             <div class='alert alert-warning'>
-                                <i class='picons-16-basic1-104'></i>Click the checkbox below to delete this group.
+                                <i class='picons-16-basic1-104'></i>@localizer["DeleteGroupCheckboxHint"]
                             </div>
 
                             <div class="alert alert-error">
-                                If you choose to delete this group the information below will be permanently deleted. This operation cannot be undone.
+                                @localizer["DeleteGroupPermanentWarning"]
                                 <br /><br />
-                                <strong>Data that is Deleted</strong>
+                                <strong>@localizer["DeleteGroupDataDeleted"]</strong>
                                 <ul>
-                                    <li>Group Data</li>
-                                    <li>Personnel Group Memberships</li>
-                                    <li>Unit Group Memberships</li>
-                                    <li>Group Inventory</li>
-                                    <li>Group Shift Data</li>
+                                    <li>@localizer["DeleteGroupDataGroupData"]</li>
+                                    <li>@localizer["DeleteGroupDataPersonnelMemberships"]</li>
+                                    <li>@localizer["DeleteGroupDataUnitMemberships"]</li>
+                                    <li>@localizer["DeleteGroupDataInventory"]</li>
+                                    <li>@localizer["DeleteGroupDataShiftData"]</li>
                                 </ul>
                             </div>
 
                             <div class="form-group">
-                                <label class="col-sm-2 control-label">Confirm Delete?</label>
+                                <label class="col-sm-2 control-label">@localizer["ConfirmDeleteLabel"]</label>
                                 <div class="col-sm-10">
                                     <input type="checkbox" asp-for="AreYouSure">
                                 </div>
@@ -101,8 +102,8 @@
 
                             <div class="form-group">
                                 <div class="col-sm-4 col-sm-offset-2">
-                                    <a class="btn btn-white" asp-controller="Groups" asp-action="Index" asp-route-area="User">Cancel</a>
-                                    <button class="btn btn-primary" type="submit">Delete Group</button>
+                                    <a class="btn btn-white" asp-controller="Groups" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                    <button class="btn btn-primary" type="submit">@localizer["DeleteGroupButton"]</button>
                                 </div>
                             </div>
                         }

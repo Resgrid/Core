@@ -23,6 +23,29 @@
     {
         @RenderSection("Styles", required: false)
     }
+
+    @if (!String.IsNullOrWhiteSpace(Resgrid.Config.TelemetryConfig.CountlyUrl) && !String.IsNullOrWhiteSpace(Resgrid.Config.TelemetryConfig.CountlyWebKey))
+    {
+        <script type='text/javascript' src="~/lib/countly-sdk-web/lib/countly.min.js"></script>
+        <script type='text/javascript'>
+            if (window.Countly && typeof window.Countly.init === 'function') {
+                window.Countly.init({
+                    app_key: "@Resgrid.Config.TelemetryConfig.CountlyWebKey",
+                    url: "@Resgrid.Config.TelemetryConfig.CountlyUrl",
+                    debug: false,
+                    ignore_referrers: [],
+                    track_sessions: true,
+                    track_pageview: true,
+                    track_links: true,
+                    track_forms: true,
+                    track_errors: true,
+                    require_consent: false,
+                    force_post: true,
+                    ignore_bots: true
+                });
+            }
+        </script>
+    }
 </head>
 <body id="page-top" class="landing-page">
 

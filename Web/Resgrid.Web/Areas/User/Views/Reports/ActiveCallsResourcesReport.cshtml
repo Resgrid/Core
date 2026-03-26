@@ -1,7 +1,9 @@
-﻿@using Resgrid.Model.Helpers
+@using Resgrid.Model.Helpers
 @using Resgrid.Web
 @using Resgrid.Web.Helpers
+@using Microsoft.Extensions.Localization
 @model Resgrid.Web.Areas.User.Models.Reports.Calls.OpenCallResourceView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Reports.Reports> localizer
 @{
     Layout = null;
 }
@@ -10,9 +12,9 @@
 
 <html lang="en">
 <head>
-    <title>Active Calls and Resources Report</title>
+    <title>@localizer["ActiveCallsResourcesReportTitle"]</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Active Calls and Resources Report">
+    <meta name="description" content="@localizer["ActiveCallsResourcesReportTitle"]">
     <meta name="author" content="Resgrid">
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"
@@ -48,12 +50,12 @@
                 <img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
             </div>
             <div class="col-md-6" style="text-align: right;">
-                <h3 style="margin-top: 10px;">Active Calls and Resources Report</h3>
+                <h3 style="margin-top: 10px;">@localizer["ActiveCallsResourcesReportTitle"]</h3>
             </div>
         </div>
         <div class="row">
             <div class="col-md-10 col-md-offset-1">
-                <h4>Calls</h4>
+                <h4>@localizer["Calls"]</h4>
             </div>
         </div>
         <div class="row">
@@ -64,27 +66,27 @@
                         {
                             <tr style="background-color: #e0e0e0;">
                                 <td style="padding-left: 10px;">
-                                     <strong><small>Number</small></strong>
+                                     <strong><small>@localizer["NumberHeader"]</small></strong>
                                     <span style="display: block;">@callState.Number</span>
                                 </td>
                                 <td>
-                                    <strong><small>Call Name</small></strong>
+                                    <strong><small>@localizer["CallNameHeader"]</small></strong>
                                     <span style="display: block;">@callState.Name</span>
                                 </td>
                                 <td>
-                                    <strong><small>Type</small></strong>
+                                    <strong><small>@localizer["TypeHeader"]</small></strong>
                                     <span style="display: block;">@callState.Type</span>
                                 </td>
                                 <td>
-                                    <strong><small>Logged On</small></strong>
+                                    <strong><small>@localizer["LoggedOnHeader"]</small></strong>
                                     <span style="display: block;">@callState.LoggedOn.FormatForDepartment(Model.Department)</span>
                                 </td>
                                 <td>
-                                    <strong><small>Units</small></strong>
+                                    <strong><small>@localizer["UnitsHeader"]</small></strong>
                                     <span style="display: block;">@callState.Units.Count()</span>
                                 </td>
                                 <td>
-                                    <strong><small>Personnel</small></strong>
+                                    <strong><small>@localizer["PersonnelHeader"]</small></strong>
                                     <span style="display: block;">@callState.Personnel.Count()</span>
                                 </td>
                             </tr>
@@ -93,7 +95,7 @@
                             {
                                 <tr>
                                     <td colspan="6">
-                                        <h4>Units on Call</h4>
+                                        <h4>@localizer["UnitsOnCallHeader"]</h4>
                                     </td>
                                 </tr>
                             }
@@ -104,10 +106,10 @@
                                         <table class="table table-condensed table-striped">
                                             <thead>
                                                 <tr>
-                                                    <th>Unit Name</th>
-                                                    <th>Dispatched On</th>
-                                                    <th>14 Day Mark</th>
-                                                    <th>21 Day Mark</th>
+                                                    <th>@localizer["UnitNameHeader"]</th>
+                                                    <th>@localizer["DispatchedOnHeader"]</th>
+                                                    <th>@localizer["FourteenDayMarkHeader"]</th>
+                                                    <th>@localizer["TwentyOneDayMarkHeader"]</th>
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -127,7 +129,7 @@
                             {
                                 <tr>
                                     <td colspan="6">
-                                        <h4>Personnel on Call</h4>
+                                        <h4>@localizer["PersonnelOnCallHeader"]</h4>
                                     </td>
                                 </tr>
                             }
@@ -138,11 +140,11 @@
                                         <table class="table table-condensed table-striped">
                                             <thead>
                                                 <tr>
-                                                    <th>Person Name</th>
-                                                    <th>Group Name</th>
-                                                    <th>Dispatched On</th>
-                                                    <th>14 Day Mark</th>
-                                                    <th>21 Day Mark</th>
+                                                    <th>@localizer["PersonNameHeader"]</th>
+                                                    <th>@localizer["GroupNameHeader"]</th>
+                                                    <th>@localizer["DispatchedOnHeader"]</th>
+                                                    <th>@localizer["FourteenDayMarkHeader"]</th>
+                                                    <th>@localizer["TwentyOneDayMarkHeader"]</th>
                                                 </tr>
                                             </thead>
                                             <tbody>

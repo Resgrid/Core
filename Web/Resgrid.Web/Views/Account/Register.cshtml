@@ -112,6 +112,12 @@
                             <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
                         </div>
                         <div class="form-group">
+                            <input type="text" class="form-control" placeholder="@localizer["DiscountCode"]" asp-for="DiscountCode">
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="@localizer["AffiliateCode"]" asp-for="AffiliateCode">
+                        </div>
+                        <div class="form-group">
                             <div class="g-recaptcha" data-sitekey="@Model.SiteKey"></div>
                             <input asp-for="GoogleReCaptchaResponse" type="hidden" required="" />
                         </div>

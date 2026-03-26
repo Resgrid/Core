@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ResourceOrdersHeader" xml:space="preserve">
+    <value>طلبات الموارد</value>
+  </data>
+  <data name="UpdateSettingsButton" xml:space="preserve">
+    <value>تحديث الإعدادات</value>
+  </data>
+  <data name="CreateOrderButton" xml:space="preserve">
+    <value>إنشاء طلب</value>
+  </data>
+  <data name="YourOrdersTab" xml:space="preserve">
+    <value>طلباتك</value>
+  </data>
+  <data name="AvailableOrdersTab" xml:space="preserve">
+    <value>الطلبات المتاحة</value>
+  </data>
+  <data name="CreatedLabel" xml:space="preserve">
+    <value>تم الإنشاء</value>
+  </data>
+  <data name="FillPercentageLabel" xml:space="preserve">
+    <value>نسبة التنفيذ</value>
+  </data>
+  <data name="ClosedLabel" xml:space="preserve">
+    <value>مغلق</value>
+  </data>
+  <data name="FilledLabel" xml:space="preserve">
+    <value>منفذ</value>
+  </data>
+  <data name="OpenLabel" xml:space="preserve">
+    <value>مفتوح</value>
+  </data>
+  <data name="ViewButton" xml:space="preserve">
+    <value>عرض</value>
+  </data>
+  <data name="LocationLabel" xml:space="preserve">
+    <value>الموقع</value>
+  </data>
+  <data name="DistanceLabel" xml:space="preserve">
+    <value>المسافة</value>
+  </data>
+  <data name="NewOrderHeader" xml:space="preserve">
+    <value>طلب جديد</value>
+  </data>
+  <data name="TitleLabel" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="TitlePlaceholder" xml:space="preserve">
+    <value>عنوان قصير للطلب</value>
+  </data>
+  <data name="SummaryLabel" xml:space="preserve">
+    <value>الملخص</value>
+  </data>
+  <data name="SummaryPlaceholder" xml:space="preserve">
+    <value>ملخص للطلب</value>
+  </data>
+  <data name="CloseOrderOnLabel" xml:space="preserve">
+    <value>إغلاق الطلب في</value>
+  </data>
+  <data name="CloseOrderOnHelp" xml:space="preserve">
+    <value>الوقت الذي يجب أن يتم فيه تنفيذ الطلب؛ اعتمادًا على نوع الطلب قد يتم إغلاقه تلقائيًا في ذلك الوقت.</value>
+  </data>
+  <data name="IncidentNumberLabel" xml:space="preserve">
+    <value>رقم الحادثة</value>
+  </data>
+  <data name="IncidentNumberPlaceholder" xml:space="preserve">
+    <value>معرّف الحادثة أو رقمها</value>
+  </data>
+  <data name="IncidentNameLabel" xml:space="preserve">
+    <value>اسم الحادثة</value>
+  </data>
+  <data name="IncidentNamePlaceholder" xml:space="preserve">
+    <value>اسم الحادثة</value>
+  </data>
+  <data name="IncidentAddressLabel" xml:space="preserve">
+    <value>عنوان الحادثة</value>
+  </data>
+  <data name="IncidentAddressPlaceholder" xml:space="preserve">
+    <value>عنوان الحادثة أو مركز القيادة أو نقطة التحكم</value>
+  </data>
+  <data name="FinanceCodeLabel" xml:space="preserve">
+    <value>الرمز المالي</value>
+  </data>
+  <data name="FinanceCodePlaceholder" xml:space="preserve">
+    <value>الرمز المالي للحادثة أو الطلب</value>
+  </data>
+  <data name="ContactNameLabel" xml:space="preserve">
+    <value>اسم جهة الاتصال</value>
+  </data>
+  <data name="ContactNamePlaceholder" xml:space="preserve">
+    <value>اسم نقطة الاتصال للاجتماع أو الحادثة</value>
+  </data>
+  <data name="ContactNumberLabel" xml:space="preserve">
+    <value>رقم جهة الاتصال</value>
+  </data>
+  <data name="ContactNumberPlaceholder" xml:space="preserve">
+    <value>رقم نقطة الاتصال للاجتماع أو الحادثة</value>
+  </data>
+  <data name="MeetupLocationLabel" xml:space="preserve">
+    <value>موقع الاجتماع</value>
+  </data>
+  <data name="MeetupLocationPlaceholder" xml:space="preserve">
+    <value>الموقع الذي ستلتقي فيه الوحدات من الطلبات المنفذة</value>
+  </data>
+  <data name="MeetupTimeLabel" xml:space="preserve">
+    <value>وقت الاجتماع</value>
+  </data>
+  <data name="SpecialInstructionsLabel" xml:space="preserve">
+    <value>تعليمات خاصة</value>
+  </data>
+  <data name="SpecialInstructionsPlaceholder" xml:space="preserve">
+    <value>أي تعليمات أو متطلبات خاصة بالطلب</value>
+  </data>
+  <data name="AllowPartialFillsLabel" xml:space="preserve">
+    <value>السماح بالتنفيذ الجزئي</value>
+  </data>
+  <data name="AllowPartialFillsHelp" xml:space="preserve">
+    <value>يسمح للإدارة بتنفيذ بند طلب الموارد جزئيًا (يتيح ذلك لعدة وحدات من إدارات متعددة تنفيذ البند)</value>
+  </data>
+  <data name="AutoAcceptFillsLabel" xml:space="preserve">
+    <value>القبول التلقائي للتنفيذات</value>
+  </data>
+  <data name="AutoAcceptFillsHelp" xml:space="preserve">
+    <value>سيقبل النظام التنفيذات تلقائيًا (الجزئية بناءً على إعداد السماح بالتنفيذ الجزئي) على أساس من يأتي أولًا يُخدَّم أولًا</value>
+  </data>
+  <data name="OrderItemsLabel" xml:space="preserve">
+    <value>بنود الطلب</value>
+  </data>
+  <data name="OrderItemsHelp" xml:space="preserve">
+    <value>انقر على زر "إضافة" الأخضر لإضافة بنود إلى هذا الطلب؛ البنود هي مجموعات من الوحدات المتشابهة التي تريد أن تكون جزءًا من الطلب.</value>
+  </data>
+  <data name="ResourceColumn" xml:space="preserve">
+    <value>المورد</value>
+  </data>
+  <data name="MinColumn" xml:space="preserve">
+    <value>الحد الأدنى</value>
+  </data>
+  <data name="MaxColumn" xml:space="preserve">
+    <value>الحد الأقصى</value>
+  </data>
+  <data name="FinancialCodeColumn" xml:space="preserve">
+    <value>الرمز المالي</value>
+  </data>
+  <data name="SpecialNeedsColumn" xml:space="preserve">
+    <value>الاحتياجات الخاصة</value>
+  </data>
+  <data name="RequirementsColumn" xml:space="preserve">
+    <value>المتطلبات</value>
+  </data>
+  <data name="AddButton" xml:space="preserve">
+    <value>إضافة</value>
+  </data>
+  <data name="CreateOrderButton2" xml:space="preserve">
+    <value>إنشاء طلب</value>
+  </data>
+  <data name="OrderSettingsHeader" xml:space="preserve">
+    <value>إعدادات طلبات الموارد</value>
+  </data>
+  <data name="DoNotReceiveOrdersLabel" xml:space="preserve">
+    <value>عدم استلام الطلبات</value>
+  </data>
+  <data name="DefaultOrderVisibilityLabel" xml:space="preserve">
+    <value>رؤية الطلبات الافتراضية</value>
+  </data>
+  <data name="RangeForVisibilityLabel" xml:space="preserve">
+    <value>نطاق الرؤية (بالأميال)</value>
+  </data>
+  <data name="DefaultOrderManagerLabel" xml:space="preserve">
+    <value>مدير الطلبات الافتراضي</value>
+  </data>
+  <data name="LimitOrderNotificationsLabel" xml:space="preserve">
+    <value>تقييد إشعارات الطلبات بمستوى التوظيف</value>
+  </data>
+  <data name="AllowedNotificationStaffingLabel" xml:space="preserve">
+    <value>مستوى التوظيف المسموح به للإشعارات</value>
+  </data>
+  <data name="AllowedDepartmentTypesLabel" xml:space="preserve">
+    <value>أنواع الأقسام المسموح بها</value>
+  </data>
+  <data name="AutomaticallyAcceptFillsLabel" xml:space="preserve">
+    <value>قبول التنفيذات تلقائيًا</value>
+  </data>
+  <data name="NotifyRolesLabel" xml:space="preserve">
+    <value>إخطار الأدوار</value>
+  </data>
+  <data name="RolesToNotifyLabel" xml:space="preserve">
+    <value>الأدوار المراد إخطارها</value>
+  </data>
+  <data name="SaveSettingsButton" xml:space="preserve">
+    <value>حفظ الإعدادات</value>
+  </data>
+  <data name="FillOrderHeader" xml:space="preserve">
+    <value>تنفيذ الطلب</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>الحالة:</value>
+  </data>
+  <data name="CreatedByLabel" xml:space="preserve">
+    <value>أُنشئ بواسطة:</value>
+  </data>
+  <data name="IncidentLabel" xml:space="preserve">
+    <value>الحادثة:</value>
+  </data>
+  <data name="NumberIdLabel" xml:space="preserve">
+    <value>الرقم\المعرّف:</value>
+  </data>
+  <data name="FinanceCodeDtLabel" xml:space="preserve">
+    <value>الرمز المالي:</value>
+  </data>
+  <data name="LastUpdatedLabel" xml:space="preserve">
+    <value>آخر تحديث:</value>
+  </data>
+  <data name="CreatedDtLabel" xml:space="preserve">
+    <value>تاريخ الإنشاء:</value>
+  </data>
+  <data name="ContactNameDtLabel" xml:space="preserve">
+    <value>اسم جهة الاتصال:</value>
+  </data>
+  <data name="ContactNumberDtLabel" xml:space="preserve">
+    <value>رقم جهة الاتصال:</value>
+  </data>
+  <data name="FillDtLabel" xml:space="preserve">
+    <value>التنفيذ:</value>
+  </data>
+  <data name="FillPercentageText" xml:space="preserve">
+    <value>طلب الموارد هذا منفذ بنسبة</value>
+  </data>
+  <data name="FillPercentageText2" xml:space="preserve">
+    <value>بالمئة.</value>
+  </data>
+  <data name="FillsTab" xml:space="preserve">
+    <value>التنفيذات</value>
+  </data>
+  <data name="ResourceDtLabel" xml:space="preserve">
+    <value>المورد:</value>
+  </data>
+  <data name="RequirementsDtLabel" xml:space="preserve">
+    <value>المتطلبات:</value>
+  </data>
+  <data name="MinDtLabel" xml:space="preserve">
+    <value>الحد الأدنى:</value>
+  </data>
+  <data name="MaxDtLabel" xml:space="preserve">
+    <value>الحد الأقصى:</value>
+  </data>
+  <data name="NeededDtLabel" xml:space="preserve">
+    <value>المطلوب:</value>
+  </data>
+  <data name="FillOrderResultHeader" xml:space="preserve">
+    <value>نتيجة تنفيذ الطلب</value>
+  </data>
+  <data name="FillFailedHeader" xml:space="preserve">
+    <value>فشل التنفيذ</value>
+  </data>
+  <data name="FillFailedMessage" xml:space="preserve">
+    <value>حدث خطأ أثناء معالجة طلبك. يُرجى الاطلاع على الخطأ أدناه لمزيد من التفاصيل.</value>
+  </data>
+  <data name="FillAcceptedHeader" xml:space="preserve">
+    <value>تم إضافة التنفيذ وقبوله</value>
+  </data>
+  <data name="FillAcceptedMessage" xml:space="preserve">
+    <value>تمت إضافة تنفيذك إلى النظام وقُبل تلقائيًا.</value>
+  </data>
+  <data name="FillAcceptedWarning" xml:space="preserve">
+    <value>قد ترغب في التواصل مع نقطة الاتصال للطلب للتأكد من عدم وجود تفاصيل أخرى تحتاج إلى معالجة.</value>
+  </data>
+  <data name="FillProposedHeader" xml:space="preserve">
+    <value>تنفيذ مقترح</value>
+  </data>
+  <data name="FillProposedMessage" xml:space="preserve">
+    <value>تم تسجيل تنفيذك في النظام وتحديده كمعلق. سيحتاج منشئ طلب الموارد إلى مراجعة طلب التنفيذ يدويًا والموافقة عليه. ستتلقى إشعارًا عند حدوث ذلك.</value>
+  </data>
+  <data name="ViewOrderHeader" xml:space="preserve">
+    <value>عرض الطلب</value>
+  </data>
+  <data name="RequestToFillButton" xml:space="preserve">
+    <value>طلب تنفيذ الطلب</value>
+  </data>
+  <data name="OrdersLabel" xml:space="preserve">
+    <value>الطلبات</value>
+  </data>
+  <data name="DepartmentColumn" xml:space="preserve">
+    <value>القسم</value>
+  </data>
+  <data name="TimestampColumn" xml:space="preserve">
+    <value>الطابع الزمني</value>
+  </data>
+  <data name="ContactColumn" xml:space="preserve">
+    <value>جهة الاتصال</value>
+  </data>
+  <data name="NoteColumn" xml:space="preserve">
+    <value>ملاحظة</value>
+  </data>
+  <data name="UnitsColumn" xml:space="preserve">
+    <value>الوحدات</value>
+  </data>
+  <data name="AcceptedLabel" xml:space="preserve">
+    <value>مقبول</value>
+  </data>
+  <data name="NotAcceptedLabel" xml:space="preserve">
+    <value>غير مقبول</value>
+  </data>
+  <data name="PendingLabel" xml:space="preserve">
+    <value>معلق</value>
+  </data>
+  <data name="AcceptButton" xml:space="preserve">
+    <value>قبول</value>
+  </data>
+  <data name="OrderSummaryHeader" xml:space="preserve">
+    <value>ملخص الطلب</value>
+  </data>
+  <data name="SpecialInstructionsHeader" xml:space="preserve">
+    <value>تعليمات خاصة</value>
+  </data>
+  <data name="IncidentAddressHeader" xml:space="preserve">
+    <value>عنوان الحادثة</value>
+  </data>
+  <data name="MeetupHeader" xml:space="preserve">
+    <value>الاجتماع</value>
+  </data>
+  <data name="MeetupLocationDtLabel" xml:space="preserve">
+    <value>الموقع:</value>
+  </data>
+  <data name="MeetupDateDtLabel" xml:space="preserve">
+    <value>التاريخ:</value>
+  </data>
+  <data name="NotSuppliedLabel" xml:space="preserve">
+    <value>غير محدد</value>
+  </data>
+</root>

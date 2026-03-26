@@ -68,6 +68,28 @@ namespace Resgrid.Web.Areas.User.Controllers
 		#endregion Private Members and Constructors
 
 		[HttpGet]
+		[Authorize]
+		public async Task<IActionResult> SelectRegistrationPlan(string discountCode = null)
+		{
+			var currentPayment = await _subscriptionsService.GetCurrentPaymentForDepartmentAsync(DepartmentId);
+			if (currentPayment != null && !currentPayment.IsFreePlan())
+				return RedirectToAction("Dashboard", "Home", new { Area = "User" });
+
+			var model = new SelectRegistrationPlanView();
+			model.DepartmentId = DepartmentId;
+			model.StripeKey = Config.PaymentProviderConfig.GetStripeClientKey();
+			model.DiscountCode = discountCode;
+
+			var paddleCustomerId = await _departmentSettingsService.GetPaddleCustomerIdForDepartmentAsync(DepartmentId);
+			bool isPaddleDepartment = !string.IsNullOrWhiteSpace(paddleCustomerId);
+			model.IsPaddleDepartment = isPaddleDepartment;
+			model.PaddleEnvironment = Config.PaymentProviderConfig.GetPaddleEnvironment();
+			model.PaddleClientToken = Config.PaymentProviderConfig.GetPaddleClientToken();
+
+			return View(model);
+		}
+
+		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> Index()
 		{
@@ -209,18 +231,32 @@ namespace Resgrid.Web.Areas.User.Controllers
 			else
 				model.AddonCost = "0";
 
-			var user = _usersService.GetUserById(UserId);
+			var paddleCustomerId = await _departmentSettingsService.GetPaddleCustomerIdForDepartmentAsync(DepartmentId);
+			bool isPaddleDepartment = !string.IsNullOrWhiteSpace(paddleCustomerId)
+				|| (model.Payment != null && model.Payment.Method == (int)PaymentMethods.Paddle);
+			model.IsPaddleDepartment = isPaddleDepartment;
 
-			try
+			if (isPaddleDepartment)
 			{
-				var session = await _subscriptionsService.CreateStripeSessionForCustomerPortal(DepartmentId, model.StripeCustomer, "", user.Email, department.Name);
-
-				if (session != null)
-					model.StripeCustomerPortalUrl = session.Url;
+				model.PaddleCustomer = paddleCustomerId;
+				model.PaddleEnvironment = Config.PaymentProviderConfig.GetPaddleEnvironment();
+				model.PaddleClientToken = Config.PaymentProviderConfig.GetPaddleClientToken();
 			}
-			catch (Exception ex)
+			else
 			{
-				Logging.LogException(ex);
+				var user = _usersService.GetUserById(UserId);
+
+				try
+				{
+					var session = await _subscriptionsService.CreateStripeSessionForCustomerPortal(DepartmentId, model.StripeCustomer, "", user.Email, department.Name);
+
+					if (session != null)
+						model.StripeCustomerPortalUrl = session.Url;
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+				}
 			}
 
 			return View(model);
@@ -386,7 +422,37 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (payment == null)
 					return RedirectToAction("CancelFailure", "Subscription", new { Area = "User" });
 
-				if (payment.Method == (int)PaymentMethods.Stripe)
+				if (payment.Method == (int)PaymentMethods.Paddle)
+				{
+					var paddleCustomerId = await _departmentSettingsService.GetPaddleCustomerIdForDepartmentAsync(DepartmentId);
+
+					if (!String.IsNullOrWhiteSpace(paddleCustomerId))
+					{
+						var result = await _subscriptionsService.CancelPaddleSubscriptionAsync(paddleCustomerId);
+
+						var auditEvent = new AuditEvent();
+						auditEvent.Before = paddleCustomerId;
+						auditEvent.DepartmentId = DepartmentId;
+						auditEvent.UserId = UserId;
+						auditEvent.Type = AuditLogTypes.SubscriptionCancelled;
+						auditEvent.After = result.ToString();
+						auditEvent.Successful = result;
+						auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+						auditEvent.ServerName = Environment.MachineName;
+						auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+						_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+
+						if (result)
+							return RedirectToAction("CancelSuccess", "Subscription", new { Area = "User" });
+						else
+							return RedirectToAction("CancelFailure", "Subscription", new { Area = "User" });
+					}
+					else
+					{
+						return RedirectToAction("CancelFailure", "Subscription", new { Area = "User" });
+					}
+				}
+				else if (payment.Method == (int)PaymentMethods.Stripe)
 				{
 					var stripeCustomerId = await _departmentSettingsService.GetStripeCustomerIdForDepartmentAsync(DepartmentId);
 
@@ -619,13 +685,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public async Task<IActionResult> GetStripeSession(int id, int count, CancellationToken cancellationToken)
+		public async Task<IActionResult> GetStripeSession(int id, int count, string discountCode = null, CancellationToken cancellationToken = default)
 		{
 			var plan = await _subscriptionsService.GetPlanByIdAsync(id);
 			var stripeCustomerId = await _departmentSettingsService.GetStripeCustomerIdForDepartmentAsync(DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			var user = _usersService.GetUserById(UserId);
-			var session = await _subscriptionsService.CreateStripeSessionForSub(DepartmentId, stripeCustomerId, plan.GetExternalKey(), plan.PlanId, user.Email, department.Name, count);
+			var session = await _subscriptionsService.CreateStripeSessionForSub(DepartmentId, stripeCustomerId, plan.GetExternalKey(), plan.PlanId, user.Email, department.Name, count, discountCode);
 			var subscription = await _subscriptionsService.GetActiveStripeSubscriptionAsync(session.CustomerId);
 
 			bool hasActiveSub = false;
@@ -653,6 +719,99 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				SessionId = session.SessionId
 			});
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> GetPaddleCheckout(int id, int count, string discountCode = null, CancellationToken cancellationToken = default)
+		{
+			var plan = await _subscriptionsService.GetPlanByIdAsync(id);
+			var paddleCustomerId = await _departmentSettingsService.GetPaddleCustomerIdForDepartmentAsync(DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var user = _usersService.GetUserById(UserId);
+			var checkout = await _subscriptionsService.CreatePaddleCheckoutForSub(DepartmentId, paddleCustomerId, plan.GetExternalKey(), plan.PlanId, user.Email, department.Name, count, discountCode);
+
+			bool hasActiveSub = false;
+			if (!string.IsNullOrWhiteSpace(paddleCustomerId))
+			{
+				var subscription = await _subscriptionsService.GetActivePaddleSubscriptionAsync(paddleCustomerId);
+				if (subscription != null)
+					hasActiveSub = true;
+			}
+
+			return Json(new
+			{
+				PriceId = checkout?.PriceId,
+				CustomerId = checkout?.CustomerId,
+				Environment = checkout?.Environment,
+				HasActiveSub = hasActiveSub
+			});
+		}
+
+		public async Task<IActionResult> PaddleProcessing(int planId)
+		{
+			ProcessingView model = new ProcessingView();
+			model.PlanId = planId;
+
+			return View(model);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> ManagePaddlePTTAddon()
+		{
+			var model = new BuyAddonView();
+			model.PlanAddon = await _subscriptionsService.GetPlanAddonByIdAsync(Config.PaymentProviderConfig.GetPaddlePTT10UserAddonPackageId());
+			model.PlanAddonId = model.PlanAddon.PlanAddonId;
+			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+
+			var paddleCustomer = await _departmentSettingsService.GetPaddleCustomerIdForDepartmentAsync(DepartmentId);
+
+			var addon = await _subscriptionsService.GetActivePTTPaddleSubscriptionAsync(paddleCustomer);
+
+			if (addon != null)
+			{
+				model.Quantity = addon.TotalQuantity;
+			}
+
+			return View("ManagePTTAddon", model);
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> ManagePaddlePTTAddon(BuyAddonView model)
+		{
+			try
+			{
+				var addonPlan = await _subscriptionsService.GetPlanAddonByIdAsync(model.PlanAddonId);
+				var paddleCustomer = await _departmentSettingsService.GetPaddleCustomerIdForDepartmentAsync(DepartmentId);
+
+				var auditEvent = new AuditEvent();
+				auditEvent.Before = null;
+				auditEvent.DepartmentId = DepartmentId;
+				auditEvent.UserId = UserId;
+				auditEvent.Type = AuditLogTypes.AddonSubscriptionModified;
+				auditEvent.After = model.Quantity.ToString();
+				auditEvent.Successful = true;
+				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+				auditEvent.ServerName = Environment.MachineName;
+				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+
+				var result = await _subscriptionsService.ModifyPaddlePTTAddonSubscriptionAsync(paddleCustomer, model.Quantity, addonPlan);
+
+				if (result)
+					return RedirectToAction("PaymentComplete", "Subscription", new { Area = "User", planId = 0 });
+				else
+					return RedirectToAction("PaymentFailed", "Subscription", new { Area = "User", chargeId = "", errorMessage = "Unknown Error" });
+			}
+			catch (Exception ex)
+			{
+				Logging.SendExceptionEmail(ex, "ManagePaddlePTTAddon", DepartmentId, UserName);
+
+				return RedirectToAction("PaymentFailed", "Subscription",
+						new { Area = "User", chargeId = "", errorMessage = ex.Message });
+			}
 		}
 
 		//[AuthorizeUpdate]

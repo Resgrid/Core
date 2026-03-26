@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>Notifications</value>
+  </data>
+  <data name="NewNotification" xml:space="preserve">
+    <value>Nouvelle Notification</value>
+  </data>
+  <data name="BeforeState" xml:space="preserve">
+    <value>État Précédent</value>
+  </data>
+  <data name="CurrentState" xml:space="preserve">
+    <value>État Actuel</value>
+  </data>
+  <data name="Notify" xml:space="preserve">
+    <value>Notifier</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Aucun</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="DeleteNotificationConfirm" xml:space="preserve">
+    <value>AVERTISSEMENT : Cela supprimera définitivement cette notification. Êtes-vous sûr de vouloir continuer ?</value>
+  </data>
+  <data name="UnitTypeToMonitor" xml:space="preserve">
+    <value>Type d'Unité à Surveiller</value>
+  </data>
+  <data name="RoleToMonitor" xml:space="preserve">
+    <value>Rôle à Surveiller</value>
+  </data>
+  <data name="AcceptableStates" xml:space="preserve">
+    <value>États Acceptables</value>
+  </data>
+  <data name="LowerLimit" xml:space="preserve">
+    <value>Limite Inférieure</value>
+  </data>
+  <data name="UsersToNotify" xml:space="preserve">
+    <value>Utilisateurs à Notifier</value>
+  </data>
+  <data name="Everyone" xml:space="preserve">
+    <value>Tout le Monde</value>
+  </data>
+  <data name="DepartmentAdmins" xml:space="preserve">
+    <value>Administrateurs de Département</value>
+  </data>
+  <data name="LockToGroup" xml:space="preserve">
+    <value>Restreindre au Groupe</value>
+  </data>
+  <data name="GroupAdminsOnly" xml:space="preserve">
+    <value>Administrateurs de Groupe Uniquement</value>
+  </data>
+  <data name="CalendarNoticeText" xml:space="preserve">
+    <value>Les notifications de calendrier sont maintenant gérées en fonction du type d'événement du calendrier (Aucun, Assigné, RSVP) et des entités appartenant à l'événement. Pour le type d'événement Aucun, les utilisateurs dans la sélection des entités (le département ou un groupe) seront notifiés. Pour les événements RSVP, tous les utilisateurs du département seront notifiés et pour les événements assignés, seuls les participants Requis et Opérationnels seront notifiés.</value>
+  </data>
+  <data name="ShiftNoticeText" xml:space="preserve">
+    <value>Les notifications de quart sont maintenant gérées en fonction des événements effectués sur un quart (Créé, Mis à jour, Jours Ajoutés). Les utilisateurs attachés à un quart existant seront notifiés des mises à jour, tous les utilisateurs du département seront notifiés des nouveaux quarts et pour les quarts d'inscription tous les utilisateurs seront notifiés des nouveaux jours, et assignés uniquement les personnes sur ce quart.</value>
+  </data>
+  <data name="SaveNotificationRole" xml:space="preserve">
+    <value>Enregistrer le Rôle de Notification</value>
+  </data>
+</root>

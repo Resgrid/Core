@@ -235,5 +235,14 @@ namespace Resgrid.Services
 
 			return await _trainingRepository.SaveOrUpdateAsync(training, cancellationToken);
 		}
+
+		public async Task<List<TrainingUser>> GetTrainingUsersForUserAsync(string userId)
+		{
+			var users = await _trainingUserRepository.GetAllByUserIdAsync(userId);
+			if (users != null)
+				return users.ToList();
+
+			return new List<TrainingUser>();
+		}
 	}
 }

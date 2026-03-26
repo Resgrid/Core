@@ -1,7 +1,9 @@
-﻿@using Resgrid.Model.Helpers
+@using Resgrid.Model.Helpers
 @using Resgrid.Web
 @using Resgrid.Web.Helpers
+@using Microsoft.Extensions.Localization
 @model Resgrid.Web.Areas.User.Models.Reports.Activity.DepartmentActivityView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Reports.Reports> localizer
 @{
 	Layout = null;
 }
@@ -10,9 +12,9 @@
 
 <html lang="en">
 <head>
-	<title>YTD Department Activity Report</title>
+	<title>@localizer["YtdDepartmentActivityReportTitle"]</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="Department Activity Report">
+	<meta name="description" content="@localizer["YtdDepartmentActivityReportTitle"]">
 	<meta name="author" content="Resgrid">
 
 	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"
@@ -48,12 +50,12 @@
 				<img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
 			</div>
 			<div class="col-md-6" style="text-align: right;">
-				<h3 style="margin-top: 10px;">YTD Department Activity Report</h3>
+				<h3 style="margin-top: 10px;">@localizer["YtdDepartmentActivityReportTitle"]</h3>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-10 col-md-offset-1">
-				<h4>Calls</h4>
+				<h4>@localizer["Calls"]</h4>
 			</div>
 		</div>
 		<div class="row">
@@ -61,9 +63,9 @@
 				<table class="table table-condensed">
 					<thead>
 						<tr>
-							<th>Type</th>
-							<th>Count</th>
-							<th>%</th>
+							<th>@localizer["TypeHeader"]</th>
+							<th>@localizer["CountHeader"]</th>
+							<th>@localizer["PercentHeader"]</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -98,7 +100,7 @@
 		</div>
 		<div class="row">
 			<div class="col-md-10 col-md-offset-1">
-				<h4>Personnel Response Detail</h4>
+				<h4>@localizer["PersonnelResponseDetail"]</h4>
 			</div>
 		</div>
 		<div class="row">
@@ -106,10 +108,10 @@
 				<table class="table table-condensed">
 					<thead>
 						<tr>
-							<th>ID</th>
-							<th>Name</th>
-							<th>Group</th>
-							<th>Dispatched</th>
+							<th>@localizer["IdHeader"]</th>
+							<th>@localizer["NameHeader"]</th>
+							<th>@localizer["GroupHeader"]</th>
+							<th>@localizer["DispatchedHeader"]</th>
 
 							@foreach (var callType in Model.CallTypeCount.OrderBy(x => x.Item1))
 							{
@@ -142,7 +144,7 @@
 		</div>
 		<div class="row">
 			<div class="col-md-10 col-md-offset-1">
-				<h4>Trainings</h4>
+				<h4>@localizer["Trainings"]</h4>
 			</div>
 		</div>
 		<div class="row">
@@ -158,7 +160,7 @@
 					<tbody>
 						<tr>
 							<td>
-								<strong><small>January</small></strong>
+								<strong><small>@localizer["January"]</small></strong>
 								<span style="display: block;">
 									@if (Model.TrainingMonthCount.FirstOrDefault(x => x.Item1 == 1) != null)
 									{
@@ -171,7 +173,7 @@
 								</span>
 							</td>
 							<td>
-								<strong><small>February</small></strong>
+								<strong><small>@localizer["February"]</small></strong>
 								<span style="display: block;">
 									@if (Model.TrainingMonthCount.FirstOrDefault(x => x.Item1 == 2) != null)
 									{
@@ -184,7 +186,7 @@
 								</span>
 							</td>
 							<td>
-								<strong><small>March</small></strong>
+								<strong><small>@localizer["March"]</small></strong>
 								<span style="display: block;">
 									@if (Model.TrainingMonthCount.FirstOrDefault(x => x.Item1 == 3) != null)
 									{
@@ -199,7 +201,7 @@
 						</tr>
 						<tr>
 							<td>
-								<strong><small>April</small></strong>
+								<strong><small>@localizer["April"]</small></strong>
 								<span style="display: block;">
 									@if (Model.TrainingMonthCount.FirstOrDefault(x => x.Item1 == 4) != null)
 									{
@@ -212,7 +214,7 @@
 								</span>
 							</td>
 							<td>
-								<strong><small>May</small></strong>
+								<strong><small>@localizer["May"]</small></strong>
 								<span style="display: block;">
 									@if (Model.TrainingMonthCount.FirstOrDefault(x => x.Item1 == 5) != null)
 									{
@@ -225,7 +227,7 @@
 								</span>
 							</td>
 							<td>
-								<strong><small>June</small></strong>
+								<strong><small>@localizer["June"]</small></strong>
 								<span style="display: block;">
 									@if (Model.TrainingMonthCount.FirstOrDefault(x => x.Item1 == 6) != null)
 									{
@@ -240,7 +242,7 @@
 						</tr>
 						<tr>
 							<td>
-								<strong><small>July</small></strong>
+								<strong><small>@localizer["July"]</small></strong>
 								<span style="display: block;">
 									@if (Model.TrainingMonthCount.FirstOrDefault(x => x.Item1 == 7) != null)
 									{
@@ -253,7 +255,7 @@
 								</span>
 							</td>
 							<td>
-								<strong><small>August</small></strong>
+								<strong><small>@localizer["August"]</small></strong>
 								<span style="display: block;">
 									@if (Model.TrainingMonthCount.FirstOrDefault(x => x.Item1 == 8) != null)
 									{
@@ -266,7 +268,7 @@
 								</span>
 							</td>
 							<td>
-								<strong><small>September</small></strong>
+								<strong><small>@localizer["September"]</small></strong>
 								<span style="display: block;">
 									@if (Model.TrainingMonthCount.FirstOrDefault(x => x.Item1 == 9) != null)
 									{
@@ -281,7 +283,7 @@
 						</tr>
 						<tr>
 							<td>
-								<strong><small>October</small></strong>
+								<strong><small>@localizer["October"]</small></strong>
 								<span style="display: block;">
 									@if (Model.TrainingMonthCount.FirstOrDefault(x => x.Item1 == 10) != null)
 									{
@@ -294,7 +296,7 @@
 								</span>
 							</td>
 							<td>
-								<strong><small>November</small></strong>
+								<strong><small>@localizer["November"]</small></strong>
 								<span style="display: block;">
 									@if (Model.TrainingMonthCount.FirstOrDefault(x => x.Item1 == 11) != null)
 									{
@@ -307,7 +309,7 @@
 								</span>
 							</td>
 							<td>
-								<strong><small>December</small></strong>
+								<strong><small>@localizer["December"]</small></strong>
 								<span style="display: block;">
 									@if (Model.TrainingMonthCount.FirstOrDefault(x => x.Item1 == 12) != null)
 									{
@@ -329,7 +331,7 @@
 		</div>
 		<div class="row">
 			<div class="col-md-10 col-md-offset-1">
-				<h4>Personnel Training Detail</h4>
+				<h4>@localizer["PersonnelTrainingDetail"]</h4>
 			</div>
 		</div>
 		<div class="row">
@@ -337,12 +339,12 @@
 				<table class="table table-condensed">
 					<thead>
 						<tr>
-							<th>ID</th>
-							<th>Name</th>
-							<th>Group</th>
-							<th>Total</th>
-							<th>Attended</th>
-							<th>%</th>
+							<th>@localizer["IdHeader"]</th>
+							<th>@localizer["NameHeader"]</th>
+							<th>@localizer["GroupHeader"]</th>
+							<th>@localizer["TotalHeader"]</th>
+							<th>@localizer["AttendedHeader"]</th>
+							<th>@localizer["PercentHeader"]</th>
 						</tr>
 					</thead>
 					<tbody>

@@ -119,5 +119,7 @@ namespace Resgrid.Web.Areas.User.Models
 		/// <summary>True when the profile belongs to the currently authenticated user (only own profile can self-verify).
 		/// Checks both <see cref="IsOwnProfile"/> and <see cref="Self"/> because different controller paths set one or the other.</summary>
 		public bool CanSelfVerify => Self || IsOwnProfile;
+
+		public GdprDataExportRequest ActiveDataExportRequest { get; set; }
 	}
 }

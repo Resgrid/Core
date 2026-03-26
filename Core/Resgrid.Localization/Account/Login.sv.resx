@@ -203,4 +203,10 @@
   <data name="Username" xml:space="preserve">
     <value>Användarnamn</value>
   </data>
+  <data name="DiscountCode" xml:space="preserve">
+    <value>Discount Code</value>
+  </data>
+  <data name="AffiliateCode" xml:space="preserve">
+    <value>Affiliate Code</value>
+  </data>
 </root>

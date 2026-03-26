@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ResourceOrdersHeader" xml:space="preserve">
+    <value>Órdenes de Recursos</value>
+  </data>
+  <data name="UpdateSettingsButton" xml:space="preserve">
+    <value>Actualizar Configuración</value>
+  </data>
+  <data name="CreateOrderButton" xml:space="preserve">
+    <value>Crear Orden</value>
+  </data>
+  <data name="YourOrdersTab" xml:space="preserve">
+    <value>Sus Órdenes</value>
+  </data>
+  <data name="AvailableOrdersTab" xml:space="preserve">
+    <value>Órdenes Disponibles</value>
+  </data>
+  <data name="CreatedLabel" xml:space="preserve">
+    <value>Creado</value>
+  </data>
+  <data name="FillPercentageLabel" xml:space="preserve">
+    <value>Porcentaje de Cumplimiento</value>
+  </data>
+  <data name="ClosedLabel" xml:space="preserve">
+    <value>Cerrado</value>
+  </data>
+  <data name="FilledLabel" xml:space="preserve">
+    <value>Completado</value>
+  </data>
+  <data name="OpenLabel" xml:space="preserve">
+    <value>Abierto</value>
+  </data>
+  <data name="ViewButton" xml:space="preserve">
+    <value>Ver</value>
+  </data>
+  <data name="LocationLabel" xml:space="preserve">
+    <value>Ubicación</value>
+  </data>
+  <data name="DistanceLabel" xml:space="preserve">
+    <value>Distancia</value>
+  </data>
+  <data name="NewOrderHeader" xml:space="preserve">
+    <value>Nueva Orden</value>
+  </data>
+  <data name="TitleLabel" xml:space="preserve">
+    <value>Título</value>
+  </data>
+  <data name="TitlePlaceholder" xml:space="preserve">
+    <value>Título corto para la orden</value>
+  </data>
+  <data name="SummaryLabel" xml:space="preserve">
+    <value>Resumen</value>
+  </data>
+  <data name="SummaryPlaceholder" xml:space="preserve">
+    <value>Un resumen para la orden</value>
+  </data>
+  <data name="CloseOrderOnLabel" xml:space="preserve">
+    <value>Cerrar Orden En</value>
+  </data>
+  <data name="CloseOrderOnHelp" xml:space="preserve">
+    <value>El momento en que la orden debe ser completada; según el tipo de orden puede cerrarse automáticamente en ese momento.</value>
+  </data>
+  <data name="IncidentNumberLabel" xml:space="preserve">
+    <value>Número de Incidente</value>
+  </data>
+  <data name="IncidentNumberPlaceholder" xml:space="preserve">
+    <value>ID o número del incidente</value>
+  </data>
+  <data name="IncidentNameLabel" xml:space="preserve">
+    <value>Nombre del Incidente</value>
+  </data>
+  <data name="IncidentNamePlaceholder" xml:space="preserve">
+    <value>Nombre del incidente</value>
+  </data>
+  <data name="IncidentAddressLabel" xml:space="preserve">
+    <value>Dirección del Incidente</value>
+  </data>
+  <data name="IncidentAddressPlaceholder" xml:space="preserve">
+    <value>Dirección del incidente, CI o Puesto de Mando</value>
+  </data>
+  <data name="FinanceCodeLabel" xml:space="preserve">
+    <value>Código Financiero</value>
+  </data>
+  <data name="FinanceCodePlaceholder" xml:space="preserve">
+    <value>Código financiero del incidente u orden</value>
+  </data>
+  <data name="ContactNameLabel" xml:space="preserve">
+    <value>Nombre de Contacto</value>
+  </data>
+  <data name="ContactNamePlaceholder" xml:space="preserve">
+    <value>Nombre del punto de contacto para la reunión o el incidente</value>
+  </data>
+  <data name="ContactNumberLabel" xml:space="preserve">
+    <value>Número de Contacto</value>
+  </data>
+  <data name="ContactNumberPlaceholder" xml:space="preserve">
+    <value>Número del punto de contacto para la reunión o el incidente</value>
+  </data>
+  <data name="MeetupLocationLabel" xml:space="preserve">
+    <value>Lugar de Reunión</value>
+  </data>
+  <data name="MeetupLocationPlaceholder" xml:space="preserve">
+    <value>Lugar donde se reunirán las unidades de las órdenes completadas</value>
+  </data>
+  <data name="MeetupTimeLabel" xml:space="preserve">
+    <value>Hora de Reunión</value>
+  </data>
+  <data name="SpecialInstructionsLabel" xml:space="preserve">
+    <value>Instrucciones Especiales</value>
+  </data>
+  <data name="SpecialInstructionsPlaceholder" xml:space="preserve">
+    <value>Cualquier instrucción o requisito especial para la orden</value>
+  </data>
+  <data name="AllowPartialFillsLabel" xml:space="preserve">
+    <value>Permitir Cumplimientos Parciales</value>
+  </data>
+  <data name="AllowPartialFillsHelp" xml:space="preserve">
+    <value>Permite a un departamento completar parcialmente un artículo de orden de recursos (esto permite que múltiples unidades de múltiples departamentos completen un artículo)</value>
+  </data>
+  <data name="AutoAcceptFillsLabel" xml:space="preserve">
+    <value>Aceptación Automática de Cumplimientos</value>
+  </data>
+  <data name="AutoAcceptFillsHelp" xml:space="preserve">
+    <value>El sistema aceptará automáticamente los cumplimientos (parciales según la configuración de Permitir Cumplimientos Parciales) por orden de llegada</value>
+  </data>
+  <data name="OrderItemsLabel" xml:space="preserve">
+    <value>Artículos de la Orden</value>
+  </data>
+  <data name="OrderItemsHelp" xml:space="preserve">
+    <value>Haga clic en el botón verde "Agregar" para añadir artículos a esta orden; los artículos son grupos de unidades similares que desea incluir en la orden.</value>
+  </data>
+  <data name="ResourceColumn" xml:space="preserve">
+    <value>Recurso</value>
+  </data>
+  <data name="MinColumn" xml:space="preserve">
+    <value>Mín</value>
+  </data>
+  <data name="MaxColumn" xml:space="preserve">
+    <value>Máx</value>
+  </data>
+  <data name="FinancialCodeColumn" xml:space="preserve">
+    <value>Código Financiero</value>
+  </data>
+  <data name="SpecialNeedsColumn" xml:space="preserve">
+    <value>Necesidades Especiales</value>
+  </data>
+  <data name="RequirementsColumn" xml:space="preserve">
+    <value>Requisitos</value>
+  </data>
+  <data name="AddButton" xml:space="preserve">
+    <value>Agregar</value>
+  </data>
+  <data name="CreateOrderButton2" xml:space="preserve">
+    <value>Crear Orden</value>
+  </data>
+  <data name="OrderSettingsHeader" xml:space="preserve">
+    <value>Configuración de Órdenes de Recursos</value>
+  </data>
+  <data name="DoNotReceiveOrdersLabel" xml:space="preserve">
+    <value>No Recibir Órdenes</value>
+  </data>
+  <data name="DefaultOrderVisibilityLabel" xml:space="preserve">
+    <value>Visibilidad Predeterminada de Órdenes</value>
+  </data>
+  <data name="RangeForVisibilityLabel" xml:space="preserve">
+    <value>Rango de Visibilidad (en millas)</value>
+  </data>
+  <data name="DefaultOrderManagerLabel" xml:space="preserve">
+    <value>Usuario Gestor de Órdenes Predeterminado</value>
+  </data>
+  <data name="LimitOrderNotificationsLabel" xml:space="preserve">
+    <value>Limitar Notificaciones de Órdenes al Personal</value>
+  </data>
+  <data name="AllowedNotificationStaffingLabel" xml:space="preserve">
+    <value>Nivel de Personal Permitido para Notificaciones</value>
+  </data>
+  <data name="AllowedDepartmentTypesLabel" xml:space="preserve">
+    <value>Tipos de Departamento Permitidos</value>
+  </data>
+  <data name="AutomaticallyAcceptFillsLabel" xml:space="preserve">
+    <value>Aceptar Cumplimientos Automáticamente</value>
+  </data>
+  <data name="NotifyRolesLabel" xml:space="preserve">
+    <value>Notificar Roles</value>
+  </data>
+  <data name="RolesToNotifyLabel" xml:space="preserve">
+    <value>Roles a Notificar</value>
+  </data>
+  <data name="SaveSettingsButton" xml:space="preserve">
+    <value>Guardar Configuración</value>
+  </data>
+  <data name="FillOrderHeader" xml:space="preserve">
+    <value>Completar Orden</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Estado:</value>
+  </data>
+  <data name="CreatedByLabel" xml:space="preserve">
+    <value>Creado por:</value>
+  </data>
+  <data name="IncidentLabel" xml:space="preserve">
+    <value>Incidente:</value>
+  </data>
+  <data name="NumberIdLabel" xml:space="preserve">
+    <value>Número\ID:</value>
+  </data>
+  <data name="FinanceCodeDtLabel" xml:space="preserve">
+    <value>Código Financiero:</value>
+  </data>
+  <data name="LastUpdatedLabel" xml:space="preserve">
+    <value>Última Actualización:</value>
+  </data>
+  <data name="CreatedDtLabel" xml:space="preserve">
+    <value>Creado:</value>
+  </data>
+  <data name="ContactNameDtLabel" xml:space="preserve">
+    <value>Nombre de Contacto:</value>
+  </data>
+  <data name="ContactNumberDtLabel" xml:space="preserve">
+    <value>Número de Contacto:</value>
+  </data>
+  <data name="FillDtLabel" xml:space="preserve">
+    <value>Cumplimiento:</value>
+  </data>
+  <data name="FillPercentageText" xml:space="preserve">
+    <value>Esta orden de recursos está</value>
+  </data>
+  <data name="FillPercentageText2" xml:space="preserve">
+    <value>completada.</value>
+  </data>
+  <data name="FillsTab" xml:space="preserve">
+    <value>Cumplimientos</value>
+  </data>
+  <data name="ResourceDtLabel" xml:space="preserve">
+    <value>Recurso:</value>
+  </data>
+  <data name="RequirementsDtLabel" xml:space="preserve">
+    <value>Requisitos:</value>
+  </data>
+  <data name="MinDtLabel" xml:space="preserve">
+    <value>Mín:</value>
+  </data>
+  <data name="MaxDtLabel" xml:space="preserve">
+    <value>Máx:</value>
+  </data>
+  <data name="NeededDtLabel" xml:space="preserve">
+    <value>Necesarios:</value>
+  </data>
+  <data name="FillOrderResultHeader" xml:space="preserve">
+    <value>Resultado de Cumplimiento de Orden</value>
+  </data>
+  <data name="FillFailedHeader" xml:space="preserve">
+    <value>Cumplimiento Fallido</value>
+  </data>
+  <data name="FillFailedMessage" xml:space="preserve">
+    <value>Hubo un error al intentar completar su solicitud. Por favor, vea el error a continuación para más detalles.</value>
+  </data>
+  <data name="FillAcceptedHeader" xml:space="preserve">
+    <value>Cumplimiento Agregado y Aceptado</value>
+  </data>
+  <data name="FillAcceptedMessage" xml:space="preserve">
+    <value>Su cumplimiento fue agregado al sistema y ha sido aceptado automáticamente.</value>
+  </data>
+  <data name="FillAcceptedWarning" xml:space="preserve">
+    <value>Es posible que desee comunicarse con el Punto de Contacto de la orden para asegurarse de que no haya otros detalles que resolver.</value>
+  </data>
+  <data name="FillProposedHeader" xml:space="preserve">
+    <value>Cumplimiento Propuesto</value>
+  </data>
+  <data name="FillProposedMessage" xml:space="preserve">
+    <value>Su cumplimiento ha sido registrado en el sistema y marcado como pendiente. El creador de la solicitud de recursos deberá revisar manualmente su solicitud de cumplimiento y aprobarla. Recibirá una notificación cuando esto ocurra.</value>
+  </data>
+  <data name="ViewOrderHeader" xml:space="preserve">
+    <value>Ver Orden</value>
+  </data>
+  <data name="RequestToFillButton" xml:space="preserve">
+    <value>Solicitar Completar Orden</value>
+  </data>
+  <data name="OrdersLabel" xml:space="preserve">
+    <value>Órdenes</value>
+  </data>
+  <data name="DepartmentColumn" xml:space="preserve">
+    <value>Departamento</value>
+  </data>
+  <data name="TimestampColumn" xml:space="preserve">
+    <value>Marca de Tiempo</value>
+  </data>
+  <data name="ContactColumn" xml:space="preserve">
+    <value>Contacto</value>
+  </data>
+  <data name="NoteColumn" xml:space="preserve">
+    <value>Nota</value>
+  </data>
+  <data name="UnitsColumn" xml:space="preserve">
+    <value>Unidades</value>
+  </data>
+  <data name="AcceptedLabel" xml:space="preserve">
+    <value>Aceptado</value>
+  </data>
+  <data name="NotAcceptedLabel" xml:space="preserve">
+    <value>No Aceptado</value>
+  </data>
+  <data name="PendingLabel" xml:space="preserve">
+    <value>Pendiente</value>
+  </data>
+  <data name="AcceptButton" xml:space="preserve">
+    <value>Aceptar</value>
+  </data>
+  <data name="OrderSummaryHeader" xml:space="preserve">
+    <value>Resumen de Orden</value>
+  </data>
+  <data name="SpecialInstructionsHeader" xml:space="preserve">
+    <value>Instrucciones Especiales</value>
+  </data>
+  <data name="IncidentAddressHeader" xml:space="preserve">
+    <value>Dirección del Incidente</value>
+  </data>
+  <data name="MeetupHeader" xml:space="preserve">
+    <value>Reunión</value>
+  </data>
+  <data name="MeetupLocationDtLabel" xml:space="preserve">
+    <value>Ubicación:</value>
+  </data>
+  <data name="MeetupDateDtLabel" xml:space="preserve">
+    <value>Fecha:</value>
+  </data>
+  <data name="NotSuppliedLabel" xml:space="preserve">
+    <value>No Proporcionado</value>
+  </data>
+</root>

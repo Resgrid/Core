@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Łącza Wydziałowe</value>
+  </data>
+  <data name="DepartmentLinks" xml:space="preserve">
+    <value>Łącza Wydziałowe</value>
+  </data>
+  <data name="NewDepartmentLinks" xml:space="preserve">
+    <value>Nowe Łącze Wydziałowe</value>
+  </data>
+  <data name="FromDepartment" xml:space="preserve">
+    <value>Z Wydziału</value>
+  </data>
+  <data name="ToDepartment" xml:space="preserve">
+    <value>Do Wydziału</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Włączone</value>
+  </data>
+  <data name="SharedData" xml:space="preserve">
+    <value>Udostępnione Dane</value>
+  </data>
+  <data name="LinkEnabled" xml:space="preserve">
+    <value>Łącze Włączone</value>
+  </data>
+  <data name="LinkDisabled" xml:space="preserve">
+    <value>Łącze Wyłączone</value>
+  </data>
+  <data name="Calls" xml:space="preserve">
+    <value>Zgłoszenia</value>
+  </data>
+  <data name="Personnel" xml:space="preserve">
+    <value>Personel</value>
+  </data>
+  <data name="Units" xml:space="preserve">
+    <value>Jednostki</value>
+  </data>
+  <data name="Orders" xml:space="preserve">
+    <value>Zlecenia</value>
+  </data>
+  <data name="NoDataShared" xml:space="preserve">
+    <value>Brak Udostępnionych Danych</value>
+  </data>
+  <data name="Enable" xml:space="preserve">
+    <value>Włącz</value>
+  </data>
+  <data name="Disable" xml:space="preserve">
+    <value>Wyłącz</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Usuń</value>
+  </data>
+  <data name="ViewData" xml:space="preserve">
+    <value>Wyświetl Dane</value>
+  </data>
+  <data name="YourDepartmentLinkCode" xml:space="preserve">
+    <value>Twój Kod Łącza Wydziałowego</value>
+  </data>
+  <data name="DeleteLinkConfirm" xml:space="preserve">
+    <value>OSTRZEŻENIE: Spowoduje to trwałe usunięcie tego łącza. Czy na pewno chcesz je usunąć?</value>
+  </data>
+  <data name="EnableDepartmentLinkTitle" xml:space="preserve">
+    <value>Włącz Łącze Wydziałowe</value>
+  </data>
+  <data name="EnableLinkDescription" xml:space="preserve">
+    <value>Łącza wydziałowe udostępniają dane w jednym kierunku. Poniżej możesz włączyć łącze i ustawić jego kolor. Kolor łącza będzie używany do kolorowania zgłoszeń, personelu i jednostek identyfikując je jako pochodzące z tego łącza.</value>
+  </data>
+  <data name="LinkColor" xml:space="preserve">
+    <value>Kolor Łącza</value>
+  </data>
+  <data name="SaveAndEnableLink" xml:space="preserve">
+    <value>Zapisz i Włącz Łącze</value>
+  </data>
+  <data name="NewDepartmentLinkTitle" xml:space="preserve">
+    <value>Nowe Łącze Wydziałowe</value>
+  </data>
+  <data name="NewLinkDescription" xml:space="preserve">
+    <value>Łącza wydziałowe udostępniają dane w jednym kierunku. Poniżej możesz skonfigurować i udostępnić danemu wydziałowi, a po włączeniu łącza przez ten wydział będzie mógł przeglądać udostępnione informacje. Aby Twój wydział mógł widzieć dane tego wydziału, muszą oni utworzyć łącze do Twojego wydziału i musisz je włączyć.</value>
+  </data>
+  <data name="LinkCode" xml:space="preserve">
+    <value>Kod Łącza</value>
+  </data>
+  <data name="TypeColor" xml:space="preserve">
+    <value>Kolor Typu</value>
+  </data>
+  <data name="TypeColorHelp" xml:space="preserve">
+    <value>To jest kolor, który zostanie zastosowany do identyfikacji Zgłoszeń\Jednostek\Personelu dla tego łącza wydziałowego</value>
+  </data>
+  <data name="ShareCalls" xml:space="preserve">
+    <value>Udostępnij Zgłoszenia</value>
+  </data>
+  <data name="ShareUnits" xml:space="preserve">
+    <value>Udostępnij Jednostki</value>
+  </data>
+  <data name="SharePersonnel" xml:space="preserve">
+    <value>Udostępnij Personel</value>
+  </data>
+  <data name="ShareOrders" xml:space="preserve">
+    <value>Udostępnij Zlecenia</value>
+  </data>
+  <data name="SaveLink" xml:space="preserve">
+    <value>Zapisz Łącze</value>
+  </data>
+  <data name="ViewDepartmentLinkTitle" xml:space="preserve">
+    <value>Wyświetl Łącze Wydziałowe</value>
+  </data>
+</root>

@@ -356,6 +356,12 @@ namespace Resgrid.Workers.Console
 					new Commands.SecurityRefreshScheduleCommand(15),
 					Cron.Daily(2, 0),
 					stoppingToken);
+
+				_logger.Log(LogLevel.Information, "Scheduling GDPR Data Export");
+				await Client.ScheduleAsync("GDPR Data Export",
+					new Commands.GdprExportCommand(16),
+					Cron.MinuteIntervals(5),
+					stoppingToken);
 			}
 			else
 			{

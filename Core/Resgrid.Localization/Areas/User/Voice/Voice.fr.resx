@@ -59,56 +59,71 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 
-  <data name="Name1" xml:space="preserve">
-    <value>this is my long string</value>
-  </data>
-  <data name="Bitmap1" xml:space="preserve">
-    <value>[base64 mime encoded serialized .NET Framework object]</value>
-  </data>
-  <data name="Icon1" xml:space="preserve">
-    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-  </data>
   <data name="AddAudio" xml:space="preserve">
-    <value>New Audio Stream</value>
+    <value>Nouveau flux audio</value>
   </data>
   <data name="AddAudioButton" xml:space="preserve">
-    <value>Add Audio Stream</value>
+    <value>Ajouter un flux audio</value>
+  </data>
+  <data name="AddPTTChannel" xml:space="preserve">
+    <value>Ajouter un canal PTT</value>
   </data>
   <data name="AddVoice" xml:space="preserve">
-    <value>New Voice Channel</value>
+    <value>Nouveau canal vocal</value>
+  </data>
+  <data name="AudioStream" xml:space="preserve">
+    <value>Flux audio</value>
   </data>
   <data name="AudioStreamNameLabel" xml:space="preserve">
-    <value>Audio Stream Name</value>
+    <value>Nom du flux audio</value>
   </data>
   <data name="AudioStreams" xml:space="preserve">
-    <value>Audio Streams</value>
+    <value>Flux audio</value>
   </data>
   <data name="AudioStreamUrlLabel" xml:space="preserve">
-    <value>Audio Stream Url</value>
+    <value>URL du flux audio</value>
   </data>
   <data name="ChannelName" xml:space="preserve">
-    <value>Channel Name</value>
+    <value>Nom du canal</value>
+  </data>
+  <data name="DefaultChannelWarning" xml:space="preserve">
+    <value>Vous ne pouvez avoir qu'un seul canal défini par défaut à la fois. Pour définir un autre canal par défaut, vous devez d'abord désactiver l'option de canal par défaut.</value>
   </data>
   <data name="EditAudio" xml:space="preserve">
-    <value>Edit Audio Stream</value>
+    <value>Modifier le flux audio</value>
+  </data>
+  <data name="EditPTTChannelHeader" xml:space="preserve">
+    <value>Modifier le canal Push-To-Talk</value>
   </data>
   <data name="IsDefault" xml:space="preserve">
-    <value>Is Default</value>
+    <value>Est par défaut</value>
+  </data>
+  <data name="IsDefaultHelp" xml:space="preserve">
+    <value>Notez qu'il ne peut y avoir qu'un seul canal par défaut à la fois ; sélectionner un nouveau canal par défaut désactivera le canal par défaut existant.</value>
+  </data>
+  <data name="NewPTTChannelHeader" xml:space="preserve">
+    <value>Nouveau canal Push-To-Talk</value>
   </data>
   <data name="Participants" xml:space="preserve">
     <value>Participants</value>
   </data>
   <data name="PTTNotPurchased" xml:space="preserve">
-    <value>Push-To-Talk Addon Not Purchased</value>
+    <value>Module Push-To-Talk non acheté</value>
   </data>
   <data name="PTTNotPurchasedInfo" xml:space="preserve">
-    <value>Your department has not purchased the Push-To-Talk addon. Your departments Managing Member can purchase the addon from the Subscription and Billing page. Push-To-Talk allows your department to enable real-time voice communications though the Resgrid applications.</value>
+    <value>Votre département n'a pas acheté le module Push-To-Talk. Le membre gestionnaire de votre département peut acheter le module depuis la page Abonnement et Facturation. Push-To-Talk permet à votre département d'activer les communications vocales en temps réel via les applications Resgrid.</value>
+  </data>
+  <data name="PushToTalk" xml:space="preserve">
+    <value>Push-To-Talk</value>
   </data>
   <data name="SaveEditAudioButton" xml:space="preserve">
-    <value>Save Audio Stream</value>
+    <value>Enregistrer le flux audio</value>
+  </data>
+  <data name="SavePTTChannel" xml:space="preserve">
+    <value>Enregistrer le canal PTT</value>
   </data>
   <data name="VoiceChannels" xml:space="preserve">
-    <value>Voice (PTT) Channels</value>
+    <value>Canaux vocaux (PTT)</value>
   </data>
   <data name="VoiceHeader" xml:space="preserve">
     <value>Audio et push-to-talk</value>

@@ -575,5 +575,41 @@
   <data name="Pending" xml:space="preserve">
     <value />
   </data>
+  <data name="RunDetailPageTitle" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunSummary" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StepLogs" xml:space="preserve">
+    <value />
+  </data>
+  <data name="NoStepLogs" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StepPrefix" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StepSkippedByCondition" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ConditionEvaluatedTo" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Result" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RenderedOutput" xml:space="preserve">
+    <value />
+  </data>
+  <data name="AllEventTypesUsed" xml:space="preserve">
+    <value />
+  </data>
+  <data name="TriggerEventHelp" xml:space="preserve">
+    <value />
+  </data>
+  <data name="Detail" xml:space="preserve">
+    <value />
+  </data>
 </root>
 

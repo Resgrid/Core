@@ -93,5 +93,7 @@ namespace Resgrid.Model.Services
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Task&lt;Training&gt;.</returns>
 		Task<Training> MarkAsNotifiedAsync(int trainingId, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<List<TrainingUser>> GetTrainingUsersForUserAsync(string userId);
 	}
 }

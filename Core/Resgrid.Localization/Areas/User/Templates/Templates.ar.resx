@@ -159,4 +159,13 @@
   <data name="TemplateNameLabel" xml:space="preserve">
     <value>اسم القالب</value>
   </data>
+  <data name="AddTemplateButton" xml:space="preserve">
+    <value>إضافة قالب</value>
+  </data>
+  <data name="CallNoteType" xml:space="preserve">
+    <value>ملاحظة البلاغ</value>
+  </data>
+  <data name="CallQuickTemplateType" xml:space="preserve">
+    <value>قالب البلاغ السريع</value>
+  </data>
 </root>

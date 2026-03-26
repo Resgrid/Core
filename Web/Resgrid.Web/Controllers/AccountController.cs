@@ -24,7 +24,6 @@ using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Localization;
 using static Microsoft.ApplicationInsights.MetricDimensionNames.TelemetryContext;
-using PostHog;
 using Microsoft.Extensions.DependencyInjection;
 using Resgrid.Web.Attributes;
 using Microsoft.Extensions.Localization;
@@ -232,7 +231,7 @@ namespace Resgrid.Web.Controllers
 		// GET: /Account/Register
 		[HttpGet]
 		[AllowAnonymous]
-		public IActionResult Register(string returnUrl = null)
+		public IActionResult Register(string returnUrl = null, string affiliateCode = null)
 		{
 			if (String.IsNullOrWhiteSpace(SystemBehaviorConfig.BillingApiBaseUrl) || String.IsNullOrWhiteSpace(ApiConfig.BackendInternalApikey))
 				return RedirectToAction("LogOn", "Account");
@@ -240,6 +239,7 @@ namespace Resgrid.Web.Controllers
 			RegisterViewModel model = new RegisterViewModel();
 			ViewBag.DepartmentTypes = new SelectList(model.DepartmentTypes);
 			model.SiteKey = WebConfig.RecaptchaPublicKey;
+			model.AffiliateCode = affiliateCode;
 			ViewData["ReturnUrl"] = returnUrl;
 
 			return View(model);
@@ -277,7 +277,20 @@ namespace Resgrid.Web.Controllers
 
 					Department department = await _departmentsService.CreateDepartmentAsync(model.DepartmentName, user.Id, model.DepartmentType, null, cancellationToken);
 					await _departmentsService.AddUserToDepartmentAsync(department.DepartmentId, user.Id, true, cancellationToken);
-					await _subscriptionsService.CreateFreePlanPaymentAsync(department.DepartmentId, user.Id, cancellationToken);
+
+					if (!String.IsNullOrWhiteSpace(model.AffiliateCode))
+					{
+						var affiliate = await _affiliateService.GetActiveAffiliateByCodeAsync(model.AffiliateCode);
+						if (affiliate != null)
+						{
+							department.AffiliateCode = affiliate.AffiliateCode;
+							await _departmentsService.SaveDepartmentAsync(department, cancellationToken);
+						}
+					}
+
+					// Only provision free plan when paid plan selection is not required
+					if (!SystemBehaviorConfig.RequirePlanSelectionDuringSignup)
+						await _subscriptionsService.CreateFreePlanPaymentAsync(department.DepartmentId, user.Id, cancellationToken);
 
 					// Guard, in case testing has caching turned on for the shared redis cache there can be artifacts
 					await _departmentsService.InvalidateAllDepartmentsCache(department.DepartmentId);
@@ -298,6 +311,8 @@ namespace Resgrid.Web.Controllers
 
 						if (!String.IsNullOrWhiteSpace(returnUrl))
 							return RedirectToLocal(returnUrl);
+						else if (SystemBehaviorConfig.RequirePlanSelectionDuringSignup)
+							return RedirectToAction("SelectRegistrationPlan", "Subscription", new { Area = "User", discountCode = model.DiscountCode });
 						else
 							return RedirectToAction("Dashboard", "Home", new { Area = "User" });
 					}
@@ -787,37 +802,7 @@ namespace Resgrid.Web.Controllers
 					var token = await ApiAuthHelper.GetBearerApiTokenAsync(username, password);
 					await _cacheProvider.SetStringAsync(CacheConfig.ApiBearerTokenKeyName + $"_${userId}", token, new TimeSpan(48, 0, 0));
 
-					if (!string.IsNullOrWhiteSpace(TelemetryConfig.PostHogApiKey))
-					{
-						var email = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
-						var departmentId = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.PrimaryGroupSid)?.Value;
-						var departmentName = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.Actor)?.Value;
-						var name = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.GivenName)?.Value;
-						var createdOn = User.Claims.FirstOrDefault(x => x.Type == ClaimTypes.OtherPhone)?.Value;
-
-						if (!string.IsNullOrWhiteSpace(Config.TelemetryConfig.PostHogApiKey))
-						{
-							var posthog = _serviceProvider.GetService<IPostHogClient>();
-
-							if (posthog != null)
-							{
-								await posthog.IdentifyAsync(
-									userId,
-									email,
-									name,
-									personPropertiesToSet: new()
-									{
-										["departmentId"] = departmentId,
-										["departmentName"] = departmentName,
-									},
-									personPropertiesToSetOnce: new()
-									{
-										["createdOn"] = createdOn
-									});
-							}
-						}
 					}
-				}
 			}
 			catch (Exception ex)
 			{

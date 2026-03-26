@@ -1,19 +1,20 @@
-﻿@using Resgrid.Model
+@using Resgrid.Model
 @using Resgrid.Web.Helpers
 @model Resgrid.WebCore.Areas.User.Models.Forms.FormIndexModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Forms.Forms> localizer
 @{
-  ViewBag.Title = "Resgrid | Forms";
+  ViewBag.Title = "Resgrid | " + localizer["PageTitle"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
-    <h2>Forms</h2>
+    <h2>@localizer["FormsHeading"]</h2>
     <ol class="breadcrumb">
       <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
       </li>
       <li class="active">
-        <strong>Forms</strong>
+        <strong>@localizer["FormsHeading"]</strong>
       </li>
     </ol>
   </div>
@@ -21,7 +22,7 @@
   {
     <div class="col-sm-8">
       <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-        <a title="Create Form" class="btn btn-success" asp-controller="Forms" asp-action="New" asp-route-area="User">New Form</a>
+        <a title="@localizer["NewFormButton"]" class="btn btn-success" asp-controller="Forms" asp-action="New" asp-route-area="User">@localizer["NewFormButton"]</a>
       </div>
     </div>
   }
@@ -37,19 +38,19 @@
               <thead>
                 <tr>
                   <th>
-                    Name
+                    @commonLocalizer["Name"]
                   </th>
                   <th>
-                    Type
+                    @commonLocalizer["Type"]
                   </th>
                   <th>
-                    Active
+                    @localizer["ActiveColumn"]
                   </th>
                   <th>
-                    Created On
+                    @commonLocalizer["CreatedOn"]
                   </th>
                   <th>
-                    Action
+                    @commonLocalizer["Action"]
                   </th>
                 </tr>
               </thead>
@@ -63,17 +64,17 @@
                     <td>
                       @if (t.Type == 0)
 					  {
-                        <span>New Call Form</span>
+                        <span>@localizer["NewCallFormType"]</span>
 					  }
                     </td>
                     <td>
                       @if (t.IsActive)
 					  {
-                        <span>Yes</span>
+                        <span>@commonLocalizer["Yes"]</span>
 					  }
 					  else
 					  {
-                        <span>No</span>
+                        <span>@commonLocalizer["No"]</span>
 					  }
                     </td>
                     <td>
@@ -82,19 +83,19 @@
                     <td>
                       <a href="@Url.Action("View", "Forms", new { area = "User", id = t.FormId })" class='btn btn-xs btn-info'>
                         <i class="icon-eye-open">
-                        </i> View
+                        </i> @localizer["ViewButton"]
                       </a>
                       @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 					  {
 						if (t.IsActive)
 						{
-                          <a href="@Url.Action("Disable", "Forms", new { area = "User", id = t.FormId })" class='btn btn-xs btn-warning' rel="nofollow">Disable</a>
+                          <a href="@Url.Action("Disable", "Forms", new { area = "User", id = t.FormId })" class='btn btn-xs btn-warning' rel="nofollow">@localizer["DisableButton"]</a>
 						}
 						else
 						{
-                          <a href="@Url.Action("Enable", "Forms", new { area = "User", id = t.FormId })" class='btn btn-xs btn-success' rel="nofollow">Enable</a>
+                          <a href="@Url.Action("Enable", "Forms", new { area = "User", id = t.FormId })" class='btn btn-xs btn-success' rel="nofollow">@localizer["EnableButton"]</a>
 						}
-                        <a href="@Url.Action("Delete", "Forms", new { area = "User", id = t.FormId })" class='btn btn-xs btn-danger' data-confirm="WARNING: This will permanently delete this form. Are you sure you want to delete the form @t.Name ?" rel="nofollow">Delete</a>
+                        <a href="@Url.Action("Delete", "Forms", new { area = "User", id = t.FormId })" class='btn btn-xs btn-danger' data-confirm="@localizer["DeleteFormWarning"] @t.Name ?" rel="nofollow">@commonLocalizer["Delete"]</a>
 					  }
                     </td>
                   </tr>
@@ -111,7 +112,7 @@
 <div class="row">
   <div class="col-xs-12">
     <div class="alert alert-warning">
-      You can only have 1 New Call Form type active at a time.
+      @localizer["OneActiveFormWarning"]
     </div>
   </div>
 </div>

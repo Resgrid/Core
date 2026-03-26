@@ -1,21 +1,22 @@
-﻿@using Resgrid.Model
+@using Resgrid.Model
 @model Resgrid.Web.Areas.User.Models.Orders.ViewOrderView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Orders.Orders> localizer
 @{
-  ViewBag.Title = "Resgrid | View Order";
+  ViewBag.Title = "Resgrid | " + localizer["ViewOrderHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
-	<h2>View Order</h2>
+	<h2>@localizer["ViewOrderHeader"]</h2>
 	<ol class="breadcrumb">
 	  <li>
-		<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+		<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a>
 	  </li>
 	  <li>
-		<a asp-controller="Orders" asp-action="Index" asp-route-area="User">Orders</a>
+		<a asp-controller="Orders" asp-action="Index" asp-route-area="User">@localizer["OrdersLabel"]</a>
 	  </li>
 	  <li class="active">
-		<strong>View Order</strong>
+		<strong>@localizer["ViewOrderHeader"]</strong>
 	  </li>
 	</ol>
   </div>
@@ -31,26 +32,26 @@
 			  <div class="m-b-md">
 				@if (Model.Department.DepartmentId != Model.Order.DepartmentId && !Model.Order.IsFilled())
 				{
-				  <a asp-controller="Orders" asp-action="Fill" asp-route-area="User" asp-route-orderId="@Model.Order.ResourceOrderId" class="btn btn-success btn-xs pull-right">Request To Fill Order</a>
+				  <a asp-controller="Orders" asp-action="Fill" asp-route-area="User" asp-route-orderId="@Model.Order.ResourceOrderId" class="btn btn-success btn-xs pull-right">@localizer["RequestToFillButton"]</a>
 				}
 				<h2>@Model.Order.Title</h2>
 			  </div>
 			  <dl class="dl-horizontal">
-				<dt>Status:</dt>
+				<dt>@localizer["StatusLabel"]</dt>
 				<dd>
 				  @if (Model.Order.CloseDate.HasValue)
 				  {
-					<span class="label label-info">Closed</span>
+					<span class="label label-info">@localizer["ClosedLabel"]</span>
 				  }
 				  else
 				  {
 					if (Model.Order.IsFilled())
 					{
-					  <span class="label label-success">Filled</span>
+					  <span class="label label-success">@localizer["FilledLabel"]</span>
 					}
 					else
 					{
-					  <span class="label label-primary">Open</span>
+					  <span class="label label-primary">@localizer["OpenLabel"]</span>
 					}
 				  }
 				</dd>
@@ -60,25 +61,25 @@
 		  <div class="row">
 			<div class="col-lg-5">
 			  <dl class="dl-horizontal">
-				<dt>Created by:</dt>
+				<dt>@localizer["CreatedByLabel"]</dt>
 				<dd>@Model.Order.Department.Name</dd>
-				<dt>Incident:</dt>
+				<dt>@localizer["IncidentLabel"]</dt>
 				<dd>@Model.Order.IncidentName</dd>
-				<dt>Number\ID:</dt>
+				<dt>@localizer["NumberIdLabel"]</dt>
 				<dd>@Model.Order.IncidentNumber</dd>
-				<dt>Finance Code:</dt>
+				<dt>@localizer["FinanceCodeDtLabel"]</dt>
 				<dd>@Model.Order.FinancialCode</dd>
 			  </dl>
 			</div>
 			<div class="col-lg-7" id="cluster_info">
 			  <dl class="dl-horizontal">
-				<dt>Last Updated:</dt>
+				<dt>@localizer["LastUpdatedLabel"]</dt>
 				<dd>@Model.Order.OpenDate.TimeConverterToString(Model.Department)</dd>
-				<dt>Created:</dt>
+				<dt>@localizer["CreatedDtLabel"]</dt>
 				<dd>@Model.Order.OpenDate.TimeConverterToString(Model.Department)</dd>
-				<dt>Contact Name:</dt>
+				<dt>@localizer["ContactNameDtLabel"]</dt>
 				<dd>@Model.Order.ContactName</dd>
-				<dt>Contact Number:</dt>
+				<dt>@localizer["ContactNumberDtLabel"]</dt>
 				<dd>@Model.Order.ContactNumber</dd>
 			  </dl>
 			</div>
@@ -86,12 +87,12 @@
 		  <div class="row">
 			<div class="col-lg-12">
 			  <dl class="dl-horizontal">
-				<dt>Fill:</dt>
+				<dt>@localizer["FillDtLabel"]</dt>
 				<dd>
 				  <div class="progress progress-striped active m-b-sm">
 					<div style="width: @Model.Order.FilledPrecentage()%;" class="progress-bar"></div>
 				  </div>
-				  <small>This resource order is <strong>@Model.Order.FilledPrecentage()%</strong> filled.</small>
+				  <small>@localizer["FillPercentageText"] <strong>@Model.Order.FilledPrecentage()%</strong> @localizer["FillPercentageText2"]</small>
 				</dd>
 			  </dl>
 			</div>
@@ -102,7 +103,7 @@
 				<div class="panel-heading">
 				  <div class="panel-options">
 					<ul class="nav nav-tabs">
-					  <li class="active"><a href="#tab-1" data-toggle="tab">Fills</a></li>
+					  <li class="active"><a href="#tab-1" data-toggle="tab">@localizer["FillsTab"]</a></li>
 					</ul>
 				  </div>
 				</div>
@@ -115,25 +116,25 @@
 						<div class="row">
 						  <div class="col-md-4">
 							<dl>
-							  <dt>Resource:</dt>
+							  <dt>@localizer["ResourceDtLabel"]</dt>
 							  <dd>@item.Resource</dd>
 							</dl>
 						  </div>
 						  <div class="col-md-4">
 							<dl>
-							  <dt>Requirements:</dt>
+							  <dt>@localizer["RequirementsDtLabel"]</dt>
 							  <dd>@item.Requirements</dd>
 							</dl>
 						  </div>
 						  <div class="col-md-2">
 							<dl>
-							  <dt>Min:</dt>
+							  <dt>@localizer["MinDtLabel"]</dt>
 							  <dd>@item.Min</dd>
 							</dl>
 						  </div>
 						  <div class="col-md-2">
 							<dl>
-							  <dt>Max:</dt>
+							  <dt>@localizer["MaxDtLabel"]</dt>
 							  <dd>@item.Max</dd>
 							</dl>
 						  </div>
@@ -141,12 +142,12 @@
 						<table class="table table-striped">
 						  <thead>
 							<tr>
-							  <th>Status</th>
-							  <th>Department</th>
-							  <th>Timestamp</th>
-							  <th>Contact</th>
-							  <th>Note</th>
-							  <th>Units</th>
+							  <th>@commonLocalizer["Status"]</th>
+							  <th>@localizer["DepartmentColumn"]</th>
+							  <th>@localizer["TimestampColumn"]</th>
+							  <th>@localizer["ContactColumn"]</th>
+							  <th>@localizer["NoteColumn"]</th>
+							  <th>@localizer["UnitsColumn"]</th>
 							  <th></th>
 							</tr>
 						  </thead>
@@ -157,15 +158,15 @@
 								<td>
 								  @if (fill.Accepted)
 								  {
-									<span class="label label-success"><i class="fa fa-check"></i> Accepted</span>
+									<span class="label label-success"><i class="fa fa-check"></i> @localizer["AcceptedLabel"]</span>
 								  }
 								  else if (Model.Order.CloseDate.HasValue)
 								  {
-									<span class="label label-danger">Not Accepted</span>
+									<span class="label label-danger">@localizer["NotAcceptedLabel"]</span>
 								  }
 								  else
 								  {
-									<span class="label label-primary">Pending</span>
+									<span class="label label-primary">@localizer["PendingLabel"]</span>
 								  }
 								</td>
 								<td>
@@ -191,7 +192,7 @@
 								  <td>
 									  @if (!fill.Accepted && Model.Department.DepartmentId == Model.Order.DepartmentId)
 									  {
-										  <a asp-controller="Orders" asp-action="AcceptFill" asp-route-area="User" asp-route-fillId="@fill.ResourceOrderFillId" class="btn btn-white btn-xs">Accept</a>
+										  <a asp-controller="Orders" asp-action="AcceptFill" asp-route-area="User" asp-route-fillId="@fill.ResourceOrderFillId" class="btn btn-white btn-xs">@localizer["AcceptButton"]</a>
 									  }
 								  </td>
 
@@ -212,32 +213,32 @@
   </div>
   <div class="col-lg-3">
 	<div class="wrapper wrapper-content project-manager">
-	  <h4>Order Summary</h4>
+	  <h4>@localizer["OrderSummaryHeader"]</h4>
 	  <p class="small">
 		@Model.Order.Summary
 	  </p>
-	  <h4>Special Instructions</h4>
+	  <h4>@localizer["SpecialInstructionsHeader"]</h4>
 	  <p class="small">
 		@Model.Order.SpecialInstructions
 	  </p>
-	  <h4>Incident Address</h4>
+	  <h4>@localizer["IncidentAddressHeader"]</h4>
 	  <p class="small">
 		@Model.Order.IncidentAddress
 	  </p>
-	  <h4>Meetup</h4>
+	  <h4>@localizer["MeetupHeader"]</h4>
 	  <dl>
-		<dt>   Location:</dt>
+		<dt>   @localizer["MeetupLocationDtLabel"]</dt>
 		<dd>@Model.Order.MeetupLocation</dd>
 	  </dl>
 	  <dl>
-		<dt>   Date:</dt>
+		<dt>   @localizer["MeetupDateDtLabel"]</dt>
 		@if (Model.Order.MeetupDate.HasValue)
 		{
 		  <dd>@Model.Order.MeetupDate.Value.TimeConverterToString(Model.Department)</dd>
 		}
 		else
 		{
-		  <dd>Not Supplied</dd>
+		  <dd>@localizer["NotSuppliedLabel"]</dd>
 		}
 	  </dl>
 	</div>
@@ -246,5 +247,5 @@
 
 @section Scripts
 {
- 
+
 }

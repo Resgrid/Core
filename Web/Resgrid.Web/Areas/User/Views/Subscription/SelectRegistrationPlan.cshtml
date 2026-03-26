@@ -163,6 +163,13 @@
                         </form>
                     </div>
 
+                    @if (!string.IsNullOrWhiteSpace(Model.DiscountCode))
+                    {
+                        <div class="alert alert-success" style="margin-top: 20px;">
+                            <strong>Discount Code Applied:</strong> @Model.DiscountCode
+                        </div>
+                    }
+
                     <div class="alert alert-info" style="margin-top: 20px;">
                         <strong>Need help choosing?</strong> Contact us at <a href="@SystemBehaviorConfig.ContactUsUrl">@SystemBehaviorConfig.ContactUsUrl</a> and we can help find the right plan for your organization.
                     </div>
@@ -191,6 +198,7 @@
         }
         var slider = 0;
         var val = 20;
+        var discountCode = '@Html.Raw(Model.DiscountCode ?? "")';
 
         function stripeCheckout(id) {
             const amount = slider == 1 ? val : $("#amount").val();
@@ -199,7 +207,7 @@
                 const packs = (amount / 10) - 1;
 
                 $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Subscription/GetStripeSession?id=' + id + '&count=' + packs,
+                    url: resgrid.absoluteBaseUrl + '/User/Subscription/GetStripeSession?id=' + id + '&count=' + packs + (discountCode ? '&discountCode=' + encodeURIComponent(discountCode) : ''),
                     contentType: 'application/json',
                     type: 'GET'
                 }).done(function (data) {
@@ -237,7 +245,7 @@
                 const packs = (amount / 10) - 1;
 
                 $.ajax({
-                    url: resgrid.absoluteBaseUrl + '/User/Subscription/GetPaddleCheckout?id=' + id + '&count=' + packs,
+                    url: resgrid.absoluteBaseUrl + '/User/Subscription/GetPaddleCheckout?id=' + id + '&count=' + packs + (discountCode ? '&discountCode=' + encodeURIComponent(discountCode) : ''),
                     contentType: 'application/json',
                     type: 'GET'
                 }).done(function (data) {

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using Resgrid.Framework;
@@ -54,6 +55,48 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					conn = _unitOfWork.CreateOrGetConnection();
 					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				throw;
+			}
+		}
+
+		public async Task<bool> TryClaimForProcessingAsync(string requestId, CancellationToken cancellationToken = default)
+		{
+			try
+			{
+				var claimFunction = new Func<DbConnection, Task<bool>>(async x =>
+				{
+					var dynamicParameters = new DynamicParameters();
+					dynamicParameters.Add("Id", requestId);
+					dynamicParameters.Add("PendingStatus", (int)GdprExportStatus.Pending);
+					dynamicParameters.Add("ProcessingStatus", (int)GdprExportStatus.Processing);
+					dynamicParameters.Add("Now", DateTime.UtcNow);
+
+					var rowsAffected = await x.ExecuteAsync(
+						sql: "UPDATE GdprDataExportRequests SET Status = @ProcessingStatus, ProcessingStartedOn = @Now WHERE GdprDataExportRequestId = @Id AND Status = @PendingStatus",
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+
+					return rowsAffected > 0;
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync(cancellationToken);
+						return await claimFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await claimFunction(conn);
 				}
 			}
 			catch (Exception ex)

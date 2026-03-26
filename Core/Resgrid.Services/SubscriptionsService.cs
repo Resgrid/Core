@@ -1148,7 +1148,7 @@ namespace Resgrid.Services
 			return await _paymentProviderEventsRepository.SaveOrUpdateAsync(providerEvent, cancellationToken);
 		}
 
-		public async Task<CreateStripeSessionForUpdateData> CreateStripeSessionForSub(int departmentId, string stripeCustomerId, string stripePlanId, int planId, string email, string departmentName, int count)
+		public async Task<CreateStripeSessionForUpdateData> CreateStripeSessionForSub(int departmentId, string stripeCustomerId, string stripePlanId, int planId, string email, string departmentName, int count, string discountCode = null)
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
@@ -1166,6 +1166,9 @@ namespace Resgrid.Services
 				request.AddParameter("count", count, ParameterType.QueryString);
 				request.AddParameter("email", email, ParameterType.QueryString, true);
 				request.AddParameter("departmentName", departmentName, ParameterType.QueryString, true);
+
+				if (!String.IsNullOrWhiteSpace(discountCode))
+					request.AddParameter("discountCode", discountCode, ParameterType.QueryString);
 
 				var response = await client.ExecuteAsync<CreateStripeSessionForUpdateResult>(request);
 
@@ -1209,7 +1212,7 @@ namespace Resgrid.Services
 			return null;
 		}
 
-		public async Task<CreatePaddleCheckoutData> CreatePaddleCheckoutForSub(int departmentId, string paddleCustomerId, string paddlePriceId, int planId, string email, string departmentName, int count)
+		public async Task<CreatePaddleCheckoutData> CreatePaddleCheckoutForSub(int departmentId, string paddleCustomerId, string paddlePriceId, int planId, string email, string departmentName, int count, string discountCode = null)
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
@@ -1227,6 +1230,9 @@ namespace Resgrid.Services
 				request.AddParameter("count", count, ParameterType.QueryString);
 				request.AddParameter("email", email, ParameterType.QueryString, true);
 				request.AddParameter("departmentName", departmentName, ParameterType.QueryString, true);
+
+				if (!String.IsNullOrWhiteSpace(discountCode))
+					request.AddParameter("discountCode", discountCode, ParameterType.QueryString);
 
 				var response = await client.ExecuteAsync<CreatePaddleCheckoutResult>(request);
 

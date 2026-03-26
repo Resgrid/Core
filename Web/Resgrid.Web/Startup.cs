@@ -27,8 +27,6 @@ using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using PostHog.Config;
-using PostHog;
 using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Localization;
@@ -473,23 +471,6 @@ namespace Resgrid.Web
 				services.AddTransient<ISentryEventProcessor, SentryEventProcessor>();
 
 				services.AddSentryTunneling();
-			}
-
-			if (!string.IsNullOrWhiteSpace(Config.TelemetryConfig.PostHogApiKey))
-			{
-				services.AddPostHog(options =>
-				{
-					options.PostConfigure(o =>
-					{
-						o.HostUrl = new Uri(TelemetryConfig.PostHogUrl);
-						o.ProjectApiKey = TelemetryConfig.PostHogApiKey;
-						o.SuperProperties.Add("app_name", "ResgridWeb");
-						o.SuperProperties.Add("environment", SystemBehaviorConfig.Environment);
-					});
-
-					// Enables PostHog as a provider for ASP.NET Core's feature management system.
-					options.UseFeatureManagement<FeatureFlagContextProvider>();
-				});
 			}
 
 			this.Services = services;

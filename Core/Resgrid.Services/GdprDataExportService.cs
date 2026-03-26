@@ -89,12 +89,12 @@ namespace Resgrid.Services
 
 			foreach (var request in pending)
 			{
+				var claimed = await _repository.TryClaimForProcessingAsync(request.GdprDataExportRequestId, cancellationToken);
+				if (!claimed)
+					continue;
+
 				try
 				{
-					request.Status = (int)GdprExportStatus.Processing;
-					request.ProcessingStartedOn = DateTime.UtcNow;
-					await _repository.SaveOrUpdateAsync(request, cancellationToken, true);
-
 					var zipBytes = await BuildExportZipAsync(request.UserId, request.DepartmentId);
 
 					var tokenBytes = new byte[32];
@@ -103,6 +103,7 @@ namespace Resgrid.Services
 						.Replace('+', '-').Replace('/', '_').TrimEnd('=');
 
 					request.Status = (int)GdprExportStatus.Completed;
+					request.ProcessingStartedOn = DateTime.UtcNow;
 					request.CompletedOn = DateTime.UtcNow;
 					request.ExportData = zipBytes;
 					request.FileSizeBytes = zipBytes.LongLength;

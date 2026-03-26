@@ -69,7 +69,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize]
-		public async Task<IActionResult> SelectRegistrationPlan()
+		public async Task<IActionResult> SelectRegistrationPlan(string discountCode = null)
 		{
 			var currentPayment = await _subscriptionsService.GetCurrentPaymentForDepartmentAsync(DepartmentId);
 			if (currentPayment != null && !currentPayment.IsFreePlan())
@@ -78,6 +78,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new SelectRegistrationPlanView();
 			model.DepartmentId = DepartmentId;
 			model.StripeKey = Config.PaymentProviderConfig.GetStripeClientKey();
+			model.DiscountCode = discountCode;
 
 			var paddleCustomerId = await _departmentSettingsService.GetPaddleCustomerIdForDepartmentAsync(DepartmentId);
 			bool isPaddleDepartment = !string.IsNullOrWhiteSpace(paddleCustomerId);
@@ -684,13 +685,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public async Task<IActionResult> GetStripeSession(int id, int count, CancellationToken cancellationToken)
+		public async Task<IActionResult> GetStripeSession(int id, int count, string discountCode = null, CancellationToken cancellationToken = default)
 		{
 			var plan = await _subscriptionsService.GetPlanByIdAsync(id);
 			var stripeCustomerId = await _departmentSettingsService.GetStripeCustomerIdForDepartmentAsync(DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			var user = _usersService.GetUserById(UserId);
-			var session = await _subscriptionsService.CreateStripeSessionForSub(DepartmentId, stripeCustomerId, plan.GetExternalKey(), plan.PlanId, user.Email, department.Name, count);
+			var session = await _subscriptionsService.CreateStripeSessionForSub(DepartmentId, stripeCustomerId, plan.GetExternalKey(), plan.PlanId, user.Email, department.Name, count, discountCode);
 			var subscription = await _subscriptionsService.GetActiveStripeSubscriptionAsync(session.CustomerId);
 
 			bool hasActiveSub = false;
@@ -722,13 +723,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public async Task<IActionResult> GetPaddleCheckout(int id, int count, CancellationToken cancellationToken)
+		public async Task<IActionResult> GetPaddleCheckout(int id, int count, string discountCode = null, CancellationToken cancellationToken = default)
 		{
 			var plan = await _subscriptionsService.GetPlanByIdAsync(id);
 			var paddleCustomerId = await _departmentSettingsService.GetPaddleCustomerIdForDepartmentAsync(DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			var user = _usersService.GetUserById(UserId);
-			var checkout = await _subscriptionsService.CreatePaddleCheckoutForSub(DepartmentId, paddleCustomerId, plan.GetExternalKey(), plan.PlanId, user.Email, department.Name, count);
+			var checkout = await _subscriptionsService.CreatePaddleCheckoutForSub(DepartmentId, paddleCustomerId, plan.GetExternalKey(), plan.PlanId, user.Email, department.Name, count, discountCode);
 
 			bool hasActiveSub = false;
 			if (!string.IsNullOrWhiteSpace(paddleCustomerId))

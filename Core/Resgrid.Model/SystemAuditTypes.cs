@@ -12,6 +12,9 @@
 		TwoFactorStepUpVerified = 7,
 		SsoLogin = 8,
 		SsoLoginFailed = 9,
-		ScimOperation = 10
+		ScimOperation = 10,
+		AccountDeletionRequested = 11,
+		GdprDataExportRequested = 12,
+		GdprDataExportDownloaded = 13
 	}
 }

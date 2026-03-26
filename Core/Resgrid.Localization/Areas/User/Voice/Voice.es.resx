@@ -98,4 +98,73 @@
 	<resheader name="writer">
 		<value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.3500.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
 	</resheader>
+  <data name="AddAudio" xml:space="preserve">
+    <value>Nuevo flujo de audio</value>
+  </data>
+  <data name="AddAudioButton" xml:space="preserve">
+    <value>Agregar flujo de audio</value>
+  </data>
+  <data name="AddPTTChannel" xml:space="preserve">
+    <value>Agregar canal PTT</value>
+  </data>
+  <data name="AddVoice" xml:space="preserve">
+    <value>Nuevo canal de voz</value>
+  </data>
+  <data name="AudioStream" xml:space="preserve">
+    <value>Flujo de audio</value>
+  </data>
+  <data name="AudioStreamNameLabel" xml:space="preserve">
+    <value>Nombre del flujo de audio</value>
+  </data>
+  <data name="AudioStreams" xml:space="preserve">
+    <value>Flujos de audio</value>
+  </data>
+  <data name="AudioStreamUrlLabel" xml:space="preserve">
+    <value>URL del flujo de audio</value>
+  </data>
+  <data name="ChannelName" xml:space="preserve">
+    <value>Nombre del canal</value>
+  </data>
+  <data name="DefaultChannelWarning" xml:space="preserve">
+    <value>Solo puede tener 1 canal configurado como predeterminado a la vez. Para establecer otro canal como predeterminado, primero debe desactivar la opción de canal predeterminado.</value>
+  </data>
+  <data name="EditAudio" xml:space="preserve">
+    <value>Editar flujo de audio</value>
+  </data>
+  <data name="EditPTTChannelHeader" xml:space="preserve">
+    <value>Editar canal Push-To-Talk</value>
+  </data>
+  <data name="IsDefault" xml:space="preserve">
+    <value>Es predeterminado</value>
+  </data>
+  <data name="IsDefaultHelp" xml:space="preserve">
+    <value>Tenga en cuenta que solo puede haber un canal predeterminado a la vez; seleccionar un nuevo canal predeterminado desactivará el predeterminado del existente.</value>
+  </data>
+  <data name="NewPTTChannelHeader" xml:space="preserve">
+    <value>Nuevo canal Push-To-Talk</value>
+  </data>
+  <data name="Participants" xml:space="preserve">
+    <value>Participantes</value>
+  </data>
+  <data name="PTTNotPurchased" xml:space="preserve">
+    <value>Complemento Push-To-Talk no adquirido</value>
+  </data>
+  <data name="PTTNotPurchasedInfo" xml:space="preserve">
+    <value>Su departamento no ha adquirido el complemento Push-To-Talk. El miembro administrador de su departamento puede adquirir el complemento desde la página de Suscripción y Facturación. Push-To-Talk permite a su departamento habilitar comunicaciones de voz en tiempo real a través de las aplicaciones de Resgrid.</value>
+  </data>
+  <data name="PushToTalk" xml:space="preserve">
+    <value>Push-To-Talk</value>
+  </data>
+  <data name="SaveEditAudioButton" xml:space="preserve">
+    <value>Guardar flujo de audio</value>
+  </data>
+  <data name="SavePTTChannel" xml:space="preserve">
+    <value>Guardar canal PTT</value>
+  </data>
+  <data name="VoiceChannels" xml:space="preserve">
+    <value>Canales de voz (PTT)</value>
+  </data>
+  <data name="VoiceHeader" xml:space="preserve">
+    <value>Audio y Push-To-Talk</value>
+  </data>
 </root>

@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="IndexPageTitle" xml:space="preserve">
+    <value>مجموعات القسم</value>
+  </data>
+  <data name="GroupsHeading" xml:space="preserve">
+    <value>المجموعات</value>
+  </data>
+  <data name="AddNewGroup" xml:space="preserve">
+    <value>إضافة مجموعة جديدة</value>
+  </data>
+  <data name="AddNewGroupTitle" xml:space="preserve">
+    <value>إضافة مجموعة جديدة</value>
+  </data>
+  <data name="GroupName" xml:space="preserve">
+    <value>اسم المجموعة</value>
+  </data>
+  <data name="Parent" xml:space="preserve">
+    <value>الأصل</value>
+  </data>
+  <data name="DispatchEmail" xml:space="preserve">
+    <value>بريد الإرسال</value>
+  </data>
+  <data name="MessageEmail" xml:space="preserve">
+    <value>بريد الرسائل</value>
+  </data>
+  <data name="Members" xml:space="preserve">
+    <value>الأعضاء</value>
+  </data>
+  <data name="Organizational" xml:space="preserve">
+    <value>تنظيمي</value>
+  </data>
+  <data name="Station" xml:space="preserve">
+    <value>محطة</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>لا شيء</value>
+  </data>
+  <data name="Geofence" xml:space="preserve">
+    <value>السياج الجغرافي</value>
+  </data>
+  <data name="DeleteGroupPageTitle" xml:space="preserve">
+    <value>حذف المجموعة</value>
+  </data>
+  <data name="DeleteGroupHeading" xml:space="preserve">
+    <value>حذف المجموعة</value>
+  </data>
+  <data name="DeleteGroupConfirmQuestion" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد حذف هذه المجموعة؟</value>
+  </data>
+  <data name="DeleteGroupWarning" xml:space="preserve">
+    <value>إذا اخترت حذف هذه المجموعة، فسيتم إزالة معلومات المجموعة، مثل عناوين الإرسال والرسائل، مع المجموعة ولن يمكن استخدامها مرة أخرى.</value>
+  </data>
+  <data name="DeleteGroupActiveUsersWarning" xml:space="preserve">
+    <value>تحتوي هذه المجموعة على مستخدمين نشطين، يجب عليك نقل المستخدمين أو حذفهم لتتمكن من حذف المجموعة.</value>
+  </data>
+  <data name="DeleteGroupChildGroupsWarning" xml:space="preserve">
+    <value>تحتوي هذه المجموعة على مجموعات فرعية. ستحتاج إلى نقل أو حذف المجموعة الفرعية قبل حذف المجموعة.</value>
+  </data>
+  <data name="DeleteGroupUnitsWarning" xml:space="preserve">
+    <value>تحتوي هذه المجموعة على وحدات مخصصة لها. ستحتاج إلى نقل الوحدة إلى مجموعة محطة أخرى أو حذف الوحدة لتتمكن من حذف المجموعة.</value>
+  </data>
+  <data name="DeleteGroupShiftsWarning" xml:space="preserve">
+    <value>تحتوي هذه المجموعة على مجموعات مناوبات مخصصة لها. ستحتاج إلى إزالة مجموعات المناوبات هذه لتتمكن من حذف المجموعة.</value>
+  </data>
+  <data name="DeleteGroupCheckboxHint" xml:space="preserve">
+    <value>انقر على مربع الاختيار أدناه لحذف هذه المجموعة.</value>
+  </data>
+  <data name="DeleteGroupPermanentWarning" xml:space="preserve">
+    <value>إذا اخترت حذف هذه المجموعة، فسيتم حذف المعلومات أدناه بشكل دائم. لا يمكن التراجع عن هذه العملية.</value>
+  </data>
+  <data name="DeleteGroupDataDeleted" xml:space="preserve">
+    <value>البيانات المحذوفة</value>
+  </data>
+  <data name="DeleteGroupDataGroupData" xml:space="preserve">
+    <value>بيانات المجموعة</value>
+  </data>
+  <data name="DeleteGroupDataPersonnelMemberships" xml:space="preserve">
+    <value>عضويات مجموعة الموظفين</value>
+  </data>
+  <data name="DeleteGroupDataUnitMemberships" xml:space="preserve">
+    <value>عضويات مجموعة الوحدات</value>
+  </data>
+  <data name="DeleteGroupDataInventory" xml:space="preserve">
+    <value>مخزون المجموعة</value>
+  </data>
+  <data name="DeleteGroupDataShiftData" xml:space="preserve">
+    <value>بيانات مناوبات المجموعة</value>
+  </data>
+  <data name="ConfirmDeleteLabel" xml:space="preserve">
+    <value>تأكيد الحذف؟</value>
+  </data>
+  <data name="DeleteGroupButton" xml:space="preserve">
+    <value>حذف المجموعة</value>
+  </data>
+  <data name="NewGroupPageTitle" xml:space="preserve">
+    <value>مجموعة جديدة</value>
+  </data>
+  <data name="NewGroupHeading" xml:space="preserve">
+    <value>مجموعة جديدة</value>
+  </data>
+  <data name="GroupType" xml:space="preserve">
+    <value>نوع المجموعة</value>
+  </data>
+  <data name="OrganizationalGroup" xml:space="preserve">
+    <value>مجموعة تنظيمية</value>
+  </data>
+  <data name="StationGroup" xml:space="preserve">
+    <value>مجموعة المحطة</value>
+  </data>
+  <data name="ParentGroup" xml:space="preserve">
+    <value>المجموعة الأصل</value>
+  </data>
+  <data name="StationAddress" xml:space="preserve">
+    <value>عنوان المحطة</value>
+  </data>
+  <data name="StationAddressDescription" xml:space="preserve">
+    <value>تتطلب مجموعات المحطات موقعاً فعلياً (حيث يمكن للموظفين والوحدات الاستجابة لها). يرجى إدخال عنوان أو إحداثيات GPS أو عنوان what3words.</value>
+  </data>
+  <data name="Street" xml:space="preserve">
+    <value>الشارع</value>
+  </data>
+  <data name="City" xml:space="preserve">
+    <value>المدينة</value>
+  </data>
+  <data name="StateProvince" xml:space="preserve">
+    <value>الولاية/المقاطعة</value>
+  </data>
+  <data name="ZipPostalCode" xml:space="preserve">
+    <value>الرمز البريدي</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>الدولة</value>
+  </data>
+  <data name="Or" xml:space="preserve">
+    <value>أو</value>
+  </data>
+  <data name="GpsCoordinates" xml:space="preserve">
+    <value>إحداثيات GPS</value>
+  </data>
+  <data name="LatitudeHint" xml:space="preserve">
+    <value>خط العرض (التدوين العشري: مثل 39.1517)</value>
+  </data>
+  <data name="LongitudeHint" xml:space="preserve">
+    <value>خط الطول (التدوين العشري: مثل -119.4571)</value>
+  </data>
+  <data name="What3WordsAddress" xml:space="preserve">
+    <value>عنوان what3words</value>
+  </data>
+  <data name="What3WordsHint" xml:space="preserve">
+    <value>عنوان w3w (مثل humble.echo.sticky)</value>
+  </data>
+  <data name="PrintNodePrinter" xml:space="preserve">
+    <value>طابعة PrintNode</value>
+  </data>
+  <data name="PrintNodeDescription" xml:space="preserve">
+    <value>PrintNode هي خدمة تتيح لنا إرسال مهام الطباعة إلى جهاز كمبيوتر أو خادم محلي على شبكتك إلى طابعة محددة. يجب أن يكون لديك حساب PrintNode نشط وبرنامجه مُعد مع الطابعة النشطة.</value>
+  </data>
+  <data name="SelectPrinter" xml:space="preserve">
+    <value>اختر الطابعة</value>
+  </data>
+  <data name="UsersOneGroupNote" xml:space="preserve">
+    <value>يمكن للمستخدمين أن يكونوا في مجموعة واحدة فقط في كل مرة. إذا لم تجد مستخدمك في القائمة، فهو موجود بالفعل في مجموعة.</value>
+  </data>
+  <data name="GroupAdmins" xml:space="preserve">
+    <value>مسؤولو المجموعة</value>
+  </data>
+  <data name="GroupUsers" xml:space="preserve">
+    <value>مستخدمو المجموعة</value>
+  </data>
+  <data name="SaveGroup" xml:space="preserve">
+    <value>حفظ المجموعة</value>
+  </data>
+  <data name="ApiKey" xml:space="preserve">
+    <value>مفتاح API:</value>
+  </data>
+  <data name="GetPrinters" xml:space="preserve">
+    <value>الحصول على الطابعات</value>
+  </data>
+  <data name="Printer" xml:space="preserve">
+    <value>الطابعة</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>إغلاق</value>
+  </data>
+  <data name="EditGroupPageTitle" xml:space="preserve">
+    <value>تعديل المجموعة</value>
+  </data>
+  <data name="EditGroupHeading" xml:space="preserve">
+    <value>تعديل المجموعة</value>
+  </data>
+  <data name="PrintCallsToPrinter" xml:space="preserve">
+    <value>طباعة المكالمات على الطابعة</value>
+  </data>
+  <data name="PrintCallsToPrinterHint" xml:space="preserve">
+    <value>سيؤدي تفعيل هذا الخيار إلى طباعة مكالمة على الطابعة المحددة عند إرفاق وحدة أو شخص من هذه المجموعة (إرساله) إلى مكالمة</value>
+  </data>
+  <data name="GeofencePageTitle" xml:space="preserve">
+    <value>السياج الجغرافي للمحطة</value>
+  </data>
+  <data name="GeofenceHeading" xml:space="preserve">
+    <value>السياج الجغرافي للمحطة</value>
+  </data>
+  <data name="GeofenceStationBreadcrumb" xml:space="preserve">
+    <value>السياج الجغرافي للمحطة</value>
+  </data>
+  <data name="GeofenceDescription" xml:space="preserve">
+    <value>أدناه يمكنك إنشاء سياج جغرافي لمحطتك. الحقول باللون الأزرق المائل مطلوبة. تتيح لك الأسيجة الجغرافية إنشاء حدود على الخريطة تمثل منطقة الاستجابة لهذه المحطة.</value>
+  </data>
+  <data name="DistrictColor" xml:space="preserve">
+    <value>لون المنطقة</value>
+  </data>
+  <data name="SaveGeofence" xml:space="preserve">
+    <value>حفظ السياج الجغرافي</value>
+  </data>
+  <data name="ClearGeofence" xml:space="preserve">
+    <value>مسح السياج الجغرافي</value>
+  </data>
+</root>

@@ -1,22 +1,23 @@
-﻿@using Resgrid.Framework
+@using Resgrid.Framework
 @using Resgrid.Model
 @using Resgrid.Model.Events
 @using Resgrid.Web.Extensions
 @using Resgrid.Web.Helpers
 @model Resgrid.WebCore.Areas.User.Models.Links.LinksIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Links.Links> localizer
 @{
-  ViewBag.Title = "Resgrid | Department Links";
+  ViewBag.Title = "Resgrid | " + localizer["PageTitle"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>Department Links</h2>
+		<h2>@localizer["DepartmentLinks"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a>
 			</li>
 			<li class="active">
-				<strong>Department Links</strong>
+				<strong>@localizer["DepartmentLinks"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -24,7 +25,7 @@
 	{
 		<div class="col-sm-8">
 			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-				<a title="Add a new department link" class="btn btn-success" asp-controller="Links" asp-action="New" asp-route-area="User">New Department Links</a>
+				<a title="Add a new department link" class="btn btn-success" asp-controller="Links" asp-action="New" asp-route-area="User">@localizer["NewDepartmentLinks"]</a>
 			</div>
 		</div>
 	}
@@ -47,12 +48,12 @@
               <table class="table table-striped">
                 <thead>
                   <tr>
-                    <th>From Department</th>
+                    <th>@localizer["FromDepartment"]</th>
                     <th></th>
-                    <th>To Department</th>
-                    <th>Enabled</th>
-                    <th>Shared Data</th>
-                    <th>Actions</th>
+                    <th>@localizer["ToDepartment"]</th>
+                    <th>@localizer["Enabled"]</th>
+                    <th>@localizer["SharedData"]</th>
+                    <th>@commonLocalizer["Actions"]</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -78,11 +79,11 @@
                       <td>
                         @if (l.LinkEnabled)
 						{
-                          <span style="color: green;">Link Enabled</span>
+                          <span style="color: green;">@localizer["LinkEnabled"]</span>
 						}
 						else
 						{
-                          <span style="color: red;">Link Disabled</span>
+                          <span style="color: red;">@localizer["LinkDisabled"]</span>
 						}
                       </td>
                       <td>
@@ -93,11 +94,11 @@
 						  {
 							if (data.Length <= 0)
 							{
-							  data = "Calls";
+							  data = localizer["Calls"];
 							}
 							else
 							{
-							  data = data + ",Calls";
+							  data = data + "," + localizer["Calls"];
 							}
 						  }
 
@@ -105,11 +106,11 @@
 						  {
 							if (data.Length <= 0)
 							{
-							  data = "Personnel";
+							  data = localizer["Personnel"];
 							}
 							else
 							{
-							  data = data + ",Personnel";
+							  data = data + "," + localizer["Personnel"];
 							}
 						  }
 
@@ -117,11 +118,11 @@
 						  {
 							if (data.Length <= 0)
 							{
-							  data = "Units";
+							  data = localizer["Units"];
 							}
 							else
 							{
-							  data = data + ",Units";
+							  data = data + "," + localizer["Units"];
 							}
 						  }
 
@@ -129,11 +130,11 @@
 						  {
 							if (data.Length <= 0)
 							{
-							  data = "Orders";
+							  data = localizer["Orders"];
 							}
 							else
 							{
-							  data = data + ",Orders";
+							  data = data + "," + localizer["Orders"];
 							}
 						  }
                         }
@@ -144,27 +145,27 @@
 						}
 						else
 						{
-                          <span>No Data Shared</span>
+                          <span>@localizer["NoDataShared"]</span>
 						}
                       </td>
                       <td>
                         @if (l.DepartmentId != Model.DepartmentId && l.LinkEnabled == false && ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 						{
                           <a href="@Url.Action("Enable", "Links", new { area = "User", linkId = l.DepartmentLinkId })" class='btn btn-xs btn-success'>
-                            Enable
+                            @localizer["Enable"]
                           </a>
 						}
 						else if (l.DepartmentId != Model.DepartmentId && l.LinkEnabled && ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 						{
                           <a href="@Url.Action("DisableLink", "Links", new { area = "User", linkId = l.DepartmentLinkId })" class='btn btn-xs btn-warning'>
-                            Disable
+                            @localizer["Disable"]
                           </a>
 						}
 
                         @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 						{
-                          <a href="@Url.Action("DeleteLink", "Links", new { area = "User", linkId = l.DepartmentLinkId })" class='btn btn-xs btn-danger' data-confirm="WARNING: This will permanently delete this link. Are you sure you want to delete it?" rel="nofollow">
-                            Delete
+                          <a href="@Url.Action("DeleteLink", "Links", new { area = "User", linkId = l.DepartmentLinkId })" class='btn btn-xs btn-danger' data-confirm="@localizer["DeleteLinkConfirm"]" rel="nofollow">
+                            @localizer["Delete"]
                           </a>
 						}
 
@@ -172,7 +173,7 @@
                         @if (l.DepartmentId != Model.DepartmentId && l.LinkEnabled)
 						{
                           <a href="@Url.Action("View", "Links", new { area = "User", linkId = l.DepartmentLinkId })" class='btn btn-xs btn-primary'>
-                            View Data
+                            @localizer["ViewData"]
                           </a>
 						}
                       </td>
@@ -194,7 +195,7 @@
             <div class="ibox-content">
               <div id="gravatarSection" style="text-align: center; padding-top: 10px;">
 
-                <span>Your Department Link Code</span>
+                <span>@localizer["YourDepartmentLinkCode"]</span>
                 <div style="color: #337ab7;">@Model.Code</div>
               </div>
             </div>

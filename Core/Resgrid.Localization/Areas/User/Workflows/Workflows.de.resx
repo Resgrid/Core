@@ -552,6 +552,43 @@
     <value>Neu</value>
   </data>
   <data name="Pending" xml:space="preserve">
-    <value>Pending</value>
+    <value>Ausstehend</value>
+  </data>
+  <!-- Run Detail -->
+  <data name="RunDetailPageTitle" xml:space="preserve">
+    <value>Ausführungsdetail</value>
+  </data>
+  <data name="RunSummary" xml:space="preserve">
+    <value>Ausführungszusammenfassung</value>
+  </data>
+  <data name="StepLogs" xml:space="preserve">
+    <value>Schrittprotokolle</value>
+  </data>
+  <data name="NoStepLogs" xml:space="preserve">
+    <value>Für diese Ausführung wurden keine Schrittprotokolle aufgezeichnet.</value>
+  </data>
+  <data name="StepPrefix" xml:space="preserve">
+    <value>Schritt:</value>
+  </data>
+  <data name="StepSkippedByCondition" xml:space="preserve">
+    <value>Schritt durch Bedingung übersprungen.</value>
+  </data>
+  <data name="ConditionEvaluatedTo" xml:space="preserve">
+    <value>Bedingung ausgewertet zu:</value>
+  </data>
+  <data name="Result" xml:space="preserve">
+    <value>Ergebnis</value>
+  </data>
+  <data name="RenderedOutput" xml:space="preserve">
+    <value>Gerenderte Ausgabe</value>
+  </data>
+  <data name="AllEventTypesUsed" xml:space="preserve">
+    <value>Alle verfügbaren Trigger-Ereignistypen haben bereits einen konfigurierten Workflow. Löschen Sie einen vorhandenen Workflow, um seinen Ereignistyp freizugeben.</value>
+  </data>
+  <data name="TriggerEventHelp" xml:space="preserve">
+    <value>Jeder Ereignistyp kann nur einen Workflow haben. Es werden nur ungenutzte Ereignistypen angezeigt.</value>
+  </data>
+  <data name="Detail" xml:space="preserve">
+    <value>Detail</value>
   </data>
 </root>

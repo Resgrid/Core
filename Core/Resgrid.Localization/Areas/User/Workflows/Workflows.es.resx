@@ -575,5 +575,42 @@
   <data name="Pending" xml:space="preserve">
     <value>Pendiente</value>
   </data>
+  <!-- Run Detail -->
+  <data name="RunDetailPageTitle" xml:space="preserve">
+    <value>Detalle de ejecución</value>
+  </data>
+  <data name="RunSummary" xml:space="preserve">
+    <value>Resumen de ejecución</value>
+  </data>
+  <data name="StepLogs" xml:space="preserve">
+    <value>Registros de pasos</value>
+  </data>
+  <data name="NoStepLogs" xml:space="preserve">
+    <value>No se registraron registros de pasos para esta ejecución.</value>
+  </data>
+  <data name="StepPrefix" xml:space="preserve">
+    <value>Paso:</value>
+  </data>
+  <data name="StepSkippedByCondition" xml:space="preserve">
+    <value>Paso omitido por condición.</value>
+  </data>
+  <data name="ConditionEvaluatedTo" xml:space="preserve">
+    <value>La condición evaluó a:</value>
+  </data>
+  <data name="Result" xml:space="preserve">
+    <value>Resultado</value>
+  </data>
+  <data name="RenderedOutput" xml:space="preserve">
+    <value>Salida renderizada</value>
+  </data>
+  <data name="AllEventTypesUsed" xml:space="preserve">
+    <value>Todos los tipos de eventos de activación disponibles ya tienen un flujo de trabajo configurado. Elimine un flujo de trabajo existente para liberar su tipo de evento.</value>
+  </data>
+  <data name="TriggerEventHelp" xml:space="preserve">
+    <value>Cada tipo de evento solo puede tener un flujo de trabajo. Solo se muestran los tipos de eventos no utilizados.</value>
+  </data>
+  <data name="Detail" xml:space="preserve">
+    <value>Detalle</value>
+  </data>
 </root>
 

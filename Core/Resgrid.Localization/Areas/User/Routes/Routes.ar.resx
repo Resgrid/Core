@@ -111,4 +111,78 @@
   <data name="StopDwellPrefix" xml:space="preserve"><value>مكوث:</value></data>
   <data name="StopSkipPrefix" xml:space="preserve"><value>تخطي:</value></data>
   <data name="StopLabel" xml:space="preserve"><value>محطة</value></data>
+
+  <!-- Add Stop Modal -->
+  <data name="AddStop" xml:space="preserve"><value>إضافة محطة</value></data>
+  <data name="StopTypeManual" xml:space="preserve"><value>يدوي</value></data>
+  <data name="StopTypeScheduledCall" xml:space="preserve"><value>مكالمة مجدولة</value></data>
+  <data name="StopTypeWaypoint" xml:space="preserve"><value>نقطة مرور</value></data>
+  <data name="LinkedCall" xml:space="preserve"><value>المكالمة المرتبطة</value></data>
+  <data name="LoadingCalls" xml:space="preserve"><value>جارٍ تحميل المكالمات...</value></data>
+  <data name="PriorityNormal" xml:space="preserve"><value>عادي</value></data>
+  <data name="PriorityHigh" xml:space="preserve"><value>عالٍ</value></data>
+  <data name="PriorityCritical" xml:space="preserve"><value>حرج</value></data>
+  <data name="PriorityOptional" xml:space="preserve"><value>اختياري</value></data>
+  <data name="Find" xml:space="preserve"><value>بحث</value></data>
+  <data name="What3Words" xml:space="preserve"><value>What3Words</value></data>
+  <data name="Location" xml:space="preserve"><value>الموقع</value></data>
+  <data name="ClickMapToSetLocation" xml:space="preserve"><value>انقر على الخريطة لتحديد الموقع، أو استخدم العنوان / What3Words أعلاه.</value></data>
+  <data name="PlannedArrival" xml:space="preserve"><value>الوصول المخطط</value></data>
+  <data name="PlannedDeparture" xml:space="preserve"><value>المغادرة المخططة</value></data>
+  <data name="EstDwellMinutes" xml:space="preserve"><value>الإقامة المقدرة (دقيقة)</value></data>
+  <data name="SelectContact" xml:space="preserve"><value>اختر جهة اتصال</value></data>
+  <data name="SelectContactPlaceholder" xml:space="preserve"><value>-- أدخل يدوياً أو اختر موجوداً --</value></data>
+  <data name="ContactAutofillHelp" xml:space="preserve"><value>يؤدي اختيار جهة اتصال إلى ملء الاسم والرقم أدناه تلقائياً.</value></data>
+  <data name="ContactName" xml:space="preserve"><value>اسم جهة الاتصال</value></data>
+  <data name="ContactNumber" xml:space="preserve"><value>رقم جهة الاتصال</value></data>
+  <data name="Notes" xml:space="preserve"><value>ملاحظات</value></data>
+
+  <!-- StartRoute -->
+  <data name="StartRoutePageTitle" xml:space="preserve"><value>بدء المسار</value></data>
+  <data name="StartRouteHeader" xml:space="preserve"><value>بدء المسار</value></data>
+  <data name="StartRouteBreadcrumb" xml:space="preserve"><value>بدء المسار</value></data>
+  <data name="AssignUnit" xml:space="preserve"><value>تعيين وحدة</value></data>
+  <data name="SelectUnitPlaceholder" xml:space="preserve"><value>-- اختر وحدة --</value></data>
+  <data name="AssignUnitHelp" xml:space="preserve"><value>اختر الوحدة التي ستنفذ هذا المسار.</value></data>
+  <data name="RouteInfoLabel" xml:space="preserve"><value>معلومات المسار</value></data>
+  <data name="MinEstimated" xml:space="preserve"><value>دقيقة مقدرة</value></data>
+  <data name="StartRouteNow" xml:space="preserve"><value>ابدأ المسار الآن</value></data>
+
+  <!-- ArchivedRoutes -->
+  <data name="ArchivedRoutesPageTitle" xml:space="preserve"><value>المسارات المؤرشفة</value></data>
+  <data name="ArchivedRoutesHeader" xml:space="preserve"><value>المسارات المؤرشفة</value></data>
+  <data name="ArchivedBreadcrumb" xml:space="preserve"><value>مؤرشف</value></data>
+  <data name="NoArchivedRoutes" xml:space="preserve"><value>لا توجد مسارات مؤرشفة</value></data>
+  <data name="NoArchivedRoutesMessage" xml:space="preserve"><value>لا توجد خطط مسارات مؤرشفة.</value></data>
+  <data name="ArchivedRouteDetailPageTitle" xml:space="preserve"><value>تفاصيل المسار المؤرشف</value></data>
+
+  <!-- Directions -->
+  <data name="Directions" xml:space="preserve"><value>الاتجاهات</value></data>
+  <data name="Print" xml:space="preserve"><value>طباعة</value></data>
+  <data name="StartRoute" xml:space="preserve"><value>بدء المسار</value></data>
+  <data name="TurnByTurnDirections" xml:space="preserve"><value>الاتجاهات خطوة بخطوة</value></data>
+  <data name="CalculatingRoute" xml:space="preserve"><value>جارٍ حساب المسار&#x2026;</value></data>
+  <data name="DirectionsError" xml:space="preserve"><value>تعذّر استرداد تعليمات القيادة. قد تكون عناوين المحطات أو إحداثياتها غير قابلة للوصول عبر الطريق. المحطات مدرجة أدناه بالترتيب.</value></data>
+  <data name="StopSummary" xml:space="preserve"><value>ملخص المحطات</value></data>
+  <data name="StopName" xml:space="preserve"><value>اسم المحطة</value></data>
+  <data name="DwellMin" xml:space="preserve"><value>الإقامة (دقيقة)</value></data>
+  <data name="Contact" xml:space="preserve"><value>جهة الاتصال</value></data>
+
+  <!-- ArchivedView -->
+  <data name="RouteIsArchived" xml:space="preserve"><value>هذا المسار مؤرشف ولا يمكن بدؤه أو تعديله أو حذفه.</value></data>
+  <data name="BackToArchivedRoutes" xml:space="preserve"><value>العودة إلى المسارات المؤرشفة</value></data>
+
+  <!-- Edit form location pickers -->
+  <data name="StartLocation" xml:space="preserve"><value>موقع البداية</value></data>
+  <data name="EndLocation" xml:space="preserve"><value>موقع النهاية</value></data>
+  <data name="EnterAddress" xml:space="preserve"><value>أدخل العنوان</value></data>
+  <data name="ClickMapToSetStartLocation" xml:space="preserve"><value>انقر على الخريطة لتحديد موقع البداية، أو استخدم العنوان / What3Words / الإحداثيات أعلاه.</value></data>
+  <data name="ClickMapToSetEndLocation" xml:space="preserve"><value>انقر على الخريطة لتحديد موقع النهاية، أو استخدم العنوان / What3Words / الإحداثيات أعلاه.</value></data>
+  <data name="Apply" xml:space="preserve"><value>تطبيق</value></data>
+  <data name="Latitude" xml:space="preserve"><value>خط العرض</value></data>
+  <data name="Longitude" xml:space="preserve"><value>خط الطول</value></data>
+  <data name="FindLocationVia" xml:space="preserve"><value>ابحث عن الموقع عبر</value></data>
+
+  <!-- View -->
+  <data name="ViewDetails" xml:space="preserve"><value>عرض التفاصيل</value></data>
 </root>

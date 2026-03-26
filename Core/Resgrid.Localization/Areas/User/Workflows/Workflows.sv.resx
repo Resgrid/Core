@@ -552,6 +552,43 @@
     <value>Ny</value>
   </data>
   <data name="Pending" xml:space="preserve">
-    <value>Pending</value>
+    <value>Väntande</value>
+  </data>
+  <!-- Run Detail -->
+  <data name="RunDetailPageTitle" xml:space="preserve">
+    <value>Körningsdetalj</value>
+  </data>
+  <data name="RunSummary" xml:space="preserve">
+    <value>Körningssammanfattning</value>
+  </data>
+  <data name="StepLogs" xml:space="preserve">
+    <value>Stegloggar</value>
+  </data>
+  <data name="NoStepLogs" xml:space="preserve">
+    <value>Inga stegloggar registrerade för denna körning.</value>
+  </data>
+  <data name="StepPrefix" xml:space="preserve">
+    <value>Steg:</value>
+  </data>
+  <data name="StepSkippedByCondition" xml:space="preserve">
+    <value>Steg överhoppat av villkor.</value>
+  </data>
+  <data name="ConditionEvaluatedTo" xml:space="preserve">
+    <value>Villkor utvärderat till:</value>
+  </data>
+  <data name="Result" xml:space="preserve">
+    <value>Resultat</value>
+  </data>
+  <data name="RenderedOutput" xml:space="preserve">
+    <value>Renderad utdata</value>
+  </data>
+  <data name="AllEventTypesUsed" xml:space="preserve">
+    <value>Alla tillgängliga trigghändelsetyper har redan ett konfigurerat arbetsflöde. Ta bort ett befintligt arbetsflöde för att frigöra dess händelsetyp.</value>
+  </data>
+  <data name="TriggerEventHelp" xml:space="preserve">
+    <value>Varje händelsetyp kan bara ha ett arbetsflöde. Endast oanvända händelsetyper visas.</value>
+  </data>
+  <data name="Detail" xml:space="preserve">
+    <value>Detalj</value>
   </data>
 </root>

@@ -1,22 +1,23 @@
-﻿@using Resgrid.Model
+@using Resgrid.Model
 @using Resgrid.Framework
 @model Resgrid.WebCore.Areas.User.Models.Protocols.ViewProtocolModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Protocols.Protocols> localizer
 @{
-  ViewBag.Title = "Resgrid | View Protocol";
+  ViewBag.Title = "Resgrid | " + localizer["ViewProtocolHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
-    <h2>View Protocol</h2>
+    <h2>@localizer["ViewProtocolHeader"]</h2>
     <ol class="breadcrumb">
       <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a>
       </li>
       <li>
-        <a asp-controller="Protocols" asp-action="Index" asp-route-area="User">Protocols</a>
+        <a asp-controller="Protocols" asp-action="Index" asp-route-area="User">@localizer["ProtocolsLabel"]</a>
       </li>
       <li class="active">
-        <strong>View Protocol</strong>
+        <strong>@localizer["ViewProtocolHeader"]</strong>
       </li>
     </ol>
   </div>
@@ -33,15 +34,15 @@
                 <h2>@Model.Protocol.Name</h2>
               </div>
               <dl class="dl-horizontal" style="margin-bottom: 0px;">
-                <dt>Status:</dt>
+                <dt>@localizer["StatusLabel"]</dt>
                 <dd>
                   @if (Model.Protocol.IsDisabled == false)
 				  {
-                    <span style="display: block; color: green;">Active</span>
+                    <span style="display: block; color: green;">@localizer["ActiveLabel"]</span>
 				  }
 				  else
 				  {
-                    <span style="display: block; color: black;">Disabled</span>
+                    <span style="display: block; color: black;">@localizer["DisabledLabel"]</span>
 				  }
                 </dd>
               </dl>
@@ -50,21 +51,21 @@
           <div class="row">
             <div class="col-lg-5">
               <dl class="dl-horizontal">
-                <dt>Code:</dt>
+                <dt>@localizer["CodeLabel"]</dt>
                 <dd>@Model.Protocol.Code</dd>
-                <dt>Type:</dt>
+                <dt>@localizer["TypeLabel"]</dt>
                 <dd>
-                  <span style="display: block;">Dispatch Protocol</span>
+                  <span style="display: block;">@localizer["DispatchProtocolLabel"]</span>
                 </dd>
               </dl>
             </div>
             <div class="col-lg-7" id="cluster_info">
               <dl class="dl-horizontal">
-                <dt>Created By:</dt>
+                <dt>@localizer["CreatedByLabel"]</dt>
                 <dd>@(await UserHelper.GetFullNameForUser(Model.Protocol.CreatedByUserId))</dd>
-                <dt>Created On:</dt>
+                <dt>@localizer["CreatedOnLabel"]</dt>
                 <dd>@Model.Protocol.CreatedOn.TimeConverterToString(Model.Department)</dd>
-                <dt>Weight:</dt>
+                <dt>@localizer["WeightLabel"]</dt>
                 <dd>@Model.Protocol.MinimumWeight</dd>
               </dl>
             </div>
@@ -72,7 +73,7 @@
           <div class="row">
             <div class="col-lg-12">
               <dl class="dl-horizontal">
-                <dt>Description:</dt>
+                <dt>@localizer["DescriptionDtLabel"]</dt>
                 <dd>
                   @Html.Raw(Model.Protocol.Description)
                 </dd>
@@ -82,7 +83,7 @@
           <div class="row">
             <div class="col-lg-12">
               <dl class="dl-horizontal">
-                <dt>Protocol Text:</dt>
+                <dt>@localizer["ProtocolTextDtLabel"]</dt>
                 <dd>
                   @Html.Raw(Model.Protocol.ProtocolText)
                 </dd>
@@ -95,9 +96,9 @@
                 <div class="panel-heading">
                   <div class="panel-options">
                     <ul class="nav nav-tabs">
-                      <li class="active"><a href="#tab-1" data-toggle="tab" aria-expanded="true">Triggers</a></li>
-                      <li class=""><a href="#tab-2" data-toggle="tab" aria-expanded="false">Attachments</a></li>
-                      <li class=""><a href="#tab-3" data-toggle="tab" aria-expanded="false">Questions</a></li>
+                      <li class="active"><a href="#tab-1" data-toggle="tab" aria-expanded="true">@localizer["TriggersTab"]</a></li>
+                      <li class=""><a href="#tab-2" data-toggle="tab" aria-expanded="false">@localizer["AttachmentsTab"]</a></li>
+                      <li class=""><a href="#tab-3" data-toggle="tab" aria-expanded="false">@localizer["QuestionsTab"]</a></li>
                     </ul>
                   </div>
                 </div>
@@ -107,11 +108,11 @@
                       <table class="table table-striped">
                         <thead>
                           <tr>
-                            <th>Type</th>
-                            <th>Starts On</th>
-                            <th>Ends On</th>
-                            <th>Priority</th>
-                            <th>Call Type</th>
+                            <th>@localizer["TriggerTypeColumn"]</th>
+                            <th>@localizer["TriggerStartsOnColumn"]</th>
+                            <th>@localizer["TriggerEndsOnColumn"]</th>
+                            <th>@localizer["TriggerPriorityColumn"]</th>
+                            <th>@localizer["TriggerCallTypeColumn"]</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -121,21 +122,21 @@
                               <td>
                                 @if (t.Type == 0)
 								{
-                                  <span>Call Priority</span>
+                                  <span>@localizer["CallPriorityTrigger"]</span>
 								}
 								else if (t.Type == 1)
 								{
-                                  <span>Call Type</span>
+                                  <span>@localizer["CallTypeTrigger"]</span>
 								}
 								else if (t.Type == 2)
 								{
-                                  <span>Call Priority & Type</span>
+                                  <span>@localizer["CallPriorityAndTypeTrigger"]</span>
 								}
                               </td>
                               <td>
                                 @if (!t.StartsOn.HasValue)
 								{
-                                  <span>No Start Date</span>
+                                  <span>@localizer["NoStartDate"]</span>
 								}
 								else
 								{
@@ -145,7 +146,7 @@
                               <td>
                                 @if (!t.EndsOn.HasValue)
 								{
-                                  <span>No End Date</span>
+                                  <span>@localizer["NoEndDate"]</span>
 								}
 								else
 								{
@@ -159,7 +160,7 @@
 								}
 								else
 								{
-                                  <span>N/A</span>
+                                  <span>@localizer["NotApplicableLabel"]</span>
 								}
                               </td>
                               <td>
@@ -169,7 +170,7 @@
 								}
 								else
 								{
-                                  <span>N/A</span>
+                                  <span>@localizer["NotApplicableLabel"]</span>
 								}
                               </td>
                             </tr>
@@ -181,9 +182,9 @@
                       <table class="table table-striped">
                         <thead>
                           <tr>
-                            <th>File Name</th>
-                            <th>File Type</th>
-                            <th>Size</th>
+                            <th>@localizer["FileNameColumn"]</th>
+                            <th>@localizer["FileTypeColumn"]</th>
+                            <th>@localizer["SizeColumn"]</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -215,8 +216,8 @@
                       <table class="table table-striped">
                         <thead>
                           <tr>
-                            <th>Question</th>
-                            <th>Answers</th>
+                            <th>@localizer["QuestionColumn"]</th>
+                            <th>@localizer["AnswersColumn"]</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -230,8 +231,8 @@
                                 <table class="table table-striped">
                                   <thead>
                                     <tr>
-                                      <th>Weight</th>
-                                      <th>Answer</th>
+                                      <th>@localizer["WeightColumn"]</th>
+                                      <th>@localizer["AnswerColumn"]</th>
                                     </tr>
                                   </thead>
                                   <tbody>

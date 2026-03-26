@@ -1,21 +1,22 @@
 ﻿@using Resgrid.Model
 @model Resgrid.WebCore.Areas.User.Models.Voice.NewChannelModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Voice.Voice> localizer
 @{
-    ViewBag.Title = "Resgrid | Edit Push-To-Talk Channel";
+    ViewBag.Title = "Resgrid | " + localizer["EditPTTChannelHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-        <h2>Edit Push-To-Talk Channel</h2>
+        <h2>@localizer["EditPTTChannelHeader"]</h2>
         <ol class="breadcrumb">
             <li>
-                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a>
             </li>
             <li>
-                <a asp-controller="Forms" asp-action="Index" asp-route-area="User">Push-To-Talk</a>
+                <a asp-controller="Voice" asp-action="Index" asp-route-area="User">@localizer["PushToTalk"]</a>
             </li>
             <li class="active">
-                <strong>Edit Push-To-Talk Channel</strong>
+                <strong>@localizer["EditPTTChannelHeader"]</strong>
             </li>
         </ol>
     </div>
@@ -43,7 +44,7 @@
                         </div>
 
                          <div class="form-group">
-                            <label class="col-sm-2 control-label required">Channel Name</label>
+                            <label class="col-sm-2 control-label required">@localizer["ChannelName"]</label>
                             <div class="col-sm-10">
                                 <div class="col-md-5">
                                     <input type="text" class="form-control" asp-for="ChannelName" autofocus="autofocus">
@@ -51,18 +52,18 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Is Default</label>
+                            <label class="col-sm-2 control-label">@localizer["IsDefault"]</label>
                             <div class="col-sm-10">
                                 <div class="col-md-5">
                                     <input type="checkbox" asp-for="IsDefault">
-                                    <span class="help-block m-b-none">Note there can be only one default channel at a time, selecting a new default channel will turn off default for the existing one.</span>
+                                    <span class="help-block m-b-none">@localizer["IsDefaultHelp"]</span>
                                 </div>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
-                                <a class="btn btn-white" asp-controller="Voice" asp-action="Index" asp-route-area="User">Cancel</a>
-                                <button class="btn btn-primary" type="submit">Save PTT Channel</button>
+                                <a class="btn btn-white" asp-controller="Voice" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                <button class="btn btn-primary" type="submit">@localizer["SavePTTChannel"]</button>
                             </div>
                         </div>
                     </form>

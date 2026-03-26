@@ -1,7 +1,9 @@
-﻿@using Resgrid.Model.Helpers
+@using Resgrid.Model.Helpers
 @using Resgrid.Web
 @using Resgrid.Web.Helpers
+@using Microsoft.Extensions.Localization
 @model Resgrid.Web.Areas.User.Models.PersonnelStatusHistoryView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Reports.Reports> localizer
 @{
 	Layout = null;
 }
@@ -10,9 +12,9 @@
 
 <html lang="en">
 <head>
-	<title>Personnel Status History Report</title>
+	<title>@localizer["PersonnelStatusHistoryReportName"]</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="Personnel Status History Report">
+	<meta name="description" content="@localizer["PersonnelStatusHistoryReportName"]">
 	<meta name="author" content="Resgrid">
 
 	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"
@@ -49,13 +51,13 @@
 				<img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
 			</div>
 			<div class="col-md-6" style="text-align: right;">
-				<h3 style="margin-top: 10px;">Personnel Status History Report</h3>
+				<h3 style="margin-top: 10px;">@localizer["PersonnelStatusHistoryReportName"]</h3>
 				<span>@Model.Start.FormatForDepartment(Model.Department)</span><span>-</span><span>@Model.End.FormatForDepartment(Model.Department)</span>
 			</div>
 		</div>
 		<div class="row">
 			<div class="col-md-10 col-md-offset-1">
-				<h4>Status Changes</h4>
+				<h4>@localizer["StatusChanges"]</h4>
 			</div>
 		</div>
 		<div class="row">
@@ -63,10 +65,10 @@
 				<table class="table table-condensed">
 					<thead>
 						<tr>
-							<th>ID</th>
-							<th>Name</th>
-							<th>Group</th>
-							<th>Total</th>
+							<th>@localizer["IdHeader"]</th>
+							<th>@localizer["NameHeader"]</th>
+							<th>@localizer["GroupHeader"]</th>
+							<th>@localizer["TotalHeader"]</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -83,9 +85,9 @@
 									<table class="table table-condensed">
 										<thead>
 											<tr>
-												<th>Timestamp</th>
-												<th>Status</th>
-												<th>Note</th>
+												<th>@localizer["TimestampHeader"]</th>
+												<th>@localizer["StatusHeader"]</th>
+												<th>@localizer["NoteHeader"]</th>
 											</tr>
 										</thead>
 										<tbody>

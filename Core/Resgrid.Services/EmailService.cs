@@ -667,5 +667,30 @@ namespace Resgrid.Services
 
 			return false;
 		}
+
+		public async Task<bool> SendGdprDataExportReadyAsync(string toEmailAddress, string firstName, string downloadUrl, DateTime expiresAt)
+		{
+			if (string.IsNullOrWhiteSpace(toEmailAddress))
+				return false;
+
+			try
+			{
+				using var mail = new MailMessage();
+				mail.To.Add(toEmailAddress);
+				mail.Subject = "Your Resgrid Data Export is Ready";
+				mail.From = new MailAddress(Config.OutboundEmailServerConfig.FromMail, "Resgrid");
+				mail.Body = $"Hi {firstName},\r\n\r\nYour personal data export is ready for download.\r\n\r\nDownload link: {downloadUrl}\r\n\r\nThis link expires on {expiresAt:f} UTC. After this date the data will no longer be available.\r\n\r\nIf you did not request this, please contact support.\r\n\r\nThe Resgrid Team";
+				mail.IsBodyHtml = false;
+
+				await _emailSender.SendEmail(mail);
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
+
+			return false;
+		}
 	}
 }

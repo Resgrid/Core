@@ -1208,5 +1208,206 @@ namespace Resgrid.Services
 
 			return null;
 		}
+
+		public async Task<CreatePaddleCheckoutData> CreatePaddleCheckoutForSub(int departmentId, string paddleCustomerId, string paddlePriceId, int planId, string email, string departmentName, int count)
+		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				if (string.IsNullOrWhiteSpace(paddleCustomerId))
+					paddleCustomerId = " ";
+
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/CreatePaddleCheckoutForSubscription", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("paddleCustomerId", Uri.EscapeDataString(paddleCustomerId), ParameterType.QueryString);
+				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
+				request.AddParameter("paddlePriceId", paddlePriceId, ParameterType.QueryString);
+				request.AddParameter("planId", planId, ParameterType.QueryString);
+				request.AddParameter("count", count, ParameterType.QueryString);
+				request.AddParameter("email", email, ParameterType.QueryString, true);
+				request.AddParameter("departmentName", departmentName, ParameterType.QueryString, true);
+
+				var response = await client.ExecuteAsync<CreatePaddleCheckoutResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
+			return null;
+		}
+
+		public async Task<CreatePaddleCheckoutData> CreatePaddleCheckoutForUpdate(int departmentId, string paddleCustomerId, string email, string departmentName)
+		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				if (string.IsNullOrWhiteSpace(paddleCustomerId))
+					paddleCustomerId = " ";
+
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/CreatePaddleCheckoutForUpdate", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("paddleCustomerId", Uri.EscapeDataString(paddleCustomerId), ParameterType.QueryString);
+				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
+				request.AddParameter("email", email, ParameterType.QueryString, true);
+				request.AddParameter("departmentName", departmentName, ParameterType.QueryString, true);
+
+				var response = await client.ExecuteAsync<CreatePaddleCheckoutResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
+			return null;
+		}
+
+		public async Task<GetActivePaddleSubscriptionData> GetActivePaddleSubscriptionAsync(string paddleCustomerId)
+		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				if (string.IsNullOrWhiteSpace(paddleCustomerId))
+					paddleCustomerId = " ";
+
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/GetActivePaddleSubscription", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("paddleCustomerId", Uri.EscapeDataString(paddleCustomerId), ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetActivePaddleSubscriptionResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
+			return null;
+		}
+
+		public async Task<GetActivePaddleSubscriptionData> GetActivePTTPaddleSubscriptionAsync(string paddleCustomerId)
+		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				if (string.IsNullOrWhiteSpace(paddleCustomerId))
+					paddleCustomerId = " ";
+
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/GetActivePTTPaddleSubscription", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("paddleCustomerId", Uri.EscapeDataString(paddleCustomerId), ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetActivePaddleSubscriptionResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return null;
+
+				if (response.Data == null)
+					return null;
+
+				return response.Data.Data;
+			}
+
+			return null;
+		}
+
+		public async Task<bool> ChangePaddleSubscriptionAsync(string paddleCustomerId, string paddlePriceId)
+		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				if (string.IsNullOrWhiteSpace(paddleCustomerId))
+					paddleCustomerId = " ";
+
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/ChangePaddleSubscription", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("paddleCustomerId", Uri.EscapeDataString(paddleCustomerId), ParameterType.QueryString);
+				request.AddParameter("paddlePriceId", paddlePriceId, ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetHasActiveSubForDepartmentFromStripeResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return false;
+
+				if (response.Data == null)
+					return false;
+
+				return response.Data.Data;
+			}
+
+			return false;
+		}
+
+		public async Task<bool> ModifyPaddlePTTAddonSubscriptionAsync(string paddleCustomerId, long quantity, PlanAddon planAddon)
+		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				if (string.IsNullOrWhiteSpace(paddleCustomerId))
+					paddleCustomerId = " ";
+
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/ModifyPaddlePTTAddonSubscription", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("paddleCustomerId", Uri.EscapeDataString(paddleCustomerId), ParameterType.QueryString);
+				request.AddParameter("quantity", quantity, ParameterType.QueryString);
+				request.AddParameter("planAddonId", planAddon.PlanAddonId, ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetHasActiveSubForDepartmentFromStripeResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return false;
+
+				if (response.Data == null)
+					return false;
+
+				return response.Data.Data;
+			}
+
+			return false;
+		}
+
+		public async Task<bool> CancelPaddleSubscriptionAsync(string paddleCustomerId)
+		{
+			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
+			{
+				if (string.IsNullOrWhiteSpace(paddleCustomerId))
+					paddleCustomerId = " ";
+
+				var client = new RestClient(Config.SystemBehaviorConfig.BillingApiBaseUrl, configureSerialization: s => s.UseNewtonsoftJson());
+				var request = new RestRequest($"/api/Billing/CancelPaddleSubscription", Method.Get);
+				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+				request.AddHeader("Content-Type", "application/json");
+				request.AddParameter("paddleCustomerId", Uri.EscapeDataString(paddleCustomerId), ParameterType.QueryString);
+
+				var response = await client.ExecuteAsync<GetHasActiveSubForDepartmentFromStripeResult>(request);
+
+				if (response.StatusCode == HttpStatusCode.NotFound)
+					return false;
+
+				if (response.Data == null)
+					return false;
+
+				return response.Data.Data;
+			}
+
+			return false;
+		}
 	}
 }

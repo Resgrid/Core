@@ -1,4 +1,6 @@
-﻿@model Resgrid.Web.Areas.User.Models.Reports.Certifications.CertificationsReportView
+@using Microsoft.Extensions.Localization
+@model Resgrid.Web.Areas.User.Models.Reports.Certifications.CertificationsReportView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Reports.Reports> localizer
 @{
 	Layout = null;
 }
@@ -7,9 +9,9 @@
 
 <html lang="en">
 <head>
-	<title>Resgrid Certifications Report</title>
+	<title>@localizer["CertificationsReportTitle"]</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="Resgrid Personnel Report">
+	<meta name="description" content="@localizer["CertificationsReportTitle"]">
 	<meta name="author" content="Resgrid">
 
 	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"
@@ -43,7 +45,7 @@
 				<img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
 			</div>
 			<div class="col-md-5" style="text-align: right;">
-				<h3 style="margin-top: 10px;">Resgrid Certifications Report</h3>
+				<h3 style="margin-top: 10px;">@localizer["CertificationsReportTitle"]</h3>
 			</div>
 		</div>
 		<div class="row">
@@ -51,9 +53,9 @@
 				<table class="table table-bordered">
 					<thead>
 						<tr>
-							<th>ID</th>
-							<th>Name</th>
-							<th>Group</th>
+							<th>@localizer["IdHeader"]</th>
+							<th>@localizer["NameHeader"]</th>
+							<th>@localizer["GroupHeader"]</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -70,12 +72,12 @@
 									<table class="table">
 										<thead>
 											<tr>
-												<th>Type</th>
-												<th>Name</th>
-												<th>Number</th>
-												<th>Issued By</th>
-												<th>Area</th>
-												<th>Expires</th>
+												<th>@localizer["TypeHeader"]</th>
+												<th>@localizer["NameHeader"]</th>
+												<th>@localizer["CertNumberHeader"]</th>
+												<th>@localizer["IssuedByHeader"]</th>
+												<th>@localizer["AreaHeader"]</th>
+												<th>@localizer["ExpiresHeader"]</th>
 											</tr>
 										</thead>
 										<tbody>

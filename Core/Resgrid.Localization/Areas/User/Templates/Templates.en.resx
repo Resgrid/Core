@@ -159,4 +159,13 @@
   <data name="TemplateNameLabel" xml:space="preserve">
     <value>Template Name</value>
   </data>
+  <data name="AddTemplateButton" xml:space="preserve">
+    <value>Add Template</value>
+  </data>
+  <data name="CallNoteType" xml:space="preserve">
+    <value>Call Note</value>
+  </data>
+  <data name="CallQuickTemplateType" xml:space="preserve">
+    <value>Call Quick Template</value>
+  </data>
 </root>

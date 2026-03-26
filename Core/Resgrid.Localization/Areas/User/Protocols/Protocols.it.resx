@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ProtocolsHeader" xml:space="preserve">
+    <value>Protocolli</value>
+  </data>
+  <data name="NewProtocolButton" xml:space="preserve">
+    <value>Nuovo Protocollo</value>
+  </data>
+  <data name="CreatedOnColumn" xml:space="preserve">
+    <value>Creato Il</value>
+  </data>
+  <data name="DispatchProtocolLabel" xml:space="preserve">
+    <value>Protocollo di Dispaccio</value>
+  </data>
+  <data name="ViewButton" xml:space="preserve">
+    <value>Visualizza</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Elimina</value>
+  </data>
+  <data name="DeleteProtocolWarning" xml:space="preserve">
+    <value>ATTENZIONE: Questo eliminerà definitivamente questo protocollo. Sei sicuro di voler eliminare il protocollo</value>
+  </data>
+  <data name="NewProtocolHeader" xml:space="preserve">
+    <value>Nuovo Protocollo</value>
+  </data>
+  <data name="ProtocolNameLabel" xml:space="preserve">
+    <value>Nome Protocollo</value>
+  </data>
+  <data name="ProtocolCodeLabel" xml:space="preserve">
+    <value>Codice Protocollo</value>
+  </data>
+  <data name="DescriptionLabel" xml:space="preserve">
+    <value>Descrizione</value>
+  </data>
+  <data name="ProtocolTextLabel" xml:space="preserve">
+    <value>Testo del Protocollo</value>
+  </data>
+  <data name="ActivationQuestionWeightLabel" xml:space="preserve">
+    <value>Peso della Domanda di Attivazione</value>
+  </data>
+  <data name="AttachmentsLabel" xml:space="preserve">
+    <value>Allegati</value>
+  </data>
+  <data name="TriggersLabel" xml:space="preserve">
+    <value>Trigger</value>
+  </data>
+  <data name="TriggersHelp" xml:space="preserve">
+    <value>I trigger vengono utilizzati per determinare quando questo protocollo verrà attivato, o farà le domande sottostanti, per le chiamate</value>
+  </data>
+  <data name="TriggerTypeColumn" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="TriggerStartsOnColumn" xml:space="preserve">
+    <value>Inizia Il</value>
+  </data>
+  <data name="TriggerEndsOnColumn" xml:space="preserve">
+    <value>Termina Il</value>
+  </data>
+  <data name="TriggerCallTypeColumn" xml:space="preserve">
+    <value>Tipo di Chiamata</value>
+  </data>
+  <data name="TriggerCallPriorityColumn" xml:space="preserve">
+    <value>Priorità Chiamata</value>
+  </data>
+  <data name="AddTriggerButton" xml:space="preserve">
+    <value>Aggiungi Trigger</value>
+  </data>
+  <data name="QuestionsLabel" xml:space="preserve">
+    <value>Domande</value>
+  </data>
+  <data name="QuestionsHelp" xml:space="preserve">
+    <value>Se hai bisogno solo dei trigger per attivare il protocollo, non è necessario aggiungere domande.</value>
+  </data>
+  <data name="QuestionColumn" xml:space="preserve">
+    <value>Domanda</value>
+  </data>
+  <data name="AnswersColumn" xml:space="preserve">
+    <value>Risposte</value>
+  </data>
+  <data name="AddQuestionButton" xml:space="preserve">
+    <value>Aggiungi Domanda</value>
+  </data>
+  <data name="AddProtocolButton" xml:space="preserve">
+    <value>Aggiungi Protocollo</value>
+  </data>
+  <data name="AddTriggerModalTitle" xml:space="preserve">
+    <value>Aggiungi Trigger</value>
+  </data>
+  <data name="TriggerTypeLabel" xml:space="preserve">
+    <value>Tipo:</value>
+  </data>
+  <data name="TriggerStartsOnLabel" xml:space="preserve">
+    <value>Inizia Il:</value>
+  </data>
+  <data name="TriggerEndsOnLabel" xml:space="preserve">
+    <value>Termina Il:</value>
+  </data>
+  <data name="TriggerCallPriorityLabel" xml:space="preserve">
+    <value>Priorità Chiamata:</value>
+  </data>
+  <data name="TriggerCallTypeLabel" xml:space="preserve">
+    <value>Tipo di Chiamata:</value>
+  </data>
+  <data name="CloseButton" xml:space="preserve">
+    <value>Chiudi</value>
+  </data>
+  <data name="AddQuestionModalTitle" xml:space="preserve">
+    <value>Aggiungi Domanda</value>
+  </data>
+  <data name="QuestionLabel" xml:space="preserve">
+    <value>Domanda:</value>
+  </data>
+  <data name="ViewProtocolHeader" xml:space="preserve">
+    <value>Visualizza Protocollo</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Stato:</value>
+  </data>
+  <data name="ActiveLabel" xml:space="preserve">
+    <value>Attivo</value>
+  </data>
+  <data name="DisabledLabel" xml:space="preserve">
+    <value>Disabilitato</value>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>Codice:</value>
+  </data>
+  <data name="TypeLabel" xml:space="preserve">
+    <value>Tipo:</value>
+  </data>
+  <data name="CreatedByLabel" xml:space="preserve">
+    <value>Creato Da:</value>
+  </data>
+  <data name="CreatedOnLabel" xml:space="preserve">
+    <value>Creato Il:</value>
+  </data>
+  <data name="WeightLabel" xml:space="preserve">
+    <value>Peso:</value>
+  </data>
+  <data name="DescriptionDtLabel" xml:space="preserve">
+    <value>Descrizione:</value>
+  </data>
+  <data name="ProtocolTextDtLabel" xml:space="preserve">
+    <value>Testo del Protocollo:</value>
+  </data>
+  <data name="TriggersTab" xml:space="preserve">
+    <value>Trigger</value>
+  </data>
+  <data name="AttachmentsTab" xml:space="preserve">
+    <value>Allegati</value>
+  </data>
+  <data name="QuestionsTab" xml:space="preserve">
+    <value>Domande</value>
+  </data>
+  <data name="TriggerPriorityColumn" xml:space="preserve">
+    <value>Priorità</value>
+  </data>
+  <data name="CallPriorityTrigger" xml:space="preserve">
+    <value>Priorità Chiamata</value>
+  </data>
+  <data name="CallTypeTrigger" xml:space="preserve">
+    <value>Tipo di Chiamata</value>
+  </data>
+  <data name="CallPriorityAndTypeTrigger" xml:space="preserve">
+    <value>Priorità &amp; Tipo di Chiamata</value>
+  </data>
+  <data name="NoStartDate" xml:space="preserve">
+    <value>Nessuna Data di Inizio</value>
+  </data>
+  <data name="NoEndDate" xml:space="preserve">
+    <value>Nessuna Data di Fine</value>
+  </data>
+  <data name="NotApplicableLabel" xml:space="preserve">
+    <value>N/A</value>
+  </data>
+  <data name="FileNameColumn" xml:space="preserve">
+    <value>Nome File</value>
+  </data>
+  <data name="FileTypeColumn" xml:space="preserve">
+    <value>Tipo di File</value>
+  </data>
+  <data name="SizeColumn" xml:space="preserve">
+    <value>Dimensione</value>
+  </data>
+  <data name="WeightColumn" xml:space="preserve">
+    <value>Peso</value>
+  </data>
+  <data name="AnswerColumn" xml:space="preserve">
+    <value>Risposta</value>
+  </data>
+  <data name="ProtocolsLabel" xml:space="preserve">
+    <value>Protocolli</value>
+  </data>
+</root>

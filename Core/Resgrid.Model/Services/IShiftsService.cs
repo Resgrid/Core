@@ -296,5 +296,7 @@ namespace Resgrid.Model.Services
 
 
 		Task<List<ShiftSignup>> GetShiftSignupsByDepartmentGroupIdAndDayAsync(int departmentGroupId, DateTime shiftDayDate);
+
+		Task<List<ShiftPerson>> GetShiftPersonsForUserAsync(string userId);
 	}
 }

@@ -96,6 +96,9 @@ namespace Resgrid.Services
 			//builder.RegisterType<StripeSubscriptionServiceFacade>().As<IStripeSubscriptionServiceFacade>().InstancePerLifetimeScope();
 			//builder.RegisterType<StripeInvoiceServiceFacade>().As<IStripeInvoiceServiceFacade>().InstancePerLifetimeScope();
 			//builder.RegisterType<StripeChargeServiceFacade>().As<IStripeChargeServiceFacade>().InstancePerLifetimeScope();
+
+			// GDPR Services
+			builder.RegisterType<GdprDataExportService>().As<IGdprDataExportService>().InstancePerLifetimeScope();
 		}
 	}
 }

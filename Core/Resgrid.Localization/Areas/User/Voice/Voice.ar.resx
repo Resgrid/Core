@@ -162,4 +162,28 @@
   <data name="VoiceHeader" xml:space="preserve">
     <value>الصوت والضغط للتحدث</value>
   </data>
+  <data name="AddPTTChannel" xml:space="preserve">
+    <value>إضافة قناة PTT</value>
+  </data>
+  <data name="AudioStream" xml:space="preserve">
+    <value>البث الصوتي</value>
+  </data>
+  <data name="DefaultChannelWarning" xml:space="preserve">
+    <value>يمكنك تعيين قناة واحدة فقط كقناة افتراضية في وقت واحد. لجعل قناة أخرى افتراضية، يجب عليك أولاً إيقاف تشغيل خيار القناة الافتراضية.</value>
+  </data>
+  <data name="EditPTTChannelHeader" xml:space="preserve">
+    <value>تعديل قناة الضغط للتحدث</value>
+  </data>
+  <data name="IsDefaultHelp" xml:space="preserve">
+    <value>لاحظ أنه لا يمكن أن تكون هناك سوى قناة افتراضية واحدة في وقت واحد؛ سيؤدي اختيار قناة افتراضية جديدة إلى إيقاف تشغيل الافتراضي للقناة الحالية.</value>
+  </data>
+  <data name="NewPTTChannelHeader" xml:space="preserve">
+    <value>قناة ضغط للتحدث جديدة</value>
+  </data>
+  <data name="PushToTalk" xml:space="preserve">
+    <value>الضغط للتحدث</value>
+  </data>
+  <data name="SavePTTChannel" xml:space="preserve">
+    <value>حفظ قناة PTT</value>
+  </data>
 </root>

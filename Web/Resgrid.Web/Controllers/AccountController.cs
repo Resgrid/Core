@@ -277,7 +277,10 @@ namespace Resgrid.Web.Controllers
 
 					Department department = await _departmentsService.CreateDepartmentAsync(model.DepartmentName, user.Id, model.DepartmentType, null, cancellationToken);
 					await _departmentsService.AddUserToDepartmentAsync(department.DepartmentId, user.Id, true, cancellationToken);
-					await _subscriptionsService.CreateFreePlanPaymentAsync(department.DepartmentId, user.Id, cancellationToken);
+
+					// Only provision free plan when paid plan selection is not required
+					if (!SystemBehaviorConfig.RequirePlanSelectionDuringSignup)
+						await _subscriptionsService.CreateFreePlanPaymentAsync(department.DepartmentId, user.Id, cancellationToken);
 
 					// Guard, in case testing has caching turned on for the shared redis cache there can be artifacts
 					await _departmentsService.InvalidateAllDepartmentsCache(department.DepartmentId);
@@ -298,6 +301,8 @@ namespace Resgrid.Web.Controllers
 
 						if (!String.IsNullOrWhiteSpace(returnUrl))
 							return RedirectToLocal(returnUrl);
+						else if (SystemBehaviorConfig.RequirePlanSelectionDuringSignup)
+							return RedirectToAction("SelectRegistrationPlan", "Subscription", new { Area = "User" });
 						else
 							return RedirectToAction("Dashboard", "Home", new { Area = "User" });
 					}

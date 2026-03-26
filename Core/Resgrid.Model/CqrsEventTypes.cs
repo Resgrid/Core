@@ -19,5 +19,10 @@
 		StripeCheckoutUpdated = 14,
 		StripeInvoicePaid = 15,
 		StripeInvoiceItemDeleted = 16,
+		PaddleTransactionCompleted = 17,
+		PaddleTransactionPaymentFailed = 18,
+		PaddleSubscriptionUpdated = 19,
+		PaddleSubscriptionCanceled = 20,
+		PaddleSubscriptionCreated = 21,
 	}
 }

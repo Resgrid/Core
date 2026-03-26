@@ -714,6 +714,58 @@
                 </div>
                 @if (Model.IsOwnProfile)
                 {
+                    @if (TempData["GdprSuccess"] != null)
+                    {
+                        <div class="alert alert-success fade in">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            <p>@TempData["GdprSuccess"]</p>
+                        </div>
+                    }
+                    @if (TempData["GdprError"] != null)
+                    {
+                        <div class="alert alert-danger fade in">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            <p>@TempData["GdprError"]</p>
+                        </div>
+                    }
+                    <div class="ibox">
+                        <div class="ibox-title">
+                            <h5>Your Personal Data (GDPR)</h5>
+                        </div>
+                        <div class="ibox-content">
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <p>You can request a copy of all your personal data stored in Resgrid. The export will be prepared in the background and you will receive an email with a download link when it is ready (usually within 5 minutes).</p>
+                                </div>
+                            </div>
+                            @if (Model.ActiveDataExportRequest != null)
+                            {
+                                <div class="alert alert-info">
+                                    <strong>Request Status:</strong>
+                                    @{
+                                        var statusName = ((Resgrid.Model.GdprExportStatus)Model.ActiveDataExportRequest.Status).ToString();
+                                    }
+                                    <span class="label label-@(Model.ActiveDataExportRequest.Status == 2 ? "success" : Model.ActiveDataExportRequest.Status == 3 ? "danger" : "warning")">@statusName</span>
+                                    &mdash; Requested on @Model.ActiveDataExportRequest.RequestedOn.ToString("f")
+                                    @if (Model.ActiveDataExportRequest.Status == 2 && Model.ActiveDataExportRequest.TokenExpiresAt.HasValue)
+                                    {
+                                        <span>&mdash; Download link expires @Model.ActiveDataExportRequest.TokenExpiresAt.Value.ToString("f")</span>
+                                    }
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#gdprRequestModal">Request My Data</button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+                @if (Model.IsOwnProfile)
+                {
                     <div class="ibox">
                         <div class="ibox-title">
                             <h5>@localizer["DeleteUserAccount"]</h5>
@@ -737,6 +789,30 @@
     </div>
 </form>
 
+@if (Model.IsOwnProfile)
+{
+    <div class="modal fade" id="gdprRequestModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                    <h4 class="modal-title">Request My Data</h4>
+                </div>
+                <div class="modal-body">
+                    <p>This will prepare a ZIP file containing all your personal data stored in Resgrid. You will receive an email with a download link when it is ready. The link expires after 7 days.</p>
+                    <p>Are you sure you want to submit this request?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <form method="post" asp-controller="Home" asp-action="RequestMyData" asp-route-area="User" style="display:inline;">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-primary">Yes, Request My Data</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 
 

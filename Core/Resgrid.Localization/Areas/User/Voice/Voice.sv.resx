@@ -59,56 +59,71 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 
-  <data name="Name1" xml:space="preserve">
-    <value>this is my long string</value>
-  </data>
-  <data name="Bitmap1" xml:space="preserve">
-    <value>[base64 mime encoded serialized .NET Framework object]</value>
-  </data>
-  <data name="Icon1" xml:space="preserve">
-    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-  </data>
   <data name="AddAudio" xml:space="preserve">
-    <value>New Audio Stream</value>
+    <value>Ny ljudström</value>
   </data>
   <data name="AddAudioButton" xml:space="preserve">
-    <value>Add Audio Stream</value>
+    <value>Lägg till ljudström</value>
+  </data>
+  <data name="AddPTTChannel" xml:space="preserve">
+    <value>Lägg till PTT-kanal</value>
   </data>
   <data name="AddVoice" xml:space="preserve">
-    <value>New Voice Channel</value>
+    <value>Ny röstkanal</value>
+  </data>
+  <data name="AudioStream" xml:space="preserve">
+    <value>Ljudström</value>
   </data>
   <data name="AudioStreamNameLabel" xml:space="preserve">
-    <value>Audio Stream Name</value>
+    <value>Namn på ljudström</value>
   </data>
   <data name="AudioStreams" xml:space="preserve">
-    <value>Audio Streams</value>
+    <value>Ljudströmmar</value>
   </data>
   <data name="AudioStreamUrlLabel" xml:space="preserve">
-    <value>Audio Stream Url</value>
+    <value>URL för ljudström</value>
   </data>
   <data name="ChannelName" xml:space="preserve">
-    <value>Channel Name</value>
+    <value>Kanalnamn</value>
+  </data>
+  <data name="DefaultChannelWarning" xml:space="preserve">
+    <value>Du kan bara ha 1 kanal inställd som standard åt gången. För att göra en annan kanal till standard måste du först stänga av standardkanalalternativet.</value>
   </data>
   <data name="EditAudio" xml:space="preserve">
-    <value>Edit Audio Stream</value>
+    <value>Redigera ljudström</value>
+  </data>
+  <data name="EditPTTChannelHeader" xml:space="preserve">
+    <value>Redigera Push-To-Talk-kanal</value>
   </data>
   <data name="IsDefault" xml:space="preserve">
-    <value>Is Default</value>
+    <value>Är standard</value>
+  </data>
+  <data name="IsDefaultHelp" xml:space="preserve">
+    <value>Observera att det bara kan finnas en standardkanal åt gången; att välja en ny standardkanal stänger av standarden för den befintliga.</value>
+  </data>
+  <data name="NewPTTChannelHeader" xml:space="preserve">
+    <value>Ny Push-To-Talk-kanal</value>
   </data>
   <data name="Participants" xml:space="preserve">
-    <value>Participants</value>
+    <value>Deltagare</value>
   </data>
   <data name="PTTNotPurchased" xml:space="preserve">
-    <value>Push-To-Talk Addon Not Purchased</value>
+    <value>Push-To-Talk-tillägg inte köpt</value>
   </data>
   <data name="PTTNotPurchasedInfo" xml:space="preserve">
-    <value>Your department has not purchased the Push-To-Talk addon. Your departments Managing Member can purchase the addon from the Subscription and Billing page. Push-To-Talk allows your department to enable real-time voice communications though the Resgrid applications.</value>
+    <value>Din avdelning har inte köpt Push-To-Talk-tillägget. Avdelningens administratörsmedlem kan köpa tillägget från sidan för Prenumeration och Fakturering. Push-To-Talk gör det möjligt för din avdelning att aktivera realtidsröstkommunkation via Resgrid-applikationerna.</value>
+  </data>
+  <data name="PushToTalk" xml:space="preserve">
+    <value>Push-To-Talk</value>
   </data>
   <data name="SaveEditAudioButton" xml:space="preserve">
-    <value>Save Audio Stream</value>
+    <value>Spara ljudström</value>
+  </data>
+  <data name="SavePTTChannel" xml:space="preserve">
+    <value>Spara PTT-kanal</value>
   </data>
   <data name="VoiceChannels" xml:space="preserve">
-    <value>Voice (PTT) Channels</value>
+    <value>Röstkanaler (PTT)</value>
   </data>
   <data name="VoiceHeader" xml:space="preserve">
     <value>Ljud och Push-To-Talk</value>

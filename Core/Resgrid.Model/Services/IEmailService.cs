@@ -3,6 +3,7 @@ using Resgrid.Model.Identity;
 using MimeKit;
 using Resgrid.Model.Events;
 using Stripe;
+using System;
 
 namespace Resgrid.Model.Services
 {
@@ -211,5 +212,7 @@ namespace Resgrid.Model.Services
 		/// <param name="firstName">User's first name for personalisation.</param>
 		/// <param name="verificationCode">The numeric verification code to include in the email.</param>
 		Task<bool> SendEmailVerificationCodeAsync(string toEmailAddress, string firstName, string verificationCode);
+
+		Task<bool> SendGdprDataExportReadyAsync(string toEmailAddress, string firstName, string downloadUrl, DateTime expiresAt);
 	}
 }

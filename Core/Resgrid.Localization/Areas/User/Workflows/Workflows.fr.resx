@@ -552,6 +552,43 @@
     <value>Nouveau</value>
   </data>
   <data name="Pending" xml:space="preserve">
-    <value>Pending</value>
+    <value>En attente</value>
+  </data>
+  <!-- Run Detail -->
+  <data name="RunDetailPageTitle" xml:space="preserve">
+    <value>Détail d'exécution</value>
+  </data>
+  <data name="RunSummary" xml:space="preserve">
+    <value>Résumé d'exécution</value>
+  </data>
+  <data name="StepLogs" xml:space="preserve">
+    <value>Journaux d'étapes</value>
+  </data>
+  <data name="NoStepLogs" xml:space="preserve">
+    <value>Aucun journal d'étape enregistré pour cette exécution.</value>
+  </data>
+  <data name="StepPrefix" xml:space="preserve">
+    <value>Étape :</value>
+  </data>
+  <data name="StepSkippedByCondition" xml:space="preserve">
+    <value>Étape ignorée par condition.</value>
+  </data>
+  <data name="ConditionEvaluatedTo" xml:space="preserve">
+    <value>La condition a été évaluée à :</value>
+  </data>
+  <data name="Result" xml:space="preserve">
+    <value>Résultat</value>
+  </data>
+  <data name="RenderedOutput" xml:space="preserve">
+    <value>Sortie rendue</value>
+  </data>
+  <data name="AllEventTypesUsed" xml:space="preserve">
+    <value>Tous les types d'événements déclencheurs disponibles ont déjà un workflow configuré. Supprimez un workflow existant pour libérer son type d'événement.</value>
+  </data>
+  <data name="TriggerEventHelp" xml:space="preserve">
+    <value>Chaque type d'événement ne peut avoir qu'un seul workflow. Seuls les types d'événements non utilisés sont affichés.</value>
+  </data>
+  <data name="Detail" xml:space="preserve">
+    <value>Détail</value>
   </data>
 </root>

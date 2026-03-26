@@ -162,4 +162,28 @@
   <data name="VoiceHeader" xml:space="preserve">
     <value>Audio &amp; Push-To-Talk</value>
   </data>
+  <data name="AddPTTChannel" xml:space="preserve">
+    <value>Add PTT Channel</value>
+  </data>
+  <data name="AudioStream" xml:space="preserve">
+    <value>Audio Stream</value>
+  </data>
+  <data name="DefaultChannelWarning" xml:space="preserve">
+    <value>You can only have 1 channel set as the default at a time. To make another channel the default you must first turn the default channel option off.</value>
+  </data>
+  <data name="EditPTTChannelHeader" xml:space="preserve">
+    <value>Edit Push-To-Talk Channel</value>
+  </data>
+  <data name="IsDefaultHelp" xml:space="preserve">
+    <value>Note there can be only one default channel at a time, selecting a new default channel will turn off default for the existing one.</value>
+  </data>
+  <data name="NewPTTChannelHeader" xml:space="preserve">
+    <value>New Push-To-Talk Channel</value>
+  </data>
+  <data name="PushToTalk" xml:space="preserve">
+    <value>Push-To-Talk</value>
+  </data>
+  <data name="SavePTTChannel" xml:space="preserve">
+    <value>Save PTT Channel</value>
+  </data>
 </root>

@@ -1,22 +1,23 @@
-﻿@using Resgrid.Framework
+@using Resgrid.Framework
 @using Resgrid.Model
 @using Resgrid.Web.Helpers
 @using Microsoft.Extensions.Localization
 @model Resgrid.Web.Areas.User.Models.Logs.LogsIndexView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Reports.FlaggedReport> flaggedReportLocalizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Reports.Reports> localizer
 @{
-    ViewBag.Title = "Resgrid | Reports";
+    ViewBag.Title = "Resgrid | " + localizer["ReportingTitle"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-        <h2>Reporting</h2>
+        <h2>@localizer["ReportingTitle"]</h2>
         <ol class="breadcrumb">
             <li>
-                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a>
             </li>
             <li class="active">
-                <strong>Reporting</strong>
+                <strong>@localizer["ReportingTitle"]</strong>
             </li>
         </ol>
     </div>
@@ -31,134 +32,134 @@
                         <table class="table table-striped">
                             <thead>
                             <tr>
-                                <th>Name</th>
-                                <th>Description</th>
+                                <th>@commonLocalizer["Name"]</th>
+                                <th>@commonLocalizer["Description"]</th>
                                 <th></th>
                             </tr>
                             </thead>
                             <tbody>
                             <tr>
                                 <td>
-                                    <a href="@Url.Action("ActionLogsParams", "Reports", new { Area = "User" })">Personnel Status History Report</a>
+                                    <a href="@Url.Action("ActionLogsParams", "Reports", new { Area = "User" })">@localizer["PersonnelStatusHistoryReportName"]</a>
                                 </td>
                                 <td>
-                                    This report will show all the personnel status (action logs) history supplied by the selected personnel
+                                    @localizer["PersonnelStatusHistoryReportDescription"]
                                 </td>
                                 <td>
-                                    <a href="@Url.Action("ActionLogsParams", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> View Report</a>
+                                    <a href="@Url.Action("ActionLogsParams", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> @localizer["ViewReport"]</a>
                                 </td>
                             </tr>
                             @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
                             {
                                 <tr>
                                     <td>
-                                        <a href="@Url.Action("PersonnelReport", "Reports", new { Area = "User" })">Personnel Report</a>
+                                        <a href="@Url.Action("PersonnelReport", "Reports", new { Area = "User" })">@localizer["PersonnelReportName"]</a>
                                     </td>
                                     <td>
-                                        View all the personnel in your department, their roles and basic contact information.
+                                        @localizer["PersonnelReportDescription"]
                                     </td>
                                     <td>
-                                        <a href="@Url.Action("PersonnelReport", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> View Report</a>
+                                        <a href="@Url.Action("PersonnelReport", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> @localizer["ViewReport"]</a>
                                     </td>
                                 </tr>
                             }
                             <tr>
                                 <td>
-                                    <a href="@Url.Action("StaffingReport", "Reports", new { Area = "User" })">Staffing Report</a>
+                                    <a href="@Url.Action("StaffingReport", "Reports", new { Area = "User" })">@localizer["StaffingReportName"]</a>
                                 </td>
                                 <td>
-                                    View all personnel and their current status, staffing level and next scheduled staffing level change.
+                                    @localizer["StaffingReportDescription"]
                                 </td>
                                 <td>
-                                    <a href="@Url.Action("StaffingReport", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> View Report</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <a href="@Url.Action("CertificationsReport", "Reports", new { Area = "User" })">Certifications Report</a>
-                                </td>
-                                <td>
-                                    View all the certifications for each person in the department.
-                                </td>
-                                <td>
-                                    <a href="@Url.Action("CertificationsReport", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> View Report</a>
+                                    <a href="@Url.Action("StaffingReport", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> @localizer["ViewReport"]</a>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <a href="@Url.Action("UpcomingShiftReadinessReport", "Reports", new { Area = "User" })">Shift Readiness Report</a>
+                                    <a href="@Url.Action("CertificationsReport", "Reports", new { Area = "User" })">@localizer["CertificationsReportName"]</a>
                                 </td>
                                 <td>
-                                    This report will show shift readiness for the next upcoming shift days for each shift.
+                                    @localizer["CertificationsReportDescription"]
                                 </td>
                                 <td>
-                                    <a href="@Url.Action("UpcomingShiftReadinessReport", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> View Report</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <a href="@Url.Action("DepartmentActivityReport", "Reports", new { Area = "User" })">Department YTD Activity Report</a>
-                                </td>
-                                <td>
-                                    This report will show the call, log, training and personnel activity for the department in year to date numbers.
-                                </td>
-                                <td>
-                                    <a href="@Url.Action("DepartmentActivityReport", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> View Report</a>
+                                    <a href="@Url.Action("CertificationsReport", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> @localizer["ViewReport"]</a>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <a href="@Url.Action("PersonnelHoursReportParams", "Reports", new { Area = "User" })">Personnel Log Hours Report</a>
+                                    <a href="@Url.Action("UpcomingShiftReadinessReport", "Reports", new { Area = "User" })">@localizer["ShiftReadinessReportName"]</a>
                                 </td>
                                 <td>
-                                    This report will show the number of hours department personnel worked, trained and responded to calls as recorded via log (after action reports) entries.
+                                    @localizer["ShiftReadinessReportDescription"]
                                 </td>
                                 <td>
-                                    <a href="@Url.Action("PersonnelHoursReportParams", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> View Report</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <a href="@Url.Action("CallSummaryReportParams", "Reports", new { Area = "User" })">Call Summary Report</a>
-                                </td>
-                                <td>
-                                    This report will show details about all calls in a selected date range (i.e. call types, close states, etc)
-                                </td>
-                                <td>
-                                    <a href="@Url.Action("CallSummaryReportParams", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> View Report</a>
+                                    <a href="@Url.Action("UpcomingShiftReadinessReport", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> @localizer["ViewReport"]</a>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <a href="@Url.Action("PersonnelStaffingHistoryReportParams", "Reports", new { Area = "User" })">Personnel Staffing History Report</a>
+                                    <a href="@Url.Action("DepartmentActivityReport", "Reports", new { Area = "User" })">@localizer["DepartmentActivityReportName"]</a>
                                 </td>
                                 <td>
-                                    This report will show all the staffing history supplied by the selected personnel
+                                    @localizer["DepartmentActivityReportDescription"]
                                 </td>
                                 <td>
-                                    <a href="@Url.Action("PersonnelStaffingHistoryReportParams", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> View Report</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <a href="@Url.Action("UnitStateHistoryReportParams", "Reports", new { Area = "User" })">Unit State History Report</a>
-                                </td>
-                                <td>
-                                    Shows the Unit States for a single unit, all, or a units in a group for a user defined time range
-                                </td>
-                                <td>
-                                    <a href="@Url.Action("UnitStateHistoryReportParams", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> View Report</a>
+                                    <a href="@Url.Action("DepartmentActivityReport", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> @localizer["ViewReport"]</a>
                                 </td>
                             </tr>
                             <tr>
                                 <td>
-                                    <a href="@Url.Action("ActiveCallsResourcesReport", "Reports", new { Area = "User" })">Active Calls and Resources Report</a>
+                                    <a href="@Url.Action("PersonnelHoursReportParams", "Reports", new { Area = "User" })">@localizer["PersonnelHoursReportName"]</a>
                                 </td>
                                 <td>
-                                    Report details the currently open calls at the time of running the report and any units and personnel currently attached to those calls
+                                    @localizer["PersonnelHoursReportDescription"]
                                 </td>
                                 <td>
-                                    <a href="@Url.Action("ActiveCallsResourcesReport", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> View Report</a>
+                                    <a href="@Url.Action("PersonnelHoursReportParams", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> @localizer["ViewReport"]</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href="@Url.Action("CallSummaryReportParams", "Reports", new { Area = "User" })">@localizer["CallSummaryReportName"]</a>
+                                </td>
+                                <td>
+                                    @localizer["CallSummaryReportDescription"]
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("CallSummaryReportParams", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> @localizer["ViewReport"]</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href="@Url.Action("PersonnelStaffingHistoryReportParams", "Reports", new { Area = "User" })">@localizer["PersonnelStaffingHistoryReportName"]</a>
+                                </td>
+                                <td>
+                                    @localizer["PersonnelStaffingHistoryReportDescription"]
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("PersonnelStaffingHistoryReportParams", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> @localizer["ViewReport"]</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href="@Url.Action("UnitStateHistoryReportParams", "Reports", new { Area = "User" })">@localizer["UnitStateHistoryReportName"]</a>
+                                </td>
+                                <td>
+                                    @localizer["UnitStateHistoryReportDescription"]
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("UnitStateHistoryReportParams", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> @localizer["ViewReport"]</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <a href="@Url.Action("ActiveCallsResourcesReport", "Reports", new { Area = "User" })">@localizer["ActiveCallsResourcesReportName"]</a>
+                                </td>
+                                <td>
+                                    @localizer["ActiveCallsResourcesReportDescription"]
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("ActiveCallsResourcesReport", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> @localizer["ViewReport"]</a>
                                 </td>
                             </tr>
                             @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
@@ -171,7 +172,7 @@
                                         @flaggedReportLocalizer["ReportIndexDescription"]
                                     </td>
                                     <td>
-                                        <a href="@Url.Action("FlaggedCallNotesReportParams", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> View Report</a>
+                                        <a href="@Url.Action("FlaggedCallNotesReportParams", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> @localizer["ViewReport"]</a>
                                     </td>
                                 </tr>
                             }

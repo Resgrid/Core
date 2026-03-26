@@ -59,56 +59,71 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
 
-  <data name="Name1" xml:space="preserve">
-    <value>this is my long string</value>
-  </data>
-  <data name="Bitmap1" xml:space="preserve">
-    <value>[base64 mime encoded serialized .NET Framework object]</value>
-  </data>
-  <data name="Icon1" xml:space="preserve">
-    <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
-  </data>
   <data name="AddAudio" xml:space="preserve">
-    <value>New Audio Stream</value>
+    <value>Neuer Audiostream</value>
   </data>
   <data name="AddAudioButton" xml:space="preserve">
-    <value>Add Audio Stream</value>
+    <value>Audiostream hinzufügen</value>
+  </data>
+  <data name="AddPTTChannel" xml:space="preserve">
+    <value>PTT-Kanal hinzufügen</value>
   </data>
   <data name="AddVoice" xml:space="preserve">
-    <value>New Voice Channel</value>
+    <value>Neuer Sprachkanal</value>
+  </data>
+  <data name="AudioStream" xml:space="preserve">
+    <value>Audiostream</value>
   </data>
   <data name="AudioStreamNameLabel" xml:space="preserve">
-    <value>Audio Stream Name</value>
+    <value>Name des Audiostreams</value>
   </data>
   <data name="AudioStreams" xml:space="preserve">
-    <value>Audio Streams</value>
+    <value>Audiostreams</value>
   </data>
   <data name="AudioStreamUrlLabel" xml:space="preserve">
-    <value>Audio Stream Url</value>
+    <value>URL des Audiostreams</value>
   </data>
   <data name="ChannelName" xml:space="preserve">
-    <value>Channel Name</value>
+    <value>Kanalname</value>
+  </data>
+  <data name="DefaultChannelWarning" xml:space="preserve">
+    <value>Es kann jeweils nur 1 Kanal als Standard festgelegt werden. Um einen anderen Kanal als Standard festzulegen, müssen Sie zunächst die Standardkanaloption deaktivieren.</value>
   </data>
   <data name="EditAudio" xml:space="preserve">
-    <value>Edit Audio Stream</value>
+    <value>Audiostream bearbeiten</value>
+  </data>
+  <data name="EditPTTChannelHeader" xml:space="preserve">
+    <value>Push-To-Talk-Kanal bearbeiten</value>
   </data>
   <data name="IsDefault" xml:space="preserve">
-    <value>Is Default</value>
+    <value>Ist Standard</value>
+  </data>
+  <data name="IsDefaultHelp" xml:space="preserve">
+    <value>Beachten Sie, dass es nur einen Standardkanal gleichzeitig geben kann. Wenn Sie einen neuen Standardkanal auswählen, wird der Standard des vorhandenen Kanals deaktiviert.</value>
+  </data>
+  <data name="NewPTTChannelHeader" xml:space="preserve">
+    <value>Neuer Push-To-Talk-Kanal</value>
   </data>
   <data name="Participants" xml:space="preserve">
-    <value>Participants</value>
+    <value>Teilnehmer</value>
   </data>
   <data name="PTTNotPurchased" xml:space="preserve">
-    <value>Push-To-Talk Addon Not Purchased</value>
+    <value>Push-To-Talk-Erweiterung nicht erworben</value>
   </data>
   <data name="PTTNotPurchasedInfo" xml:space="preserve">
-    <value>Your department has not purchased the Push-To-Talk addon. Your departments Managing Member can purchase the addon from the Subscription and Billing page. Push-To-Talk allows your department to enable real-time voice communications though the Resgrid applications.</value>
+    <value>Ihre Abteilung hat die Push-To-Talk-Erweiterung nicht erworben. Das verwaltende Mitglied Ihrer Abteilung kann die Erweiterung auf der Seite für Abonnement und Abrechnung erwerben. Push-To-Talk ermöglicht Ihrer Abteilung, Echtzeit-Sprachkommunikation über die Resgrid-Anwendungen zu aktivieren.</value>
+  </data>
+  <data name="PushToTalk" xml:space="preserve">
+    <value>Sprechtaste</value>
   </data>
   <data name="SaveEditAudioButton" xml:space="preserve">
-    <value>Save Audio Stream</value>
+    <value>Audiostream speichern</value>
+  </data>
+  <data name="SavePTTChannel" xml:space="preserve">
+    <value>PTT-Kanal speichern</value>
   </data>
   <data name="VoiceChannels" xml:space="preserve">
-    <value>Voice (PTT) Channels</value>
+    <value>Sprachkanäle (PTT)</value>
   </data>
   <data name="VoiceHeader" xml:space="preserve">
     <value>Audio und Sprechtaste</value>

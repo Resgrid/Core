@@ -410,9 +410,12 @@ namespace Resgrid.Web
 			});
 
 
+			services.AddScoped<Filters.RequireActivePlanFilter>();
+
 			var builder = services.AddMvc().AddMvcOptions(options =>
 			{
 				options.EnableEndpointRouting = false;
+				options.Filters.Add(new Microsoft.AspNetCore.Mvc.ServiceFilterAttribute(typeof(Filters.RequireActivePlanFilter)));
 			}).AddJsonOptions(jsonOptions =>
 			{
 				jsonOptions.JsonSerializerOptions.PropertyNamingPolicy = null;

@@ -68,6 +68,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IUdfRenderingService _udfRenderingService;
 		private readonly IDepartmentSsoService _departmentSsoService;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> _secLocalizer;
+		private readonly IGdprDataExportService _gdprDataExportService;
+		private readonly ISystemAuditsService _systemAuditsService;
 
 		public HomeController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IUserStateService userStateService, IDepartmentGroupsService departmentGroupsService, Resgrid.Model.Services.IAuthorizationService authorizationService,
@@ -76,7 +78,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ICustomStateService customStateService, IEventAggregator eventAggregator, IOptions<AppOptions> appOptionsAccessor, UserManager<IdentityUser> userManager,
 			IStringLocalizerFactory factory, ISubscriptionsService subscriptionsService, IContactVerificationService contactVerificationService,
 			IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService, IDepartmentSsoService departmentSsoService,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> secLocalizer)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> secLocalizer, IGdprDataExportService gdprDataExportService,
+			ISystemAuditsService systemAuditsService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -103,6 +106,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_udfRenderingService = udfRenderingService;
 			_departmentSsoService = departmentSsoService;
 			_secLocalizer = secLocalizer;
+			_gdprDataExportService = gdprDataExportService;
+			_systemAuditsService = systemAuditsService;
 
 			_localizer = factory.Create("Home.Dashboard", new AssemblyName(typeof(SupportedLocales).GetTypeInfo().Assembly.FullName).Name);
 		}
@@ -484,6 +489,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (model.IsOwnProfile)
 				model.MinPasswordLength = await _departmentSsoService.GetEffectiveMinPasswordLengthAsync(DepartmentId);
+
+			if (model.IsOwnProfile)
+				model.ActiveDataExportRequest = await _gdprDataExportService.GetActiveRequestByUserIdAsync(userId);
 
 			return View(model);
 		}
@@ -1074,6 +1082,101 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return Json(new { success = confirmed });
 		}
 		#endregion Contact Verification (AJAX)
+
+		#region GDPR Data Export
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_View)]
+		public async Task<IActionResult> RequestMyData(CancellationToken cancellationToken)
+		{
+			var existing = await _gdprDataExportService.GetActiveRequestByUserIdAsync(UserId);
+			if (existing != null)
+			{
+				TempData["GdprError"] = "You already have a pending or in-progress data export request. Please wait for it to complete.";
+				return RedirectToAction("EditUserProfile", new { userId = UserId });
+			}
+
+			await _gdprDataExportService.CreateExportRequestAsync(UserId, DepartmentId, cancellationToken);
+
+			var user = _usersService.GetUserById(UserId);
+			await _systemAuditsService.SaveSystemAuditAsync(new SystemAudit
+			{
+				System = (int)SystemAuditSystems.Website,
+				Type = (int)SystemAuditTypes.GdprDataExportRequested,
+				DepartmentId = DepartmentId,
+				UserId = UserId,
+				Username = user?.UserName,
+				Successful = true,
+				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+				ServerName = Environment.MachineName,
+				Data = $"GDPR data export requested. {Request.Headers["User-Agent"]}"
+			}, cancellationToken);
+
+			TempData["GdprSuccess"] = "Your data export request has been submitted. You will receive an email when it is ready.";
+
+			return RedirectToAction("EditUserProfile", new { userId = UserId });
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_View)]
+		public async Task<IActionResult> DownloadMyData(string token, CancellationToken cancellationToken)
+		{
+			if (string.IsNullOrWhiteSpace(token))
+				return NotFound();
+
+			var request = await _gdprDataExportService.GetRequestByTokenAsync(token);
+			if (request == null)
+				return NotFound();
+
+			if (request.UserId != UserId)
+				return Forbid();
+
+			if (request.TokenExpiresAt.HasValue && request.TokenExpiresAt.Value < DateTime.UtcNow)
+			{
+				TempData["GdprError"] = "This download link has expired. Please submit a new data export request.";
+				return RedirectToAction("EditUserProfile", new { userId = UserId });
+			}
+
+			if (request.ExportData == null || request.ExportData.Length == 0)
+				return NotFound();
+
+			// Hold a reference to the data before invalidating the record
+			var fileData = request.ExportData;
+			var fileName = $"resgrid_data_export_{DateTime.UtcNow:yyyyMMdd}.zip";
+
+			// Invalidate the token so this is a one-time download
+			await _gdprDataExportService.MarkDownloadedAsync(request, cancellationToken);
+
+			var user = _usersService.GetUserById(UserId);
+			await _systemAuditsService.SaveSystemAuditAsync(new SystemAudit
+			{
+				System = (int)SystemAuditSystems.Website,
+				Type = (int)SystemAuditTypes.GdprDataExportDownloaded,
+				DepartmentId = DepartmentId,
+				UserId = UserId,
+				Username = user?.UserName,
+				Successful = true,
+				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+				ServerName = Environment.MachineName,
+				Data = $"GDPR data export downloaded (file: {fileName}). {Request.Headers["User-Agent"]}"
+			}, cancellationToken);
+
+			return File(fileData, "application/zip", fileName);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_View)]
+		public async Task<IActionResult> GetDataExportStatus()
+		{
+			var request = await _gdprDataExportService.GetActiveRequestByUserIdAsync(UserId);
+			if (request == null)
+				return Json(new { status = "none" });
+
+			return Json(new { status = request.Status, statusName = ((GdprExportStatus)request.Status).ToString() });
+		}
+
+		#endregion GDPR Data Export
 	}
 
 	/// <summary>Request body for sending a contact verification code.</summary>

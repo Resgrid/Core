@@ -1,21 +1,22 @@
-﻿@using Resgrid.Model
+@using Resgrid.Model
 @model Resgrid.WebCore.Areas.User.Models.Forms.ViewFormModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Forms.Forms> localizer
 @{
-  ViewBag.Title = "Resgrid | View Form";
+  ViewBag.Title = "Resgrid | " + localizer["ViewFormPageTitle"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
-    <h2>View Form</h2>
+    <h2>@localizer["ViewFormHeading"]</h2>
     <ol class="breadcrumb">
       <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
       </li>
       <li>
-        <a asp-controller="Forms" asp-action="Index" asp-route-area="User">Forms</a>
+        <a asp-controller="Forms" asp-action="Index" asp-route-area="User">@localizer["FormsHeading"]</a>
       </li>
       <li class="active">
-        <strong>View Form</strong>
+        <strong>@localizer["ViewFormHeading"]</strong>
       </li>
     </ol>
   </div>
@@ -29,7 +30,7 @@
 		  <div class="form-horizontal">
 		    <div class="form-group">
 		      <label class="col-sm-2 control-label required">
-		        Form Name
+		        @localizer["FormNameLabel"]
 		      </label>
 		      <div class="col-sm-6">
 		        @Model.Form.Name
@@ -37,18 +38,18 @@
 		    </div>
 		    <div class="form-group">
 		      <label class="col-sm-2 control-label required">
-		        Form Type
+		        @localizer["FormTypeLabel"]
 		      </label>
 		      <div class="col-sm-3">
 		        @if (Model.Form.Type == 0)
 				{
-		          <span>New Call Form</span>
+		          <span>@localizer["NewCallFormType"]</span>
 				}
 		      </div>
 		    </div>
 		    <div class="form-group">
 		      <label class="col-sm-2 control-label required">
-		        Form
+		        @localizer["FormLabel"]
 		      </label>
 		      <div class="col-sm-9">
 		        <div id="fb-template"></div>

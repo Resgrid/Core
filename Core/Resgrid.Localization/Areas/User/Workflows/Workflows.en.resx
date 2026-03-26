@@ -576,5 +576,43 @@
   <data name="Pending" xml:space="preserve">
     <value>Pending</value>
   </data>
+  <!-- Run Detail -->
+  <data name="RunDetailPageTitle" xml:space="preserve">
+    <value>Run Detail</value>
+  </data>
+  <data name="RunSummary" xml:space="preserve">
+    <value>Run Summary</value>
+  </data>
+  <data name="StepLogs" xml:space="preserve">
+    <value>Step Logs</value>
+  </data>
+  <data name="NoStepLogs" xml:space="preserve">
+    <value>No step logs recorded for this run.</value>
+  </data>
+  <data name="StepPrefix" xml:space="preserve">
+    <value>Step:</value>
+  </data>
+  <data name="StepSkippedByCondition" xml:space="preserve">
+    <value>Step skipped by condition.</value>
+  </data>
+  <data name="ConditionEvaluatedTo" xml:space="preserve">
+    <value>Condition evaluated to:</value>
+  </data>
+  <data name="Result" xml:space="preserve">
+    <value>Result</value>
+  </data>
+  <data name="RenderedOutput" xml:space="preserve">
+    <value>Rendered Output</value>
+  </data>
+  <!-- New workflow form -->
+  <data name="AllEventTypesUsed" xml:space="preserve">
+    <value>All available trigger event types already have a workflow configured. Delete an existing workflow to free up its event type.</value>
+  </data>
+  <data name="TriggerEventHelp" xml:space="preserve">
+    <value>Each event type can only have one workflow. Only unused event types are shown.</value>
+  </data>
+  <data name="Detail" xml:space="preserve">
+    <value>Detail</value>
+  </data>
 </root>
 

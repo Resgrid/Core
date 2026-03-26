@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Powiadomienia</value>
+  </data>
+  <data name="Notifications" xml:space="preserve">
+    <value>Powiadomienia</value>
+  </data>
+  <data name="NewNotification" xml:space="preserve">
+    <value>Nowe Powiadomienie</value>
+  </data>
+  <data name="BeforeState" xml:space="preserve">
+    <value>Stan Poprzedni</value>
+  </data>
+  <data name="CurrentState" xml:space="preserve">
+    <value>Stan Bieżący</value>
+  </data>
+  <data name="Notify" xml:space="preserve">
+    <value>Powiadamiaj</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Brak</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Usuń</value>
+  </data>
+  <data name="DeleteNotificationConfirm" xml:space="preserve">
+    <value>OSTRZEŻENIE: Spowoduje to trwałe usunięcie tego powiadomienia. Czy na pewno chcesz kontynuować?</value>
+  </data>
+  <data name="UnitTypeToMonitor" xml:space="preserve">
+    <value>Typ Jednostki do Monitorowania</value>
+  </data>
+  <data name="RoleToMonitor" xml:space="preserve">
+    <value>Rola do Monitorowania</value>
+  </data>
+  <data name="AcceptableStates" xml:space="preserve">
+    <value>Dopuszczalne Stany</value>
+  </data>
+  <data name="LowerLimit" xml:space="preserve">
+    <value>Dolny Limit</value>
+  </data>
+  <data name="UsersToNotify" xml:space="preserve">
+    <value>Użytkownicy do Powiadamiania</value>
+  </data>
+  <data name="Everyone" xml:space="preserve">
+    <value>Wszyscy</value>
+  </data>
+  <data name="DepartmentAdmins" xml:space="preserve">
+    <value>Administratorzy Wydziału</value>
+  </data>
+  <data name="LockToGroup" xml:space="preserve">
+    <value>Zablokuj do Grupy</value>
+  </data>
+  <data name="GroupAdminsOnly" xml:space="preserve">
+    <value>Tylko Administratorzy Grupy</value>
+  </data>
+  <data name="CalendarNoticeText" xml:space="preserve">
+    <value>Powiadomienia kalendarza są teraz sterowane na podstawie typu zdarzenia kalendarza (Brak, Przypisany, RSVP) i podmiotów będących częścią zdarzenia. Dla typu zdarzenia Brak, użytkownicy w wyborze podmiotów (wydział lub grupa) zostaną powiadomieni. Dla zdarzeń RSVP wszyscy użytkownicy wydziału zostaną powiadomieni, a dla zdarzeń przypisanych powiadamiani będą tylko uczestnicy Wymagani i Operacyjni.</value>
+  </data>
+  <data name="ShiftNoticeText" xml:space="preserve">
+    <value>Powiadomienia o zmianie są teraz sterowane na podstawie zdarzeń wykonanych na zmianie (Utworzone, Zaktualizowane, Dodane Dni). Użytkownicy przypisani do istniejącej zmiany będą powiadamiani o aktualizacjach, wszyscy użytkownicy wydziału będą powiadamiani o nowych zmianach, a dla zmian rejestracyjnych wszyscy użytkownicy będą powiadamiani o nowych dniach, a przypisani tylko osoby na tej zmianie.</value>
+  </data>
+  <data name="SaveNotificationRole" xml:space="preserve">
+    <value>Zapisz Rolę Powiadomienia</value>
+  </data>
+</root>

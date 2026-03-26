@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="IndexPageTitle" xml:space="preserve">
+    <value>Avdelningsgrupper</value>
+  </data>
+  <data name="GroupsHeading" xml:space="preserve">
+    <value>Grupper</value>
+  </data>
+  <data name="AddNewGroup" xml:space="preserve">
+    <value>Lägg till ny grupp</value>
+  </data>
+  <data name="AddNewGroupTitle" xml:space="preserve">
+    <value>Lägg till en ny grupp</value>
+  </data>
+  <data name="GroupName" xml:space="preserve">
+    <value>Gruppnamn</value>
+  </data>
+  <data name="Parent" xml:space="preserve">
+    <value>Överordnad</value>
+  </data>
+  <data name="DispatchEmail" xml:space="preserve">
+    <value>Utrycknings-e-post</value>
+  </data>
+  <data name="MessageEmail" xml:space="preserve">
+    <value>Meddelande-e-post</value>
+  </data>
+  <data name="Members" xml:space="preserve">
+    <value>Medlemmar</value>
+  </data>
+  <data name="Organizational" xml:space="preserve">
+    <value>Organisatorisk</value>
+  </data>
+  <data name="Station" xml:space="preserve">
+    <value>Station</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Ingen</value>
+  </data>
+  <data name="Geofence" xml:space="preserve">
+    <value>Geofence</value>
+  </data>
+  <data name="DeleteGroupPageTitle" xml:space="preserve">
+    <value>Ta bort grupp</value>
+  </data>
+  <data name="DeleteGroupHeading" xml:space="preserve">
+    <value>Ta bort grupp</value>
+  </data>
+  <data name="DeleteGroupConfirmQuestion" xml:space="preserve">
+    <value>Är du säker på att du vill ta bort den här gruppen?</value>
+  </data>
+  <data name="DeleteGroupWarning" xml:space="preserve">
+    <value>Om du väljer att ta bort den här gruppen kommer gruppens information, till exempel utrycknings- och meddelandeadresser, att tas bort med gruppen och kan inte användas igen.</value>
+  </data>
+  <data name="DeleteGroupActiveUsersWarning" xml:space="preserve">
+    <value>Den här gruppen har aktiva användare under sig, du måste flytta eller ta bort användarna för att kunna ta bort gruppen.</value>
+  </data>
+  <data name="DeleteGroupChildGroupsWarning" xml:space="preserve">
+    <value>Den här gruppen har undergrupper. Du måste flytta eller ta bort undergruppen innan du tar bort gruppen.</value>
+  </data>
+  <data name="DeleteGroupUnitsWarning" xml:space="preserve">
+    <value>Den här gruppen har enheter tilldelade till sig. Du måste flytta enheten till en annan stationsgrupp eller ta bort enheten för att kunna ta bort gruppen.</value>
+  </data>
+  <data name="DeleteGroupShiftsWarning" xml:space="preserve">
+    <value>Den här gruppen har skiftgrupper tilldelade till sig. Du måste ta bort dessa skiftgrupper, skift tilldelade till en Station\Grupp, för att kunna ta bort gruppen.</value>
+  </data>
+  <data name="DeleteGroupCheckboxHint" xml:space="preserve">
+    <value>Klicka på kryssrutan nedan för att ta bort den här gruppen.</value>
+  </data>
+  <data name="DeleteGroupPermanentWarning" xml:space="preserve">
+    <value>Om du väljer att ta bort den här gruppen kommer informationen nedan att raderas permanent. Denna åtgärd kan inte ångras.</value>
+  </data>
+  <data name="DeleteGroupDataDeleted" xml:space="preserve">
+    <value>Data som tas bort</value>
+  </data>
+  <data name="DeleteGroupDataGroupData" xml:space="preserve">
+    <value>Gruppdata</value>
+  </data>
+  <data name="DeleteGroupDataPersonnelMemberships" xml:space="preserve">
+    <value>Personalgruppmedlemskap</value>
+  </data>
+  <data name="DeleteGroupDataUnitMemberships" xml:space="preserve">
+    <value>Enhetsgruppmedlemskap</value>
+  </data>
+  <data name="DeleteGroupDataInventory" xml:space="preserve">
+    <value>Gruppinventar</value>
+  </data>
+  <data name="DeleteGroupDataShiftData" xml:space="preserve">
+    <value>Grupps skiftdata</value>
+  </data>
+  <data name="ConfirmDeleteLabel" xml:space="preserve">
+    <value>Bekräfta borttagning?</value>
+  </data>
+  <data name="DeleteGroupButton" xml:space="preserve">
+    <value>Ta bort grupp</value>
+  </data>
+  <data name="NewGroupPageTitle" xml:space="preserve">
+    <value>Ny grupp</value>
+  </data>
+  <data name="NewGroupHeading" xml:space="preserve">
+    <value>Ny grupp</value>
+  </data>
+  <data name="GroupType" xml:space="preserve">
+    <value>Grupptyp</value>
+  </data>
+  <data name="OrganizationalGroup" xml:space="preserve">
+    <value>Organisationsgrupp</value>
+  </data>
+  <data name="StationGroup" xml:space="preserve">
+    <value>Stationsgrupp</value>
+  </data>
+  <data name="ParentGroup" xml:space="preserve">
+    <value>Överordnad grupp</value>
+  </data>
+  <data name="StationAddress" xml:space="preserve">
+    <value>Stationsadress</value>
+  </data>
+  <data name="StationAddressDescription" xml:space="preserve">
+    <value>Stationsgrupper kräver en fysisk plats (eftersom personal och enheter kan svara på dem). Ange en adress, GPS-koordinater eller en what3words-adress.</value>
+  </data>
+  <data name="Street" xml:space="preserve">
+    <value>Gata</value>
+  </data>
+  <data name="City" xml:space="preserve">
+    <value>Stad</value>
+  </data>
+  <data name="StateProvince" xml:space="preserve">
+    <value>Stat/Provins</value>
+  </data>
+  <data name="ZipPostalCode" xml:space="preserve">
+    <value>Postnummer</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>Land</value>
+  </data>
+  <data name="Or" xml:space="preserve">
+    <value>Eller</value>
+  </data>
+  <data name="GpsCoordinates" xml:space="preserve">
+    <value>GPS-koordinater</value>
+  </data>
+  <data name="LatitudeHint" xml:space="preserve">
+    <value>Latitud (Decimalnotation: t.ex. 39.1517)</value>
+  </data>
+  <data name="LongitudeHint" xml:space="preserve">
+    <value>Longitud (Decimalnotation: t.ex. -119.4571)</value>
+  </data>
+  <data name="What3WordsAddress" xml:space="preserve">
+    <value>what3words-adress</value>
+  </data>
+  <data name="What3WordsHint" xml:space="preserve">
+    <value>w3w-adress (t.ex. humble.echo.sticky)</value>
+  </data>
+  <data name="PrintNodePrinter" xml:space="preserve">
+    <value>PrintNode-skrivare</value>
+  </data>
+  <data name="PrintNodeDescription" xml:space="preserve">
+    <value>PrintNode är en tjänst som låter oss skicka utskriftsjobb till en lokal dator eller server i ditt nätverk till en specifik skrivare. Du måste ha ett aktivt PrintNode-konto och dess programvara konfigurerad med skrivaren aktiv.</value>
+  </data>
+  <data name="SelectPrinter" xml:space="preserve">
+    <value>Välj skrivare</value>
+  </data>
+  <data name="UsersOneGroupNote" xml:space="preserve">
+    <value>Användare kan bara vara i en grupp åt gången. Om du inte ser din användare i listan är de redan i en grupp.</value>
+  </data>
+  <data name="GroupAdmins" xml:space="preserve">
+    <value>Gruppadministratörer</value>
+  </data>
+  <data name="GroupUsers" xml:space="preserve">
+    <value>Gruppsanvändare</value>
+  </data>
+  <data name="SaveGroup" xml:space="preserve">
+    <value>Spara grupp</value>
+  </data>
+  <data name="ApiKey" xml:space="preserve">
+    <value>API-nyckel:</value>
+  </data>
+  <data name="GetPrinters" xml:space="preserve">
+    <value>Hämta skrivare</value>
+  </data>
+  <data name="Printer" xml:space="preserve">
+    <value>Skrivare</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Stäng</value>
+  </data>
+  <data name="EditGroupPageTitle" xml:space="preserve">
+    <value>Redigera grupp</value>
+  </data>
+  <data name="EditGroupHeading" xml:space="preserve">
+    <value>Redigera grupp</value>
+  </data>
+  <data name="PrintCallsToPrinter" xml:space="preserve">
+    <value>Skriv ut utryckningar på skrivare</value>
+  </data>
+  <data name="PrintCallsToPrinterHint" xml:space="preserve">
+    <value>Aktivering av detta alternativ skriver ut ett larm på den valda skrivaren när en enhet eller person från denna grupp bifogas (utskickas) till ett larm</value>
+  </data>
+  <data name="GeofencePageTitle" xml:space="preserve">
+    <value>Geofence-station</value>
+  </data>
+  <data name="GeofenceHeading" xml:space="preserve">
+    <value>Geofence-station</value>
+  </data>
+  <data name="GeofenceStationBreadcrumb" xml:space="preserve">
+    <value>Geofence-station</value>
+  </data>
+  <data name="GeofenceDescription" xml:space="preserve">
+    <value>Nedan kan du skapa en geofence för din station. Fält i blå kursiv är obligatoriska. Geofences låter dig skapa en gräns på kartan som är denna stations svarsområde. Detta kommer att användas för att automatiskt dirigera larm och bestämma svar.</value>
+  </data>
+  <data name="DistrictColor" xml:space="preserve">
+    <value>Distriktsfärg</value>
+  </data>
+  <data name="SaveGeofence" xml:space="preserve">
+    <value>Spara geofence</value>
+  </data>
+  <data name="ClearGeofence" xml:space="preserve">
+    <value>Rensa geofence</value>
+  </data>
+</root>

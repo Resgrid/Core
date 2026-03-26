@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ResourceOrdersHeader" xml:space="preserve">
+    <value>Замовлення Ресурсів</value>
+  </data>
+  <data name="UpdateSettingsButton" xml:space="preserve">
+    <value>Оновити Налаштування</value>
+  </data>
+  <data name="CreateOrderButton" xml:space="preserve">
+    <value>Створити Замовлення</value>
+  </data>
+  <data name="YourOrdersTab" xml:space="preserve">
+    <value>Ваші Замовлення</value>
+  </data>
+  <data name="AvailableOrdersTab" xml:space="preserve">
+    <value>Доступні Замовлення</value>
+  </data>
+  <data name="CreatedLabel" xml:space="preserve">
+    <value>Створено</value>
+  </data>
+  <data name="FillPercentageLabel" xml:space="preserve">
+    <value>Відсоток Виконання</value>
+  </data>
+  <data name="ClosedLabel" xml:space="preserve">
+    <value>Закрито</value>
+  </data>
+  <data name="FilledLabel" xml:space="preserve">
+    <value>Виконано</value>
+  </data>
+  <data name="OpenLabel" xml:space="preserve">
+    <value>Відкрито</value>
+  </data>
+  <data name="ViewButton" xml:space="preserve">
+    <value>Переглянути</value>
+  </data>
+  <data name="LocationLabel" xml:space="preserve">
+    <value>Місцезнаходження</value>
+  </data>
+  <data name="DistanceLabel" xml:space="preserve">
+    <value>Відстань</value>
+  </data>
+  <data name="NewOrderHeader" xml:space="preserve">
+    <value>Нове Замовлення</value>
+  </data>
+  <data name="TitleLabel" xml:space="preserve">
+    <value>Заголовок</value>
+  </data>
+  <data name="TitlePlaceholder" xml:space="preserve">
+    <value>Короткий заголовок замовлення</value>
+  </data>
+  <data name="SummaryLabel" xml:space="preserve">
+    <value>Підсумок</value>
+  </data>
+  <data name="SummaryPlaceholder" xml:space="preserve">
+    <value>Підсумок замовлення</value>
+  </data>
+  <data name="CloseOrderOnLabel" xml:space="preserve">
+    <value>Закрити Замовлення</value>
+  </data>
+  <data name="CloseOrderOnHelp" xml:space="preserve">
+    <value>Час, до якого замовлення має бути виконане; залежно від типу замовлення воно може бути автоматично закрите в цей час.</value>
+  </data>
+  <data name="IncidentNumberLabel" xml:space="preserve">
+    <value>Номер Інциденту</value>
+  </data>
+  <data name="IncidentNumberPlaceholder" xml:space="preserve">
+    <value>ID або номер інциденту</value>
+  </data>
+  <data name="IncidentNameLabel" xml:space="preserve">
+    <value>Назва Інциденту</value>
+  </data>
+  <data name="IncidentNamePlaceholder" xml:space="preserve">
+    <value>Назва інциденту</value>
+  </data>
+  <data name="IncidentAddressLabel" xml:space="preserve">
+    <value>Адреса Інциденту</value>
+  </data>
+  <data name="IncidentAddressPlaceholder" xml:space="preserve">
+    <value>Адреса інциденту, IC або Командного Пункту</value>
+  </data>
+  <data name="FinanceCodeLabel" xml:space="preserve">
+    <value>Фінансовий Код</value>
+  </data>
+  <data name="FinanceCodePlaceholder" xml:space="preserve">
+    <value>Фінансовий код для інциденту або замовлення</value>
+  </data>
+  <data name="ContactNameLabel" xml:space="preserve">
+    <value>Ім'я Контакту</value>
+  </data>
+  <data name="ContactNamePlaceholder" xml:space="preserve">
+    <value>Ім'я особи для контакту щодо зустрічі або інциденту</value>
+  </data>
+  <data name="ContactNumberLabel" xml:space="preserve">
+    <value>Номер Контакту</value>
+  </data>
+  <data name="ContactNumberPlaceholder" xml:space="preserve">
+    <value>Номер особи для контакту щодо зустрічі або інциденту</value>
+  </data>
+  <data name="MeetupLocationLabel" xml:space="preserve">
+    <value>Місце Зустрічі</value>
+  </data>
+  <data name="MeetupLocationPlaceholder" xml:space="preserve">
+    <value>Місце, де зустрінуться підрозділи з виконаних замовлень</value>
+  </data>
+  <data name="MeetupTimeLabel" xml:space="preserve">
+    <value>Час Зустрічі</value>
+  </data>
+  <data name="SpecialInstructionsLabel" xml:space="preserve">
+    <value>Спеціальні Інструкції</value>
+  </data>
+  <data name="SpecialInstructionsPlaceholder" xml:space="preserve">
+    <value>Будь-які спеціальні інструкції або вимоги для замовлення</value>
+  </data>
+  <data name="AllowPartialFillsLabel" xml:space="preserve">
+    <value>Дозволити Часткове Виконання</value>
+  </data>
+  <data name="AllowPartialFillsHelp" xml:space="preserve">
+    <value>Дозволяє підрозділу частково виконати позицію замовлення ресурсів (це дозволяє кільком підрозділам з кількох відділів виконати одну позицію)</value>
+  </data>
+  <data name="AutoAcceptFillsLabel" xml:space="preserve">
+    <value>Автоматичне Прийняття Виконань</value>
+  </data>
+  <data name="AutoAcceptFillsHelp" xml:space="preserve">
+    <value>Система автоматично приймає виконання (часткові відповідно до налаштування Дозволити Часткове Виконання) за принципом першим прийшов, першим обслуговується</value>
+  </data>
+  <data name="OrderItemsLabel" xml:space="preserve">
+    <value>Позиції Замовлення</value>
+  </data>
+  <data name="OrderItemsHelp" xml:space="preserve">
+    <value>Натисніть зелену кнопку "Додати", щоб додати позиції до цього замовлення; позиції — це групи схожих підрозділів, які мають бути частиною замовлення.</value>
+  </data>
+  <data name="ResourceColumn" xml:space="preserve">
+    <value>Ресурс</value>
+  </data>
+  <data name="MinColumn" xml:space="preserve">
+    <value>Мін</value>
+  </data>
+  <data name="MaxColumn" xml:space="preserve">
+    <value>Макс</value>
+  </data>
+  <data name="FinancialCodeColumn" xml:space="preserve">
+    <value>Фінансовий Код</value>
+  </data>
+  <data name="SpecialNeedsColumn" xml:space="preserve">
+    <value>Спеціальні Потреби</value>
+  </data>
+  <data name="RequirementsColumn" xml:space="preserve">
+    <value>Вимоги</value>
+  </data>
+  <data name="AddButton" xml:space="preserve">
+    <value>Додати</value>
+  </data>
+  <data name="CreateOrderButton2" xml:space="preserve">
+    <value>Створити Замовлення</value>
+  </data>
+  <data name="OrderSettingsHeader" xml:space="preserve">
+    <value>Налаштування Замовлень Ресурсів</value>
+  </data>
+  <data name="DoNotReceiveOrdersLabel" xml:space="preserve">
+    <value>Не Отримувати Замовлення</value>
+  </data>
+  <data name="DefaultOrderVisibilityLabel" xml:space="preserve">
+    <value>Видимість Замовлень За Замовчуванням</value>
+  </data>
+  <data name="RangeForVisibilityLabel" xml:space="preserve">
+    <value>Діапазон Видимості (у милях)</value>
+  </data>
+  <data name="DefaultOrderManagerLabel" xml:space="preserve">
+    <value>Менеджер Замовлень За Замовчуванням</value>
+  </data>
+  <data name="LimitOrderNotificationsLabel" xml:space="preserve">
+    <value>Обмежити Повідомлення про Замовлення до Рівня Персоналу</value>
+  </data>
+  <data name="AllowedNotificationStaffingLabel" xml:space="preserve">
+    <value>Дозволений Рівень Персоналу для Повідомлень</value>
+  </data>
+  <data name="AllowedDepartmentTypesLabel" xml:space="preserve">
+    <value>Дозволені Типи Відділів</value>
+  </data>
+  <data name="AutomaticallyAcceptFillsLabel" xml:space="preserve">
+    <value>Автоматично Приймати Виконання</value>
+  </data>
+  <data name="NotifyRolesLabel" xml:space="preserve">
+    <value>Повідомляти Ролі</value>
+  </data>
+  <data name="RolesToNotifyLabel" xml:space="preserve">
+    <value>Ролі для Повідомлення</value>
+  </data>
+  <data name="SaveSettingsButton" xml:space="preserve">
+    <value>Зберегти Налаштування</value>
+  </data>
+  <data name="FillOrderHeader" xml:space="preserve">
+    <value>Виконати Замовлення</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Статус:</value>
+  </data>
+  <data name="CreatedByLabel" xml:space="preserve">
+    <value>Створено:</value>
+  </data>
+  <data name="IncidentLabel" xml:space="preserve">
+    <value>Інцидент:</value>
+  </data>
+  <data name="NumberIdLabel" xml:space="preserve">
+    <value>Номер\ID:</value>
+  </data>
+  <data name="FinanceCodeDtLabel" xml:space="preserve">
+    <value>Фінансовий Код:</value>
+  </data>
+  <data name="LastUpdatedLabel" xml:space="preserve">
+    <value>Останнє Оновлення:</value>
+  </data>
+  <data name="CreatedDtLabel" xml:space="preserve">
+    <value>Створено:</value>
+  </data>
+  <data name="ContactNameDtLabel" xml:space="preserve">
+    <value>Ім'я Контакту:</value>
+  </data>
+  <data name="ContactNumberDtLabel" xml:space="preserve">
+    <value>Номер Контакту:</value>
+  </data>
+  <data name="FillDtLabel" xml:space="preserve">
+    <value>Виконання:</value>
+  </data>
+  <data name="FillPercentageText" xml:space="preserve">
+    <value>Це замовлення ресурсів виконано на</value>
+  </data>
+  <data name="FillPercentageText2" xml:space="preserve">
+    <value>відсотків.</value>
+  </data>
+  <data name="FillsTab" xml:space="preserve">
+    <value>Виконання</value>
+  </data>
+  <data name="ResourceDtLabel" xml:space="preserve">
+    <value>Ресурс:</value>
+  </data>
+  <data name="RequirementsDtLabel" xml:space="preserve">
+    <value>Вимоги:</value>
+  </data>
+  <data name="MinDtLabel" xml:space="preserve">
+    <value>Мін:</value>
+  </data>
+  <data name="MaxDtLabel" xml:space="preserve">
+    <value>Макс:</value>
+  </data>
+  <data name="NeededDtLabel" xml:space="preserve">
+    <value>Потрібно:</value>
+  </data>
+  <data name="FillOrderResultHeader" xml:space="preserve">
+    <value>Результат Виконання Замовлення</value>
+  </data>
+  <data name="FillFailedHeader" xml:space="preserve">
+    <value>Виконання Не Вдалося</value>
+  </data>
+  <data name="FillFailedMessage" xml:space="preserve">
+    <value>Під час обробки вашого запиту сталася помилка. Перегляньте помилку нижче для отримання додаткових відомостей.</value>
+  </data>
+  <data name="FillAcceptedHeader" xml:space="preserve">
+    <value>Виконання Додано і Прийнято</value>
+  </data>
+  <data name="FillAcceptedMessage" xml:space="preserve">
+    <value>Ваше виконання було додано до системи та автоматично прийнято.</value>
+  </data>
+  <data name="FillAcceptedWarning" xml:space="preserve">
+    <value>Можливо, ви захочете зв'язатися з Контактною Особою замовлення, щоб переконатися, що немає інших деталей для вирішення.</value>
+  </data>
+  <data name="FillProposedHeader" xml:space="preserve">
+    <value>Виконання Запропоновано</value>
+  </data>
+  <data name="FillProposedMessage" xml:space="preserve">
+    <value>Ваше виконання зареєстроване в системі та позначене як очікуване. Творець запиту ресурсів повинен вручну переглянути ваш запит на виконання та затвердити його. Ви отримаєте сповіщення, коли це станеться.</value>
+  </data>
+  <data name="ViewOrderHeader" xml:space="preserve">
+    <value>Переглянути Замовлення</value>
+  </data>
+  <data name="RequestToFillButton" xml:space="preserve">
+    <value>Запит на Виконання Замовлення</value>
+  </data>
+  <data name="OrdersLabel" xml:space="preserve">
+    <value>Замовлення</value>
+  </data>
+  <data name="DepartmentColumn" xml:space="preserve">
+    <value>Відділ</value>
+  </data>
+  <data name="TimestampColumn" xml:space="preserve">
+    <value>Позначка Часу</value>
+  </data>
+  <data name="ContactColumn" xml:space="preserve">
+    <value>Контакт</value>
+  </data>
+  <data name="NoteColumn" xml:space="preserve">
+    <value>Примітка</value>
+  </data>
+  <data name="UnitsColumn" xml:space="preserve">
+    <value>Підрозділи</value>
+  </data>
+  <data name="AcceptedLabel" xml:space="preserve">
+    <value>Прийнято</value>
+  </data>
+  <data name="NotAcceptedLabel" xml:space="preserve">
+    <value>Не Прийнято</value>
+  </data>
+  <data name="PendingLabel" xml:space="preserve">
+    <value>Очікується</value>
+  </data>
+  <data name="AcceptButton" xml:space="preserve">
+    <value>Прийняти</value>
+  </data>
+  <data name="OrderSummaryHeader" xml:space="preserve">
+    <value>Підсумок Замовлення</value>
+  </data>
+  <data name="SpecialInstructionsHeader" xml:space="preserve">
+    <value>Спеціальні Інструкції</value>
+  </data>
+  <data name="IncidentAddressHeader" xml:space="preserve">
+    <value>Адреса Інциденту</value>
+  </data>
+  <data name="MeetupHeader" xml:space="preserve">
+    <value>Зустріч</value>
+  </data>
+  <data name="MeetupLocationDtLabel" xml:space="preserve">
+    <value>Місце:</value>
+  </data>
+  <data name="MeetupDateDtLabel" xml:space="preserve">
+    <value>Дата:</value>
+  </data>
+  <data name="NotSuppliedLabel" xml:space="preserve">
+    <value>Не Вказано</value>
+  </data>
+</root>

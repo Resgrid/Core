@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="IndexPageTitle" xml:space="preserve">
+    <value>Групи Відділу</value>
+  </data>
+  <data name="GroupsHeading" xml:space="preserve">
+    <value>Групи</value>
+  </data>
+  <data name="AddNewGroup" xml:space="preserve">
+    <value>Додати Нову Групу</value>
+  </data>
+  <data name="AddNewGroupTitle" xml:space="preserve">
+    <value>Додати нову групу</value>
+  </data>
+  <data name="GroupName" xml:space="preserve">
+    <value>Назва Групи</value>
+  </data>
+  <data name="Parent" xml:space="preserve">
+    <value>Батьківська</value>
+  </data>
+  <data name="DispatchEmail" xml:space="preserve">
+    <value>Електронна пошта диспетчеризації</value>
+  </data>
+  <data name="MessageEmail" xml:space="preserve">
+    <value>Електронна пошта повідомлень</value>
+  </data>
+  <data name="Members" xml:space="preserve">
+    <value>Члени</value>
+  </data>
+  <data name="Organizational" xml:space="preserve">
+    <value>Організаційна</value>
+  </data>
+  <data name="Station" xml:space="preserve">
+    <value>Станція</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Немає</value>
+  </data>
+  <data name="Geofence" xml:space="preserve">
+    <value>Геозона</value>
+  </data>
+  <data name="DeleteGroupPageTitle" xml:space="preserve">
+    <value>Видалити Групу</value>
+  </data>
+  <data name="DeleteGroupHeading" xml:space="preserve">
+    <value>Видалити Групу</value>
+  </data>
+  <data name="DeleteGroupConfirmQuestion" xml:space="preserve">
+    <value>Ви впевнені, що хочете видалити цю групу?</value>
+  </data>
+  <data name="DeleteGroupWarning" xml:space="preserve">
+    <value>Якщо ви вирішите видалити цю групу, інформація про групу, наприклад адреси диспетчеризації та повідомлень, будуть видалені разом з групою і не зможуть бути використані знову.</value>
+  </data>
+  <data name="DeleteGroupActiveUsersWarning" xml:space="preserve">
+    <value>Ця група має активних користувачів, ви повинні перемістити або видалити користувачів, щоб мати можливість видалити групу.</value>
+  </data>
+  <data name="DeleteGroupChildGroupsWarning" xml:space="preserve">
+    <value>Ця група має дочірні групи. Вам потрібно перемістити або видалити дочірню групу перед видаленням групи.</value>
+  </data>
+  <data name="DeleteGroupUnitsWarning" xml:space="preserve">
+    <value>До цієї групи призначені підрозділи. Вам потрібно перемістити підрозділ до іншої Групи Станцій або видалити підрозділ, щоб мати можливість видалити групу.</value>
+  </data>
+  <data name="DeleteGroupShiftsWarning" xml:space="preserve">
+    <value>До цієї групи призначені групи змін. Вам потрібно видалити ці групи змін, Зміни, призначені до Станції\Групи, щоб мати можливість видалити групу.</value>
+  </data>
+  <data name="DeleteGroupCheckboxHint" xml:space="preserve">
+    <value>Натисніть прапорець нижче, щоб видалити цю групу.</value>
+  </data>
+  <data name="DeleteGroupPermanentWarning" xml:space="preserve">
+    <value>Якщо ви вирішите видалити цю групу, наведена нижче інформація буде видалена назавжди. Цю операцію не можна скасувати.</value>
+  </data>
+  <data name="DeleteGroupDataDeleted" xml:space="preserve">
+    <value>Дані, що видаляються</value>
+  </data>
+  <data name="DeleteGroupDataGroupData" xml:space="preserve">
+    <value>Дані Групи</value>
+  </data>
+  <data name="DeleteGroupDataPersonnelMemberships" xml:space="preserve">
+    <value>Членства в Групі Персоналу</value>
+  </data>
+  <data name="DeleteGroupDataUnitMemberships" xml:space="preserve">
+    <value>Членства в Групі Підрозділів</value>
+  </data>
+  <data name="DeleteGroupDataInventory" xml:space="preserve">
+    <value>Інвентар Групи</value>
+  </data>
+  <data name="DeleteGroupDataShiftData" xml:space="preserve">
+    <value>Дані Змін Групи</value>
+  </data>
+  <data name="ConfirmDeleteLabel" xml:space="preserve">
+    <value>Підтвердити Видалення?</value>
+  </data>
+  <data name="DeleteGroupButton" xml:space="preserve">
+    <value>Видалити Групу</value>
+  </data>
+  <data name="NewGroupPageTitle" xml:space="preserve">
+    <value>Нова Група</value>
+  </data>
+  <data name="NewGroupHeading" xml:space="preserve">
+    <value>Нова Група</value>
+  </data>
+  <data name="GroupType" xml:space="preserve">
+    <value>Тип Групи</value>
+  </data>
+  <data name="OrganizationalGroup" xml:space="preserve">
+    <value>Організаційна Група</value>
+  </data>
+  <data name="StationGroup" xml:space="preserve">
+    <value>Група Станції</value>
+  </data>
+  <data name="ParentGroup" xml:space="preserve">
+    <value>Батьківська Група</value>
+  </data>
+  <data name="StationAddress" xml:space="preserve">
+    <value>Адреса Станції</value>
+  </data>
+  <data name="StationAddressDescription" xml:space="preserve">
+    <value>Групи станцій вимагають фізичного місцезнаходження (оскільки персонал та підрозділи можуть реагувати на них). Будь ласка, введіть Адресу, Координати GPS або адресу what3words.</value>
+  </data>
+  <data name="Street" xml:space="preserve">
+    <value>Вулиця</value>
+  </data>
+  <data name="City" xml:space="preserve">
+    <value>Місто</value>
+  </data>
+  <data name="StateProvince" xml:space="preserve">
+    <value>Область/Провінція</value>
+  </data>
+  <data name="ZipPostalCode" xml:space="preserve">
+    <value>Поштовий Індекс</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>Країна</value>
+  </data>
+  <data name="Or" xml:space="preserve">
+    <value>Або</value>
+  </data>
+  <data name="GpsCoordinates" xml:space="preserve">
+    <value>Координати GPS</value>
+  </data>
+  <data name="LatitudeHint" xml:space="preserve">
+    <value>Широта (Десяткова нотація: наприклад 39.1517)</value>
+  </data>
+  <data name="LongitudeHint" xml:space="preserve">
+    <value>Довгота (Десяткова нотація: наприклад -119.4571)</value>
+  </data>
+  <data name="What3WordsAddress" xml:space="preserve">
+    <value>Адреса what3words</value>
+  </data>
+  <data name="What3WordsHint" xml:space="preserve">
+    <value>Адреса w3w (наприклад humble.echo.sticky)</value>
+  </data>
+  <data name="PrintNodePrinter" xml:space="preserve">
+    <value>Принтер PrintNode</value>
+  </data>
+  <data name="PrintNodeDescription" xml:space="preserve">
+    <value>PrintNode — це сервіс, який дозволяє нам надсилати завдання друку на локальний комп'ютер або сервер у вашій мережі до конкретного принтера. Ви повинні мати активний обліковий запис PrintNode та його програмне забезпечення, налаштоване з активним принтером.</value>
+  </data>
+  <data name="SelectPrinter" xml:space="preserve">
+    <value>Вибрати Принтер</value>
+  </data>
+  <data name="UsersOneGroupNote" xml:space="preserve">
+    <value>Користувачі можуть перебувати лише в одній групі одночасно. Якщо ви не бачите свого користувача в списку, він вже знаходиться в групі.</value>
+  </data>
+  <data name="GroupAdmins" xml:space="preserve">
+    <value>Адміністратори Групи</value>
+  </data>
+  <data name="GroupUsers" xml:space="preserve">
+    <value>Користувачі Групи</value>
+  </data>
+  <data name="SaveGroup" xml:space="preserve">
+    <value>Зберегти Групу</value>
+  </data>
+  <data name="ApiKey" xml:space="preserve">
+    <value>Ключ API:</value>
+  </data>
+  <data name="GetPrinters" xml:space="preserve">
+    <value>Отримати Принтери</value>
+  </data>
+  <data name="Printer" xml:space="preserve">
+    <value>Принтер</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Закрити</value>
+  </data>
+  <data name="EditGroupPageTitle" xml:space="preserve">
+    <value>Редагувати Групу</value>
+  </data>
+  <data name="EditGroupHeading" xml:space="preserve">
+    <value>Редагувати Групу</value>
+  </data>
+  <data name="PrintCallsToPrinter" xml:space="preserve">
+    <value>Друкувати Виклики на Принтері</value>
+  </data>
+  <data name="PrintCallsToPrinterHint" xml:space="preserve">
+    <value>Увімкнення цієї опції друкуватиме виклик на вибраному принтері, коли підрозділ або особа з цієї групи буде прикріплена (задіяна) до виклику</value>
+  </data>
+  <data name="GeofencePageTitle" xml:space="preserve">
+    <value>Геозона Станції</value>
+  </data>
+  <data name="GeofenceHeading" xml:space="preserve">
+    <value>Геозона Станції</value>
+  </data>
+  <data name="GeofenceStationBreadcrumb" xml:space="preserve">
+    <value>Геозона Станції</value>
+  </data>
+  <data name="GeofenceDescription" xml:space="preserve">
+    <value>Нижче ви можете створити геозону для вашої станції. Поля синім курсивом є обов'язковими. Геозони дозволяють створити межу на карті, яка є зоною реагування цієї станції.</value>
+  </data>
+  <data name="DistrictColor" xml:space="preserve">
+    <value>Колір Округу</value>
+  </data>
+  <data name="SaveGeofence" xml:space="preserve">
+    <value>Зберегти Геозону</value>
+  </data>
+  <data name="ClearGeofence" xml:space="preserve">
+    <value>Очистити Геозону</value>
+  </data>
+</root>

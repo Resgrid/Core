@@ -1,7 +1,9 @@
-﻿@using Resgrid.Model.Helpers
+@using Resgrid.Model.Helpers
 @using Resgrid.Web
 @using Resgrid.Web.Helpers
+@using Microsoft.Extensions.Localization
 @model Resgrid.Web.Areas.User.Models.Reports.Personnel.StaffingReportView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Reports.Reports> localizer
 @{
 	Layout = null;
 }
@@ -10,9 +12,9 @@
 
 <html lang="en">
 <head>
-	<title>Resgrid Staffing Report</title>
+	<title>@localizer["StaffingReportTitle"]</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="Resgrid Staffing Report">
+	<meta name="description" content="@localizer["StaffingReportTitle"]">
 	<meta name="author" content="Resgrid">
 
 	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"
@@ -47,7 +49,7 @@
 				<img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
 			</div>
 			<div class="col-md-5" style="text-align: right;">
-				<h3 style="margin-top: 10px;">Resgrid Staffing Report</h3>
+				<h3 style="margin-top: 10px;">@localizer["StaffingReportTitle"]</h3>
 			</div>
 		</div>
 		<div class="row">
@@ -57,7 +59,7 @@
 					<thead>
 						<tr>
 							<th></th>
-							<th>Count</th>
+							<th>@localizer["CountHeader"]</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -88,14 +90,14 @@
 				<table class="table table-bordered">
 					<thead>
 						<tr>
-							<th>Name</th>
-							<th>Group</th>
-							<th>Roles</th>
-							<th>Staffing</th>
-							<th>Staffing Timestamp</th>
-							<th>Next Change</th>
-							<th>Next Staffing</th>
-							<th>Note</th>
+							<th>@localizer["NameHeader"]</th>
+							<th>@localizer["GroupHeader"]</th>
+							<th>@localizer["RolesHeader"]</th>
+							<th>@localizer["StaffingHeader"]</th>
+							<th>@localizer["StaffingTimestampHeader"]</th>
+							<th>@localizer["NextChangeHeader"]</th>
+							<th>@localizer["NextStaffingHeader"]</th>
+							<th>@localizer["NoteHeader"]</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -110,23 +112,23 @@
 									{
 										if (row.Staffing == 0)
 										{
-											<span class='label label-default'>Available</span>
+											<span class='label label-default'>@localizer["StaffingAvailable"]</span>
 										}
 										else if (row.Staffing == 1)
 										{
-											<span class='label label-warning'>Delayed</span>
+											<span class='label label-warning'>@localizer["StaffingDelayed"]</span>
 										}
 										else if (row.Staffing == 2)
 										{
-											<span class='label label-danger'>Unavailable</span>
+											<span class='label label-danger'>@localizer["StaffingUnavailable"]</span>
 										}
 										else if (row.Staffing == 3)
 										{
-											<span class='label label-info'>Committed</span>
+											<span class='label label-info'>@localizer["StaffingCommitted"]</span>
 										}
 										else if (row.Staffing == 4)
 										{
-											<span class='label label-primary'>On Shift</span>
+											<span class='label label-primary'>@localizer["StaffingOnShift"]</span>
 										}
 									}
 									else
@@ -139,7 +141,7 @@
 										}
 										else
 										{
-											<span class='label label-default'>Unknown</span>
+											<span class='label label-default'>@localizer["StaffingUnknown"]</span>
 										}
 									}
 								</td>
@@ -150,23 +152,23 @@
 									{
 										if (row.NextStaffing == 0)
 										{
-											<span class='label label-default'>Available</span>
+											<span class='label label-default'>@localizer["StaffingAvailable"]</span>
 										}
 										else if (row.NextStaffing == 1)
 										{
-											<span class='label label-warning'>Delayed</span>
+											<span class='label label-warning'>@localizer["StaffingDelayed"]</span>
 										}
 										else if (row.NextStaffing == 2)
 										{
-											<span class='label label-danger'>Unavailable</span>
+											<span class='label label-danger'>@localizer["StaffingUnavailable"]</span>
 										}
 										else if (row.NextStaffing == 3)
 										{
-											<span class='label label-info'>Committed</span>
+											<span class='label label-info'>@localizer["StaffingCommitted"]</span>
 										}
 										else if (row.NextStaffing == 4)
 										{
-											<span class='label label-primary'>On Shift</span>
+											<span class='label label-primary'>@localizer["StaffingOnShift"]</span>
 										}
 									}
 									else
@@ -179,7 +181,7 @@
 										}
 										else
 										{
-											<span class='label label-default'>Unknown</span>
+											<span class='label label-default'>@localizer["StaffingUnknown"]</span>
 										}
 									}
 								</td>
@@ -201,7 +203,7 @@
 
 	<!-- Latest compiled and minified JavaScript -->
 	<script src="~/lib/bootstrap/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
-	
+
 	<script src="~/clib/flot/jquery.flot.js"></script>
 	<script src="~/clib/flot/jquery.flot.tooltip.min.js"></script>
 	<script src="~/clib/flot/jquery.flot.resize.js"></script>

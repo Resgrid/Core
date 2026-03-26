@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="ReportingTitle" xml:space="preserve"><value>Звіти</value></data>
+  <data name="ViewReport" xml:space="preserve"><value>Переглянути Звіт</value></data>
+  <data name="Reports" xml:space="preserve"><value>Звіти</value></data>
+  <data name="PersonnelStatusHistoryReportName" xml:space="preserve"><value>Звіт про Історію Статусу Персоналу</value></data>
+  <data name="PersonnelStatusHistoryReportDescription" xml:space="preserve"><value>Цей звіт покаже всю історію статусу персоналу (журнали дій) наданого вибраним персоналом</value></data>
+  <data name="PersonnelReportName" xml:space="preserve"><value>Звіт про Персонал</value></data>
+  <data name="PersonnelReportDescription" xml:space="preserve"><value>Переглянути весь персонал у вашому підрозділі, їхні ролі та основну контактну інформацію.</value></data>
+  <data name="StaffingReportName" xml:space="preserve"><value>Звіт про Укомплектованість</value></data>
+  <data name="StaffingReportDescription" xml:space="preserve"><value>Переглянути весь персонал та їх поточний статус, рівень укомплектованості та наступну заплановану зміну рівня укомплектованості.</value></data>
+  <data name="CertificationsReportName" xml:space="preserve"><value>Звіт про Сертифікати</value></data>
+  <data name="CertificationsReportDescription" xml:space="preserve"><value>Переглянути всі сертифікати кожної особи у підрозділі.</value></data>
+  <data name="ShiftReadinessReportName" xml:space="preserve"><value>Звіт про Готовність до Зміни</value></data>
+  <data name="ShiftReadinessReportDescription" xml:space="preserve"><value>Цей звіт покаже готовність до зміни для наступних днів зміни для кожної зміни.</value></data>
+  <data name="DepartmentActivityReportName" xml:space="preserve"><value>Річний Звіт про Активність Підрозділу</value></data>
+  <data name="DepartmentActivityReportDescription" xml:space="preserve"><value>Цей звіт покаже активність викликів, журналів, навчання та персоналу підрозділу в річних цифрах.</value></data>
+  <data name="PersonnelHoursReportName" xml:space="preserve"><value>Звіт про Години Журналу Персоналу</value></data>
+  <data name="PersonnelHoursReportDescription" xml:space="preserve"><value>Цей звіт покаже кількість годин, які персонал підрозділу працював, навчався та реагував на виклики згідно записів журналу.</value></data>
+  <data name="CallSummaryReportName" xml:space="preserve"><value>Зведений Звіт про Виклики</value></data>
+  <data name="CallSummaryReportDescription" xml:space="preserve"><value>Цей звіт покаже деталі всіх викликів у вибраному діапазоні дат</value></data>
+  <data name="PersonnelStaffingHistoryReportName" xml:space="preserve"><value>Звіт про Історію Укомплектованості Персоналу</value></data>
+  <data name="PersonnelStaffingHistoryReportDescription" xml:space="preserve"><value>Цей звіт покаже всю історію укомплектованості наданого вибраним персоналом</value></data>
+  <data name="UnitStateHistoryReportName" xml:space="preserve"><value>Звіт про Історію Стану Підрозділу</value></data>
+  <data name="UnitStateHistoryReportDescription" xml:space="preserve"><value>Показує стани підрозділу для одного підрозділу, всіх або підрозділів у групі за визначений користувачем часовий діапазон</value></data>
+  <data name="ActiveCallsResourcesReportName" xml:space="preserve"><value>Звіт про Активні Виклики та Ресурси</value></data>
+  <data name="ActiveCallsResourcesReportDescription" xml:space="preserve"><value>Звіт деталізує активні виклики на момент запуску звіту та підрозділи і персонал, прикріплені до цих викликів</value></data>
+  <data name="ReportStartTime" xml:space="preserve"><value>Час Початку Звіту</value></data>
+  <data name="ReportEndTime" xml:space="preserve"><value>Час Закінчення Звіту</value></data>
+  <data name="RunReport" xml:space="preserve"><value>Запустити Звіт</value></data>
+  <data name="SelectType" xml:space="preserve"><value>Тип</value></data>
+  <data name="GroupOrUsers" xml:space="preserve"><value>Група або Користувач(і)</value></data>
+  <data name="Group" xml:space="preserve"><value>Група</value></data>
+  <data name="GroupLabel" xml:space="preserve"><value>Група</value></data>
+  <data name="UsersLabel" xml:space="preserve"><value>Користувач(і)</value></data>
+  <data name="UnitsLabel" xml:space="preserve"><value>Підрозділ(и)</value></data>
+  <data name="GroupOrUnits" xml:space="preserve"><value>Група або Підрозділ(и)</value></data>
+  <data name="IdHeader" xml:space="preserve"><value>ID</value></data>
+  <data name="NameHeader" xml:space="preserve"><value>Ім'я</value></data>
+  <data name="GroupHeader" xml:space="preserve"><value>Група</value></data>
+  <data name="TotalHeader" xml:space="preserve"><value>Всього</value></data>
+  <data name="CountHeader" xml:space="preserve"><value>Кількість</value></data>
+  <data name="TypeHeader" xml:space="preserve"><value>Тип</value></data>
+  <data name="StateHeader" xml:space="preserve"><value>Стан</value></data>
+  <data name="StatusHeader" xml:space="preserve"><value>Статус</value></data>
+  <data name="TimestampHeader" xml:space="preserve"><value>Мітка Часу</value></data>
+  <data name="NoteHeader" xml:space="preserve"><value>Примітка</value></data>
+  <data name="HoursHeader" xml:space="preserve"><value>Години</value></data>
+  <data name="NumberHeader" xml:space="preserve"><value>Номер</value></data>
+  <data name="StartHeader" xml:space="preserve"><value>Початок</value></data>
+  <data name="EndHeader" xml:space="preserve"><value>Кінець</value></data>
+  <data name="DateHeader" xml:space="preserve"><value>Дата</value></data>
+  <data name="RolesHeader" xml:space="preserve"><value>Ролі</value></data>
+  <data name="LocationHeader" xml:space="preserve"><value>Місцезнаходження</value></data>
+  <data name="StatusChanges" xml:space="preserve"><value>Зміни Статусу</value></data>
+  <data name="TotalStaffingChanges" xml:space="preserve"><value>Всього</value></data>
+  <data name="CallTypes" xml:space="preserve"><value>Типи Виклику</value></data>
+  <data name="CallStates" xml:space="preserve"><value>Стани Виклику</value></data>
+  <data name="Calls" xml:space="preserve"><value>Виклики</value></data>
+  <data name="LoggedOnHeader" xml:space="preserve"><value>Зареєстровано</value></data>
+  <data name="ClosedOnHeader" xml:space="preserve"><value>Закрито</value></data>
+  <data name="CallLengthHeader" xml:space="preserve"><value>Тривалість Виклику</value></data>
+  <data name="OnSceneTimeHeader" xml:space="preserve"><value>Час на Місці</value></data>
+  <data name="UnitsHeader" xml:space="preserve"><value>Підрозділи</value></data>
+  <data name="PersonnelHeader" xml:space="preserve"><value>Персонал</value></data>
+  <data name="OpenStatus" xml:space="preserve"><value>Відкрито</value></data>
+  <data name="PercentHeader" xml:space="preserve"><value>%</value></data>
+  <data name="CertificationsReportTitle" xml:space="preserve"><value>Звіт про Сертифікати Resgrid</value></data>
+  <data name="CertNumberHeader" xml:space="preserve"><value>Номер</value></data>
+  <data name="IssuedByHeader" xml:space="preserve"><value>Видано</value></data>
+  <data name="AreaHeader" xml:space="preserve"><value>Область</value></data>
+  <data name="ExpiresHeader" xml:space="preserve"><value>Дійсний до</value></data>
+  <data name="YtdDepartmentActivityReportTitle" xml:space="preserve"><value>Річний Звіт про Активність Підрозділу</value></data>
+  <data name="PersonnelResponseDetail" xml:space="preserve"><value>Деталі Відповіді Персоналу</value></data>
+  <data name="Trainings" xml:space="preserve"><value>Навчання</value></data>
+  <data name="PersonnelTrainingDetail" xml:space="preserve"><value>Деталі Навчання Персоналу</value></data>
+  <data name="DispatchedHeader" xml:space="preserve"><value>Відправлено</value></data>
+  <data name="AttendedHeader" xml:space="preserve"><value>Відвідали</value></data>
+  <data name="January" xml:space="preserve"><value>Січень</value></data>
+  <data name="February" xml:space="preserve"><value>Лютий</value></data>
+  <data name="March" xml:space="preserve"><value>Березень</value></data>
+  <data name="April" xml:space="preserve"><value>Квітень</value></data>
+  <data name="May" xml:space="preserve"><value>Травень</value></data>
+  <data name="June" xml:space="preserve"><value>Червень</value></data>
+  <data name="July" xml:space="preserve"><value>Липень</value></data>
+  <data name="August" xml:space="preserve"><value>Серпень</value></data>
+  <data name="September" xml:space="preserve"><value>Вересень</value></data>
+  <data name="October" xml:space="preserve"><value>Жовтень</value></data>
+  <data name="November" xml:space="preserve"><value>Листопад</value></data>
+  <data name="December" xml:space="preserve"><value>Грудень</value></data>
+  <data name="PersonnelEventsReportTitle" xml:space="preserve"><value>Звіт про Події Персоналу Resgrid</value></data>
+  <data name="DestinationCallHeader" xml:space="preserve"><value>Призначення\Виклик</value></data>
+  <data name="PersonnelHoursReportTitle" xml:space="preserve"><value>Звіт про Години Персоналу</value></data>
+  <data name="PersonnelHoursDetailReportTitle" xml:space="preserve"><value>Детальний Звіт про Години Персоналу</value></data>
+  <data name="CallHours" xml:space="preserve"><value>Години Виклику</value></data>
+  <data name="WorkHours" xml:space="preserve"><value>Робочі Години</value></data>
+  <data name="TrainingHours" xml:space="preserve"><value>Години Навчання</value></data>
+  <data name="WorkLogs" xml:space="preserve"><value>Журнали Роботи</value></data>
+  <data name="PersonnelReportTitle" xml:space="preserve"><value>Звіт про Персонал Resgrid</value></data>
+  <data name="UsernameHeader" xml:space="preserve"><value>Ім'я Користувача</value></data>
+  <data name="EmailHeader" xml:space="preserve"><value>Електронна Пошта</value></data>
+  <data name="MobileNumberHeader" xml:space="preserve"><value>Номер Мобільного</value></data>
+  <data name="MailingAddressHeader" xml:space="preserve"><value>Поштова Адреса</value></data>
+  <data name="PersonnelStaffingHistoryReportTitle" xml:space="preserve"><value>Звіт про Історію Укомплектованості Персоналу</value></data>
+  <data name="StaffingChanges" xml:space="preserve"><value>Зміни Укомплектованості</value></data>
+  <data name="StaffingHeader" xml:space="preserve"><value>Укомплектованість</value></data>
+  <data name="ScheduledHeader" xml:space="preserve"><value>Заплановано</value></data>
+  <data name="StaffingReportTitle" xml:space="preserve"><value>Звіт про Укомплектованість Resgrid</value></data>
+  <data name="StaffingTimestampHeader" xml:space="preserve"><value>Мітка Часу Укомплектованості</value></data>
+  <data name="NextChangeHeader" xml:space="preserve"><value>Наступна Зміна</value></data>
+  <data name="NextStaffingHeader" xml:space="preserve"><value>Наступна Укомплектованість</value></data>
+  <data name="StaffingAvailable" xml:space="preserve"><value>Доступний</value></data>
+  <data name="StaffingDelayed" xml:space="preserve"><value>Затримується</value></data>
+  <data name="StaffingUnavailable" xml:space="preserve"><value>Недоступний</value></data>
+  <data name="StaffingCommitted" xml:space="preserve"><value>Зайнятий</value></data>
+  <data name="StaffingOnShift" xml:space="preserve"><value>На Зміні</value></data>
+  <data name="StaffingUnknown" xml:space="preserve"><value>Невідомо</value></data>
+  <data name="UnitEventsReportTitle" xml:space="preserve"><value>Звіт про Події Підрозділу Resgrid</value></data>
+  <data name="UnitStateHistoryReportTitle" xml:space="preserve"><value>Звіт про Історію Стану Підрозділу</value></data>
+  <data name="StateChanges" xml:space="preserve"><value>Зміни Стану</value></data>
+  <data name="TotalStatesHeader" xml:space="preserve"><value>Всього Станів</value></data>
+  <data name="UpcomingShiftReadinessReportTitle" xml:space="preserve"><value>Звіт про Готовність до Майбутньої Зміни</value></data>
+  <data name="ShiftReadyLabel" xml:space="preserve"><value>Готовий</value></data>
+  <data name="ShiftNotReadyLabel" xml:space="preserve"><value>Не Готовий</value></data>
+  <data name="RequiredHeader" xml:space="preserve"><value>Обов'язково</value></data>
+  <data name="OptionalHeader" xml:space="preserve"><value>Необов'язково</value></data>
+  <data name="DeltaHeader" xml:space="preserve"><value>Дельта</value></data>
+  <data name="RoleHeader" xml:space="preserve"><value>Роль</value></data>
+  <data name="SignupNameHeader" xml:space="preserve"><value>Ім'я при Реєстрації</value></data>
+  <data name="ActiveCallsResourcesReportTitle" xml:space="preserve"><value>Звіт про Активні Виклики та Ресурси</value></data>
+  <data name="CallNameHeader" xml:space="preserve"><value>Назва Виклику</value></data>
+  <data name="UnitsOnCallHeader" xml:space="preserve"><value>Підрозділи на Виклику</value></data>
+  <data name="PersonnelOnCallHeader" xml:space="preserve"><value>Персонал на Виклику</value></data>
+  <data name="UnitNameHeader" xml:space="preserve"><value>Назва Підрозділу</value></data>
+  <data name="PersonNameHeader" xml:space="preserve"><value>Ім'я Особи</value></data>
+  <data name="GroupNameHeader" xml:space="preserve"><value>Назва Групи</value></data>
+  <data name="DispatchedOnHeader" xml:space="preserve"><value>Відправлено</value></data>
+  <data name="FourteenDayMarkHeader" xml:space="preserve"><value>Позначка 14 Днів</value></data>
+  <data name="TwentyOneDayMarkHeader" xml:space="preserve"><value>Позначка 21 День</value></data>
+  <data name="LogReportTitle" xml:space="preserve"><value>Журнал Resgrid</value></data>
+  <data name="DistrictLabel" xml:space="preserve"><value>Район</value></data>
+  <data name="DepartmentLabel" xml:space="preserve"><value>Підрозділ</value></data>
+  <data name="TypeLabel" xml:space="preserve"><value>Тип</value></data>
+  <data name="LoggedOnLabel" xml:space="preserve"><value>Зареєстровано</value></data>
+  <data name="LoggedByLabel" xml:space="preserve"><value>Зареєстровано</value></data>
+  <data name="StartedOnLabel" xml:space="preserve"><value>Розпочато</value></data>
+  <data name="EndedOnLabel" xml:space="preserve"><value>Завершено</value></data>
+  <data name="PersonnelLabel" xml:space="preserve"><value>Персонал</value></data>
+  <data name="NarrativeLabel" xml:space="preserve"><value>Опис</value></data>
+  <data name="NotSupplied" xml:space="preserve"><value>Не Вказано</value></data>
+  <data name="WorkLogType" xml:space="preserve"><value>Робота</value></data>
+  <data name="IdLabel" xml:space="preserve"><value>Id</value></data>
+  <data name="StationHeader" xml:space="preserve"><value>Станція</value></data>
+  <data name="UnitsLabel" xml:space="preserve"><value>Підрозділи</value></data>
+  <data name="ConditionLabel" xml:space="preserve"><value>Стан</value></data>
+  <data name="CallNameLabel" xml:space="preserve"><value>Назва Виклику</value></data>
+  <data name="CallTypeLabel" xml:space="preserve"><value>Тип Виклику</value></data>
+  <data name="NoTypeLabel" xml:space="preserve"><value>Без Типу</value></data>
+  <data name="PriorityLabel" xml:space="preserve"><value>Пріоритет</value></data>
+  <data name="CallAddressLabel" xml:space="preserve"><value>Адреса Виклику</value></data>
+  <data name="DispatchedLabel" xml:space="preserve"><value>Відправлено</value></data>
+  <data name="EnrouteLabel" xml:space="preserve"><value>В Дорозі</value></data>
+  <data name="OnSceneLabel" xml:space="preserve"><value>На Місці</value></data>
+  <data name="ReleasedLabel" xml:space="preserve"><value>Звільнено</value></data>
+  <data name="InQuartersLabel" xml:space="preserve"><value>У Казармах</value></data>
+  <data name="AuditHeader" xml:space="preserve"><value>Аудит</value></data>
+  <data name="TrainingCourseLabel" xml:space="preserve"><value>Навчання\Курс</value></data>
+  <data name="CodeLabel" xml:space="preserve"><value>Код</value></data>
+  <data name="InstructorsLabel" xml:space="preserve"><value>Інструктори</value></data>
+  <data name="AttendanceLabel" xml:space="preserve"><value>Відвідуваність</value></data>
+  <data name="TotalTimeLabel" xml:space="preserve"><value>Загальний Час</value></data>
+  <data name="MeetingTypeLabel" xml:space="preserve"><value>Тип Зборів</value></data>
+  <data name="LogTypeLabel" xml:space="preserve"><value>Тип Журналу</value></data>
+  <data name="MeetingLogType" xml:space="preserve"><value>Збори</value></data>
+  <data name="LocationLabel" xml:space="preserve"><value>Місцезнаходження</value></data>
+  <data name="PresidingLabel" xml:space="preserve"><value>Головує</value></data>
+  <data name="OtherAttendeesLabel" xml:space="preserve"><value>Інші Учасники</value></data>
+  <data name="MeetingMinutesLabel" xml:space="preserve"><value>Протокол Зборів</value></data>
+  <data name="CaseNumberLabel" xml:space="preserve"><value>Справа #</value></data>
+  <data name="OicLabel" xml:space="preserve"><value>OIC</value></data>
+  <data name="DestinationLabel" xml:space="preserve"><value>Призначення</value></data>
+  <data name="PronouncedByLabel" xml:space="preserve"><value>Констатовано</value></data>
+  <data name="BodyLocationLabel" xml:space="preserve"><value>Місце Тіла</value></data>
+  <data name="CallIdLabel" xml:space="preserve"><value>Id Виклику</value></data>
+  <data name="CallNumberLabel" xml:space="preserve"><value>Номер Виклику</value></data>
+  <data name="IncidentIdLabel" xml:space="preserve"><value>Id Інциденту</value></data>
+  <data name="ReferenceIdLabel" xml:space="preserve"><value>Id Посилання</value></data>
+  <data name="NoneLabel" xml:space="preserve"><value>Немає</value></data>
+  <data name="CallbackLogType" xml:space="preserve"><value>Зворотній Дзвінок</value></data>
+</root>

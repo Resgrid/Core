@@ -18,13 +18,13 @@
             @if (Model.Plan.RouteStatus == (int)Resgrid.Model.RouteStatus.Active)
             {
                 <a class="btn btn-success" asp-controller="Routes" asp-action="StartRoute" asp-route-id="@Model.Plan.RoutePlanId" asp-route-area="User">
-                    <i class="fa fa-play"></i> Start Route
+                    <i class="fa fa-play"></i> @localizer["StartRoute"]
                 </a>
             }
             @if (Model.Plan.RouteStatus != (int)Resgrid.Model.RouteStatus.Archived)
             {
                 <a class="btn btn-info" asp-controller="Routes" asp-action="Directions" asp-route-id="@Model.Plan.RoutePlanId" asp-route-area="User">
-                    <i class="fa fa-map-signs"></i> Directions
+                    <i class="fa fa-map-signs"></i> @localizer["Directions"]
                 </a>
                 <a class="btn btn-warning" asp-controller="Routes" asp-action="Edit" asp-route-id="@Model.Plan.RoutePlanId" asp-route-area="User">
                     <i class="fa fa-pencil"></i> @localizer["Edit"]

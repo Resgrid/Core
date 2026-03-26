@@ -1,6 +1,7 @@
-﻿@model Resgrid.WebCore.Areas.User.Models.Links.NewLinksView
+@model Resgrid.WebCore.Areas.User.Models.Links.NewLinksView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Links.Links> localizer
 @{
-  ViewBag.Title = "Resgrid | Enable Department Link";
+  ViewBag.Title = "Resgrid | " + localizer["EnableDepartmentLinkTitle"];
 }
 
 @section Styles
@@ -14,16 +15,16 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
-    <h2>Enable Department Link</h2>
+    <h2>@localizer["EnableDepartmentLinkTitle"]</h2>
     <ol class="breadcrumb">
       <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a>
       </li>
       <li>
-        <a asp-controller="Links" asp-action="Index" asp-route-area="User">Department Links</a>
+        <a asp-controller="Links" asp-action="Index" asp-route-area="User">@localizer["DepartmentLinks"]</a>
       </li>
       <li class="active">
-        <strong>Enable Department Link</strong>
+        <strong>@localizer["EnableDepartmentLinkTitle"]</strong>
       </li>
     </ol>
   </div>
@@ -39,7 +40,7 @@
             <div class="row">
               <div class="col-md-8 col-md-offset-1">
                 <div class="alert alert-warning">
-                  Department Links are sharing data in one direction. Below is where you can enable a link and set it's link color. The link color will be used to color calls, personnel and units that will identify them as originating from this link.
+                  @localizer["EnableLinkDescription"]
                 </div>
                 @if (!String.IsNullOrEmpty(Model.Message))
 				{
@@ -54,14 +55,14 @@
             </div>
 
             <div class="form-group">
-              <label class="col-sm-2 control-label">Link Color</label>
+              <label class="col-sm-2 control-label">@localizer["LinkColor"]</label>
               <div class="col-sm-10"><input type="text" class="form-control" asp-for="Link.DepartmentColor" /></div>
             </div>
 
             <div class="form-group">
               <div class="col-sm-4 col-sm-offset-2">
-                <a class="btn btn-white" asp-controller="Links" asp-action="Index" asp-route-area="User">Cancel</a>
-                <button class="btn btn-primary" type="submit">Save and Enable Link</button>
+                <a class="btn btn-white" asp-controller="Links" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                <button class="btn btn-primary" type="submit">@localizer["SaveAndEnableLink"]</button>
               </div>
             </div>
           </form>

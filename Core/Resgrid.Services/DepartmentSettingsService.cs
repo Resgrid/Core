@@ -15,6 +15,7 @@ namespace Resgrid.Services
 	{
 		private static string DisableAutoAvailableCacheKey = "DSetAutoAvailable_{0}";
 		private static string StripeCustomerCacheKey = "DSetStripeCus_{0}";
+		private static string PaddleCustomerCacheKey = "DSetPaddleCus_{0}";
 		private static string BigBoardCenterGps = "DSetBBCenterGps_{0}";
 		private static string StaffingSupressInfo = "DSetStaffingSupress_{0}";
 		private static string PersonnelOnUnitSetUnitStatusCacheKey = "DSetPersonnelOnUnitSetUnitStatus_{0}";
@@ -750,6 +751,41 @@ namespace Resgrid.Services
 				return scope;
 
 			return 0; // Disabled by default
+		}
+
+		public async Task<string> GetPaddleCustomerIdForDepartmentAsync(int departmentId)
+		{
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.PaddleCustomerId);
+
+			if (settingValue != null)
+				return settingValue.Setting;
+
+			return String.Empty;
+		}
+
+		public async Task<int?> GetDepartmentIdForPaddleCustomerIdAsync(string paddleCustomerId, bool bypassCache = false)
+		{
+			DepartmentSetting key;
+
+			async Task<DepartmentSetting> getSetting()
+			{
+				return await _departmentSettingsRepository.GetDepartmentSettingBySettingTypeAsync(paddleCustomerId, DepartmentSettingTypes.PaddleCustomerId);
+			}
+
+			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
+			{
+				key = await _cacheProvider.RetrieveAsync<DepartmentSetting>(string.Format(PaddleCustomerCacheKey, paddleCustomerId),
+					getSetting, TwoYearCacheLength);
+			}
+			else
+			{
+				key = await getSetting();
+			}
+
+			if (key != null)
+				return key.DepartmentId;
+
+			return null;
 		}
 	}
 }

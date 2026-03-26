@@ -1,8 +1,10 @@
-﻿@using Resgrid.Model
+@using Resgrid.Model
 @using Resgrid.Model.Helpers
 @using Resgrid.Web
 @using Resgrid.Web.Helpers
+@using Microsoft.Extensions.Localization
 @model Resgrid.Web.Areas.User.Models.Reports.Logs.LogReportView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Reports.Reports> localizer
 @{
     Layout = null;
 }
@@ -11,9 +13,9 @@
 
 <html lang="en">
 <head>
-    <title>Resgrid Log Report</title>
+    <title>@localizer["LogReportTitle"]</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Resgrid Log Report">
+    <meta name="description" content="@localizer["LogReportTitle"]">
     <meta name="author" content="Resgrid">
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"
@@ -54,7 +56,7 @@
                  style="margin-top: 10px; margin-bottom: 5px;">
         </div>
         <div class="col-xs-5" style="text-align: right;">
-            <h3 style="margin-top: 10px;">Resgrid Log</h3>
+            <h3 style="margin-top: 10px;">@localizer["LogReportTitle"]</h3>
         </div>
     </div>
     <div class="row">
@@ -69,41 +71,41 @@
                     @if (Model.Log.StationGroup != null)
                     {
                         <td>
-                            <strong><small>District</small></strong>
+                            <strong><small>@localizer["DistrictLabel"]</small></strong>
                             <span style="display: block;">@Model.Log.StationGroup.Name</span>
                         </td>
                     }
                     else
                     {
                         <td>
-                            <strong><small>Department</small></strong>
+                            <strong><small>@localizer["DepartmentLabel"]</small></strong>
                             <span style="display: block;">@Model.Log.Department.Name</span>
                         </td>
                     }
                     @if (Model.Log.LogType != null)
                     {
                         <td>
-                            <strong><small>Type</small></strong>
+                            <strong><small>@localizer["TypeLabel"]</small></strong>
                             <span style="display: block;">@(((LogTypes)Model.Log.LogType.Value).ToString())</span>
                         </td>
                     }
                     else
                     {
                         <td>
-                            <strong><small>Type</small></strong>
-                            <span style="display: block;">Work</span>
+                            <strong><small>@localizer["TypeLabel"]</small></strong>
+                            <span style="display: block;">@localizer["WorkLogType"]</span>
                         </td>
                     }
                 </tr>
                 <tr>
                     <td>
-                        <strong><small>Logged On</small></strong>
+                        <strong><small>@localizer["LoggedOnLabel"]</small></strong>
                         <span
                             style="display: block;">@Model.Log.LoggedOn.TimeConverterToString(Model.Log.Department)</span>
                     </td>
 
                     <td>
-                        <strong><small>Logged By</small></strong>
+                        <strong><small>@localizer["LoggedByLabel"]</small></strong>
                         <span
                             style="display: block;">@(await UserHelper.GetFullNameForUser(Model.Log.LoggedByUserId))</span>
                     </td>
@@ -112,7 +114,7 @@
                     @if (Model.Log.StartedOn.HasValue)
                     {
                         <td>
-                            <strong><small>Started On</small></strong>
+                            <strong><small>@localizer["StartedOnLabel"]</small></strong>
                             <span
                                 style="display: block;">@Model.Log.StartedOn.Value.FormatForDepartment(Model.Log.Department, true)</span>
                         </td>
@@ -120,14 +122,14 @@
                     else
                     {
                         <td>
-                            <strong><small>Started On</small></strong>
-                            <span style="display: block;">Not Supplied</span>
+                            <strong><small>@localizer["StartedOnLabel"]</small></strong>
+                            <span style="display: block;">@localizer["NotSupplied"]</span>
                         </td>
                     }
                     @if (Model.Log.EndedOn.HasValue)
                     {
                         <td>
-                            <strong><small>Ended On</small></strong>
+                            <strong><small>@localizer["EndedOnLabel"]</small></strong>
                             <span
                                 style="display: block;">@Model.Log.EndedOn.Value.FormatForDepartment(Model.Log.Department, true)</span>
                         </td>
@@ -135,8 +137,8 @@
                     else
                     {
                         <td>
-                            <strong><small>Ended On</small></strong>
-                            <span style="display: block;">Not Supplied</span>
+                            <strong><small>@localizer["EndedOnLabel"]</small></strong>
+                            <span style="display: block;">@localizer["NotSupplied"]</span>
                         </td>
                     }
                 </tr>
@@ -146,13 +148,13 @@
     </div>
     <div class="row">
         <div class="col-xs-10 col-xs-offset-1">
-            <strong><small>Personnel</small></strong>
+            <strong><small>@localizer["PersonnelLabel"]</small></strong>
             <table class="table table-bordered">
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Station</th>
-                    <th>Name</th>
+                    <th>@localizer["IdHeader"]</th>
+                    <th>@localizer["StationHeader"]</th>
+                    <th>@localizer["NameHeader"]</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -185,7 +187,7 @@
     </div>
     <div class="row">
         <div class="col-xs-10 col-xs-offset-1">
-            <strong><small>Narrative</small></strong>
+            <strong><small>@localizer["NarrativeLabel"]</small></strong>
             <div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Log.Narrative)</div>
         </div>
     </div>
@@ -204,7 +206,7 @@
                  style="margin-top: 10px; margin-bottom: 5px;">
         </div>
         <div class="col-xs-5" style="text-align: right;">
-            <h3 style="margin-top: 10px;">Resgrid Log</h3>
+            <h3 style="margin-top: 10px;">@localizer["LogReportTitle"]</h3>
         </div>
     </div>
     <div class="row">
@@ -213,47 +215,47 @@
                 <tbody>
                 <tr>
                     <td>
-                        <strong><small>Id</small></strong>
+                        <strong><small>@localizer["IdLabel"]</small></strong>
                         <span style="display: block;">@Model.Log.ExternalId</span>
                     </td>
                     @if (Model.Log.StationGroup != null)
                     {
                         <td>
-                            <strong><small>District</small></strong>
+                            <strong><small>@localizer["DistrictLabel"]</small></strong>
                             <span style="display: block;">@Model.Log.StationGroup.Name</span>
                         </td>
                     }
                     else
                     {
                         <td>
-                            <strong><small>District</small></strong>
+                            <strong><small>@localizer["DistrictLabel"]</small></strong>
                             <span style="display: block;">@Model.Log.Department.Name</span>
                         </td>
                     }
                     @if (Model.Log.LogType != null)
                     {
                         <td>
-                            <strong><small>Type</small></strong>
+                            <strong><small>@localizer["TypeLabel"]</small></strong>
                             <span style="display: block;">@(((LogTypes)Model.Log.LogType.Value).ToString())</span>
                         </td>
                     }
                     else
                     {
                         <td>
-                            <strong><small>Type</small></strong>
-                            <span style="display: block;">Work</span>
+                            <strong><small>@localizer["TypeLabel"]</small></strong>
+                            <span style="display: block;">@localizer["WorkLogType"]</span>
                         </td>
                     }
                 </tr>
                 <tr>
                     <td>
-                        <strong><small>Logged On</small></strong>
+                        <strong><small>@localizer["LoggedOnLabel"]</small></strong>
                         <span
                             style="display: block;">@Model.Log.LoggedOn.TimeConverterToString(Model.Log.Department)</span>
                     </td>
 
                     <td>
-                        <strong><small>Logged By</small></strong>
+                        <strong><small>@localizer["LoggedByLabel"]</small></strong>
                         <span
                             style="display: block;">@(await UserHelper.GetFullNameForUser(Model.Log.LoggedByUserId))</span>
                     </td>
@@ -262,22 +264,22 @@
                     @if (Model.Log.Call != null)
                     {
                         <td>
-                            <strong><small>Call Name</small></strong>
+                            <strong><small>@localizer["CallNameLabel"]</small></strong>
                             <span style="display: block;">@Model.Log.Call.Name</span>
                         </td>
                         <td>
-                            <strong><small>Call Type</small></strong>
+                            <strong><small>@localizer["CallTypeLabel"]</small></strong>
                             @if (!String.IsNullOrWhiteSpace(Model.Log.Call.Type))
                             {
                                 <span style="display: block;">@Model.Log.Call.Type</span>
                             }
                             else
                             {
-                                <span style="display: block;">No Type</span>
+                                <span style="display: block;">@localizer["NoTypeLabel"]</span>
                             }
                         </td>
                         <td>
-                            <strong><small>Priority</small></strong>
+                            <strong><small>@localizer["PriorityLabel"]</small></strong>
                             <span
                                 style="display: block;">@(await CallPriorityHelper.CallPriorityToString(Model.Log.DepartmentId, Model.Log.Call.Priority))</span>
                         </td>
@@ -285,8 +287,8 @@
                     else
                     {
                         <td colspan="2">
-                            <strong><small>Call Name</small></strong>
-                            <span style="display: block;">Not Supplied</span>
+                            <strong><small>@localizer["CallNameLabel"]</small></strong>
+                            <span style="display: block;">@localizer["NotSupplied"]</span>
                         </td>
                     }
                 </tr>
@@ -294,15 +296,15 @@
                     @if (Model.Log.Call != null)
                     {
                         <td colspan="3">
-                            <strong><small>Call Address</small></strong>
+                            <strong><small>@localizer["CallAddressLabel"]</small></strong>
                             <span style="display: block;">@Model.Log.Call.Address</span>
                         </td>
                     }
                     else
                     {
                         <td colspan="3">
-                            <strong><small>Call Address</small></strong>
-                            <span style="display: block;">Not Supplied</span>
+                            <strong><small>@localizer["CallAddressLabel"]</small></strong>
+                            <span style="display: block;">@localizer["NotSupplied"]</span>
                         </td>
                     }
 
@@ -313,7 +315,7 @@
     </div>
     <div class="row">
         <div class="col-xs-10 col-xs-offset-1">
-            <strong><small>Units</small></strong>
+            <strong><small>@localizer["UnitsLabel"]</small></strong>
             <div>
                 @foreach (var unit in Model.Log.Units)
                 {
@@ -321,7 +323,7 @@
                         <div class="row">
                             <div class="col-xs-2"><strong>@unit.Unit.Name</strong></div>
                             <div class="col-xs-2">
-                                <strong><small>Dispatched</small></strong>
+                                <strong><small>@localizer["DispatchedLabel"]</small></strong>
 
                                 @if (unit.Dispatched.HasValue)
                                 {
@@ -330,11 +332,11 @@
                                 }
                                 else
                                 {
-                                    <span style="display: block;">Not Supplied</span>
+                                    <span style="display: block;">@localizer["NotSupplied"]</span>
                                 }
                             </div>
                             <div class="col-xs-2">
-                                <strong><small>Enroute</small></strong>
+                                <strong><small>@localizer["EnrouteLabel"]</small></strong>
 
                                 @if (unit.Enroute.HasValue)
                                 {
@@ -343,11 +345,11 @@
                                 }
                                 else
                                 {
-                                    <span style="display: block;">Not Supplied</span>
+                                    <span style="display: block;">@localizer["NotSupplied"]</span>
                                 }
                             </div>
                             <div class="col-xs-2">
-                                <strong><small>On Scene</small></strong>
+                                <strong><small>@localizer["OnSceneLabel"]</small></strong>
 
                                 @if (unit.OnScene.HasValue)
                                 {
@@ -356,11 +358,11 @@
                                 }
                                 else
                                 {
-                                    <span style="display: block;">Not Supplied</span>
+                                    <span style="display: block;">@localizer["NotSupplied"]</span>
                                 }
                             </div>
                             <div class="col-xs-2">
-                                <strong><small>Released</small></strong>
+                                <strong><small>@localizer["ReleasedLabel"]</small></strong>
 
                                 @if (unit.Released.HasValue)
                                 {
@@ -369,11 +371,11 @@
                                 }
                                 else
                                 {
-                                    <span style="display: block;">Not Supplied</span>
+                                    <span style="display: block;">@localizer["NotSupplied"]</span>
                                 }
                             </div>
                             <div class="col-xs-2">
-                                <strong><small>In Quarters</small></strong>
+                                <strong><small>@localizer["InQuartersLabel"]</small></strong>
 
                                 @if (unit.InQuarters.HasValue)
                                 {
@@ -382,16 +384,16 @@
                                 }
                                 else
                                 {
-                                    <span style="display: block;">Not Supplied</span>
+                                    <span style="display: block;">@localizer["NotSupplied"]</span>
                                 }
                             </div>
                         </div>
                         <table class="table table-condensed table-bordered">
                             <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Station</th>
-                                <th>Name</th>
+                                <th>@localizer["IdHeader"]</th>
+                                <th>@localizer["StationHeader"]</th>
+                                <th>@localizer["NameHeader"]</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -427,13 +429,13 @@
     </div>
     <div class="row">
         <div class="col-xs-10 col-xs-offset-1">
-            <strong><small>Personnel</small></strong>
+            <strong><small>@localizer["PersonnelLabel"]</small></strong>
             <table class="table table-condensed table-bordered">
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Station</th>
-                    <th>Name</th>
+                    <th>@localizer["IdHeader"]</th>
+                    <th>@localizer["StationHeader"]</th>
+                    <th>@localizer["NameHeader"]</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -466,13 +468,13 @@
     </div>
     <div class="row">
         <div class="col-xs-10 col-xs-offset-1">
-            <strong><small>Condition</small></strong>
+            <strong><small>@localizer["ConditionLabel"]</small></strong>
             <div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Log.InitialReport)</div>
         </div>
     </div>
     <div class="row">
         <div class="col-xs-10 col-xs-offset-1">
-            <strong><small>Narrative</small></strong>
+            <strong><small>@localizer["NarrativeLabel"]</small></strong>
             <div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Log.Narrative)</div>
         </div>
     </div>
@@ -491,7 +493,7 @@
                  style="margin-top: 10px; margin-bottom: 5px;">
         </div>
         <div class="col-xs-5" style="text-align: right;">
-            <h3 style="margin-top: 10px;">Resgrid Log</h3>
+            <h3 style="margin-top: 10px;">@localizer["LogReportTitle"]</h3>
         </div>
     </div>
     <div class="row">
@@ -502,14 +504,14 @@
                     @if (Model.Log.StationGroup != null)
                     {
                         <td>
-                            <strong><small>District</small></strong>
+                            <strong><small>@localizer["DistrictLabel"]</small></strong>
                             <span style="display: block;">@Model.Log.StationGroup.Name</span>
                         </td>
                     }
                     else
                     {
                         <td>
-                            <strong><small>District</small></strong>
+                            <strong><small>@localizer["DistrictLabel"]</small></strong>
                             <span style="display: block;">@Model.Log.Department.Name</span>
                         </td>
                     }
@@ -520,54 +522,54 @@
                     @if (Model.Log.LogType != null)
                     {
                         <td>
-                            <strong><small>Type</small></strong>
+                            <strong><small>@localizer["TypeLabel"]</small></strong>
                             <span style="display: block;">@(((LogTypes)Model.Log.LogType.Value).ToString())</span>
                         </td>
                     }
                     else
                     {
                         <td>
-                            <strong><small>Type</small></strong>
-                            <span style="display: block;">Work</span>
+                            <strong><small>@localizer["TypeLabel"]</small></strong>
+                            <span style="display: block;">@localizer["WorkLogType"]</span>
                         </td>
                     }
                 </tr>
                 <tr>
                     <td>
-                        <strong><small>Logged On</small></strong>
+                        <strong><small>@localizer["LoggedOnLabel"]</small></strong>
                         <span
                             style="display: block;">@Model.Log.LoggedOn.TimeConverterToString(Model.Log.Department)</span>
                     </td>
 
                     <td>
-                        <strong><small>Logged By</small></strong>
+                        <strong><small>@localizer["LoggedByLabel"]</small></strong>
                         <span
                             style="display: block;">@(await UserHelper.GetFullNameForUser(Model.Log.LoggedByUserId))</span>
                     </td>
 
                     <td>
-                        <strong><small>Attendance</small></strong>
+                        <strong><small>@localizer["AttendanceLabel"]</small></strong>
                         <span
                             style="display: block;">@Html.Raw(string.Format("{0}%", Model.Attendance.ToString("F")))</span>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <strong><small>Training\Course</small></strong>
+                        <strong><small>@localizer["TrainingCourseLabel"]</small></strong>
                         <span style="display: block;">@Model.Log.Course</span>
                     </td>
                     <td>
-                        <strong><small>Code</small></strong>
+                        <strong><small>@localizer["CodeLabel"]</small></strong>
                         <span style="display: block;">@Model.Log.CourseCode</span>
                     </td>
                     <td>
-                        <strong><small>Instructors</small></strong>
+                        <strong><small>@localizer["InstructorsLabel"]</small></strong>
                         <span style="display: block;">@Model.Log.Instructors</span>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <strong><small>Start</small></strong>
+                        <strong><small>@localizer["StartHeader"]</small></strong>
                         @if (Model.Log.StartedOn.HasValue)
                         {
                             <span
@@ -579,7 +581,7 @@
                         }
                     </td>
                     <td>
-                        <strong><small>End</small></strong>
+                        <strong><small>@localizer["EndHeader"]</small></strong>
                         @if (Model.Log.EndedOn.HasValue)
                         {
                             <span
@@ -598,7 +600,7 @@
                                 timeDiff = Model.Log.EndedOn.Value.Subtract(Model.Log.StartedOn.Value);
                             }
                         }
-                        <strong><small>Total Time</small></strong>
+                        <strong><small>@localizer["TotalTimeLabel"]</small></strong>
                         <span style="display: block;">@timeDiff.ToString("g")</span>
                     </td>
                 </tr>
@@ -608,14 +610,14 @@
     </div>
     <div class="row">
         <div class="col-xs-10 col-xs-offset-1">
-            <strong><small>Personnel</small></strong>
+            <strong><small>@localizer["PersonnelLabel"]</small></strong>
             <table class="table table-condensed table-bordered">
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Station</th>
-                    <th>Audit</th>
+                    <th>@localizer["IdHeader"]</th>
+                    <th>@localizer["NameHeader"]</th>
+                    <th>@localizer["StationHeader"]</th>
+                    <th>@localizer["AuditHeader"]</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -649,7 +651,7 @@
     </div>
     <div class="row">
         <div class="col-xs-10 col-xs-offset-1">
-            <strong><small>Units</small></strong>
+            <strong><small>@localizer["UnitsLabel"]</small></strong>
             <div>
                 @foreach (var unit in Model.Log.Units)
                 {
@@ -660,10 +662,10 @@
                         <table class="table table-condensed table-bordered">
                             <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Name</th>
-                                <th>Station</th>
-                                <th>Audit</th>
+                                <th>@localizer["IdHeader"]</th>
+                                <th>@localizer["NameHeader"]</th>
+                                <th>@localizer["StationHeader"]</th>
+                                <th>@localizer["AuditHeader"]</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -699,7 +701,7 @@
     </div>
     <div class="row">
         <div class="col-xs-10 col-xs-offset-1">
-            <strong><small>Narrative</small></strong>
+            <strong><small>@localizer["NarrativeLabel"]</small></strong>
             <div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Log.Narrative)</div>
         </div>
     </div>
@@ -718,7 +720,7 @@
                  style="margin-top: 10px; margin-bottom: 5px;">
         </div>
         <div class="col-xs-5" style="text-align: right;">
-            <h3 style="margin-top: 10px;">Resgrid Log</h3>
+            <h3 style="margin-top: 10px;">@localizer["LogReportTitle"]</h3>
         </div>
     </div>
     <div class="row">
@@ -727,47 +729,47 @@
                 <tbody>
                 <tr>
                     <td>
-                        <strong><small>Meeting Type</small></strong>
+                        <strong><small>@localizer["MeetingTypeLabel"]</small></strong>
                         <span style="display: block;">@Model.Log.Type</span>
                     </td>
                     @if (Model.Log.StationGroup != null)
                     {
                         <td>
-                            <strong><small>District</small></strong>
+                            <strong><small>@localizer["DistrictLabel"]</small></strong>
                             <span style="display: block;">@Model.Log.StationGroup.Name</span>
                         </td>
                     }
                     else
                     {
                         <td>
-                            <strong><small>Department</small></strong>
+                            <strong><small>@localizer["DepartmentLabel"]</small></strong>
                             <span style="display: block;">@Model.Log.Department.Name</span>
                         </td>
                     }
                     @if (Model.Log.LogType != null)
                     {
                         <td>
-                            <strong><small>Log Type</small></strong>
+                            <strong><small>@localizer["LogTypeLabel"]</small></strong>
                             <span style="display: block;">@(((LogTypes)Model.Log.LogType.Value).ToString())</span>
                         </td>
                     }
                     else
                     {
                         <td>
-                            <strong><small>Type</small></strong>
-                            <span style="display: block;">Meeting</span>
+                            <strong><small>@localizer["TypeLabel"]</small></strong>
+                            <span style="display: block;">@localizer["MeetingLogType"]</span>
                         </td>
                     }
                 </tr>
                 <tr>
                     <td>
-                        <strong><small>Logged On</small></strong>
+                        <strong><small>@localizer["LoggedOnLabel"]</small></strong>
                         <span
                             style="display: block;">@Model.Log.LoggedOn.FormatForDepartment(Model.Log.Department, true)</span>
                     </td>
 
                     <td>
-                        <strong><small>Logged By</small></strong>
+                        <strong><small>@localizer["LoggedByLabel"]</small></strong>
                         <span
                             style="display: block;">@(await UserHelper.GetFullNameForUser(Model.Log.LoggedByUserId))</span>
                     </td>
@@ -776,7 +778,7 @@
                     @if (Model.Log.StartedOn.HasValue)
                     {
                         <td>
-                            <strong><small>Started On</small></strong>
+                            <strong><small>@localizer["StartedOnLabel"]</small></strong>
                             <span
                                 style="display: block;">@Model.Log.StartedOn.Value.FormatForDepartment(Model.Log.Department, true)</span>
                         </td>
@@ -784,14 +786,14 @@
                     else
                     {
                         <td>
-                            <strong><small>Started On</small></strong>
-                            <span style="display: block;">Not Supplied</span>
+                            <strong><small>@localizer["StartedOnLabel"]</small></strong>
+                            <span style="display: block;">@localizer["NotSupplied"]</span>
                         </td>
                     }
                     @if (Model.Log.EndedOn.HasValue)
                     {
                         <td>
-                            <strong><small>Ended On</small></strong>
+                            <strong><small>@localizer["EndedOnLabel"]</small></strong>
                             <span
                                 style="display: block;">@Model.Log.EndedOn.Value.FormatForDepartment(Model.Log.Department, true)</span>
                         </td>
@@ -799,22 +801,22 @@
                     else
                     {
                         <td>
-                            <strong><small>Ended On</small></strong>
-                            <span style="display: block;">Not Supplied</span>
+                            <strong><small>@localizer["EndedOnLabel"]</small></strong>
+                            <span style="display: block;">@localizer["NotSupplied"]</span>
                         </td>
                     }
                     <td>
-                        <strong><small>Location</small></strong>
+                        <strong><small>@localizer["LocationLabel"]</small></strong>
                         <span style="display: block;">@Model.Log.Location</span>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <strong><small>Presiding</small></strong>
+                        <strong><small>@localizer["PresidingLabel"]</small></strong>
                         <span style="display: block;">@Model.Log.Instructors</span>
                     </td>
                     <td colspan="2">
-                        <strong><small>Other Attendees</small></strong>
+                        <strong><small>@localizer["OtherAttendeesLabel"]</small></strong>
                         <span style="display: block;">@Model.Log.OtherPersonnel</span>
                     </td>
                 </tr>
@@ -824,13 +826,13 @@
     </div>
     <div class="row">
         <div class="col-xs-10 col-xs-offset-1">
-            <strong><small>Personnel</small></strong>
+            <strong><small>@localizer["PersonnelLabel"]</small></strong>
             <table class="table table-bordered">
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Station</th>
-                    <th>Name</th>
+                    <th>@localizer["IdHeader"]</th>
+                    <th>@localizer["StationHeader"]</th>
+                    <th>@localizer["NameHeader"]</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -863,7 +865,7 @@
     </div>
     <div class="row">
         <div class="col-xs-10 col-xs-offset-1">
-            <strong><small>Meeting Minutes</small></strong>
+            <strong><small>@localizer["MeetingMinutesLabel"]</small></strong>
             <div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Log.Narrative)</div>
         </div>
     </div>
@@ -882,7 +884,7 @@
                  style="margin-top: 10px; margin-bottom: 5px;">
         </div>
         <div class="col-xs-5" style="text-align: right;">
-            <h3 style="margin-top: 10px;">Resgrid Log</h3>
+            <h3 style="margin-top: 10px;">@localizer["LogReportTitle"]</h3>
         </div>
     </div>
     <div class="row">
@@ -891,51 +893,51 @@
                 <tbody>
                 <tr>
                     <td>
-                        <strong><small>Case #</small></strong>
+                        <strong><small>@localizer["CaseNumberLabel"]</small></strong>
                         <span style="display: block;">@Model.Log.ExternalId</span>
                     </td>
                     @if (Model.Log.StationGroup != null)
                     {
                         <td>
-                            <strong><small>District</small></strong>
+                            <strong><small>@localizer["DistrictLabel"]</small></strong>
                             <span style="display: block;">@Model.Log.StationGroup.Name</span>
                         </td>
                     }
                     else
                     {
                         <td>
-                            <strong><small>Department</small></strong>
+                            <strong><small>@localizer["DepartmentLabel"]</small></strong>
                             <span style="display: block;">@Model.Log.Department.Name</span>
                         </td>
                     }
                     @if (Model.Log.LogType != null)
                     {
                         <td>
-                            <strong><small>Log Type</small></strong>
+                            <strong><small>@localizer["LogTypeLabel"]</small></strong>
                             <span style="display: block;">@(((LogTypes)Model.Log.LogType.Value).ToString())</span>
                         </td>
                     }
                     else
                     {
                         <td>
-                            <strong><small>Type</small></strong>
-                            <span style="display: block;">Meeting</span>
+                            <strong><small>@localizer["TypeLabel"]</small></strong>
+                            <span style="display: block;">@localizer["MeetingLogType"]</span>
                         </td>
                     }
                 </tr>
                 <tr>
                     <td>
-                        <strong><small>Logged On</small></strong>
+                        <strong><small>@localizer["LoggedOnLabel"]</small></strong>
                         <span
                             style="display: block;">@Model.Log.LoggedOn.FormatForDepartment(Model.Log.Department, true)</span>
                     </td>
                     <td>
-                        <strong><small>Logged By</small></strong>
+                        <strong><small>@localizer["LoggedByLabel"]</small></strong>
                         <span
                             style="display: block;">@(await UserHelper.GetFullNameForUser(Model.Log.LoggedByUserId))</span>
                     </td>
                     <td>
-                        <strong><small>OIC</small></strong>
+                        <strong><small>@localizer["OicLabel"]</small></strong>
                         <span style="display: block;">@Model.Log.Instructors</span>
                     </td>
                 </tr>
@@ -943,29 +945,29 @@
                     @if (Model.Log.StartedOn.HasValue)
                     {
                         <td>
-                            <strong><small>Date</small></strong>
+                            <strong><small>@localizer["DateHeader"]</small></strong>
                             <span style="display: block;">@Model.Log.StartedOn.Value.ToShortDateString()</span>
                         </td>
                     }
                     else
                     {
                         <td>
-                            <strong><small>Date</small></strong>
-                            <span style="display: block;">Not Supplied</span>
+                            <strong><small>@localizer["DateHeader"]</small></strong>
+                            <span style="display: block;">@localizer["NotSupplied"]</span>
                         </td>
                     }
                     <td colspan="2">
-                        <strong><small>Destination</small></strong>
+                        <strong><small>@localizer["DestinationLabel"]</small></strong>
                         <span style="display: block;">@Model.Log.Location</span>
                     </td>
                 </tr>
                 <tr>
                     <td>
-                        <strong><small>Pronounced By</small></strong>
+                        <strong><small>@localizer["PronouncedByLabel"]</small></strong>
                         <span style="display: block;">@Model.Log.PronouncedDeceasedBy</span>
                     </td>
                     <td colspan="2">
-                        <strong><small>Body Location</small></strong>
+                        <strong><small>@localizer["BodyLocationLabel"]</small></strong>
                         <span style="display: block;">@Model.Log.BodyLocation</span>
                     </td>
                 </tr>
@@ -975,7 +977,7 @@
     </div>
     <div class="row">
         <div class="col-xs-10 col-xs-offset-1">
-            <strong><small>Units</small></strong>
+            <strong><small>@localizer["UnitsLabel"]</small></strong>
             <div>
                 @foreach (var unit in Model.Log.Units)
                 {
@@ -983,7 +985,7 @@
                         <div class="row">
                             <div class="col-xs-2"><strong>@unit.Unit.Name</strong></div>
                             <div class="col-xs-2">
-                                <strong><small>Dispatched</small></strong>
+                                <strong><small>@localizer["DispatchedLabel"]</small></strong>
 
                                 @if (unit.Dispatched.HasValue)
                                 {
@@ -992,11 +994,11 @@
                                 }
                                 else
                                 {
-                                    <span style="display: block;">Not Supplied</span>
+                                    <span style="display: block;">@localizer["NotSupplied"]</span>
                                 }
                             </div>
                             <div class="col-xs-2">
-                                <strong><small>Enroute</small></strong>
+                                <strong><small>@localizer["EnrouteLabel"]</small></strong>
 
                                 @if (unit.Enroute.HasValue)
                                 {
@@ -1005,11 +1007,11 @@
                                 }
                                 else
                                 {
-                                    <span style="display: block;">Not Supplied</span>
+                                    <span style="display: block;">@localizer["NotSupplied"]</span>
                                 }
                             </div>
                             <div class="col-xs-2">
-                                <strong><small>On Scene</small></strong>
+                                <strong><small>@localizer["OnSceneLabel"]</small></strong>
 
                                 @if (unit.OnScene.HasValue)
                                 {
@@ -1018,11 +1020,11 @@
                                 }
                                 else
                                 {
-                                    <span style="display: block;">Not Supplied</span>
+                                    <span style="display: block;">@localizer["NotSupplied"]</span>
                                 }
                             </div>
                             <div class="col-xs-2">
-                                <strong><small>Released</small></strong>
+                                <strong><small>@localizer["ReleasedLabel"]</small></strong>
 
                                 @if (unit.Released.HasValue)
                                 {
@@ -1031,11 +1033,11 @@
                                 }
                                 else
                                 {
-                                    <span style="display: block;">Not Supplied</span>
+                                    <span style="display: block;">@localizer["NotSupplied"]</span>
                                 }
                             </div>
                             <div class="col-xs-2">
-                                <strong><small>In Quarters</small></strong>
+                                <strong><small>@localizer["InQuartersLabel"]</small></strong>
 
                                 @if (unit.InQuarters.HasValue)
                                 {
@@ -1044,16 +1046,16 @@
                                 }
                                 else
                                 {
-                                    <span style="display: block;">Not Supplied</span>
+                                    <span style="display: block;">@localizer["NotSupplied"]</span>
                                 }
                             </div>
                         </div>
                         <table class="table table-condensed table-bordered">
                             <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Station</th>
-                                <th>Name</th>
+                                <th>@localizer["IdHeader"]</th>
+                                <th>@localizer["StationHeader"]</th>
+                                <th>@localizer["NameHeader"]</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -1089,13 +1091,13 @@
     </div>
     <div class="row">
         <div class="col-xs-10 col-xs-offset-1">
-            <strong><small>Personnel</small></strong>
+            <strong><small>@localizer["PersonnelLabel"]</small></strong>
             <table class="table table-condensed table-bordered">
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Station</th>
-                    <th>Name</th>
+                    <th>@localizer["IdHeader"]</th>
+                    <th>@localizer["StationHeader"]</th>
+                    <th>@localizer["NameHeader"]</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -1128,7 +1130,7 @@
     </div>
     <div class="row">
         <div class="col-xs-10 col-xs-offset-1">
-            <strong><small>Meeting Minutes</small></strong>
+            <strong><small>@localizer["MeetingMinutesLabel"]</small></strong>
             <div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Log.Narrative)</div>
         </div>
     </div>
@@ -1147,7 +1149,7 @@
                  style="margin-top: 10px; margin-bottom: 5px;">
         </div>
         <div class="col-xs-5" style="text-align: right;">
-            <h3 style="margin-top: 10px;">Resgrid Log</h3>
+            <h3 style="margin-top: 10px;">@localizer["LogReportTitle"]</h3>
         </div>
     </div>
     <div class="row">
@@ -1162,41 +1164,41 @@
                     @if (Model.Log.StationGroup != null)
                     {
                         <td>
-                            <strong><small>District</small></strong>
+                            <strong><small>@localizer["DistrictLabel"]</small></strong>
                             <span style="display: block;">@Model.Log.StationGroup.Name</span>
                         </td>
                     }
                     else
                     {
                         <td>
-                            <strong><small>Department</small></strong>
+                            <strong><small>@localizer["DepartmentLabel"]</small></strong>
                             <span style="display: block;">@Model.Log.Department.Name</span>
                         </td>
                     }
                     @if (Model.Log.LogType != null)
                     {
                         <td>
-                            <strong><small>Type</small></strong>
+                            <strong><small>@localizer["TypeLabel"]</small></strong>
                             <span style="display: block;">@(((LogTypes)Model.Log.LogType.Value).ToString())</span>
                         </td>
                     }
                     else
                     {
                         <td>
-                            <strong><small>Type</small></strong>
-                            <span style="display: block;">Callback</span>
+                            <strong><small>@localizer["TypeLabel"]</small></strong>
+                            <span style="display: block;">@localizer["CallbackLogType"]</span>
                         </td>
                     }
                 </tr>
                 <tr>
                     <td>
-                        <strong><small>Logged On</small></strong>
+                        <strong><small>@localizer["LoggedOnLabel"]</small></strong>
                         <span
                             style="display: block;">@Model.Log.LoggedOn.FormatForDepartment(Model.Log.Department, true)</span>
                     </td>
 
                     <td>
-                        <strong><small>Logged By</small></strong>
+                        <strong><small>@localizer["LoggedByLabel"]</small></strong>
                         <span
                             style="display: block;">@(await UserHelper.GetFullNameForUser(Model.Log.LoggedByUserId))</span>
                     </td>
@@ -1205,18 +1207,18 @@
                 {
                     <tr>
                         <td>
-                            <strong><small>Call Id</small></strong>
+                            <strong><small>@localizer["CallIdLabel"]</small></strong>
                             <span style="display: block;">@Model.Log.Call.CallId</span>
                         </td>
                         <td>
-                            <strong><small>Call Number</small></strong>
+                            <strong><small>@localizer["CallNumberLabel"]</small></strong>
                             <span style="display: block;">@Model.Log.Call.Number</span>
                         </td>
                         <td>
                             <table>
                                 <tr>
                                     <td style="width: 30%">
-                                        <strong><small>Incident Id</small></strong>
+                                        <strong><small>@localizer["IncidentIdLabel"]</small></strong>
 
                                         @if (!String.IsNullOrWhiteSpace(Model.Log.Call.IncidentNumber))
                                         {
@@ -1224,11 +1226,11 @@
                                         }
                                         else
                                         {
-                                            <span style="display: block;">None</span>
+                                            <span style="display: block;">@localizer["NoneLabel"]</span>
                                         }
                                     </td>
                                     <td style="width: 30%">
-                                        <strong><small>Call Id</small></strong>
+                                        <strong><small>@localizer["CallIdLabel"]</small></strong>
 
                                         @if (!String.IsNullOrWhiteSpace(Model.Log.Call.ExternalIdentifier))
                                         {
@@ -1236,11 +1238,11 @@
                                         }
                                         else
                                         {
-                                            <span style="display: block;">None</span>
+                                            <span style="display: block;">@localizer["NoneLabel"]</span>
                                         }
                                     </td>
                                     <td style="width: 30%">
-                                        <strong><small>Reference Id</small></strong>
+                                        <strong><small>@localizer["ReferenceIdLabel"]</small></strong>
 
                                         @if (!String.IsNullOrWhiteSpace(@Model.Log.Call.ReferenceNumber))
                                         {
@@ -1248,7 +1250,7 @@
                                         }
                                         else
                                         {
-                                            <span style="display: block;">None</span>
+                                            <span style="display: block;">@localizer["NoneLabel"]</span>
                                         }
                                     </td>
                                 </tr>
@@ -1260,22 +1262,22 @@
                     @if (Model.Log.Call != null)
                     {
                         <td>
-                            <strong><small>Call Name</small></strong>
+                            <strong><small>@localizer["CallNameLabel"]</small></strong>
                             <span style="display: block;">@Model.Log.Call.Name</span>
                         </td>
                         <td>
-                            <strong><small>Call Type</small></strong>
+                            <strong><small>@localizer["CallTypeLabel"]</small></strong>
                             @if (!String.IsNullOrWhiteSpace(Model.Log.Call.Type))
                             {
                                 <span style="display: block;">@Model.Log.Call.Type</span>
                             }
                             else
                             {
-                                <span style="display: block;">No Type</span>
+                                <span style="display: block;">@localizer["NoTypeLabel"]</span>
                             }
                         </td>
                         <td>
-                            <strong><small>Priority</small></strong>
+                            <strong><small>@localizer["PriorityLabel"]</small></strong>
                             <span
                                 style="display: block;">@(await CallPriorityHelper.CallPriorityToString(Model.Log.DepartmentId, Model.Log.Call.Priority))</span>
                         </td>
@@ -1283,8 +1285,8 @@
                     else
                     {
                         <td colspan="2">
-                            <strong><small>Call Name</small></strong>
-                            <span style="display: block;">Not Supplied</span>
+                            <strong><small>@localizer["CallNameLabel"]</small></strong>
+                            <span style="display: block;">@localizer["NotSupplied"]</span>
                         </td>
                     }
                 </tr>
@@ -1292,15 +1294,15 @@
                     @if (Model.Log.Call != null)
                     {
                         <td colspan="3">
-                            <strong><small>Call Address</small></strong>
+                            <strong><small>@localizer["CallAddressLabel"]</small></strong>
                             <span style="display: block;">@Model.Log.Call.Address</span>
                         </td>
                     }
                     else
                     {
                         <td colspan="3">
-                            <strong><small>Call Address</small></strong>
-                            <span style="display: block;">Not Supplied</span>
+                            <strong><small>@localizer["CallAddressLabel"]</small></strong>
+                            <span style="display: block;">@localizer["NotSupplied"]</span>
                         </td>
                     }
 
@@ -1311,13 +1313,13 @@
     </div>
     <div class="row">
         <div class="col-xs-10 col-xs-offset-1">
-            <strong><small>Personnel</small></strong>
+            <strong><small>@localizer["PersonnelLabel"]</small></strong>
             <table class="table table-bordered">
                 <thead>
                 <tr>
-                    <th>ID</th>
-                    <th>Station</th>
-                    <th>Name</th>
+                    <th>@localizer["IdHeader"]</th>
+                    <th>@localizer["StationHeader"]</th>
+                    <th>@localizer["NameHeader"]</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -1350,7 +1352,7 @@
     </div>
     <div class="row">
         <div class="col-xs-10 col-xs-offset-1">
-            <strong><small>Narrative</small></strong>
+            <strong><small>@localizer["NarrativeLabel"]</small></strong>
             <div style="border: 1px solid #ddd; padding: 10px;">@Html.Raw(Model.Log.Narrative)</div>
         </div>
     </div>

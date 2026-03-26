@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Avdelningslänkar</value>
+  </data>
+  <data name="DepartmentLinks" xml:space="preserve">
+    <value>Avdelningslänkar</value>
+  </data>
+  <data name="NewDepartmentLinks" xml:space="preserve">
+    <value>Ny Avdelningslänk</value>
+  </data>
+  <data name="FromDepartment" xml:space="preserve">
+    <value>Från Avdelning</value>
+  </data>
+  <data name="ToDepartment" xml:space="preserve">
+    <value>Till Avdelning</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Aktiverad</value>
+  </data>
+  <data name="SharedData" xml:space="preserve">
+    <value>Delad Data</value>
+  </data>
+  <data name="LinkEnabled" xml:space="preserve">
+    <value>Länk Aktiverad</value>
+  </data>
+  <data name="LinkDisabled" xml:space="preserve">
+    <value>Länk Inaktiverad</value>
+  </data>
+  <data name="Calls" xml:space="preserve">
+    <value>Larm</value>
+  </data>
+  <data name="Personnel" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="Units" xml:space="preserve">
+    <value>Enheter</value>
+  </data>
+  <data name="Orders" xml:space="preserve">
+    <value>Ordrar</value>
+  </data>
+  <data name="NoDataShared" xml:space="preserve">
+    <value>Ingen Data Delad</value>
+  </data>
+  <data name="Enable" xml:space="preserve">
+    <value>Aktivera</value>
+  </data>
+  <data name="Disable" xml:space="preserve">
+    <value>Inaktivera</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Radera</value>
+  </data>
+  <data name="ViewData" xml:space="preserve">
+    <value>Visa Data</value>
+  </data>
+  <data name="YourDepartmentLinkCode" xml:space="preserve">
+    <value>Din Avdelningslänkskod</value>
+  </data>
+  <data name="DeleteLinkConfirm" xml:space="preserve">
+    <value>VARNING: Detta kommer permanent ta bort denna länk. Är du säker på att du vill ta bort den?</value>
+  </data>
+  <data name="EnableDepartmentLinkTitle" xml:space="preserve">
+    <value>Aktivera Avdelningslänk</value>
+  </data>
+  <data name="EnableLinkDescription" xml:space="preserve">
+    <value>Avdelningslänkar delar data i en riktning. Nedan kan du aktivera en länk och ange dess färg. Länkfärgen används för att färgkoda larm, personal och enheter som identifierar dem som härstammande från denna länk.</value>
+  </data>
+  <data name="LinkColor" xml:space="preserve">
+    <value>Länkfärg</value>
+  </data>
+  <data name="SaveAndEnableLink" xml:space="preserve">
+    <value>Spara och Aktivera Länk</value>
+  </data>
+  <data name="NewDepartmentLinkTitle" xml:space="preserve">
+    <value>Ny Avdelningslänk</value>
+  </data>
+  <data name="NewLinkDescription" xml:space="preserve">
+    <value>Avdelningslänkar delar data i en riktning. Nedan kan du konfigurera och dela med en annan avdelning och när de aktiverar länken kan de se den delade informationen. För att din avdelning ska se den avdelningens data behöver de skapa en länk till din avdelning och du behöver aktivera den.</value>
+  </data>
+  <data name="LinkCode" xml:space="preserve">
+    <value>Länkkod</value>
+  </data>
+  <data name="TypeColor" xml:space="preserve">
+    <value>Typfärg</value>
+  </data>
+  <data name="TypeColorHelp" xml:space="preserve">
+    <value>Detta är färgen som används för att identifiera Larm\Enheter\Personal för denna avdelningslänk</value>
+  </data>
+  <data name="ShareCalls" xml:space="preserve">
+    <value>Dela Larm</value>
+  </data>
+  <data name="ShareUnits" xml:space="preserve">
+    <value>Dela Enheter</value>
+  </data>
+  <data name="SharePersonnel" xml:space="preserve">
+    <value>Dela Personal</value>
+  </data>
+  <data name="ShareOrders" xml:space="preserve">
+    <value>Dela Ordrar</value>
+  </data>
+  <data name="SaveLink" xml:space="preserve">
+    <value>Spara Länk</value>
+  </data>
+  <data name="ViewDepartmentLinkTitle" xml:space="preserve">
+    <value>Visa Avdelningslänk</value>
+  </data>
+</root>

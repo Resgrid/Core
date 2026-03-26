@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <data name="ReportingTitle" xml:space="preserve"><value>Rapporter</value></data>
+  <data name="ViewReport" xml:space="preserve"><value>Visa Rapport</value></data>
+  <data name="Reports" xml:space="preserve"><value>Rapporter</value></data>
+  <data name="PersonnelStatusHistoryReportName" xml:space="preserve"><value>Personalstatushistorikrapport</value></data>
+  <data name="PersonnelStatusHistoryReportDescription" xml:space="preserve"><value>Denna rapport visar all personalstatushistorik (åtgärdsloggar) för vald personal</value></data>
+  <data name="PersonnelReportName" xml:space="preserve"><value>Personalrapport</value></data>
+  <data name="PersonnelReportDescription" xml:space="preserve"><value>Visa all personal i din avdelning, deras roller och grundläggande kontaktinformation.</value></data>
+  <data name="StaffingReportName" xml:space="preserve"><value>Bemanningsrapport</value></data>
+  <data name="StaffingReportDescription" xml:space="preserve"><value>Visa all personal och deras aktuella status, bemanningsnivå och nästa schemalagda bemanningsförändring.</value></data>
+  <data name="CertificationsReportName" xml:space="preserve"><value>Certifieringsrapport</value></data>
+  <data name="CertificationsReportDescription" xml:space="preserve"><value>Visa alla certifieringar för varje person i avdelningen.</value></data>
+  <data name="ShiftReadinessReportName" xml:space="preserve"><value>Skiftberedskapsrapport</value></data>
+  <data name="ShiftReadinessReportDescription" xml:space="preserve"><value>Denna rapport visar skiftberedskap för kommande skiftdagar för varje skift.</value></data>
+  <data name="DepartmentActivityReportName" xml:space="preserve"><value>Avdelningens Årsaktivitetsrapport</value></data>
+  <data name="DepartmentActivityReportDescription" xml:space="preserve"><value>Denna rapport visar larm-, logg-, utbildnings- och personalaktivitet för avdelningen i helårstal.</value></data>
+  <data name="PersonnelHoursReportName" xml:space="preserve"><value>Personalloggtimmar Rapport</value></data>
+  <data name="PersonnelHoursReportDescription" xml:space="preserve"><value>Denna rapport visar antalet timmar som avdelningens personal arbetat, utbildats och svarat på larm enligt loggposter.</value></data>
+  <data name="CallSummaryReportName" xml:space="preserve"><value>Larmsammanfattningsrapport</value></data>
+  <data name="CallSummaryReportDescription" xml:space="preserve"><value>Denna rapport visar detaljer om alla larm i ett valt datumintervall</value></data>
+  <data name="PersonnelStaffingHistoryReportName" xml:space="preserve"><value>Personalbemanningshistorikrapport</value></data>
+  <data name="PersonnelStaffingHistoryReportDescription" xml:space="preserve"><value>Denna rapport visar all bemanningshistorik för vald personal</value></data>
+  <data name="UnitStateHistoryReportName" xml:space="preserve"><value>Enhetsstatushistorikrapport</value></data>
+  <data name="UnitStateHistoryReportDescription" xml:space="preserve"><value>Visar enhetsstatus för en enhet, alla eller enheter i en grupp för ett användardefinierat tidsintervall</value></data>
+  <data name="ActiveCallsResourcesReportName" xml:space="preserve"><value>Aktiva Larm och Resurser Rapport</value></data>
+  <data name="ActiveCallsResourcesReportDescription" xml:space="preserve"><value>Rapporten detaljerar aktuellt öppna larm vid tidpunkten för körning och enheter och personal kopplade till dessa larm</value></data>
+  <data name="ReportStartTime" xml:space="preserve"><value>Rapportens Starttid</value></data>
+  <data name="ReportEndTime" xml:space="preserve"><value>Rapportens Sluttid</value></data>
+  <data name="RunReport" xml:space="preserve"><value>Kör Rapport</value></data>
+  <data name="SelectType" xml:space="preserve"><value>Typ</value></data>
+  <data name="GroupOrUsers" xml:space="preserve"><value>Grupp eller Användare</value></data>
+  <data name="Group" xml:space="preserve"><value>Grupp</value></data>
+  <data name="GroupLabel" xml:space="preserve"><value>Grupp</value></data>
+  <data name="UsersLabel" xml:space="preserve"><value>Användare</value></data>
+  <data name="UnitsLabel" xml:space="preserve"><value>Enhet(er)</value></data>
+  <data name="GroupOrUnits" xml:space="preserve"><value>Grupp eller Enhet(er)</value></data>
+  <data name="IdHeader" xml:space="preserve"><value>ID</value></data>
+  <data name="NameHeader" xml:space="preserve"><value>Namn</value></data>
+  <data name="GroupHeader" xml:space="preserve"><value>Grupp</value></data>
+  <data name="TotalHeader" xml:space="preserve"><value>Totalt</value></data>
+  <data name="CountHeader" xml:space="preserve"><value>Antal</value></data>
+  <data name="TypeHeader" xml:space="preserve"><value>Typ</value></data>
+  <data name="StateHeader" xml:space="preserve"><value>Tillstånd</value></data>
+  <data name="StatusHeader" xml:space="preserve"><value>Status</value></data>
+  <data name="TimestampHeader" xml:space="preserve"><value>Tidsstämpel</value></data>
+  <data name="NoteHeader" xml:space="preserve"><value>Notering</value></data>
+  <data name="HoursHeader" xml:space="preserve"><value>Timmar</value></data>
+  <data name="NumberHeader" xml:space="preserve"><value>Nummer</value></data>
+  <data name="StartHeader" xml:space="preserve"><value>Start</value></data>
+  <data name="EndHeader" xml:space="preserve"><value>Slut</value></data>
+  <data name="DateHeader" xml:space="preserve"><value>Datum</value></data>
+  <data name="RolesHeader" xml:space="preserve"><value>Roller</value></data>
+  <data name="LocationHeader" xml:space="preserve"><value>Plats</value></data>
+  <data name="StatusChanges" xml:space="preserve"><value>Statusändringar</value></data>
+  <data name="TotalStaffingChanges" xml:space="preserve"><value>Totalt</value></data>
+  <data name="CallTypes" xml:space="preserve"><value>Larmtyper</value></data>
+  <data name="CallStates" xml:space="preserve"><value>Larmtillstånd</value></data>
+  <data name="Calls" xml:space="preserve"><value>Larm</value></data>
+  <data name="LoggedOnHeader" xml:space="preserve"><value>Loggad</value></data>
+  <data name="ClosedOnHeader" xml:space="preserve"><value>Stängd</value></data>
+  <data name="CallLengthHeader" xml:space="preserve"><value>Larmlängd</value></data>
+  <data name="OnSceneTimeHeader" xml:space="preserve"><value>Tid på Plats</value></data>
+  <data name="UnitsHeader" xml:space="preserve"><value>Enheter</value></data>
+  <data name="PersonnelHeader" xml:space="preserve"><value>Personal</value></data>
+  <data name="OpenStatus" xml:space="preserve"><value>Öppen</value></data>
+  <data name="PercentHeader" xml:space="preserve"><value>%</value></data>
+  <data name="CertificationsReportTitle" xml:space="preserve"><value>Resgrid Certifieringsrapport</value></data>
+  <data name="CertNumberHeader" xml:space="preserve"><value>Nummer</value></data>
+  <data name="IssuedByHeader" xml:space="preserve"><value>Utfärdad Av</value></data>
+  <data name="AreaHeader" xml:space="preserve"><value>Område</value></data>
+  <data name="ExpiresHeader" xml:space="preserve"><value>Utgår</value></data>
+  <data name="YtdDepartmentActivityReportTitle" xml:space="preserve"><value>Årsaktivitetsrapport för Avdelningen</value></data>
+  <data name="PersonnelResponseDetail" xml:space="preserve"><value>Personalresponsdetalj</value></data>
+  <data name="Trainings" xml:space="preserve"><value>Utbildningar</value></data>
+  <data name="PersonnelTrainingDetail" xml:space="preserve"><value>Personalutbildningsdetalj</value></data>
+  <data name="DispatchedHeader" xml:space="preserve"><value>Utskickad</value></data>
+  <data name="AttendedHeader" xml:space="preserve"><value>Närvarade</value></data>
+  <data name="January" xml:space="preserve"><value>Januari</value></data>
+  <data name="February" xml:space="preserve"><value>Februari</value></data>
+  <data name="March" xml:space="preserve"><value>Mars</value></data>
+  <data name="April" xml:space="preserve"><value>April</value></data>
+  <data name="May" xml:space="preserve"><value>Maj</value></data>
+  <data name="June" xml:space="preserve"><value>Juni</value></data>
+  <data name="July" xml:space="preserve"><value>Juli</value></data>
+  <data name="August" xml:space="preserve"><value>Augusti</value></data>
+  <data name="September" xml:space="preserve"><value>September</value></data>
+  <data name="October" xml:space="preserve"><value>Oktober</value></data>
+  <data name="November" xml:space="preserve"><value>November</value></data>
+  <data name="December" xml:space="preserve"><value>December</value></data>
+  <data name="PersonnelEventsReportTitle" xml:space="preserve"><value>Resgrid Personalhändelserapport</value></data>
+  <data name="DestinationCallHeader" xml:space="preserve"><value>Destination\Larm</value></data>
+  <data name="PersonnelHoursReportTitle" xml:space="preserve"><value>Personaltimmarsrapport</value></data>
+  <data name="PersonnelHoursDetailReportTitle" xml:space="preserve"><value>Detaljerad Personaltimmarsrapport</value></data>
+  <data name="CallHours" xml:space="preserve"><value>Larmtimmar</value></data>
+  <data name="WorkHours" xml:space="preserve"><value>Arbetstimmar</value></data>
+  <data name="TrainingHours" xml:space="preserve"><value>Utbildningstimmar</value></data>
+  <data name="WorkLogs" xml:space="preserve"><value>Arbetsloggar</value></data>
+  <data name="PersonnelReportTitle" xml:space="preserve"><value>Resgrid Personalrapport</value></data>
+  <data name="UsernameHeader" xml:space="preserve"><value>Användarnamn</value></data>
+  <data name="EmailHeader" xml:space="preserve"><value>E-post</value></data>
+  <data name="MobileNumberHeader" xml:space="preserve"><value>Mobilnummer</value></data>
+  <data name="MailingAddressHeader" xml:space="preserve"><value>Postadress</value></data>
+  <data name="PersonnelStaffingHistoryReportTitle" xml:space="preserve"><value>Personalbemanningshistorikrapport</value></data>
+  <data name="StaffingChanges" xml:space="preserve"><value>Bemanningsändringar</value></data>
+  <data name="StaffingHeader" xml:space="preserve"><value>Bemanning</value></data>
+  <data name="ScheduledHeader" xml:space="preserve"><value>Schemalagd</value></data>
+  <data name="StaffingReportTitle" xml:space="preserve"><value>Resgrid Bemanningsrapport</value></data>
+  <data name="StaffingTimestampHeader" xml:space="preserve"><value>Bemanningstidsstämpel</value></data>
+  <data name="NextChangeHeader" xml:space="preserve"><value>Nästa Ändring</value></data>
+  <data name="NextStaffingHeader" xml:space="preserve"><value>Nästa Bemanning</value></data>
+  <data name="StaffingAvailable" xml:space="preserve"><value>Tillgänglig</value></data>
+  <data name="StaffingDelayed" xml:space="preserve"><value>Försenad</value></data>
+  <data name="StaffingUnavailable" xml:space="preserve"><value>Otillgänglig</value></data>
+  <data name="StaffingCommitted" xml:space="preserve"><value>Engagerad</value></data>
+  <data name="StaffingOnShift" xml:space="preserve"><value>I Tjänst</value></data>
+  <data name="StaffingUnknown" xml:space="preserve"><value>Okänd</value></data>
+  <data name="UnitEventsReportTitle" xml:space="preserve"><value>Resgrid Enhetshändelserapport</value></data>
+  <data name="UnitStateHistoryReportTitle" xml:space="preserve"><value>Enhetsstatushistorikrapport</value></data>
+  <data name="StateChanges" xml:space="preserve"><value>Tillståndsändringar</value></data>
+  <data name="TotalStatesHeader" xml:space="preserve"><value>Totala Tillstånd</value></data>
+  <data name="UpcomingShiftReadinessReportTitle" xml:space="preserve"><value>Kommande Skiftberedskapsrapport</value></data>
+  <data name="ShiftReadyLabel" xml:space="preserve"><value>Redo</value></data>
+  <data name="ShiftNotReadyLabel" xml:space="preserve"><value>Inte Redo</value></data>
+  <data name="RequiredHeader" xml:space="preserve"><value>Krävs</value></data>
+  <data name="OptionalHeader" xml:space="preserve"><value>Valfri</value></data>
+  <data name="DeltaHeader" xml:space="preserve"><value>Delta</value></data>
+  <data name="RoleHeader" xml:space="preserve"><value>Roll</value></data>
+  <data name="SignupNameHeader" xml:space="preserve"><value>Registreringsnamn</value></data>
+  <data name="ActiveCallsResourcesReportTitle" xml:space="preserve"><value>Aktiva Larm och Resurser Rapport</value></data>
+  <data name="CallNameHeader" xml:space="preserve"><value>Larmnamn</value></data>
+  <data name="UnitsOnCallHeader" xml:space="preserve"><value>Enheter på Larm</value></data>
+  <data name="PersonnelOnCallHeader" xml:space="preserve"><value>Personal på Larm</value></data>
+  <data name="UnitNameHeader" xml:space="preserve"><value>Enhetsnamn</value></data>
+  <data name="PersonNameHeader" xml:space="preserve"><value>Personnamn</value></data>
+  <data name="GroupNameHeader" xml:space="preserve"><value>Gruppnamn</value></data>
+  <data name="DispatchedOnHeader" xml:space="preserve"><value>Utskickad</value></data>
+  <data name="FourteenDayMarkHeader" xml:space="preserve"><value>14 Dagarsmärke</value></data>
+  <data name="TwentyOneDayMarkHeader" xml:space="preserve"><value>21 Dagarsmärke</value></data>
+  <data name="LogReportTitle" xml:space="preserve"><value>Resgrid Logg</value></data>
+  <data name="DistrictLabel" xml:space="preserve"><value>Distrikt</value></data>
+  <data name="DepartmentLabel" xml:space="preserve"><value>Avdelning</value></data>
+  <data name="TypeLabel" xml:space="preserve"><value>Typ</value></data>
+  <data name="LoggedOnLabel" xml:space="preserve"><value>Loggad</value></data>
+  <data name="LoggedByLabel" xml:space="preserve"><value>Loggad Av</value></data>
+  <data name="StartedOnLabel" xml:space="preserve"><value>Startad</value></data>
+  <data name="EndedOnLabel" xml:space="preserve"><value>Avslutad</value></data>
+  <data name="PersonnelLabel" xml:space="preserve"><value>Personal</value></data>
+  <data name="NarrativeLabel" xml:space="preserve"><value>Berättelse</value></data>
+  <data name="NotSupplied" xml:space="preserve"><value>Inte Angivet</value></data>
+  <data name="WorkLogType" xml:space="preserve"><value>Arbete</value></data>
+  <data name="IdLabel" xml:space="preserve"><value>Id</value></data>
+  <data name="StationHeader" xml:space="preserve"><value>Station</value></data>
+  <data name="UnitsLabel" xml:space="preserve"><value>Enheter</value></data>
+  <data name="ConditionLabel" xml:space="preserve"><value>Tillstånd</value></data>
+  <data name="CallNameLabel" xml:space="preserve"><value>Larmnamn</value></data>
+  <data name="CallTypeLabel" xml:space="preserve"><value>Larmtyp</value></data>
+  <data name="NoTypeLabel" xml:space="preserve"><value>Ingen Typ</value></data>
+  <data name="PriorityLabel" xml:space="preserve"><value>Prioritet</value></data>
+  <data name="CallAddressLabel" xml:space="preserve"><value>Larmadress</value></data>
+  <data name="DispatchedLabel" xml:space="preserve"><value>Utskickad</value></data>
+  <data name="EnrouteLabel" xml:space="preserve"><value>På Väg</value></data>
+  <data name="OnSceneLabel" xml:space="preserve"><value>På Plats</value></data>
+  <data name="ReleasedLabel" xml:space="preserve"><value>Frisläppt</value></data>
+  <data name="InQuartersLabel" xml:space="preserve"><value>I Kasern</value></data>
+  <data name="AuditHeader" xml:space="preserve"><value>Revision</value></data>
+  <data name="TrainingCourseLabel" xml:space="preserve"><value>Utbildning\Kurs</value></data>
+  <data name="CodeLabel" xml:space="preserve"><value>Kod</value></data>
+  <data name="InstructorsLabel" xml:space="preserve"><value>Instruktörer</value></data>
+  <data name="AttendanceLabel" xml:space="preserve"><value>Närvaro</value></data>
+  <data name="TotalTimeLabel" xml:space="preserve"><value>Total Tid</value></data>
+  <data name="MeetingTypeLabel" xml:space="preserve"><value>Mötestyp</value></data>
+  <data name="LogTypeLabel" xml:space="preserve"><value>Loggtyp</value></data>
+  <data name="MeetingLogType" xml:space="preserve"><value>Möte</value></data>
+  <data name="LocationLabel" xml:space="preserve"><value>Plats</value></data>
+  <data name="PresidingLabel" xml:space="preserve"><value>Ordförande</value></data>
+  <data name="OtherAttendeesLabel" xml:space="preserve"><value>Andra Deltagare</value></data>
+  <data name="MeetingMinutesLabel" xml:space="preserve"><value>Mötesprotokoll</value></data>
+  <data name="CaseNumberLabel" xml:space="preserve"><value>Ärende #</value></data>
+  <data name="OicLabel" xml:space="preserve"><value>OIC</value></data>
+  <data name="DestinationLabel" xml:space="preserve"><value>Destination</value></data>
+  <data name="PronouncedByLabel" xml:space="preserve"><value>Konstaterad Av</value></data>
+  <data name="BodyLocationLabel" xml:space="preserve"><value>Kroppens Plats</value></data>
+  <data name="CallIdLabel" xml:space="preserve"><value>Larm-Id</value></data>
+  <data name="CallNumberLabel" xml:space="preserve"><value>Larmnummer</value></data>
+  <data name="IncidentIdLabel" xml:space="preserve"><value>Incident-Id</value></data>
+  <data name="ReferenceIdLabel" xml:space="preserve"><value>Referens-Id</value></data>
+  <data name="NoneLabel" xml:space="preserve"><value>Ingen</value></data>
+  <data name="CallbackLogType" xml:space="preserve"><value>Återuppringning</value></data>
+</root>

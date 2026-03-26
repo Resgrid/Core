@@ -200,6 +200,9 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<UdfDefinitionRepository>().As<IUdfDefinitionRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<UdfFieldRepository>().As<IUdfFieldRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<UdfFieldValueRepository>().As<IUdfFieldValueRepository>().InstancePerLifetimeScope();
+
+			// GDPR Repositories
+			builder.RegisterType<GdprDataExportRequestRepository>().As<IGdprDataExportRequestRepository>().InstancePerLifetimeScope();
 		}
 	}
 }

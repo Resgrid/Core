@@ -1,6 +1,7 @@
-﻿@model Resgrid.Web.Areas.User.Models.Notifications.NotificationNewView
+@model Resgrid.Web.Areas.User.Models.Notifications.NotificationNewView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Notifications.Notifications> localizer
 @{
-	ViewBag.Title = "Resgrid | New Notification";
+	ViewBag.Title = "Resgrid | " + localizer["NewNotification"];
 }
 
 @section Styles
@@ -14,16 +15,16 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>New Notification</h2>
+		<h2>@localizer["NewNotification"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a>
 			</li>
 			<li>
-				<a asp-controller="Notifications" asp-action="Index" asp-route-area="User">Notifications</a>
+				<a asp-controller="Notifications" asp-action="Index" asp-route-area="User">@localizer["Notifications"]</a>
 			</li>
 			<li class="active">
-				<strong>New Notification</strong>
+				<strong>@localizer["NewNotification"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -48,24 +49,24 @@
 								<div asp-validation-summary="All" class="text-danger"></div>
 							</div>
 						</div>
-					
+
 
 						<div class="form-group">
-							<label class="col-sm-2 control-label">Type</label>
+							<label class="col-sm-2 control-label">@commonLocalizer["Type"]</label>
 							<div class="col-sm-10"><select asp-for="Type" asp-items="ViewBag.Types" class="sl2" style="padding-left: 0; width: 100%;"></select></div>
 						</div>
 						<div class="form-group" id="beforeState">
-							<label class="col-sm-2 control-label">Before State</label>
+							<label class="col-sm-2 control-label">@localizer["BeforeState"]</label>
 							<div class="col-sm-10" id="beforeStateControl"></div>
 						</div>
 						<div class="form-group" id="currentState">
-							<label class="col-sm-2 control-label">Current State</label>
+							<label class="col-sm-2 control-label">@localizer["CurrentState"]</label>
 							<div class="col-sm-10" id="currentStateControl"></div>
 						</div>
 
 						<div class="form-group" id="unitTypesToMonitor" style="display: none;">
 							<label class="col-sm-2 control-label">
-								Unit Type To Monitor
+								@localizer["UnitTypeToMonitor"]
 							</label>
 							<div class="col-sm-10">
 								@Html.DropDownListFor(m => m.SelectedUnitType, new SelectList(Model.UnitsTypes, "UnitTypeId", "Type"), new { @class = "sl2", style = "width: 340px;" })
@@ -73,7 +74,7 @@
 						</div>
 						<div class="form-group" id="roleToMonitor" style="display: none;">
 							<label class="col-sm-2 control-label">
-								Role To Monitor
+								@localizer["RoleToMonitor"]
 							</label>
 							<div class="col-sm-10">
 								@Html.DropDownListFor(m => m.SelectedRole, new SelectList(Model.PersonnelRoles, "PersonnelRoleId", "Name"), new { @class = "sl2", style = "width: 340px;" })
@@ -81,7 +82,7 @@
 						</div>
 						<div class="form-group" id="currentStateMulti" style="display: none;">
 							<label class="col-sm-2 control-label" id="currentStateMultiLabel">
-								Acceptable States
+								@localizer["AcceptableStates"]
 							</label>
 							<div class="col-sm-10" id="currentStateMultiControl">
 								<select id="currentStates" name="currentStates"></select>
@@ -89,7 +90,7 @@
 						</div>
 						<div class="form-group" id="lowerLimitGroup" style="display: none;">
 							<label class="col-sm-2 control-label" id="lowerLimitGroupLabel">
-								Lower Limit
+								@localizer["LowerLimit"]
 							</label>
 							<div class="col-sm-10" id="lowerLimitGroupControl">
 								<input id="lowerLimit" name="lowerLimit" value="0" />
@@ -97,7 +98,7 @@
 						</div>
 						<div class="form-group" id="usersToNotify">
 							<label class="col-sm-2 control-label">
-								Users To Notify
+								@localizer["UsersToNotify"]
 							</label>
 							<div class="col-sm-10">
 								<div class="row">
@@ -105,7 +106,7 @@
 										<div class="checkbox checkbox-primary">
 											<input type="checkbox" asp-for="Notification.Everyone">
 											<label for="Notification_Everyone">
-												Everyone
+												@localizer["Everyone"]
 											</label>
 										</div>
 									</div>
@@ -113,7 +114,7 @@
 										<div class="checkbox checkbox-primary">
 											<input type="checkbox" asp-for="Notification.DepartmentAdmins">
 											<label for="Notification_DepartmentAdmins">
-												Department Admins
+												@localizer["DepartmentAdmins"]
 											</label>
 										</div>
 									</div>
@@ -121,7 +122,7 @@
 										<div class="checkbox checkbox-primary">
 											<input type="checkbox" asp-for="Notification.LockToGroup">
 											<label for="Notification_LockToGroup">
-												Lock To Group
+												@localizer["LockToGroup"]
 											</label>
 										</div>
 									</div>
@@ -129,7 +130,7 @@
 										<div class="checkbox checkbox-primary">
 											<input type="checkbox" asp-for="Notification.SelectedGroupsAdminsOnly">
 											<label for="Notification_SelectedGroupsAdminsOnly">
-												Group Admins Only
+												@localizer["GroupAdminsOnly"]
 											</label>
 										</div>
 									</div>
@@ -154,7 +155,7 @@
 							<div class="col-sm-10">
 								<div class="row">
 									<div class="alert alert-info" role="alert">
-										Calendar notifications are now driven based on the calendar event type (None, Assigned, RSVP) and the Entities apart of the event. For the None event type users in the Entities selection (the department or a group) will be notified. For RSVP events all users in the department will be notified and for assigned events only Required and Opertional attendees will be notified.
+										@localizer["CalendarNoticeText"]
 									</div>
 								</div>
 							</div>
@@ -166,7 +167,7 @@
 							<div class="col-sm-10">
 								<div class="row">
 									<div class="alert alert-info" role="alert">
-										Shift notifications are now driven based off of events performed against a shift (Created, Updated, Days Added). Users attached to an existing shift will be notified of updates, all users in the department will be notified about new shifts and for signup shifts all users will be notified about new days, and assigned just the people on that shift.
+										@localizer["ShiftNoticeText"]
 									</div>
 								</div>
 							</div>
@@ -174,8 +175,8 @@
 
 						<div class="form-group">
 							<div class="col-sm-4 col-sm-offset-2">
-								<a class="btn btn-white" asp-controller="Notifications" asp-action="Index" asp-route-area="User">Cancel</a>
-								<button class="btn btn-primary" type="submit">Save Notification Role</button>
+								<a class="btn btn-white" asp-controller="Notifications" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+								<button class="btn btn-primary" type="submit">@localizer["SaveNotificationRole"]</button>
 							</div>
 						</div>
 					</form>

@@ -281,5 +281,9 @@ namespace Resgrid.Model.Services
 		/// Returns 0 = disabled, 1 = dept admins + managing user, 2 = dept admins + managing user + group admins.
 		/// </summary>
 		Task<int> GetRequire2FAForAdminsAsync(int departmentId);
+
+		Task<int?> GetDepartmentIdForPaddleCustomerIdAsync(string paddleCustomerId, bool bypassCache = false);
+
+		Task<string> GetPaddleCustomerIdForDepartmentAsync(int departmentId);
 	}
 }

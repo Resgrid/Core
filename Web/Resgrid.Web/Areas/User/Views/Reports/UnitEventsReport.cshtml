@@ -1,7 +1,9 @@
-﻿@using Resgrid.Model.Helpers
+@using Resgrid.Model.Helpers
 @using Resgrid.Web
 @using Resgrid.Web.Helpers
+@using Microsoft.Extensions.Localization
 @model Resgrid.Web.Areas.User.Models.Reports.Units.UnitEventsReportView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Reports.Reports> localizer
 @{
     Layout = null;
 }
@@ -10,9 +12,9 @@
 
 <html lang="en">
 <head>
-    <title>Resgrid Unit Events Report</title>
+    <title>@localizer["UnitEventsReportTitle"]</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="Resgrid Unit Events Report">
+	<meta name="description" content="@localizer["UnitEventsReportTitle"]">
     <meta name="author" content="Resgrid">
 
    	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"
@@ -47,14 +49,14 @@
                 <img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
             </div>
 	        <div class="col-md-5" style="text-align: right;">
-		        
+
 				@if (Model.Rows != null && Model.Rows.Count > 0)
 				{
 					<h3 style="margin-top: 10px;">@Model.Rows[0].UnitName Events Report</h3>
 				}
 				else
 				{
-					<h3 style="margin-top: 10px;">Resgrid Unit Events Report</h3>
+					<h3 style="margin-top: 10px;">@localizer["UnitEventsReportTitle"]</h3>
 				}
 	        </div>
         </div>
@@ -63,11 +65,11 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th>Status</th>
-                            <th>Destination\Call</th>
-                            <th>Timestamp</th>
-	                        <th>Location</th>
-							<th>Note</th>
+                            <th>@localizer["StatusHeader"]</th>
+                            <th>@localizer["DestinationCallHeader"]</th>
+                            <th>@localizer["TimestampHeader"]</th>
+	                        <th>@localizer["LocationHeader"]</th>
+							<th>@localizer["NoteHeader"]</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -76,9 +78,9 @@
                             <tr>
                                 <td>@row.State</td>
                                 <td>@row.DestinationName</td>
-								<td>@row.Timestamp</td>
+							<td>@row.Timestamp</td>
                                 <td>@row.Latitude,@row.Longitude</td>
-								<td>@row.Note</td>
+							<td>@row.Note</td>
                             </tr>
                         }
                     </tbody>

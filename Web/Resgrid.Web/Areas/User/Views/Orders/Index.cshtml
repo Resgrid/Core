@@ -1,22 +1,23 @@
-﻿@using Resgrid.Framework
+@using Resgrid.Framework
 @using Resgrid.Model
 @using Resgrid.Model.Events
 @using Resgrid.Web.Extensions
 @using Resgrid.Web.Helpers
 @model Resgrid.WebCore.Areas.User.Models.Orders.OrdersIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Orders.Orders> localizer
 @{
-  ViewBag.Title = "Resgrid | Resource Orders";
+  ViewBag.Title = "Resgrid | " + localizer["ResourceOrdersHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
-	<h2>Resource Orders</h2>
+	<h2>@localizer["ResourceOrdersHeader"]</h2>
 	<ol class="breadcrumb">
 	  <li>
-		<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+		<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a>
 	  </li>
 	  <li class="active">
-		<strong>Resource Orders</strong>
+		<strong>@localizer["ResourceOrdersHeader"]</strong>
 	  </li>
 	</ol>
   </div>
@@ -24,8 +25,8 @@
   {
 	<div class="col-sm-8">
 	  <div class="btn-group top-page-buttons" style="float: right; padding-right: 15px;">
-		<a title="Updated Resource Order Settings" class="btn btn-info" asp-controller="Orders" asp-action="Settings" asp-route-area="User">Update Settings</a>
-		<a title="Create a new Resource Order" class="btn btn-success" asp-controller="Orders" asp-action="New" asp-route-area="User">Create Order</a>
+		<a title="@localizer["UpdateSettingsButton"]" class="btn btn-info" asp-controller="Orders" asp-action="Settings" asp-route-area="User">@localizer["UpdateSettingsButton"]</a>
+		<a title="@localizer["CreateOrderButton"]" class="btn btn-success" asp-controller="Orders" asp-action="New" asp-route-area="User">@localizer["CreateOrderButton"]</a>
 	  </div>
 	</div>
   }
@@ -37,7 +38,7 @@
 	  <ul class="nav nav-tabs">
 		<li class="active">
 		  <a href="#tab-1" data-toggle="tab">
-			Your Orders
+			@localizer["YourOrdersTab"]
 
 			@if (Model.YourOrders != null && Model.YourOrders.Count > 0)
 			{
@@ -47,7 +48,7 @@
 		</li>
 		<li>
 		  <a aria-expanded="false" href="#tab-2" data-toggle="tab">
-			Available Orders
+			@localizer["AvailableOrdersTab"]
 
 			@if (Model.OthersOrders != null && Model.OthersOrders.Count > 0)
 			{
@@ -68,34 +69,34 @@
 					  <td class="project-status">
 						@if (order.CloseDate.HasValue)
 						{
-						  <span class="label label-info">Closed</span>
+						  <span class="label label-info">@localizer["ClosedLabel"]</span>
 						}
 						else
 						{
 						  if (order.IsFilled())
 						  {
-							<span class="label label-success">Filled</span>
+							<span class="label label-success">@localizer["FilledLabel"]</span>
 						  }
 						  else
 						  {
-							<span class="label label-primary">Open</span>
+							<span class="label label-primary">@localizer["OpenLabel"]</span>
 						  }
 						}
 					  </td>
 					  <td class="project-title">
 						<a asp-controller="Orders" asp-action="View" asp-route-area="User" asp-route-orderId="@order.ResourceOrderId">@order.Title</a>
 						<br>
-						<small>Created @order.OpenDate.TimeConverterToString(Model.Department)</small>
+						<small>@localizer["CreatedLabel"] @order.OpenDate.TimeConverterToString(Model.Department)</small>
 					  </td>
 					  <td class="project-completion">
-						<small>Fill Percentage: @order.FilledPrecentage()%</small>
+						<small>@localizer["FillPercentageLabel"]: @order.FilledPrecentage()%</small>
 						<div class="progress progress-mini">
 						  <div style="width: @order.FilledPrecentage()%;" class="progress-bar"></div>
 						</div>
 					  </td>
 					  <td class="project-people"></td>
 					  <td class="project-actions">
-						<a asp-controller="Orders" asp-action="View" asp-route-area="User" asp-route-orderId="@order.ResourceOrderId" class="btn btn-white btn-sm"><i class="fa fa-folder"></i> View </a>
+						<a asp-controller="Orders" asp-action="View" asp-route-area="User" asp-route-orderId="@order.ResourceOrderId" class="btn btn-white btn-sm"><i class="fa fa-folder"></i> @localizer["ViewButton"] </a>
 					  </td>
 					</tr>
 				  }
@@ -115,44 +116,44 @@
 					  <td class="project-status">
 						@if (order.CloseDate.HasValue)
 						{
-						  <span class="label label-info">Closed</span>
+						  <span class="label label-info">@localizer["ClosedLabel"]</span>
 						}
 						else
 						{
 						  if (order.IsFilled())
 						  {
-							<span class="label label-success">Filled</span>
+							<span class="label label-success">@localizer["FilledLabel"]</span>
 						  }
 						  else
 						  {
-							<span class="label label-primary">Open</span>
+							<span class="label label-primary">@localizer["OpenLabel"]</span>
 						  }
 						}
 					  </td>
 					  <td class="project-title">
 						<a asp-controller="Orders" asp-action="View" asp-route-area="User" asp-route-orderId="@order.ResourceOrderId">@order.Title</a>
 						<br>
-						<small>Created @order.OpenDate.TimeConverterToString(Model.Department)</small>
+						<small>@localizer["CreatedLabel"] @order.OpenDate.TimeConverterToString(Model.Department)</small>
 					  </td>
 					  <td class="project-title">
 						<a asp-controller="Orders" asp-action="View" asp-route-area="User" asp-route-orderId="@order.ResourceOrderId">@order.Department.Name</a>
 						<br>
-						<small>Location @order.IncidentAddress</small>
+						<small>@localizer["LocationLabel"] @order.IncidentAddress</small>
 					  </td>
 					  <td class="project-title">
-						Distance
+						@localizer["DistanceLabel"]
 						<br>
 						<small>@order.GetDistanceTo(Model.Coordinates.Latitude.Value, Model.Coordinates.Longitude.Value) mi</small>
 					  </td>
 					  <td class="project-completion">
-						<small>Fill Percentage: @order.FilledPrecentage()%</small>
+						<small>@localizer["FillPercentageLabel"]: @order.FilledPrecentage()%</small>
 						<div class="progress progress-mini">
 						  <div style="width: @order.FilledPrecentage()%;" class="progress-bar"></div>
 						</div>
 					  </td>
 					  <td class="project-people"></td>
 					  <td class="project-actions">
-						<a asp-controller="Orders" asp-action="View" asp-route-area="User" asp-route-orderId="@order.ResourceOrderId" class="btn btn-white btn-sm"><i class="fa fa-folder"></i> View </a>
+						<a asp-controller="Orders" asp-action="View" asp-route-area="User" asp-route-orderId="@order.ResourceOrderId" class="btn btn-white btn-sm"><i class="fa fa-folder"></i> @localizer["ViewButton"] </a>
 					  </td>
 					</tr>
 				  }

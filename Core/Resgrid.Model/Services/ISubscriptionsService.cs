@@ -249,5 +249,19 @@ namespace Resgrid.Model.Services
 		Task<CreateStripeSessionForUpdateData> CreateStripeSessionForSub(int departmentId, string stripeCustomerId, string stripePlanId, int planId, string email, string departmentName, int count);
 
 		Task<ChangeActiveSubscriptionData> ChangeActiveSubscriptionAsync(string stripeCustomerId, string stripePlanId);
+
+		Task<CreatePaddleCheckoutData> CreatePaddleCheckoutForSub(int departmentId, string paddleCustomerId, string paddlePriceId, int planId, string email, string departmentName, int count);
+
+		Task<CreatePaddleCheckoutData> CreatePaddleCheckoutForUpdate(int departmentId, string paddleCustomerId, string email, string departmentName);
+
+		Task<GetActivePaddleSubscriptionData> GetActivePaddleSubscriptionAsync(string paddleCustomerId);
+
+		Task<GetActivePaddleSubscriptionData> GetActivePTTPaddleSubscriptionAsync(string paddleCustomerId);
+
+		Task<bool> ChangePaddleSubscriptionAsync(string paddleCustomerId, string paddlePriceId);
+
+		Task<bool> ModifyPaddlePTTAddonSubscriptionAsync(string paddleCustomerId, long quantity, PlanAddon planAddon);
+
+		Task<bool> CancelPaddleSubscriptionAsync(string paddleCustomerId);
 	}
 }

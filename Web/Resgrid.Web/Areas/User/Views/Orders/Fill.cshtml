@@ -1,21 +1,22 @@
-﻿@using Resgrid.Model
+@using Resgrid.Model
 @model Resgrid.Web.Areas.User.Models.Orders.FillOrderView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Orders.Orders> localizer
 @{
-  ViewBag.Title = "Resgrid | Fill Order";
+  ViewBag.Title = "Resgrid | " + localizer["FillOrderHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
-    <h2>Fill Order</h2>
+    <h2>@localizer["FillOrderHeader"]</h2>
     <ol class="breadcrumb">
       <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a>
       </li>
       <li>
-        <a asp-controller="Orders" asp-action="Index" asp-route-area="User">Orders</a>
+        <a asp-controller="Orders" asp-action="Index" asp-route-area="User">@localizer["OrdersLabel"]</a>
       </li>
       <li class="active">
-        <strong>Fill Order</strong>
+        <strong>@localizer["FillOrderHeader"]</strong>
       </li>
     </ol>
   </div>
@@ -32,21 +33,21 @@
                 <h2>@Model.Order.Title</h2>
               </div>
               <dl class="dl-horizontal">
-                <dt>Status:</dt>
+                <dt>@localizer["StatusLabel"]</dt>
                 <dd>
                   @if (Model.Order.CloseDate.HasValue)
 				  {
-                    <span class="label label-info">Closed</span>
+                    <span class="label label-info">@localizer["ClosedLabel"]</span>
 				  }
 				  else
 				  {
 					if (Model.Order.IsFilled())
 					{
-                      <span class="label label-success">Filled</span>
+                      <span class="label label-success">@localizer["FilledLabel"]</span>
 					}
 					else
 					{
-                      <span class="label label-primary">Open</span>
+                      <span class="label label-primary">@localizer["OpenLabel"]</span>
 					}
 				  }
                 </dd>
@@ -56,25 +57,25 @@
           <div class="row">
             <div class="col-lg-5">
               <dl class="dl-horizontal">
-                <dt>Created by:</dt>
+                <dt>@localizer["CreatedByLabel"]</dt>
                 <dd>@Model.Order.Department.Name</dd>
-                <dt>Incident:</dt>
+                <dt>@localizer["IncidentLabel"]</dt>
                 <dd>@Model.Order.IncidentName</dd>
-                <dt>Number\ID:</dt>
+                <dt>@localizer["NumberIdLabel"]</dt>
                 <dd>@Model.Order.IncidentNumber</dd>
-                <dt>Finance Code:</dt>
+                <dt>@localizer["FinanceCodeDtLabel"]</dt>
                 <dd>@Model.Order.FinancialCode</dd>
               </dl>
             </div>
             <div class="col-lg-7" id="cluster_info">
               <dl class="dl-horizontal">
-                <dt>Last Updated:</dt>
+                <dt>@localizer["LastUpdatedLabel"]</dt>
                 <dd>@Model.Order.OpenDate.TimeConverterToString(Model.Department)</dd>
-                <dt>Created:</dt>
+                <dt>@localizer["CreatedDtLabel"]</dt>
                 <dd>@Model.Order.OpenDate.TimeConverterToString(Model.Department)</dd>
-                <dt>Contact Name:</dt>
+                <dt>@localizer["ContactNameDtLabel"]</dt>
                 <dd>@Model.Order.ContactName</dd>
-                <dt>Contact Number:</dt>
+                <dt>@localizer["ContactNumberDtLabel"]</dt>
                 <dd>@Model.Order.ContactNumber</dd>
               </dl>
             </div>
@@ -82,12 +83,12 @@
           <div class="row">
             <div class="col-lg-12">
               <dl class="dl-horizontal">
-                <dt>Fill:</dt>
+                <dt>@localizer["FillDtLabel"]</dt>
                 <dd>
                   <div class="progress progress-striped active m-b-sm">
                     <div style="width: @Model.Order.FilledPrecentage()%;" class="progress-bar"></div>
                   </div>
-                  <small>This resource order is <strong>@Model.Order.FilledPrecentage()%</strong> filled.</small>
+                  <small>@localizer["FillPercentageText"] <strong>@Model.Order.FilledPrecentage()%</strong> @localizer["FillPercentageText2"]</small>
                 </dd>
               </dl>
             </div>
@@ -98,7 +99,7 @@
                 <div class="panel-heading">
                   <div class="panel-options">
                     <ul class="nav nav-tabs">
-                      <li class="active"><a href="#tab-1" data-toggle="tab">Fills</a></li>
+                      <li class="active"><a href="#tab-1" data-toggle="tab">@localizer["FillsTab"]</a></li>
                     </ul>
                   </div>
                 </div>
@@ -111,31 +112,31 @@
                         <div class="row">
                           <div class="col-md-4">
                             <dl>
-                              <dt>Resource:</dt>
+                              <dt>@localizer["ResourceDtLabel"]</dt>
                               <dd>@item.Resource</dd>
                             </dl>
                           </div>
                           <div class="col-md-4">
                             <dl>
-                              <dt>Requirements:</dt>
+                              <dt>@localizer["RequirementsDtLabel"]</dt>
                               <dd>@item.Requirements</dd>
                             </dl>
                           </div>
                           <div class="col-md-1">
                             <dl>
-                              <dt>Min:</dt>
+                              <dt>@localizer["MinDtLabel"]</dt>
                               <dd>@item.Min</dd>
                             </dl>
                           </div>
                           <div class="col-md-1">
                             <dl>
-                              <dt>Max:</dt>
+                              <dt>@localizer["MaxDtLabel"]</dt>
                               <dd>@item.Max</dd>
                             </dl>
                           </div>
                           <div class="col-md-1">
                             <dl>
-                              <dt>Needed:</dt>
+                              <dt>@localizer["NeededDtLabel"]</dt>
 	                            <dd>
 		                            @{
 			                            <script>
@@ -143,7 +144,7 @@
                             				window['unitFillId_@Model.Count'] = @item.ResourceOrderItemId;
                             			</script>
 		                            }
-								
+
 		                            <span>@(item.Max - item.UnitFillCount())</span>
 	                            </dd>
                             </dl>

@@ -1,7 +1,9 @@
-﻿@using Resgrid.Model.Helpers
+@using Resgrid.Model.Helpers
 @using Resgrid.Web
 @using Resgrid.Web.Helpers
+@using Microsoft.Extensions.Localization
 @model Resgrid.Web.Areas.User.Models.Reports.Personnel.PersonnelHoursDetailView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Reports.Reports> localizer
 @{
 	Layout = null;
 }
@@ -10,9 +12,9 @@
 
 <html lang="en">
 <head>
-	<title>Personnel Hours Detail Report</title>
+	<title>@localizer["PersonnelHoursDetailReportTitle"]</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="Personnel Hours Detail Report">
+	<meta name="description" content="@localizer["PersonnelHoursDetailReportTitle"]">
 	<meta name="author" content="Resgrid">
 
 	<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"
@@ -49,7 +51,7 @@
 				<img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
 			</div>
 			<div class="col-md-6" style="text-align: right;">
-				<h3 style="margin-top: 10px;">Personnel Hours Detail Report</h3>
+				<h3 style="margin-top: 10px;">@localizer["PersonnelHoursDetailReportTitle"]</h3>
 			</div>
 		</div>
 		<div class="row">
@@ -58,26 +60,26 @@
 					<tbody>
 						<tr>
 							<td>
-								<strong><small>Id</small></strong>
+								<strong><small>@localizer["IdHeader"]</small></strong>
 								<span style="display: block;">@Model.ID</span>
 							</td>
 							<td>
-								<strong><small>Name</small></strong>
+								<strong><small>@localizer["NameHeader"]</small></strong>
 								<span style="display: block;">@Model.Name</span>
 							</td>
 							<td>
-								<strong><small>Group</small></strong>
+								<strong><small>@localizer["GroupHeader"]</small></strong>
 								<span style="display: block;">@Model.Group</span>
 							</td>
 						</tr>
 						<tr>
 							<td>
-								<strong><small>Start</small></strong>
+								<strong><small>@localizer["StartHeader"]</small></strong>
 								<span style="display: block;">@Model.Start.FormatForDepartment(Model.Department)</span>
 							</td>
 
 							<td>
-								<strong><small>End</small></strong>
+								<strong><small>@localizer["EndHeader"]</small></strong>
 								<span style="display: block;">@Model.End.FormatForDepartment(Model.Department)</span>
 							</td>
 							<td>
@@ -91,7 +93,7 @@
 		</div>
 		<div class="row">
 			<div class="col-md-10 col-md-offset-1">
-				<h4>Calls</h4>
+				<h4>@localizer["Calls"]</h4>
 			</div>
 		</div>
 		<div class="row">
@@ -99,11 +101,11 @@
 				<table class="table table-condensed">
 					<thead>
 						<tr>
-							<th>Number</th>
-							<th>Name</th>
-							<th>Start</th>
-							<th>End</th>
-							<th>Hours</th>
+							<th>@localizer["NumberHeader"]</th>
+							<th>@localizer["NameHeader"]</th>
+							<th>@localizer["StartHeader"]</th>
+							<th>@localizer["EndHeader"]</th>
+							<th>@localizer["HoursHeader"]</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -123,7 +125,7 @@
 		</div>
 		<div class="row">
 			<div class="col-md-10 col-md-offset-1">
-				<h4>Work Logs</h4>
+				<h4>@localizer["WorkLogs"]</h4>
 			</div>
 		</div>
 		<div class="row">
@@ -131,10 +133,10 @@
 				<table class="table table-condensed">
 					<thead>
 						<tr>
-							<th>Name</th>
-							<th>Start</th>
-							<th>End</th>
-							<th>Hours</th>
+							<th>@localizer["NameHeader"]</th>
+							<th>@localizer["StartHeader"]</th>
+							<th>@localizer["EndHeader"]</th>
+							<th>@localizer["HoursHeader"]</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -153,7 +155,7 @@
 		</div>
 		<div class="row">
 			<div class="col-md-10 col-md-offset-1">
-				<h4>Trainings</h4>
+				<h4>@localizer["Trainings"]</h4>
 			</div>
 		</div>
 		<div class="row">
@@ -161,10 +163,10 @@
 				<table class="table table-condensed">
 					<thead>
 						<tr>
-							<th>Name</th>
-							<th>Start</th>
-							<th>End</th>
-							<th>Hours</th>
+							<th>@localizer["NameHeader"]</th>
+							<th>@localizer["StartHeader"]</th>
+							<th>@localizer["EndHeader"]</th>
+							<th>@localizer["HoursHeader"]</th>
 						</tr>
 					</thead>
 					<tbody>

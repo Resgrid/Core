@@ -1,6 +1,7 @@
-﻿@model Resgrid.WebCore.Areas.User.Models.Links.LinkDataView
+@model Resgrid.WebCore.Areas.User.Models.Links.LinkDataView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Links.Links> localizer
 @{
-  ViewBag.Title = "Resgrid | View Department Link";
+  ViewBag.Title = "Resgrid | " + localizer["ViewDepartmentLinkTitle"];
 }
 
 @section Styles
@@ -14,16 +15,16 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
-    <h2>View Department Link</h2>
+    <h2>@localizer["ViewDepartmentLinkTitle"]</h2>
     <ol class="breadcrumb">
       <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a>
       </li>
       <li>
-        <a asp-controller="Links" asp-action="Index" asp-route-area="User">Department Links</a>
+        <a asp-controller="Links" asp-action="Index" asp-route-area="User">@localizer["DepartmentLinks"]</a>
       </li>
       <li class="active">
-        <strong>View Department Link</strong>
+        <strong>@localizer["ViewDepartmentLinkTitle"]</strong>
       </li>
     </ol>
   </div>
@@ -34,7 +35,7 @@
     <div class="col-sm-12">
       <div class="ibox float-e-margins">
         <div class="ibox-title">
-          <h5>Calls</h5>
+          <h5>@localizer["Calls"]</h5>
         </div>
         <div class="ibox-content">
           <div id="callsList"></div>
@@ -47,7 +48,7 @@
     <div class="col-sm-12">
       <div class="ibox float-e-margins">
         <div class="ibox-title">
-          <h5>Units</h5>
+          <h5>@localizer["Units"]</h5>
         </div>
         <div class="ibox-content">
           <div id="unitsList"></div>
@@ -60,7 +61,7 @@
     <div class="col-sm-12">
       <div class="ibox float-e-margins">
         <div class="ibox-title">
-          <h5>Personnel</h5>
+          <h5>@localizer["Personnel"]</h5>
         </div>
         <div class="ibox-content">
           <div id="personnelList"></div>

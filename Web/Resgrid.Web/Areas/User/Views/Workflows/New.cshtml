@@ -37,7 +37,7 @@
                         @if (noEventTypesAvailable)
                         {
                             <div class="alert alert-warning">
-                                <i class="fa fa-info-circle"></i> All available trigger event types already have a workflow configured. Delete an existing workflow to free up its event type.
+                                <i class="fa fa-info-circle"></i> @localizer["AllEventTypesUsed"]
                             </div>
                         }
 
@@ -60,7 +60,7 @@
                             {
                                 <select asp-for="TriggerEventType" asp-items="@eventTypes" class="form-control"></select>
                             }
-                            <span class="help-block text-muted">Each event type can only have one workflow. Only unused event types are shown.</span>
+                            <span class="help-block text-muted">@localizer["TriggerEventHelp"]</span>
                         </div>
                         <div class="form-group">
                             <label asp-for="MaxRetryCount">@localizer["MaxRetryCount"]</label>

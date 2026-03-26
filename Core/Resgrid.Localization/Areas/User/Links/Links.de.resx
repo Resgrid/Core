@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Abteilungsverknüpfungen</value>
+  </data>
+  <data name="DepartmentLinks" xml:space="preserve">
+    <value>Abteilungsverknüpfungen</value>
+  </data>
+  <data name="NewDepartmentLinks" xml:space="preserve">
+    <value>Neue Abteilungsverknüpfung</value>
+  </data>
+  <data name="FromDepartment" xml:space="preserve">
+    <value>Von Abteilung</value>
+  </data>
+  <data name="ToDepartment" xml:space="preserve">
+    <value>Zu Abteilung</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Aktiviert</value>
+  </data>
+  <data name="SharedData" xml:space="preserve">
+    <value>Gemeinsame Daten</value>
+  </data>
+  <data name="LinkEnabled" xml:space="preserve">
+    <value>Verknüpfung Aktiviert</value>
+  </data>
+  <data name="LinkDisabled" xml:space="preserve">
+    <value>Verknüpfung Deaktiviert</value>
+  </data>
+  <data name="Calls" xml:space="preserve">
+    <value>Einsätze</value>
+  </data>
+  <data name="Personnel" xml:space="preserve">
+    <value>Personal</value>
+  </data>
+  <data name="Units" xml:space="preserve">
+    <value>Einheiten</value>
+  </data>
+  <data name="Orders" xml:space="preserve">
+    <value>Aufträge</value>
+  </data>
+  <data name="NoDataShared" xml:space="preserve">
+    <value>Keine Daten Geteilt</value>
+  </data>
+  <data name="Enable" xml:space="preserve">
+    <value>Aktivieren</value>
+  </data>
+  <data name="Disable" xml:space="preserve">
+    <value>Deaktivieren</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="ViewData" xml:space="preserve">
+    <value>Daten Anzeigen</value>
+  </data>
+  <data name="YourDepartmentLinkCode" xml:space="preserve">
+    <value>Ihr Abteilungsverknüpfungscode</value>
+  </data>
+  <data name="DeleteLinkConfirm" xml:space="preserve">
+    <value>WARNUNG: Dies wird diese Verknüpfung dauerhaft löschen. Sind Sie sicher, dass Sie sie löschen möchten?</value>
+  </data>
+  <data name="EnableDepartmentLinkTitle" xml:space="preserve">
+    <value>Abteilungsverknüpfung Aktivieren</value>
+  </data>
+  <data name="EnableLinkDescription" xml:space="preserve">
+    <value>Abteilungsverknüpfungen teilen Daten in einer Richtung. Hier können Sie eine Verknüpfung aktivieren und ihre Farbe festlegen. Die Verknüpfungsfarbe wird verwendet, um Einsätze, Personal und Einheiten zu kennzeichnen, die aus dieser Verknüpfung stammen.</value>
+  </data>
+  <data name="LinkColor" xml:space="preserve">
+    <value>Verknüpfungsfarbe</value>
+  </data>
+  <data name="SaveAndEnableLink" xml:space="preserve">
+    <value>Speichern und Verknüpfung Aktivieren</value>
+  </data>
+  <data name="NewDepartmentLinkTitle" xml:space="preserve">
+    <value>Neue Abteilungsverknüpfung</value>
+  </data>
+  <data name="NewLinkDescription" xml:space="preserve">
+    <value>Abteilungsverknüpfungen teilen Daten in einer Richtung. Unten können Sie eine Verknüpfung mit einer anderen Abteilung einrichten und sobald diese die Verknüpfung aktiviert, können sie die geteilten Informationen einsehen. Damit Ihre Abteilung die Daten dieser Abteilung sehen kann, müssen sie eine Verknüpfung zu Ihrer Abteilung erstellen und Sie müssen diese aktivieren.</value>
+  </data>
+  <data name="LinkCode" xml:space="preserve">
+    <value>Verknüpfungscode</value>
+  </data>
+  <data name="TypeColor" xml:space="preserve">
+    <value>Typfarbe</value>
+  </data>
+  <data name="TypeColorHelp" xml:space="preserve">
+    <value>Dies ist die Farbe, die zur Identifizierung von Einsätzen\Einheiten\Personal für diese Abteilungsverknüpfung verwendet wird</value>
+  </data>
+  <data name="ShareCalls" xml:space="preserve">
+    <value>Einsätze Teilen</value>
+  </data>
+  <data name="ShareUnits" xml:space="preserve">
+    <value>Einheiten Teilen</value>
+  </data>
+  <data name="SharePersonnel" xml:space="preserve">
+    <value>Personal Teilen</value>
+  </data>
+  <data name="ShareOrders" xml:space="preserve">
+    <value>Aufträge Teilen</value>
+  </data>
+  <data name="SaveLink" xml:space="preserve">
+    <value>Verknüpfung Speichern</value>
+  </data>
+  <data name="ViewDepartmentLinkTitle" xml:space="preserve">
+    <value>Abteilungsverknüpfung Anzeigen</value>
+  </data>
+</root>

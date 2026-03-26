@@ -1,21 +1,22 @@
-﻿@using Resgrid.Model
+@using Resgrid.Model
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Groups.DepartmentGroupsModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Groups.Groups> localizer
 @{
-    ViewBag.Title = "Resgrid | Department Groups";
+    ViewBag.Title = "Resgrid | " + localizer["IndexPageTitle"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
         <h2>
-            <h1>Groups</h1>
+            <h1>@localizer["GroupsHeading"]</h1>
         </h2>
         <ol class="breadcrumb">
             <li>
-                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Home"]</a>
             </li>
             <li class="active">
-                <strong>Groups</strong>
+                <strong>@localizer["GroupsHeading"]</strong>
             </li>
         </ol>
     </div>
@@ -26,12 +27,12 @@
         <div class="wrapper wrapper-content">
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
-                    <h5>Groups</h5>
+                    <h5>@localizer["GroupsHeading"]</h5>
                     <div class="ibox-tools">
                         @if (Model.CanAddNewGroup)
                         {
                             <div class="buttons-actions">
-                                <a title="Add a new Group" class="btn btn-success" asp-controller="Groups" asp-action="NewGroup" asp-route-area="User">Add New Group</a>
+                                <a title="@localizer["AddNewGroupTitle"]" class="btn btn-success" asp-controller="Groups" asp-action="NewGroup" asp-route-area="User">@localizer["AddNewGroup"]</a>
                             </div>
                         }
                     </div>
@@ -42,22 +43,22 @@
                             <thead>
                                 <tr>
                                     <th>
-                                        Group Name
+                                        @localizer["GroupName"]
                                     </th>
                                     <th>
-                                        Type
+                                        @commonLocalizer["Type"]
                                     </th>
                                     <th>
-                                        Parent
+                                        @localizer["Parent"]
                                     </th>
                                     <th>
-                                        Dispatch Email
+                                        @localizer["DispatchEmail"]
                                     </th>
                                     <th>
-                                        Message Email
+                                        @localizer["MessageEmail"]
                                     </th>
                                     <th>
-                                        Members
+                                        @localizer["Members"]
                                     </th>
                                     <th class="span1">
                                     </th>
@@ -73,17 +74,17 @@
                                         <td>
                                             @if (g.Type == null || g.Type == (int)DepartmentGroupTypes.Orginizational)
                                             {
-                                                @Html.Raw("Organizational")
+                                                @Html.Raw(localizer["Organizational"].Value)
                                             }
                                             else
                                             {
-                                                @Html.Raw("Station")
+                                                @Html.Raw(localizer["Station"].Value)
                                             }
                                         </td>
                                         <td>
                                             @if (g.Parent == null)
                                             {
-                                                @Html.Raw("None")
+                                                @Html.Raw(localizer["None"].Value)
                                             }
                                             else
                                             {
@@ -102,13 +103,13 @@
                                         <td>
                                             @if (ClaimsAuthorizationHelper.IsUserDepartmentOrGroupAdmin(g.DepartmentGroupId))
                                             {
-                                                <a class="btn btn-xs btn-primary" asp-controller="Groups" asp-action="EditGroup" asp-route-area="User" asp-route-departmentGroupId="@g.DepartmentGroupId">Edit</a>
+                                                <a class="btn btn-xs btn-primary" asp-controller="Groups" asp-action="EditGroup" asp-route-area="User" asp-route-departmentGroupId="@g.DepartmentGroupId">@commonLocalizer["Edit"]</a>
 
                                                 @if (g.Type == (int)DepartmentGroupTypes.Station)
                                                 {
-                                                    <a class="btn btn-xs btn-info" asp-controller="Groups" asp-action="Geofence" asp-route-area="User" asp-route-departmentGroupId="@g.DepartmentGroupId">Geofence</a>
+                                                    <a class="btn btn-xs btn-info" asp-controller="Groups" asp-action="Geofence" asp-route-area="User" asp-route-departmentGroupId="@g.DepartmentGroupId">@localizer["Geofence"]</a>
                                                 }
-                                                <a class="btn btn-xs btn-danger" asp-controller="Groups" asp-action="DeleteGroup" asp-route-area="User" asp-route-departmentGroupId="@g.DepartmentGroupId" data-confirm="WARNING: This will permanently delete this group and all units, Shift Groups, etc attached to this group. Are you sure you want to delete the group @g.Name?" rel="nofollow">Delete</a>
+                                                <a class="btn btn-xs btn-danger" asp-controller="Groups" asp-action="DeleteGroup" asp-route-area="User" asp-route-departmentGroupId="@g.DepartmentGroupId" data-confirm="WARNING: This will permanently delete this group and all units, Shift Groups, etc attached to this group. Are you sure you want to delete the group @g.Name?" rel="nofollow">@commonLocalizer["Delete"]</a>
                                             }
                                         </td>
                                     </tr>

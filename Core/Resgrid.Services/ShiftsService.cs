@@ -760,5 +760,14 @@ namespace Resgrid.Services
 			var signups = await _shiftSignupRepository.GetAllShiftSignupsByGroupIdAndDateAsync(departmentGroupId, shiftDayDate);
 			return signups.ToList();
 		}
+
+		public async Task<List<ShiftPerson>> GetShiftPersonsForUserAsync(string userId)
+		{
+			var persons = await _shiftPersonRepository.GetAllByUserIdAsync(userId);
+			if (persons != null)
+				return persons.ToList();
+
+			return new List<ShiftPerson>();
+		}
 	}
 }

@@ -1,7 +1,7 @@
 @model Resgrid.Web.Areas.User.Models.Routes.RouteDirectionsView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Routes.Routes> localizer
 @{
-    ViewBag.Title = "Resgrid | Directions - " + Model.Plan.Name;
+    ViewBag.Title = "Resgrid | " + localizer["Directions"] + " — " + Model.Plan.Name;
 }
 
 <style>
@@ -63,21 +63,21 @@
 
 <div class="row wrapper border-bottom white-bg page-heading no-print">
     <div class="col-sm-8">
-        <h2><i class="fa fa-map-signs"></i> Directions &mdash; @Model.Plan.Name</h2>
+        <h2><i class="fa fa-map-signs"></i> @localizer["Directions"] &mdash; @Model.Plan.Name</h2>
         <ol class="breadcrumb">
             <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
             <li><a asp-controller="Routes" asp-action="Index" asp-route-area="User">@localizer["RoutesHeader"]</a></li>
             <li><a asp-controller="Routes" asp-action="View" asp-route-id="@Model.Plan.RoutePlanId" asp-route-area="User">@Model.Plan.Name</a></li>
-            <li class="active"><strong>Directions</strong></li>
+            <li class="active"><strong>@localizer["Directions"]</strong></li>
         </ol>
     </div>
     <div class="col-sm-4">
         <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
             <button class="btn btn-primary" onclick="window.print();">
-                <i class="fa fa-print"></i> Print
+                <i class="fa fa-print"></i> @localizer["Print"]
             </button>
             <a class="btn btn-success" asp-controller="Routes" asp-action="StartRoute" asp-route-id="@Model.Plan.RoutePlanId" asp-route-area="User">
-                <i class="fa fa-play"></i> Start Route
+                <i class="fa fa-play"></i> @localizer["StartRoute"]
             </a>
         </div>
     </div>
@@ -102,44 +102,43 @@
         <div class="col-lg-12">
             <div class="ibox">
                 <div class="ibox-title">
-                    <h5><i class="fa fa-list"></i> Turn-by-Turn Directions</h5>
+                    <h5><i class="fa fa-list"></i> @localizer["TurnByTurnDirections"]</h5>
                 </div>
                 <div class="ibox-content">
                     <div id="directionsLoading" style="text-align:center;padding:20px;">
                         <i class="fa fa-spinner fa-spin fa-2x"></i>
-                        <p>Calculating route&hellip;</p>
+                        <p>@localizer["CalculatingRoute"]</p>
                     </div>
                     <div id="directionsError" class="alert alert-warning">
                         <i class="fa fa-exclamation-triangle"></i>
-                        Could not retrieve driving directions. The stop addresses or coordinates may not be reachable by road.
-                        The stops are listed below in order.
+                        @localizer["DirectionsError"]
                     </div>
                     <div id="directionsContainer"></div>
 
                     @* Fallback stop list — always shown below directions *@
                     <hr />
-                    <h4>Stop Summary</h4>
+                    <h4>@localizer["StopSummary"]</h4>
                     <table class="table table-condensed table-bordered">
                         <thead>
                             <tr>
                                 <th>#</th>
-                                <th>Stop Name</th>
-                                <th>Address</th>
+                                <th>@localizer["StopName"]</th>
+                                <th>@localizer["Address"]</th>
                                 @if (Model.Stops.Any(s => s.PlannedArrivalTime.HasValue))
                                 {
-                                    <th>Planned Arrival</th>
+                                    <th>@localizer["PlannedArrival"]</th>
                                 }
                                 @if (Model.Stops.Any(s => s.EstimatedDwellMinutes.HasValue))
                                 {
-                                    <th>Dwell (min)</th>
+                                    <th>@localizer["DwellMin"]</th>
                                 }
                                 @if (Model.Stops.Any(s => !string.IsNullOrEmpty(s.ContactName)))
                                 {
-                                    <th>Contact</th>
+                                    <th>@localizer["Contact"]</th>
                                 }
                                 @if (Model.Stops.Any(s => !string.IsNullOrEmpty(s.Notes)))
                                 {
-                                    <th>Notes</th>
+                                    <th>@localizer["Notes"]</th>
                                 }
                             </tr>
                         </thead>

@@ -1,0 +1,51 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__dual-graph__graph_scan",
+      "mcp__dual-graph__graph_continue",
+      "Bash(find G:ResgridResgridCoreResgrid.ModelBilling -type f -name *.cs)",
+      "Bash(python3:*)",
+      "Bash(xargs grep:*)",
+      "Bash(grep -E \"\\\\.cs$|Program\")",
+      "Bash(grep -l \"DepartmentMembers\\\\|DepartmentMember\" \"G:\\\\Resgrid\\\\Resgrid/Repositories/Resgrid.Repositories.DataRepository/\"*.cs)",
+      "Bash(find /g/Resgrid/Resgrid/Repositories/Resgrid.Repositories.DataRepository/Servers -name *.cs)",
+      "Bash(find G:/Resgrid/Resgrid -newer G:/Resgrid/Resgrid/CLAUDE.md -name *.cs -not -path */obj/* -not -path */.git/*)",
+      "Bash(dotnet build:*)"
+    ]
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -File \"G:/Resgrid/Resgrid/.dual-graph/prime.ps1\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -File \"G:/Resgrid/Resgrid/.dual-graph/stop_hook.ps1\""
+          }
+        ]
+      }
+    ],
+    "PreCompact": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "powershell -NoProfile -File \"G:/Resgrid/Resgrid/.dual-graph/prime.ps1\""
+          }
+        ]
+      }
+    ]
+  }
+}

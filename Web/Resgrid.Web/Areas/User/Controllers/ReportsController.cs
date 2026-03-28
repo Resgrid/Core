@@ -2056,9 +2056,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 		public async Task<IActionResult> EventAttendanceReportParams()
 		{
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var now = DateTime.UtcNow.TimeConverter(department);
+
 			var model = new EventAttendanceReportParams();
-			model.Start = new DateTime(DateTime.UtcNow.Year, 1, 1);
-			model.End = new DateTime(DateTime.UtcNow.Year, 12, 31, 23, 59, 59);
+			model.Start = new DateTime(now.Year, 1, 1);
+			model.End = new DateTime(now.Year, 12, 31, 23, 59, 59);
 
 			return View(model);
 		}
@@ -2085,7 +2088,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 		public async Task<IActionResult> EventAttendanceDetailReport(string userId, DateTime start, DateTime end)
 		{
-			var model = await BuildEventAttendanceDetailReportModel(userId, start, end);
+			if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(userId, UserId, DepartmentId))
+				return Unauthorized();
+
+			var canViewLocation = await _authorizationService.CanUserViewPersonLocationViaMatrixAsync(userId, UserId, DepartmentId);
+			var model = await BuildEventAttendanceDetailReportModel(userId, start, end, canViewLocation);
 			return View(model);
 		}
 
@@ -2137,6 +2144,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var userId in allUserIds)
 			{
+				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(userId, UserId, DepartmentId))
+					continue;
+
 				var personHours = new PersonnelEventHours();
 				personHours.ID = userId;
 
@@ -2175,7 +2185,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return model;
 		}
 
-		private async Task<EventAttendanceDetailView> BuildEventAttendanceDetailReportModel(string userId, DateTime start, DateTime end)
+		private async Task<EventAttendanceDetailView> BuildEventAttendanceDetailReportModel(string userId, DateTime start, DateTime end, bool includeLocation = true)
 		{
 			var model = new EventAttendanceDetailView();
 			model.RunOn = DateTime.UtcNow;
@@ -2215,10 +2225,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 				detail.IsManualOverride = checkIn.IsManualOverride;
 				detail.CheckInNote = checkIn.CheckInNote;
 				detail.CheckOutNote = checkIn.CheckOutNote;
-				detail.CheckInLatitude = checkIn.CheckInLatitude;
-				detail.CheckInLongitude = checkIn.CheckInLongitude;
-				detail.CheckOutLatitude = checkIn.CheckOutLatitude;
-				detail.CheckOutLongitude = checkIn.CheckOutLongitude;
+				if (includeLocation)
+				{
+					detail.CheckInLatitude = checkIn.CheckInLatitude;
+					detail.CheckInLongitude = checkIn.CheckInLongitude;
+					detail.CheckOutLatitude = checkIn.CheckOutLatitude;
+					detail.CheckOutLongitude = checkIn.CheckOutLongitude;
+				}
 
 				if (!string.IsNullOrWhiteSpace(checkIn.CheckInByUserId))
 				{

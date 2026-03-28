@@ -158,6 +158,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CreateLogPermissions = new SelectList(createLogPermissions, "Id", "Name");
 
 
+			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.DeleteLog))
+				model.DeleteLog = permissions.First(x => x.PermissionType == (int)PermissionTypes.DeleteLog).Action;
+			else
+				model.DeleteLog = 3;
+
+			var deleteLogPermissions = new List<dynamic>();
+			deleteLogPermissions.Add(new { Id = 3, Name = "Everyone" });
+			deleteLogPermissions.Add(new { Id = 0, Name = "Department Admins" });
+			deleteLogPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
+			deleteLogPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			model.DeleteLogPermissions = new SelectList(deleteLogPermissions, "Id", "Name");
+
+
 			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.CreateShift))
 				model.CreateShift = permissions.First(x => x.PermissionType == (int)PermissionTypes.CreateShift).Action;
 

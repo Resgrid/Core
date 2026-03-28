@@ -140,6 +140,9 @@
 		CalendarCheckOutPerformed,
 		CalendarCheckInUpdated,
 		CalendarCheckInDeleted,
-		CalendarAdminCheckInPerformed
+		CalendarAdminCheckInPerformed,
+		// Log operations
+		LogCreated,
+		LogDeleted
 	}
 }

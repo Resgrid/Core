@@ -171,7 +171,6 @@ namespace Resgrid.Providers.Claims
 					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.View));
 					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Update));
 					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Create));
-					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Delete));
 				}
 				else if (permission.Action == (int)PermissionActions.DepartmentAdminsOnly && !isAdmin)
 				{
@@ -182,7 +181,6 @@ namespace Resgrid.Providers.Claims
 					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.View));
 					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Update));
 					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Create));
-					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Delete));
 				}
 				else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && !isAdmin && !isGroupAdmin)
 				{
@@ -193,7 +191,6 @@ namespace Resgrid.Providers.Claims
 					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.View));
 					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Update));
 					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Create));
-					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Delete));
 				}
 				else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && !isAdmin)
 				{
@@ -209,7 +206,6 @@ namespace Resgrid.Providers.Claims
 							identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.View));
 							identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Update));
 							identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Create));
-							identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Delete));
 						}
 						else
 						{
@@ -226,7 +222,6 @@ namespace Resgrid.Providers.Claims
 					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.View));
 					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Update));
 					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Create));
-					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Delete));
 				}
 
 			}
@@ -235,6 +230,50 @@ namespace Resgrid.Providers.Claims
 				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.View));
 				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Update));
 				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Create));
+			}
+		}
+
+		public static void AddDeleteLogClaims(ClaimsIdentity identity, bool isAdmin, List<Permission> permissions, bool isGroupAdmin, List<PersonnelRole> roles)
+		{
+			if (permissions != null && permissions.Any(x => x.PermissionType == (int)PermissionTypes.DeleteLog))
+			{
+				var permission = permissions.First(x => x.PermissionType == (int)PermissionTypes.DeleteLog);
+
+				if (permission.Action == (int)PermissionActions.DepartmentAdminsOnly && isAdmin)
+				{
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Delete));
+				}
+				else if (permission.Action == (int)PermissionActions.DepartmentAndGroupAdmins && (isAdmin || isGroupAdmin))
+				{
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Delete));
+				}
+				else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && isAdmin)
+				{
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Delete));
+				}
+				else if (permission.Action == (int)PermissionActions.DepartmentAdminsAndSelectRoles && !isAdmin)
+				{
+					if (!String.IsNullOrWhiteSpace(permission.Data))
+					{
+						var roleIds = permission.Data.Split(char.Parse(",")).Select(int.Parse);
+						var role = from r in roles
+											 where roleIds.Contains(r.PersonnelRoleId)
+											 select r;
+
+						if (role.Any())
+						{
+							identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Delete));
+						}
+					}
+				}
+				else if (permission.Action == (int)PermissionActions.Everyone)
+				{
+					identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Delete));
+				}
+			}
+			else
+			{
+				// Default: everyone can delete logs
 				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.Log, ResgridClaimTypes.Actions.Delete));
 			}
 		}

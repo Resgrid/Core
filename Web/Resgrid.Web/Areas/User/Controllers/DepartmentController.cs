@@ -1697,6 +1697,29 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.UnitTypes = (await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId))?.ToList() ?? new List<UnitType>();
 			model.CallTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId) ?? new List<CallType>();
 
+			// Build state ID → name lookup for display in the configs/overrides tables
+			var personnelStatuses = await _customStateService.GetCustomPersonnelStatusesOrDefaultsAsync(DepartmentId);
+			foreach (var s in personnelStatuses)
+				model.StateNames[s.CustomStateDetailId.ToString()] = s.ButtonText;
+
+			var unitDefaults = _customStateService.GetDefaultUnitStatuses();
+			foreach (var s in unitDefaults)
+				model.StateNames.TryAdd(s.CustomStateDetailId.ToString(), s.ButtonText);
+
+			// Also include custom unit states from each unit type
+			foreach (var ut in model.UnitTypes)
+			{
+				if (ut.CustomStatesId.HasValue && ut.CustomStatesId.Value > 0)
+				{
+					var customState = await _customStateService.GetCustomSateByIdAsync(ut.CustomStatesId.Value);
+					if (customState != null)
+					{
+						foreach (var detail in customState.GetActiveDetails())
+							model.StateNames.TryAdd(detail.CustomStateDetailId.ToString(), detail.ButtonText);
+					}
+				}
+			}
+
 			return View(model);
 		}
 

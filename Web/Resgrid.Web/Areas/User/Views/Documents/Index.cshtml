@@ -69,7 +69,14 @@
                                         <i class="@doc.GetIconType()"></i>
                                     </div>
                                     <div class="file-name">
-                                        <a asp-controller="Documents" asp-action="EditDocument" asp-route-area="User" asp-route-documentId="@doc.DocumentId">@doc.Name</a>
+                                        @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || doc.UserId == Model.UserId)
+                                        {
+                                            <a asp-controller="Documents" asp-action="EditDocument" asp-route-area="User" asp-route-documentId="@doc.DocumentId">@doc.Name</a>
+                                        }
+                                        else
+                                        {
+                                            @doc.Name
+                                        }
                                         <br />
                                         <small>@commonLocalizer["Added"]: @doc.AddedOn.TimeConverterToString(Model.Department)</small>
                                     </div>

@@ -636,4 +636,13 @@
   <data name="CheckInTimerSaveGeneral" xml:space="preserve">
     <value>Save General Settings</value>
   </data>
+  <data name="CheckInTimerActiveStatesLabel" xml:space="preserve">
+    <value>Active States</value>
+  </data>
+  <data name="CheckInTimerLeaveEmptyForAllStates" xml:space="preserve">
+    <value>Leave empty for "All States".</value>
+  </data>
+  <data name="CheckInTimerAllStates" xml:space="preserve">
+    <value>All</value>
+  </data>
 </root>

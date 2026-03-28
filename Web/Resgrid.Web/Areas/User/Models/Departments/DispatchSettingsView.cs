@@ -25,6 +25,8 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 		public List<UnitType> UnitTypes { get; set; }
 		public List<CallType> CallTypes { get; set; }
 
+		public Dictionary<string, string> StateNames { get; set; }
+
 		public bool? SaveSuccess { get; set; }
 		public string Message { get; set; }
 
@@ -36,6 +38,7 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 			TimerOverrides = new List<CheckInTimerOverride>();
 			UnitTypes = new List<UnitType>();
 			CallTypes = new List<CallType>();
+			StateNames = new Dictionary<string, string>();
 		}
 	}
 }

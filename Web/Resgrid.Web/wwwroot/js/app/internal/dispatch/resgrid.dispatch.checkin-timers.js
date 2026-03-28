@@ -66,7 +66,7 @@
 			case 'Critical':
 				return '<span class="label label-danger">OVERDUE</span>';
 			default:
-				return '<span class="label label-default">' + status + '</span>';
+				return '<span class="label label-default">' + escapeHtml(status) + '</span>';
 		}
 	}
 

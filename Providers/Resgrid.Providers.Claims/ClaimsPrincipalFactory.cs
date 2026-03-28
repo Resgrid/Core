@@ -175,6 +175,7 @@ namespace Resgrid.Providers.Claims
 					ClaimsLogic.AddCallClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
 					ClaimsLogic.AddActionClaims(id);
 					ClaimsLogic.AddLogClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
+					ClaimsLogic.AddDeleteLogClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
 					ClaimsLogic.AddStaffingClaims(id);
 					ClaimsLogic.AddPersonnelClaims(id, departmentAdmin, permissions, isGroupAdmin,roles);
 					ClaimsLogic.AddUnitClaims(id, departmentAdmin);

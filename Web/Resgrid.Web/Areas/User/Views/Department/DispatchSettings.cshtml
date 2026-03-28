@@ -141,7 +141,7 @@
                                 <th>@localizer["CheckInTimerDurationLabel"]</th>
                                 <th>@localizer["CheckInTimerWarningLabel"]</th>
                                 <th>@localizer["CheckInTimerEnabledLabel"]</th>
-                                <th>Active States</th>
+                                <th>@localizer["CheckInTimerActiveStatesLabel"]</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -160,7 +160,11 @@
                                     <td>@config.DurationMinutes</td>
                                     <td>@config.WarningThresholdMinutes</td>
                                     <td>@(config.IsEnabled ? localizer["CheckInTimerYes"] : localizer["CheckInTimerNo"])</td>
-                                    <td>@(string.IsNullOrWhiteSpace(config.ActiveForStates) ? "All" : config.ActiveForStates)</td>
+                                    <td>@if (string.IsNullOrWhiteSpace(config.ActiveForStates))
+                                        { @localizer["CheckInTimerAllStates"] }
+                                        else
+                                        { @string.Join(", ", config.ActiveForStates.Split(',').Select(id => id.Trim()).Select(id => Model.StateNames.ContainsKey(id) ? Model.StateNames[id] : id)) }
+                                    </td>
                                     <td>
                                         <form asp-controller="Department" asp-action="DeleteCheckInTimerConfig" asp-route-area="User" method="post" style="display:inline;">
                                             @Html.AntiForgeryToken()
@@ -222,12 +226,12 @@
                             </div>
                         </div>
                         <div class="form-group active-states-row">
-                            <label class="col-sm-3 control-label">Active States</label>
+                            <label class="col-sm-3 control-label">@localizer["CheckInTimerActiveStatesLabel"]</label>
                             <div class="col-sm-9">
                                 <select id="configActiveStates" multiple class="form-control checkin-states-select" style="width:300px;">
                                 </select>
                                 <input type="hidden" name="activeForStates" id="configActiveForStates" />
-                                <span class="help-block m-b-none">Leave empty for "All States".</span>
+                                <span class="help-block m-b-none">@localizer["CheckInTimerLeaveEmptyForAllStates"]</span>
                             </div>
                         </div>
                         <div class="form-group">
@@ -255,7 +259,7 @@
                                 <th>@localizer["CheckInTimerDurationLabel"]</th>
                                 <th>@localizer["CheckInTimerWarningLabel"]</th>
                                 <th>@localizer["CheckInTimerEnabledLabel"]</th>
-                                <th>Active States</th>
+                                <th>@localizer["CheckInTimerActiveStatesLabel"]</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -286,7 +290,11 @@
                                     <td>@ovr.DurationMinutes</td>
                                     <td>@ovr.WarningThresholdMinutes</td>
                                     <td>@(ovr.IsEnabled ? localizer["CheckInTimerYes"] : localizer["CheckInTimerNo"])</td>
-                                    <td>@(string.IsNullOrWhiteSpace(ovr.ActiveForStates) ? "All" : ovr.ActiveForStates)</td>
+                                    <td>@if (string.IsNullOrWhiteSpace(ovr.ActiveForStates))
+                                        { @localizer["CheckInTimerAllStates"] }
+                                        else
+                                        { @string.Join(", ", ovr.ActiveForStates.Split(',').Select(id => id.Trim()).Select(id => Model.StateNames.ContainsKey(id) ? Model.StateNames[id] : id)) }
+                                    </td>
                                     <td>
                                         <form asp-controller="Department" asp-action="DeleteCheckInTimerOverride" asp-route-area="User" method="post" style="display:inline;">
                                             @Html.AntiForgeryToken()
@@ -372,12 +380,12 @@
                             </div>
                         </div>
                         <div class="form-group active-states-row">
-                            <label class="col-sm-3 control-label">Active States</label>
+                            <label class="col-sm-3 control-label">@localizer["CheckInTimerActiveStatesLabel"]</label>
                             <div class="col-sm-9">
                                 <select id="overrideActiveStates" multiple class="form-control checkin-states-select" style="width:300px;">
                                 </select>
                                 <input type="hidden" name="activeForStates" id="overrideActiveForStates" />
-                                <span class="help-block m-b-none">Leave empty for "All States".</span>
+                                <span class="help-block m-b-none">@localizer["CheckInTimerLeaveEmptyForAllStates"]</span>
                             </div>
                         </div>
                         <div class="form-group">
@@ -428,7 +436,7 @@
             var $hidden = $('#' + hiddenId);
 
             $statesSelect.select2({
-                placeholder: 'All States',
+                placeholder: '@localizer["CheckInTimerActiveStatesLabel"]',
                 allowClear: true,
                 width: '300px'
             });

@@ -164,11 +164,24 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var personnelSortOrder = await _departmentSettingsService.GetDepartmentPersonnelSortOrderAsync(DepartmentId);
 			var personnelStatusSortOrder = await _departmentSettingsService.GetDepartmentPersonnelListStatusSortOrderAsync(DepartmentId);
 			var canViewPII = await _authorizationService.CanUserViewPIIAsync(UserId, DepartmentId);
+			var departmentMembers = await _departmentsService.GetAllMembersForDepartmentAsync(DepartmentId);
 
 			foreach (var u in users)
 			{
 				if (!await _authorizationService.CanUserViewPersonViaMatrixAsync(u.UserId, UserId, DepartmentId))
 					continue;
+
+				// Skip hidden/disabled users unless current user is dept admin or group admin of their group
+				var member = departmentMembers.FirstOrDefault(x => x.UserId == u.UserId);
+				if (member != null && ((member.IsDisabled.HasValue && member.IsDisabled.Value) || (member.IsHidden.HasValue && member.IsHidden.Value)))
+				{
+					if (!department.IsUserAnAdmin(UserId))
+					{
+						var userGroup = await _departmentGroupsService.GetGroupForUserAsync(u.UserId, DepartmentId);
+						if (userGroup == null || !userGroup.IsUserGroupAdmin(UserId))
+							continue;
+					}
+				}
 
 				var log = (from l in actionLogs
 						   where l.UserId == u.UserId

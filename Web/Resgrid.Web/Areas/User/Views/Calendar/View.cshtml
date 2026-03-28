@@ -387,7 +387,7 @@
                     <h5><i class="fa fa-clock-o"></i> @localizer["CheckIn"] / @localizer["CheckOut"]</h5>
                 </div>
                 <div class="ibox-content">
-                    @if (Model.UserCheckIn == null && (checkInWindowOpen || adminBypassWindow))
+                    @if (Model.UserCheckIn == null && ((checkInWindowOpen && !eventIsPast) || adminBypassWindow))
                     {
                         @using (Html.BeginForm("CheckIn", "Calendar", FormMethod.Post, new { area = "User" }))
                         {
@@ -402,7 +402,7 @@
                             </button>
                         }
                     }
-                    else if (Model.UserCheckIn == null && !checkInWindowOpen && !adminBypassWindow)
+                    else if (Model.UserCheckIn == null && (!checkInWindowOpen || eventIsPast) && !adminBypassWindow)
                     {
                         <p class="text-muted"><i class="fa fa-clock-o"></i> @localizer["CheckInNotYetAvailable"]</p>
                     }

@@ -164,6 +164,16 @@
                                         </td>
                                     </tr>
                                     <tr>
+                                        <td>Delete Log Entries</td>
+                                        <td style="max-width: 350px">Who in your department is allowed to delete log entries</td>
+                                        <td>@Html.DropDownListFor(m => m.DeleteLog, Model.DeleteLogPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="logDeleteNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="logDeleteRolesDiv" style="display: none;"><select id="logDeleteRoles" name="logDeleteRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
                                         <td>@localizer["PermCreateShiftLabel"]</td>
                                         <td style="max-width: 350px">@localizer["PermCreateShiftNote"]</td>
                                         <td>@Html.DropDownListFor(m => m.CreateShift, Model.CreateShiftPermissions)</td>

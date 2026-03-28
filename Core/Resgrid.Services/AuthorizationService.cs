@@ -1582,8 +1582,7 @@ namespace Resgrid.Services
 			// Department admins can check in users in their department
 			if (department.IsUserAnAdmin(userId))
 			{
-				var targetDepartment = await _departmentsService.GetDepartmentByUserIdAsync(targetUserId);
-				if (targetDepartment != null && targetDepartment.DepartmentId == department.DepartmentId)
+				if (department.IsUserInDepartment(targetUserId))
 					return true;
 
 				return false;
@@ -1592,8 +1591,7 @@ namespace Resgrid.Services
 			// Calendar item creator can check in users in their department
 			if (!string.IsNullOrWhiteSpace(item.CreatorUserId) && item.CreatorUserId == userId)
 			{
-				var targetDepartment = await _departmentsService.GetDepartmentByUserIdAsync(targetUserId);
-				if (targetDepartment != null && targetDepartment.DepartmentId == department.DepartmentId)
+				if (department.IsUserInDepartment(targetUserId))
 					return true;
 
 				return false;

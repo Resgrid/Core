@@ -28,7 +28,8 @@
 		ManageWorkflowCredentials = 23,
 		ViewWorkflowRuns = 24,
 		ViewUdfFields = 25,
-		ManageRoutes = 26
+		ManageRoutes = 26,
+		DeleteLog = 27
 	}
 
 }

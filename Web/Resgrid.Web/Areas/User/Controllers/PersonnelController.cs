@@ -140,6 +140,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 				person.UserId = user.UserId.ToString();
 
 				var member = departmentMembers.FirstOrDefault(x => x.UserId == user.UserId);
+
+				// Skip hidden/disabled users unless current user is dept admin or group admin of their group
+				if (member != null && ((member.IsDisabled.HasValue && member.IsDisabled.Value) || (member.IsHidden.HasValue && member.IsHidden.Value)))
+				{
+					if (!department.IsUserAnAdmin(UserId))
+					{
+						var userGroup = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
+						if (userGroup == null || !userGroup.IsUserGroupAdmin(UserId))
+							continue;
+					}
+				}
+
 				var actionLog = actionLogs.FirstOrDefault(x => x.UserId == user.UserId);
 				var staffing = staffings.FirstOrDefault(x => x.UserId == user.UserId);
 
@@ -551,7 +563,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 					if (model.UserGroup != 0)
-						await _departmentGroupsService.MoveUserIntoGroupAsync(user.UserId, model.UserGroup, model.IsUserGroupAdmin, DepartmentId, cancellationToken);
+						await _departmentGroupsService.MoveUserIntoGroupAsync(user.UserId, model.UserGroup, model.IsGroupAdminAdding, DepartmentId, cancellationToken);
 
 					if (form.ContainsKey("roles"))
 					{
@@ -908,10 +920,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var user in users)
 			{
+				var member = departmentMembers.FirstOrDefault(x => x.UserId == user.UserId);
+
+				// Skip hidden/disabled users unless current user is dept admin or group admin of their group
+				if (member != null && ((member.IsDisabled.HasValue && member.IsDisabled.Value) || (member.IsHidden.HasValue && member.IsHidden.Value)))
+				{
+					if (!department.IsUserAnAdmin(UserId))
+					{
+						var userGroup = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
+						if (userGroup == null || !userGroup.IsUserGroupAdmin(UserId))
+							continue;
+					}
+				}
+
 				var person = new PersonnelForListJson();
 				person.UserId = user.UserId.ToString();
 
-				var member = departmentMembers.FirstOrDefault(x => x.UserId == user.UserId);
 				//var actionLog = actionLogs.FirstOrDefault(x => x.UserId == user.UserId);
 				//var userProfile = await _userProfileService.GetProfileByUserId(user.UserId);
 
@@ -1041,10 +1065,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var user in users)
 			{
+				var member = departmentMembers.FirstOrDefault(x => x.UserId == user.UserId);
+
+				// Skip hidden/disabled users unless current user is dept admin or group admin of their group
+				if (member != null && ((member.IsDisabled.HasValue && member.IsDisabled.Value) || (member.IsHidden.HasValue && member.IsHidden.Value)))
+				{
+					if (!department.IsUserAnAdmin(UserId))
+					{
+						var userGroup = await _departmentGroupsService.GetGroupForUserAsync(user.UserId, DepartmentId);
+						if (userGroup == null || !userGroup.IsUserGroupAdmin(UserId))
+							continue;
+					}
+				}
+
 				var person = new PersonnelForListJson();
 				person.UserId = user.UserId.ToString();
 
-				var member = departmentMembers.FirstOrDefault(x => x.UserId == user.UserId);
 				//var actionLog = actionLogs.FirstOrDefault(x => x.UserId == user.UserId);
 				//var userProfile = await _userProfileService.GetProfileByUserId(user.UserId);
 

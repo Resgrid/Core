@@ -112,5 +112,10 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// Indoor Map Floor Id for the call location
 		/// </summary>
 		public string IndoorMapFloorId { get; set; }
+
+		/// <summary>
+		/// Enable check-in timers for this call. Leave null to use department default.
+		/// </summary>
+		public bool? CheckInTimersEnabled { get; set; }
 	}
 }

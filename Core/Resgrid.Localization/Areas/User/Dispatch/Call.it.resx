@@ -458,4 +458,70 @@
   <data name="W3wHelp" xml:space="preserve">
     <value>This is a what3words address.</value>
   </data>
+  <data name="CheckInTimersLabel" xml:space="preserve">
+    <value>Timer di Registrazione</value>
+  </data>
+  <data name="EnableCheckInTimers" xml:space="preserve">
+    <value>Abilita Timer di Registrazione</value>
+  </data>
+  <data name="CheckInTimersHeader" xml:space="preserve">
+    <value>Timer di Registrazione</value>
+  </data>
+  <data name="CheckInTimerTarget" xml:space="preserve">
+    <value>Obiettivo</value>
+  </data>
+  <data name="CheckInTimerType" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="CheckInTimerLastCheckIn" xml:space="preserve">
+    <value>Ultima Registrazione</value>
+  </data>
+  <data name="CheckInTimerTimeRemaining" xml:space="preserve">
+    <value>Tempo Rimanente</value>
+  </data>
+  <data name="CheckInTimerStatus" xml:space="preserve">
+    <value>Stato</value>
+  </data>
+  <data name="CheckInTimerActions" xml:space="preserve">
+    <value>Azioni</value>
+  </data>
+  <data name="CheckInTimerPerformCheckIn" xml:space="preserve">
+    <value>Registrarsi</value>
+  </data>
+  <data name="CheckInTimerShowHistory" xml:space="preserve">
+    <value>Mostra Cronologia Registrazioni</value>
+  </data>
+  <data name="CheckInTimerHistoryTimestamp" xml:space="preserve">
+    <value>Marca Temporale</value>
+  </data>
+  <data name="CheckInTimerHistoryWho" xml:space="preserve">
+    <value>Chi</value>
+  </data>
+  <data name="CheckInTimerHistoryType" xml:space="preserve">
+    <value>Tipo</value>
+  </data>
+  <data name="CheckInTimerHistoryUnit" xml:space="preserve">
+    <value>Unità</value>
+  </data>
+  <data name="CheckInTimerHistoryLocation" xml:space="preserve">
+    <value>Posizione</value>
+  </data>
+  <data name="CheckInTimerHistoryNote" xml:space="preserve">
+    <value>Nota</value>
+  </data>
+  <data name="CheckInTimerConfigSection" xml:space="preserve">
+    <value>Configurazione Timer di Registrazione</value>
+  </data>
+  <data name="CheckInTimerLogSection" xml:space="preserve">
+    <value>Registro Check-In</value>
+  </data>
+  <data name="CheckInTimerDuration" xml:space="preserve">
+    <value>Durata (min)</value>
+  </data>
+  <data name="CheckInTimerWarning" xml:space="preserve">
+    <value>Soglia di Avviso (min)</value>
+  </data>
+  <data name="CheckInTimerSource" xml:space="preserve">
+    <value>Fonte</value>
+  </data>
 </root>

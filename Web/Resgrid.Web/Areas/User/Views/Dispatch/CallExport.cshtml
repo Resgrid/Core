@@ -2,6 +2,8 @@
 @using Resgrid.Model.Helpers
 @using Resgrid.Web
 @using Resgrid.Web.Helpers
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> localizer
 @model Resgrid.Web.Areas.User.Models.Dispatch.CallExportView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> localizer
 @{
@@ -495,6 +497,80 @@
                 </table>
             </div>
         </div>
+        @if (Model.Call.CheckInTimersEnabled && Model.TimerConfigs != null && Model.TimerConfigs.Any())
+        {
+        <div class="row" style="page-break-before: auto;">
+            <div class="col-xs-12">
+                <h3>@localizer["CheckInTimerConfigSection"]</h3>
+                <table class="table table-bordered table-condensed">
+                    <thead>
+                        <tr>
+                            <th>@localizer["CheckInTimerType"]</th>
+                            <th>@localizer["CheckInTimerDuration"]</th>
+                            <th>@localizer["CheckInTimerWarning"]</th>
+                            <th>@localizer["CheckInTimerSource"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var timer in Model.TimerConfigs)
+                        {
+                        <tr>
+                            <td>@((Resgrid.Model.CheckInTimerTargetType)timer.TargetType)</td>
+                            <td>@timer.DurationMinutes</td>
+                            <td>@timer.WarningThresholdMinutes</td>
+                            <td>@(timer.IsFromOverride ? "Override" : "Default")</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        }
+
+        @if (Model.CheckInRecords != null && Model.CheckInRecords.Any())
+        {
+        <div class="row" style="page-break-before: auto;">
+            <div class="col-xs-12">
+                <h3>@localizer["CheckInTimerLogSection"]</h3>
+                <table class="table table-bordered table-condensed">
+                    <thead>
+                        <tr>
+                            <th>@localizer["CheckInTimerHistoryTimestamp"]</th>
+                            <th>@localizer["CheckInTimerHistoryWho"]</th>
+                            <th>@localizer["CheckInTimerHistoryType"]</th>
+                            <th>@localizer["CheckInTimerHistoryLocation"]</th>
+                            <th>@localizer["CheckInTimerHistoryNote"]</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var record in Model.CheckInRecords.OrderBy(r => r.Timestamp))
+                        {
+                            var personName = Model.Names?.FirstOrDefault(p => p.UserId == record.UserId);
+                            string unitName = null;
+                            if (record.UnitId.HasValue && Model.Units != null)
+                            {
+                                var unit = Model.Units.FirstOrDefault(u => u.UnitId == record.UnitId.Value);
+                                unitName = unit?.Name;
+                            }
+                            var typeName = ((Resgrid.Model.CheckInTimerTargetType)record.CheckInType).ToString();
+                            if (!string.IsNullOrEmpty(unitName))
+                            {
+                                typeName += " - " + unitName;
+                            }
+                        <tr>
+                            <td>@record.Timestamp.TimeConverterToString(Model.Department)</td>
+                            <td>@(personName?.Name ?? record.UserId)</td>
+                            <td>@typeName</td>
+                            <td>@((!string.IsNullOrEmpty(record.Latitude) && !string.IsNullOrEmpty(record.Longitude)) ? record.Latitude + ", " + record.Longitude : "")</td>
+                            <td>@record.Note</td>
+                        </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        }
+
         <div class="row">
             <div class="col-xs-12">
                 <strong><small>@localizer["AttachedImages"]</small></strong>
@@ -526,6 +602,7 @@
                 }
             </div>
         </div>
+
         <div class="row">
             <div class="col-xs-12" style="text-align: right;">
                 @DateTime.UtcNow.TimeConverterToString(Model.Department)

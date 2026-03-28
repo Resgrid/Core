@@ -135,4 +135,26 @@
   <data name="ViewCallHeader" xml:space="preserve"><value>عرض البلاغ</value></data>
   <data name="ViewText" xml:space="preserve"><value>عرض النص</value></data>
   <data name="W3wHelp" xml:space="preserve"><value>هذا عنوان what3words.</value></data>
+  <data name="CheckInTimersLabel" xml:space="preserve"><value>مؤقتات تسجيل الوصول</value></data>
+  <data name="EnableCheckInTimers" xml:space="preserve"><value>تفعيل مؤقتات تسجيل الوصول</value></data>
+  <data name="CheckInTimersHeader" xml:space="preserve"><value>مؤقتات تسجيل الوصول</value></data>
+  <data name="CheckInTimerTarget" xml:space="preserve"><value>الهدف</value></data>
+  <data name="CheckInTimerType" xml:space="preserve"><value>النوع</value></data>
+  <data name="CheckInTimerLastCheckIn" xml:space="preserve"><value>آخر تسجيل وصول</value></data>
+  <data name="CheckInTimerTimeRemaining" xml:space="preserve"><value>الوقت المتبقي</value></data>
+  <data name="CheckInTimerStatus" xml:space="preserve"><value>الحالة</value></data>
+  <data name="CheckInTimerActions" xml:space="preserve"><value>الإجراءات</value></data>
+  <data name="CheckInTimerPerformCheckIn" xml:space="preserve"><value>تسجيل الوصول</value></data>
+  <data name="CheckInTimerShowHistory" xml:space="preserve"><value>عرض سجل تسجيل الوصول</value></data>
+  <data name="CheckInTimerHistoryTimestamp" xml:space="preserve"><value>الطابع الزمني</value></data>
+  <data name="CheckInTimerHistoryWho" xml:space="preserve"><value>من</value></data>
+  <data name="CheckInTimerHistoryType" xml:space="preserve"><value>النوع</value></data>
+  <data name="CheckInTimerHistoryUnit" xml:space="preserve"><value>الوحدة</value></data>
+  <data name="CheckInTimerHistoryLocation" xml:space="preserve"><value>الموقع</value></data>
+  <data name="CheckInTimerHistoryNote" xml:space="preserve"><value>ملاحظة</value></data>
+  <data name="CheckInTimerConfigSection" xml:space="preserve"><value>تكوين مؤقت تسجيل الوصول</value></data>
+  <data name="CheckInTimerLogSection" xml:space="preserve"><value>سجل تسجيل الوصول</value></data>
+  <data name="CheckInTimerDuration" xml:space="preserve"><value>المدة (دقائق)</value></data>
+  <data name="CheckInTimerWarning" xml:space="preserve"><value>حد التحذير (دقائق)</value></data>
+  <data name="CheckInTimerSource" xml:space="preserve"><value>المصدر</value></data>
 </root>

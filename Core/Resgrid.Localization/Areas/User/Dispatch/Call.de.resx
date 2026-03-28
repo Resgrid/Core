@@ -458,4 +458,70 @@
   <data name="W3wHelp" xml:space="preserve">
     <value>This is a what3words address.</value>
   </data>
+  <data name="CheckInTimersLabel" xml:space="preserve">
+    <value>Check-In-Timer</value>
+  </data>
+  <data name="EnableCheckInTimers" xml:space="preserve">
+    <value>Check-In-Timer aktivieren</value>
+  </data>
+  <data name="CheckInTimersHeader" xml:space="preserve">
+    <value>Check-In-Timer</value>
+  </data>
+  <data name="CheckInTimerTarget" xml:space="preserve">
+    <value>Ziel</value>
+  </data>
+  <data name="CheckInTimerType" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="CheckInTimerLastCheckIn" xml:space="preserve">
+    <value>Letzter Check-In</value>
+  </data>
+  <data name="CheckInTimerTimeRemaining" xml:space="preserve">
+    <value>Verbleibende Zeit</value>
+  </data>
+  <data name="CheckInTimerStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="CheckInTimerActions" xml:space="preserve">
+    <value>Aktionen</value>
+  </data>
+  <data name="CheckInTimerPerformCheckIn" xml:space="preserve">
+    <value>Einchecken</value>
+  </data>
+  <data name="CheckInTimerShowHistory" xml:space="preserve">
+    <value>Check-In-Verlauf anzeigen</value>
+  </data>
+  <data name="CheckInTimerHistoryTimestamp" xml:space="preserve">
+    <value>Zeitstempel</value>
+  </data>
+  <data name="CheckInTimerHistoryWho" xml:space="preserve">
+    <value>Wer</value>
+  </data>
+  <data name="CheckInTimerHistoryType" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="CheckInTimerHistoryUnit" xml:space="preserve">
+    <value>Einheit</value>
+  </data>
+  <data name="CheckInTimerHistoryLocation" xml:space="preserve">
+    <value>Standort</value>
+  </data>
+  <data name="CheckInTimerHistoryNote" xml:space="preserve">
+    <value>Notiz</value>
+  </data>
+  <data name="CheckInTimerConfigSection" xml:space="preserve">
+    <value>Check-In-Timer-Konfiguration</value>
+  </data>
+  <data name="CheckInTimerLogSection" xml:space="preserve">
+    <value>Check-In-Protokoll</value>
+  </data>
+  <data name="CheckInTimerDuration" xml:space="preserve">
+    <value>Dauer (Min)</value>
+  </data>
+  <data name="CheckInTimerWarning" xml:space="preserve">
+    <value>Warnschwelle (Min)</value>
+  </data>
+  <data name="CheckInTimerSource" xml:space="preserve">
+    <value>Quelle</value>
+  </data>
 </root>

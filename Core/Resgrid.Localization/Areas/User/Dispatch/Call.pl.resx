@@ -458,4 +458,70 @@
   <data name="W3wHelp" xml:space="preserve">
     <value>This is a what3words address.</value>
   </data>
+  <data name="CheckInTimersLabel" xml:space="preserve">
+    <value>Czasomierze Meldowania</value>
+  </data>
+  <data name="EnableCheckInTimers" xml:space="preserve">
+    <value>Włącz Czasomierze Meldowania</value>
+  </data>
+  <data name="CheckInTimersHeader" xml:space="preserve">
+    <value>Czasomierze Meldowania</value>
+  </data>
+  <data name="CheckInTimerTarget" xml:space="preserve">
+    <value>Cel</value>
+  </data>
+  <data name="CheckInTimerType" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="CheckInTimerLastCheckIn" xml:space="preserve">
+    <value>Ostatnie Meldowanie</value>
+  </data>
+  <data name="CheckInTimerTimeRemaining" xml:space="preserve">
+    <value>Pozostały Czas</value>
+  </data>
+  <data name="CheckInTimerStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="CheckInTimerActions" xml:space="preserve">
+    <value>Akcje</value>
+  </data>
+  <data name="CheckInTimerPerformCheckIn" xml:space="preserve">
+    <value>Zamelduj się</value>
+  </data>
+  <data name="CheckInTimerShowHistory" xml:space="preserve">
+    <value>Pokaż Historię Meldowań</value>
+  </data>
+  <data name="CheckInTimerHistoryTimestamp" xml:space="preserve">
+    <value>Znacznik Czasu</value>
+  </data>
+  <data name="CheckInTimerHistoryWho" xml:space="preserve">
+    <value>Kto</value>
+  </data>
+  <data name="CheckInTimerHistoryType" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="CheckInTimerHistoryUnit" xml:space="preserve">
+    <value>Jednostka</value>
+  </data>
+  <data name="CheckInTimerHistoryLocation" xml:space="preserve">
+    <value>Lokalizacja</value>
+  </data>
+  <data name="CheckInTimerHistoryNote" xml:space="preserve">
+    <value>Notatka</value>
+  </data>
+  <data name="CheckInTimerConfigSection" xml:space="preserve">
+    <value>Konfiguracja Czasomierza Meldowania</value>
+  </data>
+  <data name="CheckInTimerLogSection" xml:space="preserve">
+    <value>Dziennik Meldowań</value>
+  </data>
+  <data name="CheckInTimerDuration" xml:space="preserve">
+    <value>Czas trwania (min)</value>
+  </data>
+  <data name="CheckInTimerWarning" xml:space="preserve">
+    <value>Próg Ostrzeżenia (min)</value>
+  </data>
+  <data name="CheckInTimerSource" xml:space="preserve">
+    <value>Źródło</value>
+  </data>
 </root>

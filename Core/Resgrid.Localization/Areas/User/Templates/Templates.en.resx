@@ -168,4 +168,7 @@
   <data name="CallQuickTemplateType" xml:space="preserve">
     <value>Call Quick Template</value>
   </data>
+  <data name="EnableCheckInTimersLabel" xml:space="preserve">
+    <value>Enable Check-In Timers</value>
+  </data>
 </root>

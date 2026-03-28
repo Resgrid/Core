@@ -458,4 +458,133 @@
   <data name="PersonnelOnUnitSetUnitStatusHelp" xml:space="preserve">
     <value>When a unit submits a status and users are setup on roles, the users status will be set to On Unit.</value>
   </data>
+  <data name="CallDispatchSettingsHeader" xml:space="preserve">
+    <value>Налаштування Викликів та Диспетчеризації</value>
+  </data>
+  <data name="CallDispatchSettingsNav" xml:space="preserve">
+    <value>Виклики та Диспетчеризація</value>
+  </data>
+  <data name="SavedCallDispatchSettings" xml:space="preserve">
+    <value>Налаштування викликів та диспетчеризації успішно збережено.</value>
+  </data>
+  <data name="CheckInTimerSettingsHeader" xml:space="preserve">
+    <value>Налаштування Таймера Реєстрації</value>
+  </data>
+  <data name="CheckInTimerGeneralHeader" xml:space="preserve">
+    <value>Загальні Налаштування</value>
+  </data>
+  <data name="CheckInTimerAutoEnableLabel" xml:space="preserve">
+    <value>Автоматично вмикати таймери реєстрації для нових викликів</value>
+  </data>
+  <data name="CheckInTimerAutoEnableHelp" xml:space="preserve">
+    <value>Коли увімкнено, всі нові виклики автоматично матимуть увімкнені таймери реєстрації.</value>
+  </data>
+  <data name="CheckInTimerDefaultConfigsHeader" xml:space="preserve">
+    <value>Стандартні Конфігурації Таймера</value>
+  </data>
+  <data name="CheckInTimerDefaultConfigsHelp" xml:space="preserve">
+    <value>Вони визначають стандартні інтервали реєстрації для кожного типу цілі.</value>
+  </data>
+  <data name="CheckInTimerOverridesHeader" xml:space="preserve">
+    <value>Перевизначення за Типом Виклику / Пріоритетом</value>
+  </data>
+  <data name="CheckInTimerOverridesHelp" xml:space="preserve">
+    <value>Перевизначення мають пріоритет над стандартними таймерами коли виклик відповідає вказаному типу та/або пріоритету.</value>
+  </data>
+  <data name="CheckInTimerTargetTypeLabel" xml:space="preserve">
+    <value>Тип Цілі</value>
+  </data>
+  <data name="CheckInTimerUnitTypeLabel" xml:space="preserve">
+    <value>Тип Підрозділу</value>
+  </data>
+  <data name="CheckInTimerDurationLabel" xml:space="preserve">
+    <value>Тривалість (хвилини)</value>
+  </data>
+  <data name="CheckInTimerWarningLabel" xml:space="preserve">
+    <value>Поріг Попередження (хвилини)</value>
+  </data>
+  <data name="CheckInTimerEnabledLabel" xml:space="preserve">
+    <value>Увімкнено</value>
+  </data>
+  <data name="CheckInTimerCallTypeLabel" xml:space="preserve">
+    <value>ID Типу Виклику</value>
+  </data>
+  <data name="CheckInTimerCallPriorityLabel" xml:space="preserve">
+    <value>Пріоритет Виклику</value>
+  </data>
+  <data name="CheckInTimerAddConfigButton" xml:space="preserve">
+    <value>Додати Конфігурацію Таймера</value>
+  </data>
+  <data name="CheckInTimerAddOverrideButton" xml:space="preserve">
+    <value>Додати Перевизначення</value>
+  </data>
+  <data name="CheckInTimerAddNewDefault" xml:space="preserve">
+    <value>Додати Новий Стандартний Таймер</value>
+  </data>
+  <data name="CheckInTimerAddNewOverride" xml:space="preserve">
+    <value>Додати Нове Перевизначення</value>
+  </data>
+  <data name="CheckInTimerNoneOption" xml:space="preserve">
+    <value>-- Немає --</value>
+  </data>
+  <data name="CheckInTimerAnyOption" xml:space="preserve">
+    <value>-- Будь-який --</value>
+  </data>
+  <data name="CheckInTimerTargetPersonnel" xml:space="preserve">
+    <value>Персонал</value>
+  </data>
+  <data name="CheckInTimerTargetUnitType" xml:space="preserve">
+    <value>Тип Підрозділу</value>
+  </data>
+  <data name="CheckInTimerTargetIC" xml:space="preserve">
+    <value>КІ (Командир Інциденту)</value>
+  </data>
+  <data name="CheckInTimerTargetPAR" xml:space="preserve">
+    <value>PAR (Відповідальність Персоналу)</value>
+  </data>
+  <data name="CheckInTimerTargetHazmat" xml:space="preserve">
+    <value>Вплив Небезпечних Матеріалів</value>
+  </data>
+  <data name="CheckInTimerTargetSectorRotation" xml:space="preserve">
+    <value>Ротація Сектора</value>
+  </data>
+  <data name="CheckInTimerTargetRehab" xml:space="preserve">
+    <value>Реабілітація</value>
+  </data>
+  <data name="CheckInTimerLeaveBlankForAny" xml:space="preserve">
+    <value>залиште порожнім для будь-якого</value>
+  </data>
+  <data name="CheckInTimerYes" xml:space="preserve">
+    <value>Так</value>
+  </data>
+  <data name="CheckInTimerNo" xml:space="preserve">
+    <value>Ні</value>
+  </data>
+  <data name="CheckInTimerDeleteConfirm" xml:space="preserve">
+    <value>Видалити цю конфігурацію таймера?</value>
+  </data>
+  <data name="CheckInTimerOverrideDeleteConfirm" xml:space="preserve">
+    <value>Видалити це перевизначення?</value>
+  </data>
+  <data name="CheckInTimerSourceDefault" xml:space="preserve">
+    <value>Стандартний</value>
+  </data>
+  <data name="CheckInTimerSourceOverride" xml:space="preserve">
+    <value>Перевизначення</value>
+  </data>
+  <data name="CheckInTimerPriorityLow" xml:space="preserve">
+    <value>Низький</value>
+  </data>
+  <data name="CheckInTimerPriorityMedium" xml:space="preserve">
+    <value>Середній</value>
+  </data>
+  <data name="CheckInTimerPriorityHigh" xml:space="preserve">
+    <value>Високий</value>
+  </data>
+  <data name="CheckInTimerPriorityEmergency" xml:space="preserve">
+    <value>Надзвичайний</value>
+  </data>
+  <data name="CheckInTimerSaveGeneral" xml:space="preserve">
+    <value>Зберегти Загальні Налаштування</value>
+  </data>
 </root>

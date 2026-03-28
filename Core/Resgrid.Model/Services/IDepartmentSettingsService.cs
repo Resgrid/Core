@@ -285,5 +285,7 @@ namespace Resgrid.Model.Services
 		Task<int?> GetDepartmentIdForPaddleCustomerIdAsync(string paddleCustomerId, bool bypassCache = false);
 
 		Task<string> GetPaddleCustomerIdForDepartmentAsync(int departmentId);
+
+		Task<bool> GetCheckInTimersAutoEnableForNewCallsAsync(int departmentId);
 	}
 }

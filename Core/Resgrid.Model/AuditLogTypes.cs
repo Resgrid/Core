@@ -124,6 +124,16 @@
 		RouteStopCheckedOut,
 		RouteStopSkipped,
 		RouteDeviationDetected,
-		RouteDeviationAcknowledged
+		RouteDeviationAcknowledged,
+		// Check-In Timers
+		CheckInTimerConfigCreated,
+		CheckInTimerConfigUpdated,
+		CheckInTimerConfigDeleted,
+		CheckInTimerOverrideCreated,
+		CheckInTimerOverrideUpdated,
+		CheckInTimerOverrideDeleted,
+		CheckInPerformed,
+		CheckInTimerEnabledOnCall,
+		CheckInTimerDisabledOnCall
 	}
 }

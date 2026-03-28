@@ -273,3 +273,4 @@ Web/Resgrid.WebCore/wwwroot/lib/*
 /Web/Resgrid.Web/wwwroot/lib
 .dual-graph/
 .claude/settings.local.json
+.claude/settings.local.json

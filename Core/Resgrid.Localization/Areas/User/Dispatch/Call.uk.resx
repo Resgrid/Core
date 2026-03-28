@@ -458,4 +458,70 @@
   <data name="W3wHelp" xml:space="preserve">
     <value>This is a what3words address.</value>
   </data>
+  <data name="CheckInTimersLabel" xml:space="preserve">
+    <value>Таймери Реєстрації</value>
+  </data>
+  <data name="EnableCheckInTimers" xml:space="preserve">
+    <value>Увімкнути Таймери Реєстрації</value>
+  </data>
+  <data name="CheckInTimersHeader" xml:space="preserve">
+    <value>Таймери Реєстрації</value>
+  </data>
+  <data name="CheckInTimerTarget" xml:space="preserve">
+    <value>Ціль</value>
+  </data>
+  <data name="CheckInTimerType" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="CheckInTimerLastCheckIn" xml:space="preserve">
+    <value>Остання Реєстрація</value>
+  </data>
+  <data name="CheckInTimerTimeRemaining" xml:space="preserve">
+    <value>Залишок Часу</value>
+  </data>
+  <data name="CheckInTimerStatus" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="CheckInTimerActions" xml:space="preserve">
+    <value>Дії</value>
+  </data>
+  <data name="CheckInTimerPerformCheckIn" xml:space="preserve">
+    <value>Зареєструватися</value>
+  </data>
+  <data name="CheckInTimerShowHistory" xml:space="preserve">
+    <value>Показати Історію Реєстрацій</value>
+  </data>
+  <data name="CheckInTimerHistoryTimestamp" xml:space="preserve">
+    <value>Мітка Часу</value>
+  </data>
+  <data name="CheckInTimerHistoryWho" xml:space="preserve">
+    <value>Хто</value>
+  </data>
+  <data name="CheckInTimerHistoryType" xml:space="preserve">
+    <value>Тип</value>
+  </data>
+  <data name="CheckInTimerHistoryUnit" xml:space="preserve">
+    <value>Підрозділ</value>
+  </data>
+  <data name="CheckInTimerHistoryLocation" xml:space="preserve">
+    <value>Місцезнаходження</value>
+  </data>
+  <data name="CheckInTimerHistoryNote" xml:space="preserve">
+    <value>Примітка</value>
+  </data>
+  <data name="CheckInTimerConfigSection" xml:space="preserve">
+    <value>Конфігурація Таймера Реєстрації</value>
+  </data>
+  <data name="CheckInTimerLogSection" xml:space="preserve">
+    <value>Журнал Реєстрацій</value>
+  </data>
+  <data name="CheckInTimerDuration" xml:space="preserve">
+    <value>Тривалість (хв)</value>
+  </data>
+  <data name="CheckInTimerWarning" xml:space="preserve">
+    <value>Поріг Попередження (хв)</value>
+  </data>
+  <data name="CheckInTimerSource" xml:space="preserve">
+    <value>Джерело</value>
+  </data>
 </root>

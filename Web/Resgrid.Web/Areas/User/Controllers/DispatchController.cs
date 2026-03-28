@@ -65,6 +65,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IContactsService _contactsService;
 		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
 		private readonly IUdfRenderingService _udfRenderingService;
+		private readonly ICheckInTimerService _checkInTimerService;
 
 		public DispatchController(IDepartmentsService departmentsService, IUsersService usersService, ICallsService callsService,
 			IDepartmentGroupsService departmentGroupsService, ICommunicationService communicationService, IQueueService queueService,
@@ -73,7 +74,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 						IUnitsService unitsService, IActionLogsService actionLogsService, IEventAggregator eventAggregator, ICustomStateService customStateService,
 						ITemplatesService templatesService, IPdfProvider pdfProvider, IProtocolsService protocolsService, IFormsService formsService,
 						IShiftsService shiftsService, IContactsService contactsService,
-						IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService)
+						IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService,
+						ICheckInTimerService checkInTimerService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -99,6 +101,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_contactsService = contactsService;
 			_userDefinedFieldsService = userDefinedFieldsService;
 			_udfRenderingService = udfRenderingService;
+			_checkInTimerService = checkInTimerService;
 		}
 		#endregion Private Members and Constructors
 
@@ -226,6 +229,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (!String.IsNullOrEmpty(model.Latitude) && !String.IsNullOrEmpty(model.Longitude))
 					model.Call.GeoLocationData = string.Format("{0},{1}", model.Latitude, model.Longitude);
+
+				// Check-in timers
+				var checkInTimersValue = collection["Call.CheckInTimersEnabled"].FirstOrDefault();
+				model.Call.CheckInTimersEnabled = !string.IsNullOrEmpty(checkInTimersValue) && checkInTimersValue.Contains("true", StringComparison.OrdinalIgnoreCase);
 
 				// Indoor map zone
 				var indoorMapZoneId = collection["IndoorMapZoneId"].FirstOrDefault();
@@ -616,6 +623,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (!String.IsNullOrEmpty(model.Latitude) && !String.IsNullOrEmpty(model.Longitude))
 					call.GeoLocationData = string.Format("{0},{1}", model.Latitude, model.Longitude);
+
+				var checkInTimersValue = collection["Call.CheckInTimersEnabled"].FirstOrDefault();
+				call.CheckInTimersEnabled = !string.IsNullOrEmpty(checkInTimersValue) && checkInTimersValue.Contains("true", StringComparison.OrdinalIgnoreCase);
 
 				// Indoor map zone
 				var indoorMapZoneId = collection["IndoorMapZoneId"].FirstOrDefault();
@@ -1637,6 +1647,137 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
+		public async Task<IActionResult> GetCheckInTimerStatuses(int callId)
+		{
+			var call = await _callsService.GetCallByIdAsync(callId);
+			if (call == null || call.DepartmentId != DepartmentId)
+				return NotFound();
+
+			var statuses = await _checkInTimerService.GetActiveTimerStatusesForCallAsync(call);
+
+			// Resolve target names from dispatched entities
+			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
+			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
+			call = await _callsService.PopulateCallData(call, true, false, false, false, true, false, false, false, false);
+
+			var result = statuses.Select(s =>
+			{
+				string targetName = ((CheckInTimerTargetType)s.TargetType).ToString();
+
+				if (s.TargetType == (int)CheckInTimerTargetType.Personnel)
+				{
+					// List dispatched personnel names
+					if (call.Dispatches != null && call.Dispatches.Any())
+					{
+						var names = call.Dispatches
+							.Select(d => personnelNames.FirstOrDefault(p => p.UserId == d.UserId))
+							.Where(n => n != null)
+							.Select(n => n.Name)
+							.ToList();
+						if (names.Any())
+							targetName = string.Join(", ", names);
+					}
+				}
+				else if (s.TargetType == (int)CheckInTimerTargetType.UnitType)
+				{
+					// List dispatched unit names matching the unit type
+					if (call.UnitDispatches != null && call.UnitDispatches.Any() && units != null)
+					{
+						var unitNames = call.UnitDispatches
+							.Select(d => units.FirstOrDefault(u => u.UnitId == d.UnitId))
+							.Where(u => u != null)
+							.Select(u => u.Name)
+							.ToList();
+						if (unitNames.Any())
+							targetName = string.Join(", ", unitNames);
+					}
+				}
+
+				return new
+				{
+					s.TargetType,
+					TargetTypeName = ((CheckInTimerTargetType)s.TargetType).ToString(),
+					TargetName = targetName,
+					s.UnitId,
+					s.LastCheckIn,
+					s.DurationMinutes,
+					s.WarningThresholdMinutes,
+					s.ElapsedMinutes,
+					s.Status
+				};
+			}).ToList();
+
+			return Json(result);
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> GetCheckInHistory(int callId)
+		{
+			var call = await _callsService.GetCallByIdAsync(callId);
+			if (call == null || call.DepartmentId != DepartmentId)
+				return NotFound();
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
+			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
+			var records = await _checkInTimerService.GetCheckInsForCallAsync(callId);
+
+			var result = records.Select(r =>
+			{
+				var personName = personnelNames.FirstOrDefault(p => p.UserId == r.UserId);
+				string unitName = null;
+				if (r.UnitId.HasValue && units != null)
+				{
+					var unit = units.FirstOrDefault(u => u.UnitId == r.UnitId.Value);
+					unitName = unit?.Name;
+				}
+
+				return new
+				{
+					r.CheckInRecordId,
+					r.CallId,
+					r.CheckInType,
+					CheckInTypeName = ((CheckInTimerTargetType)r.CheckInType).ToString(),
+					PerformedBy = personName?.Name ?? r.UserId,
+					UnitName = unitName,
+					Timestamp = r.Timestamp.TimeConverterToString(department),
+					r.Note
+				};
+			}).ToList();
+
+			return Json(result);
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> PerformCheckIn([FromBody] PerformCheckInInput input, CancellationToken cancellationToken)
+		{
+			if (input == null || input.CallId <= 0)
+				return BadRequest();
+
+			var call = await _callsService.GetCallByIdAsync(input.CallId);
+			if (call == null || call.DepartmentId != DepartmentId)
+				return NotFound();
+
+			if (!call.CheckInTimersEnabled || call.State != (int)CallStates.Active)
+				return BadRequest();
+
+			var record = new CheckInRecord
+			{
+				DepartmentId = DepartmentId,
+				CallId = input.CallId,
+				CheckInType = input.CheckInType,
+				UserId = UserId,
+				UnitId = input.UnitId,
+				Latitude = input.Latitude,
+				Longitude = input.Longitude,
+				Note = input.Note
+			};
+
+			var saved = await _checkInTimerService.PerformCheckInAsync(record, cancellationToken);
+			return Json(new { Id = saved.CheckInRecordId });
+		}
+
+		[HttpGet]
 		[Authorize(Policy = ResgridResources.Call_View)]
 		public async Task<IActionResult> CallExport(int callId)
 		{
@@ -1655,6 +1796,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 			model.ChildCalls = await _callsService.GetChildCallsForCallAsync(callId);
 			model.Contacts = await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId);
+			model.CheckInRecords = await _checkInTimerService.GetCheckInsForCallAsync(callId);
+			model.TimerConfigs = await _checkInTimerService.ResolveAllTimersForCallAsync(model.Call);
 
 			return View(model);
 		}
@@ -1705,6 +1848,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(call.DepartmentId);
 				model.ChildCalls = await _callsService.GetChildCallsForCallAsync(call.CallId);
 				model.Contacts = await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId);
+				model.CheckInRecords = await _checkInTimerService.GetCheckInsForCallAsync(call.CallId);
+				model.TimerConfigs = await _checkInTimerService.ResolveAllTimersForCallAsync(model.Call);
 
 				return View(model);
 			}
@@ -1734,6 +1879,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(call.DepartmentId);
 				model.ChildCalls = await _callsService.GetChildCallsForCallAsync(call.CallId);
 				model.Contacts = await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId);
+				model.CheckInRecords = await _checkInTimerService.GetCheckInsForCallAsync(call.CallId);
+				model.TimerConfigs = await _checkInTimerService.ResolveAllTimersForCallAsync(model.Call);
 
 				if (!String.IsNullOrWhiteSpace(items[2]) && items[2] != "0")
 				{

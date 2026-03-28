@@ -509,6 +509,20 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectUnacknowledgedRouteDeviationsByDepartmentQuery { get; set; }
 		#endregion Routes
 
+		#region CheckIns
+		public string CheckInTimerConfigsTableName { get; set; }
+		public string CheckInTimerOverridesTableName { get; set; }
+		public string CheckInRecordsTableName { get; set; }
+		public string SelectCheckInTimerConfigsByDepartmentIdQuery { get; set; }
+		public string SelectCheckInTimerConfigByDepartmentAndTargetQuery { get; set; }
+		public string SelectCheckInTimerOverridesByDepartmentIdQuery { get; set; }
+		public string SelectMatchingCheckInTimerOverridesQuery { get; set; }
+		public string SelectCheckInRecordsByCallIdQuery { get; set; }
+		public string SelectLastCheckInForUserOnCallQuery { get; set; }
+		public string SelectLastCheckInForUnitOnCallQuery { get; set; }
+		public string SelectCheckInRecordsByDepartmentIdAndDateRangeQuery { get; set; }
+		#endregion CheckIns
+
 		// Identity
 
 		#region Table Names

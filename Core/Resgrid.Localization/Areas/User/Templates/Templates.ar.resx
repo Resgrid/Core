@@ -168,4 +168,7 @@
   <data name="CallQuickTemplateType" xml:space="preserve">
     <value>قالب البلاغ السريع</value>
   </data>
+  <data name="EnableCheckInTimersLabel" xml:space="preserve">
+    <value>تفعيل مؤقتات تسجيل الوصول</value>
+  </data>
 </root>

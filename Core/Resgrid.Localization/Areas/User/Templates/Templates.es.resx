@@ -115,4 +115,5 @@
 	<data name="AddTemplateButton" xml:space="preserve"><value>Agregar plantilla</value></data>
 	<data name="CallNoteType" xml:space="preserve"><value>Nota de llamada</value></data>
 	<data name="CallQuickTemplateType" xml:space="preserve"><value>Plantilla rápida de llamada</value></data>
+	<data name="EnableCheckInTimersLabel" xml:space="preserve"><value>Habilitar Temporizadores de Registro</value></data>
 </root>

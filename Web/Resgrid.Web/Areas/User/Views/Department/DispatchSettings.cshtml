@@ -1,12 +1,12 @@
-﻿@model Resgrid.Web.Areas.User.Models.Departments.DispatchSettingsView
+@model Resgrid.Web.Areas.User.Models.Departments.DispatchSettingsView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> localizer
 @{
-    ViewBag.Title = "Resgrid | " + localizer["DispatchSettingsHeader"];
+    ViewBag.Title = "Resgrid | " + localizer["CallDispatchSettingsHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
     <div class="col-sm-4">
-        <h2>@localizer["DispatchSettingsHeader"]</h2>
+        <h2>@localizer["CallDispatchSettingsHeader"]</h2>
         <ol class="breadcrumb">
             <li>
                 <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
@@ -15,105 +15,361 @@
                 <a asp-controller="Department" asp-action="Settings" asp-route-area="User">@localizer["DepartmentSettingsHeader"]</a>
             </li>
             <li class="active">
-                <strong>@localizer["DispatchSettingsHeader"]</strong>
+                <strong>@localizer["CallDispatchSettingsHeader"]</strong>
             </li>
         </ol>
     </div>
 </div>
 
-<form role="form" class="form-horizontal" asp-controller="Department" asp-action="DispatchSettings" asp-route-area="User" method="post">
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="wrapper wrapper-content">
-                <div class="ibox float-e-margins">
-                    <div class="ibox-content">
-                        <div class="form-horizontal">
-                            @Html.AntiForgeryToken()
-                            <div asp-validation-summary="All" class="text-danger"></div>
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
 
-                            @if (Model.SaveSuccess.GetValueOrDefault())
-				            {
-                              <div class="alert alert-success">
-                                @localizer["SavedDispatchSettings"]
-                              </div>
-				            }
+            @* ── Dispatch Settings Form ──────────────────── *@
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <form role="form" class="form-horizontal" asp-controller="Department" asp-action="DispatchSettings" asp-route-area="User" method="post">
+                        @Html.AntiForgeryToken()
+                        <div asp-validation-summary="All" class="text-danger"></div>
 
-                            <h3>@localizer["GroupDispatchSettingsHeader"]</h3>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">@localizer["UseShiftForGroupDispatchLabel"]</label>
-                                <div class="col-sm-9">
-                                    <div class="row">
-                                        <div class="col-sm-10">
-                                            <input type="checkbox" asp-for="DispatchShiftInsteadOfGroup">
-                                        </div>
-                                    </div>
-                                </div>
+                        @if (Model.SaveSuccess.GetValueOrDefault())
+                        {
+                            <div class="alert alert-success">
+                                @localizer["SavedCallDispatchSettings"]
                             </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">@localizer["SetStatusforShiftPersonnelOnDispatchLabel"]</label>
-                                <div class="col-sm-9">
-                                    <div class="row">
-                                        <div class="col-sm-10">
-                                            <input type="checkbox" asp-for="AutoSetStatusForShiftPersonnel">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">@localizer["PersonCallDispatchStatusLabel"]</label>
-                                <div class="col-sm-9">@Html.DropDownListFor(m => m.ShiftDispatchStatus, Model.StatusLevels, new { style = "width: 70%" })</div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">@localizer["PersonCallReleaseStatusLabel"]</label>
-                                <div class="col-sm-9">@Html.DropDownListFor(m => m.ShiftClearStatus, Model.StatusLevels, new { style = "width: 70%" })</div>
-                            </div>
+                        }
 
-                            <h3>@localizer["UnitDispatchSettingsHeader"]</h3>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">@localizer["UnitDispatchAlsoDispatchToAssignedPersonnelLabel"]</label>
-                                <div class="col-sm-9">
-                                    <div class="row">
-                                        <div class="col-sm-10">
-                                            <input type="checkbox" asp-for="UnitDispatchAlsoDispatchToAssignedPersonnel">
-                                        </div>
+                        <h3>@localizer["GroupDispatchSettingsHeader"]</h3>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["UseShiftForGroupDispatchLabel"]</label>
+                            <div class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-sm-10">
+                                        <input type="checkbox" asp-for="DispatchShiftInsteadOfGroup">
                                     </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">@localizer["UnitDispatchAlsoDispatchToGroupLabel"]</label>
-                                <div class="col-sm-9">
-                                    <div class="row">
-                                        <div class="col-sm-10">
-                                            <input type="checkbox" asp-for="UnitDispatchAlsoDispatchToGroup">
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="col-sm-3 control-label">@localizer["PersonnelOnUnitSetUnitStatusLabel"]</label>
-                                <div class="col-sm-9">
-                                    <div class="row">
-                                        <div class="col-sm-10">
-                                            <input type="checkbox" asp-for="PersonnelOnUnitSetUnitStatus">
-                                            <span class="help-block m-b-none">@localizer["PersonnelOnUnitSetUnitStatusHelp"]</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <div class="col-sm-4 col-sm-offset-2">
-                                    <a class="btn btn-white" asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Cancel"]</a>
-                                    <button class="btn btn-primary" type="submit">@commonLocalizer["Save"]</button>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["SetStatusforShiftPersonnelOnDispatchLabel"]</label>
+                            <div class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-sm-10">
+                                        <input type="checkbox" asp-for="AutoSetStatusForShiftPersonnel">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["PersonCallDispatchStatusLabel"]</label>
+                            <div class="col-sm-9">@Html.DropDownListFor(m => m.ShiftDispatchStatus, Model.StatusLevels, new { style = "width: 70%" })</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["PersonCallReleaseStatusLabel"]</label>
+                            <div class="col-sm-9">@Html.DropDownListFor(m => m.ShiftClearStatus, Model.StatusLevels, new { style = "width: 70%" })</div>
+                        </div>
+
+                        <h3>@localizer["UnitDispatchSettingsHeader"]</h3>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["UnitDispatchAlsoDispatchToAssignedPersonnelLabel"]</label>
+                            <div class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-sm-10">
+                                        <input type="checkbox" asp-for="UnitDispatchAlsoDispatchToAssignedPersonnel">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["UnitDispatchAlsoDispatchToGroupLabel"]</label>
+                            <div class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-sm-10">
+                                        <input type="checkbox" asp-for="UnitDispatchAlsoDispatchToGroup">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["PersonnelOnUnitSetUnitStatusLabel"]</label>
+                            <div class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-sm-10">
+                                        <input type="checkbox" asp-for="PersonnelOnUnitSetUnitStatus">
+                                        <span class="help-block m-b-none">@localizer["PersonnelOnUnitSetUnitStatusHelp"]</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="hr-line-dashed"></div>
+                        <h3>@localizer["CheckInTimerSettingsHeader"]</h3>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["CheckInTimerAutoEnableLabel"]</label>
+                            <div class="col-sm-9">
+                                <div class="row">
+                                    <div class="col-sm-10">
+                                        <input type="checkbox" asp-for="AutoEnableCheckInTimers">
+                                        <span class="help-block m-b-none">@localizer["CheckInTimerAutoEnableHelp"]</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <a class="btn btn-white" asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                <button class="btn btn-primary" type="submit">@commonLocalizer["Save"]</button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
+
+            @* ── Default Timer Configurations (independent form) ── *@
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["CheckInTimerDefaultConfigsHeader"]</h5></div>
+                <div class="ibox-content">
+                    <p class="text-muted">@localizer["CheckInTimerDefaultConfigsHelp"]</p>
+
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>@localizer["CheckInTimerTargetTypeLabel"]</th>
+                                <th>@localizer["CheckInTimerUnitTypeLabel"]</th>
+                                <th>@localizer["CheckInTimerDurationLabel"]</th>
+                                <th>@localizer["CheckInTimerWarningLabel"]</th>
+                                <th>@localizer["CheckInTimerEnabledLabel"]</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var config in Model.TimerConfigs)
+                            {
+                                <tr>
+                                    <td>@((Resgrid.Model.CheckInTimerTargetType)config.TimerTargetType)</td>
+                                    <td>
+                                        @if (config.UnitTypeId.HasValue)
+                                        {
+                                            var ut = Model.UnitTypes.FirstOrDefault(u => u.UnitTypeId == config.UnitTypeId.Value);
+                                            @(ut != null ? ut.Type : config.UnitTypeId.ToString())
+                                        }
+                                    </td>
+                                    <td>@config.DurationMinutes</td>
+                                    <td>@config.WarningThresholdMinutes</td>
+                                    <td>@(config.IsEnabled ? localizer["CheckInTimerYes"] : localizer["CheckInTimerNo"])</td>
+                                    <td>
+                                        <form asp-controller="Department" asp-action="DeleteCheckInTimerConfig" asp-route-area="User" method="post" style="display:inline;">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="configId" value="@config.CheckInTimerConfigId" />
+                                            <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["CheckInTimerDeleteConfirm"]');">@commonLocalizer["Delete"]</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                    <hr />
+                    <h4>@localizer["CheckInTimerAddNewDefault"]</h4>
+                    <form role="form" class="form-horizontal" asp-controller="Department" asp-action="SaveCheckInTimerConfig" asp-route-area="User" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["CheckInTimerTargetTypeLabel"]</label>
+                            <div class="col-sm-9">
+                                <select name="timerTargetType" class="form-control" style="width:300px;">
+                                    <option value="0">@localizer["CheckInTimerTargetPersonnel"]</option>
+                                    <option value="1">@localizer["CheckInTimerTargetUnitType"]</option>
+                                    <option value="2">@localizer["CheckInTimerTargetIC"]</option>
+                                    <option value="3">@localizer["CheckInTimerTargetPAR"]</option>
+                                    <option value="4">@localizer["CheckInTimerTargetHazmat"]</option>
+                                    <option value="5">@localizer["CheckInTimerTargetSectorRotation"]</option>
+                                    <option value="6">@localizer["CheckInTimerTargetRehab"]</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["CheckInTimerUnitTypeLabel"]</label>
+                            <div class="col-sm-9">
+                                <select name="unitTypeId" class="form-control" style="width:300px;">
+                                    <option value="">@localizer["CheckInTimerNoneOption"]</option>
+                                    @foreach (var ut in Model.UnitTypes)
+                                    {
+                                        <option value="@ut.UnitTypeId">@ut.Type</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["CheckInTimerDurationLabel"]</label>
+                            <div class="col-sm-9">
+                                <input type="number" name="durationMinutes" class="form-control" style="width:150px;" value="30" min="1" required />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["CheckInTimerWarningLabel"]</label>
+                            <div class="col-sm-9">
+                                <input type="number" name="warningThresholdMinutes" class="form-control" style="width:150px;" value="5" min="1" required />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["CheckInTimerEnabledLabel"]</label>
+                            <div class="col-sm-9">
+                                <input type="checkbox" name="isEnabled" value="true" checked />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-3 col-sm-offset-3">
+                                <button class="btn btn-primary" type="submit">@localizer["CheckInTimerAddConfigButton"]</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            @* ── Call Type / Priority Overrides (independent form) ── *@
+            <div class="ibox float-e-margins">
+                <div class="ibox-title"><h5>@localizer["CheckInTimerOverridesHeader"]</h5></div>
+                <div class="ibox-content">
+                    <p class="text-muted">@localizer["CheckInTimerOverridesHelp"]</p>
+
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>@localizer["CheckInTimerCallTypeLabel"]</th>
+                                <th>@localizer["CheckInTimerCallPriorityLabel"]</th>
+                                <th>@localizer["CheckInTimerTargetTypeLabel"]</th>
+                                <th>@localizer["CheckInTimerUnitTypeLabel"]</th>
+                                <th>@localizer["CheckInTimerDurationLabel"]</th>
+                                <th>@localizer["CheckInTimerWarningLabel"]</th>
+                                <th>@localizer["CheckInTimerEnabledLabel"]</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var ovr in Model.TimerOverrides)
+                            {
+                                <tr>
+                                    <td>
+                                        @if (ovr.CallTypeId.HasValue)
+                                        {
+                                            var ct = Model.CallTypes.FirstOrDefault(c => c.CallTypeId == ovr.CallTypeId.Value);
+                                            @(ct != null ? ct.Type : ovr.CallTypeId.ToString())
+                                        }
+                                        else
+                                        {
+                                            @localizer["CheckInTimerAnyOption"]
+                                        }
+                                    </td>
+                                    <td>@(ovr.CallPriority.HasValue ? ((Resgrid.Model.CallPriority)ovr.CallPriority.Value).ToString() : localizer["CheckInTimerAnyOption"].Value)</td>
+                                    <td>@((Resgrid.Model.CheckInTimerTargetType)ovr.TimerTargetType)</td>
+                                    <td>
+                                        @if (ovr.UnitTypeId.HasValue)
+                                        {
+                                            var ut = Model.UnitTypes.FirstOrDefault(u => u.UnitTypeId == ovr.UnitTypeId.Value);
+                                            @(ut != null ? ut.Type : ovr.UnitTypeId.ToString())
+                                        }
+                                    </td>
+                                    <td>@ovr.DurationMinutes</td>
+                                    <td>@ovr.WarningThresholdMinutes</td>
+                                    <td>@(ovr.IsEnabled ? localizer["CheckInTimerYes"] : localizer["CheckInTimerNo"])</td>
+                                    <td>
+                                        <form asp-controller="Department" asp-action="DeleteCheckInTimerOverride" asp-route-area="User" method="post" style="display:inline;">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="overrideId" value="@ovr.CheckInTimerOverrideId" />
+                                            <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('@localizer["CheckInTimerOverrideDeleteConfirm"]');">@commonLocalizer["Delete"]</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                    <hr />
+                    <h4>@localizer["CheckInTimerAddNewOverride"]</h4>
+                    <form role="form" class="form-horizontal" asp-controller="Department" asp-action="SaveCheckInTimerOverride" asp-route-area="User" method="post">
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["CheckInTimerCallTypeLabel"]</label>
+                            <div class="col-sm-9">
+                                <select name="callTypeId" class="form-control" style="width:300px;">
+                                    <option value="">@localizer["CheckInTimerAnyOption"]</option>
+                                    @foreach (var ct in Model.CallTypes)
+                                    {
+                                        <option value="@ct.CallTypeId">@ct.Type</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["CheckInTimerCallPriorityLabel"]</label>
+                            <div class="col-sm-9">
+                                <select name="callPriority" class="form-control" style="width:300px;">
+                                    <option value="">@localizer["CheckInTimerAnyOption"]</option>
+                                    <option value="0">@localizer["CheckInTimerPriorityLow"]</option>
+                                    <option value="1">@localizer["CheckInTimerPriorityMedium"]</option>
+                                    <option value="2">@localizer["CheckInTimerPriorityHigh"]</option>
+                                    <option value="3">@localizer["CheckInTimerPriorityEmergency"]</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["CheckInTimerTargetTypeLabel"]</label>
+                            <div class="col-sm-9">
+                                <select name="timerTargetType" class="form-control" style="width:300px;">
+                                    <option value="0">@localizer["CheckInTimerTargetPersonnel"]</option>
+                                    <option value="1">@localizer["CheckInTimerTargetUnitType"]</option>
+                                    <option value="2">@localizer["CheckInTimerTargetIC"]</option>
+                                    <option value="3">@localizer["CheckInTimerTargetPAR"]</option>
+                                    <option value="4">@localizer["CheckInTimerTargetHazmat"]</option>
+                                    <option value="5">@localizer["CheckInTimerTargetSectorRotation"]</option>
+                                    <option value="6">@localizer["CheckInTimerTargetRehab"]</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["CheckInTimerUnitTypeLabel"]</label>
+                            <div class="col-sm-9">
+                                <select name="unitTypeId" class="form-control" style="width:300px;">
+                                    <option value="">@localizer["CheckInTimerNoneOption"]</option>
+                                    @foreach (var ut in Model.UnitTypes)
+                                    {
+                                        <option value="@ut.UnitTypeId">@ut.Type</option>
+                                    }
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["CheckInTimerDurationLabel"]</label>
+                            <div class="col-sm-9">
+                                <input type="number" name="durationMinutes" class="form-control" style="width:150px;" value="30" min="1" required />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["CheckInTimerWarningLabel"]</label>
+                            <div class="col-sm-9">
+                                <input type="number" name="warningThresholdMinutes" class="form-control" style="width:150px;" value="5" min="1" required />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["CheckInTimerEnabledLabel"]</label>
+                            <div class="col-sm-9">
+                                <input type="checkbox" name="isEnabled" value="true" checked />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-3 col-sm-offset-3">
+                                <button class="btn btn-primary" type="submit">@localizer["CheckInTimerAddOverrideButton"]</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </div>
     </div>
-</form>
+</div>
 
 @section Scripts
 {

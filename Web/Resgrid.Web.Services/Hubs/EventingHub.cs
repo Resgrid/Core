@@ -97,5 +97,21 @@ namespace Resgrid.Web.Services.Hubs
 			if (group != null)
 				await group.SendAsync("departmentUpdated");
 		}
+
+		public async Task CheckInPerformed(int departmentId, int callId, string checkInRecordId)
+		{
+			var group = Clients.Group(departmentId.ToString());
+
+			if (group != null)
+				await group.SendAsync("checkInPerformed", callId, checkInRecordId);
+		}
+
+		public async Task CheckInTimersUpdated(int departmentId, int callId)
+		{
+			var group = Clients.Group(departmentId.ToString());
+
+			if (group != null)
+				await group.SendAsync("checkInTimersUpdated", callId);
+		}
 	}
 }

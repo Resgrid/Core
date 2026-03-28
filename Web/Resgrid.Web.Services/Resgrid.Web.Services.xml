@@ -303,6 +303,66 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.CheckInTimersController">
+            <summary>
+            Check-in timer operations for call accountability
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CheckInTimersController.GetTimerConfigs">
+            <summary>
+            Gets all timer configurations for the department
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CheckInTimersController.SaveTimerConfig(Resgrid.Web.Services.Models.v4.CheckInTimers.CheckInTimerConfigInput,System.Threading.CancellationToken)">
+            <summary>
+            Creates or updates a timer configuration
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CheckInTimersController.DeleteTimerConfig(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Deletes a timer configuration
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CheckInTimersController.GetTimerOverrides">
+            <summary>
+            Gets all timer overrides for the department
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CheckInTimersController.SaveTimerOverride(Resgrid.Web.Services.Models.v4.CheckInTimers.CheckInTimerOverrideInput,System.Threading.CancellationToken)">
+            <summary>
+            Creates or updates a timer override
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CheckInTimersController.DeleteTimerOverride(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Deletes a timer override
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CheckInTimersController.GetTimersForCall(System.Int32)">
+            <summary>
+            Gets the resolved timers for a specific call
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CheckInTimersController.GetTimerStatuses(System.Int32)">
+            <summary>
+            Gets real-time timer statuses with color coding for a call
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CheckInTimersController.PerformCheckIn(Resgrid.Web.Services.Models.v4.CheckInTimers.PerformCheckInInput,System.Threading.CancellationToken)">
+            <summary>
+            Records a check-in for a call with optional geolocation
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CheckInTimersController.GetCheckInHistory(System.Int32)">
+            <summary>
+            Gets all check-in records for a call
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CheckInTimersController.ToggleCallTimers(System.Int32,System.Boolean,System.Threading.CancellationToken)">
+            <summary>
+            Enables or disables check-in timers on a call
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ConfigController">
             <summary>
             Generic configuration api endpoints
@@ -4728,6 +4788,11 @@
             User Defined Field values for this call
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.CheckInTimersEnabled">
+            <summary>
+            Whether check-in timers are enabled for this call
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.CloseCallInput">
             <summary>
             Input information to close a call
@@ -4971,6 +5036,11 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.IndoorMapFloorId">
             <summary>
             Indoor Map Floor Id for the call location
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.CheckInTimersEnabled">
+            <summary>
+            Enable check-in timers for this call. Leave null to use department default.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.ScheduledCallsResult">

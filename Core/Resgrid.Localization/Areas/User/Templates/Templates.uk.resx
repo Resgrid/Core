@@ -119,4 +119,7 @@
   <data name="CallQuickTemplateType" xml:space="preserve">
     <value>Шаблон швидкого виклику</value>
   </data>
+  <data name="EnableCheckInTimersLabel" xml:space="preserve">
+    <value>Увімкнути Таймери Реєстрації</value>
+  </data>
 </root>

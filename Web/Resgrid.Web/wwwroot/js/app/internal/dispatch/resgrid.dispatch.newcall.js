@@ -318,6 +318,12 @@ var resgrid;
                                 if (data.CallPriority && data.CallPriority >= 0) {
                                     $('#CallPriority').val(data.CallPriority);
                                 }
+
+                                if (data.CheckInTimersEnabled === true) {
+                                    $('input[name="Call.CheckInTimersEnabled"]').prop('checked', true);
+                                } else if (data.CheckInTimersEnabled === false) {
+                                    $('input[name="Call.CheckInTimersEnabled"]').prop('checked', false);
+                                }
                             }
                         });
                     }

@@ -38,6 +38,8 @@ namespace Resgrid.Model
 
 		public DateTime CreatedOn { get; set; }
 
+		public bool? CheckInTimersEnabled { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

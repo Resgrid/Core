@@ -22,6 +22,7 @@ using Resgrid.Web.Areas.User.Models.Reports.Logs;
 using Resgrid.Web.Areas.User.Models.Reports.Params;
 using Resgrid.Web.Areas.User.Models.Reports.Personnel;
 using Resgrid.Web.Areas.User.Models.Reports.Shifts;
+using Resgrid.Web.Areas.User.Models.Reports.EventAttendance;
 using Resgrid.Web.Areas.User.Models.Reports.Units;
 using Resgrid.Web.Helpers;
 using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
@@ -52,6 +53,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IAuthorizationService _authorizationService;
 		private readonly IUnitsService _unitsService;
 		private readonly IUnitStatesService _unitStatesService;
+		private readonly ICalendarService _calendarService;
 
 		public ReportsController(IDepartmentsService departmentsService, IUsersService usersService,
 			IActionLogsService actionLogsService,
@@ -62,7 +64,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ICertificationService certificationService, IWorkLogsService logService, IShiftsService shiftsService,
 			ICallsService callsService, IWorkLogsService workLogsService,
 			ICustomStateService customStateService, IAuthorizationService authorizationService,
-			IUnitsService unitsService, IUnitStatesService unitStatesService)
+			IUnitsService unitsService, IUnitStatesService unitStatesService,
+			ICalendarService calendarService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -82,6 +85,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_authorizationService = authorizationService;
 			_unitsService = unitsService;
 			_unitStatesService = unitStatesService;
+			_calendarService = calendarService;
 		}
 
 		#endregion Private Members and Constructors
@@ -2044,5 +2048,194 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			return model;
 		}
+
+		#region Event Attendance Report
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Reports_View)]
+		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+		public async Task<IActionResult> EventAttendanceReportParams()
+		{
+			var model = new EventAttendanceReportParams();
+			model.Start = new DateTime(DateTime.UtcNow.Year, 1, 1);
+			model.End = new DateTime(DateTime.UtcNow.Year, 12, 31, 23, 59, 59);
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Reports_View)]
+		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+		public async Task<IActionResult> EventAttendanceReportParams(EventAttendanceReportParams model)
+		{
+			return RedirectToAction("EventAttendanceReport", new { start = model.Start.ToString("o"), end = model.End.ToString("o") });
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Reports_View)]
+		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+		public async Task<IActionResult> EventAttendanceReport(DateTime start, DateTime end)
+		{
+			var model = await BuildEventAttendanceReportModel(start, end);
+			return View(model);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Reports_View)]
+		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+		public async Task<IActionResult> EventAttendanceDetailReport(string userId, DateTime start, DateTime end)
+		{
+			var model = await BuildEventAttendanceDetailReportModel(userId, start, end);
+			return View(model);
+		}
+
+		private async Task<EventAttendanceView> BuildEventAttendanceReportModel(DateTime start, DateTime end)
+		{
+			var model = new EventAttendanceView();
+			model.RunOn = DateTime.UtcNow;
+			model.Start = start;
+			model.End = end;
+			model.Name = "Event Attendance Report";
+			model.EventHours = new List<PersonnelEventHours>();
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.Department = department;
+
+			var checkIns = await _calendarService.GetCheckInsByDepartmentDateRangeAsync(DepartmentId, start, end);
+			var calendarItems = await _calendarService.GetAllCalendarItemsForDepartmentInRangeAsync(DepartmentId, start, end);
+			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
+			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
+
+			// Build a lookup: userId → set of calendarItemIds they were listed as attendee for
+			var attendeeEventsByUser = new Dictionary<string, HashSet<int>>();
+			foreach (var item in calendarItems)
+			{
+				if (item.Attendees != null)
+				{
+					foreach (var attendee in item.Attendees)
+					{
+						if (!attendeeEventsByUser.ContainsKey(attendee.UserId))
+							attendeeEventsByUser[attendee.UserId] = new HashSet<int>();
+						attendeeEventsByUser[attendee.UserId].Add(item.CalendarItemId);
+					}
+				}
+			}
+
+			// Build a lookup: userId → set of calendarItemIds they actually checked in for
+			var checkedInEventsByUser = new Dictionary<string, HashSet<int>>();
+			foreach (var ci in checkIns)
+			{
+				if (!checkedInEventsByUser.ContainsKey(ci.UserId))
+					checkedInEventsByUser[ci.UserId] = new HashSet<int>();
+				checkedInEventsByUser[ci.UserId].Add(ci.CalendarItemId);
+			}
+
+			// Collect all users who are either attendees or have check-ins
+			var allUserIds = new HashSet<string>(attendeeEventsByUser.Keys);
+			foreach (var ci in checkIns)
+				allUserIds.Add(ci.UserId);
+
+			foreach (var userId in allUserIds)
+			{
+				var personHours = new PersonnelEventHours();
+				personHours.ID = userId;
+
+				// Count events checked in for
+				checkedInEventsByUser.TryGetValue(userId, out var checkedInEvents);
+				personHours.TotalEvents = checkedInEvents?.Count ?? 0;
+
+				// Count events listed as attendee but did NOT check in for
+				attendeeEventsByUser.TryGetValue(userId, out var attendeeEvents);
+				if (attendeeEvents != null)
+				{
+					personHours.MissedEvents = checkedInEvents != null
+						? attendeeEvents.Count(e => !checkedInEvents.Contains(e))
+						: attendeeEvents.Count;
+				}
+
+				// Total hours from check-ins with checkouts
+				personHours.TotalSeconds = checkIns
+					.Where(c => c.UserId == userId && c.CheckOutTime.HasValue)
+					.Sum(c => (c.CheckOutTime.Value - c.CheckInTime).TotalSeconds);
+
+				var name = personnelNames?.FirstOrDefault(x => x.UserId == userId);
+				personHours.Name = name?.Name ?? userId;
+
+				if (groups != null)
+				{
+					var userGroup = groups.FirstOrDefault(g => g.Members != null && g.Members.Any(m => m.UserId == userId));
+					personHours.Group = userGroup?.Name ?? "";
+				}
+
+				model.EventHours.Add(personHours);
+			}
+
+			model.EventHours = model.EventHours.OrderBy(x => x.Name).ToList();
+
+			return model;
+		}
+
+		private async Task<EventAttendanceDetailView> BuildEventAttendanceDetailReportModel(string userId, DateTime start, DateTime end)
+		{
+			var model = new EventAttendanceDetailView();
+			model.RunOn = DateTime.UtcNow;
+			model.Start = start;
+			model.End = end;
+			model.Name = "Event Attendance Detail Report";
+			model.Details = new List<EventAttendanceDetail>();
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			model.Department = department;
+
+			var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
+			model.PersonnelName = profile?.FullName?.AsFirstNameLastName ?? userId;
+
+			var checkIns = await _calendarService.GetCheckInsByUserDateRangeAsync(userId, DepartmentId, start, end);
+			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
+
+			double totalSeconds = 0;
+			foreach (var checkIn in checkIns)
+			{
+				var calItem = await _calendarService.GetCalendarItemByIdAsync(checkIn.CalendarItemId);
+
+				var detail = new EventAttendanceDetail();
+				detail.EventTitle = calItem?.Title ?? "Unknown Event";
+				detail.CheckInTime = checkIn.CheckInTime;
+				detail.CheckOutTime = checkIn.CheckOutTime;
+				detail.IsManualOverride = checkIn.IsManualOverride;
+				detail.CheckInNote = checkIn.CheckInNote;
+				detail.CheckOutNote = checkIn.CheckOutNote;
+				detail.CheckInLatitude = checkIn.CheckInLatitude;
+				detail.CheckInLongitude = checkIn.CheckInLongitude;
+				detail.CheckOutLatitude = checkIn.CheckOutLatitude;
+				detail.CheckOutLongitude = checkIn.CheckOutLongitude;
+
+				if (!string.IsNullOrWhiteSpace(checkIn.CheckInByUserId))
+				{
+					var byName = personnelNames?.FirstOrDefault(x => x.UserId == checkIn.CheckInByUserId);
+					detail.CheckInByName = byName?.Name;
+				}
+
+				if (!string.IsNullOrWhiteSpace(checkIn.CheckOutByUserId))
+				{
+					var byName = personnelNames?.FirstOrDefault(x => x.UserId == checkIn.CheckOutByUserId);
+					detail.CheckOutByName = byName?.Name;
+				}
+
+				if (checkIn.CheckOutTime.HasValue)
+				{
+					detail.DurationSeconds = (checkIn.CheckOutTime.Value - checkIn.CheckInTime).TotalSeconds;
+					totalSeconds += detail.DurationSeconds;
+				}
+
+				model.Details.Add(detail);
+			}
+
+			model.TotalSeconds = totalSeconds;
+
+			return model;
+		}
+
+		#endregion Event Attendance Report
 	}
 }

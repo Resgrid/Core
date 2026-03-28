@@ -1,0 +1,173 @@
+@using Resgrid.Model.Helpers
+@using Resgrid.Framework
+@model Resgrid.Web.Areas.User.Models.Calendar.SignupSheetView
+@{
+    Layout = null;
+    var attendeeList = Model.CalendarItem.Attendees?.ToList() ?? new List<Resgrid.Model.CalendarItemAttendee>();
+    var blankRows = Model.TotalRows - attendeeList.Count;
+    if (blankRows < 0) blankRows = 0;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Signup Sheet — @Model.CalendarItem.Title</title>
+    <meta charset="utf-8" />
+    <style>
+        @@page {
+            size: letter;
+            margin: 0.5in;
+        }
+        * { box-sizing: border-box; }
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 12px;
+            margin: 0;
+            padding: 0.5in;
+            color: #222;
+        }
+        .header {
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+            margin-bottom: 12px;
+        }
+        .header h1 {
+            font-size: 22px;
+            margin: 0 0 4px 0;
+        }
+        .header .meta {
+            font-size: 13px;
+            color: #555;
+        }
+        .header .meta span {
+            margin-right: 20px;
+        }
+        .header .description {
+            margin-top: 8px;
+            font-size: 11px;
+            color: #666;
+            max-height: 60px;
+            overflow: hidden;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 8px;
+        }
+        th {
+            background: #f0f0f0;
+            text-align: left;
+            font-size: 11px;
+            padding: 5px 8px;
+            border: 1px solid #999;
+        }
+        td {
+            padding: 6px 8px;
+            border: 1px solid #ccc;
+            font-size: 11px;
+            height: 26px;
+        }
+        .row-num {
+            width: 30px;
+            text-align: center;
+            color: #999;
+        }
+        .name-col { width: 28%; }
+        .sign-col { width: 20%; }
+        .time-col { width: 13%; }
+        .note-col { width: 26%; }
+        .footer {
+            margin-top: 10px;
+            font-size: 10px;
+            color: #999;
+            text-align: right;
+        }
+        @@media print {
+            body { padding: 0; }
+        }
+    </style>
+</head>
+<body onload="window.print();">
+    <div class="header">
+        <h1>@Model.CalendarItem.Title</h1>
+        <div class="meta">
+            <span><strong>Date:</strong>
+                @if (Model.CalendarItem.IsAllDay)
+                {
+                    @Model.CalendarItem.Start.TimeConverter(Model.Department).ToString("dddd, MMMM d, yyyy")
+                }
+                else
+                {
+                    @Model.CalendarItem.Start.TimeConverter(Model.Department).ToString("dddd, MMMM d, yyyy")
+                }
+            </span>
+            <span><strong>Time:</strong>
+                @if (Model.CalendarItem.IsAllDay)
+                {
+                    @:All Day
+                }
+                else
+                {
+                    @Model.CalendarItem.Start.TimeConverter(Model.Department).ToString("h:mm tt")
+                    @: – @Model.CalendarItem.End.TimeConverter(Model.Department).ToString("h:mm tt")
+                }
+            </span>
+            @if (!string.IsNullOrWhiteSpace(Model.CalendarItem.Location))
+            {
+                <span><strong>Location:</strong> @Model.CalendarItem.Location</span>
+            }
+        </div>
+        @if (!string.IsNullOrWhiteSpace(Model.CalendarItem.Description))
+        {
+            <div class="description">@Html.Raw(StringHelpers.SanitizeHtmlInString(Model.CalendarItem.Description))</div>
+        }
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th class="row-num">#</th>
+                <th class="name-col">Name (Print)</th>
+                <th class="sign-col">Signature</th>
+                <th class="time-col">Time In</th>
+                <th class="time-col">Time Out</th>
+                <th class="note-col">Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{
+                int rowNum = 1;
+            }
+            @foreach (var attendee in attendeeList)
+            {
+                var personName = Model.PersonnelNames?.FirstOrDefault(x => x.UserId == attendee.UserId);
+                <tr>
+                    <td class="row-num">@rowNum</td>
+                    <td>@(personName?.Name ?? attendee.UserId)</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                rowNum++;
+            }
+            @for (int i = 0; i < blankRows; i++)
+            {
+                <tr>
+                    <td class="row-num">@rowNum</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                </tr>
+                rowNum++;
+            }
+        </tbody>
+    </table>
+
+    <div class="footer">
+        @Model.Department.Name &mdash; Generated @DateTime.UtcNow.TimeConverter(Model.Department).ToString("M/d/yyyy h:mm tt")
+    </div>
+</body>
+</html>

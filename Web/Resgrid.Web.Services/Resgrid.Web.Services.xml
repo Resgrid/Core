@@ -81,6 +81,31 @@
              <param name="input"></param>
              <returns></returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CalendarController.SetCalendarCheckIn(Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInInput,System.Threading.CancellationToken)">
+            <summary>
+            Checks in to a calendar event
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CalendarController.SetCalendarCheckOut(Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckOutInput,System.Threading.CancellationToken)">
+            <summary>
+            Checks out from a calendar event
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CalendarController.UpdateCalendarCheckIn(Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInUpdateInput,System.Threading.CancellationToken)">
+            <summary>
+            Updates check-in times for a calendar event
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CalendarController.GetCalendarItemCheckIns(System.Int32)">
+            <summary>
+            Gets all check-ins for a calendar item
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CalendarController.DeleteCalendarCheckIn(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Deletes a calendar check-in record
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CalendarExportController">
             <summary>
             iCal export and external calendar sync endpoints.
@@ -4032,6 +4057,181 @@
             Added on as UTC
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInInput">
+            <summary>
+            Input for checking in to a calendar event
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInInput.CalendarEventId">
+            <summary>
+            Calendar event item id to check in to
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInInput.Note">
+            <summary>
+            Optional note for the check-in
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInInput.UserId">
+            <summary>
+            Optional user id for admin/group admin check-in on behalf of another user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInInput.Latitude">
+            <summary>
+            GPS latitude at check-in (from Responder app)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInInput.Longitude">
+            <summary>
+            GPS longitude at check-in (from Responder app)
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInResultData">
+            <summary>
+            Data representing a single calendar check-in record
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInResultData.CheckInId">
+            <summary>
+            The check-in record id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInResultData.CalendarItemId">
+            <summary>
+            The calendar item id
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInResultData.UserId">
+            <summary>
+            The user id who checked in
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInResultData.Name">
+            <summary>
+            The display name of the user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInResultData.CheckInTime">
+            <summary>
+            Check-in time in UTC
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInResultData.CheckOutTime">
+            <summary>
+            Check-out time in UTC (nullable)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInResultData.DurationSeconds">
+            <summary>
+            Duration in seconds (null if not checked out)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInResultData.IsManualOverride">
+            <summary>
+            Whether the times were manually overridden
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInResultData.CheckInByName">
+            <summary>
+            Name of the person who performed the check-in (if on behalf)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInResultData.CheckOutByName">
+            <summary>
+            Name of the person who performed the check-out (if on behalf)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInResultData.CheckInNote">
+            <summary>
+            Check-in note
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInResultData.CheckOutNote">
+            <summary>
+            Check-out note
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInResultData.CheckInLatitude">
+            <summary>
+            GPS latitude at check-in
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInResultData.CheckInLongitude">
+            <summary>
+            GPS longitude at check-in
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInResultData.CheckOutLatitude">
+            <summary>
+            GPS latitude at check-out
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInResultData.CheckOutLongitude">
+            <summary>
+            GPS longitude at check-out
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInUpdateInput">
+            <summary>
+            Input for updating check-in times
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInUpdateInput.CheckInId">
+            <summary>
+            The check-in record id to update
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInUpdateInput.CheckInTime">
+            <summary>
+            The updated check-in time in UTC
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInUpdateInput.CheckOutTime">
+            <summary>
+            The updated check-out time in UTC (nullable)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInUpdateInput.CheckInNote">
+            <summary>
+            Check-in note
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckInUpdateInput.CheckOutNote">
+            <summary>
+            Check-out note
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckOutInput">
+            <summary>
+            Input for checking out from a calendar event
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckOutInput.CalendarEventId">
+            <summary>
+            Calendar event item id to check out from
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckOutInput.UserId">
+            <summary>
+            Optional user id for admin/group admin check-out on behalf of another user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckOutInput.Note">
+            <summary>
+            Optional note for the check-out
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckOutInput.Latitude">
+            <summary>
+            GPS latitude at check-out (from Responder app)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.CalendarCheckOutInput.Longitude">
+            <summary>
+            GPS longitude at check-out (from Responder app)
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calendar.GetAllCalendarItemResult">
             <summary>
             Result containing all calendar items
@@ -4130,6 +4330,11 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Calendar.GetAllCalendarItemResultData.SignupType">
             <summary>
             Signup type
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.GetAllCalendarItemResultData.CheckInType">
+            <summary>
+            Check-in type: 0=Disabled, 1=SelfCheckIn, 2=AdminOnly
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calendar.GetAllCalendarItemResultData.Reminder">
@@ -4257,6 +4462,16 @@
             Color for this type
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Calendar.GetCalendarCheckInsResult">
+            <summary>
+            Result containing calendar check-in records
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.GetCalendarCheckInsResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calendar.GetCalendarItemResult">
             <summary>
             Result containing a single calendar items
@@ -4296,6 +4511,16 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Calendar.SetCalendarAttendingResult.Id">
             <summary>
             Identifier of the new attending calendar entry
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Calendar.SetCalendarCheckInResult">
+            <summary>
+            The result of a calendar check-in operation
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calendar.SetCalendarCheckInResult.Id">
+            <summary>
+            Identifier of the check-in record
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.CallFiles.CallFileResult">

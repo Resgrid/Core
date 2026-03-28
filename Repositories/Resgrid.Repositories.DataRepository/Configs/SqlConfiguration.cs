@@ -523,6 +523,14 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectCheckInRecordsByDepartmentIdAndDateRangeQuery { get; set; }
 		#endregion CheckIns
 
+		#region CalendarItemCheckIns
+		public string CalendarItemCheckInsTableName { get; set; }
+		public string SelectCalendarItemCheckInByItemAndUserQuery { get; set; }
+		public string SelectCalendarItemCheckInsByItemIdQuery { get; set; }
+		public string SelectCalendarItemCheckInsByDeptDateRangeQuery { get; set; }
+		public string SelectCalendarItemCheckInsByUserDateRangeQuery { get; set; }
+		#endregion CalendarItemCheckIns
+
 		// Identity
 
 		#region Table Names

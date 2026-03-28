@@ -300,4 +300,103 @@
   <data name="Types" xml:space="preserve">
     <value>Types</value>
   </data>
+  <data name="CheckIn" xml:space="preserve">
+    <value>Check In</value>
+  </data>
+  <data name="CheckOut" xml:space="preserve">
+    <value>Check Out</value>
+  </data>
+  <data name="CheckInTime" xml:space="preserve">
+    <value>Check-In Time</value>
+  </data>
+  <data name="CheckOutTime" xml:space="preserve">
+    <value>Check-Out Time</value>
+  </data>
+  <data name="Duration" xml:space="preserve">
+    <value>Duration</value>
+  </data>
+  <data name="CheckInSuccessful" xml:space="preserve">
+    <value>Check-in successful</value>
+  </data>
+  <data name="CheckOutSuccessful" xml:space="preserve">
+    <value>Check-out successful</value>
+  </data>
+  <data name="EditCheckInTimes" xml:space="preserve">
+    <value>Edit Check-In Times</value>
+  </data>
+  <data name="ManualOverride" xml:space="preserve">
+    <value>Manual Override</value>
+  </data>
+  <data name="AdminCheckIn" xml:space="preserve">
+    <value>Admin Check-In</value>
+  </data>
+  <data name="CheckInOnBehalf" xml:space="preserve">
+    <value>Check In on Behalf</value>
+  </data>
+  <data name="EventAttendanceReport" xml:space="preserve">
+    <value>Event Attendance Report</value>
+  </data>
+  <data name="TotalEventsAttended" xml:space="preserve">
+    <value>Total Events Attended</value>
+  </data>
+  <data name="TotalHours" xml:space="preserve">
+    <value>Total Hours</value>
+  </data>
+  <data name="NoCheckInRecord" xml:space="preserve">
+    <value>No check-in record found</value>
+  </data>
+  <data name="AlreadyCheckedIn" xml:space="preserve">
+    <value>Already checked in</value>
+  </data>
+  <data name="NotCheckedIn" xml:space="preserve">
+    <value>Not checked in</value>
+  </data>
+  <data name="LateRSVP" xml:space="preserve">
+    <value>Late RSVP</value>
+  </data>
+  <data name="CustomTimes" xml:space="preserve">
+    <value>Custom Times</value>
+  </data>
+  <data name="Unauthorized" xml:space="preserve">
+    <value>Unauthorized</value>
+  </data>
+  <data name="CheckInDeleted" xml:space="preserve">
+    <value>Check-in deleted</value>
+  </data>
+  <data name="CheckInNote" xml:space="preserve">
+    <value>Check-In Note</value>
+  </data>
+  <data name="CheckOutNote" xml:space="preserve">
+    <value>Check-Out Note</value>
+  </data>
+  <data name="CheckedInBy" xml:space="preserve">
+    <value>Checked In By</value>
+  </data>
+  <data name="CheckedOutBy" xml:space="preserve">
+    <value>Checked Out By</value>
+  </data>
+  <data name="CheckInDisabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="CheckInSelfService" xml:space="preserve">
+    <value>Self Check-In/Out</value>
+  </data>
+  <data name="CheckInAdminOnly" xml:space="preserve">
+    <value>Creator &amp; Admins Only</value>
+  </data>
+  <data name="CheckInNotYetAvailable" xml:space="preserve">
+    <value>Check-in opens 15 minutes before the event starts.</value>
+  </data>
+  <data name="Attendees" xml:space="preserve">
+    <value>Attendees</value>
+  </data>
+  <data name="AttendeesAddedDirectly" xml:space="preserve">
+    <value>Selected groups/personnel will be added as attendees and notified directly.</value>
+  </data>
+  <data name="EntitiesToNotifyHelp" xml:space="preserve">
+    <value>Selected groups/personnel will be notified about this event.</value>
+  </data>
+  <data name="PrintSignupSheet" xml:space="preserve">
+    <value>Print Signup Sheet</value>
+  </data>
 </root>

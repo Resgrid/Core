@@ -1526,5 +1526,168 @@ namespace Resgrid.Services
 			return department.IsUserAnAdmin(userId);
 		}
 
+		public async Task<bool> CanUserCheckInToCalendarEventAsync(string userId, int calendarItemId)
+		{
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var item = await _calendarService.GetCalendarItemByIdAsync(calendarItemId);
+
+			if (department == null || item == null)
+				return false;
+
+			if (item.DepartmentId != department.DepartmentId)
+				return false;
+
+			// Check-in disabled for this event
+			if (item.CheckInType == (int)CalendarItemCheckInTypes.Disabled)
+				return false;
+
+			// Self check-in mode: any department member can check themselves in
+			if (item.CheckInType == (int)CalendarItemCheckInTypes.SelfCheckIn)
+				return true;
+
+			// Admin-only mode: only creator, dept admin, or group admin can perform check-ins
+			if (item.CheckInType == (int)CalendarItemCheckInTypes.AdminOnly)
+			{
+				if (department.IsUserAnAdmin(userId))
+					return true;
+
+				if (!string.IsNullOrWhiteSpace(item.CreatorUserId) && item.CreatorUserId == userId)
+					return true;
+
+				var group = await _departmentGroupsService.GetGroupForUserAsync(userId, department.DepartmentId);
+				if (group != null && group.IsUserGroupAdmin(userId))
+					return true;
+
+				return false;
+			}
+
+			return false;
+		}
+
+		public async Task<bool> CanUserAdminCheckInCalendarEventAsync(string userId, int calendarItemId, string targetUserId)
+		{
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var item = await _calendarService.GetCalendarItemByIdAsync(calendarItemId);
+
+			if (department == null || item == null)
+				return false;
+
+			if (item.DepartmentId != department.DepartmentId)
+				return false;
+
+			// Check-in disabled for this event
+			if (item.CheckInType == (int)CalendarItemCheckInTypes.Disabled)
+				return false;
+
+			// Department admins can check in anyone
+			if (department.IsUserAnAdmin(userId))
+				return true;
+
+			// Calendar item creator can check in attendees
+			if (!string.IsNullOrWhiteSpace(item.CreatorUserId) && item.CreatorUserId == userId)
+				return true;
+
+			// Group admins can check in users in their group or child groups
+			var adminGroup = await _departmentGroupsService.GetGroupForUserAsync(userId, department.DepartmentId);
+			if (adminGroup != null && adminGroup.IsUserGroupAdmin(userId))
+			{
+				// Check if the target user is in the admin's group
+				if (adminGroup.IsUserInGroup(targetUserId))
+					return true;
+
+				// Check child groups
+				var childGroups = await _departmentGroupsService.GetAllChildDepartmentGroupsAsync(adminGroup.DepartmentGroupId);
+				if (childGroups != null)
+				{
+					foreach (var childGroup in childGroups)
+					{
+						if (childGroup.IsUserInGroup(targetUserId))
+							return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+		public async Task<bool> CanUserEditCalendarCheckInAsync(string userId, string checkInId)
+		{
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var checkIn = await _calendarService.GetCheckInByIdAsync(checkInId);
+
+			if (department == null || checkIn == null)
+				return false;
+
+			if (checkIn.DepartmentId != department.DepartmentId)
+				return false;
+
+			if (checkIn.UserId == userId)
+				return true;
+
+			if (department.IsUserAnAdmin(userId))
+				return true;
+
+			// Calendar item creator can edit check-ins
+			var item = await _calendarService.GetCalendarItemByIdAsync(checkIn.CalendarItemId);
+			if (item != null && !string.IsNullOrWhiteSpace(item.CreatorUserId) && item.CreatorUserId == userId)
+				return true;
+
+			// Group admins can edit check-ins for their group members
+			var adminGroup = await _departmentGroupsService.GetGroupForUserAsync(userId, department.DepartmentId);
+			if (adminGroup != null && adminGroup.IsUserGroupAdmin(userId))
+			{
+				if (adminGroup.IsUserInGroup(checkIn.UserId))
+					return true;
+
+				var childGroups = await _departmentGroupsService.GetAllChildDepartmentGroupsAsync(adminGroup.DepartmentGroupId);
+				if (childGroups != null)
+				{
+					foreach (var childGroup in childGroups)
+					{
+						if (childGroup.IsUserInGroup(checkIn.UserId))
+							return true;
+					}
+				}
+			}
+
+			return false;
+		}
+
+		public async Task<bool> CanUserDeleteCalendarCheckInAsync(string userId, string checkInId)
+		{
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var checkIn = await _calendarService.GetCheckInByIdAsync(checkInId);
+
+			if (department == null || checkIn == null)
+				return false;
+
+			if (checkIn.DepartmentId != department.DepartmentId)
+				return false;
+
+			if (department.IsUserAnAdmin(userId))
+				return true;
+
+			// Calendar item creator can delete check-ins
+			var item = await _calendarService.GetCalendarItemByIdAsync(checkIn.CalendarItemId);
+			if (item != null && !string.IsNullOrWhiteSpace(item.CreatorUserId) && item.CreatorUserId == userId)
+				return true;
+
+			return false;
+		}
+
+		public async Task<bool> CanUserViewCalendarCheckInsAsync(string userId, int calendarItemId)
+		{
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(userId);
+			var item = await _calendarService.GetCalendarItemByIdAsync(calendarItemId);
+
+			if (department == null || item == null)
+				return false;
+
+			if (item.DepartmentId != department.DepartmentId)
+				return false;
+
+			return true;
+		}
+
 	}
 }

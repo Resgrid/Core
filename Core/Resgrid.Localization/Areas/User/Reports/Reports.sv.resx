@@ -246,4 +246,67 @@
   <data name="ReferenceIdLabel" xml:space="preserve"><value>Referens-Id</value></data>
   <data name="NoneLabel" xml:space="preserve"><value>Ingen</value></data>
   <data name="CallbackLogType" xml:space="preserve"><value>Återuppringning</value></data>
+  <data name="EventAttendanceReportName" xml:space="preserve">
+    <value>Närvarorapport för evenemang</value>
+  </data>
+  <data name="EventAttendanceReportDescription" xml:space="preserve">
+    <value>Visar närvarotimmar per person med in-/utcheckningsspårning.</value>
+  </data>
+  <data name="EventAttendanceReportTitle" xml:space="preserve">
+    <value>Närvarorapport för evenemang</value>
+  </data>
+  <data name="EventAttendanceHours" xml:space="preserve">
+    <value>Närvarotimmar</value>
+  </data>
+  <data name="EventsAttendedHeader" xml:space="preserve">
+    <value>Besökta evenemang</value>
+  </data>
+  <data name="EventsMissedHeader" xml:space="preserve">
+    <value>Missade evenemang</value>
+  </data>
+  <data name="TotalHoursHeader" xml:space="preserve">
+    <value>Totala timmar</value>
+  </data>
+  <data name="DetailsButton" xml:space="preserve">
+    <value>Detaljer</value>
+  </data>
+  <data name="EventAttendanceDetailTitle" xml:space="preserve">
+    <value>Närvarodetaljer</value>
+  </data>
+  <data name="EventHeader" xml:space="preserve">
+    <value>Evenemang</value>
+  </data>
+  <data name="CheckInTimeHeader" xml:space="preserve">
+    <value>Incheckningstid</value>
+  </data>
+  <data name="CheckOutTimeHeader" xml:space="preserve">
+    <value>Utcheckningstid</value>
+  </data>
+  <data name="DurationHeader" xml:space="preserve">
+    <value>Varaktighet</value>
+  </data>
+  <data name="CheckInNoteHeader" xml:space="preserve">
+    <value>Incheckningsanteckning</value>
+  </data>
+  <data name="CheckOutNoteHeader" xml:space="preserve">
+    <value>Utcheckningsanteckning</value>
+  </data>
+  <data name="CheckedInByHeader" xml:space="preserve">
+    <value>Incheckad av</value>
+  </data>
+  <data name="CheckedOutByHeader" xml:space="preserve">
+    <value>Utcheckad av</value>
+  </data>
+  <data name="CheckInLocationHeader" xml:space="preserve">
+    <value>Incheckningsplats</value>
+  </data>
+  <data name="CheckOutLocationHeader" xml:space="preserve">
+    <value>Utcheckningsplats</value>
+  </data>
+  <data name="NotCheckedOut" xml:space="preserve">
+    <value>Inte utcheckad</value>
+  </data>
+  <data name="TotalTimeLabel" xml:space="preserve">
+    <value>Total tid</value>
+  </data>
 </root>

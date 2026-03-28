@@ -6,17 +6,22 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Mime;
+using System.Threading;
 using Microsoft.AspNetCore.Authorization;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Events;
 using Resgrid.Model.Helpers;
+using Resgrid.Model.Providers;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Services.Controllers.Version3.Models.Calendar;
 using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.Calendar;
+using Resgrid.Web.ServicesCore.Helpers;
 using CalendarItem = Resgrid.Model.CalendarItem;
 using CalendarItemAttendee = Resgrid.Model.CalendarItemAttendee;
 using CalendarItemType = Resgrid.Model.CalendarItemType;
+using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -31,11 +36,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 		#region Members and Constructors
 		private readonly ICalendarService _calendarService;
 		private readonly IDepartmentsService _departmentsService;
+		private readonly IAuthorizationService _authorizationService;
+		private readonly IEventAggregator _eventAggregator;
+		private readonly IUserProfileService _userProfileService;
 
-		public CalendarController(ICalendarService calendarService, IDepartmentsService departmentsService)
+		public CalendarController(ICalendarService calendarService, IDepartmentsService departmentsService,
+			IAuthorizationService authorizationService, IEventAggregator eventAggregator,
+			IUserProfileService userProfileService)
 		{
 			_calendarService = calendarService;
 			_departmentsService = departmentsService;
+			_authorizationService = authorizationService;
+			_eventAggregator = eventAggregator;
+			_userProfileService = userProfileService;
 		}
 		#endregion Members and Constructors
 
@@ -257,6 +270,291 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return result;
 		}
 
+		/// <summary>
+		/// Checks in to a calendar event
+		/// </summary>
+		[HttpPost("SetCalendarCheckIn")]
+		[Consumes(MediaTypeNames.Application.Json)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[Authorize(Policy = ResgridResources.Schedule_View)]
+		public async Task<ActionResult<SetCalendarCheckInResult>> SetCalendarCheckIn([FromBody] CalendarCheckInInput input, CancellationToken cancellationToken)
+		{
+			var result = new SetCalendarCheckInResult();
+
+			if (input == null || input.CalendarEventId <= 0)
+				return BadRequest();
+
+			var targetUserId = !string.IsNullOrWhiteSpace(input.UserId) && input.UserId != UserId ? input.UserId : UserId;
+			var isAdminCheckIn = targetUserId != UserId;
+
+			if (isAdminCheckIn)
+			{
+				if (!await _authorizationService.CanUserAdminCheckInCalendarEventAsync(UserId, input.CalendarEventId, targetUserId))
+					return Unauthorized();
+			}
+			else
+			{
+				if (!await _authorizationService.CanUserCheckInToCalendarEventAsync(UserId, input.CalendarEventId))
+					return Unauthorized();
+			}
+
+			var checkIn = await _calendarService.CheckInToEventAsync(input.CalendarEventId, targetUserId, input.Note,
+				isAdminCheckIn ? UserId : null, input.Latitude, input.Longitude, cancellationToken);
+
+			if (checkIn == null)
+			{
+				result.Id = "";
+				result.PageSize = 0;
+				result.Status = ResponseHelper.Failure;
+			}
+			else
+			{
+				result.Id = checkIn.CalendarItemCheckInId;
+				result.PageSize = 1;
+				result.Status = ResponseHelper.Success;
+
+				var auditEvent = new AuditEvent();
+				auditEvent.DepartmentId = DepartmentId;
+				auditEvent.UserId = UserId;
+				auditEvent.Type = isAdminCheckIn ? AuditLogTypes.CalendarAdminCheckInPerformed : AuditLogTypes.CalendarCheckInPerformed;
+				auditEvent.After = checkIn.CloneJsonToString();
+				auditEvent.Successful = true;
+				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+				auditEvent.ServerName = Environment.MachineName;
+				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+			}
+
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Checks out from a calendar event
+		/// </summary>
+		[HttpPost("SetCalendarCheckOut")]
+		[Consumes(MediaTypeNames.Application.Json)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[Authorize(Policy = ResgridResources.Schedule_View)]
+		public async Task<ActionResult<SetCalendarCheckInResult>> SetCalendarCheckOut([FromBody] CalendarCheckOutInput input, CancellationToken cancellationToken)
+		{
+			var result = new SetCalendarCheckInResult();
+
+			if (input == null || input.CalendarEventId <= 0)
+				return BadRequest();
+
+			var targetUserId = !string.IsNullOrWhiteSpace(input.UserId) && input.UserId != UserId ? input.UserId : UserId;
+			var isAdminCheckOut = targetUserId != UserId;
+
+			if (isAdminCheckOut)
+			{
+				if (!await _authorizationService.CanUserAdminCheckInCalendarEventAsync(UserId, input.CalendarEventId, targetUserId))
+					return Unauthorized();
+			}
+			else
+			{
+				if (!await _authorizationService.CanUserCheckInToCalendarEventAsync(UserId, input.CalendarEventId))
+					return Unauthorized();
+			}
+
+			var checkIn = await _calendarService.CheckOutFromEventAsync(input.CalendarEventId, targetUserId,
+				input.Note, isAdminCheckOut ? UserId : null, input.Latitude, input.Longitude, cancellationToken);
+
+			if (checkIn == null)
+			{
+				result.Id = "";
+				result.PageSize = 0;
+				result.Status = ResponseHelper.NotFound;
+			}
+			else
+			{
+				result.Id = checkIn.CalendarItemCheckInId;
+				result.PageSize = 1;
+				result.Status = ResponseHelper.Success;
+
+				var auditEvent = new AuditEvent();
+				auditEvent.DepartmentId = DepartmentId;
+				auditEvent.UserId = UserId;
+				auditEvent.Type = AuditLogTypes.CalendarCheckOutPerformed;
+				auditEvent.After = checkIn.CloneJsonToString();
+				auditEvent.Successful = true;
+				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+				auditEvent.ServerName = Environment.MachineName;
+				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+			}
+
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Updates check-in times for a calendar event
+		/// </summary>
+		[HttpPost("UpdateCalendarCheckIn")]
+		[Consumes(MediaTypeNames.Application.Json)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[Authorize(Policy = ResgridResources.Schedule_Update)]
+		public async Task<ActionResult<SetCalendarCheckInResult>> UpdateCalendarCheckIn([FromBody] CalendarCheckInUpdateInput input, CancellationToken cancellationToken)
+		{
+			var result = new SetCalendarCheckInResult();
+
+			if (input == null || string.IsNullOrWhiteSpace(input.CheckInId))
+				return BadRequest();
+
+			if (!await _authorizationService.CanUserEditCalendarCheckInAsync(UserId, input.CheckInId))
+				return Unauthorized();
+
+			var existing = await _calendarService.GetCheckInByIdAsync(input.CheckInId);
+			var beforeJson = existing?.CloneJsonToString();
+
+			var checkIn = await _calendarService.UpdateCheckInTimesAsync(input.CheckInId, input.CheckInTime,
+				input.CheckOutTime, input.CheckInNote, input.CheckOutNote, cancellationToken);
+
+			if (checkIn == null)
+			{
+				result.Id = "";
+				result.PageSize = 0;
+				result.Status = ResponseHelper.NotFound;
+			}
+			else
+			{
+				result.Id = checkIn.CalendarItemCheckInId;
+				result.PageSize = 1;
+				result.Status = ResponseHelper.Success;
+
+				var auditEvent = new AuditEvent();
+				auditEvent.DepartmentId = DepartmentId;
+				auditEvent.UserId = UserId;
+				auditEvent.Type = AuditLogTypes.CalendarCheckInUpdated;
+				auditEvent.Before = beforeJson;
+				auditEvent.After = checkIn.CloneJsonToString();
+				auditEvent.Successful = true;
+				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+				auditEvent.ServerName = Environment.MachineName;
+				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+			}
+
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Gets all check-ins for a calendar item
+		/// </summary>
+		[HttpGet("GetCalendarItemCheckIns")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[Authorize(Policy = ResgridResources.Schedule_View)]
+		public async Task<ActionResult<GetCalendarCheckInsResult>> GetCalendarItemCheckIns(int calendarItemId)
+		{
+			var result = new GetCalendarCheckInsResult();
+			result.Data = new List<CalendarCheckInResultData>();
+
+			if (!await _authorizationService.CanUserViewCalendarCheckInsAsync(UserId, calendarItemId))
+				return Unauthorized();
+
+			var checkIns = await _calendarService.GetCheckInsByCalendarItemAsync(calendarItemId);
+			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
+
+			foreach (var checkIn in checkIns)
+			{
+				var data = new CalendarCheckInResultData
+				{
+					CheckInId = checkIn.CalendarItemCheckInId,
+					CalendarItemId = checkIn.CalendarItemId,
+					UserId = checkIn.UserId,
+					CheckInTime = checkIn.CheckInTime,
+					CheckOutTime = checkIn.CheckOutTime,
+					DurationSeconds = checkIn.GetDuration()?.TotalSeconds,
+					IsManualOverride = checkIn.IsManualOverride,
+					CheckInNote = checkIn.CheckInNote,
+					CheckOutNote = checkIn.CheckOutNote,
+					CheckInLatitude = checkIn.CheckInLatitude,
+					CheckInLongitude = checkIn.CheckInLongitude,
+					CheckOutLatitude = checkIn.CheckOutLatitude,
+					CheckOutLongitude = checkIn.CheckOutLongitude
+				};
+
+				var name = personnelNames?.FirstOrDefault(x => x.UserId == checkIn.UserId);
+				if (name != null)
+					data.Name = name.Name;
+
+				if (!string.IsNullOrWhiteSpace(checkIn.CheckInByUserId))
+				{
+					var adminName = personnelNames?.FirstOrDefault(x => x.UserId == checkIn.CheckInByUserId);
+					if (adminName != null)
+						data.CheckInByName = adminName.Name;
+				}
+
+				if (!string.IsNullOrWhiteSpace(checkIn.CheckOutByUserId))
+				{
+					var outName = personnelNames?.FirstOrDefault(x => x.UserId == checkIn.CheckOutByUserId);
+					if (outName != null)
+						data.CheckOutByName = outName.Name;
+				}
+
+				result.Data.Add(data);
+			}
+
+			result.PageSize = result.Data.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Deletes a calendar check-in record
+		/// </summary>
+		[HttpDelete("DeleteCalendarCheckIn")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[Authorize(Policy = ResgridResources.Schedule_Delete)]
+		public async Task<ActionResult<SetCalendarCheckInResult>> DeleteCalendarCheckIn(string checkInId, CancellationToken cancellationToken)
+		{
+			var result = new SetCalendarCheckInResult();
+
+			if (string.IsNullOrWhiteSpace(checkInId))
+				return BadRequest();
+
+			if (!await _authorizationService.CanUserDeleteCalendarCheckInAsync(UserId, checkInId))
+				return Unauthorized();
+
+			var existing = await _calendarService.GetCheckInByIdAsync(checkInId);
+			var beforeJson = existing?.CloneJsonToString();
+
+			var deleted = await _calendarService.DeleteCheckInAsync(checkInId, cancellationToken);
+
+			result.Id = checkInId;
+			result.PageSize = deleted ? 1 : 0;
+			result.Status = deleted ? ResponseHelper.Success : ResponseHelper.NotFound;
+
+			if (deleted)
+			{
+				var auditEvent = new AuditEvent();
+				auditEvent.DepartmentId = DepartmentId;
+				auditEvent.UserId = UserId;
+				auditEvent.Type = AuditLogTypes.CalendarCheckInDeleted;
+				auditEvent.Before = beforeJson;
+				auditEvent.Successful = true;
+				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+				auditEvent.ServerName = Environment.MachineName;
+				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+			}
+
+			ResponseHelper.PopulateV4ResponseData(result);
+			return Ok(result);
+		}
+
 		public static GetAllCalendarItemResultData ConvertCalendarItemData(CalendarItem item, Department department, string currentUserId, CalendarItemType type, List<PersonName> personnelNames)
 		{
 			var calendarItem = new GetAllCalendarItemResultData();
@@ -297,6 +595,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			calendarItem.ItemType = item.ItemType;
 			calendarItem.Location = item.Location;
 			calendarItem.SignupType = item.SignupType;
+			calendarItem.CheckInType = item.CheckInType;
 			calendarItem.Reminder = item.Reminder;
 			calendarItem.LockEditing = item.LockEditing;
 			calendarItem.Entities = item.Entities;

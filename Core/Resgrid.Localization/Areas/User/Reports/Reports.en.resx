@@ -675,4 +675,69 @@
   <data name="CallbackLogType" xml:space="preserve">
     <value>Callback</value>
   </data>
+
+  <!-- Event Attendance Report -->
+  <data name="EventAttendanceReportName" xml:space="preserve">
+    <value>Event Attendance Report</value>
+  </data>
+  <data name="EventAttendanceReportDescription" xml:space="preserve">
+    <value>Shows volunteer/event attendance hours per person with check-in/check-out tracking.</value>
+  </data>
+  <data name="EventAttendanceReportTitle" xml:space="preserve">
+    <value>Event Attendance Report</value>
+  </data>
+  <data name="EventAttendanceHours" xml:space="preserve">
+    <value>Event Attendance Hours</value>
+  </data>
+  <data name="EventsAttendedHeader" xml:space="preserve">
+    <value>Events Attended</value>
+  </data>
+  <data name="EventsMissedHeader" xml:space="preserve">
+    <value>Events Missed</value>
+  </data>
+  <data name="TotalHoursHeader" xml:space="preserve">
+    <value>Total Hours</value>
+  </data>
+  <data name="DetailsButton" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="EventAttendanceDetailTitle" xml:space="preserve">
+    <value>Event Attendance Detail</value>
+  </data>
+  <data name="EventHeader" xml:space="preserve">
+    <value>Event</value>
+  </data>
+  <data name="CheckInTimeHeader" xml:space="preserve">
+    <value>Check-In Time</value>
+  </data>
+  <data name="CheckOutTimeHeader" xml:space="preserve">
+    <value>Check-Out Time</value>
+  </data>
+  <data name="DurationHeader" xml:space="preserve">
+    <value>Duration</value>
+  </data>
+  <data name="CheckInNoteHeader" xml:space="preserve">
+    <value>Check-In Note</value>
+  </data>
+  <data name="CheckOutNoteHeader" xml:space="preserve">
+    <value>Check-Out Note</value>
+  </data>
+  <data name="CheckedInByHeader" xml:space="preserve">
+    <value>Checked In By</value>
+  </data>
+  <data name="CheckedOutByHeader" xml:space="preserve">
+    <value>Checked Out By</value>
+  </data>
+  <data name="CheckInLocationHeader" xml:space="preserve">
+    <value>Check-In Location</value>
+  </data>
+  <data name="CheckOutLocationHeader" xml:space="preserve">
+    <value>Check-Out Location</value>
+  </data>
+  <data name="NotCheckedOut" xml:space="preserve">
+    <value>Not checked out</value>
+  </data>
+  <data name="TotalTimeLabel" xml:space="preserve">
+    <value>Total Time</value>
+  </data>
 </root>

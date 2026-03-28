@@ -251,4 +251,103 @@
   <data name="Types" xml:space="preserve">
     <value>Типи</value>
   </data>
+  <data name="CheckIn" xml:space="preserve">
+    <value>Реєстрація входу</value>
+  </data>
+  <data name="CheckOut" xml:space="preserve">
+    <value>Реєстрація виходу</value>
+  </data>
+  <data name="CheckInTime" xml:space="preserve">
+    <value>Час входу</value>
+  </data>
+  <data name="CheckOutTime" xml:space="preserve">
+    <value>Час виходу</value>
+  </data>
+  <data name="Duration" xml:space="preserve">
+    <value>Тривалість</value>
+  </data>
+  <data name="CheckInSuccessful" xml:space="preserve">
+    <value>Реєстрацію входу виконано</value>
+  </data>
+  <data name="CheckOutSuccessful" xml:space="preserve">
+    <value>Реєстрацію виходу виконано</value>
+  </data>
+  <data name="EditCheckInTimes" xml:space="preserve">
+    <value>Редагувати час реєстрації</value>
+  </data>
+  <data name="ManualOverride" xml:space="preserve">
+    <value>Ручне коригування</value>
+  </data>
+  <data name="AdminCheckIn" xml:space="preserve">
+    <value>Реєстрація адміністратором</value>
+  </data>
+  <data name="CheckInOnBehalf" xml:space="preserve">
+    <value>Зареєструвати від імені іншого</value>
+  </data>
+  <data name="EventAttendanceReport" xml:space="preserve">
+    <value>Звіт про відвідуваність подій</value>
+  </data>
+  <data name="TotalEventsAttended" xml:space="preserve">
+    <value>Загальна кількість відвіданих подій</value>
+  </data>
+  <data name="TotalHours" xml:space="preserve">
+    <value>Загальна кількість годин</value>
+  </data>
+  <data name="NoCheckInRecord" xml:space="preserve">
+    <value>Запис реєстрації не знайдено</value>
+  </data>
+  <data name="AlreadyCheckedIn" xml:space="preserve">
+    <value>Вже зареєстровано</value>
+  </data>
+  <data name="NotCheckedIn" xml:space="preserve">
+    <value>Не зареєстровано</value>
+  </data>
+  <data name="LateRSVP" xml:space="preserve">
+    <value>Пізня реєстрація</value>
+  </data>
+  <data name="CustomTimes" xml:space="preserve">
+    <value>Власний час</value>
+  </data>
+  <data name="Unauthorized" xml:space="preserve">
+    <value>Не авторизовано</value>
+  </data>
+  <data name="CheckInDeleted" xml:space="preserve">
+    <value>Запис реєстрації видалено</value>
+  </data>
+  <data name="CheckInNote" xml:space="preserve">
+    <value>Примітка до входу</value>
+  </data>
+  <data name="CheckOutNote" xml:space="preserve">
+    <value>Примітка до виходу</value>
+  </data>
+  <data name="CheckedInBy" xml:space="preserve">
+    <value>Вхід зареєстровано</value>
+  </data>
+  <data name="CheckedOutBy" xml:space="preserve">
+    <value>Вихід зареєстровано</value>
+  </data>
+  <data name="CheckInDisabled" xml:space="preserve">
+    <value>Вимкнено</value>
+  </data>
+  <data name="CheckInSelfService" xml:space="preserve">
+    <value>Самостійна реєстрація входу/виходу</value>
+  </data>
+  <data name="CheckInAdminOnly" xml:space="preserve">
+    <value>Тільки автор та адміністратори</value>
+  </data>
+  <data name="CheckInNotYetAvailable" xml:space="preserve">
+    <value>Реєстрація відкривається за 15 хвилин до початку події.</value>
+  </data>
+  <data name="Attendees" xml:space="preserve">
+    <value>Учасники</value>
+  </data>
+  <data name="AttendeesAddedDirectly" xml:space="preserve">
+    <value>Обрані групи/персонал будуть додані як учасники та сповіщені безпосередньо.</value>
+  </data>
+  <data name="EntitiesToNotifyHelp" xml:space="preserve">
+    <value>Обрані групи/персонал будуть сповіщені про цю подію.</value>
+  </data>
+  <data name="PrintSignupSheet" xml:space="preserve">
+    <value>Друк листа реєстрації</value>
+  </data>
 </root>

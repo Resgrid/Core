@@ -134,6 +134,12 @@
 		CheckInTimerOverrideDeleted,
 		CheckInPerformed,
 		CheckInTimerEnabledOnCall,
-		CheckInTimerDisabledOnCall
+		CheckInTimerDisabledOnCall,
+		// Calendar Check-In Attendance
+		CalendarCheckInPerformed,
+		CalendarCheckOutPerformed,
+		CalendarCheckInUpdated,
+		CalendarCheckInDeleted,
+		CalendarAdminCheckInPerformed
 	}
 }

@@ -246,4 +246,67 @@
   <data name="ReferenceIdLabel" xml:space="preserve"><value>Id Referencji</value></data>
   <data name="NoneLabel" xml:space="preserve"><value>Brak</value></data>
   <data name="CallbackLogType" xml:space="preserve"><value>Oddzwonienie</value></data>
+  <data name="EventAttendanceReportName" xml:space="preserve">
+    <value>Raport obecności na wydarzeniach</value>
+  </data>
+  <data name="EventAttendanceReportDescription" xml:space="preserve">
+    <value>Pokazuje godziny obecności na osobę ze śledzeniem zameldowań/wymeldowań.</value>
+  </data>
+  <data name="EventAttendanceReportTitle" xml:space="preserve">
+    <value>Raport obecności na wydarzeniach</value>
+  </data>
+  <data name="EventAttendanceHours" xml:space="preserve">
+    <value>Godziny obecności</value>
+  </data>
+  <data name="EventsAttendedHeader" xml:space="preserve">
+    <value>Wydarzenia z obecnością</value>
+  </data>
+  <data name="EventsMissedHeader" xml:space="preserve">
+    <value>Wydarzenia nieobecne</value>
+  </data>
+  <data name="TotalHoursHeader" xml:space="preserve">
+    <value>Łączna liczba godzin</value>
+  </data>
+  <data name="DetailsButton" xml:space="preserve">
+    <value>Szczegóły</value>
+  </data>
+  <data name="EventAttendanceDetailTitle" xml:space="preserve">
+    <value>Szczegóły obecności</value>
+  </data>
+  <data name="EventHeader" xml:space="preserve">
+    <value>Wydarzenie</value>
+  </data>
+  <data name="CheckInTimeHeader" xml:space="preserve">
+    <value>Czas zameldowania</value>
+  </data>
+  <data name="CheckOutTimeHeader" xml:space="preserve">
+    <value>Czas wymeldowania</value>
+  </data>
+  <data name="DurationHeader" xml:space="preserve">
+    <value>Czas trwania</value>
+  </data>
+  <data name="CheckInNoteHeader" xml:space="preserve">
+    <value>Notatka zameldowania</value>
+  </data>
+  <data name="CheckOutNoteHeader" xml:space="preserve">
+    <value>Notatka wymeldowania</value>
+  </data>
+  <data name="CheckedInByHeader" xml:space="preserve">
+    <value>Zameldowany przez</value>
+  </data>
+  <data name="CheckedOutByHeader" xml:space="preserve">
+    <value>Wymeldowany przez</value>
+  </data>
+  <data name="CheckInLocationHeader" xml:space="preserve">
+    <value>Lokalizacja zameldowania</value>
+  </data>
+  <data name="CheckOutLocationHeader" xml:space="preserve">
+    <value>Lokalizacja wymeldowania</value>
+  </data>
+  <data name="NotCheckedOut" xml:space="preserve">
+    <value>Nie wymeldowany</value>
+  </data>
+  <data name="TotalTimeLabel" xml:space="preserve">
+    <value>Łączny czas</value>
+  </data>
 </root>

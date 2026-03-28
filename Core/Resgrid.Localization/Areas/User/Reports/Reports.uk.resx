@@ -246,4 +246,67 @@
   <data name="ReferenceIdLabel" xml:space="preserve"><value>Id Посилання</value></data>
   <data name="NoneLabel" xml:space="preserve"><value>Немає</value></data>
   <data name="CallbackLogType" xml:space="preserve"><value>Зворотній Дзвінок</value></data>
+  <data name="EventAttendanceReportName" xml:space="preserve">
+    <value>Звіт про відвідуваність подій</value>
+  </data>
+  <data name="EventAttendanceReportDescription" xml:space="preserve">
+    <value>Показує години присутності на особу з відстеженням входу/виходу.</value>
+  </data>
+  <data name="EventAttendanceReportTitle" xml:space="preserve">
+    <value>Звіт про відвідуваність подій</value>
+  </data>
+  <data name="EventAttendanceHours" xml:space="preserve">
+    <value>Години присутності</value>
+  </data>
+  <data name="EventsAttendedHeader" xml:space="preserve">
+    <value>Відвідані події</value>
+  </data>
+  <data name="EventsMissedHeader" xml:space="preserve">
+    <value>Пропущені події</value>
+  </data>
+  <data name="TotalHoursHeader" xml:space="preserve">
+    <value>Загальна кількість годин</value>
+  </data>
+  <data name="DetailsButton" xml:space="preserve">
+    <value>Деталі</value>
+  </data>
+  <data name="EventAttendanceDetailTitle" xml:space="preserve">
+    <value>Деталі присутності</value>
+  </data>
+  <data name="EventHeader" xml:space="preserve">
+    <value>Подія</value>
+  </data>
+  <data name="CheckInTimeHeader" xml:space="preserve">
+    <value>Час входу</value>
+  </data>
+  <data name="CheckOutTimeHeader" xml:space="preserve">
+    <value>Час виходу</value>
+  </data>
+  <data name="DurationHeader" xml:space="preserve">
+    <value>Тривалість</value>
+  </data>
+  <data name="CheckInNoteHeader" xml:space="preserve">
+    <value>Примітка до входу</value>
+  </data>
+  <data name="CheckOutNoteHeader" xml:space="preserve">
+    <value>Примітка до виходу</value>
+  </data>
+  <data name="CheckedInByHeader" xml:space="preserve">
+    <value>Вхід зареєстровано</value>
+  </data>
+  <data name="CheckedOutByHeader" xml:space="preserve">
+    <value>Вихід зареєстровано</value>
+  </data>
+  <data name="CheckInLocationHeader" xml:space="preserve">
+    <value>Місце входу</value>
+  </data>
+  <data name="CheckOutLocationHeader" xml:space="preserve">
+    <value>Місце виходу</value>
+  </data>
+  <data name="NotCheckedOut" xml:space="preserve">
+    <value>Вихід не зареєстровано</value>
+  </data>
+  <data name="TotalTimeLabel" xml:space="preserve">
+    <value>Загальний час</value>
+  </data>
 </root>

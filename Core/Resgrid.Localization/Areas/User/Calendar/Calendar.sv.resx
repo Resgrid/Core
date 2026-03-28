@@ -251,4 +251,103 @@
   <data name="Types" xml:space="preserve">
     <value>Typer</value>
   </data>
+  <data name="CheckIn" xml:space="preserve">
+    <value>Checka in</value>
+  </data>
+  <data name="CheckOut" xml:space="preserve">
+    <value>Checka ut</value>
+  </data>
+  <data name="CheckInTime" xml:space="preserve">
+    <value>Incheckningstid</value>
+  </data>
+  <data name="CheckOutTime" xml:space="preserve">
+    <value>Utcheckningstid</value>
+  </data>
+  <data name="Duration" xml:space="preserve">
+    <value>Varaktighet</value>
+  </data>
+  <data name="CheckInSuccessful" xml:space="preserve">
+    <value>Incheckning lyckades</value>
+  </data>
+  <data name="CheckOutSuccessful" xml:space="preserve">
+    <value>Utcheckning lyckades</value>
+  </data>
+  <data name="EditCheckInTimes" xml:space="preserve">
+    <value>Redigera incheckningstider</value>
+  </data>
+  <data name="ManualOverride" xml:space="preserve">
+    <value>Manuell justering</value>
+  </data>
+  <data name="AdminCheckIn" xml:space="preserve">
+    <value>Administratörsincheckning</value>
+  </data>
+  <data name="CheckInOnBehalf" xml:space="preserve">
+    <value>Checka in åt annan person</value>
+  </data>
+  <data name="EventAttendanceReport" xml:space="preserve">
+    <value>Närvarorapport för evenemang</value>
+  </data>
+  <data name="TotalEventsAttended" xml:space="preserve">
+    <value>Totalt antal besökta evenemang</value>
+  </data>
+  <data name="TotalHours" xml:space="preserve">
+    <value>Totala timmar</value>
+  </data>
+  <data name="NoCheckInRecord" xml:space="preserve">
+    <value>Ingen incheckningspost hittades</value>
+  </data>
+  <data name="AlreadyCheckedIn" xml:space="preserve">
+    <value>Redan incheckad</value>
+  </data>
+  <data name="NotCheckedIn" xml:space="preserve">
+    <value>Inte incheckad</value>
+  </data>
+  <data name="LateRSVP" xml:space="preserve">
+    <value>Sen anmälan</value>
+  </data>
+  <data name="CustomTimes" xml:space="preserve">
+    <value>Anpassade tider</value>
+  </data>
+  <data name="Unauthorized" xml:space="preserve">
+    <value>Ej behörig</value>
+  </data>
+  <data name="CheckInDeleted" xml:space="preserve">
+    <value>Incheckningspost raderad</value>
+  </data>
+  <data name="CheckInNote" xml:space="preserve">
+    <value>Incheckningsanteckning</value>
+  </data>
+  <data name="CheckOutNote" xml:space="preserve">
+    <value>Utcheckningsanteckning</value>
+  </data>
+  <data name="CheckedInBy" xml:space="preserve">
+    <value>Incheckad av</value>
+  </data>
+  <data name="CheckedOutBy" xml:space="preserve">
+    <value>Utcheckad av</value>
+  </data>
+  <data name="CheckInDisabled" xml:space="preserve">
+    <value>Inaktiverad</value>
+  </data>
+  <data name="CheckInSelfService" xml:space="preserve">
+    <value>Själv in-/utcheckning</value>
+  </data>
+  <data name="CheckInAdminOnly" xml:space="preserve">
+    <value>Endast skapare och administratörer</value>
+  </data>
+  <data name="CheckInNotYetAvailable" xml:space="preserve">
+    <value>Incheckning öppnar 15 minuter före evenemangets start.</value>
+  </data>
+  <data name="Attendees" xml:space="preserve">
+    <value>Deltagare</value>
+  </data>
+  <data name="AttendeesAddedDirectly" xml:space="preserve">
+    <value>Valda grupper/personal läggs till som deltagare och meddelas direkt.</value>
+  </data>
+  <data name="EntitiesToNotifyHelp" xml:space="preserve">
+    <value>Valda grupper/personal meddelas om detta evenemang.</value>
+  </data>
+  <data name="PrintSignupSheet" xml:space="preserve">
+    <value>Skriv ut närvarolista</value>
+  </data>
 </root>

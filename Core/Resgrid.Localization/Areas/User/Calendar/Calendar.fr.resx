@@ -251,4 +251,103 @@
   <data name="Types" xml:space="preserve">
     <value>Types</value>
   </data>
+  <data name="CheckIn" xml:space="preserve">
+    <value>Pointer l'arrivée</value>
+  </data>
+  <data name="CheckOut" xml:space="preserve">
+    <value>Pointer le départ</value>
+  </data>
+  <data name="CheckInTime" xml:space="preserve">
+    <value>Heure d'arrivée</value>
+  </data>
+  <data name="CheckOutTime" xml:space="preserve">
+    <value>Heure de départ</value>
+  </data>
+  <data name="Duration" xml:space="preserve">
+    <value>Durée</value>
+  </data>
+  <data name="CheckInSuccessful" xml:space="preserve">
+    <value>Pointage d'arrivée réussi</value>
+  </data>
+  <data name="CheckOutSuccessful" xml:space="preserve">
+    <value>Pointage de départ réussi</value>
+  </data>
+  <data name="EditCheckInTimes" xml:space="preserve">
+    <value>Modifier les horaires de pointage</value>
+  </data>
+  <data name="ManualOverride" xml:space="preserve">
+    <value>Ajustement manuel</value>
+  </data>
+  <data name="AdminCheckIn" xml:space="preserve">
+    <value>Pointage par l'administrateur</value>
+  </data>
+  <data name="CheckInOnBehalf" xml:space="preserve">
+    <value>Pointer pour le compte d'un autre</value>
+  </data>
+  <data name="EventAttendanceReport" xml:space="preserve">
+    <value>Rapport de présence aux événements</value>
+  </data>
+  <data name="TotalEventsAttended" xml:space="preserve">
+    <value>Total des événements assistés</value>
+  </data>
+  <data name="TotalHours" xml:space="preserve">
+    <value>Total des heures</value>
+  </data>
+  <data name="NoCheckInRecord" xml:space="preserve">
+    <value>Aucun enregistrement de pointage trouvé</value>
+  </data>
+  <data name="AlreadyCheckedIn" xml:space="preserve">
+    <value>Déjà pointé</value>
+  </data>
+  <data name="NotCheckedIn" xml:space="preserve">
+    <value>Non pointé</value>
+  </data>
+  <data name="LateRSVP" xml:space="preserve">
+    <value>Inscription tardive</value>
+  </data>
+  <data name="CustomTimes" xml:space="preserve">
+    <value>Horaires personnalisés</value>
+  </data>
+  <data name="Unauthorized" xml:space="preserve">
+    <value>Non autorisé</value>
+  </data>
+  <data name="CheckInDeleted" xml:space="preserve">
+    <value>Pointage supprimé</value>
+  </data>
+  <data name="CheckInNote" xml:space="preserve">
+    <value>Note d'arrivée</value>
+  </data>
+  <data name="CheckOutNote" xml:space="preserve">
+    <value>Note de départ</value>
+  </data>
+  <data name="CheckedInBy" xml:space="preserve">
+    <value>Arrivée enregistrée par</value>
+  </data>
+  <data name="CheckedOutBy" xml:space="preserve">
+    <value>Départ enregistré par</value>
+  </data>
+  <data name="CheckInDisabled" xml:space="preserve">
+    <value>Désactivé</value>
+  </data>
+  <data name="CheckInSelfService" xml:space="preserve">
+    <value>Auto-pointage arrivée/départ</value>
+  </data>
+  <data name="CheckInAdminOnly" xml:space="preserve">
+    <value>Créateur et administrateurs uniquement</value>
+  </data>
+  <data name="CheckInNotYetAvailable" xml:space="preserve">
+    <value>Le pointage ouvre 15 minutes avant le début de l'événement.</value>
+  </data>
+  <data name="Attendees" xml:space="preserve">
+    <value>Participants</value>
+  </data>
+  <data name="AttendeesAddedDirectly" xml:space="preserve">
+    <value>Les groupes/personnels sélectionnés seront ajoutés comme participants et notifiés directement.</value>
+  </data>
+  <data name="EntitiesToNotifyHelp" xml:space="preserve">
+    <value>Les groupes/personnels sélectionnés seront notifiés de cet événement.</value>
+  </data>
+  <data name="PrintSignupSheet" xml:space="preserve">
+    <value>Imprimer la feuille d'émargement</value>
+  </data>
 </root>

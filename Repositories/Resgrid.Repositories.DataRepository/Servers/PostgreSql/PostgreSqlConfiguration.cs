@@ -1615,6 +1615,32 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 				ORDER BY Timestamp DESC";
 			#endregion CheckIns
 
+			#region CalendarItemCheckIns
+			CalendarItemCheckInsTableName = "CalendarItemCheckIns";
+			SelectCalendarItemCheckInByItemAndUserQuery = @"
+				SELECT *
+				FROM %SCHEMA%.%TABLENAME%
+				WHERE CalendarItemId = %CALITEMID% AND UserId = %USERID%
+				LIMIT 1";
+			SelectCalendarItemCheckInsByItemIdQuery = @"
+				SELECT *
+				FROM %SCHEMA%.%TABLENAME%
+				WHERE CalendarItemId = %CALITEMID%
+				ORDER BY CheckInTime DESC";
+			SelectCalendarItemCheckInsByDeptDateRangeQuery = @"
+				SELECT *
+				FROM %SCHEMA%.%TABLENAME%
+				WHERE DepartmentId = %DID%
+				AND CheckInTime >= %STARTDATE% AND CheckInTime <= %ENDDATE%
+				ORDER BY CheckInTime DESC";
+			SelectCalendarItemCheckInsByUserDateRangeQuery = @"
+				SELECT *
+				FROM %SCHEMA%.%TABLENAME%
+				WHERE UserId = %USERID% AND DepartmentId = %DID%
+				AND CheckInTime >= %STARTDATE% AND CheckInTime <= %ENDDATE%
+				ORDER BY CheckInTime DESC";
+			#endregion CalendarItemCheckIns
+
 			#region User Defined Fields
 			UdfDefinitionsTableName = "UdfDefinitions";
 			UdfFieldsTableName = "UdfFields";

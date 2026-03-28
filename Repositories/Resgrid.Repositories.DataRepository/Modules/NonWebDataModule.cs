@@ -189,6 +189,9 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<CheckInTimerOverrideRepository>().As<ICheckInTimerOverrideRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CheckInRecordRepository>().As<ICheckInRecordRepository>().InstancePerLifetimeScope();
 
+			// Calendar Check-In Repositories
+			builder.RegisterType<CalendarItemCheckInRepository>().As<ICalendarItemCheckInRepository>().InstancePerLifetimeScope();
+
 			// SSO Repositories
 			builder.RegisterType<DepartmentSsoConfigRepository>().As<IDepartmentSsoConfigRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentSecurityPolicyRepository>().As<IDepartmentSecurityPolicyRepository>().InstancePerLifetimeScope();

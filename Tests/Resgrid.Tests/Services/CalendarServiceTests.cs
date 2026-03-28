@@ -70,7 +70,7 @@ namespace Resgrid.Tests.Services
 				_calendarService = new CalendarService(_calendarItemRepositoryMock.Object, _calendarItemTypeRepositoryMock.Object,
 					_calendarItemAttendeeRepositoryMock.Object, _departmentsServiceMock.Object, _communicationServiceMock.Object,
 					_userProfileServiceMock.Object, _departmentGroupsServiceMock.Object, _departmentSettingsServiceMock.Object,
-					_encryptionServiceMock.Object);
+					_encryptionServiceMock.Object, new Mock<ICalendarItemCheckInRepository>().Object);
 			}
 		}
 

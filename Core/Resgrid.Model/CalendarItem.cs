@@ -52,6 +52,8 @@ namespace Resgrid.Model
 
 		public int SignupType { get; set; }
 
+		public int CheckInType { get; set; }
+
 		public int Reminder { get; set; }
 
 		public bool LockEditing { get; set; }
@@ -171,6 +173,7 @@ namespace Resgrid.Model
 			item.IsAllDay = IsAllDay;
 			item.ItemType = ItemType;
 			item.SignupType = SignupType;
+			item.CheckInType = CheckInType;
 			item.Public = Public;
 			item.StartTimezone = timeZone;
 			item.EndTimezone = timeZone;

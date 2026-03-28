@@ -405,19 +405,24 @@
     <script src="~/js/app/internal/calendar/resgrid.calendar.editEntry.js" type="text/javascript"></script>
     <script>
         $(document).ready(function () {
+            var L_ENTITIES_TO_NOTIFY = @Json.Serialize(localizer["EntitiesToNotify"].Value);
+            var L_ENTITIES_TO_NOTIFY_HELP = @Json.Serialize(localizer["EntitiesToNotifyHelp"].Value);
+            var L_ATTENDEES = @Json.Serialize(localizer["Attendees"].Value);
+            var L_ATTENDEES_ADDED_DIRECTLY = @Json.Serialize(localizer["AttendeesAddedDirectly"].Value);
+
             function updateEntitiesLabel() {
                 var signupType = parseInt($('#Item_SignupType').val());
                 if (signupType === 2) {
-                    $('#entitiesLabel').text('@Html.Raw(localizer["EntitiesToNotify"])');
-                    $('#entitiesHelp').text('@Html.Raw(localizer["EntitiesToNotifyHelp"])');
+                    $('#entitiesLabel').text(L_ENTITIES_TO_NOTIFY);
+                    $('#entitiesHelp').text(L_ENTITIES_TO_NOTIFY_HELP);
                     $('#entitiesGroup').show();
                 } else if (signupType === 0) {
-                    $('#entitiesLabel').text('@Html.Raw(localizer["Attendees"])');
-                    $('#entitiesHelp').text('@Html.Raw(localizer["AttendeesAddedDirectly"])');
+                    $('#entitiesLabel').text(L_ATTENDEES);
+                    $('#entitiesHelp').text(L_ATTENDEES_ADDED_DIRECTLY);
                     $('#entitiesGroup').show();
                 } else {
                     $('#entitiesGroup').show();
-                    $('#entitiesLabel').text('@Html.Raw(localizer["EntitiesToNotify"])');
+                    $('#entitiesLabel').text(L_ENTITIES_TO_NOTIFY);
                     $('#entitiesHelp').text('');
                 }
             }

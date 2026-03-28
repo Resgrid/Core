@@ -465,18 +465,18 @@
                                 <tbody>
                                     @foreach (var ci in Model.CheckIns)
                                     {
-                                        var personName = Model.PersonnelNames?.FirstOrDefault(x => x.UserId == ci.UserId);
+                                        var personName = Model.PersonnelNames?.FirstOrDefault(x => string.Equals(x.UserId, ci.UserId, StringComparison.OrdinalIgnoreCase));
                                         <tr>
                                             <td>
                                                 @(personName?.Name ?? ci.UserId)
                                                 @if (!string.IsNullOrWhiteSpace(ci.CheckInByUserId))
                                                 {
-                                                    var byName = Model.PersonnelNames?.FirstOrDefault(x => x.UserId == ci.CheckInByUserId);
+                                                    var byName = Model.PersonnelNames?.FirstOrDefault(x => string.Equals(x.UserId, ci.CheckInByUserId, StringComparison.OrdinalIgnoreCase));
                                                     <br /><small class="text-muted">@localizer["CheckIn"] by @(byName?.Name ?? ci.CheckInByUserId)</small>
                                                 }
                                                 @if (!string.IsNullOrWhiteSpace(ci.CheckOutByUserId))
                                                 {
-                                                    var byName = Model.PersonnelNames?.FirstOrDefault(x => x.UserId == ci.CheckOutByUserId);
+                                                    var byName = Model.PersonnelNames?.FirstOrDefault(x => string.Equals(x.UserId, ci.CheckOutByUserId, StringComparison.OrdinalIgnoreCase));
                                                     <br /><small class="text-muted">@localizer["CheckOut"] by @(byName?.Name ?? ci.CheckOutByUserId)</small>
                                                 }
                                             </td>
@@ -488,7 +488,7 @@
                                                 }
                                                 else
                                                 {
-                                                    <span class="label label-info">@localizer["NotCheckedIn"]</span>
+                                                    <span class="label label-info">@localizer["NotCheckedOut"]</span>
                                                 }
                                             </td>
                                             <td>
@@ -549,7 +549,7 @@
                             <div class="list-group">
                                 @foreach (var attendee in uncheckedAttendees)
                                 {
-                                    var aName = Model.PersonnelNames?.FirstOrDefault(x => x.UserId == attendee.UserId);
+                                    var aName = Model.PersonnelNames?.FirstOrDefault(x => string.Equals(x.UserId, attendee.UserId, StringComparison.OrdinalIgnoreCase));
                                     @using (Html.BeginForm("AdminCheckIn", "Calendar", FormMethod.Post, new { area = "User", style = "display:inline;" }))
                                     {
                                         @Html.AntiForgeryToken()

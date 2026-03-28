@@ -35,7 +35,7 @@
                             <label class="col-sm-3 control-label">@localizer["CheckInTime"]</label>
                             <div class="col-sm-9">
                                 <input type="text" id="CheckInTime" name="CheckIn.CheckInTime"
-                                       value="@Model.CheckIn.CheckInTime.ToString("MM/dd/yyyy HH:mm")"
+                                       value="@Model.CheckIn.CheckInTime.ToString("yyyy/MM/dd HH:mm")"
                                        class="form-control" style="width:250px;" />
                             </div>
                         </div>
@@ -43,7 +43,7 @@
                             <label class="col-sm-3 control-label">@localizer["CheckOutTime"]</label>
                             <div class="col-sm-9">
                                 <input type="text" id="CheckOutTime" name="CheckIn.CheckOutTime"
-                                       value="@(Model.CheckIn.CheckOutTime?.ToString("MM/dd/yyyy HH:mm") ?? "")"
+                                       value="@(Model.CheckIn.CheckOutTime?.ToString("yyyy/MM/dd HH:mm") ?? "")"
                                        class="form-control" style="width:250px;" />
                             </div>
                         </div>
@@ -77,8 +77,8 @@
 {
 <script>
     $(document).ready(function () {
-        $("#CheckInTime").datetimepicker({ step: 5 });
-        $("#CheckOutTime").datetimepicker({ step: 5 });
+        $("#CheckInTime").datetimepicker({ step: 5, format: 'Y/m/d H:i' });
+        $("#CheckOutTime").datetimepicker({ step: 5, format: 'Y/m/d H:i' });
     });
 </script>
 }

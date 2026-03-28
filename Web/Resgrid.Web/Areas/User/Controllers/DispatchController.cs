@@ -1749,6 +1749,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> PerformCheckIn([FromBody] PerformCheckInInput input, CancellationToken cancellationToken)
 		{
 			if (input == null || input.CallId <= 0)

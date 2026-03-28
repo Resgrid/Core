@@ -466,6 +466,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			foreach (var checkIn in checkIns)
 			{
+				var canViewLocation = await _authorizationService.CanUserViewPersonLocationAsync(UserId, checkIn.UserId, DepartmentId);
+
 				var data = new CalendarCheckInResultData
 				{
 					CheckInId = checkIn.CalendarItemCheckInId,
@@ -477,10 +479,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 					IsManualOverride = checkIn.IsManualOverride,
 					CheckInNote = checkIn.CheckInNote,
 					CheckOutNote = checkIn.CheckOutNote,
-					CheckInLatitude = checkIn.CheckInLatitude,
-					CheckInLongitude = checkIn.CheckInLongitude,
-					CheckOutLatitude = checkIn.CheckOutLatitude,
-					CheckOutLongitude = checkIn.CheckOutLongitude
+					CheckInLatitude = canViewLocation ? checkIn.CheckInLatitude : null,
+					CheckInLongitude = canViewLocation ? checkIn.CheckInLongitude : null,
+					CheckOutLatitude = canViewLocation ? checkIn.CheckOutLatitude : null,
+					CheckOutLongitude = canViewLocation ? checkIn.CheckOutLongitude : null
 				};
 
 				var name = personnelNames?.FirstOrDefault(x => x.UserId == checkIn.UserId);

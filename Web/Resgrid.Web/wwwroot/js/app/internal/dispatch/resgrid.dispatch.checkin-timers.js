@@ -185,6 +185,7 @@
 			url: resgrid.absoluteBaseUrl + '/User/Dispatch/PerformCheckIn',
 			contentType: 'application/json; charset=utf-8',
 			type: 'POST',
+			headers: { 'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val() },
 			data: JSON.stringify(input)
 		}).done(function (result) {
 			$('#checkInModal').modal('hide');

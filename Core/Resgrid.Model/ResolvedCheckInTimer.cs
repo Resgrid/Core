@@ -15,5 +15,7 @@ namespace Resgrid.Model
 		public int WarningThresholdMinutes { get; set; }
 
 		public bool IsFromOverride { get; set; }
+
+		public string ActiveForStates { get; set; }
 	}
 }

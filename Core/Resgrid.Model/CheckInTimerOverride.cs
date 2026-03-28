@@ -31,6 +31,8 @@ namespace Resgrid.Model
 
 		public DateTime? UpdatedOn { get; set; }
 
+		public string ActiveForStates { get; set; }
+
 		[NotMapped]
 		public string TableName => "CheckInTimerOverrides";
 

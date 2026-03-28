@@ -9,12 +9,12 @@ namespace Resgrid.Model.Services
 		// Configuration CRUD
 		Task<List<CheckInTimerConfig>> GetTimerConfigsForDepartmentAsync(int departmentId);
 		Task<CheckInTimerConfig> SaveTimerConfigAsync(CheckInTimerConfig config, CancellationToken cancellationToken = default);
-		Task<bool> DeleteTimerConfigAsync(string configId, CancellationToken cancellationToken = default);
+		Task<bool> DeleteTimerConfigAsync(string configId, int departmentId, CancellationToken cancellationToken = default);
 
 		// Override CRUD
 		Task<List<CheckInTimerOverride>> GetTimerOverridesForDepartmentAsync(int departmentId);
 		Task<CheckInTimerOverride> SaveTimerOverrideAsync(CheckInTimerOverride ovr, CancellationToken cancellationToken = default);
-		Task<bool> DeleteTimerOverrideAsync(string overrideId, CancellationToken cancellationToken = default);
+		Task<bool> DeleteTimerOverrideAsync(string overrideId, int departmentId, CancellationToken cancellationToken = default);
 
 		// Timer Resolution
 		Task<List<ResolvedCheckInTimer>> ResolveAllTimersForCallAsync(Call call);

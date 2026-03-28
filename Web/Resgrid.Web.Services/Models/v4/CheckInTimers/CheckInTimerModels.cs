@@ -21,6 +21,7 @@ namespace Resgrid.Web.Services.Models.v4.CheckInTimers
 		public int DurationMinutes { get; set; }
 		public int WarningThresholdMinutes { get; set; }
 		public bool IsEnabled { get; set; }
+		public string ActiveForStates { get; set; }
 		public DateTime CreatedOn { get; set; }
 		public DateTime? UpdatedOn { get; set; }
 	}
@@ -30,17 +31,22 @@ namespace Resgrid.Web.Services.Models.v4.CheckInTimers
 		public string CheckInTimerConfigId { get; set; }
 
 		[Required]
+		[Range(0, int.MaxValue)]
 		public int TimerTargetType { get; set; }
 
 		public int? UnitTypeId { get; set; }
 
 		[Required]
+		[Range(1, int.MaxValue)]
 		public int DurationMinutes { get; set; }
 
 		[Required]
+		[Range(1, int.MaxValue)]
 		public int WarningThresholdMinutes { get; set; }
 
 		public bool IsEnabled { get; set; } = true;
+
+		public string ActiveForStates { get; set; }
 	}
 
 	public class SaveCheckInTimerConfigResult : StandardApiResponseV4Base
@@ -67,6 +73,7 @@ namespace Resgrid.Web.Services.Models.v4.CheckInTimers
 		public int DurationMinutes { get; set; }
 		public int WarningThresholdMinutes { get; set; }
 		public bool IsEnabled { get; set; }
+		public string ActiveForStates { get; set; }
 		public DateTime CreatedOn { get; set; }
 		public DateTime? UpdatedOn { get; set; }
 	}
@@ -78,17 +85,22 @@ namespace Resgrid.Web.Services.Models.v4.CheckInTimers
 		public int? CallPriority { get; set; }
 
 		[Required]
+		[Range(0, int.MaxValue)]
 		public int TimerTargetType { get; set; }
 
 		public int? UnitTypeId { get; set; }
 
 		[Required]
+		[Range(1, int.MaxValue)]
 		public int DurationMinutes { get; set; }
 
 		[Required]
+		[Range(1, int.MaxValue)]
 		public int WarningThresholdMinutes { get; set; }
 
 		public bool IsEnabled { get; set; } = true;
+
+		public string ActiveForStates { get; set; }
 	}
 
 	public class SaveCheckInTimerOverrideResult : StandardApiResponseV4Base
@@ -122,9 +134,11 @@ namespace Resgrid.Web.Services.Models.v4.CheckInTimers
 	public class PerformCheckInInput
 	{
 		[Required]
+		[Range(1, int.MaxValue)]
 		public int CallId { get; set; }
 
 		[Required]
+		[Range(0, int.MaxValue)]
 		public int CheckInType { get; set; }
 
 		public string Latitude { get; set; }
@@ -174,6 +188,7 @@ namespace Resgrid.Web.Services.Models.v4.CheckInTimers
 		public int DurationMinutes { get; set; }
 		public int WarningThresholdMinutes { get; set; }
 		public bool IsFromOverride { get; set; }
+		public string ActiveForStates { get; set; }
 	}
 
 	// ── Toggle ──────────────────────────────────────────────────

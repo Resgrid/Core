@@ -1579,13 +1579,25 @@ namespace Resgrid.Services
 			if (item.CheckInType == (int)CalendarItemCheckInTypes.Disabled)
 				return false;
 
-			// Department admins can check in anyone
+			// Department admins can check in users in their department
 			if (department.IsUserAnAdmin(userId))
-				return true;
+			{
+				var targetDepartment = await _departmentsService.GetDepartmentByUserIdAsync(targetUserId);
+				if (targetDepartment != null && targetDepartment.DepartmentId == department.DepartmentId)
+					return true;
 
-			// Calendar item creator can check in attendees
+				return false;
+			}
+
+			// Calendar item creator can check in users in their department
 			if (!string.IsNullOrWhiteSpace(item.CreatorUserId) && item.CreatorUserId == userId)
-				return true;
+			{
+				var targetDepartment = await _departmentsService.GetDepartmentByUserIdAsync(targetUserId);
+				if (targetDepartment != null && targetDepartment.DepartmentId == department.DepartmentId)
+					return true;
+
+				return false;
+			}
 
 			// Group admins can check in users in their group or child groups
 			var adminGroup = await _departmentGroupsService.GetGroupForUserAsync(userId, department.DepartmentId);

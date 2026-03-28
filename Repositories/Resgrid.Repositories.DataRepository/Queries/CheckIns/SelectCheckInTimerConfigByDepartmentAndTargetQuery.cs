@@ -27,7 +27,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.CheckIns
 
 		public string GetQuery<TEntity>() where TEntity : class, IEntity
 		{
-			throw new System.NotImplementedException();
+			return GetQuery();
 		}
 	}
 }

@@ -230,7 +230,14 @@ namespace Resgrid.Services
 
 					if (existingDetail != null)
 					{
+						existingDetail.ButtonText = detail.ButtonText;
+						existingDetail.ButtonColor = detail.ButtonColor;
+						existingDetail.TextColor = detail.TextColor;
+						existingDetail.GpsRequired = detail.GpsRequired;
+						existingDetail.NoteType = detail.NoteType;
+						existingDetail.DetailType = detail.DetailType;
 						existingDetail.Order = detail.Order;
+						existingDetail.BaseType = detail.BaseType;
 					}
 				}
 			}

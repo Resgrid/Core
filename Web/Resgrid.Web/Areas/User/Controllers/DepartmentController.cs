@@ -1775,7 +1775,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> SaveCheckInTimerConfig(string configId, int timerTargetType, int? unitTypeId,
-			int durationMinutes, int warningThresholdMinutes, bool isEnabled, CancellationToken cancellationToken)
+			int durationMinutes, int warningThresholdMinutes, bool isEnabled, string activeForStates, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
 				return Unauthorized();
@@ -1789,6 +1789,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				DurationMinutes = durationMinutes,
 				WarningThresholdMinutes = warningThresholdMinutes,
 				IsEnabled = isEnabled,
+				ActiveForStates = string.IsNullOrWhiteSpace(activeForStates) ? null : activeForStates,
 				CreatedByUserId = UserId
 			};
 
@@ -1805,7 +1806,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
 				return Unauthorized();
 
-			await _checkInTimerService.DeleteTimerConfigAsync(configId, cancellationToken);
+			await _checkInTimerService.DeleteTimerConfigAsync(configId, DepartmentId, cancellationToken);
 
 			return RedirectToAction("DispatchSettings");
 		}
@@ -1814,7 +1815,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> SaveCheckInTimerOverride(string overrideId, int? callTypeId, int? callPriority,
-			int timerTargetType, int? unitTypeId, int durationMinutes, int warningThresholdMinutes, bool isEnabled, CancellationToken cancellationToken)
+			int timerTargetType, int? unitTypeId, int durationMinutes, int warningThresholdMinutes, bool isEnabled, string activeForStates, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
 				return Unauthorized();
@@ -1830,6 +1831,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				DurationMinutes = durationMinutes,
 				WarningThresholdMinutes = warningThresholdMinutes,
 				IsEnabled = isEnabled,
+				ActiveForStates = string.IsNullOrWhiteSpace(activeForStates) ? null : activeForStates,
 				CreatedByUserId = UserId
 			};
 
@@ -1846,9 +1848,59 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
 				return Unauthorized();
 
-			await _checkInTimerService.DeleteTimerOverrideAsync(overrideId, cancellationToken);
+			await _checkInTimerService.DeleteTimerOverrideAsync(overrideId, DepartmentId, cancellationToken);
 
 			return RedirectToAction("DispatchSettings");
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_View)]
+		public async Task<IActionResult> GetActiveStatesForTimerTarget(int timerTargetType, int? unitTypeId)
+		{
+			var states = new List<object>();
+
+			if (timerTargetType == (int)CheckInTimerTargetType.UnitType)
+			{
+				// Unit-type target: check if the selected unit type has a custom state set
+				if (unitTypeId.HasValue)
+				{
+					var unitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
+					var unitType = unitTypes?.FirstOrDefault(ut => ut.UnitTypeId == unitTypeId.Value);
+
+					if (unitType?.CustomStatesId != null && unitType.CustomStatesId.Value > 0)
+					{
+						var customState = await _customStateService.GetCustomSateByIdAsync(unitType.CustomStatesId.Value);
+						if (customState != null)
+						{
+							foreach (var detail in customState.GetActiveDetails())
+							{
+								states.Add(new { id = detail.CustomStateDetailId.ToString(), text = detail.ButtonText });
+							}
+						}
+					}
+				}
+
+				// If no custom states found, use defaults
+				if (!states.Any())
+				{
+					var defaults = _customStateService.GetDefaultUnitStatuses();
+					foreach (var d in defaults)
+					{
+						states.Add(new { id = d.CustomStateDetailId.ToString(), text = d.ButtonText });
+					}
+				}
+			}
+			else
+			{
+				// Personnel-based targets: use custom personnel statuses or defaults
+				var personnelStatuses = await _customStateService.GetCustomPersonnelStatusesOrDefaultsAsync(DepartmentId);
+				foreach (var s in personnelStatuses)
+				{
+					states.Add(new { id = s.CustomStateDetailId.ToString(), text = s.ButtonText });
+				}
+			}
+
+			return Json(states);
 		}
 
 		#endregion Check-In Timer Settings

@@ -253,7 +253,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				// Add new attendees from entities and notify only the newly added ones
 				// Skip notifications for past events (bookkeeping after the fact)
-				if (!string.IsNullOrWhiteSpace(model.entities))
+				if (model.Item.SignupType == (int)CalendarItemSignupTypes.None && !string.IsNullOrWhiteSpace(model.entities))
 				{
 					var updatedItem = await _calendarService.GetCalendarItemByIdAsync(model.Item.CalendarItemId);
 					var newUserIds = await AddEntitiesAsAttendeesAsync(updatedItem, model.entities, existingAttendeeIds, cancellationToken);
@@ -1090,7 +1090,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					if (int.TryParse(val.Replace("G:", ""), out groupId))
 					{
 						var group = await _departmentGroupsService.GetGroupByIdAsync(groupId);
-						if (group?.Members != null)
+						if (group != null && group.DepartmentId == calendarItem.DepartmentId && group.Members != null)
 						{
 							foreach (var member in group.Members)
 							{

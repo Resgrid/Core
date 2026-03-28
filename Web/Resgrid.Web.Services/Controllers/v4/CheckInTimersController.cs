@@ -58,6 +58,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				DurationMinutes = c.DurationMinutes,
 				WarningThresholdMinutes = c.WarningThresholdMinutes,
 				IsEnabled = c.IsEnabled,
+				ActiveForStates = c.ActiveForStates,
 				CreatedOn = c.CreatedOn,
 				UpdatedOn = c.UpdatedOn
 			}).ToList();
@@ -90,6 +91,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				DurationMinutes = input.DurationMinutes,
 				WarningThresholdMinutes = input.WarningThresholdMinutes,
 				IsEnabled = input.IsEnabled,
+				ActiveForStates = input.ActiveForStates,
 				CreatedByUserId = UserId
 			};
 
@@ -114,7 +116,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var result = new SaveCheckInTimerConfigResult();
 
-			var deleted = await _checkInTimerService.DeleteTimerConfigAsync(configId, cancellationToken);
+			var deleted = await _checkInTimerService.DeleteTimerConfigAsync(configId, DepartmentId, cancellationToken);
 			if (!deleted)
 				return NotFound();
 
@@ -153,6 +155,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				DurationMinutes = o.DurationMinutes,
 				WarningThresholdMinutes = o.WarningThresholdMinutes,
 				IsEnabled = o.IsEnabled,
+				ActiveForStates = o.ActiveForStates,
 				CreatedOn = o.CreatedOn,
 				UpdatedOn = o.UpdatedOn
 			}).ToList();
@@ -187,6 +190,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				DurationMinutes = input.DurationMinutes,
 				WarningThresholdMinutes = input.WarningThresholdMinutes,
 				IsEnabled = input.IsEnabled,
+				ActiveForStates = input.ActiveForStates,
 				CreatedByUserId = UserId
 			};
 
@@ -211,7 +215,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var result = new SaveCheckInTimerOverrideResult();
 
-			var deleted = await _checkInTimerService.DeleteTimerOverrideAsync(overrideId, cancellationToken);
+			var deleted = await _checkInTimerService.DeleteTimerOverrideAsync(overrideId, DepartmentId, cancellationToken);
 			if (!deleted)
 				return NotFound();
 
@@ -253,7 +257,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				TargetName = t.TargetName ?? ((CheckInTimerTargetType)t.TargetType).ToString(),
 				DurationMinutes = t.DurationMinutes,
 				WarningThresholdMinutes = t.WarningThresholdMinutes,
-				IsFromOverride = t.IsFromOverride
+				IsFromOverride = t.IsFromOverride,
+				ActiveForStates = t.ActiveForStates
 			}).ToList();
 
 			result.PageSize = result.Data.Count;

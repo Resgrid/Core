@@ -302,6 +302,9 @@
   <data name="NotCheckedIn" xml:space="preserve">
     <value>Non pointé</value>
   </data>
+  <data name="NotCheckedOut" xml:space="preserve">
+    <value>Not checked out</value>
+  </data>
   <data name="LateRSVP" xml:space="preserve">
     <value>Inscription tardive</value>
   </data>

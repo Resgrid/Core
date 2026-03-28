@@ -140,7 +140,7 @@
             }
             @foreach (var attendee in attendeeList)
             {
-                var personName = Model.PersonnelNames?.FirstOrDefault(x => x.UserId == attendee.UserId);
+                var personName = Model.PersonnelNames?.FirstOrDefault(x => string.Equals(x.UserId, attendee.UserId, StringComparison.OrdinalIgnoreCase));
                 <tr>
                     <td class="row-num">@rowNum</td>
                     <td>@(personName?.Name ?? attendee.UserId)</td>

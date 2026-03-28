@@ -2193,10 +2193,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var checkIns = await _calendarService.GetCheckInsByUserDateRangeAsync(userId, DepartmentId, start, end);
 			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 
+			// Batch-fetch calendar items to avoid N+1 queries
+			var calendarItemIds = checkIns.Select(c => c.CalendarItemId).Distinct().ToList();
+			var calendarItemsDict = new Dictionary<int, CalendarItem>();
+			foreach (var id in calendarItemIds)
+			{
+				var item = await _calendarService.GetCalendarItemByIdAsync(id);
+				if (item != null)
+					calendarItemsDict[id] = item;
+			}
+
 			double totalSeconds = 0;
 			foreach (var checkIn in checkIns)
 			{
-				var calItem = await _calendarService.GetCalendarItemByIdAsync(checkIn.CalendarItemId);
+				calendarItemsDict.TryGetValue(checkIn.CalendarItemId, out var calItem);
 
 				var detail = new EventAttendanceDetail();
 				detail.EventTitle = calItem?.Title ?? "Unknown Event";

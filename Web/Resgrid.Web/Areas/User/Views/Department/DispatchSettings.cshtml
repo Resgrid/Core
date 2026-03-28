@@ -141,6 +141,7 @@
                                 <th>@localizer["CheckInTimerDurationLabel"]</th>
                                 <th>@localizer["CheckInTimerWarningLabel"]</th>
                                 <th>@localizer["CheckInTimerEnabledLabel"]</th>
+                                <th>Active States</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -159,6 +160,7 @@
                                     <td>@config.DurationMinutes</td>
                                     <td>@config.WarningThresholdMinutes</td>
                                     <td>@(config.IsEnabled ? localizer["CheckInTimerYes"] : localizer["CheckInTimerNo"])</td>
+                                    <td>@(string.IsNullOrWhiteSpace(config.ActiveForStates) ? "All" : config.ActiveForStates)</td>
                                     <td>
                                         <form asp-controller="Department" asp-action="DeleteCheckInTimerConfig" asp-route-area="User" method="post" style="display:inline;">
                                             @Html.AntiForgeryToken()
@@ -173,7 +175,7 @@
 
                     <hr />
                     <h4>@localizer["CheckInTimerAddNewDefault"]</h4>
-                    <form role="form" class="form-horizontal" asp-controller="Department" asp-action="SaveCheckInTimerConfig" asp-route-area="User" method="post">
+                    <form role="form" class="form-horizontal checkin-timer-form" asp-controller="Department" asp-action="SaveCheckInTimerConfig" asp-route-area="User" method="post">
                         @Html.AntiForgeryToken()
                         <div class="form-group">
                             <label class="col-sm-3 control-label">@localizer["CheckInTimerTargetTypeLabel"]</label>
@@ -189,7 +191,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group unit-type-row">
                             <label class="col-sm-3 control-label">@localizer["CheckInTimerUnitTypeLabel"]</label>
                             <div class="col-sm-9">
                                 <select name="unitTypeId" class="form-control" style="width:300px;">
@@ -219,6 +221,15 @@
                                 <input type="checkbox" name="isEnabled" value="true" checked />
                             </div>
                         </div>
+                        <div class="form-group active-states-row">
+                            <label class="col-sm-3 control-label">Active States</label>
+                            <div class="col-sm-9">
+                                <select id="configActiveStates" multiple class="form-control checkin-states-select" style="width:300px;">
+                                </select>
+                                <input type="hidden" name="activeForStates" id="configActiveForStates" />
+                                <span class="help-block m-b-none">Leave empty for "All States".</span>
+                            </div>
+                        </div>
                         <div class="form-group">
                             <div class="col-sm-3 col-sm-offset-3">
                                 <button class="btn btn-primary" type="submit">@localizer["CheckInTimerAddConfigButton"]</button>
@@ -244,6 +255,7 @@
                                 <th>@localizer["CheckInTimerDurationLabel"]</th>
                                 <th>@localizer["CheckInTimerWarningLabel"]</th>
                                 <th>@localizer["CheckInTimerEnabledLabel"]</th>
+                                <th>Active States</th>
                                 <th></th>
                             </tr>
                         </thead>
@@ -274,6 +286,7 @@
                                     <td>@ovr.DurationMinutes</td>
                                     <td>@ovr.WarningThresholdMinutes</td>
                                     <td>@(ovr.IsEnabled ? localizer["CheckInTimerYes"] : localizer["CheckInTimerNo"])</td>
+                                    <td>@(string.IsNullOrWhiteSpace(ovr.ActiveForStates) ? "All" : ovr.ActiveForStates)</td>
                                     <td>
                                         <form asp-controller="Department" asp-action="DeleteCheckInTimerOverride" asp-route-area="User" method="post" style="display:inline;">
                                             @Html.AntiForgeryToken()
@@ -288,7 +301,7 @@
 
                     <hr />
                     <h4>@localizer["CheckInTimerAddNewOverride"]</h4>
-                    <form role="form" class="form-horizontal" asp-controller="Department" asp-action="SaveCheckInTimerOverride" asp-route-area="User" method="post">
+                    <form role="form" class="form-horizontal checkin-timer-form" asp-controller="Department" asp-action="SaveCheckInTimerOverride" asp-route-area="User" method="post">
                         @Html.AntiForgeryToken()
                         <div class="form-group">
                             <label class="col-sm-3 control-label">@localizer["CheckInTimerCallTypeLabel"]</label>
@@ -328,7 +341,7 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="form-group">
+                        <div class="form-group unit-type-row">
                             <label class="col-sm-3 control-label">@localizer["CheckInTimerUnitTypeLabel"]</label>
                             <div class="col-sm-9">
                                 <select name="unitTypeId" class="form-control" style="width:300px;">
@@ -358,6 +371,15 @@
                                 <input type="checkbox" name="isEnabled" value="true" checked />
                             </div>
                         </div>
+                        <div class="form-group active-states-row">
+                            <label class="col-sm-3 control-label">Active States</label>
+                            <div class="col-sm-9">
+                                <select id="overrideActiveStates" multiple class="form-control checkin-states-select" style="width:300px;">
+                                </select>
+                                <input type="hidden" name="activeForStates" id="overrideActiveForStates" />
+                                <span class="help-block m-b-none">Leave empty for "All States".</span>
+                            </div>
+                        </div>
                         <div class="form-group">
                             <div class="col-sm-3 col-sm-offset-3">
                                 <button class="btn btn-primary" type="submit">@localizer["CheckInTimerAddOverrideButton"]</button>
@@ -373,5 +395,97 @@
 
 @section Scripts
 {
+<script>
+    $(function () {
+        var statesUrl = '@Url.Action("GetActiveStatesForTimerTarget", "Department", new { area = "User" })';
 
+        // Target types that support Active States filtering
+        var PERSONNEL = '0', UNIT_TYPE = '1';
+
+        function loadStates($statesSelect, timerTargetType, unitTypeId) {
+            var params = { timerTargetType: timerTargetType };
+            if (unitTypeId) params.unitTypeId = unitTypeId;
+
+            $statesSelect.val(null).trigger('change').empty();
+
+            $.getJSON(statesUrl, params, function (data) {
+                $.each(data, function (i, item) {
+                    $statesSelect.append(new Option(item.text, item.id, false, false));
+                });
+                $statesSelect.trigger('change.select2');
+            });
+        }
+
+        function setupTimerForm(formSelector, statesSelectId, hiddenId) {
+            var $form = $(formSelector);
+            if (!$form.length) return;
+
+            var $targetSelect = $form.find('select[name="timerTargetType"]');
+            var $unitTypeSelect = $form.find('select[name="unitTypeId"]');
+            var $unitTypeRow = $form.find('.unit-type-row');
+            var $activeStatesRow = $form.find('.active-states-row');
+            var $statesSelect = $('#' + statesSelectId);
+            var $hidden = $('#' + hiddenId);
+
+            $statesSelect.select2({
+                placeholder: 'All States',
+                allowClear: true,
+                width: '300px'
+            });
+
+            function updateVisibility() {
+                var targetType = $targetSelect.val();
+                var isUnitType = targetType === UNIT_TYPE;
+                var showStates = targetType === PERSONNEL || targetType === UNIT_TYPE;
+
+                // Unit Type row: only visible for UnitType target
+                $unitTypeRow.toggle(isUnitType);
+                if (!isUnitType) {
+                    $unitTypeSelect.val('').trigger('change');
+                }
+
+                // Active States row: only visible for Personnel and UnitType
+                $activeStatesRow.toggle(showStates);
+                if (!showStates) {
+                    $statesSelect.val(null).trigger('change').empty();
+                    $hidden.val('');
+                }
+            }
+
+            function reloadStates() {
+                var targetType = $targetSelect.val();
+                if (targetType !== PERSONNEL && targetType !== UNIT_TYPE) return;
+
+                var unitTypeId = (targetType === UNIT_TYPE) ? $unitTypeSelect.val() : null;
+                loadStates($statesSelect, targetType, unitTypeId);
+            }
+
+            $targetSelect.on('change', function () {
+                updateVisibility();
+                reloadStates();
+            });
+
+            $unitTypeSelect.on('change', function () {
+                if ($targetSelect.val() === UNIT_TYPE) {
+                    reloadStates();
+                }
+            });
+
+            // Initial state
+            updateVisibility();
+            reloadStates();
+
+            $form.on('submit', function () {
+                var vals = $statesSelect.val() || [];
+                $hidden.val(vals.join(','));
+            });
+        }
+
+        // Config form
+        setupTimerForm('form[action*="SaveCheckInTimerConfig"]', 'configActiveStates', 'configActiveForStates');
+
+        // Override form
+        setupTimerForm('form[action*="SaveCheckInTimerOverride"]', 'overrideActiveStates', 'overrideActiveForStates');
+    });
+</script>
 }

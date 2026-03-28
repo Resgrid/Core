@@ -862,6 +862,7 @@
                 <h4 class="modal-title" id="checkInModalTitle">@localizer["CheckInTimerPerformCheckIn"]</h4>
             </div>
             <div class="modal-body">
+                @Html.AntiForgeryToken()
                 <input type="hidden" id="checkInTargetType" />
                 <input type="hidden" id="checkInUnitId" />
                 <div class="form-group">

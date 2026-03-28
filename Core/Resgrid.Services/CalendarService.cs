@@ -789,6 +789,9 @@ namespace Resgrid.Services
 			if (existing == null)
 				return null;
 
+			if (existing.CheckOutTime.HasValue)
+				return existing;
+
 			existing.CheckOutTime = DateTime.UtcNow;
 			existing.CheckOutByUserId = adminUserId;
 			existing.CheckOutNote = note;
@@ -805,6 +808,9 @@ namespace Resgrid.Services
 			var existing = await _calendarItemCheckInRepository.GetByIdAsync(checkInId);
 			if (existing == null)
 				return null;
+
+			if (checkOutTime.HasValue && checkOutTime.Value < checkInTime)
+				throw new ArgumentException("Check-out time cannot be earlier than check-in time.");
 
 			existing.CheckInTime = checkInTime;
 			existing.CheckOutTime = checkOutTime;

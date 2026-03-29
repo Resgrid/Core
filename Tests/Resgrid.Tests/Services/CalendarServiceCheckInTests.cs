@@ -333,7 +333,8 @@ namespace Resgrid.Tests.Services
 		public async Task CanUserAdminCheckIn_returns_true_when_department_admin()
 		{
 			SetupAuthService();
-			var dept = new Department { DepartmentId = 10, ManagingUserId = "admin1" };
+			var dept = new Department { DepartmentId = 10, ManagingUserId = "admin1",
+				Members = new List<DepartmentMember> { new DepartmentMember { UserId = "admin1", IsAdmin = true }, new DepartmentMember { UserId = "user1" } } };
 			_authDeptService.Setup(x => x.GetDepartmentByUserIdAsync("admin1", It.IsAny<bool>())).ReturnsAsync(dept);
 			_authCalService.Setup(x => x.GetCalendarItemByIdAsync(1))
 				.ReturnsAsync(new CalendarItem { CalendarItemId = 1, DepartmentId = 10, CheckInType = (int)CalendarItemCheckInTypes.SelfCheckIn });
@@ -347,7 +348,8 @@ namespace Resgrid.Tests.Services
 		public async Task CanUserAdminCheckIn_returns_true_when_event_creator()
 		{
 			SetupAuthService();
-			var dept = new Department { DepartmentId = 10, ManagingUserId = "someoneelse" };
+			var dept = new Department { DepartmentId = 10, ManagingUserId = "someoneelse",
+				Members = new List<DepartmentMember> { new DepartmentMember { UserId = "creator1" }, new DepartmentMember { UserId = "user1" } } };
 			_authDeptService.Setup(x => x.GetDepartmentByUserIdAsync("creator1", It.IsAny<bool>())).ReturnsAsync(dept);
 			_authCalService.Setup(x => x.GetCalendarItemByIdAsync(1))
 				.ReturnsAsync(new CalendarItem { CalendarItemId = 1, DepartmentId = 10, CheckInType = (int)CalendarItemCheckInTypes.AdminOnly, CreatorUserId = "creator1" });

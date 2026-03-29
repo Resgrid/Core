@@ -219,6 +219,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!ClaimsAuthorizationHelper.CanCreateDocument())
 				return Unauthorized();
 
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && document.UserId != UserId)
+				return Unauthorized();
+
 			List<DocumentCategory> noteCategories = new List<DocumentCategory>();
 			noteCategories.Add(new DocumentCategory { Name = "None" });
 			noteCategories.AddRange(await _documentsService.GetAllCategoriesByDepartmentIdAsync(DepartmentId));
@@ -251,6 +254,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return Unauthorized();
 
 			if (!ClaimsAuthorizationHelper.CanCreateDocument())
+				return Unauthorized();
+
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && document.UserId != UserId)
 				return Unauthorized();
 
 			if (fileToUpload != null && fileToUpload.Length > 0)

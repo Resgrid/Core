@@ -787,5 +787,15 @@ namespace Resgrid.Services
 
 			return null;
 		}
+
+		public async Task<bool> GetCheckInTimersAutoEnableForNewCallsAsync(int departmentId)
+		{
+			var s = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.CheckInTimersAutoEnableForNewCalls);
+
+			if (s != null && bool.TryParse(s.Setting, out bool result))
+				return result;
+
+			return false;
+		}
 	}
 }

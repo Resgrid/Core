@@ -167,5 +167,10 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// User Defined Field values for this call
 		/// </summary>
 		public List<UdfFieldValueResultData> UdfValues { get; set; }
+
+		/// <summary>
+		/// Whether check-in timers are enabled for this call
+		/// </summary>
+		public bool CheckInTimersEnabled { get; set; }
 	}
 }

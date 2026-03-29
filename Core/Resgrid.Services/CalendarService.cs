@@ -24,11 +24,12 @@ namespace Resgrid.Services
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IEncryptionService _encryptionService;
+		private readonly ICalendarItemCheckInRepository _calendarItemCheckInRepository;
 
 		public CalendarService(ICalendarItemsRepository calendarItemRepository, ICalendarItemTypeRepository calendarItemTypeRepository,
 			ICalendarItemAttendeeRepository calendarItemAttendeeRepository, IDepartmentsService departmentsService, ICommunicationService communicationService,
 			IUserProfileService userProfileService, IDepartmentGroupsService departmentGroupsService, IDepartmentSettingsService departmentSettingsService,
-			IEncryptionService encryptionService)
+			IEncryptionService encryptionService, ICalendarItemCheckInRepository calendarItemCheckInRepository)
 		{
 			_calendarItemRepository = calendarItemRepository;
 			_calendarItemTypeRepository = calendarItemTypeRepository;
@@ -39,6 +40,7 @@ namespace Resgrid.Services
 			_departmentGroupsService = departmentGroupsService;
 			_departmentSettingsService = departmentSettingsService;
 			_encryptionService = encryptionService;
+			_calendarItemCheckInRepository = calendarItemCheckInRepository;
 		}
 
 		public async Task<List<CalendarItem>> GetAllCalendarItemsForDepartmentAsync(int departmentId)
@@ -541,6 +543,36 @@ namespace Resgrid.Services
 			return false;
 		}
 
+		public async Task<bool> NotifyUsersAboutCalendarItemAsync(CalendarItem calendarItem, List<string> userIds)
+		{
+			if (calendarItem == null || userIds == null || !userIds.Any())
+				return false;
+
+			var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(calendarItem.DepartmentId);
+			var departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(calendarItem.DepartmentId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(calendarItem.DepartmentId, false);
+
+			var adjustedDateTime = calendarItem.Start.TimeConverter(department);
+			var title = $"New: {calendarItem.Title}";
+
+			var message = String.IsNullOrWhiteSpace(calendarItem.Location)
+				? $"on {adjustedDateTime.ToShortDateString()} - {adjustedDateTime.ToShortTimeString()}"
+				: $"on {adjustedDateTime.ToShortDateString()} - {adjustedDateTime.ToShortTimeString()} at {calendarItem.Location}";
+
+			if (ConfigHelper.CanTransmit(department.DepartmentId))
+			{
+				foreach (var userId in userIds)
+				{
+					if (profiles.ContainsKey(userId))
+						await _communicationService.SendCalendarAsync(userId, calendarItem.DepartmentId, message, departmentNumber, title, profiles[userId], department);
+					else
+						await _communicationService.SendCalendarAsync(userId, calendarItem.DepartmentId, message, departmentNumber, title, null, department);
+				}
+			}
+
+			return true;
+		}
+
 		public async Task<List<CalendarItem>> GetCalendarItemsToNotifyAsync(DateTime timestamp)
 		{
 			List<CalendarItem> itemsToNotify = new List<CalendarItem>();
@@ -715,5 +747,118 @@ namespace Resgrid.Services
 				.Replace('/', '_')
 				.TrimEnd('=');
 		}
+
+		#region Calendar Check-In Attendance
+
+		public async Task<CalendarItemCheckIn> CheckInToEventAsync(int calendarItemId, string userId, string note,
+			string adminUserId = null, string latitude = null, string longitude = null,
+			CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var existing = await _calendarItemCheckInRepository.GetCheckInByCalendarItemAndUserAsync(calendarItemId, userId);
+			if (existing != null)
+				return existing;
+
+			var calendarItem = await _calendarItemRepository.GetByIdAsync(calendarItemId);
+			if (calendarItem == null)
+				return null;
+
+			var checkIn = new CalendarItemCheckIn
+			{
+				CalendarItemCheckInId = Guid.NewGuid().ToString(),
+				DepartmentId = calendarItem.DepartmentId,
+				CalendarItemId = calendarItemId,
+				UserId = userId,
+				CheckInTime = DateTime.UtcNow,
+				CheckInByUserId = adminUserId,
+				IsManualOverride = false,
+				CheckInNote = note,
+				CheckInLatitude = latitude,
+				CheckInLongitude = longitude,
+				Timestamp = DateTime.UtcNow
+			};
+
+			var saved = await _calendarItemCheckInRepository.SaveOrUpdateAsync(checkIn, cancellationToken);
+			return saved;
+		}
+
+		public async Task<CalendarItemCheckIn> CheckOutFromEventAsync(int calendarItemId, string userId,
+			string note = null, string adminUserId = null, string latitude = null, string longitude = null,
+			CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var existing = await _calendarItemCheckInRepository.GetCheckInByCalendarItemAndUserAsync(calendarItemId, userId);
+			if (existing == null)
+				return null;
+
+			if (existing.CheckOutTime.HasValue)
+				return existing;
+
+			existing.CheckOutTime = DateTime.UtcNow;
+			existing.CheckOutByUserId = adminUserId;
+			existing.CheckOutNote = note;
+			existing.CheckOutLatitude = latitude;
+			existing.CheckOutLongitude = longitude;
+			var saved = await _calendarItemCheckInRepository.SaveOrUpdateAsync(existing, cancellationToken);
+			return saved;
+		}
+
+		public async Task<CalendarItemCheckIn> UpdateCheckInTimesAsync(string checkInId, DateTime checkInTime,
+			DateTime? checkOutTime, string checkInNote, string checkOutNote,
+			CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var existing = await _calendarItemCheckInRepository.GetByIdAsync(checkInId);
+			if (existing == null)
+				return null;
+
+			if (checkOutTime.HasValue && checkOutTime.Value < checkInTime)
+				throw new ArgumentException("Check-out time cannot be earlier than check-in time.");
+
+			existing.CheckInTime = checkInTime;
+			existing.CheckOutTime = checkOutTime;
+			existing.IsManualOverride = true;
+			existing.CheckInNote = checkInNote;
+			existing.CheckOutNote = checkOutNote;
+
+			var saved = await _calendarItemCheckInRepository.SaveOrUpdateAsync(existing, cancellationToken);
+			return saved;
+		}
+
+		public async Task<CalendarItemCheckIn> GetCheckInByCalendarItemAndUserAsync(int calendarItemId, string userId)
+		{
+			return await _calendarItemCheckInRepository.GetCheckInByCalendarItemAndUserAsync(calendarItemId, userId);
+		}
+
+		public async Task<CalendarItemCheckIn> GetCheckInByIdAsync(string checkInId)
+		{
+			return await _calendarItemCheckInRepository.GetByIdAsync(checkInId);
+		}
+
+		public async Task<List<CalendarItemCheckIn>> GetCheckInsByCalendarItemAsync(int calendarItemId)
+		{
+			var items = await _calendarItemCheckInRepository.GetCheckInsByCalendarItemIdAsync(calendarItemId);
+			return items?.ToList() ?? new List<CalendarItemCheckIn>();
+		}
+
+		public async Task<bool> DeleteCheckInAsync(string checkInId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var checkIn = await _calendarItemCheckInRepository.GetByIdAsync(checkInId);
+			if (checkIn == null)
+				return false;
+
+			return await _calendarItemCheckInRepository.DeleteAsync(checkIn, cancellationToken);
+		}
+
+		public async Task<List<CalendarItemCheckIn>> GetCheckInsByDepartmentDateRangeAsync(int departmentId, DateTime start, DateTime end)
+		{
+			var items = await _calendarItemCheckInRepository.GetCheckInsByDepartmentAndDateRangeAsync(departmentId, start, end);
+			return items?.ToList() ?? new List<CalendarItemCheckIn>();
+		}
+
+		public async Task<List<CalendarItemCheckIn>> GetCheckInsByUserDateRangeAsync(string userId, int departmentId, DateTime start, DateTime end)
+		{
+			var items = await _calendarItemCheckInRepository.GetCheckInsByUserAndDateRangeAsync(userId, departmentId, start, end);
+			return items?.ToList() ?? new List<CalendarItemCheckIn>();
+		}
+
+		#endregion Calendar Check-In Attendance
 	}
 }

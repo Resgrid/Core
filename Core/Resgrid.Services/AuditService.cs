@@ -150,6 +150,17 @@ namespace Resgrid.Services
 					return "UDF Field Removed";
 				case AuditLogTypes.UdfFieldValueSaved:
 					return "UDF Field Values Saved";
+				// Calendar Check-In Attendance
+				case AuditLogTypes.CalendarCheckInPerformed:
+					return "Calendar Event Check-In";
+				case AuditLogTypes.CalendarCheckOutPerformed:
+					return "Calendar Event Check-Out";
+				case AuditLogTypes.CalendarCheckInUpdated:
+					return "Calendar Check-In Times Updated";
+				case AuditLogTypes.CalendarCheckInDeleted:
+					return "Calendar Check-In Deleted";
+				case AuditLogTypes.CalendarAdminCheckInPerformed:
+					return "Admin Calendar Check-In";
 			}
 
 			return $"Unknown ({logType})";

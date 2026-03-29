@@ -144,12 +144,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (calendarItem != null)
 				{
-					try
+					if (model.Item.SignupType == (int)CalendarItemSignupTypes.None && !string.IsNullOrWhiteSpace(model.entities))
 					{
-						await _calendarService.NotifyNewCalendarItemAsync(calendarItem);
+						// None signup: add selected entities as direct attendees and notify only them
+						var newUserIds = await AddEntitiesAsAttendeesAsync(calendarItem, model.entities, new HashSet<string>(), cancellationToken);
+						if (newUserIds.Any())
+						{
+							try { await _calendarService.NotifyUsersAboutCalendarItemAsync(calendarItem, newUserIds); } catch { }
+						}
 					}
-					catch
-					{ }
+					else
+					{
+						// RSVP mode: notify entities (groups/department) via existing mechanism
+						try { await _calendarService.NotifyNewCalendarItemAsync(calendarItem); } catch { }
+					}
 				}
 
 				return RedirectToAction("Index");
@@ -225,6 +233,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
+				// Snapshot existing attendees before update so we can diff for notifications
+				var existingItem = await _calendarService.GetCalendarItemByIdAsync(model.Item.CalendarItemId);
+				var existingAttendeeIds = new HashSet<string>();
+				if (existingItem?.Attendees != null)
+				{
+					foreach (var a in existingItem.Attendees)
+						existingAttendeeIds.Add(a.UserId);
+				}
+
 				model.Item.Start = model.StartTime;
 				model.Item.End = model.EndTime;
 				model.Item.RecurrenceEnd = model.RecurrenceEndLocal;
@@ -233,6 +250,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Item.Entities = model.entities;
 
 				await _calendarService.UpdateCalendarItemAsync(model.Item, department.TimeZone, cancellationToken);
+
+				// Add new attendees from entities and notify only the newly added ones
+				// Skip notifications for past events (bookkeeping after the fact)
+				if (model.Item.SignupType == (int)CalendarItemSignupTypes.None && !string.IsNullOrWhiteSpace(model.entities))
+				{
+					var updatedItem = await _calendarService.GetCalendarItemByIdAsync(model.Item.CalendarItemId);
+					var newUserIds = await AddEntitiesAsAttendeesAsync(updatedItem, model.entities, existingAttendeeIds, cancellationToken);
+					if (newUserIds.Any() && updatedItem.End > DateTime.UtcNow)
+					{
+						try { await _calendarService.NotifyUsersAboutCalendarItemAsync(updatedItem, newUserIds); } catch { }
+					}
+				}
 
 				return RedirectToAction("Index");
 			}
@@ -590,10 +619,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.CanEdit = await _authorizationService.CanUserModifyCalendarEntryAsync(UserId, calendarItemId);
 
-			if (model.CalendarItem.DepartmentId != DepartmentId)
-				return Unauthorized();
-
 			model.ExportIcsUrl = $"{SystemBehaviorConfig.ResgridApiBaseUrl}/api/v4/CalendarExport/ExportICalFile?calendarItemId={calendarItemId}";
+
+			// Check-in attendance data
+			model.UserCheckIn = await _calendarService.GetCheckInByCalendarItemAndUserAsync(calendarItemId, UserId);
+			model.CheckIns = await _calendarService.GetCheckInsByCalendarItemAsync(calendarItemId);
+			model.PersonnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
+			model.IsAdmin = model.Department.IsUserAnAdmin(UserId);
+
+			// Check if user is event creator or group admin (for admin check-in buttons)
+			if (!model.IsAdmin)
+			{
+				if (!string.IsNullOrWhiteSpace(model.CalendarItem.CreatorUserId) && model.CalendarItem.CreatorUserId == UserId)
+					model.IsAdmin = true;
+				else
+				{
+					var group = await _departmentGroupsService.GetGroupForUserAsync(UserId, DepartmentId);
+					if (group != null && group.IsUserGroupAdmin(UserId))
+						model.IsAdmin = true;
+				}
+			}
 
 			return View(model);
 		}
@@ -605,6 +650,30 @@ namespace Resgrid.Web.Areas.User.Controllers
 			await _calendarService.SignupForEvent(model.CalendarItem.CalendarItemId, UserId, model.Note, (int)CalendarItemAttendeeTypes.RSVP, cancellationToken);
 
 			return RedirectToAction("View", new { calendarItemId = model.CalendarItem.CalendarItemId });
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Schedule_View)]
+		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+		public async Task<IActionResult> SignupSheet(int calendarItemId, int rows = 0)
+		{
+			var calendarItem = await _calendarService.GetCalendarItemByIdAsync(calendarItemId);
+			if (calendarItem == null || calendarItem.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			if (!await _authorizationService.CanUserModifyCalendarEntryAsync(UserId, calendarItemId))
+				return Unauthorized();
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
+
+			var model = new SignupSheetView();
+			model.CalendarItem = calendarItem;
+			model.Department = department;
+			model.PersonnelNames = personnelNames;
+			model.TotalRows = rows > 0 ? rows : 25;
+
+			return View(model);
 		}
 
 		[HttpGet]
@@ -831,6 +900,216 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("Index");
 		}
 
+		// -- Check-In Attendance -------------------------------------------------------
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Schedule_View)]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> CheckIn(int calendarItemId, string checkInNote, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserCheckInToCalendarEventAsync(UserId, calendarItemId))
+				return Unauthorized();
+
+			var checkIn = await _calendarService.CheckInToEventAsync(calendarItemId, UserId, checkInNote, cancellationToken: cancellationToken);
+
+			if (checkIn != null)
+			{
+				var auditEvent = new AuditEvent();
+				auditEvent.DepartmentId = DepartmentId;
+				auditEvent.UserId = UserId;
+				auditEvent.Type = AuditLogTypes.CalendarCheckInPerformed;
+				auditEvent.After = checkIn.CloneJsonToString();
+				auditEvent.Successful = true;
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+			}
+
+			return RedirectToAction("View", new { calendarItemId = calendarItemId });
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Schedule_View)]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> CheckOut(int calendarItemId, string checkOutNote, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserCheckInToCalendarEventAsync(UserId, calendarItemId))
+				return Unauthorized();
+
+			var checkIn = await _calendarService.CheckOutFromEventAsync(calendarItemId, UserId, checkOutNote, cancellationToken: cancellationToken);
+
+			if (checkIn != null)
+			{
+				var auditEvent = new AuditEvent();
+				auditEvent.DepartmentId = DepartmentId;
+				auditEvent.UserId = UserId;
+				auditEvent.Type = AuditLogTypes.CalendarCheckOutPerformed;
+				auditEvent.After = checkIn.CloneJsonToString();
+				auditEvent.Successful = true;
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+			}
+
+			return RedirectToAction("View", new { calendarItemId = calendarItemId });
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Schedule_View)]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> AdminCheckIn(int calendarItemId, string userId, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserAdminCheckInCalendarEventAsync(UserId, calendarItemId, userId))
+				return Unauthorized();
+
+			var checkIn = await _calendarService.CheckInToEventAsync(calendarItemId, userId, null, UserId, cancellationToken: cancellationToken);
+
+			if (checkIn != null)
+			{
+				var auditEvent = new AuditEvent();
+				auditEvent.DepartmentId = DepartmentId;
+				auditEvent.UserId = UserId;
+				auditEvent.Type = AuditLogTypes.CalendarAdminCheckInPerformed;
+				auditEvent.After = checkIn.CloneJsonToString();
+				auditEvent.Successful = true;
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+			}
+
+			return RedirectToAction("View", new { calendarItemId = calendarItemId });
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Schedule_View)]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> AdminCheckOut(int calendarItemId, string userId, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserAdminCheckInCalendarEventAsync(UserId, calendarItemId, userId))
+				return Unauthorized();
+
+			var checkIn = await _calendarService.CheckOutFromEventAsync(calendarItemId, userId, null, UserId, cancellationToken: cancellationToken);
+
+			if (checkIn != null)
+			{
+				var auditEvent = new AuditEvent();
+				auditEvent.DepartmentId = DepartmentId;
+				auditEvent.UserId = UserId;
+				auditEvent.Type = AuditLogTypes.CalendarCheckOutPerformed;
+				auditEvent.After = checkIn.CloneJsonToString();
+				auditEvent.Successful = true;
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+			}
+
+			return RedirectToAction("View", new { calendarItemId = calendarItemId });
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Schedule_Update)]
+		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
+		public async Task<IActionResult> EditCheckIn(string checkInId)
+		{
+			if (!await _authorizationService.CanUserEditCalendarCheckInAsync(UserId, checkInId))
+				return Unauthorized();
+
+			var checkIn = await _calendarService.GetCheckInByIdAsync(checkInId);
+			if (checkIn == null)
+				return NotFound();
+
+			var model = new EditCalendarCheckInView();
+			model.CheckIn = checkIn;
+
+			return View(model);
+		}
+
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Schedule_Update)]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> EditCheckIn(EditCalendarCheckInView model, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserEditCalendarCheckInAsync(UserId, model.CheckIn.CalendarItemCheckInId))
+				return Unauthorized();
+
+			var existing = await _calendarService.GetCheckInByIdAsync(model.CheckIn.CalendarItemCheckInId);
+			var beforeJson = existing?.CloneJsonToString();
+
+			var updated = await _calendarService.UpdateCheckInTimesAsync(
+				model.CheckIn.CalendarItemCheckInId,
+				model.CheckIn.CheckInTime,
+				model.CheckIn.CheckOutTime,
+				model.CheckIn.CheckInNote,
+				model.CheckIn.CheckOutNote,
+				cancellationToken);
+
+			if (updated != null)
+			{
+				var auditEvent = new AuditEvent();
+				auditEvent.DepartmentId = DepartmentId;
+				auditEvent.UserId = UserId;
+				auditEvent.Type = AuditLogTypes.CalendarCheckInUpdated;
+				auditEvent.Before = beforeJson;
+				auditEvent.After = updated.CloneJsonToString();
+				auditEvent.Successful = true;
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+
+				return RedirectToAction("View", new { calendarItemId = updated.CalendarItemId });
+			}
+
+			return NotFound();
+		}
+
 		// -- Helpers ------------------------------------------------------------------
+
+		/// <summary>
+		/// Resolves entity strings (D: for department, G:123 for groups) into individual users,
+		/// creates attendee records for any user not already attending, and returns the list of
+		/// newly added user IDs (so only they can be notified).
+		/// </summary>
+		private async Task<List<string>> AddEntitiesAsAttendeesAsync(CalendarItem calendarItem, string entities,
+			HashSet<string> existingAttendeeUserIds, CancellationToken cancellationToken)
+		{
+			var newlyAdded = new List<string>();
+			if (string.IsNullOrWhiteSpace(entities))
+				return newlyAdded;
+
+			var items = entities.Split(',');
+			var processedUserIds = new HashSet<string>();
+
+			foreach (var val in items)
+			{
+				if (val.StartsWith("D:"))
+				{
+					var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(calendarItem.DepartmentId);
+					if (personnelNames != null)
+					{
+						foreach (var person in personnelNames)
+						{
+							if (processedUserIds.Add(person.UserId) && !existingAttendeeUserIds.Contains(person.UserId))
+							{
+								await _calendarService.SignupForEvent(calendarItem.CalendarItemId, person.UserId, null,
+									(int)CalendarItemAttendeeTypes.Required, cancellationToken);
+								newlyAdded.Add(person.UserId);
+							}
+						}
+					}
+				}
+				else if (val.StartsWith("G:"))
+				{
+					int groupId;
+					if (int.TryParse(val.Replace("G:", ""), out groupId))
+					{
+						var group = await _departmentGroupsService.GetGroupByIdAsync(groupId);
+						if (group != null && group.DepartmentId == calendarItem.DepartmentId && group.Members != null)
+						{
+							foreach (var member in group.Members)
+							{
+								if (processedUserIds.Add(member.UserId) && !existingAttendeeUserIds.Contains(member.UserId))
+								{
+									await _calendarService.SignupForEvent(calendarItem.CalendarItemId, member.UserId, null,
+										(int)CalendarItemAttendeeTypes.Required, cancellationToken);
+									newlyAdded.Add(member.UserId);
+								}
+							}
+						}
+					}
+				}
+			}
+
+			return newlyAdded;
+		}
 	}
 }

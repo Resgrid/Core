@@ -246,4 +246,67 @@
   <data name="ReferenceIdLabel" xml:space="preserve"><value>Id de Referencia</value></data>
   <data name="NoneLabel" xml:space="preserve"><value>Ninguno</value></data>
   <data name="CallbackLogType" xml:space="preserve"><value>Devolución de Llamada</value></data>
+  <data name="EventAttendanceReportName" xml:space="preserve">
+    <value>Reporte de Asistencia a Eventos</value>
+  </data>
+  <data name="EventAttendanceReportDescription" xml:space="preserve">
+    <value>Muestra las horas de asistencia voluntaria/evento por persona con seguimiento de entrada/salida.</value>
+  </data>
+  <data name="EventAttendanceReportTitle" xml:space="preserve">
+    <value>Reporte de Asistencia a Eventos</value>
+  </data>
+  <data name="EventAttendanceHours" xml:space="preserve">
+    <value>Horas de Asistencia a Eventos</value>
+  </data>
+  <data name="EventsAttendedHeader" xml:space="preserve">
+    <value>Eventos Asistidos</value>
+  </data>
+  <data name="EventsMissedHeader" xml:space="preserve">
+    <value>Eventos Perdidos</value>
+  </data>
+  <data name="TotalHoursHeader" xml:space="preserve">
+    <value>Total de Horas</value>
+  </data>
+  <data name="DetailsButton" xml:space="preserve">
+    <value>Detalles</value>
+  </data>
+  <data name="EventAttendanceDetailTitle" xml:space="preserve">
+    <value>Detalle de Asistencia a Eventos</value>
+  </data>
+  <data name="EventHeader" xml:space="preserve">
+    <value>Evento</value>
+  </data>
+  <data name="CheckInTimeHeader" xml:space="preserve">
+    <value>Hora de Entrada</value>
+  </data>
+  <data name="CheckOutTimeHeader" xml:space="preserve">
+    <value>Hora de Salida</value>
+  </data>
+  <data name="DurationHeader" xml:space="preserve">
+    <value>Duración</value>
+  </data>
+  <data name="CheckInNoteHeader" xml:space="preserve">
+    <value>Nota de Entrada</value>
+  </data>
+  <data name="CheckOutNoteHeader" xml:space="preserve">
+    <value>Nota de Salida</value>
+  </data>
+  <data name="CheckedInByHeader" xml:space="preserve">
+    <value>Entrada Registrada Por</value>
+  </data>
+  <data name="CheckedOutByHeader" xml:space="preserve">
+    <value>Salida Registrada Por</value>
+  </data>
+  <data name="CheckInLocationHeader" xml:space="preserve">
+    <value>Ubicación de Entrada</value>
+  </data>
+  <data name="CheckOutLocationHeader" xml:space="preserve">
+    <value>Ubicación de Salida</value>
+  </data>
+  <data name="NotCheckedOut" xml:space="preserve">
+    <value>Sin registro de salida</value>
+  </data>
+  <data name="TotalTimeLabel" xml:space="preserve">
+    <value>Tiempo Total</value>
+  </data>
 </root>

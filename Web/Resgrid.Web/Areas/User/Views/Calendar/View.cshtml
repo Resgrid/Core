@@ -122,6 +122,13 @@
                         <i class="fa fa-download"></i> @localizer["DownloadIcs"]
                     </a>
                 }
+                @if (Model.CanEdit)
+                {
+                    <a href="@Url.Action("SignupSheet", "Calendar", new { area = "User", calendarItemId = Model.CalendarItem.CalendarItemId })"
+                       class="btn btn-warning" target="_blank">
+                        <i class="fa fa-print"></i> @localizer["PrintSignupSheet"]
+                    </a>
+                }
             </div>
         </div>
     </div>
@@ -298,7 +305,7 @@
                                                 }
                                             </td>
                                             <td class="text-right">
-                                                @if (attendee.UserId == ClaimsAuthorizationHelper.GetUserId() && Model.CalendarItem.Start >= DateTime.UtcNow)
+                                                @if (string.Equals(attendee.UserId, ClaimsAuthorizationHelper.GetUserId(), StringComparison.OrdinalIgnoreCase) && Model.CalendarItem.Start >= DateTime.UtcNow)
                                                 {
                                                     <a title="@localizer["RemoveHelp"]" class="btn btn-xs btn-danger"
                                                        href="@Url.Action("RemoveFromEvent", "Calendar", new { area = "User", id = attendee.CalendarItemAttendeeId })">
@@ -330,8 +337,8 @@
             </div>
         </div>
     </div>
-    @* Signup form *@
-    @if (Model.CalendarItem.SignupType != 0 && !Model.CalendarItem.IsUserAttending(Model.UserId) && Model.CalendarItem.Start >= DateTime.UtcNow)
+    @* Signup form — admins/creators can sign up people even after the event has passed *@
+    @if (Model.CalendarItem.SignupType != 0 && !Model.CalendarItem.IsUserAttending(Model.UserId) && (Model.CalendarItem.Start >= DateTime.UtcNow || Model.IsAdmin))
     {
         <div class="row">
             <div class="col-lg-6">
@@ -362,6 +369,209 @@
             </div>
         </div>
     }
+    @* Self Check-In / Check-Out *@
+    @if (Model.CalendarItem.CheckInType != (int)Resgrid.Model.CalendarItemCheckInTypes.Disabled)
+    {
+        @* Show self check-in panel if SelfCheckIn mode, or if AdminOnly and user is admin/creator/group-admin *@
+        var showSelfPanel = Model.CalendarItem.CheckInType == (int)Resgrid.Model.CalendarItemCheckInTypes.SelfCheckIn || Model.IsAdmin;
+        var checkInWindowOpen = DateTime.UtcNow >= Model.CalendarItem.Start.AddMinutes(-15);
+        var eventIsPast = DateTime.UtcNow > Model.CalendarItem.End;
+        @* Admins/creators can always check in/out (even after event has passed) for bookkeeping *@
+        var adminBypassWindow = Model.IsAdmin;
+        if (showSelfPanel)
+        {
+    <div class="row">
+        <div class="col-lg-6">
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5><i class="fa fa-clock-o"></i> @localizer["CheckIn"] / @localizer["CheckOut"]</h5>
+                </div>
+                <div class="ibox-content">
+                    @if (Model.UserCheckIn == null && ((checkInWindowOpen && !eventIsPast) || adminBypassWindow))
+                    {
+                        @using (Html.BeginForm("CheckIn", "Calendar", FormMethod.Post, new { area = "User" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="calendarItemId" value="@Model.CalendarItem.CalendarItemId" />
+                            <div class="form-group">
+                                <label class="control-label">@localizer["CheckInNote"]</label>
+                                <input type="text" name="checkInNote" class="form-control" placeholder="@localizer["CheckInNote"]" />
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fa fa-sign-in"></i> @localizer["CheckIn"]
+                            </button>
+                        }
+                    }
+                    else if (Model.UserCheckIn == null && eventIsPast && !adminBypassWindow)
+                    {
+                        <p class="text-muted"><i class="fa fa-clock-o"></i> @localizer["CheckInClosed"]</p>
+                    }
+                    else if (Model.UserCheckIn == null && !checkInWindowOpen && !adminBypassWindow)
+                    {
+                        <p class="text-muted"><i class="fa fa-clock-o"></i> @localizer["CheckInNotYetAvailable"]</p>
+                    }
+                    else if (Model.UserCheckIn != null && !Model.UserCheckIn.CheckOutTime.HasValue)
+                    {
+                        <p><strong>@localizer["CheckInTime"]:</strong> @Model.UserCheckIn.CheckInTime.TimeConverterToString(Model.Department)</p>
+                        @using (Html.BeginForm("CheckOut", "Calendar", FormMethod.Post, new { area = "User" }))
+                        {
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="calendarItemId" value="@Model.CalendarItem.CalendarItemId" />
+                            <div class="form-group">
+                                <label class="control-label">@localizer["CheckOutNote"]</label>
+                                <input type="text" name="checkOutNote" class="form-control" placeholder="@localizer["CheckOutNote"]" />
+                            </div>
+                            <button type="submit" class="btn btn-warning">
+                                <i class="fa fa-sign-out"></i> @localizer["CheckOut"]
+                            </button>
+                        }
+                    }
+                    else if (Model.UserCheckIn != null && Model.UserCheckIn.CheckOutTime.HasValue)
+                    {
+                        <p><strong>@localizer["CheckInTime"]:</strong> @Model.UserCheckIn.CheckInTime.TimeConverterToString(Model.Department)</p>
+                        <p><strong>@localizer["CheckOutTime"]:</strong> @Model.UserCheckIn.CheckOutTime.Value.TimeConverterToString(Model.Department)</p>
+                        <p><strong>@localizer["Duration"]:</strong> @Model.UserCheckIn.GetDuration()?.ToString(@"h\h\ m\m")</p>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+        }
+    @* Attendance Check-Ins Table *@
+    @if (Model.CheckIns != null && Model.CheckIns.Any())
+    {
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5><i class="fa fa-list-alt"></i> @localizer["EventAttendanceReport"]</h5>
+                        <div class="ibox-tools">
+                            <span class="badge">@Model.CheckIns.Count</span>
+                        </div>
+                    </div>
+                    <div class="ibox-content">
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover no-margins">
+                                <thead>
+                                    <tr>
+                                        <th>@commonLocalizer["Name"]</th>
+                                        <th>@localizer["CheckInTime"]</th>
+                                        <th>@localizer["CheckOutTime"]</th>
+                                        <th>@localizer["Duration"]</th>
+                                        <th>@localizer["CheckInNote"]</th>
+                                        <th>@localizer["CheckOutNote"]</th>
+                                        @if (Model.IsAdmin)
+                                        {
+                                            <th></th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var ci in Model.CheckIns)
+                                    {
+                                        var personName = Model.PersonnelNames?.FirstOrDefault(x => string.Equals(x.UserId, ci.UserId, StringComparison.OrdinalIgnoreCase));
+                                        <tr>
+                                            <td>
+                                                @(personName?.Name ?? ci.UserId)
+                                                @if (!string.IsNullOrWhiteSpace(ci.CheckInByUserId))
+                                                {
+                                                    var byName = Model.PersonnelNames?.FirstOrDefault(x => string.Equals(x.UserId, ci.CheckInByUserId, StringComparison.OrdinalIgnoreCase));
+                                                    <br /><small class="text-muted">@localizer["CheckInBy", byName?.Name ?? ci.CheckInByUserId]</small>
+                                                }
+                                                @if (!string.IsNullOrWhiteSpace(ci.CheckOutByUserId))
+                                                {
+                                                    var byName = Model.PersonnelNames?.FirstOrDefault(x => string.Equals(x.UserId, ci.CheckOutByUserId, StringComparison.OrdinalIgnoreCase));
+                                                    <br /><small class="text-muted">@localizer["CheckOutBy", byName?.Name ?? ci.CheckOutByUserId]</small>
+                                                }
+                                            </td>
+                                            <td><small>@ci.CheckInTime.TimeConverterToString(Model.Department)</small></td>
+                                            <td>
+                                                @if (ci.CheckOutTime.HasValue)
+                                                {
+                                                    <small>@ci.CheckOutTime.Value.TimeConverterToString(Model.Department)</small>
+                                                }
+                                                else
+                                                {
+                                                    <span class="label label-info">@localizer["NotCheckedOut"]</span>
+                                                }
+                                            </td>
+                                            <td>
+                                                @if (ci.GetDuration() != null)
+                                                {
+                                                    @ci.GetDuration()?.ToString(@"h\h\ m\m")
+                                                }
+                                            </td>
+                                            <td><small>@ci.CheckInNote</small></td>
+                                            <td><small>@ci.CheckOutNote</small></td>
+                                            @if (Model.IsAdmin)
+                                            {
+                                                <td class="text-right" style="white-space:nowrap;">
+                                                    @if (!ci.CheckOutTime.HasValue)
+                                                    {
+                                                        @using (Html.BeginForm("AdminCheckOut", "Calendar", FormMethod.Post, new { area = "User", style = "display:inline;" }))
+                                                        {
+                                                            @Html.AntiForgeryToken()
+                                                            <input type="hidden" name="calendarItemId" value="@Model.CalendarItem.CalendarItemId" />
+                                                            <input type="hidden" name="userId" value="@ci.UserId" />
+                                                            <button type="submit" class="btn btn-xs btn-warning" title="@localizer["CheckOut"]">
+                                                                <i class="fa fa-sign-out"></i>
+                                                            </button>
+                                                        }
+                                                    }
+                                                    <a href="@Url.Action("EditCheckIn", "Calendar", new { area = "User", checkInId = ci.CalendarItemCheckInId })"
+                                                       class="btn btn-xs btn-default" title="@localizer["EditCheckInTimes"]">
+                                                        <i class="fa fa-pencil"></i>
+                                                    </a>
+                                                </td>
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    @* Admin Check-In on Behalf — admins can always check in users, even after the event *@
+    @if (Model.IsAdmin && Model.CalendarItem.Attendees != null && Model.CalendarItem.Attendees.Any())
+    {
+        var uncheckedAttendees = Model.CalendarItem.Attendees
+            .Where(a => Model.CheckIns == null || !Model.CheckIns.Any(c => string.Equals(c.UserId, a.UserId, StringComparison.OrdinalIgnoreCase)))
+            .ToList();
+        if (uncheckedAttendees.Any())
+        {
+            <div class="row">
+                <div class="col-lg-6">
+                    <div class="ibox float-e-margins">
+                        <div class="ibox-title">
+                            <h5><i class="fa fa-user-plus"></i> @localizer["AdminCheckIn"]</h5>
+                        </div>
+                        <div class="ibox-content">
+                            <p class="text-muted">@localizer["CheckInOnBehalf"]</p>
+                            <div class="list-group">
+                                @foreach (var attendee in uncheckedAttendees)
+                                {
+                                    var aName = Model.PersonnelNames?.FirstOrDefault(x => string.Equals(x.UserId, attendee.UserId, StringComparison.OrdinalIgnoreCase));
+                                    @using (Html.BeginForm("AdminCheckIn", "Calendar", FormMethod.Post, new { area = "User", style = "display:inline;" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="calendarItemId" value="@Model.CalendarItem.CalendarItemId" />
+                                        <input type="hidden" name="userId" value="@attendee.UserId" />
+                                        <button type="submit" class="list-group-item list-group-item-action" style="cursor:pointer;">
+                                            <i class="fa fa-sign-in text-primary"></i> @(aName?.Name ?? attendee.UserId)
+                                        </button>
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    } @* end CheckInType != Disabled *@
 </div>
 @section Scripts
 {

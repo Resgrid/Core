@@ -458,4 +458,133 @@
   <data name="PersonnelOnUnitSetUnitStatusHelp" xml:space="preserve">
     <value>When a unit submits a status and users are setup on roles, the users status will be set to On Unit.</value>
   </data>
+  <data name="CallDispatchSettingsHeader" xml:space="preserve">
+    <value>Param&#xE8;tres d'Appels et de Dispatch</value>
+  </data>
+  <data name="CallDispatchSettingsNav" xml:space="preserve">
+    <value>Appels et Dispatch</value>
+  </data>
+  <data name="SavedCallDispatchSettings" xml:space="preserve">
+    <value>Param&#xE8;tres d'appels et de dispatch enregistr&#xE9;s avec succ&#xE8;s.</value>
+  </data>
+  <data name="CheckInTimerSettingsHeader" xml:space="preserve">
+    <value>Param&#xE8;tres des Minuteries de Pointage</value>
+  </data>
+  <data name="CheckInTimerGeneralHeader" xml:space="preserve">
+    <value>Param&#xE8;tres G&#xE9;n&#xE9;raux</value>
+  </data>
+  <data name="CheckInTimerAutoEnableLabel" xml:space="preserve">
+    <value>Activer automatiquement les minuteries de pointage pour les nouveaux appels</value>
+  </data>
+  <data name="CheckInTimerAutoEnableHelp" xml:space="preserve">
+    <value>Lorsqu'activ&#xE9;, tous les nouveaux appels auront automatiquement les minuteries de pointage activ&#xE9;es.</value>
+  </data>
+  <data name="CheckInTimerDefaultConfigsHeader" xml:space="preserve">
+    <value>Configurations de Minuterie par D&#xE9;faut</value>
+  </data>
+  <data name="CheckInTimerDefaultConfigsHelp" xml:space="preserve">
+    <value>Ceux-ci d&#xE9;finissent les intervalles de pointage par d&#xE9;faut pour chaque type de cible.</value>
+  </data>
+  <data name="CheckInTimerOverridesHeader" xml:space="preserve">
+    <value>Remplacements par Type d'Appel / Priorit&#xE9;</value>
+  </data>
+  <data name="CheckInTimerOverridesHelp" xml:space="preserve">
+    <value>Les remplacements ont priorit&#xE9; sur les minuteries par d&#xE9;faut lorsqu'un appel correspond au type et/ou &#xE0; la priorit&#xE9; sp&#xE9;cifi&#xE9;s.</value>
+  </data>
+  <data name="CheckInTimerTargetTypeLabel" xml:space="preserve">
+    <value>Type de Cible</value>
+  </data>
+  <data name="CheckInTimerUnitTypeLabel" xml:space="preserve">
+    <value>Type d'Unit&#xE9;</value>
+  </data>
+  <data name="CheckInTimerDurationLabel" xml:space="preserve">
+    <value>Dur&#xE9;e (minutes)</value>
+  </data>
+  <data name="CheckInTimerWarningLabel" xml:space="preserve">
+    <value>Seuil d'Avertissement (minutes)</value>
+  </data>
+  <data name="CheckInTimerEnabledLabel" xml:space="preserve">
+    <value>Activ&#xE9;</value>
+  </data>
+  <data name="CheckInTimerCallTypeLabel" xml:space="preserve">
+    <value>ID du Type d'Appel</value>
+  </data>
+  <data name="CheckInTimerCallPriorityLabel" xml:space="preserve">
+    <value>Priorit&#xE9; d'Appel</value>
+  </data>
+  <data name="CheckInTimerAddConfigButton" xml:space="preserve">
+    <value>Ajouter une Configuration de Minuterie</value>
+  </data>
+  <data name="CheckInTimerAddOverrideButton" xml:space="preserve">
+    <value>Ajouter un Remplacement</value>
+  </data>
+  <data name="CheckInTimerAddNewDefault" xml:space="preserve">
+    <value>Ajouter une Nouvelle Minuterie par D&#xE9;faut</value>
+  </data>
+  <data name="CheckInTimerAddNewOverride" xml:space="preserve">
+    <value>Ajouter un Nouveau Remplacement</value>
+  </data>
+  <data name="CheckInTimerNoneOption" xml:space="preserve">
+    <value>-- Aucun --</value>
+  </data>
+  <data name="CheckInTimerAnyOption" xml:space="preserve">
+    <value>-- N'importe quel --</value>
+  </data>
+  <data name="CheckInTimerTargetPersonnel" xml:space="preserve">
+    <value>Personnel</value>
+  </data>
+  <data name="CheckInTimerTargetUnitType" xml:space="preserve">
+    <value>Type d'Unit&#xE9;</value>
+  </data>
+  <data name="CheckInTimerTargetIC" xml:space="preserve">
+    <value>CI (Commandant d'Intervention)</value>
+  </data>
+  <data name="CheckInTimerTargetPAR" xml:space="preserve">
+    <value>PAR (Responsabilit&#xE9; du Personnel)</value>
+  </data>
+  <data name="CheckInTimerTargetHazmat" xml:space="preserve">
+    <value>Exposition aux Mati&#xE8;res Dangereuses</value>
+  </data>
+  <data name="CheckInTimerTargetSectorRotation" xml:space="preserve">
+    <value>Rotation de Secteur</value>
+  </data>
+  <data name="CheckInTimerTargetRehab" xml:space="preserve">
+    <value>R&#xE9;habilitation</value>
+  </data>
+  <data name="CheckInTimerLeaveBlankForAny" xml:space="preserve">
+    <value>laisser vide pour n'importe quel</value>
+  </data>
+  <data name="CheckInTimerYes" xml:space="preserve">
+    <value>Oui</value>
+  </data>
+  <data name="CheckInTimerNo" xml:space="preserve">
+    <value>Non</value>
+  </data>
+  <data name="CheckInTimerDeleteConfirm" xml:space="preserve">
+    <value>Supprimer cette configuration de minuterie?</value>
+  </data>
+  <data name="CheckInTimerOverrideDeleteConfirm" xml:space="preserve">
+    <value>Supprimer ce remplacement?</value>
+  </data>
+  <data name="CheckInTimerSourceDefault" xml:space="preserve">
+    <value>Par D&#xE9;faut</value>
+  </data>
+  <data name="CheckInTimerSourceOverride" xml:space="preserve">
+    <value>Remplacement</value>
+  </data>
+  <data name="CheckInTimerPriorityLow" xml:space="preserve">
+    <value>Basse</value>
+  </data>
+  <data name="CheckInTimerPriorityMedium" xml:space="preserve">
+    <value>Moyenne</value>
+  </data>
+  <data name="CheckInTimerPriorityHigh" xml:space="preserve">
+    <value>Haute</value>
+  </data>
+  <data name="CheckInTimerPriorityEmergency" xml:space="preserve">
+    <value>Urgence</value>
+  </data>
+  <data name="CheckInTimerSaveGeneral" xml:space="preserve">
+    <value>Enregistrer les Param&#xE8;tres G&#xE9;n&#xE9;raux</value>
+  </data>
 </root>

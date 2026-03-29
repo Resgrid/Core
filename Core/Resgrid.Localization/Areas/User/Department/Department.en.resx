@@ -507,4 +507,142 @@
   <data name="PersonnelOnUnitSetUnitStatusHelp" xml:space="preserve">
     <value>When a unit submits a status and users are setup on roles, the users status will be set to On Unit.</value>
   </data>
+  <data name="CallDispatchSettingsHeader" xml:space="preserve">
+    <value>Call &amp; Dispatch Settings</value>
+  </data>
+  <data name="CallDispatchSettingsNav" xml:space="preserve">
+    <value>Call &amp; Dispatch Settings</value>
+  </data>
+  <data name="SavedCallDispatchSettings" xml:space="preserve">
+    <value>Successfully saved Call &amp; Dispatch Settings.</value>
+  </data>
+  <data name="CheckInTimerSettingsHeader" xml:space="preserve">
+    <value>Check-In Timer Settings</value>
+  </data>
+  <data name="CheckInTimerGeneralHeader" xml:space="preserve">
+    <value>General Settings</value>
+  </data>
+  <data name="CheckInTimerAutoEnableLabel" xml:space="preserve">
+    <value>Auto-Enable Check-In Timers for New Calls</value>
+  </data>
+  <data name="CheckInTimerAutoEnableHelp" xml:space="preserve">
+    <value>When enabled, all new calls will automatically have check-in timers turned on.</value>
+  </data>
+  <data name="CheckInTimerDefaultConfigsHeader" xml:space="preserve">
+    <value>Default Timer Configurations</value>
+  </data>
+  <data name="CheckInTimerDefaultConfigsHelp" xml:space="preserve">
+    <value>These define the default check-in intervals for each target type. They apply to all calls unless overridden by call type/priority rules below.</value>
+  </data>
+  <data name="CheckInTimerOverridesHeader" xml:space="preserve">
+    <value>Call Type / Priority Overrides</value>
+  </data>
+  <data name="CheckInTimerOverridesHelp" xml:space="preserve">
+    <value>Overrides take precedence over default timers when a call matches the specified type and/or priority.</value>
+  </data>
+  <data name="CheckInTimerTargetTypeLabel" xml:space="preserve">
+    <value>Target Type</value>
+  </data>
+  <data name="CheckInTimerUnitTypeLabel" xml:space="preserve">
+    <value>Unit Type</value>
+  </data>
+  <data name="CheckInTimerDurationLabel" xml:space="preserve">
+    <value>Duration (minutes)</value>
+  </data>
+  <data name="CheckInTimerWarningLabel" xml:space="preserve">
+    <value>Warning Threshold (minutes)</value>
+  </data>
+  <data name="CheckInTimerEnabledLabel" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="CheckInTimerCallTypeLabel" xml:space="preserve">
+    <value>Call Type ID</value>
+  </data>
+  <data name="CheckInTimerCallPriorityLabel" xml:space="preserve">
+    <value>Call Priority</value>
+  </data>
+  <data name="CheckInTimerAddConfigButton" xml:space="preserve">
+    <value>Add Timer Config</value>
+  </data>
+  <data name="CheckInTimerAddOverrideButton" xml:space="preserve">
+    <value>Add Override</value>
+  </data>
+  <data name="CheckInTimerAddNewDefault" xml:space="preserve">
+    <value>Add New Default Timer</value>
+  </data>
+  <data name="CheckInTimerAddNewOverride" xml:space="preserve">
+    <value>Add New Override</value>
+  </data>
+  <data name="CheckInTimerNoneOption" xml:space="preserve">
+    <value>-- None --</value>
+  </data>
+  <data name="CheckInTimerAnyOption" xml:space="preserve">
+    <value>-- Any --</value>
+  </data>
+  <data name="CheckInTimerTargetPersonnel" xml:space="preserve">
+    <value>Personnel</value>
+  </data>
+  <data name="CheckInTimerTargetUnitType" xml:space="preserve">
+    <value>Unit Type</value>
+  </data>
+  <data name="CheckInTimerTargetIC" xml:space="preserve">
+    <value>IC (Incident Commander)</value>
+  </data>
+  <data name="CheckInTimerTargetPAR" xml:space="preserve">
+    <value>PAR (Personnel Accountability)</value>
+  </data>
+  <data name="CheckInTimerTargetHazmat" xml:space="preserve">
+    <value>Hazmat Exposure</value>
+  </data>
+  <data name="CheckInTimerTargetSectorRotation" xml:space="preserve">
+    <value>Sector Rotation</value>
+  </data>
+  <data name="CheckInTimerTargetRehab" xml:space="preserve">
+    <value>Rehab</value>
+  </data>
+  <data name="CheckInTimerLeaveBlankForAny" xml:space="preserve">
+    <value>leave blank for any</value>
+  </data>
+  <data name="CheckInTimerYes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="CheckInTimerNo" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="CheckInTimerDeleteConfirm" xml:space="preserve">
+    <value>Delete this timer configuration?</value>
+  </data>
+  <data name="CheckInTimerOverrideDeleteConfirm" xml:space="preserve">
+    <value>Delete this override?</value>
+  </data>
+  <data name="CheckInTimerSourceDefault" xml:space="preserve">
+    <value>Default</value>
+  </data>
+  <data name="CheckInTimerSourceOverride" xml:space="preserve">
+    <value>Override</value>
+  </data>
+  <data name="CheckInTimerPriorityLow" xml:space="preserve">
+    <value>Low</value>
+  </data>
+  <data name="CheckInTimerPriorityMedium" xml:space="preserve">
+    <value>Medium</value>
+  </data>
+  <data name="CheckInTimerPriorityHigh" xml:space="preserve">
+    <value>High</value>
+  </data>
+  <data name="CheckInTimerPriorityEmergency" xml:space="preserve">
+    <value>Emergency</value>
+  </data>
+  <data name="CheckInTimerSaveGeneral" xml:space="preserve">
+    <value>Save General Settings</value>
+  </data>
+  <data name="CheckInTimerActiveStatesLabel" xml:space="preserve">
+    <value>Active States</value>
+  </data>
+  <data name="CheckInTimerLeaveEmptyForAllStates" xml:space="preserve">
+    <value>Leave empty for "All States".</value>
+  </data>
+  <data name="CheckInTimerAllStates" xml:space="preserve">
+    <value>All</value>
+  </data>
 </root>

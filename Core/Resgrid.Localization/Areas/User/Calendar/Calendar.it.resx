@@ -251,4 +251,106 @@
   <data name="Types" xml:space="preserve">
     <value>Tipi</value>
   </data>
+  <data name="CheckIn" xml:space="preserve">
+    <value>Registra Entrata</value>
+  </data>
+  <data name="CheckOut" xml:space="preserve">
+    <value>Registra Uscita</value>
+  </data>
+  <data name="CheckInTime" xml:space="preserve">
+    <value>Ora di Entrata</value>
+  </data>
+  <data name="CheckOutTime" xml:space="preserve">
+    <value>Ora di Uscita</value>
+  </data>
+  <data name="Duration" xml:space="preserve">
+    <value>Durata</value>
+  </data>
+  <data name="CheckInSuccessful" xml:space="preserve">
+    <value>Registrazione entrata riuscita</value>
+  </data>
+  <data name="CheckOutSuccessful" xml:space="preserve">
+    <value>Registrazione uscita riuscita</value>
+  </data>
+  <data name="EditCheckInTimes" xml:space="preserve">
+    <value>Modifica Orari di Registrazione</value>
+  </data>
+  <data name="ManualOverride" xml:space="preserve">
+    <value>Modifica Manuale</value>
+  </data>
+  <data name="AdminCheckIn" xml:space="preserve">
+    <value>Registrazione Entrata da Amministratore</value>
+  </data>
+  <data name="CheckInOnBehalf" xml:space="preserve">
+    <value>Registra Entrata per Conto di</value>
+  </data>
+  <data name="EventAttendanceReport" xml:space="preserve">
+    <value>Report Presenze Eventi</value>
+  </data>
+  <data name="TotalEventsAttended" xml:space="preserve">
+    <value>Totale Eventi Partecipati</value>
+  </data>
+  <data name="TotalHours" xml:space="preserve">
+    <value>Ore Totali</value>
+  </data>
+  <data name="NoCheckInRecord" xml:space="preserve">
+    <value>Nessun record di entrata trovato</value>
+  </data>
+  <data name="AlreadyCheckedIn" xml:space="preserve">
+    <value>Entrata già registrata</value>
+  </data>
+  <data name="NotCheckedIn" xml:space="preserve">
+    <value>Entrata non registrata</value>
+  </data>
+  <data name="NotCheckedOut" xml:space="preserve">
+    <value>Not checked out</value>
+  </data>
+  <data name="LateRSVP" xml:space="preserve">
+    <value>RSVP in Ritardo</value>
+  </data>
+  <data name="CustomTimes" xml:space="preserve">
+    <value>Orari Personalizzati</value>
+  </data>
+  <data name="Unauthorized" xml:space="preserve">
+    <value>Non Autorizzato</value>
+  </data>
+  <data name="CheckInDeleted" xml:space="preserve">
+    <value>Registrazione entrata eliminata</value>
+  </data>
+  <data name="CheckInNote" xml:space="preserve">
+    <value>Nota di Entrata</value>
+  </data>
+  <data name="CheckOutNote" xml:space="preserve">
+    <value>Nota di Uscita</value>
+  </data>
+  <data name="CheckedInBy" xml:space="preserve">
+    <value>Entrata Registrata Da</value>
+  </data>
+  <data name="CheckedOutBy" xml:space="preserve">
+    <value>Uscita Registrata Da</value>
+  </data>
+  <data name="CheckInDisabled" xml:space="preserve">
+    <value>Disabilitato</value>
+  </data>
+  <data name="CheckInSelfService" xml:space="preserve">
+    <value>Auto Registrazione Entrata/Uscita</value>
+  </data>
+  <data name="CheckInAdminOnly" xml:space="preserve">
+    <value>Solo Creatore e Amministratori</value>
+  </data>
+  <data name="CheckInNotYetAvailable" xml:space="preserve">
+    <value>La registrazione entrata si apre 15 minuti prima dell'inizio dell'evento.</value>
+  </data>
+  <data name="Attendees" xml:space="preserve">
+    <value>Partecipanti</value>
+  </data>
+  <data name="AttendeesAddedDirectly" xml:space="preserve">
+    <value>I gruppi/personale selezionati verranno aggiunti come partecipanti e notificati direttamente.</value>
+  </data>
+  <data name="EntitiesToNotifyHelp" xml:space="preserve">
+    <value>I gruppi/personale selezionati verranno notificati di questo evento.</value>
+  </data>
+  <data name="PrintSignupSheet" xml:space="preserve">
+    <value>Stampa Foglio Presenze</value>
+  </data>
 </root>

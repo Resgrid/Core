@@ -61,6 +61,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDocumentsService _documentsService;
 		private readonly INotesService _notesService;
 		private readonly IContactsService _contactsService;
+		private readonly ICheckInTimerService _checkInTimerService;
 
 		public DepartmentController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IEmailService emailService, IDepartmentGroupsService departmentGroupsService, IUserProfileService userProfileService, IDeleteService deleteService,
@@ -68,7 +69,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ILimitsService limitsService, ICallsService callsService, IDepartmentSettingsService departmentSettingsService, IUnitsService unitsService,
 			ICertificationService certificationService, INumbersService numbersService, IScheduledTasksService scheduledTasksService, IPersonnelRolesService personnelRolesService,
 			IEventAggregator eventAggregator, ICustomStateService customStateService, ICqrsProvider cqrsProvider, IPrinterProvider printerProvider, IQueueService queueService,
-			IDocumentsService documentsService, INotesService notesService, IContactsService contactsService)
+			IDocumentsService documentsService, INotesService notesService, IContactsService contactsService, ICheckInTimerService checkInTimerService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -97,6 +98,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_documentsService = documentsService;
 			_notesService = notesService;
 			_contactsService = contactsService;
+			_checkInTimerService = checkInTimerService;
 		}
 
 		#endregion Private Members and Constructors
@@ -1688,6 +1690,36 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.UnitDispatchAlsoDispatchToGroup = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToGroupAsync(DepartmentId);
 			model.PersonnelOnUnitSetUnitStatus = await _departmentSettingsService.GetPersonnelOnUnitSetUnitStatusAsync(DepartmentId);
 
+			// Check-In Timer data
+			model.AutoEnableCheckInTimers = await _departmentSettingsService.GetCheckInTimersAutoEnableForNewCallsAsync(DepartmentId);
+			model.TimerConfigs = await _checkInTimerService.GetTimerConfigsForDepartmentAsync(DepartmentId);
+			model.TimerOverrides = await _checkInTimerService.GetTimerOverridesForDepartmentAsync(DepartmentId);
+			model.UnitTypes = (await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId))?.ToList() ?? new List<UnitType>();
+			model.CallTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId) ?? new List<CallType>();
+
+			// Build state ID → name lookup for display in the configs/overrides tables
+			var personnelStatuses = await _customStateService.GetCustomPersonnelStatusesOrDefaultsAsync(DepartmentId);
+			foreach (var s in personnelStatuses)
+				model.StateNames[s.CustomStateDetailId.ToString()] = s.ButtonText;
+
+			var unitDefaults = _customStateService.GetDefaultUnitStatuses();
+			foreach (var s in unitDefaults)
+				model.StateNames.TryAdd(s.CustomStateDetailId.ToString(), s.ButtonText);
+
+			// Also include custom unit states from each unit type
+			foreach (var ut in model.UnitTypes)
+			{
+				if (ut.CustomStatesId.HasValue && ut.CustomStatesId.Value > 0)
+				{
+					var customState = await _customStateService.GetCustomSateByIdAsync(ut.CustomStatesId.Value);
+					if (customState != null)
+					{
+						foreach (var detail in customState.GetActiveDetails())
+							model.StateNames.TryAdd(detail.CustomStateDetailId.ToString(), detail.ButtonText);
+					}
+				}
+			}
+
 			return View(model);
 		}
 
@@ -1734,15 +1766,167 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.PersonnelOnUnitSetUnitStatus.ToString(),
 					DepartmentSettingTypes.PersonnelOnUnitSetUnitStatus, cancellationToken);
 
+				// Save check-in timer auto-enable setting
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.AutoEnableCheckInTimers.ToString(),
+					DepartmentSettingTypes.CheckInTimersAutoEnableForNewCalls, cancellationToken);
+
+				// Reload timer data for re-display
+				model.TimerConfigs = await _checkInTimerService.GetTimerConfigsForDepartmentAsync(DepartmentId);
+				model.TimerOverrides = await _checkInTimerService.GetTimerOverridesForDepartmentAsync(DepartmentId);
+				model.UnitTypes = (await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId))?.ToList() ?? new List<UnitType>();
+			model.CallTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId) ?? new List<CallType>();
+
 				model.SaveSuccess = true;
 				return View(model);
 			}
+
+			// Reload timer data even on validation failure
+			model.TimerConfigs = await _checkInTimerService.GetTimerConfigsForDepartmentAsync(DepartmentId);
+			model.TimerOverrides = await _checkInTimerService.GetTimerOverridesForDepartmentAsync(DepartmentId);
+			model.UnitTypes = (await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId))?.ToList() ?? new List<UnitType>();
+			model.CallTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId) ?? new List<CallType>();
 
 			model.SaveSuccess = false;
 			return View(model);
 		}
 
 		#endregion Dispatch Settings
+
+		#region Check-In Timer Settings
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> SaveCheckInTimerConfig(string configId, int timerTargetType, int? unitTypeId,
+			int durationMinutes, int warningThresholdMinutes, bool isEnabled, string activeForStates, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			var config = new CheckInTimerConfig
+			{
+				CheckInTimerConfigId = string.IsNullOrWhiteSpace(configId) ? null : configId,
+				DepartmentId = DepartmentId,
+				TimerTargetType = timerTargetType,
+				UnitTypeId = unitTypeId,
+				DurationMinutes = durationMinutes,
+				WarningThresholdMinutes = warningThresholdMinutes,
+				IsEnabled = isEnabled,
+				ActiveForStates = string.IsNullOrWhiteSpace(activeForStates) ? null : activeForStates,
+				CreatedByUserId = UserId
+			};
+
+			await _checkInTimerService.SaveTimerConfigAsync(config, cancellationToken);
+
+			return RedirectToAction("DispatchSettings");
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> DeleteCheckInTimerConfig(string configId, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			await _checkInTimerService.DeleteTimerConfigAsync(configId, DepartmentId, cancellationToken);
+
+			return RedirectToAction("DispatchSettings");
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> SaveCheckInTimerOverride(string overrideId, int? callTypeId, int? callPriority,
+			int timerTargetType, int? unitTypeId, int durationMinutes, int warningThresholdMinutes, bool isEnabled, string activeForStates, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			var ovr = new CheckInTimerOverride
+			{
+				CheckInTimerOverrideId = string.IsNullOrWhiteSpace(overrideId) ? null : overrideId,
+				DepartmentId = DepartmentId,
+				CallTypeId = callTypeId,
+				CallPriority = callPriority,
+				TimerTargetType = timerTargetType,
+				UnitTypeId = unitTypeId,
+				DurationMinutes = durationMinutes,
+				WarningThresholdMinutes = warningThresholdMinutes,
+				IsEnabled = isEnabled,
+				ActiveForStates = string.IsNullOrWhiteSpace(activeForStates) ? null : activeForStates,
+				CreatedByUserId = UserId
+			};
+
+			await _checkInTimerService.SaveTimerOverrideAsync(ovr, cancellationToken);
+
+			return RedirectToAction("DispatchSettings");
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> DeleteCheckInTimerOverride(string overrideId, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			await _checkInTimerService.DeleteTimerOverrideAsync(overrideId, DepartmentId, cancellationToken);
+
+			return RedirectToAction("DispatchSettings");
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_View)]
+		public async Task<IActionResult> GetActiveStatesForTimerTarget(int timerTargetType, int? unitTypeId)
+		{
+			var states = new List<object>();
+
+			if (timerTargetType == (int)CheckInTimerTargetType.UnitType)
+			{
+				// Unit-type target: check if the selected unit type has a custom state set
+				if (unitTypeId.HasValue)
+				{
+					var unitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
+					var unitType = unitTypes?.FirstOrDefault(ut => ut.UnitTypeId == unitTypeId.Value);
+
+					if (unitType?.CustomStatesId != null && unitType.CustomStatesId.Value > 0)
+					{
+						var customState = await _customStateService.GetCustomSateByIdAsync(unitType.CustomStatesId.Value);
+						if (customState != null)
+						{
+							foreach (var detail in customState.GetActiveDetails())
+							{
+								states.Add(new { id = detail.CustomStateDetailId.ToString(), text = detail.ButtonText });
+							}
+						}
+					}
+				}
+
+				// If no custom states found, use defaults
+				if (!states.Any())
+				{
+					var defaults = _customStateService.GetDefaultUnitStatuses();
+					foreach (var d in defaults)
+					{
+						states.Add(new { id = d.CustomStateDetailId.ToString(), text = d.ButtonText });
+					}
+				}
+			}
+			else
+			{
+				// Personnel-based targets: use custom personnel statuses or defaults
+				var personnelStatuses = await _customStateService.GetCustomPersonnelStatusesOrDefaultsAsync(DepartmentId);
+				foreach (var s in personnelStatuses)
+				{
+					states.Add(new { id = s.CustomStateDetailId.ToString(), text = s.ButtonText });
+				}
+			}
+
+			return Json(states);
+		}
+
+		#endregion Check-In Timer Settings
 
 		#region Mapping Settings
 

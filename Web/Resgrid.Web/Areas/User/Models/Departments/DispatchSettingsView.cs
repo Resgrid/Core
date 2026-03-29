@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Model;
 
 namespace Resgrid.Web.Areas.User.Models.Departments
@@ -17,6 +18,15 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 
 		public bool PersonnelOnUnitSetUnitStatus { get; set; }
 
+		// Check-In Timer Settings
+		public bool AutoEnableCheckInTimers { get; set; }
+		public List<CheckInTimerConfig> TimerConfigs { get; set; }
+		public List<CheckInTimerOverride> TimerOverrides { get; set; }
+		public List<UnitType> UnitTypes { get; set; }
+		public List<CallType> CallTypes { get; set; }
+
+		public Dictionary<string, string> StateNames { get; set; }
+
 		public bool? SaveSuccess { get; set; }
 		public string Message { get; set; }
 
@@ -24,6 +34,11 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 		{
 			ShiftDispatchStatus = -1;
 			ShiftClearStatus = -1;
+			TimerConfigs = new List<CheckInTimerConfig>();
+			TimerOverrides = new List<CheckInTimerOverride>();
+			UnitTypes = new List<UnitType>();
+			CallTypes = new List<CallType>();
+			StateNames = new Dictionary<string, string>();
 		}
 	}
 }

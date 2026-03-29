@@ -458,4 +458,70 @@
   <data name="W3wHelp" xml:space="preserve">
     <value>This is a what3words address.</value>
   </data>
+  <data name="CheckInTimersLabel" xml:space="preserve">
+    <value>Minuteries de Pointage</value>
+  </data>
+  <data name="EnableCheckInTimers" xml:space="preserve">
+    <value>Activer les Minuteries de Pointage</value>
+  </data>
+  <data name="CheckInTimersHeader" xml:space="preserve">
+    <value>Minuteries de Pointage</value>
+  </data>
+  <data name="CheckInTimerTarget" xml:space="preserve">
+    <value>Cible</value>
+  </data>
+  <data name="CheckInTimerType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="CheckInTimerLastCheckIn" xml:space="preserve">
+    <value>Dernier Pointage</value>
+  </data>
+  <data name="CheckInTimerTimeRemaining" xml:space="preserve">
+    <value>Temps Restant</value>
+  </data>
+  <data name="CheckInTimerStatus" xml:space="preserve">
+    <value>Statut</value>
+  </data>
+  <data name="CheckInTimerActions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="CheckInTimerPerformCheckIn" xml:space="preserve">
+    <value>Pointer</value>
+  </data>
+  <data name="CheckInTimerShowHistory" xml:space="preserve">
+    <value>Afficher l'Historique des Pointages</value>
+  </data>
+  <data name="CheckInTimerHistoryTimestamp" xml:space="preserve">
+    <value>Horodatage</value>
+  </data>
+  <data name="CheckInTimerHistoryWho" xml:space="preserve">
+    <value>Qui</value>
+  </data>
+  <data name="CheckInTimerHistoryType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="CheckInTimerHistoryUnit" xml:space="preserve">
+    <value>Unité</value>
+  </data>
+  <data name="CheckInTimerHistoryLocation" xml:space="preserve">
+    <value>Emplacement</value>
+  </data>
+  <data name="CheckInTimerHistoryNote" xml:space="preserve">
+    <value>Note</value>
+  </data>
+  <data name="CheckInTimerConfigSection" xml:space="preserve">
+    <value>Configuration des Minuteries de Pointage</value>
+  </data>
+  <data name="CheckInTimerLogSection" xml:space="preserve">
+    <value>Journal de Pointage</value>
+  </data>
+  <data name="CheckInTimerDuration" xml:space="preserve">
+    <value>Durée (min)</value>
+  </data>
+  <data name="CheckInTimerWarning" xml:space="preserve">
+    <value>Seuil d'Avertissement (min)</value>
+  </data>
+  <data name="CheckInTimerSource" xml:space="preserve">
+    <value>Source</value>
+  </data>
 </root>

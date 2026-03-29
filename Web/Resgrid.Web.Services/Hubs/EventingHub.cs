@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Security.Claims;
+using System.Threading.Tasks;
 using CommonServiceLocator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
@@ -23,6 +24,9 @@ namespace Resgrid.Web.Services.Hubs
 		Task CallsUpdated(int departmentId, int id);
 
 		Task DepartmentUpdated(int departmentId);
+
+		// CheckInPerformed and CheckInTimersUpdated are server-only broadcasts
+		// invoked via IHubContext<EventingHub>.SendAsync() — no client-facing methods needed.
 	}
 
 	[AllowAnonymous]
@@ -35,8 +39,13 @@ namespace Resgrid.Web.Services.Hubs
 			_departmentLinksService = ServiceLocator.Current.GetInstance<IDepartmentLinksService>();
 		}
 
+		[Authorize]
 		public async Task Connect(int departmentId)
 		{
+			var claim = Context.User?.FindFirst(ClaimTypes.PrimaryGroupSid);
+			if (claim == null || !int.TryParse(claim.Value, out int userDepartmentId) || userDepartmentId != departmentId)
+				throw new HubException("Unauthorized: department mismatch.");
+
 			await Groups.AddToGroupAsync(Context.ConnectionId, departmentId.ToString());
 
 			await Clients.Caller.SendAsync("onConnected", Context.ConnectionId);
@@ -97,5 +106,9 @@ namespace Resgrid.Web.Services.Hubs
 			if (group != null)
 				await group.SendAsync("departmentUpdated");
 		}
+
+		// CheckInPerformed and CheckInTimersUpdated are server-only broadcasts.
+		// They are invoked via IHubContext<EventingHub>.Clients.Group().SendAsync()
+		// and must not be exposed as client-callable hub methods.
 	}
 }

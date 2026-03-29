@@ -176,6 +176,17 @@
                                     </td>
                                 </tr>
                             }
+                            <tr>
+                                <td>
+                                    <a href="@Url.Action("EventAttendanceReportParams", "Reports", new { Area = "User" })">@localizer["EventAttendanceReportName"]</a>
+                                </td>
+                                <td>
+                                    @localizer["EventAttendanceReportDescription"]
+                                </td>
+                                <td>
+                                    <a href="@Url.Action("EventAttendanceReportParams", "Reports", new { Area = "User" })" class=" btn btn-primary btn-sm"><i class="icon-eye-open"></i> @localizer["ViewReport"]</a>
+                                </td>
+                            </tr>
                             </tbody>
                         </table>
                     </div>

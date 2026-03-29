@@ -328,6 +328,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 				catch { }
 
 				_eventAggregator.SendMessage<LogAddedEvent>(new LogAddedEvent() { DepartmentId = DepartmentId, Log = model.Log });
+
+				var auditEvent = new AuditEvent();
+				auditEvent.DepartmentId = DepartmentId;
+				auditEvent.UserId = UserId;
+				auditEvent.After = savedLog.CloneJsonToString();
+				auditEvent.Type = AuditLogTypes.LogCreated;
+				auditEvent.Successful = true;
+				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+				auditEvent.ServerName = Environment.MachineName;
+				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 			}
 			catch (Exception ex)
 			{
@@ -346,8 +357,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			List<LogForListJson> logsJson = new List<LogForListJson>();
 
-			//var logs = await _workLogsService.GetAllLogsForDepartmentAsync(DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
+			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
+			var unitLookup = units.ToDictionary(u => u.UnitId, u => u.Name);
 
 			List<Log> logs;
 			if (String.IsNullOrWhiteSpace(year))
@@ -355,8 +368,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			else
 				logs = await _workLogsService.GetAllLogsForDepartmentAndYearAsync(DepartmentId, year);
 
+			// Cache calls to avoid duplicate lookups
+			var callCache = new Dictionary<int, Call>();
+
 			foreach (var log in logs)
 			{
+				await _workLogsService.PopulateLogData(log, true, true);
+
 				var logJson = new LogForListJson();
 				logJson.LogId = log.LogId;
 				logJson.Type = ((LogTypes)log.LogType).ToString();
@@ -366,8 +384,80 @@ namespace Resgrid.Web.Areas.User.Controllers
 				else
 					logJson.Group = department.Name;
 
-				logJson.LoggedBy = await UserHelper.GetFullNameForUser(log.LoggedByUserId);
+				logJson.LoggedBy = await UserHelper.GetFullNameForUser(personnelNames, null, log.LoggedByUserId);
 				logJson.LoggedOn = log.LoggedOn.TimeConverterToString(department);
+				logJson.Narrative = log.Narrative ?? "";
+
+				// Build search terms from related data
+				var terms = new List<string>();
+
+				// Personnel names from log users
+				if (log.Users != null)
+				{
+					foreach (var logUser in log.Users)
+					{
+						var pn = personnelNames.FirstOrDefault(x => x.UserId == logUser.UserId);
+						if (pn != null)
+							terms.Add(pn.Name);
+					}
+				}
+
+				// Unit names from log units
+				if (log.Units != null)
+				{
+					foreach (var logUnit in log.Units)
+					{
+						if (unitLookup.TryGetValue(logUnit.UnitId, out var unitName))
+							terms.Add(unitName);
+					}
+				}
+
+				// Call info
+				if (log.CallId.HasValue)
+				{
+					if (!callCache.TryGetValue(log.CallId.Value, out var call))
+					{
+						call = await _callsService.GetCallByIdAsync(log.CallId.Value);
+						callCache[log.CallId.Value] = call;
+					}
+
+					if (call != null)
+					{
+						if (!String.IsNullOrWhiteSpace(call.Name))
+							terms.Add(call.Name);
+						if (!String.IsNullOrWhiteSpace(call.Number))
+							terms.Add(call.Number);
+						terms.Add(call.CallId.ToString());
+						if (!String.IsNullOrWhiteSpace(call.IncidentNumber))
+							terms.Add(call.IncidentNumber);
+					}
+				}
+
+				// Other searchable fields from the log itself
+				if (!String.IsNullOrWhiteSpace(log.Location))
+					terms.Add(log.Location);
+				if (!String.IsNullOrWhiteSpace(log.ContactName))
+					terms.Add(log.ContactName);
+				if (!String.IsNullOrWhiteSpace(log.Instructors))
+					terms.Add(log.Instructors);
+				if (!String.IsNullOrWhiteSpace(log.Course))
+					terms.Add(log.Course);
+				if (!String.IsNullOrWhiteSpace(log.CourseCode))
+					terms.Add(log.CourseCode);
+				if (!String.IsNullOrWhiteSpace(log.Cause))
+					terms.Add(log.Cause);
+				if (!String.IsNullOrWhiteSpace(log.ExternalId))
+					terms.Add(log.ExternalId);
+				if (!String.IsNullOrWhiteSpace(log.OtherPersonnel))
+					terms.Add(log.OtherPersonnel);
+				if (!String.IsNullOrWhiteSpace(log.OtherAgencies))
+					terms.Add(log.OtherAgencies);
+				if (!String.IsNullOrWhiteSpace(log.OtherUnits))
+					terms.Add(log.OtherUnits);
+				if (!String.IsNullOrWhiteSpace(log.InitialReport))
+					terms.Add(log.InitialReport);
+
+				logJson.SearchTerms = String.Join(" ", terms);
 
 				if (ClaimsAuthorizationHelper.CanDeleteLog() &&
 				    (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || log.LoggedByUserId == UserId ||
@@ -389,7 +479,24 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await _authorizationService.CanUserDeleteWorkLogAsync(UserId, logId))
 				return Unauthorized();
 
+			var log = await _workLogsService.GetWorkLogByIdAsync(logId);
+
+			if (log == null)
+				return NotFound();
+
+			var auditEvent = new AuditEvent();
+			auditEvent.DepartmentId = DepartmentId;
+			auditEvent.UserId = UserId;
+			auditEvent.Before = log.CloneJsonToString();
+			auditEvent.Type = AuditLogTypes.LogDeleted;
+			auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+			auditEvent.ServerName = Environment.MachineName;
+			auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+
 			await _workLogsService.DeleteLogAsync(logId, cancellationToken);
+
+			auditEvent.Successful = true;
+			_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 			return RedirectToAction("Index");
 		}

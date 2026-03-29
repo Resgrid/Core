@@ -1566,6 +1566,81 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					ORDER BY d.DetectedOn DESC";
 			#endregion Routes
 
+			#region CheckIns
+			CheckInTimerConfigsTableName = "CheckInTimerConfigs";
+			CheckInTimerOverridesTableName = "CheckInTimerOverrides";
+			CheckInRecordsTableName = "CheckInRecords";
+
+			SelectCheckInTimerConfigsByDepartmentIdQuery = @"
+				SELECT *
+				FROM %SCHEMA%.%TABLENAME%
+				WHERE DepartmentId = %DID%";
+			SelectCheckInTimerConfigByDepartmentAndTargetQuery = @"
+				SELECT *
+				FROM %SCHEMA%.%TABLENAME%
+				WHERE DepartmentId = %DID% AND TimerTargetType = %TTT%
+				AND (UnitTypeId = %UTID% OR (%UTID% IS NULL AND UnitTypeId IS NULL))";
+			SelectCheckInTimerOverridesByDepartmentIdQuery = @"
+				SELECT *
+				FROM %SCHEMA%.%TABLENAME%
+				WHERE DepartmentId = %DID%";
+			SelectMatchingCheckInTimerOverridesQuery = @"
+				SELECT *
+				FROM %SCHEMA%.%TABLENAME%
+				WHERE DepartmentId = %DID% AND IsEnabled = true
+				AND (CallTypeId = %CTID% OR CallTypeId IS NULL)
+				AND (CallPriority = %CPRI% OR CallPriority IS NULL)";
+			SelectCheckInRecordsByCallIdQuery = @"
+				SELECT *
+				FROM %SCHEMA%.%TABLENAME%
+				WHERE CallId = %CALLID%
+				ORDER BY Timestamp DESC";
+			SelectLastCheckInForUserOnCallQuery = @"
+				SELECT *
+				FROM %SCHEMA%.%TABLENAME%
+				WHERE CallId = %CALLID% AND UserId = %UID%
+				ORDER BY Timestamp DESC
+				LIMIT 1";
+			SelectLastCheckInForUnitOnCallQuery = @"
+				SELECT *
+				FROM %SCHEMA%.%TABLENAME%
+				WHERE CallId = %CALLID% AND UnitId = %UNITID%
+				ORDER BY Timestamp DESC
+				LIMIT 1";
+			SelectCheckInRecordsByDepartmentIdAndDateRangeQuery = @"
+				SELECT *
+				FROM %SCHEMA%.%TABLENAME%
+				WHERE DepartmentId = %DID%
+				AND Timestamp >= %STARTDATE% AND Timestamp <= %ENDDATE%
+				ORDER BY Timestamp DESC";
+			#endregion CheckIns
+
+			#region CalendarItemCheckIns
+			CalendarItemCheckInsTableName = "CalendarItemCheckIns";
+			SelectCalendarItemCheckInByItemAndUserQuery = @"
+				SELECT *
+				FROM %SCHEMA%.%TABLENAME%
+				WHERE CalendarItemId = %CALITEMID% AND UserId = %USERID%
+				LIMIT 1";
+			SelectCalendarItemCheckInsByItemIdQuery = @"
+				SELECT *
+				FROM %SCHEMA%.%TABLENAME%
+				WHERE CalendarItemId = %CALITEMID%
+				ORDER BY CheckInTime DESC";
+			SelectCalendarItemCheckInsByDeptDateRangeQuery = @"
+				SELECT *
+				FROM %SCHEMA%.%TABLENAME%
+				WHERE DepartmentId = %DID%
+				AND CheckInTime >= %STARTDATE% AND CheckInTime <= %ENDDATE%
+				ORDER BY CheckInTime DESC";
+			SelectCalendarItemCheckInsByUserDateRangeQuery = @"
+				SELECT *
+				FROM %SCHEMA%.%TABLENAME%
+				WHERE UserId = %USERID% AND DepartmentId = %DID%
+				AND CheckInTime >= %STARTDATE% AND CheckInTime <= %ENDDATE%
+				ORDER BY CheckInTime DESC";
+			#endregion CalendarItemCheckIns
+
 			#region User Defined Fields
 			UdfDefinitionsTableName = "UdfDefinitions";
 			UdfFieldsTableName = "UdfFields";

@@ -342,5 +342,15 @@ namespace Resgrid.Model.Services
 		/// <param name="departmentId">The department identifier of the resource being modified.</param>
 		/// <returns><c>true</c> if the user is the managing member or a department admin; otherwise <c>false</c>.</returns>
 		Task<bool> CanUserModifyDepartmentAsync(string userId, int departmentId);
+
+		Task<bool> CanUserCheckInToCalendarEventAsync(string userId, int calendarItemId);
+
+		Task<bool> CanUserAdminCheckInCalendarEventAsync(string userId, int calendarItemId, string targetUserId);
+
+		Task<bool> CanUserEditCalendarCheckInAsync(string userId, string checkInId);
+
+		Task<bool> CanUserDeleteCalendarCheckInAsync(string userId, string checkInId);
+
+		Task<bool> CanUserViewCalendarCheckInsAsync(string userId, int calendarItemId);
 	}
 }

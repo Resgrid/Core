@@ -75,6 +75,8 @@ namespace Resgrid.Model.Services
 
 		Task<bool> NotifyNewCalendarItemAsync(CalendarItem calendarItem);
 
+		Task<bool> NotifyUsersAboutCalendarItemAsync(CalendarItem calendarItem, List<string> userIds);
+
 		// ── External calendar sync ─────────────────────────────────────────────────
 
 		/// <summary>
@@ -104,5 +106,31 @@ namespace Resgrid.Model.Services
 		/// returns null if the token is invalid, expired, or has been regenerated.
 		/// </summary>
 		Task<(int DepartmentId, string UserId)?> ValidateCalendarFeedTokenAsync(string encryptedToken);
+
+		// ── Calendar Check-In Attendance ───────────────────────────────────────────
+
+		Task<CalendarItemCheckIn> CheckInToEventAsync(int calendarItemId, string userId, string note,
+			string adminUserId = null, string latitude = null, string longitude = null,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<CalendarItemCheckIn> CheckOutFromEventAsync(int calendarItemId, string userId,
+			string note = null, string adminUserId = null, string latitude = null, string longitude = null,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<CalendarItemCheckIn> UpdateCheckInTimesAsync(string checkInId, DateTime checkInTime,
+			DateTime? checkOutTime, string checkInNote, string checkOutNote,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<CalendarItemCheckIn> GetCheckInByCalendarItemAndUserAsync(int calendarItemId, string userId);
+
+		Task<CalendarItemCheckIn> GetCheckInByIdAsync(string checkInId);
+
+		Task<List<CalendarItemCheckIn>> GetCheckInsByCalendarItemAsync(int calendarItemId);
+
+		Task<bool> DeleteCheckInAsync(string checkInId, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<List<CalendarItemCheckIn>> GetCheckInsByDepartmentDateRangeAsync(int departmentId, DateTime start, DateTime end);
+
+		Task<List<CalendarItemCheckIn>> GetCheckInsByUserDateRangeAsync(string userId, int departmentId, DateTime start, DateTime end);
 	}
 }

@@ -179,6 +179,8 @@ namespace Resgrid.Model
 
 		public string IndoorMapFloorId { get; set; }
 
+		public bool CheckInTimersEnabled { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

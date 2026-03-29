@@ -119,4 +119,7 @@
   <data name="CallQuickTemplateType" xml:space="preserve">
     <value>Modèle rapide d'appel</value>
   </data>
+  <data name="EnableCheckInTimersLabel" xml:space="preserve">
+    <value>Activer les Minuteries de Pointage</value>
+  </data>
 </root>

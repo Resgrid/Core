@@ -7,6 +7,8 @@
 		public string Group { get; set; }
 		public string LoggedOn { get; set; }
 		public string LoggedBy { get; set; }
+		public string Narrative { get; set; }
+		public string SearchTerms { get; set; }
 		public bool CanDelete { get; set; }
 	}
 }

@@ -23,5 +23,7 @@ namespace Resgrid.Web.Areas.User.Models.Dispatch
 		public List<PersonName> Names { get; set; }
 		public List<CallReference> ChildCalls { get; set; }
 		public List<Contact> Contacts { get; set; }
+		public List<CheckInRecord> CheckInRecords { get; set; }
+		public List<ResolvedCheckInTimer> TimerConfigs { get; set; }
 	}
 }

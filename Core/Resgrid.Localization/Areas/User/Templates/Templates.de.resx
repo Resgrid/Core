@@ -119,4 +119,7 @@
   <data name="CallQuickTemplateType" xml:space="preserve">
     <value>Anruf-Schnellvorlage</value>
   </data>
+  <data name="EnableCheckInTimersLabel" xml:space="preserve">
+    <value>Check-In-Timer aktivieren</value>
+  </data>
 </root>

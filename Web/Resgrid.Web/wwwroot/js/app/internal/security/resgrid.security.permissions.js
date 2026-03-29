@@ -204,6 +204,36 @@ var resgrid;
                     $('#logCreateRolesDiv').hide();
                 }
                 initPermRoles("#logCreateRoles", 7);
+
+                // Delete Log
+                ////////////////////////////////////////////////////////
+                $('#DeleteLog').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=27&perm=' + val,
+                        type: 'GET'
+                    }).done(function (results) {
+                    });
+                    if ($("#DeleteLog").val() === "2") {
+                        $('#logDeleteNoRolesSpan').hide();
+                        $('#logDeleteRolesDiv').show();
+                    }
+                    else {
+                        $('#logDeleteNoRolesSpan').show();
+                        $('#logDeleteRolesDiv').hide();
+                    }
+                });
+                if ($("#DeleteLog").val() === "2") {
+                    $('#logDeleteNoRolesSpan').hide();
+                    $('#logDeleteRolesDiv').show();
+                }
+                else {
+                    $('#logDeleteNoRolesSpan').show();
+                    $('#logDeleteRolesDiv').hide();
+                }
+                initPermRoles("#logDeleteRoles", 27);
+                ////////////////////////////////////////////////////////
+
                 $('#CreateShift').change(function () {
                     var val = this.value;
                     $.ajax({
@@ -558,12 +588,12 @@ var resgrid;
                 ////////////////////////////////////////////////////////
 
 
-                // View Contacts
+                // View Contacts (ContactView = 20)
                 ////////////////////////////////////////////////////////
                 $('#ViewContacts').change(function () {
                     var val = this.value;
                     $.ajax({
-                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=19&perm=' + val + '&lockToGroup=false',
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=20&perm=' + val + '&lockToGroup=false',
                         type: 'GET'
                     }).done(function (results) {
                     });
@@ -584,16 +614,16 @@ var resgrid;
                     $('#viewContactsRolesSpan').show();
                     $('#viewContactsRolesDiv').hide();
                 }
-                initPermRoles("#viewContactsRoles", 19);
+                initPermRoles("#viewContactsRoles", 20);
                 ////////////////////////////////////////////////////////
 
 
-                // View Contacts
+                // Edit Contacts (ContactEdit = 19)
                 ////////////////////////////////////////////////////////
                 $('#EditContacts').change(function () {
                     var val = this.value;
                     $.ajax({
-                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=20&perm=' + val + '&lockToGroup=false',
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=19&perm=' + val + '&lockToGroup=false',
                         type: 'GET'
                     }).done(function (results) {
                     });
@@ -606,7 +636,7 @@ var resgrid;
                         $('#editContactsRolesDiv').hide();
                     }
                 });
-                if ($("#ViewContacts").val() === "2") {
+                if ($("#EditContacts").val() === "2") {
                     $('#editContactsRolesSpan').hide();
                     $('#editContactsRolesDiv').show();
                 }
@@ -614,7 +644,7 @@ var resgrid;
                     $('#editContactsRolesSpan').show();
                     $('#editContactsRolesDiv').hide();
                 }
-                initPermRoles("#editContactsRoles", 20);
+                initPermRoles("#editContactsRoles", 19);
                 ////////////////////////////////////////////////////////
 
 

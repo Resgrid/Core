@@ -124,6 +124,25 @@
 		RouteStopCheckedOut,
 		RouteStopSkipped,
 		RouteDeviationDetected,
-		RouteDeviationAcknowledged
+		RouteDeviationAcknowledged,
+		// Check-In Timers
+		CheckInTimerConfigCreated,
+		CheckInTimerConfigUpdated,
+		CheckInTimerConfigDeleted,
+		CheckInTimerOverrideCreated,
+		CheckInTimerOverrideUpdated,
+		CheckInTimerOverrideDeleted,
+		CheckInPerformed,
+		CheckInTimerEnabledOnCall,
+		CheckInTimerDisabledOnCall,
+		// Calendar Check-In Attendance
+		CalendarCheckInPerformed,
+		CalendarCheckOutPerformed,
+		CalendarCheckInUpdated,
+		CalendarCheckInDeleted,
+		CalendarAdminCheckInPerformed,
+		// Log operations
+		LogCreated,
+		LogDeleted
 	}
 }

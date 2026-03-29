@@ -609,6 +609,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			call.LoggedOn = DateTime.UtcNow;
 
+			if (newCallInput.CheckInTimersEnabled.HasValue)
+				call.CheckInTimersEnabled = newCallInput.CheckInTimersEnabled.Value;
+			else
+			{
+				var autoEnable = await _departmentSettingsService.GetCheckInTimersAutoEnableForNewCallsAsync(DepartmentId);
+				call.CheckInTimersEnabled = autoEnable;
+			}
+
 			if (!String.IsNullOrWhiteSpace(newCallInput.Type) && newCallInput.Type != "No Type")
 			{
 				var callTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
@@ -1669,6 +1677,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			callResult.ExternalId = call.ExternalIdentifier;
 			callResult.IncidentId = call.IncidentNumber;
 			callResult.Type = call.Type;
+
+			callResult.CheckInTimersEnabled = call.CheckInTimersEnabled;
 
 			callResult.Protocols = new List<CallProtocolResultData>();
 			if (protocol != null && protocol.Any())

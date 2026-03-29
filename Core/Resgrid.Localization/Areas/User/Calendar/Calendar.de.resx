@@ -251,4 +251,106 @@
   <data name="Types" xml:space="preserve">
     <value>Typen</value>
   </data>
+  <data name="CheckIn" xml:space="preserve">
+    <value>Einchecken</value>
+  </data>
+  <data name="CheckOut" xml:space="preserve">
+    <value>Auschecken</value>
+  </data>
+  <data name="CheckInTime" xml:space="preserve">
+    <value>Eincheckzeit</value>
+  </data>
+  <data name="CheckOutTime" xml:space="preserve">
+    <value>Auscheckzeit</value>
+  </data>
+  <data name="Duration" xml:space="preserve">
+    <value>Dauer</value>
+  </data>
+  <data name="CheckInSuccessful" xml:space="preserve">
+    <value>Einchecken erfolgreich</value>
+  </data>
+  <data name="CheckOutSuccessful" xml:space="preserve">
+    <value>Auschecken erfolgreich</value>
+  </data>
+  <data name="EditCheckInTimes" xml:space="preserve">
+    <value>Eincheckzeiten bearbeiten</value>
+  </data>
+  <data name="ManualOverride" xml:space="preserve">
+    <value>Manuelle Anpassung</value>
+  </data>
+  <data name="AdminCheckIn" xml:space="preserve">
+    <value>Einchecken durch Administrator</value>
+  </data>
+  <data name="CheckInOnBehalf" xml:space="preserve">
+    <value>Stellvertretend einchecken</value>
+  </data>
+  <data name="EventAttendanceReport" xml:space="preserve">
+    <value>Anwesenheitsbericht für Veranstaltungen</value>
+  </data>
+  <data name="TotalEventsAttended" xml:space="preserve">
+    <value>Gesamtzahl besuchter Veranstaltungen</value>
+  </data>
+  <data name="TotalHours" xml:space="preserve">
+    <value>Gesamtstunden</value>
+  </data>
+  <data name="NoCheckInRecord" xml:space="preserve">
+    <value>Kein Eincheckdatensatz gefunden</value>
+  </data>
+  <data name="AlreadyCheckedIn" xml:space="preserve">
+    <value>Bereits eingecheckt</value>
+  </data>
+  <data name="NotCheckedIn" xml:space="preserve">
+    <value>Nicht eingecheckt</value>
+  </data>
+  <data name="NotCheckedOut" xml:space="preserve">
+    <value>Not checked out</value>
+  </data>
+  <data name="LateRSVP" xml:space="preserve">
+    <value>Verspätete Anmeldung</value>
+  </data>
+  <data name="CustomTimes" xml:space="preserve">
+    <value>Benutzerdefinierte Zeiten</value>
+  </data>
+  <data name="Unauthorized" xml:space="preserve">
+    <value>Nicht autorisiert</value>
+  </data>
+  <data name="CheckInDeleted" xml:space="preserve">
+    <value>Eincheckdatensatz gelöscht</value>
+  </data>
+  <data name="CheckInNote" xml:space="preserve">
+    <value>Eincheck-Notiz</value>
+  </data>
+  <data name="CheckOutNote" xml:space="preserve">
+    <value>Auscheck-Notiz</value>
+  </data>
+  <data name="CheckedInBy" xml:space="preserve">
+    <value>Eingecheckt von</value>
+  </data>
+  <data name="CheckedOutBy" xml:space="preserve">
+    <value>Ausgecheckt von</value>
+  </data>
+  <data name="CheckInDisabled" xml:space="preserve">
+    <value>Deaktiviert</value>
+  </data>
+  <data name="CheckInSelfService" xml:space="preserve">
+    <value>Selbst Ein-/Auschecken</value>
+  </data>
+  <data name="CheckInAdminOnly" xml:space="preserve">
+    <value>Nur Ersteller &amp; Administratoren</value>
+  </data>
+  <data name="CheckInNotYetAvailable" xml:space="preserve">
+    <value>Das Einchecken öffnet 15 Minuten vor Veranstaltungsbeginn.</value>
+  </data>
+  <data name="Attendees" xml:space="preserve">
+    <value>Teilnehmer</value>
+  </data>
+  <data name="AttendeesAddedDirectly" xml:space="preserve">
+    <value>Ausgewählte Gruppen/Mitarbeiter werden als Teilnehmer hinzugefügt und direkt benachrichtigt.</value>
+  </data>
+  <data name="EntitiesToNotifyHelp" xml:space="preserve">
+    <value>Ausgewählte Gruppen/Mitarbeiter werden über diese Veranstaltung benachrichtigt.</value>
+  </data>
+  <data name="PrintSignupSheet" xml:space="preserve">
+    <value>Anmeldeliste drucken</value>
+  </data>
 </root>

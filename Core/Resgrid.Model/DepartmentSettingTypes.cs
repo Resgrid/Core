@@ -39,5 +39,6 @@
 		PersonnelOnUnitSetUnitStatus = 35,
 		Require2FAForAdmins = 36,
 		PaddleCustomerId = 37,
+		CheckInTimersAutoEnableForNewCalls = 38,
 	}
 }

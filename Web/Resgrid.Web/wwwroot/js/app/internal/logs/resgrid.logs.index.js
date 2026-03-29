@@ -18,6 +18,8 @@ var resgrid;
                         { data: 'Group', title: 'Group' },
                         { data: 'LoggedBy', title: 'Logged By' },
                         { data: 'LoggedOn', title: 'Logged On' },
+                        { data: 'Narrative', title: 'Narrative', visible: false, searchable: true },
+                        { data: 'SearchTerms', title: 'SearchTerms', visible: false, searchable: true },
                         {
                             data: 'LogId',
                             title: 'Actions',
@@ -26,7 +28,7 @@ var resgrid;
                             render: function (data, type, row) {
                                 var html = '<a class="btn btn-sm btn-primary" href="' + resgrid.absoluteBaseUrl + '/User/Logs/View?logId=' + data + '">View</a> ';
                                 if (row.CanDelete) {
-                                    html += '<a class="btn btn-sm btn-danger" href="' + resgrid.absoluteBaseUrl + '/User/Logs/Delete?logId=' + data + '">Delete</a>';
+                                    html += '<a class="btn btn-sm btn-danger" href="' + resgrid.absoluteBaseUrl + '/User/Logs/DeleteWorkLog?logId=' + data + '">Delete</a>';
                                 }
                                 return html;
                             }

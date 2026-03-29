@@ -105,6 +105,11 @@ public class GetAllCalendarItemResultData
 	public int SignupType { get; set; }
 
 	/// <summary>
+	/// Check-in type: 0=Disabled, 1=SelfCheckIn, 2=AdminOnly
+	/// </summary>
+	public int CheckInType { get; set; }
+
+	/// <summary>
 	/// Reminder type
 	/// </summary>
 	public int Reminder { get; set; }

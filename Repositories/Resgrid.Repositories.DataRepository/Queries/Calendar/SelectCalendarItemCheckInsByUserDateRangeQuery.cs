@@ -1,0 +1,33 @@
+using Resgrid.Model;
+using Resgrid.Model.Repositories.Queries.Contracts;
+using Resgrid.Repositories.DataRepository.Configs;
+using Resgrid.Repositories.DataRepository.Extensions;
+
+namespace Resgrid.Repositories.DataRepository.Queries.Calendar
+{
+	public class SelectCalendarItemCheckInsByUserDateRangeQuery : ISelectQuery
+	{
+		private readonly SqlConfiguration _sqlConfiguration;
+		public SelectCalendarItemCheckInsByUserDateRangeQuery(SqlConfiguration sqlConfiguration)
+		{
+			_sqlConfiguration = sqlConfiguration;
+		}
+
+		public string GetQuery()
+		{
+			var query = _sqlConfiguration.SelectCalendarItemCheckInsByUserDateRangeQuery
+				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
+					_sqlConfiguration.CalendarItemCheckInsTableName,
+					_sqlConfiguration.ParameterNotation,
+					new string[] { "%USERID%", "%DID%", "%STARTDATE%", "%ENDDATE%" },
+					new string[] { "UserId", "DepartmentId", "StartDate", "EndDate" });
+
+			return query;
+		}
+
+		public string GetQuery<TEntity>() where TEntity : class, IEntity
+		{
+			return GetQuery();
+		}
+	}
+}

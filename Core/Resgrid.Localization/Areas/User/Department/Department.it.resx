@@ -458,4 +458,133 @@
   <data name="PersonnelOnUnitSetUnitStatusHelp" xml:space="preserve">
     <value>When a unit submits a status and users are setup on roles, the users status will be set to On Unit.</value>
   </data>
+  <data name="CallDispatchSettingsHeader" xml:space="preserve">
+    <value>Impostazioni Chiamate e Invio</value>
+  </data>
+  <data name="CallDispatchSettingsNav" xml:space="preserve">
+    <value>Chiamate e Invio</value>
+  </data>
+  <data name="SavedCallDispatchSettings" xml:space="preserve">
+    <value>Impostazioni chiamate e invio salvate con successo.</value>
+  </data>
+  <data name="CheckInTimerSettingsHeader" xml:space="preserve">
+    <value>Impostazioni Timer di Registrazione</value>
+  </data>
+  <data name="CheckInTimerGeneralHeader" xml:space="preserve">
+    <value>Impostazioni Generali</value>
+  </data>
+  <data name="CheckInTimerAutoEnableLabel" xml:space="preserve">
+    <value>Abilita automaticamente i timer di registrazione per le nuove chiamate</value>
+  </data>
+  <data name="CheckInTimerAutoEnableHelp" xml:space="preserve">
+    <value>Quando abilitato, tutte le nuove chiamate avranno automaticamente i timer di registrazione attivati.</value>
+  </data>
+  <data name="CheckInTimerDefaultConfigsHeader" xml:space="preserve">
+    <value>Configurazioni Timer Predefinite</value>
+  </data>
+  <data name="CheckInTimerDefaultConfigsHelp" xml:space="preserve">
+    <value>Questi definiscono gli intervalli di registrazione predefiniti per ogni tipo di obiettivo.</value>
+  </data>
+  <data name="CheckInTimerOverridesHeader" xml:space="preserve">
+    <value>Sovrascritture per Tipo di Chiamata / Priorit&#xE0;</value>
+  </data>
+  <data name="CheckInTimerOverridesHelp" xml:space="preserve">
+    <value>Le sovrascritture hanno la precedenza sui timer predefiniti quando una chiamata corrisponde al tipo e/o alla priorit&#xE0; specificati.</value>
+  </data>
+  <data name="CheckInTimerTargetTypeLabel" xml:space="preserve">
+    <value>Tipo di Obiettivo</value>
+  </data>
+  <data name="CheckInTimerUnitTypeLabel" xml:space="preserve">
+    <value>Tipo di Unit&#xE0;</value>
+  </data>
+  <data name="CheckInTimerDurationLabel" xml:space="preserve">
+    <value>Durata (minuti)</value>
+  </data>
+  <data name="CheckInTimerWarningLabel" xml:space="preserve">
+    <value>Soglia di Avviso (minuti)</value>
+  </data>
+  <data name="CheckInTimerEnabledLabel" xml:space="preserve">
+    <value>Abilitato</value>
+  </data>
+  <data name="CheckInTimerCallTypeLabel" xml:space="preserve">
+    <value>ID Tipo di Chiamata</value>
+  </data>
+  <data name="CheckInTimerCallPriorityLabel" xml:space="preserve">
+    <value>Priorit&#xE0; di Chiamata</value>
+  </data>
+  <data name="CheckInTimerAddConfigButton" xml:space="preserve">
+    <value>Aggiungi Configurazione Timer</value>
+  </data>
+  <data name="CheckInTimerAddOverrideButton" xml:space="preserve">
+    <value>Aggiungi Sovrascrittura</value>
+  </data>
+  <data name="CheckInTimerAddNewDefault" xml:space="preserve">
+    <value>Aggiungi Nuovo Timer Predefinito</value>
+  </data>
+  <data name="CheckInTimerAddNewOverride" xml:space="preserve">
+    <value>Aggiungi Nuova Sovrascrittura</value>
+  </data>
+  <data name="CheckInTimerNoneOption" xml:space="preserve">
+    <value>-- Nessuno --</value>
+  </data>
+  <data name="CheckInTimerAnyOption" xml:space="preserve">
+    <value>-- Qualsiasi --</value>
+  </data>
+  <data name="CheckInTimerTargetPersonnel" xml:space="preserve">
+    <value>Personale</value>
+  </data>
+  <data name="CheckInTimerTargetUnitType" xml:space="preserve">
+    <value>Tipo di Unit&#xE0;</value>
+  </data>
+  <data name="CheckInTimerTargetIC" xml:space="preserve">
+    <value>CI (Comandante dell'Incidente)</value>
+  </data>
+  <data name="CheckInTimerTargetPAR" xml:space="preserve">
+    <value>PAR (Responsabilit&#xE0; del Personale)</value>
+  </data>
+  <data name="CheckInTimerTargetHazmat" xml:space="preserve">
+    <value>Esposizione a Materiali Pericolosi</value>
+  </data>
+  <data name="CheckInTimerTargetSectorRotation" xml:space="preserve">
+    <value>Rotazione del Settore</value>
+  </data>
+  <data name="CheckInTimerTargetRehab" xml:space="preserve">
+    <value>Riabilitazione</value>
+  </data>
+  <data name="CheckInTimerLeaveBlankForAny" xml:space="preserve">
+    <value>lasciare vuoto per qualsiasi</value>
+  </data>
+  <data name="CheckInTimerYes" xml:space="preserve">
+    <value>S&#xEC;</value>
+  </data>
+  <data name="CheckInTimerNo" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="CheckInTimerDeleteConfirm" xml:space="preserve">
+    <value>Eliminare questa configurazione del timer?</value>
+  </data>
+  <data name="CheckInTimerOverrideDeleteConfirm" xml:space="preserve">
+    <value>Eliminare questa sovrascrittura?</value>
+  </data>
+  <data name="CheckInTimerSourceDefault" xml:space="preserve">
+    <value>Predefinito</value>
+  </data>
+  <data name="CheckInTimerSourceOverride" xml:space="preserve">
+    <value>Sovrascrittura</value>
+  </data>
+  <data name="CheckInTimerPriorityLow" xml:space="preserve">
+    <value>Bassa</value>
+  </data>
+  <data name="CheckInTimerPriorityMedium" xml:space="preserve">
+    <value>Media</value>
+  </data>
+  <data name="CheckInTimerPriorityHigh" xml:space="preserve">
+    <value>Alta</value>
+  </data>
+  <data name="CheckInTimerPriorityEmergency" xml:space="preserve">
+    <value>Emergenza</value>
+  </data>
+  <data name="CheckInTimerSaveGeneral" xml:space="preserve">
+    <value>Salva Impostazioni Generali</value>
+  </data>
 </root>

@@ -119,4 +119,7 @@
   <data name="CallQuickTemplateType" xml:space="preserve">
     <value>Modello rapido chiamata</value>
   </data>
+  <data name="EnableCheckInTimersLabel" xml:space="preserve">
+    <value>Abilita Timer di Registrazione</value>
+  </data>
 </root>

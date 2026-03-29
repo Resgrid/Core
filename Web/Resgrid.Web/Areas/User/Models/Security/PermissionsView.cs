@@ -26,6 +26,9 @@ namespace Resgrid.Web.Areas.User.Models.Security
 		public int CreateLog { get; set; }
 		public SelectList CreateLogPermissions { get; set; }
 
+		public int DeleteLog { get; set; }
+		public SelectList DeleteLogPermissions { get; set; }
+
 		public int CreateShift { get; set; }
 		public SelectList CreateShiftPermissions { get; set; }
 

@@ -68,19 +68,19 @@
                                     <div class="icon">
                                         <i class="@doc.GetIconType()"></i>
                                     </div>
-                                    <div class="file-name">
-                                        @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || doc.UserId == Model.UserId)
-                                        {
-                                            <a asp-controller="Documents" asp-action="EditDocument" asp-route-area="User" asp-route-documentId="@doc.DocumentId">@doc.Name</a>
-                                        }
-                                        else
-                                        {
-                                            @doc.Name
-                                        }
-                                        <br />
-                                        <small>@commonLocalizer["Added"]: @doc.AddedOn.TimeConverterToString(Model.Department)</small>
-                                    </div>
                                 </a>
+                                <div class="file-name">
+                                    @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || doc.UserId == Model.UserId)
+                                    {
+                                        <a asp-controller="Documents" asp-action="EditDocument" asp-route-area="User" asp-route-documentId="@doc.DocumentId">@doc.Name</a>
+                                    }
+                                    else
+                                    {
+                                        <a asp-controller="Documents" asp-action="GetDocument" asp-route-area="User" asp-route-documentId="@doc.DocumentId">@doc.Name</a>
+                                    }
+                                    <br />
+                                    <small>@commonLocalizer["Added"]: @doc.AddedOn.TimeConverterToString(Model.Department)</small>
+                                </div>
                                 @if (ClaimsAuthorizationHelper.CanDeleteDocument() && (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || doc.UserId == Model.UserId))
                                 {
                                     <form asp-controller="Documents" asp-action="DeleteDocument" asp-route-area="User" method="post"

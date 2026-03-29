@@ -12,22 +12,32 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 			Execute.Sql("DROP INDEX IF EXISTS uq_checkintimeroverrides_dept_call_target_unit;");
 
 			// Remove duplicate rows that may exist from before the NULLS NOT DISTINCT
-			// constraint was applied (keep the row with the latest id per group)
+			// constraint was applied (keep the most recently modified row per group)
 			Execute.Sql(@"
 				DELETE FROM checkintimerconfigs
-				WHERE checkintimerconfigid NOT IN (
-					SELECT MAX(checkintimerconfigid)
-					FROM checkintimerconfigs
-					GROUP BY departmentid, timertargettype, COALESCE(unittypeid, -1)
+				WHERE checkintimerconfigid IN (
+					SELECT checkintimerconfigid FROM (
+						SELECT checkintimerconfigid,
+							ROW_NUMBER() OVER (
+								PARTITION BY departmentid, timertargettype, COALESCE(unittypeid, -1)
+								ORDER BY COALESCE(updatedon, createdon) DESC, checkintimerconfigid DESC
+							) AS rn
+						FROM checkintimerconfigs
+					) sub WHERE rn > 1
 				);
 			");
 
 			Execute.Sql(@"
 				DELETE FROM checkintimeroverrides
-				WHERE checkintimeroverrideid NOT IN (
-					SELECT MAX(checkintimeroverrideid)
-					FROM checkintimeroverrides
-					GROUP BY departmentid, COALESCE(calltypeid, -1), COALESCE(callpriority, -1), timertargettype, COALESCE(unittypeid, -1)
+				WHERE checkintimeroverrideid IN (
+					SELECT checkintimeroverrideid FROM (
+						SELECT checkintimeroverrideid,
+							ROW_NUMBER() OVER (
+								PARTITION BY departmentid, COALESCE(calltypeid, -1), COALESCE(callpriority, -1), timertargettype, COALESCE(unittypeid, -1)
+								ORDER BY COALESCE(updatedon, createdon) DESC, checkintimeroverrideid DESC
+							) AS rn
+						FROM checkintimeroverrides
+					) sub WHERE rn > 1
 				);
 			");
 

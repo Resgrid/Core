@@ -305,7 +305,7 @@
                                                 }
                                             </td>
                                             <td class="text-right">
-                                                @if (attendee.UserId == ClaimsAuthorizationHelper.GetUserId() && Model.CalendarItem.Start >= DateTime.UtcNow)
+                                                @if (string.Equals(attendee.UserId, ClaimsAuthorizationHelper.GetUserId(), StringComparison.OrdinalIgnoreCase) && Model.CalendarItem.Start >= DateTime.UtcNow)
                                                 {
                                                     <a title="@localizer["RemoveHelp"]" class="btn btn-xs btn-danger"
                                                        href="@Url.Action("RemoveFromEvent", "Calendar", new { area = "User", id = attendee.CalendarItemAttendeeId })">
@@ -534,7 +534,7 @@
     @if (Model.IsAdmin && Model.CalendarItem.Attendees != null && Model.CalendarItem.Attendees.Any())
     {
         var uncheckedAttendees = Model.CalendarItem.Attendees
-            .Where(a => Model.CheckIns == null || !Model.CheckIns.Any(c => c.UserId == a.UserId))
+            .Where(a => Model.CheckIns == null || !Model.CheckIns.Any(c => string.Equals(c.UserId, a.UserId, StringComparison.OrdinalIgnoreCase)))
             .ToList();
         if (uncheckedAttendees.Any())
         {

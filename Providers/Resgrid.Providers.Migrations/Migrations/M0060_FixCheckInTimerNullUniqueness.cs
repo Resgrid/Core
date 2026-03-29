@@ -12,13 +12,13 @@ namespace Resgrid.Providers.Migrations.Migrations
 			Execute.Sql("DROP INDEX IF EXISTS UQ_CheckInTimerOverrides_Dept_Call_Target_Unit ON CheckInTimerOverrides;");
 
 			// Remove duplicate rows that may have accumulated while the filtered indexes
-			// allowed multiple NULL entries (keep the row with the latest CheckInTimerConfigId per group)
+			// allowed multiple NULL entries (keep the most recently modified row per group)
 			Execute.Sql(@"
 				WITH cte AS (
 					SELECT CheckInTimerConfigId,
 						ROW_NUMBER() OVER (
 							PARTITION BY DepartmentId, TimerTargetType, ISNULL(UnitTypeId, -1)
-							ORDER BY CheckInTimerConfigId DESC
+							ORDER BY ISNULL(UpdatedOn, CreatedOn) DESC, CheckInTimerConfigId DESC
 						) AS rn
 					FROM CheckInTimerConfigs
 				)
@@ -30,7 +30,7 @@ namespace Resgrid.Providers.Migrations.Migrations
 					SELECT CheckInTimerOverrideId,
 						ROW_NUMBER() OVER (
 							PARTITION BY DepartmentId, ISNULL(CallTypeId, -1), ISNULL(CallPriority, -1), TimerTargetType, ISNULL(UnitTypeId, -1)
-							ORDER BY CheckInTimerOverrideId DESC
+							ORDER BY ISNULL(UpdatedOn, CreatedOn) DESC, CheckInTimerOverrideId DESC
 						) AS rn
 					FROM CheckInTimerOverrides
 				)

@@ -481,6 +481,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var log = await _workLogsService.GetWorkLogByIdAsync(logId);
 
+			if (log == null)
+				return NotFound();
+
 			var auditEvent = new AuditEvent();
 			auditEvent.DepartmentId = DepartmentId;
 			auditEvent.UserId = UserId;

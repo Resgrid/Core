@@ -370,6 +370,8 @@
   <data name="PwdErrorNoLowercase" xml:space="preserve"><value>Password must contain at least one lowercase letter.</value></data>
   <data name="PwdErrorTooShort" xml:space="preserve"><value>Password must be at least {0} characters long.</value></data>
   <data name="PwdMinLengthTooLow" xml:space="preserve"><value>Minimum password length cannot be less than the system default of 8 characters.</value></data>
+  <data name="PermDeleteLogLabel" xml:space="preserve"><value>Delete Log Entries</value></data>
+  <data name="PermDeleteLogNote" xml:space="preserve"><value>Who in your department is allowed to delete log entries</value></data>
 </root>
 
 

@@ -44,7 +44,7 @@
 				'<td><strong>' + escapeHtml(t.TargetName || t.TargetTypeName) + '</strong><br/><small class="text-muted">' + escapeHtml(t.TargetTypeName) + '</small></td>' +
 				'<td class="timer-remaining" data-index="' + i + '">' + remaining + '</td>' +
 				'<td class="timer-status" data-index="' + i + '">' + statusBadge + '</td>' +
-				'<td><button class="btn btn-xs btn-primary" onclick="showCheckInDialog(' + t.TargetType + ', ' + (t.UnitId || 'null') + ')">Check In</button></td>' +
+				'<td><button class="btn btn-xs btn-primary btn-checkin-dialog" data-target-type="' + parseInt(t.TargetType) + '" data-unit-id="' + (t.UnitId != null ? parseInt(t.UnitId) : '') + '">Check In</button></td>' +
 				'</tr>';
 			tbody.append(row);
 		}
@@ -151,6 +151,16 @@
 		$('#checkInNote').val('');
 		$('#checkInModal').modal('show');
 	};
+
+	// Delegated click handler for check-in buttons
+	$(document).on('click', '.btn-checkin-dialog', function () {
+		var targetType = parseInt($(this).data('target-type'));
+		var unitIdRaw = $(this).data('unit-id');
+		var unitId = (unitIdRaw !== '' && unitIdRaw != null) ? parseInt(unitIdRaw) : null;
+		if (!isNaN(targetType)) {
+			showCheckInDialog(targetType, unitId);
+		}
+	});
 
 	// Wire up modal submit button
 	$(document).on('click', '#checkInSubmitBtn', function () {

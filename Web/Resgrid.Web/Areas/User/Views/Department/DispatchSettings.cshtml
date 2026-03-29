@@ -436,7 +436,7 @@
             var $hidden = $('#' + hiddenId);
 
             $statesSelect.select2({
-                placeholder: '@localizer["CheckInTimerActiveStatesLabel"]',
+                placeholder: '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["CheckInTimerActiveStatesLabel"].Value))',
                 allowClear: true,
                 width: '300px'
             });

@@ -402,7 +402,11 @@
                             </button>
                         }
                     }
-                    else if (Model.UserCheckIn == null && (!checkInWindowOpen || eventIsPast) && !adminBypassWindow)
+                    else if (Model.UserCheckIn == null && eventIsPast && !adminBypassWindow)
+                    {
+                        <p class="text-muted"><i class="fa fa-clock-o"></i> @localizer["CheckInClosed"]</p>
+                    }
+                    else if (Model.UserCheckIn == null && !checkInWindowOpen && !adminBypassWindow)
                     {
                         <p class="text-muted"><i class="fa fa-clock-o"></i> @localizer["CheckInNotYetAvailable"]</p>
                     }
@@ -472,12 +476,12 @@
                                                 @if (!string.IsNullOrWhiteSpace(ci.CheckInByUserId))
                                                 {
                                                     var byName = Model.PersonnelNames?.FirstOrDefault(x => string.Equals(x.UserId, ci.CheckInByUserId, StringComparison.OrdinalIgnoreCase));
-                                                    <br /><small class="text-muted">@localizer["CheckIn"] by @(byName?.Name ?? ci.CheckInByUserId)</small>
+                                                    <br /><small class="text-muted">@localizer["CheckInBy", byName?.Name ?? ci.CheckInByUserId]</small>
                                                 }
                                                 @if (!string.IsNullOrWhiteSpace(ci.CheckOutByUserId))
                                                 {
                                                     var byName = Model.PersonnelNames?.FirstOrDefault(x => string.Equals(x.UserId, ci.CheckOutByUserId, StringComparison.OrdinalIgnoreCase));
-                                                    <br /><small class="text-muted">@localizer["CheckOut"] by @(byName?.Name ?? ci.CheckOutByUserId)</small>
+                                                    <br /><small class="text-muted">@localizer["CheckOutBy", byName?.Name ?? ci.CheckOutByUserId]</small>
                                                 }
                                             </td>
                                             <td><small>@ci.CheckInTime.TimeConverterToString(Model.Department)</small></td>

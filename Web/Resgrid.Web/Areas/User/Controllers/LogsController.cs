@@ -489,13 +489,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			auditEvent.UserId = UserId;
 			auditEvent.Before = log.CloneJsonToString();
 			auditEvent.Type = AuditLogTypes.LogDeleted;
-			auditEvent.Successful = true;
 			auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
 			auditEvent.ServerName = Environment.MachineName;
 			auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
-			_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 			await _workLogsService.DeleteLogAsync(logId, cancellationToken);
+
+			auditEvent.Successful = true;
+			_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 			return RedirectToAction("Index");
 		}

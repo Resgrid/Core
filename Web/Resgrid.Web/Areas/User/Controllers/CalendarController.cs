@@ -661,6 +661,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (calendarItem == null || calendarItem.DepartmentId != DepartmentId)
 				return Unauthorized();
 
+			if (!await _authorizationService.CanUserModifyCalendarEntryAsync(UserId, calendarItemId))
+				return Unauthorized();
+
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 

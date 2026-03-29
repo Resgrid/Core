@@ -402,4 +402,13 @@
   <data name="PrintSignupSheet" xml:space="preserve">
     <value>Print Signup Sheet</value>
   </data>
+  <data name="CheckInClosed" xml:space="preserve">
+    <value>Check-in is no longer available for this event.</value>
+  </data>
+  <data name="CheckInBy" xml:space="preserve">
+    <value>Checked in by {0}</value>
+  </data>
+  <data name="CheckOutBy" xml:space="preserve">
+    <value>Checked out by {0}</value>
+  </data>
 </root>

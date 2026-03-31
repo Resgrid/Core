@@ -328,6 +328,42 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.CallVideoFeedsController">
+            <summary>
+            Video feeds attached to calls for live video monitoring during incidents
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallVideoFeedsController.GetCallVideoFeeds(System.String)">
+            <summary>
+            Get video feeds for a call
+            </summary>
+            <param name="callId">CallId of the call you want to get video feeds for</param>
+            <returns></returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallVideoFeedsController.SaveCallVideoFeed(Resgrid.Web.Services.Models.v4.CallVideoFeeds.SaveCallVideoFeedInput,System.Threading.CancellationToken)">
+            <summary>
+            Saves a video feed to a call
+            </summary>
+            <param name="input">Video feed data</param>
+            <param name="cancellationToken">The cancellation token</param>
+            <returns>ActionResult.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallVideoFeedsController.EditCallVideoFeed(Resgrid.Web.Services.Models.v4.CallVideoFeeds.EditCallVideoFeedInput,System.Threading.CancellationToken)">
+            <summary>
+            Updates an existing video feed
+            </summary>
+            <param name="input">Video feed data with Id</param>
+            <param name="cancellationToken">The cancellation token</param>
+            <returns>ActionResult.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallVideoFeedsController.DeleteCallVideoFeed(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Soft deletes a video feed
+            </summary>
+            <param name="callVideoFeedId">The video feed Id to delete</param>
+            <param name="cancellationToken">The cancellation token</param>
+            <returns>ActionResult.</returns>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CheckInTimersController">
             <summary>
             Check-in timer operations for call accountability

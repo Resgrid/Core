@@ -139,6 +139,9 @@ namespace Resgrid.Model
 		[ProtoMember(32)]
 		public virtual ICollection<CallContact> Contacts { get; set; }
 
+		[ProtoMember(33)]
+		public virtual ICollection<CallVideoFeed> VideoFeeds { get; set; }
+
 		public string ContactName { get; set; }
 
 		public string ContactNumber { get; set; }
@@ -199,7 +202,7 @@ namespace Resgrid.Model
 		public int IdType => 0;
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "ReportingUser", "ClosedByUser", "Department", "Dispatches", "Attachments", "CallNotes", "GroupDispatches", "UnitDispatches", "RoleDispatches", "Protocols", "ShortenedAudioUrl", "ShortenedCallUrl", "CallPriority", "PreviousDispatchCount", "References", "Contacts" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "ReportingUser", "ClosedByUser", "Department", "Dispatches", "Attachments", "CallNotes", "GroupDispatches", "UnitDispatches", "RoleDispatches", "Protocols", "ShortenedAudioUrl", "ShortenedCallUrl", "CallPriority", "PreviousDispatchCount", "References", "Contacts", "VideoFeeds" };
 
 		public string GetIdentifier()
 		{

@@ -962,10 +962,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
 			model.Protocols = await _protocolsService.GetAllProtocolsForDepartmentAsync(DepartmentId);
 			model.ChildCalls = await _callsService.GetChildCallsForCallAsync(callId);
-			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true, true, true);
+			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true, true, true, true);
 
 			if (model.Stations == null)
 				model.Stations = new List<DepartmentGroup>();
+
+			model.VideoFeeds = model.Call.VideoFeeds != null
+				? model.Call.VideoFeeds.Where(f => !f.IsDeleted).ToList()
+				: new List<CallVideoFeed>();
 
 			if (!String.IsNullOrEmpty(model.Call.GeoLocationData))
 			{

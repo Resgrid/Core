@@ -524,4 +524,85 @@
   <data name="CheckInTimerSource" xml:space="preserve">
     <value>Джерело</value>
   </data>
+  <data name="VideoFeeds" xml:space="preserve">
+    <value>Відеотрансляції</value>
+  </data>
+  <data name="AddVideoFeed" xml:space="preserve">
+    <value>Додати Відеотрансляцію</value>
+  </data>
+  <data name="EditVideoFeed" xml:space="preserve">
+    <value>Редагувати Відеотрансляцію</value>
+  </data>
+  <data name="DeleteVideoFeed" xml:space="preserve">
+    <value>Видалити Відеотрансляцію</value>
+  </data>
+  <data name="VideoFeedName" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="VideoFeedUrl" xml:space="preserve">
+    <value>URL</value>
+  </data>
+  <data name="VideoFeedType" xml:space="preserve">
+    <value>Тип Трансляції</value>
+  </data>
+  <data name="VideoFeedFormat" xml:space="preserve">
+    <value>Формат Трансляції</value>
+  </data>
+  <data name="VideoFeedDescription" xml:space="preserve">
+    <value>Опис</value>
+  </data>
+  <data name="VideoFeedStatus" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="VideoFeedLocation" xml:space="preserve">
+    <value>Місцезнаходження</value>
+  </data>
+  <data name="VideoFeedAddedBy" xml:space="preserve">
+    <value>Додано</value>
+  </data>
+  <data name="VideoFeedAddedOn" xml:space="preserve">
+    <value>Дата додавання</value>
+  </data>
+  <data name="VideoFeedSortOrder" xml:space="preserve">
+    <value>Порядок сортування</value>
+  </data>
+  <data name="VideoFeedActive" xml:space="preserve">
+    <value>Активний</value>
+  </data>
+  <data name="VideoFeedInactive" xml:space="preserve">
+    <value>Неактивний</value>
+  </data>
+  <data name="VideoFeedError" xml:space="preserve">
+    <value>Помилка</value>
+  </data>
+  <data name="VideoFeedDrone" xml:space="preserve">
+    <value>Дрон</value>
+  </data>
+  <data name="VideoFeedFixedCamera" xml:space="preserve">
+    <value>Стаціонарна Камера</value>
+  </data>
+  <data name="VideoFeedBodyCam" xml:space="preserve">
+    <value>Натільна Камера</value>
+  </data>
+  <data name="VideoFeedTrafficCam" xml:space="preserve">
+    <value>Камера Дорожнього Руху</value>
+  </data>
+  <data name="VideoFeedWeatherCam" xml:space="preserve">
+    <value>Метеокамера</value>
+  </data>
+  <data name="VideoFeedSatellite" xml:space="preserve">
+    <value>Супутникова Трансляція</value>
+  </data>
+  <data name="VideoFeedWebCam" xml:space="preserve">
+    <value>Веб-камера</value>
+  </data>
+  <data name="VideoFeedOther" xml:space="preserve">
+    <value>Інше</value>
+  </data>
+  <data name="ConfirmDeleteVideoFeed" xml:space="preserve">
+    <value>Ви впевнені, що хочете видалити цю відеотрансляцію?</value>
+  </data>
+  <data name="NoVideoFeeds" xml:space="preserve">
+    <value>До цього виклику не додано жодних відеотрансляцій.</value>
+  </data>
 </root>

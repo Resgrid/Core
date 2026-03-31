@@ -133,6 +133,7 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<CallDispatchUnitRepository>().As<ICallDispatchUnitRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CallDispatchRoleRepository>().As<ICallDispatchRoleRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CallNotesRepository>().As<ICallNotesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CallVideoFeedRepository>().As<ICallVideoFeedRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentCallPriorityRepository>().As<IDepartmentCallPriorityRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CallProtocolsRepository>().As<ICallProtocolsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<TrainingQuestionRepository>().As<ITrainingQuestionRepository>().InstancePerLifetimeScope();

@@ -524,4 +524,85 @@
   <data name="CheckInTimerSource" xml:space="preserve">
     <value>Source</value>
   </data>
+  <data name="VideoFeeds" xml:space="preserve">
+    <value>Flux Vidéo</value>
+  </data>
+  <data name="AddVideoFeed" xml:space="preserve">
+    <value>Ajouter un Flux Vidéo</value>
+  </data>
+  <data name="EditVideoFeed" xml:space="preserve">
+    <value>Modifier le Flux Vidéo</value>
+  </data>
+  <data name="DeleteVideoFeed" xml:space="preserve">
+    <value>Supprimer le Flux Vidéo</value>
+  </data>
+  <data name="VideoFeedName" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="VideoFeedUrl" xml:space="preserve">
+    <value>URL</value>
+  </data>
+  <data name="VideoFeedType" xml:space="preserve">
+    <value>Type de Flux</value>
+  </data>
+  <data name="VideoFeedFormat" xml:space="preserve">
+    <value>Format de Flux</value>
+  </data>
+  <data name="VideoFeedDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="VideoFeedStatus" xml:space="preserve">
+    <value>Statut</value>
+  </data>
+  <data name="VideoFeedLocation" xml:space="preserve">
+    <value>Emplacement</value>
+  </data>
+  <data name="VideoFeedAddedBy" xml:space="preserve">
+    <value>Ajouté par</value>
+  </data>
+  <data name="VideoFeedAddedOn" xml:space="preserve">
+    <value>Ajouté le</value>
+  </data>
+  <data name="VideoFeedSortOrder" xml:space="preserve">
+    <value>Ordre de tri</value>
+  </data>
+  <data name="VideoFeedActive" xml:space="preserve">
+    <value>Actif</value>
+  </data>
+  <data name="VideoFeedInactive" xml:space="preserve">
+    <value>Inactif</value>
+  </data>
+  <data name="VideoFeedError" xml:space="preserve">
+    <value>Erreur</value>
+  </data>
+  <data name="VideoFeedDrone" xml:space="preserve">
+    <value>Drone</value>
+  </data>
+  <data name="VideoFeedFixedCamera" xml:space="preserve">
+    <value>Caméra Fixe</value>
+  </data>
+  <data name="VideoFeedBodyCam" xml:space="preserve">
+    <value>Caméra Corporelle</value>
+  </data>
+  <data name="VideoFeedTrafficCam" xml:space="preserve">
+    <value>Caméra de Circulation</value>
+  </data>
+  <data name="VideoFeedWeatherCam" xml:space="preserve">
+    <value>Caméra Météo</value>
+  </data>
+  <data name="VideoFeedSatellite" xml:space="preserve">
+    <value>Flux Satellite</value>
+  </data>
+  <data name="VideoFeedWebCam" xml:space="preserve">
+    <value>Webcam</value>
+  </data>
+  <data name="VideoFeedOther" xml:space="preserve">
+    <value>Autre</value>
+  </data>
+  <data name="ConfirmDeleteVideoFeed" xml:space="preserve">
+    <value>Êtes-vous sûr de vouloir supprimer ce flux vidéo ?</value>
+  </data>
+  <data name="NoVideoFeeds" xml:space="preserve">
+    <value>Aucun flux vidéo n'a été ajouté à cet appel.</value>
+  </data>
 </root>

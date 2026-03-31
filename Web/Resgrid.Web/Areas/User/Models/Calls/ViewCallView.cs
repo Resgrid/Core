@@ -27,6 +27,7 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		public List<DispatchProtocol> Protocols { get; set; }
 		public List<CallReference> ChildCalls { get; set; }
 		public List<Contact> Contacts { get; set; }
+		public List<CallVideoFeed> VideoFeeds { get; set; }
 
 		public string IsMapTabActive()
 		{

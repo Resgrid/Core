@@ -330,6 +330,9 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectFlaggedCallNotesByDepartmentIdQuery { get; set; }
 		public string SelectFlaggedCallImagesByDepartmentIdQuery { get; set; }
 		public string SelectFlaggedCallFilesByDepartmentIdQuery { get; set; }
+		public string CallVideoFeedsTable { get; set; }
+		public string SelectCallVideoFeedsByCallIdQuery { get; set; }
+		public string SelectCallVideoFeedsByDepartmentIdQuery { get; set; }
 		#endregion Calls
 
 		#region Dispatch Protocols

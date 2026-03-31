@@ -42,6 +42,7 @@ namespace Resgrid.Services
 		private readonly ICallReferencesRepository _callReferencesRepository;
 		private readonly ICallContactsRepository _callContactsRepository;
 		private readonly IIndoorMapService _indoorMapService;
+		private readonly ICallVideoFeedRepository _callVideoFeedRepository;
 
 		public CallsService(ICallsRepository callsRepository, ICommunicationService communicationService,
 			ICallDispatchesRepository callDispatchesRepository, ICallTypesRepository callTypesRepository, ICallEmailFactory callEmailFactory,
@@ -51,7 +52,7 @@ namespace Resgrid.Services
 			IDepartmentCallPriorityRepository departmentCallPriorityRepository, IShortenUrlProvider shortenUrlProvider,
 			ICallProtocolsRepository callProtocolsRepository, IGeoLocationProvider geoLocationProvider, IDepartmentsService departmentsService,
 			ICallReferencesRepository callReferencesRepository, ICallContactsRepository callContactsRepository,
-			IIndoorMapService indoorMapService)
+			IIndoorMapService indoorMapService, ICallVideoFeedRepository callVideoFeedRepository)
 		{
 			_callsRepository = callsRepository;
 			_communicationService = communicationService;
@@ -72,6 +73,7 @@ namespace Resgrid.Services
 			_callReferencesRepository = callReferencesRepository;
 			_callContactsRepository = callContactsRepository;
 			_indoorMapService = indoorMapService;
+			_callVideoFeedRepository = callVideoFeedRepository;
 		}
 
 		public async Task<Call> SaveCallAsync(Call call, CancellationToken cancellationToken = default(CancellationToken))
@@ -498,7 +500,7 @@ namespace Resgrid.Services
 			return activePriorities;
 		}
 
-		public async Task<Call> PopulateCallData(Call call, bool getDispatches, bool getAttachments, bool getNotes, bool getGroupDispatches, bool getUnitDispatches, bool getRoleDispatches, bool getProtocols, bool getReferences, bool getContacts)
+		public async Task<Call> PopulateCallData(Call call, bool getDispatches, bool getAttachments, bool getNotes, bool getGroupDispatches, bool getUnitDispatches, bool getRoleDispatches, bool getProtocols, bool getReferences, bool getContacts, bool getVideoFeeds = false)
 		{
 			if (call == null)
 				return null;
@@ -584,6 +586,15 @@ namespace Resgrid.Services
 					call.Contacts = items.ToList();
 				else
 					call.Contacts = new List<CallContact>();
+			}
+			if (getVideoFeeds && call.VideoFeeds == null)
+			{
+				var items = await _callVideoFeedRepository.GetByCallIdAsync(call.CallId);
+
+				if (items != null)
+					call.VideoFeeds = items.ToList();
+				else
+					call.VideoFeeds = new List<CallVideoFeed>();
 			}
 
 			return call;
@@ -986,6 +997,39 @@ namespace Resgrid.Services
 				return calls.ToList();
 
 			return new List<Call>();
+		}
+
+		public async Task<CallVideoFeed> SaveCallVideoFeedAsync(CallVideoFeed feed, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var saved = await _callVideoFeedRepository.SaveOrUpdateAsync(feed, cancellationToken);
+			return saved;
+		}
+
+		public async Task<CallVideoFeed> GetCallVideoFeedByIdAsync(string callVideoFeedId)
+		{
+			var feed = await _callVideoFeedRepository.GetByIdAsync(callVideoFeedId);
+			return feed;
+		}
+
+		public async Task<List<CallVideoFeed>> GetCallVideoFeedsByCallIdAsync(int callId)
+		{
+			var feeds = await _callVideoFeedRepository.GetByCallIdAsync(callId);
+
+			if (feeds != null && feeds.Any())
+				return feeds.ToList();
+
+			return new List<CallVideoFeed>();
+		}
+
+		public async Task<bool> DeleteCallVideoFeedAsync(CallVideoFeed feed, string deletedByUserId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			feed.IsDeleted = true;
+			feed.DeletedByUserId = deletedByUserId;
+			feed.DeletedOn = DateTime.UtcNow;
+
+			await _callVideoFeedRepository.SaveOrUpdateAsync(feed, cancellationToken);
+
+			return true;
 		}
 	}
 }

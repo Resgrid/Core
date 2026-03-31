@@ -730,7 +730,7 @@
                                                         {
                                                             <tr>
                                                                 <td>@feed.Name</td>
-                                                                <td><a href="@feed.Url" target="_blank">@feed.Url</a></td>
+                                                                <td><a href="@feed.Url" target="_blank" rel="noopener noreferrer">@feed.Url</a></td>
                                                                 <td>
                                                                     @if (feed.FeedType.HasValue)
                                                                     {
@@ -761,7 +761,7 @@
                                                                     }
                                                                 </td>
                                                                 <td>@feed.AddedByUserId</td>
-                                                                <td>@feed.AddedOn.ToString("g")</td>
+                                                                <td>@feed.AddedOn.TimeConverterToString(Model.Department)</td>
                                                             </tr>
                                                         }
                                                     </tbody>

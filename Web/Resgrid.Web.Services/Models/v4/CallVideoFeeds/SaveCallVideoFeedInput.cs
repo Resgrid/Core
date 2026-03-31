@@ -13,8 +13,10 @@ namespace Resgrid.Web.Services.Models.v4.CallVideoFeeds
 		[Required]
 		public string Url { get; set; }
 
+		[Range(0, int.MaxValue)]
 		public int? FeedType { get; set; }
 
+		[Range(0, int.MaxValue)]
 		public int? FeedFormat { get; set; }
 
 		public string Description { get; set; }
@@ -23,6 +25,7 @@ namespace Resgrid.Web.Services.Models.v4.CallVideoFeeds
 
 		public string Longitude { get; set; }
 
+		[Range(0, int.MaxValue)]
 		public int SortOrder { get; set; }
 	}
 }

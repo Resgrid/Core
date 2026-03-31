@@ -592,7 +592,7 @@ namespace Resgrid.Services
 				var items = await _callVideoFeedRepository.GetByCallIdAsync(call.CallId);
 
 				if (items != null)
-					call.VideoFeeds = items.ToList();
+					call.VideoFeeds = items.OrderBy(f => f.SortOrder).ToList();
 				else
 					call.VideoFeeds = new List<CallVideoFeed>();
 			}
@@ -1016,7 +1016,7 @@ namespace Resgrid.Services
 			var feeds = await _callVideoFeedRepository.GetByCallIdAsync(callId);
 
 			if (feeds != null && feeds.Any())
-				return feeds.ToList();
+				return feeds.OrderBy(f => f.SortOrder).ToList();
 
 			return new List<CallVideoFeed>();
 		}

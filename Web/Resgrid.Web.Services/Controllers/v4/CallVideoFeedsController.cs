@@ -12,6 +12,7 @@ using Resgrid.Web.Services.Models.v4.CallVideoFeeds;
 using System;
 using Resgrid.Model.Helpers;
 using System.Net.Mime;
+using System.Globalization;
 using System.Threading;
 
 namespace Resgrid.Web.Services.Controllers.v4
@@ -46,12 +47,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Call_View)]
 		public async Task<ActionResult<CallVideoFeedsResult>> GetCallVideoFeeds(string callId)
 		{
-			if (String.IsNullOrWhiteSpace(callId))
+			if (String.IsNullOrWhiteSpace(callId) || !int.TryParse(callId, out var cId))
 				return BadRequest();
 
 			var result = new CallVideoFeedsResult();
 
-			var call = await _callsService.GetCallByIdAsync(int.Parse(callId));
+			var call = await _callsService.GetCallByIdAsync(cId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 			if (call == null)
@@ -63,7 +64,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (call.DepartmentId != DepartmentId)
 				return Unauthorized();
 
-			var feeds = await _callsService.GetCallVideoFeedsByCallIdAsync(int.Parse(callId));
+			var feeds = await _callsService.GetCallVideoFeedsByCallIdAsync(cId);
 
 			if (feeds != null && feeds.Any())
 			{
@@ -97,13 +98,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Consumes(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		[Authorize(Policy = ResgridResources.Call_View)]
+		[Authorize(Policy = ResgridResources.Call_Create)]
 		public async Task<ActionResult<SaveCallVideoFeedResult>> SaveCallVideoFeed(SaveCallVideoFeedInput input, CancellationToken cancellationToken)
 		{
 			if (!ModelState.IsValid)
 				return BadRequest();
 
-			var call = await _callsService.GetCallByIdAsync(int.Parse(input.CallId));
+			if (!int.TryParse(input.CallId, out var parsedCallId))
+				return BadRequest();
+
+			var call = await _callsService.GetCallByIdAsync(parsedCallId);
 
 			if (call == null)
 				return BadRequest();
@@ -115,7 +119,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var feed = new CallVideoFeed();
 			feed.CallVideoFeedId = Guid.NewGuid().ToString();
-			feed.CallId = int.Parse(input.CallId);
+			feed.CallId = parsedCallId;
 			feed.DepartmentId = DepartmentId;
 			feed.Name = input.Name;
 			feed.Url = input.Url;
@@ -129,8 +133,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (!String.IsNullOrWhiteSpace(input.Latitude) && !String.IsNullOrWhiteSpace(input.Longitude))
 			{
-				feed.Latitude = decimal.Parse(input.Latitude);
-				feed.Longitude = decimal.Parse(input.Longitude);
+				if (!decimal.TryParse(input.Latitude, NumberStyles.Number, CultureInfo.InvariantCulture, out var lat) ||
+					!decimal.TryParse(input.Longitude, NumberStyles.Number, CultureInfo.InvariantCulture, out var lng))
+					return BadRequest();
+
+				feed.Latitude = lat;
+				feed.Longitude = lng;
 			}
 
 			var saved = await _callsService.SaveCallVideoFeedAsync(feed, cancellationToken);
@@ -153,7 +161,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Consumes(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		[Authorize(Policy = ResgridResources.Call_View)]
+		[Authorize(Policy = ResgridResources.Call_Update)]
 		public async Task<ActionResult<SaveCallVideoFeedResult>> EditCallVideoFeed(EditCallVideoFeedInput input, CancellationToken cancellationToken)
 		{
 			if (!ModelState.IsValid)
@@ -180,8 +188,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (!String.IsNullOrWhiteSpace(input.Latitude) && !String.IsNullOrWhiteSpace(input.Longitude))
 			{
-				feed.Latitude = decimal.Parse(input.Latitude);
-				feed.Longitude = decimal.Parse(input.Longitude);
+				if (!decimal.TryParse(input.Latitude, NumberStyles.Number, CultureInfo.InvariantCulture, out var lat) ||
+					!decimal.TryParse(input.Longitude, NumberStyles.Number, CultureInfo.InvariantCulture, out var lng))
+					return BadRequest();
+
+				feed.Latitude = lat;
+				feed.Longitude = lng;
 			}
 
 			var saved = await _callsService.SaveCallVideoFeedAsync(feed, cancellationToken);
@@ -203,7 +215,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpDelete("DeleteCallVideoFeed")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
-		[Authorize(Policy = ResgridResources.Call_View)]
+		[Authorize(Policy = ResgridResources.Call_Delete)]
 		public async Task<ActionResult<DeleteCallVideoFeedResult>> DeleteCallVideoFeed(string callVideoFeedId, CancellationToken cancellationToken)
 		{
 			if (String.IsNullOrWhiteSpace(callVideoFeedId))

@@ -1079,8 +1079,8 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SelectAllCallRoleDispsByCallIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [CallId] = %CALLID%";
 			SelectCallNotesByCallIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [CallId] = %CALLID%";
 			CallVideoFeedsTable = "CallVideoFeeds";
-			SelectCallVideoFeedsByCallIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [CallId] = %CALLID%";
-			SelectCallVideoFeedsByDepartmentIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DEPARTMENTID%";
+			SelectCallVideoFeedsByCallIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [CallId] = %CALLID% AND [IsDeleted] = 0";
+			SelectCallVideoFeedsByDepartmentIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DEPARTMENTID% AND [IsDeleted] = 0";
 			SelectCallYearsByDeptQuery = @"
 					SELECT DISTINCT YEAR(c.LoggedOn)
 					FROM Calls c WHERE c.DepartmentId = %DID%

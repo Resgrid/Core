@@ -203,18 +203,6 @@ namespace Resgrid.Web.ServicesCore
 					{securityScheme, new string[] { }}
 				});
 
-				//options.SwaggerDoc("v3",
-
-				//	new OpenApiInfo
-				//	{
-				//		Title = "Resgrid API",
-				//		Version = "v3",
-				//		Description = "The Resgrid Computer Aided Dispatch (CAD) API reference. Documentation: https://resgrid-core.readthedocs.io/en/latest/api/index.html",
-				//		Contact = new OpenApiContact() { Email = "team@resgrid.com", Name = "Resgrid Team", Url = new Uri("https://resgrid.com") },
-				//		TermsOfService = new Uri("https://resgrid.com/Public/Terms")
-				//	}
-				//);
-
 				options.SwaggerDoc("v4",
 
 					new OpenApiInfo

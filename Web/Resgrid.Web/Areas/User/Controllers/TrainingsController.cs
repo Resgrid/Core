@@ -235,6 +235,239 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
+		public async Task<IActionResult> Edit(int trainingId)
+		{
+			var training = await _trainingService.GetTrainingByIdAsync(trainingId);
+
+			if (training == null)
+				return NotFound();
+
+			if (training.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			var model = new EditTrainingModel();
+			model.Training = training;
+			model.ExistingUserIds = new List<string>();
+
+			if (training.Users != null)
+			{
+				foreach (var user in training.Users)
+				{
+					model.ExistingUserIds.Add(user.UserId);
+				}
+			}
+
+			return View(model);
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> Edit(int trainingId, EditTrainingModel model, IFormCollection form, ICollection<IFormFile> attachments)
+		{
+			var existingTraining = await _trainingService.GetTrainingByIdAsync(trainingId);
+
+			if (existingTraining == null)
+				return NotFound();
+
+			if (existingTraining.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			if (attachments != null && attachments.Count > 0)
+			{
+				if (existingTraining.Attachments == null)
+					existingTraining.Attachments = new Collection<TrainingAttachment>();
+
+				foreach (var file in attachments)
+				{
+					if (file != null && file.Length > 0)
+					{
+						var extension = file.FileName.Substring(file.FileName.IndexOf(char.Parse(".")) + 1,
+							file.FileName.Length - file.FileName.IndexOf(char.Parse(".")) - 1);
+
+						if (!String.IsNullOrWhiteSpace(extension))
+							extension = extension.ToLower();
+
+						if (extension != "jpg" && extension != "jpeg" && extension != "png" && extension != "gif" &&
+							extension != "pdf" && extension != "doc"
+							&& extension != "docx" && extension != "ppt" && extension != "pptx" && extension != "pps" && extension != "ppsx" &&
+							extension != "odt"
+							&& extension != "xls" && extension != "xlsx" && extension != "txt" && extension != "mpg" && extension != "avi" &&
+							extension != "mpeg")
+							ModelState.AddModelError("fileToUpload", string.Format("File type ({0}) is not importable.", extension));
+
+						if (file.Length > 30000000)
+							ModelState.AddModelError("fileToUpload", "Attachment is too large, must be smaller then 30MB.");
+
+						var attachment = new TrainingAttachment();
+						attachment.FileType = file.ContentType;
+						attachment.FileName = file.FileName;
+						attachment.TrainingId = trainingId;
+
+						var uploadedFile = new byte[file.OpenReadStream().Length];
+						file.OpenReadStream().Read(uploadedFile, 0, uploadedFile.Length);
+
+						attachment.Data = uploadedFile;
+						existingTraining.Attachments.Add(attachment);
+					}
+				}
+			}
+
+			// Handle adding new users (in addition to existing ones)
+			var roles = new List<string>();
+			var groups = new List<string>();
+			var users = new List<string>();
+
+			if (form.ContainsKey("rolesToAdd"))
+				roles.AddRange(form["rolesToAdd"].ToString().Split(char.Parse(",")));
+
+			if (form.ContainsKey("groupsToAdd"))
+				groups.AddRange(form["groupsToAdd"].ToString().Split(char.Parse(",")));
+
+			if (form.ContainsKey("usersToAdd"))
+				users.AddRange(form["usersToAdd"].ToString().Split(char.Parse(",")));
+
+			if (model.SendToAll)
+			{
+				var allUsers = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
+				foreach (var user in allUsers)
+				{
+					if (existingTraining.Users == null)
+						existingTraining.Users = new List<TrainingUser>();
+
+					if (existingTraining.Users.All(x => x.UserId != user.UserId))
+					{
+						var trainingUser = new TrainingUser();
+						trainingUser.UserId = user.UserId;
+						existingTraining.Users.Add(trainingUser);
+					}
+				}
+			}
+			else
+			{
+				foreach (var user in users)
+				{
+					if (!string.IsNullOrWhiteSpace(user))
+					{
+						if (existingTraining.Users == null)
+							existingTraining.Users = new List<TrainingUser>();
+
+						if (existingTraining.Users.All(x => x.UserId != user))
+						{
+							var trainingUser = new TrainingUser();
+							trainingUser.UserId = user;
+							existingTraining.Users.Add(trainingUser);
+						}
+					}
+				}
+
+				foreach (var group in groups)
+				{
+					if (!string.IsNullOrWhiteSpace(group))
+					{
+						var members = await _departmentGroupsService.GetAllMembersForGroupAsync(int.Parse(group));
+
+						foreach (var member in members)
+						{
+							if (existingTraining.Users == null)
+								existingTraining.Users = new List<TrainingUser>();
+
+							if (existingTraining.Users.All(x => x.UserId != member.UserId))
+							{
+								var trainingUser = new TrainingUser();
+								trainingUser.UserId = member.UserId;
+								existingTraining.Users.Add(trainingUser);
+							}
+						}
+					}
+				}
+
+				foreach (var role in roles)
+				{
+					if (!string.IsNullOrWhiteSpace(role))
+					{
+						var roleMembers = await _personnelRolesService.GetAllMembersOfRoleAsync(int.Parse(role));
+
+						foreach (var member in roleMembers)
+						{
+							if (existingTraining.Users == null)
+								existingTraining.Users = new List<TrainingUser>();
+
+							if (existingTraining.Users.All(x => x.UserId != member.UserId))
+							{
+								var trainingUser = new TrainingUser();
+								trainingUser.UserId = member.UserId;
+								existingTraining.Users.Add(trainingUser);
+							}
+						}
+					}
+				}
+			}
+
+			if (ModelState.IsValid)
+			{
+				// Update basic properties
+				existingTraining.Name = model.Training.Name;
+				existingTraining.Description = System.Net.WebUtility.HtmlDecode(model.Training.Description);
+				existingTraining.TrainingText = System.Net.WebUtility.HtmlDecode(model.Training.TrainingText);
+				existingTraining.MinimumScore = model.Training.MinimumScore;
+				existingTraining.ToBeCompletedBy = model.Training.ToBeCompletedBy;
+				existingTraining.GroupsToAdd = form["groupsToAdd"];
+				existingTraining.RolesToAdd = form["rolesToAdd"];
+				existingTraining.UsersToAdd = form["usersToAdd"];
+
+				// Handle questions - remove existing and add new ones
+				existingTraining.Questions = null;
+
+				List<int> questions = (from object key in form.Keys where key.ToString().StartsWith("question_") select int.Parse(key.ToString().Replace("question_", ""))).ToList();
+
+				if (questions.Count > 0)
+					existingTraining.Questions = new Collection<TrainingQuestion>();
+
+				foreach (var i in questions)
+				{
+					if (form.ContainsKey("question_" + i))
+					{
+						var questionText = form["question_" + i];
+						var question = new TrainingQuestion();
+						question.Question = questionText;
+						question.TrainingId = trainingId;
+
+						List<int> answers = (from object key in form.Keys where key.ToString().StartsWith("answerForQuestion_" + i + "_") select int.Parse(key.ToString().Replace("answerForQuestion_" + i + "_", ""))).ToList();
+
+						if (answers.Count > 0)
+							question.Answers = new Collection<TrainingQuestionAnswer>();
+
+						foreach (var answer in answers)
+						{
+							var trainingQuestionAnswer = new TrainingQuestionAnswer();
+							var answerForQuestion = form["answerForQuestion_" + i + "_" + answer];
+
+							var possibleAnswer = form["answer_" + i];
+							trainingQuestionAnswer.Answer = answerForQuestion;
+							trainingQuestionAnswer.TrainingQuestionId = question.TrainingQuestionId;
+
+							if (!string.IsNullOrWhiteSpace(possibleAnswer))
+							{
+								if ("answerForQuestion_" + i + "_" + answer == possibleAnswer)
+									trainingQuestionAnswer.Correct = true;
+							}
+
+							question.Answers.Add(trainingQuestionAnswer);
+						}
+
+						existingTraining.Questions.Add(question);
+					}
+				}
+
+				await _trainingService.SaveAsync(existingTraining);
+
+				return RedirectToAction("Index");
+			}
+
+			model.Training = existingTraining;
+			return View(model);
+		}
+
+		[HttpGet]
 		public async Task<FileResult> GetTrainingAttachment(int trainingAttachmentId)
 		{
 			var attachment = await _trainingService.GetTrainingAttachmentByIdAsync(trainingAttachmentId);

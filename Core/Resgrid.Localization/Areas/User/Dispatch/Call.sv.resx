@@ -374,6 +374,12 @@
   <data name="ProtocolText" xml:space="preserve">
     <value>Protocol Text</value>
   </data>
+  <data name="NotifyCancelledHelp" xml:space="preserve">
+    <value>If checked, entities removed from the dispatch list will receive a cancellation notification for this call.</value>
+  </data>
+  <data name="NotifyCancelledLabel" xml:space="preserve">
+    <value>Notify Cancelled</value>
+  </data>
   <data name="RedispatchCallHelp" xml:space="preserve">
     <value>If you want to rebroadcast this call check this box. This will dispatch the call to all users selected, regardless if they were on the first dispatch or not.</value>
   </data>

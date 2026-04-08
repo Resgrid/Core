@@ -423,6 +423,12 @@
   <data name="ProtocolText" xml:space="preserve">
     <value>Texto del protocolo</value>
   </data>
+  <data name="NotifyCancelledHelp" xml:space="preserve">
+    <value>If checked, entities removed from the dispatch list will receive a cancellation notification for this call.</value>
+  </data>
+  <data name="NotifyCancelledLabel" xml:space="preserve">
+    <value>Notify Cancelled</value>
+  </data>
   <data name="RedispatchCallHelp" xml:space="preserve">
     <value>Si desea retransmitir esta llamada marque esta casilla. Esto enviará la llamada a todos los usuarios seleccionados, independientemente de si estaban en el primer envío o no.</value>
   </data>

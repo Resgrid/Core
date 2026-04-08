@@ -21,6 +21,14 @@
             </li>
         </ol>
     </div>
+    @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+    {
+        <div class="col-sm-8">
+            <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+                <a class="btn btn-success" asp-controller="CommunicationTest" asp-action="Index" asp-route-area="User">Communication Tests</a>
+            </div>
+        </div>
+    }
 </div>
 
 <div class="row">

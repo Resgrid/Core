@@ -36,6 +36,25 @@
 		public static string PaddleProductionClientToken = "";
 		public static string PaddleTestClientToken = "";
 
+		// Global toggle: 1 = Stripe (default), 7 = Paddle. Matches PaymentMethods enum values.
+		// Set per-instance via ResgridConfig.json: "PaymentProviderConfig.ActivePaymentProvider": "7"
+		public static int ActivePaymentProvider = 1;
+
+		public static int GetActivePaymentProvider()
+		{
+			return ActivePaymentProvider;
+		}
+
+		public static bool IsStripeActive()
+		{
+			return ActivePaymentProvider == 1;
+		}
+
+		public static bool IsPaddleActive()
+		{
+			return ActivePaymentProvider == 7;
+		}
+
 		public static string GetStripeClientKey()
 		{
 			if (IsTestMode)

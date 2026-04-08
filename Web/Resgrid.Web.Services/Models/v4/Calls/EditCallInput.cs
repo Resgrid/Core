@@ -104,6 +104,11 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public bool RebroadcastCall { get; set; }
 
 		/// <summary>
+		/// If true, entities removed from the dispatch list will receive a cancellation notification
+		/// </summary>
+		public bool NotifyCancelledEntities { get; set; }
+
+		/// <summary>
 		/// User Defined Field values for this call
 		/// </summary>
 		public List<UdfFieldValueInput> UdfValues { get; set; }

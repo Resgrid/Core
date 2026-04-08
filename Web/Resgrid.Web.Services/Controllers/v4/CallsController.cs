@@ -52,6 +52,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IShiftsService _shiftsService;
 		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
+		private readonly ICommunicationService _communicationService;
 
 		public CallsController(
 			ICallsService callsService,
@@ -70,7 +71,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ICustomStateService customStateService,
 			IDepartmentSettingsService departmentSettingsService,
 			IShiftsService shiftsService,
-			IUserDefinedFieldsService userDefinedFieldsService
+			IUserDefinedFieldsService userDefinedFieldsService,
+			ICommunicationService communicationService
 			)
 		{
 			_callsService = callsService;
@@ -90,6 +92,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_departmentSettingsService = departmentSettingsService;
 			_shiftsService = shiftsService;
 			_userDefinedFieldsService = userDefinedFieldsService;
+			_communicationService = communicationService;
 		}
 		#endregion Members and Constructors
 
@@ -966,6 +969,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 			}
 
+			// Capture existing dispatch snapshots for cancel notification diffing
+			var existingDispatches = new List<CallDispatch>(call.Dispatches ?? new List<CallDispatch>());
+			var existingGroupDispatches = new List<CallDispatchGroup>(call.GroupDispatches ?? new List<CallDispatchGroup>());
+			var existingUnitDispatches = new List<CallDispatchUnit>(call.UnitDispatches ?? new List<CallDispatchUnit>());
+			var existingRoleDispatches = new List<CallDispatchRole>(call.RoleDispatches ?? new List<CallDispatchRole>());
+
 			if (string.IsNullOrWhiteSpace(editCallInput.DispatchList) || editCallInput.DispatchList == "0")
 			{
 				if (call.Dispatches == null)
@@ -1120,6 +1129,116 @@ namespace Resgrid.Web.Services.Controllers.v4
 				call.HasBeenDispatched = true;
 
 			await _callsService.SaveCallAsync(call, cancellationToken);
+
+			// Send cancel notifications to removed entities
+			if (editCallInput.NotifyCancelledEntities)
+			{
+				var currentUserIds = call.Dispatches?.Select(x => x.UserId).ToList() ?? new List<string>();
+				var currentGroupIds = call.GroupDispatches?.Select(x => x.DepartmentGroupId).ToList() ?? new List<int>();
+				var currentUnitIds = call.UnitDispatches?.Select(x => x.UnitId).ToList() ?? new List<int>();
+				var currentRoleIds = call.RoleDispatches?.Select(x => x.RoleId).ToList() ?? new List<int>();
+
+				var cancelledUserIds = existingDispatches.Select(x => x.UserId)
+					.Where(y => !currentUserIds.Contains(y)).ToList();
+				var cancelledGroupIds = existingGroupDispatches.Select(x => x.DepartmentGroupId)
+					.Where(y => !currentGroupIds.Contains(y)).ToList();
+				var cancelledUnitIds = existingUnitDispatches.Select(x => x.UnitId)
+					.Where(y => !currentUnitIds.Contains(y)).ToList();
+				var cancelledRoleIds = existingRoleDispatches.Select(x => x.RoleId)
+					.Where(y => !currentRoleIds.Contains(y)).ToList();
+
+				if (cancelledUserIds.Any() || cancelledGroupIds.Any() || cancelledUnitIds.Any() || cancelledRoleIds.Any())
+				{
+					var departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
+
+					// Build set of still-dispatched user IDs for dedup
+					var stillDispatchedUserIds = new HashSet<string>(currentUserIds);
+					foreach (var gd in call.GroupDispatches)
+					{
+						var members = await _departmentGroupsService.GetAllMembersForGroupAsync(gd.DepartmentGroupId);
+						foreach (var m in members) stillDispatchedUserIds.Add(m.UserId);
+					}
+					foreach (var rd in call.RoleDispatches)
+					{
+						var members = await _personnelRolesService.GetAllMembersOfRoleAsync(rd.RoleId);
+						foreach (var m in members) stillDispatchedUserIds.Add(m.UserId);
+					}
+
+					var notifiedUserIds = new HashSet<string>();
+
+					// Cancel personnel
+					foreach (var userId in cancelledUserIds)
+					{
+						if (!stillDispatchedUserIds.Contains(userId) && notifiedUserIds.Add(userId))
+						{
+							var cd = new CallDispatch { CallId = call.CallId, UserId = userId };
+							await _communicationService.SendCancelCallAsync(call, cd, departmentNumber, DepartmentId);
+						}
+					}
+
+					// Cancel group members
+					foreach (var groupId in cancelledGroupIds)
+					{
+						var members = await _departmentGroupsService.GetAllMembersForGroupAsync(groupId);
+						foreach (var member in members)
+						{
+							if (!stillDispatchedUserIds.Contains(member.UserId) && notifiedUserIds.Add(member.UserId))
+							{
+								var cd = new CallDispatch { CallId = call.CallId, UserId = member.UserId };
+								await _communicationService.SendCancelCallAsync(call, cd, departmentNumber, DepartmentId);
+							}
+						}
+					}
+
+					// Cancel role members
+					foreach (var roleId in cancelledRoleIds)
+					{
+						var members = await _personnelRolesService.GetAllMembersOfRoleAsync(roleId);
+						foreach (var member in members)
+						{
+							if (!stillDispatchedUserIds.Contains(member.UserId) && notifiedUserIds.Add(member.UserId))
+							{
+								var cd = new CallDispatch { CallId = call.CallId, UserId = member.UserId };
+								await _communicationService.SendCancelCallAsync(call, cd, departmentNumber, DepartmentId);
+							}
+						}
+					}
+
+					// Cancel units
+					foreach (var unitId in cancelledUnitIds)
+					{
+						var cdu = new CallDispatchUnit { CallId = call.CallId, UnitId = unitId };
+						await _communicationService.SendCancelUnitCallAsync(call, cdu, departmentNumber);
+					}
+				}
+			}
+
+			// Auto-dispatch newly added entities when RebroadcastCall is not checked
+			if (!editCallInput.RebroadcastCall)
+			{
+				var currentUserIds2 = call.Dispatches?.Select(x => x.UserId).ToList() ?? new List<string>();
+				var currentGroupIds2 = call.GroupDispatches?.Select(x => x.DepartmentGroupId).ToList() ?? new List<int>();
+				var currentUnitIds2 = call.UnitDispatches?.Select(x => x.UnitId).ToList() ?? new List<int>();
+				var currentRoleIds2 = call.RoleDispatches?.Select(x => x.RoleId).ToList() ?? new List<int>();
+
+				var newUserIds = currentUserIds2.Where(id => !existingDispatches.Any(d => d.UserId == id)).ToList();
+				var newGroupIds = currentGroupIds2.Where(id => !existingGroupDispatches.Any(d => d.DepartmentGroupId == id)).ToList();
+				var newUnitIds = currentUnitIds2.Where(id => !existingUnitDispatches.Any(d => d.UnitId == id)).ToList();
+				var newRoleIds = currentRoleIds2.Where(id => !existingRoleDispatches.Any(d => d.RoleId == id)).ToList();
+
+				if (newUserIds.Any() || newGroupIds.Any() || newUnitIds.Any() || newRoleIds.Any())
+				{
+					var cqi = new CallQueueItem();
+					cqi.Call = call;
+
+					if (newGroupIds.Any() || newUnitIds.Any() || newRoleIds.Any())
+						cqi.Profiles = (await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId)).Select(x => x.Value).ToList();
+					else
+						cqi.Profiles = await _userProfileService.GetSelectedUserProfilesAsync(newUserIds);
+
+					await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
+				}
+			}
 
 			if (editCallInput.RebroadcastCall)
 			{

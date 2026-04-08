@@ -424,6 +424,66 @@
             Enables or disables check-in timers on a call
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.CommunicationTestResponseController">
+            <summary>
+            Public endpoints for communication test responses (email confirm, voice webhook)
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CommunicationTestResponseController.EmailConfirm(System.String)">
+            <summary>
+            Email confirmation endpoint - user clicks link with token to confirm receipt
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CommunicationTestResponseController.VoiceWebhook(System.String,System.String)">
+            <summary>
+            Voice webhook endpoint - receives DTMF keypress callbacks
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.CommunicationTestsController">
+            <summary>
+            Communication Test management - CRUD, run tests, get reports. Admin only.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CommunicationTestsController.GetAll">
+            <summary>
+            Gets all communication tests for the current department
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CommunicationTestsController.Get(System.String)">
+            <summary>
+            Gets a specific communication test by id
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CommunicationTestsController.Save(Resgrid.Web.Services.Models.v4.CommunicationTests.SaveCommunicationTestInput,System.Threading.CancellationToken)">
+            <summary>
+            Saves a communication test definition (admin only)
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CommunicationTestsController.Delete(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Deletes a communication test (admin only)
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CommunicationTestsController.StartRun(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Starts a new on-demand test run (admin only, rate limited to once per 48 hours)
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CommunicationTestsController.GetRuns(System.String)">
+            <summary>
+            Gets test runs for a specific test
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CommunicationTestsController.GetReport(System.String)">
+            <summary>
+            Gets the report for a specific test run
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CommunicationTestsController.RecordPushResponse(Resgrid.Web.Services.Models.v4.CommunicationTests.RecordPushResponseInput)">
+            <summary>
+            Records a push notification response for a communication test
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ConfigController">
             <summary>
             Generic configuration api endpoints
@@ -5179,6 +5239,11 @@
             Should all the entities attached to the call be re-notified
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.NotifyCancelledEntities">
+            <summary>
+            If true, entities removed from the dispatch list will receive a cancellation notification
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.UdfValues">
             <summary>
             User Defined Field values for this call
@@ -5627,6 +5692,131 @@
         <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactResultData.UdfValues">
             <summary>
             User Defined Field values for this contact
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.CommunicationTests.GetCommunicationTestsResult">
+            <summary>
+            Result of getting all communication tests for a department
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.GetCommunicationTestsResult.Data">
+            <summary>
+            List of communication test definitions
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.CommunicationTests.CommunicationTestData">
+            <summary>
+            Communication test definition data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.CommunicationTests.GetCommunicationTestResult">
+            <summary>
+            Result of getting a single communication test
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.CommunicationTests.GetTestRunReportResult">
+            <summary>
+            Result of getting a test run report
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.CommunicationTests.CommunicationTestResultData">
+            <summary>
+            Individual test result data for report
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.CommunicationTestResultData.Channel">
+            <summary>
+            Channel type (0=Sms, 1=Email, 2=Voice, 3=Push)
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.CommunicationTests.GetTestRunsResult">
+            <summary>
+            Result of getting test runs
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.CommunicationTests.TestRunData">
+            <summary>
+            Test run summary data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.CommunicationTests.RecordPushResponseInput">
+            <summary>
+            Input for recording a push notification response
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.RecordPushResponseInput.ResponseToken">
+            <summary>
+            The response token from the push notification
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.CommunicationTests.RecordPushResponseResult">
+            <summary>
+            Result of recording a push notification response
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.CommunicationTests.SaveCommunicationTestInput">
+            <summary>
+            Input model for creating or updating a communication test
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.SaveCommunicationTestInput.Id">
+            <summary>
+            The Id of the communication test (empty or null for new tests)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.SaveCommunicationTestInput.Name">
+            <summary>
+            Name of the communication test
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.SaveCommunicationTestInput.Description">
+            <summary>
+            Description of the communication test
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.SaveCommunicationTestInput.ScheduleType">
+            <summary>
+            Schedule type (0=OnDemand, 1=Weekly, 2=Monthly)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.SaveCommunicationTestInput.DayOfMonth">
+            <summary>
+            Day of month for monthly schedule (1-28)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.SaveCommunicationTestInput.Time">
+            <summary>
+            Time of day for scheduled tests (e.g. "09:00 AM")
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.SaveCommunicationTestInput.ResponseWindowMinutes">
+            <summary>
+            Response window in minutes (default 60)
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.CommunicationTests.SaveCommunicationTestResult">
+            <summary>
+            Result of saving a communication test
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.SaveCommunicationTestResult.Id">
+            <summary>
+            Id of the saved communication test
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.CommunicationTests.StartTestRunResult">
+            <summary>
+            Result of starting a communication test run
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.StartTestRunResult.Id">
+            <summary>
+            Id of the new test run
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.StartTestRunResult.RunCode">
+            <summary>
+            The run code used for SMS responses
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Configs.GetConfigResult">

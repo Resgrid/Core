@@ -44,13 +44,14 @@ namespace Resgrid.Web.Services.Controllers
 		private readonly IUnitsService _unitsService;
 		private readonly IUsersService _usersService;
 		private readonly ICalendarService _calendarService;
+		private readonly ICommunicationTestService _communicationTestService;
 
 		public TwilioController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
 			ILimitsService limitsService, ICallsService callsService, IQueueService queueService, IDepartmentsService departmentsService,
 			IUserProfileService userProfileService, ITextCommandService textCommandService, IActionLogsService actionLogsService,
 			IUserStateService userStateService, ICommunicationService communicationService, IGeoLocationProvider geoLocationProvider,
 			IDepartmentGroupsService departmentGroupsService, ICustomStateService customStateService, IUnitsService unitsService,
-			IUsersService usersService, ICalendarService calendarService)
+			IUsersService usersService, ICalendarService calendarService, ICommunicationTestService communicationTestService)
 		{
 			_departmentSettingsService = departmentSettingsService;
 			_numbersService = numbersService;
@@ -69,6 +70,7 @@ namespace Resgrid.Web.Services.Controllers
 			_unitsService = unitsService;
 			_usersService = usersService;
 			_calendarService = calendarService;
+			_communicationTestService = communicationTestService;
 		}
 
 		#endregion Private Readonly Properties and Constructors
@@ -97,6 +99,24 @@ namespace Resgrid.Web.Services.Controllers
 			messageEvent.Data = JsonConvert.SerializeObject(textMessage);
 			messageEvent.Processed = false;
 			messageEvent.CustomerId = "";
+
+			// Check for Communication Test response (CT- prefix)
+			if (!string.IsNullOrWhiteSpace(textMessage.Text) && textMessage.Text.Trim().StartsWith("CT-", StringComparison.OrdinalIgnoreCase))
+			{
+				var runCode = textMessage.Text.Trim().Split(' ')[0].ToUpperInvariant();
+				await _communicationTestService.RecordSmsResponseAsync(runCode, textMessage.Msisdn);
+				messageEvent.Processed = true;
+
+				response.Message("Resgrid received your communication test response. Thank you.");
+
+				await _numbersService.SaveInboundMessageEventAsync(messageEvent);
+				return new ContentResult
+				{
+					Content = response.ToString(),
+					ContentType = "application/xml",
+					StatusCode = 200
+				};
+			}
 
 			try
 			{

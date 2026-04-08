@@ -33,6 +33,12 @@ namespace Resgrid.Model.Services
 			UserProfile profile = null, string address = null, Payment payment = null);
 
 		/// <summary>
+		/// Sends a cancellation SMS for a call dispatch.
+		/// </summary>
+		Task<bool> SendCancelCallAsync(Call call, CallDispatch dispatch, string departmentNumber, int departmentId,
+			UserProfile profile = null, string address = null, Payment payment = null);
+
+		/// <summary>
 		/// Sends the trouble alert.
 		/// </summary>
 		/// <param name="unit">The unit.</param>

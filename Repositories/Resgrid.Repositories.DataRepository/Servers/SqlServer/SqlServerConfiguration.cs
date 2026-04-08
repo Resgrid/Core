@@ -1605,6 +1605,18 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 				ORDER BY [CheckInTime] DESC";
 			#endregion CalendarItemCheckIns
 
+			#region CommunicationTests
+			CommunicationTestsTable = "CommunicationTests";
+			CommunicationTestRunsTable = "CommunicationTestRuns";
+			CommunicationTestResultsTable = "CommunicationTestResults";
+			SelectActiveCommTestsByScheduleTypeQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [Active] = 1 AND [ScheduleType] = %SCHEDULETYPE%";
+			SelectCommTestRunsByTestIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [CommunicationTestId] = %COMMTESTID% ORDER BY [StartedOn] DESC";
+			SelectCommTestRunByRunCodeQuery = "SELECT TOP 1 * FROM %SCHEMA%.%TABLENAME% WHERE [RunCode] = %RUNCODE%";
+			SelectOpenCommTestRunsQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [Status] IN (0, 1, 2)";
+			SelectCommTestResultsByRunIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [CommunicationTestRunId] = %RUNID%";
+			SelectCommTestResultByResponseTokenQuery = "SELECT TOP 1 * FROM %SCHEMA%.%TABLENAME% WHERE [ResponseToken] = %TOKEN%";
+			#endregion CommunicationTests
+
 			#region User Defined Fields
 			UdfDefinitionsTableName = "UdfDefinitions";
 			UdfFieldsTableName = "UdfFields";

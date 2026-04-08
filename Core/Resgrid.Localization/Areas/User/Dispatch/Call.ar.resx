@@ -107,6 +107,12 @@
   <data name="ProtocolQuestionHeader" xml:space="preserve"><value>الإجابة على أسئلة البروتوكول</value></data>
   <data name="ProtocolsLabel" xml:space="preserve"><value>البروتوكولات</value></data>
   <data name="ProtocolText" xml:space="preserve"><value>نص البروتوكول</value></data>
+  <data name="NotifyCancelledHelp" xml:space="preserve">
+    <value>If checked, entities removed from the dispatch list will receive a cancellation notification for this call.</value>
+  </data>
+  <data name="NotifyCancelledLabel" xml:space="preserve">
+    <value>Notify Cancelled</value>
+  </data>
   <data name="RedispatchCallHelp" xml:space="preserve"><value>إذا أردت إعادة بث هذا البلاغ حدد هذا المربع. سيُرسَل البلاغ إلى جميع المستخدمين المحددين بغض النظر عن مشاركتهم في الإرسال الأول أم لا.</value></data>
   <data name="RedispatchCallLabel" xml:space="preserve"><value>إعادة الإرسال</value></data>
   <data name="ReferenceIdLabel" xml:space="preserve"><value>معرف المرجع</value></data>

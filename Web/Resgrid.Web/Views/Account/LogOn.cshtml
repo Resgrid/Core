@@ -64,6 +64,25 @@
             </div>
             <div class="col-md-6">
                 <div class="ibox-content">
+                    @if (Resgrid.Config.InfoConfig.Locations != null && Resgrid.Config.InfoConfig.Locations.Count > 1)
+                    {
+                        <div class="form-group m-t">
+                            <label><small>@localizer["Region"]</small></label>
+                            <select id="regionSelect" class="form-control">
+                                @foreach (var location in Resgrid.Config.InfoConfig.Locations)
+                                {
+                                    @if (location.Name == Resgrid.Config.SystemBehaviorConfig.LocationName)
+                                    {
+                                        <option value="@location.GetLogonUrl()" selected="selected">@location.DisplayName</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@location.GetLogonUrl()">@location.DisplayName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    }
                     <form class="m-t" role="form" asp-controller="Account" asp-action="LogOn" method="post" asp-route-returnurl="@ViewData["ReturnUrl"]">
                         <div class="form-group">
                             <input type="text" class="form-control" placeholder="Username" asp-for="Username" required="">
@@ -192,6 +211,13 @@
                     }
                 }
             }
+
+            $("#regionSelect").change(function () {
+                var url = $(this).val();
+                if (url) {
+                    window.location.href = url;
+                }
+            });
 
             $(".langDropdownSelection").click(function (e) {
                 if (e) {

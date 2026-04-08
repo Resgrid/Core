@@ -534,6 +534,18 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectCalendarItemCheckInsByUserDateRangeQuery { get; set; }
 		#endregion CalendarItemCheckIns
 
+		#region CommunicationTests
+		public string CommunicationTestsTable { get; set; }
+		public string CommunicationTestRunsTable { get; set; }
+		public string CommunicationTestResultsTable { get; set; }
+		public string SelectActiveCommTestsByScheduleTypeQuery { get; set; }
+		public string SelectCommTestRunsByTestIdQuery { get; set; }
+		public string SelectCommTestRunByRunCodeQuery { get; set; }
+		public string SelectOpenCommTestRunsQuery { get; set; }
+		public string SelectCommTestResultsByRunIdQuery { get; set; }
+		public string SelectCommTestResultByResponseTokenQuery { get; set; }
+		#endregion CommunicationTests
+
 		// Identity
 
 		#region Table Names

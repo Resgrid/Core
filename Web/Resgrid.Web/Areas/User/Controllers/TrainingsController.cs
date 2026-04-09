@@ -301,8 +301,9 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 						attachment.FileName = file.FileName;
 						attachment.TrainingId = trainingId;
 
-						var uploadedFile = new byte[file.OpenReadStream().Length];
-						file.OpenReadStream().Read(uploadedFile, 0, uploadedFile.Length);
+using var stream = file.OpenReadStream();
+var uploadedFile = new byte[stream.Length];
+stream.Read(uploadedFile, 0, uploadedFile.Length);
 
 						attachment.Data = uploadedFile;
 						existingTraining.Attachments.Add(attachment);

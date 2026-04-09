@@ -216,19 +216,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (test == null || test.DepartmentId != DepartmentId)
 				return Unauthorized();
 
+			var beforeJson = test.CloneJsonToString();
+
+			await _communicationTestService.DeleteTestAsync(id, cancellationToken);
+
 			_eventAggregator.SendMessage<AuditEvent>(new AuditEvent
 			{
 				DepartmentId = DepartmentId,
 				UserId = UserId,
 				Type = AuditLogTypes.CommunicationTestDeleted,
-				Before = test.CloneJsonToString(),
+				Before = beforeJson,
 				Successful = true,
 				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
 				ServerName = Environment.MachineName,
 				UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}"
 			});
-
-			await _communicationTestService.DeleteTestAsync(id, cancellationToken);
 
 			return RedirectToAction("Index");
 		}

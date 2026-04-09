@@ -641,10 +641,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 					call.IndoorMapFloorId = null;
 				}
 
-				List<CallDispatch> existingDispatches = new List<CallDispatch>(call.Dispatches);
-				List<CallDispatchGroup> existingGroupDispatches = new List<CallDispatchGroup>(call.GroupDispatches);
-				List<CallDispatchUnit> existingUnitDispatches = new List<CallDispatchUnit>(call.UnitDispatches);
-				List<CallDispatchRole> existingRoleDispatches = new List<CallDispatchRole>(call.RoleDispatches);
+				List<CallDispatch> existingDispatches = new List<CallDispatch>(call.Dispatches ?? Enumerable.Empty<CallDispatch>());
+				List<CallDispatchGroup> existingGroupDispatches = new List<CallDispatchGroup>(call.GroupDispatches ?? Enumerable.Empty<CallDispatchGroup>());
+				List<CallDispatchUnit> existingUnitDispatches = new List<CallDispatchUnit>(call.UnitDispatches ?? Enumerable.Empty<CallDispatchUnit>());
+				List<CallDispatchRole> existingRoleDispatches = new List<CallDispatchRole>(call.RoleDispatches ?? Enumerable.Empty<CallDispatchRole>());
 
 				List<string> dispatchingUserIds = new List<string>();
 				List<int> dispatchingGroupIds = new List<int>();
@@ -893,10 +893,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				// Send cancel notifications to removed entities
 				if (model.NotifyCancelledEntities)
 				{
-					var savedUserIds = new HashSet<string>(call.Dispatches.Select(x => x.UserId));
-					var savedGroupIds = new HashSet<int>(call.GroupDispatches.Select(x => x.DepartmentGroupId));
-					var savedUnitIds = new HashSet<int>(call.UnitDispatches.Select(x => x.UnitId));
-					var savedRoleIds = new HashSet<int>(call.RoleDispatches.Select(x => x.RoleId));
+					var savedUserIds = new HashSet<string>((call.Dispatches ?? Enumerable.Empty<CallDispatch>()).Select(x => x.UserId));
+					var savedGroupIds = new HashSet<int>((call.GroupDispatches ?? Enumerable.Empty<CallDispatchGroup>()).Select(x => x.DepartmentGroupId));
+					var savedUnitIds = new HashSet<int>((call.UnitDispatches ?? Enumerable.Empty<CallDispatchUnit>()).Select(x => x.UnitId));
+					var savedRoleIds = new HashSet<int>((call.RoleDispatches ?? Enumerable.Empty<CallDispatchRole>()).Select(x => x.RoleId));
 
 					var cancelledUserIds = existingDispatches.Select(x => x.UserId)
 						.Where(y => !savedUserIds.Contains(y)).ToList();
@@ -912,13 +912,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 						var departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
 
 						// Build set of still-dispatched user IDs for dedup
-						var stillDispatchedUserIds = new HashSet<string>(call.Dispatches.Select(x => x.UserId));
-						foreach (var gd in call.GroupDispatches)
+						var stillDispatchedUserIds = new HashSet<string>((call.Dispatches ?? Enumerable.Empty<CallDispatch>()).Select(x => x.UserId));
+						foreach (var gd in call.GroupDispatches ?? Enumerable.Empty<CallDispatchGroup>())
 						{
 							var members = await _departmentGroupsService.GetAllMembersForGroupAsync(gd.DepartmentGroupId);
 							foreach (var m in members) stillDispatchedUserIds.Add(m.UserId);
 						}
-						foreach (var rd in call.RoleDispatches)
+						foreach (var rd in call.RoleDispatches ?? Enumerable.Empty<CallDispatchRole>())
 						{
 							var members = await _personnelRolesService.GetAllMembersOfRoleAsync(rd.RoleId);
 							foreach (var m in members) stillDispatchedUserIds.Add(m.UserId);

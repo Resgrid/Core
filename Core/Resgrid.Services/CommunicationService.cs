@@ -408,8 +408,15 @@ namespace Resgrid.Services
 			{
 				if (profile == null || profile.MobileNumberVerified.IsContactMethodAllowedForSending())
 				{
-					var payment = await _subscriptionsService.GetCurrentPaymentForDepartmentAsync(departmentId);
-					await _smsService.SendCancelCallAsync(call, dispatch, departmentNumber, departmentId, profile, call.Address, payment);
+					try
+					{
+						var payment = await _subscriptionsService.GetCurrentPaymentForDepartmentAsync(departmentId);
+						await _smsService.SendCancelCallAsync(call, dispatch, departmentNumber, departmentId, profile, call.Address, payment);
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex);
+					}
 				}
 			}
 
@@ -418,7 +425,14 @@ namespace Resgrid.Services
 			{
 				if (profile == null || profile.EmailVerified.IsContactMethodAllowedForSending())
 				{
-					await _emailService.SendCancelCallAsync(call, dispatch, profile);
+					try
+					{
+						await _emailService.SendCancelCallAsync(call, dispatch, profile);
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex);
+					}
 				}
 			}
 

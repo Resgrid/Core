@@ -271,19 +271,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return result;
 			}
 
+			var beforeJson = test.CloneJsonToString();
+
+			await _communicationTestService.DeleteTestAsync(testId, cancellationToken);
+
 			_eventAggregator.SendMessage<AuditEvent>(new AuditEvent
 			{
 				DepartmentId = DepartmentId,
 				UserId = UserId,
 				Type = AuditLogTypes.CommunicationTestDeleted,
-				Before = test.CloneJsonToString(),
+				Before = beforeJson,
 				Successful = true,
 				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
 				ServerName = Environment.MachineName,
 				UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}"
 			});
-
-			await _communicationTestService.DeleteTestAsync(testId, cancellationToken);
 
 			result.Status = ResponseHelper.Deleted;
 			ResponseHelper.PopulateV4ResponseData(result);

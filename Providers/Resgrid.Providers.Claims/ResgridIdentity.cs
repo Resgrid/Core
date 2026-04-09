@@ -1087,5 +1087,10 @@ namespace Resgrid.Providers.Claims
 		{
 			ClaimsLogic.AddCommunicationTestClaims(this, isAdmin);
 		}
+
+		public void AddWeatherAlertClaims(bool isAdmin)
+		{
+			ClaimsLogic.AddWeatherAlertClaims(this, isAdmin);
+		}
 	}
 }

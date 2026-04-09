@@ -103,6 +103,9 @@ namespace Resgrid.Services
 
 			// Communication Test Services
 			builder.RegisterType<CommunicationTestService>().As<ICommunicationTestService>().InstancePerLifetimeScope();
+
+			// Weather Alert Services
+			builder.RegisterType<WeatherAlertService>().As<IWeatherAlertService>().InstancePerLifetimeScope();
 		}
 	}
 }

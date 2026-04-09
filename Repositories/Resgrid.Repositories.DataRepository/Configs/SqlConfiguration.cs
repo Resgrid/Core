@@ -546,6 +546,23 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectCommTestResultByResponseTokenQuery { get; set; }
 		#endregion CommunicationTests
 
+		#region WeatherAlerts
+		public string WeatherAlertSourcesTable { get; set; }
+		public string WeatherAlertsTable { get; set; }
+		public string WeatherAlertZonesTable { get; set; }
+		public string SelectActiveWeatherAlertSourcesForPollingQuery { get; set; }
+		public string SelectWeatherAlertSourcesByDepartmentIdQuery { get; set; }
+		public string SelectActiveWeatherAlertsByDepartmentIdQuery { get; set; }
+		public string SelectWeatherAlertByExternalIdAndSourceIdQuery { get; set; }
+		public string SelectWeatherAlertsByDepartmentAndSeverityQuery { get; set; }
+		public string SelectWeatherAlertsByDepartmentAndCategoryQuery { get; set; }
+		public string SelectExpiredUnprocessedWeatherAlertsQuery { get; set; }
+		public string SelectUnnotifiedWeatherAlertsQuery { get; set; }
+		public string SelectWeatherAlertHistoryByDepartmentQuery { get; set; }
+		public string SelectWeatherAlertZonesByDepartmentIdQuery { get; set; }
+		public string SelectActiveWeatherAlertZonesByDepartmentIdQuery { get; set; }
+		#endregion WeatherAlerts
+
 		// Identity
 
 		#region Table Names

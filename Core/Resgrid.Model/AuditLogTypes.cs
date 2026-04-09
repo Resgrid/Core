@@ -148,6 +148,18 @@
 		CommunicationTestCreated,
 		CommunicationTestUpdated,
 		CommunicationTestDeleted,
-		CommunicationTestRunStarted
+		CommunicationTestRunStarted,
+		// Weather Alerts
+		WeatherAlertSourceCreated,
+		WeatherAlertSourceUpdated,
+		WeatherAlertSourceDeleted,
+		WeatherAlertSourceEnabled,
+		WeatherAlertSourceDisabled,
+		WeatherAlertZoneCreated,
+		WeatherAlertZoneUpdated,
+		WeatherAlertZoneDeleted,
+		WeatherAlertZoneEnabled,
+		WeatherAlertZoneDisabled,
+		WeatherAlertSettingsChanged
 	}
 }

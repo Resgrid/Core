@@ -70,7 +70,13 @@ namespace Resgrid.Model.Events
 		LinkedDepartmentCallAdded = 20,
 
 		[NotMapped]
-		ResourceOrderAdded = 21
+		ResourceOrderAdded = 21,
+
+		[NotMapped]
+		WeatherAlertReceived = 22,
+
+		[NotMapped]
+		WeatherAlertExpired = 23
 	}
 
 	public static class EventOptions
@@ -140,7 +146,9 @@ namespace Resgrid.Model.Events
 			EventTypes.CalendarEventUpdated,
 			EventTypes.ShiftCreated,
 			EventTypes.ShiftUpdated,
-			EventTypes.ShiftDaysAdded
+			EventTypes.ShiftDaysAdded,
+			EventTypes.WeatherAlertReceived,
+			EventTypes.WeatherAlertExpired
 		};
 	}
 }

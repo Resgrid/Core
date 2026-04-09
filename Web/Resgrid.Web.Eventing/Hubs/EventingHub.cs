@@ -33,6 +33,12 @@ namespace Resgrid.Web.Eventing.Hubs
 		Task CallAdded(int departmentId, int id);
 
 		Task CallClosed(int departmentId, int id);
+
+		Task WeatherAlertReceived(int departmentId, string alertId);
+
+		Task WeatherAlertExpired(int departmentId, string alertId);
+
+		Task WeatherAlertUpdated(int departmentId, string alertId);
 	}
 
 	[AllowAnonymous]
@@ -140,6 +146,30 @@ namespace Resgrid.Web.Eventing.Hubs
 
 			if (group != null)
 				await group.SendAsync("CallClosed", id);
+		}
+
+		public async Task WeatherAlertReceived(int departmentId, string alertId)
+		{
+			var group = Clients.Group(departmentId.ToString());
+
+			if (group != null)
+				await group.SendAsync("WeatherAlertReceived", alertId);
+		}
+
+		public async Task WeatherAlertExpired(int departmentId, string alertId)
+		{
+			var group = Clients.Group(departmentId.ToString());
+
+			if (group != null)
+				await group.SendAsync("WeatherAlertExpired", alertId);
+		}
+
+		public async Task WeatherAlertUpdated(int departmentId, string alertId)
+		{
+			var group = Clients.Group(departmentId.ToString());
+
+			if (group != null)
+				await group.SendAsync("WeatherAlertUpdated", alertId);
 		}
 	}
 }

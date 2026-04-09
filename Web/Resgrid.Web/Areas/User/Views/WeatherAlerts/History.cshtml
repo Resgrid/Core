@@ -1,0 +1,176 @@
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.WeatherAlerts.WeatherAlerts> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["AlertHistory"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>@localizer["AlertHistory"]</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="WeatherAlerts" asp-action="Index" asp-route-area="User">@localizer["WeatherAlerts"]</a>
+			</li>
+			<li class="active">
+				<strong>@localizer["AlertHistory"]</strong>
+			</li>
+		</ol>
+	</div>
+	<div class="col-sm-8">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-default" asp-controller="WeatherAlerts" asp-action="Index" asp-route-area="User">@localizer["BackToAlerts"]</a>
+		</div>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>@localizer["AlertHistory"]</h5>
+				</div>
+				<div class="ibox-content">
+					<form class="form-inline" id="historyFilterForm">
+						<div class="form-group" style="margin-right:15px;">
+							<label style="margin-right:5px;">@localizer["StartDate"]</label>
+							<input type="date" class="form-control" id="startDate" />
+						</div>
+						<div class="form-group" style="margin-right:15px;">
+							<label style="margin-right:5px;">@localizer["EndDate"]</label>
+							<input type="date" class="form-control" id="endDate" />
+						</div>
+						<button type="button" class="btn btn-primary" onclick="loadHistory()">@localizer["SearchHistory"]</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>@localizer["AlertHistory"]</h5>
+				</div>
+				<div class="ibox-content">
+					<div id="historyContainer">
+						<div class="alert alert-info">@localizer["NoHistoryFound"]</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+	<script>
+		var loc = {
+			event: '@localizer["Event"]',
+			severity: '@localizer["Severity"]',
+			category: '@localizer["Category"]',
+			area: '@localizer["Area"]',
+			effectiveDate: '@localizer["EffectiveDate"]',
+			expires: '@localizer["Expires"]',
+			status: '@localizer["Status"]',
+			details: '@localizer["Details"]',
+			selectDates: '@localizer["SelectDates"]',
+			loadingHistory: '@localizer["LoadingHistory"]',
+			noHistoryFound: '@localizer["NoHistoryFound"]',
+			failedToLoadHistory: '@localizer["FailedToLoadHistory"]',
+			severityExtreme: '@localizer["SeverityExtreme"]',
+			severitySevere: '@localizer["SeveritySevere"]',
+			severityModerate: '@localizer["SeverityModerate"]',
+			severityMinor: '@localizer["SeverityMinor"]',
+			severityUnknown: '@localizer["SeverityUnknown"]',
+			categoryMet: '@localizer["CategoryMet"]',
+			categoryFire: '@localizer["CategoryFire"]',
+			categoryHealth: '@localizer["CategoryHealth"]',
+			categoryEnv: '@localizer["CategoryEnv"]',
+			categoryOther: '@localizer["CategoryOther"]',
+			statusActive: '@localizer["StatusActive"]',
+			statusUpdated: '@localizer["StatusUpdated"]',
+			statusExpired: '@localizer["StatusExpired"]',
+			statusCancelled: '@localizer["StatusCancelled"]'
+		};
+
+		function getAuthToken() {
+			try {
+				for (var i = 0; i < localStorage.length; i++) {
+					var val = localStorage.getItem(localStorage.key(i));
+					if (!val || val.charAt(0) !== '{') continue;
+					var obj = JSON.parse(val);
+					if (obj && typeof obj.access_token === 'string' && obj.access_token.length > 0) return obj.access_token;
+				}
+			} catch (e) {}
+			return '';
+		}
+		$(document).ready(function() {
+			var today = new Date();
+			var thirtyDaysAgo = new Date();
+			thirtyDaysAgo.setDate(today.getDate() - 30);
+
+			$('#endDate').val(today.toISOString().split('T')[0]);
+			$('#startDate').val(thirtyDaysAgo.toISOString().split('T')[0]);
+
+			loadHistory();
+		});
+
+		function loadHistory() {
+			var startDate = $('#startDate').val();
+			var endDate = $('#endDate').val();
+
+			if (!startDate || !endDate) {
+				alert(loc.selectDates);
+				return;
+			}
+
+			var container = $('#historyContainer');
+			container.html('<p>' + loc.loadingHistory + '</p>');
+
+			$.ajax({
+				url: resgrid.absoluteApiBaseUrl + '/api/v4/WeatherAlerts/GetAlertHistory?startDate=' + startDate + '&endDate=' + endDate,
+				type: 'GET',
+				headers: { 'Authorization': 'Bearer ' + getAuthToken() },
+				success: function(data) {
+					container.empty();
+					if (data.Data && data.Data.length > 0) {
+						var severityNames = [loc.severityExtreme, loc.severitySevere, loc.severityModerate, loc.severityMinor, loc.severityUnknown];
+						var severityClasses = ['danger', 'danger', 'warning', 'info', 'default'];
+						var categoryNames = [loc.categoryMet, loc.categoryFire, loc.categoryHealth, loc.categoryEnv, loc.categoryOther];
+						var statusNames = [loc.statusActive, loc.statusUpdated, loc.statusExpired, loc.statusCancelled];
+
+						var table = '<table class="table table-striped"><thead><tr><th>' + loc.event + '</th><th>' + loc.severity + '</th><th>' + loc.category + '</th><th>' + loc.area + '</th><th>' + loc.effectiveDate + '</th><th>' + loc.expires + '</th><th>' + loc.status + '</th><th></th></tr></thead><tbody>';
+
+						$.each(data.Data, function(i, alert) {
+							var sevClass = severityClasses[alert.Severity] || 'default';
+							var sevName = severityNames[alert.Severity] || loc.severityUnknown;
+							var catName = categoryNames[alert.AlertCategory] || loc.categoryOther;
+							var statName = statusNames[alert.Status] || loc.severityUnknown;
+
+							table += '<tr>';
+							table += '<td>' + alert.Event + '</td>';
+							table += '<td><span class="label label-' + sevClass + '">' + sevName + '</span></td>';
+							table += '<td>' + catName + '</td>';
+							table += '<td>' + (alert.AreaDescription || '') + '</td>';
+							table += '<td>' + (alert.EffectiveUtc || '') + '</td>';
+							table += '<td>' + (alert.ExpiresUtc || 'N/A') + '</td>';
+							table += '<td>' + statName + '</td>';
+							table += '<td><a href="/User/WeatherAlerts/Details/' + alert.WeatherAlertId + '" class="btn btn-xs btn-primary">' + loc.details + '</a></td>';
+							table += '</tr>';
+						});
+						table += '</tbody></table>';
+						container.html(table);
+					} else {
+						container.html('<div class="alert alert-info">' + loc.noHistoryFound + '</div>');
+					}
+				},
+				error: function() {
+					container.html('<div class="alert alert-warning">' + loc.failedToLoadHistory + '</div>');
+				}
+			});
+		}
+	</script>
+}

@@ -21,14 +21,15 @@
 			</li>
 		</ol>
 	</div>
-	@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
-	{
-		<div class="col-sm-8">
-			<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-				<a title="Add a new department link" class="btn btn-success" asp-controller="Notifications" asp-action="New" asp-route-area="User">@localizer["NewNotification"]</a>
-			</div>
+	<div class="col-sm-8">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a title="Weather Alerts" class="btn btn-warning" asp-controller="WeatherAlerts" asp-action="Index" asp-route-area="User">Weather Alerts</a>
+			@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+			{
+				<a title="Add new notification" class="btn btn-success" asp-controller="Notifications" asp-action="New" asp-route-area="User">@localizer["NewNotification"]</a>
+			}
 		</div>
-	}
+	</div>
 </div>
 
 <div class="row">

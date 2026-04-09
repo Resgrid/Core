@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>تنبيهات الطقس</value>
+  </data>
+  <data name="WeatherAlerts" xml:space="preserve">
+    <value>تنبيهات الطقس</value>
+  </data>
+  <data name="ActiveAlerts" xml:space="preserve">
+    <value>تنبيهات الطقس النشطة</value>
+  </data>
+  <data name="AlertHistory" xml:space="preserve">
+    <value>سجل التنبيهات</value>
+  </data>
+  <data name="AlertSources" xml:space="preserve">
+    <value>مصادر التنبيهات</value>
+  </data>
+  <data name="MonitoringZones" xml:space="preserve">
+    <value>مناطق المراقبة</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>الإعدادات</value>
+  </data>
+  <data name="ViewHistory" xml:space="preserve">
+    <value>عرض السجل</value>
+  </data>
+  <data name="BackToAlerts" xml:space="preserve">
+    <value>العودة إلى التنبيهات</value>
+  </data>
+  <data name="BackToSettings" xml:space="preserve">
+    <value>العودة إلى الإعدادات</value>
+  </data>
+  <data name="ManageZones" xml:space="preserve">
+    <value>إدارة المناطق</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>التفاصيل</value>
+  </data>
+  <data name="NoActiveAlerts" xml:space="preserve">
+    <value>لا توجد تنبيهات طقس نشطة لقسمك.</value>
+  </data>
+  <data name="UnableToLoad" xml:space="preserve">
+    <value>تعذر تحميل تنبيهات الطقس. يرجى التحقق من الإعدادات.</value>
+  </data>
+  <data name="LoadingAlerts" xml:space="preserve">
+    <value>جاري تحميل تنبيهات الطقس...</value>
+  </data>
+  <data name="LoadingHistory" xml:space="preserve">
+    <value>جاري تحميل السجل...</value>
+  </data>
+  <data name="Event" xml:space="preserve">
+    <value>الحدث</value>
+  </data>
+  <data name="Severity" xml:space="preserve">
+    <value>الخطورة</value>
+  </data>
+  <data name="Area" xml:space="preserve">
+    <value>المنطقة</value>
+  </data>
+  <data name="Expires" xml:space="preserve">
+    <value>ينتهي</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>الفئة</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>الإجراءات</value>
+  </data>
+  <data name="SeverityExtreme" xml:space="preserve">
+    <value>شديدة للغاية</value>
+  </data>
+  <data name="SeveritySevere" xml:space="preserve">
+    <value>شديدة</value>
+  </data>
+  <data name="SeverityModerate" xml:space="preserve">
+    <value>معتدلة</value>
+  </data>
+  <data name="SeverityMinor" xml:space="preserve">
+    <value>طفيفة</value>
+  </data>
+  <data name="SeverityUnknown" xml:space="preserve">
+    <value>غير معروفة</value>
+  </data>
+  <data name="UrgencyImmediate" xml:space="preserve">
+    <value>فورية</value>
+  </data>
+  <data name="UrgencyExpected" xml:space="preserve">
+    <value>متوقعة</value>
+  </data>
+  <data name="UrgencyFuture" xml:space="preserve">
+    <value>مستقبلية</value>
+  </data>
+  <data name="UrgencyPast" xml:space="preserve">
+    <value>سابقة</value>
+  </data>
+  <data name="UrgencyUnknown" xml:space="preserve">
+    <value>غير معروفة</value>
+  </data>
+  <data name="CategoryMet" xml:space="preserve">
+    <value>أرصاد جوية</value>
+  </data>
+  <data name="CategoryFire" xml:space="preserve">
+    <value>حريق</value>
+  </data>
+  <data name="CategoryHealth" xml:space="preserve">
+    <value>صحة</value>
+  </data>
+  <data name="CategoryEnv" xml:space="preserve">
+    <value>بيئية</value>
+  </data>
+  <data name="CategoryOther" xml:space="preserve">
+    <value>أخرى</value>
+  </data>
+  <data name="StatusActive" xml:space="preserve">
+    <value>نشط</value>
+  </data>
+  <data name="StatusUpdated" xml:space="preserve">
+    <value>محدّث</value>
+  </data>
+  <data name="StatusExpired" xml:space="preserve">
+    <value>منتهي</value>
+  </data>
+  <data name="StatusCancelled" xml:space="preserve">
+    <value>ملغى</value>
+  </data>
+  <data name="SourceTypeNWS" xml:space="preserve">
+    <value>خدمة الطقس الوطنية</value>
+  </data>
+  <data name="SourceTypeEC" xml:space="preserve">
+    <value>البيئة الكندية</value>
+  </data>
+  <data name="SourceTypeMeteoAlarm" xml:space="preserve">
+    <value>MeteoAlarm (أوروبا)</value>
+  </data>
+  <data name="AddSource" xml:space="preserve">
+    <value>إضافة مصدر</value>
+  </data>
+  <data name="SourceName" xml:space="preserve">
+    <value>اسم المصدر</value>
+  </data>
+  <data name="SourceType" xml:space="preserve">
+    <value>نوع المصدر</value>
+  </data>
+  <data name="AreaFilter" xml:space="preserve">
+    <value>فلتر المنطقة (أكواد مناطق JSON)</value>
+  </data>
+  <data name="PollInterval" xml:space="preserve">
+    <value>فترة الاستعلام (دقائق)</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>حذف</value>
+  </data>
+  <data name="DeleteSourceConfirm" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد حذف هذا المصدر؟</value>
+  </data>
+  <data name="FailedToSaveSource" xml:space="preserve">
+    <value>فشل في حفظ المصدر. يرجى المحاولة مرة أخرى.</value>
+  </data>
+  <data name="FailedToDeleteSource" xml:space="preserve">
+    <value>فشل في حذف المصدر. يرجى المحاولة مرة أخرى.</value>
+  </data>
+  <data name="AddZone" xml:space="preserve">
+    <value>إضافة منطقة مراقبة</value>
+  </data>
+  <data name="EditZone" xml:space="preserve">
+    <value>تعديل منطقة المراقبة</value>
+  </data>
+  <data name="ZoneName" xml:space="preserve">
+    <value>اسم المنطقة</value>
+  </data>
+  <data name="ZoneCode" xml:space="preserve">
+    <value>رمز المنطقة</value>
+  </data>
+  <data name="CenterLocation" xml:space="preserve">
+    <value>الموقع المركزي</value>
+  </data>
+  <data name="RadiusMiles" xml:space="preserve">
+    <value>نصف القطر (أميال)</value>
+  </data>
+  <data name="PrimaryZone" xml:space="preserve">
+    <value>المنطقة الرئيسية</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>نشطة</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>غير نشطة</value>
+  </data>
+  <data name="Primary" xml:space="preserve">
+    <value>رئيسية</value>
+  </data>
+  <data name="Enable" xml:space="preserve">
+    <value>تفعيل</value>
+  </data>
+  <data name="Disable" xml:space="preserve">
+    <value>تعطيل</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="NoZonesConfigured" xml:space="preserve">
+    <value>لم يتم تكوين مناطق مراقبة. أضف منطقة أدناه لتحديد المناطق الجغرافية التي تريد مراقبتها لتنبيهات الطقس.</value>
+  </data>
+  <data name="DeleteZoneConfirm" xml:space="preserve">
+    <value>هل أنت متأكد أنك تريد حذف هذه المنطقة؟</value>
+  </data>
+  <data name="FailedToSaveZone" xml:space="preserve">
+    <value>فشل في حفظ المنطقة. يرجى المحاولة مرة أخرى.</value>
+  </data>
+  <data name="FailedToDeleteZone" xml:space="preserve">
+    <value>فشل في حذف المنطقة. يرجى المحاولة مرة أخرى.</value>
+  </data>
+  <data name="FailedToToggleZone" xml:space="preserve">
+    <value>فشل في تحديث حالة المنطقة. يرجى المحاولة مرة أخرى.</value>
+  </data>
+  <data name="EnterZoneName" xml:space="preserve">
+    <value>يرجى إدخال اسم المنطقة.</value>
+  </data>
+  <data name="SaveZone" xml:space="preserve">
+    <value>حفظ المنطقة</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>الخيارات</value>
+  </data>
+  <data name="StartDate" xml:space="preserve">
+    <value>تاريخ البداية</value>
+  </data>
+  <data name="EndDate" xml:space="preserve">
+    <value>تاريخ النهاية</value>
+  </data>
+  <data name="SearchHistory" xml:space="preserve">
+    <value>بحث</value>
+  </data>
+  <data name="SelectDates" xml:space="preserve">
+    <value>يرجى تحديد تاريخ البداية والنهاية.</value>
+  </data>
+  <data name="NoHistoryFound" xml:space="preserve">
+    <value>لم يتم العثور على سجل تنبيهات للفترة المحددة.</value>
+  </data>
+  <data name="FailedToLoadHistory" xml:space="preserve">
+    <value>تعذر تحميل سجل التنبيهات.</value>
+  </data>
+  <data name="AlertDetail" xml:space="preserve">
+    <value>تفاصيل التنبيه</value>
+  </data>
+  <data name="Headline" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>الوصف</value>
+  </data>
+  <data name="Instructions" xml:space="preserve">
+    <value>التعليمات</value>
+  </data>
+  <data name="AreaDescription" xml:space="preserve">
+    <value>وصف المنطقة</value>
+  </data>
+  <data name="Urgency" xml:space="preserve">
+    <value>الإلحاح</value>
+  </data>
+  <data name="Certainty" xml:space="preserve">
+    <value>اليقين</value>
+  </data>
+  <data name="EffectiveDate" xml:space="preserve">
+    <value>تاريخ السريان</value>
+  </data>
+  <data name="OnsetDate" xml:space="preserve">
+    <value>تاريخ البدء</value>
+  </data>
+  <data name="ExpiresDate" xml:space="preserve">
+    <value>تاريخ الانتهاء</value>
+  </data>
+  <data name="SentDate" xml:space="preserve">
+    <value>تاريخ الإرسال</value>
+  </data>
+  <data name="FirstSeen" xml:space="preserve">
+    <value>أول اكتشاف</value>
+  </data>
+  <data name="LastUpdated" xml:space="preserve">
+    <value>آخر تحديث</value>
+  </data>
+  <data name="Sender" xml:space="preserve">
+    <value>المرسل</value>
+  </data>
+  <data name="ExternalId" xml:space="preserve">
+    <value>المعرف الخارجي</value>
+  </data>
+  <data name="NotificationSent" xml:space="preserve">
+    <value>تم إرسال الإشعار</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>نعم</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>لا</value>
+  </data>
+  <data name="ConfiguredSources" xml:space="preserve">
+    <value>المصادر المكوّنة</value>
+  </data>
+  <data name="PollIntervalMinutes" xml:space="preserve">
+    <value>فترة الاستعلام</value>
+  </data>
+  <data name="LastPoll" xml:space="preserve">
+    <value>آخر استعلام</value>
+  </data>
+  <data name="SourceStatus" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="Healthy" xml:space="preserve">
+    <value>سليم</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>خطأ</value>
+  </data>
+  <data name="NeverPolled" xml:space="preserve">
+    <value>لم يتم الاستعلام مطلقاً</value>
+  </data>
+  <data name="NoSourcesConfigured" xml:space="preserve">
+    <value>لم يتم تكوين مصادر تنبيهات الطقس. أضف مصدراً لبدء تلقي تنبيهات الطقس.</value>
+  </data>
+  <data name="WeatherAlertMessage" xml:space="preserve">
+    <value>تنبيه الطقس: {0}</value>
+  </data>
+  <data name="AlertExpires" xml:space="preserve">
+    <value>ينتهي: {0}</value>
+  </data>
+  <data name="AlertArea" xml:space="preserve">
+    <value>المنطقة: {0}</value>
+  </data>
+  <data name="AlertInstructions" xml:space="preserve">
+    <value>التعليمات: {0}</value>
+  </data>
+  <data name="NotificationSettings" xml:space="preserve">
+    <value>إعدادات الإشعارات</value>
+  </data>
+  <data name="NotificationSettingsDesc" xml:space="preserve">
+    <value>قم بتكوين تنبيهات الطقس التي تولّد رسائل تلقائياً لأعضاء القسم.</value>
+  </data>
+  <data name="EnableWeatherAlerts" xml:space="preserve">
+    <value>تفعيل تنبيهات الطقس</value>
+  </data>
+  <data name="MinimumSeverityDisplay" xml:space="preserve">
+    <value>الحد الأدنى للخطورة للعرض</value>
+  </data>
+  <data name="MinimumSeverityDisplayHelp" xml:space="preserve">
+    <value>سيتم عرض التنبيهات بهذه الخطورة أو أعلى فقط في لوحة المعلومات.</value>
+  </data>
+  <data name="AutoMessageSeverity" xml:space="preserve">
+    <value>عتبة الخطورة للرسائل التلقائية</value>
+  </data>
+  <data name="AutoMessageSeverityHelp" xml:space="preserve">
+    <value>التنبيهات بهذه الخطورة أو أعلى سترسل تلقائياً رسالة إلى جميع أعضاء القسم. قيمة أقل = خطورة أعلى (شديدة للغاية=0، شديدة=1، معتدلة=2، طفيفة=3).</value>
+  </data>
+  <data name="EnableCallIntegration" xml:space="preserve">
+    <value>إرفاق سياق الطقس بالمكالمات</value>
+  </data>
+  <data name="EnableCallIntegrationHelp" xml:space="preserve">
+    <value>عند التفعيل، سيتم إرفاق تنبيهات الطقس النشطة القريبة من موقع المكالمة كملاحظة للمكالمة.</value>
+  </data>
+  <data name="SaveSettings" xml:space="preserve">
+    <value>حفظ الإعدادات</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>تم حفظ الإعدادات بنجاح.</value>
+  </data>
+  <data name="FailedToSaveSettings" xml:space="preserve">
+    <value>فشل في حفظ الإعدادات. يرجى المحاولة مرة أخرى.</value>
+  </data>
+  <data name="FailedToLoadSettings" xml:space="preserve">
+    <value>فشل في تحميل الإعدادات.</value>
+  </data>
+  <data name="FailedToToggleSource" xml:space="preserve">
+    <value>فشل في تحديث حالة المصدر. يرجى المحاولة مرة أخرى.</value>
+  </data>
+  <data name="EditSource" xml:space="preserve">
+    <value>تعديل المصدر</value>
+  </data>
+  <data name="AddEditSource" xml:space="preserve">
+    <value>إضافة / تعديل مصدر</value>
+  </data>
+  <data name="EnterSourceName" xml:space="preserve">
+    <value>يرجى إدخال اسم المصدر.</value>
+  </data>
+  <data name="AreaFilterHelp" xml:space="preserve">
+    <value>قائمة مفصولة بفواصل من رموز الولايات أو رموز المقاطعات أو رموز مناطق NWS.</value>
+  </data>
+</root>

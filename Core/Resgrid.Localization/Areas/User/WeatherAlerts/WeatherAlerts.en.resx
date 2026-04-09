@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Weather Alerts</value>
+  </data>
+  <data name="WeatherAlerts" xml:space="preserve">
+    <value>Weather Alerts</value>
+  </data>
+  <data name="ActiveAlerts" xml:space="preserve">
+    <value>Active Weather Alerts</value>
+  </data>
+  <data name="AlertHistory" xml:space="preserve">
+    <value>Alert History</value>
+  </data>
+  <data name="AlertSources" xml:space="preserve">
+    <value>Alert Sources</value>
+  </data>
+  <data name="MonitoringZones" xml:space="preserve">
+    <value>Monitoring Zones</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="ViewHistory" xml:space="preserve">
+    <value>View History</value>
+  </data>
+  <data name="BackToAlerts" xml:space="preserve">
+    <value>Back to Alerts</value>
+  </data>
+  <data name="BackToSettings" xml:space="preserve">
+    <value>Back to Settings</value>
+  </data>
+  <data name="ManageZones" xml:space="preserve">
+    <value>Manage Zones</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Details</value>
+  </data>
+  <data name="NoActiveAlerts" xml:space="preserve">
+    <value>No active weather alerts for your department.</value>
+  </data>
+  <data name="UnableToLoad" xml:space="preserve">
+    <value>Unable to load weather alerts. Please check your configuration.</value>
+  </data>
+  <data name="LoadingAlerts" xml:space="preserve">
+    <value>Loading weather alerts...</value>
+  </data>
+  <data name="LoadingHistory" xml:space="preserve">
+    <value>Loading history...</value>
+  </data>
+  <data name="Event" xml:space="preserve">
+    <value>Event</value>
+  </data>
+  <data name="Severity" xml:space="preserve">
+    <value>Severity</value>
+  </data>
+  <data name="Area" xml:space="preserve">
+    <value>Area</value>
+  </data>
+  <data name="Expires" xml:space="preserve">
+    <value>Expires</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Actions</value>
+  </data>
+  <data name="SeverityExtreme" xml:space="preserve">
+    <value>Extreme</value>
+  </data>
+  <data name="SeveritySevere" xml:space="preserve">
+    <value>Severe</value>
+  </data>
+  <data name="SeverityModerate" xml:space="preserve">
+    <value>Moderate</value>
+  </data>
+  <data name="SeverityMinor" xml:space="preserve">
+    <value>Minor</value>
+  </data>
+  <data name="SeverityUnknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="UrgencyImmediate" xml:space="preserve">
+    <value>Immediate</value>
+  </data>
+  <data name="UrgencyExpected" xml:space="preserve">
+    <value>Expected</value>
+  </data>
+  <data name="UrgencyFuture" xml:space="preserve">
+    <value>Future</value>
+  </data>
+  <data name="UrgencyPast" xml:space="preserve">
+    <value>Past</value>
+  </data>
+  <data name="UrgencyUnknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="CategoryMet" xml:space="preserve">
+    <value>Meteorological</value>
+  </data>
+  <data name="CategoryFire" xml:space="preserve">
+    <value>Fire</value>
+  </data>
+  <data name="CategoryHealth" xml:space="preserve">
+    <value>Health</value>
+  </data>
+  <data name="CategoryEnv" xml:space="preserve">
+    <value>Environmental</value>
+  </data>
+  <data name="CategoryOther" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="StatusActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="StatusUpdated" xml:space="preserve">
+    <value>Updated</value>
+  </data>
+  <data name="StatusExpired" xml:space="preserve">
+    <value>Expired</value>
+  </data>
+  <data name="StatusCancelled" xml:space="preserve">
+    <value>Cancelled</value>
+  </data>
+  <data name="SourceTypeNWS" xml:space="preserve">
+    <value>National Weather Service</value>
+  </data>
+  <data name="SourceTypeEC" xml:space="preserve">
+    <value>Environment Canada</value>
+  </data>
+  <data name="SourceTypeMeteoAlarm" xml:space="preserve">
+    <value>MeteoAlarm (Europe)</value>
+  </data>
+  <data name="AddSource" xml:space="preserve">
+    <value>Add Source</value>
+  </data>
+  <data name="SourceName" xml:space="preserve">
+    <value>Source Name</value>
+  </data>
+  <data name="SourceType" xml:space="preserve">
+    <value>Source Type</value>
+  </data>
+  <data name="AreaFilter" xml:space="preserve">
+    <value>Area Filter (JSON zone codes)</value>
+  </data>
+  <data name="PollInterval" xml:space="preserve">
+    <value>Poll Interval (minutes)</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="DeleteSourceConfirm" xml:space="preserve">
+    <value>Are you sure you want to delete this source?</value>
+  </data>
+  <data name="FailedToSaveSource" xml:space="preserve">
+    <value>Failed to save source. Please try again.</value>
+  </data>
+  <data name="FailedToDeleteSource" xml:space="preserve">
+    <value>Failed to delete source. Please try again.</value>
+  </data>
+  <data name="AddZone" xml:space="preserve">
+    <value>Add Monitoring Zone</value>
+  </data>
+  <data name="EditZone" xml:space="preserve">
+    <value>Edit Monitoring Zone</value>
+  </data>
+  <data name="ZoneName" xml:space="preserve">
+    <value>Zone Name</value>
+  </data>
+  <data name="ZoneCode" xml:space="preserve">
+    <value>Zone Code</value>
+  </data>
+  <data name="CenterLocation" xml:space="preserve">
+    <value>Center Location</value>
+  </data>
+  <data name="RadiusMiles" xml:space="preserve">
+    <value>Radius (miles)</value>
+  </data>
+  <data name="PrimaryZone" xml:space="preserve">
+    <value>Primary Zone</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>Inactive</value>
+  </data>
+  <data name="Primary" xml:space="preserve">
+    <value>Primary</value>
+  </data>
+  <data name="Enable" xml:space="preserve">
+    <value>Enable</value>
+  </data>
+  <data name="Disable" xml:space="preserve">
+    <value>Disable</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="NoZonesConfigured" xml:space="preserve">
+    <value>No monitoring zones configured. Add a zone below to define the geographic areas you want to monitor for weather alerts.</value>
+  </data>
+  <data name="DeleteZoneConfirm" xml:space="preserve">
+    <value>Are you sure you want to delete this zone?</value>
+  </data>
+  <data name="FailedToSaveZone" xml:space="preserve">
+    <value>Failed to save zone. Please try again.</value>
+  </data>
+  <data name="FailedToDeleteZone" xml:space="preserve">
+    <value>Failed to delete zone. Please try again.</value>
+  </data>
+  <data name="FailedToToggleZone" xml:space="preserve">
+    <value>Failed to update zone status. Please try again.</value>
+  </data>
+  <data name="EnterZoneName" xml:space="preserve">
+    <value>Please enter a zone name.</value>
+  </data>
+  <data name="SaveZone" xml:space="preserve">
+    <value>Save Zone</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>Options</value>
+  </data>
+  <data name="StartDate" xml:space="preserve">
+    <value>Start Date</value>
+  </data>
+  <data name="EndDate" xml:space="preserve">
+    <value>End Date</value>
+  </data>
+  <data name="SearchHistory" xml:space="preserve">
+    <value>Search</value>
+  </data>
+  <data name="SelectDates" xml:space="preserve">
+    <value>Please select both start and end dates.</value>
+  </data>
+  <data name="NoHistoryFound" xml:space="preserve">
+    <value>No alert history found for the selected date range.</value>
+  </data>
+  <data name="FailedToLoadHistory" xml:space="preserve">
+    <value>Unable to load alert history.</value>
+  </data>
+  <data name="AlertDetail" xml:space="preserve">
+    <value>Alert Detail</value>
+  </data>
+  <data name="Headline" xml:space="preserve">
+    <value>Headline</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="Instructions" xml:space="preserve">
+    <value>Instructions</value>
+  </data>
+  <data name="AreaDescription" xml:space="preserve">
+    <value>Area Description</value>
+  </data>
+  <data name="Urgency" xml:space="preserve">
+    <value>Urgency</value>
+  </data>
+  <data name="Certainty" xml:space="preserve">
+    <value>Certainty</value>
+  </data>
+  <data name="EffectiveDate" xml:space="preserve">
+    <value>Effective Date</value>
+  </data>
+  <data name="OnsetDate" xml:space="preserve">
+    <value>Onset Date</value>
+  </data>
+  <data name="ExpiresDate" xml:space="preserve">
+    <value>Expires Date</value>
+  </data>
+  <data name="SentDate" xml:space="preserve">
+    <value>Sent Date</value>
+  </data>
+  <data name="FirstSeen" xml:space="preserve">
+    <value>First Seen</value>
+  </data>
+  <data name="LastUpdated" xml:space="preserve">
+    <value>Last Updated</value>
+  </data>
+  <data name="Sender" xml:space="preserve">
+    <value>Sender</value>
+  </data>
+  <data name="ExternalId" xml:space="preserve">
+    <value>External ID</value>
+  </data>
+  <data name="NotificationSent" xml:space="preserve">
+    <value>Notification Sent</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="ConfiguredSources" xml:space="preserve">
+    <value>Configured Sources</value>
+  </data>
+  <data name="PollIntervalMinutes" xml:space="preserve">
+    <value>Poll Interval</value>
+  </data>
+  <data name="LastPoll" xml:space="preserve">
+    <value>Last Poll</value>
+  </data>
+  <data name="SourceStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Healthy" xml:space="preserve">
+    <value>Healthy</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="NeverPolled" xml:space="preserve">
+    <value>Never Polled</value>
+  </data>
+  <data name="NoSourcesConfigured" xml:space="preserve">
+    <value>No weather alert sources configured. Add a source to start receiving weather alerts.</value>
+  </data>
+  <data name="WeatherAlertMessage" xml:space="preserve">
+    <value>Weather Alert: {0}</value>
+  </data>
+  <data name="AlertExpires" xml:space="preserve">
+    <value>Expires: {0}</value>
+  </data>
+  <data name="AlertArea" xml:space="preserve">
+    <value>Area: {0}</value>
+  </data>
+  <data name="AlertInstructions" xml:space="preserve">
+    <value>Instructions: {0}</value>
+  </data>
+  <data name="NotificationSettings" xml:space="preserve">
+    <value>Notification Settings</value>
+  </data>
+  <data name="NotificationSettingsDesc" xml:space="preserve">
+    <value>Configure which weather alerts automatically generate messages to department members.</value>
+  </data>
+  <data name="EnableWeatherAlerts" xml:space="preserve">
+    <value>Enable Weather Alerts</value>
+  </data>
+  <data name="MinimumSeverityDisplay" xml:space="preserve">
+    <value>Minimum Severity to Display</value>
+  </data>
+  <data name="MinimumSeverityDisplayHelp" xml:space="preserve">
+    <value>Only alerts at or above this severity will be shown in the dashboard.</value>
+  </data>
+  <data name="AutoMessageSeverity" xml:space="preserve">
+    <value>Auto-Message Severity Threshold</value>
+  </data>
+  <data name="AutoMessageSeverityHelp" xml:space="preserve">
+    <value>Alerts at or above this severity will automatically send a message to all department members. Lower value = higher severity (Extreme=0, Severe=1, Moderate=2, Minor=3).</value>
+  </data>
+  <data name="EnableCallIntegration" xml:space="preserve">
+    <value>Attach Weather Context to Calls</value>
+  </data>
+  <data name="EnableCallIntegrationHelp" xml:space="preserve">
+    <value>When enabled, active weather alerts near a call's location will be attached as a call note.</value>
+  </data>
+  <data name="SaveSettings" xml:space="preserve">
+    <value>Save Settings</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Settings saved successfully.</value>
+  </data>
+  <data name="FailedToSaveSettings" xml:space="preserve">
+    <value>Failed to save settings. Please try again.</value>
+  </data>
+  <data name="FailedToLoadSettings" xml:space="preserve">
+    <value>Failed to load settings.</value>
+  </data>
+  <data name="FailedToToggleSource" xml:space="preserve">
+    <value>Failed to update source status. Please try again.</value>
+  </data>
+  <data name="EditSource" xml:space="preserve">
+    <value>Edit Source</value>
+  </data>
+  <data name="AddEditSource" xml:space="preserve">
+    <value>Add / Edit Source</value>
+  </data>
+  <data name="EnterSourceName" xml:space="preserve">
+    <value>Please enter a source name.</value>
+  </data>
+  <data name="AreaFilterHelp" xml:space="preserve">
+    <value>Comma-separated list of state codes, province codes, or NWS zone codes.</value>
+  </data>
+</root>

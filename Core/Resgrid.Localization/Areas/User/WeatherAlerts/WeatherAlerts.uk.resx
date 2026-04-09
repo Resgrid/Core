@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Попередження про Погоду</value>
+  </data>
+  <data name="WeatherAlerts" xml:space="preserve">
+    <value>Попередження про Погоду</value>
+  </data>
+  <data name="ActiveAlerts" xml:space="preserve">
+    <value>Активні Попередження про Погоду</value>
+  </data>
+  <data name="AlertHistory" xml:space="preserve">
+    <value>Історія Попереджень</value>
+  </data>
+  <data name="AlertSources" xml:space="preserve">
+    <value>Джерела Попереджень</value>
+  </data>
+  <data name="MonitoringZones" xml:space="preserve">
+    <value>Зони Моніторингу</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Налаштування</value>
+  </data>
+  <data name="ViewHistory" xml:space="preserve">
+    <value>Переглянути Історію</value>
+  </data>
+  <data name="BackToAlerts" xml:space="preserve">
+    <value>Назад до Попереджень</value>
+  </data>
+  <data name="BackToSettings" xml:space="preserve">
+    <value>Назад до Налаштувань</value>
+  </data>
+  <data name="ManageZones" xml:space="preserve">
+    <value>Керувати Зонами</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Деталі</value>
+  </data>
+  <data name="NoActiveAlerts" xml:space="preserve">
+    <value>Немає активних попереджень про погоду для вашого підрозділу.</value>
+  </data>
+  <data name="UnableToLoad" xml:space="preserve">
+    <value>Не вдалося завантажити попередження про погоду. Перевірте налаштування.</value>
+  </data>
+  <data name="LoadingAlerts" xml:space="preserve">
+    <value>Завантаження попереджень про погоду...</value>
+  </data>
+  <data name="LoadingHistory" xml:space="preserve">
+    <value>Завантаження історії...</value>
+  </data>
+  <data name="Event" xml:space="preserve">
+    <value>Подія</value>
+  </data>
+  <data name="Severity" xml:space="preserve">
+    <value>Серйозність</value>
+  </data>
+  <data name="Area" xml:space="preserve">
+    <value>Район</value>
+  </data>
+  <data name="Expires" xml:space="preserve">
+    <value>Закінчується</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Категорія</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Дії</value>
+  </data>
+  <data name="SeverityExtreme" xml:space="preserve">
+    <value>Екстремальна</value>
+  </data>
+  <data name="SeveritySevere" xml:space="preserve">
+    <value>Серйозна</value>
+  </data>
+  <data name="SeverityModerate" xml:space="preserve">
+    <value>Помірна</value>
+  </data>
+  <data name="SeverityMinor" xml:space="preserve">
+    <value>Незначна</value>
+  </data>
+  <data name="SeverityUnknown" xml:space="preserve">
+    <value>Невідома</value>
+  </data>
+  <data name="UrgencyImmediate" xml:space="preserve">
+    <value>Негайна</value>
+  </data>
+  <data name="UrgencyExpected" xml:space="preserve">
+    <value>Очікувана</value>
+  </data>
+  <data name="UrgencyFuture" xml:space="preserve">
+    <value>Майбутня</value>
+  </data>
+  <data name="UrgencyPast" xml:space="preserve">
+    <value>Минула</value>
+  </data>
+  <data name="UrgencyUnknown" xml:space="preserve">
+    <value>Невідома</value>
+  </data>
+  <data name="CategoryMet" xml:space="preserve">
+    <value>Метеорологічна</value>
+  </data>
+  <data name="CategoryFire" xml:space="preserve">
+    <value>Пожежа</value>
+  </data>
+  <data name="CategoryHealth" xml:space="preserve">
+    <value>Здоров'я</value>
+  </data>
+  <data name="CategoryEnv" xml:space="preserve">
+    <value>Екологічна</value>
+  </data>
+  <data name="CategoryOther" xml:space="preserve">
+    <value>Інша</value>
+  </data>
+  <data name="StatusActive" xml:space="preserve">
+    <value>Активний</value>
+  </data>
+  <data name="StatusUpdated" xml:space="preserve">
+    <value>Оновлений</value>
+  </data>
+  <data name="StatusExpired" xml:space="preserve">
+    <value>Закінчився</value>
+  </data>
+  <data name="StatusCancelled" xml:space="preserve">
+    <value>Скасований</value>
+  </data>
+  <data name="SourceTypeNWS" xml:space="preserve">
+    <value>Національна Метеорологічна Служба</value>
+  </data>
+  <data name="SourceTypeEC" xml:space="preserve">
+    <value>Environment Canada</value>
+  </data>
+  <data name="SourceTypeMeteoAlarm" xml:space="preserve">
+    <value>MeteoAlarm (Європа)</value>
+  </data>
+  <data name="AddSource" xml:space="preserve">
+    <value>Додати Джерело</value>
+  </data>
+  <data name="SourceName" xml:space="preserve">
+    <value>Назва Джерела</value>
+  </data>
+  <data name="SourceType" xml:space="preserve">
+    <value>Тип Джерела</value>
+  </data>
+  <data name="AreaFilter" xml:space="preserve">
+    <value>Фільтр Району (коди зон JSON)</value>
+  </data>
+  <data name="PollInterval" xml:space="preserve">
+    <value>Інтервал Опитування (хвилини)</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Зберегти</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Скасувати</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Видалити</value>
+  </data>
+  <data name="DeleteSourceConfirm" xml:space="preserve">
+    <value>Ви впевнені, що хочете видалити це джерело?</value>
+  </data>
+  <data name="FailedToSaveSource" xml:space="preserve">
+    <value>Не вдалося зберегти джерело. Спробуйте ще раз.</value>
+  </data>
+  <data name="FailedToDeleteSource" xml:space="preserve">
+    <value>Не вдалося видалити джерело. Спробуйте ще раз.</value>
+  </data>
+  <data name="AddZone" xml:space="preserve">
+    <value>Додати Зону Моніторингу</value>
+  </data>
+  <data name="EditZone" xml:space="preserve">
+    <value>Редагувати Зону Моніторингу</value>
+  </data>
+  <data name="ZoneName" xml:space="preserve">
+    <value>Назва Зони</value>
+  </data>
+  <data name="ZoneCode" xml:space="preserve">
+    <value>Код Зони</value>
+  </data>
+  <data name="CenterLocation" xml:space="preserve">
+    <value>Центральне Розташування</value>
+  </data>
+  <data name="RadiusMiles" xml:space="preserve">
+    <value>Радіус (милі)</value>
+  </data>
+  <data name="PrimaryZone" xml:space="preserve">
+    <value>Основна Зона</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Активна</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>Неактивна</value>
+  </data>
+  <data name="Primary" xml:space="preserve">
+    <value>Основна</value>
+  </data>
+  <data name="Enable" xml:space="preserve">
+    <value>Увімкнути</value>
+  </data>
+  <data name="Disable" xml:space="preserve">
+    <value>Вимкнути</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Редагувати</value>
+  </data>
+  <data name="NoZonesConfigured" xml:space="preserve">
+    <value>Зони моніторингу не налаштовані. Додайте зону нижче, щоб визначити географічні райони для моніторингу попереджень про погоду.</value>
+  </data>
+  <data name="DeleteZoneConfirm" xml:space="preserve">
+    <value>Ви впевнені, що хочете видалити цю зону?</value>
+  </data>
+  <data name="FailedToSaveZone" xml:space="preserve">
+    <value>Не вдалося зберегти зону. Спробуйте ще раз.</value>
+  </data>
+  <data name="FailedToDeleteZone" xml:space="preserve">
+    <value>Не вдалося видалити зону. Спробуйте ще раз.</value>
+  </data>
+  <data name="FailedToToggleZone" xml:space="preserve">
+    <value>Не вдалося оновити статус зони. Спробуйте ще раз.</value>
+  </data>
+  <data name="EnterZoneName" xml:space="preserve">
+    <value>Будь ласка, введіть назву зони.</value>
+  </data>
+  <data name="SaveZone" xml:space="preserve">
+    <value>Зберегти Зону</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>Параметри</value>
+  </data>
+  <data name="StartDate" xml:space="preserve">
+    <value>Дата Початку</value>
+  </data>
+  <data name="EndDate" xml:space="preserve">
+    <value>Дата Закінчення</value>
+  </data>
+  <data name="SearchHistory" xml:space="preserve">
+    <value>Пошук</value>
+  </data>
+  <data name="SelectDates" xml:space="preserve">
+    <value>Будь ласка, виберіть дату початку та закінчення.</value>
+  </data>
+  <data name="NoHistoryFound" xml:space="preserve">
+    <value>Історія попереджень для обраного періоду не знайдена.</value>
+  </data>
+  <data name="FailedToLoadHistory" xml:space="preserve">
+    <value>Не вдалося завантажити історію попереджень.</value>
+  </data>
+  <data name="AlertDetail" xml:space="preserve">
+    <value>Деталі Попередження</value>
+  </data>
+  <data name="Headline" xml:space="preserve">
+    <value>Заголовок</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Опис</value>
+  </data>
+  <data name="Instructions" xml:space="preserve">
+    <value>Інструкції</value>
+  </data>
+  <data name="AreaDescription" xml:space="preserve">
+    <value>Опис Району</value>
+  </data>
+  <data name="Urgency" xml:space="preserve">
+    <value>Терміновість</value>
+  </data>
+  <data name="Certainty" xml:space="preserve">
+    <value>Достовірність</value>
+  </data>
+  <data name="EffectiveDate" xml:space="preserve">
+    <value>Дата Набуття Чинності</value>
+  </data>
+  <data name="OnsetDate" xml:space="preserve">
+    <value>Дата Початку</value>
+  </data>
+  <data name="ExpiresDate" xml:space="preserve">
+    <value>Дата Закінчення</value>
+  </data>
+  <data name="SentDate" xml:space="preserve">
+    <value>Дата Відправлення</value>
+  </data>
+  <data name="FirstSeen" xml:space="preserve">
+    <value>Перше Виявлення</value>
+  </data>
+  <data name="LastUpdated" xml:space="preserve">
+    <value>Останнє Оновлення</value>
+  </data>
+  <data name="Sender" xml:space="preserve">
+    <value>Відправник</value>
+  </data>
+  <data name="ExternalId" xml:space="preserve">
+    <value>Зовнішній ID</value>
+  </data>
+  <data name="NotificationSent" xml:space="preserve">
+    <value>Сповіщення Надіслано</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Так</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Ні</value>
+  </data>
+  <data name="ConfiguredSources" xml:space="preserve">
+    <value>Налаштовані Джерела</value>
+  </data>
+  <data name="PollIntervalMinutes" xml:space="preserve">
+    <value>Інтервал Опитування</value>
+  </data>
+  <data name="LastPoll" xml:space="preserve">
+    <value>Останнє Опитування</value>
+  </data>
+  <data name="SourceStatus" xml:space="preserve">
+    <value>Статус</value>
+  </data>
+  <data name="Healthy" xml:space="preserve">
+    <value>Справний</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Помилка</value>
+  </data>
+  <data name="NeverPolled" xml:space="preserve">
+    <value>Ніколи Не Опитувалось</value>
+  </data>
+  <data name="NoSourcesConfigured" xml:space="preserve">
+    <value>Джерела попереджень про погоду не налаштовані. Додайте джерело, щоб почати отримувати попередження про погоду.</value>
+  </data>
+  <data name="WeatherAlertMessage" xml:space="preserve">
+    <value>Попередження про Погоду: {0}</value>
+  </data>
+  <data name="AlertExpires" xml:space="preserve">
+    <value>Закінчується: {0}</value>
+  </data>
+  <data name="AlertArea" xml:space="preserve">
+    <value>Район: {0}</value>
+  </data>
+  <data name="AlertInstructions" xml:space="preserve">
+    <value>Інструкції: {0}</value>
+  </data>
+  <data name="NotificationSettings" xml:space="preserve">
+    <value>Налаштування Сповіщень</value>
+  </data>
+  <data name="NotificationSettingsDesc" xml:space="preserve">
+    <value>Налаштуйте, які попередження про погоду автоматично генерують повідомлення для членів підрозділу.</value>
+  </data>
+  <data name="EnableWeatherAlerts" xml:space="preserve">
+    <value>Увімкнути Попередження про Погоду</value>
+  </data>
+  <data name="MinimumSeverityDisplay" xml:space="preserve">
+    <value>Мінімальна Серйозність для Відображення</value>
+  </data>
+  <data name="MinimumSeverityDisplayHelp" xml:space="preserve">
+    <value>На панелі будуть показані лише попередження з цим або вищим рівнем серйозності.</value>
+  </data>
+  <data name="AutoMessageSeverity" xml:space="preserve">
+    <value>Поріг Серйозності для Автоматичного Повідомлення</value>
+  </data>
+  <data name="AutoMessageSeverityHelp" xml:space="preserve">
+    <value>Попередження з цим або вищим рівнем серйозності автоматично надішлють повідомлення всім членам підрозділу. Нижче значення = вища серйозність (Екстремальна=0, Серйозна=1, Помірна=2, Незначна=3).</value>
+  </data>
+  <data name="EnableCallIntegration" xml:space="preserve">
+    <value>Додавати Погодний Контекст до Викликів</value>
+  </data>
+  <data name="EnableCallIntegrationHelp" xml:space="preserve">
+    <value>Коли увімкнено, активні попередження про погоду поблизу місця виклику будуть додані як примітка до виклику.</value>
+  </data>
+  <data name="SaveSettings" xml:space="preserve">
+    <value>Зберегти Налаштування</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Налаштування збережено успішно.</value>
+  </data>
+  <data name="FailedToSaveSettings" xml:space="preserve">
+    <value>Не вдалося зберегти налаштування. Спробуйте ще раз.</value>
+  </data>
+  <data name="FailedToLoadSettings" xml:space="preserve">
+    <value>Не вдалося завантажити налаштування.</value>
+  </data>
+  <data name="FailedToToggleSource" xml:space="preserve">
+    <value>Не вдалося оновити статус джерела. Спробуйте ще раз.</value>
+  </data>
+  <data name="EditSource" xml:space="preserve">
+    <value>Редагувати Джерело</value>
+  </data>
+  <data name="AddEditSource" xml:space="preserve">
+    <value>Додати / Редагувати Джерело</value>
+  </data>
+  <data name="EnterSourceName" xml:space="preserve">
+    <value>Будь ласка, введіть назву джерела.</value>
+  </data>
+  <data name="AreaFilterHelp" xml:space="preserve">
+    <value>Розділений комами список кодів штатів, кодів провінцій або кодів зон NWS.</value>
+  </data>
+</root>

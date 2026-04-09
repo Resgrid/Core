@@ -65,6 +65,7 @@
 			public const string Udf = "Udf";
 			public const string Route = "Route";
 			public const string CommunicationTest = "CommunicationTest";
+			public const string WeatherAlert = "WeatherAlert";
 		}
 
 		public static string CreateDepartmentClaimTypeString(int departmentId)

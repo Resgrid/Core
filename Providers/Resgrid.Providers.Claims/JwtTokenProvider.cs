@@ -128,6 +128,7 @@ namespace Resgrid.Providers.Claims
 			ClaimsLogic.AddUdfClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
 			ClaimsLogic.AddRouteClaims(id, departmentAdmin, permissions, isGroupAdmin, roles);
 			ClaimsLogic.AddCommunicationTestClaims(id, departmentAdmin);
+			ClaimsLogic.AddWeatherAlertClaims(id, departmentAdmin);
 
 			var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtConfig.Key));
 			var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);

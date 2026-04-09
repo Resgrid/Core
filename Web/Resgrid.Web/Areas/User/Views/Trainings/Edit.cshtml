@@ -231,8 +231,8 @@
 																	foreach (var answer in question.Answers)
 																	{
 																		<div style="margin-bottom: 5px;">
-																			<input type="radio" name="answer_@qIndex" value="answerForQuestion_@qIndex_@aIndex" @(answer.Correct ? "checked" : "") /> Correct
-																			<input type="text" name="answerForQuestion_@qIndex_@aIndex" value="@answer.Answer" class="form-control" style="display:inline-block; width:auto;" />
+																			<input type="radio" name="answer_@(qIndex)" value="answerForQuestion_@(qIndex)_@(aIndex)" @(answer.Correct ? "checked" : "") /> Correct
+																			<input type="text" name="answerForQuestion_@(qIndex)_@(aIndex)" value="@answer.Answer" class="form-control" style="display:inline-block; width:auto;" />
 																		</div>
 																		aIndex++;
 																	}

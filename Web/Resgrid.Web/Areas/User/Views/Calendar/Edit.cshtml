@@ -252,11 +252,11 @@
                                 <ul style="list-style-type:none">
                                     <li>
                                         <label>
-                                            <input type="radio" name="month" value="monthday" title="Day ">@commonLocalizer["Day"]
+                                            <input type="radio" name="month" value="monthday" title="Day ">&nbsp;@commonLocalizer["Day"]&nbsp;
                                         </label>
                                         <span>
                                             <span>
-                                                <input type="text" title="Day ">
+                                                &nbsp;@Html.TextBoxFor(m => m.Item.RepeatOnDay, new { onkeydown = "javascript:return false;" })
                                             </span>
                                         </span>
                                     </li>
@@ -264,7 +264,8 @@
                                         <input type="radio" name="month" value="weekday" title="Repeat on: ">
                                         <span title="Repeat on: ">
                                             <span>
-                                                <select>
+                                                &nbsp;
+                                                <select asp-for="WeekdayOccurrence">
                                                     <option value="1">@localizer["First"]</option>
                                                     <option value="2">@localizer["Second"]</option>
                                                     <option value="3">@localizer["Third"]</option>
@@ -273,7 +274,7 @@
                                                 </select>
                                             </span>
                                             <span>
-                                                <select>
+                                                <select asp-for="WeekdayDayOfWeek">
                                                     <option value="0">@commonLocalizer["Sunday"]</option>
                                                     <option value="1">@commonLocalizer["Monday"]</option>
                                                     <option value="2">@commonLocalizer["Tuesday"]</option>

@@ -107,6 +107,12 @@
   <data name="ProtocolQuestionHeader" xml:space="preserve"><value>الإجابة على أسئلة البروتوكول</value></data>
   <data name="ProtocolsLabel" xml:space="preserve"><value>البروتوكولات</value></data>
   <data name="ProtocolText" xml:space="preserve"><value>نص البروتوكول</value></data>
+  <data name="NotifyCancelledHelp" xml:space="preserve">
+    <value>If checked, entities removed from the dispatch list will receive a cancellation notification for this call.</value>
+  </data>
+  <data name="NotifyCancelledLabel" xml:space="preserve">
+    <value>Notify Cancelled</value>
+  </data>
   <data name="RedispatchCallHelp" xml:space="preserve"><value>إذا أردت إعادة بث هذا البلاغ حدد هذا المربع. سيُرسَل البلاغ إلى جميع المستخدمين المحددين بغض النظر عن مشاركتهم في الإرسال الأول أم لا.</value></data>
   <data name="RedispatchCallLabel" xml:space="preserve"><value>إعادة الإرسال</value></data>
   <data name="ReferenceIdLabel" xml:space="preserve"><value>معرف المرجع</value></data>
@@ -157,4 +163,31 @@
   <data name="CheckInTimerDuration" xml:space="preserve"><value>المدة (دقائق)</value></data>
   <data name="CheckInTimerWarning" xml:space="preserve"><value>حد التحذير (دقائق)</value></data>
   <data name="CheckInTimerSource" xml:space="preserve"><value>المصدر</value></data>
+  <data name="VideoFeeds" xml:space="preserve"><value>بث الفيديو</value></data>
+  <data name="AddVideoFeed" xml:space="preserve"><value>إضافة بث فيديو</value></data>
+  <data name="EditVideoFeed" xml:space="preserve"><value>تعديل بث الفيديو</value></data>
+  <data name="DeleteVideoFeed" xml:space="preserve"><value>حذف بث الفيديو</value></data>
+  <data name="VideoFeedName" xml:space="preserve"><value>الاسم</value></data>
+  <data name="VideoFeedUrl" xml:space="preserve"><value>الرابط</value></data>
+  <data name="VideoFeedType" xml:space="preserve"><value>نوع البث</value></data>
+  <data name="VideoFeedFormat" xml:space="preserve"><value>تنسيق البث</value></data>
+  <data name="VideoFeedDescription" xml:space="preserve"><value>الوصف</value></data>
+  <data name="VideoFeedStatus" xml:space="preserve"><value>الحالة</value></data>
+  <data name="VideoFeedLocation" xml:space="preserve"><value>الموقع</value></data>
+  <data name="VideoFeedAddedBy" xml:space="preserve"><value>أضيف بواسطة</value></data>
+  <data name="VideoFeedAddedOn" xml:space="preserve"><value>تاريخ الإضافة</value></data>
+  <data name="VideoFeedSortOrder" xml:space="preserve"><value>ترتيب الفرز</value></data>
+  <data name="VideoFeedActive" xml:space="preserve"><value>نشط</value></data>
+  <data name="VideoFeedInactive" xml:space="preserve"><value>غير نشط</value></data>
+  <data name="VideoFeedError" xml:space="preserve"><value>خطأ</value></data>
+  <data name="VideoFeedDrone" xml:space="preserve"><value>طائرة مسيّرة</value></data>
+  <data name="VideoFeedFixedCamera" xml:space="preserve"><value>كاميرا ثابتة</value></data>
+  <data name="VideoFeedBodyCam" xml:space="preserve"><value>كاميرا الجسم</value></data>
+  <data name="VideoFeedTrafficCam" xml:space="preserve"><value>كاميرا المرور</value></data>
+  <data name="VideoFeedWeatherCam" xml:space="preserve"><value>كاميرا الطقس</value></data>
+  <data name="VideoFeedSatellite" xml:space="preserve"><value>بث فضائي</value></data>
+  <data name="VideoFeedWebCam" xml:space="preserve"><value>كاميرا ويب</value></data>
+  <data name="VideoFeedOther" xml:space="preserve"><value>أخرى</value></data>
+  <data name="ConfirmDeleteVideoFeed" xml:space="preserve"><value>هل أنت متأكد من رغبتك في حذف بث الفيديو هذا؟</value></data>
+  <data name="NoVideoFeeds" xml:space="preserve"><value>لم تتم إضافة أي بث فيديو لهذه المكالمة.</value></data>
 </root>

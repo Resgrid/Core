@@ -25,6 +25,7 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		public string MapCenterLatitude { get; set; }
 		public string MapCenterLongitude { get; set; }
 		public bool RebroadcastCall { get; set; }
+		public bool NotifyCancelledEntities { get; set; }
 		public List<Unit> Units { get; set; }
 		public List<UnitState> UnitStates { get; set; }
 		public List<Contact> Contacts { get; set; }

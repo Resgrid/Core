@@ -69,6 +69,14 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label class="col-sm-2 control-label">@commonLocalizer["Category"]</label>
+                            <div class="col-sm-10">
+                                <select asp-for="Contact.ContactCategoryId" asp-items="@((SelectList)ViewBag.Categories)" class="form-control">
+                                    <option value="">@commonLocalizer["None"]</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["FirstNameLabel"]</label>
                             <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["FirstNamePlaceholder"]" asp-for="Contact.FirstName" /></div>
                         </div>

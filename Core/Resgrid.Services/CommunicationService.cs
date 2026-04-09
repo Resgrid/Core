@@ -177,7 +177,9 @@ namespace Resgrid.Services
 							spc.SubTitle = call.NatureOfCall.Truncate(200);
 					}
 
-					if (!String.IsNullOrWhiteSpace(spc.SubTitle))
+					if (String.IsNullOrWhiteSpace(spc.SubTitle))
+						spc.SubTitle = String.Empty;
+					else
 						spc.SubTitle = StringHelpers.StripHtmlTagsCharArray(spc.SubTitle);
 
 					spc.SubTitle = Regex.Replace(spc.SubTitle, @"((http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)", "");
@@ -246,6 +248,204 @@ namespace Resgrid.Services
 			var spc = new StandardPushCall();
 			spc.CallId = call.CallId;
 			spc.Title = string.Format("Call {0}", call.Name);
+			spc.Priority = call.Priority;
+			spc.ActiveCallCount = 1;
+			spc.DepartmentId = call.DepartmentId;
+			spc.DepartmentCode = call.Department?.Code;
+
+			if (call.CallPriority != null && !String.IsNullOrWhiteSpace(call.CallPriority.Color))
+			{
+				spc.Color = call.CallPriority.Color;
+			}
+			else
+			{
+				spc.Color = "#000000";
+			}
+
+			string subTitle = String.Empty;
+
+			if (String.IsNullOrWhiteSpace(address) && !String.IsNullOrWhiteSpace(call.Address))
+			{
+				subTitle = call.Address;
+			}
+			else if (!String.IsNullOrWhiteSpace(address))
+			{
+				subTitle = address;
+			}
+			else if (!string.IsNullOrEmpty(call.GeoLocationData) && call.GeoLocationData.Length > 1)
+			{
+				try
+				{
+					string[] points = call.GeoLocationData.Split(char.Parse(","));
+
+					if (points != null && points.Length == 2)
+					{
+						subTitle = await _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
+					}
+				}
+				catch
+				{ }
+			}
+
+			if (!string.IsNullOrEmpty(subTitle))
+			{
+				spc.SubTitle = subTitle.Truncate(200);
+			}
+			else
+			{
+				if (!string.IsNullOrEmpty(call.NatureOfCall))
+					spc.SubTitle = call.NatureOfCall.Truncate(200);
+			}
+
+			if (!String.IsNullOrWhiteSpace(spc.SubTitle))
+				spc.SubTitle = StringHelpers.StripHtmlTagsCharArray(spc.SubTitle);
+
+			spc.Title = StringHelpers.StripHtmlTagsCharArray(spc.Title);
+
+			try
+			{
+				await _pushService.PushCallUnit(spc, dispatch.UnitId, call.CallPriority);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
+
+			return true;
+		}
+
+		public async Task<bool> SendCancelCallAsync(Call call, CallDispatch dispatch, string departmentNumber, int departmentId, UserProfile profile = null, string address = null)
+		{
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
+				return false;
+
+			if (!await CanSendToUser(dispatch.UserId, departmentId))
+				return false;
+
+			if (profile == null)
+				profile = await _userProfileService.GetProfileByUserIdAsync(dispatch.UserId);
+
+			// Send a Push Notification
+			if (profile == null || profile.SendPush)
+			{
+				try
+				{
+					var spc = new StandardPushCall();
+					spc.CallId = call.CallId;
+					spc.Title = string.Format("Dispatch Cancelled - {0}", call.Name);
+					spc.Priority = call.Priority;
+					spc.ActiveCallCount = 1;
+					spc.DepartmentId = departmentId;
+					spc.DepartmentCode = call.Department?.Code;
+
+					if (call.CallPriority != null && !String.IsNullOrWhiteSpace(call.CallPriority.Color))
+					{
+						spc.Color = call.CallPriority.Color;
+					}
+					else
+					{
+						spc.Color = "#000000";
+					}
+
+					string subTitle = String.Empty;
+
+					if (String.IsNullOrWhiteSpace(address) && !String.IsNullOrWhiteSpace(call.Address))
+					{
+						subTitle = call.Address;
+					}
+					else if (!String.IsNullOrWhiteSpace(address))
+					{
+						subTitle = address;
+					}
+					else if (!string.IsNullOrEmpty(call.GeoLocationData) && call.GeoLocationData.Length > 1)
+					{
+						try
+						{
+							string[] points = call.GeoLocationData.Split(char.Parse(","));
+
+							if (points != null && points.Length == 2)
+							{
+								subTitle = await _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
+							}
+						}
+						catch
+						{ }
+					}
+
+					if (!string.IsNullOrEmpty(subTitle))
+					{
+						spc.SubTitle = subTitle.Truncate(200);
+					}
+					else
+					{
+						if (!string.IsNullOrEmpty(call.NatureOfCall))
+							spc.SubTitle = call.NatureOfCall.Truncate(200);
+					}
+
+					if (String.IsNullOrWhiteSpace(spc.SubTitle))
+						spc.SubTitle = String.Empty;
+					else
+						spc.SubTitle = StringHelpers.StripHtmlTagsCharArray(spc.SubTitle);
+
+					spc.SubTitle = Regex.Replace(spc.SubTitle, @"((http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)", "");
+
+					spc.Title = StringHelpers.StripHtmlTagsCharArray(spc.Title);
+					spc.Title = Regex.Replace(spc.Title, @"((http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)", "");
+
+					spc.Title = spc.Title.Replace(char.Parse("/"), char.Parse(" "));
+					spc.SubTitle = spc.SubTitle.Replace(char.Parse("/"), char.Parse(" "));
+
+					await _pushService.PushCall(spc, dispatch.UserId, profile, call.CallPriority);
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+				}
+			}
+
+			// Send an SMS Message
+			if (profile == null || profile.SendSms)
+			{
+				if (profile == null || profile.MobileNumberVerified.IsContactMethodAllowedForSending())
+				{
+					try
+					{
+						var payment = await _subscriptionsService.GetCurrentPaymentForDepartmentAsync(departmentId);
+						await _smsService.SendCancelCallAsync(call, dispatch, departmentNumber, departmentId, profile, call.Address, payment);
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex);
+					}
+				}
+			}
+
+			// Send an Email
+			if (profile == null || profile.SendEmail)
+			{
+				if (profile == null || profile.EmailVerified.IsContactMethodAllowedForSending())
+				{
+					try
+					{
+						await _emailService.SendCancelCallAsync(call, dispatch, profile);
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex);
+					}
+				}
+			}
+
+			// No voice call for cancellation
+
+			return true;
+		}
+
+		public async Task<bool> SendCancelUnitCallAsync(Call call, CallDispatchUnit dispatch, string departmentNumber, string address = null)
+		{
+			var spc = new StandardPushCall();
+			spc.CallId = call.CallId;
+			spc.Title = string.Format("Dispatch Cancelled - {0}", call.Name);
 			spc.Priority = call.Priority;
 			spc.ActiveCallCount = 1;
 			spc.DepartmentId = call.DepartmentId;

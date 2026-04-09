@@ -209,6 +209,102 @@ namespace Resgrid.Services
 			return true;
 		}
 
+		public async Task<bool> SendCancelCallAsync(Call call, CallDispatch dispatch, string departmentNumber, int departmentId, UserProfile profile = null, string address = null, Payment payment = null)
+		{
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
+				return false;
+
+			if (profile == null)
+				profile = await _userProfileService.GetProfileByUserIdAsync(dispatch.UserId);
+
+			if (payment != null && !_subscriptionsService.CanPlanSendCallSms(payment.PlanId))
+				return true;
+
+			if (profile != null && profile.SendSms)
+			{
+				if (String.IsNullOrWhiteSpace(address))
+				{
+					if (!String.IsNullOrWhiteSpace(call.Address))
+					{
+						address = call.Address;
+					}
+					else if (!string.IsNullOrEmpty(call.GeoLocationData))
+					{
+						try
+						{
+							string[] points = call.GeoLocationData.Split(char.Parse(","));
+
+							if (points != null && points.Length == 2)
+							{
+								address = await _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
+							}
+						}
+						catch
+						{
+						}
+					}
+				}
+
+				if (Carriers.DirectSendCarriers.Contains((MobileCarriers)profile.MobileCarrier))
+				{
+					string text = "CANCELLED: " + HtmlToTextHelper.ConvertHtml(call.NatureOfCall);
+					text = StringHelpers.StripHtmlTagsCharArray(text);
+					text = text + " " + address;
+
+					if (call.Protocols != null && call.Protocols.Any())
+					{
+						string protocols = String.Empty;
+						foreach (var protocol in call.Protocols)
+						{
+							if (!String.IsNullOrWhiteSpace(protocol.Data))
+							{
+								if (String.IsNullOrWhiteSpace(protocols))
+									protocols = protocol.Data;
+								else
+									protocols = protocol + "," + protocol.Data;
+							}
+						}
+
+						if (!String.IsNullOrWhiteSpace(protocols))
+							text = text + " (" + protocols + ")";
+					}
+
+					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(call.Name, text), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, true);
+				}
+				else
+				{
+					await SendCancelCallViaEmailSmsGatewayAsync(call, address, profile);
+				}
+			}
+
+			return true;
+		}
+
+		private async Task SendCancelCallViaEmailSmsGatewayAsync(Call call, string address, UserProfile profile)
+		{
+			MailMessage email = new MailMessage();
+			email.To.Add(string.Format(Carriers.CarriersMap[(MobileCarriers)profile.MobileCarrier], profile.GetPhoneNumber()));
+
+			email.From = new MailAddress(Config.OutboundEmailServerConfig.FromMail, "RGCall");
+			email.Subject = "CANCELLED: " + call.Name;
+
+			if (!string.IsNullOrEmpty(call.NatureOfCall))
+			{
+				string text = "CANCELLED: " + HtmlToTextHelper.ConvertHtml(call.NatureOfCall);
+				text = StringHelpers.StripHtmlTagsCharArray(text);
+				email.Body = text + " " + address;
+			}
+
+			try
+			{
+				await _emailSender.SendEmail(email);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
+		}
+
 		private void SendCallViaEmailSmsGateway(Call call, string address, UserProfile profile)
 		{
 			MailMessage email = new MailMessage();

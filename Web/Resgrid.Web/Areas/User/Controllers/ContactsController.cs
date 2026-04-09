@@ -169,6 +169,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ViewBag.TimeZones = new SelectList(TimeZones.Zones, "Key", "Value");
 			ViewBag.Languages = new SelectList(SupportedLocales.SupportedLanguagesMap, "Key", "Value");
 
+			var categories = await _contactsService.GetContactCategoriesForDepartmentAsync(DepartmentId);
+			ViewBag.Categories = new SelectList(categories, "ContactCategoryId", "Name");
+
 			var udfDefinition = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Contact);
 			if (udfDefinition != null)
 			{
@@ -195,6 +198,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ViewBag.TimeZones = new SelectList(TimeZones.Zones, "Key", "Value");
 			ViewBag.Languages = new SelectList(SupportedLocales.SupportedLanguagesMap, "Key", "Value");
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+
+			var addPostCategories = await _contactsService.GetContactCategoriesForDepartmentAsync(DepartmentId);
+			ViewBag.Categories = new SelectList(addPostCategories, "ContactCategoryId", "Name");
 
 			// They specified a street address for physical
 			if (!String.IsNullOrWhiteSpace(model.PhysicalAddress1))
@@ -420,6 +426,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ViewBag.TimeZones = new SelectList(TimeZones.Zones, "Key", "Value");
 			ViewBag.Languages = new SelectList(SupportedLocales.SupportedLanguagesMap, "Key", "Value");
 
+			var editCategories = await _contactsService.GetContactCategoriesForDepartmentAsync(DepartmentId);
+			ViewBag.Categories = new SelectList(editCategories, "ContactCategoryId", "Name", model.Contact.ContactCategoryId);
+
 			var udfDefinitionEdit = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Contact);
 			if (udfDefinitionEdit != null)
 			{
@@ -449,6 +458,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ViewBag.TimeZones = new SelectList(TimeZones.Zones, "Key", "Value");
 			ViewBag.Languages = new SelectList(SupportedLocales.SupportedLanguagesMap, "Key", "Value");
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+
+			var editPostCategories = await _contactsService.GetContactCategoriesForDepartmentAsync(DepartmentId);
+			ViewBag.Categories = new SelectList(editPostCategories, "ContactCategoryId", "Name");
 
 			// They specified a street address for physical
 			if (!String.IsNullOrWhiteSpace(model.PhysicalAddress1))

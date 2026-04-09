@@ -423,6 +423,12 @@
   <data name="ProtocolText" xml:space="preserve">
     <value>Protocol Text</value>
   </data>
+  <data name="NotifyCancelledHelp" xml:space="preserve">
+    <value>If checked, entities removed from the dispatch list will receive a cancellation notification for this call.</value>
+  </data>
+  <data name="NotifyCancelledLabel" xml:space="preserve">
+    <value>Notify Cancelled</value>
+  </data>
   <data name="RedispatchCallHelp" xml:space="preserve">
     <value>If you want to rebroadcast this call check this box. This will dispatch the call to all users selected, regardless if they were on the first dispatch or not.</value>
   </data>
@@ -572,5 +578,86 @@
   </data>
   <data name="CheckInTimerSource" xml:space="preserve">
     <value>Source</value>
+  </data>
+  <data name="VideoFeeds" xml:space="preserve">
+    <value>Video Feeds</value>
+  </data>
+  <data name="AddVideoFeed" xml:space="preserve">
+    <value>Add Video Feed</value>
+  </data>
+  <data name="EditVideoFeed" xml:space="preserve">
+    <value>Edit Video Feed</value>
+  </data>
+  <data name="DeleteVideoFeed" xml:space="preserve">
+    <value>Delete Video Feed</value>
+  </data>
+  <data name="VideoFeedName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="VideoFeedUrl" xml:space="preserve">
+    <value>URL</value>
+  </data>
+  <data name="VideoFeedType" xml:space="preserve">
+    <value>Feed Type</value>
+  </data>
+  <data name="VideoFeedFormat" xml:space="preserve">
+    <value>Feed Format</value>
+  </data>
+  <data name="VideoFeedDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="VideoFeedStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="VideoFeedLocation" xml:space="preserve">
+    <value>Location</value>
+  </data>
+  <data name="VideoFeedAddedBy" xml:space="preserve">
+    <value>Added By</value>
+  </data>
+  <data name="VideoFeedAddedOn" xml:space="preserve">
+    <value>Added On</value>
+  </data>
+  <data name="VideoFeedSortOrder" xml:space="preserve">
+    <value>Sort Order</value>
+  </data>
+  <data name="VideoFeedActive" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="VideoFeedInactive" xml:space="preserve">
+    <value>Inactive</value>
+  </data>
+  <data name="VideoFeedError" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="VideoFeedDrone" xml:space="preserve">
+    <value>Drone</value>
+  </data>
+  <data name="VideoFeedFixedCamera" xml:space="preserve">
+    <value>Fixed Camera</value>
+  </data>
+  <data name="VideoFeedBodyCam" xml:space="preserve">
+    <value>Body Cam</value>
+  </data>
+  <data name="VideoFeedTrafficCam" xml:space="preserve">
+    <value>Traffic Cam</value>
+  </data>
+  <data name="VideoFeedWeatherCam" xml:space="preserve">
+    <value>Weather Cam</value>
+  </data>
+  <data name="VideoFeedSatellite" xml:space="preserve">
+    <value>Satellite Feed</value>
+  </data>
+  <data name="VideoFeedWebCam" xml:space="preserve">
+    <value>Web Cam</value>
+  </data>
+  <data name="VideoFeedOther" xml:space="preserve">
+    <value>Other</value>
+  </data>
+  <data name="ConfirmDeleteVideoFeed" xml:space="preserve">
+    <value>Are you sure you want to delete this video feed?</value>
+  </data>
+  <data name="NoVideoFeeds" xml:space="preserve">
+    <value>No video feeds have been added to this call.</value>
   </data>
 </root>

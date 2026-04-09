@@ -1627,5 +1627,19 @@ namespace Resgrid.Providers.Claims
 				}
 			}
 		}
+
+		/// <summary>
+		/// Communication test management is restricted to department admins only.
+		/// </summary>
+		public static void AddCommunicationTestClaims(ClaimsIdentity identity, bool isAdmin)
+		{
+			if (isAdmin)
+			{
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.CommunicationTest, ResgridClaimTypes.Actions.View));
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.CommunicationTest, ResgridClaimTypes.Actions.Update));
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.CommunicationTest, ResgridClaimTypes.Actions.Create));
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.CommunicationTest, ResgridClaimTypes.Actions.Delete));
+			}
+		}
 	}
 }

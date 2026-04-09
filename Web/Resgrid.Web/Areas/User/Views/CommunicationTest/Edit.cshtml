@@ -1,0 +1,177 @@
+@model Resgrid.Web.Areas.User.Models.CommunicationTests.EditCommunicationTestView
+@{
+    ViewBag.Title = "Resgrid | Edit Communication Test";
+
+    var selectedDay = "Monday";
+    if (Model.Test.Sunday) selectedDay = "Sunday";
+    else if (Model.Test.Monday) selectedDay = "Monday";
+    else if (Model.Test.Tuesday) selectedDay = "Tuesday";
+    else if (Model.Test.Wednesday) selectedDay = "Wednesday";
+    else if (Model.Test.Thursday) selectedDay = "Thursday";
+    else if (Model.Test.Friday) selectedDay = "Friday";
+    else if (Model.Test.Saturday) selectedDay = "Saturday";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-12">
+        <h2>Edit Communication Test</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+            </li>
+            <li>
+                <a asp-controller="CommunicationTest" asp-action="Index" asp-route-area="User">Communication Tests</a>
+            </li>
+            <li class="active">
+                <strong>Edit</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+<div class="wrapper wrapper-content animated fadeInRight">
+    <div class="row">
+        <div class="col-lg-8">
+            @if (!string.IsNullOrWhiteSpace(Model.Message))
+            {
+                <div class="alert alert-danger">@Model.Message</div>
+            }
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>Test Definition</h5>
+                </div>
+                <div class="ibox-content">
+                    <form asp-controller="CommunicationTest" asp-action="Edit" asp-route-area="User" method="post" class="form-horizontal">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" asp-for="Test.CommunicationTestId" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Name</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" asp-for="Test.Name" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Description</label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" asp-for="Test.Description" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <hr />
+                        <h4 class="col-sm-offset-3">Schedule</h4>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Schedule Type</label>
+                            <div class="col-sm-9">
+                                <select class="form-control" asp-for="Test.ScheduleType" id="scheduleType">
+                                    <option value="0">On Demand</option>
+                                    <option value="1">Weekly</option>
+                                    <option value="2">Monthly</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group" id="weeklyOptions" style="display:none;">
+                            <label class="col-sm-3 control-label">Day of Week</label>
+                            <div class="col-sm-9">
+                                <label class="radio-inline"><input type="radio" name="DayOfWeek" value="Sunday" @(selectedDay == "Sunday" ? "checked" : "") /> Sun</label>
+                                <label class="radio-inline"><input type="radio" name="DayOfWeek" value="Monday" @(selectedDay == "Monday" ? "checked" : "") /> Mon</label>
+                                <label class="radio-inline"><input type="radio" name="DayOfWeek" value="Tuesday" @(selectedDay == "Tuesday" ? "checked" : "") /> Tue</label>
+                                <label class="radio-inline"><input type="radio" name="DayOfWeek" value="Wednesday" @(selectedDay == "Wednesday" ? "checked" : "") /> Wed</label>
+                                <label class="radio-inline"><input type="radio" name="DayOfWeek" value="Thursday" @(selectedDay == "Thursday" ? "checked" : "") /> Thu</label>
+                                <label class="radio-inline"><input type="radio" name="DayOfWeek" value="Friday" @(selectedDay == "Friday" ? "checked" : "") /> Fri</label>
+                                <label class="radio-inline"><input type="radio" name="DayOfWeek" value="Saturday" @(selectedDay == "Saturday" ? "checked" : "") /> Sat</label>
+                                <input type="hidden" asp-for="Test.Sunday" id="hdnSunday" />
+                                <input type="hidden" asp-for="Test.Monday" id="hdnMonday" />
+                                <input type="hidden" asp-for="Test.Tuesday" id="hdnTuesday" />
+                                <input type="hidden" asp-for="Test.Wednesday" id="hdnWednesday" />
+                                <input type="hidden" asp-for="Test.Thursday" id="hdnThursday" />
+                                <input type="hidden" asp-for="Test.Friday" id="hdnFriday" />
+                                <input type="hidden" asp-for="Test.Saturday" id="hdnSaturday" />
+                            </div>
+                        </div>
+                        <div class="form-group" id="monthlyOptions" style="display:none;">
+                            <label class="col-sm-3 control-label">Day of Month (1-28)</label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control" asp-for="Test.DayOfMonth" min="1" max="28" />
+                            </div>
+                        </div>
+                        <div class="form-group" id="timeOptions" style="display:none;">
+                            <label class="col-sm-3 control-label">Time</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" asp-for="Test.Time" id="timePicker" placeholder="09:00 AM" />
+                            </div>
+                        </div>
+
+                        <hr />
+                        <h4 class="col-sm-offset-3">Channels to Test</h4>
+                        <div class="form-group">
+                            <div class="col-sm-offset-3 col-sm-9">
+                                <label class="checkbox-inline"><input type="checkbox" asp-for="Test.TestSms" /> SMS</label>
+                                <label class="checkbox-inline"><input type="checkbox" asp-for="Test.TestEmail" /> Email</label>
+                                <label class="checkbox-inline"><input type="checkbox" asp-for="Test.TestVoice" /> Voice</label>
+                                <label class="checkbox-inline"><input type="checkbox" asp-for="Test.TestPush" /> Push</label>
+                            </div>
+                        </div>
+
+                        <hr />
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Response Window (minutes)</label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control" asp-for="Test.ResponseWindowMinutes" min="1" max="1440" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-3 col-sm-9">
+                                <label class="checkbox-inline"><input type="checkbox" asp-for="Test.Active" /> Active</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-offset-3 col-sm-9">
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                                <a class="btn btn-default" asp-controller="CommunicationTest" asp-action="Index" asp-route-area="User">Cancel</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            function toggleScheduleOptions() {
+                var type = $('#scheduleType').val();
+                $('#weeklyOptions').toggle(type === '1');
+                $('#monthlyOptions').toggle(type === '2');
+                $('#timeOptions').toggle(type !== '0');
+            }
+            $('#scheduleType').change(toggleScheduleOptions);
+            toggleScheduleOptions();
+
+            $('#timePicker').datetimepicker({
+                datepicker: false,
+                format: 'h:i A',
+                formatTime: 'h:i A',
+                step: 15
+            });
+
+            function syncDayRadios() {
+                var days = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+                var selected = $('input[name="DayOfWeek"]:checked').val();
+                days.forEach(function(d) {
+                    $('#hdn' + d).val(d === selected ? 'true' : 'false');
+                });
+            }
+
+            $('input[name="DayOfWeek"]').change(syncDayRadios);
+            syncDayRadios();
+
+            $('form').on('submit', function () {
+                syncDayRadios();
+            });
+        });
+    </script>
+}

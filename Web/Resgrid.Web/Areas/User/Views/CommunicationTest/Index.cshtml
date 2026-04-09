@@ -1,0 +1,158 @@
+@using Resgrid.Web.Helpers
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.CommunicationTests.CommunicationTestIndexView
+@{
+    ViewBag.Title = "Resgrid | Communication Tests";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>Communication Tests</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+            </li>
+            <li class="active">
+                <strong>Communication Tests</strong>
+            </li>
+        </ol>
+    </div>
+    @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+    {
+        <div class="col-sm-8">
+            <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+                <a class="btn btn-success" asp-controller="CommunicationTest" asp-action="New" asp-route-area="User">New Test</a>
+            </div>
+        </div>
+    }
+</div>
+<div class="wrapper wrapper-content animated fadeInUp">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>Test Definitions</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Schedule</th>
+                                    <th>Channels</th>
+                                    <th>Active</th>
+                                    <th>Response Window</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var test in Model.Tests)
+                                {
+                                    var scheduleLabel = ((CommunicationTestScheduleType)test.ScheduleType).ToString();
+                                    var channels = new System.Collections.Generic.List<string>();
+                                    if (test.TestSms) channels.Add("SMS");
+                                    if (test.TestEmail) channels.Add("Email");
+                                    if (test.TestVoice) channels.Add("Voice");
+                                    if (test.TestPush) channels.Add("Push");
+
+                                    <tr>
+                                        <td>@test.Name</td>
+                                        <td>@scheduleLabel</td>
+                                        <td>@string.Join(", ", channels)</td>
+                                        <td>
+                                            @if (test.Active)
+                                            {
+                                                <span class="label label-primary">Active</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="label label-default">Inactive</span>
+                                            }
+                                        </td>
+                                        <td>@test.ResponseWindowMinutes min</td>
+                                        <td style="text-align:right;">
+                                            @if (test.ScheduleType == (int)Resgrid.Model.CommunicationTestScheduleType.OnDemand)
+                                            {
+                                                <form asp-controller="CommunicationTest" asp-action="StartRun" asp-route-area="User" method="post" style="display:inline;">
+                                                    @Html.AntiForgeryToken()
+                                                    <input type="hidden" name="testId" value="@test.CommunicationTestId" />
+                                                    <button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('Start a communication test run now?');">Run Now</button>
+                                                </form>
+                                            }
+                                            <a class="btn btn-sm btn-info" asp-controller="CommunicationTest" asp-action="Edit" asp-route-area="User" asp-route-testId="@test.CommunicationTestId">Edit</a>
+                                            <form asp-controller="CommunicationTest" asp-action="Delete" asp-route-area="User" method="post" style="display:inline;">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="testId" value="@test.CommunicationTestId" />
+                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this test?');">Delete</button>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5>Recent Test Runs</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Test Name</th>
+                                    <th>Run Code</th>
+                                    <th>Started</th>
+                                    <th>Status</th>
+                                    <th>Users Tested</th>
+                                    <th>Responses</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var run in Model.RecentRuns)
+                                {
+                                    var testName = "";
+                                    Model.TestNames.TryGetValue(run.CommunicationTestId.ToString(), out testName);
+                                    var statusLabel = ((CommunicationTestRunStatus)run.Status).ToString();
+
+                                    <tr>
+                                        <td>@testName</td>
+                                        <td><code>@run.RunCode</code></td>
+                                        <td>@run.StartedOn.ToString("g")</td>
+                                        <td>
+                                            @if (run.Status == (int)CommunicationTestRunStatus.Completed)
+                                            {
+                                                <span class="label label-primary">@statusLabel</span>
+                                            }
+                                            else if (run.Status == (int)CommunicationTestRunStatus.Failed)
+                                            {
+                                                <span class="label label-danger">@statusLabel</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="label label-warning">@statusLabel</span>
+                                            }
+                                        </td>
+                                        <td>@run.TotalUsersTested</td>
+                                        <td>@run.TotalResponses</td>
+                                        <td>
+                                            <a class="btn btn-sm btn-info" asp-controller="CommunicationTest" asp-action="Report" asp-route-area="User" asp-route-runId="@run.CommunicationTestRunId">View Report</a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

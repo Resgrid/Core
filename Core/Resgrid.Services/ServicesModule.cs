@@ -100,6 +100,9 @@ namespace Resgrid.Services
 
 			// GDPR Services
 			builder.RegisterType<GdprDataExportService>().As<IGdprDataExportService>().InstancePerLifetimeScope();
+
+			// Communication Test Services
+			builder.RegisterType<CommunicationTestService>().As<ICommunicationTestService>().InstancePerLifetimeScope();
 		}
 	}
 }

@@ -362,6 +362,12 @@ namespace Resgrid.Workers.Console
 					new Commands.GdprExportCommand(16),
 					Cron.MinuteIntervals(5),
 					stoppingToken);
+
+				_logger.Log(LogLevel.Information, "Scheduling Communication Test");
+				await Client.ScheduleAsync("Communication Test",
+					new Commands.CommunicationTestCommand(17),
+					Cron.MinuteIntervals(15),
+					stoppingToken);
 			}
 			else
 			{

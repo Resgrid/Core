@@ -66,6 +66,20 @@ var resgrid;
 
                 $("#Item_RepeatOnDay").attr({ type: 'number', min: 1, max: 31, step: 1 });
 
+                // Toggle between "day of month" and "weekday occurrence" inputs
+                $('input[name="month"]').on('change', function () {
+                    if ($(this).val() === 'weekday') {
+                        $('#Item_RepeatOnDay').prop('disabled', true).removeAttr('min max');
+                        $('#WeekdayOccurrence, #WeekdayDayOfWeek').prop('disabled', false);
+                    } else {
+                        $('#Item_RepeatOnDay').prop('disabled', false).attr({ min: 1, max: 31 });
+                        $('#WeekdayOccurrence, #WeekdayDayOfWeek').prop('disabled', true);
+                    }
+                });
+
+                // Default to "monthday" radio selected, weekday dropdowns disabled
+                $('input[name="month"][value="monthday"]').prop('checked', true).trigger('change');
+
                 var quill = new Quill('#editor-container', {
                     placeholder: '',
                     theme: 'snow'

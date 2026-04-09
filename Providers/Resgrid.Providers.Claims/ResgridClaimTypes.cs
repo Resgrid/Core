@@ -64,6 +64,7 @@
 			public const string Scim = "Scim";
 			public const string Udf = "Udf";
 			public const string Route = "Route";
+			public const string CommunicationTest = "CommunicationTest";
 		}
 
 		public static string CreateDepartmentClaimTypeString(int departmentId)

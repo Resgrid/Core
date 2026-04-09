@@ -143,6 +143,11 @@
 		CalendarAdminCheckInPerformed,
 		// Log operations
 		LogCreated,
-		LogDeleted
+		LogDeleted,
+		// Communication Test operations
+		CommunicationTestCreated,
+		CommunicationTestUpdated,
+		CommunicationTestDeleted,
+		CommunicationTestRunStarted
 	}
 }

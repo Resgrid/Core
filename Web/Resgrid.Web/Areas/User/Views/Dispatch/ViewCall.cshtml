@@ -181,6 +181,7 @@
                                             <li class=""><a href="#tab-8" data-toggle="tab" aria-expanded="false">@commonLocalizer["Protocols"]</a></li>
                                             <li class=""><a href="#tab-9" data-toggle="tab" aria-expanded="false">@localizer["LinkedCalls"]</a></li>
                                             <li class=""><a href="#tab-11" data-toggle="tab" aria-expanded="false">@localizer["Contacts"]</a></li>
+                                            <li class=""><a href="#tab-12" data-toggle="tab" aria-expanded="false">@localizer["VideoFeeds"]</a></li>
                                             @if (!String.IsNullOrWhiteSpace(Model.Call.CallFormData))
                                             {
                                                 <li class=""><a href="#tab-10" data-toggle="tab" aria-expanded="false">@localizer["CallFormLabel"]</a></li>
@@ -708,6 +709,68 @@
                                                     }
                                                 </tbody>
                                             </table>
+                                        </div>
+                                        <div class="tab-pane" id="tab-12">
+                                            @if (Model.VideoFeeds != null && Model.VideoFeeds.Any())
+                                            {
+                                                <table class="table table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>@localizer["VideoFeedName"]</th>
+                                                            <th>@localizer["VideoFeedUrl"]</th>
+                                                            <th>@localizer["VideoFeedType"]</th>
+                                                            <th>@localizer["VideoFeedFormat"]</th>
+                                                            <th>@localizer["VideoFeedStatus"]</th>
+                                                            <th>@localizer["VideoFeedAddedBy"]</th>
+                                                            <th>@localizer["VideoFeedAddedOn"]</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach (var feed in Model.VideoFeeds.OrderBy(f => f.SortOrder))
+                                                        {
+                                                            <tr>
+                                                                <td>@feed.Name</td>
+                                                                <td><a href="@feed.Url" target="_blank" rel="noopener noreferrer">@feed.Url</a></td>
+                                                                <td>
+                                                                    @if (feed.FeedType.HasValue)
+                                                                    {
+                                                                        @(((Resgrid.Model.CallVideoFeedTypes)feed.FeedType.Value).ToString())
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    @if (feed.FeedFormat.HasValue)
+                                                                    {
+                                                                        @(((Resgrid.Model.CallVideoFeedFormats)feed.FeedFormat.Value).ToString())
+                                                                    }
+                                                                </td>
+                                                                <td>
+                                                                    @{
+                                                                        var status = (Resgrid.Model.CallVideoFeedStatuses)feed.Status;
+                                                                    }
+                                                                    @if (status == Resgrid.Model.CallVideoFeedStatuses.Active)
+                                                                    {
+                                                                        <span class="label label-primary">@localizer["VideoFeedActive"]</span>
+                                                                    }
+                                                                    else if (status == Resgrid.Model.CallVideoFeedStatuses.Inactive)
+                                                                    {
+                                                                        <span class="label label-default">@localizer["VideoFeedInactive"]</span>
+                                                                    }
+                                                                    else
+                                                                    {
+                                                                        <span class="label label-danger">@localizer["VideoFeedError"]</span>
+                                                                    }
+                                                                </td>
+                                                                <td>@feed.AddedByUserId</td>
+                                                                <td>@feed.AddedOn.TimeConverterToString(Model.Department)</td>
+                                                            </tr>
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                            }
+                                            else
+                                            {
+                                                <p>@localizer["NoVideoFeeds"]</p>
+                                            }
                                         </div>
                                         @if (!String.IsNullOrWhiteSpace(Model.Call.CallFormData))
                                         {

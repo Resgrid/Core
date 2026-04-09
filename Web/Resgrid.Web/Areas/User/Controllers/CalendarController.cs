@@ -208,6 +208,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ViewBag.Types = new SelectList(model.Types, "CalendarItemTypeId", "Name");
 			model.Item.Description = StringHelpers.StripHtmlTagsCharArray(model.Item.Description);
 
+			if (model.Item.RecurrenceType == 2 && model.Item.RepeatOnWeek > 0)
+			{
+				model.WeekdayOccurrence = model.Item.RepeatOnWeek;
+				model.WeekdayDayOfWeek = model.Item.RepeatOnDay;
+			}
+
 			return View(model);
 		}
 
@@ -248,6 +254,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Item.DepartmentId = DepartmentId;
 				model.Item.CreatorUserId = UserId;
 				model.Item.Entities = model.entities;
+
+				if (model.Item.RecurrenceType == 2)
+				{
+					model.Item.RepeatOnWeek = model.WeekdayOccurrence;
+					model.Item.RepeatOnDay = model.WeekdayDayOfWeek;
+				}
 
 				await _calendarService.UpdateCalendarItemAsync(model.Item, department.TimeZone, cancellationToken);
 

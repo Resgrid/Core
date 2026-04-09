@@ -248,6 +248,83 @@ namespace Resgrid.Services
 			return true;
 		}
 
+		public async Task<bool> SendCancelCallAsync(Call call, CallDispatch dispatch, UserProfile profile = null)
+		{
+			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(call.DepartmentId))
+				return false;
+
+			if (profile == null)
+				profile = await _userProfileService.GetProfileByUserIdAsync(dispatch.UserId);
+
+			string emailAddress = String.Empty;
+
+			if (dispatch.User != null && dispatch.User != null)
+				emailAddress = dispatch.User.Email;
+			else
+			{
+				var user = _usersService.GetUserById(dispatch.UserId, false);
+
+				if (user != null && user != null)
+					emailAddress = user.Email;
+			}
+
+			string subject = string.Format("Resgrid CANCELLED Dispatch: P{0} {1}", call.Priority, call.Name);
+			string priority = string.Format("{0}", ((CallPriority)call.Priority).ToString());
+			string address = "No Address Supplied";
+
+			string coordinates = "No Coordinates Supplied";
+			if (!string.IsNullOrEmpty(call.GeoLocationData) && call.GeoLocationData.Length > 1)
+				coordinates = call.GeoLocationData;
+
+			if (!string.IsNullOrEmpty(call.Address))
+				address = call.Address;
+			else if (!string.IsNullOrEmpty(call.GeoLocationData) && call.GeoLocationData.Length > 1)
+			{
+				string[] points = call.GeoLocationData.Split(char.Parse(","));
+
+				if (points != null && points.Length == 2)
+				{
+					try
+					{
+						address = await _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
+					}
+					catch (Exception)
+					{
+					}
+				}
+			}
+
+			string dispatchedOn = String.Empty;
+
+			if (call.Department != null)
+				dispatchedOn = call.LoggedOn.TimeConverterToString(call.Department);
+			else
+				dispatchedOn = call.LoggedOn.ToString("G") + " UTC";
+
+			string natureOfCall = "DISPATCH CANCELLED - " + call.NatureOfCall;
+
+			if (call.Protocols != null && call.Protocols.Any())
+			{
+				string protocols = String.Empty;
+				foreach (var protocol in call.Protocols)
+				{
+					if (String.IsNullOrWhiteSpace(protocols))
+						protocols = protocol.Data;
+					else
+						protocols = protocol + "," + protocol.Data;
+				}
+
+				if (!String.IsNullOrWhiteSpace(protocols))
+					natureOfCall = natureOfCall + " (" + protocols + ")";
+			}
+
+			if (profile != null && profile.SendEmail && !String.IsNullOrWhiteSpace(emailAddress))
+				await _emailProvider.SendCallMail(emailAddress, subject, call.Name, priority, natureOfCall, call.MapPage,
+																	address, dispatchedOn, call.CallId, dispatch.UserId, coordinates, call.ShortenedAudioUrl);
+
+			return true;
+		}
+
 		public async Task<bool> SendTroubleAlert(TroubleAlertEvent troubleAlertEvent, Unit unit, Call call, string callAddress, string unitAddress, string personnelNames, UserProfile profile)
 		{
 			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(unit.DepartmentId))

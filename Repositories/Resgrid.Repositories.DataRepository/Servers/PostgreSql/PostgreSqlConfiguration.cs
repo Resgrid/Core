@@ -1114,6 +1114,9 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SelectAllCallUnitDispsByCallIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE CallId = %CALLID%";
 			SelectAllCallRoleDispsByCallIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE CallId = %CALLID%";
 			SelectCallNotesByCallIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE CallId = %CALLID%";
+			CallVideoFeedsTable = "CallVideoFeeds";
+			SelectCallVideoFeedsByCallIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE CallId = %CALLID% AND IsDeleted = false";
+			SelectCallVideoFeedsByDepartmentIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE DepartmentId = %DEPARTMENTID% AND IsDeleted = false";
 			SelectCallYearsByDeptQuery = @"
 					SELECT extract(year from c.LoggedOn)
 					FROM Calls c WHERE c.DepartmentId = %DID%
@@ -1640,6 +1643,18 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 				AND CheckInTime >= %STARTDATE% AND CheckInTime <= %ENDDATE%
 				ORDER BY CheckInTime DESC";
 			#endregion CalendarItemCheckIns
+
+			#region CommunicationTests
+			CommunicationTestsTable = "CommunicationTests";
+			CommunicationTestRunsTable = "CommunicationTestRuns";
+			CommunicationTestResultsTable = "CommunicationTestResults";
+			SelectActiveCommTestsByScheduleTypeQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE Active = true AND ScheduleType = %SCHEDULETYPE%";
+			SelectCommTestRunsByTestIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE CommunicationTestId = %COMMTESTID% ORDER BY StartedOn DESC";
+			SelectCommTestRunByRunCodeQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE RunCode = %RUNCODE% LIMIT 1";
+			SelectOpenCommTestRunsQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE Status IN (0, 1, 2)";
+			SelectCommTestResultsByRunIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE CommunicationTestRunId = %RUNID%";
+			SelectCommTestResultByResponseTokenQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE ResponseToken = %TOKEN% LIMIT 1";
+			#endregion CommunicationTests
 
 			#region User Defined Fields
 			UdfDefinitionsTableName = "UdfDefinitions";

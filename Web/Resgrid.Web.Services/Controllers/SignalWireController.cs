@@ -42,12 +42,14 @@ namespace Resgrid.Web.Services.Controllers
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly ICustomStateService _customStateService;
 		private readonly IUnitsService _unitsService;
+		private readonly ICommunicationTestService _communicationTestService;
 
 		public SignalWireController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
 			ILimitsService limitsService, ICallsService callsService, IQueueService queueService, IDepartmentsService departmentsService,
 			IUserProfileService userProfileService, ITextCommandService textCommandService, IActionLogsService actionLogsService,
 			IUserStateService userStateService, ICommunicationService communicationService, IGeoLocationProvider geoLocationProvider,
-			IDepartmentGroupsService departmentGroupsService, ICustomStateService customStateService, IUnitsService unitsService)
+			IDepartmentGroupsService departmentGroupsService, ICustomStateService customStateService, IUnitsService unitsService,
+			ICommunicationTestService communicationTestService)
 		{
 			_departmentSettingsService = departmentSettingsService;
 			_numbersService = numbersService;
@@ -64,6 +66,7 @@ namespace Resgrid.Web.Services.Controllers
 			_departmentGroupsService = departmentGroupsService;
 			_customStateService = customStateService;
 			_unitsService = unitsService;
+			_communicationTestService = communicationTestService;
 		}
 		#endregion Private Readonly Properties and Constructors
 
@@ -108,6 +111,24 @@ namespace Resgrid.Web.Services.Controllers
 			messageEvent.CustomerId = "";
 
 			string response = "";
+
+			// Check for Communication Test response (CT- prefix)
+			if (!string.IsNullOrWhiteSpace(textMessage.Text) && textMessage.Text.Trim().StartsWith("CT-", StringComparison.OrdinalIgnoreCase))
+			{
+				var runCode = textMessage.Text.Trim().Split(' ')[0].ToUpperInvariant();
+				await _communicationTestService.RecordSmsResponseAsync(runCode, textMessage.Msisdn);
+				messageEvent.Processed = true;
+
+				response = LaMLResponse.Message.Respond("Resgrid received your communication test response. Thank you.");
+
+				await _numbersService.SaveInboundMessageEventAsync(messageEvent);
+				return new ContentResult
+				{
+					Content = response,
+					ContentType = "application/xml",
+					StatusCode = 200
+				};
+			}
 
 			try
 			{

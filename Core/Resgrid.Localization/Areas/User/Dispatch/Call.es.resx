@@ -423,6 +423,12 @@
   <data name="ProtocolText" xml:space="preserve">
     <value>Texto del protocolo</value>
   </data>
+  <data name="NotifyCancelledHelp" xml:space="preserve">
+    <value>If checked, entities removed from the dispatch list will receive a cancellation notification for this call.</value>
+  </data>
+  <data name="NotifyCancelledLabel" xml:space="preserve">
+    <value>Notify Cancelled</value>
+  </data>
   <data name="RedispatchCallHelp" xml:space="preserve">
     <value>Si desea retransmitir esta llamada marque esta casilla. Esto enviará la llamada a todos los usuarios seleccionados, independientemente de si estaban en el primer envío o no.</value>
   </data>
@@ -572,5 +578,86 @@
   </data>
   <data name="CheckInTimerSource" xml:space="preserve">
     <value>Fuente</value>
+  </data>
+  <data name="VideoFeeds" xml:space="preserve">
+    <value>Transmisiones de Video</value>
+  </data>
+  <data name="AddVideoFeed" xml:space="preserve">
+    <value>Agregar Transmisión de Video</value>
+  </data>
+  <data name="EditVideoFeed" xml:space="preserve">
+    <value>Editar Transmisión de Video</value>
+  </data>
+  <data name="DeleteVideoFeed" xml:space="preserve">
+    <value>Eliminar Transmisión de Video</value>
+  </data>
+  <data name="VideoFeedName" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="VideoFeedUrl" xml:space="preserve">
+    <value>URL</value>
+  </data>
+  <data name="VideoFeedType" xml:space="preserve">
+    <value>Tipo de Transmisión</value>
+  </data>
+  <data name="VideoFeedFormat" xml:space="preserve">
+    <value>Formato de Transmisión</value>
+  </data>
+  <data name="VideoFeedDescription" xml:space="preserve">
+    <value>Descripción</value>
+  </data>
+  <data name="VideoFeedStatus" xml:space="preserve">
+    <value>Estado</value>
+  </data>
+  <data name="VideoFeedLocation" xml:space="preserve">
+    <value>Ubicación</value>
+  </data>
+  <data name="VideoFeedAddedBy" xml:space="preserve">
+    <value>Agregado Por</value>
+  </data>
+  <data name="VideoFeedAddedOn" xml:space="preserve">
+    <value>Fecha de Agregado</value>
+  </data>
+  <data name="VideoFeedSortOrder" xml:space="preserve">
+    <value>Orden</value>
+  </data>
+  <data name="VideoFeedActive" xml:space="preserve">
+    <value>Activo</value>
+  </data>
+  <data name="VideoFeedInactive" xml:space="preserve">
+    <value>Inactivo</value>
+  </data>
+  <data name="VideoFeedError" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="VideoFeedDrone" xml:space="preserve">
+    <value>Dron</value>
+  </data>
+  <data name="VideoFeedFixedCamera" xml:space="preserve">
+    <value>Cámara Fija</value>
+  </data>
+  <data name="VideoFeedBodyCam" xml:space="preserve">
+    <value>Cámara Corporal</value>
+  </data>
+  <data name="VideoFeedTrafficCam" xml:space="preserve">
+    <value>Cámara de Tráfico</value>
+  </data>
+  <data name="VideoFeedWeatherCam" xml:space="preserve">
+    <value>Cámara Meteorológica</value>
+  </data>
+  <data name="VideoFeedSatellite" xml:space="preserve">
+    <value>Transmisión Satelital</value>
+  </data>
+  <data name="VideoFeedWebCam" xml:space="preserve">
+    <value>Cámara Web</value>
+  </data>
+  <data name="VideoFeedOther" xml:space="preserve">
+    <value>Otro</value>
+  </data>
+  <data name="ConfirmDeleteVideoFeed" xml:space="preserve">
+    <value>¿Está seguro de que desea eliminar esta transmisión de video?</value>
+  </data>
+  <data name="NoVideoFeeds" xml:space="preserve">
+    <value>No se han agregado transmisiones de video a esta llamada.</value>
   </data>
 </root>

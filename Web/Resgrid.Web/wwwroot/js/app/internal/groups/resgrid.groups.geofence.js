@@ -94,6 +94,14 @@ var resgrid;
                     });
                 }
 
+                var groupId = $('#Group_DepartmentGroupId').val();
+                if (!groupId) {
+                    $('#alertArea').html('<p>Unable to determine the group. Please reload the page and try again.</p>');
+                    $('#successArea').hide();
+                    $('#alertArea').show();
+                    return;
+                }
+
                 $.ajax({
                     type: "POST",
                     async: true,
@@ -102,14 +110,20 @@ var resgrid;
                     cache: false,
                     processData: false,
                     data: JSON.stringify({
-                        DepartmentGroupId: $('#Group_DepartmentGroupId').val(),
+                        DepartmentGroupId: parseInt(groupId, 10),
                         Color: $('#colorPicker').val(),
                         GeoFence: JSON.stringify(coords)
                     })
                 }).done(function (data) {
-                    $('#successArea').html('<p>Your geofence has been saved.</p>');
-                    $('#successArea').show();
-                    $('#alertArea').hide();
+                    if (data && data.Success) {
+                        $('#successArea').html('<p>' + (data.Message || 'Your geofence has been saved.') + '</p>');
+                        $('#successArea').show();
+                        $('#alertArea').hide();
+                    } else {
+                        $('#alertArea').html('<p>' + (data && data.Message ? data.Message : 'Your geofence could not be saved.') + '</p>');
+                        $('#successArea').hide();
+                        $('#alertArea').show();
+                    }
                 }).fail(function (error) {
                     $('#alertArea').html('<p>Your geofence could not be saved. Please correct the errors and try again.</p>');
                     $('#successArea').hide();

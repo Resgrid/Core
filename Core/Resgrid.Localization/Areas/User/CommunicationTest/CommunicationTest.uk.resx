@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CommunicationTestModule" xml:space="preserve">
+    <value>Communication Tests</value>
+  </data>
+  <data name="CommunicationTestsHeader" xml:space="preserve">
+    <value>Communication Tests</value>
+  </data>
+  <data name="NewTest" xml:space="preserve">
+    <value>New Test</value>
+  </data>
+  <data name="EditTest" xml:space="preserve">
+    <value>Edit Test</value>
+  </data>
+  <data name="DeleteTest" xml:space="preserve">
+    <value>Delete Test</value>
+  </data>
+  <data name="DeleteTestWarning" xml:space="preserve">
+    <value>Are you sure you want to delete this test?</value>
+  </data>
+  <data name="TestDefinitions" xml:space="preserve">
+    <value>Test Definitions</value>
+  </data>
+  <data name="TestName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="TestDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="ScheduleType" xml:space="preserve">
+    <value>Schedule Type</value>
+  </data>
+  <data name="OnDemand" xml:space="preserve">
+    <value>On Demand</value>
+  </data>
+  <data name="Weekly" xml:space="preserve">
+    <value>Weekly</value>
+  </data>
+  <data name="Monthly" xml:space="preserve">
+    <value>Monthly</value>
+  </data>
+  <data name="DaysOfWeek" xml:space="preserve">
+    <value>Days of Week</value>
+  </data>
+  <data name="DayOfMonth" xml:space="preserve">
+    <value>Day of Month</value>
+  </data>
+  <data name="Time" xml:space="preserve">
+    <value>Time</value>
+  </data>
+  <data name="ChannelsToTest" xml:space="preserve">
+    <value>Channels to Test</value>
+  </data>
+  <data name="SMS" xml:space="preserve">
+    <value>SMS</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Voice" xml:space="preserve">
+    <value>Voice</value>
+  </data>
+  <data name="Push" xml:space="preserve">
+    <value>Push</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Active</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>Inactive</value>
+  </data>
+  <data name="ResponseWindow" xml:space="preserve">
+    <value>Response Window</value>
+  </data>
+  <data name="ResponseWindowMinutes" xml:space="preserve">
+    <value>Response Window (minutes)</value>
+  </data>
+  <data name="CreateTest" xml:space="preserve">
+    <value>Create Test</value>
+  </data>
+  <data name="SaveChanges" xml:space="preserve">
+    <value>Save Changes</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="RecentTestRuns" xml:space="preserve">
+    <value>Recent Test Runs</value>
+  </data>
+  <data name="RunNow" xml:space="preserve">
+    <value>Run Now</value>
+  </data>
+  <data name="RunCode" xml:space="preserve">
+    <value>Run Code</value>
+  </data>
+  <data name="Started" xml:space="preserve">
+    <value>Started</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="UsersTested" xml:space="preserve">
+    <value>Users Tested</value>
+  </data>
+  <data name="Responses" xml:space="preserve">
+    <value>Responses</value>
+  </data>
+  <data name="ViewReport" xml:space="preserve">
+    <value>View Report</value>
+  </data>
+  <data name="ReportHeader" xml:space="preserve">
+    <value>Communication Test Report</value>
+  </data>
+  <data name="RunDetails" xml:space="preserve">
+    <value>Run Details</value>
+  </data>
+  <data name="PerUserResults" xml:space="preserve">
+    <value>Per-User Results</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="Contact" xml:space="preserve">
+    <value>Contact</value>
+  </data>
+  <data name="Carrier" xml:space="preserve">
+    <value>Carrier</value>
+  </data>
+  <data name="VerificationStatus" xml:space="preserve">
+    <value>Verification Status</value>
+  </data>
+  <data name="Responded" xml:space="preserve">
+    <value>Responded</value>
+  </data>
+  <data name="NoResponse" xml:space="preserve">
+    <value>No Response</value>
+  </data>
+  <data name="NotSent" xml:space="preserve">
+    <value>Not Sent</value>
+  </data>
+  <data name="ResponseRate" xml:space="preserve">
+    <value>Response Rate</value>
+  </data>
+  <data name="ThankYouResponse" xml:space="preserve">
+    <value>Your communication test response has been recorded. Thank you.</value>
+  </data>
+  <data name="TestResponseReceived" xml:space="preserve">
+    <value>Resgrid received your communication test response. Thank you.</value>
+  </data>
+</root>

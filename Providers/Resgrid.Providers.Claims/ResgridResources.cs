@@ -167,5 +167,10 @@
 		public const string Route_Update = "Route_Update";
 		public const string Route_Create = "Route_Create";
 		public const string Route_Delete = "Route_Delete";
+
+		public const string CommunicationTest_View = "CommunicationTest_View";
+		public const string CommunicationTest_Update = "CommunicationTest_Update";
+		public const string CommunicationTest_Create = "CommunicationTest_Create";
+		public const string CommunicationTest_Delete = "CommunicationTest_Delete";
 	}
 }

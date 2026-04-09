@@ -1,4 +1,6 @@
-﻿namespace Resgrid.Config
+﻿using System;
+
+namespace Resgrid.Config
 {
 	public static class PaymentProviderConfig
 	{
@@ -35,6 +37,32 @@
 		public static string PaddleTestEnvironment = "sandbox";
 		public static string PaddleProductionClientToken = "";
 		public static string PaddleTestClientToken = "";
+
+		// Global toggle: 1 = Stripe (default), 7 = Paddle. Matches PaymentMethods enum values.
+		// Set per-instance via ResgridConfig.json: "PaymentProviderConfig.ActivePaymentProvider": "7"
+		public static int ActivePaymentProvider = 1;
+
+		public const int ProviderStripe = 1;
+		public const int ProviderPaddle = 7;
+
+		public static int GetActivePaymentProvider()
+		{
+			if (ActivePaymentProvider != ProviderStripe && ActivePaymentProvider != ProviderPaddle)
+				throw new InvalidOperationException(
+					$"Unsupported ActivePaymentProvider value '{ActivePaymentProvider}'. Expected {ProviderStripe} (Stripe) or {ProviderPaddle} (Paddle).");
+
+			return ActivePaymentProvider;
+		}
+
+		public static bool IsStripeActive()
+		{
+			return GetActivePaymentProvider() == ProviderStripe;
+		}
+
+		public static bool IsPaddleActive()
+		{
+			return GetActivePaymentProvider() == ProviderPaddle;
+		}
 
 		public static string GetStripeClientKey()
 		{

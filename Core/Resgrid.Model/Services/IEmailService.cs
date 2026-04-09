@@ -76,6 +76,11 @@ namespace Resgrid.Model.Services
 		Task<bool> SendCallAsync(Call call, CallDispatch dispatch, UserProfile profile = null);
 
 		/// <summary>
+		/// Sends a cancellation email for a call dispatch.
+		/// </summary>
+		Task<bool> SendCancelCallAsync(Call call, CallDispatch dispatch, UserProfile profile = null);
+
+		/// <summary>
 		/// Sends the trouble alert.
 		/// </summary>
 		/// <param name="troubleAlertEvent">The trouble alert event.</param>

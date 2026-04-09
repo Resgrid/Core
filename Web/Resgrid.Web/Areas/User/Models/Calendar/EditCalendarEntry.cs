@@ -16,5 +16,7 @@ namespace Resgrid.WebCore.Areas.User.Models.Calendar
 		public DateTime? RecurrenceEndLocal { get; set; }
 		public bool IsRecurrenceParent { get; set; }
 		public string entities { get; set; }
+		public int WeekdayOccurrence { get; set; }
+		public int WeekdayDayOfWeek { get; set; }
 	}
 }

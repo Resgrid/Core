@@ -330,6 +330,9 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectFlaggedCallNotesByDepartmentIdQuery { get; set; }
 		public string SelectFlaggedCallImagesByDepartmentIdQuery { get; set; }
 		public string SelectFlaggedCallFilesByDepartmentIdQuery { get; set; }
+		public string CallVideoFeedsTable { get; set; }
+		public string SelectCallVideoFeedsByCallIdQuery { get; set; }
+		public string SelectCallVideoFeedsByDepartmentIdQuery { get; set; }
 		#endregion Calls
 
 		#region Dispatch Protocols
@@ -530,6 +533,18 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectCalendarItemCheckInsByDeptDateRangeQuery { get; set; }
 		public string SelectCalendarItemCheckInsByUserDateRangeQuery { get; set; }
 		#endregion CalendarItemCheckIns
+
+		#region CommunicationTests
+		public string CommunicationTestsTable { get; set; }
+		public string CommunicationTestRunsTable { get; set; }
+		public string CommunicationTestResultsTable { get; set; }
+		public string SelectActiveCommTestsByScheduleTypeQuery { get; set; }
+		public string SelectCommTestRunsByTestIdQuery { get; set; }
+		public string SelectCommTestRunByRunCodeQuery { get; set; }
+		public string SelectOpenCommTestRunsQuery { get; set; }
+		public string SelectCommTestResultsByRunIdQuery { get; set; }
+		public string SelectCommTestResultByResponseTokenQuery { get; set; }
+		#endregion CommunicationTests
 
 		// Identity
 

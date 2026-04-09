@@ -33,6 +33,7 @@ namespace Resgrid.Config
 				LocationInfo =
 					"This is the Resgrid system hosted in the Western United States (private datacenter). This system services most Resgrid customers.",
 				IsDefault = true,
+				AppUrl = "https://app.resgrid.com",
 				ApiUrl = "https://api.resgrid.com",
 				AllowsFreeAccounts = true
 			},
@@ -41,9 +42,10 @@ namespace Resgrid.Config
 				Name = "EU-Central",
 				DisplayName = "Resgrid Europe",
 				LocationInfo =
-					"This is the Resgrid system hosted in Central Europe (on OVH). This system services Resgrid customers in the European Union to help with data compliance requirements.",
+					"This is the Resgrid system hosted in Central Europe (on OVH). This system services Resgrid customers in the European Union to help with data (GDPR) compliance requirements.",
 				IsDefault = false,
-				ApiUrl = "https://api.eu.resgrid.com",
+				AppUrl = "https://app.eu-central.resgrid.com",
+				ApiUrl = "https://api-eu-central.resgrid.com",
 				AllowsFreeAccounts = false
 			}
 		};
@@ -55,7 +57,13 @@ namespace Resgrid.Config
 		public string DisplayName { get; set; }
 		public string LocationInfo { get; set; }
 		public bool IsDefault { get; set; }
+		public string AppUrl { get; set; }
 		public string ApiUrl { get; set; }
 		public bool AllowsFreeAccounts { get; set; }
+
+		public string GetLogonUrl()
+		{
+			return AppUrl + "/Account/LogOn";
+		}
 	}
 }

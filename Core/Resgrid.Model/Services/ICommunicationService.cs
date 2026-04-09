@@ -46,6 +46,18 @@ namespace Resgrid.Model.Services
 			string address = null);
 
 		/// <summary>
+		/// Sends a cancellation notification for a call dispatch to a user.
+		/// </summary>
+		Task<bool> SendCancelCallAsync(Call call, CallDispatch dispatch, string departmentNumber, int departmentId,
+			UserProfile profile = null, string address = null);
+
+		/// <summary>
+		/// Sends a cancellation notification for a call dispatch to a unit.
+		/// </summary>
+		Task<bool> SendCancelUnitCallAsync(Call call, CallDispatchUnit dispatch, string departmentNumber,
+			string address = null);
+
+		/// <summary>
 		/// Sends the notification asynchronous.
 		/// </summary>
 		/// <param name="userId">The user identifier.</param>

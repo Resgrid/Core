@@ -1082,5 +1082,10 @@ namespace Resgrid.Providers.Claims
 		{
 			ClaimsLogic.AddRouteClaims(this, isAdmin, permissions, isGroupAdmin, roles);
 		}
+
+		public void AddCommunicationTestClaims(bool isAdmin)
+		{
+			ClaimsLogic.AddCommunicationTestClaims(this, isAdmin);
+		}
 	}
 }

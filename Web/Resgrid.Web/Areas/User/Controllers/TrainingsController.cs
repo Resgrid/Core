@@ -280,8 +280,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					if (file != null && file.Length > 0)
 					{
-						var extension = file.FileName.Substring(file.FileName.IndexOf(char.Parse(".")) + 1,
-							file.FileName.Length - file.FileName.IndexOf(char.Parse(".")) - 1);
+var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? string.Empty;
 
 						if (!String.IsNullOrWhiteSpace(extension))
 							extension = extension.ToLower();

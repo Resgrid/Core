@@ -177,7 +177,9 @@ namespace Resgrid.Services
 							spc.SubTitle = call.NatureOfCall.Truncate(200);
 					}
 
-					if (!String.IsNullOrWhiteSpace(spc.SubTitle))
+					if (String.IsNullOrWhiteSpace(spc.SubTitle))
+						spc.SubTitle = String.Empty;
+					else
 						spc.SubTitle = StringHelpers.StripHtmlTagsCharArray(spc.SubTitle);
 
 					spc.SubTitle = Regex.Replace(spc.SubTitle, @"((http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)", "");
@@ -380,7 +382,9 @@ namespace Resgrid.Services
 							spc.SubTitle = call.NatureOfCall.Truncate(200);
 					}
 
-					if (!String.IsNullOrWhiteSpace(spc.SubTitle))
+					if (String.IsNullOrWhiteSpace(spc.SubTitle))
+						spc.SubTitle = String.Empty;
+					else
 						spc.SubTitle = StringHelpers.StripHtmlTagsCharArray(spc.SubTitle);
 
 					spc.SubTitle = Regex.Replace(spc.SubTitle, @"((http|https):\/\/[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?)", "");

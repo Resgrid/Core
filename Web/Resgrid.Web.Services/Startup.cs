@@ -402,6 +402,11 @@ namespace Resgrid.Web.ServicesCore
 				options.AddPolicy(ResgridResources.Route_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Route, ResgridClaimTypes.Actions.Update));
 				options.AddPolicy(ResgridResources.Route_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Route, ResgridClaimTypes.Actions.Create));
 				options.AddPolicy(ResgridResources.Route_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.Route, ResgridClaimTypes.Actions.Delete));
+
+				options.AddPolicy(ResgridResources.CommunicationTest_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.CommunicationTest, ResgridClaimTypes.Actions.View));
+				options.AddPolicy(ResgridResources.CommunicationTest_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.CommunicationTest, ResgridClaimTypes.Actions.Update));
+				options.AddPolicy(ResgridResources.CommunicationTest_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.CommunicationTest, ResgridClaimTypes.Actions.Create));
+				options.AddPolicy(ResgridResources.CommunicationTest_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.CommunicationTest, ResgridClaimTypes.Actions.Delete));
 			});
 			#endregion Auth Roles
 

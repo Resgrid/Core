@@ -1,4 +1,6 @@
-﻿namespace Resgrid.Config
+﻿using System;
+
+namespace Resgrid.Config
 {
 	public static class PaymentProviderConfig
 	{
@@ -40,19 +42,26 @@
 		// Set per-instance via ResgridConfig.json: "PaymentProviderConfig.ActivePaymentProvider": "7"
 		public static int ActivePaymentProvider = 1;
 
+		public const int ProviderStripe = 1;
+		public const int ProviderPaddle = 7;
+
 		public static int GetActivePaymentProvider()
 		{
+			if (ActivePaymentProvider != ProviderStripe && ActivePaymentProvider != ProviderPaddle)
+				throw new InvalidOperationException(
+					$"Unsupported ActivePaymentProvider value '{ActivePaymentProvider}'. Expected {ProviderStripe} (Stripe) or {ProviderPaddle} (Paddle).");
+
 			return ActivePaymentProvider;
 		}
 
 		public static bool IsStripeActive()
 		{
-			return ActivePaymentProvider == 1;
+			return GetActivePaymentProvider() == ProviderStripe;
 		}
 
 		public static bool IsPaddleActive()
 		{
-			return ActivePaymentProvider == 7;
+			return GetActivePaymentProvider() == ProviderPaddle;
 		}
 
 		public static string GetStripeClientKey()

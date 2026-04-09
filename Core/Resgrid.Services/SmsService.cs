@@ -273,14 +273,14 @@ namespace Resgrid.Services
 				}
 				else
 				{
-					SendCancelCallViaEmailSmsGateway(call, address, profile);
+					await SendCancelCallViaEmailSmsGatewayAsync(call, address, profile);
 				}
 			}
 
 			return true;
 		}
 
-		private void SendCancelCallViaEmailSmsGateway(Call call, string address, UserProfile profile)
+		private async Task SendCancelCallViaEmailSmsGatewayAsync(Call call, string address, UserProfile profile)
 		{
 			MailMessage email = new MailMessage();
 			email.To.Add(string.Format(Carriers.CarriersMap[(MobileCarriers)profile.MobileCarrier], profile.GetPhoneNumber()));
@@ -297,7 +297,7 @@ namespace Resgrid.Services
 
 			try
 			{
-				_emailSender.SendEmail(email);
+				await _emailSender.SendEmail(email);
 			}
 			catch (Exception ex)
 			{

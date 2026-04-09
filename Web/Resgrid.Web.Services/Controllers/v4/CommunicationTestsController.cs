@@ -146,7 +146,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		/// <summary>
-		/// Saves a communication test definition (admin only)
+		/// Saves a communication test definition (admin only).
+		/// Creates require CommunicationTest_Create; updates require CommunicationTest_Update.
 		/// </summary>
 		[HttpPost("Save")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
@@ -160,6 +161,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 			Guid? excludeId = null;
 			if (!string.IsNullOrWhiteSpace(input.Id) && Guid.TryParse(input.Id, out var parsedExclude))
 				excludeId = parsedExclude;
+
+			if (excludeId.HasValue)
+			{
+				if (!User.HasClaim(ResgridClaimTypes.Resources.CommunicationTest, ResgridClaimTypes.Actions.Update))
+				{
+					result.Status = ResponseHelper.Failure;
+					ResponseHelper.PopulateV4ResponseData(result);
+					return result;
+				}
+			}
 
 			if (!await _communicationTestService.CanCreateScheduledTestAsync(DepartmentId, input.ScheduleType, excludeId))
 			{

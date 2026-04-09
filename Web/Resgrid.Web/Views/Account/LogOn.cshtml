@@ -215,6 +215,10 @@
             $("#regionSelect").change(function () {
                 var url = $(this).val();
                 if (url) {
+                    var qs = window.location.search;
+                    if (qs) {
+                        url += (url.indexOf('?') > -1 ? '&' : '?') + qs.substring(1);
+                    }
                     window.location.href = url;
                 }
             });

@@ -43,9 +43,6 @@
                     <form asp-controller="CommunicationTest" asp-action="Edit" asp-route-area="User" method="post" class="form-horizontal">
                         @Html.AntiForgeryToken()
                         <input type="hidden" asp-for="Test.CommunicationTestId" />
-                        <input type="hidden" asp-for="Test.DepartmentId" />
-                        <input type="hidden" asp-for="Test.CreatedByUserId" />
-                        <input type="hidden" asp-for="Test.CreatedOn" />
                         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
                         <div class="form-group">

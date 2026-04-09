@@ -893,14 +893,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 				// Send cancel notifications to removed entities
 				if (model.NotifyCancelledEntities)
 				{
+					var savedUserIds = new HashSet<string>(call.Dispatches.Select(x => x.UserId));
+					var savedGroupIds = new HashSet<int>(call.GroupDispatches.Select(x => x.DepartmentGroupId));
+					var savedUnitIds = new HashSet<int>(call.UnitDispatches.Select(x => x.UnitId));
+					var savedRoleIds = new HashSet<int>(call.RoleDispatches.Select(x => x.RoleId));
+
 					var cancelledUserIds = existingDispatches.Select(x => x.UserId)
-						.Where(y => !dispatchingUserIds.Contains(y)).ToList();
+						.Where(y => !savedUserIds.Contains(y)).ToList();
 					var cancelledGroupIds = existingGroupDispatches.Select(x => x.DepartmentGroupId)
-						.Where(y => !dispatchingGroupIds.Contains(y)).ToList();
+						.Where(y => !savedGroupIds.Contains(y)).ToList();
 					var cancelledUnitIds = existingUnitDispatches.Select(x => x.UnitId)
-						.Where(y => !dispatchingUnitIds.Contains(y)).ToList();
+						.Where(y => !savedUnitIds.Contains(y)).ToList();
 					var cancelledRoleIds = existingRoleDispatches.Select(x => x.RoleId)
-						.Where(y => !dispatchingRoleIds.Contains(y)).ToList();
+						.Where(y => !savedRoleIds.Contains(y)).ToList();
 
 					if (cancelledUserIds.Any() || cancelledGroupIds.Any() || cancelledUnitIds.Any() || cancelledRoleIds.Any())
 					{

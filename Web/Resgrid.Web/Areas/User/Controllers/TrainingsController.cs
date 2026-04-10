@@ -224,6 +224,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var model = new ViewTrainingModel();
 			model.Training = await _trainingService.GetTrainingByIdAsync(trainingId);
+
+			if (model.Training == null)
+				return NotFound();
+
 			model.CreatorUserName = await UserHelper.GetFullNameForUser(model.Training.CreatedByUserId);
 
 			if (model.Training.DepartmentId != DepartmentId)
@@ -302,9 +306,9 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 						attachment.FileName = file.FileName;
 						attachment.TrainingId = trainingId;
 
-using var stream = file.OpenReadStream();
-var uploadedFile = new byte[stream.Length];
-stream.Read(uploadedFile, 0, uploadedFile.Length);
+						using var stream = file.OpenReadStream();
+						var uploadedFile = new byte[stream.Length];
+						await stream.ReadAsync(uploadedFile, 0, uploadedFile.Length);
 
 						attachment.Data = uploadedFile;
 						existingTraining.Attachments.Add(attachment);
@@ -485,6 +489,9 @@ stream.Read(uploadedFile, 0, uploadedFile.Length);
 			var model = new ViewTrainingModel();
 			model.Training = await _trainingService.GetTrainingByIdAsync(trainingId);
 
+			if (model.Training == null)
+				return NotFound();
+
 			if (model.Training.DepartmentId != DepartmentId)
 				return Unauthorized();
 
@@ -499,7 +506,10 @@ stream.Read(uploadedFile, 0, uploadedFile.Length);
 		{
 			int correctAnswers = 0;
 			var training = await _trainingService.GetTrainingByIdAsync(model.Training.TrainingId);
-			
+
+			if (training == null)
+				return NotFound();
+
 			List<int> questions = (from object key in form.Keys where key.ToString().StartsWith("question_") select int.Parse(key.ToString().Replace("question_", ""))).ToList();
 
 			foreach (var questionId in questions)
@@ -529,6 +539,9 @@ stream.Read(uploadedFile, 0, uploadedFile.Length);
 			var model = new ViewTrainingModel();
 			model.Training = await _trainingService.GetTrainingByIdAsync(trainingId);
 
+			if (model.Training == null)
+				return NotFound();
+
 			if (model.Training.DepartmentId != DepartmentId)
 				return Unauthorized();
 
@@ -543,6 +556,9 @@ stream.Read(uploadedFile, 0, uploadedFile.Length);
 			var model = new ViewTrainingModel();
 			model.Training = await _trainingService.GetTrainingByIdAsync(trainingId);
 
+			if (model.Training == null)
+				return NotFound();
+
 			if (model.Training.DepartmentId != DepartmentId)
 				return Unauthorized();
 
@@ -556,6 +572,10 @@ stream.Read(uploadedFile, 0, uploadedFile.Length);
 		{
 			var model = new TrainingReportView();
 			model.Training = await _trainingService.GetTrainingByIdAsync(trainingId);
+
+			if (model.Training == null)
+				return NotFound();
+
 			model.UserGroups = new Dictionary<string, string>();
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 

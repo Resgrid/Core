@@ -198,18 +198,19 @@
 @section Scripts
 {
 	<script>
-		var resgridTrainingsI18n = {
-			selectGroups: '@localizer["SelectGroupsPlaceholder"]',
-			selectRoles: '@localizer["SelectRolesPlaceholder"]',
-			selectUsers: '@localizer["SelectUsersPlaceholder"]',
-			removeQuestionTooltip: '@localizer["RemoveQuestionTooltip"]',
-			removeAnswerTooltip: '@localizer["RemoveAnswerTooltip"]',
-			addAnswer: '@localizer["AddAnswerButton"]',
-			answerRequired: '@localizer["AnswerRequiredMessage"]',
-			addQuestionTooltip: '@localizer["AddQuestionTooltip"]',
-			correct: '@localizer["CorrectLabel"]',
-			answerText: '@localizer["AnswerTextColumn"]'
-		};
+		var resgridTrainingsI18n = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(new {
+			selectGroups = localizer["SelectGroupsPlaceholder"].Value,
+			selectRoles = localizer["SelectRolesPlaceholder"].Value,
+			selectUsers = localizer["SelectUsersPlaceholder"].Value,
+			removeQuestionTooltip = localizer["RemoveQuestionTooltip"].Value,
+			removeAnswerTooltip = localizer["RemoveAnswerTooltip"].Value,
+			addAnswer = localizer["AddAnswerButton"].Value,
+			answerRequired = localizer["AnswerRequiredMessage"].Value,
+			addQuestionTooltip = localizer["AddQuestionTooltip"].Value,
+			addAnswerTooltip = localizer["AddAnswerTooltip"].Value,
+			correct = localizer["CorrectLabel"].Value,
+			answerText = localizer["AnswerTextColumn"].Value
+		}));
 	</script>
 	<script src="~/js/app/internal/training/resgrid.training.newtraining.js"></script>
 }

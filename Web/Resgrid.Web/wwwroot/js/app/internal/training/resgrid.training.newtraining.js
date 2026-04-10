@@ -7,6 +7,11 @@ var resgrid;
         (function (newtraining) {
             var i18n = (typeof resgridTrainingsI18n !== 'undefined') ? resgridTrainingsI18n : {};
 
+            function escapeHtml(str) {
+                if (!str) return '';
+                return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+            }
+
             $(document).ready(function () {
                 resgrid.common.analytics.track('Training - New');
 
@@ -73,37 +78,30 @@ var resgrid;
                 resgrid.training.newtraining.questionsCount = 0;
             });
             function addQuestion() {
-                var removeTooltip = i18n.removeQuestionTooltip || 'Remove this question';
+                var removeTooltip = escapeHtml(i18n.removeQuestionTooltip || 'Remove this question');
                 resgrid.training.newtraining.questionsCount++;
                 $('#questions tbody').first().append("<tr><td style='max-width: 215px;'><textarea id='question_" + newtraining.questionsCount + "' name='question_" + newtraining.questionsCount + "' rows='4' cols='40'></textarea></td><td>" + resgrid.training.newtraining.generateAnswersTable(newtraining.questionsCount) + "</td><td style='text-align:center;'><a onclick='$(this).parent().parent().remove();' class='tip-top' data-original-title='" + removeTooltip + "'><i class='fa fa-minus' style='color: red;'></i></a></td></tr>");
             }
             newtraining.addQuestion = addQuestion;
             function generateAnswersTable(count) {
-                var addAnswerLabel = i18n.addAnswer || 'Add Answer';
-                var addAnswerTooltip = i18n.addQuestionTooltip || 'Add Answers to Question';
-                var correctLabel = i18n.correct || 'Correct';
-                var answerTextLabel = i18n.answerText || 'Answer Text';
-                var answersTable = '<table id="answersTable_' + count + '" class="table table-striped table-bordered"><thead><tr><th style="max-width:35px;font-size: 14px;" >' + correctLabel + '</th><th style = "font-size: 14px;" >' + answerTextLabel + '</th><th style = "font-size: 16px;" ><a id="addAnswerButton" class="btn btn-success btn-xs" onclick="resgrid.training.newtraining.addAnswer(' + count + ');" data-original-title="' + addAnswerTooltip + '" ><i class="icon-plus" ></i> ' + addAnswerLabel + '</a></th></tr></thead><tbody></tbody></table>';
+                var addAnswerLabel = escapeHtml(i18n.addAnswer || 'Add Answer');
+                var addAnswerTooltip = escapeHtml(i18n.addAnswerTooltip || 'Add Answers to Question');
+                var correctLabel = escapeHtml(i18n.correct || 'Correct');
+                var answerTextLabel = escapeHtml(i18n.answerText || 'Answer Text');
+                var answersTable = '<table id="answersTable_' + count + '" class="table table-striped table-bordered"><thead><tr><th style="max-width:35px;font-size: 14px;" >' + correctLabel + '</th><th style = "font-size: 14px;" >' + answerTextLabel + '</th><th style = "font-size: 16px;" ><a id="addAnswerButton_' + count + '" class="btn btn-success btn-xs" onclick="resgrid.training.newtraining.addAnswer(' + count + ');" data-original-title="' + addAnswerTooltip + '" ><i class="icon-plus" ></i> ' + addAnswerLabel + '</a></th></tr></thead><tbody></tbody></table>';
                 return answersTable;
             }
             newtraining.generateAnswersTable = generateAnswersTable;
             function addAnswer(count) {
                 var id = generate(4);
-                var answerRequired = i18n.answerRequired || 'Answer is required';
-                var removeAnswerTooltip = i18n.removeAnswerTooltip || 'Remove this answer from the question';
+                var answerRequired = escapeHtml(i18n.answerRequired || 'Answer is required');
+                var removeAnswerTooltip = escapeHtml(i18n.removeAnswerTooltip || 'Remove this answer from the question');
                 $('#answersTable_' + count + ' tbody').append("<tr><td><input type='radio' name='answer_" + count + "' value='answerForQuestion_" + count + "_" + id + "'></td><td><textarea rows='3' cols='30' data-bv-notempty data-bv-notempty-message='" + answerRequired + "' id='answerForQuestion_" + count + "_" + id + "' name='answerForQuestion_" + count + "_" + id + "'></textarea></td><td style='text-align:center;'><a onclick='$(this).parent().parent().remove();' class='tip-top' data-original-title='" + removeAnswerTooltip + "'><i class='fa fa-minus' style='color: red;'></i></a></td></tr>");
             }
             newtraining.addAnswer = addAnswer;
-            function generate(length) {
-                var arr = [];
-                var n;
-                for (var i = 0; i < length; i++) {
-                    do
-                        n = Math.floor(Math.random() * 20 + 1);
-                    while (arr.indexOf(n) !== -1);
-                    arr[i] = n;
-                }
-                return arr.join('');
+            var _answerIdCounter = 0;
+            function generate() {
+                return ++_answerIdCounter;
             }
             newtraining.generate = generate;
         })(newtraining = training.newtraining || (training.newtraining = {}));

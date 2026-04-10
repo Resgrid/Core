@@ -233,7 +233,7 @@ namespace Resgrid.Providers.Weather
 					if (geocodes.Any())
 					{
 						alert.Geocodes = System.Text.Json.JsonSerializer.Serialize(
-							geocodes.ToDictionary(g => g.Name, g => g.Value));
+							geocodes.GroupBy(g => g.Name).ToDictionary(g => g.Key, g => g.Last().Value));
 					}
 				}
 

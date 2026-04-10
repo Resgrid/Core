@@ -88,7 +88,7 @@ var resgrid;
             function addQuestion() {
                 var removeTooltip = escapeHtml(i18n.removeQuestionTooltip || 'Remove this question');
                 resgrid.training.edittraining.questionsCount++;
-                $('#questions tbody').first().append("<tr><td style='max-width: 215px;'><textarea id='question_" + edittraining.questionsCount + "' name='question_" + edittraining.questionsCount + "' rows='4' cols='40'></textarea></td><td>" + resgrid.training.edittraining.generateAnswersTable(edittraining.questionsCount) + "</td><td style='text-align:center;'><a onclick='$(this).parent().parent().remove();' class='tip-top' data-original-title='" + removeTooltip + "'><i class='fa fa-minus' style='color: red;'></i></a></td></tr>");
+                $('#questions tbody').first().append("<tr id='questionRow_" + edittraining.questionsCount + "'><td style='max-width: 215px;'><textarea id='question_" + edittraining.questionsCount + "' name='question_" + edittraining.questionsCount + "' rows='4' cols='40'></textarea></td><td>" + resgrid.training.edittraining.generateAnswersTable(edittraining.questionsCount) + "</td><td style='text-align:center;'><a onclick='resgrid.training.edittraining.removeQuestion(" + edittraining.questionsCount + ");' class='tip-top' data-original-title='" + removeTooltip + "'><i class='fa fa-minus' style='color: red;'></i></a></td></tr>");
             }
             edittraining.addQuestion = addQuestion;
             function generateAnswersTable(count) {

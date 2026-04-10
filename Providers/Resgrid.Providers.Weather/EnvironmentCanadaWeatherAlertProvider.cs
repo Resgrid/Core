@@ -103,10 +103,10 @@ namespace Resgrid.Providers.Weather
 		{
 			var capUrls = new List<string>();
 
-			var request = new HttpRequestMessage(HttpMethod.Get, feedUrl);
+			using var request = new HttpRequestMessage(HttpMethod.Get, feedUrl);
 			request.Headers.UserAgent.ParseAdd("Resgrid/1.0 (weather-alerts)");
 
-			var response = await _httpClient.SendAsync(request, ct);
+			using var response = await _httpClient.SendAsync(request, ct);
 			response.EnsureSuccessStatusCode();
 
 			var content = await response.Content.ReadAsStringAsync();
@@ -143,10 +143,10 @@ namespace Resgrid.Providers.Weather
 		{
 			var alerts = new List<WeatherAlert>();
 
-			var request = new HttpRequestMessage(HttpMethod.Get, capUrl);
+			using var request = new HttpRequestMessage(HttpMethod.Get, capUrl);
 			request.Headers.UserAgent.ParseAdd("Resgrid/1.0 (weather-alerts)");
 
-			var response = await _httpClient.SendAsync(request, ct);
+			using var response = await _httpClient.SendAsync(request, ct);
 			response.EnsureSuccessStatusCode();
 
 			var xml = await response.Content.ReadAsStringAsync();

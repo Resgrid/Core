@@ -162,7 +162,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
-				List<int> questions = (from object key in form.Keys where key.ToString().StartsWith("question_") select int.Parse(key.ToString().Replace("question_", ""))).ToList();
+				List<int> questions = form.Keys
+						.Where(k => k.StartsWith("question_"))
+						.Select(k => { var s = k.Replace("question_", ""); return int.TryParse(s, out var v) ? (int?)v : null; })
+						.Where(v => v.HasValue).Select(v => v.Value).ToList();
 
 				if (questions.Count > 0)
 					model.Training.Questions = new Collection<TrainingQuestion>();
@@ -185,7 +188,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 						var question = new TrainingQuestion();
 						question.Question = questionText;
 						
-						List<int> answers = (from object key in form.Keys where key.ToString().StartsWith("answerForQuestion_" + i + "_") select int.Parse(key.ToString().Replace("answerForQuestion_" + i + "_", ""))).ToList();
+						var answerPrefix1 = "answerForQuestion_" + i + "_";
+						List<int> answers = form.Keys
+							.Where(k => k.StartsWith(answerPrefix1))
+							.Select(k => { var s = k.Replace(answerPrefix1, ""); return int.TryParse(s, out var v) ? (int?)v : null; })
+							.Where(v => v.HasValue).Select(v => v.Value).ToList();
 
 						if (answers.Count > 0)
 							question.Answers = new Collection<TrainingQuestionAnswer>();
@@ -366,9 +373,9 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 
 				foreach (var group in groups)
 				{
-					if (!string.IsNullOrWhiteSpace(group))
+					if (!string.IsNullOrWhiteSpace(group) && int.TryParse(group, out var groupId))
 					{
-						var members = await _departmentGroupsService.GetAllMembersForGroupAsync(int.Parse(group));
+						var members = await _departmentGroupsService.GetAllMembersForGroupAsync(groupId);
 
 						foreach (var member in members)
 						{
@@ -387,9 +394,9 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 
 				foreach (var role in roles)
 				{
-					if (!string.IsNullOrWhiteSpace(role))
+					if (!string.IsNullOrWhiteSpace(role) && int.TryParse(role, out var roleId))
 					{
-						var roleMembers = await _personnelRolesService.GetAllMembersOfRoleAsync(int.Parse(role));
+						var roleMembers = await _personnelRolesService.GetAllMembersOfRoleAsync(roleId);
 
 						foreach (var member in roleMembers)
 						{
@@ -425,7 +432,10 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 				else
 					existingTraining.Questions.Clear();
 
-				List<int> questions = (from object key in form.Keys where key.ToString().StartsWith("question_") select int.Parse(key.ToString().Replace("question_", ""))).ToList();
+				List<int> questions = form.Keys
+						.Where(k => k.StartsWith("question_"))
+						.Select(k => { var s = k.Replace("question_", ""); return int.TryParse(s, out var v) ? (int?)v : null; })
+						.Where(v => v.HasValue).Select(v => v.Value).ToList();
 
 				foreach (var i in questions)
 				{
@@ -436,7 +446,11 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 						question.Question = questionText;
 						question.TrainingId = trainingId;
 
-						List<int> answers = (from object key in form.Keys where key.ToString().StartsWith("answerForQuestion_" + i + "_") select int.Parse(key.ToString().Replace("answerForQuestion_" + i + "_", ""))).ToList();
+						var answerPrefix = "answerForQuestion_" + i + "_";
+						List<int> answers = form.Keys
+							.Where(k => k.StartsWith(answerPrefix))
+							.Select(k => { var s = k.Replace(answerPrefix, ""); return int.TryParse(s, out var v) ? (int?)v : null; })
+							.Where(v => v.HasValue).Select(v => v.Value).ToList();
 
 						if (answers.Count > 0)
 							question.Answers = new Collection<TrainingQuestionAnswer>();
@@ -510,7 +524,10 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 			if (training == null)
 				return NotFound();
 
-			List<int> questions = (from object key in form.Keys where key.ToString().StartsWith("question_") select int.Parse(key.ToString().Replace("question_", ""))).ToList();
+			List<int> questions = form.Keys
+						.Where(k => k.StartsWith("question_"))
+						.Select(k => { var s = k.Replace("question_", ""); return int.TryParse(s, out var v) ? (int?)v : null; })
+						.Where(v => v.HasValue).Select(v => v.Value).ToList();
 
 			foreach (var questionId in questions)
 			{

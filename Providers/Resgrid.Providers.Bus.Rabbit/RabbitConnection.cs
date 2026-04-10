@@ -13,6 +13,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 		private static ConnectionFactory _factory { get; set; }
 		private static readonly SemaphoreSlim _semaphore = new SemaphoreSlim(1, 1);
 
+		/// <summary>
+		/// Raised when the connection is reset so callers can clear cached declaration state.
+		/// </summary>
+		public static event Action ConnectionReset;
 
 		public static async Task<bool> VerifyAndCreateClients(string clientName)
 		{
@@ -21,6 +25,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 				_connection.Dispose();
 				_connection = null;
 				_factory = null;
+				RaiseConnectionReset();
 			}
 
 			if (_connection == null)
@@ -77,7 +82,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 				{
 					try
 					{
-						var channel = await _connection.CreateChannelAsync();
+						using var channel = await _connection.CreateChannelAsync();
 
 						await channel.QueueDeclareAsync(queue: SetQueueNameForEnv(ServiceBusConfig.SystemQueueName),
 									 durable: true,
@@ -180,11 +185,31 @@ namespace Resgrid.Providers.Bus.Rabbit
 				_connection.Dispose();
 				_connection = null;
 				_factory = null;
+				RaiseConnectionReset();
 
 				await VerifyAndCreateClients(clientName);
 			}
 
 			return _connection;
+		}
+
+		private static void RaiseConnectionReset()
+		{
+			var handler = ConnectionReset;
+			if (handler == null)
+				return;
+
+			foreach (var subscriber in handler.GetInvocationList())
+			{
+				try
+				{
+					((Action)subscriber).Invoke();
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+				}
+			}
 		}
 
 		public static string SetQueueNameForEnv(string cacheKey)

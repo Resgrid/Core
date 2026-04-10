@@ -14,6 +14,12 @@ namespace Resgrid.Providers.Bus.Rabbit
 	public class RabbitTopicProvider
 	{
 		private readonly string _clientName = "Resgrid-Topic";
+		private static volatile bool _exchangeDeclared;
+
+		static RabbitTopicProvider()
+		{
+			RabbitConnection.ConnectionReset += () => _exchangeDeclared = false;
+		}
 
 		public async Task<bool> PersonnelStatusChanged(UserStatusEvent message)
 		{
@@ -117,7 +123,11 @@ namespace Resgrid.Providers.Bus.Rabbit
 		{
 			try
 			{
+				// Validate/create connection first so a reconnect clears _exchangeDeclared
 				var connection = await RabbitConnection.CreateConnection(clientName);
+
+				if (_exchangeDeclared)
+					return true;
 
 				if (connection != null)
 				{
@@ -125,6 +135,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 					{
 						await channel.ExchangeDeclareAsync(RabbitConnection.SetQueueNameForEnv(Topics.EventingTopic), "fanout");
 					}
+
+					_exchangeDeclared = true;
 				}
 			}
 			catch (Exception ex)

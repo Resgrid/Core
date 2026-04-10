@@ -195,6 +195,8 @@ namespace Resgrid.Services
 					var existing = await _weatherAlertRepository.GetByExternalIdAndSourceIdAsync(
 						alert.ExternalId, source.WeatherAlertSourceId);
 
+					TruncateAlertFields(alert);
+
 					if (existing == null)
 					{
 						// New alert
@@ -525,78 +527,31 @@ namespace Resgrid.Services
 		{
 			var sb = new System.Text.StringBuilder();
 
-			// Header
-			sb.AppendLine($"=== WEATHER ALERT: {alert.Event?.ToUpper()} ===");
+			sb.AppendLine($"WEATHER ALERT: {alert.Event?.ToUpper()}");
+			sb.AppendLine($"Severity: {SeverityNames[Math.Min(alert.Severity, 4)]}");
+
+			if (alert.ExpiresUtc.HasValue)
+			{
+				if (department != null)
+					sb.AppendLine($"Expires: {alert.ExpiresUtc.Value.TimeConverter(department):MM/dd/yyyy h:mm tt}");
+				else
+					sb.AppendLine($"Expires: {alert.ExpiresUtc.Value:yyyy-MM-dd HH:mm} UTC");
+			}
+
 			sb.AppendLine();
 
-			// Headline
 			if (!string.IsNullOrEmpty(alert.Headline))
-			{
 				sb.AppendLine(alert.Headline);
-				sb.AppendLine();
-			}
 
-			// Classification grid
-			sb.AppendLine("--- Alert Details ---");
-			sb.AppendLine($"Severity:  {SeverityNames[Math.Min(alert.Severity, 4)]}");
-			sb.AppendLine($"Urgency:   {UrgencyNames[Math.Min(alert.Urgency, 4)]}");
-			sb.AppendLine($"Certainty: {CertaintyNames[Math.Min(alert.Certainty, 4)]}");
-			sb.AppendLine($"Category:  {CategoryNames[Math.Min(alert.AlertCategory, 4)]}");
-			sb.AppendLine();
-
-			// Timing
-			sb.AppendLine("--- Timing ---");
-			if (department != null)
-			{
-				sb.AppendLine($"Effective: {alert.EffectiveUtc.TimeConverter(department):MM/dd/yyyy h:mm tt}");
-				if (alert.OnsetUtc.HasValue)
-					sb.AppendLine($"Onset:     {alert.OnsetUtc.Value.TimeConverter(department):MM/dd/yyyy h:mm tt}");
-				if (alert.ExpiresUtc.HasValue)
-					sb.AppendLine($"Expires:   {alert.ExpiresUtc.Value.TimeConverter(department):MM/dd/yyyy h:mm tt}");
-			}
-			else
-			{
-				sb.AppendLine($"Effective: {alert.EffectiveUtc:yyyy-MM-dd HH:mm} UTC");
-				if (alert.OnsetUtc.HasValue)
-					sb.AppendLine($"Onset:     {alert.OnsetUtc.Value:yyyy-MM-dd HH:mm} UTC");
-				if (alert.ExpiresUtc.HasValue)
-					sb.AppendLine($"Expires:   {alert.ExpiresUtc.Value:yyyy-MM-dd HH:mm} UTC");
-			}
-			sb.AppendLine();
-
-			// Affected area
-			if (!string.IsNullOrEmpty(alert.AreaDescription))
-			{
-				sb.AppendLine("--- Affected Area ---");
-				sb.AppendLine(alert.AreaDescription);
-				sb.AppendLine();
-			}
-
-			// Description
-			if (!string.IsNullOrEmpty(alert.Description))
-			{
-				sb.AppendLine("--- Description ---");
-				sb.AppendLine(alert.Description);
-				sb.AppendLine();
-			}
-
-			// Instructions (critical for responders)
 			if (!string.IsNullOrEmpty(alert.Instruction))
 			{
-				sb.AppendLine("--- INSTRUCTIONS ---");
-				sb.AppendLine(alert.Instruction);
 				sb.AppendLine();
+				sb.AppendLine(alert.Instruction);
 			}
 
-			// Source info
-			if (!string.IsNullOrEmpty(alert.Sender))
-				sb.AppendLine($"Source: {alert.Sender}");
-
-			sb.AppendLine($"Alert ID: {alert.ExternalId}");
 			sb.AppendLine();
-			sb.AppendLine("This is an automated weather alert from the Resgrid Weather Alert System.");
+			sb.AppendLine("View active weather alerts for full details.");
 
-			// Respect the 4000 char body limit
 			var body = sb.ToString();
 			if (body.Length > 3950)
 				body = body.Substring(0, 3947) + "...";
@@ -619,5 +574,24 @@ namespace Resgrid.Services
 		private static double ToRadians(double degrees) => degrees * Math.PI / 180;
 
 		#endregion
+
+		private static void TruncateAlertFields(WeatherAlert alert)
+		{
+			alert.ExternalId = Truncate(alert.ExternalId, 500);
+			alert.Sender = Truncate(alert.Sender, 500);
+			alert.Event = Truncate(alert.Event, 500);
+			alert.Headline = Truncate(alert.Headline, 500);
+			alert.AreaDescription = Truncate(alert.AreaDescription, 500);
+			alert.CenterGeoLocation = Truncate(alert.CenterGeoLocation, 100);
+			alert.ReferencesExternalId = Truncate(alert.ReferencesExternalId, 500);
+		}
+
+		private static string Truncate(string value, int maxLength)
+		{
+			if (string.IsNullOrEmpty(value) || value.Length <= maxLength)
+				return value;
+
+			return value.Substring(0, maxLength);
+		}
 	}
 }

@@ -591,14 +591,14 @@ namespace Resgrid.Web.Services.Controllers
 
 				response.Say("You have been marked responding to the scene, goodbye.").Hangup();
 			}
-			else
+			else if (int.TryParse(twilioRequest.Digits, out var digit))
 			{
 				var call = await _callsService.GetCallByIdAsync(callId);
 				var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(call.DepartmentId);
 
-				int index = int.Parse(twilioRequest.Digits) - 2;
+				int index = digit - 2;
 
-				if (index >= 0 && index < 8)
+				if (index >= 0 && index < stations.Count)
 				{
 					var station = stations[index];
 
@@ -610,6 +610,10 @@ namespace Resgrid.Web.Services.Controllers
 						response.Say(string.Format("You have been marked responding to {0}, goodbye.", station.Name)).Hangup();
 					}
 				}
+			}
+			else
+			{
+				response.Say("Sorry, that was not a valid selection.").Redirect(new Uri(string.Format("{0}/api/Twilio/VoiceCall?userId={1}&callId={2}", Config.SystemBehaviorConfig.ResgridApiBaseUrl, userId, callId)), "GET");
 			}
 
 			return new ContentResult

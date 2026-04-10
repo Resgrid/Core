@@ -1,28 +1,29 @@
-﻿
+
 @using Resgrid.Model.Helpers
 @model Resgrid.Web.Areas.User.Models.Training.TrainingReportView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
 @{
-	ViewBag.Title = "Resgrid | Training Report";
+	ViewBag.Title = "Resgrid | " + localizer["TrainingReportHeader"];
 	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
 @section Styles
 {
-	
+
 }
 
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>Training Report</h2>
+		<h2>@localizer["TrainingReportHeader"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@localizer["HomeLink"]</a>
 			</li>
 			<li>
-				<a asp-controller="Trainings" asp-action="Index" asp-route-area="User">Trainings</a>
+				<a asp-controller="Trainings" asp-action="Index" asp-route-area="User">@localizer["TrainingsLink"]</a>
 			</li>
 			<li class="active">
-				<strong>Training Report</strong>
+				<strong>@localizer["TrainingReportHeader"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -38,22 +39,22 @@
 							<thead>
 								<tr>
 									<th>
-										Name
+										@localizer["NameColumn"]
 									</th>
 									<th>
-										Group
+										@localizer["GroupColumn"]
 									</th>
 									<th>
-										Viewed
+										@localizer["ViewedColumn"]
 									</th>
 									<th>
-										Completed
+										@localizer["CompletedColumn"]
 									</th>
 									<th>
-										Score
+										@localizer["ScoreColumn"]
 									</th>
 									<th>
-										Result
+										@localizer["ResultColumn"]
 									</th>
 									<th>
 
@@ -78,7 +79,7 @@
 											}
 											else
 											{
-												<span>Not Viewed</span>
+												<span>@localizer["NotViewed"]</span>
 											}
 										</td>
 										<td>
@@ -88,7 +89,7 @@
 											}
 											else
 											{
-												<span>Not Completed</span>
+												<span>@localizer["NotCompleted"]</span>
 											}
 										</td>
 										<td>
@@ -98,7 +99,7 @@
 											}
 											else
 											{
-												<span>No Score</span>
+												<span>@localizer["NoScore"]</span>
 											}
 										</td>
 										<td>
@@ -106,24 +107,24 @@
 											{
 												if (@u.Score >= Model.Training.MinimumScore)
 												{
-													<span class='label label-success'>Pass</span>
+													<span class='label label-success'>@localizer["PassLabel"]</span>
 												}
 												else
 												{
-													<span class='label label-danger'>Failed</span>
+													<span class='label label-danger'>@localizer["FailedLabel"]</span>
 												}
 											}
 											else if (u.Viewed && Model.Training.Questions == null || Model.Training.Questions.Count <= 0)
 											{
-												<span>Complete</span>
+												<span>@localizer["CompleteLabel"]</span>
 											}
 											else
 											{
-												<span>Pending</span>
+												<span>@localizer["PendingLabel"]</span>
 											}
 										</td>
 										<td>
-											<a href="@Url.Action("ResetUserTraining", "Trainings", new {Area ="User", trainingId = Model.Training.TrainingId, userId = u.UserId})" class="btn btn-primary btn-xs">Reset User</a>
+											<a href="@Url.Action("ResetUserTraining", "Trainings", new {Area ="User", trainingId = Model.Training.TrainingId, userId = u.UserId})" class="btn btn-primary btn-xs">@localizer["ResetUserButton"]</a>
 										</td>
 									</tr>
 								}

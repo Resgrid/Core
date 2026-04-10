@@ -14,10 +14,15 @@ namespace Resgrid.Providers.Weather
 		public static bool TryGet(WeatherAlertSourceType sourceType, string areaFilter, out List<WeatherAlert> alerts)
 		{
 			var key = BuildKey(sourceType, areaFilter);
-			if (_cache.TryGetValue(key, out var entry) && entry.ExpiresUtc > DateTime.UtcNow)
+			if (_cache.TryGetValue(key, out var entry))
 			{
-				alerts = entry.Alerts;
-				return true;
+				if (entry.ExpiresUtc > DateTime.UtcNow)
+				{
+					alerts = entry.Alerts;
+					return true;
+				}
+
+				_cache.TryRemove(key, out _);
 			}
 			alerts = null;
 			return false;

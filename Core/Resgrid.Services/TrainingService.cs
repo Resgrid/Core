@@ -92,6 +92,10 @@ namespace Resgrid.Services
 		public async Task<Training> GetTrainingByIdAsync(int trainingId)
 		{
 			var training = await _trainingRepository.GetTrainingByTrainingIdAsync(trainingId);
+
+			if (training == null)
+				return null;
+
 			training.Questions = (await _trainingQuestionRepository.GetTrainingQuestionsByTrainingIdAsync(training.TrainingId)).ToList();
 			training.Attachments = (await _trainingAttachmentRepository.GetTrainingAttachmentsByTrainingIdAsync(trainingId)).ToList();
 

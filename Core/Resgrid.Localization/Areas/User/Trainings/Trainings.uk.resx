@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers &amp; schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="HomeLink" xml:space="preserve">
+    <value>&#1043;&#1086;&#1083;&#1086;&#1074;&#1085;&#1072;</value>
+  </data>
+  <data name="TrainingsLink" xml:space="preserve">
+    <value>&#1053;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="NewTrainingHeader" xml:space="preserve">
+    <value>&#1053;&#1086;&#1074;&#1077; &#1085;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="AddTrainingButton" xml:space="preserve">
+    <value>&#1044;&#1086;&#1076;&#1072;&#1090;&#1080; &#1085;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="EditTrainingHeader" xml:space="preserve">
+    <value>&#1056;&#1077;&#1076;&#1072;&#1075;&#1091;&#1074;&#1072;&#1090;&#1080; &#1085;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="SaveTrainingButton" xml:space="preserve">
+    <value>&#1047;&#1073;&#1077;&#1088;&#1077;&#1075;&#1090;&#1080; &#1085;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="TrainingNameLabel" xml:space="preserve">
+    <value>&#1053;&#1072;&#1079;&#1074;&#1072; &#1085;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="DescriptionLabel" xml:space="preserve">
+    <value>&#1054;&#1087;&#1080;&#1089;</value>
+  </data>
+  <data name="TrainingTextLabel" xml:space="preserve">
+    <value>&#1058;&#1077;&#1082;&#1089;&#1090; &#1085;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="MinimumScoreLabel" xml:space="preserve">
+    <value>&#1052;&#1110;&#1085;&#1110;&#1084;&#1072;&#1083;&#1100;&#1085;&#1080;&#1081; &#1073;&#1072;&#1083;</value>
+  </data>
+  <data name="DueDateLabel" xml:space="preserve">
+    <value>&#1058;&#1077;&#1088;&#1084;&#1110;&#1085; &#1074;&#1080;&#1082;&#1086;&#1085;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="ExistingAttachmentsLabel" xml:space="preserve">
+    <value>&#1030;&#1089;&#1085;&#1091;&#1102;&#1095;&#1110; &#1074;&#1082;&#1083;&#1072;&#1076;&#1077;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="AddAttachmentsLabel" xml:space="preserve">
+    <value>&#1044;&#1086;&#1076;&#1072;&#1090;&#1080; &#1074;&#1082;&#1083;&#1072;&#1076;&#1077;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="AttachmentsLabel" xml:space="preserve">
+    <value>&#1042;&#1082;&#1083;&#1072;&#1076;&#1077;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="CurrentlyAssignedLabel" xml:space="preserve">
+    <value>&#1053;&#1072;&#1088;&#1072;&#1079;&#1110; &#1087;&#1088;&#1080;&#1079;&#1085;&#1072;&#1095;&#1077;&#1085;&#1110;</value>
+  </data>
+  <data name="CurrentlyAssignedText" xml:space="preserve">
+    <value>{0} &#1082;&#1086;&#1088;&#1080;&#1089;&#1090;&#1091;&#1074;&#1072;&#1095;(&#1110;&#1074;) &#1085;&#1072;&#1088;&#1072;&#1079;&#1110; &#1087;&#1088;&#1080;&#1079;&#1085;&#1072;&#1095;&#1077;&#1085;&#1086; &#1076;&#1086; &#1094;&#1100;&#1086;&#1075;&#1086; &#1085;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103;.</value>
+  </data>
+  <data name="AddAllPersonnelLabel" xml:space="preserve">
+    <value>&#1044;&#1086;&#1076;&#1072;&#1090;&#1080; &#1074;&#1077;&#1089;&#1100; &#1087;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1083;</value>
+  </data>
+  <data name="AddGroupsLabel" xml:space="preserve">
+    <value>&#1044;&#1086;&#1076;&#1072;&#1090;&#1080; &#1075;&#1088;&#1091;&#1087;&#1080;</value>
+  </data>
+  <data name="AddRolesLabel" xml:space="preserve">
+    <value>&#1044;&#1086;&#1076;&#1072;&#1090;&#1080; &#1088;&#1086;&#1083;&#1110;</value>
+  </data>
+  <data name="AddUsersLabel" xml:space="preserve">
+    <value>&#1044;&#1086;&#1076;&#1072;&#1090;&#1080; &#1082;&#1086;&#1088;&#1080;&#1089;&#1090;&#1091;&#1074;&#1072;&#1095;&#1110;&#1074;</value>
+  </data>
+  <data name="GroupsToAddLabel" xml:space="preserve">
+    <value>&#1043;&#1088;&#1091;&#1087;&#1080; &#1076;&#1083;&#1103; &#1076;&#1086;&#1076;&#1072;&#1074;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="RolesToAddLabel" xml:space="preserve">
+    <value>&#1056;&#1086;&#1083;&#1110; &#1076;&#1083;&#1103; &#1076;&#1086;&#1076;&#1072;&#1074;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="UsersToAddLabel" xml:space="preserve">
+    <value>&#1050;&#1086;&#1088;&#1080;&#1089;&#1090;&#1091;&#1074;&#1072;&#1095;&#1110; &#1076;&#1083;&#1103; &#1076;&#1086;&#1076;&#1072;&#1074;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="QuestionsLabel" xml:space="preserve">
+    <value>&#1047;&#1072;&#1087;&#1080;&#1090;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="QuestionsHelpText" xml:space="preserve">
+    <value>&#1047;&#1072;&#1087;&#1080;&#1090;&#1072;&#1085;&#1085;&#1103; &#1108; &#1085;&#1077;&#1086;&#1073;&#1086;&#1074;&#8217;&#1103;&#1079;&#1082;&#1086;&#1074;&#1080;&#1084;&#1080;. &#1071;&#1082;&#1097;&#1086; &#1074;&#1080; &#1087;&#1088;&#1086;&#1089;&#1090;&#1086; &#1093;&#1086;&#1095;&#1077;&#1090;&#1077;, &#1097;&#1086;&#1073; &#1087;&#1077;&#1088;&#1089;&#1086;&#1085;&#1072;&#1083; &#1087;&#1077;&#1088;&#1077;&#1075;&#1083;&#1103;&#1085;&#1091;&#1074; &#1085;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103;, &#1094;&#1077; &#1073;&#1091;&#1076;&#1077; &#1074;&#1110;&#1076;&#1089;&#1090;&#1077;&#1078;&#1091;&#1074;&#1072;&#1090;&#1080;&#1089;&#1103; &#1073;&#1077;&#1079; &#1079;&#1072;&#1087;&#1080;&#1090;&#1072;&#1085;&#1100;.</value>
+  </data>
+  <data name="QuestionColumn" xml:space="preserve">
+    <value>&#1047;&#1072;&#1087;&#1080;&#1090;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="AnswersColumn" xml:space="preserve">
+    <value>&#1042;&#1110;&#1076;&#1087;&#1086;&#1074;&#1110;&#1076;&#1110;</value>
+  </data>
+  <data name="AddQuestionButton" xml:space="preserve">
+    <value>&#1044;&#1086;&#1076;&#1072;&#1090;&#1080; &#1079;&#1072;&#1087;&#1080;&#1090;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>&#1042;&#1080;&#1076;&#1072;&#1083;&#1080;&#1090;&#1080;</value>
+  </data>
+  <data name="CorrectLabel" xml:space="preserve">
+    <value>&#1055;&#1088;&#1072;&#1074;&#1080;&#1083;&#1100;&#1085;&#1072;</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>&#1057;&#1082;&#1072;&#1089;&#1091;&#1074;&#1072;&#1090;&#1080;</value>
+  </data>
+  <data name="TrainingsHeader" xml:space="preserve">
+    <value>&#1053;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="AddTrainingIndexButton" xml:space="preserve">
+    <value>&#1044;&#1086;&#1076;&#1072;&#1090;&#1080; &#1085;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="NameColumn" xml:space="preserve">
+    <value>&#1053;&#1072;&#1079;&#1074;&#1072;</value>
+  </data>
+  <data name="DescriptionColumn" xml:space="preserve">
+    <value>&#1054;&#1087;&#1080;&#1089;</value>
+  </data>
+  <data name="DueDateColumn" xml:space="preserve">
+    <value>&#1058;&#1077;&#1088;&#1084;&#1110;&#1085; &#1074;&#1080;&#1082;&#1086;&#1085;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="ActionColumn" xml:space="preserve">
+    <value>&#1044;&#1110;&#1103;</value>
+  </data>
+  <data name="NoDueDate" xml:space="preserve">
+    <value>&#1041;&#1077;&#1079; &#1090;&#1077;&#1088;&#1084;&#1110;&#1085;&#1091;</value>
+  </data>
+  <data name="ViewTrainingButton" xml:space="preserve">
+    <value>&#1055;&#1077;&#1088;&#1077;&#1075;&#1083;&#1103;&#1085;&#1091;&#1090;&#1080; &#1085;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="TrainingCompleteButton" xml:space="preserve">
+    <value>&#1053;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103; &#1079;&#1072;&#1074;&#1077;&#1088;&#1096;&#1077;&#1085;&#1086;</value>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>&#1056;&#1077;&#1076;&#1072;&#1075;&#1091;&#1074;&#1072;&#1090;&#1080;</value>
+  </data>
+  <data name="ReportButton" xml:space="preserve">
+    <value>&#1047;&#1074;&#1110;&#1090;</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>&#1042;&#1080;&#1076;&#1072;&#1083;&#1080;&#1090;&#1080;</value>
+  </data>
+  <data name="DeleteTrainingWarning" xml:space="preserve">
+    <value>&#1059;&#1042;&#1040;&#1043;&#1040;: &#1062;&#1077; &#1085;&#1072;&#1079;&#1072;&#1074;&#1078;&#1076;&#1080; &#1074;&#1080;&#1076;&#1072;&#1083;&#1080;&#1090;&#1100; &#1094;&#1077; &#1085;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103;. &#1042;&#1080; &#1074;&#1087;&#1077;&#1074;&#1085;&#1077;&#1085;&#1110;, &#1097;&#1086; &#1093;&#1086;&#1095;&#1077;&#1090;&#1077; &#1074;&#1080;&#1076;&#1072;&#1083;&#1080;&#1090;&#1080; &#1085;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="ViewTrainingHeader" xml:space="preserve">
+    <value>&#1055;&#1077;&#1088;&#1077;&#1075;&#1083;&#1103;&#1085;&#1091;&#1090;&#1080; &#1085;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>&#1057;&#1090;&#1072;&#1090;&#1091;&#1089;:</value>
+  </data>
+  <data name="ActiveLabel" xml:space="preserve">
+    <value>&#1040;&#1082;&#1090;&#1080;&#1074;&#1085;&#1077;</value>
+  </data>
+  <data name="CreatedByLabel" xml:space="preserve">
+    <value>&#1057;&#1090;&#1074;&#1086;&#1088;&#1077;&#1085;&#1086;:</value>
+  </data>
+  <data name="DueByLabel" xml:space="preserve">
+    <value>&#1058;&#1077;&#1088;&#1084;&#1110;&#1085; &#1076;&#1086;:</value>
+  </data>
+  <data name="CreatedOnLabel" xml:space="preserve">
+    <value>&#1044;&#1072;&#1090;&#1072; &#1089;&#1090;&#1074;&#1086;&#1088;&#1077;&#1085;&#1085;&#1103;:</value>
+  </data>
+  <data name="TrainingAttachmentsHeader" xml:space="preserve">
+    <value>&#1042;&#1082;&#1083;&#1072;&#1076;&#1077;&#1085;&#1085;&#1103; &#1085;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="AttachmentsHelpText" xml:space="preserve">
+    <value>&#1053;&#1080;&#1078;&#1095;&#1077; &#1085;&#1072;&#1074;&#1077;&#1076;&#1077;&#1085;&#1086; &#1092;&#1072;&#1081;&#1083;&#1080; (&#1074;&#1082;&#1083;&#1072;&#1076;&#1077;&#1085;&#1085;&#1103;) &#1076;&#1083;&#1103; &#1094;&#1100;&#1086;&#1075;&#1086; &#1085;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103;. &#1047;&#1072;&#1074;&#1072;&#1085;&#1090;&#1072;&#1078;&#1090;&#1077;, &#1074;&#1110;&#1076;&#1082;&#1088;&#1080;&#1081;&#1090;&#1077; &#1090;&#1072; &#1087;&#1077;&#1088;&#1077;&#1075;&#1083;&#1103;&#1085;&#1100;&#1090;&#1077; &#1074;&#1089;&#1110; &#1094;&#1110; &#1074;&#1082;&#1083;&#1072;&#1076;&#1077;&#1085;&#1085;&#1103; &#1090;&#1072; &#1090;&#1077;&#1082;&#1089;&#1090; &#1085;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103;. &#1030;&#1085;&#1092;&#1086;&#1088;&#1084;&#1072;&#1094;&#1110;&#1103; &#1074; &#1094;&#1080;&#1093; &#1074;&#1082;&#1083;&#1072;&#1076;&#1077;&#1085;&#1085;&#1103;&#1093; &#1084;&#1086;&#1078;&#1077; &#1073;&#1091;&#1090;&#1080; &#1079;&#1072;&#1087;&#1080;&#1090;&#1072;&#1085;&#1085;&#1103;&#1084;&#1080; &#1074; &#1090;&#1077;&#1089;&#1090;&#1110; &#1085;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103;.</value>
+  </data>
+  <data name="TrainingFilesHeader" xml:space="preserve">
+    <value>&#1060;&#1072;&#1081;&#1083;&#1080; &#1085;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="TrainingQuizHeader" xml:space="preserve">
+    <value>&#1058;&#1077;&#1089;&#1090; &#1085;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="QuizHelpText" xml:space="preserve">
+    <value>&#1062;&#1077; &#1085;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103; &#1084;&#1072;&#1108; &#1090;&#1077;&#1089;&#1090;. &#1055;&#1077;&#1088;&#1077;&#1075;&#1083;&#1103;&#1085;&#1100;&#1090;&#1077; &#1074;&#1077;&#1089;&#1100; &#1090;&#1077;&#1082;&#1089;&#1090; &#1085;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103; &#1090;&#1072; &#1074;&#1089;&#1110; &#1074;&#1082;&#1083;&#1072;&#1076;&#1077;&#1085;&#1085;&#1103; &#1087;&#1077;&#1088;&#1077;&#1076; &#1087;&#1088;&#1086;&#1093;&#1086;&#1076;&#1078;&#1077;&#1085;&#1085;&#1103;&#1084; &#1090;&#1077;&#1089;&#1090;&#1091;.</value>
+  </data>
+  <data name="TakeQuizButton" xml:space="preserve">
+    <value>&#1055;&#1088;&#1086;&#1081;&#1090;&#1080; &#1090;&#1077;&#1089;&#1090;</value>
+  </data>
+  <data name="QuizPageHeader" xml:space="preserve">
+    <value>&#1058;&#1077;&#1089;&#1090; &#1085;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="TrainingBreadcrumb" xml:space="preserve">
+    <value>&#1053;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="StartTab" xml:space="preserve">
+    <value>&#1055;&#1086;&#1095;&#1072;&#1090;&#1086;&#1082; ></value>
+  </data>
+  <data name="QuestionTab" xml:space="preserve">
+    <value>&#1047;&#1072;&#1087;&#1080;&#1090;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="FinishTab" xml:space="preserve">
+    <value>&#1047;&#1072;&#1074;&#1077;&#1088;&#1096;&#1080;&#1090;&#1080;</value>
+  </data>
+  <data name="QuizWelcomeText" xml:space="preserve">
+    <value>&#1051;&#1072;&#1089;&#1082;&#1072;&#1074;&#1086; &#1087;&#1088;&#1086;&#1089;&#1080;&#1084;&#1086; &#1076;&#1086; &#1090;&#1077;&#1089;&#1090;&#1091; &#1079; &#1085;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103; ({0}). &#1042;&#1080;&#1073;&#1077;&#1088;&#1110;&#1090;&#1100; &#1087;&#1088;&#1072;&#1074;&#1080;&#1083;&#1100;&#1085;&#1091; &#1074;&#1110;&#1076;&#1087;&#1086;&#1074;&#1110;&#1076;&#1100; &#1085;&#1072; &#1082;&#1086;&#1078;&#1085;&#1077; &#1079;&#1072;&#1087;&#1080;&#1090;&#1072;&#1085;&#1085;&#1103;. &#1053;&#1072;&#1090;&#1080;&#1089;&#1085;&#1110;&#1090;&#1100; &#1082;&#1085;&#1086;&#1087;&#1082;&#1091; &#1076;&#1072;&#1083;&#1110;, &#1097;&#1086;&#1073; &#1088;&#1086;&#1079;&#1087;&#1086;&#1095;&#1072;&#1090;&#1080; &#1090;&#1077;&#1089;&#1090;.</value>
+  </data>
+  <data name="QuizFinishText" xml:space="preserve">
+    <value>&#1053;&#1072;&#1090;&#1080;&#1089;&#1085;&#1110;&#1090;&#1100; &#1082;&#1085;&#1086;&#1087;&#1082;&#1091; &#1047;&#1072;&#1074;&#1077;&#1088;&#1096;&#1080;&#1090;&#1080; &#1085;&#1080;&#1078;&#1095;&#1077;, &#1097;&#1086;&#1073; &#1085;&#1072;&#1076;&#1110;&#1089;&#1083;&#1072;&#1090;&#1080; &#1074;&#1110;&#1076;&#1087;&#1086;&#1074;&#1110;&#1076;&#1110; &#1085;&#1072; &#1090;&#1077;&#1089;&#1090;. &#1042;&#1080; &#1084;&#1086;&#1078;&#1077;&#1090;&#1077; &#1087;&#1086;&#1074;&#1077;&#1088;&#1085;&#1091;&#1090;&#1080;&#1089;&#1103;, &#1097;&#1086;&#1073; &#1087;&#1077;&#1088;&#1077;&#1082;&#1086;&#1085;&#1072;&#1090;&#1080;&#1089;&#1103;, &#1097;&#1086; &#1074;&#1080; &#1074;&#1110;&#1076;&#1087;&#1086;&#1074;&#1110;&#1083;&#1080; &#1085;&#1072; &#1074;&#1089;&#1110; &#1073;&#1072;&#1078;&#1072;&#1085;&#1110; &#1079;&#1072;&#1087;&#1080;&#1090;&#1072;&#1085;&#1085;&#1103;. &#1042;&#1072;&#1096; &#1090;&#1077;&#1089;&#1090; &#1073;&#1091;&#1076;&#1077; &#1086;&#1094;&#1110;&#1085;&#1077;&#1085;&#1086;, &#1072; &#1088;&#1077;&#1079;&#1091;&#1083;&#1100;&#1090;&#1072;&#1090; &#1073;&#1091;&#1076;&#1077; &#1087;&#1086;&#1082;&#1072;&#1079;&#1072;&#1085;&#1086; &#1085;&#1072; &#1075;&#1086;&#1083;&#1086;&#1074;&#1085;&#1110;&#1081; &#1089;&#1090;&#1086;&#1088;&#1110;&#1085;&#1094;&#1110; &#1085;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103;.</value>
+  </data>
+  <data name="FirstButton" xml:space="preserve">
+    <value>&#1055;&#1077;&#1088;&#1096;&#1080;&#1081;</value>
+  </data>
+  <data name="PreviousButton" xml:space="preserve">
+    <value>&#1055;&#1086;&#1087;&#1077;&#1088;&#1077;&#1076;&#1085;&#1110;&#1081;</value>
+  </data>
+  <data name="NextButton" xml:space="preserve">
+    <value>&#1053;&#1072;&#1089;&#1090;&#1091;&#1087;&#1085;&#1080;&#1081;</value>
+  </data>
+  <data name="FinishButton" xml:space="preserve">
+    <value>&#1047;&#1072;&#1074;&#1077;&#1088;&#1096;&#1080;&#1090;&#1080;</value>
+  </data>
+  <data name="TrainingReportHeader" xml:space="preserve">
+    <value>&#1047;&#1074;&#1110;&#1090; &#1087;&#1088;&#1086; &#1085;&#1072;&#1074;&#1095;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="GroupColumn" xml:space="preserve">
+    <value>&#1043;&#1088;&#1091;&#1087;&#1072;</value>
+  </data>
+  <data name="ViewedColumn" xml:space="preserve">
+    <value>&#1055;&#1077;&#1088;&#1077;&#1075;&#1083;&#1103;&#1085;&#1091;&#1090;&#1086;</value>
+  </data>
+  <data name="CompletedColumn" xml:space="preserve">
+    <value>&#1047;&#1072;&#1074;&#1077;&#1088;&#1096;&#1077;&#1085;&#1086;</value>
+  </data>
+  <data name="ScoreColumn" xml:space="preserve">
+    <value>&#1041;&#1072;&#1083;</value>
+  </data>
+  <data name="ResultColumn" xml:space="preserve">
+    <value>&#1056;&#1077;&#1079;&#1091;&#1083;&#1100;&#1090;&#1072;&#1090;</value>
+  </data>
+  <data name="NotViewed" xml:space="preserve">
+    <value>&#1053;&#1077; &#1087;&#1077;&#1088;&#1077;&#1075;&#1083;&#1103;&#1085;&#1091;&#1090;&#1086;</value>
+  </data>
+  <data name="NotCompleted" xml:space="preserve">
+    <value>&#1053;&#1077; &#1079;&#1072;&#1074;&#1077;&#1088;&#1096;&#1077;&#1085;&#1086;</value>
+  </data>
+  <data name="NoScore" xml:space="preserve">
+    <value>&#1041;&#1077;&#1079; &#1086;&#1094;&#1110;&#1085;&#1082;&#1080;</value>
+  </data>
+  <data name="PassLabel" xml:space="preserve">
+    <value>&#1047;&#1076;&#1072;&#1085;&#1086;</value>
+  </data>
+  <data name="FailedLabel" xml:space="preserve">
+    <value>&#1053;&#1077; &#1079;&#1076;&#1072;&#1085;&#1086;</value>
+  </data>
+  <data name="CompleteLabel" xml:space="preserve">
+    <value>&#1047;&#1072;&#1074;&#1077;&#1088;&#1096;&#1077;&#1085;&#1086;</value>
+  </data>
+  <data name="PendingLabel" xml:space="preserve">
+    <value>&#1054;&#1095;&#1110;&#1082;&#1091;&#1108;&#1090;&#1100;&#1089;&#1103;</value>
+  </data>
+  <data name="ResetUserButton" xml:space="preserve">
+    <value>&#1057;&#1082;&#1080;&#1085;&#1091;&#1090;&#1080; &#1082;&#1086;&#1088;&#1080;&#1089;&#1090;&#1091;&#1074;&#1072;&#1095;&#1072;</value>
+  </data>
+  <data name="SelectGroupsPlaceholder" xml:space="preserve">
+    <value>&#1042;&#1080;&#1073;&#1077;&#1088;&#1110;&#1090;&#1100; &#1075;&#1088;&#1091;&#1087;&#1080;...</value>
+  </data>
+  <data name="SelectRolesPlaceholder" xml:space="preserve">
+    <value>&#1042;&#1080;&#1073;&#1077;&#1088;&#1110;&#1090;&#1100; &#1088;&#1086;&#1083;&#1110;...</value>
+  </data>
+  <data name="SelectUsersPlaceholder" xml:space="preserve">
+    <value>&#1042;&#1080;&#1073;&#1077;&#1088;&#1110;&#1090;&#1100; &#1082;&#1086;&#1088;&#1080;&#1089;&#1090;&#1091;&#1074;&#1072;&#1095;&#1110;&#1074;...</value>
+  </data>
+  <data name="RemoveQuestionTooltip" xml:space="preserve">
+    <value>&#1042;&#1080;&#1076;&#1072;&#1083;&#1080;&#1090;&#1080; &#1094;&#1077; &#1079;&#1072;&#1087;&#1080;&#1090;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="RemoveAnswerTooltip" xml:space="preserve">
+    <value>&#1042;&#1080;&#1076;&#1072;&#1083;&#1080;&#1090;&#1080; &#1094;&#1102; &#1074;&#1110;&#1076;&#1087;&#1086;&#1074;&#1110;&#1076;&#1100; &#1110;&#1079; &#1079;&#1072;&#1087;&#1080;&#1090;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="AddAnswerButton" xml:space="preserve">
+    <value>&#1044;&#1086;&#1076;&#1072;&#1090;&#1080; &#1074;&#1110;&#1076;&#1087;&#1086;&#1074;&#1110;&#1076;&#1100;</value>
+  </data>
+  <data name="AnswerRequiredMessage" xml:space="preserve">
+    <value>&#1042;&#1110;&#1076;&#1087;&#1086;&#1074;&#1110;&#1076;&#1100; &#1108; &#1086;&#1073;&#1086;&#1074;&#8217;&#1103;&#1079;&#1082;&#1086;&#1074;&#1086;&#1102;</value>
+  </data>
+  <data name="AddQuestionTooltip" xml:space="preserve">
+    <value>&#1044;&#1086;&#1076;&#1072;&#1090;&#1080; &#1079;&#1072;&#1087;&#1080;&#1090;&#1072;&#1085;&#1085;&#1103;</value>
+  </data>
+  <data name="AnswerTextColumn" xml:space="preserve">
+    <value>Текст відповіді</value>
+  </data>
+</root>

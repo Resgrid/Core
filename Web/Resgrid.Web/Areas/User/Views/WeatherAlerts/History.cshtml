@@ -107,13 +107,19 @@
 			} catch (e) {}
 			return '';
 		}
+		function formatLocalDate(d) {
+			var y = d.getFullYear();
+			var m = ('0' + (d.getMonth() + 1)).slice(-2);
+			var day = ('0' + d.getDate()).slice(-2);
+			return y + '-' + m + '-' + day;
+		}
 		$(document).ready(function() {
 			var today = new Date();
 			var thirtyDaysAgo = new Date();
 			thirtyDaysAgo.setDate(today.getDate() - 30);
 
-			$('#endDate').val(today.toISOString().split('T')[0]);
-			$('#startDate').val(thirtyDaysAgo.toISOString().split('T')[0]);
+			$('#endDate').val(formatLocalDate(today));
+			$('#startDate').val(formatLocalDate(thirtyDaysAgo));
 
 			loadHistory();
 		});

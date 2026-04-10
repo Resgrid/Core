@@ -7,7 +7,7 @@ namespace Resgrid.Web.Services.Models.v4.WeatherAlerts
 		public string Name { get; set; }
 		public int SourceType { get; set; }
 		public string AreaFilter { get; set; }
-		public string ApiKey { get; set; }
+		public bool HasApiKey { get; set; }
 		public string CustomEndpoint { get; set; }
 		public int PollIntervalMinutes { get; set; }
 		public bool Active { get; set; }

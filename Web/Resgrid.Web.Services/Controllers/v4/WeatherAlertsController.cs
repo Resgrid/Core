@@ -157,8 +157,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			WeatherAlertSource source;
 
-			if (!string.IsNullOrWhiteSpace(input.WeatherAlertSourceId) && Guid.TryParse(input.WeatherAlertSourceId, out var sourceGuid))
+			if (!string.IsNullOrWhiteSpace(input.WeatherAlertSourceId))
 			{
+				if (!Guid.TryParse(input.WeatherAlertSourceId, out var sourceGuid))
+					return BadRequest();
+
 				if (!User.HasClaim(ResgridClaimTypes.Resources.WeatherAlert, ResgridClaimTypes.Actions.Update))
 					return Forbid();
 
@@ -254,8 +257,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			WeatherAlertZone zone;
 
-			if (!string.IsNullOrWhiteSpace(input.WeatherAlertZoneId) && Guid.TryParse(input.WeatherAlertZoneId, out var zoneGuid))
+			if (!string.IsNullOrWhiteSpace(input.WeatherAlertZoneId))
 			{
+				if (!Guid.TryParse(input.WeatherAlertZoneId, out var zoneGuid))
+					return BadRequest();
+
 				if (!User.HasClaim(ResgridClaimTypes.Resources.WeatherAlert, ResgridClaimTypes.Actions.Update))
 					return Forbid();
 
@@ -425,7 +431,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				Name = source.Name,
 				SourceType = source.SourceType,
 				AreaFilter = FormatAreaFilterForDisplay(source.AreaFilter),
-				ApiKey = source.ApiKey,
+				HasApiKey = !string.IsNullOrEmpty(source.ApiKey),
 				CustomEndpoint = source.CustomEndpoint,
 				PollIntervalMinutes = source.PollIntervalMinutes,
 				Active = source.Active,
@@ -463,7 +469,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var trimmed = input.Trim();
 
-			// Already a JSON array
+			// Already a JSON array — return as-is if valid, reject if malformed
 			if (trimmed.StartsWith("["))
 			{
 				try
@@ -471,7 +477,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 					JsonSerializer.Deserialize<string[]>(trimmed);
 					return trimmed;
 				}
-				catch { }
+				catch
+				{
+					return null;
+				}
 			}
 
 			// Comma-separated list — split, trim, remove empties, serialize to JSON array

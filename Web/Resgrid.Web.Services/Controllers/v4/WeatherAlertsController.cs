@@ -89,6 +89,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<ActionResult<GetActiveWeatherAlertsResult>> GetAlertHistory([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
 		{
+			if (startDate > endDate)
+				return BadRequest();
+
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var alerts = await _weatherAlertService.GetAlertHistoryAsync(DepartmentId, startDate, endDate);
 			var result = new GetActiveWeatherAlertsResult();
@@ -111,6 +114,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<ActionResult<GetActiveWeatherAlertsResult>> GetAlertsNearLocation([FromQuery] double lat, [FromQuery] double lng, [FromQuery] double radiusMiles = 25)
 		{
+			if (lat < -90 || lat > 90 || lng < -180 || lng > 180 || radiusMiles < 0 || radiusMiles > 500)
+				return BadRequest();
+
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var alerts = await _weatherAlertService.GetActiveAlertsNearLocationAsync(DepartmentId, lat, lng, radiusMiles);
 			var result = new GetActiveWeatherAlertsResult();

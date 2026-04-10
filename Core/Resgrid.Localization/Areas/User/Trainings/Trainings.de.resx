@@ -1,0 +1,390 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers &amp; schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="HomeLink" xml:space="preserve">
+    <value>Startseite</value>
+  </data>
+  <data name="TrainingsLink" xml:space="preserve">
+    <value>Schulungen</value>
+  </data>
+  <data name="NewTrainingHeader" xml:space="preserve">
+    <value>Neue Schulung</value>
+  </data>
+  <data name="AddTrainingButton" xml:space="preserve">
+    <value>Schulung hinzuf&#252;gen</value>
+  </data>
+  <data name="EditTrainingHeader" xml:space="preserve">
+    <value>Schulung bearbeiten</value>
+  </data>
+  <data name="SaveTrainingButton" xml:space="preserve">
+    <value>Schulung speichern</value>
+  </data>
+  <data name="TrainingNameLabel" xml:space="preserve">
+    <value>Schulungsname</value>
+  </data>
+  <data name="DescriptionLabel" xml:space="preserve">
+    <value>Beschreibung</value>
+  </data>
+  <data name="TrainingTextLabel" xml:space="preserve">
+    <value>Schulungstext</value>
+  </data>
+  <data name="MinimumScoreLabel" xml:space="preserve">
+    <value>Mindestpunktzahl</value>
+  </data>
+  <data name="DueDateLabel" xml:space="preserve">
+    <value>F&#228;lligkeitsdatum</value>
+  </data>
+  <data name="ExistingAttachmentsLabel" xml:space="preserve">
+    <value>Vorhandene Anh&#228;nge</value>
+  </data>
+  <data name="AddAttachmentsLabel" xml:space="preserve">
+    <value>Anh&#228;nge hinzuf&#252;gen</value>
+  </data>
+  <data name="AttachmentsLabel" xml:space="preserve">
+    <value>Anh&#228;nge</value>
+  </data>
+  <data name="CurrentlyAssignedLabel" xml:space="preserve">
+    <value>Derzeit zugewiesen</value>
+  </data>
+  <data name="CurrentlyAssignedText" xml:space="preserve">
+    <value>{0} Benutzer derzeit dieser Schulung zugewiesen.</value>
+  </data>
+  <data name="AddAllPersonnelLabel" xml:space="preserve">
+    <value>Gesamtes Personal hinzuf&#252;gen</value>
+  </data>
+  <data name="AddGroupsLabel" xml:space="preserve">
+    <value>Gruppen hinzuf&#252;gen</value>
+  </data>
+  <data name="AddRolesLabel" xml:space="preserve">
+    <value>Rollen hinzuf&#252;gen</value>
+  </data>
+  <data name="AddUsersLabel" xml:space="preserve">
+    <value>Benutzer hinzuf&#252;gen</value>
+  </data>
+  <data name="GroupsToAddLabel" xml:space="preserve">
+    <value>Hinzuzuf&#252;gende Gruppen</value>
+  </data>
+  <data name="RolesToAddLabel" xml:space="preserve">
+    <value>Hinzuzuf&#252;gende Rollen</value>
+  </data>
+  <data name="UsersToAddLabel" xml:space="preserve">
+    <value>Hinzuzuf&#252;gende Benutzer</value>
+  </data>
+  <data name="QuestionsLabel" xml:space="preserve">
+    <value>Fragen</value>
+  </data>
+  <data name="QuestionsHelpText" xml:space="preserve">
+    <value>Fragen sind optional. Wenn Sie m&#246;chten, dass Ihr Personal die Schulung nur ansieht, wird dies ohne Fragen erfasst.</value>
+  </data>
+  <data name="QuestionColumn" xml:space="preserve">
+    <value>Frage</value>
+  </data>
+  <data name="AnswersColumn" xml:space="preserve">
+    <value>Antworten</value>
+  </data>
+  <data name="AddQuestionButton" xml:space="preserve">
+    <value>Frage hinzuf&#252;gen</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Entfernen</value>
+  </data>
+  <data name="CorrectLabel" xml:space="preserve">
+    <value>Richtig</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="TrainingsHeader" xml:space="preserve">
+    <value>Schulungen</value>
+  </data>
+  <data name="AddTrainingIndexButton" xml:space="preserve">
+    <value>Schulung hinzuf&#252;gen</value>
+  </data>
+  <data name="NameColumn" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="DescriptionColumn" xml:space="preserve">
+    <value>Beschreibung</value>
+  </data>
+  <data name="DueDateColumn" xml:space="preserve">
+    <value>F&#228;lligkeitsdatum</value>
+  </data>
+  <data name="ActionColumn" xml:space="preserve">
+    <value>Aktion</value>
+  </data>
+  <data name="NoDueDate" xml:space="preserve">
+    <value>Kein F&#228;lligkeitsdatum</value>
+  </data>
+  <data name="ViewTrainingButton" xml:space="preserve">
+    <value>Schulung anzeigen</value>
+  </data>
+  <data name="TrainingCompleteButton" xml:space="preserve">
+    <value>Schulung abgeschlossen</value>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>Bearbeiten</value>
+  </data>
+  <data name="ReportButton" xml:space="preserve">
+    <value>Bericht</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>L&#246;schen</value>
+  </data>
+  <data name="DeleteTrainingWarning" xml:space="preserve">
+    <value>WARNUNG: Diese Schulung wird dauerhaft gel&#246;scht. Sind Sie sicher, dass Sie die Schulung l&#246;schen m&#246;chten</value>
+  </data>
+  <data name="ViewTrainingHeader" xml:space="preserve">
+    <value>Schulung anzeigen</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Status:</value>
+  </data>
+  <data name="ActiveLabel" xml:space="preserve">
+    <value>Aktiv</value>
+  </data>
+  <data name="CreatedByLabel" xml:space="preserve">
+    <value>Erstellt von:</value>
+  </data>
+  <data name="DueByLabel" xml:space="preserve">
+    <value>F&#228;llig am:</value>
+  </data>
+  <data name="CreatedOnLabel" xml:space="preserve">
+    <value>Erstellt am:</value>
+  </data>
+  <data name="TrainingAttachmentsHeader" xml:space="preserve">
+    <value>Schulungsanh&#228;nge</value>
+  </data>
+  <data name="AttachmentsHelpText" xml:space="preserve">
+    <value>Nachfolgend finden Sie die Dateien (Anh&#228;nge) f&#252;r diese Schulung. Bitte laden Sie alle Anh&#228;nge herunter, &#246;ffnen und &#252;berpr&#252;fen Sie sie zusammen mit dem Schulungstext. Informationen in diesen Anh&#228;ngen k&#246;nnen Fragen im Schulungsquiz sein.</value>
+  </data>
+  <data name="TrainingFilesHeader" xml:space="preserve">
+    <value>Schulungsdateien</value>
+  </data>
+  <data name="TrainingQuizHeader" xml:space="preserve">
+    <value>Schulungsquiz</value>
+  </data>
+  <data name="QuizHelpText" xml:space="preserve">
+    <value>Diese Schulung hat ein Quiz. Bitte &#252;berpr&#252;fen Sie den gesamten Schulungstext und alle Anh&#228;nge der Schulung, bevor Sie das Quiz ablegen.</value>
+  </data>
+  <data name="TakeQuizButton" xml:space="preserve">
+    <value>Quiz starten</value>
+  </data>
+  <data name="QuizPageHeader" xml:space="preserve">
+    <value>Schulungsquiz</value>
+  </data>
+  <data name="TrainingBreadcrumb" xml:space="preserve">
+    <value>Schulung</value>
+  </data>
+  <data name="StartTab" xml:space="preserve">
+    <value>Start ></value>
+  </data>
+  <data name="QuestionTab" xml:space="preserve">
+    <value>Frage</value>
+  </data>
+  <data name="FinishTab" xml:space="preserve">
+    <value>Abschluss</value>
+  </data>
+  <data name="QuizWelcomeText" xml:space="preserve">
+    <value>Willkommen zum Quiz f&#252;r die Schulung ({0}). Bitte w&#228;hlen Sie die richtige Antwort f&#252;r jede Frage. Dr&#252;cken Sie die Schaltfl&#228;che Weiter, um das Quiz zu beginnen.</value>
+  </data>
+  <data name="QuizFinishText" xml:space="preserve">
+    <value>Klicken Sie auf die Schaltfl&#228;che Abschluss, um Ihre Quizantworten einzureichen. Sie k&#246;nnen zur&#252;ckgehen, um sicherzustellen, dass Sie jede gew&#252;nschte Frage beantwortet haben. Ihr Quiz wird bewertet und das Ergebnis wird auf der Schulungs-Startseite angezeigt.</value>
+  </data>
+  <data name="FirstButton" xml:space="preserve">
+    <value>Erste</value>
+  </data>
+  <data name="PreviousButton" xml:space="preserve">
+    <value>Zur&#252;ck</value>
+  </data>
+  <data name="NextButton" xml:space="preserve">
+    <value>Weiter</value>
+  </data>
+  <data name="FinishButton" xml:space="preserve">
+    <value>Abschluss</value>
+  </data>
+  <data name="TrainingReportHeader" xml:space="preserve">
+    <value>Schulungsbericht</value>
+  </data>
+  <data name="GroupColumn" xml:space="preserve">
+    <value>Gruppe</value>
+  </data>
+  <data name="ViewedColumn" xml:space="preserve">
+    <value>Angesehen</value>
+  </data>
+  <data name="CompletedColumn" xml:space="preserve">
+    <value>Abgeschlossen</value>
+  </data>
+  <data name="ScoreColumn" xml:space="preserve">
+    <value>Punktzahl</value>
+  </data>
+  <data name="ResultColumn" xml:space="preserve">
+    <value>Ergebnis</value>
+  </data>
+  <data name="NotViewed" xml:space="preserve">
+    <value>Nicht angesehen</value>
+  </data>
+  <data name="NotCompleted" xml:space="preserve">
+    <value>Nicht abgeschlossen</value>
+  </data>
+  <data name="NoScore" xml:space="preserve">
+    <value>Keine Punktzahl</value>
+  </data>
+  <data name="PassLabel" xml:space="preserve">
+    <value>Bestanden</value>
+  </data>
+  <data name="FailedLabel" xml:space="preserve">
+    <value>Nicht bestanden</value>
+  </data>
+  <data name="CompleteLabel" xml:space="preserve">
+    <value>Abgeschlossen</value>
+  </data>
+  <data name="PendingLabel" xml:space="preserve">
+    <value>Ausstehend</value>
+  </data>
+  <data name="ResetUserButton" xml:space="preserve">
+    <value>Benutzer zur&#252;cksetzen</value>
+  </data>
+  <data name="SelectGroupsPlaceholder" xml:space="preserve">
+    <value>Gruppen ausw&#228;hlen...</value>
+  </data>
+  <data name="SelectRolesPlaceholder" xml:space="preserve">
+    <value>Rollen ausw&#228;hlen...</value>
+  </data>
+  <data name="SelectUsersPlaceholder" xml:space="preserve">
+    <value>Benutzer ausw&#228;hlen...</value>
+  </data>
+  <data name="RemoveQuestionTooltip" xml:space="preserve">
+    <value>Diese Frage entfernen</value>
+  </data>
+  <data name="RemoveAnswerTooltip" xml:space="preserve">
+    <value>Diese Antwort von der Frage entfernen</value>
+  </data>
+  <data name="AddAnswerButton" xml:space="preserve">
+    <value>Antwort hinzuf&#252;gen</value>
+  </data>
+  <data name="AnswerRequiredMessage" xml:space="preserve">
+    <value>Antwort ist erforderlich</value>
+  </data>
+  <data name="AddQuestionTooltip" xml:space="preserve">
+    <value>Frage hinzuf&#252;gen</value>
+  </data>
+  <data name="AnswerTextColumn" xml:space="preserve">
+    <value>Antworttext</value>
+  </data>
+</root>

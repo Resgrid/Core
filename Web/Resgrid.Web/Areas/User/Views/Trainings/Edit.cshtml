@@ -1,21 +1,22 @@
 @using Resgrid.Model
 @model Resgrid.Web.Areas.User.Models.Training.EditTrainingModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
 @{
-	ViewBag.Title = "Resgrid | Edit Training";
+	ViewBag.Title = "Resgrid | " + localizer["EditTrainingHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>Edit Training</h2>
+		<h2>@localizer["EditTrainingHeader"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@localizer["HomeLink"]</a>
 			</li>
 			<li>
-				<a asp-controller="Trainings" asp-action="Index" asp-route-area="User">Trainings</a>
+				<a asp-controller="Trainings" asp-action="Index" asp-route-area="User">@localizer["TrainingsLink"]</a>
 			</li>
 			<li class="active">
-				<strong>Edit Training</strong>
+				<strong>@localizer["EditTrainingHeader"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -47,7 +48,7 @@
 
 						<div class="form-group">
 							<label class="col-sm-2 control-label required">
-								Training name
+								@localizer["TrainingNameLabel"]
 							</label>
 							<div class="col-sm-10">
 								<div class="col-md-5">
@@ -57,12 +58,12 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label required">
-								Description
+								@localizer["DescriptionLabel"]
 							</label>
 							<div class="col-sm-10">
 								<div class="col-md-6">
 									<input type="hidden" asp-for="Training.Description">
-						
+
 									<div id="editor-container" style="width:100%; height: 300px;">
 										@Html.Raw(Model.Training.Description)
 									</div>
@@ -71,12 +72,12 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label required">
-								Training Text
+								@localizer["TrainingTextLabel"]
 							</label>
 							<div class="col-sm-10">
 								<div class="col-md-10">
 									<input type="hidden" asp-for="Training.TrainingText">
-						
+
 									<div id="editor-container2" style="width:100%; height: 300px;">
 										@Html.Raw(Model.Training.TrainingText)
 									</div>
@@ -85,7 +86,7 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label">
-								Minimum Score
+								@localizer["MinimumScoreLabel"]
 							</label>
 							<div class="col-sm-10">
 								<div class="col-md-2">
@@ -98,7 +99,7 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label">
-								Due Date
+								@localizer["DueDateLabel"]
 							</label>
 							<div class="col-sm-10">
 								<div class="col-md-5">
@@ -111,7 +112,7 @@
 						{
 							<div class="form-group">
 								<label class="col-sm-2 control-label">
-									Existing Attachments
+									@localizer["ExistingAttachmentsLabel"]
 								</label>
 								<div class="col-sm-10">
 									<div class="col-md-8">
@@ -132,7 +133,7 @@
 
 						<div class="form-group">
 							<label class="col-sm-2 control-label">
-								Add Attachments
+								@localizer["AddAttachmentsLabel"]
 							</label>
 							<div class="col-sm-10">
 								<div class="col-md-5">
@@ -143,18 +144,18 @@
 
 						<div class="form-group">
 							<label class="col-sm-2 control-label">
-								Currently Assigned
+								@localizer["CurrentlyAssignedLabel"]
 							</label>
 							<div class="col-sm-10">
 								<div class="col-md-8">
-									<span class="help-block">@(Model.Training.Users?.Count ?? 0) user(s) currently assigned to this training.</span>
+									<span class="help-block">@string.Format(localizer["CurrentlyAssignedText"].Value, Model.Training.Users?.Count ?? 0)</span>
 								</div>
 							</div>
 						</div>
 
 						<div class="form-group">
 							<label class="col-sm-2 control-label">
-								Add all Personnel
+								@localizer["AddAllPersonnelLabel"]
 							</label>
 							<div class="col-sm-10">
 								<div class="row">
@@ -166,7 +167,7 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label">
-								Add Groups
+								@localizer["AddGroupsLabel"]
 							</label>
 							<div class="col-sm-10">
 								<div class="row">
@@ -176,7 +177,7 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label">
-								Add Roles
+								@localizer["AddRolesLabel"]
 							</label>
 							<div class="col-sm-10">
 								<div class="row">
@@ -186,7 +187,7 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label">
-								Add Users
+								@localizer["AddUsersLabel"]
 							</label>
 							<div class="col-sm-10">
 								<div class="row">
@@ -197,20 +198,20 @@
 
 						<div class="form-group">
 							<label class="col-sm-2 control-label">
-								Questions
+								@localizer["QuestionsLabel"]
 							</label>
 							<div class="col-sm-10">
 								<div class="row">
-									<div class="col-xs-10">Questions are optional, if you just want your personnel to view the training that will be tracked without questions. <br /></div>
+									<div class="col-xs-10">@localizer["QuestionsHelpText"] <br /></div>
 								</div>
 								<div class="row">
 									<div class="col-xs-12">
 										<table id="questions" class="table table-striped table-bordered">
 											<thead>
 												<tr>
-													<th style="max-width: 200px;font-size: 14px;">Question</th>
-													<th style="max-width: 350px;font-size: 14px;">Answers</th>
-													<th style="max-width: 90px;font-size: 16px;"><a id="addQuestionButton" class="btn btn-success btn-xs" onclick="resgrid.training.edittraining.addQuestion();" data-original-title="Add Question"><i class="icon-plus"></i> Add Question</a></th>
+													<th style="max-width: 200px;font-size: 14px;">@localizer["QuestionColumn"]</th>
+													<th style="max-width: 350px;font-size: 14px;">@localizer["AnswersColumn"]</th>
+													<th style="max-width: 90px;font-size: 16px;"><a id="addQuestionButton" class="btn btn-success btn-xs" onclick="resgrid.training.edittraining.addQuestion();" data-original-title="@localizer["AddQuestionTooltip"]"><i class="icon-plus"></i> @localizer["AddQuestionButton"]</a></th>
 												</tr>
 											</thead>
 											<tbody>
@@ -231,7 +232,7 @@
 																	foreach (var answer in question.Answers)
 																	{
 																		<div style="margin-bottom: 5px;">
-																			<input type="radio" name="answer_@(qIndex)" value="answerForQuestion_@(qIndex)_@(aIndex)" @(answer.Correct ? "checked" : "") /> Correct
+																			<input type="radio" name="answer_@(qIndex)" value="answerForQuestion_@(qIndex)_@(aIndex)" @(answer.Correct ? "checked" : "") /> @localizer["CorrectLabel"]
 																			<input type="text" name="answerForQuestion_@(qIndex)_@(aIndex)" value="@answer.Answer" class="form-control" style="display:inline-block; width:auto;" />
 																		</div>
 																		aIndex++;
@@ -239,7 +240,7 @@
 																}
 															</td>
 															<td>
-																<a class="btn btn-xs btn-danger" onclick="resgrid.training.edittraining.removeQuestion(@qIndex);"><i class="icon-trash"></i> Remove</a>
+																<a class="btn btn-xs btn-danger" onclick="resgrid.training.edittraining.removeQuestion(@qIndex);"><i class="icon-trash"></i> @localizer["RemoveButton"]</a>
 															</td>
 														</tr>
 														qIndex++;
@@ -254,8 +255,8 @@
 
 						<div class="form-group">
 							<div class="col-sm-4 col-sm-offset-2">
-								<a class="btn btn-white" asp-controller="Trainings" asp-action="Index" asp-route-area="User">Cancel</a>
-								<button class="btn btn-primary" type="submit">Save Training</button>
+								<a class="btn btn-white" asp-controller="Trainings" asp-action="Index" asp-route-area="User">@localizer["CancelButton"]</a>
+								<button class="btn btn-primary" type="submit">@localizer["SaveTrainingButton"]</button>
 							</div>
 						</div>
 					</form>
@@ -268,5 +269,19 @@
 
 @section Scripts
 {
+	<script>
+		var resgridTrainingsI18n = {
+			selectGroups: '@localizer["SelectGroupsPlaceholder"]',
+			selectRoles: '@localizer["SelectRolesPlaceholder"]',
+			selectUsers: '@localizer["SelectUsersPlaceholder"]',
+			removeQuestionTooltip: '@localizer["RemoveQuestionTooltip"]',
+			removeAnswerTooltip: '@localizer["RemoveAnswerTooltip"]',
+			addAnswer: '@localizer["AddAnswerButton"]',
+			answerRequired: '@localizer["AnswerRequiredMessage"]',
+			addQuestionTooltip: '@localizer["AddQuestionTooltip"]',
+			correct: '@localizer["CorrectLabel"]',
+			answerText: '@localizer["AnswerTextColumn"]'
+		};
+	</script>
 	<script src="~/js/app/internal/training/resgrid.training.edittraining.js"></script>
 }

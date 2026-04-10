@@ -1,19 +1,20 @@
-﻿@using Resgrid.Model
+@using Resgrid.Model
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Training.TrainingIndexModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
 @{
-  ViewBag.Title = "Resgrid | Trainings";
+  ViewBag.Title = "Resgrid | " + localizer["TrainingsHeader"];
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-sm-4">
-    <h2>Trainings</h2>
+    <h2>@localizer["TrainingsHeader"]</h2>
     <ol class="breadcrumb">
       <li>
-        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+        <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@localizer["HomeLink"]</a>
       </li>
       <li class="active">
-        <strong>Trainings</strong>
+        <strong>@localizer["TrainingsHeader"]</strong>
       </li>
     </ol>
   </div>
@@ -21,7 +22,7 @@
   {
     <div class="col-sm-8">
       <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-        <a title="Add a new training" class="btn btn-success" asp-controller="Trainings" asp-action="New" asp-route-area="User">Add Training</a>
+        <a title="@localizer["AddTrainingIndexButton"]" class="btn btn-success" asp-controller="Trainings" asp-action="New" asp-route-area="User">@localizer["AddTrainingIndexButton"]</a>
       </div>
     </div>
   }
@@ -37,16 +38,16 @@
               <thead>
                 <tr>
                   <th>
-                    Name
+                    @localizer["NameColumn"]
                   </th>
                   <th style="max-width: 300px;">
-                    Description
+                    @localizer["DescriptionColumn"]
                   </th>
                   <th>
-                    Due Date
+                    @localizer["DueDateColumn"]
                   </th>
                   <th>
-                    Action
+                    @localizer["ActionColumn"]
                   </th>
                   <th class="span1">
                   </th>
@@ -69,7 +70,7 @@
 					  }
 					  else
 					  {
-                        @Html.Raw("No Due Date")
+                        @localizer["NoDueDate"]
 					  }
                     </td>
                     <td>
@@ -80,23 +81,23 @@
 						{
 						  if (!userRecord.Viewed)
 						  {
-                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-primary'>View Training</a>")
+                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-primary'>" + localizer["ViewTrainingButton"] + "</a>")
 						  }
 						  else if (userRecord.Complete && (t.Questions == null || t.Questions.Count <= 0))
 						  {
-                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-primary'>View Training</a>")
+                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-primary'>" + localizer["ViewTrainingButton"] + "</a>")
 						  }
 						  else if (userRecord.Complete && userRecord.Score >= t.MinimumScore && (t.Questions != null && t.Questions.Count > 0))
 						  {
-                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-success'>Training Complete</a>")
+                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-success'>" + localizer["TrainingCompleteButton"] + "</a>")
 						  }
 						  else if (userRecord.Complete && userRecord.Score < t.MinimumScore && (t.Questions != null && t.Questions.Count > 0))
 						  {
-                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-danger'>Training Complete</a>")
+                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-danger'>" + localizer["TrainingCompleteButton"] + "</a>")
 						  }
 						  else
 						  {
-                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-primary'>View Training</a>")
+                            @Html.Raw("<a href='" + Url.Action("View", "Trainings", new { Area = "User", trainingId = t.TrainingId }) + "' class='btn btn-xs btn-primary'>" + localizer["ViewTrainingButton"] + "</a>")
 						  }
 						}
 					  }
@@ -105,14 +106,14 @@
                       @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 					  {
                         <a href="@Url.Action("Edit", "Trainings", new { area = "User", trainingId = t.TrainingId })" class='btn btn-xs btn-info'>
-                          <i class='icon-pencil'></i> Edit
+                          <i class='icon-pencil'></i> @localizer["EditButton"]
                         </a>
                         <a href="@Url.Action("Report", "Trainings", new { area = "User", trainingId = t.TrainingId })" class='btn btn-xs btn-primary'>
-                          <i class='icon-eye-open'></i> Report
+                          <i class='icon-eye-open'></i> @localizer["ReportButton"]
                         </a>
-                        <a href="@Url.Action("DeleteTraining", "Trainings", new { area = "User", trainingId = t.TrainingId })" class='btn btn-xs btn-danger' data-confirm="WARNING: This will permanently delete this training. Are you sure you want to delete the training @t.Name ?" rel="nofollow">
+                        <a href="@Url.Action("DeleteTraining", "Trainings", new { area = "User", trainingId = t.TrainingId })" class='btn btn-xs btn-danger' data-confirm="@localizer["DeleteTrainingWarning"] @t.Name ?" rel="nofollow">
                           <i class="icon-trash">
-                          </i> Delete
+                          </i> @localizer["DeleteButton"]
                         </a>
 					  }
                     </td>

@@ -261,6 +261,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Edit(int trainingId, EditTrainingModel model, IFormCollection form, ICollection<IFormFile> attachments)
 		{
 			var existingTraining = await _trainingService.GetTrainingByIdAsync(trainingId);
@@ -414,13 +415,13 @@ stream.Read(uploadedFile, 0, uploadedFile.Length);
 				existingTraining.RolesToAdd = form["rolesToAdd"];
 				existingTraining.UsersToAdd = form["usersToAdd"];
 
-				// Handle questions - remove existing and add new ones
-				existingTraining.Questions = null;
+				// Handle questions - clear and repopulate so SyncChildArrayUpdates can detect deletions
+				if (existingTraining.Questions == null)
+					existingTraining.Questions = new Collection<TrainingQuestion>();
+				else
+					existingTraining.Questions.Clear();
 
 				List<int> questions = (from object key in form.Keys where key.ToString().StartsWith("question_") select int.Parse(key.ToString().Replace("question_", ""))).ToList();
-
-				if (questions.Count > 0)
-					existingTraining.Questions = new Collection<TrainingQuestion>();
 
 				foreach (var i in questions)
 				{

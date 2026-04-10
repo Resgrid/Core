@@ -1,11 +1,12 @@
-﻿@using Resgrid.Web.Helpers
+@using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Training.ViewTrainingModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Trainings.Trainings> localizer
 @{
-	ViewBag.Title = "Resgrid | View Training";
+	ViewBag.Title = "Resgrid | " + localizer["ViewTrainingHeader"];
 }
 @section Styles
 {
-	
+
 }
 
 @{
@@ -14,16 +15,16 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>View Training</h2>
+		<h2>@localizer["ViewTrainingHeader"]</h2>
 		<ol class="breadcrumb">
 			<li>
-				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@localizer["HomeLink"]</a>
 			</li>
 			<li>
-				<a asp-controller="Trainings" asp-action="Index" asp-route-area="User">Trainings</a>
+				<a asp-controller="Trainings" asp-action="Index" asp-route-area="User">@localizer["TrainingsLink"]</a>
 			</li>
 			<li class="active">
-				<strong>View Training</strong>
+				<strong>@localizer["ViewTrainingHeader"]</strong>
 			</li>
 		</ol>
 	</div>
@@ -44,13 +45,13 @@
 					<div class="row">
 						<div class="col-lg-5">
 							<dl class="dl-horizontal">
-								<dt>Status:</dt>
-								<dd><span class="label label-primary">Active</span></dd>
+								<dt>@localizer["StatusLabel"]</dt>
+								<dd><span class="label label-primary">@localizer["ActiveLabel"]</span></dd>
 							</dl>
 						</div>
 						<div class="col-lg-7">
 							<dl class="dl-horizontal">
-								<dt>Created By:</dt>
+								<dt>@localizer["CreatedByLabel"]</dt>
 								<dd>@Model.CreatorUserName</dd>
 							</dl>
 						</div>
@@ -58,7 +59,7 @@
 					<div class="row">
 						<div class="col-lg-5">
 							<dl class="dl-horizontal">
-								<dt>Due By:</dt>
+								<dt>@localizer["DueByLabel"]</dt>
 								<dd>
 									@if (Model.Training.ToBeCompletedBy != null)
 									{
@@ -66,14 +67,14 @@
 									}
 									else
 									{
-										<span>No Due Date</span>
+										<span>@localizer["NoDueDate"]</span>
 									}
 								</dd>
 							</dl>
 						</div>
 						<div class="col-lg-7">
 							<dl class="dl-horizontal">
-								<dt>Created On:</dt>
+								<dt>@localizer["CreatedOnLabel"]</dt>
 								<dd>@Model.Training.CreatedOn.ToShortDateString()</dd>
 							</dl>
 						</div>
@@ -81,7 +82,7 @@
 					<div class="row">
 						<div class="col-lg-12">
 							<dl class="dl-horizontal">
-								<dt>Description:</dt>
+								<dt>@localizer["DescriptionLabel"]:</dt>
 								<dd>
 									@Html.Raw(Model.Training.Description)
 								</dd>
@@ -101,11 +102,11 @@
 	</div>
 	<div class="col-lg-3">
 		<div class="wrapper wrapper-content project-manager">
-			<h4>Training Attachments</h4>
+			<h4>@localizer["TrainingAttachmentsHeader"]</h4>
 			<p class="small">
-				Below are the files (attachments) for this training. Please download, open and review all of these attachments as well as the training text. Information in these attachments can be questions in the training quiz.
+				@localizer["AttachmentsHelpText"]
 			</p>
-			<h5>Training files</h5>
+			<h5>@localizer["TrainingFilesHeader"]</h5>
 			<ul class="list-unstyled project-files">
 				@if (Model.Training.Attachments != null && Model.Training.Attachments.Count > 0)
 				{
@@ -120,12 +121,12 @@
 @if (Model.Training.Questions != null && Model.Training.Questions.Count > 0 && (currentUser != null && !currentUser.Complete))
 {
 		<div class="wrapper wrapper-content project-manager">
-			<h4>Training Quiz</h4>
+			<h4>@localizer["TrainingQuizHeader"]</h4>
 			<p class="small">
-				This training has a quiz. Please review all the of the training text and all attachments to the training before you take the quiz.
+				@localizer["QuizHelpText"]
 			</p>
-			
-			<a class="btn btn-success btn-rounded btn-block" asp-controller="Trainings" asp-action="Quiz" asp-route-area="User" asp-route-trainingId="@Model.Training.TrainingId">Take Quiz</a>
+
+			<a class="btn btn-success btn-rounded btn-block" asp-controller="Trainings" asp-action="Quiz" asp-route-area="User" asp-route-trainingId="@Model.Training.TrainingId">@localizer["TakeQuizButton"]</a>
 		</div>
 }
 

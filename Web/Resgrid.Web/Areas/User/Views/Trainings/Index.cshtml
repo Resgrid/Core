@@ -104,6 +104,9 @@
                     <td>
                       @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 					  {
+                        <a href="@Url.Action("Edit", "Trainings", new { area = "User", trainingId = t.TrainingId })" class='btn btn-xs btn-info'>
+                          <i class='icon-pencil'></i> Edit
+                        </a>
                         <a href="@Url.Action("Report", "Trainings", new { area = "User", trainingId = t.TrainingId })" class='btn btn-xs btn-primary'>
                           <i class='icon-eye-open'></i> Report
                         </a>

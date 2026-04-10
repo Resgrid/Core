@@ -598,7 +598,7 @@ namespace Resgrid.Web.Services.Controllers
 
 				int index = int.Parse(twilioRequest.Digits) - 2;
 
-				if (index >= 0 && index < 8)
+				if (index >= 0 && index < stations.Count)
 				{
 					var station = stations[index];
 

@@ -102,8 +102,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 						if (gpsValue == "on")
 							gps = true;
 
-						var noteType = int.Parse(form["noteType_" + i]);
-						var detailType = int.Parse(form["detailType_" + i]);
+						int.TryParse(form["noteType_" + i], out var noteType);
+						int.TryParse(form["detailType_" + i], out var detailType);
 
 						var detail = new CustomStateDetail();
 						detail.ButtonText = text;
@@ -113,15 +113,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 						detail.DetailType = detailType;
 						detail.TextColor = textColor;
 
-						if (!string.IsNullOrWhiteSpace(order))
-							detail.Order = int.Parse(order);
-						else
-							detail.Order = 0;
-
-						if (!string.IsNullOrWhiteSpace(baseType))
-							detail.BaseType = int.Parse(baseType);
-						else
-							detail.BaseType = 0;
+						detail.Order = int.TryParse(order, out var parsedNewOrder) ? parsedNewOrder : 0;
+						detail.BaseType = int.TryParse(baseType, out var parsedNewBaseType) ? parsedNewBaseType : -1;
 
 						model.State.Details.Add(detail);
 					}
@@ -217,6 +210,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.DetailTypes = model.DetailType.ToSelectList();
 			model.NoteTypes = model.NoteType.ToSelectList();
+			model.BaseTypes = model.BaseType.ToSelectList();
+			model.Detail.CustomState = await _customStateService.GetCustomSateByIdAsync(model.Detail.CustomStateId);
 
 			if (ModelState.IsValid)
 			{
@@ -247,8 +242,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				return RedirectToAction("Edit", new { id = detail.CustomStateId });
 			}
-
-			model.Detail.CustomState = await _customStateService.GetCustomSateByIdAsync(model.Detail.CustomStateId);
 
 			return View(model);
 		}
@@ -292,8 +285,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 						if (gpsValue == "on")
 							gps = true;
 
-						var noteType = int.Parse(form["noteType_" + i]);
-						var detailType = int.Parse(form["detailType_" + i]);
+						int.TryParse(form["noteType_" + i], out var noteType);
+						int.TryParse(form["detailType_" + i], out var detailType);
 
 						var detail = new CustomStateDetail();
 						detail.ButtonText = text;
@@ -302,8 +295,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 						detail.NoteType = noteType;
 						detail.DetailType = detailType;
 						detail.TextColor = textColor;
-						detail.Order = int.Parse(order);
-						detail.BaseType = int.Parse(baseType);
+						detail.Order = int.TryParse(order, out var parsedOrder) ? parsedOrder : 0;
+						detail.BaseType = int.TryParse(baseType, out var parsedBaseType) ? parsedBaseType : -1;
 
 						if (!string.IsNullOrWhiteSpace(customStateDetailId))
 							detail.CustomStateDetailId = int.Parse(customStateDetailId);

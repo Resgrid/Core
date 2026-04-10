@@ -606,7 +606,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.Group.DepartmentId != DepartmentId)
 				return Unauthorized();
 
-			model.Coordinates = await _departmentGroupsService.GetMapCenterCoordinatesForGroupAsync(departmentGroupId);
+			model.Coordinates = await _departmentGroupsService.GetMapCenterCoordinatesForGroupAsync(departmentGroupId)
+				?? new Coordinates { Latitude = 39.8283, Longitude = -98.5795 };
 
 			return View(model);
 		}

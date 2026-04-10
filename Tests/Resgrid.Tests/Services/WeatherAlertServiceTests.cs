@@ -28,6 +28,7 @@ namespace Resgrid.Tests.Services
 			protected readonly Mock<IDepartmentSettingsRepository> _departmentSettingsRepoMock;
 			protected readonly Mock<IDepartmentsService> _departmentsServiceMock;
 			protected readonly Mock<IMessageService> _messageServiceMock;
+			protected readonly Mock<ICallNotesRepository> _callNotesRepoMock;
 			protected readonly Mock<ICacheProvider> _cacheProviderMock;
 			protected readonly Mock<IEventAggregator> _eventAggregatorMock;
 
@@ -44,6 +45,7 @@ namespace Resgrid.Tests.Services
 				_departmentSettingsRepoMock = new Mock<IDepartmentSettingsRepository>();
 				_departmentsServiceMock = new Mock<IDepartmentsService>();
 				_messageServiceMock = new Mock<IMessageService>();
+				_callNotesRepoMock = new Mock<ICallNotesRepository>();
 				_cacheProviderMock = new Mock<ICacheProvider>();
 				_eventAggregatorMock = new Mock<IEventAggregator>();
 
@@ -55,6 +57,7 @@ namespace Resgrid.Tests.Services
 					_departmentSettingsRepoMock.Object,
 					_departmentsServiceMock.Object,
 					_messageServiceMock.Object,
+					_callNotesRepoMock.Object,
 					_cacheProviderMock.Object,
 					_eventAggregatorMock.Object);
 			}
@@ -79,7 +82,13 @@ namespace Resgrid.Tests.Services
 
 				_weatherAlertSourceRepoMock
 					.Setup(x => x.SaveOrUpdateAsync(It.IsAny<WeatherAlertSource>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
-					.ReturnsAsync((WeatherAlertSource s, CancellationToken _, bool __) => s);
+					.ReturnsAsync((WeatherAlertSource s, CancellationToken _, bool __) =>
+					{
+						// Simulate what RepositoryBase.SaveOrUpdateAsync does for new entities
+						if (s.WeatherAlertSourceId == Guid.Empty)
+							s.WeatherAlertSourceId = Guid.NewGuid();
+						return s;
+					});
 
 				var result = await _weatherAlertService.SaveSourceAsync(source);
 
@@ -458,7 +467,13 @@ namespace Resgrid.Tests.Services
 
 				_weatherAlertZoneRepoMock
 					.Setup(x => x.SaveOrUpdateAsync(It.IsAny<WeatherAlertZone>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
-					.ReturnsAsync((WeatherAlertZone z, CancellationToken _, bool __) => z);
+					.ReturnsAsync((WeatherAlertZone z, CancellationToken _, bool __) =>
+					{
+						// Simulate what RepositoryBase.SaveOrUpdateAsync does for new entities
+						if (z.WeatherAlertZoneId == Guid.Empty)
+							z.WeatherAlertZoneId = Guid.NewGuid();
+						return z;
+					});
 
 				var result = await _weatherAlertService.SaveZoneAsync(zone);
 

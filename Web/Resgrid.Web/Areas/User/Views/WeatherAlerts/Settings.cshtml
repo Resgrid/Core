@@ -1,4 +1,5 @@
 @using Resgrid.Model
+@using System.Text.Json
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.WeatherAlerts.WeatherAlerts> localizer
 @{
 	ViewBag.Title = "Resgrid | " + localizer["Settings"];
@@ -138,10 +139,21 @@
 											}
 										</td>
 										<td>@(source.LastPollUtc?.ToString("g") ?? localizer["NeverPolled"].Value)</td>
+										@{
+											var sourceData = JsonSerializer.Serialize(new {
+												id = source.WeatherAlertSourceId.ToString(),
+												name = source.Name,
+												sourceType = source.SourceType,
+												areaFilter = source.AreaFilter ?? "",
+												pollInterval = source.PollIntervalMinutes,
+												active = source.Active,
+												errorMessage = source.ErrorMessage ?? ""
+											});
+										}
 										<td>
 											@if (source.IsFailure)
 											{
-												<a href="javascript:void(0)" class="label label-danger" onclick="showError('@source.Name.Replace("'", "\\'")','@(source.ErrorMessage?.Replace("'", "\\'").Replace("\r", "").Replace("\n", " ") ?? "")')"><i class="fa fa-exclamation-triangle"></i> @localizer["Error"]</a>
+												<a href="javascript:void(0)" class="label label-danger js-show-error" data-source="@sourceData"><i class="fa fa-exclamation-triangle"></i> @localizer["Error"]</a>
 											}
 											else
 											{
@@ -149,16 +161,16 @@
 											}
 										</td>
 										<td>
-											<a class="btn btn-xs btn-info" href="javascript:void(0)" onclick="editSource('@source.WeatherAlertSourceId','@source.Name.Replace("'", "\\'")','@source.SourceType','@(source.AreaFilter?.Replace("'", "\\'") ?? "")','@source.PollIntervalMinutes',@source.Active.ToString().ToLower(),'@(source.ApiKey?.Replace("'", "\\'") ?? "")')"><i class="fa fa-pencil"></i> @localizer["Edit"]</a>
+											<a class="btn btn-xs btn-info js-edit-source" href="javascript:void(0)" data-source="@sourceData"><i class="fa fa-pencil"></i> @localizer["Edit"]</a>
 											@if (source.Active)
 											{
-												<a class="btn btn-xs btn-warning" href="javascript:void(0)" onclick="toggleSource('@source.WeatherAlertSourceId','@source.Name.Replace("'", "\\'")','@source.SourceType','@(source.AreaFilter?.Replace("'", "\\'") ?? "")','@source.PollIntervalMinutes',false,'@(source.ApiKey?.Replace("'", "\\'") ?? "")')"><i class="fa fa-pause"></i> @localizer["Disable"]</a>
+												<a class="btn btn-xs btn-warning js-toggle-source" href="javascript:void(0)" data-source="@sourceData" data-newactive="false"><i class="fa fa-pause"></i> @localizer["Disable"]</a>
 											}
 											else
 											{
-												<a class="btn btn-xs btn-success" href="javascript:void(0)" onclick="toggleSource('@source.WeatherAlertSourceId','@source.Name.Replace("'", "\\'")','@source.SourceType','@(source.AreaFilter?.Replace("'", "\\'") ?? "")','@source.PollIntervalMinutes',true,'@(source.ApiKey?.Replace("'", "\\'") ?? "")')"><i class="fa fa-play"></i> @localizer["Enable"]</a>
+												<a class="btn btn-xs btn-success js-toggle-source" href="javascript:void(0)" data-source="@sourceData" data-newactive="true"><i class="fa fa-play"></i> @localizer["Enable"]</a>
 											}
-											<a class="btn btn-xs btn-danger" href="javascript:void(0)" onclick="deleteSource('@source.WeatherAlertSourceId')"><i class="fa fa-trash"></i> @localizer["Delete"]</a>
+											<a class="btn btn-xs btn-danger js-delete-source" href="javascript:void(0)" data-sourceid="@source.WeatherAlertSourceId"><i class="fa fa-trash"></i> @localizer["Delete"]</a>
 										</td>
 									</tr>
 								}
@@ -328,12 +340,62 @@
 			});
 		}
 
-		// --- Error Modal ---
-		function showError(sourceName, errorMessage) {
-			$('#errorModalSourceName').text(sourceName);
-			$('#errorModalMessage').text(errorMessage || 'Unknown error');
+		// --- Event delegation for source actions (no inline onclick) ---
+		$(document).on('click', '.js-show-error', function () {
+			var s = $(this).data('source');
+			$('#errorModalSourceName').text(s.name);
+			$('#errorModalMessage').text(s.errorMessage || 'Unknown error');
 			$('#errorModal').modal('show');
-		}
+		});
+
+		$(document).on('click', '.js-edit-source', function () {
+			var s = $(this).data('source');
+			$('#editSourceId').val(s.id);
+			$('#sourceName').val(s.name);
+			$('#sourceType').val(s.sourceType);
+			$('#areaFilter').val(s.areaFilter);
+			$('#apiKey').val(''); // API key not in DOM; user re-enters if changing
+			$('#pollInterval').val(s.pollInterval);
+			$('#sourceActive').prop('checked', s.active);
+			$('#sourceFormTitle').text(loc.editSource);
+			$('html, body').animate({ scrollTop: $('#sourceFormPanel').offset().top - 60 }, 300);
+		});
+
+		$(document).on('click', '.js-toggle-source', function () {
+			var s = $(this).data('source');
+			var newActive = $(this).data('newactive');
+			var data = {
+				WeatherAlertSourceId: s.id,
+				Name: s.name,
+				SourceType: s.sourceType,
+				AreaFilter: s.areaFilter,
+				PollIntervalMinutes: s.pollInterval,
+				Active: newActive
+			};
+
+			$.ajax({
+				url: resgrid.absoluteApiBaseUrl + '/api/v4/WeatherAlerts/SaveSource',
+				type: 'POST',
+				contentType: 'application/json',
+				headers: { 'Authorization': 'Bearer ' + getAuthToken() },
+				data: JSON.stringify(data),
+				success: function () { location.reload(); },
+				error: function () { alert(loc.failedToToggleSource); }
+			});
+		});
+
+		$(document).on('click', '.js-delete-source', function () {
+			var sourceId = $(this).data('sourceid');
+			if (confirm(loc.deleteSourceConfirm)) {
+				$.ajax({
+					url: resgrid.absoluteApiBaseUrl + '/api/v4/WeatherAlerts/DeleteSource/' + encodeURIComponent(sourceId),
+					type: 'DELETE',
+					headers: { 'Authorization': 'Bearer ' + getAuthToken() },
+					success: function () { location.reload(); },
+					error: function () { alert(loc.failedToDeleteSource); }
+				});
+			}
+		});
 
 		// --- Sources ---
 		function resetSourceForm() {
@@ -345,44 +407,6 @@
 			$('#pollInterval').val(15);
 			$('#sourceActive').prop('checked', true);
 			$('#sourceFormTitle').text(loc.addEditSource);
-		}
-
-		function editSource(id, name, type, areaFilter, pollInterval, isActive, apiKey) {
-			$('#editSourceId').val(id);
-			$('#sourceName').val(name);
-			$('#sourceType').val(type);
-			$('#areaFilter').val(areaFilter);
-			$('#apiKey').val(apiKey || '');
-			$('#pollInterval').val(pollInterval);
-			$('#sourceActive').prop('checked', isActive);
-			$('#sourceFormTitle').text(loc.editSource);
-			$('html, body').animate({ scrollTop: $('#sourceFormPanel').offset().top - 60 }, 300);
-		}
-
-		function toggleSource(id, name, type, areaFilter, pollInterval, newActiveState, apiKey) {
-			var data = {
-				WeatherAlertSourceId: id,
-				Name: name,
-				SourceType: parseInt(type),
-				AreaFilter: areaFilter,
-				ApiKey: apiKey || '',
-				PollIntervalMinutes: parseInt(pollInterval),
-				Active: newActiveState
-			};
-
-			$.ajax({
-				url: resgrid.absoluteApiBaseUrl + '/api/v4/WeatherAlerts/SaveSource',
-				type: 'POST',
-				contentType: 'application/json',
-				headers: { 'Authorization': 'Bearer ' + getAuthToken() },
-				data: JSON.stringify(data),
-				success: function () {
-					location.reload();
-				},
-				error: function () {
-					alert(loc.failedToToggleSource);
-				}
-			});
 		}
 
 		function saveSource() {
@@ -412,29 +436,9 @@
 				contentType: 'application/json',
 				headers: { 'Authorization': 'Bearer ' + getAuthToken() },
 				data: JSON.stringify(data),
-				success: function () {
-					location.reload();
-				},
-				error: function () {
-					alert(loc.failedToSaveSource);
-				}
+				success: function () { location.reload(); },
+				error: function () { alert(loc.failedToSaveSource); }
 			});
-		}
-
-		function deleteSource(sourceId) {
-			if (confirm(loc.deleteSourceConfirm)) {
-				$.ajax({
-					url: resgrid.absoluteApiBaseUrl + '/api/v4/WeatherAlerts/DeleteSource/' + sourceId,
-					type: 'DELETE',
-					headers: { 'Authorization': 'Bearer ' + getAuthToken() },
-					success: function () {
-						location.reload();
-					},
-					error: function () {
-						alert(loc.failedToDeleteSource);
-					}
-				});
-			}
 		}
 	</script>
 }

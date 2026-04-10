@@ -1778,6 +1778,13 @@
             Converts a JSON array area filter back to a comma-separated string for display.
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WeatherAlertsController.ValidateCustomEndpoint(System.String,System.Int32)">
+            <summary>
+            Validates a custom endpoint URL to prevent SSRF. Enforces HTTPS and
+            restricts the host to known weather API domains per source type.
+            Returns null if the URL is empty, invalid, or not on the allowlist.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.WorkflowCredentialsController">
             <summary>
             Manages encrypted credentials used by workflow action executors.

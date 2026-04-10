@@ -78,14 +78,34 @@
 					container.empty();
 					if (data.Data && data.Data.length > 0) {
 						var severityNames = [loc.severityExtreme, loc.severitySevere, loc.severityModerate, loc.severityMinor, loc.severityUnknown];
-						var table = '<table class="table table-striped"><thead><tr><th>' + loc.event + '</th><th>' + loc.severity + '</th><th>' + loc.area + '</th><th>' + loc.expires + '</th><th></th></tr></thead><tbody>';
+						var severityClasses = ['danger', 'danger', 'warning', 'info', 'default'];
+						var $table = $('<table class="table table-striped">');
+						var $thead = $('<thead>').append(
+							$('<tr>')
+								.append($('<th>').text(loc.event))
+								.append($('<th>').text(loc.severity))
+								.append($('<th>').text(loc.area))
+								.append($('<th>').text(loc.expires))
+								.append($('<th>'))
+						);
+						var $tbody = $('<tbody>');
 						$.each(data.Data, function(i, alert) {
-							var severityClass = ['danger', 'danger', 'warning', 'info', 'default'][alert.Severity] || 'default';
-							var severityName = severityNames[alert.Severity] || loc.severityUnknown;
-							table += '<tr><td>' + alert.Event + '</td><td><span class="label label-' + severityClass + '">' + severityName + '</span></td><td>' + (alert.AreaDescription || '') + '</td><td>' + (alert.ExpiresUtc || 'N/A') + '</td><td><a href="/User/WeatherAlerts/Details/' + alert.WeatherAlertId + '" class="btn btn-xs btn-primary">' + loc.details + '</a></td></tr>';
+							var sevClass = severityClasses[alert.Severity] || 'default';
+							var sevName = severityNames[alert.Severity] || loc.severityUnknown;
+							var $row = $('<tr>');
+							$row.append($('<td>').text(alert.Event));
+							$row.append($('<td>').append($('<span>').addClass('label label-' + sevClass).text(sevName)));
+							$row.append($('<td>').text(alert.AreaDescription || ''));
+							$row.append($('<td>').text(alert.ExpiresUtc || 'N/A'));
+							$row.append($('<td>').append(
+								$('<a>').addClass('btn btn-xs btn-primary')
+									.attr('href', '/User/WeatherAlerts/Details/' + encodeURIComponent(alert.WeatherAlertId))
+									.text(loc.details)
+							));
+							$tbody.append($row);
 						});
-						table += '</tbody></table>';
-						container.html(table);
+						$table.append($thead).append($tbody);
+						container.append($table);
 					} else {
 						container.html('<div class="alert alert-info">' + loc.noActiveAlerts + '</div>');
 					}

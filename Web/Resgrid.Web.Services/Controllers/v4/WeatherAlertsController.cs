@@ -159,6 +159,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (!string.IsNullOrWhiteSpace(input.WeatherAlertSourceId) && Guid.TryParse(input.WeatherAlertSourceId, out var sourceGuid))
 			{
+				if (!User.HasClaim(ResgridClaimTypes.Resources.WeatherAlert, ResgridClaimTypes.Actions.Update))
+					return Forbid();
+
 				source = await _weatherAlertService.GetSourceByIdAsync(sourceGuid);
 				if (source == null || source.DepartmentId != DepartmentId)
 					return NotFound();
@@ -177,7 +180,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			source.SourceType = input.SourceType;
 			source.AreaFilter = NormalizeAreaFilter(input.AreaFilter);
 			source.ApiKey = input.ApiKey;
-			source.CustomEndpoint = input.CustomEndpoint;
+			source.CustomEndpoint = ValidateCustomEndpoint(input.CustomEndpoint, input.SourceType);
 			source.PollIntervalMinutes = Math.Max(input.PollIntervalMinutes, 15);
 			source.Active = input.Active;
 
@@ -253,6 +256,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (!string.IsNullOrWhiteSpace(input.WeatherAlertZoneId) && Guid.TryParse(input.WeatherAlertZoneId, out var zoneGuid))
 			{
+				if (!User.HasClaim(ResgridClaimTypes.Resources.WeatherAlert, ResgridClaimTypes.Actions.Update))
+					return Forbid();
+
 				zone = await _weatherAlertService.GetZoneByIdAsync(zoneGuid);
 				if (zone == null || zone.DepartmentId != DepartmentId)
 					return NotFound();
@@ -497,6 +503,37 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			return trimmed;
+		}
+
+		/// <summary>
+		/// Validates a custom endpoint URL to prevent SSRF. Enforces HTTPS and
+		/// restricts the host to known weather API domains per source type.
+		/// Returns null if the URL is empty, invalid, or not on the allowlist.
+		/// </summary>
+		private static string ValidateCustomEndpoint(string url, int sourceType)
+		{
+			if (string.IsNullOrWhiteSpace(url))
+				return null;
+
+			if (!Uri.TryCreate(url.Trim(), UriKind.Absolute, out var uri))
+				return null;
+
+			if (uri.Scheme != Uri.UriSchemeHttps)
+				return null;
+
+			var allowedHosts = sourceType switch
+			{
+				0 => new[] { "api.weather.gov" },                            // NWS
+				1 => new[] { "dd.weather.gc.ca", "dd.meteo.gc.ca" },         // Environment Canada
+				2 => new[] { "feeds.meteoalarm.org", "meteoalarm.org" },     // MeteoAlarm
+				_ => Array.Empty<string>()
+			};
+
+			var host = uri.Host.ToLowerInvariant();
+			if (!Array.Exists(allowedHosts, h => host == h || host.EndsWith("." + h)))
+				return null;
+
+			return uri.GetLeftPart(UriPartial.Query);
 		}
 	}
 }

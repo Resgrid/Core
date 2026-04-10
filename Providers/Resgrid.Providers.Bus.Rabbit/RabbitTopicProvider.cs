@@ -121,12 +121,13 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 		private static async Task<bool> VerifyAndCreateClients(string clientName)
 		{
-			if (_exchangeDeclared)
-				return true;
-
 			try
 			{
+				// Validate/create connection first so a reconnect clears _exchangeDeclared
 				var connection = await RabbitConnection.CreateConnection(clientName);
+
+				if (_exchangeDeclared)
+					return true;
 
 				if (connection != null)
 				{

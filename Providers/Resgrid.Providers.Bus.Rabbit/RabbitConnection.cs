@@ -25,7 +25,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 				_connection.Dispose();
 				_connection = null;
 				_factory = null;
-				ConnectionReset?.Invoke();
+				RaiseConnectionReset();
 			}
 
 			if (_connection == null)
@@ -185,12 +185,31 @@ namespace Resgrid.Providers.Bus.Rabbit
 				_connection.Dispose();
 				_connection = null;
 				_factory = null;
-				ConnectionReset?.Invoke();
+				RaiseConnectionReset();
 
 				await VerifyAndCreateClients(clientName);
 			}
 
 			return _connection;
+		}
+
+		private static void RaiseConnectionReset()
+		{
+			var handler = ConnectionReset;
+			if (handler == null)
+				return;
+
+			foreach (var subscriber in handler.GetInvocationList())
+			{
+				try
+				{
+					((Action)subscriber).Invoke();
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+				}
+			}
 		}
 
 		public static string SetQueueNameForEnv(string cacheKey)

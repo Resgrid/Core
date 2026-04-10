@@ -1,0 +1,444 @@
+@using Resgrid.Model
+@using System.Text.Json
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.WeatherAlerts.WeatherAlerts> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["Settings"];
+	var sources = ViewBag.Sources as List<WeatherAlertSource> ?? new List<WeatherAlertSource>();
+	var sourceTypeNames = new[] { localizer["SourceTypeNWS"].Value, localizer["SourceTypeEC"].Value, localizer["SourceTypeMeteoAlarm"].Value };
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>@localizer["Settings"]</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="WeatherAlerts" asp-action="Index" asp-route-area="User">@localizer["WeatherAlerts"]</a>
+			</li>
+			<li class="active">
+				<strong>@localizer["Settings"]</strong>
+			</li>
+		</ol>
+	</div>
+	<div class="col-sm-8">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-default" asp-controller="WeatherAlerts" asp-action="Index" asp-route-area="User">@localizer["BackToAlerts"]</a>
+			<a class="btn btn-info" asp-controller="WeatherAlerts" asp-action="Zones" asp-route-area="User">@localizer["ManageZones"]</a>
+		</div>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+
+	<!-- Notification Settings -->
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>@localizer["NotificationSettings"]</h5>
+				</div>
+				<div class="ibox-content">
+					<p class="text-muted">@localizer["NotificationSettingsDesc"]</p>
+					<form class="form-horizontal" id="notificationSettingsForm">
+						<div class="form-group">
+							<label class="col-sm-4 control-label">@localizer["EnableWeatherAlerts"]</label>
+							<div class="col-sm-8">
+								<div class="checkbox" style="margin-top:0;">
+									<label><input type="checkbox" id="settingEnabled" /></label>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-4 control-label">@localizer["MinimumSeverityDisplay"]</label>
+							<div class="col-sm-8">
+								<select class="form-control" id="settingMinSeverity" style="max-width:250px;">
+									<option value="0">@localizer["SeverityExtreme"]</option>
+									<option value="1">@localizer["SeveritySevere"]</option>
+									<option value="2">@localizer["SeverityModerate"]</option>
+									<option value="3">@localizer["SeverityMinor"]</option>
+									<option value="4">@localizer["SeverityUnknown"]</option>
+								</select>
+								<span class="help-block">@localizer["MinimumSeverityDisplayHelp"]</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-4 control-label">@localizer["AutoMessageSeverity"]</label>
+							<div class="col-sm-8">
+								<select class="form-control" id="settingAutoMsgSeverity" style="max-width:250px;">
+									<option value="0">@localizer["SeverityExtreme"]</option>
+									<option value="1">@localizer["SeveritySevere"]</option>
+									<option value="2">@localizer["SeverityModerate"]</option>
+									<option value="3">@localizer["SeverityMinor"]</option>
+									<option value="4">@localizer["SeverityUnknown"]</option>
+								</select>
+								<span class="help-block">@localizer["AutoMessageSeverityHelp"]</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-4 control-label">@localizer["EnableCallIntegration"]</label>
+							<div class="col-sm-8">
+								<div class="checkbox" style="margin-top:0;">
+									<label><input type="checkbox" id="settingCallIntegration" /></label>
+								</div>
+								<span class="help-block" style="margin-top:5px;">@localizer["EnableCallIntegrationHelp"]</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-offset-4 col-sm-8">
+								<button type="button" class="btn btn-primary" onclick="saveSettings()">@localizer["SaveSettings"]</button>
+								<span id="settingsSavedMsg" class="text-success" style="display:none;margin-left:10px;">@localizer["SettingsSaved"]</span>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Alert Sources -->
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>@localizer["AlertSources"]</h5>
+				</div>
+				<div class="ibox-content">
+					@if (sources.Any())
+					{
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>@localizer["SourceName"]</th>
+									<th>@localizer["SourceType"]</th>
+									<th>@localizer["AreaFilter"]</th>
+									<th>@localizer["PollIntervalMinutes"]</th>
+									<th>@localizer["Status"]</th>
+									<th>@localizer["LastPoll"]</th>
+									<th>@localizer["SourceStatus"]</th>
+									<th>@localizer["Actions"]</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var source in sources)
+								{
+									<tr>
+										<td>@source.Name</td>
+										<td>@(sourceTypeNames[source.SourceType])</td>
+										<td>@(source.AreaFilter ?? "-")</td>
+										<td>@source.PollIntervalMinutes min</td>
+										<td>
+											@if (source.Active)
+											{
+												<span class="label label-primary">@localizer["Active"]</span>
+											}
+											else
+											{
+												<span class="label label-default">@localizer["Inactive"]</span>
+											}
+										</td>
+										<td>@(source.LastPollUtc?.ToString("g") ?? localizer["NeverPolled"].Value)</td>
+										@{
+											var sourceData = JsonSerializer.Serialize(new {
+												id = source.WeatherAlertSourceId.ToString(),
+												name = source.Name,
+												sourceType = source.SourceType,
+												areaFilter = source.AreaFilter ?? "",
+												pollInterval = source.PollIntervalMinutes,
+												active = source.Active,
+												errorMessage = source.ErrorMessage ?? ""
+											});
+										}
+										<td>
+											@if (source.IsFailure)
+											{
+												<a href="javascript:void(0)" class="label label-danger js-show-error" data-source="@sourceData"><i class="fa fa-exclamation-triangle"></i> @localizer["Error"]</a>
+											}
+											else
+											{
+												<span class="label label-primary">OK</span>
+											}
+										</td>
+										<td>
+											<a class="btn btn-xs btn-info js-edit-source" href="javascript:void(0)" data-source="@sourceData"><i class="fa fa-pencil"></i> @localizer["Edit"]</a>
+											@if (source.Active)
+											{
+												<a class="btn btn-xs btn-warning js-toggle-source" href="javascript:void(0)" data-source="@sourceData" data-newactive="false"><i class="fa fa-pause"></i> @localizer["Disable"]</a>
+											}
+											else
+											{
+												<a class="btn btn-xs btn-success js-toggle-source" href="javascript:void(0)" data-source="@sourceData" data-newactive="true"><i class="fa fa-play"></i> @localizer["Enable"]</a>
+											}
+											<a class="btn btn-xs btn-danger js-delete-source" href="javascript:void(0)" data-sourceid="@source.WeatherAlertSourceId"><i class="fa fa-trash"></i> @localizer["Delete"]</a>
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					}
+					else
+					{
+						<div class="alert alert-info">
+							@localizer["NoSourcesConfigured"]
+						</div>
+					}
+				</div>
+			</div>
+
+			<!-- Add/Edit Source Form -->
+			<div class="ibox float-e-margins" id="sourceFormPanel">
+				<div class="ibox-title">
+					<h5 id="sourceFormTitle">@localizer["AddEditSource"]</h5>
+				</div>
+				<div class="ibox-content">
+					<form class="form-horizontal" id="sourceForm">
+						<input type="hidden" id="editSourceId" value="" />
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["SourceName"]</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" id="sourceName" required />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["SourceType"]</label>
+							<div class="col-sm-9">
+								<select class="form-control" id="sourceType">
+									<option value="0">@localizer["SourceTypeNWS"]</option>
+									<option value="1">@localizer["SourceTypeEC"]</option>
+									<option value="2">@localizer["SourceTypeMeteoAlarm"]</option>
+								</select>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["AreaFilter"]</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" id="areaFilter" placeholder="e.g. TX, WAZ021, WAZ022" />
+								<span class="help-block">@localizer["AreaFilterHelp"]</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">API Key</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" id="apiKey" placeholder="Optional — required by some providers for higher rate limits" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["PollInterval"]</label>
+							<div class="col-sm-9">
+								<input type="number" class="form-control" id="pollInterval" value="15" min="15" max="1440" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["Options"]</label>
+							<div class="col-sm-9">
+								<label class="checkbox-inline"><input type="checkbox" id="sourceActive" checked /> @localizer["Active"]</label>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-offset-3 col-sm-9">
+								<button type="button" class="btn btn-primary" onclick="saveSource()">@localizer["Save"]</button>
+								<button type="button" class="btn btn-default" onclick="resetSourceForm()">@localizer["Cancel"]</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- Error Detail Modal -->
+<div class="modal fade" id="errorModal" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title"><i class="fa fa-exclamation-triangle text-danger"></i> <span id="errorModalSourceName"></span></h4>
+				<button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+			</div>
+			<div class="modal-body">
+				<pre id="errorModalMessage" style="white-space:pre-wrap;word-break:break-word;max-height:400px;overflow-y:auto;"></pre>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+	<script>
+		var loc = {
+			addEditSource: '@localizer["AddEditSource"]',
+			editSource: '@localizer["EditSource"]',
+			enterSourceName: '@localizer["EnterSourceName"]',
+			failedToSaveSource: '@localizer["FailedToSaveSource"]',
+			failedToToggleSource: '@localizer["FailedToToggleSource"]',
+			deleteSourceConfirm: '@localizer["DeleteSourceConfirm"]',
+			failedToDeleteSource: '@localizer["FailedToDeleteSource"]',
+			settingsSaved: '@localizer["SettingsSaved"]',
+			failedToSaveSettings: '@localizer["FailedToSaveSettings"]',
+			failedToLoadSettings: '@localizer["FailedToLoadSettings"]'
+		};
+
+		function getAuthToken() {
+			try {
+				for (var i = 0; i < localStorage.length; i++) {
+					var val = localStorage.getItem(localStorage.key(i));
+					if (!val || val.charAt(0) !== '{') continue;
+					var obj = JSON.parse(val);
+					if (obj && typeof obj.access_token === 'string' && obj.access_token.length > 0) return obj.access_token;
+				}
+			} catch (e) {}
+			return '';
+		}
+
+		// --- Settings ---
+		$(document).ready(function () {
+			loadSettings();
+		});
+
+		function loadSettings() {
+			$.ajax({
+				url: resgrid.absoluteApiBaseUrl + '/api/v4/WeatherAlerts/GetSettings',
+				type: 'GET',
+				headers: { 'Authorization': 'Bearer ' + getAuthToken() },
+				success: function (data) {
+					if (data && data.Data) {
+						$('#settingEnabled').prop('checked', data.Data.WeatherAlertsEnabled);
+						$('#settingMinSeverity').val(data.Data.MinimumSeverity);
+						$('#settingAutoMsgSeverity').val(data.Data.AutoMessageSeverity);
+						$('#settingCallIntegration').prop('checked', data.Data.CallIntegrationEnabled);
+					}
+				},
+				error: function () {
+					console.warn(loc.failedToLoadSettings);
+				}
+			});
+		}
+
+		function saveSettings() {
+			var data = {
+				WeatherAlertsEnabled: $('#settingEnabled').is(':checked'),
+				MinimumSeverity: parseInt($('#settingMinSeverity').val()),
+				AutoMessageSeverity: parseInt($('#settingAutoMsgSeverity').val()),
+				CallIntegrationEnabled: $('#settingCallIntegration').is(':checked')
+			};
+
+			$.ajax({
+				url: resgrid.absoluteApiBaseUrl + '/api/v4/WeatherAlerts/SaveSettings',
+				type: 'POST',
+				contentType: 'application/json',
+				headers: { 'Authorization': 'Bearer ' + getAuthToken() },
+				data: JSON.stringify(data),
+				success: function () {
+					$('#settingsSavedMsg').fadeIn().delay(3000).fadeOut();
+				},
+				error: function () {
+					alert(loc.failedToSaveSettings);
+				}
+			});
+		}
+
+		// --- Event delegation for source actions (no inline onclick) ---
+		$(document).on('click', '.js-show-error', function () {
+			var s = $(this).data('source');
+			$('#errorModalSourceName').text(s.name);
+			$('#errorModalMessage').text(s.errorMessage || 'Unknown error');
+			$('#errorModal').modal('show');
+		});
+
+		$(document).on('click', '.js-edit-source', function () {
+			var s = $(this).data('source');
+			$('#editSourceId').val(s.id);
+			$('#sourceName').val(s.name);
+			$('#sourceType').val(s.sourceType);
+			$('#areaFilter').val(s.areaFilter);
+			$('#apiKey').val(''); // API key not in DOM; user re-enters if changing
+			$('#pollInterval').val(s.pollInterval);
+			$('#sourceActive').prop('checked', s.active);
+			$('#sourceFormTitle').text(loc.editSource);
+			$('html, body').animate({ scrollTop: $('#sourceFormPanel').offset().top - 60 }, 300);
+		});
+
+		$(document).on('click', '.js-toggle-source', function () {
+			var s = $(this).data('source');
+			var newActive = $(this).data('newactive');
+			var data = {
+				WeatherAlertSourceId: s.id,
+				Name: s.name,
+				SourceType: s.sourceType,
+				AreaFilter: s.areaFilter,
+				PollIntervalMinutes: s.pollInterval,
+				Active: newActive
+			};
+
+			$.ajax({
+				url: resgrid.absoluteApiBaseUrl + '/api/v4/WeatherAlerts/SaveSource',
+				type: 'POST',
+				contentType: 'application/json',
+				headers: { 'Authorization': 'Bearer ' + getAuthToken() },
+				data: JSON.stringify(data),
+				success: function () { location.reload(); },
+				error: function () { alert(loc.failedToToggleSource); }
+			});
+		});
+
+		$(document).on('click', '.js-delete-source', function () {
+			var sourceId = $(this).data('sourceid');
+			if (confirm(loc.deleteSourceConfirm)) {
+				$.ajax({
+					url: resgrid.absoluteApiBaseUrl + '/api/v4/WeatherAlerts/DeleteSource/' + encodeURIComponent(sourceId),
+					type: 'DELETE',
+					headers: { 'Authorization': 'Bearer ' + getAuthToken() },
+					success: function () { location.reload(); },
+					error: function () { alert(loc.failedToDeleteSource); }
+				});
+			}
+		});
+
+		// --- Sources ---
+		function resetSourceForm() {
+			$('#editSourceId').val('');
+			$('#sourceName').val('');
+			$('#sourceType').val('0');
+			$('#areaFilter').val('');
+			$('#apiKey').val('');
+			$('#pollInterval').val(15);
+			$('#sourceActive').prop('checked', true);
+			$('#sourceFormTitle').text(loc.addEditSource);
+		}
+
+		function saveSource() {
+			var name = $('#sourceName').val();
+			if (!name || !name.trim()) {
+				alert(loc.enterSourceName);
+				return;
+			}
+
+			var data = {
+				Name: name,
+				SourceType: parseInt($('#sourceType').val()),
+				AreaFilter: $('#areaFilter').val(),
+				ApiKey: $('#apiKey').val(),
+				PollIntervalMinutes: parseInt($('#pollInterval').val()),
+				Active: $('#sourceActive').is(':checked')
+			};
+
+			var editId = $('#editSourceId').val();
+			if (editId) {
+				data.WeatherAlertSourceId = editId;
+			}
+
+			$.ajax({
+				url: resgrid.absoluteApiBaseUrl + '/api/v4/WeatherAlerts/SaveSource',
+				type: 'POST',
+				contentType: 'application/json',
+				headers: { 'Authorization': 'Bearer ' + getAuthToken() },
+				data: JSON.stringify(data),
+				success: function () { location.reload(); },
+				error: function () { alert(loc.failedToSaveSource); }
+			});
+		}
+	</script>
+}

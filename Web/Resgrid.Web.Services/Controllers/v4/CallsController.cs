@@ -53,6 +53,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IShiftsService _shiftsService;
 		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
 		private readonly ICommunicationService _communicationService;
+		private readonly IWeatherAlertService _weatherAlertService;
 
 		public CallsController(
 			ICallsService callsService,
@@ -72,7 +73,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IDepartmentSettingsService departmentSettingsService,
 			IShiftsService shiftsService,
 			IUserDefinedFieldsService userDefinedFieldsService,
-			ICommunicationService communicationService
+			ICommunicationService communicationService,
+			IWeatherAlertService weatherAlertService
 			)
 		{
 			_callsService = callsService;
@@ -93,6 +95,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_shiftsService = shiftsService;
 			_userDefinedFieldsService = userDefinedFieldsService;
 			_communicationService = communicationService;
+			_weatherAlertService = weatherAlertService;
 		}
 		#endregion Members and Constructors
 
@@ -778,6 +781,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
 
+			// Attach weather alerts as call notes if enabled
+			await _weatherAlertService.AttachWeatherAlertsToCallAsync(savedCall, cancellationToken);
+
 			//OutboundEventProvider handler = new OutboundEventProvider.CallAddedTopicHandler();
 			//OutboundEventProvider..Handle(new CallAddedEvent() { DepartmentId = DepartmentId, Call = savedCall });
 			_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = DepartmentId, Call = savedCall });
@@ -1129,6 +1135,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 				call.HasBeenDispatched = true;
 
 			await _callsService.SaveCallAsync(call, cancellationToken);
+
+			// Attach weather alerts as call notes if enabled (deduplication handled inside)
+			await _weatherAlertService.AttachWeatherAlertsToCallAsync(call, cancellationToken);
 
 			// Send cancel notifications to removed entities
 			if (editCallInput.NotifyCancelledEntities)

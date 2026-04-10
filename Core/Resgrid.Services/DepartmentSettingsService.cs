@@ -797,5 +797,10 @@ namespace Resgrid.Services
 
 			return false;
 		}
+
+		public async Task<DepartmentSetting> GetSettingByTypeAsync(int departmentId, DepartmentSettingTypes type)
+		{
+			return await GetSettingByDepartmentIdType(departmentId, type);
+		}
 	}
 }

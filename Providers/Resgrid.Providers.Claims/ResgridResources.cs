@@ -172,5 +172,10 @@
 		public const string CommunicationTest_Update = "CommunicationTest_Update";
 		public const string CommunicationTest_Create = "CommunicationTest_Create";
 		public const string CommunicationTest_Delete = "CommunicationTest_Delete";
+
+		public const string WeatherAlert_View = "WeatherAlert_View";
+		public const string WeatherAlert_Update = "WeatherAlert_Update";
+		public const string WeatherAlert_Create = "WeatherAlert_Create";
+		public const string WeatherAlert_Delete = "WeatherAlert_Delete";
 	}
 }

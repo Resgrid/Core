@@ -505,6 +505,7 @@ namespace Resgrid.Web
 			builder.RegisterModule(new VoipProviderModule());
 			builder.RegisterModule(new MessagingProviderModule());
 			builder.RegisterModule(new Resgrid.Providers.Workflow.WorkflowProviderModule());
+			builder.RegisterModule(new Resgrid.Providers.Weather.WeatherProviderModule());
 
 			builder.RegisterType<IdentityUserStore>().As<IUserStore<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
 			builder.RegisterType<IdentityRoleStore>().As<IRoleStore<Model.Identity.IdentityRole>>().InstancePerLifetimeScope();

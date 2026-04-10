@@ -40,5 +40,10 @@
 		Require2FAForAdmins = 36,
 		PaddleCustomerId = 37,
 		CheckInTimersAutoEnableForNewCalls = 38,
+		WeatherAlertsEnabled = 39,
+		WeatherAlertMinimumSeverity = 40,
+		WeatherAlertAutoMessageSeverity = 41,
+		WeatherAlertCallIntegration = 42,
+		WeatherAlertCacheMinutes = 43,
 	}
 }

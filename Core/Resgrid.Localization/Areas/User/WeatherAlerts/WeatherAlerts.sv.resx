@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Vädervarningar</value>
+  </data>
+  <data name="WeatherAlerts" xml:space="preserve">
+    <value>Vädervarningar</value>
+  </data>
+  <data name="ActiveAlerts" xml:space="preserve">
+    <value>Aktiva Vädervarningar</value>
+  </data>
+  <data name="AlertHistory" xml:space="preserve">
+    <value>Varningshistorik</value>
+  </data>
+  <data name="AlertSources" xml:space="preserve">
+    <value>Varningskällor</value>
+  </data>
+  <data name="MonitoringZones" xml:space="preserve">
+    <value>Övervakningszoner</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Inställningar</value>
+  </data>
+  <data name="ViewHistory" xml:space="preserve">
+    <value>Visa Historik</value>
+  </data>
+  <data name="BackToAlerts" xml:space="preserve">
+    <value>Tillbaka till Varningar</value>
+  </data>
+  <data name="BackToSettings" xml:space="preserve">
+    <value>Tillbaka till Inställningar</value>
+  </data>
+  <data name="ManageZones" xml:space="preserve">
+    <value>Hantera Zoner</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Detaljer</value>
+  </data>
+  <data name="NoActiveAlerts" xml:space="preserve">
+    <value>Inga aktiva vädervarningar för din avdelning.</value>
+  </data>
+  <data name="UnableToLoad" xml:space="preserve">
+    <value>Kunde inte ladda vädervarningar. Kontrollera din konfiguration.</value>
+  </data>
+  <data name="LoadingAlerts" xml:space="preserve">
+    <value>Laddar vädervarningar...</value>
+  </data>
+  <data name="LoadingHistory" xml:space="preserve">
+    <value>Laddar historik...</value>
+  </data>
+  <data name="Event" xml:space="preserve">
+    <value>Händelse</value>
+  </data>
+  <data name="Severity" xml:space="preserve">
+    <value>Allvarlighetsgrad</value>
+  </data>
+  <data name="Area" xml:space="preserve">
+    <value>Område</value>
+  </data>
+  <data name="Expires" xml:space="preserve">
+    <value>Upphör</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Kategori</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Åtgärder</value>
+  </data>
+  <data name="SeverityExtreme" xml:space="preserve">
+    <value>Extrem</value>
+  </data>
+  <data name="SeveritySevere" xml:space="preserve">
+    <value>Allvarlig</value>
+  </data>
+  <data name="SeverityModerate" xml:space="preserve">
+    <value>Måttlig</value>
+  </data>
+  <data name="SeverityMinor" xml:space="preserve">
+    <value>Mindre</value>
+  </data>
+  <data name="SeverityUnknown" xml:space="preserve">
+    <value>Okänd</value>
+  </data>
+  <data name="UrgencyImmediate" xml:space="preserve">
+    <value>Omedelbar</value>
+  </data>
+  <data name="UrgencyExpected" xml:space="preserve">
+    <value>Förväntad</value>
+  </data>
+  <data name="UrgencyFuture" xml:space="preserve">
+    <value>Framtida</value>
+  </data>
+  <data name="UrgencyPast" xml:space="preserve">
+    <value>Passerad</value>
+  </data>
+  <data name="UrgencyUnknown" xml:space="preserve">
+    <value>Okänd</value>
+  </data>
+  <data name="CategoryMet" xml:space="preserve">
+    <value>Meteorologisk</value>
+  </data>
+  <data name="CategoryFire" xml:space="preserve">
+    <value>Brand</value>
+  </data>
+  <data name="CategoryHealth" xml:space="preserve">
+    <value>Hälsa</value>
+  </data>
+  <data name="CategoryEnv" xml:space="preserve">
+    <value>Miljö</value>
+  </data>
+  <data name="CategoryOther" xml:space="preserve">
+    <value>Övrigt</value>
+  </data>
+  <data name="StatusActive" xml:space="preserve">
+    <value>Aktiv</value>
+  </data>
+  <data name="StatusUpdated" xml:space="preserve">
+    <value>Uppdaterad</value>
+  </data>
+  <data name="StatusExpired" xml:space="preserve">
+    <value>Upphörd</value>
+  </data>
+  <data name="StatusCancelled" xml:space="preserve">
+    <value>Avbruten</value>
+  </data>
+  <data name="SourceTypeNWS" xml:space="preserve">
+    <value>National Weather Service</value>
+  </data>
+  <data name="SourceTypeEC" xml:space="preserve">
+    <value>Environment Canada</value>
+  </data>
+  <data name="SourceTypeMeteoAlarm" xml:space="preserve">
+    <value>MeteoAlarm (Europa)</value>
+  </data>
+  <data name="AddSource" xml:space="preserve">
+    <value>Lägg till Källa</value>
+  </data>
+  <data name="SourceName" xml:space="preserve">
+    <value>Källnamn</value>
+  </data>
+  <data name="SourceType" xml:space="preserve">
+    <value>Källtyp</value>
+  </data>
+  <data name="AreaFilter" xml:space="preserve">
+    <value>Områdesfilter (JSON-zonkoder)</value>
+  </data>
+  <data name="PollInterval" xml:space="preserve">
+    <value>Pollningsintervall (minuter)</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Spara</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Avbryt</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Ta bort</value>
+  </data>
+  <data name="DeleteSourceConfirm" xml:space="preserve">
+    <value>Är du säker på att du vill ta bort denna källa?</value>
+  </data>
+  <data name="FailedToSaveSource" xml:space="preserve">
+    <value>Kunde inte spara källan. Försök igen.</value>
+  </data>
+  <data name="FailedToDeleteSource" xml:space="preserve">
+    <value>Kunde inte ta bort källan. Försök igen.</value>
+  </data>
+  <data name="AddZone" xml:space="preserve">
+    <value>Lägg till Övervakningszon</value>
+  </data>
+  <data name="EditZone" xml:space="preserve">
+    <value>Redigera Övervakningszon</value>
+  </data>
+  <data name="ZoneName" xml:space="preserve">
+    <value>Zonnamn</value>
+  </data>
+  <data name="ZoneCode" xml:space="preserve">
+    <value>Zonkod</value>
+  </data>
+  <data name="CenterLocation" xml:space="preserve">
+    <value>Centrumposition</value>
+  </data>
+  <data name="RadiusMiles" xml:space="preserve">
+    <value>Radie (miles)</value>
+  </data>
+  <data name="PrimaryZone" xml:space="preserve">
+    <value>Primär Zon</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Aktiv</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>Inaktiv</value>
+  </data>
+  <data name="Primary" xml:space="preserve">
+    <value>Primär</value>
+  </data>
+  <data name="Enable" xml:space="preserve">
+    <value>Aktivera</value>
+  </data>
+  <data name="Disable" xml:space="preserve">
+    <value>Inaktivera</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Redigera</value>
+  </data>
+  <data name="NoZonesConfigured" xml:space="preserve">
+    <value>Inga övervakningszoner konfigurerade. Lägg till en zon nedan för att definiera de geografiska områden du vill övervaka för vädervarningar.</value>
+  </data>
+  <data name="DeleteZoneConfirm" xml:space="preserve">
+    <value>Är du säker på att du vill ta bort denna zon?</value>
+  </data>
+  <data name="FailedToSaveZone" xml:space="preserve">
+    <value>Kunde inte spara zonen. Försök igen.</value>
+  </data>
+  <data name="FailedToDeleteZone" xml:space="preserve">
+    <value>Kunde inte ta bort zonen. Försök igen.</value>
+  </data>
+  <data name="FailedToToggleZone" xml:space="preserve">
+    <value>Kunde inte uppdatera zonens status. Försök igen.</value>
+  </data>
+  <data name="EnterZoneName" xml:space="preserve">
+    <value>Ange ett zonnamn.</value>
+  </data>
+  <data name="SaveZone" xml:space="preserve">
+    <value>Spara Zon</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>Alternativ</value>
+  </data>
+  <data name="StartDate" xml:space="preserve">
+    <value>Startdatum</value>
+  </data>
+  <data name="EndDate" xml:space="preserve">
+    <value>Slutdatum</value>
+  </data>
+  <data name="SearchHistory" xml:space="preserve">
+    <value>Sök</value>
+  </data>
+  <data name="SelectDates" xml:space="preserve">
+    <value>Välj både start- och slutdatum.</value>
+  </data>
+  <data name="NoHistoryFound" xml:space="preserve">
+    <value>Ingen varningshistorik hittades för den valda perioden.</value>
+  </data>
+  <data name="FailedToLoadHistory" xml:space="preserve">
+    <value>Kunde inte ladda varningshistorik.</value>
+  </data>
+  <data name="AlertDetail" xml:space="preserve">
+    <value>Varningsdetalj</value>
+  </data>
+  <data name="Headline" xml:space="preserve">
+    <value>Rubrik</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Beskrivning</value>
+  </data>
+  <data name="Instructions" xml:space="preserve">
+    <value>Instruktioner</value>
+  </data>
+  <data name="AreaDescription" xml:space="preserve">
+    <value>Områdesbeskrivning</value>
+  </data>
+  <data name="Urgency" xml:space="preserve">
+    <value>Brådska</value>
+  </data>
+  <data name="Certainty" xml:space="preserve">
+    <value>Säkerhet</value>
+  </data>
+  <data name="EffectiveDate" xml:space="preserve">
+    <value>Giltighetsdatum</value>
+  </data>
+  <data name="OnsetDate" xml:space="preserve">
+    <value>Startdatum</value>
+  </data>
+  <data name="ExpiresDate" xml:space="preserve">
+    <value>Utgångsdatum</value>
+  </data>
+  <data name="SentDate" xml:space="preserve">
+    <value>Sändningsdatum</value>
+  </data>
+  <data name="FirstSeen" xml:space="preserve">
+    <value>Först Upptäckt</value>
+  </data>
+  <data name="LastUpdated" xml:space="preserve">
+    <value>Senast Uppdaterad</value>
+  </data>
+  <data name="Sender" xml:space="preserve">
+    <value>Avsändare</value>
+  </data>
+  <data name="ExternalId" xml:space="preserve">
+    <value>Externt ID</value>
+  </data>
+  <data name="NotificationSent" xml:space="preserve">
+    <value>Avisering Skickad</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Ja</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Nej</value>
+  </data>
+  <data name="ConfiguredSources" xml:space="preserve">
+    <value>Konfigurerade Källor</value>
+  </data>
+  <data name="PollIntervalMinutes" xml:space="preserve">
+    <value>Pollningsintervall</value>
+  </data>
+  <data name="LastPoll" xml:space="preserve">
+    <value>Senaste Pollning</value>
+  </data>
+  <data name="SourceStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Healthy" xml:space="preserve">
+    <value>Fungerar</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Fel</value>
+  </data>
+  <data name="NeverPolled" xml:space="preserve">
+    <value>Aldrig Pollad</value>
+  </data>
+  <data name="NoSourcesConfigured" xml:space="preserve">
+    <value>Inga vädervarningskällor konfigurerade. Lägg till en källa för att börja ta emot vädervarningar.</value>
+  </data>
+  <data name="WeatherAlertMessage" xml:space="preserve">
+    <value>Vädervarning: {0}</value>
+  </data>
+  <data name="AlertExpires" xml:space="preserve">
+    <value>Upphör: {0}</value>
+  </data>
+  <data name="AlertArea" xml:space="preserve">
+    <value>Område: {0}</value>
+  </data>
+  <data name="AlertInstructions" xml:space="preserve">
+    <value>Instruktioner: {0}</value>
+  </data>
+  <data name="NotificationSettings" xml:space="preserve">
+    <value>Aviseringsinställningar</value>
+  </data>
+  <data name="NotificationSettingsDesc" xml:space="preserve">
+    <value>Konfigurera vilka vädervarningar som automatiskt genererar meddelanden till avdelningsmedlemmar.</value>
+  </data>
+  <data name="EnableWeatherAlerts" xml:space="preserve">
+    <value>Aktivera Vädervarningar</value>
+  </data>
+  <data name="MinimumSeverityDisplay" xml:space="preserve">
+    <value>Lägsta Allvarlighetsgrad att Visa</value>
+  </data>
+  <data name="MinimumSeverityDisplayHelp" xml:space="preserve">
+    <value>Endast varningar med denna eller högre allvarlighetsgrad visas i instrumentpanelen.</value>
+  </data>
+  <data name="AutoMessageSeverity" xml:space="preserve">
+    <value>Tröskel för Automatiskt Meddelande</value>
+  </data>
+  <data name="AutoMessageSeverityHelp" xml:space="preserve">
+    <value>Varningar med denna eller högre allvarlighetsgrad skickar automatiskt ett meddelande till alla avdelningsmedlemmar. Lägre värde = högre allvarlighetsgrad (Extrem=0, Allvarlig=1, Måttlig=2, Mindre=3).</value>
+  </data>
+  <data name="EnableCallIntegration" xml:space="preserve">
+    <value>Bifoga Väderkontext till Utryckningar</value>
+  </data>
+  <data name="EnableCallIntegrationHelp" xml:space="preserve">
+    <value>När aktiverat bifogas aktiva vädervarningar nära en utrycknings plats som en utryckningsanteckning.</value>
+  </data>
+  <data name="SaveSettings" xml:space="preserve">
+    <value>Spara Inställningar</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Inställningar sparade.</value>
+  </data>
+  <data name="FailedToSaveSettings" xml:space="preserve">
+    <value>Kunde inte spara inställningarna. Försök igen.</value>
+  </data>
+  <data name="FailedToLoadSettings" xml:space="preserve">
+    <value>Kunde inte ladda inställningarna.</value>
+  </data>
+  <data name="FailedToToggleSource" xml:space="preserve">
+    <value>Kunde inte uppdatera källans status. Försök igen.</value>
+  </data>
+  <data name="EditSource" xml:space="preserve">
+    <value>Redigera Källa</value>
+  </data>
+  <data name="AddEditSource" xml:space="preserve">
+    <value>Lägg till / Redigera Källa</value>
+  </data>
+  <data name="EnterSourceName" xml:space="preserve">
+    <value>Ange ett källnamn.</value>
+  </data>
+  <data name="AreaFilterHelp" xml:space="preserve">
+    <value>Kommaseparerad lista med delstatskoder, provinskoder eller NWS-zonkoder.</value>
+  </data>
+</root>

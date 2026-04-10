@@ -1,0 +1,119 @@
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.WeatherAlerts.WeatherAlerts> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["PageTitle"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>@localizer["WeatherAlerts"]</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li class="active">
+				<strong>@localizer["WeatherAlerts"]</strong>
+			</li>
+		</ol>
+	</div>
+	<div class="col-sm-8">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-info" asp-controller="WeatherAlerts" asp-action="History" asp-route-area="User">@localizer["ViewHistory"]</a>
+			<a class="btn btn-default" asp-controller="WeatherAlerts" asp-action="Settings" asp-route-area="User">@localizer["Settings"]</a>
+		</div>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>@localizer["ActiveAlerts"]</h5>
+				</div>
+				<div class="ibox-content">
+					<div id="weatherAlertsContainer">
+						<p>@localizer["LoadingAlerts"]</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+	<script>
+		var loc = {
+			event: '@localizer["Event"]',
+			severity: '@localizer["Severity"]',
+			area: '@localizer["Area"]',
+			expires: '@localizer["Expires"]',
+			details: '@localizer["Details"]',
+			noActiveAlerts: '@localizer["NoActiveAlerts"]',
+			unableToLoad: '@localizer["UnableToLoad"]',
+			severityExtreme: '@localizer["SeverityExtreme"]',
+			severitySevere: '@localizer["SeveritySevere"]',
+			severityModerate: '@localizer["SeverityModerate"]',
+			severityMinor: '@localizer["SeverityMinor"]',
+			severityUnknown: '@localizer["SeverityUnknown"]'
+		};
+
+		function getAuthToken() {
+			try {
+				for (var i = 0; i < localStorage.length; i++) {
+					var val = localStorage.getItem(localStorage.key(i));
+					if (!val || val.charAt(0) !== '{') continue;
+					var obj = JSON.parse(val);
+					if (obj && typeof obj.access_token === 'string' && obj.access_token.length > 0) return obj.access_token;
+				}
+			} catch (e) {}
+			return '';
+		}
+		$(document).ready(function() {
+			$.ajax({
+				url: resgrid.absoluteApiBaseUrl + '/api/v4/WeatherAlerts/GetActiveAlerts',
+				type: 'GET',
+				headers: { 'Authorization': 'Bearer ' + getAuthToken() },
+				success: function(data) {
+					var container = $('#weatherAlertsContainer');
+					container.empty();
+					if (data.Data && data.Data.length > 0) {
+						var severityNames = [loc.severityExtreme, loc.severitySevere, loc.severityModerate, loc.severityMinor, loc.severityUnknown];
+						var severityClasses = ['danger', 'danger', 'warning', 'info', 'default'];
+						var $table = $('<table class="table table-striped">');
+						var $thead = $('<thead>').append(
+							$('<tr>')
+								.append($('<th>').text(loc.event))
+								.append($('<th>').text(loc.severity))
+								.append($('<th>').text(loc.area))
+								.append($('<th>').text(loc.expires))
+								.append($('<th>'))
+						);
+						var $tbody = $('<tbody>');
+						$.each(data.Data, function(i, alert) {
+							var sevClass = severityClasses[alert.Severity] || 'default';
+							var sevName = severityNames[alert.Severity] || loc.severityUnknown;
+							var $row = $('<tr>');
+							$row.append($('<td>').text(alert.Event));
+							$row.append($('<td>').append($('<span>').addClass('label label-' + sevClass).text(sevName)));
+							$row.append($('<td>').text(alert.AreaDescription || ''));
+							$row.append($('<td>').text(alert.ExpiresUtc || 'N/A'));
+							$row.append($('<td>').append(
+								$('<a>').addClass('btn btn-xs btn-primary')
+									.attr('href', '/User/WeatherAlerts/Details/' + encodeURIComponent(alert.WeatherAlertId))
+									.text(loc.details)
+							));
+							$tbody.append($row);
+						});
+						$table.append($thead).append($tbody);
+						container.append($table);
+					} else {
+						container.html('<div class="alert alert-info">' + loc.noActiveAlerts + '</div>');
+					}
+				},
+				error: function() {
+					$('#weatherAlertsContainer').html('<div class="alert alert-warning">' + loc.unableToLoad + '</div>');
+				}
+			});
+		});
+	</script>
+}

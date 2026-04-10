@@ -456,7 +456,8 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.CommunicationTestsController.Save(Resgrid.Web.Services.Models.v4.CommunicationTests.SaveCommunicationTestInput,System.Threading.CancellationToken)">
             <summary>
-            Saves a communication test definition (admin only)
+            Saves a communication test definition (admin only).
+            Creates require CommunicationTest_Create; updates require CommunicationTest_Update.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.CommunicationTestsController.Delete(System.String,System.Threading.CancellationToken)">
@@ -1699,6 +1700,90 @@
             Returns all the department audio streams
             </summary>
             <returns>Array of RecipientResult objects for each responding option in the department</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.WeatherAlertsController">
+            <summary>
+            Weather alert operations
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WeatherAlertsController.GetActiveAlerts">
+            <summary>
+            Gets all active weather alerts for the department
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WeatherAlertsController.GetWeatherAlert(System.String)">
+            <summary>
+            Gets a single weather alert by id
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WeatherAlertsController.GetAlertHistory(System.DateTime,System.DateTime)">
+            <summary>
+            Gets historical weather alerts for a date range
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WeatherAlertsController.GetAlertsNearLocation(System.Double,System.Double,System.Double)">
+            <summary>
+            Gets active weather alerts near a geographic location
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WeatherAlertsController.GetSources">
+            <summary>
+            Gets all weather alert sources for the department
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WeatherAlertsController.SaveSource(Resgrid.Web.Services.Models.v4.WeatherAlerts.SaveWeatherAlertSourceInput)">
+            <summary>
+            Creates or updates a weather alert source
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WeatherAlertsController.DeleteSource(System.String)">
+            <summary>
+            Deletes a weather alert source
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WeatherAlertsController.GetZones">
+            <summary>
+            Gets all weather alert zones for the department
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WeatherAlertsController.SaveZone(Resgrid.Web.Services.Models.v4.WeatherAlerts.SaveWeatherAlertZoneInput)">
+            <summary>
+            Creates or updates a weather alert zone
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WeatherAlertsController.DeleteZone(System.String)">
+            <summary>
+            Deletes a weather alert zone
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WeatherAlertsController.GetSettings">
+            <summary>
+            Gets weather alert settings for the department
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WeatherAlertsController.SaveSettings(Resgrid.Web.Services.Models.v4.WeatherAlerts.SaveWeatherAlertSettingsInput)">
+            <summary>
+            Saves weather alert settings for the department
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WeatherAlertsController.NormalizeAreaFilter(System.String)">
+            <summary>
+            Converts a comma-separated area filter string (e.g. "TX, WAZ021, WAZ022")
+            into a JSON array (e.g. ["TX","WAZ021","WAZ022"]) for the weather provider.
+            If the input is already valid JSON array, it is returned as-is.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WeatherAlertsController.FormatAreaFilterForDisplay(System.String)">
+            <summary>
+            Converts a JSON array area filter back to a comma-separated string for display.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.WeatherAlertsController.ValidateCustomEndpoint(System.String,System.Int32)">
+            <summary>
+            Validates a custom endpoint URL to prevent SSRF. Enforces HTTPS and
+            restricts the host to known weather API domains per source type.
+            Returns null if the URL is empty, invalid, or not on the allowlist.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.WorkflowCredentialsController">
             <summary>

@@ -1656,6 +1656,23 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SelectCommTestResultByResponseTokenQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE ResponseToken = %TOKEN% LIMIT 1";
 			#endregion CommunicationTests
 
+			#region WeatherAlerts
+			WeatherAlertSourcesTable = "WeatherAlertSources";
+			WeatherAlertsTable = "WeatherAlerts";
+			WeatherAlertZonesTable = "WeatherAlertZones";
+			SelectActiveWeatherAlertSourcesForPollingQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE Active = true";
+			SelectWeatherAlertSourcesByDepartmentIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE DepartmentId = %DEPARTMENTID%";
+			SelectActiveWeatherAlertsByDepartmentIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE DepartmentId = %DEPARTMENTID% AND Status = 0";
+			SelectWeatherAlertByExternalIdAndSourceIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE ExternalId = %EXTERNALID% AND WeatherAlertSourceId = %SOURCEID% LIMIT 1";
+			SelectWeatherAlertsByDepartmentAndSeverityQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE DepartmentId = %DEPARTMENTID% AND Severity <= %MAXSEVERITY% AND Status = 0";
+			SelectWeatherAlertsByDepartmentAndCategoryQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE DepartmentId = %DEPARTMENTID% AND AlertCategory = %CATEGORY% AND Status = 0";
+			SelectExpiredUnprocessedWeatherAlertsQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE Status = 0 AND ExpiresUtc IS NOT NULL AND ExpiresUtc < NOW() AT TIME ZONE 'UTC'";
+			SelectUnnotifiedWeatherAlertsQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE NotificationSent = false AND Status = 0";
+			SelectWeatherAlertHistoryByDepartmentQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE DepartmentId = %DEPARTMENTID% AND FirstSeenUtc >= %STARTDATE% AND FirstSeenUtc <= %ENDDATE% ORDER BY FirstSeenUtc DESC";
+			SelectWeatherAlertZonesByDepartmentIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE DepartmentId = %DEPARTMENTID%";
+			SelectActiveWeatherAlertZonesByDepartmentIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE DepartmentId = %DEPARTMENTID% AND IsActive = true";
+			#endregion WeatherAlerts
+
 			#region User Defined Fields
 			UdfDefinitionsTableName = "UdfDefinitions";
 			UdfFieldsTableName = "UdfFields";

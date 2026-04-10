@@ -1641,5 +1641,20 @@ namespace Resgrid.Providers.Claims
 				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.CommunicationTest, ResgridClaimTypes.Actions.Delete));
 			}
 		}
+
+		/// <summary>
+		/// Weather alert viewing is available to all users. Management (create/update/delete) is admin-only.
+		/// </summary>
+		public static void AddWeatherAlertClaims(ClaimsIdentity identity, bool isAdmin)
+		{
+			identity.AddClaim(new Claim(ResgridClaimTypes.Resources.WeatherAlert, ResgridClaimTypes.Actions.View));
+
+			if (isAdmin)
+			{
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.WeatherAlert, ResgridClaimTypes.Actions.Update));
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.WeatherAlert, ResgridClaimTypes.Actions.Create));
+				identity.AddClaim(new Claim(ResgridClaimTypes.Resources.WeatherAlert, ResgridClaimTypes.Actions.Delete));
+			}
+		}
 	}
 }

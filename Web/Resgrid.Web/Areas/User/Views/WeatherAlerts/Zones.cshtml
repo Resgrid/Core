@@ -1,0 +1,278 @@
+@using Resgrid.Model
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.WeatherAlerts.WeatherAlerts> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["MonitoringZones"];
+	var zones = ViewBag.Zones as List<WeatherAlertZone> ?? new List<WeatherAlertZone>();
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>@localizer["MonitoringZones"]</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="WeatherAlerts" asp-action="Index" asp-route-area="User">@localizer["WeatherAlerts"]</a>
+			</li>
+			<li class="active">
+				<strong>@localizer["MonitoringZones"]</strong>
+			</li>
+		</ol>
+	</div>
+	<div class="col-sm-8">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-default" asp-controller="WeatherAlerts" asp-action="Settings" asp-route-area="User">@localizer["BackToSettings"]</a>
+		</div>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>@localizer["MonitoringZones"]</h5>
+				</div>
+				<div class="ibox-content">
+					@if (zones.Any())
+					{
+						<table class="table table-striped">
+							<thead>
+								<tr>
+									<th>@localizer["ZoneName"]</th>
+									<th>@localizer["ZoneCode"]</th>
+									<th>@localizer["CenterLocation"]</th>
+									<th>@localizer["RadiusMiles"]</th>
+									<th>@localizer["Primary"]</th>
+									<th>@localizer["Status"]</th>
+									<th>@localizer["Actions"]</th>
+								</tr>
+							</thead>
+							<tbody>
+								@foreach (var zone in zones)
+								{
+									<tr id="zone-row-@zone.WeatherAlertZoneId">
+										<td>@zone.Name</td>
+										<td>@(zone.ZoneCode ?? "-")</td>
+										<td>@(zone.CenterGeoLocation ?? "-")</td>
+										<td>@zone.RadiusMiles</td>
+										<td>
+											@if (zone.IsPrimary)
+											{
+												<span class="label label-info">@localizer["Primary"]</span>
+											}
+										</td>
+										<td>
+											@if (zone.IsActive)
+											{
+												<span class="label label-primary">@localizer["Active"]</span>
+											}
+											else
+											{
+												<span class="label label-default">@localizer["Inactive"]</span>
+											}
+										</td>
+										<td>
+											<a class="btn btn-xs btn-info" href="javascript:void(0)" onclick="editZone('@zone.WeatherAlertZoneId', '@zone.Name.Replace("'", "\\'")','@(zone.ZoneCode ?? "")','@(zone.CenterGeoLocation ?? "")',@zone.RadiusMiles,@zone.IsPrimary.ToString().ToLower(),@zone.IsActive.ToString().ToLower())"><i class="fa fa-pencil"></i> @localizer["Edit"]</a>
+											@if (zone.IsActive)
+											{
+												<a class="btn btn-xs btn-warning" href="javascript:void(0)" onclick="toggleZone('@zone.WeatherAlertZoneId', '@zone.Name.Replace("'", "\\'")','@(zone.ZoneCode ?? "")','@(zone.CenterGeoLocation ?? "")',@zone.RadiusMiles,@zone.IsPrimary.ToString().ToLower(),false)"><i class="fa fa-pause"></i> @localizer["Disable"]</a>
+											}
+											else
+											{
+												<a class="btn btn-xs btn-success" href="javascript:void(0)" onclick="toggleZone('@zone.WeatherAlertZoneId', '@zone.Name.Replace("'", "\\'")','@(zone.ZoneCode ?? "")','@(zone.CenterGeoLocation ?? "")',@zone.RadiusMiles,@zone.IsPrimary.ToString().ToLower(),true)"><i class="fa fa-play"></i> @localizer["Enable"]</a>
+											}
+											<a class="btn btn-xs btn-danger" href="javascript:void(0)" onclick="deleteZone('@zone.WeatherAlertZoneId')"><i class="fa fa-trash"></i> @localizer["Delete"]</a>
+										</td>
+									</tr>
+								}
+							</tbody>
+						</table>
+					}
+					else
+					{
+						<div class="alert alert-info">
+							@localizer["NoZonesConfigured"]
+						</div>
+					}
+				</div>
+			</div>
+
+			<div class="ibox float-e-margins" id="zoneFormPanel">
+				<div class="ibox-title">
+					<h5 id="zoneFormTitle">@localizer["AddZone"]</h5>
+				</div>
+				<div class="ibox-content">
+					<form class="form-horizontal" id="zoneForm">
+						<input type="hidden" id="editZoneId" value="" />
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["ZoneName"]</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" id="zoneName" required placeholder="e.g. Primary Station, Mutual Aid East" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["ZoneCode"]</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" id="zoneCode" placeholder="Optional NWS zone code, e.g. TXZ211" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["CenterLocation"]</label>
+							<div class="col-sm-9">
+								<input type="text" class="form-control" id="centerLocation" placeholder="lat, lng  e.g. 32.7767, -96.7970" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["RadiusMiles"]</label>
+							<div class="col-sm-9">
+								<input type="number" class="form-control" id="radiusMiles" value="25" min="1" max="500" />
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-3 control-label">@localizer["Options"]</label>
+							<div class="col-sm-9">
+								<label class="checkbox-inline"><input type="checkbox" id="isPrimary" /> @localizer["PrimaryZone"]</label>
+								<label class="checkbox-inline"><input type="checkbox" id="isActive" checked /> @localizer["Active"]</label>
+							</div>
+						</div>
+						<div class="form-group">
+							<div class="col-sm-offset-3 col-sm-9">
+								<button type="button" class="btn btn-primary" onclick="saveZone()">@localizer["SaveZone"]</button>
+								<button type="button" class="btn btn-default" onclick="resetForm()">@localizer["Cancel"]</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts {
+	<script>
+		var loc = {
+			addZone: '@localizer["AddZone"]',
+			editZone: '@localizer["EditZone"]',
+			enterZoneName: '@localizer["EnterZoneName"]',
+			failedToSaveZone: '@localizer["FailedToSaveZone"]',
+			failedToToggleZone: '@localizer["FailedToToggleZone"]',
+			deleteZoneConfirm: '@localizer["DeleteZoneConfirm"]',
+			failedToDeleteZone: '@localizer["FailedToDeleteZone"]'
+		};
+
+		function getAuthToken() {
+			try {
+				for (var i = 0; i < localStorage.length; i++) {
+					var val = localStorage.getItem(localStorage.key(i));
+					if (!val || val.charAt(0) !== '{') continue;
+					var obj = JSON.parse(val);
+					if (obj && typeof obj.access_token === 'string' && obj.access_token.length > 0) return obj.access_token;
+				}
+			} catch (e) {}
+			return '';
+		}
+
+		function resetForm() {
+			$('#editZoneId').val('');
+			$('#zoneName').val('');
+			$('#zoneCode').val('');
+			$('#centerLocation').val('');
+			$('#radiusMiles').val(25);
+			$('#isPrimary').prop('checked', false);
+			$('#isActive').prop('checked', true);
+			$('#zoneFormTitle').text(loc.addZone);
+		}
+
+		function editZone(id, name, code, center, radius, isPrimary, isActive) {
+			$('#editZoneId').val(id);
+			$('#zoneName').val(name);
+			$('#zoneCode').val(code);
+			$('#centerLocation').val(center);
+			$('#radiusMiles').val(radius);
+			$('#isPrimary').prop('checked', isPrimary);
+			$('#isActive').prop('checked', isActive);
+			$('#zoneFormTitle').text(loc.editZone);
+			$('html, body').animate({ scrollTop: $('#zoneFormPanel').offset().top - 60 }, 300);
+		}
+
+		function toggleZone(id, name, code, center, radius, isPrimary, newActiveState) {
+			var data = {
+				WeatherAlertZoneId: id,
+				Name: name,
+				ZoneCode: code,
+				CenterGeoLocation: center,
+				RadiusMiles: radius,
+				IsPrimary: isPrimary,
+				IsActive: newActiveState
+			};
+
+			$.ajax({
+				url: resgrid.absoluteApiBaseUrl + '/api/v4/WeatherAlerts/SaveZone',
+				type: 'POST',
+				contentType: 'application/json',
+				headers: { 'Authorization': 'Bearer ' + getAuthToken() },
+				data: JSON.stringify(data),
+				success: function() {
+					location.reload();
+				},
+				error: function() {
+					alert(loc.failedToToggleZone);
+				}
+			});
+		}
+
+		function saveZone() {
+			var name = $('#zoneName').val();
+			if (!name || !name.trim()) {
+				alert(loc.enterZoneName);
+				return;
+			}
+
+			var data = {
+				Name: name,
+				ZoneCode: $('#zoneCode').val(),
+				CenterGeoLocation: $('#centerLocation').val(),
+				RadiusMiles: parseFloat($('#radiusMiles').val()),
+				IsPrimary: $('#isPrimary').is(':checked'),
+				IsActive: $('#isActive').is(':checked')
+			};
+
+			var editId = $('#editZoneId').val();
+			if (editId) {
+				data.WeatherAlertZoneId = editId;
+			}
+
+			$.ajax({
+				url: resgrid.absoluteApiBaseUrl + '/api/v4/WeatherAlerts/SaveZone',
+				type: 'POST',
+				contentType: 'application/json',
+				headers: { 'Authorization': 'Bearer ' + getAuthToken() },
+				data: JSON.stringify(data),
+				success: function() {
+					location.reload();
+				},
+				error: function() {
+					alert(loc.failedToSaveZone);
+				}
+			});
+		}
+
+		function deleteZone(zoneId) {
+			if (confirm(loc.deleteZoneConfirm)) {
+				$.ajax({
+					url: resgrid.absoluteApiBaseUrl + '/api/v4/WeatherAlerts/DeleteZone/' + zoneId,
+					type: 'DELETE',
+					headers: { 'Authorization': 'Bearer ' + getAuthToken() },
+					success: function() {
+						location.reload();
+					},
+					error: function() {
+						alert(loc.failedToDeleteZone);
+					}
+				});
+			}
+		}
+	</script>
+}

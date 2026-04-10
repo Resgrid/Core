@@ -66,6 +66,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
 		private readonly IUdfRenderingService _udfRenderingService;
 		private readonly ICheckInTimerService _checkInTimerService;
+		private readonly IWeatherAlertService _weatherAlertService;
 
 		public DispatchController(IDepartmentsService departmentsService, IUsersService usersService, ICallsService callsService,
 			IDepartmentGroupsService departmentGroupsService, ICommunicationService communicationService, IQueueService queueService,
@@ -75,7 +76,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						ITemplatesService templatesService, IPdfProvider pdfProvider, IProtocolsService protocolsService, IFormsService formsService,
 						IShiftsService shiftsService, IContactsService contactsService,
 						IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService,
-						ICheckInTimerService checkInTimerService)
+						ICheckInTimerService checkInTimerService, IWeatherAlertService weatherAlertService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -102,6 +103,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_userDefinedFieldsService = userDefinedFieldsService;
 			_udfRenderingService = udfRenderingService;
 			_checkInTimerService = checkInTimerService;
+			_weatherAlertService = weatherAlertService;
 		}
 		#endregion Private Members and Constructors
 
@@ -489,6 +491,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 				var call = await _callsService.SaveCallAsync(model.Call, cancellationToken);
 
+				// Attach weather alerts as call notes if enabled
+				await _weatherAlertService.AttachWeatherAlertsToCallAsync(call, cancellationToken);
+
 				// Save UDF field values for the new call.
 				// Keys named "udf_<id>" carry the submitted value; keys named "udf_<id>_exists"
 				// are hidden sentinels posted for every rendered UDF field regardless of whether
@@ -852,6 +857,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				call.Contacts = contacts;
 
 				await _callsService.SaveCallAsync(call, cancellationToken);
+
+				// Attach weather alerts as call notes if enabled (deduplication handled inside)
+				await _weatherAlertService.AttachWeatherAlertsToCallAsync(call, cancellationToken);
 
 				// Save UDF field values for the updated call.
 				// Keys named "udf_<id>" carry the submitted value; keys named "udf_<id>_exists"

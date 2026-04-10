@@ -30,5 +30,6 @@
     <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.DataRepository\Resgrid.Repositories.DataRepository.csproj" />
     <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.NoSqlRepository\Resgrid.Repositories.NoSqlRepository.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Workflow\Resgrid.Providers.Workflow.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Weather\Resgrid.Providers.Weather.csproj" />
   </ItemGroup>
 </Project>

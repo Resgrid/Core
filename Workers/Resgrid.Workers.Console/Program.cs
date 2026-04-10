@@ -368,6 +368,12 @@ namespace Resgrid.Workers.Console
 					new Commands.CommunicationTestCommand(17),
 					Cron.MinuteIntervals(15),
 					stoppingToken);
+
+				_logger.Log(LogLevel.Information, "Scheduling Weather Alert Import");
+				await Client.ScheduleAsync("Weather Alert Import",
+					new Commands.WeatherAlertImportCommand(20),
+					Cron.MinuteIntervals(5),
+					stoppingToken);
 			}
 			else
 			{

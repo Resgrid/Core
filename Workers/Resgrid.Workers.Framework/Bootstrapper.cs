@@ -48,6 +48,7 @@ namespace Resgrid.Workers.Framework
 				builder.RegisterModule(new VoipProviderModule());
 				builder.RegisterModule(new MessagingProviderModule());
 				builder.RegisterModule(new Resgrid.Providers.Workflow.WorkflowProviderModule());
+				builder.RegisterModule(new Resgrid.Providers.Weather.WeatherProviderModule());
 
 				_container = builder.Build();
 

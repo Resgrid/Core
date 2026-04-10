@@ -407,6 +407,11 @@ namespace Resgrid.Web.ServicesCore
 				options.AddPolicy(ResgridResources.CommunicationTest_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.CommunicationTest, ResgridClaimTypes.Actions.Update));
 				options.AddPolicy(ResgridResources.CommunicationTest_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.CommunicationTest, ResgridClaimTypes.Actions.Create));
 				options.AddPolicy(ResgridResources.CommunicationTest_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.CommunicationTest, ResgridClaimTypes.Actions.Delete));
+
+				options.AddPolicy(ResgridResources.WeatherAlert_View, policy => policy.RequireClaim(ResgridClaimTypes.Resources.WeatherAlert, ResgridClaimTypes.Actions.View));
+				options.AddPolicy(ResgridResources.WeatherAlert_Update, policy => policy.RequireClaim(ResgridClaimTypes.Resources.WeatherAlert, ResgridClaimTypes.Actions.Update));
+				options.AddPolicy(ResgridResources.WeatherAlert_Create, policy => policy.RequireClaim(ResgridClaimTypes.Resources.WeatherAlert, ResgridClaimTypes.Actions.Create));
+				options.AddPolicy(ResgridResources.WeatherAlert_Delete, policy => policy.RequireClaim(ResgridClaimTypes.Resources.WeatherAlert, ResgridClaimTypes.Actions.Delete));
 			});
 			#endregion Auth Roles
 
@@ -624,6 +629,7 @@ namespace Resgrid.Web.ServicesCore
 			builder.RegisterModule(new VoipProviderModule());
 			builder.RegisterModule(new MessagingProviderModule());
 			builder.RegisterModule(new Resgrid.Providers.Workflow.WorkflowProviderModule());
+			builder.RegisterModule(new Resgrid.Providers.Weather.WeatherProviderModule());
 
 			builder.RegisterType<IdentityUserStore>().As<IUserStore<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
 			builder.RegisterType<IdentityRoleStore>().As<IRoleStore<Model.Identity.IdentityRole>>().InstancePerLifetimeScope();

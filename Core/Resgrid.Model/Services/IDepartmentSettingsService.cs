@@ -287,5 +287,10 @@ namespace Resgrid.Model.Services
 		Task<string> GetPaddleCustomerIdForDepartmentAsync(int departmentId);
 
 		Task<bool> GetCheckInTimersAutoEnableForNewCallsAsync(int departmentId);
+
+		/// <summary>
+		/// Gets a department setting by type. Returns null if the setting does not exist.
+		/// </summary>
+		Task<DepartmentSetting> GetSettingByTypeAsync(int departmentId, DepartmentSettingTypes type);
 	}
 }

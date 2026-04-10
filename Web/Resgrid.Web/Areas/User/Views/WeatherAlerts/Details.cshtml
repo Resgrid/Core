@@ -1,0 +1,94 @@
+@using Resgrid.Model.Helpers
+@model Resgrid.Model.WeatherAlert
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.WeatherAlerts.WeatherAlerts> localizer
+@{
+	ViewBag.Title = "Resgrid | " + localizer["AlertDetail"];
+	var department = ViewBag.Department as Resgrid.Model.Department;
+
+	var severityNames = new[] { localizer["SeverityExtreme"].Value, localizer["SeveritySevere"].Value, localizer["SeverityModerate"].Value, localizer["SeverityMinor"].Value, localizer["SeverityUnknown"].Value };
+	var severityClasses = new[] { "danger", "danger", "warning", "info", "default" };
+	var urgencyNames = new[] { localizer["UrgencyImmediate"].Value, localizer["UrgencyExpected"].Value, localizer["UrgencyFuture"].Value, localizer["UrgencyPast"].Value, localizer["UrgencyUnknown"].Value };
+	var certaintyNames = new[] { "Observed", "Likely", "Possible", "Unlikely", localizer["SeverityUnknown"].Value };
+	var categoryNames = new[] { localizer["CategoryMet"].Value, localizer["CategoryFire"].Value, localizer["CategoryHealth"].Value, localizer["CategoryEnv"].Value, localizer["CategoryOther"].Value };
+	var statusNames = new[] { localizer["StatusActive"].Value, localizer["StatusUpdated"].Value, localizer["StatusExpired"].Value, localizer["StatusCancelled"].Value };
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-4">
+		<h2>@localizer["AlertDetail"]</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">Home</a>
+			</li>
+			<li>
+				<a asp-controller="WeatherAlerts" asp-action="Index" asp-route-area="User">@localizer["WeatherAlerts"]</a>
+			</li>
+			<li class="active">
+				<strong>@localizer["Details"]</strong>
+			</li>
+		</ol>
+	</div>
+	<div class="col-sm-8">
+		<div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+			<a class="btn btn-default" asp-controller="WeatherAlerts" asp-action="Index" asp-route-area="User">@localizer["BackToAlerts"]</a>
+		</div>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content animated fadeInRight">
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>@Model.Event</h5>
+					<span class="label label-@(severityClasses[Model.Severity]) pull-right">@(severityNames[Model.Severity])</span>
+				</div>
+				<div class="ibox-content">
+					@if (!string.IsNullOrEmpty(Model.Headline))
+					{
+						<div class="alert alert-@(severityClasses[Model.Severity])">
+							<strong>@Model.Headline</strong>
+						</div>
+					}
+
+					<div class="row">
+						<div class="col-md-6">
+							<table class="table table-bordered">
+								<tr><th>@localizer["Status"]</th><td>@(statusNames[Model.Status])</td></tr>
+								<tr><th>@localizer["Severity"]</th><td>@(severityNames[Model.Severity])</td></tr>
+								<tr><th>@localizer["Urgency"]</th><td>@(urgencyNames[Model.Urgency])</td></tr>
+								<tr><th>@localizer["Certainty"]</th><td>@(certaintyNames[Model.Certainty])</td></tr>
+								<tr><th>@localizer["Category"]</th><td>@(categoryNames[Model.AlertCategory])</td></tr>
+							</table>
+						</div>
+						<div class="col-md-6">
+							<table class="table table-bordered">
+								<tr><th>@localizer["Sender"]</th><td>@(Model.Sender ?? "N/A")</td></tr>
+								<tr><th>@localizer["Area"]</th><td>@(Model.AreaDescription ?? "N/A")</td></tr>
+								<tr><th>@localizer["EffectiveDate"]</th><td>@Model.EffectiveUtc.TimeConverterToString(department)</td></tr>
+								<tr><th>@localizer["OnsetDate"]</th><td>@(Model.OnsetUtc.HasValue ? Model.OnsetUtc.Value.TimeConverterToString(department) : "N/A")</td></tr>
+								<tr><th>@localizer["ExpiresDate"]</th><td>@(Model.ExpiresUtc.HasValue ? Model.ExpiresUtc.Value.TimeConverterToString(department) : "N/A")</td></tr>
+							</table>
+						</div>
+					</div>
+
+					@if (!string.IsNullOrEmpty(Model.Description))
+					{
+						<div class="panel panel-default">
+							<div class="panel-heading"><strong>@localizer["Description"]</strong></div>
+							<div class="panel-body">@Model.Description</div>
+						</div>
+					}
+
+					@if (!string.IsNullOrEmpty(Model.Instruction))
+					{
+						<div class="panel panel-default">
+							<div class="panel-heading"><strong>@localizer["Instructions"]</strong></div>
+							<div class="panel-body">@Model.Instruction</div>
+						</div>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

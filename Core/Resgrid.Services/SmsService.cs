@@ -181,7 +181,7 @@ namespace Resgrid.Services
 								if (String.IsNullOrWhiteSpace(protocols))
 									protocols = protocol.Data;
 								else
-									protocols = protocol + "," + protocol.Data;
+									protocols = protocols + "," + protocol.Data;
 							}
 						}
 
@@ -261,7 +261,7 @@ namespace Resgrid.Services
 								if (String.IsNullOrWhiteSpace(protocols))
 									protocols = protocol.Data;
 								else
-									protocols = protocol + "," + protocol.Data;
+									protocols = protocols + "," + protocol.Data;
 							}
 						}
 

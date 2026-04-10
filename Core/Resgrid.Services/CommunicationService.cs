@@ -411,7 +411,7 @@ namespace Resgrid.Services
 					try
 					{
 						var payment = await _subscriptionsService.GetCurrentPaymentForDepartmentAsync(departmentId);
-						await _smsService.SendCancelCallAsync(call, dispatch, departmentNumber, departmentId, profile, call.Address, payment);
+						await _smsService.SendCancelCallAsync(call, dispatch, departmentNumber, departmentId, profile, address ?? call.Address, payment);
 					}
 					catch (Exception ex)
 					{

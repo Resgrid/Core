@@ -99,13 +99,14 @@
 
                     <div class="price-box">
                         <div class="price-slider">
-                            <h4 class="great">Entities</h4>
-                            <span style="color: #7f8c8d; font-size: 13px;">Users or Units sold in packs of 10</span>
+                            <h4 class="great"><label for="entity-slider">Entities</label></h4>
+                            <span id="entity-desc" style="color: #7f8c8d; font-size: 13px;">Users or Units sold in packs of 10</span>
                             <div style="padding: 10px 0;">
-                                <input type="range" id="entity-slider" class="entity-range" min="20" max="2000" step="10" value="20">
+                                <input type="range" id="entity-slider" class="entity-range" min="20" max="2000" step="10" value="20" aria-describedby="entity-desc">
                             </div>
                             <div class="text-center" style="padding-top: 5px;">
-                                <input id="amount-input" type="number" min="20" max="2000" step="10" value="20" /> <span>Entities</span>
+                                <label for="amount-input" class="sr-only">Entity count</label>
+                                <input id="amount-input" type="number" min="20" max="2000" step="10" value="20" aria-describedby="entity-desc" /> <span>Entities</span>
                             </div>
                         </div>
 
@@ -115,7 +116,7 @@
                                     <span class="price-label">Monthly ($):</span>
                                 </div>
                                 <div class="col-sm-6 text-right">
-                                    <span class="price-display" id="monthly-label">0</span><span class="price-cents">.00</span>
+                                    <span class="price-display" id="monthly-label">0.00</span>
                                 </div>
                             </div>
                             <div class="row" style="padding: 10px 0;">
@@ -123,7 +124,7 @@
                                     <span class="price-label">Yearly ($):</span>
                                 </div>
                                 <div class="col-sm-6 text-right">
-                                    <span class="price-display" id="yearly-label">0</span><span class="price-cents">.00</span>
+                                    <span class="price-display" id="yearly-label">0.00</span>
                                 </div>
                             </div>
                             <hr class="style">
@@ -194,9 +195,15 @@
                 }).done(function (data) {
                     if (data && data.SessionId) {
                         stripe.redirectToCheckout({ sessionId: data.SessionId }).then(function (result) {
-                            swal({ title: "Purchase Error", text: "Error redirecting to Stripe: " + result.error.message, icon: "error", buttons: true, dangerMode: false });
+                            if (result.error) {
+                                swal({ title: "Purchase Error", text: "Error redirecting to Stripe: " + result.error.message, icon: "error", buttons: true, dangerMode: false });
+                            }
                         });
+                    } else {
+                        swal({ title: "Checkout Error", text: "Unable to create a checkout session. Please try again.", icon: "error", buttons: true, dangerMode: false });
                     }
+                }).fail(function () {
+                    swal({ title: "Connection Error", text: "Unable to reach the server. Please check your connection and try again.", icon: "error", buttons: true, dangerMode: false });
                 });
             } else {
                 swal({ title: "Cannot Purchase", text: "Please select more than 10 entities to purchase a plan.", icon: "warning", buttons: true, dangerMode: false });
@@ -220,6 +227,11 @@
                             return;
                         }
 
+                        if (!data.PriceId) {
+                            swal({ title: "Checkout Error", text: "Unable to create a checkout session. Please try again.", icon: "error", buttons: true, dangerMode: false });
+                            return;
+                        }
+
                         var checkoutSettings = {
                             settings: { successUrl: resgrid.absoluteBaseUrl + '/User/Subscription/PaddleProcessing?planId=' + id },
                             items: [{ priceId: data.PriceId, quantity: packs }]
@@ -230,7 +242,11 @@
                         }
 
                         Paddle.Checkout.open(checkoutSettings);
+                    } else {
+                        swal({ title: "Checkout Error", text: "Unable to create a checkout session. Please try again.", icon: "error", buttons: true, dangerMode: false });
                     }
+                }).fail(function () {
+                    swal({ title: "Connection Error", text: "Unable to reach the server. Please check your connection and try again.", icon: "error", buttons: true, dangerMode: false });
                 });
             } else {
                 swal({ title: "Cannot Purchase", text: "Please select more than 10 entities to purchase a plan.", icon: "warning", buttons: true, dangerMode: false });
@@ -250,7 +266,7 @@
                 { marginalUserSlots: 5, costPerUser: 200.0 },
                 { marginalUserSlots: 100, costPerUser: 20.0 },
                 { marginalUserSlots: 1000, costPerUser: 15.0 },
-                { marginalUserSlots: 1000, costPerUser: 10.0 },
+                { marginalUserSlots: 5000, costPerUser: 10.0 },
                 { marginalUserSlots: 999999999, costPerUser: 5.0 }
             ];
 
@@ -276,13 +292,13 @@
             var amount = parseInt(document.getElementById('amount-input').value) || 0;
 
             if (amount > 10) {
-                document.getElementById('monthly-label').textContent = calculateCostFromUsers(amount, true);
-                document.getElementById('yearly-label').textContent = calculateCostFromUsers(amount, false);
+                document.getElementById('monthly-label').textContent = calculateCostFromUsers(amount, true).toFixed(2);
+                document.getElementById('yearly-label').textContent = calculateCostFromUsers(amount, false).toFixed(2);
                 document.getElementById('buyYearlyButton').style.display = '';
                 document.getElementById('buyMonthlyButton').style.display = '';
             } else {
-                document.getElementById('monthly-label').textContent = '0';
-                document.getElementById('yearly-label').textContent = '0';
+                document.getElementById('monthly-label').textContent = '0.00';
+                document.getElementById('yearly-label').textContent = '0.00';
                 document.getElementById('buyYearlyButton').style.display = 'none';
                 document.getElementById('buyMonthlyButton').style.display = 'none';
             }

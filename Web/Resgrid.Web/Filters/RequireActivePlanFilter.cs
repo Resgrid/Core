@@ -19,22 +19,14 @@ namespace Resgrid.Web.Filters
 		// Actions that are always reachable regardless of plan status
 		private static readonly string[] ExemptControllers = new[]
 		{
-			"account"
+			"account",
+			"subscription"
 		};
 
 		private static readonly string[] ExemptActions = new[]
 		{
-			"selectregistrationplan",
-			"getstripesession",
-			"getstripeupdate",
-			"stripeprocessing",
-			"paymentcomplete",
-			"paymentpending",
-			"paymentfailed",
-			"logstriperesponse",
-			"stripebillinginfoupdatesuccess",
-			"getpaddlecheckout",
-			"paddleprocessing"
+			"topiconsarea",
+			"getsearchresults"
 		};
 
 		public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)

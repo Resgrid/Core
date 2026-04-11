@@ -363,18 +363,19 @@ namespace Resgrid.Services
 									SentOn = DateTime.UtcNow,
 									SystemGenerated = true,
 									IsBroadcast = true,
-									Type = 0,
-									Recipients = string.Join(",", members.Select(m => m.UserId))
+									Type = 0
 								};
 
-								// Use SendMessageAsync which saves AND enqueues for push/SMS/email delivery
-								var sent = await _messageService.SendMessageAsync(
-									message, "Weather Alert System", departmentId, true, ct);
-
-								if (sent)
+								foreach (var member in members)
 								{
-									alert.SystemMessageId = message.MessageId;
+									if (member.UserId != senderId)
+										message.AddRecipient(member.UserId);
 								}
+
+								var savedMessage = await _messageService.SaveMessageAsync(message, ct);
+								await _messageService.SendMessageAsync(savedMessage, "Weather Alert System", departmentId, false, ct);
+
+								alert.SystemMessageId = savedMessage.MessageId;
 							}
 						}
 						catch (Exception ex)

@@ -265,13 +265,13 @@
                                 @if (Model.Plan.Frequency == (int)PlanFrequency.Yearly)
                                 {
                                     <span>
-                                        @Model.Plan.Cost.ToString("C", Cultures.UnitedStates)<small>/@localizer["Year"]</small>
+                                        @currencySymbol@Model.Plan.Cost.ToString("N2")<small>/@localizer["Year"]</small>
                                     </span>
                                 }
                                 else
                                 {
                                     <span>
-                                        @Model.Plan.Cost.ToString("C", Cultures.UnitedStates)<small>/@localizer["month"]</small>
+                                        @currencySymbol@Model.Plan.Cost.ToString("N2")<small>/@localizer["month"]</small>
                                     </span>
                                 }
                             </h3>
@@ -527,43 +527,32 @@
 
                 function stripeCheckout(id) {
                     const amount = slider == 1 ? val : $("#amount").val();
+                    const minAmount = IS_EU ? 10 : 20;
 
-                    if (amount && amount > 10) {
-                        const packs = (amount / 10) - 1; // First 10 users are free.
+                    if (amount && amount >= minAmount && (!IS_EU ? amount > 10 : true)) {
+                        const packs = IS_EU ? (amount / 10) : (amount / 10) - 1;
 
                         $.ajax({
                             url: resgrid.absoluteBaseUrl + '/User/Subscription/GetStripeSession?id=' + id + '&count=' + packs,
                             contentType: 'application/json',
                             type: 'GET'
                         }).done(function (data) {
-                            if (data) {
-                                if (data.SessionId) {
-                                    stripe.redirectToCheckout({
-                                        sessionId: data.SessionId
-                                    }).then(function (result) {
-                                        // If `redirectToCheckout` fails due to a browser or network
-                                        // error, display the localized error message to your customer
-                                        // using `result.error.message`.
-
-                                        swal({
-                                            title: "Purchase Error",
-                                            text: "Error redirecting to Stripe for checkout. Stripe error: " + result.error.message,
-                                            icon: "error",
-                                            buttons: true,
-                                            dangerMode: false
-                                        });
-                                    });
-                                }
+                            if (data && data.SessionId) {
+                                stripe.redirectToCheckout({
+                                    sessionId: data.SessionId
+                                }).then(function (result) {
+                                    if (result.error) {
+                                        swal({ title: "Purchase Error", text: "Error redirecting to Stripe: " + result.error.message, icon: "error", buttons: true, dangerMode: false });
+                                    }
+                                });
+                            } else {
+                                swal({ title: "Checkout Error", text: "Unable to create a checkout session. Please try again.", icon: "error", buttons: true, dangerMode: false });
                             }
+                        }).fail(function () {
+                            swal({ title: "Connection Error", text: "Unable to reach the server. Please check your connection and try again.", icon: "error", buttons: true, dangerMode: false });
                         });
                     } else {
-                        swal({
-                            title: "Cannot Purchase",
-                            text: "Resgrid includes 10 entities for free for all departments. Please select a entity count greater then 10 to purchase.",
-                            icon: "warning",
-                            buttons: true,
-                            dangerMode: false
-                        });
+                        swal({ title: "Cannot Purchase", text: "Please select more entities to purchase a plan.", icon: "warning", buttons: true, dangerMode: false });
                     }
                 }
 
@@ -589,9 +578,10 @@
 
                 function paddleCheckout(id) {
                     const amount = slider == 1 ? val : $("#amount").val();
+                    const minAmount = IS_EU ? 10 : 20;
 
-                    if (amount && amount > 10) {
-                        const packs = (amount / 10) - 1;
+                    if (amount && amount >= minAmount && (!IS_EU ? amount > 10 : true)) {
+                        const packs = IS_EU ? (amount / 10) : (amount / 10) - 1;
 
                         $.ajax({
                             url: resgrid.absoluteBaseUrl + '/User/Subscription/GetPaddleCheckout?id=' + id + '&count=' + packs,
@@ -600,24 +590,18 @@
                         }).done(function (data) {
                             if (data) {
                                 if (data.HasActiveSub) {
-                                    swal({
-                                        title: "Active Subscription",
-                                        text: "You already have an active subscription. Please manage your existing subscription instead.",
-                                        icon: "warning",
-                                        buttons: true,
-                                        dangerMode: false
-                                    });
+                                    swal({ title: "Active Subscription", text: "You already have an active subscription. Please manage your existing subscription instead.", icon: "warning", buttons: true, dangerMode: false });
+                                    return;
+                                }
+
+                                if (!data.PriceId) {
+                                    swal({ title: "Checkout Error", text: "Unable to create a checkout session. Please try again.", icon: "error", buttons: true, dangerMode: false });
                                     return;
                                 }
 
                                 var checkoutSettings = {
-                                    settings: {
-                                        successUrl: resgrid.absoluteBaseUrl + '/User/Subscription/PaddleProcessing?planId=' + id
-                                    },
-                                    items: [{
-                                        priceId: data.PriceId,
-                                        quantity: packs
-                                    }]
+                                    settings: { successUrl: resgrid.absoluteBaseUrl + '/User/Subscription/PaddleProcessing?planId=' + id },
+                                    items: [{ priceId: data.PriceId, quantity: packs }]
                                 };
 
                                 if (data.CustomerId) {
@@ -625,16 +609,14 @@
                                 }
 
                                 Paddle.Checkout.open(checkoutSettings);
+                            } else {
+                                swal({ title: "Checkout Error", text: "Unable to create a checkout session. Please try again.", icon: "error", buttons: true, dangerMode: false });
                             }
+                        }).fail(function () {
+                            swal({ title: "Connection Error", text: "Unable to reach the server. Please check your connection and try again.", icon: "error", buttons: true, dangerMode: false });
                         });
                     } else {
-                        swal({
-                            title: "Cannot Purchase",
-                            text: "Resgrid includes 10 entities for free for all departments. Please select a entity count greater then 10 to purchase.",
-                            icon: "warning",
-                            buttons: true,
-                            dangerMode: false
-                        });
+                        swal({ title: "Cannot Purchase", text: "Please select more entities to purchase a plan.", icon: "warning", buttons: true, dangerMode: false });
                     }
                 }
 

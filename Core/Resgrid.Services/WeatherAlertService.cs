@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Helpers;
@@ -319,15 +320,27 @@ namespace Resgrid.Services
 					continue;
 				}
 
-				// Get the auto-message severity threshold setting
-				var thresholdSetting = await _departmentSettingsRepository.GetDepartmentSettingByIdTypeAsync(
-					departmentId, DepartmentSettingTypes.WeatherAlertAutoMessageSeverity);
+				// Load per-severity schedule (if configured)
+				List<AutoMessageSeveritySchedule> schedule = null;
+				var scheduleSetting = await _departmentSettingsRepository.GetDepartmentSettingByIdTypeAsync(
+					departmentId, DepartmentSettingTypes.WeatherAlertAutoMessageSchedule);
+				if (scheduleSetting != null && !string.IsNullOrWhiteSpace(scheduleSetting.Setting))
+				{
+					try { schedule = JsonConvert.DeserializeObject<List<AutoMessageSeveritySchedule>>(scheduleSetting.Setting); }
+					catch { }
+				}
 
-				int threshold = (int)WeatherAlertSeverity.Severe; // Default: Severe=1
-				if (thresholdSetting != null && int.TryParse(thresholdSetting.Setting, out var parsed))
-					threshold = parsed;
+				// Fall back to legacy threshold if no schedule configured
+				int legacyThreshold = (int)WeatherAlertSeverity.Severe;
+				if (schedule == null || schedule.Count == 0)
+				{
+					var thresholdSetting = await _departmentSettingsRepository.GetDepartmentSettingByIdTypeAsync(
+						departmentId, DepartmentSettingTypes.WeatherAlertAutoMessageSeverity);
+					if (thresholdSetting != null && int.TryParse(thresholdSetting.Setting, out var parsed))
+						legacyThreshold = parsed;
+				}
 
-				// Load department for sender info
+				// Load department for sender info and time conversion
 				Department department = null;
 				try
 				{
@@ -340,9 +353,8 @@ namespace Resgrid.Services
 
 				foreach (var alert in group)
 				{
-					// Only send notifications for alerts meeting severity threshold
-					// Lower enum value = higher severity (Extreme=0, Severe=1, etc.)
-					if (alert.Severity <= threshold)
+					bool shouldSend = ShouldSendAutoMessage(alert.Severity, schedule, legacyThreshold, department);
+					if (shouldSend)
 					{
 						try
 						{
@@ -593,6 +605,51 @@ namespace Resgrid.Services
 				return value;
 
 			return value.Substring(0, maxLength);
+		}
+
+		private static bool ShouldSendAutoMessage(int severity, List<AutoMessageSeveritySchedule> schedule, int legacyThreshold, Department department)
+		{
+			if (schedule != null && schedule.Count > 0)
+			{
+				var entry = schedule.FirstOrDefault(s => s.Severity == severity);
+
+				// Severity not in schedule — don't send
+				if (entry == null || !entry.Enabled)
+					return false;
+
+				// Check time window (StartHour == 0 && EndHour == 0 means 24h/always)
+				if (entry.StartHour == 0 && entry.EndHour == 0)
+					return true;
+
+				// Get department local time
+				var now = DateTime.UtcNow;
+				if (department != null)
+					now = now.TimeConverter(department);
+
+				int currentHour = now.Hour;
+
+				if (entry.StartHour <= entry.EndHour)
+				{
+					// Same-day window: e.g. 6-18
+					return currentHour >= entry.StartHour && currentHour < entry.EndHour;
+				}
+				else
+				{
+					// Overnight window: e.g. 18-6 (6pm to 6am)
+					return currentHour >= entry.StartHour || currentHour < entry.EndHour;
+				}
+			}
+
+			// Legacy: simple severity threshold
+			return severity <= legacyThreshold;
+		}
+
+		private class AutoMessageSeveritySchedule
+		{
+			public int Severity { get; set; }
+			public bool Enabled { get; set; }
+			public int StartHour { get; set; }
+			public int EndHour { get; set; }
 		}
 	}
 }

@@ -5,6 +5,11 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Subscription.Subscription> localizer
 @{
     ViewBag.Title = "Resgrid | " + @localizer["SubscriptionHeader"];
+
+    var locationName = SystemBehaviorConfig.LocationName ?? "US-West";
+    var location = InfoConfig.Locations.Find(l => l.Name == locationName) ?? InfoConfig.Locations[0];
+    var isEU = locationName.StartsWith("EU", StringComparison.OrdinalIgnoreCase);
+    var currencySymbol = isEU ? "\u20AC" : "$";
 }
 
 @section Styles
@@ -260,13 +265,13 @@
                                 @if (Model.Plan.Frequency == (int)PlanFrequency.Yearly)
                                 {
                                     <span>
-                                        @Model.Plan.Cost.ToString("C", Cultures.UnitedStates)<small>/@localizer["Year"]</small>
+                                        @currencySymbol@Model.Plan.Cost.ToString("N2")<small>/@localizer["Year"]</small>
                                     </span>
                                 }
                                 else
                                 {
                                     <span>
-                                        @Model.Plan.Cost.ToString("C", Cultures.UnitedStates)<small>/@localizer["month"]</small>
+                                        @currencySymbol@Model.Plan.Cost.ToString("N2")<small>/@localizer["month"]</small>
                                     </span>
                                 }
                             </h3>
@@ -319,7 +324,17 @@
 
                                             @if (Model.Plan == null || Model.Plan.PlanId == 1)
                                             {
-                                                <p>Move the blue slider below with the arrows to select the number of Entities (Users + Units) you require. You can also type in the Entity count (in increments of 10) in the text box below. Please the "Buy Yearly" or "Buy Monthly" depending on the payment interval you wish. This will then take you to the Stripe checkout page. Please note you cannot buy a 10 entity pack as that is our free plan.</p>
+                                                <p>Select the number of Entities (Users + Units) you require using the slider or text box below.
+                                                    @if (!isEU) { <text>Your first 10 entities are included at no charge — each</text> } else { <text>Each</text> }
+                                                    additional pack of 10 entities is billed at the rate shown. Select "Buy Yearly" or "Buy Monthly" to proceed to checkout.</p>
+
+                                                @if (isEU)
+                                                {
+                                                    <div class="alert alert-info" style="font-size:13px;">
+                                                        <strong>European Region</strong> — Pricing includes GDPR-compliant data hosting. All prices shown in EUR (@currencySymbol) with a regional adjustment. No free tier is available.
+                                                    </div>
+                                                }
+
                                                 <div class="price-box">
 
                                                     <form class="form-horizontal form-pricing" role="form">
@@ -345,21 +360,19 @@
                                                                 </div>
                                                             </div>
                                                             <div class="form-group">
-                                                                <label for="amount" class="col-sm-6 control-label">Monthly ($): </label>
+                                                                <label for="amount" class="col-sm-6 control-label">Monthly (@currencySymbol): </label>
                                                                 <span class="help-text">Monthly billing amount</span>
                                                                 <div class="col-sm-6">
                                                                     <input type="hidden" id="amount" class="form-control">
-                                                                    <p class="price lead" id="monthly-label"></p>
-                                                                    <span class="price">.00</span>
+                                                                    <p class="price lead" id="monthly-label">0.00</p>
                                                                 </div>
                                                             </div>
                                                             <div class="form-group">
-                                                                <label for="duration" class="col-sm-6 control-label">Yearly ($):  </label>
+                                                                <label for="duration" class="col-sm-6 control-label">Yearly (@currencySymbol): </label>
                                                                 <span class="help-text">Yearly (annual) billing amount</span>
                                                                 <div class="col-sm-6">
                                                                     <input type="hidden" id="duration" class="form-control">
-                                                                    <p class="price lead" id="yearly-label"></p>
-                                                                    <span class="price">.00</span>
+                                                                    <p class="price lead" id="yearly-label">0.00</p>
                                                                 </div>
                                                             </div>
                                                             <hr class="style">
@@ -514,43 +527,32 @@
 
                 function stripeCheckout(id) {
                     const amount = slider == 1 ? val : $("#amount").val();
+                    const minAmount = IS_EU ? 10 : 20;
 
-                    if (amount && amount > 10) {
-                        const packs = (amount / 10) - 1; // First 10 users are free.
+                    if (amount && amount >= minAmount && (!IS_EU ? amount > 10 : true)) {
+                        const packs = IS_EU ? (amount / 10) : (amount / 10) - 1;
 
                         $.ajax({
                             url: resgrid.absoluteBaseUrl + '/User/Subscription/GetStripeSession?id=' + id + '&count=' + packs,
                             contentType: 'application/json',
                             type: 'GET'
                         }).done(function (data) {
-                            if (data) {
-                                if (data.SessionId) {
-                                    stripe.redirectToCheckout({
-                                        sessionId: data.SessionId
-                                    }).then(function (result) {
-                                        // If `redirectToCheckout` fails due to a browser or network
-                                        // error, display the localized error message to your customer
-                                        // using `result.error.message`.
-
-                                        swal({
-                                            title: "Purchase Error",
-                                            text: "Error redirecting to Stripe for checkout. Stripe error: " + result.error.message,
-                                            icon: "error",
-                                            buttons: true,
-                                            dangerMode: false
-                                        });
-                                    });
-                                }
+                            if (data && data.SessionId) {
+                                stripe.redirectToCheckout({
+                                    sessionId: data.SessionId
+                                }).then(function (result) {
+                                    if (result.error) {
+                                        swal({ title: "Purchase Error", text: "Error redirecting to Stripe: " + result.error.message, icon: "error", buttons: true, dangerMode: false });
+                                    }
+                                });
+                            } else {
+                                swal({ title: "Checkout Error", text: "Unable to create a checkout session. Please try again.", icon: "error", buttons: true, dangerMode: false });
                             }
+                        }).fail(function () {
+                            swal({ title: "Connection Error", text: "Unable to reach the server. Please check your connection and try again.", icon: "error", buttons: true, dangerMode: false });
                         });
                     } else {
-                        swal({
-                            title: "Cannot Purchase",
-                            text: "Resgrid includes 10 entities for free for all departments. Please select a entity count greater then 10 to purchase.",
-                            icon: "warning",
-                            buttons: true,
-                            dangerMode: false
-                        });
+                        swal({ title: "Cannot Purchase", text: "Please select more entities to purchase a plan.", icon: "warning", buttons: true, dangerMode: false });
                     }
                 }
 
@@ -576,9 +578,10 @@
 
                 function paddleCheckout(id) {
                     const amount = slider == 1 ? val : $("#amount").val();
+                    const minAmount = IS_EU ? 10 : 20;
 
-                    if (amount && amount > 10) {
-                        const packs = (amount / 10) - 1;
+                    if (amount && amount >= minAmount && (!IS_EU ? amount > 10 : true)) {
+                        const packs = IS_EU ? (amount / 10) : (amount / 10) - 1;
 
                         $.ajax({
                             url: resgrid.absoluteBaseUrl + '/User/Subscription/GetPaddleCheckout?id=' + id + '&count=' + packs,
@@ -587,24 +590,18 @@
                         }).done(function (data) {
                             if (data) {
                                 if (data.HasActiveSub) {
-                                    swal({
-                                        title: "Active Subscription",
-                                        text: "You already have an active subscription. Please manage your existing subscription instead.",
-                                        icon: "warning",
-                                        buttons: true,
-                                        dangerMode: false
-                                    });
+                                    swal({ title: "Active Subscription", text: "You already have an active subscription. Please manage your existing subscription instead.", icon: "warning", buttons: true, dangerMode: false });
+                                    return;
+                                }
+
+                                if (!data.PriceId) {
+                                    swal({ title: "Checkout Error", text: "Unable to create a checkout session. Please try again.", icon: "error", buttons: true, dangerMode: false });
                                     return;
                                 }
 
                                 var checkoutSettings = {
-                                    settings: {
-                                        successUrl: resgrid.absoluteBaseUrl + '/User/Subscription/PaddleProcessing?planId=' + id
-                                    },
-                                    items: [{
-                                        priceId: data.PriceId,
-                                        quantity: packs
-                                    }]
+                                    settings: { successUrl: resgrid.absoluteBaseUrl + '/User/Subscription/PaddleProcessing?planId=' + id },
+                                    items: [{ priceId: data.PriceId, quantity: packs }]
                                 };
 
                                 if (data.CustomerId) {
@@ -612,20 +609,21 @@
                                 }
 
                                 Paddle.Checkout.open(checkoutSettings);
+                            } else {
+                                swal({ title: "Checkout Error", text: "Unable to create a checkout session. Please try again.", icon: "error", buttons: true, dangerMode: false });
                             }
+                        }).fail(function () {
+                            swal({ title: "Connection Error", text: "Unable to reach the server. Please check your connection and try again.", icon: "error", buttons: true, dangerMode: false });
                         });
                     } else {
-                        swal({
-                            title: "Cannot Purchase",
-                            text: "Resgrid includes 10 entities for free for all departments. Please select a entity count greater then 10 to purchase.",
-                            icon: "warning",
-                            buttons: true,
-                            dangerMode: false
-                        });
+                        swal({ title: "Cannot Purchase", text: "Please select more entities to purchase a plan.", icon: "warning", buttons: true, dangerMode: false });
                     }
                 }
 
 
+
+                var IS_EU = @(isEU ? "true" : "false");
+                var EU_MULTIPLIER = 1.25;
 
                 $(document).ready(function () {
                     $("#slider").slider({
@@ -639,7 +637,7 @@
                             handle.text($(this).slider("value"));
                         },
                         slide: function (event, ui) {
-                            update(1, ui.value); //changed
+                            update(1, ui.value);
                         }
                     });
 
@@ -663,97 +661,87 @@
                         }
                     });
 
-                    //Added, set initial value.
                     $("#amount").val(10);
-                    //$("#duration").val(0);
-                    //$("#amount-label").text(0);
-                    $("#amount-input").val(0);
-                    $("#monthly-label").text(0);
-                    $("#yearly-label").text(0);
-
-                    //$("#duration-label").text(0);
+                    $("#amount-input").val(10);
+                    $("#monthly-label").text('0.00');
+                    $("#yearly-label").text('0.00');
 
                     update();
                 });
 
-                //changed. now with parameter
-                function update(slider, val) {
+                function update(sliderFlag, sliderVal) {
                     let handle = $("#handle-text");
-
-                    //changed. Now, directly take value from ui.value. if not set (initial, will use current value.)
-                    var $amount = slider == 1 ? val : $("#amount").val();
-                    var $duration = slider == 2 ? val : $("#duration").val();
-
-                    /* commented
-                    $amount = $( "#slider" ).slider( "value" );
-                    $duration = $( "#slider2" ).slider( "value" );
-                     */
+                    var $amount = sliderFlag == 1 ? sliderVal : $("#amount").val();
+                    var showButtons = IS_EU ? ($amount >= 10) : ($amount > 10);
 
                     handle.text($amount);
-                    //$total = "$" + ($amount * $duration);
                     $("#amount").val($amount);
-                    //$("#amount-label").text($amount);
                     $("#amount-input").val($amount);
 
-                    if ($amount > 10) {
-                        const totalCostMonthly = calculateCostFromUsers($amount, true);
-                        const totalCostYearly = calculateCostFromUsers($amount, false);
+                    if (showButtons) {
+                        var totalCostMonthly = calculateCostFromUsers($amount, true);
+                        var totalCostYearly = calculateCostFromUsers($amount, false);
 
-                        $("#monthly-label").text(totalCostMonthly);
-                        $("#yearly-label").text(totalCostYearly);
+                        $("#monthly-label").text(totalCostMonthly.toFixed(2));
+                        $("#yearly-label").text(totalCostYearly.toFixed(2));
 
                         $("#buyYearlyButton").show();
                         $("#buyMonthlyButton").show();
                     } else {
-                        $("#monthly-label").text(0);
-                        $("#yearly-label").text(0);
+                        $("#monthly-label").text('0.00');
+                        $("#yearly-label").text('0.00');
 
                         $("#buyYearlyButton").hide();
                         $("#buyMonthlyButton").hide();
                     }
                 }
 
-
                 const calculateCostFromUsers = (totalNumUsers, isMonthly) => {
-                    let marginalBreakdownStrs = [];
-
                     const pricingTiersMonthly = [
-                        //{ tier: 0, marginalUserSlots: 1, costPerUser: 0.0 },
-                        { tier: 0, marginalUserSlots: 5, costPerUser: 20.0 },
-                        { tier: 1, marginalUserSlots: 100, costPerUser: 2.0 },
-                        { tier: 2, marginalUserSlots: 1000, costPerUser: 1.5 },
-                        { tier: 3, marginalUserSlots: 5000, costPerUser: 1.0 },
-                        { tier: 4, marginalUserSlots: 999999999, costPerUser: 0.5 },
+                        { marginalUserSlots: 1, costPerUser: 0.0 },
+                        { marginalUserSlots: 5, costPerUser: 20.0 },
+                        { marginalUserSlots: 100, costPerUser: 2.0 },
+                        { marginalUserSlots: 1000, costPerUser: 1.5 },
+                        { marginalUserSlots: 5000, costPerUser: 1.0 },
+                        { marginalUserSlots: 999999999, costPerUser: 0.5 },
                     ];
 
                     const pricingTiersYearly = [
-                        //{ tier: 0, marginalUserSlots: 1, costPerUser: 0.0 },
-                        { tier: 0, marginalUserSlots: 5, costPerUser: 200.0 },
-                        { tier: 1, marginalUserSlots: 100, costPerUser: 20.0 },
-                        { tier: 2, marginalUserSlots: 1000, costPerUser: 15.0 },
-                        { tier: 3, marginalUserSlots: 5000, costPerUser: 10.0 },
-                        { tier: 4, marginalUserSlots: 999999999, costPerUser: 5.0 },
+                        { marginalUserSlots: 1, costPerUser: 0.0 },
+                        { marginalUserSlots: 5, costPerUser: 200.0 },
+                        { marginalUserSlots: 100, costPerUser: 20.0 },
+                        { marginalUserSlots: 1000, costPerUser: 15.0 },
+                        { marginalUserSlots: 5000, costPerUser: 10.0 },
+                        { marginalUserSlots: 999999999, costPerUser: 5.0 },
                     ];
 
                     let finalCost = 0.0;
-                    let remainingUsers = (totalNumUsers / 10) - 1; // First 10 users are free.
-                    let pricingTiers = isMonthly ? pricingTiersMonthly : pricingTiersYearly;
+                    let remainingUsers = totalNumUsers / 10;
+                    const baseTiers = isMonthly ? pricingTiersMonthly : pricingTiersYearly;
 
-                    for (let i = 0; i < pricingTiers.length; i++) {
-                        let tier = pricingTiers[i];
+                    let tiers;
+                    if (IS_EU) {
+                        tiers = [{
+                            marginalUserSlots: baseTiers[0].marginalUserSlots + baseTiers[1].marginalUserSlots,
+                            costPerUser: baseTiers[1].costPerUser
+                        }].concat(baseTiers.slice(2));
+                    } else {
+                        tiers = baseTiers;
+                    }
+
+                    for (let i = 0; i < tiers.length; i++) {
+                        let tier = tiers[i];
                         if (tier.marginalUserSlots < remainingUsers) {
-                            // calculate cost
                             finalCost += tier.marginalUserSlots * tier.costPerUser;
-                            marginalBreakdownStrs.push(`${tier.marginalUserSlots} @@ $${tier.costPerUser}`);
-                            // remove the users
                             remainingUsers -= tier.marginalUserSlots;
                         } else {
-                            // only need the partial group of the marginal user slots/ potentially all of them
                             finalCost += tier.costPerUser * remainingUsers;
-                            marginalBreakdownStrs.push(`${remainingUsers} @@ $${tier.costPerUser}`);
                             remainingUsers = 0;
                         }
-                        //console.log("RemainingUsers: ", remainingUsers);
+                    }
+
+                    if (IS_EU) {
+                        finalCost = Math.round(finalCost * EU_MULTIPLIER);
                     }
 
                     return finalCost;

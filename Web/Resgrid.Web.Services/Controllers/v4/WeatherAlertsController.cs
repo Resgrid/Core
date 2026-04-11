@@ -357,13 +357,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 			await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, input.AutoMessageSeverity.ToString(), DepartmentSettingTypes.WeatherAlertAutoMessageSeverity);
 			await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, input.CallIntegrationEnabled.ToString(), DepartmentSettingTypes.WeatherAlertCallIntegration);
 
+			if (input.AutoMessageSchedule != null)
+			{
+				var scheduleJson = Newtonsoft.Json.JsonConvert.SerializeObject(input.AutoMessageSchedule);
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, scheduleJson, DepartmentSettingTypes.WeatherAlertAutoMessageSchedule);
+			}
+
 			var result = new GetWeatherAlertSettingsResult();
 			result.Data = new WeatherAlertSettingsData
 			{
 				WeatherAlertsEnabled = input.WeatherAlertsEnabled,
 				MinimumSeverity = input.MinimumSeverity,
 				AutoMessageSeverity = input.AutoMessageSeverity,
-				CallIntegrationEnabled = input.CallIntegrationEnabled
+				CallIntegrationEnabled = input.CallIntegrationEnabled,
+				AutoMessageSchedule = input.AutoMessageSchedule
 			};
 
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -378,6 +385,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var minSeveritySetting = await _departmentSettingsService.GetSettingByTypeAsync(DepartmentId, DepartmentSettingTypes.WeatherAlertMinimumSeverity);
 			var autoMsgSetting = await _departmentSettingsService.GetSettingByTypeAsync(DepartmentId, DepartmentSettingTypes.WeatherAlertAutoMessageSeverity);
 			var callIntSetting = await _departmentSettingsService.GetSettingByTypeAsync(DepartmentId, DepartmentSettingTypes.WeatherAlertCallIntegration);
+			var scheduleSetting = await _departmentSettingsService.GetSettingByTypeAsync(DepartmentId, DepartmentSettingTypes.WeatherAlertAutoMessageSchedule);
 
 			if (enabledSetting != null && !string.IsNullOrWhiteSpace(enabledSetting.Setting))
 				settings.WeatherAlertsEnabled = bool.TryParse(enabledSetting.Setting, out var enabled) && enabled;
@@ -390,6 +398,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (callIntSetting != null && !string.IsNullOrWhiteSpace(callIntSetting.Setting))
 				settings.CallIntegrationEnabled = bool.TryParse(callIntSetting.Setting, out var callInt) && callInt;
+
+			if (scheduleSetting != null && !string.IsNullOrWhiteSpace(scheduleSetting.Setting))
+			{
+				try
+				{
+					settings.AutoMessageSchedule = Newtonsoft.Json.JsonConvert.DeserializeObject<System.Collections.Generic.List<WeatherAlertSeverityScheduleData>>(scheduleSetting.Setting);
+				}
+				catch { }
+			}
 
 			return settings;
 		}

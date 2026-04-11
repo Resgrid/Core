@@ -2,6 +2,13 @@
 @model Resgrid.Web.Areas.User.Models.Subscription.SelectRegistrationPlanView
 @{
     ViewBag.Title = "Resgrid | Select Your Plan";
+    Layout = "~/Areas/User/Views/Shared/_MinimalLayout.cshtml";
+
+    var locationName = SystemBehaviorConfig.LocationName ?? "US-West";
+    var location = InfoConfig.Locations.Find(l => l.Name == locationName) ?? InfoConfig.Locations[0];
+    var isEU = locationName.StartsWith("EU", StringComparison.OrdinalIgnoreCase);
+    var currencySymbol = isEU ? "\u20AC" : "$";
+    var minEntities = isEU ? 10 : 20;
 }
 
 @section Styles
@@ -16,49 +23,14 @@
             border: 1px solid #e7eaec;
         }
 
-        .price-form {
-            width: 100%;
-            padding-top: 10px;
-        }
+        .price-form { width: 100%; padding-top: 10px; }
+        .price-slider { width: 100%; padding-bottom: 20px; }
+        .entity-range { width: 100%; margin: 15px 0; }
+        .price-display { font-weight: 600; font-size: 28px; display: inline-block; }
+        .price-label { font-weight: 200; font-size: 18px; }
 
-        .price-slider {
-            width: 100%;
-            padding-bottom: 20px;
-        }
-
-        .entity-range {
-            width: 100%;
-            margin: 15px 0;
-        }
-
-        .price-display {
-            font-weight: 600;
-            font-size: 28px;
-            display: inline-block;
-        }
-
-        .price-label {
-            font-weight: 200;
-            font-size: 18px;
-        }
-
-        .price-cents {
-            font-weight: 200;
-            color: #7f8c8d;
-            font-size: 14px;
-        }
-
-        hr.style {
-            border: 0;
-            border-bottom: 1px dashed #ccc;
-            background: #999;
-            margin-top: 5px;
-        }
-
-        input[type="number"] {
-            width: 80px !important;
-            font-size: 18px;
-        }
+        hr.style { border: 0; border-bottom: 1px dashed #ccc; background: #999; margin-top: 5px; }
+        input[type="number"] { width: 80px !important; font-size: 18px; }
 
         h4.great {
             background: #00ac98;
@@ -78,7 +50,7 @@
         <h2>Select Your Plan</h2>
         <ol class="breadcrumb">
             <li class="active">
-                <strong>Plan Selection</strong>
+                <strong>Plan Selection — @location.DisplayName</strong>
             </li>
         </ol>
     </div>
@@ -95,25 +67,34 @@
                         Free tier signups are not available on this Resgrid instance. Please select a plan below to complete your registration.
                     </div>
 
-                    <p>Select the number of Entities (Users + Units) you require using the slider or text box below. Your first 10 entities are included at no charge — each additional pack of 10 entities is billed at the rate shown. Select <strong>Buy Yearly</strong> or <strong>Buy Monthly</strong> to proceed to checkout.</p>
+                    @if (isEU)
+                    {
+                        <div class="alert alert-info">
+                            <strong>European Region</strong> — Pricing includes GDPR-compliant data hosting. All prices shown in EUR (@currencySymbol) with a regional adjustment. No free tier is available.
+                        </div>
+                    }
+
+                    <p>Select the number of Entities (Users + Units) you require using the slider or text box below.
+                        @if (!isEU) { <text>Your first 10 entities are included at no charge — each additional</text> } else { <text>Each</text> }
+                        pack of 10 entities is billed at the rate shown. Select <strong>Buy Yearly</strong> or <strong>Buy Monthly</strong> to proceed to checkout.</p>
 
                     <div class="price-box">
                         <div class="price-slider">
                             <h4 class="great"><label for="entity-slider">Entities</label></h4>
                             <span id="entity-desc" style="color: #7f8c8d; font-size: 13px;">Users or Units sold in packs of 10</span>
                             <div style="padding: 10px 0;">
-                                <input type="range" id="entity-slider" class="entity-range" min="20" max="2000" step="10" value="20" aria-describedby="entity-desc">
+                                <input type="range" id="entity-slider" class="entity-range" min="@minEntities" max="2000" step="10" value="@minEntities" aria-describedby="entity-desc">
                             </div>
                             <div class="text-center" style="padding-top: 5px;">
                                 <label for="amount-input" class="sr-only">Entity count</label>
-                                <input id="amount-input" type="number" min="20" max="2000" step="10" value="20" aria-describedby="entity-desc" /> <span>Entities</span>
+                                <input id="amount-input" type="number" min="@minEntities" max="2000" step="10" value="@minEntities" aria-describedby="entity-desc" /> <span>Entities</span>
                             </div>
                         </div>
 
                         <div class="price-form">
                             <div class="row" style="padding: 10px 0;">
                                 <div class="col-sm-6">
-                                    <span class="price-label">Monthly ($):</span>
+                                    <span class="price-label">Monthly (@currencySymbol):</span>
                                 </div>
                                 <div class="col-sm-6 text-right">
                                     <span class="price-display" id="monthly-label">0.00</span>
@@ -121,7 +102,7 @@
                             </div>
                             <div class="row" style="padding: 10px 0;">
                                 <div class="col-sm-6">
-                                    <span class="price-label">Yearly ($):</span>
+                                    <span class="price-label">Yearly (@currencySymbol):</span>
                                 </div>
                                 <div class="col-sm-6 text-right">
                                     <span class="price-display" id="yearly-label">0.00</span>
@@ -130,18 +111,10 @@
                             <hr class="style">
                             <div class="row" style="padding-top: 15px;">
                                 <div class="col-sm-6 text-center">
-                                    @if (Model.IsPaddleDepartment) {
-                                        <a id="buyYearlyButton" title="Buy Yearly" class="btn btn-primary" href="#" style="display:none;">Buy Yearly</a>
-                                    } else {
-                                        <a id="buyYearlyButton" title="Buy Yearly" class="btn btn-primary" href="#" style="display:none;">Buy Yearly</a>
-                                    }
+                                    <a id="buyYearlyButton" title="Buy Yearly" class="btn btn-primary" href="#" style="display:none;">Buy Yearly</a>
                                 </div>
                                 <div class="col-sm-6 text-center">
-                                    @if (Model.IsPaddleDepartment) {
-                                        <a id="buyMonthlyButton" title="Buy Monthly" class="btn btn-primary" href="#" style="display:none;">Buy Monthly</a>
-                                    } else {
-                                        <a id="buyMonthlyButton" title="Buy Monthly" class="btn btn-primary" href="#" style="display:none;">Buy Monthly</a>
-                                    }
+                                    <a id="buyMonthlyButton" title="Buy Monthly" class="btn btn-primary" href="#" style="display:none;">Buy Monthly</a>
                                 </div>
                             </div>
                         </div>
@@ -181,12 +154,15 @@
             <text>var stripe = Stripe('@Model.StripeKey');</text>
         }
         var discountCode = '@Html.Raw(Model.DiscountCode ?? "")';
+        var IS_EU = @(isEU ? "true" : "false");
+        var EU_MULTIPLIER = 1.25;
 
         function stripeCheckout(id) {
             var amount = parseInt(document.getElementById('amount-input').value) || 0;
+            var minAmount = @minEntities;
 
-            if (amount > 10) {
-                var packs = (amount / 10) - 1;
+            if (amount >= minAmount) {
+                var packs = IS_EU ? (amount / 10) : (amount / 10) - 1;
 
                 $.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/Subscription/GetStripeSession?id=' + id + '&count=' + packs + (discountCode ? '&discountCode=' + encodeURIComponent(discountCode) : ''),
@@ -206,15 +182,16 @@
                     swal({ title: "Connection Error", text: "Unable to reach the server. Please check your connection and try again.", icon: "error", buttons: true, dangerMode: false });
                 });
             } else {
-                swal({ title: "Cannot Purchase", text: "Please select more than 10 entities to purchase a plan.", icon: "warning", buttons: true, dangerMode: false });
+                swal({ title: "Cannot Purchase", text: "Please select more entities to purchase a plan.", icon: "warning", buttons: true, dangerMode: false });
             }
         }
 
         function paddleCheckout(id) {
             var amount = parseInt(document.getElementById('amount-input').value) || 0;
+            var minAmount = @minEntities;
 
-            if (amount > 10) {
-                var packs = (amount / 10) - 1;
+            if (amount >= minAmount) {
+                var packs = IS_EU ? (amount / 10) : (amount / 10) - 1;
 
                 $.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/Subscription/GetPaddleCheckout?id=' + id + '&count=' + packs + (discountCode ? '&discountCode=' + encodeURIComponent(discountCode) : ''),
@@ -223,24 +200,20 @@
                 }).done(function (data) {
                     if (data) {
                         if (data.HasActiveSub) {
-                            swal({ title: "Active Subscription", text: "You already have an active subscription. Please manage your existing subscription instead.", icon: "warning", buttons: true, dangerMode: false });
+                            swal({ title: "Active Subscription", text: "You already have an active subscription.", icon: "warning", buttons: true, dangerMode: false });
                             return;
                         }
-
                         if (!data.PriceId) {
                             swal({ title: "Checkout Error", text: "Unable to create a checkout session. Please try again.", icon: "error", buttons: true, dangerMode: false });
                             return;
                         }
-
                         var checkoutSettings = {
                             settings: { successUrl: resgrid.absoluteBaseUrl + '/User/Subscription/PaddleProcessing?planId=' + id },
                             items: [{ priceId: data.PriceId, quantity: packs }]
                         };
-
                         if (data.CustomerId) {
                             checkoutSettings.customer = { id: data.CustomerId };
                         }
-
                         Paddle.Checkout.open(checkoutSettings);
                     } else {
                         swal({ title: "Checkout Error", text: "Unable to create a checkout session. Please try again.", icon: "error", buttons: true, dangerMode: false });
@@ -249,12 +222,13 @@
                     swal({ title: "Connection Error", text: "Unable to reach the server. Please check your connection and try again.", icon: "error", buttons: true, dangerMode: false });
                 });
             } else {
-                swal({ title: "Cannot Purchase", text: "Please select more than 10 entities to purchase a plan.", icon: "warning", buttons: true, dangerMode: false });
+                swal({ title: "Cannot Purchase", text: "Please select more entities to purchase a plan.", icon: "warning", buttons: true, dangerMode: false });
             }
         }
 
         var calculateCostFromUsers = function (totalNumUsers, isMonthly) {
             var pricingTiersMonthly = [
+                { marginalUserSlots: 1, costPerUser: 0.0 },
                 { marginalUserSlots: 5, costPerUser: 20.0 },
                 { marginalUserSlots: 100, costPerUser: 2.0 },
                 { marginalUserSlots: 1000, costPerUser: 1.5 },
@@ -263,6 +237,7 @@
             ];
 
             var pricingTiersYearly = [
+                { marginalUserSlots: 1, costPerUser: 0.0 },
                 { marginalUserSlots: 5, costPerUser: 200.0 },
                 { marginalUserSlots: 100, costPerUser: 20.0 },
                 { marginalUserSlots: 1000, costPerUser: 15.0 },
@@ -271,11 +246,21 @@
             ];
 
             var finalCost = 0.0;
-            var remainingUsers = (totalNumUsers / 10) - 1;
-            var pricingTiers = isMonthly ? pricingTiersMonthly : pricingTiersYearly;
+            var remainingUsers = totalNumUsers / 10;
+            var baseTiers = isMonthly ? pricingTiersMonthly : pricingTiersYearly;
+            var tiers;
 
-            for (var i = 0; i < pricingTiers.length; i++) {
-                var tier = pricingTiers[i];
+            if (IS_EU) {
+                tiers = [{
+                    marginalUserSlots: baseTiers[0].marginalUserSlots + baseTiers[1].marginalUserSlots,
+                    costPerUser: baseTiers[1].costPerUser
+                }].concat(baseTiers.slice(2));
+            } else {
+                tiers = baseTiers;
+            }
+
+            for (var i = 0; i < tiers.length; i++) {
+                var tier = tiers[i];
                 if (tier.marginalUserSlots < remainingUsers) {
                     finalCost += tier.marginalUserSlots * tier.costPerUser;
                     remainingUsers -= tier.marginalUserSlots;
@@ -285,13 +270,18 @@
                 }
             }
 
+            if (IS_EU) {
+                finalCost = Math.round(finalCost * EU_MULTIPLIER);
+            }
+
             return finalCost;
         };
 
         function updatePricing() {
             var amount = parseInt(document.getElementById('amount-input').value) || 0;
+            var showButtons = IS_EU ? (amount >= 10) : (amount > 10);
 
-            if (amount > 10) {
+            if (showButtons) {
                 document.getElementById('monthly-label').textContent = calculateCostFromUsers(amount, true).toFixed(2);
                 document.getElementById('yearly-label').textContent = calculateCostFromUsers(amount, false).toFixed(2);
                 document.getElementById('buyYearlyButton').style.display = '';
@@ -309,7 +299,6 @@
             var input = document.getElementById('amount-input');
             var isPaddle = @(Model.IsPaddleDepartment ? "true" : "false");
 
-            // Wire up buy buttons
             document.getElementById('buyYearlyButton').addEventListener('click', function (e) {
                 e.preventDefault();
                 isPaddle ? paddleCheckout(36) : stripeCheckout(36);
@@ -319,16 +308,15 @@
                 isPaddle ? paddleCheckout(37) : stripeCheckout(37);
             });
 
-            // Sync slider → input
             slider.addEventListener('input', function () {
                 input.value = slider.value;
                 updatePricing();
             });
 
-            // Sync input → slider
             input.addEventListener('change', function () {
-                var val = parseInt(input.value) || 20;
-                if (val < 20) val = 20;
+                var minVal = @minEntities;
+                var val = parseInt(input.value) || minVal;
+                if (val < minVal) val = minVal;
                 if (val > 2000) val = 2000;
                 val = Math.ceil(val / 10) * 10;
                 input.value = val;

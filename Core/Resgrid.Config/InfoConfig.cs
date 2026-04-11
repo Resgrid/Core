@@ -44,7 +44,7 @@ namespace Resgrid.Config
 				LocationInfo =
 					"This is the Resgrid system hosted in Central Europe (on OVH). This system services Resgrid customers in the European Union to help with data (GDPR) compliance requirements.",
 				IsDefault = false,
-				AppUrl = "https://app.eu-central.resgrid.com",
+				AppUrl = "https://app-eu-central.resgrid.com",
 				ApiUrl = "https://api-eu-central.resgrid.com",
 				AllowsFreeAccounts = false
 			}

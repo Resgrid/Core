@@ -45,5 +45,6 @@
 		WeatherAlertAutoMessageSeverity = 41,
 		WeatherAlertCallIntegration = 42,
 		WeatherAlertCacheMinutes = 43,
+		WeatherAlertAutoMessageSchedule = 44,
 	}
 }

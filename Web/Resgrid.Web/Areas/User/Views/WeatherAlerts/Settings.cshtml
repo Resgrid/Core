@@ -66,14 +66,25 @@
 						<div class="form-group">
 							<label class="col-sm-4 control-label">@localizer["AutoMessageSeverity"]</label>
 							<div class="col-sm-8">
-								<select class="form-control" id="settingAutoMsgSeverity" style="max-width:250px;">
-									<option value="0">@localizer["SeverityExtreme"]</option>
-									<option value="1">@localizer["SeveritySevere"]</option>
-									<option value="2">@localizer["SeverityModerate"]</option>
-									<option value="3">@localizer["SeverityMinor"]</option>
-									<option value="4">@localizer["SeverityUnknown"]</option>
-								</select>
-								<span class="help-block">@localizer["AutoMessageSeverityHelp"]</span>
+								<p class="text-muted" style="margin-bottom:10px;">Configure which severity levels generate auto-messages and optionally restrict them to specific hours (department local time). Set both hours to 0 for 24-hour delivery.</p>
+								<table class="table table-bordered" style="max-width:550px;">
+									<thead>
+										<tr>
+											<th>Severity</th>
+											<th style="width:60px;text-align:center;">Enabled</th>
+											<th style="width:100px;">Start Hour</th>
+											<th style="width:100px;">End Hour</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr><td>@localizer["SeverityExtreme"]</td><td style="text-align:center;"><input type="checkbox" class="sched-enabled" data-severity="0" /></td><td><input type="number" class="form-control input-sm sched-start" data-severity="0" min="0" max="23" value="0" /></td><td><input type="number" class="form-control input-sm sched-end" data-severity="0" min="0" max="23" value="0" /></td></tr>
+										<tr><td>@localizer["SeveritySevere"]</td><td style="text-align:center;"><input type="checkbox" class="sched-enabled" data-severity="1" /></td><td><input type="number" class="form-control input-sm sched-start" data-severity="1" min="0" max="23" value="0" /></td><td><input type="number" class="form-control input-sm sched-end" data-severity="1" min="0" max="23" value="0" /></td></tr>
+										<tr><td>@localizer["SeverityModerate"]</td><td style="text-align:center;"><input type="checkbox" class="sched-enabled" data-severity="2" /></td><td><input type="number" class="form-control input-sm sched-start" data-severity="2" min="0" max="23" value="0" /></td><td><input type="number" class="form-control input-sm sched-end" data-severity="2" min="0" max="23" value="0" /></td></tr>
+										<tr><td>@localizer["SeverityMinor"]</td><td style="text-align:center;"><input type="checkbox" class="sched-enabled" data-severity="3" /></td><td><input type="number" class="form-control input-sm sched-start" data-severity="3" min="0" max="23" value="0" /></td><td><input type="number" class="form-control input-sm sched-end" data-severity="3" min="0" max="23" value="0" /></td></tr>
+										<tr><td>@localizer["SeverityUnknown"]</td><td style="text-align:center;"><input type="checkbox" class="sched-enabled" data-severity="4" /></td><td><input type="number" class="form-control input-sm sched-start" data-severity="4" min="0" max="23" value="0" /></td><td><input type="number" class="form-control input-sm sched-end" data-severity="4" min="0" max="23" value="0" /></td></tr>
+									</tbody>
+								</table>
+								<input type="hidden" id="settingAutoMsgSeverity" value="1" />
 							</div>
 						</div>
 						<div class="form-group">
@@ -309,6 +320,14 @@
 						$('#settingMinSeverity').val(data.Data.MinimumSeverity);
 						$('#settingAutoMsgSeverity').val(data.Data.AutoMessageSeverity);
 						$('#settingCallIntegration').prop('checked', data.Data.CallIntegrationEnabled);
+
+						if (data.Data.AutoMessageSchedule && data.Data.AutoMessageSchedule.length > 0) {
+							data.Data.AutoMessageSchedule.forEach(function (entry) {
+								$('.sched-enabled[data-severity="' + entry.Severity + '"]').prop('checked', entry.Enabled);
+								$('.sched-start[data-severity="' + entry.Severity + '"]').val(entry.StartHour);
+								$('.sched-end[data-severity="' + entry.Severity + '"]').val(entry.EndHour);
+							});
+						}
 					}
 				},
 				error: function () {
@@ -318,11 +337,23 @@
 		}
 
 		function saveSettings() {
+			var schedule = [];
+			$('.sched-enabled').each(function () {
+				var sev = parseInt($(this).data('severity'));
+				schedule.push({
+					Severity: sev,
+					Enabled: $(this).is(':checked'),
+					StartHour: parseInt($('.sched-start[data-severity="' + sev + '"]').val()) || 0,
+					EndHour: parseInt($('.sched-end[data-severity="' + sev + '"]').val()) || 0
+				});
+			});
+
 			var data = {
 				WeatherAlertsEnabled: $('#settingEnabled').is(':checked'),
 				MinimumSeverity: parseInt($('#settingMinSeverity').val()),
 				AutoMessageSeverity: parseInt($('#settingAutoMsgSeverity').val()),
-				CallIntegrationEnabled: $('#settingCallIntegration').is(':checked')
+				CallIntegrationEnabled: $('#settingCallIntegration').is(':checked'),
+				AutoMessageSchedule: schedule
 			};
 
 			$.ajax({

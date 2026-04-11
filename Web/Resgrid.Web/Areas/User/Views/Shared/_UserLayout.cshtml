@@ -17,8 +17,11 @@
 
     <link rel="stylesheet" href="/css/int-bundle.css" />
 
-    <link rel="stylesheet" href="/js/ng/styles.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    @if (ViewBag.LoadAngular == true)
+    {
+        <link rel="stylesheet" href="/js/ng/styles.css" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    }
 
     <link rel="shortcut icon" href="~/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="~/images/apple-touch-icon.png">
@@ -127,16 +130,19 @@
         localStorage.setItem("RgWebApp.auth-tokens", '@Html.Raw(await JavasriptHelpers.GetApiToken())');
     </script>
 
-    <environment names="Release,Staging,Production,Docker">
-        <script src="/js/ng/app.js"></script>
-    </environment>
+    @if (ViewBag.LoadAngular == true)
+    {
+        <environment names="Release,Staging,Production,Docker">
+            <script src="/js/ng/app.js"></script>
+        </environment>
 
-    <environment names="Development">
-        <script src="/js/ng/runtime.js" asp-append-version="false"></script>
-        <script src="/js/ng/polyfills.js" asp-append-version="false"></script>
-        <script src="/js/ng/vendor.js" asp-append-version="false"></script>
-        <script src="/js/ng/main.js" asp-append-version="false"></script>
-    </environment>
+        <environment names="Development">
+            <script src="/js/ng/runtime.js" asp-append-version="false"></script>
+            <script src="/js/ng/polyfills.js" asp-append-version="false"></script>
+            <script src="/js/ng/vendor.js" asp-append-version="false"></script>
+            <script src="/js/ng/main.js" asp-append-version="false"></script>
+        </environment>
+    }
 
     @if (IsSectionDefined("Scripts"))
     {

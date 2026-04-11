@@ -107,17 +107,6 @@
     </script>
 
     <script src="/js/int-bundle.js"></script>
-    <script>
-        // Guard Pace.js finish() against null element references (known issue with Zone.js interaction)
-        if (window.Pace && Pace.bar) {
-            var _origFinish = Pace.bar.finish.bind(Pace.bar);
-            Pace.bar.finish = function () {
-                try { return _origFinish(); } catch (e) {
-                    document.body.className = document.body.className.replace('pace-running', '') + ' pace-done';
-                }
-            };
-        }
-    </script>
     <script src="~/lib/chart.js/dist/chart.umd.min.js" asp-append-version="true"></script>
     <script src="~/js/app/resgrid.js" asp-append-version="true"></script>
     <script src="~/js/app/internal/resgrid.user.js" asp-append-version="true"></script>

@@ -687,6 +687,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> GetStripeSession(int id, int count, string discountCode = null, CancellationToken cancellationToken = default)
 		{
+			if (count < 1 || count > 200)
+				return BadRequest("Invalid entity pack count.");
+
 			var plan = await _subscriptionsService.GetPlanByIdAsync(id);
 			var stripeCustomerId = await _departmentSettingsService.GetStripeCustomerIdForDepartmentAsync(DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
@@ -725,6 +728,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> GetPaddleCheckout(int id, int count, string discountCode = null, CancellationToken cancellationToken = default)
 		{
+			if (count < 1 || count > 200)
+				return BadRequest("Invalid entity pack count.");
+
 			var plan = await _subscriptionsService.GetPlanByIdAsync(id);
 			var paddleCustomerId = await _departmentSettingsService.GetPaddleCustomerIdForDepartmentAsync(DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);

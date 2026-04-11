@@ -32,7 +32,9 @@ namespace Resgrid.Web.Filters
 			"paymentpending",
 			"paymentfailed",
 			"logstriperesponse",
-			"stripebillinginfoupdatesuccess"
+			"stripebillinginfoupdatesuccess",
+			"getpaddlecheckout",
+			"paddleprocessing"
 		};
 
 		public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)

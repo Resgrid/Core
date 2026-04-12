@@ -23,15 +23,27 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly ICalendarExportService _calendarExportService;
 		private readonly ICalendarService _calendarService;
 		private readonly IUserProfileService _userProfileService;
+		private readonly IPermissionsService _permissionsService;
+		private readonly IPersonnelRolesService _personnelRolesService;
+		private readonly IDepartmentsService _departmentsService;
+		private readonly IDepartmentGroupsService _departmentGroupsService;
 
 		public CalendarExportController(
 			ICalendarExportService calendarExportService,
 			ICalendarService calendarService,
-			IUserProfileService userProfileService)
+			IUserProfileService userProfileService,
+			IPermissionsService permissionsService,
+			IPersonnelRolesService personnelRolesService,
+			IDepartmentsService departmentsService,
+			IDepartmentGroupsService departmentGroupsService)
 		{
 			_calendarExportService = calendarExportService;
 			_calendarService = calendarService;
 			_userProfileService = userProfileService;
+			_permissionsService = permissionsService;
+			_personnelRolesService = personnelRolesService;
+			_departmentsService = departmentsService;
+			_departmentGroupsService = departmentGroupsService;
 		}
 
 		/// <summary>
@@ -131,6 +143,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var validated = await _calendarService.ValidateCalendarFeedTokenAsync(token);
 			if (validated == null)
 				return Unauthorized();
+
+			// Check UseCalendarSync permission for the user who owns this token
+			var calSyncPerm = await _permissionsService.GetPermissionByDepartmentTypeAsync(validated.Value.DepartmentId, Resgrid.Model.PermissionTypes.UseCalendarSync);
+			if (calSyncPerm != null)
+			{
+				var dept = await _departmentsService.GetDepartmentByIdAsync(validated.Value.DepartmentId, false);
+				var isAdmin = dept != null && dept.IsUserAnAdmin(validated.Value.UserId);
+				var grp = await _departmentGroupsService.GetGroupForUserAsync(validated.Value.UserId, validated.Value.DepartmentId);
+				var isGroupAdmin = grp != null && grp.IsUserGroupAdmin(validated.Value.UserId);
+				var roles = await _personnelRolesService.GetRolesForUserAsync(validated.Value.UserId, validated.Value.DepartmentId);
+				if (!_permissionsService.IsUserAllowed(calSyncPerm, isAdmin, isGroupAdmin, roles))
+					return Unauthorized();
+			}
 
 			var icsContent = await _calendarExportService.GenerateICalForDepartmentAsync(validated.Value.DepartmentId);
 			var bytes = Encoding.UTF8.GetBytes(icsContent);

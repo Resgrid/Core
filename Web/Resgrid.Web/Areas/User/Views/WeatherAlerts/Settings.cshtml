@@ -88,6 +88,13 @@
 							</div>
 						</div>
 						<div class="form-group">
+							<label class="col-sm-4 control-label">Excluded Alert Events</label>
+							<div class="col-sm-8">
+								<textarea class="form-control" id="settingExcludedEvents" rows="3" placeholder="e.g. Lake Wind Advisory, Wind Advisory"></textarea>
+								<span class="help-block">Comma-separated list of alert event titles that should not generate auto-messages. Alerts will still appear in the dashboard but no Resgrid message will be created for these events.</span>
+							</div>
+						</div>
+						<div class="form-group">
 							<label class="col-sm-4 control-label">@localizer["EnableCallIntegration"]</label>
 							<div class="col-sm-8">
 								<div class="checkbox" style="margin-top:0;">
@@ -328,6 +335,10 @@
 								$('.sched-end[data-severity="' + entry.Severity + '"]').val(entry.EndHour);
 							});
 						}
+
+						if (data.Data.ExcludedEvents) {
+							$('#settingExcludedEvents').val(data.Data.ExcludedEvents);
+						}
 					}
 				},
 				error: function () {
@@ -353,7 +364,8 @@
 				MinimumSeverity: parseInt($('#settingMinSeverity').val()),
 				AutoMessageSeverity: parseInt($('#settingAutoMsgSeverity').val()),
 				CallIntegrationEnabled: $('#settingCallIntegration').is(':checked'),
-				AutoMessageSchedule: schedule
+				AutoMessageSchedule: schedule,
+				ExcludedEvents: $('#settingExcludedEvents').val() || ''
 			};
 
 			$.ajax({

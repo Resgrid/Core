@@ -134,6 +134,8 @@
             </div>
 
             @* Calendar Sync Panel *@
+            @if (Model.CanUseCalendarSync)
+            {
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <h5>@localizer["CalendarSyncTitle"]</h5>
@@ -191,9 +193,22 @@
                                 <i class="fa fa-refresh"></i> @localizer["RegenerateCalendarSync"]
                             </button>
                         </form>
+
+                        @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+                        {
+                            <form asp-controller="Calendar" asp-action="RegenerateAllCalendarSyncTokens" asp-route-area="User" method="post" style="margin-top:12px; padding-top:12px; border-top:1px solid #eee;">
+                                @Html.AntiForgeryToken()
+                                <p class="small text-muted">Admin: Regenerate all calendar sync tokens for every user in the department. This will invalidate all existing subscription URLs.</p>
+                                <button type="submit" class="btn btn-danger btn-sm"
+                                        onclick="return confirm('This will invalidate ALL calendar sync URLs for every user in your department. This cannot be undone. Continue?');">
+                                    <i class="fa fa-refresh"></i> Regenerate All Department Tokens
+                                </button>
+                            </form>
+                        }
                     }
                 </div>
             </div>
+            }
         </div>
     </div>
 </div>

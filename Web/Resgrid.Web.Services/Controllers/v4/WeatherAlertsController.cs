@@ -363,6 +363,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, scheduleJson, DepartmentSettingTypes.WeatherAlertAutoMessageSchedule);
 			}
 
+			await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, input.ExcludedEvents ?? "", DepartmentSettingTypes.WeatherAlertExcludedEvents);
+
 			var result = new GetWeatherAlertSettingsResult();
 			result.Data = new WeatherAlertSettingsData
 			{
@@ -370,7 +372,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				MinimumSeverity = input.MinimumSeverity,
 				AutoMessageSeverity = input.AutoMessageSeverity,
 				CallIntegrationEnabled = input.CallIntegrationEnabled,
-				AutoMessageSchedule = input.AutoMessageSchedule
+				AutoMessageSchedule = input.AutoMessageSchedule,
+				ExcludedEvents = input.ExcludedEvents
 			};
 
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -386,6 +389,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var autoMsgSetting = await _departmentSettingsService.GetSettingByTypeAsync(DepartmentId, DepartmentSettingTypes.WeatherAlertAutoMessageSeverity);
 			var callIntSetting = await _departmentSettingsService.GetSettingByTypeAsync(DepartmentId, DepartmentSettingTypes.WeatherAlertCallIntegration);
 			var scheduleSetting = await _departmentSettingsService.GetSettingByTypeAsync(DepartmentId, DepartmentSettingTypes.WeatherAlertAutoMessageSchedule);
+			var excludedEventsSetting = await _departmentSettingsService.GetSettingByTypeAsync(DepartmentId, DepartmentSettingTypes.WeatherAlertExcludedEvents);
 
 			if (enabledSetting != null && !string.IsNullOrWhiteSpace(enabledSetting.Setting))
 				settings.WeatherAlertsEnabled = bool.TryParse(enabledSetting.Setting, out var enabled) && enabled;
@@ -407,6 +411,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 				catch { }
 			}
+
+			if (excludedEventsSetting != null && !string.IsNullOrWhiteSpace(excludedEventsSetting.Setting))
+				settings.ExcludedEvents = excludedEventsSetting.Setting;
 
 			return settings;
 		}

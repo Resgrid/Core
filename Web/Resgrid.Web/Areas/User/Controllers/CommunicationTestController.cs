@@ -22,24 +22,40 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly ICommunicationTestService _communicationTestService;
 		private readonly IUserProfileService _userProfileService;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly IDepartmentGroupsService _departmentGroupsService;
+		private readonly IDepartmentsService _departmentsService;
 
 		public CommunicationTestController(
 			ICommunicationTestService communicationTestService,
 			IUserProfileService userProfileService,
-			IEventAggregator eventAggregator)
+			IEventAggregator eventAggregator,
+			IDepartmentGroupsService departmentGroupsService,
+			IDepartmentsService departmentsService)
 		{
 			_communicationTestService = communicationTestService;
 			_userProfileService = userProfileService;
 			_eventAggregator = eventAggregator;
+			_departmentGroupsService = departmentGroupsService;
+			_departmentsService = departmentsService;
 		}
 
 		[HttpGet]
 		public async Task<IActionResult> Index()
 		{
-			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+			bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+			bool isGroupAdmin = false;
+
+			if (!isDeptAdmin)
+			{
+				var group = await _departmentGroupsService.GetGroupForUserAsync(UserId, DepartmentId);
+				isGroupAdmin = group != null && group.IsUserGroupAdmin(UserId);
+			}
+
+			if (!isDeptAdmin && !isGroupAdmin)
 				return Unauthorized();
 
 			var model = new CommunicationTestIndexView();
+			model.IsDepartmentAdmin = isDeptAdmin;
 
 			var tests = await _communicationTestService.GetTestsByDepartmentIdAsync(DepartmentId);
 			if (tests != null)
@@ -287,7 +303,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		public async Task<IActionResult> Report(string runId)
 		{
-			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+			bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+			bool isGroupAdmin = false;
+			DepartmentGroup userGroup = null;
+
+			if (!isDeptAdmin)
+			{
+				userGroup = await _departmentGroupsService.GetGroupForUserAsync(UserId, DepartmentId);
+				isGroupAdmin = userGroup != null && userGroup.IsUserGroupAdmin(UserId);
+			}
+
+			if (!isDeptAdmin && !isGroupAdmin)
 				return Unauthorized();
 
 			if (!Guid.TryParse(runId, out var id))
@@ -299,13 +325,39 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var test = await _communicationTestService.GetTestByIdAsync(run.CommunicationTestId);
 			var results = await _communicationTestService.GetResultsByRunIdAsync(id);
+			var resultList = results?.ToList() ?? new List<CommunicationTestResult>();
 			var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId);
+
+			// Group admins only see results for members in their group and child groups
+			if (!isDeptAdmin && isGroupAdmin && userGroup != null)
+			{
+				var allowedUserIds = new HashSet<string>();
+
+				// Add members of the admin's own group
+				var groupMembers = await _departmentGroupsService.GetAllMembersForGroupAsync(userGroup.DepartmentGroupId);
+				foreach (var m in groupMembers)
+					allowedUserIds.Add(m.UserId);
+
+				// Add members of child groups
+				var childGroups = await _departmentGroupsService.GetAllChildDepartmentGroupsAsync(userGroup.DepartmentGroupId);
+				if (childGroups != null)
+				{
+					foreach (var childGroup in childGroups)
+					{
+						var childMembers = await _departmentGroupsService.GetAllMembersForGroupAsync(childGroup.DepartmentGroupId);
+						foreach (var m in childMembers)
+							allowedUserIds.Add(m.UserId);
+					}
+				}
+
+				resultList = resultList.Where(r => allowedUserIds.Contains(r.UserId)).ToList();
+			}
 
 			var model = new CommunicationTestReportView
 			{
 				Run = run,
 				Test = test,
-				Results = results?.ToList() ?? new List<CommunicationTestResult>(),
+				Results = resultList,
 				Profiles = profiles ?? new Dictionary<string, UserProfile>()
 			};
 

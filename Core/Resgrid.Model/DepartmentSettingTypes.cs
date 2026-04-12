@@ -46,5 +46,6 @@
 		WeatherAlertCallIntegration = 42,
 		WeatherAlertCacheMinutes = 43,
 		WeatherAlertAutoMessageSchedule = 44,
+		WeatherAlertExcludedEvents = 45,
 	}
 }

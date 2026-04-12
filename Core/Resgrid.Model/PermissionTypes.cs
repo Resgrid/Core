@@ -29,7 +29,8 @@
 		ViewWorkflowRuns = 24,
 		ViewUdfFields = 25,
 		ManageRoutes = 26,
-		DeleteLog = 27
+		DeleteLog = 27,
+		UseCalendarSync = 28
 	}
 
 }

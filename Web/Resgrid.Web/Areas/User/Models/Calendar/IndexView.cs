@@ -14,5 +14,7 @@ namespace Resgrid.Web.Areas.User.Models.Calendar
 		public string CalendarSyncToken { get; set; }
 		/// <summary>The full HTTPS subscription URL to display to the user once sync is activated.</summary>
 		public string CalendarSubscriptionUrl { get; set; }
+		/// <summary>Whether the current user has permission to use calendar sync.</summary>
+		public bool CanUseCalendarSync { get; set; }
 	}
 }

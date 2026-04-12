@@ -336,9 +336,7 @@
 							});
 						}
 
-						if (data.Data.ExcludedEvents) {
-							$('#settingExcludedEvents').val(data.Data.ExcludedEvents);
-						}
+						$('#settingExcludedEvents').val(data.Data.ExcludedEvents || '');
 					}
 				},
 				error: function () {

@@ -964,7 +964,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 			}
 
-			return RedirectToAction("Index");
+			return RedirectToAction("Api", "Department");
 		}
 
 		// -- Check-In Attendance -------------------------------------------------------

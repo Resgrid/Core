@@ -1,7 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Config;
+using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Services.Helpers;
@@ -86,6 +87,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Schedule_View)]
 		public async Task<ActionResult<GetCalendarSubscriptionUrlResult>> GetCalendarSubscriptionUrl()
 		{
+			if (!await HasCalendarSyncPermissionAsync(DepartmentId, UserId))
+				return Unauthorized();
+
 			var result = new GetCalendarSubscriptionUrlResult();
 
 			// Activate if not already done; returns existing token if already active.
@@ -111,6 +115,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		public async Task<ActionResult<GetCalendarSubscriptionUrlResult>> RegenerateCalendarSubscriptionUrl(
 			CancellationToken cancellationToken)
 		{
+			if (!await HasCalendarSyncPermissionAsync(DepartmentId, UserId))
+				return Unauthorized();
+
 			var result = new GetCalendarSubscriptionUrlResult();
 
 			var token = await _calendarService.RegenerateCalendarSyncAsync(DepartmentId, UserId, cancellationToken);
@@ -144,18 +151,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (validated == null)
 				return Unauthorized();
 
-			// Check UseCalendarSync permission for the user who owns this token
-			var calSyncPerm = await _permissionsService.GetPermissionByDepartmentTypeAsync(validated.Value.DepartmentId, Resgrid.Model.PermissionTypes.UseCalendarSync);
-			if (calSyncPerm != null)
-			{
-				var dept = await _departmentsService.GetDepartmentByIdAsync(validated.Value.DepartmentId, false);
-				var isAdmin = dept != null && dept.IsUserAnAdmin(validated.Value.UserId);
-				var grp = await _departmentGroupsService.GetGroupForUserAsync(validated.Value.UserId, validated.Value.DepartmentId);
-				var isGroupAdmin = grp != null && grp.IsUserGroupAdmin(validated.Value.UserId);
-				var roles = await _personnelRolesService.GetRolesForUserAsync(validated.Value.UserId, validated.Value.DepartmentId);
-				if (!_permissionsService.IsUserAllowed(calSyncPerm, isAdmin, isGroupAdmin, roles))
-					return Unauthorized();
-			}
+			if (!await HasCalendarSyncPermissionAsync(validated.Value.DepartmentId, validated.Value.UserId))
+				return Unauthorized();
 
 			var icsContent = await _calendarExportService.GenerateICalForDepartmentAsync(validated.Value.DepartmentId);
 			var bytes = Encoding.UTF8.GetBytes(icsContent);
@@ -163,6 +160,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 			Response.Headers["X-WR-CACHETIME"] = $"PT{CalendarConfig.ICalFeedCacheDurationMinutes}M";
 			return File(bytes, "text/calendar", "calendar.ics");
 		}
+
+		private async Task<bool> HasCalendarSyncPermissionAsync(int departmentId, string userId)
+		{
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionTypes.UseCalendarSync);
+			if (permission == null)
+				return true; // No permission configured = default Everyone
+
+			var dept = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
+			var isAdmin = dept != null && dept.IsUserAnAdmin(userId);
+			var grp = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+			var isGroupAdmin = grp != null && grp.IsUserGroupAdmin(userId);
+			var roles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+
+			return _permissionsService.IsUserAllowed(permission, isAdmin, isGroupAdmin, roles);
+		}
 	}
 }
-

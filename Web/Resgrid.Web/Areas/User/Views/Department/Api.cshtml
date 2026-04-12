@@ -58,6 +58,31 @@
     </div>
   </div>
 </div>
+
+<div class="row">
+  <div class="col-xs-12">
+    <div class="wrapper wrapper-content">
+      <div class="ibox float-e-margins">
+        <div class="ibox-content">
+          <h5>Calendar Sync Tokens</h5>
+          <p>
+            Calendar sync allows users to subscribe to the department calendar from external calendar applications (Google Calendar, Outlook, Apple Calendar).
+            Use the button below to regenerate all calendar sync tokens for every user in the department. This will invalidate all existing subscription URLs
+            and users will need to re-subscribe.
+          </p>
+          <form asp-controller="Calendar" asp-action="RegenerateAllCalendarSyncTokens" asp-route-area="User" method="post">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-danger"
+                    onclick="return confirm('This will invalidate ALL calendar sync URLs for every user in your department. Users will need to re-subscribe. Continue?');">
+              <i class="fa fa-refresh"></i> Regenerate All Calendar Sync Tokens
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 @section Scripts
 {
 

@@ -418,6 +418,15 @@
   <data name="AutoMessageSeverityHelp" xml:space="preserve">
     <value>Alerty o tej lub wyższej ważności automatycznie wyślą wiadomość do wszystkich członków departamentu. Niższa wartość = wyższa ważność (Ekstremalna=0, Poważna=1, Umiarkowana=2, Niewielka=3).</value>
   </data>
+  <data name="ExcludedEventsLabel" xml:space="preserve">
+    <value>Wykluczone zdarzenia alertów</value>
+  </data>
+  <data name="ExcludedEventsPlaceholder" xml:space="preserve">
+    <value>np. Ostrzeżenie o wietrze nad jeziorem, Ostrzeżenie o wietrze</value>
+  </data>
+  <data name="ExcludedEventsHelp" xml:space="preserve">
+    <value>Lista tytułów zdarzeń alertów oddzielonych przecinkami, dla których nie powinny być generowane automatyczne wiadomości. Alerty nadal będą wyświetlane w panelu, ale nie zostanie utworzona żadna wiadomość Resgrid dla tych zdarzeń.</value>
+  </data>
   <data name="EnableCallIntegration" xml:space="preserve">
     <value>Dołącz Kontekst Pogodowy do Wezwań</value>
   </data>

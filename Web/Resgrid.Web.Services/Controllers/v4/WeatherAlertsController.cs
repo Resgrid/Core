@@ -363,7 +363,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, scheduleJson, DepartmentSettingTypes.WeatherAlertAutoMessageSchedule);
 			}
 
-			await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, input.ExcludedEvents ?? "", DepartmentSettingTypes.WeatherAlertExcludedEvents);
+			var excludedEvents = input.ExcludedEvents ?? "";
+			await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, excludedEvents, DepartmentSettingTypes.WeatherAlertExcludedEvents);
 
 			var result = new GetWeatherAlertSettingsResult();
 			result.Data = new WeatherAlertSettingsData
@@ -373,7 +374,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				AutoMessageSeverity = input.AutoMessageSeverity,
 				CallIntegrationEnabled = input.CallIntegrationEnabled,
 				AutoMessageSchedule = input.AutoMessageSchedule,
-				ExcludedEvents = input.ExcludedEvents
+				ExcludedEvents = excludedEvents
 			};
 
 			ResponseHelper.PopulateV4ResponseData(result);

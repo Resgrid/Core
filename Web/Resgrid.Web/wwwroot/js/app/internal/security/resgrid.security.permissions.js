@@ -755,6 +755,33 @@ var resgrid;
                 initPermRoles("#workflowRunsRoles", 24);
                 ////////////////////////////////////////////////////////
 
+                // Use Calendar Sync
+                ////////////////////////////////////////////////////////
+                $('#UseCalendarSync').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=28&perm=' + val,
+                        type: 'GET'
+                    }).done(function (results) {
+                    });
+                    if ($("#UseCalendarSync").val() === "2") {
+                        $('#calSyncNoRolesSpan').hide();
+                        $('#calSyncRolesDiv').show();
+                    } else {
+                        $('#calSyncNoRolesSpan').show();
+                        $('#calSyncRolesDiv').hide();
+                    }
+                });
+                if ($("#UseCalendarSync").val() === "2") {
+                    $('#calSyncNoRolesSpan').hide();
+                    $('#calSyncRolesDiv').show();
+                } else {
+                    $('#calSyncNoRolesSpan').show();
+                    $('#calSyncRolesDiv').hide();
+                }
+                initPermRoles("#calSyncRoles", 28);
+                ////////////////////////////////////////////////////////
+
             });
         })(permissions = security.permissions || (security.permissions = {}));
     })(security = resgrid.security || (resgrid.security = {}));

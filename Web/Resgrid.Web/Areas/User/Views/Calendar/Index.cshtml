@@ -134,6 +134,8 @@
             </div>
 
             @* Calendar Sync Panel *@
+            @if (Model.CanUseCalendarSync)
+            {
             <div class="ibox float-e-margins">
                 <div class="ibox-title">
                     <h5>@localizer["CalendarSyncTitle"]</h5>
@@ -191,9 +193,12 @@
                                 <i class="fa fa-refresh"></i> @localizer["RegenerateCalendarSync"]
                             </button>
                         </form>
+
+
                     }
                 </div>
             </div>
+            }
         </div>
     </div>
 </div>

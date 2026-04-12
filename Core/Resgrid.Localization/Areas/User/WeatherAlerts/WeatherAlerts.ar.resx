@@ -418,6 +418,15 @@
   <data name="AutoMessageSeverityHelp" xml:space="preserve">
     <value>التنبيهات بهذه الخطورة أو أعلى سترسل تلقائياً رسالة إلى جميع أعضاء القسم. قيمة أقل = خطورة أعلى (شديدة للغاية=0، شديدة=1، معتدلة=2، طفيفة=3).</value>
   </data>
+  <data name="ExcludedEventsLabel" xml:space="preserve">
+    <value>أحداث التنبيه المستبعدة</value>
+  </data>
+  <data name="ExcludedEventsPlaceholder" xml:space="preserve">
+    <value>مثال: تحذير رياح البحيرة، تحذير الرياح</value>
+  </data>
+  <data name="ExcludedEventsHelp" xml:space="preserve">
+    <value>قائمة مفصولة بفواصل لعناوين أحداث التنبيه التي لا ينبغي أن تولد رسائل تلقائية. ستظل التنبيهات تظهر في لوحة المعلومات ولكن لن يتم إنشاء رسالة Resgrid لهذه الأحداث.</value>
+  </data>
   <data name="EnableCallIntegration" xml:space="preserve">
     <value>إرفاق سياق الطقس بالمكالمات</value>
   </data>

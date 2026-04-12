@@ -418,6 +418,15 @@
   <data name="AutoMessageSeverityHelp" xml:space="preserve">
     <value>Les alertes de cette sévérité ou supérieure enverront automatiquement un message à tous les membres du département. Valeur plus basse = sévérité plus élevée (Extrême=0, Sévère=1, Modérée=2, Mineure=3).</value>
   </data>
+  <data name="ExcludedEventsLabel" xml:space="preserve">
+    <value>Événements d'alerte exclus</value>
+  </data>
+  <data name="ExcludedEventsPlaceholder" xml:space="preserve">
+    <value>ex. Avis de vent lacustre, Avis de vent</value>
+  </data>
+  <data name="ExcludedEventsHelp" xml:space="preserve">
+    <value>Liste de titres d'événements d'alerte séparés par des virgules qui ne doivent pas générer de messages automatiques. Les alertes apparaîtront toujours dans le tableau de bord mais aucun message Resgrid ne sera créé pour ces événements.</value>
+  </data>
   <data name="EnableCallIntegration" xml:space="preserve">
     <value>Joindre le Contexte Météo aux Appels</value>
   </data>

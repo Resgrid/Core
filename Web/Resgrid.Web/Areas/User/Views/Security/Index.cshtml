@@ -313,6 +313,16 @@
                                             <div id="workflowRunsRolesDiv" style="display: none;"><select id="workflowRunsRoles" name="workflowRunsRoles"></select></div>
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td>Use Calendar Sync</td>
+                                        <td style="max-width: 350px">Controls who can activate and use calendar subscription URLs to sync Resgrid calendar events to external calendar applications.</td>
+                                        <td>@Html.DropDownListFor(m => m.UseCalendarSync, Model.UseCalendarSyncPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="calSyncNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="calSyncRolesDiv" style="display: none;"><select id="calSyncRoles" name="calSyncRoles"></select></div>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>

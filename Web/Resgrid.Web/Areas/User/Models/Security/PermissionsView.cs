@@ -91,6 +91,9 @@ namespace Resgrid.Web.Areas.User.Models.Security
 		public int ViewWorkflowRuns { get; set; }
 		public SelectList ViewWorkflowRunsPermissions { get; set; }
 
+		public int UseCalendarSync { get; set; }
+		public SelectList UseCalendarSyncPermissions { get; set; }
+
 		// Two-Factor Authentication enforcement
 		public int Require2FAForAdmins { get; set; }
 		public SelectList Require2FAForAdminsOptions { get; set; }

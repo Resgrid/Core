@@ -382,6 +382,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.ViewWorkflowRunsPermissions = new SelectList(viewWorkflowRunsPermissions, "Id", "Name");
 
 			// 2FA enforcement scope � only managingUser can change this
+			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.UseCalendarSync))
+				model.UseCalendarSync = permissions.First(x => x.PermissionType == (int)PermissionTypes.UseCalendarSync).Action;
+			else
+				model.UseCalendarSync = 3;
+
+			var useCalendarSyncPermissions = new List<dynamic>();
+			useCalendarSyncPermissions.Add(new { Id = 3, Name = "Everyone" });
+			useCalendarSyncPermissions.Add(new { Id = 0, Name = "Department Admins" });
+			useCalendarSyncPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
+			useCalendarSyncPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			model.UseCalendarSyncPermissions = new SelectList(useCalendarSyncPermissions, "Id", "Name");
+
+
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.IsManagingUser = department.ManagingUserId == UserId;
 			model.Require2FAForAdmins = await _departmentSettingsService.GetRequire2FAForAdminsAsync(DepartmentId);

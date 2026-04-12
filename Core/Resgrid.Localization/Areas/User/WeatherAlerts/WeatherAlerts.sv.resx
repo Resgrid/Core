@@ -418,6 +418,15 @@
   <data name="AutoMessageSeverityHelp" xml:space="preserve">
     <value>Varningar med denna eller högre allvarlighetsgrad skickar automatiskt ett meddelande till alla avdelningsmedlemmar. Lägre värde = högre allvarlighetsgrad (Extrem=0, Allvarlig=1, Måttlig=2, Mindre=3).</value>
   </data>
+  <data name="ExcludedEventsLabel" xml:space="preserve">
+    <value>Exkluderade varningshändelser</value>
+  </data>
+  <data name="ExcludedEventsPlaceholder" xml:space="preserve">
+    <value>t.ex. Vindvarning vid sjö, Vindvarning</value>
+  </data>
+  <data name="ExcludedEventsHelp" xml:space="preserve">
+    <value>Kommaseparerad lista med varningstitlar som inte ska generera automatiska meddelanden. Varningarna visas fortfarande i instrumentpanelen men inget Resgrid-meddelande skapas för dessa händelser.</value>
+  </data>
   <data name="EnableCallIntegration" xml:space="preserve">
     <value>Bifoga Väderkontext till Utryckningar</value>
   </data>

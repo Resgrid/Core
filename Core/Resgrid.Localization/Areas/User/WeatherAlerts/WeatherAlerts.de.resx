@@ -418,6 +418,15 @@
   <data name="AutoMessageSeverityHelp" xml:space="preserve">
     <value>Warnungen mit diesem oder höherem Schweregrad senden automatisch eine Nachricht an alle Abteilungsmitglieder. Niedrigerer Wert = höherer Schweregrad (Extrem=0, Schwer=1, Mäßig=2, Gering=3).</value>
   </data>
+  <data name="ExcludedEventsLabel" xml:space="preserve">
+    <value>Ausgeschlossene Alarmereignisse</value>
+  </data>
+  <data name="ExcludedEventsPlaceholder" xml:space="preserve">
+    <value>z.B. Windwarnung am See, Windwarnung</value>
+  </data>
+  <data name="ExcludedEventsHelp" xml:space="preserve">
+    <value>Kommagetrennte Liste von Alarm-Ereignistiteln, für die keine automatischen Nachrichten erstellt werden sollen. Die Alarme werden weiterhin im Dashboard angezeigt, aber es wird keine Resgrid-Nachricht für diese Ereignisse erstellt.</value>
+  </data>
   <data name="EnableCallIntegration" xml:space="preserve">
     <value>Wetterkontext an Einsätze anhängen</value>
   </data>

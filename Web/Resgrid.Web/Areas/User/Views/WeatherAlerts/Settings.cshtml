@@ -88,6 +88,13 @@
 							</div>
 						</div>
 						<div class="form-group">
+							<label class="col-sm-4 control-label">@localizer["ExcludedEventsLabel"]</label>
+							<div class="col-sm-8">
+								<textarea class="form-control" id="settingExcludedEvents" rows="3" placeholder="@localizer["ExcludedEventsPlaceholder"]"></textarea>
+								<span class="help-block">@localizer["ExcludedEventsHelp"]</span>
+							</div>
+						</div>
+						<div class="form-group">
 							<label class="col-sm-4 control-label">@localizer["EnableCallIntegration"]</label>
 							<div class="col-sm-8">
 								<div class="checkbox" style="margin-top:0;">
@@ -328,6 +335,8 @@
 								$('.sched-end[data-severity="' + entry.Severity + '"]').val(entry.EndHour);
 							});
 						}
+
+						$('#settingExcludedEvents').val(data.Data.ExcludedEvents || '');
 					}
 				},
 				error: function () {
@@ -353,7 +362,8 @@
 				MinimumSeverity: parseInt($('#settingMinSeverity').val()),
 				AutoMessageSeverity: parseInt($('#settingAutoMsgSeverity').val()),
 				CallIntegrationEnabled: $('#settingCallIntegration').is(':checked'),
-				AutoMessageSchedule: schedule
+				AutoMessageSchedule: schedule,
+				ExcludedEvents: $('#settingExcludedEvents').val() || ''
 			};
 
 			$.ajax({

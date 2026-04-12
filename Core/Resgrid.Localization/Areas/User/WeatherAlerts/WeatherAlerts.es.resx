@@ -418,6 +418,15 @@
   <data name="AutoMessageSeverityHelp" xml:space="preserve">
     <value>Las alertas con esta severidad o superior enviarán automáticamente un mensaje a todos los miembros del departamento. Valor más bajo = mayor severidad (Extrema=0, Severa=1, Moderada=2, Menor=3).</value>
   </data>
+  <data name="ExcludedEventsLabel" xml:space="preserve">
+    <value>Eventos de Alerta Excluidos</value>
+  </data>
+  <data name="ExcludedEventsPlaceholder" xml:space="preserve">
+    <value>ej. Aviso de Viento en Lago, Aviso de Viento</value>
+  </data>
+  <data name="ExcludedEventsHelp" xml:space="preserve">
+    <value>Lista de títulos de eventos de alerta separados por comas que no deben generar mensajes automáticos. Las alertas seguirán apareciendo en el panel pero no se creará ningún mensaje de Resgrid para estos eventos.</value>
+  </data>
   <data name="EnableCallIntegration" xml:space="preserve">
     <value>Adjuntar Contexto Meteorológico a Llamadas</value>
   </data>

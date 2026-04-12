@@ -34,10 +34,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IAuthorizationService _authorizationService;
 		private readonly IUserProfileService _userProfileService;
+		private readonly IPermissionsService _permissionsService;
+		private readonly IPersonnelRolesService _personnelRolesService;
 
 		public CalendarController(IDepartmentsService departmentsService, IUsersService usersService, ICalendarService calendarService,
 			IDepartmentGroupsService departmentGroupsService, IGeoLocationProvider geoLocationProvider, IEventAggregator eventAggregator,
-			IAuthorizationService authorizationService, IUserProfileService userProfileService)
+			IAuthorizationService authorizationService, IUserProfileService userProfileService,
+			IPermissionsService permissionsService, IPersonnelRolesService personnelRolesService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -47,6 +50,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_eventAggregator = eventAggregator;
 			_authorizationService = authorizationService;
 			_userProfileService = userProfileService;
+			_permissionsService = permissionsService;
+			_personnelRolesService = personnelRolesService;
 		}
 		#endregion Private Members and Constructors
 
@@ -69,13 +74,25 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.UpcomingItems = new List<CalendarItem>();
 			model.UpcomingItems = await _calendarService.GetUpcomingCalendarItemsAsync(DepartmentId, DateTime.UtcNow);
 
+			// Check calendar sync permission
+			var calSyncPermission = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.UseCalendarSync);
+			var department = model.Department;
+			var isAdmin = department.IsUserAnAdmin(UserId);
+			var group = await _departmentGroupsService.GetGroupForUserAsync(UserId, DepartmentId);
+			var isGroupAdmin = group != null && group.IsUserGroupAdmin(UserId);
+			var roles = await _personnelRolesService.GetRolesForUserAsync(UserId, DepartmentId);
+			model.CanUseCalendarSync = _permissionsService.IsUserAllowed(calSyncPermission, isAdmin, isGroupAdmin, roles);
+
 			// Populate calendar sync token for the subscribe panel.
-			var profile = await _userProfileService.GetProfileByUserIdAsync(UserId);
-			if (profile != null && !String.IsNullOrWhiteSpace(profile.CalendarSyncToken))
+			if (model.CanUseCalendarSync)
 			{
-				model.CalendarSyncToken = profile.CalendarSyncToken;
-				var feedToken = await _calendarService.GetCalendarFeedTokenAsync(DepartmentId, UserId);
-				model.CalendarSubscriptionUrl = $"{SystemBehaviorConfig.ResgridApiBaseUrl}/api/v4/CalendarExport/CalendarFeed/{feedToken}";
+				var profile = await _userProfileService.GetProfileByUserIdAsync(UserId);
+				if (profile != null && !String.IsNullOrWhiteSpace(profile.CalendarSyncToken))
+				{
+					model.CalendarSyncToken = profile.CalendarSyncToken;
+					var feedToken = await _calendarService.GetCalendarFeedTokenAsync(DepartmentId, UserId);
+					model.CalendarSubscriptionUrl = $"{SystemBehaviorConfig.ResgridApiBaseUrl}/api/v4/CalendarExport/CalendarFeed/{feedToken}";
+				}
 			}
 
 			return View(model);
@@ -895,6 +912,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> ActivateCalendarSync(CancellationToken cancellationToken)
 		{
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.UseCalendarSync);
+			var dept = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var grp = await _departmentGroupsService.GetGroupForUserAsync(UserId, DepartmentId);
+			var roles = await _personnelRolesService.GetRolesForUserAsync(UserId, DepartmentId);
+			if (!_permissionsService.IsUserAllowed(permission, dept.IsUserAnAdmin(UserId), grp != null && grp.IsUserGroupAdmin(UserId), roles))
+				return Unauthorized();
+
 			await _calendarService.ActivateCalendarSyncAsync(DepartmentId, UserId, cancellationToken);
 			return RedirectToAction("Index");
 		}
@@ -908,8 +932,39 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> RegenerateCalendarSync(CancellationToken cancellationToken)
 		{
+			var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.UseCalendarSync);
+			var dept = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var grp = await _departmentGroupsService.GetGroupForUserAsync(UserId, DepartmentId);
+			var roles = await _personnelRolesService.GetRolesForUserAsync(UserId, DepartmentId);
+			if (!_permissionsService.IsUserAllowed(permission, dept.IsUserAnAdmin(UserId), grp != null && grp.IsUserGroupAdmin(UserId), roles))
+				return Unauthorized();
+
 			await _calendarService.RegenerateCalendarSyncAsync(DepartmentId, UserId, cancellationToken);
 			return RedirectToAction("Index");
+		}
+
+		/// <summary>
+		/// Admin action: regenerates calendar sync tokens for ALL users in the department who have one provisioned.
+		/// </summary>
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> RegenerateAllCalendarSyncTokens(CancellationToken cancellationToken)
+		{
+			var members = await _departmentsService.GetAllMembersForDepartmentAsync(DepartmentId);
+			if (members != null)
+			{
+				foreach (var member in members)
+				{
+					var profile = await _userProfileService.GetProfileByUserIdAsync(member.UserId);
+					if (profile != null && !string.IsNullOrWhiteSpace(profile.CalendarSyncToken))
+					{
+						await _calendarService.RegenerateCalendarSyncAsync(DepartmentId, member.UserId, cancellationToken);
+					}
+				}
+			}
+
+			return RedirectToAction("Api", "Department");
 		}
 
 		// -- Check-In Attendance -------------------------------------------------------

@@ -72,20 +72,23 @@
                                         </td>
                                         <td>@test.ResponseWindowMinutes min</td>
                                         <td style="text-align:right;">
-                                            @if (test.ScheduleType == (int)Resgrid.Model.CommunicationTestScheduleType.OnDemand)
+                                            @if (Model.IsDepartmentAdmin)
                                             {
-                                                <form asp-controller="CommunicationTest" asp-action="StartRun" asp-route-area="User" method="post" style="display:inline;">
+                                                if (test.ScheduleType == (int)Resgrid.Model.CommunicationTestScheduleType.OnDemand)
+                                                {
+                                                    <form asp-controller="CommunicationTest" asp-action="StartRun" asp-route-area="User" method="post" style="display:inline;">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="testId" value="@test.CommunicationTestId" />
+                                                        <button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('Start a communication test run now?');">Run Now</button>
+                                                    </form>
+                                                }
+                                                <a class="btn btn-sm btn-info" asp-controller="CommunicationTest" asp-action="Edit" asp-route-area="User" asp-route-testId="@test.CommunicationTestId">Edit</a>
+                                                <form asp-controller="CommunicationTest" asp-action="Delete" asp-route-area="User" method="post" style="display:inline;">
                                                     @Html.AntiForgeryToken()
                                                     <input type="hidden" name="testId" value="@test.CommunicationTestId" />
-                                                    <button type="submit" class="btn btn-sm btn-primary" onclick="return confirm('Start a communication test run now?');">Run Now</button>
+                                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this test?');">Delete</button>
                                                 </form>
                                             }
-                                            <a class="btn btn-sm btn-info" asp-controller="CommunicationTest" asp-action="Edit" asp-route-area="User" asp-route-testId="@test.CommunicationTestId">Edit</a>
-                                            <form asp-controller="CommunicationTest" asp-action="Delete" asp-route-area="User" method="post" style="display:inline;">
-                                                @Html.AntiForgeryToken()
-                                                <input type="hidden" name="testId" value="@test.CommunicationTestId" />
-                                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this test?');">Delete</button>
-                                            </form>
                                         </td>
                                     </tr>
                                 }

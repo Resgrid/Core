@@ -340,6 +340,17 @@ namespace Resgrid.Services
 						legacyThreshold = parsed;
 				}
 
+				// Load excluded event titles
+				HashSet<string> excludedEvents = null;
+				var excludedSetting = await _departmentSettingsRepository.GetDepartmentSettingByIdTypeAsync(
+					departmentId, DepartmentSettingTypes.WeatherAlertExcludedEvents);
+				if (excludedSetting != null && !string.IsNullOrWhiteSpace(excludedSetting.Setting))
+				{
+					excludedEvents = new HashSet<string>(
+						excludedSetting.Setting.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries),
+						StringComparer.OrdinalIgnoreCase);
+				}
+
 				// Load department for sender info and time conversion
 				Department department = null;
 				try
@@ -353,6 +364,15 @@ namespace Resgrid.Services
 
 				foreach (var alert in group)
 				{
+					// Skip excluded event titles
+					if (excludedEvents != null && !string.IsNullOrWhiteSpace(alert.Event) && excludedEvents.Contains(alert.Event))
+					{
+						alert.NotificationSent = true;
+						alert.LastUpdatedUtc = DateTime.UtcNow;
+						await _weatherAlertRepository.UpdateAsync(alert, ct, true);
+						continue;
+					}
+
 					bool shouldSend = ShouldSendAutoMessage(alert.Severity, schedule, legacyThreshold, department);
 					if (shouldSend)
 					{

@@ -418,6 +418,15 @@
   <data name="AutoMessageSeverityHelp" xml:space="preserve">
     <value>Le allerte con questa gravità o superiore invieranno automaticamente un messaggio a tutti i membri del dipartimento. Valore più basso = gravità più alta (Estrema=0, Grave=1, Moderata=2, Lieve=3).</value>
   </data>
+  <data name="ExcludedEventsLabel" xml:space="preserve">
+    <value>Eventi di allerta esclusi</value>
+  </data>
+  <data name="ExcludedEventsPlaceholder" xml:space="preserve">
+    <value>es. Avviso vento sul lago, Avviso di vento</value>
+  </data>
+  <data name="ExcludedEventsHelp" xml:space="preserve">
+    <value>Elenco separato da virgole di titoli di eventi di allerta che non devono generare messaggi automatici. Gli avvisi continueranno ad apparire nel pannello ma non verrà creato alcun messaggio Resgrid per questi eventi.</value>
+  </data>
   <data name="EnableCallIntegration" xml:space="preserve">
     <value>Allega Contesto Meteo alle Chiamate</value>
   </data>

@@ -9,5 +9,6 @@ namespace Resgrid.Web.Services.Models.v4.WeatherAlerts
 		public int AutoMessageSeverity { get; set; }
 		public bool CallIntegrationEnabled { get; set; }
 		public List<WeatherAlertSeverityScheduleData> AutoMessageSchedule { get; set; }
+		public string ExcludedEvents { get; set; }
 	}
 }

@@ -418,6 +418,15 @@
   <data name="AutoMessageSeverityHelp" xml:space="preserve">
     <value>Alerts at or above this severity will automatically send a message to all department members. Lower value = higher severity (Extreme=0, Severe=1, Moderate=2, Minor=3).</value>
   </data>
+  <data name="ExcludedEventsLabel" xml:space="preserve">
+    <value>Excluded Alert Events</value>
+  </data>
+  <data name="ExcludedEventsPlaceholder" xml:space="preserve">
+    <value>e.g. Lake Wind Advisory, Wind Advisory</value>
+  </data>
+  <data name="ExcludedEventsHelp" xml:space="preserve">
+    <value>Comma-separated list of alert event titles that should not generate auto-messages. Alerts will still appear in the dashboard but no Resgrid message will be created for these events.</value>
+  </data>
   <data name="EnableCallIntegration" xml:space="preserve">
     <value>Attach Weather Context to Calls</value>
   </data>

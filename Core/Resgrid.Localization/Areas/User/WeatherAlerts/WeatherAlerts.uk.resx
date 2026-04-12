@@ -418,6 +418,15 @@
   <data name="AutoMessageSeverityHelp" xml:space="preserve">
     <value>Попередження з цим або вищим рівнем серйозності автоматично надішлють повідомлення всім членам підрозділу. Нижче значення = вища серйозність (Екстремальна=0, Серйозна=1, Помірна=2, Незначна=3).</value>
   </data>
+  <data name="ExcludedEventsLabel" xml:space="preserve">
+    <value>Виключені події сповіщень</value>
+  </data>
+  <data name="ExcludedEventsPlaceholder" xml:space="preserve">
+    <value>напр. Попередження про вітер на озері, Попередження про вітер</value>
+  </data>
+  <data name="ExcludedEventsHelp" xml:space="preserve">
+    <value>Список назв подій сповіщень через кому, для яких не потрібно створювати автоматичні повідомлення. Сповіщення все одно відображатимуться на панелі, але повідомлення Resgrid для цих подій не буде створено.</value>
+  </data>
   <data name="EnableCallIntegration" xml:space="preserve">
     <value>Додавати Погодний Контекст до Викликів</value>
   </data>

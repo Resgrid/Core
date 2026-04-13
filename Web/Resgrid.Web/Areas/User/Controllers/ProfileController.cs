@@ -1000,6 +1000,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				await _departmentSsoService.RecordPasswordChangedAsync(DepartmentId, model.UserId);
 
+				var member = await _departmentsService.GetDepartmentMemberAsync(model.UserId, DepartmentId);
+				if (member != null)
+				{
+					member.MustChangePassword = model.MustChangePasswordOnLogin;
+					await _departmentsService.SaveDepartmentMemberAsync(member);
+				}
+
 				if (model.EmailUser)
 					await _emailService.SendPasswordResetEmail(model.Email, model.Name, user.UserName, model.Password, userDepartment.Name);
 

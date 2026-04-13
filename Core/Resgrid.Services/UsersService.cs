@@ -97,7 +97,7 @@ namespace Resgrid.Services
 			var user = await GetUserByNameAsync(userName);
 			var memberships = await _departmentMembersRepository.GetAllByUserIdAsync(user.UserId);
 
-			return memberships.Any(x => x.IsDeleted == false);
+			return memberships.Any(x => x.IsDeleted == false && (x.IsDisabled == null || x.IsDisabled == false));
 		}
 
 		public IdentityUser GetUserById(string userId, bool bypassCache = true)

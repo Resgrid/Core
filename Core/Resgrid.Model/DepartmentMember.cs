@@ -80,6 +80,13 @@ namespace Resgrid.Model
 		/// </summary>
 		public DateTime? PasswordLastSetOn { get; set; }
 
+		/// <summary>
+		/// When true the user must change their password on next login.
+		/// Set by admins when creating accounts or resetting passwords.
+		/// Cleared automatically after the user completes the forced password change.
+		/// </summary>
+		public bool MustChangePassword { get; set; }
+
 		[NotMapped]
 		public string TableName => "DepartmentMembers";
 

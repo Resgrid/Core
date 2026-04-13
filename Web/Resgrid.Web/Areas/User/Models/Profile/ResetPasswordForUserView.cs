@@ -25,5 +25,7 @@ namespace Resgrid.Web.Areas.User.Models.Profile
 		[Display(Name = "Confirm password")]
 		[System.ComponentModel.DataAnnotations.Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
 		public string ConfirmPassword { get; set; }
+
+		public bool MustChangePasswordOnLogin { get; set; }
 	}
 }

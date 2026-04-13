@@ -212,6 +212,12 @@
   <data name="NotifyWarning" xml:space="preserve">
     <value>Uncheck if you don't want Resgrid to notify the user of this account creation.</value>
   </data>
+  <data name="RequirePasswordChange" xml:space="preserve">
+    <value>Vymahaty zminu parolya</value>
+  </data>
+  <data name="RequirePasswordChangeHelp" xml:space="preserve">
+    <value>Korystuvach povynen zminyty parol pid chas pershoho vkhodu.</value>
+  </data>
   <data name="NoUnGroupedPersonnel" xml:space="preserve">
     <value>No UnGrouped Personnel</value>
   </data>

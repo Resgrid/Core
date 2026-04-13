@@ -962,6 +962,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Email = user.Email;
 			model.Username = user.UserName;
 			model.MinPasswordLength = await _departmentSsoService.GetEffectiveMinPasswordLengthAsync(DepartmentId);
+			model.MustChangePasswordOnLogin = true;
 
 			return View(model);
 		}

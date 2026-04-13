@@ -85,6 +85,7 @@ namespace Resgrid.Model
 		/// Set by admins when creating accounts or resetting passwords.
 		/// Cleared automatically after the user completes the forced password change.
 		/// </summary>
+		[ProtoMember(13)]
 		public bool MustChangePassword { get; set; }
 
 		[NotMapped]

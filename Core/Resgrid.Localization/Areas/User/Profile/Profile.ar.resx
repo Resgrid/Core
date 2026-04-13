@@ -31,6 +31,12 @@
   <data name="EditStaffingScheduleHeader" xml:space="preserve"><value>تعديل جدول التأمين</value></data>
   <data name="EmailUser" xml:space="preserve"><value>إرسال بريد إلكتروني للمستخدم؟</value></data>
   <data name="EmailUserInfo" xml:space="preserve"><value>حدد هذا المربع إذا أردت إرسال بريد إلكتروني للمستخدم يحتوي على اسم المستخدم وكلمة المرور الجديدة.</value></data>
+  <data name="RequirePasswordChange" xml:space="preserve">
+    <value>Require Password Change</value>
+  </data>
+  <data name="RequirePasswordChangeHelp" xml:space="preserve">
+    <value>User will be required to change their password on next login.</value>
+  </data>
   <data name="ExpiresOn" xml:space="preserve"><value>تنتهي في</value></data>
   <data name="ExpiresOnLabel" xml:space="preserve"><value>تنتهي في</value></data>
   <data name="IssuedByLabel" xml:space="preserve"><value>صادرة عن</value></data>

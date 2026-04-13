@@ -53,6 +53,12 @@
   <data name="NotificationOptionsLabel" xml:space="preserve"><value>خيارات الإشعارات</value></data>
   <data name="NotifyUser" xml:space="preserve"><value>إشعار المستخدم؟</value></data>
   <data name="NotifyWarning" xml:space="preserve"><value>أزل التحديد إذا كنت لا تريد من Resgrid إشعار المستخدم بإنشاء هذا الحساب.</value></data>
+  <data name="RequirePasswordChange" xml:space="preserve">
+    <value>Require Password Change</value>
+  </data>
+  <data name="RequirePasswordChangeHelp" xml:space="preserve">
+    <value>User will be required to change their password on first login.</value>
+  </data>
   <data name="NoUnGroupedPersonnel" xml:space="preserve"><value>لا يوجد أفراد غير منتمين لمجموعة</value></data>
   <data name="PersonnelHeader" xml:space="preserve"><value>الأفراد</value></data>
   <data name="PhoneNumbers" xml:space="preserve"><value>أرقام الهاتف</value></data>

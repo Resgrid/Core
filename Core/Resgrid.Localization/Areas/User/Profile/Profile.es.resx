@@ -195,6 +195,12 @@
   <data name="EmailUserInfo" xml:space="preserve">
     <value>Marque esta casilla si desea que el usuario envíe un correo electrónico con su nombre de usuario y su nueva contraseña.</value>
   </data>
+  <data name="RequirePasswordChange" xml:space="preserve">
+    <value>Requerir cambio de contrasena</value>
+  </data>
+  <data name="RequirePasswordChangeHelp" xml:space="preserve">
+    <value>El usuario debera cambiar su contrasena en el proximo inicio de sesion.</value>
+  </data>
   <data name="ExpiresOn" xml:space="preserve">
     <value>Expira el</value>
   </data>

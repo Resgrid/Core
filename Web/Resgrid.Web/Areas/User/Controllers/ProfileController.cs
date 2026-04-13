@@ -962,6 +962,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Email = user.Email;
 			model.Username = user.UserName;
 			model.MinPasswordLength = await _departmentSsoService.GetEffectiveMinPasswordLengthAsync(DepartmentId);
+			model.MustChangePasswordOnLogin = true;
 
 			return View(model);
 		}
@@ -999,6 +1000,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (result.Succeeded)
 			{
 				await _departmentSsoService.RecordPasswordChangedAsync(DepartmentId, model.UserId);
+
+				var member = await _departmentsService.GetDepartmentMemberAsync(model.UserId, DepartmentId);
+				if (member != null)
+				{
+					member.MustChangePassword = model.MustChangePasswordOnLogin;
+					await _departmentsService.SaveDepartmentMemberAsync(member);
+				}
 
 				if (model.EmailUser)
 					await _emailService.SendPasswordResetEmail(model.Email, model.Name, user.UserName, model.Password, userDepartment.Name);

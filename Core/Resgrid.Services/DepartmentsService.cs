@@ -289,7 +289,7 @@ namespace Resgrid.Services
 			if (member != null)
 			{
 				member.IsDeleted = true;
-				var savedMember = _departmentMembersRepository.SaveOrUpdateAsync(member, cancellationToken);
+				await _departmentMembersRepository.SaveOrUpdateAsync(member, cancellationToken);
 
 				var member2 = await _departmentMembersRepository.GetDepartmentMemberByDepartmentIdAndUserIdAsync(departmentId, userIdToDelete);
 

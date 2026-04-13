@@ -195,6 +195,12 @@
   <data name="EmailUserInfo" xml:space="preserve">
     <value>Check this box if you want the user Emailed with their UserName and new Password.</value>
   </data>
+  <data name="RequirePasswordChange" xml:space="preserve">
+    <value>Require Password Change</value>
+  </data>
+  <data name="RequirePasswordChangeHelp" xml:space="preserve">
+    <value>User will be required to change their password on next login.</value>
+  </data>
   <data name="ExpiresOn" xml:space="preserve">
     <value>Expires On</value>
   </data>

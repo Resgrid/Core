@@ -261,6 +261,12 @@
   <data name="NotifyWarning" xml:space="preserve">
     <value>Desmarque si no desea que Resgrid notifique al usuario sobre la creación de esta cuenta.</value>
   </data>
+  <data name="RequirePasswordChange" xml:space="preserve">
+    <value>Requerir cambio de contrasena</value>
+  </data>
+  <data name="RequirePasswordChangeHelp" xml:space="preserve">
+    <value>El usuario debera cambiar su contrasena en el primer inicio de sesion.</value>
+  </data>
   <data name="NoUnGroupedPersonnel" xml:space="preserve">
     <value>Sin Personal Desagrupado</value>
   </data>

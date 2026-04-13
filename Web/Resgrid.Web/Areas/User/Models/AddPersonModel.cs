@@ -63,5 +63,7 @@ namespace Resgrid.Web.Areas.User.Models
 		public string ConfirmPassword { get; set; }
 
 		public bool SendAccountCreationNotification { get; set; }
+
+		public bool MustChangePasswordOnLogin { get; set; }
 	}
 }

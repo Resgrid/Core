@@ -146,6 +146,12 @@
   <data name="EmailUserInfo" xml:space="preserve">
     <value>Check this box if you want the user Emailed with their UserName and new Password.</value>
   </data>
+  <data name="RequirePasswordChange" xml:space="preserve">
+    <value>Krav pa losenordsbyte</value>
+  </data>
+  <data name="RequirePasswordChangeHelp" xml:space="preserve">
+    <value>Anvandaren maste byta losenord vid naesta inloggning.</value>
+  </data>
   <data name="ExpiresOn" xml:space="preserve">
     <value>Expires On</value>
   </data>

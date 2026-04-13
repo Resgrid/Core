@@ -212,6 +212,12 @@
   <data name="NotifyWarning" xml:space="preserve">
     <value>Uncheck if you don't want Resgrid to notify the user of this account creation.</value>
   </data>
+  <data name="RequirePasswordChange" xml:space="preserve">
+    <value>Exiger le changement de mot de passe</value>
+  </data>
+  <data name="RequirePasswordChangeHelp" xml:space="preserve">
+    <value>L'utilisateur devra changer son mot de passe lors de la premiere connexion.</value>
+  </data>
   <data name="NoUnGroupedPersonnel" xml:space="preserve">
     <value>No UnGrouped Personnel</value>
   </data>

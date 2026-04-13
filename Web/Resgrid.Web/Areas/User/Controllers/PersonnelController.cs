@@ -547,6 +547,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 					await _departmentsService.AddUserToDepartmentAsync(DepartmentId, user.UserId, false, cancellationToken);
 
+					if (model.MustChangePasswordOnLogin)
+					{
+						var member = await _departmentsService.GetDepartmentMemberAsync(user.UserId, DepartmentId);
+						if (member != null)
+						{
+							member.MustChangePassword = true;
+							await _departmentsService.SaveDepartmentMemberAsync(member, cancellationToken);
+						}
+					}
+
 					var userObject = _usersService.GetUserById(user.UserId);
 
 					_eventAggregator.SendMessage<UserCreatedEvent>(new UserCreatedEvent() { DepartmentId = DepartmentId, Name = string.Format("{0} {1}", model.FirstName, model.LastName), User = userObject });

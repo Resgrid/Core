@@ -163,10 +163,19 @@ namespace Resgrid.Web.Controllers
 									var department = await _departmentsService.GetDepartmentForUserAsync(model.Username);
 									if (department != null)
 									{
+										var member = await _departmentsService.GetDepartmentMemberAsync(identityUser.Id, department.DepartmentId);
+
+										// Check if admin flagged this user to change password on next login
+										if (member != null && member.MustChangePassword)
+										{
+											HttpContext.Session.SetString("ForcePasswordChangeUserId", identityUser.Id);
+											HttpContext.Session.SetString("ForcePasswordChangeDeptId", department.DepartmentId.ToString());
+											return RedirectToAction(nameof(ForcePasswordChange));
+										}
+
 										var policy = await _departmentSsoService.GetSecurityPolicyForDepartmentAsync(department.DepartmentId, cancellationToken);
 										if (policy != null && policy.PasswordExpirationDays > 0)
 										{
-											var member = await _departmentsService.GetDepartmentMemberAsync(identityUser.Id, department.DepartmentId);
 											if (_departmentSsoService.IsPasswordExpired(policy, member?.PasswordLastSetOn))
 											{
 												HttpContext.Session.SetString("ForcePasswordChangeUserId", identityUser.Id);
@@ -554,6 +563,15 @@ namespace Resgrid.Web.Controllers
 
 			// Record the password change and clear the forced-change session flags
 			await _departmentSsoService.RecordPasswordChangedAsync(deptId, userId, cancellationToken);
+
+			// Clear the must-change-password flag if it was set by an admin
+			var member = await _departmentsService.GetDepartmentMemberAsync(userId, deptId);
+			if (member != null && member.MustChangePassword)
+			{
+				member.MustChangePassword = false;
+				await _departmentsService.SaveDepartmentMemberAsync(member, cancellationToken);
+			}
+
 			HttpContext.Session.Remove("ForcePasswordChangeUserId");
 			HttpContext.Session.Remove("ForcePasswordChangeDeptId");
 

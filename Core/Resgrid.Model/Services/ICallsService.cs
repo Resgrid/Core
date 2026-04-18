@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -441,5 +441,14 @@ namespace Resgrid.Model.Services
 		Task<List<CallVideoFeed>> GetCallVideoFeedsByCallIdAsync(int callId);
 
 		Task<bool> DeleteCallVideoFeedAsync(CallVideoFeed feed, string deletedByUserId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Gets all active calls for a department that have personnel check-in timers
+		/// enabled and that the specified user has been dispatched on.
+		/// </summary>
+		/// <param name="userId">The ASP.NET Identity user identifier.</param>
+		/// <param name="departmentId">The department to scope the search to.</param>
+		/// <returns>Active calls with check-in timers dispatched to the user.</returns>
+		Task<List<Call>> GetActiveCallsWithCheckInTimersForUserAsync(string userId, int departmentId);
 	}
 }

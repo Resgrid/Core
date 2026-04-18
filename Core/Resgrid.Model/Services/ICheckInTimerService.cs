@@ -26,5 +26,24 @@ namespace Resgrid.Model.Services
 
 		// Timer Status Computation
 		Task<List<CheckInTimerStatus>> GetActiveTimerStatusesForCallAsync(Call call);
+
+		// ── New: per-user and per-call personnel check-in status ────────────────
+
+		/// <summary>
+		/// Returns a check-in summary for every active call (with check-in timers
+		/// enabled) that <paramref name="userId"/> has been dispatched on.
+		/// Used by API Endpoint 1.
+		/// </summary>
+		/// <param name="userId">The ASP.NET Identity user identifier to query for.</param>
+		/// <param name="departmentId">Dept scope (from JWT claims) – prevents cross-dept data access.</param>
+		Task<List<UserCallCheckInSummary>> GetUserActiveCallCheckInSummariesAsync(string userId, int departmentId);
+
+		/// <summary>
+		/// For a call that has a personnel check-in timer active, returns the current
+		/// check-in status for every person dispatched on that call.
+		/// Used by API Endpoint 2.
+		/// </summary>
+		/// <param name="call">The call to evaluate. Must have <see cref="Call.CheckInTimersEnabled"/> = true.</param>
+		Task<List<PersonnelCallCheckInStatus>> GetCallPersonnelCheckInStatusesAsync(Call call);
 	}
 }

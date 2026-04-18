@@ -85,7 +85,8 @@ var resgrid;
                         data: JSON.stringify({ type: contactType })
                     }).done(function (result) {
                         if (result && result.success) {
-                            $(w.msgSpan).text(rgVerifyLabels.sent).css('color', '#31708f').show();
+                            var sentLabel = (contactType === 2 && rgVerifyLabels.voiceCallSent) ? rgVerifyLabels.voiceCallSent : rgVerifyLabels.sent;
+                            $(w.msgSpan).text(sentLabel).css('color', '#31708f').show();
                             $(w.codeEntry).show();
                             $btn.hide();
                         } else {

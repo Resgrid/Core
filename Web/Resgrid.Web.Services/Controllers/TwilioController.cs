@@ -45,13 +45,15 @@ namespace Resgrid.Web.Services.Controllers
 		private readonly IUsersService _usersService;
 		private readonly ICalendarService _calendarService;
 		private readonly ICommunicationTestService _communicationTestService;
+		private readonly IEncryptionService _encryptionService;
 
 		public TwilioController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
 			ILimitsService limitsService, ICallsService callsService, IQueueService queueService, IDepartmentsService departmentsService,
 			IUserProfileService userProfileService, ITextCommandService textCommandService, IActionLogsService actionLogsService,
 			IUserStateService userStateService, ICommunicationService communicationService, IGeoLocationProvider geoLocationProvider,
 			IDepartmentGroupsService departmentGroupsService, ICustomStateService customStateService, IUnitsService unitsService,
-			IUsersService usersService, ICalendarService calendarService, ICommunicationTestService communicationTestService)
+			IUsersService usersService, ICalendarService calendarService, ICommunicationTestService communicationTestService,
+			IEncryptionService encryptionService)
 		{
 			_departmentSettingsService = departmentSettingsService;
 			_numbersService = numbersService;
@@ -71,6 +73,7 @@ namespace Resgrid.Web.Services.Controllers
 			_usersService = usersService;
 			_calendarService = calendarService;
 			_communicationTestService = communicationTestService;
+			_encryptionService = encryptionService;
 		}
 
 		#endregion Private Readonly Properties and Constructors
@@ -615,6 +618,82 @@ namespace Resgrid.Web.Services.Controllers
 			{
 				response.Say("Sorry, that was not a valid selection.").Redirect(new Uri(string.Format("{0}/api/Twilio/VoiceCall?userId={1}&callId={2}", Config.SystemBehaviorConfig.ResgridApiBaseUrl, userId, callId)), "GET");
 			}
+
+			return new ContentResult
+			{
+				Content = response.ToString(),
+				ContentType = "application/xml",
+				StatusCode = 200
+			};
+		}
+
+		[HttpGet("VoiceVerification")]
+		[Produces("application/xml")]
+		public async Task<ActionResult> VoiceVerification(string userId, int contactType)
+		{
+			var response = new VoiceResponse();
+
+			if (string.IsNullOrWhiteSpace(userId))
+			{
+				response.Say("An error occurred. Goodbye.").Hangup();
+				return new ContentResult { Content = response.ToString(), ContentType = "application/xml", StatusCode = 200 };
+			}
+
+			var profile = await _userProfileService.GetProfileByUserIdAsync(userId, bypassCache: true);
+			if (profile == null)
+			{
+				response.Say("An error occurred. Goodbye.").Hangup();
+				return new ContentResult { Content = response.ToString(), ContentType = "application/xml", StatusCode = 200 };
+			}
+
+			// Determine which verification code to read based on the contact type
+			string encryptedCode;
+			DateTime? expiry;
+			switch ((ContactVerificationType)contactType)
+			{
+				case ContactVerificationType.MobileNumber:
+					encryptedCode = profile.MobileVerificationCode;
+					expiry = profile.MobileVerificationCodeExpiry;
+					break;
+				case ContactVerificationType.HomeNumber:
+					encryptedCode = profile.HomeVerificationCode;
+					expiry = profile.HomeVerificationCodeExpiry;
+					break;
+				default:
+					response.Say("This verification type does not support voice calls. Goodbye.").Hangup();
+					return new ContentResult { Content = response.ToString(), ContentType = "application/xml", StatusCode = 200 };
+			}
+
+			if (string.IsNullOrWhiteSpace(encryptedCode) || !expiry.HasValue || DateTime.UtcNow > expiry.Value)
+			{
+				response.Say("Your verification code has expired. Please request a new one. Goodbye.").Hangup();
+				return new ContentResult { Content = response.ToString(), ContentType = "application/xml", StatusCode = 200 };
+			}
+
+			string code;
+			try
+			{
+				code = _encryptionService.Decrypt(encryptedCode);
+			}
+			catch
+			{
+				response.Say("An error occurred retrieving your code. Goodbye.").Hangup();
+				return new ContentResult { Content = response.ToString(), ContentType = "application/xml", StatusCode = 200 };
+			}
+
+			// Build the spoken digits with pauses between each digit
+			var spokenCode = string.Join(", ", code.ToCharArray());
+
+			// Repeat the code 3 times so the user can hear and enter it
+			response.Say("Hello, this is Resgrid calling with your verification code.");
+			for (int i = 0; i < 3; i++)
+			{
+				response.Pause(length: 1);
+				response.Say($"Your verification code is: {spokenCode}.");
+			}
+			response.Pause(length: 1);
+			response.Say("That was your Resgrid verification code. Goodbye.");
+			response.Hangup();
 
 			return new ContentResult
 			{

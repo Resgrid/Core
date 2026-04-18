@@ -25,9 +25,10 @@ namespace Resgrid.Model.Services
 		Task<bool> SendMobileVerificationCodeAsync(string userId, int departmentId, string departmentNumber, CancellationToken cancellationToken = default);
 
 		/// <summary>
-		/// Generates a verification code and sends it via SMS to the user's home number.
+		/// Generates a verification code and delivers it via a Twilio voice call to the
+		/// user's home number, speaking the digits and repeating multiple times.
 		/// Returns <c>false</c> if the user has no home number, if rate limits are exceeded,
-		/// or if the send fails.
+		/// or if the call fails.
 		/// </summary>
 		Task<bool> SendHomeVerificationCodeAsync(string userId, int departmentId, string departmentNumber, CancellationToken cancellationToken = default);
 

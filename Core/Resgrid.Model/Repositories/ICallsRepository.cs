@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -81,5 +81,15 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<Call>> GetAllCallsByContactIdAsync(string contactId, int departmentId);
 
 		Task<int> GetCallsCountByDepartmentDateRangeAsync(int departmentId, DateTime startDate, DateTime endDate);
+
+		/// <summary>
+		/// Gets all active calls for a department that have check-in timers enabled
+		/// and that the specified user has been dispatched on.
+		/// Optimised as a single JOIN query to avoid N+1 lookups.
+		/// </summary>
+		/// <param name="userId">The identity user identifier to filter dispatches by.</param>
+		/// <param name="departmentId">The department identifier (used to scope the result).</param>
+		/// <returns>Active calls with check-in timers that the user is dispatched on.</returns>
+		Task<IEnumerable<Call>> GetActiveCallsWithCheckInTimersForUserAsync(string userId, int departmentId);
 	}
 }

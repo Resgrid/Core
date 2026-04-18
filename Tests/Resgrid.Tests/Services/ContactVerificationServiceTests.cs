@@ -6,6 +6,7 @@ using Moq;
 using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Identity;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Services;
 
@@ -21,6 +22,7 @@ namespace Resgrid.Tests.Services
 			protected Mock<ISmsService> _smsServiceMock;
 			protected Mock<ISystemAuditsService> _systemAuditsServiceMock;
 			protected Mock<IEncryptionService> _encryptionServiceMock;
+			protected Mock<IOutboundVoiceProvider> _outboundVoiceProviderMock;
 			protected IContactVerificationService _contactVerificationService;
 
 			protected with_the_contact_verification_service()
@@ -45,13 +47,19 @@ namespace Resgrid.Tests.Services
 					.Setup(s => s.SaveSystemAuditAsync(It.IsAny<SystemAudit>(), It.IsAny<CancellationToken>()))
 					.ReturnsAsync(new SystemAudit());
 
+				_outboundVoiceProviderMock = new Mock<IOutboundVoiceProvider>();
+				_outboundVoiceProviderMock
+					.Setup(v => v.SendVoiceVerificationCallAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()))
+					.ReturnsAsync(true);
+
 				_contactVerificationService = new ContactVerificationService(
 					_userProfileServiceMock.Object,
 					_usersServiceMock.Object,
 					_emailServiceMock.Object,
 					_smsServiceMock.Object,
 					_systemAuditsServiceMock.Object,
-					_encryptionServiceMock.Object);
+					_encryptionServiceMock.Object,
+					_outboundVoiceProviderMock.Object);
 			}
 
 			protected static UserProfile BuildProfile(string userId = "user1",

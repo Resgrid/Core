@@ -1,16 +1,18 @@
 {
   "permissions": {
     "allow": [
-      "mcp__dual-graph__graph_scan",
       "mcp__dual-graph__graph_continue",
-      "Bash(find G:ResgridResgridCoreResgrid.ModelBilling -type f -name *.cs)",
-      "Bash(python3:*)",
+      "mcp__dual-graph__graph_read",
+      "Bash(dotnet build:*)",
+      "mcp__dual-graph__graph_register_edit",
+      "mcp__dual-graph__graph_scan",
+      "Bash(find /g/Resgrid/Resgrid -type d \\\\\\(-name *mobile* -o -name *Mobile* -o -name *app* -o -name *App* -o -name *apps* -o -name *Apps* \\\\\\))",
       "Bash(xargs grep:*)",
-      "Bash(grep -E \"\\\\.cs$|Program\")",
-      "Bash(grep -l \"DepartmentMembers\\\\|DepartmentMember\" \"G:\\\\Resgrid\\\\Resgrid/Repositories/Resgrid.Repositories.DataRepository/\"*.cs)",
-      "Bash(find /g/Resgrid/Resgrid/Repositories/Resgrid.Repositories.DataRepository/Servers -name *.cs)",
-      "Bash(find G:/Resgrid/Resgrid -newer G:/Resgrid/Resgrid/CLAUDE.md -name *.cs -not -path */obj/* -not -path */.git/*)",
-      "Bash(dotnet build:*)"
+      "Bash(grep -r \"mapbox\\\\|react-native\\\\|rnmapbox\" /g/Resgrid/Resgrid --include=package.json --include=*.ts --include=*.tsx)",
+      "Bash(find G:ResgridResgridWebResgrid.WebAreasUserViews -type f -name *.cshtml)",
+      "Bash(grep -r \"google.maps\\\\|mapboxgl\\\\|leaflet\\\\|openstreetmap\" G:/Resgrid/Resgrid/Web/Resgrid.Web/Areas/User/Apps/src --include=*.ts)",
+      "Bash(grep -r \"leaflet\\\\|L\\\\.tileLayer\\\\|OpenStreetMap\" /g/Resgrid/Resgrid/Web/Resgrid.Web.Services --include=*.cs)",
+      "Bash(find /g/Resgrid/Resgrid -type f -name *.swift -o -name *.kt -o -name *.java)"
     ]
   },
   "hooks": {

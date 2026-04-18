@@ -402,6 +402,9 @@
   <data name="VerificationCodeSent" xml:space="preserve">
     <value>A verification code has been sent.</value>
   </data>
+  <data name="VerificationCodeVoiceCallSent" xml:space="preserve">
+    <value>A verification call is being placed. Please answer and note the code spoken to you.</value>
+  </data>
   <data name="VerificationSuccessful" xml:space="preserve">
     <value>Verification successful.</value>
   </data>

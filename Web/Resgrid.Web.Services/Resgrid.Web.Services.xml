@@ -424,6 +424,27 @@
             Enables or disables check-in timers on a call
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CheckInTimersController.GetUserCallCheckInStatuses(System.String)">
+            <summary>
+            Returns a check-in timer status summary for every active call (with
+            personnel check-in timers enabled) that <paramref name="userId"/> has been
+            dispatched on.  If the caller is querying a different user they must hold
+            the <c>Personnel_View</c> policy; a user may always query themselves with
+            just <c>Call_View</c>.
+            </summary>
+            <param name="userId">
+            The ASP.NET Identity user identifier to look up. Must belong to the
+            calling user's department.
+            </param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CheckInTimersController.GetCallPersonnelCheckInStatuses(System.Int32)">
+            <summary>
+            For a call that has a personnel check-in timer active, returns the
+            current check-in status (last check-in, time remaining, colour status)
+            for every person dispatched on the call.
+            </summary>
+            <param name="callId">The call identifier to inspect.</param>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CommunicationTestResponseController">
             <summary>
             Public endpoints for communication test responses (email confirm, voice webhook)
@@ -5778,6 +5799,95 @@
             <summary>
             User Defined Field values for this contact
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.CheckInTimers.UserCallCheckInStatusResult">
+            <summary>
+            Response wrapper for <see cref="!:GetUserCallCheckInStatuses"/>.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.CheckInTimers.UserCallCheckInStatusResultData">
+            <summary>
+            Per-call check-in status for the requested user.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.UserCallCheckInStatusResultData.CallId">
+            <summary>The call identifier.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.UserCallCheckInStatusResultData.CallName">
+            <summary>Call name / nature of call.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.UserCallCheckInStatusResultData.CallNumber">
+            <summary>Human-readable call number.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.UserCallCheckInStatusResultData.CallStartedOn">
+            <summary>UTC timestamp when the call was logged.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.UserCallCheckInStatusResultData.HasPersonnelTimer">
+            <summary>True when a personnel check-in timer is active on this call.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.UserCallCheckInStatusResultData.DurationMinutes">
+            <summary>Timer interval in minutes (0 when HasPersonnelTimer is false).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.UserCallCheckInStatusResultData.WarningThresholdMinutes">
+            <summary>Warning window in minutes before the deadline (0 when HasPersonnelTimer is false).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.UserCallCheckInStatusResultData.LastCheckIn">
+            <summary>UTC timestamp of the user's last check-in on this call, or null.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.UserCallCheckInStatusResultData.NeedsCheckIn">
+            <summary>True when the timer has expired and the user must check in immediately.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.UserCallCheckInStatusResultData.MinutesRemaining">
+            <summary>
+            Minutes remaining until the next check-in is due.
+            Positive = time still available; negative = number of minutes overdue.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.UserCallCheckInStatusResultData.Status">
+            <summary>Colour-coded status: "Green", "Warning", "Critical", or "NoTimer".</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.CheckInTimers.CallPersonnelCheckInStatusResult">
+            <summary>
+            Response wrapper for <see cref="!:GetCallPersonnelCheckInStatuses"/>.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.CallPersonnelCheckInStatusResult.CallId">
+            <summary>The call identifier that was queried.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.CallPersonnelCheckInStatusResult.HasActivePersonnelTimer">
+            <summary>True when a personnel check-in timer is currently active for this call.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.CallPersonnelCheckInStatusResult.DurationMinutes">
+            <summary>Resolved timer duration in minutes (0 when HasActivePersonnelTimer is false).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.CallPersonnelCheckInStatusResult.WarningThresholdMinutes">
+            <summary>Warning window in minutes (0 when HasActivePersonnelTimer is false).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.CheckInTimers.CallPersonnelCheckInStatusResultData">
+            <summary>
+            Per-person check-in status on a specific call.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.CallPersonnelCheckInStatusResultData.UserId">
+            <summary>The ASP.NET Identity user identifier.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.CallPersonnelCheckInStatusResultData.FullName">
+            <summary>The user's full display name (first + last from their profile).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.CallPersonnelCheckInStatusResultData.LastCheckIn">
+            <summary>UTC timestamp of the user's last personnel check-in on this call, or null.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.CallPersonnelCheckInStatusResultData.NeedsCheckIn">
+            <summary>True when the timer has expired and this person must check in immediately.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.CallPersonnelCheckInStatusResultData.MinutesRemaining">
+            <summary>
+            Minutes remaining until the next check-in is due.
+            Positive = time still available; negative = number of minutes overdue.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.CallPersonnelCheckInStatusResultData.Status">
+            <summary>Colour-coded status: "Green", "Warning", or "Critical".</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.CommunicationTests.GetCommunicationTestsResult">
             <summary>

@@ -1,12 +1,16 @@
-﻿using CommonServiceLocator;
+using CommonServiceLocator;
+using Microsoft.AspNetCore.Http;
+using Resgrid.Config;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Web.Helpers
 {
-    public static class SettingsHelper
-    {
+	public static class SettingsHelper
+	{
+		private const string DepartmentMapConfigCacheKeyFormat = "DepartmentMapConfig_{0}";
 		private static IDepartmentSettingsService _departmentSettingsService;
+		private static IHttpContextAccessor _httpContextAccessor;
 
 		private static IDepartmentSettingsService GetSettingsService()
 		{
@@ -14,6 +18,14 @@ namespace Resgrid.Web.Helpers
 				_departmentSettingsService = ServiceLocator.Current.GetInstance<IDepartmentSettingsService>();
 
 			return _departmentSettingsService;
+		}
+
+		private static IHttpContextAccessor GetHttpContextAccessor()
+		{
+			if (_httpContextAccessor == null)
+				_httpContextAccessor = ServiceLocator.Current.GetInstance<IHttpContextAccessor>();
+
+			return _httpContextAccessor;
 		}
 
 		private static DepartmentModuleSettings GetModuleSettings()
@@ -79,6 +91,23 @@ namespace Resgrid.Web.Helpers
 		public static bool IsMaintenanceEnabled()
 		{
 			return !GetModuleSettings().MaintenanceDisabled;
+		}
+
+		public static ResolvedMapConfig GetDepartmentMapConfig(string key = null)
+		{
+			var requestedKey = string.IsNullOrWhiteSpace(key) ? InfoConfig.WebsiteKey : key;
+			var httpContext = GetHttpContextAccessor().HttpContext;
+			var cacheKey = string.Format(DepartmentMapConfigCacheKeyFormat, requestedKey);
+
+			if (httpContext?.Items != null && httpContext.Items.ContainsKey(cacheKey))
+				return httpContext.Items[cacheKey] as ResolvedMapConfig;
+
+			var mapConfig = GetSettingsService().GetMapConfigForDepartmentAsync(ClaimsAuthorizationHelper.GetDepartmentId(), requestedKey).GetAwaiter().GetResult();
+
+			if (httpContext?.Items != null)
+				httpContext.Items[cacheKey] = mapConfig;
+
+			return mapConfig;
 		}
 	}
 }

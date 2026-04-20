@@ -1,0 +1,73 @@
+.rg-omnibar {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 640px;
+  color: #111827;
+  font-size: 13px;
+}
+
+.rg-omnibar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.rg-omnibar__title {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.rg-omnibar__count {
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.rg-omnibar__input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  outline: none;
+}
+
+.rg-omnibar__input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.rg-omnibar__results {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.rg-omnibar__item {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid #dbe2ea;
+  border-radius: 6px;
+  background: #ffffff;
+  text-align: left;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.rg-omnibar__item:hover,
+.rg-omnibar__item--active {
+  border-color: #2563eb;
+  background: #eff6ff;
+}
+
+.rg-omnibar__item-label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.rg-omnibar__item-description,
+.rg-omnibar__empty {
+  color: #6b7280;
+}

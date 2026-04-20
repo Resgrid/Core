@@ -3,6 +3,7 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.CustomMaps.CustomMaps> localizer
 @{
     ViewBag.Title = "Resgrid | " + localizer["EditCustomMapPageTitle"];
+    var mapConfig = SettingsHelper.GetDepartmentMapConfig(Resgrid.Config.InfoConfig.WebsiteKey);
 }
 
 @section Styles {
@@ -91,8 +92,8 @@
 @section Scripts {
     <script src="~/lib/geoman-io/leaflet-geoman-free/dist/leaflet-geoman.min.js"></script>
     <script>
-        var osmTileUrl = '@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()';
-        var osmTileAttribution = '@Resgrid.Config.MappingConfig.LeafletAttribution';
+        var osmTileUrl = '@mapConfig.TileUrl';
+        var osmTileAttribution = '@mapConfig.Attribution';
         var initialLat = @Model.Map.CenterLatitude.ToString("G", System.Globalization.CultureInfo.InvariantCulture);
         var initialLon = @Model.Map.CenterLongitude.ToString("G", System.Globalization.CultureInfo.InvariantCulture);
     </script>

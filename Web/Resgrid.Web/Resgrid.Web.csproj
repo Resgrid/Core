@@ -192,13 +192,15 @@
   </ItemGroup>
   <Target Name="BuildClientApps" AfterTargets="BeforeBuild">
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
-    <Exec WorkingDirectory="$(SpaRoot)" Condition="'$(Configuration)' == 'Debug'" Command="npm run build -- --configuration development --output-hashing=none --output-path=./dist/core --delete-output-path=true" />
-    <Exec WorkingDirectory="$(SpaRoot)" Condition="'$(Configuration)' != 'Debug'" Command="npm run build -- --configuration production --output-hashing=none --output-path=./dist/core --delete-output-path=true" />
+    <Exec WorkingDirectory="$(SpaRoot)" Condition="'$(Configuration)' == 'Debug'" Command="npm run build -- --mode development --outDir ./dist/core --emptyOutDir" />
+    <Exec WorkingDirectory="$(SpaRoot)" Condition="'$(Configuration)' != 'Debug'" Command="npm run build -- --mode production --outDir ./dist/core --emptyOutDir" />
   </Target>
   <Target Name="CopyClientApps" AfterTargets="AfterBuild">
     <ItemGroup>
-      <ClientAppFiles Include="$(SpaRoot)dist\**\*.*" />
+      <ClientAppFiles Include="$(SpaRoot)dist\core\**\*.*" />
     </ItemGroup>
-    <Copy SourceFiles="@(ClientAppFiles)" DestinationFolder="wwwroot\js\ng" />
+    <RemoveDir Directories="wwwroot\js\ng" />
+    <MakeDir Directories="wwwroot\js\ng" />
+    <Copy SourceFiles="@(ClientAppFiles)" DestinationFiles="@(ClientAppFiles->'wwwroot\js\ng\%(RecursiveDir)%(Filename)%(Extension)')" />
   </Target>
 </Project>

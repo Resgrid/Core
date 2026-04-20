@@ -2,6 +2,7 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> localizer
 @{
     ViewBag.Title = "Resgrid | " + localizer["LiveRoutingPageTitle"];
+    var mapConfig = SettingsHelper.GetDepartmentMapConfig(Resgrid.Config.InfoConfig.WebsiteKey);
 }
 
 @section Styles
@@ -59,8 +60,8 @@
 @section Scripts
 {
     <script type="text/javascript">
-        var osmTileUrl = '@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()';
-        var osmTileAttribution = '@Resgrid.Config.MappingConfig.LeafletAttribution';
+        var osmTileUrl = '@mapConfig.TileUrl';
+        var osmTileAttribution = '@mapConfig.Attribution';
         var osrmUrl = '@Resgrid.Config.MappingConfig.OsrmUrl';
         var endLat = @Model.EndLat;
         var endLon = @Model.EndLon;

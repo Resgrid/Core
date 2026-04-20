@@ -3,6 +3,7 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.CustomMaps.CustomMaps> localizer
 @{
     ViewBag.Title = "Resgrid | " + localizer["RegionEditorPageTitlePrefix"] + " - " + Model.Layer.Name;
+    var mapConfig = SettingsHelper.GetDepartmentMapConfig(Resgrid.Config.InfoConfig.WebsiteKey);
 }
 
 @section Styles {
@@ -119,8 +120,8 @@
 @section Scripts {
     <script src="~/lib/geoman-io/leaflet-geoman-free/dist/leaflet-geoman.min.js"></script>
     <script>
-        var osmTileUrl = '@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()';
-        var osmTileAttribution = '@Resgrid.Config.MappingConfig.LeafletAttribution';
+        var osmTileUrl = '@mapConfig.TileUrl';
+        var osmTileAttribution = '@mapConfig.Attribution';
         var layerId = '@Model.Layer.IndoorMapFloorId';
         var isTiled = @(Model.Layer.IsTiled ? "true" : "false");
         var tileMinZoom = @(Model.Layer.TileMinZoom ?? 0);

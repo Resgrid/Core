@@ -1,0 +1,62 @@
+.rg-shifts {
+  color: #111827;
+  font-size: 13px;
+}
+
+.rg-shifts__calendar {
+  min-height: 760px;
+}
+
+.rg-shifts .rbc-calendar {
+  min-height: 760px;
+}
+
+.rg-shifts .rbc-toolbar {
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.rg-shifts .rbc-toolbar button {
+  border: 1px solid #2563eb;
+  border-radius: 4px;
+  background: #2563eb;
+  color: #ffffff;
+  padding: 6px 12px;
+}
+
+.rg-shifts .rbc-toolbar button:hover,
+.rg-shifts .rbc-toolbar button:focus {
+  border-color: #1d4ed8;
+  background: #1d4ed8;
+  color: #ffffff;
+}
+
+.rg-shifts .rbc-toolbar button.rbc-active {
+  border-color: #1e40af;
+  background: #1e40af;
+  color: #ffffff;
+}
+
+.rg-shifts .rbc-month-view,
+.rg-shifts .rbc-time-view {
+  overflow: hidden;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+}
+
+.rg-shifts .rbc-header {
+  padding: 8px 0;
+  font-weight: 600;
+}
+
+.rg-shifts .rbc-today {
+  background: #eff6ff;
+}
+
+.rg-shifts .rbc-off-range-bg {
+  background: #f8fafc;
+}
+
+.rg-shifts .rbc-event {
+  box-shadow: none;
+}

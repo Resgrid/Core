@@ -1,0 +1,162 @@
+.rg-map {
+  font-size: 13px;
+  color: #111827;
+}
+
+.rg-map__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.rg-map__toolbar-section {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.rg-map__search {
+  width: 220px;
+  max-width: 100%;
+  padding: 7px 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  outline: none;
+}
+
+.rg-map__search:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+}
+
+.rg-map__checkbox,
+.rg-map__layer-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 400;
+}
+
+.rg-map__message {
+  margin-bottom: 8px;
+}
+
+.rg-map__viewport {
+  position: relative;
+  width: 100%;
+  min-height: 320px;
+  overflow: hidden;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: #f8fafc;
+}
+
+.rg-map__canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.rg-map__canvas .leaflet-container {
+  width: 100%;
+  height: 100%;
+}
+
+.rg-map__canvas .mapboxgl-map {
+  width: 100%;
+  height: 100%;
+}
+
+.rg-map__layers {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 450;
+  width: 240px;
+  max-width: calc(100% - 24px);
+  padding: 12px;
+}
+
+.rg-map__layers-title {
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.rg-map__layer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rg-map__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 500;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.rg-map__footer {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 8px;
+  color: #6b7280;
+  font-size: 12px;
+}
+
+.rg-map__tooltip {
+  padding: 2px 6px;
+  border: 1px solid #111827;
+  color: #111827;
+  background: #ffffff;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.rg-map__tooltip::before {
+  border-top-color: #111827;
+}
+
+.rg-map__marker {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  cursor: pointer;
+}
+
+.rg-map__marker-icon {
+  width: 32px;
+  height: 37px;
+  object-fit: contain;
+  pointer-events: none;
+}
+
+.rg-map__marker-label {
+  max-width: 180px;
+  padding: 2px 6px;
+  border: 1px solid #111827;
+  border-radius: 4px;
+  color: #111827;
+  background: rgba(255, 255, 255, 0.96);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .rg-map__toolbar {
+    align-items: stretch;
+  }
+
+  .rg-map__layers {
+    position: static;
+    width: auto;
+    max-width: none;
+    margin: 12px;
+  }
+}

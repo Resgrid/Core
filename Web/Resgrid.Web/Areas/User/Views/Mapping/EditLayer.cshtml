@@ -168,11 +168,11 @@
 			});
 
 			const tiles1 = L.tileLayer(
-				'@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()',
+				'@SettingsHelper.GetDepartmentMapConfig(Resgrid.Config.InfoConfig.WebsiteKey).TileUrl',
 				{
 					maxZoom: 19,
 					attribution:
-						'@Resgrid.Config.MappingConfig.LeafletAttribution',
+						'@SettingsHelper.GetDepartmentMapConfig(Resgrid.Config.InfoConfig.WebsiteKey).Attribution',
 				}
 			);
 

@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Resgrid.Model.Services;
 using System.Threading.Tasks;
 using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.Configs;
 using Resgrid.Config;
 using Microsoft.Diagnostics.Tracing.Parsers.Kernel;
+using Resgrid.Web.ServicesCore.Helpers;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -18,9 +20,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 	public class ConfigController : ControllerBase
 	{
 		#region Members and Constructors
-		public ConfigController()
-		{
+		private readonly IDepartmentSettingsService _departmentSettingsService;
 
+		public ConfigController(IDepartmentSettingsService departmentSettingsService)
+		{
+			_departmentSettingsService = departmentSettingsService;
 		}
 		#endregion Members and Constructors
 
@@ -50,41 +54,48 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<ActionResult<GetConfigResult>> GetConfig(string key)
 		{
-			var result = new GetConfigResult();
+			return await BuildConfigResultAsync(key, GetCurrentDepartmentId());
+		}
 
-			if (key == InfoConfig.WebsiteKey)
+		[HttpGet("GetDepartmentConfig")]
+		[Authorize(AuthenticationSchemes = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<ActionResult<GetConfigResult>> GetDepartmentConfig(string key)
+		{
+			return await BuildConfigResultAsync(key, ClaimsAuthorizationHelper.GetDepartmentId());
+		}
+
+		private async Task<GetConfigResult> BuildConfigResultAsync(string key, int departmentId)
+		{
+			var result = new GetConfigResult();
+			var mapConfig = await _departmentSettingsService.GetMapConfigForDepartmentAsync(departmentId, key);
+
+			if (key == InfoConfig.DispatchAppKey)
 			{
-				result.Data.MapUrl = MappingConfig.GetWebsiteOSMUrl();
-			}
-			else if (key == InfoConfig.ApiKey)
-			{
-				result.Data.MapUrl = MappingConfig.GetApiOSMUrl();
-			}
-			else if (key == InfoConfig.DispatchAppKey)
-			{
-				result.Data.MapUrl = MappingConfig.GetDispatchAppOSMUrl();
 				result.Data.OpenWeatherApiKey = MappingConfig.DispatchOpenWeatherApiKey;
 			}
 			else if (key == InfoConfig.ResponderAppKey)
 			{
-				result.Data.MapUrl = MappingConfig.GetResponderAppOSMUrl();
 				result.Data.GoogleMapsKey = MappingConfig.ResponderAppGoogleMapsKey;
 				result.Data.W3WKey = MappingConfig.ResponderAppWhat3WordsKey;
 			}
 			else if (key == InfoConfig.UnitAppKey)
 			{
-				result.Data.MapUrl = MappingConfig.GetUnitAppOSMUrl();
 				result.Data.NavigationMapKey = MappingConfig.UnitAppMapBoxKey;
 				result.Data.GoogleMapsKey = MappingConfig.UnitAppGoogleMapsKey;
 				result.Data.W3WKey = MappingConfig.UnitAppWhat3WordsKey;
 			}
 			else if (key == InfoConfig.BigBoardKey)
 			{
-				result.Data.MapUrl = MappingConfig.GetBigBoardAppOSMUrl();
 				result.Data.OpenWeatherApiKey = MappingConfig.BigBoardOpenWeatherApiKey;
 			}
 
-			result.Data.MapAttribution = MappingConfig.LeafletAttribution;
+			result.Data.MapUrl = mapConfig.TileUrl;
+			result.Data.MapProvider = mapConfig.MapProvider;
+			result.Data.MapStyleUrl = mapConfig.StyleUrl;
+			result.Data.MapAccessToken = mapConfig.AccessToken;
+			result.Data.MapAttribution = mapConfig.Attribution;
+			result.Data.IsDepartmentMapOverride = mapConfig.IsDepartmentOverride;
 			result.Data.EventingUrl = SystemBehaviorConfig.ResgridEventingBaseUrl;
 
 			result.Data.PersonnelLocationStaleSeconds = MappingConfig.PersonnelLocationStaleSeconds;
@@ -105,6 +116,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ResponseHelper.PopulateV4ResponseData(result);
 
 			return result;
+		}
+
+		private static int GetCurrentDepartmentId()
+		{
+			var principal = ClaimsAuthorizationHelper.GetClaimsPrincipal();
+
+			if (principal?.Identity != null && principal.Identity.IsAuthenticated)
+				return ClaimsAuthorizationHelper.GetDepartmentId();
+
+			return 0;
 		}
 	}
 }

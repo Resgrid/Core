@@ -2,6 +2,7 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.IndoorMaps.IndoorMaps> localizer
 @{
     ViewBag.Title = "Resgrid | " + localizer["ZoneEditorPageTitlePrefix"] + " - " + Model.Floor.Name;
+    var mapConfig = SettingsHelper.GetDepartmentMapConfig(Resgrid.Config.InfoConfig.WebsiteKey);
 }
 
 @section Styles {
@@ -104,8 +105,8 @@
 @section Scripts {
     <script src="~/lib/geoman-io/leaflet-geoman-free/dist/leaflet-geoman.min.js"></script>
     <script>
-        var osmTileUrl = '@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()';
-        var osmTileAttribution = '@Resgrid.Config.MappingConfig.LeafletAttribution';
+        var osmTileUrl = '@mapConfig.TileUrl';
+        var osmTileAttribution = '@mapConfig.Attribution';
         var floorId = '@Model.Floor.IndoorMapFloorId';
         var floorImageUrl = '@Url.Action("GetFloorImage", "IndoorMaps", new { id = Model.Floor.IndoorMapFloorId, area = "User" })';
         var boundsNE = [@(Model.Floor.BoundsNELat ?? Model.IndoorMap.BoundsNELat), @(Model.Floor.BoundsNELon ?? Model.IndoorMap.BoundsNELon)];

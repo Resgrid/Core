@@ -6,6 +6,7 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> localizer
 @{
     Layout = null;
+    var mapConfig = SettingsHelper.GetDepartmentMapConfig(Resgrid.Config.InfoConfig.WebsiteKey);
 }
 
 <!DOCTYPE html>
@@ -561,8 +562,8 @@
     @if (Model.Station != null)
     {
         <script type="text/javascript">
-            var osmTileUrl = '@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()';
-            var osmTileAttribution = '@Resgrid.Config.MappingConfig.LeafletAttribution';
+            var osmTileUrl = '@mapConfig.TileUrl';
+            var osmTileAttribution = '@mapConfig.Attribution';
             var osrmUrl = '@Resgrid.Config.MappingConfig.OsrmUrl';
             var startLat = @Model.StartLat;
             var startLon = @Model.StartLon;

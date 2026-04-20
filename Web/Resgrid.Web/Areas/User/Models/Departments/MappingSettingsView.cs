@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
-using Resgrid.Model;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Resgrid.Web.Areas.User.Models.Departments
 {
@@ -13,5 +12,13 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 
 		public bool PersonnelAllowStatusWithNoLocationToOverwrite { get; set; }
 		public bool UnitAllowStatusWithNoLocationToOverwrite { get; set; }
+
+		public bool UseMapboxOverride { get; set; }
+
+		[Display(Name = "Mapbox Style Url")]
+		public string MapboxStyleUrl { get; set; }
+
+		[Display(Name = "Mapbox Public Access Token")]
+		public string MapboxAccessToken { get; set; }
 	}
 }

@@ -2,6 +2,7 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Units.Units> localizer
 @{
     ViewBag.Title = "Resgrid | " + @localizer["ViewUnitEventsHeader"];
+    var mapConfig = SettingsHelper.GetDepartmentMapConfig(Resgrid.Config.InfoConfig.WebsiteKey);
 }
 @section Styles
     {
@@ -97,7 +98,7 @@
     <script>
         var unitId = '@Model.Unit.UnitId';
         var osmKey = '@Model.OSMKey';
-        var osmTileUrl = '@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()';
+        var osmTileUrl = '@mapConfig.TileUrl';
         var centerLat = '@Model.CenterLat';
         var centerLon = '@Model.CenterLon';
     </script>

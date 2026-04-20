@@ -2,6 +2,7 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Routes.Routes> localizer
 @{
     ViewBag.Title = "Resgrid | " + localizer["Directions"] + " — " + Model.Plan.Name;
+    var mapConfig = SettingsHelper.GetDepartmentMapConfig(Resgrid.Config.InfoConfig.WebsiteKey);
 }
 
 <style>
@@ -189,8 +190,8 @@
 
 @section Scripts {
     <script>
-        var osmTileUrl = '@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()';
-        var osmTileAttribution = '@Resgrid.Config.MappingConfig.LeafletAttribution';
+        var osmTileUrl = '@mapConfig.TileUrl';
+        var osmTileAttribution = '@mapConfig.Attribution';
         var routeStops = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
             Model.Stops.Select(s => new {
                 name = s.Name,

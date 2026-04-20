@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
@@ -627,6 +628,44 @@ namespace Resgrid.Services
 				return bool.Parse(settingValue.Setting);
 
 			return false;
+		}
+
+		public async Task<bool> GetMappingUseMapboxOverrideAsync(int departmentId)
+		{
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.MappingUseMapboxOverride);
+
+			if (settingValue != null && bool.TryParse(settingValue.Setting, out bool enabled))
+				return enabled;
+
+			return false;
+		}
+
+		public async Task<string> GetMappingMapboxStyleUrlAsync(int departmentId)
+		{
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.MappingMapboxStyleUrl);
+
+			return settingValue?.Setting;
+		}
+
+		public async Task<string> GetMappingMapboxAccessTokenAsync(int departmentId)
+		{
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.MappingMapboxAccessToken);
+
+			return settingValue?.Setting;
+		}
+
+		public async Task<ResolvedMapConfig> GetMapConfigForDepartmentAsync(int departmentId, string key = null)
+		{
+			if (departmentId > 0 && await GetMappingUseMapboxOverrideAsync(departmentId))
+			{
+				var styleUrl = await GetMappingMapboxStyleUrlAsync(departmentId);
+				var accessToken = await GetMappingMapboxAccessTokenAsync(departmentId);
+
+				if (MappingConfig.TryCreateMapboxConfig(styleUrl, accessToken, true, out var mapConfig))
+					return mapConfig;
+			}
+
+			return MappingConfig.GetMapConfig(key);
 		}
 		#endregion Department Mapping Settings
 

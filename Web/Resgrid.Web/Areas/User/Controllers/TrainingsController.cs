@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Web.Areas.User.Models.Training;
@@ -62,11 +63,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					if (file != null && file.Length > 0)
 					{
-						var extenion = file.FileName.Substring(file.FileName.IndexOf(char.Parse(".")) + 1,
-							file.FileName.Length - file.FileName.IndexOf(char.Parse(".")) - 1);
-
-						if (!String.IsNullOrWhiteSpace(extenion))
-							extenion = extenion.ToLower();
+						var extenion = FileHelper.GetFileExtensionWithoutDot(file.FileName);
 
 						if (extenion != "jpg" && extenion != "jpeg" && extenion != "png" && extenion != "gif" && extenion != "gif" &&
 						    extenion != "pdf" && extenion != "doc"

@@ -6066,12 +6066,32 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.MapUrl">
             <summary>
-            The Url for the leaflet map api
+            The Url for the rendered map tiles
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.MapProvider">
+            <summary>
+            The map provider identifier
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.MapStyleUrl">
+            <summary>
+            The resolved Mapbox style url for website and native clients
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.MapAccessToken">
+            <summary>
+            The access token for the resolved map config
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.IsDepartmentMapOverride">
+            <summary>
+            Indicates if a department-specific override is active
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.MapAttribution">
             <summary>
-            The Attribution for the leaflet map
+            The attribution for the rendered map
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.PersonnelLocationStaleSeconds">

@@ -3,6 +3,7 @@
 @{
     ViewBag.Title = "Resgrid | " + @localizer["UpdateCallHeader"];
     Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+    var mapConfig = SettingsHelper.GetDepartmentMapConfig(Resgrid.Config.InfoConfig.WebsiteKey);
 }
 @section Styles
 {
@@ -437,8 +438,8 @@
     <script type="text/javascript">
         var callId = @(Model.Call.CallId);
         var newCallFormData = '@Html.Raw(Model.NewCallFormData)';
-        var osmTileUrl = '@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()';
-        var osmTileAttribution = '@Resgrid.Config.MappingConfig.LeafletAttribution';
+        var osmTileUrl = '@mapConfig.TileUrl';
+        var osmTileAttribution = '@mapConfig.Attribution';
         var nominatimUrl = '@Resgrid.Config.MappingConfig.NominatimUrl';
         var osrmUrl = '@Resgrid.Config.MappingConfig.OsrmUrl';
     </script>

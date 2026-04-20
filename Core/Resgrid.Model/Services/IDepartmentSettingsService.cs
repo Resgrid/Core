@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Resgrid.Config;
 
 namespace Resgrid.Model.Services
 {
@@ -265,6 +266,14 @@ namespace Resgrid.Model.Services
 		Task<bool> GetMappingPersonnelAllowStatusWithNoLocationToOverwriteAsync(int departmentId);
 
 		Task<bool> GetMappingUnitAllowStatusWithNoLocationToOverwriteAsync(int departmentId);
+
+		Task<bool> GetMappingUseMapboxOverrideAsync(int departmentId);
+
+		Task<string> GetMappingMapboxStyleUrlAsync(int departmentId);
+
+		Task<string> GetMappingMapboxAccessTokenAsync(int departmentId);
+
+		Task<ResolvedMapConfig> GetMapConfigForDepartmentAsync(int departmentId, string key = null);
 
 		Task<DepartmentModuleSettings> GetDepartmentModuleSettingsAsync(int departmentId, bool bypassCache = false);
 

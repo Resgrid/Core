@@ -6,6 +6,16 @@ namespace Resgrid.Framework
 {
 	public static class FileHelper
 	{
+		public static string GetFileExtensionWithoutDot(string fileName)
+		{
+			var extension = Path.GetExtension(fileName);
+
+			if (string.IsNullOrWhiteSpace(extension))
+				return string.Empty;
+
+			return extension.TrimStart('.').ToLowerInvariant();
+		}
+
 		public static string GetContentTypeByExtension(string strExtension)
 		{
 			switch (strExtension)

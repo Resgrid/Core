@@ -5,6 +5,7 @@
 @{
 	ViewBag.Title = "Resgrid | " + localizer["MappingHeader"];
 	ViewBag.LoadAngular = true;
+	var mapConfig = SettingsHelper.GetDepartmentMapConfig(Resgrid.Config.InfoConfig.WebsiteKey);
 }
 @section Styles
 {
@@ -55,7 +56,7 @@
 		<div class="wrapper wrapper-content">
 			<div class="ibox float-e-margins">
 				<div class="ibox-content">
-					<rg-map showbuttons="1" mapheight="750px" departmentId="@ClaimsAuthorizationHelper.GetDepartmentId()" leafletosmurl="@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()" mapattribution="@Resgrid.Config.MappingConfig.LeafletAttribution"></rg-map>
+					<rg-map showbuttons="1" mapheight="750px" departmentId="@ClaimsAuthorizationHelper.GetDepartmentId()" leafletosmurl="@mapConfig.TileUrl" mapattribution="@mapConfig.Attribution" mapprovider="@mapConfig.MapProvider" mapstyleurl="@mapConfig.StyleUrl" mapaccesstoken="@mapConfig.AccessToken"></rg-map>
 					<br/>
 				</div>
 			</div>

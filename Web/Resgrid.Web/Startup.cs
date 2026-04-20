@@ -367,7 +367,7 @@ namespace Resgrid.Web
 			{
 				// jquery/js app files and css
 #if !DEBUG
-				pipeline.MinifyJsFiles("/js/**/*.js");
+				pipeline.MinifyJsFiles("/js/app/**/*.js", "/js/site.js");
 #endif
 				pipeline.MinifyCssFiles("/css/**/*.css");
 

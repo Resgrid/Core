@@ -2,8 +2,8 @@ using FluentMigrator;
 
 namespace Resgrid.Providers.MigrationsPg.Migrations
 {
-	[Migration(48)]
-	public class M0048_AddingVoiceVerificationConsumptionFlagsPg : Migration
+	[Migration(65)]
+	public class M0065_AddingVoiceVerificationConsumptionFlagsPg : Migration
 	{
 		public override void Up()
 		{

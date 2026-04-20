@@ -258,26 +258,6 @@
       "destination": "wwwroot/lib/bootstrap-select/"
     },
     {
-      "library": "tw-elements@1.0.0",
-      "destination": "wwwroot/lib/tw-elements/"
-    },
-    {
-      "library": "tailwindcss@3.3.3",
-      "destination": "wwwroot/lib/tailwindcss/"
-    },
-    {
-      "library": "@tailwindcss/postcss7-compat@2.2.17",
-      "destination": "wwwroot/lib/tailwindcss/postcss7-compat/"
-    },
-    {
-      "library": "postcss@7.0.39",
-      "destination": "wwwroot/lib/postcss/"
-    },
-    {
-      "library": "autoprefixer@9.8.8",
-      "destination": "wwwroot/lib/autoprefixer/"
-    },
-    {
       "provider": "unpkg",
       "library": "jquery-ui-multidatespicker@1.6.6",
       "destination": "wwwroot/lib/jquery-ui-multidatespicker/"

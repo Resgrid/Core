@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Globalization;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Reflection;
@@ -26,6 +27,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Logging;
 using Resgrid.Config;
 using Resgrid.Framework;
@@ -375,10 +377,6 @@ namespace Resgrid.Web
 				pipeline.AddCssBundle("/css/pub-bundle.css",
 					"css/style.css", "css/animate.css", "lib/font-awesome/css/font-awesome.min.css");
 
-				// Angular App code
-				pipeline.AddJavaScriptBundle("/js/ng/app.js",
-					"js/ng/vendor.js", "js/ng/runtime.js", "js/ng/polyfills.js", "js/ng/main.js");
-
 				// Internal app style bundle
 				pipeline.AddCssBundle("/css/int-bundle.css",
 					"lib/font-awesome/css/font-awesome.min.css", "lib/metisMenu/dist/metisMenu.min.css", "lib/bootstrap-tour/build/css/bootstrap-tour.min.css",
@@ -585,6 +583,26 @@ namespace Resgrid.Web
 			};
 
 			app.UseCookiePolicy(cookiePolicyOptions);
+
+			// Serve the Vite ESM assets directly so legacy optimization doesn't rewrite module chunks.
+			app.UseWhen(
+				context => context.Request.Path.StartsWithSegments("/js/ng"),
+				clientApp =>
+				{
+					clientApp.UseStaticFiles(new StaticFileOptions
+					{
+						FileProvider = new PhysicalFileProvider(Path.Combine(env.WebRootPath, "js", "ng")),
+						RequestPath = "/js/ng",
+						OnPrepareResponse = context =>
+						{
+							var cacheControl = context.Context.Request.Path.StartsWithSegments("/js/ng/chunks")
+								? "public,max-age=31536000,immutable,no-transform"
+								: "no-cache,no-transform";
+
+							context.Context.Response.Headers["Cache-Control"] = cacheControl;
+						}
+					});
+				});
 
 			app.UseWebOptimizer();
 			app.UseStaticFiles();

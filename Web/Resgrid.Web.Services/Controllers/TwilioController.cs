@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,7 @@ using Resgrid.Model.Queue;
 using Resgrid.Model.Services;
 using Resgrid.Web.Services.Models;
 using Twilio.AspNet.Common;
+using Twilio.AspNet.Core;
 using Twilio.TwiML;
 using Twilio.TwiML.Voice;
 
@@ -454,6 +456,7 @@ namespace Resgrid.Web.Services.Controllers
 
 		[HttpGet("VoiceCall")]
 		[Produces("application/xml")]
+		[ValidateRequest]
 		public async Task<ActionResult> VoiceCall(string userId, int callId)
 		{
 			var response = new VoiceResponse();
@@ -629,62 +632,71 @@ namespace Resgrid.Web.Services.Controllers
 
 		[HttpGet("VoiceVerification")]
 		[Produces("application/xml")]
+		[ValidateRequest]
 		public async Task<ActionResult> VoiceVerification(string userId, int contactType)
 		{
-			var response = new VoiceResponse();
-
 			if (string.IsNullOrWhiteSpace(userId))
-			{
-				response.Say("An error occurred. Goodbye.").Hangup();
-				return new ContentResult { Content = response.ToString(), ContentType = "application/xml", StatusCode = 200 };
-			}
+				return GetVoiceVerificationErrorResult();
 
 			var profile = await _userProfileService.GetProfileByUserIdAsync(userId, bypassCache: true);
 			if (profile == null)
-			{
-				response.Say("An error occurred. Goodbye.").Hangup();
-				return new ContentResult { Content = response.ToString(), ContentType = "application/xml", StatusCode = 200 };
-			}
+				return GetVoiceVerificationErrorResult();
 
-			// Determine which verification code to read based on the contact type
 			string encryptedCode;
 			DateTime? expiry;
+			bool alreadyConsumed;
 			switch ((ContactVerificationType)contactType)
 			{
 				case ContactVerificationType.MobileNumber:
 					encryptedCode = profile.MobileVerificationCode;
 					expiry = profile.MobileVerificationCodeExpiry;
+					alreadyConsumed = profile.MobileVerificationVoiceCodeConsumed;
 					break;
 				case ContactVerificationType.HomeNumber:
 					encryptedCode = profile.HomeVerificationCode;
 					expiry = profile.HomeVerificationCodeExpiry;
+					alreadyConsumed = profile.HomeVerificationVoiceCodeConsumed;
 					break;
 				default:
-					response.Say("This verification type does not support voice calls. Goodbye.").Hangup();
-					return new ContentResult { Content = response.ToString(), ContentType = "application/xml", StatusCode = 200 };
+					return GetVoiceVerificationErrorResult();
 			}
 
-			if (string.IsNullOrWhiteSpace(encryptedCode) || !expiry.HasValue || DateTime.UtcNow > expiry.Value)
-			{
-				response.Say("Your verification code has expired. Please request a new one. Goodbye.").Hangup();
-				return new ContentResult { Content = response.ToString(), ContentType = "application/xml", StatusCode = 200 };
-			}
+			if (alreadyConsumed || string.IsNullOrWhiteSpace(encryptedCode) || !expiry.HasValue || DateTime.UtcNow > expiry.Value)
+				return GetVoiceVerificationErrorResult();
 
 			string code;
 			try
 			{
 				code = _encryptionService.Decrypt(encryptedCode);
 			}
-			catch
+			catch (CryptographicException ex)
 			{
-				response.Say("An error occurred retrieving your code. Goodbye.").Hangup();
-				return new ContentResult { Content = response.ToString(), ContentType = "application/xml", StatusCode = 200 };
+				Framework.Logging.LogException(ex);
+				return GetVoiceVerificationErrorResult();
 			}
 
-			// Build the spoken digits with pauses between each digit
+			if (string.IsNullOrWhiteSpace(code))
+				return GetVoiceVerificationErrorResult();
+
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(profile.UserId, false);
+			if (department == null)
+				return GetVoiceVerificationErrorResult();
+
+			switch ((ContactVerificationType)contactType)
+			{
+				case ContactVerificationType.MobileNumber:
+					profile.MobileVerificationVoiceCodeConsumed = true;
+					break;
+				case ContactVerificationType.HomeNumber:
+					profile.HomeVerificationVoiceCodeConsumed = true;
+					break;
+			}
+
+			await _userProfileService.SaveProfileAsync(department.DepartmentId, profile);
+
+			var response = new VoiceResponse();
 			var spokenCode = string.Join(", ", code.ToCharArray());
 
-			// Repeat the code 3 times so the user can hear and enter it
 			response.Say("Hello, this is Resgrid calling with your verification code.");
 			for (int i = 0; i < 3; i++)
 			{
@@ -705,6 +717,7 @@ namespace Resgrid.Web.Services.Controllers
 
 		[HttpGet("InboundVoice")]
 		[Produces("application/xml")]
+		[ValidateRequest]
 		public async Task<ActionResult> InboundVoice([FromQuery] TwilioGatherRequest request)
 		{
 			if (request == null || string.IsNullOrWhiteSpace(request.To) || string.IsNullOrWhiteSpace(request.From))
@@ -771,6 +784,19 @@ namespace Resgrid.Web.Services.Controllers
 			{
 				response.Say("Thank you for calling Resgrid, automated personnel system. The number you called is not tied to an active department or the department doesn't have this feature enabled. Goodbye.").Hangup();
 			}
+
+			return new ContentResult
+			{
+				Content = response.ToString(),
+				ContentType = "application/xml",
+				StatusCode = 200
+			};
+		}
+
+		private ContentResult GetVoiceVerificationErrorResult()
+		{
+			var response = new VoiceResponse();
+			response.Say("We couldn't complete your verification call. Please request a new code and try again. Goodbye.").Hangup();
 
 			return new ContentResult
 			{

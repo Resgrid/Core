@@ -81,6 +81,7 @@
     <PackageReference Include="Stripe.net" Version="47.4.0" />
     <PackageReference Include="Twilio" Version="7.9.1" />
     <PackageReference Include="Twilio.AspNet.Common" Version="8.1.1" />
+    <PackageReference Include="Twilio.AspNet.Core" Version="8.1.1" />
     <PackageReference Include="JWT" Version="11.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="9.0.3" />

@@ -131,6 +131,7 @@ namespace Resgrid.Tests.Services
 		public async Task should_fall_back_to_mapbox_system_config_when_website_mode_is_mapbox()
 		{
 			MappingConfig.WebsiteMapMode = MappingConfig.MapboxMapProvider;
+			MappingConfig.WebsiteOSMKey = "pk.system-token";
 
 			_departmentSettingsRepository
 				.Setup(x => x.GetDepartmentSettingByIdTypeAsync(7, DepartmentSettingTypes.MappingUseMapboxOverride))
@@ -140,7 +141,7 @@ namespace Resgrid.Tests.Services
 
 			result.IsDepartmentOverride.Should().BeFalse();
 			result.MapProvider.Should().Be(MappingConfig.MapboxMapProvider);
-			result.AccessToken.Should().Be("system-token");
+			result.AccessToken.Should().Be("pk.system-token");
 			result.StyleUrl.Should().Be("mapbox://styles/resgrid/abc123");
 		}
 
@@ -184,6 +185,7 @@ namespace Resgrid.Tests.Services
 		{
 			MappingConfig.WebsiteMapMode = MappingConfig.MapboxMapProvider;
 			MappingConfig.MapBoxStyleUrl = string.Empty;
+			MappingConfig.WebsiteOSMKey = "pk.system-token";
 
 			_departmentSettingsRepository
 				.Setup(x => x.GetDepartmentSettingByIdTypeAsync(7, DepartmentSettingTypes.MappingUseMapboxOverride))
@@ -192,15 +194,16 @@ namespace Resgrid.Tests.Services
 			var result = await _service.GetMapConfigForDepartmentAsync(7, InfoConfig.WebsiteKey);
 
 			result.MapProvider.Should().Be(MappingConfig.MapboxMapProvider);
-			result.TileUrl.Should().Be("https://api.mapbox.com/styles/v1/resgrid/abc123/tiles/256/{z}/{x}/{y}?access_token=system-token");
+			result.TileUrl.Should().Be("https://api.mapbox.com/styles/v1/resgrid/abc123/tiles/256/{z}/{x}/{y}?access_token=pk.system-token");
 			result.StyleUrl.Should().BeEmpty();
-			result.AccessToken.Should().Be("system-token");
+			result.AccessToken.Should().Be("pk.system-token");
 		}
 
 		[Test]
 		public async Task should_fall_back_to_system_config_when_override_is_incomplete()
 		{
 			MappingConfig.WebsiteMapMode = MappingConfig.MapboxMapProvider;
+			MappingConfig.WebsiteOSMKey = "pk.system-token";
 
 			_departmentSettingsRepository
 				.Setup(x => x.GetDepartmentSettingByIdTypeAsync(7, DepartmentSettingTypes.MappingUseMapboxOverride))
@@ -215,8 +218,48 @@ namespace Resgrid.Tests.Services
 			var result = await _service.GetMapConfigForDepartmentAsync(7, InfoConfig.WebsiteKey);
 
 			result.IsDepartmentOverride.Should().BeFalse();
-			result.AccessToken.Should().Be("system-token");
+			result.AccessToken.Should().Be("pk.system-token");
 			result.StyleUrl.Should().Be("mapbox://styles/resgrid/abc123");
+		}
+
+		[Test]
+		public async Task should_fall_back_to_leaflet_when_website_mapbox_access_token_is_private()
+		{
+			MappingConfig.WebsiteMapMode = MappingConfig.MapboxMapProvider;
+			MappingConfig.WebsiteMapboxAccessToken = "sk.website-secret";
+			MappingConfig.WebsiteOSMKey = string.Empty;
+
+			_departmentSettingsRepository
+				.Setup(x => x.GetDepartmentSettingByIdTypeAsync(7, DepartmentSettingTypes.MappingUseMapboxOverride))
+				.ReturnsAsync(new DepartmentSetting { DepartmentId = 7, Setting = "false", SettingType = (int)DepartmentSettingTypes.MappingUseMapboxOverride });
+
+			var result = await _service.GetMapConfigForDepartmentAsync(7, InfoConfig.WebsiteKey);
+
+			result.MapProvider.Should().Be(MappingConfig.LeafletMapProvider);
+			result.AccessToken.Should().BeEmpty();
+			result.StyleUrl.Should().BeEmpty();
+			result.TileUrl.Should().NotContain("sk.website-secret");
+		}
+
+		[Test]
+		public async Task should_ignore_department_override_when_mapbox_access_token_is_private()
+		{
+			_departmentSettingsRepository
+				.Setup(x => x.GetDepartmentSettingByIdTypeAsync(7, DepartmentSettingTypes.MappingUseMapboxOverride))
+				.ReturnsAsync(new DepartmentSetting { DepartmentId = 7, Setting = "true", SettingType = (int)DepartmentSettingTypes.MappingUseMapboxOverride });
+			_departmentSettingsRepository
+				.Setup(x => x.GetDepartmentSettingByIdTypeAsync(7, DepartmentSettingTypes.MappingMapboxStyleUrl))
+				.ReturnsAsync(new DepartmentSetting { DepartmentId = 7, Setting = "mapbox://styles/department/customstyle", SettingType = (int)DepartmentSettingTypes.MappingMapboxStyleUrl });
+			_departmentSettingsRepository
+				.Setup(x => x.GetDepartmentSettingByIdTypeAsync(7, DepartmentSettingTypes.MappingMapboxAccessToken))
+				.ReturnsAsync(new DepartmentSetting { DepartmentId = 7, Setting = "sk.department-secret", SettingType = (int)DepartmentSettingTypes.MappingMapboxAccessToken });
+
+			var result = await _service.GetMapConfigForDepartmentAsync(7, InfoConfig.WebsiteKey);
+
+			result.IsDepartmentOverride.Should().BeFalse();
+			result.MapProvider.Should().Be(MappingConfig.LeafletMapProvider);
+			result.AccessToken.Should().BeEmpty();
+			result.TileUrl.Should().NotContain("sk.department-secret");
 		}
 	}
 }

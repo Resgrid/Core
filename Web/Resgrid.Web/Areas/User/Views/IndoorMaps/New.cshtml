@@ -86,8 +86,8 @@
 
 @section Scripts {
     <script>
-        var osmTileUrl = '@mapConfig.TileUrl';
-        var osmTileAttribution = '@mapConfig.Attribution';
+        var osmTileUrl = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.TileUrl, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
+        var osmTileAttribution = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.Attribution, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
     </script>
     <script src="~/js/app/internal/indoormaps/resgrid.indoormaps.editor.js" asp-append-version="true"></script>
 }

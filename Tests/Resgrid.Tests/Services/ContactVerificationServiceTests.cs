@@ -113,6 +113,32 @@ namespace Resgrid.Tests.Services
 		}
 
 		[TestFixture]
+		public class when_sending_phone_verification : with_the_contact_verification_service
+		{
+			[Test]
+			public async Task should_reset_home_voice_consumption_when_sending_a_new_home_code()
+			{
+				var profile = BuildProfile();
+				profile.HomeVerificationVoiceCodeConsumed = true;
+				UserProfile savedProfile = null;
+
+				_userProfileServiceMock
+					.Setup(s => s.GetProfileByUserIdAsync("user1", true))
+					.ReturnsAsync(profile);
+				_userProfileServiceMock
+					.Setup(s => s.SaveProfileAsync(It.IsAny<int>(), It.IsAny<UserProfile>(), It.IsAny<CancellationToken>()))
+					.Callback<int, UserProfile, CancellationToken>((_, p, _) => savedProfile = p)
+					.ReturnsAsync(profile);
+
+				var result = await _contactVerificationService.SendHomeVerificationCodeAsync("user1", 1, "15555550123");
+
+				result.Should().BeTrue();
+				savedProfile.Should().NotBeNull();
+				savedProfile!.HomeVerificationVoiceCodeConsumed.Should().BeFalse();
+			}
+		}
+
+		[TestFixture]
 		public class when_confirming_verification_code : with_the_contact_verification_service
 		{
 			[Test]
@@ -238,6 +264,7 @@ namespace Resgrid.Tests.Services
 
 				updated.MobileNumberVerified.Should().BeFalse();
 				updated.MobileVerificationCode.Should().BeNull();
+				updated.MobileVerificationVoiceCodeConsumed.Should().BeFalse();
 				updated.MobileVerificationAttempts.Should().Be(0);
 			}
 
@@ -272,6 +299,23 @@ namespace Resgrid.Tests.Services
 
 				updated.EmailVerified.Should().BeFalse();
 				updated.EmailVerificationCode.Should().BeNull();
+			}
+
+			[Test]
+			public async Task should_reset_home_voice_consumption_when_number_changes()
+			{
+				var existing = BuildProfile();
+				existing.HomeNumber = "5551112222";
+				existing.HomeVerificationVoiceCodeConsumed = true;
+
+				var updated = BuildProfile();
+				updated.HomeNumber = "5553334444";
+				updated.HomeVerificationVoiceCodeConsumed = true;
+
+				await _contactVerificationService.ResetVerificationForChangedContactAsync(existing, updated);
+
+				updated.HomeVerificationVoiceCodeConsumed.Should().BeFalse();
+				updated.HomeVerificationCode.Should().BeNull();
 			}
 		}
 

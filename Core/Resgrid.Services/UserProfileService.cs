@@ -93,6 +93,7 @@ namespace Resgrid.Services
 					profile.MobileNumberVerified = false;
 					profile.MobileVerificationCode = null;
 					profile.MobileVerificationCodeExpiry = null;
+					profile.MobileVerificationVoiceCodeConsumed = false;
 					profile.MobileVerificationAttempts = 0;
 					profile.MobileVerificationAttemptsResetDate = null;
 				}
@@ -101,6 +102,7 @@ namespace Resgrid.Services
 					profile.HomeNumberVerified = false;
 					profile.HomeVerificationCode = null;
 					profile.HomeVerificationCodeExpiry = null;
+					profile.HomeVerificationVoiceCodeConsumed = false;
 					profile.HomeVerificationAttempts = 0;
 					profile.HomeVerificationAttemptsResetDate = null;
 				}

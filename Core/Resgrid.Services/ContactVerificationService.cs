@@ -86,6 +86,7 @@ namespace Resgrid.Services
 			string code = GenerateCode();
 			profile.MobileVerificationCode = _encryptionService.Encrypt(code);
 			profile.MobileVerificationCodeExpiry = DateTime.UtcNow.AddMinutes(Config.VerificationConfig.VerificationCodeExpiryMinutes);
+			profile.MobileVerificationVoiceCodeConsumed = false;
 
 			await _userProfileService.SaveProfileAsync(departmentId, profile, cancellationToken);
 
@@ -108,6 +109,7 @@ namespace Resgrid.Services
 			string code = GenerateCode();
 			profile.HomeVerificationCode = _encryptionService.Encrypt(code);
 			profile.HomeVerificationCodeExpiry = DateTime.UtcNow.AddMinutes(Config.VerificationConfig.VerificationCodeExpiryMinutes);
+			profile.HomeVerificationVoiceCodeConsumed = false;
 
 			await _userProfileService.SaveProfileAsync(departmentId, profile, cancellationToken);
 
@@ -270,6 +272,7 @@ namespace Resgrid.Services
 				updatedProfile.MobileNumberVerified = false;
 				updatedProfile.MobileVerificationCode = null;
 				updatedProfile.MobileVerificationCodeExpiry = null;
+				updatedProfile.MobileVerificationVoiceCodeConsumed = false;
 				updatedProfile.MobileVerificationAttempts = 0;
 				updatedProfile.MobileVerificationAttemptsResetDate = null;
 			}
@@ -279,6 +282,7 @@ namespace Resgrid.Services
 				updatedProfile.HomeNumberVerified = false;
 				updatedProfile.HomeVerificationCode = null;
 				updatedProfile.HomeVerificationCodeExpiry = null;
+				updatedProfile.HomeVerificationVoiceCodeConsumed = false;
 				updatedProfile.HomeVerificationAttempts = 0;
 				updatedProfile.HomeVerificationAttemptsResetDate = null;
 			}

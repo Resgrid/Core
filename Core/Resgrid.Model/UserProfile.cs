@@ -178,6 +178,12 @@ namespace Resgrid.Model
 		[ProtoMember(48)]
 		public string CalendarSyncToken { get; set; }
 
+		[ProtoMember(49)]
+		public bool MobileVerificationVoiceCodeConsumed { get; set; }
+
+		[ProtoMember(50)]
+		public bool HomeVerificationVoiceCodeConsumed { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

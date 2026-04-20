@@ -82,7 +82,7 @@ namespace Resgrid.Config
 
 			if (mapProvider == MapboxMapProvider)
 			{
-				var mapboxAccessToken = GetSystemMapboxAccessToken(surfaceKey);
+				var mapboxAccessToken = NormalizePublicMapboxAccessToken(GetSystemMapboxAccessToken(surfaceKey));
 
 				if (TryCreateMapboxConfig(MapBoxStyleUrl, mapboxAccessToken, false, out var mapboxConfig))
 					return mapboxConfig;
@@ -115,8 +115,9 @@ namespace Resgrid.Config
 		public static bool TryCreateMapboxConfig(string styleUrl, string accessToken, bool isDepartmentOverride, out ResolvedMapConfig mapConfig)
 		{
 			mapConfig = null;
+			var publicAccessToken = NormalizePublicMapboxAccessToken(accessToken);
 
-			if (string.IsNullOrWhiteSpace(styleUrl) || string.IsNullOrWhiteSpace(accessToken))
+			if (string.IsNullOrWhiteSpace(styleUrl) || string.IsNullOrWhiteSpace(publicAccessToken))
 				return false;
 
 			var styleId = GetMapboxStyleId(styleUrl);
@@ -127,9 +128,9 @@ namespace Resgrid.Config
 			mapConfig = new ResolvedMapConfig
 			{
 				MapProvider = MapboxMapProvider,
-				TileUrl = $"https://api.mapbox.com/styles/v1/{styleId}/tiles/256/{{z}}/{{x}}/{{y}}@2x?access_token={accessToken}",
+				TileUrl = $"https://api.mapbox.com/styles/v1/{styleId}/tiles/256/{{z}}/{{x}}/{{y}}@2x?access_token={publicAccessToken}",
 				StyleUrl = NormalizeMapboxStyleUrl(styleUrl, styleId),
-				AccessToken = accessToken,
+				AccessToken = publicAccessToken,
 				Attribution = MapBoxAttribution,
 				IsDepartmentOverride = isDepartmentOverride
 			};
@@ -292,6 +293,18 @@ namespace Resgrid.Config
 				return styleUrl;
 
 			return $"mapbox://styles/{styleId}";
+		}
+
+		private static string NormalizePublicMapboxAccessToken(string accessToken)
+		{
+			if (string.IsNullOrWhiteSpace(accessToken))
+				return string.Empty;
+
+			var trimmedAccessToken = accessToken.Trim();
+
+			return trimmedAccessToken.StartsWith("pk.", StringComparison.Ordinal)
+				? trimmedAccessToken
+				: string.Empty;
 		}
 
 		private static string GetMapboxStyleId(string styleUrl)

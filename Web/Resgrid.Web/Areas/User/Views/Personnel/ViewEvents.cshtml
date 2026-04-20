@@ -100,7 +100,7 @@
     <script>
         var personnelUserId = '@Model.UserId';
         var osmKey = '@Model.OSMKey';
-        var osmTileUrl = '@mapConfig.TileUrl';
+        var osmTileUrl = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.TileUrl, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
         var centerLat = '@Model.CenterLat';
         var centerLon = '@Model.CenterLon';
     </script>

@@ -438,8 +438,8 @@
     <script type="text/javascript">
         var callId = @(Model.Call.CallId);
         var newCallFormData = '@Html.Raw(Model.NewCallFormData)';
-        var osmTileUrl = '@mapConfig.TileUrl';
-        var osmTileAttribution = '@mapConfig.Attribution';
+        var osmTileUrl = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.TileUrl, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
+        var osmTileAttribution = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.Attribution, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
         var nominatimUrl = '@Resgrid.Config.MappingConfig.NominatimUrl';
         var osrmUrl = '@Resgrid.Config.MappingConfig.OsrmUrl';
     </script>

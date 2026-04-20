@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -20,6 +21,7 @@ namespace Resgrid.Services
 		private readonly ISmsService _smsService;
 		private readonly ISystemAuditsService _systemAuditsService;
 		private readonly IEncryptionService _encryptionService;
+		private readonly IOutboundVoiceProvider _outboundVoiceProvider;
 
 		public ContactVerificationService(
 			IUserProfileService userProfileService,
@@ -27,7 +29,8 @@ namespace Resgrid.Services
 			IEmailService emailService,
 			ISmsService smsService,
 			ISystemAuditsService systemAuditsService,
-			IEncryptionService encryptionService)
+			IEncryptionService encryptionService,
+			IOutboundVoiceProvider outboundVoiceProvider)
 		{
 			_userProfileService = userProfileService;
 			_usersService = usersService;
@@ -35,6 +38,7 @@ namespace Resgrid.Services
 			_smsService = smsService;
 			_systemAuditsService = systemAuditsService;
 			_encryptionService = encryptionService;
+			_outboundVoiceProvider = outboundVoiceProvider;
 		}
 
 		public async Task<bool> SendEmailVerificationCodeAsync(string userId, int departmentId, CancellationToken cancellationToken = default)
@@ -82,6 +86,7 @@ namespace Resgrid.Services
 			string code = GenerateCode();
 			profile.MobileVerificationCode = _encryptionService.Encrypt(code);
 			profile.MobileVerificationCodeExpiry = DateTime.UtcNow.AddMinutes(Config.VerificationConfig.VerificationCodeExpiryMinutes);
+			profile.MobileVerificationVoiceCodeConsumed = false;
 
 			await _userProfileService.SaveProfileAsync(departmentId, profile, cancellationToken);
 
@@ -104,12 +109,17 @@ namespace Resgrid.Services
 			string code = GenerateCode();
 			profile.HomeVerificationCode = _encryptionService.Encrypt(code);
 			profile.HomeVerificationCodeExpiry = DateTime.UtcNow.AddMinutes(Config.VerificationConfig.VerificationCodeExpiryMinutes);
+			profile.HomeVerificationVoiceCodeConsumed = false;
 
 			await _userProfileService.SaveProfileAsync(departmentId, profile, cancellationToken);
 
-			bool sent = await _smsService.SendSmsVerificationCodeAsync(profile.GetHomePhoneNumber(), code, departmentNumber);
+			// Use a Twilio voice call instead of SMS for home numbers, since they may be
+			// landlines that cannot receive text messages. The call speaks the digits
+			// of the verification code, repeating multiple times so the user can note them.
+			bool sent = await _outboundVoiceProvider.SendVoiceVerificationCallAsync(
+				profile.GetHomePhoneNumber(), userId, (int)ContactVerificationType.HomeNumber);
 
-			await WriteAuditAsync(userId, departmentId, ContactVerificationType.HomeNumber, sent, "Send", null, cancellationToken);
+			await WriteAuditAsync(userId, departmentId, ContactVerificationType.HomeNumber, sent, "SendVoice", null, cancellationToken);
 
 			return sent;
 		}
@@ -262,6 +272,7 @@ namespace Resgrid.Services
 				updatedProfile.MobileNumberVerified = false;
 				updatedProfile.MobileVerificationCode = null;
 				updatedProfile.MobileVerificationCodeExpiry = null;
+				updatedProfile.MobileVerificationVoiceCodeConsumed = false;
 				updatedProfile.MobileVerificationAttempts = 0;
 				updatedProfile.MobileVerificationAttemptsResetDate = null;
 			}
@@ -271,6 +282,7 @@ namespace Resgrid.Services
 				updatedProfile.HomeNumberVerified = false;
 				updatedProfile.HomeVerificationCode = null;
 				updatedProfile.HomeVerificationCodeExpiry = null;
+				updatedProfile.HomeVerificationVoiceCodeConsumed = false;
 				updatedProfile.HomeVerificationAttempts = 0;
 				updatedProfile.HomeVerificationAttemptsResetDate = null;
 			}

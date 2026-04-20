@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -14,6 +15,7 @@ using Resgrid.Model.Queue;
 using Resgrid.Model.Services;
 using Resgrid.Web.Services.Models;
 using Twilio.AspNet.Common;
+using Twilio.AspNet.Core;
 using Twilio.TwiML;
 using Twilio.TwiML.Voice;
 
@@ -45,13 +47,15 @@ namespace Resgrid.Web.Services.Controllers
 		private readonly IUsersService _usersService;
 		private readonly ICalendarService _calendarService;
 		private readonly ICommunicationTestService _communicationTestService;
+		private readonly IEncryptionService _encryptionService;
 
 		public TwilioController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
 			ILimitsService limitsService, ICallsService callsService, IQueueService queueService, IDepartmentsService departmentsService,
 			IUserProfileService userProfileService, ITextCommandService textCommandService, IActionLogsService actionLogsService,
 			IUserStateService userStateService, ICommunicationService communicationService, IGeoLocationProvider geoLocationProvider,
 			IDepartmentGroupsService departmentGroupsService, ICustomStateService customStateService, IUnitsService unitsService,
-			IUsersService usersService, ICalendarService calendarService, ICommunicationTestService communicationTestService)
+			IUsersService usersService, ICalendarService calendarService, ICommunicationTestService communicationTestService,
+			IEncryptionService encryptionService)
 		{
 			_departmentSettingsService = departmentSettingsService;
 			_numbersService = numbersService;
@@ -71,6 +75,7 @@ namespace Resgrid.Web.Services.Controllers
 			_usersService = usersService;
 			_calendarService = calendarService;
 			_communicationTestService = communicationTestService;
+			_encryptionService = encryptionService;
 		}
 
 		#endregion Private Readonly Properties and Constructors
@@ -451,6 +456,7 @@ namespace Resgrid.Web.Services.Controllers
 
 		[HttpGet("VoiceCall")]
 		[Produces("application/xml")]
+		[ValidateRequest]
 		public async Task<ActionResult> VoiceCall(string userId, int callId)
 		{
 			var response = new VoiceResponse();
@@ -624,8 +630,94 @@ namespace Resgrid.Web.Services.Controllers
 			};
 		}
 
+		[HttpGet("VoiceVerification")]
+		[Produces("application/xml")]
+		[ValidateRequest]
+		public async Task<ActionResult> VoiceVerification(string userId, int contactType)
+		{
+			if (string.IsNullOrWhiteSpace(userId))
+				return GetVoiceVerificationErrorResult();
+
+			var profile = await _userProfileService.GetProfileByUserIdAsync(userId, bypassCache: true);
+			if (profile == null)
+				return GetVoiceVerificationErrorResult();
+
+			string encryptedCode;
+			DateTime? expiry;
+			bool alreadyConsumed;
+			switch ((ContactVerificationType)contactType)
+			{
+				case ContactVerificationType.MobileNumber:
+					encryptedCode = profile.MobileVerificationCode;
+					expiry = profile.MobileVerificationCodeExpiry;
+					alreadyConsumed = profile.MobileVerificationVoiceCodeConsumed;
+					break;
+				case ContactVerificationType.HomeNumber:
+					encryptedCode = profile.HomeVerificationCode;
+					expiry = profile.HomeVerificationCodeExpiry;
+					alreadyConsumed = profile.HomeVerificationVoiceCodeConsumed;
+					break;
+				default:
+					return GetVoiceVerificationErrorResult();
+			}
+
+			if (alreadyConsumed || string.IsNullOrWhiteSpace(encryptedCode) || !expiry.HasValue || DateTime.UtcNow > expiry.Value)
+				return GetVoiceVerificationErrorResult();
+
+			string code;
+			try
+			{
+				code = _encryptionService.Decrypt(encryptedCode);
+			}
+			catch (CryptographicException ex)
+			{
+				Framework.Logging.LogException(ex);
+				return GetVoiceVerificationErrorResult();
+			}
+
+			if (string.IsNullOrWhiteSpace(code))
+				return GetVoiceVerificationErrorResult();
+
+			var department = await _departmentsService.GetDepartmentByUserIdAsync(profile.UserId, false);
+			if (department == null)
+				return GetVoiceVerificationErrorResult();
+
+			switch ((ContactVerificationType)contactType)
+			{
+				case ContactVerificationType.MobileNumber:
+					profile.MobileVerificationVoiceCodeConsumed = true;
+					break;
+				case ContactVerificationType.HomeNumber:
+					profile.HomeVerificationVoiceCodeConsumed = true;
+					break;
+			}
+
+			await _userProfileService.SaveProfileAsync(department.DepartmentId, profile);
+
+			var response = new VoiceResponse();
+			var spokenCode = string.Join(", ", code.ToCharArray());
+
+			response.Say("Hello, this is Resgrid calling with your verification code.");
+			for (int i = 0; i < 3; i++)
+			{
+				response.Pause(length: 1);
+				response.Say($"Your verification code is: {spokenCode}.");
+			}
+			response.Pause(length: 1);
+			response.Say("That was your Resgrid verification code. Goodbye.");
+			response.Hangup();
+
+			return new ContentResult
+			{
+				Content = response.ToString(),
+				ContentType = "application/xml",
+				StatusCode = 200
+			};
+		}
+
 		[HttpGet("InboundVoice")]
 		[Produces("application/xml")]
+		[ValidateRequest]
 		public async Task<ActionResult> InboundVoice([FromQuery] TwilioGatherRequest request)
 		{
 			if (request == null || string.IsNullOrWhiteSpace(request.To) || string.IsNullOrWhiteSpace(request.From))
@@ -692,6 +784,19 @@ namespace Resgrid.Web.Services.Controllers
 			{
 				response.Say("Thank you for calling Resgrid, automated personnel system. The number you called is not tied to an active department or the department doesn't have this feature enabled. Goodbye.").Hangup();
 			}
+
+			return new ContentResult
+			{
+				Content = response.ToString(),
+				ContentType = "application/xml",
+				StatusCode = 200
+			};
+		}
+
+		private ContentResult GetVoiceVerificationErrorResult()
+		{
+			var response = new VoiceResponse();
+			response.Say("We couldn't complete your verification call. Please request a new code and try again. Goodbye.").Hangup();
 
 			return new ContentResult
 			{

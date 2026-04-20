@@ -2,6 +2,7 @@
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Routes.Routes> localizer
 @{
     ViewBag.Title = "Resgrid | " + localizer["RouteDetailPageTitle"];
+    var mapConfig = SettingsHelper.GetDepartmentMapConfig(Resgrid.Config.InfoConfig.WebsiteKey);
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -94,8 +95,8 @@
 
 @section Scripts {
     <script>
-        var osmTileUrl = '@Resgrid.Config.MappingConfig.GetWebsiteOSMUrl()';
-        var osmTileAttribution = '@Resgrid.Config.MappingConfig.LeafletAttribution';
+        var osmTileUrl = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.TileUrl, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
+        var osmTileAttribution = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.Attribution, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
         var routeStops = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Stops.OrderBy(s => s.StopOrder).Select(s => new { s.Name, lat = s.Latitude, lng = s.Longitude })));
         var routeGeometry = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Plan.MapboxRouteGeometry ?? ""));
         var routeColor = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Plan.RouteColor ?? "#3388ff"));

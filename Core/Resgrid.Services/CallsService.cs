@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -1030,6 +1030,12 @@ namespace Resgrid.Services
 			await _callVideoFeedRepository.SaveOrUpdateAsync(feed, cancellationToken);
 
 			return true;
+		}
+
+		public async Task<List<Call>> GetActiveCallsWithCheckInTimersForUserAsync(string userId, int departmentId)
+		{
+			var calls = await _callsRepository.GetActiveCallsWithCheckInTimersForUserAsync(userId, departmentId);
+			return calls?.ToList() ?? new List<Call>();
 		}
 	}
 }

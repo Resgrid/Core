@@ -197,4 +197,105 @@ namespace Resgrid.Web.Services.Models.v4.CheckInTimers
 	{
 		public string Id { get; set; }
 	}
+
+	// ── Endpoint 1: User active-call check-in summaries ─────────
+
+	/// <summary>
+	/// Response wrapper for <see cref="GetUserCallCheckInStatuses"/>.
+	/// </summary>
+	public class UserCallCheckInStatusResult : StandardApiResponseV4Base
+	{
+		public List<UserCallCheckInStatusResultData> Data { get; set; }
+	}
+
+	/// <summary>
+	/// Per-call check-in status for the requested user.
+	/// </summary>
+	public class UserCallCheckInStatusResultData
+	{
+		/// <summary>The call identifier.</summary>
+		public int CallId { get; set; }
+
+		/// <summary>Call name / nature of call.</summary>
+		public string CallName { get; set; }
+
+		/// <summary>Human-readable call number.</summary>
+		public string CallNumber { get; set; }
+
+		/// <summary>UTC timestamp when the call was logged.</summary>
+		public DateTime CallStartedOn { get; set; }
+
+		/// <summary>True when a personnel check-in timer is active on this call.</summary>
+		public bool HasPersonnelTimer { get; set; }
+
+		/// <summary>Timer interval in minutes (0 when HasPersonnelTimer is false).</summary>
+		public int DurationMinutes { get; set; }
+
+		/// <summary>Warning window in minutes before the deadline (0 when HasPersonnelTimer is false).</summary>
+		public int WarningThresholdMinutes { get; set; }
+
+		/// <summary>UTC timestamp of the user's last check-in on this call, or null.</summary>
+		public DateTime? LastCheckIn { get; set; }
+
+		/// <summary>True when the timer has expired and the user must check in immediately.</summary>
+		public bool NeedsCheckIn { get; set; }
+
+		/// <summary>
+		/// Minutes remaining until the next check-in is due.
+		/// Positive = time still available; negative = number of minutes overdue.
+		/// </summary>
+		public double MinutesRemaining { get; set; }
+
+		/// <summary>Colour-coded status: "Green", "Warning", "Critical", or "NoTimer".</summary>
+		public string Status { get; set; }
+	}
+
+	// ── Endpoint 2: Call personnel check-in statuses ────────────
+
+	/// <summary>
+	/// Response wrapper for <see cref="GetCallPersonnelCheckInStatuses"/>.
+	/// </summary>
+	public class CallPersonnelCheckInStatusResult : StandardApiResponseV4Base
+	{
+		/// <summary>The call identifier that was queried.</summary>
+		public int CallId { get; set; }
+
+		/// <summary>True when a personnel check-in timer is currently active for this call.</summary>
+		public bool HasActivePersonnelTimer { get; set; }
+
+		/// <summary>Resolved timer duration in minutes (0 when HasActivePersonnelTimer is false).</summary>
+		public int DurationMinutes { get; set; }
+
+		/// <summary>Warning window in minutes (0 when HasActivePersonnelTimer is false).</summary>
+		public int WarningThresholdMinutes { get; set; }
+
+		public List<CallPersonnelCheckInStatusResultData> Data { get; set; }
+	}
+
+	/// <summary>
+	/// Per-person check-in status on a specific call.
+	/// </summary>
+	public class CallPersonnelCheckInStatusResultData
+	{
+		/// <summary>The ASP.NET Identity user identifier.</summary>
+		public string UserId { get; set; }
+
+		/// <summary>The user's full display name (first + last from their profile).</summary>
+		public string FullName { get; set; }
+
+		/// <summary>UTC timestamp of the user's last personnel check-in on this call, or null.</summary>
+		public DateTime? LastCheckIn { get; set; }
+
+		/// <summary>True when the timer has expired and this person must check in immediately.</summary>
+		public bool NeedsCheckIn { get; set; }
+
+		/// <summary>
+		/// Minutes remaining until the next check-in is due.
+		/// Positive = time still available; negative = number of minutes overdue.
+		/// </summary>
+		public double MinutesRemaining { get; set; }
+
+		/// <summary>Colour-coded status: "Green", "Warning", or "Critical".</summary>
+		public string Status { get; set; }
+	}
 }

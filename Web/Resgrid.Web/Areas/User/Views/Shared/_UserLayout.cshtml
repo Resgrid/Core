@@ -19,8 +19,7 @@
 
     @if (ViewBag.LoadAngular == true)
     {
-        <link rel="stylesheet" href="/js/ng/styles.css" />
-        <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+        <link rel="stylesheet" href="~/js/ng/react-elements.css" asp-append-version="true" />
     }
 
     <link rel="shortcut icon" href="~/favicon.ico" />
@@ -132,16 +131,7 @@
 
     @if (ViewBag.LoadAngular == true)
     {
-        <environment names="Release,Staging,Production,Docker">
-            <script src="/js/ng/app.js"></script>
-        </environment>
-
-        <environment names="Development">
-            <script src="/js/ng/runtime.js" asp-append-version="false"></script>
-            <script src="/js/ng/polyfills.js" asp-append-version="false"></script>
-            <script src="/js/ng/vendor.js" asp-append-version="false"></script>
-            <script src="/js/ng/main.js" asp-append-version="false"></script>
-        </environment>
+        <script type="module" src="~/js/ng/react-elements.js" asp-append-version="true"></script>
     }
 
     @if (IsSectionDefined("Scripts"))

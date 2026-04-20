@@ -33,7 +33,6 @@ namespace Resgrid.Services
 			_unitsService = unitsService;
 			_callsService = callsService;
 		}
-
 		#region Configuration CRUD
 
 		public async Task<List<CheckInTimerConfig>> GetTimerConfigsForDepartmentAsync(int departmentId)
@@ -380,5 +379,163 @@ namespace Resgrid.Services
 		}
 
 		#endregion State Filtering
+
+		#region Per-User Active Call Check-In Summaries (Endpoint 1)
+
+		/// <inheritdoc/>
+		public async Task<List<UserCallCheckInSummary>> GetUserActiveCallCheckInSummariesAsync(string userId, int departmentId)
+		{
+			if (string.IsNullOrWhiteSpace(userId))
+				return new List<UserCallCheckInSummary>();
+
+			// Single optimised query: joins Calls + CallDispatches, filtered by
+			// user, department, CheckInTimersEnabled=true, State=Active (0).
+			var activeCalls = await _callsService.GetActiveCallsWithCheckInTimersForUserAsync(userId, departmentId);
+			if (activeCalls == null || !activeCalls.Any())
+				return new List<UserCallCheckInSummary>();
+
+			var summaries = new List<UserCallCheckInSummary>();
+			var now = DateTime.UtcNow;
+
+			foreach (var call in activeCalls)
+			{
+				// Resolve the configured timers for this call (handles overrides).
+				var resolvedTimers = await ResolveAllTimersForCallAsync(call);
+
+				// Find the first personnel-type timer (TargetType == Personnel = 0).
+				var personnelTimer = resolvedTimers
+					.FirstOrDefault(t => t.TargetType == (int)CheckInTimerTargetType.Personnel);
+
+				if (personnelTimer == null)
+				{
+					// No personnel timer active for this call – include the call but
+					// mark it clearly so the client can inform the user.
+					summaries.Add(new UserCallCheckInSummary
+					{
+						CallId = call.CallId,
+						CallName = call.Name,
+						CallNumber = call.Number,
+						CallStartedOn = call.LoggedOn,
+						HasPersonnelTimer = false,
+						Status = "NoTimer"
+					});
+					continue;
+				}
+
+				// Get the user's last check-in on this call (single targeted query).
+				var lastCheckIn = await _recordRepository.GetLastCheckInForUserOnCallAsync(call.CallId, userId);
+
+				// Baseline is the last check-in timestamp OR the call start time if
+				// the user has never checked in.
+				var baseTime = lastCheckIn?.Timestamp ?? call.LoggedOn;
+				var elapsed = (now - baseTime).TotalMinutes;
+				var minutesRemaining = personnelTimer.DurationMinutes - elapsed;
+
+				string status;
+				if (minutesRemaining > personnelTimer.WarningThresholdMinutes)
+					status = "Green";
+				else if (minutesRemaining > 0)
+					status = "Warning";
+				else
+					status = "Critical";
+
+				summaries.Add(new UserCallCheckInSummary
+				{
+					CallId = call.CallId,
+					CallName = call.Name,
+					CallNumber = call.Number,
+					CallStartedOn = call.LoggedOn,
+					HasPersonnelTimer = true,
+					DurationMinutes = personnelTimer.DurationMinutes,
+					WarningThresholdMinutes = personnelTimer.WarningThresholdMinutes,
+					LastCheckIn = lastCheckIn?.Timestamp,
+					NeedsCheckIn = minutesRemaining <= 0,
+					MinutesRemaining = Math.Round(minutesRemaining, 1),
+					Status = status
+				});
+			}
+
+			return summaries;
+		}
+
+		#endregion Per-User Active Call Check-In Summaries
+
+		#region Call Personnel Check-In Statuses (Endpoint 2)
+
+		/// <inheritdoc/>
+		public async Task<List<PersonnelCallCheckInStatus>> GetCallPersonnelCheckInStatusesAsync(Call call)
+		{
+			if (call == null || !call.CheckInTimersEnabled || call.State != (int)CallStates.Active)
+				return new List<PersonnelCallCheckInStatus>();
+
+			// Resolve the personnel timer for this call.
+			var resolvedTimers = await ResolveAllTimersForCallAsync(call);
+			var personnelTimer = resolvedTimers
+				.FirstOrDefault(t => t.TargetType == (int)CheckInTimerTargetType.Personnel);
+
+			// If no personnel timer is configured there's nothing to report.
+			if (personnelTimer == null)
+				return new List<PersonnelCallCheckInStatus>();
+
+			// Load dispatched personnel (single query).
+			if (call.Dispatches == null)
+				call = await _callsService.PopulateCallData(call, true, false, false, false, false, false, false, false, false);
+
+			var dispatches = call.Dispatches?.ToList() ?? new List<CallDispatch>();
+			if (!dispatches.Any())
+				return new List<PersonnelCallCheckInStatus>();
+
+			// Load ALL check-in records for the call at once (single query), then
+			// keep only the most-recent personnel-type record per user in memory.
+			// This avoids N separate "last check-in" queries.
+			var allCheckIns = (await _recordRepository.GetByCallIdAsync(call.CallId))?.ToList()
+							  ?? new List<CheckInRecord>();
+
+			var latestByUser = allCheckIns
+				.Where(r => r.CheckInType == (int)CheckInTimerTargetType.Personnel)
+				.GroupBy(r => r.UserId)
+				.ToDictionary(
+					g => g.Key,
+					g => g.OrderByDescending(r => r.Timestamp).First());
+
+			var now = DateTime.UtcNow;
+			var statuses = new List<PersonnelCallCheckInStatus>();
+
+			foreach (var dispatch in dispatches)
+			{
+				latestByUser.TryGetValue(dispatch.UserId, out var lastRecord);
+
+				var baseTime = lastRecord?.Timestamp ?? call.LoggedOn;
+				var elapsed = (now - baseTime).TotalMinutes;
+				var minutesRemaining = personnelTimer.DurationMinutes - elapsed;
+
+				string status;
+				if (minutesRemaining > personnelTimer.WarningThresholdMinutes)
+					status = "Green";
+				else if (minutesRemaining > 0)
+					status = "Warning";
+				else
+					status = "Critical";
+
+				statuses.Add(new PersonnelCallCheckInStatus
+				{
+					UserId = dispatch.UserId,
+					// FullName is intentionally left null here; the controller enriches
+					// it from IUserProfileService to avoid pulling that dependency into
+					// this service.
+					FullName = null,
+					LastCheckIn = lastRecord?.Timestamp,
+					NeedsCheckIn = minutesRemaining <= 0,
+					MinutesRemaining = Math.Round(minutesRemaining, 1),
+					Status = status,
+					DurationMinutes = personnelTimer.DurationMinutes,
+					WarningThresholdMinutes = personnelTimer.WarningThresholdMinutes
+				});
+			}
+
+			return statuses;
+		}
+
+		#endregion Call Personnel Check-In Statuses
 	}
 }

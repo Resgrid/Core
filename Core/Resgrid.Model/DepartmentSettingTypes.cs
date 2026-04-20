@@ -47,5 +47,8 @@
 		WeatherAlertCacheMinutes = 43,
 		WeatherAlertAutoMessageSchedule = 44,
 		WeatherAlertExcludedEvents = 45,
+		MappingUseMapboxOverride = 46,
+		MappingMapboxStyleUrl = 47,
+		MappingMapboxAccessToken = 48,
 	}
 }

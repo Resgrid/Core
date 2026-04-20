@@ -1,4 +1,4 @@
-﻿using Resgrid.Config;
+using Resgrid.Config;
 using Resgrid.Repositories.DataRepository.Configs;
 using Resgrid.Repositories.DataRepository.Queries.Calendar;
 using Resgrid.Repositories.DataRepository.Queries.Calls;
@@ -1134,6 +1134,14 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT *
 					FROM %SCHEMA%.%TABLENAME%
 					WHERE HasBeenDispatched = false AND IsDeleted = false AND DepartmentId = %DID%";
+			SelectActiveCallsWithCheckInTimersForUserQuery = @"
+					SELECT DISTINCT c.*
+					FROM %SCHEMA%.%TABLENAME% c
+					INNER JOIN %SCHEMA%.%CALLDISPATCHTABLE% cd ON cd.CallId = c.CallId
+					WHERE cd.UserId = %USERID%
+					  AND c.DepartmentId = %DID%
+					  AND c.CheckInTimersEnabled = true
+					  AND c.State = 0";
 			SelectCallsByContactQuery= @"
 					SELECT %SCHEMA%.%CALLSTABLE%.*
 					FROM %SCHEMA%.%CALLSTABLE%

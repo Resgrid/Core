@@ -135,11 +135,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ModelState.AddModelError("fileToUpload", "You must select a document to add.");
 			else
 			{
-				var extenion = fileToUpload.FileName.Substring(fileToUpload.FileName.IndexOf(char.Parse(".")) + 1,
-					fileToUpload.FileName.Length - fileToUpload.FileName.IndexOf(char.Parse(".")) - 1);
-
-				if (!String.IsNullOrWhiteSpace(extenion))
-					extenion = extenion.ToLower();
+				var extenion = FileHelper.GetFileExtensionWithoutDot(fileToUpload.FileName);
 
 				if (extenion != "jpg" && extenion != "jpeg" && extenion != "png" && extenion != "gif" && extenion != "gif" && extenion != "pdf" && extenion != "doc"
 					&& extenion != "docx" && extenion != "ppt" && extenion != "pptx" && extenion != "pps" && extenion != "ppsx" && extenion != "odt"
@@ -261,11 +257,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (fileToUpload != null && fileToUpload.Length > 0)
 			{
-				var extenion = fileToUpload.FileName.Substring(fileToUpload.FileName.IndexOf(char.Parse(".")) + 1,
-					fileToUpload.FileName.Length - fileToUpload.FileName.IndexOf(char.Parse(".")) - 1);
-
-				if (!String.IsNullOrWhiteSpace(extenion))
-					extenion = extenion.ToLower();
+				var extenion = FileHelper.GetFileExtensionWithoutDot(fileToUpload.FileName);
 
 				if (extenion != "jpg" && extenion != "jpeg" && extenion != "png" && extenion != "gif" && extenion != "gif" && extenion != "pdf" && extenion != "doc"
 					&& extenion != "docx" && extenion != "ppt" && extenion != "pptx" && extenion != "pps" && extenion != "ppsx" && extenion != "odt"

@@ -6,6 +6,7 @@ using Moq;
 using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Identity;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Services;
 
@@ -21,6 +22,7 @@ namespace Resgrid.Tests.Services
 			protected Mock<ISmsService> _smsServiceMock;
 			protected Mock<ISystemAuditsService> _systemAuditsServiceMock;
 			protected Mock<IEncryptionService> _encryptionServiceMock;
+			protected Mock<IOutboundVoiceProvider> _outboundVoiceProviderMock;
 			protected IContactVerificationService _contactVerificationService;
 
 			protected with_the_contact_verification_service()
@@ -45,13 +47,19 @@ namespace Resgrid.Tests.Services
 					.Setup(s => s.SaveSystemAuditAsync(It.IsAny<SystemAudit>(), It.IsAny<CancellationToken>()))
 					.ReturnsAsync(new SystemAudit());
 
+				_outboundVoiceProviderMock = new Mock<IOutboundVoiceProvider>();
+				_outboundVoiceProviderMock
+					.Setup(v => v.SendVoiceVerificationCallAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()))
+					.ReturnsAsync(true);
+
 				_contactVerificationService = new ContactVerificationService(
 					_userProfileServiceMock.Object,
 					_usersServiceMock.Object,
 					_emailServiceMock.Object,
 					_smsServiceMock.Object,
 					_systemAuditsServiceMock.Object,
-					_encryptionServiceMock.Object);
+					_encryptionServiceMock.Object,
+					_outboundVoiceProviderMock.Object);
 			}
 
 			protected static UserProfile BuildProfile(string userId = "user1",
@@ -101,6 +109,32 @@ namespace Resgrid.Tests.Services
 				savedProfile.EmailVerificationCode.Should().StartWith("ENC:");
 				savedProfile.EmailVerificationCodeExpiry.Should().NotBeNull();
 				savedProfile.EmailVerificationCodeExpiry!.Value.Should().BeAfter(DateTime.UtcNow);
+			}
+		}
+
+		[TestFixture]
+		public class when_sending_phone_verification : with_the_contact_verification_service
+		{
+			[Test]
+			public async Task should_reset_home_voice_consumption_when_sending_a_new_home_code()
+			{
+				var profile = BuildProfile();
+				profile.HomeVerificationVoiceCodeConsumed = true;
+				UserProfile savedProfile = null;
+
+				_userProfileServiceMock
+					.Setup(s => s.GetProfileByUserIdAsync("user1", true))
+					.ReturnsAsync(profile);
+				_userProfileServiceMock
+					.Setup(s => s.SaveProfileAsync(It.IsAny<int>(), It.IsAny<UserProfile>(), It.IsAny<CancellationToken>()))
+					.Callback<int, UserProfile, CancellationToken>((_, p, _) => savedProfile = p)
+					.ReturnsAsync(profile);
+
+				var result = await _contactVerificationService.SendHomeVerificationCodeAsync("user1", 1, "15555550123");
+
+				result.Should().BeTrue();
+				savedProfile.Should().NotBeNull();
+				savedProfile!.HomeVerificationVoiceCodeConsumed.Should().BeFalse();
 			}
 		}
 
@@ -230,6 +264,7 @@ namespace Resgrid.Tests.Services
 
 				updated.MobileNumberVerified.Should().BeFalse();
 				updated.MobileVerificationCode.Should().BeNull();
+				updated.MobileVerificationVoiceCodeConsumed.Should().BeFalse();
 				updated.MobileVerificationAttempts.Should().Be(0);
 			}
 
@@ -264,6 +299,23 @@ namespace Resgrid.Tests.Services
 
 				updated.EmailVerified.Should().BeFalse();
 				updated.EmailVerificationCode.Should().BeNull();
+			}
+
+			[Test]
+			public async Task should_reset_home_voice_consumption_when_number_changes()
+			{
+				var existing = BuildProfile();
+				existing.HomeNumber = "5551112222";
+				existing.HomeVerificationVoiceCodeConsumed = true;
+
+				var updated = BuildProfile();
+				updated.HomeNumber = "5553334444";
+				updated.HomeVerificationVoiceCodeConsumed = true;
+
+				await _contactVerificationService.ResetVerificationForChangedContactAsync(existing, updated);
+
+				updated.HomeVerificationVoiceCodeConsumed.Should().BeFalse();
+				updated.HomeVerificationCode.Should().BeNull();
 			}
 		}
 

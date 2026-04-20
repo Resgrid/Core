@@ -53,6 +53,7 @@ using IPNetwork = Microsoft.AspNetCore.HttpOverrides.IPNetwork;
 using System.Net.Http;
 using Resgrid.Providers.Messaging;
 using Resgrid.Web.Services;
+using Twilio.AspNet.Core;
 
 namespace Resgrid.Web.ServicesCore
 {
@@ -159,6 +160,11 @@ namespace Resgrid.Web.ServicesCore
 			services.AddControllers().AddNewtonsoftJson(options =>
 			{
 				options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+			});
+			services.AddTwilioRequestValidation((serviceProvider, options) =>
+			{
+				options.AuthToken = NumberProviderConfig.TwilioAuthToken;
+				options.AllowLocal = false;
 			});
 
 			services.AddApiVersioning(x =>
@@ -672,6 +678,10 @@ namespace Resgrid.Web.ServicesCore
 				context.Request.Scheme = "https";
 				await next.Invoke();
 			});
+
+			app.UseWhen(
+				context => context.Request.Path.StartsWithSegments("/api/Twilio", StringComparison.OrdinalIgnoreCase),
+				twilioApp => twilioApp.UseTwilioRequestValidation());
 
 			//app.UseCors("_resgridWebsiteAllowSpecificOrigins");
 			// global cors policy

@@ -1940,6 +1940,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.UnitLocationTTL = await _departmentSettingsService.GetMappingUnitLocationTTLAsync(DepartmentId);
 			model.PersonnelAllowStatusWithNoLocationToOverwrite = await _departmentSettingsService.GetMappingPersonnelAllowStatusWithNoLocationToOverwriteAsync(DepartmentId);
 			model.UnitAllowStatusWithNoLocationToOverwrite = await _departmentSettingsService.GetMappingUnitAllowStatusWithNoLocationToOverwriteAsync(DepartmentId);
+			model.UseMapboxOverride = await _departmentSettingsService.GetMappingUseMapboxOverrideAsync(DepartmentId);
+			model.MapboxStyleUrl = await _departmentSettingsService.GetMappingMapboxStyleUrlAsync(DepartmentId);
+			model.MapboxAccessToken = await _departmentSettingsService.GetMappingMapboxAccessTokenAsync(DepartmentId);
 
 			return View(model);
 		}
@@ -1952,6 +1955,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
 				return Unauthorized();
 
+			if (model.UseMapboxOverride)
+			{
+				if (String.IsNullOrWhiteSpace(model.MapboxStyleUrl))
+					ModelState.AddModelError(nameof(model.MapboxStyleUrl), "A Mapbox style url is required when the department override is enabled for website and mobile map rendering.");
+
+				if (String.IsNullOrWhiteSpace(model.MapboxAccessToken))
+					ModelState.AddModelError(nameof(model.MapboxAccessToken), "A Mapbox public access token is required when the department override is enabled for website and mobile map rendering.");
+
+				if (!String.IsNullOrWhiteSpace(model.MapboxStyleUrl) && !Config.MappingConfig.IsSupportedMapboxStyleUrl(model.MapboxStyleUrl))
+					ModelState.AddModelError(nameof(model.MapboxStyleUrl), "The Mapbox style url must be a mapbox://styles/... value or a https://api.mapbox.com/styles/v1/... url.");
+			}
+
 			if (ModelState.IsValid)
 			{
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.PersonnelLocationTTL.ToString(),
@@ -1962,6 +1977,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 					DepartmentSettingTypes.MappingPersonnelAllowStatusWithNoLocationToOverwrite, cancellationToken);
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.UnitAllowStatusWithNoLocationToOverwrite.ToString(),
 					DepartmentSettingTypes.MappingUnitAllowStatusWithNoLocationToOverwrite, cancellationToken);
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.UseMapboxOverride.ToString(),
+					DepartmentSettingTypes.MappingUseMapboxOverride, cancellationToken);
+
+				if (model.UseMapboxOverride)
+				{
+					await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.MapboxStyleUrl?.Trim(),
+						DepartmentSettingTypes.MappingMapboxStyleUrl, cancellationToken);
+					await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.MapboxAccessToken?.Trim(),
+						DepartmentSettingTypes.MappingMapboxAccessToken, cancellationToken);
+				}
+				else
+				{
+					await _departmentSettingsService.DeleteSettingAsync(DepartmentId, DepartmentSettingTypes.MappingMapboxStyleUrl, cancellationToken);
+					await _departmentSettingsService.DeleteSettingAsync(DepartmentId, DepartmentSettingTypes.MappingMapboxAccessToken, cancellationToken);
+				}
 
 				model.SaveSuccess = true;
 				return View(model);

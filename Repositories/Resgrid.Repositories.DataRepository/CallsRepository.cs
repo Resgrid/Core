@@ -1,4 +1,4 @@
-﻿﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Threading.Tasks;
@@ -28,7 +28,6 @@ namespace Resgrid.Repositories.DataRepository
 			_queryFactory = queryFactory;
 			_unitOfWork = unitOfWork;
 		}
-
 		public async Task<IEnumerable<Call>> GetAllCallsByDepartmentDateRangeAsync(int departmentId, DateTime startDate, DateTime endDate)
 		{
 			try
@@ -457,6 +456,45 @@ namespace Resgrid.Repositories.DataRepository
 			//							WHERE LoggedOn < @DeleteBeforeDate)",
 			//		new SqlParameter("@DeleteBeforeDate", lastestDate));
 
+		}
+
+		public async Task<IEnumerable<Call>> GetActiveCallsWithCheckInTimersForUserAsync(string userId, int departmentId)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<Call>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParametersExtension();
+					dynamicParameters.Add("UserId", userId);
+					dynamicParameters.Add("DepartmentId", departmentId);
+
+					var query = _queryFactory.GetQuery<SelectActiveCallsWithCheckInTimersForUserQuery>();
+
+					return await x.QueryAsync<Call>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				throw;
+			}
 		}
 	}
 }

@@ -9,6 +9,7 @@ using Resgrid.Model;
 using Resgrid.Model.Helpers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
+using Resgrid.Framework;
 using Resgrid.Web.Areas.User.Models;
 using Resgrid.Web.Areas.User.Models.Profile;
 using Resgrid.Web.Helpers;
@@ -770,11 +771,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (fileToUpload != null && fileToUpload.Length > 0)
 			{
-				var extenion = fileToUpload.FileName.Substring(fileToUpload.FileName.IndexOf(char.Parse(".")) + 1,
-					fileToUpload.FileName.Length - fileToUpload.FileName.IndexOf(char.Parse(".")) - 1);
-
-				if (!String.IsNullOrWhiteSpace(extenion))
-					extenion = extenion.ToLower();
+				var extenion = FileHelper.GetFileExtensionWithoutDot(fileToUpload.FileName);
 
 				if (extenion != "jpg" && extenion != "jpeg" && extenion != "png" && extenion != "gif" && extenion != "gif" && extenion != "pdf" && extenion != "doc"
 					&& extenion != "docx" && extenion != "ppt" && extenion != "pptx" && extenion != "pps" && extenion != "ppsx" && extenion != "odt"
@@ -853,11 +850,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (fileToUpload != null && fileToUpload.Length > 0)
 			{
-				var extenion = fileToUpload.FileName.Substring(fileToUpload.FileName.IndexOf(char.Parse(".")) + 1,
-					fileToUpload.FileName.Length - fileToUpload.FileName.IndexOf(char.Parse(".")) - 1);
-
-				if (!String.IsNullOrWhiteSpace(extenion))
-					extenion = extenion.ToLower();
+				var extenion = FileHelper.GetFileExtensionWithoutDot(fileToUpload.FileName);
 
 				if (extenion != "jpg" && extenion != "jpeg" && extenion != "png" && extenion != "gif" && extenion != "gif" && extenion != "pdf" && extenion != "doc"
 					&& extenion != "docx" && extenion != "ppt" && extenion != "pptx" && extenion != "pps" && extenion != "ppsx" && extenion != "odt"

@@ -1,4 +1,4 @@
-﻿// From https://github.com/grandchamp/Identity.Dapper
+// From https://github.com/grandchamp/Identity.Dapper
 
 namespace Resgrid.Repositories.DataRepository.Configs
 {
@@ -315,6 +315,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectAllOpenCallsByDidDateQuery { get; set; }
 		public string SelectAllCallsByDidLoggedOnQuery { get; set; }
 		public string UpdateUserDispatchesAsSentQuery { get; set; }
+		public string SelectActiveCallsWithCheckInTimersForUserQuery { get; set; }
 		public string SelectCallProtocolsByCallIdQuery { get; set; }
 		public string SelectAllCallDispatchesByCallIdQuery { get; set; }
 		public string SelectCallAttachmentByCallIdQuery { get; set; }

@@ -60,5 +60,32 @@ namespace Resgrid.Providers.NumberProvider
 
 			return false;
 		}
+
+		public async Task<bool> SendVoiceVerificationCallAsync(string phoneNumber, string userId, int contactType)
+		{
+			if (string.IsNullOrWhiteSpace(phoneNumber) || string.IsNullOrWhiteSpace(userId))
+				return false;
+
+			try
+			{
+				TwilioClient.Init(Config.NumberProviderConfig.TwilioAccountSid, Config.NumberProviderConfig.TwilioAuthToken);
+
+				string fromNumber = Config.NumberProviderConfig.TwilioResgridNumber;
+				if (string.IsNullOrWhiteSpace(fromNumber))
+					return false;
+
+				var options = new CreateCallOptions(new PhoneNumber(phoneNumber), new PhoneNumber(fromNumber));
+				options.Url = new Uri(string.Format(Config.NumberProviderConfig.TwilioVoiceVerificationApiUrl, userId, contactType));
+				options.Method = "GET";
+
+				var phoneCall = await CallResource.CreateAsync(options);
+				return phoneCall != null;
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+				return false;
+			}
+		}
 	}
 }

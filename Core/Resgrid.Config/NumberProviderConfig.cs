@@ -15,6 +15,7 @@ namespace Resgrid.Config
 		public static string TwilioResgridNumber = "";
 		public static string TwilioApiUrl = SystemBehaviorConfig.ResgridApiBaseUrl + "/api/Twilio/IncomingMessage";
 		public static string TwilioVoiceCallApiUrl = SystemBehaviorConfig.ResgridApiBaseUrl + "/api/Twilio/VoiceCall?userId={0}&callId={1}";
+		public static string TwilioVoiceVerificationApiUrl = SystemBehaviorConfig.ResgridApiBaseUrl + "/api/Twilio/VoiceVerification?userId={0}&contactType={1}";
 		public static string TwilioVoiceApiUrl = SystemBehaviorConfig.ResgridApiBaseUrl + "/api/Twilio/InboundVoice";
 
 		// Diafaan (https://www.diafaan.com)

@@ -57,12 +57,32 @@ namespace Resgrid.Web.Services.Models.v4.Configs
 		public string LoggingKey { get; set; }
 
 		/// <summary>
-		/// The Url for the leaflet map api
+		/// The Url for the rendered map tiles
 		/// </summary>
 		public string MapUrl { get; set; }
 
 		/// <summary>
-		/// The Attribution for the leaflet map
+		/// The map provider identifier
+		/// </summary>
+		public string MapProvider { get; set; }
+
+		/// <summary>
+		/// The resolved Mapbox style url for website and native clients
+		/// </summary>
+		public string MapStyleUrl { get; set; }
+
+		/// <summary>
+		/// The access token for the resolved map config
+		/// </summary>
+		public string MapAccessToken { get; set; }
+
+		/// <summary>
+		/// Indicates if a department-specific override is active
+		/// </summary>
+		public bool IsDepartmentMapOverride { get; set; }
+
+		/// <summary>
+		/// The attribution for the rendered map
 		/// </summary>
 		public string MapAttribution { get; set; }
 

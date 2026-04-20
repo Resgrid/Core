@@ -85,6 +85,33 @@
                                     <span class="help-block m-b-none">@localizer["UnitTTLHelp"]</span>
                                 </div>
                             </div>
+
+							<h3>Department Mapbox Override</h3>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Use Department Mapbox Map</label>
+								<div class="col-sm-6">
+									<div class="row">
+										<div class="col-sm-6">
+											<input type="checkbox" asp-for="UseMapboxOverride">
+										</div>
+									</div>
+									<span class="help-block m-b-none">When enabled, this department's Mapbox style and public token override the system map mode for the department website views and authenticated mobile/API clients, even when the system stays on Leaflet.</span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Mapbox Style Url</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" asp-for="MapboxStyleUrl" placeholder="mapbox://styles/username/styleid">
+									<span class="help-block m-b-none">Supported values are `mapbox://styles/...` or `https://api.mapbox.com/styles/v1/...`.</span>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label">Mapbox Public Access Token</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" asp-for="MapboxAccessToken" placeholder="pk.ey...">
+									<span class="help-block m-b-none">Use a public Mapbox token intended for website and mobile client-side map rendering for this department.</span>
+								</div>
+							</div>
  
                             <div class="form-group">
                                 <div class="col-sm-4 col-sm-offset-2">

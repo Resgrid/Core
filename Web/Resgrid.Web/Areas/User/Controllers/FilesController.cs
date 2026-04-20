@@ -3,6 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.WebCore.Areas.User.Models.Files;
@@ -43,11 +44,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ModelState.AddModelError("fileToUpload", "You must select a file to upload.");
 			else
 			{
-				var extenion = fileToUpload.FileName.Substring(fileToUpload.FileName.IndexOf(char.Parse(".")) + 1,
-					fileToUpload.FileName.Length - fileToUpload.FileName.IndexOf(char.Parse(".")) - 1);
-
-				if (!String.IsNullOrWhiteSpace(extenion))
-					extenion = extenion.ToLower();
+				var extenion = FileHelper.GetFileExtensionWithoutDot(fileToUpload.FileName);
 
 				if (extenion != "jpg" && extenion != "jpeg" && extenion != "png" && extenion != "gif" && extenion != "gif" && extenion != "pdf" && extenion != "doc"
 					&& extenion != "docx" && extenion != "ppt" && extenion != "pptx" && extenion != "pps" && extenion != "ppsx" && extenion != "odt"

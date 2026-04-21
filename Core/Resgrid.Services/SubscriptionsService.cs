@@ -56,26 +56,34 @@ namespace Resgrid.Services
 
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
-				var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
+				try
 				{
-					MaxTimeout = 200000 // ms
-				};
+					var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
+					{
+						MaxTimeout = 5000 // ms — fail fast so callers (e.g. Twilio webhooks) don't exceed their own timeouts
+					};
 
-				var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
-				var request = new RestRequest($"/api/Billing/GetCurrentPlanForDepartment", Method.Get);
-				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
-				request.AddHeader("Content-Type", "application/json");
-				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
+					var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
+					var request = new RestRequest($"/api/Billing/GetCurrentPlanForDepartment", Method.Get);
+					request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+					request.AddHeader("Content-Type", "application/json");
+					request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
 
-				var response = await client.ExecuteAsync<GetCurrentPlanForDepartmentResult>(request);
+					var response = await client.ExecuteAsync<GetCurrentPlanForDepartmentResult>(request);
 
-				if (response.StatusCode == HttpStatusCode.NotFound)
+					if (response.StatusCode == HttpStatusCode.NotFound)
+						return freePlan;
+
+					if (response.Data == null)
+						return freePlan;
+
+					return response.Data.Data;
+				}
+				catch (Exception ex)
+				{
+					Framework.Logging.LogException(ex);
 					return freePlan;
-
-				if (response.Data == null)
-					return freePlan;
-
-				return response.Data.Data;
+				}
 			}
 
 			return freePlan;

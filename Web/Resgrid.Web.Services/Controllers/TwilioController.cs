@@ -143,12 +143,18 @@ namespace Resgrid.Web.Services.Controllers
 
 				if (departmentId.HasValue)
 				{
-					var department = await _departmentsService.GetDepartmentByIdAsync(departmentId.Value);
-					//var textToCallEnabled = await _departmentSettingsService.GetDepartmentIsTextCallImportEnabledAsync(departmentId.Value);
-					//var textCommandEnabled = await _departmentSettingsService.GetDepartmentIsTextCommandEnabledAsync(departmentId.Value);
-					var dispatchNumbers = await _departmentSettingsService.GetTextToCallSourceNumbersForDepartmentAsync(departmentId.Value);
-					var authroized = await _limitsService.CanDepartmentProvisionNumberAsync(departmentId.Value);
-					var customStates = await _customStateService.GetAllActiveCustomStatesForDepartmentAsync(departmentId.Value);
+					// Run all department-level lookups in parallel — they are independent of each other.
+					var departmentTask = _departmentsService.GetDepartmentByIdAsync(departmentId.Value);
+					var dispatchNumbersTask = _departmentSettingsService.GetTextToCallSourceNumbersForDepartmentAsync(departmentId.Value);
+					var authorizedTask = _limitsService.CanDepartmentProvisionNumberAsync(departmentId.Value);
+					var customStatesTask = _customStateService.GetAllActiveCustomStatesForDepartmentAsync(departmentId.Value);
+
+					await System.Threading.Tasks.Task.WhenAll(departmentTask, dispatchNumbersTask, authorizedTask, customStatesTask);
+
+					var department = departmentTask.Result;
+					var dispatchNumbers = dispatchNumbersTask.Result;
+					var authroized = authorizedTask.Result;
+					var customStates = customStatesTask.Result;
 
 					messageEvent.CustomerId = departmentId.Value.ToString();
 
@@ -196,7 +202,9 @@ namespace Resgrid.Web.Services.Controllers
 
 						if (!isDispatchSource)
 						{
-							var profile = await _userProfileService.GetProfileByMobileNumberAsync(textMessage.Msisdn);
+							// Reuse the profile fetched above when the department was resolved via mobile number;
+							// only hit the DB again if the department came from the phone-number lookup path.
+							var profile = userProfile ?? await _userProfileService.GetProfileByMobileNumberAsync(textMessage.Msisdn);
 
 							if (profile != null)
 							{

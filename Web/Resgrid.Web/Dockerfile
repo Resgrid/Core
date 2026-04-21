@@ -17,7 +17,7 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0.202-noble-amd64 AS build
 #COPY --from=node_base /usr/local/bin /usr/local/bin
 RUN apt-get update
 RUN apt-get install -y ca-certificates curl gnupg
-RUN curl -sL https://deb.nodesource.com/setup_18.x  | bash -
+RUN curl -sL https://deb.nodesource.com/setup_20.x  | bash -
 RUN apt-get -y install nodejs
 ARG BUILD_VERSION
 WORKDIR /src

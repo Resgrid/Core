@@ -17,6 +17,7 @@ export default defineConfig(({ mode }) => {
       target: 'es2022',
       outDir: 'dist/core',
       emptyOutDir: true,
+      minify: false,
       sourcemap: mode !== 'production',
       cssCodeSplit: false,
       modulePreload: {
@@ -30,7 +31,7 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           entryFileNames: 'react-elements.js',
-          chunkFileNames: 'chunks/[name]-[hash].js',
+          chunkFileNames: 'chunks/[name]-[hash].min.js',
           assetFileNames: (assetInfo) => {
             if (assetInfo.name?.endsWith('.css')) {
               return 'react-elements.css';

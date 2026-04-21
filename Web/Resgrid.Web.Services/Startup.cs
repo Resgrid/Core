@@ -165,6 +165,11 @@ namespace Resgrid.Web.ServicesCore
 			{
 				options.AuthToken = NumberProviderConfig.TwilioAuthToken;
 				options.AllowLocal = false;
+				// BaseUrlOverride ensures the URL used for signature validation matches
+				// what Twilio used when signing the request, regardless of any scheme
+				// override applied by upstream middleware (e.g. http → https rewrites).
+				if (!string.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.ResgridApiBaseUrl))
+					options.BaseUrlOverride = Config.SystemBehaviorConfig.ResgridApiBaseUrl;
 			});
 
 			services.AddApiVersioning(x =>

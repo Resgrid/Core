@@ -62,6 +62,8 @@ jobs:
             dockerfile: Web/Resgrid.Web.Eventing/Dockerfile
           - image: resgridllc/resgridwebmcp
             dockerfile: Web/Resgrid.Web.Mcp/Dockerfile
+          - image: resgridllc/resgridwebtts
+            dockerfile: Web/Resgrid.Web.Tts/Dockerfile
           - image: resgridllc/resgridworkersconsole
             dockerfile: Workers/Resgrid.Workers.Console/Dockerfile
 

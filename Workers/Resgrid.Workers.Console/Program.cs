@@ -369,6 +369,17 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(15),
 					stoppingToken);
 
+				if (!string.IsNullOrWhiteSpace(TtsConfig.ServiceBaseUrl) && !string.IsNullOrWhiteSpace(TtsConfig.StaticPromptAdminKey))
+				{
+					var refreshInterval = TtsConfig.StaticPromptRefreshIntervalMinutes > 0 ? TtsConfig.StaticPromptRefreshIntervalMinutes : 60;
+
+					_logger.Log(LogLevel.Information, "Scheduling TTS Static Prompt Refresh");
+					await Client.ScheduleAsync("TTS Static Prompt Refresh",
+						new Commands.TtsStaticPromptRefreshCommand(18),
+						Cron.MinuteIntervals(refreshInterval),
+						stoppingToken);
+				}
+
 				_logger.Log(LogLevel.Information, "Scheduling Weather Alert Import");
 				await Client.ScheduleAsync("Weather Alert Import",
 					new Commands.WeatherAlertImportCommand(20),

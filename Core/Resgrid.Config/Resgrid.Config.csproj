@@ -1,15 +1,15 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <Configurations>Debug;Release;Docker</Configurations>
-  </PropertyGroup>
-  <ItemGroup>
-    <None Remove="_ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="_ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-  </ItemGroup>
+<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFrameworks>net8.0;net9.0</TargetFrameworks>
+		<Configurations>Debug;Release;Docker</Configurations>
+	</PropertyGroup>
+	<ItemGroup>
+		<None Remove="_ReadMe.txt" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="_ReadMe.txt" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+	</ItemGroup>
 </Project>

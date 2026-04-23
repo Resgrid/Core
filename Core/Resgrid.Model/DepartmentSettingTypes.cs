@@ -50,5 +50,6 @@
 		MappingUseMapboxOverride = 46,
 		MappingMapboxStyleUrl = 47,
 		MappingMapboxAccessToken = 48,
+		TtsLanguage = 49,
 	}
 }

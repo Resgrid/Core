@@ -25,6 +25,7 @@ namespace Resgrid.Model.Services
 		Task<bool> RecordEmailResponseAsync(string responseToken);
 		Task<bool> RecordVoiceResponseAsync(string responseToken);
 		Task<bool> RecordPushResponseAsync(string responseToken);
+		Task<int?> GetDepartmentIdByResponseTokenAsync(string responseToken);
 
 		Task ProcessScheduledTestsAsync(CancellationToken cancellationToken = default);
 		Task CompleteExpiredRunsAsync(CancellationToken cancellationToken = default);

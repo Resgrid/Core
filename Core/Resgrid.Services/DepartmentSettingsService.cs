@@ -19,6 +19,7 @@ namespace Resgrid.Services
 		private static string PaddleCustomerCacheKey = "DSetPaddleCus_{0}";
 		private static string BigBoardCenterGps = "DSetBBCenterGps_{0}";
 		private static string StaffingSupressInfo = "DSetStaffingSupress_{0}";
+		private static string TtsLanguageCacheKey = "DSetTtsLanguage_{0}";
 		private static string PersonnelOnUnitSetUnitStatusCacheKey = "DSetPersonnelOnUnitSetUnitStatus_{0}";
 		private static TimeSpan LongCacheLength = TimeSpan.FromDays(14);
 		private static TimeSpan ThatsNotLongThisIsLongCacheLength = TimeSpan.FromDays(365);
@@ -64,6 +65,9 @@ namespace Resgrid.Services
 						break;
 					case DepartmentSettingTypes.StaffingSuppressStaffingLevels:
 						await _cacheProvider.RemoveAsync(string.Format(StaffingSupressInfo, departmentId));
+						break;
+					case DepartmentSettingTypes.TtsLanguage:
+						await _cacheProvider.RemoveAsync(string.Format(TtsLanguageCacheKey, departmentId));
 						break;
 					case DepartmentSettingTypes.PersonnelOnUnitSetUnitStatus:
 						await _cacheProvider.RemoveAsync(string.Format(PersonnelOnUnitSetUnitStatusCacheKey, departmentId));
@@ -464,6 +468,27 @@ namespace Resgrid.Services
 			return null;
 		}
 
+		public async Task<string> GetTtsLanguageForDepartmentAsync(int departmentId)
+		{
+			async Task<string> getSetting()
+			{
+				var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.TtsLanguage);
+
+				if (settingValue != null && EspeakVoiceCatalog.TryNormalizeIdentifier(settingValue.Setting, out var normalizedSetting))
+					return normalizedSetting;
+
+				return GetDefaultTtsLanguage();
+			}
+
+			if (Config.SystemBehaviorConfig.CacheEnabled)
+			{
+				return await _cacheProvider.RetrieveAsync(string.Format(TtsLanguageCacheKey, departmentId),
+					getSetting, LongCacheLength);
+			}
+
+			return await getSetting();
+		}
+
 		public async Task<DateTime> GetDepartmentUpdateTimestampAsync(int departmentId)
 		{
 			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.UpdateTimestamp);
@@ -840,6 +865,17 @@ namespace Resgrid.Services
 		public async Task<DepartmentSetting> GetSettingByTypeAsync(int departmentId, DepartmentSettingTypes type)
 		{
 			return await GetSettingByDepartmentIdType(departmentId, type);
+		}
+
+		private static string GetDefaultTtsLanguage()
+		{
+			if (EspeakVoiceCatalog.TryNormalizeIdentifier(TtsConfig.DefaultVoice, out var normalizedVoice))
+				return normalizedVoice;
+
+			if (!string.IsNullOrWhiteSpace(TtsConfig.DefaultVoice))
+				return TtsConfig.DefaultVoice.Trim();
+
+			return EspeakVoiceCatalog.DefaultIdentifier;
 		}
 	}
 }

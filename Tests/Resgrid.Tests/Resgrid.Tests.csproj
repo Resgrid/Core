@@ -56,6 +56,7 @@
     <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.NoSqlRepository\Resgrid.Repositories.NoSqlRepository.csproj" />
     <ProjectReference Include="..\..\Web\Resgrid.Web.Services\Resgrid.Web.Services.csproj" />
     <ProjectReference Include="..\..\Web\Resgrid.Web.Mcp\Resgrid.Web.Mcp.csproj" />
+    <ProjectReference Include="..\..\Web\Resgrid.Web.Tts\Resgrid.Web.Tts.csproj" />
     <ProjectReference Include="..\..\Workers\Resgrid.Workers.Framework\Resgrid.Workers.Framework.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Workflow\Resgrid.Providers.Workflow.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Weather\Resgrid.Providers.Weather.csproj" />

@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Description>Linux-ready TTS microservice backed by eSpeak NG, ffmpeg, and S3-compatible storage.</Description>
+		<AssemblyName>Resgrid.Web.Tts</AssemblyName>
+		<RootNamespace>Resgrid.Web.Tts</RootNamespace>
+		<Configurations>Debug;Release;Docker</Configurations>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="AWSSDK.S3" Version="3.7.414.5" />
+		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
+	</ItemGroup>
+</Project>

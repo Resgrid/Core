@@ -300,6 +300,15 @@ namespace Resgrid.Services
 			return await RecordResponseByTokenAsync(responseToken, CommunicationTestChannel.Push);
 		}
 
+		public async Task<int?> GetDepartmentIdByResponseTokenAsync(string responseToken)
+		{
+			if (string.IsNullOrWhiteSpace(responseToken))
+				return null;
+
+			var result = await _communicationTestResultRepository.GetResultByResponseTokenAsync(responseToken);
+			return result?.DepartmentId;
+		}
+
 		public async Task ProcessScheduledTestsAsync(CancellationToken cancellationToken = default)
 		{
 			var now = DateTime.UtcNow;

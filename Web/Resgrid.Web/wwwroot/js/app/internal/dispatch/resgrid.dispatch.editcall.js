@@ -316,10 +316,10 @@ var resgrid;
                     if (initialDrawCount >= totalTables) { resgrid.dispatch.editcall.updateDispatchedEntities(); }
                 });
 
-                $('#checkAllPersonnel').on('click', function () { $('#personnelGrid').find(':checkbox').prop('checked', this.checked); });
-                $('#checkAllGroups').on('click', function () { $('#groupsGrid').find(':checkbox').prop('checked', this.checked); });
-                $('#checkAllUnits').on('click', function () { $('#unitsGrid').find(':checkbox').prop('checked', this.checked); });
-                $('#checkAllRoles').on('click', function () { $('#rolesGrid').find(':checkbox').prop('checked', this.checked); });
+                $('#personnelGrid').on('click', '#checkAllPersonnel', function () { $('#personnelGrid').find('tbody :checkbox').prop('checked', this.checked); });
+                $('#groupsGrid').on('click', '#checkAllGroups', function () { $('#groupsGrid').find('tbody :checkbox').prop('checked', this.checked); });
+                $('#unitsGrid').on('click', '#checkAllUnits', function () { $('#unitsGrid').find('tbody :checkbox').prop('checked', this.checked); });
+                $('#rolesGrid').on('click', '#checkAllRoles', function () { $('#rolesGrid').find('tbody :checkbox').prop('checked', this.checked); });
                 $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                     if (e.target && e.target.textContent === "Personnel") { personnelTable.columns.adjust(); }
                     else if (e.target && e.target.textContent === "Groups") { groupsTable.columns.adjust(); }

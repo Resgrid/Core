@@ -1,8 +1,12 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Resgrid.Model;
 using Resgrid.Model.Services;
+using Resgrid.Web.Services.Twilio;
+using System.Threading;
 using System.Threading.Tasks;
+using Twilio.TwiML;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -15,10 +19,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 	public class CommunicationTestResponseController : V4AuthenticatedApiControllerbase
 	{
 		private readonly ICommunicationTestService _communicationTestService;
+		private readonly IDepartmentSettingsService _departmentSettingsService;
+		private readonly ITwilioVoiceResponseService _twilioVoiceResponseService;
 
-		public CommunicationTestResponseController(ICommunicationTestService communicationTestService)
+		public CommunicationTestResponseController(
+			ICommunicationTestService communicationTestService,
+			IDepartmentSettingsService departmentSettingsService,
+			ITwilioVoiceResponseService twilioVoiceResponseService)
 		{
 			_communicationTestService = communicationTestService;
+			_departmentSettingsService = departmentSettingsService;
+			_twilioVoiceResponseService = twilioVoiceResponseService;
 		}
 
 		/// <summary>
@@ -66,12 +77,27 @@ namespace Resgrid.Web.Services.Controllers.v4
 				await _communicationTestService.RecordVoiceResponseAsync(token);
 			}
 
+			var response = new VoiceResponse();
+			var ttsLanguage = await GetDepartmentTtsLanguageAsync(token);
+			await _twilioVoiceResponseService.AppendPromptAsync(response, TwilioVoicePromptCatalog.CommunicationTestRecorded, HttpContext?.RequestAborted ?? CancellationToken.None, ttsLanguage);
+			response.Hangup();
+
 			return new ContentResult
 			{
-				Content = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><Response><Say>Thank you. Your response has been recorded.</Say><Hangup/></Response>",
+				Content = response.ToString(),
 				ContentType = "application/xml",
 				StatusCode = 200
 			};
+		}
+
+		private async Task<string> GetDepartmentTtsLanguageAsync(string token)
+		{
+			var departmentId = await _communicationTestService.GetDepartmentIdByResponseTokenAsync(token);
+
+			if (!departmentId.HasValue)
+				return null;
+
+			return await _departmentSettingsService.GetTtsLanguageForDepartmentAsync(departmentId.Value);
 		}
 	}
 }

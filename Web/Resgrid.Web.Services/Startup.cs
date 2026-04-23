@@ -53,6 +53,7 @@ using IPNetwork = Microsoft.AspNetCore.HttpOverrides.IPNetwork;
 using System.Net.Http;
 using Resgrid.Providers.Messaging;
 using Resgrid.Web.Services;
+using Resgrid.Web.Services.Twilio;
 using Twilio.AspNet.Core;
 
 namespace Resgrid.Web.ServicesCore
@@ -607,6 +608,7 @@ namespace Resgrid.Web.ServicesCore
 			services.AddTransient<ISentryEventProcessor, SentryEventProcessor>();
 
 			services.AddHostedService<Worker>();
+			services.AddScoped<ITwilioVoiceResponseService, TwilioVoiceResponseService>();
 			this.Services = services;
 
 			//if (Config.ExternalErrorConfig.ApplicationInsightsEnabled)

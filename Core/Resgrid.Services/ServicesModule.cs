@@ -75,6 +75,7 @@ namespace Resgrid.Services
 			builder.RegisterType<ContactVerificationService>().As<IContactVerificationService>().InstancePerLifetimeScope();
 			builder.RegisterType<AutofillsService>().As<IAutofillsService>().InstancePerLifetimeScope();
 			builder.RegisterType<UnitStatesService>().As<IUnitStatesService>().InstancePerLifetimeScope();
+			builder.RegisterType<TtsAudioService>().As<ITtsAudioService>().InstancePerLifetimeScope();
 
 			// SSO / Security Policy
 			builder.RegisterType<DepartmentSsoService>().As<IDepartmentSsoService>().InstancePerLifetimeScope();

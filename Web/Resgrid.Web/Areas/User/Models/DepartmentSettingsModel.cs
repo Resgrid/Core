@@ -28,6 +28,8 @@ namespace Resgrid.Web.Areas.User.Models
 		public bool MapHideUnavailable { get; set; }
 		public string ActiveCallRssKey { get; set; }
 		public bool DisableAutoAvailable { get; set; }
+		public string TtsLanguage { get; set; }
+		public SelectList TtsLanguages { get; set; }
 
 		public bool EnableStaffingReset { get; set; }
 		public string TimeToResetStaffing { get; set; }

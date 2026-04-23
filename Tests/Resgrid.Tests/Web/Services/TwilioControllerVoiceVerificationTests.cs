@@ -11,6 +11,9 @@ using Resgrid.Model.Helpers;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Web.Services.Controllers;
+using Resgrid.Web.Services.Twilio;
+using Twilio.TwiML;
+using Twilio.TwiML.Voice;
 
 namespace Resgrid.Tests.Web.Services
 {
@@ -36,6 +39,7 @@ namespace Resgrid.Tests.Web.Services
 		private Mock<ICalendarService> _calendarServiceMock;
 		private Mock<ICommunicationTestService> _communicationTestServiceMock;
 		private Mock<IEncryptionService> _encryptionServiceMock;
+		private Mock<ITwilioVoiceResponseService> _twilioVoiceResponseServiceMock;
 
 		protected override void Before_all_tests()
 		{
@@ -58,6 +62,17 @@ namespace Resgrid.Tests.Web.Services
 			_calendarServiceMock = new Mock<ICalendarService>();
 			_communicationTestServiceMock = new Mock<ICommunicationTestService>();
 			_encryptionServiceMock = new Mock<IEncryptionService>();
+			_twilioVoiceResponseServiceMock = new Mock<ITwilioVoiceResponseService>();
+			_twilioVoiceResponseServiceMock
+				.Setup(x => x.AppendPromptAsync(It.IsAny<VoiceResponse>(), It.IsAny<string>(), It.IsAny<CancellationToken>(), It.IsAny<string>()))
+				.Returns<VoiceResponse, string, CancellationToken, string>((response, text, _, __) =>
+				{
+					response.Append(new Play
+					{
+						Url = new Uri($"https://tts.example/{Uri.EscapeDataString(text)}.wav")
+					});
+					return System.Threading.Tasks.Task.CompletedTask;
+				});
 		}
 
 		private TwilioController BuildController()
@@ -81,11 +96,12 @@ namespace Resgrid.Tests.Web.Services
 				_usersServiceMock.Object,
 				_calendarServiceMock.Object,
 				_communicationTestServiceMock.Object,
-				_encryptionServiceMock.Object);
+				_encryptionServiceMock.Object,
+				_twilioVoiceResponseServiceMock.Object);
 		}
 
 		[Test]
-		public async Task should_mark_home_code_consumed_after_successful_voice_generation()
+		public async System.Threading.Tasks.Task should_mark_home_code_consumed_after_successful_voice_generation()
 		{
 			var profile = new UserProfile
 			{
@@ -99,6 +115,7 @@ namespace Resgrid.Tests.Web.Services
 			_userProfileServiceMock.Setup(x => x.GetProfileByUserIdAsync("user1", true)).ReturnsAsync(profile);
 			_encryptionServiceMock.Setup(x => x.Decrypt("ENC:123456")).Returns("123456");
 			_departmentsServiceMock.Setup(x => x.GetDepartmentByUserIdAsync("user1", false)).ReturnsAsync(department);
+			_departmentSettingsServiceMock.Setup(x => x.GetTtsLanguageForDepartmentAsync(7)).ReturnsAsync("es");
 			_userProfileServiceMock
 				.Setup(x => x.SaveProfileAsync(7, It.IsAny<UserProfile>(), It.IsAny<CancellationToken>()))
 				.Callback<int, UserProfile, CancellationToken>((_, p, _) => savedProfile = p)
@@ -107,14 +124,18 @@ namespace Resgrid.Tests.Web.Services
 			var result = await BuildController().VoiceVerification("user1", (int)ContactVerificationType.HomeNumber);
 
 			var content = ((ContentResult)result).Content;
-			content.Should().Contain("Your verification code is: 1, 2, 3, 4, 5, 6.");
+			content.Should().Contain("<Play>");
+			content.Should().Contain(Uri.EscapeDataString("Your verification code is: 1, 2, 3, 4, 5, 6."));
 			savedProfile.Should().NotBeNull();
 			savedProfile!.HomeVerificationVoiceCodeConsumed.Should().BeTrue();
 			savedProfile.HomeVerificationCode.Should().Be("ENC:123456");
+			_twilioVoiceResponseServiceMock.Verify(x => x.AppendPromptAsync(It.IsAny<VoiceResponse>(), "Hello, this is Resgrid calling with your verification code.", It.IsAny<CancellationToken>(), "es"), Times.Once);
+			_twilioVoiceResponseServiceMock.Verify(x => x.AppendPromptAsync(It.IsAny<VoiceResponse>(), "Your verification code is: 1, 2, 3, 4, 5, 6.", It.IsAny<CancellationToken>(), "es"), Times.Exactly(3));
+			_twilioVoiceResponseServiceMock.Verify(x => x.AppendPromptAsync(It.IsAny<VoiceResponse>(), "That was your Resgrid verification code. Goodbye.", It.IsAny<CancellationToken>(), "es"), Times.Once);
 		}
 
 		[Test]
-		public async Task should_return_generic_message_when_home_code_already_consumed()
+		public async System.Threading.Tasks.Task should_return_generic_message_when_home_code_already_consumed()
 		{
 			var profile = new UserProfile
 			{
@@ -129,13 +150,15 @@ namespace Resgrid.Tests.Web.Services
 			var result = await BuildController().VoiceVerification("user1", (int)ContactVerificationType.HomeNumber);
 
 			var content = ((ContentResult)result).Content;
-			content.Should().Contain("We couldn't complete your verification call.");
+			content.Should().Contain("<Play>");
+			content.Should().Contain(Uri.EscapeDataString("We couldn't complete your verification call. Please request a new code and try again. Goodbye."));
 			content.Should().NotContain("123456");
 			_userProfileServiceMock.Verify(x => x.SaveProfileAsync(It.IsAny<int>(), It.IsAny<UserProfile>(), It.IsAny<CancellationToken>()), Times.Never);
+			_twilioVoiceResponseServiceMock.Verify(x => x.AppendPromptAsync(It.IsAny<VoiceResponse>(), "We couldn't complete your verification call. Please request a new code and try again. Goodbye.", It.IsAny<CancellationToken>(), It.IsAny<string>()), Times.Once);
 		}
 
 		[Test]
-		public async Task should_return_generic_message_when_decryption_fails()
+		public async System.Threading.Tasks.Task should_return_generic_message_when_decryption_fails()
 		{
 			var profile = new UserProfile
 			{
@@ -150,8 +173,10 @@ namespace Resgrid.Tests.Web.Services
 			var result = await BuildController().VoiceVerification("user1", (int)ContactVerificationType.HomeNumber);
 
 			var content = ((ContentResult)result).Content;
-			content.Should().Contain("We couldn't complete your verification call.");
+			content.Should().Contain("<Play>");
+			content.Should().Contain(Uri.EscapeDataString("We couldn't complete your verification call. Please request a new code and try again. Goodbye."));
 			content.Should().NotContain("broken");
+			_twilioVoiceResponseServiceMock.Verify(x => x.AppendPromptAsync(It.IsAny<VoiceResponse>(), "We couldn't complete your verification call. Please request a new code and try again. Goodbye.", It.IsAny<CancellationToken>(), It.IsAny<string>()), Times.Once);
 		}
 	}
 }

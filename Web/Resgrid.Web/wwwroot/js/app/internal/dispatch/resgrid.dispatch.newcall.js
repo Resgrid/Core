@@ -326,14 +326,14 @@ var resgrid;
                 }
                 newcall.fillCallTemplate = fillCallTemplate;
 
-                $('#checkAllPersonnel').on('click', function () {
-                    $('#personnelGrid').find(':checkbox').prop('checked', this.checked);
+                $('#personnelGrid').on('click', '#checkAllPersonnel', function () {
+                    $('#personnelGrid').find('tbody :checkbox').prop('checked', this.checked);
                 });
-                $('#checkAllGroups').on('click', function () {
-                    $('#groupsGrid').find(':checkbox').prop('checked', this.checked);
+                $('#groupsGrid').on('click', '#checkAllGroups', function () {
+                    $('#groupsGrid').find('tbody :checkbox').prop('checked', this.checked);
                 });
-                $('#checkAllRoles').on('click', function () {
-                    $('#rolesGrid').find(':checkbox').prop('checked', this.checked);
+                $('#rolesGrid').on('click', '#checkAllRoles', function () {
+                    $('#rolesGrid').find('tbody :checkbox').prop('checked', this.checked);
                 });
                 $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                     // DataTables adjusts itself; trigger resize for any hidden columns
@@ -419,7 +419,7 @@ var resgrid;
             }
             newcall.refreshPersonnelGrid = refreshPersonnelGrid;
             function checkAllUnits(gridName, item) {
-                $('#' + gridName).find(':checkbox').trigger('click');//.prop('checked', item.value);
+                $('#' + gridName).find(':checkbox').prop('checked', item.checked);
             }
             newcall.checkAllUnits = checkAllUnits;
             function checkForProtocols() {

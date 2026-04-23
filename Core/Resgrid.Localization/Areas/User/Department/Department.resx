@@ -330,4 +330,10 @@
   <data name="CheckInTimerAllStates" xml:space="preserve">
     <value />
   </data>
+  <data name="TtsLanguage" xml:space="preserve">
+    <value>TTS Language</value>
+  </data>
+  <data name="TtsLanguageHelp" xml:space="preserve">
+    <value>Select the eSpeak-NG language or dialect to use for this department's voice prompts.</value>
+  </data>
 </root>

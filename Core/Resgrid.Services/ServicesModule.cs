@@ -1,11 +1,17 @@
-﻿using Autofac;
+﻿using System;
+using Autofac;
 using Resgrid.Model.Services;
 using Resgrid.Services.CallEmailTemplates;
+using RestSharp;
+using RestSharp.Serializers.NewtonsoftJson;
+using Resgrid.Config;
 
 namespace Resgrid.Services
 {
 	public class ServicesModule : Module
 	{
+		private const string TtsRestClientRegistrationName = "tts-rest-client";
+
 		protected override void Load(ContainerBuilder builder)
 		{
 			builder.RegisterType<EncryptionService>().As<IEncryptionService>().InstancePerLifetimeScope();
@@ -75,6 +81,26 @@ namespace Resgrid.Services
 			builder.RegisterType<ContactVerificationService>().As<IContactVerificationService>().InstancePerLifetimeScope();
 			builder.RegisterType<AutofillsService>().As<IAutofillsService>().InstancePerLifetimeScope();
 			builder.RegisterType<UnitStatesService>().As<IUnitStatesService>().InstancePerLifetimeScope();
+			builder.Register(_ =>
+				{
+					if (string.IsNullOrWhiteSpace(TtsConfig.ServiceBaseUrl))
+						throw new InvalidOperationException("TtsConfig.ServiceBaseUrl must be configured before using the TTS service.");
+
+					var options = new RestClientOptions(TtsConfig.ServiceBaseUrl.TrimEnd('/'))
+					{
+						Timeout = TimeSpan.FromSeconds(5)
+					};
+
+					return new RestClient(options, configureSerialization: serializer => serializer.UseNewtonsoftJson());
+				})
+				.Named<RestClient>(TtsRestClientRegistrationName)
+				.SingleInstance();
+			builder.RegisterType<TtsAudioService>()
+				.As<ITtsAudioService>()
+				.WithParameter(
+					(parameter, _) => parameter.ParameterType == typeof(RestClient),
+					(_, context) => context.ResolveNamed<RestClient>(TtsRestClientRegistrationName))
+				.InstancePerLifetimeScope();
 
 			// SSO / Security Policy
 			builder.RegisterType<DepartmentSsoService>().As<IDepartmentSsoService>().InstancePerLifetimeScope();

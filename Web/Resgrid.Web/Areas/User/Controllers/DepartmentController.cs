@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
+using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
@@ -242,6 +243,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var mapHideUnavailable = await _departmentSettingsService.GetBigBoardHideUnavailableDepartmentAsync(DepartmentId);
 			var activeCallRssKey = await _departmentSettingsService.GetRssKeyForDepartmentAsync(DepartmentId);
 			model.DisableAutoAvailable = await _departmentSettingsService.GetDisableAutoAvailableForDepartmentAsync(DepartmentId);
+			model.TtsLanguage = await _departmentSettingsService.GetTtsLanguageForDepartmentAsync(DepartmentId);
+			model.TtsLanguages = BuildTtsLanguageSelectList(model.TtsLanguage);
 
 			var personnelSortOrder = await _departmentSettingsService.GetDepartmentPersonnelSortOrderAsync(DepartmentId);
 			model.PersonnelSort = (int)personnelSortOrder;
@@ -399,6 +402,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			CallSortOrders callSortTypes = CallSortOrders.Default;
 			model.CallSortTypes = callSortTypes.ToSelectListInt();
+			model.TtsLanguage = NormalizeTtsLanguage(model.TtsLanguage);
+			model.TtsLanguages = BuildTtsLanguageSelectList(model.TtsLanguage);
 
 			var staffingLevels = await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(DepartmentId);
 			if (staffingLevels == null)
@@ -495,6 +500,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 					ModelState.AddModelError("TimeToResetStatus", "If you want to reset status levels you need to supply a time to reset them.");
 			}
 
+			if (!IsSupportedTtsLanguage(model.TtsLanguage))
+			{
+				ModelState.AddModelError(nameof(model.TtsLanguage), "TTS language must be one of the supported eSpeak-NG languages.");
+			}
+
 			if (!String.IsNullOrWhiteSpace(model.MapCenterGpsCoordinatesLatitude) && !LocationHelpers.IsValidLatitude(model.MapCenterGpsCoordinatesLatitude))
 			{
 				ModelState.AddModelError("MapCenterGpsCoordinatesLatitude", "Map Center Latitude value seems invalid, MUST be decimal format.");
@@ -527,6 +537,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.MapHideUnavailable.ToString(), DepartmentSettingTypes.BigBoardHideUnavailable,
 					cancellationToken);
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.DisableAutoAvailable.ToString(), DepartmentSettingTypes.DisabledAutoAvailable,
+					cancellationToken);
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.TtsLanguage, DepartmentSettingTypes.TtsLanguage,
 					cancellationToken);
 
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.PersonnelSort.ToString(), DepartmentSettingTypes.PersonnelSortOrder,
@@ -647,6 +659,60 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.SuppressStaffingInfo = await _departmentSettingsService.GetDepartmentStaffingSuppressInfoAsync(DepartmentId, false);
 
 			return View(model);
+		}
+
+		private static SelectList BuildTtsLanguageSelectList(string selectedLanguage)
+		{
+			var normalizedSelectedLanguage = NormalizeTtsLanguage(selectedLanguage);
+			var languages = EspeakVoiceCatalog.Voices
+				.Select(x => new SelectListItem
+				{
+					Text = x.DisplayName,
+					Value = x.Identifier
+				})
+				.ToList();
+
+			if (!string.IsNullOrWhiteSpace(normalizedSelectedLanguage) &&
+				languages.All(x => !string.Equals(x.Value, normalizedSelectedLanguage, StringComparison.OrdinalIgnoreCase)))
+			{
+				languages.Insert(0, new SelectListItem
+				{
+					Text = EspeakVoiceCatalog.GetDisplayName(normalizedSelectedLanguage),
+					Value = normalizedSelectedLanguage
+				});
+			}
+
+			return new SelectList(languages, "Value", "Text", normalizedSelectedLanguage);
+		}
+
+		private static string NormalizeTtsLanguage(string ttsLanguage)
+		{
+			if (EspeakVoiceCatalog.TryNormalizeIdentifier(ttsLanguage, out var normalizedLanguage))
+				return normalizedLanguage;
+
+			if (!string.IsNullOrWhiteSpace(ttsLanguage))
+				return ttsLanguage.Trim();
+
+			return GetConfiguredDefaultTtsLanguage();
+		}
+
+		private static bool IsSupportedTtsLanguage(string ttsLanguage)
+		{
+			if (EspeakVoiceCatalog.TryNormalizeIdentifier(ttsLanguage, out _))
+				return true;
+
+			return string.Equals(NormalizeTtsLanguage(ttsLanguage), GetConfiguredDefaultTtsLanguage(), StringComparison.OrdinalIgnoreCase);
+		}
+
+		private static string GetConfiguredDefaultTtsLanguage()
+		{
+			if (EspeakVoiceCatalog.TryNormalizeIdentifier(TtsConfig.DefaultVoice, out var normalizedLanguage))
+				return normalizedLanguage;
+
+			if (!string.IsNullOrWhiteSpace(TtsConfig.DefaultVoice))
+				return TtsConfig.DefaultVoice.Trim();
+
+			return EspeakVoiceCatalog.DefaultIdentifier;
 		}
 
 		[HttpGet]

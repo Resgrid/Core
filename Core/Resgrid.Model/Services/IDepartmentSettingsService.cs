@@ -169,6 +169,8 @@ namespace Resgrid.Model.Services
 		/// <returns>Task&lt;System.String&gt;.</returns>
 		Task<string> GetDispatchEmailForDepartmentAsync(int departmentId);
 
+		Task<string> GetTtsLanguageForDepartmentAsync(int departmentId);
+
 		/// <summary>
 		/// Gets the disable automatic available for department by user identifier asynchronous.
 		/// </summary>

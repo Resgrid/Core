@@ -15,7 +15,7 @@ RUN dotnet restore "Web/Resgrid.Web.Tts/Resgrid.Web.Tts.csproj"
 
 COPY . .
 WORKDIR /src/Web/Resgrid.Web.Tts
-RUN dotnet publish "Resgrid.Web.Tts.csproj" -c Release -o /app/publish /p:UseAppHost=false --no-restore
+RUN dotnet publish "Resgrid.Web.Tts.csproj" -c Release -o /app/publish /p:UseAppHost=false --no-restore -p:Version=${BUILD_VERSION}
 
 FROM base AS final
 RUN apt-get update \

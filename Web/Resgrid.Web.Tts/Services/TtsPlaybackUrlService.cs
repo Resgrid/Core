@@ -16,6 +16,14 @@ namespace Resgrid.Web.Tts.Services
 		public Uri CreatePlaybackUrl(HttpRequest? request, string hash)
 		{
 			ArgumentException.ThrowIfNullOrWhiteSpace(hash);
+			var normalizedHash = hash.Trim().ToLowerInvariant();
+
+			if (normalizedHash.IndexOfAny(['/', '?', '#']) >= 0)
+			{
+				throw new ArgumentException("Playback hash cannot contain path or URL delimiter characters.", nameof(hash));
+			}
+
+			var safeHash = Uri.EscapeDataString(normalizedHash);
 
 			var baseUrl = !string.IsNullOrWhiteSpace(_options.PlaybackBaseUrl)
 				? _options.PlaybackBaseUrl
@@ -28,7 +36,7 @@ namespace Resgrid.Web.Tts.Services
 				throw new InvalidOperationException("A public playback base URL is required to generate TTS playback URLs.");
 			}
 
-			return new Uri($"{baseUrl.TrimEnd('/')}/tts/audio/{hash.Trim().ToLowerInvariant()}.wav", UriKind.Absolute);
+			return new Uri($"{baseUrl.TrimEnd('/')}/tts/audio/{safeHash}.wav", UriKind.Absolute);
 		}
 	}
 }

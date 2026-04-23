@@ -5,6 +5,8 @@ namespace Resgrid.Web.Tts.Configuration
 {
 	public static class ServiceCollectionExtensions
 	{
+		private const string StaticPromptAdminKeyRequiredMessage = "A static prompt admin key is required.";
+
 		public static IServiceCollection AddTtsConfiguration(this IServiceCollection services)
 		{
 			services.AddOptions<S3StorageOptions>()
@@ -19,6 +21,7 @@ namespace Resgrid.Web.Tts.Configuration
 				.Configure(ApplyTtsOptions)
 				.ValidateDataAnnotations()
 				.Validate(options => !string.IsNullOrWhiteSpace(options.DefaultVoice), "A default voice is required.")
+				.Validate(options => !string.IsNullOrWhiteSpace(options.StaticPromptAdminKey), StaticPromptAdminKeyRequiredMessage)
 				.Validate(options => options.PreGeneratedPrompts is not null, "Pre-generated prompts must be initialized.")
 				.ValidateOnStart();
 

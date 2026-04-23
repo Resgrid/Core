@@ -2,6 +2,7 @@ using Amazon.Runtime;
 using Microsoft.Extensions.Options;
 using Resgrid.Web.Tts.Configuration;
 using Resgrid.Web.Tts.Models;
+using System.Collections.Concurrent;
 using System.Diagnostics;
 
 namespace Resgrid.Web.Tts.Services
@@ -13,6 +14,7 @@ namespace Resgrid.Web.Tts.Services
 		private readonly TtsOptions _options;
 		private readonly ILogger<TtsService> _logger;
 		private readonly SemaphoreSlim _generationSemaphore;
+		private readonly ConcurrentDictionary<string, GenerationLock> _generationLocks = new(StringComparer.Ordinal);
 
 		public TtsService(
 			ICacheService cacheService,
@@ -98,6 +100,7 @@ namespace Resgrid.Web.Tts.Services
 
 			_logger.LogInformation("TTS cache miss for {Hash}", cacheKey.Hash);
 
+			using var generationLock = await AcquireGenerationLockAsync(cacheKey.Hash, cancellationToken);
 			await _generationSemaphore.WaitAsync(cancellationToken);
 
 			try
@@ -122,6 +125,65 @@ namespace Resgrid.Web.Tts.Services
 			finally
 			{
 				_generationSemaphore.Release();
+			}
+		}
+
+		private async Task<GenerationLockLease> AcquireGenerationLockAsync(string hash, CancellationToken cancellationToken)
+		{
+			while (true)
+			{
+				if (_generationLocks.TryGetValue(hash, out var existingLock))
+				{
+					Interlocked.Increment(ref existingLock.ReferenceCount);
+
+					if (_generationLocks.TryGetValue(hash, out var currentLock) && ReferenceEquals(existingLock, currentLock))
+					{
+						try
+						{
+							await existingLock.Semaphore.WaitAsync(cancellationToken);
+							return new GenerationLockLease(this, hash, existingLock);
+						}
+						catch
+						{
+							ReleaseGenerationLockReference(hash, existingLock);
+							throw;
+						}
+					}
+
+					ReleaseGenerationLockReference(hash, existingLock);
+					continue;
+				}
+
+				var newLock = new GenerationLock();
+
+				if (_generationLocks.TryAdd(hash, newLock))
+				{
+					try
+					{
+						await newLock.Semaphore.WaitAsync(cancellationToken);
+						return new GenerationLockLease(this, hash, newLock);
+					}
+					catch
+					{
+						ReleaseGenerationLockReference(hash, newLock);
+						throw;
+					}
+				}
+			}
+		}
+
+		private void ReleaseGenerationLock(string hash, GenerationLock generationLock)
+		{
+			generationLock.Semaphore.Release();
+			ReleaseGenerationLockReference(hash, generationLock);
+		}
+
+		private void ReleaseGenerationLockReference(string hash, GenerationLock generationLock)
+		{
+			if (Interlocked.Decrement(ref generationLock.ReferenceCount) == 0
+				&& _generationLocks.TryRemove(new KeyValuePair<string, GenerationLock>(hash, generationLock)))
+			{
+				generationLock.Semaphore.Dispose();
 			}
 		}
 
@@ -168,6 +230,44 @@ namespace Resgrid.Web.Tts.Services
 				Speed = request.Speed,
 				Cached = cached
 			};
+		}
+
+		private sealed class GenerationLock
+		{
+			public GenerationLock()
+			{
+				ReferenceCount = 1;
+			}
+
+			public SemaphoreSlim Semaphore { get; } = new(1, 1);
+
+			public int ReferenceCount;
+		}
+
+		private sealed class GenerationLockLease : IDisposable
+		{
+			private readonly TtsService _service;
+			private readonly string _hash;
+			private readonly GenerationLock _generationLock;
+			private bool _disposed;
+
+			public GenerationLockLease(TtsService service, string hash, GenerationLock generationLock)
+			{
+				_service = service;
+				_hash = hash;
+				_generationLock = generationLock;
+			}
+
+			public void Dispose()
+			{
+				if (_disposed)
+				{
+					return;
+				}
+
+				_service.ReleaseGenerationLock(_hash, _generationLock);
+				_disposed = true;
+			}
 		}
 
 		private sealed record NormalizedTtsRequest(string Text, string Voice, int Speed);

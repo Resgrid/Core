@@ -51,26 +51,47 @@ namespace Resgrid.Web.Tts.Services
 
 		public async Task UploadAsync(string objectKey, Stream content, string contentType, CancellationToken cancellationToken)
 		{
-			await ExecuteWithRetryAsync(
-				() =>
-				{
-					if (content.CanSeek)
-					{
-						content.Position = 0;
-					}
+			MemoryStream? bufferedContent = null;
+			var uploadContent = content;
 
-					return _s3Client.PutObjectAsync(
-						new PutObjectRequest
+			if (!content.CanSeek)
+			{
+				bufferedContent = new MemoryStream();
+				await content.CopyToAsync(bufferedContent, cancellationToken);
+				bufferedContent.Position = 0;
+				uploadContent = bufferedContent;
+			}
+
+			try
+			{
+				await ExecuteWithRetryAsync(
+					() =>
+					{
+						if (uploadContent.CanSeek)
 						{
-							BucketName = _options.Bucket,
-							Key = objectKey,
-							InputStream = content,
-							ContentType = contentType
-						},
-						cancellationToken);
-				},
-				$"uploading {objectKey}",
-				cancellationToken);
+							uploadContent.Position = 0;
+						}
+
+						return _s3Client.PutObjectAsync(
+							new PutObjectRequest
+							{
+								BucketName = _options.Bucket,
+								Key = objectKey,
+								InputStream = uploadContent,
+								ContentType = contentType
+							},
+							cancellationToken);
+					},
+					$"uploading {objectKey}",
+					cancellationToken);
+			}
+			finally
+			{
+				if (bufferedContent is not null)
+				{
+					await bufferedContent.DisposeAsync();
+				}
+			}
 		}
 
 		public async Task<TtsAudioContent?> GetObjectAsync(string objectKey, CancellationToken cancellationToken)

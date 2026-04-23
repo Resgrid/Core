@@ -113,5 +113,59 @@ namespace Resgrid.Tests.Web.Tts
 			await action.Should().ThrowAsync<ArgumentException>()
 				.WithMessage("*Text is required*");
 		}
+
+		[Test]
+		public async Task generate_async_should_deduplicate_concurrent_generation_for_the_same_cache_key()
+		{
+			var audioBytes = new byte[] { 1, 2, 3, 4 };
+			var objectUri = new Uri("https://cdn.example.com/tts/abc123.wav");
+			var generationStarted = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+			var allowGenerationCompletion = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+			var cacheLookupCount = 0;
+
+			_cacheService
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en-us", 175))
+				.Returns(CacheKey);
+			_cacheService
+				.Setup(x => x.TryGetCachedUrlAsync(CacheKey, It.IsAny<CancellationToken>()))
+				.Returns(() =>
+				{
+					var attempt = Interlocked.Increment(ref cacheLookupCount);
+					return Task.FromResult<Uri?>(attempt < 4 ? null : objectUri);
+				});
+			_audioProcessingService
+				.Setup(x => x.GenerateNormalizedWavAsync("Press 1 for yes", "en-us", 175, It.IsAny<CancellationToken>()))
+				.Returns(async () =>
+				{
+					generationStarted.TrySetResult(true);
+					await allowGenerationCompletion.Task;
+					return audioBytes;
+				});
+			_cacheService
+				.Setup(x => x.StoreAsync(CacheKey, It.Is<byte[]>(bytes => bytes.SequenceEqual(audioBytes)), It.IsAny<CancellationToken>()))
+				.ReturnsAsync(objectUri);
+
+			var firstRequest = _service.GenerateAsync(new TtsRequest { Text = "Press 1 for yes" }, CancellationToken.None);
+			await generationStarted.Task;
+			var secondRequest = _service.GenerateAsync(new TtsRequest { Text = "Press 1 for yes" }, CancellationToken.None);
+
+			await Task.Yield();
+			allowGenerationCompletion.TrySetResult(true);
+
+			var responses = await Task.WhenAll(firstRequest, secondRequest);
+
+			responses.Should().HaveCount(2);
+			responses.Count(response => response.Cached).Should().Be(1);
+			responses.Count(response => !response.Cached).Should().Be(1);
+			_audioProcessingService.Verify(
+				x => x.GenerateNormalizedWavAsync("Press 1 for yes", "en-us", 175, It.IsAny<CancellationToken>()),
+				Times.Once);
+			_cacheService.Verify(
+				x => x.StoreAsync(CacheKey, It.Is<byte[]>(bytes => bytes.SequenceEqual(audioBytes)), It.IsAny<CancellationToken>()),
+				Times.Once);
+			_cacheService.Verify(
+				x => x.TryGetCachedUrlAsync(CacheKey, It.IsAny<CancellationToken>()),
+				Times.Exactly(4));
+		}
 	}
 }

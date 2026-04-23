@@ -45,6 +45,10 @@ namespace Resgrid.Web.Tts.Services
 			{
 				_logger.LogInformation("TTS prompt warmup was cancelled.");
 			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "TTS prompt warmup failed but will not stop host.");
+			}
 		}
 	}
 }

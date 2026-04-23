@@ -69,5 +69,68 @@ namespace Resgrid.Tests.Web.Services
 				x => x.GenerateSpeechUrlAsync("Hello from Resgrid", "fr", null, It.IsAny<CancellationToken>()),
 				Times.Once);
 		}
+
+		[Test]
+		public async Task append_prompt_async_should_generate_cached_prompt_without_request_cancellation_token()
+		{
+			var promptUrl = new Uri("https://tts.example.com/tts/audio/abc.wav");
+			var requestCancellation = new CancellationTokenSource();
+			var capturedToken = CancellationToken.None;
+			var ttsAudioService = new Mock<ITtsAudioService>(MockBehavior.Strict);
+			ttsAudioService
+				.Setup(x => x.GenerateSpeechUrlAsync("Hello from Resgrid", null, null, It.IsAny<CancellationToken>()))
+				.Callback<string, string, int?, CancellationToken>((_, _, _, token) => capturedToken = token)
+				.ReturnsAsync(promptUrl);
+
+			var service = new TwilioVoiceResponseService(ttsAudioService.Object);
+			var response = new VoiceResponse();
+
+			await service.AppendPromptAsync(response, "Hello from Resgrid", requestCancellation.Token);
+
+			capturedToken.CanBeCanceled.Should().BeFalse();
+			ttsAudioService.Verify(
+				x => x.GenerateSpeechUrlAsync("Hello from Resgrid", null, null, It.IsAny<CancellationToken>()),
+				Times.Once);
+		}
+
+		[Test]
+		public async Task append_prompt_async_should_not_evict_cached_generation_when_a_waiting_request_is_cancelled()
+		{
+			var promptUrl = new Uri("https://tts.example.com/tts/audio/abc.wav");
+			var generationStarted = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+			var promptGeneration = new TaskCompletionSource<Uri>(TaskCreationOptions.RunContinuationsAsynchronously);
+			var ttsAudioService = new Mock<ITtsAudioService>(MockBehavior.Strict);
+			ttsAudioService
+				.Setup(x => x.GenerateSpeechUrlAsync("Hello from Resgrid", null, null, It.IsAny<CancellationToken>()))
+				.Returns<string, string, int?, CancellationToken>((_, _, _, _) =>
+				{
+					generationStarted.TrySetResult(true);
+					return promptGeneration.Task;
+				});
+
+			var service = new TwilioVoiceResponseService(ttsAudioService.Object);
+			using var requestCancellation = new CancellationTokenSource();
+			var cancelledResponse = new VoiceResponse();
+			var cancelledAppendTask = service.AppendPromptAsync(cancelledResponse, "Hello from Resgrid", requestCancellation.Token);
+
+			await generationStarted.Task;
+			requestCancellation.Cancel();
+
+			await FluentActions
+				.Awaiting(() => cancelledAppendTask)
+				.Should()
+				.ThrowAsync<OperationCanceledException>();
+
+			var response = new VoiceResponse();
+			var secondAppendTask = service.AppendPromptAsync(response, "Hello from Resgrid", CancellationToken.None);
+
+			promptGeneration.SetResult(promptUrl);
+			await secondAppendTask;
+
+			response.ToString().Should().Contain(promptUrl.ToString());
+			ttsAudioService.Verify(
+				x => x.GenerateSpeechUrlAsync("Hello from Resgrid", null, null, It.IsAny<CancellationToken>()),
+				Times.Once);
+		}
 	}
 }

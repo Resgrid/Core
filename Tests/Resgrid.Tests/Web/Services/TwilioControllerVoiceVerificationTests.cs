@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
@@ -177,6 +178,55 @@ namespace Resgrid.Tests.Web.Services
 			content.Should().Contain(Uri.EscapeDataString("We couldn't complete your verification call. Please request a new code and try again. Goodbye."));
 			content.Should().NotContain("broken");
 			_twilioVoiceResponseServiceMock.Verify(x => x.AppendPromptAsync(It.IsAny<VoiceResponse>(), "We couldn't complete your verification call. Please request a new code and try again. Goodbye.", It.IsAny<CancellationToken>(), It.IsAny<string>()), Times.Once);
+		}
+
+		[Test]
+		public async System.Threading.Tasks.Task should_redirect_invalid_status_selection_back_to_user_scoped_menu()
+		{
+			var department = new Department { DepartmentId = 7, Name = "Dept 1" };
+			var profile = new UserProfile { UserId = "user1", FirstName = "Pat" };
+
+			_departmentsServiceMock.Setup(x => x.GetDepartmentByUserIdAsync("user1", false)).ReturnsAsync(department);
+			_userProfileServiceMock.Setup(x => x.GetProfileByUserIdAsync("user1", false)).ReturnsAsync(profile);
+			_customStateServiceMock.Setup(x => x.GetCustomPersonnelStatusesOrDefaultsAsync(7)).ReturnsAsync(new List<CustomStateDetail>
+			{
+				new CustomStateDetail { CustomStateDetailId = 1, ButtonText = "Available" }
+			});
+
+			var controller = BuildController();
+			var action = typeof(TwilioController).GetMethod(nameof(TwilioController.InboundVoiceActionStatus));
+			dynamic request = Activator.CreateInstance(action!.GetParameters()[1].ParameterType);
+			request.Digits = "9";
+			var result = await (Task<ActionResult>)action.Invoke(controller, new object[] { "user1", request });
+
+			var content = ((ContentResult)result).Content;
+			content.Should().Contain("https://resgridapi.local/api/Twilio/InboundVoiceAction?userId=user1");
+			content.Should().NotContain("https://resgridapi.local/api/Twilio/InboundVoice</Redirect>");
+			_twilioVoiceResponseServiceMock.Verify(x => x.AppendPromptAsync(It.IsAny<VoiceResponse>(), TwilioVoicePromptCatalog.InvalidStatusSelection, It.IsAny<CancellationToken>(), It.IsAny<string>()), Times.Once);
+		}
+
+		[Test]
+		public async System.Threading.Tasks.Task should_redirect_missing_status_selection_back_to_user_scoped_menu()
+		{
+			var department = new Department { DepartmentId = 7, Name = "Dept 1" };
+			var profile = new UserProfile { UserId = "user1", FirstName = "Pat" };
+
+			_departmentsServiceMock.Setup(x => x.GetDepartmentByUserIdAsync("user1", false)).ReturnsAsync(department);
+			_userProfileServiceMock.Setup(x => x.GetProfileByUserIdAsync("user1", false)).ReturnsAsync(profile);
+			_customStateServiceMock.Setup(x => x.GetCustomPersonnelStatusesOrDefaultsAsync(7)).ReturnsAsync(new List<CustomStateDetail>
+			{
+				new CustomStateDetail { CustomStateDetailId = 1, ButtonText = "Available" }
+			});
+
+			var controller = BuildController();
+			var action = typeof(TwilioController).GetMethod(nameof(TwilioController.InboundVoiceActionStatus));
+			var request = Activator.CreateInstance(action!.GetParameters()[1].ParameterType);
+			var result = await (Task<ActionResult>)action.Invoke(controller, new object[] { "user1", request });
+
+			var content = ((ContentResult)result).Content;
+			content.Should().Contain("https://resgridapi.local/api/Twilio/InboundVoiceAction?userId=user1");
+			content.Should().NotContain("https://resgridapi.local/api/Twilio/InboundVoice</Redirect>");
+			_twilioVoiceResponseServiceMock.Verify(x => x.AppendPromptAsync(It.IsAny<VoiceResponse>(), TwilioVoicePromptCatalog.NoStatusSelection, It.IsAny<CancellationToken>(), It.IsAny<string>()), Times.Once);
 		}
 	}
 }

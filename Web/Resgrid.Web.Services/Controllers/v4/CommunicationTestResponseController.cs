@@ -78,7 +78,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			var response = new VoiceResponse();
-			var ttsLanguage = await GetDepartmentTtsLanguageAsync(token);
+			var ttsLanguage = string.IsNullOrWhiteSpace(token)
+				? null
+				: await GetDepartmentTtsLanguageAsync(token);
 			await _twilioVoiceResponseService.AppendPromptAsync(response, TwilioVoicePromptCatalog.CommunicationTestRecorded, HttpContext?.RequestAborted ?? CancellationToken.None, ttsLanguage);
 			response.Hangup();
 
@@ -92,6 +94,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		private async Task<string> GetDepartmentTtsLanguageAsync(string token)
 		{
+			if (string.IsNullOrWhiteSpace(token))
+				return null;
+
 			var departmentId = await _communicationTestService.GetDepartmentIdByResponseTokenAsync(token);
 
 			if (!departmentId.HasValue)

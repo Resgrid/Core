@@ -19,10 +19,15 @@ namespace Resgrid.Tests.Services
 		private Mock<IGeoLocationProvider> _geoLocationProvider;
 		private Mock<ICacheProvider> _cacheProvider;
 		private DepartmentSettingsService _service;
+		private bool _originalCacheEnabled;
+		private string _originalDefaultVoice;
 
 		[SetUp]
 		public void SetUp()
 		{
+			_originalCacheEnabled = global::Resgrid.Config.SystemBehaviorConfig.CacheEnabled;
+			_originalDefaultVoice = TtsConfig.DefaultVoice;
+
 			_departmentSettingsRepository = new Mock<IDepartmentSettingsRepository>();
 			_addressService = new Mock<IAddressService>();
 			_geoLocationProvider = new Mock<IGeoLocationProvider>();
@@ -36,6 +41,13 @@ namespace Resgrid.Tests.Services
 
 			global::Resgrid.Config.SystemBehaviorConfig.CacheEnabled = false;
 			TtsConfig.DefaultVoice = "en-us";
+		}
+
+		[TearDown]
+		public void TearDown()
+		{
+			global::Resgrid.Config.SystemBehaviorConfig.CacheEnabled = _originalCacheEnabled;
+			TtsConfig.DefaultVoice = _originalDefaultVoice;
 		}
 
 		[Test]

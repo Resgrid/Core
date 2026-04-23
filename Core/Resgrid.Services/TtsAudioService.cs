@@ -7,13 +7,18 @@ using System.Threading.Tasks;
 using Resgrid.Config;
 using Resgrid.Model.Services;
 using RestSharp;
-using RestSharp.Serializers.NewtonsoftJson;
 
 namespace Resgrid.Services
 {
 	public class TtsAudioService : ITtsAudioService
 	{
 		private const string AdminKeyHeaderName = "X-Resgrid-Admin-Key";
+		private readonly RestClient _restClient;
+
+		public TtsAudioService(RestClient restClient)
+		{
+			_restClient = restClient ?? throw new ArgumentNullException(nameof(restClient));
+		}
 
 		public async Task<Uri> GenerateSpeechUrlAsync(string text, string voice = null, int? speed = null, CancellationToken cancellationToken = default)
 		{
@@ -28,7 +33,7 @@ namespace Resgrid.Services
 				Speed = speed ?? TtsConfig.DefaultSpeed
 			});
 
-			var response = await CreateClient().ExecuteAsync<GenerateSpeechResponse>(request, cancellationToken);
+			var response = await _restClient.ExecuteAsync<GenerateSpeechResponse>(request, cancellationToken);
 
 			if (!response.IsSuccessful || response.Data == null || string.IsNullOrWhiteSpace(response.Data.Url))
 				throw CreateRequestFailure("generate speech audio", response);
@@ -61,23 +66,10 @@ namespace Resgrid.Services
 				Prompts = promptRequests
 			});
 
-			var response = await CreateClient().ExecuteAsync(request, cancellationToken);
+			var response = await _restClient.ExecuteAsync(request, cancellationToken);
 
 			if (!response.IsSuccessful)
 				throw CreateRequestFailure("regenerate static prompts", response);
-		}
-
-		private static RestClient CreateClient()
-		{
-			if (string.IsNullOrWhiteSpace(TtsConfig.ServiceBaseUrl))
-				throw new InvalidOperationException("TtsConfig.ServiceBaseUrl must be configured before using the TTS service.");
-
-			var options = new RestClientOptions(TtsConfig.ServiceBaseUrl.TrimEnd('/'))
-			{
-				MaxTimeout = 5000
-			};
-
-			return new RestClient(options, configureSerialization: serializer => serializer.UseNewtonsoftJson());
 		}
 
 		private static Exception CreateRequestFailure(string operation, RestResponse response)
@@ -86,10 +78,13 @@ namespace Resgrid.Services
 			var detail = response.ErrorException?.Message;
 
 			if (string.IsNullOrWhiteSpace(detail))
-				detail = response.Content;
+				detail = response.ErrorMessage;
+
+			if (string.IsNullOrWhiteSpace(detail) && !string.IsNullOrWhiteSpace(response.StatusDescription))
+				detail = response.StatusDescription;
 
 			if (string.IsNullOrWhiteSpace(detail))
-				detail = response.ErrorMessage;
+				detail = "No additional error details were provided.";
 
 			return new InvalidOperationException($"The TTS service failed to {operation}. Status: {status}. Detail: {detail}");
 		}

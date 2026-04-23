@@ -191,12 +191,19 @@ namespace Resgrid.Web.Services.Twilio
 			var lazyUrl = _promptUrlCache.GetOrAdd(
 				cacheKey,
 				_ => new Lazy<Task<Uri>>(
-					() => _ttsAudioService.GenerateSpeechUrlAsync(chunk, voice, cancellationToken: cancellationToken),
+					() => _ttsAudioService.GenerateSpeechUrlAsync(chunk, voice, cancellationToken: CancellationToken.None),
 					LazyThreadSafetyMode.ExecutionAndPublication));
+			var generationTask = lazyUrl.Value;
 
 			try
 			{
-				return await lazyUrl.Value;
+				return cancellationToken.CanBeCanceled
+					? await generationTask.WaitAsync(cancellationToken)
+					: await generationTask;
+			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				throw;
 			}
 			catch
 			{

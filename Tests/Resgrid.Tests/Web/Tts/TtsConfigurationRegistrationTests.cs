@@ -100,5 +100,22 @@ namespace Resgrid.Tests.Web.Tts
 			ttsOptions.PreGeneratedPrompts.Should().Equal("Alpha", "Beta");
 			rateLimitOptions.PermitLimit.Should().Be(15);
 		}
+
+		[Test]
+		public void add_tts_configuration_should_require_static_prompt_admin_key()
+		{
+			TtsConfig.StaticPromptAdminKey = " ";
+
+			var services = new ServiceCollection();
+			services.AddTtsConfiguration();
+
+			using var provider = services.BuildServiceProvider();
+
+			FluentActions
+				.Invoking(() => provider.GetRequiredService<IOptions<TtsOptions>>().Value)
+				.Should()
+				.Throw<OptionsValidationException>()
+				.WithMessage("*A static prompt admin key is required.*");
+		}
 	}
 }

@@ -2,6 +2,7 @@ using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Resgrid.Config;
@@ -29,6 +30,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTtsConfiguration();
+builder.Services.Configure<ForwardedHeadersOptions>(TtsRequestIdentity.ConfigureForwardedHeaders);
 builder.Services.AddHealthChecks()
 	.AddCheck<TtsDependencyHealthCheck>("tts_dependencies");
 builder.Services.AddRateLimiter(options =>
@@ -36,7 +38,7 @@ builder.Services.AddRateLimiter(options =>
 	options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
 	options.AddPolicy("tts", httpContext =>
 	{
-		var clientId = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+		var clientId = TtsRequestIdentity.ResolveRateLimitPartitionKey(httpContext);
 		var rateLimitOptions = httpContext.RequestServices.GetRequiredService<IOptions<RateLimitOptions>>().Value;
 
 		return RateLimitPartition.GetFixedWindowLimiter(
@@ -85,6 +87,7 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI();
 }
 
+app.UseForwardedHeaders();
 app.UseRateLimiter();
 
 app.MapHealthChecks("/health", new HealthCheckOptions

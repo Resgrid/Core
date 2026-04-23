@@ -44,10 +44,15 @@ namespace Resgrid.Workers.Console.Tasks
 
 				progress.Report(100, $"Finishing the {Name} Task");
 			}
+			catch (OperationCanceledException)
+			{
+				throw;
+			}
 			catch (Exception ex)
 			{
 				Resgrid.Framework.Logging.LogException(ex);
-				_logger.LogError(ex.ToString());
+				_logger.LogError(ex, "TtsStaticPromptRefresh::Failed to refresh static prompts");
+				throw;
 			}
 		}
 	}

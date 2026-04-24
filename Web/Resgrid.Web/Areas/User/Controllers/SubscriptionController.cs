@@ -67,6 +67,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		#endregion Private Members and Constructors
 
+		private static bool ShouldUsePaddleForSubscriptionFlow(Payment currentPayment, string paddleCustomerId)
+		{
+			if (!string.IsNullOrWhiteSpace(paddleCustomerId))
+				return true;
+
+			if (currentPayment != null && !currentPayment.IsFreePlan())
+				return currentPayment.Method == (int)PaymentMethods.Paddle;
+
+			return Config.PaymentProviderConfig.IsPaddleActive();
+		}
+
 		[HttpGet]
 		[Authorize]
 		public async Task<IActionResult> SelectRegistrationPlan(string discountCode = null)
@@ -81,7 +92,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.DiscountCode = discountCode;
 
 			var paddleCustomerId = await _departmentSettingsService.GetPaddleCustomerIdForDepartmentAsync(DepartmentId);
-			bool isPaddleDepartment = !string.IsNullOrWhiteSpace(paddleCustomerId);
+			bool isPaddleDepartment = ShouldUsePaddleForSubscriptionFlow(currentPayment, paddleCustomerId);
 			model.IsPaddleDepartment = isPaddleDepartment;
 			model.PaddleEnvironment = Config.PaymentProviderConfig.GetPaddleEnvironment();
 			model.PaddleClientToken = Config.PaymentProviderConfig.GetPaddleClientToken();
@@ -232,8 +243,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.AddonCost = "0";
 
 			var paddleCustomerId = await _departmentSettingsService.GetPaddleCustomerIdForDepartmentAsync(DepartmentId);
-			bool isPaddleDepartment = !string.IsNullOrWhiteSpace(paddleCustomerId)
-				|| (model.Payment != null && model.Payment.Method == (int)PaymentMethods.Paddle);
+			bool isPaddleDepartment = ShouldUsePaddleForSubscriptionFlow(model.Payment, paddleCustomerId);
 			model.IsPaddleDepartment = isPaddleDepartment;
 
 			if (isPaddleDepartment)

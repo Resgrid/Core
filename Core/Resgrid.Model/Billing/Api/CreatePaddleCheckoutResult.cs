@@ -7,6 +7,7 @@ public class CreatePaddleCheckoutResult : BillingApiResponseBase
 
 public class CreatePaddleCheckoutData
 {
+	public string TransactionId { get; set; }
 	public string PriceId { get; set; }
 	public string CustomerId { get; set; }
 	public string Environment { get; set; }

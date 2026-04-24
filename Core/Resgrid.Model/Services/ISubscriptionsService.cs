@@ -250,7 +250,7 @@ namespace Resgrid.Model.Services
 
 		Task<ChangeActiveSubscriptionData> ChangeActiveSubscriptionAsync(string stripeCustomerId, string stripePlanId);
 
-		Task<CreatePaddleCheckoutData> CreatePaddleCheckoutForSub(int departmentId, string paddleCustomerId, string paddlePriceId, int planId, string email, string departmentName, int count, string discountCode = null);
+		Task<CreatePaddleCheckoutData> CreatePaddleCheckoutForSub(int departmentId, string paddleCustomerId, string paddleProductId, int planId, string email, string departmentName, int count, string discountCode = null);
 
 		Task<CreatePaddleCheckoutData> CreatePaddleCheckoutForUpdate(int departmentId, string paddleCustomerId, string email, string departmentName);
 

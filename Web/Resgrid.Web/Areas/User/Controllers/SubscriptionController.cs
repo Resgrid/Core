@@ -112,6 +112,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return null;
 		}
 
+		private static string GetPaddleCheckoutProductId(Resgrid.Model.Plan plan)
+		{
+			return plan?.GetExternalKey() ?? string.Empty;
+		}
+
 		[HttpGet]
 		[Authorize]
 		public async Task<IActionResult> SelectRegistrationPlan(string discountCode = null)
@@ -782,10 +787,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return BadRequest("Invalid entity pack count.");
 
 			var plan = await _subscriptionsService.GetPlanByIdAsync(id);
+			var paddleProductId = GetPaddleCheckoutProductId(plan);
+
+			if (string.IsNullOrWhiteSpace(paddleProductId))
+				return StatusCode(StatusCodes.Status500InternalServerError, "Paddle checkout is not configured for this plan.");
+
 			var paddleCustomerId = await _departmentSettingsService.GetPaddleCustomerIdForDepartmentAsync(DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			var user = _usersService.GetUserById(UserId);
-			var checkout = await _subscriptionsService.CreatePaddleCheckoutForSub(DepartmentId, paddleCustomerId, plan.GetExternalKey(), plan.PlanId, user.Email, department.Name, count, discountCode);
+			var checkout = await _subscriptionsService.CreatePaddleCheckoutForSub(DepartmentId, paddleCustomerId, paddleProductId, plan.PlanId, user.Email, department.Name, count, discountCode);
 
 			bool hasActiveSub = false;
 			if (!string.IsNullOrWhiteSpace(paddleCustomerId))
@@ -797,6 +807,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			return Json(new
 			{
+				TransactionId = checkout?.TransactionId,
 				PriceId = checkout?.PriceId,
 				CustomerId = checkout?.CustomerId,
 				Environment = checkout?.Environment,

@@ -1220,7 +1220,7 @@ namespace Resgrid.Services
 			return null;
 		}
 
-		public async Task<CreatePaddleCheckoutData> CreatePaddleCheckoutForSub(int departmentId, string paddleCustomerId, string paddlePriceId, int planId, string email, string departmentName, int count, string discountCode = null)
+		public async Task<CreatePaddleCheckoutData> CreatePaddleCheckoutForSub(int departmentId, string paddleCustomerId, string paddleProductId, int planId, string email, string departmentName, int count, string discountCode = null)
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
@@ -1233,7 +1233,8 @@ namespace Resgrid.Services
 				request.AddHeader("Content-Type", "application/json");
 				request.AddParameter("paddleCustomerId", Uri.EscapeDataString(paddleCustomerId), ParameterType.QueryString);
 				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
-				request.AddParameter("paddlePriceId", paddlePriceId, ParameterType.QueryString);
+				request.AddParameter("paddleProductId", paddleProductId, ParameterType.QueryString);
+				request.AddParameter("paddlePriceId", paddleProductId, ParameterType.QueryString);
 				request.AddParameter("planId", planId, ParameterType.QueryString);
 				request.AddParameter("count", count, ParameterType.QueryString);
 				request.AddParameter("email", email, ParameterType.QueryString, true);

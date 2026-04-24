@@ -606,8 +606,20 @@
                                     return;
                                 }
 
+                                if (data.TransactionId) {
+                                    Paddle.Checkout.open({
+                                        settings: { successUrl: resgrid.absoluteBaseUrl + '/User/Subscription/PaddleProcessing?planId=' + id },
+                                        transactionId: data.TransactionId
+                                    });
+                                    return;
+                                }
+
                                 if (!data.PriceId) {
                                     swal({ title: "Checkout Error", text: "Unable to create a checkout session. Please try again.", icon: "error", buttons: true, dangerMode: false });
+                                    return;
+                                }
+                                if (!/^pri_/.test(data.PriceId)) {
+                                    swal({ title: "Checkout Error", text: "Paddle checkout returned an unsupported checkout payload. Please contact support.", icon: "error", buttons: true, dangerMode: false });
                                     return;
                                 }
 

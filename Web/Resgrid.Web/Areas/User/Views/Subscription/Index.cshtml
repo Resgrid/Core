@@ -1,4 +1,5 @@
-﻿@using Resgrid.Framework
+﻿@using Newtonsoft.Json
+@using Resgrid.Framework
 @using Resgrid.Model
 @using Resgrid.Config
 @model Resgrid.Web.Areas.User.Models.Subscription.SubscriptionView
@@ -10,6 +11,10 @@
     var location = InfoConfig.Locations.Find(l => l.Name == locationName) ?? InfoConfig.Locations[0];
     var isEU = locationName.StartsWith("EU", StringComparison.OrdinalIgnoreCase);
     var currencySymbol = isEU ? "\u20AC" : "$";
+    var jsStringSettings = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml };
+    var paddleEnvironmentJson = Html.Raw(JsonConvert.SerializeObject(Model.PaddleEnvironment ?? "", jsStringSettings));
+    var paddleClientTokenJson = Html.Raw(JsonConvert.SerializeObject(Model.PaddleClientToken ?? "", jsStringSettings));
+    var paddleConfigurationErrorJson = Html.Raw(JsonConvert.SerializeObject(Model.PaddleConfigurationError ?? "", jsStringSettings));
 }
 
 @section Styles
@@ -510,13 +515,13 @@
 
         @section Scripts
         {
-            @if (Model.IsPaddleDepartment) {
+            @if (Model.IsPaddleDepartment && Model.CanInitializePaddleCheckout) {
                 <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
                 <script>
-                    Paddle.Environment.set('@Model.PaddleEnvironment');
-                    Paddle.Initialize({ token: '@Model.PaddleClientToken' });
+                    Paddle.Environment.set(@paddleEnvironmentJson);
+                    Paddle.Initialize({ token: @paddleClientTokenJson, pwCustomer: {} });
                 </script>
-            } else {
+            } else if (!Model.IsPaddleDepartment) {
                 <script src="https://js.stripe.com/v3/"></script>
             }
 
@@ -524,6 +529,8 @@
                 @if (!Model.IsPaddleDepartment) {
                     <text>var stripe = Stripe('@Model.StripeKey');</text>
                 }
+                var paddleReady = @(Model.CanInitializePaddleCheckout ? "true" : "false");
+                var paddleConfigurationError = @paddleConfigurationErrorJson;
 
                 function stripeCheckout(id) {
                     const amount = slider == 1 ? val : $("#amount").val();
@@ -577,6 +584,11 @@
                 }
 
                 function paddleCheckout(id) {
+                    if (!paddleReady) {
+                        swal({ title: "Checkout Unavailable", text: paddleConfigurationError || "Paddle checkout is not configured correctly. Please contact support.", icon: "error", buttons: true, dangerMode: false });
+                        return;
+                    }
+
                     const amount = slider == 1 ? val : $("#amount").val();
                     const minAmount = IS_EU ? 10 : 20;
 

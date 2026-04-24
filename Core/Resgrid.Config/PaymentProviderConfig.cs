@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Text.RegularExpressions;
 
 namespace Resgrid.Config
 {
 	public static class PaymentProviderConfig
 	{
+		private static readonly Regex PaddleClientTokenRegex = new Regex("^(test|live)_[a-zA-Z0-9]{27}$", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
 #if DEBUG
 		public static bool IsTestMode = true;
 #else
@@ -139,17 +142,34 @@ namespace Resgrid.Config
 		public static string GetPaddleEnvironment()
 		{
 			if (IsTestMode)
-				return PaddleTestEnvironment;
+				return NormalizeConfigValue(PaddleTestEnvironment).ToLowerInvariant();
 			else
-				return PaddleProductionEnvironment;
+				return NormalizeConfigValue(PaddleProductionEnvironment).ToLowerInvariant();
 		}
 
 		public static string GetPaddleClientToken()
 		{
 			if (IsTestMode)
-				return PaddleTestClientToken;
+				return NormalizeConfigValue(PaddleTestClientToken);
 			else
-				return PaddleProductionClientToken;
+				return NormalizeConfigValue(PaddleProductionClientToken);
+		}
+
+		public static bool IsValidPaddleEnvironment(string environment)
+		{
+			var normalizedEnvironment = NormalizeConfigValue(environment).ToLowerInvariant();
+			return normalizedEnvironment == "sandbox" || normalizedEnvironment == "production";
+		}
+
+		public static bool IsValidPaddleClientToken(string token)
+		{
+			var normalizedToken = NormalizeConfigValue(token);
+			return !string.IsNullOrWhiteSpace(normalizedToken) && PaddleClientTokenRegex.IsMatch(normalizedToken);
+		}
+
+		private static string NormalizeConfigValue(string value)
+		{
+			return string.IsNullOrWhiteSpace(value) ? string.Empty : value.Trim();
 		}
 	}
 }

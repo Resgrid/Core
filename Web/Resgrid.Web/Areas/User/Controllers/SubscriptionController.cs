@@ -78,6 +78,40 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return Config.PaymentProviderConfig.IsPaddleActive();
 		}
 
+		private static (string PaddleEnvironment, string PaddleClientToken, bool CanInitializePaddleCheckout, string PaddleConfigurationError) GetPaddleCheckoutConfiguration(bool isPaddleDepartment)
+		{
+			if (!isPaddleDepartment)
+				return (string.Empty, string.Empty, false, null);
+
+			var paddleEnvironment = Config.PaymentProviderConfig.GetPaddleEnvironment();
+			var paddleClientToken = Config.PaymentProviderConfig.GetPaddleClientToken();
+			var canInitializePaddleCheckout =
+				Config.PaymentProviderConfig.IsValidPaddleEnvironment(paddleEnvironment)
+				&& Config.PaymentProviderConfig.IsValidPaddleClientToken(paddleClientToken);
+
+			return (
+				paddleEnvironment,
+				paddleClientToken,
+				canInitializePaddleCheckout,
+				isPaddleDepartment && !canInitializePaddleCheckout
+					? GetPaddleConfigurationError(paddleEnvironment, paddleClientToken)
+					: null);
+		}
+
+		private static string GetPaddleConfigurationError(string paddleEnvironment, string paddleClientToken)
+		{
+			if (string.IsNullOrWhiteSpace(paddleClientToken))
+				return "Paddle checkout is not configured. A valid client-side token is required.";
+
+			if (!Config.PaymentProviderConfig.IsValidPaddleClientToken(paddleClientToken))
+				return "Paddle checkout is misconfigured. The configured client-side token must use Paddle's documented live_... or test_... format.";
+
+			if (!Config.PaymentProviderConfig.IsValidPaddleEnvironment(paddleEnvironment))
+				return "Paddle checkout is misconfigured. The configured environment must be sandbox or production.";
+
+			return null;
+		}
+
 		[HttpGet]
 		[Authorize]
 		public async Task<IActionResult> SelectRegistrationPlan(string discountCode = null)
@@ -94,8 +128,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var paddleCustomerId = await _departmentSettingsService.GetPaddleCustomerIdForDepartmentAsync(DepartmentId);
 			bool isPaddleDepartment = ShouldUsePaddleForSubscriptionFlow(currentPayment, paddleCustomerId);
 			model.IsPaddleDepartment = isPaddleDepartment;
-			model.PaddleEnvironment = Config.PaymentProviderConfig.GetPaddleEnvironment();
-			model.PaddleClientToken = Config.PaymentProviderConfig.GetPaddleClientToken();
+			var paddleCheckoutConfiguration = GetPaddleCheckoutConfiguration(isPaddleDepartment);
+			model.PaddleEnvironment = paddleCheckoutConfiguration.PaddleEnvironment;
+			model.PaddleClientToken = paddleCheckoutConfiguration.PaddleClientToken;
+			model.CanInitializePaddleCheckout = paddleCheckoutConfiguration.CanInitializePaddleCheckout;
+			model.PaddleConfigurationError = paddleCheckoutConfiguration.PaddleConfigurationError;
 
 			return View(model);
 		}
@@ -249,8 +286,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (isPaddleDepartment)
 			{
 				model.PaddleCustomer = paddleCustomerId;
-				model.PaddleEnvironment = Config.PaymentProviderConfig.GetPaddleEnvironment();
-				model.PaddleClientToken = Config.PaymentProviderConfig.GetPaddleClientToken();
+				var paddleCheckoutConfiguration = GetPaddleCheckoutConfiguration(isPaddleDepartment);
+				model.PaddleEnvironment = paddleCheckoutConfiguration.PaddleEnvironment;
+				model.PaddleClientToken = paddleCheckoutConfiguration.PaddleClientToken;
+				model.CanInitializePaddleCheckout = paddleCheckoutConfiguration.CanInitializePaddleCheckout;
+				model.PaddleConfigurationError = paddleCheckoutConfiguration.PaddleConfigurationError;
 			}
 			else
 			{

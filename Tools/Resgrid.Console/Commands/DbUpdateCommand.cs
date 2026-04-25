@@ -21,7 +21,8 @@ namespace Resgrid.Console.Commands
 	public sealed class DbUpdateCommand(
 		IConfiguration configuration,
 		ILogger<DbUpdateCommand> logger,
-		IMigrationRunner migrationRunner) : ICommandService
+		IMigrationRunner migrationRunner,
+		IDocumentDbRepository documentDbRepository) : ICommandService
 	{
 		/// <summary>
 		///     Executes the main functionality of the application.
@@ -37,6 +38,17 @@ namespace Resgrid.Console.Commands
 			try
 			{
 				migrationRunner.MigrateUp();
+
+				if (Config.DataConfig.DocDatabaseType == Config.DatabaseTypes.Postgres)
+				{
+					var result = await documentDbRepository.UpdateDocumentDatabaseAsync();
+
+					if (!result)
+					{
+						logger.LogError("Postgres document database update did not complete successfully.");
+						return ExitCode.Failed;
+					}
+				}
 
 				logger.LogInformation("Completed updating the Resgrid Database!");
 			}

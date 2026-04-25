@@ -21,6 +21,7 @@ namespace Resgrid.Console.Commands
 	public sealed class MigrateDocsDbCommand(
 		IConfiguration configuration,
 		ILogger<MigrateDocsDbCommand> logger,
+		IDocumentDbRepository documentDbRepository,
 		IMongoRepository<MapLayer> mapLayersRepository,
 		IMongoRepository<UnitsLocation> unitsLocationRepository,
 		IMongoRepository<PersonnelLocation> personnelLocationRepository,
@@ -41,6 +42,19 @@ namespace Resgrid.Console.Commands
 
 			try
 			{
+				if (Config.DataConfig.DocDatabaseType == Config.DatabaseTypes.Postgres)
+				{
+					logger.LogInformation("Ensuring Postgres document tables exist...");
+
+					var schemaUpdated = await documentDbRepository.UpdateDocumentDatabaseAsync();
+
+					if (!schemaUpdated)
+					{
+						logger.LogError("Failed to update the Postgres document database schema.");
+						return ExitCode.Failed;
+					}
+				}
+
 				logger.LogInformation("Migrating Map Layers...");
 
 				var layers = mapLayersRepository.AsQueryable().ToList();

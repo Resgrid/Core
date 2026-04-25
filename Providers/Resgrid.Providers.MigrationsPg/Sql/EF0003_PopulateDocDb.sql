@@ -41,7 +41,7 @@ END IF;
 CREATE TABLE IF NOT EXISTS public.maplayers(
   id serial,
   departmentid integer,
-  oid text
+  oid text,
   data jsonb NOT NULL
 );
 

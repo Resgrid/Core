@@ -71,14 +71,17 @@ namespace Resgrid.Workers.Console
 					services.AddOptions();
 
 					var upgradeDatabase = Environment.GetEnvironmentVariable("RESGRID__DODBUPGRADE");
+					var runDatabaseUpgrade = !String.IsNullOrWhiteSpace(upgradeDatabase) && upgradeDatabase.ToLower() == "true";
 
-					if (!String.IsNullOrWhiteSpace(upgradeDatabase) && upgradeDatabase.ToLower() == "true")
+					if (runDatabaseUpgrade)
 					{
 						services.AddSingleton<IHostedService, DatabaseUpgradeService>();
 					}
-
-					services.AddSingleton<IHostedService, QueuesProcessingService>();
-					services.AddSingleton<IHostedService, ScheduledJobsService>();
+					else
+					{
+						services.AddSingleton<IHostedService, QueuesProcessingService>();
+						services.AddSingleton<IHostedService, ScheduledJobsService>();
+					}
 
 				})
 				.ConfigureLogging((hostingContext, logging) => {
@@ -411,10 +414,12 @@ namespace Resgrid.Workers.Console
 	public class DatabaseUpgradeService : BackgroundService
 	{
 		private ILogger _logger;
+		private readonly IHostApplicationLifetime _hostApplicationLifetime;
 
-		public DatabaseUpgradeService(ILogger<ScheduledJobsService> logger)
+		public DatabaseUpgradeService(ILogger<ScheduledJobsService> logger, IHostApplicationLifetime hostApplicationLifetime)
 		{
 			_logger = logger;
+			_hostApplicationLifetime = hostApplicationLifetime;
 		}
 
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -434,9 +439,11 @@ namespace Resgrid.Workers.Console
 				{
 					UpdateDatabase(scope.ServiceProvider);
 					await UpdateOidcDatabaseAsync(logger, scope.ServiceProvider);
+					await UpdateDocumentDatabaseAsync(logger, scope.ServiceProvider);
 				}
 
 				_logger.Log(LogLevel.Information, "Completed updating the Resgrid Database!");
+				_hostApplicationLifetime.StopApplication();
 			}
 			catch (Exception ex)
 			{
@@ -478,6 +485,33 @@ namespace Resgrid.Workers.Console
 			catch (Exception ex)
 			{
 				logger.Log(LogLevel.Error, ex, "There was an error trying to update the OIDC Database.");
+				throw;
+			}
+		}
+
+		/// <summary>
+		/// Update the document database
+		/// </summary>
+		private static async Task UpdateDocumentDatabaseAsync(ILogger<Program> logger, IServiceProvider serviceProvider)
+		{
+			if (Config.DataConfig.DocDatabaseType != Config.DatabaseTypes.Postgres)
+				return;
+
+			logger.Log(LogLevel.Information, "Starting Document Database Upgrade");
+
+			try
+			{
+				var documentDbRepository = Bootstrapper.GetKernel().Resolve<IDocumentDbRepository>();
+				bool result = await documentDbRepository.UpdateDocumentDatabaseAsync();
+
+				if (result)
+					logger.Log(LogLevel.Information, "Completed updating the Document Database!");
+				else
+					throw new InvalidOperationException("UpdateDocumentDatabaseAsync returned false; the document database was not fully updated.");
+			}
+			catch (Exception ex)
+			{
+				logger.Log(LogLevel.Error, ex, "There was an error trying to update the Document Database.");
 				throw;
 			}
 		}

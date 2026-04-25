@@ -46,7 +46,7 @@ namespace Resgrid.Repositories.NoSqlRepository
 			using (var connection = new NpgsqlConnection(Config.DataConfig.DocumentConnectionString))
 			{
 				await connection.OpenAsync();
-				var unitLocationsData = await connection.QueryAsync<PersonnelLocation>($"SELECT DISTINCT ON (userid) data FROM public.personnellocations ul WHERE ul.departmentid = {departmentId} ORDER BY timestamp DESC;");
+				var unitLocationsData = await connection.QueryAsync<PersonnelLocation>($"SELECT DISTINCT ON (userid) data FROM public.personnellocations ul WHERE ul.departmentid = {departmentId} ORDER BY ul.userid, ul.timestamp DESC;");
 
 				if (unitLocationsData != null)
 					return unitLocationsData.ToList();
@@ -62,7 +62,7 @@ namespace Resgrid.Repositories.NoSqlRepository
 				await connection.OpenAsync();
 				var unitLocationsData = await connection.QueryAsync<PersonnelLocation>($"SELECT data FROM public.personnellocations ul WHERE ul.oid = '{id}';");
 
-				if (unitLocationsData != null)
+				if (unitLocationsData != null && unitLocationsData.Any())
 					return unitLocationsData.FirstOrDefault();
 				else
 				{
@@ -97,6 +97,19 @@ namespace Resgrid.Repositories.NoSqlRepository
 				await connection.OpenAsync();
 				var result = await connection.ExecuteScalarAsync<string>($"INSERT INTO public.personnellocations (departmentid, userid, data) VALUES ({location.DepartmentId}, '{location.UserId}', '{JsonConvert.SerializeObject(location)}') RETURNING id;");
 				location.PgId = result;
+
+				return location;
+			}
+		}
+
+		public async Task<PersonnelLocation> UpdateAsync(PersonnelLocation location)
+		{
+			using (var connection = new NpgsqlConnection(Config.DataConfig.DocumentConnectionString))
+			{
+				await connection.OpenAsync();
+
+				if (!string.IsNullOrWhiteSpace(location.PgId))
+					await connection.ExecuteAsync($"UPDATE public.personnellocations SET departmentid = {location.DepartmentId}, userid = '{location.UserId}', data = '{JsonConvert.SerializeObject(location)}' WHERE id = {location.PgId};");
 
 				return location;
 			}

@@ -677,7 +677,7 @@
                                 if (data.TransactionId) {
                                     ensurePaddleInitialized().then(function () {
                                         Paddle.Checkout.open({
-                                            settings: { successUrl: resgrid.absoluteBaseUrl + '/User/Subscription/PaddleProcessing?planId=' + id },
+                                            settings: { successUrl: resgrid.absoluteBaseUrl + '/User/Subscription/Processing?planId=' + id },
                                             transactionId: data.TransactionId
                                         });
                                     }).catch(function (error) {
@@ -696,7 +696,7 @@
                                 }
 
                                 var checkoutSettings = {
-                                    settings: { successUrl: resgrid.absoluteBaseUrl + '/User/Subscription/PaddleProcessing?planId=' + id },
+                                    settings: { successUrl: resgrid.absoluteBaseUrl + '/User/Subscription/Processing?planId=' + id },
                                     items: [{ priceId: data.PriceId, quantity: packs }]
                                 };
 

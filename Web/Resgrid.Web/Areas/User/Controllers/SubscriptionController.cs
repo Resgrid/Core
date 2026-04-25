@@ -828,7 +828,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ProcessingView model = new ProcessingView();
 			model.PlanId = planId;
 
-			return View(model);
+			return View("Processing", model);
 		}
 
 		[HttpGet]

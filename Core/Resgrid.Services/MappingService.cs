@@ -13,10 +13,10 @@ namespace Resgrid.Services
 	{
 		private readonly IPoiTypesRepository _poiTypesRepository;
 		private readonly IPoisRepository _poisRepository;
-		private readonly IMongoRepository<MapLayer> _mapLayersRepository;
+		private readonly Lazy<IMongoRepository<MapLayer>> _mapLayersRepository;
 		private readonly IMapLayersDocRepository _mapLayersDocRepository;
 
-		public MappingService(IPoiTypesRepository poiTypesRepository, IPoisRepository poisRepository, IMongoRepository<MapLayer> mapLayersRepository,
+		public MappingService(IPoiTypesRepository poiTypesRepository, IPoisRepository poisRepository, Lazy<IMongoRepository<MapLayer>> mapLayersRepository,
 			IMapLayersDocRepository mapLayersDocRepository)
 		{
 			_poiTypesRepository = poiTypesRepository;
@@ -75,9 +75,9 @@ namespace Resgrid.Services
 			else
 			{
 				if (mapLayer.Id.Timestamp == 0)
-					await _mapLayersRepository.InsertOneAsync(mapLayer);
+					await _mapLayersRepository.Value.InsertOneAsync(mapLayer);
 				else
-					await _mapLayersRepository.ReplaceOneAsync(mapLayer);
+					await _mapLayersRepository.Value.ReplaceOneAsync(mapLayer);
 
 				return mapLayer;
 			}
@@ -93,7 +93,7 @@ namespace Resgrid.Services
 			}
 			else
 			{
-				var layers = await _mapLayersRepository.FilterByAsync(filter => filter.DepartmentId == departmentId && filter.Type == (int)type && filter.IsDeleted == false);
+				var layers = await _mapLayersRepository.Value.FilterByAsync(filter => filter.DepartmentId == departmentId && filter.Type == (int)type && filter.IsDeleted == false);
 
 				return layers.ToList();
 			}
@@ -109,7 +109,7 @@ namespace Resgrid.Services
 			}
 			else
 			{
-				var layers = await _mapLayersRepository.FindByIdAsync(id);
+				var layers = await _mapLayersRepository.Value.FindByIdAsync(id);
 
 				return layers;
 			}

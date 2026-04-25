@@ -46,7 +46,7 @@ namespace Resgrid.Repositories.NoSqlRepository
 			using (var connection = new NpgsqlConnection(Config.DataConfig.DocumentConnectionString))
 			{
 				await connection.OpenAsync();
-				var unitLocationsData = await connection.QueryAsync<UnitsLocation>($"SELECT DISTINCT ON (unitid) data FROM public.unitlocations ul WHERE ul.departmentid = {departmentId} ORDER BY timestamp DESC;");
+				var unitLocationsData = await connection.QueryAsync<UnitsLocation>($"SELECT DISTINCT ON (unitid) data FROM public.unitlocations ul WHERE ul.departmentid = {departmentId} ORDER BY ul.unitid, ul.timestamp DESC;");
 
 				if (unitLocationsData != null)
 					return unitLocationsData.ToList();
@@ -62,7 +62,7 @@ namespace Resgrid.Repositories.NoSqlRepository
 				await connection.OpenAsync();
 				var unitLocationsData = await connection.QueryAsync<UnitsLocation>($"SELECT data FROM public.unitlocations ul WHERE ul.oid = '{id}';");
 
-				if (unitLocationsData != null)
+				if (unitLocationsData != null && unitLocationsData.Any())
 					return unitLocationsData.FirstOrDefault();
 				else
 				{
@@ -97,6 +97,19 @@ namespace Resgrid.Repositories.NoSqlRepository
 				await connection.OpenAsync();
 				var result = await connection.ExecuteScalarAsync<string>($"INSERT INTO public.unitlocations (departmentid, unitid, data) VALUES ({location.DepartmentId}, {location.UnitId}, '{JsonConvert.SerializeObject(location)}') RETURNING id;");
 				location.PgId = result;
+
+				return location;
+			}
+		}
+
+		public async Task<UnitsLocation> UpdateAsync(UnitsLocation location)
+		{
+			using (var connection = new NpgsqlConnection(Config.DataConfig.DocumentConnectionString))
+			{
+				await connection.OpenAsync();
+
+				if (!string.IsNullOrWhiteSpace(location.PgId))
+					await connection.ExecuteAsync($"UPDATE public.unitlocations SET departmentid = {location.DepartmentId}, unitid = {location.UnitId}, data = '{JsonConvert.SerializeObject(location)}' WHERE id = {location.PgId};");
 
 				return location;
 			}

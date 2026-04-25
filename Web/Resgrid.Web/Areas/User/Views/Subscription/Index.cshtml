@@ -14,6 +14,7 @@
     var jsStringSettings = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml };
     var paddleEnvironmentJson = Html.Raw(JsonConvert.SerializeObject(Model.PaddleEnvironment ?? "", jsStringSettings));
     var paddleClientTokenJson = Html.Raw(JsonConvert.SerializeObject(Model.PaddleClientToken ?? "", jsStringSettings));
+    var paddleCustomerJson = Html.Raw(JsonConvert.SerializeObject(Model.PaddleCustomer ?? "", jsStringSettings));
     var paddleConfigurationErrorJson = Html.Raw(JsonConvert.SerializeObject(Model.PaddleConfigurationError ?? "", jsStringSettings));
 }
 
@@ -519,7 +520,14 @@
                 <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
                 <script>
                     Paddle.Environment.set(@paddleEnvironmentJson);
-                    Paddle.Initialize({ token: @paddleClientTokenJson, pwCustomer: {} });
+                    var paddleInitializeOptions = { token: @paddleClientTokenJson };
+                    var paddleCustomerId = @paddleCustomerJson;
+
+                    if (/^ctm_/.test(paddleCustomerId)) {
+                        paddleInitializeOptions.pwCustomer = { id: paddleCustomerId };
+                    }
+
+                    Paddle.Initialize(paddleInitializeOptions);
                 </script>
             } else if (!Model.IsPaddleDepartment) {
                 <script src="https://js.stripe.com/v3/"></script>

@@ -71,17 +71,16 @@ namespace Resgrid.Workers.Console
 					services.AddOptions();
 
 					var upgradeDatabase = Environment.GetEnvironmentVariable("RESGRID__DODBUPGRADE");
-					var runDatabaseUpgrade = !String.IsNullOrWhiteSpace(upgradeDatabase) && upgradeDatabase.ToLower() == "true";
+					var runDatabaseUpgrade = string.Equals(upgradeDatabase, "true", StringComparison.OrdinalIgnoreCase);
+					services.AddSingleton(new DatabaseUpgradeState(runDatabaseUpgrade));
 
 					if (runDatabaseUpgrade)
 					{
 						services.AddSingleton<IHostedService, DatabaseUpgradeService>();
 					}
-					else
-					{
-						services.AddSingleton<IHostedService, QueuesProcessingService>();
-						services.AddSingleton<IHostedService, ScheduledJobsService>();
-					}
+
+					services.AddSingleton<IHostedService, QueuesProcessingService>();
+					services.AddSingleton<IHostedService, ScheduledJobsService>();
 
 				})
 				.ConfigureLogging((hostingContext, logging) => {
@@ -197,17 +196,46 @@ namespace Resgrid.Workers.Console
 		}
 	}
 
+	public sealed class DatabaseUpgradeState
+	{
+		private readonly TaskCompletionSource<bool> _completionSource = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+		public DatabaseUpgradeState(bool upgradeRequired)
+		{
+			if (!upgradeRequired)
+				_completionSource.TrySetResult(true);
+		}
+
+		public Task WaitForCompletionAsync(CancellationToken cancellationToken)
+		{
+			return _completionSource.Task.WaitAsync(cancellationToken);
+		}
+
+		public void MarkCompleted()
+		{
+			_completionSource.TrySetResult(true);
+		}
+
+		public void MarkFailed(Exception ex)
+		{
+			_completionSource.TrySetException(ex);
+		}
+	}
+
 	public class QueuesProcessingService : BackgroundService
 	{
 		private ILogger _logger;
+		private readonly DatabaseUpgradeState _databaseUpgradeState;
 
-		public QueuesProcessingService(ILogger<QueuesProcessingService> logger)
+		public QueuesProcessingService(ILogger<QueuesProcessingService> logger, DatabaseUpgradeState databaseUpgradeState)
 		{
 			_logger = logger;
+			_databaseUpgradeState = databaseUpgradeState;
 		}
 
-		protected override Task ExecuteAsync(CancellationToken stoppingToken)
+		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
+			await _databaseUpgradeState.WaitForCompletionAsync(stoppingToken);
 			_logger.Log(LogLevel.Information, "Starting Queues Event Watcher");
 
 			Task.Run(async () =>
@@ -216,23 +244,27 @@ namespace Resgrid.Workers.Console
 				await queuesTask.ProcessAsync(new QueuesProcessorCommand(4), null, stoppingToken);
 			}, stoppingToken);
 
-			return Task.CompletedTask;
+			return;
 		}
 	}
 
 	public class ScheduledJobsService : BackgroundService
 	{
 		private ILogger _logger;
+		private readonly DatabaseUpgradeState _databaseUpgradeState;
 		private IQuidjiboClient Client { get; set; }
 		private QuidjiboBuilder Builder { get; set; }
 
-		public ScheduledJobsService(ILogger<ScheduledJobsService> logger)
+		public ScheduledJobsService(ILogger<ScheduledJobsService> logger, DatabaseUpgradeState databaseUpgradeState)
 		{
 			_logger = logger;
+			_databaseUpgradeState = databaseUpgradeState;
 		}
 
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
+			await _databaseUpgradeState.WaitForCompletionAsync(stoppingToken);
+
 			var aes = Aes.Create();
 			var key = string.Join(",", aes.Key);
 			//System.Console.CancelKeyPress += (s, e) => { cancellationToken..Cancel(); };
@@ -414,12 +446,12 @@ namespace Resgrid.Workers.Console
 	public class DatabaseUpgradeService : BackgroundService
 	{
 		private ILogger _logger;
-		private readonly IHostApplicationLifetime _hostApplicationLifetime;
+		private readonly DatabaseUpgradeState _databaseUpgradeState;
 
-		public DatabaseUpgradeService(ILogger<ScheduledJobsService> logger, IHostApplicationLifetime hostApplicationLifetime)
+		public DatabaseUpgradeService(ILogger<DatabaseUpgradeService> logger, DatabaseUpgradeState databaseUpgradeState)
 		{
 			_logger = logger;
-			_hostApplicationLifetime = hostApplicationLifetime;
+			_databaseUpgradeState = databaseUpgradeState;
 		}
 
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -442,11 +474,12 @@ namespace Resgrid.Workers.Console
 					await UpdateDocumentDatabaseAsync(logger, scope.ServiceProvider);
 				}
 
+				_databaseUpgradeState.MarkCompleted();
 				_logger.Log(LogLevel.Information, "Completed updating the Resgrid Database!");
-				_hostApplicationLifetime.StopApplication();
 			}
 			catch (Exception ex)
 			{
+				_databaseUpgradeState.MarkFailed(ex);
 				_logger.Log(LogLevel.Error, ex, "There was an error trying to update the Resgrid Database.");
 				Environment.Exit(1);
 			}

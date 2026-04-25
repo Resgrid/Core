@@ -797,6 +797,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var user = _usersService.GetUserById(UserId);
 			var checkout = await _subscriptionsService.CreatePaddleCheckoutForSub(DepartmentId, paddleCustomerId, paddleProductId, plan.PlanId, user.Email, department.Name, count, discountCode);
 
+			if (checkout == null || (string.IsNullOrWhiteSpace(checkout.TransactionId) && string.IsNullOrWhiteSpace(checkout.PriceId)))
+			{
+				if (plan.PlanId == 36 || plan.PlanId == 37)
+					return StatusCode(StatusCodes.Status502BadGateway, "Paddle checkout could not be created because the billing service did not return a transaction or price for this product-based entity plan.");
+
+				return StatusCode(StatusCodes.Status502BadGateway, "Paddle checkout could not be created because the billing service did not return checkout data.");
+			}
+
 			bool hasActiveSub = false;
 			if (!string.IsNullOrWhiteSpace(paddleCustomerId))
 			{

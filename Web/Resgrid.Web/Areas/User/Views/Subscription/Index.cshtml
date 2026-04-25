@@ -516,20 +516,7 @@
 
         @section Scripts
         {
-            @if (Model.IsPaddleDepartment && Model.CanInitializePaddleCheckout) {
-                <script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
-                <script>
-                    Paddle.Environment.set(@paddleEnvironmentJson);
-                    var paddleInitializeOptions = { token: @paddleClientTokenJson };
-                    var paddleCustomerId = @paddleCustomerJson;
-
-                    if (/^ctm_/.test(paddleCustomerId)) {
-                        paddleInitializeOptions.pwCustomer = { id: paddleCustomerId };
-                    }
-
-                    Paddle.Initialize(paddleInitializeOptions);
-                </script>
-            } else if (!Model.IsPaddleDepartment) {
+            @if (!Model.IsPaddleDepartment) {
                 <script src="https://js.stripe.com/v3/"></script>
             }
 
@@ -538,7 +525,80 @@
                     <text>var stripe = Stripe('@Model.StripeKey');</text>
                 }
                 var paddleReady = @(Model.CanInitializePaddleCheckout ? "true" : "false");
+                var paddleEnvironment = @paddleEnvironmentJson;
+                var paddleClientToken = @paddleClientTokenJson;
+                var paddleCustomerId = @paddleCustomerJson;
                 var paddleConfigurationError = @paddleConfigurationErrorJson;
+                var paddleInitializationPromise = null;
+
+                function getAjaxErrorMessage(xhr, fallbackMessage) {
+                    if (xhr && xhr.responseText) {
+                        return xhr.responseText;
+                    }
+
+                    return fallbackMessage;
+                }
+
+                function initializePaddle() {
+                    if (window.resgridPaddleInitialized) {
+                        return window.Paddle;
+                    }
+
+                    Paddle.Environment.set(paddleEnvironment);
+
+                    var paddleInitializeOptions = { token: paddleClientToken };
+                    if (/^ctm_/.test(paddleCustomerId)) {
+                        paddleInitializeOptions.pwCustomer = { id: paddleCustomerId };
+                    }
+
+                    Paddle.Initialize(paddleInitializeOptions);
+                    window.resgridPaddleInitialized = true;
+
+                    return window.Paddle;
+                }
+
+                function ensurePaddleInitialized() {
+                    if (!paddleReady) {
+                        return Promise.reject(new Error(paddleConfigurationError || "Paddle checkout is not configured correctly. Please contact support."));
+                    }
+
+                    if (window.resgridPaddleInitialized && window.Paddle) {
+                        return Promise.resolve(window.Paddle);
+                    }
+
+                    if (paddleInitializationPromise) {
+                        return paddleInitializationPromise;
+                    }
+
+                    paddleInitializationPromise = new Promise(function (resolve, reject) {
+                        var completeInitialization = function () {
+                            try {
+                                resolve(initializePaddle());
+                            } catch (error) {
+                                paddleInitializationPromise = null;
+                                reject(error);
+                            }
+                        };
+
+                        if (window.Paddle) {
+                            completeInitialization();
+                            return;
+                        }
+
+                        var script = document.createElement('script');
+                        script.src = 'https://cdn.paddle.com/paddle/v2/paddle.js';
+                        script.async = true;
+                        script.onload = completeInitialization;
+                        script.onerror = function () {
+                            paddleInitializationPromise = null;
+                            reject(new Error("Unable to load Paddle checkout. Please try again."));
+                        };
+
+                        document.head.appendChild(script);
+                    });
+
+                    return paddleInitializationPromise;
+                }
 
                 function stripeCheckout(id) {
                     const amount = slider == 1 ? val : $("#amount").val();
@@ -615,9 +675,13 @@
                                 }
 
                                 if (data.TransactionId) {
-                                    Paddle.Checkout.open({
-                                        settings: { successUrl: resgrid.absoluteBaseUrl + '/User/Subscription/PaddleProcessing?planId=' + id },
-                                        transactionId: data.TransactionId
+                                    ensurePaddleInitialized().then(function () {
+                                        Paddle.Checkout.open({
+                                            settings: { successUrl: resgrid.absoluteBaseUrl + '/User/Subscription/PaddleProcessing?planId=' + id },
+                                            transactionId: data.TransactionId
+                                        });
+                                    }).catch(function (error) {
+                                        swal({ title: "Checkout Error", text: (error && error.message) || "Unable to initialize Paddle checkout. Please try again.", icon: "error", buttons: true, dangerMode: false });
                                     });
                                     return;
                                 }
@@ -640,12 +704,16 @@
                                     checkoutSettings.customer = { id: data.CustomerId };
                                 }
 
-                                Paddle.Checkout.open(checkoutSettings);
+                                ensurePaddleInitialized().then(function () {
+                                    Paddle.Checkout.open(checkoutSettings);
+                                }).catch(function (error) {
+                                    swal({ title: "Checkout Error", text: (error && error.message) || "Unable to initialize Paddle checkout. Please try again.", icon: "error", buttons: true, dangerMode: false });
+                                });
                             } else {
                                 swal({ title: "Checkout Error", text: "Unable to create a checkout session. Please try again.", icon: "error", buttons: true, dangerMode: false });
                             }
-                        }).fail(function () {
-                            swal({ title: "Connection Error", text: "Unable to reach the server. Please check your connection and try again.", icon: "error", buttons: true, dangerMode: false });
+                        }).fail(function (xhr) {
+                            swal({ title: "Checkout Error", text: getAjaxErrorMessage(xhr, "Unable to reach the server. Please check your connection and try again."), icon: "error", buttons: true, dangerMode: false });
                         });
                     } else {
                         swal({ title: "Cannot Purchase", text: "Please select more entities to purchase a plan.", icon: "warning", buttons: true, dangerMode: false });

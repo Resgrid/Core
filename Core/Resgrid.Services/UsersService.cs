@@ -38,13 +38,15 @@ namespace Resgrid.Services
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IIdentityRepository _identityRepository;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
-		private readonly IMongoRepository<PersonnelLocation> _personnelLocationRepository;
+		private readonly Lazy<IMongoRepository<PersonnelLocation>> _personnelLocationRepository;
+		private readonly IPersonnelLocationsDocRepository _personnelLocationsDocRepository;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly ILimitsService _limitsService;
 
 		public UsersService(IDepartmentMembersRepository departmentMembersRepository, ICacheProvider cacheProvider,
 			IIdentityRepository identityRepository, IDepartmentSettingsService departmentSettingsService,
-			IMongoRepository<PersonnelLocation> personnelLocationRepository, IEventAggregator eventAggregator,
+			Lazy<IMongoRepository<PersonnelLocation>> personnelLocationRepository, IPersonnelLocationsDocRepository personnelLocationsDocRepository,
+			IEventAggregator eventAggregator,
 			ILimitsService limitsService)
 		{
 			_departmentMembersRepository = departmentMembersRepository;
@@ -52,6 +54,7 @@ namespace Resgrid.Services
 			_identityRepository = identityRepository;
 			_departmentSettingsService = departmentSettingsService;
 			_personnelLocationRepository = personnelLocationRepository;
+			_personnelLocationsDocRepository = personnelLocationsDocRepository;
 			_eventAggregator = eventAggregator;
 			_limitsService = limitsService;
 		}
@@ -257,17 +260,27 @@ namespace Resgrid.Services
 		{
 			try
 			{
-				if (personnelLocation.Id.Timestamp == 0)
-					await _personnelLocationRepository.InsertOneAsync(personnelLocation);
+				if (Config.DataConfig.DocDatabaseType == Config.DatabaseTypes.Postgres)
+				{
+					if (String.IsNullOrWhiteSpace(personnelLocation.PgId))
+						personnelLocation = await _personnelLocationsDocRepository.InsertAsync(personnelLocation);
+					else
+						personnelLocation = await _personnelLocationsDocRepository.UpdateAsync(personnelLocation);
+				}
 				else
-					await _personnelLocationRepository.ReplaceOneAsync(personnelLocation);
+				{
+					if (personnelLocation.Id.Timestamp == 0)
+						await _personnelLocationRepository.Value.InsertOneAsync(personnelLocation);
+					else
+						await _personnelLocationRepository.Value.ReplaceOneAsync(personnelLocation);
+				}
 
 				_eventAggregator.SendMessage<PersonnelLocationUpdatedEvent>(new PersonnelLocationUpdatedEvent() {
 					DepartmentId = personnelLocation.DepartmentId,
 					UserId = personnelLocation.UserId,
 					Latitude = personnelLocation.Latitude,
 					Longitude = personnelLocation.Longitude,
-					RecordId = personnelLocation.Id.ToString(),
+					RecordId = personnelLocation.GetId(),
 				});
 			}
 			catch (Exception ex)
@@ -282,7 +295,10 @@ namespace Resgrid.Services
 		{
 			try
 			{
-				var locations = _personnelLocationRepository
+				if (Config.DataConfig.DocDatabaseType == Config.DatabaseTypes.Postgres)
+					return await _personnelLocationsDocRepository.GetLatestLocationsByDepartmentIdAsync(departmentId);
+
+				var locations = _personnelLocationRepository.Value
 									.AsQueryable()
 									.Where(x => x.DepartmentId == departmentId).OrderByDescending(y => y.Timestamp)
 									.GroupBy(pv => pv.UserId, (key, group) => new
@@ -308,7 +324,10 @@ namespace Resgrid.Services
 		{
 			try
 			{
-				var layers = await _personnelLocationRepository.FindByIdAsync(id);
+				if (Config.DataConfig.DocDatabaseType == Config.DatabaseTypes.Postgres)
+					return await _personnelLocationsDocRepository.GetByIdAsync(id);
+
+				var layers = await _personnelLocationRepository.Value.FindByIdAsync(id);
 
 				return layers;
 			}

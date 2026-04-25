@@ -11,5 +11,6 @@ namespace Resgrid.Model.Repositories
 		Task<PersonnelLocation> GetByIdAsync(string id);
 		Task<PersonnelLocation> GetByOldIdAsync(string id);
 		Task<PersonnelLocation> InsertAsync(PersonnelLocation location);
+		Task<PersonnelLocation> UpdateAsync(PersonnelLocation location);
 	}
 }

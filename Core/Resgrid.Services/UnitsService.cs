@@ -20,7 +20,8 @@ namespace Resgrid.Services
 		private readonly IUnitTypesRepository _unitTypesRepository;
 		private readonly IUnitRolesRepository _unitRolesRepository;
 		private readonly IUnitStateRoleRepository _unitStateRoleRepository;
-		private readonly IMongoRepository<UnitsLocation> _unitLocationRepository;
+		private readonly Lazy<IMongoRepository<UnitsLocation>> _unitLocationRepository;
+		private readonly IUnitLocationsDocRepository _unitLocationsDocRepository;
 		private readonly ISubscriptionsService _subscriptionsService;
 		private readonly IUserStateService _userStateService;
 		private readonly IEventAggregator _eventAggregator;
@@ -32,8 +33,9 @@ namespace Resgrid.Services
 		public UnitsService(IUnitsRepository unitsRepository, IUnitStatesRepository unitStatesRepository,
 			IUnitLogsRepository unitLogsRepository, IUnitTypesRepository unitTypesRepository, ISubscriptionsService subscriptionsService,
 			IUnitRolesRepository unitRolesRepository, IUnitStateRoleRepository unitStateRoleRepository, IUserStateService userStateService,
-			IEventAggregator eventAggregator, ICustomStateService customStateService, IMongoRepository<UnitsLocation> unitLocationRepository,
-			IUnitActiveRolesRepository unitActiveRolesRepository, IDepartmentGroupsService departmentGroupsService, ILimitsService limitsService)
+			IEventAggregator eventAggregator, ICustomStateService customStateService, Lazy<IMongoRepository<UnitsLocation>> unitLocationRepository,
+			IUnitLocationsDocRepository unitLocationsDocRepository, IUnitActiveRolesRepository unitActiveRolesRepository,
+			IDepartmentGroupsService departmentGroupsService, ILimitsService limitsService)
 		{
 			_unitsRepository = unitsRepository;
 			_unitStatesRepository = unitStatesRepository;
@@ -46,6 +48,7 @@ namespace Resgrid.Services
 			_eventAggregator = eventAggregator;
 			_customStateService = customStateService;
 			_unitLocationRepository = unitLocationRepository;
+			_unitLocationsDocRepository = unitLocationsDocRepository;
 			_unitActiveRolesRepository = unitActiveRolesRepository;
 			_departmentGroupsService = departmentGroupsService;
 			_limitsService = limitsService;
@@ -528,10 +531,20 @@ namespace Resgrid.Services
 		{
 			try
 			{
-				if (location.Id.Timestamp == 0)
-					await _unitLocationRepository.InsertOneAsync(location);
+				if (Config.DataConfig.DocDatabaseType == Config.DatabaseTypes.Postgres)
+				{
+					if (String.IsNullOrWhiteSpace(location.PgId))
+						location = await _unitLocationsDocRepository.InsertAsync(location);
+					else
+						location = await _unitLocationsDocRepository.UpdateAsync(location);
+				}
 				else
-					await _unitLocationRepository.ReplaceOneAsync(location);
+				{
+					if (location.Id.Timestamp == 0)
+						await _unitLocationRepository.Value.InsertOneAsync(location);
+					else
+						await _unitLocationRepository.Value.ReplaceOneAsync(location);
+				}
 
 				_eventAggregator.SendMessage<UnitLocationUpdatedEvent>(new UnitLocationUpdatedEvent()
 					{
@@ -539,7 +552,7 @@ namespace Resgrid.Services
 						UnitId = location.UnitId.ToString(),
 						Latitude = double.Parse(location.Latitude.ToString()),
 						Longitude = double.Parse(location.Longitude.ToString()),
-						RecordId = location.Id.ToString(),
+						RecordId = location.GetId(),
 					});
 			}
 			catch (Exception ex)
@@ -554,7 +567,10 @@ namespace Resgrid.Services
 		{
 			try
 			{
-				var location = _unitLocationRepository.AsQueryable().Where(x => x.UnitId == unitId).OrderByDescending(y => y.Timestamp).FirstOrDefault();
+				if (Config.DataConfig.DocDatabaseType == Config.DatabaseTypes.Postgres)
+					return await _unitLocationsDocRepository.GetLatestLocationsByUnitIdAsync(unitId);
+
+				var location = _unitLocationRepository.Value.AsQueryable().Where(x => x.UnitId == unitId).OrderByDescending(y => y.Timestamp).FirstOrDefault();
 
 				//var layers = await _personnelLocationRepository.FilterByAsync(filter => filter.DepartmentId == departmentId && filter.Type == (int)type && filter.IsDeleted == false);
 
@@ -572,10 +588,12 @@ namespace Resgrid.Services
 		{
 			try
 			{
+				if (Config.DataConfig.DocDatabaseType == Config.DatabaseTypes.Postgres)
+					return await _unitLocationsDocRepository.GetLatestLocationsByDepartmentIdAsync(departmentId);
 
 				//var locations = _unitLocationRepository.AsQueryable().Where(x => x.DepartmentId == departmentId).OrderByDescending(y => y.Timestamp).GroupBy(x => x.UnitId);//.FirstOrDefault();
 
-				var locations = _unitLocationRepository
+				var locations = _unitLocationRepository.Value
 									.AsQueryable()
 									.Where(x => x.DepartmentId == departmentId).OrderByDescending(y => y.Timestamp)
 									.GroupBy(pv => pv.UnitId, (key, group) => new

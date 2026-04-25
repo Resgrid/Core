@@ -10,6 +10,7 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			builder.RegisterGeneric(typeof(MongoRepository<>)).As(typeof(IMongoRepository<>)).InstancePerLifetimeScope();
 
+			builder.RegisterType<DocumentDbRepository>().As<IDocumentDbRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<MapLayersDocRepository>().As<IMapLayersDocRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<PersonnelLocationsDocRepository>().As<IPersonnelLocationsDocRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<UnitLocationsDocRepository>().As<IUnitLocationsDocRepository>().InstancePerLifetimeScope();

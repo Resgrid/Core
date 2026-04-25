@@ -18,7 +18,9 @@ namespace Resgrid.Repositories.NoSqlRepository
 			using (var connection = new NpgsqlConnection(Config.DataConfig.DocumentConnectionString))
 			{
 				await connection.OpenAsync();
-				var personLocationsData = await connection.QueryAsync<PersonnelLocation>($"SELECT data FROM public.personnellocations ul WHERE ul.userid = '{userId}' ORDER BY timestamp DESC;");
+				var personLocationsData = await connection.QueryAsync<PersonnelLocation>(
+					"SELECT data FROM public.personnellocations ul WHERE ul.userid = @userId ORDER BY timestamp DESC;",
+					new { userId });
 
 				if (personLocationsData != null)
 					return personLocationsData.ToList();
@@ -32,7 +34,9 @@ namespace Resgrid.Repositories.NoSqlRepository
 			using (var connection = new NpgsqlConnection(Config.DataConfig.DocumentConnectionString))
 			{
 				await connection.OpenAsync();
-				var unitLocationsData = await connection.QueryAsync<PersonnelLocation>($"SELECT data FROM public.personnellocations ul WHERE ul.userid = '{userId}' ORDER BY timestamp DESC LIMIT 1;");
+				var unitLocationsData = await connection.QueryAsync<PersonnelLocation>(
+					"SELECT data FROM public.personnellocations ul WHERE ul.userid = @userId ORDER BY timestamp DESC LIMIT 1;",
+					new { userId });
 
 				if (unitLocationsData != null)
 					return unitLocationsData.FirstOrDefault();
@@ -46,7 +50,9 @@ namespace Resgrid.Repositories.NoSqlRepository
 			using (var connection = new NpgsqlConnection(Config.DataConfig.DocumentConnectionString))
 			{
 				await connection.OpenAsync();
-				var unitLocationsData = await connection.QueryAsync<PersonnelLocation>($"SELECT DISTINCT ON (userid) data FROM public.personnellocations ul WHERE ul.departmentid = {departmentId} ORDER BY ul.userid, ul.timestamp DESC;");
+				var unitLocationsData = await connection.QueryAsync<PersonnelLocation>(
+					"SELECT DISTINCT ON (userid) data FROM public.personnellocations ul WHERE ul.departmentid = @departmentId ORDER BY ul.userid, ul.timestamp DESC;",
+					new { departmentId });
 
 				if (unitLocationsData != null)
 					return unitLocationsData.ToList();
@@ -60,19 +66,24 @@ namespace Resgrid.Repositories.NoSqlRepository
 			using (var connection = new NpgsqlConnection(Config.DataConfig.DocumentConnectionString))
 			{
 				await connection.OpenAsync();
-				var unitLocationsData = await connection.QueryAsync<PersonnelLocation>($"SELECT data FROM public.personnellocations ul WHERE ul.oid = '{id}';");
+				var unitLocationsData = await connection.QueryAsync<PersonnelLocation>(
+					"SELECT data FROM public.personnellocations ul WHERE ul.oid = @id;",
+					new { id });
 
 				if (unitLocationsData != null && unitLocationsData.Any())
 					return unitLocationsData.FirstOrDefault();
-				else
-				{
-					var unitLocationsData2 = await connection.QueryAsync<PersonnelLocation>($"SELECT data FROM public.personnellocations ul WHERE ul.id = {id};");
 
-					if (unitLocationsData2 != null)
-						return unitLocationsData2.FirstOrDefault();
-					else
-						return null;
-				}
+				if (!int.TryParse(id, out var numericId))
+					return null;
+
+				var unitLocationsData2 = await connection.QueryAsync<PersonnelLocation>(
+					"SELECT data FROM public.personnellocations ul WHERE ul.id = @id;",
+					new { id = numericId });
+
+				if (unitLocationsData2 != null && unitLocationsData2.Any())
+					return unitLocationsData2.FirstOrDefault();
+				else
+					return null;
 			}
 		}
 
@@ -81,7 +92,9 @@ namespace Resgrid.Repositories.NoSqlRepository
 			using (var connection = new NpgsqlConnection(Config.DataConfig.DocumentConnectionString))
 			{
 				await connection.OpenAsync();
-				var personnelLocationsData = await connection.QueryAsync<PersonnelLocation>($"SELECT data FROM public.personnellocations ul WHERE ul.oid = '{id}';");
+				var personnelLocationsData = await connection.QueryAsync<PersonnelLocation>(
+					"SELECT data FROM public.personnellocations ul WHERE ul.oid = @id;",
+					new { id });
 
 				if (personnelLocationsData != null)
 					return personnelLocationsData.FirstOrDefault();
@@ -92,10 +105,19 @@ namespace Resgrid.Repositories.NoSqlRepository
 
 		public async Task<PersonnelLocation> InsertAsync(PersonnelLocation location)
 		{
+			var dataJson = JsonConvert.SerializeObject(location);
+
 			using (var connection = new NpgsqlConnection(Config.DataConfig.DocumentConnectionString))
 			{
 				await connection.OpenAsync();
-				var result = await connection.ExecuteScalarAsync<string>($"INSERT INTO public.personnellocations (departmentid, userid, data) VALUES ({location.DepartmentId}, '{location.UserId}', '{JsonConvert.SerializeObject(location)}') RETURNING id;");
+				var result = await connection.ExecuteScalarAsync<string>(
+					"INSERT INTO public.personnellocations (departmentid, userid, data) VALUES (@departmentId, @userId, CAST(@dataJson AS jsonb)) RETURNING id::text;",
+					new
+					{
+						departmentId = location.DepartmentId,
+						userId = location.UserId,
+						dataJson
+					});
 				location.PgId = result;
 
 				return location;
@@ -104,12 +126,30 @@ namespace Resgrid.Repositories.NoSqlRepository
 
 		public async Task<PersonnelLocation> UpdateAsync(PersonnelLocation location)
 		{
+			if (location == null)
+				throw new ArgumentNullException(nameof(location));
+
+			if (string.IsNullOrWhiteSpace(location.PgId))
+				throw new InvalidOperationException("Personnel location PgId is required for updates.");
+
+			if (!int.TryParse(location.PgId, out var pgId))
+				throw new ArgumentException("Personnel location PgId must be a valid integer.", nameof(location));
+
+			var dataJson = JsonConvert.SerializeObject(location);
+
 			using (var connection = new NpgsqlConnection(Config.DataConfig.DocumentConnectionString))
 			{
 				await connection.OpenAsync();
 
-				if (!string.IsNullOrWhiteSpace(location.PgId))
-					await connection.ExecuteAsync($"UPDATE public.personnellocations SET departmentid = {location.DepartmentId}, userid = '{location.UserId}', data = '{JsonConvert.SerializeObject(location)}' WHERE id = {location.PgId};");
+				await connection.ExecuteAsync(
+					"UPDATE public.personnellocations SET departmentid = @departmentId, userid = @userId, data = CAST(@dataJson AS jsonb) WHERE id = @id;",
+					new
+					{
+						departmentId = location.DepartmentId,
+						userId = location.UserId,
+						dataJson,
+						id = pgId
+					});
 
 				return location;
 			}

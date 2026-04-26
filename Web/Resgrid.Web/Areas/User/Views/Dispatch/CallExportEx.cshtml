@@ -11,11 +11,11 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="@System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
 <head>
     <title>@localizer["CallExportHeader"]</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Resgrid Log Report">
+    <meta name="description" content="@localizer["CallExportHeader"]">
     <meta name="author" content="Resgrid">
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"
@@ -104,7 +104,7 @@
                             </td>
                             <td>
                                 <strong><small>@localizer["PrioirtyLabel"]</small></strong>
-                                <span style="display: block;">@(((CallPriority)Model.Call.Priority).ToString())</span>
+                                <span style="display: block;">@(await DispatchDisplayHelper.GetLocalizedCallPriorityAsync(Model.Department.DepartmentId, Model.Call.Priority, localizer))</span>
                             </td>
 
                         </tr>
@@ -155,7 +155,7 @@
                             {
                                 <td>
                                     <strong><small>@localizer["ClosedOnLabel"]</small></strong>
-                                    <span style="display: block;">Not Closed</span>
+                                    <span style="display: block;">@localizer["NotClosed"]</span>
                                 </td>
                                 <td>
                                     <strong><small>@localizer["ClosedByLabel"]</small></strong>
@@ -170,6 +170,21 @@
                                 <td colspan="2">
                                     <strong><small>@localizer["LocationLabel"]</small></strong>
                                     <span style="display: block;">@Model.Call.Address</span>
+                                    @if (!String.IsNullOrWhiteSpace(Model.DestinationName))
+                                    {
+                                        <strong><small>@localizer["Destination"]</small></strong>
+                                        <span style="display: block;">
+                                            @Model.DestinationName
+                                            @if (!String.IsNullOrWhiteSpace(Model.DestinationTypeName))
+                                            {
+                                                <span class="text-muted">(@Model.DestinationTypeName)</span>
+                                            }
+                                        </span>
+                                        @if (!String.IsNullOrWhiteSpace(Model.DestinationAddress) && Model.DestinationAddress != Model.DestinationName)
+                                        {
+                                            <span style="display: block;">@Model.DestinationAddress</span>
+                                        }
+                                    }
                                 </td>
                                 <td colspan="1">
                                     <strong><small>@localizer["GPSLabel"]</small></strong>
@@ -180,11 +195,11 @@
                             {
                                 <td colspan="2">
                                     <strong><small>@localizer["LocationLabel"]</small></strong>
-                                    <span style="display: block;">Not Supplied</span>
+                                    <span style="display: block;">@localizer["NotSupplied"]</span>
                                 </td>
                                 <td colspan="1">
                                     <strong><small>@localizer["GPSLabel"]</small></strong>
-                                    <span style="display: block;">Not Supplied</span>
+                                    <span style="display: block;">@localizer["NotSupplied"]</span>
                                 </td>
                             }
 
@@ -569,6 +584,11 @@
             var startLon = @Model.StartLon;
             var endLat = @Model.EndLat;
             var endLon = @Model.EndLon;
+            var routeDistanceLabel = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["RouteDistance"].Value, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
+            var routeDurationLabel = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["RouteDuration"].Value, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
+            var routeStepLabel = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["RouteStep"].Value, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
+            var routeUnitKilometers = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["RouteUnitKilometers"].Value, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
+            var routeUnitMinutes = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(localizer["RouteUnitMinutes"].Value, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
 
             $(document).ready(function () {
                 var map = L.map('dvMap').setView([startLat, startLon], 9);
@@ -595,7 +615,7 @@
                             var distKm = (routeData.distance / 1000).toFixed(1);
                             var durationMin = Math.round(routeData.duration / 60);
                             var dvDistance = document.getElementById('dvDistance');
-                            dvDistance.innerHTML = 'Distance: ' + distKm + ' km<br />Duration: ' + durationMin + ' min';
+                            dvDistance.innerHTML = routeDistanceLabel + ': ' + distKm + ' ' + routeUnitKilometers + '<br />' + routeDurationLabel + ': ' + durationMin + ' ' + routeUnitMinutes;
 
                             if (routeData.legs.length > 0) {
                                 var steps = routeData.legs[0].steps;
@@ -603,8 +623,8 @@
                                 for (var i = 0; i < steps.length; i++) {
                                     var s = steps[i];
                                     if (s.maneuver && s.maneuver.type !== 'arrive') {
-                                        html += '<li>' + s.maneuver.type + (s.name ? ' onto ' + s.name : '') +
-                                            ' (' + (s.distance / 1000).toFixed(1) + ' km)</li>';
+                                        var stepTitle = s.name ? s.name : routeStepLabel + ' ' + (i + 1);
+                                        html += '<li>' + stepTitle + ' (' + (s.distance / 1000).toFixed(1) + ' ' + routeUnitKilometers + ')</li>';
                                     }
                                 }
                                 html += '</ol>';

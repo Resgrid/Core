@@ -28,10 +28,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IUserStateService _userStateService;
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly ILimitsService _limitsService;
+		private readonly IMappingService _mappingService;
 
 		public LinksController(IDepartmentLinksService departmentLinksService, IDepartmentsService departmentsService, IEmailService emailService, 
 			ICallsService callsService, IUnitsService unitsService, IActionLogsService actionLogsService, IDepartmentGroupsService departmentGroupsService,
-			IUserStateService userStateService, IPersonnelRolesService personnelRolesService, ILimitsService limitsService)
+			IUserStateService userStateService, IPersonnelRolesService personnelRolesService, ILimitsService limitsService, IMappingService mappingService)
 		{
 			_departmentLinksService = departmentLinksService;
 			_departmentsService = departmentsService;
@@ -43,6 +44,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_userStateService = userStateService;
 			_personnelRolesService = personnelRolesService;
 			_limitsService = limitsService;
+			_mappingService = mappingService;
 		}
 		#endregion Private Members and Constructors
 
@@ -294,6 +296,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var calls = await _callsService.GetActiveCallsByDepartmentAsync(link.DepartmentId);
 			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(link.DepartmentId);
+			var pois = await _mappingService.GetPOIsForDepartmentAsync(link.DepartmentId);
 
 			var names = new Dictionary<string, string>();
 
@@ -345,7 +348,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var group = await _departmentGroupsService.GetGroupForUserAsync(u.User.UserId, DepartmentId);
 
 				string callNumber = "";
-				if (al != null && al.ActionTypeId == (int)ActionTypes.RespondingToScene || (al != null && al.DestinationType.HasValue && al.DestinationType.Value == 2))
+				if ((al != null && al.ActionTypeId == (int)ActionTypes.RespondingToScene) || (al != null && al.DestinationType.ToDestinationEntityType() == DestinationEntityTypes.Call))
 				{
 					if (al.DestinationId.HasValue)
 					{
@@ -356,7 +359,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 				var respondingToDepartment = stations.Where(s => al != null && s.DepartmentGroupId == al.DestinationId).FirstOrDefault();
-				var personnelViewModel = await Models.BigBoardX.PersonnelViewModel.Create(u.Name, al, us, department, respondingToDepartment, group, u.Roles, callNumber);
+				var destination = DestinationResolutionHelper.Resolve(al?.DestinationId, al?.DestinationType, null, calls, stations, pois);
+				var personnelViewModel = await Models.BigBoardX.PersonnelViewModel.Create(u.Name, al, us, department, respondingToDepartment, group, u.Roles, callNumber, destination);
 
 				personnelViewModels.Add(personnelViewModel);
 			}

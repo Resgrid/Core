@@ -64,9 +64,24 @@ namespace Resgrid.Web.Services.Models.v4.UnitStatus
 		public int? DestinationId { get; set; }
 
 		/// <summary>
+		/// Destination type (Station, Call, or POI).
+		/// </summary>
+		public int? DestinationType { get; set; }
+
+		/// <summary>
 		/// Name of the Desination (Call or Station)
 		/// </summary>
 		public string DestinationName { get; set; }
+
+		/// <summary>
+		/// Destination address.
+		/// </summary>
+		public string DestinationAddress { get; set; }
+
+		/// <summary>
+		/// Destination type/category name.
+		/// </summary>
+		public string DestinationTypeName { get; set; }
 
 		/// <summary>
 		/// Note for the State

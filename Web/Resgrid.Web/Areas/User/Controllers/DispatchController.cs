@@ -8,6 +8,7 @@ using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using Resgrid.Framework;
 using Resgrid.Model;
@@ -63,10 +64,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IFormsService _formsService;
 		private readonly IShiftsService _shiftsService;
 		private readonly IContactsService _contactsService;
+		private readonly IMappingService _mappingService;
 		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
 		private readonly IUdfRenderingService _udfRenderingService;
 		private readonly ICheckInTimerService _checkInTimerService;
 		private readonly IWeatherAlertService _weatherAlertService;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> _dispatchLocalizer;
+		private readonly IStringLocalizer<Resgrid.Localization.Common> _commonLocalizer;
 
 		public DispatchController(IDepartmentsService departmentsService, IUsersService usersService, ICallsService callsService,
 			IDepartmentGroupsService departmentGroupsService, ICommunicationService communicationService, IQueueService queueService,
@@ -74,9 +78,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 						IPersonnelRolesService personnelRolesService, IDepartmentSettingsService departmentSettingsService, IUserProfileService userProfileService,
 						IUnitsService unitsService, IActionLogsService actionLogsService, IEventAggregator eventAggregator, ICustomStateService customStateService,
 						ITemplatesService templatesService, IPdfProvider pdfProvider, IProtocolsService protocolsService, IFormsService formsService,
-						IShiftsService shiftsService, IContactsService contactsService,
+						IShiftsService shiftsService, IContactsService contactsService, IMappingService mappingService,
 						IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService,
-						ICheckInTimerService checkInTimerService, IWeatherAlertService weatherAlertService)
+						ICheckInTimerService checkInTimerService, IWeatherAlertService weatherAlertService,
+						IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> dispatchLocalizer, IStringLocalizer<Resgrid.Localization.Common> commonLocalizer)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -100,10 +105,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_formsService = formsService;
 			_shiftsService = shiftsService;
 			_contactsService = contactsService;
+			_mappingService = mappingService;
 			_userDefinedFieldsService = userDefinedFieldsService;
 			_udfRenderingService = udfRenderingService;
 			_checkInTimerService = checkInTimerService;
 			_weatherAlertService = weatherAlertService;
+			_dispatchLocalizer = dispatchLocalizer;
+			_commonLocalizer = commonLocalizer;
 		}
 		#endregion Private Members and Constructors
 
@@ -212,6 +220,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return Unauthorized();
 
 			model = await FillNewCallView(model);
+			var destinationPoi = await GetValidatedDestinationPoiAsync(model.Call?.DestinationPoiId);
+
+			if (model.Call?.DestinationPoiId.HasValue == true && model.Call.DestinationPoiId.Value > 0 && destinationPoi == null)
+				ModelState.AddModelError("Call.DestinationPoiId", _dispatchLocalizer["InvalidDestinationPoi"].Value);
 
 			if (ModelState.IsValid)
 			{
@@ -226,7 +238,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (!String.IsNullOrWhiteSpace(model.What3Word))
 					model.Call.W3W = model.What3Word;
 
-				if (model.Call.Type == "No Type")
+				model.Call.DestinationPoiId = destinationPoi?.PoiId;
+
+				if (model.Call.Type == _dispatchLocalizer["NoType"].Value)
 					model.Call.Type = null;
 
 				if (!String.IsNullOrEmpty(model.Latitude) && !String.IsNullOrEmpty(model.Longitude))
@@ -598,6 +612,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return Unauthorized();
 
 			model = await FillUpdateCallView(model);
+			var destinationPoi = await GetValidatedDestinationPoiAsync(model.Call?.DestinationPoiId);
+
+			if (model.Call?.DestinationPoiId.HasValue == true && model.Call.DestinationPoiId.Value > 0 && destinationPoi == null)
+				ModelState.AddModelError("Call.DestinationPoiId", _dispatchLocalizer["InvalidDestinationPoi"].Value);
 
 			if (ModelState.IsValid)
 			{
@@ -619,6 +637,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				call.IncidentNumber = model.Call.IncidentNumber;
 				call.Address = model.Call.Address;
 				call.W3W = model.What3Word;
+				call.DestinationPoiId = destinationPoi?.PoiId;
 				call.Type = model.Call.Type;
 
 				if (!string.IsNullOrEmpty(model.Call.Address))
@@ -1079,6 +1098,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Protocols = await _protocolsService.GetAllProtocolsForDepartmentAsync(DepartmentId);
 			model.ChildCalls = await _callsService.GetChildCallsForCallAsync(callId);
 			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true, true, true, true);
+			var destinationPoi = await GetValidatedDestinationPoiAsync(model.Call.DestinationPoiId);
+			var destinationInfo = BuildDestinationInfo(destinationPoi);
+			model.DestinationName = destinationInfo.Name;
+			model.DestinationAddress = destinationInfo.Address;
+			model.DestinationTypeName = destinationInfo.TypeName;
 
 			if (model.Stations == null)
 				model.Stations = new List<DepartmentGroup>();
@@ -1130,6 +1154,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CallStates = model.CallState.ToSelectList();
 			model.Call.LoggedOn = DateTime.UtcNow.TimeConverter(model.Department);
 			model.Call.ReportingUserId = UserId;
+			var destinationPoi = await GetValidatedDestinationPoiAsync(model.Call?.DestinationPoiId);
+
+			if (model.Call?.DestinationPoiId.HasValue == true && model.Call.DestinationPoiId.Value > 0 && destinationPoi == null)
+				ModelState.AddModelError("Call.DestinationPoiId", _dispatchLocalizer["InvalidDestinationPoi"].Value);
 
 			if (ModelState.IsValid)
 			{
@@ -1146,7 +1174,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (!String.IsNullOrWhiteSpace(model.What3Word))
 					model.Call.W3W = model.What3Word;
 
-				if (model.Call.Type == "No Type")
+				model.Call.DestinationPoiId = destinationPoi?.PoiId;
+
+				if (model.Call.Type == _dispatchLocalizer["NoType"].Value)
 					model.Call.Type = null;
 
 				if (!String.IsNullOrEmpty(model.Latitude) && !String.IsNullOrEmpty(model.Longitude))
@@ -1756,7 +1786,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 					else
 					{
-						note.Location = "No Location";
+						note.Location = _dispatchLocalizer["NoLocation"].Value;
 					}
 
 					callNotes.Add(note);
@@ -1782,7 +1812,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var result = statuses.Select(s =>
 			{
-				string targetName = ((CheckInTimerTargetType)s.TargetType).ToString();
+				string targetTypeText = DispatchDisplayHelper.GetLocalizedCheckInTimerTargetType((CheckInTimerTargetType)s.TargetType, _dispatchLocalizer, _commonLocalizer);
+				string targetName = targetTypeText;
 
 				if (s.TargetType == (int)CheckInTimerTargetType.Personnel)
 				{
@@ -1816,7 +1847,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return new
 				{
 					s.TargetType,
-					TargetTypeName = ((CheckInTimerTargetType)s.TargetType).ToString(),
+					TargetTypeName = targetTypeText,
 					TargetName = targetName,
 					s.UnitId,
 					s.LastCheckIn,
@@ -1857,7 +1888,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					r.CheckInRecordId,
 					r.CallId,
 					r.CheckInType,
-					CheckInTypeName = ((CheckInTimerTargetType)r.CheckInType).ToString(),
+					CheckInTypeName = DispatchDisplayHelper.GetLocalizedCheckInTimerTargetType((CheckInTimerTargetType)r.CheckInType, _dispatchLocalizer, _commonLocalizer),
 					PerformedBy = personName?.Name ?? r.UserId,
 					UnitName = unitName,
 					Timestamp = r.Timestamp.TimeConverterToString(department),
@@ -1914,6 +1945,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
 			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true, true, true);
+			var callDestination = await GetValidatedDestinationPoiAsync(model.Call.DestinationPoiId);
+			var callDestinationInfo = BuildDestinationInfo(callDestination);
+			model.DestinationName = callDestinationInfo.Name;
+			model.DestinationAddress = callDestinationInfo.Address;
+			model.DestinationTypeName = callDestinationInfo.TypeName;
 			model.Names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
 			model.ChildCalls = await _callsService.GetChildCallsForCallAsync(callId);
 			model.Contacts = await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId);
@@ -1960,6 +1996,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				var model = new CallExportView();
 				model.Call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
+				var destinationPoi = await GetValidatedDestinationPoiAsync(model.Call.DestinationPoiId);
+				var destinationInfo = BuildDestinationInfo(destinationPoi);
+				model.DestinationName = destinationInfo.Name;
+				model.DestinationAddress = destinationInfo.Address;
+				model.DestinationTypeName = destinationInfo.TypeName;
 				model.CallLogs = await _workLogsService.GetCallLogsForCallAsync(call.CallId);
 				model.Department = await _departmentsService.GetDepartmentByIdAsync(call.DepartmentId, false);
 				model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(call.DepartmentId, call.CallId)).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
@@ -1991,6 +2032,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				var model = new CallExportView();
 				model.Call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
+				var destinationPoi = await GetValidatedDestinationPoiAsync(model.Call.DestinationPoiId);
+				var destinationInfo = BuildDestinationInfo(destinationPoi);
+				model.DestinationName = destinationInfo.Name;
+				model.DestinationAddress = destinationInfo.Address;
+				model.DestinationTypeName = destinationInfo.TypeName;
 				model.CallLogs = await _workLogsService.GetCallLogsForCallAsync(call.CallId);
 				model.Department = await _departmentsService.GetDepartmentByIdAsync(call.DepartmentId, false);
 				model.UnitStates = (await _unitsService.GetUnitStatesForCallAsync(call.DepartmentId, call.CallId)).OrderBy(x => x.UnitId).OrderBy(y => y.Timestamp).ToList();
@@ -2118,8 +2164,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var genericCall = new CallJson()
 			{
 				DispatchTime = DateTime.UtcNow,
-				Priority = "Low",
-				Name = "Generic Call"
+				Priority = _dispatchLocalizer["CallPriorityLow"].Value,
+				Name = _dispatchLocalizer["GenericCall"].Value
 			};
 			calls.Add(genericCall);
 
@@ -2128,7 +2174,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var jsonCall = new CallJson();
 				jsonCall.CallId = call.CallId;
 				jsonCall.DispatchTime = call.LoggedOn;
-				jsonCall.Priority = call.GetPriorityText();
+				jsonCall.Priority = await DispatchDisplayHelper.GetLocalizedCallPriorityAsync(DepartmentId, call.Priority, _dispatchLocalizer);
 				jsonCall.Name = call.Name;
 
 				calls.Add(jsonCall);
@@ -2150,9 +2196,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var jsonCall = new CallJson();
 				jsonCall.CallId = call.CallId;
 				jsonCall.DispatchTime = call.LoggedOn;
-				jsonCall.Priority = call.GetPriorityText();
+				jsonCall.Priority = await DispatchDisplayHelper.GetLocalizedCallPriorityAsync(DepartmentId, call.Priority, _dispatchLocalizer);
 				jsonCall.Name = call.Name;
-				jsonCall.State = ((CallStates)call.State).ToString();
+				jsonCall.State = DispatchDisplayHelper.GetLocalizedCallState(call.State, _dispatchLocalizer, _commonLocalizer);
 
 				calls.Add(jsonCall);
 			}
@@ -2184,10 +2230,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			call.CallId = savedCall.CallId;
 			call.DispatchTime = savedCall.LoggedOn.TimeConverter(savedCall.Department);
-			call.Priority = savedCall.GetPriorityText();
+			call.Priority = await DispatchDisplayHelper.GetLocalizedCallPriorityAsync(savedCall.DepartmentId, savedCall.Priority, _dispatchLocalizer);
 			call.PriorityEnum = (CallPriority)savedCall.Priority;
 			call.Name = savedCall.Name;
-			call.State = ((CallStates)savedCall.State).ToString();
+			call.State = DispatchDisplayHelper.GetLocalizedCallState(savedCall.State, _dispatchLocalizer, _commonLocalizer);
 			call.Nature = savedCall.NatureOfCall;
 			call.Address = savedCall.Address;
 
@@ -2373,7 +2419,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var groupedCalls = calls.GroupBy(x => x.Type);
 				foreach (var grouppedCall in groupedCalls)
 				{
-					string key = "No Type";
+					string key = _dispatchLocalizer["NoType"].Value;
 					if (!String.IsNullOrWhiteSpace(grouppedCall.Key))
 						key = grouppedCall.Key;
 
@@ -2404,7 +2450,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var groupedCallStates = calls.GroupBy(x => x.State);
 				foreach (var grouppedCall in groupedCallStates)
 				{
-					callTypes.Add(new CallTypesJson() { Count = grouppedCall.ToList().Count, Type = ((CallStates)grouppedCall.Key).ToString() });
+					callTypes.Add(new CallTypesJson() { Count = grouppedCall.ToList().Count, Type = DispatchDisplayHelper.GetLocalizedCallState(grouppedCall.Key, _dispatchLocalizer, _commonLocalizer) });
 				}
 			}
 
@@ -2427,11 +2473,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 				callJson.CallId = call.CallId;
 				callJson.Number = call.Number;
 				callJson.Name = call.Name;
-				callJson.State = _callsService.CallStateToString((CallStates)call.State);
+				callJson.State = DispatchDisplayHelper.GetLocalizedCallState(call.State, _dispatchLocalizer, _commonLocalizer);
 				callJson.StateColor = _callsService.CallStateToColor((CallStates)call.State);
 				callJson.Timestamp = call.LoggedOn.TimeConverterToString(department);
 				callJson.LoggedOn = new DateTimeOffset(DateTime.SpecifyKind(call.LoggedOn, DateTimeKind.Utc)).ToUnixTimeSeconds();
-				callJson.Priority = await _callsService.CallPriorityToStringAsync(call.Priority, DepartmentId);
+				callJson.Priority = await DispatchDisplayHelper.GetLocalizedCallPriorityAsync(DepartmentId, call.Priority, _dispatchLocalizer);
 				callJson.Color = await _callsService.CallPriorityToColorAsync(call.Priority, DepartmentId);
 				callJson.CanDeleteCall = await _authorizationService.CanUserDeleteCallAsync(UserId, call.CallId, DepartmentId);
 				callJson.CanCloseCall = await _authorizationService.CanUserCloseCallAsync(UserId, call.CallId, DepartmentId);
@@ -2468,10 +2514,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				callJson.CallId = call.CallId;
 				callJson.Number = call.Number;
 				callJson.Name = call.Name;
-				callJson.State = _callsService.CallStateToString((CallStates)call.State);
+				callJson.State = DispatchDisplayHelper.GetLocalizedCallState(call.State, _dispatchLocalizer, _commonLocalizer);
 				callJson.StateColor = _callsService.CallStateToColor((CallStates)call.State);
 				callJson.Timestamp = call.LoggedOn.TimeConverterToString(department);
-				callJson.Priority = await _callsService.CallPriorityToStringAsync(call.Priority, DepartmentId);
+				callJson.Priority = await DispatchDisplayHelper.GetLocalizedCallPriorityAsync(DepartmentId, call.Priority, _dispatchLocalizer);
 				callJson.Color = await _callsService.CallPriorityToColorAsync(call.Priority, DepartmentId);
 
 				if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || call.ReportingUserId == UserId)
@@ -2489,7 +2535,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> AttachCallFile(FileAttachInput model, IFormFile fileToUpload, CancellationToken cancellationToken)
 		{
 			if (fileToUpload == null || fileToUpload.Length <= 0)
-				ModelState.AddModelError("fileToUpload", "You must select a file to attach.");
+				ModelState.AddModelError("fileToUpload", _dispatchLocalizer["AttachFileRequired"].Value);
 			else
 			{
 				var extenion = FileHelper.GetFileExtensionWithoutDot(fileToUpload.FileName);
@@ -2498,10 +2544,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 					&& extenion != "docx" && extenion != "ppt" && extenion != "pptx" && extenion != "pps" && extenion != "ppsx" && extenion != "odt"
 					&& extenion != "xls" && extenion != "xlsx" && extenion != "mp3" && extenion != "m4a" && extenion != "ogg" && extenion != "wav"
 					&& extenion != "mp4" && extenion != "m4v" && extenion != "mov" && extenion != "wmv" && extenion != "avi" && extenion != "mpg" && extenion != "txt")
-					ModelState.AddModelError("fileToUpload", string.Format("Document type ({0}) is not importable.", extenion));
+					ModelState.AddModelError("fileToUpload", _dispatchLocalizer["DocumentTypeNotImportable", extenion].Value);
 
 				if (fileToUpload.Length > 10000000)
-					ModelState.AddModelError("fileToUpload", "File is too large, must be smaller then 10MB.");
+					ModelState.AddModelError("fileToUpload", _dispatchLocalizer["FileTooLarge10Mb"].Value);
 			}
 
 			if (ModelState.IsValid)
@@ -2680,7 +2726,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					CallSelectListJsonResult json = new CallSelectListJsonResult();
 					json.id = call.CallId;
-					json.text = $"{call.Number} - {call.GetStateText()} - {call.LoggedOn.FormatForDepartment(department)} - {call.Name}";
+					json.text = $"{call.Number} - {DispatchDisplayHelper.GetLocalizedCallState(call.State, _dispatchLocalizer, _commonLocalizer)} - {call.LoggedOn.FormatForDepartment(department)} - {call.Name}";
 
 					if (String.IsNullOrWhiteSpace(term) || json.text.Contains(term))
 						callSelectJson.results.Add(json);
@@ -2707,7 +2753,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.UnGroupedUsers = new List<IdentityUser>();
 
 			List<CallType> types = new List<CallType>();
-			types.Add(new CallType { CallTypeId = 0, Type = "No Type" });
+			types.Add(new CallType { CallTypeId = 0, Type = _dispatchLocalizer["NoType"].Value });
 			types.AddRange(await _callsService.GetCallTypesForDepartmentAsync(DepartmentId));
 			model.CallTypes = new SelectList(types, "Type", "Type");
 
@@ -2746,7 +2792,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Contacts = await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId);
 			if (model.Contacts != null && model.Contacts.Any())
 			{
-				SelectListItem selListItem = new SelectListItem() { Value = "", Text = "Select Contact" };
+				SelectListItem selListItem = new SelectListItem() { Value = "", Text = _dispatchLocalizer["SelectContact"].Value };
 				List<SelectListItem> newList = new List<SelectListItem>();
 				newList.Add(selListItem);
 				newList.AddRange(new SelectList(model.Contacts, "ContactId", "Name"));
@@ -2756,6 +2802,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				//model.ContactsList = new SelectList(model.Contacts, "ContactId", "Name");
 			}
+
+			model.DestinationPois = await GetDestinationPoiSelectListAsync(model.Call?.DestinationPoiId);
 
 			var udfDefinition = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Call);
 			if (udfDefinition != null)
@@ -2783,7 +2831,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.UnGroupedUsers = new List<IdentityUser>();
 
 			List<CallType> types = new List<CallType>();
-			types.Add(new CallType { CallTypeId = 0, Type = "No Type" });
+			types.Add(new CallType { CallTypeId = 0, Type = _dispatchLocalizer["NoType"].Value });
 			types.AddRange(await _callsService.GetCallTypesForDepartmentAsync(DepartmentId));
 			model.CallTypes = new SelectList(types, "Type", "Type");
 
@@ -2819,7 +2867,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Contacts = await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId);
 			if (model.Contacts != null && model.Contacts.Any())
 			{
-				SelectListItem selListItem = new SelectListItem() { Value = "", Text = "Select Contact" };
+				SelectListItem selListItem = new SelectListItem() { Value = "", Text = _dispatchLocalizer["SelectContact"].Value };
 				List<SelectListItem> newList = new List<SelectListItem>();
 				newList.Add(selListItem);
 				newList.AddRange(new SelectList(model.Contacts, "ContactId", "Name"));
@@ -2847,6 +2895,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 			}
+
+			model.DestinationPois = await GetDestinationPoiSelectListAsync(model.Call?.DestinationPoiId);
 
 			if (model.Call != null && model.Call.CallId > 0)
 			{
@@ -2916,6 +2966,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			else
 				model.Contacts = new List<Contact>();
 
+			var destinationPoi = await GetValidatedDestinationPoiAsync(model.Call?.DestinationPoiId);
+			var destinationInfo = BuildDestinationInfo(destinationPoi);
+			model.DestinationName = destinationInfo.Name;
+			model.DestinationAddress = destinationInfo.Address;
+			model.DestinationTypeName = destinationInfo.TypeName;
+
 			var udfDefinition = await _userDefinedFieldsService.GetActiveDefinitionAsync(DepartmentId, (int)UdfEntityType.Call);
 			if (udfDefinition != null)
 			{
@@ -2929,6 +2985,61 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return model;
+		}
+
+		private async Task<List<SelectListItem>> GetDestinationPoiSelectListAsync(int? selectedPoiId)
+		{
+			var selectListItems = new List<SelectListItem>
+			{
+				new SelectListItem
+				{
+					Value = "",
+					Text = _dispatchLocalizer["NoDestination"].Value
+				}
+			};
+
+			var destinationPois = await _mappingService.GetDestinationPOIsForDepartmentAsync(DepartmentId);
+
+			if (destinationPois == null || !destinationPois.Any())
+				return selectListItems;
+
+			var groups = new Dictionary<string, SelectListGroup>(StringComparer.OrdinalIgnoreCase);
+
+			foreach (var poi in destinationPois.OrderBy(x => x.Type?.Name).ThenBy(x => x.Name).ThenBy(x => x.Address).ThenBy(x => x.Note))
+			{
+				var groupName = !String.IsNullOrWhiteSpace(poi.Type?.Name) ? poi.Type.Name : _dispatchLocalizer["Pois"].Value;
+
+				if (!groups.ContainsKey(groupName))
+					groups[groupName] = new SelectListGroup { Name = groupName };
+
+				var title = PoiDisplayHelper.GetSelectionLabel(poi, groupName);
+
+				selectListItems.Add(new SelectListItem
+				{
+					Value = poi.PoiId.ToString(),
+					Text = title,
+					Selected = selectedPoiId.HasValue && selectedPoiId.Value == poi.PoiId,
+					Group = groups[groupName]
+				});
+			}
+
+			return selectListItems;
+		}
+
+		private async Task<Poi> GetValidatedDestinationPoiAsync(int? destinationPoiId)
+		{
+			if (!destinationPoiId.HasValue || destinationPoiId.Value <= 0)
+				return null;
+
+			return await _mappingService.GetDestinationPOIByIdAsync(DepartmentId, destinationPoiId.Value);
+		}
+
+		private static (string Name, string Address, string TypeName) BuildDestinationInfo(Poi destinationPoi)
+		{
+			if (destinationPoi == null)
+				return (null, null, null);
+
+			return (PoiDisplayHelper.GetDisplayName(destinationPoi, destinationPoi.Type?.Name), destinationPoi.Address, PoiDisplayHelper.GetTypeName(destinationPoi));
 		}
 
 		private async Task<CloseCallView> FillCloseCallView(CloseCallView model)

@@ -3,6 +3,8 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import {
   getLayerColor,
   getMarkerIconUrl,
+  getPoiMarkerShapePath,
+  isPoiMarker,
   type MapMarkerInfo,
   type MapRendererProps,
 } from './mapTypes';
@@ -17,6 +19,9 @@ interface MarkerState {
   longitude: number;
   title: string;
   imagePath: string;
+  markerShape: string;
+  color: string;
+  markerType: number;
   infoWindowContent: string;
   hideLabels: boolean;
 }
@@ -26,11 +31,31 @@ function createMarkerElement(markerInfo: MapMarkerInfo, hideLabels: boolean): HT
   wrapper.className = 'rg-map__marker';
   wrapper.title = hideLabels ? '' : markerInfo.Title;
 
-  const icon = document.createElement('img');
-  icon.className = 'rg-map__marker-icon';
-  icon.src = getMarkerIconUrl(markerInfo);
-  icon.alt = '';
-  wrapper.appendChild(icon);
+  if (isPoiMarker(markerInfo)) {
+    wrapper.classList.add('rg-map__marker--poi');
+    wrapper.style.setProperty('--rg-map-poi-color', markerInfo.Color || '#2563eb');
+
+    const markerShape = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    markerShape.setAttribute('viewBox', '-24 -48 48 48');
+    markerShape.setAttribute('class', 'rg-map__poi-marker-shape');
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', getPoiMarkerShapePath(markerInfo.Marker));
+    markerShape.appendChild(path);
+
+    const icon = document.createElement('span');
+    icon.className = `map-icon ${markerInfo.ImagePath || 'map-icon-map-pin'} rg-map__poi-marker-icon`;
+    icon.setAttribute('aria-hidden', 'true');
+
+    wrapper.appendChild(markerShape);
+    wrapper.appendChild(icon);
+  } else {
+    const icon = document.createElement('img');
+    icon.className = 'rg-map__marker-icon';
+    icon.src = getMarkerIconUrl(markerInfo);
+    icon.alt = '';
+    wrapper.appendChild(icon);
+  }
 
   if (!hideLabels && markerInfo.Title) {
     const label = document.createElement('div');
@@ -259,10 +284,13 @@ export default function MapboxMapView({
       const existingMarkerState = markerRefs.current.get(markerInfo.Id);
       const appearanceChanged =
         !existingMarkerState ||
-        existingMarkerState.title !== markerInfo.Title ||
-        existingMarkerState.imagePath !== markerInfo.ImagePath ||
-        existingMarkerState.infoWindowContent !== markerInfo.InfoWindowContent ||
-        existingMarkerState.hideLabels !== hideLabels;
+          existingMarkerState.title !== markerInfo.Title ||
+          existingMarkerState.imagePath !== markerInfo.ImagePath ||
+          existingMarkerState.markerShape !== (markerInfo.Marker ?? '') ||
+          existingMarkerState.color !== (markerInfo.Color ?? '') ||
+          existingMarkerState.markerType !== markerInfo.Type ||
+          existingMarkerState.infoWindowContent !== markerInfo.InfoWindowContent ||
+          existingMarkerState.hideLabels !== hideLabels;
 
       if (appearanceChanged) {
         existingMarkerState?.marker.remove();
@@ -284,6 +312,9 @@ export default function MapboxMapView({
           longitude: markerInfo.Longitude,
           title: markerInfo.Title,
           imagePath: markerInfo.ImagePath,
+          markerShape: markerInfo.Marker ?? '',
+          color: markerInfo.Color ?? '',
+          markerType: markerInfo.Type,
           infoWindowContent: markerInfo.InfoWindowContent,
           hideLabels,
         });

@@ -5,6 +5,7 @@
     Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
     var mapConfig = SettingsHelper.GetDepartmentMapConfig(Resgrid.Config.InfoConfig.WebsiteKey);
 }
+
 @section Styles
 {
     <style>
@@ -34,7 +35,8 @@
                 <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
             </li>
             <li>
-                <a asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["CallsModule"]</a>
+                <a asp-controller="Dispatch" asp-action="Dashboard"
+                   asp-route-area="User">@commonLocalizer["CallsModule"]</a>
             </li>
             <li class="active">
                 <strong>@localizer["NewCallHeader"]</strong>
@@ -44,10 +46,12 @@
     <div class="col-sm-8">
         <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
             <div class="buttons-actions">
-                <a title="Quick Template" class="btn btn-inverse" data-target="#callQuickTemplateWindow" data-toggle="modal">@localizer["Template"]</a>
+                <a title="@localizer["Template"]" class="btn btn-inverse" data-target="#callQuickTemplateWindow"
+                   data-toggle="modal">@localizer["Template"]</a>
                 @if (!String.IsNullOrWhiteSpace(Model.NewCallFormData))
                 {
-                    <a title="Call Form" class="btn btn-info" data-target="#newCallFormWindow" data-toggle="modal">@localizer["CallForm"]</a>
+                    <a title="@localizer["CallForm"]" class="btn btn-info" data-target="#newCallFormWindow"
+                       data-toggle="modal">@localizer["CallForm"]</a>
                 }
             </div>
         </div>
@@ -59,7 +63,8 @@
         <div class="wrapper wrapper-content">
             <div class="ibox float-e-margins">
                 <div class="ibox-content">
-                    <form class="form-horizontal" role="form" asp-controller="Dispatch" asp-action="NewCall" asp-route-area="User" method="post" id="newCallForm">
+                    <form class="form-horizontal" role="form" asp-controller="Dispatch" asp-action="NewCall"
+                          asp-route-area="User" method="post" id="newCallForm">
 
                         <div class="row">
                             <div class="col-md-8 col-md-offset-1">
@@ -79,53 +84,71 @@
 
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["NameLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["NamePlaceholder"]" asp-for="Call.Name"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control"
+                                                          placeholder="@localizer["NamePlaceholder"]"
+                                                          asp-for="Call.Name"></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["PrioirtyLabel"]</label>
-                            <div class="col-sm-10">@Html.DropDownListFor(m => m.CallPriority, Model.CallPriorities, new { @style = "width: 200px;", tabindex = "2" })</div>
+                            <div
+                                class="col-sm-10">@Html.DropDownListFor(m => m.CallPriority, Model.CallPriorities, new { @style = "width: 200px;", tabindex = "2" })</div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["TypeLabel"]</label>
-                            <div class="col-sm-10">@Html.DropDownListFor(m => m.Call.Type, Model.CallTypes, new { @style = "width: 200px;", tabindex = "3" })</div>
+                            <div
+                                class="col-sm-10">@Html.DropDownListFor(m => m.Call.Type, Model.CallTypes, new { @style = "width: 200px;", tabindex = "3" })</div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["ReportNameLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["ReportNamePlaceholder"]" asp-for="Call.ContactName"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control"
+                                                          placeholder="@localizer["ReportNamePlaceholder"]"
+                                                          asp-for="Call.ContactName"></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["ReportContactLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["ReportContactPlaceholder"]" asp-for="Call.ContactNumber"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control"
+                                                          placeholder="@localizer["ReportContactPlaceholder"]"
+                                                          asp-for="Call.ContactNumber"></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["PrimaryContactLabel"]</label>
                             <div class="col-sm-10">
-                                <select asp-for="PrimaryContact" asp-items="Model.ContactsList" style="padding-left: 0; width: 100%;"></select>
+                                <select asp-for="PrimaryContact" asp-items="Model.ContactsList"
+                                        style="padding-left: 0; width: 100%;"></select>
                                 <span class="input-group-addon">
-                                    <i id="primaryNotesIcon" class="fa fa-info-circle text-danger alert-icon" title="Note Alerts"></i>
+                                    <i id="primaryNotesIcon" class="fa fa-info-circle text-danger alert-icon"
+                                       title="@localizer["NoteAlerts"]"></i>
                                 </span>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["AdditionalContactLabel"]</label>
                             <div class="col-sm-10">
-                                <select asp-for="AdditionalContacts" asp-items="Model.ContactsList" multiple="multiple" style="padding-left: 0; width: 100%;"></select>
+                                <select asp-for="AdditionalContacts" asp-items="Model.ContactsList" multiple="multiple"
+                                        style="padding-left: 0; width: 100%;"></select>
                                 <span class="input-group-addon">
-                                    <i id="additionalNotesIcon" class="fa fa-info-circle text-danger alert-icon" title="Note Alerts"></i>
+                                    <i id="additionalNotesIcon" class="fa fa-info-circle text-danger alert-icon"
+                                       title="@localizer["NoteAlerts"]"></i>
                                 </span>
                             </div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["CallIdentifierLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["CallIdentifierPlaceholder"]" asp-for="Call.ExternalIdentifier"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control"
+                                                          placeholder="@localizer["CallIdentifierPlaceholder"]"
+                                                          asp-for="Call.ExternalIdentifier"></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["IncidentIdLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["IncidentIdPlaceholder"]" asp-for="Call.IncidentNumber"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control"
+                                                          placeholder="@localizer["IncidentIdPlaceholder"]"
+                                                          asp-for="Call.IncidentNumber"></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["ReferenceIdLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["ReferenceIdPlaceholder"]" asp-for="Call.ReferenceNumber"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control"
+                                                          placeholder="@localizer["ReferenceIdPlaceholder"]"
+                                                          asp-for="Call.ReferenceNumber"></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["CallNatureLabel"]</label>
@@ -149,7 +172,9 @@
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["MapPageLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["MapPagePlaceholder"]" asp-for="Call.MapPage"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control"
+                                                          placeholder="@localizer["MapPagePlaceholder"]"
+                                                          asp-for="Call.MapPage"></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["LocationLabel"]</label>
@@ -157,48 +182,65 @@
                                 <div class="row">
                                     <div class="col-md-5">
                                         <div class="input-group input-group-sm">
-                                            <input type="text" class="form-control" placeholder="@localizer["LocationPlaceholder"]" asp-for="Call.Address" name="Call_Address">
+                                            <input type="text" class="form-control"
+                                                   placeholder="@localizer["LocationPlaceholder"]"
+                                                   asp-for="Call.Address" name="Call_Address">
                                             <span class="input-group-btn">
-                                                <a id="searchButton" href="#" class="btn btn-info">@localizer["FindAddress"]</a>
+                                                <a id="searchButton" href="#"
+                                                   class="btn btn-info">@localizer["FindAddress"]</a>
                                             </span>
                                         </div>
                                     </div>
                                     <div class="col-md-6" style="padding-left: 0px;">
                                         <div class="input-group input-group-sm">
-                                            <input type="text" class="form-control" placeholder="what.three.words" asp-for="What3Word" style="width:250px;">
+                                            <input type="text" class="form-control" placeholder="@localizer["WhatThreeWordsPlaceholder"]"
+                                                   asp-for="What3Word" style="width:250px;">
                                             <span class="input-group-btn" style="float: left;">
-                                                <a id="findw3wButton" href="#" class="btn btn-info">@localizer["FindW3wLocation"]</a>
+                                                <a id="findw3wButton" href="#"
+                                                   class="btn btn-info">@localizer["FindW3wLocation"]</a>
                                             </span>
                                         </div>
-                                        <span class="help-inline">@localizer["W3wHelp"] <a href="https://what3words.com/about/" target="_blank">@localizer["LearnMore"]</a></span>
+                                        <span class="help-inline">@localizer["W3wHelp"] <a
+                                                href="https://what3words.com/about/"
+                                                target="_blank">@localizer["LearnMore"]</a></span>
                                     </div>
                                 </div>
                                 <div class="row" style="margin-top: 8px;">
                                     <div class="col-md-11">
                                         <div class="input-group input-group-sm">
-                                            <span class="input-group-addon">Lat</span>
-                                            <input type="text" class="form-control" asp-for="Latitude" placeholder="Latitude">
-                                            <span class="input-group-addon">Lng</span>
-                                            <input type="text" class="form-control" asp-for="Longitude" placeholder="Longitude">
+                                            <span class="input-group-addon">@localizer["LatitudeShort"]</span>
+                                            <input type="text" class="form-control" asp-for="Latitude"
+                                                   placeholder="@localizer["Latitude"]">
+                                            <span class="input-group-addon">@localizer["LongitudeShort"]</span>
+                                            <input type="text" class="form-control" asp-for="Longitude"
+                                                   placeholder="@localizer["Longitude"]">
                                             <span class="input-group-btn">
-                                                <a id="setPinButton" href="#" class="btn btn-warning">Set Pin on Map</a>
+                                                <a id="setPinButton" href="#" class="btn btn-warning">@localizer["SetPinOnMap"]</a>
                                             </span>
                                         </div>
                                     </div>
                                 </div>
-                                <div id="callMap" name="callMap" style="position: relative; width: 90%; height: 500px; margin-top: 8px;"></div>
+                                <div id="callMap" name="callMap"
+                                     style="position: relative; width: 90%; height: 500px; margin-top: 8px;"></div>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-2 control-label">Indoor Location</label>
+                            <label class="col-sm-2 control-label">@localizer["Destination"]</label>
+                            <div class="col-sm-6">
+                                @Html.DropDownListFor(x => x.Call.DestinationPoiId, Model.DestinationPois, new { @class = "form-control destination-poi-search", @style = "width:100%;" })
+                                <span class="help-inline">@localizer["DestinationHelp"]</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["IndoorLocation"]</label>
                             <div class="col-sm-10">
                                 <div class="row">
                                     <div class="col-md-6">
                                         <select id="indoorZoneSearch" class="form-control" style="width:100%;"></select>
                                     </div>
                                 </div>
-                                <input type="hidden" name="IndoorMapZoneId" id="IndoorMapZoneId" value="" />
-                                <input type="hidden" name="IndoorMapFloorId" id="IndoorMapFloorId" value="" />
+                                <input type="hidden" name="IndoorMapZoneId" id="IndoorMapZoneId" value=""/>
+                                <input type="hidden" name="IndoorMapFloorId" id="IndoorMapFloorId" value=""/>
                             </div>
                         </div>
                         <div class="form-group">
@@ -224,7 +266,11 @@
                                     <tr>
                                         <th style="max-width: 350px;font-size: 14px;">@localizer["Name"]</th>
                                         <th style="max-width: 350px;font-size: 14px;">@localizer["Note"]</th>
-                                        <th style="max-width: 350px;font-size: 14px;"><a href="#" class="btn btn-xs btn-info" data-target="#selectCallToLinkModal" data-toggle="modal">@localizer["AddLinkedCall"]</a></th>
+                                        <th style="max-width: 350px;font-size: 14px;"><a href="#"
+                                                                                         class="btn btn-xs btn-info"
+                                                                                         data-target="#selectCallToLinkModal"
+                                                                                         data-toggle="modal">@localizer["AddLinkedCall"]</a>
+                                        </th>
                                     </tr>
                                     </thead>
                                     <tbody></tbody>
@@ -236,19 +282,29 @@
                             <div class="col-sm-10">
                                 <div>
                                     <ul class="nav nav-tabs" role="tablist">
-                                        <li role="presentation" class="active"><a href="#personnelTab" aria-controls="home" role="tab" data-toggle="tab">@commonLocalizer["Personnel"]</a></li>
-                                        <li role="presentation"><a href="#groupsTab" aria-controls="profile" role="tab" data-toggle="tab">@commonLocalizer["Groups"]</a></li>
-                                        <li role="presentation"><a href="#rolesTab" aria-controls="settings" role="tab" data-toggle="tab">@commonLocalizer["Roles"]</a></li>
+                                        <li role="presentation" class="active"><a href="#personnelTab"
+                                                                                  aria-controls="home" role="tab"
+                                                                                  data-toggle="tab">@commonLocalizer["Personnel"]</a>
+                                        </li>
+                                        <li role="presentation"><a href="#groupsTab" aria-controls="profile" role="tab"
+                                                                   data-toggle="tab">@commonLocalizer["Groups"]</a></li>
+                                        <li role="presentation"><a href="#rolesTab" aria-controls="settings" role="tab"
+                                                                   data-toggle="tab">@commonLocalizer["Roles"]</a></li>
                                     </ul>
                                     <div class="tab-content" style="height: 600px;">
                                         <div role="tabpanel" class="tab-pane active" id="personnelTab">
-                                            <table id="personnelGrid" class="table table-striped table-bordered table-hover" width="100%"></table>
+                                            <table id="personnelGrid"
+                                                   class="table table-striped table-bordered table-hover"
+                                                   width="100%"></table>
                                         </div>
                                         <div role="tabpanel" class="tab-pane" id="groupsTab">
-                                            <table id="groupsGrid" class="table table-striped table-bordered table-hover" width="100%"></table>
+                                            <table id="groupsGrid"
+                                                   class="table table-striped table-bordered table-hover"
+                                                   width="100%"></table>
                                         </div>
                                         <div role="tabpanel" class="tab-pane" id="rolesTab">
-                                            <table id="rolesGrid" class="table table-striped table-bordered table-hover" width="100%"></table>
+                                            <table id="rolesGrid" class="table table-striped table-bordered table-hover"
+                                                   width="100%"></table>
                                         </div>
                                     </div>
 
@@ -313,7 +369,7 @@
                                                     foreach (var u in ungroupedUnits2)
                                                     {
                                                         var unitStatus = Model.UnitStates.FirstOrDefault(x => x.UnitId == u.UnitId);
-                                                        var stateText = "Unknown";
+                                                        var stateText = commonLocalizer["Unknown"].Value;
                                                         var stateColor = "#000000";
                                                         var stateTextColor = "#FFFFFF";
 
@@ -333,6 +389,7 @@
                                                         ;
                                                     }
                                                 }
+
                                                 @Html.Raw("</tbody></table></div></div>")
                                                 ;
                                                 count2++;
@@ -355,7 +412,7 @@
                                                         ;
                                                     }
 
-                                                    @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'><input type='checkbox' id='checkAllUnits" + Model.Groups[i].DepartmentGroupId + "' onChange='resgrid.dispatch.newcall.checkAllUnits(\"unitGroups_" + Model.Groups[i].DepartmentGroupId + "\", this)'/></th><th>" + @commonLocalizer["Name"] + "</th><th>Type</th><th>" + @commonLocalizer["Status"] + "</th></tr></thead><tbody id='unitGroups_" + Model.Groups[i].DepartmentGroupId + "'>")
+                                                    @Html.Raw("<div class='table-responsive'><table class='table table-striped'><thead><tr><th class='span1'><input type='checkbox' id='checkAllUnits" + Model.Groups[i].DepartmentGroupId + "' onChange='resgrid.dispatch.newcall.checkAllUnits(\"unitGroups_" + Model.Groups[i].DepartmentGroupId + "\", this)'/></th><th>" + @commonLocalizer["Name"] + "</th><th>" + @commonLocalizer["Type"] + "</th><th>" + @commonLocalizer["Status"] + "</th></tr></thead><tbody id='unitGroups_" + Model.Groups[i].DepartmentGroupId + "'>")
                                                     ;
 
                                                     if (groupUnits != null && groupUnits.Any())
@@ -363,7 +420,7 @@
                                                         foreach (var u in groupUnits)
                                                         {
                                                             var unitStatus = Model.UnitStates.FirstOrDefault(x => x.UnitId == u.UnitId);
-                                                            var stateText = "Unknown";
+                                                            var stateText = commonLocalizer["Unknown"].Value;
                                                             var stateColor = "#000000";
                                                             var stateTextColor = "#FFFFFF";
 
@@ -383,6 +440,7 @@
                                                             ;
                                                         }
                                                     }
+
                                                     @Html.Raw("</tbody></table></div></div>")
                                                     ;
 
@@ -398,7 +456,7 @@
                         @if (!string.IsNullOrEmpty(Model.UdfFormHtml))
                         {
                             <div class="hr-line-dashed"></div>
-                            <h3>Custom Fields</h3>
+                            <h3>@localizer["CustomFields"]</h3>
                             @Html.Raw(Model.UdfFormHtml)
                             <div class="hr-line-dashed"></div>
                         }
@@ -409,7 +467,7 @@
                             <div class="col-sm-10">
                                 <div class="checkbox">
                                     <label>
-                                        <input asp-for="Call.CheckInTimersEnabled" /> @localizer["EnableCheckInTimers"]
+                                        <input asp-for="Call.CheckInTimersEnabled"/> @localizer["EnableCheckInTimers"]
                                     </label>
                                 </div>
                             </div>
@@ -417,7 +475,8 @@
 
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
-                                <a class="btn btn-white" asp-controller="Dispatch" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                <a class="btn btn-white" asp-controller="Dispatch" asp-action="Dashboard"
+                                   asp-route-area="User">@commonLocalizer["Cancel"]</a>
                                 <button class="btn btn-primary" type="submit">@localizer["CreateCall"]</button>
                             </div>
                         </div>
@@ -441,19 +500,23 @@
                         @localizer["CallTemplatesLabel"]
                     </label>
                     <div class="controls">
-                        <select asp-for="CallTemplateId" asp-items="Model.CallTemplates" style="padding-left: 0; width: 100%;"></select>
+                        <select asp-for="CallTemplateId" asp-items="Model.CallTemplates"
+                                style="padding-left: 0; width: 100%;"></select>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">@commonLocalizer["Close"]</button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true" onclick="resgrid.dispatch.newcall.fillCallTemplate();">@localizer["SetTemplateButton"]</button>
+                <button type="button" class="btn" data-dismiss="modal"
+                        aria-hidden="true">@commonLocalizer["Close"]</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true"
+                        onclick="resgrid.dispatch.newcall.fillCallTemplate();">@localizer["SetTemplateButton"]</button>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="protocolQuestionWindow">
+<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     id="protocolQuestionWindow">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -463,15 +526,18 @@
             <div class="modal-body">
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">@commonLocalizer["Close"]</button>
-                <button id="processQuestionAnswers" type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">@commonLocalizer["Process"]</button>
+                <button type="button" class="btn" data-dismiss="modal"
+                        aria-hidden="true">@commonLocalizer["Close"]</button>
+                <button id="processQuestionAnswers" type="button" class="btn btn-primary" data-dismiss="modal"
+                        aria-hidden="true">@commonLocalizer["Process"]</button>
             </div>
 
         </div>
     </div>
 </div>
 
-<div class="modal xl fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="newCallFormWindow">
+<div class="modal xl fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     id="newCallFormWindow">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -482,15 +548,18 @@
                 <div id="fb-template"></div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">@commonLocalizer["Close"]</button>
-                <button id="saveNewCallFrom" type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">@commonLocalizer["Save"]</button>
+                <button type="button" class="btn" data-dismiss="modal"
+                        aria-hidden="true">@commonLocalizer["Close"]</button>
+                <button id="saveNewCallFrom" type="button" class="btn btn-primary" data-dismiss="modal"
+                        aria-hidden="true">@commonLocalizer["Save"]</button>
             </div>
 
         </div>
     </div>
 </div>
 
-<div class="modal xl fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" id="selectCallToLinkModal">
+<div class="modal xl fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true"
+     id="selectCallToLinkModal">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -511,13 +580,16 @@
                         @localizer["SelectCallNoteLabel"]
                     </label>
                     <div class="controls">
-                        <input type="text" id="selectCallNote" name="selectCallNote" style="padding-left: 0; width: 100%;" />
+                        <input type="text" id="selectCallNote" name="selectCallNote"
+                               style="padding-left: 0; width: 100%;"/>
                     </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">@commonLocalizer["Close"]</button>
-                <button id="addNewLinkedCall" type="button" class="btn btn-primary" data-dismiss="modal" aria-hidden="true">@localizer["AddLinkedCall"]</button>
+                <button type="button" class="btn" data-dismiss="modal"
+                        aria-hidden="true">@commonLocalizer["Close"]</button>
+                <button id="addNewLinkedCall" type="button" class="btn btn-primary" data-dismiss="modal"
+                        aria-hidden="true">@localizer["AddLinkedCall"]</button>
             </div>
 
         </div>
@@ -525,7 +597,8 @@
 </div>
 
 <!-- Alert Notes Modal -->
-<div class="modal fade" id="alertNotesModal" tabindex="-1" role="dialog" aria-labelledby="alertNotesModalLabel" aria-hidden="true">
+<div class="modal fade" id="alertNotesModal" tabindex="-1" role="dialog" aria-labelledby="alertNotesModalLabel"
+     aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -542,8 +615,11 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" id="alertNotesPrev" style="display:none;">&#8249; @commonLocalizer["Previous"]</button>
-                <button type="button" class="btn btn-default" id="alertNotesNext" style="display:none;">@commonLocalizer["Next"] &#8250;</button>
+                <button type="button" class="btn btn-default" id="alertNotesPrev" style="display:none;">
+                    &#8249; @commonLocalizer["Previous"]</button>
+                <button type="button" class="btn btn-default" id="alertNotesNext"
+                        style="display:none;">@commonLocalizer["Next"] &#8250;
+                </button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">@commonLocalizer["Close"]</button>
             </div>
         </div>
@@ -571,6 +647,7 @@
         </script>
     }
 
+    @await Html.PartialAsync("_DispatchLocalizationScript")
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.newcall.js"></script>
 
     <script type="text/javascript">
@@ -606,8 +683,8 @@
             $.ajax({
                 url: resgrid.absoluteBaseUrl + "/User/Dispatch/GetAlertNotesForContact",
                 type: "GET",
-                data: { contactId: contactId },
-                success: function(response) {
+                data: {contactId: contactId},
+                success: function (response) {
                     if (response && $.isArray(response) && response.length > 0) {
                         _alertNotes = response;
                         _alertNoteIndex = 0;
@@ -619,7 +696,8 @@
                         $(iconSelector).hide();
                     }
                 },
-                error: function() {}
+                error: function () {
+                }
             });
         }
 
@@ -654,31 +732,38 @@
             });
 
             $('#indoorZoneSearch').select2({
-                placeholder: 'Search indoor locations...',
+                placeholder: resgrid.dispatch.getText('searchIndoorLocations', 'Search indoor locations...'),
                 allowClear: true,
                 minimumInputLength: 2,
                 ajax: {
                     url: '@Url.Action("SearchZones", "IndoorMaps", new { area = "User" })',
                     dataType: 'json',
                     delay: 300,
-                    data: function(params) {
-                        return { term: params.term };
+                    data: function (params) {
+                        return {term: params.term};
                     },
-                    processResults: function(data) {
-                        return { results: data.results };
+                    processResults: function (data) {
+                        return {results: data.results};
                     }
                 }
             });
 
-            $('#indoorZoneSearch').on('select2:select', function(e) {
+            $('#indoorZoneSearch').on('select2:select', function (e) {
                 var data = e.params.data;
                 $('#IndoorMapZoneId').val(data.id);
                 $('#IndoorMapFloorId').val(data.floorId);
             });
 
-            $('#indoorZoneSearch').on('select2:clear', function() {
+            $('#indoorZoneSearch').on('select2:clear', function () {
                 $('#IndoorMapZoneId').val('');
                 $('#IndoorMapFloorId').val('');
+            });
+
+            $('.destination-poi-search').select2({
+                placeholder: resgrid.dispatch.getText('searchDestinationPois', 'Search destination POIs...'),
+                allowClear: true,
+                minimumResultsForSearch: 0,
+                width: '100%'
             });
         });
     </script>

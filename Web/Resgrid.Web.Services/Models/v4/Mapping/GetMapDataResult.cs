@@ -23,12 +23,14 @@ namespace Resgrid.Web.Services.Models.v4.Mapping
 		public GetMapDataResultData()
 		{
 			MapMakerInfos = new List<MapMakerInfoData>();
+			PoiLayers = new List<PoiLayerData>();
 		}
 
 		public double CenterLat { get; set; }
 		public double CenterLon { get; set; }
 		public int ZoomLevel { get; set; }
 		public List<MapMakerInfoData> MapMakerInfos { get; set; }
+		public List<PoiLayerData> PoiLayers { get; set; }
 	}
 
 	public class MapMakerInfoData
@@ -42,5 +44,22 @@ namespace Resgrid.Web.Services.Models.v4.Mapping
 		public string InfoWindowContent { get; set; }
 		public string Color { get; set; }
 		public int Type { get; set; }
+		public string Marker { get; set; }
+		public int? PoiTypeId { get; set; }
+		public string PoiTypeName { get; set; }
+		public string Address { get; set; }
+		public string Note { get; set; }
+		public string LayerId { get; set; }
+		public string LayerName { get; set; }
+	}
+
+	public class PoiLayerData
+	{
+		public int PoiTypeId { get; set; }
+		public string Name { get; set; }
+		public string Color { get; set; }
+		public string ImagePath { get; set; }
+		public string Marker { get; set; }
+		public bool IsDestination { get; set; }
 	}
 }

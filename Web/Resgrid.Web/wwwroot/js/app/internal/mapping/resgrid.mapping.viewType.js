@@ -19,25 +19,26 @@ var resgrid;
                     },
                     pageLength: 50,
                     columns: [
+                        { data: 'Name', title: 'Name', defaultContent: '' },
+                        { data: 'Address', title: 'Address', defaultContent: '' },
+                        { data: 'Note', title: 'Note', defaultContent: '' },
+                        { data: 'Latitude', title: 'Latitude' },
+                        { data: 'Longitude', title: 'Longitude' },
                         {
                             data: 'PoiId',
-                            title: '',
+                            title: 'Actions',
                             orderable: false,
                             searchable: false,
                             render: function (data) {
-                                return '<input type="checkbox" id="dispatchRole_' + data + '" name="dispatchRole_' + data + '" />';
+                                if (!canManagePois) {
+                                    return '';
+                                }
+
+                                return '<a class="btn btn-xs btn-info" href="' + resgrid.absoluteBaseUrl + '/User/Mapping/EditPOI?poiId=' + data + '">Edit</a> ' +
+                                    '<a class="btn btn-xs btn-danger" href="' + resgrid.absoluteBaseUrl + '/User/Mapping/DeletePOI?poiId=' + data + '" onclick="return confirm(\'Delete this POI?\');">Delete</a>';
                             }
-                        },
-                        { data: 'Latitude', title: 'Latitude' },
-                        { data: 'Longitude', title: 'Longitude' },
-                        { data: 'Note', title: 'Note' }
+                        }
                     ]
-                });
-                poisTable.on('draw', function () {
-                    $('#poisGrid thead th:first').html('<label><input type="checkbox" id="checkAllRoles"/></label>');
-                });
-                $(document).on('click', '#checkAllRoles', function () {
-                    $('#poisGrid tbody :checkbox').prop('checked', this.checked);
                 });
 
                 map = L.map('map').setView([parseFloat(centerLat) || 39.7392, parseFloat(centerLon) || -104.9903], 9);
@@ -68,6 +69,17 @@ var resgrid;
                             var marker = L.marker([poi.Latitude, poi.Longitude], {
                                 icon: createMarkerIcon(poi)
                             }).addTo(map);
+
+                            if (poi.InfoWindowContent) {
+                                marker.bindPopup(poi.InfoWindowContent);
+                            }
+
+                            if (poi.Title) {
+                                marker.bindTooltip(poi.Title, {
+                                    direction: 'bottom'
+                                });
+                            }
+
                             markers.push(marker);
                         });
 

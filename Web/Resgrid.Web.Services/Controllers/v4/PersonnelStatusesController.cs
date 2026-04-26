@@ -31,6 +31,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IUserProfileService _userProfileService;
 		private readonly IUserStateService _userStateService;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
+		private readonly ICallsService _callsService;
+		private readonly IMappingService _mappingService;
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly Model.Services.IAuthorizationService _authorizationService;
@@ -42,6 +44,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IUserProfileService userProfileService,
 			IUserStateService userStateService,
 			IDepartmentGroupsService departmentGroupsService,
+			ICallsService callsService,
+			IMappingService mappingService,
 			IPersonnelRolesService personnelRolesService,
 			IDepartmentSettingsService departmentSettingsService,
 			Model.Services.IAuthorizationService authorizationService
@@ -53,6 +57,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_userProfileService = userProfileService;
 			_userStateService = userStateService;
 			_departmentGroupsService = departmentGroupsService;
+			_callsService = callsService;
+			_mappingService = mappingService;
 			_personnelRolesService = personnelRolesService;
 			_departmentSettingsService = departmentSettingsService;
 			_authorizationService = authorizationService;
@@ -76,10 +82,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var action = await _actionLogsService.GetLastActionLogForUserAsync(userId, DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
+			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
+			var pois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 
 			if (action != null)
 			{
-				result.Data = ConvertPersonStatus(action, department, userId);
+				result.Data = ConvertPersonStatus(action, department, userId, activeCalls, stations, pois);
 				result.PageSize = 1;
 				result.Status = ResponseHelper.Success;
 			}
@@ -142,7 +151,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (String.IsNullOrWhiteSpace(input.RespondingTo) || input.RespondingTo == "0")
 					log = await _actionLogsService.SetUserActionAsync(input.UserId, DepartmentId, int.Parse(input.Type), geolocation, cancellationToken);
 				else
-					log = await _actionLogsService.SetUserActionAsync(input.UserId, DepartmentId, int.Parse(input.Type), geolocation, int.Parse(input.RespondingTo), input.Note, cancellationToken);
+				{
+					var destinationType = input.RespondingToType ?? (int)DestinationEntityTypes.Call;
+					var destinationId = int.Parse(input.RespondingTo);
+
+					if (!await IsValidDestinationAsync(destinationId, destinationType))
+						return BadRequest();
+
+					log = await _actionLogsService.SetUserActionAsync(input.UserId, DepartmentId, int.Parse(input.Type), geolocation, destinationId, destinationType, input.Note, cancellationToken);
+				}
 
 				result.Id = log.ActionLogId.ToString();
 				result.PageSize = 0;
@@ -201,7 +218,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (String.IsNullOrWhiteSpace(input.RespondingTo) || input.RespondingTo == "0")
 					log = await _actionLogsService.SetUserActionAsync(userId, DepartmentId, int.Parse(input.Type), geolocation, cancellationToken);
 				else
-					log = await _actionLogsService.SetUserActionAsync(userId, DepartmentId, int.Parse(input.Type), geolocation, int.Parse(input.RespondingTo), input.Note, cancellationToken);
+				{
+					var destinationType = input.RespondingToType ?? (int)DestinationEntityTypes.Call;
+					var destinationId = int.Parse(input.RespondingTo);
+
+					if (!await IsValidDestinationAsync(destinationId, destinationType))
+						continue;
+
+					log = await _actionLogsService.SetUserActionAsync(userId, DepartmentId, int.Parse(input.Type), geolocation, destinationId, destinationType, input.Note, cancellationToken);
+				}
 
 				logIds.Add(log.ActionLogId.ToString());
 			}
@@ -214,7 +239,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return Created($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/v4/Statuses/GetAllStatusesForPersonnel", result);
 		}
 
-		public static GetCurrentStatusResultData ConvertPersonStatus(ActionLog actionLog, Department department, string userId)
+		public static GetCurrentStatusResultData ConvertPersonStatus(ActionLog actionLog, Department department, string userId, List<Call> activeCalls, List<DepartmentGroup> stations, List<Poi> pois)
 		{
 			var statusResult = new GetCurrentStatusResultData
 			{
@@ -238,16 +263,35 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				if (actionLog.DestinationId.HasValue)
 				{
-					statusResult.DestinationId = actionLog.DestinationId.Value;
-
-					if (actionLog.DestinationType.HasValue)
-						statusResult.DestinationType = actionLog.DestinationType.Value;
-					else
-						statusResult.DestinationType = 2; // Call (1 = Group)
+					var destination = DestinationResolutionHelper.Resolve(actionLog.DestinationId, actionLog.DestinationType, null, activeCalls, stations, pois);
+					statusResult.DestinationId = destination.DestinationId;
+					statusResult.DestinationType = destination.DestinationType;
+					statusResult.DestinationName = destination.Name;
+					statusResult.DestinationAddress = destination.Address;
+					statusResult.DestinationTypeName = destination.TypeName;
 				}
 			}
 
 			return statusResult;
+		}
+
+		private async Task<bool> IsValidDestinationAsync(int destinationId, int destinationType)
+		{
+			var entityType = (DestinationEntityTypes)destinationType;
+
+			switch (entityType)
+			{
+				case DestinationEntityTypes.Station:
+					var station = await _departmentGroupsService.GetGroupByIdAsync(destinationId);
+					return station != null && station.DepartmentId == DepartmentId;
+				case DestinationEntityTypes.Call:
+					var call = await _callsService.GetCallByIdAsync(destinationId);
+					return call != null && call.DepartmentId == DepartmentId;
+				case DestinationEntityTypes.Poi:
+					return await _mappingService.GetDestinationPOIByIdAsync(DepartmentId, destinationId) != null;
+				default:
+					return false;
+			}
 		}
 	}
 }

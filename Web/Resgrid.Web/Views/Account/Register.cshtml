@@ -77,6 +77,25 @@
             </div>
             <div class="col-md-6">
                 <div class="ibox-content">
+                    @if (Resgrid.Config.InfoConfig.Locations != null && Resgrid.Config.InfoConfig.Locations.Count > 1)
+                    {
+                        <div class="form-group m-t">
+                            <label><small>@localizer["Region"]</small></label>
+                            <select id="regionSelect" class="form-control">
+                                @foreach (var location in Resgrid.Config.InfoConfig.Locations)
+                                {
+                                    @if (location.Name == Resgrid.Config.SystemBehaviorConfig.LocationName)
+                                    {
+                                        <option value="@location.GetRegisterUrl()" selected="selected">@location.DisplayName</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@location.GetRegisterUrl()">@location.DisplayName</option>
+                                    }
+                                }
+                            </select>
+                        </div>
+                    }
                     <form id="registrationForm" class="m-t" role="form" asp-controller="Account" asp-action="Register" method="post">
                         @Html.AntiForgeryToken()
                         <div class="form-group">
@@ -159,6 +178,17 @@
 
     <script>
             $(document).ready(function () {
+                $("#regionSelect").change(function () {
+                    var url = $(this).val();
+                    if (url) {
+                        var qs = window.location.search;
+                        if (qs) {
+                            url += (url.indexOf('?') > -1 ? '&' : '?') + qs.substring(1);
+                        }
+                        window.location.href = url;
+                    }
+                });
+
                 $(".pr-password").passwordRequirements({
                   numCharacters: 8,
                   useLowercase: true,

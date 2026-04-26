@@ -1,7 +1,12 @@
 @model Resgrid.Web.Areas.User.Models.Mapping.AddPOIView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Mapping.Mapping> localizer
 @{
-	ViewBag.Title = "Resgrid | " + localizer["AddPOIPageTitle"];
+	var isEditing = Model?.Poi?.PoiId > 0;
+	var pageTitle = isEditing ? "Edit POI" : localizer["AddPOIPageTitle"];
+	var pageHeader = isEditing ? "Edit POI" : localizer["AddPOIHeader"];
+	var submitText = isEditing ? "Save POI" : localizer["AddPOIHeader"];
+	var formAction = isEditing ? "EditPOI" : "AddPOI";
+	ViewBag.Title = "Resgrid | " + pageTitle;
 }
 
 @section Styles
@@ -30,7 +35,7 @@
 
 <div class="row wrapper border-bottom white-bg page-heading">
 	<div class="col-sm-4">
-		<h2>@localizer["AddPOIHeader"]</h2>
+		<h2>@pageHeader</h2>
 		<ol class="breadcrumb">
 			<li>
 				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
@@ -39,7 +44,7 @@
 				<a asp-controller="Mapping" asp-action="Index" asp-route-area="User">@localizer["MappingHeader"]</a>
 			</li>
 			<li class="active">
-				<strong>@localizer["AddPOIHeader"]</strong>
+				<strong>@pageHeader</strong>
 			</li>
 		</ol>
 	</div>
@@ -50,7 +55,7 @@
 		<div class="wrapper wrapper-content">
 			<div class="ibox float-e-margins">
 				<div class="ibox-content">
-					<form class="form-horizontal" role="form" asp-controller="Mapping" asp-action="AddPOI" asp-route-area="User" method="post">
+					<form class="form-horizontal" role="form" asp-controller="Mapping" asp-action="@formAction" asp-route-area="User" method="post">
 
 						<div class="row">
 							<div class="col-md-8 col-md-offset-1">
@@ -61,6 +66,7 @@
 								</div>
 								}
 								@Html.HiddenFor(m => m.TypeId)
+								@Html.HiddenFor(m => m.Poi.PoiId)
 								@Html.AntiForgeryToken()
 								<div asp-validation-summary="All" class="text-danger"></div>
 							</div>
@@ -86,17 +92,33 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-2 control-label">
+								@localizer["Name"]
+							</label>
+							<div class="col-sm-6">
+								@Html.TextBoxFor(x => x.Poi.Name, new { @class = "form-control" })
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">
+								Address
+							</label>
+							<div class="col-sm-6">
+								@Html.TextBoxFor(x => x.Poi.Address, new { @class = "form-control" })
+							</div>
+						</div>
+						<div class="form-group">
+							<label class="col-sm-2 control-label">
 								@localizer["Note"]
 							</label>
 							<div class="col-sm-6">
-								@Html.TextBoxFor(x => x.Poi.Note, new { @class = "form-control" })
+								@Html.TextAreaFor(x => x.Poi.Note, new { @class = "form-control", rows = 3 })
 							</div>
 						</div>
 
 						<div class="form-group">
 							<div class="col-sm-4 col-sm-offset-2">
-								<a class="btn btn-white" asp-controller="Mapping" asp-action="POIs" asp-route-area="User">@localizer["Cancel"]</a>
-								<button class="btn btn-primary" type="submit">@localizer["AddPOIHeader"]</button>
+								<a class="btn btn-white" asp-controller="Mapping" asp-action="ViewType" asp-route-area="User" asp-route-poiTypeId="@Model.TypeId">@localizer["Cancel"]</a>
+								<button class="btn btn-primary" type="submit">@submitText</button>
 							</div>
 						</div>
 					</form>

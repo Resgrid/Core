@@ -611,4 +611,223 @@
   <data name="NoVideoFeeds" xml:space="preserve">
     <value>До цього виклику не додано жодних відеотрансляцій.</value>
   </data>
+  <data name="Additional" xml:space="preserve">
+    <value>Додатково</value>
+  </data>
+  <data name="AllOfGroupDispatched" xml:space="preserve">
+    <value>Усіх з {0} направлено</value>
+  </data>
+  <data name="AreYouSure" xml:space="preserve">
+    <value>Ви впевнені?</value>
+  </data>
+  <data name="CallUpdatedTitle" xml:space="preserve">
+    <value>Виклик оновлено</value>
+  </data>
+  <data name="CallUpdatedMessage" xml:space="preserve">
+    <value>Цей виклик було оновлено, оновіть сторінку, щоб побачити найновішу інформацію.</value>
+  </data>
+  <data name="CallsForYear" xml:space="preserve">
+    <value>Виклики за рік</value>
+  </data>
+  <data name="CheckInFailed" xml:space="preserve">
+    <value>Не вдалося виконати відмітку. Спробуйте ще раз.</value>
+  </data>
+  <data name="CheckInStatusOk" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="CheckInStatusOverdue" xml:space="preserve">
+    <value>ПРОСТРОЧЕНО</value>
+  </data>
+  <data name="CustomFields" xml:space="preserve">
+    <value>Спеціальні поля</value>
+  </data>
+  <data name="Destination" xml:space="preserve">
+    <value>Пункт призначення</value>
+  </data>
+  <data name="DestinationHelp" xml:space="preserve">
+    <value>Виберіть POI призначення, наприклад лікарню, укриття, транзитний центр або зону збору.</value>
+  </data>
+  <data name="DispatchChat" xml:space="preserve">
+    <value>Чат диспетчеризації</value>
+  </data>
+  <data name="DispatchTime" xml:space="preserve">
+    <value>Час диспетчеризації</value>
+  </data>
+  <data name="EnterMessageHere" xml:space="preserve">
+    <value>Введіть повідомлення тут...</value>
+  </data>
+  <data name="ETA" xml:space="preserve">
+    <value>ETA</value>
+  </data>
+  <data name="GoToDispatch" xml:space="preserve">
+    <value>Перейти до диспетчеризації</value>
+  </data>
+  <data name="GoToHome" xml:space="preserve">
+    <value>Перейти на головну</value>
+  </data>
+  <data name="Group" xml:space="preserve">
+    <value>Група</value>
+  </data>
+  <data name="GroupSelected" xml:space="preserve">
+    <value>(Групу вибрано)</value>
+  </data>
+  <data name="IndoorLocation" xml:space="preserve">
+    <value>Внутрішнє розташування</value>
+  </data>
+  <data name="InvalidCoordinates" xml:space="preserve">
+    <value>Введіть дійсні числові значення широти та довготи.</value>
+  </data>
+  <data name="Latitude" xml:space="preserve">
+    <value>Широта</value>
+  </data>
+  <data name="LatitudeShort" xml:space="preserve">
+    <value>Шир.</value>
+  </data>
+  <data name="Longitude" xml:space="preserve">
+    <value>Довгота</value>
+  </data>
+  <data name="LongitudeShort" xml:space="preserve">
+    <value>Довг.</value>
+  </data>
+  <data name="NoteAlerts" xml:space="preserve">
+    <value>Сповіщення про примітки</value>
+  </data>
+  <data name="OnlineUsers" xml:space="preserve">
+    <value>Користувачі онлайн</value>
+  </data>
+  <data name="PersonnelCount" xml:space="preserve">
+    <value>Кількість персоналу</value>
+  </data>
+  <data name="PrintExportView" xml:space="preserve">
+    <value>Друкований вигляд (експорт)</value>
+  </data>
+  <data name="Primary" xml:space="preserve">
+    <value>Основний</value>
+  </data>
+  <data name="ProtocolTextFor" xml:space="preserve">
+    <value>Текст протоколу для {0}</value>
+  </data>
+  <data name="QuestionsFor" xml:space="preserve">
+    <value>Питання для {0}</value>
+  </data>
+  <data name="RemoveThisCallLink" xml:space="preserve">
+    <value>Видалити це посилання на виклик</value>
+  </data>
+  <data name="RequestSent" xml:space="preserve">
+    <value>Запит надіслано!</value>
+  </data>
+  <data name="ReopenCallConfirmText" xml:space="preserve">
+    <value>Ви впевнені, що хочете знову відкрити цей виклик? Це видалить усі пов’язані дані закриття, зокрема хто закрив виклик, коли його було закрито, статус закриття та будь-які примітки щодо закриття.</value>
+  </data>
+  <data name="ReopenCallRequestSentMessage" xml:space="preserve">
+    <value>Ваш запит на повторне відкриття виклику обробляється. Перевірте сторінку панелі відкритих викликів, щоб переглянути виклик.</value>
+  </data>
+  <data name="RouteFrom" xml:space="preserve">
+    <value>Маршрут від {0}</value>
+  </data>
+  <data name="SearchDestinationPois" xml:space="preserve">
+    <value>Шукати POI призначення...</value>
+  </data>
+  <data name="SearchIndoorLocations" xml:space="preserve">
+    <value>Шукати внутрішні розташування...</value>
+  </data>
+  <data name="SetPinOnMap" xml:space="preserve">
+    <value>Поставити позначку на мапі</value>
+  </data>
+  <data name="Staffing" xml:space="preserve">
+    <value>Укомплектування</value>
+  </data>
+  <data name="UngroupedUsersUnits" xml:space="preserve">
+    <value>Незгруповані користувачі/підрозділи</value>
+  </data>
+  <data name="WhatThreeWordsNotFound" xml:space="preserve">
+    <value>What3Words не вдалося знайти місце для цих слів. Переконайтеся, що це 3 слова, розділені крапками.</value>
+  </data>
+  <data name="WhatThreeWordsPlaceholder" xml:space="preserve">
+    <value>what.three.words</value>
+  </data>
+  <data name="AnswerQuestions" xml:space="preserve">
+    <value>Відповісти на запитання</value>
+  </data>
+  <data name="CallPriorityLow" xml:space="preserve">
+    <value>Низький</value>
+  </data>
+  <data name="CallPriorityMedium" xml:space="preserve">
+    <value>Середній</value>
+  </data>
+  <data name="CallPriorityHigh" xml:space="preserve">
+    <value>Високий</value>
+  </data>
+  <data name="CallPriorityEmergency" xml:space="preserve">
+    <value>Екстрений</value>
+  </data>
+  <data name="Cancelled" xml:space="preserve">
+    <value>Скасовано</value>
+  </data>
+  <data name="CheckInTimerTargetUnitType" xml:space="preserve">
+    <value>Тип підрозділу</value>
+  </data>
+  <data name="CheckInTimerTargetHazmatExposure" xml:space="preserve">
+    <value>Вплив небезпечних матеріалів</value>
+  </data>
+  <data name="CheckInTimerTargetSectorRotation" xml:space="preserve">
+    <value>Ротація сектору</value>
+  </data>
+  <data name="CheckInTimerTargetRehab" xml:space="preserve">
+    <value>Реабілітація</value>
+  </data>
+  <data name="File" xml:space="preserve">
+    <value>Файл</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>Неактивний</value>
+  </data>
+  <data name="InvalidDestinationPoi" xml:space="preserve">
+    <value>Виберіть дійсний POI призначення.</value>
+  </data>
+  <data name="LoggedOff" xml:space="preserve">
+    <value>вийшов із системи.</value>
+  </data>
+  <data name="AttachFileRequired" xml:space="preserve">
+    <value>Потрібно вибрати файл для вкладення.</value>
+  </data>
+  <data name="DocumentTypeNotImportable" xml:space="preserve">
+    <value>Тип документа ({0}) не можна імпортувати.</value>
+  </data>
+  <data name="FileTooLarge10Mb" xml:space="preserve">
+    <value>Файл завеликий і має бути меншим за 10 МБ.</value>
+  </data>
+  <data name="NoLocation" xml:space="preserve">
+    <value>Немає місця</value>
+  </data>
+  <data name="GenericCall" xml:space="preserve">
+    <value>Загальний виклик</value>
+  </data>
+  <data name="SelectContact" xml:space="preserve">
+    <value>Виберіть контакт</value>
+  </data>
+  <data name="NoDestination" xml:space="preserve">
+    <value>Немає пункту призначення</value>
+  </data>
+  <data name="Pois" xml:space="preserve">
+    <value>POI</value>
+  </data>
+  <data name="Override" xml:space="preserve">
+    <value>Перевизначення</value>
+  </data>
+  <data name="RouteDistance" xml:space="preserve">
+    <value>Відстань</value>
+  </data>
+  <data name="RouteDuration" xml:space="preserve">
+    <value>Тривалість</value>
+  </data>
+  <data name="RouteStep" xml:space="preserve">
+    <value>Крок</value>
+  </data>
+  <data name="RouteUnitKilometers" xml:space="preserve">
+    <value>км</value>
+  </data>
+  <data name="RouteUnitMinutes" xml:space="preserve">
+    <value>хв</value>
+  </data>
 </root>

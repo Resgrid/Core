@@ -35,5 +35,12 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		public SelectList CallTemplates { get; set; }
 		public int CallTemplateId { get; set; }
 		public string NewCallFormData { get; set; }
+		public List<SelectListItem> DestinationPois { get; set; }
+
+		public UpdateCallView()
+		{
+			AdditionalContacts = new List<string>();
+			DestinationPois = new List<SelectListItem>();
+		}
 	}
 }

@@ -47,10 +47,10 @@
     <div class="col-sm-8">
         <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
             <div class="buttons-actions">
-                <a title="Quick Template" class="btn btn-inverse" data-target="#callQuickTemplateWindow" data-toggle="modal">@localizer["Template"]</a>
+                <a title="@localizer["Template"]" class="btn btn-inverse" data-target="#callQuickTemplateWindow" data-toggle="modal">@localizer["Template"]</a>
                 @if (!String.IsNullOrWhiteSpace(Model.NewCallFormData))
                 {
-                    <a title="Call Form" class="btn btn-info" data-target="#newCallFormWindow" data-toggle="modal">@localizer["CallForm"]</a>
+                    <a title="@localizer["CallForm"]" class="btn btn-info" data-target="#newCallFormWindow" data-toggle="modal">@localizer["CallForm"]</a>
                 }
             </div>
         </div>
@@ -109,7 +109,7 @@
                             <div class="col-sm-10">
                                 <select asp-for="PrimaryContact" asp-items="Model.ContactsList" style="padding-left: 0; width: 100%;"></select>
                                 <span class="input-group-addon">
-                                    <i id="primaryNotesIcon" class="fa fa-info-circle text-danger alert-icon" title="Note Alerts"></i>
+                                    <i id="primaryNotesIcon" class="fa fa-info-circle text-danger alert-icon" title="@localizer["NoteAlerts"]"></i>
                                 </span>
                             </div>
                         </div>
@@ -118,7 +118,7 @@
                             <div class="col-sm-10">
                                 <select asp-for="AdditionalContacts" asp-items="Model.ContactsList" multiple="multiple" style="padding-left: 0; width: 100%;"></select>
                                 <span class="input-group-addon">
-                                    <i id="additionalNotesIcon" class="fa fa-info-circle text-danger alert-icon" title="Note Alerts"></i>
+                                    <i id="additionalNotesIcon" class="fa fa-info-circle text-danger alert-icon" title="@localizer["NoteAlerts"]"></i>
                                 </span>
                             </div>
                         </div>
@@ -172,7 +172,7 @@
                                     </div>
                                     <div class="col-md-6" style="padding-left: 0px;">
                                         <div class="input-group input-group-sm">
-                                            <input type="text" class="form-control" placeholder="what.three.words" asp-for="What3Word" style="width:250px;">
+                                            <input type="text" class="form-control" placeholder="@localizer["WhatThreeWordsPlaceholder"]" asp-for="What3Word" style="width:250px;">
                                             <span class="input-group-btn" style="float: left;">
                                                 <a id="findw3wButton" href="#" class="btn btn-info">@localizer["FindW3wLocation"]</a>
                                             </span>
@@ -183,17 +183,24 @@
                                 <div class="row" style="margin-top: 8px;">
                                     <div class="col-md-11">
                                         <div class="input-group input-group-sm">
-                                            <span class="input-group-addon">Lat</span>
-                                            <input type="text" class="form-control" asp-for="Latitude" placeholder="Latitude">
-                                            <span class="input-group-addon">Lng</span>
-                                            <input type="text" class="form-control" asp-for="Longitude" placeholder="Longitude">
+                                            <span class="input-group-addon">@localizer["LatitudeShort"]</span>
+                                            <input type="text" class="form-control" asp-for="Latitude" placeholder="@localizer["Latitude"]">
+                                            <span class="input-group-addon">@localizer["LongitudeShort"]</span>
+                                            <input type="text" class="form-control" asp-for="Longitude" placeholder="@localizer["Longitude"]">
                                             <span class="input-group-btn">
-                                                <a id="setPinButton" href="#" class="btn btn-warning">Set Pin on Map</a>
+                                                <a id="setPinButton" href="#" class="btn btn-warning">@localizer["SetPinOnMap"]</a>
                                             </span>
                                         </div>
                                     </div>
                                 </div>
                                 <div id="callMap" name="callMap" style="position: relative; width: 90%; height: 500px; margin-top: 8px;"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["Destination"]</label>
+                            <div class="col-sm-6">
+                                @Html.DropDownListFor(x => x.Call.DestinationPoiId, Model.DestinationPois, new { @class = "form-control destination-poi-search", @style = "width:100%;" })
+                                <span class="help-inline">@localizer["DestinationHelp"]</span>
                             </div>
                         </div>
                         <div class="form-group">
@@ -422,6 +429,7 @@
         </script>
     }
 
+    @await Html.PartialAsync("_DispatchLocalizationScript")
     <script src="~/js/app/internal/dispatch/resgrid.dispatch.addArchivedCall.js"></script>
 
     <script type="text/javascript">
@@ -507,6 +515,13 @@
             $("#AdditionalContacts :selected").map(function(i, el) {
                 checkAlertNotes($(el).val(), "#additionalNotesIcon");
             }).get();
+
+            $('.destination-poi-search').select2({
+                placeholder: resgrid.dispatch.getText('searchDestinationPois', 'Search destination POIs...'),
+                allowClear: true,
+                minimumResultsForSearch: 0,
+                width: '100%'
+            });
         });
     </script>
 }

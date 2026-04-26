@@ -8,6 +8,25 @@ var resgrid;
             $(document).ready(function () {
                 resgrid.common.analytics.track('Units List');
 
+                function parseDestinationSelection(rawValue) {
+                    if (!rawValue) {
+                        return { type: 0, destination: 0 };
+                    }
+
+                    const parts = rawValue.toString().split(':');
+                    if (parts.length === 2) {
+                        return {
+                            type: parseInt(parts[0], 10) || 0,
+                            destination: parseInt(parts[1], 10) || 0
+                        };
+                    }
+
+                    return {
+                        type: 0,
+                        destination: parseInt(rawValue, 10) || 0
+                    };
+                }
+
                 $('.table').DataTable();
                 $('#tree').bstreeview({ data: treeData });
                 $('input[type="checkbox"]').click(evaluate);
@@ -47,7 +66,8 @@ var resgrid;
                     function () {
                         $('#savingUnitStatusButtonLoader').show();
                         $('#savingUnitStatusButton').hide();
-                        $.get(resgrid.absoluteBaseUrl + '/User/Units/SetUnitStateWithDest?unitId=' + $('#setUnitStateUnitId').val() + '&stateType=' + $("#UnitStatusDropdown").val() + '&type=2&destination=' + $('#UnitStatusDestinationDropdown').val() + '&note=' + encodeURI($('#UnitStatusNote').val()), function (data) {
+                        const selection = parseDestinationSelection($('#UnitStatusDestinationDropdown').val());
+                        $.get(resgrid.absoluteBaseUrl + '/User/Units/SetUnitStateWithDest?unitId=' + $('#setUnitStateUnitId').val() + '&stateType=' + $("#UnitStatusDropdown").val() + '&type=' + selection.type + '&destination=' + selection.destination + '&note=' + encodeURI($('#UnitStatusNote').val()), function (data) {
                             location.reload();
                         });
                     });
@@ -83,7 +103,8 @@ var resgrid;
                     function () {
                         $('#savingSelectedUnitStatusButtonLoader').show();
                         $('#savingSelectedUnitStatusButton').hide();
-                        $.get(resgrid.absoluteBaseUrl + '/User/Units/SetUnitStateForMultiple?unitIds=' + getSelectedUnits() + '&stateType=' + $("#SelectedUnitStatusDropdown").val() + '&type=2&destination=' + $('#SelectedUnitStatusDestinationDropdown').val() + '&note=' + encodeURI($('#SelectedUnitStatusNote').val()), function (data) {
+                        const selection = parseDestinationSelection($('#SelectedUnitStatusDestinationDropdown').val());
+                        $.get(resgrid.absoluteBaseUrl + '/User/Units/SetUnitStateForMultiple?unitIds=' + getSelectedUnits() + '&stateType=' + $("#SelectedUnitStatusDropdown").val() + '&type=' + selection.type + '&destination=' + selection.destination + '&note=' + encodeURI($('#SelectedUnitStatusNote').val()), function (data) {
                             location.reload();
                         });
                     });

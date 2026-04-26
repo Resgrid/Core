@@ -91,6 +91,20 @@
   gap: 6px;
 }
 
+.rg-map__layer-section + .rg-map__layer-section {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.rg-map__layer-swatch {
+  width: 12px;
+  height: 12px;
+  border: 1px solid rgba(17, 24, 39, 0.2);
+  border-radius: 999px;
+  flex: 0 0 auto;
+}
+
 .rg-map__overlay {
   position: absolute;
   inset: 0;
@@ -127,11 +141,56 @@
   cursor: pointer;
 }
 
+.rg-map__marker--poi {
+  position: relative;
+  width: 36px;
+  min-height: 48px;
+  justify-content: flex-start;
+}
+
 .rg-map__marker-icon {
   width: 32px;
   height: 37px;
   object-fit: contain;
   pointer-events: none;
+}
+
+.rg-map__poi-marker-wrapper {
+  background: transparent;
+  border: 0;
+}
+
+.rg-map__poi-marker {
+  position: relative;
+  width: 36px;
+  height: 48px;
+}
+
+.rg-map__poi-marker-shape {
+  width: 36px;
+  height: 48px;
+  fill: var(--rg-map-poi-color, #2563eb);
+  filter: drop-shadow(0 1px 2px rgba(17, 24, 39, 0.35));
+}
+
+.rg-map__poi-marker-icon {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: #ffffff;
+  font-size: 14px;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.rg-map__marker--poi .rg-map__poi-marker-shape {
+  width: 36px;
+  height: 48px;
+}
+
+.rg-map__marker--poi .rg-map__poi-marker-icon {
+  top: 10px;
 }
 
 .rg-map__marker-label {

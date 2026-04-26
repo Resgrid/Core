@@ -611,4 +611,223 @@
   <data name="NoVideoFeeds" xml:space="preserve">
     <value>Inga videoflöden har lagts till för detta ärende.</value>
   </data>
+  <data name="Additional" xml:space="preserve">
+    <value>Ytterligare</value>
+  </data>
+  <data name="AllOfGroupDispatched" xml:space="preserve">
+    <value>Alla i {0} utlarmade</value>
+  </data>
+  <data name="AreYouSure" xml:space="preserve">
+    <value>Är du säker?</value>
+  </data>
+  <data name="CallUpdatedTitle" xml:space="preserve">
+    <value>Ärende uppdaterat</value>
+  </data>
+  <data name="CallUpdatedMessage" xml:space="preserve">
+    <value>Detta ärende har uppdaterats, uppdatera sidan för att se den senaste informationen.</value>
+  </data>
+  <data name="CallsForYear" xml:space="preserve">
+    <value>Ärenden för året</value>
+  </data>
+  <data name="CheckInFailed" xml:space="preserve">
+    <value>Incheckning misslyckades. Försök igen.</value>
+  </data>
+  <data name="CheckInStatusOk" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="CheckInStatusOverdue" xml:space="preserve">
+    <value>FÖRSENAD</value>
+  </data>
+  <data name="CustomFields" xml:space="preserve">
+    <value>Anpassade fält</value>
+  </data>
+  <data name="Destination" xml:space="preserve">
+    <value>Destination</value>
+  </data>
+  <data name="DestinationHelp" xml:space="preserve">
+    <value>Välj en destinations-POI som ett sjukhus, skydd, överföringscenter eller uppställningsområde.</value>
+  </data>
+  <data name="DispatchChat" xml:space="preserve">
+    <value>Larmchatt</value>
+  </data>
+  <data name="DispatchTime" xml:space="preserve">
+    <value>Larmtid</value>
+  </data>
+  <data name="EnterMessageHere" xml:space="preserve">
+    <value>Skriv meddelande här...</value>
+  </data>
+  <data name="ETA" xml:space="preserve">
+    <value>ETA</value>
+  </data>
+  <data name="GoToDispatch" xml:space="preserve">
+    <value>Gå till larm</value>
+  </data>
+  <data name="GoToHome" xml:space="preserve">
+    <value>Gå till startsidan</value>
+  </data>
+  <data name="Group" xml:space="preserve">
+    <value>Grupp</value>
+  </data>
+  <data name="GroupSelected" xml:space="preserve">
+    <value>(Grupp vald)</value>
+  </data>
+  <data name="IndoorLocation" xml:space="preserve">
+    <value>Inomhusplats</value>
+  </data>
+  <data name="InvalidCoordinates" xml:space="preserve">
+    <value>Ange giltiga numeriska värden för latitud och longitud.</value>
+  </data>
+  <data name="Latitude" xml:space="preserve">
+    <value>Latitud</value>
+  </data>
+  <data name="LatitudeShort" xml:space="preserve">
+    <value>Lat</value>
+  </data>
+  <data name="Longitude" xml:space="preserve">
+    <value>Longitud</value>
+  </data>
+  <data name="LongitudeShort" xml:space="preserve">
+    <value>Lon</value>
+  </data>
+  <data name="NoteAlerts" xml:space="preserve">
+    <value>Notisvarningar</value>
+  </data>
+  <data name="OnlineUsers" xml:space="preserve">
+    <value>Användare online</value>
+  </data>
+  <data name="PersonnelCount" xml:space="preserve">
+    <value>Personalantal</value>
+  </data>
+  <data name="PrintExportView" xml:space="preserve">
+    <value>Utskriftsvy (export)</value>
+  </data>
+  <data name="Primary" xml:space="preserve">
+    <value>Primär</value>
+  </data>
+  <data name="ProtocolTextFor" xml:space="preserve">
+    <value>Protokolltext för {0}</value>
+  </data>
+  <data name="QuestionsFor" xml:space="preserve">
+    <value>Frågor för {0}</value>
+  </data>
+  <data name="RemoveThisCallLink" xml:space="preserve">
+    <value>Ta bort denna ärendelänk</value>
+  </data>
+  <data name="RequestSent" xml:space="preserve">
+    <value>Begäran skickad!</value>
+  </data>
+  <data name="ReopenCallConfirmText" xml:space="preserve">
+    <value>Är du säker på att du vill öppna detta ärende igen? Detta tar bort all tillhörande stängningsdata, inklusive vem som stängde ärendet, när det stängdes, dess stängningsstatus och eventuella stängningsanteckningar.</value>
+  </data>
+  <data name="ReopenCallRequestSentMessage" xml:space="preserve">
+    <value>Din begäran om att öppna ärendet igen behandlas. Kontrollera dashboardsidan för öppna ärenden för att visa ärendet.</value>
+  </data>
+  <data name="RouteFrom" xml:space="preserve">
+    <value>Rutt från {0}</value>
+  </data>
+  <data name="SearchDestinationPois" xml:space="preserve">
+    <value>Sök destinations-POI:er...</value>
+  </data>
+  <data name="SearchIndoorLocations" xml:space="preserve">
+    <value>Sök inomhusplatser...</value>
+  </data>
+  <data name="SetPinOnMap" xml:space="preserve">
+    <value>Sätt nål på kartan</value>
+  </data>
+  <data name="Staffing" xml:space="preserve">
+    <value>Bemanning</value>
+  </data>
+  <data name="UngroupedUsersUnits" xml:space="preserve">
+    <value>Ogrupperade användare/enheter</value>
+  </data>
+  <data name="WhatThreeWordsNotFound" xml:space="preserve">
+    <value>What3Words kunde inte hitta en plats för dessa ord. Kontrollera att det är 3 ord separerade med punkter.</value>
+  </data>
+  <data name="WhatThreeWordsPlaceholder" xml:space="preserve">
+    <value>what.three.words</value>
+  </data>
+  <data name="AnswerQuestions" xml:space="preserve">
+    <value>Besvara frågor</value>
+  </data>
+  <data name="CallPriorityLow" xml:space="preserve">
+    <value>Låg</value>
+  </data>
+  <data name="CallPriorityMedium" xml:space="preserve">
+    <value>Medel</value>
+  </data>
+  <data name="CallPriorityHigh" xml:space="preserve">
+    <value>Hög</value>
+  </data>
+  <data name="CallPriorityEmergency" xml:space="preserve">
+    <value>Akut</value>
+  </data>
+  <data name="Cancelled" xml:space="preserve">
+    <value>Avbruten</value>
+  </data>
+  <data name="CheckInTimerTargetUnitType" xml:space="preserve">
+    <value>Enhetstyp</value>
+  </data>
+  <data name="CheckInTimerTargetHazmatExposure" xml:space="preserve">
+    <value>Exponering för farliga ämnen</value>
+  </data>
+  <data name="CheckInTimerTargetSectorRotation" xml:space="preserve">
+    <value>Sektorrotation</value>
+  </data>
+  <data name="CheckInTimerTargetRehab" xml:space="preserve">
+    <value>Rehab</value>
+  </data>
+  <data name="File" xml:space="preserve">
+    <value>Fil</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>Inaktiv</value>
+  </data>
+  <data name="InvalidDestinationPoi" xml:space="preserve">
+    <value>Välj en giltig destinations-POI.</value>
+  </data>
+  <data name="LoggedOff" xml:space="preserve">
+    <value>loggade ut.</value>
+  </data>
+  <data name="AttachFileRequired" xml:space="preserve">
+    <value>Du måste välja en fil att bifoga.</value>
+  </data>
+  <data name="DocumentTypeNotImportable" xml:space="preserve">
+    <value>Dokumenttypen ({0}) kan inte importeras.</value>
+  </data>
+  <data name="FileTooLarge10Mb" xml:space="preserve">
+    <value>Filen är för stor och måste vara mindre än 10 MB.</value>
+  </data>
+  <data name="NoLocation" xml:space="preserve">
+    <value>Ingen plats</value>
+  </data>
+  <data name="GenericCall" xml:space="preserve">
+    <value>Generiskt ärende</value>
+  </data>
+  <data name="SelectContact" xml:space="preserve">
+    <value>Välj kontakt</value>
+  </data>
+  <data name="NoDestination" xml:space="preserve">
+    <value>Ingen destination</value>
+  </data>
+  <data name="Pois" xml:space="preserve">
+    <value>POI</value>
+  </data>
+  <data name="Override" xml:space="preserve">
+    <value>Åsidosättning</value>
+  </data>
+  <data name="RouteDistance" xml:space="preserve">
+    <value>Avstånd</value>
+  </data>
+  <data name="RouteDuration" xml:space="preserve">
+    <value>Varaktighet</value>
+  </data>
+  <data name="RouteStep" xml:space="preserve">
+    <value>Steg</value>
+  </data>
+  <data name="RouteUnitKilometers" xml:space="preserve">
+    <value>km</value>
+  </data>
+  <data name="RouteUnitMinutes" xml:space="preserve">
+    <value>min</value>
+  </data>
 </root>

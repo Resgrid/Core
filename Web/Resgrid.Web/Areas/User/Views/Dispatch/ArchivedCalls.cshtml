@@ -35,7 +35,7 @@
 		<div class="wrapper wrapper-content">
 		  <div class="ibox float-e-margins">
 		    <div class="ibox-title">
-		      <h5>Archived Calls</h5>
+		      <h5>@localizer["ArchivedCallsHeader"]</h5>
 		      <div class="ibox-tools">
 		        @if (ClaimsAuthorizationHelper.CanCreateCall())
 				{
@@ -47,7 +47,7 @@
 		    </div>
 		    <div class="ibox-tools">
 		      <div class="buttons-actions" style="padding-left: 12px; text-align:left;">
-		        Calls for Year: @Html.DropDownListFor(m => m.Year, Model.Years, new { @style = "margin-left: 4px; width: 60px;" })
+		        @localizer["CallsForYear"]: @Html.DropDownListFor(m => m.Year, Model.Years, new { @style = "margin-left: 4px; width: 60px;" })
 		      </div>
 		    </div>
 		    <div class="ibox-content">
@@ -60,6 +60,6 @@
 
 @section Scripts
 {
-
+	@await Html.PartialAsync("_DispatchLocalizationScript")
 	<script src="@Url.Content("~/js/app/internal/dispatch/resgrid.dispatch.archive.js")" type="text/javascript"></script>
 }

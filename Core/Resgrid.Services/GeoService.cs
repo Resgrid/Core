@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
@@ -12,13 +13,15 @@ namespace Resgrid.Services
 		private readonly ICallsService _callsService;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IAddressService _addressService;
+		private readonly IMappingService _mappingService;
 
-		public GeoService(IGeoLocationProvider geoLocationProvider, ICallsService callsService, IDepartmentGroupsService departmentGroupsService, IAddressService addressService)
+		public GeoService(IGeoLocationProvider geoLocationProvider, ICallsService callsService, IDepartmentGroupsService departmentGroupsService, IAddressService addressService, IMappingService mappingService)
 		{
 			_geoLocationProvider = geoLocationProvider;
 			_callsService = callsService;
 			_departmentGroupsService = departmentGroupsService;
 			_addressService = addressService;
+			_mappingService = mappingService;
 		}
 
 		public async Task<double> GetPersonnelEtaInSecondsAsync(ActionLog log)
@@ -29,7 +32,7 @@ namespace Resgrid.Services
 			if (log.DestinationId.HasValue)
 			{
 				RouteInformation route = null;
-				if (log.DestinationType.GetValueOrDefault() == 1 || log.ActionTypeId == (int)ActionTypes.RespondingToStation) // Department Group
+				if (log.DestinationType.ToDestinationEntityType() == DestinationEntityTypes.Station || log.ActionTypeId == (int)ActionTypes.RespondingToStation) // Department Group
 				{
 					var group = await _departmentGroupsService.GetGroupByIdAsync(log.DestinationId.Value, false);
 
@@ -49,14 +52,24 @@ namespace Resgrid.Services
 						route = await _geoLocationProvider.GetRoute(log.GeoLocationData, string.Format("{0},{1}", group.Latitude, group.Longitude));
 					}
 				}
-				else if (log.DestinationType.GetValueOrDefault() == 2 || log.ActionTypeId == (int)ActionTypes.RespondingToScene) // Call
+				else if (log.DestinationType.ToDestinationEntityType() == DestinationEntityTypes.Call || log.ActionTypeId == (int)ActionTypes.RespondingToScene) // Call
 				{
 					var call = await _callsService.GetCallByIdAsync(log.DestinationId.Value, false);
 
-					if (!String.IsNullOrWhiteSpace(call.GeoLocationData) && call.GeoLocationData.Length > 1)
+					if (call != null && !String.IsNullOrWhiteSpace(call.GeoLocationData))
 						route = await _geoLocationProvider.GetRoute(log.GeoLocationData, call.GeoLocationData);
-					else
-						route = await _geoLocationProvider.GetRoute(log.GeoLocationData, call.GeoLocationData);
+				}
+				else if (log.DestinationType.ToDestinationEntityType() == DestinationEntityTypes.Poi)
+				{
+					var poi = await _mappingService.GetPOIByIdAsync(log.DestinationId.Value);
+
+					if (poi != null)
+					{
+						if (!String.IsNullOrWhiteSpace(poi.Address))
+							route = await _geoLocationProvider.GetRoute(log.GeoLocationData, poi.Address);
+						else
+							route = await _geoLocationProvider.GetRoute(log.GeoLocationData, String.Format(CultureInfo.InvariantCulture, "{0},{1}", poi.Latitude, poi.Longitude));
+					}
 				}
 
 				if (route != null)

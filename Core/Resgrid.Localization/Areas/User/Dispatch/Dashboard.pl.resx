@@ -83,4 +83,7 @@
   <data name="UnitStatusesHeader" xml:space="preserve">
     <value>Unit Statuses</value>
   </data>
+  <data name="Routes" xml:space="preserve">
+    <value>Trasy</value>
+  </data>
 </root>

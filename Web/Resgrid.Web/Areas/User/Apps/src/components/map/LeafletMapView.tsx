@@ -5,6 +5,8 @@ import 'leaflet/dist/leaflet.css';
 import {
   getLayerColor,
   getMarkerIconUrl,
+  getPoiMarkerShapePath,
+  isPoiMarker,
   type MapMarkerInfo,
   type MapRendererProps,
 } from './mapTypes';
@@ -15,11 +17,35 @@ interface MarkerState {
   longitude: number;
   title: string;
   imagePath: string;
+  markerShape: string;
+  color: string;
+  markerType: number;
   infoWindowContent: string;
   hideLabels: boolean;
 }
 
-function createMarkerIcon(marker: MapMarkerInfo): L.Icon {
+function createMarkerIcon(marker: MapMarkerInfo): L.Icon | L.DivIcon {
+  if (isPoiMarker(marker)) {
+    const iconClass = typeof marker.ImagePath === 'string' && marker.ImagePath.length > 0
+      ? marker.ImagePath
+      : 'map-icon-map-pin';
+    const color = marker.Color || '#2563eb';
+
+    return L.divIcon({
+      className: 'rg-map__poi-marker-wrapper',
+      html: `<div class="rg-map__poi-marker" style="--rg-map-poi-color:${color};">
+        <svg viewBox="-24 -48 48 48" class="rg-map__poi-marker-shape" aria-hidden="true">
+          <path d="${getPoiMarkerShapePath(marker.Marker)}"></path>
+        </svg>
+        <span class="map-icon ${iconClass} rg-map__poi-marker-icon" aria-hidden="true"></span>
+      </div>`,
+      iconSize: [36, 48],
+      iconAnchor: [18, 48],
+      popupAnchor: [0, -42],
+      tooltipAnchor: [0, 20],
+    });
+  }
+
   return L.icon({
     iconUrl: getMarkerIconUrl(marker),
     iconSize: [32, 37],
@@ -143,10 +169,13 @@ export default function LeafletMapView({
       const existingMarkerState = markerRefs.current.get(markerInfo.Id);
       const appearanceChanged =
         !existingMarkerState ||
-        existingMarkerState.title !== markerInfo.Title ||
-        existingMarkerState.imagePath !== markerInfo.ImagePath ||
-        existingMarkerState.infoWindowContent !== markerInfo.InfoWindowContent ||
-        existingMarkerState.hideLabels !== hideLabels;
+          existingMarkerState.title !== markerInfo.Title ||
+          existingMarkerState.imagePath !== markerInfo.ImagePath ||
+          existingMarkerState.markerShape !== (markerInfo.Marker ?? '') ||
+          existingMarkerState.color !== (markerInfo.Color ?? '') ||
+          existingMarkerState.markerType !== markerInfo.Type ||
+          existingMarkerState.infoWindowContent !== markerInfo.InfoWindowContent ||
+          existingMarkerState.hideLabels !== hideLabels;
 
       if (appearanceChanged) {
         existingMarkerState?.marker.remove();
@@ -160,6 +189,9 @@ export default function LeafletMapView({
           longitude: markerInfo.Longitude,
           title: markerInfo.Title,
           imagePath: markerInfo.ImagePath,
+          markerShape: markerInfo.Marker ?? '',
+          color: markerInfo.Color ?? '',
+          markerType: markerInfo.Type,
           infoWindowContent: markerInfo.InfoWindowContent,
           hideLabels,
         });

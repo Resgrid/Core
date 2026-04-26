@@ -122,6 +122,7 @@
         var centerLat = '@Model.Latitude';
         var centerLon = '@Model.Longitude';
         var poiTypeId = '@Model.Type.PoiTypeId';
+        var canManagePois = @(ClaimsAuthorizationHelper.IsUserDepartmentAdmin() ? "true" : "false");
         var osmTileUrl = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.TileUrl, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
         var osmTileAttribution = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.Attribution, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
     </script>

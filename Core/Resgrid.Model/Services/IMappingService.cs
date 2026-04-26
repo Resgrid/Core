@@ -29,6 +29,14 @@ namespace Resgrid.Model.Services
 		/// <returns>Task&lt;List&lt;PoiType&gt;&gt;.</returns>
 		Task<List<PoiType>> GetPOITypesForDepartmentAsync(int departmentId);
 
+		Task<List<Poi>> GetPOIsForDepartmentAsync(int departmentId);
+
+		Task<List<Poi>> GetDestinationPOIsForDepartmentAsync(int departmentId);
+
+		Task<Poi> GetPOIByIdAsync(int poiId);
+
+		Task<Poi> GetDestinationPOIByIdAsync(int departmentId, int poiId);
+
 		/// <summary>
 		/// Gets the type by identifier asynchronous.
 		/// </summary>
@@ -43,6 +51,8 @@ namespace Resgrid.Model.Services
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
 		Task<bool> DeletePOITypeAsync(int poiTypeId, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<bool> DeletePOIAsync(int poiId, CancellationToken cancellationToken = default(CancellationToken));
 
 		Task<MapLayer> SaveMapLayerAsync(MapLayer mapLayer);
 

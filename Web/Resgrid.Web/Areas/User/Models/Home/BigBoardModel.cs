@@ -99,7 +99,7 @@ namespace Resgrid.Web.Areas.User.Models
 
 		public class PersonnelViewModel
 		{
-			public static async Task<PersonnelViewModel> Create(string name, ActionLog actionLog, UserState userState, Department department, DepartmentGroup respondingToDepartment, DepartmentGroup group, List<PersonnelRole> roles, string callNumber)
+			public static async Task<PersonnelViewModel> Create(string name, ActionLog actionLog, UserState userState, Department department, DepartmentGroup respondingToDepartment, DepartmentGroup group, List<PersonnelRole> roles, string callNumber, ResolvedDestinationData destination)
 			{
 				DateTime updateDate = TimeConverterHelper.TimeConverter(DateTime.UtcNow, department);
 
@@ -264,7 +264,9 @@ namespace Resgrid.Web.Areas.User.Models
 							}
 							else
 							{
-								if (!String.IsNullOrWhiteSpace(callNumber))
+								if (destination?.DestinationType == (int)DestinationEntityTypes.Poi && !String.IsNullOrWhiteSpace(destination.Name))
+									status = string.Format("Responding to {0}", destination.Name);
+								else if (!String.IsNullOrWhiteSpace(callNumber))
 									status = string.Format("Responding to Call {0}", callNumber);
 								else
 									status = string.Format("Responding to Call {0}", actionLog.DestinationId);

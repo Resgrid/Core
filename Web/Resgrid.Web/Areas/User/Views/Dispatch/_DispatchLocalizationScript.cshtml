@@ -1,0 +1,71 @@
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> localizer
+@inject IStringLocalizer<Resgrid.Localization.Common> commonLocalizer
+<script type="text/javascript">
+    window.resgrid = window.resgrid || {};
+    window.resgrid.dispatch = window.resgrid.dispatch || {};
+    window.resgrid.dispatch.localizer = Object.assign(
+        window.resgrid.dispatch.localizer || {},
+        @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(new
+        {
+            active = commonLocalizer["Active"].Value,
+            actions = commonLocalizer["Actions"].Value,
+            additional = localizer["Additional"].Value,
+            answerQuestions = localizer["AnswerQuestions"].Value,
+            areYouSure = localizer["AreYouSure"].Value,
+            callUpdatedMessage = localizer["CallUpdatedMessage"].Value,
+            callUpdatedTitle = localizer["CallUpdatedTitle"].Value,
+            checkIn = localizer["CheckInTimerPerformCheckIn"].Value,
+            checkInFailed = localizer["CheckInFailed"].Value,
+            checkInStatusOk = localizer["CheckInStatusOk"].Value,
+            checkInStatusOverdue = localizer["CheckInStatusOverdue"].Value,
+            close = commonLocalizer["Close"].Value,
+            customFields = localizer["CustomFields"].Value,
+            delete = commonLocalizer["Delete"].Value,
+            dispatchTime = localizer["DispatchTime"].Value,
+            eta = localizer["ETA"].Value,
+            group = localizer["Group"].Value,
+            invalidCoordinates = localizer["InvalidCoordinates"].Value,
+            inactive = localizer["Inactive"].Value,
+            name = commonLocalizer["Name"].Value,
+            noteAlerts = localizer["NoteAlerts"].Value,
+            number = commonLocalizer["Number"].Value,
+            personnelCount = localizer["PersonnelCount"].Value,
+            priority = commonLocalizer["Priority"].Value,
+            protocolTextFor = localizer["ProtocolTextFor"].Value,
+            questionsFor = localizer["QuestionsFor"].Value,
+            removeThisCallLink = localizer["RemoveThisCallLink"].Value,
+            reopenCallConfirmText = localizer["ReopenCallConfirmText"].Value,
+            reopenCallRequestSentMessage = localizer["ReopenCallRequestSentMessage"].Value,
+            requestSent = localizer["RequestSent"].Value,
+            respondToCall = commonLocalizer["RespondToCall"].Value,
+            roles = commonLocalizer["Roles"].Value,
+            searchDestinationPois = localizer["SearchDestinationPois"].Value,
+            searchIndoorLocations = localizer["SearchIndoorLocations"].Value,
+            staffing = localizer["Staffing"].Value,
+            state = localizer["StateLabel"].Value,
+            station = commonLocalizer["Station"].Value,
+            status = commonLocalizer["Status"].Value,
+            timestamp = commonLocalizer["Timestamp"].Value,
+            type = commonLocalizer["Type"].Value,
+            unknown = commonLocalizer["Unknown"].Value,
+            update = commonLocalizer["Update"].Value,
+            view = commonLocalizer["View"].Value,
+            warning = commonLocalizer["Warning"].Value,
+            whatThreeWordsNotFound = localizer["WhatThreeWordsNotFound"].Value
+        },
+        new Newtonsoft.Json.JsonSerializerSettings
+        {
+            StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml
+        }))
+    );
+    window.resgrid.dispatch.getText = window.resgrid.dispatch.getText || function (key, fallback) {
+        var value = window.resgrid.dispatch.localizer && window.resgrid.dispatch.localizer[key];
+        return typeof value === 'string' && value.length > 0 ? value : fallback;
+    };
+    window.resgrid.dispatch.formatText = window.resgrid.dispatch.formatText || function (template) {
+        var args = Array.prototype.slice.call(arguments, 1);
+        return (template || '').replace(/\{(\d+)\}/g, function (match, index) {
+            return typeof args[index] !== 'undefined' ? args[index] : match;
+        });
+    };
+</script>

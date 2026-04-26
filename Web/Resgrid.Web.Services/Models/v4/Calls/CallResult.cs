@@ -54,6 +54,41 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public string Address { get; set; }
 
 		/// <summary>
+		/// Destination POI id if the call has a destination.
+		/// </summary>
+		public int? DestinationPoiId { get; set; }
+
+		/// <summary>
+		/// Destination display name.
+		/// </summary>
+		public string DestinationName { get; set; }
+
+		/// <summary>
+		/// Destination address.
+		/// </summary>
+		public string DestinationAddress { get; set; }
+
+		/// <summary>
+		/// Destination type/category name.
+		/// </summary>
+		public string DestinationTypeName { get; set; }
+
+		/// <summary>
+		/// Destination POI type id.
+		/// </summary>
+		public int? DestinationPoiTypeId { get; set; }
+
+		/// <summary>
+		/// Destination latitude.
+		/// </summary>
+		public double? DestinationLatitude { get; set; }
+
+		/// <summary>
+		/// Destination longitude.
+		/// </summary>
+		public double? DestinationLongitude { get; set; }
+
+		/// <summary>
 		/// Geo location Coordinates
 		/// </summary>
 		public string Geolocation { get; set; }

@@ -611,4 +611,223 @@
   <data name="NoVideoFeeds" xml:space="preserve">
     <value>Aucun flux vidéo n'a été ajouté à cet appel.</value>
   </data>
+  <data name="Additional" xml:space="preserve">
+    <value>Supplémentaire</value>
+  </data>
+  <data name="AllOfGroupDispatched" xml:space="preserve">
+    <value>Tout {0} dépêché</value>
+  </data>
+  <data name="AreYouSure" xml:space="preserve">
+    <value>Êtes-vous sûr ?</value>
+  </data>
+  <data name="CallUpdatedTitle" xml:space="preserve">
+    <value>Appel mis à jour</value>
+  </data>
+  <data name="CallUpdatedMessage" xml:space="preserve">
+    <value>Cet appel a été mis à jour, veuillez actualiser la page pour voir les dernières informations.</value>
+  </data>
+  <data name="CallsForYear" xml:space="preserve">
+    <value>Appels pour l'année</value>
+  </data>
+  <data name="CheckInFailed" xml:space="preserve">
+    <value>Échec du pointage. Veuillez réessayer.</value>
+  </data>
+  <data name="CheckInStatusOk" xml:space="preserve">
+    <value>OK</value>
+  </data>
+  <data name="CheckInStatusOverdue" xml:space="preserve">
+    <value>EN RETARD</value>
+  </data>
+  <data name="CustomFields" xml:space="preserve">
+    <value>Champs personnalisés</value>
+  </data>
+  <data name="Destination" xml:space="preserve">
+    <value>Destination</value>
+  </data>
+  <data name="DestinationHelp" xml:space="preserve">
+    <value>Sélectionnez un POI de destination tel qu'un hôpital, un abri, un centre de transfert ou une zone de regroupement.</value>
+  </data>
+  <data name="DispatchChat" xml:space="preserve">
+    <value>Chat de dispatch</value>
+  </data>
+  <data name="DispatchTime" xml:space="preserve">
+    <value>Heure de dispatch</value>
+  </data>
+  <data name="EnterMessageHere" xml:space="preserve">
+    <value>Saisissez votre message ici...</value>
+  </data>
+  <data name="ETA" xml:space="preserve">
+    <value>ETA</value>
+  </data>
+  <data name="GoToDispatch" xml:space="preserve">
+    <value>Aller au dispatch</value>
+  </data>
+  <data name="GoToHome" xml:space="preserve">
+    <value>Aller à l'accueil</value>
+  </data>
+  <data name="Group" xml:space="preserve">
+    <value>Groupe</value>
+  </data>
+  <data name="GroupSelected" xml:space="preserve">
+    <value>(Groupe sélectionné)</value>
+  </data>
+  <data name="IndoorLocation" xml:space="preserve">
+    <value>Localisation intérieure</value>
+  </data>
+  <data name="InvalidCoordinates" xml:space="preserve">
+    <value>Veuillez entrer des valeurs numériques valides de latitude et longitude.</value>
+  </data>
+  <data name="Latitude" xml:space="preserve">
+    <value>Latitude</value>
+  </data>
+  <data name="LatitudeShort" xml:space="preserve">
+    <value>Lat</value>
+  </data>
+  <data name="Longitude" xml:space="preserve">
+    <value>Longitude</value>
+  </data>
+  <data name="LongitudeShort" xml:space="preserve">
+    <value>Lon</value>
+  </data>
+  <data name="NoteAlerts" xml:space="preserve">
+    <value>Alertes de notes</value>
+  </data>
+  <data name="OnlineUsers" xml:space="preserve">
+    <value>Utilisateurs en ligne</value>
+  </data>
+  <data name="PersonnelCount" xml:space="preserve">
+    <value>Effectif du personnel</value>
+  </data>
+  <data name="PrintExportView" xml:space="preserve">
+    <value>Vue impression (export)</value>
+  </data>
+  <data name="Primary" xml:space="preserve">
+    <value>Principal</value>
+  </data>
+  <data name="ProtocolTextFor" xml:space="preserve">
+    <value>Texte du protocole pour {0}</value>
+  </data>
+  <data name="QuestionsFor" xml:space="preserve">
+    <value>Questions pour {0}</value>
+  </data>
+  <data name="RemoveThisCallLink" xml:space="preserve">
+    <value>Supprimer ce lien d'appel</value>
+  </data>
+  <data name="RequestSent" xml:space="preserve">
+    <value>Demande envoyée !</value>
+  </data>
+  <data name="ReopenCallConfirmText" xml:space="preserve">
+    <value>Êtes-vous sûr de vouloir rouvrir cet appel ? Cela supprimera toutes les données de clôture associées, notamment qui a clôturé l'appel, quand il a été clôturé, son état de clôture et toutes les notes de clôture.</value>
+  </data>
+  <data name="ReopenCallRequestSentMessage" xml:space="preserve">
+    <value>Votre demande de réouverture de l'appel est en cours de traitement. Veuillez consulter le tableau de bord des appels ouverts pour voir l'appel.</value>
+  </data>
+  <data name="RouteFrom" xml:space="preserve">
+    <value>Itinéraire depuis {0}</value>
+  </data>
+  <data name="SearchDestinationPois" xml:space="preserve">
+    <value>Rechercher des POI de destination...</value>
+  </data>
+  <data name="SearchIndoorLocations" xml:space="preserve">
+    <value>Rechercher des localisations intérieures...</value>
+  </data>
+  <data name="SetPinOnMap" xml:space="preserve">
+    <value>Placer une épingle sur la carte</value>
+  </data>
+  <data name="Staffing" xml:space="preserve">
+    <value>Effectifs</value>
+  </data>
+  <data name="UngroupedUsersUnits" xml:space="preserve">
+    <value>Utilisateurs/Unités non groupés</value>
+  </data>
+  <data name="WhatThreeWordsNotFound" xml:space="preserve">
+    <value>What3Words n'a pas pu trouver de localisation pour ces mots. Assurez-vous qu'il s'agit de 3 mots séparés par des points.</value>
+  </data>
+  <data name="WhatThreeWordsPlaceholder" xml:space="preserve">
+    <value>what.three.words</value>
+  </data>
+  <data name="AnswerQuestions" xml:space="preserve">
+    <value>Répondre aux questions</value>
+  </data>
+  <data name="CallPriorityLow" xml:space="preserve">
+    <value>Faible</value>
+  </data>
+  <data name="CallPriorityMedium" xml:space="preserve">
+    <value>Moyenne</value>
+  </data>
+  <data name="CallPriorityHigh" xml:space="preserve">
+    <value>Élevée</value>
+  </data>
+  <data name="CallPriorityEmergency" xml:space="preserve">
+    <value>Urgence</value>
+  </data>
+  <data name="Cancelled" xml:space="preserve">
+    <value>Annulé</value>
+  </data>
+  <data name="CheckInTimerTargetUnitType" xml:space="preserve">
+    <value>Type d'unité</value>
+  </data>
+  <data name="CheckInTimerTargetHazmatExposure" xml:space="preserve">
+    <value>Exposition matières dangereuses</value>
+  </data>
+  <data name="CheckInTimerTargetSectorRotation" xml:space="preserve">
+    <value>Rotation de secteur</value>
+  </data>
+  <data name="CheckInTimerTargetRehab" xml:space="preserve">
+    <value>Réhabilitation</value>
+  </data>
+  <data name="File" xml:space="preserve">
+    <value>Fichier</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>Inactif</value>
+  </data>
+  <data name="InvalidDestinationPoi" xml:space="preserve">
+    <value>Veuillez sélectionner un POI de destination valide.</value>
+  </data>
+  <data name="LoggedOff" xml:space="preserve">
+    <value>s'est déconnecté.</value>
+  </data>
+  <data name="AttachFileRequired" xml:space="preserve">
+    <value>Vous devez sélectionner un fichier à joindre.</value>
+  </data>
+  <data name="DocumentTypeNotImportable" xml:space="preserve">
+    <value>Le type de document ({0}) n'est pas importable.</value>
+  </data>
+  <data name="FileTooLarge10Mb" xml:space="preserve">
+    <value>Le fichier est trop volumineux et doit être inférieur à 10 Mo.</value>
+  </data>
+  <data name="NoLocation" xml:space="preserve">
+    <value>Aucun emplacement</value>
+  </data>
+  <data name="GenericCall" xml:space="preserve">
+    <value>Appel générique</value>
+  </data>
+  <data name="SelectContact" xml:space="preserve">
+    <value>Sélectionner un contact</value>
+  </data>
+  <data name="NoDestination" xml:space="preserve">
+    <value>Aucune destination</value>
+  </data>
+  <data name="Pois" xml:space="preserve">
+    <value>POI</value>
+  </data>
+  <data name="Override" xml:space="preserve">
+    <value>Surcharge</value>
+  </data>
+  <data name="RouteDistance" xml:space="preserve">
+    <value>Distance</value>
+  </data>
+  <data name="RouteDuration" xml:space="preserve">
+    <value>Durée</value>
+  </data>
+  <data name="RouteStep" xml:space="preserve">
+    <value>Étape</value>
+  </data>
+  <data name="RouteUnitKilometers" xml:space="preserve">
+    <value>km</value>
+  </data>
+  <data name="RouteUnitMinutes" xml:space="preserve">
+    <value>min</value>
+  </data>
 </root>

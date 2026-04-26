@@ -13,6 +13,7 @@ using MongoDB.Bson;
 using Newtonsoft.Json;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Helpers;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Web.Areas.User.Models.Home;
@@ -338,6 +339,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					var poi = new Poi();
 					poi.PoiTypeId = modal.TypeId;
+					poi.Name = coordinate.Name;
 
 					if (coordinate.Latitude.HasValue && coordinate.Longitude.HasValue)
 					{
@@ -389,10 +391,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		public async Task<IActionResult> AddPOI(int poiTypeId)
 		{
+			var type = await _mappingService.GetTypeByIdAsync(poiTypeId);
+
+			if (type == null)
+				return NotFound();
+
+			if (type.DepartmentId != DepartmentId)
+				return Unauthorized();
+
 			var modal = new AddPOIView();
 			modal.TypeId = poiTypeId;
 			modal.Poi = new Poi();
-
 
 			return View(modal);
 		}
@@ -418,10 +427,95 @@ namespace Resgrid.Web.Areas.User.Controllers
 				modal.Poi.PoiTypeId = modal.TypeId;
 				await _mappingService.SavePOIAsync(modal.Poi, cancellationToken);
 
-				return RedirectToAction("POIs");
+				return RedirectToAction("ViewType", new { poiTypeId = modal.TypeId });
 			}
 
 			return View(modal);
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> EditPOI(int poiId)
+		{
+			var poi = await _mappingService.GetPOIByIdAsync(poiId);
+
+			if (poi == null)
+				return NotFound();
+
+			var type = await _mappingService.GetTypeByIdAsync(poi.PoiTypeId);
+
+			if (type == null)
+				return NotFound();
+
+			if (type.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			var model = new AddPOIView();
+			model.TypeId = type.PoiTypeId;
+			model.Poi = poi;
+
+			return View("AddPOI", model);
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> EditPOI(AddPOIView modal, CancellationToken cancellationToken)
+		{
+			if (modal?.Poi == null || modal.Poi.PoiId <= 0)
+			{
+				ModelState.AddModelError("", "Cannot edit POI. Please go back and try again.");
+				return View("AddPOI", modal);
+			}
+
+			var existingPoi = await _mappingService.GetPOIByIdAsync(modal.Poi.PoiId);
+
+			if (existingPoi == null)
+				return NotFound();
+
+			var type = await _mappingService.GetTypeByIdAsync(existingPoi.PoiTypeId);
+
+			if (type == null)
+				return NotFound();
+
+			if (type.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			modal.TypeId = type.PoiTypeId;
+
+			if (ModelState.IsValid)
+			{
+				existingPoi.Name = modal.Poi.Name;
+				existingPoi.Address = modal.Poi.Address;
+				existingPoi.Note = modal.Poi.Note;
+				existingPoi.Latitude = modal.Poi.Latitude;
+				existingPoi.Longitude = modal.Poi.Longitude;
+
+				await _mappingService.SavePOIAsync(existingPoi, cancellationToken);
+
+				return RedirectToAction("ViewType", new { poiTypeId = type.PoiTypeId });
+			}
+
+			modal.Poi.PoiTypeId = type.PoiTypeId;
+			return View("AddPOI", modal);
+		}
+
+		[HttpGet]
+		public async Task<IActionResult> DeletePOI(int poiId, CancellationToken cancellationToken)
+		{
+			var poi = await _mappingService.GetPOIByIdAsync(poiId);
+
+			if (poi == null)
+				return NotFound();
+
+			var type = await _mappingService.GetTypeByIdAsync(poi.PoiTypeId);
+
+			if (type == null)
+				return NotFound();
+
+			if (type.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			await _mappingService.DeletePOIAsync(poi.PoiId, cancellationToken);
+
+			return RedirectToAction("ViewType", new { poiTypeId = type.PoiTypeId });
 		}
 
 		[HttpGet]
@@ -609,8 +703,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 						MapMakerInfo info = new MapMakerInfo();
 						info.ImagePath = poiType.Image;
 						info.Marker = poiType.Marker;
-						info.Title = poiType.Name;
-						info.InfoWindowContent = "";
+						info.Title = PoiDisplayHelper.GetDisplayName(poi, poiType.Name);
+						info.InfoWindowContent = BuildPoiInfoWindow(poi, poiType);
 						info.Latitude = poi.Latitude;
 						info.Longitude = poi.Longitude;
 						info.Color = poiType.Color;
@@ -641,8 +735,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				MapMakerInfo info = new MapMakerInfo();
 				info.ImagePath = poiType.Image;
 				info.Marker = poiType.Marker;
-				info.Title = poiType.Name;
-				info.InfoWindowContent = "";
+				info.Title = PoiDisplayHelper.GetDisplayName(poi, poiType.Name);
+				info.InfoWindowContent = BuildPoiInfoWindow(poi, poiType);
 				info.Latitude = poi.Latitude;
 				info.Longitude = poi.Longitude;
 				info.Color = poiType.Color;
@@ -671,14 +765,27 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var poiJson = new PoiJson();
 				poiJson.PoiId = poi.PoiId;
 				poiJson.PoiTypeId = poi.PoiTypeId;
+				poiJson.Name = poi.Name;
 				poiJson.Latitude = poi.Latitude;
 				poiJson.Longitude = poi.Longitude;
+				poiJson.Address = poi.Address;
 				poiJson.Note = poi.Note;
 
 				poisJson.Add(poiJson);
 			}
 
 			return Json(poisJson);
+		}
+
+		private static string BuildPoiInfoWindow(Poi poi, PoiType poiType)
+		{
+			var rows = PoiDisplayHelper.GetDisplayRows(poi, poiType?.Name);
+			if (!rows.Any())
+				return string.Empty;
+
+			rows[0] = $"<strong>{rows[0]}</strong>";
+
+			return string.Join("<br/>", rows);
 		}
 
 		[HttpGet]

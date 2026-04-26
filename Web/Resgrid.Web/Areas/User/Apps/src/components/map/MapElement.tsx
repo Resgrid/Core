@@ -8,7 +8,9 @@ import {
   type UnitLocationUpdate,
 } from '../../runtime/signalr';
 import {
+  getPoiLayerId,
   isMapboxRendererEnabled,
+  isPoiMarker,
   mapMarkerTypes,
   normalizeMapLayers,
   resolveMapConfig,
@@ -31,6 +33,36 @@ function getErrorMessage(error: unknown, fallbackMessage: string): string {
   return fallbackMessage;
 }
 
+function readBooleanPreference(storageKey: string, fallbackValue: boolean): boolean {
+  if (typeof window === 'undefined') {
+    return fallbackValue;
+  }
+
+  try {
+    const storedValue = window.localStorage.getItem(storageKey);
+
+    if (storedValue === null) {
+      return fallbackValue;
+    }
+
+    return storedValue === 'true';
+  } catch {
+    return fallbackValue;
+  }
+}
+
+function writeBooleanPreference(storageKey: string, value: boolean): void {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  try {
+    window.localStorage.setItem(storageKey, value ? 'true' : 'false');
+  } catch {
+    // Ignore storage failures and fall back to in-memory state.
+  }
+}
+
 export default function MapElement(props: MapElementProps) {
   const connectionRef = useRef<HubConnection | null>(null);
 
@@ -38,11 +70,13 @@ export default function MapElement(props: MapElementProps) {
   const [layers, setLayers] = useState<MapRendererProps['layers']>([]);
   const [layerVisibility, setLayerVisibility] = useState<Record<string, boolean>>({});
   const [filterText, setFilterText] = useState('');
-  const [showCalls, setShowCalls] = useState(true);
-  const [showStations, setShowStations] = useState(true);
-  const [showUnits, setShowUnits] = useState(true);
-  const [showPersonnel, setShowPersonnel] = useState(true);
-  const [hideLabels, setHideLabels] = useState(false);
+  const [showCalls, setShowCalls] = useState(() => readBooleanPreference('rg-map:show-calls', true));
+  const [showStations, setShowStations] = useState(() => readBooleanPreference('rg-map:show-stations', true));
+  const [showUnits, setShowUnits] = useState(() => readBooleanPreference('rg-map:show-units', true));
+  const [showPersonnel, setShowPersonnel] = useState(() => readBooleanPreference('rg-map:show-personnel', true));
+  const [showPois, setShowPois] = useState(() => readBooleanPreference('rg-map:show-pois', true));
+  const [poiLayerVisibility, setPoiLayerVisibility] = useState<Record<string, boolean>>({});
+  const [hideLabels, setHideLabels] = useState(() => readBooleanPreference('rg-map:hide-labels', false));
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdated, setLastUpdated] = useState(() => new Date().toString());
@@ -71,6 +105,7 @@ export default function MapElement(props: MapElementProps) {
     [resolvedMapConfig],
   );
   const hasMapSource = useMapboxRenderer || resolvedMapConfig.tileUrl.length > 0;
+  const poiLayers = useMemo(() => mapData?.PoiLayers ?? [], [mapData]);
 
   const visibleMarkers = useMemo(() => {
     const normalizedFilter = filterText.trim().toLowerCase();
@@ -90,14 +125,17 @@ export default function MapElement(props: MapElementProps) {
         };
       })
       .filter((marker) => {
+        const markerTitle = typeof marker.Title === 'string' ? marker.Title.toLowerCase() : '';
+        const markerType = typeof marker.Type === 'string' ? Number.parseInt(marker.Type, 10) : marker.Type;
+        const isPoi = isPoiMarker(marker);
         const matchesFilter =
-          normalizedFilter.length === 0 || marker.Title.toLowerCase().includes(normalizedFilter);
+          normalizedFilter.length === 0 || markerTitle.includes(normalizedFilter);
 
         if (!matchesFilter) {
           return false;
         }
 
-        switch (marker.Type) {
+        switch (markerType) {
           case mapMarkerTypes.call:
             return showCalls;
           case mapMarkerTypes.unit:
@@ -106,11 +144,42 @@ export default function MapElement(props: MapElementProps) {
             return showStations;
           case mapMarkerTypes.personnel:
             return showPersonnel;
+          case mapMarkerTypes.poi:
+            return showPois && (poiLayerVisibility[getPoiLayerId(marker)] ?? true);
           default:
-            return true;
+            return !isPoi || (showPois && (poiLayerVisibility[getPoiLayerId(marker)] ?? true));
         }
       });
-  }, [filterText, mapData, markerPositionOverrides, showCalls, showPersonnel, showStations, showUnits]);
+  }, [
+    filterText,
+    mapData,
+    markerPositionOverrides,
+    poiLayerVisibility,
+    showCalls,
+    showPersonnel,
+    showPois,
+    showStations,
+    showUnits,
+  ]);
+
+  useEffect(() => writeBooleanPreference('rg-map:show-calls', showCalls), [showCalls]);
+  useEffect(() => writeBooleanPreference('rg-map:show-stations', showStations), [showStations]);
+  useEffect(() => writeBooleanPreference('rg-map:show-units', showUnits), [showUnits]);
+  useEffect(() => writeBooleanPreference('rg-map:show-personnel', showPersonnel), [showPersonnel]);
+  useEffect(() => writeBooleanPreference('rg-map:show-pois', showPois), [showPois]);
+  useEffect(() => writeBooleanPreference('rg-map:hide-labels', hideLabels), [hideLabels]);
+
+  useEffect(() => {
+    Object.entries(layerVisibility).forEach(([layerId, isVisible]) => {
+      writeBooleanPreference(`rg-map:layer:${layerId}`, isVisible);
+    });
+  }, [layerVisibility]);
+
+  useEffect(() => {
+    Object.entries(poiLayerVisibility).forEach(([layerId, isVisible]) => {
+      writeBooleanPreference(`rg-map:poi-layer:${layerId}`, isVisible);
+    });
+  }, [poiLayerVisibility]);
 
   useEffect(() => {
     let cancelled = false;
@@ -177,7 +246,16 @@ export default function MapElement(props: MapElementProps) {
         setLayers(normalizedLayers);
         setLayerVisibility(
           normalizedLayers.reduce<Record<string, boolean>>((result, layer) => {
-            result[layer.id] = layer.isOnByDefault;
+            result[layer.id] = readBooleanPreference(`rg-map:layer:${layer.id}`, layer.isOnByDefault);
+            return result;
+          }, {}),
+        );
+
+        const normalizedPoiLayers = mapResponse.Data?.PoiLayers ?? [];
+        setPoiLayerVisibility(
+          normalizedPoiLayers.reduce<Record<string, boolean>>((result, poiLayer) => {
+            const layerId = getPoiLayerId(poiLayer);
+            result[layerId] = readBooleanPreference(`rg-map:poi-layer:${layerId}`, true);
             return result;
           }, {}),
         );
@@ -280,6 +358,29 @@ export default function MapElement(props: MapElementProps) {
 
   const combinedError = error ?? rendererError;
 
+  const handleShowPoisChanged = (checked: boolean) => {
+    setShowPois(checked);
+
+    if (!checked) {
+      return;
+    }
+
+    setPoiLayerVisibility((currentVisibility) => {
+      const hasVisiblePoiLayer = poiLayers.some(
+        (poiLayer) => currentVisibility[getPoiLayerId(poiLayer)] ?? true,
+      );
+
+      if (hasVisiblePoiLayer) {
+        return currentVisibility;
+      }
+
+      return poiLayers.reduce<Record<string, boolean>>((nextVisibility, poiLayer) => {
+        nextVisibility[getPoiLayerId(poiLayer)] = true;
+        return nextVisibility;
+      }, { ...currentVisibility });
+    });
+  };
+
   return (
     <div className="rg-map">
       {showButtons && (
@@ -339,6 +440,15 @@ export default function MapElement(props: MapElementProps) {
               />
               <span>Show personnel</span>
             </label>
+
+            <label className="rg-map__checkbox">
+              <input
+                type="checkbox"
+                checked={showPois}
+                onChange={(event) => handleShowPoisChanged(event.target.checked)}
+              />
+              <span>Show POIs</span>
+            </label>
           </div>
         </div>
       )}
@@ -354,32 +464,72 @@ export default function MapElement(props: MapElementProps) {
             markers={visibleMarkers}
             layers={layers}
             layerVisibility={layerVisibility}
+            poiLayers={poiLayers}
+            poiLayerVisibility={poiLayerVisibility}
             hideLabels={hideLabels}
             resolvedMapConfig={resolvedMapConfig}
             fitBoundsKey={fitBoundsKey}
           />
         )}
 
-        {layers.length > 0 && (
+        {(layers.length > 0 || poiLayers.length > 0) && (
           <div className="rg-map__layers rg-card">
-            <div className="rg-map__layers-title">Map layers</div>
-            <div className="rg-map__layer-list">
-              {layers.map((layer) => (
-                <label key={layer.id} className="rg-map__layer-toggle">
-                  <input
-                    type="checkbox"
-                    checked={layerVisibility[layer.id] ?? false}
-                    onChange={(event) =>
-                      setLayerVisibility((currentVisibility) => ({
-                        ...currentVisibility,
-                        [layer.id]: event.target.checked,
-                      }))
-                    }
-                  />
-                  <span>{layer.name}</span>
-                </label>
-              ))}
-            </div>
+            {layers.length > 0 && (
+              <div className="rg-map__layer-section">
+                <div className="rg-map__layers-title">Map layers</div>
+                <div className="rg-map__layer-list">
+                  {layers.map((layer) => (
+                    <label key={layer.id} className="rg-map__layer-toggle">
+                      <input
+                        type="checkbox"
+                        checked={layerVisibility[layer.id] ?? false}
+                        onChange={(event) =>
+                          setLayerVisibility((currentVisibility) => ({
+                            ...currentVisibility,
+                            [layer.id]: event.target.checked,
+                          }))
+                        }
+                      />
+                      <span>{layer.name}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {poiLayers.length > 0 && (
+              <div className="rg-map__layer-section">
+                <div className="rg-map__layers-title">POI layers</div>
+                <div className="rg-map__layer-list">
+                  {poiLayers.map((poiLayer) => {
+                    const layerId = getPoiLayerId(poiLayer);
+
+                    return (
+                      <label key={layerId} className="rg-map__layer-toggle">
+                        <input
+                          type="checkbox"
+                          checked={poiLayerVisibility[layerId] ?? true}
+                          onChange={(event) =>
+                            setPoiLayerVisibility((currentVisibility) => ({
+                              ...currentVisibility,
+                              [layerId]: event.target.checked,
+                            }))
+                          }
+                        />
+                        <span
+                          className="rg-map__layer-swatch"
+                          style={{ backgroundColor: poiLayer.Color || '#2563eb' }}
+                        />
+                        <span>
+                          {poiLayer.Name}
+                          {poiLayer.IsDestination ? ' (Destination)' : ''}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         )}
 

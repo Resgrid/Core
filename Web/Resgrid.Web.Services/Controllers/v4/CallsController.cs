@@ -51,6 +51,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly ICustomStateService _customStateService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IShiftsService _shiftsService;
+		private readonly IMappingService _mappingService;
 		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
 		private readonly ICommunicationService _communicationService;
 		private readonly IWeatherAlertService _weatherAlertService;
@@ -72,6 +73,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ICustomStateService customStateService,
 			IDepartmentSettingsService departmentSettingsService,
 			IShiftsService shiftsService,
+			IMappingService mappingService,
 			IUserDefinedFieldsService userDefinedFieldsService,
 			ICommunicationService communicationService,
 			IWeatherAlertService weatherAlertService
@@ -93,6 +95,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_customStateService = customStateService;
 			_departmentSettingsService = departmentSettingsService;
 			_shiftsService = shiftsService;
+			_mappingService = mappingService;
 			_userDefinedFieldsService = userDefinedFieldsService;
 			_communicationService = communicationService;
 			_weatherAlertService = weatherAlertService;
@@ -111,6 +114,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var result = new ActiveCallsResult();
 
 			var calls = (await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId)).OrderByDescending(x => x.LoggedOn);
+			var destinationPois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
+			var destinationPoiLookup = destinationPois.ToDictionary(x => x.PoiId);
 
 			if (calls != null && calls.Any())
 			{
@@ -129,7 +134,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 					else
 						address = c.Address;
 
-					result.Data.Add(ConvertCall(callWithData, null, address, TimeZone));
+					destinationPoiLookup.TryGetValue(callWithData.DestinationPoiId.GetValueOrDefault(), out var destinationPoi);
+					result.Data.Add(ConvertCall(callWithData, null, address, TimeZone, destinationPoi));
 				}
 				result.PageSize = result.Data.Count();
 				result.Status = ResponseHelper.Success;
@@ -173,6 +179,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Unauthorized();
 
 			c = await _callsService.PopulateCallData(c, false, true, true, false, false, false, true, true, true);
+			var destinationPoi = await GetValidatedDestinationPoiAsync(c.DestinationPoiId);
 
 			string address = "";
 			if (String.IsNullOrWhiteSpace(c.Address) && c.HasValidGeolocationData())
@@ -196,7 +203,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 			}
 
-			result.Data = ConvertCall(c, protocols, address, TimeZone);
+			result.Data = ConvertCall(c, protocols, address, TimeZone, destinationPoi);
 
 			// Populate UDF values
 			var udfValues = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Call, c.CallId.ToString());
@@ -548,6 +555,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 			var roles = await _personnelRolesService.GetAllRolesForDepartmentAsync(DepartmentId);
 			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
+			var destinationPoi = await GetValidatedDestinationPoiAsync(newCallInput.DestinationPoiId);
+
+			if (newCallInput.DestinationPoiId.HasValue && newCallInput.DestinationPoiId.Value > 0 && destinationPoi == null)
+				return BadRequest();
 
 			var call = new Call
 			{
@@ -575,6 +586,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (!string.IsNullOrWhiteSpace(newCallInput.Address))
 				call.Address = newCallInput.Address;
+
+			call.DestinationPoiId = destinationPoi?.PoiId;
 
 			if (!string.IsNullOrWhiteSpace(newCallInput.What3Words))
 				call.W3W = newCallInput.What3Words;
@@ -910,6 +923,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
 			var roles = await _personnelRolesService.GetAllRolesForDepartmentAsync(DepartmentId);
 			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
+			var destinationPoi = await GetValidatedDestinationPoiAsync(editCallInput.DestinationPoiId);
+
+			if (editCallInput.DestinationPoiId.HasValue && editCallInput.DestinationPoiId.Value > 0 && destinationPoi == null)
+				return BadRequest();
 
 			call.Priority = editCallInput.Priority;
 			call.Name = editCallInput.Name;
@@ -932,6 +949,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (!string.IsNullOrWhiteSpace(editCallInput.Address))
 				call.Address = editCallInput.Address;
+
+			call.DestinationPoiId = destinationPoi?.PoiId;
 
 			if (!string.IsNullOrWhiteSpace(editCallInput.What3Words))
 				call.W3W = editCallInput.What3Words;
@@ -1454,6 +1473,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var calls = (await _callsService.GetAllNonDispatchedScheduledCallsByDepartmentIdAsync(DepartmentId)).OrderBy(x => x.DispatchOn);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var destinationPois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
+			var destinationPoiLookup = destinationPois.ToDictionary(x => x.PoiId);
 
 			if (calls != null && calls.Any())
 			{
@@ -1470,7 +1491,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 					else
 						address = c.Address;
 
-					result.Data.Add(ConvertCall(c, null, address, TimeZone));
+					destinationPoiLookup.TryGetValue(c.DestinationPoiId.GetValueOrDefault(), out var destinationPoi);
+					result.Data.Add(ConvertCall(c, null, address, TimeZone, destinationPoi));
 				}
 				result.PageSize = result.Data.Count();
 				result.Status = ResponseHelper.Success;
@@ -1710,6 +1732,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var result = new ActiveCallsResult();
 
 			var calls = (await _callsService.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, startDate, endDate)).OrderByDescending(x => x.LoggedOn);
+			var destinationPois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
+			var destinationPoiLookup = destinationPois.ToDictionary(x => x.PoiId);
 
 			if (calls != null && calls.Any())
 			{
@@ -1734,7 +1758,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 					else
 						address = c.Address;
 
-					result.Data.Add(ConvertCall(callWithData, null, address, TimeZone));
+					destinationPoiLookup.TryGetValue(callWithData.DestinationPoiId.GetValueOrDefault(), out var destinationPoi);
+					result.Data.Add(ConvertCall(callWithData, null, address, TimeZone, destinationPoi));
 				}
 				result.PageSize = result.Data.Count();
 				result.Status = ResponseHelper.Success;
@@ -1749,7 +1774,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return Ok(result);
 		}
 
-		public static CallResultData ConvertCall(Call call, List<DispatchProtocol> protocol, string geoLocationAddress, string timeZone)
+		public static CallResultData ConvertCall(Call call, List<DispatchProtocol> protocol, string geoLocationAddress, string timeZone, Poi destinationPoi = null)
 		{
 			var callResult = new CallResultData();
 
@@ -1786,6 +1811,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 			else
 				callResult.Address = call.Address;
 
+			callResult.DestinationPoiId = call.DestinationPoiId;
+
+			if (destinationPoi != null)
+			{
+				callResult.DestinationName = PoiDisplayHelper.GetDisplayName(destinationPoi, destinationPoi.Type?.Name);
+				callResult.DestinationAddress = destinationPoi.Address;
+				callResult.DestinationTypeName = PoiDisplayHelper.GetTypeName(destinationPoi);
+				callResult.DestinationPoiTypeId = destinationPoi.Type?.PoiTypeId;
+				callResult.DestinationLatitude = destinationPoi.Latitude;
+				callResult.DestinationLongitude = destinationPoi.Longitude;
+			}
+
 			callResult.Geolocation = call.GeoLocationData;
 			callResult.LoggedOn = call.LoggedOn.TimeConverter(new Department() { TimeZone = timeZone });
 			callResult.LoggedOnUtc = call.LoggedOn;
@@ -1818,6 +1855,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			return callResult;
+		}
+
+		private async Task<Poi> GetValidatedDestinationPoiAsync(int? destinationPoiId)
+		{
+			if (!destinationPoiId.HasValue || destinationPoiId.Value <= 0)
+				return null;
+
+			return await _mappingService.GetDestinationPOIByIdAsync(DepartmentId, destinationPoiId.Value);
 		}
 	}
 }

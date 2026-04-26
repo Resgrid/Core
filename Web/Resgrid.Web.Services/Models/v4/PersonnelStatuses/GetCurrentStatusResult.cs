@@ -54,6 +54,21 @@ namespace Resgrid.Web.Services.Models.v4.PersonnelStatuses
 		public int? DestinationType { get; set; }
 
 		/// <summary>
+		/// Destination display name.
+		/// </summary>
+		public string DestinationName { get; set; }
+
+		/// <summary>
+		/// Destination address.
+		/// </summary>
+		public string DestinationAddress { get; set; }
+
+		/// <summary>
+		/// Destination type/category name.
+		/// </summary>
+		public string DestinationTypeName { get; set; }
+
+		/// <summary>
 		/// Geolocation for this status
 		/// </summary>
 		public string GeoLocationData { get; set; }

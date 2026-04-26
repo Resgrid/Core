@@ -83,7 +83,9 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 							SELECT al.*, u.*
 							FROM %SCHEMA%.%ACTIONLOGSTABLE% al
 							INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% u ON u.Id = al.UserId
-							WHERE al.DestinationId = %CALLID%  AND (al.ActionTypeId IS NULL OR al.ActionTypeId IN (%TYPES%))";
+							WHERE al.DestinationId = %CALLID%
+								AND (al.DestinationType IS NULL OR al.DestinationType = 2)
+								AND (al.ActionTypeId IS NULL OR al.ActionTypeId IN (%TYPES%))";
 			SelectPreviousActionLogsByUserQuery = @"
 							SELECT a1.*, u.*
 							FROM %SCHEMA%.%ACTIONLOGSTABLE% a1
@@ -677,7 +679,8 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT us.*, u.*
 					FROM %SCHEMA%.%UNITSTATESTABLE% us
 					INNER JOIN %SCHEMA%.%UNITSTABLE% u ON u.UnitId = us.UnitId
-					WHERE us.DestinationId = %CALLID%";
+					WHERE us.DestinationId = %CALLID%
+						AND (us.DestinationType IS NULL OR us.DestinationType = 2)";
 			SelectUnitByDIdTypeQuery =
 				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE DepartmentId = %DID% AND Type = %TYPE%";
 			SelectLastUnitStatesByDidQuery = @"

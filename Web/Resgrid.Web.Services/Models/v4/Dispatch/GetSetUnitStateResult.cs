@@ -1,6 +1,7 @@
-﻿using Resgrid.Web.Services.Models.v4.Calls;
+using Resgrid.Web.Services.Models.v4.Calls;
 using Resgrid.Web.Services.Models.v4.CustomStatuses;
 using Resgrid.Web.Services.Models.v4.Groups;
+using Resgrid.Web.Services.Models.v4.Mapping;
 using System.Collections.Generic;
 
 namespace Resgrid.Web.Services.Models.v4.Dispatch
@@ -40,6 +41,16 @@ namespace Resgrid.Web.Services.Models.v4.Dispatch
 		/// Calls the unit can respond to
 		/// </summary>
 		public List<CallResultData> Calls { get; set; }
+
+		/// <summary>
+		/// Destination POIs the unit can respond to.
+		/// </summary>
+		public List<PoiResultData> DestinationPois { get; set; }
+
+		/// <summary>
+		/// POI types available to the department.
+		/// </summary>
+		public List<PoiTypeResultData> PoiTypes { get; set; }
 
 		/// <summary>
 		/// Status types

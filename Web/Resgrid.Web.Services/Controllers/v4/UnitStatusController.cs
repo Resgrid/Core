@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Localization;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Helpers;
@@ -36,7 +35,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IActionLogsService _actionLogsService;
 		private readonly IMappingService _mappingService;
-		private readonly IStringLocalizer<Resgrid.Localization.Common> _localizer;
 
 		public UnitStatusController(
 			ICallsService callsService,
@@ -44,8 +42,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IDepartmentGroupsService departmentGroupsService,
 			IDepartmentSettingsService departmentSettingsService,
 			IActionLogsService actionLogsService,
-			IMappingService mappingService,
-			IStringLocalizer<Resgrid.Localization.Common> localizer
+			IMappingService mappingService
 			)
 		{
 			_callsService = callsService;
@@ -54,7 +51,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_departmentSettingsService = departmentSettingsService;
 			_actionLogsService = actionLogsService;
 			_mappingService = mappingService;
-			_localizer = localizer;
 		}
 		#endregion Members and Constructors
 
@@ -373,7 +369,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					stateCss = stateFound.ToStateCss();
 				}
 
-				var resolvedDestination = DestinationResolutionHelper.Resolve(stateFound.DestinationId, stateFound.DestinationType, customState?.DetailType, activeCalls, groups, pois, _localizer);
+				var resolvedDestination = DestinationResolutionHelper.Resolve(stateFound.DestinationId, stateFound.DestinationType, customState?.DetailType, activeCalls, groups, pois);
 				destinationId = resolvedDestination.DestinationId;
 				destinationType = resolvedDestination.DestinationType;
 				destinationName = resolvedDestination.Name;

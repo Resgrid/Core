@@ -15,7 +15,7 @@ namespace Resgrid.Model.Helpers
 
 	public static class DestinationResolutionHelper
 	{
-		public static ResolvedDestinationData Resolve(int? destinationId, int? destinationType, int? detailType, IEnumerable<Call> activeCalls, IEnumerable<DepartmentGroup> groups, IEnumerable<Poi> pois, IStringLocalizer localizer, bool allowCrossTypeFallback = false)
+		public static ResolvedDestinationData Resolve(int? destinationId, int? destinationType, int? detailType, IEnumerable<Call> activeCalls, IEnumerable<DepartmentGroup> groups, IEnumerable<Poi> pois, IStringLocalizer localizer = null, bool allowCrossTypeFallback = false)
 		{
 			var result = new ResolvedDestinationData
 			{
@@ -55,11 +55,12 @@ namespace Resgrid.Model.Helpers
 					if (!string.IsNullOrWhiteSpace(poiResult.Name))
 						return poiResult;
 				}
+
 			}
 
 			if (!allowCrossTypeFallback)
 				return result;
-				
+
 			var fallbackStation = ResolveByType(destinationId.Value, DestinationEntityTypes.Station, activeCalls, groups, pois);
 			if (!string.IsNullOrWhiteSpace(fallbackStation.Name))
 				return fallbackStation;
@@ -71,7 +72,7 @@ namespace Resgrid.Model.Helpers
 			return ResolveByType(destinationId.Value, DestinationEntityTypes.Poi, activeCalls, groups, pois, localizer);
 		}
 
-		private static ResolvedDestinationData ResolveByType(int destinationId, DestinationEntityTypes destinationType, IEnumerable<Call> activeCalls, IEnumerable<DepartmentGroup> groups, IEnumerable<Poi> pois, IStringLocalizer localizer)
+		private static ResolvedDestinationData ResolveByType(int destinationId, DestinationEntityTypes destinationType, IEnumerable<Call> activeCalls, IEnumerable<DepartmentGroup> groups, IEnumerable<Poi> pois, IStringLocalizer localizer = null)
 		{
 			var result = new ResolvedDestinationData
 			{

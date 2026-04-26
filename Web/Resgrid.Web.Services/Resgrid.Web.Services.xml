@@ -5117,7 +5117,9 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.DestinationTypeName">
             <summary>
-            Destination type/category name.
+            Localized display label for the destination type (e.g. "POI", "Station"). Not suitable
+            for programmatic branching; use <see cref="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.DestinationPoiTypeId"/> as the
+            machine-readable POI type identifier instead.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.DestinationPoiTypeId">
@@ -7624,7 +7626,8 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.GetCurrentStatusResultData.DestinationType">
             <summary>
-            Destination type for the action log
+            Machine-readable destination type for the action log (None = 0, Station = 1, Call = 2, POI = 3).
+            Use this for programmatic branching; see <see cref="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.GetCurrentStatusResultData.DestinationTypeName"/> for the localized display label.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.GetCurrentStatusResultData.DestinationName">
@@ -7639,7 +7642,9 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.GetCurrentStatusResultData.DestinationTypeName">
             <summary>
-            Destination type/category name.
+            Localized display label for the destination type (e.g. "Station", "Call", "POI"). Not
+            suitable for programmatic branching; use <see cref="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.GetCurrentStatusResultData.DestinationType"/> as the
+            machine-readable discriminator instead.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.GetCurrentStatusResultData.GeoLocationData">
@@ -9504,7 +9509,9 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.DestinationTypeName">
             <summary>
-            Destination type/category name.
+            Localized display label for the destination type (e.g. "Station", "Call", "POI"). Not
+            suitable for programmatic branching; use <see cref="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.DestinationType"/> as the
+            machine-readable discriminator instead.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Note">

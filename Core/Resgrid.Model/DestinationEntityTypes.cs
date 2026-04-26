@@ -21,16 +21,16 @@ namespace Resgrid.Model
 			return (DestinationEntityTypes)destinationType.Value;
 		}
 
-		public static string GetDisplayName(this DestinationEntityTypes destinationType, IStringLocalizer localizer)
+		public static string GetDisplayName(this DestinationEntityTypes destinationType, IStringLocalizer localizer = null)
 		{
 			switch (destinationType)
 			{
 				case DestinationEntityTypes.Station:
-					return localizer["Station"];
+					return localizer != null ? localizer["Station"] : "Station";
 				case DestinationEntityTypes.Call:
-					return localizer["Call"];
+					return localizer != null ? localizer["Call"] : "Call";
 				case DestinationEntityTypes.Poi:
-					return localizer["POI"];
+					return localizer != null ? localizer["POI"] : "POI";
 				default:
 					return string.Empty;
 			}

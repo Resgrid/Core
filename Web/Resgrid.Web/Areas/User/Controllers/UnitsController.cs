@@ -1596,13 +1596,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (state.DetailType == (int)CustomStateDetailTypes.None)
 				{
-					sb.Append($"<li><a style=\"color:{HttpUtility.HtmlEncode(state.ButtonColor)};\" href='/User/Units/{actionWithoutDestination}?{targetQuery}&stateType={state.CustomStateDetailId}'>{HttpUtility.HtmlEncode(state.ButtonText)}</a></li>");
+					sb.Append($"<li><a style='color:{buttonColor};' href='{withoutDestinationHref}'>{buttonText}</a></li>");
 					continue;
 				}
 
-				sb.Append($"<li class='dropdown-submenu'><a style=\"color:{HttpUtility.HtmlEncode(state.ButtonColor)};\" tabindex='-1' href='#'>{HttpUtility.HtmlEncode(state.ButtonText)}</a>");
+				sb.Append($"<li class='dropdown-submenu'><a style='color:{buttonColor};' tabindex='-1' href='#'>{buttonText}</a>");
 				sb.Append($"<ul class='dropdown-menu unitStateList_{cssKey}'>");
-				sb.Append($"<li><a href='/User/Units/{actionWithoutDestination}?{targetQuery}&stateType={state.CustomStateDetailId}'>{HttpUtility.HtmlEncode(state.ButtonText)}</a></li>");
+				sb.Append($"<li><a href='{withoutDestinationHref}'>{buttonText}</a></li>");
 				sb.Append("<li class='divider'></li>");
 				AppendDestinationMenuEntries(sb, unitId, unitIds, actionWithDestination, activeCalls, stations, destinationPois, state);
 				sb.Append("</ul>");

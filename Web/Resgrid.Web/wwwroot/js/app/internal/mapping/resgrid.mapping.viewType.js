@@ -9,6 +9,26 @@ var resgrid;
             var map;
             var markers = [];
 
+            function renderTextValue(data, type) {
+                if (data === null || data === undefined) {
+                    return '';
+                }
+
+                if (type === 'display' || type === 'filter') {
+                    var safeWrapper = document.createElement('div');
+                    safeWrapper.textContent = String(data);
+                    return safeWrapper.innerHTML;
+                }
+
+                return data;
+            }
+
+            function createSafeTextElement(text) {
+                var safeElement = document.createElement('span');
+                safeElement.textContent = text === null || text === undefined ? '' : String(text);
+                return safeElement;
+            }
+
             $(document).ready(function () {
                 resgrid.common.analytics.track('Mapping - View Type');
 
@@ -19,9 +39,9 @@ var resgrid;
                     },
                     pageLength: 50,
                     columns: [
-                        { data: 'Name', title: 'Name', defaultContent: '' },
-                        { data: 'Address', title: 'Address', defaultContent: '' },
-                        { data: 'Note', title: 'Note', defaultContent: '' },
+                        { data: 'Name', title: 'Name', defaultContent: '', render: renderTextValue },
+                        { data: 'Address', title: 'Address', defaultContent: '', render: renderTextValue },
+                        { data: 'Note', title: 'Note', defaultContent: '', render: renderTextValue },
                         { data: 'Latitude', title: 'Latitude' },
                         { data: 'Longitude', title: 'Longitude' },
                         {
@@ -71,11 +91,11 @@ var resgrid;
                             }).addTo(map);
 
                             if (poi.InfoWindowContent) {
-                                marker.bindPopup(poi.InfoWindowContent);
+                                marker.bindPopup(createSafeTextElement(poi.InfoWindowContent));
                             }
 
                             if (poi.Title) {
-                                marker.bindTooltip(poi.Title, {
+                                marker.bindTooltip(createSafeTextElement(poi.Title), {
                                     direction: 'bottom'
                                 });
                             }

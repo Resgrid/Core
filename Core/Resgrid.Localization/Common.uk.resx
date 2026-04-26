@@ -614,5 +614,14 @@
   <data name="YourDepartments" xml:space="preserve">
     <value>Ваші підрозділи</value>
   </data>
+  <data name="Calls" xml:space="preserve">
+    <value>Виклики</value>
+  </data>
+  <data name="Stations" xml:space="preserve">
+    <value>Stations</value>
+  </data>
+  <data name="Pois" xml:space="preserve">
+    <value>POI</value>
+  </data>
 </root>
 

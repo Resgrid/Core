@@ -171,6 +171,9 @@
   <data name="CallsModule" xml:space="preserve">
     <value>Calls</value>
   </data>
+  <data name="Calls" xml:space="preserve">
+    <value>Calls</value>
+  </data>
   <data name="CallTimestamp" xml:space="preserve">
     <value>Call Timestamp</value>
   </data>
@@ -524,6 +527,12 @@
   </data>
   <data name="StationAndGroups" xml:space="preserve">
     <value>Stations &amp; Groups</value>
+  </data>
+  <data name="Stations" xml:space="preserve">
+    <value>Stations</value>
+  </data>
+  <data name="Pois" xml:space="preserve">
+    <value>POIs</value>
   </data>
   <data name="Status" xml:space="preserve">
     <value>Status</value>

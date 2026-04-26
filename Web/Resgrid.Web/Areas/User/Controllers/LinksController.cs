@@ -359,7 +359,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 				var respondingToDepartment = stations.Where(s => al != null && s.DepartmentGroupId == al.DestinationId).FirstOrDefault();
-				var destination = DestinationResolutionHelper.Resolve(al?.DestinationId, al?.DestinationType, null, calls, stations, pois);
+				var destinationType = al.GetEffectiveDestinationType();
+				var destination = DestinationResolutionHelper.Resolve(al?.DestinationId, destinationType == DestinationEntityTypes.None ? null : (int?)destinationType, null, calls, stations, pois);
 				var personnelViewModel = await Models.BigBoardX.PersonnelViewModel.Create(u.Name, al, us, department, respondingToDepartment, group, u.Roles, callNumber, destination);
 
 				personnelViewModels.Add(personnelViewModel);

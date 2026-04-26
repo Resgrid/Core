@@ -21,6 +21,7 @@ using Resgrid.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Localization;
 using Resgrid.Model.Identity;
 using Resgrid.WebCore.Areas.User.Models.Personnel;
 using IdentityUser = Resgrid.Model.Identity.IdentityUser;
@@ -57,13 +58,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IMappingService _mappingService;
 		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
 		private readonly IUdfRenderingService _udfRenderingService;
+		private readonly IStringLocalizer<Resgrid.Localization.Common> _localizer;
 
 		public PersonnelController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IEmailService emailService, IUserProfileService userProfileService, IDeleteService deleteService, Model.Services.IAuthorizationService authorizationService,
 			ILimitsService limitsService, IPersonnelRolesService personnelRolesService, IDepartmentGroupsService departmentGroupsService, IUserStateService userStateService,
 			IEventAggregator eventAggregator, IEmailMarketingProvider emailMarketingProvider, ICertificationService certificationService, ICustomStateService customStateService,
 			IGeoService geoService, UserManager<IdentityUser> userManager, IDepartmentSettingsService departmentSettingsService, ICallsService callsService,
-			IGeoLocationProvider geoLocationProvider, IMappingService mappingService, IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService)
+			IGeoLocationProvider geoLocationProvider, IMappingService mappingService, IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService,
+			IStringLocalizer<Resgrid.Localization.Common> localizer)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -88,6 +91,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_mappingService = mappingService;
 			_userDefinedFieldsService = userDefinedFieldsService;
 			_udfRenderingService = udfRenderingService;
+			_localizer = localizer;
 		}
 		#endregion Private Members and Constructors
 
@@ -1298,40 +1302,49 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
 			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
 			var destinationPois = await _mappingService.GetDestinationPOIsForDepartmentAsync(DepartmentId);
+			var noneText = HttpUtility.HtmlEncode(_localizer["None"].Value);
+			var callsLabel = HttpUtility.HtmlEncode(_localizer["Calls"].Value);
+			var stationsLabel = HttpUtility.HtmlEncode(_localizer["Stations"].Value);
+			var poisLabel = _localizer["Pois"].Value;
+			var callPrefix = _localizer["Call"].Value;
+			var stationPrefix = _localizer["Station"].Value;
 			StringBuilder sb = new StringBuilder();
 
-			sb.Append("<option value=''>None</option>");
+			sb.Append($"<option value=''>{noneText}</option>");
 
 			if (state != null)
 			{
 				if (state.DetailType.SupportsCalls())
 				{
-					sb.Append("<optgroup label='Calls'>");
+					sb.Append($"<optgroup label='{callsLabel}'>");
 					foreach (var call in activeCalls)
 					{
-						sb.Append($"<option value='{(int)DestinationEntityTypes.Call}:{call.CallId}'>Call {call.GetIdentifier()}:{call.Name}</option>");
+						var callText = HttpUtility.HtmlEncode($"{callPrefix} {call.GetIdentifier()}:{call.Name}");
+						sb.Append($"<option value='{(int)DestinationEntityTypes.Call}:{call.CallId}'>{callText}</option>");
 					}
 					sb.Append("</optgroup>");
 				}
 
 				if (state.DetailType.SupportsStations())
 				{
-					sb.Append("<optgroup label='Stations'>");
+					sb.Append($"<optgroup label='{stationsLabel}'>");
 					foreach (var station in stations)
 					{
-						sb.Append($"<option value='{(int)DestinationEntityTypes.Station}:{station.DepartmentGroupId}'>Station: {station.Name}</option>");
+						var stationText = HttpUtility.HtmlEncode($"{stationPrefix}: {station.Name}");
+						sb.Append($"<option value='{(int)DestinationEntityTypes.Station}:{station.DepartmentGroupId}'>{stationText}</option>");
 					}
 					sb.Append("</optgroup>");
 				}
 
 				if (state.DetailType.SupportsPois())
 				{
-					foreach (var poiGroup in destinationPois.GroupBy(x => !String.IsNullOrWhiteSpace(x.Type?.Name) ? x.Type.Name : "POIs"))
+					foreach (var poiGroup in destinationPois.GroupBy(x => !String.IsNullOrWhiteSpace(x.Type?.Name) ? x.Type.Name : string.Empty))
 					{
-						sb.Append($"<optgroup label='{poiGroup.Key}'>");
+						var poiGroupLabel = !String.IsNullOrWhiteSpace(poiGroup.Key) ? poiGroup.Key : poisLabel;
+						sb.Append($"<optgroup label='{HttpUtility.HtmlEncode(poiGroupLabel)}'>");
 						foreach (var poi in poiGroup.OrderBy(x => x.Name).ThenBy(x => x.Address).ThenBy(x => x.Note))
 						{
-							var poiText = PoiDisplayHelper.GetSelectionLabel(poi, poiGroup.Key);
+							var poiText = HttpUtility.HtmlEncode(PoiDisplayHelper.GetSelectionLabel(poi, poiGroupLabel));
 							sb.Append($"<option value='{(int)DestinationEntityTypes.Poi}:{poi.PoiId}'>{poiText}</option>");
 						}
 						sb.Append("</optgroup>");

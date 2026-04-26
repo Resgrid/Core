@@ -187,4 +187,7 @@
   <data name="Yes" xml:space="preserve"><value>نعم</value></data>
   <data name="UserDefinedFields" xml:space="preserve"><value>الحقول المعرَّفة من قبل المستخدم</value></data>
   <data name="YourDepartments" xml:space="preserve"><value>أقسامك</value></data>
+  <data name="Calls" xml:space="preserve"><value>البلاغات</value></data>
+  <data name="Stations" xml:space="preserve"><value>المحطات</value></data>
+  <data name="Pois" xml:space="preserve"><value>نقاط الاهتمام</value></data>
 </root>

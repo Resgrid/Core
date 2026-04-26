@@ -263,7 +263,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				if (actionLog.DestinationId.HasValue)
 				{
-					var destination = DestinationResolutionHelper.Resolve(actionLog.DestinationId, actionLog.DestinationType, null, activeCalls, stations, pois);
+					var destinationType = actionLog.GetEffectiveDestinationType();
+					var destination = DestinationResolutionHelper.Resolve(actionLog.DestinationId, destinationType == DestinationEntityTypes.None ? null : (int?)destinationType, null, activeCalls, stations, pois);
 					statusResult.DestinationId = destination.DestinationId;
 					statusResult.DestinationType = destination.DestinationType;
 					statusResult.DestinationName = destination.Name;

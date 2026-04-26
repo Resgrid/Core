@@ -654,4 +654,13 @@
   <data name="YourDepartments" xml:space="preserve">
     <value>Tus Departamentos</value>
   </data>
+  <data name="Calls" xml:space="preserve">
+    <value>Llamadas</value>
+  </data>
+  <data name="Stations" xml:space="preserve">
+    <value>Estaciones</value>
+  </data>
+  <data name="Pois" xml:space="preserve">
+    <value>PDI</value>
+  </data>
 </root>

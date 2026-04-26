@@ -30,9 +30,10 @@ namespace Resgrid.Workers.Console.Tasks
 			{
 				progress.Report(1, $"Starting the {Name} Task");
 
-				IUserProfileService _userProfileService = null;
+				var userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
 				var callsService = Bootstrapper.GetKernel().Resolve<ICallsService>();
 				var queueService = Bootstrapper.GetKernel().Resolve<IQueueService>();
+				var callDispatchStatusService = Bootstrapper.GetKernel().Resolve<ICallDispatchStatusService>();
 
 				var pendingCalls = await callsService.GetAllNonDispatchedScheduledCallsWithinDateRange(DateTime.UtcNow.AddMinutes(-5), DateTime.UtcNow.AddMinutes(5));
 
@@ -44,7 +45,7 @@ namespace Resgrid.Workers.Console.Tasks
 						cqi.Call = await callsService.PopulateCallData(call, true, false, false, true, true, true, true, false, false);
 
 						if (cqi.Call.Dispatches != null && cqi.Call.Dispatches.Any())
-							cqi.Profiles = await _userProfileService.GetSelectedUserProfilesAsync(cqi.Call.Dispatches.Select(x => x.UserId).ToList());
+							cqi.Profiles = await userProfileService.GetSelectedUserProfilesAsync(cqi.Call.Dispatches.Select(x => x.UserId).ToList());
 
 						var result = await queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
 
@@ -52,6 +53,7 @@ namespace Resgrid.Workers.Console.Tasks
 						{
 							call.HasBeenDispatched = true;
 							await callsService.SaveCallAsync(call);
+							await callDispatchStatusService.ApplyDispatchStatusesAsync(cqi.Call, cancellationToken: cancellationToken);
 						}
 					}
 				}

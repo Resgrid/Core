@@ -1732,21 +1732,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var model = new DispatchSettingsView();
 
-			var actionLogs = await _customStateService.GetActivePersonnelStateForDepartmentAsync(DepartmentId);
-			if (actionLogs == null)
-			{
-				var statuses = model.UserStatusTypes.ToSelectListInt().ToList();
-				statuses.Insert(0, new SelectListItem() { Value = "-1", Text = "Default" });
-				model.StatusLevels = new SelectList(statuses, "Value", "Text");
-			}
-			else
-			{
-				List<CustomStateDetail> statuses = new List<CustomStateDetail>();
-				statuses.Add(new CustomStateDetail() { CustomStateDetailId = -1, ButtonText = "Default" });
-				statuses.AddRange(actionLogs.GetActiveDetails());
-
-				model.StatusLevels = new SelectList(statuses, "CustomStateDetailId", "ButtonText");
-			}
+			await PopulateDispatchSettingsSelectionsAsync(model);
 
 			model.DispatchShiftInsteadOfGroup = await _departmentSettingsService.GetDispatchShiftInsteadOfGroupAsync(DepartmentId);
 			model.AutoSetStatusForShiftPersonnel = await _departmentSettingsService.GetAutoSetStatusForShiftDispatchPersonnelAsync(DepartmentId);
@@ -1754,6 +1740,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.ShiftClearStatus = await _departmentSettingsService.GetShiftCallReleasePersonnelStatusToSetAsync(DepartmentId);
 			model.UnitDispatchAlsoDispatchToAssignedPersonnel = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToAssignedPersonnelAsync(DepartmentId);
 			model.UnitDispatchAlsoDispatchToGroup = await _departmentSettingsService.GetUnitDispatchAlsoDispatchToGroupAsync(DepartmentId);
+			model.UnitDispatchStatus = await _departmentSettingsService.GetUnitCallDispatchStatusToSetAsync(DepartmentId);
+			model.UnitClearStatus = await _departmentSettingsService.GetUnitCallReleaseStatusToSetAsync(DepartmentId);
 			model.PersonnelOnUnitSetUnitStatus = await _departmentSettingsService.GetPersonnelOnUnitSetUnitStatusAsync(DepartmentId);
 
 			// Check-In Timer data
@@ -1797,21 +1785,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
 				return Unauthorized();
 
-			var actionLogs = await _customStateService.GetActivePersonnelStateForDepartmentAsync(DepartmentId);
-			if (actionLogs == null)
-			{
-				var statuses = model.UserStatusTypes.ToSelectListInt().ToList();
-				statuses.Insert(0, new SelectListItem() { Value = "-1", Text = "Default" });
-				model.StatusLevels = new SelectList(statuses, "Value", "Text");
-			}
-			else
-			{
-				List<CustomStateDetail> statuses = new List<CustomStateDetail>();
-				statuses.Add(new CustomStateDetail() { CustomStateDetailId = -1, ButtonText = "Default" });
-				statuses.AddRange(actionLogs.GetActiveDetails());
-
-				model.StatusLevels = new SelectList(statuses, "CustomStateDetailId", "ButtonText");
-			}
+			await PopulateDispatchSettingsSelectionsAsync(model);
 
 			if (ModelState.IsValid)
 			{
@@ -1828,6 +1802,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 					DepartmentSettingTypes.UnitDispatchAlsoDispatchToAssignedPersonnel, cancellationToken);
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.UnitDispatchAlsoDispatchToGroup.ToString(),
 					DepartmentSettingTypes.UnitDispatchAlsoDispatchToGroup, cancellationToken);
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.UnitDispatchStatus.ToString(),
+					DepartmentSettingTypes.UnitCallDispatchStatusToSet, cancellationToken);
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.UnitClearStatus.ToString(),
+					DepartmentSettingTypes.UnitCallReleaseStatusToSet, cancellationToken);
 
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.PersonnelOnUnitSetUnitStatus.ToString(),
 					DepartmentSettingTypes.PersonnelOnUnitSetUnitStatus, cancellationToken);
@@ -1854,6 +1832,71 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.SaveSuccess = false;
 			return View(model);
+		}
+
+		private async Task PopulateDispatchSettingsSelectionsAsync(DispatchSettingsView model)
+		{
+			model.StatusLevels = await GetPersonnelDispatchStatusSelectListAsync(model);
+			model.UnitStatusLevels = await GetUnitDispatchStatusSelectListAsync();
+		}
+
+		private async Task<SelectList> GetPersonnelDispatchStatusSelectListAsync(DispatchSettingsView model)
+		{
+			var actionLogs = await _customStateService.GetActivePersonnelStateForDepartmentAsync(DepartmentId);
+			if (actionLogs == null)
+			{
+				var statuses = model.UserStatusTypes.ToSelectListInt().ToList();
+				statuses.Insert(0, new SelectListItem() { Value = "-1", Text = "Default" });
+				return new SelectList(statuses, "Value", "Text");
+			}
+
+			List<CustomStateDetail> statusesWithDefault = new List<CustomStateDetail>();
+			statusesWithDefault.Add(new CustomStateDetail() { CustomStateDetailId = -1, ButtonText = "Default" });
+			statusesWithDefault.AddRange(actionLogs.GetActiveDetails());
+
+			return new SelectList(statusesWithDefault, "CustomStateDetailId", "ButtonText");
+		}
+
+		private async Task<SelectList> GetUnitDispatchStatusSelectListAsync()
+		{
+			var statuses = new List<SelectListItem>
+			{
+				new SelectListItem { Value = "-1", Text = "Default" }
+			};
+			var customStates = await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(DepartmentId);
+
+			if (customStates != null && customStates.Any())
+			{
+				var seenStatusIds = new HashSet<int>();
+
+				foreach (var customState in customStates)
+				{
+					foreach (var detail in customState.GetActiveDetails())
+					{
+						if (seenStatusIds.Add(detail.CustomStateDetailId))
+						{
+							statuses.Add(new SelectListItem
+							{
+								Value = detail.CustomStateDetailId.ToString(),
+								Text = $"{customState.Name}: {detail.ButtonText}"
+							});
+						}
+					}
+				}
+			}
+			else
+			{
+				foreach (var state in Enum.GetValues(typeof(UnitStateTypes)).Cast<UnitStateTypes>())
+				{
+					statuses.Add(new SelectListItem
+					{
+						Value = ((int)state).ToString(),
+						Text = state.DisplayName()
+					});
+				}
+			}
+
+			return new SelectList(statuses, "Value", "Text");
 		}
 
 		#endregion Dispatch Settings

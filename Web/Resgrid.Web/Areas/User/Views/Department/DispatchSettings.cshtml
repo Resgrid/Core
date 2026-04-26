@@ -91,6 +91,14 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["UnitCallDispatchStatusLabel"]</label>
+                            <div class="col-sm-9">@Html.DropDownListFor(m => m.UnitDispatchStatus, Model.UnitStatusLevels, new { style = "width: 70%" })</div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["UnitCallReleaseStatusLabel"]</label>
+                            <div class="col-sm-9">@Html.DropDownListFor(m => m.UnitClearStatus, Model.UnitStatusLevels, new { style = "width: 70%" })</div>
+                        </div>
+                        <div class="form-group">
                             <label class="col-sm-3 control-label">@localizer["PersonnelOnUnitSetUnitStatusLabel"]</label>
                             <div class="col-sm-9">
                                 <div class="row">

@@ -69,6 +69,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IUdfRenderingService _udfRenderingService;
 		private readonly ICheckInTimerService _checkInTimerService;
 		private readonly IWeatherAlertService _weatherAlertService;
+		private readonly ICallDispatchStatusService _callDispatchStatusService;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> _dispatchLocalizer;
 		private readonly IStringLocalizer<Resgrid.Localization.Common> _commonLocalizer;
 
@@ -79,9 +80,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 						IUnitsService unitsService, IActionLogsService actionLogsService, IEventAggregator eventAggregator, ICustomStateService customStateService,
 						ITemplatesService templatesService, IPdfProvider pdfProvider, IProtocolsService protocolsService, IFormsService formsService,
 						IShiftsService shiftsService, IContactsService contactsService, IMappingService mappingService,
-						IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService,
-						ICheckInTimerService checkInTimerService, IWeatherAlertService weatherAlertService,
-						IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> dispatchLocalizer, IStringLocalizer<Resgrid.Localization.Common> commonLocalizer)
+			IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService,
+			ICheckInTimerService checkInTimerService, IWeatherAlertService weatherAlertService,
+			ICallDispatchStatusService callDispatchStatusService,
+			IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> dispatchLocalizer, IStringLocalizer<Resgrid.Localization.Common> commonLocalizer)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -110,6 +112,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_udfRenderingService = udfRenderingService;
 			_checkInTimerService = checkInTimerService;
 			_weatherAlertService = weatherAlertService;
+			_callDispatchStatusService = callDispatchStatusService;
 			_dispatchLocalizer = dispatchLocalizer;
 			_commonLocalizer = commonLocalizer;
 		}
@@ -413,58 +416,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
-				if (model.Call.UnitDispatches != null && model.Call.UnitDispatches.Any())
-				{
-					foreach (var unitDispatch in model.Call.UnitDispatches)
-					{
-						var unitRoleAssignments = await _unitsService.GetActiveRolesForUnitAsync(unitDispatch.UnitId);
-
-						if (unitRoleAssignments != null && unitRoleAssignments.Any())
-						{
-							foreach (var unitRoleAssignment in unitRoleAssignments)
-							{
-								if (!model.Call.Dispatches.Any(x => x.UserId == unitRoleAssignment.UserId))
-								{
-									CallDispatch cd = new CallDispatch();
-									cd.UserId = unitRoleAssignment.UserId;
-
-									model.Call.Dispatches.Add(cd);
-								}
-							}
-						}
-					}
-				}
-
-				var dispatchShiftInsteadOfGroup = await _departmentSettingsService.GetDispatchShiftInsteadOfGroupAsync(DepartmentId);
-				var autoSetStatusForShiftPersonnel = await _departmentSettingsService.GetAutoSetStatusForShiftDispatchPersonnelAsync(DepartmentId);
-				var shiftDispatchStatus = await _departmentSettingsService.GetShiftCallDispatchPersonnelStatusToSetAsync(DepartmentId);
-				//var shiftClearStatus = await _departmentSettingsService.GetShiftCallReleasePersonnelStatusToSetAsync(DepartmentId);
-
-				List<string> shiftUserIds = new List<string>();
-				if (dispatchShiftInsteadOfGroup)
-				{
-					if (model.Call.GroupDispatches != null && model.Call.GroupDispatches.Any())
-					{
-						var localizedDate = TimeConverterHelper.TimeConverter(DateTime.UtcNow, model.Department);
-						var shiftDate = new DateTime(localizedDate.Year, localizedDate.Month, localizedDate.Day);
-						foreach (var group in model.Call.GroupDispatches)
-						{
-							var signups = await _shiftsService.GetShiftSignupsByDepartmentGroupIdAndDayAsync(group.DepartmentGroupId, shiftDate);
-
-							if (signups != null && signups.Any())
-							{
-								foreach (var signup in signups)
-								{
-									CallDispatch cd = new CallDispatch();
-									cd.UserId = signup.UserId;
-
-									model.Call.Dispatches.Add(cd);
-									shiftUserIds.Add(signup.UserId);
-								}
-							}
-						}
-					}
-				}
+				var shouldDispatchNow = !model.Call.DispatchOn.HasValue || model.Call.DispatchOn.Value <= DateTime.UtcNow;
 
 				model.Call.Contacts = new List<CallContact>();
 				if (!String.IsNullOrWhiteSpace(model.PrimaryContact))
@@ -543,15 +495,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 					await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Call, call.CallId.ToString(), udfValues, UserId, isDeptAdmin, isGroupAdmin, cancellationToken);
 				}
 
-				if (autoSetStatusForShiftPersonnel && shiftUserIds.Any())
+				if (shouldDispatchNow && (dispatchingGroupIds.Any() || dispatchingUnitIds.Any()))
 				{
-					if (shiftDispatchStatus < 0)
-						shiftDispatchStatus = (int)ActionTypes.RespondingToScene;
-
-					foreach (var user in shiftUserIds)
-					{
-						await _actionLogsService.SetUserActionAsync(user, DepartmentId, shiftDispatchStatus, null, call.CallId, cancellationToken);
-					}
+					await _callDispatchStatusService.ApplyDispatchStatusesAsync(call, dispatchingGroupIds, dispatchingUnitIds, cancellationToken);
 				}
 
 				var cqi = new CallQueueItem();
@@ -915,25 +861,41 @@ namespace Resgrid.Web.Areas.User.Controllers
 					await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Call, call.CallId.ToString(), udfValues, UserId, isDeptAdmin, isGroupAdmin, cancellationToken);
 				}
 
+				var savedUserIds = new HashSet<string>((call.Dispatches ?? Enumerable.Empty<CallDispatch>()).Select(x => x.UserId));
+				var savedGroupIds = new HashSet<int>((call.GroupDispatches ?? Enumerable.Empty<CallDispatchGroup>()).Select(x => x.DepartmentGroupId));
+				var savedUnitIds = new HashSet<int>((call.UnitDispatches ?? Enumerable.Empty<CallDispatchUnit>()).Select(x => x.UnitId));
+				var savedRoleIds = new HashSet<int>((call.RoleDispatches ?? Enumerable.Empty<CallDispatchRole>()).Select(x => x.RoleId));
+
+				var cancelledUserIds = existingDispatches.Select(x => x.UserId)
+					.Where(y => !savedUserIds.Contains(y)).ToList();
+				var cancelledGroupIds = existingGroupDispatches.Select(x => x.DepartmentGroupId)
+					.Where(y => !savedGroupIds.Contains(y)).ToList();
+				var cancelledUnitIds = existingUnitDispatches.Select(x => x.UnitId)
+					.Where(y => !savedUnitIds.Contains(y)).ToList();
+				var cancelledRoleIds = existingRoleDispatches.Select(x => x.RoleId)
+					.Where(y => !savedRoleIds.Contains(y)).ToList();
+
+				var newUserIds = dispatchingUserIds.Where(id => !existingDispatches.Any(d => d.UserId == id)).ToList();
+				var newGroupIds = dispatchingGroupIds.Where(id => !existingGroupDispatches.Any(d => d.DepartmentGroupId == id)).ToList();
+				var newUnitIds = dispatchingUnitIds.Where(id => !existingUnitDispatches.Any(d => d.UnitId == id)).ToList();
+				var newRoleIds = dispatchingRoleIds.Where(id => !existingRoleDispatches.Any(d => d.RoleId == id)).ToList();
+
+				var shouldApplyDispatchStatuses = call.HasBeenDispatched.GetValueOrDefault() || !call.DispatchOn.HasValue || call.DispatchOn.Value <= DateTime.UtcNow;
+				if (shouldApplyDispatchStatuses && (cancelledGroupIds.Any() || cancelledUnitIds.Any()))
+				{
+					await _callDispatchStatusService.ApplyReleaseStatusesAsync(call, cancelledGroupIds, cancelledUnitIds, cancellationToken);
+				}
+
+				if (shouldApplyDispatchStatuses && (newGroupIds.Any() || newUnitIds.Any()))
+				{
+					await _callDispatchStatusService.ApplyDispatchStatusesAsync(call, newGroupIds, newUnitIds, cancellationToken);
+				}
+
 				_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent() { DepartmentId = DepartmentId, Call = call });
 
 				// Send cancel notifications to removed entities
 				if (model.NotifyCancelledEntities)
 				{
-					var savedUserIds = new HashSet<string>((call.Dispatches ?? Enumerable.Empty<CallDispatch>()).Select(x => x.UserId));
-					var savedGroupIds = new HashSet<int>((call.GroupDispatches ?? Enumerable.Empty<CallDispatchGroup>()).Select(x => x.DepartmentGroupId));
-					var savedUnitIds = new HashSet<int>((call.UnitDispatches ?? Enumerable.Empty<CallDispatchUnit>()).Select(x => x.UnitId));
-					var savedRoleIds = new HashSet<int>((call.RoleDispatches ?? Enumerable.Empty<CallDispatchRole>()).Select(x => x.RoleId));
-
-					var cancelledUserIds = existingDispatches.Select(x => x.UserId)
-						.Where(y => !savedUserIds.Contains(y)).ToList();
-					var cancelledGroupIds = existingGroupDispatches.Select(x => x.DepartmentGroupId)
-						.Where(y => !savedGroupIds.Contains(y)).ToList();
-					var cancelledUnitIds = existingUnitDispatches.Select(x => x.UnitId)
-						.Where(y => !savedUnitIds.Contains(y)).ToList();
-					var cancelledRoleIds = existingRoleDispatches.Select(x => x.RoleId)
-						.Where(y => !savedRoleIds.Contains(y)).ToList();
-
 					if (cancelledUserIds.Any() || cancelledGroupIds.Any() || cancelledUnitIds.Any() || cancelledRoleIds.Any())
 					{
 						var departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
@@ -1003,11 +965,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 				// Auto-dispatch newly added entities when RebroadcastCall is not checked
 				if (!model.RebroadcastCall)
 				{
-					var newUserIds = dispatchingUserIds.Where(id => !existingDispatches.Any(d => d.UserId == id)).ToList();
-					var newGroupIds = dispatchingGroupIds.Where(id => !existingGroupDispatches.Any(d => d.DepartmentGroupId == id)).ToList();
-					var newUnitIds = dispatchingUnitIds.Where(id => !existingUnitDispatches.Any(d => d.UnitId == id)).ToList();
-					var newRoleIds = dispatchingRoleIds.Where(id => !existingRoleDispatches.Any(d => d.RoleId == id)).ToList();
-
 					if (newUserIds.Any() || newGroupIds.Any() || newUnitIds.Any() || newRoleIds.Any())
 					{
 						var cqi = new CallQueueItem();
@@ -1419,6 +1376,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
+				call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
 				call.ClosedByUserId = UserId;
 				call.ClosedOn = DateTime.UtcNow;
 				call.CompletedNotes = System.Net.WebUtility.HtmlDecode(model.ClosedCallNotes);
@@ -1426,6 +1384,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				await _callsService.SaveCallAsync(call, cancellationToken);
 				_eventAggregator.SendMessage<CallClosedEvent>(new CallClosedEvent() { DepartmentId = DepartmentId, Call = call });
+
+				var shouldApplyReleaseStatuses = call.HasBeenDispatched.GetValueOrDefault() || !call.DispatchOn.HasValue || call.DispatchOn.Value <= DateTime.UtcNow;
+				if (shouldApplyReleaseStatuses && ((call.GroupDispatches != null && call.GroupDispatches.Any()) || (call.UnitDispatches != null && call.UnitDispatches.Any())))
+				{
+					await _callDispatchStatusService.ApplyReleaseStatusesAsync(call, cancellationToken: cancellationToken);
+				}
 
 				return RedirectToAction("Dashboard", "Dispatch", new { Area = "User" });
 			}

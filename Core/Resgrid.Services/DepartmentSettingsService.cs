@@ -784,6 +784,26 @@ namespace Resgrid.Services
 			return false;
 		}
 
+		public async Task<int> GetUnitCallDispatchStatusToSetAsync(int departmentId)
+		{
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.UnitCallDispatchStatusToSet);
+
+			if (settingValue != null)
+				return int.Parse(settingValue.Setting);
+
+			return -1;
+		}
+
+		public async Task<int> GetUnitCallReleaseStatusToSetAsync(int departmentId)
+		{
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.UnitCallReleaseStatusToSet);
+
+			if (settingValue != null)
+				return int.Parse(settingValue.Setting);
+
+			return -1;
+		}
+
 		public async Task<bool> GetPersonnelOnUnitSetUnitStatusAsync(int departmentId, bool bypassCache = false)
 		{
 			async Task<string> getSetting()

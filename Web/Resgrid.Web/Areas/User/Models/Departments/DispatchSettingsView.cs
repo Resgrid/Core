@@ -7,8 +7,11 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 	public class DispatchSettingsView
 	{
 		public SelectList StatusLevels { get; set; }
+		public SelectList UnitStatusLevels { get; set; }
 		public int ShiftDispatchStatus { get; set; }
 		public int ShiftClearStatus { get; set; }
+		public int UnitDispatchStatus { get; set; }
+		public int UnitClearStatus { get; set; }
 		public ActionTypes UserStatusTypes { get; set; }
 		public bool DispatchShiftInsteadOfGroup { get; set; }
 		public bool AutoSetStatusForShiftPersonnel { get; set; }
@@ -34,6 +37,8 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 		{
 			ShiftDispatchStatus = -1;
 			ShiftClearStatus = -1;
+			UnitDispatchStatus = -1;
+			UnitClearStatus = -1;
 			TimerConfigs = new List<CheckInTimerConfig>();
 			TimerOverrides = new List<CheckInTimerOverride>();
 			UnitTypes = new List<UnitType>();

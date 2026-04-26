@@ -312,6 +312,12 @@
   <data name="PersonCallReleaseStatusLabel" xml:space="preserve">
     <value>Person Call Release Status</value>
   </data>
+  <data name="UnitCallDispatchStatusLabel" xml:space="preserve">
+    <value>Unit Call Dispatch Status</value>
+  </data>
+  <data name="UnitCallReleaseStatusLabel" xml:space="preserve">
+    <value>Unit Call Release Status</value>
+  </data>
   <data name="PersonnelSorting" xml:space="preserve">
     <value>Personnel Sorting</value>
   </data>

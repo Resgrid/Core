@@ -192,6 +192,12 @@
   <data name="PersonnelOnUnitSetUnitStatusHelp" xml:space="preserve">
     <value />
   </data>
+  <data name="UnitCallDispatchStatusLabel" xml:space="preserve">
+    <value>Unit Call Dispatch Status</value>
+  </data>
+  <data name="UnitCallReleaseStatusLabel" xml:space="preserve">
+    <value>Unit Call Release Status</value>
+  </data>
   <data name="CallDispatchSettingsHeader" xml:space="preserve">
     <value />
   </data>

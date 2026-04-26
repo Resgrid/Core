@@ -79,7 +79,9 @@ namespace Resgrid.Web.Services.Models.v4.UnitStatus
 		public string DestinationAddress { get; set; }
 
 		/// <summary>
-		/// Destination type/category name.
+		/// Localized display label for the destination type (e.g. "Station", "Call", "POI"). Not
+		/// suitable for programmatic branching; use <see cref="DestinationType"/> as the
+		/// machine-readable discriminator instead.
 		/// </summary>
 		public string DestinationTypeName { get; set; }
 

@@ -6,6 +6,7 @@ using System.Threading;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Localization;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
@@ -2177,7 +2178,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				personnelEvent.Timestamp = actionLog.Timestamp.TimeConverterToString(model.Department);
 				personnelEvent.Note = actionLog.Note;
 
-				var destination = DestinationResolutionHelper.Resolve(actionLog.DestinationId, actionLog.DestinationType, statusDetail?.DetailType, activeCalls, stations, pois);
+				var destination = DestinationResolutionHelper.Resolve(actionLog.DestinationId, actionLog.DestinationType, statusDetail?.DetailType, activeCalls, stations, pois, _localizer);
 				personnelEvent.DestinationName = destination.Name;
 
 				var coordinates = actionLog.GetCoordinates();
@@ -2226,7 +2227,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				personnelEvent.Timestamp = actionLog.Timestamp.TimeConverterToString(department);
 				personnelEvent.Note = actionLog.Note;
 
-				var destination = DestinationResolutionHelper.Resolve(actionLog.DestinationId, actionLog.DestinationType, statusDetail?.DetailType, activeCalls, stations, pois);
+				var destination = DestinationResolutionHelper.Resolve(actionLog.DestinationId, actionLog.DestinationType, statusDetail?.DetailType, activeCalls, stations, pois, _localizer);
 				personnelEvent.DestinationName = destination.Name;
 
 				var coordinates = actionLog.GetCoordinates();

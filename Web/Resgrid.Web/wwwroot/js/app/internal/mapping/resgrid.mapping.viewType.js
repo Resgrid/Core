@@ -55,7 +55,7 @@ var resgrid;
                                 }
 
                                 return '<a class="btn btn-xs btn-info" href="' + resgrid.absoluteBaseUrl + '/User/Mapping/EditPOI?poiId=' + data + '">Edit</a> ' +
-                                    '<a class="btn btn-xs btn-danger" href="' + resgrid.absoluteBaseUrl + '/User/Mapping/DeletePOI?poiId=' + data + '" onclick="return confirm(\'Delete this POI?\');">Delete</a>';
+                                    '<button type="button" class="btn btn-xs btn-danger" onclick="resgrid.mapping.viewType.deletePoi(' + data + ')">Delete</button>';
                             }
                         }
                     ]
@@ -127,6 +127,13 @@ var resgrid;
                     return false;
             }
             viewType.checkboxToBool = checkboxToBool;
+
+            function deletePoi(poiId) {
+                if (!confirm('Delete this POI?')) return;
+                document.getElementById('deletePoiId').value = poiId;
+                document.getElementById('deletePoiForm').submit();
+            }
+            viewType.deletePoi = deletePoi;
 
         })(viewType = mapping.viewType || (mapping.viewType = {}));
     })(mapping = resgrid.mapping || (resgrid.mapping = {}));

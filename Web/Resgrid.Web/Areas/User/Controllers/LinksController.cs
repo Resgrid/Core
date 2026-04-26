@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Web.Areas.User.Models.Dispatch;
@@ -29,10 +30,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly ILimitsService _limitsService;
 		private readonly IMappingService _mappingService;
+		private readonly IStringLocalizer<Resgrid.Localization.Common> _localizer;
 
 		public LinksController(IDepartmentLinksService departmentLinksService, IDepartmentsService departmentsService, IEmailService emailService, 
 			ICallsService callsService, IUnitsService unitsService, IActionLogsService actionLogsService, IDepartmentGroupsService departmentGroupsService,
-			IUserStateService userStateService, IPersonnelRolesService personnelRolesService, ILimitsService limitsService, IMappingService mappingService)
+			IUserStateService userStateService, IPersonnelRolesService personnelRolesService, ILimitsService limitsService, IMappingService mappingService,
+			IStringLocalizer<Resgrid.Localization.Common> localizer)
 		{
 			_departmentLinksService = departmentLinksService;
 			_departmentsService = departmentsService;
@@ -45,6 +48,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_personnelRolesService = personnelRolesService;
 			_limitsService = limitsService;
 			_mappingService = mappingService;
+			_localizer = localizer;
 		}
 		#endregion Private Members and Constructors
 
@@ -360,7 +364,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 				var respondingToDepartment = stations.Where(s => al != null && s.DepartmentGroupId == al.DestinationId).FirstOrDefault();
 				var destinationType = al.GetEffectiveDestinationType();
-				var destination = DestinationResolutionHelper.Resolve(al?.DestinationId, destinationType == DestinationEntityTypes.None ? null : (int?)destinationType, null, calls, stations, pois);
+				var destination = DestinationResolutionHelper.Resolve(al?.DestinationId, al?.DestinationType, null, calls, stations, pois);
 				var personnelViewModel = await Models.BigBoardX.PersonnelViewModel.Create(u.Name, al, us, department, respondingToDepartment, group, u.Roles, callNumber, destination);
 
 				personnelViewModels.Add(personnelViewModel);

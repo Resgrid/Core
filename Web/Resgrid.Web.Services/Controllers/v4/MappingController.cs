@@ -688,9 +688,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!rows.Any())
 				return String.Empty;
 
-			rows[0] = $"<strong>{rows[0]}</strong>";
+			var encodedRows = rows.Select(System.Net.WebUtility.HtmlEncode).ToList();
+			encodedRows[0] = $"<strong>{encodedRows[0]}</strong>";
 
-			return String.Join("<br/>", rows);
+			return String.Join("<br/>", encodedRows);
 		}
 
 		private static string GetPoiLayerId(PoiType poiType)

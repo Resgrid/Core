@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
 using System.Threading.Tasks;
@@ -36,6 +37,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly Model.Services.IAuthorizationService _authorizationService;
+		private readonly IStringLocalizer<Resgrid.Localization.Common> _localizer;
 
 		public PersonnelStatusesController(
 			IUsersService usersService,
@@ -48,7 +50,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IMappingService mappingService,
 			IPersonnelRolesService personnelRolesService,
 			IDepartmentSettingsService departmentSettingsService,
-			Model.Services.IAuthorizationService authorizationService
+			Model.Services.IAuthorizationService authorizationService,
+			IStringLocalizer<Resgrid.Localization.Common> localizer
 			)
 		{
 			_usersService = usersService;
@@ -62,6 +65,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_personnelRolesService = personnelRolesService;
 			_departmentSettingsService = departmentSettingsService;
 			_authorizationService = authorizationService;
+			_localizer = localizer;
 		}
 		#endregion Members and Constructors
 
@@ -152,8 +156,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 					log = await _actionLogsService.SetUserActionAsync(input.UserId, DepartmentId, int.Parse(input.Type), geolocation, cancellationToken);
 				else
 				{
+					if (!int.TryParse(input.RespondingTo, out var destinationId))
+						return BadRequest();
+
 					var destinationType = input.RespondingToType ?? (int)DestinationEntityTypes.Call;
-					var destinationId = int.Parse(input.RespondingTo);
 
 					if (!await IsValidDestinationAsync(destinationId, destinationType))
 						return BadRequest();
@@ -219,8 +225,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 					log = await _actionLogsService.SetUserActionAsync(userId, DepartmentId, int.Parse(input.Type), geolocation, cancellationToken);
 				else
 				{
+					if (!int.TryParse(input.RespondingTo, out var destinationId))
+						continue;
+
 					var destinationType = input.RespondingToType ?? (int)DestinationEntityTypes.Call;
-					var destinationId = int.Parse(input.RespondingTo);
 
 					if (!await IsValidDestinationAsync(destinationId, destinationType))
 						continue;
@@ -264,7 +272,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (actionLog.DestinationId.HasValue)
 				{
 					var destinationType = actionLog.GetEffectiveDestinationType();
-					var destination = DestinationResolutionHelper.Resolve(actionLog.DestinationId, destinationType == DestinationEntityTypes.None ? null : (int?)destinationType, null, activeCalls, stations, pois);
+					var destination = DestinationResolutionHelper.Resolve(actionLog.DestinationId, actionLog.DestinationType, null, activeCalls, stations, pois);
 					statusResult.DestinationId = destination.DestinationId;
 					statusResult.DestinationType = destination.DestinationType;
 					statusResult.DestinationName = destination.Name;

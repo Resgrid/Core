@@ -139,7 +139,7 @@
 				var ctrId = 'private_' + id;
 				$('#' + ctrId).remove();
 
-				var disc = $('<div class="disconnect">"' + userName + '" ' + loggedOffMessage + '</div>');
+				var disc = $('<div class="disconnect">"' + htmlEncode(userName) + '" ' + loggedOffMessage + '</div>');
 
 				$(disc).hide();
 				$('#divusers').prepend(disc);

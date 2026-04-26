@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
@@ -47,11 +48,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IMappingService _mappingService;
 		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
 		private readonly IUdfRenderingService _udfRenderingService;
+		private readonly IStringLocalizer<Resgrid.Localization.Common> _localizer;
 
 		public UnitsController(IDepartmentsService departmentsService, IUsersService usersService, IUnitsService unitsService, Model.Services.IAuthorizationService authorizationService,
 			ILimitsService limitsService, IDepartmentGroupsService departmentGroupsService, ICallsService callsService, IEventAggregator eventAggregator, ICustomStateService customStateService,
 			IGeoService geoService, IDepartmentSettingsService departmentSettingsService, IGeoLocationProvider geoLocationProvider, INovuProvider novuProvider, IMappingService mappingService,
-			IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService)
+			IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService, IStringLocalizer<Resgrid.Localization.Common> localizer)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -69,6 +71,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_mappingService = mappingService;
 			_userDefinedFieldsService = userDefinedFieldsService;
 			_udfRenderingService = udfRenderingService;
+			_localizer = localizer;
 		}
 		#endregion Private Members and Constructors
 
@@ -953,7 +956,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				eventJson.Timestamp = eventRecord.Timestamp.TimeConverterToString(model.Department).ToString();
 				eventJson.Note = eventRecord.Note;
 				var customState = await _customStateService.GetCustomUnitStateAsync(eventRecord);
-				var destination = DestinationResolutionHelper.Resolve(eventRecord.DestinationId, eventRecord.DestinationType, customState?.DetailType, activeCalls, stations, pois);
+				var destination = DestinationResolutionHelper.Resolve(eventRecord.DestinationId, eventRecord.DestinationType, customState?.DetailType, activeCalls, stations, pois, _localizer);
 				eventJson.DestinationName = destination.Name;
 
 				if (eventRecord.LocalTimestamp.HasValue)
@@ -1009,7 +1012,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				unitEvent.Timestamp = e.Timestamp.TimeConverterToString(department);
 				unitEvent.Note = e.Note;
 
-				var destination = DestinationResolutionHelper.Resolve(e.DestinationId, e.DestinationType, customState?.DetailType, activeCalls, stations, pois);
+				var destination = DestinationResolutionHelper.Resolve(e.DestinationId, e.DestinationType, customState?.DetailType, activeCalls, stations, pois, _localizer);
 				unitEvent.DestinationName = destination.Name;
 
 
@@ -1329,7 +1332,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var state in activeDetails.OrderBy(x => x.Order))
 			{
-				sb.Append($"<option value='{state.CustomStateDetailId}'>{state.ButtonText}</option>");
+				sb.Append($"<option value='{state.CustomStateDetailId}'>{HttpUtility.HtmlEncode(state.ButtonText)}</option>");
 			}
 
 			buttonHtml = sb.ToString();
@@ -1364,7 +1367,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var state in activeDetails.OrderBy(x => x.Order))
 			{
-				sb.Append($"<option value='{state.CustomStateDetailId}'>{state.ButtonText}</option>");
+				sb.Append($"<option value='{state.CustomStateDetailId}'>{HttpUtility.HtmlEncode(state.ButtonText)}</option>");
 			}
 
 			buttonHtml = sb.ToString();
@@ -1551,7 +1554,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				sb.Append("<optgroup label='Calls'>");
 				foreach (var call in activeCalls)
 				{
-					sb.Append($"<option value='{(int)DestinationEntityTypes.Call}:{call.CallId}'>Call {call.GetIdentifier()}:{call.Name}</option>");
+					sb.Append($"<option value='{(int)DestinationEntityTypes.Call}:{call.CallId}'>Call {call.GetIdentifier()}:{HttpUtility.HtmlEncode(call.Name)}</option>");
 				}
 				sb.Append("</optgroup>");
 			}
@@ -1561,7 +1564,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				sb.Append("<optgroup label='Stations'>");
 				foreach (var station in stations)
 				{
-					sb.Append($"<option value='{(int)DestinationEntityTypes.Station}:{station.DepartmentGroupId}'>Station: {station.Name}</option>");
+					sb.Append($"<option value='{(int)DestinationEntityTypes.Station}:{station.DepartmentGroupId}'>Station: {HttpUtility.HtmlEncode(station.Name)}</option>");
 				}
 				sb.Append("</optgroup>");
 			}
@@ -1570,10 +1573,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				foreach (var poiGroup in destinationPois.GroupBy(x => !String.IsNullOrWhiteSpace(x.Type?.Name) ? x.Type.Name : "POIs"))
 				{
-					sb.Append($"<optgroup label='{poiGroup.Key}'>");
+					sb.Append($"<optgroup label=\"{HttpUtility.HtmlEncode(poiGroup.Key)}\">");
 					foreach (var poi in poiGroup.OrderBy(x => x.Name).ThenBy(x => x.Address).ThenBy(x => x.Note))
 					{
-						sb.Append($"<option value='{(int)DestinationEntityTypes.Poi}:{poi.PoiId}'>{GetPoiDisplayText(poi)}</option>");
+						sb.Append($"<option value='{(int)DestinationEntityTypes.Poi}:{poi.PoiId}'>{HttpUtility.HtmlEncode(GetPoiDisplayText(poi))}</option>");
 					}
 					sb.Append("</optgroup>");
 				}
@@ -1593,13 +1596,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (state.DetailType == (int)CustomStateDetailTypes.None)
 				{
-					sb.Append($"<li><a style='color:{buttonColor};' href='{withoutDestinationHref}'>{buttonText}</a></li>");
+					sb.Append($"<li><a style=\"color:{HttpUtility.HtmlEncode(state.ButtonColor)};\" href='/User/Units/{actionWithoutDestination}?{targetQuery}&stateType={state.CustomStateDetailId}'>{HttpUtility.HtmlEncode(state.ButtonText)}</a></li>");
 					continue;
 				}
 
-				sb.Append($"<li class='dropdown-submenu'><a style='color:{buttonColor};' tabindex='-1' href='#'>{buttonText}</a>");
+				sb.Append($"<li class='dropdown-submenu'><a style=\"color:{HttpUtility.HtmlEncode(state.ButtonColor)};\" tabindex='-1' href='#'>{HttpUtility.HtmlEncode(state.ButtonText)}</a>");
 				sb.Append($"<ul class='dropdown-menu unitStateList_{cssKey}'>");
-				sb.Append($"<li><a href='{withoutDestinationHref}'>{buttonText}</a></li>");
+				sb.Append($"<li><a href='/User/Units/{actionWithoutDestination}?{targetQuery}&stateType={state.CustomStateDetailId}'>{HttpUtility.HtmlEncode(state.ButtonText)}</a></li>");
 				sb.Append("<li class='divider'></li>");
 				AppendDestinationMenuEntries(sb, unitId, unitIds, actionWithDestination, activeCalls, stations, destinationPois, state);
 				sb.Append("</ul>");

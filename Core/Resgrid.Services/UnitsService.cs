@@ -517,7 +517,7 @@ namespace Resgrid.Services
 
 			callEnabledStates.AddRange(from state in nonNullStates
 									   from detail in state.Details
-									   where detail.DetailType == (int)CustomStateDetailTypes.Calls || detail.DetailType == (int)CustomStateDetailTypes.CallsAndStations
+									   where detail.DetailType.SupportsCalls()
 									   select detail.CustomStateDetailId);
 
 			var unitStates = (from us in await _unitStatesRepository.GetAllStatesByCallIdAsync(callId)

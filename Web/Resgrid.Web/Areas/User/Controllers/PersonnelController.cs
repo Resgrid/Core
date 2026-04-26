@@ -6,6 +6,7 @@ using System.Threading;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Localization;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
@@ -21,6 +22,7 @@ using Resgrid.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Localization;
 using Resgrid.Model.Identity;
 using Resgrid.WebCore.Areas.User.Models.Personnel;
 using IdentityUser = Resgrid.Model.Identity.IdentityUser;
@@ -54,15 +56,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly ICallsService _callsService;
 		private readonly IGeoLocationProvider _geoLocationProvider;
+		private readonly IMappingService _mappingService;
 		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
 		private readonly IUdfRenderingService _udfRenderingService;
+		private readonly IStringLocalizer<Resgrid.Localization.Common> _localizer;
 
 		public PersonnelController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IEmailService emailService, IUserProfileService userProfileService, IDeleteService deleteService, Model.Services.IAuthorizationService authorizationService,
 			ILimitsService limitsService, IPersonnelRolesService personnelRolesService, IDepartmentGroupsService departmentGroupsService, IUserStateService userStateService,
 			IEventAggregator eventAggregator, IEmailMarketingProvider emailMarketingProvider, ICertificationService certificationService, ICustomStateService customStateService,
 			IGeoService geoService, UserManager<IdentityUser> userManager, IDepartmentSettingsService departmentSettingsService, ICallsService callsService,
-			IGeoLocationProvider geoLocationProvider, IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService)
+			IGeoLocationProvider geoLocationProvider, IMappingService mappingService, IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService,
+			IStringLocalizer<Resgrid.Localization.Common> localizer)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -84,8 +89,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_departmentSettingsService = departmentSettingsService;
 			_callsService = callsService;
 			_geoLocationProvider = geoLocationProvider;
+			_mappingService = mappingService;
 			_userDefinedFieldsService = userDefinedFieldsService;
 			_udfRenderingService = udfRenderingService;
+			_localizer = localizer;
 		}
 		#endregion Private Members and Constructors
 
@@ -1295,46 +1302,53 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var state = activeDetails.FirstOrDefault(x => x.CustomStateDetailId == customStatusDetailId);
 			var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
 			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
+			var destinationPois = await _mappingService.GetDestinationPOIsForDepartmentAsync(DepartmentId);
+			var noneText = HttpUtility.HtmlEncode(_localizer["None"].Value);
+			var callsLabel = HttpUtility.HtmlEncode(_localizer["Calls"].Value);
+			var stationsLabel = HttpUtility.HtmlEncode(_localizer["Stations"].Value);
+			var poisLabel = _localizer["Pois"].Value;
+			var callPrefix = _localizer["Call"].Value;
+			var stationPrefix = _localizer["Station"].Value;
 			StringBuilder sb = new StringBuilder();
 
-			sb.Append($"<option value='-1'>None</option>");
+			sb.Append($"<option value=''>{noneText}</option>");
 
 			if (state != null)
 			{
-				// No custom drop down options for responding to avoid confusion between Responding Station and Responding Scene
-				if (customStatusDetailId != (int)ActionTypes.Responding)
+				if (state.DetailType.SupportsCalls())
 				{
-					if (state.DetailType == (int)CustomStateDetailTypes.None)
+					sb.Append($"<optgroup label='{callsLabel}'>");
+					foreach (var call in activeCalls)
 					{
-
+						var callText = HttpUtility.HtmlEncode($"{callPrefix} {call.GetIdentifier()}:{call.Name}");
+						sb.Append($"<option value='{(int)DestinationEntityTypes.Call}:{call.CallId}'>{callText}</option>");
 					}
-					else if (state.DetailType == (int)CustomStateDetailTypes.Calls)
-					{
-						foreach (var call in activeCalls)
-						{
-							sb.Append($"<option value='{call.CallId}'>Call {call.GetIdentifier()}:{call.Name}</option>");
-						}
-					}
-					else if (state.DetailType == (int)CustomStateDetailTypes.Stations)
-					{
-						foreach (var station in stations)
-						{
-							sb.Append($"<option value='{station.DepartmentGroupId}'>Station: {station.Name}</option>");
-						}
+					sb.Append("</optgroup>");
+				}
 
-						sb.Append("</ul>");
-					}
-					else if (state.DetailType == (int)CustomStateDetailTypes.CallsAndStations)
+				if (state.DetailType.SupportsStations())
+				{
+					sb.Append($"<optgroup label='{stationsLabel}'>");
+					foreach (var station in stations)
 					{
-						foreach (var call in activeCalls)
-						{
-							sb.Append($"<option value='{call.CallId}'>Call {call.GetIdentifier()}:{call.Name}</option>");
-						}
+						var stationText = HttpUtility.HtmlEncode($"{stationPrefix}: {station.Name}");
+						sb.Append($"<option value='{(int)DestinationEntityTypes.Station}:{station.DepartmentGroupId}'>{stationText}</option>");
+					}
+					sb.Append("</optgroup>");
+				}
 
-						foreach (var station in stations)
+				if (state.DetailType.SupportsPois())
+				{
+					foreach (var poiGroup in destinationPois.GroupBy(x => !String.IsNullOrWhiteSpace(x.Type?.Name) ? x.Type.Name : string.Empty))
+					{
+						var poiGroupLabel = !String.IsNullOrWhiteSpace(poiGroup.Key) ? poiGroup.Key : poisLabel;
+						sb.Append($"<optgroup label='{HttpUtility.HtmlEncode(poiGroupLabel)}'>");
+						foreach (var poi in poiGroup.OrderBy(x => x.Name).ThenBy(x => x.Address).ThenBy(x => x.Note))
 						{
-							sb.Append($"<option value='{station.DepartmentGroupId}'>Station: {station.Name}</option>");
+							var poiText = HttpUtility.HtmlEncode(PoiDisplayHelper.GetSelectionLabel(poi, poiGroupLabel));
+							sb.Append($"<option value='{(int)DestinationEntityTypes.Poi}:{poi.PoiId}'>{poiText}</option>");
 						}
+						sb.Append("</optgroup>");
 					}
 				}
 			}
@@ -1347,26 +1361,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
-		public async Task<IActionResult> SetActionForUser(string userId, int actionType, int destination, string note, CancellationToken cancellationToken)
+		public async Task<IActionResult> SetActionForUser(string userId, int actionType, int destination, int type, string note, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserViewPersonAsync(UserId, userId, DepartmentId))
 				return Unauthorized();
 
-			var status = new ActionLog();
-			status.UserId = userId;
-			status.Timestamp = DateTime.UtcNow;
-			status.ActionTypeId = actionType;
-			status.DepartmentId = DepartmentId;
-
-			if (destination > 0)
-				status.DestinationId = destination;
-
-			if (!String.IsNullOrWhiteSpace(note))
-				status.Note = HttpUtility.UrlDecode(note);
-
 			try
 			{
-				var savedState = await _actionLogsService.SaveActionLogAsync(status, cancellationToken);
+				var decodedNote = !String.IsNullOrWhiteSpace(note) ? HttpUtility.UrlDecode(note) : null;
+
+				if (destination > 0)
+				{
+					if (!await IsValidDestinationAsync(destination, type))
+						return BadRequest();
+
+					await _actionLogsService.SetUserActionAsync(userId, DepartmentId, actionType, null, destination, type, decodedNote, cancellationToken);
+				}
+				else
+				{
+					await _actionLogsService.SetUserActionAsync(userId, DepartmentId, actionType, null, decodedNote, cancellationToken);
+				}
 			}
 			catch (Exception ex)
 			{
@@ -1378,7 +1392,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Personnel_View)]
-		public async Task<IActionResult> SetUserActionForMultiple(string userIds, int actionType, int destination, string note, CancellationToken cancellationToken)
+		public async Task<IActionResult> SetUserActionForMultiple(string userIds, int actionType, int destination, int type, string note, CancellationToken cancellationToken)
 		{
 			if (!String.IsNullOrWhiteSpace(userIds) && userIds.Split(char.Parse("|")).Any())
 			{
@@ -1387,21 +1401,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 					if (!await _authorizationService.CanUserViewPersonAsync(UserId, userId, DepartmentId))
 						return Unauthorized();
 
-					var status = new ActionLog();
-					status.UserId = userId;
-					status.Timestamp = DateTime.UtcNow;
-					status.ActionTypeId = actionType;
-					status.DepartmentId = DepartmentId;
-
-					if (destination > 0)
-						status.DestinationId = destination;
-
-					if (!String.IsNullOrWhiteSpace(note))
-						status.Note = HttpUtility.UrlDecode(note);
-
 					try
 					{
-						var savedState = await _actionLogsService.SaveActionLogAsync(status, cancellationToken);
+						var decodedNote = !String.IsNullOrWhiteSpace(note) ? HttpUtility.UrlDecode(note) : null;
+
+						if (destination > 0)
+						{
+							if (!await IsValidDestinationAsync(destination, type))
+								return BadRequest();
+
+							await _actionLogsService.SetUserActionAsync(userId, DepartmentId, actionType, null, destination, type, decodedNote, cancellationToken);
+						}
+						else
+						{
+							await _actionLogsService.SetUserActionAsync(userId, DepartmentId, actionType, null, decodedNote, cancellationToken);
+						}
 					}
 					catch (Exception ex)
 					{
@@ -2136,6 +2150,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Rows = new List<PersonnelEventJson>();
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			model.RunOn = DateTime.UtcNow.TimeConverter(model.Department);
+			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
+			var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
+			var pois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 
 			foreach (var eventId in eventIds)
 			{
@@ -2161,19 +2178,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				personnelEvent.Timestamp = actionLog.Timestamp.TimeConverterToString(model.Department);
 				personnelEvent.Note = actionLog.Note;
 
-				if (actionLog.DestinationId.HasValue && actionLog.DestinationType.HasValue)
-				{
-					if (actionLog.DestinationType.Value == 1)
-					{
-						var station = await _departmentGroupsService.GetGroupByIdAsync(actionLog.DestinationId.Value, false);
-						personnelEvent.DestinationName = station?.Name ?? "Station Not Found";
-					}
-					else if (actionLog.DestinationType.Value == 2)
-					{
-						var call = await _callsService.GetCallByIdAsync(actionLog.DestinationId.Value, false);
-						personnelEvent.DestinationName = call?.Name ?? "Call Not Found";
-					}
-				}
+				var destination = DestinationResolutionHelper.Resolve(actionLog.DestinationId, actionLog.DestinationType, statusDetail?.DetailType, activeCalls, stations, pois, _localizer);
+				personnelEvent.DestinationName = destination.Name;
 
 				var coordinates = actionLog.GetCoordinates();
 				if (coordinates != null)
@@ -2205,6 +2211,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var personName = profile != null ? profile.FullName.AsFirstNameLastName : userId;
 			var allEvents = await _actionLogsService.GetAllActionLogsForUser(userId);
 			var events = allEvents.Where(al => al.DepartmentId == DepartmentId).ToList();
+			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
+			var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
+			var pois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 
 			foreach (var actionLog in events)
 			{
@@ -2218,25 +2227,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				personnelEvent.Timestamp = actionLog.Timestamp.TimeConverterToString(department);
 				personnelEvent.Note = actionLog.Note;
 
-				if (actionLog.DestinationId.HasValue && actionLog.DestinationType.HasValue)
-				{
-					if (actionLog.DestinationType.Value == 1) // Station / Group
-					{
-						var station = await _departmentGroupsService.GetGroupByIdAsync(actionLog.DestinationId.Value, false);
-						if (station != null)
-							personnelEvent.DestinationName = station.Name;
-						else
-							personnelEvent.DestinationName = "Station Not Found";
-					}
-					else if (actionLog.DestinationType.Value == 2) // Call
-					{
-						var call = await _callsService.GetCallByIdAsync(actionLog.DestinationId.Value, false);
-						if (call != null)
-							personnelEvent.DestinationName = call.Name;
-						else
-							personnelEvent.DestinationName = "Call Not Found";
-					}
-				}
+				var destination = DestinationResolutionHelper.Resolve(actionLog.DestinationId, actionLog.DestinationType, statusDetail?.DetailType, activeCalls, stations, pois, _localizer);
+				personnelEvent.DestinationName = destination.Name;
 
 				var coordinates = actionLog.GetCoordinates();
 				if (coordinates != null)
@@ -2252,6 +2244,25 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return Json(personnelEvents);
+		}
+
+		private async Task<bool> IsValidDestinationAsync(int destinationId, int destinationType)
+		{
+			var entityType = (DestinationEntityTypes)destinationType;
+
+			switch (entityType)
+			{
+				case DestinationEntityTypes.Station:
+					var station = await _departmentGroupsService.GetGroupByIdAsync(destinationId, false);
+					return station != null && station.DepartmentId == DepartmentId;
+				case DestinationEntityTypes.Call:
+					var call = await _callsService.GetCallByIdAsync(destinationId, false);
+					return call != null && call.DepartmentId == DepartmentId;
+				case DestinationEntityTypes.Poi:
+					return await _mappingService.GetDestinationPOIByIdAsync(DepartmentId, destinationId) != null;
+				default:
+					return false;
+			}
 		}
 
 		#endregion Personnel Events

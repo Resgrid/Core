@@ -9,5 +9,7 @@ namespace Resgrid.Model
 		public double? Longitude { get; set; }
 		[ProtoMember(2)]
 		public double? Latitude { get; set; }
+		[ProtoMember(3)]
+		public string Name { get; set; }
 	}
 }

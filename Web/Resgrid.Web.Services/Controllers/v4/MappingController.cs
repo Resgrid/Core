@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using GeoJSON.Net.Feature;
+using Resgrid.Model.Helpers;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -107,6 +108,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var unitLocations = await _unitsService.GetLatestUnitLocationsAsync(DepartmentId);
 			var unitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
 			var callTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
+			var poiTypes = await _mappingService.GetPOITypesForDepartmentAsync(DepartmentId);
 
 			var personnelStates = await _actionLogsService.GetLastActionLogsForDepartmentAsync(DepartmentId);
 			//var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
@@ -458,6 +460,27 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 			}
 
+			if (poiTypes != null && poiTypes.Any())
+			{
+				foreach (var poiType in poiTypes.Where(x => x.Pois != null && x.Pois.Any()))
+				{
+					result.Data.PoiLayers.Add(new PoiLayerData
+					{
+						PoiTypeId = poiType.PoiTypeId,
+						Name = poiType.Name,
+						Color = poiType.Color,
+						ImagePath = poiType.Image,
+						Marker = poiType.Marker,
+						IsDestination = poiType.IsDestination
+					});
+
+					foreach (var poi in poiType.Pois)
+					{
+						result.Data.MapMakerInfos.Add(ConvertPoiMapMarker(poi, poiType));
+					}
+				}
+			}
+
 			result.PageSize = 1;
 			result.Status = ResponseHelper.Success;
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -495,6 +518,88 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return Ok(result);
 		}
 
+		[HttpGet("GetPoiTypes")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Department_View)]
+		public async Task<ActionResult<PoiTypesResult>> GetPoiTypes()
+		{
+			var result = new PoiTypesResult();
+			var poiTypes = await _mappingService.GetPOITypesForDepartmentAsync(DepartmentId);
+
+			if (poiTypes != null && poiTypes.Any())
+			{
+				foreach (var poiType in poiTypes)
+				{
+					result.Data.Add(ConvertPoiTypeData(poiType));
+				}
+			}
+
+			result.PageSize = result.Data.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		[HttpGet("GetPois")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Department_View)]
+		public async Task<ActionResult<PoisResult>> GetPois(int? poiTypeId, bool destinationOnly = false)
+		{
+			var result = new PoisResult();
+			var poiTypes = await _mappingService.GetPOITypesForDepartmentAsync(DepartmentId);
+
+			if (poiTypes != null && poiTypes.Any())
+			{
+				var filteredPoiTypes = poiTypes.AsEnumerable();
+
+				if (poiTypeId.HasValue)
+					filteredPoiTypes = filteredPoiTypes.Where(x => x.PoiTypeId == poiTypeId.Value);
+
+				if (destinationOnly)
+					filteredPoiTypes = filteredPoiTypes.Where(x => x.IsDestination);
+
+				foreach (var poiType in filteredPoiTypes.Where(x => x.Pois != null && x.Pois.Any()))
+				{
+					foreach (var poi in poiType.Pois)
+					{
+						result.Data.Add(ConvertPoiData(poi, poiType));
+					}
+				}
+			}
+
+			result.PageSize = result.Data.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		[HttpGet("GetPoi/{poiId}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		[Authorize(Policy = ResgridResources.Department_View)]
+		public async Task<ActionResult<PoiResult>> GetPoi(int poiId)
+		{
+			var result = new PoiResult();
+			var poi = await _mappingService.GetPOIByIdAsync(poiId);
+
+			if (poi == null)
+				return NotFound();
+
+			var poiType = await _mappingService.GetTypeByIdAsync(poi.PoiTypeId);
+
+			if (poiType == null || poiType.DepartmentId != DepartmentId)
+				return NotFound();
+
+			result.Data = ConvertPoiData(poi, poiType);
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
 		public static GetMapLayersData ConvertMapLayerData(MapLayer layer)
 		{
 			var result = new GetMapLayersData();
@@ -516,6 +621,82 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data.Features = layer.Data.Convert();
 
 			return result;
+		}
+
+		public static PoiTypeResultData ConvertPoiTypeData(PoiType poiType)
+		{
+			return new PoiTypeResultData
+			{
+				PoiTypeId = poiType.PoiTypeId,
+				Name = poiType.Name,
+				Color = poiType.Color,
+				ImagePath = poiType.Image,
+				Marker = poiType.Marker,
+				IsDestination = poiType.IsDestination
+			};
+		}
+
+		public static PoiResultData ConvertPoiData(Poi poi, PoiType poiType)
+		{
+			return new PoiResultData
+			{
+				PoiId = poi.PoiId,
+				PoiTypeId = poiType.PoiTypeId,
+				PoiTypeName = poiType.Name,
+				Name = poi.Name,
+				Address = poi.Address,
+				Note = poi.Note,
+				Latitude = poi.Latitude,
+				Longitude = poi.Longitude,
+				Color = poiType.Color,
+				ImagePath = poiType.Image,
+				Marker = poiType.Marker,
+				IsDestination = poiType.IsDestination
+			};
+		}
+
+		private static MapMakerInfoData ConvertPoiMapMarker(Poi poi, PoiType poiType)
+		{
+			return new MapMakerInfoData
+			{
+				Id = $"poi{poi.PoiId}",
+				Longitude = poi.Longitude,
+				Latitude = poi.Latitude,
+				Title = GetPoiTitle(poi, poiType),
+				InfoWindowContent = GetPoiInfoWindowContent(poi, poiType),
+				ImagePath = poiType.Image,
+				Marker = poiType.Marker,
+				Color = poiType.Color,
+				Type = 4,
+				PoiTypeId = poiType.PoiTypeId,
+				PoiTypeName = poiType.Name,
+				Address = poi.Address,
+				Note = poi.Note,
+				LayerId = GetPoiLayerId(poiType),
+				LayerName = poiType.Name
+			};
+		}
+
+		private static string GetPoiTitle(Poi poi, PoiType poiType)
+		{
+			return PoiDisplayHelper.GetDisplayName(poi, poiType.Name);
+		}
+
+		private static string GetPoiInfoWindowContent(Poi poi, PoiType poiType)
+		{
+			var rows = PoiDisplayHelper.GetDisplayRows(poi, poiType.Name);
+			if (!rows.Any())
+				return String.Empty;
+
+			var encodedRows = rows.Select(System.Net.WebUtility.HtmlEncode).ToList();
+			encodedRows[0] = $"<strong>{encodedRows[0]}</strong>";
+
+			return String.Join("<br/>", encodedRows);
+		}
+
+		private static string GetPoiLayerId(PoiType poiType)
+		{
+			return $"poi-type-{poiType.PoiTypeId}";
 		}
 
 		/// <summary>

@@ -177,6 +177,24 @@ namespace Resgrid.Model
 
 	public static class ActionLogExtensions
 	{
+		public static DestinationEntityTypes GetEffectiveDestinationType(this ActionLog actionLog)
+		{
+			if (actionLog == null)
+				return DestinationEntityTypes.None;
+
+			var explicitDestinationType = actionLog.DestinationType.ToDestinationEntityType();
+			if (explicitDestinationType != DestinationEntityTypes.None)
+				return explicitDestinationType;
+
+			if (actionLog.ActionTypeId == (int)ActionTypes.RespondingToScene)
+				return DestinationEntityTypes.Call;
+
+			if (actionLog.ActionTypeId == (int)ActionTypes.AvailableStation || actionLog.ActionTypeId == (int)ActionTypes.RespondingToStation)
+				return DestinationEntityTypes.Station;
+
+			return DestinationEntityTypes.None;
+		}
+
 		public static int GetWeightForAction(this ActionLog actionLog)
 		{
 			if (actionLog == null)

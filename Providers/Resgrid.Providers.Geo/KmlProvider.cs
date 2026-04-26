@@ -32,9 +32,8 @@ namespace Resgrid.Providers.GeoLocationProvider
 				{
 					foreach (var placemark in kml.Flatten().OfType<Placemark>())
 					{
-						Console.WriteLine(placemark.Name);
-
 						var coords = new Coordinates();
+						coords.Name = placemark.Name;
 						coords.Latitude = placemark.CalculateBounds().Center.Latitude;
 						coords.Longitude = placemark.CalculateBounds().Center.Longitude;
 

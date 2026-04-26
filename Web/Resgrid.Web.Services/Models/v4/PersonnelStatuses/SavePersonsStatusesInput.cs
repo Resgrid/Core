@@ -27,6 +27,11 @@ namespace Resgrid.Web.Services.Models.v4.PersonnelStatuses
 		public string RespondingTo { get; set; }
 
 		/// <summary>
+		/// Destination type for RespondingTo (Station = 1, Call = 2, POI = 3).
+		/// </summary>
+		public int? RespondingToType { get; set; }
+
+		/// <summary>
 		/// The timestamp of the status event in UTC
 		/// </summary>
 		public DateTime? TimestampUtc { get; set; }

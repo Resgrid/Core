@@ -5100,6 +5100,43 @@
             Call Address
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.DestinationPoiId">
+            <summary>
+            Destination POI id if the call has a destination.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.DestinationName">
+            <summary>
+            Destination display name.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.DestinationAddress">
+            <summary>
+            Destination address.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.DestinationTypeName">
+            <summary>
+            Localized display label for the destination type (e.g. "POI", "Station"). Not suitable
+            for programmatic branching; use <see cref="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.DestinationPoiTypeId"/> as the
+            machine-readable POI type identifier instead.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.DestinationPoiTypeId">
+            <summary>
+            Destination POI type id.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.DestinationLatitude">
+            <summary>
+            Destination latitude.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.DestinationLongitude">
+            <summary>
+            Destination longitude.
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.Geolocation">
             <summary>
             Geo location Coordinates
@@ -5285,6 +5322,11 @@
             Address
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.DestinationPoiId">
+            <summary>
+            Optional destination POI id for transfers, transports, and relocations.
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.EditCallInput.Geolocation">
             <summary>
             Geolocation data "lat,lon"
@@ -5393,6 +5435,11 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.Address">
             <summary>
             Address
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.DestinationPoiId">
+            <summary>
+            Optional destination POI id for transfers, transports, and relocations.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallInput.Geolocation">
@@ -6559,6 +6606,16 @@
             Calls the unit can respond to
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Dispatch.GetSetUnitStateResultData.DestinationPois">
+            <summary>
+            Destination POIs the unit can respond to.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Dispatch.GetSetUnitStateResultData.PoiTypes">
+            <summary>
+            POI types available to the department.
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Dispatch.GetSetUnitStateResultData.Statuses">
             <summary>
             Status types
@@ -7569,7 +7626,25 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.GetCurrentStatusResultData.DestinationType">
             <summary>
-            Destination type for the action log
+            Machine-readable destination type for the action log (None = 0, Station = 1, Call = 2, POI = 3).
+            Use this for programmatic branching; see <see cref="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.GetCurrentStatusResultData.DestinationTypeName"/> for the localized display label.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.GetCurrentStatusResultData.DestinationName">
+            <summary>
+            Destination display name.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.GetCurrentStatusResultData.DestinationAddress">
+            <summary>
+            Destination address.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.GetCurrentStatusResultData.DestinationTypeName">
+            <summary>
+            Localized display label for the destination type (e.g. "Station", "Call", "POI"). Not
+            suitable for programmatic branching; use <see cref="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.GetCurrentStatusResultData.DestinationType"/> as the
+            machine-readable discriminator instead.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.GetCurrentStatusResultData.GeoLocationData">
@@ -7600,6 +7675,11 @@
         <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonsStatusesInput.RespondingTo">
             <summary>
             The Call/Station the unit is responding to
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonsStatusesInput.RespondingToType">
+            <summary>
+            Destination type for RespondingTo (Station = 1, Call = 2, POI = 3).
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonsStatusesInput.TimestampUtc">
@@ -7685,6 +7765,11 @@
         <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonStatusInput.RespondingTo">
             <summary>
             The Call/Station the unit is responding to
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonStatusInput.RespondingToType">
+            <summary>
+            Destination type for RespondingTo (Station = 1, Call = 2, POI = 3).
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.PersonnelStatuses.SavePersonStatusInput.TimestampUtc">
@@ -9252,6 +9337,11 @@
             The Call/Station the unit is responding to
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.RespondingToType">
+            <summary>
+            Destination type for RespondingTo (Station = 1, Call = 2, POI = 3).
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusInput.TimestampUtc">
             <summary>
             The timestamp of the status event in UTC
@@ -9402,9 +9492,26 @@
             Destination Id (Station or Call)
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.DestinationType">
+            <summary>
+            Destination type (Station, Call, or POI).
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.DestinationName">
             <summary>
             Name of the Desination (Call or Station)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.DestinationAddress">
+            <summary>
+            Destination address.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.DestinationTypeName">
+            <summary>
+            Localized display label for the destination type (e.g. "Station", "Call", "POI"). Not
+            suitable for programmatic branching; use <see cref="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.DestinationType"/> as the
+            machine-readable discriminator instead.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.UnitStatus.UnitStatusResultData.Note">

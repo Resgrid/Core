@@ -25,5 +25,8 @@ namespace Resgrid.Web.Areas.User.Models.Dispatch
 		public List<Contact> Contacts { get; set; }
 		public List<CheckInRecord> CheckInRecords { get; set; }
 		public List<ResolvedCheckInTimer> TimerConfigs { get; set; }
+		public string DestinationName { get; set; }
+		public string DestinationAddress { get; set; }
+		public string DestinationTypeName { get; set; }
 	}
 }

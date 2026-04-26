@@ -84,7 +84,7 @@
 											}
 											else
 											{
-												<td>Unknown</td>
+												<td>@commonLocalizer["Unknown"]</td>
 											}
 											@if (a.Timestamp.HasValue)
 											{
@@ -95,7 +95,7 @@
 												<td>@commonLocalizer["Unknown"]</td>
 											}
 
-											<td>File</td>
+											<td>@localizer["File"]</td>
 
 											@if (a.Size.HasValue)
 											{
@@ -164,5 +164,6 @@
 	<script type="text/javascript">
 		var callId = @(Model.Call.CallId);
 	</script>
+	@await Html.PartialAsync("_DispatchLocalizationScript")
 	<script src="~/js/app/internal/dispatch/resgrid.dispatch.callData.js"></script>
 }

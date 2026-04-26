@@ -11,11 +11,11 @@
 
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="@System.Globalization.CultureInfo.CurrentUICulture.TwoLetterISOLanguageName">
 <head>
     <title>@localizer["CallExportHeader"]</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Resgrid Log Report">
+    <meta name="description" content="@localizer["CallExportHeader"]">
     <meta name="author" content="Resgrid">
 
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"
@@ -49,7 +49,7 @@
     <div id="runLog" class="container">
         <div class="row">
             <div class="col-xs-6" style="text-align: left;">
-                <img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid Logo" style="margin-top: 10px; margin-bottom: 5px;">
+                <img src="@Url.Content("~/images/Resgrid_JustText_small.png")" title="Resgrid" alt="Resgrid" style="margin-top: 10px; margin-bottom: 5px;">
             </div>
             <div class="col-xs-6" style="text-align: right;">
                 <h3 style="margin-top: 10px;">@localizer["CallExportHeader"]</h3>
@@ -129,7 +129,7 @@
                             </td>
                             <td>
                                 <strong><small>@localizer["PrioirtyLabel"]</small></strong>
-                                <span style="display: block;">@(((CallPriority)Model.Call.Priority).ToString())</span>
+                                <span style="display: block;">@(await DispatchDisplayHelper.GetLocalizedCallPriorityAsync(Model.Department.DepartmentId, Model.Call.Priority, localizer))</span>
                             </td>
 
                         </tr>
@@ -195,6 +195,21 @@
                                 <td colspan="2">
                                     <strong><small>@localizer["LocationLabel"]</small></strong>
                                     <span style="display: block;">@Model.Call.Address</span>
+                                    @if (!String.IsNullOrWhiteSpace(Model.DestinationName))
+                                    {
+                                        <strong><small>@localizer["Destination"]</small></strong>
+                                        <span style="display: block;">
+                                            @Model.DestinationName
+                                            @if (!String.IsNullOrWhiteSpace(Model.DestinationTypeName))
+                                            {
+                                                <span class="text-muted">(@Model.DestinationTypeName)</span>
+                                            }
+                                        </span>
+                                        @if (!String.IsNullOrWhiteSpace(Model.DestinationAddress) && Model.DestinationAddress != Model.DestinationName)
+                                        {
+                                            <span style="display: block;">@Model.DestinationAddress</span>
+                                        }
+                                    }
                                 </td>
                                 <td colspan="1">
                                     <strong><small>@localizer["GPSLabel"]</small></strong>
@@ -514,10 +529,10 @@
                         @foreach (var timer in Model.TimerConfigs)
                         {
                         <tr>
-                            <td>@((Resgrid.Model.CheckInTimerTargetType)timer.TargetType)</td>
+                            <td>@DispatchDisplayHelper.GetLocalizedCheckInTimerTargetType((Resgrid.Model.CheckInTimerTargetType)timer.TargetType, localizer, commonLocalizer)</td>
                             <td>@timer.DurationMinutes</td>
                             <td>@timer.WarningThresholdMinutes</td>
-                            <td>@(timer.IsFromOverride ? "Override" : "Default")</td>
+                            <td>@DispatchDisplayHelper.GetLocalizedOverrideState(timer.IsFromOverride, localizer, commonLocalizer)</td>
                         </tr>
                         }
                     </tbody>
@@ -551,7 +566,7 @@
                                 var unit = Model.Units.FirstOrDefault(u => u.UnitId == record.UnitId.Value);
                                 unitName = unit?.Name;
                             }
-                            var typeName = ((Resgrid.Model.CheckInTimerTargetType)record.CheckInType).ToString();
+                            var typeName = DispatchDisplayHelper.GetLocalizedCheckInTimerTargetType((Resgrid.Model.CheckInTimerTargetType)record.CheckInType, localizer, commonLocalizer);
                             if (!string.IsNullOrEmpty(unitName))
                             {
                                 typeName += " - " + unitName;

@@ -6,6 +6,20 @@ var resgrid;
 		var viewcall;
         (function (viewcall) {
             var noteQuillDescription;
+            function getText(key, fallback) {
+                return (resgrid.dispatch && typeof resgrid.dispatch.getText === 'function')
+                    ? resgrid.dispatch.getText(key, fallback)
+                    : fallback;
+            }
+            function formatText(template) {
+                if (resgrid.dispatch && typeof resgrid.dispatch.formatText === 'function') {
+                    return resgrid.dispatch.formatText.apply(null, arguments);
+                }
+                var args = Array.prototype.slice.call(arguments, 1);
+                return (template || '').replace(/\{(\d+)\}/g, function (match, index) {
+                    return typeof args[index] !== 'undefined' ? args[index] : match;
+                });
+            }
 			$(document).ready(function () {
                 callMarker = null;
                 map = null;
@@ -77,7 +91,7 @@ var resgrid;
 						type: 'GET'
 					}).done(function (result) {
 						if (result) {
-							modal.find('.modal-title').text(`Protocol Text for ${result.Name}`);
+							modal.find('.modal-title').text(formatText(getText('protocolTextFor', 'Protocol Text for {0}'), result.Name));
 							modal.find('.modal-body').empty();
 							modal.find('.modal-body').append(result.Text);
 						}
@@ -86,7 +100,9 @@ var resgrid;
 			});
 			function notifyCallUpdated(id) {
 				if (id == callId) {
-					resgrid.common.notifications.showInformational("Call Updated", "This call was updated, please refresh the page to view the latest information.");
+					resgrid.common.notifications.showInformational(
+                        getText('callUpdatedTitle', 'Call Updated'),
+                        getText('callUpdatedMessage', 'This call was updated, please refresh the page to view the latest information.'));
 				}
 			}
 			viewcall.notifyCallUpdated = notifyCallUpdated;
@@ -167,8 +183,8 @@ var resgrid;
 			viewcall.getCallNotes = getCallNotes;
 			function reOpenCall() {
 				swal({
-					title: "Are you sure?",
-					text: "Are you sure you want to re-open this call? This was delete all the associated close data (i.e. who closed the call, when, it's close state and any notes on the close).",
+					title: getText('areYouSure', 'Are you sure?'),
+					text: getText('reopenCallConfirmText', 'Are you sure you want to re-open this call? This will delete all the associated close data, including who closed the call, when it was closed, its close state, and any close notes.'),
 					icon: "warning",
 					buttons: true,
 					dangerMode: true
@@ -179,7 +195,10 @@ var resgrid;
 							contentType: 'application/json',
 							type: 'GET'
 						}).done(function (data) {
-							swal("Request Sent!", "Your request to re-open the call is being processed. Please check the Open Calls (Disaptch) dashboard page to now view the call.", "success");
+							swal(
+                                getText('requestSent', 'Request Sent!'),
+                                getText('reopenCallRequestSentMessage', 'Your request to re-open the call is being processed. Please check the Open Calls dashboard page to view the call.'),
+                                "success");
 						});
 					}
 				});

@@ -30,6 +30,8 @@ namespace Resgrid.Model
 
 		public int? DestinationId { get; set; }
 
+		public int? DestinationType { get; set; }
+
 		public DateTime? LocalTimestamp { get; set; }
 
 		public string Note { get; set; }

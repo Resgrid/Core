@@ -3,6 +3,11 @@
 
 	var timerStatuses = [];
 	var timerInterval = null;
+	function getText(key, fallback) {
+		return (window.resgrid && resgrid.dispatch && typeof resgrid.dispatch.getText === 'function')
+			? resgrid.dispatch.getText(key, fallback)
+			: fallback;
+	}
 
 	$(document).ready(function () {
 		// callState 0 = Active
@@ -44,7 +49,7 @@
 				'<td><strong>' + escapeHtml(t.TargetName || t.TargetTypeName) + '</strong><br/><small class="text-muted">' + escapeHtml(t.TargetTypeName) + '</small></td>' +
 				'<td class="timer-remaining" data-index="' + i + '">' + remaining + '</td>' +
 				'<td class="timer-status" data-index="' + i + '">' + statusBadge + '</td>' +
-				'<td><button class="btn btn-xs btn-primary btn-checkin-dialog" data-target-type="' + parseInt(t.TargetType) + '" data-unit-id="' + (t.UnitId != null ? parseInt(t.UnitId) : '') + '">Check In</button></td>' +
+				'<td><button class="btn btn-xs btn-primary btn-checkin-dialog" data-target-type="' + parseInt(t.TargetType) + '" data-unit-id="' + (t.UnitId != null ? parseInt(t.UnitId) : '') + '">' + getText('checkIn', 'Check In') + '</button></td>' +
 				'</tr>';
 			tbody.append(row);
 		}
@@ -60,11 +65,11 @@
 	function getStatusBadge(status) {
 		switch (status) {
 			case 'Green':
-				return '<span class="label label-primary" style="background-color: #1ab394;">OK</span>';
+				return '<span class="label label-primary" style="background-color: #1ab394;">' + getText('checkInStatusOk', 'OK') + '</span>';
 			case 'Warning':
-				return '<span class="label label-warning">Warning</span>';
+				return '<span class="label label-warning">' + getText('warning', 'Warning') + '</span>';
 			case 'Critical':
-				return '<span class="label label-danger">OVERDUE</span>';
+				return '<span class="label label-danger">' + getText('checkInStatusOverdue', 'OVERDUE') + '</span>';
 			default:
 				return '<span class="label label-default">' + escapeHtml(status) + '</span>';
 		}
@@ -83,8 +88,12 @@
 		var hours = Math.floor(min / 60);
 		var mins = Math.floor(min % 60);
 		var secs = Math.floor((min * 60) % 60);
-		if (hours > 0) return hours + 'h ' + mins + 'm ' + secs + 's';
-		return mins + 'm ' + secs + 's';
+		if (hours > 0) return padNumber(hours) + ':' + padNumber(mins) + ':' + padNumber(secs);
+		return padNumber(mins) + ':' + padNumber(secs);
+	}
+
+	function padNumber(value) {
+		return value < 10 ? '0' + value : value.toString();
 	}
 
 	function updateCountdowns() {
@@ -207,7 +216,7 @@
 		}).fail(function () {
 			$('#checkInSubmitBtn').prop('disabled', false);
 			$('#checkInModal').modal('hide');
-			alert('Failed to perform check-in. Please try again.');
+			alert(getText('checkInFailed', 'Failed to perform check-in. Please try again.'));
 		});
 	}
 })();

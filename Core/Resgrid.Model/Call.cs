@@ -73,6 +73,9 @@ namespace Resgrid.Model
 		[ProtoMember(14)]
 		public string GeoLocationData { get; set; }
 
+		[ProtoMember(34)]
+		public int? DestinationPoiId { get; set; }
+
 		[ProtoMember(15)]
 		public DateTime LoggedOn { get; set; }
 

@@ -1,7 +1,8 @@
-﻿using Resgrid.Web.Services.Models.v4.CallPriorities;
+using Resgrid.Web.Services.Models.v4.CallPriorities;
 using Resgrid.Web.Services.Models.v4.CallTypes;
 using Resgrid.Web.Services.Models.v4.CustomStatuses;
 using Resgrid.Web.Services.Models.v4.Groups;
+using Resgrid.Web.Services.Models.v4.Mapping;
 using Resgrid.Web.Services.Models.v4.Personnel;
 using Resgrid.Web.Services.Models.v4.Roles;
 using Resgrid.Web.Services.Models.v4.UnitRoles;
@@ -36,5 +37,7 @@ namespace Resgrid.Web.Services.Models.v4.Dispatch
 		public List<UnitRoleResultData> UnitRoles { get; set; }
 		public List<CallPriorityResultData> Priorities { get; set; }
 		public List<CallTypeResultData> CallTypes { get; set; }
+		public List<PoiTypeResultData> PoiTypes { get; set; }
+		public List<PoiResultData> DestinationPois { get; set; }
 	}
 }

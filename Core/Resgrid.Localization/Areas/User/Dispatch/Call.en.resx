@@ -660,4 +660,77 @@
   <data name="NoVideoFeeds" xml:space="preserve">
     <value>No video feeds have been added to this call.</value>
   </data>
+  <data name="Additional" xml:space="preserve"><value>Additional</value></data>
+  <data name="AllOfGroupDispatched" xml:space="preserve"><value>All of {0} Dispatched</value></data>
+  <data name="AreYouSure" xml:space="preserve"><value>Are you sure?</value></data>
+  <data name="CallUpdatedTitle" xml:space="preserve"><value>Call Updated</value></data>
+  <data name="CallUpdatedMessage" xml:space="preserve"><value>This call was updated, please refresh the page to view the latest information.</value></data>
+  <data name="CallsForYear" xml:space="preserve"><value>Calls for Year</value></data>
+  <data name="CheckInFailed" xml:space="preserve"><value>Failed to perform check-in. Please try again.</value></data>
+  <data name="CheckInStatusOk" xml:space="preserve"><value>OK</value></data>
+  <data name="CheckInStatusOverdue" xml:space="preserve"><value>OVERDUE</value></data>
+  <data name="CustomFields" xml:space="preserve"><value>Custom Fields</value></data>
+  <data name="Destination" xml:space="preserve"><value>Destination</value></data>
+  <data name="DestinationHelp" xml:space="preserve"><value>Select a destination POI such as a hospital, shelter, transfer center, or staging area.</value></data>
+  <data name="DispatchChat" xml:space="preserve"><value>Dispatch Chat</value></data>
+  <data name="DispatchTime" xml:space="preserve"><value>Dispatch Time</value></data>
+  <data name="EnterMessageHere" xml:space="preserve"><value>Enter message here...</value></data>
+  <data name="ETA" xml:space="preserve"><value>ETA</value></data>
+  <data name="GoToDispatch" xml:space="preserve"><value>Go to Dispatch</value></data>
+  <data name="GoToHome" xml:space="preserve"><value>Go to Home</value></data>
+  <data name="Group" xml:space="preserve"><value>Group</value></data>
+  <data name="GroupSelected" xml:space="preserve"><value>(Group Selected)</value></data>
+  <data name="IndoorLocation" xml:space="preserve"><value>Indoor Location</value></data>
+  <data name="InvalidCoordinates" xml:space="preserve"><value>Please enter valid numeric latitude and longitude values.</value></data>
+  <data name="Latitude" xml:space="preserve"><value>Latitude</value></data>
+  <data name="LatitudeShort" xml:space="preserve"><value>Lat</value></data>
+  <data name="Longitude" xml:space="preserve"><value>Longitude</value></data>
+  <data name="LongitudeShort" xml:space="preserve"><value>Lng</value></data>
+  <data name="NoteAlerts" xml:space="preserve"><value>Note Alerts</value></data>
+  <data name="OnlineUsers" xml:space="preserve"><value>Online Users</value></data>
+  <data name="PersonnelCount" xml:space="preserve"><value>Personnel Count</value></data>
+  <data name="PrintExportView" xml:space="preserve"><value>Print (Export) View</value></data>
+  <data name="Primary" xml:space="preserve"><value>Primary</value></data>
+  <data name="ProtocolTextFor" xml:space="preserve"><value>Protocol Text for {0}</value></data>
+  <data name="QuestionsFor" xml:space="preserve"><value>Questions for {0}</value></data>
+  <data name="RemoveThisCallLink" xml:space="preserve"><value>Remove this call link</value></data>
+  <data name="RequestSent" xml:space="preserve"><value>Request Sent!</value></data>
+  <data name="ReopenCallConfirmText" xml:space="preserve"><value>Are you sure you want to re-open this call? This will delete all the associated close data, including who closed the call, when it was closed, its close state, and any close notes.</value></data>
+  <data name="ReopenCallRequestSentMessage" xml:space="preserve"><value>Your request to re-open the call is being processed. Please check the Open Calls dashboard page to view the call.</value></data>
+  <data name="RouteFrom" xml:space="preserve"><value>Route from {0}</value></data>
+  <data name="SearchDestinationPois" xml:space="preserve"><value>Search destination POIs...</value></data>
+  <data name="SearchIndoorLocations" xml:space="preserve"><value>Search indoor locations...</value></data>
+  <data name="SetPinOnMap" xml:space="preserve"><value>Set Pin on Map</value></data>
+  <data name="Staffing" xml:space="preserve"><value>Staffing</value></data>
+  <data name="UngroupedUsersUnits" xml:space="preserve"><value>Ungrouped Users/Units</value></data>
+  <data name="WhatThreeWordsNotFound" xml:space="preserve"><value>What3Words was unable to find a location for those words. Ensure they are 3 words separated by periods.</value></data>
+  <data name="WhatThreeWordsPlaceholder" xml:space="preserve"><value>what.three.words</value></data>
+  <data name="AnswerQuestions" xml:space="preserve"><value>Answer Questions</value></data>
+  <data name="CallPriorityLow" xml:space="preserve"><value>Low</value></data>
+  <data name="CallPriorityMedium" xml:space="preserve"><value>Medium</value></data>
+  <data name="CallPriorityHigh" xml:space="preserve"><value>High</value></data>
+  <data name="CallPriorityEmergency" xml:space="preserve"><value>Emergency</value></data>
+  <data name="Cancelled" xml:space="preserve"><value>Cancelled</value></data>
+  <data name="CheckInTimerTargetUnitType" xml:space="preserve"><value>Unit Type</value></data>
+  <data name="CheckInTimerTargetHazmatExposure" xml:space="preserve"><value>Hazmat Exposure</value></data>
+  <data name="CheckInTimerTargetSectorRotation" xml:space="preserve"><value>Sector Rotation</value></data>
+  <data name="CheckInTimerTargetRehab" xml:space="preserve"><value>Rehab</value></data>
+  <data name="File" xml:space="preserve"><value>File</value></data>
+  <data name="Inactive" xml:space="preserve"><value>Inactive</value></data>
+  <data name="InvalidDestinationPoi" xml:space="preserve"><value>Please select a valid destination POI.</value></data>
+  <data name="LoggedOff" xml:space="preserve"><value>logged off.</value></data>
+  <data name="AttachFileRequired" xml:space="preserve"><value>You must select a file to attach.</value></data>
+  <data name="DocumentTypeNotImportable" xml:space="preserve"><value>Document type ({0}) is not importable.</value></data>
+  <data name="FileTooLarge10Mb" xml:space="preserve"><value>File is too large, must be smaller then 10MB.</value></data>
+  <data name="NoLocation" xml:space="preserve"><value>No Location</value></data>
+  <data name="GenericCall" xml:space="preserve"><value>Generic Call</value></data>
+  <data name="SelectContact" xml:space="preserve"><value>Select Contact</value></data>
+  <data name="NoDestination" xml:space="preserve"><value>No Destination</value></data>
+  <data name="Pois" xml:space="preserve"><value>POIs</value></data>
+  <data name="Override" xml:space="preserve"><value>Override</value></data>
+  <data name="RouteDistance" xml:space="preserve"><value>Distance</value></data>
+  <data name="RouteDuration" xml:space="preserve"><value>Duration</value></data>
+  <data name="RouteStep" xml:space="preserve"><value>Step</value></data>
+  <data name="RouteUnitKilometers" xml:space="preserve"><value>km</value></data>
+  <data name="RouteUnitMinutes" xml:space="preserve"><value>min</value></data>
 </root>

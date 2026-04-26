@@ -39,6 +39,11 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public string Address { get; set; }
 
 		/// <summary>
+		/// Optional destination POI id for transfers, transports, and relocations.
+		/// </summary>
+		public int? DestinationPoiId { get; set; }
+
+		/// <summary>
 		/// Geolocation data "lat,lon" in decimal format
 		/// </summary>
 		public string Geolocation { get; set; }

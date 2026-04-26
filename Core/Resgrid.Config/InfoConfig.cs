@@ -65,5 +65,10 @@ namespace Resgrid.Config
 		{
 			return AppUrl + "/Account/LogOn";
 		}
+
+		public string GetRegisterUrl()
+		{
+			return AppUrl + "/Account/Register";
+		}
 	}
 }

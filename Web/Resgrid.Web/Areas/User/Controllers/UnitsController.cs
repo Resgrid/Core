@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
@@ -14,6 +15,7 @@ using Resgrid.Web.Areas.User.Models.Reports.Units;
 using Resgrid.Web.Areas.User.Models.Units;
 using Resgrid.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
+using System.Globalization;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -43,13 +45,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IGeoLocationProvider _geoLocationProvider;
 		private readonly INovuProvider _novuProvider;
+		private readonly IMappingService _mappingService;
 		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
 		private readonly IUdfRenderingService _udfRenderingService;
+		private readonly IStringLocalizer<Resgrid.Localization.Common> _localizer;
 
 		public UnitsController(IDepartmentsService departmentsService, IUsersService usersService, IUnitsService unitsService, Model.Services.IAuthorizationService authorizationService,
 			ILimitsService limitsService, IDepartmentGroupsService departmentGroupsService, ICallsService callsService, IEventAggregator eventAggregator, ICustomStateService customStateService,
-			IGeoService geoService, IDepartmentSettingsService departmentSettingsService, IGeoLocationProvider geoLocationProvider, INovuProvider novuProvider,
-			IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService)
+			IGeoService geoService, IDepartmentSettingsService departmentSettingsService, IGeoLocationProvider geoLocationProvider, INovuProvider novuProvider, IMappingService mappingService,
+			IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService, IStringLocalizer<Resgrid.Localization.Common> localizer)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -64,8 +68,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_departmentSettingsService = departmentSettingsService;
 			_geoLocationProvider = geoLocationProvider;
 			_novuProvider = novuProvider;
+			_mappingService = mappingService;
 			_userDefinedFieldsService = userDefinedFieldsService;
 			_udfRenderingService = udfRenderingService;
+			_localizer = localizer;
 		}
 		#endregion Private Members and Constructors
 
@@ -639,7 +645,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 				state.Timestamp = DateTime.UtcNow;
 
 				if (destination > 0)
+				{
+					if (!await IsValidDestinationAsync(destination, type))
+						return BadRequest();
+
 					state.DestinationId = destination;
+					state.DestinationType = type;
+				}
 
 				if (!String.IsNullOrWhiteSpace(note))
 					state.Note = HttpUtility.UrlDecode(note);
@@ -680,7 +692,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 					state.Timestamp = DateTime.UtcNow;
 
 					if (destination > 0)
+					{
+						if (!await IsValidDestinationAsync(destination, type))
+							return BadRequest();
+
 						state.DestinationId = destination;
+						state.DestinationType = type;
+					}
 
 					if (!String.IsNullOrWhiteSpace(note))
 						state.Note = HttpUtility.UrlDecode(note);
@@ -720,6 +738,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 					state.State = stateType;
 					state.Timestamp = DateTime.UtcNow;
 					state.DestinationId = destination;
+					state.DestinationType = type;
+
+					if (!await IsValidDestinationAsync(destination, type))
+						return BadRequest();
 
 					try
 					{
@@ -918,6 +940,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var model = new UnitEventsReportView();
 			model.Rows = new List<UnitEventJson>();
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
+			var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
+			var pois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 
 			foreach (var eventId in eventIds)
 			{
@@ -930,37 +955,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				eventJson.State = StringHelpers.GetDescription(((UnitStateTypes)eventRecord.State));
 				eventJson.Timestamp = eventRecord.Timestamp.TimeConverterToString(model.Department).ToString();
 				eventJson.Note = eventRecord.Note;
-
-				if (((UnitStateTypes)eventRecord.State) == UnitStateTypes.Enroute)
-				{
-					if (eventRecord.DestinationId.HasValue)
-					{
-						var station = await _departmentGroupsService.GetGroupByIdAsync(eventRecord.DestinationId.Value, false);
-
-						if (station != null)
-							eventJson.DestinationName = station.Name;
-						else
-							eventJson.DestinationName = "Station";
-					}
-					else
-					{
-						eventJson.DestinationName = "Station";
-					}
-				}
-				else if (((UnitStateTypes)eventRecord.State) == UnitStateTypes.Responding || ((UnitStateTypes)eventRecord.State) == UnitStateTypes.Committed
-					|| ((UnitStateTypes)eventRecord.State) == UnitStateTypes.OnScene || ((UnitStateTypes)eventRecord.State) == UnitStateTypes.Staging
-					 || ((UnitStateTypes)eventRecord.State) == UnitStateTypes.Released || ((UnitStateTypes)eventRecord.State) == UnitStateTypes.Cancelled)
-				{
-					if (eventRecord.DestinationId.HasValue)
-					{
-						var call = await _callsService.GetCallByIdAsync(eventRecord.DestinationId.Value, false);
-
-						if (call != null)
-							eventJson.DestinationName = call.Name;
-						else
-							eventJson.DestinationName = "Scene";
-					}
-				}
+				var customState = await _customStateService.GetCustomUnitStateAsync(eventRecord);
+				var destination = DestinationResolutionHelper.Resolve(eventRecord.DestinationId, eventRecord.DestinationType, customState?.DetailType, activeCalls, stations, pois, _localizer);
+				eventJson.DestinationName = destination.Name;
 
 				if (eventRecord.LocalTimestamp.HasValue)
 					eventJson.LocalTimestamp = eventRecord.LocalTimestamp.Value.ToString();
@@ -998,6 +995,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var events = await _unitsService.GetAllStatesForUnitAsync(unitId);
+			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
+			var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
+			var pois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 
 			foreach (var e in events)
 			{
@@ -1012,57 +1012,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				unitEvent.Timestamp = e.Timestamp.TimeConverterToString(department);
 				unitEvent.Note = e.Note;
 
-				if (customState?.DetailType == (int)CustomStateDetailTypes.Calls)
-				{
-					if (e.DestinationId.HasValue)
-					{
-						var call = await _callsService.GetCallByIdAsync(e.DestinationId.Value, false);
-
-						if (call != null)
-							unitEvent.DestinationName = call.Name;
-						else
-							unitEvent.DestinationName = "Call Not Found";
-					}
-				}
-				else if (customState?.DetailType == (int)CustomStateDetailTypes.Stations)
-				{
-					if (e.DestinationId.HasValue)
-					{
-						var station = await _departmentGroupsService.GetGroupByIdAsync(e.DestinationId.Value, false);
-
-						if (station != null)
-							unitEvent.DestinationName = station.Name;
-						else
-							unitEvent.DestinationName = "Station Not Found";
-					}
-					else
-					{
-						unitEvent.DestinationName = "Station Not Supplied";
-					}
-				}
-				else if (customState?.DetailType == (int)CustomStateDetailTypes.CallsAndStations)
-				{
-					if (e.DestinationId.HasValue)
-					{
-						var station = await _departmentGroupsService.GetGroupByIdAsync(e.DestinationId.Value, false);
-
-						if (station != null && station.DepartmentId == DepartmentId)
-							unitEvent.DestinationName = station.Name;
-						else
-						{
-							var call = await _callsService.GetCallByIdAsync(e.DestinationId.Value, false);
-
-							if (call != null && call.DepartmentId == DepartmentId)
-								unitEvent.DestinationName = call.Name;
-							else
-								unitEvent.DestinationName = "Scene";
-						}
-					}
-					else
-					{
-						unitEvent.DestinationName = "Call or Station";
-					}
-				}
+				var destination = DestinationResolutionHelper.Resolve(e.DestinationId, e.DestinationType, customState?.DetailType, activeCalls, stations, pois, _localizer);
+				unitEvent.DestinationName = destination.Name;
 
 
 				if (e.LocalTimestamp.HasValue)
@@ -1381,7 +1332,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var state in activeDetails.OrderBy(x => x.Order))
 			{
-				sb.Append($"<option value='{state.CustomStateDetailId}'>{state.ButtonText}</option>");
+				sb.Append($"<option value='{state.CustomStateDetailId}'>{HttpUtility.HtmlEncode(state.ButtonText)}</option>");
 			}
 
 			buttonHtml = sb.ToString();
@@ -1416,7 +1367,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			foreach (var state in activeDetails.OrderBy(x => x.Order))
 			{
-				sb.Append($"<option value='{state.CustomStateDetailId}'>{state.ButtonText}</option>");
+				sb.Append($"<option value='{state.CustomStateDetailId}'>{HttpUtility.HtmlEncode(state.ButtonText)}</option>");
 			}
 
 			buttonHtml = sb.ToString();
@@ -1429,71 +1380,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Unit_View)]
 		public async Task<IActionResult> GetUnitStatusDestinationHtmlForDropdown(int customStateId, int customStatusDetailId)
 		{
-			string buttonHtml = string.Empty;
-
-			CustomState customStates = null;
-			List<CustomStateDetail> activeDetails = null;
-
-			if (customStateId > 25)
-			{
-				customStates = await _customStateService.GetCustomSateByIdAsync(customStateId);
-
-				if (customStates != null)
-				{
-					activeDetails = customStates.GetActiveDetails();
-				}
-			}
-
-			if (activeDetails == null)
-				activeDetails = _customStateService.GetDefaultUnitStatuses();
-
+			var activeDetails = await GetActiveUnitStatusDetailsAsync(customStateId);
 			var state = activeDetails.FirstOrDefault(x => x.CustomStateDetailId == customStatusDetailId);
 			var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
 			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
-			StringBuilder sb = new StringBuilder();
+			var destinationPois = await _mappingService.GetDestinationPOIsForDepartmentAsync(DepartmentId);
+			var sb = new StringBuilder();
 
-			sb.Append($"<option value='-1'>None</option>");
+			sb.Append("<option value=''>None</option>");
 
 			if (state != null)
 			{
-				if (state.DetailType == (int)CustomStateDetailTypes.None)
-				{
-
-				}
-				else if (state.DetailType == (int)CustomStateDetailTypes.Calls)
-				{
-					foreach (var call in activeCalls)
-					{
-						sb.Append($"<option value='{call.CallId}'>Call {call.GetIdentifier()}:{call.Name}</option>");
-					}
-				}
-				else if (state.DetailType == (int)CustomStateDetailTypes.Stations)
-				{
-					foreach (var station in stations)
-					{
-						sb.Append($"<option value='{station.DepartmentGroupId}'>Station: {station.Name}</option>");
-					}
-
-					sb.Append("</ul>");
-				}
-				else if (state.DetailType == (int)CustomStateDetailTypes.CallsAndStations)
-				{
-					foreach (var call in activeCalls)
-					{
-						sb.Append($"<option value='{call.CallId}'>Call {call.GetIdentifier()}:{call.Name}</option>");
-					}
-
-					foreach (var station in stations)
-					{
-						sb.Append($"<option value='{station.DepartmentGroupId}'>Station: {station.Name}</option>");
-					}
-				}
+				AppendDestinationOptions(sb, state, activeCalls, stations, destinationPois);
 			}
 
-			buttonHtml = sb.ToString();
-
-
-			return Content(buttonHtml);
+			return Content(sb.ToString());
 		}
 
 
@@ -1514,85 +1415,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 				var customStates = await _customStateService.GetCustomSateByIdAsync(type.CustomStatesId.Value);
 				var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
 				var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
-
-				StringBuilder sb = new StringBuilder();
-				sb.Append($"<ul class='dropdown-menu multi-level unitStateList_{unitId}'>");
-
+				var destinationPois = await _mappingService.GetDestinationPOIsForDepartmentAsync(DepartmentId);
 				var activeDetails = customStates.GetActiveDetails();
 
-				foreach (var state in activeDetails.OrderBy(x => x.Order))
-				{
-					if (state.DetailType == (int)CustomStateDetailTypes.None)
-					{
-						sb.Append("<li><a style='color:" + state.ButtonColor + ";' href='/User/Units/SetUnitState?unitId=" + unitId + "&stateType=" + state.CustomStateDetailId + "'>" + state.ButtonText + "</a></li>");
-					}
-					else if (state.DetailType == (int)CustomStateDetailTypes.Calls)
-					{
-						sb.Append($"<li class='dropdown-submenu'><a style='color:{state.ButtonColor};' tabindex='-1' href='#'>{state.ButtonText}</a>");
-						sb.Append($"<ul class='dropdown-menu unitStateList_{unitId}'>");
-						sb.Append($"<li><a href='/User/Units/SetUnitState?unitId={unitId}&stateType={state.CustomStateDetailId}'>{state.ButtonText}</a></li>");
-						sb.Append("<li class='divider'></li>");
-						sb.Append("<li class='dropdown-header'>Calls</li>");
-
-						foreach (var call in activeCalls)
-						{
-							sb.Append($"<li><a href='/User/Units/SetUnitStateWithDest?unitId={unitId}&stateType={state.CustomStateDetailId}&type=2&destination={call.CallId}'>{call.GetIdentifier()}:{call.Name}</a></li>");
-						}
-
-						sb.Append("</ul>");
-					}
-					else if (state.DetailType == (int)CustomStateDetailTypes.Stations)
-					{
-						sb.Append($"<li class='dropdown-submenu'><a style='color:{state.ButtonColor};' tabindex='-1' href='#'>{state.ButtonText}</a>");
-						sb.Append($"<ul class='dropdown-menu unitStateList_{unitId}'>");
-						sb.Append($"<li><a href='/User/Units/SetUnitState?unitId={unitId}&stateType={state.CustomStateDetailId}'>{state.ButtonText}</a></li>");
-						sb.Append("<li class='divider'></li>");
-						sb.Append("<li class='dropdown-header'>Stations</li>");
-
-						foreach (var station in stations)
-						{
-							sb.Append("<li><a href='/User/Units/SetUnitStateWithDest?unitId=" + unitId + "&stateType=" + state.CustomStateDetailId + "&type=2&destination=" + station.DepartmentGroupId + "'>" + station.Name + "</a></li>");
-						}
-
-						sb.Append("</ul>");
-					}
-					else if (state.DetailType == (int)CustomStateDetailTypes.CallsAndStations)
-					{
-						sb.Append($"<li class='dropdown-submenu'><a style='color:{state.ButtonColor};' tabindex='-1' href='#'>{state.ButtonText}</a>");
-						sb.Append($"<ul class='dropdown-menu unitStateList_{unitId}'>");
-						sb.Append($"<li><a href='/User/Units/SetUnitState?unitId={unitId}&stateType={state.CustomStateDetailId}'>{state.ButtonText}</a></li>");
-						sb.Append("<li class='divider'></li>");
-						sb.Append("<li class='dropdown-header'>Calls</li>");
-
-						foreach (var call in activeCalls)
-						{
-							sb.Append($"<li><a href='/User/Units/SetUnitStateWithDest?unitId={unitId}&stateType={state.CustomStateDetailId}&type=2&destination={call.CallId}'>{call.GetIdentifier()}:{call.Name}</a></li>");
-						}
-
-						sb.Append("<li class='dropdown-header'>Stations</li>");
-
-						foreach (var station in stations)
-						{
-							sb.Append($"<li><a href='/User/Units/SetUnitStateWithDest?unitId={unitId}&stateType={state.CustomStateDetailId}&type=2&destination={station.DepartmentGroupId}'>{station.Name}</a></li>");
-						}
-
-						sb.Append("</ul>");
-					}
-				}
-				sb.Append("</ul>");
-
-				buttonHtml = sb.ToString();
+				buttonHtml = BuildUnitStateMenuHtml(unitId.ToString(CultureInfo.InvariantCulture), unitId, null, "SetUnitState", "SetUnitStateWithDest", activeDetails, activeCalls, stations, destinationPois);
 			}
 
 			if (String.IsNullOrWhiteSpace(buttonHtml))
 			{
 				StringBuilder sb = new StringBuilder();
 				sb.Append($"<ul class='dropdown-menu unitStateList_{unitId}'>");
-				sb.Append($"<li><a href='/User/Units/SetUnitState?unitId={unitId}&stateType=0'>Available</a></li>");
-				sb.Append($"<li><a href='/User/Units/SetUnitState?unitId={unitId}&stateType=3'>Committed</a></li>");
-				sb.Append($"<li><a href='/User/Units/SetUnitState?unitId={unitId}&stateType=1'>Delayed</a></li>");
-				sb.Append($"<li><a href='/User/Units/SetUnitState?unitId={unitId}&stateType=4'>Out Of Service</a></li>");
-				sb.Append($"<li><a href='/User/Units/SetUnitState?unitId={unitId}&stateType=2'>Unavailable</a></li>");
+				sb.Append($"<li><a href='{BuildUnitStateHref("SetUnitState", unitId, null, 0)}'>Available</a></li>");
+				sb.Append($"<li><a href='{BuildUnitStateHref("SetUnitState", unitId, null, 3)}'>Committed</a></li>");
+				sb.Append($"<li><a href='{BuildUnitStateHref("SetUnitState", unitId, null, 1)}'>Delayed</a></li>");
+				sb.Append($"<li><a href='{BuildUnitStateHref("SetUnitState", unitId, null, 4)}'>Out Of Service</a></li>");
+				sb.Append($"<li><a href='{BuildUnitStateHref("SetUnitState", unitId, null, 2)}'>Unavailable</a></li>");
 				sb.Append("</ul>");
 
 				buttonHtml = sb.ToString();
@@ -1606,81 +1443,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> GetUnitOptionsDropdownForStates(int stateId, string units)
 		{
 			string buttonHtml = string.Empty;
+			var targetUnitIds = ParseUnitIds(units);
 
 			if (stateId > 1)
 			{
 				var customStates = await _customStateService.GetCustomSateByIdAsync(stateId);
 				var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
 				var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
-
-				StringBuilder sb = new StringBuilder();
-				sb.Append($"<ul class='dropdown-menu multi-level unitStateList_{stateId}'>");
+				var destinationPois = await _mappingService.GetDestinationPOIsForDepartmentAsync(DepartmentId);
 				var activeDetails = customStates.GetActiveDetails();
 
 				if (activeDetails.Any())
 				{
-					foreach (var state in activeDetails.OrderBy(x => x.Order))
-					{
-						if (state.DetailType == (int)CustomStateDetailTypes.None)
-						{
-							sb.Append("<li><a style='color:" + state.ButtonColor + ";' href='/User/Units/SetUnitStateForMultiple?unitIds=" + units + "&stateType=" + state.CustomStateDetailId + "'>" + state.ButtonText + "</a></li>");
-						}
-						else if (state.DetailType == (int)CustomStateDetailTypes.Calls)
-						{
-							sb.Append($"<li class='dropdown-submenu'><a style='color:{state.ButtonColor};' tabindex='-1' href='#'>{state.ButtonText}</a>");
-							sb.Append($"<ul class='dropdown-menu unitStateList_{stateId}'>");
-							sb.Append($"<li><a href='/User/Units/SetUnitStateForMultiple?unitIds={units}&stateType={state.CustomStateDetailId}'>{state.ButtonText}</a></li>");
-							sb.Append("<li class='divider'></li>");
-							sb.Append("<li class='dropdown-header'>Calls</li>");
-
-							foreach (var call in activeCalls)
-							{
-								sb.Append($"<li><a href='/User/Units/SetUnitStateWithDestForMultiple?unitIds={units}&stateType={state.CustomStateDetailId}&type=2&destination={call.CallId}'>{call.GetIdentifier()}:{call.Name}</a></li>");
-							}
-
-							sb.Append("</ul>");
-						}
-						else if (state.DetailType == (int)CustomStateDetailTypes.Stations)
-						{
-							sb.Append($"<li class='dropdown-submenu'><a style='color:{state.ButtonColor};' tabindex='-1' href='#'>{state.ButtonText}</a>");
-							sb.Append($"<ul class='dropdown-menu unitStateList_{stateId}'>");
-							sb.Append($"<li><a href='/User/Units/SetUnitStateForMultiple?unitIds={units}&stateType={state.CustomStateDetailId}'>{state.ButtonText}</a></li>");
-							sb.Append("<li class='divider'></li>");
-							sb.Append("<li class='dropdown-header'>Stations</li>");
-
-							foreach (var station in stations)
-							{
-								sb.Append("<li><a href='/User/Units/SetUnitStateWithDestForMultiple?unitIds=" + units + "&stateType=" + state.CustomStateDetailId + "&type=2&destination=" + station.DepartmentGroupId + "'>" + station.Name + "</a></li>");
-							}
-
-							sb.Append("</ul>");
-						}
-						else if (state.DetailType == (int)CustomStateDetailTypes.CallsAndStations)
-						{
-							sb.Append($"<li class='dropdown-submenu'><a style='color:{state.ButtonColor};' tabindex='-1' href='#'>{state.ButtonText}</a>");
-							sb.Append($"<ul class='dropdown-menu unitStateList_{stateId}'>");
-							sb.Append($"<li><a href='/User/Units/SetUnitStateForMultiple?unitIds={units}&stateType={state.CustomStateDetailId}'>{state.ButtonText}</a></li>");
-							sb.Append("<li class='divider'></li>");
-							sb.Append("<li class='dropdown-header'>Calls</li>");
-
-							foreach (var call in activeCalls)
-							{
-								sb.Append($"<li><a href='/User/Units/SetUnitStateWithDestForMultiple?unitIds={units}&stateType={state.CustomStateDetailId}&type=2&destination={call.CallId}'>{call.GetIdentifier()}:{call.Name}</a></li>");
-							}
-
-							sb.Append("<li class='dropdown-header'>Stations</li>");
-
-							foreach (var station in stations)
-							{
-								sb.Append($"<li><a href='/User/Units/SetUnitStateWithDestForMultiple?unitIds={units}&stateType={state.CustomStateDetailId}&type=2&destination={station.DepartmentGroupId}'>{station.Name}</a></li>");
-							}
-
-							sb.Append("</ul>");
-						}
-					}
-					sb.Append("</ul>");
-
-					buttonHtml = sb.ToString();
+					buttonHtml = BuildUnitStateMenuHtml(stateId.ToString(CultureInfo.InvariantCulture), null, targetUnitIds, "SetUnitStateForMultiple", "SetUnitStateWithDestForMultiple", activeDetails, activeCalls, stations, destinationPois);
 				}
 			}
 
@@ -1688,11 +1463,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				StringBuilder sb2 = new StringBuilder();
 				sb2.Append($"<ul class='dropdown-menu unitStateList_{stateId}'>");
-				sb2.Append($"<li><a href='/User/Units/SetUnitStateForMultiple?unitIds={units}&stateType=0'>Available</a></li>");
-				sb2.Append($"<li><a href='/User/Units/SetUnitStateForMultiple?unitIds={units}&stateType=3'>Committed</a></li>");
-				sb2.Append($"<li><a href='/User/Units/SetUnitStateForMultiple?unitIds={units}&stateType=1'>Delayed</a></li>");
-				sb2.Append($"<li><a href='/User/Units/SetUnitStateForMultiple?unitIds={units}&stateType=4'>Out Of Service</a></li>");
-				sb2.Append($"<li><a href='/User/Units/SetUnitStateForMultiple?unitIds={units}&stateType=2'>Unavailable</a></li>");
+				sb2.Append($"<li><a href='{BuildUnitStateHref("SetUnitStateForMultiple", null, targetUnitIds, 0)}'>Available</a></li>");
+				sb2.Append($"<li><a href='{BuildUnitStateHref("SetUnitStateForMultiple", null, targetUnitIds, 3)}'>Committed</a></li>");
+				sb2.Append($"<li><a href='{BuildUnitStateHref("SetUnitStateForMultiple", null, targetUnitIds, 1)}'>Delayed</a></li>");
+				sb2.Append($"<li><a href='{BuildUnitStateHref("SetUnitStateForMultiple", null, targetUnitIds, 4)}'>Out Of Service</a></li>");
+				sb2.Append($"<li><a href='{BuildUnitStateHref("SetUnitStateForMultiple", null, targetUnitIds, 2)}'>Unavailable</a></li>");
 				sb2.Append("</ul>");
 
 				buttonHtml = sb2.ToString();
@@ -1757,6 +1532,196 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return Json(personsJson);
+		}
+
+		private async Task<List<CustomStateDetail>> GetActiveUnitStatusDetailsAsync(int customStateId)
+		{
+			if (customStateId > 25)
+			{
+				var customStates = await _customStateService.GetCustomSateByIdAsync(customStateId);
+
+				if (customStates != null)
+					return customStates.GetActiveDetails();
+			}
+
+			return _customStateService.GetDefaultUnitStatuses();
+		}
+
+		private static void AppendDestinationOptions(StringBuilder sb, CustomStateDetail state, List<Call> activeCalls, List<DepartmentGroup> stations, List<Poi> destinationPois)
+		{
+			if (state.DetailType.SupportsCalls())
+			{
+				sb.Append("<optgroup label='Calls'>");
+				foreach (var call in activeCalls)
+				{
+					sb.Append($"<option value='{(int)DestinationEntityTypes.Call}:{call.CallId}'>Call {call.GetIdentifier()}:{HttpUtility.HtmlEncode(call.Name)}</option>");
+				}
+				sb.Append("</optgroup>");
+			}
+
+			if (state.DetailType.SupportsStations())
+			{
+				sb.Append("<optgroup label='Stations'>");
+				foreach (var station in stations)
+				{
+					sb.Append($"<option value='{(int)DestinationEntityTypes.Station}:{station.DepartmentGroupId}'>Station: {HttpUtility.HtmlEncode(station.Name)}</option>");
+				}
+				sb.Append("</optgroup>");
+			}
+
+			if (state.DetailType.SupportsPois())
+			{
+				foreach (var poiGroup in destinationPois.GroupBy(x => !String.IsNullOrWhiteSpace(x.Type?.Name) ? x.Type.Name : "POIs"))
+				{
+					sb.Append($"<optgroup label=\"{HttpUtility.HtmlEncode(poiGroup.Key)}\">");
+					foreach (var poi in poiGroup.OrderBy(x => x.Name).ThenBy(x => x.Address).ThenBy(x => x.Note))
+					{
+						sb.Append($"<option value='{(int)DestinationEntityTypes.Poi}:{poi.PoiId}'>{HttpUtility.HtmlEncode(GetPoiDisplayText(poi))}</option>");
+					}
+					sb.Append("</optgroup>");
+				}
+			}
+		}
+
+		private string BuildUnitStateMenuHtml(string cssKey, int? unitId, IReadOnlyCollection<int> unitIds, string actionWithoutDestination, string actionWithDestination, IEnumerable<CustomStateDetail> activeDetails, List<Call> activeCalls, List<DepartmentGroup> stations, List<Poi> destinationPois)
+		{
+			var sb = new StringBuilder();
+			sb.Append($"<ul class='dropdown-menu multi-level unitStateList_{cssKey}'>");
+
+			foreach (var state in activeDetails.OrderBy(x => x.Order))
+			{
+				var withoutDestinationHref = BuildUnitStateHref(actionWithoutDestination, unitId, unitIds, state.CustomStateDetailId);
+				var buttonColor = HttpUtility.HtmlAttributeEncode(state.ButtonColor ?? string.Empty);
+				var buttonText = HttpUtility.HtmlEncode(state.ButtonText);
+
+				if (state.DetailType == (int)CustomStateDetailTypes.None)
+				{
+					sb.Append($"<li><a style='color:{buttonColor};' href='{withoutDestinationHref}'>{buttonText}</a></li>");
+					continue;
+				}
+
+				sb.Append($"<li class='dropdown-submenu'><a style='color:{buttonColor};' tabindex='-1' href='#'>{buttonText}</a>");
+				sb.Append($"<ul class='dropdown-menu unitStateList_{cssKey}'>");
+				sb.Append($"<li><a href='{withoutDestinationHref}'>{buttonText}</a></li>");
+				sb.Append("<li class='divider'></li>");
+				AppendDestinationMenuEntries(sb, unitId, unitIds, actionWithDestination, activeCalls, stations, destinationPois, state);
+				sb.Append("</ul>");
+				sb.Append("</li>");
+			}
+
+			sb.Append("</ul>");
+			return sb.ToString();
+		}
+
+		private static IReadOnlyCollection<int> ParseUnitIds(string units)
+		{
+			var parsedUnitIds = new List<int>();
+
+			if (String.IsNullOrWhiteSpace(units))
+				return parsedUnitIds;
+
+			foreach (var unitIdValue in units.Split(new[] { '|' }, StringSplitOptions.RemoveEmptyEntries))
+			{
+				if (int.TryParse(unitIdValue, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsedUnitId) &&
+					parsedUnitId > 0 &&
+					!parsedUnitIds.Contains(parsedUnitId))
+				{
+					parsedUnitIds.Add(parsedUnitId);
+				}
+			}
+
+			return parsedUnitIds;
+		}
+
+		private static string BuildUnitStateHref(string actionName, int? unitId, IReadOnlyCollection<int> unitIds, int stateType, int? destinationType = null, int? destinationId = null)
+		{
+			var query = HttpUtility.ParseQueryString(string.Empty);
+
+			if (unitId.HasValue && unitId.Value > 0)
+				query["unitId"] = unitId.Value.ToString(CultureInfo.InvariantCulture);
+
+			if (unitIds != null && unitIds.Count > 0)
+				query["unitIds"] = string.Join("|", unitIds.Where(x => x > 0).Distinct().Select(x => x.ToString(CultureInfo.InvariantCulture)));
+
+			query["stateType"] = stateType.ToString(CultureInfo.InvariantCulture);
+
+			if (destinationType.HasValue)
+				query["type"] = destinationType.Value.ToString(CultureInfo.InvariantCulture);
+
+			if (destinationId.HasValue)
+				query["destination"] = destinationId.Value.ToString(CultureInfo.InvariantCulture);
+
+			var queryString = query.ToString();
+			var href = $"/User/Units/{actionName}";
+
+			if (!String.IsNullOrWhiteSpace(queryString))
+				href = $"{href}?{queryString}";
+
+			return HttpUtility.HtmlAttributeEncode(href);
+		}
+
+		private static void AppendDestinationMenuEntries(StringBuilder sb, int? unitId, IReadOnlyCollection<int> unitIds, string actionWithDestination, IEnumerable<Call> activeCalls, IEnumerable<DepartmentGroup> stations, IEnumerable<Poi> destinationPois, CustomStateDetail state)
+		{
+			if (state.DetailType.SupportsCalls())
+			{
+				sb.Append("<li class='dropdown-header'>Calls</li>");
+				foreach (var call in activeCalls)
+				{
+					var callHref = BuildUnitStateHref(actionWithDestination, unitId, unitIds, state.CustomStateDetailId, (int)DestinationEntityTypes.Call, call.CallId);
+					var callText = HttpUtility.HtmlEncode($"{call.GetIdentifier()}:{call.Name}");
+					sb.Append($"<li><a href='{callHref}'>{callText}</a></li>");
+				}
+			}
+
+			if (state.DetailType.SupportsStations())
+			{
+				sb.Append("<li class='dropdown-header'>Stations</li>");
+				foreach (var station in stations)
+				{
+					var stationHref = BuildUnitStateHref(actionWithDestination, unitId, unitIds, state.CustomStateDetailId, (int)DestinationEntityTypes.Station, station.DepartmentGroupId);
+					var stationText = HttpUtility.HtmlEncode(station.Name);
+					sb.Append($"<li><a href='{stationHref}'>{stationText}</a></li>");
+				}
+			}
+
+			if (state.DetailType.SupportsPois())
+			{
+				foreach (var poiGroup in destinationPois.GroupBy(x => !String.IsNullOrWhiteSpace(x.Type?.Name) ? x.Type.Name : "POIs"))
+				{
+					var poiGroupLabel = HttpUtility.HtmlEncode(poiGroup.Key);
+					sb.Append($"<li class='dropdown-header'>{poiGroupLabel}</li>");
+					foreach (var poi in poiGroup.OrderBy(x => x.Name).ThenBy(x => x.Address).ThenBy(x => x.Note))
+					{
+						var poiHref = BuildUnitStateHref(actionWithDestination, unitId, unitIds, state.CustomStateDetailId, (int)DestinationEntityTypes.Poi, poi.PoiId);
+						var poiText = HttpUtility.HtmlEncode(GetPoiDisplayText(poi));
+						sb.Append($"<li><a href='{poiHref}'>{poiText}</a></li>");
+					}
+				}
+			}
+		}
+
+		private static string GetPoiDisplayText(Poi poi)
+		{
+			return PoiDisplayHelper.GetSelectionLabel(poi);
+		}
+
+		private async Task<bool> IsValidDestinationAsync(int destinationId, int destinationType)
+		{
+			var entityType = (DestinationEntityTypes)destinationType;
+
+			switch (entityType)
+			{
+				case DestinationEntityTypes.Station:
+					var station = await _departmentGroupsService.GetGroupByIdAsync(destinationId, false);
+					return station != null && station.DepartmentId == DepartmentId;
+				case DestinationEntityTypes.Call:
+					var call = await _callsService.GetCallByIdAsync(destinationId, false);
+					return call != null && call.DepartmentId == DepartmentId;
+				case DestinationEntityTypes.Poi:
+					return await _mappingService.GetDestinationPOIByIdAsync(DepartmentId, destinationId) != null;
+				default:
+					return false;
+			}
 		}
 	}
 }

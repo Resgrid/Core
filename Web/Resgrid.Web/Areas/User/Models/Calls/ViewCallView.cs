@@ -28,6 +28,9 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		public List<CallReference> ChildCalls { get; set; }
 		public List<Contact> Contacts { get; set; }
 		public List<CallVideoFeed> VideoFeeds { get; set; } = new List<CallVideoFeed>();
+		public string DestinationName { get; set; }
+		public string DestinationAddress { get; set; }
+		public string DestinationTypeName { get; set; }
 
 		public string IsMapTabActive()
 		{

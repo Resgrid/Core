@@ -190,4 +190,77 @@
   <data name="VideoFeedOther" xml:space="preserve"><value>أخرى</value></data>
   <data name="ConfirmDeleteVideoFeed" xml:space="preserve"><value>هل أنت متأكد من رغبتك في حذف بث الفيديو هذا؟</value></data>
   <data name="NoVideoFeeds" xml:space="preserve"><value>لم تتم إضافة أي بث فيديو لهذه المكالمة.</value></data>
+  <data name="Additional" xml:space="preserve"><value>إضافي</value></data>
+  <data name="AllOfGroupDispatched" xml:space="preserve"><value>تم إيفاد جميع {0}</value></data>
+  <data name="AreYouSure" xml:space="preserve"><value>هل أنت متأكد؟</value></data>
+  <data name="CallUpdatedTitle" xml:space="preserve"><value>تم تحديث البلاغ</value></data>
+  <data name="CallUpdatedMessage" xml:space="preserve"><value>تم تحديث هذا البلاغ، يرجى تحديث الصفحة لعرض أحدث المعلومات.</value></data>
+  <data name="CallsForYear" xml:space="preserve"><value>البلاغات للسنة</value></data>
+  <data name="CheckInFailed" xml:space="preserve"><value>فشل تسجيل الوصول. يرجى المحاولة مرة أخرى.</value></data>
+  <data name="CheckInStatusOk" xml:space="preserve"><value>حسناً</value></data>
+  <data name="CheckInStatusOverdue" xml:space="preserve"><value>متأخر</value></data>
+  <data name="CustomFields" xml:space="preserve"><value>حقول مخصصة</value></data>
+  <data name="Destination" xml:space="preserve"><value>الوجهة</value></data>
+  <data name="DestinationHelp" xml:space="preserve"><value>حدد نقطة اهتمام للوجهة مثل مستشفى أو ملجأ أو مركز نقل أو منطقة تجمع.</value></data>
+  <data name="DispatchChat" xml:space="preserve"><value>محادثة الإيفاد</value></data>
+  <data name="DispatchTime" xml:space="preserve"><value>وقت الإيفاد</value></data>
+  <data name="EnterMessageHere" xml:space="preserve"><value>أدخل الرسالة هنا...</value></data>
+  <data name="ETA" xml:space="preserve"><value>وقت الوصول المتوقع</value></data>
+  <data name="GoToDispatch" xml:space="preserve"><value>الذهاب إلى الإيفاد</value></data>
+  <data name="GoToHome" xml:space="preserve"><value>الذهاب إلى الرئيسية</value></data>
+  <data name="Group" xml:space="preserve"><value>مجموعة</value></data>
+  <data name="GroupSelected" xml:space="preserve"><value>(تم اختيار المجموعة)</value></data>
+  <data name="IndoorLocation" xml:space="preserve"><value>الموقع الداخلي</value></data>
+  <data name="InvalidCoordinates" xml:space="preserve"><value>الرجاء إدخال قيم رقمية صحيحة لخط العرض وخط الطول.</value></data>
+  <data name="Latitude" xml:space="preserve"><value>خط العرض</value></data>
+  <data name="LatitudeShort" xml:space="preserve"><value>ع</value></data>
+  <data name="Longitude" xml:space="preserve"><value>خط الطول</value></data>
+  <data name="LongitudeShort" xml:space="preserve"><value>ط</value></data>
+  <data name="NoteAlerts" xml:space="preserve"><value>تنبيهات الملاحظات</value></data>
+  <data name="OnlineUsers" xml:space="preserve"><value>المستخدمون المتصلون</value></data>
+  <data name="PersonnelCount" xml:space="preserve"><value>عدد الموظفين</value></data>
+  <data name="PrintExportView" xml:space="preserve"><value>طباعة (تصدير) العرض</value></data>
+  <data name="Primary" xml:space="preserve"><value>أساسي</value></data>
+  <data name="ProtocolTextFor" xml:space="preserve"><value>نص البروتوكول لـ {0}</value></data>
+  <data name="QuestionsFor" xml:space="preserve"><value>الأسئلة الخاصة بـ {0}</value></data>
+  <data name="RemoveThisCallLink" xml:space="preserve"><value>إزالة رابط البلاغ هذا</value></data>
+  <data name="RequestSent" xml:space="preserve"><value>تم إرسال الطلب!</value></data>
+  <data name="ReopenCallConfirmText" xml:space="preserve"><value>هل أنت متأكد أنك تريد إعادة فتح هذا البلاغ؟ سيؤدي ذلك إلى حذف جميع بيانات الإغلاق المرتبطة، بما في ذلك من أغلق البلاغ، ومتى تم إغلاقه، وحالة الإغلاق، وأي ملاحظات إغلاق.</value></data>
+  <data name="ReopenCallRequestSentMessage" xml:space="preserve"><value>جارٍ معالجة طلبك لإعادة فتح البلاغ. يرجى مراجعة صفحة لوحة التحكم الخاصة بالبلاغات المفتوحة لعرض البلاغ.</value></data>
+  <data name="RouteFrom" xml:space="preserve"><value>المسار من {0}</value></data>
+  <data name="SearchDestinationPois" xml:space="preserve"><value>البحث في نقاط الاهتمام للوجهة...</value></data>
+  <data name="SearchIndoorLocations" xml:space="preserve"><value>البحث في المواقع الداخلية...</value></data>
+  <data name="SetPinOnMap" xml:space="preserve"><value>تعيين دبوس على الخريطة</value></data>
+  <data name="Staffing" xml:space="preserve"><value>التوظيف</value></data>
+  <data name="UngroupedUsersUnits" xml:space="preserve"><value>المستخدمون/الوحدات غير المجمّعون</value></data>
+  <data name="WhatThreeWordsNotFound" xml:space="preserve"><value>تعذّر على What3Words العثور على موقع لتلك الكلمات. تأكد من أنها 3 كلمات مفصولة بنقاط.</value></data>
+  <data name="WhatThreeWordsPlaceholder" xml:space="preserve"><value>what.three.words</value></data>
+  <data name="AnswerQuestions" xml:space="preserve"><value>الإجابة على الأسئلة</value></data>
+  <data name="CallPriorityLow" xml:space="preserve"><value>منخفض</value></data>
+  <data name="CallPriorityMedium" xml:space="preserve"><value>متوسط</value></data>
+  <data name="CallPriorityHigh" xml:space="preserve"><value>عالٍ</value></data>
+  <data name="CallPriorityEmergency" xml:space="preserve"><value>طارئ</value></data>
+  <data name="Cancelled" xml:space="preserve"><value>ملغى</value></data>
+  <data name="CheckInTimerTargetUnitType" xml:space="preserve"><value>نوع الوحدة</value></data>
+  <data name="CheckInTimerTargetHazmatExposure" xml:space="preserve"><value>التعرض للمواد الخطرة</value></data>
+  <data name="CheckInTimerTargetSectorRotation" xml:space="preserve"><value>تدوير القطاع</value></data>
+  <data name="CheckInTimerTargetRehab" xml:space="preserve"><value>إعادة التأهيل</value></data>
+  <data name="File" xml:space="preserve"><value>ملف</value></data>
+  <data name="Inactive" xml:space="preserve"><value>غير نشط</value></data>
+  <data name="InvalidDestinationPoi" xml:space="preserve"><value>يرجى تحديد نقطة اهتمام صالحة للوجهة.</value></data>
+  <data name="LoggedOff" xml:space="preserve"><value>قام بتسجيل الخروج.</value></data>
+  <data name="AttachFileRequired" xml:space="preserve"><value>يجب تحديد ملف لإرفاقه.</value></data>
+  <data name="DocumentTypeNotImportable" xml:space="preserve"><value>نوع المستند ({0}) غير قابل للاستيراد.</value></data>
+  <data name="FileTooLarge10Mb" xml:space="preserve"><value>الملف كبير جداً، ويجب أن يكون أصغر من 10 ميجابايت.</value></data>
+  <data name="NoLocation" xml:space="preserve"><value>لا يوجد موقع</value></data>
+  <data name="GenericCall" xml:space="preserve"><value>بلاغ عام</value></data>
+  <data name="SelectContact" xml:space="preserve"><value>اختر جهة اتصال</value></data>
+  <data name="NoDestination" xml:space="preserve"><value>لا توجد وجهة</value></data>
+  <data name="Pois" xml:space="preserve"><value>نقاط الاهتمام</value></data>
+  <data name="Override" xml:space="preserve"><value>تجاوز</value></data>
+  <data name="RouteDistance" xml:space="preserve"><value>المسافة</value></data>
+  <data name="RouteDuration" xml:space="preserve"><value>المدة</value></data>
+  <data name="RouteStep" xml:space="preserve"><value>خطوة</value></data>
+  <data name="RouteUnitKilometers" xml:space="preserve"><value>كم</value></data>
+  <data name="RouteUnitMinutes" xml:space="preserve"><value>دقيقة</value></data>
 </root>

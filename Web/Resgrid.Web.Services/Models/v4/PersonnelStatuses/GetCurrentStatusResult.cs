@@ -49,9 +49,27 @@ namespace Resgrid.Web.Services.Models.v4.PersonnelStatuses
 		public int? DestinationId { get; set; }
 
 		/// <summary>
-		/// Destination type for the action log
+		/// Machine-readable destination type for the action log (None = 0, Station = 1, Call = 2, POI = 3).
+		/// Use this for programmatic branching; see <see cref="DestinationTypeName"/> for the localized display label.
 		/// </summary>
 		public int? DestinationType { get; set; }
+
+		/// <summary>
+		/// Destination display name.
+		/// </summary>
+		public string DestinationName { get; set; }
+
+		/// <summary>
+		/// Destination address.
+		/// </summary>
+		public string DestinationAddress { get; set; }
+
+		/// <summary>
+		/// Localized display label for the destination type (e.g. "Station", "Call", "POI"). Not
+		/// suitable for programmatic branching; use <see cref="DestinationType"/> as the
+		/// machine-readable discriminator instead.
+		/// </summary>
+		public string DestinationTypeName { get; set; }
 
 		/// <summary>
 		/// Geolocation for this status

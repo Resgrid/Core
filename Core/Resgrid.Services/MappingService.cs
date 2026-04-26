@@ -44,6 +44,56 @@ namespace Resgrid.Services
 			return types.ToList();
 		}
 
+		public async Task<List<Poi>> GetPOIsForDepartmentAsync(int departmentId)
+		{
+			var poiTypes = await GetPOITypesForDepartmentAsync(departmentId);
+			var pois = new List<Poi>();
+
+			foreach (var poiType in poiTypes)
+			{
+				if (poiType.Pois == null || !poiType.Pois.Any())
+					continue;
+
+				foreach (var poi in poiType.Pois)
+				{
+					poi.Type = poiType;
+					pois.Add(poi);
+				}
+			}
+
+			return pois;
+		}
+
+		public async Task<List<Poi>> GetDestinationPOIsForDepartmentAsync(int departmentId)
+		{
+			var poiTypes = await GetPOITypesForDepartmentAsync(departmentId);
+			var pois = new List<Poi>();
+
+			foreach (var poiType in poiTypes.Where(x => x.IsDestination))
+			{
+				if (poiType.Pois == null || !poiType.Pois.Any())
+					continue;
+
+				foreach (var poi in poiType.Pois)
+				{
+					poi.Type = poiType;
+					pois.Add(poi);
+				}
+			}
+
+			return pois;
+		}
+
+		public async Task<Poi> GetPOIByIdAsync(int poiId)
+		{
+			return await _poisRepository.GetByIdAsync(poiId);
+		}
+
+		public async Task<Poi> GetDestinationPOIByIdAsync(int departmentId, int poiId)
+		{
+			return (await GetDestinationPOIsForDepartmentAsync(departmentId)).FirstOrDefault(x => x.PoiId == poiId);
+		}
+
 		public async Task<PoiType> GetTypeByIdAsync(int poiTypeId)
 		{
 			return await _poiTypesRepository.GetPoiTypeByTypeIdAsync(poiTypeId);
@@ -56,6 +106,18 @@ namespace Resgrid.Services
 			if (type != null)
 			{
 				return await _poiTypesRepository.DeleteAsync(type, cancellationToken);
+			}
+
+			return false;
+		}
+
+		public async Task<bool> DeletePOIAsync(int poiId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var poi = await GetPOIByIdAsync(poiId);
+
+			if (poi != null)
+			{
+				return await _poisRepository.DeleteAsync(poi, cancellationToken);
 			}
 
 			return false;

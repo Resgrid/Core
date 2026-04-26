@@ -8,6 +8,25 @@ var resgrid;
             $(document).ready(function () {
                 resgrid.common.analytics.track('Personnel List');
 
+                function parseDestinationSelection(rawValue) {
+                    if (!rawValue) {
+                        return { type: 0, destination: 0 };
+                    }
+
+                    const parts = rawValue.toString().split(':');
+                    if (parts.length === 2) {
+                        return {
+                            type: parseInt(parts[0], 10) || 0,
+                            destination: parseInt(parts[1], 10) || 0
+                        };
+                    }
+
+                    return {
+                        type: 0,
+                        destination: parseInt(rawValue, 10) || 0
+                    };
+                }
+
                 $('.table').DataTable();
                 $('#tree').bstreeview({ data: treeData });
                 $('.selectPersonCheckbox').click(evaluate);
@@ -61,7 +80,8 @@ var resgrid;
                     function () {
                         $('#savingPersonnelStatusButtonLoader').show();
                         $('#savingPersonnelStatusButton').hide();
-                        $.get(resgrid.absoluteBaseUrl + '/User/Personnel/SetActionForUser?userId=' + $('#setPersonStatusUserId').val() + '&actionType=' + $("#PersonnelStatusDropdown").val() + '&destination=' + $('#PersonnelStatusDestinationDropdown').val() + '&note=' + encodeURI($('#PersonnelStatusNote').val()), function (data) {
+                        const selection = parseDestinationSelection($('#PersonnelStatusDestinationDropdown').val());
+                        $.get(resgrid.absoluteBaseUrl + '/User/Personnel/SetActionForUser?userId=' + $('#setPersonStatusUserId').val() + '&actionType=' + $("#PersonnelStatusDropdown").val() + '&type=' + selection.type + '&destination=' + selection.destination + '&note=' + encodeURI($('#PersonnelStatusNote').val()), function (data) {
                             location.reload();
                         });
                     });
@@ -118,7 +138,8 @@ var resgrid;
                     function () {
                         $('#savingSelectedPersonnelStatusButtonLoader').show();
                         $('#savingSelectedPersonnelStatusButton').hide();
-                        $.get(resgrid.absoluteBaseUrl + '/User/Personnel/SetUserActionForMultiple?userIds=' + getSelectedUsers() + '&actionType=' + $("#SelectedPersonnelStatusDropdown").val() + '&destination=' + $('#SelectedPersonnelStatusDestinationDropdown').val() + '&note=' + encodeURI($('#SelectedPersonnelStatusNote').val()), function (data) {
+                        const selection = parseDestinationSelection($('#SelectedPersonnelStatusDestinationDropdown').val());
+                        $.get(resgrid.absoluteBaseUrl + '/User/Personnel/SetUserActionForMultiple?userIds=' + getSelectedUsers() + '&actionType=' + $("#SelectedPersonnelStatusDropdown").val() + '&type=' + selection.type + '&destination=' + selection.destination + '&note=' + encodeURI($('#SelectedPersonnelStatusNote').val()), function (data) {
                             location.reload();
                         });
                     });

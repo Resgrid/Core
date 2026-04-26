@@ -5,6 +5,20 @@ var resgrid;
     (function (dispatch) {
         var newcall;
         (function (newcall) {
+            function getText(key, fallback) {
+                return (resgrid.dispatch && typeof resgrid.dispatch.getText === 'function')
+                    ? resgrid.dispatch.getText(key, fallback)
+                    : fallback;
+            }
+            function formatText(template) {
+                if (resgrid.dispatch && typeof resgrid.dispatch.formatText === 'function') {
+                    return resgrid.dispatch.formatText.apply(null, arguments);
+                }
+                var args = Array.prototype.slice.call(arguments, 1);
+                return (template || '').replace(/\{(\d+)\}/g, function (match, index) {
+                    return typeof args[index] !== 'undefined' ? args[index] : match;
+                });
+            }
             $(document).ready(function () {
                 callMarker = null;
                 map = null;
@@ -151,7 +165,7 @@ var resgrid;
                             resgrid.dispatch.newcall.setMarkerLocation(data.Latitude, data.Longitude);
                         }
                         else {
-                            alert("What3Words was unable to find a location for those words. Ensure its 3 words separated by periods.");
+                            alert(getText('whatThreeWordsNotFound', 'What3Words was unable to find a location for those words. Ensure they are 3 words separated by periods.'));
                         }
                     });
                     evt.preventDefault();
@@ -160,7 +174,7 @@ var resgrid;
                     var lat = parseFloat($("#Latitude").val());
                     var lng = parseFloat($("#Longitude").val());
                     if (isNaN(lat) || isNaN(lng)) {
-                        alert("Please enter valid numeric latitude and longitude values.");
+                        alert(getText('invalidCoordinates', 'Please enter valid numeric latitude and longitude values.'));
                         return false;
                     }
                     map.setView(new L.LatLng(lat, lng), 16);
@@ -172,12 +186,12 @@ var resgrid;
                     paging: false,
                     columns: [
                         { data: 'UserId', title: '', orderable: false, searchable: false, render: function(data) { return '<input type="checkbox" id="dispatchUser_'+data+'" name="dispatchUser_'+data+'" />'; } },
-                        { data: 'Name', title: 'Name' },
-                        { data: 'Eta', title: 'ETA' },
-                        { data: null, title: 'Status', orderable: false, render: function(d,t,row) { return '<span style="color:'+row.StatusColor+'">'+row.Status+'</span>'; } },
-                        { data: null, title: 'Staffing', orderable: false, render: function(d,t,row) { return '<span style="color:'+row.StaffingColor+'">'+row.Staffing+'</span>'; } },
-                        { data: 'Group', title: 'Group' },
-                        { data: 'Roles', title: 'Roles' }
+                        { data: 'Name', title: getText('name', 'Name') },
+                        { data: 'Eta', title: getText('eta', 'ETA') },
+                        { data: null, title: getText('status', 'Status'), orderable: false, render: function(d,t,row) { return '<span style="color:'+row.StatusColor+'">'+row.Status+'</span>'; } },
+                        { data: null, title: getText('staffing', 'Staffing'), orderable: false, render: function(d,t,row) { return '<span style="color:'+row.StaffingColor+'">'+row.Staffing+'</span>'; } },
+                        { data: 'Group', title: getText('group', 'Group') },
+                        { data: 'Roles', title: getText('roles', 'Roles') }
                     ]
                 });
                 personnelTable.on('draw', function() {
@@ -189,8 +203,8 @@ var resgrid;
                     paging: false,
                     columns: [
                         { data: 'GroupId', title: '', orderable: false, searchable: false, render: function(data) { return '<input type="checkbox" id="dispatchGroup_'+data+'" name="dispatchGroup_'+data+'" />'; } },
-                        { data: 'Name', title: 'Name' },
-                        { data: 'Count', title: 'Personnel Count' }
+                        { data: 'Name', title: getText('name', 'Name') },
+                        { data: 'Count', title: getText('personnelCount', 'Personnel Count') }
                     ]
                 });
                 groupsTable.on('draw', function() {
@@ -202,8 +216,8 @@ var resgrid;
                     paging: false,
                     columns: [
                         { data: 'RoleId', title: '', orderable: false, searchable: false, render: function(data) { return '<input type="checkbox" id="dispatchRole_'+data+'" name="dispatchRole_'+data+'" />'; } },
-                        { data: 'Name', title: 'Name' },
-                        { data: 'Count', title: 'Personnel Count' }
+                        { data: 'Name', title: getText('name', 'Name') },
+                        { data: 'Count', title: getText('personnelCount', 'Personnel Count') }
                     ]
                 });
                 rolesTable.on('draw', function() {
@@ -224,7 +238,7 @@ var resgrid;
                     }
 
                     var modal = $(this);
-                    modal.find('.modal-title').text(`Questions for ${protocol.Name}`);
+                    modal.find('.modal-title').text(formatText(getText('questionsFor', 'Questions for {0}'), protocol.Name));
 
                     var questionHtml = "";
                     for (var t = 0; t < protocol.Questions.length; t++) {
@@ -286,7 +300,7 @@ var resgrid;
                 $('#addNewLinkedCall').click(function () {
                     var data = $('#selectLinkedCall').select2('data');
 
-                    $('#linkedCalls tbody').first().append(`<tr><td style='max-width: 215px;'>${data[0].text}<input type='hidden' id='linkedCall_${data[0].id}' name='linkedCall_${data[0].id}' value='${data[0].id}' /></td><td>${$('#selectCallNote').val()}<input type='hidden' id='linkedCallNote_${data[0].id}' name='linkedCallNote_${data[0].id}' value='${$('#selectCallNote').val()}' /></td><td style='text-align:center;'><a onclick='$(this).parent().parent().remove();' class='tip-top' data-original-title='Remove this call link'><i class='fa fa-minus' style='color: red;'></i></a></td></tr>`);
+                    $('#linkedCalls tbody').first().append(`<tr><td style='max-width: 215px;'>${data[0].text}<input type='hidden' id='linkedCall_${data[0].id}' name='linkedCall_${data[0].id}' value='${data[0].id}' /></td><td>${$('#selectCallNote').val()}<input type='hidden' id='linkedCallNote_${data[0].id}' name='linkedCallNote_${data[0].id}' value='${$('#selectCallNote').val()}' /></td><td style='text-align:center;'><a onclick='$(this).parent().parent().remove();' class='tip-top' data-original-title='${getText('removeThisCallLink', 'Remove this call link')}'><i class='fa fa-minus' style='color: red;'></i></a></td></tr>`);
                     $('#selectCallNote').val('');
                     $('#selectLinkedCall').empty();
                 });
@@ -337,9 +351,10 @@ var resgrid;
                 });
                 $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
                     // DataTables adjusts itself; trigger resize for any hidden columns
-                    if (e.target && e.target.textContent === "Personnel") { personnelTable.columns.adjust(); }
-                    else if (e.target && e.target.textContent === "Groups") { groupsTable.columns.adjust(); }
-                    else if (e.target && e.target.textContent === "Roles") { rolesTable.columns.adjust(); }
+                    var targetTab = e.target && e.target.getAttribute('href');
+                    if (targetTab === '#personnelTab') { personnelTable.columns.adjust(); }
+                    else if (targetTab === '#groupsTab') { groupsTable.columns.adjust(); }
+                    else if (targetTab === '#rolesTab') { rolesTable.columns.adjust(); }
                 });
                 centerMap();
             });
@@ -462,14 +477,18 @@ var resgrid;
             newcall.addProtocol = addProtocol;
 
             function getStatusField(id, state, code) {
+                var inactiveText = resgrid.dispatch.getText('inactive', 'Inactive');
+                var activeText = resgrid.dispatch.getText('active', 'Active');
+                var answerQuestionsText = resgrid.dispatch.getText('answerQuestions', 'Answer Questions');
+                var unknownText = resgrid.dispatch.getText('unknown', 'Unknown');
                 if (state === 0) {
-                    return "Inactive";
+                    return inactiveText;
                 } else if (state === 1) {
-                    return `Active <input type='text' id='activeProtocol_${id}' name='activeProtocol_${id}' style='display:none;' value='1'></input><input type='text' id='protocolCode_${id}' name='protocolCode_${id}' style='display:none;' value='${code}'></input>`;
+                    return `${activeText} <input type='text' id='activeProtocol_${id}' name='activeProtocol_${id}' style='display:none;' value='1'></input><input type='text' id='protocolCode_${id}' name='protocolCode_${id}' style='display:none;' value='${code}'></input>`;
                 } else if (state === 2) {
-                    return `<a id="answerProcotolQuestions_${id}" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#protocolQuestionWindow" data-protocolId="${id}">Answer Questions</a> <input type='text' id='pendingProtocol_${id}' name='pendingProtocol_${id}' style='display:none;' value='0'></input><input type='text' id='protocolCode_${id}' name='protocolCode_${id}' style='display:none;' value='${code}'></input>`;
+                    return `<a id="answerProcotolQuestions_${id}" class="btn btn-warning btn-xs" data-toggle="modal" data-target="#protocolQuestionWindow" data-protocolId="${id}">${answerQuestionsText}</a> <input type='text' id='pendingProtocol_${id}' name='pendingProtocol_${id}' style='display:none;' value='0'></input><input type='text' id='protocolCode_${id}' name='protocolCode_${id}' style='display:none;' value='${code}'></input>`;
                 } else {
-                    return "Unknown";
+                    return unknownText;
                 }
             }
             newcall.getStatusField = getStatusField;

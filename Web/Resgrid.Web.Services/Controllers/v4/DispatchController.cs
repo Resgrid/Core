@@ -12,6 +12,7 @@ using Resgrid.Model.Providers;
 using Resgrid.Web.Services.Models.v4.Personnel;
 using Resgrid.Web.Services.Models.v4.Dispatch;
 using Resgrid.Web.Services.Models.v4.Groups;
+using Resgrid.Web.Services.Models.v4.Mapping;
 using Resgrid.Web.Services.Models.v4.Units;
 using Resgrid.Web.Services.Models.v4.CallTypes;
 using Resgrid.Web.Services.Models.v4.CallPriorities;
@@ -50,6 +51,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly ITemplatesService _templatesService;
 		private readonly IFormsService _formsService;
 		private readonly Model.Services.IAuthorizationService _authorizationService;
+		private readonly IMappingService _mappingService;
 
 		public DispatchController(
 			IUsersService usersService,
@@ -67,6 +69,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IDepartmentSettingsService departmentSettingsService,
 			ITemplatesService templatesService,
 			IFormsService formsService,
+			IMappingService mappingService,
 			Model.Services.IAuthorizationService authorizationService
 			)
 		{
@@ -85,6 +88,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_departmentSettingsService = departmentSettingsService;
 			_templatesService = templatesService;
 			_formsService = formsService;
+			_mappingService = mappingService;
 			_authorizationService = authorizationService;
 		}
 		#endregion Members and Constructors
@@ -109,6 +113,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.UnitRoles = new List<UnitRoleResultData>();
 			result.Priorities = new List<CallPriorityResultData>();
 			result.CallTypes = new List<CallTypeResultData>();
+			result.PoiTypes = new List<PoiTypeResultData>();
+			result.DestinationPois = new List<PoiResultData>();
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 			var users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
@@ -122,6 +128,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var callPriorites = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(DepartmentId);
 			var callTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
 			var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
+			var poiTypes = await _mappingService.GetPOITypesForDepartmentAsync(DepartmentId);
+			var pois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 			var canViewPII = await _authorizationService.CanUserViewPIIAsync(UserId, DepartmentId);
 
 			foreach (var user in users)
@@ -178,7 +186,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var latestUnitLocation = await _unitsService.GetLatestUnitLocationAsync(us.UnitId, us.Timestamp);
 
 				var group = allGroups.FirstOrDefault(x => x.DepartmentGroupId == us.Unit.StationGroupId);
-				result.UnitStatuses.Add(UnitStatusController.ConvertUnitStatusData(us.Unit, us, latestUnitLocation, customState, group, TimeZone, activeCalls, allGroups));
+				result.UnitStatuses.Add(UnitStatusController.ConvertUnitStatusData(us.Unit, us, latestUnitLocation, customState, group, TimeZone, activeCalls, allGroups, pois));
 			}
 
 			foreach (var role in allRoles)
@@ -213,6 +221,22 @@ namespace Resgrid.Web.Services.Controllers.v4
 				foreach (var callType in callTypes)
 				{
 					result.CallTypes.Add(CallTypesController.ConvertTypeData(callType));
+				}
+			}
+
+			if (poiTypes != null && poiTypes.Any())
+			{
+				foreach (var poiType in poiTypes)
+				{
+					result.PoiTypes.Add(MappingController.ConvertPoiTypeData(poiType));
+
+					if (poiType.IsDestination && poiType.Pois != null && poiType.Pois.Any())
+					{
+						foreach (var poi in poiType.Pois)
+						{
+							result.DestinationPois.Add(MappingController.ConvertPoiData(poi, poiType));
+						}
+					}
 				}
 			}
 
@@ -255,11 +279,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data.UnitName = unit.Name;
 			result.Data.Stations = new List<GroupResultData>();
 			result.Data.Calls = new List<CallResultData>();
+			result.Data.DestinationPois = new List<PoiResultData>();
+			result.Data.PoiTypes = new List<PoiTypeResultData>();
 			result.Data.Statuses = new List<CustomStatusResultData>();
 
 			var type = await _unitsService.GetUnitTypeByNameAsync(DepartmentId, unit.Type);
 			var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
 			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
+			var poiTypes = await _mappingService.GetPOITypesForDepartmentAsync(DepartmentId);
 
 			var callDefault = new CallResultData();
 			callDefault.CallId = "0";
@@ -284,6 +311,22 @@ namespace Resgrid.Web.Services.Controllers.v4
 				foreach (var group in stations)
 				{
 					result.Data.Stations.Add(GroupsController.ConvertGroupData(group));
+				}
+			}
+
+			if (poiTypes != null && poiTypes.Any())
+			{
+				foreach (var poiType in poiTypes)
+				{
+					result.Data.PoiTypes.Add(MappingController.ConvertPoiTypeData(poiType));
+
+					if (poiType.IsDestination && poiType.Pois != null && poiType.Pois.Any())
+					{
+						foreach (var poi in poiType.Pois)
+						{
+							result.Data.DestinationPois.Add(MappingController.ConvertPoiData(poi, poiType));
+						}
+					}
 				}
 			}
 

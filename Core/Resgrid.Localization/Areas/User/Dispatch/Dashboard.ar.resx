@@ -78,4 +78,7 @@
   <data name="UnitStatusesHeader" xml:space="preserve">
     <value>حالات الوحدات</value>
   </data>
+  <data name="Routes" xml:space="preserve">
+    <value>المسارات</value>
+  </data>
 </root>

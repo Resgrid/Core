@@ -9,6 +9,26 @@ var resgrid;
             var map;
             var markers = [];
 
+            function renderTextValue(data, type) {
+                if (data === null || data === undefined) {
+                    return '';
+                }
+
+                if (type === 'display' || type === 'filter') {
+                    var safeWrapper = document.createElement('div');
+                    safeWrapper.textContent = String(data);
+                    return safeWrapper.innerHTML;
+                }
+
+                return data;
+            }
+
+            function createSafeTextElement(text) {
+                var safeElement = document.createElement('span');
+                safeElement.textContent = text === null || text === undefined ? '' : String(text);
+                return safeElement;
+            }
+
             $(document).ready(function () {
                 resgrid.common.analytics.track('Mapping - View Type');
 
@@ -19,25 +39,26 @@ var resgrid;
                     },
                     pageLength: 50,
                     columns: [
+                        { data: 'Name', title: 'Name', defaultContent: '', render: renderTextValue },
+                        { data: 'Address', title: 'Address', defaultContent: '', render: renderTextValue },
+                        { data: 'Note', title: 'Note', defaultContent: '', render: renderTextValue },
+                        { data: 'Latitude', title: 'Latitude' },
+                        { data: 'Longitude', title: 'Longitude' },
                         {
                             data: 'PoiId',
-                            title: '',
+                            title: 'Actions',
                             orderable: false,
                             searchable: false,
                             render: function (data) {
-                                return '<input type="checkbox" id="dispatchRole_' + data + '" name="dispatchRole_' + data + '" />';
+                                if (!canManagePois) {
+                                    return '';
+                                }
+
+                                return '<a class="btn btn-xs btn-info" href="' + resgrid.absoluteBaseUrl + '/User/Mapping/EditPOI?poiId=' + data + '">Edit</a> ' +
+                                    '<button type="button" class="btn btn-xs btn-danger" onclick="resgrid.mapping.viewType.deletePoi(' + data + ')">Delete</button>';
                             }
-                        },
-                        { data: 'Latitude', title: 'Latitude' },
-                        { data: 'Longitude', title: 'Longitude' },
-                        { data: 'Note', title: 'Note' }
+                        }
                     ]
-                });
-                poisTable.on('draw', function () {
-                    $('#poisGrid thead th:first').html('<label><input type="checkbox" id="checkAllRoles"/></label>');
-                });
-                $(document).on('click', '#checkAllRoles', function () {
-                    $('#poisGrid tbody :checkbox').prop('checked', this.checked);
                 });
 
                 map = L.map('map').setView([parseFloat(centerLat) || 39.7392, parseFloat(centerLon) || -104.9903], 9);
@@ -68,6 +89,17 @@ var resgrid;
                             var marker = L.marker([poi.Latitude, poi.Longitude], {
                                 icon: createMarkerIcon(poi)
                             }).addTo(map);
+
+                            if (poi.InfoWindowContent) {
+                                marker.bindPopup(createSafeTextElement(poi.InfoWindowContent));
+                            }
+
+                            if (poi.Title) {
+                                marker.bindTooltip(createSafeTextElement(poi.Title), {
+                                    direction: 'bottom'
+                                });
+                            }
+
                             markers.push(marker);
                         });
 
@@ -95,6 +127,13 @@ var resgrid;
                     return false;
             }
             viewType.checkboxToBool = checkboxToBool;
+
+            function deletePoi(poiId) {
+                if (!confirm('Delete this POI?')) return;
+                document.getElementById('deletePoiId').value = poiId;
+                document.getElementById('deletePoiForm').submit();
+            }
+            viewType.deletePoi = deletePoi;
 
         })(viewType = mapping.viewType || (mapping.viewType = {}));
     })(mapping = resgrid.mapping || (resgrid.mapping = {}));

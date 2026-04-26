@@ -58,7 +58,7 @@ namespace Resgrid.Services
 				if (actionLog.User == null)
 					actionLog.User = _usersService.GetUserById(actionLog.UserId, false);
 
-				if (actionLog.DestinationType.GetValueOrDefault() == 1 || actionLog.DestinationType.GetValueOrDefault() == 2 ||
+				if (actionLog.DestinationType.ToDestinationEntityType() != DestinationEntityTypes.None ||
 					actionLog.ActionTypeId == (int)ActionTypes.RespondingToScene || actionLog.ActionTypeId == (int)ActionTypes.RespondingToStation)
 					actionLog.Eta = await _geoService.GetPersonnelEtaInSecondsAsync(actionLog);
 			}
@@ -93,7 +93,7 @@ namespace Resgrid.Services
 
 				foreach (var v in values)
 				{
-					if (v.DestinationId.HasValue && (v.DestinationType.GetValueOrDefault() == 1 || v.DestinationType.GetValueOrDefault() == 2 || v.ActionTypeId == (int) ActionTypes.RespondingToScene || v.ActionTypeId == (int) ActionTypes.RespondingToStation))
+					if (v.DestinationId.HasValue && (v.DestinationType.ToDestinationEntityType() != DestinationEntityTypes.None || v.ActionTypeId == (int) ActionTypes.RespondingToScene || v.ActionTypeId == (int) ActionTypes.RespondingToStation))
 					{
 						v.Eta = await _geoService.GetPersonnelEtaInSecondsAsync(v);
 						v.EtaPulledOn = DateTime.UtcNow;
@@ -423,7 +423,7 @@ namespace Resgrid.Services
 								where state.Details != null
 								select state;
 
-			callEnabledStates.AddRange(from state in nonNullStates from detail in state.Details where detail.DetailType == (int)CustomStateDetailTypes.Calls || detail.DetailType == (int)CustomStateDetailTypes.CallsAndStations select detail.CustomStateDetailId);
+			callEnabledStates.AddRange(from state in nonNullStates from detail in state.Details where detail.DetailType.SupportsCalls() select detail.CustomStateDetailId);
 
 			var items = await _actionLogsRepository.GetActionLogsForCallAndTypesAsync(callId, callEnabledStates);
 			return items.ToList();

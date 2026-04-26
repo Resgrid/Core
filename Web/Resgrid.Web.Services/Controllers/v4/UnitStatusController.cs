@@ -34,13 +34,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IActionLogsService _actionLogsService;
+		private readonly IMappingService _mappingService;
 
 		public UnitStatusController(
 			ICallsService callsService,
 			IUnitsService unitsService,
 			IDepartmentGroupsService departmentGroupsService,
 			IDepartmentSettingsService departmentSettingsService,
-			IActionLogsService actionLogsService
+			IActionLogsService actionLogsService,
+			IMappingService mappingService
 			)
 		{
 			_callsService = callsService;
@@ -48,6 +50,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_departmentGroupsService = departmentGroupsService;
 			_departmentSettingsService = departmentSettingsService;
 			_actionLogsService = actionLogsService;
+			_mappingService = mappingService;
 		}
 		#endregion Members and Constructors
 
@@ -69,6 +72,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var unitStates = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(DepartmentId);
 				var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
 				var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
+				var pois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 
 				var sortedUnits = from u in units
 								  let station = u.StationGroup
@@ -92,12 +96,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 						var customState = await CustomStatesHelper.GetCustomUnitState(stateFound);
 						var latestUnitLocation = await _unitsService.GetLatestUnitLocationAsync(unit.Unit.UnitId, timestamp);
 
-						result.Data.Add(ConvertUnitStatusData(unit.Unit, stateFound, latestUnitLocation, customState, unit.Station, TimeZone, activeCalls, groups));
+						result.Data.Add(ConvertUnitStatusData(unit.Unit, stateFound, latestUnitLocation, customState, unit.Station, TimeZone, activeCalls, groups, pois));
 					}
 					else
 					{
 						var latestUnitLocation = await _unitsService.GetLatestUnitLocationAsync(unit.Unit.UnitId, timestamp);
-						result.Data.Add(ConvertUnitStatusData(unit.Unit, stateFound, latestUnitLocation, null, unit.Station, TimeZone, activeCalls, groups));
+						result.Data.Add(ConvertUnitStatusData(unit.Unit, stateFound, latestUnitLocation, null, unit.Station, TimeZone, activeCalls, groups, pois));
 					}
 				}
 
@@ -142,6 +146,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(DepartmentId);
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
+			var pois = await _mappingService.GetPOIsForDepartmentAsync(DepartmentId);
 			var status = await _unitsService.GetLastUnitStateByUnitIdAsync(int.Parse(unitId));
 
 			DepartmentGroup group = null;
@@ -155,12 +160,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var customState = await CustomStatesHelper.GetCustomUnitState(status);
 				var latestUnitLocation = await _unitsService.GetLatestUnitLocationAsync(status.UnitId, timestamp);
 
-				result.Data = ConvertUnitStatusData(unit, status, latestUnitLocation, customState, group, TimeZone, activeCalls, groups);
+				result.Data = ConvertUnitStatusData(unit, status, latestUnitLocation, customState, group, TimeZone, activeCalls, groups, pois);
 			}
 			else
 			{
-				var latestUnitLocation = await _unitsService.GetLatestUnitLocationAsync(status.UnitId, timestamp);
-				result.Data = ConvertUnitStatusData(unit, status, latestUnitLocation, null, group, TimeZone, activeCalls, groups);
+				var latestUnitLocation = await _unitsService.GetLatestUnitLocationAsync(unit.UnitId, timestamp);
+				result.Data = ConvertUnitStatusData(unit, null, latestUnitLocation, null, group, TimeZone, activeCalls, groups, pois);
 			}
 
 			result.PageSize = 1;
@@ -249,7 +254,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 					}
 
 					if (!string.IsNullOrWhiteSpace(stateInput.RespondingTo) && int.Parse(stateInput.RespondingTo) > 0)
-						state.DestinationId = int.Parse(stateInput.RespondingTo);
+					{
+						var destinationType = stateInput.RespondingToType ?? (int)DestinationEntityTypes.Call;
+						var destinationId = int.Parse(stateInput.RespondingTo);
+
+						if (!await IsValidDestinationAsync(destinationId, destinationType))
+							return BadRequest();
+
+						state.DestinationId = destinationId;
+						state.DestinationType = destinationType;
+					}
 
 					var savedState = await _unitsService.SetUnitStateAsync(state, DepartmentId);
 
@@ -327,15 +341,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 
 		public static UnitStatusResultData ConvertUnitStatusData(Unit unit, UnitState stateFound, UnitsLocation latestUnitLocation,
-			CustomStateDetail customState, DepartmentGroup group, string timeZone, List<Call> activeCalls, List<DepartmentGroup> groups)
+			CustomStateDetail customState, DepartmentGroup group, string timeZone, List<Call> activeCalls, List<DepartmentGroup> groups, List<Poi> pois)
 		{
 			var state = "Unknown";
 			var stateCss = "";
 			var stateStyle = "";
 			int? destinationId = 0;
+			int? destinationType = 0;
 			decimal? latitude = 0;
 			decimal? longitude = 0;
 			var destinationName = "";
+			var destinationAddress = "";
+			var destinationTypeName = "";
 			DateTime timestamp = DateTime.UtcNow;
 
 			if (stateFound != null)
@@ -345,49 +362,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 					state = customState.ButtonText;
 					stateCss = customState.ButtonColor;
 					stateStyle = customState.ButtonColor;
-
-					if (customState.DetailType == (int)CustomStateDetailTypes.Calls)
-					{
-						if (activeCalls != null && activeCalls.Any())
-						{
-							var call = activeCalls.FirstOrDefault(x => x.CallId == stateFound.DestinationId);
-							if (call != null)
-							{
-								destinationName = call.Number;
-							}
-						}
-					}
-					else if (customState.DetailType == (int)CustomStateDetailTypes.Stations)
-					{
-						if (groups != null && groups.Any())
-						{
-							var station = groups.FirstOrDefault(x => x.DepartmentGroupId == stateFound.DestinationId);
-							if (station != null)
-							{
-								destinationName = station.Name;
-							}
-						}
-					}
-					else if (customState.DetailType == (int)CustomStateDetailTypes.CallsAndStations)
-					{
-						if (groups != null && groups.Any() && activeCalls != null && activeCalls.Any())
-						{
-							// First try and get the station, as a station can get a call (based on Id) but the inverse is hard
-							var station = groups.FirstOrDefault(x => x.DepartmentGroupId == stateFound.DestinationId);
-							if (station != null)
-							{
-								destinationName = station.Name;
-							}
-							else
-							{
-								var call = activeCalls.FirstOrDefault(x => x.CallId == stateFound.DestinationId);
-								if (call != null)
-								{
-									destinationName = call.Number;
-								}
-							}
-						}
-					}
 				}
 				else
 				{
@@ -395,7 +369,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 					stateCss = stateFound.ToStateCss();
 				}
 
-				destinationId = stateFound.DestinationId;
+				var resolvedDestination = DestinationResolutionHelper.Resolve(stateFound.DestinationId, stateFound.DestinationType, customState?.DetailType, activeCalls, groups, pois);
+				destinationId = resolvedDestination.DestinationId;
+				destinationType = resolvedDestination.DestinationType;
+				destinationName = resolvedDestination.Name;
+				destinationAddress = resolvedDestination.Address;
+				destinationTypeName = resolvedDestination.TypeName;
 				latitude = stateFound.Latitude;
 				longitude = stateFound.Longitude;
 				timestamp = stateFound.Timestamp;
@@ -426,14 +405,36 @@ namespace Resgrid.Web.Services.Controllers.v4
 				TimestampUtc = timestamp,
 				Timestamp = timestamp.TimeConverter(new Department() { TimeZone = timeZone }),
 				DestinationId = destinationId,
+				DestinationType = destinationType,
 				Latitude = latitude,
 				Longitude = longitude,
 				GroupId = groupId,
 				GroupName = groupName,
-				DestinationName = destinationName
+				DestinationName = destinationName,
+				DestinationAddress = destinationAddress,
+				DestinationTypeName = destinationTypeName
 			};
 
 			return unitViewModel;
+		}
+
+		private async Task<bool> IsValidDestinationAsync(int destinationId, int destinationType)
+		{
+			var entityType = (DestinationEntityTypes)destinationType;
+
+			switch (entityType)
+			{
+				case DestinationEntityTypes.Station:
+					var station = await _departmentGroupsService.GetGroupByIdAsync(destinationId);
+					return station != null && station.DepartmentId == DepartmentId;
+				case DestinationEntityTypes.Call:
+					var call = await _callsService.GetCallByIdAsync(destinationId);
+					return call != null && call.DepartmentId == DepartmentId;
+				case DestinationEntityTypes.Poi:
+					return await _mappingService.GetDestinationPOIByIdAsync(DepartmentId, destinationId) != null;
+				default:
+					return false;
+			}
 		}
 	}
 }

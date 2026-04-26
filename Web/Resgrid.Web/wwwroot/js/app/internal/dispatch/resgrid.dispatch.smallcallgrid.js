@@ -5,6 +5,11 @@ var resgrid;
         var smallcallgrid;
         (function (smallcallgrid) {
             var callsTable;
+            function getText(key, fallback) {
+                return (resgrid.dispatch && typeof resgrid.dispatch.getText === 'function')
+                    ? resgrid.dispatch.getText(key, fallback)
+                    : fallback;
+            }
             $(document).ready(function () {
                 callsTable = $("#smallActiveCallsGrid").DataTable({
                     ajax: {
@@ -13,16 +18,16 @@ var resgrid;
                     },
                     pageLength: 6,
                     columns: [
-                        { data: 'Priority', title: 'Priority' },
-                        { data: 'DispatchTime', title: 'Dispatch Time' },
-                        { data: 'Name', title: 'Name' },
+                        { data: 'Priority', title: getText('priority', 'Priority') },
+                        { data: 'DispatchTime', title: getText('dispatchTime', 'Dispatch Time') },
+                        { data: 'Name', title: getText('name', 'Name') },
                         {
                             data: 'CallId',
-                            title: 'Actions',
+                            title: getText('actions', 'Actions'),
                             orderable: false,
                             searchable: false,
                             render: function (data) {
-                                return '<a class="btn btn-success respondToCallButton" onclick="resgrid.dispatch.smallcallgrid.respondToCall(' + data + ');">Respond To Call</a>';
+                                return '<a class="btn btn-success respondToCallButton" onclick="resgrid.dispatch.smallcallgrid.respondToCall(' + data + ');">' + getText('respondToCall', 'Respond To Call') + '</a>';
                             }
                         }
                     ]

@@ -116,6 +116,13 @@
 		</div>
 </div>
 
+<form id="deletePoiForm" method="post"
+      asp-controller="Mapping" asp-action="DeletePOI" asp-route-area="User"
+      style="display:none">
+    @Html.AntiForgeryToken()
+    <input type="hidden" id="deletePoiId" name="poiId" value="" />
+</form>
+
 @section Scripts
 {
     <script>

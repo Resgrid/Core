@@ -1,4 +1,5 @@
 using System;
+using Microsoft.Extensions.Localization;
 
 namespace Resgrid.Model
 {
@@ -20,16 +21,16 @@ namespace Resgrid.Model
 			return (DestinationEntityTypes)destinationType.Value;
 		}
 
-		public static string GetDisplayName(this DestinationEntityTypes destinationType)
+		public static string GetDisplayName(this DestinationEntityTypes destinationType, IStringLocalizer localizer)
 		{
 			switch (destinationType)
 			{
 				case DestinationEntityTypes.Station:
-					return "Station";
+					return localizer["Station"];
 				case DestinationEntityTypes.Call:
-					return "Call";
+					return localizer["Call"];
 				case DestinationEntityTypes.Poi:
-					return "POI";
+					return localizer["POI"];
 				default:
 					return string.Empty;
 			}

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using GeoJSON.Net.Feature;
@@ -362,6 +363,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			modal.Type.DepartmentId = DepartmentId;
 			modal.Type.Marker = modal.MarkerType;
 
+			if (!string.IsNullOrWhiteSpace(modal.Type.Color) &&
+			    !Regex.IsMatch(modal.Type.Color, @"^#[0-9a-fA-F]{3,8}$"))
+				ModelState.AddModelError("Type.Color", "Color must be a valid CSS hex color (e.g. #rgb, #rrggbb, #rrggbbaa).");
+
+			if (!string.IsNullOrWhiteSpace(modal.Type.Image) &&
+			    !Regex.IsMatch(modal.Type.Image, @"^[a-zA-Z0-9_-]+$"))
+				ModelState.AddModelError("Type.Image", "Image class name may only contain letters, digits, hyphens, and underscores.");
+
 			if (ModelState.IsValid)
 			{
 				await _mappingService.SavePOITypeAsync(modal.Type, cancellationToken);
@@ -457,6 +466,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> EditPOI(AddPOIView modal, CancellationToken cancellationToken)
 		{
 			if (modal?.Poi == null || modal.Poi.PoiId <= 0)
@@ -497,7 +507,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View("AddPOI", modal);
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> DeletePOI(int poiId, CancellationToken cancellationToken)
 		{
 			var poi = await _mappingService.GetPOIByIdAsync(poiId);
@@ -783,9 +794,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!rows.Any())
 				return string.Empty;
 
-			rows[0] = $"<strong>{rows[0]}</strong>";
+			var encodedRows = rows.Select(System.Net.WebUtility.HtmlEncode).ToList();
+			encodedRows[0] = $"<strong>{encodedRows[0]}</strong>";
 
-			return string.Join("<br/>", rows);
+			return string.Join("<br/>", encodedRows);
 		}
 
 		[HttpGet]

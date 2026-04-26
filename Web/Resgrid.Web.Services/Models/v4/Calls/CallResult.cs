@@ -69,7 +69,9 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public string DestinationAddress { get; set; }
 
 		/// <summary>
-		/// Destination type/category name.
+		/// Localized display label for the destination type (e.g. "POI", "Station"). Not suitable
+		/// for programmatic branching; use <see cref="DestinationPoiTypeId"/> as the
+		/// machine-readable POI type identifier instead.
 		/// </summary>
 		public string DestinationTypeName { get; set; }
 

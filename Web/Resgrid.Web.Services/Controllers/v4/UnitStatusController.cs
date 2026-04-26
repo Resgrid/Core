@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Helpers;
@@ -35,6 +36,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IActionLogsService _actionLogsService;
 		private readonly IMappingService _mappingService;
+		private readonly IStringLocalizer<Resgrid.Localization.Common> _localizer;
 
 		public UnitStatusController(
 			ICallsService callsService,
@@ -42,7 +44,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IDepartmentGroupsService departmentGroupsService,
 			IDepartmentSettingsService departmentSettingsService,
 			IActionLogsService actionLogsService,
-			IMappingService mappingService
+			IMappingService mappingService,
+			IStringLocalizer<Resgrid.Localization.Common> localizer
 			)
 		{
 			_callsService = callsService;
@@ -51,6 +54,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_departmentSettingsService = departmentSettingsService;
 			_actionLogsService = actionLogsService;
 			_mappingService = mappingService;
+			_localizer = localizer;
 		}
 		#endregion Members and Constructors
 
@@ -164,8 +168,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 			else
 			{
-				var latestUnitLocation = await _unitsService.GetLatestUnitLocationAsync(status.UnitId, timestamp);
-				result.Data = ConvertUnitStatusData(unit, status, latestUnitLocation, null, group, TimeZone, activeCalls, groups, pois);
+				var latestUnitLocation = await _unitsService.GetLatestUnitLocationAsync(unit.UnitId, timestamp);
+				result.Data = ConvertUnitStatusData(unit, null, latestUnitLocation, null, group, TimeZone, activeCalls, groups, pois);
 			}
 
 			result.PageSize = 1;
@@ -369,7 +373,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					stateCss = stateFound.ToStateCss();
 				}
 
-				var resolvedDestination = DestinationResolutionHelper.Resolve(stateFound.DestinationId, stateFound.DestinationType, customState?.DetailType, activeCalls, groups, pois);
+				var resolvedDestination = DestinationResolutionHelper.Resolve(stateFound.DestinationId, stateFound.DestinationType, customState?.DetailType, activeCalls, groups, pois, _localizer);
 				destinationId = resolvedDestination.DestinationId;
 				destinationType = resolvedDestination.DestinationType;
 				destinationName = resolvedDestination.Name;

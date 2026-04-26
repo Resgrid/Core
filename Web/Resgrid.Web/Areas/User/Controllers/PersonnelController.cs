@@ -6,6 +6,7 @@ using System.Threading;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.Extensions.Localization;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
@@ -57,13 +58,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IMappingService _mappingService;
 		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
 		private readonly IUdfRenderingService _udfRenderingService;
+		private readonly IStringLocalizer<Resgrid.Localization.Common> _localizer;
 
 		public PersonnelController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IEmailService emailService, IUserProfileService userProfileService, IDeleteService deleteService, Model.Services.IAuthorizationService authorizationService,
 			ILimitsService limitsService, IPersonnelRolesService personnelRolesService, IDepartmentGroupsService departmentGroupsService, IUserStateService userStateService,
 			IEventAggregator eventAggregator, IEmailMarketingProvider emailMarketingProvider, ICertificationService certificationService, ICustomStateService customStateService,
 			IGeoService geoService, UserManager<IdentityUser> userManager, IDepartmentSettingsService departmentSettingsService, ICallsService callsService,
-			IGeoLocationProvider geoLocationProvider, IMappingService mappingService, IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService)
+			IGeoLocationProvider geoLocationProvider, IMappingService mappingService, IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService,
+			IStringLocalizer<Resgrid.Localization.Common> localizer)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -88,6 +91,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_mappingService = mappingService;
 			_userDefinedFieldsService = userDefinedFieldsService;
 			_udfRenderingService = udfRenderingService;
+			_localizer = localizer;
 		}
 		#endregion Private Members and Constructors
 
@@ -1309,7 +1313,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					sb.Append("<optgroup label='Calls'>");
 					foreach (var call in activeCalls)
 					{
-						sb.Append($"<option value='{(int)DestinationEntityTypes.Call}:{call.CallId}'>Call {call.GetIdentifier()}:{call.Name}</option>");
+						sb.Append($"<option value='{(int)DestinationEntityTypes.Call}:{call.CallId}'>Call {call.GetIdentifier()}:{HttpUtility.HtmlEncode(call.Name)}</option>");
 					}
 					sb.Append("</optgroup>");
 				}
@@ -1319,7 +1323,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					sb.Append("<optgroup label='Stations'>");
 					foreach (var station in stations)
 					{
-						sb.Append($"<option value='{(int)DestinationEntityTypes.Station}:{station.DepartmentGroupId}'>Station: {station.Name}</option>");
+						sb.Append($"<option value='{(int)DestinationEntityTypes.Station}:{station.DepartmentGroupId}'>Station: {HttpUtility.HtmlEncode(station.Name)}</option>");
 					}
 					sb.Append("</optgroup>");
 				}
@@ -1328,11 +1332,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					foreach (var poiGroup in destinationPois.GroupBy(x => !String.IsNullOrWhiteSpace(x.Type?.Name) ? x.Type.Name : "POIs"))
 					{
-						sb.Append($"<optgroup label='{poiGroup.Key}'>");
+						sb.Append($"<optgroup label=\"{HttpUtility.HtmlEncode(poiGroup.Key)}\">");
 						foreach (var poi in poiGroup.OrderBy(x => x.Name).ThenBy(x => x.Address).ThenBy(x => x.Note))
 						{
 							var poiText = PoiDisplayHelper.GetSelectionLabel(poi, poiGroup.Key);
-							sb.Append($"<option value='{(int)DestinationEntityTypes.Poi}:{poi.PoiId}'>{poiText}</option>");
+							sb.Append($"<option value='{(int)DestinationEntityTypes.Poi}:{poi.PoiId}'>{HttpUtility.HtmlEncode(poiText)}</option>");
 						}
 						sb.Append("</optgroup>");
 					}
@@ -2164,7 +2168,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				personnelEvent.Timestamp = actionLog.Timestamp.TimeConverterToString(model.Department);
 				personnelEvent.Note = actionLog.Note;
 
-				var destination = DestinationResolutionHelper.Resolve(actionLog.DestinationId, actionLog.DestinationType, statusDetail?.DetailType, activeCalls, stations, pois);
+				var destination = DestinationResolutionHelper.Resolve(actionLog.DestinationId, actionLog.DestinationType, statusDetail?.DetailType, activeCalls, stations, pois, _localizer);
 				personnelEvent.DestinationName = destination.Name;
 
 				var coordinates = actionLog.GetCoordinates();
@@ -2213,7 +2217,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				personnelEvent.Timestamp = actionLog.Timestamp.TimeConverterToString(department);
 				personnelEvent.Note = actionLog.Note;
 
-				var destination = DestinationResolutionHelper.Resolve(actionLog.DestinationId, actionLog.DestinationType, statusDetail?.DetailType, activeCalls, stations, pois);
+				var destination = DestinationResolutionHelper.Resolve(actionLog.DestinationId, actionLog.DestinationType, statusDetail?.DetailType, activeCalls, stations, pois, _localizer);
 				personnelEvent.DestinationName = destination.Name;
 
 				var coordinates = actionLog.GetCoordinates();

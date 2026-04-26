@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Microsoft.Extensions.Localization;
 
 namespace Resgrid.Model.Helpers
 {
@@ -40,7 +41,7 @@ namespace Resgrid.Model.Helpers
 			return displayName;
 		}
 
-		public static string GetTypeName(Poi poi, string fallbackTypeName = null)
+		public static string GetTypeName(Poi poi, string fallbackTypeName = null, IStringLocalizer localizer = null)
 		{
 			if (!string.IsNullOrWhiteSpace(poi?.Type?.Name))
 				return poi.Type.Name;
@@ -48,7 +49,7 @@ namespace Resgrid.Model.Helpers
 			if (!string.IsNullOrWhiteSpace(fallbackTypeName))
 				return fallbackTypeName;
 
-			return DestinationEntityTypes.Poi.GetDisplayName();
+			return localizer != null ? localizer["POI"] : "POI";
 		}
 
 		public static List<string> GetDisplayRows(Poi poi, string fallbackTypeName = null)

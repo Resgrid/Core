@@ -447,6 +447,9 @@
   <data name="Protocols" xml:space="preserve">
     <value>Protocols</value>
   </data>
+  <data name="POI" xml:space="preserve">
+    <value>POI</value>
+  </data>
   <data name="PushToTalk" xml:space="preserve">
     <value>Push-To-Talk</value>
   </data>

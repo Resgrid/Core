@@ -45,13 +45,14 @@ namespace Resgrid.Web.Services.Controllers
 		private readonly IFileService _fileService;
 		private readonly IUnitsService _unitsService;
 		private readonly IGeoLocationProvider _geoLocationProvider;
+		private readonly ICallDispatchStatusService _callDispatchStatusService;
 
 		public EmailController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
 			ILimitsService limitsService, ICallsService callsService, IQueueService queueService, IDepartmentsService departmentsService,
 			IUserProfileService userProfileService, ITextCommandService textCommandService, IActionLogsService actionLogsService,
 			IUserStateService userStateService, ICommunicationService communicationService, IDistributionListsService distributionListsService,
 			IUsersService usersService, IEmailService emailService, IDepartmentGroupsService departmentGroupsService, IMessageService messageService,
-			IFileService fileService, IUnitsService unitsService, IGeoLocationProvider geoLocationProvider)
+			IFileService fileService, IUnitsService unitsService, IGeoLocationProvider geoLocationProvider, ICallDispatchStatusService callDispatchStatusService)
 		{
 			_departmentSettingsService = departmentSettingsService;
 			_numbersService = numbersService;
@@ -72,6 +73,7 @@ namespace Resgrid.Web.Services.Controllers
 			_fileService = fileService;
 			_unitsService = unitsService;
 			_geoLocationProvider = geoLocationProvider;
+			_callDispatchStatusService = callDispatchStatusService;
 		}
 		#endregion Private Readonly Properties and Constructors
 
@@ -374,12 +376,7 @@ namespace Resgrid.Web.Services.Controllers
 
 									var savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
 
-									var cqi = new CallQueueItem();
-									cqi.Call = savedCall;
-									cqi.Profiles = (await _userProfileService.GetAllProfilesForDepartmentAsync(call.DepartmentId)).Select(x => x.Value).ToList();
-									cqi.DepartmentTextNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(cqi.Call.DepartmentId);
-
-									await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
+									await QueueCallBroadcastAsync(savedCall, cancellationToken);
 
 									return CreatedAtAction(nameof(Receive), new { id = savedCall.CallId }, savedCall);
 								}
@@ -396,12 +393,7 @@ namespace Resgrid.Web.Services.Controllers
 									// If our Dispatch Count changed, i.e. 2nd Alarm to 3rd Alarm, redispatch
 									if (call.DidDispatchCountChange())
 									{
-										var cqi = new CallQueueItem();
-										cqi.Call = savedCall;
-										cqi.Profiles = (await _userProfileService.GetAllProfilesForDepartmentAsync(call.DepartmentId)).Select(x => x.Value).ToList();
-										cqi.DepartmentTextNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(cqi.Call.DepartmentId);
-
-										await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
+										await QueueCallBroadcastAsync(savedCall, cancellationToken);
 									}
 
 									return CreatedAtAction(nameof(Receive), new { id = savedCall.CallId }, savedCall);
@@ -571,12 +563,7 @@ namespace Resgrid.Web.Services.Controllers
 
 									var savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
 
-									var cqi = new CallQueueItem();
-									cqi.Call = savedCall;
-									cqi.Profiles = await _userProfileService.GetSelectedUserProfilesAsync(departmentGroupUsers.Select(x => x.UserId).ToList());
-									cqi.DepartmentTextNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(cqi.Call.DepartmentId);
-
-									await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
+									await QueueCallBroadcastAsync(savedCall, cancellationToken);
 
 									return CreatedAtAction(nameof(Receive), new { id = savedCall.CallId }, savedCall);
 								}
@@ -647,6 +634,27 @@ namespace Resgrid.Web.Services.Controllers
 				// If our message was null, we throw an exception
 				return BadRequest("Error parsing Inbound Message, message is null.");
 			}
+		}
+
+		private async Task QueueCallBroadcastAsync(Call savedCall, CancellationToken cancellationToken)
+		{
+			var call = await _callsService.PopulateCallData(savedCall, true, false, false, true, true, true, false, false, false);
+			var cqi = new CallQueueItem();
+			cqi.Call = call;
+
+			if ((call.GroupDispatches != null && call.GroupDispatches.Any()) || (call.UnitDispatches != null && call.UnitDispatches.Any()) || (call.RoleDispatches != null && call.RoleDispatches.Any()))
+				cqi.Profiles = (await _userProfileService.GetAllProfilesForDepartmentAsync(call.DepartmentId)).Select(x => x.Value).ToList();
+			else if (call.Dispatches != null && call.Dispatches.Any())
+				cqi.Profiles = await _userProfileService.GetSelectedUserProfilesAsync(call.Dispatches.Select(x => x.UserId).ToList());
+			else
+				cqi.Profiles = new List<UserProfile>();
+
+			cqi.DepartmentTextNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(call.DepartmentId);
+
+			if ((call.GroupDispatches != null && call.GroupDispatches.Any()) || (call.UnitDispatches != null && call.UnitDispatches.Any()))
+				await _callDispatchStatusService.ApplyDispatchStatusesAsync(call, cancellationToken: cancellationToken);
+
+			await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
 		}
 
 		private static Tuple<int, string> ProcessEmailAddress(string email)

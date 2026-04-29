@@ -318,6 +318,15 @@
   <data name="UnitCallReleaseStatusLabel" xml:space="preserve">
     <value>Unit Call Release Status</value>
   </data>
+  <data name="UnitDefaultStatusesHelp" xml:space="preserve">
+    <value>These default unit statuses only use the built-in unit state types. Use the unit type override table below when a unit type needs one of its own custom statuses.</value>
+  </data>
+  <data name="UnitTypeStatusOverridesHeader" xml:space="preserve">
+    <value>Unit Type Status Overrides</value>
+  </data>
+  <data name="UnitTypeStatusOverridesHelp" xml:space="preserve">
+    <value>Only unit types with custom unit statuses appear here. Leave a value on Default to use the department-wide built-in status above.</value>
+  </data>
   <data name="PersonnelSorting" xml:space="preserve">
     <value>Personnel Sorting</value>
   </data>

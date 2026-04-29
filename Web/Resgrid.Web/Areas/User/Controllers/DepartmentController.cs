@@ -1743,36 +1743,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.UnitDispatchStatus = await _departmentSettingsService.GetUnitCallDispatchStatusToSetAsync(DepartmentId);
 			model.UnitClearStatus = await _departmentSettingsService.GetUnitCallReleaseStatusToSetAsync(DepartmentId);
 			model.PersonnelOnUnitSetUnitStatus = await _departmentSettingsService.GetPersonnelOnUnitSetUnitStatusAsync(DepartmentId);
-
-			// Check-In Timer data
 			model.AutoEnableCheckInTimers = await _departmentSettingsService.GetCheckInTimersAutoEnableForNewCallsAsync(DepartmentId);
-			model.TimerConfigs = await _checkInTimerService.GetTimerConfigsForDepartmentAsync(DepartmentId);
-			model.TimerOverrides = await _checkInTimerService.GetTimerOverridesForDepartmentAsync(DepartmentId);
-			model.UnitTypes = (await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId))?.ToList() ?? new List<UnitType>();
-			model.CallTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId) ?? new List<CallType>();
 
-			// Build state ID → name lookup for display in the configs/overrides tables
-			var personnelStatuses = await _customStateService.GetCustomPersonnelStatusesOrDefaultsAsync(DepartmentId);
-			foreach (var s in personnelStatuses)
-				model.StateNames[s.CustomStateDetailId.ToString()] = s.ButtonText;
-
-			var unitDefaults = _customStateService.GetDefaultUnitStatuses();
-			foreach (var s in unitDefaults)
-				model.StateNames.TryAdd(s.CustomStateDetailId.ToString(), s.ButtonText);
-
-			// Also include custom unit states from each unit type
-			foreach (var ut in model.UnitTypes)
-			{
-				if (ut.CustomStatesId.HasValue && ut.CustomStatesId.Value > 0)
-				{
-					var customState = await _customStateService.GetCustomSateByIdAsync(ut.CustomStatesId.Value);
-					if (customState != null)
-					{
-						foreach (var detail in customState.GetActiveDetails())
-							model.StateNames.TryAdd(detail.CustomStateDetailId.ToString(), detail.ButtonText);
-					}
-				}
-			}
+			await PopulateDispatchSettingsSupportingDataAsync(model);
+			await PopulateDispatchSettingsUnitTypeOverridesAsync(model,
+				await _departmentSettingsService.GetUnitCallStatusOverridesByUnitTypeAsync(DepartmentId));
 
 			return View(model);
 		}
@@ -1786,9 +1761,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return Unauthorized();
 
 			await PopulateDispatchSettingsSelectionsAsync(model);
+			await PopulateDispatchSettingsSupportingDataAsync(model);
 
 			if (ModelState.IsValid)
 			{
+				model.UnitDispatchStatus = NormalizeUnitDispatchStatus(model.UnitDispatchStatus);
+				model.UnitClearStatus = NormalizeUnitDispatchStatus(model.UnitClearStatus);
+				var unitTypeStatusOverrides = await BuildValidUnitTypeStatusOverridesAsync(model);
+
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.DispatchShiftInsteadOfGroup.ToString(),
 					DepartmentSettingTypes.DispatchShiftInsteadOfGroup, cancellationToken);
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.AutoSetStatusForShiftPersonnel.ToString(),
@@ -1806,6 +1786,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					DepartmentSettingTypes.UnitCallDispatchStatusToSet, cancellationToken);
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.UnitClearStatus.ToString(),
 					DepartmentSettingTypes.UnitCallReleaseStatusToSet, cancellationToken);
+				await _departmentSettingsService.SetUnitCallStatusOverridesByUnitTypeAsync(DepartmentId, unitTypeStatusOverrides, cancellationToken);
 
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.PersonnelOnUnitSetUnitStatus.ToString(),
 					DepartmentSettingTypes.PersonnelOnUnitSetUnitStatus, cancellationToken);
@@ -1814,22 +1795,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.AutoEnableCheckInTimers.ToString(),
 					DepartmentSettingTypes.CheckInTimersAutoEnableForNewCalls, cancellationToken);
 
-				// Reload timer data for re-display
-				model.TimerConfigs = await _checkInTimerService.GetTimerConfigsForDepartmentAsync(DepartmentId);
-				model.TimerOverrides = await _checkInTimerService.GetTimerOverridesForDepartmentAsync(DepartmentId);
-				model.UnitTypes = (await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId))?.ToList() ?? new List<UnitType>();
-			model.CallTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId) ?? new List<CallType>();
-
+				ModelState.Clear();
+				model.UnitTypeStatusOverrides = new List<UnitTypeDispatchStatusOverrideView>();
+				await PopulateDispatchSettingsUnitTypeOverridesAsync(model, unitTypeStatusOverrides);
 				model.SaveSuccess = true;
 				return View(model);
 			}
 
-			// Reload timer data even on validation failure
-			model.TimerConfigs = await _checkInTimerService.GetTimerConfigsForDepartmentAsync(DepartmentId);
-			model.TimerOverrides = await _checkInTimerService.GetTimerOverridesForDepartmentAsync(DepartmentId);
-			model.UnitTypes = (await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId))?.ToList() ?? new List<UnitType>();
-			model.CallTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId) ?? new List<CallType>();
-
+			await PopulateDispatchSettingsUnitTypeOverridesAsync(model);
 			model.SaveSuccess = false;
 			return View(model);
 		}
@@ -1857,46 +1830,158 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return new SelectList(statusesWithDefault, "CustomStateDetailId", "ButtonText");
 		}
 
-		private async Task<SelectList> GetUnitDispatchStatusSelectListAsync()
+		private Task<SelectList> GetUnitDispatchStatusSelectListAsync()
 		{
 			var statuses = new List<SelectListItem>
 			{
 				new SelectListItem { Value = "-1", Text = "Default" }
 			};
-			var customStates = await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(DepartmentId);
 
-			if (customStates != null && customStates.Any())
+			foreach (var state in Enum.GetValues(typeof(UnitStateTypes)).Cast<UnitStateTypes>())
 			{
-				var seenStatusIds = new HashSet<int>();
-
-				foreach (var customState in customStates)
+				statuses.Add(new SelectListItem
 				{
-					foreach (var detail in customState.GetActiveDetails())
+					Value = ((int)state).ToString(),
+					Text = state.DisplayName()
+				});
+			}
+
+			return Task.FromResult(new SelectList(statuses, "Value", "Text"));
+		}
+
+		private async Task PopulateDispatchSettingsSupportingDataAsync(DispatchSettingsView model)
+		{
+			model.TimerConfigs = await _checkInTimerService.GetTimerConfigsForDepartmentAsync(DepartmentId);
+			model.TimerOverrides = await _checkInTimerService.GetTimerOverridesForDepartmentAsync(DepartmentId);
+			model.UnitTypes = (await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId))?.ToList() ?? new List<UnitType>();
+			model.CallTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId) ?? new List<CallType>();
+			model.StateNames = new Dictionary<string, string>();
+
+			var personnelStatuses = await _customStateService.GetCustomPersonnelStatusesOrDefaultsAsync(DepartmentId);
+			foreach (var s in personnelStatuses)
+				model.StateNames[s.CustomStateDetailId.ToString()] = s.ButtonText;
+
+			var unitDefaults = _customStateService.GetDefaultUnitStatuses();
+			foreach (var s in unitDefaults)
+				model.StateNames.TryAdd(s.CustomStateDetailId.ToString(), s.ButtonText);
+
+			foreach (var ut in model.UnitTypes)
+			{
+				if (ut.CustomStatesId.HasValue && ut.CustomStatesId.Value > 0)
+				{
+					var customState = await _customStateService.GetCustomSateByIdAsync(ut.CustomStatesId.Value);
+					if (customState != null)
 					{
-						if (seenStatusIds.Add(detail.CustomStateDetailId))
-						{
-							statuses.Add(new SelectListItem
-							{
-								Value = detail.CustomStateDetailId.ToString(),
-								Text = $"{customState.Name}: {detail.ButtonText}"
-							});
-						}
+						foreach (var detail in customState.GetActiveDetails())
+							model.StateNames.TryAdd(detail.CustomStateDetailId.ToString(), detail.ButtonText);
 					}
 				}
 			}
-			else
+		}
+
+		private async Task PopulateDispatchSettingsUnitTypeOverridesAsync(DispatchSettingsView model,
+			IEnumerable<UnitTypeCallStatusOverride> savedOverrides = null)
+		{
+			var postedOverrides = model.UnitTypeStatusOverrides?
+				.Where(x => x != null)
+				.GroupBy(x => x.UnitTypeId)
+				.ToDictionary(x => x.Key, x => x.Last()) ?? new Dictionary<int, UnitTypeDispatchStatusOverrideView>();
+			var overrideLookup = savedOverrides?
+				.Where(x => x != null)
+				.GroupBy(x => x.UnitTypeId)
+				.ToDictionary(x => x.Key, x => x.Last()) ?? new Dictionary<int, UnitTypeCallStatusOverride>();
+
+			model.UnitTypeStatusOverrides = new List<UnitTypeDispatchStatusOverrideView>();
+
+			foreach (var unitType in model.UnitTypes
+				.Where(x => x.CustomStatesId.HasValue && x.CustomStatesId.Value > 0)
+				.OrderBy(x => x.Type))
 			{
-				foreach (var state in Enum.GetValues(typeof(UnitStateTypes)).Cast<UnitStateTypes>())
+				var availableStatuses = new List<SelectListItem>
 				{
-					statuses.Add(new SelectListItem
+					new SelectListItem { Value = "-1", Text = "Default" }
+				};
+
+				var customState = await _customStateService.GetCustomSateByIdAsync(unitType.CustomStatesId.Value);
+				if (customState != null && !customState.IsDeleted)
+				{
+					foreach (var detail in customState.GetActiveDetails())
 					{
-						Value = ((int)state).ToString(),
-						Text = state.DisplayName()
-					});
+						availableStatuses.Add(new SelectListItem
+						{
+							Value = detail.CustomStateDetailId.ToString(),
+							Text = detail.ButtonText
+						});
+					}
 				}
+
+				var overrideRow = new UnitTypeDispatchStatusOverrideView
+				{
+					UnitTypeId = unitType.UnitTypeId,
+					UnitTypeName = unitType.Type,
+					AvailableStatuses = availableStatuses
+				};
+
+				if (postedOverrides.TryGetValue(unitType.UnitTypeId, out var postedOverride))
+				{
+					overrideRow.DispatchStatus = postedOverride.DispatchStatus;
+					overrideRow.ReleaseStatus = postedOverride.ReleaseStatus;
+				}
+				else if (overrideLookup.TryGetValue(unitType.UnitTypeId, out var savedOverride))
+				{
+					overrideRow.DispatchStatus = savedOverride.DispatchStatus;
+					overrideRow.ReleaseStatus = savedOverride.ReleaseStatus;
+				}
+
+				model.UnitTypeStatusOverrides.Add(overrideRow);
+			}
+		}
+
+		private async Task<List<UnitTypeCallStatusOverride>> BuildValidUnitTypeStatusOverridesAsync(DispatchSettingsView model)
+		{
+			var overrides = new List<UnitTypeCallStatusOverride>();
+
+			if (model.UnitTypeStatusOverrides == null || !model.UnitTypeStatusOverrides.Any())
+				return overrides;
+
+			var unitTypesById = model.UnitTypes
+				.Where(x => x.CustomStatesId.HasValue && x.CustomStatesId.Value > 0)
+				.ToDictionary(x => x.UnitTypeId);
+
+			foreach (var row in model.UnitTypeStatusOverrides)
+			{
+				if (!unitTypesById.TryGetValue(row.UnitTypeId, out var unitType))
+					continue;
+
+				var validStateIds = new HashSet<int>();
+				var customState = await _customStateService.GetCustomSateByIdAsync(unitType.CustomStatesId.Value);
+
+				if (customState != null && !customState.IsDeleted)
+				{
+					foreach (var detail in customState.GetActiveDetails())
+						validStateIds.Add(detail.CustomStateDetailId);
+				}
+
+				var dispatchStatus = validStateIds.Contains(row.DispatchStatus) ? row.DispatchStatus : -1;
+				var releaseStatus = validStateIds.Contains(row.ReleaseStatus) ? row.ReleaseStatus : -1;
+
+				if (dispatchStatus < 0 && releaseStatus < 0)
+					continue;
+
+				overrides.Add(new UnitTypeCallStatusOverride
+				{
+					UnitTypeId = row.UnitTypeId,
+					DispatchStatus = dispatchStatus,
+					ReleaseStatus = releaseStatus
+				});
 			}
 
-			return new SelectList(statuses, "Value", "Text");
+			return overrides;
+		}
+
+		private static int NormalizeUnitDispatchStatus(int status)
+		{
+			return status >= 0 && Enum.IsDefined(typeof(UnitStateTypes), status) ? status : -1;
 		}
 
 		#endregion Dispatch Settings

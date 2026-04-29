@@ -12,6 +12,7 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 		public int ShiftClearStatus { get; set; }
 		public int UnitDispatchStatus { get; set; }
 		public int UnitClearStatus { get; set; }
+		public List<UnitTypeDispatchStatusOverrideView> UnitTypeStatusOverrides { get; set; }
 		public ActionTypes UserStatusTypes { get; set; }
 		public bool DispatchShiftInsteadOfGroup { get; set; }
 		public bool AutoSetStatusForShiftPersonnel { get; set; }
@@ -39,11 +40,28 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 			ShiftClearStatus = -1;
 			UnitDispatchStatus = -1;
 			UnitClearStatus = -1;
+			UnitTypeStatusOverrides = new List<UnitTypeDispatchStatusOverrideView>();
 			TimerConfigs = new List<CheckInTimerConfig>();
 			TimerOverrides = new List<CheckInTimerOverride>();
 			UnitTypes = new List<UnitType>();
 			CallTypes = new List<CallType>();
 			StateNames = new Dictionary<string, string>();
 		}
+	}
+
+	public class UnitTypeDispatchStatusOverrideView
+	{
+		public UnitTypeDispatchStatusOverrideView()
+		{
+			DispatchStatus = -1;
+			ReleaseStatus = -1;
+			AvailableStatuses = new List<SelectListItem>();
+		}
+
+		public int UnitTypeId { get; set; }
+		public string UnitTypeName { get; set; }
+		public int DispatchStatus { get; set; }
+		public int ReleaseStatus { get; set; }
+		public List<SelectListItem> AvailableStatuses { get; set; }
 	}
 }

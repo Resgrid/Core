@@ -287,6 +287,11 @@ namespace Resgrid.Model.Services
 
 		Task<int> GetUnitCallReleaseStatusToSetAsync(int departmentId);
 
+		Task<List<UnitTypeCallStatusOverride>> GetUnitCallStatusOverridesByUnitTypeAsync(int departmentId);
+
+		Task<DepartmentSetting> SetUnitCallStatusOverridesByUnitTypeAsync(int departmentId,
+			List<UnitTypeCallStatusOverride> overrides, CancellationToken cancellationToken = default(CancellationToken));
+
 		Task<bool> GetPersonnelOnUnitSetUnitStatusAsync(int departmentId, bool bypassCache = false);
 
 		Task<DepartmentSetting> SetDepartmentModuleSettingsAsync(int departmentId, DepartmentModuleSettings settings, CancellationToken cancellationToken = default(CancellationToken));

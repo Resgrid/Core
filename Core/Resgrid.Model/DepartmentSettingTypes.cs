@@ -51,5 +51,8 @@
 		MappingMapboxStyleUrl = 47,
 		MappingMapboxAccessToken = 48,
 		TtsLanguage = 49,
+		UnitCallDispatchStatusToSet = 50,
+		UnitCallReleaseStatusToSet = 51,
+		UnitCallStatusOverridesByUnitType = 52,
 	}
 }

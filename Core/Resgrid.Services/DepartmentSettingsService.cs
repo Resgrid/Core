@@ -784,6 +784,63 @@ namespace Resgrid.Services
 			return false;
 		}
 
+		public async Task<int> GetUnitCallDispatchStatusToSetAsync(int departmentId)
+		{
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.UnitCallDispatchStatusToSet);
+
+			if (settingValue != null && int.TryParse(settingValue.Setting, out var stateToSet) &&
+				Enum.IsDefined(typeof(UnitStateTypes), stateToSet))
+				return stateToSet;
+
+			return -1;
+		}
+
+		public async Task<int> GetUnitCallReleaseStatusToSetAsync(int departmentId)
+		{
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.UnitCallReleaseStatusToSet);
+
+			if (settingValue != null && int.TryParse(settingValue.Setting, out var stateToSet) &&
+				Enum.IsDefined(typeof(UnitStateTypes), stateToSet))
+				return stateToSet;
+
+			return -1;
+		}
+
+		public async Task<List<UnitTypeCallStatusOverride>> GetUnitCallStatusOverridesByUnitTypeAsync(int departmentId)
+		{
+			var settingValue = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.UnitCallStatusOverridesByUnitType);
+
+			if (settingValue != null && !String.IsNullOrWhiteSpace(settingValue.Setting))
+			{
+				var setting = ObjectSerialization.Deserialize<UnitTypeCallStatusOverrideSetting>(settingValue.Setting);
+
+				if (setting?.Overrides != null)
+					return setting.Overrides
+						.Where(x => x != null && x.UnitTypeId > 0)
+						.GroupBy(x => x.UnitTypeId)
+						.Select(x => x.Last())
+						.ToList();
+			}
+
+			return new List<UnitTypeCallStatusOverride>();
+		}
+
+		public async Task<DepartmentSetting> SetUnitCallStatusOverridesByUnitTypeAsync(int departmentId,
+			List<UnitTypeCallStatusOverride> overrides, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var setting = new UnitTypeCallStatusOverrideSetting
+			{
+				Overrides = overrides?
+					.Where(x => x != null && x.UnitTypeId > 0)
+					.GroupBy(x => x.UnitTypeId)
+					.Select(x => x.Last())
+					.ToList() ?? new List<UnitTypeCallStatusOverride>()
+			};
+
+			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(setting),
+				DepartmentSettingTypes.UnitCallStatusOverridesByUnitType, cancellationToken);
+		}
+
 		public async Task<bool> GetPersonnelOnUnitSetUnitStatusAsync(int departmentId, bool bypassCache = false)
 		{
 			async Task<string> getSetting()

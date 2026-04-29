@@ -91,6 +91,46 @@
                             </div>
                         </div>
                         <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["UnitCallDispatchStatusLabel"]</label>
+                            <div class="col-sm-9">
+                                @Html.DropDownListFor(m => m.UnitDispatchStatus, Model.UnitStatusLevels, new { style = "width: 70%" })
+                                <span class="help-block m-b-none">@localizer["UnitDefaultStatusesHelp"]</span>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["UnitCallReleaseStatusLabel"]</label>
+                            <div class="col-sm-9">@Html.DropDownListFor(m => m.UnitClearStatus, Model.UnitStatusLevels, new { style = "width: 70%" })</div>
+                        </div>
+                        @if (Model.UnitTypeStatusOverrides.Any())
+                        {
+                            <div class="form-group">
+                                <div class="col-sm-9 col-sm-offset-3">
+                                    <h4>@localizer["UnitTypeStatusOverridesHeader"]</h4>
+                                    <p class="text-muted m-b-sm">@localizer["UnitTypeStatusOverridesHelp"]</p>
+                                    <table class="table table-striped table-hover">
+                                        <thead>
+                                            <tr>
+                                                <th>@localizer["CheckInTimerUnitTypeLabel"]</th>
+                                                <th>@localizer["UnitCallDispatchStatusLabel"]</th>
+                                                <th>@localizer["UnitCallReleaseStatusLabel"]</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @for (var i = 0; i < Model.UnitTypeStatusOverrides.Count; i++)
+                                            {
+                                                <tr>
+                                                    @Html.HiddenFor(m => m.UnitTypeStatusOverrides[i].UnitTypeId)
+                                                    <td>@Model.UnitTypeStatusOverrides[i].UnitTypeName</td>
+                                                    <td>@Html.DropDownListFor(m => m.UnitTypeStatusOverrides[i].DispatchStatus, Model.UnitTypeStatusOverrides[i].AvailableStatuses, new { style = "width: 100%" })</td>
+                                                    <td>@Html.DropDownListFor(m => m.UnitTypeStatusOverrides[i].ReleaseStatus, Model.UnitTypeStatusOverrides[i].AvailableStatuses, new { style = "width: 100%" })</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        }
+                        <div class="form-group">
                             <label class="col-sm-3 control-label">@localizer["PersonnelOnUnitSetUnitStatusLabel"]</label>
                             <div class="col-sm-9">
                                 <div class="row">

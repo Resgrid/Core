@@ -116,7 +116,29 @@ namespace Resgrid.Workers.Framework.Logic
 						var signups = await _shiftsService.GetShiftSignupsByDepartmentGroupIdAndDayAsync(d.DepartmentGroupId, shiftDate);
 
 						if (dispatchShiftInsteadOfGroup && (signups != null && signups.Any()))
+						{
+							foreach (var signup in signups)
+							{
+								if (!dispatchedUsers.Contains(signup.UserId))
+								{
+									dispatchedUsers.Add(signup.UserId);
+									try
+									{
+										var profile = cqi.Profiles.FirstOrDefault(x => x.UserId == signup.UserId);
+										await _communicationService.SendCallAsync(cqi.Call, new CallDispatch() { UserId = signup.UserId }, cqi.DepartmentTextNumber, cqi.Call.DepartmentId, profile, cqi.Address);
+									}
+									catch (SocketException sex)
+									{
+									}
+									catch (Exception ex)
+									{
+										Logging.LogException(ex);
+									}
+								}
+							}
+
 							continue;
+						}
 
 						var members = await _departmentGroupsService.GetAllMembersForGroupAsync(d.DepartmentGroupId);
 

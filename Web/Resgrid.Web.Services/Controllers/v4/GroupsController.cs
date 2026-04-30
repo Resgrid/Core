@@ -17,6 +17,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]
 	[ApiExplorerSettings(GroupName = "v4")]
+	[Authorize(AuthenticationSchemes = "BasicAuthentication,SystemApiKey")]
 	public class GroupsController : V4AuthenticatedApiControllerbaseSystemAuth
 	{
 		#region Members and Constructors
@@ -138,8 +139,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (group.DepartmentId != DepartmentId)
 					return Unauthorized();
 			}
-			else if (!string.IsNullOrWhiteSpace(departmentId) && int.TryParse(departmentId, out var deptId) && deptId > 0)
+			else if (!string.IsNullOrWhiteSpace(departmentId))
 			{
+				// DepartmentId was provided explicitly — must be valid and match
+				if (!int.TryParse(departmentId, out var deptId) || deptId <= 0)
+				{
+					ResponseHelper.PopulateV4ResponseNotFound(result);
+					return result;
+				}
 				if (group.DepartmentId != deptId)
 				{
 					ResponseHelper.PopulateV4ResponseNotFound(result);
@@ -193,8 +200,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (group.DepartmentId != DepartmentId)
 					return Unauthorized();
 			}
-			else if (!string.IsNullOrWhiteSpace(departmentId) && int.TryParse(departmentId, out var deptId) && deptId > 0)
+			else if (!string.IsNullOrWhiteSpace(departmentId))
 			{
+				// DepartmentId was provided explicitly — must be valid and match
+				if (!int.TryParse(departmentId, out var deptId) || deptId <= 0)
+				{
+					ResponseHelper.PopulateV4ResponseNotFound(result);
+					return result;
+				}
 				if (group.DepartmentId != deptId)
 				{
 					ResponseHelper.PopulateV4ResponseNotFound(result);

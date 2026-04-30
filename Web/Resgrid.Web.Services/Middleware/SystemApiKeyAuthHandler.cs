@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -45,9 +47,9 @@ namespace Resgrid.Web.Services.Middleware
 			if (string.IsNullOrWhiteSpace(apiKey))
 				return Task.FromResult(AuthenticateResult.NoResult());
 
-			// Validate the API key against the configured system API key
+			// Validate the API key against the configured system API key (timing-safe comparison)
 			if (string.IsNullOrWhiteSpace(Config.SecurityConfig.SystemApiKey) ||
-				!string.Equals(apiKey, Config.SecurityConfig.SystemApiKey, StringComparison.Ordinal))
+				!FixedTimeApiKeyEquals(Config.SecurityConfig.SystemApiKey, apiKey))
 			{
 				return Task.FromResult(AuthenticateResult.Fail("Invalid System API Key"));
 			}
@@ -56,14 +58,14 @@ namespace Resgrid.Web.Services.Middleware
 			var claims = new List<Claim>
 			{
 				new Claim(ClaimTypes.Name, "SMTP Relay System"),
-				new Claim(ClaimTypes.PrimarySid, "smpt_relay_system"),
+				new Claim(ClaimTypes.PrimarySid, "smtp_relay_system"),
 				new Claim(ClaimTypes.PrimaryGroupSid, "0"),
 				new Claim(ClaimTypes.GivenName, "SMTP Relay"),
 				new Claim(ClaimTypes.Email, "smtp-relay@resgrid.local"),
 				// Data claims
 				new Claim(ResgridClaimTypes.Data.TimeZone, "UTC"),
 				new Claim(ResgridClaimTypes.Data.DisplayName, "SMTP Relay"),
-				new Claim(ResgridClaimTypes.Data.UserId, "smpt_relay_system")
+				new Claim(ResgridClaimTypes.Data.UserId, "smtp_relay_system")
 			};
 
 			// Add all resource claims for full cross-department access
@@ -129,6 +131,22 @@ namespace Resgrid.Web.Services.Middleware
 			var ticket = new AuthenticationTicket(principal, Scheme.Name);
 
 			return Task.FromResult(AuthenticateResult.Success(ticket));
+		}
+
+		/// <summary>
+		/// Performs a timing-safe comparison of two API key strings to prevent timing attacks.
+		/// Unlike string.Equals with Ordinal, this compares every byte regardless of where
+		/// the first mismatch occurs.
+		/// </summary>
+		private static bool FixedTimeApiKeyEquals(string stored, string provided)
+		{
+			if (stored == null || provided == null)
+				return false;
+
+			var storedBytes = Encoding.UTF8.GetBytes(stored);
+			var providedBytes = Encoding.UTF8.GetBytes(provided);
+
+			return CryptographicOperations.FixedTimeEquals(storedBytes, providedBytes);
 		}
 	}
 }

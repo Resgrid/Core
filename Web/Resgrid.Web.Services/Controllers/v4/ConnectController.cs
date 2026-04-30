@@ -17,6 +17,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Text;
+using System.Security.Cryptography;
 using Resgrid.Providers.Claims;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
@@ -252,9 +254,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 					return Forbid(properties, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 				}
 
-				// First, check system-level credentials
+				// First, check system-level credentials (timing-safe comparison)
 				if (Config.SecurityConfig.SystemLoginCredentials.ContainsKey(request.ClientId) &&
-					Config.SecurityConfig.SystemLoginCredentials[request.ClientId] == request.ClientSecret)
+					FixedTimeSecretEquals(Config.SecurityConfig.SystemLoginCredentials[request.ClientId], request.ClientSecret))
 				{
 					audit.Successful = true;
 					await _systemAuditsService.SaveSystemAuditAsync(audit);
@@ -305,7 +307,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 
 				if (string.IsNullOrWhiteSpace(department.SharedSecret) ||
-					department.SharedSecret != request.ClientSecret)
+					!FixedTimeSecretEquals(department.SharedSecret, request.ClientSecret))
 				{
 					await _systemAuditsService.SaveSystemAuditAsync(audit);
 
@@ -912,6 +914,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 						.SetDestinations(Destinations.AccessToken));
 				}
 			}
+		}
+		/// <summary>
+		/// Performs a timing-safe comparison of two secret strings to prevent timing attacks.
+		/// </summary>
+		private static bool FixedTimeSecretEquals(string stored, string provided)
+		{
+			if (stored == null || provided == null)
+				return false;
+
+			var storedBytes = Encoding.UTF8.GetBytes(stored);
+			var providedBytes = Encoding.UTF8.GetBytes(provided);
+
+			return CryptographicOperations.FixedTimeEquals(storedBytes, providedBytes);
 		}
 	}
 }

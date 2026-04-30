@@ -32,6 +32,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]
 	[ApiExplorerSettings(GroupName = "v4")]
+	[Authorize(AuthenticationSchemes = "BasicAuthentication,SystemApiKey")]
 	public class CallsController : V4AuthenticatedApiControllerbaseSystemAuth
 	{
 		#region Members and Constructors
@@ -560,6 +561,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return BadRequest();
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(effectiveDepartmentId);
+
+			if (department == null)
+				return BadRequest($"Department not found: {effectiveDepartmentId}");
+
 			var activeUsers = await _departmentsService.GetAllMembersForDepartmentAsync(effectiveDepartmentId);
 			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(effectiveDepartmentId);
 			var roles = await _personnelRolesService.GetAllRolesForDepartmentAsync(effectiveDepartmentId);

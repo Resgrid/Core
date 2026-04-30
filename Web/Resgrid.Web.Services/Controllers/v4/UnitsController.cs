@@ -24,6 +24,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]
 	[ApiExplorerSettings(GroupName = "v4")]
+	[Authorize(AuthenticationSchemes = "BasicAuthentication,SystemApiKey")]
 	public class UnitsController : V4AuthenticatedApiControllerbaseSystemAuth
 	{
 		#region Members and Constructors
@@ -271,6 +272,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var unit = await _unitsService.GetUnitByNameDepartmentIdAsync(effectiveDepartmentId, name);
 
 			if (unit == null)
+			{
+				ResponseHelper.PopulateV4ResponseNotFound(result);
+				return result;
+			}
+
+			if (!await _authorizationService.CanUserViewUnitViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
 			{
 				ResponseHelper.PopulateV4ResponseNotFound(result);
 				return result;

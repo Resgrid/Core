@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using OpenIddict.Server.AspNetCore;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using Resgrid.Web.ServicesCore.Helpers;
 
@@ -17,14 +15,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 	/// </summary>
 	[ApiController]
 	[Produces("application/json")]
-	[Authorize(AuthenticationSchemes = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme + ",SystemApiKey")]
 	public class V4AuthenticatedApiControllerbaseSystemAuth : ControllerBase
 	{
 		/// <summary>
 		/// Returns the current user ID. In SystemApiKey mode returns a synthetic identifier.
 		/// </summary>
 		protected string UserId => IsSystemApiKeyRequest
-			? "smpt_relay_system"
+			? "smtp_relay_system"
 			: ClaimsAuthorizationHelper.GetUserId();
 
 		/// <summary>

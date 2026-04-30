@@ -595,6 +595,11 @@
             Used for system-level and client-credentials service principals that need full access.
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.FixedTimeSecretEquals(System.String,System.String)">
+            <summary>
+            Performs a timing-safe comparison of two secret strings to prevent timing attacks.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ContactsController">
             <summary>
             Contacts, which are people, entities, and things that can be contacted (i.e. people, departments, groups, etc.) to dispatch a call to.
@@ -4253,6 +4258,13 @@
             Used by the SMTP Relay in hosted multi-department mode to bypass OAuth 2.0 entirely.
             The handler creates a ClaimsPrincipal with full permissions across all departments.
             Department scoping is achieved via the DepartmentId field on individual API request models.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Middleware.SystemApiKeyAuthHandler.FixedTimeApiKeyEquals(System.String,System.String)">
+            <summary>
+            Performs a timing-safe comparison of two API key strings to prevent timing attacks.
+            Unlike string.Equals with Ordinal, this compares every byte regardless of where
+            the first mismatch occurs.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Middleware.ValidateCredentialsContext">

@@ -1786,7 +1786,8 @@
         </member>
         <member name="P:Resgrid.Web.Services.Controllers.v4.V4AuthenticatedApiControllerbaseSystemAuth.IsSystemApiKeyRequest">
             <summary>
-            Returns true if the current request was authenticated via the SystemApiKey scheme.
+            Returns true if the current request was authenticated via the SystemApiKey scheme
+            or carries a service-account marker claim set by the ConnectController client_credentials flow.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.V4AuthenticatedApiControllerbaseSystemAuth.GetEffectiveDepartmentId(System.Nullable{System.Int32})">

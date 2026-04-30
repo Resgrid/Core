@@ -255,44 +255,54 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 
 				// First, check system-level credentials (timing-safe comparison)
-				if (Config.SecurityConfig.SystemLoginCredentials.ContainsKey(request.ClientId) &&
-					FixedTimeSecretEquals(Config.SecurityConfig.SystemLoginCredentials[request.ClientId], request.ClientSecret))
+			if (Config.SecurityConfig.SystemLoginCredentials.ContainsKey(request.ClientId) &&
+				FixedTimeSecretEquals(Config.SecurityConfig.SystemLoginCredentials[request.ClientId], request.ClientSecret))
+			{
+				audit.Successful = true;
+				await _systemAuditsService.SaveSystemAuditAsync(audit);
+
+				// Create a system-level service principal with all claims
+				var identity = new ClaimsIdentity(
+					OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
+					Claims.Name,
+					Claims.Role);
+
+				identity.AddClaim(new Claim(Claims.Subject, $"system_{request.ClientId}")
+					.SetDestinations(Destinations.AccessToken, Destinations.IdentityToken));
+				identity.AddClaim(new Claim(Claims.Name, $"System Account ({request.ClientId})")
+					.SetDestinations(Destinations.AccessToken, Destinations.IdentityToken));
+				identity.AddClaim(new Claim(ClaimTypes.PrimarySid, $"system_{request.ClientId}")
+					.SetDestinations(Destinations.AccessToken));
+				identity.AddClaim(new Claim(ClaimTypes.PrimaryGroupSid, "0")
+					.SetDestinations(Destinations.AccessToken));
+				identity.AddClaim(new Claim(ClaimTypes.GivenName, "SMTP Relay System")
+					.SetDestinations(Destinations.AccessToken, Destinations.IdentityToken));
+				identity.AddClaim(new Claim(ResgridClaimTypes.Data.DisplayName, "SMTP Relay System")
+					.SetDestinations(Destinations.AccessToken, Destinations.IdentityToken));
+				identity.AddClaim(new Claim(ResgridClaimTypes.Data.ServiceAccount, "true")
+					.SetDestinations(Destinations.AccessToken, Destinations.IdentityToken));
+
+				// Add all resource claims for full access
+				AddAllResourceClaims(identity);
+
+				var principal = new ClaimsPrincipal(identity);
+
+				principal.SetScopes(new[]
 				{
-					audit.Successful = true;
-					await _systemAuditsService.SaveSystemAuditAsync(audit);
+					Scopes.OpenId,
+					Scopes.Email,
+					Scopes.Profile
+				}.Intersect(request.GetScopes()));
 
-					// Create a system-level service principal with all claims
-					var identity = new ClaimsIdentity(
-						OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
-						Claims.Name,
-						Claims.Role);
+				principal.SetAccessTokenLifetime(TimeSpan.FromMinutes(OidcConfig.AccessTokenExpiryMinutes));
 
-					identity.AddClaim(new Claim(Claims.Subject, $"system_{request.ClientId}")
-						.SetDestinations(Destinations.AccessToken, Destinations.IdentityToken));
-					identity.AddClaim(new Claim(Claims.Name, request.ClientId)
-						.SetDestinations(Destinations.AccessToken, Destinations.IdentityToken));
+				return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+			}
 
-					// Add all resource claims for full access
-					AddAllResourceClaims(identity);
+			// Second, try department-level credentials via department code + shared secret
+			var department = await _departmentsService.GetDepartmentByNameAsync(request.ClientId);
 
-					var principal = new ClaimsPrincipal(identity);
-
-					principal.SetScopes(new[]
-					{
-						Scopes.OpenId,
-						Scopes.Email,
-						Scopes.Profile
-					}.Intersect(request.GetScopes()));
-
-					principal.SetAccessTokenLifetime(TimeSpan.FromMinutes(OidcConfig.AccessTokenExpiryMinutes));
-
-					return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
-				}
-
-				// Second, try department-level credentials via department code + shared secret
-				var department = await _departmentsService.GetDepartmentByNameAsync(request.ClientId);
-
-				if (department == null)
+			if (department == null)
 				{
 					await _systemAuditsService.SaveSystemAuditAsync(audit);
 

@@ -65,7 +65,8 @@ namespace Resgrid.Web.Services.Middleware
 				// Data claims
 				new Claim(ResgridClaimTypes.Data.TimeZone, "UTC"),
 				new Claim(ResgridClaimTypes.Data.DisplayName, "SMTP Relay"),
-				new Claim(ResgridClaimTypes.Data.UserId, "smtp_relay_system")
+				new Claim(ResgridClaimTypes.Data.UserId, "smtp_relay_system"),
+				new Claim(ResgridClaimTypes.Data.ServiceAccount, "true")
 			};
 
 			// Add all resource claims for full cross-department access

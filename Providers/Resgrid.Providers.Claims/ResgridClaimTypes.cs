@@ -24,6 +24,13 @@
 			public const string TimeZone = "TimeZone";
 			public const string DisplayName = "DisplayName";
 			public const string UserId = "UserId";
+
+			/// <summary>
+			/// Claim added to service-account tokens (client_credentials, system API keys)
+			/// so downstream controllers can identify them as non-user principals that bypass
+			/// per-user authorization checks and support cross-department operation.
+			/// </summary>
+			public const string ServiceAccount = "ServiceAccount";
 		}
 
 		public static class Resources

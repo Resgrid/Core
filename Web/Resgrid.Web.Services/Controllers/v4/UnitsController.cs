@@ -277,7 +277,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return result;
 			}
 
-			if (!await _authorizationService.CanUserViewUnitViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
+			if (!IsSystemApiKeyRequest && !await _authorizationService.CanUserViewUnitViaMatrixAsync(unit.UnitId, UserId, DepartmentId))
 			{
 				ResponseHelper.PopulateV4ResponseNotFound(result);
 				return result;

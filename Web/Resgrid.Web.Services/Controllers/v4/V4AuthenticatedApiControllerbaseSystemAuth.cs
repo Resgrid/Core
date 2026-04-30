@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System.Linq;
+using System.Security.Claims;
+using Resgrid.Providers.Claims;
 using Resgrid.Web.ServicesCore.Helpers;
 
 namespace Resgrid.Web.Services.Controllers.v4
@@ -41,10 +43,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 		protected string TimeZone => ClaimsAuthorizationHelper.GetTimeZone();
 
 		/// <summary>
-		/// Returns true if the current request was authenticated via the SystemApiKey scheme.
+		/// Returns true if the current request was authenticated via the SystemApiKey scheme
+		/// or carries a service-account marker claim set by the ConnectController client_credentials flow.
 		/// </summary>
 		protected bool IsSystemApiKeyRequest =>
-			HttpContext.User.Identities.Any(i => i.AuthenticationType == "SystemApiKey");
+			HttpContext.User.Identities.Any(i => i.AuthenticationType == "SystemApiKey") ||
+			HttpContext.User.HasClaim(ResgridClaimTypes.Data.ServiceAccount, "true");
 
 		/// <summary>
 		/// Returns the effective department ID for the current request.

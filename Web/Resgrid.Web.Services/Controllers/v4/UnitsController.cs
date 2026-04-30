@@ -24,7 +24,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]
 	[ApiExplorerSettings(GroupName = "v4")]
-	public class UnitsController : V4AuthenticatedApiControllerbase
+	public class UnitsController : V4AuthenticatedApiControllerbaseSystemAuth
 	{
 		#region Members and Constructors
 		private readonly IUnitsService _unitsService;
@@ -234,6 +234,50 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			result.PageSize = result.Data.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Resolves a unit name to the corresponding unit.
+		/// Used by the SMTP relay to resolve unit dispatch codes like "engine2" to numeric unit IDs for DispatchList.
+		/// </summary>
+		/// <param name="name">The unit name to look up.</param>
+		/// <param name="departmentId">Optional department override for SystemApiKey (hosted multi-department) mode.</param>
+		/// <returns>UnitResult with the matching unit, or a not-found response.</returns>
+		[HttpGet("GetUnitByName")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Unit_View)]
+		public async Task<ActionResult<UnitResult>> GetUnitByName(string name, [FromQuery] string departmentId = null)
+		{
+			var result = new UnitResult();
+
+			if (String.IsNullOrWhiteSpace(name))
+			{
+				ResponseHelper.PopulateV4ResponseNotFound(result);
+				return result;
+			}
+
+			var effectiveDepartmentId = GetEffectiveDepartmentId(departmentId);
+
+			if (effectiveDepartmentId <= 0)
+			{
+				ResponseHelper.PopulateV4ResponseNotFound(result);
+				return result;
+			}
+
+			var unit = await _unitsService.GetUnitByNameDepartmentIdAsync(effectiveDepartmentId, name);
+
+			if (unit == null)
+			{
+				ResponseHelper.PopulateV4ResponseNotFound(result);
+				return result;
+			}
+
+			result.Data = ConvertUnitsData(unit, null, null, TimeZone);
+			result.PageSize = 1;
 			result.Status = ResponseHelper.Success;
 			ResponseHelper.PopulateV4ResponseData(result);
 

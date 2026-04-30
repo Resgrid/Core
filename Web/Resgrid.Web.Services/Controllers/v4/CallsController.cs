@@ -32,7 +32,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]
 	[ApiExplorerSettings(GroupName = "v4")]
-	public class CallsController : V4AuthenticatedApiControllerbase
+	public class CallsController : V4AuthenticatedApiControllerbaseSystemAuth
 	{
 		#region Members and Constructors
 		private readonly ICallsService _callsService;
@@ -161,7 +161,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("GetCall")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Call_View)]
-		public async Task<ActionResult<GetCallResult>> GetCall(string callId)
+		public async Task<ActionResult<GetCallResult>> GetCall(string callId, [FromQuery] string departmentId = null)
 		{
 			if (String.IsNullOrWhiteSpace(callId))
 				return BadRequest();
@@ -175,14 +175,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Ok(result);
 			}
 
-			if (c.DepartmentId != DepartmentId)
+			var effectiveDepartmentId = GetEffectiveDepartmentId(departmentId);
+
+			if (c.DepartmentId != effectiveDepartmentId)
 				return Unauthorized();
 
-			if (!await _authorizationService.CanUserViewCallAsync(UserId, int.Parse(callId)))
+			if (!IsSystemApiKeyRequest && !await _authorizationService.CanUserViewCallAsync(UserId, int.Parse(callId)))
 				return Unauthorized();
 
 			c = await _callsService.PopulateCallData(c, false, true, true, false, false, false, true, true, true);
-			var destinationPoi = await GetValidatedDestinationPoiAsync(c.DestinationPoiId);
+			var destinationPoi = await GetValidatedDestinationPoiAsync(c.DestinationPoiId, effectiveDepartmentId);
 
 			string address = "";
 			if (String.IsNullOrWhiteSpace(c.Address) && c.HasValidGeolocationData())
@@ -209,7 +211,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data = ConvertCall(c, protocols, address, TimeZone, destinationPoi);
 
 			// Populate UDF values
-			var udfValues = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Call, c.CallId.ToString());
+			var udfValues = await _userDefinedFieldsService.GetFieldValuesForEntityAsync(effectiveDepartmentId, (int)UdfEntityType.Call, c.CallId.ToString());
 			if (udfValues != null && udfValues.Any())
 			{
 				result.Data.UdfValues = udfValues.Select(v => new UdfFieldValueResultData
@@ -545,27 +547,31 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var result = new SaveCallResult();
 
-			var canDoOperation = await _authorizationService.CanUserCreateCallAsync(UserId, DepartmentId);
+			var effectiveDepartmentId = GetEffectiveDepartmentId(newCallInput.DepartmentId);
 
-			if (!canDoOperation)
-				return Unauthorized();
+			if (!IsSystemApiKeyRequest)
+			{
+				var canDoOperation = await _authorizationService.CanUserCreateCallAsync(UserId, effectiveDepartmentId);
+				if (!canDoOperation)
+					return Unauthorized();
+			}
 
 			if (!ModelState.IsValid)
 				return BadRequest();
 
-			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
-			var activeUsers = await _departmentsService.GetAllMembersForDepartmentAsync(DepartmentId);
-			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
-			var roles = await _personnelRolesService.GetAllRolesForDepartmentAsync(DepartmentId);
-			var units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
-			var destinationPoi = await GetValidatedDestinationPoiAsync(newCallInput.DestinationPoiId);
+			var department = await _departmentsService.GetDepartmentByIdAsync(effectiveDepartmentId);
+			var activeUsers = await _departmentsService.GetAllMembersForDepartmentAsync(effectiveDepartmentId);
+			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(effectiveDepartmentId);
+			var roles = await _personnelRolesService.GetAllRolesForDepartmentAsync(effectiveDepartmentId);
+			var units = await _unitsService.GetUnitsForDepartmentAsync(effectiveDepartmentId);
+			var destinationPoi = await GetValidatedDestinationPoiAsync(newCallInput.DestinationPoiId, effectiveDepartmentId);
 
 			if (newCallInput.DestinationPoiId.HasValue && newCallInput.DestinationPoiId.Value > 0 && destinationPoi == null)
 				return BadRequest();
 
 			var call = new Call
 			{
-				DepartmentId = DepartmentId,
+				DepartmentId = effectiveDepartmentId,
 				ReportingUserId = UserId,
 				Priority = newCallInput.Priority,
 				Name = newCallInput.Name,
@@ -635,13 +641,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 				call.CheckInTimersEnabled = newCallInput.CheckInTimersEnabled.Value;
 			else
 			{
-				var autoEnable = await _departmentSettingsService.GetCheckInTimersAutoEnableForNewCallsAsync(DepartmentId);
+				var autoEnable = await _departmentSettingsService.GetCheckInTimersAutoEnableForNewCallsAsync(effectiveDepartmentId);
 				call.CheckInTimersEnabled = autoEnable;
 			}
 
 			if (!String.IsNullOrWhiteSpace(newCallInput.Type) && newCallInput.Type != "No Type")
 			{
-				var callTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
+				var callTypes = await _callsService.GetCallTypesForDepartmentAsync(effectiveDepartmentId);
 				var type = callTypes.FirstOrDefault(x => x.Type == newCallInput.Type);
 
 				if (type != null)
@@ -649,13 +655,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 					call.Type = type.Type;
 				}
 			}
-			var users = await _departmentsService.GetAllUsersForDepartmentAsync(DepartmentId);
+			var users = await _departmentsService.GetAllUsersForDepartmentAsync(effectiveDepartmentId);
 			call.Dispatches = new Collection<CallDispatch>();
 			call.GroupDispatches = new List<CallDispatchGroup>();
 			call.RoleDispatches = new List<CallDispatchRole>();
 			call.UnitDispatches = new List<CallDispatchUnit>();
 
-			if (newCallInput.DispatchList == "0")
+			if (!IsSystemApiKeyRequest && (newCallInput.DispatchList == "0" || string.IsNullOrWhiteSpace(newCallInput.DispatchList)))
 			{
 				// Use case, existing clients and non-ionic2 app this will be null dispatch all users. Or we've specified everyone (0).
 				foreach (var u in users)
@@ -665,7 +671,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					call.Dispatches.Add(cd);
 				}
 			}
-			else
+			else if (!string.IsNullOrWhiteSpace(newCallInput.DispatchList) && newCallInput.DispatchList != "0")
 			{
 				var dispatch = newCallInput.DispatchList.Split(char.Parse("|"));
 
@@ -751,7 +757,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			//OutboundEventProvider handler = new OutboundEventProvider.CallAddedTopicHandler();
 			//OutboundEventProvider..Handle(new CallAddedEvent() { DepartmentId = DepartmentId, Call = savedCall });
-			_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = DepartmentId, Call = savedCall });
+			_eventAggregator.SendMessage<CallAddedEvent>(new CallAddedEvent() { DepartmentId = effectiveDepartmentId, Call = savedCall });
 
 			if (shouldDispatchNow && ((call.GroupDispatches != null && call.GroupDispatches.Any()) || (call.UnitDispatches != null && call.UnitDispatches.Any())))
 			{
@@ -806,7 +812,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// Save UDF field values if supplied
 			if (newCallInput.UdfValues != null && newCallInput.UdfValues.Any())
 			{
-				bool isDeptAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+				bool isDeptAdmin = IsSystemApiKeyRequest || ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
 				bool isGroupAdmin = HttpContext.User.Claims
 					.Any(c => c.Type.StartsWith(ResgridClaimTypes.Resources.Group + "/", StringComparison.Ordinal)
 						&& c.Value == ResgridClaimTypes.Actions.Update);
@@ -816,7 +822,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					UdfFieldId = v.UdfFieldId,
 					Value = v.Value
 				}).ToList();
-				await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(DepartmentId, (int)UdfEntityType.Call, savedCall.CallId.ToString(), udfValues, UserId, isDeptAdmin, isGroupAdmin, cancellationToken);
+				await _userDefinedFieldsService.SaveFieldValuesForEntityAsync(effectiveDepartmentId, (int)UdfEntityType.Call, savedCall.CallId.ToString(), udfValues, UserId, isDeptAdmin, isGroupAdmin, cancellationToken);
 			}
 
 			result.Id = savedCall.CallId.ToString();
@@ -1819,12 +1825,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return callResult;
 		}
 
-		private async Task<Poi> GetValidatedDestinationPoiAsync(int? destinationPoiId)
+		private async Task<Poi> GetValidatedDestinationPoiAsync(int? destinationPoiId, int? departmentIdOverride = null)
 		{
 			if (!destinationPoiId.HasValue || destinationPoiId.Value <= 0)
 				return null;
 
-			return await _mappingService.GetDestinationPOIByIdAsync(DepartmentId, destinationPoiId.Value);
+			var deptId = departmentIdOverride ?? DepartmentId;
+			return await _mappingService.GetDestinationPOIByIdAsync(deptId, destinationPoiId.Value);
 		}
 	}
 }

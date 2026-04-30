@@ -47,6 +47,7 @@ using static OpenIddict.Abstractions.OpenIddictConstants;
 //using OpenTelemetry.Metrics;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Security.Cryptography.X509Certificates;
+using Microsoft.AspNetCore.Authentication;
 using Sentry.Extensibility;
 using Resgrid.Web.ServicesCore.Middleware;
 using IPNetwork = Microsoft.AspNetCore.HttpOverrides.IPNetwork;
@@ -593,7 +594,8 @@ namespace Resgrid.Web.ServicesCore
 
 
 			services.AddAuthentication("BasicAuthentication")
-				.AddScheme<ResgridAuthenticationOptions, ResgridTokenAuthHandler>("BasicAuthentication", null);
+				.AddScheme<ResgridAuthenticationOptions, ResgridTokenAuthHandler>("BasicAuthentication", null)
+				.AddScheme<AuthenticationSchemeOptions, SystemApiKeyAuthHandler>("SystemApiKey", null);
 
 			//// TODO: Add IServiceCollection.AddOpenTelemetryMetrics extension method
 			//var providerBuilder = Sdk.CreateMeterProviderBuilder()

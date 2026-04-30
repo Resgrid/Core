@@ -16,6 +16,15 @@ namespace Resgrid.Config
 
 		};
 
+		/// <summary>
+		/// System-level API key used by the SMTP Relay in hosted multi-department mode.
+		/// When the X-Resgrid-SystemApiKey header matches this value, the request bypasses
+		/// OAuth 2.0 authentication and is granted full cross-department access.
+		/// The department for each operation is determined by the DepartmentId field in the
+		/// request body/query parameters, not by the auth token.
+		/// </summary>
+		public static string SystemApiKey = "";
+
 		// ── Encryption ───────────────────────────────────────────────────────────────
 
 		/// <summary>AES-256 master key used by IEncryptionService for system-wide encryption.</summary>

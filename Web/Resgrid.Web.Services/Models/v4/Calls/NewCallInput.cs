@@ -122,5 +122,11 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// Enable check-in timers for this call. Leave null to use department default.
 		/// </summary>
 		public bool? CheckInTimersEnabled { get; set; }
+
+		/// <summary>
+		/// Department Id for the call. Only used in System API Key (hosted multi-department) mode.
+		/// When provided, overrides the department derived from the auth token.
+		/// </summary>
+		public string DepartmentId { get; set; }
 	}
 }

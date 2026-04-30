@@ -26,7 +26,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]
 	[ApiExplorerSettings(GroupName = "v4")]
-	public class CallFilesController : V4AuthenticatedApiControllerbase
+	public class CallFilesController : V4AuthenticatedApiControllerbaseSystemAuth
 	{
 		#region Members and Constructors
 		private readonly ICallsService _callsService;
@@ -205,7 +205,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Ok(result);
 			}
 
-			if (call.DepartmentId != DepartmentId)
+			var effectiveDepartmentId = GetEffectiveDepartmentId(input.DepartmentId);
+
+			if (call.DepartmentId != effectiveDepartmentId)
 				return Unauthorized();
 
 			if (call.State != (int)CallStates.Active)

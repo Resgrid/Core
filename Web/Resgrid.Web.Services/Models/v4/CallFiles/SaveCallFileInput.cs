@@ -42,5 +42,11 @@ namespace Resgrid.Web.Services.Models.v4.CallFiles
 		public string Longitude { get; set; }
 
 		public string Note { get; set; }
+
+		/// <summary>
+		/// Department Id for the call file. Only used in System API Key (hosted multi-department) mode.
+		/// When provided, overrides the department derived from the auth token.
+		/// </summary>
+		public string DepartmentId { get; set; }
 	}
 }

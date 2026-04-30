@@ -17,6 +17,9 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Text;
+using System.Security.Cryptography;
+using Resgrid.Providers.Claims;
 using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace Resgrid.Web.Services.Controllers.v4
@@ -221,6 +224,156 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 
 				return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+			}
+
+			else if (request != null && request.IsClientCredentialsGrantType())
+			{
+				// Client Credentials grant_type for SMTP Relay single-department deployments.
+				// Validates client_id and client_secret against department credentials or system-level config.
+
+				SystemAudit audit = new SystemAudit();
+				audit.System = (int)SystemAuditSystems.Api;
+				audit.Type = (int)SystemAuditTypes.Login;
+				audit.Username = request.ClientId;
+				audit.Successful = false;
+				audit.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+				audit.ServerName = Environment.MachineName;
+				audit.Data = $"V4 Token (client_credentials), {Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+
+				if (string.IsNullOrWhiteSpace(request.ClientId) || string.IsNullOrWhiteSpace(request.ClientSecret))
+				{
+					await _systemAuditsService.SaveSystemAuditAsync(audit);
+
+					var properties = new AuthenticationProperties(new Dictionary<string, string>
+					{
+						[OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
+						[OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] =
+							"The client_id and client_secret are required for client_credentials grant."
+					});
+
+					return Forbid(properties, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+				}
+
+				// First, check system-level credentials (timing-safe comparison)
+			if (Config.SecurityConfig.SystemLoginCredentials.ContainsKey(request.ClientId) &&
+				FixedTimeSecretEquals(Config.SecurityConfig.SystemLoginCredentials[request.ClientId], request.ClientSecret))
+			{
+				audit.Successful = true;
+				await _systemAuditsService.SaveSystemAuditAsync(audit);
+
+				// Create a system-level service principal with all claims
+				var identity = new ClaimsIdentity(
+					OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
+					Claims.Name,
+					Claims.Role);
+
+				identity.AddClaim(new Claim(Claims.Subject, $"system_{request.ClientId}")
+					.SetDestinations(Destinations.AccessToken, Destinations.IdentityToken));
+				identity.AddClaim(new Claim(Claims.Name, $"System Account ({request.ClientId})")
+					.SetDestinations(Destinations.AccessToken, Destinations.IdentityToken));
+				identity.AddClaim(new Claim(ClaimTypes.PrimarySid, $"system_{request.ClientId}")
+					.SetDestinations(Destinations.AccessToken));
+				identity.AddClaim(new Claim(ClaimTypes.PrimaryGroupSid, "0")
+					.SetDestinations(Destinations.AccessToken));
+				identity.AddClaim(new Claim(ClaimTypes.GivenName, "SMTP Relay System")
+					.SetDestinations(Destinations.AccessToken, Destinations.IdentityToken));
+				identity.AddClaim(new Claim(ResgridClaimTypes.Data.DisplayName, "SMTP Relay System")
+					.SetDestinations(Destinations.AccessToken, Destinations.IdentityToken));
+				identity.AddClaim(new Claim(ResgridClaimTypes.Data.ServiceAccount, "true")
+					.SetDestinations(Destinations.AccessToken, Destinations.IdentityToken));
+
+				// Add all resource claims for full access
+				AddAllResourceClaims(identity);
+
+				var principal = new ClaimsPrincipal(identity);
+
+				principal.SetScopes(new[]
+				{
+					Scopes.OpenId,
+					Scopes.Email,
+					Scopes.Profile
+				}.Intersect(request.GetScopes()));
+
+				principal.SetAccessTokenLifetime(TimeSpan.FromMinutes(OidcConfig.AccessTokenExpiryMinutes));
+
+				return SignIn(principal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+			}
+
+			// Second, try department-level credentials via department code + shared secret
+			var department = await _departmentsService.GetDepartmentByNameAsync(request.ClientId);
+
+			if (department == null)
+				{
+					await _systemAuditsService.SaveSystemAuditAsync(audit);
+
+					var properties = new AuthenticationProperties(new Dictionary<string, string>
+					{
+						[OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
+						[OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] =
+							"The client_id or client_secret is invalid."
+					});
+
+					return Forbid(properties, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+				}
+
+				if (string.IsNullOrWhiteSpace(department.SharedSecret) ||
+					!FixedTimeSecretEquals(department.SharedSecret, request.ClientSecret))
+				{
+					await _systemAuditsService.SaveSystemAuditAsync(audit);
+
+					var properties = new AuthenticationProperties(new Dictionary<string, string>
+					{
+						[OpenIddictServerAspNetCoreConstants.Properties.Error] = Errors.InvalidGrant,
+						[OpenIddictServerAspNetCoreConstants.Properties.ErrorDescription] =
+							"The client_id or client_secret is invalid."
+					});
+
+					return Forbid(properties, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
+				}
+
+				audit.Successful = true;
+				audit.UserId = department.ManagingUserId;
+				await _systemAuditsService.SaveSystemAuditAsync(audit);
+
+				// Create a department-scoped service principal
+				var deptIdentity = new ClaimsIdentity(
+					OpenIddictServerAspNetCoreDefaults.AuthenticationScheme,
+					Claims.Name,
+					Claims.Role);
+
+				deptIdentity.AddClaim(new Claim(Claims.Subject, $"dept_{department.DepartmentId}_svc")
+					.SetDestinations(Destinations.AccessToken, Destinations.IdentityToken));
+				deptIdentity.AddClaim(new Claim(Claims.Name, $"svc_{request.ClientId}")
+					.SetDestinations(Destinations.AccessToken, Destinations.IdentityToken));
+				deptIdentity.AddClaim(new Claim(ClaimTypes.PrimarySid, $"dept_{department.DepartmentId}_svc")
+					.SetDestinations(Destinations.AccessToken));
+				deptIdentity.AddClaim(new Claim(ClaimTypes.PrimaryGroupSid, department.DepartmentId.ToString())
+					.SetDestinations(Destinations.AccessToken));
+				deptIdentity.AddClaim(new Claim(ClaimTypes.Actor, department.Name)
+					.SetDestinations(Destinations.AccessToken));
+
+				// Add all resource claims for full department access
+				AddAllResourceClaims(deptIdentity);
+
+				var deptPrincipal = new ClaimsPrincipal(deptIdentity);
+
+				deptPrincipal.SetScopes(new[]
+				{
+					Scopes.OpenId,
+					Scopes.Email,
+					Scopes.Profile
+				}.Intersect(request.GetScopes()));
+
+				if (request.GetScopes() != null && request.GetScopes().Contains("mobile"))
+				{
+					deptPrincipal.SetAccessTokenLifetime(TimeSpan.FromMinutes(OidcConfig.AccessTokenExpiryMinutes));
+				}
+				else
+				{
+					deptPrincipal.SetAccessTokenLifetime(TimeSpan.FromMinutes(OidcConfig.AccessTokenExpiryMinutes));
+				}
+
+				return SignIn(deptPrincipal, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 			}
 
 			throw new NotImplementedException("The specified grant type is not implemented.");
@@ -706,6 +859,84 @@ namespace Resgrid.Web.Services.Controllers.v4
 					yield return Destinations.AccessToken;
 					yield break;
 			}
+		}
+
+		/// <summary>
+		/// Adds all Resgrid resource claims (View, Create, Update, Delete) to the given identity.
+		/// Used for system-level and client-credentials service principals that need full access.
+		/// </summary>
+		private static void AddAllResourceClaims(ClaimsIdentity identity)
+		{
+			var resources = new[]
+			{
+				ResgridClaimTypes.Resources.Department,
+				ResgridClaimTypes.Resources.Personnel,
+				ResgridClaimTypes.Resources.Call,
+				ResgridClaimTypes.Resources.Log,
+				ResgridClaimTypes.Resources.Action,
+				ResgridClaimTypes.Resources.Staffing,
+				ResgridClaimTypes.Resources.Unit,
+				ResgridClaimTypes.Resources.Group,
+				ResgridClaimTypes.Resources.UnitLog,
+				ResgridClaimTypes.Resources.Messages,
+				ResgridClaimTypes.Resources.Role,
+				ResgridClaimTypes.Resources.Profile,
+				ResgridClaimTypes.Resources.Reports,
+				ResgridClaimTypes.Resources.GenericGroup,
+				ResgridClaimTypes.Resources.Documents,
+				ResgridClaimTypes.Resources.Notes,
+				ResgridClaimTypes.Resources.Schedule,
+				ResgridClaimTypes.Resources.Shift,
+				ResgridClaimTypes.Resources.Training,
+				ResgridClaimTypes.Resources.PersonalInfo,
+				ResgridClaimTypes.Resources.Inventory,
+				ResgridClaimTypes.Resources.Command,
+				ResgridClaimTypes.Resources.Connect,
+				ResgridClaimTypes.Resources.Protocols,
+				ResgridClaimTypes.Resources.Forms,
+				ResgridClaimTypes.Resources.Voice,
+				ResgridClaimTypes.Resources.CustomStates,
+				ResgridClaimTypes.Resources.Contacts,
+				ResgridClaimTypes.Resources.Workflow,
+				ResgridClaimTypes.Resources.WorkflowCredential,
+				ResgridClaimTypes.Resources.WorkflowRun,
+				ResgridClaimTypes.Resources.Sso,
+				ResgridClaimTypes.Resources.Scim,
+				ResgridClaimTypes.Resources.Udf,
+				ResgridClaimTypes.Resources.Route,
+				ResgridClaimTypes.Resources.CommunicationTest,
+				ResgridClaimTypes.Resources.WeatherAlert
+			};
+
+			var actions = new[]
+			{
+				ResgridClaimTypes.Actions.View,
+				ResgridClaimTypes.Actions.Create,
+				ResgridClaimTypes.Actions.Update,
+				ResgridClaimTypes.Actions.Delete
+			};
+
+			foreach (var resource in resources)
+			{
+				foreach (var action in actions)
+				{
+					identity.AddClaim(new Claim(resource, action)
+						.SetDestinations(Destinations.AccessToken));
+				}
+			}
+		}
+		/// <summary>
+		/// Performs a timing-safe comparison of two secret strings to prevent timing attacks.
+		/// </summary>
+		private static bool FixedTimeSecretEquals(string stored, string provided)
+		{
+			if (stored == null || provided == null)
+				return false;
+
+			var storedBytes = Encoding.UTF8.GetBytes(stored);
+			var providedBytes = Encoding.UTF8.GetBytes(provided);
+
+			return CryptographicOperations.FixedTimeEquals(storedBytes, providedBytes);
 		}
 	}
 }

@@ -645,6 +645,9 @@ namespace Resgrid.Web.ServicesCore
 			builder.RegisterModule(new MessagingProviderModule());
 			builder.RegisterModule(new Resgrid.Providers.Workflow.WorkflowProviderModule());
 			builder.RegisterModule(new Resgrid.Providers.Weather.WeatherProviderModule());
+			builder.RegisterModule(new Resgrid.Chatbot.ChatbotModule());
+			builder.RegisterModule(new Resgrid.Chatbot.NLU.NLUModule());
+			builder.RegisterModule(new Resgrid.Providers.Chatbot.ChatbotProviderModule());
 
 			builder.RegisterType<IdentityUserStore>().As<IUserStore<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
 			builder.RegisterType<IdentityRoleStore>().As<IRoleStore<Model.Identity.IdentityRole>>().InstancePerLifetimeScope();

@@ -120,12 +120,15 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
     <ProjectReference Include="..\..\Core\Resgrid.Framework\Resgrid.Framework.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Chatbot\Resgrid.Chatbot.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Chatbot.NLU\Resgrid.Chatbot.NLU.csproj" />
     <ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj" />
     <ProjectReference Include="..\..\Core\Resgrid.Services\Resgrid.Services.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.AddressVerification\Resgrid.Providers.AddressVerification.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus.Rabbit\Resgrid.Providers.Bus.Rabbit.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus\Resgrid.Providers.Bus.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Cache\Resgrid.Providers.Cache.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Chatbot\Resgrid.Providers.Chatbot.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Claims\Resgrid.Providers.Claims.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Email\Resgrid.Providers.Email.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Geo\Resgrid.Providers.Geo.csproj" />

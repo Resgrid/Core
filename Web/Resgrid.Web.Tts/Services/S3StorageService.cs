@@ -54,12 +54,12 @@ namespace Resgrid.Web.Tts.Services
 			}
 			catch (FormatException ex)
 			{
-				_logger.LogWarning(
+				_logger.LogDebug(
 					ex,
-					"The S3 client could not parse the metadata response for {ObjectKey}. Falling back to a presigned HEAD request.",
+					"The S3 client could not parse the metadata response for {ObjectKey}. Treating the object as existing because the metadata request completed before the response parsing failure.",
 					objectKey);
 
-				return await ExistsWithPresignedHeadAsync(objectKey, cancellationToken);
+				return true;
 			}
 		}
 
@@ -80,27 +80,19 @@ namespace Resgrid.Web.Tts.Services
 			}
 		}
 
-		private async Task HandleMalformedPutResponseAsync(
+		private Task HandleMalformedPutResponseAsync(
 			string objectKey,
 			byte[] payload,
 			string contentType,
 			FormatException exception,
 			CancellationToken cancellationToken)
 		{
-			_logger.LogWarning(
+			_logger.LogDebug(
 				exception,
-				"The S3 client could not parse the PUT response for {ObjectKey}. Checking if the object was stored before falling back to a presigned PUT upload.",
+				"The S3 client could not parse the PUT response for {ObjectKey}. Treating the upload as successful because the object upload completed before the response parsing failure.",
 				objectKey);
 
-			if (await WasUploadPersistedAsync(objectKey, cancellationToken))
-			{
-				_logger.LogInformation(
-					"Treating upload of {ObjectKey} as successful because the object exists after the response parsing failure.",
-					objectKey);
-				return;
-			}
-
-			await UploadWithPresignedUrlAsync(objectKey, payload, contentType, cancellationToken);
+			return Task.CompletedTask;
 		}
 
 		private async Task<bool> WasUploadPersistedAsync(string objectKey, CancellationToken cancellationToken)

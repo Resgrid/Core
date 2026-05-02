@@ -56,49 +56,32 @@ namespace Resgrid.Tests.Web.Tts
 		}
 
 		[Test]
-		public async Task exists_async_should_fall_back_to_presigned_head_when_metadata_response_is_malformed()
+		public async Task exists_async_should_treat_malformed_metadata_response_as_existing_object()
 		{
 			var s3Client = new Mock<IAmazonS3>(MockBehavior.Strict);
 			s3Client
 				.Setup(x => x.GetObjectMetadataAsync(It.IsAny<GetObjectMetadataRequest>(), It.IsAny<CancellationToken>()))
 				.ThrowsAsync(new FormatException("bad metadata expiration header"));
-			s3Client
-				.Setup(x => x.GetPreSignedURL(It.IsAny<GetPreSignedUrlRequest>()))
-				.Returns<GetPreSignedUrlRequest>(request =>
-				{
-					request.BucketName.Should().Be("tts-bucket");
-					request.Key.Should().Be("tts/audio.wav");
-					request.Verb.Should().Be(HttpVerb.HEAD);
-					request.Protocol.Should().Be(Protocol.HTTP);
-					return "http://upload.example.com/tts/audio.wav?signature=head";
-				});
 
-			var handler = new RecordingHttpMessageHandler((request, _) =>
-			{
-				request.Method.Should().Be(HttpMethod.Head);
-				request.RequestUri.Should().Be(new Uri("http://upload.example.com/tts/audio.wav?signature=head"));
-				return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
-			});
+			var handler = new RecordingHttpMessageHandler((_, _) =>
+				Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)));
 			var service = CreateService(s3Client.Object, handler, useSsl: false);
 
 			var exists = await service.ExistsAsync("tts/audio.wav", CancellationToken.None);
 
 			exists.Should().BeTrue();
-			handler.Requests.Should().HaveCount(1);
+			handler.Requests.Should().BeEmpty();
 			s3Client.Verify(x => x.GetObjectMetadataAsync(It.Is<GetObjectMetadataRequest>(request => request.BucketName == "tts-bucket" && request.Key == "tts/audio.wav"), It.IsAny<CancellationToken>()), Times.Once);
-			s3Client.Verify(x => x.GetPreSignedURL(It.IsAny<GetPreSignedUrlRequest>()), Times.Once);
+			s3Client.Verify(x => x.GetPreSignedURL(It.IsAny<GetPreSignedUrlRequest>()), Times.Never);
 		}
 
 		[Test]
-		public async Task upload_async_should_treat_format_exception_as_success_when_object_exists_after_upload()
+		public async Task upload_async_should_treat_malformed_put_response_as_success_without_using_presigned_uploads()
 		{
 			var s3Client = new Mock<IAmazonS3>(MockBehavior.Strict);
 			s3Client
 				.Setup(x => x.PutObjectAsync(It.IsAny<PutObjectRequest>(), It.IsAny<CancellationToken>()))
 				.ThrowsAsync(new FormatException("bad expiration header"));
-			s3Client
-				.Setup(x => x.GetObjectMetadataAsync(It.IsAny<GetObjectMetadataRequest>(), It.IsAny<CancellationToken>()))
-				.ReturnsAsync(new GetObjectMetadataResponse());
 
 			var handler = new RecordingHttpMessageHandler((_, _) =>
 				Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)));
@@ -109,216 +92,39 @@ namespace Resgrid.Tests.Web.Tts
 			await service.UploadAsync("tts/audio.wav", content, "audio/wav", CancellationToken.None);
 
 			handler.Requests.Should().BeEmpty();
-			s3Client.Verify(x => x.GetObjectMetadataAsync(It.Is<GetObjectMetadataRequest>(request => request.BucketName == "tts-bucket" && request.Key == "tts/audio.wav"), It.IsAny<CancellationToken>()), Times.Once);
+			s3Client.Verify(x => x.PutObjectAsync(It.Is<PutObjectRequest>(request => request.BucketName == "tts-bucket" && request.Key == "tts/audio.wav" && request.ContentType == "audio/wav"), It.IsAny<CancellationToken>()), Times.Once);
+			s3Client.Verify(x => x.GetObjectMetadataAsync(It.IsAny<GetObjectMetadataRequest>(), It.IsAny<CancellationToken>()), Times.Never);
 			s3Client.Verify(x => x.GetPreSignedURL(It.IsAny<GetPreSignedUrlRequest>()), Times.Never);
 		}
 
 		[Test]
-		public async Task upload_async_should_fall_back_to_presigned_put_when_metadata_response_is_malformed()
+		public async Task upload_async_should_treat_malformed_put_response_as_success_even_if_sdk_disposes_input_stream()
 		{
 			var s3Client = new Mock<IAmazonS3>(MockBehavior.Strict);
+			byte[] capturedPayload = null;
 			s3Client
 				.Setup(x => x.PutObjectAsync(It.IsAny<PutObjectRequest>(), It.IsAny<CancellationToken>()))
-				.ThrowsAsync(new FormatException("bad expiration header"));
-			s3Client
-				.Setup(x => x.GetObjectMetadataAsync(It.IsAny<GetObjectMetadataRequest>(), It.IsAny<CancellationToken>()))
-				.ThrowsAsync(new FormatException("bad metadata expiration header"));
-			s3Client
-				.Setup(x => x.GetPreSignedURL(It.IsAny<GetPreSignedUrlRequest>()))
-				.Returns<GetPreSignedUrlRequest>(request =>
+				.Returns<PutObjectRequest, CancellationToken>(async (request, _) =>
 				{
-					request.BucketName.Should().Be("tts-bucket");
-					request.Key.Should().Be("tts/audio.wav");
-					request.Protocol.Should().Be(Protocol.HTTP);
-
-					return request.Verb switch
-					{
-						HttpVerb.HEAD => "http://upload.example.com/tts/audio.wav?signature=metadata-head",
-						HttpVerb.PUT => "http://upload.example.com/tts/audio.wav?signature=metadata-put",
-						_ => throw new AssertionException($"Unexpected presigned verb {request.Verb}")
-					};
-				});
-
-			var headRequests = 0;
-			var putRequests = 0;
-			var handler = new RecordingHttpMessageHandler(async (request, cancellationToken) =>
-			{
-				request.RequestUri.Should().NotBeNull();
-
-				if (request.Method == HttpMethod.Head)
-				{
-					headRequests++;
-					request.RequestUri.Should().Be(new Uri("http://upload.example.com/tts/audio.wav?signature=metadata-head"));
-					return new HttpResponseMessage(HttpStatusCode.NotFound);
-				}
-
-				putRequests++;
-				request.Method.Should().Be(HttpMethod.Put);
-				request.RequestUri.Should().Be(new Uri("http://upload.example.com/tts/audio.wav?signature=metadata-put"));
-
-				var body = await request.Content!.ReadAsByteArrayAsync(cancellationToken);
-				body.Should().Equal(2, 4, 6, 8);
-				request.Content.Headers.ContentType!.MediaType.Should().Be("audio/wav");
-
-				return new HttpResponseMessage(HttpStatusCode.OK);
-			});
-			var service = CreateService(s3Client.Object, handler, useSsl: false);
-
-			await using var content = new MemoryStream(new byte[] { 2, 4, 6, 8 }, writable: false);
-
-			await service.UploadAsync("tts/audio.wav", content, "audio/wav", CancellationToken.None);
-
-			headRequests.Should().Be(1);
-			putRequests.Should().Be(1);
-			handler.Requests.Should().HaveCount(2);
-			s3Client.Verify(x => x.GetObjectMetadataAsync(It.IsAny<GetObjectMetadataRequest>(), It.IsAny<CancellationToken>()), Times.Once);
-			s3Client.Verify(x => x.GetPreSignedURL(It.Is<GetPreSignedUrlRequest>(request => request.Verb == HttpVerb.HEAD)), Times.Once);
-			s3Client.Verify(x => x.GetPreSignedURL(It.Is<GetPreSignedUrlRequest>(request => request.Verb == HttpVerb.PUT)), Times.Once);
-		}
-
-		[Test]
-		public async Task upload_async_should_fall_back_to_presigned_put_when_metadata_check_times_out()
-		{
-			var s3Client = new Mock<IAmazonS3>(MockBehavior.Strict);
-			s3Client
-				.Setup(x => x.PutObjectAsync(It.IsAny<PutObjectRequest>(), It.IsAny<CancellationToken>()))
-				.ThrowsAsync(new FormatException("bad expiration header"));
-			s3Client
-				.Setup(x => x.GetObjectMetadataAsync(It.IsAny<GetObjectMetadataRequest>(), It.IsAny<CancellationToken>()))
-				.ThrowsAsync(new TaskCanceledException("metadata timeout"));
-			s3Client
-				.Setup(x => x.GetPreSignedURL(It.IsAny<GetPreSignedUrlRequest>()))
-				.Returns("https://upload.example.com/tts/audio.wav?signature=timeout");
-
-			var handler = new RecordingHttpMessageHandler(async (request, cancellationToken) =>
-			{
-				var body = await request.Content!.ReadAsByteArrayAsync(cancellationToken);
-				body.Should().Equal(6, 7, 8, 9);
-				request.Method.Should().Be(HttpMethod.Put);
-				request.RequestUri.Should().Be(new Uri("https://upload.example.com/tts/audio.wav?signature=timeout"));
-				request.Content!.Headers.ContentType!.MediaType.Should().Be("audio/wav");
-
-				return new HttpResponseMessage(HttpStatusCode.OK);
-			});
-			var service = CreateService(s3Client.Object, handler);
-
-			await using var content = new MemoryStream(new byte[] { 6, 7, 8, 9 }, writable: false);
-
-			await service.UploadAsync("tts/audio.wav", content, "audio/wav", CancellationToken.None);
-
-			handler.Requests.Should().HaveCount(1);
-			s3Client.Verify(x => x.GetObjectMetadataAsync(It.IsAny<GetObjectMetadataRequest>(), It.IsAny<CancellationToken>()), Times.Once);
-			s3Client.Verify(x => x.GetPreSignedURL(It.IsAny<GetPreSignedUrlRequest>()), Times.Once);
-		}
-
-		[Test]
-		public async Task upload_async_should_fall_back_to_presigned_put_when_put_response_is_malformed_and_object_is_missing()
-		{
-			var s3Client = new Mock<IAmazonS3>(MockBehavior.Strict);
-			s3Client
-				.Setup(x => x.PutObjectAsync(It.IsAny<PutObjectRequest>(), It.IsAny<CancellationToken>()))
-				.ThrowsAsync(new FormatException("bad expiration header"));
-			s3Client
-				.Setup(x => x.GetObjectMetadataAsync(It.IsAny<GetObjectMetadataRequest>(), It.IsAny<CancellationToken>()))
-				.ThrowsAsync(new AmazonS3Exception("missing")
-				{
-					StatusCode = HttpStatusCode.NotFound,
-					ErrorCode = "NoSuchKey"
-				});
-			s3Client
-				.Setup(x => x.GetPreSignedURL(It.IsAny<GetPreSignedUrlRequest>()))
-				.Returns<GetPreSignedUrlRequest>(request =>
-				{
-					request.BucketName.Should().Be("tts-bucket");
-					request.Key.Should().Be("tts/audio.wav");
-					request.Verb.Should().Be(HttpVerb.PUT);
-					request.ContentType.Should().Be("audio/wav");
-					return "https://upload.example.com/tts/audio.wav?signature=123";
-				});
-
-			var handler = new RecordingHttpMessageHandler(async (request, cancellationToken) =>
-			{
-				var body = await request.Content!.ReadAsByteArrayAsync(cancellationToken);
-				body.Should().Equal(5, 4, 3, 2);
-				request.Method.Should().Be(HttpMethod.Put);
-				request.RequestUri.Should().Be(new Uri("https://upload.example.com/tts/audio.wav?signature=123"));
-				request.Content!.Headers.ContentType!.MediaType.Should().Be("audio/wav");
-
-				return new HttpResponseMessage(HttpStatusCode.OK);
-			});
-			var service = CreateService(s3Client.Object, handler);
-
-			await using var content = new MemoryStream(new byte[] { 5, 4, 3, 2 }, writable: false);
-
-			await service.UploadAsync("tts/audio.wav", content, "audio/wav", CancellationToken.None);
-
-			handler.Requests.Should().HaveCount(1);
-			s3Client.Verify(x => x.GetObjectMetadataAsync(It.IsAny<GetObjectMetadataRequest>(), It.IsAny<CancellationToken>()), Times.Once);
-			s3Client.Verify(x => x.GetPreSignedURL(It.IsAny<GetPreSignedUrlRequest>()), Times.Once);
-		}
-
-		[Test]
-		public async Task upload_async_should_reuse_buffered_payload_when_falling_back_after_sdk_disposes_input_stream()
-		{
-			var s3Client = new Mock<IAmazonS3>(MockBehavior.Strict);
-			s3Client
-				.Setup(x => x.PutObjectAsync(It.IsAny<PutObjectRequest>(), It.IsAny<CancellationToken>()))
-				.Returns<PutObjectRequest, CancellationToken>((request, _) =>
-				{
+					using var captureStream = new MemoryStream();
+					await request.InputStream.CopyToAsync(captureStream);
+					capturedPayload = captureStream.ToArray();
 					request.InputStream.Dispose();
-					return Task.FromException<PutObjectResponse>(new FormatException("bad expiration header"));
-				});
-			s3Client
-				.Setup(x => x.GetObjectMetadataAsync(It.IsAny<GetObjectMetadataRequest>(), It.IsAny<CancellationToken>()))
-				.ThrowsAsync(new FormatException("bad metadata expiration header"));
-			s3Client
-				.Setup(x => x.GetPreSignedURL(It.IsAny<GetPreSignedUrlRequest>()))
-				.Returns<GetPreSignedUrlRequest>(request =>
-				{
-					request.Protocol.Should().Be(Protocol.HTTP);
-
-					return request.Verb switch
-					{
-						HttpVerb.HEAD => "http://upload.example.com/tts/audio.wav?signature=disposed-head",
-						HttpVerb.PUT => "http://upload.example.com/tts/audio.wav?signature=disposed-put",
-						_ => throw new AssertionException($"Unexpected presigned verb {request.Verb}")
-					};
+					throw new FormatException("bad expiration header");
 				});
 
-			var headRequests = 0;
-			var putRequests = 0;
-			var handler = new RecordingHttpMessageHandler(async (request, cancellationToken) =>
-			{
-				if (request.Method == HttpMethod.Head)
-				{
-					headRequests++;
-					request.RequestUri.Should().Be(new Uri("http://upload.example.com/tts/audio.wav?signature=disposed-head"));
-					throw new HttpRequestException("connectivity failure");
-				}
-
-				putRequests++;
-				request.Method.Should().Be(HttpMethod.Put);
-				request.RequestUri.Should().Be(new Uri("http://upload.example.com/tts/audio.wav?signature=disposed-put"));
-
-				var body = await request.Content!.ReadAsByteArrayAsync(cancellationToken);
-				body.Should().Equal(7, 5, 3, 1);
-				request.Content.Headers.ContentType!.MediaType.Should().Be("audio/wav");
-
-				return new HttpResponseMessage(HttpStatusCode.OK);
-			});
-
-			var service = CreateService(s3Client.Object, handler, useSsl: false);
+			var handler = new RecordingHttpMessageHandler((_, _) =>
+				Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)));
+			var service = CreateService(s3Client.Object, handler);
 
 			await using var content = new MemoryStream(new byte[] { 7, 5, 3, 1 }, writable: false);
 
 			await service.UploadAsync("tts/audio.wav", content, "audio/wav", CancellationToken.None);
 
-			headRequests.Should().Be(3);
-			putRequests.Should().Be(1);
-			handler.Requests.Should().HaveCount(4);
-			s3Client.Verify(x => x.GetObjectMetadataAsync(It.IsAny<GetObjectMetadataRequest>(), It.IsAny<CancellationToken>()), Times.Once);
-			s3Client.Verify(x => x.GetPreSignedURL(It.Is<GetPreSignedUrlRequest>(request => request.Verb == HttpVerb.HEAD)), Times.Exactly(3));
-			s3Client.Verify(x => x.GetPreSignedURL(It.Is<GetPreSignedUrlRequest>(request => request.Verb == HttpVerb.PUT)), Times.Once);
+			capturedPayload.Should().Equal(7, 5, 3, 1);
+			handler.Requests.Should().BeEmpty();
+			s3Client.Verify(x => x.GetObjectMetadataAsync(It.IsAny<GetObjectMetadataRequest>(), It.IsAny<CancellationToken>()), Times.Never);
+			s3Client.Verify(x => x.GetPreSignedURL(It.IsAny<GetPreSignedUrlRequest>()), Times.Never);
 		}
 
 		[Test]

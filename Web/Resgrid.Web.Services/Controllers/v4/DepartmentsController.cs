@@ -17,7 +17,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]
 	[ApiExplorerSettings(GroupName = "v4")]
-	[Authorize(AuthenticationSchemes = "BasicAuthentication,SystemApiKey")]
 	public class DepartmentsController : V4AuthenticatedApiControllerbaseSystemAuth
 	{
 		#region Members and Constructors

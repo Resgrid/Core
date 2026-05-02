@@ -1760,12 +1760,12 @@
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.V4AuthenticatedApiControllerbaseSystemAuth">
-            <summary>
-            Base controller for v4 API endpoints that accept both standard OAuth/OIDC AND SystemApiKey
-            authentication (used by the SMTP Relay in hosted multi-department mode).
+             <summary>
+             Base controller for v4 API endpoints that accept both standard OAuth/OIDC AND SystemApiKey
+             authentication (used by the SMTP Relay in hosted multi-department mode).
             
-            Controllers that only need standard OAuth should use <see cref="T:Resgrid.Web.Services.Controllers.v4.V4AuthenticatedApiControllerbase"/> instead.
-            </summary>
+             Controllers that only need standard OAuth should use <see cref="T:Resgrid.Web.Services.Controllers.v4.V4AuthenticatedApiControllerbase"/> instead.
+             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Controllers.v4.V4AuthenticatedApiControllerbaseSystemAuth.UserId">
             <summary>

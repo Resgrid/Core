@@ -41,7 +41,7 @@ namespace Resgrid.Tests.Services
 				_cacheProvider.Object);
 
 			global::Resgrid.Config.SystemBehaviorConfig.CacheEnabled = false;
-			TtsConfig.DefaultVoice = "en-us";
+			TtsConfig.DefaultVoice = "en-us+f3";
 		}
 
 		[TearDown]
@@ -77,7 +77,7 @@ namespace Resgrid.Tests.Services
 
 			var result = await _service.GetTtsLanguageForDepartmentAsync(7);
 
-			result.Should().Be("en-us");
+			result.Should().Be("en-us+f3");
 		}
 
 		[Test]

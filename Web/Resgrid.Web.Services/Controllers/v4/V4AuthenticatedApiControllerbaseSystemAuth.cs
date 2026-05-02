@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.ServicesCore.Helpers;
 
@@ -12,11 +13,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 	/// <summary>
 	/// Base controller for v4 API endpoints that accept both standard OAuth/OIDC AND SystemApiKey
 	/// authentication (used by the SMTP Relay in hosted multi-department mode).
-	/// 
+	///
 	/// Controllers that only need standard OAuth should use <see cref="V4AuthenticatedApiControllerbase"/> instead.
 	/// </summary>
 	[ApiController]
 	[Produces("application/json")]
+	[Authorize(AuthenticationSchemes = $"{OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme},SystemApiKey")]
 	public class V4AuthenticatedApiControllerbaseSystemAuth : ControllerBase
 	{
 		/// <summary>

@@ -21,7 +21,6 @@ RUN dotnet publish "Resgrid.Web.Tts.csproj" -c Release -o /app/publish /p:UseApp
 FROM base AS final
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends espeak-ng ffmpeg ca-certificates \
-	&& printf 'language variant\nname klatt6\nklatt 6\n' > /usr/lib/x86_64-linux-gnu/espeak-ng-data/voices/!v/klatt6 \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& groupadd --gid 10001 appgroup \
 	&& useradd --uid 10001 --gid appgroup --create-home --shell /usr/sbin/nologin appuser

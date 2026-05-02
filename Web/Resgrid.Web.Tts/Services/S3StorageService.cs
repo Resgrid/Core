@@ -52,15 +52,75 @@ namespace Resgrid.Web.Tts.Services
 			{
 				return false;
 			}
-			catch (FormatException ex)
+			catch (AmazonUnmarshallingException ex) when (ex.InnerException is FormatException formatException)
+			{
+				return await HandleMalformedMetadataResponseAsync(objectKey, ex, formatException, cancellationToken);
+			}
+		}
+
+		private async Task<bool> HandleMalformedMetadataResponseAsync(
+			string objectKey,
+			AmazonUnmarshallingException exception,
+			FormatException formatException,
+			CancellationToken cancellationToken)
+		{
+			_logger.LogWarning(
+				exception,
+				"The S3 client could not parse the metadata response for {ObjectKey}. Verifying existence with a presigned HEAD request. Inner format error: {InnerFormatErrorMessage}",
+				objectKey,
+				formatException.Message);
+
+			_logger.LogDebug(
+				formatException,
+				"Inner FormatException while parsing the metadata response for {ObjectKey}. Last known location: {LastKnownLocation}.",
+				objectKey,
+				exception.LastKnownLocation ?? "unknown");
+
+			try
+			{
+				var exists = await ExistsWithPresignedHeadAsync(objectKey, cancellationToken);
+
+				_logger.LogDebug(
+					"Presigned HEAD verification after the metadata parsing failure reported that {ObjectKey} {ExistenceState}.",
+					objectKey,
+					exists ? "exists" : "does not exist");
+
+				return exists;
+			}
+			catch (AmazonServiceException verificationException)
 			{
 				_logger.LogWarning(
-					ex,
-					"The S3 client could not parse the metadata response for {ObjectKey}. Falling back to a presigned HEAD request.",
+					verificationException,
+					"Unable to verify whether {ObjectKey} exists after the metadata parsing failure. Assuming the object exists because S3 returned a response before the unmarshalling error.",
 					objectKey);
-
-				return await ExistsWithPresignedHeadAsync(objectKey, cancellationToken);
 			}
+			catch (HttpRequestException verificationException)
+			{
+				_logger.LogWarning(
+					verificationException,
+					"Unable to verify whether {ObjectKey} exists after the metadata parsing failure due to connectivity. Assuming the object exists because S3 returned a response before the unmarshalling error.",
+					objectKey);
+			}
+			catch (TaskCanceledException verificationException) when (!cancellationToken.IsCancellationRequested)
+			{
+				_logger.LogWarning(
+					verificationException,
+					"Unable to verify whether {ObjectKey} exists after the metadata parsing failure due to timeout. Assuming the object exists because S3 returned a response before the unmarshalling error.",
+					objectKey);
+			}
+			catch (IOException verificationException)
+			{
+				_logger.LogWarning(
+					verificationException,
+					"Unable to verify whether {ObjectKey} exists after the metadata parsing failure due to IO. Assuming the object exists because S3 returned a response before the unmarshalling error.",
+					objectKey);
+			}
+
+			// The metadata request reached S3 and only failed while the SDK parsed the response.
+			// If the explicit presigned HEAD verification also fails, preserve the best-effort
+			// behavior and assume the object exists so callers such as CacheService understand
+			// this path can still return an optimistic result.
+			return true;
 		}
 
 		public async Task UploadAsync(string objectKey, Stream content, string contentType, CancellationToken cancellationToken)
@@ -89,16 +149,21 @@ namespace Resgrid.Web.Tts.Services
 		{
 			_logger.LogWarning(
 				exception,
-				"The S3 client could not parse the PUT response for {ObjectKey}. Checking if the object was stored before falling back to a presigned PUT upload.",
+				"The S3 client could not parse the PUT response for {ObjectKey}. Verifying whether the upload persisted before falling back to a presigned PUT upload.",
 				objectKey);
 
 			if (await WasUploadPersistedAsync(objectKey, cancellationToken))
 			{
 				_logger.LogInformation(
-					"Treating upload of {ObjectKey} as successful because the object exists after the response parsing failure.",
+					"The upload for {ObjectKey} was verified after the PUT response parsing failure. Treating the upload as successful.",
 					objectKey);
+
 				return;
 			}
+
+			_logger.LogWarning(
+				"The upload for {ObjectKey} could not be verified after the PUT response parsing failure. Retrying with a presigned PUT upload.",
+				objectKey);
 
 			await UploadWithPresignedUrlAsync(objectKey, payload, contentType, cancellationToken);
 		}

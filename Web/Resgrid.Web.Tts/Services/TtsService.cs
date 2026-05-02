@@ -220,13 +220,14 @@ namespace Resgrid.Web.Tts.Services
 		private string NormalizeVoice(string? voice)
 		{
 			var configuredDefaultVoice = string.IsNullOrWhiteSpace(_options.DefaultVoice)
-				? "en-us+klatt6"
+				? "en-us+klatt4"
 				: _options.DefaultVoice.Trim();
 			var requestedVoice = string.IsNullOrWhiteSpace(voice)
 				? configuredDefaultVoice
 				: voice.Trim();
 
-			if (string.Equals(requestedVoice, "en-us+f3", StringComparison.OrdinalIgnoreCase))
+			if (string.Equals(requestedVoice, "en-us+f3", StringComparison.OrdinalIgnoreCase) ||
+				string.Equals(requestedVoice, "en-us+klatt6", StringComparison.OrdinalIgnoreCase))
 			{
 				return configuredDefaultVoice;
 			}

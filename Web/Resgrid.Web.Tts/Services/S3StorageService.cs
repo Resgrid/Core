@@ -126,6 +126,13 @@ namespace Resgrid.Web.Tts.Services
 					"Unable to verify whether {ObjectKey} exists after the PUT response parsing failure. Falling back to a presigned PUT upload.",
 					objectKey);
 			}
+			catch (FormatException ex)
+			{
+				_logger.LogWarning(
+					ex,
+					"Unable to verify whether {ObjectKey} exists after the PUT response parsing failure because the metadata response could not be parsed. Falling back to a presigned PUT upload.",
+					objectKey);
+			}
 			catch (HttpRequestException ex)
 			{
 				_logger.LogWarning(

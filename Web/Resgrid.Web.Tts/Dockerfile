@@ -9,6 +9,7 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0.202-noble-amd64 AS build
 ARG BUILD_VERSION
 WORKDIR /src
 
+COPY ["Directory.Build.props", "./"]
 COPY ["Web/Resgrid.Web.Tts/Resgrid.Web.Tts.csproj", "Web/Resgrid.Web.Tts/"]
 COPY ["Core/Resgrid.Config/Resgrid.Config.csproj", "Core/Resgrid.Config/"]
 RUN dotnet restore "Web/Resgrid.Web.Tts/Resgrid.Web.Tts.csproj"

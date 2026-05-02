@@ -17,6 +17,7 @@ using Resgrid.Workers.Console.Tasks;
 namespace Resgrid.Tests.Workers.Console.Tasks
 {
 	[TestFixture]
+	[NonParallelizable]
 	public class TtsStaticPromptRefreshTaskTests
 	{
 		private static readonly FieldInfo WorkerBootstrapperContainerField = typeof(Resgrid.Workers.Framework.Bootstrapper)

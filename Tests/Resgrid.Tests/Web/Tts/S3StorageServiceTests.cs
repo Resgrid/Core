@@ -56,6 +56,39 @@ namespace Resgrid.Tests.Web.Tts
 		}
 
 		[Test]
+		public async Task exists_async_should_fall_back_to_presigned_head_when_metadata_response_is_malformed()
+		{
+			var s3Client = new Mock<IAmazonS3>(MockBehavior.Strict);
+			s3Client
+				.Setup(x => x.GetObjectMetadataAsync(It.IsAny<GetObjectMetadataRequest>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new FormatException("bad metadata expiration header"));
+			s3Client
+				.Setup(x => x.GetPreSignedURL(It.IsAny<GetPreSignedUrlRequest>()))
+				.Returns<GetPreSignedUrlRequest>(request =>
+				{
+					request.BucketName.Should().Be("tts-bucket");
+					request.Key.Should().Be("tts/audio.wav");
+					request.Verb.Should().Be(HttpVerb.HEAD);
+					return "https://upload.example.com/tts/audio.wav?signature=head";
+				});
+
+			var handler = new RecordingHttpMessageHandler((request, _) =>
+			{
+				request.Method.Should().Be(HttpMethod.Head);
+				request.RequestUri.Should().Be(new Uri("https://upload.example.com/tts/audio.wav?signature=head"));
+				return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
+			});
+			var service = CreateService(s3Client.Object, handler);
+
+			var exists = await service.ExistsAsync("tts/audio.wav", CancellationToken.None);
+
+			exists.Should().BeTrue();
+			handler.Requests.Should().HaveCount(1);
+			s3Client.Verify(x => x.GetObjectMetadataAsync(It.Is<GetObjectMetadataRequest>(request => request.BucketName == "tts-bucket" && request.Key == "tts/audio.wav"), It.IsAny<CancellationToken>()), Times.Once);
+			s3Client.Verify(x => x.GetPreSignedURL(It.IsAny<GetPreSignedUrlRequest>()), Times.Once);
+		}
+
+		[Test]
 		public async Task upload_async_should_treat_format_exception_as_success_when_object_exists_after_upload()
 		{
 			var s3Client = new Mock<IAmazonS3>(MockBehavior.Strict);
@@ -91,15 +124,39 @@ namespace Resgrid.Tests.Web.Tts
 				.ThrowsAsync(new FormatException("bad metadata expiration header"));
 			s3Client
 				.Setup(x => x.GetPreSignedURL(It.IsAny<GetPreSignedUrlRequest>()))
-				.Returns("https://upload.example.com/tts/audio.wav?signature=metadata-format");
+				.Returns<GetPreSignedUrlRequest>(request =>
+				{
+					request.BucketName.Should().Be("tts-bucket");
+					request.Key.Should().Be("tts/audio.wav");
 
+					return request.Verb switch
+					{
+						HttpVerb.HEAD => "https://upload.example.com/tts/audio.wav?signature=metadata-head",
+						HttpVerb.PUT => "https://upload.example.com/tts/audio.wav?signature=metadata-put",
+						_ => throw new AssertionException($"Unexpected presigned verb {request.Verb}")
+					};
+				});
+
+			var headRequests = 0;
+			var putRequests = 0;
 			var handler = new RecordingHttpMessageHandler(async (request, cancellationToken) =>
 			{
+				request.RequestUri.Should().NotBeNull();
+
+				if (request.Method == HttpMethod.Head)
+				{
+					headRequests++;
+					request.RequestUri.Should().Be(new Uri("https://upload.example.com/tts/audio.wav?signature=metadata-head"));
+					return new HttpResponseMessage(HttpStatusCode.NotFound);
+				}
+
+				putRequests++;
+				request.Method.Should().Be(HttpMethod.Put);
+				request.RequestUri.Should().Be(new Uri("https://upload.example.com/tts/audio.wav?signature=metadata-put"));
+
 				var body = await request.Content!.ReadAsByteArrayAsync(cancellationToken);
 				body.Should().Equal(2, 4, 6, 8);
-				request.Method.Should().Be(HttpMethod.Put);
-				request.RequestUri.Should().Be(new Uri("https://upload.example.com/tts/audio.wav?signature=metadata-format"));
-				request.Content!.Headers.ContentType!.MediaType.Should().Be("audio/wav");
+				request.Content.Headers.ContentType!.MediaType.Should().Be("audio/wav");
 
 				return new HttpResponseMessage(HttpStatusCode.OK);
 			});
@@ -109,9 +166,12 @@ namespace Resgrid.Tests.Web.Tts
 
 			await service.UploadAsync("tts/audio.wav", content, "audio/wav", CancellationToken.None);
 
-			handler.Requests.Should().HaveCount(1);
+			headRequests.Should().Be(1);
+			putRequests.Should().Be(1);
+			handler.Requests.Should().HaveCount(2);
 			s3Client.Verify(x => x.GetObjectMetadataAsync(It.IsAny<GetObjectMetadataRequest>(), It.IsAny<CancellationToken>()), Times.Once);
-			s3Client.Verify(x => x.GetPreSignedURL(It.IsAny<GetPreSignedUrlRequest>()), Times.Once);
+			s3Client.Verify(x => x.GetPreSignedURL(It.Is<GetPreSignedUrlRequest>(request => request.Verb == HttpVerb.HEAD)), Times.Once);
+			s3Client.Verify(x => x.GetPreSignedURL(It.Is<GetPreSignedUrlRequest>(request => request.Verb == HttpVerb.PUT)), Times.Once);
 		}
 
 		[Test]

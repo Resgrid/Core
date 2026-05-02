@@ -12,6 +12,7 @@ using Resgrid.Services;
 namespace Resgrid.Tests.Services
 {
 	[TestFixture]
+	[NonParallelizable]
 	public class DepartmentSettingsServiceTtsLanguageTests
 	{
 		private Mock<IDepartmentSettingsRepository> _departmentSettingsRepository;

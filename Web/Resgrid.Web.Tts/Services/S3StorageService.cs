@@ -52,6 +52,15 @@ namespace Resgrid.Web.Tts.Services
 			{
 				return false;
 			}
+			catch (FormatException ex)
+			{
+				_logger.LogWarning(
+					ex,
+					"The S3 client could not parse the metadata response for {ObjectKey}. Falling back to a presigned HEAD request.",
+					objectKey);
+
+				return await ExistsWithPresignedHeadAsync(objectKey, cancellationToken);
+			}
 		}
 
 		public async Task UploadAsync(string objectKey, Stream content, string contentType, CancellationToken cancellationToken)
@@ -228,6 +237,69 @@ namespace Resgrid.Web.Tts.Services
 			}
 
 			throw new InvalidOperationException($"Presigned PUT upload retry loop terminated unexpectedly for {objectKey}.");
+		}
+
+		private string CreatePresignedHeadUrl(string objectKey)
+		{
+			return _s3Client.GetPreSignedURL(new GetPreSignedUrlRequest
+			{
+				BucketName = _options.Bucket,
+				Key = objectKey,
+				Verb = HttpVerb.HEAD,
+				Expires = DateTime.UtcNow.AddMinutes(PresignedPutUrlExpiryMinutes)
+			});
+		}
+
+		private async Task<bool> ExistsWithPresignedHeadAsync(string objectKey, CancellationToken cancellationToken)
+		{
+			var client = _httpClientFactory.CreateClient(nameof(S3StorageService));
+
+			for (var attempt = 1; attempt <= MaxRetryAttempts; attempt++)
+			{
+				using var request = new HttpRequestMessage(HttpMethod.Head, CreatePresignedHeadUrl(objectKey));
+
+				try
+				{
+					using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+
+					if (response.StatusCode == HttpStatusCode.NotFound)
+					{
+						return false;
+					}
+
+					if (response.IsSuccessStatusCode)
+					{
+						return true;
+					}
+
+					var exception = new HttpRequestException(
+						$"Presigned HEAD existence check for {objectKey} failed with status code {(int)response.StatusCode}.",
+						null,
+						response.StatusCode);
+
+					if (attempt < MaxRetryAttempts && IsTransientStatusCode(response.StatusCode))
+					{
+						await DelayRetryAsync($"checking existence of {objectKey} via presigned HEAD", attempt, exception, cancellationToken);
+						continue;
+					}
+
+					response.EnsureSuccessStatusCode();
+				}
+				catch (HttpRequestException ex) when (attempt < MaxRetryAttempts && (!ex.StatusCode.HasValue || IsTransientStatusCode(ex.StatusCode.Value)))
+				{
+					await DelayRetryAsync($"checking existence of {objectKey} via presigned HEAD", attempt, ex, cancellationToken);
+				}
+				catch (IOException ex) when (attempt < MaxRetryAttempts)
+				{
+					await DelayRetryAsync($"checking existence of {objectKey} via presigned HEAD", attempt, ex, cancellationToken);
+				}
+				catch (TaskCanceledException ex) when (!cancellationToken.IsCancellationRequested && attempt < MaxRetryAttempts)
+				{
+					await DelayRetryAsync($"checking existence of {objectKey} via presigned HEAD", attempt, ex, cancellationToken);
+				}
+			}
+
+			throw new InvalidOperationException($"Presigned HEAD existence check retry loop terminated unexpectedly for {objectKey}.");
 		}
 
 		private string CreatePresignedPutUrl(string objectKey, string contentType)

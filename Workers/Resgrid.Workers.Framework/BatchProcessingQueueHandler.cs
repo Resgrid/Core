@@ -48,7 +48,7 @@ namespace Resgrid.Workers.Framework
 					{
 						while (true)
 						{
-							this.Cycle(batchCommand);
+							var result = this.Cycle(batchCommand).Result;
 						}
 					},
 					TaskCreationOptions.LongRunning);
@@ -64,7 +64,7 @@ namespace Resgrid.Workers.Framework
 				do
 				{
 					var messages = await this.queue.GetItems(32);
-					ProcessMessages(this.queue, messages, batchCommand.Run);
+					await ProcessMessages(this.queue, messages, batchCommand.Run);
 
 					continueProcessing = messages.Count() > 0;
 				}

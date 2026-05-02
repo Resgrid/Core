@@ -33,7 +33,7 @@ namespace Resgrid.Tests.Web.Tts
 				_audioProcessingService.Object,
 				Options.Create(new TtsOptions
 				{
-					DefaultVoice = "en-us+f3",
+					DefaultVoice = "en-us+klatt6",
 					DefaultSpeed = 175,
 					MaxConcurrentGenerations = 2,
 					MaxTextLength = 500
@@ -47,7 +47,7 @@ namespace Resgrid.Tests.Web.Tts
 			var cachedUri = new Uri("https://cdn.example.com/tts/abc123.wav");
 
 			_cacheService
-				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en-us+f3", 175))
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en-us+klatt6", 175))
 				.Returns(CacheKey);
 			_cacheService
 				.Setup(x => x.TryGetCachedUrlAsync(CacheKey, It.IsAny<CancellationToken>()))
@@ -59,7 +59,7 @@ namespace Resgrid.Tests.Web.Tts
 			result.Hash.Should().Be(CacheKey.Hash);
 			result.ObjectKey.Should().Be(CacheKey.ObjectKey);
 			result.Url.Should().Be(cachedUri.ToString());
-			result.Voice.Should().Be("en-us+f3");
+			result.Voice.Should().Be("en-us+klatt6");
 			result.Speed.Should().Be(175);
 
 			_audioProcessingService.Verify(
@@ -77,14 +77,14 @@ namespace Resgrid.Tests.Web.Tts
 			var objectUri = new Uri("https://cdn.example.com/tts/abc123.wav");
 
 			_cacheService
-				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en-us+f3", 175))
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en-us+klatt6", 175))
 				.Returns(CacheKey);
 			_cacheService
 				.SetupSequence(x => x.TryGetCachedUrlAsync(CacheKey, It.IsAny<CancellationToken>()))
 				.ReturnsAsync((Uri)null)
 				.ReturnsAsync((Uri)null);
 			_audioProcessingService
-				.Setup(x => x.GenerateNormalizedWavAsync("Press 1 for yes", "en-us+f3", 175, It.IsAny<CancellationToken>()))
+				.Setup(x => x.GenerateNormalizedWavAsync("Press 1 for yes", "en-us+klatt6", 175, It.IsAny<CancellationToken>()))
 				.ReturnsAsync(audioBytes);
 			_cacheService
 				.Setup(x => x.StoreAsync(CacheKey, It.Is<byte[]>(bytes => bytes.SequenceEqual(audioBytes)), It.IsAny<CancellationToken>()))
@@ -94,15 +94,63 @@ namespace Resgrid.Tests.Web.Tts
 
 			result.Cached.Should().BeFalse();
 			result.Url.Should().Be(objectUri.ToString());
-			result.Voice.Should().Be("en-us+f3");
+			result.Voice.Should().Be("en-us+klatt6");
 			result.Speed.Should().Be(175);
 
 			_audioProcessingService.Verify(
-				x => x.GenerateNormalizedWavAsync("Press 1 for yes", "en-us+f3", 175, It.IsAny<CancellationToken>()),
+				x => x.GenerateNormalizedWavAsync("Press 1 for yes", "en-us+klatt6", 175, It.IsAny<CancellationToken>()),
 				Times.Once);
 			_cacheService.Verify(
 				x => x.StoreAsync(CacheKey, It.Is<byte[]>(bytes => bytes.SequenceEqual(audioBytes)), It.IsAny<CancellationToken>()),
 				Times.Once);
+		}
+
+		[Test]
+		public async Task generate_async_should_apply_configured_klatt_variant_to_requested_language()
+		{
+			var cachedUri = new Uri("https://cdn.example.com/tts/xyz789.wav");
+			var cacheKey = new TtsCacheKey("xyz789", "tts/xyz789.wav");
+
+			_cacheService
+				.Setup(x => x.CreateCacheKey("Bonjour", "fr+klatt6", 175))
+				.Returns(cacheKey);
+			_cacheService
+				.Setup(x => x.TryGetCachedUrlAsync(cacheKey, It.IsAny<CancellationToken>()))
+				.ReturnsAsync(cachedUri);
+
+			var result = await _service.GenerateAsync(new TtsRequest { Text = "Bonjour", Voice = "fr" }, CancellationToken.None);
+
+			result.Cached.Should().BeTrue();
+			result.Voice.Should().Be("fr+klatt6");
+			result.Url.Should().Be(cachedUri.ToString());
+
+			_audioProcessingService.Verify(
+				x => x.GenerateNormalizedWavAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<CancellationToken>()),
+				Times.Never);
+		}
+
+		[Test]
+		public async Task generate_async_should_replace_legacy_f3_voice_with_configured_klatt_variant()
+		{
+			var cachedUri = new Uri("https://cdn.example.com/tts/legacy.wav");
+			var cacheKey = new TtsCacheKey("legacy", "tts/legacy.wav");
+
+			_cacheService
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en-us+klatt6", 175))
+				.Returns(cacheKey);
+			_cacheService
+				.Setup(x => x.TryGetCachedUrlAsync(cacheKey, It.IsAny<CancellationToken>()))
+				.ReturnsAsync(cachedUri);
+
+			var result = await _service.GenerateAsync(new TtsRequest { Text = "Press 1 for yes", Voice = "en-us+f3" }, CancellationToken.None);
+
+			result.Cached.Should().BeTrue();
+			result.Voice.Should().Be("en-us+klatt6");
+			result.Url.Should().Be(cachedUri.ToString());
+
+			_audioProcessingService.Verify(
+				x => x.GenerateNormalizedWavAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<CancellationToken>()),
+				Times.Never);
 		}
 
 		[Test]
@@ -124,7 +172,7 @@ namespace Resgrid.Tests.Web.Tts
 			var cacheLookupCount = 0;
 
 			_cacheService
-				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en-us+f3", 175))
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en-us+klatt6", 175))
 				.Returns(CacheKey);
 			_cacheService
 				.Setup(x => x.TryGetCachedUrlAsync(CacheKey, It.IsAny<CancellationToken>()))
@@ -134,7 +182,7 @@ namespace Resgrid.Tests.Web.Tts
 					return Task.FromResult<Uri?>(attempt < 4 ? null : objectUri);
 				});
 			_audioProcessingService
-				.Setup(x => x.GenerateNormalizedWavAsync("Press 1 for yes", "en-us+f3", 175, It.IsAny<CancellationToken>()))
+				.Setup(x => x.GenerateNormalizedWavAsync("Press 1 for yes", "en-us+klatt6", 175, It.IsAny<CancellationToken>()))
 				.Returns(async () =>
 				{
 					generationStarted.TrySetResult(true);
@@ -158,7 +206,7 @@ namespace Resgrid.Tests.Web.Tts
 			responses.Count(response => response.Cached).Should().Be(1);
 			responses.Count(response => !response.Cached).Should().Be(1);
 			_audioProcessingService.Verify(
-				x => x.GenerateNormalizedWavAsync("Press 1 for yes", "en-us+f3", 175, It.IsAny<CancellationToken>()),
+				x => x.GenerateNormalizedWavAsync("Press 1 for yes", "en-us+klatt6", 175, It.IsAny<CancellationToken>()),
 				Times.Once);
 			_cacheService.Verify(
 				x => x.StoreAsync(CacheKey, It.Is<byte[]>(bytes => bytes.SequenceEqual(audioBytes)), It.IsAny<CancellationToken>()),

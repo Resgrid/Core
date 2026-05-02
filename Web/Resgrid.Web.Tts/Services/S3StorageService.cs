@@ -65,43 +65,24 @@ namespace Resgrid.Web.Tts.Services
 
 		public async Task UploadAsync(string objectKey, Stream content, string contentType, CancellationToken cancellationToken)
 		{
-			MemoryStream? bufferedContent = null;
-			var uploadContent = content;
-
-			if (!content.CanSeek)
-			{
-				bufferedContent = new MemoryStream();
-				await content.CopyToAsync(bufferedContent, cancellationToken);
-				bufferedContent.Position = 0;
-				uploadContent = bufferedContent;
-			}
+			var payload = await ReadContentBytesAsync(content, cancellationToken);
 
 			try
 			{
-				try
-				{
-					await ExecuteWithRetryAsync(
-						() => UploadWithSdkAsync(objectKey, uploadContent, contentType, cancellationToken),
-						$"uploading {objectKey}",
-						cancellationToken);
-				}
-				catch (FormatException ex)
-				{
-					await HandleMalformedPutResponseAsync(objectKey, uploadContent, contentType, ex, cancellationToken);
-				}
+				await ExecuteWithRetryAsync(
+					() => UploadWithSdkAsync(objectKey, payload, contentType, cancellationToken),
+					$"uploading {objectKey}",
+					cancellationToken);
 			}
-			finally
+			catch (FormatException ex)
 			{
-				if (bufferedContent is not null)
-				{
-					await bufferedContent.DisposeAsync();
-				}
+				await HandleMalformedPutResponseAsync(objectKey, payload, contentType, ex, cancellationToken);
 			}
 		}
 
 		private async Task HandleMalformedPutResponseAsync(
 			string objectKey,
-			Stream content,
+			byte[] payload,
 			string contentType,
 			FormatException exception,
 			CancellationToken cancellationToken)
@@ -119,7 +100,7 @@ namespace Resgrid.Web.Tts.Services
 				return;
 			}
 
-			await UploadWithPresignedUrlAsync(objectKey, content, contentType, cancellationToken);
+			await UploadWithPresignedUrlAsync(objectKey, payload, contentType, cancellationToken);
 		}
 
 		private async Task<bool> WasUploadPersistedAsync(string objectKey, CancellationToken cancellationToken)
@@ -167,28 +148,22 @@ namespace Resgrid.Web.Tts.Services
 			return false;
 		}
 
-		private Task<PutObjectResponse> UploadWithSdkAsync(string objectKey, Stream content, string contentType, CancellationToken cancellationToken)
+		private Task<PutObjectResponse> UploadWithSdkAsync(string objectKey, byte[] payload, string contentType, CancellationToken cancellationToken)
 		{
-			if (content.CanSeek)
-			{
-				content.Position = 0;
-			}
-
 			return _s3Client.PutObjectAsync(
 				new PutObjectRequest
 				{
 					BucketName = _options.Bucket,
 					Key = objectKey,
-					InputStream = content,
+					InputStream = new MemoryStream(payload, writable: false),
 					ContentType = contentType
 				},
 				cancellationToken);
 		}
 
-		private async Task UploadWithPresignedUrlAsync(string objectKey, Stream content, string contentType, CancellationToken cancellationToken)
+		private async Task UploadWithPresignedUrlAsync(string objectKey, byte[] payload, string contentType, CancellationToken cancellationToken)
 		{
 			var client = _httpClientFactory.CreateClient(nameof(S3StorageService));
-			var payload = await ReadContentBytesAsync(content, cancellationToken);
 
 			for (var attempt = 1; attempt <= MaxRetryAttempts; attempt++)
 			{
@@ -246,6 +221,7 @@ namespace Resgrid.Web.Tts.Services
 				BucketName = _options.Bucket,
 				Key = objectKey,
 				Verb = HttpVerb.HEAD,
+				Protocol = GetPresignedUrlProtocol(),
 				Expires = DateTime.UtcNow.AddMinutes(PresignedPutUrlExpiryMinutes)
 			});
 		}
@@ -309,6 +285,7 @@ namespace Resgrid.Web.Tts.Services
 				BucketName = _options.Bucket,
 				Key = objectKey,
 				Verb = HttpVerb.PUT,
+				Protocol = GetPresignedUrlProtocol(),
 				ContentType = contentType,
 				Expires = DateTime.UtcNow.AddMinutes(PresignedPutUrlExpiryMinutes)
 			});
@@ -377,6 +354,7 @@ namespace Resgrid.Web.Tts.Services
 				{
 					BucketName = _options.Bucket,
 					Key = objectKey,
+					Protocol = GetPresignedUrlProtocol(),
 					Expires = DateTime.UtcNow.AddMinutes(_options.PresignedUrlExpiryMinutes)
 				});
 
@@ -448,6 +426,24 @@ namespace Resgrid.Web.Tts.Services
 			return exception.StatusCode == HttpStatusCode.NotFound
 				   || string.Equals(exception.ErrorCode, "NoSuchKey", StringComparison.OrdinalIgnoreCase)
 				   || string.Equals(exception.ErrorCode, "NotFound", StringComparison.OrdinalIgnoreCase);
+		}
+
+		private Protocol GetPresignedUrlProtocol()
+		{
+			if (Uri.TryCreate(_options.Endpoint, UriKind.Absolute, out var endpointUri))
+			{
+				if (string.Equals(endpointUri.Scheme, Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase))
+				{
+					return Protocol.HTTP;
+				}
+
+				if (string.Equals(endpointUri.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase))
+				{
+					return Protocol.HTTPS;
+				}
+			}
+
+			return _options.UseSsl ? Protocol.HTTPS : Protocol.HTTP;
 		}
 
 		private Uri BuildDirectObjectUrl(string objectKey)

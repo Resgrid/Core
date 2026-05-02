@@ -53,7 +53,7 @@ namespace Resgrid.Workers.Framework
 						///while (command.Continue)
 						while (!token.IsCancellationRequested)
 						{
-							this.Cycle(command);
+							var result = this.Cycle(command).Result;
 						}
 
 						queue.Clear();

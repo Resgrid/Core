@@ -37,7 +37,6 @@ namespace Resgrid.Model
 			new TtsVoiceOption("da", "Danish"),
 			new TtsVoiceOption("nl", "Dutch"),
 			new TtsVoiceOption("en-us", "English", "American"),
-			new TtsVoiceOption("en-us+f3", "English", "American Female 3"),
 			new TtsVoiceOption("en", "English", "British"),
 			new TtsVoiceOption("en-029", "English", "Caribbean"),
 			new TtsVoiceOption("en-gb-x-gbclan", "English", "Lancastrian"),
@@ -141,7 +140,7 @@ namespace Resgrid.Model
 
 		private static readonly Dictionary<string, TtsVoiceOption> VoiceLookup = VoicesInternal.ToDictionary(x => x.Identifier, StringComparer.OrdinalIgnoreCase);
 
-		public const string DefaultIdentifier = "en-us+f3";
+		public const string DefaultIdentifier = "en-us";
 
 		public static IReadOnlyList<TtsVoiceOption> Voices => VoicesInternal;
 
@@ -149,10 +148,7 @@ namespace Resgrid.Model
 		{
 			normalizedVoice = null;
 
-			if (string.IsNullOrWhiteSpace(voice))
-				return false;
-
-			if (!VoiceLookup.TryGetValue(voice.Trim(), out var option))
+			if (!TryGetOption(voice, out var option))
 				return false;
 
 			normalizedVoice = option.Identifier;
@@ -174,7 +170,15 @@ namespace Resgrid.Model
 			if (string.IsNullOrWhiteSpace(voice))
 				return false;
 
-			return VoiceLookup.TryGetValue(voice.Trim(), out option);
+			var normalizedVoice = GetBaseIdentifier(voice);
+			return VoiceLookup.TryGetValue(normalizedVoice, out option);
+		}
+
+		private static string GetBaseIdentifier(string voice)
+		{
+			var trimmedVoice = voice.Trim();
+			var variantSeparatorIndex = trimmedVoice.IndexOf('+');
+			return variantSeparatorIndex <= 0 ? trimmedVoice : trimmedVoice[..variantSeparatorIndex];
 		}
 	}
 

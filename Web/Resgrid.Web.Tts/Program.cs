@@ -29,6 +29,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpClient();
 builder.Services.AddTtsConfiguration();
 builder.Services.Configure<ForwardedHeadersOptions>(TtsRequestIdentity.ConfigureForwardedHeaders);
 builder.Services.AddHealthChecks()

@@ -5,25 +5,30 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Resgrid.Web.Tts.Configuration;
 using System.Net;
+using System.Net.Http;
 
 namespace Resgrid.Web.Tts.Services
 {
 	public sealed class S3StorageService : IStorageService
 	{
 		private const int MaxRetryAttempts = 3;
+		private const int PresignedPutUrlExpiryMinutes = 5;
 
 		private readonly IAmazonS3 _s3Client;
 		private readonly S3StorageOptions _options;
 		private readonly ILogger<S3StorageService> _logger;
+		private readonly IHttpClientFactory _httpClientFactory;
 
 		public S3StorageService(
 			IAmazonS3 s3Client,
 			IOptions<S3StorageOptions> options,
-			ILogger<S3StorageService> logger)
+			ILogger<S3StorageService> logger,
+			IHttpClientFactory httpClientFactory)
 		{
 			_s3Client = s3Client;
 			_options = options.Value;
 			_logger = logger;
+			_httpClientFactory = httpClientFactory;
 		}
 
 		public async Task<bool> ExistsAsync(string objectKey, CancellationToken cancellationToken)
@@ -64,26 +69,17 @@ namespace Resgrid.Web.Tts.Services
 
 			try
 			{
-				await ExecuteWithRetryAsync(
-					() =>
-					{
-						if (uploadContent.CanSeek)
-						{
-							uploadContent.Position = 0;
-						}
-
-						return _s3Client.PutObjectAsync(
-							new PutObjectRequest
-							{
-								BucketName = _options.Bucket,
-								Key = objectKey,
-								InputStream = uploadContent,
-								ContentType = contentType
-							},
-							cancellationToken);
-					},
-					$"uploading {objectKey}",
-					cancellationToken);
+				try
+				{
+					await ExecuteWithRetryAsync(
+						() => UploadWithSdkAsync(objectKey, uploadContent, contentType, cancellationToken),
+						$"uploading {objectKey}",
+						cancellationToken);
+				}
+				catch (FormatException ex)
+				{
+					await HandleMalformedPutResponseAsync(objectKey, uploadContent, contentType, ex, cancellationToken);
+				}
 			}
 			finally
 			{
@@ -92,6 +88,156 @@ namespace Resgrid.Web.Tts.Services
 					await bufferedContent.DisposeAsync();
 				}
 			}
+		}
+
+		private async Task HandleMalformedPutResponseAsync(
+			string objectKey,
+			Stream content,
+			string contentType,
+			FormatException exception,
+			CancellationToken cancellationToken)
+		{
+			_logger.LogWarning(
+				exception,
+				"The S3 client could not parse the PUT response for {ObjectKey}. Checking if the object was stored before falling back to a presigned PUT upload.",
+				objectKey);
+
+			if (await WasUploadPersistedAsync(objectKey, cancellationToken))
+			{
+				_logger.LogInformation(
+					"Treating upload of {ObjectKey} as successful because the object exists after the response parsing failure.",
+					objectKey);
+				return;
+			}
+
+			await UploadWithPresignedUrlAsync(objectKey, content, contentType, cancellationToken);
+		}
+
+		private async Task<bool> WasUploadPersistedAsync(string objectKey, CancellationToken cancellationToken)
+		{
+			try
+			{
+				return await ExistsAsync(objectKey, cancellationToken);
+			}
+			catch (AmazonServiceException ex)
+			{
+				_logger.LogWarning(
+					ex,
+					"Unable to verify whether {ObjectKey} exists after the PUT response parsing failure. Falling back to a presigned PUT upload.",
+					objectKey);
+			}
+			catch (HttpRequestException ex)
+			{
+				_logger.LogWarning(
+					ex,
+					"Unable to verify whether {ObjectKey} exists after the PUT response parsing failure due to connectivity. Falling back to a presigned PUT upload.",
+					objectKey);
+			}
+			catch (IOException ex)
+			{
+				_logger.LogWarning(
+					ex,
+					"Unable to verify whether {ObjectKey} exists after the PUT response parsing failure due to IO. Falling back to a presigned PUT upload.",
+					objectKey);
+			}
+
+			return false;
+		}
+
+		private Task<PutObjectResponse> UploadWithSdkAsync(string objectKey, Stream content, string contentType, CancellationToken cancellationToken)
+		{
+			if (content.CanSeek)
+			{
+				content.Position = 0;
+			}
+
+			return _s3Client.PutObjectAsync(
+				new PutObjectRequest
+				{
+					BucketName = _options.Bucket,
+					Key = objectKey,
+					InputStream = content,
+					ContentType = contentType
+				},
+				cancellationToken);
+		}
+
+		private async Task UploadWithPresignedUrlAsync(string objectKey, Stream content, string contentType, CancellationToken cancellationToken)
+		{
+			var client = _httpClientFactory.CreateClient(nameof(S3StorageService));
+			var payload = await ReadContentBytesAsync(content, cancellationToken);
+
+			for (var attempt = 1; attempt <= MaxRetryAttempts; attempt++)
+			{
+				using var request = new HttpRequestMessage(HttpMethod.Put, CreatePresignedPutUrl(objectKey, contentType));
+				request.Content = new ByteArrayContent(payload);
+
+				if (!string.IsNullOrWhiteSpace(contentType))
+				{
+					request.Content.Headers.TryAddWithoutValidation("Content-Type", contentType);
+				}
+
+				try
+				{
+					using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+
+					if (response.IsSuccessStatusCode)
+					{
+						return;
+					}
+
+					var exception = new HttpRequestException(
+						$"Presigned PUT upload for {objectKey} failed with status code {(int)response.StatusCode}.",
+						null,
+						response.StatusCode);
+
+					if (attempt < MaxRetryAttempts && IsTransientStatusCode(response.StatusCode))
+					{
+						await DelayRetryAsync($"uploading {objectKey} via presigned PUT", attempt, exception, cancellationToken);
+						continue;
+					}
+
+					response.EnsureSuccessStatusCode();
+				}
+				catch (HttpRequestException ex) when (attempt < MaxRetryAttempts && (!ex.StatusCode.HasValue || IsTransientStatusCode(ex.StatusCode.Value)))
+				{
+					await DelayRetryAsync($"uploading {objectKey} via presigned PUT", attempt, ex, cancellationToken);
+				}
+				catch (IOException ex) when (attempt < MaxRetryAttempts)
+				{
+					await DelayRetryAsync($"uploading {objectKey} via presigned PUT", attempt, ex, cancellationToken);
+				}
+				catch (TaskCanceledException ex) when (!cancellationToken.IsCancellationRequested && attempt < MaxRetryAttempts)
+				{
+					await DelayRetryAsync($"uploading {objectKey} via presigned PUT", attempt, ex, cancellationToken);
+				}
+			}
+
+			throw new InvalidOperationException($"Presigned PUT upload retry loop terminated unexpectedly for {objectKey}.");
+		}
+
+		private string CreatePresignedPutUrl(string objectKey, string contentType)
+		{
+			return _s3Client.GetPreSignedURL(new GetPreSignedUrlRequest
+			{
+				BucketName = _options.Bucket,
+				Key = objectKey,
+				Verb = HttpVerb.PUT,
+				ContentType = contentType,
+				Expires = DateTime.UtcNow.AddMinutes(PresignedPutUrlExpiryMinutes)
+			});
+		}
+
+		private static async Task<byte[]> ReadContentBytesAsync(Stream content, CancellationToken cancellationToken)
+		{
+			if (content.CanSeek)
+			{
+				content.Position = 0;
+			}
+
+			using var memoryStream = new MemoryStream();
+			await content.CopyToAsync(memoryStream, cancellationToken);
+			return memoryStream.ToArray();
 		}
 
 		public async Task<TtsAudioContent?> GetObjectAsync(string objectKey, CancellationToken cancellationToken)
@@ -199,10 +345,16 @@ namespace Resgrid.Web.Tts.Services
 
 		private bool IsTransient(AmazonServiceException exception)
 		{
-			return exception.StatusCode == HttpStatusCode.RequestTimeout
-				   || (int)exception.StatusCode >= 500
+			return IsTransientStatusCode(exception.StatusCode)
 				   || exception.InnerException is HttpRequestException
 				   || exception.InnerException is IOException;
+		}
+
+		private static bool IsTransientStatusCode(HttpStatusCode statusCode)
+		{
+			return statusCode == HttpStatusCode.RequestTimeout
+				   || statusCode == HttpStatusCode.TooManyRequests
+				   || (int)statusCode >= 500;
 		}
 
 		private static bool IsNotFound(AmazonS3Exception exception)

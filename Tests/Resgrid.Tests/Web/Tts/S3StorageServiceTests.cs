@@ -80,6 +80,41 @@ namespace Resgrid.Tests.Web.Tts
 		}
 
 		[Test]
+		public async Task upload_async_should_fall_back_to_presigned_put_when_metadata_check_times_out()
+		{
+			var s3Client = new Mock<IAmazonS3>(MockBehavior.Strict);
+			s3Client
+				.Setup(x => x.PutObjectAsync(It.IsAny<PutObjectRequest>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new FormatException("bad expiration header"));
+			s3Client
+				.Setup(x => x.GetObjectMetadataAsync(It.IsAny<GetObjectMetadataRequest>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new TaskCanceledException("metadata timeout"));
+			s3Client
+				.Setup(x => x.GetPreSignedURL(It.IsAny<GetPreSignedUrlRequest>()))
+				.Returns("https://upload.example.com/tts/audio.wav?signature=timeout");
+
+			var handler = new RecordingHttpMessageHandler(async (request, cancellationToken) =>
+			{
+				var body = await request.Content!.ReadAsByteArrayAsync(cancellationToken);
+				body.Should().Equal(6, 7, 8, 9);
+				request.Method.Should().Be(HttpMethod.Put);
+				request.RequestUri.Should().Be(new Uri("https://upload.example.com/tts/audio.wav?signature=timeout"));
+				request.Content!.Headers.ContentType!.MediaType.Should().Be("audio/wav");
+
+				return new HttpResponseMessage(HttpStatusCode.OK);
+			});
+			var service = CreateService(s3Client.Object, handler);
+
+			await using var content = new MemoryStream(new byte[] { 6, 7, 8, 9 }, writable: false);
+
+			await service.UploadAsync("tts/audio.wav", content, "audio/wav", CancellationToken.None);
+
+			handler.Requests.Should().HaveCount(1);
+			s3Client.Verify(x => x.GetObjectMetadataAsync(It.IsAny<GetObjectMetadataRequest>(), It.IsAny<CancellationToken>()), Times.Once);
+			s3Client.Verify(x => x.GetPreSignedURL(It.IsAny<GetPreSignedUrlRequest>()), Times.Once);
+		}
+
+		[Test]
 		public async Task upload_async_should_fall_back_to_presigned_put_when_put_response_is_malformed_and_object_is_missing()
 		{
 			var s3Client = new Mock<IAmazonS3>(MockBehavior.Strict);

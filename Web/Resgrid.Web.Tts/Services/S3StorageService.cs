@@ -133,6 +133,13 @@ namespace Resgrid.Web.Tts.Services
 					"Unable to verify whether {ObjectKey} exists after the PUT response parsing failure due to connectivity. Falling back to a presigned PUT upload.",
 					objectKey);
 			}
+			catch (TaskCanceledException ex) when (!cancellationToken.IsCancellationRequested)
+			{
+				_logger.LogWarning(
+					ex,
+					"Unable to verify whether {ObjectKey} exists after the PUT response parsing failure due to timeout. Falling back to a presigned PUT upload.",
+					objectKey);
+			}
 			catch (IOException ex)
 			{
 				_logger.LogWarning(

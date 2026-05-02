@@ -490,86 +490,15 @@ namespace Resgrid.Web.Services.Controllers
 				return CreateVoiceContentResult(response);
 			}
 
-			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(call.DepartmentId);
-
-			if (call.Attachments != null &&
-				call.Attachments.Count(x => x.CallAttachmentType == (int)CallAttachmentTypes.DispatchAudio) > 0)
-			{
-				var audio = call.Attachments.FirstOrDefault(x =>
-					x.CallAttachmentType == (int)CallAttachmentTypes.DispatchAudio);
-
-				if (audio != null)
-				{
-					var url = await _callsService.GetShortenedAudioUrlAsync(call.CallId, audio.CallAttachmentId);
-
-					Play playResponse = new Play();
-					playResponse.Url = new Uri(url);
-
-					StringBuilder sb1 = new StringBuilder();
-					sb1.Append("Press 0 to repeat, Press 1 to respond to the scene");
-
-					for (int i = 0; i < stations.Count; i++)
-					{
-						if (i >= 8)
-							break;
-
-						sb1.Append(string.Format(", press {0} to respond to {1}", i + 2, stations[i].Name));
-					}
-
-					for (int repeat = 0; repeat < 2; repeat++)
-					{
-						var gatherResponse1 = new Gather(numDigits: 1, action: new Uri(string.Format("{0}/api/Twilio/VoiceCallAction?userId={1}&callId={2}", Config.SystemBehaviorConfig.ResgridApiBaseUrl, userId, callId)), method: "GET")
-						{
-							BargeIn = true
-						};
-						await AppendVoicePromptAsync(gatherResponse1, TwilioVoicePromptCatalog.RepeatAndRespondToScene, call.DepartmentId);
-						await AppendVoicePromptsAsync(gatherResponse1, BuildStationOptionPrompts(stations), call.DepartmentId);
-						gatherResponse1.Append(playResponse);
-						response.Append(gatherResponse1);
-					}
-
-					response.Hangup();
-
-					return CreateVoiceContentResult(response);
-				}
-			}
-
-			string address = call.Address;
-			if (String.IsNullOrWhiteSpace(address) && !string.IsNullOrWhiteSpace(call.GeoLocationData) && call.GeoLocationData.Length > 1)
-			{
-				try
-				{
-					string[] points = call.GeoLocationData.Split(char.Parse(","));
-
-					if (points != null && points.Length == 2)
-					{
-						address = await _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
-					}
-				}
-				catch
-				{
-				}
-			}
-
-			if (String.IsNullOrWhiteSpace(address) && !String.IsNullOrWhiteSpace(call.Address))
-				address = call.Address;
-
-			StringBuilder sb = new StringBuilder();
-
-			if (!String.IsNullOrWhiteSpace(address))
-				sb.Append(string.Format("{0}, Priority {1} Address {2} Nature {3}", call.Name, call.GetPriorityText(), call.Address, StringHelpers.StripHtmlTagsCharArray(call.NatureOfCall)));
-			else
-				sb.Append(string.Format("{0}, Priority {1} Nature {2}", call.Name, call.GetPriorityText(), call.NatureOfCall));
+			await AppendDispatchPlaybackAsync(response, call);
 
 			for (int repeat = 0; repeat < 2; repeat++)
 			{
-				var gatherResponse = new Gather(numDigits: 1, action: new Uri(string.Format("{0}/api/Twilio/VoiceCallAction?userId={1}&callId={2}", Config.SystemBehaviorConfig.ResgridApiBaseUrl, userId, callId)), method: "GET")
+				var gatherResponse = new Gather(numDigits: 1, action: new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/VoiceCallAction?userId={userId}&callId={callId}"), method: "GET")
 				{
 					BargeIn = true
 				};
-				await AppendVoicePromptAsync(gatherResponse, sb.ToString(), call.DepartmentId);
-				await AppendVoicePromptAsync(gatherResponse, TwilioVoicePromptCatalog.RepeatAndRespondToScene, call.DepartmentId);
-				await AppendVoicePromptsAsync(gatherResponse, BuildStationOptionPrompts(stations), call.DepartmentId);
+				await AppendVoicePromptAsync(gatherResponse, TwilioVoicePromptCatalog.OutboundDispatchMenu, call.DepartmentId);
 				response.Append(gatherResponse);
 			}
 
@@ -584,24 +513,101 @@ namespace Resgrid.Web.Services.Controllers
 		{
 			var response = new VoiceResponse();
 
-			if (twilioRequest.Digits == "0")
+			if (twilioRequest?.Digits == "1")
 			{
-				response.Redirect(new Uri(string.Format("{0}/api/Twilio/VoiceCall?userId={1}&callId={2}", Config.SystemBehaviorConfig.ResgridApiBaseUrl, userId, callId)), "GET");
+				response.Redirect(new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/VoiceCall?userId={userId}&callId={callId}"), "GET");
+				return CreateVoiceContentResult(response);
 			}
-			else if (twilioRequest.Digits == "1")
-			{
-				var call = await _callsService.GetCallByIdAsync(callId);
-				await _actionLogsService.SetUserActionAsync(userId, call.DepartmentId, (int)ActionTypes.RespondingToScene, null, call.CallId);
 
+			if (twilioRequest?.Digits == "2")
+			{
+				response.Redirect(new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/VoiceCallResponseOptions?userId={userId}&callId={callId}"), "GET");
+				return CreateVoiceContentResult(response);
+			}
+
+			var call = await _callsService.GetCallByIdAsync(callId);
+			await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.InvalidSelection, call?.DepartmentId);
+			response.Redirect(new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/VoiceCall?userId={userId}&callId={callId}"), "GET");
+			return CreateVoiceContentResult(response);
+		}
+
+		[HttpGet("VoiceCallResponseOptions")]
+		[Produces("application/xml")]
+		public async Task<ActionResult> VoiceCallResponseOptions(string userId, int callId)
+		{
+			var response = new VoiceResponse();
+			var call = await _callsService.GetCallByIdAsync(callId);
+
+			if (call == null)
+			{
+				await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.CallClosed);
+				response.Hangup();
+				return CreateVoiceContentResult(response);
+			}
+
+			if (call.State == (int)CallStates.Cancelled || call.State == (int)CallStates.Closed || call.IsDeleted)
+			{
+				await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.CallClosedByNumber(call.Number), call.DepartmentId);
+				response.Hangup();
+				return CreateVoiceContentResult(response);
+			}
+
+			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(call.DepartmentId);
+
+			for (int repeat = 0; repeat < 2; repeat++)
+			{
+				var gatherResponse = new Gather(action: new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/VoiceCallRespond?userId={userId}&callId={callId}"), method: "GET", finishOnKey: "#")
+				{
+					BargeIn = true
+				};
+				await AppendVoicePromptsAsync(gatherResponse, BuildVoiceCallResponseOptionPrompts(stations), call.DepartmentId);
+				response.Append(gatherResponse);
+			}
+
+			response.Hangup();
+
+			return CreateVoiceContentResult(response);
+		}
+
+		[HttpGet("VoiceCallRespond")]
+		[Produces("application/xml")]
+		public async Task<ActionResult> VoiceCallRespond(string userId, int callId, [FromQuery] VoiceRequest twilioRequest)
+		{
+			var response = new VoiceResponse();
+			var call = await _callsService.GetCallByIdAsync(callId);
+
+			if (call == null)
+			{
+				await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.CallClosed);
+				response.Hangup();
+				return CreateVoiceContentResult(response);
+			}
+
+			if (call.State == (int)CallStates.Cancelled || call.State == (int)CallStates.Closed || call.IsDeleted)
+			{
+				await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.CallClosedByNumber(call.Number), call.DepartmentId);
+				response.Hangup();
+				return CreateVoiceContentResult(response);
+			}
+
+			if (twilioRequest?.Digits == "0")
+			{
+				response.Redirect(new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/VoiceCall?userId={userId}&callId={callId}"), "GET");
+				return CreateVoiceContentResult(response);
+			}
+
+			if (twilioRequest?.Digits == "1")
+			{
+				await _actionLogsService.SetUserActionAsync(userId, call.DepartmentId, (int)ActionTypes.RespondingToScene, null, call.CallId);
 				await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.RespondingToScene, call.DepartmentId);
 				response.Hangup();
+				return CreateVoiceContentResult(response);
 			}
-			else if (int.TryParse(twilioRequest.Digits, out var digit))
-			{
-				var call = await _callsService.GetCallByIdAsync(callId);
-				var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(call.DepartmentId);
 
-				int index = digit - 2;
+			if (int.TryParse(twilioRequest?.Digits, out var digit))
+			{
+				var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(call.DepartmentId);
+				var index = digit - 2;
 
 				if (index >= 0 && index < stations.Count)
 				{
@@ -609,21 +615,16 @@ namespace Resgrid.Web.Services.Controllers
 
 					if (station != null)
 					{
-						await _actionLogsService.SetUserActionAsync(userId, call.DepartmentId, (int)ActionTypes.RespondingToStation, null,
-							station.DepartmentGroupId);
-
+						await _actionLogsService.SetUserActionAsync(userId, call.DepartmentId, (int)ActionTypes.RespondingToStation, null, station.DepartmentGroupId);
 						await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.RespondingToStation(station.Name), call.DepartmentId);
 						response.Hangup();
+						return CreateVoiceContentResult(response);
 					}
 				}
 			}
-			else
-			{
-				var call = await _callsService.GetCallByIdAsync(callId);
-				await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.InvalidSelection, call?.DepartmentId);
-				response.Redirect(new Uri(string.Format("{0}/api/Twilio/VoiceCall?userId={1}&callId={2}", Config.SystemBehaviorConfig.ResgridApiBaseUrl, userId, callId)), "GET");
-			}
 
+			await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.InvalidSelection, call.DepartmentId);
+			response.Redirect(new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/VoiceCallResponseOptions?userId={userId}&callId={callId}"), "GET");
 			return CreateVoiceContentResult(response);
 		}
 
@@ -787,7 +788,10 @@ namespace Resgrid.Web.Services.Controllers
 			var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
 
 			var prompts = new List<string>();
-			Gather gatherResponse = null;
+			Uri gatherAction = new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceAction?userId={userId}");
+			string gatherFinishOnKey = null;
+			int? gatherNumDigits = 1;
+			string goBackPrompt = TwilioVoicePromptCatalog.GoBackToMainMenu;
 
 			if (twilioRequest.Digits == "0")
 			{
@@ -887,10 +891,10 @@ namespace Resgrid.Web.Services.Controllers
 					index++;
 				}
 
-				gatherResponse = new Gather(numDigits: 1, action: new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceActionStatus?userId={userId}"), method: "GET")
-				{
-					BargeIn = true
-				};
+				gatherAction = new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceActionStatus?userId={userId}");
+				gatherFinishOnKey = "#";
+				gatherNumDigits = null;
+				goBackPrompt = TwilioVoicePromptCatalog.GoBackToMainMenuWithPound;
 			}
 			else if (twilioRequest.Digits == "7") // Set current staffing
 			{
@@ -908,28 +912,20 @@ namespace Resgrid.Web.Services.Controllers
 					index++;
 				}
 
-				gatherResponse = new Gather(numDigits: 1, action: new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceActionStaffing?userId={userId}"), method: "GET")
-				{
-					BargeIn = true
-				};
-			}
-
-			if (gatherResponse == null)
-			{
-				gatherResponse = new Gather(numDigits: 1, action: new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceAction?userId={userId}"), method: "GET")
-				{
-					BargeIn = true
-				};
+				gatherAction = new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/InboundVoiceActionStaffing?userId={userId}");
+				gatherFinishOnKey = "#";
+				gatherNumDigits = null;
+				goBackPrompt = TwilioVoicePromptCatalog.GoBackToMainMenuWithPound;
 			}
 
 			for (int repeat = 0; repeat < 2; repeat++)
 			{
-				var gather = new Gather(numDigits: 1, action: gatherResponse.Action, method: gatherResponse.Method)
+				var gather = new Gather(action: gatherAction, method: "GET", finishOnKey: gatherFinishOnKey, numDigits: gatherNumDigits)
 				{
 					BargeIn = true
 				};
 				await AppendVoicePromptsAsync(gather, prompts, department.DepartmentId);
-				await AppendVoicePromptAsync(gather, TwilioVoicePromptCatalog.GoBackToMainMenu, department.DepartmentId);
+				await AppendVoicePromptAsync(gather, goBackPrompt, department.DepartmentId);
 				response.Append(gather);
 			}
 
@@ -1059,6 +1055,58 @@ namespace Resgrid.Web.Services.Controllers
 			return ttsLanguage;
 		}
 
+		private async System.Threading.Tasks.Task AppendDispatchPlaybackAsync(VoiceResponse response, Call call)
+		{
+			if (call.Attachments != null)
+			{
+				var audio = call.Attachments.FirstOrDefault(x => x.CallAttachmentType == (int)CallAttachmentTypes.DispatchAudio);
+
+				if (audio != null)
+				{
+					var url = await _callsService.GetShortenedAudioUrlAsync(call.CallId, audio.CallAttachmentId);
+					response.Append(new Play
+					{
+						Url = new Uri(url)
+					});
+					return;
+				}
+			}
+
+			var address = await ResolveCallAddressAsync(call);
+			await AppendVoicePromptAsync(response, BuildDispatchPrompt(call, address), call.DepartmentId);
+		}
+
+		private async Task<string> ResolveCallAddressAsync(Call call)
+		{
+			var address = call.Address;
+
+			if (String.IsNullOrWhiteSpace(address) && !string.IsNullOrWhiteSpace(call.GeoLocationData) && call.GeoLocationData.Length > 1)
+			{
+				try
+				{
+					string[] points = call.GeoLocationData.Split(char.Parse(","));
+
+					if (points != null && points.Length == 2)
+						address = await _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
+				}
+				catch
+				{
+				}
+			}
+
+			return String.IsNullOrWhiteSpace(address) ? call.Address : address;
+		}
+
+		private static string BuildDispatchPrompt(Call call, string address)
+		{
+			var nature = StringHelpers.StripHtmlTagsCharArray(call.NatureOfCall);
+
+			if (!String.IsNullOrWhiteSpace(address))
+				return string.Format("{0}, Priority {1} Address {2} Nature {3}", call.Name, call.GetPriorityText(), address, nature);
+
+			return string.Format("{0}, Priority {1} Nature {2}", call.Name, call.GetPriorityText(), nature);
+		}
+
 		private static ContentResult CreateVoiceContentResult(VoiceResponse response)
 		{
 			return new ContentResult
@@ -1069,12 +1117,26 @@ namespace Resgrid.Web.Services.Controllers
 			};
 		}
 
+		private static IReadOnlyCollection<string> BuildVoiceCallResponseOptionPrompts(IEnumerable<DepartmentGroup> stations)
+		{
+			var prompts = new List<string>
+			{
+				TwilioVoicePromptCatalog.OutboundResponseSelectionIntro,
+				TwilioVoicePromptCatalog.RespondToSceneOption(1)
+			};
+
+			prompts.AddRange(BuildStationOptionPrompts(stations));
+			prompts.Add(TwilioVoicePromptCatalog.RepeatDispatchWithPound);
+
+			return prompts;
+		}
+
 		private static IReadOnlyCollection<string> BuildStationOptionPrompts(IEnumerable<DepartmentGroup> stations)
 		{
 			var prompts = new List<string>();
 			var index = 2;
 
-			foreach (var station in stations.Take(8))
+			foreach (var station in stations)
 			{
 				prompts.Add(TwilioVoicePromptCatalog.RespondToStationOption(index, station.Name));
 				index++;

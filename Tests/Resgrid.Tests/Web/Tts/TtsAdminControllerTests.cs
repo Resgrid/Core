@@ -33,7 +33,7 @@ namespace Resgrid.Tests.Web.Tts
 				.Returns<HttpRequest, string>((_, hash) => new Uri($"https://tts.example.com/tts/audio/{hash}.wav"));
 			_options = new TtsOptions
 			{
-				DefaultVoice = "en-us+f3",
+				DefaultVoice = "en-us+klatt6",
 				DefaultSpeed = 175,
 				StaticPromptAdminKey = "secret-key",
 				PreGeneratedPrompts = new List<string> { "Alpha", "Beta" }
@@ -95,8 +95,8 @@ namespace Resgrid.Tests.Web.Tts
 				.Callback<IEnumerable<TtsRequest>, CancellationToken>((requests, _) => capturedPrompts = requests.ToList())
 				.ReturnsAsync(new[]
 				{
-					new TtsResponse { Hash = "a", ObjectKey = "tts/a.wav", Url = "https://cdn.example.com/tts/a.wav", Voice = "en-us+f3", Speed = 175 },
-					new TtsResponse { Hash = "b", ObjectKey = "tts/b.wav", Url = "https://cdn.example.com/tts/b.wav", Voice = "en-us+f3", Speed = 175 }
+					new TtsResponse { Hash = "a", ObjectKey = "tts/a.wav", Url = "https://cdn.example.com/tts/a.wav", Voice = "en-us+klatt6", Speed = 175 },
+					new TtsResponse { Hash = "b", ObjectKey = "tts/b.wav", Url = "https://cdn.example.com/tts/b.wav", Voice = "en-us+klatt6", Speed = 175 }
 				});
 
 			var controller = BuildController();
@@ -106,7 +106,7 @@ namespace Resgrid.Tests.Web.Tts
 			result.Result.Should().BeOfType<OkObjectResult>();
 			capturedPrompts.Should().HaveCount(2);
 			capturedPrompts!.Select(x => x.Text).Should().Equal("Alpha", "Beta");
-			capturedPrompts.Select(x => x.Voice).Should().OnlyContain(x => x == "en-us+f3");
+			capturedPrompts.Select(x => x.Voice).Should().OnlyContain(x => x == "en-us+klatt6");
 			capturedPrompts.Select(x => x.Speed).Should().OnlyContain(x => x == 175);
 		}
 

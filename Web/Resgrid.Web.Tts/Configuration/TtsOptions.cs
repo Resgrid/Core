@@ -5,7 +5,7 @@ namespace Resgrid.Web.Tts.Configuration
 	public sealed class TtsOptions
 	{
 		[Required]
-		public string DefaultVoice { get; set; } = "en-us+f3";
+		public string DefaultVoice { get; set; } = "en-us+klatt6";
 
 		[Range(80, 450)]
 		public int DefaultSpeed { get; set; } = 175;

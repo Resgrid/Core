@@ -206,9 +206,7 @@ namespace Resgrid.Web.Tts.Services
 				throw new ArgumentException($"Text exceeds the configured maximum length of {_options.MaxTextLength} characters.", nameof(request));
 			}
 
-			var voice = string.IsNullOrWhiteSpace(request.Voice)
-				? _options.DefaultVoice
-				: request.Voice.Trim();
+			var voice = NormalizeVoice(request.Voice);
 			var speed = request.Speed ?? _options.DefaultSpeed;
 
 			if (speed < 80 || speed > 450)
@@ -217,6 +215,42 @@ namespace Resgrid.Web.Tts.Services
 			}
 
 			return new NormalizedTtsRequest(text, voice, speed);
+		}
+
+		private string NormalizeVoice(string? voice)
+		{
+			var configuredDefaultVoice = string.IsNullOrWhiteSpace(_options.DefaultVoice)
+				? "en-us+klatt6"
+				: _options.DefaultVoice.Trim();
+			var requestedVoice = string.IsNullOrWhiteSpace(voice)
+				? configuredDefaultVoice
+				: voice.Trim();
+
+			if (string.Equals(requestedVoice, "en-us+f3", StringComparison.OrdinalIgnoreCase))
+			{
+				return configuredDefaultVoice;
+			}
+
+			if (HasExplicitVariant(requestedVoice))
+			{
+				return requestedVoice;
+			}
+
+			var configuredVariantSuffix = GetVariantSuffix(configuredDefaultVoice);
+			return string.IsNullOrWhiteSpace(configuredVariantSuffix)
+				? requestedVoice
+				: $"{requestedVoice}{configuredVariantSuffix}";
+		}
+
+		private static bool HasExplicitVariant(string voice)
+		{
+			return voice.IndexOf('+') > 0;
+		}
+
+		private static string? GetVariantSuffix(string voice)
+		{
+			var variantSeparatorIndex = voice.IndexOf('+');
+			return variantSeparatorIndex <= 0 ? null : voice[variantSeparatorIndex..];
 		}
 
 		private static TtsResponse CreateResponse(TtsCacheKey cacheKey, NormalizedTtsRequest request, Uri objectUrl, bool cached)

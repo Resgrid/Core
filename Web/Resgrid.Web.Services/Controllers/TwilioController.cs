@@ -509,6 +509,7 @@ namespace Resgrid.Web.Services.Controllers
 
 		[HttpGet("VoiceCallAction")]
 		[Produces("application/xml")]
+		[ValidateRequest]
 		public async Task<ActionResult> VoiceCallAction(string userId, int callId, [FromQuery] VoiceRequest twilioRequest)
 		{
 			var response = new VoiceResponse();
@@ -533,6 +534,7 @@ namespace Resgrid.Web.Services.Controllers
 
 		[HttpGet("VoiceCallResponseOptions")]
 		[Produces("application/xml")]
+		[ValidateRequest]
 		public async Task<ActionResult> VoiceCallResponseOptions(string userId, int callId)
 		{
 			var response = new VoiceResponse();
@@ -571,6 +573,7 @@ namespace Resgrid.Web.Services.Controllers
 
 		[HttpGet("VoiceCallRespond")]
 		[Produces("application/xml")]
+		[ValidateRequest]
 		public async Task<ActionResult> VoiceCallRespond(string userId, int callId, [FromQuery] VoiceRequest twilioRequest)
 		{
 			var response = new VoiceResponse();
@@ -1100,11 +1103,13 @@ namespace Resgrid.Web.Services.Controllers
 		private static string BuildDispatchPrompt(Call call, string address)
 		{
 			var nature = StringHelpers.StripHtmlTagsCharArray(call.NatureOfCall);
+			var prompt = !String.IsNullOrWhiteSpace(address)
+				? string.Format("{0}, Priority {1} Address {2} Nature {3}", call.Name, call.GetPriorityText(), address, nature)
+				: string.Format("{0}, Priority {1} Nature {2}", call.Name, call.GetPriorityText(), nature);
 
-			if (!String.IsNullOrWhiteSpace(address))
-				return string.Format("{0}, Priority {1} Address {2} Nature {3}", call.Name, call.GetPriorityText(), address, nature);
-
-			return string.Format("{0}, Priority {1} Nature {2}", call.Name, call.GetPriorityText(), nature);
+			return prompt.EndsWith(".", StringComparison.Ordinal) || prompt.EndsWith("!", StringComparison.Ordinal) || prompt.EndsWith("?", StringComparison.Ordinal)
+				? prompt
+				: $"{prompt}.";
 		}
 
 		private static ContentResult CreateVoiceContentResult(VoiceResponse response)

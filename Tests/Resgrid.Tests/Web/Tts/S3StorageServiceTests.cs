@@ -343,7 +343,30 @@ namespace Resgrid.Tests.Web.Tts
 			s3Client.Verify(x => x.GetPreSignedURL(It.IsAny<GetPreSignedUrlRequest>()), Times.Once);
 		}
 
-		private static S3StorageService CreateService(IAmazonS3 s3Client, RecordingHttpMessageHandler handler = null, bool useSsl = true)
+		[TestCase("http://rustfs.example.local:9000", true, Protocol.HTTP, "http://download.example.com/tts/audio.wav?signature=endpoint-http")]
+		[TestCase("https://rustfs.example.local:9443", false, Protocol.HTTPS, "https://download.example.com/tts/audio.wav?signature=endpoint-https")]
+		public async Task get_object_url_async_should_prefer_absolute_endpoint_scheme_over_use_ssl(string endpoint, bool useSsl, Protocol expectedProtocol, string presignedUrl)
+		{
+			var s3Client = new Mock<IAmazonS3>(MockBehavior.Strict);
+			s3Client
+				.Setup(x => x.GetPreSignedURL(It.IsAny<GetPreSignedUrlRequest>()))
+				.Returns<GetPreSignedUrlRequest>(request =>
+				{
+					request.BucketName.Should().Be("tts-bucket");
+					request.Key.Should().Be("tts/audio.wav");
+					request.Protocol.Should().Be(expectedProtocol);
+					return presignedUrl;
+				});
+
+			var service = CreateService(s3Client.Object, useSsl: useSsl, endpoint: endpoint);
+
+			var url = await service.GetObjectUrlAsync("tts/audio.wav", CancellationToken.None);
+
+			url.Should().Be(new Uri(presignedUrl));
+			s3Client.Verify(x => x.GetPreSignedURL(It.IsAny<GetPreSignedUrlRequest>()), Times.Once);
+		}
+
+		private static S3StorageService CreateService(IAmazonS3 s3Client, RecordingHttpMessageHandler handler = null, bool useSsl = true, string endpoint = null)
 		{
 			handler ??= new RecordingHttpMessageHandler((_, _) => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)));
 			var httpClientFactory = new Mock<IHttpClientFactory>(MockBehavior.Strict);
@@ -356,7 +379,8 @@ namespace Resgrid.Tests.Web.Tts
 					Bucket = "tts-bucket",
 					AccessKey = "access-key",
 					SecretKey = "secret-key",
-					UseSsl = useSsl
+					UseSsl = useSsl,
+					Endpoint = endpoint
 				}),
 				Mock.Of<ILogger<S3StorageService>>(),
 				httpClientFactory.Object);

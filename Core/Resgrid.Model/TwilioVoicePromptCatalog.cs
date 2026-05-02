@@ -27,8 +27,8 @@ namespace Resgrid.Model
 		public const string GoBackToMainMenuWithPound = "To go back to the main menu, enter 0 and press pound.";
 		public const string StatusSelectionIntro = "To set your current status, enter the number of your selection, then press pound.";
 		public const string StaffingSelectionIntro = "To set your current staffing, enter the number of your selection, then press pound.";
-		public const string InvalidStatusSelection = "Invalid status selection. Goodbye.";
-		public const string NoStatusSelection = "No status selection made. Goodbye.";
+		public const string InvalidStatusSelection = "Invalid status selection. Returning to the main menu.";
+		public const string NoStatusSelection = "No status selection made. Returning to the main menu.";
 		public const string InvalidStaffingSelection = "Invalid staffing selection. Returning to the main menu.";
 		public const string NoStaffingSelection = "No staffing selection made. Returning to the main menu.";
 		public const string CommunicationTestRecorded = "Thank you. Your response has been recorded.";

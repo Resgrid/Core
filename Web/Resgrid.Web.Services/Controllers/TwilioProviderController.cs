@@ -734,11 +734,13 @@ namespace Resgrid.Web.Services.Controllers
 		private static string BuildDispatchPrompt(Call call, string address)
 		{
 			var nature = StringHelpers.StripHtmlTagsCharArray(call.NatureOfCall);
+			var prompt = !String.IsNullOrWhiteSpace(address)
+				? $"{call.Name}, Priority {call.GetPriorityText()} Address {address} Nature {nature}"
+				: $"{call.Name}, Priority {call.GetPriorityText()} Nature {nature}";
 
-			if (!String.IsNullOrWhiteSpace(address))
-				return $"{call.Name}, Priority {call.GetPriorityText()} Address {address} Nature {nature}";
-
-			return $"{call.Name}, Priority {call.GetPriorityText()} Nature {nature}";
+			return prompt.EndsWith(".", StringComparison.Ordinal) || prompt.EndsWith("!", StringComparison.Ordinal) || prompt.EndsWith("?", StringComparison.Ordinal)
+				? prompt
+				: $"{prompt}.";
 		}
 
 		private static IReadOnlyCollection<string> BuildVoiceCallResponseOptionPrompts(IEnumerable<DepartmentGroup> stations)

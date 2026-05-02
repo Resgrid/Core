@@ -140,6 +140,15 @@ namespace Resgrid.Tests.Web.Services
 				_twilioVoiceResponseServiceMock.Object);
 		}
 
+		private static string InvokeBuildDispatchPrompt(Type controllerType, Call call, string address)
+		{
+			var buildDispatchPrompt = controllerType.GetMethod("BuildDispatchPrompt", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+			var prompt = buildDispatchPrompt?.Invoke(null, new object[] { call, address }) as string;
+
+			prompt.Should().NotBeNull();
+			return prompt!;
+		}
+
 		[Test]
 		public async System.Threading.Tasks.Task should_mark_home_code_consumed_after_successful_voice_generation()
 		{
@@ -220,6 +229,26 @@ namespace Resgrid.Tests.Web.Services
 		}
 
 		[Test]
+		public void voice_call_callback_actions_should_require_validate_request()
+		{
+			var callbackActions = new[]
+			{
+				nameof(TwilioController.VoiceCallAction),
+				nameof(TwilioController.VoiceCallResponseOptions),
+				nameof(TwilioController.VoiceCallRespond)
+			};
+
+			foreach (var actionName in callbackActions)
+			{
+				typeof(TwilioController)
+					.GetMethod(actionName)!
+					.CustomAttributes
+					.Should()
+					.Contain(attribute => attribute.AttributeType.Name == "ValidateRequestAttribute");
+			}
+		}
+
+		[Test]
 		public async System.Threading.Tasks.Task should_play_dispatch_before_outbound_response_menu()
 		{
 			var call = new Call
@@ -241,12 +270,33 @@ namespace Resgrid.Tests.Web.Services
 			var result = await BuildController().VoiceCall("user1", 42);
 
 			var content = ((ContentResult)result).Content;
-			var dispatchPrompt = Uri.EscapeDataString("Call 42, Priority High Address 123 Main St Nature Structure fire");
+			var dispatchPrompt = Uri.EscapeDataString("Call 42, Priority High Address 123 Main St Nature Structure fire.");
 			var menuPrompt = Uri.EscapeDataString(TwilioVoicePromptCatalog.OutboundDispatchMenu);
 
 			content.Should().Contain(dispatchPrompt);
 			content.Should().Contain("https://resgridapi.local/api/Twilio/VoiceCallAction?userId=user1&amp;callId=42");
 			content.IndexOf(dispatchPrompt, StringComparison.Ordinal).Should().BeLessThan(content.IndexOf(menuPrompt, StringComparison.Ordinal));
+		}
+
+		[Test]
+		public void dispatch_prompt_helpers_should_end_with_sentence_punctuation()
+		{
+			var call = new Call
+			{
+				Name = "Call 42",
+				Priority = (int)CallPriority.High,
+				Address = "123 Main St",
+				NatureOfCall = "Structure fire"
+			};
+
+			InvokeBuildDispatchPrompt(typeof(TwilioController), call, "123 Main St")
+				.Should().Be("Call 42, Priority High Address 123 Main St Nature Structure fire.");
+			InvokeBuildDispatchPrompt(typeof(TwilioController), call, null)
+				.Should().Be("Call 42, Priority High Nature Structure fire.");
+			InvokeBuildDispatchPrompt(typeof(TwilioProviderController), call, "123 Main St")
+				.Should().Be("Call 42, Priority High Address 123 Main St Nature Structure fire.");
+			InvokeBuildDispatchPrompt(typeof(TwilioProviderController), call, null)
+				.Should().Be("Call 42, Priority High Nature Structure fire.");
 		}
 
 		[TestCase("1", "https://resgridapi.local/api/Twilio/VoiceCall?userId=user1&amp;callId=42")]
@@ -410,8 +460,8 @@ namespace Resgrid.Tests.Web.Services
 
 			TwilioVoicePromptCatalog.RespondingToScene.Should().Be("You have been marked responding to the scene. Goodbye.");
 			TwilioVoicePromptCatalog.InboundVoiceUnavailable.Should().Be("Thank you for calling the Resgrid automated personnel system. The number you called is not tied to an active department, or the department doesn't have this feature enabled. Goodbye.");
-			TwilioVoicePromptCatalog.InvalidStatusSelection.Should().Be("Invalid status selection. Goodbye.");
-			TwilioVoicePromptCatalog.NoStatusSelection.Should().Be("No status selection made. Goodbye.");
+			TwilioVoicePromptCatalog.InvalidStatusSelection.Should().Be("Invalid status selection. Returning to the main menu.");
+			TwilioVoicePromptCatalog.NoStatusSelection.Should().Be("No status selection made. Returning to the main menu.");
 			TwilioVoicePromptCatalog.CallClosedByNumber("42").Should().Be("This call, ID 42, has been closed. Goodbye.");
 			TwilioVoicePromptCatalog.RespondingToStation("Station 12").Should().Be("You have been marked responding to Station 12. Goodbye.");
 			TwilioVoicePromptCatalog.MainMenuGreeting("Pat", "Dept 1").Should().Be("Hello Pat. This is the Resgrid automated voice system for Dept 1.");

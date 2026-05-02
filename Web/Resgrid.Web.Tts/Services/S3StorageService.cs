@@ -430,6 +430,19 @@ namespace Resgrid.Web.Tts.Services
 
 		private Protocol GetPresignedUrlProtocol()
 		{
+			if (Uri.TryCreate(_options.Endpoint, UriKind.Absolute, out var endpointUri))
+			{
+				if (string.Equals(endpointUri.Scheme, Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase))
+				{
+					return Protocol.HTTP;
+				}
+
+				if (string.Equals(endpointUri.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase))
+				{
+					return Protocol.HTTPS;
+				}
+			}
+
 			return _options.UseSsl ? Protocol.HTTPS : Protocol.HTTP;
 		}
 

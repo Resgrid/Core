@@ -37,6 +37,7 @@ namespace Resgrid.Model
 			new TtsVoiceOption("da", "Danish"),
 			new TtsVoiceOption("nl", "Dutch"),
 			new TtsVoiceOption("en-us", "English", "American"),
+			new TtsVoiceOption("en-us+f3", "English", "American Female 3"),
 			new TtsVoiceOption("en", "English", "British"),
 			new TtsVoiceOption("en-029", "English", "Caribbean"),
 			new TtsVoiceOption("en-gb-x-gbclan", "English", "Lancastrian"),
@@ -140,7 +141,7 @@ namespace Resgrid.Model
 
 		private static readonly Dictionary<string, TtsVoiceOption> VoiceLookup = VoicesInternal.ToDictionary(x => x.Identifier, StringComparer.OrdinalIgnoreCase);
 
-		public const string DefaultIdentifier = "en-us";
+		public const string DefaultIdentifier = "en-us+f3";
 
 		public static IReadOnlyList<TtsVoiceOption> Voices => VoicesInternal;
 

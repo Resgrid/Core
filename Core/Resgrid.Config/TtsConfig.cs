@@ -24,7 +24,7 @@ namespace Resgrid.Config
 		public static int S3PresignedUrlExpiryMinutes = 60;
 		public static string S3PublicBaseUrl = "";
 
-		public static string DefaultVoice = "en-us";
+		public static string DefaultVoice = "en-us+f3";
 		public static int DefaultSpeed = 175;
 		public static int MaxConcurrentGenerations = 4;
 		public static int MaxTextLength = 1000;

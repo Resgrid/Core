@@ -17,7 +17,7 @@ data:
   RESGRID__TtsConfig__S3ForcePathStyle: "true"
   RESGRID__TtsConfig__S3UsePresignedUrls: "true"
   RESGRID__TtsConfig__S3PresignedUrlExpiryMinutes: "60"
-  RESGRID__TtsConfig__DefaultVoice: en-us
+  RESGRID__TtsConfig__DefaultVoice: en-us+f3
   RESGRID__TtsConfig__DefaultSpeed: "175"
   RESGRID__TtsConfig__MaxConcurrentGenerations: "4"
   RESGRID__TtsConfig__MaxTextLength: "1000"

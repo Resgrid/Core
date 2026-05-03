@@ -56,25 +56,70 @@ namespace Resgrid.Web.Tts.Services
 			{
 				return await HandleMalformedMetadataResponseAsync(objectKey, ex, formatException, cancellationToken);
 			}
+			catch (FormatException ex)
+			{
+				return await HandleMalformedMetadataResponseAsync(objectKey, ex, cancellationToken);
+			}
 		}
 
-		private async Task<bool> HandleMalformedMetadataResponseAsync(
+		private Task<bool> HandleMalformedMetadataResponseAsync(
 			string objectKey,
 			AmazonUnmarshallingException exception,
 			FormatException formatException,
 			CancellationToken cancellationToken)
 		{
-			_logger.LogWarning(
-				exception,
-				"The S3 client could not parse the metadata response for {ObjectKey}. Verifying existence with a presigned HEAD request. Inner format error: {InnerFormatErrorMessage}",
+			return HandleMalformedMetadataResponseAsync(
 				objectKey,
-				formatException.Message);
+				exception,
+				formatException,
+				exception.LastKnownLocation ?? "unknown",
+				cancellationToken,
+				wrappedByAmazonUnmarshallingException: true);
+		}
+
+		private Task<bool> HandleMalformedMetadataResponseAsync(
+			string objectKey,
+			FormatException exception,
+			CancellationToken cancellationToken)
+		{
+			return HandleMalformedMetadataResponseAsync(
+				objectKey,
+				exception,
+				exception,
+				"unknown",
+				cancellationToken,
+				wrappedByAmazonUnmarshallingException: false);
+		}
+
+		private async Task<bool> HandleMalformedMetadataResponseAsync(
+			string objectKey,
+			Exception exception,
+			FormatException formatException,
+			string lastKnownLocation,
+			CancellationToken cancellationToken,
+			bool wrappedByAmazonUnmarshallingException)
+		{
+			if (wrappedByAmazonUnmarshallingException)
+			{
+				_logger.LogWarning(
+					exception,
+					"The S3 client could not parse the metadata response for {ObjectKey}. Verifying existence with a presigned HEAD request. Inner format error: {InnerFormatErrorMessage}",
+					objectKey,
+					formatException.Message);
+			}
+			else
+			{
+				_logger.LogWarning(
+					exception,
+					"The S3 client surfaced a raw FormatException while parsing the metadata response for {ObjectKey}. Verifying existence with a presigned HEAD request because the AWS SDK did not wrap the parsing failure in an AmazonUnmarshallingException.",
+					objectKey);
+			}
 
 			_logger.LogDebug(
 				formatException,
-				"Inner FormatException while parsing the metadata response for {ObjectKey}. Last known location: {LastKnownLocation}.",
+				"FormatException while parsing the metadata response for {ObjectKey}. Last known location: {LastKnownLocation}.",
 				objectKey,
-				exception.LastKnownLocation ?? "unknown");
+				lastKnownLocation);
 
 			try
 			{

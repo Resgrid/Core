@@ -1,5 +1,7 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -215,6 +217,90 @@ namespace Resgrid.Tests.Web.Tts
 			_cacheService.Verify(
 				x => x.TryGetCachedUrlAsync(CacheKey, It.IsAny<CancellationToken>()),
 				Times.Exactly(4));
+		}
+	}
+
+	[TestFixture]
+	public class AudioProcessingServiceTests
+	{
+		[Test]
+		public void create_espeak_start_info_should_use_mbrola_profile_for_english_voices()
+		{
+			var service = CreateService();
+
+			var startInfo = InvokePrivateMethod<ProcessStartInfo>(service, "CreateEspeakStartInfo", "en-gb-x-rp+klatt4", 165, "/tmp/raw.wav");
+
+			startInfo.FileName.Should().Be("espeak-ng");
+			startInfo.ArgumentList.Should().Equal(
+				"--stdin",
+				"-w",
+				"/tmp/raw.wav",
+				"-v",
+				"mb-us1",
+				"-s",
+				"130",
+				"-p",
+				"50",
+				"-g",
+				"3");
+		}
+
+		[Test]
+		public void create_espeak_start_info_should_keep_requested_voice_and_speed_for_non_english_voices()
+		{
+			var service = CreateService();
+
+			var startInfo = InvokePrivateMethod<ProcessStartInfo>(service, "CreateEspeakStartInfo", "fr+klatt4", 165, "/tmp/raw.wav");
+
+			startInfo.FileName.Should().Be("espeak-ng");
+			startInfo.ArgumentList.Should().Equal(
+				"--stdin",
+				"-w",
+				"/tmp/raw.wav",
+				"-v",
+				"fr+klatt4",
+				"-s",
+				"165");
+		}
+
+		[Test]
+		public void create_ffmpeg_start_info_should_apply_the_requested_telephone_filter()
+		{
+			var service = CreateService();
+
+			var startInfo = InvokePrivateMethod<ProcessStartInfo>(service, "CreateFfmpegStartInfo", "/tmp/raw.wav", "/tmp/normalized.wav");
+
+			startInfo.FileName.Should().Be("ffmpeg");
+			startInfo.ArgumentList.Should().Equal(
+				"-nostdin",
+				"-loglevel",
+				"error",
+				"-y",
+				"-i",
+				"/tmp/raw.wav",
+				"-ar",
+				"8000",
+				"-ac",
+				"1",
+				"-acodec",
+				"pcm_s16le",
+				"-af",
+				"highpass=f=200, lowpass=f=3000, anequalizer=c0 f=2500 w=1000 g=3 t=1",
+				"/tmp/normalized.wav");
+		}
+
+		private static AudioProcessingService CreateService()
+		{
+			return new AudioProcessingService(
+				Options.Create(new TtsOptions()),
+				Mock.Of<ILogger<AudioProcessingService>>());
+		}
+
+		private static T InvokePrivateMethod<T>(object instance, string methodName, params object[] arguments)
+		{
+			var method = instance.GetType().GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic);
+			method.Should().NotBeNull($"{methodName} should exist on {instance.GetType().FullName}");
+			return (T)method!.Invoke(instance, arguments)!;
 		}
 	}
 }

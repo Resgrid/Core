@@ -400,7 +400,7 @@ namespace Resgrid.Services
 
 								foreach (var member in members)
 								{
-									if (member.UserId != senderId)
+									if (member.UserId != senderId && !member.IsDisabled.GetValueOrDefault() && !member.IsDeleted)
 										message.AddRecipient(member.UserId);
 								}
 
@@ -560,6 +560,7 @@ namespace Resgrid.Services
 		{
 			var sb = new System.Text.StringBuilder();
 
+			// Header
 			sb.AppendLine($"WEATHER ALERT: {alert.Event?.ToUpper()}");
 			sb.AppendLine($"Severity: {SeverityNames[Math.Min(alert.Severity, 4)]}");
 
@@ -573,17 +574,25 @@ namespace Resgrid.Services
 
 			sb.AppendLine();
 
+			// Headline as summary
 			if (!string.IsNullOrEmpty(alert.Headline))
+			{
 				sb.AppendLine(alert.Headline);
+				sb.AppendLine();
+			}
 
+			// Description — the core alert details
+			if (!string.IsNullOrEmpty(alert.Description))
+			{
+				sb.AppendLine(alert.Description);
+			}
+
+			// Safety instructions, if provided
 			if (!string.IsNullOrEmpty(alert.Instruction))
 			{
 				sb.AppendLine();
 				sb.AppendLine(alert.Instruction);
 			}
-
-			sb.AppendLine();
-			sb.AppendLine("View active weather alerts for full details.");
 
 			var body = sb.ToString();
 			if (body.Length > 3950)

@@ -23,10 +23,11 @@ namespace Resgrid.Services
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly ISubscriptionsService _subscriptionsService;
 		private readonly IUserStateService _userStateService;
+		private readonly IDepartmentsService _departmentsService;
 
 		public CommunicationService(ISmsService smsService, IEmailService emailService, IPushService pushService, IGeoLocationProvider geoLocationProvider,
 			IOutboundVoiceProvider outboundVoiceProvider, IUserProfileService userProfileService, IDepartmentSettingsService departmentSettingsService,
-			ISubscriptionsService subscriptionsService, IUserStateService userStateService)
+			ISubscriptionsService subscriptionsService, IUserStateService userStateService, IDepartmentsService departmentsService)
 		{
 			_smsService = smsService;
 			_emailService = emailService;
@@ -37,6 +38,7 @@ namespace Resgrid.Services
 			_departmentSettingsService = departmentSettingsService;
 			_subscriptionsService = subscriptionsService;
 			_userStateService = userStateService;
+			_departmentsService = departmentsService;
 		}
 
 		public async Task<bool> SendMessageAsync(Message message, string sendersName, string departmentNumber, int departmentId, UserProfile profile = null, Department department = null)
@@ -50,7 +52,7 @@ namespace Resgrid.Services
 			if (profile == null && !String.IsNullOrWhiteSpace(message.ReceivingUserId))
 				profile = await _userProfileService.GetProfileByUserIdAsync(message.ReceivingUserId);
 
-			if (profile == null || profile.SendMessageSms)
+			if (profile == null || (message.SystemGenerated ? profile.SendNotificationSms : profile.SendMessageSms))
 			{
 				if (profile == null || profile.MobileNumberVerified.IsContactMethodAllowedForSending())
 				{
@@ -66,7 +68,7 @@ namespace Resgrid.Services
 				}
 			}
 
-			if (profile == null || profile.SendMessageEmail)
+			if (profile == null || (message.SystemGenerated ? profile.SendNotificationEmail : profile.SendMessageEmail))
 			{
 				if (profile == null || profile.EmailVerified.IsContactMethodAllowedForSending())
 				{
@@ -81,7 +83,7 @@ namespace Resgrid.Services
 				}
 			}
 
-			if (profile == null || profile.SendMessagePush)
+			if (profile == null || (message.SystemGenerated ? profile.SendNotificationPush : profile.SendMessagePush))
 			{
 				var spm = new StandardPushMessage();
 				spm.MessageId = message.MessageId;
@@ -684,6 +686,9 @@ namespace Resgrid.Services
 
 			foreach (var recipient in recipients)
 			{
+				if (!await CanSendToUser(recipient.UserId, departmentId))
+					continue;
+
 				// Send a Push Notification
 				if (recipient.SendPush)
 				{
@@ -766,6 +771,14 @@ namespace Resgrid.Services
 
 		private async Task<bool> CanSendToUser(string userId, int departmentId)
 		{
+			// Filter out disabled or deleted users
+			if (!string.IsNullOrWhiteSpace(userId))
+			{
+				var member = await _departmentsService.GetDepartmentMemberAsync(userId, departmentId, false);
+				if (member == null || member.IsDisabled.GetValueOrDefault() || member.IsDeleted)
+					return false;
+			}
+
 			var supressStaffingInfo = await _departmentSettingsService.GetDepartmentStaffingSuppressInfoAsync(departmentId);
 			var lastUserStaffing = await _userStateService.GetLastUserStateByUserIdAsync(userId);
 

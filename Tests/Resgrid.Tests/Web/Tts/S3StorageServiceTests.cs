@@ -124,6 +124,40 @@ namespace Resgrid.Tests.Web.Tts
 		}
 
 		[Test]
+		public async Task exists_async_should_verify_with_presigned_head_when_metadata_throws_raw_format_exception()
+		{
+			var s3Client = new Mock<IAmazonS3>(MockBehavior.Strict);
+			s3Client
+				.Setup(x => x.GetObjectMetadataAsync(It.IsAny<GetObjectMetadataRequest>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new FormatException("bad metadata expiration header"));
+			s3Client
+				.Setup(x => x.GetPreSignedURL(It.IsAny<GetPreSignedUrlRequest>()))
+				.Returns<GetPreSignedUrlRequest>(request =>
+				{
+					request.BucketName.Should().Be("tts-bucket");
+					request.Key.Should().Be("tts/audio.wav");
+					request.Verb.Should().Be(HttpVerb.HEAD);
+					request.Protocol.Should().Be(Protocol.HTTP);
+					return "http://download.example.com/tts/audio.wav?signature=head-raw-format";
+				});
+
+			var handler = new RecordingHttpMessageHandler((request, _) =>
+			{
+				request.Method.Should().Be(HttpMethod.Head);
+				request.RequestUri.Should().Be(new Uri("http://download.example.com/tts/audio.wav?signature=head-raw-format"));
+				return Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK));
+			});
+			var service = CreateService(s3Client.Object, handler, useSsl: false);
+
+			var exists = await service.ExistsAsync("tts/audio.wav", CancellationToken.None);
+
+			exists.Should().BeTrue();
+			handler.Requests.Should().HaveCount(1);
+			s3Client.Verify(x => x.GetObjectMetadataAsync(It.Is<GetObjectMetadataRequest>(request => request.BucketName == "tts-bucket" && request.Key == "tts/audio.wav"), It.IsAny<CancellationToken>()), Times.Once);
+			s3Client.Verify(x => x.GetPreSignedURL(It.Is<GetPreSignedUrlRequest>(request => request.BucketName == "tts-bucket" && request.Key == "tts/audio.wav" && request.Verb == HttpVerb.HEAD && request.Protocol == Protocol.HTTP)), Times.Once);
+		}
+
+		[Test]
 		public async Task upload_async_should_treat_malformed_put_response_as_success_when_the_object_is_verified()
 		{
 			var s3Client = new Mock<IAmazonS3>(MockBehavior.Strict);

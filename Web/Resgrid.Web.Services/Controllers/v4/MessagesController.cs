@@ -304,6 +304,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 				{
 					foreach (var departmentMember in departmentUsers)
 					{
+						if (departmentMember.IsDisabled.GetValueOrDefault() || departmentMember.IsDeleted)
+							continue;
+
 						message.AddRecipient(departmentMember.UserId);
 					}
 				}
@@ -319,8 +322,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 							if (usersToSendTo.All(x => x != userIdToSendTo) && userIdToSendTo != UserId)
 							{
-								// Ensure the user is in the same department
-								if (departmentUsers.Any(x => x.UserId == userIdToSendTo))
+								// Ensure the user is in the same department and not disabled/deleted
+								var dm = departmentUsers.FirstOrDefault(x => x.UserId == userIdToSendTo);
+								if (dm != null && !dm.IsDisabled.GetValueOrDefault() && !dm.IsDeleted)
 								{
 									usersToSendTo.Add(userIdToSendTo);
 									message.AddRecipient(userIdToSendTo);

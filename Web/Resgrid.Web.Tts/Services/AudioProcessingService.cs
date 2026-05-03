@@ -8,6 +8,12 @@ namespace Resgrid.Web.Tts.Services
 {
 	public sealed class AudioProcessingService : IAudioProcessingService
 	{
+		private const string MbrolaEnglishVoice = "mb-us1";
+		private const int MbrolaEnglishSpeed = 130;
+		private const int MbrolaEnglishPitch = 50;
+		private const int MbrolaEnglishWordGap = 3;
+		private const string TelephoneAudioFilter = "highpass=f=200, lowpass=f=3000, anequalizer=c0 f=2500 w=1000 g=3 t=1";
+
 		private readonly TtsOptions _options;
 		private readonly ILogger<AudioProcessingService> _logger;
 
@@ -41,21 +47,77 @@ namespace Resgrid.Web.Tts.Services
 			}
 		}
 
+		public (string Voice, int Speed) GetEffectiveSynthesisProfile(string voice, int speed)
+		{
+			var invocation = GetEspeakInvocation(voice, speed);
+			return (invocation.Voice, invocation.Speed);
+		}
+
 		private async Task RunEspeakAsync(string text, string voice, int speed, string outputFilePath, CancellationToken cancellationToken)
 		{
+			var startInfo = CreateEspeakStartInfo(voice, speed, outputFilePath);
+			await RunProcessAsync(startInfo, text, "eSpeak NG", cancellationToken);
+		}
+
+		private ProcessStartInfo CreateEspeakStartInfo(string voice, int speed, string outputFilePath)
+		{
+			var invocation = GetEspeakInvocation(voice, speed);
 			var startInfo = CreateStartInfo(_options.EspeakExecutable, redirectStandardInput: true);
 			startInfo.ArgumentList.Add("--stdin");
 			startInfo.ArgumentList.Add("-w");
 			startInfo.ArgumentList.Add(outputFilePath);
 			startInfo.ArgumentList.Add("-v");
-			startInfo.ArgumentList.Add(voice);
+			startInfo.ArgumentList.Add(invocation.Voice);
 			startInfo.ArgumentList.Add("-s");
-			startInfo.ArgumentList.Add(speed.ToString(CultureInfo.InvariantCulture));
+			startInfo.ArgumentList.Add(invocation.Speed.ToString(CultureInfo.InvariantCulture));
 
-			await RunProcessAsync(startInfo, text, "eSpeak NG", cancellationToken);
+			if (invocation.Pitch.HasValue)
+			{
+				startInfo.ArgumentList.Add("-p");
+				startInfo.ArgumentList.Add(invocation.Pitch.Value.ToString(CultureInfo.InvariantCulture));
+			}
+
+			if (invocation.WordGap.HasValue)
+			{
+				startInfo.ArgumentList.Add("-g");
+				startInfo.ArgumentList.Add(invocation.WordGap.Value.ToString(CultureInfo.InvariantCulture));
+			}
+
+			return startInfo;
+		}
+
+		private static EspeakInvocation GetEspeakInvocation(string voice, int speed)
+		{
+			// English playback uses a fixed MBROLA telephony profile.
+			// Other languages continue to use their current eSpeak-NG voice and requested speed.
+			return IsEnglishVoice(voice)
+				? new EspeakInvocation(MbrolaEnglishVoice, MbrolaEnglishSpeed, MbrolaEnglishPitch, MbrolaEnglishWordGap)
+				: new EspeakInvocation(voice, speed, null, null);
+		}
+
+		private static bool IsEnglishVoice(string voice)
+		{
+			if (string.IsNullOrWhiteSpace(voice))
+			{
+				return false;
+			}
+
+			var trimmedVoice = voice.Trim();
+			var variantSeparatorIndex = trimmedVoice.IndexOf('+');
+			var baseVoice = variantSeparatorIndex <= 0 ? trimmedVoice : trimmedVoice[..variantSeparatorIndex];
+
+			return string.Equals(baseVoice, MbrolaEnglishVoice, StringComparison.OrdinalIgnoreCase)
+				|| string.Equals(baseVoice, "en", StringComparison.OrdinalIgnoreCase)
+				|| baseVoice.StartsWith("en-", StringComparison.OrdinalIgnoreCase);
 		}
 
 		private async Task RunFfmpegAsync(string inputFilePath, string outputFilePath, CancellationToken cancellationToken)
+		{
+			var startInfo = CreateFfmpegStartInfo(inputFilePath, outputFilePath);
+			await RunProcessAsync(startInfo, null, "ffmpeg", cancellationToken);
+		}
+
+		private ProcessStartInfo CreateFfmpegStartInfo(string inputFilePath, string outputFilePath)
 		{
 			var startInfo = CreateStartInfo(_options.FfmpegExecutable);
 			startInfo.ArgumentList.Add("-nostdin");
@@ -70,9 +132,10 @@ namespace Resgrid.Web.Tts.Services
 			startInfo.ArgumentList.Add(_options.NormalizedChannels.ToString(CultureInfo.InvariantCulture));
 			startInfo.ArgumentList.Add("-acodec");
 			startInfo.ArgumentList.Add("pcm_s16le");
+			startInfo.ArgumentList.Add("-af");
+			startInfo.ArgumentList.Add(TelephoneAudioFilter);
 			startInfo.ArgumentList.Add(outputFilePath);
-
-			await RunProcessAsync(startInfo, null, "ffmpeg", cancellationToken);
+			return startInfo;
 		}
 
 		private static ProcessStartInfo CreateStartInfo(string fileName, bool redirectStandardInput = false)
@@ -161,5 +224,7 @@ namespace Resgrid.Web.Tts.Services
 			{
 			}
 		}
+
+		private sealed record EspeakInvocation(string Voice, int Speed, int? Pitch, int? WordGap);
 	}
 }

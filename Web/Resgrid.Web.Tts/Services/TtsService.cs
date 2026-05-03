@@ -89,7 +89,8 @@ namespace Resgrid.Web.Tts.Services
 
 		private async Task<TtsResponse> GenerateInternalAsync(NormalizedTtsRequest request, CancellationToken cancellationToken)
 		{
-			var cacheKey = _cacheService.CreateCacheKey(request.Text, request.Voice, request.Speed);
+			var effectiveProfile = _audioProcessingService.GetEffectiveSynthesisProfile(request.Voice, request.Speed);
+			var cacheKey = _cacheService.CreateCacheKey(request.Text, effectiveProfile.Voice, effectiveProfile.Speed);
 			var cachedUrl = await _cacheService.TryGetCachedUrlAsync(cacheKey, cancellationToken);
 
 			if (cachedUrl is not null)

@@ -318,6 +318,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					foreach (var userId in dispatchingUserIds)
 					{
+						var member = await _departmentsService.GetDepartmentMemberAsync(userId, DepartmentId, false);
+						if (member == null || member.IsDisabled.GetValueOrDefault() || member.IsDeleted)
+							continue;
+
 						CallDispatch cd = new CallDispatch();
 						cd.UserId = userId;
 
@@ -672,6 +676,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 					foreach (var userId in dispatchingUserIds)
 					{
+						var member = await _departmentsService.GetDepartmentMemberAsync(userId, DepartmentId, false);
+						if (member == null || member.IsDisabled.GetValueOrDefault() || member.IsDeleted)
+							continue;
+
 						if (!call.Dispatches.Any(x => x.UserId == userId))
 						{
 							CallDispatch cd = new CallDispatch();
@@ -1181,6 +1189,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 					foreach (var userId in dispatchingUserIds)
 					{
+						var member = await _departmentsService.GetDepartmentMemberAsync(userId, DepartmentId, false);
+						if (member == null || member.IsDisabled.GetValueOrDefault() || member.IsDeleted)
+							continue;
+
 						CallDispatch cd = new CallDispatch();
 						cd.UserId = userId;
 

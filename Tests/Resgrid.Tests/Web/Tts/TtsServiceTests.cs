@@ -1,5 +1,7 @@
 using System;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -46,8 +48,11 @@ namespace Resgrid.Tests.Web.Tts
 		{
 			var cachedUri = new Uri("https://cdn.example.com/tts/abc123.wav");
 
+			_audioProcessingService
+				.Setup(x => x.GetEffectiveSynthesisProfile("en-us+klatt4", 165))
+				.Returns(("mb-us1", 130));
 			_cacheService
-				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en-us+klatt4", 165))
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "mb-us1", 130))
 				.Returns(CacheKey);
 			_cacheService
 				.Setup(x => x.TryGetCachedUrlAsync(CacheKey, It.IsAny<CancellationToken>()))
@@ -76,8 +81,11 @@ namespace Resgrid.Tests.Web.Tts
 			var audioBytes = new byte[] { 1, 2, 3, 4 };
 			var objectUri = new Uri("https://cdn.example.com/tts/abc123.wav");
 
+			_audioProcessingService
+				.Setup(x => x.GetEffectiveSynthesisProfile("en-us+klatt4", 165))
+				.Returns(("mb-us1", 130));
 			_cacheService
-				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en-us+klatt4", 165))
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "mb-us1", 130))
 				.Returns(CacheKey);
 			_cacheService
 				.SetupSequence(x => x.TryGetCachedUrlAsync(CacheKey, It.IsAny<CancellationToken>()))
@@ -111,6 +119,9 @@ namespace Resgrid.Tests.Web.Tts
 			var cachedUri = new Uri("https://cdn.example.com/tts/xyz789.wav");
 			var cacheKey = new TtsCacheKey("xyz789", "tts/xyz789.wav");
 
+			_audioProcessingService
+				.Setup(x => x.GetEffectiveSynthesisProfile("fr+klatt4", 165))
+				.Returns(("fr+klatt4", 165));
 			_cacheService
 				.Setup(x => x.CreateCacheKey("Bonjour", "fr+klatt4", 165))
 				.Returns(cacheKey);
@@ -136,8 +147,11 @@ namespace Resgrid.Tests.Web.Tts
 			var cachedUri = new Uri("https://cdn.example.com/tts/legacy.wav");
 			var cacheKey = new TtsCacheKey("legacy", "tts/legacy.wav");
 
+			_audioProcessingService
+				.Setup(x => x.GetEffectiveSynthesisProfile("en-us+klatt4", 165))
+				.Returns(("mb-us1", 130));
 			_cacheService
-				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en-us+klatt4", 165))
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "mb-us1", 130))
 				.Returns(cacheKey);
 			_cacheService
 				.Setup(x => x.TryGetCachedUrlAsync(cacheKey, It.IsAny<CancellationToken>()))
@@ -172,8 +186,11 @@ namespace Resgrid.Tests.Web.Tts
 			var allowGenerationCompletion = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 			var cacheLookupCount = 0;
 
+			_audioProcessingService
+				.Setup(x => x.GetEffectiveSynthesisProfile("en-us+klatt4", 165))
+				.Returns(("mb-us1", 130));
 			_cacheService
-				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en-us+klatt4", 165))
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "mb-us1", 130))
 				.Returns(CacheKey);
 			_cacheService
 				.Setup(x => x.TryGetCachedUrlAsync(CacheKey, It.IsAny<CancellationToken>()))
@@ -215,6 +232,90 @@ namespace Resgrid.Tests.Web.Tts
 			_cacheService.Verify(
 				x => x.TryGetCachedUrlAsync(CacheKey, It.IsAny<CancellationToken>()),
 				Times.Exactly(4));
+		}
+	}
+
+	[TestFixture]
+	public class AudioProcessingServiceTests
+	{
+		[Test]
+		public void create_espeak_start_info_should_use_mbrola_profile_for_english_voices()
+		{
+			var service = CreateService();
+
+			var startInfo = InvokePrivateMethod<ProcessStartInfo>(service, "CreateEspeakStartInfo", "en-gb-x-rp+klatt4", 165, "/tmp/raw.wav");
+
+			startInfo.FileName.Should().Be("espeak-ng");
+			startInfo.ArgumentList.Should().Equal(
+				"--stdin",
+				"-w",
+				"/tmp/raw.wav",
+				"-v",
+				"mb-us1",
+				"-s",
+				"130",
+				"-p",
+				"50",
+				"-g",
+				"3");
+		}
+
+		[Test]
+		public void create_espeak_start_info_should_keep_requested_voice_and_speed_for_non_english_voices()
+		{
+			var service = CreateService();
+
+			var startInfo = InvokePrivateMethod<ProcessStartInfo>(service, "CreateEspeakStartInfo", "fr+klatt4", 165, "/tmp/raw.wav");
+
+			startInfo.FileName.Should().Be("espeak-ng");
+			startInfo.ArgumentList.Should().Equal(
+				"--stdin",
+				"-w",
+				"/tmp/raw.wav",
+				"-v",
+				"fr+klatt4",
+				"-s",
+				"165");
+		}
+
+		[Test]
+		public void create_ffmpeg_start_info_should_apply_the_requested_telephone_filter()
+		{
+			var service = CreateService();
+
+			var startInfo = InvokePrivateMethod<ProcessStartInfo>(service, "CreateFfmpegStartInfo", "/tmp/raw.wav", "/tmp/normalized.wav");
+
+			startInfo.FileName.Should().Be("ffmpeg");
+			startInfo.ArgumentList.Should().Equal(
+				"-nostdin",
+				"-loglevel",
+				"error",
+				"-y",
+				"-i",
+				"/tmp/raw.wav",
+				"-ar",
+				"8000",
+				"-ac",
+				"1",
+				"-acodec",
+				"pcm_s16le",
+				"-af",
+				"highpass=f=200, lowpass=f=3000, anequalizer=c0 f=2500 w=1000 g=3 t=1",
+				"/tmp/normalized.wav");
+		}
+
+		private static AudioProcessingService CreateService()
+		{
+			return new AudioProcessingService(
+				Options.Create(new TtsOptions()),
+				Mock.Of<ILogger<AudioProcessingService>>());
+		}
+
+		private static T InvokePrivateMethod<T>(object instance, string methodName, params object[] arguments)
+		{
+			var method = instance.GetType().GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic);
+			method.Should().NotBeNull($"{methodName} should exist on {instance.GetType().FullName}");
+			return (T)method!.Invoke(instance, arguments)!;
 		}
 	}
 }

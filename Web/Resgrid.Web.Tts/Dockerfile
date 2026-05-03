@@ -19,8 +19,17 @@ WORKDIR /src/Web/Resgrid.Web.Tts
 RUN dotnet publish "Resgrid.Web.Tts.csproj" -c Release -o /app/publish /p:UseAppHost=false --no-restore -p:Version=${BUILD_VERSION}
 
 FROM base AS final
-RUN apt-get update \
-	&& apt-get install -y --no-install-recommends espeak-ng ffmpeg ca-certificates \
+# Enable multiverse repository for MBROLA packages, install TTS dependencies,
+# then clean up in a single RUN layer to keep the image small.
+RUN echo "deb http://archive.ubuntu.com/ubuntu/ noble multiverse" >> /etc/apt/sources.list \
+	&& echo "deb http://archive.ubuntu.com/ubuntu/ noble-updates multiverse" >> /etc/apt/sources.list \
+	&& apt-get update \
+	&& apt-get install -y --no-install-recommends \
+		espeak-ng \
+		ffmpeg \
+		ca-certificates \
+		mbrola \
+		mbrola-us1 \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& groupadd --gid 10001 appgroup \
 	&& useradd --uid 10001 --gid appgroup --create-home --shell /usr/sbin/nologin appuser

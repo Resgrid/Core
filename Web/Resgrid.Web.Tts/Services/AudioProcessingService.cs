@@ -47,6 +47,12 @@ namespace Resgrid.Web.Tts.Services
 			}
 		}
 
+		public (string Voice, int Speed) GetEffectiveSynthesisProfile(string voice, int speed)
+		{
+			var invocation = GetEspeakInvocation(voice, speed);
+			return (invocation.Voice, invocation.Speed);
+		}
+
 		private async Task RunEspeakAsync(string text, string voice, int speed, string outputFilePath, CancellationToken cancellationToken)
 		{
 			var startInfo = CreateEspeakStartInfo(voice, speed, outputFilePath);

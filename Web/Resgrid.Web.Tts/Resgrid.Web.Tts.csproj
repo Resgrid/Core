@@ -12,6 +12,8 @@
 	<ItemGroup>
 		<PackageReference Include="AWSSDK.S3" Version="3.7.414.5" />
 		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="9.0.2" />
+		<PackageReference Include="Sentry.AspNetCore" Version="5.4.0" />
+		<PackageReference Include="Sentry.Profiling" Version="5.4.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="8.0.0" />
 	</ItemGroup>
 

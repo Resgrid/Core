@@ -48,8 +48,11 @@ namespace Resgrid.Tests.Web.Tts
 		{
 			var cachedUri = new Uri("https://cdn.example.com/tts/abc123.wav");
 
+			_audioProcessingService
+				.Setup(x => x.GetEffectiveSynthesisProfile("en-us+klatt4", 165))
+				.Returns(("mb-us1", 130));
 			_cacheService
-				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en-us+klatt4", 165))
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "mb-us1", 130))
 				.Returns(CacheKey);
 			_cacheService
 				.Setup(x => x.TryGetCachedUrlAsync(CacheKey, It.IsAny<CancellationToken>()))
@@ -78,8 +81,11 @@ namespace Resgrid.Tests.Web.Tts
 			var audioBytes = new byte[] { 1, 2, 3, 4 };
 			var objectUri = new Uri("https://cdn.example.com/tts/abc123.wav");
 
+			_audioProcessingService
+				.Setup(x => x.GetEffectiveSynthesisProfile("en-us+klatt4", 165))
+				.Returns(("mb-us1", 130));
 			_cacheService
-				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en-us+klatt4", 165))
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "mb-us1", 130))
 				.Returns(CacheKey);
 			_cacheService
 				.SetupSequence(x => x.TryGetCachedUrlAsync(CacheKey, It.IsAny<CancellationToken>()))
@@ -113,6 +119,9 @@ namespace Resgrid.Tests.Web.Tts
 			var cachedUri = new Uri("https://cdn.example.com/tts/xyz789.wav");
 			var cacheKey = new TtsCacheKey("xyz789", "tts/xyz789.wav");
 
+			_audioProcessingService
+				.Setup(x => x.GetEffectiveSynthesisProfile("fr+klatt4", 165))
+				.Returns(("fr+klatt4", 165));
 			_cacheService
 				.Setup(x => x.CreateCacheKey("Bonjour", "fr+klatt4", 165))
 				.Returns(cacheKey);
@@ -138,8 +147,11 @@ namespace Resgrid.Tests.Web.Tts
 			var cachedUri = new Uri("https://cdn.example.com/tts/legacy.wav");
 			var cacheKey = new TtsCacheKey("legacy", "tts/legacy.wav");
 
+			_audioProcessingService
+				.Setup(x => x.GetEffectiveSynthesisProfile("en-us+klatt4", 165))
+				.Returns(("mb-us1", 130));
 			_cacheService
-				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en-us+klatt4", 165))
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "mb-us1", 130))
 				.Returns(cacheKey);
 			_cacheService
 				.Setup(x => x.TryGetCachedUrlAsync(cacheKey, It.IsAny<CancellationToken>()))
@@ -174,8 +186,11 @@ namespace Resgrid.Tests.Web.Tts
 			var allowGenerationCompletion = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 			var cacheLookupCount = 0;
 
+			_audioProcessingService
+				.Setup(x => x.GetEffectiveSynthesisProfile("en-us+klatt4", 165))
+				.Returns(("mb-us1", 130));
 			_cacheService
-				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en-us+klatt4", 165))
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "mb-us1", 130))
 				.Returns(CacheKey);
 			_cacheService
 				.Setup(x => x.TryGetCachedUrlAsync(CacheKey, It.IsAny<CancellationToken>()))

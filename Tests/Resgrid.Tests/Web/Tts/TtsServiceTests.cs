@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -243,12 +244,12 @@ namespace Resgrid.Tests.Web.Tts
 		{
 			var service = CreateService();
 
-			var startInfo = InvokePrivateMethod<ProcessStartInfo>(service, "CreatePiperStartInfo", "en-gb-x-rp+klatt4", 165, "/tmp/raw.wav");
+			var startInfo = InvokePrivateMethod<ProcessStartInfo>(service, "CreatePiperStartInfo", "en-us+klatt4", 165, "/tmp/raw.wav");
 
 			startInfo.FileName.Should().Be("piper");
 			startInfo.ArgumentList.Should().Equal(
 				"--model",
-				"/usr/local/share/piper-voices/en_GB-semaine-medium.onnx",
+				Path.Combine("/usr/local/share/piper-voices", "en_US-norman-medium.onnx"),
 				"--output_file",
 				"/tmp/raw.wav",
 				"--length-scale",
@@ -256,16 +257,18 @@ namespace Resgrid.Tests.Web.Tts
 		}
 
 		[Test]
-		public void create_piper_start_info_should_use_mapped_model_for_non_english_voices()
+		public void create_piper_start_info_should_fallback_to_default_model_for_unmapped_languages()
 		{
 			var service = CreateService();
 
-			var startInfo = InvokePrivateMethod<ProcessStartInfo>(service, "CreatePiperStartInfo", "fr+klatt4", 165, "/tmp/raw.wav");
+			// "ja" (Japanese) is not a Resgrid-supported language and has no
+			// entry in VoiceModelMap, so it must fall back to the default en-US model.
+			var startInfo = InvokePrivateMethod<ProcessStartInfo>(service, "CreatePiperStartInfo", "ja+klatt4", 165, "/tmp/raw.wav");
 
 			startInfo.FileName.Should().Be("piper");
 			startInfo.ArgumentList.Should().Equal(
 				"--model",
-				"/usr/local/share/piper-voices/fr_FR-siwis-medium.onnx",
+				Path.Combine("/usr/local/share/piper-voices", "en_US-norman-medium.onnx"),
 				"--output_file",
 				"/tmp/raw.wav",
 				"--length-scale",
@@ -283,7 +286,7 @@ namespace Resgrid.Tests.Web.Tts
 			startInfo.FileName.Should().Be("piper");
 			startInfo.ArgumentList.Should().Equal(
 				"--model",
-				"/usr/local/share/piper-voices/en_US-norman-medium.onnx",
+				Path.Combine("/usr/local/share/piper-voices", "en_US-norman-medium.onnx"),
 				"--output_file",
 				"/tmp/raw.wav",
 				"--length-scale",

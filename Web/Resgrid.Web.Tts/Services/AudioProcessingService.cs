@@ -16,96 +16,42 @@ namespace Resgrid.Web.Tts.Services
 		private const string TelephoneAudioFilter = "highpass=f=200, lowpass=f=3000, anequalizer=c0 f=2500 w=1000 g=3 t=1";
 
 		/// <summary>
-		/// Maps the eSpeak-style voice identifier (base language code) to a Piper
-		/// model filename.  Languages without a matching Piper model fall back to
-		/// the default en-US model.
+		/// Maps eSpeak voice identifiers to Piper model filenames provisioned in the
+		/// Docker image.  The keys correspond to the supported Resgrid languages
+		/// (see Resgrid.Localization.SupportedLocales).
+		/// Unknown languages fall back to DefaultEnglishModel.
 		/// </summary>
 		private static readonly Dictionary<string, string> VoiceModelMap = new(StringComparer.OrdinalIgnoreCase)
 		{
 			// English variants
+			{ "en", "en_US-norman-medium.onnx" },
 			{ "en-us", "en_US-norman-medium.onnx" },
-			{ "en", "en_GB-alan-medium.onnx" },
-			{ "en-gb", "en_GB-alan-medium.onnx" },
-			{ "en-gb-x-rp", "en_GB-semaine-medium.onnx" },
-			{ "en-gb-scotland", "en_GB-alan-medium.onnx" },
-			{ "en-gb-x-gbclan", "en_GB-northern_english_male-medium.onnx" },
-			{ "en-gb-x-gbcwmd", "en_GB-alan-medium.onnx" },
 			{ "en-029", "en_US-norman-medium.onnx" },
 			{ "mb-us1", "en_US-norman-medium.onnx" },
 
-			// Western European
-			{ "fr", "fr_FR-siwis-medium.onnx" },
-			{ "fr-be", "fr_FR-siwis-medium.onnx" },
-			{ "fr-ch", "fr_FR-siwis-medium.onnx" },
-			{ "de", "de_DE-thorsten-medium.onnx" },
-			{ "es", "es_ES-sharvard-medium.onnx" },
-			{ "es-419", "es_MX-claude-high.onnx" },
-			{ "it", "it_IT-paola-medium.onnx" },
-			{ "nl", "nl_NL-mls-medium.onnx" },
-			{ "pt", "pt_BR-faber-medium.onnx" },
-			{ "pt-br", "pt_BR-faber-medium.onnx" },
+			// Spanish
+			{ "es", "es_MX-claude-high.onnx" },
 
-			// Nordic
-			{ "da", "da_DK-talesyntese-medium.onnx" },
+			// Swedish
 			{ "sv", "sv_SE-nst-medium.onnx" },
-			{ "nb", "no_NO-talesyntese-medium.onnx" },
-			{ "fi", "fi_FI-harri-medium.onnx" },
-			{ "is", "is_IS-ugla-medium.onnx" },
 
-			// Slavic
+			// German
+			{ "de", "de_DE-thorsten-medium.onnx" },
+
+			// French
+			{ "fr", "fr_FR-siwis-medium.onnx" },
+
+			// Italian
+			{ "it", "it_IT-paola-medium.onnx" },
+
+			// Polish
 			{ "pl", "pl_PL-gosia-medium.onnx" },
+
+			// Ukrainian
 			{ "uk", "uk_UA-ukrainian_tts-medium.onnx" },
-			{ "ru", "ru_RU-ruslan-medium.onnx" },
-			{ "cs", "cs_CZ-jirka-medium.onnx" },
-			{ "sk", "sk_SK-lili-medium.onnx" },
-			{ "sl", "sl_SI-artur-medium.onnx" },
-			{ "sr", "sr_RS-serbski_institut-medium.onnx" },
 
-			// Other European
-			{ "hu", "hu_HU-anna-medium.onnx" },
-			{ "el", "el_GR-rapunzelina-medium.onnx" },
-			{ "ro", "ro_RO-mihai-medium.onnx" },
-			{ "tr", "tr_TR-dfki-medium.onnx" },
-			{ "sq", "sq_AL-edon-medium.onnx" },
-			{ "eu", "eu_ES-antton-medium.onnx" },
-			{ "bg", "bg_BG-dimitar-medium.onnx" },
-			{ "cy", "cy_GB-gwryw_gogleddol-medium.onnx" },
-			{ "lb", "lb_LU-marylux-medium.onnx" },
-			{ "lv", "lv_LV-aivars-medium.onnx" },
-			{ "ca", "ca_ES-upc_ona-medium.onnx" },
-
-			// Baltic/Uralic
-			{ "et", "fi_FI-harri-medium.onnx" },
-
-			// Middle Eastern / Central Asian
+			// Arabic
 			{ "ar", "ar_JO-kareem-medium.onnx" },
-			{ "fa", "fa_IR-amir-medium.onnx" },
-			{ "fa-latn", "fa_IR-amir-medium.onnx" },
-			{ "ka", "ka_GE-natia-medium.onnx" },
-			{ "kk", "kk_KZ-issai-high.onnx" },
-			{ "ku", "ku_TR-berfin_renas-medium.onnx" },
-			{ "ur", "ur_PK-fasih-medium.onnx" },
-
-			// South Asian
-			{ "hi", "hi_IN-pratham-medium.onnx" },
-			{ "ml", "ml_IN-arjun-medium.onnx" },
-			{ "te", "te_IN-maya-medium.onnx" },
-			{ "ne", "ne_NP-google-medium.onnx" },
-
-			// Southeast Asian
-			{ "vi", "vi_VN-vais1000-medium.onnx" },
-			{ "vi-vn-x-central", "vi_VN-vais1000-medium.onnx" },
-			{ "vi-vn-x-south", "vi_VN-vais1000-medium.onnx" },
-			{ "id", "id_ID-news_tts-medium.onnx" },
-
-			// East Asian
-			{ "zh", "zh_CN-huayan-medium.onnx" },
-			{ "cmn", "zh_CN-huayan-medium.onnx" },
-			{ "yue", "zh_CN-huayan-medium.onnx" },
-			{ "hak", "zh_CN-huayan-medium.onnx" },
-
-			// African
-			{ "sw", "sw_CD-lanfrica-medium.onnx" },
 		};
 
 		private readonly TtsOptions _options;

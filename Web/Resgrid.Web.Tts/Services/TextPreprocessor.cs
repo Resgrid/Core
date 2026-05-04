@@ -325,11 +325,13 @@ namespace Resgrid.Web.Tts.Services
 		private static string ExpandAddressAbbreviations(string text)
 		{
 			// Address abbreviations should only be expanded when they appear
-			// after a number (e.g. "123 Main St" → "123 Main Street").
+			// after a house/building number (e.g. "123 Main St" → "123 Main Street").
+			// The pattern anchors to a leading digit (\b\d+\b), then lazily skips
+			// over the street name (one or more words) before matching the suffix.
 
 			foreach (var kvp in AddressAbbreviationMap.OrderByDescending(k => k.Key.Length))
 			{
-				var pattern = $@"(?<=\d\s+){Regex.Escape(kvp.Key)}\b";
+				var pattern = $@"\b\d+\b[\s\w,]*?\b{Regex.Escape(kvp.Key)}\b";
 				text = Regex.Replace(text, pattern, kvp.Value, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 			}
 

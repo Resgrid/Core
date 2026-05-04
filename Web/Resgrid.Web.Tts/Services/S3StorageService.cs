@@ -148,19 +148,21 @@ namespace Resgrid.Web.Tts.Services
 
 		public Task<Uri> GetObjectUrlAsync(string objectKey, CancellationToken cancellationToken)
 		{
+			var encodedKey = EncodeObjectKey(objectKey);
+
 			// If a public base URL is configured, use it directly.
 			if (!string.IsNullOrWhiteSpace(_options.PublicBaseUrl))
 			{
-				return Task.FromResult(new Uri($"{_options.PublicBaseUrl.TrimEnd('/')}/{objectKey}"));
+				return Task.FromResult(new Uri($"{_options.PublicBaseUrl.TrimEnd('/')}/{encodedKey}"));
 			}
 
 			if (_options.UsePresignedUrls)
 			{
-				var url = CreatePresignedGetUrl(objectKey);
+				var url = CreatePresignedGetUrl(encodedKey);
 				return Task.FromResult(new Uri(url));
 			}
 
-			return Task.FromResult(BuildDirectObjectUrl(objectKey));
+			return Task.FromResult(BuildDirectObjectUrl(encodedKey));
 		}
 
 		// -----------------------------------------------------------------
@@ -192,7 +194,6 @@ namespace Resgrid.Web.Tts.Services
 				// Compute and add the content SHA-256 header.
 				var payloadHash = HexSha256(content);
 				request.Headers.Add("x-amz-content-sha256", payloadHash);
-				request.Content.Headers.Add("x-amz-content-sha256", payloadHash);
 			}
 			else
 			{
@@ -272,12 +273,15 @@ namespace Resgrid.Web.Tts.Services
 			var canonicalQueryString = canonicalQueryStringOverride ?? string.Empty;
 
 			// Only include headers that are listed in signedHeaders.
-			var signedHeadersSet = new HashSet<string>(
-				signedHeaders.Split(';', StringSplitOptions.RemoveEmptyEntries),
-				StringComparer.Ordinal);
-
+		// Only include headers that are listed in signedHeaders.  Order
+		// must be preserved so the canonical headers appear in the same
+		// sequence as the SignedHeaders value in the canonical request.
+		var signedHeadersList = signedHeaders
+			.Split(';', StringSplitOptions.RemoveEmptyEntries)
+			.Select(h => h.Trim())
+			.ToList();
 			var canonicalHeadersBuilder = new StringBuilder();
-			foreach (var header in signedHeadersSet)
+			foreach (var header in signedHeadersList)
 			{
 				switch (header)
 				{
@@ -299,7 +303,7 @@ namespace Resgrid.Web.Tts.Services
 			// Payload hash must match the signedHeaders. When x-amz-content-sha256
 			// is signed the hash is the actual payload digest; otherwise it is the
 			// literal string UNSIGNED-PAYLOAD.
-			var sha256HeaderSigned = signedHeadersSet.Contains("x-amz-content-sha256");
+			var sha256HeaderSigned = signedHeadersList.Contains("x-amz-content-sha256", StringComparer.Ordinal);
 			var payloadHash = sha256HeaderSigned && content is not null
 				? HexSha256(content)
 				: "UNSIGNED-PAYLOAD";
@@ -345,21 +349,8 @@ namespace Resgrid.Web.Tts.Services
 
 		private string BuildObjectUrl(string objectKey)
 		{
-			var endpointUri = GetEndpointUri();
-			var authority = endpointUri.IsDefaultPort
-				? endpointUri.Host
-				: $"{endpointUri.Host}:{endpointUri.Port}";
+			var encodedKey = EncodeObjectKey(objectKey);
 
-			if (_options.ForcePathStyle)
-			{
-				return $"{endpointUri.Scheme}://{authority}/{_options.Bucket}/{objectKey}";
-			}
-
-			return $"{endpointUri.Scheme}://{_options.Bucket}.{authority}/{objectKey}";
-		}
-
-		private Uri BuildDirectObjectUrl(string objectKey)
-		{
 			if (!string.IsNullOrWhiteSpace(_options.Endpoint))
 			{
 				var endpointUri = GetEndpointUri();
@@ -369,34 +360,68 @@ namespace Resgrid.Web.Tts.Services
 
 				if (_options.ForcePathStyle)
 				{
-					return new Uri($"{endpointUri.Scheme}://{authority}/{_options.Bucket}/{objectKey}");
+					return $"{endpointUri.Scheme}://{authority}/{_options.Bucket}/{encodedKey}";
 				}
 
-				return new Uri($"{endpointUri.Scheme}://{_options.Bucket}.{authority}/{objectKey}");
+				return $"{endpointUri.Scheme}://{_options.Bucket}.{authority}/{encodedKey}";
 			}
 
-			return new Uri($"https://{_options.Bucket}.s3.{_options.Region}.amazonaws.com/{objectKey}");
+			// No custom endpoint — use the AWS regional endpoint.
+			return $"https://{_options.Bucket}.s3.{_options.Region}.amazonaws.com/{encodedKey}";
 		}
 
-		private string BuildCanonicalUri(string objectKey) =>
-			_options.ForcePathStyle
-				? $"/{_options.Bucket}/{objectKey}"
-				: $"/{objectKey}";
+		private Uri BuildDirectObjectUrl(string objectKey)
+		{
+			var encodedKey = EncodeObjectKey(objectKey);
+
+			if (!string.IsNullOrWhiteSpace(_options.Endpoint))
+			{
+				var endpointUri = GetEndpointUri();
+				var authority = endpointUri.IsDefaultPort
+					? endpointUri.Host
+					: $"{endpointUri.Host}:{endpointUri.Port}";
+
+				if (_options.ForcePathStyle)
+				{
+					return new Uri($"{endpointUri.Scheme}://{authority}/{_options.Bucket}/{encodedKey}");
+				}
+
+				return new Uri($"{endpointUri.Scheme}://{_options.Bucket}.{authority}/{encodedKey}");
+			}
+
+			return new Uri($"https://{_options.Bucket}.s3.{_options.Region}.amazonaws.com/{encodedKey}");
+		}
+
+		private string BuildCanonicalUri(string objectKey)
+		{
+			var encodedKey = EncodeObjectKey(objectKey);
+			return _options.ForcePathStyle
+				? $"/{_options.Bucket}/{encodedKey}"
+				: $"/{encodedKey}";
+		}
 
 		private string GetHost()
 		{
-			var endpointUri = GetEndpointUri();
-
-			if (_options.ForcePathStyle)
+			if (!string.IsNullOrWhiteSpace(_options.Endpoint))
 			{
+				var endpointUri = GetEndpointUri();
+
+				if (_options.ForcePathStyle)
+				{
+					return endpointUri.IsDefaultPort
+						? endpointUri.Host
+						: $"{endpointUri.Host}:{endpointUri.Port}";
+				}
+
 				return endpointUri.IsDefaultPort
-					? endpointUri.Host
-					: $"{endpointUri.Host}:{endpointUri.Port}";
+					? $"{_options.Bucket}.{endpointUri.Host}"
+					: $"{_options.Bucket}.{endpointUri.Host}:{endpointUri.Port}";
 			}
 
-			return endpointUri.IsDefaultPort
-				? $"{_options.Bucket}.{endpointUri.Host}"
-				: $"{_options.Bucket}.{endpointUri.Host}:{endpointUri.Port}";
+			// No custom endpoint — use the AWS regional host.
+			return _options.ForcePathStyle
+				? $"s3.{_options.Region}.amazonaws.com"
+				: $"{_options.Bucket}.s3.{_options.Region}.amazonaws.com";
 		}
 
 		private Uri GetEndpointUri()
@@ -496,7 +521,25 @@ namespace Resgrid.Web.Tts.Services
 	}
 
 	// -----------------------------------------------------------------
-	//  Crypto / encoding helpers
+		//  Crypto / encoding helpers
+
+		/// <summary>
+		/// Splits the object key on <c>/</c>, percent-encodes each path segment
+		/// individually, then rejoins with <c>/</c>.  This preserves the path
+		/// hierarchy while ensuring that the URL and SigV4 canonical URI are
+		/// byte-identical (both use percent-encoded segments).
+		/// </summary>
+		private static string EncodeObjectKey(string objectKey)
+		{
+			if (string.IsNullOrEmpty(objectKey))
+				return objectKey ?? string.Empty;
+
+			var segments = objectKey.Split('/');
+			for (var i = 0; i < segments.Length; i++)
+				segments[i] = Uri.EscapeDataString(segments[i]);
+
+			return string.Join("/", segments);
+		}
 
 		private static byte[] HmacSha256(byte[] key, byte[] data)
 		{

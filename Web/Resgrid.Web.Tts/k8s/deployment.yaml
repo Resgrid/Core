@@ -21,7 +21,8 @@ data:
   RESGRID__TtsConfig__DefaultSpeed: "165"
   RESGRID__TtsConfig__MaxConcurrentGenerations: "4"
   RESGRID__TtsConfig__MaxTextLength: "1000"
-  RESGRID__TtsConfig__EspeakExecutable: /usr/bin/espeak-ng
+  RESGRID__TtsConfig__PiperExecutable: /usr/local/bin/piper
+  RESGRID__TtsConfig__PiperModelDirectory: /usr/local/share/piper-voices
   RESGRID__TtsConfig__FfmpegExecutable: /usr/bin/ffmpeg
   RESGRID__TtsConfig__TempDirectory: /tmp/resgrid-tts
   RESGRID__TtsConfig__CachePrefix: tts

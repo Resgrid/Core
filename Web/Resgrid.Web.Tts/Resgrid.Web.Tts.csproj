@@ -3,7 +3,7 @@
 		<TargetFramework>net9.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<Description>Linux-ready TTS microservice backed by eSpeak NG, ffmpeg, and S3-compatible storage.</Description>
+		<Description>Linux-ready TTS microservice backed by Piper TTS, ffmpeg, and S3-compatible storage.</Description>
 		<AssemblyName>Resgrid.Web.Tts</AssemblyName>
 		<RootNamespace>Resgrid.Web.Tts</RootNamespace>
 		<Configurations>Debug;Release;Docker</Configurations>

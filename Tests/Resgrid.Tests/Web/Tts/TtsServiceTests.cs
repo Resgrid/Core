@@ -1,5 +1,6 @@
 using System;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
@@ -50,9 +51,9 @@ namespace Resgrid.Tests.Web.Tts
 
 			_audioProcessingService
 				.Setup(x => x.GetEffectiveSynthesisProfile("en-us+klatt4", 165))
-				.Returns(("mb-us1", 130));
+				.Returns(("en_US-norman-medium.onnx", 165));
 			_cacheService
-				.Setup(x => x.CreateCacheKey("Press 1 for yes", "mb-us1", 130))
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en_US-norman-medium.onnx", 165))
 				.Returns(CacheKey);
 			_cacheService
 				.Setup(x => x.TryGetCachedUrlAsync(CacheKey, It.IsAny<CancellationToken>()))
@@ -83,9 +84,9 @@ namespace Resgrid.Tests.Web.Tts
 
 			_audioProcessingService
 				.Setup(x => x.GetEffectiveSynthesisProfile("en-us+klatt4", 165))
-				.Returns(("mb-us1", 130));
+				.Returns(("en_US-norman-medium.onnx", 165));
 			_cacheService
-				.Setup(x => x.CreateCacheKey("Press 1 for yes", "mb-us1", 130))
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en_US-norman-medium.onnx", 165))
 				.Returns(CacheKey);
 			_cacheService
 				.SetupSequence(x => x.TryGetCachedUrlAsync(CacheKey, It.IsAny<CancellationToken>()))
@@ -121,9 +122,9 @@ namespace Resgrid.Tests.Web.Tts
 
 			_audioProcessingService
 				.Setup(x => x.GetEffectiveSynthesisProfile("fr+klatt4", 165))
-				.Returns(("fr+klatt4", 165));
+				.Returns(("fr_FR-siwis-medium.onnx", 165));
 			_cacheService
-				.Setup(x => x.CreateCacheKey("Bonjour", "fr+klatt4", 165))
+				.Setup(x => x.CreateCacheKey("Bonjour", "fr_FR-siwis-medium.onnx", 165))
 				.Returns(cacheKey);
 			_cacheService
 				.Setup(x => x.TryGetCachedUrlAsync(cacheKey, It.IsAny<CancellationToken>()))
@@ -149,9 +150,9 @@ namespace Resgrid.Tests.Web.Tts
 
 			_audioProcessingService
 				.Setup(x => x.GetEffectiveSynthesisProfile("en-us+klatt4", 165))
-				.Returns(("mb-us1", 130));
+				.Returns(("en_US-norman-medium.onnx", 165));
 			_cacheService
-				.Setup(x => x.CreateCacheKey("Press 1 for yes", "mb-us1", 130))
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en_US-norman-medium.onnx", 165))
 				.Returns(cacheKey);
 			_cacheService
 				.Setup(x => x.TryGetCachedUrlAsync(cacheKey, It.IsAny<CancellationToken>()))
@@ -188,9 +189,9 @@ namespace Resgrid.Tests.Web.Tts
 
 			_audioProcessingService
 				.Setup(x => x.GetEffectiveSynthesisProfile("en-us+klatt4", 165))
-				.Returns(("mb-us1", 130));
+				.Returns(("en_US-norman-medium.onnx", 165));
 			_cacheService
-				.Setup(x => x.CreateCacheKey("Press 1 for yes", "mb-us1", 130))
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en_US-norman-medium.onnx", 165))
 				.Returns(CacheKey);
 			_cacheService
 				.Setup(x => x.TryGetCachedUrlAsync(CacheKey, It.IsAny<CancellationToken>()))
@@ -239,43 +240,57 @@ namespace Resgrid.Tests.Web.Tts
 	public class AudioProcessingServiceTests
 	{
 		[Test]
-		public void create_espeak_start_info_should_use_mbrola_profile_for_english_voices()
+		public void create_piper_start_info_should_use_english_model_for_english_voices()
 		{
 			var service = CreateService();
 
-			var startInfo = InvokePrivateMethod<ProcessStartInfo>(service, "CreateEspeakStartInfo", "en-gb-x-rp+klatt4", 165, "/tmp/raw.wav");
+			var startInfo = InvokePrivateMethod<ProcessStartInfo>(service, "CreatePiperStartInfo", "en-us+klatt4", 165, "/tmp/raw.wav");
 
-			startInfo.FileName.Should().Be("espeak-ng");
+			startInfo.FileName.Should().Be("piper");
 			startInfo.ArgumentList.Should().Equal(
-				"--stdin",
-				"-w",
+				"--model",
+				Path.Combine("/usr/local/share/piper-voices", "en_US-norman-medium.onnx"),
+				"--output_file",
 				"/tmp/raw.wav",
-				"-v",
-				"mb-us1",
-				"-s",
-				"140",
-				"-p",
-				"50",
-				"-g",
-				"2");
+				"--length-scale",
+				"1.06");
 		}
 
 		[Test]
-		public void create_espeak_start_info_should_keep_requested_voice_and_speed_for_non_english_voices()
+		public void create_piper_start_info_should_fallback_to_default_model_for_unmapped_languages()
 		{
 			var service = CreateService();
 
-			var startInfo = InvokePrivateMethod<ProcessStartInfo>(service, "CreateEspeakStartInfo", "fr+klatt4", 165, "/tmp/raw.wav");
+			// "ja" (Japanese) is not a Resgrid-supported language and has no
+			// entry in VoiceModelMap, so it must fall back to the default en-US model.
+			var startInfo = InvokePrivateMethod<ProcessStartInfo>(service, "CreatePiperStartInfo", "ja+klatt4", 165, "/tmp/raw.wav");
 
-			startInfo.FileName.Should().Be("espeak-ng");
+			startInfo.FileName.Should().Be("piper");
 			startInfo.ArgumentList.Should().Equal(
-				"--stdin",
-				"-w",
+				"--model",
+				Path.Combine("/usr/local/share/piper-voices", "en_US-norman-medium.onnx"),
+				"--output_file",
 				"/tmp/raw.wav",
-				"-v",
-				"fr+klatt4",
-				"-s",
-				"165");
+				"--length-scale",
+				"1.06");
+		}
+
+		[Test]
+		public void create_piper_start_info_should_adjust_length_scale_for_speed()
+		{
+			var service = CreateService();
+
+			// Speed 350 wpm (very fast): 175/350 ≈ 0.50
+			var startInfo = InvokePrivateMethod<ProcessStartInfo>(service, "CreatePiperStartInfo", "en-us+klatt4", 350, "/tmp/raw.wav");
+
+			startInfo.FileName.Should().Be("piper");
+			startInfo.ArgumentList.Should().Equal(
+				"--model",
+				Path.Combine("/usr/local/share/piper-voices", "en_US-norman-medium.onnx"),
+				"--output_file",
+				"/tmp/raw.wav",
+				"--length-scale",
+				"0.50");
 		}
 
 		[Test]

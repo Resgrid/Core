@@ -448,7 +448,7 @@ namespace Resgrid.Tests.Web.Services
 		}
 
 		[Test]
-		public void voice_prompt_catalog_should_use_sentence_punctuation_for_espeak_playback()
+		public void voice_prompt_catalog_should_use_sentence_punctuation_for_tts_playback()
 		{
 			TwilioVoicePromptCatalog.GetStaticPrompts()
 				.Should()

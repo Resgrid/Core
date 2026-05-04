@@ -6,14 +6,14 @@ namespace Resgrid.Web.Tts.Services
 {
 	/// <summary>
 	/// Transforms dispatch jargon, abbreviations, and codes into expanded,
-	/// pronounceable English that eSpeak NG renders clearly.
+	/// pronounceable English that the TTS engine renders clearly.
 	///
 	/// The preprocessor runs <em>before</em> the cache key is computed so that
 	/// two requests that differ only by abbreviation style share the same
 	/// synthesised audio.
 	///
 	/// Expansion rules are deliberately conservative — we only touch terms
-	/// that eSpeak routinely gets wrong.  Everything else is passed through
+	/// that the engine routinely gets wrong.  Everything else is passed through
 	/// unchanged.
 	/// </summary>
 	public sealed partial class TextPreprocessor : ITextPreprocessor
@@ -80,7 +80,7 @@ namespace Resgrid.Web.Tts.Services
 		};
 
 		// ---------------------------------------------------------------
-		//  CAD / dispatch shorthand that eSpeak reads letter-by-letter
+		//  CAD / dispatch shorthand that the engine reads letter-by-letter
 		//  or mispronounces as garbled words.  These are the raw tokens
 		//  that appear in CAD-to-email or CAD-to-API dispatch feeds.
 		//  Ordered longest-first.
@@ -158,7 +158,7 @@ namespace Resgrid.Web.Tts.Services
 
 		// ---------------------------------------------------------------
 		//  Slash-notation expansions commonly used in dispatch text.
-		//  eSpeak reads "Y/O" as "Y slash O" — we want "year old".
+		//  The engine reads "Y/O" as "Y slash O" — we want "year old".
 		// ---------------------------------------------------------------
 		private static readonly Dictionary<string, string> SlashNotationMap = new(StringComparer.OrdinalIgnoreCase)
 		{
@@ -168,7 +168,7 @@ namespace Resgrid.Web.Tts.Services
 		};
 
 		// ---------------------------------------------------------------
-		//  10-codes — eSpeak reads "10-4" as "ten dash four", which is
+		//  10-codes — the engine reads "10-4" as "ten dash four", which is
 		//  actually fine for most listeners.  We keep them as-is for now.
 		//  Uncomment the map and the handler below if you prefer expansion.
 		// ---------------------------------------------------------------
@@ -266,7 +266,7 @@ namespace Resgrid.Web.Tts.Services
 
 		/// <summary>
 		/// Converts slash-delimited abbreviations into spoken English so
-		/// eSpeak doesn't say the word "slash" aloud.
+		/// the engine doesn't say the word "slash" aloud.
 		/// <br/>
 		/// Example: "75 Y/O" → "75 Year Old" (instead of "75 Y slash O")
 		/// </summary>
@@ -292,7 +292,7 @@ namespace Resgrid.Web.Tts.Services
 		/// "two patients" rather than having the digit read in isolation.
 		/// <br/>
 		/// Numbers followed by a digit or numeric suffix (e.g. "1st", "2nd")
-		/// are left as-is — they're already handled by eSpeak's digit parser.
+		/// are left as-is — they're already handled by the engine's digit parser.
 		/// </summary>
 		private static string NormalizeSmallNumbers(string text)
 		{
@@ -340,7 +340,7 @@ namespace Resgrid.Web.Tts.Services
 
 		private static string ExpandUnitIdentifiers(string text)
 		{
-			// Transform common unit-identifier patterns so eSpeak speaks them
+			// Transform common unit-identifier patterns so the engine speaks them
 			// as separate words:
 			//   "E1"   → "E 1"    (engine one)
 			//   "M2"   → "M 2"    (medic two)

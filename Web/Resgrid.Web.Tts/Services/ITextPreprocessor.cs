@@ -7,7 +7,7 @@ namespace Resgrid.Web.Tts.Services
 	public interface ITextPreprocessor
 	{
 		/// <summary>
-		/// Normalises the input text for the given voice / language so that eSpeak
+		/// Normalises the input text for the given voice / language so that Piper
 		/// (or any downstream TTS engine) produces the most natural speech.
 		/// </summary>
 		string Preprocess(string text, string voice);

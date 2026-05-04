@@ -74,7 +74,7 @@ namespace Resgrid.Services
 					if (response.StatusCode == HttpStatusCode.NotFound)
 						return freePlan;
 
-					if (response.Data == null)
+					if (response.Data == null || response.Data.Data == null)
 						return freePlan;
 
 					return response.Data.Data;
@@ -109,7 +109,7 @@ namespace Resgrid.Services
 				if (response.StatusCode == HttpStatusCode.NotFound)
 					return new DepartmentPlanCount();
 
-				if (response.Data == null)
+				if (response.Data == null || response.Data.Data == null)
 					return new DepartmentPlanCount();
 
 				return response.Data.Data;

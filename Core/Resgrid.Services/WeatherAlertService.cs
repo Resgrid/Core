@@ -21,7 +21,7 @@ namespace Resgrid.Services
 		private readonly IWeatherAlertProviderFactory _weatherAlertProviderFactory;
 		private readonly IDepartmentSettingsRepository _departmentSettingsRepository;
 		private readonly IDepartmentsService _departmentsService;
-		private readonly IMessageService _messageService;
+		private readonly ICommunicationService _communicationService;
 		private readonly ICallNotesRepository _callNotesRepository;
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IEventAggregator _eventAggregator;
@@ -33,7 +33,7 @@ namespace Resgrid.Services
 			IWeatherAlertProviderFactory weatherAlertProviderFactory,
 			IDepartmentSettingsRepository departmentSettingsRepository,
 			IDepartmentsService departmentsService,
-			IMessageService messageService,
+			ICommunicationService communicationService,
 			ICallNotesRepository callNotesRepository,
 			ICacheProvider cacheProvider,
 			IEventAggregator eventAggregator)
@@ -44,7 +44,7 @@ namespace Resgrid.Services
 			_weatherAlertProviderFactory = weatherAlertProviderFactory;
 			_departmentSettingsRepository = departmentSettingsRepository;
 			_departmentsService = departmentsService;
-			_messageService = messageService;
+			_communicationService = communicationService;
 			_callNotesRepository = callNotesRepository;
 			_cacheProvider = cacheProvider;
 			_eventAggregator = eventAggregator;
@@ -381,33 +381,31 @@ namespace Resgrid.Services
 							var members = await _departmentsService.GetAllMembersForDepartmentAsync(departmentId);
 							if (members != null && members.Any())
 							{
-								// Use department managing user as sender for system messages
+								// Use department managing user as sender for notifications
 								var senderId = department?.ManagingUserId ?? members.First().UserId;
 
 								var subject = FormatAlertSubject(alert);
 								var body = FormatAlertMessageBody(alert, department);
 
-								var message = new Message
-								{
-									Subject = subject,
-									Body = body,
-									SendingUserId = senderId,
-									SentOn = DateTime.UtcNow,
-									SystemGenerated = true,
-									IsBroadcast = true,
-									Type = 0
-								};
-
 								foreach (var member in members)
 								{
-									if (member.UserId != senderId && !member.IsDisabled.GetValueOrDefault() && !member.IsDeleted)
-										message.AddRecipient(member.UserId);
+									if (member.UserId == senderId || member.IsDisabled.GetValueOrDefault() || member.IsDeleted)
+										continue;
+
+									var notifyMsg = new Message
+									{
+										Subject = subject,
+										Body = body,
+										SendingUserId = senderId,
+										ReceivingUserId = member.UserId,
+										SentOn = DateTime.UtcNow,
+										SystemGenerated = true,
+										IsBroadcast = true,
+										Type = 0
+									};
+
+									await _communicationService.SendMessageAsync(notifyMsg, "Weather Alert System", null, departmentId, null, department);
 								}
-
-								var savedMessage = await _messageService.SaveMessageAsync(message, ct);
-								await _messageService.SendMessageAsync(savedMessage, "Weather Alert System", departmentId, false, ct);
-
-								alert.SystemMessageId = savedMessage.MessageId;
 							}
 						}
 						catch (Exception ex)

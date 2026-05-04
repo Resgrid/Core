@@ -1,444 +1,146 @@
-using Amazon.Runtime;
-using Amazon.S3;
-using Amazon.S3.Model;
-using Microsoft.Extensions.Logging;
+using System.Globalization;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Security.Cryptography;
+using System.Text;
 using Microsoft.Extensions.Options;
 using Resgrid.Web.Tts.Configuration;
-using System.Net;
-using System.Net.Http;
 
 namespace Resgrid.Web.Tts.Services
 {
 	public sealed class S3StorageService : IStorageService
 	{
 		private const int MaxRetryAttempts = 3;
-		private const int PresignedPutUrlExpiryMinutes = 5;
+		private const int PresignedUrlExpiryMinutes = 5;
 
-		private readonly IAmazonS3 _s3Client;
+		// The AWS SDK could not parse the Expiration header value "2026-05-04T00:00:00Z"
+		// returned by RustFS / MinIO.  We handle all header parsing ourselves to avoid
+		// this class of failure entirely.
+		private static readonly string[] Iso8601Formats =
+		{
+			"yyyy-MM-ddTHH:mm:ssZ",
+			"yyyy-MM-ddTHH:mm:ss.fZ",
+			"yyyy-MM-ddTHH:mm:ss.ffZ",
+			"yyyy-MM-ddTHH:mm:ss.fffZ",
+			"yyyy-MM-ddTHH:mm:ss.ffffZ",
+			"yyyy-MM-ddTHH:mm:ss.fffffZ",
+			"yyyy-MM-ddTHH:mm:ss.ffffffZ",
+			"yyyy-MM-ddTHH:mm:ss.fffffffZ",
+			"yyyy-MM-ddTHH:mm:sszzz",
+			"yyyy-MM-ddTHH:mm:ss.fzzz",
+			"yyyy-MM-ddTHH:mm:ss.ffzzz",
+			"yyyy-MM-ddTHH:mm:ss.fffzzz",
+			"yyyy-MM-ddTHH:mm:ss.ffffzzz",
+			"yyyy-MM-ddTHH:mm:ss.fffffzzz",
+			"yyyy-MM-ddTHH:mm:ss.ffffffzzz",
+			"yyyy-MM-ddTHH:mm:ss.fffffffzzz",
+		};
+
+		private readonly IHttpClientFactory _httpClientFactory;
 		private readonly S3StorageOptions _options;
 		private readonly ILogger<S3StorageService> _logger;
-		private readonly IHttpClientFactory _httpClientFactory;
 
 		public S3StorageService(
-			IAmazonS3 s3Client,
+			IHttpClientFactory httpClientFactory,
 			IOptions<S3StorageOptions> options,
-			ILogger<S3StorageService> logger,
-			IHttpClientFactory httpClientFactory)
+			ILogger<S3StorageService> logger)
 		{
-			_s3Client = s3Client;
+			_httpClientFactory = httpClientFactory;
 			_options = options.Value;
 			_logger = logger;
-			_httpClientFactory = httpClientFactory;
 		}
+
+		// -----------------------------------------------------------------
+		//  IStorageService  implementation
+		// -----------------------------------------------------------------
 
 		public async Task<bool> ExistsAsync(string objectKey, CancellationToken cancellationToken)
 		{
 			try
 			{
-				await ExecuteWithRetryAsync(
-					() => _s3Client.GetObjectMetadataAsync(
-						new GetObjectMetadataRequest
-						{
-							BucketName = _options.Bucket,
-							Key = objectKey
-						},
-						cancellationToken),
-					$"checking metadata for {objectKey}",
+				using var response = await SendSignedRequestAsync(
+					HttpMethod.Head,
+					objectKey,
+					content: null,
+					contentType: null,
 					cancellationToken);
 
-				return true;
+				return response.StatusCode switch
+				{
+					HttpStatusCode.OK => true,
+					HttpStatusCode.NotFound => false,
+					_ => throw new HttpRequestException(
+						$"HEAD {objectKey} returned unexpected status {(int)response.StatusCode}.",
+						null,
+						response.StatusCode)
+				};
 			}
-			catch (AmazonS3Exception ex) when (IsNotFound(ex))
+			catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
 			{
 				return false;
 			}
-			catch (AmazonUnmarshallingException ex) when (ex.InnerException is FormatException formatException)
-			{
-				return await HandleMalformedMetadataResponseAsync(objectKey, ex, formatException, cancellationToken);
-			}
-			catch (FormatException ex)
-			{
-				return await HandleMalformedMetadataResponseAsync(objectKey, ex, cancellationToken);
-			}
-		}
-
-		private Task<bool> HandleMalformedMetadataResponseAsync(
-			string objectKey,
-			AmazonUnmarshallingException exception,
-			FormatException formatException,
-			CancellationToken cancellationToken)
-		{
-			return HandleMalformedMetadataResponseAsync(
-				objectKey,
-				exception,
-				formatException,
-				exception.LastKnownLocation ?? "unknown",
-				cancellationToken,
-				wrappedByAmazonUnmarshallingException: true);
-		}
-
-		private Task<bool> HandleMalformedMetadataResponseAsync(
-			string objectKey,
-			FormatException exception,
-			CancellationToken cancellationToken)
-		{
-			return HandleMalformedMetadataResponseAsync(
-				objectKey,
-				exception,
-				exception,
-				"unknown",
-				cancellationToken,
-				wrappedByAmazonUnmarshallingException: false);
-		}
-
-		private async Task<bool> HandleMalformedMetadataResponseAsync(
-			string objectKey,
-			Exception exception,
-			FormatException formatException,
-			string lastKnownLocation,
-			CancellationToken cancellationToken,
-			bool wrappedByAmazonUnmarshallingException)
-		{
-			if (wrappedByAmazonUnmarshallingException)
-			{
-				_logger.LogWarning(
-					exception,
-					"The S3 client could not parse the metadata response for {ObjectKey}. Verifying existence with a presigned HEAD request. Inner format error: {InnerFormatErrorMessage}",
-					objectKey,
-					formatException.Message);
-			}
-			else
-			{
-				_logger.LogWarning(
-					exception,
-					"The S3 client surfaced a raw FormatException while parsing the metadata response for {ObjectKey}. Verifying existence with a presigned HEAD request because the AWS SDK did not wrap the parsing failure in an AmazonUnmarshallingException.",
-					objectKey);
-			}
-
-			_logger.LogDebug(
-				formatException,
-				"FormatException while parsing the metadata response for {ObjectKey}. Last known location: {LastKnownLocation}.",
-				objectKey,
-				lastKnownLocation);
-
-			try
-			{
-				var exists = await ExistsWithPresignedHeadAsync(objectKey, cancellationToken);
-
-				_logger.LogDebug(
-					"Presigned HEAD verification after the metadata parsing failure reported that {ObjectKey} {ExistenceState}.",
-					objectKey,
-					exists ? "exists" : "does not exist");
-
-				return exists;
-			}
-			catch (AmazonServiceException verificationException)
-			{
-				_logger.LogWarning(
-					verificationException,
-					"Unable to verify whether {ObjectKey} exists after the metadata parsing failure. Assuming the object exists because S3 returned a response before the unmarshalling error.",
-					objectKey);
-			}
-			catch (HttpRequestException verificationException)
-			{
-				_logger.LogWarning(
-					verificationException,
-					"Unable to verify whether {ObjectKey} exists after the metadata parsing failure due to connectivity. Assuming the object exists because S3 returned a response before the unmarshalling error.",
-					objectKey);
-			}
-			catch (TaskCanceledException verificationException) when (!cancellationToken.IsCancellationRequested)
-			{
-				_logger.LogWarning(
-					verificationException,
-					"Unable to verify whether {ObjectKey} exists after the metadata parsing failure due to timeout. Assuming the object exists because S3 returned a response before the unmarshalling error.",
-					objectKey);
-			}
-			catch (IOException verificationException)
-			{
-				_logger.LogWarning(
-					verificationException,
-					"Unable to verify whether {ObjectKey} exists after the metadata parsing failure due to IO. Assuming the object exists because S3 returned a response before the unmarshalling error.",
-					objectKey);
-			}
-
-			// The metadata request reached S3 and only failed while the SDK parsed the response.
-			// If the explicit presigned HEAD verification also fails, preserve the best-effort
-			// behavior and assume the object exists so callers such as CacheService understand
-			// this path can still return an optimistic result.
-			return true;
 		}
 
 		public async Task UploadAsync(string objectKey, Stream content, string contentType, CancellationToken cancellationToken)
 		{
-			var payload = await ReadContentBytesAsync(content, cancellationToken);
-
-			try
-			{
-				await ExecuteWithRetryAsync(
-					() => UploadWithSdkAsync(objectKey, payload, contentType, cancellationToken),
-					$"uploading {objectKey}",
-					cancellationToken);
-			}
-			catch (FormatException ex)
-			{
-				await HandleMalformedPutResponseAsync(objectKey, payload, contentType, ex, cancellationToken);
-			}
-		}
-
-		private async Task HandleMalformedPutResponseAsync(
-			string objectKey,
-			byte[] payload,
-			string contentType,
-			FormatException exception,
-			CancellationToken cancellationToken)
-		{
-			_logger.LogWarning(
-				exception,
-				"The S3 client could not parse the PUT response for {ObjectKey}. Verifying whether the upload persisted before falling back to a presigned PUT upload.",
-				objectKey);
-
-			if (await WasUploadPersistedAsync(objectKey, cancellationToken))
-			{
-				_logger.LogInformation(
-					"The upload for {ObjectKey} was verified after the PUT response parsing failure. Treating the upload as successful.",
-					objectKey);
-
-				return;
-			}
-
-			_logger.LogWarning(
-				"The upload for {ObjectKey} could not be verified after the PUT response parsing failure. Retrying with a presigned PUT upload.",
-				objectKey);
-
-			await UploadWithPresignedUrlAsync(objectKey, payload, contentType, cancellationToken);
-		}
-
-		private async Task<bool> WasUploadPersistedAsync(string objectKey, CancellationToken cancellationToken)
-		{
-			try
-			{
-				return await ExistsAsync(objectKey, cancellationToken);
-			}
-			catch (AmazonServiceException ex)
-			{
-				_logger.LogWarning(
-					ex,
-					"Unable to verify whether {ObjectKey} exists after the PUT response parsing failure. Falling back to a presigned PUT upload.",
-					objectKey);
-			}
-			catch (HttpRequestException ex)
-			{
-				_logger.LogWarning(
-					ex,
-					"Unable to verify whether {ObjectKey} exists after the PUT response parsing failure due to connectivity. Falling back to a presigned PUT upload.",
-					objectKey);
-			}
-			catch (TaskCanceledException ex) when (!cancellationToken.IsCancellationRequested)
-			{
-				_logger.LogWarning(
-					ex,
-					"Unable to verify whether {ObjectKey} exists after the PUT response parsing failure due to timeout. Falling back to a presigned PUT upload.",
-					objectKey);
-			}
-			catch (IOException ex)
-			{
-				_logger.LogWarning(
-					ex,
-					"Unable to verify whether {ObjectKey} exists after the PUT response parsing failure due to IO. Falling back to a presigned PUT upload.",
-					objectKey);
-			}
-
-			return false;
-		}
-
-		private Task<PutObjectResponse> UploadWithSdkAsync(string objectKey, byte[] payload, string contentType, CancellationToken cancellationToken)
-		{
-			return _s3Client.PutObjectAsync(
-				new PutObjectRequest
-				{
-					BucketName = _options.Bucket,
-					Key = objectKey,
-					InputStream = new MemoryStream(payload, writable: false),
-					ContentType = contentType
-				},
-				cancellationToken);
-		}
-
-		private async Task UploadWithPresignedUrlAsync(string objectKey, byte[] payload, string contentType, CancellationToken cancellationToken)
-		{
-			var client = _httpClientFactory.CreateClient(nameof(S3StorageService));
-
-			for (var attempt = 1; attempt <= MaxRetryAttempts; attempt++)
-			{
-				using var request = new HttpRequestMessage(HttpMethod.Put, CreatePresignedPutUrl(objectKey, contentType));
-				request.Content = new ByteArrayContent(payload);
-
-				if (!string.IsNullOrWhiteSpace(contentType))
-				{
-					request.Content.Headers.TryAddWithoutValidation("Content-Type", contentType);
-				}
-
-				try
-				{
-					using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-
-					if (response.IsSuccessStatusCode)
-					{
-						return;
-					}
-
-					var exception = new HttpRequestException(
-						$"Presigned PUT upload for {objectKey} failed with status code {(int)response.StatusCode}.",
-						null,
-						response.StatusCode);
-
-					if (attempt < MaxRetryAttempts && IsTransientStatusCode(response.StatusCode))
-					{
-						await DelayRetryAsync($"uploading {objectKey} via presigned PUT", attempt, exception, cancellationToken);
-						continue;
-					}
-
-					response.EnsureSuccessStatusCode();
-				}
-				catch (HttpRequestException ex) when (attempt < MaxRetryAttempts && (!ex.StatusCode.HasValue || IsTransientStatusCode(ex.StatusCode.Value)))
-				{
-					await DelayRetryAsync($"uploading {objectKey} via presigned PUT", attempt, ex, cancellationToken);
-				}
-				catch (IOException ex) when (attempt < MaxRetryAttempts)
-				{
-					await DelayRetryAsync($"uploading {objectKey} via presigned PUT", attempt, ex, cancellationToken);
-				}
-				catch (TaskCanceledException ex) when (!cancellationToken.IsCancellationRequested && attempt < MaxRetryAttempts)
-				{
-					await DelayRetryAsync($"uploading {objectKey} via presigned PUT", attempt, ex, cancellationToken);
-				}
-			}
-
-			throw new InvalidOperationException($"Presigned PUT upload retry loop terminated unexpectedly for {objectKey}.");
-		}
-
-		private string CreatePresignedHeadUrl(string objectKey)
-		{
-			return _s3Client.GetPreSignedURL(new GetPreSignedUrlRequest
-			{
-				BucketName = _options.Bucket,
-				Key = objectKey,
-				Verb = HttpVerb.HEAD,
-				Protocol = GetPresignedUrlProtocol(),
-				Expires = DateTime.UtcNow.AddMinutes(PresignedPutUrlExpiryMinutes)
-			});
-		}
-
-		private async Task<bool> ExistsWithPresignedHeadAsync(string objectKey, CancellationToken cancellationToken)
-		{
-			var client = _httpClientFactory.CreateClient(nameof(S3StorageService));
-
-			for (var attempt = 1; attempt <= MaxRetryAttempts; attempt++)
-			{
-				using var request = new HttpRequestMessage(HttpMethod.Head, CreatePresignedHeadUrl(objectKey));
-
-				try
-				{
-					using var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-
-					if (response.StatusCode == HttpStatusCode.NotFound)
-					{
-						return false;
-					}
-
-					if (response.IsSuccessStatusCode)
-					{
-						return true;
-					}
-
-					var exception = new HttpRequestException(
-						$"Presigned HEAD existence check for {objectKey} failed with status code {(int)response.StatusCode}.",
-						null,
-						response.StatusCode);
-
-					if (attempt < MaxRetryAttempts && IsTransientStatusCode(response.StatusCode))
-					{
-						await DelayRetryAsync($"checking existence of {objectKey} via presigned HEAD", attempt, exception, cancellationToken);
-						continue;
-					}
-
-					response.EnsureSuccessStatusCode();
-				}
-				catch (HttpRequestException ex) when (attempt < MaxRetryAttempts && (!ex.StatusCode.HasValue || IsTransientStatusCode(ex.StatusCode.Value)))
-				{
-					await DelayRetryAsync($"checking existence of {objectKey} via presigned HEAD", attempt, ex, cancellationToken);
-				}
-				catch (IOException ex) when (attempt < MaxRetryAttempts)
-				{
-					await DelayRetryAsync($"checking existence of {objectKey} via presigned HEAD", attempt, ex, cancellationToken);
-				}
-				catch (TaskCanceledException ex) when (!cancellationToken.IsCancellationRequested && attempt < MaxRetryAttempts)
-				{
-					await DelayRetryAsync($"checking existence of {objectKey} via presigned HEAD", attempt, ex, cancellationToken);
-				}
-			}
-
-			throw new InvalidOperationException($"Presigned HEAD existence check retry loop terminated unexpectedly for {objectKey}.");
-		}
-
-		private string CreatePresignedPutUrl(string objectKey, string contentType)
-		{
-			return _s3Client.GetPreSignedURL(new GetPreSignedUrlRequest
-			{
-				BucketName = _options.Bucket,
-				Key = objectKey,
-				Verb = HttpVerb.PUT,
-				Protocol = GetPresignedUrlProtocol(),
-				ContentType = contentType,
-				Expires = DateTime.UtcNow.AddMinutes(PresignedPutUrlExpiryMinutes)
-			});
-		}
-
-		private static async Task<byte[]> ReadContentBytesAsync(Stream content, CancellationToken cancellationToken)
-		{
-			if (content.CanSeek)
-			{
-				content.Position = 0;
-			}
-
 			using var memoryStream = new MemoryStream();
 			await content.CopyToAsync(memoryStream, cancellationToken);
-			return memoryStream.ToArray();
+			var payload = memoryStream.ToArray();
+
+			await ExecuteWithRetryAsync(
+				async () =>
+				{
+					using var response = await SendSignedRequestAsync(
+						HttpMethod.Put,
+						objectKey,
+						payload,
+						contentType,
+						cancellationToken);
+
+					response.EnsureSuccessStatusCode();
+				},
+				$"uploading {objectKey}",
+				cancellationToken);
 		}
 
 		public async Task<TtsAudioContent?> GetObjectAsync(string objectKey, CancellationToken cancellationToken)
 		{
 			try
 			{
-				using var response = await ExecuteWithRetryAsync(
-					() => _s3Client.GetObjectAsync(
-						new GetObjectRequest
-						{
-							BucketName = _options.Bucket,
-							Key = objectKey
-						},
-						cancellationToken),
-					$"downloading {objectKey}",
+				using var response = await SendSignedRequestAsync(
+					HttpMethod.Get,
+					objectKey,
+					content: null,
+					contentType: null,
 					cancellationToken);
 
-				await using var responseStream = response.ResponseStream;
-				using var memoryStream = new MemoryStream();
-				await responseStream.CopyToAsync(memoryStream, cancellationToken);
+				response.EnsureSuccessStatusCode();
 
-				var audioBytes = memoryStream.ToArray();
-				var contentType = string.IsNullOrWhiteSpace(response.Headers.ContentType)
+				var responseContentType = response.Content.Headers.ContentType?.ToString();
+				var contentType = string.IsNullOrWhiteSpace(responseContentType)
 					? "audio/wav"
-					: response.Headers.ContentType;
-				var entityTag = string.IsNullOrWhiteSpace(response.ETag)
-					? CreateEntityTag(audioBytes)
-					: NormalizeEntityTag(response.ETag);
-				var lastModified = response.LastModified == default
-					? DateTimeOffset.UtcNow
-					: new DateTimeOffset(DateTime.SpecifyKind(response.LastModified, DateTimeKind.Utc));
+					: responseContentType;
 
-				return new TtsAudioContent(audioBytes, contentType, entityTag, lastModified);
+				var entityTag = response.Headers.ETag?.Tag;
+				if (string.IsNullOrWhiteSpace(entityTag))
+				{
+					entityTag = response.Content.Headers.TryGetValues("ETag", out var etagValues)
+						? string.Join(",", etagValues)
+						: null;
+				}
+
+				var lastModified = response.Content.Headers.LastModified
+					?? DateTimeOffset.UtcNow;
+
+				var audioBytes = await response.Content.ReadAsByteArrayAsync(cancellationToken);
+
+				return new TtsAudioContent(
+					audioBytes,
+					contentType,
+					NormalizeEntityTag(entityTag),
+					lastModified);
 			}
-			catch (AmazonS3Exception ex) when (IsNotFound(ex))
+			catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
 			{
 				return null;
 			}
@@ -446,6 +148,7 @@ namespace Resgrid.Web.Tts.Services
 
 		public Task<Uri> GetObjectUrlAsync(string objectKey, CancellationToken cancellationToken)
 		{
+			// If a public base URL is configured, use it directly.
 			if (!string.IsNullOrWhiteSpace(_options.PublicBaseUrl))
 			{
 				return Task.FromResult(new Uri($"{_options.PublicBaseUrl.TrimEnd('/')}/{objectKey}"));
@@ -453,100 +156,180 @@ namespace Resgrid.Web.Tts.Services
 
 			if (_options.UsePresignedUrls)
 			{
-				var url = _s3Client.GetPreSignedURL(new GetPreSignedUrlRequest
-				{
-					BucketName = _options.Bucket,
-					Key = objectKey,
-					Protocol = GetPresignedUrlProtocol(),
-					Expires = DateTime.UtcNow.AddMinutes(_options.PresignedUrlExpiryMinutes)
-				});
-
+				var url = CreatePresignedGetUrl(objectKey);
 				return Task.FromResult(new Uri(url));
 			}
 
 			return Task.FromResult(BuildDirectObjectUrl(objectKey));
 		}
 
-		private async Task<TResponse> ExecuteWithRetryAsync<TResponse>(Func<Task<TResponse>> operation, string operationName, CancellationToken cancellationToken)
+		// -----------------------------------------------------------------
+		//  HTTP request helpers
+		// -----------------------------------------------------------------
+
+		private async Task<HttpResponseMessage> SendSignedRequestAsync(
+			HttpMethod method,
+			string objectKey,
+			byte[]? content,
+			string? contentType,
+			CancellationToken cancellationToken)
 		{
-			for (var attempt = 1; attempt <= MaxRetryAttempts; attempt++)
+			var url = BuildObjectUrl(objectKey);
+			using var request = new HttpRequestMessage(method, url);
+
+			// Add the Date header for SigV4 signing.
+			var now = DateTimeOffset.UtcNow;
+			request.Headers.Add("x-amz-date", now.ToString("yyyyMMddTHHmmssZ", CultureInfo.InvariantCulture));
+
+			if (content is not null)
 			{
-				try
+				request.Content = new ByteArrayContent(content);
+				if (!string.IsNullOrWhiteSpace(contentType))
 				{
-					return await operation();
+					request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse(contentType);
 				}
-				catch (AmazonS3Exception ex) when (IsNotFound(ex))
-				{
-					throw;
-				}
-				catch (AmazonServiceException ex) when (attempt < MaxRetryAttempts && IsTransient(ex))
-				{
-					await DelayRetryAsync(operationName, attempt, ex, cancellationToken);
-				}
-				catch (HttpRequestException ex) when (attempt < MaxRetryAttempts)
-				{
-					await DelayRetryAsync(operationName, attempt, ex, cancellationToken);
-				}
-				catch (IOException ex) when (attempt < MaxRetryAttempts)
-				{
-					await DelayRetryAsync(operationName, attempt, ex, cancellationToken);
-				}
+
+				// Compute and add the content SHA-256 header.
+				var payloadHash = HexSha256(content);
+				request.Headers.Add("x-amz-content-sha256", payloadHash);
+				request.Content.Headers.Add("x-amz-content-sha256", payloadHash);
+			}
+			else
+			{
+				request.Headers.Add("x-amz-content-sha256", "UNSIGNED-PAYLOAD");
 			}
 
-			throw new InvalidOperationException($"S3 operation retry loop terminated unexpectedly for {operationName}.");
+			// Add the Host header required by SigV4.
+			request.Headers.Host = GetHost();
+
+			// Compute and add the Authorization header.
+			var scope = BuildScope(now);
+			var signedHeaders = "host;x-amz-content-sha256;x-amz-date";
+			var signature = CalculateSignature(method, objectKey, content, contentType, now, scope, signedHeaders);
+			var credential = $"{_options.AccessKey}/{scope}";
+
+			request.Headers.TryAddWithoutValidation(
+				"Authorization",
+				$"AWS4-HMAC-SHA256 Credential={credential},SignedHeaders={signedHeaders},Signature={signature}");
+
+			return await CreateClient().SendAsync(request, cancellationToken);
 		}
 
-		private async Task DelayRetryAsync(string operationName, int attempt, Exception exception, CancellationToken cancellationToken)
+		private string CreatePresignedGetUrl(string objectKey)
 		{
-			var delay = TimeSpan.FromMilliseconds(150 * Math.Pow(2, attempt - 1));
+			var now = DateTimeOffset.UtcNow;
+			var expires = PresignedUrlExpiryMinutes * 60;
+			var scope = BuildScope(now);
+			var signedHeaders = "host";
 
-			_logger.LogWarning(
-				exception,
-				"Transient S3 failure during {OperationName} on attempt {Attempt}. Retrying in {DelayMs} ms.",
-				operationName,
-				attempt,
-				delay.TotalMilliseconds);
+			var canonicalUri = BuildCanonicalUri(objectKey);
+			var host = GetHost();
 
-			await Task.Delay(delay, cancellationToken);
-		}
-
-		private bool IsTransient(AmazonServiceException exception)
-		{
-			return IsTransientStatusCode(exception.StatusCode)
-				   || exception.InnerException is HttpRequestException
-				   || exception.InnerException is IOException;
-		}
-
-		private static bool IsTransientStatusCode(HttpStatusCode statusCode)
-		{
-			return statusCode == HttpStatusCode.RequestTimeout
-				   || statusCode == HttpStatusCode.TooManyRequests
-				   || (int)statusCode >= 500;
-		}
-
-		private static bool IsNotFound(AmazonS3Exception exception)
-		{
-			return exception.StatusCode == HttpStatusCode.NotFound
-				   || string.Equals(exception.ErrorCode, "NoSuchKey", StringComparison.OrdinalIgnoreCase)
-				   || string.Equals(exception.ErrorCode, "NotFound", StringComparison.OrdinalIgnoreCase);
-		}
-
-		private Protocol GetPresignedUrlProtocol()
-		{
-			if (Uri.TryCreate(_options.Endpoint, UriKind.Absolute, out var endpointUri))
+			// Query params for presigned URL (must be sorted).
+			var queryParams = new SortedDictionary<string, string>(StringComparer.Ordinal)
 			{
-				if (string.Equals(endpointUri.Scheme, Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase))
-				{
-					return Protocol.HTTP;
-				}
+				["X-Amz-Algorithm"] = "AWS4-HMAC-SHA256",
+				["X-Amz-Credential"] = $"{_options.AccessKey}/{scope}",
+				["X-Amz-Date"] = now.ToString("yyyyMMddTHHmmssZ", CultureInfo.InvariantCulture),
+				["X-Amz-Expires"] = expires.ToString(CultureInfo.InvariantCulture),
+				["X-Amz-SignedHeaders"] = signedHeaders,
+			};
 
-				if (string.Equals(endpointUri.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase))
-				{
-					return Protocol.HTTPS;
-				}
+			var canonicalQueryString = string.Join("&",
+				queryParams.Select(kvp => $"{UrlEncode(kvp.Key)}={UrlEncode(kvp.Value)}"));
+
+			// Null content for presigned GET — payload hash is UNSIGNED-PAYLOAD.
+			var signature = CalculateSignature(
+				HttpMethod.Get,
+				objectKey,
+				content: null,
+				contentType: null,
+				now,
+				scope,
+				signedHeaders,
+				canonicalQueryStringOverride: canonicalQueryString);
+
+			// Build final URL.
+			var baseUrl = BuildObjectUrl(objectKey);
+			return $"{baseUrl}?{canonicalQueryString}&X-Amz-Signature={signature}";
+		}
+
+		// -----------------------------------------------------------------
+		//  Signature V4 helpers
+		// -----------------------------------------------------------------
+
+		private string CalculateSignature(
+			HttpMethod method,
+			string objectKey,
+			byte[]? content,
+			string? contentType,
+			DateTimeOffset now,
+			string scope,
+			string signedHeaders,
+			string? canonicalQueryStringOverride = null)
+		{
+			var canonicalUri = BuildCanonicalUri(objectKey);
+			var canonicalQueryString = canonicalQueryStringOverride ?? string.Empty;
+
+			var canonicalHeaders =
+				$"host:{GetHost()}\n" +
+				$"x-amz-content-sha256:{(content is not null ? HexSha256(content) : "UNSIGNED-PAYLOAD")}\n" +
+				$"x-amz-date:{now:yyyyMMddTHHmmssZ}\n";
+
+			var payloadHash = content is not null ? HexSha256(content) : "UNSIGNED-PAYLOAD";
+
+			var canonicalRequest = string.Join('\n',
+				method.Method,
+				canonicalUri,
+				canonicalQueryString,
+				canonicalHeaders,
+				signedHeaders,
+				payloadHash);
+
+			var stringToSign = string.Join('\n',
+				"AWS4-HMAC-SHA256",
+				now.ToString("yyyyMMddTHHmmssZ", CultureInfo.InvariantCulture),
+				scope,
+				HexSha256(Encoding.UTF8.GetBytes(canonicalRequest)));
+
+			var signingKey = DeriveSigningKey(now);
+			var signature = HmacSha256(signingKey, Encoding.UTF8.GetBytes(stringToSign));
+
+			return Convert.ToHexString(signature).ToLowerInvariant();
+		}
+
+		private byte[] DeriveSigningKey(DateTimeOffset now)
+		{
+			var date = now.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
+
+			var kDate = HmacSha256(
+				Encoding.UTF8.GetBytes($"AWS4{_options.SecretKey}"),
+				Encoding.UTF8.GetBytes(date));
+
+			var kRegion = HmacSha256(kDate, Encoding.UTF8.GetBytes(_options.Region));
+
+			var kService = HmacSha256(kRegion, Encoding.UTF8.GetBytes("s3"));
+
+			return HmacSha256(kService, Encoding.UTF8.GetBytes("aws4_request"));
+		}
+
+		// -----------------------------------------------------------------
+		//  URL builders
+		// -----------------------------------------------------------------
+
+		private string BuildObjectUrl(string objectKey)
+		{
+			var endpointUri = GetEndpointUri();
+			var authority = endpointUri.IsDefaultPort
+				? endpointUri.Host
+				: $"{endpointUri.Host}:{endpointUri.Port}";
+
+			if (_options.ForcePathStyle)
+			{
+				return $"{endpointUri.Scheme}://{authority}/{_options.Bucket}/{objectKey}";
 			}
 
-			return _options.UseSsl ? Protocol.HTTPS : Protocol.HTTP;
+			return $"{endpointUri.Scheme}://{_options.Bucket}.{authority}/{objectKey}";
 		}
 
 		private Uri BuildDirectObjectUrl(string objectKey)
@@ -569,6 +352,24 @@ namespace Resgrid.Web.Tts.Services
 			return new Uri($"https://{_options.Bucket}.s3.{_options.Region}.amazonaws.com/{objectKey}");
 		}
 
+		private string BuildCanonicalUri(string objectKey) => $"/{_options.Bucket}/{objectKey}";
+
+		private string GetHost()
+		{
+			var endpointUri = GetEndpointUri();
+
+			if (_options.ForcePathStyle)
+			{
+				return endpointUri.IsDefaultPort
+					? endpointUri.Host
+					: $"{endpointUri.Host}:{endpointUri.Port}";
+			}
+
+			return endpointUri.IsDefaultPort
+				? $"{_options.Bucket}.{endpointUri.Host}"
+				: $"{_options.Bucket}.{endpointUri.Host}:{endpointUri.Port}";
+		}
+
 		private Uri GetEndpointUri()
 		{
 			if (Uri.TryCreate(_options.Endpoint, UriKind.Absolute, out var uri))
@@ -580,19 +381,122 @@ namespace Resgrid.Web.Tts.Services
 			return new Uri($"{scheme}://{_options.Endpoint}");
 		}
 
-		private static string NormalizeEntityTag(string entityTag)
+		private string BuildScope(DateTimeOffset now)
 		{
-			var trimmed = entityTag.Trim();
-
-			return trimmed.StartsWith("\"", StringComparison.Ordinal)
-				? trimmed
-				: $"\"{trimmed.Trim('\"')}\"";
+			return string.Concat(
+				now.ToString("yyyyMMdd", CultureInfo.InvariantCulture),
+				"/",
+				_options.Region,
+				"/s3/aws4_request");
 		}
 
-		private static string CreateEntityTag(byte[] audioBytes)
+		// -----------------------------------------------------------------
+		//  Retry helpers
+		// -----------------------------------------------------------------
+
+		private async Task ExecuteWithRetryAsync(
+			Func<Task> operation,
+			string operationName,
+			CancellationToken cancellationToken)
 		{
-			using var sha256 = System.Security.Cryptography.SHA256.Create();
-			return $"\"{Convert.ToHexString(sha256.ComputeHash(audioBytes)).ToLowerInvariant()}\"";
+			for (var attempt = 1; attempt <= MaxRetryAttempts; attempt++)
+			{
+				try
+				{
+					await operation();
+					return;
+				}
+				catch (HttpRequestException ex) when (attempt < MaxRetryAttempts && IsTransientStatusCode(ex.StatusCode))
+				{
+					await DelayRetryAsync(operationName, attempt, ex, cancellationToken);
+				}
+				catch (IOException ex) when (attempt < MaxRetryAttempts)
+				{
+					await DelayRetryAsync(operationName, attempt, ex, cancellationToken);
+				}
+				catch (TaskCanceledException ex) when (!cancellationToken.IsCancellationRequested && attempt < MaxRetryAttempts)
+				{
+					await DelayRetryAsync(operationName, attempt, ex, cancellationToken);
+				}
+			}
+
+			throw new InvalidOperationException(
+				$"S3 operation retry loop terminated unexpectedly for {operationName}.");
+		}
+
+		private async Task DelayRetryAsync(
+			string operationName,
+			int attempt,
+			Exception exception,
+			CancellationToken cancellationToken)
+		{
+			var delay = TimeSpan.FromMilliseconds(150 * Math.Pow(2, attempt - 1));
+
+			_logger.LogWarning(
+				exception,
+				"Transient S3 failure during {OperationName} on attempt {Attempt}. Retrying in {DelayMs} ms.",
+				operationName,
+				attempt,
+				delay.TotalMilliseconds);
+
+			await Task.Delay(delay, cancellationToken);
+		}
+
+		private static bool IsTransientStatusCode(HttpStatusCode? statusCode)
+		{
+			return statusCode.HasValue
+				&& (statusCode == HttpStatusCode.RequestTimeout
+					|| statusCode == HttpStatusCode.TooManyRequests
+					|| (int)statusCode >= 500);
+		}
+
+		// -----------------------------------------------------------------
+		//  HttpClient management
+		// -----------------------------------------------------------------
+
+		private HttpClient CreateClient()
+	{
+		var client = _httpClientFactory.CreateClient(nameof(S3StorageService));
+
+		// Set a reasonable timeout. This should be generous enough for
+		// large audio file uploads / downloads while still failing fast
+		// on a genuinely hung connection.
+		client.Timeout = TimeSpan.FromMinutes(2);
+
+		return client;
+	}
+
+	// -----------------------------------------------------------------
+	//  Crypto / encoding helpers
+
+		private static byte[] HmacSha256(byte[] key, byte[] data)
+		{
+			using var hmac = new HMACSHA256(key);
+			return hmac.ComputeHash(data);
+		}
+
+		private static string HexSha256(byte[] data)
+		{
+			return Convert.ToHexString(SHA256.HashData(data)).ToLowerInvariant();
+		}
+
+		private static string UrlEncode(string value)
+		{
+			return Uri.EscapeDataString(value);
+		}
+
+		private static string NormalizeEntityTag(string? entityTag)
+		{
+			if (string.IsNullOrWhiteSpace(entityTag))
+			{
+				return $"\"{Guid.NewGuid():N}\"";
+			}
+
+			var trimmed = entityTag.Trim();
+
+			return trimmed.StartsWith('"')
+				? trimmed
+				: $"\"{trimmed}\"";
 		}
 	}
 }

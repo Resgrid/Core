@@ -272,9 +272,14 @@ namespace Resgrid.Web.Tts.Services
 		/// </summary>
 		private static string ExpandSlashNotation(string text)
 		{
-			foreach (var kvp in SlashNotationMap)
+			// Sort longest-first so "W/O" is matched before "W/".
+			foreach (var kvp in SlashNotationMap.OrderByDescending(k => k.Key.Length))
 			{
-				var pattern = $@"\b{Regex.Escape(kvp.Key)}\b";
+				// Keys like "W/" and "Y/O" contain non-word characters that
+				// defeat the standard \b anchor.  Use lookaround boundaries
+				// instead: (?<!\w) ensures no word character precedes, and
+				// (?!\w) ensures no word character follows.
+				var pattern = $@"(?<!\w){Regex.Escape(kvp.Key)}(?!\w)";
 				text = Regex.Replace(text, pattern, kvp.Value, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 			}
 

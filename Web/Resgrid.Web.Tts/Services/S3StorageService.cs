@@ -271,12 +271,38 @@ namespace Resgrid.Web.Tts.Services
 			var canonicalUri = BuildCanonicalUri(objectKey);
 			var canonicalQueryString = canonicalQueryStringOverride ?? string.Empty;
 
-			var canonicalHeaders =
-				$"host:{GetHost()}\n" +
-				$"x-amz-content-sha256:{(content is not null ? HexSha256(content) : "UNSIGNED-PAYLOAD")}\n" +
-				$"x-amz-date:{now:yyyyMMddTHHmmssZ}\n";
+			// Only include headers that are listed in signedHeaders.
+			var signedHeadersSet = new HashSet<string>(
+				signedHeaders.Split(';', StringSplitOptions.RemoveEmptyEntries),
+				StringComparer.Ordinal);
 
-			var payloadHash = content is not null ? HexSha256(content) : "UNSIGNED-PAYLOAD";
+			var canonicalHeadersBuilder = new StringBuilder();
+			foreach (var header in signedHeadersSet)
+			{
+				switch (header)
+				{
+					case "host":
+						canonicalHeadersBuilder.Append($"host:{GetHost()}\n");
+						break;
+					case "x-amz-content-sha256":
+						var sha256Value = content is not null ? HexSha256(content) : "UNSIGNED-PAYLOAD";
+						canonicalHeadersBuilder.Append($"x-amz-content-sha256:{sha256Value}\n");
+						break;
+					case "x-amz-date":
+						canonicalHeadersBuilder.Append($"x-amz-date:{now:yyyyMMddTHHmmssZ}\n");
+						break;
+				}
+			}
+
+			var canonicalHeaders = canonicalHeadersBuilder.ToString();
+
+			// Payload hash must match the signedHeaders. When x-amz-content-sha256
+			// is signed the hash is the actual payload digest; otherwise it is the
+			// literal string UNSIGNED-PAYLOAD.
+			var sha256HeaderSigned = signedHeadersSet.Contains("x-amz-content-sha256");
+			var payloadHash = sha256HeaderSigned && content is not null
+				? HexSha256(content)
+				: "UNSIGNED-PAYLOAD";
 
 			var canonicalRequest = string.Join('\n',
 				method.Method,
@@ -352,7 +378,10 @@ namespace Resgrid.Web.Tts.Services
 			return new Uri($"https://{_options.Bucket}.s3.{_options.Region}.amazonaws.com/{objectKey}");
 		}
 
-		private string BuildCanonicalUri(string objectKey) => $"/{_options.Bucket}/{objectKey}";
+		private string BuildCanonicalUri(string objectKey) =>
+			_options.ForcePathStyle
+				? $"/{_options.Bucket}/{objectKey}"
+				: $"/{objectKey}";
 
 		private string GetHost()
 		{

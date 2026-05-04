@@ -1,4 +1,3 @@
-using Amazon.Runtime;
 using Microsoft.Extensions.Options;
 using Resgrid.Web.Tts.Configuration;
 using Resgrid.Web.Tts.Models;
@@ -68,13 +67,9 @@ namespace Resgrid.Web.Tts.Services
 				{
 					_logger.LogError(ex, "Configured pre-generated prompt is invalid: {Prompt}", prompt);
 				}
-				catch (AmazonServiceException ex)
-				{
-					_logger.LogError(ex, "Failed to warm prompt {Prompt} because S3 returned an error.", prompt);
-				}
 				catch (HttpRequestException ex)
 				{
-					_logger.LogError(ex, "Failed to warm prompt {Prompt} because storage connectivity failed.", prompt);
+					_logger.LogError(ex, "Failed to warm prompt {Prompt} because storage returned an error.", prompt);
 				}
 				catch (IOException ex)
 				{

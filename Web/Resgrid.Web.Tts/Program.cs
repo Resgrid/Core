@@ -1,6 +1,3 @@
-using Amazon;
-using Amazon.Runtime;
-using Amazon.S3;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
@@ -106,12 +103,8 @@ builder.Services.AddRateLimiter(options =>
 	};
 });
 
-builder.Services.AddSingleton<IAmazonS3>(sp =>
-{
-	var options = sp.GetRequiredService<IOptions<S3StorageOptions>>().Value;
-	return CreateS3Client(options);
-});
 builder.Services.AddSingleton<IStorageService, S3StorageService>();
+builder.Services.AddSingleton<ITextPreprocessor, TextPreprocessor>();
 builder.Services.AddSingleton<ICacheService, CacheService>();
 builder.Services.AddSingleton<IAudioProcessingService, AudioProcessingService>();
 builder.Services.AddSingleton<ITtsPlaybackUrlService, TtsPlaybackUrlService>();
@@ -155,35 +148,5 @@ app.MapHealthChecks("/health", new HealthCheckOptions
 app.MapControllers();
 
 app.Run();
-
-static AmazonS3Client CreateS3Client(S3StorageOptions options)
-{
-	var credentials = new BasicAWSCredentials(options.AccessKey, options.SecretKey);
-	var config = new AmazonS3Config
-	{
-		ForcePathStyle = options.ForcePathStyle,
-		AuthenticationRegion = options.Region
-	};
-
-	if (!string.IsNullOrWhiteSpace(options.Endpoint))
-	{
-		if (Uri.TryCreate(options.Endpoint, UriKind.Absolute, out var endpointUri))
-		{
-			config.ServiceURL = endpointUri.GetLeftPart(UriPartial.Authority);
-			config.UseHttp = endpointUri.Scheme.Equals(Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase);
-		}
-		else
-		{
-			config.ServiceURL = $"{(options.UseSsl ? Uri.UriSchemeHttps : Uri.UriSchemeHttp)}://{options.Endpoint}";
-			config.UseHttp = !options.UseSsl;
-		}
-	}
-	else
-	{
-		config.RegionEndpoint = RegionEndpoint.GetBySystemName(options.Region);
-	}
-
-	return new AmazonS3Client(credentials, config);
-}
 
 public partial class Program;

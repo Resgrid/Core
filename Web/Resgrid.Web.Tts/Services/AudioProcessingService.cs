@@ -9,20 +9,23 @@ namespace Resgrid.Web.Tts.Services
 	public sealed class AudioProcessingService : IAudioProcessingService
 	{
 		private const string MbrolaEnglishVoice = "mb-us1";
-		private const int MbrolaEnglishSpeed = 130;
+		private const int MbrolaEnglishSpeed = 140;
 		private const int MbrolaEnglishPitch = 50;
-		private const int MbrolaEnglishWordGap = 3;
+		private const int MbrolaEnglishWordGap = 2;
 		private const string TelephoneAudioFilter = "highpass=f=200, lowpass=f=3000, anequalizer=c0 f=2500 w=1000 g=3 t=1";
 
 		private readonly TtsOptions _options;
 		private readonly ILogger<AudioProcessingService> _logger;
+		private readonly ITextPreprocessor _textPreprocessor;
 
 		public AudioProcessingService(
 			IOptions<TtsOptions> options,
-			ILogger<AudioProcessingService> logger)
+			ILogger<AudioProcessingService> logger,
+			ITextPreprocessor textPreprocessor)
 		{
 			_options = options.Value;
 			_logger = logger;
+			_textPreprocessor = textPreprocessor;
 		}
 
 		public async Task<byte[]> GenerateNormalizedWavAsync(string text, string voice, int speed, CancellationToken cancellationToken)
@@ -36,7 +39,8 @@ namespace Resgrid.Web.Tts.Services
 
 			try
 			{
-				await RunEspeakAsync(text, voice, speed, rawFilePath, cancellationToken);
+				var preprocessedText = _textPreprocessor.Preprocess(text, voice);
+				await RunEspeakAsync(preprocessedText, voice, speed, rawFilePath, cancellationToken);
 				await RunFfmpegAsync(rawFilePath, normalizedFilePath, cancellationToken);
 
 				return await File.ReadAllBytesAsync(normalizedFilePath, cancellationToken);

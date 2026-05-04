@@ -21,7 +21,7 @@ RUN dotnet publish "Resgrid.Web.Tts.csproj" -c Release -o /app/publish /p:UseApp
 FROM base AS final
 # Install ffmpeg, download Piper TTS binary and the default English (US) voice
 # model, then clean up in a single RUN layer to keep the image small.
-ARG PIPER_VERSION=1.2.0
+ARG PIPER_VERSION=v1.2.0
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
 		ffmpeg \

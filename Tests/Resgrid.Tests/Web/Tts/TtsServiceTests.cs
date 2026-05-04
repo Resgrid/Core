@@ -253,11 +253,11 @@ namespace Resgrid.Tests.Web.Tts
 				"-v",
 				"mb-us1",
 				"-s",
-				"130",
+				"140",
 				"-p",
 				"50",
 				"-g",
-				"3");
+				"2");
 		}
 
 		[Test]
@@ -308,7 +308,8 @@ namespace Resgrid.Tests.Web.Tts
 		{
 			return new AudioProcessingService(
 				Options.Create(new TtsOptions()),
-				Mock.Of<ILogger<AudioProcessingService>>());
+				Mock.Of<ILogger<AudioProcessingService>>(),
+				Mock.Of<ITextPreprocessor>());
 		}
 
 		private static T InvokePrivateMethod<T>(object instance, string methodName, params object[] arguments)

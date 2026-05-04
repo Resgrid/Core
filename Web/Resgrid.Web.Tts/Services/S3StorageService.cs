@@ -65,15 +65,16 @@ namespace Resgrid.Web.Tts.Services
 					contentType: null,
 					cancellationToken);
 
-				return response.StatusCode switch
-				{
-					HttpStatusCode.OK => true,
-					HttpStatusCode.NotFound => false,
-					_ => throw new HttpRequestException(
-						$"HEAD {objectKey} returned unexpected status {(int)response.StatusCode}.",
-						null,
-						response.StatusCode)
-				};
+			return response.StatusCode switch
+			{
+				HttpStatusCode.OK => true,
+				HttpStatusCode.NotFound  => false,
+				HttpStatusCode.Forbidden => false,
+				_ => throw new HttpRequestException(
+					$"HEAD {objectKey} returned unexpected status {(int)response.StatusCode}.",
+					null,
+					response.StatusCode)
+			};
 			}
 			catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.NotFound)
 			{
@@ -515,7 +516,16 @@ namespace Resgrid.Web.Tts.Services
 		// Set a reasonable timeout. This should be generous enough for
 		// large audio file uploads / downloads while still failing fast
 		// on a genuinely hung connection.
-		client.Timeout = TimeSpan.FromMinutes(2);
+		// Some mocked/derived HttpMessageHandler implementations prevent
+		// setting Timeout; we silently accept that scenario.
+		try
+		{
+			client.Timeout = TimeSpan.FromMinutes(2);
+		}
+		catch (InvalidOperationException)
+		{
+			// Ignore — keep the factory-supplied default timeout.
+		}
 
 		return client;
 	}

@@ -37,9 +37,14 @@ namespace Resgrid.Web.Tts.Health
 				validationErrors.Add("S3 bucket is not configured.");
 			}
 
-			if (string.IsNullOrWhiteSpace(_ttsOptions.EspeakExecutable))
+			if (string.IsNullOrWhiteSpace(_ttsOptions.PiperExecutable))
 			{
-				validationErrors.Add("eSpeak NG executable is not configured.");
+				validationErrors.Add("Piper TTS executable is not configured.");
+			}
+
+			if (string.IsNullOrWhiteSpace(_ttsOptions.PiperModelDirectory))
+			{
+				validationErrors.Add("Piper TTS model directory is not configured.");
 			}
 
 			if (string.IsNullOrWhiteSpace(_ttsOptions.FfmpegExecutable))

@@ -28,7 +28,8 @@ namespace Resgrid.Config
 		public static int DefaultSpeed = 165;
 		public static int MaxConcurrentGenerations = 4;
 		public static int MaxTextLength = 1000;
-		public static string EspeakExecutable = "espeak-ng";
+		public static string PiperExecutable = "piper";
+		public static string PiperModelDirectory = "/usr/local/share/piper-voices";
 		public static string FfmpegExecutable = "ffmpeg";
 		public static string TempDirectory = "";
 		public static string CachePrefix = "tts";

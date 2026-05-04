@@ -17,7 +17,10 @@ namespace Resgrid.Web.Tts.Configuration
 		public int MaxTextLength { get; set; } = 1000;
 
 		[Required]
-		public string EspeakExecutable { get; set; } = "espeak-ng";
+		public string PiperExecutable { get; set; } = "piper";
+
+		[Required]
+		public string PiperModelDirectory { get; set; } = "/usr/local/share/piper-voices";
 
 		[Required]
 		public string FfmpegExecutable { get; set; } = "ffmpeg";

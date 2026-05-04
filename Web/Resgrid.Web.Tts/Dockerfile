@@ -32,6 +32,8 @@ RUN apt-get update \
 	&& tar -xzf /tmp/piper.tar.gz -C /tmp \
 	&& mv /tmp/piper/piper /usr/local/bin/piper \
 	&& chmod +x /usr/local/bin/piper \
+	&& find /tmp/piper -name 'libpiper_phonemize.so*' -exec cp {} /usr/local/lib/ \; \
+	&& ldconfig \
 	&& rm -rf /tmp/piper /tmp/piper.tar.gz \
 	&& curl -fsSL "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/norman/medium/en_US-norman-medium.onnx" -o /usr/local/share/piper-voices/en_US-norman-medium.onnx \
 	&& curl -fsSL "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/norman/medium/en_US-norman-medium.onnx.json" -o /usr/local/share/piper-voices/en_US-norman-medium.onnx.json \

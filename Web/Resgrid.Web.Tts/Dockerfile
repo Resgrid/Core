@@ -28,7 +28,7 @@ RUN apt-get update \
 		ca-certificates \
 		curl \
 	&& mkdir -p /usr/local/share/piper-voices \
-	&& curl -fsSL "https://github.com/rhasspy/piper/releases/download/${PIPER_VERSION}/piper_linux_x86_64.tar.gz" -o /tmp/piper.tar.gz \
+	&& curl -fsSL "https://github.com/rhasspy/piper/releases/download/${PIPER_VERSION}/piper_amd64.tar.gz" -o /tmp/piper.tar.gz \
 	&& tar -xzf /tmp/piper.tar.gz -C /tmp \
 	&& mv /tmp/piper/piper /usr/local/bin/piper \
 	&& chmod +x /usr/local/bin/piper \

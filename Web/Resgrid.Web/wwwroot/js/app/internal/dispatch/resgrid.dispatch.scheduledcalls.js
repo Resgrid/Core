@@ -25,10 +25,10 @@ var resgrid;
                         { data: 'Name', title: getText('name', 'Name') },
                         { data: 'Timestamp', title: getText('timestamp', 'Timestamp') },
                         {
-                            data: 'DispatchOn', title: 'Scheduled Dispatch',
+                            data: 'DispatchOn', title: getText('scheduledDispatch', 'Scheduled Dispatch'),
                             render: function (data, type, row) {
                                 if (data) {
-                                    var d = new Date(data);
+                                    var d = new Date(data * 1000);
                                     return d.toLocaleString();
                                 }
                                 return '';

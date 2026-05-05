@@ -90,12 +90,14 @@ namespace Resgrid.Web.Tts.Services
 			//    Using the default speed ensures the cache key is consistent.
 			const string modelWarmPrompt = "Test";
 			var distinctVoices = _audioProcessingService.GetDistinctVoiceIdentifiers();
+			var defaultProfile = _audioProcessingService.GetEffectiveSynthesisProfile(_options.DefaultVoice, _options.DefaultSpeed);
 
 			foreach (var voice in distinctVoices)
 			{
 				// Skip the default voice — its model was already covered by the
 				// static prompts above provided at least one prompt is configured.
-				if (string.Equals(voice, _options.DefaultVoice, StringComparison.OrdinalIgnoreCase))
+				var profile = _audioProcessingService.GetEffectiveSynthesisProfile(voice, _options.DefaultSpeed);
+				if (string.Equals(profile.Voice, defaultProfile.Voice, StringComparison.OrdinalIgnoreCase))
 				{
 					continue;
 				}

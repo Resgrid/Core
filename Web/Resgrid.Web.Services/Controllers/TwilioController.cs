@@ -85,6 +85,8 @@ namespace Resgrid.Web.Services.Controllers
 
 		#endregion Private Readonly Properties and Constructors
 
+		private const int MAX_DISPATCH_RETRY = 3;
+
 		[HttpGet("IncomingMessage")]
 		[Produces("application/xml")]
 		public async Task<ActionResult> IncomingMessage([FromQuery] TwilioMessage request)
@@ -500,6 +502,18 @@ namespace Resgrid.Web.Services.Controllers
 
 			if (!dispatchReady)
 			{
+				// Parse and increment the retry counter from the incoming request.
+				if (!int.TryParse(retry, out var retryCount))
+					retryCount = 0;
+
+				if (retryCount >= MAX_DISPATCH_RETRY)
+				{
+					// Exceeded retry cap — fall back to a static error prompt.
+					await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.CallClosed);
+					response.Hangup();
+					return CreateVoiceContentResult(response);
+				}
+
 				// Dispatch audio isn't ready yet. Pre-warm it in the background
 				// and redirect back — by the time Twilio re-fetches this endpoint
 				// the audio should be cached.
@@ -509,10 +523,17 @@ namespace Resgrid.Web.Services.Controllers
 
 				// Fire off TTS generation in the background. The TTS microservice
 				// caches the result, so the redirect will find it once ready.
-				_ = _twilioVoiceResponseService.PreWarmPromptAsync(dispatchText, ttsLanguage);
+				_twilioVoiceResponseService.PreWarmPromptAsync(dispatchText, ttsLanguage)
+					.ContinueWith(t =>
+					{
+						if (t.IsFaulted && t.Exception != null)
+							Logging.LogException(t.Exception);
+					}, TaskContinuationOptions.OnlyOnFaulted);
+
 				await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.PleaseWaitForDispatch);
+				var nextRetry = retryCount + 1;
 				response.Redirect(
-					new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/VoiceCall?userId={userId}&callId={callId}&retry=1"),
+					new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/VoiceCall?userId={userId}&callId={callId}&retry={nextRetry}"),
 					"GET");
 				return CreateVoiceContentResult(response);
 			}

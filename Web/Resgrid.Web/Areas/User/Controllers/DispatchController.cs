@@ -426,18 +426,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 				}
 
-				// Handle scheduled dispatch
-				if (model.ScheduleDispatchDate.HasValue)
+			// Handle scheduled dispatch
+			if (model.ScheduleDispatchDate.HasValue)
+			{
+				var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+				var dispatchUtc = DateTimeHelpers.ConvertToUtc(
+					DateTime.SpecifyKind(model.ScheduleDispatchDate.Value, DateTimeKind.Unspecified),
+					department.TimeZone);
+
+				// Validate dispatch is at least 15 minutes in the future
+				if (dispatchUtc <= DateTime.UtcNow.AddMinutes(15))
 				{
-					// Validate dispatch is at least 15 minutes in the future
-					if (model.ScheduleDispatchDate.Value <= DateTime.UtcNow.AddMinutes(15))
-					{
-						ModelState.AddModelError("ScheduleDispatchDate", _dispatchLocalizer["ScheduleDispatchValidationError"].Value);
-						return View("NewCall", model);
-					}
-					model.Call.DispatchOn = model.ScheduleDispatchDate.Value;
-					model.Call.HasBeenDispatched = false;
+					ModelState.AddModelError("ScheduleDispatchDate", _dispatchLocalizer["ScheduleDispatchValidationError"].Value);
+					return View("NewCall", model);
 				}
+				model.Call.DispatchOn = dispatchUtc;
+				model.Call.HasBeenDispatched = false;
+			}
 
 				var shouldDispatchNow = !model.Call.DispatchOn.HasValue || model.Call.DispatchOn.Value <= DateTime.UtcNow;
 
@@ -561,6 +566,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true, true, true);
 			model.CallPriority = model.Call.Priority;
 			model = await FillUpdateCallView(model);
+
+			if (model.Call.DispatchOn.HasValue)
+			{
+				model.ScheduleDispatchDate = model.Call.DispatchOn.Value.TimeConverter(model.Department);
+			}
 
 			if (!String.IsNullOrEmpty(model.Call.GeoLocationData))
 			{
@@ -849,23 +859,32 @@ namespace Resgrid.Web.Areas.User.Controllers
 				call.Contacts = contacts;
 
 				// Handle scheduled dispatch
-				if (model.ScheduleDispatchDate.HasValue)
+			if (model.ScheduleDispatchDate.HasValue)
+			{
+				var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
+				var dispatchUtc = DateTimeHelpers.ConvertToUtc(
+					DateTime.SpecifyKind(model.ScheduleDispatchDate.Value, DateTimeKind.Unspecified),
+					department.TimeZone);
+
+				// Only validate and apply when the dispatch date actually changed
+				if (!call.DispatchOn.HasValue || dispatchUtc != call.DispatchOn.Value)
 				{
 					// Validate dispatch is at least 15 minutes in the future
-					if (model.ScheduleDispatchDate.Value <= DateTime.UtcNow.AddMinutes(15))
+					if (dispatchUtc <= DateTime.UtcNow.AddMinutes(15))
 					{
 						ModelState.AddModelError("ScheduleDispatchDate", _dispatchLocalizer["ScheduleDispatchValidationError"].Value);
 						return View("UpdateCall", model);
 					}
-					call.DispatchOn = model.ScheduleDispatchDate.Value;
+					call.DispatchOn = dispatchUtc;
 					call.HasBeenDispatched = false;
 				}
-				else if (model.ScheduleDispatchDate == null && call.DispatchOn.HasValue && call.HasBeenDispatched == false)
-				{
-					// User cleared the scheduled dispatch date, reset to dispatch now
-					call.DispatchOn = null;
-				}
-
+			}
+			else if (call.DispatchOn.HasValue)
+			{
+				// User cleared a previously scheduled dispatch
+				call.DispatchOn = null;
+				call.HasBeenDispatched = false;
+			}
 				await _callsService.SaveCallAsync(call, cancellationToken);
 
 				// Attach weather alerts as call notes if enabled (deduplication handled inside)
@@ -2555,7 +2574,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 			List<CallListJson> callsJson = new List<CallListJson>();
 
 			var calls = (await _callsService.GetAllNonDispatchedScheduledCallsByDepartmentIdAsync(DepartmentId))
-				.Where(x => x.DispatchOn.HasValue && x.DispatchOn.Value > DateTime.UtcNow)
 				.OrderBy(x => x.DispatchOn);
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
@@ -2570,7 +2588,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				callJson.StateColor = _callsService.CallStateToColor((CallStates)call.State);
 				callJson.Timestamp = call.LoggedOn.TimeConverterToString(department);
 				callJson.LoggedOn = new DateTimeOffset(DateTime.SpecifyKind(call.LoggedOn, DateTimeKind.Utc)).ToUnixTimeSeconds();
-				callJson.DispatchOn = call.DispatchOn;
+				callJson.DispatchOn = call.DispatchOn.HasValue ? new DateTimeOffset(DateTime.SpecifyKind(call.DispatchOn.Value, DateTimeKind.Utc)).ToUnixTimeSeconds() : 0;
 				callJson.Priority = await DispatchDisplayHelper.GetLocalizedCallPriorityAsync(DepartmentId, call.Priority, _dispatchLocalizer);
 				callJson.Color = await _callsService.CallPriorityToColorAsync(call.Priority, DepartmentId);
 				callJson.CanDeleteCall = await _authorizationService.CanUserDeleteCallAsync(UserId, call.CallId, DepartmentId);

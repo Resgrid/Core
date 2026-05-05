@@ -608,13 +608,6 @@
                 minDate: 0,
                 defaultSelect: false
             });
-
-            @if (Model.Call.DispatchOn.HasValue)
-            {
-                <text>
-                $('#scheduleDispatchDate').val('@Model.Call.DispatchOn.Value.ToString("MM/dd/yyyy HH:mm")');
-                </text>
-            }
         });
     </script>
 }

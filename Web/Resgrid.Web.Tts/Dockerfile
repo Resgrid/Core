@@ -26,6 +26,7 @@ RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
 		ffmpeg \
 		libespeak-ng1 \
+		espeak-ng-data \
 		ca-certificates \
 		curl \
 	&& mkdir -p /usr/local/share/piper-voices \

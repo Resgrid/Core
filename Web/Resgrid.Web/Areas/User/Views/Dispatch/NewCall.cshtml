@@ -453,14 +453,6 @@
                             </div>
                         </div>
 
-                        @if (!string.IsNullOrEmpty(Model.UdfFormHtml))
-                        {
-                            <div class="hr-line-dashed"></div>
-                            <h3>@localizer["CustomFields"]</h3>
-                            @Html.Raw(Model.UdfFormHtml)
-                            <div class="hr-line-dashed"></div>
-                        }
-
                         <div class="hr-line-dashed"></div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["CheckInTimersLabel"]</label>
@@ -472,6 +464,27 @@
                                 </div>
                             </div>
                         </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-2 control-label">@localizer["ScheduleDispatchLabel"]</label>
+                            <div class="col-sm-10">
+                                <div class="input-group" style="width: 300px;">
+                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+                                    <input type="text" class="form-control" id="scheduleDispatchDate"
+                                           placeholder="@localizer["ScheduleDispatchPlaceholder"]"
+                                           asp-for="ScheduleDispatchDate" autocomplete="off">
+                                </div>
+                                <span class="help-block m-b-none">@localizer["ScheduleDispatchHelp"]</span>
+                            </div>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(Model.UdfFormHtml))
+                        {
+                            <div class="hr-line-dashed"></div>
+                            <h3>@localizer["CustomFields"]</h3>
+                            @Html.Raw(Model.UdfFormHtml)
+                            <div class="hr-line-dashed"></div>
+                        }
 
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
@@ -764,6 +777,15 @@
                 allowClear: true,
                 minimumResultsForSearch: 0,
                 width: '100%'
+            });
+
+            $('#scheduleDispatchDate').datetimepicker({
+                format: 'm/d/Y H:i',
+                formatTime: 'H:i',
+                formatDate: 'm/d/Y',
+                step: 15,
+                minDate: 0,
+                defaultSelect: false
             });
         });
     </script>

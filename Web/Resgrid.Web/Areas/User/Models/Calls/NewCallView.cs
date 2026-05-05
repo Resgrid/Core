@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Model;
@@ -40,6 +41,7 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		public string PrimaryContact { get; set; }
 		public List<string> AdditionalContacts { get; set; }
 		public List<SelectListItem> DestinationPois { get; set; }
+		public DateTime? ScheduleDispatchDate { get; set; }
 
 		public NewCallView()
 		{

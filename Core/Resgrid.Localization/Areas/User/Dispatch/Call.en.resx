@@ -733,4 +733,19 @@
   <data name="RouteStep" xml:space="preserve"><value>Step</value></data>
   <data name="RouteUnitKilometers" xml:space="preserve"><value>km</value></data>
   <data name="RouteUnitMinutes" xml:space="preserve"><value>min</value></data>
+  <data name="ScheduleDispatchLabel" xml:space="preserve">
+    <value>Schedule Dispatch</value>
+  </data>
+  <data name="ScheduleDispatchPlaceholder" xml:space="preserve">
+    <value>Select a future date and time...</value>
+  </data>
+  <data name="ScheduleDispatchHelp" xml:space="preserve">
+    <value>Optionally set a future date/time to delay dispatch. Must be at least 15 minutes in the future.</value>
+  </data>
+  <data name="ScheduleDispatchValidationError" xml:space="preserve">
+    <value>Scheduled dispatch must be at least 15 minutes in the future.</value>
+  </data>
+  <data name="ScheduledDispatchDate" xml:space="preserve">
+    <value>Scheduled Dispatch Date</value>
+  </data>
 </root>

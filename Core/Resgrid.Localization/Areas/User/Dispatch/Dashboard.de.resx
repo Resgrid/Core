@@ -86,4 +86,10 @@
   <data name="Routes" xml:space="preserve">
     <value>Routen</value>
   </data>
+  <data name="ScheduledCalls" xml:space="preserve">
+    <value>Geplante Einsätze</value>
+  </data>
+  <data name="ScheduledCallsHeader" xml:space="preserve">
+    <value>Geplante Einsätze</value>
+  </data>
 </root>

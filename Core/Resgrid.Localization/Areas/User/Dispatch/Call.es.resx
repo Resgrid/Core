@@ -879,4 +879,19 @@
   <data name="RouteUnitMinutes" xml:space="preserve">
     <value>min</value>
   </data>
+  <data name="ScheduleDispatchLabel" xml:space="preserve">
+    <value>Programar despacho</value>
+  </data>
+  <data name="ScheduleDispatchPlaceholder" xml:space="preserve">
+    <value>Seleccione una fecha y hora futura...</value>
+  </data>
+  <data name="ScheduleDispatchHelp" xml:space="preserve">
+    <value>Opcionalmente, establezca una fecha/hora futura para retrasar el despacho. Debe ser al menos 15 minutos en el futuro.</value>
+  </data>
+  <data name="ScheduleDispatchValidationError" xml:space="preserve">
+    <value>El despacho programado debe ser al menos 15 minutos en el futuro.</value>
+  </data>
+  <data name="ScheduledDispatchDate" xml:space="preserve">
+    <value>Fecha de despacho programada</value>
+  </data>
 </root>

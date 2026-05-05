@@ -183,6 +183,21 @@ namespace Resgrid.Web.Services.Twilio
 			};
 		}
 
+		public System.Threading.Tasks.Task PreWarmPromptAsync(string text, string voice = null)
+		{
+			// Start the generation task (or return the existing one) without
+		// Start the generation task (or return the existing one) without
+		// necessarily awaiting it. The TTS microservice's internal cache
+		// persists across requests, so a subsequent call will find the URL.
+			GetOrCreatePromptUrlAsync(text, voice, CancellationToken.None);
+			return System.Threading.Tasks.Task.CompletedTask;
+		}
+
+		public async System.Threading.Tasks.Task<Uri> GetPromptUrlAsync(string text, string voice, CancellationToken cancellationToken)
+		{
+			return await GetOrCreatePromptUrlAsync(text, voice, cancellationToken);
+		}
+
 		private async Task<Uri> GetOrCreatePromptUrlAsync(string chunk, string voice, CancellationToken cancellationToken)
 		{
 			var cacheKey = string.IsNullOrWhiteSpace(voice)

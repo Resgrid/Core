@@ -470,7 +470,7 @@ namespace Resgrid.Web.Services.Controllers
 		[HttpGet("VoiceCall")]
 		[Produces("application/xml")]
 		[ValidateRequest]
-		public async Task<ActionResult> VoiceCall(string userId, int callId)
+		public async Task<ActionResult> VoiceCall(string userId, int callId, [FromQuery] string retry = null)
 		{
 			var response = new VoiceResponse();
 			var call = await _callsService.GetCallByIdAsync(callId);
@@ -490,17 +490,40 @@ namespace Resgrid.Web.Services.Controllers
 				return CreateVoiceContentResult(response);
 			}
 
-			await AppendDispatchPlaybackAsync(response, call);
+			// For dispatch playback, attempt to fetch (or pre-warm) the TTS URL
+			// within a short timeout so that the TwiML response is returned before
+			// Twilio's 15-second webhook timeout expires. If the dispatch text is
+			// not yet cached, we play a brief "please wait" prompt and redirect
+			// back to this endpoint, giving the TTS service time to complete
+			// generation in the background.
+			var dispatchReady = await TryAppendDispatchPlaybackAsync(response, call);
 
-			for (int repeat = 0; repeat < 2; repeat++)
+			if (!dispatchReady)
 			{
-				var gatherResponse = new Gather(numDigits: 1, action: new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/VoiceCallAction?userId={userId}&callId={callId}"), method: "GET")
-				{
-					BargeIn = true
-				};
-				await AppendVoicePromptAsync(gatherResponse, TwilioVoicePromptCatalog.OutboundDispatchMenu, call.DepartmentId);
-				response.Append(gatherResponse);
+				// Dispatch audio isn't ready yet. Pre-warm it in the background
+				// and redirect back — by the time Twilio re-fetches this endpoint
+				// the audio should be cached.
+				var address = await ResolveCallAddressAsync(call);
+				var dispatchText = BuildDispatchPrompt(call, address);
+				var ttsLanguage = await GetDepartmentTtsLanguageAsync(call.DepartmentId);
+
+				// Fire off TTS generation in the background. The TTS microservice
+				// caches the result, so the redirect will find it once ready.
+				_ = _twilioVoiceResponseService.PreWarmPromptAsync(dispatchText, ttsLanguage);
+				await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.PleaseWaitForDispatch);
+				response.Redirect(
+					new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/VoiceCall?userId={userId}&callId={callId}&retry=1"),
+					"GET");
+				return CreateVoiceContentResult(response);
 			}
+
+			// Dispatch is ready (fast path or retry with cached audio).
+			var gather = new Gather(numDigits: 1, action: new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/VoiceCallAction?userId={userId}&callId={callId}"), method: "GET")
+			{
+				BargeIn = true
+			};
+			await AppendVoicePromptAsync(gather, TwilioVoicePromptCatalog.OutboundDispatchMenu, call.DepartmentId);
+			response.Append(gather);
 
 			response.Hangup();
 
@@ -526,8 +549,12 @@ namespace Resgrid.Web.Services.Controllers
 				return CreateVoiceContentResult(response);
 			}
 
-			var call = await _callsService.GetCallByIdAsync(callId);
-			await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.InvalidSelection, call?.DepartmentId);
+			if (!string.IsNullOrWhiteSpace(twilioRequest?.Digits))
+			{
+				var call = await _callsService.GetCallByIdAsync(callId);
+				await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.InvalidSelection, call?.DepartmentId);
+			}
+
 			response.Redirect(new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/VoiceCall?userId={userId}&callId={callId}"), "GET");
 			return CreateVoiceContentResult(response);
 		}
@@ -1058,7 +1085,7 @@ namespace Resgrid.Web.Services.Controllers
 			return ttsLanguage;
 		}
 
-		private async System.Threading.Tasks.Task AppendDispatchPlaybackAsync(VoiceResponse response, Call call)
+		private async System.Threading.Tasks.Task<bool> TryAppendDispatchPlaybackAsync(VoiceResponse response, Call call)
 		{
 			if (call.Attachments != null)
 			{
@@ -1067,16 +1094,41 @@ namespace Resgrid.Web.Services.Controllers
 				if (audio != null)
 				{
 					var url = await _callsService.GetShortenedAudioUrlAsync(call.CallId, audio.CallAttachmentId);
-					response.Append(new Play
+					if (!string.IsNullOrWhiteSpace(url) && Uri.TryCreate(url, UriKind.Absolute, out var audioUri))
 					{
-						Url = new Uri(url)
-					});
-					return;
+						response.Append(new Play
+						{
+							Url = audioUri
+						});
+						return true;
+					}
 				}
 			}
 
 			var address = await ResolveCallAddressAsync(call);
-			await AppendVoicePromptAsync(response, BuildDispatchPrompt(call, address), call.DepartmentId);
+			var ttsLanguage = await GetDepartmentTtsLanguageAsync(call.DepartmentId);
+			var dispatchText = BuildDispatchPrompt(call, address);
+
+			// Try to get the TTS URL within 3 seconds. If the audio is cached,
+			// the URL returns nearly instantly; if it needs generation, we let
+			// the caller fall back to the redirect pattern.
+			using var timeoutCts = new CancellationTokenSource(TimeSpan.FromSeconds(3));
+			using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(
+				timeoutCts.Token,
+				HttpContext?.RequestAborted ?? CancellationToken.None);
+
+			try
+			{
+				var url = await _twilioVoiceResponseService.GetPromptUrlAsync(dispatchText, ttsLanguage, linkedCts.Token);
+				response.Append(new Play { Url = url });
+				return true;
+			}
+			catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested)
+			{
+				// TTS generation is taking too long — return false so the caller
+				// can pre-warm in the background and redirect.
+				return false;
+			}
 		}
 
 		private async Task<string> ResolveCallAddressAsync(Call call)

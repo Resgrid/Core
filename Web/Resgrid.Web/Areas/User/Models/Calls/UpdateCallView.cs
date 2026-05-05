@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+using System;
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Model;
 using Resgrid.Model.Identity;
@@ -36,6 +37,7 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		public int CallTemplateId { get; set; }
 		public string NewCallFormData { get; set; }
 		public List<SelectListItem> DestinationPois { get; set; }
+		public DateTime? ScheduleDispatchDate { get; set; }
 
 		public UpdateCallView()
 		{

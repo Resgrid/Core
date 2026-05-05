@@ -830,4 +830,19 @@
   <data name="RouteUnitMinutes" xml:space="preserve">
     <value>хв</value>
   </data>
+  <data name="ScheduleDispatchLabel" xml:space="preserve">
+    <value>Запланувати відправку</value>
+  </data>
+  <data name="ScheduleDispatchPlaceholder" xml:space="preserve">
+    <value>Виберіть майбутню дату та час...</value>
+  </data>
+  <data name="ScheduleDispatchHelp" xml:space="preserve">
+    <value>За бажанням встановіть майбутню дату/час для затримки відправки. Має бути щонайменше 15 хвилин у майбутньому.</value>
+  </data>
+  <data name="ScheduleDispatchValidationError" xml:space="preserve">
+    <value>Запланована відправка має бути щонайменше 15 хвилин у майбутньому.</value>
+  </data>
+  <data name="ScheduledDispatchDate" xml:space="preserve">
+    <value>Запланована дата відправки</value>
+  </data>
 </root>

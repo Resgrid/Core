@@ -830,4 +830,19 @@
   <data name="RouteUnitMinutes" xml:space="preserve">
     <value>min</value>
   </data>
+  <data name="ScheduleDispatchLabel" xml:space="preserve">
+    <value>Alarmierung planen</value>
+  </data>
+  <data name="ScheduleDispatchPlaceholder" xml:space="preserve">
+    <value>Wählen Sie ein zukünftiges Datum und eine Uhrzeit...</value>
+  </data>
+  <data name="ScheduleDispatchHelp" xml:space="preserve">
+    <value>Legen Sie optional ein zukünftiges Datum/Uhrzeit fest, um die Alarmierung zu verzögern. Muss mindestens 15 Minuten in der Zukunft liegen.</value>
+  </data>
+  <data name="ScheduleDispatchValidationError" xml:space="preserve">
+    <value>Die geplante Alarmierung muss mindestens 15 Minuten in der Zukunft liegen.</value>
+  </data>
+  <data name="ScheduledDispatchDate" xml:space="preserve">
+    <value>Geplantes Alarmierungsdatum</value>
+  </data>
 </root>

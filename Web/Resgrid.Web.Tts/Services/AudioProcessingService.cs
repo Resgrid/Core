@@ -98,6 +98,45 @@ namespace Resgrid.Web.Tts.Services
 		}
 
 		/// <summary>
+		/// Returns the set of distinct voice identifiers (one per unique model file)
+		/// that should be warmed at startup. The identifiers are chosen as the first
+		/// language code that maps to each model, providing a deterministic and
+		/// minimal set of voices to pre-load.
+		/// </summary>
+		public IReadOnlySet<string> GetDistinctVoiceIdentifiers()
+		{
+			var distinctVoices = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+			foreach (var (languageCode, modelName) in VoiceModelMap)
+			{
+				// We select the first language code we encounter for each model file.
+				// Since SortedDictionary-like ordering isn't needed here (any code that
+				// maps to a given model will load it), this simple dedup suffices.
+				if (!distinctVoices.Contains(languageCode))
+				{
+					// Check if this model has already been represented
+					var alreadyRepresented = false;
+					foreach (var existingVoice in distinctVoices)
+					{
+						if (VoiceModelMap.TryGetValue(existingVoice, out var existingModel)
+							&& string.Equals(existingModel, modelName, StringComparison.OrdinalIgnoreCase))
+						{
+							alreadyRepresented = true;
+							break;
+						}
+					}
+
+					if (!alreadyRepresented)
+					{
+						distinctVoices.Add(languageCode);
+					}
+				}
+			}
+
+			return distinctVoices;
+		}
+
+		/// <summary>
 		/// Resolves a voice identifier plus speed into a Piper model filename and length-scale,
 		/// with the effective model name used for cache-key derivation.
 		/// </summary>
@@ -189,7 +228,7 @@ namespace Resgrid.Web.Tts.Services
 			startInfo.ArgumentList.Add("-ac");
 			startInfo.ArgumentList.Add(_options.NormalizedChannels.ToString(CultureInfo.InvariantCulture));
 			startInfo.ArgumentList.Add("-acodec");
-			startInfo.ArgumentList.Add("pcm_s16le");
+			startInfo.ArgumentList.Add("pcm_mulaw");
 			startInfo.ArgumentList.Add("-af");
 			startInfo.ArgumentList.Add(TelephoneAudioFilter);
 			startInfo.ArgumentList.Add(outputFilePath);

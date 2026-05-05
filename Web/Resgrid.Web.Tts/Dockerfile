@@ -26,7 +26,6 @@ RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
 		ffmpeg \
 		libespeak-ng1 \
-		espeak-ng-data \
 		ca-certificates \
 		curl \
 	&& mkdir -p /usr/local/share/piper-voices \
@@ -35,7 +34,7 @@ RUN apt-get update \
 	&& mv /tmp/piper/piper /usr/local/bin/piper \
 	&& chmod +x /usr/local/bin/piper \
 	&& find /tmp/piper -name '*.so*' -exec cp {} /usr/local/lib/ \; \
-	&& if [ -d /tmp/piper/espeak-ng-data ]; then cp -R /tmp/piper/espeak-ng-data /usr/local/share/; fi \
+	&& if [ -d /tmp/piper/espeak-ng-data ]; then cp -R /tmp/piper/espeak-ng-data /usr/share/; else ln -sf /usr/lib/x86_64-linux-gnu/espeak-ng-data /usr/share/espeak-ng-data; fi \
 	&& ldconfig \
 	&& rm -rf /tmp/piper /tmp/piper.tar.gz \
 	&& curl -fsSL "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/norman/medium/en_US-norman-medium.onnx" -o /usr/local/share/piper-voices/en_US-norman-medium.onnx \

@@ -25,6 +25,7 @@ ARG PIPER_VERSION=v1.2.0
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
 		ffmpeg \
+		libespeak-ng1 \
 		ca-certificates \
 		curl \
 	&& mkdir -p /usr/local/share/piper-voices \
@@ -32,7 +33,8 @@ RUN apt-get update \
 	&& tar -xzf /tmp/piper.tar.gz -C /tmp \
 	&& mv /tmp/piper/piper /usr/local/bin/piper \
 	&& chmod +x /usr/local/bin/piper \
-	&& find /tmp/piper -name 'libpiper_phonemize.so*' -exec cp {} /usr/local/lib/ \; \
+	&& find /tmp/piper -name '*.so*' -exec cp {} /usr/local/lib/ \; \
+	&& if [ -d /tmp/piper/espeak-ng-data ]; then cp -R /tmp/piper/espeak-ng-data /usr/local/share/; fi \
 	&& ldconfig \
 	&& rm -rf /tmp/piper /tmp/piper.tar.gz \
 	&& curl -fsSL "https://huggingface.co/rhasspy/piper-voices/resolve/main/en/en_US/norman/medium/en_US-norman-medium.onnx" -o /usr/local/share/piper-voices/en_US-norman-medium.onnx \

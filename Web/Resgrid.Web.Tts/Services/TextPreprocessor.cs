@@ -179,10 +179,10 @@ namespace Resgrid.Web.Tts.Services
 		// 	...
 		// };
 
+		private static readonly Regex LongNumberRegex = LongNumberExpandoRegex();
 		private static readonly Regex WhitespaceRegex = WhitespaceExpandoRegex();
 		private static readonly Regex UnitIdentifierRegex = UnitIdentifierExpandoRegex();
 		private static readonly Regex NumberToWordRegexField = NumberToWordRegex();
-
 		private readonly ILogger<TextPreprocessor> _logger;
 
 		public TextPreprocessor(ILogger<TextPreprocessor> logger)
@@ -199,33 +199,40 @@ namespace Resgrid.Web.Tts.Services
 
 			var result = text.Trim();
 
-			// Only preprocess English voices — other languages need their
-			// own abbreviation dictionaries.
-			if (!IsEnglishVoice(voice))
+			// Only preprocess English voices — they need their own abbreviation
+			// dictionaries.  Other languages pass through to Piper directly.
+			if (IsEnglishVoice(voice))
 			{
-				return result;
+				var original = result;
+
+				// Order matters: expand abbreviations first so downstream
+				// passes operate on natural-language words rather than codes.
+				result = ExpandAbbreviations(result);
+				result = ExpandDispatchShorthand(result);
+				result = ExpandSlashNotation(result);
+				result = ExpandAddressAbbreviations(result);
+				result = ExpandUnitIdentifiers(result);
+				result = ExpandLongNumbers(result);
+				result = NormalizeSmallNumbers(result);
+				// Collapse any whitespace artefacts introduced by expansion.
+				result = WhitespaceRegex.Replace(result, " ").Trim();
+
+				if (!string.Equals(original, result, StringComparison.Ordinal))
+				{
+					_logger.LogDebug(
+						"TextPreprocessor normalised \"{OriginalText}\" to \"{NormalisedText}\"",
+						original,
+						result);
+				}
 			}
 
-			var original = result;
-
-			// Order matters: expand abbreviations first so downstream
-			// passes operate on natural-language words rather than codes.
-			result = ExpandAbbreviations(result);
-			result = ExpandDispatchShorthand(result);
-			result = ExpandSlashNotation(result);
-			result = ExpandAddressAbbreviations(result);
-			result = ExpandUnitIdentifiers(result);
-			result = NormalizeSmallNumbers(result);
-
-			// Collapse any whitespace artefacts introduced by expansion.
-			result = WhitespaceRegex.Replace(result, " ").Trim();
-
-			if (!string.Equals(original, result, StringComparison.Ordinal))
+			// Ensure the text ends with sentence-ending punctuation so that
+			// Piper does not hallucinate extra speech past the intended end.
+			// Without a clear sentence boundary, neural TTS models may
+			// continue generating audio that sounds like additional words.
+			if (result.Length > 0 && result[^1] is not '.' and not '!' and not '?')
 			{
-				_logger.LogDebug(
-					"TextPreprocessor normalised \"{OriginalText}\" to \"{NormalisedText}\"",
-					original,
-					result);
+				result += ".";
 			}
 
 			return result;
@@ -376,6 +383,27 @@ namespace Resgrid.Web.Tts.Services
 		}
 
 		// ---------------------------------------------------------------
+		//  Long number expansion for clarity
+		// ---------------------------------------------------------------
+
+		/// <summary>
+		/// Converts digit sequences of 4 or more consecutive digits into
+		/// individual space-separated digits so that Piper reads them as
+		/// digit-by-digit (e.g. "12345" → "1 2 3 4 5") rather than as
+		/// a large composite number ("twelve thousand three hundred forty-five").
+		/// This is critical for address numbers, call IDs, and other dispatch
+		/// identifiers where digit-by-digit reading is significantly clearer.
+		/// </summary>
+		private static string ExpandLongNumbers(string text)
+		{
+			return LongNumberRegex.Replace(text, match =>
+			{
+				var digits = match.Groups[1].Value;
+				return match.Value.Replace(digits, string.Join(" ", digits.ToCharArray()));
+			});
+		}
+
+		// ---------------------------------------------------------------
 		//  Source-generated regex helpers
 		// ---------------------------------------------------------------
 
@@ -386,6 +414,10 @@ namespace Resgrid.Web.Tts.Services
 		/// <summary>Matches standalone digits 1-20 followed by a space and a letter.</summary>
 		[GeneratedRegex(@"\b(?<digits>(?:[1-9]|1[0-9]|20))\s(?<letter>[A-Za-z])", RegexOptions.CultureInvariant)]
 		private static partial Regex NumberToWordRegex();
+
+		/// <summary>Matches a run of 4+ consecutive digits not surrounded by other digits.</summary>
+		[GeneratedRegex(@"(?<!\d)(?<digits>\d{4,})(?!\d)", RegexOptions.CultureInvariant)]
+		private static partial Regex LongNumberExpandoRegex();
 
 		/// <summary>Collapses multiple whitespace characters into a single space.</summary>
 		[GeneratedRegex(@"\s+")]

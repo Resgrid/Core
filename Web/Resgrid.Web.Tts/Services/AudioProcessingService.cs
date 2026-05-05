@@ -163,6 +163,8 @@ namespace Resgrid.Web.Tts.Services
 			startInfo.ArgumentList.Add(outputFilePath);
 			startInfo.ArgumentList.Add("--length-scale");
 			startInfo.ArgumentList.Add(invocation.LengthScale.ToString("0.00", CultureInfo.InvariantCulture));
+			startInfo.ArgumentList.Add("--sentence-silence");
+			startInfo.ArgumentList.Add("0.0");
 
 			return startInfo;
 		}

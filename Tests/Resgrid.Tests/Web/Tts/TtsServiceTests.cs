@@ -253,7 +253,9 @@ namespace Resgrid.Tests.Web.Tts
 				"--output_file",
 				"/tmp/raw.wav",
 				"--length-scale",
-				"1.06");
+				"1.06",
+				"--sentence-silence",
+				"0.0");
 		}
 
 		[Test]
@@ -272,7 +274,9 @@ namespace Resgrid.Tests.Web.Tts
 				"--output_file",
 				"/tmp/raw.wav",
 				"--length-scale",
-				"1.06");
+				"1.06",
+				"--sentence-silence",
+				"0.0");
 		}
 
 		[Test]
@@ -290,7 +294,9 @@ namespace Resgrid.Tests.Web.Tts
 				"--output_file",
 				"/tmp/raw.wav",
 				"--length-scale",
-				"0.50");
+				"0.50",
+				"--sentence-silence",
+				"0.0");
 		}
 
 		[Test]

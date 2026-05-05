@@ -8,7 +8,7 @@ namespace Resgrid.Web.Tts.Configuration
 		public string DefaultVoice { get; set; } = "en-us+klatt4";
 
 		[Range(80, 450)]
-		public int DefaultSpeed { get; set; } = 165;
+		public int DefaultSpeed { get; set; } = 150;
 
 		[Range(1, 64)]
 		public int MaxConcurrentGenerations { get; set; } = 4;

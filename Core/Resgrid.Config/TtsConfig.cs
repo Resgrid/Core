@@ -25,7 +25,7 @@ namespace Resgrid.Config
 		public static string S3PublicBaseUrl = "";
 
 		public static string DefaultVoice = "en-us+klatt4";
-		public static int DefaultSpeed = 165;
+		public static int DefaultSpeed = 150;
 		public static int MaxConcurrentGenerations = 4;
 		public static int MaxTextLength = 1000;
 		public static string PiperExecutable = "piper";

@@ -319,7 +319,7 @@ namespace Resgrid.Tests.Web.Tts
 				"-ac",
 				"1",
 				"-acodec",
-				"pcm_s16le",
+				"pcm_mulaw",
 				"-af",
 				"highpass=f=200, lowpass=f=3000, anequalizer=c0 f=2500 w=1000 g=3 t=1",
 				"/tmp/normalized.wav");

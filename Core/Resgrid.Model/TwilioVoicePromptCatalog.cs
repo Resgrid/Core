@@ -33,6 +33,8 @@ namespace Resgrid.Model
 		public const string NoStaffingSelection = "No staffing selection made. Returning to the main menu.";
 		public const string CommunicationTestRecorded = "Thank you. Your response has been recorded.";
 
+		public const string PleaseWaitForDispatch = "Please wait while we prepare your dispatch information.";
+
 		public static string CallClosedByNumber(string callNumber) => $"This call, ID {callNumber}, has been closed. Goodbye.";
 
 		public static string RespondingToStation(string stationName) => $"You have been marked responding to {stationName}. Goodbye.";
@@ -84,7 +86,8 @@ namespace Resgrid.Model
 				NoStatusSelection,
 				InvalidStaffingSelection,
 				NoStaffingSelection,
-				CommunicationTestRecorded
+				CommunicationTestRecorded,
+				PleaseWaitForDispatch
 			};
 		}
 	}

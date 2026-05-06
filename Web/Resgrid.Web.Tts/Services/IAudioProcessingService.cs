@@ -12,5 +12,13 @@ namespace Resgrid.Web.Tts.Services
 		/// profile rather than the original request parameters.
 		/// </summary>
 		(string Voice, int Speed) GetEffectiveSynthesisProfile(string voice, int speed);
+
+		/// <summary>
+		/// Returns the set of distinct voice identifiers that map to unique
+		/// Piper model files. Used at startup to warm up each model so that
+		/// the first request for a non-default language does not incur the
+		/// model-loading penalty.
+		/// </summary>
+		IReadOnlySet<string> GetDistinctVoiceIdentifiers();
 	}
 }

@@ -84,7 +84,8 @@ namespace Resgrid.Web.Tts.Configuration
 			"No status selection made. Returning to the main menu.",
 			"Invalid staffing selection. Returning to the main menu.",
 			"No staffing selection made. Returning to the main menu.",
-			"Thank you. Your response has been recorded."
+			"Thank you. Your response has been recorded.",
+			"Please wait while we prepare your dispatch information."
 		};
 	}
 }

@@ -86,4 +86,10 @@
   <data name="Routes" xml:space="preserve">
     <value>Rutter</value>
   </data>
+  <data name="ScheduledCalls" xml:space="preserve">
+    <value>Schemalagda larm</value>
+  </data>
+  <data name="ScheduledCallsHeader" xml:space="preserve">
+    <value>Schemalagda larm</value>
+  </data>
 </root>

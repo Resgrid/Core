@@ -381,22 +381,20 @@ namespace Resgrid.Services
 							var members = await _departmentsService.GetAllMembersForDepartmentAsync(departmentId);
 							if (members != null && members.Any())
 							{
-								// Use department managing user as sender for notifications
-								var senderId = department?.ManagingUserId ?? members.First().UserId;
+								// Weather alerts are system-generated — use the system do-not-reply email, not the department admin
 
 								var subject = FormatAlertSubject(alert);
 								var body = FormatAlertMessageBody(alert, department);
 
 								foreach (var member in members)
 								{
-									if (member.UserId == senderId || member.IsDisabled.GetValueOrDefault() || member.IsDeleted)
+									if (member.IsDisabled.GetValueOrDefault() || member.IsDeleted)
 										continue;
 
 									var notifyMsg = new Message
 									{
 										Subject = subject,
 										Body = body,
-										SendingUserId = senderId,
 										ReceivingUserId = member.UserId,
 										SentOn = DateTime.UtcNow,
 										SystemGenerated = true,

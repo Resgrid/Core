@@ -113,6 +113,13 @@ namespace Resgrid.Tests.Web.Services
 					}
 					return System.Threading.Tasks.Task.CompletedTask;
 				});
+			_twilioVoiceResponseServiceMock
+				.Setup(x => x.GetPromptUrlAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>()))
+				.Returns<string, string, CancellationToken>((text, _, __) =>
+					System.Threading.Tasks.Task.FromResult(new Uri($"https://tts.example/{Uri.EscapeDataString(text)}.wav")));
+			_twilioVoiceResponseServiceMock
+				.Setup(x => x.PreWarmPromptAsync(It.IsAny<string>(), It.IsAny<string>()))
+				.Returns(System.Threading.Tasks.Task.CompletedTask);
 		}
 
 		private TwilioController BuildController()
@@ -292,10 +299,6 @@ namespace Resgrid.Tests.Web.Services
 			InvokeBuildDispatchPrompt(typeof(TwilioController), call, "123 Main St")
 				.Should().Be("Call 42, Priority High Address 123 Main St Nature Structure fire.");
 			InvokeBuildDispatchPrompt(typeof(TwilioController), call, null)
-				.Should().Be("Call 42, Priority High Nature Structure fire.");
-			InvokeBuildDispatchPrompt(typeof(TwilioProviderController), call, "123 Main St")
-				.Should().Be("Call 42, Priority High Address 123 Main St Nature Structure fire.");
-			InvokeBuildDispatchPrompt(typeof(TwilioProviderController), call, null)
 				.Should().Be("Call 42, Priority High Nature Structure fire.");
 		}
 

@@ -92,27 +92,59 @@ namespace Resgrid.Providers.GeoLocationProvider
 			if (string.IsNullOrWhiteSpace(href))
 				return;
 
-			using (var httpClient = new HttpClient { Timeout = System.TimeSpan.FromSeconds(30) })
+			// Step 1: URI-based detection — check AbsolutePath for .kmz/.kml suffix
+			bool? isKmzFromUri = null;
+			if (Uri.TryCreate(href, UriKind.Absolute, out Uri uri))
 			{
-				var response = httpClient.GetAsync(href).GetAwaiter().GetResult();
+				var path = uri.AbsolutePath;
+				if (path.EndsWith(".kmz", StringComparison.OrdinalIgnoreCase))
+					isKmzFromUri = true;
+				else if (path.EndsWith(".kml", StringComparison.OrdinalIgnoreCase))
+					isKmzFromUri = false;
+			}
+
+			using (var httpClient = new HttpClient { Timeout = System.TimeSpan.FromSeconds(30) })
+			using (var response = httpClient.GetAsync(href).GetAwaiter().GetResult())
+			{
 				if (!response.IsSuccessStatusCode)
 					return;
 
-				using (var stream = response.Content.ReadAsStreamAsync().GetAwaiter().GetResult())
-				{
-					bool isKmz = href.EndsWith(".kmz", StringComparison.OrdinalIgnoreCase);
+				// Step 2: Content-Type detection — fallback when URI is inconclusive
+				bool? isKmzFromContentType = null;
+				var contentType = response.Content.Headers.ContentType?.MediaType;
+				if (string.Equals(contentType, "application/vnd.google-earth.kmz", StringComparison.OrdinalIgnoreCase))
+					isKmzFromContentType = true;
+				else if (string.Equals(contentType, "application/vnd.google-earth.kml+xml", StringComparison.OrdinalIgnoreCase))
+					isKmzFromContentType = false;
 
+				// Download into memory so we can peek bytes and re-read for parsing
+				var contentBytes = response.Content.ReadAsByteArrayAsync().GetAwaiter().GetResult();
+
+				// Step 3: ZIP magic-byte detection — final fallback
+				bool? isKmzFromMagic = null;
+				if (contentBytes.Length >= 4)
+				{
+					// PK\x03\x04 is the ZIP magic number
+					isKmzFromMagic = contentBytes[0] == 0x50 && contentBytes[1] == 0x4B
+					              && contentBytes[2] == 0x03 && contentBytes[3] == 0x04;
+				}
+
+				// Precedence: URI suffix > Content-Type header > magic bytes; default to false
+				bool isKmz = isKmzFromUri ?? isKmzFromContentType ?? isKmzFromMagic ?? false;
+
+				using (var ms = new MemoryStream(contentBytes))
+				{
 					KmlFile file;
 					if (isKmz)
 					{
-						var kmz = KmzFile.Open(stream);
+						var kmz = KmzFile.Open(ms);
 						file = kmz?.GetDefaultKmlFile();
 						if (file == null)
 							return;
 					}
 					else
 					{
-						file = KmlFile.Load(stream);
+						file = KmlFile.Load(ms);
 					}
 
 					if (file?.Root is Kml kml)

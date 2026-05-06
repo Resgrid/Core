@@ -316,6 +316,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> ImportPOIs(ImportPOIsView modal, IFormFile fileToUpload, CancellationToken cancellationToken)
 		{
 			if (fileToUpload == null || fileToUpload.Length == 0)

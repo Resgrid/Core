@@ -35,11 +35,19 @@
 	<div class="col-xs-12">
 		<div class="wrapper wrapper-content">
 			<div class="ibox float-e-margins">
-				<div class="ibox-content">
-					<div class="table-responsive">
-						<table class="table table-striped">
-							<thead>
-								<tr>
+			<div class="ibox-content">
+				@if (!String.IsNullOrEmpty(Model.Message))
+				{
+					<div class="alert alert-success">@Model.Message</div>
+				}
+				@if (!String.IsNullOrEmpty(Model.ErrorMessage))
+				{
+					<div class="alert alert-danger">@Model.ErrorMessage</div>
+				}
+				<div class="table-responsive">
+					<table class="table table-striped">
+						<thead>
+							<tr>
 									<th>
 										@localizer["Name"]
 									</th>

@@ -10,6 +10,13 @@ namespace Resgrid.Web.Services.Models.v4.Mapping
 		public string ImagePath { get; set; }
 		public string Marker { get; set; }
 		public bool IsDestination { get; set; }
+
+		/// <summary>
+		/// The POI-specific custom icon image name.
+		/// New app versions should use this field for POI type icons.
+		/// ImagePath is set to null so old apps fall back to their default icon.
+		/// </summary>
+		public string PoiImage { get; set; }
 	}
 
 	public class PoiResultData
@@ -26,6 +33,13 @@ namespace Resgrid.Web.Services.Models.v4.Mapping
 		public string ImagePath { get; set; }
 		public string Marker { get; set; }
 		public bool IsDestination { get; set; }
+
+		/// <summary>
+		/// The POI-specific custom icon image name.
+		/// New app versions should use this field for POI icons.
+		/// ImagePath is set to null so old apps fall back to their default icon.
+		/// </summary>
+		public string PoiImage { get; set; }
 	}
 
 	public class PoiTypesResult : StandardApiResponseV4Base

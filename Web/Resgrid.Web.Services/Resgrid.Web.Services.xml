@@ -7080,6 +7080,20 @@
             Default constructor
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapMakerInfoData.PoiImage">
+            <summary>
+            The POI-specific custom icon image name (only set for POI markers, Type=4).
+            New app versions should use this field instead of ImagePath for POI icons.
+            ImagePath is set to null for POI markers so old apps fall back to their default icon.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.PoiLayerData.PoiImage">
+            <summary>
+            The POI-specific custom icon image name.
+            New app versions should use this field for POI type icons.
+            ImagePath is set to null so old apps fall back to their default icon.
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetMapLayersResult.Data">
             <summary>
             Response Data
@@ -7098,6 +7112,20 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetMapLayersResultData.Layers">
             <summary>
             Map Layers
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.PoiTypeResultData.PoiImage">
+            <summary>
+            The POI-specific custom icon image name.
+            New app versions should use this field for POI type icons.
+            ImagePath is set to null so old apps fall back to their default icon.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Mapping.PoiResultData.PoiImage">
+            <summary>
+            The POI-specific custom icon image name.
+            New app versions should use this field for POI icons.
+            ImagePath is set to null so old apps fall back to their default icon.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.MapFeatureResultData.FeatureType">

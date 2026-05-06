@@ -289,6 +289,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var modal = new POIsView();
 			modal.Types = await _mappingService.GetPOITypesForDepartmentAsync(DepartmentId);
+			modal.Message = TempData["ImportPOIsMessage"] as string;
+			modal.ErrorMessage = TempData["ImportPOIsError"] as string;
 
 			return View(modal);
 		}
@@ -305,37 +307,41 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public async Task<IActionResult> ImportPOIs()
+		public async Task<IActionResult> ImportPOIs(int poiTypeId)
 		{
 			var model = new ImportPOIsView();
+			model.TypeId = poiTypeId;
 
 			return View(model);
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> ImportPOIs(ImportPOIsView modal, IFormFile fileToUpload, CancellationToken cancellationToken)
 		{
-			if (fileToUpload != null && fileToUpload.Length > 0)
+			if (fileToUpload == null || fileToUpload.Length == 0)
 			{
-				//Path.GetExtension(file.FileName).ToLower() == "kmz"
+				ModelState.AddModelError("fileToUpload", "Please select a file to upload.");
+			}
+			else
+			{
+				var extension = Path.GetExtension(fileToUpload.FileName).ToLower();
 
-				//var extenion = file.FileName.Substring(file.FileName.IndexOf(char.Parse(".")) + 1, file.FileName.Length - file.FileName.IndexOf(char.Parse(".")) - 1);
-				var extenion = Path.GetExtension(fileToUpload.FileName).ToLower();
-
-				if (!String.IsNullOrWhiteSpace(extenion))
-					extenion = extenion.ToLower();
-
-				if (extenion != ".kml" && extenion != ".kmz")
-					ModelState.AddModelError("fileToUpload", string.Format("File type ({0}) is not a KMZ or KML extension to import POIs.", extenion));
+				if (extension != ".kml" && extension != ".kmz")
+					ModelState.AddModelError("fileToUpload", string.Format("File type ({0}) is not a KMZ or KML extension to import POIs.", extension));
 
 				if (fileToUpload.Length > 10000000)
 					ModelState.AddModelError("fileToUpload", "Document is too large, must be smaller then 10MB.");
 			}
 
+			if (modal.TypeId <= 0)
+				ModelState.AddModelError("TypeId", "Please select a POI type before importing.");
+
 			if (ModelState.IsValid)
 			{
 				var coordinates = _kmlProvider.ImportFile(fileToUpload.OpenReadStream(), Path.GetExtension(fileToUpload.FileName).ToLower() == ".kmz");
 
+				int importedCount = 0;
 				foreach (var coordinate in coordinates)
 				{
 					var poi = new Poi();
@@ -348,8 +354,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 						poi.Longitude = coordinate.Longitude.Value;
 
 						await _mappingService.SavePOIAsync(poi, cancellationToken);
+						importedCount++;
 					}
 				}
+
+				if (importedCount > 0)
+					TempData["ImportPOIsMessage"] = string.Format("Successfully imported {0} POI(s).", importedCount);
+				else
+					TempData["ImportPOIsError"] = "No valid placemarks with coordinates could be found in the uploaded file.";
 
 				return RedirectToAction("POIs");
 			}

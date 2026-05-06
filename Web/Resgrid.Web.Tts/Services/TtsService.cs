@@ -58,11 +58,14 @@ namespace Resgrid.Web.Tts.Services
 				.Distinct(StringComparer.Ordinal)
 				.ToList();
 
+			var defaultVoiceWarmed = false;
+
 			foreach (var prompt in prompts)
 			{
 				try
 				{
 					await GenerateInternalAsync(new NormalizedTtsRequest(prompt, _options.DefaultVoice, _options.DefaultSpeed), cancellationToken);
+					defaultVoiceWarmed = true;
 				}
 				catch (ArgumentException ex)
 				{
@@ -97,7 +100,7 @@ namespace Resgrid.Web.Tts.Services
 				// Skip the default voice — its model was already covered by the
 				// static prompts above provided at least one prompt is configured.
 				var profile = _audioProcessingService.GetEffectiveSynthesisProfile(voice, _options.DefaultSpeed);
-				if (string.Equals(profile.Voice, defaultProfile.Voice, StringComparison.OrdinalIgnoreCase))
+				if (defaultVoiceWarmed && string.Equals(profile.Voice, defaultProfile.Voice, StringComparison.OrdinalIgnoreCase))
 				{
 					continue;
 				}

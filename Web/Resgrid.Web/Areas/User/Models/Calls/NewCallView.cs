@@ -41,6 +41,7 @@ namespace Resgrid.Web.Areas.User.Models.Calls
 		public string PrimaryContact { get; set; }
 		public List<string> AdditionalContacts { get; set; }
 		public List<SelectListItem> DestinationPois { get; set; }
+		[System.ComponentModel.DataAnnotations.DisplayFormat(DataFormatString = "{0:MM/dd/yyyy HH:mm}", ApplyFormatInEditMode = true)]
 		public DateTime? ScheduleDispatchDate { get; set; }
 
 		public NewCallView()

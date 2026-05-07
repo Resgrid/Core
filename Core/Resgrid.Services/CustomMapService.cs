@@ -311,6 +311,9 @@ namespace Resgrid.Services
 
 		public async Task<CustomMapImport> ImportGeoJsonAsync(string mapId, string layerId, string geoJsonString, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			if (string.IsNullOrWhiteSpace(layerId))
+				throw new ArgumentException("A target layer must be specified for import.", nameof(layerId));
+
 			var import = new CustomMapImport
 			{
 								CustomMapId = mapId,
@@ -353,6 +356,9 @@ namespace Resgrid.Services
 
 		public async Task<CustomMapImport> ImportKmlAsync(string mapId, string layerId, Stream kmlStream, bool isKmz, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			if (string.IsNullOrWhiteSpace(layerId))
+				throw new ArgumentException("A target layer must be specified for import.", nameof(layerId));
+
 			var import = new CustomMapImport
 			{
 								CustomMapId = mapId,

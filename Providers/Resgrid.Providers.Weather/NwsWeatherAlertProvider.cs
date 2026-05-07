@@ -1,4 +1,5 @@
 using System;
+using Resgrid.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -79,16 +80,35 @@ namespace Resgrid.Providers.Weather
 			if (response.StatusCode == System.Net.HttpStatusCode.NotModified)
 				return alerts; // No changes since last poll
 
-			response.EnsureSuccessStatusCode();
+			// Read response body before checking status for diagnostic context
+			var json = response.Content != null ? await response.Content.ReadAsStringAsync() : string.Empty;
+
+			if (!response.IsSuccessStatusCode)
+			{
+				// For client errors (4xx), the request is malformed — retrying won't help.
+				// Log the full diagnostic context and return empty rather than crashing the poller.
+				var snippet = json.Length > 500 ? json.Substring(0, 500) : json;
+				var errorMsg = $"NWS API returned {(int)response.StatusCode} ({response.ReasonPhrase}) " +
+				               $"for URL '{url}', departmentId='{source.DepartmentId}', areaFilter='{source.AreaFilter}'. " +
+				               $"Response body: {snippet}";
+
+				if ((int)response.StatusCode >= 500)
+				{
+					// Server errors are transient — throw so the poller can retry
+					throw new HttpRequestException(errorMsg);
+				}
+
+				// Client errors (400, etc.) are permanent — log and return empty
+				Logging.LogError(errorMsg);
+				return alerts;
+			}
 
 			// Update ETag on source
 			if (response.Headers.ETag != null)
 				source.LastETag = response.Headers.ETag.Tag;
 
-			var json = await response.Content.ReadAsStringAsync();
-
 			// Validate response content-type is JSON before parsing
-			var contentType = response.Content.Headers.ContentType?.MediaType ?? "";
+			var contentType = response.Content?.Headers.ContentType?.MediaType ?? "";
 			if (!contentType.Contains("json", StringComparison.OrdinalIgnoreCase))
 			{
 				var snippet = json.Length > 200 ? json.Substring(0, 200) : json;

@@ -34,15 +34,19 @@
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["TargetLayer"]</label>
                             <div class="col-sm-4">
-                                <select class="form-control" name="layerId">
-                                    @if (Model.Layers != null)
-                                    {
-                                        foreach (var layer in Model.Layers)
+                                @if (Model.Layers == null || !Model.Layers.Any())
+                                {
+                                    <p class="text-danger">@localizer["NoLayersAvailable"]</p>
+                                }
+                                else
+                                {
+                                    <select class="form-control" name="layerId">
+                                        @foreach (var layer in Model.Layers)
                                         {
                                             <option value="@layer.IndoorMapFloorId">@layer.Name</option>
                                         }
-                                    }
-                                </select>
+                                    </select>
+                                }
                             </div>
                         </div>
                         <div class="form-group">
@@ -52,7 +56,7 @@
                                 <span class="help-block">@localizer["ImportFileHelp"]</span>
                             </div>
                             <div class="col-sm-2">
-                                <button class="btn btn-primary" type="submit">@localizer["ImportButton"]</button>
+                                <button class="btn btn-primary" type="submit" @(Model.Layers == null || !Model.Layers.Any() ? "disabled" : null)>@localizer["ImportButton"]</button>
                             </div>
                         </div>
                     </form>

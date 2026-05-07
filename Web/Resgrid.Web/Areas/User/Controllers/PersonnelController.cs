@@ -649,6 +649,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Personnel_Delete)]
 		public async Task<IActionResult> DeletePerson(string userId)
 		{
+			if (string.IsNullOrWhiteSpace(userId))
+				return RedirectToAction("Index", "Personnel", new { area = "User" });
+
 			if (!await _authorizationService.CanUserDeleteUserAsync(DepartmentId, UserId, userId))
 				return Unauthorized();
 
@@ -666,6 +669,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[RequiresRecentTwoFactor]
 		public async Task<IActionResult> DeletePerson(DeletePersonModel model, CancellationToken cancellationToken)
 		{
+			if (string.IsNullOrWhiteSpace(model?.UserId))
+				return RedirectToAction("Index", "Personnel", new { area = "User" });
+
 			if (!await _authorizationService.CanUserDeleteUserAsync(DepartmentId, UserId, model.UserId))
 				return Unauthorized();
 

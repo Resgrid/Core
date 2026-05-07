@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using ProtoBuf;
 using Resgrid.Framework;
 using System;
 using System.Collections.Generic;
@@ -6,20 +7,28 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Resgrid.Model
 {
+	[ProtoContract]
 	public class PlanAddon : IEntity
 	{
+		[ProtoMember(1)]
 		public string PlanAddonId { get; set; }
 
+		[ProtoMember(2)]
 		public int? PlanId { get; set; }
 
+		[ProtoMember(3)]
 		public virtual Plan Plan { get; set; }
 
+		[ProtoMember(4)]
 		public int AddonType { get; set; }
 
+		[ProtoMember(5)]
 		public double Cost { get; set; }
 
+		[ProtoMember(6)]
 		public string ExternalId { get; set; }
 
+		[ProtoMember(7)]
 		public string TestExternalId { get; set; }
 
 		[NotMapped]
@@ -33,10 +42,13 @@ namespace Resgrid.Model
 
 		public string GetExternalKey()
 		{
-			if (Config.PaymentProviderConfig.IsTestMode)
-				return TestExternalId;
-			else
+			if (!string.IsNullOrEmpty(ExternalId))
 				return ExternalId;
+
+			if (Config.PaymentProviderConfig.IsTestMode && !string.IsNullOrEmpty(TestExternalId))
+				return TestExternalId;
+
+			return null;
 		}
 
 		[NotMapped]

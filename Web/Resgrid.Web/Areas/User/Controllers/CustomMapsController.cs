@@ -277,6 +277,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (map == null || map.DepartmentId != DepartmentId)
 				return RedirectToAction("Index");
 
+			if (string.IsNullOrWhiteSpace(layerId))
+			{
+				var model = new CustomMapImportView();
+				model.Map = map;
+				model.Layers = await _customMapService.GetLayersForMapAsync(mapId);
+				model.Imports = await _customMapService.GetImportsForMapAsync(mapId);
+				model.Message = "Please select a target layer before importing. Create a layer first if none exist.";
+				return View("Import", model);
+			}
+
 			if (importFile == null || importFile.Length == 0)
 				return RedirectToAction("Import", new { id = mapId });
 

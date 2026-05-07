@@ -105,6 +105,9 @@ namespace Resgrid.Services
 
 		public IdentityUser GetUserById(string userId, bool bypassCache = true)
 		{
+			if (string.IsNullOrWhiteSpace(userId))
+				return null;
+
 			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
 			{
 				Func<IdentityUser> getUser = delegate ()

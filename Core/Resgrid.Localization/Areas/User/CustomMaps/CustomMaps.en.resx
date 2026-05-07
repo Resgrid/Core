@@ -365,4 +365,7 @@
   <data name="Error" xml:space="preserve">
     <value>Error</value>
   </data>
+  <data name="NoLayersAvailable" xml:space="preserve">
+    <value>No layers available. Please create a layer first before importing.</value>
+  </data>
 </root>

@@ -492,6 +492,10 @@ namespace Resgrid.Web.Services.Controllers
 				return CreateVoiceContentResult(response);
 			}
 
+			// For outbound calls, allow a brief pause for the audio bridge to
+			// stabilize after the callee answers before attempting playback.
+			response.Pause(length: 1);
+
 			// For dispatch playback, attempt to fetch (or pre-warm) the TTS URL
 			// within a short timeout so that the TwiML response is returned before
 			// Twilio's 15-second webhook timeout expires. If the dispatch text is
@@ -499,7 +503,6 @@ namespace Resgrid.Web.Services.Controllers
 			// back to this endpoint, giving the TTS service time to complete
 			// generation in the background.
 			var dispatchReady = await TryAppendDispatchPlaybackAsync(response, call);
-
 			if (!dispatchReady)
 			{
 				// Parse and increment the retry counter from the incoming request.

@@ -37,6 +37,7 @@ namespace Resgrid.Providers.NumberProvider
 					var options = new CreateCallOptions(new PhoneNumber(profile.GetPhoneNumber()), new PhoneNumber(number));
 					options.Url = new Uri(string.Format(Config.NumberProviderConfig.TwilioVoiceCallApiUrl, profile.UserId, call.CallId));
 					options.Method = "GET";
+					options.MachineDetection = "Enable";
 					//options.IfMachine = "Continue";
 
 					var phoneCall = await CallResource.CreateAsync(options);
@@ -51,6 +52,7 @@ namespace Resgrid.Providers.NumberProvider
 					var options = new CreateCallOptions(new PhoneNumber(profile.GetHomePhoneNumber()), new PhoneNumber(number));
 					options.Url = new Uri(string.Format(Config.NumberProviderConfig.TwilioVoiceCallApiUrl, profile.UserId, call.CallId));
 					options.Method = "GET";
+					options.MachineDetection = "Enable";
 					//options.IfMachine = "Continue";
 
 					var phoneCall = await CallResource.CreateAsync(options);

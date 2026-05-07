@@ -9,6 +9,8 @@ using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Web.Areas.User.Models.CustomMaps;
+using Microsoft.Extensions.Localization;
+using Resgrid.Localization.Areas.User.CustomMaps;
 using Resgrid.Web.Helpers;
 
 namespace Resgrid.Web.Areas.User.Controllers
@@ -17,10 +19,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 	public class CustomMapsController : SecureBaseController
 	{
 		private readonly ICustomMapService _customMapService;
+		private readonly IStringLocalizer<CustomMaps> _localizer;
 
-		public CustomMapsController(ICustomMapService customMapService)
+		public CustomMapsController(ICustomMapService customMapService, IStringLocalizer<CustomMaps> localizer)
 		{
 			_customMapService = customMapService;
+			_localizer = localizer;
 		}
 
 		#region Map CRUD
@@ -283,7 +287,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Map = map;
 				model.Layers = await _customMapService.GetLayersForMapAsync(mapId);
 				model.Imports = await _customMapService.GetImportsForMapAsync(mapId);
-				model.Message = "Please select a target layer before importing. Create a layer first if none exist.";
+				model.Message = _localizer["PleaseSelectTargetLayer"];
 				return View("Import", model);
 			}
 

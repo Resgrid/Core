@@ -59,7 +59,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Template = new CallQuickTemplate();
 
 			var priorites = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(DepartmentId);
-			model.CallPriorities = new SelectList(priorites, "DepartmentCallPriorityId", "Name", priorites.FirstOrDefault(x => x.IsDefault));
+			model.CallPriorities = new SelectList(priorites, "DepartmentCallPriorityId", "Name", priorites.FirstOrDefault(x => x.IsDefault)?.DepartmentCallPriorityId);
 
 
 			List<CallType> types = new List<CallType>();
@@ -73,7 +73,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private async Task PopulateDropdowns(NewTemplateModel model)
 		{
 			var priorites = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(DepartmentId);
-			model.CallPriorities = new SelectList(priorites, "DepartmentCallPriorityId", "Name", priorites.FirstOrDefault(x => x.IsDefault));
+			model.CallPriorities = new SelectList(priorites, "DepartmentCallPriorityId", "Name", priorites.FirstOrDefault(x => x.IsDefault)?.DepartmentCallPriorityId);
 
 			List<CallType> types = new List<CallType>();
 			types.Add(new CallType { CallTypeId = 0, Type = "No Type" });

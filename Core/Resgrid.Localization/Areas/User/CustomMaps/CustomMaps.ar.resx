@@ -119,4 +119,5 @@
   <data name="Date" xml:space="preserve"><value>التاريخ</value></data>
   <data name="Error" xml:space="preserve"><value>خطأ</value></data>
   <data name="NoLayersAvailable" xml:space="preserve"><value>لا توجد طبقات متاحة. يرجى إنشاء طبقة أولاً قبل الاستيراد.</value></data>
+  <data name="PleaseSelectTargetLayer" xml:space="preserve"><value>يرجى تحديد طبقة الهدف قبل الاستيراد. أنشئ طبقة أولاً إذا لم تكن موجودة.</value></data>
 </root>

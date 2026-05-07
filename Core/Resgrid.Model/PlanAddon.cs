@@ -42,10 +42,13 @@ namespace Resgrid.Model
 
 		public string GetExternalKey()
 		{
-			if (Config.PaymentProviderConfig.IsTestMode)
-				return TestExternalId;
-			else
+			if (!string.IsNullOrEmpty(ExternalId))
 				return ExternalId;
+
+			if (Config.PaymentProviderConfig.IsTestMode && !string.IsNullOrEmpty(TestExternalId))
+				return TestExternalId;
+
+			return null;
 		}
 
 		[NotMapped]

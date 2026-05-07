@@ -1,4 +1,5 @@
 using System;
+using Resgrid.Framework;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -80,7 +81,7 @@ namespace Resgrid.Providers.Weather
 				return alerts; // No changes since last poll
 
 			// Read response body before checking status for diagnostic context
-			var json = await response.Content.ReadAsStringAsync();
+			var json = response.Content != null ? await response.Content.ReadAsStringAsync() : string.Empty;
 
 			if (!response.IsSuccessStatusCode)
 			{
@@ -98,7 +99,7 @@ namespace Resgrid.Providers.Weather
 				}
 
 				// Client errors (400, etc.) are permanent — log and return empty
-				System.Diagnostics.Debug.WriteLine(errorMsg);
+				Logging.LogError(errorMsg);
 				return alerts;
 			}
 
@@ -107,7 +108,7 @@ namespace Resgrid.Providers.Weather
 				source.LastETag = response.Headers.ETag.Tag;
 
 			// Validate response content-type is JSON before parsing
-			var contentType = response.Content.Headers.ContentType?.MediaType ?? "";
+			var contentType = response.Content?.Headers.ContentType?.MediaType ?? "";
 			if (!contentType.Contains("json", StringComparison.OrdinalIgnoreCase))
 			{
 				var snippet = json.Length > 200 ? json.Substring(0, 200) : json;

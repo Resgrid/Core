@@ -245,5 +245,5 @@ grep -r "I{Name}Service" --include="*.cs"
 
 ## Agent Coding
 
-Always use the hindsight recall tool before answering coding questions.
-Always retain important project information using hindsight retain.
+- Always use the hindsight recall tool before answering coding questions.
+- Always retain important project information using hindsight retain.

@@ -41,11 +41,17 @@ namespace Resgrid.Providers.Weather
 				var zones = ParseAreaFilter(source.AreaFilter);
 				if (zones.Length > 0)
 				{
-					// If codes look like state abbreviations (2 chars), use area parameter
-					if (zones[0].Length == 2)
-						url += $"?area={string.Join(",", zones)}";
-					else
-						url += $"?zone={string.Join(",", zones)}";
+					// Separate state abbreviations (2-char) from zone codes (5+ char) because
+					// the NWS API requires separate query parameters for each type.
+					var stateCodes = zones.Where(z => z.Length == 2).ToArray();
+					var zoneCodes = zones.Where(z => z.Length > 2).ToArray();
+					var queryParams = new List<string>();
+					if (stateCodes.Length > 0)
+						queryParams.Add($"area={string.Join(",", stateCodes)}");
+					if (zoneCodes.Length > 0)
+						queryParams.Add($"zone={string.Join(",", zoneCodes)}");
+					if (queryParams.Count > 0)
+						url += "?" + string.Join("&", queryParams);
 				}
 			}
 
@@ -92,15 +98,15 @@ namespace Resgrid.Providers.Weather
 				               $"for URL '{url}', departmentId='{source.DepartmentId}', areaFilter='{source.AreaFilter}'. " +
 				               $"Response body: {snippet}";
 
-				if ((int)response.StatusCode >= 500)
+				if ((int)response.StatusCode == 429 || (int)response.StatusCode >= 500)
 				{
-					// Server errors are transient — throw so the poller can retry
+					// Rate-limit (429) and server errors (5xx) are transient — throw so the poller can retry
 					throw new HttpRequestException(errorMsg);
 				}
 
-				// Client errors (400, etc.) are permanent — log and return empty
-				Logging.LogError(errorMsg);
-				return alerts;
+				// Client errors (400, etc.) are permanent — throw so the source is marked as failed
+				// but ProcessAllActiveSourcesAsync will catch and log without crashing the poller
+				throw new HttpRequestException(errorMsg);
 			}
 
 			// Update ETag on source

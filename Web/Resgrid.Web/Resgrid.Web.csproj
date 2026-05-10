@@ -97,7 +97,7 @@
     <PackageReference Include="System.Reflection.Metadata" Version="9.0.3" />
     <PackageReference Include="System.ServiceModel.Syndication" Version="9.0.3" />
   </ItemGroup>
-  <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish">
+  <Target Name="PrepublishScript" BeforeTargets="PrepareForPublish" Condition="'$(SKIP_LIBMAN_RESTORE)' != '1'">
     <Exec Command="libman restore" />
   </Target>
   <ItemGroup>

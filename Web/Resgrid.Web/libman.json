@@ -169,7 +169,7 @@
       "destination": "wwwroot/lib/plyr/"
     },
     {
-      "library": "@microsoft/signalr@latest",
+      "library": "@microsoft/signalr@8.0.7",
       "destination": "wwwroot/lib/signalr/"
     },
     {

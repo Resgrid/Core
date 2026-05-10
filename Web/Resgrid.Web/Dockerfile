@@ -47,6 +47,10 @@ FROM build AS publish
 ARG BUILD_VERSION
 RUN dotnet tool install -g Microsoft.Web.LibraryManager.Cli
 ENV PATH="${PATH}:/root/.dotnet/tools"
+# Pre-restore client libraries with retries to survive transient CDN failures.
+# The csproj PrepublishScript is skipped when SKIP_LIBMAN_RESTORE=1 is set.
+RUN for i in 1 2 3; do libman restore && break || { echo "libman restore attempt $i failed, retrying..."; sleep 10; }; done
+ENV SKIP_LIBMAN_RESTORE=1
 RUN dotnet publish "Resgrid.Web.csproj" -c Release -o /app/publish -p:Version=${BUILD_VERSION}
 
 FROM base AS final

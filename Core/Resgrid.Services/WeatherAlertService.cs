@@ -241,6 +241,15 @@ namespace Resgrid.Services
 				source.ErrorMessage = null;
 				await _weatherAlertSourceRepository.UpdateAsync(source, ct, true);
 			}
+			catch (TransientWeatherAlertException ex)
+			{
+				// Transient failures (rate-limit, server errors) — record the error
+				// but don't flag the source as permanently failed so it will be retried.
+				source.LastPollUtc = DateTime.UtcNow;
+				source.ErrorMessage = $"Transient: {ex.Message}";
+				await _weatherAlertSourceRepository.UpdateAsync(source, ct, true);
+				throw;
+			}
 			catch (Exception ex)
 			{
 				source.LastPollUtc = DateTime.UtcNow;

@@ -51,7 +51,7 @@ namespace Resgrid.Providers.Weather
 					if (zoneCodes.Length > 0)
 						queryParams.Add($"zone={string.Join(",", zoneCodes)}");
 					if (queryParams.Count > 0)
-						url += "?" + string.Join("&", queryParams);
+						url += (url.Contains('?') ? "&" : "?") + string.Join("&", queryParams);
 				}
 			}
 
@@ -101,7 +101,7 @@ namespace Resgrid.Providers.Weather
 				if ((int)response.StatusCode == 429 || (int)response.StatusCode >= 500)
 				{
 					// Rate-limit (429) and server errors (5xx) are transient — throw so the poller can retry
-					throw new HttpRequestException(errorMsg);
+					throw new TransientWeatherAlertException(errorMsg);
 				}
 
 				// Client errors (400, etc.) are permanent — throw so the source is marked as failed

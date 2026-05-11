@@ -913,7 +913,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 							)
 
 					from shifts sh
-						where exists (select 1 from shiftdays sd where sd.shiftid = sh.shiftid and sd.day >= current_date and sd.day < current_date + interval '2 days')
+						where exists (select 1 from shiftdays sd where sd.shiftid = sh.shiftid and sd.day >= %startdate% and sd.day < %enddate%)
 				) j";
 			SelectShiftSignupByUserIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE UserId = %USERID%";
 			SelectShiftSignupTradeByUserIdQuery = @"

@@ -198,13 +198,15 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
-		public async Task<IEnumerable<Shift>> GetUpcomingShiftAndDaysAsync()
+		public async Task<IEnumerable<Shift>> GetUpcomingShiftAndDaysAsync(DateTime referenceTime)
 		{
 			try
 			{
 				var selectFunction = new Func<DbConnection, Task<IEnumerable<Shift>>>(async x =>
 				{
 					var dynamicParameters = new DynamicParametersExtension();
+					dynamicParameters.Add("StartDate", referenceTime.Date);
+					dynamicParameters.Add("EndDate", referenceTime.Date.AddDays(2));
 
 					if (DataConfig.DatabaseType == DatabaseTypes.SqlServer)
 						dynamicParameters.Add("JsonResult", null, DbType.String, ParameterDirection.Output, int.MaxValue);

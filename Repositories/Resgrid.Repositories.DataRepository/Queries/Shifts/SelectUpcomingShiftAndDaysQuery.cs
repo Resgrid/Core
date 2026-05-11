@@ -20,10 +20,12 @@ namespace Resgrid.Repositories.DataRepository.Queries.Shifts
 																 string.Empty,
 																 _sqlConfiguration.ParameterNotation,
 																new string[] {
-																				
+																				"%STARTDATE%",
+																				"%ENDDATE%"
 																},
 																 new string[] {
-																				
+																				"StartDate",
+																				"EndDate"
 																 },
 																 new string[] {
 																				"%SHIFTSTABLE%",

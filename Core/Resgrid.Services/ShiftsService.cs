@@ -273,7 +273,7 @@ namespace Resgrid.Services
 		{
 			var upcomingShifts = new List<Shift>();
 
-			var shifts = await _shiftsRepository.GetUpcomingShiftAndDaysAsync();
+			var shifts = await _shiftsRepository.GetUpcomingShiftAndDaysAsync(currentTime);
 
 			if (shifts != null && shifts.Any())
 			{

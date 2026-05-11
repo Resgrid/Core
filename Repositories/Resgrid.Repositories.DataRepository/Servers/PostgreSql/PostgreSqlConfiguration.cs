@@ -834,6 +834,85 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 							)
 
 					from shifts sh
+				) j";
+			// Filtered variant: only shifts with at least one ShiftDay in the next 2 days.
+			// Used by GetUpcomingShiftAndDaysAsync to avoid loading the entire Shifts table
+			// for the GetShiftsStartingNextDayAsync worker, which only needs near-term shifts.
+			SelectUpcomingShiftAndDaysJSONQuery = @"
+					select json_agg(row_to_json(j)) as JsonResult
+						from (
+							select *, (
+								select row_to_json(d) from departments d where d.departmentid = sh.departmentid
+							) department, (
+								SELECT
+									  jsonb_agg(
+												jsonb_build_object(
+													'ShiftGroupId', sg.shiftgroupid,
+													'ShiftId', sg.shiftid,
+													'DepartmentGroupId', sg.departmentgroupid,
+													'shift', (SELECT row_to_json(s1) from shifts s1 where s1.shiftid = sg.shiftid),
+													'departmentgroup', (SELECT row_to_json(dg1) from departmentgroups dg1 WHERE dg1.departmentgroupid = sg.departmentgroupid),
+													'roles', (SELECT json_agg(row_to_json(sgr1)) from shiftgrouproles sgr1 WHERE sgr1.shiftgroupid = sg.shiftgroupid)
+												)
+											)
+										from shiftgroups sg
+												  where sg.shiftid = sh.shiftid
+							) groups, (
+							SELECT
+									  jsonb_agg(
+										  jsonb_build_object(
+											  'ShiftDayId', sd.shiftdayid,
+											  'ShiftId', sd.shiftid,
+											  'Day', sd.day,
+											  'shift', (SELECT row_to_json(s2) from shifts s2 where s2.shiftid = sd.shiftid)
+										  )
+									  )
+									  from shiftdays sd
+												WHERE sd.shiftid = sh.shiftid
+							) days, (
+							SELECT
+									  jsonb_agg(
+										  jsonb_build_object(
+											  'ShiftPersonId', sp.shiftpersonid,
+											  'ShiftId', sp.shiftid,
+											  'UserId', sp.userid,
+											  'shift', (SELECT row_to_json(s3) from shifts s3 where s3.shiftid = sp.shiftid)
+										  )
+									  )
+									  FROM shiftpersons sp
+												WHERE sp.shiftid = sh.shiftid
+							) personnel, (
+							SELECT
+									  jsonb_agg(
+										  jsonb_build_object(
+											  'ShiftAdminId', sa.shiftadminid,
+											  'ShiftId', sa.shiftid,
+											  'UserId', sa.userid,
+											  'shift', (SELECT row_to_json(s4) from shifts s4 where s4.shiftid = sa.shiftid)
+										  )
+									  )
+									  FROM shiftadmins sa
+												WHERE sa.shiftid = sh.shiftid
+							) admins, (
+								SELECT
+									  jsonb_agg(
+												jsonb_build_object(
+													'ShiftSignupId', ss.shiftsignupid,
+													'ShiftId', ss.shiftid,
+													'DepartmentGroupId', ss.departmentgroupid,
+													'UserId', ss.userid,
+													'SignupTimestamp', ss.signuptimestamp,
+													'ShiftDay', ss.shiftday,
+													'Denied', ss.denied,
+													'shift', (SELECT row_to_json(s5) from shifts s5 where s5.shiftid = ss.shiftid),
+													'departmentgroup', (SELECT row_to_json(dg2) from departmentgroups dg2 WHERE dg2.departmentgroupid = ss.departmentgroupid)
+												)
+											)
+										from shiftsignups ss
+												  where ss.shiftid = sh.shiftid
+							)
+
+					from shifts sh
 						where exists (select 1 from shiftdays sd where sd.shiftid = sh.shiftid and sd.day >= current_date and sd.day < current_date + interval '2 days')
 				) j";
 			SelectShiftSignupByUserIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE UserId = %USERID%";

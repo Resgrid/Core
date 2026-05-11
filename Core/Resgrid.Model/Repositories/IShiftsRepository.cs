@@ -24,6 +24,13 @@ namespace Resgrid.Model.Repositories
 		Task<IEnumerable<Shift>> GetAllShiftAndDaysAsync();
 
 		/// <summary>
+		/// Gets upcoming shifts (with days in the next 2 days) and their associated data asynchronous.
+		/// Filters at the database level to avoid loading the entire Shifts table.
+		/// </summary>
+		/// <returns>Task&lt;IEnumerable&lt;Shift&gt;&gt;.</returns>
+		Task<IEnumerable<Shift>> GetUpcomingShiftAndDaysAsync();
+
+		/// <summary>
 		/// Gets the shift and days by department identifier asynchronous.
 		/// </summary>
 		/// <param name="departmentId">The department identifier.</param>

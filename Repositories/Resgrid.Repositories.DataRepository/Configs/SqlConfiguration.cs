@@ -279,6 +279,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectShiftAndDaysByShiftIdQuery { get; set; }
 		public string SelectShiftAndDaysQuery { get; set; }
 		public string SelectShiftAndDaysJSONQuery { get; set; }
+		public string SelectUpcomingShiftAndDaysJSONQuery { get; set; }
 		public string SelectShiftSignupByUserIdQuery { get; set; }
 		public string SelectShiftSignupTradeByUserIdQuery { get; set; }
 		public string SelectOpenShiftSignupTradesByUserIdQuery { get; set; }

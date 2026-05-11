@@ -820,6 +820,74 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 				       FOR JSON PATH) AS 'Signups'
 
 				FROM [dbo].[Shifts] sh
+				FOR JSON PATH) AS 'JsonResult'";
+			// Filtered variant: only shifts with at least one ShiftDay in the next 2 days.
+			// Used by GetUpcomingShiftAndDaysAsync to avoid loading the entire Shifts table
+			// for the GetShiftsStartingNextDayAsync worker, which only needs near-term shifts.
+			SelectUpcomingShiftAndDaysJSONQuery = @"
+					SELECT (SELECT *,
+				      JSON_QUERY((SELECT *
+				         FROM [dbo].[Departments]
+						 WHERE [dbo].[Departments].DepartmentId = sh.DepartmentId
+				       FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Department',
+					   (SELECT *,
+							JSON_QUERY((SELECT *
+								 FROM [dbo].[Shifts]
+								 WHERE [dbo].[Shifts].ShiftId = sh.ShiftId
+							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Shift',
+							JSON_QUERY((SELECT *
+								 FROM [dbo].[DepartmentGroups]
+								 WHERE [dbo].[DepartmentGroups].DepartmentGroupId = sg.DepartmentGroupId
+							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'DepartmentGroup',
+							 (SELECT *
+								 FROM [dbo].[ShiftGroupRoles]
+								 WHERE [dbo].[ShiftGroupRoles].ShiftGroupId = sg.ShiftGroupId
+							   FOR JSON PATH) AS 'Roles',
+							  (SELECT *
+								 FROM [dbo].[ShiftGroupAssignments]
+								 WHERE [dbo].[ShiftGroupAssignments].ShiftGroupId = sg.ShiftGroupId
+							   FOR JSON PATH) AS 'Assignments'
+				         FROM [dbo].[ShiftGroups] sg
+						 WHERE sg.ShiftId = sh.ShiftId
+				       FOR JSON PATH) AS 'Groups',
+					   (SELECT *,
+							JSON_QUERY((SELECT *
+								 FROM [dbo].[Shifts]
+								 WHERE [dbo].[Shifts].ShiftId = sh.ShiftId
+							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Shift'
+				         FROM [dbo].[ShiftDays] sd
+						 WHERE sd.ShiftId = sh.ShiftId
+				       FOR JSON PATH) AS 'Days',
+					   (SELECT *,
+							JSON_QUERY((SELECT *
+								 FROM [dbo].[Shifts]
+								 WHERE [dbo].[Shifts].ShiftId = sh.ShiftId
+							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Shift'
+				         FROM [dbo].[ShiftPersons] sp
+						 WHERE sp.ShiftId = sh.ShiftId
+				       FOR JSON PATH) AS 'Personnel',
+					   (SELECT *,
+							JSON_QUERY((SELECT *
+								 FROM [dbo].[Shifts]
+								 WHERE [dbo].[Shifts].ShiftId = sh.ShiftId
+							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Shift'
+				         FROM [dbo].[ShiftAdmins] sa
+						 WHERE sa.ShiftId = sh.ShiftId
+				       FOR JSON PATH) AS 'Admins',
+					   (SELECT *,
+							JSON_QUERY((SELECT *
+								 FROM [dbo].[Shifts]
+								 WHERE [dbo].[Shifts].ShiftId = sh.ShiftId
+							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Shift',
+							 JSON_QUERY((SELECT *
+								 FROM [dbo].[DepartmentGroups]
+								 WHERE [dbo].[DepartmentGroups].DepartmentGroupId = ss.DepartmentGroupId
+							   FOR JSON PATH, WITHOUT_ARRAY_WRAPPER)) AS 'Group'
+				         FROM [dbo].[ShiftSignups] ss
+						 WHERE ss.ShiftId = sh.ShiftId
+				       FOR JSON PATH) AS 'Signups'
+
+				FROM [dbo].[Shifts] sh
 				WHERE EXISTS (SELECT 1 FROM [dbo].[ShiftDays] sd WHERE sd.[ShiftId] = sh.[ShiftId] AND sd.[Day] >= CAST(GETDATE() AS DATE) AND sd.[Day] < DATEADD(DAY, 2, CAST(GETDATE() AS DATE)))
 				FOR JSON PATH) AS 'JsonResult'";
 			SelectShiftSignupByUserIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [UserId] = %USERID%";

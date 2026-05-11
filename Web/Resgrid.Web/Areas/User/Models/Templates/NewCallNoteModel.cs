@@ -9,6 +9,7 @@ namespace Resgrid.WebCore.Areas.User.Models.Templates
 		public int Sort { get; set; }
 
 		[Required]
+		[MaxLength(256)]
 		public string Name { get; set; }
 
 		[Required]

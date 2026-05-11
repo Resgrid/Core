@@ -55,7 +55,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT %SCHEMA%.%ACTIONLOGSTABLE%.*, %SCHEMA%.%ASPNETUSERSTABLE%.*
 					FROM %SCHEMA%.%ACTIONLOGSTABLE%
 					INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% ON %SCHEMA%.%ASPNETUSERSTABLE%.Id = %SCHEMA%.%ACTIONLOGSTABLE%.UserId
-					[UserId] = %ID%";
+					WHERE [UserId] = %USERID%";
 			SelectALogsByUserInDateRangQuery = @"
 					SELECT %SCHEMA%.%ACTIONLOGSTABLE%.*, %SCHEMA%.%ASPNETUSERSTABLE%.*
 					FROM %SCHEMA%.%ACTIONLOGSTABLE%
@@ -820,6 +820,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 				       FOR JSON PATH) AS 'Signups'
 
 				FROM [dbo].[Shifts] sh
+				WHERE EXISTS (SELECT 1 FROM [dbo].[ShiftDays] sd WHERE sd.[ShiftId] = sh.[ShiftId] AND sd.[Day] >= CAST(GETDATE() AS DATE) AND sd.[Day] < DATEADD(DAY, 2, CAST(GETDATE() AS DATE)))
 				FOR JSON PATH) AS 'JsonResult'";
 			SelectShiftSignupByUserIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [UserId] = %USERID%";
 			SelectShiftSignupTradeByUserIdQuery = @"

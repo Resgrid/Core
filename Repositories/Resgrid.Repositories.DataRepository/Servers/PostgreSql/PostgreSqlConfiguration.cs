@@ -57,7 +57,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					SELECT %SCHEMA%.%ACTIONLOGSTABLE%.*, %SCHEMA%.%ASPNETUSERSTABLE%.*
 					FROM %SCHEMA%.%ACTIONLOGSTABLE%
 					INNER JOIN %SCHEMA%.%ASPNETUSERSTABLE% ON %SCHEMA%.%ASPNETUSERSTABLE%.Id = %SCHEMA%.%ACTIONLOGSTABLE%.UserId
-					UserId = %ID%";
+					WHERE UserId = %USERID%";
 			SelectALogsByUserInDateRangQuery = @"
 					SELECT %SCHEMA%.%ACTIONLOGSTABLE%.*, %SCHEMA%.%ASPNETUSERSTABLE%.*
 					FROM %SCHEMA%.%ACTIONLOGSTABLE%
@@ -833,8 +833,9 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 												  where ss.shiftid = sh.shiftid
 							)
 
-						from shifts sh
-					) j";
+					from shifts sh
+						where exists (select 1 from shiftdays sd where sd.shiftid = sh.shiftid and sd.day >= current_date and sd.day < current_date + interval '2 days')
+				) j";
 			SelectShiftSignupByUserIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE UserId = %USERID%";
 			SelectShiftSignupTradeByUserIdQuery = @"
 					SELECT %SCHEMA%.%SHIFTSIGNUPTRADESTABLE%.*, %SCHEMA%.%SHIFTSIGNUPTRADEUSERSTABLE%.*

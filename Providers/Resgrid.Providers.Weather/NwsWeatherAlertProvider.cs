@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model;
@@ -16,6 +17,14 @@ namespace Resgrid.Providers.Weather
 	{
 		private static readonly HttpClient _httpClient = new HttpClient();
 		private const string DefaultBaseUrl = "https://api.weather.gov/alerts/active";
+
+		/// <summary>
+		/// Regex matching valid NWS zone/county codes (e.g. MIC081, MIZ037, TXZ123).
+		/// State abbreviation + C (county) or Z (zone) + 3 digits.
+		/// </summary>
+		private static readonly Regex NwsZoneCodeRegex = new Regex(
+			@"^(A[KLMNRSZ]|C[AOT]|D[CE]|F[LM]|G[AMU]|I[ADLN]|K[SY]|L[ACEHMOS]|M[ADEHINOPST]|N[CDEHJMVY]|O[HKR]|P[AHKMRSWZ]|S[CDL]|T[NX]|UT|V[AIT]|W[AIVY]|[HR]I)[CZ]\d{3}$",
+			RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
 		static NwsWeatherAlertProvider()
 		{
@@ -45,6 +54,14 @@ namespace Resgrid.Providers.Weather
 					// the NWS API requires separate query parameters for each type.
 					var stateCodes = zones.Where(z => z.Length == 2).ToArray();
 					var zoneCodes = zones.Where(z => z.Length > 2).ToArray();
+
+					// Validate zone codes before calling the NWS API to produce a clear error
+					// instead of a cryptic 400 Bad Request from the upstream API.
+					var validationError = GetZoneValidationError(source.AreaFilter);
+					if (validationError != null)
+						throw new HttpRequestException(
+							$"Invalid NWS zone code in area filter for department {source.DepartmentId}: {validationError}");
+
 					var queryParams = new List<string>();
 					if (stateCodes.Length > 0)
 						queryParams.Add($"area={string.Join(",", stateCodes)}");
@@ -344,6 +361,68 @@ namespace Resgrid.Providers.Weather
 
 			// Fall back to comma-separated string
 			return trimmed.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+		}
+
+		/// <summary>
+		/// Returns true if the code is a valid NWS zone/county code (e.g. MIC081, MIZ037, TXZ123).
+		/// State abbreviation + C (county) or Z (zone) + 3 digits.
+		/// </summary>
+		public static bool IsValidNwsZoneCode(string code)
+		{
+			if (string.IsNullOrWhiteSpace(code))
+				return false;
+
+			return NwsZoneCodeRegex.IsMatch(code.Trim());
+		}
+
+		/// <summary>
+		/// Validates that all non-state zone codes in the area filter are valid NWS zone codes.
+		/// Returns an error message describing the first invalid code, or null if all are valid.
+		/// 2-letter codes are assumed to be state abbreviations and are not validated as zones.
+		/// </summary>
+		public static string GetZoneValidationError(string areaFilter)
+		{
+			var zones = ParseAreaFilter(areaFilter);
+			foreach (var code in zones)
+			{
+				// 2-letter codes are state abbreviations (e.g. TX, MI) — skip
+				if (code.Length <= 2)
+					continue;
+
+				if (!IsValidNwsZoneCode(code))
+				{
+					var hint = GetCodeFormatHint(code);
+					return $"'{code}' is not a valid NWS zone code. " +
+					       $"Expected format: state abbreviation + C or Z + 3 digits (e.g. MIC081, TXZ123). {hint}";
+				}
+			}
+
+			return null;
+		}
+
+		/// <summary>
+		/// Attempts to identify what kind of code the user entered and provides a helpful hint.
+		/// </summary>
+		private static string GetCodeFormatHint(string code)
+		{
+			if (string.IsNullOrWhiteSpace(code))
+				return "";
+
+			var upper = code.Trim().ToUpperInvariant();
+
+			// ICAO airport code (4 chars, starts with K for continental US)
+			if (upper.Length == 4 && upper.StartsWith("K") && upper[1] >= 'A' && upper[1] <= 'Z')
+				return $"'{code}' looks like an ICAO airport code. Use an NWS zone code instead (e.g. MIZ037 for Grand Rapids, MI area).";
+
+			// US ZIP code (5 digits)
+			if (upper.Length == 5 && int.TryParse(upper, out _))
+				return $"'{code}' looks like a ZIP code. NWS uses zone codes, not ZIP codes. Find your zone at https://www.weather.gov/gis/.";
+
+			// FIPS county code (state FIPS + county FIPS, typically 5 digits)
+			if (upper.Length == 5 && int.TryParse(upper, out _))
+				return $"'{code}' looks like a FIPS code. NWS zone codes use the format MIC081 (state + C/Z + 3 digits).";
+
+			return "Find your NWS zone code at https://www.weather.gov/gis/";
 		}
 	}
 }

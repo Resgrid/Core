@@ -198,6 +198,61 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
+		public async Task<IEnumerable<Shift>> GetUpcomingShiftAndDaysAsync(DateTime referenceTime)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<Shift>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParametersExtension();
+					dynamicParameters.Add("StartDate", referenceTime.Date);
+					dynamicParameters.Add("EndDate", referenceTime.Date.AddDays(2));
+
+					if (DataConfig.DatabaseType == DatabaseTypes.SqlServer)
+						dynamicParameters.Add("JsonResult", null, DbType.String, ParameterDirection.Output, int.MaxValue);
+
+					var query = _queryFactory.GetQuery<SelectUpcomingShiftAndDaysQuery>();
+
+					var result = await x.QueryAsync<string>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+
+					if (result != null)
+					{
+						var singleResult = result.FirstOrDefault();
+						if (singleResult != null)
+						{
+							return JsonConvert.DeserializeObject<IEnumerable<Shift>>(singleResult);
+						}
+					}
+
+					return null;
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+
+				return null;
+			}
+		}
+
 		private static Func<Shift, ShiftDay, Shift> ShiftDayMapping(Dictionary<int, Shift> dictionary)
 		{
 			return new Func<Shift, ShiftDay, Shift>((shift, shiftDay) =>

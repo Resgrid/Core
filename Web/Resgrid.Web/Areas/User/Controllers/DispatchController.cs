@@ -591,6 +591,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return Unauthorized();
 
 			model = await FillUpdateCallView(model);
+
+			// Populate navigation properties (References, Contacts, etc.) so the view can
+			// render safely if we return it on validation failure.
+			model.Call = await _callsService.PopulateCallData(model.Call, true, true, true, true, true, true, true, true, true);
+
 			var destinationPoi = await GetValidatedDestinationPoiAsync(model.Call?.DestinationPoiId);
 
 			if (model.Call?.DestinationPoiId.HasValue == true && model.Call.DestinationPoiId.Value > 0 && destinationPoi == null)

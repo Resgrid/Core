@@ -186,7 +186,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var model = new EditDetailView();
 			model.Detail = await _customStateService.GetCustomDetailByIdAsync(stateDetailId);
+
+			if (model.Detail == null)
+				return RedirectToAction("Index");
+
 			model.Detail.CustomState = await _customStateService.GetCustomSateByIdAsync(model.Detail.CustomStateId);
+
+			if (model.Detail.CustomState == null)
+				return RedirectToAction("Index");
+
 			model.DetailTypes = model.DetailType.ToSelectList();
 			model.NoteTypes = model.NoteType.ToSelectList();
 			model.BaseTypes = model.BaseType.ToSelectList();
@@ -205,13 +213,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.CustomStates_Update)]
 		public async Task<IActionResult> EditDetail(EditDetailView model, CancellationToken cancellationToken)
 		{
+			if (model.Detail == null)
+				return RedirectToAction("Index");
+
 			if (!await _authorizationService.CanUserModifyCustomStateDetailAsync(UserId, model.Detail.CustomStateDetailId))
 				return Unauthorized();
+
+			model.Detail.CustomState = await _customStateService.GetCustomSateByIdAsync(model.Detail.CustomStateId);
+			if (model.Detail.CustomState == null)
+				return RedirectToAction("Index");
 
 			model.DetailTypes = model.DetailType.ToSelectList();
 			model.NoteTypes = model.NoteType.ToSelectList();
 			model.BaseTypes = model.BaseType.ToSelectList();
-			model.Detail.CustomState = await _customStateService.GetCustomSateByIdAsync(model.Detail.CustomStateId);
 
 			if (ModelState.IsValid)
 			{

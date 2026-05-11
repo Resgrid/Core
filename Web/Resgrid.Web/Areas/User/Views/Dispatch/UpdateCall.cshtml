@@ -236,8 +236,10 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        @foreach (var callReference in Model.Call.References)
+                                        @if (Model.Call.References != null)
                                         {
+                                            foreach (var callReference in Model.Call.References)
+                                            {
                                             var linkedCallStateText = DispatchDisplayHelper.GetLocalizedCallState(callReference.TargetCall.State, localizer, commonLocalizer);
                                             <tr>
                                                 <td style='max-width: 215px;'>
@@ -253,6 +255,7 @@
                                                     <a onclick='$(this).parent().parent().remove();' class='tip-top' data-original-title='@localizer["RemoveThisCallLink"]'><i class='fa fa-minus' style='color: red;'></i></a>
                                                 </td>
                                             </tr>
+                                            }
                                         }
                                     </tbody>
                                 </table>

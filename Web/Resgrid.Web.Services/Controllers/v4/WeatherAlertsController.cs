@@ -208,6 +208,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			// Clear any previous permanent failure so the source will be retried on next poll.
 			source.IsFailure = false;
+			source.IsPermanentFailure = false;
 			source.ErrorMessage = null;
 
 			await _weatherAlertService.SaveSourceAsync(source);
@@ -486,6 +487,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				LastPollUtc = source.LastPollUtc?.TimeConverterToString(department),
 				LastSuccessUtc = source.LastSuccessUtc?.TimeConverterToString(department),
 				IsFailure = source.IsFailure,
+				IsPermanentFailure = source.IsPermanentFailure,
 				ErrorMessage = source.ErrorMessage
 			};
 		}

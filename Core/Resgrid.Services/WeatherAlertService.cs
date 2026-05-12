@@ -238,6 +238,7 @@ namespace Resgrid.Services
 				source.LastPollUtc = DateTime.UtcNow;
 				source.LastSuccessUtc = DateTime.UtcNow;
 				source.IsFailure = false;
+				source.IsPermanentFailure = false;
 				source.ErrorMessage = null;
 				await _weatherAlertSourceRepository.UpdateAsync(source, ct, true);
 			}
@@ -249,6 +250,7 @@ namespace Resgrid.Services
 				// user edits and saves it.
 				source.LastPollUtc = DateTime.UtcNow;
 				source.IsFailure = true;
+				source.IsPermanentFailure = true;
 				source.ErrorMessage = ex.Message;
 				await _weatherAlertSourceRepository.UpdateAsync(source, ct, true);
 			}
@@ -281,8 +283,7 @@ namespace Resgrid.Services
 			{
 				// Skip sources with permanent failures (e.g. invalid zone codes).
 				// They will be retried only after the user edits and saves the source.
-				if (source.IsFailure && !string.IsNullOrEmpty(source.ErrorMessage) &&
-					!source.ErrorMessage.StartsWith("Transient:"))
+				if (source.IsFailure && source.IsPermanentFailure)
 					continue;
 
 				// Check if it's time to poll based on interval

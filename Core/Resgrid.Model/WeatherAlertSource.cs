@@ -44,6 +44,8 @@ namespace Resgrid.Model
 
 		public bool IsFailure { get; set; }
 
+		public bool IsPermanentFailure { get; set; }
+
 		[MaxLength(2000)]
 		public string ErrorMessage { get; set; }
 

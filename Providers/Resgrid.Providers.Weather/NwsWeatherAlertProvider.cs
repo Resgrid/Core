@@ -55,12 +55,12 @@ namespace Resgrid.Providers.Weather
 					var stateCodes = zones.Where(z => z.Length == 2).ToArray();
 					var zoneCodes = zones.Where(z => z.Length > 2).ToArray();
 
-					// Validate zone codes before calling the NWS API to produce a clear error
-					// instead of a cryptic 400 Bad Request from the upstream API.
-					var validationError = GetZoneValidationError(source.AreaFilter);
-					if (validationError != null)
-						throw new HttpRequestException(
-							$"Invalid NWS zone code in area filter for department {source.DepartmentId}: {validationError}");
+				// Validate zone codes before calling the NWS API to produce a clear error
+				// instead of a cryptic 400 Bad Request from the upstream API.
+				var validationError = GetZoneValidationError(source.AreaFilter);
+				if (validationError != null)
+					throw new PermanentWeatherAlertException(
+						$"Invalid NWS zone code in area filter for department {source.DepartmentId}: {validationError}");
 
 					var queryParams = new List<string>();
 					if (stateCodes.Length > 0)

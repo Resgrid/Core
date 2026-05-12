@@ -14,6 +14,7 @@ namespace Resgrid.Web.Services.Models.v4.WeatherAlerts
 		public string LastPollUtc { get; set; }
 		public string LastSuccessUtc { get; set; }
 		public bool IsFailure { get; set; }
+		public bool IsPermanentFailure { get; set; }
 		public string ErrorMessage { get; set; }
 	}
 }

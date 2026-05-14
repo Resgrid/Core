@@ -26,11 +26,17 @@ COPY --from=base /etc/passwd /tmp/base-passwd
 COPY --from=base /etc/group /tmp/base-group
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
-		ffmpeg \
 		libespeak-ng1 \
 		ca-certificates \
 		curl \
+		xz-utils \
 	&& rm -rf /var/lib/apt/lists/* \
+	&& curl -fsSL --retry 3 --retry-delay 5 "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz" -o /tmp/ffmpeg.tar.xz \
+	&& tar -xf /tmp/ffmpeg.tar.xz -C /tmp \
+	&& cp /tmp/ffmpeg-master-latest-linux64-gpl/bin/ffmpeg /usr/local/bin/ffmpeg \
+	&& cp /tmp/ffmpeg-master-latest-linux64-gpl/bin/ffprobe /usr/local/bin/ffprobe \
+	&& chmod +x /usr/local/bin/ffmpeg /usr/local/bin/ffprobe \
+	&& rm -rf /tmp/ffmpeg* \
 	&& mkdir -p /usr/local/share/piper-voices \
 	&& curl -fsSL --retry 3 --retry-delay 5 "https://github.com/rhasspy/piper/releases/download/${PIPER_VERSION}/piper_amd64.tar.gz" -o /tmp/piper.tar.gz \
 	&& tar -xzf /tmp/piper.tar.gz -C /tmp \
@@ -62,7 +68,7 @@ RUN apt-get update \
 	&& grep appuser /etc/passwd >> /tmp/app-passwd \
 	&& grep appgroup /etc/group >> /tmp/app-group \
 	&& mkdir -p /tmp/ttsdeps \
-	&& for bin in /usr/local/bin/piper /usr/bin/ffmpeg; do \
+	&& for bin in /usr/local/bin/piper /usr/local/bin/ffmpeg; do \
 		ldd "$bin" 2>/dev/null | awk '/=>/ {print $3}' >> /tmp/ttsdeps/libs.txt; \
 	done \
 	&& find /usr/local/lib -name '*.so*' -type f >> /tmp/ttsdeps/libs.txt \
@@ -74,8 +80,8 @@ WORKDIR /app
 COPY --from=publish /usr/local/bin/piper /usr/local/bin/piper
 COPY --from=publish /usr/local/share/piper-voices/ /usr/local/share/piper-voices/
 COPY --from=publish /usr/share/espeak-ng-data/ /usr/share/espeak-ng-data/
-COPY --from=publish /usr/bin/ffmpeg /usr/bin/ffmpeg
-COPY --from=publish /usr/bin/ffprobe /usr/bin/ffprobe
+COPY --from=publish /usr/local/bin/ffmpeg /usr/local/bin/ffmpeg
+COPY --from=publish /usr/local/bin/ffprobe /usr/local/bin/ffprobe
 COPY --from=publish /tmp/ttsdeps/ /usr/local/lib/tts/
 COPY --from=publish /tmp/app-passwd /etc/passwd
 COPY --from=publish /tmp/app-group /etc/group

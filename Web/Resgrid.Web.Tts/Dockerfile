@@ -34,8 +34,10 @@ RUN apt-get update \
 	&& curl -fsSL --retry 3 --retry-delay 5 "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" -o /tmp/ffmpeg.tar.xz \
 	&& tar -xf /tmp/ffmpeg.tar.xz -C /tmp \
 	&& mkdir -p /usr/local/bin \
-	&& find /tmp -name 'ffmpeg' -type f -not -path '*/lib/*' -exec cp {} /usr/local/bin/ffmpeg \; \
-	&& find /tmp -name 'ffprobe' -type f -not -path '*/lib/*' -exec cp {} /usr/local/bin/ffprobe \; \
+	&& ffmpeg_path=$(find /tmp -name 'ffmpeg' -type f -executable -not -path '*/lib/*' -print -quit) \
+	&& test -n "$ffmpeg_path" && cp "$ffmpeg_path" /usr/local/bin/ffmpeg \
+	&& ffprobe_path=$(find /tmp -name 'ffprobe' -type f -executable -not -path '*/lib/*' -print -quit) \
+	&& test -n "$ffprobe_path" && cp "$ffprobe_path" /usr/local/bin/ffprobe \
 	&& chmod +x /usr/local/bin/ffmpeg /usr/local/bin/ffprobe \
 	&& rm -rf /tmp/ffmpeg* \
 	&& mkdir -p /usr/local/share/piper-voices \

@@ -1,11 +1,13 @@
 ARG BUILD_VERSION=3.5.0
 
-FROM mcr.microsoft.com/dotnet/aspnet:9.0.3-noble-amd64 AS base
+#FROM mcr.microsoft.com/dotnet/runtime:9.0.3-noble-amd64 AS base
+FROM dhi.io/dotnet:9.0.16-debian13@sha256:4797903e46b475875f4a402aa6f42a1dcc78cfe67d217f9f5f49e358b60d47a3 AS base
 ARG BUILD_VERSION
 WORKDIR /app
 EXPOSE 8080
 
-FROM mcr.microsoft.com/dotnet/sdk:9.0.202-noble-amd64 AS build
+#FROM mcr.microsoft.com/dotnet/sdk:9.0.202-noble-amd64 AS build
+FROM dhi.io/dotnet:9.0.314-sdk-debian13@sha256:a3acd51de0af79878e26292b3053aab513c6ca4476ddb2f9f11adb9c04aa7c89 AS build
 ARG BUILD_VERSION
 WORKDIR /src
 

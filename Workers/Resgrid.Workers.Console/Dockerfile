@@ -40,29 +40,39 @@ RUN dotnet publish "Resgrid.Workers.Console.csproj" -c Release -o /app/publish -
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.9.0/wait /app/publish/wait
 RUN chmod +x /app/publish/wait
 
-FROM base AS final
+## Install wkhtmltopdf and capture its runtime libraries
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        wget \
+        fontconfig \
+        xfonts-75dpi \
+        xfonts-base \
+        libfontconfig1 \
+        libfreetype6 \
+        libjpeg62-turbo \
+        libpng16-16 \
+        libssl3 \
+        libx11-6 \
+        libxext6 \
+        libxrender1 \
+        zlib1g \
+    && wget -q https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-3/wkhtmltox_0.12.6.1-3.bookworm_amd64.deb \
+    && dpkg -i wkhtmltox_0.12.6.1-3.bookworm_amd64.deb || apt-get install -fy \
+    && rm -f wkhtmltox_0.12.6.1-3.bookworm_amd64.deb \
+    && mkdir -p /tmp/wkdeps \
+    && ldd /usr/local/bin/wkhtmltopdf | awk '/=>/ {print $3}' | while read lib; do cp "$lib" /tmp/wkdeps/; done \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+FROM base AS final
 WORKDIR /app
 
-## START - INSTALL WKHTMLTOPDF
-ENV WKHTMLTOX wkhtmltox_0.12.6.1-3.bookworm_amd64.deb
-ENV BUILD_PACKAGES build-essential
-ENV MAIN_PACKAGES apt-transport-https wget libfontconfig1-dev libfreetype6-dev libjpeg-dev libpng-dev libssl-dev libx11-dev libxext-dev libxrender-dev xfonts-75dpi xfonts-base zlib1g-dev fontconfig
+## Copy wkhtmltopdf binary + runtime libraries from publish stage
+COPY --from=publish /usr/local/bin/wkhtmltopdf /usr/local/bin/wkhtmltopdf
+COPY --from=publish /tmp/wkdeps/ /usr/local/lib/wkhtmltopdf/
+COPY --from=publish /etc/fonts/ /etc/fonts/
+COPY --from=publish /usr/share/fonts/ /usr/share/fonts/
 
-RUN apt-get update && apt-get install -y $MAIN_PACKAGES
-
-RUN set -xe \
-    && apt-get update -qq \
-    && apt-get install --no-install-recommends -yq $BUILD_PACKAGES \
-    && wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-3/wkhtmltox_0.12.6.1-3.bookworm_amd64.deb \
-    && dpkg -i ${WKHTMLTOX} \
-    && apt-get remove -y $BUILD_PACKAGES \
-    && apt-get autoremove -y \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-    && rm -rf ${WKHTMLTOX} \
-    && truncate -s 0 /var/log/*log
-## END - INSTALL WKHTMLTOPDF
+ENV LD_LIBRARY_PATH="/usr/local/lib/wkhtmltopdf:${LD_LIBRARY_PATH}"
 
 COPY --from=publish /app/publish .
 

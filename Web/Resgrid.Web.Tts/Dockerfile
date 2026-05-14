@@ -20,9 +20,7 @@ COPY . .
 WORKDIR /src/Web/Resgrid.Web.Tts
 RUN dotnet publish "Resgrid.Web.Tts.csproj" -c Release -o /app/publish /p:UseAppHost=false --no-restore -p:Version=${BUILD_VERSION}
 
-FROM base AS final
-# Install ffmpeg, download Piper TTS binary and the default English (US) voice
-# model, then clean up in a single RUN layer to keep the image small.
+FROM build AS publish
 ARG PIPER_VERSION=v1.2.0
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
@@ -30,8 +28,6 @@ RUN apt-get update \
 		libespeak-ng1 \
 		ca-certificates \
 		curl \
-		libc-bin \
-		passwd \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& mkdir -p /usr/local/share/piper-voices \
 	&& curl -fsSL --retry 3 --retry-delay 5 "https://github.com/rhasspy/piper/releases/download/${PIPER_VERSION}/piper_amd64.tar.gz" -o /tmp/piper.tar.gz \
@@ -58,11 +54,28 @@ RUN apt-get update \
 		curl -fsSL --retry 3 --retry-delay 5 "https://huggingface.co/rhasspy/piper-voices/resolve/main/${f}.onnx.json" -o "/usr/local/share/piper-voices/${name}.onnx.json"; \
 	done \
 	&& groupadd --gid 10001 appgroup \
-	&& useradd --uid 10001 --gid appgroup --create-home --shell /usr/sbin/nologin appuser
+	&& useradd --uid 10001 --gid appgroup --create-home --shell /usr/sbin/nologin appuser \
+	&& mkdir -p /tmp/ttsdeps \
+	&& for bin in /usr/local/bin/piper /usr/bin/ffmpeg; do \
+		ldd "$bin" 2>/dev/null | awk '/=>/ {print $3}' >> /tmp/ttsdeps/libs.txt; \
+	done \
+	&& find /usr/local/lib -name '*.so*' -type f >> /tmp/ttsdeps/libs.txt \
+	&& sort -u /tmp/ttsdeps/libs.txt | while read lib; do [ -f "$lib" ] && cp "$lib" /tmp/ttsdeps/; done
 
+FROM base AS final
 WORKDIR /app
-COPY --from=build /app/publish .
 
+COPY --from=publish /usr/local/bin/piper /usr/local/bin/piper
+COPY --from=publish /usr/local/share/piper-voices/ /usr/local/share/piper-voices/
+COPY --from=publish /usr/share/espeak-ng-data/ /usr/share/espeak-ng-data/
+COPY --from=publish /usr/bin/ffmpeg /usr/bin/ffmpeg
+COPY --from=publish /usr/bin/ffprobe /usr/bin/ffprobe
+COPY --from=publish /tmp/ttsdeps/ /usr/local/lib/tts/
+COPY --from=publish /etc/passwd /etc/passwd
+COPY --from=publish /etc/group /etc/group
+COPY --from=publish /app/publish .
+
+ENV LD_LIBRARY_PATH="/usr/local/lib/tts:${LD_LIBRARY_PATH}"
 ENV ASPNETCORE_URLS=http://+:8080
 USER appuser
 ENTRYPOINT ["dotnet", "Resgrid.Web.Tts.dll"]

@@ -33,6 +33,7 @@ RUN apt-get update \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& curl -fsSL --retry 3 --retry-delay 5 "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz" -o /tmp/ffmpeg.tar.xz \
 	&& tar -xf /tmp/ffmpeg.tar.xz -C /tmp \
+	&& mkdir -p /usr/local/bin \
 	&& cp /tmp/ffmpeg-master-latest-linux64-gpl/bin/ffmpeg /usr/local/bin/ffmpeg \
 	&& cp /tmp/ffmpeg-master-latest-linux64-gpl/bin/ffprobe /usr/local/bin/ffprobe \
 	&& chmod +x /usr/local/bin/ffmpeg /usr/local/bin/ffprobe \

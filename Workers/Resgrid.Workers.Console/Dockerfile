@@ -2,12 +2,12 @@
 ARG BUILD_VERSION=3.5.0
 
 #FROM mcr.microsoft.com/dotnet/runtime:9.0.3-noble-amd64 AS base
-FROM dhi.io/dotnet:9.0.16-debian13 AS base
+FROM dhi.io/dotnet:9.0.16-debian13@sha256:4797903e46b475875f4a402aa6f42a1dcc78cfe67d217f9f5f49e358b60d47a3 AS base
 ARG BUILD_VERSION
 WORKDIR /app
 
 #FROM mcr.microsoft.com/dotnet/sdk:9.0.202-noble-amd64 AS build
-FROM dhi.io/dotnet:9.0.314-sdk-debian13 AS build
+FROM dhi.io/dotnet:9.0.314-sdk-debian13@sha256:a3acd51de0af79878e26292b3053aab513c6ca4476ddb2f9f11adb9c04aa7c89 AS build
 ARG BUILD_VERSION
 WORKDIR /src
 
@@ -45,7 +45,7 @@ FROM base AS final
 WORKDIR /app
 
 ## START - INSTALL WKHTMLTOPDF
-ENV WKHTMLTOX wkhtmltox_0.12.6.1-3.jammy_amd64.deb
+ENV WKHTMLTOX wkhtmltox_0.12.6.1-3.bookworm_amd64.deb
 ENV BUILD_PACKAGES build-essential
 ENV MAIN_PACKAGES apt-transport-https wget libfontconfig1-dev libfreetype6-dev libjpeg-dev libpng-dev libssl-dev libx11-dev libxext-dev libxrender-dev xfonts-75dpi xfonts-base zlib1g-dev fontconfig
 
@@ -54,7 +54,7 @@ RUN apt-get update && apt-get install -y $MAIN_PACKAGES
 RUN set -xe \
     && apt-get update -qq \
     && apt-get install --no-install-recommends -yq $BUILD_PACKAGES \
-    && wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-3/wkhtmltox_0.12.6.1-3.jammy_amd64.deb \
+    && wget https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-3/wkhtmltox_0.12.6.1-3.bookworm_amd64.deb \
     && dpkg -i ${WKHTMLTOX} \
     && apt-get remove -y $BUILD_PACKAGES \
     && apt-get autoremove -y \
@@ -62,7 +62,7 @@ RUN set -xe \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     && rm -rf ${WKHTMLTOX} \
     && truncate -s 0 /var/log/*log
-## END - INSTALL WKHTMLTPDF
+## END - INSTALL WKHTMLTOPDF
 
 COPY --from=publish /app/publish .
 

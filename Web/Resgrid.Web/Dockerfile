@@ -2,14 +2,14 @@
 ARG BUILD_VERSION=3.5.0
 
 #FROM mcr.microsoft.com/dotnet/aspnet:9.0.3-noble-amd64 AS base
-FROM dhi.io/aspnetcore:9.0.16-debian13 AS base
+FROM dhi.io/aspnetcore:9.0.16-debian13@sha256:961647e80202ce33fc06472dda4e7ae2d2bc56d819aee6742602f70047b13dc7 AS base
 ARG BUILD_VERSION
 WORKDIR /app
 EXPOSE 80
 
 #FROM node:18.19-alpine3.19 AS node_base
 #FROM mcr.microsoft.com/dotnet/sdk:9.0.202-noble-amd64 AS build
-FROM dhi.io/dotnet:9.0.314-sdk-debian13 AS build
+FROM dhi.io/dotnet:9.0.314-sdk-debian13@sha256:a3acd51de0af79878e26292b3053aab513c6ca4476ddb2f9f11adb9c04aa7c89 AS build
 #RUN apt-get update && apt-get install nodejs
 #COPY --from=node_base . .
 #COPY --from=node_base /usr/lib /usr/lib

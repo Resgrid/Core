@@ -31,11 +31,16 @@ RUN apt-get update \
 		curl \
 		xz-utils \
 	&& rm -rf /var/lib/apt/lists/* \
-	&& curl -fsSL --retry 3 --retry-delay 5 "https://github.com/BtbN/FFmpeg-Builds/releases/download/latest/ffmpeg-master-latest-linux64-gpl.tar.xz" -o /tmp/ffmpeg.tar.xz \
+	&& curl -fsSL --retry 3 --retry-delay 5 "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" -o /tmp/ffmpeg.tar.xz \
+	&& curl -fsSL "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz.md5" -o /tmp/ffmpeg.tar.xz.md5 \
+	&& echo "$(awk '{print $1}' /tmp/ffmpeg.tar.xz.md5)  /tmp/ffmpeg.tar.xz" | md5sum -c - \
+	&& rm -f /tmp/ffmpeg.tar.xz.md5 \
 	&& tar -xf /tmp/ffmpeg.tar.xz -C /tmp \
 	&& mkdir -p /usr/local/bin \
-	&& cp /tmp/ffmpeg-master-latest-linux64-gpl/bin/ffmpeg /usr/local/bin/ffmpeg \
-	&& cp /tmp/ffmpeg-master-latest-linux64-gpl/bin/ffprobe /usr/local/bin/ffprobe \
+	&& ffmpeg_path=$(find /tmp -name 'ffmpeg' -type f -executable -not -path '*/lib/*' -print -quit) \
+	&& test -n "$ffmpeg_path" && cp "$ffmpeg_path" /usr/local/bin/ffmpeg \
+	&& ffprobe_path=$(find /tmp -name 'ffprobe' -type f -executable -not -path '*/lib/*' -print -quit) \
+	&& test -n "$ffprobe_path" && cp "$ffprobe_path" /usr/local/bin/ffprobe \
 	&& chmod +x /usr/local/bin/ffmpeg /usr/local/bin/ffprobe \
 	&& rm -rf /tmp/ffmpeg* \
 	&& mkdir -p /usr/local/share/piper-voices \

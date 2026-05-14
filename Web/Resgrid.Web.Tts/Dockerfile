@@ -22,6 +22,8 @@ RUN dotnet publish "Resgrid.Web.Tts.csproj" -c Release -o /app/publish /p:UseApp
 
 FROM build AS publish
 ARG PIPER_VERSION=v1.2.0
+COPY --from=base /etc/passwd /tmp/base-passwd
+COPY --from=base /etc/group /tmp/base-group
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
 		ffmpeg \
@@ -55,6 +57,10 @@ RUN apt-get update \
 	done \
 	&& groupadd --gid 10001 appgroup \
 	&& useradd --uid 10001 --gid appgroup --create-home --shell /usr/sbin/nologin appuser \
+	&& cp /tmp/base-passwd /tmp/app-passwd \
+	&& cp /tmp/base-group /tmp/app-group \
+	&& grep appuser /etc/passwd >> /tmp/app-passwd \
+	&& grep appgroup /etc/group >> /tmp/app-group \
 	&& mkdir -p /tmp/ttsdeps \
 	&& for bin in /usr/local/bin/piper /usr/bin/ffmpeg; do \
 		ldd "$bin" 2>/dev/null | awk '/=>/ {print $3}' >> /tmp/ttsdeps/libs.txt; \
@@ -71,11 +77,11 @@ COPY --from=publish /usr/share/espeak-ng-data/ /usr/share/espeak-ng-data/
 COPY --from=publish /usr/bin/ffmpeg /usr/bin/ffmpeg
 COPY --from=publish /usr/bin/ffprobe /usr/bin/ffprobe
 COPY --from=publish /tmp/ttsdeps/ /usr/local/lib/tts/
-COPY --from=publish /etc/passwd /etc/passwd
-COPY --from=publish /etc/group /etc/group
+COPY --from=publish /tmp/app-passwd /etc/passwd
+COPY --from=publish /tmp/app-group /etc/group
 COPY --from=publish /app/publish .
 
-ENV LD_LIBRARY_PATH="/usr/local/lib/tts:${LD_LIBRARY_PATH}"
+ENV LD_LIBRARY_PATH="/usr/local/lib/tts"
 ENV ASPNETCORE_URLS=http://+:8080
 USER appuser
 ENTRYPOINT ["dotnet", "Resgrid.Web.Tts.dll"]

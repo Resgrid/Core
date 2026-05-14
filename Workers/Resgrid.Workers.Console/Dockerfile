@@ -72,7 +72,7 @@ COPY --from=publish /tmp/wkdeps/ /usr/local/lib/wkhtmltopdf/
 COPY --from=publish /etc/fonts/ /etc/fonts/
 COPY --from=publish /usr/share/fonts/ /usr/share/fonts/
 
-ENV LD_LIBRARY_PATH="/usr/local/lib/wkhtmltopdf:${LD_LIBRARY_PATH}"
+ENV LD_LIBRARY_PATH="/usr/local/lib/wkhtmltopdf"
 
 COPY --from=publish /app/publish .
 

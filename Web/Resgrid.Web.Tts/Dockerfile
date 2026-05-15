@@ -31,6 +31,7 @@ RUN apt-get update \
 		curl \
 		xz-utils \
 		gzip \
+		passwd \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& curl -fsSL --retry 3 --retry-delay 5 "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" -o /tmp/ffmpeg.tar.xz \
 	&& curl -fsSL "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz.md5" -o /tmp/ffmpeg.tar.xz.md5 \
@@ -50,6 +51,7 @@ RUN apt-get update \
 	&& tar -xzf /tmp/piper.tar.gz -C /tmp \
 	&& mv /tmp/piper/piper /usr/local/bin/piper \
 	&& chmod +x /usr/local/bin/piper \
+	&& mkdir -p /usr/local/lib \
 	&& find /tmp/piper -name '*.so*' -exec cp {} /usr/local/lib/ \; \
 	&& if [ -d /tmp/piper/espeak-ng-data ]; then cp -R /tmp/piper/espeak-ng-data /usr/share/; else ln -sf /usr/lib/x86_64-linux-gnu/espeak-ng-data /usr/share/espeak-ng-data; fi \
 	&& ldconfig \

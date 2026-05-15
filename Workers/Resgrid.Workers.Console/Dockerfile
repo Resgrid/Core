@@ -45,8 +45,8 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         wget \
         fontconfig \
-        xfonts-75dpi \
-        xfonts-base \
+        fonts-dejavu-core \
+        init-system-helpers \
         libfontconfig1 \
         libfreetype6 \
         libjpeg62-turbo \

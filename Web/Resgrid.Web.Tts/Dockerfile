@@ -35,7 +35,7 @@ RUN apt-get update \
 	&& curl -fsSL "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz.md5" -o /tmp/ffmpeg.tar.xz.md5 \
 	&& echo "$(awk '{print $1}' /tmp/ffmpeg.tar.xz.md5)  /tmp/ffmpeg.tar.xz" | md5sum -c - \
 	&& rm -f /tmp/ffmpeg.tar.xz.md5 \
-	&& tar -xf /tmp/ffmpeg.tar.xz -C /tmp \
+	&& tar -xJf /tmp/ffmpeg.tar.xz -C /tmp \
 	&& mkdir -p /usr/local/bin \
 	&& ffmpeg_path=$(find /tmp -name 'ffmpeg' -type f -executable -not -path '*/lib/*' -print -quit) \
 	&& test -n "$ffmpeg_path" && cp "$ffmpeg_path" /usr/local/bin/ffmpeg \

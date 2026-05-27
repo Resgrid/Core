@@ -88,6 +88,7 @@ namespace Resgrid.Services
 				var spm = new StandardPushMessage();
 				spm.MessageId = message.MessageId;
 				spm.DepartmentCode = department?.Code;
+				spm.DepartmentId = departmentId;
 
 				if (message.SystemGenerated)
 					spm.SubTitle = "Msg from System";
@@ -547,6 +548,7 @@ namespace Resgrid.Services
 				spm.Title = "Notification";
 				spm.SubTitle = $"{title} {message}";
 				spm.DepartmentCode = department?.Code;
+				spm.DepartmentId = departmentId;
 
 				try
 				{
@@ -595,6 +597,7 @@ namespace Resgrid.Services
 				spm.Title = "Calendar";
 				spm.SubTitle = $"{title} {message}";
 				spm.DepartmentCode = null;
+				spm.DepartmentId = departmentId;
 
 				try
 				{
@@ -613,6 +616,7 @@ namespace Resgrid.Services
 		public async Task<bool> SendChat(string chatId, int departmentId, string sendingUserId, string group, string message, UserProfile sendingUser, List<UserProfile> recipients)
 		{
 			var spm = new StandardPushMessage();
+			spm.DepartmentId = departmentId;
 
 			if (recipients.Count == 1)
 			{

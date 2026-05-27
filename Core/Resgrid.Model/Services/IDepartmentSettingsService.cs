@@ -312,5 +312,7 @@ namespace Resgrid.Model.Services
 		/// Gets a department setting by type. Returns null if the setting does not exist.
 		/// </summary>
 		Task<DepartmentSetting> GetSettingByTypeAsync(int departmentId, DepartmentSettingTypes type);
+
+		Task<bool> GetModernNotificationsEnabledAsync(int departmentId);
 	}
 }

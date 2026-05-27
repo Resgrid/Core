@@ -54,5 +54,6 @@
 		UnitCallDispatchStatusToSet = 50,
 		UnitCallReleaseStatusToSet = 51,
 		UnitCallStatusOverridesByUnitType = 52,
+		EnableModernNotifications = 53,
 	}
 }

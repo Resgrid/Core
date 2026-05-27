@@ -924,6 +924,16 @@ namespace Resgrid.Services
 			return await GetSettingByDepartmentIdType(departmentId, type);
 		}
 
+		public async Task<bool> GetModernNotificationsEnabledAsync(int departmentId)
+		{
+			var s = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.EnableModernNotifications);
+
+			if (s != null && bool.TryParse(s.Setting, out bool result))
+				return result;
+
+			return false;
+		}
+
 		private static string GetDefaultTtsLanguage()
 		{
 			if (EspeakVoiceCatalog.TryNormalizeIdentifier(TtsConfig.DefaultVoice, out var normalizedVoice))

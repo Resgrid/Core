@@ -636,4 +636,10 @@
   <data name="CheckInTimerSaveGeneral" xml:space="preserve">
     <value>حفظ الإعدادات العامة</value>
   </data>
+  <data name="EnableModernNotifications" xml:space="preserve">
+    <value>Enable Modern Notifications</value>
+  </data>
+  <data name="EnableModernNotificationsHelp" xml:space="preserve">
+    <value>When enabled, push notifications will use the modern notification sounds instead of the legacy sounds for all users in this department.</value>
+  </data>
 </root>

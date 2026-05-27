@@ -243,6 +243,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var mapHideUnavailable = await _departmentSettingsService.GetBigBoardHideUnavailableDepartmentAsync(DepartmentId);
 			var activeCallRssKey = await _departmentSettingsService.GetRssKeyForDepartmentAsync(DepartmentId);
 			model.DisableAutoAvailable = await _departmentSettingsService.GetDisableAutoAvailableForDepartmentAsync(DepartmentId);
+			model.EnableModernNotifications = await _departmentSettingsService.GetModernNotificationsEnabledAsync(DepartmentId);
 			model.TtsLanguage = await _departmentSettingsService.GetTtsLanguageForDepartmentAsync(DepartmentId);
 			model.TtsLanguages = BuildTtsLanguageSelectList(model.TtsLanguage);
 
@@ -537,6 +538,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.MapHideUnavailable.ToString(), DepartmentSettingTypes.BigBoardHideUnavailable,
 					cancellationToken);
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.DisableAutoAvailable.ToString(), DepartmentSettingTypes.DisabledAutoAvailable,
+					cancellationToken);
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.EnableModernNotifications.ToString(), DepartmentSettingTypes.EnableModernNotifications,
 					cancellationToken);
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.TtsLanguage, DepartmentSettingTypes.TtsLanguage,
 					cancellationToken);

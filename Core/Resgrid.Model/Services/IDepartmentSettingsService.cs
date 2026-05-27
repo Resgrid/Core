@@ -313,6 +313,6 @@ namespace Resgrid.Model.Services
 		/// </summary>
 		Task<DepartmentSetting> GetSettingByTypeAsync(int departmentId, DepartmentSettingTypes type);
 
-		Task<bool> GetModernNotificationsEnabledAsync(int departmentId);
+		Task<bool> GetModernNotificationsEnabledAsync(int departmentId, bool bypassCache = false);
 	}
 }

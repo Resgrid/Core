@@ -21,6 +21,7 @@ namespace Resgrid.Services
 		private static string StaffingSupressInfo = "DSetStaffingSupress_{0}";
 		private static string TtsLanguageCacheKey = "DSetTtsLanguage_{0}";
 		private static string PersonnelOnUnitSetUnitStatusCacheKey = "DSetPersonnelOnUnitSetUnitStatus_{0}";
+		private static string ModernNotificationsCacheKey = "DSetModernNotifications_{0}";
 		private static TimeSpan LongCacheLength = TimeSpan.FromDays(14);
 		private static TimeSpan ThatsNotLongThisIsLongCacheLength = TimeSpan.FromDays(365);
 		private static TimeSpan TwoYearCacheLength = TimeSpan.FromDays(730);
@@ -71,6 +72,9 @@ namespace Resgrid.Services
 						break;
 					case DepartmentSettingTypes.PersonnelOnUnitSetUnitStatus:
 						await _cacheProvider.RemoveAsync(string.Format(PersonnelOnUnitSetUnitStatusCacheKey, departmentId));
+						break;
+					case DepartmentSettingTypes.EnableModernNotifications:
+						await _cacheProvider.RemoveAsync(string.Format(ModernNotificationsCacheKey, departmentId));
 						break;
 				}
 
@@ -924,14 +928,21 @@ namespace Resgrid.Services
 			return await GetSettingByDepartmentIdType(departmentId, type);
 		}
 
-		public async Task<bool> GetModernNotificationsEnabledAsync(int departmentId)
+		public async Task<bool> GetModernNotificationsEnabledAsync(int departmentId, bool bypassCache = false)
 		{
-			var s = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.EnableModernNotifications);
+			async Task<string> getSetting()
+			{
+				var s = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.EnableModernNotifications);
+				return s?.Setting ?? "false";
+			}
 
-			if (s != null && bool.TryParse(s.Setting, out bool result))
-				return result;
+			if (Config.SystemBehaviorConfig.CacheEnabled && !bypassCache)
+			{
+				var cachedValue = await _cacheProvider.RetrieveAsync<string>(string.Format(ModernNotificationsCacheKey, departmentId), getSetting, LongCacheLength);
+				return bool.Parse(cachedValue);
+			}
 
-			return false;
+			return bool.Parse(await getSetting());
 		}
 
 		private static string GetDefaultTtsLanguage()

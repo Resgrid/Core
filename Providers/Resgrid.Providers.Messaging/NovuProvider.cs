@@ -394,6 +394,11 @@ namespace Resgrid.Providers.Messaging
 			}
 			else
 			{
+				// Modern sound set (PushSoundTypes 7+): uniform stem-based filenames.
+				var modernStem = PushSoundFile.GetModernStem(type);
+				if (modernStem != null)
+					return $"{modernStem}.wav";
+
 				return $"{type}.wav";
 			}
 		}

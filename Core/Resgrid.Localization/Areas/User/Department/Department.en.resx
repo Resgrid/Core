@@ -666,4 +666,10 @@
   <data name="TtsLanguageHelp" xml:space="preserve">
     <value>Select the eSpeak-NG language or dialect to use for this department's voice prompts.</value>
   </data>
+  <data name="EnableModernNotifications" xml:space="preserve">
+    <value>Enable Modern Notifications</value>
+  </data>
+  <data name="EnableModernNotificationsHelp" xml:space="preserve">
+    <value>When enabled, push notifications will use the modern notification sounds instead of the legacy sounds for all users in this department.</value>
+  </data>
 </root>

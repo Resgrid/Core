@@ -452,6 +452,16 @@ namespace Resgrid.Providers.Bus
 			}
 			else
 			{
+				// Modern sound set (PushSoundTypes 7+): uniform stem-based filenames.
+				var modernStem = PushSoundFile.GetModernStem(type);
+				if (modernStem != null)
+				{
+					if (platform == Platforms.iOS)
+						return $"{modernStem}.caf";
+
+					return $"{modernStem}.wav";
+				}
+
 				if (platform == Platforms.iOS)
 					return $"{type}.caf";
 

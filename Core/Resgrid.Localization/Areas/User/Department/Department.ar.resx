@@ -636,4 +636,94 @@
   <data name="CheckInTimerSaveGeneral" xml:space="preserve">
     <value>حفظ الإعدادات العامة</value>
   </data>
+  <data name="ChatbotSettingsHeader" xml:space="preserve">
+    <value>إعدادات روبوت الدردشة</value>
+  </data>
+  <data name="ChatbotSettingsNav" xml:space="preserve">
+    <value>روبوت الدردشة</value>
+  </data>
+  <data name="ChatbotConfiguration" xml:space="preserve">
+    <value>تكوين روبوت الدردشة</value>
+  </data>
+  <data name="ChatbotEnable" xml:space="preserve">
+    <value>تفعيل روبوت الدردشة</value>
+  </data>
+  <data name="ChatbotEnableHelp" xml:space="preserve">
+    <value>السماح لأعضاء هذا القسم بالتفاعل مع روبوت الدردشة.</value>
+  </data>
+  <data name="ChatbotAllowedPlatforms" xml:space="preserve">
+    <value>المنصات المسموح بها</value>
+  </data>
+  <data name="ChatbotAllowedPlatformsHelp" xml:space="preserve">
+    <value>أسماء المنصات مفصولة بفواصل المسموح بها لهذا القسم، أو * للكل. الأسماء الصالحة: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, Teams, Signal, WebChat.</value>
+  </data>
+  <data name="ChatbotAllowDispatch" xml:space="preserve">
+    <value>السماح بالإرسال عبر روبوت الدردشة</value>
+  </data>
+  <data name="ChatbotAllowDispatchHelp" xml:space="preserve">
+    <value>السماح للمستخدمين المصرّح لهم بإنشاء أو إرسال المكالمات عبر روبوت الدردشة.</value>
+  </data>
+  <data name="ChatbotConfirmStatusChanges" xml:space="preserve">
+    <value>تأكيد تغييرات الحالة</value>
+  </data>
+  <data name="ChatbotConfirmStatusChangesHelp" xml:space="preserve">
+    <value>طلب تأكيد صريح قبل الإجراءات المدمّرة أو التي تغيّر الحالة.</value>
+  </data>
+  <data name="ChatbotConfirmPhoneLinking" xml:space="preserve">
+    <value>تأكيد ربط الهاتف</value>
+  </data>
+  <data name="ChatbotConfirmPhoneLinkingHelp" xml:space="preserve">
+    <value>طلب تأكيد لمرة واحدة «أجب بـ YES» قبل ربط رقم SMS بحساب مطابق.</value>
+  </data>
+  <data name="ChatbotProactiveNotifications" xml:space="preserve">
+    <value>الإشعارات الاستباقية</value>
+  </data>
+  <data name="ChatbotProactiveNotificationsHelp" xml:space="preserve">
+    <value>السماح لروبوت الدردشة بإرسال إشعارات استباقية (مكالمات، تذكيرات) إلى المستخدمين المرتبطين.</value>
+  </data>
+  <data name="ChatbotMessagesPerUser" xml:space="preserve">
+    <value>الرسائل / المستخدم / الدقيقة</value>
+  </data>
+  <data name="ChatbotMessagesPerUserHelp" xml:space="preserve">
+    <value>الحد لكل مستخدم. اتركه فارغًا لاستخدام الإعداد الافتراضي للنظام.</value>
+  </data>
+  <data name="ChatbotMessagesPerDept" xml:space="preserve">
+    <value>الرسائل / القسم / الدقيقة</value>
+  </data>
+  <data name="ChatbotMessagesPerDeptHelp" xml:space="preserve">
+    <value>الحد لكل قسم. اتركه فارغًا لاستخدام الإعداد الافتراضي للنظام.</value>
+  </data>
+  <data name="ChatbotLlmHeader" xml:space="preserve">
+    <value>مزوّد الذكاء الاصطناعي / LLM للقسم (اختياري)</value>
+  </data>
+  <data name="ChatbotLlmIntro" xml:space="preserve">
+    <value>اترك هذه الحقول فارغة لاستخدام مزوّد الذكاء الاصطناعي لنظام Resgrid. للإبقاء على معالجة روبوت الدردشة لدى مزوّدك الخاص، أدخل نقطة نهاية متوافقة مع OpenAI ونموذجًا ومفتاح API.</value>
+  </data>
+  <data name="ChatbotLlmEndpoint" xml:space="preserve">
+    <value>نقطة نهاية LLM</value>
+  </data>
+  <data name="ChatbotLlmModel" xml:space="preserve">
+    <value>نموذج LLM</value>
+  </data>
+  <data name="ChatbotLlmApiKey" xml:space="preserve">
+    <value>مفتاح API لـ LLM</value>
+  </data>
+  <data name="ChatbotLlmApiKeyHelpHasKey" xml:space="preserve">
+    <value>يوجد مفتاح مخزَّن حاليًا. اتركه فارغًا للإبقاء عليه، أو أدخل قيمة جديدة لاستبداله.</value>
+  </data>
+  <data name="ChatbotLlmApiKeyHelpNoKey" xml:space="preserve">
+    <value>لا يوجد مفتاح مخزَّن. يتم تشفير المفتاح أثناء التخزين ولا يُعرض أبدًا.</value>
+  </data>
+  <data name="ChatbotSave" xml:space="preserve">
+    <value>حفظ</value>
+  </data>
+  <data name="ChatbotCancel" xml:space="preserve">
+    <value>إلغاء</value>
+  </data>
+  <data name="ChatbotSaved" xml:space="preserve">
+    <value>تم حفظ إعدادات روبوت الدردشة.</value>
+  </data>
+  <data name="ChatbotSaveError" xml:space="preserve">
+    <value>حدث خطأ أثناء حفظ إعدادات روبوت الدردشة.</value>
+  </data>
 </root>

@@ -37,6 +37,7 @@ namespace Resgrid.Chatbot.NLU.Providers
 		public int Priority => 100;
 
 		private readonly HttpClient _httpClient;
+		private readonly IChatbotDepartmentConfigService _configService;
 
 		private static readonly string IntentSystemPrompt = @"You are a classification engine for emergency service chatbot commands.
 Classify the user's message into exactly one of these intent categories:
@@ -97,8 +98,9 @@ Extract any parameters mentioned:
 Confidence should be between 0.0 and 1.0 based on how certain you are.
 If the user's message doesn't clearly match any intent, set intent to ""unknown"" with confidence 0.0.";
 
-		public OpenAiCompatibleNluProvider()
+		public OpenAiCompatibleNluProvider(IChatbotDepartmentConfigService configService)
 		{
+			_configService = configService;
 			_httpClient = new HttpClient
 			{
 				Timeout = TimeSpan.FromSeconds(ChatbotConfig.CloudNluTimeoutSeconds > 0
@@ -107,7 +109,7 @@ If the user's message doesn't clearly match any intent, set intent to ""unknown"
 			};
 		}
 
-		public async Task<NLUResult> ClassifyAsync(string text, string context = null)
+		public async Task<NLUResult> ClassifyAsync(string text, string context = null, int departmentId = 0)
 		{
 			if (string.IsNullOrWhiteSpace(text))
 				return new NLUResult { IntentName = "unknown", Confidence = 0, ProviderName = ProviderName };
@@ -116,9 +118,17 @@ If the user's message doesn't clearly match any intent, set intent to ""unknown"
 
 			try
 			{
-				var endpoint = ResolveEndpoint();
-				var apiKey = ResolveApiKey();
-				var model = ResolveModel();
+				// A department may supply its own LLM provider so its processing stays with that
+				// provider; otherwise fall back to the Resgrid system-level configuration.
+				DepartmentLlmOverride departmentLlm = null;
+				if (departmentId > 0 && _configService != null)
+					departmentLlm = await _configService.GetLlmOverrideAsync(departmentId);
+
+				var endpoint = departmentLlm != null ? departmentLlm.Endpoint : ResolveEndpoint();
+				var apiKey = departmentLlm != null ? departmentLlm.ApiKey : ResolveApiKey();
+				var model = departmentLlm != null && !string.IsNullOrWhiteSpace(departmentLlm.Model)
+					? departmentLlm.Model
+					: ResolveModel();
 
 				if (string.IsNullOrWhiteSpace(apiKey))
 				{
@@ -166,8 +176,9 @@ If the user's message doesn't clearly match any intent, set intent to ""unknown"
 				};
 				request.Headers.Add("Authorization", $"Bearer {apiKey}");
 
-				// Azure OpenAI uses api-key header instead
-				if (ChatbotConfig.CloudNluProvider == CloudNluProviderType.AzureOpenAI)
+				// Azure OpenAI uses api-key header instead (system config only; a department override
+				// is assumed OpenAI-compatible with Bearer auth).
+				if (departmentLlm == null && ChatbotConfig.CloudNluProvider == CloudNluProviderType.AzureOpenAI)
 				{
 					request.Headers.Remove("Authorization");
 					request.Headers.Add("api-key", apiKey);

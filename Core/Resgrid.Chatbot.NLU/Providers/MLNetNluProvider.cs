@@ -14,7 +14,7 @@ namespace Resgrid.Chatbot.NLU.Providers
 		{
 		}
 
-		public Task<NLUResult> ClassifyAsync(string text, string context = null)
+		public Task<NLUResult> ClassifyAsync(string text, string context = null, int departmentId = 0)
 		{
 			if (string.IsNullOrWhiteSpace(text))
 				return Task.FromResult(new NLUResult { IntentName = "unknown", Confidence = 0, ProviderName = ProviderName });

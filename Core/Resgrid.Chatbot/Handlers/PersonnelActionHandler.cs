@@ -15,19 +15,22 @@ namespace Resgrid.Chatbot.Handlers
 		private readonly IActionLogsService _actionLogsService;
 		private readonly IUserStateService _userStateService;
 		private readonly ICustomStateService _customStateService;
+		private readonly IAuthorizationService _authorizationService;
 
 		public PersonnelActionHandler(
 			IDepartmentsService departmentsService,
 			IUsersService usersService,
 			IActionLogsService actionLogsService,
 			IUserStateService userStateService,
-			ICustomStateService customStateService)
+			ICustomStateService customStateService,
+			IAuthorizationService authorizationService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
 			_actionLogsService = actionLogsService;
 			_userStateService = userStateService;
 			_customStateService = customStateService;
+			_authorizationService = authorizationService;
 		}
 
 		public ChatbotIntentType IntentType => ChatbotIntentType.PersonnelLookup;
@@ -36,6 +39,12 @@ namespace Resgrid.Chatbot.Handlers
 		{
 			try
 			{
+				// Authorization: only users permitted to view the roster may list personnel.
+				if (!await _authorizationService.CanUserViewAllPeopleAsync(session.UserId, session.DepartmentId))
+				{
+					return new ChatbotResponse { Text = "You don't have permission to view personnel for your department.", Processed = false };
+				}
+
 				var allUsers = await _usersService.GetUserGroupAndRolesByDepartmentIdInLimitAsync(session.DepartmentId, false, false, false);
 				var lastActionLogs = await _actionLogsService.GetLastActionLogsForDepartmentAsync(session.DepartmentId);
 				var userStates = await _userStateService.GetLatestStatesForDepartmentAsync(session.DepartmentId);

@@ -587,4 +587,94 @@
   <data name="CheckInTimerSaveGeneral" xml:space="preserve">
     <value>Зберегти Загальні Налаштування</value>
   </data>
+  <data name="ChatbotSettingsHeader" xml:space="preserve">
+    <value>Налаштування чат-бота</value>
+  </data>
+  <data name="ChatbotSettingsNav" xml:space="preserve">
+    <value>Чат-бот</value>
+  </data>
+  <data name="ChatbotConfiguration" xml:space="preserve">
+    <value>Конфігурація чат-бота</value>
+  </data>
+  <data name="ChatbotEnable" xml:space="preserve">
+    <value>Увімкнути чат-бота</value>
+  </data>
+  <data name="ChatbotEnableHelp" xml:space="preserve">
+    <value>Дозволити учасникам цього підрозділу взаємодіяти з чат-ботом.</value>
+  </data>
+  <data name="ChatbotAllowedPlatforms" xml:space="preserve">
+    <value>Дозволені платформи</value>
+  </data>
+  <data name="ChatbotAllowedPlatformsHelp" xml:space="preserve">
+    <value>Назви платформ, розділені комами, дозволені для цього підрозділу, або * для всіх. Дійсні назви: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, Teams, Signal, WebChat.</value>
+  </data>
+  <data name="ChatbotAllowDispatch" xml:space="preserve">
+    <value>Дозволити диспетчеризацію через чат-бот</value>
+  </data>
+  <data name="ChatbotAllowDispatchHelp" xml:space="preserve">
+    <value>Дозволити уповноваженим користувачам створювати або диспетчеризувати виклики через чат-бот.</value>
+  </data>
+  <data name="ChatbotConfirmStatusChanges" xml:space="preserve">
+    <value>Підтверджувати зміни статусу</value>
+  </data>
+  <data name="ChatbotConfirmStatusChangesHelp" xml:space="preserve">
+    <value>Вимагати явного підтвердження перед руйнівними діями або діями, що змінюють статус.</value>
+  </data>
+  <data name="ChatbotConfirmPhoneLinking" xml:space="preserve">
+    <value>Підтверджувати прив'язку телефону</value>
+  </data>
+  <data name="ChatbotConfirmPhoneLinkingHelp" xml:space="preserve">
+    <value>Вимагати одноразового підтвердження «Відповідь YES» перед прив'язкою номера SMS до відповідного облікового запису.</value>
+  </data>
+  <data name="ChatbotProactiveNotifications" xml:space="preserve">
+    <value>Проактивні сповіщення</value>
+  </data>
+  <data name="ChatbotProactiveNotificationsHelp" xml:space="preserve">
+    <value>Дозволити чат-боту надсилати проактивні сповіщення (виклики, нагадування) прив'язаним користувачам.</value>
+  </data>
+  <data name="ChatbotMessagesPerUser" xml:space="preserve">
+    <value>Повідомлення / користувач / хвилина</value>
+  </data>
+  <data name="ChatbotMessagesPerUserHelp" xml:space="preserve">
+    <value>Обмеження на користувача. Залиште порожнім, щоб використовувати системне значення за замовчуванням.</value>
+  </data>
+  <data name="ChatbotMessagesPerDept" xml:space="preserve">
+    <value>Повідомлення / підрозділ / хвилина</value>
+  </data>
+  <data name="ChatbotMessagesPerDeptHelp" xml:space="preserve">
+    <value>Обмеження на підрозділ. Залиште порожнім, щоб використовувати системне значення за замовчуванням.</value>
+  </data>
+  <data name="ChatbotLlmHeader" xml:space="preserve">
+    <value>Постачальник ШІ / LLM підрозділу (необов'язково)</value>
+  </data>
+  <data name="ChatbotLlmIntro" xml:space="preserve">
+    <value>Залиште ці поля порожніми, щоб використовувати системного постачальника ШІ Resgrid. Щоб обробка вашого чат-бота залишалася у вашого власного постачальника, введіть сумісну з OpenAI кінцеву точку, модель і ключ API.</value>
+  </data>
+  <data name="ChatbotLlmEndpoint" xml:space="preserve">
+    <value>Кінцева точка LLM</value>
+  </data>
+  <data name="ChatbotLlmModel" xml:space="preserve">
+    <value>Модель LLM</value>
+  </data>
+  <data name="ChatbotLlmApiKey" xml:space="preserve">
+    <value>Ключ API LLM</value>
+  </data>
+  <data name="ChatbotLlmApiKeyHelpHasKey" xml:space="preserve">
+    <value>Наразі збережено ключ. Залиште порожнім, щоб зберегти його, або введіть нове значення, щоб замінити його.</value>
+  </data>
+  <data name="ChatbotLlmApiKeyHelpNoKey" xml:space="preserve">
+    <value>Ключ не збережено. Ключ шифрується у стані спокою та ніколи не відображається.</value>
+  </data>
+  <data name="ChatbotSave" xml:space="preserve">
+    <value>Зберегти</value>
+  </data>
+  <data name="ChatbotCancel" xml:space="preserve">
+    <value>Скасувати</value>
+  </data>
+  <data name="ChatbotSaved" xml:space="preserve">
+    <value>Налаштування чат-бота збережено.</value>
+  </data>
+  <data name="ChatbotSaveError" xml:space="preserve">
+    <value>Під час збереження налаштувань чат-бота сталася помилка.</value>
+  </data>
 </root>

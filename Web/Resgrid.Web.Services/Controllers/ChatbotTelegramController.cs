@@ -1,9 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Resgrid.Chatbot.Config;
 using Resgrid.Chatbot.Interfaces;
 using Resgrid.Chatbot.Models;
 using Resgrid.Framework;
@@ -43,6 +47,17 @@ namespace Resgrid.Web.Services.Controllers
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<IActionResult> Webhook()
 		{
+			// Verify the secret token Telegram echoes back in the X-Telegram-Bot-Api-Secret-Token
+			// header (configured via setWebhook). When a secret is configured, requests without a
+			// matching token are rejected so the webhook cannot be driven by arbitrary callers.
+			var configuredSecret = ChatbotConfig.TelegramWebhookSecretToken;
+			if (!string.IsNullOrEmpty(configuredSecret))
+			{
+				var providedSecret = Request.Headers["X-Telegram-Bot-Api-Secret-Token"].ToString();
+				if (!SecretMatches(providedSecret, configuredSecret))
+					return Unauthorized();
+			}
+
 			try
 			{
 				using var reader = new StreamReader(Request.Body);
@@ -92,86 +107,48 @@ namespace Resgrid.Web.Services.Controllers
 
 		private static void ParseTelegramUpdate(string json, Dictionary<string, string> parameters)
 		{
-			// Simple JSON parsing for Telegram Update objects.
-			// In production, use System.Text.Json or Newtonsoft.Json for full parsing.
-			// Extract message.from.id, message.text, message.chat.id
+			// Parse the Telegram Update object with System.Text.Json. Extracts
+			// message.from.id, message.from.first_name, message.text, and message.chat.id.
 			try
 			{
-				if (json.Contains("\"message\""))
+				using var doc = JsonDocument.Parse(json);
+				var root = doc.RootElement;
+
+				if (root.ValueKind != JsonValueKind.Object || !root.TryGetProperty("message", out var messageEl)
+					|| messageEl.ValueKind != JsonValueKind.Object)
+					return;
+
+				if (messageEl.TryGetProperty("from", out var fromEl) && fromEl.ValueKind == JsonValueKind.Object)
 				{
-					// Extract from.id
-					var fromIdIdx = json.IndexOf("\"from\"");
-					if (fromIdIdx > 0)
-					{
-						var idIdx = json.IndexOf("\"id\"", fromIdIdx);
-						if (idIdx > 0)
-						{
-							var colonIdx = json.IndexOf(':', idIdx);
-							if (colonIdx > 0)
-							{
-								var endIdx = json.IndexOfAny(new[] { ',', '}', '\n' }, colonIdx);
-								if (endIdx > colonIdx)
-								{
-									var id = json.Substring(colonIdx + 1, endIdx - colonIdx - 1).Trim();
-									parameters["from"] = id;
-								}
-							}
-						}
+					if (fromEl.TryGetProperty("id", out var fromIdEl) && fromIdEl.ValueKind == JsonValueKind.Number)
+						parameters["from"] = fromIdEl.GetRawText();
 
-						// Extract from.first_name
-						var firstNameIdx = json.IndexOf("\"first_name\"", fromIdIdx);
-						if (firstNameIdx > 0)
-						{
-							var colonIdx = json.IndexOf(':', firstNameIdx);
-							if (colonIdx > 0)
-							{
-								var startQuote = json.IndexOf('"', colonIdx + 1);
-								var endQuote = json.IndexOf('"', startQuote + 1);
-								if (startQuote > 0 && endQuote > startQuote)
-									parameters["first_name"] = json.Substring(startQuote + 1, endQuote - startQuote - 1);
-							}
-						}
-					}
-
-					// Extract message.text
-					var textIdx = json.IndexOf("\"text\"");
-					if (textIdx > 0)
-					{
-						var colonIdx = json.IndexOf(':', textIdx);
-						if (colonIdx > 0)
-						{
-							var startQuote = json.IndexOf('"', colonIdx + 1);
-							var endQuote = json.IndexOf('"', startQuote + 1);
-							if (startQuote > 0 && endQuote > startQuote)
-								parameters["text"] = json.Substring(startQuote + 1, endQuote - startQuote - 1);
-						}
-					}
-
-					// Extract message.chat.id
-					var chatIdx = json.IndexOf("\"chat\"");
-					if (chatIdx > 0)
-					{
-						var idIdx = json.IndexOf("\"id\"", chatIdx);
-						if (idIdx > 0)
-						{
-							var colonIdx = json.IndexOf(':', idIdx);
-							if (colonIdx > 0)
-							{
-								var endIdx = json.IndexOfAny(new[] { ',', '}', '\n' }, colonIdx);
-								if (endIdx > colonIdx)
-								{
-									var chatId = json.Substring(colonIdx + 1, endIdx - colonIdx - 1).Trim();
-									parameters["chat_id"] = chatId;
-								}
-							}
-						}
-					}
+					if (fromEl.TryGetProperty("first_name", out var firstNameEl) && firstNameEl.ValueKind == JsonValueKind.String)
+						parameters["first_name"] = firstNameEl.GetString();
 				}
+
+				if (messageEl.TryGetProperty("text", out var textEl) && textEl.ValueKind == JsonValueKind.String)
+					parameters["text"] = textEl.GetString();
+
+				if (messageEl.TryGetProperty("chat", out var chatEl) && chatEl.ValueKind == JsonValueKind.Object
+					&& chatEl.TryGetProperty("id", out var chatIdEl) && chatIdEl.ValueKind == JsonValueKind.Number)
+					parameters["chat_id"] = chatIdEl.GetRawText();
 			}
-			catch
+			catch (JsonException)
 			{
-				// Silently ignore parse errors
+				// Malformed update - leave parameters empty; the caller skips updates without text.
 			}
+		}
+
+		private static bool SecretMatches(string provided, string expected)
+		{
+			if (string.IsNullOrEmpty(provided))
+				return false;
+
+			// Constant-time comparison to avoid leaking the secret via timing.
+			var providedBytes = Encoding.UTF8.GetBytes(provided);
+			var expectedBytes = Encoding.UTF8.GetBytes(expected);
+			return CryptographicOperations.FixedTimeEquals(providedBytes, expectedBytes);
 		}
 	}
 }

@@ -42,25 +42,26 @@ namespace Resgrid.Chatbot.Services
 			{
 				var text = message.Text.Trim();
 				var context = BuildContextString(session);
+				var departmentId = session?.DepartmentId ?? 0;
 				var mode = ChatbotConfig.NluProvider;
 
 				switch (mode)
 				{
 					case NluProviderType.Cloud:
-						return await ClassifyCloudOnlyAsync(text, context);
+						return await ClassifyCloudOnlyAsync(text, context, departmentId);
 
 					case NluProviderType.HybridCloud:
-						return await ClassifyHybridCloudAsync(text, context);
+						return await ClassifyHybridCloudAsync(text, context, departmentId);
 
 					case NluProviderType.HybridLocal:
-						return await ClassifyHybridLocalAsync(text, context);
+						return await ClassifyHybridLocalAsync(text, context, departmentId);
 
 					case NluProviderType.MLNet:
-						return await ClassifySingleProviderAsync("MLNet", text, context);
+						return await ClassifySingleProviderAsync("MLNet", text, context, departmentId);
 
 					case NluProviderType.Keyword:
 					default:
-						return await ClassifyKeywordOnlyAsync(text, context);
+						return await ClassifyKeywordOnlyAsync(text, context, departmentId);
 				}
 			}
 			catch (Exception ex)
@@ -70,38 +71,38 @@ namespace Resgrid.Chatbot.Services
 			}
 		}
 
-		private async Task<ChatbotIntent> ClassifyKeywordOnlyAsync(string text, string context)
+		private async Task<ChatbotIntent> ClassifyKeywordOnlyAsync(string text, string context, int departmentId)
 		{
 			var provider = GetProviders().FirstOrDefault(p => p.ProviderName == "Keyword");
-			return await ClassifyWithProviderAsync(provider, text, context);
+			return await ClassifyWithProviderAsync(provider, text, context, departmentId);
 		}
 
-		private async Task<ChatbotIntent> ClassifySingleProviderAsync(string providerName, string text, string context)
+		private async Task<ChatbotIntent> ClassifySingleProviderAsync(string providerName, string text, string context, int departmentId)
 		{
 			var provider = GetProviders().FirstOrDefault(p => p.ProviderName == providerName);
 			if (provider == null)
-				return await ClassifyKeywordOnlyAsync(text, context);
+				return await ClassifyKeywordOnlyAsync(text, context, departmentId);
 
-			return await ClassifyWithProviderAsync(provider, text, context);
+			return await ClassifyWithProviderAsync(provider, text, context, departmentId);
 		}
 
-		private async Task<ChatbotIntent> ClassifyCloudOnlyAsync(string text, string context)
+		private async Task<ChatbotIntent> ClassifyCloudOnlyAsync(string text, string context, int departmentId)
 		{
 			var cloudProvider = GetProviders().FirstOrDefault(p => p.ProviderName == "CloudLLM");
 			if (cloudProvider == null || !await cloudProvider.IsAvailableAsync())
 			{
 				// Cloud not available, fall back to keyword
 				Logging.LogInfo("ChatbotIntentRouter: Cloud provider unavailable, falling back to keyword");
-				return await ClassifyKeywordOnlyAsync(text, context);
+				return await ClassifyKeywordOnlyAsync(text, context, departmentId);
 			}
 
-			var intent = await ClassifyWithProviderAsync(cloudProvider, text, context);
+			var intent = await ClassifyWithProviderAsync(cloudProvider, text, context, departmentId);
 
 			// If cloud returned low confidence, optionally fall back to keyword
 			if (intent.Confidence < ChatbotConfig.MinimumIntentConfidence && ChatbotConfig.CloudNluFallbackToKeyword)
 			{
 				Logging.LogInfo($"ChatbotIntentRouter: Cloud confidence {intent.Confidence} below threshold, falling back to keyword");
-				var keywordIntent = await ClassifyKeywordOnlyAsync(text, context);
+				var keywordIntent = await ClassifyKeywordOnlyAsync(text, context, departmentId);
 				if (keywordIntent.Confidence > intent.Confidence)
 					return keywordIntent;
 			}
@@ -109,10 +110,10 @@ namespace Resgrid.Chatbot.Services
 			return intent;
 		}
 
-		private async Task<ChatbotIntent> ClassifyHybridCloudAsync(string text, string context)
+		private async Task<ChatbotIntent> ClassifyHybridCloudAsync(string text, string context, int departmentId)
 		{
 			// Step 1: Try keyword classifier first (fast)
-			var keywordIntent = await ClassifyKeywordOnlyAsync(text, context);
+			var keywordIntent = await ClassifyKeywordOnlyAsync(text, context, departmentId);
 
 			// If keyword is confident enough, return immediately
 			if (keywordIntent.Confidence >= ChatbotConfig.MinimumIntentConfidence)
@@ -123,7 +124,7 @@ namespace Resgrid.Chatbot.Services
 			if (cloudProvider == null || !await cloudProvider.IsAvailableAsync())
 				return keywordIntent; // Return best we have (even if low confidence)
 
-			var cloudIntent = await ClassifyWithProviderAsync(cloudProvider, text, context);
+			var cloudIntent = await ClassifyWithProviderAsync(cloudProvider, text, context, departmentId);
 			cloudIntent.IsFallbackResult = true;
 
 			// If cloud is confident, use it
@@ -134,9 +135,9 @@ namespace Resgrid.Chatbot.Services
 			return cloudIntent.Confidence > keywordIntent.Confidence ? cloudIntent : keywordIntent;
 		}
 
-		private async Task<ChatbotIntent> ClassifyHybridLocalAsync(string text, string context)
+		private async Task<ChatbotIntent> ClassifyHybridLocalAsync(string text, string context, int departmentId)
 		{
-			var keywordIntent = await ClassifyKeywordOnlyAsync(text, context);
+			var keywordIntent = await ClassifyKeywordOnlyAsync(text, context, departmentId);
 			if (keywordIntent.Confidence >= ChatbotConfig.MinimumIntentConfidence)
 				return keywordIntent;
 
@@ -144,16 +145,16 @@ namespace Resgrid.Chatbot.Services
 			if (mlProvider == null || !await mlProvider.IsAvailableAsync())
 				return keywordIntent;
 
-			var mlIntent = await ClassifyWithProviderAsync(mlProvider, text, context);
+			var mlIntent = await ClassifyWithProviderAsync(mlProvider, text, context, departmentId);
 			return mlIntent.Confidence > keywordIntent.Confidence ? mlIntent : keywordIntent;
 		}
 
-		private async Task<ChatbotIntent> ClassifyWithProviderAsync(INLUProvider provider, string text, string context)
+		private async Task<ChatbotIntent> ClassifyWithProviderAsync(INLUProvider provider, string text, string context, int departmentId)
 		{
 			if (provider == null)
 				return new ChatbotIntent { Type = ChatbotIntentType.Unknown, Confidence = 0 };
 
-			var nluResult = await provider.ClassifyAsync(text, context);
+			var nluResult = await provider.ClassifyAsync(text, context, departmentId);
 			var intent = _intentMapper.MapToIntent(nluResult);
 
 			// Apply confidence threshold (applied at mapping level)

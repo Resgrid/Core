@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Resgrid.Chatbot.Config;
 using Resgrid.Chatbot.Interfaces;
 using Resgrid.Chatbot.Models;
 using Resgrid.Framework;
@@ -21,6 +22,9 @@ namespace Resgrid.Chatbot.Services
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly ILimitsService _limitsService;
+		private readonly IAuthorizationService _authorizationService;
+		private readonly IChatbotDepartmentConfigService _departmentConfigService;
+		private readonly IChatbotRateLimiter _rateLimiter;
 
 		public ChatbotIngressService(
 			IChatbotUserIdentityService userIdentityService,
@@ -32,7 +36,10 @@ namespace Resgrid.Chatbot.Services
 			IUserProfileService userProfileService,
 			IDepartmentsService departmentsService,
 			IDepartmentSettingsService departmentSettingsService,
-			ILimitsService limitsService)
+			ILimitsService limitsService,
+			IAuthorizationService authorizationService,
+			IChatbotDepartmentConfigService departmentConfigService,
+			IChatbotRateLimiter rateLimiter)
 		{
 			_userIdentityService = userIdentityService;
 			_sessionManager = sessionManager;
@@ -44,6 +51,9 @@ namespace Resgrid.Chatbot.Services
 			_departmentsService = departmentsService;
 			_departmentSettingsService = departmentSettingsService;
 			_limitsService = limitsService;
+			_authorizationService = authorizationService;
+			_departmentConfigService = departmentConfigService;
+			_rateLimiter = rateLimiter;
 		}
 
 		public async Task<ChatbotResponse> ProcessMessageAsync(ChatbotMessage message)
@@ -53,8 +63,37 @@ namespace Resgrid.Chatbot.Services
 
 			try
 			{
-				// 1. Identify user from the platform-specific identifier
+				// 1. Identify user from the platform-specific identifier (already-linked only).
 				var identity = await ResolveUserIdentityAsync(message);
+
+				// 1b. SMS: a phone number that matches a Resgrid profile but isn't linked yet. Depending
+				// on the department's RequireLinkingConfirmation setting, either auto-link or run a
+				// one-time "Reply YES to link" confirmation before trusting the number.
+				if (identity == null && IsSmsPlatform(message.Platform))
+				{
+					var cleanPhone = message.From?.Replace("+", "").Trim();
+					if (!string.IsNullOrWhiteSpace(cleanPhone))
+					{
+						var profile = await _userProfileService.GetProfileByMobileNumberAsync(cleanPhone);
+						if (profile != null)
+						{
+							var candidateDepartment = await ResolveActiveDepartmentAsync(profile.UserId);
+							var requireConfirmation = candidateDepartment == null
+								|| ((await _departmentConfigService.GetConfigAsync(candidateDepartment.DepartmentId))?.RequireLinkingConfirmation ?? true);
+
+							if (!requireConfirmation)
+							{
+								identity = await _userIdentityService.LinkUserAsync(
+									profile.UserId, message.Platform, message.From, profile.FullName.AsFirstNameLastName, "phone_match");
+							}
+							else
+							{
+								// Returns the prompt / acknowledgement; links the number on a YES reply.
+								return await HandlePhoneLinkConfirmationAsync(message, profile, candidateDepartment);
+							}
+						}
+					}
+				}
 
 				if (identity == null || string.IsNullOrWhiteSpace(identity.UserId))
 				{
@@ -74,13 +113,57 @@ namespace Resgrid.Chatbot.Services
 						message.Platform, new ChatbotIntent { Type = ChatbotIntentType.Unknown });
 				}
 
-				// 3. Check department authorization
+				// 3. Central authorization gate (layer 1): the user must be a valid, active member
+				// within the resolved department's limits before any intent is dispatched. Per-handler
+				// permission checks (layer 2) enforce action-specific authorization.
+				if (!await _authorizationService.IsUserValidWithinLimitsAsync(identity.UserId, department.DepartmentId))
+				{
+					return await _templateRenderer.RenderResponseAsync("error",
+						new Services.ErrorModel { Message = "Your account isn't active in this department. Please contact your administrator." },
+						message.Platform, new ChatbotIntent { Type = ChatbotIntentType.Unknown });
+				}
+
+				// 3b. Check department plan supports chatbot features
 				var isAuthorized = await _limitsService.CanDepartmentProvisionNumberAsync(department.DepartmentId);
 				if (!isAuthorized)
 				{
 					return await _templateRenderer.RenderResponseAsync("error",
 						new Services.ErrorModel { Message = "Your department's plan does not support chatbot features. Please upgrade your plan." },
 						message.Platform, new ChatbotIntent { Type = ChatbotIntentType.Unknown });
+				}
+
+				// 3c. Per-department configuration gates (when a config row exists; otherwise the
+				// system defaults apply and the chatbot stays enabled for backward compatibility).
+				var deptConfig = await _departmentConfigService.GetConfigAsync(department.DepartmentId);
+				if (deptConfig != null)
+				{
+					if (!deptConfig.IsEnabled)
+					{
+						return await _templateRenderer.RenderResponseAsync("error",
+							new Services.ErrorModel { Message = "The chatbot is not enabled for your department. Please contact your administrator." },
+							message.Platform, new ChatbotIntent { Type = ChatbotIntentType.Unknown });
+					}
+
+					if (!IsPlatformAllowed(deptConfig.AllowedPlatforms, message.Platform))
+					{
+						return await _templateRenderer.RenderResponseAsync("error",
+							new Services.ErrorModel { Message = "This channel isn't enabled for your department's chatbot." },
+							message.Platform, new ChatbotIntent { Type = ChatbotIntentType.Unknown });
+					}
+				}
+
+				// 3d. Rate limiting using the department's limits (or system defaults). Emergency/distress
+				// messages are exempt so a mayday is never throttled.
+				if (!IsEmergencyText(message.Text))
+				{
+					var perUserLimit = deptConfig?.MessagesPerUserPerMinute ?? ChatbotConfig.MessagesPerUserPerMinute;
+					var perDeptLimit = deptConfig?.MessagesPerDepartmentPerMinute ?? ChatbotConfig.MessagesPerDepartmentPerMinute;
+					if (!await _rateLimiter.TryAcquireAsync(identity.UserId, department.DepartmentId, perUserLimit, perDeptLimit))
+					{
+						return await _templateRenderer.RenderResponseAsync("error",
+							new Services.ErrorModel { Message = "You're sending messages too quickly. Please wait a moment and try again." },
+							message.Platform, new ChatbotIntent { Type = ChatbotIntentType.Unknown });
+					}
 				}
 
 				// 4. Get or create session
@@ -163,39 +246,89 @@ namespace Resgrid.Chatbot.Services
 
 		private async Task<ChatbotUserIdentity> ResolveUserIdentityAsync(ChatbotMessage message)
 		{
-			// Try platform-specific identity first
+			// Platform-specific identity (already linked).
 			var identity = await _userIdentityService.GetIdentityAsync(message.Platform, message.From);
 
-			// For SMS platforms, fall back to phone number lookup via UserProfile
-			if (identity == null && (message.Platform == ChatbotPlatform.SmsTwilio || message.Platform == ChatbotPlatform.SmsSignalWire))
-			{
-				var cleanPhone = message.From?.Replace("+", "").Trim();
-				if (!string.IsNullOrWhiteSpace(cleanPhone))
-				{
-					var profile = await _userProfileService.GetProfileByMobileNumberAsync(cleanPhone);
-					if (profile != null)
-					{
-						identity = await _userIdentityService.LinkUserAsync(
-							profile.UserId,
-							message.Platform,
-							message.From,
-							profile.FullName.AsFirstNameLastName,
-							"phone_match");
-					}
-				}
-			}
-
-			// Generic phone-based lookup for any platform
+			// Generic lookup for a number already linked to a Resgrid user (any platform). Note: this
+			// does NOT auto-link new numbers — that is handled (with optional confirmation) in the ingress.
 			if (identity == null)
 			{
 				var cleanPhone = message.From?.Replace("+", "").Trim();
 				if (!string.IsNullOrWhiteSpace(cleanPhone))
-				{
 					identity = await _userIdentityService.GetIdentityByPhoneAsync(cleanPhone);
-				}
 			}
 
 			return identity;
+		}
+
+		private static bool IsSmsPlatform(ChatbotPlatform platform)
+			=> platform == ChatbotPlatform.SmsTwilio || platform == ChatbotPlatform.SmsSignalWire;
+
+		private static bool IsEmergencyText(string text)
+		{
+			if (string.IsNullOrWhiteSpace(text))
+				return false;
+
+			var t = text.ToLowerInvariant();
+			return t.Contains("mayday") || t.Contains("emergency") || t.Contains("officer down") || t.Contains("firefighter down");
+		}
+
+		private static bool IsAffirmative(string text)
+		{
+			var t = text?.Trim().ToLowerInvariant();
+			return t == "yes" || t == "y" || t == "confirm";
+		}
+
+		private static bool IsNegative(string text)
+		{
+			var t = text?.Trim().ToLowerInvariant();
+			return t == "no" || t == "n" || t == "cancel" || t == "stop";
+		}
+
+		/// <summary>
+		/// One-time confirmation before linking an unrecognized SMS number to the matching Resgrid
+		/// account. Prompts on first contact, links on YES, cancels on NO.
+		/// </summary>
+		private async Task<ChatbotResponse> HandlePhoneLinkConfirmationAsync(ChatbotMessage message, Model.UserProfile profile, Model.Department department)
+		{
+			var session = await _sessionManager.GetOrCreateSessionAsync(profile.UserId, department.DepartmentId, message.Platform, message.From);
+
+			var awaitingConfirmation = session.State == ChatbotDialogState.AwaitingConfirmation
+				&& session.Context != null
+				&& session.Context.TryGetValue("pendingAction", out var pendingAction)
+				&& pendingAction == "confirm_phone_link";
+
+			if (awaitingConfirmation)
+			{
+				if (IsAffirmative(message.Text))
+				{
+					await _userIdentityService.LinkUserAsync(
+						profile.UserId, message.Platform, message.From, profile.FullName.AsFirstNameLastName, "phone_match_confirmed");
+					session.State = ChatbotDialogState.Idle;
+					session.Context.Remove("pendingAction");
+					await _sessionManager.SaveSessionAsync(session);
+					return new ChatbotResponse { Text = "Your number is now linked to your Resgrid account. Text HELP to see what you can do.", Processed = true };
+				}
+
+				if (IsNegative(message.Text))
+				{
+					await _sessionManager.EndSessionAsync(session.SessionId);
+					return new ChatbotResponse { Text = "No problem — I won't link this number. Reply LINK anytime to connect your account.", Processed = true };
+				}
+
+				return new ChatbotResponse { Text = "Please reply YES to link this number to your Resgrid account, or NO to cancel.", Processed = false };
+			}
+
+			// First contact for this number: ask for confirmation before linking.
+			session.State = ChatbotDialogState.AwaitingConfirmation;
+			session.Context["pendingAction"] = "confirm_phone_link";
+			await _sessionManager.SaveSessionAsync(session);
+
+			return new ChatbotResponse
+			{
+				Text = $"We found a Resgrid account for {profile.FirstName}. Reply YES to link this number, or NO to cancel.",
+				Processed = true
+			};
 		}
 
 		private async Task<Model.Department> ResolveActiveDepartmentAsync(string userId)
@@ -219,6 +352,21 @@ namespace Resgrid.Chatbot.Services
 				return await _departmentsService.GetDepartmentByIdAsync(activeMember.DepartmentId);
 
 			return null;
+		}
+
+		private static bool IsPlatformAllowed(string allowedPlatforms, ChatbotPlatform platform)
+		{
+			if (string.IsNullOrWhiteSpace(allowedPlatforms) || allowedPlatforms.Trim() == "*")
+				return true;
+
+			var platformName = platform.ToString();
+			foreach (var entry in allowedPlatforms.Split(','))
+			{
+				if (string.Equals(entry.Trim(), platformName, StringComparison.OrdinalIgnoreCase))
+					return true;
+			}
+
+			return false;
 		}
 	}
 }

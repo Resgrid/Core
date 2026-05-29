@@ -587,4 +587,94 @@
   <data name="CheckInTimerSaveGeneral" xml:space="preserve">
     <value>Enregistrer les Param&#xE8;tres G&#xE9;n&#xE9;raux</value>
   </data>
+  <data name="ChatbotSettingsHeader" xml:space="preserve">
+    <value>Paramètres du chatbot</value>
+  </data>
+  <data name="ChatbotSettingsNav" xml:space="preserve">
+    <value>Chatbot</value>
+  </data>
+  <data name="ChatbotConfiguration" xml:space="preserve">
+    <value>Configuration du chatbot</value>
+  </data>
+  <data name="ChatbotEnable" xml:space="preserve">
+    <value>Activer le chatbot</value>
+  </data>
+  <data name="ChatbotEnableHelp" xml:space="preserve">
+    <value>Autoriser les membres de ce service à interagir avec le chatbot.</value>
+  </data>
+  <data name="ChatbotAllowedPlatforms" xml:space="preserve">
+    <value>Plateformes autorisées</value>
+  </data>
+  <data name="ChatbotAllowedPlatformsHelp" xml:space="preserve">
+    <value>Noms de plateformes séparés par des virgules autorisés pour ce service, ou * pour toutes. Noms valides : SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, Teams, Signal, WebChat.</value>
+  </data>
+  <data name="ChatbotAllowDispatch" xml:space="preserve">
+    <value>Autoriser la répartition via le chatbot</value>
+  </data>
+  <data name="ChatbotAllowDispatchHelp" xml:space="preserve">
+    <value>Autoriser les utilisateurs habilités à créer ou répartir des appels via le chatbot.</value>
+  </data>
+  <data name="ChatbotConfirmStatusChanges" xml:space="preserve">
+    <value>Confirmer les changements de statut</value>
+  </data>
+  <data name="ChatbotConfirmStatusChangesHelp" xml:space="preserve">
+    <value>Exiger une confirmation explicite avant les actions destructrices ou modifiant le statut.</value>
+  </data>
+  <data name="ChatbotConfirmPhoneLinking" xml:space="preserve">
+    <value>Confirmer la liaison du téléphone</value>
+  </data>
+  <data name="ChatbotConfirmPhoneLinkingHelp" xml:space="preserve">
+    <value>Exiger une confirmation unique « Répondre YES » avant de lier un numéro SMS à un compte correspondant.</value>
+  </data>
+  <data name="ChatbotProactiveNotifications" xml:space="preserve">
+    <value>Notifications proactives</value>
+  </data>
+  <data name="ChatbotProactiveNotificationsHelp" xml:space="preserve">
+    <value>Autoriser le chatbot à envoyer des notifications proactives (appels, rappels) aux utilisateurs liés.</value>
+  </data>
+  <data name="ChatbotMessagesPerUser" xml:space="preserve">
+    <value>Messages / utilisateur / minute</value>
+  </data>
+  <data name="ChatbotMessagesPerUserHelp" xml:space="preserve">
+    <value>Limite par utilisateur. Laissez vide pour utiliser la valeur par défaut du système.</value>
+  </data>
+  <data name="ChatbotMessagesPerDept" xml:space="preserve">
+    <value>Messages / service / minute</value>
+  </data>
+  <data name="ChatbotMessagesPerDeptHelp" xml:space="preserve">
+    <value>Limite par service. Laissez vide pour utiliser la valeur par défaut du système.</value>
+  </data>
+  <data name="ChatbotLlmHeader" xml:space="preserve">
+    <value>Fournisseur d'IA / LLM du service (facultatif)</value>
+  </data>
+  <data name="ChatbotLlmIntro" xml:space="preserve">
+    <value>Laissez ces champs vides pour utiliser le fournisseur d'IA système de Resgrid. Pour conserver le traitement de votre chatbot chez votre propre fournisseur, saisissez un point de terminaison compatible OpenAI, un modèle et une clé API.</value>
+  </data>
+  <data name="ChatbotLlmEndpoint" xml:space="preserve">
+    <value>Point de terminaison LLM</value>
+  </data>
+  <data name="ChatbotLlmModel" xml:space="preserve">
+    <value>Modèle LLM</value>
+  </data>
+  <data name="ChatbotLlmApiKey" xml:space="preserve">
+    <value>Clé API LLM</value>
+  </data>
+  <data name="ChatbotLlmApiKeyHelpHasKey" xml:space="preserve">
+    <value>Une clé est actuellement enregistrée. Laissez ce champ vide pour la conserver, ou saisissez une nouvelle valeur pour la remplacer.</value>
+  </data>
+  <data name="ChatbotLlmApiKeyHelpNoKey" xml:space="preserve">
+    <value>Aucune clé enregistrée. La clé est chiffrée au repos et n'est jamais affichée.</value>
+  </data>
+  <data name="ChatbotSave" xml:space="preserve">
+    <value>Enregistrer</value>
+  </data>
+  <data name="ChatbotCancel" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="ChatbotSaved" xml:space="preserve">
+    <value>Paramètres du chatbot enregistrés.</value>
+  </data>
+  <data name="ChatbotSaveError" xml:space="preserve">
+    <value>Une erreur s'est produite lors de l'enregistrement des paramètres du chatbot.</value>
+  </data>
 </root>

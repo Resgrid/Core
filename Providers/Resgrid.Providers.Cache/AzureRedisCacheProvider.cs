@@ -235,6 +235,30 @@ namespace Resgrid.Providers.Cache
 			return false;
 		}
 
+		public async Task<long> IncrementAsync(string cacheKey, TimeSpan expiration)
+		{
+			try
+			{
+				if (Config.SystemBehaviorConfig.CacheEnabled && _connection != null && _connection.IsConnected)
+				{
+					IDatabase cache = _connection.GetDatabase();
+					var key = SetCacheKeyForEnv(cacheKey);
+
+					var value = await cache.StringIncrementAsync(key);
+					if (value == 1)
+						await cache.KeyExpireAsync(key, expiration);
+
+					return value;
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
+
+			return 0;
+		}
+
 		public bool IsConnected()
 		{
 			EstablishRedisConnection();

@@ -1,51 +1,86 @@
 using System;
+using System.Linq;
 using System.Security.Cryptography;
+using System.Threading;
 using System.Threading.Tasks;
+using Resgrid.Chatbot.Config;
 using Resgrid.Chatbot.Interfaces;
 using Resgrid.Chatbot.Models;
+using Resgrid.Model.Repositories;
+using LinkingCodeEntity = Resgrid.Model.ChatbotLinkingCode;
 
 namespace Resgrid.Chatbot.Services
 {
 	/// <summary>
 	/// Code-based account linking service for platforms without OAuth2 (Telegram, Signal, generic).
-	/// Generates short-lived linking codes that users enter in chat to prove ownership.
+	/// Generates short-lived, single-use linking codes (persisted in ChatbotLinkingCodes) that users
+	/// enter in chat to prove ownership of their Resgrid account.
 	/// </summary>
 	public class CodeLinkingService
 	{
 		private readonly IChatbotUserIdentityService _userIdentityService;
+		private readonly IChatbotLinkingCodeRepository _linkingCodeRepository;
 
-		public CodeLinkingService(IChatbotUserIdentityService userIdentityService)
+		public CodeLinkingService(
+			IChatbotUserIdentityService userIdentityService,
+			IChatbotLinkingCodeRepository linkingCodeRepository)
 		{
 			_userIdentityService = userIdentityService;
+			_linkingCodeRepository = linkingCodeRepository;
 		}
 
 		/// <summary>
-		/// Generates a 6-character alphanumeric linking code for a Resgrid user.
-		/// Codes expire after 15 minutes.
+		/// Generates a single-use linking code bound to a Resgrid user and persists it until it
+		/// expires. Enforces the per-user daily generation cap.
 		/// </summary>
-		public LinkingCode GenerateCode(string resgridUserId)
+		public async Task<LinkingCode> GenerateCodeAsync(string resgridUserId)
 		{
-			var codeBytes = new byte[4];
-			using var rng = RandomNumberGenerator.Create();
-			rng.GetBytes(codeBytes);
+			if (string.IsNullOrWhiteSpace(resgridUserId))
+				throw new ArgumentException("A user id is required to generate a linking code.", nameof(resgridUserId));
 
-			// Convert to a 6-character code (base36-like, uppercase alphanumeric)
-		// Convert to a 6-character code (base36-like, uppercase alphanumeric)
-		var value = (uint)(BitConverter.ToUInt32(codeBytes, 0) % 2176782336); // 36^6
-		var code = ToBase36(value).PadLeft(6, '0').ToUpperInvariant();
+			// Enforce the per-user daily cap.
+			var since = DateTime.UtcNow.AddDays(-1);
+			var existing = await _linkingCodeRepository.GetAllByUserIdAsync(resgridUserId);
+			var recent = existing?.Count(c => c.CreatedAt >= since) ?? 0;
+			if (recent >= ChatbotConfig.MaxLinkingCodesPerUserPerDay)
+				throw new InvalidOperationException("You've reached the daily limit for linking codes. Please try again later.");
+
+			// Generate a unique code (retry on the rare collision with an existing code).
+			string code;
+			var attempts = 0;
+			do
+			{
+				code = GenerateRandomCode();
+				attempts++;
+			}
+			while (await _linkingCodeRepository.GetByCodeAsync(code) != null && attempts < 10);
+
+			var entity = new LinkingCodeEntity
+			{
+				Id = Guid.NewGuid().ToString("N"),
+				UserId = resgridUserId,
+				Code = code,
+				IsUsed = false,
+				CreatedAt = DateTime.UtcNow,
+				ExpiresAt = DateTime.UtcNow.AddMinutes(ChatbotConfig.LinkingCodeExpiryMinutes)
+			};
+
+			await _linkingCodeRepository.InsertAsync(entity, CancellationToken.None);
+
 			return new LinkingCode
 			{
-				Code = code,
-				UserId = resgridUserId,
-				CreatedAt = DateTime.UtcNow,
-				ExpiresAt = DateTime.UtcNow.AddMinutes(15),
-				IsUsed = false
+				Code = entity.Code,
+				UserId = entity.UserId,
+				CreatedAt = entity.CreatedAt,
+				ExpiresAt = entity.ExpiresAt,
+				IsUsed = entity.IsUsed
 			};
 		}
 
 		/// <summary>
-		/// Processes a linking code entered by a user on a chat platform.
-		/// Returns the linked identity on success.
+		/// Processes a linking code entered by a user on a chat platform. Validates the code exists,
+		/// is unexpired and unused, links the <b>stored</b> Resgrid user (never the code string), and
+		/// consumes the code so it cannot be reused.
 		/// </summary>
 		public async Task<LinkResult> ProcessCodeAsync(
 			string code,
@@ -56,25 +91,44 @@ namespace Resgrid.Chatbot.Services
 			if (string.IsNullOrWhiteSpace(code))
 				return LinkResult.Fail("Please provide a linking code.");
 
-			// In production, codes would be stored in the ChatbotLinkingCodes table.
-			// Phase 2: Validate the code format. Full persistence in Phase 3.
 			code = code.Trim().ToUpperInvariant();
 
-			if (code.Length < 4 || code.Length > 8)
-				return LinkResult.Fail("Invalid code format. Codes are 6 characters.");
+			var entity = await _linkingCodeRepository.GetByCodeAsync(code);
+			if (entity == null)
+				return LinkResult.Fail("That linking code is invalid or has expired.");
 
-			// Phase 2: Since we don't have full DB persistence yet, validate code format
-			// and link the user directly. The web portal generates codes that are checked here.
-			// For now, accept any valid-format code as a placeholder.
+			if (entity.IsUsed)
+				return LinkResult.Fail("That linking code has already been used.");
 
+			if (DateTime.UtcNow > entity.ExpiresAt)
+				return LinkResult.Fail("That linking code has expired. Please generate a new one.");
+
+			// Consume the code (single use) before linking so a retry can't reuse it.
+			entity.IsUsed = true;
+			entity.UsedAt = DateTime.UtcNow;
+			entity.Platform = (int)platform;
+			entity.PlatformUserId = platformUserId;
+			await _linkingCodeRepository.UpdateAsync(entity, CancellationToken.None);
+
+			// Link the platform identity to the Resgrid user the code was issued to.
 			var identity = await _userIdentityService.LinkUserAsync(
-				code, // placeholder - would look up user from code DB
+				entity.UserId,
 				platform,
 				platformUserId,
 				displayName,
-				"code");
+				"code",
+				code);
 
 			return LinkResult.Ok("Account linked successfully! You can now use all chatbot features.", identity);
+		}
+
+		private static string GenerateRandomCode()
+		{
+			var codeBytes = new byte[4];
+			using var rng = RandomNumberGenerator.Create();
+			rng.GetBytes(codeBytes);
+			var value = (uint)(BitConverter.ToUInt32(codeBytes, 0) % 2176782336); // 36^6
+			return ToBase36(value).PadLeft(6, '0').ToUpperInvariant();
 		}
 
 		private static string ToBase36(uint value)

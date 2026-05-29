@@ -21,7 +21,11 @@ namespace Resgrid.Chatbot.Interfaces
 		/// </summary>
 		/// <param name="text">User input text</param>
 		/// <param name="context">Optional conversation context string</param>
-		Task<NLUResult> ClassifyAsync(string text, string context = null);
+		/// <param name="departmentId">
+		/// The department the message belongs to (0 when unknown). Cloud providers use this to honor a
+		/// department's own LLM provider override; local providers ignore it.
+		/// </param>
+		Task<NLUResult> ClassifyAsync(string text, string context = null, int departmentId = 0);
 
 		/// <summary>
 		/// Whether this provider is available to classify.

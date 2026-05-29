@@ -8,6 +8,7 @@ using Resgrid.Model.Queue;
 using Resgrid.Model.Services;
 using Resgrid.Providers.NumberProvider;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net.Http;
@@ -82,6 +83,34 @@ namespace Resgrid.Web.Services.Controllers
 	}
 
 
+		/// <summary>
+		/// Validates the inbound SignalWire webhook signature. SignalWire's Compatibility API uses
+		/// the same scheme as Twilio: an X-Twilio-Signature HMAC-SHA1 over the request URL (the
+		/// query string carries the params for this GET endpoint), keyed with the project token.
+		/// Enforced only when a signing token is configured so unconfigured installs aren't broken;
+		/// the URL is reconstructed from ResgridApiBaseUrl to match what SignalWire signed (mirrors
+		/// the Twilio middleware's BaseUrlOverride behind the reverse proxy).
+		/// </summary>
+		private bool ValidateSignalWireRequest()
+		{
+			var signingToken = Config.NumberProviderConfig.SignalWireApiKey;
+			if (string.IsNullOrWhiteSpace(signingToken))
+				return true; // Not configured - don't block (see remarks).
+
+			var signature = Request.Headers["X-Twilio-Signature"].ToString();
+			if (string.IsNullOrWhiteSpace(signature))
+				return false;
+
+			var baseUrl = Config.SystemBehaviorConfig.ResgridApiBaseUrl;
+			var url = !string.IsNullOrWhiteSpace(baseUrl)
+				? baseUrl.TrimEnd('/') + Request.Path + Request.QueryString
+				: $"{Request.Scheme}://{Request.Host}{Request.Path}{Request.QueryString}";
+
+			// GET webhook: the signed payload is the URL itself (params live in the query string).
+			var validator = new global::Twilio.Security.RequestValidator(signingToken);
+			return validator.Validate(url, new Dictionary<string, string>(), signature);
+		}
+
 		[HttpGet("Receive")]
 		[Produces("application/xml")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
@@ -89,6 +118,9 @@ namespace Resgrid.Web.Services.Controllers
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<ActionResult> Receive(CancellationToken cancellationToken)
 		{
+			if (!ValidateSignalWireRequest())
+				return Unauthorized();
+
 			var queryValues = Request.Query.ToDictionary(x => x.Key, y => y.Value.ToString());//.RequestUri.ParseQueryString();
 
 			var textMessage = new TextMessage();

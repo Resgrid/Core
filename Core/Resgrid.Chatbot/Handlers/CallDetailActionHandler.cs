@@ -13,11 +13,13 @@ namespace Resgrid.Chatbot.Handlers
 	{
 		private readonly ICallsService _callsService;
 		private readonly IDepartmentsService _departmentsService;
+		private readonly IAuthorizationService _authorizationService;
 
-		public CallDetailActionHandler(ICallsService callsService, IDepartmentsService departmentsService)
+		public CallDetailActionHandler(ICallsService callsService, IDepartmentsService departmentsService, IAuthorizationService authorizationService)
 		{
 			_callsService = callsService;
 			_departmentsService = departmentsService;
+			_authorizationService = authorizationService;
 		}
 
 		public ChatbotIntentType IntentType => ChatbotIntentType.GetCallDetail;
@@ -32,9 +34,18 @@ namespace Resgrid.Chatbot.Handlers
 				}
 
 				var call = await _callsService.GetCallByIdAsync(callId);
-				if (call == null)
+
+				// Tenant isolation (anti-IDOR): a call that doesn't exist OR belongs to another
+				// department must be indistinguishable so call ids can't be enumerated across tenants.
+				if (call == null || call.DepartmentId != session.DepartmentId)
 				{
 					return new ChatbotResponse { Text = $"Call #{callId} not found.", Processed = true };
+				}
+
+				// Authorization: the call is in the user's department, but they still need view permission.
+				if (!await _authorizationService.CanUserViewCallAsync(session.UserId, call.CallId))
+				{
+					return new ChatbotResponse { Text = "You don't have permission to view this call.", Processed = false };
 				}
 
 				var department = await _departmentsService.GetDepartmentByIdAsync(session.DepartmentId);

@@ -22,9 +22,11 @@ namespace Resgrid.Chatbot
 				.As<IChatbotSessionManager>()
 				.SingleInstance();
 
+			// InstancePerLifetimeScope (not SingleInstance) because it now depends on the
+			// per-scope IChatbotIdentityRepository (a singleton would capture a scoped DB connection).
 			builder.RegisterType<ChatbotUserIdentityService>()
 				.As<IChatbotUserIdentityService>()
-				.SingleInstance();
+				.InstancePerLifetimeScope();
 
 			// Phase 2: New services
 			builder.RegisterType<IntentMapper>()
@@ -37,6 +39,14 @@ namespace Resgrid.Chatbot
 
 			builder.RegisterType<ChatbotTemplateRenderer>()
 				.As<IChatbotTemplateRenderer>()
+				.SingleInstance();
+
+			builder.RegisterType<ChatbotDepartmentConfigService>()
+				.As<IChatbotDepartmentConfigService>()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<ChatbotRateLimiter>()
+				.As<IChatbotRateLimiter>()
 				.SingleInstance();
 
 			builder.RegisterType<OAuthLinkingService>()

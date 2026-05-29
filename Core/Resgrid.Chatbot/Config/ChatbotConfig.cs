@@ -37,7 +37,18 @@ namespace Resgrid.Chatbot.Config
 		public static string SlackBotToken = "";
 		public static string SlackAppToken = "";
 		public static string TelegramBotToken = "";
+		// Secret token sent by Telegram in the X-Telegram-Bot-Api-Secret-Token header
+		// (configured via setWebhook). When set, inbound webhooks lacking a matching token are rejected.
+		public static string TelegramWebhookSecretToken = "";
 		public static string LinkingBaseUrl = "";
+
+		// OAuth2 app credentials for Discord/Slack account linking (server-side code exchange).
+		public static string DiscordClientId = "";
+		public static string DiscordClientSecret = "";
+		public static string SlackClientId = "";
+		public static string SlackClientSecret = "";
+		// Redirect URI registered with the OAuth apps; the platform returns the code here.
+		public static string OAuthRedirectUri = "";
 
 		// Message Logging
 		public static int MessageLogRetentionDays = 90;

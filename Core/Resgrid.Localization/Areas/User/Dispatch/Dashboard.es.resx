@@ -135,4 +135,10 @@
   <data name="Routes" xml:space="preserve">
     <value>Rutas</value>
   </data>
+  <data name="ScheduledCalls" xml:space="preserve">
+    <value>Llamadas programadas</value>
+  </data>
+  <data name="ScheduledCallsHeader" xml:space="preserve">
+    <value>Llamadas programadas</value>
+  </data>
 </root>

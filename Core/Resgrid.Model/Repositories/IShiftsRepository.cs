@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Resgrid.Model.Repositories
@@ -22,6 +23,14 @@ namespace Resgrid.Model.Repositories
 		/// </summary>
 		/// <returns>Task&lt;IEnumerable&lt;Shift&gt;&gt;.</returns>
 		Task<IEnumerable<Shift>> GetAllShiftAndDaysAsync();
+
+		/// <summary>
+		/// Gets upcoming shifts (with days in the next 2 days from the reference time) and their associated data asynchronous.
+		/// Filters at the database level to avoid loading the entire Shifts table.
+		/// </summary>
+		/// <param name="referenceTime">The reference time from which to look for upcoming shifts (e.g. caller-computed currentTime).</param>
+		/// <returns>Task&lt;IEnumerable&lt;Shift&gt;&gt;.</returns>
+		Task<IEnumerable<Shift>> GetUpcomingShiftAndDaysAsync(DateTime referenceTime);
 
 		/// <summary>
 		/// Gets the shift and days by department identifier asynchronous.

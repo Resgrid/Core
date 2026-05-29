@@ -81,4 +81,10 @@
   <data name="Routes" xml:space="preserve">
     <value>المسارات</value>
   </data>
+  <data name="ScheduledCalls" xml:space="preserve">
+    <value>البلاغات المجدولة</value>
+  </data>
+  <data name="ScheduledCallsHeader" xml:space="preserve">
+    <value>البلاغات المجدولة</value>
+  </data>
 </root>

@@ -86,4 +86,10 @@
   <data name="Routes" xml:space="preserve">
     <value>Маршрути</value>
   </data>
+  <data name="ScheduledCalls" xml:space="preserve">
+    <value>Заплановані виклики</value>
+  </data>
+  <data name="ScheduledCallsHeader" xml:space="preserve">
+    <value>Заплановані виклики</value>
+  </data>
 </root>

@@ -593,8 +593,7 @@ namespace Resgrid.Web.ServicesCore
 			//});
 
 
-			services.AddAuthentication("BasicAuthentication")
-				.AddScheme<ResgridAuthenticationOptions, ResgridTokenAuthHandler>("BasicAuthentication", null)
+			services.AddAuthentication(OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)
 				.AddScheme<AuthenticationSchemeOptions, SystemApiKeyAuthHandler>("SystemApiKey", null);
 
 			//// TODO: Add IServiceCollection.AddOpenTelemetryMetrics extension method

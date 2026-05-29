@@ -11,7 +11,9 @@ namespace Resgrid.Model.Helpers
 			Serializer.PrepareSerializer<Address>();
 			Serializer.PrepareSerializer<DepartmentMember>();
 			Serializer.PrepareSerializer<Payment>();
+			Serializer.PrepareSerializer<PaymentAddon>();
 			Serializer.PrepareSerializer<Plan>();
+			Serializer.PrepareSerializer<PlanAddon>();
 			Serializer.PrepareSerializer<PlanLimit>();
 			Serializer.PrepareSerializer<IdentityUser>();
 			Serializer.PrepareSerializer<UserProfile>();

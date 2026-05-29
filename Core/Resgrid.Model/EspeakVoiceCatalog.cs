@@ -148,10 +148,7 @@ namespace Resgrid.Model
 		{
 			normalizedVoice = null;
 
-			if (string.IsNullOrWhiteSpace(voice))
-				return false;
-
-			if (!VoiceLookup.TryGetValue(voice.Trim(), out var option))
+			if (!TryGetOption(voice, out var option))
 				return false;
 
 			normalizedVoice = option.Identifier;
@@ -173,7 +170,15 @@ namespace Resgrid.Model
 			if (string.IsNullOrWhiteSpace(voice))
 				return false;
 
-			return VoiceLookup.TryGetValue(voice.Trim(), out option);
+			var normalizedVoice = GetBaseIdentifier(voice);
+			return VoiceLookup.TryGetValue(normalizedVoice, out option);
+		}
+
+		private static string GetBaseIdentifier(string voice)
+		{
+			var trimmedVoice = voice.Trim();
+			var variantSeparatorIndex = trimmedVoice.IndexOf('+');
+			return variantSeparatorIndex <= 0 ? trimmedVoice : trimmedVoice[..variantSeparatorIndex];
 		}
 	}
 

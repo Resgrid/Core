@@ -12,6 +12,7 @@ using Resgrid.Services;
 namespace Resgrid.Tests.Services
 {
 	[TestFixture]
+	[NonParallelizable]
 	public class DepartmentSettingsServiceTtsLanguageTests
 	{
 		private Mock<IDepartmentSettingsRepository> _departmentSettingsRepository;
@@ -40,7 +41,7 @@ namespace Resgrid.Tests.Services
 				_cacheProvider.Object);
 
 			global::Resgrid.Config.SystemBehaviorConfig.CacheEnabled = false;
-			TtsConfig.DefaultVoice = "en-us";
+			TtsConfig.DefaultVoice = "en-us+klatt4";
 		}
 
 		[TearDown]
@@ -82,7 +83,7 @@ namespace Resgrid.Tests.Services
 		[Test]
 		public async Task should_fall_back_to_default_tts_language_when_setting_is_invalid()
 		{
-			TtsConfig.DefaultVoice = "fr";
+			TtsConfig.DefaultVoice = "fr+klatt4";
 
 			_departmentSettingsRepository
 				.Setup(x => x.GetDepartmentSettingByIdTypeAsync(7, DepartmentSettingTypes.TtsLanguage))

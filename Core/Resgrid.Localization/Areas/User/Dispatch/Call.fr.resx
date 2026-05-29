@@ -830,4 +830,19 @@
   <data name="RouteUnitMinutes" xml:space="preserve">
     <value>min</value>
   </data>
+  <data name="ScheduleDispatchLabel" xml:space="preserve">
+    <value>Planifier l'envoi</value>
+  </data>
+  <data name="ScheduleDispatchPlaceholder" xml:space="preserve">
+    <value>Sélectionnez une date et une heure futures...</value>
+  </data>
+  <data name="ScheduleDispatchHelp" xml:space="preserve">
+    <value>Définissez éventuellement une date/heure future pour retarder l'envoi. Doit être au moins 15 minutes dans le futur.</value>
+  </data>
+  <data name="ScheduleDispatchValidationError" xml:space="preserve">
+    <value>L'envoi planifié doit être au moins 15 minutes dans le futur.</value>
+  </data>
+  <data name="ScheduledDispatchDate" xml:space="preserve">
+    <value>Date d'envoi planifiée</value>
+  </data>
 </root>

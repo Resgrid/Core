@@ -180,6 +180,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					foreach (var user in users)
 					{
+						var member = await _departmentsService.GetDepartmentMemberAsync(user, DepartmentId, false);
+						if (member == null || member.IsDisabled.GetValueOrDefault() || member.IsDeleted)
+							continue;
+
 						model.Message.AddRecipient(user);
 					}
 

@@ -275,5 +275,5 @@ Web/Resgrid.WebCore/wwwroot/lib/*
 .claude/settings.local.json
 /Web/Resgrid.Web/wwwroot/js/ng/chunks
 opencode.json
-/.dual-graph-pro
+.dual-graph-pro/
 .mcp.json

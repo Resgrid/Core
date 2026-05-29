@@ -1,5 +1,8 @@
 using System;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -33,8 +36,8 @@ namespace Resgrid.Tests.Web.Tts
 				_audioProcessingService.Object,
 				Options.Create(new TtsOptions
 				{
-					DefaultVoice = "en-us",
-					DefaultSpeed = 175,
+					DefaultVoice = "en-us+klatt4",
+					DefaultSpeed = 165,
 					MaxConcurrentGenerations = 2,
 					MaxTextLength = 500
 				}),
@@ -46,8 +49,11 @@ namespace Resgrid.Tests.Web.Tts
 		{
 			var cachedUri = new Uri("https://cdn.example.com/tts/abc123.wav");
 
+			_audioProcessingService
+				.Setup(x => x.GetEffectiveSynthesisProfile("en-us+klatt4", 165))
+				.Returns(("en_US-norman-medium.onnx", 165));
 			_cacheService
-				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en-us", 175))
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en_US-norman-medium.onnx", 165))
 				.Returns(CacheKey);
 			_cacheService
 				.Setup(x => x.TryGetCachedUrlAsync(CacheKey, It.IsAny<CancellationToken>()))
@@ -59,8 +65,8 @@ namespace Resgrid.Tests.Web.Tts
 			result.Hash.Should().Be(CacheKey.Hash);
 			result.ObjectKey.Should().Be(CacheKey.ObjectKey);
 			result.Url.Should().Be(cachedUri.ToString());
-			result.Voice.Should().Be("en-us");
-			result.Speed.Should().Be(175);
+			result.Voice.Should().Be("en-us+klatt4");
+			result.Speed.Should().Be(165);
 
 			_audioProcessingService.Verify(
 				x => x.GenerateNormalizedWavAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<CancellationToken>()),
@@ -76,15 +82,18 @@ namespace Resgrid.Tests.Web.Tts
 			var audioBytes = new byte[] { 1, 2, 3, 4 };
 			var objectUri = new Uri("https://cdn.example.com/tts/abc123.wav");
 
+			_audioProcessingService
+				.Setup(x => x.GetEffectiveSynthesisProfile("en-us+klatt4", 165))
+				.Returns(("en_US-norman-medium.onnx", 165));
 			_cacheService
-				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en-us", 175))
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en_US-norman-medium.onnx", 165))
 				.Returns(CacheKey);
 			_cacheService
 				.SetupSequence(x => x.TryGetCachedUrlAsync(CacheKey, It.IsAny<CancellationToken>()))
 				.ReturnsAsync((Uri)null)
 				.ReturnsAsync((Uri)null);
 			_audioProcessingService
-				.Setup(x => x.GenerateNormalizedWavAsync("Press 1 for yes", "en-us", 175, It.IsAny<CancellationToken>()))
+				.Setup(x => x.GenerateNormalizedWavAsync("Press 1 for yes", "en-us+klatt4", 165, It.IsAny<CancellationToken>()))
 				.ReturnsAsync(audioBytes);
 			_cacheService
 				.Setup(x => x.StoreAsync(CacheKey, It.Is<byte[]>(bytes => bytes.SequenceEqual(audioBytes)), It.IsAny<CancellationToken>()))
@@ -94,15 +103,70 @@ namespace Resgrid.Tests.Web.Tts
 
 			result.Cached.Should().BeFalse();
 			result.Url.Should().Be(objectUri.ToString());
-			result.Voice.Should().Be("en-us");
-			result.Speed.Should().Be(175);
+			result.Voice.Should().Be("en-us+klatt4");
+			result.Speed.Should().Be(165);
 
 			_audioProcessingService.Verify(
-				x => x.GenerateNormalizedWavAsync("Press 1 for yes", "en-us", 175, It.IsAny<CancellationToken>()),
+				x => x.GenerateNormalizedWavAsync("Press 1 for yes", "en-us+klatt4", 165, It.IsAny<CancellationToken>()),
 				Times.Once);
 			_cacheService.Verify(
 				x => x.StoreAsync(CacheKey, It.Is<byte[]>(bytes => bytes.SequenceEqual(audioBytes)), It.IsAny<CancellationToken>()),
 				Times.Once);
+		}
+
+		[Test]
+		public async Task generate_async_should_apply_configured_klatt_variant_to_requested_language()
+		{
+			var cachedUri = new Uri("https://cdn.example.com/tts/xyz789.wav");
+			var cacheKey = new TtsCacheKey("xyz789", "tts/xyz789.wav");
+
+			_audioProcessingService
+				.Setup(x => x.GetEffectiveSynthesisProfile("fr+klatt4", 165))
+				.Returns(("fr_FR-siwis-medium.onnx", 165));
+			_cacheService
+				.Setup(x => x.CreateCacheKey("Bonjour", "fr_FR-siwis-medium.onnx", 165))
+				.Returns(cacheKey);
+			_cacheService
+				.Setup(x => x.TryGetCachedUrlAsync(cacheKey, It.IsAny<CancellationToken>()))
+				.ReturnsAsync(cachedUri);
+
+			var result = await _service.GenerateAsync(new TtsRequest { Text = "Bonjour", Voice = "fr" }, CancellationToken.None);
+
+			result.Cached.Should().BeTrue();
+			result.Voice.Should().Be("fr+klatt4");
+			result.Url.Should().Be(cachedUri.ToString());
+
+			_audioProcessingService.Verify(
+				x => x.GenerateNormalizedWavAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<CancellationToken>()),
+				Times.Never);
+		}
+
+		[TestCase("en-us+f3")]
+		[TestCase("en-us+klatt6")]
+		public async Task generate_async_should_replace_legacy_default_voices_with_configured_klatt_variant(string requestedVoice)
+		{
+			var cachedUri = new Uri("https://cdn.example.com/tts/legacy.wav");
+			var cacheKey = new TtsCacheKey("legacy", "tts/legacy.wav");
+
+			_audioProcessingService
+				.Setup(x => x.GetEffectiveSynthesisProfile("en-us+klatt4", 165))
+				.Returns(("en_US-norman-medium.onnx", 165));
+			_cacheService
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en_US-norman-medium.onnx", 165))
+				.Returns(cacheKey);
+			_cacheService
+				.Setup(x => x.TryGetCachedUrlAsync(cacheKey, It.IsAny<CancellationToken>()))
+				.ReturnsAsync(cachedUri);
+
+			var result = await _service.GenerateAsync(new TtsRequest { Text = "Press 1 for yes", Voice = requestedVoice }, CancellationToken.None);
+
+			result.Cached.Should().BeTrue();
+			result.Voice.Should().Be("en-us+klatt4");
+			result.Url.Should().Be(cachedUri.ToString());
+
+			_audioProcessingService.Verify(
+				x => x.GenerateNormalizedWavAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<CancellationToken>()),
+				Times.Never);
 		}
 
 		[Test]
@@ -123,18 +187,21 @@ namespace Resgrid.Tests.Web.Tts
 			var allowGenerationCompletion = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 			var cacheLookupCount = 0;
 
+			_audioProcessingService
+				.Setup(x => x.GetEffectiveSynthesisProfile("en-us+klatt4", 165))
+				.Returns(("en_US-norman-medium.onnx", 165));
 			_cacheService
-				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en-us", 175))
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en_US-norman-medium.onnx", 165))
 				.Returns(CacheKey);
 			_cacheService
 				.Setup(x => x.TryGetCachedUrlAsync(CacheKey, It.IsAny<CancellationToken>()))
 				.Returns(() =>
 				{
 					var attempt = Interlocked.Increment(ref cacheLookupCount);
-					return Task.FromResult<Uri?>(attempt < 4 ? null : objectUri);
+					return Task.FromResult(attempt < 4 ? null : objectUri);
 				});
 			_audioProcessingService
-				.Setup(x => x.GenerateNormalizedWavAsync("Press 1 for yes", "en-us", 175, It.IsAny<CancellationToken>()))
+				.Setup(x => x.GenerateNormalizedWavAsync("Press 1 for yes", "en-us+klatt4", 165, It.IsAny<CancellationToken>()))
 				.Returns(async () =>
 				{
 					generationStarted.TrySetResult(true);
@@ -158,7 +225,7 @@ namespace Resgrid.Tests.Web.Tts
 			responses.Count(response => response.Cached).Should().Be(1);
 			responses.Count(response => !response.Cached).Should().Be(1);
 			_audioProcessingService.Verify(
-				x => x.GenerateNormalizedWavAsync("Press 1 for yes", "en-us", 175, It.IsAny<CancellationToken>()),
+				x => x.GenerateNormalizedWavAsync("Press 1 for yes", "en-us+klatt4", 165, It.IsAny<CancellationToken>()),
 				Times.Once);
 			_cacheService.Verify(
 				x => x.StoreAsync(CacheKey, It.Is<byte[]>(bytes => bytes.SequenceEqual(audioBytes)), It.IsAny<CancellationToken>()),
@@ -166,6 +233,111 @@ namespace Resgrid.Tests.Web.Tts
 			_cacheService.Verify(
 				x => x.TryGetCachedUrlAsync(CacheKey, It.IsAny<CancellationToken>()),
 				Times.Exactly(4));
+		}
+	}
+
+	[TestFixture]
+	public class AudioProcessingServiceTests
+	{
+		[Test]
+		public void create_piper_start_info_should_use_english_model_for_english_voices()
+		{
+			var service = CreateService();
+
+			var startInfo = InvokePrivateMethod<ProcessStartInfo>(service, "CreatePiperStartInfo", "en-us+klatt4", 165, "/tmp/raw.wav");
+
+			startInfo.FileName.Should().Be("piper");
+			startInfo.ArgumentList.Should().Equal(
+				"--model",
+				Path.Combine("/usr/local/share/piper-voices", "en_US-norman-medium.onnx"),
+				"--output_file",
+				"/tmp/raw.wav",
+				"--length-scale",
+				"1.06",
+				"--sentence-silence",
+				"0.0");
+		}
+
+		[Test]
+		public void create_piper_start_info_should_fallback_to_default_model_for_unmapped_languages()
+		{
+			var service = CreateService();
+
+			// "ja" (Japanese) is not a Resgrid-supported language and has no
+			// entry in VoiceModelMap, so it must fall back to the default en-US model.
+			var startInfo = InvokePrivateMethod<ProcessStartInfo>(service, "CreatePiperStartInfo", "ja+klatt4", 165, "/tmp/raw.wav");
+
+			startInfo.FileName.Should().Be("piper");
+			startInfo.ArgumentList.Should().Equal(
+				"--model",
+				Path.Combine("/usr/local/share/piper-voices", "en_US-norman-medium.onnx"),
+				"--output_file",
+				"/tmp/raw.wav",
+				"--length-scale",
+				"1.06",
+				"--sentence-silence",
+				"0.0");
+		}
+
+		[Test]
+		public void create_piper_start_info_should_adjust_length_scale_for_speed()
+		{
+			var service = CreateService();
+
+			// Speed 350 wpm (very fast): 175/350 ≈ 0.50
+			var startInfo = InvokePrivateMethod<ProcessStartInfo>(service, "CreatePiperStartInfo", "en-us+klatt4", 350, "/tmp/raw.wav");
+
+			startInfo.FileName.Should().Be("piper");
+			startInfo.ArgumentList.Should().Equal(
+				"--model",
+				Path.Combine("/usr/local/share/piper-voices", "en_US-norman-medium.onnx"),
+				"--output_file",
+				"/tmp/raw.wav",
+				"--length-scale",
+				"0.50",
+				"--sentence-silence",
+				"0.0");
+		}
+
+		[Test]
+		public void create_ffmpeg_start_info_should_apply_the_requested_telephone_filter()
+		{
+			var service = CreateService();
+
+			var startInfo = InvokePrivateMethod<ProcessStartInfo>(service, "CreateFfmpegStartInfo", "/tmp/raw.wav", "/tmp/normalized.wav");
+
+			startInfo.FileName.Should().Be("ffmpeg");
+			startInfo.ArgumentList.Should().Equal(
+				"-nostdin",
+				"-loglevel",
+				"error",
+				"-y",
+				"-i",
+				"/tmp/raw.wav",
+				"-ar",
+				"8000",
+				"-ac",
+				"1",
+				"-acodec",
+				"pcm_mulaw",
+				"-af",
+				"highpass=f=200, lowpass=f=3000, anequalizer=c0 f=2500 w=1000 g=3 t=1",
+				"/tmp/normalized.wav");
+		}
+
+		private static AudioProcessingService CreateService()
+		{
+			return new AudioProcessingService(
+				Options.Create(new TtsOptions()),
+				Mock.Of<ILogger<AudioProcessingService>>(),
+				Mock.Of<ITextPreprocessor>());
+		}
+
+		private static T InvokePrivateMethod<T>(object instance, string methodName, params object[] arguments)
+		{
+			var method = instance.GetType().GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic);
+			method.Should().NotBeNull($"{methodName} should exist on {instance.GetType().FullName}");
+			return (T)method!.Invoke(instance, arguments)!;
 		}
 	}
 }

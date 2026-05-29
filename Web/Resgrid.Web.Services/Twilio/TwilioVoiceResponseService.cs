@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Config;
+using Resgrid.Framework;
 using Resgrid.Model.Services;
 using Twilio.TwiML;
 using Twilio.TwiML.Voice;
@@ -181,6 +182,37 @@ namespace Resgrid.Web.Services.Twilio
 			{
 				Url = url
 			};
+		}
+
+		public System.Threading.Tasks.Task PreWarmPromptAsync(string text, string voice = null)
+		{
+			ArgumentException.ThrowIfNullOrWhiteSpace(text);
+
+			var chunks = ChunkText(text).ToList();
+			if (chunks.Count != 1)
+				throw new ArgumentException($"PreWarmPromptAsync does not support multi-chunk input (got {chunks.Count} chunks). Use AppendPromptAsync for multi-chunk text.", nameof(text));
+
+			// Start the generation task (or return the existing one) without
+			// necessarily awaiting it. The TTS microservice's internal cache
+			// persists across requests, so a subsequent call will find the URL.
+			GetOrCreatePromptUrlAsync(chunks[0], voice, CancellationToken.None)
+				.ContinueWith(t =>
+				{
+					if (t.IsFaulted && t.Exception != null)
+						Logging.LogException(t.Exception);
+				}, TaskContinuationOptions.OnlyOnFaulted);
+			return System.Threading.Tasks.Task.CompletedTask;
+		}
+
+		public async System.Threading.Tasks.Task<Uri> GetPromptUrlAsync(string text, string voice, CancellationToken cancellationToken)
+		{
+			ArgumentException.ThrowIfNullOrWhiteSpace(text);
+
+			var chunks = ChunkText(text).ToList();
+			if (chunks.Count != 1)
+				throw new ArgumentException($"GetPromptUrlAsync does not support multi-chunk input (got {chunks.Count} chunks). Use AppendPromptAsync for multi-chunk text.", nameof(text));
+
+			return await GetOrCreatePromptUrlAsync(chunks[0], voice, cancellationToken);
 		}
 
 		private async Task<Uri> GetOrCreatePromptUrlAsync(string chunk, string voice, CancellationToken cancellationToken)

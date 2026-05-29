@@ -33,8 +33,8 @@ namespace Resgrid.Tests.Web.Tts
 				.Returns<HttpRequest, string>((_, hash) => new Uri($"https://tts.example.com/tts/audio/{hash}.wav"));
 			_options = new TtsOptions
 			{
-				DefaultVoice = "en-us",
-				DefaultSpeed = 175,
+				DefaultVoice = "en-us+klatt4",
+				DefaultSpeed = 165,
 				StaticPromptAdminKey = "secret-key",
 				PreGeneratedPrompts = new List<string> { "Alpha", "Beta" }
 			};
@@ -56,7 +56,7 @@ namespace Resgrid.Tests.Web.Tts
 		{
 			var responses = new[]
 			{
-				new TtsResponse { Hash = "a", ObjectKey = "tts/a.wav", Url = "https://cdn.example.com/tts/a.wav", Voice = "en-us", Speed = 175 }
+				new TtsResponse { Hash = "a", ObjectKey = "tts/a.wav", Url = "https://cdn.example.com/tts/a.wav", Voice = "en-us", Speed = 165 }
 			};
 			List<TtsRequest> capturedPrompts = null;
 			_ttsService
@@ -95,8 +95,8 @@ namespace Resgrid.Tests.Web.Tts
 				.Callback<IEnumerable<TtsRequest>, CancellationToken>((requests, _) => capturedPrompts = requests.ToList())
 				.ReturnsAsync(new[]
 				{
-					new TtsResponse { Hash = "a", ObjectKey = "tts/a.wav", Url = "https://cdn.example.com/tts/a.wav", Voice = "en-us", Speed = 175 },
-					new TtsResponse { Hash = "b", ObjectKey = "tts/b.wav", Url = "https://cdn.example.com/tts/b.wav", Voice = "en-us", Speed = 175 }
+					new TtsResponse { Hash = "a", ObjectKey = "tts/a.wav", Url = "https://cdn.example.com/tts/a.wav", Voice = "en-us+klatt4", Speed = 165 },
+					new TtsResponse { Hash = "b", ObjectKey = "tts/b.wav", Url = "https://cdn.example.com/tts/b.wav", Voice = "en-us+klatt4", Speed = 165 }
 				});
 
 			var controller = BuildController();
@@ -106,8 +106,8 @@ namespace Resgrid.Tests.Web.Tts
 			result.Result.Should().BeOfType<OkObjectResult>();
 			capturedPrompts.Should().HaveCount(2);
 			capturedPrompts!.Select(x => x.Text).Should().Equal("Alpha", "Beta");
-			capturedPrompts.Select(x => x.Voice).Should().OnlyContain(x => x == "en-us");
-			capturedPrompts.Select(x => x.Speed).Should().OnlyContain(x => x == 175);
+			capturedPrompts.Select(x => x.Voice).Should().OnlyContain(x => x == "en-us+klatt4");
+			capturedPrompts.Select(x => x.Speed).Should().OnlyContain(x => x == 165);
 		}
 
 		private TtsAdminController BuildController()

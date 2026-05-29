@@ -27,7 +27,7 @@ namespace Resgrid.Tests.Services
 			protected readonly Mock<IWeatherAlertProviderFactory> _providerFactoryMock;
 			protected readonly Mock<IDepartmentSettingsRepository> _departmentSettingsRepoMock;
 			protected readonly Mock<IDepartmentsService> _departmentsServiceMock;
-			protected readonly Mock<IMessageService> _messageServiceMock;
+			protected readonly Mock<ICommunicationService> _communicationServiceMock;
 			protected readonly Mock<ICallNotesRepository> _callNotesRepoMock;
 			protected readonly Mock<ICacheProvider> _cacheProviderMock;
 			protected readonly Mock<IEventAggregator> _eventAggregatorMock;
@@ -44,7 +44,7 @@ namespace Resgrid.Tests.Services
 				_providerFactoryMock = new Mock<IWeatherAlertProviderFactory>();
 				_departmentSettingsRepoMock = new Mock<IDepartmentSettingsRepository>();
 				_departmentsServiceMock = new Mock<IDepartmentsService>();
-				_messageServiceMock = new Mock<IMessageService>();
+				_communicationServiceMock = new Mock<ICommunicationService>();
 				_callNotesRepoMock = new Mock<ICallNotesRepository>();
 				_cacheProviderMock = new Mock<ICacheProvider>();
 				_eventAggregatorMock = new Mock<IEventAggregator>();
@@ -56,7 +56,7 @@ namespace Resgrid.Tests.Services
 					_providerFactoryMock.Object,
 					_departmentSettingsRepoMock.Object,
 					_departmentsServiceMock.Object,
-					_messageServiceMock.Object,
+					_communicationServiceMock.Object,
 					_callNotesRepoMock.Object,
 					_cacheProviderMock.Object,
 					_eventAggregatorMock.Object);

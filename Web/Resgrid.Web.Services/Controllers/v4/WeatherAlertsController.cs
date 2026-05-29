@@ -5,6 +5,7 @@ using Resgrid.Model;
 using Resgrid.Model.Helpers;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
+using Resgrid.Providers.Weather;
 using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4;
 using Resgrid.Web.Services.Models.v4.WeatherAlerts;
@@ -192,6 +193,23 @@ namespace Resgrid.Web.Services.Controllers.v4
 			source.CustomEndpoint = ValidateCustomEndpoint(input.CustomEndpoint, input.SourceType);
 			source.PollIntervalMinutes = Math.Max(input.PollIntervalMinutes, 15);
 			source.Active = input.Active;
+
+			// Validate NWS zone codes at save time so users get immediate feedback
+			// instead of a cryptic 400 from the NWS API during polling.
+			if (input.SourceType == 0 && !string.IsNullOrWhiteSpace(source.AreaFilter))
+			{
+				var zoneError = NwsWeatherAlertProvider.GetZoneValidationError(source.AreaFilter);
+				if (zoneError != null)
+				{
+					ModelState.AddModelError("AreaFilter", zoneError);
+					return ValidationProblem(ModelState);
+				}
+			}
+
+			// Clear any previous permanent failure so the source will be retried on next poll.
+			source.IsFailure = false;
+			source.IsPermanentFailure = false;
+			source.ErrorMessage = null;
 
 			await _weatherAlertService.SaveSourceAsync(source);
 
@@ -469,6 +487,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				LastPollUtc = source.LastPollUtc?.TimeConverterToString(department),
 				LastSuccessUtc = source.LastSuccessUtc?.TimeConverterToString(department),
 				IsFailure = source.IsFailure,
+				IsPermanentFailure = source.IsPermanentFailure,
 				ErrorMessage = source.ErrorMessage
 			};
 		}

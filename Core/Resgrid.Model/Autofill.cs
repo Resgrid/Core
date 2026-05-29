@@ -19,6 +19,7 @@ namespace Resgrid.Model
 
 		public string AddedByUserId { get; set; }
 
+		[MaxLength(256)]
 		public string Name { get; set; }
 
 		public string Data { get; set; }

@@ -26,6 +26,7 @@ namespace Resgrid.Tests.Services
 			protected Mock<IDepartmentSettingsService> _departmentSettingsServiceMock;
 			protected Mock<ISubscriptionsService> _subscriptionsServiceMock;
 			protected Mock<IUserStateService> _userStateServiceMock;
+			protected Mock<IDepartmentsService> _departmentsServiceMock;
 
 			protected ICommunicationService _communicationService;
 
@@ -40,10 +41,16 @@ namespace Resgrid.Tests.Services
 				_departmentSettingsServiceMock = new Mock<IDepartmentSettingsService>();
 				_subscriptionsServiceMock = new Mock<ISubscriptionsService>();
 				_userStateServiceMock = new Mock<IUserStateService>();
+				_departmentsServiceMock = new Mock<IDepartmentsService>();
+
+				// CanSendToUser requires a valid DepartmentMember for the user to proceed.
+				_departmentsServiceMock
+					.Setup(x => x.GetDepartmentMemberAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<bool>()))
+					.ReturnsAsync(new DepartmentMember());
 
 				_communicationService = new CommunicationService(_smsServiceMock.Object, _emailServiceMock.Object, _pushServiceMock.Object,
 					_geoLocationProviderMock.Object, _outboundVoiceProviderMock.Object, _userProfileServiceMock.Object, _departmentSettingsServiceMock.Object,
-					_subscriptionsServiceMock.Object, _userStateServiceMock.Object);
+					_subscriptionsServiceMock.Object, _userStateServiceMock.Object, _departmentsServiceMock.Object);
 			}
 		}
 

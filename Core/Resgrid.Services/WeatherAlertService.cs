@@ -21,7 +21,7 @@ namespace Resgrid.Services
 		private readonly IWeatherAlertProviderFactory _weatherAlertProviderFactory;
 		private readonly IDepartmentSettingsRepository _departmentSettingsRepository;
 		private readonly IDepartmentsService _departmentsService;
-		private readonly IMessageService _messageService;
+		private readonly ICommunicationService _communicationService;
 		private readonly ICallNotesRepository _callNotesRepository;
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IEventAggregator _eventAggregator;
@@ -33,7 +33,7 @@ namespace Resgrid.Services
 			IWeatherAlertProviderFactory weatherAlertProviderFactory,
 			IDepartmentSettingsRepository departmentSettingsRepository,
 			IDepartmentsService departmentsService,
-			IMessageService messageService,
+			ICommunicationService communicationService,
 			ICallNotesRepository callNotesRepository,
 			ICacheProvider cacheProvider,
 			IEventAggregator eventAggregator)
@@ -44,7 +44,7 @@ namespace Resgrid.Services
 			_weatherAlertProviderFactory = weatherAlertProviderFactory;
 			_departmentSettingsRepository = departmentSettingsRepository;
 			_departmentsService = departmentsService;
-			_messageService = messageService;
+			_communicationService = communicationService;
 			_callNotesRepository = callNotesRepository;
 			_cacheProvider = cacheProvider;
 			_eventAggregator = eventAggregator;
@@ -238,8 +238,30 @@ namespace Resgrid.Services
 				source.LastPollUtc = DateTime.UtcNow;
 				source.LastSuccessUtc = DateTime.UtcNow;
 				source.IsFailure = false;
+				source.IsPermanentFailure = false;
 				source.ErrorMessage = null;
 				await _weatherAlertSourceRepository.UpdateAsync(source, ct, true);
+			}
+			catch (PermanentWeatherAlertException ex)
+			{
+				// Permanent failures (invalid zone codes, etc.) — record the error
+				// and mark the source as failed. Don't rethrow so the poller continues
+				// without noisy Fatal logs. The source will be retried only after the
+				// user edits and saves it.
+				source.LastPollUtc = DateTime.UtcNow;
+				source.IsFailure = true;
+				source.IsPermanentFailure = true;
+				source.ErrorMessage = ex.Message;
+				await _weatherAlertSourceRepository.UpdateAsync(source, ct, true);
+			}
+			catch (TransientWeatherAlertException ex)
+			{
+				// Transient failures (rate-limit, server errors) — record the error
+				// but don't flag the source as permanently failed so it will be retried.
+				source.LastPollUtc = DateTime.UtcNow;
+				source.ErrorMessage = $"Transient: {ex.Message}";
+				await _weatherAlertSourceRepository.UpdateAsync(source, ct, true);
+				throw;
 			}
 			catch (Exception ex)
 			{
@@ -259,6 +281,11 @@ namespace Resgrid.Services
 
 			foreach (var source in sources)
 			{
+				// Skip sources with permanent failures (e.g. invalid zone codes).
+				// They will be retried only after the user edits and saves the source.
+				if (source.IsFailure && source.IsPermanentFailure)
+					continue;
+
 				// Check if it's time to poll based on interval
 				if (source.LastPollUtc.HasValue)
 				{
@@ -381,33 +408,29 @@ namespace Resgrid.Services
 							var members = await _departmentsService.GetAllMembersForDepartmentAsync(departmentId);
 							if (members != null && members.Any())
 							{
-								// Use department managing user as sender for system messages
-								var senderId = department?.ManagingUserId ?? members.First().UserId;
+								// Weather alerts are system-generated — use the system do-not-reply email, not the department admin
 
 								var subject = FormatAlertSubject(alert);
 								var body = FormatAlertMessageBody(alert, department);
 
-								var message = new Message
-								{
-									Subject = subject,
-									Body = body,
-									SendingUserId = senderId,
-									SentOn = DateTime.UtcNow,
-									SystemGenerated = true,
-									IsBroadcast = true,
-									Type = 0
-								};
-
 								foreach (var member in members)
 								{
-									if (member.UserId != senderId)
-										message.AddRecipient(member.UserId);
+									if (member.IsDisabled.GetValueOrDefault() || member.IsDeleted)
+										continue;
+
+									var notifyMsg = new Message
+									{
+										Subject = subject,
+										Body = body,
+										ReceivingUserId = member.UserId,
+										SentOn = DateTime.UtcNow,
+										SystemGenerated = true,
+										IsBroadcast = true,
+										Type = 0
+									};
+
+									await _communicationService.SendMessageAsync(notifyMsg, "Weather Alert System", null, departmentId, null, department);
 								}
-
-								var savedMessage = await _messageService.SaveMessageAsync(message, ct);
-								await _messageService.SendMessageAsync(savedMessage, "Weather Alert System", departmentId, false, ct);
-
-								alert.SystemMessageId = savedMessage.MessageId;
 							}
 						}
 						catch (Exception ex)
@@ -560,6 +583,7 @@ namespace Resgrid.Services
 		{
 			var sb = new System.Text.StringBuilder();
 
+			// Header
 			sb.AppendLine($"WEATHER ALERT: {alert.Event?.ToUpper()}");
 			sb.AppendLine($"Severity: {SeverityNames[Math.Min(alert.Severity, 4)]}");
 
@@ -573,17 +597,25 @@ namespace Resgrid.Services
 
 			sb.AppendLine();
 
+			// Headline as summary
 			if (!string.IsNullOrEmpty(alert.Headline))
+			{
 				sb.AppendLine(alert.Headline);
+				sb.AppendLine();
+			}
 
+			// Description — the core alert details
+			if (!string.IsNullOrEmpty(alert.Description))
+			{
+				sb.AppendLine(alert.Description);
+			}
+
+			// Safety instructions, if provided
 			if (!string.IsNullOrEmpty(alert.Instruction))
 			{
 				sb.AppendLine();
 				sb.AppendLine(alert.Instruction);
 			}
-
-			sb.AppendLine();
-			sb.AppendLine("View active weather alerts for full details.");
 
 			var body = sb.ToString();
 			if (body.Length > 3950)

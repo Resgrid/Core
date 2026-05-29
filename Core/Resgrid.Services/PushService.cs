@@ -16,16 +16,18 @@ namespace Resgrid.Services
 		private readonly IUnitNotificationProvider _unitNotificationProvider;
 		private readonly IUserProfileService _userProfileService;
 		private readonly INovuProvider _novuProvider;
+		private readonly IDepartmentSettingsService _departmentSettingsService;
 
 		public PushService(IPushLogsService pushLogsService, INotificationProvider notificationProvider,
 			IUserProfileService userProfileService, IUnitNotificationProvider unitNotificationProvider,
-			INovuProvider novuProvider)
+			INovuProvider novuProvider, IDepartmentSettingsService departmentSettingsService)
 		{
 			_pushLogsService = pushLogsService;
 			_notificationProvider = notificationProvider;
 			_userProfileService = userProfileService;
 			_unitNotificationProvider = unitNotificationProvider;
 			_novuProvider = novuProvider;
+			_departmentSettingsService = departmentSettingsService;
 		}
 
 		public async Task<bool> Register(PushUri pushUri)
@@ -96,9 +98,11 @@ namespace Resgrid.Services
 
 			if (profile != null && profile.SendMessagePush)
 			{
+				string soundType = await GetSoundTypeAsync(message.DepartmentId, PushSoundTypes.Message, PushSoundTypes.ModernMessage);
+
 				try
 				{
-					await _notificationProvider.SendAllNotifications(message.Title, message.SubTitle, userId, string.Format("M{0}", message.MessageId), ((int)PushSoundTypes.Message).ToString(), true, 1, "#000000");
+					await _notificationProvider.SendAllNotifications(message.Title, message.SubTitle, userId, string.Format("M{0}", message.MessageId), soundType, true, 1, "#000000");
 				}
 				catch (Exception ex)
 				{
@@ -108,7 +112,7 @@ namespace Resgrid.Services
 				try
 				{
 					if (!string.IsNullOrWhiteSpace(message.DepartmentCode))
-						await _novuProvider.SendUserMessage(message.Title, message.SubTitle, userId, message.DepartmentCode, string.Format("M{0}", message.MessageId), ((int)PushSoundTypes.Message).ToString());
+						await _novuProvider.SendUserMessage(message.Title, message.SubTitle, userId, message.DepartmentCode, string.Format("M{0}", message.MessageId), soundType);
 				}
 				catch (Exception ex)
 				{
@@ -129,9 +133,11 @@ namespace Resgrid.Services
 
 			if (profile != null && profile.SendNotificationPush)
 			{
+				string soundType = await GetSoundTypeAsync(message.DepartmentId, PushSoundTypes.Notifiation, PushSoundTypes.ModernNotification);
+
 				try
 				{
-					await _notificationProvider.SendAllNotifications(message.Title, message.SubTitle, userId, string.Format("N{0}", message.MessageId), ((int)PushSoundTypes.Notifiation).ToString(), true, 1, "#000000");
+					await _notificationProvider.SendAllNotifications(message.Title, message.SubTitle, userId, string.Format("N{0}", message.MessageId), soundType, true, 1, "#000000");
 				}
 				catch (Exception ex)
 				{
@@ -140,7 +146,7 @@ namespace Resgrid.Services
 				try
 				{
 					if (!string.IsNullOrWhiteSpace(message.DepartmentCode))
-						await _novuProvider.SendUserNotification(message.Title, message.SubTitle, userId, message.DepartmentCode, string.Format("N{0}", message.MessageId), ((int)PushSoundTypes.Notifiation).ToString());
+						await _novuProvider.SendUserNotification(message.Title, message.SubTitle, userId, message.DepartmentCode, string.Format("N{0}", message.MessageId), soundType);
 				}
 				catch (Exception ex)
 				{
@@ -159,7 +165,10 @@ namespace Resgrid.Services
 				profile = await _userProfileService.GetProfileByUserIdAsync(userId);
 
 			if (profile != null && profile.SendMessagePush)
-				await _notificationProvider.SendAllNotifications(message.Title, message.SubTitle, userId, message.Id, ((int)PushSoundTypes.Message).ToString(), true, 1, "#000000");
+			{
+				string soundType = await GetSoundTypeAsync(message.DepartmentId, PushSoundTypes.Message, PushSoundTypes.ModernChat);
+				await _notificationProvider.SendAllNotifications(message.Title, message.SubTitle, userId, message.Id, soundType, true, 1, "#000000");
+			}
 
 			return true;
 		}
@@ -175,16 +184,18 @@ namespace Resgrid.Services
 			if (profile == null)
 				profile = await _userProfileService.GetProfileByUserIdAsync(userId);
 
-			string color = null;
-			if (priority != null)
-				color = priority.Color;
-
 			if (profile != null && profile.SendPush)
 			{
+				string color = null;
+				if (priority != null)
+					color = priority.Color;
+
+				string soundType = await GetCallSoundTypeAsync(call, priority);
+
 				// Legacy Push Notifications (Azure)
 				try
 				{
-					await _notificationProvider.SendAllNotifications(call.SubTitle, call.Title, userId, string.Format("C{0}", call.CallId), ConvertCallPriorityToSound((int)call.Priority, priority), true, call.ActiveCallCount, color);
+					await _notificationProvider.SendAllNotifications(call.SubTitle, call.Title, userId, string.Format("C{0}", call.CallId), soundType, true, call.ActiveCallCount, color);
 				}
 				catch (Exception ex)
 				{
@@ -193,7 +204,7 @@ namespace Resgrid.Services
 
 				try
 				{
-					await _novuProvider.SendUserDispatch(call.Title, call.SubTitle, userId, call.DepartmentCode, string.Format("C{0}", call.CallId), ConvertCallPriorityToSound((int)call.Priority, priority), true, call.ActiveCallCount, color);
+					await _novuProvider.SendUserDispatch(call.Title, call.SubTitle, userId, call.DepartmentCode, string.Format("C{0}", call.CallId), soundType, true, call.ActiveCallCount, color);
 				}
 				catch (Exception ex)
 				{
@@ -216,9 +227,11 @@ namespace Resgrid.Services
 			if (priority != null)
 				color = priority.Color;
 
+			string soundType = await GetCallSoundTypeAsync(call, priority);
+
 			try
 			{
-				await _novuProvider.SendUnitDispatch(call.Title, call.SubTitle, unitId, call.DepartmentCode, string.Format("C{0}", call.CallId), ConvertCallPriorityToSound((int)call.Priority, priority), true, call.ActiveCallCount, color);
+				await _novuProvider.SendUnitDispatch(call.Title, call.SubTitle, unitId, call.DepartmentCode, string.Format("C{0}", call.CallId), soundType, true, call.ActiveCallCount, color);
 			}
 			catch (Exception ex)
 			{
@@ -228,28 +241,66 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		private string ConvertCallPriorityToSound(int priority, DepartmentCallPriority callPriority)
+		private async Task<string> GetSoundTypeAsync(int? departmentId, PushSoundTypes legacyType, PushSoundTypes modernType)
+		{
+			if (departmentId.HasValue)
+			{
+				try
+				{
+					bool useModern = await _departmentSettingsService.GetModernNotificationsEnabledAsync(departmentId.Value);
+					if (useModern)
+						return ((int)modernType).ToString();
+				}
+				catch (Exception ex)
+				{
+					Framework.Logging.LogException(ex);
+				}
+			}
+
+			return ((int)legacyType).ToString();
+		}
+
+		private async Task<string> GetCallSoundTypeAsync(StandardPushCall call, DepartmentCallPriority priority)
+		{
+			bool useModern = false;
+
+			if (call.DepartmentId.HasValue)
+			{
+				try
+				{
+					useModern = await _departmentSettingsService.GetModernNotificationsEnabledAsync(call.DepartmentId.Value);
+				}
+				catch (Exception ex)
+				{
+					Framework.Logging.LogException(ex);
+				}
+			}
+
+			return ConvertCallPriorityToSound((int)call.Priority, priority, useModern);
+		}
+
+		private string ConvertCallPriorityToSound(int priority, DepartmentCallPriority callPriority, bool useModern)
 		{
 			if (priority > 3 && callPriority != null)
 			{
 				if (callPriority.Tone > 0)
 					return $"c{callPriority.Tone}";
 				else
-					return ((int)PushSoundTypes.CallHigh).ToString();
+					return ((int)(useModern ? PushSoundTypes.ModernCallHigh : PushSoundTypes.CallHigh)).ToString();
 			}
 
 			switch (priority)
 			{
 				case (int)CallPriority.Low:
-					return ((int)PushSoundTypes.CallLow).ToString();
+					return ((int)(useModern ? PushSoundTypes.ModernCallLow : PushSoundTypes.CallLow)).ToString();
 				case (int)CallPriority.Medium:
-					return ((int)PushSoundTypes.CallMedium).ToString();
+					return ((int)(useModern ? PushSoundTypes.ModernCallMedium : PushSoundTypes.CallMedium)).ToString();
 				case (int)CallPriority.High:
-					return ((int)PushSoundTypes.CallHigh).ToString();
+					return ((int)(useModern ? PushSoundTypes.ModernCallHigh : PushSoundTypes.CallHigh)).ToString();
 				case (int)CallPriority.Emergency:
-					return ((int)PushSoundTypes.CallEmergency).ToString();
+					return ((int)(useModern ? PushSoundTypes.ModernCallEmergency : PushSoundTypes.CallEmergency)).ToString();
 				default:
-					return ((int)PushSoundTypes.CallHigh).ToString();
+					return ((int)(useModern ? PushSoundTypes.ModernCallHigh : PushSoundTypes.CallHigh)).ToString();
 			}
 		}
 

@@ -1,4 +1,3 @@
-using Amazon.Runtime;
 using Microsoft.Extensions.Options;
 using Resgrid.Web.Tts.Configuration;
 using Resgrid.Web.Tts.Models;
@@ -52,29 +51,29 @@ namespace Resgrid.Web.Tts.Services
 
 		public async Task WarmPromptsAsync(CancellationToken cancellationToken)
 		{
+			// 1. Warm static prompts with the default voice and speed.
 			var prompts = _options.PreGeneratedPrompts
 				.Where(prompt => !string.IsNullOrWhiteSpace(prompt))
 				.Select(prompt => prompt.Trim())
 				.Distinct(StringComparer.Ordinal)
 				.ToList();
 
+			var defaultVoiceWarmed = false;
+
 			foreach (var prompt in prompts)
 			{
 				try
 				{
 					await GenerateInternalAsync(new NormalizedTtsRequest(prompt, _options.DefaultVoice, _options.DefaultSpeed), cancellationToken);
+					defaultVoiceWarmed = true;
 				}
 				catch (ArgumentException ex)
 				{
 					_logger.LogError(ex, "Configured pre-generated prompt is invalid: {Prompt}", prompt);
 				}
-				catch (AmazonServiceException ex)
-				{
-					_logger.LogError(ex, "Failed to warm prompt {Prompt} because S3 returned an error.", prompt);
-				}
 				catch (HttpRequestException ex)
 				{
-					_logger.LogError(ex, "Failed to warm prompt {Prompt} because storage connectivity failed.", prompt);
+					_logger.LogError(ex, "Failed to warm prompt {Prompt} because storage returned an error.", prompt);
 				}
 				catch (IOException ex)
 				{
@@ -85,11 +84,54 @@ namespace Resgrid.Web.Tts.Services
 					_logger.LogError(ex, "Failed to warm prompt {Prompt} because audio generation failed.", prompt);
 				}
 			}
+
+			// 2. Warm one minimal prompt per distinct voice model so that the first
+			//    non-default-language request does not incur the model-loading
+			//    penalty. The English model is already loaded by step 1, but a
+			//    cache hit for English means the model might be skipped — the
+			//    explicit per-model warm here guarantees each model file is loaded.
+			//    Using the default speed ensures the cache key is consistent.
+			const string modelWarmPrompt = "Test";
+			var distinctVoices = _audioProcessingService.GetDistinctVoiceIdentifiers();
+			var defaultProfile = _audioProcessingService.GetEffectiveSynthesisProfile(_options.DefaultVoice, _options.DefaultSpeed);
+
+			foreach (var voice in distinctVoices)
+			{
+				// Skip the default voice — its model was already covered by the
+				// static prompts above provided at least one prompt is configured.
+				var profile = _audioProcessingService.GetEffectiveSynthesisProfile(voice, _options.DefaultSpeed);
+				if (defaultVoiceWarmed && string.Equals(profile.Voice, defaultProfile.Voice, StringComparison.OrdinalIgnoreCase))
+				{
+					continue;
+				}
+
+				try
+				{
+					await GenerateInternalAsync(new NormalizedTtsRequest(modelWarmPrompt, voice, _options.DefaultSpeed), cancellationToken);
+				}
+				catch (ArgumentException ex)
+				{
+					_logger.LogError(ex, "Model warm-up prompt is invalid for voice {Voice}: {Prompt}", voice, modelWarmPrompt);
+				}
+				catch (HttpRequestException ex)
+				{
+					_logger.LogError(ex, "Failed to warm model for voice {Voice} because storage returned an error.", voice);
+				}
+				catch (IOException ex)
+				{
+					_logger.LogError(ex, "Failed to warm model for voice {Voice} because audio files could not be processed.", voice);
+				}
+				catch (InvalidOperationException ex)
+				{
+					_logger.LogError(ex, "Failed to warm model for voice {Voice} because audio generation failed.", voice);
+				}
+			}
 		}
 
 		private async Task<TtsResponse> GenerateInternalAsync(NormalizedTtsRequest request, CancellationToken cancellationToken)
 		{
-			var cacheKey = _cacheService.CreateCacheKey(request.Text, request.Voice, request.Speed);
+			var effectiveProfile = _audioProcessingService.GetEffectiveSynthesisProfile(request.Voice, request.Speed);
+			var cacheKey = _cacheService.CreateCacheKey(request.Text, effectiveProfile.Voice, effectiveProfile.Speed);
 			var cachedUrl = await _cacheService.TryGetCachedUrlAsync(cacheKey, cancellationToken);
 
 			if (cachedUrl is not null)
@@ -206,9 +248,7 @@ namespace Resgrid.Web.Tts.Services
 				throw new ArgumentException($"Text exceeds the configured maximum length of {_options.MaxTextLength} characters.", nameof(request));
 			}
 
-			var voice = string.IsNullOrWhiteSpace(request.Voice)
-				? _options.DefaultVoice
-				: request.Voice.Trim();
+			var voice = NormalizeVoice(request.Voice);
 			var speed = request.Speed ?? _options.DefaultSpeed;
 
 			if (speed < 80 || speed > 450)
@@ -217,6 +257,43 @@ namespace Resgrid.Web.Tts.Services
 			}
 
 			return new NormalizedTtsRequest(text, voice, speed);
+		}
+
+		private string NormalizeVoice(string? voice)
+		{
+			var configuredDefaultVoice = string.IsNullOrWhiteSpace(_options.DefaultVoice)
+				? "en-us+klatt4"
+				: _options.DefaultVoice.Trim();
+			var requestedVoice = string.IsNullOrWhiteSpace(voice)
+				? configuredDefaultVoice
+				: voice.Trim();
+
+			if (string.Equals(requestedVoice, "en-us+f3", StringComparison.OrdinalIgnoreCase) ||
+				string.Equals(requestedVoice, "en-us+klatt6", StringComparison.OrdinalIgnoreCase))
+			{
+				return configuredDefaultVoice;
+			}
+
+			if (HasExplicitVariant(requestedVoice))
+			{
+				return requestedVoice;
+			}
+
+			var configuredVariantSuffix = GetVariantSuffix(configuredDefaultVoice);
+			return string.IsNullOrWhiteSpace(configuredVariantSuffix)
+				? requestedVoice
+				: $"{requestedVoice}{configuredVariantSuffix}";
+		}
+
+		private static bool HasExplicitVariant(string voice)
+		{
+			return voice.IndexOf('+') > 0;
+		}
+
+		private static string? GetVariantSuffix(string voice)
+		{
+			var variantSeparatorIndex = voice.IndexOf('+');
+			return variantSeparatorIndex <= 0 ? null : voice[variantSeparatorIndex..];
 		}
 
 		private static TtsResponse CreateResponse(TtsCacheKey cacheKey, NormalizedTtsRequest request, Uri objectUrl, bool cached)

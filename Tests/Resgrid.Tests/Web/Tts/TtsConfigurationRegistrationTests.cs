@@ -8,6 +8,7 @@ using Resgrid.Web.Tts.Configuration;
 namespace Resgrid.Tests.Web.Tts
 {
 	[TestFixture]
+	[NonParallelizable]
 	public class TtsConfigurationRegistrationTests
 	{
 		private string _originalS3AccessKey;

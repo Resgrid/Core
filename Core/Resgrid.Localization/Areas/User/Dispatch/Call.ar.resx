@@ -263,4 +263,19 @@
   <data name="RouteStep" xml:space="preserve"><value>خطوة</value></data>
   <data name="RouteUnitKilometers" xml:space="preserve"><value>كم</value></data>
   <data name="RouteUnitMinutes" xml:space="preserve"><value>دقيقة</value></data>
+  <data name="ScheduleDispatchLabel" xml:space="preserve">
+    <value>جدولة الإرسال</value>
+  </data>
+  <data name="ScheduleDispatchPlaceholder" xml:space="preserve">
+    <value>اختر تاريخ ووقت مستقبلي...</value>
+  </data>
+  <data name="ScheduleDispatchHelp" xml:space="preserve">
+    <value>قم بتعيين تاريخ/وقت مستقبلي اختياريًا لتأخير الإرسال. يجب أن يكون 15 دقيقة على الأقل في المستقبل.</value>
+  </data>
+  <data name="ScheduleDispatchValidationError" xml:space="preserve">
+    <value>يجب أن يكون الإرسال المجدول 15 دقيقة على الأقل في المستقبل.</value>
+  </data>
+  <data name="ScheduledDispatchDate" xml:space="preserve">
+    <value>تاريخ الإرسال المجدول</value>
+  </data>
 </root>

@@ -452,8 +452,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				personnelData.StaffingId = userState.State.ToString();
 				personnelData.StaffingTimestamp = userState.Timestamp.TimeConverter(department);
-				personnelData.Staffing = staffing.ButtonText;
-				personnelData.StaffingColor = staffing.ButtonClassToColor();
+
+				if (staffing != null)
+				{
+					personnelData.Staffing = staffing.ButtonText;
+					personnelData.StaffingColor = staffing.ButtonClassToColor();
+				}
+				else
+				{
+					personnelData.Staffing = "Available";
+					personnelData.StaffingColor = "#000";
+				}
 			}
 
 			if (action == null)

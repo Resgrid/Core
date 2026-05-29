@@ -74,6 +74,9 @@ namespace Resgrid.Services
 
 		private static Exception CreateRequestFailure(string operation, RestResponse response)
 		{
+			if (response.ErrorException is OperationCanceledException or TaskCanceledException)
+				return new OperationCanceledException($"The TTS service {operation} was canceled.", response.ErrorException);
+
 			var status = response.StatusCode == 0 ? "no-response" : response.StatusCode.ToString();
 			var detail = response.ErrorException?.Message;
 

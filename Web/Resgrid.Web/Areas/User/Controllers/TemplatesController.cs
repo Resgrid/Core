@@ -59,7 +59,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Template = new CallQuickTemplate();
 
 			var priorites = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(DepartmentId);
-			model.CallPriorities = new SelectList(priorites, "DepartmentCallPriorityId", "Name", priorites.FirstOrDefault(x => x.IsDefault));
+			model.CallPriorities = new SelectList(priorites, "DepartmentCallPriorityId", "Name", priorites.FirstOrDefault(x => x.IsDefault)?.DepartmentCallPriorityId);
 
 
 			List<CallType> types = new List<CallType>();
@@ -70,6 +70,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
+		private async Task PopulateDropdowns(NewTemplateModel model)
+		{
+			var priorites = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(DepartmentId);
+			model.CallPriorities = new SelectList(priorites, "DepartmentCallPriorityId", "Name", priorites.FirstOrDefault(x => x.IsDefault)?.DepartmentCallPriorityId);
+
+			List<CallType> types = new List<CallType>();
+			types.Add(new CallType { CallTypeId = 0, Type = "No Type" });
+			types.AddRange(await _callsService.GetCallTypesForDepartmentAsync(DepartmentId));
+			model.CallTypes = new SelectList(types, "Type", "Type");
+		}
+
 		[HttpPost]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> New(NewTemplateModel model, CancellationToken cancellationToken)
@@ -77,6 +88,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (String.IsNullOrWhiteSpace(model.Template.CallName) &&
 				String.IsNullOrWhiteSpace(model.Template.CallNature))
 			{
+				await PopulateDropdowns(model);
 				model.Message = "You must specify a call name and/or call nature to set to save the template";
 				return View(model);
 			}
@@ -91,6 +103,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return RedirectToAction("Index");
 			}
 
+			await PopulateDropdowns(model);
 			return View(model);
 		}
 
@@ -125,6 +138,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (String.IsNullOrWhiteSpace(model.Template.CallName) &&
 				String.IsNullOrWhiteSpace(model.Template.CallNature))
 			{
+				await PopulateDropdowns(model);
 				model.Message = "You must specify a call name and/or call nature to set to save the template";
 				return View(model);
 			}
@@ -139,6 +153,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return RedirectToAction("Index");
 			}
 
+			await PopulateDropdowns(model);
 			return View(model);
 		}
 

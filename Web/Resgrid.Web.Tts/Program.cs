@@ -1,6 +1,3 @@
-using Amazon;
-using Amazon.Runtime;
-using Amazon.S3;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
@@ -9,13 +6,53 @@ using Resgrid.Config;
 using Resgrid.Web.Tts.Configuration;
 using Resgrid.Web.Tts.Health;
 using Resgrid.Web.Tts.Services;
+using System.Reflection;
 using System.Text.Json;
 using System.Threading.RateLimiting;
+using Sentry.Profiling;
 
 var builder = WebApplication.CreateBuilder(args);
 
 ConfigProcessor.LoadAndProcessConfig(builder.Configuration["AppOptions:ConfigPath"]);
 ConfigProcessor.LoadAndProcessEnvVariables(builder.Configuration.AsEnumerable());
+
+// Configure Sentry error tracking and performance monitoring
+if (!string.IsNullOrWhiteSpace(ExternalErrorConfig.ExternalErrorServiceUrlForTts))
+{
+	builder.WebHost.UseSentry(options =>
+	{
+		options.Dsn = ExternalErrorConfig.ExternalErrorServiceUrlForTts;
+		options.AttachStacktrace = true;
+		options.SendDefaultPii = true;
+		options.AutoSessionTracking = true;
+		options.TracesSampleRate = ExternalErrorConfig.SentryPerfSampleRate;
+		options.Environment = ExternalErrorConfig.Environment;
+		options.Release = Assembly.GetEntryAssembly()?.GetName().Version?.ToString();
+		options.ProfilesSampleRate = ExternalErrorConfig.SentryProfilingSampleRate;
+
+		// Add profiling integration for performance tracing
+		options.AddIntegration(new ProfilingIntegration());
+
+		options.TracesSampler = samplingContext =>
+		{
+			if (samplingContext?.CustomSamplingContext != null)
+			{
+				if (samplingContext.CustomSamplingContext.TryGetValue("__HttpPath", out var httpPath))
+				{
+					var pathValue = httpPath?.ToString();
+					if (string.Equals(pathValue, "/health", StringComparison.OrdinalIgnoreCase) ||
+					    string.Equals(pathValue, "/livez", StringComparison.OrdinalIgnoreCase) ||
+					    string.Equals(pathValue, "/readyz", StringComparison.OrdinalIgnoreCase))
+					{
+						return 0;
+					}
+				}
+			}
+
+			return ExternalErrorConfig.SentryPerfSampleRate;
+		};
+	});
+}
 
 builder.Logging.ClearProviders();
 builder.Logging.AddJsonConsole();
@@ -29,6 +66,7 @@ builder.Services.AddStackExchangeRedisCache(options =>
 });
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHttpClient();
 builder.Services.AddTtsConfiguration();
 builder.Services.Configure<ForwardedHeadersOptions>(TtsRequestIdentity.ConfigureForwardedHeaders);
 builder.Services.AddHealthChecks()
@@ -65,12 +103,8 @@ builder.Services.AddRateLimiter(options =>
 	};
 });
 
-builder.Services.AddSingleton<IAmazonS3>(sp =>
-{
-	var options = sp.GetRequiredService<IOptions<S3StorageOptions>>().Value;
-	return CreateS3Client(options);
-});
 builder.Services.AddSingleton<IStorageService, S3StorageService>();
+builder.Services.AddSingleton<ITextPreprocessor, TextPreprocessor>();
 builder.Services.AddSingleton<ICacheService, CacheService>();
 builder.Services.AddSingleton<IAudioProcessingService, AudioProcessingService>();
 builder.Services.AddSingleton<ITtsPlaybackUrlService, TtsPlaybackUrlService>();
@@ -114,35 +148,5 @@ app.MapHealthChecks("/health", new HealthCheckOptions
 app.MapControllers();
 
 app.Run();
-
-static AmazonS3Client CreateS3Client(S3StorageOptions options)
-{
-	var credentials = new BasicAWSCredentials(options.AccessKey, options.SecretKey);
-	var config = new AmazonS3Config
-	{
-		ForcePathStyle = options.ForcePathStyle,
-		AuthenticationRegion = options.Region
-	};
-
-	if (!string.IsNullOrWhiteSpace(options.Endpoint))
-	{
-		if (Uri.TryCreate(options.Endpoint, UriKind.Absolute, out var endpointUri))
-		{
-			config.ServiceURL = endpointUri.GetLeftPart(UriPartial.Authority);
-			config.UseHttp = endpointUri.Scheme.Equals(Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase);
-		}
-		else
-		{
-			config.ServiceURL = $"{(options.UseSsl ? Uri.UriSchemeHttps : Uri.UriSchemeHttp)}://{options.Endpoint}";
-			config.UseHttp = !options.UseSsl;
-		}
-	}
-	else
-	{
-		config.RegionEndpoint = RegionEndpoint.GetBySystemName(options.Region);
-	}
-
-	return new AmazonS3Client(credentials, config);
-}
 
 public partial class Program;

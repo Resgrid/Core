@@ -21,6 +21,14 @@ namespace Resgrid.Chatbot.Models
 		public string UserId { get; set; }
 		public int DepartmentId { get; set; }
 		public ChatbotPlatform Platform { get; set; }
+
+		/// <summary>
+		/// The resolved user's preferred culture code (e.g. "en", "es"), from <c>UserProfile.Language</c>,
+		/// set by the ingress when the session is created. Handlers pass this to <c>ChatbotResources.Get</c>
+		/// so responses render in the user's language; null/unknown falls back to English at lookup time.
+		/// </summary>
+		public string Culture { get; set; }
+
 		public ChatbotDialogState State { get; set; }
 		public ChatbotIntentType? PendingIntent { get; set; }
 		public Dictionary<string, string> Context { get; set; } = new Dictionary<string, string>();

@@ -3,11 +3,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Resgrid.Chatbot.Interfaces;
+using Resgrid.Chatbot.Localization;
 using Resgrid.Chatbot.Models;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Chatbot.Handlers
 {
+	/// <summary>
+	/// Lists/searches department personnel and their status (intent <see cref="ChatbotIntentType.PersonnelLookup"/>).
+	/// Requires <see cref="IAuthorizationService.CanUserViewAllPeopleAsync"/> (§2). Responses are localized to
+	/// the user's culture; personnel names and custom-state button text are data and rendered as-is.
+	/// </summary>
 	public class PersonnelActionHandler : IChatbotActionHandler
 	{
 		private readonly IDepartmentsService _departmentsService;
@@ -37,28 +43,48 @@ namespace Resgrid.Chatbot.Handlers
 
 		public async Task<ChatbotResponse> HandleAsync(ChatbotMessage message, ChatbotIntent intent, ChatbotSession session)
 		{
+			var culture = session.Culture;
 			try
 			{
-				// Authorization: only users permitted to view the roster may list personnel.
 				if (!await _authorizationService.CanUserViewAllPeopleAsync(session.UserId, session.DepartmentId))
-				{
-					return new ChatbotResponse { Text = "You don't have permission to view personnel for your department.", Processed = false };
-				}
+					return new ChatbotResponse { Text = ChatbotResources.Get("Personnel_NoPermission", culture), Processed = false };
 
 				var allUsers = await _usersService.GetUserGroupAndRolesByDepartmentIdInLimitAsync(session.DepartmentId, false, false, false);
 				var lastActionLogs = await _actionLogsService.GetLastActionLogsForDepartmentAsync(session.DepartmentId);
 				var userStates = await _userStateService.GetLatestStatesForDepartmentAsync(session.DepartmentId);
 
 				if (allUsers == null || !allUsers.Any())
+					return new ChatbotResponse { Text = ChatbotResources.Get("Personnel_None", culture), Processed = true };
+
+				// Optional search filter: "who is John", "where is captain smith" supply a query.
+				intent.Parameters.TryGetValue("query", out var query);
+				var hasQuery = !string.IsNullOrWhiteSpace(query);
+
+				var filteredUsers = allUsers.AsEnumerable();
+				if (hasQuery)
 				{
-					return new ChatbotResponse { Text = "No personnel found for your department.", Processed = true };
+					var q = query.Trim().ToLowerInvariant();
+					filteredUsers = allUsers.Where(u =>
+						(u.FirstName?.ToLowerInvariant().Contains(q) == true) ||
+						(u.LastName?.ToLowerInvariant().Contains(q) == true) ||
+						(u.Name?.ToLowerInvariant().Contains(q) == true));
 				}
 
+				var userList = filteredUsers
+					.OrderBy(u => u.LastName)
+					.ThenBy(u => u.FirstName)
+					.Take(15)
+					.ToList();
+
+				if (userList.Count == 0)
+					return new ChatbotResponse { Text = ChatbotResources.Get("Personnel_NoMatch", culture, query), Processed = true };
+
 				var sb = new StringBuilder();
-				sb.AppendLine("Personnel Status:");
+				sb.AppendLine(hasQuery
+					? ChatbotResources.Get("Personnel_HeaderQuery", culture, query)
+					: ChatbotResources.Get("Personnel_Header", culture));
 				sb.AppendLine("----------------------");
 
-				var userList = allUsers.Take(15).ToList();
 				foreach (var user in userList)
 				{
 					var lastAction = lastActionLogs.FirstOrDefault(x => x.UserId == user.UserId);
@@ -66,7 +92,10 @@ namespace Resgrid.Chatbot.Handlers
 					var status = await _customStateService.GetCustomPersonnelStatusAsync(session.DepartmentId, lastAction);
 					var staffing = await _customStateService.GetCustomPersonnelStaffingAsync(session.DepartmentId, state);
 
-					sb.AppendLine($"{user.LastName}, {user.FirstName}: {status?.ButtonText ?? "Unknown"} / {staffing?.ButtonText ?? "N/A"}");
+					var statusText = status?.ButtonText ?? ChatbotResources.Get("Personnel_Unknown", culture);
+					var staffingText = staffing?.ButtonText ?? ChatbotResources.Get("Personnel_NA", culture);
+
+					sb.AppendLine(ChatbotResources.Get("Personnel_Line", culture, user.LastName, user.FirstName, statusText, staffingText));
 				}
 
 				return new ChatbotResponse { Text = sb.ToString(), Processed = true };
@@ -74,7 +103,7 @@ namespace Resgrid.Chatbot.Handlers
 			catch (Exception ex)
 			{
 				Framework.Logging.LogException(ex);
-				return new ChatbotResponse { Text = "Error retrieving personnel.", Processed = false };
+				return new ChatbotResponse { Text = ChatbotResources.Get("Personnel_Error", culture), Processed = false };
 			}
 		}
 	}

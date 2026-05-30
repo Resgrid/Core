@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Resgrid.Framework;
 using Resgrid.Chatbot.Config;
 using Resgrid.Chatbot.Interfaces;
 using Resgrid.Chatbot.Models;
@@ -36,7 +38,11 @@ namespace Resgrid.Chatbot.NLU.Providers
 		public string ProviderName => "CloudLLM";
 		public int Priority => 100;
 
-		private readonly HttpClient _httpClient;
+		// A single shared HttpClient avoids socket exhaustion. This provider is registered
+		// InstancePerLifetimeScope, so a per-instance client would leak sockets under load.
+		// Per-request timeouts are enforced via a CancellationToken (see ClassifyAsync) rather
+		// than the shared client's Timeout, which cannot be varied safely across concurrent callers.
+		private static readonly HttpClient _httpClient = new HttpClient();
 		private readonly IChatbotDepartmentConfigService _configService;
 
 		private static readonly string IntentSystemPrompt = @"You are a classification engine for emergency service chatbot commands.
@@ -101,12 +107,6 @@ If the user's message doesn't clearly match any intent, set intent to ""unknown"
 		public OpenAiCompatibleNluProvider(IChatbotDepartmentConfigService configService)
 		{
 			_configService = configService;
-			_httpClient = new HttpClient
-			{
-				Timeout = TimeSpan.FromSeconds(ChatbotConfig.CloudNluTimeoutSeconds > 0
-					? ChatbotConfig.CloudNluTimeoutSeconds
-					: 10)
-			};
 		}
 
 		public async Task<NLUResult> ClassifyAsync(string text, string context = null, int departmentId = 0)
@@ -142,30 +142,60 @@ If the user's message doesn't clearly match any intent, set intent to ""unknown"
 					};
 				}
 
+				// Anthropic uses a different request/response schema and auth header than the OpenAI
+				// chat-completions API. Department overrides carry no provider type, so detect Anthropic
+				// from the endpoint URL; otherwise honour the system-level provider setting.
+				var isAnthropic = departmentLlm != null
+					? (!string.IsNullOrWhiteSpace(endpoint) && endpoint.IndexOf("anthropic", StringComparison.OrdinalIgnoreCase) >= 0)
+					: ChatbotConfig.CloudNluProvider == CloudNluProviderType.Anthropic;
+
 				var systemPrompt = !string.IsNullOrWhiteSpace(ChatbotConfig.CloudNluSystemPrompt)
 					? ChatbotConfig.CloudNluSystemPrompt
 					: IntentSystemPrompt;
 
-				var messages = new List<object>
-				{
-					new { role = "system", content = systemPrompt }
-				};
+				var maxTokens = ChatbotConfig.CloudNluMaxTokens > 0 ? ChatbotConfig.CloudNluMaxTokens : 256;
 
-				if (!string.IsNullOrWhiteSpace(context))
+				object requestBody;
+				if (isAnthropic)
 				{
-					messages.Add(new { role = "system", content = $"Conversation context: {context}" });
+					// Anthropic /v1/messages: the system prompt is a top-level field, messages contain
+					// only user/assistant turns, and there is no response_format option.
+					var anthropicSystem = string.IsNullOrWhiteSpace(context)
+						? systemPrompt
+						: $"{systemPrompt}\n\nConversation context: {context}";
+
+					requestBody = new
+					{
+						model,
+						max_tokens = maxTokens,
+						temperature = ChatbotConfig.CloudNluTemperature,
+						system = anthropicSystem,
+						messages = new[] { new { role = "user", content = text } }
+					};
 				}
-
-				messages.Add(new { role = "user", content = text });
-
-				var requestBody = new
+				else
 				{
-					model,
-					messages,
-					temperature = ChatbotConfig.CloudNluTemperature,
-					max_tokens = ChatbotConfig.CloudNluMaxTokens > 0 ? ChatbotConfig.CloudNluMaxTokens : 256,
-					response_format = new { type = "json_object" }
-				};
+					var messages = new List<object>
+					{
+						new { role = "system", content = systemPrompt }
+					};
+
+					if (!string.IsNullOrWhiteSpace(context))
+					{
+						messages.Add(new { role = "system", content = $"Conversation context: {context}" });
+					}
+
+					messages.Add(new { role = "user", content = text });
+
+					requestBody = new
+					{
+						model,
+						messages,
+						temperature = ChatbotConfig.CloudNluTemperature,
+						max_tokens = maxTokens,
+						response_format = new { type = "json_object" }
+					};
+				}
 
 				var json = JsonConvert.SerializeObject(requestBody);
 				var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -174,23 +204,37 @@ If the user's message doesn't clearly match any intent, set intent to ""unknown"
 				{
 					Content = content
 				};
-				request.Headers.Add("Authorization", $"Bearer {apiKey}");
 
-				// Azure OpenAI uses api-key header instead (system config only; a department override
-				// is assumed OpenAI-compatible with Bearer auth).
-				if (departmentLlm == null && ChatbotConfig.CloudNluProvider == CloudNluProviderType.AzureOpenAI)
+				if (isAnthropic)
 				{
-					request.Headers.Remove("Authorization");
+					// Anthropic authenticates with x-api-key and requires an API version header.
+					request.Headers.Add("x-api-key", apiKey);
+					request.Headers.Add("anthropic-version", "2023-06-01");
+				}
+				else if (departmentLlm == null && ChatbotConfig.CloudNluProvider == CloudNluProviderType.AzureOpenAI)
+				{
+					// Azure OpenAI uses an api-key header instead of Bearer auth (system config only;
+					// a department override is assumed OpenAI-compatible with Bearer auth).
 					request.Headers.Add("api-key", apiKey);
 				}
+				else
+				{
+					request.Headers.Add("Authorization", $"Bearer {apiKey}");
+				}
 
-				var response = await _httpClient.SendAsync(request);
+				// Enforce the configured timeout per request via a CancellationToken rather than the
+				// shared client's Timeout.
+				using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(
+					ChatbotConfig.CloudNluTimeoutSeconds > 0 ? ChatbotConfig.CloudNluTimeoutSeconds : 10));
+
+				var response = await _httpClient.SendAsync(request, cts.Token);
 				var responseBody = await response.Content.ReadAsStringAsync();
 
 				sw.Stop();
 
 				if (!response.IsSuccessStatusCode)
 				{
+					Logging.LogError($"Cloud NLU error from {ProviderName} (HTTP {(int)response.StatusCode}): {responseBody?.Truncate(500)}");
 					return new NLUResult
 					{
 						IntentName = "unknown",
@@ -202,12 +246,13 @@ If the user's message doesn't clearly match any intent, set intent to ""unknown"
 					};
 				}
 
-				var parsed = ParseOpenAiResponse(responseBody, model, sw.ElapsedMilliseconds);
+				var parsed = ParseOpenAiResponse(responseBody, model, sw.ElapsedMilliseconds, isAnthropic);
 				return parsed;
 			}
-			catch (TaskCanceledException)
+			catch (TaskCanceledException ex)
 			{
 				sw.Stop();
+				Logging.LogError($"Cloud NLU ({ProviderName}) timed out after {sw.ElapsedMilliseconds}ms: {ex.Message}");
 				return new NLUResult
 				{
 					IntentName = "unknown",
@@ -220,6 +265,7 @@ If the user's message doesn't clearly match any intent, set intent to ""unknown"
 			catch (Exception ex)
 			{
 				sw.Stop();
+				Logging.LogException(ex, "Cloud NLU classification failed.");
 				return new NLUResult
 				{
 					IntentName = "unknown",
@@ -286,40 +332,61 @@ If the user's message doesn't clearly match any intent, set intent to ""unknown"
 				CloudNluProviderType.OpenAI => "gpt-4o",
 				CloudNluProviderType.OpenAiCompatible => "gpt-4o",
 				CloudNluProviderType.AzureOpenAI => "gpt-4",
-				CloudNluProviderType.Anthropic => "claude-3-5-sonnet",
+				CloudNluProviderType.Anthropic => "claude-3-5-sonnet-latest",
 				_ => "gpt-4o"
 			};
 		}
 
-		private NLUResult ParseOpenAiResponse(string responseBody, string model, long latencyMs)
+		private NLUResult ParseOpenAiResponse(string responseBody, string model, long latencyMs, bool isAnthropic = false)
 		{
 			try
 			{
 				var root = JObject.Parse(responseBody);
-				var choices = root["choices"] as JArray;
-				if (choices == null || choices.Count == 0)
+
+				string contentText;
+				int? totalTokens;
+
+				if (isAnthropic)
 				{
-					return new NLUResult
-					{
-						IntentName = "unknown",
-						Confidence = 0,
-						ProviderName = ProviderName,
-						RawResponse = "Cloud NLU returned no choices.",
-						LatencyMs = latencyMs,
-						ModelName = model
-					};
+					// Anthropic returns content as an array of blocks and reports input/output tokens
+					// separately rather than a single total_tokens value.
+					var contentBlocks = root["content"] as JArray;
+					contentText = contentBlocks != null && contentBlocks.Count > 0
+						? contentBlocks[0]?["text"]?.ToString()
+						: null;
+
+					var usage = root["usage"];
+					totalTokens = usage != null
+						? (usage["input_tokens"]?.Value<int>() ?? 0) + (usage["output_tokens"]?.Value<int>() ?? 0)
+						: (int?)null;
 				}
+				else
+				{
+					var choices = root["choices"] as JArray;
+					if (choices == null || choices.Count == 0)
+					{
+						Logging.LogError($"Cloud NLU ({ProviderName}) returned no choices.");
+						return new NLUResult
+						{
+							IntentName = "unknown",
+							Confidence = 0,
+							ProviderName = ProviderName,
+							RawResponse = "Cloud NLU returned no choices.",
+							LatencyMs = latencyMs,
+							ModelName = model
+						};
+					}
 
-				var message = choices[0]["message"];
-				var contentText = message?["content"]?.ToString();
+					var message = choices[0]["message"];
+					contentText = message?["content"]?.ToString();
 
-				int? totalTokens = null;
-				var usage = root["usage"];
-				if (usage != null)
-					totalTokens = usage["total_tokens"]?.Value<int>();
+					var usage = root["usage"];
+					totalTokens = usage != null ? usage["total_tokens"]?.Value<int>() : null;
+				}
 
 				if (string.IsNullOrWhiteSpace(contentText))
 				{
+					Logging.LogError($"Cloud NLU ({ProviderName}) returned empty content.");
 					return new NLUResult
 					{
 						IntentName = "unknown",
@@ -356,8 +423,9 @@ If the user's message doesn't clearly match any intent, set intent to ""unknown"
 					TotalTokens = totalTokens
 				};
 			}
-			catch (JsonException)
+			catch (JsonException ex)
 			{
+				Logging.LogException(ex, "Cloud NLU returned unparseable JSON.");
 				return new NLUResult
 				{
 					IntentName = "unknown",

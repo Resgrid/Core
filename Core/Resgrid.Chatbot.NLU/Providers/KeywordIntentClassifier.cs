@@ -58,6 +58,16 @@ namespace Resgrid.Chatbot.NLU.Providers
 			(new Regex(@"^(link|login|verify|auth)$", RegexOptions.IgnoreCase), "link_account", null),
 			(new Regex(@"^(unlink|logout|unauth)$", RegexOptions.IgnoreCase), "unlink_account", null),
 
+			// === Message Detail / Delete / Respond (must precede the natural-language message patterns) ===
+			(new Regex(@"^#(\d+)$", RegexOptions.IgnoreCase),
+				"message_detail", m => P("messageId", m.Groups[1].Value)),
+			(new Regex(@"^(read|show|open|view|get)\s+(message|msg)\s+#?(\d+)", RegexOptions.IgnoreCase),
+				"message_detail", m => P("messageId", m.Groups[3].Value)),
+			(new Regex(@"^(delete|remove|del)\s+(message|msg)?\s*#?(\d+)$", RegexOptions.IgnoreCase),
+				"delete_message", m => P("messageId", m.Groups[3].Value)),
+			(new Regex(@"^(reply|respond)\s+(yes|no|acknowledge|ack)\s+to\s+(message|msg|#)?\s*#?(\d+)", RegexOptions.IgnoreCase),
+				"respond_to_message", m => P2("response", m.Groups[2].Value, "messageId", m.Groups[4].Value)),
+
 			// === Natural Language Query Commands ===
 			(new Regex(@"^(show|list|get|what)\s+(are\s+)?(active|open)?\s*(calls|incidents)", RegexOptions.IgnoreCase),
 				"list_calls", null),
@@ -103,6 +113,10 @@ namespace Resgrid.Chatbot.NLU.Providers
 			// === Respond to Call ===
 			(new Regex(@"^(respond|en\s*route|going)\s+to\s+c?(\d+)", RegexOptions.IgnoreCase),
 				"respond_to_call", m => P("callId", m.Groups[2].Value)),
+
+			// === Shift Drop (must precede shift signup/detail so 'drop shift 5' isn't misread) ===
+			(new Regex(@"^(drop|cancel|release)\s+(my\s+)?shift\s+#?(\d+)", RegexOptions.IgnoreCase),
+				"shift_drop", m => P("shiftId", m.Groups[3].Value)),
 
 			// === Shift Signup ===
 			(new Regex(@"^(sign\s*up|take)\s+shift\s+(.+)", RegexOptions.IgnoreCase),

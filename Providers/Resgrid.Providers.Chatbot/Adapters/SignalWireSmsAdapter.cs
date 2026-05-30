@@ -12,6 +12,14 @@ namespace Resgrid.Providers.Chatbot.Adapters
 	{
 		public ChatbotPlatform Platform => ChatbotPlatform.SmsSignalWire;
 
+		public ChatbotPlatformCapabilities GetCapabilities() => ChatbotPlatformCapabilities.ForPlatform(Platform);
+
+		// SMS proactive sends are delivered through ICommunicationService/ISmsService (the chat
+		// adapter does not own an SMS transport), so this is a no-op for the SMS adapters.
+		public Task SendRichResponseAsync(string platformUserId, ChatbotResponse response) => Task.CompletedTask;
+
+		public Task SendTypingIndicatorAsync(string platformUserId) => Task.CompletedTask;
+
 		public Task<ChatbotMessage> ParseInboundMessageAsync(object rawRequest)
 		{
 			if (rawRequest is IQueryCollection queryValues)

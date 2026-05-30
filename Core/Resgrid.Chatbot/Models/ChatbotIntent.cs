@@ -32,7 +32,11 @@ namespace Resgrid.Chatbot.Models
 		SetUnitStatus = 25,
 		ListDepartments = 26,
 		GetActiveDepartment = 27,
-		SwitchDepartment = 28
+		SwitchDepartment = 28,
+		MessageDetail = 29,
+		DeleteMessage = 30,
+		RespondToMessage = 31,
+		ShiftDrop = 32
 	}
 
 	public class ChatbotIntent

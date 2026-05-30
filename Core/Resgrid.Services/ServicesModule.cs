@@ -21,6 +21,10 @@ namespace Resgrid.Services
 			builder.RegisterType<QueueService>().As<IQueueService>().InstancePerLifetimeScope();
 			builder.RegisterType<DeleteService>().As<IDeleteService>().InstancePerLifetimeScope();
 			builder.RegisterType<CommunicationService>().As<ICommunicationService>().InstancePerLifetimeScope();
+			// Default no-op chat outbound channel so CommunicationService always resolves it; the real
+			// ChatbotOutboundService in ChatbotProviderModule overrides this (PreserveExistingDefaults
+			// keeps the real one winning regardless of module load order).
+			builder.RegisterType<NullChatbotOutboundService>().As<IChatbotOutboundService>().InstancePerLifetimeScope().PreserveExistingDefaults();
 			builder.RegisterType<SmsService>().As<ISmsService>().InstancePerLifetimeScope();
 			builder.RegisterType<PushLogsService>().As<IPushLogsService>().InstancePerLifetimeScope();
 			builder.RegisterType<PushService>().As<IPushService>().SingleInstance();

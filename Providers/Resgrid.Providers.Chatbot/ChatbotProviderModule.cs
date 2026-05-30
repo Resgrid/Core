@@ -29,6 +29,24 @@ namespace Resgrid.Providers.Chatbot
 			builder.RegisterType<TelegramBotAdapter>()
 				.As<IChatbotPlatformAdapter>()
 				.InstancePerLifetimeScope();
+
+			// Phase 3: additional platform adapters
+			builder.RegisterType<WhatsAppAdapter>()
+				.As<IChatbotPlatformAdapter>()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<WebChatAdapter>()
+				.As<IChatbotPlatformAdapter>()
+				.InstancePerLifetimeScope();
+
+			// Phase 3: proactive outbound delivery (chat as a CommunicationService channel).
+			builder.RegisterType<Services.ChatbotAdapterRegistry>()
+				.As<IChatbotAdapterRegistry>()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<Services.ChatbotOutboundService>()
+				.As<Resgrid.Model.Services.IChatbotOutboundService>()
+				.InstancePerLifetimeScope();
 		}
 	}
 }

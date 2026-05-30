@@ -17,12 +17,14 @@ namespace Resgrid.Providers.Chatbot.Adapters
 	{
 		public ChatbotPlatform Platform => ChatbotPlatform.Slack;
 
-		private readonly IChatbotPlatformAdapterConfig _config;
+		public ChatbotPlatformCapabilities GetCapabilities() => ChatbotPlatformCapabilities.ForPlatform(Platform);
 
-		public SlackBotAdapter(IChatbotPlatformAdapterConfig config)
-		{
-			_config = config;
-		}
+		// Proactive/rich send. Delegates to the Slack client send (SendResponseAsync). Until the
+		// SlackNet client is wired (P3.12), this routes through the existing stub send path.
+		public Task SendRichResponseAsync(string platformUserId, ChatbotResponse response)
+			=> SendResponseAsync(platformUserId, response);
+
+		public Task SendTypingIndicatorAsync(string platformUserId) => Task.CompletedTask;
 
 		public Task<bool> ValidateAsync(Dictionary<string, string> parameters)
 		{
@@ -82,8 +84,13 @@ namespace Resgrid.Providers.Chatbot.Adapters
 
 		public Task<bool> IsUserAuthorizedAsync(string platformUserId)
 		{
-			// Authorization is via OAuth2 linking.
-			return Task.FromResult(true);
+			// Adapters do NOT authorize. Inbound authorization is enforced centrally in
+			// ChatbotIngressService via IChatbotUserIdentityService.GetIdentityAsync(...) (account
+			// linking) and IAuthorizationService.IsUserValidWithinLimitsAsync(...). This method is not
+			// part of IChatbotPlatformAdapter and is never called; it fails loud so it can't be mistaken
+			// for a working authorization check.
+			throw new NotSupportedException(
+				"Adapters do not perform authorization; it is enforced in ChatbotIngressService.");
 		}
 
 		public ValueTask DisposeAsync()

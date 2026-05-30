@@ -23,11 +23,12 @@ namespace Resgrid.Services
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly ISubscriptionsService _subscriptionsService;
 		private readonly IUserStateService _userStateService;
-		private readonly IDepartmentsService _departmentsService;
+		private readonly IChatbotOutboundService _chatbotOutboundService;
 
 		public CommunicationService(ISmsService smsService, IEmailService emailService, IPushService pushService, IGeoLocationProvider geoLocationProvider,
 			IOutboundVoiceProvider outboundVoiceProvider, IUserProfileService userProfileService, IDepartmentSettingsService departmentSettingsService,
-			ISubscriptionsService subscriptionsService, IUserStateService userStateService, IDepartmentsService departmentsService)
+			ISubscriptionsService subscriptionsService, IUserStateService userStateService, IChatbotOutboundService chatbotOutboundService,
+			IDepartmentsService departmentsService)
 		{
 			_smsService = smsService;
 			_emailService = emailService;
@@ -39,6 +40,7 @@ namespace Resgrid.Services
 			_subscriptionsService = subscriptionsService;
 			_userStateService = userStateService;
 			_departmentsService = departmentsService;
+			_chatbotOutboundService = chatbotOutboundService;
 		}
 
 		public async Task<bool> SendMessageAsync(Message message, string sendersName, string departmentNumber, int departmentId, UserProfile profile = null, Department department = null)
@@ -109,6 +111,23 @@ namespace Resgrid.Services
 
 			}
 
+			// Outbound chat platforms (Discord/Slack/etc.) as a sibling channel; failures are isolated.
+			try
+			{
+				await _chatbotOutboundService.SendToUserAsync(message.ReceivingUserId, departmentId,
+					new ChatbotOutboundMessage
+					{
+						Type = ChatbotOutboundType.Message,
+						Title = message.Subject,
+						Body = message.Body,
+						ReferenceId = message.MessageId.ToString()
+					});
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
+
 			return true;
 		}
 
@@ -122,6 +141,23 @@ namespace Resgrid.Services
 
 			if (profile == null)
 				profile = await _userProfileService.GetProfileByUserIdAsync(dispatch.UserId);
+
+			// Outbound chat platforms as a sibling channel for call dispatches; failures are isolated.
+			try
+			{
+				await _chatbotOutboundService.SendToUserAsync(dispatch.UserId, departmentId,
+					new ChatbotOutboundMessage
+					{
+						Type = ChatbotOutboundType.Dispatch,
+						Title = string.Format("Call {0}", call.Name),
+						Body = string.IsNullOrWhiteSpace(call.Address) ? call.NatureOfCall : call.Address,
+						ReferenceId = call.CallId.ToString()
+					});
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
 
 			// Send a Push Notification
 			if (profile == null || profile.SendPush)

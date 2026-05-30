@@ -112,11 +112,13 @@ namespace Resgrid.Chatbot.Services
 		{
 			return intentType switch
 			{
-				ChatbotIntentType.SendMessage => true,
+				// SendMessage is handled single-turn by MessageSendHandler (recipient+body are captured
+				// inline by the classifier). It is intentionally NOT multi-turn here: the previous
+				// multi-turn path only *faked* the send. A guided "ask for the body" flow can be added later.
 				ChatbotIntentType.SetStatus => true,
 				ChatbotIntentType.SetStaffing => true,
-				ChatbotIntentType.DispatchCall => true,
-				ChatbotIntentType.CloseCall => true,
+				// CloseCall/DispatchCall are single-turn: their handlers run a confirmation pass via
+				// AwaitingConfirmation, which ChatbotIngressService re-dispatches on YES (addendum §5).
 				_ => false
 			};
 		}

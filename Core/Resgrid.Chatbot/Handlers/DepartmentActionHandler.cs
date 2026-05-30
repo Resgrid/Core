@@ -1,9 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Resgrid.Chatbot.Interfaces;
+using Resgrid.Chatbot.Localization;
 using Resgrid.Chatbot.Models;
 using Resgrid.Model;
 using Resgrid.Model.Services;
@@ -47,25 +47,19 @@ namespace Resgrid.Chatbot.Handlers
 				case ChatbotIntentType.SwitchDepartment:
 					return await SwitchDepartmentAsync(intent, session);
 				default:
-					return new ChatbotResponse { Text = "Unknown department command.", Processed = false };
+					return new ChatbotResponse { Text = ChatbotResources.Get("Dept_UnknownCommand", session.Culture), Processed = false };
 			}
 		}
 
 		private async Task<ChatbotResponse> ListDepartmentsAsync(ChatbotSession session)
 		{
+			var culture = session.Culture;
 			try
 			{
 				var allMemberRecords = await _departmentsService.GetAllDepartmentsForUserAsync(session.UserId);
 				if (allMemberRecords == null || allMemberRecords.Count == 0)
-				{
-					return new ChatbotResponse
-					{
-						Text = "You are not a member of any department.",
-						Processed = true
-					};
-				}
+					return new ChatbotResponse { Text = ChatbotResources.Get("Dept_NoMembership", culture), Processed = true };
 
-				// Filter out deleted memberships
 				var activeMemberships = allMemberRecords
 					.Where(m => !m.IsDeleted)
 					.OrderByDescending(m => m.IsActive)
@@ -73,53 +67,41 @@ namespace Resgrid.Chatbot.Handlers
 					.ToList();
 
 				if (activeMemberships.Count == 0)
-				{
-					return new ChatbotResponse
-					{
-						Text = "You have no active department memberships.",
-						Processed = true
-					};
-				}
+					return new ChatbotResponse { Text = ChatbotResources.Get("Dept_NoActiveMemberships", culture), Processed = true };
 
-				// Resolve department names
 				var sb = new StringBuilder();
-				sb.AppendLine("Your departments:");
+				sb.AppendLine(ChatbotResources.Get("Dept_YourDepartments", culture));
 
 				for (int i = 0; i < activeMemberships.Count; i++)
 				{
 					var membership = activeMemberships[i];
 					var dept = await _departmentsService.GetDepartmentByIdAsync(membership.DepartmentId);
-					var deptName = dept?.Name ?? $"Department #{membership.DepartmentId}";
-					var isActive = membership.IsActive ? " [ACTIVE]" : "";
+					var deptName = dept?.Name ?? ChatbotResources.Get("Dept_DepartmentNum", culture, membership.DepartmentId);
+					var activeMarker = membership.IsActive ? ChatbotResources.Get("Dept_ActiveMarker", culture) : "";
 
-					sb.AppendLine($"{i + 1}. {deptName}{isActive}");
+					sb.AppendLine(ChatbotResources.Get("Dept_ListItem", culture, i + 1, deptName, activeMarker));
 				}
 
 				sb.AppendLine();
-				sb.AppendLine("To switch departments, type: switch to department [name or number]");
+				sb.AppendLine(ChatbotResources.Get("Dept_SwitchHint", culture));
 
 				return new ChatbotResponse { Text = sb.ToString().TrimEnd(), Processed = true };
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
-				return new ChatbotResponse { Text = "Error retrieving your departments.", Processed = false };
+				return new ChatbotResponse { Text = ChatbotResources.Get("Dept_ErrorList", culture), Processed = false };
 			}
 		}
 
 		private async Task<ChatbotResponse> GetActiveDepartmentAsync(ChatbotSession session)
 		{
+			var culture = session.Culture;
 			try
 			{
 				var allMemberRecords = await _departmentsService.GetAllDepartmentsForUserAsync(session.UserId);
 				if (allMemberRecords == null || allMemberRecords.Count == 0)
-				{
-					return new ChatbotResponse
-					{
-						Text = "You are not a member of any department.",
-						Processed = true
-					};
-				}
+					return new ChatbotResponse { Text = ChatbotResources.Get("Dept_NoMembership", culture), Processed = true };
 
 				var activeMembership = allMemberRecords
 					.Where(m => !m.IsDeleted && m.IsActive)
@@ -128,7 +110,6 @@ namespace Resgrid.Chatbot.Handlers
 
 				if (activeMembership == null)
 				{
-					// Fall back to IsDefault
 					activeMembership = allMemberRecords
 						.Where(m => !m.IsDeleted)
 						.OrderByDescending(m => m.IsDefault)
@@ -136,40 +117,36 @@ namespace Resgrid.Chatbot.Handlers
 				}
 
 				if (activeMembership == null)
-				{
-					return new ChatbotResponse
-					{
-						Text = "You don't have an active department set. Type 'departments' to see your options.",
-						Processed = true
-					};
-				}
+					return new ChatbotResponse { Text = ChatbotResources.Get("Dept_NoActiveSet", culture), Processed = true };
 
 				var dept = await _departmentsService.GetDepartmentByIdAsync(activeMembership.DepartmentId);
-				var deptName = dept?.Name ?? $"Department #{activeMembership.DepartmentId}";
+				var deptName = dept?.Name ?? ChatbotResources.Get("Dept_DepartmentNum", culture, activeMembership.DepartmentId);
 
-				var isDefault = activeMembership.IsDefault ? " (your default)" : "";
-				var isActive = activeMembership.IsActive ? "active" : "not active";
+				var defaultMarker = activeMembership.IsDefault ? ChatbotResources.Get("Dept_DefaultMarker", culture) : "";
+				var activeWord = activeMembership.IsActive
+					? ChatbotResources.Get("Dept_Active", culture)
+					: ChatbotResources.Get("Dept_NotActive", culture);
 
 				return new ChatbotResponse
 				{
-					Text = $"Your {isActive} department is: {deptName}{isDefault}.",
+					Text = ChatbotResources.Get("Dept_ActiveIs", culture, activeWord, deptName, defaultMarker),
 					Processed = true
 				};
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
-				return new ChatbotResponse { Text = "Error retrieving your active department.", Processed = false };
+				return new ChatbotResponse { Text = ChatbotResources.Get("Dept_ErrorActive", culture), Processed = false };
 			}
 		}
 
 		private async Task<ChatbotResponse> SwitchDepartmentAsync(ChatbotIntent intent, ChatbotSession session)
 		{
+			var culture = session.Culture;
 			try
 			{
 				var departmentIdentifier = "";
 
-				// Check for department identifier in parameters
 				if (intent.Parameters != null)
 				{
 					intent.Parameters.TryGetValue("departmentIdentifier", out departmentIdentifier);
@@ -179,20 +156,11 @@ namespace Resgrid.Chatbot.Handlers
 						intent.Parameters.TryGetValue("departmentId", out departmentIdentifier);
 				}
 
-				// Try TargetDepartmentId override
 				if (string.IsNullOrWhiteSpace(departmentIdentifier) && intent.TargetDepartmentId.HasValue)
-				{
 					departmentIdentifier = intent.TargetDepartmentId.Value.ToString();
-				}
 
 				if (string.IsNullOrWhiteSpace(departmentIdentifier))
-				{
-					return new ChatbotResponse
-					{
-						Text = "Please specify the department name or number to switch to.\nType 'departments' to see your list.",
-						Processed = true
-					};
-				}
+					return new ChatbotResponse { Text = ChatbotResources.Get("Dept_SwitchSpecify", culture), Processed = true };
 
 				var allMemberRecords = await _departmentsService.GetAllDepartmentsForUserAsync(session.UserId);
 				var activeMemberships = allMemberRecords
@@ -200,31 +168,17 @@ namespace Resgrid.Chatbot.Handlers
 					.ToList();
 
 				if (activeMemberships.Count == 0)
-				{
-					return new ChatbotResponse
-					{
-						Text = "You are not a member of any department.",
-						Processed = true
-					};
-				}
+					return new ChatbotResponse { Text = ChatbotResources.Get("Dept_NoMembership", culture), Processed = true };
 
-				// Find the target membership: by number (1-based list index), by department id, or by name
 				DepartmentMember targetMembership = null;
 				var trimmedId = departmentIdentifier.Trim();
 
-				// Try as list index (1-based)
 				if (int.TryParse(trimmedId, out var listIndex) && listIndex >= 1 && listIndex <= activeMemberships.Count)
-				{
 					targetMembership = activeMemberships[listIndex - 1];
-				}
 
-				// Try as department ID
 				if (targetMembership == null && int.TryParse(trimmedId, out var deptId))
-				{
 					targetMembership = activeMemberships.FirstOrDefault(m => m.DepartmentId == deptId);
-				}
 
-				// Try as department name or code
 				if (targetMembership == null)
 				{
 					foreach (var membership in activeMemberships)
@@ -239,7 +193,6 @@ namespace Resgrid.Chatbot.Handlers
 								break;
 							}
 
-							// Partial match on name
 							if (dept.Name.IndexOf(trimmedId, StringComparison.OrdinalIgnoreCase) >= 0)
 							{
 								if (targetMembership == null)
@@ -250,28 +203,17 @@ namespace Resgrid.Chatbot.Handlers
 				}
 
 				if (targetMembership == null)
-				{
-					return new ChatbotResponse
-					{
-						Text = $"Couldn't find a department matching \"{departmentIdentifier}\".\nType 'departments' to see your list.",
-						Processed = true
-					};
-				}
+					return new ChatbotResponse { Text = ChatbotResources.Get("Dept_SwitchNotFound", culture, departmentIdentifier), Processed = true };
 
 				if (targetMembership.IsActive)
 				{
 					var dept = await _departmentsService.GetDepartmentByIdAsync(targetMembership.DepartmentId);
-					return new ChatbotResponse
-					{
-						Text = $"Your active department is already {dept?.Name ?? $"#{targetMembership.DepartmentId}"}.",
-						Processed = true
-					};
+					var name = dept?.Name ?? ChatbotResources.Get("Dept_DepartmentNum", culture, targetMembership.DepartmentId);
+					return new ChatbotResponse { Text = ChatbotResources.Get("Dept_AlreadyActive", culture, name), Processed = true };
 				}
 
-				// Get the IdentityUser for the SetActiveDepartmentForUserAsync call
 				var identityUser = _usersService.GetUserById(session.UserId);
 
-				// Switch the active department
 				var success = await _departmentsService.SetActiveDepartmentForUserAsync(
 					session.UserId,
 					targetMembership.DepartmentId,
@@ -279,27 +221,19 @@ namespace Resgrid.Chatbot.Handlers
 
 				if (success)
 				{
-					// Update session's DepartmentId so subsequent operations target the correct department
 					session.DepartmentId = targetMembership.DepartmentId;
 
 					var dept = await _departmentsService.GetDepartmentByIdAsync(targetMembership.DepartmentId);
-					return new ChatbotResponse
-					{
-						Text = $"Switched to {dept?.Name ?? $"Department #{targetMembership.DepartmentId}"}.",
-						Processed = true
-					};
+					var name = dept?.Name ?? ChatbotResources.Get("Dept_DepartmentNum", culture, targetMembership.DepartmentId);
+					return new ChatbotResponse { Text = ChatbotResources.Get("Dept_Switched", culture, name), Processed = true };
 				}
 
-				return new ChatbotResponse
-				{
-					Text = "Failed to switch departments. Please try again or contact your administrator.",
-					Processed = false
-				};
+				return new ChatbotResponse { Text = ChatbotResources.Get("Dept_SwitchFailed", culture), Processed = false };
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
-				return new ChatbotResponse { Text = "Error switching departments.", Processed = false };
+				return new ChatbotResponse { Text = ChatbotResources.Get("Dept_ErrorSwitch", culture), Processed = false };
 			}
 		}
 	}

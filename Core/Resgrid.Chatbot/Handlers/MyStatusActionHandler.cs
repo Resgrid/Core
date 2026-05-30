@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Resgrid.Chatbot.Interfaces;
+using Resgrid.Chatbot.Localization;
 using Resgrid.Chatbot.Models;
 using Resgrid.Model.Helpers;
 using Resgrid.Model.Services;
@@ -33,6 +34,7 @@ namespace Resgrid.Chatbot.Handlers
 
 		public async Task<ChatbotResponse> HandleAsync(ChatbotMessage message, ChatbotIntent intent, ChatbotSession session)
 		{
+			var culture = session.Culture;
 			try
 			{
 				var profile = await _userProfileService.GetProfileByUserIdAsync(session.UserId);
@@ -44,16 +46,19 @@ namespace Resgrid.Chatbot.Handlers
 				var customStaffing = await _customStateService.GetCustomPersonnelStaffingAsync(session.DepartmentId, userStaffing);
 
 				var timeStr = DateTime.UtcNow.TimeConverterToString(department);
-				var response = $"Hello {profile?.FullName?.AsFirstNameLastName ?? "User"} at {timeStr}.\n" +
-							   $"Status: {customStatus?.ButtonText ?? "Unknown"}\n" +
-							   $"Staffing: {customStaffing?.ButtonText ?? "Unknown"}";
+				var unknown = ChatbotResources.Get("Personnel_Unknown", culture);
+				var response = ChatbotResources.Get("MyStatus_Summary", culture,
+					profile?.FullName?.AsFirstNameLastName ?? "User",
+					timeStr,
+					customStatus?.ButtonText ?? unknown,
+					customStaffing?.ButtonText ?? unknown);
 
 				return new ChatbotResponse { Text = response, Processed = true };
 			}
 			catch (Exception ex)
 			{
 				Framework.Logging.LogException(ex);
-				return new ChatbotResponse { Text = "Error retrieving your status.", Processed = false };
+				return new ChatbotResponse { Text = ChatbotResources.Get("MyStatus_Error", culture), Processed = false };
 			}
 		}
 	}

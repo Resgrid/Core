@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Resgrid.Chatbot.Interfaces;
+using Resgrid.Chatbot.Localization;
 using Resgrid.Chatbot.Models;
 using Resgrid.Model.Services;
 
@@ -35,7 +36,7 @@ namespace Resgrid.Chatbot.Handlers
 				}
 				else
 				{
-					return new ChatbotResponse { Text = "Could not determine status to set. Text HELP for available commands.", Processed = false };
+					return new ChatbotResponse { Text = ChatbotResources.Get("Status_CouldNotDetermine", session.Culture), Processed = false };
 				}
 
 				await _actionLogsService.SetUserActionAsync(session.UserId, session.DepartmentId, statusId);
@@ -46,14 +47,14 @@ namespace Resgrid.Chatbot.Handlers
 
 				return new ChatbotResponse
 				{
-					Text = $"Status updated to: {statusName?.ButtonText ?? statusId.ToString()}",
+					Text = ChatbotResources.Get("Status_Updated", session.Culture, statusName?.ButtonText ?? statusId.ToString()),
 					Processed = true
 				};
 			}
 			catch (Exception ex)
 			{
 				Framework.Logging.LogException(ex);
-				return new ChatbotResponse { Text = "Error updating status. Please try again.", Processed = false };
+				return new ChatbotResponse { Text = ChatbotResources.Get("Status_Error", session.Culture), Processed = false };
 			}
 		}
 	}

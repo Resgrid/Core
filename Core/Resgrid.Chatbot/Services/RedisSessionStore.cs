@@ -57,7 +57,7 @@ namespace Resgrid.Chatbot.Services
 			{
 				try
 				{
-					var activeKey = ActiveKey(userId, platform);
+					var activeKey = ActiveKey(userId, departmentId, platform);
 					var existingId = await _cacheProvider.GetStringAsync(activeKey);
 					if (!string.IsNullOrWhiteSpace(existingId))
 					{
@@ -148,7 +148,7 @@ namespace Resgrid.Chatbot.Services
 					var session = await GetFromRedisAsync(sessionId);
 					await _cacheProvider.RemoveAsync(SessionKey(sessionId));
 					if (session != null)
-						await _cacheProvider.RemoveAsync(ActiveKey(session.UserId, session.Platform));
+						await _cacheProvider.RemoveAsync(ActiveKey(session.UserId, session.DepartmentId, session.Platform));
 					return;
 				}
 				catch (Exception ex)
@@ -201,7 +201,7 @@ namespace Resgrid.Chatbot.Services
 		{
 			var json = JsonConvert.SerializeObject(session);
 			await _cacheProvider.SetStringAsync(SessionKey(session.SessionId), json, Ttl);
-			await _cacheProvider.SetStringAsync(ActiveKey(session.UserId, session.Platform), session.SessionId, Ttl);
+			await _cacheProvider.SetStringAsync(ActiveKey(session.UserId, session.DepartmentId, session.Platform), session.SessionId, Ttl);
 		}
 
 		private async Task<ChatbotSession> GetFromRedisAsync(string sessionId)
@@ -235,6 +235,10 @@ namespace Resgrid.Chatbot.Services
 		}
 
 		private static string SessionKey(string sessionId) => $"{SessionKeyPrefix}{sessionId}";
-		private static string ActiveKey(string userId, ChatbotPlatform platform) => $"{ActiveKeyPrefix}{userId}:{(int)platform}";
+
+		// The active-session pointer is keyed by department as well as user/platform so a multi-department
+		// user who switches their active department gets that department's session, not a stale one. This
+		// mirrors the in-memory fallback, which matches on (userId, departmentId, platform).
+		private static string ActiveKey(string userId, int departmentId, ChatbotPlatform platform) => $"{ActiveKeyPrefix}{userId}:{departmentId}:{(int)platform}";
 	}
 }

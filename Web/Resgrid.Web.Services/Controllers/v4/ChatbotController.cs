@@ -149,7 +149,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// </summary>
 		[HttpGet("OAuthStart")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		public IActionResult OAuthStart([FromQuery] string platform)
+		public async Task<IActionResult> OAuthStart([FromQuery] string platform)
 		{
 			try
 			{
@@ -158,7 +158,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (!Enum.TryParse<ChatbotPlatform>(platform, true, out var chatbotPlatform))
 					return BadRequest(new { error = "Invalid platform. Valid values: Discord, Slack" });
 
-				var result = _oauthLinkingService.StartLink(userId, chatbotPlatform);
+				var result = await _oauthLinkingService.StartLinkAsync(userId, chatbotPlatform);
 				if (!result.Success)
 					return BadRequest(new { error = result.Message });
 

@@ -9,6 +9,7 @@ using Resgrid.Chatbot.Handlers;
 using Resgrid.Chatbot.Interfaces;
 using Resgrid.Chatbot.Models;
 using Resgrid.Chatbot.Services;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using LinkingCodeEntity = Resgrid.Model.ChatbotLinkingCode;
@@ -181,7 +182,7 @@ namespace Resgrid.Tests.Chatbot
 		[Test]
 		public async Task OAuthComplete_UnknownState_Fails()
 		{
-			var service = new OAuthLinkingService(Mock.Of<IChatbotUserIdentityService>());
+			var service = new OAuthLinkingService(Mock.Of<IChatbotUserIdentityService>(), Mock.Of<ICacheProvider>());
 
 			var result = await service.ExchangeAndLinkAsync("user-1", ChatbotPlatform.Discord, "code", "state-that-was-never-issued");
 
@@ -194,9 +195,9 @@ namespace Resgrid.Tests.Chatbot
 			ChatbotConfig.DiscordClientId = "test-client";
 			ChatbotConfig.OAuthRedirectUri = "https://example.test/callback";
 
-			var service = new OAuthLinkingService(Mock.Of<IChatbotUserIdentityService>());
+			var service = new OAuthLinkingService(Mock.Of<IChatbotUserIdentityService>(), Mock.Of<ICacheProvider>());
 
-			var start = service.StartLink("user-A", ChatbotPlatform.Discord);
+			var start = await service.StartLinkAsync("user-A", ChatbotPlatform.Discord);
 			start.Success.Should().BeTrue();
 
 			// A different authenticated user attempts to complete the link with user-A's state.

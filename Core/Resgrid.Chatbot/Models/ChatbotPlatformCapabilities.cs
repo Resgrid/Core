@@ -91,6 +91,42 @@ namespace Resgrid.Chatbot.Models
 					SupportsQuickReplies = true,
 					SupportsTypingIndicator = true,
 				},
+				ChatbotPlatform.WhatsApp => new ChatbotPlatformCapabilities
+				{
+					MaxMessageLength = 1024,
+					SupportsMarkdown = false,
+					SupportsButtons = true,
+					SupportsEmbeds = false,
+					SupportsImages = true,
+					SupportsSelectMenus = false,
+					SupportsModals = false,
+					SupportsQuickReplies = true,
+					SupportsTypingIndicator = false,
+				},
+				ChatbotPlatform.MicrosoftTeams => new ChatbotPlatformCapabilities
+				{
+					MaxMessageLength = 4000,
+					SupportsMarkdown = true,
+					SupportsButtons = true,
+					SupportsEmbeds = true,
+					SupportsImages = true,
+					SupportsSelectMenus = true,
+					SupportsModals = false,
+					SupportsQuickReplies = false,
+					SupportsTypingIndicator = true,
+				},
+				ChatbotPlatform.Signal => new ChatbotPlatformCapabilities
+				{
+					MaxMessageLength = 2000,
+					SupportsMarkdown = false,
+					SupportsButtons = false,
+					SupportsEmbeds = false,
+					SupportsImages = true,
+					SupportsSelectMenus = false,
+					SupportsModals = false,
+					SupportsQuickReplies = false,
+					SupportsTypingIndicator = false,
+				},
 				_ => new ChatbotPlatformCapabilities()
 			};
 		}

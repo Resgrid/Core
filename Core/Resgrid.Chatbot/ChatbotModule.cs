@@ -45,6 +45,17 @@ namespace Resgrid.Chatbot
 				.As<IChatbotDepartmentConfigService>()
 				.InstancePerLifetimeScope();
 
+			builder.RegisterType<ChatbotUserSearchService>()
+				.As<IChatbotUserSearchService>()
+				.InstancePerLifetimeScope();
+
+			// Default no-op Web Chat notifier; the real SignalR-backed notifier in the web layer
+			// overrides this (PreserveExistingDefaults keeps the real one winning regardless of order).
+			builder.RegisterType<NullChatbotWebChatNotifier>()
+				.As<IChatbotWebChatNotifier>()
+				.SingleInstance()
+				.PreserveExistingDefaults();
+
 			builder.RegisterType<ChatbotRateLimiter>()
 				.As<IChatbotRateLimiter>()
 				.SingleInstance();
@@ -79,7 +90,23 @@ namespace Resgrid.Chatbot
 				.As<IChatbotActionHandler>()
 				.InstancePerLifetimeScope();
 
+			builder.RegisterType<CloseCallHandler>()
+				.As<IChatbotActionHandler>()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<DispatchCallHandler>()
+				.As<IChatbotActionHandler>()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<RespondToCallHandler>()
+				.As<IChatbotActionHandler>()
+				.InstancePerLifetimeScope();
+
 			builder.RegisterType<UnitsActionHandler>()
+				.As<IChatbotActionHandler>()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<SetUnitStatusHandler>()
 				.As<IChatbotActionHandler>()
 				.InstancePerLifetimeScope();
 
@@ -91,7 +118,35 @@ namespace Resgrid.Chatbot
 				.As<IChatbotActionHandler>()
 				.InstancePerLifetimeScope();
 
+			builder.RegisterType<MessageReadHandler>()
+				.As<IChatbotActionHandler>()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<MessageDeleteHandler>()
+				.As<IChatbotActionHandler>()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<MessageRespondHandler>()
+				.As<IChatbotActionHandler>()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<MessageSendHandler>()
+				.As<IChatbotActionHandler>()
+				.InstancePerLifetimeScope();
+
 			builder.RegisterType<CalendarActionHandler>()
+				.As<IChatbotActionHandler>()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<CalendarRsvpHandler>()
+				.As<IChatbotActionHandler>()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<ShiftSignupHandler>()
+				.As<IChatbotActionHandler>()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<ShiftDropHandler>()
 				.As<IChatbotActionHandler>()
 				.InstancePerLifetimeScope();
 
@@ -104,6 +159,10 @@ namespace Resgrid.Chatbot
 				.InstancePerLifetimeScope();
 
 			builder.RegisterType<DepartmentActionHandler>()
+				.As<IChatbotActionHandler>()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<WeatherAlertHandler>()
 				.As<IChatbotActionHandler>()
 				.InstancePerLifetimeScope();
 		}

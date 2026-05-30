@@ -1,6 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using Resgrid.Chatbot.Interfaces;
+using Resgrid.Chatbot.Localization;
 using Resgrid.Chatbot.Models;
 using Resgrid.Model.Services;
 
@@ -35,7 +36,7 @@ namespace Resgrid.Chatbot.Handlers
 				}
 				else
 				{
-					return new ChatbotResponse { Text = "Could not determine staffing level to set. Text HELP for available commands.", Processed = false };
+					return new ChatbotResponse { Text = ChatbotResources.Get("Staffing_CouldNotDetermine", session.Culture), Processed = false };
 				}
 
 				await _userStateService.CreateUserState(session.UserId, session.DepartmentId, staffingId);
@@ -45,14 +46,14 @@ namespace Resgrid.Chatbot.Handlers
 
 				return new ChatbotResponse
 				{
-					Text = $"Staffing level updated to: {staffingName?.ButtonText ?? staffingId.ToString()}",
+					Text = ChatbotResources.Get("Staffing_Updated", session.Culture, staffingName?.ButtonText ?? staffingId.ToString()),
 					Processed = true
 				};
 			}
 			catch (Exception ex)
 			{
 				Framework.Logging.LogException(ex);
-				return new ChatbotResponse { Text = "Error updating staffing. Please try again.", Processed = false };
+				return new ChatbotResponse { Text = ChatbotResources.Get("Staffing_Error", session.Culture), Processed = false };
 			}
 		}
 	}

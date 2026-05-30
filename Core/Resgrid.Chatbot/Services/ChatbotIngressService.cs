@@ -153,17 +153,25 @@ namespace Resgrid.Chatbot.Services
 				}
 
 				// 3d. Rate limiting using the department's limits (or system defaults). Emergency/distress
-				// messages are exempt so a mayday is never throttled.
-				if (!IsEmergencyText(message.Text))
+				// messages (mayday, etc.) get a far more generous allowance so a real human in distress is
+				// never throttled at any plausible texting speed, but they are NOT fully exempt: a fully-open
+				// bypass lets a compromised/abusive account flood the pipeline (each message can trigger a
+				// paid cloud NLU call) just by including an emergency keyword. A configured limit of 0 means
+				// "unlimited", so emergencies stay unlimited in that case too.
+				var perUserLimit = deptConfig?.MessagesPerUserPerMinute ?? ChatbotConfig.MessagesPerUserPerMinute;
+				var perDeptLimit = deptConfig?.MessagesPerDepartmentPerMinute ?? ChatbotConfig.MessagesPerDepartmentPerMinute;
+				if (IsEmergencyText(message.Text))
 				{
-					var perUserLimit = deptConfig?.MessagesPerUserPerMinute ?? ChatbotConfig.MessagesPerUserPerMinute;
-					var perDeptLimit = deptConfig?.MessagesPerDepartmentPerMinute ?? ChatbotConfig.MessagesPerDepartmentPerMinute;
-					if (!await _rateLimiter.TryAcquireAsync(identity.UserId, department.DepartmentId, perUserLimit, perDeptLimit))
-					{
-						return await _templateRenderer.RenderResponseAsync("error",
-							new Services.ErrorModel { Message = "You're sending messages too quickly. Please wait a moment and try again." },
-							message.Platform, new ChatbotIntent { Type = ChatbotIntentType.Unknown });
-					}
+					const int emergencyMultiplier = 10;
+					perUserLimit = perUserLimit <= 0 ? 0 : perUserLimit * emergencyMultiplier;
+					perDeptLimit = perDeptLimit <= 0 ? 0 : perDeptLimit * emergencyMultiplier;
+				}
+
+				if (!await _rateLimiter.TryAcquireAsync(identity.UserId, department.DepartmentId, perUserLimit, perDeptLimit))
+				{
+					return await _templateRenderer.RenderResponseAsync("error",
+						new Services.ErrorModel { Message = "You're sending messages too quickly. Please wait a moment and try again." },
+						message.Platform, new ChatbotIntent { Type = ChatbotIntentType.Unknown });
 				}
 
 				// 4. Get or create session
@@ -173,12 +181,62 @@ namespace Resgrid.Chatbot.Services
 					message.Platform,
 					message.From);
 
+				// Resolve the user's preferred language once per session so responses are localized
+				// (UserProfile.Language → supported culture; unknown/none falls back to English).
+				if (string.IsNullOrWhiteSpace(session.Culture))
+				{
+					var cultureProfile = await _userProfileService.GetProfileByUserIdAsync(identity.UserId);
+					session.Culture = Localization.ChatbotResources.NormalizeCulture(cultureProfile?.Language);
+				}
+
 				// Add message to session history
 				session.RecentMessages.Add(message);
 				if (session.RecentMessages.Count > 20)
 					session.RecentMessages.RemoveAt(0);
 
 				// 5. Handle session state machine via ConversationEngine (Phase 2)
+
+				// 5a. Confirmation of a destructive action (CloseCall, DispatchCall, SetUnitStatus, ...).
+				// The owning handler parked the session in AwaitingConfirmation with PendingIntent set and
+				// its parameters stashed in Context. On YES we re-dispatch to that handler with a
+				// "__confirmed" marker so it actually executes (re-checking authz/ownership); on NO we
+				// cancel. This is the real confirmation gate required by the security addendum §5.
+				if (session.State == ChatbotDialogState.AwaitingConfirmation && session.PendingIntent.HasValue)
+				{
+					var reply = message.Text?.Trim().ToUpperInvariant();
+					if (reply == "YES" || reply == "Y" || reply == "CONFIRM" || reply == "OK")
+					{
+						var pendingType = session.PendingIntent.Value;
+						var confirmedIntent = new ChatbotIntent
+						{
+							Type = pendingType,
+							Parameters = new Dictionary<string, string>(session.Context) { ["__confirmed"] = "true" }
+						};
+						session.State = ChatbotDialogState.Idle;
+						session.PendingIntent = null;
+
+						var confirmHandler = _actionHandlers.FirstOrDefault(h => h.CanHandle(pendingType));
+						if (confirmHandler != null)
+						{
+							var confirmResponse = await confirmHandler.HandleAsync(message, confirmedIntent, session);
+							confirmResponse.Intent = confirmedIntent;
+							session.Context.Clear();
+							await _sessionManager.SaveSessionAsync(session);
+							return confirmResponse;
+						}
+					}
+					else if (reply == "NO" || reply == "N" || reply == "CANCEL")
+					{
+						session.Reset();
+						await _sessionManager.SaveSessionAsync(session);
+						return new ChatbotResponse { Text = "Cancelled.", Processed = true };
+					}
+					else
+					{
+						return new ChatbotResponse { Text = "Please reply YES to confirm or NO to cancel.", Processed = true };
+					}
+				}
+
 				if (session.State != ChatbotDialogState.Idle)
 				{
 					var continuationResult = await _conversationEngine.HandleContinuationAsync(message, session);
@@ -291,7 +349,11 @@ namespace Resgrid.Chatbot.Services
 		/// </summary>
 		private async Task<ChatbotResponse> HandlePhoneLinkConfirmationAsync(ChatbotMessage message, Model.UserProfile profile, Model.Department department)
 		{
-			var session = await _sessionManager.GetOrCreateSessionAsync(profile.UserId, department.DepartmentId, message.Platform, message.From);
+			// A matched profile may have no active department membership, in which case the caller
+			// passes a null department. The phone-link confirmation only tracks trust of the number
+			// (linking doesn't depend on a department), so fall back to department id 0 for the
+			// temporary session rather than dereferencing a null department.
+			var session = await _sessionManager.GetOrCreateSessionAsync(profile.UserId, department?.DepartmentId ?? 0, message.Platform, message.From);
 
 			var awaitingConfirmation = session.State == ChatbotDialogState.AwaitingConfirmation
 				&& session.Context != null

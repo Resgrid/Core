@@ -9,6 +9,7 @@ using Resgrid.Chatbot.Config;
 using Resgrid.Chatbot.Interfaces;
 using Resgrid.Chatbot.Models;
 using Resgrid.Framework;
+using Resgrid.Model.Providers;
 
 namespace Resgrid.Chatbot.Services
 {
@@ -21,23 +22,48 @@ namespace Resgrid.Chatbot.Services
 	/// </summary>
 	public class OAuthLinkingService
 	{
+		private const string StateKeyPrefix = "Chatbot:OAuthState:";
+		private static readonly TimeSpan StateTtl = TimeSpan.FromMinutes(10);
+
 		private static readonly HttpClient _http = new HttpClient();
 
-		// CSRF state -> initiating user/platform. In-memory; states are short-lived and single-use.
+		// CSRF state -> initiating user/platform. Stored in Redis (shared across instances, expires via
+		// key TTL) when the cache is connected, so the OAuth callback can land on a different web node
+		// than the one that started the link. Falls back to this in-memory map for single-instance or
+		// when Redis is unavailable; states are short-lived and single-use either way.
 		private static readonly ConcurrentDictionary<string, OAuthState> _states = new();
 
 		private readonly IChatbotUserIdentityService _userIdentityService;
+		private readonly ICacheProvider _cacheProvider;
 
-		public OAuthLinkingService(IChatbotUserIdentityService userIdentityService)
+		public OAuthLinkingService(IChatbotUserIdentityService userIdentityService, ICacheProvider cacheProvider)
 		{
 			_userIdentityService = userIdentityService;
+			_cacheProvider = cacheProvider;
 		}
+
+		private bool UseRedis()
+		{
+			if (_cacheProvider == null)
+				return false;
+
+			try
+			{
+				return _cacheProvider.IsConnected();
+			}
+			catch
+			{
+				return false;
+			}
+		}
+
+		private static string StateKey(string state) => $"{StateKeyPrefix}{state}";
 
 		/// <summary>
 		/// Begins an OAuth link: generates a CSRF state bound to the user and returns the platform
 		/// authorize URL the user should be redirected to.
 		/// </summary>
-		public OAuthStartResult StartLink(string resgridUserId, ChatbotPlatform platform)
+		public async Task<OAuthStartResult> StartLinkAsync(string resgridUserId, ChatbotPlatform platform)
 		{
 			if (string.IsNullOrWhiteSpace(resgridUserId))
 				return OAuthStartResult.Fail("Missing user.");
@@ -49,10 +75,26 @@ namespace Resgrid.Chatbot.Services
 			if (string.IsNullOrWhiteSpace(clientId) || string.IsNullOrWhiteSpace(ChatbotConfig.OAuthRedirectUri))
 				return OAuthStartResult.Fail("OAuth is not configured for this platform.");
 
-			PurgeExpiredStates();
-
 			var state = GenerateState();
-			_states[state] = new OAuthState { UserId = resgridUserId, Platform = platform, CreatedAt = DateTime.UtcNow };
+			var oauthState = new OAuthState { UserId = resgridUserId, Platform = platform, CreatedAt = DateTime.UtcNow };
+
+			if (UseRedis())
+			{
+				try
+				{
+					await _cacheProvider.SetStringAsync(StateKey(state), JsonSerializer.Serialize(oauthState), StateTtl);
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+					_states[state] = oauthState; // fall back to in-memory on a transient cache error
+				}
+			}
+			else
+			{
+				PurgeExpiredStates();
+				_states[state] = oauthState;
+			}
 
 			var redirect = Uri.EscapeDataString(ChatbotConfig.OAuthRedirectUri);
 			var url = platform == ChatbotPlatform.Discord
@@ -71,8 +113,31 @@ namespace Resgrid.Chatbot.Services
 			if (string.IsNullOrWhiteSpace(resgridUserId) || string.IsNullOrWhiteSpace(code) || string.IsNullOrWhiteSpace(state))
 				return LinkResult.Fail("Missing required parameters.");
 
-			// Validate and consume the CSRF state.
-			if (!_states.TryRemove(state, out var stored))
+			// Validate and consume (single-use) the CSRF state. Prefer the shared Redis copy so the
+			// callback works even when it lands on a different web node than StartLink; fall back to the
+			// in-memory map (covers single-instance and states written during a transient Redis outage).
+			OAuthState stored = null;
+			if (UseRedis())
+			{
+				try
+				{
+					var json = await _cacheProvider.GetStringAsync(StateKey(state));
+					if (!string.IsNullOrWhiteSpace(json))
+					{
+						stored = JsonSerializer.Deserialize<OAuthState>(json);
+						await _cacheProvider.RemoveAsync(StateKey(state));
+					}
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+				}
+			}
+
+			if (stored == null)
+				_states.TryRemove(state, out stored);
+
+			if (stored == null)
 				return LinkResult.Fail("Invalid or expired linking request. Please start again.");
 
 			if (DateTime.UtcNow > stored.CreatedAt.AddMinutes(10))

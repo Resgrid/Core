@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Resgrid.Chatbot.Interfaces;
+using Resgrid.Chatbot.Localization;
 using Resgrid.Chatbot.Models;
 using Resgrid.Framework;
 using Resgrid.Model.Helpers;
@@ -33,28 +34,24 @@ namespace Resgrid.Chatbot.Handlers
 
 		public async Task<ChatbotResponse> HandleAsync(ChatbotMessage message, ChatbotIntent intent, ChatbotSession session)
 		{
+			var culture = session.Culture;
 			try
 			{
 				var department = await _departmentsService.GetDepartmentByIdAsync(session.DepartmentId);
+				var departmentName = department?.Name ?? ChatbotResources.Get("Common_YourDepartment", culture);
 				var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(session.DepartmentId);
 
 				if (activeCalls == null || !activeCalls.Any())
-				{
-					return new ChatbotResponse
-					{
-						Text = $"No active calls for {department?.Name ?? "your department"}.",
-						Processed = true
-					};
-				}
+					return new ChatbotResponse { Text = ChatbotResources.Get("Calls_NoActive", culture, departmentName), Processed = true };
 
 				var callList = activeCalls.Take(10).ToList();
 				var sb = new StringBuilder();
-				sb.AppendLine($"Active Calls for {department?.Name}:");
+				sb.AppendLine(ChatbotResources.Get("Calls_Header", culture, departmentName));
 				sb.AppendLine("----------------------");
 
 				foreach (var call in callList)
 				{
-					sb.AppendLine($"Call#{call.CallId} {call.Name?.Truncate(25)} - {call.NatureOfCall?.Truncate(40)}");
+					sb.AppendLine(ChatbotResources.Get("Calls_Line", culture, call.CallId, call.Name?.Truncate(25), call.NatureOfCall?.Truncate(40)));
 				}
 
 				return new ChatbotResponse { Text = sb.ToString(), Processed = true };
@@ -62,7 +59,7 @@ namespace Resgrid.Chatbot.Handlers
 			catch (Exception ex)
 			{
 				Framework.Logging.LogException(ex);
-				return new ChatbotResponse { Text = "Error retrieving calls. Please try again.", Processed = false };
+				return new ChatbotResponse { Text = ChatbotResources.Get("Calls_Error", culture), Processed = false };
 			}
 		}
 	}

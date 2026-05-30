@@ -27,6 +27,7 @@ namespace Resgrid.Tests.Services
 			protected Mock<ISubscriptionsService> _subscriptionsServiceMock;
 			protected Mock<IUserStateService> _userStateServiceMock;
 			protected Mock<IDepartmentsService> _departmentsServiceMock;
+			protected Mock<IChatbotOutboundService> _chatbotOutboundServiceMock;
 
 			protected ICommunicationService _communicationService;
 
@@ -51,6 +52,11 @@ namespace Resgrid.Tests.Services
 				_communicationService = new CommunicationService(_smsServiceMock.Object, _emailServiceMock.Object, _pushServiceMock.Object,
 					_geoLocationProviderMock.Object, _outboundVoiceProviderMock.Object, _userProfileServiceMock.Object, _departmentSettingsServiceMock.Object,
 					_subscriptionsServiceMock.Object, _userStateServiceMock.Object, _departmentsServiceMock.Object);
+				_chatbotOutboundServiceMock = new Mock<IChatbotOutboundService>();
+
+				_communicationService = new CommunicationService(_smsServiceMock.Object, _emailServiceMock.Object, _pushServiceMock.Object,
+					_geoLocationProviderMock.Object, _outboundVoiceProviderMock.Object, _userProfileServiceMock.Object, _departmentSettingsServiceMock.Object,
+					_subscriptionsServiceMock.Object, _userStateServiceMock.Object, _chatbotOutboundServiceMock.Object);
 			}
 		}
 

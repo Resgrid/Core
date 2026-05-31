@@ -49,14 +49,11 @@ namespace Resgrid.Tests.Services
 					.Setup(x => x.GetDepartmentMemberAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<bool>()))
 					.ReturnsAsync(new DepartmentMember());
 
-				_communicationService = new CommunicationService(_smsServiceMock.Object, _emailServiceMock.Object, _pushServiceMock.Object,
-					_geoLocationProviderMock.Object, _outboundVoiceProviderMock.Object, _userProfileServiceMock.Object, _departmentSettingsServiceMock.Object,
-					_subscriptionsServiceMock.Object, _userStateServiceMock.Object, _departmentsServiceMock.Object);
 				_chatbotOutboundServiceMock = new Mock<IChatbotOutboundService>();
 
 				_communicationService = new CommunicationService(_smsServiceMock.Object, _emailServiceMock.Object, _pushServiceMock.Object,
 					_geoLocationProviderMock.Object, _outboundVoiceProviderMock.Object, _userProfileServiceMock.Object, _departmentSettingsServiceMock.Object,
-					_subscriptionsServiceMock.Object, _userStateServiceMock.Object, _chatbotOutboundServiceMock.Object);
+					_subscriptionsServiceMock.Object, _userStateServiceMock.Object, _chatbotOutboundServiceMock.Object, _departmentsServiceMock.Object);
 			}
 		}
 

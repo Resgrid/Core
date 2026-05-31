@@ -676,6 +676,7 @@
   </data>
   <data name="ChatbotSaveError" xml:space="preserve">
     <value>Wystąpił błąd podczas zapisywania ustawień chatbota.</value>
+  </data>
   <data name="EnableModernNotifications" xml:space="preserve">
     <value>Enable Modern Notifications</value>
   </data>

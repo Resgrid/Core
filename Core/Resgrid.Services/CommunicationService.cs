@@ -24,6 +24,7 @@ namespace Resgrid.Services
 		private readonly ISubscriptionsService _subscriptionsService;
 		private readonly IUserStateService _userStateService;
 		private readonly IChatbotOutboundService _chatbotOutboundService;
+		private readonly IDepartmentsService _departmentsService;
 
 		public CommunicationService(ISmsService smsService, IEmailService emailService, IPushService pushService, IGeoLocationProvider geoLocationProvider,
 			IOutboundVoiceProvider outboundVoiceProvider, IUserProfileService userProfileService, IDepartmentSettingsService departmentSettingsService,

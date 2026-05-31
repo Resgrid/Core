@@ -160,6 +160,9 @@
 		WeatherAlertZoneDeleted,
 		WeatherAlertZoneEnabled,
 		WeatherAlertZoneDisabled,
-		WeatherAlertSettingsChanged
+		WeatherAlertSettingsChanged,
+		// Feature Toggles
+		FeatureFlagChanged,
+		FeatureFlagOverrideChanged
 	}
 }

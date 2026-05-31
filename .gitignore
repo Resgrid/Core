@@ -273,10 +273,7 @@ Web/Resgrid.WebCore/wwwroot/lib/*
 /Web/Resgrid.Web/wwwroot/lib
 .dual-graph/
 .claude/settings.local.json
-.claude/settings.local.json
 /Web/Resgrid.Web/wwwroot/js/ng/chunks
 opencode.json
-.claude/settings.local.json
-/.dual-graph-pro
-.claude/settings.local.json
+.dual-graph-pro/
 .mcp.json

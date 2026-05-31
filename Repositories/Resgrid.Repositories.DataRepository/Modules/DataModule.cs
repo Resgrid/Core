@@ -218,6 +218,11 @@ namespace Resgrid.Repositories.DataRepository
 
 			// GDPR Repositories
 			builder.RegisterType<GdprDataExportRequestRepository>().As<IGdprDataExportRequestRepository>().InstancePerLifetimeScope();
+
+			// Chatbot Repositories
+			builder.RegisterType<ChatbotIdentityRepository>().As<IChatbotIdentityRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ChatbotLinkingCodeRepository>().As<IChatbotLinkingCodeRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ChatbotDepartmentConfigRepository>().As<IChatbotDepartmentConfigRepository>().InstancePerLifetimeScope();
 		}
 	}
 }

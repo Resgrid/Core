@@ -1,0 +1,160 @@
+@model Resgrid.Web.Areas.User.Models.ChatbotSettingsModel
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> localizer
+@{
+    ViewBag.Title = "Resgrid | " + @localizer["ChatbotSettingsHeader"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-4">
+        <h2>@localizer["ChatbotSettingsHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Department" asp-action="Settings" asp-route-area="User">@localizer["DepartmentSettingsHeader"]</a>
+            </li>
+            <li class="active">
+                <strong>@localizer["ChatbotSettingsNav"]</strong>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<form role="form" class="form-horizontal" asp-controller="ChatbotSettings" asp-action="Index" asp-route-area="User" method="post">
+    <div class="row">
+        <div class="col-sm-8">
+            <div class="wrapper wrapper-content">
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>@localizer["ChatbotConfiguration"]</h5>
+                    </div>
+                    <div class="ibox-content">
+
+                        @Html.AntiForgeryToken()
+
+                        @if (Model.Saved == true)
+                        {
+                            <div class="alert alert-success">@localizer["ChatbotSaved"]</div>
+                        }
+                        else if (Model.Saved == false)
+                        {
+                            <div class="alert alert-danger">@localizer["ChatbotSaveError"]</div>
+                        }
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["ChatbotEnable"]</label>
+                            <div class="col-sm-9">
+                                <input type="checkbox" asp-for="IsEnabled">
+                                <span class="help-block m-b-none">@localizer["ChatbotEnableHelp"]</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["ChatbotAllowedPlatforms"]</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" asp-for="AllowedPlatforms" placeholder="*">
+                                <span class="help-block m-b-none">@localizer["ChatbotAllowedPlatformsHelp"]</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["ChatbotAllowDispatch"]</label>
+                            <div class="col-sm-9">
+                                <input type="checkbox" asp-for="AllowDispatchViaChatbot">
+                                <span class="help-block m-b-none">@localizer["ChatbotAllowDispatchHelp"]</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["ChatbotConfirmStatusChanges"]</label>
+                            <div class="col-sm-9">
+                                <input type="checkbox" asp-for="RequireConfirmationForStatusChange">
+                                <span class="help-block m-b-none">@localizer["ChatbotConfirmStatusChangesHelp"]</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["ChatbotConfirmPhoneLinking"]</label>
+                            <div class="col-sm-9">
+                                <input type="checkbox" asp-for="RequireLinkingConfirmation">
+                                <span class="help-block m-b-none">@localizer["ChatbotConfirmPhoneLinkingHelp"]</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["ChatbotProactiveNotifications"]</label>
+                            <div class="col-sm-9">
+                                <input type="checkbox" asp-for="ProactiveNotificationsEnabled">
+                                <span class="help-block m-b-none">@localizer["ChatbotProactiveNotificationsHelp"]</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["ChatbotMessagesPerUser"]</label>
+                            <div class="col-sm-9">
+                                <input type="number" min="0" class="form-control" asp-for="MessagesPerUserPerMinute">
+                                <span class="help-block m-b-none">@localizer["ChatbotMessagesPerUserHelp"]</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["ChatbotMessagesPerDept"]</label>
+                            <div class="col-sm-9">
+                                <input type="number" min="0" class="form-control" asp-for="MessagesPerDepartmentPerMinute">
+                                <span class="help-block m-b-none">@localizer["ChatbotMessagesPerDeptHelp"]</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ibox float-e-margins">
+                    <div class="ibox-title">
+                        <h5>@localizer["ChatbotLlmHeader"]</h5>
+                    </div>
+                    <div class="ibox-content">
+                        <p class="text-muted">@localizer["ChatbotLlmIntro"]</p>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["ChatbotLlmEndpoint"]</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" asp-for="LlmApiEndpoint" placeholder="https://api.your-provider.com/v1/chat/completions">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["ChatbotLlmModel"]</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" asp-for="LlmModelName" placeholder="gpt-4o, deepseek-chat, ...">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">@localizer["ChatbotLlmApiKey"]</label>
+                            <div class="col-sm-9">
+                                <input type="password" class="form-control" asp-for="LlmApiKey" autocomplete="new-password">
+                                <span class="help-block m-b-none">
+                                    @if (Model.HasLlmApiKey)
+                                    {
+                                        <span>@localizer["ChatbotLlmApiKeyHelpHasKey"]</span>
+                                    }
+                                    else
+                                    {
+                                        <span>@localizer["ChatbotLlmApiKeyHelpNoKey"]</span>
+                                    }
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-sm-9 col-sm-offset-3">
+                                <button class="btn btn-primary" type="submit">@localizer["ChatbotSave"]</button>
+                                <a class="btn btn-white" asp-controller="Department" asp-action="Settings" asp-route-area="User">@localizer["ChatbotCancel"]</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>

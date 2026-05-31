@@ -505,6 +505,12 @@ namespace Resgrid.Web
 			builder.RegisterModule(new Resgrid.Providers.Workflow.WorkflowProviderModule());
 			builder.RegisterModule(new Resgrid.Providers.Weather.WeatherProviderModule());
 
+			// Chatbot per-department configuration service (its repository, cache and encryption deps
+			// are provided by DataModule / CacheProviderModule / ServicesModule above).
+			builder.RegisterType<Resgrid.Chatbot.Services.ChatbotDepartmentConfigService>()
+				.As<Resgrid.Chatbot.Interfaces.IChatbotDepartmentConfigService>()
+				.InstancePerLifetimeScope();
+
 			builder.RegisterType<IdentityUserStore>().As<IUserStore<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
 			builder.RegisterType<IdentityRoleStore>().As<IRoleStore<Model.Identity.IdentityRole>>().InstancePerLifetimeScope();
 			builder.RegisterType<ClaimsPrincipalFactory<Model.Identity.IdentityUser, Model.Identity.IdentityRole>>().As<IUserClaimsPrincipalFactory<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();

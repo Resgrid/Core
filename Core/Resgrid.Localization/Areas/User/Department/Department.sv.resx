@@ -587,6 +587,96 @@
   <data name="CheckInTimerSaveGeneral" xml:space="preserve">
     <value>Spara Allmänna Inställningar</value>
   </data>
+  <data name="ChatbotSettingsHeader" xml:space="preserve">
+    <value>Chatbot-inställningar</value>
+  </data>
+  <data name="ChatbotSettingsNav" xml:space="preserve">
+    <value>Chatbot</value>
+  </data>
+  <data name="ChatbotConfiguration" xml:space="preserve">
+    <value>Chatbot-konfiguration</value>
+  </data>
+  <data name="ChatbotEnable" xml:space="preserve">
+    <value>Aktivera chatbot</value>
+  </data>
+  <data name="ChatbotEnableHelp" xml:space="preserve">
+    <value>Tillåt medlemmar i denna avdelning att interagera med chatboten.</value>
+  </data>
+  <data name="ChatbotAllowedPlatforms" xml:space="preserve">
+    <value>Tillåtna plattformar</value>
+  </data>
+  <data name="ChatbotAllowedPlatformsHelp" xml:space="preserve">
+    <value>Kommaseparerade plattformsnamn som denna avdelning tillåter, eller * för alla. Giltiga namn: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, Teams, Signal, WebChat.</value>
+  </data>
+  <data name="ChatbotAllowDispatch" xml:space="preserve">
+    <value>Tillåt utlarmning via chatboten</value>
+  </data>
+  <data name="ChatbotAllowDispatchHelp" xml:space="preserve">
+    <value>Tillåt behöriga användare att skapa eller larma ut ärenden via chatboten.</value>
+  </data>
+  <data name="ChatbotConfirmStatusChanges" xml:space="preserve">
+    <value>Bekräfta statusändringar</value>
+  </data>
+  <data name="ChatbotConfirmStatusChangesHelp" xml:space="preserve">
+    <value>Kräv en uttrycklig bekräftelse före destruktiva eller statusändrande åtgärder.</value>
+  </data>
+  <data name="ChatbotConfirmPhoneLinking" xml:space="preserve">
+    <value>Bekräfta telefonkoppling</value>
+  </data>
+  <data name="ChatbotConfirmPhoneLinkingHelp" xml:space="preserve">
+    <value>Kräv en engångsbekräftelse ”Svara YES” innan ett SMS-nummer kopplas till ett matchande konto.</value>
+  </data>
+  <data name="ChatbotProactiveNotifications" xml:space="preserve">
+    <value>Proaktiva aviseringar</value>
+  </data>
+  <data name="ChatbotProactiveNotificationsHelp" xml:space="preserve">
+    <value>Tillåt chatboten att skicka proaktiva aviseringar (ärenden, påminnelser) till kopplade användare.</value>
+  </data>
+  <data name="ChatbotMessagesPerUser" xml:space="preserve">
+    <value>Meddelanden / användare / minut</value>
+  </data>
+  <data name="ChatbotMessagesPerUserHelp" xml:space="preserve">
+    <value>Gräns per användare. Lämna tomt för att använda systemets standardvärde.</value>
+  </data>
+  <data name="ChatbotMessagesPerDept" xml:space="preserve">
+    <value>Meddelanden / avdelning / minut</value>
+  </data>
+  <data name="ChatbotMessagesPerDeptHelp" xml:space="preserve">
+    <value>Gräns per avdelning. Lämna tomt för att använda systemets standardvärde.</value>
+  </data>
+  <data name="ChatbotLlmHeader" xml:space="preserve">
+    <value>Avdelningens AI-/LLM-leverantör (valfritt)</value>
+  </data>
+  <data name="ChatbotLlmIntro" xml:space="preserve">
+    <value>Lämna dessa tomma för att använda Resgrids system-AI-leverantör. För att behålla din chatbots bearbetning hos din egen leverantör, ange en OpenAI-kompatibel slutpunkt, modell och API-nyckel.</value>
+  </data>
+  <data name="ChatbotLlmEndpoint" xml:space="preserve">
+    <value>LLM-slutpunkt</value>
+  </data>
+  <data name="ChatbotLlmModel" xml:space="preserve">
+    <value>LLM-modell</value>
+  </data>
+  <data name="ChatbotLlmApiKey" xml:space="preserve">
+    <value>LLM-API-nyckel</value>
+  </data>
+  <data name="ChatbotLlmApiKeyHelpHasKey" xml:space="preserve">
+    <value>En nyckel är för närvarande lagrad. Lämna tomt för att behålla den, eller ange ett nytt värde för att ersätta den.</value>
+  </data>
+  <data name="ChatbotLlmApiKeyHelpNoKey" xml:space="preserve">
+    <value>Ingen nyckel lagrad. Nyckeln krypteras i vila och visas aldrig.</value>
+  </data>
+  <data name="ChatbotSave" xml:space="preserve">
+    <value>Spara</value>
+  </data>
+  <data name="ChatbotCancel" xml:space="preserve">
+    <value>Avbryt</value>
+  </data>
+  <data name="ChatbotSaved" xml:space="preserve">
+    <value>Chatbot-inställningarna sparades.</value>
+  </data>
+  <data name="ChatbotSaveError" xml:space="preserve">
+    <value>Ett fel uppstod när dina chatbot-inställningar skulle sparas.</value>
+  </data>
   <data name="EnableModernNotifications" xml:space="preserve">
     <value>Enable Modern Notifications</value>
   </data>

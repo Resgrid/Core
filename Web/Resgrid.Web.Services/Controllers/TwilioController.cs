@@ -153,6 +153,11 @@ namespace Resgrid.Web.Services.Controllers
 					}
 				}
 
+				// Carry the resolved department onto the inbound message event so chatbot-routed events
+				// retain the same department context the text-command path records.
+				if (departmentId.HasValue)
+					messageEvent.CustomerId = departmentId.Value.ToString();
+
 				// Feature-flagged rollout: the chatbot ingress is the new path. When the flag is off
 				// (globally or for this department) fall back to the original text-command handling so
 				// existing behavior is preserved.
@@ -443,6 +448,14 @@ namespace Resgrid.Web.Services.Controllers
 
 									var call = await _callsService.GetCallByIdAsync(int.Parse(payload.Data));
 
+									// Guard against a missing call (NRE) and against reading a call that belongs
+									// to another department (cross-department data leakage).
+									if (call == null || call.DepartmentId != department.DepartmentId)
+									{
+										response.Message("Resgrid could not find that call.");
+										break;
+									}
+
 									var callText = new StringBuilder();
 									callText.Append($"Call Information for {call.Name}" + Environment.NewLine);
 									callText.Append("---------------------" + Environment.NewLine);
@@ -505,6 +518,13 @@ namespace Resgrid.Web.Services.Controllers
 						break;
 					case TextCommandTypes.Stop:
 						messageEvent.Processed = true;
+
+						if (profile == null)
+						{
+							response.Message("Unable to locate your profile. Please log in to Resgrid to manage your text message settings.");
+							break;
+						}
+
 						await _userProfileService.DisableTextMessagesForUserAsync(profile.UserId);
 						response.Message("Text messages are now turned off for this user, to enable again log in to Resgrid and update your profile.");
 						break;

@@ -8,6 +8,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NUnit.Framework;
+using Resgrid.Chatbot.Interfaces;
 using Resgrid.Model;
 using Resgrid.Model.Helpers;
 using Resgrid.Model.Providers;
@@ -43,6 +44,7 @@ namespace Resgrid.Tests.Web.Services
 		private Mock<ICommunicationTestService> _communicationTestServiceMock;
 		private Mock<IEncryptionService> _encryptionServiceMock;
 		private Mock<ITwilioVoiceResponseService> _twilioVoiceResponseServiceMock;
+		private Mock<IChatbotIngressService> _chatbotIngressServiceMock;
 
 		protected override void Before_all_tests()
 		{
@@ -65,6 +67,7 @@ namespace Resgrid.Tests.Web.Services
 			_calendarServiceMock = new Mock<ICalendarService>();
 			_communicationTestServiceMock = new Mock<ICommunicationTestService>();
 			_encryptionServiceMock = new Mock<IEncryptionService>();
+			_chatbotIngressServiceMock = new Mock<IChatbotIngressService>();
 			_twilioVoiceResponseServiceMock = new Mock<ITwilioVoiceResponseService>();
 			_departmentSettingsServiceMock.Setup(x => x.GetTtsLanguageForDepartmentAsync(It.IsAny<int>())).ReturnsAsync((string)null);
 			_twilioVoiceResponseServiceMock
@@ -144,7 +147,8 @@ namespace Resgrid.Tests.Web.Services
 				_calendarServiceMock.Object,
 				_communicationTestServiceMock.Object,
 				_encryptionServiceMock.Object,
-				_twilioVoiceResponseServiceMock.Object);
+				_twilioVoiceResponseServiceMock.Object,
+				_chatbotIngressServiceMock.Object);
 		}
 
 		private static string InvokeBuildDispatchPrompt(Type controllerType, Call call, string address)

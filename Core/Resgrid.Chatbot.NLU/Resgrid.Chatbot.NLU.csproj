@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <AssemblyName>Resgrid.Chatbot.NLU</AssemblyName>
+    <RootNamespace>Resgrid.Chatbot.NLU</RootNamespace>
+    <Configurations>Debug;Release;Docker</Configurations>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\..\Common\Resgrid-PubPriv-KeyFile.snk" Link="Resgrid-PubPriv-KeyFile.snk" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="8.2.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Resgrid.Chatbot\Resgrid.Chatbot.csproj" />
+    <ProjectReference Include="..\Resgrid.Config\Resgrid.Config.csproj" />
+    <ProjectReference Include="..\Resgrid.Framework\Resgrid.Framework.csproj" />
+  </ItemGroup>
+</Project>

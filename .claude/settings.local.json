@@ -12,39 +12,44 @@
       "Bash(find G:ResgridResgridWebResgrid.WebAreasUserViews -type f -name *.cshtml)",
       "Bash(grep -r \"google.maps\\\\|mapboxgl\\\\|leaflet\\\\|openstreetmap\" G:/Resgrid/Resgrid/Web/Resgrid.Web/Areas/User/Apps/src --include=*.ts)",
       "Bash(grep -r \"leaflet\\\\|L\\\\.tileLayer\\\\|OpenStreetMap\" /g/Resgrid/Resgrid/Web/Resgrid.Web.Services --include=*.cs)",
-      "Bash(find /g/Resgrid/Resgrid -type f -name *.swift -o -name *.kt -o -name *.java)"
+      "Bash(find /g/Resgrid/Resgrid -type f -name *.swift -o -name *.kt -o -name *.java)",
+      "mcp__graperoot-pro__graph_continue",
+      "mcp__graperoot-pro__fallback_rg",
+      "mcp__graperoot-pro__graph_read",
+      "Bash(export PATH=\"$PATH:/usr/local/share/dotnet\")",
+      "Read(//usr/local/**)",
+      "Read(//opt/**)",
+      "Bash(echo $PATH)",
+      "Bash(command -v dotnet)",
+      "Bash(brew --prefix dotnet)",
+      "Bash(/opt/homebrew/opt/dotnet/bin/dotnet build:*)",
+      "Bash(brew info:*)",
+      "mcp__graperoot-pro__graph_register_edit"
     ]
   },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "graperoot-pro"
+  ],
   "hooks": {
-    "SessionStart": [
+    "PreToolUse": [
       {
-        "matcher": "",
+        "matcher": "Bash|Read",
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -NoProfile -File \"G:/Resgrid/Resgrid/.dual-graph/prime.ps1\""
+            "command": "DG_DATA_DIR=\"/Volumes/USBSSD/dev/Resgrid/Core/.dual-graph-pro\" /Users/shawn/.graperoot-pro/venv/bin/python3 \"/Users/shawn/.graperoot-pro/graph_gate.py\""
           }
         ]
       }
     ],
-    "Stop": [
+    "PostToolUse": [
       {
-        "matcher": "",
+        "matcher": "Write|Edit",
         "hooks": [
           {
             "type": "command",
-            "command": "powershell -NoProfile -File \"G:/Resgrid/Resgrid/.dual-graph/stop_hook.ps1\""
-          }
-        ]
-      }
-    ],
-    "PreCompact": [
-      {
-        "matcher": "",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "powershell -NoProfile -File \"G:/Resgrid/Resgrid/.dual-graph/prime.ps1\""
+            "command": "DG_DATA_DIR=\"/Volumes/USBSSD/dev/Resgrid/Core/.dual-graph-pro\" /Users/shawn/.graperoot-pro/venv/bin/python3 \"/Users/shawn/.graperoot-pro/graph_sync.py\""
           }
         ]
       }

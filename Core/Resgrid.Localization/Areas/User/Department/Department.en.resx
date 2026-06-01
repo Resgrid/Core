@@ -666,6 +666,96 @@
   <data name="TtsLanguageHelp" xml:space="preserve">
     <value>Select the eSpeak-NG language or dialect to use for this department's voice prompts.</value>
   </data>
+  <data name="ChatbotSettingsHeader" xml:space="preserve">
+    <value>Chatbot Settings</value>
+  </data>
+  <data name="ChatbotSettingsNav" xml:space="preserve">
+    <value>Chatbot</value>
+  </data>
+  <data name="ChatbotConfiguration" xml:space="preserve">
+    <value>Chatbot Configuration</value>
+  </data>
+  <data name="ChatbotEnable" xml:space="preserve">
+    <value>Enable Chatbot</value>
+  </data>
+  <data name="ChatbotEnableHelp" xml:space="preserve">
+    <value>Allow members of this department to interact with the chatbot.</value>
+  </data>
+  <data name="ChatbotAllowedPlatforms" xml:space="preserve">
+    <value>Allowed Platforms</value>
+  </data>
+  <data name="ChatbotAllowedPlatformsHelp" xml:space="preserve">
+    <value>Comma-separated platform names this department allows, or * for all. Valid names: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, Teams, Signal, WebChat.</value>
+  </data>
+  <data name="ChatbotAllowDispatch" xml:space="preserve">
+    <value>Allow Dispatch via Chatbot</value>
+  </data>
+  <data name="ChatbotAllowDispatchHelp" xml:space="preserve">
+    <value>Allow authorized users to create or dispatch calls through the chatbot.</value>
+  </data>
+  <data name="ChatbotConfirmStatusChanges" xml:space="preserve">
+    <value>Confirm Status Changes</value>
+  </data>
+  <data name="ChatbotConfirmStatusChangesHelp" xml:space="preserve">
+    <value>Require an explicit confirmation before destructive or status-changing actions.</value>
+  </data>
+  <data name="ChatbotConfirmPhoneLinking" xml:space="preserve">
+    <value>Confirm Phone Linking</value>
+  </data>
+  <data name="ChatbotConfirmPhoneLinkingHelp" xml:space="preserve">
+    <value>Require a one-time 'Reply YES' confirmation before linking an SMS number to a matching account.</value>
+  </data>
+  <data name="ChatbotProactiveNotifications" xml:space="preserve">
+    <value>Proactive Notifications</value>
+  </data>
+  <data name="ChatbotProactiveNotificationsHelp" xml:space="preserve">
+    <value>Allow the chatbot to push proactive notifications (calls, reminders) to linked users.</value>
+  </data>
+  <data name="ChatbotMessagesPerUser" xml:space="preserve">
+    <value>Messages / User / Minute</value>
+  </data>
+  <data name="ChatbotMessagesPerUserHelp" xml:space="preserve">
+    <value>Per-user rate limit. Leave blank to use the system default.</value>
+  </data>
+  <data name="ChatbotMessagesPerDept" xml:space="preserve">
+    <value>Messages / Dept / Minute</value>
+  </data>
+  <data name="ChatbotMessagesPerDeptHelp" xml:space="preserve">
+    <value>Per-department rate limit. Leave blank to use the system default.</value>
+  </data>
+  <data name="ChatbotLlmHeader" xml:space="preserve">
+    <value>Department AI / LLM Provider (optional)</value>
+  </data>
+  <data name="ChatbotLlmIntro" xml:space="preserve">
+    <value>Leave these blank to use the Resgrid system AI provider. To keep your chatbot processing with your own provider, enter an OpenAI-compatible endpoint, model, and API key.</value>
+  </data>
+  <data name="ChatbotLlmEndpoint" xml:space="preserve">
+    <value>LLM Endpoint</value>
+  </data>
+  <data name="ChatbotLlmModel" xml:space="preserve">
+    <value>LLM Model</value>
+  </data>
+  <data name="ChatbotLlmApiKey" xml:space="preserve">
+    <value>LLM API Key</value>
+  </data>
+  <data name="ChatbotLlmApiKeyHelpHasKey" xml:space="preserve">
+    <value>A key is currently stored. Leave this blank to keep it, or enter a new value to replace it.</value>
+  </data>
+  <data name="ChatbotLlmApiKeyHelpNoKey" xml:space="preserve">
+    <value>No key stored. The key is encrypted at rest and never displayed.</value>
+  </data>
+  <data name="ChatbotSave" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="ChatbotCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ChatbotSaved" xml:space="preserve">
+    <value>Chatbot settings saved.</value>
+  </data>
+  <data name="ChatbotSaveError" xml:space="preserve">
+    <value>An error occurred saving your chatbot settings.</value>
+  </data>
   <data name="EnableModernNotifications" xml:space="preserve">
     <value>Enable Modern Notifications</value>
   </data>

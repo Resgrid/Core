@@ -27,6 +27,7 @@ namespace Resgrid.Tests.Services
 			protected Mock<ISubscriptionsService> _subscriptionsServiceMock;
 			protected Mock<IUserStateService> _userStateServiceMock;
 			protected Mock<IDepartmentsService> _departmentsServiceMock;
+			protected Mock<IChatbotOutboundService> _chatbotOutboundServiceMock;
 
 			protected ICommunicationService _communicationService;
 
@@ -48,9 +49,11 @@ namespace Resgrid.Tests.Services
 					.Setup(x => x.GetDepartmentMemberAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<bool>()))
 					.ReturnsAsync(new DepartmentMember());
 
+				_chatbotOutboundServiceMock = new Mock<IChatbotOutboundService>();
+
 				_communicationService = new CommunicationService(_smsServiceMock.Object, _emailServiceMock.Object, _pushServiceMock.Object,
 					_geoLocationProviderMock.Object, _outboundVoiceProviderMock.Object, _userProfileServiceMock.Object, _departmentSettingsServiceMock.Object,
-					_subscriptionsServiceMock.Object, _userStateServiceMock.Object, _departmentsServiceMock.Object);
+					_subscriptionsServiceMock.Object, _userStateServiceMock.Object, _chatbotOutboundServiceMock.Object, _departmentsServiceMock.Object);
 			}
 		}
 

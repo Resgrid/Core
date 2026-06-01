@@ -37,6 +37,9 @@ reviews:
     - "!**/*.Designer.cs"
     - "!**/bin/**"
     - "!**/obj/**"
+    - "!**/Tests/**"
+    - "!**/.claude/**"
+    - "!**/*.md"
   path_instructions: []
   abort_on_close: true
   disable_cache: false

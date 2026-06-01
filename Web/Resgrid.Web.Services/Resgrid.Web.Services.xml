@@ -845,6 +845,23 @@
             </summary>
             <returns>Array of CallTemplateResult objects for each role in the department</returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.FeatureTogglesController">
+            <summary>
+            Built-in feature toggle API. The poll endpoints are available to any authenticated user and are
+            scoped to that user's department. Flag/targeting/prerequisite/analytics management requires
+            SystemAdmin; per-department override management is available to system administrators (any
+            department) and to a department's own administrators (their department only).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.FeatureTogglesController.GetAll">
+            <summary>Evaluates every active flag for the caller's department. Supports ETag/If-None-Match polling.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.FeatureTogglesController.Get(System.String)">
+            <summary>Evaluates a single flag for the caller's department.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.FeatureTogglesController.GetState(System.String)">
+            <summary>Lightweight enabled-only check for a single flag.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.FeedsController">
             <summary>
             Gets calls and other data formatted for different feed formats, like RSS.
@@ -6881,6 +6898,18 @@
             <summary>
             All the data required to populate the New Call form
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.FeatureToggles.SaveFeatureFlagInput">
+            <summary>Create or update a feature flag definition (matched by Key).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.FeatureToggles.SetFeatureFlagOverrideInput.DepartmentId">
+            <summary>Target department. Honored only for system administrators; otherwise the caller's department is used.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.FeatureToggles.FeatureToggleData">
+            <summary>Resolved state of a single feature toggle for the calling department.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.FeatureToggles.FeatureTogglesResult.StateHash">
+            <summary>Stable hash of the full resolved state (also returned as the ETag header).</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Forms.FormResult">
             <summary>

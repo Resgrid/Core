@@ -47,6 +47,7 @@ namespace Resgrid.Services
 			builder.RegisterType<JobsService>().As<IJobsService>().InstancePerLifetimeScope();
 			builder.RegisterType<UnitsService>().As<IUnitsService>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentSettingsService>().As<IDepartmentSettingsService>().InstancePerLifetimeScope();
+			builder.RegisterType<FeatureToggleService>().As<IFeatureToggleService>().InstancePerLifetimeScope();
 			builder.RegisterType<CallDispatchStatusService>().As<ICallDispatchStatusService>().InstancePerLifetimeScope();
 			builder.RegisterType<PersonnelRolesService>().As<IPersonnelRolesService>().InstancePerLifetimeScope();
 			builder.RegisterType<ScheduledTasksService>().As<IScheduledTasksService>().InstancePerLifetimeScope();

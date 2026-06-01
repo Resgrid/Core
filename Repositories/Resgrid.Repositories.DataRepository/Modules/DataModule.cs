@@ -36,6 +36,11 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<UserStatesRepository>().As<IUserStatesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentsRepository>().As<IDepartmentsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentSettingsRepository>().As<IDepartmentSettingsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<FeatureFlagRepository>().As<IFeatureFlagRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<FeatureFlagOverrideRepository>().As<IFeatureFlagOverrideRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<FeatureFlagTargetingRuleRepository>().As<IFeatureFlagTargetingRuleRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<FeatureFlagPrerequisiteRepository>().As<IFeatureFlagPrerequisiteRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<FeatureFlagUsageRepository>().As<IFeatureFlagUsageRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<UnitStatesRepository>().As<IUnitStatesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentMembersRepository>().As<IDepartmentMembersRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<PaymentRepository>().As<IPaymentRepository>().InstancePerLifetimeScope();

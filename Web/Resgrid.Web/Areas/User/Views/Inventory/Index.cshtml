@@ -31,6 +31,7 @@
                 <a title="@localizer["AdjustInventory"]" class="btn btn-success" href="@Url.Action("Adjust", "Inventory", new {area = "User"})">@localizer["AdjustInventory"]</a>
             }
             <a title="@localizer["ViewHistory"]" class="btn btn-primary" href="@Url.Action("History", "Inventory", new {area = "User"})">@localizer["ViewHistory"]</a>
+            <a title="@localizer["InventoryByUnitHeader"]" class="btn btn-primary" href="@Url.Action("ByUnit", "Inventory", new {area = "User"})">@localizer["InventoryByUnitHeader"]</a>
             @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
             {
                 <a title="@localizer["ManageTypes"]" class="btn btn-info" href="@Url.Action("ManageTypes", "Inventory", new {area = "User"})">@localizer["ManageTypes"]</a>

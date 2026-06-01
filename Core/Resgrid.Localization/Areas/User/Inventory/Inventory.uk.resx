@@ -79,6 +79,9 @@
   <data name="AdjustInventoryHeader" xml:space="preserve">
     <value>Коригувати інвентар</value>
   </data>
+  <data name="AdjustmentAmountRequired" xml:space="preserve">
+    <value>Ви повинні вказати ненульове коригування запасів (кількість).</value>
+  </data>
   <data name="Amount" xml:space="preserve">
     <value>Кількість</value>
   </data>
@@ -111,6 +114,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>Група</value>
+  </data>
+  <data name="InventoryByUnitHeader" xml:space="preserve">
+    <value>Інвентар за підрозділом</value>
   </data>
   <data name="InventoryHistoryHeader" xml:space="preserve">
     <value>Історія інвентарю</value>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Web.Areas.User.Models.Inventory;
@@ -21,14 +22,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IUnitsService _unitsService;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IUserProfileService _userProfileService;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> _localizer;
+		private readonly IStringLocalizer<Resgrid.Localization.Common> _commonLocalizer;
 
-		public InventoryController(IInventoryService inventoryService, IDepartmentGroupsService departmentGroupsService, IUnitsService unitsService, IDepartmentsService departmentsService, IUserProfileService userProfileService)
+		public InventoryController(IInventoryService inventoryService, IDepartmentGroupsService departmentGroupsService, IUnitsService unitsService, IDepartmentsService departmentsService, IUserProfileService userProfileService,
+			IStringLocalizer<Resgrid.Localization.Areas.User.Inventory.Inventory> localizer, IStringLocalizer<Resgrid.Localization.Common> commonLocalizer)
 		{
 			_inventoryService = inventoryService;
 			_departmentGroupsService = departmentGroupsService;
 			_unitsService = unitsService;
 			_departmentsService = departmentsService;
 			_userProfileService = userProfileService;
+			_localizer = localizer;
+			_commonLocalizer = commonLocalizer;
 		}
 		#endregion Private Members and Constructors
 
@@ -71,7 +77,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> Adjust(AdjustView model)
 		{
 			if (model.Inventory.Amount == 0)
-				ModelState.AddModelError("Inventory.Amount", "You must supply a non-zero inventory adjustment (count/amount).");
+				ModelState.AddModelError("Inventory.Amount", _localizer["AdjustmentAmountRequired"]);
 
 			if (ModelState.IsValid)
 			{
@@ -114,7 +120,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (profile != null)
 				model.Name = profile.FullName.AsFirstNameLastName;
 			else
-				model.Name = "Unknown";
+				model.Name = _commonLocalizer["Unknown"];
 
 			return View(model);
 		}
@@ -230,7 +236,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (item.Unit != null)
 					inventory.Unit = item.Unit.Name;
 				else
-					inventory.Unit = "No Unit";
+					inventory.Unit = _localizer["NoUnit"];
 
 				inventory.Count = item.Amount;
 
@@ -264,20 +270,70 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (item.Unit != null)
 					inventory.Unit = item.Unit.Name;
 				else
-					inventory.Unit = "No Unit";
+					inventory.Unit = _localizer["NoUnit"];
 
 				if (item.Group != null)
 					inventory.Group = item.Group.Name;
 				else
-					inventory.Group = "No Group";
+					inventory.Group = _localizer["NoGroup"];
 
 				var name = names.FirstOrDefault(x => x.UserId == item.AddedByUserId);
 
 				if (name != null)
 					inventory.UserName = name.Name;
 				else
-					inventory.UserName = "Unknown";
+					inventory.UserName = _commonLocalizer["Unknown"];
 
+
+				inventoryJson.Add(inventory);
+			}
+
+			return Json(inventoryJson);
+		}
+
+		[Authorize(Policy = ResgridResources.Inventory_View)]
+		public async Task<IActionResult> ByUnit()
+		{
+			return View();
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Inventory_View)]
+		public async Task<IActionResult> GetInventoryByUnitList()
+		{
+			List<InventoryJson> inventoryJson = new List<InventoryJson>();
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var items = await _inventoryService.GetAllTransactionsForDepartmentAsync(DepartmentId);
+			var names = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
+
+			foreach (var item in items.Where(x => x.UnitId.HasValue && x.UnitId.Value > 0)
+										.OrderBy(x => x.Unit != null ? x.Unit.Name : string.Empty)
+										.ThenBy(x => x.Type != null ? x.Type.Type : string.Empty))
+			{
+				var inventory = new InventoryJson();
+				inventory.InventoryId = item.InventoryId;
+				inventory.Type = item.Type.Type;
+				inventory.Amount = item.Amount;
+				inventory.Batch = item.Batch;
+				inventory.Timestamp = item.TimeStamp.FormatForDepartment(department);
+
+				if (item.Unit != null)
+					inventory.Unit = item.Unit.Name;
+				else
+					inventory.Unit = _localizer["NoUnit"];
+
+				if (item.Group != null)
+					inventory.Group = item.Group.Name;
+				else
+					inventory.Group = _localizer["NoGroup"];
+
+				var name = names.FirstOrDefault(x => x.UserId == item.AddedByUserId);
+
+				if (name != null)
+					inventory.UserName = name.Name;
+				else
+					inventory.UserName = _commonLocalizer["Unknown"];
 
 				inventoryJson.Add(inventory);
 			}

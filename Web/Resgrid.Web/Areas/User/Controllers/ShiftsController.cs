@@ -960,21 +960,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 						DateTime startResult;
 						if (!String.IsNullOrWhiteSpace(shift.StartTime) && DateTime.TryParse(shift.StartTime, out startResult))
 						{
-							item.Start = new DateTime(day.Day.Year, day.Day.Month, day.Day.Day, startResult.Hour, startResult.Minute, 0, DateTimeKind.Local);
+							item.Start = new DateTime(day.Day.Year, day.Day.Month, day.Day.Day, startResult.Hour, startResult.Minute, 0, DateTimeKind.Unspecified);
 						}
 						else
 						{
-							item.Start = new DateTime(day.Day.Year, day.Day.Month, day.Day.Day, 0, 0, 0, DateTimeKind.Local);
+							item.Start = new DateTime(day.Day.Year, day.Day.Month, day.Day.Day, 0, 0, 0, DateTimeKind.Unspecified);
 						}
 
 						DateTime endResult;
 						if (!String.IsNullOrWhiteSpace(shift.EndTime) && DateTime.TryParse(shift.EndTime, out endResult))
 						{
-							item.End = new DateTime(day.Day.Year, day.Day.Month, day.Day.Day, endResult.Hour, endResult.Minute, 0, DateTimeKind.Local);
+							item.End = new DateTime(day.Day.Year, day.Day.Month, day.Day.Day, endResult.Hour, endResult.Minute, 0, DateTimeKind.Unspecified);
 						}
 						else
 						{
-							item.End = new DateTime(day.Day.Year, day.Day.Month, day.Day.Day, 23, 59, 59, DateTimeKind.Local);
+							item.End = new DateTime(day.Day.Year, day.Day.Month, day.Day.Day, 23, 59, 59, DateTimeKind.Unspecified);
 						}
 
 						item.Color = shift.Color;
@@ -1109,21 +1109,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 				DateTime startResult;
 				if (!String.IsNullOrWhiteSpace(shift.StartTime) && DateTime.TryParse(shift.StartTime, out startResult))
 				{
-					item.Start = new DateTime(day.Day.Year, day.Day.Month, day.Day.Day, startResult.Hour, startResult.Minute, 0, DateTimeKind.Local);
+					item.Start = new DateTime(day.Day.Year, day.Day.Month, day.Day.Day, startResult.Hour, startResult.Minute, 0, DateTimeKind.Unspecified);
 				}
 				else
 				{
-					item.Start = new DateTime(day.Day.Year, day.Day.Month, day.Day.Day, 0, 0, 0, DateTimeKind.Local);
+					item.Start = new DateTime(day.Day.Year, day.Day.Month, day.Day.Day, 0, 0, 0, DateTimeKind.Unspecified);
 				}
 
 				DateTime endResult;
 				if (!String.IsNullOrWhiteSpace(shift.EndTime) && DateTime.TryParse(shift.EndTime, out endResult))
 				{
-					item.End = new DateTime(day.Day.Year, day.Day.Month, day.Day.Day, endResult.Hour, endResult.Minute, 0, DateTimeKind.Local);
+					item.End = new DateTime(day.Day.Year, day.Day.Month, day.Day.Day, endResult.Hour, endResult.Minute, 0, DateTimeKind.Unspecified);
 				}
 				else
 				{
-					item.End = new DateTime(day.Day.Year, day.Day.Month, day.Day.Day, 23, 59, 59, DateTimeKind.Local);
+					item.End = new DateTime(day.Day.Year, day.Day.Month, day.Day.Day, 23, 59, 59, DateTimeKind.Unspecified);
 				}
 
 				item.Title = shift.Name;

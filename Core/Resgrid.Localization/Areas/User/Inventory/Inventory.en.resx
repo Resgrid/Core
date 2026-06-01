@@ -138,6 +138,9 @@
   <data name="AdjustInventoryHeader" xml:space="preserve">
     <value>Adjust Inventory</value>
   </data>
+  <data name="AdjustmentAmountRequired" xml:space="preserve">
+    <value>You must supply a non-zero inventory adjustment (count/amount).</value>
+  </data>
   <data name="Amount" xml:space="preserve">
     <value>Amount</value>
   </data>
@@ -170,6 +173,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>Group</value>
+  </data>
+  <data name="InventoryByUnitHeader" xml:space="preserve">
+    <value>Inventory by Unit</value>
   </data>
   <data name="InventoryHistoryHeader" xml:space="preserve">
     <value>Inventory History</value>

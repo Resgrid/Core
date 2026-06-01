@@ -13,12 +13,14 @@ namespace Resgrid.Services
 		private readonly IInventoryTypesRepository _inventoryTypesRepository;
 		private readonly IInventoryRepository _inventoryRepository;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
+		private readonly IUnitsService _unitsService;
 
-		public InventoryService(IInventoryTypesRepository inventoryTypesRepository, IInventoryRepository inventoryRepository, IDepartmentGroupsService departmentGroupsService)
+		public InventoryService(IInventoryTypesRepository inventoryTypesRepository, IInventoryRepository inventoryRepository, IDepartmentGroupsService departmentGroupsService, IUnitsService unitsService)
 		{
 			_inventoryTypesRepository = inventoryTypesRepository;
 			_inventoryRepository = inventoryRepository;
 			_departmentGroupsService = departmentGroupsService;
+			_unitsService = unitsService;
 		}
 
 		public async Task<InventoryType> GetTypeByIdAsync(int typeId)
@@ -37,6 +39,9 @@ namespace Resgrid.Services
 
 			if (inventory != null && inventory.GroupId > 0)
 				inventory.Group = await _departmentGroupsService.GetGroupByIdAsync(inventory.GroupId);
+
+			if (inventory != null && inventory.UnitId.HasValue && inventory.UnitId.Value > 0)
+				inventory.Unit = await _unitsService.GetUnitByIdAsync(inventory.UnitId.Value);
 
 			return inventory;
 		}
@@ -65,9 +70,14 @@ namespace Resgrid.Services
 		{
 			var inventories = await _inventoryRepository.GetAllInventoriesByDepartmentIdAsync(departmentId);
 
+			var units = await _unitsService.GetUnitsForDepartmentAsync(departmentId);
+
 			foreach (var inventory in inventories)
 			{
 				inventory.Group = await _departmentGroupsService.GetGroupByIdAsync(inventory.GroupId);
+
+				if (inventory.UnitId.HasValue && inventory.UnitId.Value > 0)
+					inventory.Unit = units?.FirstOrDefault(x => x.UnitId == inventory.UnitId.Value);
 			}
 
 			return inventories.ToList();

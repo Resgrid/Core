@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
 
 namespace Resgrid.Config
 {
@@ -36,6 +36,6 @@ namespace Resgrid.Config
 		/// Code-registered boolean defaults keyed by flag key. Used as the fallback when a flag has not
 		/// yet been seeded in the database, so new flags behave predictably before they exist as rows.
 		/// </summary>
-		public static Dictionary<string, bool> CodeDefaults = new Dictionary<string, bool>();
+		public static ConcurrentDictionary<string, bool> CodeDefaults = new ConcurrentDictionary<string, bool>();
 	}
 }

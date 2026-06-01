@@ -118,20 +118,21 @@ namespace Resgrid.Services
 			if (!visited.Add(flag.FeatureFlagId))
 				return Build(flag, false, null, FeatureFlagEvaluationSource.Prerequisite);
 
+			FeatureFlagEvaluation evaluation = null;
 			try
 			{
 				// 2) Archived.
 				if (flag.IsArchived)
-					return Build(flag, false, flag.OffValue, FeatureFlagEvaluationSource.Archived);
+					return evaluation = Build(flag, false, flag.OffValue, FeatureFlagEvaluationSource.Archived);
 
 				// 3) Environment scope.
 				if (flag.Environment.HasValue && flag.Environment.Value != (int)SystemBehaviorConfig.Environment)
-					return Build(flag, false, flag.OffValue, FeatureFlagEvaluationSource.GlobalDefault);
+					return evaluation = Build(flag, false, flag.OffValue, FeatureFlagEvaluationSource.GlobalDefault);
 
 				// 4) Scheduling window.
 				var now = DateTime.UtcNow;
 				if ((flag.EnableOn.HasValue && now < flag.EnableOn.Value) || (flag.DisableOn.HasValue && now >= flag.DisableOn.Value))
-					return Build(flag, false, flag.OffValue, FeatureFlagEvaluationSource.Schedule);
+					return evaluation = Build(flag, false, flag.OffValue, FeatureFlagEvaluationSource.Schedule);
 
 				// 5) Prerequisites.
 				var prerequisites = (await GetAllPrerequisitesAsync()).Where(p => p.FeatureFlagId == flag.FeatureFlagId).ToList();
@@ -147,21 +148,21 @@ namespace Resgrid.Services
 						: requiredEvaluation.IsEnabled && string.Equals(requiredEvaluation.Value, prerequisite.RequiredValue, StringComparison.OrdinalIgnoreCase);
 
 					if (!satisfied)
-						return Build(flag, false, flag.OffValue, FeatureFlagEvaluationSource.Prerequisite);
+						return evaluation = Build(flag, false, flag.OffValue, FeatureFlagEvaluationSource.Prerequisite);
 				}
 
 				// 6) Per-department override (explicit, non-expired) wins over rollout/targeting.
 				var overrides = await GetOverridesForDepartmentAsync(departmentId);
 				var departmentOverride = overrides.FirstOrDefault(o => o.FeatureFlagId == flag.FeatureFlagId);
 				if (departmentOverride != null && (!departmentOverride.ExpiresOn.HasValue || departmentOverride.ExpiresOn.Value > now))
-					return Build(flag, departmentOverride.IsEnabled, departmentOverride.FlagValue, FeatureFlagEvaluationSource.Override);
+					return evaluation = Build(flag, departmentOverride.IsEnabled, departmentOverride.FlagValue, FeatureFlagEvaluationSource.Override);
 
 				// 7) Optional plan gate.
 				if (flag.MinimumPlanType.HasValue)
 				{
 					var gatePassed = await PassesPlanGateAsync(flag.MinimumPlanType.Value, departmentId);
 					if (!gatePassed)
-						return Build(flag, false, flag.OffValue, FeatureFlagEvaluationSource.PlanGate);
+						return evaluation = Build(flag, false, flag.OffValue, FeatureFlagEvaluationSource.PlanGate);
 				}
 
 				// 8) Targeting rules (first match by priority).
@@ -180,25 +181,25 @@ namespace Resgrid.Services
 							continue;
 					}
 
-					return Build(flag, rule.ResultEnabled, rule.ResultValue, FeatureFlagEvaluationSource.TargetingRule, rule.FeatureFlagTargetingRuleId);
+					return evaluation = Build(flag, rule.ResultEnabled, rule.ResultValue, FeatureFlagEvaluationSource.TargetingRule, rule.FeatureFlagTargetingRuleId);
 				}
 
 				// 9) Global default + percentage rollout.
 				if (!flag.IsEnabledGlobally)
-					return Build(flag, false, flag.OffValue, FeatureFlagEvaluationSource.GlobalDefault);
+					return evaluation = Build(flag, false, flag.OffValue, FeatureFlagEvaluationSource.GlobalDefault);
 
 				if (flag.RolloutPercentage.HasValue && flag.RolloutPercentage.Value < 100)
 				{
 					var enabled = flag.RolloutPercentage.Value > 0 && StableBucket(flag.FlagKey + ":" + departmentId) < flag.RolloutPercentage.Value;
-					return Build(flag, enabled, enabled ? flag.DefaultValue : flag.OffValue, FeatureFlagEvaluationSource.GlobalRollout);
+					return evaluation = Build(flag, enabled, enabled ? flag.DefaultValue : flag.OffValue, FeatureFlagEvaluationSource.GlobalRollout);
 				}
 
-				return Build(flag, true, flag.DefaultValue, FeatureFlagEvaluationSource.GlobalDefault);
+				return evaluation = Build(flag, true, flag.DefaultValue, FeatureFlagEvaluationSource.GlobalDefault);
 			}
 			finally
 			{
 				visited.Remove(flag.FeatureFlagId);
-				RecordEvaluation(flag.FeatureFlagId, departmentId);
+				RecordEvaluation(flag.FeatureFlagId, departmentId, evaluation?.IsEnabled);
 			}
 		}
 
@@ -581,6 +582,10 @@ namespace Resgrid.Services
 			foreach (var ovr in overrides.ToList())
 				await _featureFlagOverrideRepository.DeleteAsync(ovr, cancellationToken);
 
+			var usages = (await _featureFlagUsageRepository.GetAllAsync())?.Where(u => u.FeatureFlagId == flag.FeatureFlagId) ?? Enumerable.Empty<FeatureFlagUsage>();
+			foreach (var usage in usages.ToList())
+				await _featureFlagUsageRepository.DeleteAsync(usage, cancellationToken);
+
 			await _featureFlagRepository.DeleteAsync(flag, cancellationToken);
 			await InvalidateFlagCacheAsync();
 			PublishAudit(0, userId, AuditLogTypes.FeatureFlagChanged, before, null);
@@ -788,7 +793,7 @@ namespace Resgrid.Services
 
 		#region Analytics & lifecycle
 
-		private void RecordEvaluation(int featureFlagId, int departmentId)
+		private void RecordEvaluation(int featureFlagId, int departmentId, bool? isEnabled = null)
 		{
 			if (!FeatureFlagsConfig.TrackEvaluations || featureFlagId == 0)
 				return;
@@ -796,6 +801,11 @@ namespace Resgrid.Services
 			var key = featureFlagId + "|" + departmentId + "|" + DateTime.UtcNow.ToString("yyyyMMdd", CultureInfo.InvariantCulture);
 			var counter = _usageBuffer.GetOrAdd(key, _ => new long[3]);
 			Interlocked.Increment(ref counter[0]);
+
+			// counter[1] = EnabledCount, counter[2] = DisabledCount (left untouched when the
+			// resolved state is unknown, e.g. an evaluation that threw before producing a result).
+			if (isEnabled.HasValue)
+				Interlocked.Increment(ref counter[isEnabled.Value ? 1 : 2]);
 		}
 
 		public async Task<int> FlushEvaluationsAsync(CancellationToken cancellationToken = default(CancellationToken))

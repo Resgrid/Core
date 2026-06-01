@@ -51,6 +51,14 @@ namespace Resgrid.Providers.Migrations.Migrations
 				.WithColumn("UpdatedOn").AsDateTime2().Nullable()
 				.WithColumn("UpdatedByUserId").AsString(450).Nullable();
 
+			Create.ForeignKey("FK_FeatureFlagOverrides_FeatureFlags")
+				.FromTable("FeatureFlagOverrides").ForeignColumn("FeatureFlagId")
+				.ToTable("FeatureFlags").PrimaryColumn("FeatureFlagId");
+
+			Create.ForeignKey("FK_FeatureFlagOverrides_Departments")
+				.FromTable("FeatureFlagOverrides").ForeignColumn("DepartmentId")
+				.ToTable("Departments").PrimaryColumn("DepartmentId");
+
 			Create.Index("UX_FeatureFlagOverrides_Flag_Department")
 				.OnTable("FeatureFlagOverrides")
 				.OnColumn("FeatureFlagId").Ascending()
@@ -73,6 +81,10 @@ namespace Resgrid.Providers.Migrations.Migrations
 				.WithColumn("UpdatedOn").AsDateTime2().Nullable()
 				.WithColumn("UpdatedByUserId").AsString(450).Nullable();
 
+			Create.ForeignKey("FK_FeatureFlagTargetingRules_FeatureFlags")
+				.FromTable("FeatureFlagTargetingRules").ForeignColumn("FeatureFlagId")
+				.ToTable("FeatureFlags").PrimaryColumn("FeatureFlagId");
+
 			Create.Index("IX_FeatureFlagTargetingRules_Flag")
 				.OnTable("FeatureFlagTargetingRules")
 				.OnColumn("FeatureFlagId").Ascending();
@@ -83,6 +95,14 @@ namespace Resgrid.Providers.Migrations.Migrations
 				.WithColumn("FeatureFlagId").AsInt32().NotNullable()
 				.WithColumn("RequiredFeatureFlagId").AsInt32().NotNullable()
 				.WithColumn("RequiredValue").AsString(int.MaxValue).Nullable();
+
+			Create.ForeignKey("FK_FeatureFlagPrerequisites_FeatureFlags")
+				.FromTable("FeatureFlagPrerequisites").ForeignColumn("FeatureFlagId")
+				.ToTable("FeatureFlags").PrimaryColumn("FeatureFlagId");
+
+			Create.ForeignKey("FK_FeatureFlagPrerequisites_RequiredFeatureFlag")
+				.FromTable("FeatureFlagPrerequisites").ForeignColumn("RequiredFeatureFlagId")
+				.ToTable("FeatureFlags").PrimaryColumn("FeatureFlagId");
 
 			Create.Index("IX_FeatureFlagPrerequisites_Flag")
 				.OnTable("FeatureFlagPrerequisites")
@@ -98,6 +118,14 @@ namespace Resgrid.Providers.Migrations.Migrations
 				.WithColumn("EnabledCount").AsInt64().NotNullable().WithDefaultValue(0)
 				.WithColumn("DisabledCount").AsInt64().NotNullable().WithDefaultValue(0);
 
+			Create.ForeignKey("FK_FeatureFlagUsages_FeatureFlags")
+				.FromTable("FeatureFlagUsages").ForeignColumn("FeatureFlagId")
+				.ToTable("FeatureFlags").PrimaryColumn("FeatureFlagId");
+
+			Create.ForeignKey("FK_FeatureFlagUsages_Departments")
+				.FromTable("FeatureFlagUsages").ForeignColumn("DepartmentId")
+				.ToTable("Departments").PrimaryColumn("DepartmentId");
+
 			Create.Index("IX_FeatureFlagUsages_Flag_Date")
 				.OnTable("FeatureFlagUsages")
 				.OnColumn("FeatureFlagId").Ascending()
@@ -106,10 +134,21 @@ namespace Resgrid.Providers.Migrations.Migrations
 
 		public override void Down()
 		{
+			Delete.ForeignKey("FK_FeatureFlagUsages_Departments").OnTable("FeatureFlagUsages");
+			Delete.ForeignKey("FK_FeatureFlagUsages_FeatureFlags").OnTable("FeatureFlagUsages");
 			Delete.Table("FeatureFlagUsages");
+
+			Delete.ForeignKey("FK_FeatureFlagPrerequisites_RequiredFeatureFlag").OnTable("FeatureFlagPrerequisites");
+			Delete.ForeignKey("FK_FeatureFlagPrerequisites_FeatureFlags").OnTable("FeatureFlagPrerequisites");
 			Delete.Table("FeatureFlagPrerequisites");
+
+			Delete.ForeignKey("FK_FeatureFlagTargetingRules_FeatureFlags").OnTable("FeatureFlagTargetingRules");
 			Delete.Table("FeatureFlagTargetingRules");
+
+			Delete.ForeignKey("FK_FeatureFlagOverrides_Departments").OnTable("FeatureFlagOverrides");
+			Delete.ForeignKey("FK_FeatureFlagOverrides_FeatureFlags").OnTable("FeatureFlagOverrides");
 			Delete.Table("FeatureFlagOverrides");
+
 			Delete.Table("FeatureFlags");
 		}
 	}

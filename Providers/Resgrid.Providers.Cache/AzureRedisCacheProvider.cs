@@ -244,11 +244,23 @@ namespace Resgrid.Providers.Cache
 					IDatabase cache = _connection.GetDatabase();
 					var key = SetCacheKeyForEnv(cacheKey);
 
-					var value = await cache.StringIncrementAsync(key);
-					if (value == 1)
-						await cache.KeyExpireAsync(key, expiration);
+					// Atomic INCR + (conditional) PEXPIRE in a single server-side script so the counter key
+					// can never be left without a TTL if the connection drops between the two operations.
+					// EXPIRE is applied only when the key was newly created (INCR == 1), and the script
+					// returns the true counter value so a partial failure can't mask it as 0.
+					const string incrementAndExpireScript =
+						"local current = redis.call('INCR', KEYS[1])\n" +
+						"if current == 1 then\n" +
+						"  redis.call('PEXPIRE', KEYS[1], ARGV[1])\n" +
+						"end\n" +
+						"return current";
 
-					return value;
+					var result = await cache.ScriptEvaluateAsync(
+						incrementAndExpireScript,
+						new RedisKey[] { key },
+						new RedisValue[] { (long)expiration.TotalMilliseconds });
+
+					return (long)result;
 				}
 			}
 			catch (Exception ex)

@@ -1,8 +1,15 @@
-﻿using Resgrid.Model;
+using System;
+using System.Collections.Generic;
+using System.Data.Common;
+using System.Threading.Tasks;
+using Dapper;
+using Resgrid.Framework;
+using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Connection;
 using Resgrid.Model.Repositories.Queries;
 using Resgrid.Repositories.DataRepository.Configs;
+using Resgrid.Repositories.DataRepository.Queries.AuditLogs;
 
 namespace Resgrid.Repositories.DataRepository
 {
@@ -20,6 +27,60 @@ namespace Resgrid.Repositories.DataRepository
 			_sqlConfiguration = sqlConfiguration;
 			_queryFactory = queryFactory;
 			_unitOfWork = unitOfWork;
+		}
+
+		public async Task<IEnumerable<AuditLog>> GetAuditLogsForDepartmentPagedAsync(int departmentId, DateTime startDate, DateTime endDate, int? logType, int page, int pageSize)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<AuditLog>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParametersExtension();
+					dynamicParameters.Add("DepartmentId", departmentId);
+					dynamicParameters.Add("StartDate", startDate);
+					dynamicParameters.Add("EndDate", endDate);
+					dynamicParameters.Add("Offset", (page - 1) * pageSize);
+					dynamicParameters.Add("PageSize", pageSize);
+
+					string query;
+					if (logType.HasValue)
+					{
+						dynamicParameters.Add("LogType", logType.Value);
+						query = _queryFactory.GetQuery<SelectAuditLogsForDepartmentByTypePagedQuery>();
+					}
+					else
+					{
+						query = _queryFactory.GetQuery<SelectAuditLogsForDepartmentPagedQuery>();
+					}
+
+					return await x.QueryAsync<AuditLog>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, extraMessage: $"GetAuditLogsForDepartmentPagedAsync DepartmentId: {departmentId}");
+
+				throw;
+			}
 		}
 	}
 }

@@ -2,8 +2,8 @@ using FluentMigrator;
 
 namespace Resgrid.Providers.Migrations.Migrations
 {
-	[Migration(68)]
-	public class M0068_AddIsPermanentFailureToWeatherAlertSources : Migration
+	[Migration(74)]
+	public class M0074_AddIsPermanentFailureToWeatherAlertSources : Migration
 	{
 		public override void Up()
 		{

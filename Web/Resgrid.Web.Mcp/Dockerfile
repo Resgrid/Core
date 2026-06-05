@@ -37,11 +37,13 @@ WORKDIR "/src/Web/Resgrid.Web.Mcp"
 FROM build AS publish
 ARG BUILD_VERSION
 RUN dotnet publish "Resgrid.Web.Mcp.csproj" -c Release -o /app/publish -p:Version=${BUILD_VERSION}
-ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.9.0/wait /app/publish/wait
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.12.1/wait /app/publish/wait
 RUN chmod +x /app/publish/wait
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+# docker-compose-wait waits for WAIT_HOSTS, then execs WAIT_COMMAND.
+# These hardened (distroless) images have no shell, so we can't chain with "sh -c".
+ENV WAIT_COMMAND="dotnet Resgrid.Web.Mcp.dll"
 ENTRYPOINT ["./wait"]
-CMD ["dotnet", "Resgrid.Web.Mcp.dll"]

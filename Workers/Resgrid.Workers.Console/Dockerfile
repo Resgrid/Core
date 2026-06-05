@@ -37,7 +37,7 @@ WORKDIR "/src/Workers/Resgrid.Workers.Console"
 FROM build AS publish
 ARG BUILD_VERSION
 RUN dotnet publish "Resgrid.Workers.Console.csproj" -c Release -o /app/publish -p:Version=${BUILD_VERSION}
-ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.9.0/wait /app/publish/wait
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.12.1/wait /app/publish/wait
 RUN chmod +x /app/publish/wait
 
 ## Install wkhtmltopdf and capture its runtime libraries
@@ -76,5 +76,7 @@ ENV LD_LIBRARY_PATH="/usr/local/lib/wkhtmltopdf"
 
 COPY --from=publish /app/publish .
 
+# docker-compose-wait waits for WAIT_HOSTS, then execs WAIT_COMMAND.
+# These hardened (distroless) images have no shell, so we can't chain with "sh -c".
+ENV WAIT_COMMAND="dotnet Resgrid.Workers.Console.dll"
 ENTRYPOINT ["./wait"]
-CMD ["dotnet", "Resgrid.Workers.Console.dll"]

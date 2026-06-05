@@ -55,11 +55,13 @@ RUN for i in 1 2 3; do libman restore && break || { echo "libman restore attempt
 ENV SKIP_LIBMAN_RESTORE=1
 RUN dotnet publish "Resgrid.Web.csproj" -c Release -o /app/publish -p:Version=${BUILD_VERSION}
 ## Download the wait script in the build stage where a shell is available
-ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.9.0/wait /app/publish/wait
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.12.1/wait /app/publish/wait
 RUN chmod +x /app/publish/wait
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+# docker-compose-wait waits for WAIT_HOSTS, then execs WAIT_COMMAND.
+# These hardened (distroless) images have no shell, so we can't chain with "sh -c".
+ENV WAIT_COMMAND="dotnet Resgrid.Web.dll"
 ENTRYPOINT ["./wait"]
-CMD ["dotnet", "Resgrid.Web.dll"]

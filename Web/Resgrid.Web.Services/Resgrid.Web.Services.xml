@@ -1333,6 +1333,50 @@
             <param name="protocolAttachmentId">ID of the protocol attachment</param>
             <returns></returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.ReportingController">
+             <summary>
+             Reporting and analytics for the caller's department: a composite dashboard, realtime personnel/
+             unit availability, response-time (NFPA), utilization and participation analytics, and incident
+             CSV export.
+            
+             SECURITY: every endpoint is hard-scoped to the authenticated user's claim DepartmentId — there is
+             deliberately no departmentId parameter, so a client can never request another department's data.
+             System-wide (cross-department) reporting is intentionally NOT exposed over HTTP; it is available
+             only to the in-process BackOffice, which resolves IPlatformReportingService directly and calls it
+             with departmentId = null.
+             </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ReportingController.GetDashboard(System.DateTime,System.DateTime,System.Int32,System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Composite dashboard for the caller's department: scalar totals, dense (zero-filled, UTC)
+            time series, top-N breakdowns, and realtime personnel/unit availability.
+            </summary>
+            <param name="from">Window start (UTC).</param>
+            <param name="to">Window end (UTC).</param>
+            <param name="granularity">Series bucketing: 0 = day, 1 = month.</param>
+            <param name="topN">Max slices per breakdown before an "Other" bucket.</param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ReportingController.GetResponseTimes(System.DateTime,System.DateTime,System.Threading.CancellationToken)">
+            <summary>Response-time / NFPA analytics (alarm handling, turnout, travel, total response).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ReportingController.GetUtilization(System.DateTime,System.DateTime,System.Threading.CancellationToken)">
+            <summary>Unit Hour Utilization and workload analytics.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ReportingController.GetParticipation(System.DateTime,System.DateTime,System.Threading.CancellationToken)">
+            <summary>Personnel participation and certification-compliance analytics.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ReportingController.ExportIncidents(System.DateTime,System.DateTime,System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Streams a CSV export of the caller's department incidents for the window using the requested
+            field mapping (0 = Generic, 1 = NFIRS, 2 = NEMSIS).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ReportingController.GetExportGaps(System.Int32)">
+            <summary>
+            Returns the standardized required fields the given export profile cannot fill from Resgrid data
+            (the gap report). 0 = Generic, 1 = NFIRS, 2 = NEMSIS.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.RolesController">
             <summary>
             User generated forms that are dispayed to get custom information for New Calls, Unit Checks, etc
@@ -8414,6 +8458,36 @@
             <summary>
             Response Data
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Reporting.DashboardReportResult">
+            <summary>Composite dashboard report (scalar totals, dense series, breakdowns).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Reporting.DashboardReportResult.Data">
+            <summary>Response Data</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Reporting.ResponseTimeReportResult">
+            <summary>Response-time / NFPA analytics report.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Reporting.ResponseTimeReportResult.Data">
+            <summary>Response Data</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Reporting.UtilizationReportResult">
+            <summary>Unit Hour Utilization analytics report.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Reporting.UtilizationReportResult.Data">
+            <summary>Response Data</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Reporting.ParticipationReportResult">
+            <summary>Personnel participation analytics report.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Reporting.ParticipationReportResult.Data">
+            <summary>Response Data</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Reporting.ExportGapReportResult">
+            <summary>Lists the standardized required export fields Resgrid does not capture (the gap report).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Reporting.ExportGapReportResult.Data">
+            <summary>Response Data</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Roles.RoleResult">
             <summary>

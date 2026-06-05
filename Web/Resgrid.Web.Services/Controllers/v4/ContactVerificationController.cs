@@ -89,8 +89,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return BadRequest();
 
 			// Use the X-Forwarded-For aware helper so the audit log records the real client IP
-			// rather than the reverse-proxy / load-balancer address.
-			string ipAddress = IpAddressHelper.GetRequestIP(Request, true);
+			// rather than the reverse-proxy / load-balancer address. IP resolution can throw when no
+			// address is resolvable; fall back to empty so verification still proceeds (the IP is only
+			// recorded for auditing).
+			string ipAddress;
+			try
+			{
+				ipAddress = IpAddressHelper.GetRequestIP(Request, true);
+			}
+			catch (System.Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex, "ContactVerification.ConfirmVerificationCode: unable to resolve client IP; continuing without it.");
+				ipAddress = string.Empty;
+			}
 
 			bool confirmed = await _contactVerificationService.ConfirmVerificationCodeAsync(
 				UserId, DepartmentId, model.Type, model.Code, ipAddress, cancellationToken);

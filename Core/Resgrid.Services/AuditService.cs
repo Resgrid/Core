@@ -39,7 +39,11 @@ namespace Resgrid.Services
 
 		public async Task<List<AuditLog>> GetAuditLogsForDepartmentPagedAsync(int departmentId, DateTime startDate, DateTime endDate, AuditLogTypes? logType, int page, int pageSize)
 		{
-			var logs = await _auditLogsRepository.GetAuditLogsForDepartmentPagedAsync(departmentId, startDate, endDate, (int?)logType, page, pageSize);
+			// Clamp paging so the repository never builds a negative OFFSET or an invalid LIMIT/FETCH.
+			var safePage = page < 1 ? 1 : page;
+			var safePageSize = pageSize < 1 ? 1 : (pageSize > 1000 ? 1000 : pageSize);
+
+			var logs = await _auditLogsRepository.GetAuditLogsForDepartmentPagedAsync(departmentId, startDate, endDate, (int?)logType, safePage, safePageSize);
 			return logs.ToList();
 		}
 

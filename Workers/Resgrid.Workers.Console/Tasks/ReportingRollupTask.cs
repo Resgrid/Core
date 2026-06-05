@@ -22,7 +22,7 @@ namespace Resgrid.Workers.Console.Tasks
 	{
 		public string Name => "Reporting Rollup";
 		public int Priority => 1;
-		public ILogger _logger;
+		private readonly ILogger _logger;
 
 		public ReportingRollupTask(ILogger logger)
 		{

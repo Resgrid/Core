@@ -56,12 +56,14 @@ namespace Resgrid.Repositories.DataRepository
 				deleteParams.Add("DepartmentId", departmentId ?? 0);
 
 				var deleteQuery = _queryFactory.GetQuery<DeleteReportRollupForDateQuery>();
-				await conn.ExecuteAsync(sql: deleteQuery, param: deleteParams, transaction: _unitOfWork.Transaction);
+				var deleteCommand = new CommandDefinition(deleteQuery, deleteParams, _unitOfWork.Transaction, cancellationToken: cancellationToken);
+				await conn.ExecuteAsync(deleteCommand);
 
 				if (rowList.Count > 0)
 				{
 					var insertQuery = _queryFactory.GetQuery<InsertReportRollupQuery>();
-					await conn.ExecuteAsync(sql: insertQuery, param: rowList, transaction: _unitOfWork.Transaction);
+					var insertCommand = new CommandDefinition(insertQuery, rowList, _unitOfWork.Transaction, cancellationToken: cancellationToken);
+					await conn.ExecuteAsync(insertCommand);
 				}
 
 				return rowList.Count;
@@ -81,7 +83,8 @@ namespace Resgrid.Repositories.DataRepository
 				p.Add("DepartmentId", departmentId ?? 0);
 
 				var query = _queryFactory.GetQuery<SelectReportRollupsQuery>();
-				return await conn.QueryAsync<ReportingDailyRollup>(sql: query, param: p, transaction: _unitOfWork.Transaction);
+				var command = new CommandDefinition(query, p, _unitOfWork.Transaction, cancellationToken: cancellationToken);
+				return await conn.QueryAsync<ReportingDailyRollup>(command);
 			});
 		}
 

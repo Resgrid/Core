@@ -65,14 +65,23 @@ namespace Resgrid.Services
 
 			foreach (var departmentId in (departmentIds ?? Enumerable.Empty<int>()).Distinct())
 			{
-				var calls = await _callsService.GetAllCallsByDepartmentDateRangeAsync(departmentId, dayStart, dayEnd);
+				try
+				{
+					var calls = await _callsService.GetAllCallsByDepartmentDateRangeAsync(departmentId, dayStart, dayEnd);
 
-				var rows = BuildCallRollups(calls);
-				rows.AddRange(await ComputeUtilizationRollupsAsync(departmentId, dayStart, dayEnd, cancellationToken));
-				written += await _rollupRepository.UpsertDailyRollupAsync(departmentId, dayStart, rows, cancellationToken);
+					var rows = BuildCallRollups(calls);
+					rows.AddRange(await ComputeUtilizationRollupsAsync(departmentId, dayStart, dayEnd, cancellationToken));
+					written += await _rollupRepository.UpsertDailyRollupAsync(departmentId, dayStart, rows, cancellationToken);
 
-				systemCallCount += calls.Count;
-				systemProcessing.AddRange(CallProcessingSamples(calls));
+					systemCallCount += calls.Count;
+					systemProcessing.AddRange(CallProcessingSamples(calls));
+				}
+				catch (Exception ex)
+				{
+					// One department's failure must not abort the nightly batch; log it and continue so the
+					// remaining departments and the system-wide aggregate still complete.
+					Logging.LogException(ex, $"ReportingRollupProcessor dept={departmentId} day={dayUtc:o}");
+				}
 			}
 
 			// System-wide aggregate row (DepartmentId null) from the combined samples.

@@ -55,7 +55,8 @@ namespace Resgrid.Repositories.DataRepository
 					query = _queryFactory.GetQuery<SelectReportCallsCountAllTimeQuery>();
 				}
 
-				return await conn.ExecuteScalarAsync<long>(sql: query, param: p, transaction: _unitOfWork.Transaction);
+				var command = new CommandDefinition(query, p, _unitOfWork.Transaction, cancellationToken: cancellationToken);
+				return await conn.ExecuteScalarAsync<long>(command);
 			});
 		}
 
@@ -65,7 +66,8 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var p = ScopeParams(departmentId);
 				var query = _queryFactory.GetQuery<SelectReportActiveCallsCountQuery>();
-				return await conn.ExecuteScalarAsync<long>(sql: query, param: p, transaction: _unitOfWork.Transaction);
+				var command = new CommandDefinition(query, p, _unitOfWork.Transaction, cancellationToken: cancellationToken);
+				return await conn.ExecuteScalarAsync<long>(command);
 			});
 		}
 
@@ -75,7 +77,8 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var p = ScopeParams(departmentId);
 				var query = _queryFactory.GetQuery<SelectReportPersonnelCountQuery>();
-				return await conn.ExecuteScalarAsync<long>(sql: query, param: p, transaction: _unitOfWork.Transaction);
+				var command = new CommandDefinition(query, p, _unitOfWork.Transaction, cancellationToken: cancellationToken);
+				return await conn.ExecuteScalarAsync<long>(command);
 			});
 		}
 
@@ -85,7 +88,8 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var p = ScopeParams(departmentId);
 				var query = _queryFactory.GetQuery<SelectReportUnitsCountQuery>();
-				return await conn.ExecuteScalarAsync<long>(sql: query, param: p, transaction: _unitOfWork.Transaction);
+				var command = new CommandDefinition(query, p, _unitOfWork.Transaction, cancellationToken: cancellationToken);
+				return await conn.ExecuteScalarAsync<long>(command);
 			});
 		}
 
@@ -95,7 +99,8 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var p = WindowScopeParams(departmentId, startUtc, endUtc);
 				var query = _queryFactory.GetQuery<SelectReportMessagesCountQuery>();
-				return await conn.ExecuteScalarAsync<long>(sql: query, param: p, transaction: _unitOfWork.Transaction);
+				var command = new CommandDefinition(query, p, _unitOfWork.Transaction, cancellationToken: cancellationToken);
+				return await conn.ExecuteScalarAsync<long>(command);
 			});
 		}
 
@@ -114,11 +119,13 @@ namespace Resgrid.Repositories.DataRepository
 					p.Add("StartDate", startUtc.Value);
 					p.Add("EndDate", endUtc.Value);
 					var newQuery = _queryFactory.GetQuery<SelectReportNewDepartmentsQuery>();
-					return await conn.ExecuteScalarAsync<long>(sql: newQuery, param: p, transaction: _unitOfWork.Transaction);
+					var newCommand = new CommandDefinition(newQuery, p, _unitOfWork.Transaction, cancellationToken: cancellationToken);
+					return await conn.ExecuteScalarAsync<long>(newCommand);
 				}
 
 				var totalQuery = _queryFactory.GetQuery<SelectReportDepartmentsTotalQuery>();
-				return await conn.ExecuteScalarAsync<long>(sql: totalQuery, param: new DynamicParametersExtension(), transaction: _unitOfWork.Transaction);
+				var totalCommand = new CommandDefinition(totalQuery, new DynamicParametersExtension(), _unitOfWork.Transaction, cancellationToken: cancellationToken);
+				return await conn.ExecuteScalarAsync<long>(totalCommand);
 			});
 		}
 
@@ -134,7 +141,8 @@ namespace Resgrid.Repositories.DataRepository
 				var query = granularity == ReportGranularity.Month
 					? _queryFactory.GetQuery<SelectReportCallsByMonthQuery>()
 					: _queryFactory.GetQuery<SelectReportCallsByDayQuery>();
-				return await conn.QueryAsync<CountByDateBucketResult>(sql: query, param: p, transaction: _unitOfWork.Transaction);
+				var command = new CommandDefinition(query, p, _unitOfWork.Transaction, cancellationToken: cancellationToken);
+				return await conn.QueryAsync<CountByDateBucketResult>(command);
 			});
 		}
 
@@ -146,7 +154,8 @@ namespace Resgrid.Repositories.DataRepository
 				var query = granularity == ReportGranularity.Month
 					? _queryFactory.GetQuery<SelectReportMessagesByMonthQuery>()
 					: _queryFactory.GetQuery<SelectReportMessagesByDayQuery>();
-				return await conn.QueryAsync<CountByDateBucketResult>(sql: query, param: p, transaction: _unitOfWork.Transaction);
+				var command = new CommandDefinition(query, p, _unitOfWork.Transaction, cancellationToken: cancellationToken);
+				return await conn.QueryAsync<CountByDateBucketResult>(command);
 			});
 		}
 
@@ -164,7 +173,8 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var p = WindowScopeParams(departmentId, startUtc, endUtc);
 				var query = _queryFactory.GetQuery<SelectReportCallsByTypeQuery>();
-				return await conn.QueryAsync<CountByStringKeyResult>(sql: query, param: p, transaction: _unitOfWork.Transaction);
+				var command = new CommandDefinition(query, p, _unitOfWork.Transaction, cancellationToken: cancellationToken);
+				return await conn.QueryAsync<CountByStringKeyResult>(command);
 			});
 		}
 
@@ -174,7 +184,8 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var p = WindowScopeParams(departmentId, startUtc, endUtc);
 				var query = _queryFactory.GetQuery<SelectReportCallsByPriorityQuery>();
-				return await conn.QueryAsync<CountByKeyResult>(sql: query, param: p, transaction: _unitOfWork.Transaction);
+				var command = new CommandDefinition(query, p, _unitOfWork.Transaction, cancellationToken: cancellationToken);
+				return await conn.QueryAsync<CountByKeyResult>(command);
 			});
 		}
 
@@ -184,7 +195,8 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var p = WindowScopeParams(departmentId, startUtc, endUtc);
 				var query = _queryFactory.GetQuery<SelectReportCallsByStateQuery>();
-				return await conn.QueryAsync<CountByKeyResult>(sql: query, param: p, transaction: _unitOfWork.Transaction);
+				var command = new CommandDefinition(query, p, _unitOfWork.Transaction, cancellationToken: cancellationToken);
+				return await conn.QueryAsync<CountByKeyResult>(command);
 			});
 		}
 
@@ -198,7 +210,8 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var p = ScopeParams(departmentId);
 				var query = _queryFactory.GetQuery<SelectReportLatestPersonnelStatesQuery>();
-				return await conn.QueryAsync<CountByKeyResult>(sql: query, param: p, transaction: _unitOfWork.Transaction);
+				var command = new CommandDefinition(query, p, _unitOfWork.Transaction, cancellationToken: cancellationToken);
+				return await conn.QueryAsync<CountByKeyResult>(command);
 			});
 		}
 
@@ -208,7 +221,8 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var p = ScopeParams(departmentId);
 				var query = _queryFactory.GetQuery<SelectReportLatestUnitStatesQuery>();
-				return await conn.QueryAsync<CountByKeyResult>(sql: query, param: p, transaction: _unitOfWork.Transaction);
+				var command = new CommandDefinition(query, p, _unitOfWork.Transaction, cancellationToken: cancellationToken);
+				return await conn.QueryAsync<CountByKeyResult>(command);
 			});
 		}
 

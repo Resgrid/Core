@@ -778,14 +778,24 @@ namespace Resgrid.Workers.Framework.Logic
 
 					} // end switch
 
+					// Fallback so no audit event is ever silently dropped. Any AuditLogTypes value that
+					// doesn't have an explicit case above (e.g. newly added types) would otherwise leave
+					// Message empty and never be persisted. Build a generic, human-readable message
+					// instead of discarding the event.
+					if (String.IsNullOrWhiteSpace(auditLog.Message))
+					{
+						var auditService = Bootstrapper.GetKernel().Resolve<IAuditService>();
+						var actor = profile?.FullName?.AsFirstNameLastName;
+						var action = auditService.GetAuditLogTypeString(auditEvent.Type);
+
+						auditLog.Message = String.IsNullOrWhiteSpace(actor) ? action : $"{actor} - {action}";
+					}
+
 					if (String.IsNullOrWhiteSpace(auditLog.Data))
 						auditLog.Data = "No Data";
 
-					if (!String.IsNullOrWhiteSpace(auditLog.Message))
-					{
-						auditLog.LoggedOn = DateTime.UtcNow;
-						await auditLogsRepository.SaveOrUpdateAsync(auditLog, cancellationToken);
-					}
+					auditLog.LoggedOn = DateTime.UtcNow;
+					await auditLogsRepository.SaveOrUpdateAsync(auditLog, cancellationToken);
 				}
 				catch (Exception ex)
 				{

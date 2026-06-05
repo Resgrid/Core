@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model;
 using Resgrid.Model.Services;
+using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.ContactVerification;
 
 namespace Resgrid.Web.Services.Controllers.v4
@@ -87,7 +88,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!ModelState.IsValid)
 				return BadRequest();
 
-			string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+			// Use the X-Forwarded-For aware helper so the audit log records the real client IP
+			// rather than the reverse-proxy / load-balancer address.
+			string ipAddress = IpAddressHelper.GetRequestIP(Request, true);
 
 			bool confirmed = await _contactVerificationService.ConfirmVerificationCodeAsync(
 				UserId, DepartmentId, model.Type, model.Code, ipAddress, cancellationToken);

@@ -37,6 +37,12 @@ namespace Resgrid.Services
 			return logs.ToList();
 		}
 
+		public async Task<List<AuditLog>> GetAuditLogsForDepartmentPagedAsync(int departmentId, DateTime startDate, DateTime endDate, AuditLogTypes? logType, int page, int pageSize)
+		{
+			var logs = await _auditLogsRepository.GetAuditLogsForDepartmentPagedAsync(departmentId, startDate, endDate, (int?)logType, page, pageSize);
+			return logs.ToList();
+		}
+
 		public string GetAuditLogTypeString(AuditLogTypes logType)
 		{
 			switch (logType)

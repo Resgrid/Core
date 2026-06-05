@@ -1076,7 +1076,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (request == null || string.IsNullOrWhiteSpace(request.Code))
 				return BadRequest();
 
-			string ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString();
+			// Use the X-Forwarded-For aware helper so the audit log records the real client IP
+			// rather than the reverse-proxy / load-balancer address.
+			string ipAddress = IpAddressHelper.GetRequestIP(Request, true);
 			bool confirmed = await _contactVerificationService.ConfirmVerificationCodeAsync(UserId, DepartmentId, request.Type, request.Code, ipAddress, cancellationToken);
 
 			return Json(new { success = confirmed });

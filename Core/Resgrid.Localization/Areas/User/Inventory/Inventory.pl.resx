@@ -79,6 +79,9 @@
   <data name="AdjustInventoryHeader" xml:space="preserve">
     <value>Dostosuj inwentarz</value>
   </data>
+  <data name="AdjustmentAmountRequired" xml:space="preserve">
+    <value>Musisz podać niezerową korektę stanu magazynowego (liczba/ilość).</value>
+  </data>
   <data name="Amount" xml:space="preserve">
     <value>Ilość</value>
   </data>
@@ -111,6 +114,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>Grupa</value>
+  </data>
+  <data name="InventoryByUnitHeader" xml:space="preserve">
+    <value>Inwentarz według jednostki</value>
   </data>
   <data name="InventoryHistoryHeader" xml:space="preserve">
     <value>Historia inwentarza</value>

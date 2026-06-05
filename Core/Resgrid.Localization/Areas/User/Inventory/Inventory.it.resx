@@ -79,6 +79,9 @@
   <data name="AdjustInventoryHeader" xml:space="preserve">
     <value>Rettifica inventario</value>
   </data>
+  <data name="AdjustmentAmountRequired" xml:space="preserve">
+    <value>È necessario fornire una rettifica di inventario diversa da zero (conteggio/quantità).</value>
+  </data>
   <data name="Amount" xml:space="preserve">
     <value>Quantità</value>
   </data>
@@ -111,6 +114,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>Gruppo</value>
+  </data>
+  <data name="InventoryByUnitHeader" xml:space="preserve">
+    <value>Inventario per unità</value>
   </data>
   <data name="InventoryHistoryHeader" xml:space="preserve">
     <value>Cronologia inventario</value>

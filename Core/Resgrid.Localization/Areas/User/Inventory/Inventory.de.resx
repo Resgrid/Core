@@ -79,6 +79,9 @@
   <data name="AdjustInventoryHeader" xml:space="preserve">
     <value>Inventar anpassen</value>
   </data>
+  <data name="AdjustmentAmountRequired" xml:space="preserve">
+    <value>Sie müssen eine von null abweichende Bestandsanpassung angeben (Anzahl/Menge).</value>
+  </data>
   <data name="Amount" xml:space="preserve">
     <value>Menge</value>
   </data>
@@ -111,6 +114,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>Gruppe</value>
+  </data>
+  <data name="InventoryByUnitHeader" xml:space="preserve">
+    <value>Inventar nach Einheit</value>
   </data>
   <data name="InventoryHistoryHeader" xml:space="preserve">
     <value>Inventarverlauf</value>

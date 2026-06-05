@@ -10,6 +10,7 @@
   <data name="AddedOn" xml:space="preserve"><value>أضيف في</value></data>
   <data name="AddInventoryTypeButton" xml:space="preserve"><value>إضافة نوع مخزون</value></data>
   <data name="AdjustInventory" xml:space="preserve"><value>تعديل المخزون</value></data>
+  <data name="AdjustmentAmountRequired" xml:space="preserve"><value>يجب تقديم تعديل مخزون غير صفري (العدد/الكمية).</value></data>
   <data name="Amount" xml:space="preserve"><value>الكمية</value></data>
   <data name="Batch" xml:space="preserve"><value>الدفعة</value></data>
   <data name="BatchSerialNumber" xml:space="preserve"><value>الرقم التسلسلي للدفعة</value></data>
@@ -18,6 +19,7 @@
   <data name="EditInventoryTypeButton" xml:space="preserve"><value>تعديل نوع المخزون</value></data>
   <data name="ForItemsNoExpiry" xml:space="preserve"><value>للعناصر التي لا تنتهي صلاحيتها</value></data>
   <data name="Group" xml:space="preserve"><value>المجموعة</value></data>
+  <data name="InventoryByUnitHeader" xml:space="preserve"><value>المخزون حسب الوحدة</value></data>
   <data name="InventoryHistoryHeader" xml:space="preserve"><value>سجل المخزون</value></data>
   <data name="InventoryTypesHeader" xml:space="preserve"><value>أنواع المخزون</value></data>
   <data name="ItemExpiresDays" xml:space="preserve"><value>تنتهي صلاحية العنصر بعد (أيام)</value></data>

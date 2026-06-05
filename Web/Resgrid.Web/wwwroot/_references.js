@@ -665,6 +665,7 @@
 /// <reference path="js/app/internal/home/resgrid.home.edituserprofile.js" />
 /// <reference path="js/app/internal/inventory/resgrid.inventory.addtype.js" />
 /// <reference path="js/app/internal/inventory/resgrid.inventory.adjust.js" />
+/// <reference path="js/app/internal/inventory/resgrid.inventory.byunit.js" />
 /// <reference path="js/app/internal/inventory/resgrid.inventory.history.js" />
 /// <reference path="js/app/internal/inventory/resgrid.inventory.index.js" />
 /// <reference path="js/app/internal/inventory/resgrid.inventory.managetypes.js" />

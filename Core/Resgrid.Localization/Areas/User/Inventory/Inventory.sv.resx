@@ -79,6 +79,9 @@
   <data name="AdjustInventoryHeader" xml:space="preserve">
     <value>Justera lager</value>
   </data>
+  <data name="AdjustmentAmountRequired" xml:space="preserve">
+    <value>Du måste ange en lagerjustering som inte är noll (antal/mängd).</value>
+  </data>
   <data name="Amount" xml:space="preserve">
     <value>Antal</value>
   </data>
@@ -111,6 +114,9 @@
   </data>
   <data name="Group" xml:space="preserve">
     <value>Grupp</value>
+  </data>
+  <data name="InventoryByUnitHeader" xml:space="preserve">
+    <value>Inventering per enhet</value>
   </data>
   <data name="InventoryHistoryHeader" xml:space="preserve">
     <value>Lagerhistorik</value>

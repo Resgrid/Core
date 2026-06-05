@@ -111,20 +111,24 @@ namespace Resgrid.Workers.Events.Console
 
 		private static void SetConnectionString()
 		{
-			var config = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-			var connectionStringsSection = (ConnectionStringsSection)config.GetSection("connectionStrings");
-
-			//var test = Configuration["ConnectionStrings:ResgridContext"];
-
 			ConfigProcessor.LoadAndProcessEnvVariables(Configuration.AsEnumerable());
 
-			if (connectionStringsSection.ConnectionStrings["ResgridContext"] != null)
-				connectionStringsSection.ConnectionStrings["ResgridContext"].ConnectionString = DataConfig.ConnectionString;
-			else
-				connectionStringsSection.ConnectionStrings.Add(new ConnectionStringSettings("ResgridContext", DataConfig.ConnectionString));
+			// Inject the connection string into the in-memory ConfigurationManager.ConnectionStrings
+			// collection for legacy consumers. We intentionally do NOT persist the .dll.config to disk
+			// via config.Save(): that fails on read-only / non-root hardened (DHI) containers. This
+			// mirrors the web apps' Startup, which only inject in-memory and never write to disk.
+			var settings = ConfigurationManager.ConnectionStrings;
+			var element = typeof(ConfigurationElement).GetField("_readOnly", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
+			var collection = typeof(ConfigurationElementCollection).GetField("_readOnly", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic);
 
-			config.Save();
-			ConfigurationManager.RefreshSection("connectionStrings");
+			element.SetValue(settings, false);
+			collection.SetValue(settings, false);
+
+			if (settings["ResgridContext"] == null)
+				settings.Add(new ConnectionStringSettings("ResgridContext", DataConfig.ConnectionString));
+
+			collection.SetValue(settings, true);
+			element.SetValue(settings, true);
 		}
 	}
 }

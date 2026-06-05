@@ -146,9 +146,6 @@ namespace Resgrid.Workers.Console
 
 		private static void SetConnectionString()
 		{
-			var config = System.Configuration.ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
-			var connectionStringsSection = (ConnectionStringsSection)config.GetSection("connectionStrings");
-
 			string configPath = Configuration["AppOptions:ConfigPath"];
 
 			if (string.IsNullOrWhiteSpace(configPath))
@@ -182,13 +179,10 @@ namespace Resgrid.Workers.Console
 				}
 			}
 
-			if (connectionStringsSection.ConnectionStrings["ResgridContext"] != null)
-				connectionStringsSection.ConnectionStrings["ResgridContext"].ConnectionString = DataConfig.ConnectionString;
-			else
-				connectionStringsSection.ConnectionStrings.Add(new ConnectionStringSettings("ResgridContext", DataConfig.ConnectionString));
-
-			config.Save();
-			System.Configuration.ConfigurationManager.RefreshSection("connectionStrings");
+			// Previously this also persisted ConnectionStrings to the on-disk .dll.config via config.Save().
+			// That fails on read-only / non-root hardened (DHI) containers and is unnecessary: the in-memory
+			// injection above is what downstream ConfigurationManager.ConnectionStrings consumers read
+			// (this mirrors the web apps' Startup, which only inject in-memory and never write to disk).
 			collection.SetValue(settings, true);
 			element.SetValue(settings, true);
 

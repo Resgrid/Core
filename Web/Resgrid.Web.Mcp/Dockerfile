@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1.7
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 
 ARG BUILD_VERSION=3.5.0
@@ -37,11 +38,13 @@ WORKDIR "/src/Web/Resgrid.Web.Mcp"
 FROM build AS publish
 ARG BUILD_VERSION
 RUN dotnet publish "Resgrid.Web.Mcp.csproj" -c Release -o /app/publish -p:Version=${BUILD_VERSION}
-ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.9.0/wait /app/publish/wait
+ADD --checksum=sha256:2241be671073520e028b2f12df1e9ef0419014cffb5670b7a80b2080804be17d https://github.com/ufoscout/docker-compose-wait/releases/download/2.12.1/wait /app/publish/wait
 RUN chmod +x /app/publish/wait
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+# docker-compose-wait waits for WAIT_HOSTS, then execs WAIT_COMMAND.
+# These hardened (distroless) images have no shell, so we can't chain with "sh -c".
+ENV WAIT_COMMAND="dotnet Resgrid.Web.Mcp.dll"
 ENTRYPOINT ["./wait"]
-CMD ["dotnet", "Resgrid.Web.Mcp.dll"]

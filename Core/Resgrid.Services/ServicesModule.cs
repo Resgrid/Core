@@ -36,6 +36,8 @@ namespace Resgrid.Services
 			builder.RegisterType<ActionLogsService>().As<IActionLogsService>().InstancePerLifetimeScope();
 			builder.RegisterType<EmailService>().As<IEmailService>().InstancePerLifetimeScope();
 			builder.RegisterType<CallsService>().As<ICallsService>().InstancePerLifetimeScope();
+			builder.RegisterType<PlatformReportingService>().As<IPlatformReportingService>().InstancePerLifetimeScope();
+			builder.RegisterType<ReportingRollupProcessor>().As<IReportingRollupProcessor>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentGroupsService>().As<IDepartmentGroupsService>().InstancePerLifetimeScope();
 			builder.RegisterType<AuthorizationService>().As<IAuthorizationService>().InstancePerLifetimeScope();
 			builder.RegisterType<UserProfileService>().As<IUserProfileService>().InstancePerLifetimeScope();

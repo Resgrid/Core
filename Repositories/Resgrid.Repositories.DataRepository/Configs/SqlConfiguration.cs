@@ -315,6 +315,29 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectCallAttachmentByCallIdTypeQuery { get; set; }
 		public string SelectAllOpenCallsByDidDateQuery { get; set; }
 		public string SelectAllCallsByDidLoggedOnQuery { get; set; }
+
+		// Platform reporting / analytics aggregate queries (set-based; dual-scope via %ALLDEPTS%).
+		public string SelectReportCallsCountQuery { get; set; }
+		public string SelectReportCallsCountAllTimeQuery { get; set; }
+		public string SelectReportActiveCallsCountQuery { get; set; }
+		public string SelectReportPersonnelCountQuery { get; set; }
+		public string SelectReportUnitsCountQuery { get; set; }
+		public string SelectReportCallsByDayQuery { get; set; }
+		public string SelectReportCallsByMonthQuery { get; set; }
+		public string SelectReportCallsByTypeQuery { get; set; }
+		public string SelectReportCallsByPriorityQuery { get; set; }
+		public string SelectReportCallsByStateQuery { get; set; }
+		public string SelectReportLatestPersonnelStatesQuery { get; set; }
+		public string SelectReportLatestUnitStatesQuery { get; set; }
+		public string ReportingDailyRollupTable { get; set; }
+		public string SelectReportRollupsQuery { get; set; }
+		public string DeleteReportRollupForDateQuery { get; set; }
+		public string InsertReportRollupQuery { get; set; }
+		public string SelectReportMessagesCountQuery { get; set; }
+		public string SelectReportMessagesByDayQuery { get; set; }
+		public string SelectReportMessagesByMonthQuery { get; set; }
+		public string SelectReportDepartmentsTotalQuery { get; set; }
+		public string SelectReportNewDepartmentsQuery { get; set; }
 		public string UpdateUserDispatchesAsSentQuery { get; set; }
 		public string SelectActiveCallsWithCheckInTimersForUserQuery { get; set; }
 		public string SelectCallProtocolsByCallIdQuery { get; set; }

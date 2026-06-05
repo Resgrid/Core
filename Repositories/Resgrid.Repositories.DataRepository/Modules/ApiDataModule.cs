@@ -42,6 +42,8 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<PaymentRepository>().As<IPaymentRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<UserProfilesRepository>().As<IUserProfilesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CallsRepository>().As<ICallsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ReportingRepository>().As<IReportingRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ReportingRollupRepository>().As<IReportingRollupRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ActionLogsRepository>().As<IActionLogsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<IdentityRepository>().As<IIdentityRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ScheduledTaskLogsRepository>().As<IScheduledTaskLogsRepository>().InstancePerLifetimeScope();

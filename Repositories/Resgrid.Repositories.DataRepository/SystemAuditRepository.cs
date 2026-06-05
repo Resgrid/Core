@@ -39,8 +39,10 @@ namespace Resgrid.Repositories.DataRepository
 					dynamicParameters.Add("UserId", userId);
 					dynamicParameters.Add("StartDate", startDate);
 					dynamicParameters.Add("EndDate", endDate);
-					dynamicParameters.Add("Offset", (page - 1) * pageSize);
-					dynamicParameters.Add("PageSize", pageSize);
+					var safePage = page < 1 ? 1 : page;
+					var safePageSize = pageSize < 1 ? 1 : pageSize;
+					dynamicParameters.Add("Offset", (safePage - 1) * safePageSize);
+					dynamicParameters.Add("PageSize", safePageSize);
 
 					var query = _queryFactory.GetQuery<SelectSystemAuditsByUserIdPagedQuery>();
 
@@ -84,8 +86,10 @@ namespace Resgrid.Repositories.DataRepository
 					dynamicParameters.Add("DepartmentId", departmentId);
 					dynamicParameters.Add("StartDate", startDate);
 					dynamicParameters.Add("EndDate", endDate);
-					dynamicParameters.Add("Offset", (page - 1) * pageSize);
-					dynamicParameters.Add("PageSize", pageSize);
+					var safePage = page < 1 ? 1 : page;
+					var safePageSize = pageSize < 1 ? 1 : pageSize;
+					dynamicParameters.Add("Offset", (safePage - 1) * safePageSize);
+					dynamicParameters.Add("PageSize", safePageSize);
 
 					var query = _queryFactory.GetQuery<SelectSystemAuditsByDepartmentIdPagedQuery>();
 

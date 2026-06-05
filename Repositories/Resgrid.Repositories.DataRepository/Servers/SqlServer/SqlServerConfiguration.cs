@@ -1129,6 +1129,52 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND [IsDeleted] = 0 AND [State] = 0";
 			SelectAllCallsByDidLoggedOnQuery =
 				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [DepartmentId] = %DID% AND AND [LoggedOn] >= %DATE%";
+
+			// ----- Platform reporting / analytics (set-based; %ALLDEPTS% = 1 means system-wide) -----
+			SelectReportCallsCountQuery =
+				"SELECT COUNT(*) FROM %SCHEMA%.%TABLENAME% WHERE (%ALLDEPTS% = 1 OR [DepartmentId] = %DID%) AND [IsDeleted] = 0 AND [LoggedOn] >= %STARTDATE% AND [LoggedOn] <= %ENDDATE%";
+			SelectReportCallsCountAllTimeQuery =
+				"SELECT COUNT(*) FROM %SCHEMA%.%TABLENAME% WHERE (%ALLDEPTS% = 1 OR [DepartmentId] = %DID%) AND [IsDeleted] = 0";
+			SelectReportActiveCallsCountQuery =
+				"SELECT COUNT(*) FROM %SCHEMA%.%TABLENAME% WHERE (%ALLDEPTS% = 1 OR [DepartmentId] = %DID%) AND [IsDeleted] = 0 AND [State] = 0";
+			SelectReportPersonnelCountQuery =
+				"SELECT COUNT(*) FROM %SCHEMA%.%TABLENAME% WHERE (%ALLDEPTS% = 1 OR [DepartmentId] = %DID%) AND [IsDeleted] = 0 AND ([IsDisabled] IS NULL OR [IsDisabled] = 0)";
+			SelectReportUnitsCountQuery =
+				"SELECT COUNT(*) FROM %SCHEMA%.%TABLENAME% WHERE (%ALLDEPTS% = 1 OR [DepartmentId] = %DID%)";
+			SelectReportCallsByDayQuery =
+				"SELECT CAST([LoggedOn] AS date) AS [Bucket], COUNT(*) AS [Total] FROM %SCHEMA%.%TABLENAME% WHERE (%ALLDEPTS% = 1 OR [DepartmentId] = %DID%) AND [IsDeleted] = 0 AND [LoggedOn] >= %STARTDATE% AND [LoggedOn] <= %ENDDATE% GROUP BY CAST([LoggedOn] AS date)";
+			SelectReportCallsByMonthQuery =
+				"SELECT DATEFROMPARTS(YEAR([LoggedOn]), MONTH([LoggedOn]), 1) AS [Bucket], COUNT(*) AS [Total] FROM %SCHEMA%.%TABLENAME% WHERE (%ALLDEPTS% = 1 OR [DepartmentId] = %DID%) AND [IsDeleted] = 0 AND [LoggedOn] >= %STARTDATE% AND [LoggedOn] <= %ENDDATE% GROUP BY YEAR([LoggedOn]), MONTH([LoggedOn])";
+			SelectReportCallsByTypeQuery =
+				"SELECT [Type] AS [GroupKey], COUNT(*) AS [Total] FROM %SCHEMA%.%TABLENAME% WHERE (%ALLDEPTS% = 1 OR [DepartmentId] = %DID%) AND [IsDeleted] = 0 AND [LoggedOn] >= %STARTDATE% AND [LoggedOn] <= %ENDDATE% GROUP BY [Type]";
+			SelectReportCallsByPriorityQuery =
+				"SELECT [Priority] AS [GroupKey], COUNT(*) AS [Total] FROM %SCHEMA%.%TABLENAME% WHERE (%ALLDEPTS% = 1 OR [DepartmentId] = %DID%) AND [IsDeleted] = 0 AND [LoggedOn] >= %STARTDATE% AND [LoggedOn] <= %ENDDATE% GROUP BY [Priority]";
+			SelectReportCallsByStateQuery =
+				"SELECT [State] AS [GroupKey], COUNT(*) AS [Total] FROM %SCHEMA%.%TABLENAME% WHERE (%ALLDEPTS% = 1 OR [DepartmentId] = %DID%) AND [IsDeleted] = 0 AND [LoggedOn] >= %STARTDATE% AND [LoggedOn] <= %ENDDATE% GROUP BY [State]";
+			// Latest-state-per-entity counts grouped by raw status id (built-in enum OR CustomStateDetailId).
+			SelectReportLatestPersonnelStatesQuery =
+				"SELECT latest.[ActionTypeId] AS [GroupKey], COUNT(*) AS [Total] FROM (SELECT al.[ActionTypeId], ROW_NUMBER() OVER (PARTITION BY al.[UserId] ORDER BY al.[Timestamp] DESC) AS rn FROM %SCHEMA%.%TABLENAME% al WHERE (%ALLDEPTS% = 1 OR al.[DepartmentId] = %DID%)) latest WHERE latest.rn = 1 GROUP BY latest.[ActionTypeId]";
+			SelectReportLatestUnitStatesQuery =
+				"SELECT latest.[State] AS [GroupKey], COUNT(*) AS [Total] FROM (SELECT us.[State], ROW_NUMBER() OVER (PARTITION BY us.[UnitId] ORDER BY us.[Timestamp] DESC) AS rn FROM %SCHEMA%.%TABLENAME% us INNER JOIN %SCHEMA%.%UNITSTABLE% u ON u.[UnitId] = us.[UnitId] WHERE (%ALLDEPTS% = 1 OR u.[DepartmentId] = %DID%)) latest WHERE latest.rn = 1 GROUP BY latest.[State]";
+			ReportingDailyRollupTable = "ReportingDailyRollup";
+			SelectReportRollupsQuery =
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [BucketDateUtc] >= %STARTDATE% AND [BucketDateUtc] <= %ENDDATE% AND [Metric] = %METRIC% AND ((%HASDEPT% = 0 AND [DepartmentId] IS NULL) OR (%HASDEPT% = 1 AND [DepartmentId] = %DID%))";
+			DeleteReportRollupForDateQuery =
+				"DELETE FROM %SCHEMA%.%TABLENAME% WHERE [BucketDateUtc] = %BUCKETDATE% AND ((%HASDEPT% = 0 AND [DepartmentId] IS NULL) OR (%HASDEPT% = 1 AND [DepartmentId] = %DID%))";
+			InsertReportRollupQuery =
+				"INSERT INTO %SCHEMA%.%TABLENAME% ([DepartmentId],[BucketDateUtc],[Metric],[Dimension],[ItemCount],[SumValue],[MinValue],[MaxValue],[P50],[P90],[CreatedOnUtc]) VALUES (@DepartmentId,@BucketDateUtc,@Metric,@Dimension,@ItemCount,@SumValue,@MinValue,@MaxValue,@P50,@P90,@CreatedOnUtc)";
+			// Messages have no DepartmentId; scope via a LEFT JOIN to DepartmentMembers on the sender, and
+			// COUNT(DISTINCT MessageId) so system-wide (%ALLDEPTS%=1) counts each message once.
+			SelectReportMessagesCountQuery =
+				"SELECT COUNT(DISTINCT m.[MessageId]) FROM %SCHEMA%.%TABLENAME% m LEFT JOIN %SCHEMA%.%MEMBERSTABLE% dm ON dm.[UserId] = m.[SendingUserId] WHERE (%ALLDEPTS% = 1 OR dm.[DepartmentId] = %DID%) AND m.[IsDeleted] = 0 AND m.[SentOn] >= %STARTDATE% AND m.[SentOn] <= %ENDDATE%";
+			SelectReportMessagesByDayQuery =
+				"SELECT CAST(m.[SentOn] AS date) AS [Bucket], COUNT(DISTINCT m.[MessageId]) AS [Total] FROM %SCHEMA%.%TABLENAME% m LEFT JOIN %SCHEMA%.%MEMBERSTABLE% dm ON dm.[UserId] = m.[SendingUserId] WHERE (%ALLDEPTS% = 1 OR dm.[DepartmentId] = %DID%) AND m.[IsDeleted] = 0 AND m.[SentOn] >= %STARTDATE% AND m.[SentOn] <= %ENDDATE% GROUP BY CAST(m.[SentOn] AS date)";
+			SelectReportMessagesByMonthQuery =
+				"SELECT DATEFROMPARTS(YEAR(m.[SentOn]), MONTH(m.[SentOn]), 1) AS [Bucket], COUNT(DISTINCT m.[MessageId]) AS [Total] FROM %SCHEMA%.%TABLENAME% m LEFT JOIN %SCHEMA%.%MEMBERSTABLE% dm ON dm.[UserId] = m.[SendingUserId] WHERE (%ALLDEPTS% = 1 OR dm.[DepartmentId] = %DID%) AND m.[IsDeleted] = 0 AND m.[SentOn] >= %STARTDATE% AND m.[SentOn] <= %ENDDATE% GROUP BY YEAR(m.[SentOn]), MONTH(m.[SentOn])";
+			SelectReportDepartmentsTotalQuery =
+				"SELECT COUNT(*) FROM %SCHEMA%.%TABLENAME%";
+			SelectReportNewDepartmentsQuery =
+				"SELECT COUNT(*) FROM %SCHEMA%.%TABLENAME% WHERE [CreatedOn] >= %STARTDATE% AND [CreatedOn] <= %ENDDATE%";
 			UpdateUserDispatchesAsSentQuery = @"
 					UPDATE Calls
 					SET DispatchCount = (DispatchCount + 1),

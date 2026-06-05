@@ -420,6 +420,12 @@ namespace Resgrid.Workers.Console
 					new Commands.WeatherAlertImportCommand(20),
 					Cron.MinuteIntervals(5),
 					stoppingToken);
+
+				_logger.Log(LogLevel.Information, "Scheduling Reporting Rollup");
+				await Client.ScheduleAsync("Reporting Rollup",
+					new Commands.ReportingRollupCommand(21),
+					Cron.Daily(3, 30),
+					stoppingToken);
 			}
 			else
 			{

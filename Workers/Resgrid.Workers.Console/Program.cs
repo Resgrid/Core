@@ -562,6 +562,9 @@ namespace Resgrid.Workers.Console
 						.AddPostgres11_0()
 						// Set the connection string
 						.WithGlobalConnectionString(Config.DataConfig.CoreConnectionString)
+						// Index builds on large tables (e.g. ActionLogs) exceed the 30s default;
+						// allow up to 30 minutes per command so migrations don't time out.
+						.WithGlobalCommandTimeout(TimeSpan.FromMinutes(30))
 						// Define the assembly containing the migrations
 						.ScanIn(typeof(M0001_InitialMigrationPg).Assembly).For.Migrations().For.EmbeddedResources())
 					// Enable logging to console in the FluentMigrator way
@@ -580,6 +583,9 @@ namespace Resgrid.Workers.Console
 						.AddSqlServer()
 						// Set the connection string
 						.WithGlobalConnectionString(Config.DataConfig.CoreConnectionString)
+						// Index builds on large tables (e.g. ActionLogs) exceed the 30s default;
+						// allow up to 30 minutes per command so migrations don't time out.
+						.WithGlobalCommandTimeout(TimeSpan.FromMinutes(30))
 						// Define the assembly containing the migrations
 						.ScanIn(typeof(M0001_InitialMigration).Assembly).For.Migrations().For.EmbeddedResources())
 					// Enable logging to console in the FluentMigrator way

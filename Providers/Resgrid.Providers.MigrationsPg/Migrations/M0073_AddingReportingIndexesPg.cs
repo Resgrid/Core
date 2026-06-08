@@ -8,31 +8,36 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 	/// covering indexes on the source tables. All identifiers are lowercased per the PG convention.
 	/// Index creation is guarded so it is safe if a matching index already exists.
 	/// </summary>
-	[Migration(73)]
+	[Migration(73, TransactionBehavior.None)]
 	public class M0073_AddingReportingIndexesPg : Migration
 	{
 		public override void Up()
 		{
 			// Pre-aggregated daily rollup (DepartmentId null => system-wide row).
-			Create.Table("ReportingDailyRollup".ToLower())
-				.WithColumn("ReportingDailyRollupId".ToLower()).AsInt64().NotNullable().PrimaryKey().Identity()
-				.WithColumn("DepartmentId".ToLower()).AsInt32().Nullable()
-				.WithColumn("BucketDateUtc".ToLower()).AsDateTime2().NotNullable()
-				.WithColumn("Metric".ToLower()).AsCustom("citext").NotNullable()
-				.WithColumn("Dimension".ToLower()).AsCustom("citext").Nullable()
-				.WithColumn("ItemCount".ToLower()).AsInt64().NotNullable().WithDefaultValue(0)
-				.WithColumn("SumValue".ToLower()).AsDecimal(18, 4).Nullable()
-				.WithColumn("MinValue".ToLower()).AsDecimal(18, 4).Nullable()
-				.WithColumn("MaxValue".ToLower()).AsDecimal(18, 4).Nullable()
-				.WithColumn("P50".ToLower()).AsDecimal(18, 4).Nullable()
-				.WithColumn("P90".ToLower()).AsDecimal(18, 4).Nullable()
-				.WithColumn("CreatedOnUtc".ToLower()).AsDateTime2().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime);
+			// TransactionBehavior.None means each statement self-commits, so every create below is
+			// guarded with an existence check to stay safe on a re-run after a partial apply
+			// (e.g. when a later large index build times out and the migration is retried).
+			if (!Schema.Table("ReportingDailyRollup".ToLower()).Exists())
+				Create.Table("ReportingDailyRollup".ToLower())
+					.WithColumn("ReportingDailyRollupId".ToLower()).AsInt64().NotNullable().PrimaryKey().Identity()
+					.WithColumn("DepartmentId".ToLower()).AsInt32().Nullable()
+					.WithColumn("BucketDateUtc".ToLower()).AsDateTime2().NotNullable()
+					.WithColumn("Metric".ToLower()).AsCustom("citext").NotNullable()
+					.WithColumn("Dimension".ToLower()).AsCustom("citext").Nullable()
+					.WithColumn("ItemCount".ToLower()).AsInt64().NotNullable().WithDefaultValue(0)
+					.WithColumn("SumValue".ToLower()).AsDecimal(18, 4).Nullable()
+					.WithColumn("MinValue".ToLower()).AsDecimal(18, 4).Nullable()
+					.WithColumn("MaxValue".ToLower()).AsDecimal(18, 4).Nullable()
+					.WithColumn("P50".ToLower()).AsDecimal(18, 4).Nullable()
+					.WithColumn("P90".ToLower()).AsDecimal(18, 4).Nullable()
+					.WithColumn("CreatedOnUtc".ToLower()).AsDateTime2().NotNullable().WithDefault(SystemMethods.CurrentUTCDateTime);
 
-			Create.Index("IX_ReportingDailyRollup_Dept_Date_Metric".ToLower())
-				.OnTable("ReportingDailyRollup".ToLower())
-				.OnColumn("DepartmentId".ToLower()).Ascending()
-				.OnColumn("BucketDateUtc".ToLower()).Ascending()
-				.OnColumn("Metric".ToLower()).Ascending();
+			if (!Schema.Table("ReportingDailyRollup".ToLower()).Index("IX_ReportingDailyRollup_Dept_Date_Metric".ToLower()).Exists())
+				Create.Index("IX_ReportingDailyRollup_Dept_Date_Metric".ToLower())
+					.OnTable("ReportingDailyRollup".ToLower())
+					.OnColumn("DepartmentId".ToLower()).Ascending()
+					.OnColumn("BucketDateUtc".ToLower()).Ascending()
+					.OnColumn("Metric".ToLower()).Ascending();
 
 			// Source-table covering indexes for the live dashboard aggregates.
 			if (!Schema.Table("Calls".ToLower()).Index("IX_Calls_DepartmentId_LoggedOn".ToLower()).Exists())
@@ -98,7 +103,8 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 			if (Schema.Table("Calls".ToLower()).Index("IX_Calls_DepartmentId_LoggedOn".ToLower()).Exists())
 				Delete.Index("IX_Calls_DepartmentId_LoggedOn".ToLower()).OnTable("Calls".ToLower());
 
-			Delete.Table("ReportingDailyRollup".ToLower());
+			if (Schema.Table("ReportingDailyRollup".ToLower()).Exists())
+				Delete.Table("ReportingDailyRollup".ToLower());
 		}
 	}
 }

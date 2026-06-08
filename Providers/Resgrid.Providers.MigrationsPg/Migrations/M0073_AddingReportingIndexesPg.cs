@@ -1,4 +1,5 @@
 using FluentMigrator;
+using FluentMigrator.Postgres;
 
 namespace Resgrid.Providers.MigrationsPg.Migrations
 {
@@ -40,9 +41,13 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.OnColumn("LoggedOn".ToLower()).Ascending();
 
 			if (!Schema.Table("Calls".ToLower()).Index("IX_Calls_DepartmentId_Type".ToLower()).Exists())
+				// Mirrors the SQL Server variant: carry Type as an INCLUDE (non-key) column instead
+				// of an index key, keeping the index shape symmetric across dialects and avoiding a
+				// key on a free-form text column whose values reach ~1189 chars. Still covers the
+				// dashboard's per-department GROUP BY Type aggregation.
 				Create.Index("IX_Calls_DepartmentId_Type".ToLower()).OnTable("Calls".ToLower())
 					.OnColumn("DepartmentId".ToLower()).Ascending()
-					.OnColumn("Type".ToLower()).Ascending();
+					.Include("Type".ToLower());
 
 			if (!Schema.Table("Calls".ToLower()).Index("IX_Calls_DepartmentId_Priority".ToLower()).Exists())
 				Create.Index("IX_Calls_DepartmentId_Priority".ToLower()).OnTable("Calls".ToLower())

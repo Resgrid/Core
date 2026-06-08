@@ -1,4 +1,5 @@
 using FluentMigrator;
+using FluentMigrator.SqlServer;
 
 namespace Resgrid.Providers.Migrations.Migrations
 {
@@ -41,9 +42,14 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.OnColumn("LoggedOn").Ascending();
 
 			if (!Schema.Table("Calls").Index("IX_Calls_DepartmentId_Type").Exists())
+				// Calls.Type is nvarchar(max), which SQL Server cannot use as an index key column
+				// (error 1919), and existing data reaches ~1189 chars so it cannot be narrowed to a
+				// keyable width without truncation. Key on DepartmentId and carry Type as an INCLUDE
+				// (non-key) column -- LOB columns are allowed there -- which still covers the
+				// dashboard's per-department GROUP BY Type aggregation.
 				Create.Index("IX_Calls_DepartmentId_Type").OnTable("Calls")
 					.OnColumn("DepartmentId").Ascending()
-					.OnColumn("Type").Ascending();
+					.Include("Type");
 
 			if (!Schema.Table("Calls").Index("IX_Calls_DepartmentId_Priority").Exists())
 				Create.Index("IX_Calls_DepartmentId_Priority").OnTable("Calls")

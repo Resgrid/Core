@@ -70,12 +70,17 @@ namespace Resgrid.Repositories.DataRepository
 							AND c.table_schema NOT IN ('pg_catalog', 'information_schema')";
 
 					pkSql = @"
-						SELECT tc.table_schema AS TableSchema, tc.table_name AS TableName, kcu.column_name AS ColumnName
+						SELECT tc.table_schema AS TableSchema, tc.table_name AS TableName, kcu.column_name AS ColumnName,
+							col.data_type AS DataType, col.udt_name AS UdtName
 						FROM information_schema.table_constraints tc
 						INNER JOIN information_schema.key_column_usage kcu
 							ON tc.constraint_name = kcu.constraint_name
 							AND tc.table_schema = kcu.table_schema
 							AND tc.table_name = kcu.table_name
+						INNER JOIN information_schema.columns col
+							ON col.table_schema = kcu.table_schema
+							AND col.table_name = kcu.table_name
+							AND col.column_name = kcu.column_name
 						WHERE tc.constraint_type = 'PRIMARY KEY'
 							AND tc.table_schema NOT IN ('pg_catalog', 'information_schema')";
 				}
@@ -89,12 +94,17 @@ namespace Resgrid.Repositories.DataRepository
 						WHERE c.DATA_TYPE IN ('char', 'varchar', 'nchar', 'nvarchar', 'text', 'ntext')";
 
 					pkSql = @"
-						SELECT tc.TABLE_SCHEMA AS TableSchema, tc.TABLE_NAME AS TableName, kcu.COLUMN_NAME AS ColumnName
+						SELECT tc.TABLE_SCHEMA AS TableSchema, tc.TABLE_NAME AS TableName, kcu.COLUMN_NAME AS ColumnName,
+							col.DATA_TYPE AS DataType
 						FROM INFORMATION_SCHEMA.TABLE_CONSTRAINTS tc
 						INNER JOIN INFORMATION_SCHEMA.KEY_COLUMN_USAGE kcu
 							ON tc.CONSTRAINT_NAME = kcu.CONSTRAINT_NAME
 							AND tc.TABLE_SCHEMA = kcu.TABLE_SCHEMA
 							AND tc.TABLE_NAME = kcu.TABLE_NAME
+						INNER JOIN INFORMATION_SCHEMA.COLUMNS col
+							ON col.TABLE_SCHEMA = kcu.TABLE_SCHEMA
+							AND col.TABLE_NAME = kcu.TABLE_NAME
+							AND col.COLUMN_NAME = kcu.COLUMN_NAME
 						WHERE tc.CONSTRAINT_TYPE = 'PRIMARY KEY'";
 				}
 
@@ -109,7 +119,7 @@ namespace Resgrid.Repositories.DataRepository
 					var singlePk = pkRows
 						.GroupBy(p => p.TableSchema + "." + p.TableName)
 						.Where(g => g.Count() == 1)
-						.ToDictionary(g => g.Key, g => g.First().ColumnName, StringComparer.OrdinalIgnoreCase);
+						.ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
 
 					var targets = new List<Utf8TextColumnTarget>();
 
@@ -120,13 +130,20 @@ namespace Resgrid.Repositories.DataRepository
 						if (ExcludedTables.Contains(first.TableName))
 							continue;
 
-						if (!singlePk.TryGetValue(group.Key, out var pkColumn))
+						if (!singlePk.TryGetValue(group.Key, out var pk))
 							continue; // no single-column PK -> cannot page safely
+
+						// The keyset cursor is a string re-bound to the PK's native type; only text,
+						// integer and uuid PKs are supported. Skip anything else (e.g. date/decimal PKs)
+						// so we never emit a query that compares an incompatible type against the cursor.
+						var keyType = ClassifyKeyType(pk);
+						if (keyType == null)
+							continue;
 
 						// Never clean the primary-key column itself.
 						var textColumns = group
 							.Select(c => c.ColumnName)
-							.Where(name => !string.Equals(name, pkColumn, StringComparison.OrdinalIgnoreCase))
+							.Where(name => !string.Equals(name, pk.ColumnName, StringComparison.OrdinalIgnoreCase))
 							.ToList();
 
 						if (textColumns.Count == 0)
@@ -136,7 +153,8 @@ namespace Resgrid.Repositories.DataRepository
 						{
 							Schema = first.TableSchema,
 							TableName = first.TableName,
-							PrimaryKeyColumn = pkColumn,
+							PrimaryKeyColumn = pk.ColumnName,
+							PrimaryKeyType = keyType.Value,
 							TextColumns = textColumns
 						});
 					}
@@ -168,7 +186,7 @@ namespace Resgrid.Repositories.DataRepository
 				var dynamicParameters = new DynamicParameters();
 				dynamicParameters.Add("batchSize", batchSize);
 				if (hasCursor)
-					dynamicParameters.Add("lastKey", lastKey);
+					dynamicParameters.Add("lastKey", ConvertKey(lastKey, target.PrimaryKeyType));
 
 				using (DbConnection conn = _connectionProvider.Create())
 				{
@@ -238,7 +256,7 @@ namespace Resgrid.Repositories.DataRepository
 								dynamicParameters.Add(paramName, (object)column.Value ?? DBNull.Value);
 							}
 
-							dynamicParameters.Add("rg_key", row.Key);
+							dynamicParameters.Add("rg_key", ConvertKey(row.Key, target.PrimaryKeyType));
 
 							var sql = $"UPDATE {table} SET {string.Join(", ", setClauses)} WHERE {pk} = @rg_key";
 
@@ -289,24 +307,45 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			try
 			{
-				var updateSql = $@"
-					UPDATE {ProgressTable}
-					SET lastprocessedkey = @LastProcessedKey, lastcompletedutc = @LastCompletedUtc,
-						rowsscanned = @RowsScanned, rowsfixed = @RowsFixed, updatedonutc = @UpdatedOnUtc
-					WHERE tablename = @TableName";
+				// Atomic upsert: overlapping cleanup runs (long sweeps or multiple workers) can save the
+				// first watermark for the same table concurrently, which the old UPDATE-then-INSERT raced
+				// on (duplicate-PK on the second INSERT). The tablename PK makes both forms below race-safe.
+				string upsertSql;
 
-				var insertSql = $@"
-					INSERT INTO {ProgressTable} (tablename, lastprocessedkey, lastcompletedutc, rowsscanned, rowsfixed, updatedonutc)
-					VALUES (@TableName, @LastProcessedKey, @LastCompletedUtc, @RowsScanned, @RowsFixed, @UpdatedOnUtc)";
+				if (IsPostgres)
+				{
+					upsertSql = $@"
+						INSERT INTO {ProgressTable} (tablename, lastprocessedkey, lastcompletedutc, rowsscanned, rowsfixed, updatedonutc)
+						VALUES (@TableName, @LastProcessedKey, @LastCompletedUtc, @RowsScanned, @RowsFixed, @UpdatedOnUtc)
+						ON CONFLICT (tablename) DO UPDATE SET
+							lastprocessedkey = EXCLUDED.lastprocessedkey,
+							lastcompletedutc = EXCLUDED.lastcompletedutc,
+							rowsscanned = EXCLUDED.rowsscanned,
+							rowsfixed = EXCLUDED.rowsfixed,
+							updatedonutc = EXCLUDED.updatedonutc";
+				}
+				else
+				{
+					// UPDLOCK + SERIALIZABLE takes a key-range lock so the row-absent case serializes:
+					// one run inserts, the other blocks then updates. No MERGE (its upsert races are well known).
+					upsertSql = $@"
+						SET XACT_ABORT ON;
+						BEGIN TRANSACTION;
+						UPDATE {ProgressTable} WITH (UPDLOCK, SERIALIZABLE)
+						SET lastprocessedkey = @LastProcessedKey, lastcompletedutc = @LastCompletedUtc,
+							rowsscanned = @RowsScanned, rowsfixed = @RowsFixed, updatedonutc = @UpdatedOnUtc
+						WHERE tablename = @TableName;
+						IF @@ROWCOUNT = 0
+							INSERT INTO {ProgressTable} (tablename, lastprocessedkey, lastcompletedutc, rowsscanned, rowsfixed, updatedonutc)
+							VALUES (@TableName, @LastProcessedKey, @LastCompletedUtc, @RowsScanned, @RowsFixed, @UpdatedOnUtc);
+						COMMIT TRANSACTION;";
+				}
 
 				using (DbConnection conn = _connectionProvider.Create())
 				{
 					await conn.OpenAsync(cancellationToken);
 
-					var affected = await conn.ExecuteAsync(new CommandDefinition(updateSql, progress, cancellationToken: cancellationToken));
-
-					if (affected == 0)
-						await conn.ExecuteAsync(new CommandDefinition(insertSql, progress, cancellationToken: cancellationToken));
+					await conn.ExecuteAsync(new CommandDefinition(upsertSql, progress, cancellationToken: cancellationToken));
 				}
 			}
 			catch (Exception ex)
@@ -316,11 +355,72 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
+		/// <summary>
+		/// Maps a primary key column's declared type to the pageable category used for keyset cursors,
+		/// or null when the type cannot be paged with a string cursor (e.g. date/decimal PKs).
+		/// </summary>
+		private static Utf8PrimaryKeyType? ClassifyKeyType(MetaColumn pk)
+		{
+			var udtName = (pk.UdtName ?? string.Empty).ToLowerInvariant();
+			if (udtName == "citext")
+				return Utf8PrimaryKeyType.Text;
+
+			var dataType = (pk.DataType ?? string.Empty).ToLowerInvariant();
+			switch (dataType)
+			{
+				case "char":
+				case "varchar":
+				case "nchar":
+				case "nvarchar":
+				case "text":
+				case "ntext":
+				case "character":
+				case "character varying":
+					return Utf8PrimaryKeyType.Text;
+
+				case "tinyint":
+				case "smallint":
+				case "int":
+				case "integer":
+				case "bigint":
+					return Utf8PrimaryKeyType.Integer;
+
+				case "uniqueidentifier":
+				case "uuid":
+					return Utf8PrimaryKeyType.Guid;
+
+				default:
+					return null; // unsupported PK type -> table is skipped
+			}
+		}
+
+		/// <summary>
+		/// Re-binds a string cursor to the primary key's native CLR type so the keyset <c>&gt;</c> / <c>=</c>
+		/// predicates compare like types (PostgreSQL has no implicit text-to-integer/uuid coercion).
+		/// </summary>
+		private static object ConvertKey(string key, Utf8PrimaryKeyType keyType)
+		{
+			if (string.IsNullOrEmpty(key))
+				return key;
+
+			switch (keyType)
+			{
+				case Utf8PrimaryKeyType.Integer:
+					return long.Parse(key, CultureInfo.InvariantCulture);
+				case Utf8PrimaryKeyType.Guid:
+					return Guid.Parse(key);
+				default:
+					return key;
+			}
+		}
+
 		private class MetaColumn
 		{
 			public string TableSchema { get; set; }
 			public string TableName { get; set; }
 			public string ColumnName { get; set; }
+			public string DataType { get; set; }
+			public string UdtName { get; set; }
 		}
 	}
 }

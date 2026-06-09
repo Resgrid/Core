@@ -15,13 +15,17 @@ namespace Resgrid.Model.Repositories
 	{
 		/// <summary>
 		/// Returns every base-table text column grouped by table, restricted to tables that have a
-		/// single-column primary key (required for stable keyset pagination).
+		/// single-column primary key of a pageable type — text/citext, an integer type, or uuid
+		/// (required for stable keyset pagination). Tables whose PK is some other type are skipped.
 		/// </summary>
 		Task<List<Utf8TextColumnTarget>> GetTextColumnTargetsAsync(CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Reads the next batch of rows for <paramref name="target"/> ordered by primary key, starting
-		/// after <paramref name="lastKey"/> (null/empty for the first page).
+		/// after <paramref name="lastKey"/> (null/empty for the first page). The cursor is the previous
+		/// page's last key rendered as an invariant string; the implementation re-binds it to the PK's
+		/// native type (see <see cref="Utf8TextColumnTarget.PrimaryKeyType"/>) so the keyset comparison
+		/// works for text, integer and uuid keys alike.
 		/// </summary>
 		Task<Utf8RowBatch> GetRowBatchAsync(Utf8TextColumnTarget target, string lastKey, int batchSize, CancellationToken cancellationToken);
 
@@ -38,12 +42,33 @@ namespace Resgrid.Model.Repositories
 		Task SaveProgressAsync(Utf8CleanupProgress progress, CancellationToken cancellationToken);
 	}
 
+	/// <summary>
+	/// The pageable category of a table's primary key. Keyset pagination renders the cursor as an
+	/// invariant string and re-binds it as this type for the <c>&gt;</c> / <c>=</c> predicates, so only
+	/// these PK types are swept; tables with any other PK type are skipped.
+	/// </summary>
+	public enum Utf8PrimaryKeyType
+	{
+		/// <summary>char/varchar/nchar/nvarchar/text/ntext and PostgreSQL citext — bound as a string.</summary>
+		Text = 0,
+
+		/// <summary>tinyint/smallint/int/bigint (and PostgreSQL integer types) — bound as Int64.</summary>
+		Integer = 1,
+
+		/// <summary>SQL Server uniqueidentifier / PostgreSQL uuid — bound as a Guid.</summary>
+		Guid = 2
+	}
+
 	/// <summary>A table plus its single-column primary key and the free-form text columns to scan.</summary>
 	public class Utf8TextColumnTarget
 	{
 		public string Schema { get; set; }
 		public string TableName { get; set; }
 		public string PrimaryKeyColumn { get; set; }
+
+		/// <summary>The PK's value category, so keyset cursors are bound as the PK's native type.</summary>
+		public Utf8PrimaryKeyType PrimaryKeyType { get; set; }
+
 		public List<string> TextColumns { get; set; } = new List<string>();
 
 		/// <summary>Stable identifier used as the watermark key (schema-qualified table name).</summary>
@@ -64,6 +89,7 @@ namespace Resgrid.Model.Repositories
 	/// </summary>
 	public class Utf8TextRow
 	{
+		/// <summary>The row's primary key rendered as an invariant string (re-bound to its native type for queries).</summary>
 		public string Key { get; set; }
 		public Dictionary<string, string> Columns { get; set; } = new Dictionary<string, string>();
 	}

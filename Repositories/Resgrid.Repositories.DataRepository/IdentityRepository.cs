@@ -63,7 +63,10 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
 				{
-					var result = await db.QueryAsync<IdentityUser>($"SELECT * FROM aspnetusers WHERE username = @userName", new { userName = userName });
+					// PostgreSQL text comparison is case-sensitive (unlike SQL Server's default collation),
+					// so match on normalizedusername the same way ASP.NET Identity sign-in does. Otherwise a
+					// user who authenticated with different casing than the stored username is not found here.
+					var result = await db.QueryAsync<IdentityUser>($"SELECT * FROM aspnetusers WHERE normalizedusername = @normalizedUserName", new { normalizedUserName = userName?.ToUpperInvariant() });
 
 					return result.FirstOrDefault();
 				}
@@ -87,7 +90,9 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
 				{
-					return db.Query<IdentityUser>($"SELECT * FROM aspnetusers WHERE email = @email", new { email = email }).FirstOrDefault();
+					// PostgreSQL text comparison is case-sensitive; LOWER() both sides so a different-cased email
+					// still matches (normalizedemail is not maintained on the PG update path, so it can't be relied on).
+					return db.Query<IdentityUser>($"SELECT * FROM aspnetusers WHERE LOWER(email) = LOWER(@email)", new { email = email }).FirstOrDefault();
 				}
 			}
 			else
@@ -107,7 +112,8 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
 				{
-					db.Execute($"UPDATE public.aspnetusers SET username = @newUsername, normalizedusername = @newUsernameUpper WHERE username = @oldUsername", new { newUsername = newUsername, newUsernameUpper = newUsername.ToUpper(), oldUsername = oldUsername });
+					// Case-insensitive match on the old username (PostgreSQL text comparison is case-sensitive).
+					db.Execute($"UPDATE public.aspnetusers SET username = @newUsername, normalizedusername = @newUsernameUpper WHERE LOWER(username) = LOWER(@oldUsername)", new { newUsername = newUsername, newUsernameUpper = newUsername.ToUpper(), oldUsername = oldUsername });
 				}
 			}
 			else
@@ -125,7 +131,9 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
 				{
-					db.Execute($"UPDATE public.aspnetusers SET email = @newEmail WHERE id = @userId", new { userId = userId, newEmail = newEmail });
+					// Keep normalizedemail in sync (ASP.NET Identity's FindByEmailAsync looks up by it); the
+					// SQL Server branch already does this. Without it, email lookups go stale after a change.
+					db.Execute($"UPDATE public.aspnetusers SET email = @newEmail, normalizedemail = @newEmailUpper WHERE id = @userId", new { userId = userId, newEmail = newEmail, newEmailUpper = newEmail?.ToUpper() });
 				}
 			}
 			else

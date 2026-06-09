@@ -38,8 +38,7 @@ namespace Resgrid.Console.Commands
 			}
 			catch (Exception ex)
 			{
-				logger.LogError("There was an error running the UTF-8 data cleanup, see the error output below:");
-				logger.LogError(ex.ToString());
+				Resgrid.Framework.Logging.LogException(ex, "There was an error running the UTF-8 data cleanup");
 				return ExitCode.Failed;
 			}
 

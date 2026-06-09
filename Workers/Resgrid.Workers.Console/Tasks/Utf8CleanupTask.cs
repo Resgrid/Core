@@ -13,7 +13,7 @@ namespace Resgrid.Workers.Console.Tasks
 	{
 		public string Name => "UTF-8 Data Cleanup";
 		public int Priority => 1;
-		public ILogger _logger;
+		private readonly ILogger _logger;
 
 		public Utf8CleanupTask(ILogger logger)
 		{

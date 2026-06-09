@@ -234,6 +234,8 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					try
 					{
+						Utf8WriteGuard.Sanitize(user);
+
 						var dynamicParameters = new DynamicParameters(user);
 
 						var query = _queryFactory.GetInsertQuery<InsertUserQuery, IdentityUser>(user);

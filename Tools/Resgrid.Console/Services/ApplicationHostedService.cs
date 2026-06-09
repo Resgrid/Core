@@ -30,6 +30,7 @@ public sealed class ApplicationHostedService : IHostedService, IDisposable
     private ICommandService _dbUpdateCommand;
     private ICommandService _genOidcCertsCommand;
     private ICommandService _migrateDocsDbCommand;
+    private ICommandService _cleanUtf8Command;
     private ICommandService _oidcUpdateCommand;
     private ICommandService _securityRefreshCommand;
     private ICommandService _helpCommand;
@@ -55,6 +56,7 @@ public sealed class ApplicationHostedService : IHostedService, IDisposable
         [FromKeyedServices("DbUpdateCommand")] ICommandService dbUpdateCommand,
         [FromKeyedServices("GenOidcCertsCommand")] ICommandService genOidcCertsCommand,
         [FromKeyedServices("MigrateDocsDbCommand")] ICommandService migrateDocsDbCommand,
+        [FromKeyedServices("CleanUtf8Command")] ICommandService cleanUtf8Command,
         [FromKeyedServices("OidcUpdateCommand")] ICommandService oidcUpdateCommand,
         [FromKeyedServices("SecurityRefreshCommand")] ICommandService securityRefreshCommand,
         [FromKeyedServices("HelpCommand")] ICommandService helpCommand)
@@ -67,6 +69,7 @@ public sealed class ApplicationHostedService : IHostedService, IDisposable
         _dbUpdateCommand = dbUpdateCommand;
         _genOidcCertsCommand = genOidcCertsCommand;
         _migrateDocsDbCommand = migrateDocsDbCommand;
+        _cleanUtf8Command = cleanUtf8Command;
         _oidcUpdateCommand = oidcUpdateCommand;
         _securityRefreshCommand = securityRefreshCommand;
         _helpCommand = helpCommand;
@@ -192,6 +195,8 @@ public sealed class ApplicationHostedService : IHostedService, IDisposable
 		        return await _genOidcCertsCommand.ExecuteMainAsync(args, cancellationToken).ConfigureAwait(false);
 	        else if (args.Contains("--MigrateDocsDb"))
 		        return await _migrateDocsDbCommand.ExecuteMainAsync(args, cancellationToken).ConfigureAwait(false);
+	        else if (args.Contains("--CleanUtf8"))
+		        return await _cleanUtf8Command.ExecuteMainAsync(args, cancellationToken).ConfigureAwait(false);
 	        else if (args.Contains("--OidcUpdate"))
 		        return await _oidcUpdateCommand.ExecuteMainAsync(args, cancellationToken).ConfigureAwait(false);
 	        else if (args.Contains("--SecurityRefresh"))

@@ -205,6 +205,9 @@ namespace Resgrid.Repositories.DataRepository
 			// SSO Repositories
 			builder.RegisterType<DepartmentSsoConfigRepository>().As<IDepartmentSsoConfigRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentSecurityPolicyRepository>().As<IDepartmentSecurityPolicyRepository>().InstancePerLifetimeScope();
+
+			// UTF-8 / PostgreSQL-migration data maintenance
+			builder.RegisterType<Utf8MaintenanceRepository>().As<IUtf8MaintenanceRepository>().InstancePerLifetimeScope();
 		}
 	}
 }

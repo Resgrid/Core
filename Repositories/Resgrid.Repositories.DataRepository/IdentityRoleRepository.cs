@@ -157,6 +157,8 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var insertFunction = new Func<DbConnection, Task<bool>>(async x =>
 				{
+					Utf8WriteGuard.Sanitize(role);
+
 					var dynamicParameters = new DynamicParameters(role);
 
 					var query = _queryFactory.GetInsertQuery<InsertQuery, IdentityRole>(role);
@@ -200,6 +202,8 @@ namespace Resgrid.Repositories.DataRepository
 					roleClaim.ClaimType = claim.Type;
 					roleClaim.ClaimValue = claim.Value;
 					roleClaim.RoleId = role.Id;
+
+					Utf8WriteGuard.Sanitize(roleClaim);
 
 					var dynamicParameters = new DynamicParameters(roleClaim);
 
@@ -322,6 +326,8 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				var updateFunction = new Func<DbConnection, Task<bool>>(async x =>
 				{
+					Utf8WriteGuard.Sanitize(role);
+
 					var dynamicParameters = new DynamicParameters(role);
 
 					var query = _queryFactory.GetUpdateQuery<UpdateQuery, IdentityRole>(role);

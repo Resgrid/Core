@@ -7,8 +7,13 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 	{
 		public override void Up()
 		{
-			Alter.Table("weatheralertsources")
-				.AddColumn("ispermanentfailure").AsBoolean().NotNullable().WithDefaultValue(false);
+			// Guarded: this migration was renumbered (68 -> 74), so databases upgraded before the
+			// renumber already added this column under version 68. Skip the add if it exists.
+			if (!Schema.Table("weatheralertsources").Column("ispermanentfailure").Exists())
+			{
+				Alter.Table("weatheralertsources")
+					.AddColumn("ispermanentfailure").AsBoolean().NotNullable().WithDefaultValue(false);
+			}
 		}
 
 		public override void Down()

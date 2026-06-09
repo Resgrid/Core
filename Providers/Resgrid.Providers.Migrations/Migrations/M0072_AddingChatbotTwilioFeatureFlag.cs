@@ -13,14 +13,15 @@ namespace Resgrid.Providers.Migrations.Migrations
 			// Seeded OFF (IsEnabledGlobally = false). Inbound Twilio SMS keeps the original text-command
 			// handling until this flag is enabled globally or via a per-department override. FlagType,
 			// IsArchived, IsPermanent and CreatedOn fall back to their table defaults.
-			Insert.IntoTable("FeatureFlags").Row(new
-			{
-				FlagKey = FlagKey,
-				Name = "Chatbot Twilio Text Integration",
-				Description = "When enabled, inbound Twilio SMS is processed by the new chatbot ingress pipeline. When off (globally or for a department) the original text-command handling is used.",
-				Category = "Chatbot",
-				IsEnabledGlobally = false
-			});
+			// Guarded with IF NOT EXISTS so re-running the migration does not violate the unique
+			// FlagKey index.
+			Execute.Sql(
+				"IF NOT EXISTS (SELECT 1 FROM [FeatureFlags] WHERE [FlagKey] = '" + FlagKey + "') " +
+				"INSERT INTO [FeatureFlags] ([FlagKey], [Name], [Description], [Category], [IsEnabledGlobally]) " +
+				"VALUES ('" + FlagKey + "', " +
+				"'Chatbot Twilio Text Integration', " +
+				"'When enabled, inbound Twilio SMS is processed by the new chatbot ingress pipeline. When off (globally or for a department) the original text-command handling is used.', " +
+				"'Chatbot', 0);");
 		}
 
 		public override void Down()

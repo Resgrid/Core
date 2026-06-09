@@ -420,6 +420,19 @@ namespace Resgrid.Workers.Console
 					new Commands.ReportingRollupCommand(21),
 					Cron.Daily(3, 30),
 					stoppingToken);
+
+				if (SystemBehaviorConfig.Utf8CleanupEnabled)
+				{
+					var utf8CleanupHour = SystemBehaviorConfig.Utf8CleanupHourUtc >= 0 && SystemBehaviorConfig.Utf8CleanupHourUtc <= 23
+						? SystemBehaviorConfig.Utf8CleanupHourUtc
+						: 4;
+
+					_logger.Log(LogLevel.Information, "Scheduling UTF-8 Data Cleanup");
+					await Client.ScheduleAsync("UTF-8 Data Cleanup",
+						new Commands.Utf8CleanupCommand(22),
+						Cron.Daily(utf8CleanupHour, 0),
+						stoppingToken);
+				}
 			}
 			else
 			{

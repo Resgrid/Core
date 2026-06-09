@@ -8,14 +8,30 @@ namespace Resgrid.Providers.Migrations.Migrations
 		public override void Up()
 		{
 			// Per-department LLM/AI override + rate limits + linking/notification preferences.
-			Alter.Table("ChatbotDepartmentConfigs")
-				.AddColumn("LlmApiEndpoint").AsString(500).Nullable()
-				.AddColumn("LlmApiKey").AsString(1000).Nullable()
-				.AddColumn("LlmModelName").AsString(200).Nullable()
-				.AddColumn("MessagesPerUserPerMinute").AsInt32().Nullable()
-				.AddColumn("MessagesPerDepartmentPerMinute").AsInt32().Nullable()
-				.AddColumn("RequireLinkingConfirmation").AsBoolean().NotNullable().WithDefaultValue(true)
-				.AddColumn("ProactiveNotificationsEnabled").AsBoolean().NotNullable().WithDefaultValue(false);
+			// Each column is guarded so the migration is safe on databases where a prior partial
+			// apply (or a version renumber) already added some of them.
+			const string table = "ChatbotDepartmentConfigs";
+
+			if (!Schema.Table(table).Column("LlmApiEndpoint").Exists())
+				Alter.Table(table).AddColumn("LlmApiEndpoint").AsString(500).Nullable();
+
+			if (!Schema.Table(table).Column("LlmApiKey").Exists())
+				Alter.Table(table).AddColumn("LlmApiKey").AsString(1000).Nullable();
+
+			if (!Schema.Table(table).Column("LlmModelName").Exists())
+				Alter.Table(table).AddColumn("LlmModelName").AsString(200).Nullable();
+
+			if (!Schema.Table(table).Column("MessagesPerUserPerMinute").Exists())
+				Alter.Table(table).AddColumn("MessagesPerUserPerMinute").AsInt32().Nullable();
+
+			if (!Schema.Table(table).Column("MessagesPerDepartmentPerMinute").Exists())
+				Alter.Table(table).AddColumn("MessagesPerDepartmentPerMinute").AsInt32().Nullable();
+
+			if (!Schema.Table(table).Column("RequireLinkingConfirmation").Exists())
+				Alter.Table(table).AddColumn("RequireLinkingConfirmation").AsBoolean().NotNullable().WithDefaultValue(true);
+
+			if (!Schema.Table(table).Column("ProactiveNotificationsEnabled").Exists())
+				Alter.Table(table).AddColumn("ProactiveNotificationsEnabled").AsBoolean().NotNullable().WithDefaultValue(false);
 		}
 
 		public override void Down()

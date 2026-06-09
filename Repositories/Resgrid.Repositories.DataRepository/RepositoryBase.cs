@@ -164,6 +164,8 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			try
 			{
+				Utf8WriteGuard.Sanitize(entity);
+
 				var insertFunction = new Func<DbConnection, Task<T>>(async x =>
 				{
 					var dynamicParameters = new DynamicParameters(entity);
@@ -214,10 +216,10 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			try
 			{
+				Utf8WriteGuard.Sanitize(entity);
+
 				var updateFunction = new Func<DbConnection, Task<T>>(async x =>
 				{
-
-
 					var dynamicParameters = new DynamicParameters(entity);
 
 					var query = _queryFactory.GetUpdateQuery<UpdateQuery, T>(entity);

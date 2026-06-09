@@ -196,6 +196,49 @@ namespace Resgrid.Config
 		/// </summary>
 		public static string LocationName = "US-West";
 
+		/// <summary>
+		/// When true, free-form text is sanitized at the data-repository write chokepoints so it is
+		/// always safe to store in a PostgreSQL UTF-8 database (strips NUL, repairs Windows-1252
+		/// mojibake, replaces unpaired UTF-16 surrogates). Guards the SQL Server -> PostgreSQL migration.
+		/// </summary>
+		public static bool SanitizeTextForUtf8 = true;
+
+		/// <summary>
+		/// When true (and <see cref="SanitizeTextForUtf8"/> is enabled), the sanitizer also normalizes
+		/// text to Unicode NFC. Not required for PostgreSQL UTF-8 validity, so off by default to avoid
+		/// altering otherwise-valid user text on the write hot-path; mainly useful for the cleanup sweep.
+		/// </summary>
+		public static bool Utf8NormalizeToNfc = false;
+
+		/// <summary>
+		/// When true (and <see cref="SanitizeTextForUtf8"/> is enabled), the sanitizer additionally
+		/// attempts a conservative repair of double-encoded UTF-8 content. Off by default because the
+		/// heuristic can misfire on legitimately Latin-1-looking text.
+		/// </summary>
+		public static bool Utf8RepairDoubleEncoding = false;
+
+		/// <summary>
+		/// Enables the nightly UTF-8 data cleanup worker that sweeps every text column and repairs
+		/// existing content in place so the database stays migration-clean.
+		/// </summary>
+		public static bool Utf8CleanupEnabled = true;
+
+		/// <summary>
+		/// Number of rows the cleanup worker reads per keyset-paginated batch.
+		/// </summary>
+		public static int Utf8CleanupBatchSize = 1000;
+
+		/// <summary>
+		/// Upper bound on the number of rows the cleanup worker will scan in a single run before
+		/// stopping (it resumes from its saved watermark on the next run). 0 means unbounded.
+		/// </summary>
+		public static int Utf8CleanupMaxRowsPerRun = 250000;
+
+		/// <summary>
+		/// UTC hour (0-23) at which the nightly UTF-8 data cleanup worker is scheduled to run.
+		/// </summary>
+		public static int Utf8CleanupHourUtc = 4;
+
 		public static string GetEnvPrefix()
 		{
 			switch (Environment)

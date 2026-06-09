@@ -98,6 +98,12 @@ namespace Resgrid.Services
 		public async Task<bool> DoesUserHaveAnyActiveDepartments(string userName)
 		{
 			var user = await GetUserByNameAsync(userName);
+
+			// Defensive: the user has already authenticated by this point, but if the lookup returns
+			// null (e.g. a stale/edge data state) treat it as no active departments rather than NRE.
+			if (user == null)
+				return false;
+
 			var memberships = await _departmentMembersRepository.GetAllByUserIdAsync(user.UserId);
 
 			return memberships.Any(x => x.IsDeleted == false && (x.IsDisabled == null || x.IsDisabled == false));

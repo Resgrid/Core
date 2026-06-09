@@ -63,7 +63,10 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
 				{
-					var result = await db.QueryAsync<IdentityUser>($"SELECT * FROM aspnetusers WHERE username = @userName", new { userName = userName });
+					// aspnetusers columns are citext (case-insensitive), so match on the same key ASP.NET
+					// Identity authenticated against -- normalizedusername -- so a row whose username and
+					// normalizedusername have drifted apart is still found here.
+					var result = await db.QueryAsync<IdentityUser>($"SELECT * FROM aspnetusers WHERE normalizedusername = @normalizedUserName", new { normalizedUserName = userName?.ToUpperInvariant() });
 
 					return result.FirstOrDefault();
 				}
@@ -87,6 +90,8 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
 				{
+					// email is citext (case-insensitive), so plain equality is already case-insensitive and can
+					// use the index -- no LOWER() needed.
 					return db.Query<IdentityUser>($"SELECT * FROM aspnetusers WHERE email = @email", new { email = email }).FirstOrDefault();
 				}
 			}
@@ -107,14 +112,15 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
 				{
-					db.Execute($"UPDATE public.aspnetusers SET username = @newUsername, normalizedusername = @newUsernameUpper WHERE username = @oldUsername", new { newUsername = newUsername, newUsernameUpper = newUsername.ToUpper(), oldUsername = oldUsername });
+					// username is citext, so equality is already case-insensitive and index-friendly.
+					db.Execute($"UPDATE public.aspnetusers SET username = @newUsername, normalizedusername = @newUsernameUpper WHERE username = @oldUsername", new { newUsername = newUsername, newUsernameUpper = newUsername.ToUpperInvariant(), oldUsername = oldUsername });
 				}
 			}
 			else
 			{
 				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
-					db.Execute($"UPDATE [AspNetUsers] SET [UserName] = @newUsername, [NormalizedUserName] = @newUsernameUpper WHERE UserName = @oldUsername", new { newUsername = newUsername, newUsernameUpper = newUsername.ToUpper(), oldUsername = oldUsername });
+					db.Execute($"UPDATE [AspNetUsers] SET [UserName] = @newUsername, [NormalizedUserName] = @newUsernameUpper WHERE UserName = @oldUsername", new { newUsername = newUsername, newUsernameUpper = newUsername.ToUpperInvariant(), oldUsername = oldUsername });
 				}
 			}
 		}
@@ -125,14 +131,16 @@ namespace Resgrid.Repositories.DataRepository
 			{
 				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
 				{
-					db.Execute($"UPDATE public.aspnetusers SET email = @newEmail WHERE id = @userId", new { userId = userId, newEmail = newEmail });
+					// Keep normalizedemail in sync (ASP.NET Identity's FindByEmailAsync looks up by it); the
+					// SQL Server branch already does this. Without it, email lookups go stale after a change.
+					db.Execute($"UPDATE public.aspnetusers SET email = @newEmail, normalizedemail = @newEmailUpper WHERE id = @userId", new { userId = userId, newEmail = newEmail, newEmailUpper = newEmail?.ToUpperInvariant() });
 				}
 			}
 			else
 			{
 				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
-					db.Execute($"UPDATE [AspNetUsers] SET [Email] = @newEmail, [NormalizedEmail] = @newEmailUpper WHERE Id = @userId", new { userId = userId, newEmail = newEmail, newEmailUpper = newEmail.ToUpper() });
+					db.Execute($"UPDATE [AspNetUsers] SET [Email] = @newEmail, [NormalizedEmail] = @newEmailUpper WHERE Id = @userId", new { userId = userId, newEmail = newEmail, newEmailUpper = newEmail?.ToUpperInvariant() });
 				}
 			}
 		}
@@ -461,22 +469,41 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					var deleteId = Guid.NewGuid().ToString();
 					var maskedEmail = deleteId + "@resgrid.del";
+					// Full de-provisioning: mask the normalized columns too (so ASP.NET Identity's normalized
+					// lookups can't find the row), null the password hash, rotate the security stamp, and lock
+					// the account so a deleted user can no longer authenticate.
 					var result = await db.ExecuteAsync(@"UPDATE public.aspnetusers
 													 SET username = @deleteId,
-													 email = @maskedEmail
+													 normalizedusername = @normalizedDeleteId,
+													 email = @maskedEmail,
+													 normalizedemail = @normalizedMaskedEmail,
+													 passwordhash = NULL,
+													 securitystamp = @securityStamp,
+													 emailconfirmed = false,
+													 lockoutenabled = true,
+													 lockoutend = @lockoutEnd
 													 WHERE id = @userId",
-									new { userId = userId, deleteId = deleteId, maskedEmail = maskedEmail });
+									new { userId = userId, deleteId = deleteId, normalizedDeleteId = deleteId.ToUpperInvariant(), maskedEmail = maskedEmail, normalizedMaskedEmail = maskedEmail.ToUpperInvariant(), securityStamp = Guid.NewGuid().ToString(), lockoutEnd = new DateTimeOffset(9999, 12, 31, 23, 59, 59, TimeSpan.Zero) });
 				}
 			}
 			else
 			{
 				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
+					var deleteId = Guid.NewGuid().ToString();
+					var maskedEmail = deleteId + "@resgrid.del";
 					var result = await db.ExecuteAsync(@"UPDATE AspNetUsers
-													 SET UserName = @deleteid,
-													 Email = @deleteid + '@resgrid.del'
+													 SET UserName = @deleteId,
+													 NormalizedUserName = @normalizedDeleteId,
+													 Email = @maskedEmail,
+													 NormalizedEmail = @normalizedMaskedEmail,
+													 PasswordHash = NULL,
+													 SecurityStamp = @securityStamp,
+													 EmailConfirmed = 0,
+													 LockoutEnabled = 1,
+													 LockoutEnd = @lockoutEnd
 													 WHERE Id = @userId",
-									new { userId = userId, deleteid = Guid.NewGuid().ToString() });
+									new { userId = userId, deleteId = deleteId, normalizedDeleteId = deleteId.ToUpperInvariant(), maskedEmail = maskedEmail, normalizedMaskedEmail = maskedEmail.ToUpperInvariant(), securityStamp = Guid.NewGuid().ToString(), lockoutEnd = new DateTimeOffset(9999, 12, 31, 23, 59, 59, TimeSpan.Zero) });
 				}
 			}
 

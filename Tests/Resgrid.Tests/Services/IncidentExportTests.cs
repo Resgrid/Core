@@ -63,6 +63,25 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public void BuildCsv_neutralizes_leading_formula_characters()
+		{
+			var call = SampleCall();
+			call.Name = "=HYPERLINK(\"http://evil.example\",\"click\")";
+			call.NatureOfCall = "@cmd|' /C calc'!A0";
+			call.Address = "-122.5";
+
+			var bytes = IncidentExport.BuildCsv(ExportProfile.Generic, new[] { call });
+			var csv = Encoding.UTF8.GetString(bytes);
+
+			// Formula-leading cells are neutralized with a single-quote prefix.
+			csv.Should().Contain("'=HYPERLINK");
+			csv.Should().Contain("'@cmd");
+			csv.Should().NotContain(",=HYPERLINK");
+			// Plain negative numbers are exempt from neutralization.
+			csv.Should().Contain(",-122.5,");
+		}
+
+		[Test]
 		public void BuildCsv_nfirs_emits_full_schema_header_with_empty_gap_cells()
 		{
 			var bytes = IncidentExport.BuildCsv(ExportProfile.Nfirs, new[] { SampleCall() });

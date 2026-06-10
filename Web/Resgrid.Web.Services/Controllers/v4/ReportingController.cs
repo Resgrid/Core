@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model.Reporting;
 using Resgrid.Model.Services;
+using Resgrid.Providers.Claims;
 using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.Reporting;
 
@@ -18,6 +19,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 	///
 	/// SECURITY: every endpoint is hard-scoped to the authenticated user's claim DepartmentId — there is
 	/// deliberately no departmentId parameter, so a client can never request another department's data.
+	/// Every endpoint also requires the caller's Reports/View permission (Reports_View policy).
 	/// System-wide (cross-department) reporting is intentionally NOT exposed over HTTP; it is available
 	/// only to the in-process BackOffice, which resolves IPlatformReportingService directly and calls it
 	/// with departmentId = null.
@@ -29,6 +31,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 	{
 		private const int MaxDayWindow = 366;
 		private const int MaxMonthWindowDays = 366 * 5;
+		private const int MaxTopN = 50;
 
 		private readonly IPlatformReportingService _reportingService;
 
@@ -44,14 +47,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="from">Window start (UTC).</param>
 		/// <param name="to">Window end (UTC).</param>
 		/// <param name="granularity">Series bucketing: 0 = day, 1 = month.</param>
-		/// <param name="topN">Max slices per breakdown before an "Other" bucket.</param>
+		/// <param name="topN">Max slices per breakdown before an "Other" bucket (clamped to 1–50).</param>
 		[HttpGet("GetDashboard")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize]
+		[Authorize(Policy = ResgridResources.Reports_View)]
 		public async Task<ActionResult<DashboardReportResult>> GetDashboard(DateTime from, DateTime to,
 			int granularity = 0, int topN = 5, CancellationToken cancellationToken = default)
 		{
 			var gran = granularity == 1 ? ReportGranularity.Month : ReportGranularity.Day;
+			topN = Math.Clamp(topN, 1, MaxTopN);
 			var (startUtc, endUtc) = NormalizeWindow(from, to, gran == ReportGranularity.Month ? MaxMonthWindowDays : MaxDayWindow);
 
 			var report = await _reportingService.GetDashboardReportAsync(DepartmentId, startUtc, endUtc, gran, topN, false, cancellationToken);
@@ -65,7 +69,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Response-time / NFPA analytics (alarm handling, turnout, travel, total response).</summary>
 		[HttpGet("GetResponseTimes")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize]
+		[Authorize(Policy = ResgridResources.Reports_View)]
 		public async Task<ActionResult<ResponseTimeReportResult>> GetResponseTimes(DateTime from, DateTime to,
 			CancellationToken cancellationToken = default)
 		{
@@ -81,7 +85,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Unit Hour Utilization and workload analytics.</summary>
 		[HttpGet("GetUtilization")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize]
+		[Authorize(Policy = ResgridResources.Reports_View)]
 		public async Task<ActionResult<UtilizationReportResult>> GetUtilization(DateTime from, DateTime to,
 			CancellationToken cancellationToken = default)
 		{
@@ -97,7 +101,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>Personnel participation and certification-compliance analytics.</summary>
 		[HttpGet("GetParticipation")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize]
+		[Authorize(Policy = ResgridResources.Reports_View)]
 		public async Task<ActionResult<ParticipationReportResult>> GetParticipation(DateTime from, DateTime to,
 			CancellationToken cancellationToken = default)
 		{
@@ -116,7 +120,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// </summary>
 		[HttpGet("ExportIncidents")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize]
+		[Authorize(Policy = ResgridResources.Reports_View)]
 		public async Task<IActionResult> ExportIncidents(DateTime from, DateTime to, int profile = 0,
 			CancellationToken cancellationToken = default)
 		{
@@ -134,7 +138,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// </summary>
 		[HttpGet("GetExportGaps")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize]
+		[Authorize(Policy = ResgridResources.Reports_View)]
 		public ActionResult<ExportGapReportResult> GetExportGaps(int profile = 0)
 		{
 			var exportProfile = Enum.IsDefined(typeof(ExportProfile), profile) ? (ExportProfile)profile : ExportProfile.Generic;

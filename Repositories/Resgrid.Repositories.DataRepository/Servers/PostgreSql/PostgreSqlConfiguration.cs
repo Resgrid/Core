@@ -1175,7 +1175,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SelectAllOpenCallsByDidDateQuery =
 				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE DepartmentId = %DID% AND IsDeleted = false AND State = 0";
 			SelectAllCallsByDidLoggedOnQuery =
-				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE DepartmentId = %DID% AND AND LoggedOn >= %DATE%";
+				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE DepartmentId = %DID% AND LoggedOn >= %DATE%";
 
 			// ----- Platform reporting / analytics (set-based; %ALLDEPTS% = 1 means system-wide) -----
 			SelectReportCallsCountQuery =

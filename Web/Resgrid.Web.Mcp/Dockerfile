@@ -37,8 +37,14 @@ WORKDIR "/src/Web/Resgrid.Web.Mcp"
 
 FROM build AS publish
 ARG BUILD_VERSION
+## The hardened DHI image marks tzdata as installed (dpkg) but ships none of the
+## zone files, so a plain "apt-get install tzdata" is a no-op. --reinstall forces
+## re-extraction; the test asserts the zone files are really present so the build
+## fails loudly instead of silently shipping an empty /usr/share/zoneinfo.
 RUN DEBIAN_FRONTEND=noninteractive apt-get update \
-    && apt-get install -y --no-install-recommends tzdata \
+    && apt-get install -y --reinstall --no-install-recommends tzdata \
+    && test -f /usr/share/zoneinfo/America/New_York \
+    && test -f /usr/share/zoneinfo/Asia/Kolkata \
     && rm -rf /var/lib/apt/lists/*
 RUN dotnet publish "Resgrid.Web.Mcp.csproj" -c Release -o /app/publish -p:Version=${BUILD_VERSION}
 ADD --checksum=sha256:2241be671073520e028b2f12df1e9ef0419014cffb5670b7a80b2080804be17d https://github.com/ufoscout/docker-compose-wait/releases/download/2.12.1/wait /app/publish/wait

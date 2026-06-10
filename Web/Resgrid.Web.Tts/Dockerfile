@@ -32,7 +32,6 @@ RUN apt-get update \
 		xz-utils \
 		gzip \
 		passwd \
-		tzdata \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& curl -fsSL --retry 3 --retry-delay 5 "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" -o /tmp/ffmpeg.tar.xz \
 	&& curl -fsSL "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz.md5" -o /tmp/ffmpeg.tar.xz.md5 \
@@ -84,6 +83,16 @@ RUN apt-get update \
 	done \
 	&& find /usr/local/lib -name '*.so*' -type f >> /tmp/ttsdeps/libs.txt \
 	&& sort -u /tmp/ttsdeps/libs.txt | while read lib; do [ -f "$lib" ] && cp "$lib" /tmp/ttsdeps/; done
+
+## The hardened DHI image marks tzdata as installed (dpkg) but ships none of the
+## zone files, so a plain "apt-get install tzdata" is a no-op. --reinstall forces
+## re-extraction; the test asserts the zone files are really present so the build
+## fails loudly instead of silently shipping an empty /usr/share/zoneinfo.
+RUN apt-get update \
+	&& apt-get install -y --reinstall --no-install-recommends tzdata \
+	&& test -f /usr/share/zoneinfo/America/New_York \
+	&& test -f /usr/share/zoneinfo/Asia/Kolkata \
+	&& rm -rf /var/lib/apt/lists/*
 
 FROM base AS final
 WORKDIR /app

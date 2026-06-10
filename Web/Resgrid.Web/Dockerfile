@@ -20,7 +20,13 @@ FROM dhi.io/dotnet:9.0.314-sdk-debian13@sha256:a3acd51de0af79878e26292b3053aab51
 #COPY --from=node_base /usr/local/bin /usr/local/bin
 RUN apt-get update
 RUN apt-get install -y ca-certificates curl gnupg
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata
+## The hardened DHI image marks tzdata as installed (dpkg) but ships none of the
+## zone files, so a plain "apt-get install tzdata" is a no-op. --reinstall forces
+## re-extraction; the test asserts the zone files are really present so the build
+## fails loudly instead of silently shipping an empty /usr/share/zoneinfo.
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --reinstall --no-install-recommends tzdata \
+    && test -f /usr/share/zoneinfo/America/New_York \
+    && test -f /usr/share/zoneinfo/Asia/Kolkata
 RUN curl -sL https://deb.nodesource.com/setup_20.x  | bash -
 RUN apt-get -y install nodejs
 ARG BUILD_VERSION

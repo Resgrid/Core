@@ -57,13 +57,22 @@ RUN apt-get update \
         libxext6 \
         libxrender1 \
         zlib1g \
-        tzdata \
     && wget -q https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-3/wkhtmltox_0.12.6.1-3.bookworm_amd64.deb \
     && dpkg -i wkhtmltox_0.12.6.1-3.bookworm_amd64.deb || apt-get install -fy \
     && rm -f wkhtmltox_0.12.6.1-3.bookworm_amd64.deb \
     && mkdir -p /tmp/wkdeps \
     && ldd /usr/local/bin/wkhtmltopdf | awk '/=>/ {print $3}' | while read lib; do cp "$lib" /tmp/wkdeps/; done \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+## The hardened DHI image marks tzdata as installed (dpkg) but ships none of the
+## zone files, so a plain "apt-get install tzdata" is a no-op. --reinstall forces
+## re-extraction; the test asserts the zone files are really present so the build
+## fails loudly instead of silently shipping an empty /usr/share/zoneinfo.
+RUN apt-get update \
+    && apt-get install -y --reinstall --no-install-recommends tzdata \
+    && test -f /usr/share/zoneinfo/America/New_York \
+    && test -f /usr/share/zoneinfo/Asia/Kolkata \
+    && rm -rf /var/lib/apt/lists/*
 
 FROM base AS final
 WORKDIR /app

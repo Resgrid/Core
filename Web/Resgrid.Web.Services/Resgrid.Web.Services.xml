@@ -1341,6 +1341,7 @@
             
              SECURITY: every endpoint is hard-scoped to the authenticated user's claim DepartmentId — there is
              deliberately no departmentId parameter, so a client can never request another department's data.
+             Every endpoint also requires the caller's Reports/View permission (Reports_View policy).
              System-wide (cross-department) reporting is intentionally NOT exposed over HTTP; it is available
              only to the in-process BackOffice, which resolves IPlatformReportingService directly and calls it
              with departmentId = null.
@@ -1354,7 +1355,7 @@
             <param name="from">Window start (UTC).</param>
             <param name="to">Window end (UTC).</param>
             <param name="granularity">Series bucketing: 0 = day, 1 = month.</param>
-            <param name="topN">Max slices per breakdown before an "Other" bucket.</param>
+            <param name="topN">Max slices per breakdown before an "Other" bucket (clamped to 1–50).</param>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ReportingController.GetResponseTimes(System.DateTime,System.DateTime,System.Threading.CancellationToken)">
             <summary>Response-time / NFPA analytics (alarm handling, turnout, travel, total response).</summary>

@@ -127,6 +127,14 @@ namespace Resgrid.Services.Reporting
 		private static string Escape(string value)
 		{
 			value ??= string.Empty;
+
+			// A leading =, +, -, @, tab or CR makes Excel/Sheets evaluate the cell as a formula on
+			// import (CSV injection). Plain numeric values (e.g. "-122.5") are exempt so coordinates
+			// and phone numbers survive intact.
+			if (value.Length > 0 && (value[0] == '=' || value[0] == '+' || value[0] == '-' || value[0] == '@' || value[0] == '\t' || value[0] == '\r')
+				&& !double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out _))
+				value = "'" + value;
+
 			if (value.IndexOf('"') >= 0 || value.IndexOf(',') >= 0 || value.IndexOf('\n') >= 0 || value.IndexOf('\r') >= 0)
 				return "\"" + value.Replace("\"", "\"\"") + "\"";
 			return value;

@@ -57,6 +57,7 @@ RUN apt-get update \
         libxext6 \
         libxrender1 \
         zlib1g \
+        tzdata \
     && wget -q https://github.com/wkhtmltopdf/packaging/releases/download/0.12.6.1-3/wkhtmltox_0.12.6.1-3.bookworm_amd64.deb \
     && dpkg -i wkhtmltox_0.12.6.1-3.bookworm_amd64.deb || apt-get install -fy \
     && rm -f wkhtmltox_0.12.6.1-3.bookworm_amd64.deb \
@@ -72,6 +73,11 @@ COPY --from=publish /usr/local/bin/wkhtmltopdf /usr/local/bin/wkhtmltopdf
 COPY --from=publish /tmp/wkdeps/ /usr/local/lib/wkhtmltopdf/
 COPY --from=publish /etc/fonts/ /etc/fonts/
 COPY --from=publish /usr/share/fonts/ /usr/share/fonts/
+
+## Copy the IANA timezone database. DHI/distroless bases ship without tzdata,
+## so TimeZoneInfo (and TZConvert) can't resolve any zone -> TimeZoneNotFoundException.
+COPY --from=publish /usr/share/zoneinfo /usr/share/zoneinfo
+ENV TZ=Etc/UTC
 
 ENV LD_LIBRARY_PATH="/usr/local/lib/wkhtmltopdf"
 

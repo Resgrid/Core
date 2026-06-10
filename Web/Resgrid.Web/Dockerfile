@@ -20,6 +20,7 @@ FROM dhi.io/dotnet:9.0.314-sdk-debian13@sha256:a3acd51de0af79878e26292b3053aab51
 #COPY --from=node_base /usr/local/bin /usr/local/bin
 RUN apt-get update
 RUN apt-get install -y ca-certificates curl gnupg
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends tzdata
 RUN curl -sL https://deb.nodesource.com/setup_20.x  | bash -
 RUN apt-get -y install nodejs
 ARG BUILD_VERSION
@@ -61,6 +62,10 @@ RUN chmod +x /app/publish/wait
 
 FROM base AS final
 WORKDIR /app
+## Copy the IANA timezone database. DHI/distroless bases ship without tzdata,
+## so TimeZoneInfo (and TZConvert) can't resolve any zone -> TimeZoneNotFoundException.
+COPY --from=publish /usr/share/zoneinfo /usr/share/zoneinfo
+ENV TZ=Etc/UTC
 COPY --from=publish /app/publish .
 # docker-compose-wait waits for WAIT_HOSTS, then execs WAIT_COMMAND.
 # These hardened (distroless) images have no shell, so we can't chain with "sh -c".

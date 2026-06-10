@@ -37,12 +37,19 @@ WORKDIR "/src/Web/Resgrid.Web.Mcp"
 
 FROM build AS publish
 ARG BUILD_VERSION
+RUN DEBIAN_FRONTEND=noninteractive apt-get update \
+    && apt-get install -y --no-install-recommends tzdata \
+    && rm -rf /var/lib/apt/lists/*
 RUN dotnet publish "Resgrid.Web.Mcp.csproj" -c Release -o /app/publish -p:Version=${BUILD_VERSION}
 ADD --checksum=sha256:2241be671073520e028b2f12df1e9ef0419014cffb5670b7a80b2080804be17d https://github.com/ufoscout/docker-compose-wait/releases/download/2.12.1/wait /app/publish/wait
 RUN chmod +x /app/publish/wait
 
 FROM base AS final
 WORKDIR /app
+## Copy the IANA timezone database. DHI/distroless bases ship without tzdata,
+## so TimeZoneInfo (and TZConvert) can't resolve any zone -> TimeZoneNotFoundException.
+COPY --from=publish /usr/share/zoneinfo /usr/share/zoneinfo
+ENV TZ=Etc/UTC
 COPY --from=publish /app/publish .
 # docker-compose-wait waits for WAIT_HOSTS, then execs WAIT_COMMAND.
 # These hardened (distroless) images have no shell, so we can't chain with "sh -c".

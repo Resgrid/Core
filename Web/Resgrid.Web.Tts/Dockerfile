@@ -32,6 +32,7 @@ RUN apt-get update \
 		xz-utils \
 		gzip \
 		passwd \
+		tzdata \
 	&& rm -rf /var/lib/apt/lists/* \
 	&& curl -fsSL --retry 3 --retry-delay 5 "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" -o /tmp/ffmpeg.tar.xz \
 	&& curl -fsSL "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz.md5" -o /tmp/ffmpeg.tar.xz.md5 \
@@ -95,6 +96,10 @@ COPY --from=publish /usr/local/bin/ffprobe /usr/local/bin/ffprobe
 COPY --from=publish /tmp/ttsdeps/ /usr/local/lib/tts/
 COPY --from=publish /tmp/app-passwd /etc/passwd
 COPY --from=publish /tmp/app-group /etc/group
+## Copy the IANA timezone database. DHI/distroless bases ship without tzdata,
+## so TimeZoneInfo (and TZConvert) can't resolve any zone -> TimeZoneNotFoundException.
+COPY --from=publish /usr/share/zoneinfo /usr/share/zoneinfo
+ENV TZ=Etc/UTC
 COPY --from=publish /app/publish .
 
 ENV LD_LIBRARY_PATH="/usr/local/lib/tts"

@@ -22,7 +22,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 		{
 			if (_connection != null && !_connection.IsOpen)
 			{
-				_connection.Dispose();
+				await _connection.DisposeAsync();
 				_connection = null;
 				_factory = null;
 				RaiseConnectionReset();
@@ -82,7 +82,9 @@ namespace Resgrid.Providers.Bus.Rabbit
 				{
 					try
 					{
-						using var channel = await _connection.CreateChannelAsync();
+						// await using to close the channel via DisposeAsync and release its channel number; a
+						// synchronous Dispose() on a v7 IChannel skips the async close handshake and leaks channels.
+						await using var channel = await _connection.CreateChannelAsync();
 
 						await channel.QueueDeclareAsync(queue: SetQueueNameForEnv(ServiceBusConfig.SystemQueueName),
 									 durable: true,
@@ -182,7 +184,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 			if (!_connection.IsOpen)
 			{
-				_connection.Dispose();
+				await _connection.DisposeAsync();
 				_connection = null;
 				_factory = null;
 				RaiseConnectionReset();

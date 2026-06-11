@@ -120,7 +120,11 @@ namespace Resgrid.Providers.Bus.Rabbit
 				var connection = await RabbitConnection.CreateConnection(_clientName);
 				if (connection != null)
 				{
-					using (var channel = await connection.CreateChannelAsync())
+					// await using so the channel is closed via DisposeAsync(): the synchronous Dispose() on a
+					// v7 IChannel skips the async Channel.Close/CloseOk handshake that releases the channel
+					// number back to the SessionManager, leaking channels until the connection hits its limit
+					// (ChannelAllocationException: "The connection cannot support any more channels").
+					await using (var channel = await connection.CreateChannelAsync())
 					{
 						if (channel != null)
 						{

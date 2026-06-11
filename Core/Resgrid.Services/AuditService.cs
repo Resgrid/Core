@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -43,7 +44,13 @@ namespace Resgrid.Services
 			var safePage = page < 1 ? 1 : page;
 			var safePageSize = pageSize < 1 ? 1 : (pageSize > 1000 ? 1000 : pageSize);
 
-			var logs = await _auditLogsRepository.GetAuditLogsForDepartmentPagedAsync(departmentId, startDate, endDate, (int?)logType, safePage, safePageSize);
+			// Normalize the time window so callers that leave a bound unset (DateTime.MinValue) don't
+			// crash or silently return nothing. Floor the inclusive start at the SQL datetime minimum,
+			// and default the exclusive end to "now" when it is unset or precedes the start.
+			var safeStart = startDate < (DateTime)SqlDateTime.MinValue ? (DateTime)SqlDateTime.MinValue : startDate;
+			var safeEnd = (endDate == default(DateTime) || endDate < safeStart) ? DateTime.UtcNow : endDate;
+
+			var logs = await _auditLogsRepository.GetAuditLogsForDepartmentPagedAsync(departmentId, safeStart, safeEnd, (int?)logType, safePage, safePageSize);
 			return logs.ToList();
 		}
 

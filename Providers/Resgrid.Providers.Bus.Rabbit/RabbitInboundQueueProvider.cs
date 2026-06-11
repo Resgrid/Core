@@ -652,7 +652,9 @@ namespace Resgrid.Providers.Bus.Rabbit
 				var connection = await RabbitConnection.CreateConnection(_clientName);
 				if (connection != null)
 				{
-					using (var channel = await connection.CreateChannelAsync())
+					// await using to close the channel via DisposeAsync and release its channel number; the
+					// synchronous Dispose() on a v7 IChannel skips the async close handshake and leaks channels.
+					await using (var channel = await connection.CreateChannelAsync())
 					{
 						var props = new BasicProperties();
 						props.DeliveryMode = DeliveryModes.Persistent;

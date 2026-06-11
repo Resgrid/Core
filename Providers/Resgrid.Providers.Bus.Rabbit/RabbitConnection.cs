@@ -182,9 +182,13 @@ namespace Resgrid.Providers.Bus.Rabbit
 			if (_connection == null)
 				await VerifyAndCreateClients(clientName);
 
-			if (!_connection.IsOpen)
+			// _connection can still be null here if VerifyAndCreateClients failed to connect (e.g. primary
+			// host down and no fallback host configured), so guard before accessing IsOpen to avoid an NRE.
+			if (_connection == null || !_connection.IsOpen)
 			{
-				await _connection.DisposeAsync();
+				if (_connection != null)
+					await _connection.DisposeAsync();
+
 				_connection = null;
 				_factory = null;
 				RaiseConnectionReset();

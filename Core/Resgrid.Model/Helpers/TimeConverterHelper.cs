@@ -12,28 +12,26 @@ namespace Resgrid.Model.Helpers
 	{
 		public static DateTime TimeConverter(this DateTime timestamp, Department department)
 		{
-			DateTime newTime = timestamp;
-			TimeZoneInfo timeZoneInfo = null;
-
 			// If department is null we gotta just bail
 			if (department == null)
 				return timestamp;
 
 			try
 			{
-				if (!String.IsNullOrEmpty(department.TimeZone))
-					timeZoneInfo =
-						TZConvert.GetTimeZoneInfo(
-							DateTimeHelpers.ConvertTimeZoneString(department
-								.TimeZone)); // TimeZoneInfo.FindSystemTimeZoneById(DateTimeHelpers.ConvertTimeZoneString(department.TimeZone));
-				else
-					timeZoneInfo = TZConvert.GetTimeZoneInfo("Pacific Standard Time");// TimeZoneInfo.FindSystemTimeZoneById("Pacific Standard Time");	// Default to Pacific as it's better then UTC
+				string timeZone = "Pacific Standard Time"; // Default to Pacific as it's better then UTC
 
-				if (timeZoneInfo != null)
-				{
-					newTime = TimeZoneInfo.ConvertTimeFromUtc(timestamp, timeZoneInfo);
-				}
-				return newTime;
+				if (!String.IsNullOrEmpty(department.TimeZone))
+					timeZone = department.TimeZone;
+
+				// Resolve via NodaTime's embedded IANA database instead of TimeZoneInfo /
+				// TZConvert.GetTimeZoneInfo. The hardened (DHI) container ships without ICU and
+				// runs in globalization-invariant mode, where TimeZoneInfo cannot map a Windows
+				// zone id and throws TimeZoneNotFoundException. NodaTime carries its own tzdb and
+				// needs neither ICU nor the OS /usr/share/zoneinfo files. Mirrors TimeConverterToString.
+				var ianaTz = TZConvert.WindowsToIana(DateTimeHelpers.ConvertTimeZoneString(timeZone));
+
+				var instant = Instant.FromDateTimeUtc(DateTime.SpecifyKind(timestamp, DateTimeKind.Utc));
+				return instant.InZone(DateTimeZoneProviders.Tzdb[ianaTz]).ToDateTimeUnspecified();
 			}
 			catch (Exception ex)
 			{
@@ -101,21 +99,21 @@ namespace Resgrid.Model.Helpers
 
 		public static TimeSpan GetOffsetForDepartment(Department department)
 		{
-			TimeZoneInfo timeZoneInfo = null;
 			TimeSpan timeSpan;
 
 			try
 			{
+				string timeZone = "Pacific Standard Time"; // Default to Pacific as it's better then UTC
+
 				if (!String.IsNullOrEmpty(department.TimeZone))
-					timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(DateTimeHelpers.ConvertTimeZoneString(department.TimeZone));
-				else
-					timeZoneInfo = TimeZoneInfo.FindSystemTimeZoneById(DateTimeHelpers.WindowsToIana("Pacific Standard Time"));    // Default to Pacific as it's better then UTC
+					timeZone = department.TimeZone;
 
-				timeSpan = timeZoneInfo.BaseUtcOffset;
-				var currentDateTime = DateTime.UtcNow.TimeConverter(department);
+				// NodaTime tzdb (no ICU / OS tzdata dependency, unlike TimeZoneInfo). GetUtcOffset
+				// already folds the active DST rule into the returned offset for the given instant.
+				var ianaTz = TZConvert.WindowsToIana(DateTimeHelpers.ConvertTimeZoneString(timeZone));
+				var instant = Instant.FromDateTimeUtc(DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc));
 
-				if (timeZoneInfo.GetAdjustmentRules() != null && timeZoneInfo.GetAdjustmentRules().Any())
-					timeSpan = timeZoneInfo.GetAdjustmentRules().Where(timeZoneAdjustment => timeZoneAdjustment.DateStart <= currentDateTime && timeZoneAdjustment.DateEnd >= currentDateTime).Aggregate(timeSpan, (current, timeZoneAdjustment) => current + timeZoneAdjustment.DaylightDelta);
+				timeSpan = DateTimeZoneProviders.Tzdb[ianaTz].GetUtcOffset(instant).ToTimeSpan();
 			}
 			catch (Exception ex)
 			{

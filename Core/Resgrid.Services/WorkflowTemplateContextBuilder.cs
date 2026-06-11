@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
@@ -357,10 +358,12 @@ namespace Resgrid.Services
 			DateTime deptNow;
 			try
 			{
-				var tz = !string.IsNullOrWhiteSpace(timeZoneId)
-					? TimeZoneInfo.FindSystemTimeZoneById(timeZoneId)
-					: TimeZoneInfo.Utc;
-				deptNow = TimeZoneInfo.ConvertTimeFromUtc(utcNow, tz);
+				// NodaTime tzdb (no ICU / OS tzdata). DHI runs in globalization-invariant mode where
+				// TimeZoneInfo.FindSystemTimeZoneById can't map a Windows zone id (TimeZoneNotFoundException).
+				// DateTimeHelpers.GetLocalDateTime resolves UTC -> department-local via the embedded tzdb.
+				deptNow = string.IsNullOrWhiteSpace(timeZoneId)
+					? utcNow
+					: DateTimeHelpers.GetLocalDateTime(utcNow, timeZoneId);
 			}
 			catch
 			{

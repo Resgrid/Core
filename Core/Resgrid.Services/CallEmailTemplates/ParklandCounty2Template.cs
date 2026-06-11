@@ -56,7 +56,12 @@ namespace Resgrid.Services.CallEmailTemplates
 						// NodaTime tzdb (no ICU / OS tzdata) — DHI runs in globalization-invariant mode where
 						// TimeZoneInfo.FindSystemTimeZoneById can't resolve a Windows zone id. InZoneLeniently is
 						// DST-aware (the prior BaseUtcOffset ignored DST, drifting an hour for ~8 months/year) and never throws.
-						var ianaTz = TZConvert.WindowsToIana(department.TimeZone);
+						// Default to Pacific (matches TimeConverterHelper) so WindowsToIana never receives a null/blank id
+						// and throws InvalidTimeZoneException, which would silently downgrade callTimeUtc to processing-time UTC.
+						var windowsTz = String.IsNullOrWhiteSpace(department.TimeZone)
+							? "Pacific Standard Time"
+							: department.TimeZone;
+						var ianaTz = TZConvert.WindowsToIana(windowsTz);
 						var localCallTime = LocalDateTime.FromDateTime(DateTime.Parse(data[0].Replace("Date:", "").Trim()));
 						callTimeUtc = localCallTime.InZoneLeniently(DateTimeZoneProviders.Tzdb[ianaTz]).ToDateTimeUtc();
 

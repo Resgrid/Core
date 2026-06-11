@@ -4,9 +4,11 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using NodaTime;
 using Resgrid.Model;
 using Resgrid.Model.Identity;
 using Resgrid.Model.Providers;
+using TimeZoneConverter;
 
 namespace Resgrid.Services.CallEmailTemplates
 {
@@ -51,8 +53,12 @@ namespace Resgrid.Services.CallEmailTemplates
 						var priorityString = c.Name.Substring(0, c.Name.IndexOf(char.Parse("-"))).Trim();
 						priorityChar = Regex.Replace(priorityString, @"\d", "").Trim();
 
-						TimeZoneInfo timeZone = TimeZoneInfo.FindSystemTimeZoneById(department.TimeZone);
-						callTimeUtc = new DateTimeOffset(DateTime.Parse(data[0].Replace("Date:", "").Trim()), timeZone.BaseUtcOffset).UtcDateTime;
+						// NodaTime tzdb (no ICU / OS tzdata) — DHI runs in globalization-invariant mode where
+						// TimeZoneInfo.FindSystemTimeZoneById can't resolve a Windows zone id. InZoneLeniently is
+						// DST-aware (the prior BaseUtcOffset ignored DST, drifting an hour for ~8 months/year) and never throws.
+						var ianaTz = TZConvert.WindowsToIana(department.TimeZone);
+						var localCallTime = LocalDateTime.FromDateTime(DateTime.Parse(data[0].Replace("Date:", "").Trim()));
+						callTimeUtc = localCallTime.InZoneLeniently(DateTimeZoneProviders.Tzdb[ianaTz]).ToDateTimeUtc();
 
 						is2ndPage = c.Notes.Contains("WCT2ndPage");
 

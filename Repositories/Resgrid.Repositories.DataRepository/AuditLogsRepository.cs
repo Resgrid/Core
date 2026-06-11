@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.Common;
 using System.Threading.Tasks;
 using Dapper;
@@ -37,8 +38,12 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					var dynamicParameters = new DynamicParametersExtension();
 					dynamicParameters.Add("DepartmentId", departmentId);
-					dynamicParameters.Add("StartDate", startDate);
-					dynamicParameters.Add("EndDate", endDate);
+					// Bind the bounds as DateTime2 so out-of-SqlDateTime-range values (e.g. DateTime.MinValue
+					// from an unset start filter) don't trigger "SqlDateTime overflow". datetime2 covers
+					// 0001-9999 on SQL Server (vs datetime's 1753 floor) and maps to timestamp on PostgreSQL,
+					// comparing correctly against the loggedon column either way.
+					dynamicParameters.Add("StartDate", startDate, DbType.DateTime2);
+					dynamicParameters.Add("EndDate", endDate, DbType.DateTime2);
 					dynamicParameters.Add("Offset", (page - 1) * pageSize);
 					dynamicParameters.Add("PageSize", pageSize);
 

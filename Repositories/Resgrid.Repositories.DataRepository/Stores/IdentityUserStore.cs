@@ -393,7 +393,9 @@ namespace Resgrid.Repositories.DataRepository.Stores
 			if (user == null)
 				throw new ArgumentNullException(nameof(user));
 
-			return Task.FromResult(user.UserName);
+			// Prefer the stored normalized name; fall back to UserName.ToUpperInvariant() for legacy
+			// rows whose NormalizedUserName was never populated (see SetNormalizedUserNameAsync).
+			return Task.FromResult(user.NormalizedUserName ?? user.UserName?.ToUpperInvariant());
 		}
 
 		public Task<string> GetPasswordHashAsync(IdentityUser user, CancellationToken cancellationToken)
@@ -805,6 +807,11 @@ namespace Resgrid.Repositories.DataRepository.Stores
 
 			if (user == null)
 				throw new ArgumentNullException(nameof(user));
+
+			// Persist the normalized name so new users (created via UserManager.CreateAsync during
+			// department/account signup) get NormalizedUserName populated; otherwise it inserts as NULL
+			// and lookups keyed on normalizedusername (= UserName.ToUpperInvariant()) can't find the user.
+			user.NormalizedUserName = normalizedName ?? user.UserName?.ToUpperInvariant();
 
 			return Task.FromResult(0);
 		}

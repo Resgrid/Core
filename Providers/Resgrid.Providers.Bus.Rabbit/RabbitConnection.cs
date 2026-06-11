@@ -22,7 +22,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 		{
 			if (_connection != null && !_connection.IsOpen)
 			{
-				_connection.Dispose();
+				await _connection.DisposeAsync();
 				_connection = null;
 				_factory = null;
 				RaiseConnectionReset();
@@ -82,7 +82,9 @@ namespace Resgrid.Providers.Bus.Rabbit
 				{
 					try
 					{
-						using var channel = await _connection.CreateChannelAsync();
+						// await using to close the channel via DisposeAsync and release its channel number; a
+						// synchronous Dispose() on a v7 IChannel skips the async close handshake and leaks channels.
+						await using var channel = await _connection.CreateChannelAsync();
 
 						await channel.QueueDeclareAsync(queue: SetQueueNameForEnv(ServiceBusConfig.SystemQueueName),
 									 durable: true,
@@ -180,9 +182,13 @@ namespace Resgrid.Providers.Bus.Rabbit
 			if (_connection == null)
 				await VerifyAndCreateClients(clientName);
 
-			if (!_connection.IsOpen)
+			// _connection can still be null here if VerifyAndCreateClients failed to connect (e.g. primary
+			// host down and no fallback host configured), so guard before accessing IsOpen to avoid an NRE.
+			if (_connection == null || !_connection.IsOpen)
 			{
-				_connection.Dispose();
+				if (_connection != null)
+					await _connection.DisposeAsync();
+
 				_connection = null;
 				_factory = null;
 				RaiseConnectionReset();

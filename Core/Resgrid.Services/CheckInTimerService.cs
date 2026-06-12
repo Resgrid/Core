@@ -554,6 +554,9 @@ namespace Resgrid.Services
 
 			if (warningThresholdMinutes < 1)
 				throw new InvalidOperationException("Check-in timer warning threshold must be at least 1 minute.");
+
+			if (warningThresholdMinutes >= durationMinutes)
+				throw new InvalidOperationException("Check-in timer warning threshold must be less than the duration.");
 		}
 
 		private static HashSet<int> ParseActiveForStates(string activeForStates)

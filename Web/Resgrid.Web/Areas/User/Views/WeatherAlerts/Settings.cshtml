@@ -66,7 +66,7 @@
 						<div class="form-group">
 							<label class="col-sm-4 control-label">@localizer["AutoMessageSeverity"]</label>
 							<div class="col-sm-8">
-								<p class="text-muted" style="margin-bottom:10px;">Configure which severity levels generate auto-messages and optionally restrict them to specific hours (department local time). Delivery runs from the start hour up to (but not including) the end hour, so the end hour must be greater than the start hour. Use start 0 and end 24 for 24-hour delivery.</p>
+								<p class="text-muted" style="margin-bottom:10px;">Configure which severity levels generate auto-messages and optionally restrict them to specific hours (department local time). Delivery runs from the start hour up to (but not including) the end hour. If the start hour is later than the end hour the window wraps overnight &mdash; for example, 18 and 6 delivers from 6pm to 6am. Use start 0 and end 24 for 24-hour delivery.</p>
 								<table class="table table-bordered" style="max-width:550px;">
 									<thead>
 										<tr>

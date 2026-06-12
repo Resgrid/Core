@@ -2021,6 +2021,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				return BadRequest(ex.Message);
 			}
+			catch (UnauthorizedAccessException)
+			{
+				return NotFound();
+			}
 
 			return RedirectToAction("DispatchSettings");
 		}

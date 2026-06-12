@@ -343,6 +343,26 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task SaveTimerConfigAsync_Throws_WhenWarningThresholdEqualsDuration()
+		{
+			var config = new CheckInTimerConfig { DepartmentId = 10, TimerTargetType = 0, DurationMinutes = 30, WarningThresholdMinutes = 30 };
+
+			Func<Task> act = async () => await _service.SaveTimerConfigAsync(config);
+
+			await act.Should().ThrowAsync<InvalidOperationException>();
+		}
+
+		[Test]
+		public async Task SaveTimerConfigAsync_Throws_WhenWarningThresholdExceedsDuration()
+		{
+			var config = new CheckInTimerConfig { DepartmentId = 10, TimerTargetType = 0, DurationMinutes = 15, WarningThresholdMinutes = 30 };
+
+			Func<Task> act = async () => await _service.SaveTimerConfigAsync(config);
+
+			await act.Should().ThrowAsync<InvalidOperationException>();
+		}
+
+		[Test]
 		public async Task SaveTimerConfigAsync_ClearsUnitTypeId_ForNonUnitTypeTargets()
 		{
 			var config = new CheckInTimerConfig { DepartmentId = 10, TimerTargetType = (int)CheckInTimerTargetType.Personnel, UnitTypeId = 5, DurationMinutes = 30, WarningThresholdMinutes = 5 };

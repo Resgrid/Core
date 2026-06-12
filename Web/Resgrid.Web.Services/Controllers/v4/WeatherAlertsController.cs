@@ -378,10 +378,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 					if (entry.StartHour < 0 || entry.StartHour > 23 || entry.EndHour < 0 || entry.EndHour > 24)
 						return BadRequest("Auto-message schedule hours are invalid: start hour must be 0-23 and end hour must be 0-24.");
 
-					// Hours only apply to enabled rows; the window must be non-empty and forward
-					// (use 0 and 24 for 24-hour delivery)
-					if (entry.Enabled && entry.EndHour <= entry.StartHour)
-						return BadRequest("Auto-message schedule end hour must be greater than the start hour. Use start 0 and end 24 for 24-hour delivery.");
+					// Hours only apply to enabled rows; the window must be non-empty. An end hour
+					// less than the start hour is a valid overnight window (e.g. 22 to 6); only an
+					// equal start and end is empty (use 0 and 24 for 24-hour delivery)
+					if (entry.Enabled && entry.EndHour == entry.StartHour)
+						return BadRequest("Auto-message schedule window cannot be empty: start hour and end hour must differ. Use start 0 and end 24 for 24-hour delivery.");
 				}
 			}
 

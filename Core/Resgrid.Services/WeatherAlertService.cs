@@ -400,8 +400,15 @@ namespace Resgrid.Services
 						continue;
 					}
 
-					bool shouldSend = ShouldSendAutoMessage(alert.Severity, schedule, legacyThreshold, department);
-					if (shouldSend)
+					var decision = GetAutoMessageDecision(alert.Severity, schedule, legacyThreshold, department);
+
+					// Outside the configured delivery window — leave NotificationSent false so a
+					// later run inside the window still delivers it. Expiration/cancellation will
+					// drop it from the pending set if the window never opens while it's active.
+					if (decision == AutoMessageDecision.DeferOutsideWindow)
+						continue;
+
+					if (decision == AutoMessageDecision.Send)
 					{
 						try
 						{
@@ -659,7 +666,14 @@ namespace Resgrid.Services
 			return value.Substring(0, maxLength);
 		}
 
-		private static bool ShouldSendAutoMessage(int severity, List<AutoMessageSeveritySchedule> schedule, int legacyThreshold, Department department)
+		private enum AutoMessageDecision
+		{
+			Send,
+			SkipPermanently,
+			DeferOutsideWindow
+		}
+
+		private static AutoMessageDecision GetAutoMessageDecision(int severity, List<AutoMessageSeveritySchedule> schedule, int legacyThreshold, Department department)
 		{
 			if (schedule != null && schedule.Count > 0)
 			{
@@ -667,11 +681,12 @@ namespace Resgrid.Services
 
 				// Severity not in schedule — don't send
 				if (entry == null || !entry.Enabled)
-					return false;
+					return AutoMessageDecision.SkipPermanently;
 
-				// Check time window (StartHour == 0 && EndHour == 0 means 24h/always)
+				// Legacy sentinel: settings saved before EndHour 24 existed use 0/0 for 24h/always.
+				// The canonical form is now StartHour 0 / EndHour 24, handled by the window check below.
 				if (entry.StartHour == 0 && entry.EndHour == 0)
-					return true;
+					return AutoMessageDecision.Send;
 
 				// Get department local time
 				var now = DateTime.UtcNow;
@@ -680,20 +695,23 @@ namespace Resgrid.Services
 
 				int currentHour = now.Hour;
 
+				bool inWindow;
 				if (entry.StartHour <= entry.EndHour)
 				{
-					// Same-day window: e.g. 6-18
-					return currentHour >= entry.StartHour && currentHour < entry.EndHour;
+					// Same-day window, EndHour exclusive: e.g. 6-24 (6am through end of day)
+					inWindow = currentHour >= entry.StartHour && currentHour < entry.EndHour;
 				}
 				else
 				{
 					// Overnight window: e.g. 18-6 (6pm to 6am)
-					return currentHour >= entry.StartHour || currentHour < entry.EndHour;
+					inWindow = currentHour >= entry.StartHour || currentHour < entry.EndHour;
 				}
+
+				return inWindow ? AutoMessageDecision.Send : AutoMessageDecision.DeferOutsideWindow;
 			}
 
-			// Legacy: simple severity threshold
-			return severity <= legacyThreshold;
+			// Legacy: simple severity threshold (no time window, so never defer)
+			return severity <= legacyThreshold ? AutoMessageDecision.Send : AutoMessageDecision.SkipPermanently;
 		}
 
 		private class AutoMessageSeveritySchedule

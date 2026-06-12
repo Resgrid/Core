@@ -66,7 +66,7 @@
 						<div class="form-group">
 							<label class="col-sm-4 control-label">@localizer["AutoMessageSeverity"]</label>
 							<div class="col-sm-8">
-								<p class="text-muted" style="margin-bottom:10px;">Configure which severity levels generate auto-messages and optionally restrict them to specific hours (department local time). Set both hours to 0 for 24-hour delivery.</p>
+								<p class="text-muted" style="margin-bottom:10px;">Configure which severity levels generate auto-messages and optionally restrict them to specific hours (department local time). Delivery runs from the start hour up to (but not including) the end hour. If the start hour is later than the end hour the window wraps overnight &mdash; for example, 18 and 6 delivers from 6pm to 6am. Use start 0 and end 24 for 24-hour delivery.</p>
 								<table class="table table-bordered" style="max-width:550px;">
 									<thead>
 										<tr>
@@ -77,11 +77,11 @@
 										</tr>
 									</thead>
 									<tbody>
-										<tr><td>@localizer["SeverityExtreme"]</td><td style="text-align:center;"><input type="checkbox" class="sched-enabled" data-severity="0" /></td><td><input type="number" class="form-control input-sm sched-start" data-severity="0" min="0" max="23" value="0" /></td><td><input type="number" class="form-control input-sm sched-end" data-severity="0" min="0" max="23" value="0" /></td></tr>
-										<tr><td>@localizer["SeveritySevere"]</td><td style="text-align:center;"><input type="checkbox" class="sched-enabled" data-severity="1" /></td><td><input type="number" class="form-control input-sm sched-start" data-severity="1" min="0" max="23" value="0" /></td><td><input type="number" class="form-control input-sm sched-end" data-severity="1" min="0" max="23" value="0" /></td></tr>
-										<tr><td>@localizer["SeverityModerate"]</td><td style="text-align:center;"><input type="checkbox" class="sched-enabled" data-severity="2" /></td><td><input type="number" class="form-control input-sm sched-start" data-severity="2" min="0" max="23" value="0" /></td><td><input type="number" class="form-control input-sm sched-end" data-severity="2" min="0" max="23" value="0" /></td></tr>
-										<tr><td>@localizer["SeverityMinor"]</td><td style="text-align:center;"><input type="checkbox" class="sched-enabled" data-severity="3" /></td><td><input type="number" class="form-control input-sm sched-start" data-severity="3" min="0" max="23" value="0" /></td><td><input type="number" class="form-control input-sm sched-end" data-severity="3" min="0" max="23" value="0" /></td></tr>
-										<tr><td>@localizer["SeverityUnknown"]</td><td style="text-align:center;"><input type="checkbox" class="sched-enabled" data-severity="4" /></td><td><input type="number" class="form-control input-sm sched-start" data-severity="4" min="0" max="23" value="0" /></td><td><input type="number" class="form-control input-sm sched-end" data-severity="4" min="0" max="23" value="0" /></td></tr>
+										<tr><td>@localizer["SeverityExtreme"]</td><td style="text-align:center;"><input type="checkbox" class="sched-enabled" data-severity="0" /></td><td><input type="number" class="form-control input-sm sched-start" data-severity="0" min="0" max="23" value="0" /></td><td><input type="number" class="form-control input-sm sched-end" data-severity="0" min="0" max="24" value="24" /></td></tr>
+										<tr><td>@localizer["SeveritySevere"]</td><td style="text-align:center;"><input type="checkbox" class="sched-enabled" data-severity="1" /></td><td><input type="number" class="form-control input-sm sched-start" data-severity="1" min="0" max="23" value="0" /></td><td><input type="number" class="form-control input-sm sched-end" data-severity="1" min="0" max="24" value="24" /></td></tr>
+										<tr><td>@localizer["SeverityModerate"]</td><td style="text-align:center;"><input type="checkbox" class="sched-enabled" data-severity="2" /></td><td><input type="number" class="form-control input-sm sched-start" data-severity="2" min="0" max="23" value="0" /></td><td><input type="number" class="form-control input-sm sched-end" data-severity="2" min="0" max="24" value="24" /></td></tr>
+										<tr><td>@localizer["SeverityMinor"]</td><td style="text-align:center;"><input type="checkbox" class="sched-enabled" data-severity="3" /></td><td><input type="number" class="form-control input-sm sched-start" data-severity="3" min="0" max="23" value="0" /></td><td><input type="number" class="form-control input-sm sched-end" data-severity="3" min="0" max="24" value="24" /></td></tr>
+										<tr><td>@localizer["SeverityUnknown"]</td><td style="text-align:center;"><input type="checkbox" class="sched-enabled" data-severity="4" /></td><td><input type="number" class="form-control input-sm sched-start" data-severity="4" min="0" max="23" value="0" /></td><td><input type="number" class="form-control input-sm sched-end" data-severity="4" min="0" max="24" value="24" /></td></tr>
 									</tbody>
 								</table>
 								<input type="hidden" id="settingAutoMsgSeverity" value="1" />
@@ -347,16 +347,46 @@
 		}
 
 		function saveSettings() {
+			var severityNames = {
+				0: '@localizer["SeverityExtreme"]',
+				1: '@localizer["SeveritySevere"]',
+				2: '@localizer["SeverityModerate"]',
+				3: '@localizer["SeverityMinor"]',
+				4: '@localizer["SeverityUnknown"]'
+			};
+
 			var schedule = [];
+			var validationError = null;
 			$('.sched-enabled').each(function () {
 				var sev = parseInt($(this).data('severity'));
+				var enabled = $(this).is(':checked');
+				var start = parseInt($('.sched-start[data-severity="' + sev + '"]').val());
+				var end = parseInt($('.sched-end[data-severity="' + sev + '"]').val());
+				if (isNaN(start)) start = 0;
+				if (isNaN(end)) end = 0;
+
+				if (enabled && !validationError) {
+					if (start < 0 || end < 0 || start > 23 || end > 24) {
+						validationError = severityNames[sev] + ': start hour must be 0-23 and end hour must be 0-24.';
+					} else if (end === start) {
+						validationError = severityNames[sev] + ': start and end hour cannot be the same. Use start 0 and end 24 for 24-hour delivery.';
+					} else if (end < start) {
+						validationError = severityNames[sev] + ': end hour cannot be before the start hour.';
+					}
+				}
+
 				schedule.push({
 					Severity: sev,
-					Enabled: $(this).is(':checked'),
-					StartHour: parseInt($('.sched-start[data-severity="' + sev + '"]').val()) || 0,
-					EndHour: parseInt($('.sched-end[data-severity="' + sev + '"]').val()) || 0
+					Enabled: enabled,
+					StartHour: start,
+					EndHour: end
 				});
 			});
+
+			if (validationError) {
+				alert(validationError);
+				return;
+			}
 
 			var data = {
 				WeatherAlertsEnabled: $('#settingEnabled').is(':checked'),

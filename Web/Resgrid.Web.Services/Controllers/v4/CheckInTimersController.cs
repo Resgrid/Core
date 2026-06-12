@@ -102,7 +102,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 				CreatedByUserId = UserId
 			};
 
-			var saved = await _checkInTimerService.SaveTimerConfigAsync(config, cancellationToken);
+			CheckInTimerConfig saved;
+			try
+			{
+				saved = await _checkInTimerService.SaveTimerConfigAsync(config, cancellationToken);
+			}
+			catch (System.InvalidOperationException ex)
+			{
+				return BadRequest(ex.Message);
+			}
+			catch (System.UnauthorizedAccessException)
+			{
+				return NotFound();
+			}
 
 			result.Id = saved.CheckInTimerConfigId;
 			result.PageSize = 1;
@@ -123,7 +135,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var result = new SaveCheckInTimerConfigResult();
 
-			var deleted = await _checkInTimerService.DeleteTimerConfigAsync(configId, DepartmentId, cancellationToken);
+			bool deleted;
+			try
+			{
+				deleted = await _checkInTimerService.DeleteTimerConfigAsync(configId, DepartmentId, cancellationToken);
+			}
+			catch (System.UnauthorizedAccessException)
+			{
+				return NotFound();
+			}
+
 			if (!deleted)
 				return NotFound();
 
@@ -201,7 +222,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 				CreatedByUserId = UserId
 			};
 
-			var saved = await _checkInTimerService.SaveTimerOverrideAsync(ovr, cancellationToken);
+			CheckInTimerOverride saved;
+			try
+			{
+				saved = await _checkInTimerService.SaveTimerOverrideAsync(ovr, cancellationToken);
+			}
+			catch (System.InvalidOperationException ex)
+			{
+				return BadRequest(ex.Message);
+			}
+			catch (System.UnauthorizedAccessException)
+			{
+				return NotFound();
+			}
 
 			result.Id = saved.CheckInTimerOverrideId;
 			result.PageSize = 1;
@@ -222,7 +255,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var result = new SaveCheckInTimerOverrideResult();
 
-			var deleted = await _checkInTimerService.DeleteTimerOverrideAsync(overrideId, DepartmentId, cancellationToken);
+			bool deleted;
+			try
+			{
+				deleted = await _checkInTimerService.DeleteTimerOverrideAsync(overrideId, DepartmentId, cancellationToken);
+			}
+			catch (System.UnauthorizedAccessException)
+			{
+				return NotFound();
+			}
+
 			if (!deleted)
 				return NotFound();
 
@@ -336,6 +378,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (!call.CheckInTimersEnabled || call.State != (int)CallStates.Active)
 				return BadRequest("Check-in timers are not enabled or call is not active.");
+
+			if (!System.Enum.IsDefined(typeof(CheckInTimerTargetType), input.CheckInType))
+				return BadRequest("Invalid check-in type.");
 
 			var record = new CheckInRecord
 			{

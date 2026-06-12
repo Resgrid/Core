@@ -66,14 +66,13 @@ namespace Resgrid.Providers.Bus.Rabbit
 								}
 							}
 						}
-						finally
-						{
-							_semaphore.Release();
-						}
 					}
 				}
 				finally
 				{
+					// Single release: the semaphore is acquired once above, so release it exactly once here.
+					// The outer finally covers every path (primary success, host2/host3 fallback, and rethrow);
+					// a second release in the fallback branch previously threw SemaphoreFullException.
 					_semaphore.Release();
 				}
 

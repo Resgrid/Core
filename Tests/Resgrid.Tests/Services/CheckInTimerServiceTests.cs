@@ -112,6 +112,28 @@ namespace Resgrid.Tests.Services
 			result.Should().BeEmpty();
 		}
 
+			[Test]
+		public async Task ResolveAllTimersForCallAsync_ResolvesCallTypeNameToId_ForOverrideMatching()
+		{
+			// Call.Type stores the call type NAME, not the id — the resolver must look the
+			// id up from the department's call types for override matching to work.
+			var call = new Call { CallId = 1, DepartmentId = 10, Type = "Structure Fire", Priority = 3, CheckInTimersEnabled = true };
+			var overrides = new List<CheckInTimerOverride>
+			{
+				new CheckInTimerOverride { TimerTargetType = 0, CallTypeId = 7, CallPriority = 3, DurationMinutes = 12, WarningThresholdMinutes = 2, IsEnabled = true }
+			};
+			_configRepo.Setup(x => x.GetByDepartmentIdAsync(10)).ReturnsAsync(new List<CheckInTimerConfig>());
+			_callsService.Setup(x => x.GetCallTypesForDepartmentAsync(10))
+				.ReturnsAsync(new List<CallType> { new CallType { CallTypeId = 7, Type = "Structure Fire" } });
+			_overrideRepo.Setup(x => x.GetMatchingOverridesAsync(10, 7, 3)).ReturnsAsync(overrides);
+
+			var result = await _service.ResolveAllTimersForCallAsync(call);
+
+			result.Should().HaveCount(1);
+			result[0].DurationMinutes.Should().Be(12);
+			result[0].IsFromOverride.Should().BeTrue();
+		}
+
 		#endregion Timer Resolution
 
 		#region Timer Status
@@ -135,9 +157,10 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task GetActiveTimerStatusesForCallAsync_Warning_WhenElapsedBetweenDurationAndThreshold()
+		public async Task GetActiveTimerStatusesForCallAsync_Warning_WhenWithinWarningThresholdOfDue()
 		{
-			var call = new Call { CallId = 1, DepartmentId = 10, State = (int)CallStates.Active, CheckInTimersEnabled = true, LoggedOn = DateTime.UtcNow.AddMinutes(-32) };
+			// Duration 30 / warning 5: elapsed 27 leaves 3 minutes remaining -> Warning
+			var call = new Call { CallId = 1, DepartmentId = 10, State = (int)CallStates.Active, CheckInTimersEnabled = true, LoggedOn = DateTime.UtcNow.AddMinutes(-27) };
 			var configs = new List<CheckInTimerConfig>
 			{
 				new CheckInTimerConfig { TimerTargetType = 0, DurationMinutes = 30, WarningThresholdMinutes = 5, IsEnabled = true }
@@ -153,9 +176,10 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task GetActiveTimerStatusesForCallAsync_Critical_WhenElapsedExceedsThreshold()
+		public async Task GetActiveTimerStatusesForCallAsync_Critical_WhenCheckInIsDue()
 		{
-			var call = new Call { CallId = 1, DepartmentId = 10, State = (int)CallStates.Active, CheckInTimersEnabled = true, LoggedOn = DateTime.UtcNow.AddMinutes(-40) };
+			// Duration 30 / warning 5: elapsed 32 means the check-in is overdue -> Critical
+			var call = new Call { CallId = 1, DepartmentId = 10, State = (int)CallStates.Active, CheckInTimersEnabled = true, LoggedOn = DateTime.UtcNow.AddMinutes(-32) };
 			var configs = new List<CheckInTimerConfig>
 			{
 				new CheckInTimerConfig { TimerTargetType = 0, DurationMinutes = 30, WarningThresholdMinutes = 5, IsEnabled = true }
@@ -188,6 +212,40 @@ namespace Resgrid.Tests.Services
 			var result = await _service.GetActiveTimerStatusesForCallAsync(call);
 
 			result.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task GetActiveTimerStatusesForCallAsync_UnitTypeTimer_MatchesCheckInsByUnitsOfThatType()
+		{
+			var call = new Call { CallId = 1, DepartmentId = 10, State = (int)CallStates.Active, CheckInTimersEnabled = true, LoggedOn = DateTime.UtcNow.AddMinutes(-40) };
+			var configs = new List<CheckInTimerConfig>
+			{
+				new CheckInTimerConfig { TimerTargetType = (int)CheckInTimerTargetType.UnitType, UnitTypeId = 2, DurationMinutes = 30, WarningThresholdMinutes = 5, IsEnabled = true }
+			};
+			_configRepo.Setup(x => x.GetByDepartmentIdAsync(10)).ReturnsAsync(configs);
+			_overrideRepo.Setup(x => x.GetMatchingOverridesAsync(10, null, 0)).ReturnsAsync(new List<CheckInTimerOverride>());
+			_unitsService.Setup(x => x.GetUnitsForDepartmentAsync(10)).ReturnsAsync(new List<Unit>
+			{
+				new Unit { UnitId = 5, DepartmentId = 10, Type = "Engine" },
+				new Unit { UnitId = 6, DepartmentId = 10, Type = "Tender" }
+			});
+			_unitsService.Setup(x => x.GetUnitTypesForDepartmentAsync(10)).ReturnsAsync(new List<UnitType>
+			{
+				new UnitType { UnitTypeId = 2, DepartmentId = 10, Type = "Engine" },
+				new UnitType { UnitTypeId = 3, DepartmentId = 10, Type = "Tender" }
+			});
+			// Unit 6 (wrong type) checked in most recently; unit 5 (matching type) earlier.
+			_recordRepo.Setup(x => x.GetByCallIdAsync(1)).ReturnsAsync(new List<CheckInRecord>
+			{
+				new CheckInRecord { CheckInRecordId = "r1", CheckInType = (int)CheckInTimerTargetType.UnitType, UnitId = 5, Timestamp = DateTime.UtcNow.AddMinutes(-2) },
+				new CheckInRecord { CheckInRecordId = "r2", CheckInType = (int)CheckInTimerTargetType.UnitType, UnitId = 6, Timestamp = DateTime.UtcNow.AddMinutes(-1) }
+			});
+
+			var result = await _service.GetActiveTimerStatusesForCallAsync(call);
+
+			result.Should().HaveCount(1);
+			result[0].UnitId.Should().Be(5);
+			result[0].Status.Should().Be("Green");
 		}
 
 		#endregion Timer Status
@@ -274,7 +332,58 @@ namespace Resgrid.Tests.Services
 			result.Should().BeFalse();
 		}
 
+		[Test]
+		public async Task SaveTimerConfigAsync_Throws_WhenDurationInvalid()
+		{
+			var config = new CheckInTimerConfig { DepartmentId = 10, TimerTargetType = 0, DurationMinutes = 0, WarningThresholdMinutes = 5 };
+
+			Func<Task> act = async () => await _service.SaveTimerConfigAsync(config);
+
+			await act.Should().ThrowAsync<InvalidOperationException>();
+		}
+
+		[Test]
+		public async Task SaveTimerConfigAsync_ClearsUnitTypeId_ForNonUnitTypeTargets()
+		{
+			var config = new CheckInTimerConfig { DepartmentId = 10, TimerTargetType = (int)CheckInTimerTargetType.Personnel, UnitTypeId = 5, DurationMinutes = 30, WarningThresholdMinutes = 5 };
+			_configRepo.Setup(x => x.SaveOrUpdateAsync(It.IsAny<CheckInTimerConfig>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((CheckInTimerConfig c, CancellationToken ct, bool b) => c);
+
+			var result = await _service.SaveTimerConfigAsync(config);
+
+			result.UnitTypeId.Should().BeNull();
+		}
+
 		#endregion CRUD
+
+		#region Per-User Summaries
+
+		[Test]
+		public async Task GetUserActiveCallCheckInSummariesAsync_IgnoresNonPersonnelCheckIns()
+		{
+			var call = new Call { CallId = 1, DepartmentId = 10, Priority = 0, State = (int)CallStates.Active, CheckInTimersEnabled = true, LoggedOn = DateTime.UtcNow.AddMinutes(-40) };
+			_callsService.Setup(x => x.GetActiveCallsWithCheckInTimersForUserAsync("user1", 10)).ReturnsAsync(new List<Call> { call });
+			_configRepo.Setup(x => x.GetByDepartmentIdAsync(10)).ReturnsAsync(new List<CheckInTimerConfig>
+			{
+				new CheckInTimerConfig { TimerTargetType = (int)CheckInTimerTargetType.Personnel, DurationMinutes = 30, WarningThresholdMinutes = 5, IsEnabled = true }
+			});
+			_overrideRepo.Setup(x => x.GetMatchingOverridesAsync(10, null, 0)).ReturnsAsync(new List<CheckInTimerOverride>());
+			// The user's only check-in on the call is an IC check-in — it must not reset
+			// their personnel timer (same semantics as the per-personnel endpoint).
+			_recordRepo.Setup(x => x.GetByCallIdAsync(1)).ReturnsAsync(new List<CheckInRecord>
+			{
+				new CheckInRecord { CheckInRecordId = "r1", CheckInType = (int)CheckInTimerTargetType.IC, UserId = "user1", Timestamp = DateTime.UtcNow.AddMinutes(-2) }
+			});
+
+			var result = await _service.GetUserActiveCallCheckInSummariesAsync("user1", 10);
+
+			result.Should().HaveCount(1);
+			result[0].LastCheckIn.Should().BeNull();
+			result[0].NeedsCheckIn.Should().BeTrue();
+			result[0].Status.Should().Be("Critical");
+		}
+
+		#endregion Per-User Summaries
 
 		#region ActiveForStates Propagation
 
@@ -356,8 +465,8 @@ namespace Resgrid.Tests.Services
 			_overrideRepo.Setup(x => x.GetMatchingOverridesAsync(10, null, 0)).ReturnsAsync(new List<CheckInTimerOverride>());
 			_recordRepo.Setup(x => x.GetByCallIdAsync(1)).ReturnsAsync(new List<CheckInRecord>());
 			// User is Responding (2), not On Scene (3)
-			_actionLogsService.Setup(x => x.GetLastActionLogForUserAsync("user1", null))
-				.ReturnsAsync(new ActionLog { ActionTypeId = (int)ActionTypes.Responding });
+			_actionLogsService.Setup(x => x.GetLastActionLogsForDepartmentAsync(10, It.IsAny<bool>(), It.IsAny<bool>()))
+				.ReturnsAsync(new List<ActionLog> { new ActionLog { UserId = "user1", ActionTypeId = (int)ActionTypes.Responding } });
 
 			var result = await _service.GetActiveTimerStatusesForCallAsync(call);
 
@@ -382,8 +491,8 @@ namespace Resgrid.Tests.Services
 			_overrideRepo.Setup(x => x.GetMatchingOverridesAsync(10, null, 0)).ReturnsAsync(new List<CheckInTimerOverride>());
 			_recordRepo.Setup(x => x.GetByCallIdAsync(1)).ReturnsAsync(new List<CheckInRecord>());
 			// User is On Scene (3) - matches
-			_actionLogsService.Setup(x => x.GetLastActionLogForUserAsync("user1", null))
-				.ReturnsAsync(new ActionLog { ActionTypeId = (int)ActionTypes.OnScene });
+			_actionLogsService.Setup(x => x.GetLastActionLogsForDepartmentAsync(10, It.IsAny<bool>(), It.IsAny<bool>()))
+				.ReturnsAsync(new List<ActionLog> { new ActionLog { UserId = "user1", ActionTypeId = (int)ActionTypes.OnScene } });
 
 			var result = await _service.GetActiveTimerStatusesForCallAsync(call);
 
@@ -431,8 +540,8 @@ namespace Resgrid.Tests.Services
 			_overrideRepo.Setup(x => x.GetMatchingOverridesAsync(10, null, 0)).ReturnsAsync(new List<CheckInTimerOverride>());
 			_recordRepo.Setup(x => x.GetByCallIdAsync(1)).ReturnsAsync(new List<CheckInRecord>());
 			// Unit is Responding (5), not On Scene (6)
-			_unitsService.Setup(x => x.GetLastUnitStateByUnitIdAsync(5))
-				.ReturnsAsync(new UnitState { State = (int)UnitStateTypes.Responding });
+			_unitsService.Setup(x => x.GetAllLatestStatusForUnitsByDepartmentIdAsync(10))
+				.ReturnsAsync(new List<UnitState> { new UnitState { UnitId = 5, State = (int)UnitStateTypes.Responding } });
 
 			var result = await _service.GetActiveTimerStatusesForCallAsync(call);
 

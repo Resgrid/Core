@@ -2013,7 +2013,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				CreatedByUserId = UserId
 			};
 
-			await _checkInTimerService.SaveTimerConfigAsync(config, cancellationToken);
+			try
+			{
+				await _checkInTimerService.SaveTimerConfigAsync(config, cancellationToken);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(ex.Message);
+			}
 
 			return RedirectToAction("DispatchSettings");
 		}
@@ -2026,7 +2033,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
 				return Unauthorized();
 
-			await _checkInTimerService.DeleteTimerConfigAsync(configId, DepartmentId, cancellationToken);
+			try
+			{
+				await _checkInTimerService.DeleteTimerConfigAsync(configId, DepartmentId, cancellationToken);
+			}
+			catch (UnauthorizedAccessException)
+			{
+				return NotFound();
+			}
 
 			return RedirectToAction("DispatchSettings");
 		}
@@ -2055,7 +2069,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 				CreatedByUserId = UserId
 			};
 
-			await _checkInTimerService.SaveTimerOverrideAsync(ovr, cancellationToken);
+			try
+			{
+				await _checkInTimerService.SaveTimerOverrideAsync(ovr, cancellationToken);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(ex.Message);
+			}
 
 			return RedirectToAction("DispatchSettings");
 		}
@@ -2068,7 +2089,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
 				return Unauthorized();
 
-			await _checkInTimerService.DeleteTimerOverrideAsync(overrideId, DepartmentId, cancellationToken);
+			try
+			{
+				await _checkInTimerService.DeleteTimerOverrideAsync(overrideId, DepartmentId, cancellationToken);
+			}
+			catch (UnauthorizedAccessException)
+			{
+				return NotFound();
+			}
 
 			return RedirectToAction("DispatchSettings");
 		}

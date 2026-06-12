@@ -368,8 +368,23 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpPost("SaveSettings")]
 		[Authorize(Policy = ResgridResources.WeatherAlert_Update)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<ActionResult<GetWeatherAlertSettingsResult>> SaveSettings([FromBody] SaveWeatherAlertSettingsInput input)
 		{
+			if (input.AutoMessageSchedule != null)
+			{
+				foreach (var entry in input.AutoMessageSchedule)
+				{
+					if (entry.StartHour < 0 || entry.StartHour > 23 || entry.EndHour < 0 || entry.EndHour > 24)
+						return BadRequest("Auto-message schedule hours are invalid: start hour must be 0-23 and end hour must be 0-24.");
+
+					// Hours only apply to enabled rows; the window must be non-empty and forward
+					// (use 0 and 24 for 24-hour delivery)
+					if (entry.Enabled && entry.EndHour <= entry.StartHour)
+						return BadRequest("Auto-message schedule end hour must be greater than the start hour. Use start 0 and end 24 for 24-hour delivery.");
+				}
+			}
+
 			await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, input.WeatherAlertsEnabled.ToString(), DepartmentSettingTypes.WeatherAlertsEnabled);
 			await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, input.MinimumSeverity.ToString(), DepartmentSettingTypes.WeatherAlertMinimumSeverity);
 			await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, input.AutoMessageSeverity.ToString(), DepartmentSettingTypes.WeatherAlertAutoMessageSeverity);
@@ -427,6 +442,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 				try
 				{
 					settings.AutoMessageSchedule = Newtonsoft.Json.JsonConvert.DeserializeObject<System.Collections.Generic.List<WeatherAlertSeverityScheduleData>>(scheduleSetting.Setting);
+
+					// Normalize the legacy 0/0 (24-hour) sentinel to the canonical 0/24 form so
+					// settings saved before EndHour 24 existed round-trip through validation
+					if (settings.AutoMessageSchedule != null)
+					{
+						foreach (var entry in settings.AutoMessageSchedule)
+						{
+							if (entry.StartHour == 0 && entry.EndHour == 0)
+								entry.EndHour = 24;
+						}
+					}
 				}
 				catch { }
 			}

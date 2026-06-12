@@ -202,6 +202,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var model = new NewCallView();
 			model.Call = new Resgrid.Model.Call();
+
+			// Default the check-in timers checkbox from the department auto-enable setting,
+			// mirroring API call creation when no explicit value is supplied
+			model.Call.CheckInTimersEnabled = await _departmentSettingsService.GetCheckInTimersAutoEnableForNewCallsAsync(DepartmentId);
+
 			model = await FillNewCallView(model);
 
 			return View(model);

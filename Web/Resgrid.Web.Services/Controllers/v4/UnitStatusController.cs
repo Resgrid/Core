@@ -197,7 +197,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private async Task<ActionResult<SaveUnitStatusResult>> ProcessSetUnitState(UnitStatusInput stateInput, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var result = new SaveUnitStatusResult();
-			var unit = await _unitsService.GetUnitByIdAsync(int.Parse(stateInput.Id));
+
+			// Validate the unit id up front: this runs before the try/catch and ModelState check below, so a
+			// non-numeric id would otherwise throw an unhandled FormatException (HTTP 500) instead of a 400.
+			if (!int.TryParse(stateInput.Id, out var unitId))
+				return BadRequest();
+
+			var unit = await _unitsService.GetUnitByIdAsync(unitId);
 			var setPersonnelStatus = await _departmentSettingsService.GetPersonnelOnUnitSetUnitStatusAsync(DepartmentId);
 
 			if (unit == null)
@@ -215,31 +221,37 @@ namespace Resgrid.Web.Services.Controllers.v4
 				{
 					var state = new UnitState();
 
-					state.UnitId = int.Parse(stateInput.Id);
+					state.UnitId = unitId;
 					state.LocalTimestamp = stateInput.Timestamp;
 
-					if (!String.IsNullOrWhiteSpace(stateInput.Latitude))
-						state.Latitude = decimal.Parse(stateInput.Latitude);
+					// Parse device-supplied telemetry defensively: a malformed value (e.g. a "lat,lon" pair sent
+					// in a single field) must be skipped, not throw FormatException and reject the whole status
+					// update. Invalid values are simply omitted from the saved state.
+					if (!String.IsNullOrWhiteSpace(stateInput.Latitude) && decimal.TryParse(stateInput.Latitude, out var latitude))
+						state.Latitude = latitude;
 
-					if (!String.IsNullOrWhiteSpace(stateInput.Longitude))
-						state.Longitude = decimal.Parse(stateInput.Longitude);
+					if (!String.IsNullOrWhiteSpace(stateInput.Longitude) && decimal.TryParse(stateInput.Longitude, out var longitude))
+						state.Longitude = longitude;
 
-					if (!String.IsNullOrWhiteSpace(stateInput.Accuracy))
-						state.Accuracy = decimal.Parse(stateInput.Accuracy);
+					if (!String.IsNullOrWhiteSpace(stateInput.Accuracy) && decimal.TryParse(stateInput.Accuracy, out var accuracy))
+						state.Accuracy = accuracy;
 
-					if (!String.IsNullOrWhiteSpace(stateInput.Altitude))
-						state.Altitude = decimal.Parse(stateInput.Altitude);
+					if (!String.IsNullOrWhiteSpace(stateInput.Altitude) && decimal.TryParse(stateInput.Altitude, out var altitude))
+						state.Altitude = altitude;
 
-					if (!String.IsNullOrWhiteSpace(stateInput.AltitudeAccuracy))
-						state.AltitudeAccuracy = decimal.Parse(stateInput.AltitudeAccuracy);
+					if (!String.IsNullOrWhiteSpace(stateInput.AltitudeAccuracy) && decimal.TryParse(stateInput.AltitudeAccuracy, out var altitudeAccuracy))
+						state.AltitudeAccuracy = altitudeAccuracy;
 
-					if (!String.IsNullOrWhiteSpace(stateInput.Speed))
-						state.Speed = decimal.Parse(stateInput.Speed);
+					if (!String.IsNullOrWhiteSpace(stateInput.Speed) && decimal.TryParse(stateInput.Speed, out var speed))
+						state.Speed = speed;
 
-					if (!String.IsNullOrWhiteSpace(stateInput.Heading))
-						state.Heading = decimal.Parse(stateInput.Heading);
+					if (!String.IsNullOrWhiteSpace(stateInput.Heading) && decimal.TryParse(stateInput.Heading, out var heading))
+						state.Heading = heading;
 
-					state.State = int.Parse(stateInput.Type);
+					if (!int.TryParse(stateInput.Type, out var stateType))
+						return BadRequest();
+
+					state.State = stateType;
 
 					if (stateInput.Timestamp.HasValue)
 						state.Timestamp = stateInput.Timestamp.Value;
@@ -253,10 +265,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 						state.GeoLocationData = string.Format("{0},{1}", state.Latitude.Value, state.Longitude.Value);
 					}
 
-					if (!string.IsNullOrWhiteSpace(stateInput.RespondingTo) && int.Parse(stateInput.RespondingTo) > 0)
+					if (!string.IsNullOrWhiteSpace(stateInput.RespondingTo) && int.TryParse(stateInput.RespondingTo, out var respondingToId) && respondingToId > 0)
 					{
 						var destinationType = stateInput.RespondingToType ?? (int)DestinationEntityTypes.Call;
-						var destinationId = int.Parse(stateInput.RespondingTo);
+						var destinationId = respondingToId;
 
 						if (!await IsValidDestinationAsync(destinationId, destinationType))
 							return BadRequest();
@@ -273,12 +285,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 						var roles = new List<UnitStateRole>();
 						foreach (var role in stateInput.Roles)
 						{
-							if (!string.IsNullOrWhiteSpace(role.UserId) && !string.IsNullOrWhiteSpace(role.RoleId))
+							// Skip roles with a non-numeric RoleId rather than throwing and rejecting the whole
+							// status update (TryParse also covers the null/empty check).
+							if (!string.IsNullOrWhiteSpace(role.UserId) && int.TryParse(role.RoleId, out var unitStateRoleId))
 							{
 								var unitRole = new UnitStateRole();
 								unitRole.UnitStateId = savedState.UnitStateId;
 								unitRole.UserId = role.UserId;
-								unitRole.UnitStateRoleId = int.Parse(role.RoleId);
+								unitRole.UnitStateRoleId = unitStateRoleId;
 
 								if (String.IsNullOrWhiteSpace(role.Name))
 								{

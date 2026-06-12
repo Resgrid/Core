@@ -43,9 +43,33 @@ namespace Resgrid.Services
 
 		public async Task<CheckInTimerConfig> SaveTimerConfigAsync(CheckInTimerConfig config, CancellationToken cancellationToken = default)
 		{
+			ValidateTimerValues(config.TimerTargetType, config.DurationMinutes, config.WarningThresholdMinutes);
+
+			// Unit type only applies to unit-type timers; clear it for other targets so it
+			// can't create per-unit-type rows the resolver and unique-target lookup would mismatch
+			if (config.TimerTargetType != (int)CheckInTimerTargetType.UnitType)
+				config.UnitTypeId = null;
+
+			// Only one config may exist per (department, target type, unit type) —
+			// enforced by the UQ_CheckInTimerConfigs_Dept_Target_Unit unique index
+			var existingForTarget = await _configRepository.GetByDepartmentAndTargetAsync(
+				config.DepartmentId, config.TimerTargetType, config.UnitTypeId);
+
 			if (string.IsNullOrWhiteSpace(config.CheckInTimerConfigId))
 			{
-				config.CreatedOn = DateTime.UtcNow;
+				if (existingForTarget != null)
+				{
+					// Saving a "new" config for a target that already has one — update the
+					// existing row instead of inserting a duplicate
+					config.CheckInTimerConfigId = existingForTarget.CheckInTimerConfigId;
+					config.CreatedOn = existingForTarget.CreatedOn;
+					config.CreatedByUserId = existingForTarget.CreatedByUserId;
+					config.UpdatedOn = DateTime.UtcNow;
+				}
+				else
+				{
+					config.CreatedOn = DateTime.UtcNow;
+				}
 			}
 			else
 			{
@@ -53,10 +77,36 @@ namespace Resgrid.Services
 				if (existing != null && existing.DepartmentId != config.DepartmentId)
 					throw new UnauthorizedAccessException("Cannot modify a timer config belonging to another department.");
 
+				if (existingForTarget != null && existingForTarget.CheckInTimerConfigId != config.CheckInTimerConfigId)
+					throw new InvalidOperationException("A check-in timer configuration already exists for this target type and unit type.");
+
+				if (existing != null)
+					config.CreatedOn = existing.CreatedOn;
+
 				config.UpdatedOn = DateTime.UtcNow;
 			}
 
-			return await _configRepository.SaveOrUpdateAsync(config, cancellationToken);
+			var isInsert = string.IsNullOrWhiteSpace(config.CheckInTimerConfigId);
+
+			try
+			{
+				return await _configRepository.SaveOrUpdateAsync(config, cancellationToken);
+			}
+			catch (Exception) when (isInsert)
+			{
+				// Two concurrent saves can both pass the lookup above and race the unique
+				// target index; the loser lands here — adopt the winner's row and update it
+				var winner = await _configRepository.GetByDepartmentAndTargetAsync(
+					config.DepartmentId, config.TimerTargetType, config.UnitTypeId);
+				if (winner == null)
+					throw;
+
+				config.CheckInTimerConfigId = winner.CheckInTimerConfigId;
+				config.CreatedOn = winner.CreatedOn;
+				config.CreatedByUserId = winner.CreatedByUserId;
+				config.UpdatedOn = DateTime.UtcNow;
+				return await _configRepository.SaveOrUpdateAsync(config, cancellationToken);
+			}
 		}
 
 		public async Task<bool> DeleteTimerConfigAsync(string configId, int departmentId, CancellationToken cancellationToken = default)
@@ -83,9 +133,37 @@ namespace Resgrid.Services
 
 		public async Task<CheckInTimerOverride> SaveTimerOverrideAsync(CheckInTimerOverride ovr, CancellationToken cancellationToken = default)
 		{
+			ValidateTimerValues(ovr.TimerTargetType, ovr.DurationMinutes, ovr.WarningThresholdMinutes);
+
+			// Unit type only applies to unit-type timers; clear it for other targets so it
+			// can't create per-unit-type rows the resolver and unique-target lookup would mismatch
+			if (ovr.TimerTargetType != (int)CheckInTimerTargetType.UnitType)
+				ovr.UnitTypeId = null;
+
+			// Only one override may exist per (department, call type, call priority, target type,
+			// unit type) — enforced by the UQ_CheckInTimerOverrides_Dept_Call_Target_Unit unique index
+			var departmentOverrides = await _overrideRepository.GetByDepartmentIdAsync(ovr.DepartmentId);
+			var existingForTarget = departmentOverrides?.FirstOrDefault(o =>
+				o.CallTypeId == ovr.CallTypeId &&
+				o.CallPriority == ovr.CallPriority &&
+				o.TimerTargetType == ovr.TimerTargetType &&
+				o.UnitTypeId == ovr.UnitTypeId);
+
 			if (string.IsNullOrWhiteSpace(ovr.CheckInTimerOverrideId))
 			{
-				ovr.CreatedOn = DateTime.UtcNow;
+				if (existingForTarget != null)
+				{
+					// Saving a "new" override for a target that already has one — update the
+					// existing row instead of inserting a duplicate
+					ovr.CheckInTimerOverrideId = existingForTarget.CheckInTimerOverrideId;
+					ovr.CreatedOn = existingForTarget.CreatedOn;
+					ovr.CreatedByUserId = existingForTarget.CreatedByUserId;
+					ovr.UpdatedOn = DateTime.UtcNow;
+				}
+				else
+				{
+					ovr.CreatedOn = DateTime.UtcNow;
+				}
 			}
 			else
 			{
@@ -93,10 +171,40 @@ namespace Resgrid.Services
 				if (existing != null && existing.DepartmentId != ovr.DepartmentId)
 					throw new UnauthorizedAccessException("Cannot modify a timer override belonging to another department.");
 
+				if (existingForTarget != null && existingForTarget.CheckInTimerOverrideId != ovr.CheckInTimerOverrideId)
+					throw new InvalidOperationException("A check-in timer override already exists for this call type, priority, target type and unit type.");
+
+				if (existing != null)
+					ovr.CreatedOn = existing.CreatedOn;
+
 				ovr.UpdatedOn = DateTime.UtcNow;
 			}
 
-			return await _overrideRepository.SaveOrUpdateAsync(ovr, cancellationToken);
+			var isInsert = string.IsNullOrWhiteSpace(ovr.CheckInTimerOverrideId);
+
+			try
+			{
+				return await _overrideRepository.SaveOrUpdateAsync(ovr, cancellationToken);
+			}
+			catch (Exception) when (isInsert)
+			{
+				// Two concurrent saves can both pass the lookup above and race the unique
+				// target index; the loser lands here — adopt the winner's row and update it
+				var currentOverrides = await _overrideRepository.GetByDepartmentIdAsync(ovr.DepartmentId);
+				var winner = currentOverrides?.FirstOrDefault(o =>
+					o.CallTypeId == ovr.CallTypeId &&
+					o.CallPriority == ovr.CallPriority &&
+					o.TimerTargetType == ovr.TimerTargetType &&
+					o.UnitTypeId == ovr.UnitTypeId);
+				if (winner == null)
+					throw;
+
+				ovr.CheckInTimerOverrideId = winner.CheckInTimerOverrideId;
+				ovr.CreatedOn = winner.CreatedOn;
+				ovr.CreatedByUserId = winner.CreatedByUserId;
+				ovr.UpdatedOn = DateTime.UtcNow;
+				return await _overrideRepository.SaveOrUpdateAsync(ovr, cancellationToken);
+			}
 		}
 
 		public async Task<bool> DeleteTimerOverrideAsync(string overrideId, int departmentId, CancellationToken cancellationToken = default)
@@ -123,10 +231,22 @@ namespace Resgrid.Services
 			var defaults = await _configRepository.GetByDepartmentIdAsync(call.DepartmentId);
 			var defaultList = defaults?.Where(c => c.IsEnabled).ToList() ?? new List<CheckInTimerConfig>();
 
-			// Parse call type as int for override matching
+			// Resolve the call's type to a CallTypeId for override matching. Call.Type stores
+			// the type NAME (see call creation in CallsController), so a numeric parse only
+			// covers legacy data — otherwise look the id up from the department's call types.
 			int? callTypeId = null;
-			if (!string.IsNullOrWhiteSpace(call.Type) && int.TryParse(call.Type, out int parsedType))
-				callTypeId = parsedType;
+			if (!string.IsNullOrWhiteSpace(call.Type))
+			{
+				if (int.TryParse(call.Type, out int parsedType))
+				{
+					callTypeId = parsedType;
+				}
+				else
+				{
+					var callTypes = await _callsService.GetCallTypesForDepartmentAsync(call.DepartmentId);
+					callTypeId = callTypes?.FirstOrDefault(t => string.Equals(t.Type, call.Type, StringComparison.OrdinalIgnoreCase))?.CallTypeId;
+				}
+			}
 
 			var overrides = await _overrideRepository.GetMatchingOverridesAsync(call.DepartmentId, callTypeId, call.Priority);
 			var overrideList = overrides?.ToList() ?? new List<CheckInTimerOverride>();
@@ -228,8 +348,15 @@ namespace Resgrid.Services
 			if (!resolvedTimers.Any())
 				return new List<CheckInTimerStatus>();
 
+			// Unit-type-scoped timers match check-ins and unit states by the unit's TYPE, but
+			// check-ins and dispatches carry UnitIds. Unit.Type stores the type name, so build
+			// a UnitId -> UnitTypeId map once when any timer is unit-type-scoped.
+			Dictionary<int, int?> unitTypeIdByUnitId = null;
+			if (resolvedTimers.Any(t => t.UnitTypeId.HasValue))
+				unitTypeIdByUnitId = await GetUnitTypeIdsByUnitIdAsync(call.DepartmentId);
+
 			// Filter timers by ActiveForStates against current dispatched entity states
-			resolvedTimers = await FilterTimersByActiveStatesAsync(resolvedTimers, call);
+			resolvedTimers = await FilterTimersByActiveStatesAsync(resolvedTimers, call, unitTypeIdByUnitId);
 			if (!resolvedTimers.Any())
 				return new List<CheckInTimerStatus>();
 
@@ -246,7 +373,11 @@ namespace Resgrid.Services
 					.Where(c => c.CheckInType == timer.TargetType);
 
 				if (timer.UnitTypeId.HasValue)
-					matchingCheckIns = matchingCheckIns.Where(c => c.UnitId == timer.UnitTypeId);
+					matchingCheckIns = matchingCheckIns.Where(c =>
+						c.UnitId.HasValue &&
+						unitTypeIdByUnitId != null &&
+						unitTypeIdByUnitId.TryGetValue(c.UnitId.Value, out var checkInUnitTypeId) &&
+						checkInUnitTypeId == timer.UnitTypeId);
 
 				var latestCheckIn = matchingCheckIns
 					.OrderByDescending(c => c.Timestamp)
@@ -254,11 +385,14 @@ namespace Resgrid.Services
 
 				var baseTime = latestCheckIn?.Timestamp ?? call.LoggedOn;
 				var elapsed = (now - baseTime).TotalMinutes;
+				var minutesRemaining = timer.DurationMinutes - elapsed;
 
+				// Same semantics as the per-user and per-personnel endpoints: warn when within
+				// the threshold of the deadline, critical once the check-in is due
 				string status;
-				if (elapsed < timer.DurationMinutes)
+				if (minutesRemaining > timer.WarningThresholdMinutes)
 					status = "Green";
-				else if (elapsed < timer.DurationMinutes + timer.WarningThresholdMinutes)
+				else if (minutesRemaining > 0)
 					status = "Warning";
 				else
 					status = "Critical";
@@ -284,7 +418,7 @@ namespace Resgrid.Services
 
 		#region State Filtering
 
-		private async Task<List<ResolvedCheckInTimer>> FilterTimersByActiveStatesAsync(List<ResolvedCheckInTimer> timers, Call call)
+		private async Task<List<ResolvedCheckInTimer>> FilterTimersByActiveStatesAsync(List<ResolvedCheckInTimer> timers, Call call, Dictionary<int, int?> unitTypeIdByUnitId)
 		{
 			var timersWithStateFilter = timers.Where(t => !string.IsNullOrWhiteSpace(t.ActiveForStates)).ToList();
 			if (!timersWithStateFilter.Any())
@@ -294,24 +428,36 @@ namespace Resgrid.Services
 			if (call.Dispatches == null || call.UnitDispatches == null)
 				call = await _callsService.PopulateCallData(call, true, false, false, false, true, false, false, false, false);
 
-			// Build a set of current personnel action type IDs
+			// Build a set of current personnel action type IDs (one batch query instead of
+			// one last-action query per dispatched user)
 			var personnelStates = new Dictionary<string, int>();
-			if (call.Dispatches != null)
+			if (call.Dispatches != null && call.Dispatches.Any())
 			{
+				var lastActionLogs = await _actionLogsService.GetLastActionLogsForDepartmentAsync(call.DepartmentId);
+				var lastActionByUser = (lastActionLogs ?? new List<ActionLog>())
+					.GroupBy(a => a.UserId)
+					.ToDictionary(g => g.Key, g => g.First());
+
 				foreach (var dispatch in call.Dispatches)
 				{
-					var lastAction = await _actionLogsService.GetLastActionLogForUserAsync(dispatch.UserId);
+					lastActionByUser.TryGetValue(dispatch.UserId, out var lastAction);
 					personnelStates[dispatch.UserId] = lastAction?.ActionTypeId ?? (int)ActionTypes.StandingBy;
 				}
 			}
 
-			// Build a set of current unit state IDs (keyed by UnitId)
+			// Build a set of current unit state IDs keyed by UnitId (one batch query instead
+			// of one last-state query per dispatched unit)
 			var unitStates = new Dictionary<int, int>();
-			if (call.UnitDispatches != null)
+			if (call.UnitDispatches != null && call.UnitDispatches.Any())
 			{
+				var latestUnitStates = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(call.DepartmentId);
+				var lastStateByUnit = (latestUnitStates ?? new List<UnitState>())
+					.GroupBy(s => s.UnitId)
+					.ToDictionary(g => g.Key, g => g.First());
+
 				foreach (var unitDispatch in call.UnitDispatches)
 				{
-					var lastState = await _unitsService.GetLastUnitStateByUnitIdAsync(unitDispatch.UnitId);
+					lastStateByUnit.TryGetValue(unitDispatch.UnitId, out var lastState);
 					unitStates[unitDispatch.UnitId] = lastState?.State ?? (int)UnitStateTypes.Available;
 				}
 			}
@@ -331,11 +477,16 @@ namespace Resgrid.Services
 
 				if (timer.TargetType == (int)CheckInTimerTargetType.UnitType)
 				{
-					// Check unit states
+					// Check unit states; a timer scoped to a specific unit type only considers
+					// dispatched units of that type
 					foreach (var kvp in unitStates)
 					{
-						// If timer is for a specific UnitType, we'd need to check the unit's type
-						// For now, check all dispatched units
+						if (timer.UnitTypeId.HasValue &&
+							(unitTypeIdByUnitId == null ||
+							 !unitTypeIdByUnitId.TryGetValue(kvp.Key, out var dispatchedUnitTypeId) ||
+							 dispatchedUnitTypeId != timer.UnitTypeId))
+							continue;
+
 						if (allowedStates.Contains(kvp.Value))
 						{
 							anyEntityMatches = true;
@@ -361,6 +512,48 @@ namespace Resgrid.Services
 			}
 
 			return result;
+		}
+
+		/// <summary>
+		/// Maps every unit in the department to its UnitTypeId. Unit.Type stores the unit
+		/// type NAME, so the id is resolved against the department's unit types; units with
+		/// no (or an unknown) type map to null.
+		/// </summary>
+		private async Task<Dictionary<int, int?>> GetUnitTypeIdsByUnitIdAsync(int departmentId)
+		{
+			var units = await _unitsService.GetUnitsForDepartmentAsync(departmentId) ?? new List<Unit>();
+			var unitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(departmentId) ?? new List<UnitType>();
+
+			var typeIdByName = new Dictionary<string, int?>(StringComparer.OrdinalIgnoreCase);
+			foreach (var unitType in unitTypes)
+			{
+				if (!string.IsNullOrWhiteSpace(unitType.Type) && !typeIdByName.ContainsKey(unitType.Type))
+					typeIdByName.Add(unitType.Type, unitType.UnitTypeId);
+			}
+
+			var map = new Dictionary<int, int?>();
+			foreach (var unit in units)
+			{
+				int? unitTypeId = null;
+				if (!string.IsNullOrWhiteSpace(unit.Type) && typeIdByName.TryGetValue(unit.Type, out var resolved))
+					unitTypeId = resolved;
+
+				map[unit.UnitId] = unitTypeId;
+			}
+
+			return map;
+		}
+
+		private static void ValidateTimerValues(int timerTargetType, int durationMinutes, int warningThresholdMinutes)
+		{
+			if (!Enum.IsDefined(typeof(CheckInTimerTargetType), timerTargetType))
+				throw new InvalidOperationException("Invalid check-in timer target type.");
+
+			if (durationMinutes < 1)
+				throw new InvalidOperationException("Check-in timer duration must be at least 1 minute.");
+
+			if (warningThresholdMinutes < 1)
+				throw new InvalidOperationException("Check-in timer warning threshold must be at least 1 minute.");
 		}
 
 		private static HashSet<int> ParseActiveForStates(string activeForStates)
@@ -422,8 +615,15 @@ namespace Resgrid.Services
 					continue;
 				}
 
-				// Get the user's last check-in on this call (single targeted query).
-				var lastCheckIn = await _recordRepository.GetLastCheckInForUserOnCallAsync(call.CallId, userId);
+				// Only personnel-type check-ins reset the personnel timer — same semantics as
+				// GetCallPersonnelCheckInStatusesAsync. The raw last-check-in query is
+				// type-agnostic, so filter the call's records here.
+				var callCheckIns = (await _recordRepository.GetByCallIdAsync(call.CallId))?.ToList()
+								   ?? new List<CheckInRecord>();
+				var lastCheckIn = callCheckIns
+					.Where(r => r.CheckInType == (int)CheckInTimerTargetType.Personnel && r.UserId == userId)
+					.OrderByDescending(r => r.Timestamp)
+					.FirstOrDefault();
 
 				// Baseline is the last check-in timestamp OR the call start time if
 				// the user has never checked in.

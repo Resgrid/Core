@@ -17,10 +17,11 @@ namespace Resgrid.Services
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IEmailSender _emailSender;
 		private readonly ISubscriptionsService _subscriptionsService;
+		private readonly ICacheProvider _cacheProvider;
 
 		public SmsService(IUserProfileService userProfileService, IGeoLocationProvider geoLocationProvider,
 			ITextMessageProvider textMessageProvider, IDepartmentSettingsService departmentSettingsService,
-			IEmailSender emailSender, ISubscriptionsService subscriptionsService)
+			IEmailSender emailSender, ISubscriptionsService subscriptionsService, ICacheProvider cacheProvider)
 		{
 			_userProfileService = userProfileService;
 			_geoLocationProvider = geoLocationProvider;
@@ -28,6 +29,7 @@ namespace Resgrid.Services
 			_departmentSettingsService = departmentSettingsService;
 			_emailSender = emailSender;
 			_subscriptionsService = subscriptionsService;
+			_cacheProvider = cacheProvider;
 		}
 
 		public async Task<bool> SendMessageAsync(Message message, string departmentNumber, int departmentId, UserProfile profile = null, Payment payment = null)
@@ -54,14 +56,14 @@ namespace Resgrid.Services
 				{
 					string text = HtmlToTextHelper.ConvertHtml(message.Body);
 					text = StringHelpers.StripHtmlTagsCharArray(text);
-					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(message.Subject, text),
+					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(message.Subject, text, ShouldDiscloseOptOut(profile.UserId)),
 						departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, true, false);
 				}
 				else if (Carriers.DirectSendCarriers.Contains((MobileCarriers)profile.MobileCarrier))
 				{
 					string text = HtmlToTextHelper.ConvertHtml(message.Body);
 					text = StringHelpers.StripHtmlTagsCharArray(text);
-					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(message.Subject, text),
+					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(message.Subject, text, ShouldDiscloseOptOut(profile.UserId)),
 						departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, false);
 				}
 				else
@@ -159,7 +161,7 @@ namespace Resgrid.Services
 				//	//	text = text + " " + call.ShortenedCallUrl;
 				//	//}
 
-				//	await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(call.Name, text), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, true, true);
+				//	await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(call.Name, text, ShouldDiscloseOptOut(profile.UserId)), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, true, true);
 
 				//	if (Config.SystemBehaviorConfig.SendCallsToSmsEmailGatewayAdditionally)
 				//		SendCallViaEmailSmsGateway(call, address, profile);
@@ -198,7 +200,7 @@ namespace Resgrid.Services
 					//	text = text + " " + call.ShortenedCallUrl;
 					//}
 
-					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(call.Name, text), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, true);
+					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(call.Name, text, ShouldDiscloseOptOut(profile.UserId)), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, true);
 				}
 				else
 				{
@@ -269,7 +271,7 @@ namespace Resgrid.Services
 							text = text + " (" + protocols + ")";
 					}
 
-					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(call.Name, text), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, true);
+					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(call.Name, text, ShouldDiscloseOptOut(profile.UserId)), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, true);
 				}
 				else
 				{
@@ -346,11 +348,11 @@ namespace Resgrid.Services
 
 				if (Config.SystemBehaviorConfig.DepartmentsToForceSmsGateway.Contains(departmentId))
 				{
-					_textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage("Trouble Alert", text), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, true, false);
+					_textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage("Trouble Alert", text, ShouldDiscloseOptOut(profile.UserId)), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, true, false);
 				}
 				else if (Carriers.DirectSendCarriers.Contains((MobileCarriers)profile.MobileCarrier))
 				{
-					_textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage("Trouble Alert", text), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, false);
+					_textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage("Trouble Alert", text, ShouldDiscloseOptOut(profile.UserId)), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, false);
 				}
 				else
 				{
@@ -382,7 +384,7 @@ namespace Resgrid.Services
 				if (Carriers.DirectSendCarriers.Contains((MobileCarriers)profile.MobileCarrier))
 				{
 					//string departmentNumber = _departmentSettingsService.GetTextToCallNumberForDepartment(departmentId);
-					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(title, message), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, false);
+					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(title, message, ShouldDiscloseOptOut(profile.UserId)), departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, false);
 				}
 				else
 				{
@@ -418,13 +420,13 @@ namespace Resgrid.Services
 			{
 				if (Config.SystemBehaviorConfig.DepartmentsToForceSmsGateway.Contains(departmentId))
 				{
-					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), message,
+					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatNotificationForMessage(message, ShouldDiscloseOptOut(profile.UserId)),
 						departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, true, false);
 				}
 				else if (Carriers.DirectSendCarriers.Contains((MobileCarriers)profile.MobileCarrier))
 				{
 					//string departmentNumber = _departmentSettingsService.GetTextToCallNumberForDepartment(departmentId);
-					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), message,
+					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatNotificationForMessage(message, ShouldDiscloseOptOut(profile.UserId)),
 						departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, false);
 				}
 				else
@@ -480,12 +482,74 @@ namespace Resgrid.Services
 			return string.Format("New Call: P{0} {1}", call.Priority, call.Name);
 		}
 
-		private string FormatTextForMessage(string title, string body)
+		// A2P/TCPA opt-out disclosure. Per CTIA/10DLC guidance this only needs to appear on the first
+		// message to a recipient and then periodically -- STOP/HELP keywords are enforced at the
+		// Twilio/SignalWire account level regardless -- so it is appended on a rolling cadence rather
+		// than on every message (see ShouldDiscloseOptOut) to keep messages short.
+		private const string SmsOptOutFooter = "STOP to opt out, HELP for help.";
+
+		// Brand identifier inserted near the start of every non-OTP outbound text message so
+		// recipients know the message was sent through Resgrid on behalf of their department.
+		private const string SmsViaResgrid = "(Resgrid)";
+
+		// Cadence at which the opt-out footer is re-shown to a given recipient, and the cache key
+		// (auto environment-prefixed) that tracks the last disclosure via a rolling TTL.
+		private static readonly TimeSpan SmsOptOutDisclosureInterval = TimeSpan.FromDays(30);
+		private const string SmsOptOutDisclosureCacheKey = "SmsOptOutDisclosure_{0}";
+		private const string SmsDisclosedCacheMarker = "1";
+
+		private string FormatTextForMessage(string title, string body, bool includeOptOut)
 		{
 			string text = HtmlToTextHelper.ConvertHtml(body);
 			text = StringHelpers.StripHtmlTagsCharArray(text);
 
-			return String.Format("{0} : {1}", title, text);
+			return AppendOptOutFooter(String.Format("{0} {1} : {2}", title, SmsViaResgrid, text), includeOptOut);
+		}
+
+		// Notifications are sent without a title/subject prefix, so put the brand marker near the
+		// start of the body.
+		private string FormatNotificationForMessage(string message, bool includeOptOut)
+		{
+			return AppendOptOutFooter(String.Format("{0} {1}", SmsViaResgrid, message), includeOptOut);
+		}
+
+		private static string AppendOptOutFooter(string message, bool includeOptOut)
+		{
+			if (!includeOptOut)
+				return message;
+
+			return message + "\n" + SmsOptOutFooter;
+		}
+
+		// Returns true the first time we text a recipient and again once the disclosure interval
+		// lapses; the rolling cache TTL drives the cadence (the fallback only runs on a cache miss).
+		// Defaults to true (disclose) whenever we cannot reliably track the recipient, so we never
+		// under-disclose for compliance.
+		private bool ShouldDiscloseOptOut(string userId)
+		{
+			if (string.IsNullOrWhiteSpace(userId) || !Config.SystemBehaviorConfig.CacheEnabled)
+				return true;
+
+			try
+			{
+				bool firstDisclosure = false;
+
+				_cacheProvider.Retrieve<string>(
+					string.Format(SmsOptOutDisclosureCacheKey, userId),
+					() =>
+					{
+						firstDisclosure = true;
+						return SmsDisclosedCacheMarker;
+					},
+					SmsOptOutDisclosureInterval);
+
+				return firstDisclosure;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return true;
+			}
 		}
 	}
 }

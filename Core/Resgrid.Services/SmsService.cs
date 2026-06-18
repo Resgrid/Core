@@ -54,16 +54,12 @@ namespace Resgrid.Services
 			{
 				if (Config.SystemBehaviorConfig.DepartmentsToForceSmsGateway.Contains(departmentId))
 				{
-					string text = HtmlToTextHelper.ConvertHtml(message.Body);
-					text = StringHelpers.StripHtmlTagsCharArray(text);
-					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(message.Subject, text, ShouldDiscloseOptOut(profile.UserId)),
+					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(message.Subject, message.Body, ShouldDiscloseOptOut(profile.UserId)),
 						departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, true, false);
 				}
 				else if (Carriers.DirectSendCarriers.Contains((MobileCarriers)profile.MobileCarrier))
 				{
-					string text = HtmlToTextHelper.ConvertHtml(message.Body);
-					text = StringHelpers.StripHtmlTagsCharArray(text);
-					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(message.Subject, text, ShouldDiscloseOptOut(profile.UserId)),
+					await _textMessageProvider.SendTextMessage(profile.GetPhoneNumber(), FormatTextForMessage(message.Subject, message.Body, ShouldDiscloseOptOut(profile.UserId)),
 						departmentNumber, (MobileCarriers)profile.MobileCarrier, departmentId, false, false);
 				}
 				else

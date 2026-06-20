@@ -106,8 +106,18 @@ namespace Resgrid.Services
 			builder.RegisterType<TtsAudioService>()
 				.As<ITtsAudioService>()
 				.WithParameter(
-					(parameter, _) => parameter.ParameterType == typeof(RestClient),
-					(_, context) => context.ResolveNamed<RestClient>(TtsRestClientRegistrationName))
+					(parameter, _) => parameter.ParameterType == typeof(Func<RestClient>),
+					(_, context) =>
+					{
+						// Hand TtsAudioService a factory rather than an eagerly-resolved RestClient. This
+						// keeps activation of the service (and any controller that depends on it, e.g. the
+						// Twilio controller that also handles incoming SMS) from forcing the named TTS
+						// RestClient to be built. The ServiceBaseUrl check only runs when the factory is
+						// invoked, i.e. when TTS audio is actually generated. Capture the lifetime scope
+						// instead of the transient IComponentContext so the factory is safe to call later.
+						var scope = context.Resolve<ILifetimeScope>();
+						return (Func<RestClient>)(() => scope.ResolveNamed<RestClient>(TtsRestClientRegistrationName));
+					})
 				.InstancePerLifetimeScope();
 
 			// SSO / Security Policy

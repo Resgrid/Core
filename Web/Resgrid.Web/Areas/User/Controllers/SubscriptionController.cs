@@ -185,6 +185,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Expires = "Never";
 			}
 
+			// The Subscription/Index view dereferences Model.Payment (e.g. Payment.Cancelled) without a
+			// null check. Departments with no current payment (free/unpaid, or when the billing API returns
+			// no payment) would otherwise throw a NullReferenceException while rendering the view. Mirror the
+			// Plan fallback below so the page renders as an active, never-expiring plan instead of erroring.
+			if (model.Payment == null)
+				model.Payment = new Resgrid.Model.Payment { Cancelled = false, Amount = 0, Quantity = 1, EndingOn = DateTime.MaxValue };
+
 			if (model.Plan != null)
 			{
 				model.PossibleUpgrades = _subscriptionsService.GetPossibleUpgradesForPlan(model.Plan.PlanId);

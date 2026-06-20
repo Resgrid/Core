@@ -128,6 +128,14 @@ namespace Resgrid.Services
 		{
 			var plan = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(departmentId);
 
+			// GetCurrentPlanForDepartmentAsync can return null (e.g. Billing API unavailable). Guard before
+			// accessing plan.PlanId to avoid a NullReferenceException; treat an unknown plan as not allowed.
+			if (plan == null)
+			{
+				Resgrid.Framework.Logging.LogInfo($"[Twilio SMS] CanDepartmentProvisionNumber=false for DepartmentId={departmentId} — plan is null (billing unavailable / no current plan), so no SMS reply will be generated.");
+				return false;
+			}
+
 			if (plan.PlanId == 4 || plan.PlanId == 5 || plan.PlanId == 10 || plan.PlanId == 14 || plan.PlanId == 15 || plan.PlanId == 16 || plan.PlanId == 17 ||
 				  plan.PlanId == 18 || plan.PlanId == 19 || plan.PlanId == 20 || plan.PlanId == 21 || plan.PlanId == 26 || plan.PlanId == 27 || plan.PlanId == 28 ||
 					plan.PlanId == 29 || plan.PlanId == 30 || plan.PlanId == 31 || plan.PlanId == 32 || plan.PlanId == 33 || plan.PlanId == 36 || plan.PlanId == 37)

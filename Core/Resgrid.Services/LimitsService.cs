@@ -133,6 +133,9 @@ namespace Resgrid.Services
 					plan.PlanId == 29 || plan.PlanId == 30 || plan.PlanId == 31 || plan.PlanId == 32 || plan.PlanId == 33 || plan.PlanId == 36 || plan.PlanId == 37)
 				return true;
 
+			// Diagnostic: this gate silently blocks the inbound-SMS text-command reply path. Log the
+			// resolved plan so it is clear *why* a department gets no reply (plan not in the allow-list).
+			Resgrid.Framework.Logging.LogInfo($"[Twilio SMS] CanDepartmentProvisionNumber=false for DepartmentId={departmentId} PlanId={plan.PlanId} — plan is not in the number/text-feature allow-list, so no SMS reply will be generated.");
 			return false;
 		}
 

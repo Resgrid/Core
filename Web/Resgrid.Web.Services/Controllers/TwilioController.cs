@@ -158,11 +158,17 @@ namespace Resgrid.Web.Services.Controllers
 				if (departmentId.HasValue)
 					messageEvent.CustomerId = departmentId.Value.ToString();
 
+				// Diagnostic: did we resolve a department for this inbound text? If not, no reply is sent.
+				Framework.Logging.LogInfo($"[Twilio SMS] MessageSid={request.MessageSid} To={textMessage.To} From={textMessage.Msisdn} resolved DepartmentId={(departmentId.HasValue ? departmentId.Value.ToString() : "none")}");
+
 				// Feature-flagged rollout: the chatbot ingress is the new path. When the flag is off
 				// (globally or for this department) fall back to the original text-command handling so
 				// existing behavior is preserved.
 				var chatbotEnabled = await _featureToggleService.IsEnabledAsync(
 					FeatureFlagKeys.ChatbotTwilioTextIntegration, departmentId ?? 0, false);
+
+				// Diagnostic: which path handled the message — chatbot ingress or legacy text commands?
+				Framework.Logging.LogInfo($"[Twilio SMS] MessageSid={request.MessageSid} DepartmentId={(departmentId.HasValue ? departmentId.Value.ToString() : "none")} ChatbotEnabled={chatbotEnabled} (path={(chatbotEnabled ? "chatbot" : "text-command")})");
 
 				if (chatbotEnabled)
 				{
@@ -181,6 +187,9 @@ namespace Resgrid.Web.Services.Controllers
 					if (chatbotResponse.Processed)
 						messageEvent.Processed = true;
 
+					// Diagnostic: an empty reply text here yields a TwiML response with no usable message.
+					Framework.Logging.LogInfo($"[Twilio SMS] MessageSid={request.MessageSid} chatbot Processed={chatbotResponse.Processed} ReplyLength={(chatbotResponse.Text?.Length ?? 0)}");
+
 					response.Message(chatbotResponse.Text);
 				}
 				else
@@ -198,9 +207,15 @@ namespace Resgrid.Web.Services.Controllers
 				await _numbersService.SaveInboundMessageEventAsync(messageEvent);
 			}
 
+			// Diagnostic: a body length of ~60 bytes is an empty <Response></Response> (no <Message>),
+			// which means no reply will be delivered to the sender. Processed reflects whether a handler
+			// claimed the message.
+			var twiml = response.ToString();
+			Framework.Logging.LogInfo($"[Twilio SMS] MessageSid={request.MessageSid} responding with {twiml.Length} bytes, Processed={messageEvent.Processed}");
+
 			return new ContentResult
 			{
-				Content = response.ToString(),
+				Content = twiml,
 				ContentType = "application/xml",
 				StatusCode = 200
 			};
@@ -212,6 +227,10 @@ namespace Resgrid.Web.Services.Controllers
 		private async System.Threading.Tasks.Task ProcessTextCommandsAsync(TextMessage textMessage, InboundMessageEvent messageEvent,
 			MessagingResponse response, int? departmentId, UserProfile userProfile)
 		{
+			// Diagnostic: without a department the legacy path adds no message, so the sender gets no reply.
+			if (!departmentId.HasValue)
+				Framework.Logging.LogInfo($"[Twilio SMS] Text-command path: no department resolved for sender {textMessage.Msisdn} → number {textMessage.To}; no reply will be sent.");
+
 			if (departmentId.HasValue)
 			{
 				// Run all department-level lookups in parallel — they are independent of each other.
@@ -228,6 +247,10 @@ namespace Resgrid.Web.Services.Controllers
 				var customStates = customStatesTask.Result;
 
 				messageEvent.CustomerId = departmentId.Value.ToString();
+
+				// Diagnostic: when Authorized=false the whole reply block below is skipped (no <Message>).
+				// The matching PlanId is logged by LimitsService.CanDepartmentProvisionNumberAsync.
+				Framework.Logging.LogInfo($"[Twilio SMS] DepartmentId={departmentId.Value} Authorized(CanProvisionNumber)={authroized}");
 
 				if (authroized)
 				{
@@ -277,9 +300,16 @@ namespace Resgrid.Web.Services.Controllers
 						// only hit the DB again if the department came from the phone-number lookup path.
 						var profile = userProfile ?? await _userProfileService.GetProfileByMobileNumberAsync(textMessage.Msisdn);
 
+						// Diagnostic: no matching user profile for the sender's number means no reply is added.
+						if (profile == null)
+							Framework.Logging.LogInfo($"[Twilio SMS] DepartmentId={departmentId.Value} sender {textMessage.Msisdn} has no matching user profile; no reply will be sent.");
+
 						if (profile != null)
 						{
 							var payload = _textCommandService.DetermineType(textMessage.Text);
+
+							// Diagnostic: which command the inbound text resolved to (None still replies with a hint).
+							Framework.Logging.LogInfo($"[Twilio SMS] DepartmentId={departmentId.Value} UserId={profile.UserId} resolved text command={payload.Type}");
 							var customActions = customStates.FirstOrDefault(x => x.Type == (int)CustomStateTypes.Personnel);
 							var customStaffing = customStates.FirstOrDefault(x => x.Type == (int)CustomStateTypes.Staffing);
 

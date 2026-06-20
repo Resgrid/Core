@@ -32,6 +32,12 @@ namespace Resgrid.Services
 			var departmentCount = await _subscriptionsService.GetPlanCountsForDepartmentAsync(departmentId);
 			var plan = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(departmentId);
 
+			// GetPlanCountsForDepartmentAsync can return null (e.g. Billing API unavailable). Without counts
+			// we cannot confirm the department is within limits; treat as NOT within limits rather than
+			// failing open, so missing billing data can't be used to bypass plan caps.
+			if (departmentCount == null)
+				return false;
+
 			if (departmentCount.UsersCount > await GetPersonnelLimitForDepartmentAsync(departmentId, plan))
 				return false;
 
@@ -78,6 +84,11 @@ namespace Resgrid.Services
 		{
 			var departmentCount = await _subscriptionsService.GetPlanCountsForDepartmentAsync(departmentId);
 
+			// GetPlanCountsForDepartmentAsync can return null (e.g. Billing API unavailable). Deny the add
+			// rather than failing open, so missing billing data can't be used to exceed plan caps.
+			if (departmentCount == null)
+				return false;
+
 			if (departmentCount.UnitsCount >= await GetUnitsLimitForDepartmentAsync(departmentId))
 				return false;
 
@@ -99,6 +110,12 @@ namespace Resgrid.Services
 		{
 			if (plan == null)
 				plan = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(departmentId);
+
+			// The fetched plan can still be null (e.g. Billing API unavailable). Default to the free-plan
+			// limit (10, matching the plan==null fallback in GetLimitsForEntityPlanWithFallbackAsync) rather
+			// than granting an unlimited cap — never fail open on missing billing data.
+			if (plan == null)
+				return 10;
 
 			return plan.GetLimitForTypeAsInt(PlanLimitTypes.Entities);
 		}
@@ -151,6 +168,11 @@ namespace Resgrid.Services
 		{
 			var plan = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(departmentId);
 
+			// GetCurrentPlanForDepartmentAsync can return null (e.g. Billing API unavailable); guard before
+			// accessing plan.PlanId and treat an unknown plan as not allowed.
+			if (plan == null)
+				return false;
+
 			if (plan.PlanId == 5 || plan.PlanId == 10 || plan.PlanId == 15 || plan.PlanId == 16 || plan.PlanId == 17 || plan.PlanId == 18 || plan.PlanId == 19 ||
 				  plan.PlanId == 20 || plan.PlanId == 21 || plan.PlanId == 28 || plan.PlanId == 29 || plan.PlanId == 30 || plan.PlanId == 31 || plan.PlanId == 32 || plan.PlanId == 33
 				  || plan.PlanId == 36 || plan.PlanId == 37)
@@ -163,6 +185,11 @@ namespace Resgrid.Services
 		{
 			var plan = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(departmentId);
 
+			// GetCurrentPlanForDepartmentAsync can return null (e.g. Billing API unavailable); guard before
+			// accessing plan.PlanId and treat an unknown plan as not allowed.
+			if (plan == null)
+				return false;
+
 			if (plan.PlanId > 1)
 				return true;
 
@@ -172,6 +199,11 @@ namespace Resgrid.Services
 		public async Task<bool> CanDepartmentCreateOrdersAsync(int departmentId)
 		{
 			var plan = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(departmentId);
+
+			// GetCurrentPlanForDepartmentAsync can return null (e.g. Billing API unavailable); guard before
+			// accessing plan.PlanId and treat an unknown plan as not allowed.
+			if (plan == null)
+				return false;
 
 			if (plan.PlanId > 1)
 				return true;
@@ -186,6 +218,19 @@ namespace Resgrid.Services
 				var limits = new DepartmentLimits();
 				var plan = await _subscriptionsService.GetCurrentPlanForDepartmentAsync(departmentId);
 				var departmentCount = await _subscriptionsService.GetPlanCountsForDepartmentAsync(departmentId);
+
+				// No usage data (e.g. Billing API unavailable): default to free-plan limits with usage assumed
+				// at the cap, so we never hand out capacity we can't verify (protect from abuse) — and so we
+				// don't throw a NullReferenceException dereferencing the counts below.
+				if (departmentCount == null)
+				{
+					limits.PersonnelLimit = 10;
+					limits.UnitsLimit = 10;
+					limits.PersonnelCount = 10;
+					limits.UnitsCount = 10;
+					return limits;
+				}
+
 				limits.PersonnelCount = departmentCount.UsersCount;
 				limits.UnitsCount = departmentCount.UnitsCount;
 

@@ -36,7 +36,12 @@ namespace Resgrid.Services
 
 		public async Task<bool> EnqueueChatbotMessageAsync(ChatbotMessageQueueItem item, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await _outboundQueueProvider.EnqueueChatbotMessage(item);
+			// The provider swallows publish failures and returns false; throw so the caller (the Twilio
+			// webhook) doesn't mark the inbound message Processed when it was never actually enqueued.
+			if (!await _outboundQueueProvider.EnqueueChatbotMessage(item))
+				throw new InvalidOperationException("Failed to enqueue chatbot message for processing.");
+
+			return true;
 		}
 
 		public async Task<QueueItem> GetPendingDeleteDepartmentQueueItemAsync(int departmentId)

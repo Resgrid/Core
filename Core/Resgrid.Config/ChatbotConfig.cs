@@ -1,29 +1,30 @@
-namespace Resgrid.Chatbot.Config
+namespace Resgrid.Config
 {
 	public static class ChatbotConfig
 	{
 		// General
-		public static bool ChatbotEnabled = true;
+		// NOTE: Chatbot enable/disable is governed by the Feature Toggle service
+		// (FeatureFlagKeys.ChatbotTwilioTextIntegration), not by a config flag.
 		public static int DefaultSessionTimeoutMinutes = 30;
 
 		// NLU Configuration
-	// NLU Configuration
-	public static NluProviderType NluProvider = NluProviderType.Keyword;
-	public static string MlNetModelPath = "";
-	public static float MinimumIntentConfidence = 0.65f;
-	public static float MinimumCloudConfidence = 0.75f;
+		public static NluProviderType NluProvider = NluProviderType.Keyword;
+		public static string MlNetModelPath = "";
+		public static float MinimumIntentConfidence = 0.65f;
+		public static float MinimumCloudConfidence = 0.75f;
 
-	// Cloud LLM NLU Configuration
-	public static CloudNluProviderType CloudNluProvider = CloudNluProviderType.OpenAiCompatible;
-	public static string CloudNluApiEndpoint = "";
-	public static string CloudNluApiKey = "";
-	public static string CloudNluModelName = "deepseek-chat";
-	public static int CloudNluTimeoutSeconds = 10;
-	public static int CloudNluMaxRetries = 2;
-	public static int CloudNluMaxTokens = 512;
-	public static float CloudNluTemperature = 0.0f;
-	public static string CloudNluSystemPrompt = "";
-	public static bool CloudNluFallbackToKeyword = true;
+		// Cloud LLM NLU Configuration
+		public static CloudNluProviderType CloudNluProvider = CloudNluProviderType.OpenAiCompatible;
+		public static string CloudNluApiEndpoint = "";
+		public static string CloudNluApiKey = "";
+		public static string CloudNluModelName = "deepseek-chat";
+		public static int CloudNluTimeoutSeconds = 10;
+		public static int CloudNluMaxRetries = 2;
+		public static int CloudNluMaxTokens = 512;
+		public static float CloudNluTemperature = 0.0f;
+		public static string CloudNluSystemPrompt = "";
+		public static bool CloudNluFallbackToKeyword = true;
+
 		// Rate Limiting
 		public static int MessagesPerUserPerMinute = 30;
 		public static int MessagesPerDepartmentPerMinute = 120;
@@ -61,7 +62,6 @@ namespace Resgrid.Chatbot.Config
 
 		// Proactive Notifications (Phase 4)
 		public static bool EnableProactiveNotifications = false;
-		public static int MaxNotificationsPerUserPerHour = 20;
 	}
 
 	public enum NluProviderType

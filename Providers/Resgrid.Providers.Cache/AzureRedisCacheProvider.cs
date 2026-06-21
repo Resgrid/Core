@@ -311,7 +311,20 @@ namespace Resgrid.Providers.Cache
 
 				try
 				{
-					_connection = ConnectionMultiplexer.Connect(Config.CacheConfig.RedisConnectionString);
+					var options = ConfigurationOptions.Parse(Config.CacheConfig.RedisConnectionString);
+
+					// Fail fast instead of blocking the calling thread when Redis is unreachable.
+					// AbortOnConnectFail=false makes Connect return immediately and reconnect in the
+					// background; the short timeouts cap any per-command wait. Without this, a dead
+					// Redis blocks every request that constructs this provider for the full connect
+					// timeout (multiplied by the retry loop below).
+					options.AbortOnConnectFail = false;
+					options.ConnectRetry = 1;
+					options.ConnectTimeout = Math.Min(options.ConnectTimeout, 1000);
+					options.SyncTimeout = 1000;
+					options.AsyncTimeout = 1000;
+
+					_connection = ConnectionMultiplexer.Connect(options);
 				}
 				catch (Exception ex)
 				{

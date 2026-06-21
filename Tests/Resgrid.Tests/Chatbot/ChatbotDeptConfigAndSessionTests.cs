@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
-using Resgrid.Chatbot.Config;
+using Resgrid.Config;
 using Resgrid.Chatbot.Models;
 using Resgrid.Chatbot.Services;
 using Resgrid.Model;

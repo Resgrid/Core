@@ -1,0 +1,50 @@
+using System;
+using System.Threading.Tasks;
+using Autofac;
+using Resgrid.Chatbot.Interfaces;
+using Resgrid.Chatbot.Models;
+using Resgrid.Framework;
+using Resgrid.Model;
+using Resgrid.Model.Providers;
+using Resgrid.Model.Queue;
+
+namespace Resgrid.Workers.Framework.Logic
+{
+	/// <summary>
+	/// Processes an inbound chatbot message off the request thread: runs the chatbot pipeline
+	/// (IChatbotIngressService) and, for SMS, sends the reply back to the sender via the SMS
+	/// transport. Enqueued by the Twilio webhook so the webhook returns immediately.
+	/// </summary>
+	public class ChatbotMessageLogic
+	{
+		public static async Task<bool> ProcessChatbotMessageQueueItem(ChatbotMessageQueueItem item)
+		{
+			if (item == null || string.IsNullOrWhiteSpace(item.From) || string.IsNullOrWhiteSpace(item.Body))
+				return true;
+
+			var chatbotIngressService = Bootstrapper.GetKernel().Resolve<IChatbotIngressService>();
+			var textMessageProvider = Bootstrapper.GetKernel().Resolve<ITextMessageProvider>();
+
+			var message = new ChatbotMessage
+			{
+				MessageId = item.MessageId,
+				From = item.From,
+				To = item.To,
+				Text = item.Body,
+				Platform = (ChatbotPlatform)item.Platform,
+				Timestamp = DateTime.UtcNow
+			};
+
+			var response = await chatbotIngressService.ProcessMessageAsync(message);
+
+			if (response != null && !string.IsNullOrWhiteSpace(response.Text))
+			{
+				// Reply from the department's text number (To) back to the sender (From). Twilio is the
+				// primary transport; carrier only governs gateway fallback, so the default is fine here.
+				await textMessageProvider.SendTextMessage(item.From, response.Text, item.To, default(MobileCarriers), item.DepartmentId);
+			}
+
+			return true;
+		}
+	}
+}

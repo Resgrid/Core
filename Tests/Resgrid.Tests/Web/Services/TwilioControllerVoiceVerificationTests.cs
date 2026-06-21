@@ -44,7 +44,6 @@ namespace Resgrid.Tests.Web.Services
 		private Mock<ICommunicationTestService> _communicationTestServiceMock;
 		private Mock<IEncryptionService> _encryptionServiceMock;
 		private Mock<ITwilioVoiceResponseService> _twilioVoiceResponseServiceMock;
-		private Mock<IChatbotIngressService> _chatbotIngressServiceMock;
 		private Mock<IFeatureToggleService> _featureToggleServiceMock;
 
 		protected override void Before_all_tests()
@@ -68,7 +67,6 @@ namespace Resgrid.Tests.Web.Services
 			_calendarServiceMock = new Mock<ICalendarService>();
 			_communicationTestServiceMock = new Mock<ICommunicationTestService>();
 			_encryptionServiceMock = new Mock<IEncryptionService>();
-			_chatbotIngressServiceMock = new Mock<IChatbotIngressService>();
 			_featureToggleServiceMock = new Mock<IFeatureToggleService>();
 			_twilioVoiceResponseServiceMock = new Mock<ITwilioVoiceResponseService>();
 			_departmentSettingsServiceMock.Setup(x => x.GetTtsLanguageForDepartmentAsync(It.IsAny<int>())).ReturnsAsync((string)null);
@@ -150,7 +148,6 @@ namespace Resgrid.Tests.Web.Services
 				_communicationTestServiceMock.Object,
 				_encryptionServiceMock.Object,
 				_twilioVoiceResponseServiceMock.Object,
-				_chatbotIngressServiceMock.Object,
 				_featureToggleServiceMock.Object);
 		}
 

@@ -163,6 +163,12 @@ namespace Resgrid.Providers.Bus.Rabbit
 									 autoDelete: false,
 									 arguments: null);
 
+						await channel.QueueDeclareAsync(queue: SetQueueNameForEnv(ServiceBusConfig.ChatbotProcessingQueueName),
+									 durable: true,
+									 exclusive: false,
+									 autoDelete: false,
+									 arguments: null);
+
 						return true;
 					}
 					catch (Exception ex)

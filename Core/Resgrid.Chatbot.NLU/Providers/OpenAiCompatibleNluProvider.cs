@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Resgrid.Framework;
-using Resgrid.Chatbot.Config;
+using Resgrid.Config;
 using Resgrid.Chatbot.Interfaces;
 using Resgrid.Chatbot.Models;
 

@@ -36,7 +36,7 @@ namespace Resgrid.Chatbot.NLU.Providers
 		public Task<bool> IsAvailableAsync()
 		{
 			// Check if model file exists
-			var modelPath = Resgrid.Chatbot.Config.ChatbotConfig.MlNetModelPath;
+			var modelPath = Resgrid.Config.ChatbotConfig.MlNetModelPath;
 			if (string.IsNullOrWhiteSpace(modelPath))
 				return Task.FromResult(false);
 

@@ -51,6 +51,7 @@ namespace Resgrid.Workers.Console.Tasks
 			queue.PersonnelLocationEventQueueReceived += OnPersonnelLocationEventQueueReceived;
 			queue.SecurityRefreshEventQueueReceived += OnSecurityRefreshEventQueueReceived;
 			queue.WorkflowQueueReceived += OnWorkflowQueueReceived;
+			queue.ChatbotMessageQueueReceived += OnChatbotMessageReceived;
 
 			await queue.Start("QueueProcessor-CQRS");
 
@@ -153,6 +154,13 @@ namespace Resgrid.Workers.Console.Tasks
 			_logger.LogInformation($"{Name}: Workflow Queue Received for WorkflowId {item.WorkflowId} RunId {item.WorkflowRunId} Attempt {item.AttemptNumber}, starting processing...");
 			var success = await WorkflowQueueLogic.ProcessWorkflowQueueItem(item, _cancellationToken);
 			_logger.LogInformation($"{Name}: Finished processing WorkflowId {item.WorkflowId} RunId {item.WorkflowRunId}. Success={success}");
+		}
+
+		private async Task OnChatbotMessageReceived(ChatbotMessageQueueItem cmqi)
+		{
+			_logger.LogInformation($"{Name}: Chatbot Message Queue Received from {cmqi.From} for department {cmqi.DepartmentId}, starting processing...");
+			await ChatbotMessageLogic.ProcessChatbotMessageQueueItem(cmqi);
+			_logger.LogInformation($"{Name}: Finished processing chatbot message from {cmqi.From}.");
 		}
 	}
 }

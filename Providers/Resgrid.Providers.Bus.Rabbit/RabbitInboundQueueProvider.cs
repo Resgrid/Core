@@ -28,6 +28,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 		public Func<PersonnelLocationEvent, Task> PersonnelLocationEventQueueReceived;
 		public Func<SecurityRefreshEvent, Task> SecurityRefreshEventQueueReceived;
 		public Func<Resgrid.Model.Queue.WorkflowQueueItem, Task> WorkflowQueueReceived;
+		public Func<ChatbotMessageQueueItem, Task> ChatbotMessageQueueReceived;
 
 		public RabbitInboundQueueProvider()
 		{
@@ -604,6 +605,54 @@ namespace Resgrid.Providers.Bus.Rabbit
 						queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.WorkflowQueueName),
 						autoAck: false,
 						consumer: workflowQueueConsumer);
+				}
+
+				if (ChatbotMessageQueueReceived != null)
+				{
+					var chatbotMessageQueueReceivedConsumer = new AsyncEventingBasicConsumer(_channel);
+					chatbotMessageQueueReceivedConsumer.ReceivedAsync += async (model, ea) =>
+					{
+						if (ea != null && ea.Body.Length > 0)
+						{
+							ChatbotMessageQueueItem cmqi = null;
+							try
+							{
+								var body = ea.Body;
+								var message = Encoding.UTF8.GetString(body.ToArray());
+								cmqi = ObjectSerialization.Deserialize<ChatbotMessageQueueItem>(message);
+							}
+							catch (Exception ex)
+							{
+								await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
+								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
+							}
+
+							try
+							{
+								if (cmqi != null)
+								{
+									if (ChatbotMessageQueueReceived != null)
+									{
+										await ChatbotMessageQueueReceived.Invoke(cmqi);
+										await _channel.BasicAckAsync(ea.DeliveryTag, false);
+									}
+								}
+							}
+							catch (Exception ex)
+							{
+								Logging.LogException(ex);
+								if (await RetryQueueItem(ea, ex))
+									await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
+								else
+									await _channel.BasicNackAsync(ea.DeliveryTag, false, true);
+							}
+						}
+					};
+
+					String chatbotMessageQueueReceivedConsumerTag = await _channel.BasicConsumeAsync(
+							queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.ChatbotProcessingQueueName),
+							autoAck: false,
+							consumer: chatbotMessageQueueReceivedConsumer);
 				}
 			}
 		}

@@ -14,6 +14,9 @@
     <ProjectReference Include="..\..\Core\Resgrid.Framework\Resgrid.Framework.csproj" />
     <ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj" />
     <ProjectReference Include="..\..\Core\Resgrid.Services\Resgrid.Services.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Chatbot\Resgrid.Chatbot.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Chatbot.NLU\Resgrid.Chatbot.NLU.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Chatbot\Resgrid.Providers.Chatbot.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.AddressVerification\Resgrid.Providers.AddressVerification.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus.Rabbit\Resgrid.Providers.Bus.Rabbit.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus\Resgrid.Providers.Bus.csproj" />

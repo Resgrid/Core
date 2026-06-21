@@ -63,6 +63,14 @@ namespace Resgrid.Model.Services
 		Task<bool> EnqueueDistributionListBroadcastAsync(DistributionListQueueItem dlqi, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
+		/// Enqueues an inbound chatbot message for asynchronous processing by the worker.
+		/// </summary>
+		/// <param name="item">The chatbot message queue item.</param>
+		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> EnqueueChatbotMessageAsync(ChatbotMessageQueueItem item, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
 		/// Sets the queue item completed asynchronous.
 		/// </summary>
 		/// <param name="queueItemId">The queue item identifier.</param>

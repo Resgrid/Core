@@ -34,6 +34,11 @@ namespace Resgrid.Services
 			return await _queueItemsRepository.GetByIdAsync(queueItemId);
 		}
 
+		public async Task<bool> EnqueueChatbotMessageAsync(ChatbotMessageQueueItem item, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return await _outboundQueueProvider.EnqueueChatbotMessage(item);
+		}
+
 		public async Task<QueueItem> GetPendingDeleteDepartmentQueueItemAsync(int departmentId)
 		{
 			var allItems = await _queueItemsRepository.GetAllAsync();

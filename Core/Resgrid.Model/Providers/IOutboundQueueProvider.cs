@@ -14,5 +14,6 @@ namespace Resgrid.Model.Providers
 		Task<bool> EnqueueAuditEvent(AuditEvent auditEvent);
         Task<bool> EnqueueSecurityRefreshEvent(SecurityRefreshEvent securityRefreshEvent);
 		Task<bool> EnqueueWorkflow(Resgrid.Model.Queue.WorkflowQueueItem item);
+		Task<bool> EnqueueChatbotMessage(ChatbotMessageQueueItem chatbotMessageQueue);
 	}
 }

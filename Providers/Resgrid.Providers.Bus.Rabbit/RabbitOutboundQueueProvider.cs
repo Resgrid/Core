@@ -23,6 +23,13 @@ namespace Resgrid.Providers.Bus.Rabbit
 			return await SendMessage(ServiceBusConfig.CallBroadcastQueueName, serializedObject);
 		}
 
+		public async Task<bool> EnqueueChatbotMessage(ChatbotMessageQueueItem chatbotMessageQueue)
+		{
+			string serializedObject = ObjectSerialization.Serialize(chatbotMessageQueue);
+
+			return await SendMessage(ServiceBusConfig.ChatbotProcessingQueueName, serializedObject);
+		}
+
 		public async Task<bool> EnqueueMessage(MessageQueueItem messageQueue)
 		{
 			string serializedObject = ObjectSerialization.Serialize(messageQueue);

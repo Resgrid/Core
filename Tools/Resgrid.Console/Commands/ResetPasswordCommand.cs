@@ -13,7 +13,7 @@ namespace Resgrid.Console.Commands
 	public sealed class ResetPasswordCommand(
 		IConfiguration configuration,
 		ILogger<ResetPasswordCommand> logger,
-		UserManager<IdentityUser> userManager) : ICommandService
+		UserManager<Resgrid.Model.Identity.IdentityUser> userManager) : ICommandService
 	{
 		private string UserId => GetConfigurationValue("UserId");
 

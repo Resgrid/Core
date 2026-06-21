@@ -54,7 +54,6 @@ namespace Resgrid.Web.Services.Controllers
 		private readonly ICommunicationTestService _communicationTestService;
 		private readonly IEncryptionService _encryptionService;
 	private readonly ITwilioVoiceResponseService _twilioVoiceResponseService;
-	private readonly IChatbotIngressService _chatbotIngressService;
 	private readonly IFeatureToggleService _featureToggleService;
 
 	public TwilioController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
@@ -64,7 +63,7 @@ namespace Resgrid.Web.Services.Controllers
 		IDepartmentGroupsService departmentGroupsService, ICustomStateService customStateService, IUnitsService unitsService,
 		IUsersService usersService, ICalendarService calendarService, ICommunicationTestService communicationTestService,
 		IEncryptionService encryptionService, ITwilioVoiceResponseService twilioVoiceResponseService,
-		IChatbotIngressService chatbotIngressService, IFeatureToggleService featureToggleService)
+		IFeatureToggleService featureToggleService)
 	{
 		_departmentSettingsService = departmentSettingsService;
 		_numbersService = numbersService;
@@ -86,7 +85,6 @@ namespace Resgrid.Web.Services.Controllers
 		_communicationTestService = communicationTestService;
 		_encryptionService = encryptionService;
 		_twilioVoiceResponseService = twilioVoiceResponseService;
-		_chatbotIngressService = chatbotIngressService;
 		_featureToggleService = featureToggleService;
 	}
 		#endregion Private Readonly Properties and Constructors
@@ -172,25 +170,24 @@ namespace Resgrid.Web.Services.Controllers
 
 				if (chatbotEnabled)
 				{
-					var chatbotMessage = new ChatbotMessage
+					// Off-thread processing: hand the message to the bus and return an immediate empty
+					// TwiML. A worker (QueuesProcessorTask -> ChatbotMessageLogic) runs the chatbot pipeline
+					// and sends the reply via outbound SMS, so this webhook never blocks on the pipeline
+					// (and can't hit Twilio's ~15s timeout / error 11200) regardless of Redis/LLM/DB latency.
+					var chatbotQueueItem = new ChatbotMessageQueueItem
 					{
-						MessageId = request.MessageSid ?? Guid.NewGuid().ToString("N"),
-						From = request.From?.Replace("+", ""),
-						To = request.To?.Replace("+", ""),
-						Text = request.Body,
-						Platform = ChatbotPlatform.SmsTwilio,
-						Timestamp = DateTime.UtcNow
+						DepartmentId = departmentId ?? 0,
+						To = textMessage.To,
+						From = textMessage.Msisdn,
+						Body = request.Body,
+						MessageId = request.MessageSid,
+						Platform = (int)ChatbotPlatform.SmsTwilio
 					};
 
-					var chatbotResponse = await _chatbotIngressService.ProcessMessageAsync(chatbotMessage);
+					await _queueService.EnqueueChatbotMessageAsync(chatbotQueueItem);
+					messageEvent.Processed = true;
 
-					if (chatbotResponse.Processed)
-						messageEvent.Processed = true;
-
-					// Diagnostic: an empty reply text here yields a TwiML response with no usable message.
-					Framework.Logging.LogInfo($"[Twilio SMS] MessageSid={request.MessageSid} chatbot Processed={chatbotResponse.Processed} ReplyLength={(chatbotResponse.Text?.Length ?? 0)}");
-
-					response.Message(chatbotResponse.Text);
+					Framework.Logging.LogInfo($"[Twilio SMS] MessageSid={request.MessageSid} chatbot enqueued for async processing (DepartmentId={departmentId ?? 0})");
 				}
 				else
 				{

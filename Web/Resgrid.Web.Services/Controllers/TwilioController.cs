@@ -297,9 +297,14 @@ namespace Resgrid.Web.Services.Controllers
 						// only hit the DB again if the department came from the phone-number lookup path.
 						var profile = userProfile ?? await _userProfileService.GetProfileByMobileNumberAsync(textMessage.Msisdn);
 
-						// Diagnostic: no matching user profile for the sender's number means no reply is added.
+						// No matching user profile for the sender's number: reply so the user knows, rather than
+						// returning an empty response (pre-refactor behavior).
 						if (profile == null)
-							Framework.Logging.LogInfo($"[Twilio SMS] DepartmentId={departmentId.Value} sender {textMessage.Msisdn} has no matching user profile; no reply will be sent.");
+						{
+							Framework.Logging.LogInfo($"[Twilio SMS] DepartmentId={departmentId.Value} sender {textMessage.Msisdn} has no matching user profile; replying with not-found message.");
+							messageEvent.Processed = true;
+							response.Message("Resgrid: We couldn't find a Resgrid user linked to this mobile number. Please add this number to your Resgrid profile to use text commands.");
+						}
 
 						if (profile != null)
 						{
@@ -516,6 +521,14 @@ namespace Resgrid.Web.Services.Controllers
 							}
 						}
 					}
+				}
+				else
+				{
+					// Department resolved but its plan doesn't include inbound text messaging (only the free
+					// tier lacks it): reply instead of returning an empty response (pre-refactor behavior).
+					Framework.Logging.LogInfo($"[Twilio SMS] DepartmentId={departmentId.Value} not authorized for inbound text (plan gate); replying with unsupported message.");
+					messageEvent.Processed = true;
+					response.Message("Resgrid: Inbound text messaging isn't available on your department's current plan. Please upgrade to a paid plan to enable text commands.");
 				}
 			}
 			else if (textMessage.To == Config.NumberProviderConfig.TwilioResgridNumber) // Resgrid master text number

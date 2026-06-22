@@ -47,6 +47,11 @@ namespace Resgrid.Services
 
 			if (savedSetting == null)
 			{
+				// First-time write still needs to clear any cache populated by the fallback
+				// "new DepartmentModuleSettings()" in GetDepartmentModuleSettingsAsync (cached 365 days).
+				if (type == DepartmentSettingTypes.ModuleSettings)
+					await _cacheProvider.RemoveAsync(string.Format(ModuleSettingsCacheKey, departmentId));
+
 				DepartmentSetting newSetting = new DepartmentSetting();
 				newSetting.DepartmentId = departmentId;
 				newSetting.Setting = setting;

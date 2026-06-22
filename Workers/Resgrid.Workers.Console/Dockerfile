@@ -2,8 +2,12 @@
 #See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
 ARG BUILD_VERSION=3.5.0
 
-#FROM mcr.microsoft.com/dotnet/runtime:9.0.3-noble-amd64 AS base
-FROM dhi.io/dotnet:9.0.16-debian13@sha256:4797903e46b475875f4a402aa6f42a1dcc78cfe67d217f9f5f49e358b60d47a3 AS base
+## Workers.Console transitively requires the ASP.NET Core shared framework
+## (OpenIddict + the shared Services/Providers projects FrameworkReference
+## Microsoft.AspNetCore.App), so the runtime-only "dhi.io/dotnet" image fails at
+## launch with "No frameworks were found". Use the aspnetcore base instead.
+#FROM mcr.microsoft.com/dotnet/aspnet:9.0.3-noble-amd64 AS base
+FROM dhi.io/aspnetcore:9.0.16-debian13@sha256:961647e80202ce33fc06472dda4e7ae2d2bc56d819aee6742602f70047b13dc7 AS base
 ARG BUILD_VERSION
 WORKDIR /app
 

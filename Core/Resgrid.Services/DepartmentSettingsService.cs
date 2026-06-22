@@ -19,6 +19,7 @@ namespace Resgrid.Services
 		private static string PaddleCustomerCacheKey = "DSetPaddleCus_{0}";
 		private static string BigBoardCenterGps = "DSetBBCenterGps_{0}";
 		private static string StaffingSupressInfo = "DSetStaffingSupress_{0}";
+		private static string ModuleSettingsCacheKey = "DSetModuleSettings_{0}";
 		private static string TtsLanguageCacheKey = "DSetTtsLanguage_{0}";
 		private static string PersonnelOnUnitSetUnitStatusCacheKey = "DSetPersonnelOnUnitSetUnitStatus_{0}";
 		private static string ModernNotificationsCacheKey = "DSetModernNotifications_{0}";
@@ -66,6 +67,9 @@ namespace Resgrid.Services
 						break;
 					case DepartmentSettingTypes.StaffingSuppressStaffingLevels:
 						await _cacheProvider.RemoveAsync(string.Format(StaffingSupressInfo, departmentId));
+						break;
+					case DepartmentSettingTypes.ModuleSettings:
+						await _cacheProvider.RemoveAsync(string.Format(ModuleSettingsCacheKey, departmentId));
 						break;
 					case DepartmentSettingTypes.TtsLanguage:
 						await _cacheProvider.RemoveAsync(string.Format(TtsLanguageCacheKey, departmentId));
@@ -759,7 +763,7 @@ namespace Resgrid.Services
 
 			if (!bypassCache && Config.SystemBehaviorConfig.CacheEnabled)
 			{
-				var cachedValue = await _cacheProvider.RetrieveAsync<DepartmentModuleSettings>(string.Format(StaffingSupressInfo, departmentId),
+				var cachedValue = await _cacheProvider.RetrieveAsync<DepartmentModuleSettings>(string.Format(ModuleSettingsCacheKey, departmentId),
 					getSetting, ThatsNotLongThisIsLongCacheLength);
 
 				return cachedValue;

@@ -116,15 +116,21 @@ namespace Resgrid.Services
 					if (response.StatusCode == HttpStatusCode.NotFound)
 						return new DepartmentPlanCount();
 
+					// No usable payload — a timeout/empty response (RestSharp returns TimedOut with Data == null,
+					// it does not throw) or a success envelope with null data. Return null to fail closed
+					// (counts unavailable) rather than treating it as zero usage, which would fail open.
 					if (response.Data == null || response.Data.Data == null)
-						return new DepartmentPlanCount();
+						return null;
 
 					return response.Data.Data;
 				}
 				catch (Exception ex)
 				{
 					Framework.Logging.LogException(ex);
-					return new DepartmentPlanCount();
+					// Billing API faulted (not merely empty): return null to signal "counts unavailable" so
+					// callers fail closed (deny) instead of treating it as zero usage. LimitsService guards on
+					// null (== null => deny); a zero-count object would slip past those guards and fail open.
+					return null;
 				}
 			}
 
@@ -613,6 +619,13 @@ namespace Resgrid.Services
 		{
 			var payment = await GetPaymentByIdAsync(paymentId);
 			var plan = await GetPlanByIdAsync(planId);
+
+			// GetPaymentByIdAsync/GetPlanByIdAsync return null when the Billing API is unavailable or the id
+			// isn't found. Every branch below dereferences payment, payment.Plan and plan and returns a price;
+			// silently returning 0 would mean a free upgrade, so fail loud rather than bill an outage-derived $0.
+			if (payment?.Plan == null || plan == null)
+				throw new InvalidOperationException(
+					$"Cannot compute upgrade price: missing billing data (paymentId={paymentId}, planId={planId}).");
 
 			// Both the original payment and the new plan have the same billing frequency, i.e. yearly/monthly.
 			if (payment.Plan.Frequency == plan.Frequency)

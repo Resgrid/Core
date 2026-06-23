@@ -592,6 +592,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var model = new BuyAddonView();
 			model.PlanAddon = await _subscriptionsService.GetPlanAddonByIdAsync(planAddonId);
+			// GetPlanAddonByIdAsync returns null when the add-on id isn't found (or the Billing API is
+			// unavailable). Bail before dereferencing model.PlanAddon below (PlanAddonId / AddonType / PlanId).
+			if (model.PlanAddon == null)
+				return NotFound();
+
 			model.PlanAddonId = model.PlanAddon.PlanAddonId;
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			var addonTypes = await _subscriptionsService.GetAllAddonPlansAsync();
@@ -620,6 +625,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var model = new BuyAddonView();
 			model.PlanAddon = await _subscriptionsService.GetPlanAddonByIdAsync("6f4c5f8b-584d-4291-8a7d-29bf97ae6aa9");
+			// GetPlanAddonByIdAsync returns null when the Billing API is unavailable / the add-on isn't found.
+			// The id here is hardcoded (a known product), so a null means a server/billing problem, not a bad
+			// request — surface a 500 instead of NRE'ing on model.PlanAddon below.
+			if (model.PlanAddon == null)
+				return StatusCode(StatusCodes.Status500InternalServerError, "Unable to load the PTT add-on. Please try again.");
+
 			model.PlanAddonId = model.PlanAddon.PlanAddonId;
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
@@ -775,6 +786,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			var user = _usersService.GetUserById(UserId);
 			var session = await _subscriptionsService.CreateStripeSessionForSub(DepartmentId, stripeCustomerId, plan.GetExternalKey(), plan.PlanId, user.Email, department.Name, count, discountCode);
+			// CreateStripeSessionForSub returns null when the Billing API is unavailable / Stripe session
+			// creation fails. Fail with a clear error instead of NRE'ing on session.CustomerId/SessionId below.
+			if (session == null)
+				return StatusCode(StatusCodes.Status500InternalServerError, "Unable to start the checkout session. Please try again.");
+
 			var subscription = await _subscriptionsService.GetActiveStripeSubscriptionAsync(session.CustomerId);
 
 			bool hasActiveSub = false;

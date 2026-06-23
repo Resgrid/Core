@@ -620,6 +620,12 @@ namespace Resgrid.Services
 			var payment = await GetPaymentByIdAsync(paymentId);
 			var plan = await GetPlanByIdAsync(planId);
 
+			// Sometimes the payment comes back without its Plan navigation populated; hydrate it from PlanId
+			// before giving up, mirroring GetCurrentPaymentForDepartmentAsync, so a valid payment with a
+			// missing navigation can still be priced rather than failing immediately.
+			if (payment != null && payment.Plan == null)
+				payment.Plan = await GetPlanByIdAsync(payment.PlanId);
+
 			// GetPaymentByIdAsync/GetPlanByIdAsync return null when the Billing API is unavailable or the id
 			// isn't found. Every branch below dereferences payment, payment.Plan and plan and returns a price;
 			// silently returning 0 would mean a free upgrade, so fail loud rather than bill an outage-derived $0.

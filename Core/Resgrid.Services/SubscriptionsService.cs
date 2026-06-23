@@ -27,6 +27,11 @@ namespace Resgrid.Services
 
 		private const int FreePlanId = 1;
 
+		// Billing API calls must fail fast. A slow/unresponsive Billing API previously blocked the
+		// request thread for up to 200s (e.g. the Subscription and User Dashboard pages would hang
+		// for ~3 minutes). Keep every Billing call on this short, shared timeout.
+		private const int BillingApiTimeoutMs = 5000;
+
 		private readonly IPlansRepository _plansRepository;
 		private readonly IPaymentRepository _paymentsRepository;
 		private readonly ICacheProvider _cacheProvider;
@@ -60,7 +65,7 @@ namespace Resgrid.Services
 				{
 					var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
 					{
-						MaxTimeout = 5000 // ms — fail fast so callers (e.g. Twilio webhooks) don't exceed their own timeouts
+						MaxTimeout = BillingApiTimeoutMs // ms — fail fast so callers (e.g. Twilio webhooks) don't exceed their own timeouts
 					};
 
 					var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
@@ -93,26 +98,40 @@ namespace Resgrid.Services
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
-				var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
+				try
 				{
-					MaxTimeout = 200000 // ms
-				};
-				var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
+					var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
+					{
+						MaxTimeout = BillingApiTimeoutMs // ms
+					};
+					var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
 
-				var request = new RestRequest($"/api/Billing/GetPlanCountsForDepartment", Method.Get);
-				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
-				request.AddHeader("Content-Type", "application/json");
-				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
+					var request = new RestRequest($"/api/Billing/GetPlanCountsForDepartment", Method.Get);
+					request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+					request.AddHeader("Content-Type", "application/json");
+					request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
 
-				var response = await client.ExecuteAsync<GetPlanCountsForDepartmentResult>(request);
+					var response = await client.ExecuteAsync<GetPlanCountsForDepartmentResult>(request);
 
-				if (response.StatusCode == HttpStatusCode.NotFound)
-					return new DepartmentPlanCount();
+					if (response.StatusCode == HttpStatusCode.NotFound)
+						return new DepartmentPlanCount();
 
-				if (response.Data == null || response.Data.Data == null)
-					return new DepartmentPlanCount();
+					// No usable payload — a timeout/empty response (RestSharp returns TimedOut with Data == null,
+					// it does not throw) or a success envelope with null data. Return null to fail closed
+					// (counts unavailable) rather than treating it as zero usage, which would fail open.
+					if (response.Data == null || response.Data.Data == null)
+						return null;
 
-				return response.Data.Data;
+					return response.Data.Data;
+				}
+				catch (Exception ex)
+				{
+					Framework.Logging.LogException(ex);
+					// Billing API faulted (not merely empty): return null to signal "counts unavailable" so
+					// callers fail closed (deny) instead of treating it as zero usage. LimitsService guards on
+					// null (== null => deny); a zero-count object would slip past those guards and fail open.
+					return null;
+				}
 			}
 
 			return new DepartmentPlanCount();
@@ -122,26 +141,34 @@ namespace Resgrid.Services
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
-				var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
+				try
 				{
-					MaxTimeout = 200000 // ms
-				};
+					var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
+					{
+						MaxTimeout = BillingApiTimeoutMs // ms
+					};
 
-				var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
-				var request = new RestRequest($"/api/Billing/GetCurrentPaymentForDepartment", Method.Get);
-				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
-				request.AddHeader("Content-Type", "application/json");
-				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
+					var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
+					var request = new RestRequest($"/api/Billing/GetCurrentPaymentForDepartment", Method.Get);
+					request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+					request.AddHeader("Content-Type", "application/json");
+					request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
 
-				var response = await client.ExecuteAsync<GetCurrentPaymentForDepartment>(request);
+					var response = await client.ExecuteAsync<GetCurrentPaymentForDepartment>(request);
 
-				if (response.StatusCode == HttpStatusCode.NotFound)
+					if (response.StatusCode == HttpStatusCode.NotFound)
+						return null;
+
+					if (response.Data == null)
+						return null;
+
+					return response.Data.Data;
+				}
+				catch (Exception ex)
+				{
+					Framework.Logging.LogException(ex);
 					return null;
-
-				if (response.Data == null)
-					return null;
-
-				return response.Data.Data;
+				}
 			}
 
 			async Task<Payment> getPayment()
@@ -172,27 +199,35 @@ namespace Resgrid.Services
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
-				var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
+				try
 				{
-					MaxTimeout = 200000 // ms
-				};
+					var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
+					{
+						MaxTimeout = BillingApiTimeoutMs // ms
+					};
 
-				var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
-				var request = new RestRequest($"/api/Billing/GetPreviousNonFreePaymentForDepartment", Method.Get);
-				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
-				request.AddHeader("Content-Type", "application/json");
-				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
-				request.AddParameter("paymentId", paymentId, ParameterType.QueryString);
+					var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
+					var request = new RestRequest($"/api/Billing/GetPreviousNonFreePaymentForDepartment", Method.Get);
+					request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+					request.AddHeader("Content-Type", "application/json");
+					request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
+					request.AddParameter("paymentId", paymentId, ParameterType.QueryString);
 
-				var response = await client.ExecuteAsync<GetCurrentPaymentForDepartment>(request);
+					var response = await client.ExecuteAsync<GetCurrentPaymentForDepartment>(request);
 
-				if (response.StatusCode == HttpStatusCode.NotFound)
+					if (response.StatusCode == HttpStatusCode.NotFound)
+						return null;
+
+					if (response.Data == null)
+						return null;
+
+					return response.Data.Data;
+				}
+				catch (Exception ex)
+				{
+					Framework.Logging.LogException(ex);
 					return null;
-
-				if (response.Data == null)
-					return null;
-
-				return response.Data.Data;
+				}
 			}
 
 			// I went with amount here as there could be preview payments, demo payments, etc in the system, no just Plans.FreePaymentId.
@@ -208,26 +243,34 @@ namespace Resgrid.Services
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
-				var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
+				try
 				{
-					MaxTimeout = 200000 // ms
-				};
+					var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
+					{
+						MaxTimeout = BillingApiTimeoutMs // ms
+					};
 
-				var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
-				var request = new RestRequest($"/api/Billing/GetUpcomingPaymentForDepartment", Method.Get);
-				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
-				request.AddHeader("Content-Type", "application/json");
-				request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
+					var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
+					var request = new RestRequest($"/api/Billing/GetUpcomingPaymentForDepartment", Method.Get);
+					request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+					request.AddHeader("Content-Type", "application/json");
+					request.AddParameter("departmentId", departmentId, ParameterType.QueryString);
 
-				var response = await client.ExecuteAsync<GetCurrentPaymentForDepartment>(request);
+					var response = await client.ExecuteAsync<GetCurrentPaymentForDepartment>(request);
 
-				if (response.StatusCode == HttpStatusCode.NotFound)
+					if (response.StatusCode == HttpStatusCode.NotFound)
+						return null;
+
+					if (response.Data == null)
+						return null;
+
+					return response.Data.Data;
+				}
+				catch (Exception ex)
+				{
+					Framework.Logging.LogException(ex);
 					return null;
-
-				if (response.Data == null)
-					return null;
-
-				return response.Data.Data;
+				}
 			}
 
 			var payment = (from p in await _paymentsRepository.GetAllAsync()
@@ -242,26 +285,34 @@ namespace Resgrid.Services
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
-				var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
+				try
 				{
-					MaxTimeout = 200000 // ms
-				};
+					var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
+					{
+						MaxTimeout = BillingApiTimeoutMs // ms
+					};
 
-				var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
-				var request = new RestRequest($"/api/Billing/GetPaymentByTransactionId", Method.Get);
-				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
-				request.AddHeader("Content-Type", "application/json");
-				request.AddParameter("transactionId", transactionId, ParameterType.QueryString);
+					var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
+					var request = new RestRequest($"/api/Billing/GetPaymentByTransactionId", Method.Get);
+					request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+					request.AddHeader("Content-Type", "application/json");
+					request.AddParameter("transactionId", transactionId, ParameterType.QueryString);
 
-				var response = await client.ExecuteAsync<GetCurrentPaymentForDepartment>(request);
+					var response = await client.ExecuteAsync<GetCurrentPaymentForDepartment>(request);
 
-				if (response.StatusCode == HttpStatusCode.NotFound)
+					if (response.StatusCode == HttpStatusCode.NotFound)
+						return null;
+
+					if (response.Data == null)
+						return null;
+
+					return response.Data.Data;
+				}
+				catch (Exception ex)
+				{
+					Framework.Logging.LogException(ex);
 					return null;
-
-				if (response.Data == null)
-					return null;
-
-				return response.Data.Data;
+				}
 			}
 
 			return await _paymentsRepository.GetPaymentByTransactionIdAsync(transactionId);
@@ -271,26 +322,34 @@ namespace Resgrid.Services
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
-				var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
+				try
 				{
-					MaxTimeout = 200000 // ms
-				};
+					var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
+					{
+						MaxTimeout = BillingApiTimeoutMs // ms
+					};
 
-				var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
-				var request = new RestRequest($"/api/Billing/GetPlanById", Method.Get);
-				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
-				request.AddHeader("Content-Type", "application/json");
-				request.AddParameter("planId", planId, ParameterType.QueryString);
+					var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
+					var request = new RestRequest($"/api/Billing/GetPlanById", Method.Get);
+					request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+					request.AddHeader("Content-Type", "application/json");
+					request.AddParameter("planId", planId, ParameterType.QueryString);
 
-				var response = await client.ExecuteAsync<GetCurrentPlanForDepartmentResult>(request);
+					var response = await client.ExecuteAsync<GetCurrentPlanForDepartmentResult>(request);
 
-				if (response.StatusCode == HttpStatusCode.NotFound)
+					if (response.StatusCode == HttpStatusCode.NotFound)
+						return null;
+
+					if (response.Data == null)
+						return null;
+
+					return response.Data.Data;
+				}
+				catch (Exception ex)
+				{
+					Framework.Logging.LogException(ex);
 					return null;
-
-				if (response.Data == null)
-					return null;
-
-				return response.Data.Data;
+				}
 			}
 
 			async Task<Model.Plan> getPlan()
@@ -310,26 +369,34 @@ namespace Resgrid.Services
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
-				var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
+				try
 				{
-					MaxTimeout = 200000 // ms
-				};
+					var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
+					{
+						MaxTimeout = BillingApiTimeoutMs // ms
+					};
 
-				var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
-				var request = new RestRequest($"/api/Billing/GetPlanByExternalId", Method.Get);
-				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
-				request.AddHeader("Content-Type", "application/json");
-				request.AddParameter("externalId", externalId, ParameterType.QueryString);
+					var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
+					var request = new RestRequest($"/api/Billing/GetPlanByExternalId", Method.Get);
+					request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+					request.AddHeader("Content-Type", "application/json");
+					request.AddParameter("externalId", externalId, ParameterType.QueryString);
 
-				var response = await client.ExecuteAsync<GetCurrentPlanForDepartmentResult>(request);
+					var response = await client.ExecuteAsync<GetCurrentPlanForDepartmentResult>(request);
 
-				if (response.StatusCode == HttpStatusCode.NotFound)
+					if (response.StatusCode == HttpStatusCode.NotFound)
+						return null;
+
+					if (response.Data == null)
+						return null;
+
+					return response.Data.Data;
+				}
+				catch (Exception ex)
+				{
+					Framework.Logging.LogException(ex);
 					return null;
-
-				if (response.Data == null)
-					return null;
-
-				return response.Data.Data;
+				}
 			}
 
 			async Task<Model.Plan> getPlan()
@@ -351,26 +418,34 @@ namespace Resgrid.Services
 		{
 			if (!String.IsNullOrWhiteSpace(Config.SystemBehaviorConfig.BillingApiBaseUrl) && !String.IsNullOrWhiteSpace(Config.ApiConfig.BackendInternalApikey))
 			{
-				var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
+				try
 				{
-					MaxTimeout = 200000 // ms
-				};
+					var options = new RestClientOptions(Config.SystemBehaviorConfig.BillingApiBaseUrl)
+					{
+						MaxTimeout = BillingApiTimeoutMs // ms
+					};
 
-				var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
-				var request = new RestRequest($"/api/Billing/GetPaymentById", Method.Get);
-				request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
-				request.AddHeader("Content-Type", "application/json");
-				request.AddParameter("paymentId", paymentId, ParameterType.QueryString);
+					var client = new RestClient(options, configureSerialization: s => s.UseNewtonsoftJson());
+					var request = new RestRequest($"/api/Billing/GetPaymentById", Method.Get);
+					request.AddHeader("X-API-Key", Config.ApiConfig.BackendInternalApikey);
+					request.AddHeader("Content-Type", "application/json");
+					request.AddParameter("paymentId", paymentId, ParameterType.QueryString);
 
-				var response = await client.ExecuteAsync<GetCurrentPaymentForDepartment>(request);
+					var response = await client.ExecuteAsync<GetCurrentPaymentForDepartment>(request);
 
-				if (response.StatusCode == HttpStatusCode.NotFound)
+					if (response.StatusCode == HttpStatusCode.NotFound)
+						return null;
+
+					if (response.Data == null)
+						return null;
+
+					return response.Data.Data;
+				}
+				catch (Exception ex)
+				{
+					Framework.Logging.LogException(ex);
 					return null;
-
-				if (response.Data == null)
-					return null;
-
-				return response.Data.Data;
+				}
 			}
 
 			var payment = await _paymentsRepository.GetPaymentByIdIdAsync(paymentId);
@@ -544,6 +619,19 @@ namespace Resgrid.Services
 		{
 			var payment = await GetPaymentByIdAsync(paymentId);
 			var plan = await GetPlanByIdAsync(planId);
+
+			// Sometimes the payment comes back without its Plan navigation populated; hydrate it from PlanId
+			// before giving up, mirroring GetCurrentPaymentForDepartmentAsync, so a valid payment with a
+			// missing navigation can still be priced rather than failing immediately.
+			if (payment != null && payment.Plan == null)
+				payment.Plan = await GetPlanByIdAsync(payment.PlanId);
+
+			// GetPaymentByIdAsync/GetPlanByIdAsync return null when the Billing API is unavailable or the id
+			// isn't found. Every branch below dereferences payment, payment.Plan and plan and returns a price;
+			// silently returning 0 would mean a free upgrade, so fail loud rather than bill an outage-derived $0.
+			if (payment?.Plan == null || plan == null)
+				throw new InvalidOperationException(
+					$"Cannot compute upgrade price: missing billing data (paymentId={paymentId}, planId={planId}).");
 
 			// Both the original payment and the new plan have the same billing frequency, i.e. yearly/monthly.
 			if (payment.Plan.Frequency == plan.Frequency)

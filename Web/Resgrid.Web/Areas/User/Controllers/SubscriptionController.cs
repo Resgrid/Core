@@ -445,6 +445,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			CancelView model = new CancelView();
 			model.Payment = await _subscriptionsService.GetCurrentPaymentForDepartmentAsync((await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId);
+			// GetCurrentPaymentForDepartmentAsync returns null when the Billing API is unavailable; without a
+			// current payment there is nothing to cancel and model.Payment.PlanId would NRE.
+			if (model.Payment == null)
+				return RedirectToAction("CancelFailure", "Subscription", new { Area = "User" });
+
 			model.Plan = await _subscriptionsService.GetPlanByIdAsync(model.Payment.PlanId);
 
 			return View(model);
@@ -571,6 +576,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			model.Payment = await _subscriptionsService.GetCurrentPaymentForDepartmentAsync((await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId);
+			// GetCurrentPaymentForDepartmentAsync returns null when the Billing API is unavailable; without a
+			// current payment there is nothing to cancel and model.Payment.PlanId would NRE.
+			if (model.Payment == null)
+				return RedirectToAction("CancelFailure", "Subscription", new { Area = "User" });
+
 			model.Plan = await _subscriptionsService.GetPlanByIdAsync(model.Payment.PlanId);
 
 			return View(model);
@@ -582,6 +592,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var model = new BuyAddonView();
 			model.PlanAddon = await _subscriptionsService.GetPlanAddonByIdAsync(planAddonId);
+			// GetPlanAddonByIdAsync returns null when the add-on id isn't found (or the Billing API is
+			// unavailable). Bail before dereferencing model.PlanAddon below (PlanAddonId / AddonType / PlanId).
+			if (model.PlanAddon == null)
+				return NotFound();
+
 			model.PlanAddonId = model.PlanAddon.PlanAddonId;
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			var addonTypes = await _subscriptionsService.GetAllAddonPlansAsync();
@@ -595,7 +610,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.PlanAddon.PlanId.HasValue)
 			{
 				var plan = await _subscriptionsService.GetPlanByIdAsync(model.PlanAddon.PlanId.Value);
-				model.Frequency = ((PlanFrequency)plan.Frequency).ToString();
+				// GetPlanByIdAsync returns null when the Billing API is unavailable / the plan isn't found.
+				// Guard before dereferencing so a billing outage can't NRE this page.
+				if (plan != null)
+					model.Frequency = ((PlanFrequency)plan.Frequency).ToString();
 			}
 
 			return View(model);
@@ -607,6 +625,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var model = new BuyAddonView();
 			model.PlanAddon = await _subscriptionsService.GetPlanAddonByIdAsync("6f4c5f8b-584d-4291-8a7d-29bf97ae6aa9");
+			// GetPlanAddonByIdAsync returns null when the Billing API is unavailable / the add-on isn't found.
+			// The id here is hardcoded (a known product), so a null means a server/billing problem, not a bad
+			// request — surface a 500 instead of NRE'ing on model.PlanAddon below.
+			if (model.PlanAddon == null)
+				return StatusCode(StatusCodes.Status500InternalServerError, "Unable to load the PTT add-on. Please try again.");
+
 			model.PlanAddonId = model.PlanAddon.PlanAddonId;
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
@@ -753,10 +777,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return BadRequest("Invalid entity pack count.");
 
 			var plan = await _subscriptionsService.GetPlanByIdAsync(id);
+			// GetPlanByIdAsync returns null when the Billing API is unavailable / the plan isn't found.
+			// Fail with a clear error instead of NRE'ing on plan.GetExternalKey()/plan.PlanId below.
+			if (plan == null)
+				return StatusCode(StatusCodes.Status500InternalServerError, "Unable to load the selected plan. Please try again.");
+
 			var stripeCustomerId = await _departmentSettingsService.GetStripeCustomerIdForDepartmentAsync(DepartmentId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			var user = _usersService.GetUserById(UserId);
 			var session = await _subscriptionsService.CreateStripeSessionForSub(DepartmentId, stripeCustomerId, plan.GetExternalKey(), plan.PlanId, user.Email, department.Name, count, discountCode);
+			// CreateStripeSessionForSub returns null when the Billing API is unavailable / Stripe session
+			// creation fails. Fail with a clear error instead of NRE'ing on session.CustomerId/SessionId below.
+			if (session == null)
+				return StatusCode(StatusCodes.Status500InternalServerError, "Unable to start the checkout session. Please try again.");
+
 			var subscription = await _subscriptionsService.GetActiveStripeSubscriptionAsync(session.CustomerId);
 
 			bool hasActiveSub = false;

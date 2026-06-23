@@ -4,7 +4,7 @@ using Consolas2.Core;
 using Resgrid.Workers.Framework;
 using Resgrid.Model.Repositories;
 using Autofac;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.IO;
 using System.Text;
 using System.Threading;

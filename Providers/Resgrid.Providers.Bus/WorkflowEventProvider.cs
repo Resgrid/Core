@@ -94,6 +94,18 @@ namespace Resgrid.Providers.Bus
 			_eventAggregator.AddListener<PersonnelRoleChangedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.PersonnelRoleChanged, e));
 			_eventAggregator.AddListener<GroupAddedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.GroupAdded, e));
 			_eventAggregator.AddListener<GroupUpdatedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.GroupUpdated, e));
+
+			// Incident Command (§3.12)
+			_eventAggregator.AddListener<CommandEstablishedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.CommandEstablished, e));
+			_eventAggregator.AddListener<CommandTransferredEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.CommandTransferred, e));
+			_eventAggregator.AddListener<IncidentObjectiveCompletedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.ObjectiveCompleted, e));
+			_eventAggregator.AddListener<IncidentClosedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.IncidentClosed, e));
+			_eventAggregator.AddListener<IncidentResourceAssignedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.ResourceAssigned, e));
+			_eventAggregator.AddListener<IncidentResourceReleasedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.ResourceReleased, e));
+			_eventAggregator.AddListener<IncidentRoleAssignedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.IncidentRoleAssigned, e));
+			_eventAggregator.AddListener<AdHocResourceCreatedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.AdHocResourceCreated, e));
+			_eventAggregator.AddListener<IncidentChannelOpenedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.IncidentChannelOpened, e));
+			_eventAggregator.AddListener<CriticalParDetectedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.CriticalParDetected, e));
 		}
 
 		private static async void HandleEvent(int departmentId, WorkflowTriggerEventType eventType, object eventObj)

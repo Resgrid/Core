@@ -17,6 +17,7 @@ namespace Resgrid.Services
 		private readonly IActionLogsService _actionLogsService;
 		private readonly IUnitsService _unitsService;
 		private readonly ICallsService _callsService;
+		private readonly ICoreEventService _coreEventService;
 
 		public CheckInTimerService(
 			ICheckInTimerConfigRepository configRepository,
@@ -24,7 +25,8 @@ namespace Resgrid.Services
 			ICheckInRecordRepository recordRepository,
 			IActionLogsService actionLogsService,
 			IUnitsService unitsService,
-			ICallsService callsService)
+			ICallsService callsService,
+			ICoreEventService coreEventService)
 		{
 			_configRepository = configRepository;
 			_overrideRepository = overrideRepository;
@@ -32,6 +34,7 @@ namespace Resgrid.Services
 			_actionLogsService = actionLogsService;
 			_unitsService = unitsService;
 			_callsService = callsService;
+			_coreEventService = coreEventService;
 		}
 		#region Configuration CRUD
 
@@ -318,7 +321,21 @@ namespace Resgrid.Services
 		public async Task<CheckInRecord> PerformCheckInAsync(CheckInRecord record, CancellationToken cancellationToken = default)
 		{
 			record.Timestamp = DateTime.UtcNow;
-			return await _recordRepository.SaveOrUpdateAsync(record, cancellationToken);
+			var saved = await _recordRepository.SaveOrUpdateAsync(record, cancellationToken);
+
+			// Real-time board refresh is best-effort: the check-in is already persisted, so a CQRS/Redis
+			// publish failure must not fail the check-in — that would 500 the caller and a retry would
+			// duplicate the record. Log and move on; the worker/board sweep reconciles the PAR view anyway.
+			try
+			{
+				await _coreEventService.IncidentCommandUpdatedAsync(record.DepartmentId, record.CallId);
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+			}
+
+			return saved;
 		}
 
 		public async Task<List<CheckInRecord>> GetCheckInsForCallAsync(int callId)

@@ -1,6 +1,6 @@
 using Resgrid.Console.Args;
 using System;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.IO;
 using System.Text;
 using System.Threading;

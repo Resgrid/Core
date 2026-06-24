@@ -101,6 +101,17 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<ResourceOrderItemRepository>().As<IResourceOrderItemRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ResourceOrderFillUnitRepository>().As<IResourceOrderFillUnitRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CommandDefinitionRepository>().As<ICommandDefinitionRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<IncidentCommandRepository>().As<IIncidentCommandRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CommandStructureNodeRepository>().As<ICommandStructureNodeRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ResourceAssignmentRepository>().As<IResourceAssignmentRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<TacticalObjectiveRepository>().As<ITacticalObjectiveRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<IncidentTimerRepository>().As<IIncidentTimerRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<IncidentMapAnnotationRepository>().As<IIncidentMapAnnotationRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CommandLogEntryRepository>().As<ICommandLogEntryRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CommandTransferRepository>().As<ICommandTransferRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<IncidentAdHocUnitRepository>().As<IIncidentAdHocUnitRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<IncidentAdHocPersonnelRepository>().As<IIncidentAdHocPersonnelRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<IncidentRoleAssignmentRepository>().As<IIncidentRoleAssignmentRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DistributionListRepository>().As<IDistributionListRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DistributionListMemberRepository>().As<IDistributionListMemberRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CustomStateRepository>().As<ICustomStateRepository>().InstancePerLifetimeScope();

@@ -92,6 +92,26 @@ namespace Resgrid.Model
 
 			switch (eventType)
 			{
+				case WorkflowTriggerEventType.CommandEstablished:
+				case WorkflowTriggerEventType.CommandTransferred:
+				case WorkflowTriggerEventType.IncidentClosed:
+				case WorkflowTriggerEventType.ResourceAssigned:
+				case WorkflowTriggerEventType.ResourceReleased:
+				case WorkflowTriggerEventType.ObjectiveCompleted:
+				case WorkflowTriggerEventType.CriticalParDetected:
+				case WorkflowTriggerEventType.IncidentRoleAssigned:
+				case WorkflowTriggerEventType.AdHocResourceCreated:
+				case WorkflowTriggerEventType.IncidentChannelOpened:
+					list.AddRange(new[]
+					{
+						new TemplateVariableDescriptor("incident.command_id", "Incident command identifier", "string", false),
+						new TemplateVariableDescriptor("incident.call_id", "Call/incident identifier", "int", false),
+						new TemplateVariableDescriptor("incident.department_id", "Department identifier", "int", false),
+						new TemplateVariableDescriptor("incident.user_id", "User associated with the event (when applicable)", "string", false),
+						new TemplateVariableDescriptor("incident.name", "Name associated with the event (objective/resource/channel)", "string", false),
+					});
+					break;
+
 				case WorkflowTriggerEventType.CallAdded:
 				case WorkflowTriggerEventType.CallUpdated:
 				case WorkflowTriggerEventType.CallClosed:

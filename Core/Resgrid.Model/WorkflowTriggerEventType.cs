@@ -29,7 +29,19 @@
 		FormSubmitted = 24,
 		PersonnelRoleChanged = 25,
 		GroupAdded = 26,
-		GroupUpdated = 27
+		GroupUpdated = 27,
+
+		// Incident Command (§3.12)
+		CommandEstablished = 28,
+		ResourceAssigned = 29,
+		ResourceReleased = 30,
+		ObjectiveCompleted = 31,
+		CriticalParDetected = 32,
+		CommandTransferred = 33,
+		IncidentRoleAssigned = 34,
+		AdHocResourceCreated = 35,
+		IncidentChannelOpened = 36,
+		IncidentClosed = 37
 	}
 }
 

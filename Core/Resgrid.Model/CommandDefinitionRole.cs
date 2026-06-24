@@ -35,6 +35,17 @@ namespace Resgrid.Model
 
 		public bool ForceRequirements { get; set; }
 
+		/// <summary>
+		/// The type of ICS lane/node this role maps to on the runtime command board
+		/// (e.g. Division, Group, Branch, Staging). Backs §3.2 CommandStructureNode seeding.
+		/// </summary>
+		public int LaneType { get; set; }
+
+		/// <summary>
+		/// Display/ordering position of this lane within the command definition.
+		/// </summary>
+		public int SortOrder { get; set; }
+
 		public virtual ICollection<CommandDefinitionRoleUnitType> RequiredUnitTypes { get; set; }
 
 		public virtual ICollection<CommandDefinitionRoleCert> RequiredCerts { get; set; }

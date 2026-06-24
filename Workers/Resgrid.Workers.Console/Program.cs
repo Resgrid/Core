@@ -421,6 +421,15 @@ namespace Resgrid.Workers.Console
 					Cron.Daily(3, 30),
 					stoppingToken);
 
+				// Frequent on purpose: PAR (personnel accountability) is safety-critical, so the backstop
+				// sweep runs every minute. Each call's evaluation short-circuits cheaply when there's no
+				// active incident command, and the alert is idempotent (timeline-deduped).
+				_logger.Log(LogLevel.Information, "Scheduling PAR Evaluation");
+				await Client.ScheduleAsync("PAR Evaluation",
+					new Commands.ParEvaluationCommand(23),
+					Cron.MinuteIntervals(1),
+					stoppingToken);
+
 				if (SystemBehaviorConfig.Utf8CleanupEnabled)
 				{
 					var utf8CleanupHour = SystemBehaviorConfig.Utf8CleanupHourUtc >= 0 && SystemBehaviorConfig.Utf8CleanupHourUtc <= 23

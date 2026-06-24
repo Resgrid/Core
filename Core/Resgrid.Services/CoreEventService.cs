@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using CommonServiceLocator;
 using Resgrid.Model;
 using Resgrid.Model.Events;
@@ -25,5 +26,17 @@ namespace Resgrid.Services
 			var departmentSettingsService = ServiceLocator.Current.GetInstance<IDepartmentSettingsService>();
 			var result = await departmentSettingsService.SaveOrUpdateSettingAsync(message.DepartmentId, DateTime.UtcNow.ToString("G"), DepartmentSettingTypes.UpdateTimestamp);
 		};
+
+		public async Task IncidentCommandUpdatedAsync(int departmentId, int callId)
+		{
+			var cqrsEvent = new CqrsEvent
+			{
+				Type = (int)CqrsEventTypes.IncidentCommandUpdated,
+				AggregateId = callId.ToString(),
+				Data = $"{{\"departmentId\":{departmentId},\"callId\":{callId}}}"
+			};
+
+			await _cqrsProvider.EnqueueCqrsEventAsync(cqrsEvent);
+		}
 	}
 }

@@ -517,6 +517,38 @@
             </summary>
             <param name="callId">The call identifier to inspect.</param>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.CommandsController">
+            <summary>
+            Command definitions: predefined incident-command templates (swimlanes) per call type, used to
+            seed the runtime command board. House Fire vs Vehicle Incident, etc.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CommandsController.GetAllCommands">
+            <summary>
+            Gets all command definitions for the department.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CommandsController.GetCommand(System.Int32)">
+            <summary>
+            Gets a single command definition by identifier.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CommandsController.GetCommandForCallType(System.Int32)">
+            <summary>
+            Resolves the command definition (template) for a call type, falling back to the
+            "Any Call Type" definition. Pass 0 to request the "Any Call Type" template directly.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CommandsController.SaveCommand(Resgrid.Web.Services.Models.v4.Commands.SaveCommandInput)">
+            <summary>
+            Creates or updates a command definition (including its lanes).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CommandsController.DeleteCommand(System.Int32)">
+            <summary>
+            Deletes a command definition.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CommunicationTestResponseController">
             <summary>
             Public endpoints for communication test responses (email confirm, voice webhook)
@@ -975,6 +1007,145 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.IncidentCommandController">
+            <summary>
+            Live incident command: establish/transfer/close command, edit the command structure (lanes), assign
+            resources, manage objectives, timers, map annotations, and read the action timeline for a Call.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.EstablishCommand(Resgrid.Web.Services.Models.v4.IncidentCommand.EstablishCommandInput)">
+            <summary>Establishes command on a call, optionally seeding lanes from a command definition.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.GetCommandBoard(System.Int32)">
+            <summary>Gets the full live command board snapshot for a call.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.TransferCommand(Resgrid.Web.Services.Models.v4.IncidentCommand.TransferCommandInput)">
+            <summary>Transfers command to another user.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.CloseCommand(System.String)">
+            <summary>Closes command on an incident.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.UpdateActionPlan(Resgrid.Web.Services.Models.v4.IncidentCommand.UpdateActionPlanInput)">
+            <summary>Updates the incident action plan.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.GetAccountability(System.Int32)">
+            <summary>Gets the personnel accountability / PAR status (Green/Warning/Critical) for the incident.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.EvaluateAccountability(System.Int32)">
+            <summary>
+            Runs a personnel accountability (PAR) sweep for the call, raising workflow + real-time alerts for any
+            member newly overdue (Critical). Returns the user ids flagged this pass. Idempotent — repeated calls
+            only re-alert after a member checks in and lapses again.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.SaveNode(Resgrid.Model.CommandStructureNode)">
+            <summary>Creates or updates a command structure lane.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.DeleteNode(System.String)">
+            <summary>Removes a command structure lane.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.AssignResource(Resgrid.Model.ResourceAssignment)">
+            <summary>Assigns a resource (own/mutual-aid/ad-hoc unit or person) to a lane.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.MoveResource(Resgrid.Web.Services.Models.v4.IncidentCommand.MoveResourceInput)">
+            <summary>Moves a resource assignment to a different lane.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.ReleaseResource(System.String)">
+            <summary>Releases a resource assignment.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.SaveObjective(Resgrid.Model.TacticalObjective)">
+            <summary>Creates or updates a tactical objective / benchmark.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.CompleteObjective(System.String)">
+            <summary>Marks a tactical objective complete.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.StartTimer(Resgrid.Model.IncidentTimer)">
+            <summary>Starts a scene/benchmark/role timer.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.AcknowledgeTimer(System.String)">
+            <summary>Acknowledges a timer (resets its next-due time).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.SaveAnnotation(Resgrid.Model.IncidentMapAnnotation)">
+            <summary>Creates or updates a real-time map annotation.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.DeleteAnnotation(System.String)">
+            <summary>Removes a map annotation.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.GetTimeline(System.Int32)">
+            <summary>Gets the append-only command (ICS-201) timeline for a call.</summary>
+        </member>
+        <!-- Badly formed XML comment ignored for member "T:Resgrid.Web.Services.Controllers.v4.IncidentReportingController" -->
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportingController.GetIncidentSummary(System.Int32)">
+            <summary>Gets the ICS-201/209-style incident status summary.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportingController.GetAfterActionReport(System.Int32)">
+            <summary>Gets the complete after-action report bundle for an incident.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportingController.ExportIncident(System.Int32)">
+            <summary>Exports the incident command timeline as a CSV file.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.IncidentResourcesController">
+            <summary>
+            Incident-scoped ad-hoc resources: create units/personnel on the fly for non-Resgrid resources, build
+            rosters, and form a unit from on-scene personnel (§3.10).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentResourcesController.CreateAdHocUnit(Resgrid.Model.IncidentAdHocUnit)">
+            <summary>Creates an ad-hoc unit for a non-Resgrid resource.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentResourcesController.GetAdHocUnits(System.Int32)">
+            <summary>Gets the active ad-hoc units for a call.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentResourcesController.ReleaseAdHocUnit(System.String)">
+            <summary>Releases an ad-hoc unit.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentResourcesController.CreateAdHocPersonnel(Resgrid.Model.IncidentAdHocPersonnel)">
+            <summary>Creates an ad-hoc person for a non-Resgrid resource.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentResourcesController.GetAdHocPersonnel(System.Int32)">
+            <summary>Gets the active ad-hoc personnel for a call.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentResourcesController.ReleaseAdHocPersonnel(System.String)">
+            <summary>Releases an ad-hoc person.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentResourcesController.AssignPersonnelToUnit(Resgrid.Web.Services.Models.v4.IncidentCommand.AssignPersonnelToUnitInput)">
+            <summary>Adds an ad-hoc person to a unit roster for accountability.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentResourcesController.FormUnit(Resgrid.Web.Services.Models.v4.IncidentCommand.FormUnitInput)">
+            <summary>Forms a new ad-hoc unit from on-scene ad-hoc personnel.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.IncidentRolesController">
+            <summary>
+            Incident-scoped functional command roles (§3.11). Assign Resgrid users to ICS positions (Staging Officer,
+            Rehab Officer, Section Chiefs, ...) which drive each user's specialized app view and capabilities.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentRolesController.AssignRole(Resgrid.Model.IncidentRoleAssignment)">
+            <summary>Assigns a Resgrid user to a functional incident-command role.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentRolesController.RemoveRole(System.String)">
+            <summary>Removes a functional incident-command role assignment.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentRolesController.GetRoles(System.Int32)">
+            <summary>Gets the active functional role assignments for a call.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentRolesController.GetMyCapabilities(System.Int32)">
+            <summary>Gets the current user's effective capabilities for an incident (drives the app's view gating).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.IncidentVoiceController">
+            <summary>
+            On-demand PTT tactical voice channels scoped to an incident (§3.4). Requires the department PTT voice addon.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentVoiceController.CreateIncidentChannel(Resgrid.Web.Services.Models.v4.IncidentCommand.CreateIncidentChannelInput)">
+            <summary>Creates an on-demand tactical channel scoped to a call (requires the voice addon).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentVoiceController.GetChannelsForCall(System.Int32)">
+            <summary>Gets the open on-demand tactical channels for a call (visible to assigned units/users).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentVoiceController.CloseIncidentChannels(System.Int32)">
+            <summary>Closes all open on-demand tactical channels for a call.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.MappingController">
             <summary>
             Mapping operations
@@ -1162,6 +1333,18 @@
             </summary>
             <param name="messageId">MessageId of the message to delete</param>
             <returns>Returns OK status code if successful</returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.MutualAidController">
+            <summary>
+            Mutual-aid resource aggregation for incident command: own-department + linked-department units/personnel,
+            color-coded, for the IC resource picker (§3.9).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.MutualAidController.GetAssignableResources">
+            <summary>
+            Gets all resources the commander can assign to lanes: own-department units/personnel plus those
+            shared toward this department by accepted mutual-aid links, color-coded by link.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.NotesController">
             <summary>
@@ -6209,6 +6392,57 @@
         <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.CallPersonnelCheckInStatusResultData.Status">
             <summary>Colour-coded status: "Green", "Warning", or "Critical".</summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Commands.CommandResultData">
+            <summary>
+            A command definition (predefined incident-command template / set of swimlanes for a call type).
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Commands.CommandResultData.CommandDefinitionId">
+            <summary>Identifier of the command definition.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Commands.CommandResultData.CallTypeId">
+            <summary>The call type this template applies to, or null for "Any Call Type".</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Commands.CommandResultData.Name">
+            <summary>Name of the command definition.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Commands.CommandResultData.Description">
+            <summary>Description of the command definition.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Commands.CommandResultData.Timer">
+            <summary>Whether a default timer is enabled for this definition.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Commands.CommandResultData.TimerMinutes">
+            <summary>Default timer length in minutes.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Commands.CommandResultData.Lanes">
+            <summary>The predefined lanes (roles) for this command definition.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Commands.CommandRoleResultData">
+            <summary>
+            A predefined lane (role) within a command definition.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Commands.CommandsResult">
+            <summary>
+            Result wrapper for a collection of command definitions.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Commands.CommandResult">
+            <summary>
+            Result wrapper for a single command definition.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Commands.SaveCommandInput">
+            <summary>
+            Input payload to create or update a command definition.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Commands.SaveCommandLaneInput">
+            <summary>
+            Input payload for a single lane within a command definition.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.CommunicationTests.GetCommunicationTestsResult">
             <summary>
             Result of getting all communication tests for a department
@@ -7165,6 +7399,48 @@
             <summary>
             Can the API services talk to the cache
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.EstablishCommandInput">
+            <summary>Input to establish command on a call.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.TransferCommandInput">
+            <summary>Input to transfer command to another user.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.UpdateActionPlanInput">
+            <summary>Input to update the incident action plan.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.MoveResourceInput">
+            <summary>Input to move a resource assignment to a different node.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.IncidentCommandActionResult">
+            <summary>Simple boolean action result (delete/release operations).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.CommandAccountabilityResult">
+            <summary>Per-person accountability / PAR status for the incident.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.EvaluateAccountabilityResult">
+            <summary>User ids newly flagged Critical (PAR overdue) by an accountability sweep — same shape used by the manual endpoint and the recurring PAR worker.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.CreateIncidentChannelInput">
+            <summary>Input to create an on-demand incident tactical voice channel.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.IncidentVoiceChannelResult">
+            <summary>Result wrapper for a single incident voice channel.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.IncidentVoiceChannelsResult">
+            <summary>Result wrapper for a collection of incident voice channels.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.MutualAidResourcesResult">
+            <summary>Assignable resources (own + mutual-aid) for the incident resource picker.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.AssignPersonnelToUnitInput">
+            <summary>Input to add an ad-hoc person to a unit roster.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.FormUnitInput">
+            <summary>Input to form an ad-hoc unit from on-scene ad-hoc personnel.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.IncidentCapabilitiesResult">
+            <summary>The current user's effective incident capabilities (raw flags value + granted names).</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Mapping.GetCustomMapRegionsGeoJSONResult.GeoJson">
             <summary>

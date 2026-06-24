@@ -16,6 +16,11 @@ namespace Resgrid.Services
 		{
 			builder.RegisterType<EncryptionService>().As<IEncryptionService>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkflowService>().As<IWorkflowService>().InstancePerLifetimeScope();
+			builder.RegisterType<IncidentCommandService>().As<IIncidentCommandService>().InstancePerLifetimeScope();
+			builder.RegisterType<IncidentVoiceService>().As<IIncidentVoiceService>().InstancePerLifetimeScope();
+			builder.RegisterType<MutualAidService>().As<IMutualAidService>().InstancePerLifetimeScope();
+			builder.RegisterType<IncidentResourcesService>().As<IIncidentResourcesService>().InstancePerLifetimeScope();
+			builder.RegisterType<IncidentReportingService>().As<IIncidentReportingService>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkflowTemplateContextBuilder>().As<Resgrid.Model.Providers.IWorkflowTemplateContextBuilder>().InstancePerLifetimeScope();
 			builder.RegisterType<LogService>().As<ILogService>().InstancePerLifetimeScope();
 			builder.RegisterType<QueueService>().As<IQueueService>().InstancePerLifetimeScope();

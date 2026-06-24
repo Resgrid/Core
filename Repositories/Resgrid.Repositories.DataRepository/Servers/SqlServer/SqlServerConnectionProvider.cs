@@ -1,7 +1,7 @@
 ﻿using Resgrid.Model.Repositories.Connection;
 using System.Configuration;
 using System.Data.Common;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Linq;
 
 namespace Resgrid.Repositories.DataRepository.Servers.SqlServer

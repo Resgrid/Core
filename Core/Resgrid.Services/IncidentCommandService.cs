@@ -96,7 +96,20 @@ namespace Resgrid.Services
 				Status = (int)IncidentCommandStatus.Active
 			};
 
-			command = await _incidentCommandRepository.SaveOrUpdateAsync(command, cancellationToken);
+			try
+			{
+				command = await _incidentCommandRepository.SaveOrUpdateAsync(command, cancellationToken);
+			}
+			catch (Exception)
+			{
+				// The active-command check above is check-then-insert and races under concurrency; the partial
+				// unique index (UX_IncidentCommands_Department_Call_Active) is the real guard. If we lost the race,
+				// adopt the winner — same idempotent result as the check, rather than surfacing a 500.
+				var winner = await GetActiveCommandForCallAsync(departmentId, callId);
+				if (winner != null)
+					return winner;
+				throw;
+			}
 
 			await WriteLogAsync(command.IncidentCommandId, departmentId, callId, CommandLogEntryType.CommandEstablished, "Command established", userId, cancellationToken);
 
@@ -163,6 +176,64 @@ namespace Resgrid.Services
 			return statuses ?? new List<PersonnelCallCheckInStatus>();
 		}
 
+		public async Task<List<string>> EvaluateCriticalParAsync(int departmentId, int callId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var newlyCritical = new List<string>();
+
+			// The call must belong to the caller's department and have accountability enabled.
+			var call = await _callsService.GetCallByIdAsync(callId);
+			if (call == null || call.DepartmentId != departmentId || !call.CheckInTimersEnabled)
+				return newlyCritical;
+
+			// Without an active command there is nothing to append the alert to (and no incident to alert on).
+			var command = await GetActiveCommandForCallAsync(departmentId, callId);
+			if (command == null)
+				return newlyCritical;
+
+			var statuses = await _checkInTimerService.GetCallPersonnelCheckInStatusesAsync(call);
+			var critical = statuses?
+				.Where(s => !string.IsNullOrWhiteSpace(s.UserId) && string.Equals(s.Status, "Critical", StringComparison.OrdinalIgnoreCase))
+				.ToList() ?? new List<PersonnelCallCheckInStatus>();
+			if (!critical.Any())
+				return newlyCritical;
+
+			// Timeline-based dedup: most-recent ParCritical marker per subject user on this call.
+			var timeline = await GetTimelineForCallAsync(departmentId, callId);
+			var lastMarkerByUser = timeline
+				.Where(e => e.EntryType == (int)CommandLogEntryType.ParCritical && !string.IsNullOrWhiteSpace(e.UserId))
+				.GroupBy(e => e.UserId)
+				.ToDictionary(g => g.Key, g => g.Max(e => e.OccurredOn));
+
+			foreach (var status in critical)
+			{
+				// A "Critical episode" begins at the member's last check-in (or when command was established if
+				// they never checked in). A marker at/after that baseline means we already alerted this episode;
+				// once they check in again the baseline moves past the marker and the next lapse re-alerts.
+				var baseline = status.LastCheckIn ?? command.EstablishedOn;
+				if (lastMarkerByUser.TryGetValue(status.UserId, out var lastMarker) && lastMarker >= baseline)
+					continue;
+
+				var overdueBy = Math.Abs(Math.Round(status.MinutesRemaining, 1));
+				var who = string.IsNullOrWhiteSpace(status.FullName) ? status.UserId : status.FullName;
+
+				// The marker (UserId = the SUBJECT member) is both the dedup record and — via WriteLogAsync —
+				// the real-time IncidentCommandUpdated push that refreshes the board/PAR view.
+				await WriteLogAsync(command.IncidentCommandId, departmentId, callId, CommandLogEntryType.ParCritical,
+					$"PAR critical: {who} overdue for check-in by {overdueBy} min", status.UserId, cancellationToken);
+
+				_eventAggregator.SendMessage<CriticalParDetectedEvent>(new CriticalParDetectedEvent
+				{
+					DepartmentId = departmentId,
+					CallId = callId,
+					UserId = status.UserId
+				});
+
+				newlyCritical.Add(status.UserId);
+			}
+
+			return newlyCritical;
+		}
+
 		private async Task EnableAccountabilityIfConfiguredAsync(int departmentId, int callId, string userId, string incidentCommandId, CancellationToken cancellationToken)
 		{
 			var configs = await _checkInTimerService.GetTimerConfigsForDepartmentAsync(departmentId);
@@ -181,9 +252,12 @@ namespace Resgrid.Services
 
 		public async Task<IncidentRoleAssignment> AssignIncidentRoleAsync(IncidentRoleAssignment assignment, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			// The parent incident command must belong to the caller's department.
-			if (!await CommandBelongsToDepartmentAsync(assignment.IncidentCommandId, assignment.DepartmentId))
+			// The parent incident command must belong to the caller's department; stamp the authoritative
+			// CallId from it so this row can't be filed under a different call than its parent command.
+			var command = await GetOwnedCommandAsync(assignment.IncidentCommandId, assignment.DepartmentId);
+			if (command == null)
 				return null;
+			assignment.CallId = command.CallId;
 
 			if (string.IsNullOrWhiteSpace(assignment.IncidentRoleAssignmentId))
 			{
@@ -251,6 +325,17 @@ namespace Resgrid.Services
 			var command = await GetActiveCommandForCallAsync(departmentId, callId);
 			if (command == null)
 				return null;
+
+			// The board is the IC app's primary polled read, so piggyback the PAR sweep here to keep
+			// accountability alerts flowing without a worker. Never let a sweep failure break the read.
+			try
+			{
+				await EvaluateCriticalParAsync(departmentId, callId);
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+			}
 
 			var board = new IncidentCommandBoard
 			{
@@ -334,9 +419,12 @@ namespace Resgrid.Services
 		public async Task<CommandStructureNode> SaveNodeAsync(CommandStructureNode node, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			// The parent incident command must belong to the caller's department (node.DepartmentId is set
-			// from the authenticated claim by the controller).
-			if (!await CommandBelongsToDepartmentAsync(node.IncidentCommandId, node.DepartmentId))
+			// from the authenticated claim by the controller); stamp the authoritative CallId from it so this
+			// row can't be filed under a different call than its parent command.
+			var command = await GetOwnedCommandAsync(node.IncidentCommandId, node.DepartmentId);
+			if (command == null)
 				return null;
+			node.CallId = command.CallId;
 
 			var isNew = string.IsNullOrWhiteSpace(node.CommandStructureNodeId);
 			if (isNew)
@@ -386,9 +474,12 @@ namespace Resgrid.Services
 
 		public async Task<ResourceAssignment> AssignResourceAsync(ResourceAssignment assignment, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			// The parent incident command must belong to the caller's department.
-			if (!await CommandBelongsToDepartmentAsync(assignment.IncidentCommandId, assignment.DepartmentId))
+			// The parent incident command must belong to the caller's department; stamp the authoritative
+			// CallId from it so this row can't be filed under a different call than its parent command.
+			var command = await GetOwnedCommandAsync(assignment.IncidentCommandId, assignment.DepartmentId);
+			if (command == null)
 				return null;
+			assignment.CallId = command.CallId;
 
 			if (string.IsNullOrWhiteSpace(assignment.ResourceAssignmentId))
 			{
@@ -418,6 +509,12 @@ namespace Resgrid.Services
 		{
 			var assignment = await _resourceAssignmentRepository.GetByIdAsync(resourceAssignmentId);
 			if (assignment == null || assignment.DepartmentId != departmentId)
+				return null;
+
+			// The target lane must exist and live on the SAME incident (department + call) as the assignment;
+			// otherwise the move would point the resource at a non-existent/foreign lane and corrupt the board.
+			var targetNode = await _commandStructureNodeRepository.GetByIdAsync(targetNodeId);
+			if (targetNode == null || targetNode.DepartmentId != departmentId || targetNode.CallId != assignment.CallId)
 				return null;
 
 			assignment.CommandStructureNodeId = targetNodeId;
@@ -457,9 +554,12 @@ namespace Resgrid.Services
 
 		public async Task<TacticalObjective> SaveObjectiveAsync(TacticalObjective objective, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			// The parent incident command must belong to the caller's department.
-			if (!await CommandBelongsToDepartmentAsync(objective.IncidentCommandId, objective.DepartmentId))
+			// The parent incident command must belong to the caller's department; stamp the authoritative
+			// CallId from it so this row can't be filed under a different call than its parent command.
+			var command = await GetOwnedCommandAsync(objective.IncidentCommandId, objective.DepartmentId);
+			if (command == null)
 				return null;
+			objective.CallId = command.CallId;
 
 			var isNew = string.IsNullOrWhiteSpace(objective.TacticalObjectiveId);
 			if (isNew)
@@ -514,9 +614,12 @@ namespace Resgrid.Services
 
 		public async Task<IncidentTimer> StartTimerAsync(IncidentTimer timer, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			// The parent incident command must belong to the caller's department.
-			if (!await CommandBelongsToDepartmentAsync(timer.IncidentCommandId, timer.DepartmentId))
+			// The parent incident command must belong to the caller's department; stamp the authoritative
+			// CallId from it so this row can't be filed under a different call than its parent command.
+			var command = await GetOwnedCommandAsync(timer.IncidentCommandId, timer.DepartmentId);
+			if (command == null)
 				return null;
+			timer.CallId = command.CallId;
 
 			if (string.IsNullOrWhiteSpace(timer.IncidentTimerId))
 			{
@@ -573,9 +676,12 @@ namespace Resgrid.Services
 
 		public async Task<IncidentMapAnnotation> SaveAnnotationAsync(IncidentMapAnnotation annotation, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			// The parent incident command must belong to the caller's department.
-			if (!await CommandBelongsToDepartmentAsync(annotation.IncidentCommandId, annotation.DepartmentId))
+			// The parent incident command must belong to the caller's department; stamp the authoritative
+			// CallId from it so this row can't be filed under a different call than its parent command.
+			var command = await GetOwnedCommandAsync(annotation.IncidentCommandId, annotation.DepartmentId);
+			if (command == null)
 				return null;
+			annotation.CallId = command.CallId;
 
 			var isNew = string.IsNullOrWhiteSpace(annotation.IncidentMapAnnotationId);
 			if (isNew)
@@ -645,16 +751,17 @@ namespace Resgrid.Services
 		#region Private helpers
 
 		/// <summary>
-		/// Verifies the parent incident command exists and belongs to the given department. Used to gate
-		/// create/update of child entities so resources can only be attached to the caller's own incidents.
+		/// Loads the parent incident command and returns it only if it belongs to the given department (else null).
+		/// Gates create/update of child entities AND supplies the authoritative CallId to stamp onto them — a caller
+		/// must not be trusted to supply a CallId that matches the parent command.
 		/// </summary>
-		private async Task<bool> CommandBelongsToDepartmentAsync(string incidentCommandId, int departmentId)
+		private async Task<IncidentCommand> GetOwnedCommandAsync(string incidentCommandId, int departmentId)
 		{
 			if (string.IsNullOrWhiteSpace(incidentCommandId))
-				return false;
+				return null;
 
 			var command = await _incidentCommandRepository.GetByIdAsync(incidentCommandId);
-			return command != null && command.DepartmentId == departmentId;
+			return command != null && command.DepartmentId == departmentId ? command : null;
 		}
 
 		private async Task<CommandLogEntry> WriteLogAsync(string incidentCommandId, int departmentId, int callId, CommandLogEntryType type, string description, string userId, CancellationToken cancellationToken)

@@ -1031,6 +1031,13 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.GetAccountability(System.Int32)">
             <summary>Gets the personnel accountability / PAR status (Green/Warning/Critical) for the incident.</summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.EvaluateAccountability(System.Int32)">
+            <summary>
+            Runs a personnel accountability (PAR) sweep for the call, raising workflow + real-time alerts for any
+            member newly overdue (Critical). Returns the user ids flagged this pass. Idempotent — repeated calls
+            only re-alert after a member checks in and lapses again.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.SaveNode(Resgrid.Model.CommandStructureNode)">
             <summary>Creates or updates a command structure lane.</summary>
         </member>
@@ -7410,6 +7417,9 @@
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.CommandAccountabilityResult">
             <summary>Per-person accountability / PAR status for the incident.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.EvaluateAccountabilityResult">
+            <summary>User ids newly flagged Critical (PAR overdue) by an accountability sweep — same shape used by the manual endpoint and the recurring PAR worker.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.CreateIncidentChannelInput">
             <summary>Input to create an on-demand incident tactical voice channel.</summary>

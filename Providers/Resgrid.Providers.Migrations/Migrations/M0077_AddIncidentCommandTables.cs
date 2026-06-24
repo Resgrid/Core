@@ -28,6 +28,11 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.OnTable("IncidentCommands")
 					.OnColumn("DepartmentId").Ascending()
 					.OnColumn("CallId").Ascending();
+
+				// At most one ACTIVE command per (department, call). Filtered so a closed command and a
+				// re-established active command can coexist. Backstops the check-then-insert race in
+				// IncidentCommandService.EstablishCommandAsync (which adopts the winner on violation).
+				Execute.Sql("CREATE UNIQUE NONCLUSTERED INDEX UX_IncidentCommands_Department_Call_Active ON IncidentCommands (DepartmentId, CallId) WHERE Status = 0;");
 			}
 
 			if (!Schema.Table("CommandStructureNodes").Exists())
@@ -177,6 +182,9 @@ namespace Resgrid.Providers.Migrations.Migrations
 
 		public override void Down()
 		{
+			// Explicit drop (the table drop below would also remove it, but be explicit to mirror the codebase pattern).
+			Execute.Sql("DROP INDEX IF EXISTS UX_IncidentCommands_Department_Call_Active ON IncidentCommands;");
+
 			Delete.Table("CommandTransfers");
 			Delete.Table("CommandLogEntries");
 			Delete.Table("IncidentMapAnnotations");

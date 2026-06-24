@@ -106,6 +106,13 @@ namespace Resgrid.Model
 		RoleRemoved = 18,
 		AdHocResourceCreated = 19,
 		Note = 20,
-		CommandClosed = 21
+		CommandClosed = 21,
+
+		/// <summary>
+		/// Personnel accountability (PAR) for a member went Critical (overdue for check-in). Written by the
+		/// PAR sweep (<c>IncidentCommandService.EvaluateCriticalParAsync</c>) keyed on the subject user, and
+		/// doubles as the dedup marker so the alert only re-fires after the member checks in and lapses again.
+		/// </summary>
+		ParCritical = 22
 	}
 }

@@ -88,6 +88,12 @@ namespace Resgrid.Web.Services.Models.v4.IncidentCommand
 		public List<Resgrid.Model.PersonnelCallCheckInStatus> Data { get; set; } = new List<Resgrid.Model.PersonnelCallCheckInStatus>();
 	}
 
+	/// <summary>User ids newly flagged Critical (PAR overdue) by an accountability sweep — same shape used by the manual endpoint and the recurring PAR worker.</summary>
+	public class EvaluateAccountabilityResult : StandardApiResponseV4Base
+	{
+		public List<string> Data { get; set; } = new List<string>();
+	}
+
 	/// <summary>Input to create an on-demand incident tactical voice channel.</summary>
 	public class CreateIncidentChannelInput
 	{

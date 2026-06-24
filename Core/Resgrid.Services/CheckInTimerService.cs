@@ -323,8 +323,18 @@ namespace Resgrid.Services
 			record.Timestamp = DateTime.UtcNow;
 			var saved = await _recordRepository.SaveOrUpdateAsync(record, cancellationToken);
 
-			// Real-time: a check-in changes the incident accountability/PAR board.
-			await _coreEventService.IncidentCommandUpdatedAsync(record.DepartmentId, record.CallId);
+			// Real-time board refresh is best-effort: the check-in is already persisted, so a CQRS/Redis
+			// publish failure must not fail the check-in — that would 500 the caller and a retry would
+			// duplicate the record. Log and move on; the worker/board sweep reconciles the PAR view anyway.
+			try
+			{
+				await _coreEventService.IncidentCommandUpdatedAsync(record.DepartmentId, record.CallId);
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+			}
+
 			return saved;
 		}
 

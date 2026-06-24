@@ -170,6 +170,24 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return result;
 		}
 
+		/// <summary>
+		/// Runs a personnel accountability (PAR) sweep for the call, raising workflow + real-time alerts for any
+		/// member newly overdue (Critical). Returns the user ids flagged this pass. Idempotent — repeated calls
+		/// only re-alert after a member checks in and lapses again.
+		/// </summary>
+		[HttpPost("EvaluateAccountability/{callId}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_Update)]
+		public async Task<ActionResult<ICModels.EvaluateAccountabilityResult>> EvaluateAccountability(int callId)
+		{
+			var result = new ICModels.EvaluateAccountabilityResult();
+			result.Data = await _incidentCommandService.EvaluateCriticalParAsync(DepartmentId, callId, CancellationToken.None);
+			result.PageSize = result.Data.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
 		#endregion Command lifecycle
 
 		#region Structure (lanes)

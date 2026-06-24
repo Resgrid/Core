@@ -1,9 +1,15 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 using FluentAssertions;
+using Moq;
 using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Reporting;
+using Resgrid.Model.Services;
+using Resgrid.Services;
 using Resgrid.Services.Reporting;
 
 namespace Resgrid.Tests.Services
@@ -90,6 +96,43 @@ namespace Resgrid.Tests.Services
 			// Gap columns are present in the schema (header) even though Resgrid can't fill them.
 			csv.Should().Contain("FDID");
 			csv.Should().Contain("IncidentTypeCode");
+		}
+
+		private static string TimelineCsvWithDescription(string description)
+		{
+			var commandService = new Mock<IIncidentCommandService>();
+			commandService.Setup(x => x.GetTimelineForCallAsync(10, 7)).ReturnsAsync(new List<CommandLogEntry>
+			{
+				new CommandLogEntry
+				{
+					OccurredOn = new DateTime(2026, 6, 1, 12, 0, 0, DateTimeKind.Utc),
+					EntryType = (int)CommandLogEntryType.Note,
+					Description = description,
+					UserId = "user1"
+				}
+			});
+			var service = new IncidentReportingService(commandService.Object);
+			return service.ExportTimelineCsvAsync(10, 7).GetAwaiter().GetResult();
+		}
+
+		[Test]
+		public void ExportTimelineCsv_neutralizes_leading_formula_characters()
+		{
+			var csv = TimelineCsvWithDescription("@SUM(A1:A9)");
+
+			// The formula-leading description is neutralized with a single-quote prefix.
+			csv.Should().Contain("'@SUM(A1:A9)");
+			csv.Should().NotContain(",@SUM");
+		}
+
+		[Test]
+		public void ExportTimelineCsv_exempts_plain_negative_numbers()
+		{
+			var csv = TimelineCsvWithDescription("-42.5");
+
+			// Plain negative numbers are NOT neutralized (coordinates/numbers survive intact).
+			csv.Should().Contain(",-42.5");
+			csv.Should().NotContain("'-42.5");
 		}
 	}
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -92,7 +93,13 @@ namespace Resgrid.Services
 			if (string.IsNullOrEmpty(value))
 				return string.Empty;
 
-			if (value.Contains(",") || value.Contains("\"") || value.Contains("\n"))
+			// A leading =, +, -, @, tab or CR makes Excel/Sheets evaluate the cell as a formula on import
+			// (CSV injection). Plain numeric values (e.g. "-122.5") are exempt so coordinates/numbers survive.
+			if ((value[0] == '=' || value[0] == '+' || value[0] == '-' || value[0] == '@' || value[0] == '\t' || value[0] == '\r')
+				&& !double.TryParse(value, NumberStyles.Float, CultureInfo.InvariantCulture, out _))
+				value = "'" + value;
+
+			if (value.Contains(",") || value.Contains("\"") || value.Contains("\n") || value.Contains("\r"))
 				return "\"" + value.Replace("\"", "\"\"") + "\"";
 
 			return value;

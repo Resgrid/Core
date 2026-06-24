@@ -107,7 +107,10 @@ namespace Resgrid.Services
 		private async Task WriteLogAsync(int departmentId, int callId, CommandLogEntryType type, string description, string userId, CancellationToken cancellationToken)
 		{
 			var commands = await _incidentCommandRepository.GetAllByDepartmentIdAsync(departmentId);
-			var command = commands?.FirstOrDefault(x => x.CallId == callId && x.Status == (int)IncidentCommandStatus.Active);
+			// Match the call's command regardless of status (most-recent first): the close-command flow sets the
+			// command to Closed before auto-closing its channels, so an Active-only filter would silently drop the
+			// channel-closed timeline entry and its real-time board update.
+			var command = commands?.Where(x => x.CallId == callId).OrderByDescending(x => x.EstablishedOn).FirstOrDefault();
 			if (command == null)
 				return;
 

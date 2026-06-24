@@ -19,6 +19,14 @@ namespace Resgrid.Model.Services
 		Task<IncidentCommandBoard> GetCommandBoardAsync(int departmentId, int callId);
 		Task<List<PersonnelCallCheckInStatus>> GetAccountabilityForCallAsync(int departmentId, int callId);
 
+		/// <summary>
+		/// Sweeps personnel accountability (PAR) for the call and raises <c>CriticalParDetectedEvent</c> once per
+		/// member each time they transition into the Critical (overdue) state. Idempotent via a timeline marker —
+		/// re-alerts only after a member checks in and lapses again. Returns the user ids flagged this pass (empty
+		/// when nothing changed). Safe to call from a read path, a manual endpoint, or a recurring worker.
+		/// </summary>
+		Task<List<string>> EvaluateCriticalParAsync(int departmentId, int callId, CancellationToken cancellationToken = default(CancellationToken));
+
 		// Incident roles (§3.11)
 		Task<IncidentRoleAssignment> AssignIncidentRoleAsync(IncidentRoleAssignment assignment, string userId, CancellationToken cancellationToken = default(CancellationToken));
 		Task<bool> RemoveIncidentRoleAsync(int departmentId, string incidentRoleAssignmentId, string userId, CancellationToken cancellationToken = default(CancellationToken));

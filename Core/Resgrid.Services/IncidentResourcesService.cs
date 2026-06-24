@@ -44,14 +44,25 @@ namespace Resgrid.Services
 			if (command == null)
 				return null;
 
-			if (string.IsNullOrWhiteSpace(unit.IncidentAdHocUnitId))
+			// Idempotent create: the client may generate the GUID PK offline. If a row with that id already exists
+			// for this department the create was already applied (replay) — return it without duplicating. Otherwise
+			// INSERT explicitly; SaveOrUpdateAsync would treat the pre-set GUID as a 0-row UPDATE, not an insert.
+			if (!string.IsNullOrWhiteSpace(unit.IncidentAdHocUnitId))
+			{
+				var stored = await _adHocUnitRepository.GetByIdAsync(unit.IncidentAdHocUnitId);
+				if (stored != null)
+					return stored.DepartmentId == unit.DepartmentId ? stored : null;
+			}
+			else
+			{
 				unit.IncidentAdHocUnitId = Guid.NewGuid().ToString();
+			}
 
 			unit.CreatedByUserId = userId;
 			if (unit.CreatedOn == default(DateTime))
 				unit.CreatedOn = DateTime.UtcNow;
 
-			unit = await _adHocUnitRepository.SaveOrUpdateAsync(unit, cancellationToken);
+			unit = await _adHocUnitRepository.InsertAsync(Touch(unit), cancellationToken);
 
 			await LogAsync(unit.DepartmentId, unit.CallId, $"Ad-hoc unit '{unit.Name}' created", userId, cancellationToken);
 
@@ -80,7 +91,7 @@ namespace Resgrid.Services
 				return false;
 
 			unit.ReleasedOn = DateTime.UtcNow;
-			await _adHocUnitRepository.SaveOrUpdateAsync(unit, cancellationToken);
+			await _adHocUnitRepository.SaveOrUpdateAsync(Touch(unit), cancellationToken);
 
 			await LogAsync(unit.DepartmentId, unit.CallId, $"Ad-hoc unit '{unit.Name}' released", userId, cancellationToken);
 			return true;
@@ -97,14 +108,24 @@ namespace Resgrid.Services
 			if (command == null)
 				return null;
 
-			if (string.IsNullOrWhiteSpace(personnel.IncidentAdHocPersonnelId))
+			// Idempotent create (see CreateAdHocUnitAsync): replay of an existing id returns the stored row; a new id
+			// is inserted explicitly (a pre-set GUID + SaveOrUpdateAsync would be a 0-row UPDATE, not an insert).
+			if (!string.IsNullOrWhiteSpace(personnel.IncidentAdHocPersonnelId))
+			{
+				var stored = await _adHocPersonnelRepository.GetByIdAsync(personnel.IncidentAdHocPersonnelId);
+				if (stored != null)
+					return stored.DepartmentId == personnel.DepartmentId ? stored : null;
+			}
+			else
+			{
 				personnel.IncidentAdHocPersonnelId = Guid.NewGuid().ToString();
+			}
 
 			personnel.CreatedByUserId = userId;
 			if (personnel.CreatedOn == default(DateTime))
 				personnel.CreatedOn = DateTime.UtcNow;
 
-			personnel = await _adHocPersonnelRepository.SaveOrUpdateAsync(personnel, cancellationToken);
+			personnel = await _adHocPersonnelRepository.InsertAsync(Touch(personnel), cancellationToken);
 
 			await LogAsync(personnel.DepartmentId, personnel.CallId, $"Ad-hoc personnel '{personnel.Name}' created", userId, cancellationToken);
 
@@ -128,7 +149,7 @@ namespace Resgrid.Services
 				return false;
 
 			personnel.ReleasedOn = DateTime.UtcNow;
-			await _adHocPersonnelRepository.SaveOrUpdateAsync(personnel, cancellationToken);
+			await _adHocPersonnelRepository.SaveOrUpdateAsync(Touch(personnel), cancellationToken);
 
 			await LogAsync(personnel.DepartmentId, personnel.CallId, $"Ad-hoc personnel '{personnel.Name}' released", userId, cancellationToken);
 			return true;
@@ -146,7 +167,7 @@ namespace Resgrid.Services
 
 			personnel.RidingResourceKind = ridingResourceKind;
 			personnel.RidingResourceId = ridingResourceId;
-			personnel = await _adHocPersonnelRepository.SaveOrUpdateAsync(personnel, cancellationToken);
+			personnel = await _adHocPersonnelRepository.SaveOrUpdateAsync(Touch(personnel), cancellationToken);
 
 			await LogAsync(personnel.DepartmentId, personnel.CallId, $"'{personnel.Name}' added to unit roster", userId, cancellationToken);
 			return personnel;
@@ -170,7 +191,7 @@ namespace Resgrid.Services
 
 					personnel.RidingResourceKind = (int)ResourceAssignmentKind.AdHocUnit;
 					personnel.RidingResourceId = createdUnit.IncidentAdHocUnitId;
-					await _adHocPersonnelRepository.SaveOrUpdateAsync(personnel, cancellationToken);
+					await _adHocPersonnelRepository.SaveOrUpdateAsync(Touch(personnel), cancellationToken);
 				}
 			}
 
@@ -180,7 +201,30 @@ namespace Resgrid.Services
 
 		#endregion Roster building
 
+		#region Offline sync
+
+		public async Task<(List<IncidentAdHocUnit> Units, List<IncidentAdHocPersonnel> Personnel)> GetAdHocChangesSinceAsync(int departmentId, DateTime sinceUtc)
+		{
+			bool Changed(IChangeTracked e) => e.ModifiedOn.HasValue && e.ModifiedOn.Value > sinceUtc;
+
+			var units = await _adHocUnitRepository.GetAllByDepartmentIdAsync(departmentId);
+			var personnel = await _adHocPersonnelRepository.GetAllByDepartmentIdAsync(departmentId);
+
+			return (
+				units?.Where(Changed).ToList() ?? new List<IncidentAdHocUnit>(),
+				personnel?.Where(Changed).ToList() ?? new List<IncidentAdHocPersonnel>());
+		}
+
+		#endregion Offline sync
+
 		#region Private helpers
+
+		/// <summary>Stamps the offline-sync change cursor (ModifiedOn) on every insert/update. See offline-first-architecture.md.</summary>
+		private static T Touch<T>(T entity) where T : IChangeTracked
+		{
+			entity.ModifiedOn = DateTime.UtcNow;
+			return entity;
+		}
 
 		private async Task LogAsync(int departmentId, int callId, string description, string userId, CancellationToken cancellationToken)
 		{

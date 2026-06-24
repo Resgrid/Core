@@ -26,5 +26,12 @@ namespace Resgrid.Model.Services
 
 		/// <summary>Forms a new ad-hoc unit and attaches the given ad-hoc personnel to it as its roster.</summary>
 		Task<IncidentAdHocUnit> FormUnitFromPersonnelAsync(IncidentAdHocUnit unit, List<string> adHocPersonnelIds, string userId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Offline-first delta pull for ad-hoc resources: returns the department's ad-hoc units and personnel whose
+		/// ModifiedOn is newer than <paramref name="sinceUtc"/> (released rows included so the client reconciles them).
+		/// Aggregated into the unified /Sync/Changes payload by SyncController. See offline-first-architecture.md.
+		/// </summary>
+		Task<(List<IncidentAdHocUnit> Units, List<IncidentAdHocPersonnel> Personnel)> GetAdHocChangesSinceAsync(int departmentId, System.DateTime sinceUtc);
 	}
 }

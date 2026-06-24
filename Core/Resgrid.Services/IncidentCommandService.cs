@@ -98,7 +98,9 @@ namespace Resgrid.Services
 
 			try
 			{
-				command = await _incidentCommandRepository.SaveOrUpdateAsync(command, cancellationToken);
+				// Explicit insert: the GUID is pre-set, and SaveOrUpdateAsync would treat a non-empty IdType-1 id
+				// as an UPDATE (zero rows) instead of an insert.
+				command = await _incidentCommandRepository.InsertAsync(Touch(command), cancellationToken);
 			}
 			catch (Exception)
 			{
@@ -141,7 +143,7 @@ namespace Resgrid.Services
 							SourceRoleId = role.CommandDefinitionRoleId
 						};
 
-						await _commandStructureNodeRepository.SaveOrUpdateAsync(node, cancellationToken);
+						await _commandStructureNodeRepository.InsertAsync(Touch(node), cancellationToken);
 					}
 				}
 			}
@@ -259,23 +261,20 @@ namespace Resgrid.Services
 				return null;
 			assignment.CallId = command.CallId;
 
-			if (string.IsNullOrWhiteSpace(assignment.IncidentRoleAssignmentId))
-			{
-				assignment.IncidentRoleAssignmentId = Guid.NewGuid().ToString();
-			}
-			else
-			{
-				// On update, the existing row must belong to the caller's department.
-				var existing = await _incidentRoleAssignmentRepository.GetByIdAsync(assignment.IncidentRoleAssignmentId);
-				if (existing == null || existing.DepartmentId != assignment.DepartmentId)
-					return null;
-			}
-
 			assignment.AssignedByUserId = userId;
 			if (assignment.AssignedOn == default(DateTime))
 				assignment.AssignedOn = DateTime.UtcNow;
 
-			assignment = await _incidentRoleAssignmentRepository.SaveOrUpdateAsync(assignment, cancellationToken);
+			var (saved, _, rejected) = await UpsertOwnedAsync(_incidentRoleAssignmentRepository, assignment, assignment.DepartmentId,
+				e => e.DepartmentId, (stored, incoming) =>
+				{
+					incoming.AssignedOn = stored.AssignedOn;
+					incoming.AssignedByUserId = stored.AssignedByUserId;
+					incoming.RemovedOn = stored.RemovedOn;
+				}, cancellationToken);
+			if (rejected)
+				return null;
+			assignment = saved;
 
 			await WriteLogAsync(assignment.IncidentCommandId, assignment.DepartmentId, assignment.CallId, CommandLogEntryType.RoleAssigned, $"Role {(IncidentRoleType)assignment.RoleType} assigned", userId, cancellationToken);
 
@@ -290,7 +289,7 @@ namespace Resgrid.Services
 				return false;
 
 			assignment.RemovedOn = DateTime.UtcNow;
-			await _incidentRoleAssignmentRepository.SaveOrUpdateAsync(assignment, cancellationToken);
+			await _incidentRoleAssignmentRepository.SaveOrUpdateAsync(Touch(assignment), cancellationToken);
 
 			await WriteLogAsync(assignment.IncidentCommandId, assignment.DepartmentId, assignment.CallId, CommandLogEntryType.RoleRemoved, $"Role {(IncidentRoleType)assignment.RoleType} removed", userId, cancellationToken);
 			return true;
@@ -352,6 +351,53 @@ namespace Resgrid.Services
 			return board;
 		}
 
+		public async Task<IncidentCommandChanges> GetChangesSinceAsync(int departmentId, DateTime sinceUtc)
+		{
+			// Capture the cursor before reading so a row committed during the read is not missed next time (it may be
+			// returned again on the next sync — harmless, the client upserts idempotently).
+			var changes = new IncidentCommandChanges { ServerTimestampMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() };
+
+			// Method-group conversion is contravariance-aware, so this Func<IChangeTracked,bool> binds to each
+			// entity-typed Where(). Soft-deleted/closed/released rows are intentionally NOT filtered out here — the
+			// delta must surface them (with their state columns) so the client removes/updates them locally.
+			bool Changed(IChangeTracked e) => e.ModifiedOn.HasValue && e.ModifiedOn.Value > sinceUtc;
+
+			var commands = await _incidentCommandRepository.GetAllByDepartmentIdAsync(departmentId);
+			if (commands != null)
+				changes.Commands = commands.Where(Changed).ToList();
+
+			var nodes = await _commandStructureNodeRepository.GetAllByDepartmentIdAsync(departmentId);
+			if (nodes != null)
+				changes.Nodes = nodes.Where(Changed).ToList();
+
+			var assignments = await _resourceAssignmentRepository.GetAllByDepartmentIdAsync(departmentId);
+			if (assignments != null)
+				changes.Assignments = assignments.Where(Changed).ToList();
+
+			var objectives = await _tacticalObjectiveRepository.GetAllByDepartmentIdAsync(departmentId);
+			if (objectives != null)
+				changes.Objectives = objectives.Where(Changed).ToList();
+
+			var timers = await _incidentTimerRepository.GetAllByDepartmentIdAsync(departmentId);
+			if (timers != null)
+				changes.Timers = timers.Where(Changed).ToList();
+
+			var annotations = await _incidentMapAnnotationRepository.GetAllByDepartmentIdAsync(departmentId);
+			if (annotations != null)
+				changes.Annotations = annotations.Where(Changed).ToList();
+
+			var roles = await _incidentRoleAssignmentRepository.GetAllByDepartmentIdAsync(departmentId);
+			if (roles != null)
+				changes.Roles = roles.Where(Changed).ToList();
+
+			// The timeline is append-only (no ModifiedOn); its natural cursor is OccurredOn.
+			var timeline = await _commandLogEntryRepository.GetAllByDepartmentIdAsync(departmentId);
+			if (timeline != null)
+				changes.TimelineEntries = timeline.Where(x => x.OccurredOn > sinceUtc).ToList();
+
+			return changes;
+		}
+
 		public async Task<IncidentCommand> CloseCommandAsync(int departmentId, string incidentCommandId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var command = await _incidentCommandRepository.GetByIdAsync(incidentCommandId);
@@ -360,7 +406,7 @@ namespace Resgrid.Services
 
 			command.Status = (int)IncidentCommandStatus.Closed;
 			command.ClosedOn = DateTime.UtcNow;
-			command = await _incidentCommandRepository.SaveOrUpdateAsync(command, cancellationToken);
+			command = await _incidentCommandRepository.SaveOrUpdateAsync(Touch(command), cancellationToken);
 
 			await WriteLogAsync(command.IncidentCommandId, command.DepartmentId, command.CallId, CommandLogEntryType.CommandClosed, "Command closed", userId, cancellationToken);
 
@@ -378,7 +424,7 @@ namespace Resgrid.Services
 				return null;
 
 			command.CurrentCommanderUserId = toUserId;
-			await _incidentCommandRepository.SaveOrUpdateAsync(command, cancellationToken);
+			await _incidentCommandRepository.SaveOrUpdateAsync(Touch(command), cancellationToken);
 
 			var transfer = new CommandTransfer
 			{
@@ -391,7 +437,7 @@ namespace Resgrid.Services
 				TransferredOn = DateTime.UtcNow,
 				Notes = notes
 			};
-			transfer = await _commandTransferRepository.SaveOrUpdateAsync(transfer, cancellationToken);
+			transfer = await _commandTransferRepository.InsertAsync(transfer, cancellationToken);
 
 			await WriteLogAsync(command.IncidentCommandId, command.DepartmentId, command.CallId, CommandLogEntryType.CommandTransferred, "Command transferred", fromUserId, cancellationToken);
 
@@ -406,7 +452,7 @@ namespace Resgrid.Services
 				return null;
 
 			command.IncidentActionPlan = actionPlan;
-			command = await _incidentCommandRepository.SaveOrUpdateAsync(command, cancellationToken);
+			command = await _incidentCommandRepository.SaveOrUpdateAsync(Touch(command), cancellationToken);
 
 			await WriteLogAsync(command.IncidentCommandId, command.DepartmentId, command.CallId, CommandLogEntryType.Note, "Incident action plan updated", userId, cancellationToken);
 			return command;
@@ -426,20 +472,11 @@ namespace Resgrid.Services
 				return null;
 			node.CallId = command.CallId;
 
-			var isNew = string.IsNullOrWhiteSpace(node.CommandStructureNodeId);
-			if (isNew)
-			{
-				node.CommandStructureNodeId = Guid.NewGuid().ToString();
-			}
-			else
-			{
-				// On update, the existing row must belong to the caller's department (no foreign-row takeover).
-				var existing = await _commandStructureNodeRepository.GetByIdAsync(node.CommandStructureNodeId);
-				if (existing == null || existing.DepartmentId != node.DepartmentId)
-					return null;
-			}
-
-			node = await _commandStructureNodeRepository.SaveOrUpdateAsync(node, cancellationToken);
+			var (saved, isNew, rejected) = await UpsertOwnedAsync(_commandStructureNodeRepository, node, node.DepartmentId,
+				e => e.DepartmentId, (stored, incoming) => incoming.DeletedOn = stored.DeletedOn, cancellationToken);
+			if (rejected)
+				return null;
+			node = saved;
 
 			await WriteLogAsync(node.IncidentCommandId, node.DepartmentId, node.CallId,
 				isNew ? CommandLogEntryType.NodeAdded : CommandLogEntryType.NodeUpdated,
@@ -453,10 +490,13 @@ namespace Resgrid.Services
 			if (node == null || node.DepartmentId != departmentId)
 				return false;
 
-			var result = await _commandStructureNodeRepository.DeleteAsync(node, cancellationToken);
+			// Soft-delete (tombstone) rather than hard-delete so the removal propagates to offline clients on the
+			// next delta sync; ModifiedOn is stamped so the change is picked up by the "changed since" query.
+			node.DeletedOn = DateTime.UtcNow;
+			await _commandStructureNodeRepository.SaveOrUpdateAsync(Touch(node), cancellationToken);
 
 			await WriteLogAsync(node.IncidentCommandId, node.DepartmentId, node.CallId, CommandLogEntryType.NodeRemoved, $"Lane '{node.Name}' removed", userId, cancellationToken);
-			return result;
+			return true;
 		}
 
 		public async Task<List<CommandStructureNode>> GetNodesForCallAsync(int departmentId, int callId)
@@ -465,7 +505,7 @@ namespace Resgrid.Services
 			if (items == null)
 				return new List<CommandStructureNode>();
 
-			return items.Where(x => x.CallId == callId).OrderBy(x => x.SortOrder).ToList();
+			return items.Where(x => x.CallId == callId && x.DeletedOn == null).OrderBy(x => x.SortOrder).ToList();
 		}
 
 		#endregion Structure (lanes)
@@ -481,23 +521,20 @@ namespace Resgrid.Services
 				return null;
 			assignment.CallId = command.CallId;
 
-			if (string.IsNullOrWhiteSpace(assignment.ResourceAssignmentId))
-			{
-				assignment.ResourceAssignmentId = Guid.NewGuid().ToString();
-			}
-			else
-			{
-				// On update, the existing row must belong to the caller's department.
-				var existing = await _resourceAssignmentRepository.GetByIdAsync(assignment.ResourceAssignmentId);
-				if (existing == null || existing.DepartmentId != assignment.DepartmentId)
-					return null;
-			}
-
 			if (assignment.AssignedOn == default(DateTime))
 				assignment.AssignedOn = DateTime.UtcNow;
-
 			assignment.AssignedByUserId = userId;
-			assignment = await _resourceAssignmentRepository.SaveOrUpdateAsync(assignment, cancellationToken);
+
+			var (saved, _, rejected) = await UpsertOwnedAsync(_resourceAssignmentRepository, assignment, assignment.DepartmentId,
+				e => e.DepartmentId, (stored, incoming) =>
+				{
+					incoming.AssignedOn = stored.AssignedOn;
+					incoming.AssignedByUserId = stored.AssignedByUserId;
+					incoming.ReleasedOn = stored.ReleasedOn;
+				}, cancellationToken);
+			if (rejected)
+				return null;
+			assignment = saved;
 
 			await WriteLogAsync(assignment.IncidentCommandId, assignment.DepartmentId, assignment.CallId, CommandLogEntryType.ResourceAssigned, "Resource assigned", userId, cancellationToken);
 
@@ -518,7 +555,7 @@ namespace Resgrid.Services
 				return null;
 
 			assignment.CommandStructureNodeId = targetNodeId;
-			assignment = await _resourceAssignmentRepository.SaveOrUpdateAsync(assignment, cancellationToken);
+			assignment = await _resourceAssignmentRepository.SaveOrUpdateAsync(Touch(assignment), cancellationToken);
 
 			await WriteLogAsync(assignment.IncidentCommandId, assignment.DepartmentId, assignment.CallId, CommandLogEntryType.ResourceMoved, "Resource moved", userId, cancellationToken);
 			return assignment;
@@ -531,7 +568,7 @@ namespace Resgrid.Services
 				return false;
 
 			assignment.ReleasedOn = DateTime.UtcNow;
-			await _resourceAssignmentRepository.SaveOrUpdateAsync(assignment, cancellationToken);
+			await _resourceAssignmentRepository.SaveOrUpdateAsync(Touch(assignment), cancellationToken);
 
 			await WriteLogAsync(assignment.IncidentCommandId, assignment.DepartmentId, assignment.CallId, CommandLogEntryType.ResourceReleased, "Resource released", userId, cancellationToken);
 
@@ -561,20 +598,17 @@ namespace Resgrid.Services
 				return null;
 			objective.CallId = command.CallId;
 
-			var isNew = string.IsNullOrWhiteSpace(objective.TacticalObjectiveId);
-			if (isNew)
-			{
-				objective.TacticalObjectiveId = Guid.NewGuid().ToString();
-			}
-			else
-			{
-				// On update, the existing row must belong to the caller's department.
-				var existing = await _tacticalObjectiveRepository.GetByIdAsync(objective.TacticalObjectiveId);
-				if (existing == null || existing.DepartmentId != objective.DepartmentId)
-					return null;
-			}
-
-			objective = await _tacticalObjectiveRepository.SaveOrUpdateAsync(objective, cancellationToken);
+			var (saved, isNew, rejected) = await UpsertOwnedAsync(_tacticalObjectiveRepository, objective, objective.DepartmentId,
+				e => e.DepartmentId, (stored, incoming) =>
+				{
+					// Completion is owned by CompleteObjectiveAsync; a Save (edit/replay) must not reset it.
+					incoming.Status = stored.Status;
+					incoming.CompletedByUserId = stored.CompletedByUserId;
+					incoming.CompletedOn = stored.CompletedOn;
+				}, cancellationToken);
+			if (rejected)
+				return null;
+			objective = saved;
 
 			if (isNew)
 				await WriteLogAsync(objective.IncidentCommandId, objective.DepartmentId, objective.CallId, CommandLogEntryType.ObjectiveAdded, $"Objective '{objective.Name}' added", userId, cancellationToken);
@@ -591,7 +625,7 @@ namespace Resgrid.Services
 			objective.Status = (int)TacticalObjectiveStatus.Complete;
 			objective.CompletedByUserId = userId;
 			objective.CompletedOn = DateTime.UtcNow;
-			objective = await _tacticalObjectiveRepository.SaveOrUpdateAsync(objective, cancellationToken);
+			objective = await _tacticalObjectiveRepository.SaveOrUpdateAsync(Touch(objective), cancellationToken);
 
 			await WriteLogAsync(objective.IncidentCommandId, objective.DepartmentId, objective.CallId, CommandLogEntryType.ObjectiveCompleted, $"Objective '{objective.Name}' completed", userId, cancellationToken);
 
@@ -621,24 +655,23 @@ namespace Resgrid.Services
 				return null;
 			timer.CallId = command.CallId;
 
-			if (string.IsNullOrWhiteSpace(timer.IncidentTimerId))
-			{
-				timer.IncidentTimerId = Guid.NewGuid().ToString();
-			}
-			else
-			{
-				// On update, the existing row must belong to the caller's department.
-				var existing = await _incidentTimerRepository.GetByIdAsync(timer.IncidentTimerId);
-				if (existing == null || existing.DepartmentId != timer.DepartmentId)
-					return null;
-			}
-
 			timer.StartedOn = DateTime.UtcNow;
 			timer.Status = (int)IncidentTimerStatus.Running;
 			if (timer.IntervalSeconds > 0)
 				timer.NextDueOn = timer.StartedOn.AddSeconds(timer.IntervalSeconds);
 
-			timer = await _incidentTimerRepository.SaveOrUpdateAsync(timer, cancellationToken);
+			var (saved, _, rejected) = await UpsertOwnedAsync(_incidentTimerRepository, timer, timer.DepartmentId,
+				e => e.DepartmentId, (stored, incoming) =>
+				{
+					// Existing id => a replayed start; keep the original run state rather than restarting the timer.
+					incoming.StartedOn = stored.StartedOn;
+					incoming.Status = stored.Status;
+					incoming.NextDueOn = stored.NextDueOn;
+					incoming.AcknowledgedOn = stored.AcknowledgedOn;
+				}, cancellationToken);
+			if (rejected)
+				return null;
+			timer = saved;
 
 			await WriteLogAsync(timer.IncidentCommandId, timer.DepartmentId, timer.CallId, CommandLogEntryType.TimerStarted, $"Timer '{timer.Name}' started", userId, cancellationToken);
 			return timer;
@@ -655,7 +688,7 @@ namespace Resgrid.Services
 			if (timer.IntervalSeconds > 0)
 				timer.NextDueOn = timer.AcknowledgedOn.Value.AddSeconds(timer.IntervalSeconds);
 
-			timer = await _incidentTimerRepository.SaveOrUpdateAsync(timer, cancellationToken);
+			timer = await _incidentTimerRepository.SaveOrUpdateAsync(Touch(timer), cancellationToken);
 
 			await WriteLogAsync(timer.IncidentCommandId, timer.DepartmentId, timer.CallId, CommandLogEntryType.TimerAcknowledged, $"Timer '{timer.Name}' acknowledged", userId, cancellationToken);
 			return timer;
@@ -683,22 +716,21 @@ namespace Resgrid.Services
 				return null;
 			annotation.CallId = command.CallId;
 
-			var isNew = string.IsNullOrWhiteSpace(annotation.IncidentMapAnnotationId);
-			if (isNew)
-			{
-				annotation.IncidentMapAnnotationId = Guid.NewGuid().ToString();
+			if (annotation.CreatedOn == default(DateTime))
 				annotation.CreatedOn = DateTime.UtcNow;
+			if (string.IsNullOrWhiteSpace(annotation.CreatedByUserId))
 				annotation.CreatedByUserId = userId;
-			}
-			else
-			{
-				// On update, the existing row must belong to the caller's department.
-				var existing = await _incidentMapAnnotationRepository.GetByIdAsync(annotation.IncidentMapAnnotationId);
-				if (existing == null || existing.DepartmentId != annotation.DepartmentId)
-					return null;
-			}
 
-			annotation = await _incidentMapAnnotationRepository.SaveOrUpdateAsync(annotation, cancellationToken);
+			var (saved, isNew, rejected) = await UpsertOwnedAsync(_incidentMapAnnotationRepository, annotation, annotation.DepartmentId,
+				e => e.DepartmentId, (stored, incoming) =>
+				{
+					incoming.CreatedOn = stored.CreatedOn;
+					incoming.CreatedByUserId = stored.CreatedByUserId;
+					incoming.DeletedOn = stored.DeletedOn;
+				}, cancellationToken);
+			if (rejected)
+				return null;
+			annotation = saved;
 
 			if (isNew)
 				await WriteLogAsync(annotation.IncidentCommandId, annotation.DepartmentId, annotation.CallId, CommandLogEntryType.AnnotationAdded, "Map annotation added", userId, cancellationToken);
@@ -713,7 +745,7 @@ namespace Resgrid.Services
 				return false;
 
 			annotation.DeletedOn = DateTime.UtcNow;
-			await _incidentMapAnnotationRepository.SaveOrUpdateAsync(annotation, cancellationToken);
+			await _incidentMapAnnotationRepository.SaveOrUpdateAsync(Touch(annotation), cancellationToken);
 
 			await WriteLogAsync(annotation.IncidentCommandId, annotation.DepartmentId, annotation.CallId, CommandLogEntryType.AnnotationRemoved, "Map annotation removed", userId, cancellationToken);
 			return true;
@@ -751,6 +783,55 @@ namespace Resgrid.Services
 		#region Private helpers
 
 		/// <summary>
+		/// Stamps the offline-sync change cursor on an entity. Called on every insert and update so the delta
+		/// endpoint can surface the row as "changed since" and reconnect conflict resolution can compare write
+		/// times (last-write-wins). See docs/architecture/offline-first-architecture.md.
+		/// </summary>
+		private static T Touch<T>(T entity) where T : IChangeTracked
+		{
+			entity.ModifiedOn = DateTime.UtcNow;
+			return entity;
+		}
+
+		/// <summary>
+		/// Idempotent upsert for an owned child entity. Create-vs-update is resolved by the entity id's EXISTENCE
+		/// (not merely whether an id was supplied), which is what makes offline replay safe:
+		///   • no id, or a client-supplied id that does not exist yet -> INSERT with that (or a generated) GUID, so
+		///     an offline-created row replays without duplicating;
+		///   • id already present -> it must belong to <paramref name="departmentId"/> (else rejected) and is
+		///     UPDATED, with <paramref name="preserve"/> copying server-owned fields off the stored row so a
+		///     replayed create payload cannot clobber them.
+		/// Returns rejected=true only for a foreign-department row. A plain SaveOrUpdateAsync cannot do the create
+		/// here: for string-GUID (IdType 1) entities it only inserts when the id is blank and otherwise issues a
+		/// blind UPDATE, so a client-supplied PK would silently update zero rows. See offline-first-architecture.md.
+		/// </summary>
+		private static async Task<(T entity, bool isNew, bool rejected)> UpsertOwnedAsync<T>(
+			IRepository<T> repository, T entity, int departmentId, Func<T, int> departmentOf,
+			Action<T, T> preserve, CancellationToken cancellationToken) where T : class, IEntity, IChangeTracked
+		{
+			var id = entity.IdValue?.ToString();
+
+			T stored = null;
+			if (!string.IsNullOrWhiteSpace(id))
+			{
+				stored = await repository.GetByIdAsync(id);
+				if (stored != null && departmentOf(stored) != departmentId)
+					return (null, false, true);
+			}
+
+			if (stored == null)
+			{
+				if (string.IsNullOrWhiteSpace(id))
+					entity.IdValue = Guid.NewGuid().ToString();
+
+				return (await repository.InsertAsync(Touch(entity), cancellationToken), true, false);
+			}
+
+			preserve?.Invoke(stored, entity);
+			return (await repository.SaveOrUpdateAsync(Touch(entity), cancellationToken), false, false);
+		}
+
+		/// <summary>
 		/// Loads the parent incident command and returns it only if it belongs to the given department (else null).
 		/// Gates create/update of child entities AND supplies the authoritative CallId to stamp onto them — a caller
 		/// must not be trusted to supply a CallId that matches the parent command.
@@ -778,7 +859,7 @@ namespace Resgrid.Services
 				OccurredOn = DateTime.UtcNow
 			};
 
-			var saved = await _commandLogEntryRepository.SaveOrUpdateAsync(entry, cancellationToken);
+			var saved = await _commandLogEntryRepository.InsertAsync(entry, cancellationToken);
 
 			// Real-time: every command mutation flows through here, so push one board-changed signal.
 			await _coreEventService.IncidentCommandUpdatedAsync(departmentId, callId);

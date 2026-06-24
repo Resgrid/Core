@@ -320,6 +320,17 @@ namespace Resgrid.Services
 
 		public async Task<CheckInRecord> PerformCheckInAsync(CheckInRecord record, CancellationToken cancellationToken = default)
 		{
+			// Offline idempotency: when the client supplies its outbox event id, a replayed check-in returns the
+			// original record instead of inserting a duplicate. Dedup is in-memory over the call's (small) check-in
+			// set, so only replayed events — which carry a key — pay the extra read; live UI check-ins skip it.
+			if (!string.IsNullOrWhiteSpace(record.IdempotencyKey))
+			{
+				var existing = await _recordRepository.GetByCallIdAsync(record.CallId);
+				var duplicate = existing?.FirstOrDefault(r => r.IdempotencyKey == record.IdempotencyKey);
+				if (duplicate != null)
+					return duplicate;
+			}
+
 			record.Timestamp = DateTime.UtcNow;
 			var saved = await _recordRepository.SaveOrUpdateAsync(record, cancellationToken);
 

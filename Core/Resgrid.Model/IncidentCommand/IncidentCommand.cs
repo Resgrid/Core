@@ -9,7 +9,7 @@ namespace Resgrid.Model
 	/// A live incident-command instance established on a specific <c>Call</c>. Seeded (optionally) from a
 	/// <c>CommandDefinition</c> template and then freely editable by the Commander for the life of the incident.
 	/// </summary>
-	public class IncidentCommand : IEntity
+	public class IncidentCommand : IEntity, IChangeTracked
 	{
 		public string IncidentCommandId { get; set; }
 
@@ -39,6 +39,9 @@ namespace Resgrid.Model
 		public int Status { get; set; }
 
 		public DateTime? ClosedOn { get; set; }
+
+		/// <summary>Change cursor for offline delta sync + last-write-wins; stamped on every write.</summary>
+		public DateTime? ModifiedOn { get; set; }
 
 		[NotMapped]
 		public string TableName => "IncidentCommands";

@@ -145,6 +145,9 @@ namespace Resgrid.Web.Services.Models.v4.CheckInTimers
 		public string Longitude { get; set; }
 		public int? UnitId { get; set; }
 		public string Note { get; set; }
+
+		/// <summary>Optional offline idempotency key (the client's outbox event id); a replayed check-in dedups on it.</summary>
+		public string IdempotencyKey { get; set; }
 	}
 
 	public class PerformCheckInResult : StandardApiResponseV4Base

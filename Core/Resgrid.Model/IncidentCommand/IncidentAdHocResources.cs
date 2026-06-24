@@ -9,7 +9,7 @@ namespace Resgrid.Model
 	/// An incident-scoped, ad-hoc unit created on the fly for resources not in Resgrid (e.g. a mutual-aid
 	/// crew from a non-Resgrid agency, or a unit formed from on-scene personnel). Not a real department Unit.
 	/// </summary>
-	public class IncidentAdHocUnit : IEntity
+	public class IncidentAdHocUnit : IEntity, IChangeTracked
 	{
 		public string IncidentAdHocUnitId { get; set; }
 
@@ -33,6 +33,9 @@ namespace Resgrid.Model
 		public DateTime CreatedOn { get; set; }
 
 		public DateTime? ReleasedOn { get; set; }
+
+		/// <summary>Change cursor for offline delta sync + last-write-wins; stamped on every write.</summary>
+		public DateTime? ModifiedOn { get; set; }
 
 		[NotMapped]
 		public string TableName => "IncidentAdHocUnits";
@@ -59,7 +62,7 @@ namespace Resgrid.Model
 	/// An incident-scoped, ad-hoc person created on the fly for resources not in Resgrid. May ride an ad-hoc
 	/// (or real) unit for accountability via <see cref="RidingResourceKind"/> + <see cref="RidingResourceId"/>.
 	/// </summary>
-	public class IncidentAdHocPersonnel : IEntity
+	public class IncidentAdHocPersonnel : IEntity, IChangeTracked
 	{
 		public string IncidentAdHocPersonnelId { get; set; }
 
@@ -87,6 +90,9 @@ namespace Resgrid.Model
 		public DateTime CreatedOn { get; set; }
 
 		public DateTime? ReleasedOn { get; set; }
+
+		/// <summary>Change cursor for offline delta sync + last-write-wins; stamped on every write.</summary>
+		public DateTime? ModifiedOn { get; set; }
 
 		[NotMapped]
 		public string TableName => "IncidentAdHocPersonnel";

@@ -9,7 +9,7 @@ namespace Resgrid.Model
 	/// A live lane / span-of-control node on the command board (Division, Group, Branch, Staging, ...).
 	/// Initially seeded from a <c>CommandDefinitionRole</c> then per-incident editable.
 	/// </summary>
-	public class CommandStructureNode : IEntity
+	public class CommandStructureNode : IEntity, IChangeTracked
 	{
 		public string CommandStructureNodeId { get; set; }
 
@@ -36,6 +36,12 @@ namespace Resgrid.Model
 		/// <summary>The CommandDefinitionRole this node was seeded from, if any.</summary>
 		public int? SourceRoleId { get; set; }
 
+		/// <summary>Soft-delete tombstone so a lane removed offline propagates on delta sync (null = live).</summary>
+		public DateTime? DeletedOn { get; set; }
+
+		/// <summary>Change cursor for offline delta sync + last-write-wins; stamped on every write.</summary>
+		public DateTime? ModifiedOn { get; set; }
+
 		[NotMapped]
 		public string TableName => "CommandStructureNodes";
 
@@ -61,7 +67,7 @@ namespace Resgrid.Model
 	/// Assigns a resource to a command structure node. Polymorphic: the resource may be an own-department
 	/// unit/person, a linked (mutual-aid) department unit/person, or an incident ad-hoc unit/person.
 	/// </summary>
-	public class ResourceAssignment : IEntity
+	public class ResourceAssignment : IEntity, IChangeTracked
 	{
 		public string ResourceAssignmentId { get; set; }
 
@@ -84,6 +90,9 @@ namespace Resgrid.Model
 		public DateTime AssignedOn { get; set; }
 
 		public DateTime? ReleasedOn { get; set; }
+
+		/// <summary>Change cursor for offline delta sync + last-write-wins; stamped on every write.</summary>
+		public DateTime? ModifiedOn { get; set; }
 
 		[NotMapped]
 		public string TableName => "ResourceAssignments";

@@ -126,7 +126,8 @@ namespace Resgrid.Services
 				OccurredOn = DateTime.UtcNow
 			};
 
-			await _commandLogEntryRepository.SaveOrUpdateAsync(entry, cancellationToken);
+			// Append-only insert: a pre-set GUID would make SaveOrUpdateAsync issue a 0-row UPDATE instead of inserting.
+			await _commandLogEntryRepository.InsertAsync(entry, cancellationToken);
 
 			// Real-time: channel open/close is a board change.
 			await _coreEventService.IncidentCommandUpdatedAsync(departmentId, callId);

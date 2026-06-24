@@ -27,6 +27,12 @@ namespace Resgrid.Model
 
 		public string Note { get; set; }
 
+		/// <summary>
+		/// Client-supplied idempotency key (the offline outbox event id). When set, a replayed check-in carrying the
+		/// same key returns the original record instead of inserting a duplicate. See offline-first-architecture.md.
+		/// </summary>
+		public string IdempotencyKey { get; set; }
+
 		[NotMapped]
 		public string TableName => "CheckInRecords";
 

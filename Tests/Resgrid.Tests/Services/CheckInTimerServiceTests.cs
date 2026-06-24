@@ -271,6 +271,34 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task PerformCheckInAsync_WithIdempotencyKey_ReturnsExistingRecord_WithoutDuplicateInsert()
+		{
+			// A check-in with this key was already recorded for the call (the client's outbox is replaying it).
+			var existing = new CheckInRecord { CheckInRecordId = "existing-1", DepartmentId = 10, CallId = 1, UserId = "user1", IdempotencyKey = "evt-1", Timestamp = DateTime.UtcNow.AddMinutes(-1) };
+			_recordRepo.Setup(x => x.GetByCallIdAsync(1)).ReturnsAsync(new List<CheckInRecord> { existing });
+
+			var replay = new CheckInRecord { DepartmentId = 10, CallId = 1, UserId = "user1", IdempotencyKey = "evt-1" };
+			var result = await _service.PerformCheckInAsync(replay);
+
+			result.Should().BeSameAs(existing);
+			_recordRepo.Verify(x => x.SaveOrUpdateAsync(It.IsAny<CheckInRecord>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+		}
+
+		[Test]
+		public async Task PerformCheckInAsync_WithNewIdempotencyKey_Inserts()
+		{
+			_recordRepo.Setup(x => x.GetByCallIdAsync(1)).ReturnsAsync(new List<CheckInRecord>()); // key not seen yet
+			_recordRepo.Setup(x => x.SaveOrUpdateAsync(It.IsAny<CheckInRecord>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((CheckInRecord r, CancellationToken ct, bool b) => { r.CheckInRecordId = "new-id"; return r; });
+
+			var record = new CheckInRecord { DepartmentId = 10, CallId = 1, UserId = "user1", IdempotencyKey = "evt-2" };
+			var result = await _service.PerformCheckInAsync(record);
+
+			result.CheckInRecordId.Should().Be("new-id");
+			_recordRepo.Verify(x => x.SaveOrUpdateAsync(It.IsAny<CheckInRecord>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Once);
+		}
+
+		[Test]
 		public async Task GetLastCheckInAsync_ReturnsUserCheckIn_WhenNoUnitId()
 		{
 			var checkIn = new CheckInRecord { CheckInRecordId = "ci1", UserId = "user1", CallId = 1 };

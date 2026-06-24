@@ -391,7 +391,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				UnitId = input.UnitId,
 				Latitude = input.Latitude,
 				Longitude = input.Longitude,
-				Note = input.Note
+				Note = input.Note,
+				IdempotencyKey = input.IdempotencyKey
 			};
 
 			var saved = await _checkInTimerService.PerformCheckInAsync(record, cancellationToken);

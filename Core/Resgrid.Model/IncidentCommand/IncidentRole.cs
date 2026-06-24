@@ -149,7 +149,7 @@ namespace Resgrid.Model
 	/// Assigns a Resgrid user to a functional incident-command role for a specific incident (Call). Incident-scoped,
 	/// not a department-wide claim. Optionally scoped to a structure node for supervisors.
 	/// </summary>
-	public class IncidentRoleAssignment : IEntity
+	public class IncidentRoleAssignment : IEntity, IChangeTracked
 	{
 		public string IncidentRoleAssignmentId { get; set; }
 
@@ -173,6 +173,9 @@ namespace Resgrid.Model
 		public DateTime AssignedOn { get; set; }
 
 		public DateTime? RemovedOn { get; set; }
+
+		/// <summary>Change cursor for offline delta sync + last-write-wins; stamped on every write.</summary>
+		public DateTime? ModifiedOn { get; set; }
 
 		[NotMapped]
 		public string TableName => "IncidentRoleAssignments";

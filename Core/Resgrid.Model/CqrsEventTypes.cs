@@ -24,5 +24,6 @@
 		PaddleSubscriptionUpdated = 19,
 		PaddleSubscriptionCanceled = 20,
 		PaddleSubscriptionCreated = 21,
+		IncidentCommandUpdated = 22,
 	}
 }

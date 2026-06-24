@@ -21,6 +21,11 @@ namespace Resgrid.Model.Reporting
 		/// <summary>National EMS Information System (NEMSIS) field mapping (EMS).</summary>
 		[Description("NEMSIS")]
 		[Display(Name = "NEMSIS")]
-		Nemsis = 2
+		Nemsis = 2,
+
+		/// <summary>ICS-209 incident status summary field mapping (incident command).</summary>
+		[Description("ICS-209")]
+		[Display(Name = "ICS-209")]
+		Ics209 = 3
 	}
 }

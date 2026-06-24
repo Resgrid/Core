@@ -22,6 +22,7 @@ namespace Resgrid.Tests.Services
 		private Mock<IActionLogsService> _actionLogsService;
 		private Mock<IUnitsService> _unitsService;
 		private Mock<ICallsService> _callsService;
+		private Mock<ICoreEventService> _coreEventService;
 		private CheckInTimerService _service;
 
 		[SetUp]
@@ -33,8 +34,9 @@ namespace Resgrid.Tests.Services
 			_actionLogsService = new Mock<IActionLogsService>();
 			_unitsService = new Mock<IUnitsService>();
 			_callsService = new Mock<ICallsService>();
+			_coreEventService = new Mock<ICoreEventService>();
 			_service = new CheckInTimerService(_configRepo.Object, _overrideRepo.Object, _recordRepo.Object,
-				_actionLogsService.Object, _unitsService.Object, _callsService.Object);
+				_actionLogsService.Object, _unitsService.Object, _callsService.Object, _coreEventService.Object);
 		}
 
 		#region Timer Resolution

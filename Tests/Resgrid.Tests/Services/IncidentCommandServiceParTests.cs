@@ -483,5 +483,21 @@ namespace Resgrid.Tests.Services
 			changes.Commands.Should().ContainSingle().Which.IncidentCommandId.Should().Be("c-new");
 			changes.Nodes.Should().ContainSingle().Which.DeletedOn.Should().NotBeNull();
 		}
+
+		[Test]
+		public async Task GetChangesSinceAsync_FullSync_ReturnsAllRowsIncludingNullModifiedOn()
+		{
+			_commandRepo.Setup(x => x.GetAllByDepartmentIdAsync(Dept)).ReturnsAsync(new List<IncidentCommand>
+			{
+				new IncidentCommand { IncidentCommandId = "c-tracked", DepartmentId = Dept, CallId = CallId, ModifiedOn = DateTime.UtcNow },
+				new IncidentCommand { IncidentCommandId = "c-legacy", DepartmentId = Dept, CallId = CallId, ModifiedOn = null } // never stamped
+			});
+
+			// since=0 maps to DateTime.MinValue in the controller — the full pull must include the legacy null row.
+			var changes = await _service.GetChangesSinceAsync(Dept, DateTime.MinValue);
+
+			changes.Commands.Should().HaveCount(2);
+			changes.Commands.Should().Contain(c => c.IncidentCommandId == "c-legacy");
+		}
 	}
 }

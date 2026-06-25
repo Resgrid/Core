@@ -299,6 +299,23 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task PerformCheckInAsync_OnConcurrentReplayUniqueViolation_AdoptsTheWinningRecord()
+		{
+			var winner = new CheckInRecord { CheckInRecordId = "winner-1", DepartmentId = 10, CallId = 1, UserId = "user1", IdempotencyKey = "evt-1" };
+			// Race: our pre-check sees nothing, a concurrent replay commits first, so our insert hits the unique
+			// index; the post-violation re-query then finds the winner and we adopt it instead of 500ing.
+			_recordRepo.SetupSequence(x => x.GetByCallIdAsync(1))
+				.ReturnsAsync(new List<CheckInRecord>())
+				.ReturnsAsync(new List<CheckInRecord> { winner });
+			_recordRepo.Setup(x => x.SaveOrUpdateAsync(It.IsAny<CheckInRecord>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ThrowsAsync(new Exception("unique constraint violation"));
+
+			var result = await _service.PerformCheckInAsync(new CheckInRecord { DepartmentId = 10, CallId = 1, UserId = "user1", IdempotencyKey = "evt-1" });
+
+			result.Should().BeSameAs(winner);
+		}
+
+		[Test]
 		public async Task GetLastCheckInAsync_ReturnsUserCheckIn_WhenNoUnitId()
 		{
 			var checkIn = new CheckInRecord { CheckInRecordId = "ci1", UserId = "user1", CallId = 1 };

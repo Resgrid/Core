@@ -332,7 +332,24 @@ namespace Resgrid.Services
 			}
 
 			record.Timestamp = DateTime.UtcNow;
-			var saved = await _recordRepository.SaveOrUpdateAsync(record, cancellationToken);
+
+			CheckInRecord saved;
+			try
+			{
+				saved = await _recordRepository.SaveOrUpdateAsync(record, cancellationToken);
+			}
+			catch (Exception) when (!string.IsNullOrWhiteSpace(record.IdempotencyKey))
+			{
+				// The in-memory pre-check above is check-then-insert and races under concurrent replays; the filtered
+				// unique index UX_CheckInRecords_Department_IdempotencyKey is the real guard. If we lost the race,
+				// adopt the winner — same idempotent result as the pre-check — rather than surfacing a 500 (which would
+				// just trigger another retry).
+				var existing = await _recordRepository.GetByCallIdAsync(record.CallId);
+				var winner = existing?.FirstOrDefault(r => r.IdempotencyKey == record.IdempotencyKey);
+				if (winner != null)
+					return winner;
+				throw;
+			}
 
 			// Real-time board refresh is best-effort: the check-in is already persisted, so a CQRS/Redis
 			// publish failure must not fail the check-in — that would 500 the caller and a retry would

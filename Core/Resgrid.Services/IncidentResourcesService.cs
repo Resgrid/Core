@@ -205,7 +205,9 @@ namespace Resgrid.Services
 
 		public async Task<(List<IncidentAdHocUnit> Units, List<IncidentAdHocPersonnel> Personnel)> GetAdHocChangesSinceAsync(int departmentId, DateTime sinceUtc)
 		{
-			bool Changed(IChangeTracked e) => e.ModifiedOn.HasValue && e.ModifiedOn.Value > sinceUtc;
+			// Full sync (since=0 → DateTime.MinValue) returns every row incl. null-ModifiedOn; incremental filters strictly.
+			var fullSync = sinceUtc == DateTime.MinValue;
+			bool Changed(IChangeTracked e) => fullSync || (e.ModifiedOn.HasValue && e.ModifiedOn.Value > sinceUtc);
 
 			var units = await _adHocUnitRepository.GetAllByDepartmentIdAsync(departmentId);
 			var personnel = await _adHocPersonnelRepository.GetAllByDepartmentIdAsync(departmentId);

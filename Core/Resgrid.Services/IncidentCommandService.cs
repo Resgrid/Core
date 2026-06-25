@@ -357,10 +357,13 @@ namespace Resgrid.Services
 			// returned again on the next sync — harmless, the client upserts idempotently).
 			var changes = new IncidentCommandChanges { ServerTimestampMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() };
 
-			// Method-group conversion is contravariance-aware, so this Func<IChangeTracked,bool> binds to each
-			// entity-typed Where(). Soft-deleted/closed/released rows are intentionally NOT filtered out here — the
-			// delta must surface them (with their state columns) so the client removes/updates them locally.
-			bool Changed(IChangeTracked e) => e.ModifiedOn.HasValue && e.ModifiedOn.Value > sinceUtc;
+			// On an initial full sync (since=0 → DateTime.MinValue) return EVERY row — including any with a null
+			// ModifiedOn (e.g. rows created before the change-tracking column existed) — so the first pull is complete;
+			// incremental syncs keep the strict "changed since the cursor" filter. Method-group conversion is
+			// contravariance-aware, so this Func<IChangeTracked,bool> binds to each entity-typed Where(). Soft-deleted/
+			// closed/released rows are intentionally surfaced (with their state columns) so the client reconciles them.
+			var fullSync = sinceUtc == DateTime.MinValue;
+			bool Changed(IChangeTracked e) => fullSync || (e.ModifiedOn.HasValue && e.ModifiedOn.Value > sinceUtc);
 
 			var commands = await _incidentCommandRepository.GetAllByDepartmentIdAsync(departmentId);
 			if (commands != null)

@@ -176,5 +176,19 @@ namespace Resgrid.Tests.Services
 			units.Should().ContainSingle().Which.IncidentAdHocUnitId.Should().Be("u-new");
 			personnel.Should().ContainSingle().Which.IncidentAdHocPersonnelId.Should().Be("p-rel");
 		}
+
+		[Test]
+		public async Task GetAdHocChangesSinceAsync_FullSync_IncludesNullModifiedOnRows()
+		{
+			_unitRepo.Setup(x => x.GetAllByDepartmentIdAsync(Dept)).ReturnsAsync(new List<IncidentAdHocUnit>
+			{
+				new IncidentAdHocUnit { IncidentAdHocUnitId = "u-legacy", DepartmentId = Dept, CallId = CallId, ModifiedOn = null }
+			});
+			_personnelRepo.Setup(x => x.GetAllByDepartmentIdAsync(Dept)).ReturnsAsync(new List<IncidentAdHocPersonnel>());
+
+			var (units, _) = await _service.GetAdHocChangesSinceAsync(Dept, DateTime.MinValue);
+
+			units.Should().ContainSingle().Which.IncidentAdHocUnitId.Should().Be("u-legacy");
+		}
 	}
 }

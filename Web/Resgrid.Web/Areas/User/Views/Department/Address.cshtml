@@ -49,7 +49,7 @@
                             @localizer["StreetLabel"]
                         </label>
                         <div class="controls">
-                            @Html.TextBoxFor(m => m.Department.Address.Address1, new { @class = "form-control" })
+                            @Html.TextBoxFor(m => m.Department.Address.Address1, new { @class = "form-control" }) @Html.ValidationMessageFor(m => m.Department.Address.Address1, "", new { @class = "text-danger" })
                         </div>
                     </div>
                     <div class="form-group">
@@ -57,7 +57,7 @@
                             @localizer["CityLabel"]
                         </label>
                         <div class="controls">
-                            @Html.TextBoxFor(m => m.Department.Address.City, new { @class = "form-control" })
+                            @Html.TextBoxFor(m => m.Department.Address.City, new { @class = "form-control" }) @Html.ValidationMessageFor(m => m.Department.Address.City, "", new { @class = "text-danger" })
                         </div>
                     </div>
                     <div class="form-group">
@@ -65,7 +65,7 @@
                             @localizer["StateLabel"]
                         </label>
                         <div class="controls">
-                            @Html.TextBoxFor(m => m.Department.Address.State, new { @class = "form-control" })
+                            @Html.TextBoxFor(m => m.Department.Address.State, new { @class = "form-control" }) @Html.ValidationMessageFor(m => m.Department.Address.State, "", new { @class = "text-danger" })
                         </div>
                     </div>
                     <div class="form-group">
@@ -73,7 +73,7 @@
                             @localizer["PostalCodeLabel"]
                         </label>
                         <div class="controls">
-                            @Html.TextBoxFor(m => m.Department.Address.PostalCode, new { @class = "form-control" })
+                            @Html.TextBoxFor(m => m.Department.Address.PostalCode, new { @class = "form-control" }) @Html.ValidationMessageFor(m => m.Department.Address.PostalCode, "", new { @class = "text-danger" })
                         </div>
                     </div>
                     <div class="form-group">
@@ -81,7 +81,7 @@
                             @localizer["CountryLabel"]
                         </label>
                         <div class="controls">
-                            @Html.TextBoxFor(m => m.Department.Address.Country, new { @class = "form-control" })
+                            @Html.TextBoxFor(m => m.Department.Address.Country, new { @class = "form-control" }) @Html.ValidationMessageFor(m => m.Department.Address.Country, "", new { @class = "text-danger" })
                         </div>
                     </div>
                     <div class="form-actions">
@@ -94,5 +94,5 @@
 </div>
 @section Scripts
     {
-
+    <partial name="_ValidationScriptsPartial" />
 }

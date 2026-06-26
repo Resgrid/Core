@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -338,12 +339,14 @@ namespace Resgrid.Services
 			{
 				saved = await _recordRepository.SaveOrUpdateAsync(record, cancellationToken);
 			}
-			catch (Exception) when (!string.IsNullOrWhiteSpace(record.IdempotencyKey))
+			catch (DbException) when (!string.IsNullOrWhiteSpace(record.IdempotencyKey))
 			{
 				// The in-memory pre-check above is check-then-insert and races under concurrent replays; the filtered
-				// unique index UX_CheckInRecords_Department_IdempotencyKey is the real guard. If we lost the race,
-				// adopt the winner — same idempotent result as the pre-check — rather than surfacing a 500 (which would
-				// just trigger another retry).
+				// unique index (UX_CheckInRecords_Department_IdempotencyKey on SQL Server / ux_..._idempotencykey on
+				// PostgreSQL) is the real guard. On that race, adopt the winner — same idempotent result as the
+				// pre-check — rather than 500ing (which would just trigger another retry). Scope is DbException only
+				// (covers PG 23505 + SQL Server 2601/2627, both derive from it); any non-DB failure, or a DbException
+				// with no matching winner, propagates below instead of being masked as a replay.
 				var existing = await _recordRepository.GetByCallIdAsync(record.CallId);
 				var winner = existing?.FirstOrDefault(r => r.IdempotencyKey == record.IdempotencyKey);
 				if (winner != null)

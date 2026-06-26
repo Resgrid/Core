@@ -170,7 +170,7 @@
                             <label class="col-sm-2 control-label">@localizer["HomeNumberLabel"]</label>
                             <div class="col-sm-10">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="@localizer["HomeNumberPlaceholder"]" asp-for="Profile.HomeNumber">
+                                    <input type="text" class="form-control js-phone-validate" data-region-source="PhysicalCountry" placeholder="@localizer["HomeNumberPlaceholder"]" asp-for="Profile.HomeNumber">
                                     @if (!string.IsNullOrWhiteSpace(Model.Profile?.HomeNumber))
                                     {
                                         @if (Model.HomeNumberVerified == true)
@@ -193,6 +193,8 @@
                                         }
                                     }
                                 </div>
+                                <span asp-validation-for="Profile.HomeNumber" class="text-danger"></span>
+                                <div class="js-phone-feedback small"></div>
                                 @if (!string.IsNullOrWhiteSpace(Model.Profile?.HomeNumber) && Model.CanSelfVerify)
                                 {
                                     @if (Model.HomeNumberVerified == false)
@@ -230,7 +232,7 @@
                             <label class="col-sm-2 control-label">@localizer["MobileNumberLabel"]</label>
                             <div class="col-sm-10">
                                 <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="@localizer["MobileNumberPlaceholder"]" asp-for="Profile.MobileNumber">
+                                    <input type="text" class="form-control js-phone-validate" data-region-source="PhysicalCountry" placeholder="@localizer["MobileNumberPlaceholder"]" asp-for="Profile.MobileNumber">
                                     @if (!string.IsNullOrWhiteSpace(Model.Profile?.MobileNumber))
                                     {
                                         @if (Model.MobileNumberVerified == true)
@@ -253,6 +255,8 @@
                                         }
                                     }
                                 </div>
+                                <span asp-validation-for="Profile.MobileNumber" class="text-danger"></span>
+                                <div class="js-phone-feedback small"></div>
                                 @if (!string.IsNullOrWhiteSpace(Model.Profile?.MobileNumber) && Model.CanSelfVerify)
                                 {
                                     @if (Model.MobileNumberVerified == false)
@@ -320,19 +324,19 @@
                         </h3>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["AddressLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["AddressPlaceholder"]" asp-for="PhysicalAddress1"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["AddressPlaceholder"]" asp-for="PhysicalAddress1"><span asp-validation-for="PhysicalAddress1" class="text-danger"></span></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["CityLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["CityPlaceholder"]" asp-for="PhysicalCity"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["CityPlaceholder"]" asp-for="PhysicalCity"><span asp-validation-for="PhysicalCity" class="text-danger"></span></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["StateLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["StatePlaceholder"]" asp-for="PhysicalState"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["StatePlaceholder"]" asp-for="PhysicalState"><span asp-validation-for="PhysicalState" class="text-danger"></span></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["PostalCodeLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["PostalCodePlaceholder"]" asp-for="PhysicalPostalCode"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["PostalCodePlaceholder"]" asp-for="PhysicalPostalCode"><span asp-validation-for="PhysicalPostalCode" class="text-danger"></span></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["CountryLabel"]</label>
@@ -348,19 +352,19 @@
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["MailingAddressLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["MailingAddressPlaceholder"]" asp-for="MailingAddress1"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["MailingAddressPlaceholder"]" asp-for="MailingAddress1"><span asp-validation-for="MailingAddress1" class="text-danger"></span></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["MailingCityLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["MailingCityPlaceholder"]" asp-for="MailingCity"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["MailingCityPlaceholder"]" asp-for="MailingCity"><span asp-validation-for="MailingCity" class="text-danger"></span></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["MailingStateLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["MailingStatePlaceholder"]" asp-for="MailingState"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["MailingStatePlaceholder"]" asp-for="MailingState"><span asp-validation-for="MailingState" class="text-danger"></span></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["MailingPostalCodeLabel"]</label>
-                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["MailingPostalCodePlaceholder"]" asp-for="MailingPostalCode"></div>
+                            <div class="col-sm-10"><input type="text" class="form-control" placeholder="@localizer["MailingPostalCodePlaceholder"]" asp-for="MailingPostalCode"><span asp-validation-for="MailingPostalCode" class="text-danger"></span></div>
                         </div>
                         <div class="form-group">
                             <label class="col-sm-2 control-label">@localizer["MailingCountryLabel"]</label>
@@ -821,6 +825,10 @@
 
 @section Scripts
 {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script src="~/js/app/resgrid.phonevalidate.js"></script>
+
     <script>
         var sameAddress = '@Model.MailingAddressSameAsPhysical';
         var rgVerifySendUrl = resgrid.absoluteBaseUrl + '/User/Home/SendContactVerificationCode';

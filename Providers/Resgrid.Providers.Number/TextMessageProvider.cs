@@ -28,6 +28,11 @@ namespace Resgrid.Providers.NumberProvider
 
 		public async Task<bool> SendTextMessage(string number, string message, string departmentNumber, MobileCarriers carrier, int departmentId, bool forceGateway = false, bool isCall = false)
 		{
+			// Single chokepoint for every outbound SMS path below (Twilio + SignalWire fallback): strip non-allow-listed
+			// URLs (carrier deliverability) and cap length (cost + avoid Twilio error 21617 at 1600 chars) before sending.
+			message = SmsContentHelper.PrepareForSms(message, Config.SystemBehaviorConfig.SmsMaxLength,
+				(Config.SystemBehaviorConfig.SmsAllowedUrlDomains ?? string.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries));
+
 			var wasTwillioSuccessful = await SendTextMessageViaTwillio(number, message, departmentNumber);
 
 			if (!wasTwillioSuccessful && isCall)
@@ -153,6 +158,13 @@ namespace Resgrid.Providers.NumberProvider
 					return true;
 				else
 					return false;
+			}
+			catch (Twilio.Exceptions.ApiException ex) when (ex.Code == 21211 || ex.Code == 21214 || ex.Code == 21217 || ex.Code == 21614)
+			{
+				// Invalid / unreachable 'To' number - bad input, not a system fault. Log quietly so these don't flood
+				// Sentry as fatals; the caller still gets false and can surface a validation message to the user.
+				Framework.Logging.LogInfo($"Twilio rejected an invalid 'To' number (code {ex.Code}): {ex.Message}");
+				return false;
 			}
 			catch (Exception ex)
 			{

@@ -308,11 +308,30 @@ namespace Resgrid.Tests.Services
 				.ReturnsAsync(new List<CheckInRecord>())
 				.ReturnsAsync(new List<CheckInRecord> { winner });
 			_recordRepo.Setup(x => x.SaveOrUpdateAsync(It.IsAny<CheckInRecord>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
-				.ThrowsAsync(new Exception("unique constraint violation"));
+				.ThrowsAsync(new FakeDbException("23505: duplicate key value violates unique constraint"));
 
 			var result = await _service.PerformCheckInAsync(new CheckInRecord { DepartmentId = 10, CallId = 1, UserId = "user1", IdempotencyKey = "evt-1" });
 
 			result.Should().BeSameAs(winner);
+		}
+
+		[Test]
+		public async Task PerformCheckInAsync_NonDatabaseError_Propagates_NotMaskedAsReplay()
+		{
+			// A non-DbException must NOT be swallowed as an idempotent replay even when a key is present.
+			_recordRepo.Setup(x => x.GetByCallIdAsync(1)).ReturnsAsync(new List<CheckInRecord>());
+			_recordRepo.Setup(x => x.SaveOrUpdateAsync(It.IsAny<CheckInRecord>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ThrowsAsync(new InvalidOperationException("boom"));
+
+			Func<Task> act = async () => await _service.PerformCheckInAsync(new CheckInRecord { DepartmentId = 10, CallId = 1, UserId = "user1", IdempotencyKey = "evt-1" });
+
+			await act.Should().ThrowAsync<InvalidOperationException>();
+		}
+
+		// Minimal concrete DbException (the framework type is abstract) to simulate a provider unique-constraint violation.
+		private sealed class FakeDbException : System.Data.Common.DbException
+		{
+			public FakeDbException(string message) : base(message) { }
 		}
 
 		[Test]

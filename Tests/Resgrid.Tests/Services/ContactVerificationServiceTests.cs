@@ -23,6 +23,7 @@ namespace Resgrid.Tests.Services
 			protected Mock<ISystemAuditsService> _systemAuditsServiceMock;
 			protected Mock<IEncryptionService> _encryptionServiceMock;
 			protected Mock<IOutboundVoiceProvider> _outboundVoiceProviderMock;
+			protected Mock<IPhoneNumberProcesserProvider> _phoneNumberProcesserMock;
 			protected IContactVerificationService _contactVerificationService;
 
 			protected with_the_contact_verification_service()
@@ -52,6 +53,13 @@ namespace Resgrid.Tests.Services
 					.Setup(v => v.SendVoiceVerificationCallAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()))
 					.ReturnsAsync(true);
 
+				// Phone processor: by default treat numbers as valid and echo them back as the "international" form so
+				// the send paths proceed; individual tests can override to simulate an invalid/unsendable number.
+				_phoneNumberProcesserMock = new Mock<IPhoneNumberProcesserProvider>();
+				_phoneNumberProcesserMock
+					.Setup(p => p.Process(It.IsAny<string>(), It.IsAny<string>()))
+					.Returns<string, string>((num, cc) => new PhoneNumberResult { IsValid = !string.IsNullOrWhiteSpace(num), InternationalNumber = num, LocalNumber = num });
+
 				_contactVerificationService = new ContactVerificationService(
 					_userProfileServiceMock.Object,
 					_usersServiceMock.Object,
@@ -59,7 +67,8 @@ namespace Resgrid.Tests.Services
 					_smsServiceMock.Object,
 					_systemAuditsServiceMock.Object,
 					_encryptionServiceMock.Object,
-					_outboundVoiceProviderMock.Object);
+					_outboundVoiceProviderMock.Object,
+					_phoneNumberProcesserMock.Object);
 			}
 
 			protected static UserProfile BuildProfile(string userId = "user1",

@@ -82,9 +82,9 @@
 
                                 if (categoryContacts != null && categoryContacts.Any())
                                 {
-                                    @Html.Raw("<div id='contactsTab" + Model.Contacts[i].ContactCategoryId + "' class='contactsTabPannel' style='display: none;'>")
+                                    @Html.Raw("<div id='contactsTab" + Model.ContactCategories[i].ContactCategoryId + "' class='contactsTabPannel' style='display: none;'>")
 
-                                    @Html.Raw($"<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'><thead><tr><th class='span1'></th><th>{@commonLocalizer["Name"]}</th><th>{@commonLocalizer["Type"]}</th><th>{@commonLocalizer["Category"]}</th><th>{@localizer["LastUpdated"]}</th><th data-searchable='false' data-orderable='false'></th></tr></thead><tbody id='contactsCategory_{Model.Contacts[i].ContactCategoryId}'>")
+                                    @Html.Raw($"<div class='table-responsive'><table class='table table-striped' data-page-length='100' width='100%'><thead><tr><th class='span1'></th><th>{@commonLocalizer["Name"]}</th><th>{@commonLocalizer["Type"]}</th><th>{@commonLocalizer["Category"]}</th><th>{@localizer["LastUpdated"]}</th><th data-searchable='false' data-orderable='false'></th></tr></thead><tbody id='contactsCategory_{Model.ContactCategories[i].ContactCategoryId}'>")
 
 
                                     foreach (var c in categoryContacts)

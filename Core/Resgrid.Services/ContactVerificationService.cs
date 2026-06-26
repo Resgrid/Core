@@ -22,6 +22,7 @@ namespace Resgrid.Services
 		private readonly ISystemAuditsService _systemAuditsService;
 		private readonly IEncryptionService _encryptionService;
 		private readonly IOutboundVoiceProvider _outboundVoiceProvider;
+		private readonly IPhoneNumberProcesserProvider _phoneNumberProcesser;
 
 		public ContactVerificationService(
 			IUserProfileService userProfileService,
@@ -30,7 +31,8 @@ namespace Resgrid.Services
 			ISmsService smsService,
 			ISystemAuditsService systemAuditsService,
 			IEncryptionService encryptionService,
-			IOutboundVoiceProvider outboundVoiceProvider)
+			IOutboundVoiceProvider outboundVoiceProvider,
+			IPhoneNumberProcesserProvider phoneNumberProcesser)
 		{
 			_userProfileService = userProfileService;
 			_usersService = usersService;
@@ -39,6 +41,7 @@ namespace Resgrid.Services
 			_systemAuditsService = systemAuditsService;
 			_encryptionService = encryptionService;
 			_outboundVoiceProvider = outboundVoiceProvider;
+			_phoneNumberProcesser = phoneNumberProcesser;
 		}
 
 		public async Task<bool> SendEmailVerificationCodeAsync(string userId, int departmentId, CancellationToken cancellationToken = default)
@@ -80,6 +83,16 @@ namespace Resgrid.Services
 			if (profile == null || string.IsNullOrWhiteSpace(profile.MobileNumber))
 				return false;
 
+			// Normalize to E.164 and validate before sending so an invalid/local-format number (e.g. a bare
+			// "082446..." with no country code) is rejected here instead of throwing a Twilio "Invalid 'To'" error.
+			var mobileResult = _phoneNumberProcesser.Process(profile.GetPhoneNumber());
+			if (mobileResult == null || !mobileResult.IsValid || string.IsNullOrWhiteSpace(mobileResult.InternationalNumber))
+			{
+				Logging.LogInfo($"Mobile verification SMS skipped for user {userId}: phone number is not a valid sendable number (needs international format, e.g. +<country code><number>).");
+				await WriteAuditAsync(userId, departmentId, ContactVerificationType.MobileNumber, false, "Send-InvalidNumber", null, cancellationToken);
+				return false;
+			}
+
 			if (!IsWithinHourlySendLimit(profile.MobileVerificationCodeExpiry, profile.MobileVerificationAttempts))
 				return false;
 
@@ -90,7 +103,7 @@ namespace Resgrid.Services
 
 			await _userProfileService.SaveProfileAsync(departmentId, profile, cancellationToken);
 
-			bool sent = await _smsService.SendSmsVerificationCodeAsync(profile.GetPhoneNumber(), code, departmentNumber);
+			bool sent = await _smsService.SendSmsVerificationCodeAsync(mobileResult.InternationalNumber, code, departmentNumber);
 
 			await WriteAuditAsync(userId, departmentId, ContactVerificationType.MobileNumber, sent, "Send", null, cancellationToken);
 
@@ -102,6 +115,15 @@ namespace Resgrid.Services
 			var profile = await _userProfileService.GetProfileByUserIdAsync(userId, bypassCache: true);
 			if (profile == null || string.IsNullOrWhiteSpace(profile.HomeNumber))
 				return false;
+
+			// Validate/normalize before placing the Twilio voice call so an invalid number doesn't throw "Invalid 'To'".
+			var homeResult = _phoneNumberProcesser.Process(profile.GetHomePhoneNumber());
+			if (homeResult == null || !homeResult.IsValid || string.IsNullOrWhiteSpace(homeResult.InternationalNumber))
+			{
+				Logging.LogInfo($"Home verification call skipped for user {userId}: phone number is not a valid sendable number.");
+				await WriteAuditAsync(userId, departmentId, ContactVerificationType.HomeNumber, false, "SendVoice-InvalidNumber", null, cancellationToken);
+				return false;
+			}
 
 			if (!IsWithinHourlySendLimit(profile.HomeVerificationCodeExpiry, profile.HomeVerificationAttempts))
 				return false;
@@ -117,7 +139,7 @@ namespace Resgrid.Services
 			// landlines that cannot receive text messages. The call speaks the digits
 			// of the verification code, repeating multiple times so the user can note them.
 			bool sent = await _outboundVoiceProvider.SendVoiceVerificationCallAsync(
-				profile.GetHomePhoneNumber(), userId, (int)ContactVerificationType.HomeNumber);
+				homeResult.InternationalNumber, userId, (int)ContactVerificationType.HomeNumber);
 
 			await WriteAuditAsync(userId, departmentId, ContactVerificationType.HomeNumber, sent, "SendVoice", null, cancellationToken);
 

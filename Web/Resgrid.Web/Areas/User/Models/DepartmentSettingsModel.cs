@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Model;
 using Resgrid.Model.Identity;
@@ -18,10 +19,19 @@ namespace Resgrid.Web.Areas.User.Models
 		public string MapZoomLevel { get; set; }
 		public string RefreshTime { get; set; }
 
+		[StringLength(500, ErrorMessage = "Street address cannot exceed 500 characters.")]
 		public string MapCenterPointAddressAddress1 { get; set; }
+
+		[StringLength(150, ErrorMessage = "City cannot exceed 150 characters.")]
 		public string MapCenterPointAddressCity { get; set; }
+
+		[StringLength(100, ErrorMessage = "State/Province cannot exceed 100 characters.")]
 		public string MapCenterPointAddressState { get; set; }
+
+		[StringLength(32, ErrorMessage = "Postal code cannot exceed 32 characters.")]
 		public string MapCenterPointAddressPostalCode { get; set; }
+
+		[StringLength(100, ErrorMessage = "Country cannot exceed 100 characters.")]
 		public string MapCenterPointAddressCountry { get; set; }
 		public string MapCenterGpsCoordinatesLatitude { get; set; }
 		public string MapCenterGpsCoordinatesLongitude { get; set; }

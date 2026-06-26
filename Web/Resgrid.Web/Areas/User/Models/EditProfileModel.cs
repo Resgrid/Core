@@ -71,42 +71,42 @@ namespace Resgrid.Web.Areas.User.Models
 		public int MinPasswordLength { get; set; } = 8;
 
 
-		[MaxLength(100)]
+		[StringLength(500, ErrorMessage = "Street address cannot exceed 500 characters.")]
 		public string PhysicalAddress1 { get; set; }
 
-		[MaxLength(100)]
+		[StringLength(500, ErrorMessage = "Street address line 2 cannot exceed 500 characters.")]
 		public string PhysicalAddress2 { get; set; }
 
-		[MaxLength(100)]
+		[StringLength(150, ErrorMessage = "City cannot exceed 150 characters.")]
 		public string PhysicalCity { get; set; }
 
-		[MaxLength(50)]
+		[StringLength(100, ErrorMessage = "State/Province cannot exceed 100 characters.")]
 		public string PhysicalState { get; set; }
 
-		[MaxLength(50)]
+		[StringLength(32, ErrorMessage = "Postal code cannot exceed 32 characters.")]
 		public string PhysicalPostalCode { get; set; }
 
-		[MaxLength(100)]
+		[StringLength(100, ErrorMessage = "Country cannot exceed 100 characters.")]
 		public string PhysicalCountry { get; set; }
 
 		public bool MailingAddressSameAsPhysical { get; set; }
 
-		[MaxLength(100)]
+		[StringLength(500, ErrorMessage = "Street address cannot exceed 500 characters.")]
 		public string MailingAddress1 { get; set; }
 
-		[MaxLength(100)]
+		[StringLength(500, ErrorMessage = "Street address line 2 cannot exceed 500 characters.")]
 		public string MailingAddress2 { get; set; }
 
-		[MaxLength(100)]
+		[StringLength(150, ErrorMessage = "City cannot exceed 150 characters.")]
 		public string MailingCity { get; set; }
 
-		[MaxLength(50)]
+		[StringLength(100, ErrorMessage = "State/Province cannot exceed 100 characters.")]
 		public string MailingState { get; set; }
 
-		[MaxLength(50)]
+		[StringLength(32, ErrorMessage = "Postal code cannot exceed 32 characters.")]
 		public string MailingPostalCode { get; set; }
 
-		[MaxLength(100)]
+		[StringLength(100, ErrorMessage = "Country cannot exceed 100 characters.")]
 		public string MailingCountry { get; set; }
 
 		public bool EnableSms { get; set; }

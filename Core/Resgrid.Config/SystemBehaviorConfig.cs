@@ -31,6 +31,21 @@ namespace Resgrid.Config
 		public static string ResgridEventingBaseUrl = "https://resgridevents.local";
 
 		/// <summary>
+		/// Maximum length (characters) of an outbound SMS body before it is truncated. Default 459 = three concatenated
+		/// GSM-7 SMS segments (153 chars each) - enough to convey a useful summary while keeping per-message cost low;
+		/// the full content is always available in the Resgrid app. (Hard carrier limit is 1600 - Twilio error 21617.)
+		/// </summary>
+		public static int SmsMaxLength = 459;
+
+		/// <summary>
+		/// Comma-separated host allow-list for URLs in outbound SMS. Carriers (A2P 10DLC) filter messages containing
+		/// public/unbranded links, so any URL whose host is not on this list is removed before the SMS is sent.
+		/// Includes Resgrid's own domains, the common mapping/location services departments share, and bit.ly (Resgrid's
+		/// default link shortener). Deployments using a self-hosted shortener (Polr/Kutt) should add their short domain.
+		/// </summary>
+		public static string SmsAllowedUrlDomains = "resgrid.com,resgrid.net,resgrid.io,google.com,maps.app.goo.gl,goo.gl,apple.com,bing.com,openstreetmap.org,osm.org,what3words.com,w3w.co,bit.ly";
+
+		/// <summary>
 		/// Resgrid internal Billing API Url. Do not set for Open-Source install.
 		/// </summary>
 		public static string BillingApiBaseUrl = "";

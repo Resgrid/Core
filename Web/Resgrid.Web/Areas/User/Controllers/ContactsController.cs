@@ -38,11 +38,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IUdfRenderingService _udfRenderingService;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IRouteService _routeService;
+		private readonly IPhoneNumberProcesserProvider _phoneNumberProcesser;
 
 		public ContactsController(IContactsService contactsService, IDepartmentsService departmentsService, IUserProfileService userProfileService,
 			IAddressService addressService, IEventAggregator eventAggregator, ICallsService callsService, IAuthorizationService authorizationService,
 			IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService,
-			IDepartmentGroupsService departmentGroupsService, IRouteService routeService)
+			IDepartmentGroupsService departmentGroupsService, IRouteService routeService, IPhoneNumberProcesserProvider phoneNumberProcesser)
 		{
 			_contactsService = contactsService;
 			_departmentsService = departmentsService;
@@ -55,6 +56,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_udfRenderingService = udfRenderingService;
 			_departmentGroupsService = departmentGroupsService;
 			_routeService = routeService;
+			_phoneNumberProcesser = phoneNumberProcesser;
 		}
 
 		#endregion Private Members and Constructors
@@ -262,6 +264,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				ModelState.AddModelError("ExitGpsLongitude", "Exit Longitude value seems invalid, MUST be decimal format.");
 			}
+
+			// Server-side phone backstop: validate + normalize each number to E.164 so saved values are
+			// Twilio-sendable (mirrors EditUserProfile). Region comes from the contact's physical country.
+			model.Contact.CellPhoneNumber = PhoneValidationHelper.ValidateAndNormalize(_phoneNumberProcesser, ModelState, "Contact.CellPhoneNumber", "cell phone number", model.Contact.CellPhoneNumber, model.PhysicalCountry);
+			model.Contact.HomePhoneNumber = PhoneValidationHelper.ValidateAndNormalize(_phoneNumberProcesser, ModelState, "Contact.HomePhoneNumber", "home phone number", model.Contact.HomePhoneNumber, model.PhysicalCountry);
+			model.Contact.FaxPhoneNumber = PhoneValidationHelper.ValidateAndNormalize(_phoneNumberProcesser, ModelState, "Contact.FaxPhoneNumber", "fax number", model.Contact.FaxPhoneNumber, model.PhysicalCountry);
+			model.Contact.OfficePhoneNumber = PhoneValidationHelper.ValidateAndNormalize(_phoneNumberProcesser, ModelState, "Contact.OfficePhoneNumber", "office phone number", model.Contact.OfficePhoneNumber, model.PhysicalCountry);
 
 			Address physicalAddress = new Address();
 			Address mailingAddress = new Address();
@@ -523,6 +532,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ModelState.AddModelError("ExitGpsLongitude", "Exit Longitude value seems invalid, MUST be decimal format.");
 			}
 
+			// Server-side phone backstop: validate + normalize each number to E.164 so saved values are
+			// Twilio-sendable (mirrors EditUserProfile). Region comes from the contact's physical country.
+			model.Contact.CellPhoneNumber = PhoneValidationHelper.ValidateAndNormalize(_phoneNumberProcesser, ModelState, "Contact.CellPhoneNumber", "cell phone number", model.Contact.CellPhoneNumber, model.PhysicalCountry);
+			model.Contact.HomePhoneNumber = PhoneValidationHelper.ValidateAndNormalize(_phoneNumberProcesser, ModelState, "Contact.HomePhoneNumber", "home phone number", model.Contact.HomePhoneNumber, model.PhysicalCountry);
+			model.Contact.FaxPhoneNumber = PhoneValidationHelper.ValidateAndNormalize(_phoneNumberProcesser, ModelState, "Contact.FaxPhoneNumber", "fax number", model.Contact.FaxPhoneNumber, model.PhysicalCountry);
+			model.Contact.OfficePhoneNumber = PhoneValidationHelper.ValidateAndNormalize(_phoneNumberProcesser, ModelState, "Contact.OfficePhoneNumber", "office phone number", model.Contact.OfficePhoneNumber, model.PhysicalCountry);
+
 			if (ModelState.IsValid)
 			{
 				var contact = await _contactsService.GetContactByIdAsync(model.Contact.ContactId);
@@ -591,11 +607,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 					if (contact.MailingAddressId.HasValue)
 						mailingAddress = await _addressService.GetAddressByIdAsync(contact.MailingAddressId.Value);
 
-					mailingAddress.Address1 = model.PhysicalAddress1;
-					mailingAddress.City = model.PhysicalCity;
-					mailingAddress.Country = model.PhysicalCountry;
-					mailingAddress.PostalCode = model.PhysicalPostalCode;
-					mailingAddress.State = model.PhysicalState;
+					mailingAddress.Address1 = model.MailingAddress1;
+					mailingAddress.City = model.MailingCity;
+					mailingAddress.Country = model.MailingCountry;
+					mailingAddress.PostalCode = model.MailingPostalCode;
+					mailingAddress.State = model.MailingState;
 
 					mailingAddress = await _addressService.SaveAddressAsync(mailingAddress, cancellationToken);
 					contact.MailingAddressId = mailingAddress.AddressId;

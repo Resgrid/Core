@@ -16,11 +16,15 @@ namespace Resgrid.Providers.Migrations.Migrations
 		{
 			if (Schema.Table("Addresses").Exists())
 			{
-				Alter.Table("Addresses").AlterColumn("Address1").AsString(Int32.MaxValue).NotNullable();
-				Alter.Table("Addresses").AlterColumn("City").AsString(200).NotNullable();
-				Alter.Table("Addresses").AlterColumn("State").AsString(100).NotNullable();
+				// Keep these columns Nullable: the Addresses table predates the migration system and they were never
+				// enforced NOT NULL, so legacy rows may hold NULLs. Enforcing NOT NULL here would fail the migration on
+				// those rows. ([Required] on the Address model already prevents new null saves at the app layer.) This
+				// migration's job is only to widen the columns to stop the 8152 "would be truncated" errors.
+				Alter.Table("Addresses").AlterColumn("Address1").AsString(Int32.MaxValue).Nullable();
+				Alter.Table("Addresses").AlterColumn("City").AsString(200).Nullable();
+				Alter.Table("Addresses").AlterColumn("State").AsString(100).Nullable();
 				Alter.Table("Addresses").AlterColumn("PostalCode").AsString(100).Nullable();
-				Alter.Table("Addresses").AlterColumn("Country").AsString(100).NotNullable();
+				Alter.Table("Addresses").AlterColumn("Country").AsString(100).Nullable();
 			}
 		}
 

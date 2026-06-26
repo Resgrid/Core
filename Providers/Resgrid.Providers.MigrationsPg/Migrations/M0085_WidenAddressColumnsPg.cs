@@ -14,7 +14,8 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 		{
 			if (Schema.Table("addresses").Exists() && Schema.Table("addresses").Column("address1").Exists())
 			{
-				Alter.Table("addresses").AlterColumn("address1").AsCustom("text").NotNullable();
+				// Keep Nullable (see M0085_WidenAddressColumns): legacy rows may hold NULLs, so NOT NULL would fail.
+				Alter.Table("addresses").AlterColumn("address1").AsCustom("text").Nullable();
 			}
 		}
 

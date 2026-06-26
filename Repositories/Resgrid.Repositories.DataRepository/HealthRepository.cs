@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Dapper;
+using Resgrid.Framework;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Repositories.Connection;
 
@@ -33,8 +34,11 @@ namespace Resgrid.Repositories.DataRepository
 					return timestamp == default(DateTime) ? null : timestamp.ToString("o");
 				}
 			}
-			catch (Exception)
+			catch (Exception ex)
 			{
+				// Log so a failing health check (DatabaseOnline = false) is diagnosable instead of silently swallowed;
+				// keep returning null so the caller still reports the DB as offline rather than throwing.
+				Logging.LogException(ex, "HealthRepository.GetDatabaseCurrentTime database connectivity check failed");
 				return null;
 			}
 		}

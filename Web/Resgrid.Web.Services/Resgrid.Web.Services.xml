@@ -1922,6 +1922,21 @@
             </summary>
             <returns></returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.SyncController">
+            <summary>
+            Offline-first delta sync. A reconnecting client calls Changes with its last cursor to pull everything that
+            changed while it was offline (created / updated / removed incident-command rows), reconciles its local store,
+            then replays its outbox. See docs/architecture/offline-first-architecture.md.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SyncController.Changes(System.Int64)">
+            <summary>
+            Returns incident-command rows changed since <paramref name="since"/> (Unix epoch milliseconds; 0 or omitted
+            = full pull), scoped to the caller's department. Soft-deleted / closed / released rows are included so the
+            client can remove them locally. Persist the returned <c>Data.ServerTimestampMs</c> and pass it as the next
+            <paramref name="since"/>.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.TemplatesController">
             <summary>
             Templates in the system. Templates can be call Templates, Autofills (i.e. Call Notes)
@@ -6303,6 +6318,9 @@
             User Defined Field values for this contact
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.PerformCheckInInput.IdempotencyKey">
+            <summary>Optional offline idempotency key (the client's outbox event id); a replayed check-in dedups on it.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.CheckInTimers.UserCallCheckInStatusResult">
             <summary>
             Response wrapper for <see cref="!:GetUserCallCheckInStatuses"/>.
@@ -9612,6 +9630,12 @@
         <member name="M:Resgrid.Web.Services.Models.v4.Statuses.UnitTypeStatusResultData.#ctor">
             <summary>
             Default constructor
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Sync.SyncChangesResult">
+            <summary>
+            Delta sync payload for offline clients: incident-command rows changed since the client's cursor. The client
+            stores <c>Data.ServerTimestampMs</c> and passes it back as the next `since`.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Templates.CallNoteTemplatesResult">

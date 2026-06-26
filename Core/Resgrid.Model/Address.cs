@@ -17,27 +17,27 @@ namespace Resgrid.Model
 		public int AddressId { get; set; }
 
 		[Required]
-		[MaxLength(200)]
+		[StringLength(500, ErrorMessage = "Street address cannot exceed 500 characters.")]
 		[Display(Name = "Street Address")]
 		[ProtoMember(2)]
 		public string Address1 { get; set; }
 
 		[Required]
-		[MaxLength(100)]
+		[StringLength(150, ErrorMessage = "City cannot exceed 150 characters.")]
 		[ProtoMember(3)]
 		public string City { get; set; }
 
 		[Required]
-		[MaxLength(50)]
+		[StringLength(100, ErrorMessage = "State/Province cannot exceed 100 characters.")]
 		[ProtoMember(4)]
 		public string State { get; set; }
 
-		[MaxLength(50)]
+		[StringLength(32, ErrorMessage = "Postal code cannot exceed 32 characters.")]
 		[ProtoMember(5)]
 		public string PostalCode { get; set; }
 
 		[Required]
-		[MaxLength(100)]
+		[StringLength(100, ErrorMessage = "Country cannot exceed 100 characters.")]
 		[ProtoMember(6)]
 		public string Country { get; set; }
 

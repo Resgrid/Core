@@ -1,4 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using Resgrid.Model;
 
 namespace Resgrid.Web.Areas.User.Models.Contacts;
@@ -21,41 +21,43 @@ public class EditContactView
 	public string ExitGpsLatitude { get; set; }
 	public string ExitGpsLongitude { get; set; }
 
-	[MaxLength(100)]
+	// Limits mirror the (widened) Addresses columns so client + server validation give feedback before save;
+	// every cap is <= its DB column width, so a validated value can never truncate. See M0085.
+	[StringLength(500, ErrorMessage = "Street address cannot exceed 500 characters.")]
 	public string PhysicalAddress1 { get; set; }
 
-	[MaxLength(100)]
+	[StringLength(500, ErrorMessage = "Street address line 2 cannot exceed 500 characters.")]
 	public string PhysicalAddress2 { get; set; }
 
-	[MaxLength(100)]
+	[StringLength(150, ErrorMessage = "City cannot exceed 150 characters.")]
 	public string PhysicalCity { get; set; }
 
-	[MaxLength(50)]
+	[StringLength(100, ErrorMessage = "State/Province cannot exceed 100 characters.")]
 	public string PhysicalState { get; set; }
 
-	[MaxLength(50)]
+	[StringLength(32, ErrorMessage = "Postal code cannot exceed 32 characters.")]
 	public string PhysicalPostalCode { get; set; }
 
-	[MaxLength(100)]
+	[StringLength(100, ErrorMessage = "Country cannot exceed 100 characters.")]
 	public string PhysicalCountry { get; set; }
 
 	public bool MailingAddressSameAsPhysical { get; set; }
 
-	[MaxLength(100)]
+	[StringLength(500, ErrorMessage = "Street address cannot exceed 500 characters.")]
 	public string MailingAddress1 { get; set; }
 
-	[MaxLength(100)]
+	[StringLength(500, ErrorMessage = "Street address line 2 cannot exceed 500 characters.")]
 	public string MailingAddress2 { get; set; }
 
-	[MaxLength(100)]
+	[StringLength(150, ErrorMessage = "City cannot exceed 150 characters.")]
 	public string MailingCity { get; set; }
 
-	[MaxLength(50)]
+	[StringLength(100, ErrorMessage = "State/Province cannot exceed 100 characters.")]
 	public string MailingState { get; set; }
 
-	[MaxLength(50)]
+	[StringLength(32, ErrorMessage = "Postal code cannot exceed 32 characters.")]
 	public string MailingPostalCode { get; set; }
 
-	[MaxLength(100)]
+	[StringLength(100, ErrorMessage = "Country cannot exceed 100 characters.")]
 	public string MailingCountry { get; set; }
 }

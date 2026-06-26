@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 namespace Resgrid.Model
 {
 	/// <summary>A tactical objective / benchmark for an incident (e.g. "Primary search complete").</summary>
-	public class TacticalObjective : IEntity
+	public class TacticalObjective : IEntity, IChangeTracked
 	{
 		public string TacticalObjectiveId { get; set; }
 
@@ -31,6 +31,9 @@ namespace Resgrid.Model
 		public DateTime? CompletedOn { get; set; }
 
 		public int SortOrder { get; set; }
+
+		/// <summary>Change cursor for offline delta sync + last-write-wins; stamped on every write.</summary>
+		public DateTime? ModifiedOn { get; set; }
 
 		[NotMapped]
 		public string TableName => "TacticalObjectives";
@@ -57,7 +60,7 @@ namespace Resgrid.Model
 	/// A scene / benchmark / role timer for an incident. Personnel accountability (PAR) is handled by the
 	/// Checkin feature, not by these timers.
 	/// </summary>
-	public class IncidentTimer : IEntity
+	public class IncidentTimer : IEntity, IChangeTracked
 	{
 		public string IncidentTimerId { get; set; }
 
@@ -89,6 +92,9 @@ namespace Resgrid.Model
 
 		public DateTime? AcknowledgedOn { get; set; }
 
+		/// <summary>Change cursor for offline delta sync + last-write-wins; stamped on every write.</summary>
+		public DateTime? ModifiedOn { get; set; }
+
 		[NotMapped]
 		public string TableName => "IncidentTimers";
 
@@ -111,7 +117,7 @@ namespace Resgrid.Model
 	}
 
 	/// <summary>A real-time map annotation (markup) on the tactical map, synced across devices.</summary>
-	public class IncidentMapAnnotation : IEntity
+	public class IncidentMapAnnotation : IEntity, IChangeTracked
 	{
 		public string IncidentMapAnnotationId { get; set; }
 
@@ -137,6 +143,9 @@ namespace Resgrid.Model
 		public DateTime CreatedOn { get; set; }
 
 		public DateTime? DeletedOn { get; set; }
+
+		/// <summary>Change cursor for offline delta sync + last-write-wins; stamped on every write.</summary>
+		public DateTime? ModifiedOn { get; set; }
 
 		[NotMapped]
 		public string TableName => "IncidentMapAnnotations";

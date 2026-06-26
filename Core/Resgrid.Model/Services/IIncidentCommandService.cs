@@ -20,6 +20,13 @@ namespace Resgrid.Model.Services
 		Task<List<PersonnelCallCheckInStatus>> GetAccountabilityForCallAsync(int departmentId, int callId);
 
 		/// <summary>
+		/// Offline-first delta pull: returns every change-tracked incident-command row (and append-only timeline entry)
+		/// for the department whose ModifiedOn/OccurredOn is newer than <paramref name="sinceUtc"/>. Includes
+		/// soft-deleted/closed/released rows so a reconnecting client can reconcile removals. See the offline-first doc.
+		/// </summary>
+		Task<IncidentCommandChanges> GetChangesSinceAsync(int departmentId, System.DateTime sinceUtc);
+
+		/// <summary>
 		/// Sweeps personnel accountability (PAR) for the call and raises <c>CriticalParDetectedEvent</c> once per
 		/// member each time they transition into the Critical (overdue) state. Idempotent via a timeline marker —
 		/// re-alerts only after a member checks in and lapses again. Returns the user ids flagged this pass (empty

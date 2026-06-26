@@ -60,6 +60,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
 		private readonly IUdfRenderingService _udfRenderingService;
 		private readonly IStringLocalizer<Resgrid.Localization.Common> _localizer;
+		private readonly IPhoneNumberProcesserProvider _phoneNumberProcesser;
 
 		public PersonnelController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IEmailService emailService, IUserProfileService userProfileService, IDeleteService deleteService, Model.Services.IAuthorizationService authorizationService,
@@ -67,7 +68,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IEventAggregator eventAggregator, IEmailMarketingProvider emailMarketingProvider, ICertificationService certificationService, ICustomStateService customStateService,
 			IGeoService geoService, UserManager<IdentityUser> userManager, IDepartmentSettingsService departmentSettingsService, ICallsService callsService,
 			IGeoLocationProvider geoLocationProvider, IMappingService mappingService, IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService,
-			IStringLocalizer<Resgrid.Localization.Common> localizer)
+			IStringLocalizer<Resgrid.Localization.Common> localizer, IPhoneNumberProcesserProvider phoneNumberProcesser)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -93,6 +94,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_userDefinedFieldsService = userDefinedFieldsService;
 			_udfRenderingService = udfRenderingService;
 			_localizer = localizer;
+			_phoneNumberProcesser = phoneNumberProcesser;
 		}
 		#endregion Private Members and Constructors
 
@@ -512,6 +514,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				ModelState.AddModelError("Profile.MobileNumber", "You have selected you want SMS/Text notifications but have not supplied a mobile number.");
 			}
+
+			// Server-side phone backstop: validate + normalize to E.164 so the saved number is Twilio-sendable
+			// (mirrors EditUserProfile). AddPerson has no country field, so the validator uses its default region.
+			model.Profile.MobileNumber = PhoneValidationHelper.ValidateAndNormalize(_phoneNumberProcesser, ModelState, "Profile.MobileNumber", "mobile number", model.Profile.MobileNumber, null);
 
 			var deletedUserId = await _departmentsService.GetUserIdForDeletedUserInDepartmentAsync(DepartmentId, model.Email);
 			if (deletedUserId != null)

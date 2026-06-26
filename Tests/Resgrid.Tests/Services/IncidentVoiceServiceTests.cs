@@ -46,7 +46,7 @@ namespace Resgrid.Tests.Services
 					Status = (int)IncidentCommandStatus.Closed, EstablishedOn = DateTime.UtcNow.AddHours(-1)
 				}
 			});
-			logRepo.Setup(x => x.SaveOrUpdateAsync(It.IsAny<CommandLogEntry>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+			logRepo.Setup(x => x.InsertAsync(It.IsAny<CommandLogEntry>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
 				.ReturnsAsync((CommandLogEntry e, CancellationToken ct, bool b) => e);
 
 			var service = new IncidentVoiceService(voiceService.Object, departmentsService.Object, logRepo.Object,
@@ -55,8 +55,8 @@ namespace Resgrid.Tests.Services
 			var result = await service.CloseIncidentChannelsForCallAsync(10, 7, "user1");
 
 			result.Should().BeTrue();
-			// The channel-closed entry is logged against the (now Closed) command, not silently dropped.
-			logRepo.Verify(x => x.SaveOrUpdateAsync(
+			// The channel-closed entry is logged (inserted) against the (now Closed) command, not silently dropped.
+			logRepo.Verify(x => x.InsertAsync(
 				It.Is<CommandLogEntry>(e => e.EntryType == (int)CommandLogEntryType.ChannelClosed && e.IncidentCommandId == "ic1"),
 				It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Once);
 			coreEventService.Verify(x => x.IncidentCommandUpdatedAsync(10, 7), Times.Once);

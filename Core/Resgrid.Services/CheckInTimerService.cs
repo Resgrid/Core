@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -320,8 +321,38 @@ namespace Resgrid.Services
 
 		public async Task<CheckInRecord> PerformCheckInAsync(CheckInRecord record, CancellationToken cancellationToken = default)
 		{
+			// Offline idempotency: when the client supplies its outbox event id, a replayed check-in returns the
+			// original record instead of inserting a duplicate. Dedup is in-memory over the call's (small) check-in
+			// set, so only replayed events — which carry a key — pay the extra read; live UI check-ins skip it.
+			if (!string.IsNullOrWhiteSpace(record.IdempotencyKey))
+			{
+				var existing = await _recordRepository.GetByCallIdAsync(record.CallId);
+				var duplicate = existing?.FirstOrDefault(r => r.IdempotencyKey == record.IdempotencyKey);
+				if (duplicate != null)
+					return duplicate;
+			}
+
 			record.Timestamp = DateTime.UtcNow;
-			var saved = await _recordRepository.SaveOrUpdateAsync(record, cancellationToken);
+
+			CheckInRecord saved;
+			try
+			{
+				saved = await _recordRepository.SaveOrUpdateAsync(record, cancellationToken);
+			}
+			catch (DbException) when (!string.IsNullOrWhiteSpace(record.IdempotencyKey))
+			{
+				// The in-memory pre-check above is check-then-insert and races under concurrent replays; the filtered
+				// unique index (UX_CheckInRecords_Department_IdempotencyKey on SQL Server / ux_..._idempotencykey on
+				// PostgreSQL) is the real guard. On that race, adopt the winner — same idempotent result as the
+				// pre-check — rather than 500ing (which would just trigger another retry). Scope is DbException only
+				// (covers PG 23505 + SQL Server 2601/2627, both derive from it); any non-DB failure, or a DbException
+				// with no matching winner, propagates below instead of being masked as a replay.
+				var existing = await _recordRepository.GetByCallIdAsync(record.CallId);
+				var winner = existing?.FirstOrDefault(r => r.IdempotencyKey == record.IdempotencyKey);
+				if (winner != null)
+					return winner;
+				throw;
+			}
 
 			// Real-time board refresh is best-effort: the check-in is already persisted, so a CQRS/Redis
 			// publish failure must not fail the check-in — that would 500 the caller and a retry would

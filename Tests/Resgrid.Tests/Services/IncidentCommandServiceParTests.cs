@@ -61,8 +61,8 @@ namespace Resgrid.Tests.Services
 			_eventAggregator = new Mock<IEventAggregator>();
 			_coreEventService = new Mock<ICoreEventService>();
 
-			// The marker write echoes back the entry so WriteLogAsync resolves a non-null result.
-			_logRepo.Setup(x => x.SaveOrUpdateAsync(It.IsAny<CommandLogEntry>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+			// Timeline entries are append-only inserts; echo back the entry so WriteLogAsync resolves a non-null result.
+			_logRepo.Setup(x => x.InsertAsync(It.IsAny<CommandLogEntry>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
 				.ReturnsAsync((CommandLogEntry e, CancellationToken ct, bool b) => e);
 
 			_service = new IncidentCommandService(_commandRepo.Object, _nodeRepo.Object, _assignmentRepo.Object,
@@ -126,7 +126,7 @@ namespace Resgrid.Tests.Services
 			result.Should().ContainSingle().Which.Should().Be("user1");
 			_eventAggregator.Verify(x => x.SendMessage(It.Is<CriticalParDetectedEvent>(
 				e => e.UserId == "user1" && e.CallId == CallId && e.DepartmentId == Dept)), Times.Once);
-			_logRepo.Verify(x => x.SaveOrUpdateAsync(
+			_logRepo.Verify(x => x.InsertAsync(
 				It.Is<CommandLogEntry>(e => e.EntryType == (int)CommandLogEntryType.ParCritical && e.UserId == "user1"),
 				It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Once);
 		}
@@ -150,7 +150,7 @@ namespace Resgrid.Tests.Services
 
 			result.Should().BeEmpty();
 			_eventAggregator.Verify(x => x.SendMessage(It.IsAny<CriticalParDetectedEvent>()), Times.Never);
-			_logRepo.Verify(x => x.SaveOrUpdateAsync(It.IsAny<CommandLogEntry>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+			_logRepo.Verify(x => x.InsertAsync(It.IsAny<CommandLogEntry>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
 		}
 
 		[Test]
@@ -254,7 +254,7 @@ namespace Resgrid.Tests.Services
 			{
 				IncidentCommandId = "ic1", DepartmentId = Dept, CallId = CallId, Status = (int)IncidentCommandStatus.Active
 			});
-			_nodeRepo.Setup(x => x.SaveOrUpdateAsync(It.IsAny<CommandStructureNode>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+			_nodeRepo.Setup(x => x.InsertAsync(It.IsAny<CommandStructureNode>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
 				.ReturnsAsync((CommandStructureNode n, CancellationToken ct, bool b) => n);
 
 			var node = new CommandStructureNode { IncidentCommandId = "ic1", DepartmentId = Dept, CallId = 999, Name = "Staging" };
@@ -329,6 +329,175 @@ namespace Resgrid.Tests.Services
 			var result = await _service.MoveResourceAsync(Dept, "ra1", "ghost", "user1");
 
 			result.Should().BeNull();
+		}
+
+		// Offline-first change tracking: every mutation stamps ModifiedOn (the delta "changed since" cursor) and a
+		// lane removal is a soft-delete tombstone (DeletedOn), so removals propagate to offline clients on delta sync.
+
+		[Test]
+		public async Task SaveNodeAsync_StampsModifiedOn_OnSave()
+		{
+			_commandRepo.Setup(x => x.GetByIdAsync("ic1")).ReturnsAsync(new IncidentCommand
+			{
+				IncidentCommandId = "ic1", DepartmentId = Dept, CallId = CallId, Status = (int)IncidentCommandStatus.Active
+			});
+			_nodeRepo.Setup(x => x.InsertAsync(It.IsAny<CommandStructureNode>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((CommandStructureNode n, CancellationToken ct, bool b) => n);
+
+			var node = new CommandStructureNode { IncidentCommandId = "ic1", DepartmentId = Dept, CallId = CallId, Name = "Staging" };
+			var saved = await _service.SaveNodeAsync(node, "user1");
+
+			saved.Should().NotBeNull();
+			saved.ModifiedOn.Should().NotBeNull();
+		}
+
+		// Idempotent creates (offline replay): the client generates the GUID PK offline. A brand-new client id must
+		// INSERT (not be rejected as a missing-row update); a replayed id must UPDATE the same row (no duplicate);
+		// an id owned by another department must be rejected.
+
+		[Test]
+		public async Task SaveNodeAsync_WithClientSuppliedId_NotYetPersisted_InsertsWithThatId()
+		{
+			const string clientId = "client-guid-1";
+			_commandRepo.Setup(x => x.GetByIdAsync("ic1")).ReturnsAsync(new IncidentCommand
+			{
+				IncidentCommandId = "ic1", DepartmentId = Dept, CallId = CallId, Status = (int)IncidentCommandStatus.Active
+			});
+			_nodeRepo.Setup(x => x.GetByIdAsync(clientId)).ReturnsAsync((CommandStructureNode)null); // not persisted yet
+			_nodeRepo.Setup(x => x.InsertAsync(It.IsAny<CommandStructureNode>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((CommandStructureNode n, CancellationToken ct, bool b) => n);
+
+			var node = new CommandStructureNode { CommandStructureNodeId = clientId, IncidentCommandId = "ic1", DepartmentId = Dept, Name = "Staging" };
+			var saved = await _service.SaveNodeAsync(node, "user1");
+
+			saved.Should().NotBeNull();
+			saved.CommandStructureNodeId.Should().Be(clientId); // honored the client GUID, did not generate a new one
+			_nodeRepo.Verify(x => x.InsertAsync(It.IsAny<CommandStructureNode>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Once);
+			_nodeRepo.Verify(x => x.SaveOrUpdateAsync(It.IsAny<CommandStructureNode>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+		}
+
+		[Test]
+		public async Task SaveNodeAsync_WithClientSuppliedId_AlreadyPersisted_Updates_WithoutDuplicateInsert()
+		{
+			const string clientId = "client-guid-1";
+			_commandRepo.Setup(x => x.GetByIdAsync("ic1")).ReturnsAsync(new IncidentCommand
+			{
+				IncidentCommandId = "ic1", DepartmentId = Dept, CallId = CallId, Status = (int)IncidentCommandStatus.Active
+			});
+			// Replay: the row already exists for this department.
+			_nodeRepo.Setup(x => x.GetByIdAsync(clientId)).ReturnsAsync(new CommandStructureNode
+			{
+				CommandStructureNodeId = clientId, IncidentCommandId = "ic1", DepartmentId = Dept, CallId = CallId, Name = "Staging"
+			});
+			_nodeRepo.Setup(x => x.SaveOrUpdateAsync(It.IsAny<CommandStructureNode>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((CommandStructureNode n, CancellationToken ct, bool b) => n);
+
+			var node = new CommandStructureNode { CommandStructureNodeId = clientId, IncidentCommandId = "ic1", DepartmentId = Dept, Name = "Staging (edited)" };
+			var saved = await _service.SaveNodeAsync(node, "user1");
+
+			saved.Should().NotBeNull();
+			_nodeRepo.Verify(x => x.SaveOrUpdateAsync(It.IsAny<CommandStructureNode>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Once);
+			_nodeRepo.Verify(x => x.InsertAsync(It.IsAny<CommandStructureNode>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+		}
+
+		[Test]
+		public async Task SaveNodeAsync_WithClientSuppliedId_OwnedByAnotherDepartment_ReturnsNull()
+		{
+			const string clientId = "client-guid-1";
+			_commandRepo.Setup(x => x.GetByIdAsync("ic1")).ReturnsAsync(new IncidentCommand
+			{
+				IncidentCommandId = "ic1", DepartmentId = Dept, CallId = CallId, Status = (int)IncidentCommandStatus.Active
+			});
+			// A row with that id exists but belongs to another department — reject, never take it over.
+			_nodeRepo.Setup(x => x.GetByIdAsync(clientId)).ReturnsAsync(new CommandStructureNode
+			{
+				CommandStructureNodeId = clientId, DepartmentId = 99, CallId = CallId
+			});
+
+			var node = new CommandStructureNode { CommandStructureNodeId = clientId, IncidentCommandId = "ic1", DepartmentId = Dept, Name = "Staging" };
+			var saved = await _service.SaveNodeAsync(node, "user1");
+
+			saved.Should().BeNull();
+			_nodeRepo.Verify(x => x.InsertAsync(It.IsAny<CommandStructureNode>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+			_nodeRepo.Verify(x => x.SaveOrUpdateAsync(It.IsAny<CommandStructureNode>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+		}
+
+		[Test]
+		public async Task DeleteNodeAsync_SoftDeletes_SetsDeletedOnAndModifiedOn_AndPersistsInsteadOfHardDeleting()
+		{
+			CommandStructureNode persisted = null;
+			_nodeRepo.Setup(x => x.GetByIdAsync("node-1")).ReturnsAsync(new CommandStructureNode
+			{
+				CommandStructureNodeId = "node-1", DepartmentId = Dept, CallId = CallId, IncidentCommandId = "ic1", Name = "Staging"
+			});
+			// A hard delete would never call SaveOrUpdate; capturing it here proves the removal is a soft-delete.
+			_nodeRepo.Setup(x => x.SaveOrUpdateAsync(It.IsAny<CommandStructureNode>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.Callback((CommandStructureNode n, CancellationToken ct, bool b) => persisted = n)
+				.ReturnsAsync((CommandStructureNode n, CancellationToken ct, bool b) => n);
+
+			var result = await _service.DeleteNodeAsync(Dept, "node-1", "user1");
+
+			result.Should().BeTrue();
+			persisted.Should().NotBeNull();
+			persisted.DeletedOn.Should().NotBeNull();
+			persisted.ModifiedOn.Should().NotBeNull();
+		}
+
+		[Test]
+		public async Task GetNodesForCallAsync_ExcludesSoftDeletedNodes()
+		{
+			_nodeRepo.Setup(x => x.GetAllByDepartmentIdAsync(Dept)).ReturnsAsync(new List<CommandStructureNode>
+			{
+				new CommandStructureNode { CommandStructureNodeId = "n1", DepartmentId = Dept, CallId = CallId, Name = "Live", SortOrder = 1 },
+				new CommandStructureNode { CommandStructureNodeId = "n2", DepartmentId = Dept, CallId = CallId, Name = "Removed", SortOrder = 2, DeletedOn = DateTime.UtcNow }
+			});
+
+			var nodes = await _service.GetNodesForCallAsync(Dept, CallId);
+
+			nodes.Should().ContainSingle().Which.CommandStructureNodeId.Should().Be("n1");
+		}
+
+		// Delta pull (offline reconnect): returns only rows changed after the cursor — INCLUDING soft-deleted rows so
+		// the client can remove them locally; rows with no ModifiedOn or an older ModifiedOn are excluded.
+
+		[Test]
+		public async Task GetChangesSinceAsync_ReturnsOnlyRowsChangedAfterCursor_IncludingSoftDeleted()
+		{
+			var since = DateTime.UtcNow.AddMinutes(-10);
+
+			_commandRepo.Setup(x => x.GetAllByDepartmentIdAsync(Dept)).ReturnsAsync(new List<IncidentCommand>
+			{
+				new IncidentCommand { IncidentCommandId = "c-new", DepartmentId = Dept, CallId = CallId, ModifiedOn = DateTime.UtcNow },
+				new IncidentCommand { IncidentCommandId = "c-old", DepartmentId = Dept, CallId = CallId, ModifiedOn = since.AddMinutes(-5) },
+				new IncidentCommand { IncidentCommandId = "c-null", DepartmentId = Dept, CallId = CallId, ModifiedOn = null }
+			});
+			_nodeRepo.Setup(x => x.GetAllByDepartmentIdAsync(Dept)).ReturnsAsync(new List<CommandStructureNode>
+			{
+				// A lane soft-deleted after the cursor must be INCLUDED (with DeletedOn) so the client removes it.
+				new CommandStructureNode { CommandStructureNodeId = "n-del", DepartmentId = Dept, CallId = CallId, DeletedOn = DateTime.UtcNow, ModifiedOn = DateTime.UtcNow }
+			});
+
+			var changes = await _service.GetChangesSinceAsync(Dept, since);
+
+			changes.ServerTimestampMs.Should().BeGreaterThan(0);
+			changes.Commands.Should().ContainSingle().Which.IncidentCommandId.Should().Be("c-new");
+			changes.Nodes.Should().ContainSingle().Which.DeletedOn.Should().NotBeNull();
+		}
+
+		[Test]
+		public async Task GetChangesSinceAsync_FullSync_ReturnsAllRowsIncludingNullModifiedOn()
+		{
+			_commandRepo.Setup(x => x.GetAllByDepartmentIdAsync(Dept)).ReturnsAsync(new List<IncidentCommand>
+			{
+				new IncidentCommand { IncidentCommandId = "c-tracked", DepartmentId = Dept, CallId = CallId, ModifiedOn = DateTime.UtcNow },
+				new IncidentCommand { IncidentCommandId = "c-legacy", DepartmentId = Dept, CallId = CallId, ModifiedOn = null } // never stamped
+			});
+
+			// since=0 maps to DateTime.MinValue in the controller — the full pull must include the legacy null row.
+			var changes = await _service.GetChangesSinceAsync(Dept, DateTime.MinValue);
+
+			changes.Commands.Should().HaveCount(2);
+			changes.Commands.Should().Contain(c => c.IncidentCommandId == "c-legacy");
 		}
 	}
 }

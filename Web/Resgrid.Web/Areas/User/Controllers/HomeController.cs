@@ -70,6 +70,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> _secLocalizer;
 		private readonly IGdprDataExportService _gdprDataExportService;
 		private readonly ISystemAuditsService _systemAuditsService;
+		private readonly IPhoneNumberProcesserProvider _phoneNumberProcesser;
 
 		public HomeController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IUserStateService userStateService, IDepartmentGroupsService departmentGroupsService, Resgrid.Model.Services.IAuthorizationService authorizationService,
@@ -79,7 +80,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IStringLocalizerFactory factory, ISubscriptionsService subscriptionsService, IContactVerificationService contactVerificationService,
 			IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService, IDepartmentSsoService departmentSsoService,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> secLocalizer, IGdprDataExportService gdprDataExportService,
-			ISystemAuditsService systemAuditsService)
+			ISystemAuditsService systemAuditsService, IPhoneNumberProcesserProvider phoneNumberProcesser)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -108,6 +109,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_secLocalizer = secLocalizer;
 			_gdprDataExportService = gdprDataExportService;
 			_systemAuditsService = systemAuditsService;
+			_phoneNumberProcesser = phoneNumberProcesser;
 
 			_localizer = factory.Create("Home.Dashboard", new AssemblyName(typeof(SupportedLocales).GetTypeInfo().Assembly.FullName).Name);
 		}
@@ -563,6 +565,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 				ModelState.AddModelError("Profile.MobileNumber", "You have selected you want SMS/Text notifications but have not supplied a mobile number.");
 			}
 
+			// Validate phone numbers to a sendable E.164 form (Twilio rejects non-E.164 'To' numbers). Use the user's
+			// country as the region hint so a national-format number (e.g. "082446...") can be recognized & normalized.
+			var phoneRegion = PhoneRegionHelper.ToIso(model.PhysicalCountry) ?? PhoneRegionHelper.ToIso(model.MailingCountry);
+			PhoneNumberResult mobileResult = null;
+			PhoneNumberResult homeResult = null;
+
+			if (!String.IsNullOrWhiteSpace(model.Profile.MobileNumber))
+			{
+				mobileResult = _phoneNumberProcesser.Process(model.Profile.MobileNumber, phoneRegion);
+				if (mobileResult == null || !mobileResult.IsValid)
+					ModelState.AddModelError("Profile.MobileNumber", "This mobile number doesn't look valid for sending texts. Enter it in full international format, starting with your country code (for example +27 82 446 1783).");
+			}
+
+			if (!String.IsNullOrWhiteSpace(model.Profile.HomeNumber))
+			{
+				homeResult = _phoneNumberProcesser.Process(model.Profile.HomeNumber, phoneRegion);
+				if (homeResult == null || !homeResult.IsValid)
+					ModelState.AddModelError("Profile.HomeNumber", "This home/phone number doesn't look valid for calls. Enter it in full international format, starting with your country code.");
+			}
+
 			// They specified a street address for physical
 			if (!String.IsNullOrWhiteSpace(model.PhysicalAddress1))
 			{
@@ -685,7 +707,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				savedProfile.MobileCarrier = (int)model.Carrier;
 				savedProfile.FirstName = model.FirstName;
 				savedProfile.LastName = model.LastName;
-				savedProfile.MobileNumber = model.Profile.MobileNumber;
+				savedProfile.MobileNumber = (mobileResult != null && mobileResult.IsValid && !string.IsNullOrWhiteSpace(mobileResult.InternationalNumber))
+					? mobileResult.InternationalNumber
+					: model.Profile.MobileNumber;
 				savedProfile.SendEmail = model.Profile.SendEmail;
 				savedProfile.SendPush = model.Profile.SendPush;
 				savedProfile.SendSms = model.Profile.SendSms;
@@ -696,7 +720,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				savedProfile.SendNotificationPush = model.Profile.SendNotificationPush;
 				savedProfile.SendNotificationSms = model.Profile.SendNotificationSms;
 				savedProfile.DoNotRecieveNewsletters = model.Profile.DoNotRecieveNewsletters;
-				savedProfile.HomeNumber = model.Profile.HomeNumber;
+				savedProfile.HomeNumber = (homeResult != null && homeResult.IsValid && !string.IsNullOrWhiteSpace(homeResult.InternationalNumber))
+					? homeResult.InternationalNumber
+					: model.Profile.HomeNumber;
 				savedProfile.IdentificationNumber = model.Profile.IdentificationNumber;
 				savedProfile.TimeZone = model.Profile.TimeZone;
 				savedProfile.Language = model.Profile.Language;
@@ -1082,6 +1108,38 @@ namespace Resgrid.Web.Areas.User.Controllers
 			bool confirmed = await _contactVerificationService.ConfirmVerificationCodeAsync(UserId, DepartmentId, request.Type, request.Code, ipAddress, cancellationToken);
 
 			return Json(new { success = confirmed });
+		}
+
+		/// <summary>
+		/// AJAX: validates a phone number the user is entering on the profile page and returns its canonical E.164
+		/// form. Read-only (no state change), so it intentionally skips antiforgery. The profile form calls this on
+		/// blur to warn about — and offer a one-click fix for — numbers Twilio would reject.
+		/// </summary>
+		[HttpPost]
+		[Authorize(Policy = ResgridResources.Department_View)]
+		public IActionResult ValidatePhoneNumber([FromBody] ValidatePhoneNumberRequest request)
+		{
+			if (request == null || string.IsNullOrWhiteSpace(request.Number))
+				return Json(new { isValid = false, formatted = (string)null, message = "Please enter a phone number." });
+
+			var iso = PhoneRegionHelper.ToIso(request.Country);
+			var result = _phoneNumberProcesser.Process(request.Number, iso);
+
+			if (result != null && result.IsValid && !string.IsNullOrWhiteSpace(result.InternationalNumber))
+				return Json(new { isValid = true, formatted = result.InternationalNumber, message = (string)null });
+
+			return Json(new
+			{
+				isValid = false,
+				formatted = (result != null && !string.IsNullOrWhiteSpace(result.InternationalNumber)) ? result.InternationalNumber : null,
+				message = "This number doesn't look valid for sending. Enter it in full international format, starting with your country code (for example +27 82 446 1783)."
+			});
+		}
+
+		public sealed class ValidatePhoneNumberRequest
+		{
+			public string Number { get; set; }
+			public string Country { get; set; }
 		}
 		#endregion Contact Verification (AJAX)
 

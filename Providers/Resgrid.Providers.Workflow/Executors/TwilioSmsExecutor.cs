@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Resgrid.Config;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Twilio.Clients;
@@ -55,11 +56,15 @@ namespace Resgrid.Providers.Workflow.Executors
 
 				var twilioClient = new TwilioRestClient(cred.AccountSid, cred.AuthToken);
 
+				// Strip non-allow-listed URLs (carrier deliverability) and cap length (cost + avoid Twilio error 21617).
+				var body = SmsContentHelper.PrepareForSms(context.RenderedContent, SystemBehaviorConfig.SmsMaxLength,
+					(SystemBehaviorConfig.SmsAllowedUrlDomains ?? string.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries));
+
 				string lastSid = null;
 				foreach (var recipient in recipients)
 				{
 					var message = await MessageResource.CreateAsync(
-						body: context.RenderedContent,
+						body: body,
 						from: new Twilio.Types.PhoneNumber(cred.FromNumber),
 						to: new Twilio.Types.PhoneNumber(recipient),
 						client: twilioClient);

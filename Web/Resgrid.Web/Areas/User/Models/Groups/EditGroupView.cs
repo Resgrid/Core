@@ -14,18 +14,19 @@ namespace Resgrid.Web.Areas.User.Models.Groups
 		public List<IdentityUser> Users { get; set; }
 		public SelectList StationGroups { get; set; }
 
+		[StringLength(500, ErrorMessage = "Street address cannot exceed 500 characters.")]
 		public string Address1 { get; set; }
 
-		[MaxLength(100)]
+		[StringLength(150, ErrorMessage = "City cannot exceed 150 characters.")]
 		public string City { get; set; }
 
-		[MaxLength(50)]
+		[StringLength(100, ErrorMessage = "State/Province cannot exceed 100 characters.")]
 		public string State { get; set; }
 
-		[MaxLength(50)]
+		[StringLength(32, ErrorMessage = "Postal code cannot exceed 32 characters.")]
 		public string PostalCode { get; set; }
 
-		[MaxLength(100)]
+		[StringLength(100, ErrorMessage = "Country cannot exceed 100 characters.")]
 		public string Country { get; set; }
 
 		public string InternalDispatchEmail { get; set; }

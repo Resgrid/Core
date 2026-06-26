@@ -271,6 +271,70 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task PerformCheckInAsync_WithIdempotencyKey_ReturnsExistingRecord_WithoutDuplicateInsert()
+		{
+			// A check-in with this key was already recorded for the call (the client's outbox is replaying it).
+			var existing = new CheckInRecord { CheckInRecordId = "existing-1", DepartmentId = 10, CallId = 1, UserId = "user1", IdempotencyKey = "evt-1", Timestamp = DateTime.UtcNow.AddMinutes(-1) };
+			_recordRepo.Setup(x => x.GetByCallIdAsync(1)).ReturnsAsync(new List<CheckInRecord> { existing });
+
+			var replay = new CheckInRecord { DepartmentId = 10, CallId = 1, UserId = "user1", IdempotencyKey = "evt-1" };
+			var result = await _service.PerformCheckInAsync(replay);
+
+			result.Should().BeSameAs(existing);
+			_recordRepo.Verify(x => x.SaveOrUpdateAsync(It.IsAny<CheckInRecord>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+		}
+
+		[Test]
+		public async Task PerformCheckInAsync_WithNewIdempotencyKey_Inserts()
+		{
+			_recordRepo.Setup(x => x.GetByCallIdAsync(1)).ReturnsAsync(new List<CheckInRecord>()); // key not seen yet
+			_recordRepo.Setup(x => x.SaveOrUpdateAsync(It.IsAny<CheckInRecord>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((CheckInRecord r, CancellationToken ct, bool b) => { r.CheckInRecordId = "new-id"; return r; });
+
+			var record = new CheckInRecord { DepartmentId = 10, CallId = 1, UserId = "user1", IdempotencyKey = "evt-2" };
+			var result = await _service.PerformCheckInAsync(record);
+
+			result.CheckInRecordId.Should().Be("new-id");
+			_recordRepo.Verify(x => x.SaveOrUpdateAsync(It.IsAny<CheckInRecord>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Once);
+		}
+
+		[Test]
+		public async Task PerformCheckInAsync_OnConcurrentReplayUniqueViolation_AdoptsTheWinningRecord()
+		{
+			var winner = new CheckInRecord { CheckInRecordId = "winner-1", DepartmentId = 10, CallId = 1, UserId = "user1", IdempotencyKey = "evt-1" };
+			// Race: our pre-check sees nothing, a concurrent replay commits first, so our insert hits the unique
+			// index; the post-violation re-query then finds the winner and we adopt it instead of 500ing.
+			_recordRepo.SetupSequence(x => x.GetByCallIdAsync(1))
+				.ReturnsAsync(new List<CheckInRecord>())
+				.ReturnsAsync(new List<CheckInRecord> { winner });
+			_recordRepo.Setup(x => x.SaveOrUpdateAsync(It.IsAny<CheckInRecord>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ThrowsAsync(new FakeDbException("23505: duplicate key value violates unique constraint"));
+
+			var result = await _service.PerformCheckInAsync(new CheckInRecord { DepartmentId = 10, CallId = 1, UserId = "user1", IdempotencyKey = "evt-1" });
+
+			result.Should().BeSameAs(winner);
+		}
+
+		[Test]
+		public async Task PerformCheckInAsync_NonDatabaseError_Propagates_NotMaskedAsReplay()
+		{
+			// A non-DbException must NOT be swallowed as an idempotent replay even when a key is present.
+			_recordRepo.Setup(x => x.GetByCallIdAsync(1)).ReturnsAsync(new List<CheckInRecord>());
+			_recordRepo.Setup(x => x.SaveOrUpdateAsync(It.IsAny<CheckInRecord>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ThrowsAsync(new InvalidOperationException("boom"));
+
+			Func<Task> act = async () => await _service.PerformCheckInAsync(new CheckInRecord { DepartmentId = 10, CallId = 1, UserId = "user1", IdempotencyKey = "evt-1" });
+
+			await act.Should().ThrowAsync<InvalidOperationException>();
+		}
+
+		// Minimal concrete DbException (the framework type is abstract) to simulate a provider unique-constraint violation.
+		private sealed class FakeDbException : System.Data.Common.DbException
+		{
+			public FakeDbException(string message) : base(message) { }
+		}
+
+		[Test]
 		public async Task GetLastCheckInAsync_ReturnsUserCheckIn_WhenNoUnitId()
 		{
 			var checkIn = new CheckInRecord { CheckInRecordId = "ci1", UserId = "user1", CallId = 1 };

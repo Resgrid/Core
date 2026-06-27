@@ -1,8 +1,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
+using Resgrid.Web.Services.Filters;
 using Resgrid.Web.Services.Helpers;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,6 +33,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpPost("CreateIncidentChannel")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Command_Update)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageChannels)]
 		public async Task<ActionResult<ICModels.IncidentVoiceChannelResult>> CreateIncidentChannel([FromBody] ICModels.CreateIncidentChannelInput input)
 		{
 			if (input == null || input.CallId <= 0)
@@ -72,6 +75,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpPost("CloseIncidentChannels/{callId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Command_Update)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageChannels)]
 		public async Task<ActionResult<ICModels.IncidentCommandActionResult>> CloseIncidentChannels(int callId)
 		{
 			var result = new ICModels.IncidentCommandActionResult();

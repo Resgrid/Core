@@ -26,6 +26,16 @@ namespace Resgrid.Model.Services
 		/// </summary>
 		Task<IncidentCommandChanges> GetChangesSinceAsync(int departmentId, System.DateTime sinceUtc);
 
+		/// <summary>Returns every ACTIVE incident command for the department (Status == Active).</summary>
+		Task<List<IncidentCommand>> GetActiveCommandsForDepartmentAsync(int departmentId);
+
+		/// <summary>
+		/// Offline shift-start aggregate: a render-ready board (incl. computed accountability / PAR) for every active
+		/// incident in the department, plus the next-sync cursor, in one pull — cutting shift-start round-trips vs.
+		/// fanning out per incident. Ad-hoc resources live in a sibling service and are aggregated by the caller.
+		/// </summary>
+		Task<IncidentCommandBundle> GetBundleForDepartmentAsync(int departmentId, bool includeAccountability = true);
+
 		/// <summary>
 		/// Sweeps personnel accountability (PAR) for the call and raises <c>CriticalParDetectedEvent</c> once per
 		/// member each time they transition into the Critical (overdue) state. Idempotent via a timeline marker —

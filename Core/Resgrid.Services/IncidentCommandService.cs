@@ -157,6 +157,15 @@ namespace Resgrid.Services
 			return items?.FirstOrDefault(x => x.CallId == callId && x.Status == (int)IncidentCommandStatus.Active);
 		}
 
+		public async Task<List<IncidentCommand>> GetActiveCommandsForDepartmentAsync(int departmentId)
+		{
+			var items = await _incidentCommandRepository.GetAllByDepartmentIdAsync(departmentId);
+			if (items == null)
+				return new List<IncidentCommand>();
+
+			return items.Where(x => x.Status == (int)IncidentCommandStatus.Active).ToList();
+		}
+
 		public async Task<IncidentCommand> GetCommandByIdAsync(string incidentCommandId)
 		{
 			return await _incidentCommandRepository.GetByIdAsync(incidentCommandId);
@@ -350,6 +359,61 @@ namespace Resgrid.Services
 
 			return board;
 		}
+
+		public async Task<IncidentCommandBundle> GetBundleForDepartmentAsync(int departmentId, bool includeAccountability = true)
+		{
+			// Capture the cursor before reading so the client's first incremental /Sync/Changes call doesn't miss a
+			// row committed during this read (a re-returned row is harmless — the client upserts idempotently).
+			var bundle = new IncidentCommandBundle { ServerTimestampMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() };
+
+			var active = await GetActiveCommandsForDepartmentAsync(departmentId);
+			if (active.Count == 0)
+				return bundle;
+
+			// Pull each board table ONCE for the whole department and index by CallId, instead of re-scanning every
+			// table per incident. The per-call getters each do a full GetAllByDepartmentIdAsync, and GetCommandBoardAsync
+			// additionally fires the write-side PAR sweep — so assembling N boards that way is O(active incidents ×
+			// department size) plus N marker-writes / SignalR pushes. Doing it here keeps the bundle O(number of tables)
+			// and side-effect free, which is what hurts departments with many open/active incidents.
+			var nodes = ToCallLookup(await _commandStructureNodeRepository.GetAllByDepartmentIdAsync(departmentId), x => x.CallId);
+			var assignments = ToCallLookup(await _resourceAssignmentRepository.GetAllByDepartmentIdAsync(departmentId), x => x.CallId);
+			var objectives = ToCallLookup(await _tacticalObjectiveRepository.GetAllByDepartmentIdAsync(departmentId), x => x.CallId);
+			var timers = ToCallLookup(await _incidentTimerRepository.GetAllByDepartmentIdAsync(departmentId), x => x.CallId);
+			var annotations = ToCallLookup(await _incidentMapAnnotationRepository.GetAllByDepartmentIdAsync(departmentId), x => x.CallId);
+			var roles = ToCallLookup(await _incidentRoleAssignmentRepository.GetAllByDepartmentIdAsync(departmentId), x => x.CallId);
+
+			foreach (var command in active)
+			{
+				var callId = command.CallId;
+
+				var board = new IncidentCommandBoard
+				{
+					Command = command,
+					// These mirror the per-call getter filters exactly (DeletedOn / ReleasedOn / RemovedOn tombstones +
+					// the active-timer rule), so the bundled board matches what GetCommandBoardAsync would return.
+					Nodes = nodes[callId].Where(x => x.DeletedOn == null).OrderBy(x => x.SortOrder).ToList(),
+					Assignments = assignments[callId].Where(x => x.ReleasedOn == null).ToList(),
+					Objectives = objectives[callId].OrderBy(x => x.SortOrder).ToList(),
+					Timers = timers[callId].Where(x => x.Status != (int)IncidentTimerStatus.Stopped).ToList(),
+					Annotations = annotations[callId].Where(x => x.DeletedOn == null).ToList(),
+					Roles = roles[callId].Where(x => x.RemovedOn == null).ToList()
+				};
+
+				// Accountability/PAR is the one per-incident read here, and it is READ-ONLY (no marker writes / SignalR
+				// pushes — unlike GetCommandBoardAsync's sweep). A department with very many open incidents can opt out
+				// via includeAccountability=false and fetch PAR per incident on demand.
+				if (includeAccountability)
+					board.Accountability = await GetAccountabilityForCallAsync(departmentId, callId);
+
+				bundle.Boards.Add(board);
+			}
+
+			return bundle;
+		}
+
+		/// <summary>Indexes a department-wide row set by CallId; a missing key yields an empty sequence (no exception).</summary>
+		private static ILookup<int, T> ToCallLookup<T>(IEnumerable<T> items, Func<T, int> callIdSelector)
+			=> (items ?? Enumerable.Empty<T>()).ToLookup(callIdSelector);
 
 		public async Task<IncidentCommandChanges> GetChangesSinceAsync(int departmentId, DateTime sinceUtc)
 		{

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
+using Resgrid.Web.Services.Filters;
 using Resgrid.Web.Services.Helpers;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,6 +36,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpPost("EstablishCommand")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Command_Create)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageCommand)]
 		public async Task<ActionResult<ICModels.IncidentCommandResult>> EstablishCommand([FromBody] ICModels.EstablishCommandInput input)
 		{
 			if (input == null || input.CallId <= 0)
@@ -85,6 +87,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpPost("TransferCommand")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Command_Update)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageCommand)]
 		public async Task<ActionResult<ICModels.CommandTransferResult>> TransferCommand([FromBody] ICModels.TransferCommandInput input)
 		{
 			if (input == null || string.IsNullOrWhiteSpace(input.IncidentCommandId) || string.IsNullOrWhiteSpace(input.ToUserId))
@@ -111,6 +114,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpPut("CloseCommand/{incidentCommandId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Command_Update)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageCommand)]
 		public async Task<ActionResult<ICModels.IncidentCommandResult>> CloseCommand(string incidentCommandId)
 		{
 			var result = new ICModels.IncidentCommandResult();
@@ -134,6 +138,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpPut("UpdateActionPlan")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Command_Update)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageCommand)]
 		public async Task<ActionResult<ICModels.IncidentCommandResult>> UpdateActionPlan([FromBody] ICModels.UpdateActionPlanInput input)
 		{
 			if (input == null || string.IsNullOrWhiteSpace(input.IncidentCommandId))
@@ -178,6 +183,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpPost("EvaluateAccountability/{callId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Command_Update)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageAccountability)]
 		public async Task<ActionResult<ICModels.EvaluateAccountabilityResult>> EvaluateAccountability(int callId)
 		{
 			var result = new ICModels.EvaluateAccountabilityResult();
@@ -196,6 +202,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpPost("SaveNode")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Command_Update)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageStructure)]
 		public async Task<ActionResult<ICModels.CommandNodeResult>> SaveNode([FromBody] CommandStructureNode node)
 		{
 			if (node == null || string.IsNullOrWhiteSpace(node.IncidentCommandId))
@@ -242,6 +249,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpPost("AssignResource")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Command_Update)]
+		[RequiresIncidentCapability(IncidentCapabilities.AssignResources)]
 		public async Task<ActionResult<ICModels.ResourceAssignmentResult>> AssignResource([FromBody] ResourceAssignment assignment)
 		{
 			if (assignment == null || string.IsNullOrWhiteSpace(assignment.IncidentCommandId))
@@ -313,6 +321,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpPost("SaveObjective")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Command_Update)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageObjectives)]
 		public async Task<ActionResult<ICModels.TacticalObjectiveResult>> SaveObjective([FromBody] TacticalObjective objective)
 		{
 			if (objective == null || string.IsNullOrWhiteSpace(objective.IncidentCommandId))
@@ -368,6 +377,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpPost("StartTimer")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Command_Update)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageTimers)]
 		public async Task<ActionResult<ICModels.IncidentTimerResult>> StartTimer([FromBody] IncidentTimer timer)
 		{
 			if (timer == null || string.IsNullOrWhiteSpace(timer.IncidentCommandId))
@@ -423,6 +433,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpPost("SaveAnnotation")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Command_Update)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageAnnotations)]
 		public async Task<ActionResult<ICModels.IncidentMapAnnotationResult>> SaveAnnotation([FromBody] IncidentMapAnnotation annotation)
 		{
 			if (annotation == null || string.IsNullOrWhiteSpace(annotation.IncidentCommandId))

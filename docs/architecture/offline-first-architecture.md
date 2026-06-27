@@ -2,7 +2,7 @@
 
 **Status:** Design / proposal
 **Author:** Resgrid IC backend work (RIC-T39 follow-on)
-**Last updated:** 2026-06-24
+**Last updated:** 2026-06-27
 **Applies to:** Resgrid **IC** app (new, `../IC`), Resgrid **Unit** app (existing, `../Unit`), Resgrid **Core** backend (this repo)
 
 > This document is the single source of truth for how the Resgrid mobile apps work
@@ -216,8 +216,39 @@ mark the local record `_syncError` and surface it (do **not** silently roll back
 3. Record `lastSyncAt` / per-store high-water timestamps; show progress + a "Synced ✓ (time)" state.
 4. Pre-warm SignalR so live updates keep the cache hot while still online.
 
-Optional backend optimization: a single `/Sync/Bundle` aggregate endpoint (§9) to cut round-trips.
-v1 can fan out existing `GetAll*` calls.
+### 6.1 Authoritative shift-start manifest (what the app MUST pull to be field-ready)
+
+The app is "field-ready" — able to **start and run** an incident fully offline — once it has pulled ALL of
+the following. Each row names its delivery endpoint. Three Sync endpoints now exist
+(`Web/Resgrid.Web.Services/Controllers/v4/SyncController.cs`); everything else rides existing v4 `GetAll*`
+endpoints. This list is the single source of truth — if a dataset isn't here with a delivery mechanism, the
+app is not field-complete.
+
+**A. Reference data (slowly-changing) — `GET /api/v4/Sync/Reference`** (one call → `SyncReferenceData`):
+call types, call priorities, command-definition **templates** (needed to establish/seed command), units +
+unit types, **personnel roster** (SAFE projection — name / mobile / primary group / current state, NO
+credentials), groups, POIs + POI types, dispatch protocols, check-in timer configs, personnel + unit custom
+statuses, resolved feature flags. Pull once per shift / on manual refresh; cache aggressively.
+
+**B. Live incident state — `GET /api/v4/Sync/Bundle`** (one call → `IncidentCommandBundle`): a render-ready
+board per ACTIVE incident (lanes, resources, objectives, timers, roles, annotations) **including computed
+accountability / PAR**, plus active ad-hoc resources, plus a `ServerTimestampMs` cursor.
+`?includeAccountability=false` skips the per-incident PAR computation for departments with very many open
+incidents.
+
+**C. Incremental catch-up — `GET /api/v4/Sync/Changes?since={cursor}`** (→ `IncidentCommandChanges`): the
+row-based delta of incident-command rows (incl. tombstones / closed / released) changed since the cursor, for
+reconnect reconciliation. `since=0` is a full row pull.
+
+**D. Delivered by other means (existing v4 endpoints — documented, intentionally not re-bundled):** the Call
+list + metadata (Calls API — incidents are CAD-dispatched), mutual-aid assignable resources
+(`MutualAidController`, per-call), indoor maps / custom GIS layers (Mapping API), detailed per-user
+roles/certs (Personnel API), and Mapbox offline tile packs (§10, client-side download). The app pulls these
+alongside A–C at shift start.
+
+> Delivery split rationale: **A** is static/cacheable, **B** is live and bounded by active-incident count,
+> **C** is the reconnect delta. Keeping them separate keeps each call cacheable/paginatable and avoids one
+> mega-endpoint that couples every subsystem and is impossible to keep performant.
 
 ---
 
@@ -277,11 +308,20 @@ see the IC backend state doc). All are additive and apply to **both** SQL Server
 3. **Action idempotency keys.** Check-in / status / location endpoints accept an `IdempotencyKey`
    (the outbox event id) and dedup on `(DepartmentId, UserId, IdempotencyKey)` within a window — or
    rely on LWW-by-timestamp where natural.
-4. **Delta endpoint(s).** `GET /api/v4/Sync/Changes?since={utcIso}&types=Calls,IncidentCommand,…`
-   returning, per type, `created/updated` rows and `deleted` ids (from tombstones) with a new
-   server high-water `syncToken`. v1 may implement per-domain `GetChangedSince` and full-refetch the
-   small reference sets; build true deltas first for the large sets (messages, call/audit history).
-5. **(Optional) `GET /api/v4/Sync/Bundle`** — one aggregate shift-start pull to reduce round-trips.
+4. **Delta endpoint — DONE.** `GET /api/v4/Sync/Changes?since={epochMs}` (`SyncController.Changes`) returns
+   every change-tracked incident-command row (incl. tombstones / closed / released) changed since the cursor,
+   scoped to the caller's department, with a `ServerTimestampMs` high-water cursor; `since=0` = full row pull.
+   (Covers the IC command working set; broader-domain deltas remain future work.)
+5. **Shift-start aggregates — DONE.**
+   - `GET /api/v4/Sync/Bundle` (`SyncController.Bundle` → `IIncidentCommandService.GetBundleForDepartmentAsync`):
+     a render-ready board per ACTIVE incident incl. computed accountability/PAR + active ad-hoc + cursor.
+     **Performance:** assembled with ONE scan per board table (grouped by CallId in memory) — O(tables), not
+     O(active incidents × department size) — and READ-ONLY (no PAR write-sweep / SignalR storm). The
+     per-incident PAR read is skippable with `?includeAccountability=false` for very busy departments.
+   - `GET /api/v4/Sync/Reference` (`SyncController.Reference` → `ISyncService.GetReferenceDataAsync`): the
+     reference manifest (§6.1.A). Personnel is a SAFE projection (`ReferencePersonnel`) — never raw
+     `IdentityUser` / `UserProfile` (which carry password hashes + contact-verification codes + CalendarSyncToken);
+     groups are projected to `ReferenceGroup` to drop the member `IdentityUser` navs.
 
 > CQRS/SignalR already publishes live updates including `IncidentCommandUpdated = 22`
 > (`ICoreEventService.IncidentCommandUpdatedAsync`). The delta endpoints are the *catch-up* path for

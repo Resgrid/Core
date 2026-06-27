@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -112,6 +113,96 @@ namespace Resgrid.Tests.Services
 			MinutesRemaining = -3,
 			LastCheckIn = lastCheckIn
 		};
+
+		[Test]
+		public async Task GetActiveCommandsForDepartmentAsync_ReturnsOnlyActiveCommands()
+		{
+			_commandRepo.Setup(x => x.GetAllByDepartmentIdAsync(Dept)).ReturnsAsync(new List<IncidentCommand>
+			{
+				new IncidentCommand { IncidentCommandId = "ic1", DepartmentId = Dept, CallId = 1, Status = (int)IncidentCommandStatus.Active },
+				new IncidentCommand { IncidentCommandId = "ic2", DepartmentId = Dept, CallId = 2, Status = (int)IncidentCommandStatus.Closed },
+				new IncidentCommand { IncidentCommandId = "ic3", DepartmentId = Dept, CallId = 3, Status = (int)IncidentCommandStatus.Active }
+			});
+
+			var active = await _service.GetActiveCommandsForDepartmentAsync(Dept);
+
+			active.Should().HaveCount(2);
+			active.Select(c => c.IncidentCommandId).Should().BeEquivalentTo(new[] { "ic1", "ic3" });
+		}
+
+		[Test]
+		public async Task GetBundleForDepartmentAsync_IncludesABoardPerActiveCommand_AndSetsCursor()
+		{
+			ArrangeCall();          // call on CallId=1, check-in timers enabled, owned by Dept
+			ArrangeActiveCommand(); // one active command on CallId=1
+
+			var bundle = await _service.GetBundleForDepartmentAsync(Dept);
+
+			bundle.ServerTimestampMs.Should().BeGreaterThan(0);
+			bundle.Boards.Should().ContainSingle();
+			bundle.Boards[0].Command.CallId.Should().Be(CallId);
+		}
+
+		[Test]
+		public async Task GetBundleForDepartmentAsync_ReturnsEmptyBoards_WhenNoActiveCommands()
+		{
+			_commandRepo.Setup(x => x.GetAllByDepartmentIdAsync(Dept)).ReturnsAsync(new List<IncidentCommand>
+			{
+				new IncidentCommand { IncidentCommandId = "ic9", DepartmentId = Dept, CallId = 9, Status = (int)IncidentCommandStatus.Closed }
+			});
+
+			var bundle = await _service.GetBundleForDepartmentAsync(Dept);
+
+			bundle.Boards.Should().BeEmpty();
+			bundle.ServerTimestampMs.Should().BeGreaterThan(0);
+		}
+
+		[Test]
+		public async Task GetBundleForDepartmentAsync_AssemblesBoardContent_AndAppliesTombstoneFilters()
+		{
+			ArrangeCall();
+			ArrangeActiveCommand(); // one active command on CallId=1
+
+			_nodeRepo.Setup(x => x.GetAllByDepartmentIdAsync(Dept)).ReturnsAsync(new List<CommandStructureNode>
+			{
+				new CommandStructureNode { CommandStructureNodeId = "n1", DepartmentId = Dept, CallId = CallId, Name = "Division A", SortOrder = 0 },
+				new CommandStructureNode { CommandStructureNodeId = "n2", DepartmentId = Dept, CallId = CallId, Name = "Removed lane", DeletedOn = DateTime.UtcNow },
+				new CommandStructureNode { CommandStructureNodeId = "n3", DepartmentId = Dept, CallId = 999, Name = "Other call lane" }
+			});
+			_assignmentRepo.Setup(x => x.GetAllByDepartmentIdAsync(Dept)).ReturnsAsync(new List<ResourceAssignment>
+			{
+				new ResourceAssignment { ResourceAssignmentId = "a1", DepartmentId = Dept, CallId = CallId },
+				new ResourceAssignment { ResourceAssignmentId = "a2", DepartmentId = Dept, CallId = CallId, ReleasedOn = DateTime.UtcNow }
+			});
+
+			var bundle = await _service.GetBundleForDepartmentAsync(Dept);
+
+			bundle.Boards.Should().ContainSingle();
+			var board = bundle.Boards[0];
+			board.Nodes.Should().ContainSingle().Which.Name.Should().Be("Division A");        // deleted + other-call excluded
+			board.Assignments.Should().ContainSingle().Which.ResourceAssignmentId.Should().Be("a1"); // released excluded
+		}
+
+		[Test]
+		public async Task GetBundleForDepartmentAsync_IsReadOnly_AndHonorsIncludeAccountabilityFlag()
+		{
+			ArrangeCall();
+			ArrangeActiveCommand();
+			ArrangeStatuses(Critical("user1")); // would be flagged PAR-critical if the write-side sweep ran
+
+			var without = await _service.GetBundleForDepartmentAsync(Dept, includeAccountability: false);
+			without.Boards.Should().ContainSingle();
+			without.Boards[0].Accountability.Should().BeEmpty();
+
+			var with = await _service.GetBundleForDepartmentAsync(Dept, includeAccountability: true);
+			with.Boards[0].Accountability.Should().ContainSingle().Which.UserId.Should().Be("user1");
+
+			// The bundle must NOT run the write-side PAR sweep (no ParCritical marker writes / SignalR storm).
+			_logRepo.Verify(x => x.InsertAsync(
+				It.Is<CommandLogEntry>(e => e.EntryType == (int)CommandLogEntryType.ParCritical),
+				It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+			_eventAggregator.Verify(x => x.SendMessage(It.IsAny<CriticalParDetectedEvent>()), Times.Never);
+		}
 
 		[Test]
 		public async Task EvaluateCriticalParAsync_RaisesEventAndWritesMarker_OnFirstTransitionToCritical()

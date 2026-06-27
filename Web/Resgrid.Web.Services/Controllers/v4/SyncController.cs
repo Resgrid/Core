@@ -24,11 +24,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 		#region Members and Constructors
 		private readonly IIncidentCommandService _incidentCommandService;
 		private readonly IIncidentResourcesService _incidentResourcesService;
+		private readonly ISyncService _syncService;
 
-		public SyncController(IIncidentCommandService incidentCommandService, IIncidentResourcesService incidentResourcesService)
+		public SyncController(IIncidentCommandService incidentCommandService, IIncidentResourcesService incidentResourcesService, ISyncService syncService)
 		{
 			_incidentCommandService = incidentCommandService;
 			_incidentResourcesService = incidentResourcesService;
+			_syncService = syncService;
 		}
 		#endregion Members and Constructors
 
@@ -58,6 +60,54 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.PageSize = changes.Commands.Count + changes.Nodes.Count + changes.Assignments.Count
 				+ changes.Objectives.Count + changes.Timers.Count + changes.Annotations.Count
 				+ changes.Roles.Count + changes.AdHocUnits.Count + changes.AdHocPersonnel.Count + changes.TimelineEntries.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>
+		/// Shift-start aggregate pull: a render-ready board (incl. computed accountability / PAR) for every ACTIVE
+		/// incident in the caller's department, plus the active ad-hoc resources and a next-sync cursor — in a single
+		/// round-trip. Persist <c>Data.ServerTimestampMs</c> and pass it as the next <see cref="Changes"/> `since`.
+		/// Unlike <see cref="Changes"/> (a row-based delta), this returns the computed PAR/accountability state.
+		/// </summary>
+		[HttpGet("Bundle")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		public async Task<ActionResult<SyncBundleResult>> Bundle(bool includeAccountability = true)
+		{
+			var bundle = await _incidentCommandService.GetBundleForDepartmentAsync(DepartmentId, includeAccountability);
+
+			// Ad-hoc resources live in IncidentResourcesService; aggregate the active ones per incident into the bundle.
+			foreach (var board in bundle.Boards)
+			{
+				var callId = board.Command.CallId;
+				bundle.AdHocUnits.AddRange(await _incidentResourcesService.GetAdHocUnitsForCallAsync(DepartmentId, callId));
+				bundle.AdHocPersonnel.AddRange(await _incidentResourcesService.GetAdHocPersonnelForCallAsync(DepartmentId, callId));
+			}
+
+			var result = new SyncBundleResult { Data = bundle };
+			result.PageSize = bundle.Boards.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>
+		/// Shift-start REFERENCE pull: the slowly-changing department configuration + a safe personnel roster needed to
+		/// start and run an incident offline (call types, command templates, units, personnel, groups, POIs, protocols,
+		/// accountability config, statuses, feature flags). Pull once per shift / on manual refresh; the live incident
+		/// state comes from <see cref="Bundle"/> and <see cref="Changes"/>.
+		/// </summary>
+		[HttpGet("Reference")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		public async Task<ActionResult<SyncReferenceResult>> Reference()
+		{
+			var data = await _syncService.GetReferenceDataAsync(DepartmentId);
+
+			var result = new SyncReferenceResult { Data = data };
+			result.PageSize = data.Units.Count + data.Personnel.Count;
 			result.Status = ResponseHelper.Success;
 			ResponseHelper.PopulateV4ResponseData(result);
 			return result;

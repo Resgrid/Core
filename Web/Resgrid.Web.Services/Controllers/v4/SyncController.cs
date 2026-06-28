@@ -25,12 +25,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IIncidentCommandService _incidentCommandService;
 		private readonly IIncidentResourcesService _incidentResourcesService;
 		private readonly ISyncService _syncService;
+		private readonly Model.Services.IAuthorizationService _authorizationService;
 
-		public SyncController(IIncidentCommandService incidentCommandService, IIncidentResourcesService incidentResourcesService, ISyncService syncService)
+		public SyncController(IIncidentCommandService incidentCommandService, IIncidentResourcesService incidentResourcesService, ISyncService syncService, Model.Services.IAuthorizationService authorizationService)
 		{
 			_incidentCommandService = incidentCommandService;
 			_incidentResourcesService = incidentResourcesService;
 			_syncService = syncService;
+			_authorizationService = authorizationService;
 		}
 		#endregion Members and Constructors
 
@@ -104,8 +106,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var data = await _syncService.GetReferenceDataAsync(DepartmentId, bypassCache);
 
+			// PII gate: the reference snapshot is cached department-scoped and caller-agnostic, so mobile numbers are
+			// redacted here per-caller (NOT inside the cached build, which would let the first caller's permission
+			// decide what every later caller sees). Matches the CanUserViewPIIAsync check the Personnel/Dispatch
+			// endpoints apply to the same roster — Command_View alone must not expose personnel PII.
+			if (!await _authorizationService.CanUserViewPIIAsync(UserId, DepartmentId))
+			{
+				foreach (var person in data.Personnel)
+					person.MobilePhone = null;
+			}
+
 			var result = new SyncReferenceResult { Data = data };
-			result.PageSize = data.Units.Count + data.Personnel.Count;
+			result.PageSize = data.CallTypes.Count + data.CallPriorities.Count + data.CommandTemplates.Count
+				+ data.Units.Count + data.UnitTypes.Count + data.Groups.Count + data.Pois.Count + data.PoiTypes.Count
+				+ data.Protocols.Count + data.CheckInTimerConfigs.Count + data.PersonnelStates.Count + data.UnitStates.Count
+				+ data.Personnel.Count + data.Features.Count;
 			result.Status = ResponseHelper.Success;
 			ResponseHelper.PopulateV4ResponseData(result);
 			return result;

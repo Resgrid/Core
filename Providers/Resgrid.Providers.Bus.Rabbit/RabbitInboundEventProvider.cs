@@ -77,51 +77,58 @@ namespace Resgrid.Providers.Bus.Rabbit
 				var body = ea.Body.ToArray();
 				var message = Encoding.UTF8.GetString(body);
 
-				var eventingMessage = JsonConvert.DeserializeObject<EventingMessage>(message);
-
-				if (eventingMessage != null)
+				try
 				{
-					switch ((EventingTypes)eventingMessage.Type)
+					var eventingMessage = JsonConvert.DeserializeObject<EventingMessage>(message);
+
+					if (eventingMessage != null)
 					{
-						case EventingTypes.PersonnelStatusUpdated:
-							if (ProcessPersonnelStatusChanged != null)
-								await ProcessPersonnelStatusChanged(eventingMessage.DepartmentId, eventingMessage.ItemId);
-							break;
-						case EventingTypes.UnitStatusUpdated:
-							if (ProcessUnitStatusChanged != null)
-								await ProcessUnitStatusChanged.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
-							break;
-						case EventingTypes.CallsUpdated:
-							if (ProcessCallStatusChanged != null)
-								await ProcessCallStatusChanged.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
-							break;
-						case EventingTypes.CallAdded:
-							if (ProcessCallAdded != null)
-								await ProcessCallAdded.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
-							break;
-						case EventingTypes.CallClosed:
-							if (ProcessCallClosed != null)
-								await ProcessCallClosed.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
-							break;
-						case EventingTypes.PersonnelStaffingUpdated:
-							if (ProcessPersonnelStaffingChanged != null)
-								await ProcessPersonnelStaffingChanged.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
-							break;
-						case EventingTypes.PersonnelLocationUpdated:
-							if (PersonnelLocationUpdated != null)
-								await PersonnelLocationUpdated.Invoke(eventingMessage.DepartmentId, JsonConvert.DeserializeObject<PersonnelLocationUpdatedEvent>(eventingMessage.Payload));
-							break;
-						case EventingTypes.UnitLocationUpdated:
-							if (UnitLocationUpdated != null)
-								await UnitLocationUpdated.Invoke(eventingMessage.DepartmentId, JsonConvert.DeserializeObject<UnitLocationUpdatedEvent>(eventingMessage.Payload));
-							break;
-						case EventingTypes.IncidentCommandUpdated:
-							if (ProcessIncidentCommandUpdated != null)
-								await ProcessIncidentCommandUpdated.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
-							break;
-						default:
-							throw new ArgumentOutOfRangeException();
+						switch ((EventingTypes)eventingMessage.Type)
+						{
+							case EventingTypes.PersonnelStatusUpdated:
+								if (ProcessPersonnelStatusChanged != null)
+									await ProcessPersonnelStatusChanged(eventingMessage.DepartmentId, eventingMessage.ItemId);
+								break;
+							case EventingTypes.UnitStatusUpdated:
+								if (ProcessUnitStatusChanged != null)
+									await ProcessUnitStatusChanged.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
+								break;
+							case EventingTypes.CallsUpdated:
+								if (ProcessCallStatusChanged != null)
+									await ProcessCallStatusChanged.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
+								break;
+							case EventingTypes.CallAdded:
+								if (ProcessCallAdded != null)
+									await ProcessCallAdded.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
+								break;
+							case EventingTypes.CallClosed:
+								if (ProcessCallClosed != null)
+									await ProcessCallClosed.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
+								break;
+							case EventingTypes.PersonnelStaffingUpdated:
+								if (ProcessPersonnelStaffingChanged != null)
+									await ProcessPersonnelStaffingChanged.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
+								break;
+							case EventingTypes.PersonnelLocationUpdated:
+								if (PersonnelLocationUpdated != null)
+									await PersonnelLocationUpdated.Invoke(eventingMessage.DepartmentId, JsonConvert.DeserializeObject<PersonnelLocationUpdatedEvent>(eventingMessage.Payload));
+								break;
+							case EventingTypes.UnitLocationUpdated:
+								if (UnitLocationUpdated != null)
+									await UnitLocationUpdated.Invoke(eventingMessage.DepartmentId, JsonConvert.DeserializeObject<UnitLocationUpdatedEvent>(eventingMessage.Payload));
+								break;
+							case EventingTypes.IncidentCommandUpdated:
+								if (ProcessIncidentCommandUpdated != null)
+									await ProcessIncidentCommandUpdated.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
+								break;
+							default:
+								throw new ArgumentOutOfRangeException();
+						}
 					}
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
 				}
 			};
 			await _channel.BasicConsumeAsync(queue: queue.QueueName,

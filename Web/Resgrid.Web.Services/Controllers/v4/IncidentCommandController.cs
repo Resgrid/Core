@@ -33,10 +33,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 		#region Command lifecycle
 
 		/// <summary>Establishes command on a call, optionally seeding lanes from a command definition.</summary>
+		// Bootstrap: intentionally NOT [RequiresIncidentCapability]. EstablishCommand CREATES the command, so at call
+		// time no command/commander/role (hence no IncidentCapabilities) exists yet — GetCapabilitiesForUserAsync would
+		// return None and 403 every establish. Department-level [Authorize(Command_Create)] is the correct gate here;
+		// the incident-scoped capability checks apply to the lifecycle endpoints that operate on an existing command.
 		[HttpPost("EstablishCommand")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Command_Create)]
-		[RequiresIncidentCapability(IncidentCapabilities.ManageCommand)]
 		public async Task<ActionResult<ICModels.IncidentCommandResult>> EstablishCommand([FromBody] ICModels.EstablishCommandInput input)
 		{
 			if (input == null || input.CallId <= 0)

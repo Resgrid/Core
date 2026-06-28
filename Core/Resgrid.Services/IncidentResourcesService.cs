@@ -217,6 +217,21 @@ namespace Resgrid.Services
 				personnel?.Where(Changed).ToList() ?? new List<IncidentAdHocPersonnel>());
 		}
 
+		public async Task<(List<IncidentAdHocUnit> Units, List<IncidentAdHocPersonnel> Personnel)> GetActiveAdHocResourcesForDepartmentAsync(int departmentId)
+		{
+			// Scope to the department's active incidents and exclude released rows, in ONE scan per ad-hoc table —
+			// replaces the bundle's previous per-board (N+1) GetAdHoc*ForCallAsync lookups.
+			var activeCallIds = (await _incidentCommandService.GetActiveCommandsForDepartmentAsync(departmentId))
+				.Select(c => c.CallId).ToHashSet();
+
+			var units = await _adHocUnitRepository.GetAllByDepartmentIdAsync(departmentId);
+			var personnel = await _adHocPersonnelRepository.GetAllByDepartmentIdAsync(departmentId);
+
+			return (
+				units?.Where(u => u.ReleasedOn == null && activeCallIds.Contains(u.CallId)).ToList() ?? new List<IncidentAdHocUnit>(),
+				personnel?.Where(p => p.ReleasedOn == null && activeCallIds.Contains(p.CallId)).ToList() ?? new List<IncidentAdHocPersonnel>());
+		}
+
 		#endregion Offline sync
 
 		#region Private helpers

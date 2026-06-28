@@ -78,13 +78,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var bundle = await _incidentCommandService.GetBundleForDepartmentAsync(DepartmentId, includeAccountability);
 
-			// Ad-hoc resources live in IncidentResourcesService; aggregate the active ones per incident into the bundle.
-			foreach (var board in bundle.Boards)
-			{
-				var callId = board.Command.CallId;
-				bundle.AdHocUnits.AddRange(await _incidentResourcesService.GetAdHocUnitsForCallAsync(DepartmentId, callId));
-				bundle.AdHocPersonnel.AddRange(await _incidentResourcesService.GetAdHocPersonnelForCallAsync(DepartmentId, callId));
-			}
+			// Ad-hoc resources live in IncidentResourcesService; pull them for ALL active incidents in one batched call
+			// (the previous per-board loop was an N+1 — each call scanned the department's ad-hoc tables).
+			var adHoc = await _incidentResourcesService.GetActiveAdHocResourcesForDepartmentAsync(DepartmentId);
+			bundle.AdHocUnits = adHoc.Units;
+			bundle.AdHocPersonnel = adHoc.Personnel;
 
 			var result = new SyncBundleResult { Data = bundle };
 			result.PageSize = bundle.Boards.Count;
@@ -102,9 +100,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("Reference")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Command_View)]
-		public async Task<ActionResult<SyncReferenceResult>> Reference()
+		public async Task<ActionResult<SyncReferenceResult>> Reference(bool bypassCache = false)
 		{
-			var data = await _syncService.GetReferenceDataAsync(DepartmentId);
+			var data = await _syncService.GetReferenceDataAsync(DepartmentId, bypassCache);
 
 			var result = new SyncReferenceResult { Data = data };
 			result.PageSize = data.Units.Count + data.Personnel.Count;

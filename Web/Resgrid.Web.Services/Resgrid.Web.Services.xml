@@ -1945,7 +1945,7 @@
             Unlike <see cref="M:Resgrid.Web.Services.Controllers.v4.SyncController.Changes(System.Int64)"/> (a row-based delta), this returns the computed PAR/accountability state.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.SyncController.Reference">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SyncController.Reference(System.Boolean)">
             <summary>
             Shift-start REFERENCE pull: the slowly-changing department configuration + a safe personnel roster needed to
             start and run an incident offline (call types, command templates, units, personnel, groups, POIs, protocols,

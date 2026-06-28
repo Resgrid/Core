@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Resgrid.Model;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -26,6 +28,10 @@ namespace Resgrid.Services
 		private readonly IUserProfileService _userProfileService;
 		private readonly IUserStateService _userStateService;
 		private readonly IFeatureToggleService _featureToggleService;
+		private readonly ICacheProvider _cacheProvider;
+
+		private static readonly string CacheKey = "SyncReferenceData_{0}";
+		private static readonly TimeSpan CacheLength = TimeSpan.FromMinutes(5);
 
 		public SyncService(
 			ICallsService callsService,
@@ -38,7 +44,8 @@ namespace Resgrid.Services
 			ICustomStateService customStateService,
 			IUserProfileService userProfileService,
 			IUserStateService userStateService,
-			IFeatureToggleService featureToggleService)
+			IFeatureToggleService featureToggleService,
+			ICacheProvider cacheProvider)
 		{
 			_callsService = callsService;
 			_commandsService = commandsService;
@@ -51,40 +58,59 @@ namespace Resgrid.Services
 			_userProfileService = userProfileService;
 			_userStateService = userStateService;
 			_featureToggleService = featureToggleService;
+			_cacheProvider = cacheProvider;
 		}
 
-		public async Task<SyncReferenceData> GetReferenceDataAsync(int departmentId)
+		public async Task<SyncReferenceData> GetReferenceDataAsync(int departmentId, bool bypassCache = false)
 		{
-			var data = new SyncReferenceData { ServerTimestampMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() };
-
-			// Configuration / reference entities returned as-is (audited: no secret scalar fields, no IdentityUser navs).
-			data.CallTypes = await _callsService.GetCallTypesForDepartmentAsync(departmentId) ?? new List<CallType>();
-			data.CallPriorities = await _callsService.GetCallPrioritiesForDepartmentAsync(departmentId) ?? new List<DepartmentCallPriority>();
-			data.CommandTemplates = await _commandsService.GetAllCommandsForDepartmentAsync(departmentId) ?? new List<CommandDefinition>();
-			data.Units = await _unitsService.GetUnitsForDepartmentAsync(departmentId) ?? new List<Unit>();
-			data.UnitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(departmentId) ?? new List<UnitType>();
-			data.Pois = await _mappingService.GetPOIsForDepartmentAsync(departmentId) ?? new List<Poi>();
-			data.PoiTypes = await _mappingService.GetPOITypesForDepartmentAsync(departmentId) ?? new List<PoiType>();
-			data.Protocols = await _protocolsService.GetAllProtocolsForDepartmentAsync(departmentId) ?? new List<DispatchProtocol>();
-			data.CheckInTimerConfigs = await _checkInTimerService.GetTimerConfigsForDepartmentAsync(departmentId) ?? new List<CheckInTimerConfig>();
-			data.PersonnelStates = await _customStateService.GetAllActiveCustomStatesForDepartmentAsync(departmentId) ?? new List<CustomState>();
-			data.UnitStates = await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(departmentId) ?? new List<CustomState>();
-			data.Features = await _featureToggleService.EvaluateAllForDepartmentAsync(departmentId) ?? new List<FeatureFlagEvaluation>();
-
-			// Groups: project to a safe shape. The raw DepartmentGroup.Members carry IdentityUser navs we must not leak,
-			// and mutating the (possibly cached) entities to strip them would be unsafe.
-			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(departmentId) ?? new List<DepartmentGroup>();
-			data.Groups = groups.Select(g => new ReferenceGroup
+			async Task<SyncReferenceData> build()
 			{
-				GroupId = g.DepartmentGroupId,
-				Name = g.Name,
-				Type = g.Type,
-				ParentGroupId = g.ParentDepartmentGroupId
-			}).ToList();
+				var data = new SyncReferenceData { ServerTimestampMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds() };
 
-			data.Personnel = await BuildPersonnelAsync(departmentId, groups);
+				// Configuration / reference entities returned as-is (audited: no secret scalar fields, no IdentityUser navs).
+				data.CallTypes = await _callsService.GetCallTypesForDepartmentAsync(departmentId) ?? new List<CallType>();
+				data.CallPriorities = await _callsService.GetCallPrioritiesForDepartmentAsync(departmentId) ?? new List<DepartmentCallPriority>();
+				data.CommandTemplates = await _commandsService.GetAllCommandsForDepartmentAsync(departmentId) ?? new List<CommandDefinition>();
+				data.Units = await _unitsService.GetUnitsForDepartmentAsync(departmentId) ?? new List<Unit>();
+				data.UnitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(departmentId) ?? new List<UnitType>();
+				data.Pois = await _mappingService.GetPOIsForDepartmentAsync(departmentId) ?? new List<Poi>();
+				data.PoiTypes = await _mappingService.GetPOITypesForDepartmentAsync(departmentId) ?? new List<PoiType>();
+				data.Protocols = await _protocolsService.GetAllProtocolsForDepartmentAsync(departmentId) ?? new List<DispatchProtocol>();
+				data.CheckInTimerConfigs = await _checkInTimerService.GetTimerConfigsForDepartmentAsync(departmentId) ?? new List<CheckInTimerConfig>();
+				data.PersonnelStates = await _customStateService.GetAllActiveCustomStatesForDepartmentAsync(departmentId) ?? new List<CustomState>();
+				data.UnitStates = await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(departmentId) ?? new List<CustomState>();
+				data.Features = await _featureToggleService.EvaluateAllForDepartmentAsync(departmentId) ?? new List<FeatureFlagEvaluation>();
 
-			return data;
+				// Groups: project to a safe shape. The raw DepartmentGroup.Members carry IdentityUser navs we must not leak,
+				// and mutating the (possibly cached) entities to strip them would be unsafe.
+				var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(departmentId) ?? new List<DepartmentGroup>();
+				data.Groups = groups.Select(g => new ReferenceGroup
+				{
+					GroupId = g.DepartmentGroupId,
+					Name = g.Name,
+					Type = g.Type,
+					ParentGroupId = g.ParentDepartmentGroupId
+				}).ToList();
+
+				data.Personnel = await BuildPersonnelAsync(departmentId, groups);
+
+				return data;
+			}
+
+			if (bypassCache || !Config.SystemBehaviorConfig.CacheEnabled)
+				return await build();
+
+			// Cache-aside, department-scoped. The cache provider serializes via protobuf-net and SyncReferenceData's
+			// contained entities are mostly not [ProtoContract], so the payload is cached as a JSON snapshot inside a
+			// protobuf-safe envelope rather than ProtoContract-tagging ~8 shared entities (see ReferenceCacheEnvelope).
+			var envelope = await _cacheProvider.RetrieveAsync<ReferenceCacheEnvelope>(
+				string.Format(CacheKey, departmentId),
+				async () => new ReferenceCacheEnvelope { Json = JsonConvert.SerializeObject(await build()) },
+				CacheLength);
+
+			return !string.IsNullOrEmpty(envelope?.Json)
+				? JsonConvert.DeserializeObject<SyncReferenceData>(envelope.Json)
+				: await build();
 		}
 
 		/// <summary>

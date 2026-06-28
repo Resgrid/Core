@@ -33,5 +33,11 @@ namespace Resgrid.Model.Services
 		/// Aggregated into the unified /Sync/Changes payload by SyncController. See offline-first-architecture.md.
 		/// </summary>
 		Task<(List<IncidentAdHocUnit> Units, List<IncidentAdHocPersonnel> Personnel)> GetAdHocChangesSinceAsync(int departmentId, System.DateTime sinceUtc);
+
+		/// <summary>
+		/// Returns all ACTIVE (non-released) ad-hoc units + personnel across the department's active incidents in one
+		/// batched read (one scan per ad-hoc table), for the shift-start bundle — replaces the per-incident N+1 lookups.
+		/// </summary>
+		Task<(List<IncidentAdHocUnit> Units, List<IncidentAdHocPersonnel> Personnel)> GetActiveAdHocResourcesForDepartmentAsync(int departmentId);
 	}
 }

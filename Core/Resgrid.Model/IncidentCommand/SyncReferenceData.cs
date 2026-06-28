@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ProtoBuf;
 
 namespace Resgrid.Model
 {
@@ -86,5 +87,17 @@ namespace Resgrid.Model
 		public int? Type { get; set; }
 
 		public int? ParentGroupId { get; set; }
+	}
+
+	/// <summary>
+	/// Protobuf-safe cache envelope for the reference bootstrap. The cache provider serializes via protobuf-net, but
+	/// most of <see cref="SyncReferenceData"/>'s contained entities are not <c>[ProtoContract]</c>; rather than
+	/// ProtoContract-tag ~8 shared entities, the reference payload is cached as a JSON snapshot inside this contract.
+	/// </summary>
+	[ProtoContract]
+	public class ReferenceCacheEnvelope
+	{
+		[ProtoMember(1)]
+		public string Json { get; set; }
 	}
 }

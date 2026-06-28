@@ -9,10 +9,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Authorization;
 using Moq;
 using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Services;
+using Resgrid.Web.Services.Controllers.v4;
 using Resgrid.Web.Services.Filters;
 
 namespace Resgrid.Tests.Web.Services
@@ -175,6 +177,17 @@ namespace Resgrid.Tests.Web.Services
 			nextCalled.Should().BeTrue();
 			context.Result.Should().BeNull();
 			_service.Verify(s => s.GetCapabilitiesForUserAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+		}
+
+		[Test]
+		public void EstablishCommand_IsNotCapabilityGated_SoBootstrapCanCreateTheCommand()
+		{
+			// EstablishCommand bootstraps the command — before it runs there is no command/commander/role and thus no
+			// IncidentCapabilities, so it must NOT carry [RequiresIncidentCapability]; it stays on the Command_Create claim.
+			var method = typeof(IncidentCommandController).GetMethod(nameof(IncidentCommandController.EstablishCommand));
+			method.Should().NotBeNull();
+			method.GetCustomAttributes(typeof(RequiresIncidentCapabilityAttribute), true).Should().BeEmpty();
+			method.GetCustomAttributes(typeof(AuthorizeAttribute), true).Should().NotBeEmpty();
 		}
 
 		#region Helpers

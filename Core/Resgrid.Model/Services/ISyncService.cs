@@ -9,6 +9,6 @@ namespace Resgrid.Model.Services
 	/// </summary>
 	public interface ISyncService
 	{
-		Task<SyncReferenceData> GetReferenceDataAsync(int departmentId);
+		Task<SyncReferenceData> GetReferenceDataAsync(int departmentId, bool bypassCache = false);
 	}
 }

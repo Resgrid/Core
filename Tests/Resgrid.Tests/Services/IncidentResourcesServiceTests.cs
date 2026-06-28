@@ -50,6 +50,36 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task GetActiveAdHocResourcesForDepartmentAsync_ReturnsActiveScopedToActiveIncidents_InOneBatch()
+		{
+			_commandService.Setup(x => x.GetActiveCommandsForDepartmentAsync(Dept)).ReturnsAsync(new List<IncidentCommand>
+			{
+				new IncidentCommand { IncidentCommandId = "ic1", DepartmentId = Dept, CallId = CallId, Status = (int)IncidentCommandStatus.Active }
+			});
+
+			_unitRepo.Setup(x => x.GetAllByDepartmentIdAsync(Dept)).ReturnsAsync(new List<IncidentAdHocUnit>
+			{
+				new IncidentAdHocUnit { IncidentAdHocUnitId = "u1", DepartmentId = Dept, CallId = CallId },                                  // active incident + active row
+				new IncidentAdHocUnit { IncidentAdHocUnitId = "u2", DepartmentId = Dept, CallId = CallId, ReleasedOn = DateTime.UtcNow },    // released → excluded
+				new IncidentAdHocUnit { IncidentAdHocUnitId = "u3", DepartmentId = Dept, CallId = 99 }                                       // not an active incident → excluded
+			});
+			_personnelRepo.Setup(x => x.GetAllByDepartmentIdAsync(Dept)).ReturnsAsync(new List<IncidentAdHocPersonnel>
+			{
+				new IncidentAdHocPersonnel { IncidentAdHocPersonnelId = "p1", DepartmentId = Dept, CallId = CallId },
+				new IncidentAdHocPersonnel { IncidentAdHocPersonnelId = "p2", DepartmentId = Dept, CallId = 99 }                             // not active → excluded
+			});
+
+			var (units, personnel) = await _service.GetActiveAdHocResourcesForDepartmentAsync(Dept);
+
+			units.Should().ContainSingle().Which.IncidentAdHocUnitId.Should().Be("u1");
+			personnel.Should().ContainSingle().Which.IncidentAdHocPersonnelId.Should().Be("p1");
+
+			// Batched: ONE scan per ad-hoc table regardless of incident count (no N+1).
+			_unitRepo.Verify(x => x.GetAllByDepartmentIdAsync(Dept), Times.Once);
+			_personnelRepo.Verify(x => x.GetAllByDepartmentIdAsync(Dept), Times.Once);
+		}
+
+		[Test]
 		public async Task CreateAdHocUnitAsync_ReturnsNull_WhenNoActiveCommandForCall()
 		{
 			_commandService.Setup(x => x.GetActiveCommandForCallAsync(Dept, CallId)).ReturnsAsync((IncidentCommand)null);

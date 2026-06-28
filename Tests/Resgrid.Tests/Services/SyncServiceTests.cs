@@ -5,7 +5,9 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using Resgrid.Config;
 using Resgrid.Model;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Services;
 
@@ -32,11 +34,13 @@ namespace Resgrid.Tests.Services
 		private Mock<IUserProfileService> _profiles;
 		private Mock<IUserStateService> _userStates;
 		private Mock<IFeatureToggleService> _features;
+		private Mock<ICacheProvider> _cacheProvider;
 		private SyncService _service;
 
 		[SetUp]
 		public void SetUp()
 		{
+			SystemBehaviorConfig.CacheEnabled = false; // exercise the direct build() path unless a test opts into caching
 			_calls = new Mock<ICallsService>();
 			_commands = new Mock<ICommandsService>();
 			_units = new Mock<IUnitsService>();
@@ -48,11 +52,12 @@ namespace Resgrid.Tests.Services
 			_profiles = new Mock<IUserProfileService>();
 			_userStates = new Mock<IUserStateService>();
 			_features = new Mock<IFeatureToggleService>();
+			_cacheProvider = new Mock<ICacheProvider>();
 
 			// Unset methods return null under Loose mocks; SyncService coalesces those to empty lists.
 			_service = new SyncService(_calls.Object, _commands.Object, _units.Object, _groups.Object,
 				_mapping.Object, _protocols.Object, _checkInTimers.Object, _customStates.Object,
-				_profiles.Object, _userStates.Object, _features.Object);
+				_profiles.Object, _userStates.Object, _features.Object, _cacheProvider.Object);
 		}
 
 		[Test]
@@ -112,6 +117,53 @@ namespace Resgrid.Tests.Services
 
 			data.Personnel.Should().BeEmpty();
 			data.ServerTimestampMs.Should().BeGreaterThan(0);
+		}
+
+		[Test]
+		public async Task GetReferenceDataAsync_UsesDepartmentScopedCacheAside_WhenCacheEnabled()
+		{
+			SystemBehaviorConfig.CacheEnabled = true;
+			try
+			{
+				_profiles.Setup(x => x.GetAllProfilesForDepartmentAsync(Dept, It.IsAny<bool>()))
+					.ReturnsAsync(new Dictionary<string, UserProfile>());
+
+				// Simulate a cache miss: invoke the fallback and return its result (round-trips through the envelope).
+				_cacheProvider
+					.Setup(c => c.RetrieveAsync<ReferenceCacheEnvelope>(It.IsAny<string>(), It.IsAny<Func<Task<ReferenceCacheEnvelope>>>(), It.IsAny<TimeSpan>()))
+					.Returns<string, Func<Task<ReferenceCacheEnvelope>>, TimeSpan>((key, fallback, ttl) => fallback());
+
+				var data = await _service.GetReferenceDataAsync(Dept);
+
+				data.Should().NotBeNull();
+				_cacheProvider.Verify(c => c.RetrieveAsync<ReferenceCacheEnvelope>(
+					"SyncReferenceData_" + Dept, It.IsAny<Func<Task<ReferenceCacheEnvelope>>>(), It.IsAny<TimeSpan>()), Times.Once);
+			}
+			finally
+			{
+				SystemBehaviorConfig.CacheEnabled = false;
+			}
+		}
+
+		[Test]
+		public async Task GetReferenceDataAsync_BypassesCache_WhenBypassCacheTrue()
+		{
+			SystemBehaviorConfig.CacheEnabled = true;
+			try
+			{
+				_profiles.Setup(x => x.GetAllProfilesForDepartmentAsync(Dept, It.IsAny<bool>()))
+					.ReturnsAsync(new Dictionary<string, UserProfile>());
+
+				var data = await _service.GetReferenceDataAsync(Dept, bypassCache: true);
+
+				data.Should().NotBeNull();
+				_cacheProvider.Verify(c => c.RetrieveAsync<ReferenceCacheEnvelope>(
+					It.IsAny<string>(), It.IsAny<Func<Task<ReferenceCacheEnvelope>>>(), It.IsAny<TimeSpan>()), Times.Never);
+			}
+			finally
+			{
+				SystemBehaviorConfig.CacheEnabled = false;
+			}
 		}
 	}
 }

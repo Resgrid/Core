@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
+using Resgrid.Web.Services.Filters;
 using Resgrid.Web.Services.Helpers;
 using System.Threading;
 using System.Threading.Tasks;
@@ -35,6 +36,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpPost("CreateAdHocUnit")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Command_Update)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageResources)]
 		public async Task<ActionResult<ICModels.AdHocUnitResult>> CreateAdHocUnit([FromBody] IncidentAdHocUnit unit)
 		{
 			if (unit == null || unit.CallId <= 0)
@@ -95,6 +97,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpPost("CreateAdHocPersonnel")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Command_Update)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageResources)]
 		public async Task<ActionResult<ICModels.AdHocPersonnelResult>> CreateAdHocPersonnel([FromBody] IncidentAdHocPersonnel personnel)
 		{
 			if (personnel == null || personnel.CallId <= 0)
@@ -180,6 +183,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpPost("FormUnit")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Command_Update)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageResources)]
 		public async Task<ActionResult<ICModels.AdHocUnitResult>> FormUnit([FromBody] ICModels.FormUnitInput input)
 		{
 			if (input == null || input.CallId <= 0 || string.IsNullOrWhiteSpace(input.Name))

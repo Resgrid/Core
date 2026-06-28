@@ -1937,6 +1937,22 @@
             <paramref name="since"/>.
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SyncController.Bundle(System.Boolean)">
+            <summary>
+            Shift-start aggregate pull: a render-ready board (incl. computed accountability / PAR) for every ACTIVE
+            incident in the caller's department, plus the active ad-hoc resources and a next-sync cursor — in a single
+            round-trip. Persist <c>Data.ServerTimestampMs</c> and pass it as the next <see cref="M:Resgrid.Web.Services.Controllers.v4.SyncController.Changes(System.Int64)"/> `since`.
+            Unlike <see cref="M:Resgrid.Web.Services.Controllers.v4.SyncController.Changes(System.Int64)"/> (a row-based delta), this returns the computed PAR/accountability state.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.SyncController.Reference(System.Boolean)">
+            <summary>
+            Shift-start REFERENCE pull: the slowly-changing department configuration + a safe personnel roster needed to
+            start and run an incident offline (call types, command templates, units, personnel, groups, POIs, protocols,
+            accountability config, statuses, feature flags). Pull once per shift / on manual refresh; the live incident
+            state comes from <see cref="M:Resgrid.Web.Services.Controllers.v4.SyncController.Bundle(System.Boolean)"/> and <see cref="M:Resgrid.Web.Services.Controllers.v4.SyncController.Changes(System.Int64)"/>.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.TemplatesController">
             <summary>
             Templates in the system. Templates can be call Templates, Autofills (i.e. Call Notes)
@@ -4557,6 +4573,37 @@
         <member name="P:Resgrid.Web.Services.Controllers.Version3.Models.Units.UnitStatusResult.Tmp">
             <summary>
             The Timestamp of the status
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Filters.RequiresIncidentCapabilityAttribute">
+             <summary>
+             Per-endpoint, incident-scoped capability gate (§3.11). Layered ON TOP of the broad
+             <c>[Authorize(Policy = Command_*)]</c> claims that already protect every IC endpoint, this filter
+             additionally enforces that the calling user's effective <see cref="T:Resgrid.Model.IncidentCapabilities"/> for the
+             target incident include <see cref="P:Resgrid.Web.Services.Filters.RequiresIncidentCapabilityAttribute.Required"/>. The Incident Commander / Deputy / Unified-Command roles
+             (and the user who established command) get <see cref="F:Resgrid.Model.IncidentCapabilities.All"/>, so they pass every
+             gate — see <see cref="T:Resgrid.Model.IncidentRoleCapabilityMap"/> and
+             <see cref="M:Resgrid.Model.Services.IIncidentCommandService.GetCapabilitiesForUserAsync(System.Int32,System.Int32,System.String)"/>.
+            
+             It runs as an action filter (after model binding) so it can read the target Call from the bound request —
+             either an explicit <c>callId</c> route value, an <c>IncidentCommandId</c> on the body/route (resolved to
+             its Call, department-ownership checked), or a <c>CallId</c> on the request body. If the Call cannot be
+             determined the filter does NOT block: the broad Command_* claim and the service-layer department-ownership
+             guards still apply, so this filter only ever ADDS protection, never removes it.
+            
+             Note: the entity-id "second action" verbs (delete/release/complete/acknowledge an existing row) are left on
+             the broad Command_* claim because the target Call isn't on the request — adding capability gating there
+             needs an entity-id → Call lookup and is a deliberate follow-up.
+             </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Filters.RequiresIncidentCapabilityAttribute.Required">
+            <summary>The capability the caller must hold for the target incident to proceed.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Filters.RequiresIncidentCapabilityAttribute.ResolveCallIdAsync(Microsoft.AspNetCore.Mvc.Filters.ActionExecutingContext,Resgrid.Model.Services.IIncidentCommandService,System.Int32)">
+            <summary>
+            Determines the target Call for the request, preferring the most authoritative source:
+            (1) an explicit <c>callId</c> route/argument, (2) an <c>IncidentCommandId</c> (route/arg/body) resolved
+            to its Call and department-ownership checked, then (3) a <c>CallId</c> on a bound request body object.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Middleware.ResgridAuthenticationEvents.OnAuthenticationFailed">
@@ -9636,6 +9683,20 @@
             <summary>
             Delta sync payload for offline clients: incident-command rows changed since the client's cursor. The client
             stores <c>Data.ServerTimestampMs</c> and passes it back as the next `since`.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Sync.SyncBundleResult">
+            <summary>
+            Shift-start aggregate pull for offline clients: a render-ready board (incl. computed accountability / PAR) for
+            every active incident in the caller's department, plus active ad-hoc resources and the next-sync cursor, in a
+            single call. The client stores <c>Data.ServerTimestampMs</c> and passes it as the next <c>Changes</c> `since`.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Sync.SyncReferenceResult">
+            <summary>
+            Shift-start REFERENCE payload: the slowly-changing department configuration + a safe personnel roster an IC/Unit
+            app needs to start and run an incident offline. Pull once per shift / on manual refresh; the live incident state
+            comes from /Sync/Bundle (active boards) and /Sync/Changes (deltas).
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Templates.CallNoteTemplatesResult">

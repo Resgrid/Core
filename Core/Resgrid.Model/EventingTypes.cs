@@ -9,6 +9,7 @@
 		CallAdded = 5,
 		CallClosed = 6,
 		PersonnelLocationUpdated = 7,
-		UnitLocationUpdated = 8
+		UnitLocationUpdated = 8,
+		IncidentCommandUpdated = 9
 	}
 }

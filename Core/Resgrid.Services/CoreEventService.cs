@@ -11,12 +11,10 @@ namespace Resgrid.Services
 	public class CoreEventService : ICoreEventService
 	{
 		private readonly IEventAggregator _eventAggregator;
-		private static ICqrsProvider _cqrsProvider;
 
-		public CoreEventService(IEventAggregator eventAggregator, ICqrsProvider cqrsProvider)
+		public CoreEventService(IEventAggregator eventAggregator)
 		{
 			_eventAggregator = eventAggregator;
-			_cqrsProvider = cqrsProvider;
 
 			_eventAggregator.AddListener(departmentSettingsUpdateHandler);
 		}
@@ -27,16 +25,18 @@ namespace Resgrid.Services
 			var result = await departmentSettingsService.SaveOrUpdateSettingAsync(message.DepartmentId, DateTime.UtcNow.ToString("G"), DepartmentSettingTypes.UpdateTimestamp);
 		};
 
-		public async Task IncidentCommandUpdatedAsync(int departmentId, int callId)
+		public Task IncidentCommandUpdatedAsync(int departmentId, int callId)
 		{
-			var cqrsEvent = new CqrsEvent
+			// Raise the domain event onto the eventing/topic rail (OutboundEventProvider ->
+			// RabbitTopicProvider -> EventingTopic -> Eventing Worker -> SignalR "incidentCommandUpdated"),
+			// mirroring how CallUpdatedEvent drives "callsUpdated".
+			_eventAggregator.SendMessage<IncidentCommandUpdatedEvent>(new IncidentCommandUpdatedEvent
 			{
-				Type = (int)CqrsEventTypes.IncidentCommandUpdated,
-				AggregateId = callId.ToString(),
-				Data = $"{{\"departmentId\":{departmentId},\"callId\":{callId}}}"
-			};
+				DepartmentId = departmentId,
+				CallId = callId
+			});
 
-			await _cqrsProvider.EnqueueCqrsEventAsync(cqrsEvent);
+			return Task.CompletedTask;
 		}
 	}
 }

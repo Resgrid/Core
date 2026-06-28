@@ -14,6 +14,7 @@ namespace Resgrid.Model.Providers
 							   Func<int, string, Task> callAdded,
 							   Func<int, string, Task> callClosed,
 							   Func<int, PersonnelLocationUpdatedEvent, Task> personnelLocationUpdated,
-							   Func<int, UnitLocationUpdatedEvent, Task> unitLocationUpdated);
+							   Func<int, UnitLocationUpdatedEvent, Task> unitLocationUpdated,
+							   Func<int, string, Task> incidentCommandUpdated);
 	}
 }

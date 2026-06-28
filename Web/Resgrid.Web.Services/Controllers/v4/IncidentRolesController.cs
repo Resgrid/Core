@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
+using Resgrid.Web.Services.Filters;
 using Resgrid.Web.Services.Helpers;
 using System;
 using System.Threading;
@@ -34,6 +35,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpPost("AssignRole")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Command_Update)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageCommand)]
 		public async Task<ActionResult<ICModels.IncidentRoleResult>> AssignRole([FromBody] IncidentRoleAssignment assignment)
 		{
 			if (assignment == null || string.IsNullOrWhiteSpace(assignment.IncidentCommandId) || string.IsNullOrWhiteSpace(assignment.UserId))

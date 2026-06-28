@@ -45,7 +45,8 @@ namespace Resgrid.Web.Eventing
 															  CallAdded,
 															  CallClosed,
 															  PersonnelLocationUpdated,
-															  UnitLocationUpdated);
+															  UnitLocationUpdated,
+															  IncidentCommandUpdated);
 
 				_rabbitInboundEventProvider.Start("Eventing-Web", "EventingWeb").ConfigureAwait(false);
 
@@ -108,6 +109,16 @@ namespace Resgrid.Web.Eventing
 
 			if (group != null)
 				await group.SendAsync("callsUpdated", id);
+		}
+
+		public async Task IncidentCommandUpdated(int departmentId, string id)
+		{
+			Console.WriteLine($"Processing RabbitMQ IncidentCommandUpdated Event For {departmentId}");
+
+			var group = _eventingHub.Clients.Group(departmentId.ToString());
+
+			if (group != null)
+				await group.SendAsync("incidentCommandUpdated", id);
 		}
 
 		public async Task DepartmentUpdated(int departmentId)

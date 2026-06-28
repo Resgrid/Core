@@ -81,6 +81,18 @@ namespace Resgrid.Providers.Bus.Rabbit
 			}.SerializeJson());
 		}
 
+		public async Task<bool> IncidentCommandUpdated(IncidentCommandUpdatedEvent message)
+		{
+			return await SendMessage(Topics.EventingTopic, new EventingMessage
+			{
+				Id = Guid.NewGuid(),
+				Type = (int)EventingTypes.IncidentCommandUpdated,
+				TimeStamp = DateTime.UtcNow,
+				DepartmentId = message.DepartmentId,
+				ItemId = message.CallId.ToString()
+			}.SerializeJson());
+		}
+
 		public async Task<bool> CallClosed(CallClosedEvent message)
 		{
 			return await SendMessage(Topics.EventingTopic, new EventingMessage

@@ -93,4 +93,15 @@ namespace Resgrid.Model.Events
 		public int CallId { get; set; }
 		public string UserId { get; set; }
 	}
+
+	/// <summary>
+	/// Raised whenever an incident command board changes (establish/transfer/close, lane/resource/objective/timer/
+	/// annotation/role mutations, check-in/PAR). Drives the real-time SignalR "Real Time Sync" fan-out to connected
+	/// IC clients via the eventing topic, mirroring <see cref="CallUpdatedEvent"/>.
+	/// </summary>
+	public class IncidentCommandUpdatedEvent
+	{
+		public int DepartmentId { get; set; }
+		public int CallId { get; set; }
+	}
 }

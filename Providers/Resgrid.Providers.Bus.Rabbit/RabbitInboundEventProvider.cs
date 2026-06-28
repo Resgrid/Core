@@ -27,6 +27,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 		public Func<int, string, Task> ProcessPersonnelStaffingChanged;
 		public Func<int, PersonnelLocationUpdatedEvent, Task> PersonnelLocationUpdated;
 		public Func<int, UnitLocationUpdatedEvent, Task> UnitLocationUpdated;
+		public Func<int, string, Task> ProcessIncidentCommandUpdated;
 
 		public async Task Start(string clientName, string queueName)
 		{
@@ -114,6 +115,10 @@ namespace Resgrid.Providers.Bus.Rabbit
 							if (UnitLocationUpdated != null)
 								await UnitLocationUpdated.Invoke(eventingMessage.DepartmentId, JsonConvert.DeserializeObject<UnitLocationUpdatedEvent>(eventingMessage.Payload));
 							break;
+						case EventingTypes.IncidentCommandUpdated:
+							if (ProcessIncidentCommandUpdated != null)
+								await ProcessIncidentCommandUpdated.Invoke(eventingMessage.DepartmentId, eventingMessage.ItemId);
+							break;
 						default:
 							throw new ArgumentOutOfRangeException();
 					}
@@ -139,7 +144,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 									  Func<int, string, Task> callAdded,
 									  Func<int, string, Task> callClosed,
 									  Func<int, PersonnelLocationUpdatedEvent, Task> personnelLocationUpdated,
-									  Func<int, UnitLocationUpdatedEvent, Task> unitLocationUpdated)
+									  Func<int, UnitLocationUpdatedEvent, Task> unitLocationUpdated,
+									  Func<int, string, Task> incidentCommandUpdated)
 		{
 			ProcessPersonnelStatusChanged = personnelStatusChanged;
 			ProcessUnitStatusChanged = unitStatusChanged;
@@ -149,6 +155,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 			ProcessCallClosed = callClosed;
 			PersonnelLocationUpdated = personnelLocationUpdated;
 			UnitLocationUpdated = unitLocationUpdated;
+			ProcessIncidentCommandUpdated = incidentCommandUpdated;
 		}
 	}
 }

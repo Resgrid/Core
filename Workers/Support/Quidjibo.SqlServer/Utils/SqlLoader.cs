@@ -1,4 +1,5 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
@@ -18,7 +19,13 @@ namespace Quidjibo.SqlServer.Utils
 
             var assembly = typeof(SqlLoader).GetTypeInfo().Assembly;
             var fullName = $"Quidjibo.SqlServer.Scripts.{scriptName}.sql";
-            using (var stream = assembly.GetManifestResourceStream(fullName) ?? new MemoryStream())
+            var stream = assembly.GetManifestResourceStream(fullName);
+            if (stream == null)
+            {
+                throw new InvalidOperationException($"Embedded SQL script '{fullName}' was not found in assembly '{assembly.GetName().Name}'.");
+            }
+
+            using (stream)
             using (var reader = new StreamReader(stream))
             {
                 script = await reader.ReadToEndAsync();

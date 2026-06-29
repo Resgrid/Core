@@ -30,9 +30,9 @@ namespace Quidjibo.Postgres.Factories
 
         public async Task<IScheduleProvider> CreateAsync(string[] queues, CancellationToken cancellationToken = default(CancellationToken))
         {
+            await SyncLock.WaitAsync(cancellationToken);
             try
             {
-                await SyncLock.WaitAsync(cancellationToken);
                 await PostgresRunner.ExecuteAsync(async cmd =>
                 {
                     var schemaSetup = await SqlLoader.GetScript("Schema.Setup");

@@ -36,9 +36,9 @@ namespace Quidjibo.SqlServer.Factories
                 return _provider;
             }
 
+            await SyncLock.WaitAsync(cancellationToken);
             try
             {
-                await SyncLock.WaitAsync(cancellationToken);
                 await SqlRunner.ExecuteAsync(async cmd =>
                 {
                     cmd.CommandText = await SqlLoader.GetScript("Progress.Setup");

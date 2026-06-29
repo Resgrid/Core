@@ -31,7 +31,17 @@ namespace Quidjibo.SqlServer.Utils
                             }
                             catch
                             {
-                                tran.Rollback();
+                                try
+                                {
+                                    tran.Rollback();
+                                }
+                                catch
+                                {
+                                    // Rollback can fail if the transaction/connection is already
+                                    // aborted; swallow that secondary error so the original
+                                    // exception below is preserved rather than masked.
+                                }
+
                                 throw;
                             }
                         }

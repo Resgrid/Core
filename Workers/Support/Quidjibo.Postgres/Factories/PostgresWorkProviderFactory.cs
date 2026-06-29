@@ -31,9 +31,9 @@ namespace Quidjibo.Postgres.Factories
 
         public async Task<IWorkProvider> CreateAsync(string[] queues, CancellationToken cancellationToken = default(CancellationToken))
         {
+            await SyncLock.WaitAsync(cancellationToken);
             try
             {
-                await SyncLock.WaitAsync(cancellationToken);
                 if (!_initialized)
                 {
                     await PostgresRunner.ExecuteAsync(async cmd =>

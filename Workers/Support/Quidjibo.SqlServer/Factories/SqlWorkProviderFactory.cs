@@ -31,9 +31,9 @@ namespace Quidjibo.SqlServer.Factories
 
         public async Task<IWorkProvider> CreateAsync(string[] queues, CancellationToken cancellationToken = default(CancellationToken))
         {
+            await SyncLock.WaitAsync(cancellationToken);
             try
             {
-                await SyncLock.WaitAsync(cancellationToken);
                 if (!_initialized)
                 {
                     await SqlRunner.ExecuteAsync(async cmd =>

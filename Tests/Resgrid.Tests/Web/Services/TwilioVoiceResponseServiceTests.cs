@@ -132,5 +132,63 @@ namespace Resgrid.Tests.Web.Services
 				x => x.GenerateSpeechUrlAsync("Hello from Resgrid", null, null, It.IsAny<CancellationToken>()),
 				Times.Once);
 		}
+
+		[Test]
+		public async Task pre_warm_prompt_async_should_not_throw_for_multi_chunk_text()
+		{
+			// Regression (Sentry RESGRID-API-78): long dispatch text spans multiple TTS chunks.
+			// PreWarmPromptAsync previously threw ArgumentException for multi-chunk input, faulting
+			// the voice-dispatch pre-warm/redirect path. It must now warm every chunk without throwing.
+			var originalMaxLength = Resgrid.Config.TtsConfig.MaxTextLength;
+			Resgrid.Config.TtsConfig.MaxTextLength = 30;
+			try
+			{
+				var ttsAudioService = new Mock<ITtsAudioService>();
+				ttsAudioService
+					.Setup(x => x.GenerateSpeechUrlAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int?>(), It.IsAny<CancellationToken>()))
+					.ReturnsAsync(new Uri("https://tts.example.com/tts/audio/chunk.wav"));
+
+				var service = new TwilioVoiceResponseService(ttsAudioService.Object);
+				var text = "Engine one respond to the structure fire. Ladder two stage at the corner. Battalion three assume command. All units use caution.";
+
+				Func<Task> act = () => service.PreWarmPromptAsync(text);
+
+				await act.Should().NotThrowAsync();
+			}
+			finally
+			{
+				Resgrid.Config.TtsConfig.MaxTextLength = originalMaxLength;
+			}
+		}
+
+		[Test]
+		public async Task append_prompt_async_should_emit_a_play_per_chunk_for_multi_chunk_text()
+		{
+			// Regression (Sentry RESGRID-API-78): the dispatch playback path now routes long text
+			// through AppendPromptAsync, which must fan multi-chunk text out to one <Play> per chunk
+			// rather than throwing like the single-chunk GetPromptUrlAsync did.
+			var originalMaxLength = Resgrid.Config.TtsConfig.MaxTextLength;
+			Resgrid.Config.TtsConfig.MaxTextLength = 30;
+			try
+			{
+				var ttsAudioService = new Mock<ITtsAudioService>();
+				ttsAudioService
+					.Setup(x => x.GenerateSpeechUrlAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int?>(), It.IsAny<CancellationToken>()))
+					.ReturnsAsync(new Uri("https://tts.example.com/tts/audio/chunk.wav"));
+
+				var service = new TwilioVoiceResponseService(ttsAudioService.Object);
+				var response = new VoiceResponse();
+				var text = "Engine one respond to the structure fire. Ladder two stage at the corner. Battalion three assume command. All units use caution.";
+
+				await service.AppendPromptAsync(response, text, CancellationToken.None);
+
+				var playCount = response.ToString().Split("<Play>").Length - 1;
+				playCount.Should().BeGreaterThan(1);
+			}
+			finally
+			{
+				Resgrid.Config.TtsConfig.MaxTextLength = originalMaxLength;
+			}
+		}
 	}
 }

@@ -1246,8 +1246,10 @@ namespace Resgrid.Web.Services.Controllers
 
 			try
 			{
-				var url = await _twilioVoiceResponseService.GetPromptUrlAsync(dispatchText, ttsLanguage, linkedCts.Token);
-				response.Append(new Play { Url = url });
+				// Dispatch text can exceed the TTS chunk limit (long notes/address), so use the
+				// multi-chunk-aware AppendPromptAsync (one <Play> per chunk) instead of GetPromptUrlAsync,
+				// which only supports single-chunk text and throws ArgumentException otherwise.
+				await _twilioVoiceResponseService.AppendPromptAsync(response, dispatchText, linkedCts.Token, ttsLanguage);
 				return true;
 			}
 			catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested)

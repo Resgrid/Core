@@ -3,22 +3,22 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Quidjibo.Factories;
 using Quidjibo.Providers;
-using Quidjibo.Postgres.Configurations;
-using Quidjibo.Postgres.Providers;
-using Quidjibo.Postgres.Utils;
+using Quidjibo.SqlServer.Configurations;
+using Quidjibo.SqlServer.Providers;
+using Quidjibo.SqlServer.Utils;
 
-namespace Quidjibo.Postgres.Factories
+namespace Quidjibo.SqlServer.Factories
 {
-    public class PostgresWorkProviderFactory : IWorkProviderFactory
+    public class SqlWorkProviderFactory : IWorkProviderFactory
     {
         private static readonly SemaphoreSlim SyncLock = new SemaphoreSlim(1, 1);
         private readonly ILoggerFactory _loggerFactory;
-        private readonly PostgresQuidjiboConfiguration _sqlServerQuidjiboConfiguration;
+        private readonly SqlServerQuidjiboConfiguration _sqlServerQuidjiboConfiguration;
         private bool _initialized;
 
-        public PostgresWorkProviderFactory(
+        public SqlWorkProviderFactory(
             ILoggerFactory loggerFactory,
-            PostgresQuidjiboConfiguration sqlServerQuidjiboConfiguration)
+            SqlServerQuidjiboConfiguration sqlServerQuidjiboConfiguration)
         {
             _loggerFactory = loggerFactory;
             _sqlServerQuidjiboConfiguration = sqlServerQuidjiboConfiguration;
@@ -36,7 +36,7 @@ namespace Quidjibo.Postgres.Factories
             {
                 if (!_initialized)
                 {
-                    await PostgresRunner.ExecuteAsync(async cmd =>
+                    await SqlRunner.ExecuteAsync(async cmd =>
                     {
                         var schemaSetup = await SqlLoader.GetScript("Schema.Setup");
                         var workSetup = await SqlLoader.GetScript("Work.Setup");
@@ -46,8 +46,8 @@ namespace Quidjibo.Postgres.Factories
                     _initialized = true;
                 }
 
-                return new PostgresWorkProvider(
-                    _loggerFactory.CreateLogger<PostgresWorkProvider>(),
+                return new SqlWorkProvider(
+                    _loggerFactory.CreateLogger<SqlWorkProvider>(),
                     _sqlServerQuidjiboConfiguration.ConnectionString,
                     queues,
                     _sqlServerQuidjiboConfiguration.LockInterval,

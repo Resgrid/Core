@@ -3,19 +3,19 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Quidjibo.Factories;
 using Quidjibo.Providers;
-using Quidjibo.Postgres.Providers;
-using Quidjibo.Postgres.Utils;
+using Quidjibo.SqlServer.Providers;
+using Quidjibo.SqlServer.Utils;
 
-namespace Quidjibo.Postgres.Factories
+namespace Quidjibo.SqlServer.Factories
 {
-    public class PostgresScheduleProviderFactory : IScheduleProviderFactory
+    public class SqlScheduleProviderFactory : IScheduleProviderFactory
     {
         private static readonly SemaphoreSlim SyncLock = new SemaphoreSlim(1, 1);
         private readonly string _connectionString;
 
         private readonly ILoggerFactory _loggerFactory;
 
-        public PostgresScheduleProviderFactory(
+        public SqlScheduleProviderFactory(
             ILoggerFactory loggerFactory,
             string connectionString)
         {
@@ -33,7 +33,7 @@ namespace Quidjibo.Postgres.Factories
             await SyncLock.WaitAsync(cancellationToken);
             try
             {
-                await PostgresRunner.ExecuteAsync(async cmd =>
+                await SqlRunner.ExecuteAsync(async cmd =>
                 {
                     var schemaSetup = await SqlLoader.GetScript("Schema.Setup");
                     var scheduleSetup = await SqlLoader.GetScript("Schedule.Setup");
@@ -41,8 +41,8 @@ namespace Quidjibo.Postgres.Factories
                     await cmd.ExecuteNonQueryAsync(cancellationToken);
                 }, _connectionString, false, cancellationToken);
 
-                return await Task.FromResult<IScheduleProvider>(new PostgresScheduleProvider(
-                    _loggerFactory.CreateLogger<PostgresScheduleProvider>(),
+                return await Task.FromResult<IScheduleProvider>(new SqlScheduleProvider(
+                    _loggerFactory.CreateLogger<SqlScheduleProvider>(),
                     _connectionString, queues));
             }
             finally

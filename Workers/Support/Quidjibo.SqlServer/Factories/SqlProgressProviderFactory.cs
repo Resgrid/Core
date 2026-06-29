@@ -3,12 +3,12 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Quidjibo.Factories;
 using Quidjibo.Providers;
-using Quidjibo.Postgres.Providers;
-using Quidjibo.Postgres.Utils;
+using Quidjibo.SqlServer.Providers;
+using Quidjibo.SqlServer.Utils;
 
-namespace Quidjibo.Postgres.Factories
+namespace Quidjibo.SqlServer.Factories
 {
-    public class PostgresProgressProviderFactory : IProgressProviderFactory
+    public class SqlProgressProviderFactory : IProgressProviderFactory
     {
         private static readonly SemaphoreSlim SyncLock = new SemaphoreSlim(1, 1);
         private readonly string _connectionString;
@@ -16,7 +16,7 @@ namespace Quidjibo.Postgres.Factories
         private readonly ILoggerFactory _loggerFactory;
         private IProgressProvider _provider;
 
-        public PostgresProgressProviderFactory(
+        public SqlProgressProviderFactory(
             ILoggerFactory loggerFactory,
             string connectionString)
         {
@@ -39,14 +39,14 @@ namespace Quidjibo.Postgres.Factories
             await SyncLock.WaitAsync(cancellationToken);
             try
             {
-                await PostgresRunner.ExecuteAsync(async cmd =>
+                await SqlRunner.ExecuteAsync(async cmd =>
                 {
                     cmd.CommandText = await SqlLoader.GetScript("Progress.Setup");
                     await cmd.ExecuteNonQueryAsync(cancellationToken);
                 }, _connectionString, false, cancellationToken);
 
-                _provider = new PostgresProgressProvider(
-                    _loggerFactory.CreateLogger<PostgresProgressProvider>(),
+                _provider = new SqlProgressProvider(
+                    _loggerFactory.CreateLogger<SqlProgressProvider>(),
                     _connectionString);
                 return _provider;
             }

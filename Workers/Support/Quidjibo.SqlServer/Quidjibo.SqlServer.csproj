@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Authors>Smiggleworth</Authors>
+    <Copyright>Copyright © 2017</Copyright>
+    <Description>Quidjibo delivers flexible async background jobs for .NET applications. Vendored SqlServer provider using Microsoft.Data.SqlClient (the legacy System.Data.SqlClient fails with a SqlGuidCaster TypeLoadException on .NET 8+).</Description>
+    <PackageProjectUrl>https://quidjibo.com/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/smiggleworth/Quidjibo</RepositoryUrl>
+    <Company>Smiggleworth</Company>
+    <PackageTags>async tasks workers cron</PackageTags>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Scripts\**\*.sql" />
+    <EmbeddedResource Include="Scripts\**\*.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Data.SqlClient" Version="6.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.3" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Quidjibo" Version="0.6.0" />
+  </ItemGroup>
+
+</Project>

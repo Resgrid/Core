@@ -1,0 +1,28 @@
+﻿INSERT INTO [Quidjibo].[Work] 
+( 
+    [Id], 
+    [ScheduleId], 
+    [CorrelationId], 
+    [Name],
+    [Queue],
+    [Attempts], 
+    [CreatedOn],
+    [ExpireOn], 
+    [VisibleOn], 
+    [Status], 
+    [Payload]
+) 
+VALUES 
+(
+    @Id, 
+    @ScheduleId, 
+    @CorrelationId, 
+    @Name,
+    @Queue,
+    @Attempts, 
+    @CreatedOn, 	
+    @ExpireOn, 
+    @VisibleOn, 
+    @Status, 
+    @Payload
+)

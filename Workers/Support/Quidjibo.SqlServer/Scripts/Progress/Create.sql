@@ -1,0 +1,22 @@
+﻿INSERT INTO [Quidjibo].[Progress] 
+(
+    [Id],
+    [WorkId],
+    [CorrelationId],
+    [Name],
+    [Queue],
+    [Note],
+    [Value],
+    [RecordedOn]
+)
+VALUES
+(
+    @Id,
+    @WorkId,
+    @CorrelationId,
+    @Name, 
+    @Queue, 
+    @Note, 
+    @Value, 
+    @RecordedOn
+);

@@ -1,0 +1,24 @@
+﻿INSERT INTO [Quidjibo].[Schedule] 
+(
+	[Id],
+    [Name], 
+    [Queue], 
+    [CronExpression], 
+    [CreatedOn],  
+    [EnqueueOn], 
+    [EnqueuedOn], 
+    [VisibleOn], 
+    [Payload]
+)
+VALUES
+(
+    @Id,
+    @Name, 
+    @Queue, 
+	@CronExpression,
+    @CreatedOn, 
+    @EnqueueOn, 
+    @EnqueuedOn, 
+    @VisibleOn, 
+    @Payload
+);

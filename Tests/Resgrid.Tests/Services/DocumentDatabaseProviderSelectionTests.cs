@@ -198,7 +198,8 @@ namespace Resgrid.Tests.Services
 				unitLocationsDocRepository,
 				new Mock<IUnitActiveRolesRepository>().Object,
 				new Mock<IDepartmentGroupsService>().Object,
-				new Mock<ILimitsService>().Object);
+				new Mock<ILimitsService>().Object,
+				new Mock<IPersonnelRolesService>().Object);
 		}
 
 		private static UsersService CreateUsersService(IEventAggregator eventAggregator, Lazy<IMongoRepository<PersonnelLocation>> mongoRepository, IPersonnelLocationsDocRepository personnelLocationsDocRepository)

@@ -49,11 +49,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IUserDefinedFieldsService _userDefinedFieldsService;
 		private readonly IUdfRenderingService _udfRenderingService;
 		private readonly IStringLocalizer<Resgrid.Localization.Common> _localizer;
+		private readonly IPersonnelRolesService _personnelRolesService;
 
 		public UnitsController(IDepartmentsService departmentsService, IUsersService usersService, IUnitsService unitsService, Model.Services.IAuthorizationService authorizationService,
 			ILimitsService limitsService, IDepartmentGroupsService departmentGroupsService, ICallsService callsService, IEventAggregator eventAggregator, ICustomStateService customStateService,
 			IGeoService geoService, IDepartmentSettingsService departmentSettingsService, IGeoLocationProvider geoLocationProvider, INovuProvider novuProvider, IMappingService mappingService,
-			IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService, IStringLocalizer<Resgrid.Localization.Common> localizer)
+			IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService, IStringLocalizer<Resgrid.Localization.Common> localizer,
+			IPersonnelRolesService personnelRolesService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -72,6 +74,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_userDefinedFieldsService = userDefinedFieldsService;
 			_udfRenderingService = udfRenderingService;
 			_localizer = localizer;
+			_personnelRolesService = personnelRolesService;
 		}
 		#endregion Private Members and Constructors
 
@@ -174,6 +177,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
 			model.Users = await _usersService.GetUserGroupAndRolesByDepartmentIdInLimitAsync(DepartmentId, false, false, false);
 			model.ActiveRoles = await _unitsService.GetAllActiveRolesForUnitsByDepartmentIdAsync(DepartmentId);
+			model.PersonnelRoles = await _personnelRolesService.GetAllRolesForDepartmentAsync(DepartmentId);
+			model.UnitStaffing = await _unitsService.GetUnitStaffingForDepartmentAsync(DepartmentId);
 
 			return View(model);
 		}
@@ -185,6 +190,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Units = await _unitsService.GetUnitsForDepartmentAsync(DepartmentId);
 			model.Users = await _usersService.GetUserGroupAndRolesByDepartmentIdInLimitAsync(DepartmentId, false, false, false);
 			model.ActiveRoles = await _unitsService.GetAllActiveRolesForUnitsByDepartmentIdAsync(DepartmentId);
+			model.PersonnelRoles = await _personnelRolesService.GetAllRolesForDepartmentAsync(DepartmentId);
+			model.UnitStaffing = await _unitsService.GetUnitStaffingForDepartmentAsync(DepartmentId);
 
 
 			if (ModelState.IsValid)
@@ -192,6 +199,33 @@ namespace Resgrid.Web.Areas.User.Controllers
 				List<int> unitRoles = (from object key in form.Keys
 									   where key.ToString().StartsWith("Role_")
 									   select int.Parse(key.ToString().Replace("Role_", ""))).ToList();
+
+				// Validate required qualifications BEFORE mutating anything -- the save path deletes existing
+				// assignments first, so blocking part-way through would lose data. A seat whose personnel role
+				// is "Required" blocks an unqualified member; a "Preferred" seat is allowed (the unit is then
+				// reported as degraded rather than blocked).
+				foreach (var unitRoleId in unitRoles)
+				{
+					var candidateUserId = form[$"Role_{unitRoleId}"];
+
+					if (String.IsNullOrWhiteSpace(candidateUserId))
+						continue;
+
+					var roleToCheck = await _unitsService.GetRoleByIdAsync(unitRoleId);
+
+					if (roleToCheck != null && roleToCheck.PersonnelRoleId.HasValue && roleToCheck.PersonnelRoleRequired
+						&& !await _unitsService.IsUserQualifiedForUnitRoleAsync(roleToCheck, candidateUserId, DepartmentId))
+					{
+						var member = model.Users?.FirstOrDefault(u => u.UserId == candidateUserId);
+						var requiredRole = await _personnelRolesService.GetRoleByIdAsync(roleToCheck.PersonnelRoleId.Value);
+						var unitName = model.Units?.FirstOrDefault(x => x.UnitId == roleToCheck.UnitId)?.Name;
+
+						ModelState.AddModelError("", $"{(member != null ? member.Name : "The selected member")} cannot be assigned to the \"{roleToCheck.Name}\" role on {unitName} because it requires the {(requiredRole != null ? requiredRole.Name : "required")} personnel role.");
+					}
+				}
+
+				if (!ModelState.IsValid)
+					return View(model);
 
 				foreach (var unit in model.Units)
 				{
@@ -227,6 +261,44 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
+		/// <summary>
+		/// Builds the list of unit roles from the New/Edit unit form, including each role's optional required
+		/// personnel qualification (unitRolePersonnelRole_N) and whether it is a hard requirement
+		/// (unitRoleRequired_N). Roles are keyed by the "unitRole_N" suffix so each role stays paired with
+		/// its qualification fields.
+		/// </summary>
+		private List<UnitRole> ParseUnitRolesFromForm(IFormCollection form, int unitId)
+		{
+			var roles = new List<UnitRole>();
+
+			foreach (var key in form.Keys.Where(k => k.StartsWith("unitRole_")))
+			{
+				var roleName = form[key].ToString();
+
+				if (String.IsNullOrWhiteSpace(roleName))
+					continue;
+
+				var suffix = key.Substring("unitRole_".Length);
+
+				var role = new UnitRole();
+				role.Name = roleName;
+				role.UnitId = unitId;
+
+				var personnelRoleValue = form[$"unitRolePersonnelRole_{suffix}"].ToString();
+				if (!String.IsNullOrWhiteSpace(personnelRoleValue) && int.TryParse(personnelRoleValue, out var personnelRoleId) && personnelRoleId > 0)
+				{
+					role.PersonnelRoleId = personnelRoleId;
+
+					var requiredValue = form[$"unitRoleRequired_{suffix}"].ToString();
+					role.PersonnelRoleRequired = requiredValue == "on" || requiredValue == "true";
+				}
+
+				roles.Add(role);
+			}
+
+			return roles;
+		}
+
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Unit_Create)]
 		public async Task<IActionResult> NewUnit()
@@ -242,6 +314,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			});
 			states.AddRange(await _customStateService.GetAllActiveUnitStatesForDepartmentAsync(DepartmentId));
 			model.States = states;
+
+			model.PersonnelRoles = await _personnelRolesService.GetAllRolesForDepartmentAsync(DepartmentId);
 
 			var groups = new List<DepartmentGroup>();
 			groups.Add(new DepartmentGroup
@@ -296,18 +370,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				model.Unit = await _unitsService.SaveUnitAsync(model.Unit, cancellationToken);
 
-				var roles = new List<UnitRole>();
-				if (unitRoleNames.Count > 0)
-				{
-					foreach (var roleName in unitRoleNames)
-					{
-						var role = new UnitRole();
-						role.Name = roleName;
-						role.UnitId = model.Unit.UnitId;
-
-						roles.Add(role);
-					}
-				}
+				var roles = ParseUnitRolesFromForm(form, model.Unit.UnitId);
 
 				if (roles.Count > 0)
 					await _unitsService.SetRolesForUnitAsync(model.Unit.UnitId, roles, cancellationToken);
@@ -423,6 +486,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.Stations = groups;
 
 			model.UnitRoles = await _unitsService.GetRolesForUnitAsync(unitId);
+			model.PersonnelRoles = await _personnelRolesService.GetAllRolesForDepartmentAsync(DepartmentId);
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			await _novuProvider.CreateUnitSubscriber(model.Unit.UnitId, department.Code, DepartmentId, model.Unit.Name, null);
@@ -494,18 +558,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				await _unitsService.SaveUnitAsync(unit, cancellationToken);
 
-				var roles = new List<UnitRole>();
-				if (unitRoleNames.Count > 0)
-				{
-					foreach (var roleName in unitRoleNames)
-					{
-						var role = new UnitRole();
-						role.Name = roleName;
-						role.UnitId = unit.UnitId;
-
-						roles.Add(role);
-					}
-				}
+				var roles = ParseUnitRolesFromForm(form, unit.UnitId);
 
 				if (roles.Count > 0)
 					await _unitsService.SetRolesForUnitAsync(unit.UnitId, roles, cancellationToken);

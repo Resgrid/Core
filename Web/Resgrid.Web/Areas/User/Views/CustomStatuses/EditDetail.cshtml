@@ -61,7 +61,10 @@
 						{
 							<div class="form-group">
 								<label class="col-sm-2 control-label">@localizer["BaseType"]</label>
-								<div class="col-sm-10">@Html.DropDownListFor(m => m.BaseType, Model.DetailTypes)</div>
+								<div class="col-sm-10">
+									@Html.DropDownListFor(m => m.BaseType, Model.BaseTypes)
+									@await Html.PartialAsync("_BaseTypeDescription", "BaseType")
+								</div>
 							</div>
 						}
 

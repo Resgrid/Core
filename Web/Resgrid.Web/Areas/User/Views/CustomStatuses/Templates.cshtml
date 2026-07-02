@@ -1,0 +1,123 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.CustomStatuses.CustomStateTemplatesView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.CustomStatuses.CustomStatuses> localizer
+@{
+	ViewBag.Title = "Resgrid | Custom Status Templates";
+
+	string typeName = Model.Type == CustomStateTypes.Unit
+		? "Unit"
+		: Model.Type == CustomStateTypes.Personnel ? "Personnel" : "Staffing";
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>@typeName Status Templates</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+			</li>
+			<li>
+				<a asp-controller="CustomStatuses" asp-action="Index" asp-route-area="User">@localizer["CustomStatusesHeader"]</a>
+			</li>
+			<li class="active">
+				<strong>@typeName Templates</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="wrapper wrapper-content">
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="ibox float-e-margins">
+				<div class="ibox-title">
+					<h5>Choose a starting point for your @typeName.ToLower() statuses</h5>
+					<div class="ibox-tools">
+						<a class="btn btn-white btn-sm" asp-controller="CustomStatuses" asp-action="New" asp-route-area="User" asp-route-type="@((int)Model.Type)">
+							<i class="fa fa-file-o"></i> Start from Blank
+						</a>
+					</div>
+				</div>
+				<div class="ibox-content">
+					<p>
+						Pick a predefined set below and we'll pre-fill the options for you. You can rename the text, change colors,
+						remove options you don't need or add your own before saving &mdash; nothing is saved until you click Add.
+						Prefer to build your own? Use <strong>Start from Blank</strong>.
+					</p>
+
+					<div class="input-group" style="max-width: 420px; margin-bottom: 18px;">
+						<span class="input-group-addon"><i class="fa fa-search"></i></span>
+						<input type="text" id="templateSearch" class="form-control" placeholder="Search templates (e.g. EMS, patrol, delivery)..." autocomplete="off" />
+					</div>
+
+					<div class="row" id="templateGrid">
+						@foreach (var template in Model.Templates)
+						{
+							<div class="col-md-6 col-lg-4 template-card" data-search="@template.SearchText">
+								<div class="ibox">
+									<div class="ibox-content" style="min-height: 260px;">
+										<div class="clearfix" style="margin-bottom: 6px;">
+											<h3 style="display: inline-block; margin: 0;">@template.Name</h3>
+											<span class="label label-primary pull-right">@template.Category</span>
+										</div>
+										<p class="text-muted" style="min-height: 54px;">@template.Description</p>
+
+										<div style="margin-bottom: 12px;">
+											@foreach (var detail in template.Details)
+											{
+												<span class="btn btn-xs" style="margin: 0 4px 6px 0; cursor: default; color: @detail.TextColor; background: @detail.ButtonColor;">@detail.ButtonText</span>
+											}
+										</div>
+
+										<div class="clearfix">
+											<small class="text-muted pull-left" style="line-height: 30px;">@template.ButtonCount options</small>
+											<a class="btn btn-primary btn-sm pull-right"
+											   asp-controller="CustomStatuses" asp-action="New" asp-route-area="User"
+											   asp-route-type="@((int)Model.Type)" asp-route-templateId="@template.Id">
+												Use this template
+											</a>
+										</div>
+									</div>
+								</div>
+							</div>
+						}
+					</div>
+
+					<div id="noTemplateResults" class="alert alert-warning" style="display: none;">
+						No templates match your search. Try a different term, or <a asp-controller="CustomStatuses" asp-action="New" asp-route-area="User" asp-route-type="@((int)Model.Type)">start from blank</a>.
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+	<script>
+		(function () {
+			var input = document.getElementById('templateSearch');
+			var cards = Array.prototype.slice.call(document.querySelectorAll('#templateGrid .template-card'));
+			var noResults = document.getElementById('noTemplateResults');
+
+			function applyFilter() {
+				var q = (input.value || '').toLowerCase().trim();
+				var terms = q.length ? q.split(/[\s,]+/) : [];
+				var visible = 0;
+
+				cards.forEach(function (card) {
+					var haystack = card.getAttribute('data-search') || '';
+					var match = terms.every(function (t) { return haystack.indexOf(t) !== -1; });
+					card.style.display = match ? '' : 'none';
+					if (match) { visible++; }
+				});
+
+				noResults.style.display = visible === 0 ? '' : 'none';
+			}
+
+			if (input) {
+				input.addEventListener('input', applyFilter);
+			}
+		})();
+	</script>
+}

@@ -68,7 +68,9 @@
 									<thead style="font-size: 14px;">
 										<tr>
 											<th style="font-size: 14px;">@localizer["RoleName"]</th>
-											<th style="font-size: 16px;"><a id="addRoleButton" onclick="resgrid.units.newunit.addRole();" class="btn btn-xs btn-success" style="float:right;" data-original-title="@localizer["AddRole"]">@localizer["AddRole"]</a></th>
+											<th style="font-size: 14px;">Required Personnel Role</th>
+											<th style="font-size: 14px; text-align:center;">Required?</th>
+											<th style="font-size: 16px;"><a id="addRoleButton" onclick="resgrid.units.newunit.addRole();" class="btn btn-xs btn-success" style="float:right;" data-original-title="@localizer["AddRole"]">@localizer["AddRole"]</a><a class="btn btn-xs btn-info" style="float:right; margin-right: 6px;" data-toggle="modal" data-target="#unitRoleTemplatesModal"><i class="fa fa-list-alt"></i> Browse Templates</a></th>
 										</tr>
 									</thead>
 									<tbody></tbody>
@@ -97,7 +99,13 @@
 	</div>
 </div>
 
+@await Html.PartialAsync("_UnitRoleTemplatesModal", Model.PersonnelRoles)
+
 @section Scripts
 {
 	<script src="~/js/app/internal/units/resgrid.units.newunit.js"></script>
+	<script>
+		// Personnel roles (qualifications) available to require on a unit role.
+		resgrid.units.newunit.personnelRoles = @Json.Serialize((Model.PersonnelRoles ?? new List<Resgrid.Model.PersonnelRole>()).Select(x => new { id = x.PersonnelRoleId, name = x.Name }));
+	</script>
 }

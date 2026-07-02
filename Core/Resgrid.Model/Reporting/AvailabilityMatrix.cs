@@ -46,6 +46,18 @@ namespace Resgrid.Model.Reporting
 			{ (int)ActionBaseTypes.Returning,     AvailabilityClass.Committed },
 			{ (int)ActionBaseTypes.Staging,       AvailabilityClass.Committed },
 			{ (int)ActionBaseTypes.Unavailable,   AvailabilityClass.Unavailable },
+			{ (int)ActionBaseTypes.Enroute,       AvailabilityClass.Committed },
+			{ (int)ActionBaseTypes.Transporting,  AvailabilityClass.Committed },
+			{ (int)ActionBaseTypes.Delivering,    AvailabilityClass.Committed },
+			{ (int)ActionBaseTypes.AtPatient,     AvailabilityClass.Committed },
+			{ (int)ActionBaseTypes.AtHospital,    AvailabilityClass.Committed },
+			{ (int)ActionBaseTypes.Searching,     AvailabilityClass.Committed },
+			{ (int)ActionBaseTypes.Loading,       AvailabilityClass.Committed },
+			{ (int)ActionBaseTypes.Standby,       AvailabilityClass.Committed },
+			{ (int)ActionBaseTypes.OnPatrol,      AvailabilityClass.Available },
+			{ (int)ActionBaseTypes.Maintenance,   AvailabilityClass.Unavailable },
+			{ (int)ActionBaseTypes.OnBreak,       AvailabilityClass.Delayed },
+			{ (int)ActionBaseTypes.Completed,     AvailabilityClass.Available },
 		};
 
 		// Built-in personnel status (ActionTypes) -> availability.

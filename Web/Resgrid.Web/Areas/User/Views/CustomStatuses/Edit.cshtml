@@ -180,7 +180,20 @@
                                 <option value="8">@localizer["Returning"]</option>
                                 <option value="9">@localizer["Staging"]</option>
                                 <option value="10">@localizer["Unavailable"]</option>
+                                <option value="11">@localizer["Enroute"]</option>
+                                <option value="12">@localizer["Transporting"]</option>
+                                <option value="13">@localizer["Delivering"]</option>
+                                <option value="14">@localizer["AtPatient"]</option>
+                                <option value="15">@localizer["AtHospital"]</option>
+                                <option value="16">@localizer["Searching"]</option>
+                                <option value="17">@localizer["Loading"]</option>
+                                <option value="18">@localizer["Standby"]</option>
+                                <option value="19">@localizer["OnPatrol"]</option>
+                                <option value="20">@localizer["Maintenance"]</option>
+                                <option value="21">@localizer["OnBreak"]</option>
+                                <option value="22">@localizer["Completed"]</option>
                             </select>
+                            @await Html.PartialAsync("_BaseTypeDescription", "baseType")
                         </div>
                     }
 

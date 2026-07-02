@@ -9964,6 +9964,12 @@
             When the user was assigned to the role
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitRoles.ActiveUnitRoleResultData.IsQualified">
+            <summary>
+            Whether the assigned user holds the personnel role required by this seat. True when the seat has
+            no requirement or no one is assigned.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.UnitRoles.SetUnitRolesInput">
             <summary>
             Object inputs for setting a users Status/Action. If this object is used in an operation that sets
@@ -10028,6 +10034,22 @@
         <member name="P:Resgrid.Web.Services.Models.v4.UnitRoles.UnitRoleResultData.Name">
             <summary>
             Name of the Unit Role
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitRoles.UnitRoleResultData.PersonnelRoleId">
+            <summary>
+            Optional personnel role (qualification) required to fill this unit role. Null/empty if none.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitRoles.UnitRoleResultData.PersonnelRoleName">
+            <summary>
+            Display name of the required personnel role, if any.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.UnitRoles.UnitRoleResultData.PersonnelRoleRequired">
+            <summary>
+            When true the personnel role is a hard requirement (unqualified members are blocked from being
+            assigned). When false it is preferred (allowed, but the unit is reported as degraded).
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.UnitRoles.UnitRolesResult">

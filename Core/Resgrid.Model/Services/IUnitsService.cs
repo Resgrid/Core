@@ -329,6 +329,23 @@ namespace Resgrid.Model.Services
 
 		Task<List<UnitActiveRole>> GetAllActiveRolesForUnitsByDepartmentIdAsync(int departmentId);
 
+		/// <summary>
+		/// Determines whether the user holds the personnel role (qualification) required by the given
+		/// unit role. Returns true when the role has no qualification requirement.
+		/// </summary>
+		Task<bool> IsUserQualifiedForUnitRoleAsync(UnitRole role, string userId, int departmentId);
+
+		/// <summary>
+		/// Computes the staffing level of a unit from its defined roles, current assignments and any
+		/// required personnel qualifications.
+		/// </summary>
+		Task<UnitRoleStaffingResult> GetUnitStaffingAsync(int unitId);
+
+		/// <summary>
+		/// Computes the staffing level for every unit in a department, keyed by unit id.
+		/// </summary>
+		Task<Dictionary<int, UnitRoleStaffingResult>> GetUnitStaffingForDepartmentAsync(int departmentId);
+
 		Task<List<UnitsLocation>> GetLatestUnitLocationsAsync(int departmentId);
 	}
 }

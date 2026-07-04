@@ -722,9 +722,16 @@ namespace Resgrid.Services
 			var roleNames = await BuildPersonnelRoleNameLookupAsync(departmentId);
 			var userRoleMap = await _personnelRolesService.GetAllRolesForUsersInDepartmentAsync(departmentId);
 
+			// Load every unit's defined roles for the whole department in a single query and group them
+			// by unit, instead of querying roles per unit inside the loop (avoids an N+1).
+			var allRoles = await _unitRolesRepository.GetAllRolesByDepartmentIdAsync(departmentId);
+			var rolesByUnit = (allRoles ?? Enumerable.Empty<UnitRole>())
+				.GroupBy(r => r.UnitId)
+				.ToDictionary(g => g.Key, g => g.ToList());
+
 			foreach (var unit in units)
 			{
-				var definedRoles = await GetRolesForUnitAsync(unit.UnitId);
+				var definedRoles = rolesByUnit.TryGetValue(unit.UnitId, out var unitRoles) ? unitRoles : new List<UnitRole>();
 
 				results[unit.UnitId] = UnitRoleStaffingResult.Calculate(unit.UnitId, definedRoles, activeRoles,
 					(uId, personnelRoleId) => UserHoldsPersonnelRole(userRoleMap, uId, personnelRoleId), roleNames);

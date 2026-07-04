@@ -18,7 +18,7 @@
 <script>
 	(function () {
 		window.resgridBaseTypeDescriptions = window.resgridBaseTypeDescriptions || (function () {
-			var d = {
+			const d = {
 				none: "No system meaning. The status is informational only and does not affect availability, reporting or automations.",
 				available: "The unit or responder is in service and available to be assigned or dispatched to a call or task.",
 				notresponding: "The responder has acknowledged but is declining or is unable to respond to the current assignment.",
@@ -46,21 +46,21 @@
 			};
 
 			// Add numeric aliases that match the ActionBaseTypes enum values (None = -1, Available = 0, ...).
-			var order = ["none", "available", "notresponding", "responding", "onscene", "madecontact",
+			const order = ["none", "available", "notresponding", "responding", "onscene", "madecontact",
 				"investigating", "dispatched", "cleared", "returning", "staging", "unavailable",
 				"enroute", "transporting", "delivering", "atpatient", "athospital", "searching",
 				"loading", "standby", "onpatrol", "maintenance", "onbreak", "completed"];
-			for (var i = 0; i < order.length; i++) {
+			for (let i = 0; i < order.length; i++) {
 				d[String(i - 1)] = d[order[i]];
 			}
 			return d;
 		})();
 
-		var sel = document.getElementById("@selectId");
-		var out = document.getElementById("@descId");
+		const sel = document.getElementById("@selectId");
+		const out = document.getElementById("@descId");
 		if (sel && out) {
-			var render = function () {
-				var key = String(sel.value == null ? "" : sel.value).toLowerCase();
+			const render = function () {
+				const key = String(sel.value == null ? "" : sel.value).toLowerCase();
 				out.textContent = window.resgridBaseTypeDescriptions[key] || "";
 			};
 			sel.addEventListener("change", render);

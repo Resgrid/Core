@@ -73,8 +73,8 @@
                                     <thead style="font-size: 14px;">
                                         <tr>
                                             <th style="font-size: 14px;">@localizer["RoleNameHeader"]</th>
-                                            <th style="font-size: 14px;">Required Personnel Role</th>
-                                            <th style="font-size: 14px; text-align:center;">Required?</th>
+                                            <th style="font-size: 14px;">@localizer["RequiredPersonnelRoleHeader"]</th>
+                                            <th style="font-size: 14px; text-align:center;">@localizer["RequiredHeader"]</th>
                                             <th style="font-size: 16px;"><a id="addRoleButton" onclick="resgrid.units.editunit.addRole();" class="btn btn-xs btn-success" style="float:right;" data-original-title="@localizer["AddRole"]">@localizer["AddRole"]</a><a class="btn btn-xs btn-info" style="float:right; margin-right: 6px;" data-toggle="modal" data-target="#unitRoleTemplatesModal"><i class="fa fa-list-alt"></i> Browse Templates</a></th>
                                         </tr>
                                     </thead>
@@ -144,7 +144,7 @@
 @section Scripts
     {
     <script>
-        var count = @(unitCount);
+        resgrid.units.roleCounter.seed(@(unitCount));
     </script>
     <script src="~/js/app/internal/units/resgrid.units.editunit.js"></script>
     <script>

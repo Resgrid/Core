@@ -28,10 +28,10 @@ namespace Resgrid.Model.CustomStates
 		public string Description { get; set; }
 
 		/// <summary>Extra synonyms/keywords to make the template easier to find via search.</summary>
-		public string[] Keywords { get; set; } = new string[0];
+		public IReadOnlyList<string> Keywords { get; init; } = new string[0];
 
 		/// <summary>The ordered buttons/options that make up the set.</summary>
-		public List<CustomStateTemplateDetail> Details { get; set; } = new List<CustomStateTemplateDetail>();
+		public IReadOnlyList<CustomStateTemplateDetail> Details { get; init; } = new List<CustomStateTemplateDetail>();
 
 		/// <summary>Number of buttons/options in the set.</summary>
 		public int ButtonCount => Details?.Count ?? 0;

@@ -6,7 +6,7 @@ var resgrid;
         var newunit;
         (function (newunit) {
             $(document).ready(function () {
-                count = 0;
+                resgrid.units.roleCounter.seed(0);
                 $('select').select2();
                 $(".removeRole").click(function () {
                     $(this).closest('tr').remove();
@@ -24,7 +24,7 @@ var resgrid;
             }
             newunit.buildPersonnelRoleOptions = buildPersonnelRoleOptions;
             function addRole() {
-                count++;
+                var count = resgrid.units.roleCounter.next();
                 var options = buildPersonnelRoleOptions(null);
                 $('#unitRoles tbody').append(
                     "<tr>" +

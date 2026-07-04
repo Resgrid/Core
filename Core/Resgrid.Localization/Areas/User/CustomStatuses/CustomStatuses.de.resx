@@ -233,4 +233,40 @@
   <data name="UnitStatus" xml:space="preserve">
     <value>Unit Status</value>
   </data>
+  <data name="Enroute" xml:space="preserve">
+    <value>Unterwegs</value>
+  </data>
+  <data name="Transporting" xml:space="preserve">
+    <value>Transportiert</value>
+  </data>
+  <data name="Delivering" xml:space="preserve">
+    <value>Liefert</value>
+  </data>
+  <data name="AtPatient" xml:space="preserve">
+    <value>Beim Patienten</value>
+  </data>
+  <data name="AtHospital" xml:space="preserve">
+    <value>Im Krankenhaus</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Sucht</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Lädt</value>
+  </data>
+  <data name="Standby" xml:space="preserve">
+    <value>Bereitschaft</value>
+  </data>
+  <data name="OnPatrol" xml:space="preserve">
+    <value>Auf Streife</value>
+  </data>
+  <data name="Maintenance" xml:space="preserve">
+    <value>Wartung</value>
+  </data>
+  <data name="OnBreak" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="Completed" xml:space="preserve">
+    <value>Abgeschlossen</value>
+  </data>
 </root>

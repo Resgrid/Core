@@ -88,6 +88,11 @@ namespace Resgrid.Model
 					continue;
 				}
 
+				// Consume the matched assignment so it cannot fill more than one seat. Without this,
+				// duplicate defined roles sharing the same Name would all match the same active role
+				// (FirstOrDefault) and overcount FilledRoleCount.
+				active.Remove(assignment);
+
 				result.FilledRoleCount++;
 
 				if (role.PersonnelRoleId.HasValue && isUserQualified != null

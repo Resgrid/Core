@@ -73,15 +73,27 @@
     resgrid.units = resgrid.units || {};
     resgrid.units.roletemplates = resgrid.units.roletemplates || {};
 
+    // Single shared source of truth for the next #unitRoles row index. Both this templates modal and the
+    // page-level addRole handlers (new/edit unit) use it, so they can never generate duplicate
+    // unitRole_<n> ids/names. Defined once, defensively, since this markup renders before the page scripts.
+    resgrid.units.roleCounter = resgrid.units.roleCounter || {
+        value: 0,
+        seed: function (start) {
+            this.value = (typeof start === 'number' && !isNaN(start)) ? start : 0;
+        },
+        next: function () {
+            this.value++;
+            return this.value;
+        }
+    };
+
     resgrid.units.roletemplates.templates = @Json.Serialize(templatesJs);
 
     resgrid.units.roletemplates.personnelRoles = @Json.Serialize(personnelRolesJs);
 
     (function (rt) {
         function nextCount() {
-            if (typeof window.count === 'undefined' || window.count === null) { window.count = 0; }
-            window.count++;
-            return window.count;
+            return resgrid.units.roleCounter.next();
         }
 
         function findPersonnelRoleId(name) {
@@ -112,12 +124,12 @@
             var safeName = $('<div>').text(name || '').html();
             var checked = required ? " checked" : "";
             $('#unitRoles tbody').append(
-                "<tr>" +
-                "<td><input id='unitRole_" + c + "' name='unitRole_" + c + "' style='width:100%;' value=\"" + safeName + "\"></td>" +
-                "<td><select id='unitRolePersonnelRole_" + c + "' name='unitRolePersonnelRole_" + c + "' style='width:100%;'>" + options + "</select></td>" +
-                "<td style='text-align:center;'><input type='checkbox' id='unitRoleRequired_" + c + "' name='unitRoleRequired_" + c + "'" + checked + "></td>" +
-                "<td style='text-align:center;'><a onclick='$(this).closest(\"tr\").remove();' class='btn btn-xs btn-danger' data-original-title='Remove this role'>Remove</a></td>" +
-                "</tr>");
+                `<tr>
+                    <td><input id='unitRole_${c}' name='unitRole_${c}' style='width:100%;' value="${safeName}"></td>
+                    <td><select id='unitRolePersonnelRole_${c}' name='unitRolePersonnelRole_${c}' style='width:100%;'>${options}</select></td>
+                    <td style='text-align:center;'><input type='checkbox' id='unitRoleRequired_${c}' name='unitRoleRequired_${c}'${checked}></td>
+                    <td style='text-align:center;'><a onclick='$(this).closest("tr").remove();' class='btn btn-xs btn-danger' data-original-title='Remove this role'>Remove</a></td>
+                </tr>`);
         }
 
         rt.apply = function (templateId) {

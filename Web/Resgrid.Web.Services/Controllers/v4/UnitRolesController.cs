@@ -273,6 +273,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				var personnelRoleNames = await GetPersonnelRoleNamesAsync();
 
+				// Load all user-personnel-role mappings in a single query before the loop to avoid an N+1
+				// (mirrors the pattern in UnitsService.GetUnitStaffingForDepartmentAsync).
+				var userRoleMap = await _personnelRolesService.GetAllRolesForUsersInDepartmentAsync(DepartmentId);
+
 				foreach (var unit in units)
 				{
 					if (unit.Roles != null && unit.Roles.Any())
@@ -287,7 +291,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 								role.UserId = activeRole.UserId;
 								role.UpdatedOn = activeRole.UpdatedOn.ToString();
 								role.FullName = await UserHelper.GetFullNameForUser(activeRole.UserId); //TODO: Perf issue here most likely, temp add for Unit app Cap conversion. -SJ
-								role.IsQualified = await _unitsService.IsUserQualifiedForUnitRoleAsync(unitRole, activeRole.UserId, DepartmentId);
+								// No qualification configured for the seat -> anyone may fill it. Otherwise check the pre-loaded
+								// map in-memory instead of hitting the DB per role (matches IsUserQualifiedForUnitRoleAsync / UserHoldsPersonnelRole).
+								role.IsQualified = !unitRole.PersonnelRoleId.HasValue
+									|| (!string.IsNullOrWhiteSpace(activeRole.UserId)
+										&& userRoleMap != null
+										&& userRoleMap.TryGetValue(activeRole.UserId, out var userRoles)
+										&& userRoles != null
+										&& userRoles.Any(r => r != null && r.PersonnelRoleId == unitRole.PersonnelRoleId.Value));
 							}
 
 							result.Data.Add(role);

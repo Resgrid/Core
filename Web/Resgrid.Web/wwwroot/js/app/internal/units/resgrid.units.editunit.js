@@ -23,7 +23,7 @@ var resgrid;
             }
             editunit.buildPersonnelRoleOptions = buildPersonnelRoleOptions;
             function addRole() {
-                count++;
+                var count = resgrid.units.roleCounter.next();
                 var options = buildPersonnelRoleOptions(null);
                 $('#unitRoles tbody').append(
                     "<tr>" +

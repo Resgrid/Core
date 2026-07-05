@@ -73,7 +73,9 @@
                                     <thead style="font-size: 14px;">
                                         <tr>
                                             <th style="font-size: 14px;">@localizer["RoleNameHeader"]</th>
-                                            <th style="font-size: 16px;"><a id="addRoleButton" onclick="resgrid.units.editunit.addRole();" class="btn btn-xs btn-success" style="float:right;" data-original-title="@localizer["AddRole"]">@localizer["AddRole"]</a></th>
+                                            <th style="font-size: 14px;">@localizer["RequiredPersonnelRoleHeader"]</th>
+                                            <th style="font-size: 14px; text-align:center;">@localizer["RequiredHeader"]</th>
+                                            <th style="font-size: 16px;"><a id="addRoleButton" onclick="resgrid.units.editunit.addRole();" class="btn btn-xs btn-success" style="float:right;" data-original-title="@localizer["AddRole"]">@localizer["AddRole"]</a><a class="btn btn-xs btn-info" style="float:right; margin-right: 6px;" data-toggle="modal" data-target="#unitRoleTemplatesModal"><i class="fa fa-list-alt"></i> Browse Templates</a></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -82,7 +84,33 @@
                                             unitCount++;
                                             <tr>
                                                 <td><input id='unitRole_@unitCount' name='unitRole_@unitCount' style='width:100%;' value="@role.Name"></td>
-                                                <td style='text-align:center;'><a onclick='$(this).parent().parent().remove();' class='btn btn-xs btn-danger' data-original-title='@localizer["RemoveThisRole"]'>@commonLocalizer["Remove"]</a></td>
+                                                <td>
+                                                    <select id='unitRolePersonnelRole_@unitCount' name='unitRolePersonnelRole_@unitCount' style='width:100%;'>
+                                                        <option value="">-- None --</option>
+                                                        @foreach (var pr in Model.PersonnelRoles ?? new List<Resgrid.Model.PersonnelRole>())
+                                                        {
+                                                            if (role.PersonnelRoleId == pr.PersonnelRoleId)
+                                                            {
+                                                                <option value="@pr.PersonnelRoleId" selected>@pr.Name</option>
+                                                            }
+                                                            else
+                                                            {
+                                                                <option value="@pr.PersonnelRoleId">@pr.Name</option>
+                                                            }
+                                                        }
+                                                    </select>
+                                                </td>
+                                                <td style='text-align:center;'>
+                                                    @if (role.PersonnelRoleRequired)
+                                                    {
+                                                        <input type='checkbox' id='unitRoleRequired_@unitCount' name='unitRoleRequired_@unitCount' checked>
+                                                    }
+                                                    else
+                                                    {
+                                                        <input type='checkbox' id='unitRoleRequired_@unitCount' name='unitRoleRequired_@unitCount'>
+                                                    }
+                                                </td>
+                                                <td style='text-align:center;'><a onclick='$(this).closest("tr").remove();' class='btn btn-xs btn-danger' data-original-title='@localizer["RemoveThisRole"]'>@commonLocalizer["Remove"]</a></td>
                                             </tr>
                                         }
                                     </tbody>
@@ -111,10 +139,16 @@
     </div>
 </div>
 
+@await Html.PartialAsync("_UnitRoleTemplatesModal", Model.PersonnelRoles)
+
 @section Scripts
     {
     <script>
-        var count = @(unitCount);
+        resgrid.units.roleCounter.seed(@(unitCount));
     </script>
     <script src="~/js/app/internal/units/resgrid.units.editunit.js"></script>
+    <script>
+        // Personnel roles (qualifications) available to require on a unit role.
+        resgrid.units.editunit.personnelRoles = @Json.Serialize((Model.PersonnelRoles ?? new List<Resgrid.Model.PersonnelRole>()).Select(x => new { id = x.PersonnelRoleId, name = x.Name }));
+    </script>
 }

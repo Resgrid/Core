@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.CustomStates;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
@@ -57,12 +58,38 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[Authorize(Policy = ResgridResources.CustomStates_Create)]
-		public async Task<IActionResult> New(int type)
+		public IActionResult Templates(int type)
+		{
+			var model = new CustomStateTemplatesView();
+			model.Type = (CustomStateTypes)type;
+			model.Templates = CustomStateTemplateCatalog.GetByType(model.Type);
+
+			return View(model);
+		}
+
+		[Authorize(Policy = ResgridResources.CustomStates_Create)]
+		public async Task<IActionResult> New(int type, string templateId = null)
 		{
 			var model = new NewCustomStateView();
 			model.Type = (CustomStateTypes)type;
 			model.State = new CustomState();
 			model.State.Details = new Collection<CustomStateDetail>();
+
+			// If the user chose a predefined template, seed the (still unsaved) state with its options so
+			// they can rename/recolor/delete them before saving. A blank/fresh slate is used otherwise.
+			if (!String.IsNullOrWhiteSpace(templateId))
+			{
+				var template = CustomStateTemplateCatalog.GetById(templateId);
+
+				if (template != null && template.Type == model.Type)
+				{
+					model.State.Name = template.Name;
+					model.State.Description = template.Description;
+
+					foreach (var templateDetail in template.Details.OrderBy(d => d.Order))
+						model.State.Details.Add(templateDetail.ToCustomStateDetail());
+				}
+			}
 
 			return View(model);
 		}

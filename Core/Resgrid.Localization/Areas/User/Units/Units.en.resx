@@ -225,4 +225,10 @@
   <data name="YouCanAddType2" xml:space="preserve">
     <value>here</value>
   </data>
+  <data name="RequiredPersonnelRoleHeader" xml:space="preserve">
+    <value>Required Personnel Role</value>
+  </data>
+  <data name="RequiredHeader" xml:space="preserve">
+    <value>Required?</value>
+  </data>
 </root>

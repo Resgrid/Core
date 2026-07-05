@@ -241,6 +241,7 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectUnitTypeByDIdNameQuery { get; set; }
 		public string SelectUnitLogsByUnitIdQuery { get; set; }
 		public string SelectUnitRolesByUnitIdQuery { get; set; }
+		public string SelectUnitRolesByDepartmentIdQuery { get; set; }
 		public string SelectUnitsByGroupIdQuery { get; set; }
 		public string SelectCurrentRolesByUnitIdQuery { get; set; }
 		public string SelectLatestUnitLocationByUnitId { get; set; }

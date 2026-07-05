@@ -28,7 +28,7 @@
           <h5>@localizer["CurrentUnitStatusesHeader"]</h5>
           <div class="ibox-tools">
             <div class="buttons-actions">
-              <a title="Add a new Custom Unit Statuses" class="btn btn-success" asp-controller="CustomStatuses" asp-action="New" asp-route-area="User" asp-route-type="2">Add Unit Statuses</a>
+              <a title="Add a new Custom Unit Statuses" class="btn btn-success" asp-controller="CustomStatuses" asp-action="Templates" asp-route-area="User" asp-route-type="2">Add Unit Statuses</a>
             </div>
           </div>
         </div>
@@ -119,7 +119,7 @@
               <div class="col-sm-4 col-sm-offset-2">
                 @if (Model.PersonnelStatuses == null)
                 {
-                  <a class="btn btn-success" asp-controller="CustomStatuses" asp-action="New" asp-route-area="User" asp-route-type="1">@localizer["SetCustomStatuses"]</a>
+                  <a class="btn btn-success" asp-controller="CustomStatuses" asp-action="Templates" asp-route-area="User" asp-route-type="1">@localizer["SetCustomStatuses"]</a>
                 }
                 else
                 {
@@ -159,7 +159,7 @@
               <div class="col-sm-4 col-sm-offset-2">
                 @if (Model.PersonellStaffing == null)
                 {
-                  <a class="btn btn-success" asp-controller="CustomStatuses" asp-action="New" asp-route-area="User" asp-route-type="3">@localizer["SetCustomStaffingLevels"]</a>
+                  <a class="btn btn-success" asp-controller="CustomStatuses" asp-action="Templates" asp-route-area="User" asp-route-type="3">@localizer["SetCustomStaffingLevels"]</a>
                 }
                 else
                 {

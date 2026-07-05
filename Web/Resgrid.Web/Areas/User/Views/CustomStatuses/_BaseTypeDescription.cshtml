@@ -1,0 +1,70 @@
+@*
+	Renders a live, user-facing description of the currently selected Custom State "Base Type".
+	The Base Type is how Resgrid understands what a custom status means at a system level (availability,
+	reporting, automations). Keep the descriptions below in sync with the [Description] attributes on
+	Resgrid.Model.ActionBaseTypes.
+
+	Usage: @await Html.PartialAsync("_BaseTypeDescription", "baseType")
+	where the model is the DOM id of the <select> element that holds the base type value. The select
+	options may be keyed either by the numeric enum value (-1..22) or by the enum member name
+	(e.g. "Transporting"); both are supported.
+*@
+@model string
+@{
+	var selectId = string.IsNullOrWhiteSpace(Model) ? "baseType" : Model;
+	var descId = selectId + "_baseTypeDescription";
+}
+<div id="@descId" class="help-block base-type-description" style="margin-top: 6px; font-style: italic;"></div>
+<script>
+	(function () {
+		window.resgridBaseTypeDescriptions = window.resgridBaseTypeDescriptions || (function () {
+			const d = {
+				none: "No system meaning. The status is informational only and does not affect availability, reporting or automations.",
+				available: "The unit or responder is in service and available to be assigned or dispatched to a call or task.",
+				notresponding: "The responder has acknowledged but is declining or is unable to respond to the current assignment.",
+				responding: "The unit or responder is actively responding (en route) to an assigned call or incident.",
+				onscene: "The unit or responder has arrived and is operating at the scene of a call or incident.",
+				madecontact: "The unit or responder has made contact with the subject, patient, party or point of interest.",
+				investigating: "The unit or responder is investigating, assessing or sizing up the situation.",
+				dispatched: "The unit or responder has been dispatched or assigned but has not yet begun responding.",
+				cleared: "The unit or responder has cleared the call or incident and is returning to an available state.",
+				returning: "The unit or responder is returning to quarters, station or base.",
+				staging: "The unit or responder is staged at a safe location awaiting assignment or orders.",
+				unavailable: "The unit or responder is out of service and unavailable for assignment.",
+				enroute: "The unit or responder is traveling to an assignment, destination or location on a routine (non-emergency) basis.",
+				transporting: "The unit or responder is actively transporting a patient, subject, prisoner or cargo to a destination.",
+				delivering: "The unit or responder is actively delivering goods, supplies, equipment or commodities to a recipient or drop-off point.",
+				atpatient: "The unit or responder has reached and is providing care to, or is in contact with, a patient or search subject.",
+				athospital: "The unit or responder has arrived at a hospital or receiving facility to transfer patient care.",
+				searching: "The unit or responder is conducting an active search of an assigned area, sector or grid.",
+				loading: "The unit or responder is loading or picking up cargo, supplies, equipment or a subject prior to transport.",
+				standby: "The unit or responder is held in reserve, on standby or on-call and ready to be assigned.",
+				onpatrol: "The unit or responder is actively patrolling an assigned area or beat while remaining available for dispatch.",
+				maintenance: "The unit or responder is out of service for maintenance, refueling, restocking, cleaning or servicing.",
+				onbreak: "The unit or responder is on a rest, meal or crew-rest break and is temporarily unavailable.",
+				completed: "The assignment, task or delivery is complete; the unit or responder is wrapping up and becoming available."
+			};
+
+			// Add numeric aliases that match the ActionBaseTypes enum values (None = -1, Available = 0, ...).
+			const order = ["none", "available", "notresponding", "responding", "onscene", "madecontact",
+				"investigating", "dispatched", "cleared", "returning", "staging", "unavailable",
+				"enroute", "transporting", "delivering", "atpatient", "athospital", "searching",
+				"loading", "standby", "onpatrol", "maintenance", "onbreak", "completed"];
+			for (let i = 0; i < order.length; i++) {
+				d[String(i - 1)] = d[order[i]];
+			}
+			return d;
+		})();
+
+		const sel = document.getElementById("@selectId");
+		const out = document.getElementById("@descId");
+		if (sel && out) {
+			const render = function () {
+				const key = String(sel.value == null ? "" : sel.value).toLowerCase();
+				out.textContent = window.resgridBaseTypeDescriptions[key] || "";
+			};
+			sel.addEventListener("change", render);
+			render();
+		}
+	})();
+</script>

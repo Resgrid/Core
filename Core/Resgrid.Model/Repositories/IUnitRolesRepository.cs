@@ -16,5 +16,12 @@ namespace Resgrid.Model.Repositories
 		/// <param name="unitId">The unit identifier.</param>
 		/// <returns>Task&lt;IEnumerable&lt;UnitRole&gt;&gt;.</returns>
 		Task<IEnumerable<UnitRole>> GetAllRolesByUnitIdAsync(int unitId);
+
+		/// <summary>
+		/// Gets all unit roles for every unit in a department in a single query.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;IEnumerable&lt;UnitRole&gt;&gt;.</returns>
+		Task<IEnumerable<UnitRole>> GetAllRolesByDepartmentIdAsync(int departmentId);
 	}
 }

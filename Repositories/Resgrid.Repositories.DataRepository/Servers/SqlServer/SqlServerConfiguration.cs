@@ -659,6 +659,11 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SelectUnitLogsByUnitIdQuery =
 				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [UnitId] = %UNITID% ORDER BY Timestamp DESC";
 			SelectUnitRolesByUnitIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE [UnitId] = %UNITID%";
+			SelectUnitRolesByDepartmentIdQuery = @"
+					SELECT ur.*
+					FROM %SCHEMA%.%TABLENAME% ur
+					INNER JOIN %SCHEMA%.%UNITSTABLE% u ON u.[UnitId] = ur.[UnitId]
+					WHERE u.[DepartmentId] = %DID%";
 			SelectUnitsByGroupIdQuery = @"
 					SELECT u.*, dg.*
 					FROM [dbo].[Units] u

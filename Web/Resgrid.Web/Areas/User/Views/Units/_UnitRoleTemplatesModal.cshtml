@@ -1,0 +1,162 @@
+@using Resgrid.Model.UnitRoles
+@using System.Linq
+@model List<Resgrid.Model.PersonnelRole>
+@{
+    var templates = UnitRoleTemplateCatalog.All;
+    var templatesJs = templates.Select(t => new
+    {
+        id = t.Id,
+        roles = t.Roles.Select(r => new { name = r.Name, personnelRole = r.SuggestedPersonnelRole, required = r.Required })
+    });
+    var personnelRolesJs = (Model ?? new List<Resgrid.Model.PersonnelRole>()).Select(x => new { id = x.PersonnelRoleId, name = x.Name });
+}
+
+<div class="modal fade" id="unitRoleTemplatesModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">Unit Role Templates</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    Pick a starting point for this unit's accountability roles. The seats are added to the roles table
+                    where you can rename them, change or clear the required personnel role, and add or remove seats
+                    before saving. Suggested qualifications are matched to your department's personnel roles by name.
+                </p>
+
+                <div class="input-group" style="max-width: 420px; margin-bottom: 16px;">
+                    <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                    <input type="text" id="unitRoleTemplateSearch" class="form-control" placeholder="Search templates (e.g. engine, medic, patrol)..." autocomplete="off" onkeyup="resgrid.units.roletemplates.filter(this.value);" />
+                </div>
+
+                <div class="row" id="unitRoleTemplateGrid" style="max-height: 55vh; overflow-y: auto;">
+                    @foreach (var t in templates)
+                    {
+                        <div class="col-md-6 role-template-card" data-search="@t.SearchText" style="margin-bottom: 14px;">
+                            <div class="ibox" style="margin-bottom: 0;">
+                                <div class="ibox-content">
+                                    <div class="clearfix" style="margin-bottom: 4px;">
+                                        <strong style="font-size: 15px;">@t.Name</strong>
+                                        <span class="label label-primary pull-right">@t.Category</span>
+                                    </div>
+                                    <p class="text-muted" style="min-height: 40px; margin-bottom: 8px;">@t.Description</p>
+                                    <div style="margin-bottom: 10px;">
+                                        @foreach (var r in t.Roles)
+                                        {
+                                            <span class="label label-default" style="display:inline-block; margin: 0 4px 4px 0; font-weight: normal;">@(r.Name + (!string.IsNullOrWhiteSpace(r.SuggestedPersonnelRole) ? " · " + r.SuggestedPersonnelRole + (r.Required ? "*" : "") : ""))</span>
+                                        }
+                                    </div>
+                                    <div class="clearfix">
+                                        <small class="text-muted pull-left" style="line-height: 26px;">@t.RoleCount seats</small>
+                                        <button type="button" class="btn btn-primary btn-sm pull-right" onclick="resgrid.units.roletemplates.apply('@t.Id');">Use these roles</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div id="noUnitRoleTemplateResults" class="alert alert-warning" style="display:none;">No templates match your search.</div>
+                <small class="text-muted">* = suggested as a hard requirement (blocks unqualified members) when the matching personnel role exists.</small>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Self-contained: create the namespace defensively (this markup renders in the body, before the
+    // page's own unit scripts in the Scripts section).
+    var resgrid = resgrid || {};
+    resgrid.units = resgrid.units || {};
+    resgrid.units.roletemplates = resgrid.units.roletemplates || {};
+
+    // Single shared source of truth for the next #unitRoles row index. Both this templates modal and the
+    // page-level addRole handlers (new/edit unit) use it, so they can never generate duplicate
+    // unitRole_<n> ids/names. Defined once, defensively, since this markup renders before the page scripts.
+    resgrid.units.roleCounter = resgrid.units.roleCounter || {
+        value: 0,
+        seed: function (start) {
+            this.value = (typeof start === 'number' && !isNaN(start)) ? start : 0;
+        },
+        next: function () {
+            this.value++;
+            return this.value;
+        }
+    };
+
+    resgrid.units.roletemplates.templates = @Json.Serialize(templatesJs);
+
+    resgrid.units.roletemplates.personnelRoles = @Json.Serialize(personnelRolesJs);
+
+    (function (rt) {
+        function nextCount() {
+            return resgrid.units.roleCounter.next();
+        }
+
+        function findPersonnelRoleId(name) {
+            if (!name) return null;
+            var roles = rt.personnelRoles || [];
+            for (var i = 0; i < roles.length; i++) {
+                if (roles[i].name && roles[i].name.toLowerCase() === name.toLowerCase()) {
+                    return roles[i].id;
+                }
+            }
+            return null;
+        }
+
+        function buildOptions(selectedId) {
+            var opts = "<option value=''>-- None --</option>";
+            var roles = rt.personnelRoles || [];
+            for (var i = 0; i < roles.length; i++) {
+                var sel = (selectedId != null && String(selectedId) === String(roles[i].id)) ? " selected" : "";
+                var nm = $('<div>').text(roles[i].name).html();
+                opts += "<option value='" + roles[i].id + "'" + sel + ">" + nm + "</option>";
+            }
+            return opts;
+        }
+
+        function addRow(name, personnelRoleId, required) {
+            var c = nextCount();
+            var options = buildOptions(personnelRoleId);
+            var safeName = $('<div>').text(name || '').html();
+            var checked = required ? " checked" : "";
+            $('#unitRoles tbody').append(
+                `<tr>
+                    <td><input id='unitRole_${c}' name='unitRole_${c}' style='width:100%;' value="${safeName}"></td>
+                    <td><select id='unitRolePersonnelRole_${c}' name='unitRolePersonnelRole_${c}' style='width:100%;'>${options}</select></td>
+                    <td style='text-align:center;'><input type='checkbox' id='unitRoleRequired_${c}' name='unitRoleRequired_${c}'${checked}></td>
+                    <td style='text-align:center;'><a onclick='$(this).closest("tr").remove();' class='btn btn-xs btn-danger' data-original-title='Remove this role'>Remove</a></td>
+                </tr>`);
+        }
+
+        rt.apply = function (templateId) {
+            var tpl = (rt.templates || []).filter(function (t) { return t.id === templateId; })[0];
+            if (!tpl) return;
+
+            for (var i = 0; i < tpl.roles.length; i++) {
+                var r = tpl.roles[i];
+                addRow(r.name, findPersonnelRoleId(r.personnelRole), r.required);
+            }
+
+            $('#unitRoleTemplatesModal').modal('hide');
+        };
+
+        rt.filter = function (query) {
+            var q = (query || '').toLowerCase().trim();
+            var terms = q.length ? q.split(/[\s,]+/) : [];
+            var visible = 0;
+
+            $('#unitRoleTemplateGrid .role-template-card').each(function () {
+                var hay = $(this).attr('data-search') || '';
+                var match = terms.every(function (t) { return hay.indexOf(t) !== -1; });
+                $(this).toggle(match);
+                if (match) { visible++; }
+            });
+
+            $('#noUnitRoleTemplateResults').toggle(visible === 0);
+        };
+    })(resgrid.units.roletemplates);
+</script>

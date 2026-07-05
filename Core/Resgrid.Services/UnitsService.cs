@@ -29,13 +29,14 @@ namespace Resgrid.Services
 		private readonly IUnitActiveRolesRepository _unitActiveRolesRepository;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly ILimitsService _limitsService;
+		private readonly IPersonnelRolesService _personnelRolesService;
 
 		public UnitsService(IUnitsRepository unitsRepository, IUnitStatesRepository unitStatesRepository,
 			IUnitLogsRepository unitLogsRepository, IUnitTypesRepository unitTypesRepository, ISubscriptionsService subscriptionsService,
 			IUnitRolesRepository unitRolesRepository, IUnitStateRoleRepository unitStateRoleRepository, IUserStateService userStateService,
 			IEventAggregator eventAggregator, ICustomStateService customStateService, Lazy<IMongoRepository<UnitsLocation>> unitLocationRepository,
 			IUnitLocationsDocRepository unitLocationsDocRepository, IUnitActiveRolesRepository unitActiveRolesRepository,
-			IDepartmentGroupsService departmentGroupsService, ILimitsService limitsService)
+			IDepartmentGroupsService departmentGroupsService, ILimitsService limitsService, IPersonnelRolesService personnelRolesService)
 		{
 			_unitsRepository = unitsRepository;
 			_unitStatesRepository = unitStatesRepository;
@@ -52,6 +53,7 @@ namespace Resgrid.Services
 			_unitActiveRolesRepository = unitActiveRolesRepository;
 			_departmentGroupsService = departmentGroupsService;
 			_limitsService = limitsService;
+			_personnelRolesService = personnelRolesService;
 		}
 
 		public async Task<List<Unit>> GetAllAsync()
@@ -373,6 +375,16 @@ namespace Resgrid.Services
 			return await _unitRolesRepository.GetByIdAsync(unitRoleId);
 		}
 
+		public async Task<List<UnitRole>> GetAllRolesForDepartmentAsync(int departmentId)
+		{
+			var roles = await _unitRolesRepository.GetAllRolesByDepartmentIdAsync(departmentId);
+
+			if (roles != null && roles.Any())
+				return roles.ToList();
+			else
+				return new List<UnitRole>();
+		}
+
 		public async Task<List<UnitRole>> SetRolesForUnitAsync(int unitId, List<UnitRole> roles, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (unitId <= 0)
@@ -674,6 +686,94 @@ namespace Resgrid.Services
 		public async Task<bool> DeleteActiveRolesForUnitAsync(int unitId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			return await _unitActiveRolesRepository.DeleteActiveRolesByUnitIdAsync(unitId, cancellationToken);
+		}
+
+		public async Task<bool> IsUserQualifiedForUnitRoleAsync(UnitRole role, string userId, int departmentId)
+		{
+			// No qualification configured for the seat -> anyone may fill it.
+			if (role == null || !role.PersonnelRoleId.HasValue)
+				return true;
+
+			if (String.IsNullOrWhiteSpace(userId))
+				return false;
+
+			var userRoles = await _personnelRolesService.GetRolesForUserAsync(userId, departmentId);
+
+			return userRoles != null && userRoles.Any(x => x != null && x.PersonnelRoleId == role.PersonnelRoleId.Value);
+		}
+
+		public async Task<UnitRoleStaffingResult> GetUnitStaffingAsync(int unitId)
+		{
+			var unit = await GetUnitByIdAsync(unitId);
+
+			if (unit == null)
+				return new UnitRoleStaffingResult { UnitId = unitId };
+
+			var definedRoles = await GetRolesForUnitAsync(unitId);
+			var activeRoles = await GetActiveRolesForUnitAsync(unitId);
+
+			var roleNames = await BuildPersonnelRoleNameLookupAsync(unit.DepartmentId);
+			var userRoleMap = await _personnelRolesService.GetAllRolesForUsersInDepartmentAsync(unit.DepartmentId);
+
+			return UnitRoleStaffingResult.Calculate(unitId, definedRoles, activeRoles,
+				(uId, personnelRoleId) => UserHoldsPersonnelRole(userRoleMap, uId, personnelRoleId), roleNames);
+		}
+
+		public async Task<Dictionary<int, UnitRoleStaffingResult>> GetUnitStaffingForDepartmentAsync(int departmentId)
+		{
+			var results = new Dictionary<int, UnitRoleStaffingResult>();
+
+			var units = await GetUnitsForDepartmentAsync(departmentId);
+
+			if (units == null || !units.Any())
+				return results;
+
+			var activeRoles = await GetAllActiveRolesForUnitsByDepartmentIdAsync(departmentId);
+			var roleNames = await BuildPersonnelRoleNameLookupAsync(departmentId);
+			var userRoleMap = await _personnelRolesService.GetAllRolesForUsersInDepartmentAsync(departmentId);
+
+			// Load every unit's defined roles for the whole department in a single query and group them
+			// by unit, instead of querying roles per unit inside the loop (avoids an N+1).
+			var allRoles = await _unitRolesRepository.GetAllRolesByDepartmentIdAsync(departmentId);
+			var rolesByUnit = (allRoles ?? Enumerable.Empty<UnitRole>())
+				.GroupBy(r => r.UnitId)
+				.ToDictionary(g => g.Key, g => g.ToList());
+
+			foreach (var unit in units)
+			{
+				var definedRoles = rolesByUnit.TryGetValue(unit.UnitId, out var unitRoles) ? unitRoles : new List<UnitRole>();
+
+				results[unit.UnitId] = UnitRoleStaffingResult.Calculate(unit.UnitId, definedRoles, activeRoles,
+					(uId, personnelRoleId) => UserHoldsPersonnelRole(userRoleMap, uId, personnelRoleId), roleNames);
+			}
+
+			return results;
+		}
+
+		private async Task<Dictionary<int, string>> BuildPersonnelRoleNameLookupAsync(int departmentId)
+		{
+			var lookup = new Dictionary<int, string>();
+			var allRoles = await _personnelRolesService.GetAllRolesForDepartmentAsync(departmentId);
+
+			if (allRoles != null)
+			{
+				foreach (var role in allRoles)
+				{
+					if (role != null && !lookup.ContainsKey(role.PersonnelRoleId))
+						lookup[role.PersonnelRoleId] = role.Name;
+				}
+			}
+
+			return lookup;
+		}
+
+		private static bool UserHoldsPersonnelRole(Dictionary<string, List<PersonnelRole>> userRoleMap, string userId, int personnelRoleId)
+		{
+			return !String.IsNullOrWhiteSpace(userId)
+				&& userRoleMap != null
+				&& userRoleMap.TryGetValue(userId, out var roles)
+				&& roles != null
+				&& roles.Any(r => r != null && r.PersonnelRoleId == personnelRoleId);
 		}
 	}
 }

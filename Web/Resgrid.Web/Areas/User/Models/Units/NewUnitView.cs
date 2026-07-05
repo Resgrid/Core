@@ -12,5 +12,6 @@ namespace Resgrid.Web.Areas.User.Models.Units
 		public List<DepartmentGroup> Stations { get; set; }
 		public List<UnitRole> UnitRoles { get; set; }
 		public List<CustomState> States { get; set; }
+		public List<PersonnelRole> PersonnelRoles { get; set; }
 	}
 }

@@ -78,6 +78,16 @@
                                 <div class="row">
                                     <div class="col-xs-10">@localizer["ButtonsHelp"]<br /></div>
                                 </div>
+                                @if (Model.State.GetActiveDetails().Count > 0)
+                                {
+                                    <div class="row">
+                                        <div class="col-xs-10">
+                                            <div class="alert alert-info" style="margin-top: 8px;">
+                                                These options were pre-filled from a template. Rename the text, change colors, remove any you don't need, or add your own &mdash; nothing is saved until you click Add.
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
                                 <div class="row">
                                     <div class="col-xs-12">
                                         <table id="options" class="table table-striped table-bordered">
@@ -89,7 +99,31 @@
                                                     <th style="max-width: 90px; font-size: 16px;"><a id="addButton" class="btn btn-success btn-xs" data-original-title="@localizer["AddOption"]" data-toggle="modal" data-target="#newStatusModal">@localizer["AddOption"]</a></th>
                                                 </tr>
                                             </thead>
-                                            <tbody></tbody>
+                                            <tbody>
+                                                @{
+                                                    int count = 0;
+                                                }
+                                                @foreach (var detail in Model.State.GetActiveDetails())
+                                                {
+                                                    count++;
+                                                    <tr>
+                                                        <td><input type='number' min='0' id='order_@count' name='order_@count' value='@detail.Order' onkeypress='return resgrid.statuses.newstatus.isNumber(event)'></td>
+                                                        <td><input type='text' class='form-control' id='buttonText_@count' name='buttonText_@count' value='@detail.ButtonText' maxlength='50'></td>
+                                                        <td>
+                                                            <a class="btn btn-default rowPreview" role="button" style="color: @detail.TextColor; background: @detail.ButtonColor;">@detail.ButtonText</a>
+                                                            <label style="font-weight: normal; margin: 0 6px;">Bg <input type='color' id='buttonColor_@count' name='buttonColor_@count' value='@detail.ButtonColor'></label>
+                                                            <label style="font-weight: normal; margin: 0 6px;">Text <input type='color' id='textColor_@count' name='textColor_@count' value='@detail.TextColor'></label>
+                                                            <input type='hidden' id='detailType_@count' name='detailType_@count' value='@detail.DetailType'>
+                                                            <input type='hidden' id='noteType_@count' name='noteType_@count' value='@detail.NoteType'>
+                                                            <input type='hidden' id='requireGps_@count' name='requireGps_@count' value='@(detail.GpsRequired ? "on" : "false")'>
+                                                            <input type='hidden' id='baseType_@count' name='baseType_@count' value='@detail.BaseType'>
+                                                        </td>
+                                                        <td style='text-align: center;'>
+                                                            <a onclick='$(this).closest("tr").remove();' class="btn btn-xs btn-danger" data-original-title='Remove this option'>@commonLocalizer["Delete"]</a>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
                                         </table>
                                     </div>
                                 </div>
@@ -153,7 +187,20 @@
                                 <option value="8">@localizer["Returning"]</option>
                                 <option value="9">@localizer["Staging"]</option>
                                 <option value="10">@localizer["Unavailable"]</option>
+                                <option value="11">@localizer["Enroute"]</option>
+                                <option value="12">@localizer["Transporting"]</option>
+                                <option value="13">@localizer["Delivering"]</option>
+                                <option value="14">@localizer["AtPatient"]</option>
+                                <option value="15">@localizer["AtHospital"]</option>
+                                <option value="16">@localizer["Searching"]</option>
+                                <option value="17">@localizer["Loading"]</option>
+                                <option value="18">@localizer["Standby"]</option>
+                                <option value="19">@localizer["OnPatrol"]</option>
+                                <option value="20">@localizer["Maintenance"]</option>
+                                <option value="21">@localizer["OnBreak"]</option>
+                                <option value="22">@localizer["Completed"]</option>
                             </select>
+                            @await Html.PartialAsync("_BaseTypeDescription", "baseType")
                         </div>
                     }
 
@@ -223,4 +270,23 @@
 @section Scripts
 {
     <script src="~/js/app/internal/statuses/resgrid.statuses.newstatus.js"></script>
+    <script>
+        // When pre-filled from a template the option rows are rendered server-side; start the option
+        // counter after them so newly added options don't collide with the seeded rows.
+        resgrid.statuses.newstatus.optionsCount = '@Model.State.GetActiveDetails().Count';
+
+        // Live-preview editing of pre-filled (template) rows: renaming the text or picking new colors
+        // updates that row's preview button in place.
+        $(function () {
+            $('#options').on('input', 'input[name^="buttonText_"]', function () {
+                $(this).closest('tr').find('.rowPreview').text($(this).val());
+            });
+            $('#options').on('input', 'input[name^="buttonColor_"]', function () {
+                $(this).closest('tr').find('.rowPreview').css('background', $(this).val());
+            });
+            $('#options').on('input', 'input[name^="textColor_"]', function () {
+                $(this).closest('tr').find('.rowPreview').css('color', $(this).val());
+            });
+        });
+    </script>
 }

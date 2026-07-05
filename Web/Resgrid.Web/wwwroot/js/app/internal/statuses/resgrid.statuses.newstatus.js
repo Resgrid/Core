@@ -7,7 +7,12 @@ var resgrid;
         (function (newstatus) {
             $(document).ready(function () {
                 resgrid.common.analytics.track('Custom Statuses - New');
-                resgrid.statuses.newstatus.optionsCount = 0;
+
+                // Preserve any count set by the view when the form is pre-filled from a template
+                // (rows already rendered server-side); only default to 0 for a blank/fresh slate.
+                if (typeof resgrid.statuses.newstatus.optionsCount === 'undefined') {
+                    resgrid.statuses.newstatus.optionsCount = 0;
+                }
 
                 let quill = new Quill('#editor-container', {
                     placeholder: '',

@@ -41,6 +41,12 @@ namespace Resgrid.Web.Services.Models.v4.UnitRoles
 		/// </summary>
 		public string UpdatedOn { get; set; }
 
+		/// <summary>
+		/// Whether the assigned user holds the personnel role required by this seat. True when the seat has
+		/// no requirement or no one is assigned.
+		/// </summary>
+		public bool IsQualified { get; set; } = true;
+
 		public ActiveUnitRoleResultData()
 		{
 		}
@@ -50,6 +56,9 @@ namespace Resgrid.Web.Services.Models.v4.UnitRoles
 			UnitId = baseData.UnitId;
 			UnitRoleId = baseData.UnitRoleId;
 			Name = baseData.Name;
+			PersonnelRoleId = baseData.PersonnelRoleId;
+			PersonnelRoleName = baseData.PersonnelRoleName;
+			PersonnelRoleRequired = baseData.PersonnelRoleRequired;
 		}
 	}
 }

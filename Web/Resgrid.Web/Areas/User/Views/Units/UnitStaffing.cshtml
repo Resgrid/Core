@@ -5,6 +5,31 @@
     ViewBag.Title = "Resgrid | " + @localizer["UnitStaffingHeader"];
     Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
+@functions {
+    static string StaffingLabelClass(Resgrid.Model.UnitStaffingLevel level)
+    {
+        switch (level)
+        {
+            case Resgrid.Model.UnitStaffingLevel.FullyStaffed: return "label-success";
+            case Resgrid.Model.UnitStaffingLevel.Degraded: return "label-warning";
+            case Resgrid.Model.UnitStaffingLevel.PartiallyStaffed: return "label-warning";
+            case Resgrid.Model.UnitStaffingLevel.NotStaffed: return "label-danger";
+            default: return "label-default";
+        }
+    }
+
+    static string StaffingLabelText(Resgrid.Model.UnitStaffingLevel level)
+    {
+        switch (level)
+        {
+            case Resgrid.Model.UnitStaffingLevel.FullyStaffed: return "Fully Staffed";
+            case Resgrid.Model.UnitStaffingLevel.Degraded: return "Degraded";
+            case Resgrid.Model.UnitStaffingLevel.PartiallyStaffed: return "Partially Staffed";
+            case Resgrid.Model.UnitStaffingLevel.NotStaffed: return "Not Staffed";
+            default: return "No Roles";
+        }
+    }
+}
 @section Styles
 {
     <style type="text/css">
@@ -114,17 +139,34 @@
                             {
                                 if (unit.Roles.Any())
                                 {
+                                    var staffing = Model.GetStaffingForUnit(unit.UnitId);
                                     <div class="form-group">
-                                        <label class="col-sm-2 control-label">@unit.Name</label>
+                                        <label class="col-sm-2 control-label">
+                                            @unit.Name
+                                            @if (staffing != null && staffing.HasDefinedRoles)
+                                            {
+                                                <br />
+                                                <span class="label @StaffingLabelClass(staffing.Level)" title="@staffing.Summary">@StaffingLabelText(staffing.Level)</span>
+                                            }
+                                        </label>
                                         <div class="col-sm-10" id="unitAssignments">
                                             @foreach (var role in unit.Roles)
                                             {
                                                 var activeRole = Model.ActiveRoles.FirstOrDefault(x => x.UnitId == role.UnitId && x.Role == role.Name);
+                                                var requiredRoleName = Model.GetPersonnelRoleName(role.PersonnelRoleId);
+                                                var currentUserQualified = activeRole == null || !role.PersonnelRoleId.HasValue || Model.DoesUserHoldPersonnelRole(activeRole.UserId, role.PersonnelRoleId.Value);
 
-                                                <div class="row">
-                                                    <div class="col-md-5">@role.Name</div>
+                                                <div class="row" style="margin-bottom: 6px;">
+                                                    <div class="col-md-5">
+                                                        @role.Name
+                                                        @if (!string.IsNullOrWhiteSpace(requiredRoleName))
+                                                        {
+                                                            <br />
+                                                            <small class="text-muted">Requires: @requiredRoleName @(role.PersonnelRoleRequired ? "(Required)" : "(Preferred)")</small>
+                                                        }
+                                                    </div>
                                                     <div class="col-md-7">
-                                                        <select id="Role_@role.UnitRoleId" name="Role_@role.UnitRoleId" class="selectize personnelDropdown" style="width:100%;">
+                                                        <select id="Role_@role.UnitRoleId" name="Role_@role.UnitRoleId" class="selectize personnelDropdown" style="width:100%;" data-required-role="@requiredRoleName" data-required="@(role.PersonnelRoleRequired ? "true" : "false")">
                                                             @if (activeRole == null)
                                                             {
                                                                 <option value="" selected>@localizer["NotOccupied"]</option>
@@ -145,6 +187,12 @@
                                                                 }
                                                             }
                                                         </select>
+                                                        <span class="help-block role-warning" style="@(currentUserQualified ? "display:none;" : "")color: @(role.PersonnelRoleRequired ? "#a94442" : "#8a6d3b");">
+                                                            @if (!currentUserQualified)
+                                                            {
+                                                                <text>Assigned member does not hold the @requiredRoleName role.</text>
+                                                            }
+                                                        </span>
                                                     </div>
                                                 </div>
                                             }
@@ -191,4 +239,50 @@
     }
 
     <script src="~/js/app/internal/units/resgrid.units.setstaffing.js" asp-append-version="true"></script>
+    <script>
+        // Live qualification warning: when a member is chosen for a seat that requires a personnel role
+        // they don't hold, surface a warning. Hard "required" seats are also blocked server-side on save.
+        $(function () {
+            function checkRoleQualification(el) {
+                var $sel = $(el);
+                var required = $sel.attr('data-required-role');
+                if (!required) return;
+
+                var isHard = $sel.attr('data-required') === 'true';
+                var $warning = $sel.closest('.col-md-7').find('.role-warning');
+                var val = $sel.val();
+
+                if (!val) { $warning.hide(); return; }
+
+                var qualified = false;
+                var opt = $sel.find('option[value="' + val + '"]');
+                var data = opt.attr('data-data');
+                if (data) {
+                    try {
+                        var roles = (JSON.parse(data).Roles || '').split(',').map(function (s) { return s.trim(); });
+                        qualified = roles.indexOf(required) !== -1;
+                    } catch (e) {
+                        // Malformed option data -- leave qualified as false (safe default) so the warning shows.
+                        if (window.console) console.warn('Failed to parse personnel role data for qualification check', e);
+                    }
+                }
+
+                if (qualified) {
+                    $warning.hide();
+                } else {
+                    $warning.css('color', isHard ? '#a94442' : '#8a6d3b')
+                        .text('Assigned member does not hold the ' + required + (isHard ? ' role (required).' : ' role (preferred).'))
+                        .show();
+                }
+            }
+
+            $(document).on('change', 'select.personnelDropdown[data-required-role]', function () {
+                checkRoleQualification(this);
+            });
+
+            $('select.personnelDropdown[data-required-role]').each(function () {
+                checkRoleQualification(this);
+            });
+        });
+    </script>
 }

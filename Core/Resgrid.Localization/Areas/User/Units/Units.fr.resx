@@ -176,4 +176,10 @@
   <data name="YouCanAddType2" xml:space="preserve">
     <value>here</value>
   </data>
+  <data name="RequiredPersonnelRoleHeader" xml:space="preserve">
+    <value>Rôle du personnel requis</value>
+  </data>
+  <data name="RequiredHeader" xml:space="preserve">
+    <value>Requis ?</value>
+  </data>
 </root>

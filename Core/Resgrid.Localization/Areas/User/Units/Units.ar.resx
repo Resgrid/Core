@@ -225,4 +225,10 @@
   <data name="YouCanAddType2" xml:space="preserve">
     <value>هنا</value>
   </data>
+  <data name="RequiredPersonnelRoleHeader" xml:space="preserve">
+    <value>دور الموظف المطلوب</value>
+  </data>
+  <data name="RequiredHeader" xml:space="preserve">
+    <value>مطلوب؟</value>
+  </data>
 </root>

@@ -233,4 +233,40 @@
   <data name="UnitStatus" xml:space="preserve">
     <value>Unit Status</value>
   </data>
+  <data name="Enroute" xml:space="preserve">
+    <value>På väg</value>
+  </data>
+  <data name="Transporting" xml:space="preserve">
+    <value>Transporterar</value>
+  </data>
+  <data name="Delivering" xml:space="preserve">
+    <value>Levererar</value>
+  </data>
+  <data name="AtPatient" xml:space="preserve">
+    <value>Hos patient</value>
+  </data>
+  <data name="AtHospital" xml:space="preserve">
+    <value>På sjukhus</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Söker</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Lastar</value>
+  </data>
+  <data name="Standby" xml:space="preserve">
+    <value>I beredskap</value>
+  </data>
+  <data name="OnPatrol" xml:space="preserve">
+    <value>På patrull</value>
+  </data>
+  <data name="Maintenance" xml:space="preserve">
+    <value>Underhåll</value>
+  </data>
+  <data name="OnBreak" xml:space="preserve">
+    <value>På rast</value>
+  </data>
+  <data name="Completed" xml:space="preserve">
+    <value>Slutförd</value>
+  </data>
 </root>

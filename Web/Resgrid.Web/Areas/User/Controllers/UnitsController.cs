@@ -200,6 +200,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 									   where key.ToString().StartsWith("Role_")
 									   select int.Parse(key.ToString().Replace("Role_", ""))).ToList();
 
+				// Batch-load all unit roles for the department and every user's personnel roles up front so the
+				// qualification checks below run in-memory instead of issuing DB round-trips per submitted role
+				// (the previous per-iteration GetRoleByIdAsync / IsUserQualifiedForUnitRoleAsync / GetRoleByIdAsync
+				// calls were an N+1 across all Role_* form entries). Personnel role names come from the already
+				// loaded model.PersonnelRoles.
+				var roleMap = (await _unitsService.GetAllRolesForDepartmentAsync(DepartmentId)).ToDictionary(r => r.UnitRoleId);
+				var userRoleMap = await _personnelRolesService.GetAllRolesForUsersInDepartmentAsync(DepartmentId);
+
 				// Validate required qualifications BEFORE mutating anything -- the save path deletes existing
 				// assignments first, so blocking part-way through would lose data. A seat whose personnel role
 				// is "Required" blocks an unqualified member; a "Preferred" seat is allowed (the unit is then
@@ -211,13 +219,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 					if (String.IsNullOrWhiteSpace(candidateUserId))
 						continue;
 
-					var roleToCheck = await _unitsService.GetRoleByIdAsync(unitRoleId);
+					if (!roleMap.TryGetValue(unitRoleId, out var roleToCheck) || roleToCheck == null
+						|| !roleToCheck.PersonnelRoleId.HasValue || !roleToCheck.PersonnelRoleRequired)
+						continue;
 
-					if (roleToCheck != null && roleToCheck.PersonnelRoleId.HasValue && roleToCheck.PersonnelRoleRequired
-						&& !await _unitsService.IsUserQualifiedForUnitRoleAsync(roleToCheck, candidateUserId, DepartmentId))
+					var candidateHoldsRole = userRoleMap != null
+						&& userRoleMap.TryGetValue(candidateUserId, out var candidateRoles)
+						&& candidateRoles != null
+						&& candidateRoles.Any(r => r != null && r.PersonnelRoleId == roleToCheck.PersonnelRoleId.Value);
+
+					if (!candidateHoldsRole)
 					{
 						var member = model.Users?.FirstOrDefault(u => u.UserId == candidateUserId);
-						var requiredRole = await _personnelRolesService.GetRoleByIdAsync(roleToCheck.PersonnelRoleId.Value);
+						var requiredRole = model.PersonnelRoles?.FirstOrDefault(p => p.PersonnelRoleId == roleToCheck.PersonnelRoleId.Value);
 						var unitName = model.Units?.FirstOrDefault(x => x.UnitId == roleToCheck.UnitId)?.Name;
 
 						ModelState.AddModelError("", $"{(member != null ? member.Name : "The selected member")} cannot be assigned to the \"{roleToCheck.Name}\" role on {unitName} because it requires the {(requiredRole != null ? requiredRole.Name : "required")} personnel role.");
@@ -238,9 +252,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 					if (!String.IsNullOrWhiteSpace(unitRoleStaffingUserId))
 					{
-						var role = await _unitsService.GetRoleByIdAsync(unitRole);
-
-						if (role != null)
+						// Reuse the department-scoped roleMap loaded above instead of a per-role DB lookup. The map
+						// only contains this department's unit roles, and the Role_ form keys are caller-supplied,
+						// so a role absent from the map (or belonging to a unit outside this department) is rejected;
+						// otherwise a caller could inject an active-role assignment onto another department's unit.
+						if (roleMap.TryGetValue(unitRole, out var role) && role != null
+							&& model.Units != null && model.Units.Any(u => u.UnitId == role.UnitId))
 						{
 							UnitActiveRole activeRole = new UnitActiveRole();
 							activeRole.UnitId = role.UnitId;

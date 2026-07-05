@@ -375,6 +375,16 @@ namespace Resgrid.Services
 			return await _unitRolesRepository.GetByIdAsync(unitRoleId);
 		}
 
+		public async Task<List<UnitRole>> GetAllRolesForDepartmentAsync(int departmentId)
+		{
+			var roles = await _unitRolesRepository.GetAllRolesByDepartmentIdAsync(departmentId);
+
+			if (roles != null && roles.Any())
+				return roles.ToList();
+			else
+				return new List<UnitRole>();
+		}
+
 		public async Task<List<UnitRole>> SetRolesForUnitAsync(int unitId, List<UnitRole> roles, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (unitId <= 0)

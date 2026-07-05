@@ -230,23 +230,27 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				foreach (var unitRole in setRolesInput.Roles)
 				{
-					if (!string.IsNullOrWhiteSpace(unitRole.UserId) && !string.IsNullOrWhiteSpace(unitRole.RoleId))
-					{
-						var role = await _unitsService.GetRoleByIdAsync(int.Parse(unitRole.RoleId));
+					if (string.IsNullOrWhiteSpace(unitRole.UserId) || string.IsNullOrWhiteSpace(unitRole.RoleId)
+						|| !int.TryParse(unitRole.RoleId, out var roleId))
+						continue;
 
-						if (role != null)
-						{
-							UnitActiveRole activeRole = new UnitActiveRole();
-							activeRole.UnitId = role.UnitId;
-							activeRole.Role = role.Name;
-							activeRole.UserId = unitRole.UserId;
-							activeRole.DepartmentId = DepartmentId;
-							activeRole.UpdatedBy = UserId;
-							activeRole.UpdatedOn = DateTime.UtcNow;
+					var role = await _unitsService.GetRoleByIdAsync(roleId);
 
-							await _unitsService.SaveActiveRoleAsync(activeRole, cancellationToken);
-						}
-					}
+					// GetRoleByIdAsync is a global primary-key lookup with no ownership filter. The role MUST
+					// belong to the validated unit for this department; otherwise a caller can inject an active-role
+					// assignment onto another department's unit by supplying that unit's RoleId.
+					if (role == null || role.UnitId != unit.UnitId)
+						continue;
+
+					UnitActiveRole activeRole = new UnitActiveRole();
+					activeRole.UnitId = unit.UnitId;
+					activeRole.Role = role.Name;
+					activeRole.UserId = unitRole.UserId;
+					activeRole.DepartmentId = DepartmentId;
+					activeRole.UpdatedBy = UserId;
+					activeRole.UpdatedOn = DateTime.UtcNow;
+
+					await _unitsService.SaveActiveRoleAsync(activeRole, cancellationToken);
 				}
 			}
 

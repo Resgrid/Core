@@ -210,6 +210,13 @@ namespace Resgrid.Model.Services
 		Task<UnitRole> GetRoleByIdAsync(int unitRoleId);
 
 		/// <summary>
+		/// Gets all unit roles for every unit in a department in a single query.
+		/// </summary>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <returns>Task&lt;List&lt;UnitRole&gt;&gt;.</returns>
+		Task<List<UnitRole>> GetAllRolesForDepartmentAsync(int departmentId);
+
+		/// <summary>
 		/// Sets the roles for unit asynchronous.
 		/// </summary>
 		/// <param name="unitId">The unit identifier.</param>

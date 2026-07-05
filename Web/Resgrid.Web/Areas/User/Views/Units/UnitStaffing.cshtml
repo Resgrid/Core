@@ -261,7 +261,10 @@
                     try {
                         var roles = (JSON.parse(data).Roles || '').split(',').map(function (s) { return s.trim(); });
                         qualified = roles.indexOf(required) !== -1;
-                    } catch (e) { }
+                    } catch (e) {
+                        // Malformed option data -- leave qualified as false (safe default) so the warning shows.
+                        if (window.console) console.warn('Failed to parse personnel role data for qualification check', e);
+                    }
                 }
 
                 if (qualified) {

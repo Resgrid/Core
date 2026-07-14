@@ -74,7 +74,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (ModelState.IsValid)
 			{
 				model.Command.DepartmentId = DepartmentId;
-				model.Command.CallTypeId = model.SelectedType != 0 ? model.SelectedType : (int?)null;
+				model.Command.CallTypeId = await ResolveCallTypeIdAsync(model.SelectedType);
 				model.Command.Assignments = ParseAssignmentsFromForm(form);
 
 				await _commandsService.Save(model.Command, cancellationToken);
@@ -121,7 +121,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				command.Name = model.Command.Name;
 				command.Description = model.Command.Description;
-				command.CallTypeId = model.SelectedType != 0 ? model.SelectedType : (int?)null;
+				command.CallTypeId = await ResolveCallTypeIdAsync(model.SelectedType);
 				command.Timer = model.Command.Timer;
 				command.TimerMinutes = model.Command.TimerMinutes;
 				command.Assignments = ParseAssignmentsFromForm(form);
@@ -153,7 +153,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		[HttpGet]
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Command_Delete)]
 		public async Task<IActionResult> Delete(int commandId, CancellationToken cancellationToken)
 		{
@@ -180,6 +181,23 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.UnitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId) ?? new List<UnitType>();
 			model.PersonnelRoles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId) ?? new List<PersonnelRole>();
+		}
+
+		/// <summary>
+		/// Resolves the posted call-type selection to a value that belongs to the current department.
+		/// "Any Call Type" (0) or any id not owned by the department resolves to null, preventing a
+		/// caller from binding a command definition to another department's call type.
+		/// </summary>
+		private async Task<int?> ResolveCallTypeIdAsync(int selectedType)
+		{
+			if (selectedType == 0)
+				return null;
+
+			var callTypes = await _callsService.GetCallTypesForDepartmentAsync(DepartmentId);
+			if (callTypes != null && callTypes.Any(ct => ct.CallTypeId == selectedType))
+				return selectedType;
+
+			return null;
 		}
 
 		/// <summary>

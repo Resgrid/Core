@@ -587,6 +587,29 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task AssignResourceAsync_IgnoresLaneRequirements_WhenLaneOnDifferentCall()
+		{
+			// A lane from another call (same department) is a foreign-incident lane: its requirements must
+			// not gate an assignment on this incident, so a forced violation there cannot block the assign.
+			ArrangeForcedLane(requiredUnitTypes: new List<int> { 7 });
+			_nodeRepo.Setup(x => x.GetByIdAsync("node-1")).ReturnsAsync(new CommandStructureNode
+			{
+				CommandStructureNodeId = "node-1", DepartmentId = Dept, CallId = 999, Name = "Other call lane", SourceRoleId = 50
+			});
+			_unitsService.Setup(x => x.GetUnitByIdAsync(5)).ReturnsAsync(new Unit { UnitId = 5, DepartmentId = Dept, Name = "Engine 1", Type = "Engine" });
+			_unitsService.Setup(x => x.GetUnitTypesForDepartmentAsync(Dept)).ReturnsAsync(new List<UnitType>
+			{
+				new UnitType { UnitTypeId = 8, Type = "Engine" } // would violate the foreign lane's required type 7
+			});
+
+			var saved = await _service.AssignResourceAsync(NewAssignment((int)ResourceAssignmentKind.RealUnit, "5"), "user1");
+
+			saved.Should().NotBeNull();
+			saved.RequirementsWarning.Should().BeFalse();
+			saved.RequirementsWarningMessage.Should().BeNull();
+		}
+
+		[Test]
 		public async Task MoveResourceAsync_Rejects_WhenTargetLaneForcesRequirements()
 		{
 			ArrangeForcedLane(requiredRoles: new List<int> { 3 });

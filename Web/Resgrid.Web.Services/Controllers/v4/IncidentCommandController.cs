@@ -269,6 +269,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 			catch (CommandRequirementsNotMetException ex)
 			{
+				Resgrid.Framework.Logging.LogException(ex);
 				// The target lane forces unit-type/personnel-role requirements the resource doesn't meet.
 				result.Status = ResponseHelper.Failure;
 				result.Message = ex.Message;
@@ -309,6 +310,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 			catch (CommandRequirementsNotMetException ex)
 			{
+				Resgrid.Framework.Logging.LogException(ex);
 				// The target lane forces unit-type/personnel-role requirements the resource doesn't meet.
 				result.Status = ResponseHelper.Failure;
 				result.Message = ex.Message;

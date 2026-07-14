@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -14,16 +15,19 @@ namespace Resgrid.Services
 		private readonly ICommandDefinitionRoleRepository _commandDefinitionRoleRepository;
 		private readonly ICommandDefinitionRoleUnitTypeRepository _commandDefinitionRoleUnitTypeRepository;
 		private readonly ICommandDefinitionRolePersonnelRoleRepository _commandDefinitionRolePersonnelRoleRepository;
+		private readonly IUnitOfWork _unitOfWork;
 
 		public CommandsService(ICommandDefinitionRepository commandDefinitionRepository,
 			ICommandDefinitionRoleRepository commandDefinitionRoleRepository,
 			ICommandDefinitionRoleUnitTypeRepository commandDefinitionRoleUnitTypeRepository,
-			ICommandDefinitionRolePersonnelRoleRepository commandDefinitionRolePersonnelRoleRepository)
+			ICommandDefinitionRolePersonnelRoleRepository commandDefinitionRolePersonnelRoleRepository,
+			IUnitOfWork unitOfWork)
 		{
 			_commandDefinitionRepository = commandDefinitionRepository;
 			_commandDefinitionRoleRepository = commandDefinitionRoleRepository;
 			_commandDefinitionRoleUnitTypeRepository = commandDefinitionRoleUnitTypeRepository;
 			_commandDefinitionRolePersonnelRoleRepository = commandDefinitionRolePersonnelRoleRepository;
+			_unitOfWork = unitOfWork;
 		}
 
 		public async Task<List<CommandDefinition>> GetAllCommandsForDepartmentAsync(int departmentId)
@@ -45,46 +49,61 @@ namespace Resgrid.Services
 
 		public async Task<CommandDefinition> Save(CommandDefinition command, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			// SaveOrUpdateAsync only persists the parent row (Assignments is in IgnoredProperties),
-			// so the lanes are reconciled explicitly below.
-			var incomingAssignments = command.Assignments;
-			var saved = await _commandDefinitionRepository.SaveOrUpdateAsync(command, cancellationToken);
+			// Reconcile the definition and all of its lanes/requirements on one shared connection and
+			// transaction so a mid-flight failure can't leave a half-reconciled board, and so the
+			// existing-lane snapshot below is read under the same transaction that mutates it (a
+			// concurrent save can't reconcile against a snapshot this one is changing out from under it).
+			_unitOfWork.CreateOrGetConnection();
 
-			// null = caller didn't load/touch the lanes; leave them alone. An empty list clears them.
-			if (incomingAssignments != null)
+			try
 			{
-				var existing = (await _commandDefinitionRoleRepository.GetRolesByCommandDefinitionIdAsync(saved.CommandDefinitionId))?.ToList()
-					?? new List<CommandDefinitionRole>();
+				// SaveOrUpdateAsync only persists the parent row (Assignments is in IgnoredProperties),
+				// so the lanes are reconciled explicitly below.
+				var incomingAssignments = command.Assignments;
+				var saved = await _commandDefinitionRepository.SaveOrUpdateAsync(command, cancellationToken);
 
-				var incomingIds = incomingAssignments
-					.Where(x => x.CommandDefinitionRoleId > 0)
-					.Select(x => x.CommandDefinitionRoleId)
-					.ToHashSet();
-
-				foreach (var removed in existing.Where(x => !incomingIds.Contains(x.CommandDefinitionRoleId)))
-					await DeleteRoleWithRequirementsAsync(removed, cancellationToken);
-
-				var savedAssignments = new List<CommandDefinitionRole>();
-				foreach (var assignment in incomingAssignments)
+				// null = caller didn't load/touch the lanes; leave them alone. An empty list clears them.
+				if (incomingAssignments != null)
 				{
-					// A role id from another definition can't be hijacked to move/overwrite that row.
-					if (assignment.CommandDefinitionRoleId > 0 && existing.All(x => x.CommandDefinitionRoleId != assignment.CommandDefinitionRoleId))
-						assignment.CommandDefinitionRoleId = 0;
+					var existing = (await _commandDefinitionRoleRepository.GetRolesByCommandDefinitionIdAsync(saved.CommandDefinitionId))?.ToList()
+						?? new List<CommandDefinitionRole>();
 
-					var incomingUnitTypes = assignment.RequiredUnitTypes;
-					var incomingRoles = assignment.RequiredRoles;
+					var incomingIds = incomingAssignments
+						.Where(x => x.CommandDefinitionRoleId > 0)
+						.Select(x => x.CommandDefinitionRoleId)
+						.ToHashSet();
 
-					assignment.CommandDefinitionId = saved.CommandDefinitionId;
-					var savedAssignment = await _commandDefinitionRoleRepository.SaveOrUpdateAsync(assignment, cancellationToken);
+					foreach (var removed in existing.Where(x => !incomingIds.Contains(x.CommandDefinitionRoleId)))
+						await DeleteRoleWithRequirementsAsync(removed, cancellationToken);
 
-					await ReconcileRoleRequirementsAsync(savedAssignment, incomingUnitTypes, incomingRoles, cancellationToken);
-					savedAssignments.Add(savedAssignment);
+					var savedAssignments = new List<CommandDefinitionRole>();
+					foreach (var assignment in incomingAssignments)
+					{
+						// A role id from another definition can't be hijacked to move/overwrite that row.
+						if (assignment.CommandDefinitionRoleId > 0 && existing.All(x => x.CommandDefinitionRoleId != assignment.CommandDefinitionRoleId))
+							assignment.CommandDefinitionRoleId = 0;
+
+						var incomingUnitTypes = assignment.RequiredUnitTypes;
+						var incomingRoles = assignment.RequiredRoles;
+
+						assignment.CommandDefinitionId = saved.CommandDefinitionId;
+						var savedAssignment = await _commandDefinitionRoleRepository.SaveOrUpdateAsync(assignment, cancellationToken);
+
+						await ReconcileRoleRequirementsAsync(savedAssignment, incomingUnitTypes, incomingRoles, cancellationToken);
+						savedAssignments.Add(savedAssignment);
+					}
+
+					saved.Assignments = savedAssignments.OrderBy(x => x.SortOrder).ToList();
 				}
 
-				saved.Assignments = savedAssignments.OrderBy(x => x.SortOrder).ToList();
+				_unitOfWork.CommitChanges();
+				return saved;
 			}
-
-			return saved;
+			catch
+			{
+				_unitOfWork.DiscardChanges();
+				throw;
+			}
 		}
 
 		public async Task<CommandDefinition> GetCommandByIdAsync(int commandDefinitionId)
@@ -130,14 +149,29 @@ namespace Resgrid.Services
 
 		public async Task<bool> DeleteAsync(CommandDefinition command, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var roles = await _commandDefinitionRoleRepository.GetRolesByCommandDefinitionIdAsync(command.CommandDefinitionId);
-			if (roles != null)
-			{
-				foreach (var role in roles)
-					await DeleteRoleWithRequirementsAsync(role, cancellationToken);
-			}
+			// Delete the lanes, their requirement rows, and the parent definition atomically so a failure
+			// partway through can't strip a definition's requirements while leaving the definition itself.
+			_unitOfWork.CreateOrGetConnection();
 
-			return await _commandDefinitionRepository.DeleteAsync(command, cancellationToken);
+			try
+			{
+				var roles = await _commandDefinitionRoleRepository.GetRolesByCommandDefinitionIdAsync(command.CommandDefinitionId);
+				if (roles != null)
+				{
+					foreach (var role in roles)
+						await DeleteRoleWithRequirementsAsync(role, cancellationToken);
+				}
+
+				var result = await _commandDefinitionRepository.DeleteAsync(command, cancellationToken);
+
+				_unitOfWork.CommitChanges();
+				return result;
+			}
+			catch
+			{
+				_unitOfWork.DiscardChanges();
+				throw;
+			}
 		}
 
 		private async Task<CommandDefinition> HydrateAssignmentsAsync(CommandDefinition command)

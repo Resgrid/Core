@@ -642,8 +642,10 @@ namespace Resgrid.Services
 			assignment.RequirementsWarningMessage = null;
 			if (!string.IsNullOrWhiteSpace(assignment.CommandStructureNodeId))
 			{
+				// The lane must live on the SAME incident (department + call) as this assignment; a lane from
+				// another call is a foreign-incident lane and must not have its requirements applied here.
 				var node = await _commandStructureNodeRepository.GetByIdAsync(assignment.CommandStructureNodeId);
-				if (node != null && node.DepartmentId == assignment.DepartmentId)
+				if (node != null && node.DepartmentId == assignment.DepartmentId && node.CallId == assignment.CallId)
 				{
 					var (violation, enforced) = await EvaluateNodeRequirementsAsync(node, assignment.DepartmentId, assignment.ResourceKind, assignment.ResourceId);
 					if (violation != null && enforced)

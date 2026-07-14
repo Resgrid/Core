@@ -68,7 +68,7 @@ namespace Resgrid.Repositories.DataRepository
 
 					return await x.QueryAsync<T>(sql: query,
 						param: dynamicParameters,
-						transaction: unitOfWork.Transaction);
+						transaction: unitOfWork?.Transaction);
 				});
 
 				DbConnection conn = null;

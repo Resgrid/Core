@@ -79,7 +79,10 @@
                       @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 					  {
                         <a asp-controller="Command" asp-action="Edit" asp-route-area="User" asp-route-commandId="@t.CommandDefinitionId" class="btn btn-xs btn-primary">Edit</a>
-                        <a asp-controller="Command" asp-action="Delete" asp-route-area="User" asp-route-commandId="@t.CommandDefinitionId" class="btn btn-xs btn-danger" data-confirm="WARNING: This will remove this command from the system. Are you sure you want to delete the @t.Name command?" rel="nofollow">Delete</a>
+                        <form asp-controller="Command" asp-action="Delete" asp-route-area="User" method="post" style="display:inline">
+                          <input type="hidden" name="commandId" value="@t.CommandDefinitionId" />
+                          <button type="submit" class="btn btn-xs btn-danger" data-confirm="WARNING: This will remove this command from the system. Are you sure you want to delete the @t.Name command?" rel="nofollow">Delete</button>
+                        </form>
 					  }
                     </td>
                   </tr>

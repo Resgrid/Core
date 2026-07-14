@@ -8,6 +8,7 @@ using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
 using Resgrid.Services;
+using Resgrid.Tests.Mocks;
 
 namespace Resgrid.Tests.Services
 {
@@ -44,7 +45,7 @@ namespace Resgrid.Tests.Services
 			_rolePersonnelRoles.Setup(x => x.GetPersonnelRolesByRoleIdAsync(It.IsAny<int>()))
 				.ReturnsAsync(new List<CommandDefinitionRolePersonnelRole>());
 
-			_service = new CommandsService(_definitions.Object, _roles.Object, _roleUnitTypes.Object, _rolePersonnelRoles.Object);
+			_service = new CommandsService(_definitions.Object, _roles.Object, _roleUnitTypes.Object, _rolePersonnelRoles.Object, new MockUnitOfWork());
 		}
 
 		[Test]

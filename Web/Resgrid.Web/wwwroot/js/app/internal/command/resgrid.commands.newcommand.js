@@ -36,12 +36,12 @@ var resgrid;
                 var description = $('#description-text').val();
                 var laneType = $('#assignment-lanetype').val() || '0';
                 var laneTypeName = $('#assignment-lanetype option:selected').text();
-                var forceRequirements = $('#forceRequirements').is(':checked') ? 'true' : 'false';
+                const forceRequirements = $('#forceRequirements').is(':checked') ? 'true' : 'false';
 
-                var unitTypeIds = $('#assignment-unittypes').val() || [];
-                var unitTypeNames = $('#assignment-unittypes option:selected').map(function () { return $(this).text(); }).get();
-                var roleIds = $('#assignment-personnelroles').val() || [];
-                var roleNames = $('#assignment-personnelroles option:selected').map(function () { return $(this).text(); }).get();
+                const unitTypeIds = $('#assignment-unittypes').val() || [];
+                const unitTypeNames = $('#assignment-unittypes option:selected').map(function () { return $(this).text(); }).get();
+                const roleIds = $('#assignment-personnelroles').val() || [];
+                const roleNames = $('#assignment-personnelroles option:selected').map(function () { return $(this).text(); }).get();
 
                 var row = $('<tr></tr>');
 
@@ -55,7 +55,7 @@ var resgrid;
                 var descriptionCell = $('<td></td>').text(description);
                 descriptionCell.append($('<input type="hidden">').attr('name', 'assignmentDescription_' + index).val(description));
 
-                var requirementsCell = $('<td></td>');
+                const requirementsCell = $('<td></td>');
                 if (unitTypeNames.length > 0) {
                     requirementsCell.append($('<div></div>').append($('<strong></strong>').text('Units: ')).append(document.createTextNode(unitTypeNames.join(', '))));
                 }

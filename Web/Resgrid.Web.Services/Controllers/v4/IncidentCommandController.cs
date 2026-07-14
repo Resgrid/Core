@@ -261,7 +261,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 			assignment.DepartmentId = DepartmentId;
 
 			var result = new ICModels.ResourceAssignmentResult();
-			var saved = await _incidentCommandService.AssignResourceAsync(assignment, UserId, CancellationToken.None);
+
+			Resgrid.Model.ResourceAssignment saved;
+			try
+			{
+				saved = await _incidentCommandService.AssignResourceAsync(assignment, UserId, CancellationToken.None);
+			}
+			catch (CommandRequirementsNotMetException ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+				// The target lane forces unit-type/personnel-role requirements the resource doesn't meet.
+				result.Status = ResponseHelper.Failure;
+				result.Message = ex.Message;
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
 
 			if (saved == null)
 			{
@@ -271,6 +285,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			result.Data = saved;
+			result.Message = saved.RequirementsWarningMessage; // advisory (non-forced) requirements notice, if any
 			result.PageSize = 1;
 			result.Status = ResponseHelper.Success;
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -287,7 +302,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return BadRequest();
 
 			var result = new ICModels.ResourceAssignmentResult();
-			var assignment = await _incidentCommandService.MoveResourceAsync(DepartmentId, input.ResourceAssignmentId, input.TargetNodeId, UserId, CancellationToken.None);
+
+			Resgrid.Model.ResourceAssignment assignment;
+			try
+			{
+				assignment = await _incidentCommandService.MoveResourceAsync(DepartmentId, input.ResourceAssignmentId, input.TargetNodeId, UserId, CancellationToken.None);
+			}
+			catch (CommandRequirementsNotMetException ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+				// The target lane forces unit-type/personnel-role requirements the resource doesn't meet.
+				result.Status = ResponseHelper.Failure;
+				result.Message = ex.Message;
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
 
 			if (assignment == null)
 			{
@@ -297,6 +326,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			result.Data = assignment;
+			result.Message = assignment.RequirementsWarningMessage; // advisory (non-forced) requirements notice, if any
 			result.PageSize = 1;
 			result.Status = ResponseHelper.Success;
 			ResponseHelper.PopulateV4ResponseData(result);

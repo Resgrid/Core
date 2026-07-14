@@ -572,6 +572,17 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectCommTestResultByResponseTokenQuery { get; set; }
 		#endregion CommunicationTests
 
+		#region Commands
+		public string CommandDefinitionRolesTable { get; set; }
+		public string CommandDefinitionRoleUnitTypesTable { get; set; }
+		public string CommandDefinitionRolePersonnelRolesTable { get; set; }
+		public string SelectCommandDefinitionRolesByCommandIdQuery { get; set; }
+		public string SelectCmdRoleUnitTypesByCommandIdQuery { get; set; }
+		public string SelectCmdRoleUnitTypesByRoleIdQuery { get; set; }
+		public string SelectCmdRolePersonnelRolesByCommandIdQuery { get; set; }
+		public string SelectCmdRolePersonnelRolesByRoleIdQuery { get; set; }
+		#endregion Commands
+
 		#region WeatherAlerts
 		public string WeatherAlertSourcesTable { get; set; }
 		public string WeatherAlertsTable { get; set; }

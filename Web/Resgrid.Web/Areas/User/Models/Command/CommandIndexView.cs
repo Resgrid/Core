@@ -6,5 +6,6 @@ namespace Resgrid.Web.Areas.User.Models.Command
 	public class CommandIndexView
 	{
 		public List<CommandDefinition> Commands { get; set; }
+		public List<CallType> CallTypes { get; set; }
 	}
 }

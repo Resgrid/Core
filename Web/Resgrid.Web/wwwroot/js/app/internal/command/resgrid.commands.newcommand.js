@@ -4,52 +4,78 @@ var resgrid;
     (function (commands) {
         var newcommand;
         (function (newcommand) {
+            newcommand.assignmentCount = 0;
+
             $(document).ready(function () {
-                resgrid.common.analytics.track('Command - New Definition');
+                resgrid.common.analytics.track('Command - Board Definition');
                 $('#SelectedType').select2();
+                $('#assignment-unittypes').select2({ placeholder: 'Any unit type', allowClear: true });
+                $('#assignment-personnelroles').select2({ placeholder: 'Any personnel', allowClear: true });
 
-                function initSelect2(selector, placeholder, url) {
-                    $(selector).select2({
-                        placeholder: placeholder,
-                        allowClear: true,
-                        ajax: {
-                            url: url,
-                            dataType: 'json',
-                            processResults: function (data) {
-                                return { results: $.map(data, function (item) { return { id: item.Id, text: item.Name }; }) };
-                            }
-                        }
-                    });
-                }
-
-                initSelect2('#unitTypes', 'Select Unit Types...', resgrid.absoluteBaseUrl + '/User/Units/GetUnitTypes');
-                initSelect2('#personnelRoles', 'Select Personnel Roles...', resgrid.absoluteBaseUrl + '/User/Department/GetRecipientsForGrid?filter=2');
-                initSelect2('#certifications', 'Select Certifications...', resgrid.absoluteBaseUrl + '/User/Personnel/GetCertifications');
+                // Continue numbering after any server-rendered lane rows (Edit page).
+                newcommand.assignmentCount = parseInt($('#assignments').data('next-index'), 10) || 0;
 
                 $('#newAssignmentModal').on('show.bs.modal', function () {
                     $('#assignment-name').val('');
                     $('#description-text').val('');
+                    $('#assignment-lanetype').val('0');
                     $('#forceRequirements').prop('checked', false);
-                    $('#unitTypes, #personnelRoles, #certifications').val(null).trigger('change');
+                    $('#assignment-unittypes, #assignment-personnelroles').val(null).trigger('change');
                 });
             });
 
             function addAssignment() {
+                var name = $.trim($('#assignment-name').val());
+                if (!name) {
+                    return;
+                }
+
                 $('#newAssignmentModal').modal('hide');
-                var unitTypeValues = $('#unitTypes').val() || [];
-                var roleValues = $('#personnelRoles').val() || [];
-                var certValues = $('#certifications').val() || [];
-                $('#assignments tbody').first().append(
-                    "<tr><td style='max-width: 215px;'>" + $('#assignment-name').val() +
-                    "<input type='text' id='assignmentName_" + newcommand.assignmentCount + "' name='assignmentName_" + newcommand.assignmentCount + "' style='display:none;' disabled='disabled' value='" + $('#assignment-name').val() + "'></input></td>" +
-                    "<td>" + $('#description-text').val() +
-                    "<input type='text' id='assignmentDescription_" + newcommand.assignmentCount + "' name='assignmentDescription_" + newcommand.assignmentCount + "' style='display:none;' disabled='disabled' value='" + $('#description-text').val() + "'></input>" +
-                    "<input type='text' style='display:none;' id='assignmentUnits_" + newcommand.assignmentCount + "' name='assignmentUnits_" + newcommand.assignmentCount + "' disabled='disabled' value='" + unitTypeValues.join(',') + "'></input>" +
-                    "<input type='text' style='display:none;' id='assignmentRoles_" + newcommand.assignmentCount + "' name='assignmentRoles_" + newcommand.assignmentCount + "' disabled='disabled' value='" + roleValues.join(',') + "'></input>" +
-                    "<input style='display:none;' id='assignmentCerts_" + newcommand.assignmentCount + "' name='assignmentCerts_" + newcommand.assignmentCount + "' disabled='disabled' value='" + certValues.join(',') + "'></input>" +
-                    "<input style='display:none;' type='text' id='assignmentLock_" + newcommand.assignmentCount + "' name='assignmentLock_" + newcommand.assignmentCount + "' value='" + $('#forceRequirements').val() + "'></input>" +
-                    "</td><td style='text-align:center;'><a onclick='$(this).parent().parent().remove();' class='tip-top' data-original-title='Remove this question'><i class='fa fa-minus' style='color: red;'></i></a></td></tr>"
-                );
+
+                var index = newcommand.assignmentCount++;
+                var description = $('#description-text').val();
+                var laneType = $('#assignment-lanetype').val() || '0';
+                var laneTypeName = $('#assignment-lanetype option:selected').text();
+                const forceRequirements = $('#forceRequirements').is(':checked') ? 'true' : 'false';
+
+                const unitTypeIds = $('#assignment-unittypes').val() || [];
+                const unitTypeNames = $('#assignment-unittypes option:selected').map(function () { return $(this).text(); }).get();
+                const roleIds = $('#assignment-personnelroles').val() || [];
+                const roleNames = $('#assignment-personnelroles option:selected').map(function () { return $(this).text(); }).get();
+
+                var row = $('<tr></tr>');
+
+                var nameCell = $('<td style="max-width: 215px;"></td>').text(name);
+                nameCell.append($('<input type="hidden">').attr('name', 'assignmentId_' + index).val('0'));
+                nameCell.append($('<input type="hidden">').attr('name', 'assignmentName_' + index).val(name));
+
+                var laneCell = $('<td></td>').text(laneTypeName);
+                laneCell.append($('<input type="hidden">').attr('name', 'assignmentLaneType_' + index).val(laneType));
+
+                var descriptionCell = $('<td></td>').text(description);
+                descriptionCell.append($('<input type="hidden">').attr('name', 'assignmentDescription_' + index).val(description));
+
+                const requirementsCell = $('<td></td>');
+                if (unitTypeNames.length > 0) {
+                    requirementsCell.append($('<div></div>').append($('<strong></strong>').text('Units: ')).append(document.createTextNode(unitTypeNames.join(', '))));
+                }
+                if (roleNames.length > 0) {
+                    requirementsCell.append($('<div></div>').append($('<strong></strong>').text('Roles: ')).append(document.createTextNode(roleNames.join(', '))));
+                }
+                if (forceRequirements === 'true') {
+                    requirementsCell.append($('<div></div>').append($('<span class="label label-warning">Enforced</span>')));
+                }
+                requirementsCell.append($('<input type="hidden">').attr('name', 'assignmentUnitTypes_' + index).val(unitTypeIds.join(',')));
+                requirementsCell.append($('<input type="hidden">').attr('name', 'assignmentRoles_' + index).val(roleIds.join(',')));
+                requirementsCell.append($('<input type="hidden">').attr('name', 'assignmentLock_' + index).val(forceRequirements));
+
+                var actionCell = $('<td style="text-align:center;"></td>');
+                actionCell.append($('<a class="tip-top" data-original-title="Remove this lane"><i class="fa fa-minus" style="color: red;"></i></a>').on('click', function () {
+                    row.remove();
+                }));
+
+                row.append(nameCell).append(laneCell).append(descriptionCell).append(requirementsCell).append(actionCell);
+                $('#assignments tbody').first().append(row);
             }
             newcommand.addAssignment = addAssignment;
         })(newcommand = commands.newcommand || (commands.newcommand = {}));

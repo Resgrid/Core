@@ -11,6 +11,30 @@ END;
 BEGIN TRANSACTION;
 
 
+-- A database provisioned by EF EnsureCreated (Resgrid.Web.Services Worker) has the full schema
+-- but no rows in [__EFMigrationsHistory]; stamp the migration row so the guarded CREATE TABLE
+-- statements below no-op instead of failing on tables that already exist. Require EVERY table this
+-- migration creates to be present (not just [AspNetRoles]) so a partial or legacy schema - e.g. one
+-- that already has the ASP.NET Identity tables but not the OpenIddict tables - is NOT falsely stamped
+-- as applied, which would skip creating the tables it is still missing.
+IF OBJECT_ID(N'[AspNetRoles]') IS NOT NULL
+   AND OBJECT_ID(N'[AspNetUsers]') IS NOT NULL
+   AND OBJECT_ID(N'[AspNetRoleClaims]') IS NOT NULL
+   AND OBJECT_ID(N'[AspNetUserClaims]') IS NOT NULL
+   AND OBJECT_ID(N'[AspNetUserLogins]') IS NOT NULL
+   AND OBJECT_ID(N'[AspNetUserRoles]') IS NOT NULL
+   AND OBJECT_ID(N'[AspNetUserTokens]') IS NOT NULL
+   AND OBJECT_ID(N'[OpenIddictApplications]') IS NOT NULL
+   AND OBJECT_ID(N'[OpenIddictScopes]') IS NOT NULL
+   AND OBJECT_ID(N'[OpenIddictAuthorizations]') IS NOT NULL
+   AND OBJECT_ID(N'[OpenIddictTokens]') IS NOT NULL
+   AND NOT EXISTS(SELECT * FROM [__EFMigrationsHistory] WHERE [MigrationId] = N'20210904153137_CreateOpenIddictModels')
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20210904153137_CreateOpenIddictModels', N'5.0.9');
+END;
+
+
 IF NOT EXISTS(SELECT * FROM [__EFMigrationsHistory] WHERE [MigrationId] = N'20210904153137_CreateOpenIddictModels')
 BEGIN
     CREATE TABLE [AspNetRoles] (

@@ -1,0 +1,63 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Command.NewCommandView
+
+<div class="modal fade" id="newAssignmentModal" tabindex="-1" role="dialog" aria-labelledby="newAssignmentModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title" id="newAssignmentModalLabel">New Lane / Assignment</h4>
+			</div>
+			<div class="modal-body">
+				<form>
+					<div class="form-group">
+						<label for="assignment-name" class="control-label">Name:</label>
+						<input type="text" class="form-control" id="assignment-name" placeholder="i.e. Interior Search, RIT, Water Supply, Staging">
+					</div>
+					<div class="form-group">
+						<label for="assignment-lanetype" class="control-label">Lane Type:</label>
+						<select class="form-control" id="assignment-lanetype">
+							@foreach (CommandNodeType nodeType in Enum.GetValues(typeof(CommandNodeType)))
+							{
+								<option value="@((int)nodeType)">@nodeType.ToString()</option>
+							}
+						</select>
+					</div>
+					<div class="form-group">
+						<label for="description-text" class="control-label">Description:</label>
+						<textarea class="form-control" id="description-text"></textarea>
+					</div>
+					<div class="form-group">
+						<label for="assignment-unittypes" class="control-label">Required Unit Types:</label>
+						<select class="form-control" id="assignment-unittypes" multiple="multiple" style="width:100%;">
+							@foreach (var unitType in Model.UnitTypes)
+							{
+								<option value="@unitType.UnitTypeId">@unitType.Type</option>
+							}
+						</select>
+						<span class="help-block m-b-none">Unit types that fit this lane. Leave empty for any unit.</span>
+					</div>
+					<div class="form-group">
+						<label for="assignment-personnelroles" class="control-label">Required Personnel Roles:</label>
+						<select class="form-control" id="assignment-personnelroles" multiple="multiple" style="width:100%;">
+							@foreach (var role in Model.PersonnelRoles)
+							{
+								<option value="@role.PersonnelRoleId">@role.Name</option>
+							}
+						</select>
+						<span class="help-block m-b-none">Personnel must hold one of these roles to fit this lane. Leave empty for anyone.</span>
+					</div>
+					<div class="form-group">
+						<label class="control-label">Force Requirements:</label>
+						<input id="forceRequirements" type="checkbox" />
+						<span class="help-block m-b-none">When checked the system blocks assigning units/personnel that don't meet the requirements above. Unchecked, the requirements are advisory only.</span>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" onclick="resgrid.commands.newcommand.addAssignment();">Add Lane</button>
+			</div>
+		</div>
+	</div>
+</div>

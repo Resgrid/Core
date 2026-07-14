@@ -48,8 +48,6 @@ namespace Resgrid.Model
 
 		public virtual ICollection<CommandDefinitionRoleUnitType> RequiredUnitTypes { get; set; }
 
-		public virtual ICollection<CommandDefinitionRoleCert> RequiredCerts { get; set; }
-
 		public virtual ICollection<CommandDefinitionRolePersonnelRole> RequiredRoles { get; set; }
 
 		[NotMapped]
@@ -70,6 +68,6 @@ namespace Resgrid.Model
 		public int IdType => 0;
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Command", "RequiredUnitTypes", "RequiredCerts", "RequiredRoles" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Command", "RequiredUnitTypes", "RequiredRoles" };
 	}
 }

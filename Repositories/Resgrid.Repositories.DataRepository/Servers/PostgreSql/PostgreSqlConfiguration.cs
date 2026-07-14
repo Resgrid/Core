@@ -1798,6 +1798,17 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SelectCommTestResultByResponseTokenQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE ResponseToken = %TOKEN% LIMIT 1";
 			#endregion CommunicationTests
 
+			#region Commands
+			CommandDefinitionRolesTable = "CommandDefinitionRoles";
+			CommandDefinitionRoleUnitTypesTable = "CommandDefinitionRoleUnitTypes";
+			CommandDefinitionRolePersonnelRolesTable = "CommandDefinitionRolePersonnelRoles";
+			SelectCommandDefinitionRolesByCommandIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE CommandDefinitionId = %COMMANDDEFINITIONID% ORDER BY SortOrder";
+			SelectCmdRoleUnitTypesByCommandIdQuery = "SELECT rut.* FROM %SCHEMA%.%TABLENAME% rut INNER JOIN %SCHEMA%.%ROLESTABLE% r ON r.CommandDefinitionRoleId = rut.CommandDefinitionRoleId WHERE r.CommandDefinitionId = %COMMANDDEFINITIONID%";
+			SelectCmdRoleUnitTypesByRoleIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE CommandDefinitionRoleId = %COMMANDDEFINITIONROLEID%";
+			SelectCmdRolePersonnelRolesByCommandIdQuery = "SELECT rpr.* FROM %SCHEMA%.%TABLENAME% rpr INNER JOIN %SCHEMA%.%ROLESTABLE% r ON r.CommandDefinitionRoleId = rpr.CommandDefinitionRoleId WHERE r.CommandDefinitionId = %COMMANDDEFINITIONID%";
+			SelectCmdRolePersonnelRolesByRoleIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE CommandDefinitionRoleId = %COMMANDDEFINITIONROLEID%";
+			#endregion Commands
+
 			#region WeatherAlerts
 			WeatherAlertSourcesTable = "WeatherAlertSources";
 			WeatherAlertsTable = "WeatherAlerts";

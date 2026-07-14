@@ -159,7 +159,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				foreach (var lane in input.Lanes)
 				{
-					command.Assignments.Add(new CommandDefinitionRole
+					var role = new CommandDefinitionRole
 					{
 						CommandDefinitionRoleId = lane.CommandDefinitionRoleId ?? 0,
 						Name = lane.Name,
@@ -172,7 +172,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 						MinTimeInRole = lane.MinTimeInRole,
 						MaxTimeInRole = lane.MaxTimeInRole,
 						ForceRequirements = lane.ForceRequirements
-					});
+					};
+
+					// The API save is a full document: absent lists clear the lane's requirements.
+					role.RequiredUnitTypes = (lane.RequiredUnitTypes ?? new List<int>())
+						.Select(id => new CommandDefinitionRoleUnitType { UnitTypeId = id }).ToList();
+					role.RequiredRoles = (lane.RequiredPersonnelRoles ?? new List<int>())
+						.Select(id => new CommandDefinitionRolePersonnelRole { PersonnelRoleId = id }).ToList();
+
+					command.Assignments.Add(role);
 				}
 			}
 
@@ -241,7 +249,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 						MaxUnits = lane.MaxUnits,
 						MinTimeInRole = lane.MinTimeInRole,
 						MaxTimeInRole = lane.MaxTimeInRole,
-						ForceRequirements = lane.ForceRequirements
+						ForceRequirements = lane.ForceRequirements,
+						RequiredUnitTypes = lane.RequiredUnitTypes?.Select(x => x.UnitTypeId).ToList() ?? new List<int>(),
+						RequiredPersonnelRoles = lane.RequiredRoles?.Select(x => x.PersonnelRoleId).ToList() ?? new List<int>()
 					});
 				}
 			}

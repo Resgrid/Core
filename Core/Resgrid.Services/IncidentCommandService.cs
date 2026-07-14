@@ -34,6 +34,8 @@ namespace Resgrid.Services
 		private readonly IIncidentRoleAssignmentRepository _incidentRoleAssignmentRepository;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly ICoreEventService _coreEventService;
+		private readonly IUnitsService _unitsService;
+		private readonly IPersonnelRolesService _personnelRolesService;
 
 		public IncidentCommandService(
 			IIncidentCommandRepository incidentCommandRepository,
@@ -50,7 +52,9 @@ namespace Resgrid.Services
 			IIncidentVoiceService incidentVoiceService,
 			IIncidentRoleAssignmentRepository incidentRoleAssignmentRepository,
 			IEventAggregator eventAggregator,
-			ICoreEventService coreEventService)
+			ICoreEventService coreEventService,
+			IUnitsService unitsService,
+			IPersonnelRolesService personnelRolesService)
 		{
 			_incidentCommandRepository = incidentCommandRepository;
 			_commandStructureNodeRepository = commandStructureNodeRepository;
@@ -67,6 +71,8 @@ namespace Resgrid.Services
 			_incidentRoleAssignmentRepository = incidentRoleAssignmentRepository;
 			_eventAggregator = eventAggregator;
 			_coreEventService = coreEventService;
+			_unitsService = unitsService;
+			_personnelRolesService = personnelRolesService;
 		}
 
 		#region Command lifecycle
@@ -84,12 +90,28 @@ namespace Resgrid.Services
 			if (existing != null)
 				return existing;
 
+			// Resolve the board template. An explicitly supplied id wins (must belong to the caller's
+			// department — CommandDefinitionId is an auto-increment integer and guessable). Otherwise fall
+			// back to the department's pre-configured board for the call's type, then to the "Any Call Type"
+			// definition, so establishing command auto-applies the department's default board layout.
+			CommandDefinition definition = null;
+			if (commandDefinitionId.HasValue)
+			{
+				definition = await _commandsService.GetCommandByIdAsync(commandDefinitionId.Value);
+				if (definition == null || definition.DepartmentId != departmentId)
+					definition = null;
+			}
+			else
+			{
+				definition = await _commandsService.GetCommandForCallTypeAsync(departmentId, await ResolveCallTypeIdAsync(call));
+			}
+
 			var command = new IncidentCommand
 			{
 				IncidentCommandId = Guid.NewGuid().ToString(),
 				DepartmentId = departmentId,
 				CallId = callId,
-				SourceCommandDefinitionId = commandDefinitionId,
+				SourceCommandDefinitionId = definition?.CommandDefinitionId,
 				EstablishedByUserId = userId,
 				EstablishedOn = DateTime.UtcNow,
 				CurrentCommanderUserId = userId,
@@ -120,35 +142,60 @@ namespace Resgrid.Services
 
 			_eventAggregator.SendMessage<CommandEstablishedEvent>(new CommandEstablishedEvent { DepartmentId = departmentId, CallId = callId, IncidentCommandId = command.IncidentCommandId, EstablishedByUserId = userId });
 
-			// Seed lanes from the command definition template, if one was supplied and its lanes were loaded.
-			if (commandDefinitionId.HasValue)
+			// Seed lanes from the resolved template so the board opens with the department's
+			// pre-configured default layout (per-incident editable afterwards).
+			if (definition?.Assignments != null)
 			{
-				var definition = await _commandsService.GetCommandByIdAsync(commandDefinitionId.Value);
-
-				// The template must belong to the caller's department. CommandDefinitionId is an auto-increment
-				// integer (guessable), so this prevents seeding from / disclosing another department's template.
-				if (definition?.Assignments != null && definition.DepartmentId == departmentId)
+				foreach (var role in definition.Assignments.OrderBy(r => r.SortOrder))
 				{
-					foreach (var role in definition.Assignments.OrderBy(r => r.SortOrder))
+					var node = new CommandStructureNode
 					{
-						var node = new CommandStructureNode
-						{
-							CommandStructureNodeId = Guid.NewGuid().ToString(),
-							IncidentCommandId = command.IncidentCommandId,
-							DepartmentId = departmentId,
-							CallId = callId,
-							NodeType = role.LaneType,
-							Name = role.Name,
-							SortOrder = role.SortOrder,
-							SourceRoleId = role.CommandDefinitionRoleId
-						};
+						CommandStructureNodeId = Guid.NewGuid().ToString(),
+						IncidentCommandId = command.IncidentCommandId,
+						DepartmentId = departmentId,
+						CallId = callId,
+						NodeType = role.LaneType,
+						Name = role.Name,
+						SortOrder = role.SortOrder,
+						SourceRoleId = role.CommandDefinitionRoleId
+					};
 
-						await _commandStructureNodeRepository.InsertAsync(Touch(node), cancellationToken);
-					}
+					await _commandStructureNodeRepository.InsertAsync(Touch(node), cancellationToken);
 				}
 			}
 
+			// Seed the template's interval timer (CommandDefinition.Timer/TimerMinutes) as a running
+			// incident-scoped benchmark timer.
+			if (definition != null && definition.Timer && definition.TimerMinutes > 0)
+			{
+				await StartTimerAsync(new IncidentTimer
+				{
+					IncidentTimerId = Guid.NewGuid().ToString(),
+					IncidentCommandId = command.IncidentCommandId,
+					DepartmentId = departmentId,
+					TimerType = (int)IncidentTimerType.Benchmark,
+					ScopeType = (int)IncidentTimerScopeType.Incident,
+					Name = string.IsNullOrWhiteSpace(definition.Name) ? "Command Timer" : $"{definition.Name} Timer",
+					IntervalSeconds = definition.TimerMinutes * 60
+				}, userId, cancellationToken);
+			}
+
 			return command;
+		}
+
+		/// <summary>
+		/// Maps a call's free-text Type (calls store the call-type NAME, not the id) back to the department's
+		/// CallTypeId so the matching command definition template can be resolved. Null when the call has no
+		/// type or it no longer matches a configured call type.
+		/// </summary>
+		private async Task<int?> ResolveCallTypeIdAsync(Call call)
+		{
+			if (string.IsNullOrWhiteSpace(call?.Type))
+				return null;
+
+			var types = await _callsService.GetCallTypesForDepartmentAsync(call.DepartmentId);
+			var match = types?.FirstOrDefault(x => string.Equals(x.Type, call.Type, StringComparison.OrdinalIgnoreCase));
+			return match?.CallTypeId;
 		}
 
 		public async Task<IncidentCommand> GetActiveCommandForCallAsync(int departmentId, int callId)
@@ -588,6 +635,27 @@ namespace Resgrid.Services
 				return null;
 			assignment.CallId = command.CallId;
 
+			// Evaluate the target lane's template requirements (unit types / personnel roles). A forced
+			// violation throws so the API can reject with the reason; an advisory violation is stamped on
+			// the assignment (RequirementsWarning) for the IC app to render, never blocking the assignment.
+			assignment.RequirementsWarning = false;
+			assignment.RequirementsWarningMessage = null;
+			if (!string.IsNullOrWhiteSpace(assignment.CommandStructureNodeId))
+			{
+				// The lane must live on the SAME incident (department + call) as this assignment; a lane from
+				// another call is a foreign-incident lane and must not have its requirements applied here.
+				var node = await _commandStructureNodeRepository.GetByIdAsync(assignment.CommandStructureNodeId);
+				if (node != null && node.DepartmentId == assignment.DepartmentId && node.CallId == assignment.CallId)
+				{
+					var (violation, enforced) = await EvaluateNodeRequirementsAsync(node, assignment.DepartmentId, assignment.ResourceKind, assignment.ResourceId);
+					if (violation != null && enforced)
+						throw new CommandRequirementsNotMetException(violation);
+
+					assignment.RequirementsWarning = violation != null;
+					assignment.RequirementsWarningMessage = violation;
+				}
+			}
+
 			if (assignment.AssignedOn == default(DateTime))
 				assignment.AssignedOn = DateTime.UtcNow;
 			assignment.AssignedByUserId = userId;
@@ -621,6 +689,15 @@ namespace Resgrid.Services
 			if (targetNode == null || targetNode.DepartmentId != departmentId || targetNode.CallId != assignment.CallId)
 				return null;
 
+			// Evaluate the target lane's template requirements before moving the resource into it: a forced
+			// violation rejects the move, an advisory one re-stamps the warning for the destination lane.
+			var (violation, enforced) = await EvaluateNodeRequirementsAsync(targetNode, departmentId, assignment.ResourceKind, assignment.ResourceId);
+			if (violation != null && enforced)
+				throw new CommandRequirementsNotMetException(violation);
+
+			assignment.RequirementsWarning = violation != null;
+			assignment.RequirementsWarningMessage = violation;
+
 			assignment.CommandStructureNodeId = targetNodeId;
 			assignment = await _resourceAssignmentRepository.SaveOrUpdateAsync(Touch(assignment), cancellationToken);
 
@@ -641,6 +718,70 @@ namespace Resgrid.Services
 
 			_eventAggregator.SendMessage<IncidentResourceReleasedEvent>(new IncidentResourceReleasedEvent { DepartmentId = assignment.DepartmentId, CallId = assignment.CallId, ResourceAssignmentId = assignment.ResourceAssignmentId });
 			return true;
+		}
+
+		/// <summary>
+		/// Evaluates a lane's template requirements for a resource: own-department units should match one of
+		/// the required unit types, and own-department personnel should hold one of the required personnel
+		/// roles. Returns the violation message (null when compliant / not applicable) and whether the lane
+		/// FORCES its requirements. Callers throw <see cref="CommandRequirementsNotMetException"/> for forced
+		/// violations and stamp advisory ones onto the assignment (RequirementsWarning) so the IC app can
+		/// render a warning on the resource chip. An empty requirement set leaves that resource kind
+		/// unrestricted; linked-department and ad-hoc resources carry no own-department type/role metadata
+		/// to validate, so they are never flagged.
+		/// </summary>
+		private async Task<(string violation, bool enforced)> EvaluateNodeRequirementsAsync(CommandStructureNode node, int departmentId, int resourceKind, string resourceId)
+		{
+			if (node == null || !node.SourceRoleId.HasValue)
+				return (null, false);
+
+			var role = await _commandsService.GetRoleWithRequirementsAsync(node.SourceRoleId.Value);
+			if (role == null)
+				return (null, false);
+
+			string violation = null;
+
+			if (resourceKind == (int)ResourceAssignmentKind.RealUnit)
+			{
+				var requiredUnitTypes = role.RequiredUnitTypes?.Select(x => x.UnitTypeId).ToList();
+				if (requiredUnitTypes == null || requiredUnitTypes.Count == 0)
+					return (null, role.ForceRequirements);
+
+				Unit unit = null;
+				if (int.TryParse(resourceId, out var unitId))
+					unit = await _unitsService.GetUnitByIdAsync(unitId);
+
+				if (unit == null || unit.DepartmentId != departmentId)
+				{
+					// An unresolvable unit cannot be verified against the requirement.
+					violation = $"Lane '{node.Name}' requires specific unit types and the unit could not be verified.";
+				}
+				else
+				{
+					// Units store the unit-type NAME, not the id; map it back through the department's unit types.
+					int? unitTypeId = null;
+					if (!string.IsNullOrWhiteSpace(unit.Type))
+					{
+						var types = await _unitsService.GetUnitTypesForDepartmentAsync(departmentId);
+						unitTypeId = types?.FirstOrDefault(x => string.Equals(x.Type, unit.Type, StringComparison.OrdinalIgnoreCase))?.UnitTypeId;
+					}
+
+					if (!unitTypeId.HasValue || !requiredUnitTypes.Contains(unitTypeId.Value))
+						violation = $"Unit '{unit.Name}' does not match the unit types required by lane '{node.Name}'.";
+				}
+			}
+			else if (resourceKind == (int)ResourceAssignmentKind.RealPersonnel)
+			{
+				var requiredRoles = role.RequiredRoles?.Select(x => x.PersonnelRoleId).ToList();
+				if (requiredRoles == null || requiredRoles.Count == 0)
+					return (null, role.ForceRequirements);
+
+				var userRoles = await _personnelRolesService.GetRolesForUserAsync(resourceId, departmentId);
+				if (userRoles == null || !userRoles.Any(x => requiredRoles.Contains(x.PersonnelRoleId)))
+					violation = $"This member does not hold a personnel role required by lane '{node.Name}'.";
+			}
+
+			return (violation, role.ForceRequirements);
 		}
 
 		public async Task<List<ResourceAssignment>> GetAssignmentsForCallAsync(int departmentId, int callId)

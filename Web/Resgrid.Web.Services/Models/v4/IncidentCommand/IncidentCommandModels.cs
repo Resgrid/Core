@@ -54,6 +54,13 @@ namespace Resgrid.Web.Services.Models.v4.IncidentCommand
 	public class ResourceAssignmentResult : StandardApiResponseV4Base
 	{
 		public Resgrid.Model.ResourceAssignment Data { get; set; }
+
+		/// <summary>
+		/// Human-readable requirements notice. On Status=failure: why the assignment was rejected (forced
+		/// lane requirements not met). On Status=success: an advisory warning when the resource doesn't
+		/// meet the lane's non-forced requirements (also stamped on Data.RequirementsWarning/-Message).
+		/// </summary>
+		public string Message { get; set; }
 	}
 
 	public class TacticalObjectiveResult : StandardApiResponseV4Base

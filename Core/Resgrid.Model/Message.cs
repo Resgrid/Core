@@ -68,6 +68,14 @@ namespace Resgrid.Model
 		[ProtoMember(14)]
 		public virtual ICollection<MessageRecipient> MessageRecipients { get; set; }
 
+		/// <summary>
+		/// Optional subtitle for push/inbox notifications; not persisted. When set, delivery
+		/// uses this instead of the generic "Msg from ..." subtitle.
+		/// </summary>
+		[NotMapped]
+		[JsonIgnore]
+		public string PushSubTitle { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue
@@ -86,7 +94,7 @@ namespace Resgrid.Model
 		public int IdType => 0;
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "SendingUser", "ReceivingUser", "MessageRecipients" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "SendingUser", "ReceivingUser", "MessageRecipients", "PushSubTitle" };
 
 		public List<string> GetRecipients()
 		{

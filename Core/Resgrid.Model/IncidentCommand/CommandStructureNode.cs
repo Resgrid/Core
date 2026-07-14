@@ -91,6 +91,16 @@ namespace Resgrid.Model
 
 		public DateTime? ReleasedOn { get; set; }
 
+		/// <summary>
+		/// True when the resource does not satisfy the target lane's template requirements but the lane
+		/// does NOT force them (advisory). The IC app renders this as a warning outline on the resource
+		/// chip. Recomputed on every assign/move; false when compliant or when requirements don't apply.
+		/// </summary>
+		public bool RequirementsWarning { get; set; }
+
+		/// <summary>Human-readable reason for <see cref="RequirementsWarning"/>; null when no warning.</summary>
+		public string RequirementsWarningMessage { get; set; }
+
 		/// <summary>Change cursor for offline delta sync + last-write-wins; stamped on every write.</summary>
 		public DateTime? ModifiedOn { get; set; }
 

@@ -93,12 +93,26 @@ namespace Resgrid.Services
 				spm.DepartmentCode = department?.Code;
 				spm.DepartmentId = departmentId;
 
-				if (message.SystemGenerated)
-					spm.SubTitle = "Msg from System";
-				else
-					spm.SubTitle = string.Format("Msg from {0}", sendersName);
+				if (message.Type == (int)MessageTypes.WeatherAlert)
+				{
+					// Weather alerts carry their own descriptive subject (e.g. "[Severe] Weather Alert: Tornado Warning")
+					// and headline, so skip the generic "Msg:" prefix and "Msg from System" subtitle.
+					spm.Title = message.Subject.Truncate(200);
 
-				spm.Title = "Msg:" + message.Subject.Truncate(200);
+					if (!String.IsNullOrWhiteSpace(message.PushSubTitle))
+						spm.SubTitle = message.PushSubTitle.Truncate(200);
+					else
+						spm.SubTitle = "Weather Alert";
+				}
+				else
+				{
+					if (message.SystemGenerated)
+						spm.SubTitle = "Msg from System";
+					else
+						spm.SubTitle = string.Format("Msg from {0}", sendersName);
+
+					spm.Title = "Msg:" + message.Subject.Truncate(200);
+				}
 
 
 				if (!String.IsNullOrWhiteSpace(message.ReceivingUserId))

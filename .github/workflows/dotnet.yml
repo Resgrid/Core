@@ -143,6 +143,7 @@ jobs:
           if (pr) {
             const body = (pr.body || '')
               .replace(/##\s*Summary by CodeRabbit[\s\S]*/i, '')
+              .replace(/Pull Request Description/gi, 'Summary')
               .trim() || 'No release notes provided.';
             fs.writeFileSync('release_notes.md', body);
           } else {

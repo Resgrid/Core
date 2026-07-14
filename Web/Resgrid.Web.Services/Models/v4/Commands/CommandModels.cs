@@ -44,7 +44,18 @@ namespace Resgrid.Web.Services.Models.v4.Commands
 		public int MaxUnits { get; set; }
 		public int MinTimeInRole { get; set; }
 		public int MaxTimeInRole { get; set; }
+
+		/// <summary>
+		/// When true the API rejects assigning/moving own-department resources into this lane unless
+		/// they match the requirement lists below; when false the requirements are advisory (UI hints).
+		/// </summary>
 		public bool ForceRequirements { get; set; }
+
+		/// <summary>UnitTypeIds a unit must match to satisfy this lane (empty = unrestricted).</summary>
+		public List<int> RequiredUnitTypes { get; set; } = new List<int>();
+
+		/// <summary>PersonnelRoleIds a member must hold (any one) to satisfy this lane (empty = unrestricted).</summary>
+		public List<int> RequiredPersonnelRoles { get; set; } = new List<int>();
 	}
 
 	/// <summary>
@@ -93,5 +104,11 @@ namespace Resgrid.Web.Services.Models.v4.Commands
 		public int MinTimeInRole { get; set; }
 		public int MaxTimeInRole { get; set; }
 		public bool ForceRequirements { get; set; }
+
+		/// <summary>UnitTypeIds required to assign a unit to this lane (empty = unrestricted).</summary>
+		public List<int> RequiredUnitTypes { get; set; } = new List<int>();
+
+		/// <summary>PersonnelRoleIds required (any one) to assign a member to this lane (empty = unrestricted).</summary>
+		public List<int> RequiredPersonnelRoles { get; set; } = new List<int>();
 	}
 }

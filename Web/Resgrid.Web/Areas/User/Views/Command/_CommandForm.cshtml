@@ -1,0 +1,124 @@
+@using Resgrid.Model
+@model Resgrid.Web.Areas.User.Models.Command.NewCommandView
+@{
+	var assignments = Model.Command?.Assignments != null
+		? Model.Command.Assignments.OrderBy(a => a.SortOrder).ToList()
+		: new System.Collections.Generic.List<CommandDefinitionRole>();
+}
+
+<div class="form-group">
+	<label class="col-sm-2 control-label required">
+		Board Name
+	</label>
+	<div class="col-sm-10">
+		<div class="col-md-5">
+			@Html.TextBoxFor(m => m.Command.Name, new { @class = "form-control", autofocus = "autofocus" })
+		</div>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-2 control-label">
+		Description
+	</label>
+	<div class="col-sm-10">
+		<div class="col-md-5">
+			@Html.TextAreaFor(m => m.Command.Description, new { id = "editor", rows = "5", cols = "30", style = "width:560px;height:120px" })
+		</div>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-2 control-label">
+		Call Type
+	</label>
+	<div class="col-sm-10">
+		<div class="col-md-5">
+			<label class="radio">@Html.DropDownListFor(m => m.SelectedType, Model.Types, new { style = "width:200px;" })</label>
+			<span class="help-block m-b-none">This board is automatically applied when command is established on a call of this type. The "Any Call Type" board is used when no type-specific board exists.</span>
+		</div>
+	</div>
+</div>
+<div class="form-group">
+	<label class="col-sm-2 control-label">
+		Repeating Timer
+	</label>
+	<div class="col-sm-10">
+		<div class="col-md-8">
+			@Html.CheckBoxFor(m => m.Command.Timer)
+			<span style="padding-left:10px;">Every</span>
+			@Html.TextBoxFor(m => m.Command.TimerMinutes, new { @class = "form-control", type = "number", min = "0", style = "width:80px;display:inline-block;margin:0 6px;" })
+			<span>minutes</span>
+			<span class="help-block m-b-none">When enabled, a repeating incident timer (e.g. PAR/benchmark check) is started automatically when command is established with this board.</span>
+		</div>
+	</div>
+</div>
+<div class="control-group">
+	<label class="col-sm-2 control-label">
+		Lanes / Assignments
+	</label>
+	<div class="col-sm-10">
+		<div class="row">
+			<div class="col-xs-10">The lanes (Divisions, Groups, Staging, etc.) that make up the default board layout for this call type. When command is established the board starts with these lanes; the Incident Commander can add, rename, or remove lanes on the fly based on the incident's needs.<br /></div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12">
+				<table id="assignments" class="table table-striped table-bordered" data-next-index="@assignments.Count">
+					<thead>
+						<tr>
+							<th style="max-width: 200px;font-size: 14px;">Name</th>
+							<th style="max-width: 120px;font-size: 14px;">Lane Type</th>
+							<th style="max-width: 300px;font-size: 14px;">Description</th>
+							<th style="max-width: 300px;font-size: 14px;">Requirements</th>
+							<th style="max-width: 90px;font-size: 16px;"><a id="addAssignmentButton" class="btn btn-success btn-xs" data-original-title="Add Lane" data-toggle="modal" data-target="#newAssignmentModal"><i class="icon-plus"></i> Add Lane</a></th>
+						</tr>
+					</thead>
+					<tbody>
+						@for (int i = 0; i < assignments.Count; i++)
+						{
+							var assignment = assignments[i];
+							var laneTypeName = Enum.IsDefined(typeof(CommandNodeType), assignment.LaneType)
+								? ((CommandNodeType)assignment.LaneType).ToString()
+								: CommandNodeType.Division.ToString();
+							var requiredUnitTypeIds = assignment.RequiredUnitTypes?.Select(x => x.UnitTypeId).ToList() ?? new System.Collections.Generic.List<int>();
+							var requiredRoleIds = assignment.RequiredRoles?.Select(x => x.PersonnelRoleId).ToList() ?? new System.Collections.Generic.List<int>();
+							var requiredUnitTypeNames = Model.UnitTypes.Where(x => requiredUnitTypeIds.Contains(x.UnitTypeId)).Select(x => x.Type).ToList();
+							var requiredRoleNames = Model.PersonnelRoles.Where(x => requiredRoleIds.Contains(x.PersonnelRoleId)).Select(x => x.Name).ToList();
+							<tr>
+								<td style="max-width: 215px;">
+									@assignment.Name
+									<input type="hidden" name="assignmentId_@i" value="@assignment.CommandDefinitionRoleId" />
+									<input type="hidden" name="assignmentName_@i" value="@assignment.Name" />
+								</td>
+								<td>
+									@laneTypeName
+									<input type="hidden" name="assignmentLaneType_@i" value="@assignment.LaneType" />
+								</td>
+								<td>
+									@assignment.Description
+									<input type="hidden" name="assignmentDescription_@i" value="@assignment.Description" />
+								</td>
+								<td>
+									@if (requiredUnitTypeNames.Count > 0)
+									{
+										<div><strong>Units:</strong> @string.Join(", ", requiredUnitTypeNames)</div>
+									}
+									@if (requiredRoleNames.Count > 0)
+									{
+										<div><strong>Roles:</strong> @string.Join(", ", requiredRoleNames)</div>
+									}
+									@if (assignment.ForceRequirements)
+									{
+										<div><span class="label label-warning">Enforced</span></div>
+									}
+									<input type="hidden" name="assignmentUnitTypes_@i" value="@string.Join(",", requiredUnitTypeIds)" />
+									<input type="hidden" name="assignmentRoles_@i" value="@string.Join(",", requiredRoleIds)" />
+									<input type="hidden" name="assignmentLock_@i" value="@assignment.ForceRequirements.ToString().ToLower()" />
+								</td>
+								<td style="text-align:center;"><a onclick="$(this).parent().parent().remove();" class="tip-top" data-original-title="Remove this lane"><i class="fa fa-minus" style="color: red;"></i></a></td>
+							</tr>
+						}
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</div>

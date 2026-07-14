@@ -37,6 +37,14 @@ namespace Resgrid.Model.Services
 		Task<CommandDefinition> GetCommandForCallTypeAsync(int departmentId, int? callTypeId);
 
 		/// <summary>
+		/// Gets a single lane (role) with its requirement sets (RequiredUnitTypes/RequiredRoles) hydrated.
+		/// Used to enforce lane requirements when assigning resources on the live command board.
+		/// </summary>
+		/// <param name="commandDefinitionRoleId">The lane (command definition role) identifier.</param>
+		/// <returns>Task&lt;CommandDefinitionRole&gt;.</returns>
+		Task<CommandDefinitionRole> GetRoleWithRequirementsAsync(int commandDefinitionRoleId);
+
+		/// <summary>
 		/// Deletes the specified command definition.
 		/// </summary>
 		/// <param name="command">The command definition.</param>

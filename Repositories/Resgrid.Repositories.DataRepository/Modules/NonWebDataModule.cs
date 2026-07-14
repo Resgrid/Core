@@ -101,6 +101,9 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<ResourceOrderItemRepository>().As<IResourceOrderItemRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ResourceOrderFillUnitRepository>().As<IResourceOrderFillUnitRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CommandDefinitionRepository>().As<ICommandDefinitionRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CommandDefinitionRoleRepository>().As<ICommandDefinitionRoleRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CommandDefinitionRoleUnitTypeRepository>().As<ICommandDefinitionRoleUnitTypeRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CommandDefinitionRolePersonnelRoleRepository>().As<ICommandDefinitionRolePersonnelRoleRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DistributionListRepository>().As<IDistributionListRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<DistributionListMemberRepository>().As<IDistributionListMemberRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CustomStateRepository>().As<ICustomStateRepository>().InstancePerLifetimeScope();

@@ -41,6 +41,8 @@ namespace Resgrid.Tests.Services
 		private Mock<IIncidentRoleAssignmentRepository> _roleRepo;
 		private Mock<IEventAggregator> _eventAggregator;
 		private Mock<ICoreEventService> _coreEventService;
+		private Mock<IUnitsService> _unitsService;
+		private Mock<IPersonnelRolesService> _personnelRolesService;
 		private IncidentCommandService _service;
 
 		[SetUp]
@@ -61,6 +63,8 @@ namespace Resgrid.Tests.Services
 			_roleRepo = new Mock<IIncidentRoleAssignmentRepository>();
 			_eventAggregator = new Mock<IEventAggregator>();
 			_coreEventService = new Mock<ICoreEventService>();
+			_unitsService = new Mock<IUnitsService>();
+			_personnelRolesService = new Mock<IPersonnelRolesService>();
 
 			// Timeline entries are append-only inserts; echo back the entry so WriteLogAsync resolves a non-null result.
 			_logRepo.Setup(x => x.InsertAsync(It.IsAny<CommandLogEntry>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
@@ -69,7 +73,8 @@ namespace Resgrid.Tests.Services
 			_service = new IncidentCommandService(_commandRepo.Object, _nodeRepo.Object, _assignmentRepo.Object,
 				_objectiveRepo.Object, _timerRepo.Object, _annotationRepo.Object, _logRepo.Object, _transferRepo.Object,
 				_commandsService.Object, _callsService.Object, _checkInTimerService.Object, _voiceService.Object,
-				_roleRepo.Object, _eventAggregator.Object, _coreEventService.Object);
+				_roleRepo.Object, _eventAggregator.Object, _coreEventService.Object,
+				_unitsService.Object, _personnelRolesService.Object);
 		}
 
 		private void ArrangeCall(bool checkInTimersEnabled = true, int departmentId = Dept)
@@ -420,6 +425,182 @@ namespace Resgrid.Tests.Services
 			var result = await _service.MoveResourceAsync(Dept, "ra1", "ghost", "user1");
 
 			result.Should().BeNull();
+		}
+
+		// Forced lane requirements (§ command board templates): when a lane's source role has
+		// ForceRequirements, own-department units must match a required unit type and personnel must
+		// hold a required personnel role; violations throw CommandRequirementsNotMetException.
+
+		private void ArrangeForcedLane(string nodeId = "node-1", int sourceRoleId = 50,
+			List<int> requiredUnitTypes = null, List<int> requiredRoles = null, bool force = true)
+		{
+			_commandRepo.Setup(x => x.GetByIdAsync("ic1")).ReturnsAsync(new IncidentCommand
+			{
+				IncidentCommandId = "ic1", DepartmentId = Dept, CallId = CallId, Status = (int)IncidentCommandStatus.Active
+			});
+
+			_nodeRepo.Setup(x => x.GetByIdAsync(nodeId)).ReturnsAsync(new CommandStructureNode
+			{
+				CommandStructureNodeId = nodeId, DepartmentId = Dept, CallId = CallId, Name = "RIT", SourceRoleId = sourceRoleId
+			});
+
+			_commandsService.Setup(x => x.GetRoleWithRequirementsAsync(sourceRoleId)).ReturnsAsync(new CommandDefinitionRole
+			{
+				CommandDefinitionRoleId = sourceRoleId,
+				Name = "RIT",
+				ForceRequirements = force,
+				RequiredUnitTypes = (requiredUnitTypes ?? new List<int>())
+					.Select(id => new CommandDefinitionRoleUnitType { CommandDefinitionRoleId = sourceRoleId, UnitTypeId = id }).ToList(),
+				RequiredRoles = (requiredRoles ?? new List<int>())
+					.Select(id => new CommandDefinitionRolePersonnelRole { CommandDefinitionRoleId = sourceRoleId, PersonnelRoleId = id }).ToList()
+			});
+
+			_assignmentRepo.Setup(x => x.InsertAsync(It.IsAny<ResourceAssignment>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((ResourceAssignment a, CancellationToken ct, bool b) => a);
+			_assignmentRepo.Setup(x => x.SaveOrUpdateAsync(It.IsAny<ResourceAssignment>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((ResourceAssignment a, CancellationToken ct, bool b) => a);
+		}
+
+		private static ResourceAssignment NewAssignment(int kind, string resourceId) => new ResourceAssignment
+		{
+			IncidentCommandId = "ic1",
+			DepartmentId = Dept,
+			CommandStructureNodeId = "node-1",
+			ResourceKind = kind,
+			ResourceId = resourceId
+		};
+
+		[Test]
+		public async Task AssignResourceAsync_Rejects_UnitNotMatchingForcedLaneUnitTypes()
+		{
+			ArrangeForcedLane(requiredUnitTypes: new List<int> { 7 });
+			_unitsService.Setup(x => x.GetUnitByIdAsync(5)).ReturnsAsync(new Unit { UnitId = 5, DepartmentId = Dept, Name = "Engine 1", Type = "Engine" });
+			_unitsService.Setup(x => x.GetUnitTypesForDepartmentAsync(Dept)).ReturnsAsync(new List<UnitType>
+			{
+				new UnitType { UnitTypeId = 8, Type = "Engine" } // maps to type 8, lane requires 7
+			});
+
+			Func<Task> act = () => _service.AssignResourceAsync(NewAssignment((int)ResourceAssignmentKind.RealUnit, "5"), "user1");
+
+			await act.Should().ThrowAsync<CommandRequirementsNotMetException>();
+			_assignmentRepo.Verify(x => x.InsertAsync(It.IsAny<ResourceAssignment>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+		}
+
+		[Test]
+		public async Task AssignResourceAsync_Allows_UnitMatchingForcedLaneUnitTypes()
+		{
+			ArrangeForcedLane(requiredUnitTypes: new List<int> { 7 });
+			_unitsService.Setup(x => x.GetUnitByIdAsync(5)).ReturnsAsync(new Unit { UnitId = 5, DepartmentId = Dept, Name = "Engine 1", Type = "Engine" });
+			_unitsService.Setup(x => x.GetUnitTypesForDepartmentAsync(Dept)).ReturnsAsync(new List<UnitType>
+			{
+				new UnitType { UnitTypeId = 7, Type = "Engine" }
+			});
+
+			var saved = await _service.AssignResourceAsync(NewAssignment((int)ResourceAssignmentKind.RealUnit, "5"), "user1");
+
+			saved.Should().NotBeNull();
+		}
+
+		[Test]
+		public async Task AssignResourceAsync_Rejects_PersonnelWithoutRequiredRole()
+		{
+			ArrangeForcedLane(requiredRoles: new List<int> { 3 });
+			_personnelRolesService.Setup(x => x.GetRolesForUserAsync("u1", Dept)).ReturnsAsync(new List<PersonnelRole>
+			{
+				new PersonnelRole { PersonnelRoleId = 4, Name = "EMT" } // lane requires role 3
+			});
+
+			Func<Task> act = () => _service.AssignResourceAsync(NewAssignment((int)ResourceAssignmentKind.RealPersonnel, "u1"), "user1");
+
+			await act.Should().ThrowAsync<CommandRequirementsNotMetException>();
+		}
+
+		[Test]
+		public async Task AssignResourceAsync_StampsWarning_WhenAdvisoryRequirementsNotMet()
+		{
+			// Requirements exist but ForceRequirements is off — the assignment succeeds and the violation
+			// is stamped as an advisory warning for the IC app to render on the resource chip.
+			ArrangeForcedLane(requiredUnitTypes: new List<int> { 7 }, force: false);
+			_unitsService.Setup(x => x.GetUnitByIdAsync(5)).ReturnsAsync(new Unit { UnitId = 5, DepartmentId = Dept, Name = "Engine 1", Type = "Engine" });
+			_unitsService.Setup(x => x.GetUnitTypesForDepartmentAsync(Dept)).ReturnsAsync(new List<UnitType>
+			{
+				new UnitType { UnitTypeId = 8, Type = "Engine" } // maps to type 8, lane wants 7
+			});
+
+			var saved = await _service.AssignResourceAsync(NewAssignment((int)ResourceAssignmentKind.RealUnit, "5"), "user1");
+
+			saved.Should().NotBeNull();
+			saved.RequirementsWarning.Should().BeTrue();
+			saved.RequirementsWarningMessage.Should().Contain("Engine 1");
+		}
+
+		[Test]
+		public async Task AssignResourceAsync_ClearsWarning_WhenAdvisoryRequirementsMet()
+		{
+			ArrangeForcedLane(requiredUnitTypes: new List<int> { 7 }, force: false);
+			_unitsService.Setup(x => x.GetUnitByIdAsync(5)).ReturnsAsync(new Unit { UnitId = 5, DepartmentId = Dept, Name = "Engine 1", Type = "Engine" });
+			_unitsService.Setup(x => x.GetUnitTypesForDepartmentAsync(Dept)).ReturnsAsync(new List<UnitType>
+			{
+				new UnitType { UnitTypeId = 7, Type = "Engine" }
+			});
+
+			// A stale warning from a previous lane must be recomputed away.
+			var assignment = NewAssignment((int)ResourceAssignmentKind.RealUnit, "5");
+			assignment.RequirementsWarning = true;
+			assignment.RequirementsWarningMessage = "stale";
+
+			var saved = await _service.AssignResourceAsync(assignment, "user1");
+
+			saved.Should().NotBeNull();
+			saved.RequirementsWarning.Should().BeFalse();
+			saved.RequirementsWarningMessage.Should().BeNull();
+		}
+
+		[Test]
+		public async Task MoveResourceAsync_StampsWarning_ForAdvisoryViolation()
+		{
+			ArrangeForcedLane(requiredRoles: new List<int> { 3 }, force: false);
+			_assignmentRepo.Setup(x => x.GetByIdAsync("ra1")).ReturnsAsync(new ResourceAssignment
+			{
+				ResourceAssignmentId = "ra1", DepartmentId = Dept, CallId = CallId, IncidentCommandId = "ic1",
+				ResourceKind = (int)ResourceAssignmentKind.RealPersonnel, ResourceId = "u1"
+			});
+			_personnelRolesService.Setup(x => x.GetRolesForUserAsync("u1", Dept)).ReturnsAsync(new List<PersonnelRole>());
+
+			var moved = await _service.MoveResourceAsync(Dept, "ra1", "node-1", "user1");
+
+			moved.Should().NotBeNull();
+			moved.CommandStructureNodeId.Should().Be("node-1");
+			moved.RequirementsWarning.Should().BeTrue();
+			moved.RequirementsWarningMessage.Should().Contain("RIT");
+		}
+
+		[Test]
+		public async Task AssignResourceAsync_DoesNotGate_MutualAidResources()
+		{
+			// Linked-department resources carry no own-department type metadata to validate.
+			ArrangeForcedLane(requiredUnitTypes: new List<int> { 7 });
+
+			var saved = await _service.AssignResourceAsync(NewAssignment((int)ResourceAssignmentKind.LinkedDeptUnit, "77"), "user1");
+
+			saved.Should().NotBeNull();
+		}
+
+		[Test]
+		public async Task MoveResourceAsync_Rejects_WhenTargetLaneForcesRequirements()
+		{
+			ArrangeForcedLane(requiredRoles: new List<int> { 3 });
+			_assignmentRepo.Setup(x => x.GetByIdAsync("ra1")).ReturnsAsync(new ResourceAssignment
+			{
+				ResourceAssignmentId = "ra1", DepartmentId = Dept, CallId = CallId, IncidentCommandId = "ic1",
+				ResourceKind = (int)ResourceAssignmentKind.RealPersonnel, ResourceId = "u1"
+			});
+			_personnelRolesService.Setup(x => x.GetRolesForUserAsync("u1", Dept)).ReturnsAsync(new List<PersonnelRole>());
+
+			Func<Task> act = () => _service.MoveResourceAsync(Dept, "ra1", "node-1", "user1");
+
+			await act.Should().ThrowAsync<CommandRequirementsNotMetException>();
+			_assignmentRepo.Verify(x => x.SaveOrUpdateAsync(It.IsAny<ResourceAssignment>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
 		}
 
 		// Offline-first change tracking: every mutation stamps ModifiedOn (the delta "changed since" cursor) and a

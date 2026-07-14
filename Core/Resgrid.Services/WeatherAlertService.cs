@@ -433,7 +433,8 @@ namespace Resgrid.Services
 										SentOn = DateTime.UtcNow,
 										SystemGenerated = true,
 										IsBroadcast = true,
-										Type = 0
+										Type = (int)MessageTypes.WeatherAlert,
+										PushSubTitle = alert.Headline
 									};
 
 									await _communicationService.SendMessageAsync(notifyMsg, "Weather Alert System", null, departmentId, null, department);

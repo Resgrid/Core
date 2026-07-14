@@ -11,6 +11,16 @@ END;
 BEGIN TRANSACTION;
 
 
+-- A database provisioned by EF EnsureCreated (Resgrid.Web.Services Worker) has the full schema
+-- but no rows in [__EFMigrationsHistory]; stamp the migration row so the guarded CREATE TABLE
+-- statements below no-op instead of failing on tables that already exist.
+IF OBJECT_ID(N'[AspNetRoles]') IS NOT NULL AND NOT EXISTS(SELECT * FROM [__EFMigrationsHistory] WHERE [MigrationId] = N'20210904153137_CreateOpenIddictModels')
+BEGIN
+    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+    VALUES (N'20210904153137_CreateOpenIddictModels', N'5.0.9');
+END;
+
+
 IF NOT EXISTS(SELECT * FROM [__EFMigrationsHistory] WHERE [MigrationId] = N'20210904153137_CreateOpenIddictModels')
 BEGIN
     CREATE TABLE [AspNetRoles] (

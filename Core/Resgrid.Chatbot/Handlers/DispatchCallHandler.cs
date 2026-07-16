@@ -59,6 +59,8 @@ namespace Resgrid.Chatbot.Handlers
 
 				var priorities = await _callsService.GetActiveCallPrioritiesForDepartmentAsync(session.DepartmentId);
 				var priority = priorities?.FirstOrDefault(p => p.IsDefault) ?? priorities?.FirstOrDefault();
+				if (priority == null)
+					Framework.Logging.LogError($"DispatchCallHandler: No active call priorities for department {session.DepartmentId}; falling back to {nameof(CallPriority.Low)}.");
 
 				var call = new Call
 				{
@@ -67,9 +69,9 @@ namespace Resgrid.Chatbot.Handlers
 					LoggedOn = DateTime.UtcNow,
 					ReportingUserId = session.UserId,
 					DepartmentId = session.DepartmentId,
-					Priority = priority?.DepartmentCallPriorityId ?? 0,
+					Priority = priority?.DepartmentCallPriorityId ?? (int)CallPriority.Low,
 					State = (int)CallStates.Active,
-					CallSource = 0
+					CallSource = (int)CallSources.Chatbot
 				};
 
 				var saved = await _callsService.SaveCallAsync(call);

@@ -54,6 +54,31 @@ namespace Resgrid.Chatbot.Localization
 			return value;
 		}
 
+		/// <summary>True if <paramref name="text"/> is an affirmative ("yes") confirmation in the given culture.</summary>
+		public static bool IsAffirmative(string text, string culture) => MatchesConfirmationToken(text, culture, "Confirm_YesTokens");
+
+		/// <summary>True if <paramref name="text"/> is a negative ("no"/"cancel") confirmation in the given culture.</summary>
+		public static bool IsNegative(string text, string culture) => MatchesConfirmationToken(text, culture, "Confirm_NoTokens");
+
+		// Matches the trimmed input against the comma-separated token list for the key. The English tokens
+		// are always accepted (commands are English today, so "yes"/"no" must keep working in every locale)
+		// alongside the locale's own words, letting non-English users confirm in their language too.
+		private static bool MatchesConfirmationToken(string text, string culture, string key)
+		{
+			if (string.IsNullOrWhiteSpace(text))
+				return false;
+
+			var input = text.Trim();
+			foreach (var token in (Get(key, "en") + "," + Get(key, culture)).Split(','))
+			{
+				var t = token.Trim();
+				if (t.Length > 0 && string.Equals(t, input, StringComparison.OrdinalIgnoreCase))
+					return true;
+			}
+
+			return false;
+		}
+
 		private static Dictionary<string, string> L(string en, string es, string sv, string de, string fr, string it, string pl, string uk, string ar)
 			=> new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
 			{
@@ -68,6 +93,166 @@ namespace Resgrid.Chatbot.Localization
 		private static readonly Dictionary<string, Dictionary<string, string>> _table =
 			new Dictionary<string, Dictionary<string, string>>(StringComparer.OrdinalIgnoreCase)
 		{
+			// ---- ConversationEngine (multi-turn continuation, confirmation, parameter prompts) ----
+
+			// Comma-separated confirmation tokens. Command words double as classifier tokens, so the
+			// English set is always honored (see MatchesConfirmationToken); the locale entries add native words.
+			["Confirm_YesTokens"] = L(
+				"yes,y,confirm,ok",
+				"sí,si,s,confirmar,vale,ok",
+				"ja,j,bekräfta,ok",
+				"ja,j,bestätigen,ok",
+				"oui,o,confirmer,ok",
+				"sì,si,s,conferma,ok",
+				"tak,t,potwierdzam,ok",
+				"так,т,підтвердити,ok",
+				"نعم,تأكيد,موافق,حسنا"),
+
+			["Confirm_NoTokens"] = L(
+				"no,n,cancel",
+				"no,n,cancelar",
+				"nej,n,avbryt",
+				"nein,n,abbrechen",
+				"non,n,annuler",
+				"no,n,annulla",
+				"nie,n,anuluj",
+				"ні,н,скасувати",
+				"لا,إلغاء"),
+
+			["Conv_Confirmed"] = L(
+				"Confirmed.",
+				"Confirmado.",
+				"Bekräftat.",
+				"Bestätigt.",
+				"Confirmé.",
+				"Confermato.",
+				"Potwierdzono.",
+				"Підтверджено.",
+				"تم التأكيد."),
+
+			["Conv_Cancelled"] = L(
+				"Cancelled.",
+				"Cancelado.",
+				"Avbruten.",
+				"Abgebrochen.",
+				"Annulé.",
+				"Annullato.",
+				"Anulowano.",
+				"Скасовано.",
+				"تم الإلغاء."),
+
+			["Conv_ConfirmPrompt"] = L(
+				"Please reply YES to confirm or NO to cancel.",
+				"Responde SÍ para confirmar o NO para cancelar.",
+				"Svara JA för att bekräfta eller NEJ för att avbryta.",
+				"Antworten Sie mit JA zum Bestätigen oder NEIN zum Abbrechen.",
+				"Répondez OUI pour confirmer ou NON pour annuler.",
+				"Rispondi SÌ per confermare o NO per annullare.",
+				"Odpowiedz TAK, aby potwierdzić, lub NIE, aby anulować.",
+				"Відповідайте ТАК, щоб підтвердити, або НІ, щоб скасувати.",
+				"أرسل نعم للتأكيد أو لا للإلغاء."),
+
+			["Conv_ProcessingLinkingCode"] = L(
+				"Processing your linking code...",
+				"Procesando tu código de vinculación...",
+				"Bearbetar din länkningskod...",
+				"Ihr Verknüpfungscode wird verarbeitet...",
+				"Traitement de votre code de liaison...",
+				"Elaborazione del codice di collegamento...",
+				"Przetwarzanie kodu łączenia...",
+				"Обробка вашого коду прив'язки...",
+				"جارٍ معالجة رمز الربط الخاص بك..."),
+
+			["Conv_ReceivedProcessing"] = L(
+				"Received. Processing your request...",
+				"Recibido. Procesando tu solicitud...",
+				"Mottaget. Bearbetar din begäran...",
+				"Empfangen. Ihre Anfrage wird verarbeitet...",
+				"Reçu. Traitement de votre demande...",
+				"Ricevuto. Elaborazione della tua richiesta...",
+				"Odebrano. Przetwarzanie żądania...",
+				"Отримано. Обробка вашого запиту...",
+				"تم الاستلام. جارٍ معالجة طلبك..."),
+
+			["Conv_PromptSendMessageTo"] = L(
+				"What message should I send to {0}?",
+				"¿Qué mensaje debo enviar a {0}?",
+				"Vilket meddelande ska jag skicka till {0}?",
+				"Welche Nachricht soll ich an {0} senden?",
+				"Quel message dois-je envoyer à {0} ?",
+				"Quale messaggio devo inviare a {0}?",
+				"Jaką wiadomość mam wysłać do {0}?",
+				"Яке повідомлення надіслати {0}?",
+				"ما الرسالة التي يجب أن أرسلها إلى {0}؟"),
+
+			["Conv_PromptSendMessage"] = L(
+				"Who would you like to send a message to, and what should it say?",
+				"¿A quién quieres enviar un mensaje y qué debe decir?",
+				"Vem vill du skicka ett meddelande till och vad ska det stå?",
+				"An wen möchten Sie eine Nachricht senden und was soll darin stehen?",
+				"À qui souhaitez-vous envoyer un message et que doit-il dire ?",
+				"A chi vuoi inviare un messaggio e cosa deve dire?",
+				"Do kogo chcesz wysłać wiadomość i co ma zawierać?",
+				"Кому ви хочете надіслати повідомлення і що в ньому написати?",
+				"إلى من تريد إرسال رسالة، وماذا يجب أن تقول؟"),
+
+			// Status/staffing option lines stay in English: the numbers and English names are the
+			// command tokens the classifier/handlers match; only the leading question is translated.
+			["Conv_PromptSetStatus"] = L(
+				"Which status? Text a number or name:\n(1) Responding\n(2) Not Responding\n(3) On Scene\n(4) Standing By",
+				"¿Qué estado? Escribe un número o nombre:\n(1) Responding\n(2) Not Responding\n(3) On Scene\n(4) Standing By",
+				"Vilken status? Skriv en siffra eller ett namn:\n(1) Responding\n(2) Not Responding\n(3) On Scene\n(4) Standing By",
+				"Welcher Status? Senden Sie eine Nummer oder einen Namen:\n(1) Responding\n(2) Not Responding\n(3) On Scene\n(4) Standing By",
+				"Quel statut ? Envoyez un numéro ou un nom :\n(1) Responding\n(2) Not Responding\n(3) On Scene\n(4) Standing By",
+				"Quale stato? Scrivi un numero o un nome:\n(1) Responding\n(2) Not Responding\n(3) On Scene\n(4) Standing By",
+				"Jaki status? Wpisz numer lub nazwę:\n(1) Responding\n(2) Not Responding\n(3) On Scene\n(4) Standing By",
+				"Який статус? Надішліть номер або назву:\n(1) Responding\n(2) Not Responding\n(3) On Scene\n(4) Standing By",
+				"ما الحالة؟ أرسل رقمًا أو اسمًا:\n(1) Responding\n(2) Not Responding\n(3) On Scene\n(4) Standing By"),
+
+			["Conv_PromptSetStaffing"] = L(
+				"Which staffing level? Text a number or name:\n(S1) Available\n(S2) Delayed\n(S3) Unavailable\n(S4) Committed\n(S5) On Shift",
+				"¿Qué nivel de personal? Escribe un número o nombre:\n(S1) Available\n(S2) Delayed\n(S3) Unavailable\n(S4) Committed\n(S5) On Shift",
+				"Vilken bemanningsnivå? Skriv en siffra eller ett namn:\n(S1) Available\n(S2) Delayed\n(S3) Unavailable\n(S4) Committed\n(S5) On Shift",
+				"Welche Personalstufe? Senden Sie eine Nummer oder einen Namen:\n(S1) Available\n(S2) Delayed\n(S3) Unavailable\n(S4) Committed\n(S5) On Shift",
+				"Quel niveau d'effectif ? Envoyez un numéro ou un nom :\n(S1) Available\n(S2) Delayed\n(S3) Unavailable\n(S4) Committed\n(S5) On Shift",
+				"Quale livello di personale? Scrivi un numero o un nome:\n(S1) Available\n(S2) Delayed\n(S3) Unavailable\n(S4) Committed\n(S5) On Shift",
+				"Jaki poziom obsady? Wpisz numer lub nazwę:\n(S1) Available\n(S2) Delayed\n(S3) Unavailable\n(S4) Committed\n(S5) On Shift",
+				"Який рівень укомплектування? Надішліть номер або назву:\n(S1) Available\n(S2) Delayed\n(S3) Unavailable\n(S4) Committed\n(S5) On Shift",
+				"ما مستوى التوظيف؟ أرسل رقمًا أو اسمًا:\n(S1) Available\n(S2) Delayed\n(S3) Unavailable\n(S4) Committed\n(S5) On Shift"),
+
+			["Conv_PromptDispatchCall"] = L(
+				"Please provide the call details (e.g., 'Structure fire at 123 Main St')",
+				"Proporciona los detalles de la llamada (p. ej., 'Structure fire at 123 Main St')",
+				"Ange samtalsuppgifterna (t.ex. 'Structure fire at 123 Main St')",
+				"Bitte geben Sie die Einsatzdetails an (z. B. 'Structure fire at 123 Main St')",
+				"Veuillez fournir les détails de l'appel (p. ex. 'Structure fire at 123 Main St')",
+				"Fornisci i dettagli della chiamata (es. 'Structure fire at 123 Main St')",
+				"Podaj szczegóły zgłoszenia (np. 'Structure fire at 123 Main St')",
+				"Вкажіть деталі виклику (напр., 'Structure fire at 123 Main St')",
+				"يرجى تقديم تفاصيل النداء (مثال: 'Structure fire at 123 Main St')"),
+
+			["Conv_PromptCloseCall"] = L(
+				"Which call would you like to close? Reply with the call number (e.g., C1445)",
+				"¿Qué llamada quieres cerrar? Responde con el número de llamada (p. ej., C1445)",
+				"Vilket samtal vill du avsluta? Svara med samtalsnumret (t.ex. C1445)",
+				"Welchen Einsatz möchten Sie schließen? Antworten Sie mit der Einsatznummer (z. B. C1445)",
+				"Quel appel souhaitez-vous clôturer ? Répondez avec le numéro d'appel (p. ex. C1445)",
+				"Quale chiamata vuoi chiudere? Rispondi con il numero della chiamata (es. C1445)",
+				"Które zgłoszenie chcesz zamknąć? Odpowiedz numerem zgłoszenia (np. C1445)",
+				"Який виклик ви хочете закрити? Відповідайте номером виклику (напр., C1445)",
+				"أي نداء تريد إغلاقه؟ أرسل رقم النداء (مثال: C1445)"),
+
+			["Conv_PromptDefault"] = L(
+				"Please provide more details.",
+				"Proporciona más detalles.",
+				"Ange fler detaljer.",
+				"Bitte geben Sie weitere Details an.",
+				"Veuillez fournir plus de détails.",
+				"Fornisci maggiori dettagli.",
+				"Podaj więcej szczegółów.",
+				"Надайте більше деталей.",
+				"يرجى تقديم مزيد من التفاصيل."),
+
 			["Msg_NoUnread"] = L(
 				"You have no unread messages.",
 				"No tienes mensajes sin leer.",

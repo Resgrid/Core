@@ -4,6 +4,7 @@
 	{
 		User		= 1,
 		EmailImport	= 2,
-		AudioImport = 3
+		AudioImport = 3,
+		Chatbot		= 4
 	}
 }

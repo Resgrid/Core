@@ -37,7 +37,11 @@ namespace Resgrid.Chatbot.Services
 			if (string.IsNullOrWhiteSpace(clean))
 				return null;
 
-			var entity = await _identityRepository.GetByPlatformUserIdAsync(clean);
+			// A phone number only ever identifies an SMS-platform identity, so scope the lookup to the
+			// SMS platforms (Twilio / SignalWire). This prevents a cleaned number from coincidentally
+			// matching a platformUserId stored by a non-SMS platform (Telegram/Discord/OAuth ids, etc.).
+			var entity = await _identityRepository.GetByPlatformAndUserAsync((int)ChatbotPlatform.SmsTwilio, clean)
+				?? await _identityRepository.GetByPlatformAndUserAsync((int)ChatbotPlatform.SmsSignalWire, clean);
 			return ToModel(entity);
 		}
 

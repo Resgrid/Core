@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Resgrid.Chatbot.Interfaces;
+using Resgrid.Chatbot.Localization;
 using Resgrid.Chatbot.Models;
 
 namespace Resgrid.Chatbot.Services
@@ -58,22 +59,15 @@ namespace Resgrid.Chatbot.Services
 						var pendingIntent = session.PendingIntent.Value;
 						switch (pendingIntent)
 						{
-							case ChatbotIntentType.SendMessage when !session.Context.ContainsKey("body"):
-								session.Context["body"] = message.Text;
-								session.State = ChatbotDialogState.Idle;
-								session.PendingIntent = null;
-								return new ChatbotResponse
-								{
-									Text = $"Message sent to {TryGetContext(session, "recipient", "recipient")}: \"{message.Text}\"",
-									Processed = true
-								};
+							// SendMessage is single-turn (handled inline by MessageSendHandler — see
+							// IsMultiTurnIntent), so it never parks here and no fake "Message sent" is reported.
 							default:
 								session.Context["parameterValue"] = message.Text;
 								session.State = ChatbotDialogState.Idle;
 								session.PendingIntent = null;
 								return new ChatbotResponse
 								{
-									Text = "Received. Processing your request...",
+									Text = ChatbotResources.Get("Conv_ReceivedProcessing", session.Culture),
 									Processed = true
 								};
 						}
@@ -81,25 +75,24 @@ namespace Resgrid.Chatbot.Services
 					break;
 
 				case ChatbotDialogState.AwaitingConfirmation:
-					var confirm = message.Text?.Trim().ToUpperInvariant();
-					if (confirm == "YES" || confirm == "Y" || confirm == "CONFIRM" || confirm == "OK")
+					if (ChatbotResources.IsAffirmative(message.Text, session.Culture))
 					{
 						session.State = ChatbotDialogState.Idle;
 						session.PendingIntent = null;
-						return new ChatbotResponse { Text = "Confirmed.", Processed = true };
+						return new ChatbotResponse { Text = ChatbotResources.Get("Conv_Confirmed", session.Culture), Processed = true };
 					}
-					if (confirm == "NO" || confirm == "N" || confirm == "CANCEL")
+					if (ChatbotResources.IsNegative(message.Text, session.Culture))
 					{
 						session.Reset();
-						return new ChatbotResponse { Text = "Cancelled.", Processed = true };
+						return new ChatbotResponse { Text = ChatbotResources.Get("Conv_Cancelled", session.Culture), Processed = true };
 					}
-					return new ChatbotResponse { Text = "Please reply YES to confirm or NO to cancel.", Processed = true };
+					return new ChatbotResponse { Text = ChatbotResources.Get("Conv_ConfirmPrompt", session.Culture), Processed = true };
 
 				case ChatbotDialogState.AwaitingAuth:
 					session.Context["linkingCode"] = message.Text?.Trim();
 					session.State = ChatbotDialogState.Idle;
 					session.PendingIntent = null;
-					return new ChatbotResponse { Text = "Processing your linking code...", Processed = true };
+					return new ChatbotResponse { Text = ChatbotResources.Get("Conv_ProcessingLinkingCode", session.Culture), Processed = true };
 			}
 
 			return null;
@@ -131,21 +124,13 @@ namespace Resgrid.Chatbot.Services
 			session.State = ChatbotDialogState.AwaitingParameter;
 			session.PendingIntent = intent.Type;
 
-			var prompt = BuildParameterPrompt(intent);
+			var prompt = BuildParameterPrompt(intent, session.Culture);
 			return Task.FromResult(new ChatbotResponse
 			{
 				Text = prompt,
 				Processed = true,
 				Intent = intent
 			});
-		}
-
-		// Helper to safely get context values
-		private static string TryGetContext(ChatbotSession session, string key, string defaultValue)
-		{
-			if (session?.Context != null && session.Context.TryGetValue(key, out var value))
-				return value;
-			return defaultValue;
 		}
 
 		private Task<ConversationResult> HandleNewIntent(ChatbotMessage message, ChatbotSession session, ChatbotIntent intent)
@@ -156,7 +141,7 @@ namespace Resgrid.Chatbot.Services
 				session.State = ChatbotDialogState.AwaitingParameter;
 				session.PendingIntent = intent.Type;
 
-				var prompt = BuildParameterPrompt(intent);
+				var prompt = BuildParameterPrompt(intent, session.Culture);
 				return Task.FromResult(new ConversationResult
 				{
 					Response = new ChatbotResponse
@@ -193,19 +178,8 @@ namespace Resgrid.Chatbot.Services
 
 				switch (pendingIntent)
 				{
-					case ChatbotIntentType.SendMessage when !session.Context.ContainsKey("body"):
-						session.Context["body"] = message.Text;
-						return Task.FromResult(new ConversationResult
-						{
-							Response = new ChatbotResponse
-							{
-								Text = $"Message sent to {TryGetContext(session, "recipient", "recipient")}: \"{message.Text}\"",
-								Processed = true
-							},
-							IsComplete = true,
-							NeedsFollowUp = false,
-							NextState = ChatbotDialogState.Idle
-						});
+					// SendMessage is single-turn (handled inline by MessageSendHandler — see IsMultiTurnIntent),
+					// so it never reaches this multi-turn path; no fake send is reported.
 
 					default:
 						// Complete the pending intent with the provided parameter
@@ -301,7 +275,9 @@ namespace Resgrid.Chatbot.Services
 
 			return intent.Type switch
 			{
-				ChatbotIntentType.SendMessage => !intent.Parameters.ContainsKey("body"),
+				// SendMessage is single-turn (handled inline by MessageSendHandler), so it is not
+				// collected here — kept consistent with IsMultiTurnIntent, which also excludes SendMessage.
+				ChatbotIntentType.SendMessage => false,
 				ChatbotIntentType.SetStatus => !intent.Parameters.ContainsKey("actionType") && !intent.Parameters.ContainsKey("customActionId") && !intent.Parameters.ContainsKey("statusName"),
 				ChatbotIntentType.SetStaffing => !intent.Parameters.ContainsKey("staffingType") && !intent.Parameters.ContainsKey("staffingName"),
 				ChatbotIntentType.DispatchCall => !intent.Parameters.ContainsKey("description"),
@@ -310,29 +286,29 @@ namespace Resgrid.Chatbot.Services
 			};
 		}
 
-		private static string BuildParameterPrompt(ChatbotIntent intent)
+		private static string BuildParameterPrompt(ChatbotIntent intent, string culture)
 		{
 			return intent.Type switch
 			{
 				ChatbotIntentType.SendMessage when intent.Parameters.TryGetValue("recipient", out var recipient)
-					=> $"What message should I send to {recipient}?",
+					=> ChatbotResources.Get("Conv_PromptSendMessageTo", culture, recipient),
 
 				ChatbotIntentType.SendMessage
-					=> "Who would you like to send a message to, and what should it say?",
+					=> ChatbotResources.Get("Conv_PromptSendMessage", culture),
 
 				ChatbotIntentType.SetStatus
-					=> "Which status? Text a number or name:\n(1) Responding\n(2) Not Responding\n(3) On Scene\n(4) Standing By",
+					=> ChatbotResources.Get("Conv_PromptSetStatus", culture),
 
 				ChatbotIntentType.SetStaffing
-					=> "Which staffing level? Text a number or name:\n(S1) Available\n(S2) Delayed\n(S3) Unavailable\n(S4) Committed\n(S5) On Shift",
+					=> ChatbotResources.Get("Conv_PromptSetStaffing", culture),
 
 				ChatbotIntentType.DispatchCall
-					=> "Please provide the call details (e.g., 'Structure fire at 123 Main St')",
+					=> ChatbotResources.Get("Conv_PromptDispatchCall", culture),
 
 				ChatbotIntentType.CloseCall
-					=> "Which call would you like to close? Reply with the call number (e.g., C1445)",
+					=> ChatbotResources.Get("Conv_PromptCloseCall", culture),
 
-				_ => "Please provide more details."
+				_ => ChatbotResources.Get("Conv_PromptDefault", culture)
 			};
 		}
 	}

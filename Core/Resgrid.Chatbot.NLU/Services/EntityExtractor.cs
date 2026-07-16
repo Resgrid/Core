@@ -109,7 +109,7 @@ namespace Resgrid.Chatbot.NLU.Services
 
 		private static void ExtractTimes(string text, List<ChatbotEntity> entities)
 		{
-			var timePattern = new Regex(@"\b(\d{1,2})(:\d{2})?\s*(am|pm|AM|PM)?\b");
+			var timePattern = new Regex(@"\b(\d{1,2})(?::\d{2}(?:\s*(?:am|pm|AM|PM))?|\s*(?:am|pm|AM|PM))\b");
 			var match = timePattern.Match(text);
 			if (match.Success)
 			{

@@ -129,6 +129,11 @@ namespace Resgrid.Chatbot.Services
 
 				identity.LastUsedAt = DateTime.UtcNow;
 
+				// Persist the touch: LinkUserAsync upserts the existing identity (bumping LastUsedAt
+				// and preserving LinkingMethod/PlatformUserName when passed their current values).
+				await _userIdentityService.LinkUserAsync(
+					identity.UserId, identity.Platform, identity.PlatformUserId, identity.PlatformUserName, identity.LinkingMethod);
+
 				// 2. Get active department for this user (respects IsActive flag for multi-dept users)
 				var department = await ResolveActiveDepartmentAsync(identity.UserId);
 				if (department == null)
@@ -258,6 +263,34 @@ namespace Resgrid.Chatbot.Services
 						var confirmResponse = await DispatchConfirmedIntentAsync(message, session);
 						if (confirmResponse != null)
 							return confirmResponse;
+						var pendingType = session.PendingIntent.Value;
+
+						// Locate the owning handler BEFORE mutating session state. If none can handle
+						// the pending intent, leave the session parked in AwaitingConfirmation and return
+						// an explicit error rather than silently dropping the confirmation.
+						var confirmHandler = _actionHandlers.FirstOrDefault(h => h.CanHandle(pendingType));
+						if (confirmHandler == null)
+						{
+							return new ChatbotResponse
+							{
+								Text = "Unable to complete confirmation — please try again or contact support.",
+								Processed = false
+							};
+						}
+
+						var confirmedIntent = new ChatbotIntent
+						{
+							Type = pendingType,
+							Parameters = new Dictionary<string, string>(session.Context) { ["__confirmed"] = "true" }
+						};
+
+						var confirmResponse = await confirmHandler.HandleAsync(message, confirmedIntent, session);
+						confirmResponse.Intent = confirmedIntent;
+						session.Context.Clear();
+						session.State = ChatbotDialogState.Idle;
+						session.PendingIntent = null;
+						await _sessionManager.SaveSessionAsync(session);
+						return confirmResponse;
 					}
 					else if (reply == "NO" || reply == "N" || reply == "CANCEL")
 					{

@@ -1,5 +1,7 @@
 namespace Resgrid.Chatbot.Models
 {
+	// The SMS values (SmsTwilio, SmsSignalWire) are mirrored as constants on
+	// Resgrid.Model.ChatbotIdentity for consumers that cannot reference this project.
 	public enum ChatbotPlatform
 	{
 		Unknown = 0,

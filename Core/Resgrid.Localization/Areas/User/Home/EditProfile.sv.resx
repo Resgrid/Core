@@ -365,4 +365,22 @@
   <data name="PasswordRequirementsLength" xml:space="preserve"><value>Minst {0} tecken</value></data>
   <data name="PasswordRequirementsDigit" xml:space="preserve"><value>Minst en siffra</value></data>
   <data name="PasswordRequirementsCase" xml:space="preserve"><value>Minst en stor och en liten bokstav</value></data>
+  <data name="SecurityPinEnabledHelp" xml:space="preserve">
+    <value>När det är aktiverat begär farliga chatbot-/SMS-åtgärder din PIN som ett extra säkerhetssteg. Om du aktiverar detta utan PIN genereras en slumpmässig åt dig.</value>
+  </data>
+  <data name="SecurityPinEnabledLabel" xml:space="preserve">
+    <value>Kräv säkerhets-PIN</value>
+  </data>
+  <data name="SecurityPinForcedHelp" xml:space="preserve">
+    <value>Din avdelning kräver en säkerhets-PIN för farliga chatbot-/SMS-åtgärder, så det här alternativet är alltid på.</value>
+  </data>
+  <data name="SecurityPinHelp" xml:space="preserve">
+    <value>Din 4-siffriga säkerhets-PIN bekräftar farliga eller avdelningsövergripande åtgärder som utförs via SMS eller chatbot. Undvik upprepade siffror (0000) och sekvenser (1234, 4321). Lämna tomt för att behålla din nuvarande PIN.</value>
+  </data>
+  <data name="SecurityPinLabel" xml:space="preserve">
+    <value>Säkerhets-PIN</value>
+  </data>
+  <data name="SecurityPinPlaceholder" xml:space="preserve">
+    <value>4-siffrig PIN</value>
+  </data>
 </root>

@@ -68,6 +68,9 @@ namespace Resgrid.Web.Areas.User.Models
 
 		public bool EnableModernNotifications { get; set; }
 
+		[Display(Name = "Require security PIN for dangerous chatbot/text actions")]
+		public bool ForceChatbotSecurityPin { get; set; }
+
 		public DepartmentSettingsModel()
 		{
 			Users = new Dictionary<string, string>();

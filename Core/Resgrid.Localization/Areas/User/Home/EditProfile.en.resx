@@ -420,4 +420,22 @@
   <data name="PasswordRequirementsLength" xml:space="preserve"><value>At least {0} characters long</value></data>
   <data name="PasswordRequirementsDigit" xml:space="preserve"><value>At least one digit (number)</value></data>
   <data name="PasswordRequirementsCase" xml:space="preserve"><value>At least one uppercase and one lowercase letter</value></data>
+  <data name="SecurityPinEnabledHelp" xml:space="preserve">
+    <value>When enabled, dangerous chatbot/text actions ask for your PIN as an extra security step. If you enable this without a PIN a random one is generated for you.</value>
+  </data>
+  <data name="SecurityPinEnabledLabel" xml:space="preserve">
+    <value>Require Security PIN</value>
+  </data>
+  <data name="SecurityPinForcedHelp" xml:space="preserve">
+    <value>Your department requires a security PIN for dangerous chatbot/text actions, so this option is always on.</value>
+  </data>
+  <data name="SecurityPinHelp" xml:space="preserve">
+    <value>Your 4-digit security PIN confirms dangerous or department-wide actions performed over text message or chatbot. Avoid repeated digits (0000) and sequences (1234, 4321). Leave blank to keep your current PIN.</value>
+  </data>
+  <data name="SecurityPinLabel" xml:space="preserve">
+    <value>Security PIN</value>
+  </data>
+  <data name="SecurityPinPlaceholder" xml:space="preserve">
+    <value>4-digit PIN</value>
+  </data>
 </root>

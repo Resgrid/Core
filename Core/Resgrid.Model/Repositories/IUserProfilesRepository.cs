@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Resgrid.Model.Repositories
@@ -51,5 +52,14 @@ namespace Resgrid.Model.Repositories
 		/// <param name="departmentId">The department identifier.</param>
 		/// <returns>Task&lt;IEnumerable&lt;UserProfile&gt;&gt;.</returns>
 		Task<IEnumerable<UserProfile>> GetAllUserProfilesForDepartmentIncDisabledDeletedAsync(int departmentId);
+
+		/// <summary>
+		/// Updates only the SecurityPin (and LastUpdated) columns for the supplied profiles as a
+		/// single batched command. Used for department-wide security PIN provisioning; callers are
+		/// responsible for profile cache eviction.
+		/// </summary>
+		/// <param name="profiles">Profiles with SecurityPin and LastUpdated already set.</param>
+		/// <param name="cancellationToken">The cancellation token.</param>
+		Task UpdateSecurityPinsAsync(IEnumerable<UserProfile> profiles, CancellationToken cancellationToken = default);
 	}
 }

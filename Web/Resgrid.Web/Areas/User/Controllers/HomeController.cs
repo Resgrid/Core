@@ -71,6 +71,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IGdprDataExportService _gdprDataExportService;
 		private readonly ISystemAuditsService _systemAuditsService;
 		private readonly IPhoneNumberProcesserProvider _phoneNumberProcesser;
+		private readonly ISecurityPinService _securityPinService;
+		private readonly IEncryptionService _encryptionService;
 
 		public HomeController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IUserStateService userStateService, IDepartmentGroupsService departmentGroupsService, Resgrid.Model.Services.IAuthorizationService authorizationService,
@@ -80,7 +82,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IStringLocalizerFactory factory, ISubscriptionsService subscriptionsService, IContactVerificationService contactVerificationService,
 			IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService, IDepartmentSsoService departmentSsoService,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> secLocalizer, IGdprDataExportService gdprDataExportService,
-			ISystemAuditsService systemAuditsService, IPhoneNumberProcesserProvider phoneNumberProcesser)
+			ISystemAuditsService systemAuditsService, IPhoneNumberProcesserProvider phoneNumberProcesser,
+			ISecurityPinService securityPinService, IEncryptionService encryptionService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -110,6 +113,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_gdprDataExportService = gdprDataExportService;
 			_systemAuditsService = systemAuditsService;
 			_phoneNumberProcesser = phoneNumberProcesser;
+			_securityPinService = securityPinService;
+			_encryptionService = encryptionService;
 
 			_localizer = factory.Create("Home.Dashboard", new AssemblyName(typeof(SupportedLocales).GetTypeInfo().Assembly.FullName).Name);
 		}
@@ -411,6 +416,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.Profile == null)
 				model.Profile = new UserProfile();
 
+			// Security PIN is only shown to the profile's owner (never to admins editing another user).
+			model.DepartmentForcesSecurityPin = await _departmentSettingsService.GetForceChatbotSecurityPinAsync(DepartmentId);
+			if (model.IsOwnProfile)
+			{
+				model.SecurityPinEnabled = model.Profile.SecurityPinEnabled;
+				model.SecurityPin = await _securityPinService.GetPinAsync(userId);
+			}
+
 			if (model.Profile.Image == null)
 				model.HasCustomIamge = false;
 			else
@@ -680,6 +693,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 					if (newUser != null)
 						ModelState.AddModelError("", "The NEW username you have supplied is already in use, please try another one. If you didn't mean to update your username please leave that field blank.");
 				}
+
+				if (!String.IsNullOrWhiteSpace(model.SecurityPin))
+				{
+					// Normalize once so validation sees the same value that gets encrypted on save.
+					model.SecurityPin = model.SecurityPin.Trim();
+
+					if (!SecurityPinUtility.IsValidFormat(model.SecurityPin))
+						ModelState.AddModelError("SecurityPin", "The security PIN must be exactly 4 digits.");
+					else if (SecurityPinUtility.IsWeak(model.SecurityPin))
+						ModelState.AddModelError("SecurityPin", "That security PIN is too easy to guess. Avoid repeated digits (like 0000) and sequences (like 1234 or 4321).");
+				}
 			}
 
 			if (ModelState.IsValid)
@@ -726,6 +750,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 				savedProfile.IdentificationNumber = model.Profile.IdentificationNumber;
 				savedProfile.TimeZone = model.Profile.TimeZone;
 				savedProfile.Language = model.Profile.Language;
+
+				// Security PIN: only the profile owner can manage it. A blank input keeps the current
+				// PIN; enabling the option with no PIN on file generates a random one.
+				if (model.IsOwnProfile)
+				{
+					savedProfile.SecurityPinEnabled = model.SecurityPinEnabled;
+
+					if (!String.IsNullOrWhiteSpace(model.SecurityPin))
+						savedProfile.SecurityPin = _encryptionService.Encrypt(model.SecurityPin.Trim());
+					else if (model.SecurityPinEnabled && String.IsNullOrWhiteSpace(savedProfile.SecurityPin))
+						savedProfile.SecurityPin = _encryptionService.Encrypt(SecurityPinUtility.Generate());
+				}
 
 				if (model.CanEnableVoice)
 				{

@@ -55,5 +55,6 @@
 		UnitCallReleaseStatusToSet = 51,
 		UnitCallStatusOverridesByUnitType = 52,
 		EnableModernNotifications = 53,
+		ForceChatbotSecurityPin = 54,
 	}
 }

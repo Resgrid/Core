@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
     <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
@@ -682,5 +682,11 @@
   </data>
   <data name="EnableModernNotificationsHelp" xml:space="preserve">
     <value>When enabled, push notifications will use the modern notification sounds instead of the legacy sounds for all users in this department.</value>
+  </data>
+  <data name="ForceChatbotSecurityPin" xml:space="preserve">
+    <value>Exiger le code PIN de sécurité</value>
+  </data>
+  <data name="ForceChatbotSecurityPinHelp" xml:space="preserve">
+    <value>Exige que chaque membre confirme les actions dangereuses ou à l'échelle du service du chatbot/SMS avec son code PIN de sécurité personnel à 4 chiffres. Les membres sans PIN en reçoivent un généré aléatoirement (visible sur leur page de profil).</value>
   </data>
 </root>

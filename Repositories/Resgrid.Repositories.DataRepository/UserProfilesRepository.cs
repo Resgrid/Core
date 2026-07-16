@@ -4,8 +4,10 @@ using System.Data.Common;
 using System.Linq;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
+using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
+using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model.Identity;
 using Resgrid.Model.Repositories.Connection;
@@ -309,6 +311,55 @@ namespace Resgrid.Repositories.DataRepository
 				Logging.LogException(ex);
 
 				return null;
+			}
+		}
+
+		public async Task UpdateSecurityPinsAsync(IEnumerable<UserProfile> profiles, CancellationToken cancellationToken = default)
+		{
+			try
+			{
+				var items = profiles?
+					.Where(p => p != null)
+					.Select(p => new { p.SecurityPin, p.LastUpdated, p.UserProfileId })
+					.ToList();
+
+				if (items == null || items.Count == 0)
+					return;
+
+				var pn = _sqlConfiguration.ParameterNotation;
+				var sql = DataConfig.DatabaseType == DatabaseTypes.Postgres
+					? $"UPDATE {_sqlConfiguration.SchemaName}.userprofiles SET securitypin = {pn}SecurityPin, lastupdated = {pn}LastUpdated WHERE userprofileid = {pn}UserProfileId"
+					: $"UPDATE {_sqlConfiguration.SchemaName}.[UserProfiles] SET [SecurityPin] = {pn}SecurityPin, [LastUpdated] = {pn}LastUpdated WHERE [UserProfileId] = {pn}UserProfileId";
+
+				// Dapper executes the statement once per item over a single prepared command/connection.
+				if (_unitOfWork?.Connection == null)
+				{
+					using (var conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync(cancellationToken);
+
+						// No ambient unit-of-work: run the batch atomically so a mid-batch failure
+						// rolls back rather than leaving some members with PINs and others without.
+						using (var transaction = await conn.BeginTransactionAsync(cancellationToken))
+						{
+							await conn.ExecuteAsync(sql, items, transaction);
+							await transaction.CommitAsync(cancellationToken);
+						}
+					}
+				}
+				else
+				{
+					// Ambient unit-of-work: participate in the caller's transaction.
+					var connection = _unitOfWork.CreateOrGetConnection();
+					await connection.ExecuteAsync(sql, items, _unitOfWork.Transaction);
+				}
+			}
+			catch (Exception ex)
+			{
+				// Rethrow (unlike the read paths): callers gate follow-on writes — e.g. persisting the
+				// department force-PIN setting — on this batch succeeding.
+				Logging.LogException(ex);
+				throw;
 			}
 		}
 

@@ -18,11 +18,14 @@ namespace Resgrid.Services
 
 		private readonly IUserProfilesRepository _userProfileRepository;
 		private readonly ICacheProvider _cacheProvider;
+		private readonly IChatbotIdentityRepository _chatbotIdentityRepository;
 
-		public UserProfileService(IUserProfilesRepository userProfileRepository, ICacheProvider cacheProvider)
+		public UserProfileService(IUserProfilesRepository userProfileRepository, ICacheProvider cacheProvider,
+			IChatbotIdentityRepository chatbotIdentityRepository)
 		{
 			_userProfileRepository = userProfileRepository;
 			_cacheProvider = cacheProvider;
+			_chatbotIdentityRepository = chatbotIdentityRepository;
 		}
 
 		public async Task<UserProfile> GetProfileByUserIdAsync(string userId, bool bypassCache = false)
@@ -75,6 +78,12 @@ namespace Resgrid.Services
 			// Load existing profile directly from repository (bypass cache) to detect contact changes
 			var existing = await _userProfileRepository.GetProfileByUserIdAsync(profile.UserId);
 
+			// A null SecurityPin means "not supplied by this caller" — keep the stored (encrypted) PIN
+			// so profile saves from flows that don't know about PINs can't silently wipe it. Clearing a
+			// PIN intentionally is done by saving an empty string.
+			if (existing != null && profile.SecurityPin == null && existing.SecurityPin != null)
+				profile.SecurityPin = existing.SecurityPin;
+
 			if (existing == null)
 			{
 				// Brand-new profile (admin-created user) — mark all contact methods as pending
@@ -96,6 +105,11 @@ namespace Resgrid.Services
 					profile.MobileVerificationVoiceCodeConsumed = false;
 					profile.MobileVerificationAttempts = 0;
 					profile.MobileVerificationAttemptsResetDate = null;
+
+					// The old number no longer identifies this user: remove any SMS chatbot identity
+					// links so inbound texts can't act as this account until the new number is verified
+					// and re-linked.
+					await RemoveSmsChatbotIdentitiesAsync(profile.UserId, cancellationToken);
 				}
 				if (!string.Equals(existing.HomeNumber ?? string.Empty, profile.HomeNumber ?? string.Empty, StringComparison.OrdinalIgnoreCase))
 				{
@@ -123,6 +137,19 @@ namespace Resgrid.Services
 			ClearAllUserProfilesFromCache(DepartmentId);
 
 			return savedProfile;
+		}
+
+		private async Task RemoveSmsChatbotIdentitiesAsync(string userId, CancellationToken cancellationToken)
+		{
+			var identities = await _chatbotIdentityRepository.GetAllByUserIdAsync(userId);
+			if (identities == null)
+				return;
+
+			foreach (var identity in identities.Where(i =>
+						 i.Platform == ChatbotIdentity.PlatformSmsTwilio || i.Platform == ChatbotIdentity.PlatformSmsSignalWire))
+			{
+				await _chatbotIdentityRepository.DeleteAsync(identity, cancellationToken);
+			}
 		}
 
 		public void ClearUserProfileFromCache(string userId)

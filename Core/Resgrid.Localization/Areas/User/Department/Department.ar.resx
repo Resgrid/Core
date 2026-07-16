@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!--
     Microsoft ResX Schema
@@ -731,5 +731,11 @@
   </data>
   <data name="EnableModernNotificationsHelp" xml:space="preserve">
     <value>When enabled, push notifications will use the modern notification sounds instead of the legacy sounds for all users in this department.</value>
+  </data>
+  <data name="ForceChatbotSecurityPin" xml:space="preserve">
+    <value>طلب رمز PIN الأمان</value>
+  </data>
+  <data name="ForceChatbotSecurityPinHelp" xml:space="preserve">
+    <value>يتطلب من كل عضو تأكيد الإجراءات الخطرة أو على مستوى القسم عبر روبوت الدردشة/الرسائل النصية باستخدام رمز PIN الأمان الشخصي المكون من 4 أرقام. يحصل الأعضاء الذين ليس لديهم رمز PIN على رمز يتم إنشاؤه عشوائيًا (يمكن عرضه في صفحة ملفهم الشخصي).</value>
   </data>
 </root>

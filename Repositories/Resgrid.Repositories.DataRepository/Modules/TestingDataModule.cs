@@ -189,6 +189,7 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<ContactNotesRepository>().As<IContactNotesRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ContactsRepository>().As<IContactsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ContactCategoryRepository>().As<IContactCategoryRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ChatbotIdentityRepository>().As<IChatbotIdentityRepository>().InstancePerLifetimeScope();
 
 			// Indoor Maps Repositories
 			builder.RegisterType<IndoorMapsRepository>().As<IIndoorMapsRepository>().InstancePerLifetimeScope();

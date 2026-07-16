@@ -23,6 +23,7 @@ namespace Resgrid.Services
 		private static string TtsLanguageCacheKey = "DSetTtsLanguage_{0}";
 		private static string PersonnelOnUnitSetUnitStatusCacheKey = "DSetPersonnelOnUnitSetUnitStatus_{0}";
 		private static string ModernNotificationsCacheKey = "DSetModernNotifications_{0}";
+		private static string ForceChatbotSecurityPinCacheKey = "DSetForceChatbotSecurityPin_{0}";
 		private static TimeSpan LongCacheLength = TimeSpan.FromDays(14);
 		private static TimeSpan ThatsNotLongThisIsLongCacheLength = TimeSpan.FromDays(365);
 		private static TimeSpan TwoYearCacheLength = TimeSpan.FromDays(730);
@@ -84,6 +85,9 @@ namespace Resgrid.Services
 						break;
 					case DepartmentSettingTypes.EnableModernNotifications:
 						await _cacheProvider.RemoveAsync(string.Format(ModernNotificationsCacheKey, departmentId));
+						break;
+					case DepartmentSettingTypes.ForceChatbotSecurityPin:
+						await _cacheProvider.RemoveAsync(string.Format(ForceChatbotSecurityPinCacheKey, departmentId));
 						break;
 				}
 
@@ -948,6 +952,23 @@ namespace Resgrid.Services
 			if (Config.SystemBehaviorConfig.CacheEnabled && !bypassCache)
 			{
 				var cachedValue = await _cacheProvider.RetrieveAsync<string>(string.Format(ModernNotificationsCacheKey, departmentId), getSetting, LongCacheLength);
+				return bool.Parse(cachedValue);
+			}
+
+			return bool.Parse(await getSetting());
+		}
+
+		public async Task<bool> GetForceChatbotSecurityPinAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<string> getSetting()
+			{
+				var s = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.ForceChatbotSecurityPin);
+				return s?.Setting ?? "false";
+			}
+
+			if (Config.SystemBehaviorConfig.CacheEnabled && !bypassCache)
+			{
+				var cachedValue = await _cacheProvider.RetrieveAsync<string>(string.Format(ForceChatbotSecurityPinCacheKey, departmentId), getSetting, LongCacheLength);
 				return bool.Parse(cachedValue);
 			}
 

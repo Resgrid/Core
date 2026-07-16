@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <root>
   <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
   <resheader name="version"><value>2.0</value></resheader>
@@ -107,4 +107,22 @@
   <data name="PasswordRequirementsLength" xml:space="preserve"><value>على الأقل {0} أحرف</value></data>
   <data name="PasswordRequirementsDigit" xml:space="preserve"><value>رقم واحد على الأقل</value></data>
   <data name="PasswordRequirementsCase" xml:space="preserve"><value>حرف كبير وحرف صغير على الأقل</value></data>
+  <data name="SecurityPinEnabledHelp" xml:space="preserve">
+    <value>عند التفعيل، تطلب الإجراءات الخطرة عبر روبوت الدردشة/الرسائل النصية رمز PIN كخطوة أمان إضافية. إذا فعّلت هذا بدون رمز PIN، يتم إنشاء رمز عشوائي لك.</value>
+  </data>
+  <data name="SecurityPinEnabledLabel" xml:space="preserve">
+    <value>طلب رمز PIN الأمان</value>
+  </data>
+  <data name="SecurityPinForcedHelp" xml:space="preserve">
+    <value>يتطلب قسمك رمز PIN الأمان للإجراءات الخطرة عبر روبوت الدردشة/الرسائل النصية، لذلك يكون هذا الخيار مفعلاً دائمًا.</value>
+  </data>
+  <data name="SecurityPinHelp" xml:space="preserve">
+    <value>يؤكد رمز PIN الأمان المكون من 4 أرقام الإجراءات الخطرة أو على مستوى القسم التي تتم عبر الرسائل النصية أو روبوت الدردشة. تجنب الأرقام المتكررة (0000) والمتسلسلة (1234، 4321). اتركه فارغًا للاحتفاظ برمز PIN الحالي.</value>
+  </data>
+  <data name="SecurityPinLabel" xml:space="preserve">
+    <value>رمز PIN الأمان</value>
+  </data>
+  <data name="SecurityPinPlaceholder" xml:space="preserve">
+    <value>رمز PIN من 4 أرقام</value>
+  </data>
 </root>

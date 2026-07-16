@@ -314,5 +314,11 @@ namespace Resgrid.Model.Services
 		Task<DepartmentSetting> GetSettingByTypeAsync(int departmentId, DepartmentSettingTypes type);
 
 		Task<bool> GetModernNotificationsEnabledAsync(int departmentId, bool bypassCache = false);
+
+		/// <summary>
+		/// True when the department forces every member to use their security PIN for dangerous
+		/// chatbot/SMS actions (overrides the per-user opt-in).
+		/// </summary>
+		Task<bool> GetForceChatbotSecurityPinAsync(int departmentId, bool bypassCache = false);
 	}
 }

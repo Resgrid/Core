@@ -365,4 +365,22 @@
   <data name="PasswordRequirementsLength" xml:space="preserve"><value>Co najmniej {0} znaków</value></data>
   <data name="PasswordRequirementsDigit" xml:space="preserve"><value>Co najmniej jedna cyfra</value></data>
   <data name="PasswordRequirementsCase" xml:space="preserve"><value>Co najmniej jedna wielka i jedna mała litera</value></data>
+  <data name="SecurityPinEnabledHelp" xml:space="preserve">
+    <value>Po włączeniu niebezpieczne akcje chatbota/SMS wymagają podania kodu PIN jako dodatkowego zabezpieczenia. Jeśli włączysz tę opcję bez kodu PIN, zostanie wygenerowany losowy.</value>
+  </data>
+  <data name="SecurityPinEnabledLabel" xml:space="preserve">
+    <value>Wymagaj kodu PIN bezpieczeństwa</value>
+  </data>
+  <data name="SecurityPinForcedHelp" xml:space="preserve">
+    <value>Twój wydział wymaga kodu PIN bezpieczeństwa dla niebezpiecznych akcji chatbota/SMS, więc ta opcja jest zawsze włączona.</value>
+  </data>
+  <data name="SecurityPinHelp" xml:space="preserve">
+    <value>Twój 4-cyfrowy kod PIN bezpieczeństwa potwierdza niebezpieczne lub obejmujące cały wydział akcje wykonywane przez SMS lub chatbota. Unikaj powtarzających się cyfr (0000) i sekwencji (1234, 4321). Pozostaw puste, aby zachować obecny PIN.</value>
+  </data>
+  <data name="SecurityPinLabel" xml:space="preserve">
+    <value>Kod PIN bezpieczeństwa</value>
+  </data>
+  <data name="SecurityPinPlaceholder" xml:space="preserve">
+    <value>4-cyfrowy PIN</value>
+  </data>
 </root>

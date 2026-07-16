@@ -14,6 +14,14 @@ namespace Resgrid.Model
 	[Table("ChatbotUserIdentities")]
 	public class ChatbotIdentity : IEntity
 	{
+		/// <summary>
+		/// SMS platform values, kept in sync with <c>Resgrid.Chatbot.Models.ChatbotPlatform</c>
+		/// (which Resgrid.Services cannot reference). Used when services outside the chatbot
+		/// project need to invalidate SMS-based identity links.
+		/// </summary>
+		public const int PlatformSmsTwilio = 1;
+		public const int PlatformSmsSignalWire = 2;
+
 		public string Id { get; set; }
 
 		[Required]

@@ -63,6 +63,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly INotesService _notesService;
 		private readonly IContactsService _contactsService;
 		private readonly ICheckInTimerService _checkInTimerService;
+		private readonly ISecurityPinService _securityPinService;
 
 		public DepartmentController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IEmailService emailService, IDepartmentGroupsService departmentGroupsService, IUserProfileService userProfileService, IDeleteService deleteService,
@@ -70,7 +71,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ILimitsService limitsService, ICallsService callsService, IDepartmentSettingsService departmentSettingsService, IUnitsService unitsService,
 			ICertificationService certificationService, INumbersService numbersService, IScheduledTasksService scheduledTasksService, IPersonnelRolesService personnelRolesService,
 			IEventAggregator eventAggregator, ICustomStateService customStateService, ICqrsProvider cqrsProvider, IPrinterProvider printerProvider, IQueueService queueService,
-			IDocumentsService documentsService, INotesService notesService, IContactsService contactsService, ICheckInTimerService checkInTimerService)
+			IDocumentsService documentsService, INotesService notesService, IContactsService contactsService, ICheckInTimerService checkInTimerService,
+			ISecurityPinService securityPinService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -100,6 +102,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_notesService = notesService;
 			_contactsService = contactsService;
 			_checkInTimerService = checkInTimerService;
+			_securityPinService = securityPinService;
 		}
 
 		#endregion Private Members and Constructors
@@ -244,6 +247,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var activeCallRssKey = await _departmentSettingsService.GetRssKeyForDepartmentAsync(DepartmentId);
 			model.DisableAutoAvailable = await _departmentSettingsService.GetDisableAutoAvailableForDepartmentAsync(DepartmentId);
 			model.EnableModernNotifications = await _departmentSettingsService.GetModernNotificationsEnabledAsync(DepartmentId);
+			model.ForceChatbotSecurityPin = await _departmentSettingsService.GetForceChatbotSecurityPinAsync(DepartmentId);
 			model.TtsLanguage = await _departmentSettingsService.GetTtsLanguageForDepartmentAsync(DepartmentId);
 			model.TtsLanguages = BuildTtsLanguageSelectList(model.TtsLanguage);
 
@@ -540,6 +544,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.DisableAutoAvailable.ToString(), DepartmentSettingTypes.DisabledAutoAvailable,
 					cancellationToken);
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.EnableModernNotifications.ToString(), DepartmentSettingTypes.EnableModernNotifications,
+					cancellationToken);
+
+				var forcePinWasEnabled = await _departmentSettingsService.GetForceChatbotSecurityPinAsync(DepartmentId, bypassCache: true);
+
+				// Turning the forced-PIN requirement on: give every member without a PIN a random one so
+				// they can complete PIN-protected chatbot/text actions immediately. Provision BEFORE
+				// persisting the enabled setting — if generation fails the setting stays off, so a
+				// later save re-detects the transition and retries PIN generation.
+				if (model.ForceChatbotSecurityPin && !forcePinWasEnabled)
+					await _securityPinService.EnsurePinsForDepartmentAsync(DepartmentId, cancellationToken);
+
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.ForceChatbotSecurityPin.ToString(), DepartmentSettingTypes.ForceChatbotSecurityPin,
 					cancellationToken);
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.TtsLanguage, DepartmentSettingTypes.TtsLanguage,
 					cancellationToken);

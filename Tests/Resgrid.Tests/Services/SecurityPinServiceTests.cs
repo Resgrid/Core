@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -6,6 +7,7 @@ using Moq;
 using NUnit.Framework;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Resgrid.Services;
 
@@ -79,6 +81,7 @@ namespace Resgrid.Tests.Services
 			protected Mock<IUserProfileService> _userProfileServiceMock;
 			protected Mock<IDepartmentSettingsService> _departmentSettingsServiceMock;
 			protected Mock<IEncryptionService> _encryptionServiceMock;
+			protected Mock<IUserProfilesRepository> _userProfileRepositoryMock;
 			protected ISecurityPinService _securityPinService;
 
 			protected const string UserId = "user1";
@@ -100,10 +103,13 @@ namespace Resgrid.Tests.Services
 					.Setup(e => e.Decrypt(It.IsAny<string>()))
 					.Returns<string>(cipher => cipher.StartsWith("ENC:") ? cipher.Substring(4) : cipher);
 
+				_userProfileRepositoryMock = new Mock<IUserProfilesRepository>();
+
 				_securityPinService = new SecurityPinService(
 					_userProfileServiceMock.Object,
 					_departmentSettingsServiceMock.Object,
-					_encryptionServiceMock.Object);
+					_encryptionServiceMock.Object,
+					_userProfileRepositoryMock.Object);
 			}
 
 			protected void SetupProfile(UserProfile profile)
@@ -231,7 +237,7 @@ namespace Resgrid.Tests.Services
 		public class when_ensuring_pins_for_a_department : with_the_security_pin_service
 		{
 			[Test]
-			public async Task only_members_without_a_pin_get_one()
+			public async Task only_members_without_a_pin_get_one_via_a_single_bulk_update()
 			{
 				var withPin = new UserProfile { UserId = "hasPin", SecurityPin = "ENC:2580" };
 				var withoutPin = new UserProfile { UserId = "noPin" };
@@ -239,16 +245,42 @@ namespace Resgrid.Tests.Services
 				_userProfileServiceMock
 					.Setup(s => s.GetAllProfilesForDepartmentAsync(DepartmentId, It.IsAny<bool>()))
 					.ReturnsAsync(new Dictionary<string, UserProfile> { { withPin.UserId, withPin }, { withoutPin.UserId, withoutPin } });
-				_userProfileServiceMock
-					.Setup(s => s.SaveProfileAsync(DepartmentId, It.IsAny<UserProfile>(), It.IsAny<CancellationToken>()))
-					.ReturnsAsync((int d, UserProfile p, CancellationToken c) => p);
+
+				List<UserProfile> updated = null;
+				_userProfileRepositoryMock
+					.Setup(r => r.UpdateSecurityPinsAsync(It.IsAny<IEnumerable<UserProfile>>(), It.IsAny<CancellationToken>()))
+					.Callback<IEnumerable<UserProfile>, CancellationToken>((p, c) => updated = p.ToList())
+					.Returns(Task.CompletedTask);
 
 				await _securityPinService.EnsurePinsForDepartmentAsync(DepartmentId);
 
 				withPin.SecurityPin.Should().Be("ENC:2580");
 				withoutPin.SecurityPin.Should().StartWith("ENC:");
-				_userProfileServiceMock.Verify(s => s.SaveProfileAsync(DepartmentId, withoutPin, It.IsAny<CancellationToken>()), Times.Once);
-				_userProfileServiceMock.Verify(s => s.SaveProfileAsync(DepartmentId, withPin, It.IsAny<CancellationToken>()), Times.Never);
+				withoutPin.LastUpdated.Should().NotBeNull();
+
+				updated.Should().ContainSingle().Which.Should().BeSameAs(withoutPin);
+				_userProfileRepositoryMock.Verify(r => r.UpdateSecurityPinsAsync(It.IsAny<IEnumerable<UserProfile>>(), It.IsAny<CancellationToken>()), Times.Once);
+				_userProfileServiceMock.Verify(s => s.SaveProfileAsync(It.IsAny<int>(), It.IsAny<UserProfile>(), It.IsAny<CancellationToken>()), Times.Never);
+
+				// Cache eviction must match SaveProfileAsync: the updated member plus the department list.
+				_userProfileServiceMock.Verify(s => s.ClearUserProfileFromCache(withoutPin.UserId), Times.Once);
+				_userProfileServiceMock.Verify(s => s.ClearUserProfileFromCache(withPin.UserId), Times.Never);
+				_userProfileServiceMock.Verify(s => s.ClearAllUserProfilesFromCache(DepartmentId), Times.Once);
+			}
+
+			[Test]
+			public async Task no_bulk_update_when_everyone_has_a_pin()
+			{
+				var withPin = new UserProfile { UserId = "hasPin", SecurityPin = "ENC:2580" };
+
+				_userProfileServiceMock
+					.Setup(s => s.GetAllProfilesForDepartmentAsync(DepartmentId, It.IsAny<bool>()))
+					.ReturnsAsync(new Dictionary<string, UserProfile> { { withPin.UserId, withPin } });
+
+				await _securityPinService.EnsurePinsForDepartmentAsync(DepartmentId);
+
+				_userProfileRepositoryMock.Verify(r => r.UpdateSecurityPinsAsync(It.IsAny<IEnumerable<UserProfile>>(), It.IsAny<CancellationToken>()), Times.Never);
+				_userProfileServiceMock.Verify(s => s.ClearAllUserProfilesFromCache(It.IsAny<int>()), Times.Never);
 			}
 		}
 	}

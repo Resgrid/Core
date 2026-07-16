@@ -22,6 +22,22 @@ namespace Resgrid.Framework
 	public static class StringHelpers
 	{
 		/// <summary>
+		/// Masks a phone number for diagnostic logging (PII redaction), keeping only the last
+		/// four digits (e.g. "***4567"). Values with four or fewer characters are fully masked.
+		/// </summary>
+		public static string MaskPhoneNumber(string number)
+		{
+			if (string.IsNullOrWhiteSpace(number))
+				return "***";
+
+			var trimmed = number.Trim();
+			if (trimmed.Length <= 4)
+				return "***";
+
+			return "***" + trimmed.Substring(trimmed.Length - 4);
+		}
+
+		/// <summary>
 		/// Remove HTML tags from string using char array.
 		/// </summary>
 		public static string StripHtmlTagsCharArray(string source)

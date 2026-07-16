@@ -696,6 +696,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (!String.IsNullOrWhiteSpace(model.SecurityPin))
 				{
+					// Normalize once so validation sees the same value that gets encrypted on save.
+					model.SecurityPin = model.SecurityPin.Trim();
+
 					if (!SecurityPinUtility.IsValidFormat(model.SecurityPin))
 						ModelState.AddModelError("SecurityPin", "The security PIN must be exactly 4 digits.");
 					else if (SecurityPinUtility.IsWeak(model.SecurityPin))

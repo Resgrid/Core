@@ -179,7 +179,7 @@ namespace Resgrid.Web.Services.Controllers
 					// Verification (MobileNumberVerified == true) is the bar for trusting an inbound sender.
 					if (profile != null && profile.MobileNumberVerified != true)
 					{
-						Framework.Logging.LogInfo($"[SignalWire SMS] MessageSid={textMessage.MessageId} From={textMessage.Msisdn} matched a profile but the mobile number is not verified; not linking sender to user.");
+						Framework.Logging.LogInfo($"[SignalWire SMS] MessageSid={textMessage.MessageId} From={Framework.StringHelpers.MaskPhoneNumber(textMessage.Msisdn)} matched a profile but the mobile number is not verified; not linking sender to user.");
 						profile = null;
 					}
 

@@ -762,4 +762,10 @@
   <data name="EnableModernNotificationsHelp" xml:space="preserve">
     <value>When enabled, push notifications will use the modern notification sounds instead of the legacy sounds for all users in this department.</value>
   </data>
+  <data name="ForceChatbotSecurityPin" xml:space="preserve">
+    <value>Require Security PIN</value>
+  </data>
+  <data name="ForceChatbotSecurityPinHelp" xml:space="preserve">
+    <value>Require every member to confirm dangerous or department-wide chatbot/text actions with their personal 4-digit security PIN. Members without a PIN get a randomly generated one (viewable on their profile page).</value>
+  </data>
 </root>

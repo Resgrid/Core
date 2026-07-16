@@ -1,8 +1,10 @@
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -17,13 +19,15 @@ namespace Resgrid.Services
 		private readonly IUserProfileService _userProfileService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IEncryptionService _encryptionService;
+		private readonly IUserProfilesRepository _userProfileRepository;
 
 		public SecurityPinService(IUserProfileService userProfileService, IDepartmentSettingsService departmentSettingsService,
-			IEncryptionService encryptionService)
+			IEncryptionService encryptionService, IUserProfilesRepository userProfileRepository)
 		{
 			_userProfileService = userProfileService;
 			_departmentSettingsService = departmentSettingsService;
 			_encryptionService = encryptionService;
+			_userProfileRepository = userProfileRepository;
 		}
 
 		public async Task<bool> IsPinRequiredAsync(string userId, int departmentId)
@@ -87,14 +91,30 @@ namespace Resgrid.Services
 			if (profiles == null)
 				return;
 
-			foreach (var profile in profiles.Values)
-			{
-				if (!string.IsNullOrWhiteSpace(profile.SecurityPin))
-					continue;
+			// Batch: generate all PINs in memory, then persist in a single bulk update rather than a
+			// full profile save per member.
+			var toUpdate = profiles.Values
+				.Where(p => string.IsNullOrWhiteSpace(p.SecurityPin))
+				.ToList();
 
+			if (toUpdate.Count == 0)
+				return;
+
+			var now = DateTime.UtcNow;
+			foreach (var profile in toUpdate)
+			{
 				profile.SecurityPin = _encryptionService.Encrypt(SecurityPinUtility.Generate());
-				await _userProfileService.SaveProfileAsync(departmentId, profile, cancellationToken);
+				profile.LastUpdated = now;
 			}
+
+			await _userProfileRepository.UpdateSecurityPinsAsync(toUpdate, cancellationToken);
+
+			// Match SaveProfileAsync's cache eviction: each member's profile cache plus the
+			// department-wide profile list.
+			foreach (var profile in toUpdate)
+				_userProfileService.ClearUserProfileFromCache(profile.UserId);
+
+			_userProfileService.ClearAllUserProfilesFromCache(departmentId);
 		}
 	}
 }

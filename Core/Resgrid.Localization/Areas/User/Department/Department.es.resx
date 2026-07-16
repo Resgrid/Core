@@ -618,4 +618,10 @@
   <data name="EnableModernNotificationsHelp" xml:space="preserve">
     <value>When enabled, push notifications will use the modern notification sounds instead of the legacy sounds for all users in this department.</value>
   </data>
+  <data name="ForceChatbotSecurityPin" xml:space="preserve">
+    <value>Requerir PIN de seguridad</value>
+  </data>
+  <data name="ForceChatbotSecurityPinHelp" xml:space="preserve">
+    <value>Exige que cada miembro confirme las acciones peligrosas o de todo el departamento del chatbot/mensajes de texto con su PIN de seguridad personal de 4 dígitos. Los miembros sin PIN reciben uno generado aleatoriamente (visible en su página de perfil).</value>
+  </data>
 </root>

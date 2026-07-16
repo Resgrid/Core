@@ -149,7 +149,7 @@ namespace Resgrid.Web.Services.Controllers
 				bool senderNumberUnverified = userProfile != null && userProfile.MobileNumberVerified != true;
 				if (senderNumberUnverified)
 				{
-					Framework.Logging.LogInfo($"[Twilio SMS] MessageSid={request.MessageSid} From={textMessage.Msisdn} matched a profile but the mobile number is not verified; not linking sender to user.");
+					Framework.Logging.LogInfo($"[Twilio SMS] MessageSid={request.MessageSid} From={Framework.StringHelpers.MaskPhoneNumber(textMessage.Msisdn)} matched a profile but the mobile number is not verified; not linking sender to user.");
 					userProfile = null;
 				}
 
@@ -171,7 +171,7 @@ namespace Resgrid.Web.Services.Controllers
 					messageEvent.CustomerId = departmentId.Value.ToString();
 
 				// Diagnostic: did we resolve a department for this inbound text? If not, no reply is sent.
-				Framework.Logging.LogInfo($"[Twilio SMS] MessageSid={request.MessageSid} To={textMessage.To} From={textMessage.Msisdn} resolved DepartmentId={(departmentId.HasValue ? departmentId.Value.ToString() : "none")}");
+				Framework.Logging.LogInfo($"[Twilio SMS] MessageSid={request.MessageSid} To={textMessage.To} From={Framework.StringHelpers.MaskPhoneNumber(textMessage.Msisdn)} resolved DepartmentId={(departmentId.HasValue ? departmentId.Value.ToString() : "none")}");
 
 				// Feature-flagged rollout: the chatbot ingress is the new path. When the flag is off
 				// (globally or for this department) fall back to the original text-command handling so
@@ -240,7 +240,7 @@ namespace Resgrid.Web.Services.Controllers
 		{
 			// Diagnostic: without a department the legacy path adds no message, so the sender gets no reply.
 			if (!departmentId.HasValue)
-				Framework.Logging.LogInfo($"[Twilio SMS] Text-command path: no department resolved for sender {textMessage.Msisdn} → number {textMessage.To}; no reply will be sent.");
+				Framework.Logging.LogInfo($"[Twilio SMS] Text-command path: no department resolved for sender {Framework.StringHelpers.MaskPhoneNumber(textMessage.Msisdn)} → number {textMessage.To}; no reply will be sent.");
 
 			if (departmentId.HasValue)
 			{
@@ -323,7 +323,7 @@ namespace Resgrid.Web.Services.Controllers
 						// returning an empty response (pre-refactor behavior).
 						if (profile == null)
 						{
-							Framework.Logging.LogInfo($"[Twilio SMS] DepartmentId={departmentId.Value} sender {textMessage.Msisdn} has no usable user profile (unverified={senderNumberUnverified}); replying with not-found message.");
+							Framework.Logging.LogInfo($"[Twilio SMS] DepartmentId={departmentId.Value} sender {Framework.StringHelpers.MaskPhoneNumber(textMessage.Msisdn)} has no usable user profile (unverified={senderNumberUnverified}); replying with not-found message.");
 							messageEvent.Processed = true;
 
 							if (senderNumberUnverified)

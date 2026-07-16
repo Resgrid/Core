@@ -547,13 +547,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 					cancellationToken);
 
 				var forcePinWasEnabled = await _departmentSettingsService.GetForceChatbotSecurityPinAsync(DepartmentId, bypassCache: true);
-				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.ForceChatbotSecurityPin.ToString(), DepartmentSettingTypes.ForceChatbotSecurityPin,
-					cancellationToken);
 
 				// Turning the forced-PIN requirement on: give every member without a PIN a random one so
-				// they can complete PIN-protected chatbot/text actions immediately.
+				// they can complete PIN-protected chatbot/text actions immediately. Provision BEFORE
+				// persisting the enabled setting — if generation fails the setting stays off, so a
+				// later save re-detects the transition and retries PIN generation.
 				if (model.ForceChatbotSecurityPin && !forcePinWasEnabled)
 					await _securityPinService.EnsurePinsForDepartmentAsync(DepartmentId, cancellationToken);
+
+				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.ForceChatbotSecurityPin.ToString(), DepartmentSettingTypes.ForceChatbotSecurityPin,
+					cancellationToken);
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.TtsLanguage, DepartmentSettingTypes.TtsLanguage,
 					cancellationToken);
 

@@ -365,4 +365,22 @@
   <data name="PasswordRequirementsLength" xml:space="preserve"><value>Щонайменше {0} символів</value></data>
   <data name="PasswordRequirementsDigit" xml:space="preserve"><value>Щонайменше одна цифра</value></data>
   <data name="PasswordRequirementsCase" xml:space="preserve"><value>Щонайменше одна велика та одна мала літера</value></data>
+  <data name="SecurityPinEnabledHelp" xml:space="preserve">
+    <value>Якщо ввімкнено, небезпечні дії чат-бота/SMS запитують ваш PIN як додатковий крок безпеки. Якщо ви ввімкнете це без PIN-коду, для вас буде згенеровано випадковий.</value>
+  </data>
+  <data name="SecurityPinEnabledLabel" xml:space="preserve">
+    <value>Вимагати PIN-код безпеки</value>
+  </data>
+  <data name="SecurityPinForcedHelp" xml:space="preserve">
+    <value>Ваш відділ вимагає PIN-код безпеки для небезпечних дій чат-бота/SMS, тому цей параметр завжди ввімкнено.</value>
+  </data>
+  <data name="SecurityPinHelp" xml:space="preserve">
+    <value>Ваш 4-значний PIN-код безпеки підтверджує небезпечні або загальновідомчі дії, виконані через SMS або чат-бот. Уникайте повторюваних цифр (0000) і послідовностей (1234, 4321). Залиште порожнім, щоб зберегти поточний PIN.</value>
+  </data>
+  <data name="SecurityPinLabel" xml:space="preserve">
+    <value>PIN-код безпеки</value>
+  </data>
+  <data name="SecurityPinPlaceholder" xml:space="preserve">
+    <value>4-значний PIN</value>
+  </data>
 </root>

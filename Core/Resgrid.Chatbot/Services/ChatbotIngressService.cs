@@ -241,15 +241,33 @@ namespace Resgrid.Chatbot.Services
 						// before it executes.
 						if (await _securityPinService.IsPinRequiredAsync(identity.UserId, department.DepartmentId))
 						{
+							// Provision a missing PIN BEFORE persisting the awaiting-PIN state: if
+							// provisioning fails (no profile, or a thrown error caught by the outer
+							// handler) the session stays parked in AwaitingConfirmation instead of
+							// being stranded awaiting a PIN that doesn't exist.
+							bool pinGenerated = false;
+							if (!await _securityPinService.HasPinAsync(identity.UserId))
+							{
+								var provisioned = await _securityPinService.EnsurePinAsync(identity.UserId, department.DepartmentId);
+								if (provisioned == null || string.IsNullOrWhiteSpace(provisioned.SecurityPin))
+								{
+									return new ChatbotResponse
+									{
+										Text = "This action requires a security PIN, but one couldn't be set up for your account. Please set a PIN on your Resgrid profile page, then reply YES again.",
+										Processed = true
+									};
+								}
+								pinGenerated = true;
+							}
+
 							session.State = ChatbotDialogState.AwaitingPin;
 							session.Context["__pinAttempts"] = "0";
 							await _sessionManager.SaveSessionAsync(session);
 
-							if (!await _securityPinService.HasPinAsync(identity.UserId))
+							if (pinGenerated)
 							{
-								// Department forces PINs but this user doesn't have one yet — generate one
-								// so they can look it up on their profile page and complete the action.
-								await _securityPinService.EnsurePinAsync(identity.UserId, department.DepartmentId);
+								// Department forces PINs but this user didn't have one yet — one was
+								// generated so they can look it up on their profile page and continue.
 								return new ChatbotResponse
 								{
 									Text = "This action requires your security PIN. A PIN has been generated for you — view or change it on your Resgrid profile page, then reply with the 4-digit PIN to continue, or NO to cancel.",
@@ -260,37 +278,7 @@ namespace Resgrid.Chatbot.Services
 							return new ChatbotResponse { Text = "For security, reply with your 4-digit security PIN to complete this action, or NO to cancel.", Processed = true };
 						}
 
-						var confirmResponse = await DispatchConfirmedIntentAsync(message, session);
-						if (confirmResponse != null)
-							return confirmResponse;
-						var pendingType = session.PendingIntent.Value;
-
-						// Locate the owning handler BEFORE mutating session state. If none can handle
-						// the pending intent, leave the session parked in AwaitingConfirmation and return
-						// an explicit error rather than silently dropping the confirmation.
-						var confirmHandler = _actionHandlers.FirstOrDefault(h => h.CanHandle(pendingType));
-						if (confirmHandler == null)
-						{
-							return new ChatbotResponse
-							{
-								Text = "Unable to complete confirmation — please try again or contact support.",
-								Processed = false
-							};
-						}
-
-						var confirmedIntent = new ChatbotIntent
-						{
-							Type = pendingType,
-							Parameters = new Dictionary<string, string>(session.Context) { ["__confirmed"] = "true" }
-						};
-
-						var confirmResponse = await confirmHandler.HandleAsync(message, confirmedIntent, session);
-						confirmResponse.Intent = confirmedIntent;
-						session.Context.Clear();
-						session.State = ChatbotDialogState.Idle;
-						session.PendingIntent = null;
-						await _sessionManager.SaveSessionAsync(session);
-						return confirmResponse;
+						return await DispatchConfirmedIntentAsync(message, session);
 					}
 					else if (reply == "NO" || reply == "N" || reply == "CANCEL")
 					{
@@ -323,9 +311,7 @@ namespace Resgrid.Chatbot.Services
 					if (await _securityPinService.ValidatePinAsync(identity.UserId, pinReply))
 					{
 						session.Context.Remove("__pinAttempts");
-						var confirmResponse = await DispatchConfirmedIntentAsync(message, session);
-						if (confirmResponse != null)
-							return confirmResponse;
+						return await DispatchConfirmedIntentAsync(message, session);
 					}
 					else
 					{
@@ -448,27 +434,35 @@ namespace Resgrid.Chatbot.Services
 
 		/// <summary>
 		/// Executes the pending (already confirmed, and PIN-verified when required) destructive intent.
-		/// Returns the handler's response, or null when no handler claims the intent (the caller then
-		/// falls through to normal classification, matching the original confirmation-gate behavior).
+		/// The owning handler is located BEFORE any session state is mutated: if none can handle the
+		/// pending intent the session stays parked and an explicit error is returned rather than
+		/// silently dropping the confirmation.
 		/// </summary>
 		private async Task<ChatbotResponse> DispatchConfirmedIntentAsync(ChatbotMessage message, ChatbotSession session)
 		{
 			var pendingType = session.PendingIntent.Value;
+
+			var confirmHandler = _actionHandlers.FirstOrDefault(h => h.CanHandle(pendingType));
+			if (confirmHandler == null)
+			{
+				return new ChatbotResponse
+				{
+					Text = "Unable to complete confirmation — please try again or contact support.",
+					Processed = false
+				};
+			}
+
 			var confirmedIntent = new ChatbotIntent
 			{
 				Type = pendingType,
 				Parameters = new Dictionary<string, string>(session.Context) { ["__confirmed"] = "true" }
 			};
-			session.State = ChatbotDialogState.Idle;
-			session.PendingIntent = null;
-
-			var confirmHandler = _actionHandlers.FirstOrDefault(h => h.CanHandle(pendingType));
-			if (confirmHandler == null)
-				return null;
 
 			var confirmResponse = await confirmHandler.HandleAsync(message, confirmedIntent, session);
 			confirmResponse.Intent = confirmedIntent;
 			session.Context.Clear();
+			session.State = ChatbotDialogState.Idle;
+			session.PendingIntent = null;
 			await _sessionManager.SaveSessionAsync(session);
 			return confirmResponse;
 		}

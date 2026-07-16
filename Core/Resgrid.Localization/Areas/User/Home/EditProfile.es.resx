@@ -411,4 +411,22 @@
   <data name="PasswordRequirementsLength" xml:space="preserve"><value>Al menos {0} caracteres</value></data>
   <data name="PasswordRequirementsDigit" xml:space="preserve"><value>Al menos un dígito (número)</value></data>
   <data name="PasswordRequirementsCase" xml:space="preserve"><value>Al menos una letra mayúscula y una minúscula</value></data>
+  <data name="SecurityPinEnabledHelp" xml:space="preserve">
+    <value>Cuando está activado, las acciones peligrosas de chatbot/mensajes de texto solicitan su PIN como paso de seguridad adicional. Si lo activa sin un PIN, se genera uno aleatorio para usted.</value>
+  </data>
+  <data name="SecurityPinEnabledLabel" xml:space="preserve">
+    <value>Requerir PIN de seguridad</value>
+  </data>
+  <data name="SecurityPinForcedHelp" xml:space="preserve">
+    <value>Su departamento requiere un PIN de seguridad para acciones peligrosas de chatbot/mensajes de texto, por lo que esta opción está siempre activada.</value>
+  </data>
+  <data name="SecurityPinHelp" xml:space="preserve">
+    <value>Su PIN de seguridad de 4 dígitos confirma acciones peligrosas o de todo el departamento realizadas por mensaje de texto o chatbot. Evite dígitos repetidos (0000) y secuencias (1234, 4321). Déjelo en blanco para conservar su PIN actual.</value>
+  </data>
+  <data name="SecurityPinLabel" xml:space="preserve">
+    <value>PIN de seguridad</value>
+  </data>
+  <data name="SecurityPinPlaceholder" xml:space="preserve">
+    <value>PIN de 4 dígitos</value>
+  </data>
 </root>

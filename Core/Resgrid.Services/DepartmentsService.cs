@@ -443,32 +443,44 @@ namespace Resgrid.Services
 			if (allMembers == null || allMembers.Count == 0)
 				return null;
 
-			// Prefer the member marked IsActive, then IsDefault, then first.
-			var ordered = allMembers
+			// The user's ACTIVE department (IsActive, then IsDefault, then first) — no plan-based
+			// auto-picking. If the active department's plan doesn't support SMS the caller's plan gate
+			// handles it (offering a switch when the user has other supported departments) rather than
+			// this resolver silently acting in a department the user didn't select.
+			var preferred = allMembers
 				.Where(m => !m.IsDeleted)
 				.OrderByDescending(m => m.IsActive)
 				.ThenByDescending(m => m.IsDefault)
-				.ToList();
+				.FirstOrDefault();
 
-			if (ordered.Count == 0)
+			if (preferred == null)
 				return null;
 
-			var preferred = ordered[0];
+			return await GetDepartmentByIdAsync(preferred.DepartmentId, bypassCache);
+		}
 
-			// If the preferred department supports SMS (non-free plan) use it; otherwise auto-pick the first
-			// of the user's departments that does, so a user whose active department is on the free plan still
-			// lands in an SMS-capable department. If none support SMS, fall back to the preferred one so the
-			// caller's plan gate returns the proper "plan doesn't support" message.
-			var canProvisionNumber = await Task.WhenAll(ordered.Select(membership =>
-				_limitsService.CanDepartmentProvisionNumberAsync(membership.DepartmentId)));
+		public async Task<List<DepartmentMember>> GetSmsSupportedMembershipsForUserAsync(string userId)
+		{
+			var allMembers = await GetAllDepartmentsForUserAsync(userId);
+			if (allMembers == null || allMembers.Count == 0)
+				return new List<DepartmentMember>();
 
-			for (var i = 0; i < ordered.Count; i++)
+			// Stable order (active first, then by id) so a numeric pick from a displayed list maps to the
+			// same membership when the follow-up "switch N" message arrives in a later, stateless request.
+			var candidates = allMembers
+				.Where(m => !m.IsDeleted)
+				.OrderByDescending(m => m.IsActive)
+				.ThenBy(m => m.DepartmentId)
+				.ToList();
+
+			var supported = new List<DepartmentMember>();
+			foreach (var membership in candidates)
 			{
-				if (canProvisionNumber[i])
-					return await GetDepartmentByIdAsync(ordered[i].DepartmentId, bypassCache);
+				if (await _limitsService.CanDepartmentProvisionNumberAsync(membership.DepartmentId))
+					supported.Add(membership);
 			}
 
-			return await GetDepartmentByIdAsync(preferred.DepartmentId, bypassCache);
+			return supported;
 		}
 
 

@@ -12,6 +12,7 @@
 		Units = 7,
 		MyStatus = 8,
 		CustomAction = 9,
-		CustomStaffing = 10
+		CustomStaffing = 10,
+		SwitchDepartment = 11
 	}
 }

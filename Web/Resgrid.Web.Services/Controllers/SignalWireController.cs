@@ -47,13 +47,14 @@ namespace Resgrid.Web.Services.Controllers
 		private readonly IUnitsService _unitsService;
 		private readonly ICommunicationTestService _communicationTestService;
 	private readonly IChatbotIngressService _chatbotIngressService;
+	private readonly IUsersService _usersService;
 
 	public SignalWireController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
 		ILimitsService limitsService, ICallsService callsService, IQueueService queueService, IDepartmentsService departmentsService,
 		IUserProfileService userProfileService, ITextCommandService textCommandService, IActionLogsService actionLogsService,
 		IUserStateService userStateService, ICommunicationService communicationService, IGeoLocationProvider geoLocationProvider,
 		IDepartmentGroupsService departmentGroupsService, ICustomStateService customStateService, IUnitsService unitsService,
-		ICommunicationTestService communicationTestService, IChatbotIngressService chatbotIngressService)
+		ICommunicationTestService communicationTestService, IChatbotIngressService chatbotIngressService, IUsersService usersService)
 	{
 		_departmentSettingsService = departmentSettingsService;
 		_numbersService = numbersService;
@@ -72,6 +73,7 @@ namespace Resgrid.Web.Services.Controllers
 		_unitsService = unitsService;
 		_communicationTestService = communicationTestService;
 		_chatbotIngressService = chatbotIngressService;
+		_usersService = usersService;
 	}
 	#endregion Private Readonly Properties and Constructors
 
@@ -168,31 +170,41 @@ namespace Resgrid.Web.Services.Controllers
 
 			try
 			{
-				UserProfile profile = null;
-				var departmentId = await _departmentSettingsService.GetDepartmentIdByTextToCallNumberAsync(textMessage.To);
+				// Parity with TwilioController: the sender's profile identifies them and their ACTIVE
+				// department drives routing. The TextToCallNumber lookup is a legacy path used only when no
+				// profile matched (dispatch centers sending text-to-call imports, unknown senders).
+				UserProfile profile = await _userProfileService.GetProfileByMobileNumberAsync(textMessage.Msisdn);
 
-				if (!departmentId.HasValue)
+				// SECURITY: an unverified mobile number may be used for ROUTING (department resolution,
+				// plan gate) so the sender lands in their real department, but it must never authorize
+				// ACTIONS. Downstream handling blocks commands for unverified senders and prompts them to
+				// verify. The single exception is STOP (handled below): opting out must always work.
+				bool senderNumberUnverified = profile != null && profile.MobileNumberVerified != true;
+				if (senderNumberUnverified)
+					Framework.Logging.LogInfo($"[SignalWire SMS] MessageSid={textMessage.MessageId} From={Framework.StringHelpers.MaskPhoneNumber(textMessage.Msisdn)} matched a profile but the mobile number is not verified; using profile for routing only, actions blocked until verified.");
+
+				int? departmentId = null;
+				if (profile != null)
 				{
-					profile = await _userProfileService.GetProfileByMobileNumberAsync(textMessage.Msisdn);
-
-					// SECURITY: an unverified mobile number must never identify/act as the matched user.
-					// Verification (MobileNumberVerified == true) is the bar for trusting an inbound sender.
-					if (profile != null && profile.MobileNumberVerified != true)
-					{
-						Framework.Logging.LogInfo($"[SignalWire SMS] MessageSid={textMessage.MessageId} From={Framework.StringHelpers.MaskPhoneNumber(textMessage.Msisdn)} matched a profile but the mobile number is not verified; not linking sender to user.");
-						profile = null;
-					}
-
-					if (profile != null)
-					{
-						var department = await _departmentsService.GetDepartmentByUserIdAsync(profile.UserId);
-
-						if (department != null)
-							departmentId = department.DepartmentId;
-					}
+					var activeDepartment = await _departmentsService.GetActiveSmsDepartmentForUserAsync(profile.UserId);
+					if (activeDepartment != null)
+						departmentId = activeDepartment.DepartmentId;
+				}
+				else
+				{
+					departmentId = await _departmentSettingsService.GetDepartmentIdByTextToCallNumberAsync(textMessage.To);
 				}
 
-				if (departmentId.HasValue)
+				// STOP from an unverified sender: honor the opt-out immediately — turning off messages must
+				// always work, regardless of verification, plan or department state.
+				if (senderNumberUnverified && _textCommandService.DetermineType(textMessage.Text).Type == TextCommandTypes.Stop)
+				{
+					Framework.Logging.LogInfo($"[SignalWire SMS] MessageSid={textMessage.MessageId} unverified sender texted STOP; disabling SMS messaging on the matched profile.");
+					await _userProfileService.DisableTextMessagesForUserAsync(profile.UserId, cancellationToken);
+					messageEvent.Processed = true;
+					response = LaMLResponse.Message.Respond("Text messages are now turned off for this user, to enable again log in to Resgrid and update your profile.");
+				}
+				else if (departmentId.HasValue)
 				{
 					var department = await _departmentsService.GetDepartmentByIdAsync(departmentId.Value);
 					var textToCallEnabled = await _departmentSettingsService.GetDepartmentIsTextCallImportEnabledAsync(departmentId.Value);
@@ -263,17 +275,52 @@ namespace Resgrid.Web.Services.Controllers
 							var result = await _chatbotIngressService.ProcessMessageAsync(request);
 
 							messageEvent.Processed = true;
-							response = LaMLResponse.Message.Respond(result.Text);
+							if (result != null && !string.IsNullOrWhiteSpace(result.Text))
+								response = LaMLResponse.Message.Respond(result.Text);
 						}
 					}
-					else if (textMessage.To == Config.NumberProviderConfig.SignalWireResgridNumber.Replace("+", "")) // Resgrid master text number
+					else if (senderNumberUnverified)
 					{
-						var payload = _textCommandService.DetermineType(textMessage.Text);
+						// Checked BEFORE the switch offer: switching departments is an action, and an
+						// unverified sender may not act as the matched user (parity with TwilioController).
+						Framework.Logging.LogInfo($"[SignalWire SMS] DepartmentId={departmentId.Value} not authorized for inbound text (plan gate) and sender is unverified; replying with verify-number message.");
+						messageEvent.Processed = true;
+						response = LaMLResponse.Message.Respond("Resgrid: This mobile number matches a Resgrid profile but hasn't been verified. Please verify your mobile number on your Resgrid profile page to use text commands.");
+					}
+					else if (profile != null)
+					{
+						// The user's ACTIVE department doesn't support inbound text. If they belong to other
+						// departments that do, process a SWITCH command or offer the switch options;
+						// otherwise fall through to the plan message.
+						response = await HandleUnsupportedActiveDepartmentAsync(textMessage, messageEvent, departmentId.Value, profile, cancellationToken);
+					}
+					else
+					{
+						Framework.Logging.LogInfo($"[SignalWire SMS] DepartmentId={departmentId.Value} not authorized for inbound text (plan gate); replying with unsupported message.");
+						messageEvent.Processed = true;
+						response = LaMLResponse.Message.Respond("Resgrid: Inbound text messaging isn't available on your department's current plan. Please upgrade to a paid plan to enable text commands.");
+					}
+				}
+				else if (textMessage.To == Config.NumberProviderConfig.SignalWireResgridNumber.Replace("+", "")) // Resgrid master text number
+				{
+					var payload = _textCommandService.DetermineType(textMessage.Text);
 
+					// A sender whose profile mobile number is unverified can't be identified, so commands
+					// can't be acted on — direct them to verify instead of replying "unknown command". HELP
+					// and STOP still work below: neither needs a trusted identity, and STOP must always opt out.
+					if (profile != null && profile.MobileNumberVerified != true
+						&& payload.Type != TextCommandTypes.Help && payload.Type != TextCommandTypes.Stop)
+					{
+						Framework.Logging.LogInfo($"[SignalWire SMS] Master number: sender {Framework.StringHelpers.MaskPhoneNumber(textMessage.Msisdn)} matched a profile but the mobile number is not verified; replying with verify-number message.");
+						messageEvent.Processed = true;
+						response = LaMLResponse.Message.Respond("Resgrid: This mobile number matches a Resgrid profile but hasn't been verified. Please verify your mobile number on your Resgrid profile page to use text commands.");
+					}
+					else
+					{
 						switch (payload.Type)
 						{
 							case TextCommandTypes.None:
-								await _communicationService.SendTextMessageAsync(profile.UserId, "Resgrid TCI Help", "Resgrid (https://resgrid.com) Automated Text System. Unknown command, text help for supported commands.", department.DepartmentId, textMessage.To, profile);
+								response = LaMLResponse.Message.Respond("Resgrid (https://resgrid.com) Automated Text System. Unknown command, text help for supported commands.");
 								break;
 							case TextCommandTypes.Help:
 								messageEvent.Processed = true;
@@ -287,18 +334,31 @@ namespace Resgrid.Web.Services.Controllers
 								help.Append("HELP: This help text" + Environment.NewLine);
 
 								response = LaMLResponse.Message.Respond(help.ToString());
-								//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", help.ToString(), department.DepartmentId, textMessage.To, profile);
 
 								break;
 							case TextCommandTypes.Stop:
 								messageEvent.Processed = true;
+
+								if (profile == null)
+								{
+									response = LaMLResponse.Message.Respond("Unable to locate your profile. Please log in to Resgrid to manage your text message settings.");
+									break;
+								}
+
 								await _userProfileService.DisableTextMessagesForUserAsync(profile.UserId, cancellationToken);
 
 								response = LaMLResponse.Message.Respond("Text messages are now turned off for this user, to enable again log in to Resgrid and update your profile.");
-								//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", "Text messages are now turned off for this user, to enable again log in to Resgrid and update your profile.", department.DepartmentId, textMessage.To, profile);
 								break;
 						}
 					}
+				}
+				else if (senderNumberUnverified)
+				{
+					// No department resolved and this isn't the master number, but the sender did match a
+					// profile with an unverified mobile number — tell them the actionable fix.
+					Framework.Logging.LogInfo($"[SignalWire SMS] No department resolved for sender {Framework.StringHelpers.MaskPhoneNumber(textMessage.Msisdn)} (unverified profile match); replying with verify-number message.");
+					messageEvent.Processed = true;
+					response = LaMLResponse.Message.Respond("Resgrid: This mobile number matches a Resgrid profile but hasn't been verified. Please verify your mobile number on your Resgrid profile page to use text commands.");
 				}
 
 				//return Ok(new StringContent(response, Encoding.UTF8, "application/xml"));
@@ -322,5 +382,112 @@ namespace Resgrid.Web.Services.Controllers
 			return Ok();
 		}
 
+		// Parity with TwilioController: the identified user's ACTIVE department failed the inbound-text
+		// plan gate. A SWITCH command is honored (the normal command path is unreachable while the active
+		// department is unsupported), any other text gets the switch options, and with no supported
+		// alternatives they get the plan message. Returns the LaML response body.
+		private async Task<string> HandleUnsupportedActiveDepartmentAsync(TextMessage textMessage, InboundMessageEvent messageEvent,
+			int departmentId, UserProfile profile, CancellationToken cancellationToken)
+		{
+			var supported = await _departmentsService.GetSmsSupportedMembershipsForUserAsync(profile.UserId);
+			if (supported.Count == 0)
+			{
+				Framework.Logging.LogInfo($"[SignalWire SMS] DepartmentId={departmentId} not authorized for inbound text (plan gate); user {profile.UserId} has no SMS-supported departments; replying with unsupported message.");
+				messageEvent.Processed = true;
+				return LaMLResponse.Message.Respond("Resgrid: Inbound text messaging isn't available on your department's current plan. Please upgrade to a paid plan to enable text commands.");
+			}
+
+			var payload = _textCommandService.DetermineType(textMessage.Text);
+			if (payload.Type == TextCommandTypes.SwitchDepartment)
+				return await HandleSwitchDepartmentCommandAsync(messageEvent, profile, payload.Data, cancellationToken);
+
+			Framework.Logging.LogInfo($"[SignalWire SMS] DepartmentId={departmentId} not authorized for inbound text (plan gate); user {profile.UserId} has {supported.Count} SMS-supported department(s); replying with switch options.");
+			messageEvent.Processed = true;
+			return LaMLResponse.Message.Respond(await BuildSwitchOptionsMessageAsync(supported,
+				"Resgrid: Your active department's plan doesn't include inbound text messaging, but you belong to other departments that do."));
+		}
+
+		// SWITCH [name/number]: changes the user's active department. Mirrors the TwilioController
+		// handler — same supported-department list and ordering so numeric picks stay stable across
+		// providers. Returns the LaML response body.
+		private async Task<string> HandleSwitchDepartmentCommandAsync(InboundMessageEvent messageEvent,
+			UserProfile profile, string departmentIdentifier, CancellationToken cancellationToken)
+		{
+			messageEvent.Processed = true;
+
+			var supported = await _departmentsService.GetSmsSupportedMembershipsForUserAsync(profile.UserId);
+			if (supported.Count == 0)
+				return LaMLResponse.Message.Respond("Resgrid: None of your departments' current plans include inbound text messaging. Please upgrade to a paid plan to enable text commands.");
+
+			if (string.IsNullOrWhiteSpace(departmentIdentifier))
+				return LaMLResponse.Message.Respond(await BuildSwitchOptionsMessageAsync(supported, "Resgrid: Your departments that support text messaging:"));
+
+			DepartmentMember target = null;
+			var trimmedId = departmentIdentifier.Trim();
+
+			// A small number is a pick from the displayed list; otherwise try a department id, then name/code.
+			if (int.TryParse(trimmedId, out var listIndex) && listIndex >= 1 && listIndex <= supported.Count)
+				target = supported[listIndex - 1];
+
+			if (target == null && int.TryParse(trimmedId, out var deptId))
+				target = supported.FirstOrDefault(m => m.DepartmentId == deptId);
+
+			if (target == null)
+			{
+				foreach (var membership in supported)
+				{
+					var dept = await _departmentsService.GetDepartmentByIdAsync(membership.DepartmentId);
+					if (dept == null)
+						continue;
+
+					if (string.Equals(dept.Name, trimmedId, StringComparison.OrdinalIgnoreCase)
+						|| string.Equals(dept.Code, trimmedId, StringComparison.OrdinalIgnoreCase))
+					{
+						target = membership;
+						break;
+					}
+
+					if (target == null && !string.IsNullOrWhiteSpace(dept.Name) && dept.Name.IndexOf(trimmedId, StringComparison.OrdinalIgnoreCase) >= 0)
+						target = membership;
+				}
+			}
+
+			if (target == null)
+				return LaMLResponse.Message.Respond(await BuildSwitchOptionsMessageAsync(supported, $"Resgrid: Couldn't find a department matching \"{trimmedId}\"."));
+
+			if (target.IsActive)
+			{
+				var alreadyActive = await _departmentsService.GetDepartmentByIdAsync(target.DepartmentId);
+				return LaMLResponse.Message.Respond($"Resgrid: {alreadyActive?.Name ?? "That department"} is already your active department.");
+			}
+
+			var identityUser = _usersService.GetUserById(profile.UserId);
+			var success = await _departmentsService.SetActiveDepartmentForUserAsync(profile.UserId, target.DepartmentId, identityUser, cancellationToken);
+
+			var targetDept = await _departmentsService.GetDepartmentByIdAsync(target.DepartmentId);
+			if (success)
+			{
+				Framework.Logging.LogInfo($"[SignalWire SMS] User {profile.UserId} switched active department to {target.DepartmentId} via text command.");
+				return LaMLResponse.Message.Respond($"Resgrid: Your active department is now {targetDept?.Name ?? ("department " + target.DepartmentId)}. Text commands now apply to this department.");
+			}
+
+			return LaMLResponse.Message.Respond("Resgrid: Unable to switch departments right now. Please try again later.");
+		}
+
+		private async Task<string> BuildSwitchOptionsMessageAsync(List<DepartmentMember> supported, string prefix)
+		{
+			var sb = new StringBuilder();
+			sb.Append(prefix + Environment.NewLine);
+
+			for (int i = 0; i < supported.Count; i++)
+			{
+				var dept = await _departmentsService.GetDepartmentByIdAsync(supported[i].DepartmentId);
+				var activeMarker = supported[i].IsActive ? " (active)" : "";
+				sb.Append($"{i + 1}: {dept?.Name ?? ("Department " + supported[i].DepartmentId)}{activeMarker}" + Environment.NewLine);
+			}
+
+			sb.Append("Reply SWITCH <number or name> to change your active department.");
+			return sb.ToString();
+		}
 	}
 }

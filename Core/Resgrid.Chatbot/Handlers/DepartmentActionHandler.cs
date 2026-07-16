@@ -37,24 +37,9 @@ namespace Resgrid.Chatbot.Handlers
 		/// </summary>
 		private async Task<System.Collections.Generic.List<DepartmentMember>> GetSmsSupportingMembershipsAsync(string userId)
 		{
-			var allMemberRecords = await _departmentsService.GetAllDepartmentsForUserAsync(userId);
-			if (allMemberRecords == null || allMemberRecords.Count == 0)
-				return new System.Collections.Generic.List<DepartmentMember>();
-
-			var candidates = allMemberRecords
-				.Where(m => !m.IsDeleted)
-				.OrderByDescending(m => m.IsActive)
-				.ThenBy(m => m.DepartmentId)
-				.ToList();
-
-			var supported = new System.Collections.Generic.List<DepartmentMember>();
-			foreach (var membership in candidates)
-			{
-				if (await _limitsService.CanDepartmentProvisionNumberAsync(membership.DepartmentId))
-					supported.Add(membership);
-			}
-
-			return supported;
+			// Shared with the legacy SMS SWITCH command and the ingress restricted mode so every surface
+			// shows the same departments in the same order (numeric picks stay stable across requests).
+			return await _departmentsService.GetSmsSupportedMembershipsForUserAsync(userId);
 		}
 
 		public ChatbotIntentType IntentType => ChatbotIntentType.ListDepartments;

@@ -143,27 +143,32 @@ namespace Resgrid.Web.Services.Controllers
 				// inbound number fall back to resolving the department from that number.
 				UserProfile userProfile = await _userProfileService.GetProfileByMobileNumberAsync(textMessage.Msisdn);
 
-				// SECURITY: an unverified mobile number must never identify/act as the matched user —
-				// anyone can type someone else's number into a profile. Verification (MobileNumberVerified
-				// == true) is the bar for trusting an inbound sender.
+				// SECURITY: an unverified mobile number may be used for ROUTING (department resolution,
+				// plan gate, feature flag) so the sender lands in their real department, but it must never
+				// authorize ACTIONS — anyone can type someone else's number into a profile. Downstream
+				// handlers block commands for unverified senders and prompt them to verify. The single
+				// exception is STOP (handled below): opting out of messages must always work.
 				bool senderNumberUnverified = userProfile != null && userProfile.MobileNumberVerified != true;
 				if (senderNumberUnverified)
-				{
-					Framework.Logging.LogInfo($"[Twilio SMS] MessageSid={request.MessageSid} From={Framework.StringHelpers.MaskPhoneNumber(textMessage.Msisdn)} matched a profile but the mobile number is not verified; not linking sender to user.");
-					userProfile = null;
-				}
+					Framework.Logging.LogInfo($"[Twilio SMS] MessageSid={request.MessageSid} From={Framework.StringHelpers.MaskPhoneNumber(textMessage.Msisdn)} matched a profile but the mobile number is not verified; using profile for routing only, actions blocked until verified.");
 
 				int? departmentId = null;
 				if (userProfile != null)
 				{
+					// An identified user (verified or not) always operates in their ACTIVE department. The
+					// texted number must NOT override this — the TextToCallNumber mapping is a legacy path
+					// that can resolve a department the user isn't even a member of.
 					var department = await _departmentsService.GetActiveSmsDepartmentForUserAsync(userProfile.UserId);
 					if (department != null)
 						departmentId = department.DepartmentId;
 				}
-
-				// Legacy fallback: a per-department provisioned inbound number identifies the department directly.
-				if (!departmentId.HasValue)
+				else
+				{
+					// Legacy fallback for senders with no usable profile only (dispatch centers sending
+					// text-to-call imports, unknown numbers): the provisioned inbound number identifies the
+					// department directly.
 					departmentId = await _departmentSettingsService.GetDepartmentIdByTextToCallNumberAsync(textMessage.To);
+				}
 
 				// Carry the resolved department onto the inbound message event so chatbot-routed events
 				// retain the same department context the text-command path records.
@@ -172,6 +177,24 @@ namespace Resgrid.Web.Services.Controllers
 
 				// Diagnostic: did we resolve a department for this inbound text? If not, no reply is sent.
 				Framework.Logging.LogInfo($"[Twilio SMS] MessageSid={request.MessageSid} To={textMessage.To} From={Framework.StringHelpers.MaskPhoneNumber(textMessage.Msisdn)} resolved DepartmentId={(departmentId.HasValue ? departmentId.Value.ToString() : "none")}");
+
+				// STOP from an unverified sender: honor the opt-out immediately — turning off messages must
+				// always work, regardless of verification, plan or feature-flag state.
+				if (senderNumberUnverified && _textCommandService.DetermineType(textMessage.Text).Type == TextCommandTypes.Stop)
+				{
+					Framework.Logging.LogInfo($"[Twilio SMS] MessageSid={request.MessageSid} unverified sender texted STOP; disabling SMS messaging on the matched profile.");
+					await _userProfileService.DisableTextMessagesForUserAsync(userProfile.UserId);
+					messageEvent.Processed = true;
+					response.Message("Text messages are now turned off for this user, to enable again log in to Resgrid and update your profile.");
+
+					// The enclosing finally saves messageEvent and the shared tail returns the TwiML.
+					return new ContentResult
+					{
+						Content = response.ToString(),
+						ContentType = "application/xml",
+						StatusCode = 200
+					};
+				}
 
 				// Feature-flagged rollout: the chatbot ingress is the new path. When the flag is off
 				// (globally or for this department) fall back to the original text-command handling so
@@ -406,6 +429,9 @@ namespace Resgrid.Web.Services.Controllers
 
 									//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", help.ToString(), department.DepartmentId, textMessage.To, profile);
 									break;
+								case TextCommandTypes.SwitchDepartment:
+									await HandleSwitchDepartmentCommandAsync(messageEvent, response, profile, payload.Data);
+									break;
 								case TextCommandTypes.Action:
 									messageEvent.Processed = true;
 									await _actionLogsService.SetUserActionAsync(profile.UserId, department.DepartmentId, (int)payload.GetActionType());
@@ -548,6 +574,22 @@ namespace Resgrid.Web.Services.Controllers
 						}
 					}
 				}
+				else if (senderNumberUnverified)
+				{
+					// Checked BEFORE the switch offer: switching departments is an action, and an unverified
+					// sender may not act as the matched user. Their profile routed them to the right
+					// department; verifying the number is the prerequisite for everything else.
+					Framework.Logging.LogInfo($"[Twilio SMS] DepartmentId={departmentId.Value} not authorized for inbound text (plan gate) and sender is unverified; replying with verify-number message.");
+					messageEvent.Processed = true;
+					response.Message("Resgrid: This mobile number matches a Resgrid profile but hasn't been verified. Please verify your mobile number on your Resgrid profile page to use text commands.");
+				}
+				else if (userProfile != null)
+				{
+					// The user's ACTIVE department doesn't support inbound text. If they belong to other
+					// departments that do, process a SWITCH command or offer the switch options; otherwise
+					// fall through to the plan message.
+					await HandleUnsupportedActiveDepartmentAsync(textMessage, messageEvent, response, departmentId.Value, userProfile);
+				}
 				else
 				{
 					// Department resolved but its plan doesn't include inbound text messaging (only the free
@@ -561,6 +603,18 @@ namespace Resgrid.Web.Services.Controllers
 			{
 				var profile = await _userProfileService.GetProfileByMobileNumberAsync(textMessage.Msisdn);
 				var payload = _textCommandService.DetermineType(textMessage.Text);
+
+				// A sender whose profile mobile number is unverified can't be identified, so commands can't
+				// be acted on — direct them to verify instead of replying "unknown command". HELP and STOP
+				// still work below: neither needs a trusted identity, and STOP must always opt out.
+				if (profile != null && profile.MobileNumberVerified != true
+					&& payload.Type != TextCommandTypes.Help && payload.Type != TextCommandTypes.Stop)
+				{
+					Framework.Logging.LogInfo($"[Twilio SMS] Master number: sender {Framework.StringHelpers.MaskPhoneNumber(textMessage.Msisdn)} matched a profile but the mobile number is not verified; replying with verify-number message.");
+					messageEvent.Processed = true;
+					response.Message("Resgrid: This mobile number matches a Resgrid profile but hasn't been verified. Please verify your mobile number on your Resgrid profile page to use text commands.");
+					return;
+				}
 
 				switch (payload.Type)
 				{
@@ -596,6 +650,139 @@ namespace Resgrid.Web.Services.Controllers
 						break;
 				}
 			}
+			else if (senderNumberUnverified)
+			{
+				// No department resolved and this isn't the master number, but the sender did match a
+				// profile with an unverified mobile number. Previously this was silence; tell them the
+				// actionable fix instead.
+				Framework.Logging.LogInfo($"[Twilio SMS] No department resolved for sender {Framework.StringHelpers.MaskPhoneNumber(textMessage.Msisdn)} (unverified profile match); replying with verify-number message.");
+				messageEvent.Processed = true;
+				response.Message("Resgrid: This mobile number matches a Resgrid profile but hasn't been verified. Please verify your mobile number on your Resgrid profile page to use text commands.");
+			}
+		}
+
+		// The identified user's ACTIVE department failed the inbound-text plan gate. When they belong to
+		// other departments that do support it, a SWITCH command is honored (it must work here — the
+		// normal command path is unreachable while the active department is unsupported) and any other
+		// text gets the switch options; with no alternatives they get the plan message.
+		private async System.Threading.Tasks.Task HandleUnsupportedActiveDepartmentAsync(TextMessage textMessage, InboundMessageEvent messageEvent,
+			MessagingResponse response, int departmentId, UserProfile userProfile)
+		{
+			var supported = await _departmentsService.GetSmsSupportedMembershipsForUserAsync(userProfile.UserId);
+			if (supported.Count == 0)
+			{
+				Framework.Logging.LogInfo($"[Twilio SMS] DepartmentId={departmentId} not authorized for inbound text (plan gate); user {userProfile.UserId} has no SMS-supported departments; replying with unsupported message.");
+				messageEvent.Processed = true;
+				response.Message("Resgrid: Inbound text messaging isn't available on your department's current plan. Please upgrade to a paid plan to enable text commands.");
+				return;
+			}
+
+			var payload = _textCommandService.DetermineType(textMessage.Text);
+			if (payload.Type == TextCommandTypes.SwitchDepartment)
+			{
+				await HandleSwitchDepartmentCommandAsync(messageEvent, response, userProfile, payload.Data);
+				return;
+			}
+
+			Framework.Logging.LogInfo($"[Twilio SMS] DepartmentId={departmentId} not authorized for inbound text (plan gate); user {userProfile.UserId} has {supported.Count} SMS-supported department(s); replying with switch options.");
+			messageEvent.Processed = true;
+			response.Message(await BuildSwitchOptionsMessageAsync(supported,
+				"Resgrid: Your active department's plan doesn't include inbound text messaging, but you belong to other departments that do."));
+		}
+
+		// SWITCH [name/number]: changes the user's active department. Only departments whose plan
+		// supports SMS are offered/accepted — the list order matches BuildSwitchOptionsMessageAsync so a
+		// numeric reply maps to what the user was shown, even though each SMS is a stateless request.
+		private async System.Threading.Tasks.Task HandleSwitchDepartmentCommandAsync(InboundMessageEvent messageEvent,
+			MessagingResponse response, UserProfile userProfile, string departmentIdentifier)
+		{
+			messageEvent.Processed = true;
+
+			var supported = await _departmentsService.GetSmsSupportedMembershipsForUserAsync(userProfile.UserId);
+			if (supported.Count == 0)
+			{
+				response.Message("Resgrid: None of your departments' current plans include inbound text messaging. Please upgrade to a paid plan to enable text commands.");
+				return;
+			}
+
+			if (string.IsNullOrWhiteSpace(departmentIdentifier))
+			{
+				response.Message(await BuildSwitchOptionsMessageAsync(supported, "Resgrid: Your departments that support text messaging:"));
+				return;
+			}
+
+			DepartmentMember target = null;
+			var trimmedId = departmentIdentifier.Trim();
+
+			// A small number is a pick from the displayed list; otherwise try a department id, then name/code.
+			if (int.TryParse(trimmedId, out var listIndex) && listIndex >= 1 && listIndex <= supported.Count)
+				target = supported[listIndex - 1];
+
+			if (target == null && int.TryParse(trimmedId, out var deptId))
+				target = supported.FirstOrDefault(m => m.DepartmentId == deptId);
+
+			if (target == null)
+			{
+				foreach (var membership in supported)
+				{
+					var dept = await _departmentsService.GetDepartmentByIdAsync(membership.DepartmentId);
+					if (dept == null)
+						continue;
+
+					if (string.Equals(dept.Name, trimmedId, StringComparison.OrdinalIgnoreCase)
+						|| string.Equals(dept.Code, trimmedId, StringComparison.OrdinalIgnoreCase))
+					{
+						target = membership;
+						break;
+					}
+
+					if (target == null && !string.IsNullOrWhiteSpace(dept.Name) && dept.Name.IndexOf(trimmedId, StringComparison.OrdinalIgnoreCase) >= 0)
+						target = membership;
+				}
+			}
+
+			if (target == null)
+			{
+				response.Message(await BuildSwitchOptionsMessageAsync(supported, $"Resgrid: Couldn't find a department matching \"{trimmedId}\"."));
+				return;
+			}
+
+			if (target.IsActive)
+			{
+				var alreadyActive = await _departmentsService.GetDepartmentByIdAsync(target.DepartmentId);
+				response.Message($"Resgrid: {alreadyActive?.Name ?? "That department"} is already your active department.");
+				return;
+			}
+
+			var identityUser = _usersService.GetUserById(userProfile.UserId);
+			var success = await _departmentsService.SetActiveDepartmentForUserAsync(userProfile.UserId, target.DepartmentId, identityUser);
+
+			var targetDept = await _departmentsService.GetDepartmentByIdAsync(target.DepartmentId);
+			if (success)
+			{
+				Framework.Logging.LogInfo($"[Twilio SMS] User {userProfile.UserId} switched active department to {target.DepartmentId} via text command.");
+				response.Message($"Resgrid: Your active department is now {targetDept?.Name ?? ("department " + target.DepartmentId)}. Text commands now apply to this department.");
+			}
+			else
+			{
+				response.Message("Resgrid: Unable to switch departments right now. Please try again later.");
+			}
+		}
+
+		private async Task<string> BuildSwitchOptionsMessageAsync(List<DepartmentMember> supported, string prefix)
+		{
+			var sb = new StringBuilder();
+			sb.Append(prefix + Environment.NewLine);
+
+			for (int i = 0; i < supported.Count; i++)
+			{
+				var dept = await _departmentsService.GetDepartmentByIdAsync(supported[i].DepartmentId);
+				var activeMarker = supported[i].IsActive ? " (active)" : "";
+				sb.Append($"{i + 1}: {dept?.Name ?? ("Department " + supported[i].DepartmentId)}{activeMarker}" + Environment.NewLine);
+			}
+
+			sb.Append("Reply SWITCH <number or name> to change your active department.");
+			return sb.ToString();
 		}
 
 		[HttpGet("VoiceCall")]

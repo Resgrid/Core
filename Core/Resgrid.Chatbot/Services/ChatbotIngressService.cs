@@ -153,19 +153,29 @@ namespace Resgrid.Chatbot.Services
 						message.Platform, new ChatbotIntent { Type = ChatbotIntentType.Unknown });
 				}
 
-				// 3b. Check department plan supports chatbot features
+				// 3b. Check the ACTIVE department's plan supports chatbot features. When it doesn't but the
+				// user belongs to other departments that do, don't hard-block: they must still be able to
+				// list departments and SWITCH their active department (restricted mode, enforced after
+				// intent classification below). Only when there is no supported alternative is this a dead end.
 				var isAuthorized = await _limitsService.CanDepartmentProvisionNumberAsync(department.DepartmentId);
+				List<Model.DepartmentMember> switchableDepartments = null;
 				if (!isAuthorized)
 				{
-					return await _templateRenderer.RenderResponseAsync("error",
-						new Services.ErrorModel { Message = "Your department's plan does not support chatbot features. Please upgrade your plan." },
-						message.Platform, new ChatbotIntent { Type = ChatbotIntentType.Unknown });
+					switchableDepartments = await _departmentsService.GetSmsSupportedMembershipsForUserAsync(identity.UserId);
+					if (switchableDepartments == null || switchableDepartments.Count == 0)
+					{
+						return await _templateRenderer.RenderResponseAsync("error",
+							new Services.ErrorModel { Message = "Your department's plan does not support chatbot features. Please upgrade your plan." },
+							message.Platform, new ChatbotIntent { Type = ChatbotIntentType.Unknown });
+					}
 				}
 
 				// 3c. Per-department configuration gates (when a config row exists; otherwise the
 				// system defaults apply and the chatbot stays enabled for backward compatibility).
+				// Skipped in restricted (switch-only) mode: the unsupported department's config must not
+				// block the user from switching OUT of it.
 				var deptConfig = await _departmentConfigService.GetConfigAsync(department.DepartmentId);
-				if (deptConfig != null)
+				if (deptConfig != null && isAuthorized)
 				{
 					if (!deptConfig.IsEnabled)
 					{
@@ -223,6 +233,40 @@ namespace Resgrid.Chatbot.Services
 				session.RecentMessages.Add(message);
 				if (session.RecentMessages.Count > 20)
 					session.RecentMessages.RemoveAt(0);
+
+				// Restricted (switch-only) mode: the active department's plan doesn't support the chatbot
+				// but the user belongs to other departments that do. Only department list/switch/active
+				// intents are honored — so the user can move to a supported department — and anything else
+				// gets the switch options. Confirmation/PIN/continuation states are intentionally skipped:
+				// no destructive intent can be pending for a department that can't dispatch them.
+				if (!isAuthorized)
+				{
+					var restrictedIntent = await _intentRouter.ClassifyIntentAsync(message, session);
+					if (restrictedIntent.Type == ChatbotIntentType.ListDepartments
+						|| restrictedIntent.Type == ChatbotIntentType.SwitchDepartment
+						|| restrictedIntent.Type == ChatbotIntentType.GetActiveDepartment)
+					{
+						var restrictedHandler = _actionHandlers.FirstOrDefault(h => h.CanHandle(restrictedIntent.Type));
+						if (restrictedHandler != null)
+						{
+							var restrictedResponse = await restrictedHandler.HandleAsync(message, restrictedIntent, session);
+							restrictedResponse.Intent = restrictedIntent;
+							await _sessionManager.SaveSessionAsync(session);
+							return restrictedResponse;
+						}
+					}
+
+					var optionsBuilder = new System.Text.StringBuilder();
+					optionsBuilder.AppendLine("Your active department's plan does not support chatbot features, but you belong to other departments that do:");
+					for (int i = 0; i < switchableDepartments.Count; i++)
+					{
+						var switchableDept = await _departmentsService.GetDepartmentByIdAsync(switchableDepartments[i].DepartmentId);
+						optionsBuilder.AppendLine($"{i + 1}: {switchableDept?.Name ?? ("Department " + switchableDepartments[i].DepartmentId)}");
+					}
+					optionsBuilder.Append("Reply SWITCH <number or name> to change your active department.");
+
+					return new ChatbotResponse { Text = optionsBuilder.ToString(), Processed = true };
+				}
 
 				// 5. Handle session state machine via ConversationEngine (Phase 2)
 

@@ -20,6 +20,19 @@ namespace Resgrid.Services
 			if (String.IsNullOrWhiteSpace(message))
 				return payload;
 
+			// SWITCH [department name/number]: change the user's active department. Checked first — the
+			// custom staffing branch below claims any message starting with 's' and would swallow it.
+			// Ordinal comparison (culture-sensitive lowercasing breaks "SWITCH" under e.g. the Turkish
+			// locale) and any whitespace after the command (spaces or tabs) before the argument.
+			var trimmedMessage = message.Trim();
+			if (trimmedMessage.StartsWith("switch", StringComparison.OrdinalIgnoreCase)
+				&& (trimmedMessage.Length == 6 || char.IsWhiteSpace(trimmedMessage[6])))
+			{
+				payload.Type = TextCommandTypes.SwitchDepartment;
+				payload.Data = trimmedMessage.Length > 6 ? trimmedMessage.Substring(6).Trim() : "";
+				return payload;
+			}
+
 			if (customActions != null && customActions.IsDeleted == false && customActions.GetActiveDetails() != null && customActions.GetActiveDetails().Any())
 			{
 				int actionId = 0;

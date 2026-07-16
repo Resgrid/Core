@@ -237,276 +237,278 @@
 </div>
 
 <div class="row">
-    <div class="col-xs-12">
-        <div class="wrapper wrapper-content">
-            <div class="ibox float-e-margins">
-                <div class="ibox-content">
-                    <div class="row">
-                        <div class="col-md-8">
-                            <h3>
-                                @Model.Plan.Name
+<div class="col-xs-12">
+    <div class="wrapper wrapper-content">
+        <div class="ibox float-e-margins">
+            <div class="ibox-content">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h3>
+                            @Model.Plan.Name
 
-                                @if (Model.Payment.Cancelled)
-                                {
-                                    <span class="label label-danger">@localizer["Canceled"]</span>
-                                }
-                                else
-                                {
-                                    <span class="label label-success">@localizer["Active"]</span>
-                                }
-                            </h3>
                             @if (Model.Payment.Cancelled)
                             {
-                                <span>@localizer["PlanExpires"]: @Model.Expires</span>
+                                <span class="label label-danger">@localizer["Canceled"]</span>
                             }
                             else
                             {
-                                <span>@localizer["PlanRenews"]: @Model.Expires</span>
+                                <span class="label label-success">@localizer["Active"]</span>
                             }
+                        </h3>
+                        @if (Model.Payment.Cancelled)
+                        {
+                            <span>@localizer["PlanExpires"]: @Model.Expires</span>
+                        }
+                        else
+                        {
+                            <span>@localizer["PlanRenews"]: @Model.Expires</span>
+                        }
+                    </div>
+                </div>
+                <div class="row" style="padding-bottom: 10px;">
+                    <div class="col-md-4">
+                        <h3 style="margin-bottom: 0;">
+                            @if (Model.Plan.Frequency == (int)PlanFrequency.Yearly)
+                            {
+                                <span>
+                                    @currencySymbol@Model.Plan.Cost.ToString("N2")<small>/@localizer["Year"]</small>
+                                </span>
+                            }
+                            else
+                            {
+                                <span>
+                                    @currencySymbol@Model.Plan.Cost.ToString("N2")<small>/@localizer["month"]</small>
+                                </span>
+                            }
+                        </h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-xs-12">
+                        <h3>
+                            <span class="">@Model.PersonnelCount</span>/@Model.PersonnelLimit
+                            <small>@localizer["Entities"]</small>
+                        </h3>
+                        <div class="progress">
+                            <div class="progress-bar @ViewBag.PersonnelBarStyle" style="width: @Model.PersonnelBarPrecent%"></div>
                         </div>
                     </div>
-                    <div class="row" style="padding-bottom: 10px;">
-                        <div class="col-md-4">
-                            <h3 style="margin-bottom: 0;">
-                                @if (Model.Plan.Frequency == (int)PlanFrequency.Yearly)
-                                {
-                                    <span>
-                                        @currencySymbol@Model.Plan.Cost.ToString("N2")<small>/@localizer["Year"]</small>
-                                    </span>
-                                }
-                                else
-                                {
-                                    <span>
-                                        @currencySymbol@Model.Plan.Cost.ToString("N2")<small>/@localizer["month"]</small>
-                                    </span>
-                                }
-                            </h3>
-                        </div>
-                    </div>
+                </div>
+
+                @if (ViewBag.SubscriptionErrorMessage != null)
+                {
                     <div class="row">
                         <div class="col-xs-12">
-                            <h3>
-                                <span class="">@Model.PersonnelCount</span>/@Model.PersonnelLimit
-                                <small>@localizer["Entities"]</small>
-                            </h3>
-                            <div class="progress">
-                                <div class="progress-bar @ViewBag.PersonnelBarStyle" style="width: @Model.PersonnelBarPrecent%"></div>
+                            <div class="alert alert-danger alert-block">
+                                <h4 class="alert alert-heading">@localizer["Warning"]</h4>
+                                @ViewBag.SubscriptionErrorMessage
                             </div>
                         </div>
                     </div>
+                }
+                <hr>
 
-                    @if (ViewBag.SubscriptionErrorMessage != null)
-                    {
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <div class="alert alert-danger alert-block">
-                                    <h4 class="alert alert-heading">@localizer["Warning"]</h4>
-                                    @ViewBag.SubscriptionErrorMessage
+
+                <div class="row">
+                    <div class='col-sm-12'>
+                        <div class="panel blank-panel">
+                            <div class="panel-heading">
+                                <div class="panel-options">
+                                    <ul class="nav nav-tabs">
+                                        <li class="@Model.IsEntitiesTabActive()"><a href="#tab-1" data-toggle="tab" aria-expanded="false">Entities</a></li>
+
+                                        @if (Model.Plan != null && Model.Plan.PlanId < 36 && Model.Plan.PlanId != 1)
+                                        {
+                                            <li class="@Model.IsLegacyTabActive()"><a href="#tab-2" data-toggle="tab" aria-expanded="true">Legacy Plan</a></li>
+                                        }
+                                    </ul>
                                 </div>
                             </div>
-                        </div>
-                    }
-                    <hr>
+                            <div class="panel-body">
+                                <div class="tab-content">
+                                    <div class="tab-pane @Model.IsEntitiesTabActive()" id="tab-1">
 
+                                        @if (Model.Plan == null || Model.Plan.PlanId == 1)
+                                        {
+                                            <p>Select the number of Entities (Users + Units) you require using the slider or text box below.
+                                                @if (!isEU) { <text>Your first 10 entities are included at no charge — each</text> } else { <text>Each</text> }
+                                                additional pack of 10 entities is billed at the rate shown. Select "Buy Yearly" or "Buy Monthly" to proceed to checkout.</p>
 
-                    <div class="row">
-                        <div class='col-sm-12'>
-                            <div class="panel blank-panel">
-                                <div class="panel-heading">
-                                    <div class="panel-options">
-                                        <ul class="nav nav-tabs">
-                                            <li class="@Model.IsEntitiesTabActive()"><a href="#tab-1" data-toggle="tab" aria-expanded="false">Entities</a></li>
-
-                                            @if (Model.Plan != null && Model.Plan.PlanId < 36 && Model.Plan.PlanId != 1)
+                                            @if (isEU)
                                             {
-                                                <li class="@Model.IsLegacyTabActive()"><a href="#tab-2" data-toggle="tab" aria-expanded="true">Legacy Plan</a></li>
-                                            }
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div class="panel-body">
-                                    <div class="tab-content">
-                                        <div class="tab-pane @Model.IsEntitiesTabActive()" id="tab-1">
-
-                                            @if (Model.Plan == null || Model.Plan.PlanId == 1)
-                                            {
-                                                <p>Select the number of Entities (Users + Units) you require using the slider or text box below.
-                                                    @if (!isEU) { <text>Your first 10 entities are included at no charge — each</text> } else { <text>Each</text> }
-                                                    additional pack of 10 entities is billed at the rate shown. Select "Buy Yearly" or "Buy Monthly" to proceed to checkout.</p>
-
-                                                @if (isEU)
-                                                {
-                                                    <div class="alert alert-info" style="font-size:13px;">
-                                                        <strong>European Region</strong> — Pricing includes GDPR-compliant data hosting. All prices shown in EUR (@currencySymbol) with a regional adjustment. No free tier is available.
-                                                    </div>
-                                                }
-
-                                                <div class="price-box">
-
-                                                    <form class="form-horizontal form-pricing" role="form">
-
-                                                        <div class="price-slider">
-                                                            <h4 class="great">Entities</h4>
-                                                            <span>Users or Units sold in packs of 10</span>
-                                                            <div class="col-sm-12">
-                                                                <div id="slider">
-                                                                    <div id="custom-handle" class="ui-slider-handle">
-                                                                        <i class="fa fa-chevron-left" aria-hidden="true"></i>
-                                                                        <span id="handle-text"></span>
-                                                                        <i class="fa fa-chevron-right" aria-hidden="true"></i>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="price-form">
-                                                            <div class="form-group">
-                                                                <div class="col-sm-12 text-center">
-                                                                    <input id="amount-input" type="number" pattern="[0-9]" min="10" max="2000" step="10" value="10" /> <span>Entities</span>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="amount" class="col-sm-6 control-label">Monthly (@currencySymbol): </label>
-                                                                <span class="help-text">Monthly billing amount</span>
-                                                                <div class="col-sm-6">
-                                                                    <input type="hidden" id="amount" class="form-control">
-                                                                    <p class="price lead" id="monthly-label">0.00</p>
-                                                                </div>
-                                                            </div>
-                                                            <div class="form-group">
-                                                                <label for="duration" class="col-sm-6 control-label">Yearly (@currencySymbol): </label>
-                                                                <span class="help-text">Yearly (annual) billing amount</span>
-                                                                <div class="col-sm-6">
-                                                                    <input type="hidden" id="duration" class="form-control">
-                                                                    <p class="price lead" id="yearly-label">0.00</p>
-                                                                </div>
-                                                            </div>
-                                                            <hr class="style">
-                                                            <div class="form-group total">
-                                                                <div class="col-sm-6 text-center">
-                                                                    @if (Model.IsPaddleDepartment) {
-                                                                        <a id="buyYearlyButton" title="@localizer["BuyYearly"]" class="btn btn-primary" href="#" onclick="paddleCheckout(36);">@localizer["BuyYearly"]</a>
-                                                                    } else {
-                                                                        <a id="buyYearlyButton" title="@localizer["BuyYearly"]" class="btn btn-primary" href="#" onclick="stripeCheckout(36);">@localizer["BuyYearly"]</a>
-                                                                    }
-                                                                </div>
-                                                                <div class="col-sm-6 text-center">
-                                                                    @if (Model.IsPaddleDepartment) {
-                                                                        <a id="buyMonthlyButton" title="@localizer["BuyMonthly"]" class="btn btn-primary" href="#" onclick="paddleCheckout(37);">@localizer["BuyMonthly"]</a>
-                                                                    } else {
-                                                                        <a id="buyMonthlyButton" title="@localizer["BuyMonthly"]" class="btn btn-primary" href="#" onclick="stripeCheckout(37);">@localizer["BuyMonthly"]</a>
-                                                                    }
-                                                                </div>
-                                                            </div>
-
-                                                        </div>
-
-                                                    </form>
-
+                                                <div class="alert alert-info" style="font-size:13px;">
+                                                    <strong>European Region</strong> — Pricing includes GDPR-compliant data hosting. All prices shown in EUR (@currencySymbol) with a regional adjustment. No free tier is available.
                                                 </div>
                                             }
-                                            else if (Model.Plan.PlanId >= 36)
-                                            {
-                                                <div class="alert alert-info alert-block">
-                                                    <h4 class="alert alert-heading">Active Subscription</h4>
-                                                    You currently have an activate subscription, thank you! To update the amount of entities you need, update your billing information, or cancel your subscription please use the "Manage Your Subscription" button. If you are a Invoice customer, please contact us to update your subscription.
+
+                                            <div class="price-box">
+
+                                                <form class="form-horizontal form-pricing" role="form">
+
+                                                    <div class="price-slider">
+                                                        <h4 class="great">Entities</h4>
+                                                        <span>Users or Units sold in packs of 10</span>
+                                                        <div class="col-sm-12">
+                                                            <div id="slider">
+                                                                <div id="custom-handle" class="ui-slider-handle">
+                                                                    <i class="fa fa-chevron-left" aria-hidden="true"></i>
+                                                                    <span id="handle-text"></span>
+                                                                    <i class="fa fa-chevron-right" aria-hidden="true"></i>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="price-form">
+                                                        <div class="form-group">
+                                                            <div class="col-sm-12 text-center">
+                                                                <input id="amount-input" type="number" pattern="[0-9]" min="10" max="2000" step="10" value="10" /> <span>Entities</span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="amount" class="col-sm-6 control-label">Monthly (@currencySymbol): </label>
+                                                            <span class="help-text">Monthly billing amount</span>
+                                                            <div class="col-sm-6">
+                                                                <input type="hidden" id="amount" class="form-control">
+                                                                <p class="price lead" id="monthly-label">0.00</p>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="duration" class="col-sm-6 control-label">Yearly (@currencySymbol): </label>
+                                                            <span class="help-text">Yearly (annual) billing amount</span>
+                                                            <div class="col-sm-6">
+                                                                <input type="hidden" id="duration" class="form-control">
+                                                                <p class="price lead" id="yearly-label">0.00</p>
+                                                            </div>
+                                                        </div>
+                                                        <hr class="style">
+                                                        <div class="form-group total">
+                                                            <div class="col-sm-6 text-center">
+                                                                @if (Model.IsPaddleDepartment) {
+                                                                    <a id="buyYearlyButton" title="@localizer["BuyYearly"]" class="btn btn-primary" href="#" onclick="paddleCheckout(36);">@localizer["BuyYearly"]</a>
+                                                                } else {
+                                                                    <a id="buyYearlyButton" title="@localizer["BuyYearly"]" class="btn btn-primary" href="#" onclick="stripeCheckout(36);">@localizer["BuyYearly"]</a>
+                                                                }
+                                                            </div>
+                                                            <div class="col-sm-6 text-center">
+                                                                @if (Model.IsPaddleDepartment) {
+                                                                    <a id="buyMonthlyButton" title="@localizer["BuyMonthly"]" class="btn btn-primary" href="#" onclick="paddleCheckout(37);">@localizer["BuyMonthly"]</a>
+                                                                } else {
+                                                                    <a id="buyMonthlyButton" title="@localizer["BuyMonthly"]" class="btn btn-primary" href="#" onclick="stripeCheckout(37);">@localizer["BuyMonthly"]</a>
+                                                                }
+                                                            </div>
+                                                        </div>
+
+                                                    </div>
+
+                                                </form>
+
+                                            </div>
+                                        }
+                                        else if (Model.Plan.PlanId >= 36)
+                                        {
+                                            <div class="alert alert-info alert-block">
+                                                <h4 class="alert alert-heading">Active Subscription</h4>
+                                                You currently have an activate subscription, thank you! To update the amount of entities you need, update your billing information, or cancel your subscription please use the "Manage Your Subscription" button. If you are a Invoice customer, please contact us to update your subscription.
+                                            </div>
+
+                                            <div class="text-center">
+                                                @if (Model.IsPaddleDepartment)
+                                                {
+                                                    <a title="Cancel" class="btn btn-danger" href="@Url.Action("Cancel", "Subscription", new { Area = "User" })">@localizer["CancelSub"]</a>
+                                                }
+                                                else if (!string.IsNullOrWhiteSpace(Model.StripeCustomer))
+                                                {
+                                                    <a title="Manage Your Sub" class="btn btn-info" href="@Model.StripeCustomerPortalUrl">@localizer["ManageYourSubscription"]</a>
+                                                }
+                                            </div>
+                                        }
+                                        else if (Model.Plan.PlanId != 1)
+                                        {
+                                            <div class="alert alert-info alert-block">
+                                                <h4 class="alert alert-heading">Active Legacy Subscription</h4>
+                                                You currently have an active legacy subscription. To change over to the Entity based subscription, please cancel your current subscription and then sign up for a new one. If you are a Invoice customer, please contact us to update your subscription. Click on the "Legacy Plan" tab to see more information about your current plan.
+                                            </div>
+                                        }
+                                    </div>
+                                    <div class="tab-pane @Model.IsLegacyTabActive()" id="tab-2">
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                <div class="alert alert-danger alert-block">
+                                                    <h4 class="alert alert-heading">@localizer["Warning"]</h4>
+                                                    You are on a Legacy Plan. We do not offer these plans anymore. You can stay on this plan as long as you wish, but you will not be able to upgrade or downgrade your plan. If you wish to change your plan, you will need to cancel your current plan and then sign up for a new plan. We do not raise prices on departments with active billing relationships, so you can stay on this plan as long as you wish, you will need to use the "Change Billing Info" button below if you are using a Credit Card to pay. If you bill via Invoice your cost will stay the same if you renew.
                                                 </div>
 
                                                 <div class="text-center">
-                                                    @if (Model.IsPaddleDepartment)
+                                                    @if (!string.IsNullOrWhiteSpace(Model.StripeCustomer))
                                                     {
+                                                        <a title="Update or Change Billing Info" class="btn btn-success" href="#" onclick="stripeUpdate();">@localizer["ChangeBillingInfo"]</a>
                                                         <a title="Cancel" class="btn btn-danger" href="@Url.Action("Cancel", "Subscription", new { Area = "User" })">@localizer["CancelSub"]</a>
                                                     }
-                                                    else if (!string.IsNullOrWhiteSpace(Model.StripeCustomer))
-                                                    {
-                                                        <a title="Manage Your Sub" class="btn btn-info" href="@Model.StripeCustomerPortalUrl">@localizer["ManageYourSubscription"]</a>
-                                                    }
-                                                </div>
-                                            }
-                                            else if (Model.Plan.PlanId != 1)
-                                            {
-                                                <div class="alert alert-info alert-block">
-                                                    <h4 class="alert alert-heading">Active Legacy Subscription</h4>
-                                                    You currently have an active legacy subscription. To change over to the Entity based subscription, please cancel your current subscription and then sign up for a new one. If you are a Invoice customer, please contact us to update your subscription. Click on the "Legacy Plan" tab to see more information about your current plan.
-                                                </div>
-                                            }
-                                        </div>
-                                        <div class="tab-pane @Model.IsLegacyTabActive()" id="tab-2">
-                                            <div class="row">
-                                                <div class="col-xs-12">
-                                                    <div class="alert alert-danger alert-block">
-                                                        <h4 class="alert alert-heading">@localizer["Warning"]</h4>
-                                                        You are on a Legacy Plan. We do not offer these plans anymore. You can stay on this plan as long as you wish, but you will not be able to upgrade or downgrade your plan. If you wish to change your plan, you will need to cancel your current plan and then sign up for a new plan. We do not raise prices on departments with active billing relationships, so you can stay on this plan as long as you wish, you will need to use the "Change Billing Info" button below if you are using a Credit Card to pay. If you bill via Invoice your cost will stay the same if you renew.
-                                                    </div>
-
-                                                    <div class="text-center">
-                                                        @if (!string.IsNullOrWhiteSpace(Model.StripeCustomer))
-                                                        {
-                                                            <a title="Update or Change Billing Info" class="btn btn-success" href="#" onclick="stripeUpdate();">@localizer["ChangeBillingInfo"]</a>
-                                                            <a title="Cancel" class="btn btn-danger" href="@Url.Action("Cancel", "Subscription", new { Area = "User" })">@localizer["CancelSub"]</a>
-                                                        }
-                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
 
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                @if (Model.HasActiveSubscription)
+                {
+                    <div class="row">
+                        <div class='col-sm-12'>
+                            <div class="pricing-tables">
+                                <div class='row'>
+                                    <div class="col-sm-8 col-md-8 col-sm-offset-2">
+                                        <div class="plan" style="margin: 0; padding-bottom: 0;">
+                                            <div class="head">
+                                                <h2>Push-To-Talk Addon</h2>
+                                            </div>
+                                            <div class="row" style="margin-left: 0;">
+                                                <div class="col-sm-4 col-md-4">
+                                                    <div style="padding-top: 10px;">
+                                                        <ul class="item-list" style="padding: 0;">
+                                                            <li>Two-Way IP Voice Communications</li>
+                                                            <li>Up to 50 Channels</li>
+                                                            <li>Radios with worldwide reach</li>
+                                                            <li>Real-Time Voice, Push-To-Talk</li>
+                                                            <li>Android, iOS and Web</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-3 col-md-3" style="text-align: center;">
+                                                    <span class="price" style="border-top: 0; margin-bottom: 5px; padding-top: 25px">
+                                                        <h3 style="font-size: 36px;"><span class="symbol" style="font-size: 36px; vertical-align: top;">$</span>35<small>/mo</small></h3><span style="font-size: 12px;">per 10 user pack</span>
+                                                    </span>
+                                                </div>
+                                                <div class="col-sm-5 col-md-5">
+                                                    <p style="color: #676a6c; padding-top: 10px;">The Push-To-Talk Addon is only available on paid plans. You can buy as many 10 user packs as you wish, and they are billed monthly separately from your Resgrid bill. Allowing you to size up and down as you need. You can have up to 50 active people per channel. Push-To-Talk requires devices with an active Internet (data) connection and uses VOIP technology.</p>
+                                                    @if (Model.IsPaddleDepartment)
+                                                    {
+                                                        <a asp-controller="Subscription" asp-action="ManagePaddlePTTAddon" asp-route-area="User" class="btn btn-sm btn-primary">Manage PTT</a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <a asp-controller="Subscription" asp-action="ManagePTTAddon" asp-route-area="User" class="btn btn-sm btn-primary">Manage PTT</a>
+                                                    }
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                }
 
-                    @if (Model.HasActiveSubscription)
-                    {
-                        <div class="row">
-                            <div class='col-sm-12'>
-                                <div class="pricing-tables">
-                                    <div class='row'>
-                                        <div class="col-sm-8 col-md-8 col-sm-offset-2">
-                                            <div class="plan" style="margin: 0; padding-bottom: 0;">
-                                                <div class="head">
-                                                    <h2>Push-To-Talk Addon</h2>
-                                                </div>
-                                                <div class="row" style="margin-left: 0;">
-                                                    <div class="col-sm-4 col-md-4">
-                                                        <div style="padding-top: 10px;">
-                                                            <ul class="item-list" style="padding: 0;">
-                                                                <li>Two-Way IP Voice Communications</li>
-                                                                <li>Up to 50 Channels</li>
-                                                                <li>Radios with worldwide reach</li>
-                                                                <li>Real-Time Voice, Push-To-Talk</li>
-                                                                <li>Android, iOS and Web</li>
-                                                            </ul>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-sm-3 col-md-3" style="text-align: center;">
-                                                        <span class="price" style="border-top: 0; margin-bottom: 5px; padding-top: 25px">
-                                                            <h3 style="font-size: 36px;"><span class="symbol" style="font-size: 36px; vertical-align: top;">$</span>35<small>/mo</small></h3><span style="font-size: 12px;">per 10 user pack</span>
-                                                        </span>
-                                                    </div>
-                                                    <div class="col-sm-5 col-md-5">
-                                                        <p style="color: #676a6c; padding-top: 10px;">The Push-To-Talk Addon is only available on paid plans. You can buy as many 10 user packs as you wish, and they are billed monthly separately from your Resgrid bill. Allowing you to size up and down as you need. You can have up to 50 active people per channel. Push-To-Talk requires devices with an active Internet (data) connection and uses VOIP technology.</p>
-                                                        @if (Model.IsPaddleDepartment)
-                                                        {
-                                                            <a asp-controller="Subscription" asp-action="ManagePaddlePTTAddon" asp-route-area="User" class="btn btn-sm btn-primary">Manage PTT</a>
-                                                        }
-                                                        else
-                                                        {
-                                                            <a asp-controller="Subscription" asp-action="ManagePTTAddon" asp-route-area="User" class="btn btn-sm btn-primary">Manage PTT</a>
-                                                        }
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    }
-
-                </div>
             </div>
         </div>
+    </div>
+</div>
+</div>
 
         <div class="alert alert-success">
             <strong>
@@ -522,7 +524,7 @@
 
             <script>
                 @if (!Model.IsPaddleDepartment) {
-                    <text>var stripe = Stripe('@Model.StripeKey');</text>
+                    @:var stripe = Stripe('@Model.StripeKey');
                 }
                 var paddleReady = @(Model.CanInitializePaddleCheckout ? "true" : "false");
                 var paddleEnvironment = @paddleEnvironmentJson;

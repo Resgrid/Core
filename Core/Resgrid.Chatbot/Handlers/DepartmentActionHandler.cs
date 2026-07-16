@@ -17,44 +17,45 @@ namespace Resgrid.Chatbot.Handlers
 		private readonly IUserProfileService _userProfileService;
 		private readonly IUsersService _usersService;
 		private readonly ILimitsService _limitsService;
+		private readonly IChatbotDepartmentConfigService _departmentConfigService;
 
 		public DepartmentActionHandler(
 			IDepartmentsService departmentsService,
 			IUserProfileService userProfileService,
 			IUsersService usersService,
-			ILimitsService limitsService)
+			ILimitsService limitsService,
+			IChatbotDepartmentConfigService departmentConfigService)
 		{
 			_departmentsService = departmentsService;
 			_userProfileService = userProfileService;
 			_usersService = usersService;
 			_limitsService = limitsService;
+			_departmentConfigService = departmentConfigService;
 		}
 
 		/// <summary>
-		/// The user's non-deleted memberships restricted to departments that support SMS (i.e. are on a
-		/// non-free plan). SMS operations — including switching — are only offered for these, so the list
-		/// the user sees and the indexes they pick from are the SMS-supporting departments, in a stable order.
+		/// The user's non-deleted memberships restricted to departments the CHATBOT can serve here: on a
+		/// plan that supports SMS AND with the chatbot enabled for the current platform (per-department
+		/// config; no config row means enabled). Listing/switching to a department whose chatbot is
+		/// disabled would strand the user behind the ingress config gate with no in-band way back. The
+		/// legacy SMS SWITCH command uses the unfiltered plan-based list — switching is account-wide and
+		/// a chatbot-disabled department is still valid for legacy text commands.
 		/// </summary>
-		private async Task<System.Collections.Generic.List<DepartmentMember>> GetSmsSupportingMembershipsAsync(string userId)
+		private async Task<System.Collections.Generic.List<DepartmentMember>> GetSmsSupportingMembershipsAsync(string userId, ChatbotPlatform platform)
 		{
-			var allMemberRecords = await _departmentsService.GetAllDepartmentsForUserAsync(userId);
-			if (allMemberRecords == null || allMemberRecords.Count == 0)
-				return new System.Collections.Generic.List<DepartmentMember>();
+			// Same base list (and order) as the legacy SMS surfaces, then chatbot-eligibility filtering.
+			// The ingress restricted mode applies the identical filter, so the numbered options it shows
+			// map to the same memberships this handler resolves.
+			var supported = await _departmentsService.GetSmsSupportedMembershipsForUserAsync(userId);
 
-			var candidates = allMemberRecords
-				.Where(m => !m.IsDeleted)
-				.OrderByDescending(m => m.IsActive)
-				.ThenBy(m => m.DepartmentId)
-				.ToList();
-
-			var supported = new System.Collections.Generic.List<DepartmentMember>();
-			foreach (var membership in candidates)
+			var usable = new System.Collections.Generic.List<DepartmentMember>();
+			foreach (var membership in supported)
 			{
-				if (await _limitsService.CanDepartmentProvisionNumberAsync(membership.DepartmentId))
-					supported.Add(membership);
+				if (await _departmentConfigService.IsChatbotUsableForDepartmentAsync(membership.DepartmentId, platform))
+					usable.Add(membership);
 			}
 
-			return supported;
+			return usable;
 		}
 
 		public ChatbotIntentType IntentType => ChatbotIntentType.ListDepartments;
@@ -86,8 +87,9 @@ namespace Resgrid.Chatbot.Handlers
 			var culture = session.Culture;
 			try
 			{
-				// Only SMS-supporting (non-free plan) departments are switchable, so only list those.
-				var activeMemberships = await GetSmsSupportingMembershipsAsync(session.UserId);
+				// Only departments the chatbot can serve here (non-free plan + chatbot enabled for this
+				// platform) are switchable, so only list those.
+				var activeMemberships = await GetSmsSupportingMembershipsAsync(session.UserId, session.Platform);
 
 				if (activeMemberships.Count == 0)
 					return new ChatbotResponse { Text = ChatbotResources.Get("Dept_NoActiveMemberships", culture), Processed = true };
@@ -185,9 +187,10 @@ namespace Resgrid.Chatbot.Handlers
 				if (string.IsNullOrWhiteSpace(departmentIdentifier))
 					return new ChatbotResponse { Text = ChatbotResources.Get("Dept_SwitchSpecify", culture), Processed = true };
 
-				// Switching is limited to SMS-supporting (non-free plan) departments — the same set, in the
-				// same order, that ListDepartments shows, so a numeric pick maps to the displayed list.
-				var activeMemberships = await GetSmsSupportingMembershipsAsync(session.UserId);
+				// Switching is limited to chatbot-usable (non-free plan, chatbot enabled for this platform)
+				// departments — the same set, in the same order, that ListDepartments shows, so a numeric
+				// pick maps to the displayed list.
+				var activeMemberships = await GetSmsSupportingMembershipsAsync(session.UserId, session.Platform);
 
 				if (activeMemberships.Count == 0)
 					return new ChatbotResponse { Text = ChatbotResources.Get("Dept_NoActiveMemberships", culture), Processed = true };

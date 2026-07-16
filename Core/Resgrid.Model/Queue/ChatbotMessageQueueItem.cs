@@ -8,6 +8,7 @@ namespace Resgrid.Model.Queue
 	/// The worker resolves IChatbotIngressService, processes the message, and sends the reply
 	/// back to <see cref="From"/> via the SMS transport.
 	/// </summary>
+	[ProtoContract]
 	public class ChatbotMessageQueueItem
 	{
 		[ProtoMember(1)]

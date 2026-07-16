@@ -184,6 +184,20 @@ namespace Resgrid.Model
 		[ProtoMember(50)]
 		public bool HomeVerificationVoiceCodeConsumed { get; set; }
 
+		/// <summary>
+		/// AES-encrypted (via IEncryptionService) 4-digit security PIN used as a step-up check for
+		/// dangerous/department-wide chatbot and SMS actions. Null = no PIN set yet.
+		/// </summary>
+		[ProtoMember(51)]
+		public string SecurityPin { get; set; }
+
+		/// <summary>
+		/// The user opted in to requiring their security PIN for dangerous chatbot/SMS actions.
+		/// The department-level ForceChatbotSecurityPin setting overrides this to on for everyone.
+		/// </summary>
+		[ProtoMember(52)]
+		public bool SecurityPinEnabled { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

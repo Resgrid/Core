@@ -142,6 +142,17 @@ namespace Resgrid.Web.Services.Controllers
 				// department the sender operates in. Legacy clients that still text a per-department provisioned
 				// inbound number fall back to resolving the department from that number.
 				UserProfile userProfile = await _userProfileService.GetProfileByMobileNumberAsync(textMessage.Msisdn);
+
+				// SECURITY: an unverified mobile number must never identify/act as the matched user —
+				// anyone can type someone else's number into a profile. Verification (MobileNumberVerified
+				// == true) is the bar for trusting an inbound sender.
+				bool senderNumberUnverified = userProfile != null && userProfile.MobileNumberVerified != true;
+				if (senderNumberUnverified)
+				{
+					Framework.Logging.LogInfo($"[Twilio SMS] MessageSid={request.MessageSid} From={textMessage.Msisdn} matched a profile but the mobile number is not verified; not linking sender to user.");
+					userProfile = null;
+				}
+
 				int? departmentId = null;
 				if (userProfile != null)
 				{
@@ -194,7 +205,7 @@ namespace Resgrid.Web.Services.Controllers
 				}
 				else
 				{
-					await ProcessTextCommandsAsync(textMessage, messageEvent, response, departmentId, userProfile);
+					await ProcessTextCommandsAsync(textMessage, messageEvent, response, departmentId, userProfile, senderNumberUnverified);
 				}
 			}
 			catch (Exception ex)
@@ -225,7 +236,7 @@ namespace Resgrid.Web.Services.Controllers
 		// enabled the Chatbot Twilio integration feature flag keep their existing behavior. departmentId
 		// and userProfile are resolved by the caller so the flag can be evaluated before dispatching here.
 		private async System.Threading.Tasks.Task ProcessTextCommandsAsync(TextMessage textMessage, InboundMessageEvent messageEvent,
-			MessagingResponse response, int? departmentId, UserProfile userProfile)
+			MessagingResponse response, int? departmentId, UserProfile userProfile, bool senderNumberUnverified = false)
 		{
 			// Diagnostic: without a department the legacy path adds no message, so the sender gets no reply.
 			if (!departmentId.HasValue)
@@ -300,13 +311,25 @@ namespace Resgrid.Web.Services.Controllers
 						// only hit the DB again if the department came from the phone-number lookup path.
 						var profile = userProfile ?? await _userProfileService.GetProfileByMobileNumberAsync(textMessage.Msisdn);
 
+						// SECURITY: same verified-number bar as the caller — an unverified number must not
+						// act as the matched user.
+						if (profile != null && profile.MobileNumberVerified != true)
+						{
+							senderNumberUnverified = true;
+							profile = null;
+						}
+
 						// No matching user profile for the sender's number: reply so the user knows, rather than
 						// returning an empty response (pre-refactor behavior).
 						if (profile == null)
 						{
-							Framework.Logging.LogInfo($"[Twilio SMS] DepartmentId={departmentId.Value} sender {textMessage.Msisdn} has no matching user profile; replying with not-found message.");
+							Framework.Logging.LogInfo($"[Twilio SMS] DepartmentId={departmentId.Value} sender {textMessage.Msisdn} has no usable user profile (unverified={senderNumberUnverified}); replying with not-found message.");
 							messageEvent.Processed = true;
-							response.Message("Resgrid: We couldn't find a Resgrid user linked to this mobile number. Please add this number to your Resgrid profile to use text commands.");
+
+							if (senderNumberUnverified)
+								response.Message("Resgrid: This mobile number matches a Resgrid profile but hasn't been verified. Please verify your mobile number on your Resgrid profile page to use text commands.");
+							else
+								response.Message("Resgrid: We couldn't find a Resgrid user linked to this mobile number. Please add this number to your Resgrid profile to use text commands.");
 						}
 
 						if (profile != null)

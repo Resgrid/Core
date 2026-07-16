@@ -25,6 +25,9 @@ namespace Resgrid.Chatbot.Services
 		private readonly IAuthorizationService _authorizationService;
 		private readonly IChatbotDepartmentConfigService _departmentConfigService;
 		private readonly IChatbotRateLimiter _rateLimiter;
+		private readonly ISecurityPinService _securityPinService;
+
+		private const int MaxPinAttempts = 3;
 
 		public ChatbotIngressService(
 			IChatbotUserIdentityService userIdentityService,
@@ -39,7 +42,8 @@ namespace Resgrid.Chatbot.Services
 			ILimitsService limitsService,
 			IAuthorizationService authorizationService,
 			IChatbotDepartmentConfigService departmentConfigService,
-			IChatbotRateLimiter rateLimiter)
+			IChatbotRateLimiter rateLimiter,
+			ISecurityPinService securityPinService)
 		{
 			_userIdentityService = userIdentityService;
 			_sessionManager = sessionManager;
@@ -54,6 +58,7 @@ namespace Resgrid.Chatbot.Services
 			_authorizationService = authorizationService;
 			_departmentConfigService = departmentConfigService;
 			_rateLimiter = rateLimiter;
+			_securityPinService = securityPinService;
 		}
 
 		public async Task<ChatbotResponse> ProcessMessageAsync(ChatbotMessage message)
@@ -66,9 +71,30 @@ namespace Resgrid.Chatbot.Services
 				// 1. Identify user from the platform-specific identifier (already-linked only).
 				var identity = await ResolveUserIdentityAsync(message);
 
-				// 1b. SMS: a phone number that matches a Resgrid profile but isn't linked yet. Depending
-				// on the department's RequireLinkingConfirmation setting, either auto-link or run a
-				// one-time "Reply YES to link" confirmation before trusting the number.
+				// 1b. SMS identities are only trusted while the linked profile's mobile number is
+				// verified AND still matches the sending number. Links created before verification was
+				// required, or made stale by a number change, must not authenticate the sender — drop
+				// them and fall through to the fresh phone-match below (the number may now belong to a
+				// different, verified profile).
+				if (identity != null && IsSmsPlatform(message.Platform))
+				{
+					var linkedProfile = await _userProfileService.GetProfileByUserIdAsync(identity.UserId);
+					if (linkedProfile == null
+						|| linkedProfile.MobileNumberVerified != true
+						|| !PhoneNumbersMatch(linkedProfile.GetPhoneNumber(), message.From))
+					{
+						// Only physically remove SMS links. The phone fallback can also surface a
+						// cross-platform identity (e.g. WhatsApp ids are phone numbers); those are
+						// merely not trusted for this SMS message, not deleted.
+						if (IsSmsPlatform(identity.Platform))
+							await _userIdentityService.UnlinkUserAsync(identity.Id);
+						identity = null;
+					}
+				}
+
+				// 1c. SMS: a phone number that matches a Resgrid profile but isn't linked yet. Only a
+				// VERIFIED mobile number may authenticate a sender; when it is verified the identity link
+				// is created silently (it's an internal optimization, not something the user is asked about).
 				if (identity == null && IsSmsPlatform(message.Platform))
 				{
 					var cleanPhone = message.From?.Replace("+", "").Trim();
@@ -77,19 +103,18 @@ namespace Resgrid.Chatbot.Services
 						var profile = await _userProfileService.GetProfileByMobileNumberAsync(cleanPhone);
 						if (profile != null)
 						{
-							var candidateDepartment = await ResolveActiveDepartmentAsync(profile.UserId);
-							var requireConfirmation = candidateDepartment == null
-								|| ((await _departmentConfigService.GetConfigAsync(candidateDepartment.DepartmentId))?.RequireLinkingConfirmation ?? true);
-
-							if (!requireConfirmation)
+							if (profile.MobileNumberVerified == true)
 							{
 								identity = await _userIdentityService.LinkUserAsync(
-									profile.UserId, message.Platform, message.From, profile.FullName.AsFirstNameLastName, "phone_match");
+									profile.UserId, message.Platform, message.From, profile.FullName.AsFirstNameLastName, "phone_match_verified");
 							}
 							else
 							{
-								// Returns the prompt / acknowledgement; links the number on a YES reply.
-								return await HandlePhoneLinkConfirmationAsync(message, profile, candidateDepartment);
+								return new ChatbotResponse
+								{
+									Text = "This mobile number matches a Resgrid profile but hasn't been verified yet. Please verify your mobile number on your Resgrid profile page, then text again.",
+									Processed = true
+								};
 							}
 						}
 					}
@@ -206,24 +231,33 @@ namespace Resgrid.Chatbot.Services
 					var reply = message.Text?.Trim().ToUpperInvariant();
 					if (reply == "YES" || reply == "Y" || reply == "CONFIRM" || reply == "OK")
 					{
-						var pendingType = session.PendingIntent.Value;
-						var confirmedIntent = new ChatbotIntent
+						// Step-up auth: when the department forces security-PIN usage (or the user opted
+						// in), a confirmed destructive action additionally requires the user's 4-digit PIN
+						// before it executes.
+						if (await _securityPinService.IsPinRequiredAsync(identity.UserId, department.DepartmentId))
 						{
-							Type = pendingType,
-							Parameters = new Dictionary<string, string>(session.Context) { ["__confirmed"] = "true" }
-						};
-						session.State = ChatbotDialogState.Idle;
-						session.PendingIntent = null;
-
-						var confirmHandler = _actionHandlers.FirstOrDefault(h => h.CanHandle(pendingType));
-						if (confirmHandler != null)
-						{
-							var confirmResponse = await confirmHandler.HandleAsync(message, confirmedIntent, session);
-							confirmResponse.Intent = confirmedIntent;
-							session.Context.Clear();
+							session.State = ChatbotDialogState.AwaitingPin;
+							session.Context["__pinAttempts"] = "0";
 							await _sessionManager.SaveSessionAsync(session);
-							return confirmResponse;
+
+							if (!await _securityPinService.HasPinAsync(identity.UserId))
+							{
+								// Department forces PINs but this user doesn't have one yet — generate one
+								// so they can look it up on their profile page and complete the action.
+								await _securityPinService.EnsurePinAsync(identity.UserId, department.DepartmentId);
+								return new ChatbotResponse
+								{
+									Text = "This action requires your security PIN. A PIN has been generated for you — view or change it on your Resgrid profile page, then reply with the 4-digit PIN to continue, or NO to cancel.",
+									Processed = true
+								};
+							}
+
+							return new ChatbotResponse { Text = "For security, reply with your 4-digit security PIN to complete this action, or NO to cancel.", Processed = true };
 						}
+
+						var confirmResponse = await DispatchConfirmedIntentAsync(message, session);
+						if (confirmResponse != null)
+							return confirmResponse;
 					}
 					else if (reply == "NO" || reply == "N" || reply == "CANCEL")
 					{
@@ -234,6 +268,48 @@ namespace Resgrid.Chatbot.Services
 					else
 					{
 						return new ChatbotResponse { Text = "Please reply YES to confirm or NO to cancel.", Processed = true };
+					}
+				}
+
+				// 5b. PIN step-up for an already-confirmed destructive action: the user replied YES and a
+				// security PIN is required, so the pending intent only executes on a correct PIN.
+				if (session.State == ChatbotDialogState.AwaitingPin && session.PendingIntent.HasValue)
+				{
+					var pinReply = message.Text?.Trim();
+
+					if (IsNegative(pinReply))
+					{
+						session.Reset();
+						await _sessionManager.SaveSessionAsync(session);
+						return new ChatbotResponse { Text = "Cancelled.", Processed = true };
+					}
+
+					if (!SecurityPinUtility.IsValidFormat(pinReply))
+						return new ChatbotResponse { Text = "Please reply with your 4-digit security PIN, or NO to cancel.", Processed = true };
+
+					if (await _securityPinService.ValidatePinAsync(identity.UserId, pinReply))
+					{
+						session.Context.Remove("__pinAttempts");
+						var confirmResponse = await DispatchConfirmedIntentAsync(message, session);
+						if (confirmResponse != null)
+							return confirmResponse;
+					}
+					else
+					{
+						session.Context.TryGetValue("__pinAttempts", out var attemptsRaw);
+						int.TryParse(attemptsRaw, out var attempts);
+						attempts++;
+
+						if (attempts >= MaxPinAttempts)
+						{
+							session.Reset();
+							await _sessionManager.SaveSessionAsync(session);
+							return new ChatbotResponse { Text = "Too many incorrect PIN attempts. The action has been cancelled.", Processed = true };
+						}
+
+						session.Context["__pinAttempts"] = attempts.ToString();
+						await _sessionManager.SaveSessionAsync(session);
+						return new ChatbotResponse { Text = "Incorrect PIN. Reply with your 4-digit security PIN, or NO to cancel.", Processed = true };
 					}
 				}
 
@@ -331,12 +407,6 @@ namespace Resgrid.Chatbot.Services
 			return t.Contains("mayday") || t.Contains("emergency") || t.Contains("officer down") || t.Contains("firefighter down");
 		}
 
-		private static bool IsAffirmative(string text)
-		{
-			var t = text?.Trim().ToLowerInvariant();
-			return t == "yes" || t == "y" || t == "confirm";
-		}
-
 		private static bool IsNegative(string text)
 		{
 			var t = text?.Trim().ToLowerInvariant();
@@ -344,54 +414,51 @@ namespace Resgrid.Chatbot.Services
 		}
 
 		/// <summary>
-		/// One-time confirmation before linking an unrecognized SMS number to the matching Resgrid
-		/// account. Prompts on first contact, links on YES, cancels on NO.
+		/// Executes the pending (already confirmed, and PIN-verified when required) destructive intent.
+		/// Returns the handler's response, or null when no handler claims the intent (the caller then
+		/// falls through to normal classification, matching the original confirmation-gate behavior).
 		/// </summary>
-		private async Task<ChatbotResponse> HandlePhoneLinkConfirmationAsync(ChatbotMessage message, Model.UserProfile profile, Model.Department department)
+		private async Task<ChatbotResponse> DispatchConfirmedIntentAsync(ChatbotMessage message, ChatbotSession session)
 		{
-			// A matched profile may have no active department membership, in which case the caller
-			// passes a null department. The phone-link confirmation only tracks trust of the number
-			// (linking doesn't depend on a department), so fall back to department id 0 for the
-			// temporary session rather than dereferencing a null department.
-			var session = await _sessionManager.GetOrCreateSessionAsync(profile.UserId, department?.DepartmentId ?? 0, message.Platform, message.From);
-
-			var awaitingConfirmation = session.State == ChatbotDialogState.AwaitingConfirmation
-				&& session.Context != null
-				&& session.Context.TryGetValue("pendingAction", out var pendingAction)
-				&& pendingAction == "confirm_phone_link";
-
-			if (awaitingConfirmation)
+			var pendingType = session.PendingIntent.Value;
+			var confirmedIntent = new ChatbotIntent
 			{
-				if (IsAffirmative(message.Text))
-				{
-					await _userIdentityService.LinkUserAsync(
-						profile.UserId, message.Platform, message.From, profile.FullName.AsFirstNameLastName, "phone_match_confirmed");
-					session.State = ChatbotDialogState.Idle;
-					session.Context.Remove("pendingAction");
-					await _sessionManager.SaveSessionAsync(session);
-					return new ChatbotResponse { Text = "Your number is now linked to your Resgrid account. Text HELP to see what you can do.", Processed = true };
-				}
-
-				if (IsNegative(message.Text))
-				{
-					await _sessionManager.EndSessionAsync(session.SessionId);
-					return new ChatbotResponse { Text = "No problem — I won't link this number. Reply LINK anytime to connect your account.", Processed = true };
-				}
-
-				return new ChatbotResponse { Text = "Please reply YES to link this number to your Resgrid account, or NO to cancel.", Processed = false };
-			}
-
-			// First contact for this number: ask for confirmation before linking.
-			session.State = ChatbotDialogState.AwaitingConfirmation;
-			session.Context["pendingAction"] = "confirm_phone_link";
-			await _sessionManager.SaveSessionAsync(session);
-
-			return new ChatbotResponse
-			{
-				Text = $"We found a Resgrid account for {profile.FirstName}. Reply YES to link this number, or NO to cancel.",
-				Processed = true
+				Type = pendingType,
+				Parameters = new Dictionary<string, string>(session.Context) { ["__confirmed"] = "true" }
 			};
+			session.State = ChatbotDialogState.Idle;
+			session.PendingIntent = null;
+
+			var confirmHandler = _actionHandlers.FirstOrDefault(h => h.CanHandle(pendingType));
+			if (confirmHandler == null)
+				return null;
+
+			var confirmResponse = await confirmHandler.HandleAsync(message, confirmedIntent, session);
+			confirmResponse.Intent = confirmedIntent;
+			session.Context.Clear();
+			await _sessionManager.SaveSessionAsync(session);
+			return confirmResponse;
 		}
+
+		/// <summary>
+		/// Compares a profile phone number against a sender number, ignoring formatting and tolerating
+		/// a leading US country code on either side (mirrors GetProfileByMobileNumberAsync).
+		/// </summary>
+		private static bool PhoneNumbersMatch(string profileNumber, string senderNumber)
+		{
+			var a = NormalizePhone(profileNumber);
+			var b = NormalizePhone(senderNumber);
+
+			if (string.IsNullOrWhiteSpace(a) || string.IsNullOrWhiteSpace(b))
+				return false;
+
+			return a == b
+				|| (a.Length == 11 && a[0] == '1' && a.Substring(1) == b)
+				|| (b.Length == 11 && b[0] == '1' && b.Substring(1) == a);
+		}
+
+		private static string NormalizePhone(string number)
+			=> number?.Replace(" ", "").Replace("(", "").Replace(")", "").Replace("+", "").Replace("-", "").Replace(".", "").Trim();
 
 		private async Task<Model.Department> ResolveActiveDepartmentAsync(string userId)
 		{

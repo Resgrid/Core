@@ -175,6 +175,14 @@ namespace Resgrid.Web.Services.Controllers
 				{
 					profile = await _userProfileService.GetProfileByMobileNumberAsync(textMessage.Msisdn);
 
+					// SECURITY: an unverified mobile number must never identify/act as the matched user.
+					// Verification (MobileNumberVerified == true) is the bar for trusting an inbound sender.
+					if (profile != null && profile.MobileNumberVerified != true)
+					{
+						Framework.Logging.LogInfo($"[SignalWire SMS] MessageSid={textMessage.MessageId} From={textMessage.Msisdn} matched a profile but the mobile number is not verified; not linking sender to user.");
+						profile = null;
+					}
+
 					if (profile != null)
 					{
 						var department = await _departmentsService.GetDepartmentByUserIdAsync(profile.UserId);

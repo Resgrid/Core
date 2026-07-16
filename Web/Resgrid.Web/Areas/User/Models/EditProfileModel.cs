@@ -111,6 +111,18 @@ namespace Resgrid.Web.Areas.User.Models
 
 		public bool EnableSms { get; set; }
 
+		// ── Security PIN (step-up auth for dangerous chatbot/SMS actions; own profile only) ──
+
+		/// <summary>The user's decrypted 4-digit security PIN (only populated for the own-profile view).</summary>
+		[Display(Name = "Security PIN")]
+		public string SecurityPin { get; set; }
+
+		[Display(Name = "Require my security PIN for dangerous chatbot/text actions")]
+		public bool SecurityPinEnabled { get; set; }
+
+		/// <summary>True when the department forces PIN usage for all members (personal opt-in is then moot).</summary>
+		public bool DepartmentForcesSecurityPin { get; set; }
+
 		// ── Contact verification status (tri-state: null = grandfathered, false = pending, true = verified) ──
 		public bool? EmailVerified => Profile?.EmailVerified;
 		public bool? MobileNumberVerified => Profile?.MobileNumberVerified;

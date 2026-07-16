@@ -12,7 +12,13 @@ namespace Resgrid.Chatbot.Models
 		AwaitingConfirmation = 4,
 		AwaitingParameter = 5,
 		AwaitingAuth = 6,
-		Completed = 7
+		Completed = 7,
+
+		/// <summary>
+		/// Step-up security-PIN prompt for a confirmed destructive action (the user already replied
+		/// YES; the pending intent executes once the correct PIN is supplied).
+		/// </summary>
+		AwaitingPin = 8
 	}
 
 	public class ChatbotSession

@@ -78,7 +78,7 @@ namespace Resgrid.Model.Services
 		/// downstream plan gate can produce the proper "plan doesn't support" message. Null when the user has
 		/// no non-deleted memberships.
 		/// </summary>
-		Task<Department> GetActiveSmsDepartmentForUserAsync(string userId);
+		Task<Department> GetActiveSmsDepartmentForUserAsync(string userId, bool bypassCache = false);
 
 		Task<ValidateUserForDepartmentResult> GetValidateUserForDepartmentInfoAsync(string userName,
 			bool bypassCache = true);

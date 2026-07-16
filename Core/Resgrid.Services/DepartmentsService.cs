@@ -437,7 +437,7 @@ namespace Resgrid.Services
 			return await _departmentRepository.GetDepartmentForUserByUserIdAsync(userId);
 		}
 
-		public async Task<Department> GetActiveSmsDepartmentForUserAsync(string userId)
+		public async Task<Department> GetActiveSmsDepartmentForUserAsync(string userId, bool bypassCache = false)
 		{
 			var allMembers = await GetAllDepartmentsForUserAsync(userId);
 			if (allMembers == null || allMembers.Count == 0)
@@ -459,16 +459,13 @@ namespace Resgrid.Services
 			// of the user's departments that does, so a user whose active department is on the free plan still
 			// lands in an SMS-capable department. If none support SMS, fall back to the preferred one so the
 			// caller's plan gate returns the proper "plan doesn't support" message.
-			if (await _limitsService.CanDepartmentProvisionNumberAsync(preferred.DepartmentId))
-				return await GetDepartmentByIdAsync(preferred.DepartmentId);
-
 			foreach (var membership in ordered)
 			{
 				if (await _limitsService.CanDepartmentProvisionNumberAsync(membership.DepartmentId))
-					return await GetDepartmentByIdAsync(membership.DepartmentId);
+					return await GetDepartmentByIdAsync(membership.DepartmentId, bypassCache);
 			}
 
-			return await GetDepartmentByIdAsync(preferred.DepartmentId);
+			return await GetDepartmentByIdAsync(preferred.DepartmentId, bypassCache);
 		}
 
 

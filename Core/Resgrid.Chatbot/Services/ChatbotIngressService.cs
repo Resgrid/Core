@@ -161,8 +161,22 @@ namespace Resgrid.Chatbot.Services
 				List<Model.DepartmentMember> switchableDepartments = null;
 				if (!isAuthorized)
 				{
-					switchableDepartments = await _departmentsService.GetSmsSupportedMembershipsForUserAsync(identity.UserId);
-					if (switchableDepartments == null || switchableDepartments.Count == 0)
+					// A switch target must be one the chatbot can actually serve on this platform (plan
+					// supports SMS AND chatbot enabled per department config) — the same filter
+					// DepartmentActionHandler applies, so the numbered options shown below map to the
+					// memberships its switch handler resolves. Plan-only filtering could strand the user in
+					// a department whose chatbot config blocks everything, with no in-band way back.
+					var smsSupported = await _departmentsService.GetSmsSupportedMembershipsForUserAsync(identity.UserId)
+						?? new List<Model.DepartmentMember>();
+
+					switchableDepartments = new List<Model.DepartmentMember>();
+					foreach (var membership in smsSupported)
+					{
+						if (await _departmentConfigService.IsChatbotUsableForDepartmentAsync(membership.DepartmentId, message.Platform))
+							switchableDepartments.Add(membership);
+					}
+
+					if (switchableDepartments.Count == 0)
 					{
 						return await _templateRenderer.RenderResponseAsync("error",
 							new Services.ErrorModel { Message = "Your department's plan does not support chatbot features. Please upgrade your plan." },

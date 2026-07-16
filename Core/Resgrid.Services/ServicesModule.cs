@@ -94,6 +94,7 @@ namespace Resgrid.Services
 			builder.RegisterType<SystemAuditsService>().As<ISystemAuditsService>().InstancePerLifetimeScope();
 			builder.RegisterType<ContactVerificationService>().As<IContactVerificationService>().InstancePerLifetimeScope();
 			builder.RegisterType<SecurityPinService>().As<ISecurityPinService>().InstancePerLifetimeScope();
+			builder.RegisterType<TextDepartmentSwitchService>().As<ITextDepartmentSwitchService>().InstancePerLifetimeScope();
 			builder.RegisterType<AutofillsService>().As<IAutofillsService>().InstancePerLifetimeScope();
 			builder.RegisterType<UnitStatesService>().As<IUnitStatesService>().InstancePerLifetimeScope();
 			builder.Register(_ =>

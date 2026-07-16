@@ -26,6 +26,14 @@ namespace Resgrid.Chatbot.Interfaces
 		/// </summary>
 		Task<ChatbotDepartmentConfig> SaveConfigAsync(ChatbotDepartmentConfig config, string newPlaintextLlmKey = null);
 
+		/// <summary>
+		/// Whether the chatbot is usable for a department on the given platform: no config row means
+		/// system defaults (enabled, all platforms); otherwise the row's IsEnabled and AllowedPlatforms
+		/// both have to permit it. Used to keep switch/list targets to departments the chatbot can
+		/// actually serve on the requesting platform.
+		/// </summary>
+		Task<bool> IsChatbotUsableForDepartmentAsync(int departmentId, ChatbotPlatform platform);
+
 		Task InvalidateCacheAsync(int departmentId);
 	}
 }

@@ -49,6 +49,35 @@ namespace Resgrid.Chatbot.Services
 			return await fetch();
 		}
 
+		public async Task<bool> IsChatbotUsableForDepartmentAsync(int departmentId, ChatbotPlatform platform)
+		{
+			var config = await GetConfigAsync(departmentId);
+			if (config == null)
+				return true; // No row: system defaults — enabled, all platforms.
+
+			if (!config.IsEnabled)
+				return false;
+
+			return IsPlatformAllowed(config.AllowedPlatforms, platform);
+		}
+
+		// Mirrors ChatbotIngressService.IsPlatformAllowed: null/blank/"*" = all platforms, otherwise a
+		// comma-separated list of ChatbotPlatform names.
+		private static bool IsPlatformAllowed(string allowedPlatforms, ChatbotPlatform platform)
+		{
+			if (string.IsNullOrWhiteSpace(allowedPlatforms) || allowedPlatforms.Trim() == "*")
+				return true;
+
+			var platformName = platform.ToString();
+			foreach (var entry in allowedPlatforms.Split(','))
+			{
+				if (string.Equals(entry.Trim(), platformName, StringComparison.OrdinalIgnoreCase))
+					return true;
+			}
+
+			return false;
+		}
+
 		public async Task<DepartmentLlmOverride> GetLlmOverrideAsync(int departmentId)
 		{
 			var config = await GetConfigAsync(departmentId);

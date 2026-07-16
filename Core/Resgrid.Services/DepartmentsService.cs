@@ -467,8 +467,10 @@ namespace Resgrid.Services
 
 			// Stable order (active first, then by id) so a numeric pick from a displayed list maps to the
 			// same membership when the follow-up "switch N" message arrives in a later, stateless request.
+			// Disabled memberships (IsDisabled is nullable; null means not disabled) are excluded — a user
+			// deactivated in a department must not be offered it as a switch target.
 			var candidates = allMembers
-				.Where(m => !m.IsDeleted)
+				.Where(m => !m.IsDeleted && m.IsDisabled != true)
 				.OrderByDescending(m => m.IsActive)
 				.ThenBy(m => m.DepartmentId)
 				.ToList();

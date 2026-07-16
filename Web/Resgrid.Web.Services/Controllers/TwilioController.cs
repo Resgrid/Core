@@ -55,6 +55,7 @@ namespace Resgrid.Web.Services.Controllers
 		private readonly IEncryptionService _encryptionService;
 	private readonly ITwilioVoiceResponseService _twilioVoiceResponseService;
 	private readonly IFeatureToggleService _featureToggleService;
+	private readonly ITextDepartmentSwitchService _textDepartmentSwitchService;
 
 	public TwilioController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
 		ILimitsService limitsService, ICallsService callsService, IQueueService queueService, IDepartmentsService departmentsService,
@@ -63,7 +64,7 @@ namespace Resgrid.Web.Services.Controllers
 		IDepartmentGroupsService departmentGroupsService, ICustomStateService customStateService, IUnitsService unitsService,
 		IUsersService usersService, ICalendarService calendarService, ICommunicationTestService communicationTestService,
 		IEncryptionService encryptionService, ITwilioVoiceResponseService twilioVoiceResponseService,
-		IFeatureToggleService featureToggleService)
+		IFeatureToggleService featureToggleService, ITextDepartmentSwitchService textDepartmentSwitchService)
 	{
 		_departmentSettingsService = departmentSettingsService;
 		_numbersService = numbersService;
@@ -86,6 +87,7 @@ namespace Resgrid.Web.Services.Controllers
 		_encryptionService = encryptionService;
 		_twilioVoiceResponseService = twilioVoiceResponseService;
 		_featureToggleService = featureToggleService;
+		_textDepartmentSwitchService = textDepartmentSwitchService;
 	}
 		#endregion Private Readonly Properties and Constructors
 
@@ -384,6 +386,7 @@ namespace Resgrid.Web.Services.Controllers
 									help.Append("CALLS: List active calls" + Environment.NewLine);
 									help.Append("C[CallId]: Get Call Detail i.e. C1445" + Environment.NewLine);
 									help.Append("UNITS: List unit statuses" + Environment.NewLine);
+									help.Append("SWITCH [name or number]: Change your active department" + Environment.NewLine);
 									help.Append("---------------------" + Environment.NewLine);
 									help.Append("Status or Action Commands" + Environment.NewLine);
 									help.Append("---------------------" + Environment.NewLine);
@@ -430,7 +433,8 @@ namespace Resgrid.Web.Services.Controllers
 									//_communicationService.SendTextMessage(profile.UserId, "Resgrid TCI Help", help.ToString(), department.DepartmentId, textMessage.To, profile);
 									break;
 								case TextCommandTypes.SwitchDepartment:
-									await HandleSwitchDepartmentCommandAsync(messageEvent, response, profile, payload.Data);
+									messageEvent.Processed = true;
+									response.Message(await _textDepartmentSwitchService.BuildSwitchCommandResponseAsync(profile, payload.Data, "[Twilio SMS]"));
 									break;
 								case TextCommandTypes.Action:
 									messageEvent.Processed = true;
@@ -585,10 +589,12 @@ namespace Resgrid.Web.Services.Controllers
 				}
 				else if (userProfile != null)
 				{
-					// The user's ACTIVE department doesn't support inbound text. If they belong to other
-					// departments that do, process a SWITCH command or offer the switch options; otherwise
-					// fall through to the plan message.
-					await HandleUnsupportedActiveDepartmentAsync(textMessage, messageEvent, response, departmentId.Value, userProfile);
+					// The user's ACTIVE department doesn't support inbound text. STOP is honored, a SWITCH
+					// command is processed, and other texts get the switch options (or the plan message
+					// when no supported alternatives exist). Shared with SignalWire via the switch service.
+					messageEvent.Processed = true;
+					response.Message(await _textDepartmentSwitchService.BuildUnsupportedActiveDepartmentResponseAsync(
+						textMessage.Text, departmentId.Value, userProfile, "[Twilio SMS]"));
 				}
 				else
 				{
@@ -659,130 +665,6 @@ namespace Resgrid.Web.Services.Controllers
 				messageEvent.Processed = true;
 				response.Message("Resgrid: This mobile number matches a Resgrid profile but hasn't been verified. Please verify your mobile number on your Resgrid profile page to use text commands.");
 			}
-		}
-
-		// The identified user's ACTIVE department failed the inbound-text plan gate. When they belong to
-		// other departments that do support it, a SWITCH command is honored (it must work here — the
-		// normal command path is unreachable while the active department is unsupported) and any other
-		// text gets the switch options; with no alternatives they get the plan message.
-		private async System.Threading.Tasks.Task HandleUnsupportedActiveDepartmentAsync(TextMessage textMessage, InboundMessageEvent messageEvent,
-			MessagingResponse response, int departmentId, UserProfile userProfile)
-		{
-			var supported = await _departmentsService.GetSmsSupportedMembershipsForUserAsync(userProfile.UserId);
-			if (supported.Count == 0)
-			{
-				Framework.Logging.LogInfo($"[Twilio SMS] DepartmentId={departmentId} not authorized for inbound text (plan gate); user {userProfile.UserId} has no SMS-supported departments; replying with unsupported message.");
-				messageEvent.Processed = true;
-				response.Message("Resgrid: Inbound text messaging isn't available on your department's current plan. Please upgrade to a paid plan to enable text commands.");
-				return;
-			}
-
-			var payload = _textCommandService.DetermineType(textMessage.Text);
-			if (payload.Type == TextCommandTypes.SwitchDepartment)
-			{
-				await HandleSwitchDepartmentCommandAsync(messageEvent, response, userProfile, payload.Data);
-				return;
-			}
-
-			Framework.Logging.LogInfo($"[Twilio SMS] DepartmentId={departmentId} not authorized for inbound text (plan gate); user {userProfile.UserId} has {supported.Count} SMS-supported department(s); replying with switch options.");
-			messageEvent.Processed = true;
-			response.Message(await BuildSwitchOptionsMessageAsync(supported,
-				"Resgrid: Your active department's plan doesn't include inbound text messaging, but you belong to other departments that do."));
-		}
-
-		// SWITCH [name/number]: changes the user's active department. Only departments whose plan
-		// supports SMS are offered/accepted — the list order matches BuildSwitchOptionsMessageAsync so a
-		// numeric reply maps to what the user was shown, even though each SMS is a stateless request.
-		private async System.Threading.Tasks.Task HandleSwitchDepartmentCommandAsync(InboundMessageEvent messageEvent,
-			MessagingResponse response, UserProfile userProfile, string departmentIdentifier)
-		{
-			messageEvent.Processed = true;
-
-			var supported = await _departmentsService.GetSmsSupportedMembershipsForUserAsync(userProfile.UserId);
-			if (supported.Count == 0)
-			{
-				response.Message("Resgrid: None of your departments' current plans include inbound text messaging. Please upgrade to a paid plan to enable text commands.");
-				return;
-			}
-
-			if (string.IsNullOrWhiteSpace(departmentIdentifier))
-			{
-				response.Message(await BuildSwitchOptionsMessageAsync(supported, "Resgrid: Your departments that support text messaging:"));
-				return;
-			}
-
-			DepartmentMember target = null;
-			var trimmedId = departmentIdentifier.Trim();
-
-			// A small number is a pick from the displayed list; otherwise try a department id, then name/code.
-			if (int.TryParse(trimmedId, out var listIndex) && listIndex >= 1 && listIndex <= supported.Count)
-				target = supported[listIndex - 1];
-
-			if (target == null && int.TryParse(trimmedId, out var deptId))
-				target = supported.FirstOrDefault(m => m.DepartmentId == deptId);
-
-			if (target == null)
-			{
-				foreach (var membership in supported)
-				{
-					var dept = await _departmentsService.GetDepartmentByIdAsync(membership.DepartmentId);
-					if (dept == null)
-						continue;
-
-					if (string.Equals(dept.Name, trimmedId, StringComparison.OrdinalIgnoreCase)
-						|| string.Equals(dept.Code, trimmedId, StringComparison.OrdinalIgnoreCase))
-					{
-						target = membership;
-						break;
-					}
-
-					if (target == null && !string.IsNullOrWhiteSpace(dept.Name) && dept.Name.IndexOf(trimmedId, StringComparison.OrdinalIgnoreCase) >= 0)
-						target = membership;
-				}
-			}
-
-			if (target == null)
-			{
-				response.Message(await BuildSwitchOptionsMessageAsync(supported, $"Resgrid: Couldn't find a department matching \"{trimmedId}\"."));
-				return;
-			}
-
-			if (target.IsActive)
-			{
-				var alreadyActive = await _departmentsService.GetDepartmentByIdAsync(target.DepartmentId);
-				response.Message($"Resgrid: {alreadyActive?.Name ?? "That department"} is already your active department.");
-				return;
-			}
-
-			var identityUser = _usersService.GetUserById(userProfile.UserId);
-			var success = await _departmentsService.SetActiveDepartmentForUserAsync(userProfile.UserId, target.DepartmentId, identityUser);
-
-			var targetDept = await _departmentsService.GetDepartmentByIdAsync(target.DepartmentId);
-			if (success)
-			{
-				Framework.Logging.LogInfo($"[Twilio SMS] User {userProfile.UserId} switched active department to {target.DepartmentId} via text command.");
-				response.Message($"Resgrid: Your active department is now {targetDept?.Name ?? ("department " + target.DepartmentId)}. Text commands now apply to this department.");
-			}
-			else
-			{
-				response.Message("Resgrid: Unable to switch departments right now. Please try again later.");
-			}
-		}
-
-		private async Task<string> BuildSwitchOptionsMessageAsync(List<DepartmentMember> supported, string prefix)
-		{
-			var sb = new StringBuilder();
-			sb.Append(prefix + Environment.NewLine);
-
-			for (int i = 0; i < supported.Count; i++)
-			{
-				var dept = await _departmentsService.GetDepartmentByIdAsync(supported[i].DepartmentId);
-				var activeMarker = supported[i].IsActive ? " (active)" : "";
-				sb.Append($"{i + 1}: {dept?.Name ?? ("Department " + supported[i].DepartmentId)}{activeMarker}" + Environment.NewLine);
-			}
-
-			sb.Append("Reply SWITCH <number or name> to change your active department.");
-			return sb.ToString();
 		}
 
 		[HttpGet("VoiceCall")]

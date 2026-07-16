@@ -148,7 +148,8 @@ namespace Resgrid.Tests.Web.Services
 				_communicationTestServiceMock.Object,
 				_encryptionServiceMock.Object,
 				_twilioVoiceResponseServiceMock.Object,
-				_featureToggleServiceMock.Object);
+				_featureToggleServiceMock.Object,
+				Mock.Of<ITextDepartmentSwitchService>());
 		}
 
 		private static string InvokeBuildDispatchPrompt(Type controllerType, Call call, string address)

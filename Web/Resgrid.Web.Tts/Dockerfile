@@ -22,9 +22,11 @@ RUN dotnet publish "Resgrid.Web.Tts.csproj" -c Release -o /app/publish /p:UseApp
 
 FROM build AS publish
 ARG PIPER_VERSION=v1.2.0
+ARG PIPER_VOICES_REVISION=e21c7de8d4eab79b902f0d61e662b3f21664b8d2
 COPY --from=base /etc/passwd /tmp/base-passwd
 COPY --from=base /etc/group /tmp/base-group
-RUN apt-get update \
+RUN set -eu; \
+	apt-get update \
 	&& apt-get install -y --no-install-recommends \
 		libespeak-ng1 \
 		ca-certificates \
@@ -32,9 +34,12 @@ RUN apt-get update \
 		xz-utils \
 		gzip \
 		passwd \
-	&& rm -rf /var/lib/apt/lists/* \
-	&& curl -fsSL --retry 3 --retry-delay 5 "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" -o /tmp/ffmpeg.tar.xz \
-	&& curl -fsSL "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz.md5" -o /tmp/ffmpeg.tar.xz.md5 \
+	&& rm -rf /var/lib/apt/lists/*
+
+RUN set -eu; \
+	echo "Downloading FFmpeg" \
+	&& curl -fsSL --retry 5 --retry-delay 5 --retry-all-errors "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" -o /tmp/ffmpeg.tar.xz \
+	&& curl -fsSL --retry 5 --retry-delay 5 --retry-all-errors "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz.md5" -o /tmp/ffmpeg.tar.xz.md5 \
 	&& echo "$(awk '{print $1}' /tmp/ffmpeg.tar.xz.md5)  /tmp/ffmpeg.tar.xz" | md5sum -c - \
 	&& rm -f /tmp/ffmpeg.tar.xz.md5 \
 	&& xz -d /tmp/ffmpeg.tar.xz \
@@ -45,9 +50,11 @@ RUN apt-get update \
 	&& ffprobe_path=$(find /tmp -name 'ffprobe' -type f -executable -not -path '*/lib/*' -print -quit) \
 	&& test -n "$ffprobe_path" && cp "$ffprobe_path" /usr/local/bin/ffprobe \
 	&& chmod +x /usr/local/bin/ffmpeg /usr/local/bin/ffprobe \
-	&& rm -rf /tmp/ffmpeg* \
-	&& mkdir -p /usr/local/share/piper-voices \
-	&& curl -fsSL --retry 3 --retry-delay 5 "https://github.com/rhasspy/piper/releases/download/${PIPER_VERSION}/piper_amd64.tar.gz" -o /tmp/piper.tar.gz \
+	&& rm -rf /tmp/ffmpeg*
+
+RUN set -eu; \
+	echo "Downloading Piper ${PIPER_VERSION}" \
+	&& curl -fsSL --retry 5 --retry-delay 5 --retry-all-errors "https://github.com/rhasspy/piper/releases/download/${PIPER_VERSION}/piper_amd64.tar.gz" -o /tmp/piper.tar.gz \
 	&& tar -xzf /tmp/piper.tar.gz -C /tmp \
 	&& mv /tmp/piper/piper /usr/local/bin/piper \
 	&& chmod +x /usr/local/bin/piper \
@@ -55,8 +62,11 @@ RUN apt-get update \
 	&& find /tmp/piper -name '*.so*' -exec cp {} /usr/local/lib/ \; \
 	&& if [ -d /tmp/piper/espeak-ng-data ]; then cp -R /tmp/piper/espeak-ng-data /usr/share/; else ln -sf /usr/lib/x86_64-linux-gnu/espeak-ng-data /usr/share/espeak-ng-data; fi \
 	&& ldconfig \
-	&& rm -rf /tmp/piper /tmp/piper.tar.gz \
-	&& for f in \
+	&& rm -rf /tmp/piper /tmp/piper.tar.gz
+
+RUN set -eu; \
+	mkdir -p /usr/local/share/piper-voices; \
+	for f in \
 		"en/en_US/norman/medium/en_US-norman-medium" \
 		"es/es_MX/claude/high/es_MX-claude-high" \
 		"sv/sv_SE/nst/medium/sv_SE-nst-medium" \
@@ -68,10 +78,13 @@ RUN apt-get update \
 		"ar/ar_JO/kareem/medium/ar_JO-kareem-medium" \
 	; do \
 		name=$(basename "$f"); \
-		curl -fsSL --retry 3 --retry-delay 5 "https://huggingface.co/rhasspy/piper-voices/resolve/main/${f}.onnx" -o "/usr/local/share/piper-voices/${name}.onnx"; \
-		curl -fsSL --retry 3 --retry-delay 5 "https://huggingface.co/rhasspy/piper-voices/resolve/main/${f}.onnx.json" -o "/usr/local/share/piper-voices/${name}.onnx.json"; \
-	done \
-	&& groupadd --gid 10001 appgroup \
+		echo "Downloading Piper voice ${name}"; \
+		curl -fsSL --retry 5 --retry-delay 5 --retry-all-errors "https://huggingface.co/rhasspy/piper-voices/resolve/${PIPER_VOICES_REVISION}/${f}.onnx" -o "/usr/local/share/piper-voices/${name}.onnx"; \
+		curl -fsSL --retry 5 --retry-delay 5 --retry-all-errors "https://huggingface.co/rhasspy/piper-voices/resolve/${PIPER_VOICES_REVISION}/${f}.onnx.json" -o "/usr/local/share/piper-voices/${name}.onnx.json"; \
+	done
+
+RUN set -eu; \
+	groupadd --gid 10001 appgroup \
 	&& useradd --uid 10001 --gid appgroup --create-home --shell /usr/sbin/nologin appuser \
 	&& cp /tmp/base-passwd /tmp/app-passwd \
 	&& cp /tmp/base-group /tmp/app-group \

@@ -437,6 +437,40 @@ namespace Resgrid.Services
 			return await _departmentRepository.GetDepartmentForUserByUserIdAsync(userId);
 		}
 
+		public async Task<Department> GetActiveSmsDepartmentForUserAsync(string userId)
+		{
+			var allMembers = await GetAllDepartmentsForUserAsync(userId);
+			if (allMembers == null || allMembers.Count == 0)
+				return null;
+
+			// Prefer the member marked IsActive, then IsDefault, then first.
+			var ordered = allMembers
+				.Where(m => !m.IsDeleted)
+				.OrderByDescending(m => m.IsActive)
+				.ThenByDescending(m => m.IsDefault)
+				.ToList();
+
+			if (ordered.Count == 0)
+				return null;
+
+			var preferred = ordered[0];
+
+			// If the preferred department supports SMS (non-free plan) use it; otherwise auto-pick the first
+			// of the user's departments that does, so a user whose active department is on the free plan still
+			// lands in an SMS-capable department. If none support SMS, fall back to the preferred one so the
+			// caller's plan gate returns the proper "plan doesn't support" message.
+			if (await _limitsService.CanDepartmentProvisionNumberAsync(preferred.DepartmentId))
+				return await GetDepartmentByIdAsync(preferred.DepartmentId);
+
+			foreach (var membership in ordered)
+			{
+				if (await _limitsService.CanDepartmentProvisionNumberAsync(membership.DepartmentId))
+					return await GetDepartmentByIdAsync(membership.DepartmentId);
+			}
+
+			return await GetDepartmentByIdAsync(preferred.DepartmentId);
+		}
+
 
 		public async Task<ValidateUserForDepartmentResult> GetValidateUserForDepartmentInfoAsync(string userName, bool bypassCache = true)
 		{

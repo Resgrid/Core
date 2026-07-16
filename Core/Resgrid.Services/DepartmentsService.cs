@@ -459,10 +459,13 @@ namespace Resgrid.Services
 			// of the user's departments that does, so a user whose active department is on the free plan still
 			// lands in an SMS-capable department. If none support SMS, fall back to the preferred one so the
 			// caller's plan gate returns the proper "plan doesn't support" message.
-			foreach (var membership in ordered)
+			var canProvisionNumber = await Task.WhenAll(ordered.Select(membership =>
+				_limitsService.CanDepartmentProvisionNumberAsync(membership.DepartmentId)));
+
+			for (var i = 0; i < ordered.Count; i++)
 			{
-				if (await _limitsService.CanDepartmentProvisionNumberAsync(membership.DepartmentId))
-					return await GetDepartmentByIdAsync(membership.DepartmentId, bypassCache);
+				if (canProvisionNumber[i])
+					return await GetDepartmentByIdAsync(ordered[i].DepartmentId, bypassCache);
 			}
 
 			return await GetDepartmentByIdAsync(preferred.DepartmentId, bypassCache);

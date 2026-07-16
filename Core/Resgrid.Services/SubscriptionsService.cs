@@ -608,7 +608,7 @@ namespace Resgrid.Services
 			// move to Entity-based plans, SMS was removed from the free tiers, so "supports SMS/paid features"
 			// is simply "not one of these". Mirrors the authoritative set in the CommonApis billing service.
 			// 1 = Free, 6 = Beta (2yr), 7 = Open Preview, 8 = Unlimited Free.
-			return planId == FreePlanId || planId == 6 || planId == 7 || planId == 8;
+			return planId == FreePlanId || planId == (int)Plans.Beta2YrPlanId || planId == (int)Plans.OpenPreviewPlanId || planId == (int)Plans.UnlimitedFreePlanId;
 		}
 
 		/// <summary>

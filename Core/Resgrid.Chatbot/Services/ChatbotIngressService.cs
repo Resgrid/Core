@@ -410,25 +410,10 @@ namespace Resgrid.Chatbot.Services
 
 		private async Task<Model.Department> ResolveActiveDepartmentAsync(string userId)
 		{
-			// Get all department memberships for this user (non-deleted)
-			var allMembers = await _departmentsService.GetAllDepartmentsForUserAsync(userId);
-			if (allMembers == null || allMembers.Count == 0)
-				return null;
-
-			var activeMemberships = allMembers.Where(m => !m.IsDeleted).ToList();
-			if (activeMemberships.Count == 0)
-				return null;
-
-			// Prefer the member marked IsActive, then IsDefault, then first
-			var activeMember = activeMemberships
-				.OrderByDescending(m => m.IsActive)
-				.ThenByDescending(m => m.IsDefault)
-				.FirstOrDefault();
-
-			if (activeMember != null)
-				return await _departmentsService.GetDepartmentByIdAsync(activeMember.DepartmentId);
-
-			return null;
+			// Shared resolution: the user's active (then default, then first) membership, preferring one whose
+			// plan supports SMS. The TwilioController uses the same resolver for the master-number sender path
+			// so the flag evaluation and the chatbot agree on which department the sender operates in.
+			return await _departmentsService.GetActiveSmsDepartmentForUserAsync(userId);
 		}
 
 		private static bool IsPlatformAllowed(string allowedPlatforms, ChatbotPlatform platform)

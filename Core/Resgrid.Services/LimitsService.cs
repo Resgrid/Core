@@ -153,14 +153,16 @@ namespace Resgrid.Services
 				return false;
 			}
 
-			if (plan.PlanId == 4 || plan.PlanId == 5 || plan.PlanId == 10 || plan.PlanId == 14 || plan.PlanId == 15 || plan.PlanId == 16 || plan.PlanId == 17 ||
-				  plan.PlanId == 18 || plan.PlanId == 19 || plan.PlanId == 20 || plan.PlanId == 21 || plan.PlanId == 26 || plan.PlanId == 27 || plan.PlanId == 28 ||
-					plan.PlanId == 29 || plan.PlanId == 30 || plan.PlanId == 31 || plan.PlanId == 32 || plan.PlanId == 33 || plan.PlanId == 36 || plan.PlanId == 37)
+			// SMS/text features are included on every non-free plan (since the move to Entity-based plans SMS
+			// was removed from the free tiers and all non-free plans carry the full feature set). Use a
+			// non-free check rather than a hardcoded plan-id allow-list so new plans (e.g. Entity 36/37) work
+			// automatically without having to be added here.
+			if (!_subscriptionsService.IsPlanRestrictedOrFree(plan.PlanId))
 				return true;
 
 			// Diagnostic: this gate silently blocks the inbound-SMS text-command reply path. Log the
-			// resolved plan so it is clear *why* a department gets no reply (plan not in the allow-list).
-			Resgrid.Framework.Logging.LogInfo($"[Twilio SMS] CanDepartmentProvisionNumber=false for DepartmentId={departmentId} PlanId={plan.PlanId} — plan is not in the number/text-feature allow-list, so no SMS reply will be generated.");
+			// resolved plan so it is clear *why* a department gets no reply (free/restricted plan).
+			Resgrid.Framework.Logging.LogInfo($"[Twilio SMS] CanDepartmentProvisionNumber=false for DepartmentId={departmentId} PlanId={plan.PlanId} — plan is a free/restricted tier without SMS/text features, so no SMS reply will be generated.");
 			return false;
 		}
 

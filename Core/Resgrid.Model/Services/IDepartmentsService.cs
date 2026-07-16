@@ -70,6 +70,16 @@ namespace Resgrid.Model.Services
 
 		Task<Department> GetDepartmentByUserIdAsync(string userId, bool bypassCache = false);
 
+		/// <summary>
+		/// Resolves the department to use for a user's SMS/chatbot operations: their active (then default,
+		/// then first) membership, preferring one whose plan supports SMS (non-free). If the preferred
+		/// department is on a free plan but another of the user's departments supports SMS, that one is
+		/// returned so a user isn't dead-ended; if none support SMS the preferred one is returned so the
+		/// downstream plan gate can produce the proper "plan doesn't support" message. Null when the user has
+		/// no non-deleted memberships.
+		/// </summary>
+		Task<Department> GetActiveSmsDepartmentForUserAsync(string userId, bool bypassCache = false);
+
 		Task<ValidateUserForDepartmentResult> GetValidateUserForDepartmentInfoAsync(string userName,
 			bool bypassCache = true);
 

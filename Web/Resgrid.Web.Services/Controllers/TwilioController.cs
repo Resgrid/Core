@@ -136,20 +136,23 @@ namespace Resgrid.Web.Services.Controllers
 
 			try
 			{
-				// Resolve the department that owns the inbound number (falling back to the sender's
-				// linked profile) so the Chatbot Twilio integration flag can be evaluated per-department.
-				UserProfile userProfile = null;
-				var departmentId = await _departmentSettingsService.GetDepartmentIdByTextToCallNumberAsync(textMessage.To);
-				if (!departmentId.HasValue)
+				// Going-forward model: one master Resgrid number handles all inbound SMS, so the department is
+				// identified from the SENDER's profile → their active SMS-capable department (NOT the number
+				// that was texted). This keeps the flag evaluation and the chatbot pipeline agreeing on which
+				// department the sender operates in. Legacy clients that still text a per-department provisioned
+				// inbound number fall back to resolving the department from that number.
+				UserProfile userProfile = await _userProfileService.GetProfileByMobileNumberAsync(textMessage.Msisdn);
+				int? departmentId = null;
+				if (userProfile != null)
 				{
-					userProfile = await _userProfileService.GetProfileByMobileNumberAsync(textMessage.Msisdn);
-					if (userProfile != null)
-					{
-						var department = await _departmentsService.GetDepartmentByUserIdAsync(userProfile.UserId);
-						if (department != null)
-							departmentId = department.DepartmentId;
-					}
+					var department = await _departmentsService.GetActiveSmsDepartmentForUserAsync(userProfile.UserId);
+					if (department != null)
+						departmentId = department.DepartmentId;
 				}
+
+				// Legacy fallback: a per-department provisioned inbound number identifies the department directly.
+				if (!departmentId.HasValue)
+					departmentId = await _departmentSettingsService.GetDepartmentIdByTextToCallNumberAsync(textMessage.To);
 
 				// Carry the resolved department onto the inbound message event so chatbot-routed events
 				// retain the same department context the text-command path records.

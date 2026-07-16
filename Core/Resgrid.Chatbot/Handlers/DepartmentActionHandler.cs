@@ -16,15 +16,45 @@ namespace Resgrid.Chatbot.Handlers
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IUserProfileService _userProfileService;
 		private readonly IUsersService _usersService;
+		private readonly ILimitsService _limitsService;
 
 		public DepartmentActionHandler(
 			IDepartmentsService departmentsService,
 			IUserProfileService userProfileService,
-			IUsersService usersService)
+			IUsersService usersService,
+			ILimitsService limitsService)
 		{
 			_departmentsService = departmentsService;
 			_userProfileService = userProfileService;
 			_usersService = usersService;
+			_limitsService = limitsService;
+		}
+
+		/// <summary>
+		/// The user's non-deleted memberships restricted to departments that support SMS (i.e. are on a
+		/// non-free plan). SMS operations — including switching — are only offered for these, so the list
+		/// the user sees and the indexes they pick from are the SMS-supporting departments, in a stable order.
+		/// </summary>
+		private async Task<System.Collections.Generic.List<DepartmentMember>> GetSmsSupportingMembershipsAsync(string userId)
+		{
+			var allMemberRecords = await _departmentsService.GetAllDepartmentsForUserAsync(userId);
+			if (allMemberRecords == null || allMemberRecords.Count == 0)
+				return new System.Collections.Generic.List<DepartmentMember>();
+
+			var candidates = allMemberRecords
+				.Where(m => !m.IsDeleted)
+				.OrderByDescending(m => m.IsActive)
+				.ThenBy(m => m.DepartmentId)
+				.ToList();
+
+			var supported = new System.Collections.Generic.List<DepartmentMember>();
+			foreach (var membership in candidates)
+			{
+				if (await _limitsService.CanDepartmentProvisionNumberAsync(membership.DepartmentId))
+					supported.Add(membership);
+			}
+
+			return supported;
 		}
 
 		public ChatbotIntentType IntentType => ChatbotIntentType.ListDepartments;
@@ -56,15 +86,8 @@ namespace Resgrid.Chatbot.Handlers
 			var culture = session.Culture;
 			try
 			{
-				var allMemberRecords = await _departmentsService.GetAllDepartmentsForUserAsync(session.UserId);
-				if (allMemberRecords == null || allMemberRecords.Count == 0)
-					return new ChatbotResponse { Text = ChatbotResources.Get("Dept_NoMembership", culture), Processed = true };
-
-				var activeMemberships = allMemberRecords
-					.Where(m => !m.IsDeleted)
-					.OrderByDescending(m => m.IsActive)
-					.ThenBy(m => m.DepartmentId)
-					.ToList();
+				// Only SMS-supporting (non-free plan) departments are switchable, so only list those.
+				var activeMemberships = await GetSmsSupportingMembershipsAsync(session.UserId);
 
 				if (activeMemberships.Count == 0)
 					return new ChatbotResponse { Text = ChatbotResources.Get("Dept_NoActiveMemberships", culture), Processed = true };
@@ -162,13 +185,12 @@ namespace Resgrid.Chatbot.Handlers
 				if (string.IsNullOrWhiteSpace(departmentIdentifier))
 					return new ChatbotResponse { Text = ChatbotResources.Get("Dept_SwitchSpecify", culture), Processed = true };
 
-				var allMemberRecords = await _departmentsService.GetAllDepartmentsForUserAsync(session.UserId);
-				var activeMemberships = allMemberRecords
-					.Where(m => !m.IsDeleted)
-					.ToList();
+				// Switching is limited to SMS-supporting (non-free plan) departments — the same set, in the
+				// same order, that ListDepartments shows, so a numeric pick maps to the displayed list.
+				var activeMemberships = await GetSmsSupportingMembershipsAsync(session.UserId);
 
 				if (activeMemberships.Count == 0)
-					return new ChatbotResponse { Text = ChatbotResources.Get("Dept_NoMembership", culture), Processed = true };
+					return new ChatbotResponse { Text = ChatbotResources.Get("Dept_NoActiveMemberships", culture), Processed = true };
 
 				DepartmentMember targetMembership = null;
 				var trimmedId = departmentIdentifier.Trim();

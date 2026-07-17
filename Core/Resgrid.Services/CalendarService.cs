@@ -25,11 +25,13 @@ namespace Resgrid.Services
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IEncryptionService _encryptionService;
 		private readonly ICalendarItemCheckInRepository _calendarItemCheckInRepository;
+		private readonly ITextResponsePromptService _textResponsePromptService;
 
 		public CalendarService(ICalendarItemsRepository calendarItemRepository, ICalendarItemTypeRepository calendarItemTypeRepository,
 			ICalendarItemAttendeeRepository calendarItemAttendeeRepository, IDepartmentsService departmentsService, ICommunicationService communicationService,
 			IUserProfileService userProfileService, IDepartmentGroupsService departmentGroupsService, IDepartmentSettingsService departmentSettingsService,
-			IEncryptionService encryptionService, ICalendarItemCheckInRepository calendarItemCheckInRepository)
+			IEncryptionService encryptionService, ICalendarItemCheckInRepository calendarItemCheckInRepository,
+			ITextResponsePromptService textResponsePromptService = null)
 		{
 			_calendarItemRepository = calendarItemRepository;
 			_calendarItemTypeRepository = calendarItemTypeRepository;
@@ -41,6 +43,7 @@ namespace Resgrid.Services
 			_departmentSettingsService = departmentSettingsService;
 			_encryptionService = encryptionService;
 			_calendarItemCheckInRepository = calendarItemCheckInRepository;
+			_textResponsePromptService = textResponsePromptService;
 		}
 
 		public async Task<List<CalendarItem>> GetAllCalendarItemsForDepartmentAsync(int departmentId)
@@ -501,6 +504,9 @@ namespace Resgrid.Services
 				else
 					message = $"on {adjustedDateTime.ToShortDateString()} - {adjustedDateTime.ToShortTimeString()} at {calendarItem.Location}";
 
+				if (calendarItem.SignupType == (int)CalendarItemSignupTypes.RSVP)
+					message += " Reply YES or NO.";
+
 				if (ConfigHelper.CanTransmit(department.DepartmentId))
 				{
 					if (items.Any(x => x.StartsWith("D:")))
@@ -508,7 +514,7 @@ namespace Resgrid.Services
 						// Notify the entire department
 						foreach (var profile in profiles)
 						{
-							await _communicationService.SendCalendarAsync(profile.Key, calendarItem.DepartmentId, message, departmentNumber, title, profile.Value, department);
+							await SendCalendarPromptAsync(calendarItem, profile.Key, message, departmentNumber, title, profile.Value, department);
 						}
 					}
 					else
@@ -526,9 +532,9 @@ namespace Resgrid.Services
 									foreach (var member in group.Members)
 									{
 										if (profiles.ContainsKey(member.UserId))
-											await _communicationService.SendCalendarAsync(member.UserId, calendarItem.DepartmentId, message, departmentNumber, title, profiles[member.UserId], department);
+											await SendCalendarPromptAsync(calendarItem, member.UserId, message, departmentNumber, title, profiles[member.UserId], department);
 										else
-											await _communicationService.SendCalendarAsync(member.UserId, calendarItem.DepartmentId, message, departmentNumber, title, null, department);
+											await SendCalendarPromptAsync(calendarItem, member.UserId, message, departmentNumber, title, null, department);
 									}
 								}
 							}
@@ -559,18 +565,41 @@ namespace Resgrid.Services
 				? $"on {adjustedDateTime.ToShortDateString()} - {adjustedDateTime.ToShortTimeString()}"
 				: $"on {adjustedDateTime.ToShortDateString()} - {adjustedDateTime.ToShortTimeString()} at {calendarItem.Location}";
 
+			if (calendarItem.SignupType == (int)CalendarItemSignupTypes.RSVP)
+				message += " Reply YES or NO.";
+
 			if (ConfigHelper.CanTransmit(department.DepartmentId))
 			{
 				foreach (var userId in userIds)
 				{
 					if (profiles.ContainsKey(userId))
-						await _communicationService.SendCalendarAsync(userId, calendarItem.DepartmentId, message, departmentNumber, title, profiles[userId], department);
+						await SendCalendarPromptAsync(calendarItem, userId, message, departmentNumber, title, profiles[userId], department);
 					else
-						await _communicationService.SendCalendarAsync(userId, calendarItem.DepartmentId, message, departmentNumber, title, null, department);
+						await SendCalendarPromptAsync(calendarItem, userId, message, departmentNumber, title, null, department);
 				}
 			}
 
 			return true;
+		}
+
+		private async System.Threading.Tasks.Task SendCalendarPromptAsync(CalendarItem calendarItem, string userId, string message,
+			string departmentNumber, string title, UserProfile profile, Department department)
+		{
+			await _communicationService.SendCalendarAsync(userId, calendarItem.DepartmentId, message,
+				departmentNumber, title, profile, department);
+
+			if (_textResponsePromptService == null
+				|| calendarItem.SignupType != (int)CalendarItemSignupTypes.RSVP)
+				return;
+
+			try
+			{
+				await _textResponsePromptService.RecordCalendarRsvpPromptAsync(calendarItem, userId);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"Unable to record calendar RSVP prompt for item {calendarItem.CalendarItemId} and user {userId}.");
+			}
 		}
 
 		public async Task<List<CalendarItem>> GetCalendarItemsToNotifyAsync(DateTime timestamp)

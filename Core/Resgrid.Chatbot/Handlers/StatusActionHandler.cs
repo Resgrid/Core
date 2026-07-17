@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Resgrid.Chatbot.Interfaces;
 using Resgrid.Chatbot.Localization;
 using Resgrid.Chatbot.Models;
+using Resgrid.Model;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Chatbot.Handlers
@@ -12,11 +13,14 @@ namespace Resgrid.Chatbot.Handlers
 	{
 		private readonly IActionLogsService _actionLogsService;
 		private readonly ICustomStateService _customStateService;
+		private readonly IChatbotDepartmentConfigService _departmentConfigService;
 
-		public StatusActionHandler(IActionLogsService actionLogsService, ICustomStateService customStateService)
+		public StatusActionHandler(IActionLogsService actionLogsService, ICustomStateService customStateService,
+			IChatbotDepartmentConfigService departmentConfigService = null)
 		{
 			_actionLogsService = actionLogsService;
 			_customStateService = customStateService;
+			_departmentConfigService = departmentConfigService;
 		}
 
 		public ChatbotIntentType IntentType => ChatbotIntentType.SetStatus;
@@ -25,41 +29,49 @@ namespace Resgrid.Chatbot.Handlers
 		{
 			try
 			{
-				int statusId;
+				CustomStateDetail resolvedStatus = null;
 
 				if (intent.Parameters.TryGetValue("customActionId", out var customIdStr) && int.TryParse(customIdStr, out var customStatusId))
 				{
-					statusId = customStatusId;
+					var statuses = await GetAvailableStatusesAsync(session.DepartmentId);
+					resolvedStatus = Services.CustomStateMatcher.FindById(statuses, customStatusId);
 				}
 				else if (intent.Parameters.TryGetValue("actionType", out var actionTypeStr) && int.TryParse(actionTypeStr, out var actionTypeId))
 				{
-					statusId = actionTypeId;
+					resolvedStatus = await ResolveStatusIdAsync(session.DepartmentId, actionTypeId);
 				}
 				else if (intent.Parameters.TryGetValue("statusName", out var statusNameInput) && !string.IsNullOrWhiteSpace(statusNameInput))
 				{
-					// "SET STATUS TO <name>": resolve against the department's custom personnel states
-					// first (this is the only text form that can reach custom statuses), then the
-					// standard status words.
-					var resolved = await ResolveStatusNameAsync(session.DepartmentId, statusNameInput);
-					if (resolved == null)
-						return new ChatbotResponse { Text = ChatbotResources.Get("Status_CouldNotDetermine", session.Culture), Processed = false };
-
-					statusId = resolved.Value;
+					resolvedStatus = await ResolveStatusNameAsync(session.DepartmentId, statusNameInput);
 				}
-				else
-				{
+
+				if (resolvedStatus == null)
 					return new ChatbotResponse { Text = ChatbotResources.Get("Status_CouldNotDetermine", session.Culture), Processed = false };
+
+				var statusId = resolvedStatus.CustomStateDetailId;
+
+				var confirmed = intent.Parameters.TryGetValue("__confirmed", out var confirmFlag) && confirmFlag == "true";
+				var config = _departmentConfigService == null
+					? null
+					: await _departmentConfigService.GetConfigAsync(session.DepartmentId);
+				if (config?.RequireConfirmationForStatusChange == true && !confirmed)
+				{
+					session.State = ChatbotDialogState.AwaitingConfirmation;
+					session.PendingIntent = ChatbotIntentType.SetStatus;
+					session.Context.Clear();
+					session.Context["actionType"] = statusId.ToString();
+					return new ChatbotResponse
+					{
+						Text = ChatbotResources.Get("Unit_SetConfirm", session.Culture, "your status", resolvedStatus.ButtonText),
+						Processed = true
+					};
 				}
 
 				await _actionLogsService.SetUserActionAsync(session.UserId, session.DepartmentId, statusId);
 
-				var customStates = await _customStateService.GetAllActiveCustomStatesForDepartmentAsync(session.DepartmentId);
-				var action = await _actionLogsService.GetLastActionLogForUserAsync(session.UserId, session.DepartmentId);
-				var statusName = await _customStateService.GetCustomPersonnelStatusAsync(session.DepartmentId, action);
-
 				return new ChatbotResponse
 				{
-					Text = ChatbotResources.Get("Status_Updated", session.Culture, statusName?.ButtonText ?? statusId.ToString()),
+					Text = ChatbotResources.Get("Status_Updated", session.Culture, resolvedStatus.ButtonText),
 					Processed = true
 				};
 			}
@@ -70,32 +82,101 @@ namespace Resgrid.Chatbot.Handlers
 			}
 		}
 
-		private async Task<int?> ResolveStatusNameAsync(int departmentId, string statusName)
+		private async Task<CustomStateDetail> ResolveStatusNameAsync(int departmentId, string statusName)
 		{
 			var name = statusName.Trim().TrimEnd('?', '!', '.', ',');
+			var statuses = await GetAvailableStatusesAsync(departmentId);
+			var match = Services.CustomStateMatcher.FindBySelection(statuses, name)
+				?? Services.CustomStateMatcher.FindByName(statuses, name);
+			if (match != null)
+				return match;
 
-			var customStates = await _customStateService.GetAllActiveCustomStatesForDepartmentAsync(departmentId);
-			var customActions = customStates?.FirstOrDefault(x => x.Type == (int)Model.CustomStateTypes.Personnel);
-			if (customActions != null && !customActions.IsDeleted && customActions.GetActiveDetails()?.Any() == true)
+			if (int.TryParse(name, out var selection))
 			{
-				var detail = customActions.GetActiveDetails()
-					.FirstOrDefault(d => string.Equals(d.ButtonText?.Trim(), name, StringComparison.OrdinalIgnoreCase)
-						|| string.Equals(d.ButtonText?.Replace(" ", ""), name.Replace(" ", ""), StringComparison.OrdinalIgnoreCase));
-
-				if (detail != null)
-					return detail.CustomStateDetailId;
+				var legacyId = selection switch
+				{
+					1 => (int)Model.ActionTypes.Responding,
+					2 => (int)Model.ActionTypes.NotResponding,
+					3 => (int)Model.ActionTypes.OnScene,
+					4 => (int)Model.ActionTypes.StandingBy,
+					_ => -1
+				};
+				if (legacyId >= 0)
+					return await ResolveStatusIdAsync(departmentId, legacyId, statuses);
 			}
 
-			// Standard status words (spaces optional).
-			return name.Replace(" ", "").ToLowerInvariant() switch
+			var baseType = Services.CustomStateMatcher.PersonnelBaseTypeFor(name);
+			if (baseType.HasValue)
 			{
-				"responding" => (int)Model.ActionTypes.Responding,
-				"notresponding" => (int)Model.ActionTypes.NotResponding,
-				"onscene" => (int)Model.ActionTypes.OnScene,
-				"standingby" => (int)Model.ActionTypes.StandingBy,
-				"available" => (int)Model.ActionTypes.AvailableStation,
-				_ => (int?)null
+				match = Services.CustomStateMatcher.FindByBaseType(statuses, baseType.Value);
+				if (match == null && baseType == Model.ActionBaseTypes.Standby)
+					match = Services.CustomStateMatcher.FindByBaseType(statuses, Model.ActionBaseTypes.Available);
+			}
+
+			if (match != null)
+				return match;
+
+			var fallback = FallbackStatusForName(name);
+			return fallback != null && (statuses == null || statuses.Count == 0
+				|| statuses.All(x => x.CustomStateDetailId <= 25))
+				? fallback
+				: null;
+		}
+
+		private async Task<CustomStateDetail> ResolveStatusIdAsync(int departmentId, int statusId,
+			System.Collections.Generic.List<CustomStateDetail> statuses = null)
+		{
+			statuses ??= await GetAvailableStatusesAsync(departmentId);
+			var match = Services.CustomStateMatcher.FindById(statuses, statusId);
+			if (match != null)
+				return match;
+
+			var fallback = FallbackStatus(statusId);
+			if (fallback == null)
+				return null;
+
+			match = Services.CustomStateMatcher.FindByName(statuses, fallback.ButtonText);
+			var baseType = Services.CustomStateMatcher.PersonnelBaseTypeFor(fallback.ButtonText);
+			if (match == null && baseType.HasValue)
+				match = Services.CustomStateMatcher.FindByBaseType(statuses, baseType.Value);
+
+			return match ?? ((statuses == null || statuses.Count == 0) ? fallback : null);
+		}
+
+		private async Task<System.Collections.Generic.List<CustomStateDetail>> GetAvailableStatusesAsync(int departmentId)
+			=> _customStateService == null
+				? null
+				: await _customStateService.GetCustomPersonnelStatusesOrDefaultsAsync(departmentId);
+
+		private static CustomStateDetail FallbackStatusForName(string name)
+		{
+			return Services.CustomStateMatcher.Normalize(name) switch
+			{
+				"responding" => FallbackStatus((int)Model.ActionTypes.Responding),
+				"notresponding" => FallbackStatus((int)Model.ActionTypes.NotResponding),
+				"onscene" => FallbackStatus((int)Model.ActionTypes.OnScene),
+				"standingby" => FallbackStatus((int)Model.ActionTypes.StandingBy),
+				"available" => FallbackStatus((int)Model.ActionTypes.AvailableStation),
+				_ => null
 			};
+		}
+
+		private static CustomStateDetail FallbackStatus(int statusId)
+		{
+			var name = statusId switch
+			{
+				(int)Model.ActionTypes.StandingBy => "Standing By",
+				(int)Model.ActionTypes.NotResponding => "Not Responding",
+				(int)Model.ActionTypes.Responding => "Responding",
+				(int)Model.ActionTypes.OnScene => "On Scene",
+				(int)Model.ActionTypes.AvailableStation => "Available Station",
+				(int)Model.ActionTypes.RespondingToStation => "Responding to Station",
+				(int)Model.ActionTypes.RespondingToScene => "Responding to Scene",
+				(int)Model.ActionTypes.OnUnit => "On Unit",
+				_ => null
+			};
+
+			return name == null ? null : new CustomStateDetail { CustomStateDetailId = statusId, ButtonText = name };
 		}
 	}
 }

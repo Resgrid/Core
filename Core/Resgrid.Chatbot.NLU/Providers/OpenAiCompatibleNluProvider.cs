@@ -53,7 +53,7 @@ Classify the user's message into exactly one of these intent categories:
 - my_status: User asks about their current status or staffing level
 - list_calls: User wants to see active/open calls/incidents
 - call_detail: User asks about a specific call by number/name
-- respond_to_call: User says they are responding/going/en route to a specific call
+- respond_to_call: User acknowledges or declines a call response. Bare phrases such as ""responding"", ""on my way"", ""omw"", ""not responding"", or ""not going"" apply to the user's most recent dispatch; a call reference is optional
 - close_call: User wants to close/cancel/end a call
 - dispatch_call: User wants to create/draft a new call or incident (dispatch role)
 - list_units: User wants to see unit statuses
@@ -96,7 +96,8 @@ Respond with ONLY a JSON object. No explanation, no markdown, no additional text
 Extract any parameters mentioned:
 - For set_status: ""statusName"" (the status name), or ""actionType"" (numeric ID 1-4)
 - For set_staffing: ""staffingName"" (the staffing name), or ""staffingType"" (numeric S1-S5)
-- For call_detail/close_call/respond_to_call: ""callId"" (the call number)
+- For call_detail/close_call: ""callId"" (the call number)
+- For respond_to_call: ""callId"" or ""callRef"" when provided, and ""response"" (""yes"" for responding/going, ""no"" for not responding/not going)
 - For set_unit_status: ""unitName"", ""status""
 - For send_message: ""recipient"", ""body""
 - For respond_to_message: ""messageId"", ""response"" (yes/no)

@@ -276,6 +276,111 @@ namespace Resgrid.Tests.Chatbot
 		// ===================== DispatchCallHandler (destructive + confirmation) =====================
 
 		[Test]
+		public async Task SetStatus_WhenDepartmentRequiresConfirmation_DoesNotChangeStatusOnFirstPass()
+		{
+			var actionLogs = new Mock<IActionLogsService>();
+			var config = new Mock<IChatbotDepartmentConfigService>();
+			config.Setup(c => c.GetConfigAsync(1, false)).ReturnsAsync(new ChatbotDepartmentConfig
+			{
+				DepartmentId = 1,
+				RequireConfirmationForStatusChange = true
+			});
+			var session = Session();
+			var handler = new StatusActionHandler(actionLogs.Object, Mock.Of<ICustomStateService>(), config.Object);
+
+			var response = await handler.HandleAsync(Msg("set status responding"),
+				Intent(ChatbotIntentType.SetStatus, ("actionType", ((int)ActionTypes.Responding).ToString())), session);
+
+			response.Processed.Should().BeTrue();
+			session.State.Should().Be(ChatbotDialogState.AwaitingConfirmation);
+			session.PendingIntent.Should().Be(ChatbotIntentType.SetStatus);
+			actionLogs.Verify(a => a.SetUserActionAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(),
+				It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task SetStatus_BuiltInResponding_UsesDepartmentCustomBaseType()
+		{
+			var actionLogs = new Mock<IActionLogsService>();
+			var customStates = new Mock<ICustomStateService>();
+			customStates.Setup(x => x.GetCustomPersonnelStatusesOrDefaultsAsync(1)).ReturnsAsync(new List<CustomStateDetail>
+			{
+				new CustomStateDetail
+				{
+					CustomStateDetailId = 101,
+					ButtonText = "Rolling",
+					BaseType = (int)ActionBaseTypes.Responding
+				}
+			});
+
+			var handler = new StatusActionHandler(actionLogs.Object, customStates.Object);
+			var response = await handler.HandleAsync(Msg("set status responding"),
+				Intent(ChatbotIntentType.SetStatus, ("actionType", ((int)ActionTypes.Responding).ToString())), Session());
+
+			response.Text.Should().Contain("Rolling");
+			actionLogs.Verify(x => x.SetUserActionAsync("user-1", 1, 101, It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task SetStatus_AvailableName_UsesBuiltInAvailableStationWhenNoCustomSetExists()
+		{
+			var actionLogs = new Mock<IActionLogsService>();
+			var customStates = new Mock<ICustomStateService>();
+			customStates.Setup(x => x.GetCustomPersonnelStatusesOrDefaultsAsync(1)).ReturnsAsync(new List<CustomStateDetail>
+			{
+				new CustomStateDetail { CustomStateDetailId = (int)ActionTypes.Responding, ButtonText = "Responding" },
+				new CustomStateDetail { CustomStateDetailId = (int)ActionTypes.AvailableStation, ButtonText = "Available Station" }
+			});
+
+			var handler = new StatusActionHandler(actionLogs.Object, customStates.Object);
+			await handler.HandleAsync(Msg("set my status to available"),
+				Intent(ChatbotIntentType.SetStatus, ("statusName", "available")), Session());
+
+			actionLogs.Verify(x => x.SetUserActionAsync("user-1", 1, (int)ActionTypes.AvailableStation,
+				It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task SetStaffing_AvailableShortcut_UsesFirstConfiguredCustomLevel()
+		{
+			var userStates = new Mock<IUserStateService>();
+			var customStates = new Mock<ICustomStateService>();
+			customStates.Setup(x => x.GetCustomPersonnelStaffingsOrDefaultsAsync(1)).ReturnsAsync(new List<CustomStateDetail>
+			{
+				new CustomStateDetail { CustomStateDetailId = 201, ButtonText = "On Duty", Order = 0 },
+				new CustomStateDetail { CustomStateDetailId = 202, ButtonText = "Off Duty", Order = 1 }
+			});
+
+			var handler = new StaffingActionHandler(userStates.Object, customStates.Object);
+			var response = await handler.HandleAsync(Msg("available"),
+				Intent(ChatbotIntentType.SetStaffing, ("staffingType", ((int)UserStateTypes.Available).ToString())), Session());
+
+			response.Text.Should().Contain("On Duty");
+			userStates.Verify(x => x.CreateUserState("user-1", 1, 201, It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task DispatchCall_WhenDisabledByDepartment_IsDeniedBeforeAuthorization()
+		{
+			var calls = new Mock<ICallsService>();
+			var authz = new Mock<IAuthorizationService>();
+			var config = new Mock<IChatbotDepartmentConfigService>();
+			config.Setup(c => c.GetConfigAsync(1, false)).ReturnsAsync(new ChatbotDepartmentConfig
+			{
+				DepartmentId = 1,
+				AllowDispatchViaChatbot = false
+			});
+
+			var handler = new DispatchCallHandler(calls.Object, authz.Object, config.Object);
+			var response = await handler.HandleAsync(Msg("dispatch structure fire"),
+				Intent(ChatbotIntentType.DispatchCall, ("description", "structure fire")), Session());
+
+			response.Processed.Should().BeFalse();
+			response.Text.Should().Contain("disabled");
+			authz.Verify(a => a.CanUserCreateCallAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+		}
+
+		[Test]
 		public async Task DispatchCall_WithoutPermission_IsDenied()
 		{
 			var calls = new Mock<ICallsService>();
@@ -356,7 +461,153 @@ namespace Resgrid.Tests.Chatbot
 			var response = await handler.HandleAsync(Msg("respond to c7"), Intent(ChatbotIntentType.RespondToCall, ("callId", "7")), Session(departmentId: 1));
 
 			response.Processed.Should().BeTrue();
-			actionLogs.Verify(a => a.SetUserActionAsync("user-1", 1, (int)ActionTypes.Responding, It.IsAny<string>(), 7, It.IsAny<CancellationToken>()), Times.Once);
+			actionLogs.Verify(a => a.SetUserActionAsync("user-1", 1, (int)ActionTypes.Responding,
+				It.IsAny<string>(), 7, (int)DestinationEntityTypes.Call, It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task RespondToCall_BareResponse_UsesMostRecentDirectDispatchAndCustomStatus()
+		{
+			var recentCall = new Call
+			{
+				CallId = 8,
+				Name = "Medical",
+				DepartmentId = 1,
+				State = (int)CallStates.Active,
+				LoggedOn = DateTime.UtcNow.AddMinutes(-10),
+				Dispatches = new List<CallDispatch>
+				{
+					new CallDispatch { UserId = "user-1", DispatchedOn = DateTime.UtcNow.AddMinutes(-5) }
+				}
+			};
+			var unrelatedCall = new Call
+			{
+				CallId = 9,
+				Name = "Alarm",
+				DepartmentId = 1,
+				State = (int)CallStates.Active,
+				LoggedOn = DateTime.UtcNow,
+				Dispatches = new List<CallDispatch> { new CallDispatch { UserId = "someone-else", DispatchedOn = DateTime.UtcNow } }
+			};
+			var calls = new Mock<ICallsService>();
+			calls.Setup(x => x.GetActiveCallsByDepartmentAsync(1)).ReturnsAsync(new List<Call> { unrelatedCall, recentCall });
+			calls.Setup(x => x.PopulateCallData(It.IsAny<Call>(), true, false, false, true, false, true, false, false, false, false))
+				.ReturnsAsync((Call call, bool _, bool _, bool _, bool _, bool _, bool _, bool _, bool _, bool _, bool _) => call);
+
+			var customStates = new Mock<ICustomStateService>();
+			customStates.Setup(x => x.GetCustomPersonnelStatusesOrDefaultsAsync(1)).ReturnsAsync(new List<CustomStateDetail>
+			{
+				new CustomStateDetail { CustomStateDetailId = 101, ButtonText = "Rolling", BaseType = (int)ActionBaseTypes.Responding }
+			});
+			var actionLogs = new Mock<IActionLogsService>();
+
+			var handler = new RespondToCallHandler(calls.Object, actionLogs.Object, customStates.Object);
+			var response = await handler.HandleAsync(Msg("omw"),
+				Intent(ChatbotIntentType.RespondToCall, ("response", "yes")), Session());
+
+			response.Processed.Should().BeTrue();
+			response.Text.Should().Contain("Call #8");
+			actionLogs.Verify(x => x.SetUserActionAsync("user-1", 1, 101, It.IsAny<string>(), 8,
+				(int)DestinationEntityTypes.Call, It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task RespondToCall_BareResponse_FallsBackToGroupDispatchMembership()
+		{
+			var call = new Call
+			{
+				CallId = 10,
+				Name = "Group Call",
+				DepartmentId = 1,
+				State = (int)CallStates.Active,
+				LoggedOn = DateTime.UtcNow.AddMinutes(-20),
+				Dispatches = new List<CallDispatch>(),
+				GroupDispatches = new List<CallDispatchGroup>
+				{
+					new CallDispatchGroup { DepartmentGroupId = 5, DispatchedOn = DateTime.UtcNow.AddMinutes(-10) }
+				},
+				RoleDispatches = new List<CallDispatchRole>()
+			};
+			var calls = CallsWithPopulatedDispatches(call);
+			var groups = new Mock<IDepartmentGroupsService>();
+			groups.Setup(x => x.GetAllMembersForGroupAsync(5)).ReturnsAsync(new List<DepartmentGroupMember>
+			{
+				new DepartmentGroupMember { UserId = "user-1", DepartmentGroupId = 5 }
+			});
+			var actionLogs = new Mock<IActionLogsService>();
+			var handler = new RespondToCallHandler(calls.Object, actionLogs.Object, null, groups.Object);
+
+			var response = await handler.HandleAsync(Msg("responding"),
+				Intent(ChatbotIntentType.RespondToCall, ("response", "yes")), Session());
+
+			response.Text.Should().Contain("Call #10");
+			actionLogs.Verify(x => x.SetUserActionAsync("user-1", 1, (int)ActionTypes.Responding,
+				It.IsAny<string>(), 10, (int)DestinationEntityTypes.Call, It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task RespondToCall_BareResponse_FallsBackToRoleDispatchMembership()
+		{
+			var call = new Call
+			{
+				CallId = 11,
+				Name = "Role Call",
+				DepartmentId = 1,
+				State = (int)CallStates.Active,
+				LoggedOn = DateTime.UtcNow.AddMinutes(-20),
+				Dispatches = new List<CallDispatch>(),
+				GroupDispatches = new List<CallDispatchGroup>(),
+				RoleDispatches = new List<CallDispatchRole>
+				{
+					new CallDispatchRole { RoleId = 7, DispatchedOn = DateTime.UtcNow.AddMinutes(-5) }
+				}
+			};
+			var calls = CallsWithPopulatedDispatches(call);
+			var roles = new Mock<IPersonnelRolesService>();
+			roles.Setup(x => x.GetRolesForUserAsync("user-1", 1)).ReturnsAsync(new List<PersonnelRole>
+			{
+				new PersonnelRole { PersonnelRoleId = 7 }
+			});
+			var actionLogs = new Mock<IActionLogsService>();
+			var handler = new RespondToCallHandler(calls.Object, actionLogs.Object, null, null, roles.Object);
+
+			var response = await handler.HandleAsync(Msg("omw"),
+				Intent(ChatbotIntentType.RespondToCall, ("response", "yes")), Session());
+
+			response.Text.Should().Contain("Call #11");
+			actionLogs.Verify(x => x.SetUserActionAsync("user-1", 1, (int)ActionTypes.Responding,
+				It.IsAny<string>(), 11, (int)DestinationEntityTypes.Call, It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task RespondToCall_NotGoing_UsesCustomNotRespondingStatus()
+		{
+			var calls = new Mock<ICallsService>();
+			calls.Setup(x => x.GetCallByIdAsync(7, It.IsAny<bool>()))
+				.ReturnsAsync(new Call { CallId = 7, Name = "Fire", DepartmentId = 1, State = (int)CallStates.Active });
+			var customStates = new Mock<ICustomStateService>();
+			customStates.Setup(x => x.GetCustomPersonnelStatusesOrDefaultsAsync(1)).ReturnsAsync(new List<CustomStateDetail>
+			{
+				new CustomStateDetail { CustomStateDetailId = 102, ButtonText = "Declined", BaseType = (int)ActionBaseTypes.NotResponding }
+			});
+			var actionLogs = new Mock<IActionLogsService>();
+
+			var handler = new RespondToCallHandler(calls.Object, actionLogs.Object, customStates.Object);
+			var response = await handler.HandleAsync(Msg("not going to c7"),
+				Intent(ChatbotIntentType.RespondToCall, ("callId", "7"), ("response", "no")), Session());
+
+			response.Text.Should().Contain("Declined").And.Contain("Call #7");
+			actionLogs.Verify(x => x.SetUserActionAsync("user-1", 1, 102, It.IsAny<string>(), 7,
+				(int)DestinationEntityTypes.Call, It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		private static Mock<ICallsService> CallsWithPopulatedDispatches(params Call[] callsToReturn)
+		{
+			var calls = new Mock<ICallsService>();
+			calls.Setup(x => x.GetActiveCallsByDepartmentAsync(1)).ReturnsAsync(new List<Call>(callsToReturn));
+			calls.Setup(x => x.PopulateCallData(It.IsAny<Call>(), true, false, false, true, false, true, false, false, false, false))
+				.ReturnsAsync((Call call, bool _, bool _, bool _, bool _, bool _, bool _, bool _, bool _, bool _, bool _) => call);
+			return calls;
 		}
 
 		// ===================== SetUnitStatusHandler (destructive + confirmation) =====================
@@ -464,6 +715,37 @@ namespace Resgrid.Tests.Chatbot
 
 			response.Processed.Should().BeTrue();
 			units.Verify(u => u.SetUnitStateAsync(7, 20, 1, It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task SetUnitStatus_UsesStateSetAssignedToUnitTypeAndMatchesBaseType()
+		{
+			var units = UnitsWith(7, "Engine 1");
+			var state = (await units.Object.GetAllLatestStatusForUnitsByDepartmentIdAsync(1))[0];
+			state.Unit.Type = "Engine";
+			units.Setup(x => x.GetUnitTypeByNameAsync(1, "Engine"))
+				.ReturnsAsync(new UnitType { UnitTypeId = 3, DepartmentId = 1, Type = "Engine", CustomStatesId = 55 });
+
+			var customStates = new Mock<ICustomStateService>();
+			customStates.Setup(x => x.GetCustomSateByIdAsync(55)).ReturnsAsync(new CustomState
+			{
+				CustomStateId = 55,
+				DepartmentId = 1,
+				Type = (int)CustomStateTypes.Unit,
+				Details = new List<CustomStateDetail>
+				{
+					new CustomStateDetail { CustomStateDetailId = 301, ButtonText = "Rolling", BaseType = (int)ActionBaseTypes.Responding }
+				}
+			});
+			var authz = new Mock<IAuthorizationService>();
+			authz.Setup(x => x.CanUserModifyUnitAsync("user-1", 7)).ReturnsAsync(true);
+
+			var handler = new SetUnitStatusHandler(units.Object, customStates.Object, authz.Object);
+			var response = await handler.HandleAsync(Msg("set unit Engine 1 to responding"),
+				Intent(ChatbotIntentType.SetUnitStatus, ("unitName", "Engine 1"), ("status", "Responding"), ("__confirmed", "true")), Session());
+
+			response.Text.Should().Contain("Rolling");
+			units.Verify(x => x.SetUnitStateAsync(7, 301, 1, It.IsAny<CancellationToken>()), Times.Once);
 		}
 
 		// ===================== ShiftSignupHandler =====================

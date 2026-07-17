@@ -18,7 +18,12 @@ namespace Resgrid.Chatbot.Models
 		/// Step-up security-PIN prompt for a confirmed destructive action (the user already replied
 		/// YES; the pending intent executes once the correct PIN is supplied).
 		/// </summary>
-		AwaitingPin = 8
+		AwaitingPin = 8,
+
+		/// <summary>
+		/// The user sent a short response such as YES/NO that could apply to more than one recent prompt.
+		/// </summary>
+		AwaitingResponseTarget = 9
 	}
 
 	public class ChatbotSession

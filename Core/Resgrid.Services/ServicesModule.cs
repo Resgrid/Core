@@ -35,6 +35,7 @@ namespace Resgrid.Services
 			builder.RegisterType<PushLogsService>().As<IPushLogsService>().InstancePerLifetimeScope();
 			builder.RegisterType<PushService>().As<IPushService>().SingleInstance();
 			builder.RegisterType<MessageService>().As<IMessageService>().InstancePerLifetimeScope();
+			builder.RegisterType<TextResponsePromptService>().As<ITextResponsePromptService>().InstancePerLifetimeScope();
 			builder.RegisterType<AddressService>().As<IAddressService>().InstancePerLifetimeScope();
 			builder.RegisterType<UserStateService>().As<IUserStateService>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentsService>().As<IDepartmentsService>().InstancePerLifetimeScope();

@@ -134,7 +134,23 @@ namespace Resgrid.Chatbot.Handlers
 			}
 
 			var detail = await _customStateService.GetCustomDetailForDepartmentAsync(departmentId, state.State);
-			return detail != null ? AvailabilityMatrix.ForCustomBaseType(detail.BaseType) : AvailabilityClass.Unknown;
+			if (detail == null)
+				return AvailabilityClass.Unknown;
+
+			var baseClassification = AvailabilityMatrix.ForCustomBaseType(detail.BaseType);
+			if (baseClassification != AvailabilityClass.Unknown)
+				return baseClassification;
+
+			// Staffing state sets predate BaseType and many still use None. Preserve their operational
+			// meaning through the standard/custom template labels instead of treating Off Duty as available.
+			return Services.CustomStateMatcher.Normalize(detail.ButtonText) switch
+			{
+				"available" or "onduty" or "oncall" or "onshift" => AvailabilityClass.Available,
+				"delayed" or "onbreak" => AvailabilityClass.Delayed,
+				"unavailable" or "offduty" or "notavailable" or "away" => AvailabilityClass.Unavailable,
+				"committed" or "ontask" => AvailabilityClass.Committed,
+				_ => AvailabilityClass.Unknown
+			};
 		}
 	}
 }

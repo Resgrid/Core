@@ -22,6 +22,8 @@ namespace Resgrid.Workers.Framework.Logic
 				var _departmentsService = Bootstrapper.GetKernel().Resolve<IDepartmentsService>();
 				var _userProfileService = Bootstrapper.GetKernel().Resolve<IUserProfileService>();
 				var _departmentSettingsService = Bootstrapper.GetKernel().Resolve<IDepartmentSettingsService>();
+				var _calendarService = Bootstrapper.GetKernel().Resolve<ICalendarService>();
+				var _textResponsePromptService = Bootstrapper.GetKernel().Resolve<ITextResponsePromptService>();
 
 				var item = new ProcessedNotification();
 
@@ -58,6 +60,18 @@ namespace Resgrid.Workers.Framework.Logic
 						foreach (var notification in notificaitons)
 						{
 							var text = await _notificationService.GetMessageForTypeAsync(notification);
+							CalendarItem rsvpItem = null;
+							if (notification.Type == EventTypes.CalendarEventAdded
+								|| notification.Type == EventTypes.CalendarEventUpcoming
+								|| notification.Type == EventTypes.CalendarEventUpdated)
+							{
+								var calendarItem = await _calendarService.GetCalendarItemByIdAsync(notification.ItemId);
+								if (calendarItem?.SignupType == (int)CalendarItemSignupTypes.RSVP)
+								{
+									rsvpItem = calendarItem;
+									text += " Reply YES or NO.";
+								}
+							}
 
 							if (!String.IsNullOrWhiteSpace(text))
 							{
@@ -71,6 +85,17 @@ namespace Resgrid.Workers.Framework.Logic
 											profile.SendNotificationSms = false;
 
 										await _communicationService.SendNotificationAsync(user, notification.DepartmentId, text, queueItem.DepartmentTextNumber, queueItem.Department, "Notification", profile);
+										if (rsvpItem != null)
+										{
+											try
+											{
+												await _textResponsePromptService.RecordCalendarRsvpPromptAsync(rsvpItem, user);
+											}
+											catch (Exception ex)
+											{
+												Logging.LogException(ex);
+											}
+										}
 									}
 								}
 							}
@@ -83,6 +108,8 @@ namespace Resgrid.Workers.Framework.Logic
 				_departmentsService = null;
 				_userProfileService = null;
 				_departmentSettingsService = null;
+				_calendarService = null;
+				_textResponsePromptService = null;
 			}
 
 			return true;

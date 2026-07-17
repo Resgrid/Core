@@ -1,14 +1,25 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Resgrid.Chatbot.Interfaces;
 using Resgrid.Chatbot.Localization;
 using Resgrid.Chatbot.Models;
+using Resgrid.Model;
+using Resgrid.Model.Services;
 
 namespace Resgrid.Chatbot.Services
 {
 	public class ConversationEngine : IConversationEngine
 	{
+		private readonly ICustomStateService _customStateService;
+
+		public ConversationEngine(ICustomStateService customStateService = null)
+		{
+			_customStateService = customStateService;
+		}
+
 		public Task<ConversationResult> ProcessAsync(ChatbotMessage message, ChatbotSession session, ChatbotIntent intent)
 		{
 			if (session == null)
@@ -101,15 +112,22 @@ namespace Resgrid.Chatbot.Services
 		/// <summary>
 		/// Phase 2: Determines if an intent type requires multi-turn dialog.
 		/// </summary>
-		public bool IsMultiTurnIntent(ChatbotIntentType intentType)
+		public bool NeedsParameterCollection(ChatbotIntent intent)
 		{
-			return intentType switch
+			if (intent == null)
+				return false;
+
+			return intent.Type switch
 			{
 				// SendMessage is handled single-turn by MessageSendHandler (recipient+body are captured
 				// inline by the classifier). It is intentionally NOT multi-turn here: the previous
 				// multi-turn path only *faked* the send. A guided "ask for the body" flow can be added later.
-				ChatbotIntentType.SetStatus => true,
-				ChatbotIntentType.SetStaffing => true,
+				ChatbotIntentType.SetStatus => !intent.Parameters.ContainsKey("actionType")
+					&& !intent.Parameters.ContainsKey("customActionId")
+					&& !intent.Parameters.ContainsKey("statusName"),
+				ChatbotIntentType.SetStaffing => !intent.Parameters.ContainsKey("staffingType")
+					&& !intent.Parameters.ContainsKey("customStaffingId")
+					&& !intent.Parameters.ContainsKey("staffingName"),
 				// CloseCall/DispatchCall are single-turn: their handlers run a confirmation pass via
 				// AwaitingConfirmation, which ChatbotIngressService re-dispatches on YES (addendum §5).
 				_ => false
@@ -119,21 +137,21 @@ namespace Resgrid.Chatbot.Services
 		/// <summary>
 		/// Phase 2: Begins a multi-turn dialog for an intent, returning the first prompt.
 		/// </summary>
-		public Task<ChatbotResponse> BeginDialogAsync(ChatbotIntent intent, ChatbotSession session)
+		public async Task<ChatbotResponse> BeginDialogAsync(ChatbotIntent intent, ChatbotSession session)
 		{
 			session.State = ChatbotDialogState.AwaitingParameter;
 			session.PendingIntent = intent.Type;
 
-			var prompt = BuildParameterPrompt(intent, session.Culture);
-			return Task.FromResult(new ChatbotResponse
+			var prompt = await BuildParameterPromptAsync(intent, session);
+			return new ChatbotResponse
 			{
 				Text = prompt,
 				Processed = true,
 				Intent = intent
-			});
+			};
 		}
 
-		private Task<ConversationResult> HandleNewIntent(ChatbotMessage message, ChatbotSession session, ChatbotIntent intent)
+		private async Task<ConversationResult> HandleNewIntent(ChatbotMessage message, ChatbotSession session, ChatbotIntent intent)
 		{
 			// Check if the intent requires multi-turn (needs parameters not provided)
 			if (NeedsParameterCollection(intent))
@@ -141,8 +159,8 @@ namespace Resgrid.Chatbot.Services
 				session.State = ChatbotDialogState.AwaitingParameter;
 				session.PendingIntent = intent.Type;
 
-				var prompt = BuildParameterPrompt(intent, session.Culture);
-				return Task.FromResult(new ConversationResult
+				var prompt = await BuildParameterPromptAsync(intent, session);
+				return new ConversationResult
 				{
 					Response = new ChatbotResponse
 					{
@@ -153,17 +171,17 @@ namespace Resgrid.Chatbot.Services
 					IsComplete = false,
 					NeedsFollowUp = true,
 					NextState = ChatbotDialogState.AwaitingParameter
-				});
+				};
 			}
 
 			// Simple intent - complete in one turn
 			session.State = ChatbotDialogState.Completed;
-			return Task.FromResult(new ConversationResult
+			return new ConversationResult
 			{
 				IsComplete = true,
 				NeedsFollowUp = false,
 				NextState = ChatbotDialogState.Idle
-			});
+			};
 		}
 
 		private Task<ConversationResult> HandleParameterResponse(ChatbotMessage message, ChatbotSession session, ChatbotIntent intent)
@@ -269,47 +287,56 @@ namespace Resgrid.Chatbot.Services
 			});
 		}
 
-		private static bool NeedsParameterCollection(ChatbotIntent intent)
+		private async Task<string> BuildParameterPromptAsync(ChatbotIntent intent, ChatbotSession session)
 		{
-			if (intent == null) return false;
-
-			return intent.Type switch
+			if (_customStateService != null && intent.Type == ChatbotIntentType.SetStatus)
 			{
-				// SendMessage is single-turn (handled inline by MessageSendHandler), so it is not
-				// collected here — kept consistent with IsMultiTurnIntent, which also excludes SendMessage.
-				ChatbotIntentType.SendMessage => false,
-				ChatbotIntentType.SetStatus => !intent.Parameters.ContainsKey("actionType") && !intent.Parameters.ContainsKey("customActionId") && !intent.Parameters.ContainsKey("statusName"),
-				ChatbotIntentType.SetStaffing => !intent.Parameters.ContainsKey("staffingType") && !intent.Parameters.ContainsKey("staffingName"),
-				ChatbotIntentType.DispatchCall => !intent.Parameters.ContainsKey("description"),
-				ChatbotIntentType.CloseCall => !intent.Parameters.ContainsKey("callId"),
-				_ => false
-			};
-		}
+				var customState = await _customStateService.GetActivePersonnelStateForDepartmentAsync(session.DepartmentId);
+				var details = customState?.GetActiveDetails();
+				if (details?.Any() == true)
+					return BuildOptionsPrompt("Which status? Reply with a number or name:", details);
+			}
 
-		private static string BuildParameterPrompt(ChatbotIntent intent, string culture)
-		{
+			if (_customStateService != null && intent.Type == ChatbotIntentType.SetStaffing)
+			{
+				var customState = await _customStateService.GetActiveStaffingLevelsForDepartmentAsync(session.DepartmentId);
+				var details = customState?.GetActiveDetails();
+				if (details?.Any() == true)
+					return BuildOptionsPrompt("Which staffing level? Reply with a number or name:", details);
+			}
+
 			return intent.Type switch
 			{
 				ChatbotIntentType.SendMessage when intent.Parameters.TryGetValue("recipient", out var recipient)
-					=> ChatbotResources.Get("Conv_PromptSendMessageTo", culture, recipient),
+					=> ChatbotResources.Get("Conv_PromptSendMessageTo", session.Culture, recipient),
 
 				ChatbotIntentType.SendMessage
-					=> ChatbotResources.Get("Conv_PromptSendMessage", culture),
+					=> ChatbotResources.Get("Conv_PromptSendMessage", session.Culture),
 
 				ChatbotIntentType.SetStatus
-					=> ChatbotResources.Get("Conv_PromptSetStatus", culture),
+					=> ChatbotResources.Get("Conv_PromptSetStatus", session.Culture),
 
 				ChatbotIntentType.SetStaffing
-					=> ChatbotResources.Get("Conv_PromptSetStaffing", culture),
+					=> ChatbotResources.Get("Conv_PromptSetStaffing", session.Culture),
 
 				ChatbotIntentType.DispatchCall
-					=> ChatbotResources.Get("Conv_PromptDispatchCall", culture),
+					=> ChatbotResources.Get("Conv_PromptDispatchCall", session.Culture),
 
 				ChatbotIntentType.CloseCall
-					=> ChatbotResources.Get("Conv_PromptCloseCall", culture),
+					=> ChatbotResources.Get("Conv_PromptCloseCall", session.Culture),
 
-				_ => ChatbotResources.Get("Conv_PromptDefault", culture)
+				_ => ChatbotResources.Get("Conv_PromptDefault", session.Culture)
 			};
+		}
+
+		private static string BuildOptionsPrompt(string heading, IEnumerable<CustomStateDetail> details)
+		{
+			var builder = new StringBuilder(heading);
+			var options = details.Where(x => x != null && !x.IsDeleted).OrderBy(x => x.Order).Take(10).ToList();
+			for (var i = 0; i < options.Count; i++)
+				builder.Append($"\n({i + 1}) {options[i].ButtonText}");
+
+			return builder.ToString();
 		}
 	}
 }

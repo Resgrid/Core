@@ -32,9 +32,10 @@ namespace Resgrid.Chatbot.Services
 			_cacheProvider = cacheProvider;
 		}
 
-		private TimeSpan Ttl => TimeSpan.FromMinutes(ChatbotConfig.DefaultSessionTimeoutMinutes > 0
-			? ChatbotConfig.DefaultSessionTimeoutMinutes
-			: 30);
+		private static TimeSpan GetTtl(ChatbotSession session)
+			=> TimeSpan.FromMinutes(session?.TtlMinutes > 0
+				? session.TtlMinutes
+				: (ChatbotConfig.DefaultSessionTimeoutMinutes > 0 ? ChatbotConfig.DefaultSessionTimeoutMinutes : 30));
 
 		private bool UseRedis()
 		{
@@ -200,8 +201,9 @@ namespace Resgrid.Chatbot.Services
 		private async Task SaveToRedisAsync(ChatbotSession session)
 		{
 			var json = JsonConvert.SerializeObject(session);
-			await _cacheProvider.SetStringAsync(SessionKey(session.SessionId), json, Ttl);
-			await _cacheProvider.SetStringAsync(ActiveKey(session.UserId, session.DepartmentId, session.Platform), session.SessionId, Ttl);
+			var ttl = GetTtl(session);
+			await _cacheProvider.SetStringAsync(SessionKey(session.SessionId), json, ttl);
+			await _cacheProvider.SetStringAsync(ActiveKey(session.UserId, session.DepartmentId, session.Platform), session.SessionId, ttl);
 		}
 
 		private async Task<ChatbotSession> GetFromRedisAsync(string sessionId)
@@ -222,6 +224,9 @@ namespace Resgrid.Chatbot.Services
 
 		private static ChatbotSession CreateNewSession(string userId, int departmentId, ChatbotPlatform platform)
 		{
+			var ttlMinutes = ChatbotConfig.DefaultSessionTimeoutMinutes > 0
+				? ChatbotConfig.DefaultSessionTimeoutMinutes
+				: 30;
 			return new ChatbotSession
 			{
 				SessionId = Guid.NewGuid().ToString("N"),
@@ -230,7 +235,8 @@ namespace Resgrid.Chatbot.Services
 				Platform = platform,
 				State = ChatbotDialogState.Idle,
 				CreatedAt = DateTime.UtcNow,
-				LastActivity = DateTime.UtcNow
+				LastActivity = DateTime.UtcNow,
+				TtlMinutes = ttlMinutes
 			};
 		}
 

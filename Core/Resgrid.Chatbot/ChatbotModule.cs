@@ -49,6 +49,10 @@ namespace Resgrid.Chatbot
 				.As<IChatbotUserSearchService>()
 				.InstancePerLifetimeScope();
 
+			builder.RegisterType<TextResponseResolver>()
+				.As<ITextResponseResolver>()
+				.InstancePerLifetimeScope();
+
 			// Default no-op Web Chat notifier; the real SignalR-backed notifier in the web layer
 			// overrides this (PreserveExistingDefaults keeps the real one winning regardless of order).
 			builder.RegisterType<NullChatbotWebChatNotifier>()

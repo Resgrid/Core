@@ -28,7 +28,6 @@ namespace Resgrid.Tests.Services
 			protected Mock<IUserStateService> _userStateServiceMock;
 			protected Mock<IDepartmentsService> _departmentsServiceMock;
 			protected Mock<IChatbotOutboundService> _chatbotOutboundServiceMock;
-
 			protected ICommunicationService _communicationService;
 
 			protected with_the_communication_service()
@@ -50,10 +49,10 @@ namespace Resgrid.Tests.Services
 					.ReturnsAsync(new DepartmentMember());
 
 				_chatbotOutboundServiceMock = new Mock<IChatbotOutboundService>();
-
 				_communicationService = new CommunicationService(_smsServiceMock.Object, _emailServiceMock.Object, _pushServiceMock.Object,
 					_geoLocationProviderMock.Object, _outboundVoiceProviderMock.Object, _userProfileServiceMock.Object, _departmentSettingsServiceMock.Object,
-					_subscriptionsServiceMock.Object, _userStateServiceMock.Object, _chatbotOutboundServiceMock.Object, _departmentsServiceMock.Object);
+					_subscriptionsServiceMock.Object, _userStateServiceMock.Object, _chatbotOutboundServiceMock.Object,
+					_departmentsServiceMock.Object);
 			}
 		}
 
@@ -120,6 +119,22 @@ namespace Resgrid.Tests.Services
 				_smsServiceMock.Verify(m => m.SendCallAsync(call, cd, null, 1, null, null, payment));
 				_emailServiceMock.Verify(m => m.SendCallAsync(call, cd, null));
 				//_pushServiceMock.Verify(m => m.PushCall(It.IsAny<StandardPushCall>(), Users.TestUser1Id));
+			}
+
+			[Test]
+			public async Task calendar_notifications_are_sent_by_sms_when_enabled()
+			{
+				var profile = new UserProfile
+				{
+					UserId = TestData.Users.TestUser1Id,
+					SendNotificationSms = true
+				};
+
+				await _communicationService.SendCalendarAsync(profile.UserId, 1,
+					"on 7/22 at 18:00. Reply YES or NO.", "15555550100", "New: Drill", profile);
+
+				_smsServiceMock.Verify(m => m.SendNotificationAsync(profile.UserId, 1,
+					"New: Drill on 7/22 at 18:00. Reply YES or NO.", "15555550100", profile), Times.Once);
 			}
 		}
 	}

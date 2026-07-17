@@ -111,7 +111,11 @@ namespace Resgrid.Tests.Chatbot
 			result.Parameters["query"].Should().Be("john");
 		}
 
-		[TestCase("responding", "set_status")]
+		[TestCase("responding", "respond_to_call")]
+		[TestCase("on my way", "respond_to_call")]
+		[TestCase("omw", "respond_to_call")]
+		[TestCase("not responding", "respond_to_call")]
+		[TestCase("not going", "respond_to_call")]
 		[TestCase("available", "set_staffing")]
 		[TestCase("units", "list_units")]
 		[TestCase("show active calls", "list_calls")]
@@ -120,6 +124,18 @@ namespace Resgrid.Tests.Chatbot
 		{
 			var result = await _classifier.ClassifyAsync(text);
 			result.IntentName.Should().Be(expectedIntent);
+		}
+
+		[TestCase("responding", "yes")]
+		[TestCase("omw", "yes")]
+		[TestCase("not responding", "no")]
+		[TestCase("not going", "no")]
+		public async Task Bare_call_response_extracts_response(string text, string expectedResponse)
+		{
+			var result = await _classifier.ClassifyAsync(text);
+
+			result.IntentName.Should().Be("respond_to_call");
+			result.Parameters["response"].Should().Be(expectedResponse);
 		}
 	}
 }

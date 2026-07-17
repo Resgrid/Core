@@ -1,9 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Resgrid.Chatbot.Interfaces;
 using Resgrid.Chatbot.Localization;
 using Resgrid.Chatbot.Models;
+using Resgrid.Model;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Chatbot.Handlers
@@ -25,76 +27,119 @@ namespace Resgrid.Chatbot.Handlers
 		{
 			try
 			{
-				int staffingId;
+				CustomStateDetail resolvedStaffing = null;
 
-				if (intent.Parameters.TryGetValue("customStaffingId", out var customIdStr) && int.TryParse(customIdStr, out var customStaffingId))
+				if (intent.Parameters.TryGetValue("customStaffingId", out var customIdRaw)
+					&& int.TryParse(customIdRaw, out var customId))
 				{
-					staffingId = customStaffingId;
+					resolvedStaffing = Services.CustomStateMatcher.FindById(
+						await GetAvailableStaffingAsync(session.DepartmentId), customId);
 				}
-				else if (intent.Parameters.TryGetValue("staffingType", out var staffingTypeStr) && int.TryParse(staffingTypeStr, out var staffingTypeId))
+				else if (intent.Parameters.TryGetValue("staffingType", out var staffingTypeRaw)
+					&& int.TryParse(staffingTypeRaw, out var staffingType))
 				{
-					staffingId = staffingTypeId;
+					resolvedStaffing = await ResolveStaffingIdAsync(session.DepartmentId, staffingType);
 				}
-				else if (intent.Parameters.TryGetValue("staffingName", out var staffingNameInput) && !string.IsNullOrWhiteSpace(staffingNameInput))
+				else if (intent.Parameters.TryGetValue("staffingName", out var staffingName)
+					&& !string.IsNullOrWhiteSpace(staffingName))
 				{
-					// "SET STAFFING TO <name>": resolve against the department's custom staffing states
-					// first (the only text form that can reach custom staffing levels), then the
-					// standard staffing words.
-					var resolved = await ResolveStaffingNameAsync(session.DepartmentId, staffingNameInput);
-					if (resolved == null)
-						return new ChatbotResponse { Text = ChatbotResources.Get("Staffing_CouldNotDetermine", session.Culture), Processed = false };
-
-					staffingId = resolved.Value;
-				}
-				else
-				{
-					return new ChatbotResponse { Text = ChatbotResources.Get("Staffing_CouldNotDetermine", session.Culture), Processed = false };
+					resolvedStaffing = await ResolveStaffingNameAsync(session.DepartmentId, staffingName);
 				}
 
-				await _userStateService.CreateUserState(session.UserId, session.DepartmentId, staffingId);
+				if (resolvedStaffing == null)
+					return new ChatbotResponse
+					{
+						Text = ChatbotResources.Get("Staffing_CouldNotDetermine", session.Culture),
+						Processed = false
+					};
 
-				var userStaffing = await _userStateService.GetLastUserStateByUserIdAsync(session.UserId);
-				var staffingName = await _customStateService.GetCustomPersonnelStaffingAsync(session.DepartmentId, userStaffing);
+				await _userStateService.CreateUserState(session.UserId, session.DepartmentId,
+					resolvedStaffing.CustomStateDetailId);
 
 				return new ChatbotResponse
 				{
-					Text = ChatbotResources.Get("Staffing_Updated", session.Culture, staffingName?.ButtonText ?? staffingId.ToString()),
+					Text = ChatbotResources.Get("Staffing_Updated", session.Culture, resolvedStaffing.ButtonText),
 					Processed = true
 				};
 			}
 			catch (Exception ex)
 			{
 				Framework.Logging.LogException(ex);
-				return new ChatbotResponse { Text = ChatbotResources.Get("Staffing_Error", session.Culture), Processed = false };
+				return new ChatbotResponse
+				{
+					Text = ChatbotResources.Get("Staffing_Error", session.Culture),
+					Processed = false
+				};
 			}
 		}
 
-		private async Task<int?> ResolveStaffingNameAsync(int departmentId, string staffingName)
+		private async Task<CustomStateDetail> ResolveStaffingNameAsync(int departmentId, string staffingName)
 		{
 			var name = staffingName.Trim().TrimEnd('?', '!', '.', ',');
+			var levels = await GetAvailableStaffingAsync(departmentId);
+			var match = Services.CustomStateMatcher.FindBySelection(levels, name)
+				?? Services.CustomStateMatcher.FindByName(levels, name);
+			if (match != null)
+				return match;
 
-			var customStates = await _customStateService.GetAllActiveCustomStatesForDepartmentAsync(departmentId);
-			var customStaffing = customStates?.FirstOrDefault(x => x.Type == (int)Model.CustomStateTypes.Staffing);
-			if (customStaffing != null && !customStaffing.IsDeleted && customStaffing.GetActiveDetails()?.Any() == true)
+			var builtInId = Services.CustomStateMatcher.Normalize(name) switch
 			{
-				var detail = customStaffing.GetActiveDetails()
-					.FirstOrDefault(d => string.Equals(d.ButtonText?.Trim(), name, StringComparison.OrdinalIgnoreCase)
-						|| string.Equals(d.ButtonText?.Replace(" ", ""), name.Replace(" ", ""), StringComparison.OrdinalIgnoreCase));
-
-				if (detail != null)
-					return detail.CustomStateDetailId;
-			}
-
-			// Standard staffing words (spaces optional) — UserStateTypes enum values.
-			return name.Replace(" ", "").ToLowerInvariant() switch
-			{
-				"available" => (int)Model.UserStateTypes.Available,
-				"delayed" => (int)Model.UserStateTypes.Delayed,
-				"unavailable" => (int)Model.UserStateTypes.Unavailable,
-				"committed" => (int)Model.UserStateTypes.Committed,
-				"onshift" => (int)Model.UserStateTypes.OnShift,
-				_ => (int?)null
+				"available" => (int)UserStateTypes.Available,
+				"delayed" => (int)UserStateTypes.Delayed,
+				"unavailable" => (int)UserStateTypes.Unavailable,
+				"committed" => (int)UserStateTypes.Committed,
+				"onshift" => (int)UserStateTypes.OnShift,
+				_ => -1
 			};
+
+			return builtInId >= 0
+				? await ResolveStaffingIdAsync(departmentId, builtInId, levels)
+				: null;
+		}
+
+		private async Task<CustomStateDetail> ResolveStaffingIdAsync(int departmentId, int staffingId,
+			List<CustomStateDetail> levels = null)
+		{
+			levels ??= await GetAvailableStaffingAsync(departmentId);
+			var match = Services.CustomStateMatcher.FindById(levels, staffingId);
+			if (match != null)
+				return match;
+
+			var fallback = FallbackStaffing(staffingId);
+			if (fallback == null)
+				return null;
+
+			match = Services.CustomStateMatcher.FindByName(levels, fallback.ButtonText);
+			if (match != null)
+				return match;
+
+			var active = levels?.Where(x => x != null && !x.IsDeleted).OrderBy(x => x.Order).ToList();
+			if (active != null && staffingId >= 0 && staffingId < active.Count)
+				return active[staffingId];
+
+			return levels == null || levels.Count == 0 ? fallback : null;
+		}
+
+		private async Task<List<CustomStateDetail>> GetAvailableStaffingAsync(int departmentId)
+			=> _customStateService == null
+				? null
+				: await _customStateService.GetCustomPersonnelStaffingsOrDefaultsAsync(departmentId);
+
+		private static CustomStateDetail FallbackStaffing(int staffingId)
+		{
+			var name = staffingId switch
+			{
+				(int)UserStateTypes.Available => "Available",
+				(int)UserStateTypes.Delayed => "Delayed",
+				(int)UserStateTypes.Unavailable => "Unavailable",
+				(int)UserStateTypes.Committed => "Committed",
+				(int)UserStateTypes.OnShift => "On Shift",
+				_ => null
+			};
+
+			return name == null
+				? null
+				: new CustomStateDetail { CustomStateDetailId = staffingId, ButtonText = name };
 		}
 	}
 }

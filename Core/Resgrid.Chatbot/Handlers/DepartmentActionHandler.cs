@@ -196,7 +196,8 @@ namespace Resgrid.Chatbot.Handlers
 					return new ChatbotResponse { Text = ChatbotResources.Get("Dept_NoActiveMemberships", culture), Processed = true };
 
 				DepartmentMember targetMembership = null;
-				var trimmedId = departmentIdentifier.Trim();
+				// Trailing punctuation is never part of a department identifier ("switch 1?").
+				var trimmedId = departmentIdentifier.Trim().TrimEnd('?', '!', '.', ',');
 
 				if (int.TryParse(trimmedId, out var listIndex) && listIndex >= 1 && listIndex <= activeMemberships.Count)
 					targetMembership = activeMemberships[listIndex - 1];

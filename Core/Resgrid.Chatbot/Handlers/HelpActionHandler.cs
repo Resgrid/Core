@@ -31,7 +31,7 @@ namespace Resgrid.Chatbot.Handlers
 			{
 				string topic = null;
 				intent?.Parameters?.TryGetValue("topic", out topic);
-				topic = topic?.Trim().ToUpperInvariant();
+				topic = topic?.Trim().TrimEnd('?', '!', '.', ',').ToUpperInvariant();
 
 				var text = topic switch
 				{
@@ -72,9 +72,11 @@ namespace Resgrid.Chatbot.Handlers
 			var customActions = await GetCustomStateAsync(departmentId, CustomStateTypes.Personnel);
 			if (customActions != null)
 			{
+				// Custom statuses are reachable via the SET STATUS TO <name> form — the numeric/word
+				// shortcuts only map to the standard statuses.
 				var details = customActions.GetActiveDetails();
 				for (int i = 0; i < details.Count; i++)
-					sb.AppendLine($"{i + 1} or {details[i].ButtonText?.Replace(" ", "")}");
+					sb.AppendLine($"SET STATUS TO {details[i].ButtonText}");
 			}
 			else
 			{
@@ -96,9 +98,11 @@ namespace Resgrid.Chatbot.Handlers
 			var customStaffing = await GetCustomStateAsync(departmentId, CustomStateTypes.Staffing);
 			if (customStaffing != null)
 			{
+				// Custom staffing levels are reachable via the SET STAFFING TO <name> form — the S-code
+				// shortcuts only map to the standard levels.
 				var details = customStaffing.GetActiveDetails();
 				for (int i = 0; i < details.Count; i++)
-					sb.AppendLine($"S{i + 1}: {details[i].ButtonText}");
+					sb.AppendLine($"SET STAFFING TO {details[i].ButtonText}");
 			}
 			else
 			{
@@ -126,7 +130,7 @@ namespace Resgrid.Chatbot.Handlers
 		private static string BuildMessagesHelp()
 		{
 			return "Messages:\n"
-				+ "MSG: list your messages\n"
+				+ "MESSAGES or MSG: list your messages\n"
 				+ "#<id>: read a message\n"
 				+ "REPLY YES/NO TO #<id>: respond\n"
 				+ "DELETE MSG <id>: delete\n"

@@ -22,29 +22,38 @@ namespace Resgrid.Workers.Framework.Logic
 			if (item == null || string.IsNullOrWhiteSpace(item.From) || string.IsNullOrWhiteSpace(item.Body))
 				return true;
 
-			var chatbotIngressService = Bootstrapper.GetKernel().Resolve<IChatbotIngressService>();
-			var textMessageProvider = Bootstrapper.GetKernel().Resolve<ITextMessageProvider>();
-
-			var message = new ChatbotMessage
+			try
 			{
-				MessageId = item.MessageId,
-				From = item.From,
-				To = item.To,
-				Text = item.Body,
-				Platform = (ChatbotPlatform)item.Platform,
-				Timestamp = DateTime.UtcNow
-			};
+				var chatbotIngressService = Bootstrapper.GetKernel().Resolve<IChatbotIngressService>();
+				var textMessageProvider = Bootstrapper.GetKernel().Resolve<ITextMessageProvider>();
 
-			var response = await chatbotIngressService.ProcessMessageAsync(message);
+				var message = new ChatbotMessage
+				{
+					MessageId = item.MessageId,
+					From = item.From,
+					To = item.To,
+					Text = item.Body,
+					Platform = (ChatbotPlatform)item.Platform,
+					Timestamp = DateTime.UtcNow
+				};
 
-			if (response != null && !string.IsNullOrWhiteSpace(response.Text))
+				var response = await chatbotIngressService.ProcessMessageAsync(message);
+
+				if (response != null && !string.IsNullOrWhiteSpace(response.Text))
+				{
+					// Reply from the department's text number (To) back to the sender (From). Twilio is the
+					// primary transport; carrier only governs gateway fallback, so the default is fine here.
+					// Chatbot replies are interactive (help/command lists the user acts on over SMS), so they
+					// use the higher chatbot length cap instead of the notification default.
+					await textMessageProvider.SendTextMessage(item.From, response.Text, item.To, default(MobileCarriers), item.DepartmentId,
+						maxLengthOverride: Resgrid.Config.ChatbotConfig.SmsReplyMaxLength);
+				}
+			}
+			catch (Exception ex)
 			{
-				// Reply from the department's text number (To) back to the sender (From). Twilio is the
-				// primary transport; carrier only governs gateway fallback, so the default is fine here.
-				// Chatbot replies are interactive (help/command lists the user acts on over SMS), so they
-				// use the higher chatbot length cap instead of the notification default.
-				await textMessageProvider.SendTextMessage(item.From, response.Text, item.To, default(MobileCarriers), item.DepartmentId,
-					maxLengthOverride: Resgrid.Config.ChatbotConfig.SmsReplyMaxLength);
+				// Same convention as AuditQueueLogic: a failed item must not take down the queue
+				// processor — log it and move on (the sender simply gets no reply for this message).
+				Logging.LogException(ex);
 			}
 
 			return true;

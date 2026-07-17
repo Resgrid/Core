@@ -17,14 +17,17 @@ namespace Resgrid.Chatbot.Services
 	/// </summary>
 	public static class CallReferenceResolver
 	{
-		private static readonly Regex CallNumberRegex = new Regex(@"^\d{2,4}-\d+$", RegexOptions.Compiled);
+		private static readonly Regex CallNumberRegex = new Regex(@"^\d{2,4}-\d+$", RegexOptions.Compiled, TimeSpan.FromMilliseconds(200));
 
 		public static async Task<Call> ResolveAsync(ICallsService callsService, int departmentId, string reference)
 		{
 			if (string.IsNullOrWhiteSpace(reference))
 				return null;
 
-			var text = reference.Trim();
+			// Trailing punctuation is never part of a call reference ("omw to 26-1.", "respond to fire?").
+			var text = reference.Trim().TrimEnd('?', '!', '.', ',');
+			if (text.Length == 0)
+				return null;
 
 			// "C1445" style prefix ahead of a digit.
 			if (text.Length > 1 && (text[0] == 'c' || text[0] == 'C') && char.IsDigit(text[1]))

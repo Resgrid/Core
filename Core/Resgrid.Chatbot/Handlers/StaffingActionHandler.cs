@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Resgrid.Chatbot.Interfaces;
 using Resgrid.Chatbot.Localization;
@@ -34,6 +35,17 @@ namespace Resgrid.Chatbot.Handlers
 				{
 					staffingId = staffingTypeId;
 				}
+				else if (intent.Parameters.TryGetValue("staffingName", out var staffingNameInput) && !string.IsNullOrWhiteSpace(staffingNameInput))
+				{
+					// "SET STAFFING TO <name>": resolve against the department's custom staffing states
+					// first (the only text form that can reach custom staffing levels), then the
+					// standard staffing words.
+					var resolved = await ResolveStaffingNameAsync(session.DepartmentId, staffingNameInput);
+					if (resolved == null)
+						return new ChatbotResponse { Text = ChatbotResources.Get("Staffing_CouldNotDetermine", session.Culture), Processed = false };
+
+					staffingId = resolved.Value;
+				}
 				else
 				{
 					return new ChatbotResponse { Text = ChatbotResources.Get("Staffing_CouldNotDetermine", session.Culture), Processed = false };
@@ -55,6 +67,34 @@ namespace Resgrid.Chatbot.Handlers
 				Framework.Logging.LogException(ex);
 				return new ChatbotResponse { Text = ChatbotResources.Get("Staffing_Error", session.Culture), Processed = false };
 			}
+		}
+
+		private async Task<int?> ResolveStaffingNameAsync(int departmentId, string staffingName)
+		{
+			var name = staffingName.Trim().TrimEnd('?', '!', '.', ',');
+
+			var customStates = await _customStateService.GetAllActiveCustomStatesForDepartmentAsync(departmentId);
+			var customStaffing = customStates?.FirstOrDefault(x => x.Type == (int)Model.CustomStateTypes.Staffing);
+			if (customStaffing != null && !customStaffing.IsDeleted && customStaffing.GetActiveDetails()?.Any() == true)
+			{
+				var detail = customStaffing.GetActiveDetails()
+					.FirstOrDefault(d => string.Equals(d.ButtonText?.Trim(), name, StringComparison.OrdinalIgnoreCase)
+						|| string.Equals(d.ButtonText?.Replace(" ", ""), name.Replace(" ", ""), StringComparison.OrdinalIgnoreCase));
+
+				if (detail != null)
+					return detail.CustomStateDetailId;
+			}
+
+			// Standard staffing words (spaces optional) — UserStateTypes enum values.
+			return name.Replace(" ", "").ToLowerInvariant() switch
+			{
+				"available" => (int)Model.UserStateTypes.Available,
+				"delayed" => (int)Model.UserStateTypes.Delayed,
+				"unavailable" => (int)Model.UserStateTypes.Unavailable,
+				"committed" => (int)Model.UserStateTypes.Committed,
+				"onshift" => (int)Model.UserStateTypes.OnShift,
+				_ => (int?)null
+			};
 		}
 	}
 }

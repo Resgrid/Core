@@ -15,163 +15,169 @@ namespace Resgrid.Chatbot.NLU.Providers
 		private static readonly List<(Regex pattern, string intent, Func<Match, Dictionary<string, string>> extractParams)> _patterns = new()
 		{
 			// === Status Commands (rigid + natural language) ===
-			(new Regex(@"^(responding|1)$", RegexOptions.IgnoreCase), "set_status", m => P("actionType", "1")),
-			(new Regex(@"^(not\s*responding|2)$", RegexOptions.IgnoreCase), "set_status", m => P("actionType", "2")),
-			(new Regex(@"^(on\s*scene|onscene|3)$", RegexOptions.IgnoreCase), "set_status", m => P("actionType", "3")),
-			(new Regex(@"^(standing\s*by|standingby|4)$", RegexOptions.IgnoreCase), "set_status", m => P("actionType", "4")),
+			// The SMS shortcut numbers (1-4) are the user-facing scheme from the legacy text commands;
+			// the emitted actionType values are ActionTypes enum values (Responding=2, NotResponding=1,
+			// OnScene=3, StandingBy/Available=0) — the handler passes them straight to SetUserActionAsync.
+			(R(@"^(responding|1)$"), "set_status", m => P("actionType", "2")),
+			(R(@"^(not\s*responding|2)$"), "set_status", m => P("actionType", "1")),
+			(R(@"^(on\s*scene|onscene|3)$"), "set_status", m => P("actionType", "3")),
+			(R(@"^(standing\s*by|standingby|4)$"), "set_status", m => P("actionType", "0")),
 			// Responder shorthand for "responding" with no target call.
-			(new Regex(@"^(omw|on\s+my\s+way|enroute|en\s+route)$", RegexOptions.IgnoreCase),
-				"set_status", m => P("actionType", "1")),
-			(new Regex(@"^(i'?m|i\s+am)\s+(responding|on\s*scene|standing\s*by|en\s*route|available|not\s*responding)", RegexOptions.IgnoreCase),
+			(R(@"^(omw|on\s+my\s+way|enroute|en\s+route)$"),
+				"set_status", m => P("actionType", "2")),
+			(R(@"^(i'?m|i\s+am)\s+(responding|on\s*scene|standing\s*by|en\s*route|available|not\s*responding)"),
 				"set_status", m => P("actionType", MapStatusWord(m.Groups[2].Value))),
-			(new Regex(@"^(set|change|mark)\s+(my\s+)?status\s+to\s+(.+)", RegexOptions.IgnoreCase),
+			(R(@"^(set|change|mark)\s+(my\s+)?status\s+to\s+(.+)"),
 				"set_status", m => P("statusName", m.Groups[3].Value.Trim())),
 
 			// === Staffing Commands ===
-			(new Regex(@"^(available|s1)$", RegexOptions.IgnoreCase), "set_staffing", m => P("staffingType", "1")),
-			(new Regex(@"^(delayed|s2)$", RegexOptions.IgnoreCase), "set_staffing", m => P("staffingType", "2")),
-			(new Regex(@"^(unavailable|s3)$", RegexOptions.IgnoreCase), "set_staffing", m => P("staffingType", "3")),
-			(new Regex(@"^(committed|s4)$", RegexOptions.IgnoreCase), "set_staffing", m => P("staffingType", "4")),
-			(new Regex(@"^(on\s*shift|onshift|s5)$", RegexOptions.IgnoreCase), "set_staffing", m => P("staffingType", "5")),
-			(new Regex(@"^(i'?m|i\s+am)\s+(available|delayed|unavailable|committed|on\s*shift)", RegexOptions.IgnoreCase),
+			// S1-S5 is the user-facing scheme; emitted staffingType values are UserStateTypes enum values
+			// (Available=0, Delayed=1, Unavailable=2, Committed=3, OnShift=4) — passed straight to CreateUserState.
+			(R(@"^(available|s1)$"), "set_staffing", m => P("staffingType", "0")),
+			(R(@"^(delayed|s2)$"), "set_staffing", m => P("staffingType", "1")),
+			(R(@"^(unavailable|s3)$"), "set_staffing", m => P("staffingType", "2")),
+			(R(@"^(committed|s4)$"), "set_staffing", m => P("staffingType", "3")),
+			(R(@"^(on\s*shift|onshift|s5)$"), "set_staffing", m => P("staffingType", "4")),
+			(R(@"^(i'?m|i\s+am)\s+(available|delayed|unavailable|committed|on\s*shift)"),
 				"set_staffing", m => P("staffingType", MapStaffingWord(m.Groups[2].Value))),
-			(new Regex(@"^(set|change|mark)\s+(my\s+)?staffing\s+to\s+(.+)", RegexOptions.IgnoreCase),
+			(R(@"^(set|change|mark)\s+(my\s+)?staffing\s+to\s+(.+)"),
 				"set_staffing", m => P("staffingName", m.Groups[3].Value.Trim())),
 
 			// === Query Commands (rigid) ===
-			(new Regex(@"^calls?$", RegexOptions.IgnoreCase), "list_calls", null),
-			(new Regex(@"^c(\d+)$", RegexOptions.IgnoreCase), "call_detail", m => P("callId", m.Groups[1].Value)),
+			(R(@"^calls?$"), "list_calls", null),
+			(R(@"^c(\d+)$"), "call_detail", m => P("callId", m.Groups[1].Value)),
 			// Call number form ("26-1" / "C26-1"): two-digit year + sequence — resolved by the handler.
-			(new Regex(@"^c?(\d{2,4}-\d+)$", RegexOptions.IgnoreCase), "call_detail", m => P("callRef", m.Groups[1].Value)),
-			(new Regex(@"^units?$", RegexOptions.IgnoreCase), "list_units", null),
-			(new Regex(@"^(my\s+)?status$", RegexOptions.IgnoreCase), "my_status", null),
+			(R(@"^c?(\d{2,4}-\d+)$"), "call_detail", m => P("callRef", m.Groups[1].Value)),
+			(R(@"^units?$"), "list_units", null),
+			(R(@"^(my\s+)?status$"), "my_status", null),
 			// "my staffing" — the my_status handler reports both status and staffing.
-			(new Regex(@"^(my\s+)?staffing$", RegexOptions.IgnoreCase), "my_status", null),
-			(new Regex(@"^messages?$", RegexOptions.IgnoreCase), "list_messages", null),
-			(new Regex(@"^(calendar|events?|cal)$", RegexOptions.IgnoreCase), "list_calendar", null),
-			(new Regex(@"^shifts?$", RegexOptions.IgnoreCase), "list_shifts", null),
-			(new Regex(@"^(personnel|staff)$", RegexOptions.IgnoreCase), "personnel_lookup", null),
-			(new Regex(@"^weather$", RegexOptions.IgnoreCase), "weather_alert", null),
+			(R(@"^(my\s+)?staffing$"), "my_status", null),
+			(R(@"^(messages?|msgs?)$"), "list_messages", null),
+			(R(@"^(calendar|events?|cal)$"), "list_calendar", null),
+			(R(@"^shifts?$"), "list_shifts", null),
+			(R(@"^(personnel|staff)$"), "personnel_lookup", null),
+			(R(@"^weather$"), "weather_alert", null),
 
 			// === Help / Stop ===
-			(new Regex(@"^(help|info|commands|menu|what\s+can\s+you\s+do)$", RegexOptions.IgnoreCase), "help", null),
+			(R(@"^(help|info|commands|menu|what\s+can\s+you\s+do)$"), "help", null),
 			// STOP is explicit-only (plus UNSUBSCRIBE, the other unambiguous opt-out word). END/QUIT/CANCEL
 			// must NOT trigger the opt-out flow — they carry other meanings in conversation flows.
-			(new Regex(@"^(stop|unsubscribe)$", RegexOptions.IgnoreCase), "stop", null),
+			(R(@"^(stop|unsubscribe)$"), "stop", null),
 
 			// === Emergency ===
-			(new Regex(@"^(mayday|emergency|sos|help\s*me|officer\s*down|ff?\s*down|firefighter\s*down)$", RegexOptions.IgnoreCase),
+			(R(@"^(mayday|emergency|sos|help\s*me|officer\s*down|ff?\s*down|firefighter\s*down)$"),
 				"emergency_mayday", null),
 
-			// === Help topic detail (after Emergency so "help me" stays a mayday) ===
-			(new Regex(@"^(help|info|commands|menu)\s+(.+)$", RegexOptions.IgnoreCase),
+			// === Help topic detail (after Emergency; "me" excluded so "help me!" stays a mayday even
+			// when the punctuated original is matched before the stripped copy reaches the pattern above) ===
+			(R(@"^(help|info|commands|menu)\s+(?!me\b)(.+)$"),
 				"help", m => P("topic", m.Groups[2].Value.Trim())),
 
 			// === Link / Unlink ===
-			(new Regex(@"^(link|login|verify|auth)$", RegexOptions.IgnoreCase), "link_account", null),
-			(new Regex(@"^(unlink|logout|unauth)$", RegexOptions.IgnoreCase), "unlink_account", null),
+			(R(@"^(link|login|verify|auth)$"), "link_account", null),
+			(R(@"^(unlink|logout|unauth)$"), "unlink_account", null),
 
 			// === Message Detail / Delete / Respond (must precede the natural-language message patterns) ===
-			(new Regex(@"^#(\d+)$", RegexOptions.IgnoreCase),
+			(R(@"^#(\d+)$"),
 				"message_detail", m => P("messageId", m.Groups[1].Value)),
-			(new Regex(@"^(read|show|open|view|get)\s+(message|msg)\s+#?(\d+)", RegexOptions.IgnoreCase),
+			(R(@"^(read|show|open|view|get)\s+(message|msg)\s+#?(\d+)"),
 				"message_detail", m => P("messageId", m.Groups[3].Value)),
-			(new Regex(@"^(delete|remove|del)\s+(message|msg)?\s*#?(\d+)$", RegexOptions.IgnoreCase),
+			(R(@"^(delete|remove|del)\s+(message|msg)?\s*#?(\d+)$"),
 				"delete_message", m => P("messageId", m.Groups[3].Value)),
-			(new Regex(@"^(reply|respond)\s+(yes|no|acknowledge|ack)\s+to\s+(message|msg|#)?\s*#?(\d+)", RegexOptions.IgnoreCase),
+			(R(@"^(reply|respond)\s+(yes|no|acknowledge|ack)\s+to\s+(message|msg|#)?\s*#?(\d+)"),
 				"respond_to_message", m => P2("response", m.Groups[2].Value, "messageId", m.Groups[4].Value)),
 
 			// === Natural Language Query Commands ===
-			(new Regex(@"^(show|list|get|what)\s+(are\s+)?(active|open)?\s*(calls|incidents)", RegexOptions.IgnoreCase),
+			(R(@"^(show|list|get|what)\s+(are\s+)?(active|open)?\s*(calls|incidents)"),
 				"list_calls", null),
-			(new Regex(@"^(show|tell|get|details?|what\s+about).*\bc(\d+)\b", RegexOptions.IgnoreCase),
+			(R(@"^(show|tell|get|details?|what\s+about).*\bc(\d+)\b"),
 				"call_detail", m => P("callId", m.Groups[m.Groups.Count - 1].Value)),
-			(new Regex(@"^(show|list|get|what)\s+(are\s+)?(units?|apparatus|rigs?)", RegexOptions.IgnoreCase),
+			(R(@"^(show|list|get|what)\s+(are\s+)?(units?|apparatus|rigs?)"),
 				"list_units", null),
-			(new Regex(@"^(who|where)\s+(is|are)\s+(.+)", RegexOptions.IgnoreCase),
+			(R(@"^(who|where)\s+(is|are)\s+(.+)"),
 				"personnel_lookup", m => P("query", m.Groups[3].Value.Trim())),
-			(new Regex(@"^(show|list|get)\s+(personnel|staff|members|crew)", RegexOptions.IgnoreCase),
+			(R(@"^(show|list|get)\s+(personnel|staff|members|crew)"),
 				"personnel_lookup", null),
-			(new Regex(@"^(what'?s|what\s+is)\s+(my\s+)?(status|staffing)", RegexOptions.IgnoreCase),
+			(R(@"^(what'?s|what\s+is)\s+(my\s+)?(status|staffing)"),
 				"my_status", null),
-			(new Regex(@"^(check|read|show)\s+(my\s+)?(messages?|inbox)", RegexOptions.IgnoreCase),
+			(R(@"^(check|read|show)\s+(my\s+)?(messages?|inbox)"),
 				"list_messages", null),
-			(new Regex(@"^(show|list|get|what'?s)\s+(on\s+)?(the\s+)?(calendar|schedule|agenda)", RegexOptions.IgnoreCase),
+			(R(@"^(show|list|get|what'?s)\s+(on\s+)?(the\s+)?(calendar|schedule|agenda)"),
 				"list_calendar", null),
-			(new Regex(@"^(show|list|get|my)\s+shifts?", RegexOptions.IgnoreCase),
+			(R(@"^(show|list|get|my)\s+shifts?"),
 				"list_shifts", null),
-			(new Regex(@"^(weather\s+)?(alerts?|warnings?)", RegexOptions.IgnoreCase),
+			(R(@"^(weather\s+)?(alerts?|warnings?)"),
 				"weather_alert", null),
 
 			// === Send Message ===
-			(new Regex(@"^send\s+message\s+to\s+(.+?):?\s+(.+)", RegexOptions.IgnoreCase),
+			(R(@"^send\s+message\s+to\s+(.+?):?\s+(.+)"),
 				"send_message", m => P2("recipient", m.Groups[1].Value.Trim(), "body", m.Groups[2].Value.Trim())),
-			(new Regex(@"^(msg|message)\s+to\s+(.+?):?\s+(.+)", RegexOptions.IgnoreCase),
+			(R(@"^(msg|message)\s+to\s+(.+?):?\s+(.+)"),
 				"send_message", m => P2("recipient", m.Groups[2].Value.Trim(), "body", m.Groups[3].Value.Trim())),
-			(new Regex(@"^tell\s+(.+?)\s+(.+)", RegexOptions.IgnoreCase),
+			(R(@"^tell\s+(.+?)\s+(.+)"),
 				"send_message", m => P2("recipient", m.Groups[1].Value.Trim(), "body", m.Groups[2].Value.Trim())),
 
 			// === Dispatch ===
-			(new Regex(@"^(dispatch|create\s+call|new\s+call)\s+(.+)", RegexOptions.IgnoreCase),
+			(R(@"^(dispatch|create\s+call|new\s+call)\s+(.+)"),
 				"dispatch_call", m => P("description", m.Groups[2].Value.Trim())),
-			(new Regex(@"^report\s+(.+)", RegexOptions.IgnoreCase),
+			(R(@"^report\s+(.+)"),
 				"dispatch_call", m => P("description", m.Groups[1].Value.Trim())),
 
 			// === Close Call ===
-			(new Regex(@"^(close|end|cancel)\s+call\s+c?(\d+)", RegexOptions.IgnoreCase),
+			(R(@"^(close|end|cancel)\s+call\s+c?(\d+)"),
 				"close_call", m => P("callId", m.Groups[2].Value)),
-			(new Regex(@"^(close|end|cancel)\s+c(\d+)", RegexOptions.IgnoreCase),
+			(R(@"^(close|end|cancel)\s+c(\d+)"),
 				"close_call", m => P("callId", m.Groups[2].Value)),
 
 			// === Respond to Call ===
-			(new Regex(@"^(respond|en\s*route|going)\s+to\s+c?(\d+)$", RegexOptions.IgnoreCase),
+			(R(@"^(respond|en\s*route|going)\s+to\s+c?(\d+)$"),
 				"respond_to_call", m => P("callId", m.Groups[2].Value)),
 			// Responder shorthand: "omw to 26-1", "omw to fire", "enroute to c1445", "headed to Main St".
 			// The reference can be a call id, a call number (yy-N), or a term matched against active
 			// calls — resolved by the handler.
-			(new Regex(@"^(omw|on\s+my\s+way|respond(?:ing)?|going|headed|enroute|en\s+route)\s+(?:to\s+)?(.+)$", RegexOptions.IgnoreCase),
+			(R(@"^(omw|on\s+my\s+way|respond(?:ing)?|going|headed|enroute|en\s+route)\s+(?:to\s+)?(.+)$"),
 				"respond_to_call", m => P("callRef", m.Groups[2].Value.Trim())),
 
 			// === Shift Drop (must precede shift signup/detail so 'drop shift 5' isn't misread) ===
-			(new Regex(@"^(drop|cancel|release)\s+(my\s+)?shift\s+#?(\d+)", RegexOptions.IgnoreCase),
+			(R(@"^(drop|cancel|release)\s+(my\s+)?shift\s+#?(\d+)"),
 				"shift_drop", m => P("shiftId", m.Groups[3].Value)),
 
 			// === Shift Signup ===
-			(new Regex(@"^(sign\s*up|take)\s+shift\s+(.+)", RegexOptions.IgnoreCase),
+			(R(@"^(sign\s*up|take)\s+shift\s+(.+)"),
 				"shift_signup", m => P("shiftId", m.Groups[2].Value.Trim())),
 
 			// === RSVP Calendar ===
-			(new Regex(@"^rsvp\s+(yes|no|maybe)\s+to\s+(.+)", RegexOptions.IgnoreCase),
+			(R(@"^rsvp\s+(yes|no|maybe)\s+to\s+(.+)"),
 				"rsvp_calendar", m => P2("response", m.Groups[1].Value, "eventId", m.Groups[2].Value.Trim())),
 
 			// === Calendar / Shift Detail (query suffix) ===
-			(new Regex(@"^(calendar|events?)\s+(.+)$", RegexOptions.IgnoreCase),
+			(R(@"^(calendar|events?)\s+(.+)$"),
 				"calendar_detail", m => P("query", m.Groups[2].Value.Trim())),
-			(new Regex(@"^shifts?\s+(.+)$", RegexOptions.IgnoreCase),
+			(R(@"^shifts?\s+(.+)$"),
 				"shift_detail", m => P("query", m.Groups[1].Value.Trim())),
 
 			// === Set Unit Status ===
-			(new Regex(@"^set\s+unit\s+(.+?)\s+to\s+(.+)", RegexOptions.IgnoreCase),
+			(R(@"^set\s+unit\s+(.+?)\s+to\s+(.+)"),
 				"set_unit_status", m => P2("unitName", m.Groups[1].Value.Trim(), "status", m.Groups[2].Value.Trim())),
 
 			// === Department Management ===
-			(new Regex(@"^(departments|depts|my\s+departments|my\s+depts|which\s+departments)$", RegexOptions.IgnoreCase),
+			(R(@"^(departments|depts|my\s+departments|my\s+depts|which\s+departments)$"),
 				"list_departments", null),
-			(new Regex(@"^(show|list|get|what|what'?s)\s+(my\s+)?(departments?|depts?)$", RegexOptions.IgnoreCase),
+			(R(@"^(show|list|get|what|what'?s)\s+(my\s+)?(departments?|depts?)$"),
 				"list_departments", null),
-			(new Regex(@"^(active\s+department|current\s+department|which\s+department|what\s+department)\s*(am\s+i\s+in)?\??$", RegexOptions.IgnoreCase),
+			(R(@"^(active\s+department|current\s+department|which\s+department|what\s+department)\s*(am\s+i\s+in)?\??$"),
 				"get_active_department", null),
-			(new Regex(@"^(switch|change|set)\s+(to\s+)?(department|dept)\s+(.+)$", RegexOptions.IgnoreCase),
+			(R(@"^(switch|change|set)\s+(to\s+)?(department|dept)\s+(.+)$"),
 				"switch_department", m => P("departmentIdentifier", m.Groups[4].Value.Trim())),
-			(new Regex(@"^(switch|change|set)\s+(my\s+)?(active\s+)?(department|dept)\s*$", RegexOptions.IgnoreCase),
+			(R(@"^(switch|change|set)\s+(my\s+)?(active\s+)?(department|dept)\s*$"),
 				"list_departments", null),
 
 			// SMS-style short forms — parity with the legacy SWITCH text command ("SWITCH" lists the
 			// options, "SWITCH <number or name>" switches). Placed after the wordier forms above so
 			// "switch department X" keeps binding the identifier without the "department" word in it.
-			(new Regex(@"^switch$", RegexOptions.IgnoreCase),
+			(R(@"^switch$"),
 				"list_departments", null),
-			(new Regex(@"^switch\s+(to\s+)?(.+)$", RegexOptions.IgnoreCase),
+			(R(@"^switch\s+(to\s+)?(.+)$"),
 				"switch_department", m => P("departmentIdentifier", m.Groups[2].Value.Trim())),
 		};
 
@@ -183,24 +189,30 @@ namespace Resgrid.Chatbot.NLU.Providers
 			var trimmed = text.Trim();
 
 			// Texters end questions/commands with punctuation ("My status?", "omw to 26-1."). The
-			// patterns are anchored, so strip trailing punctuation before matching.
-			trimmed = trimmed.TrimEnd('?', '!', '.', ',', ' ');
-			if (trimmed.Length == 0)
-				return Task.FromResult(new NLUResult { IntentName = "unknown", Confidence = 0, ProviderName = ProviderName });
+			// patterns are anchored, so a trailing-punctuation-stripped copy is also tried — but only as
+			// a FALLBACK: the original input goes first so free-form parameters (message bodies, dispatch
+			// descriptions) are extracted with their punctuation intact.
+			var normalized = trimmed.TrimEnd('?', '!', '.', ',', ' ');
+			var candidates = normalized.Length > 0 && !string.Equals(normalized, trimmed, StringComparison.Ordinal)
+				? new[] { trimmed, normalized }
+				: new[] { trimmed };
 
 			// Check all patterns in priority order
-			foreach (var (pattern, intent, extractor) in _patterns)
+			foreach (var candidate in candidates)
 			{
-				var match = pattern.Match(trimmed);
-				if (match.Success)
+				foreach (var (pattern, intent, extractor) in _patterns)
 				{
-					return Task.FromResult(new NLUResult
+					var match = pattern.Match(candidate);
+					if (match.Success)
 					{
-						IntentName = intent,
-						Parameters = extractor?.Invoke(match) ?? new Dictionary<string, string>(),
-						Confidence = 1.0,
-						ProviderName = ProviderName
-					});
+						return Task.FromResult(new NLUResult
+						{
+							IntentName = intent,
+							Parameters = extractor?.Invoke(match) ?? new Dictionary<string, string>(),
+							Confidence = 1.0,
+							ProviderName = ProviderName
+						});
+					}
 				}
 			}
 
@@ -234,6 +246,16 @@ namespace Resgrid.Chatbot.NLU.Providers
 			return Task.FromResult(true);
 		}
 
+		// All patterns run against untrusted inbound SMS text, so every one gets a match timeout to
+		// bound pathological backtracking (same convention as WebhookUrlValidator/UdfValidationHelper).
+		// The timeout is inlined rather than a static field: _patterns is declared above and static
+		// field initializers run in declaration order, so a field here would still be zero when the
+		// pattern list is built.
+		private static Regex R(string pattern)
+		{
+			return new Regex(pattern, RegexOptions.IgnoreCase, TimeSpan.FromMilliseconds(200));
+		}
+
 		private static Dictionary<string, string> P(string key, string value)
 		{
 			return new Dictionary<string, string> { [key] = value };
@@ -244,32 +266,34 @@ namespace Resgrid.Chatbot.NLU.Providers
 			return new Dictionary<string, string> { [k1] = v1, [k2] = v2 };
 		}
 
+		// ActionTypes enum values: Responding=2, NotResponding=1, OnScene=3, StandingBy/Available=0.
 		private static string MapStatusWord(string word)
 		{
 			var w = word.ToLowerInvariant().Replace(" ", "");
 			return w switch
 			{
-				"responding" => "1",
-				"notresponding" => "2",
+				"responding" => "2",
+				"notresponding" => "1",
 				"onscene" => "3",
-				"standingby" => "4",
-				"enroute" => "1",
-				"available" => "4",
-				_ => "1"
+				"standingby" => "0",
+				"enroute" => "2",
+				"available" => "0",
+				_ => "2"
 			};
 		}
 
+		// UserStateTypes enum values: Available=0, Delayed=1, Unavailable=2, Committed=3, OnShift=4.
 		private static string MapStaffingWord(string word)
 		{
 			var w = word.ToLowerInvariant().Replace(" ", "");
 			return w switch
 			{
-				"available" => "1",
-				"delayed" => "2",
-				"unavailable" => "3",
-				"committed" => "4",
-				"onshift" => "5",
-				_ => "1"
+				"available" => "0",
+				"delayed" => "1",
+				"unavailable" => "2",
+				"committed" => "3",
+				"onshift" => "4",
+				_ => "0"
 			};
 		}
 	}

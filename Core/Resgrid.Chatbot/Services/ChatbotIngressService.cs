@@ -257,13 +257,24 @@ namespace Resgrid.Chatbot.Services
 				{
 					var restrictedIntent = await _intentRouter.ClassifyIntentAsync(message, session);
 
-					// STOP (telecom opt-out) always works, even in restricted mode.
-					if (restrictedIntent.Type == ChatbotIntentType.Stop && IsSmsPlatform(message.Platform))
+					// STOP always works, even in restricted mode — same semantics as the normal-mode
+					// branch: SMS opts out of all outbound texts; other platforms get the profile guidance.
+					if (restrictedIntent.Type == ChatbotIntentType.Stop)
 					{
-						await _userProfileService.DisableTextMessagesForUserAsync(identity.UserId);
+						if (IsSmsPlatform(message.Platform))
+						{
+							await _userProfileService.DisableTextMessagesForUserAsync(identity.UserId);
+							return new ChatbotResponse
+							{
+								Text = "Text messages are now turned off for this user, to enable again log in to Resgrid and update your profile.",
+								Processed = true,
+								Intent = restrictedIntent
+							};
+						}
+
 						return new ChatbotResponse
 						{
-							Text = "Text messages are now turned off for this user, to enable again log in to Resgrid and update your profile.",
+							Text = "To manage your notification settings, update your profile in Resgrid.",
 							Processed = true,
 							Intent = restrictedIntent
 						};
@@ -293,6 +304,37 @@ namespace Resgrid.Chatbot.Services
 					optionsBuilder.Append("Reply SWITCH <number or name> to change your active department.");
 
 					return new ChatbotResponse { Text = optionsBuilder.ToString(), Processed = true };
+				}
+
+				// STOP (the telecom opt-out) must be honored BEFORE any session state processing — a user
+				// parked mid-confirmation or awaiting a PIN who texts STOP is opting out, not answering
+				// the prompt. Deliberately a plain string check against the explicit opt-out words (the
+				// classifier's stop set — STOP/UNSUBSCRIBE only, per policy) and NOT ClassifyIntentAsync:
+				// running the classifier on every mid-dialog reply would send confirmation replies and
+				// 4-digit PINs to the cloud NLU in the hybrid-cloud modes.
+				var optOutText = message.Text.Trim().TrimEnd('?', '!', '.', ',');
+				if (string.Equals(optOutText, "stop", StringComparison.OrdinalIgnoreCase)
+					|| string.Equals(optOutText, "unsubscribe", StringComparison.OrdinalIgnoreCase))
+				{
+					var stopIntent = new ChatbotIntent { Type = ChatbotIntentType.Stop, Confidence = 1.0f };
+
+					if (IsSmsPlatform(message.Platform))
+					{
+						await _userProfileService.DisableTextMessagesForUserAsync(identity.UserId);
+						return new ChatbotResponse
+						{
+							Text = "Text messages are now turned off for this user, to enable again log in to Resgrid and update your profile.",
+							Processed = true,
+							Intent = stopIntent
+						};
+					}
+
+					return new ChatbotResponse
+					{
+						Text = "To manage your notification settings, update your profile in Resgrid.",
+						Processed = true,
+						Intent = stopIntent
+					};
 				}
 
 				// 5. Handle session state machine via ConversationEngine (Phase 2)
@@ -413,13 +455,11 @@ namespace Resgrid.Chatbot.Services
 					}
 				}
 
-				// 6. Classify intent
+				// 6. Classify intent (explicit STOP/UNSUBSCRIBE already handled before the state machine).
 				var intent = await _intentRouter.ClassifyIntentAsync(message, session);
 
-				// 7. STOP is the telecom opt-out keyword, never a session operation: on SMS it turns off
-				// all outbound SMS notifications (calls, messages, notifications) on the user's profile —
-				// same behavior as the legacy text-command path. Sessions are infrastructure; users don't
-				// start or end them.
+				// 7. STOP intent from non-verbatim phrasing (cloud NLU can classify e.g. "please stop
+				// texting me"): same opt-out semantics as the explicit-word check above.
 				if (intent.Type == ChatbotIntentType.Stop)
 				{
 					if (IsSmsPlatform(message.Platform))

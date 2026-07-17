@@ -127,6 +127,10 @@ export default function LeafletMapView({
       zoomControl: true,
     });
 
+    // Leaflet throws "Set map center and zoom first." if the user interacts before
+    // the first setView/fitBounds; give the map a fallback view until mapData loads.
+    map.setView([39.14086268299356, -119.7583809782715], 9);
+
     L.tileLayer(resolvedMapConfig.tileUrl, {
       maxZoom: 19,
       attribution: resolvedMapConfig.attribution,

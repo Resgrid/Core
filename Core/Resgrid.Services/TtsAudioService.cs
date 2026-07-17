@@ -13,6 +13,10 @@ namespace Resgrid.Services
 	public class TtsAudioService : ITtsAudioService
 	{
 		private const string AdminKeyHeaderName = "X-Resgrid-Admin-Key";
+		// Retries are bounded (worst case ~1.2s of delay) so Twilio voice webhooks that
+		// generate audio inline still respond well within Twilio's timeout.
+		private const int MaxTransientRetries = 2;
+		private const int BaseRetryDelayMilliseconds = 300;
 		private readonly Func<RestClient> _restClientFactory;
 
 		public TtsAudioService(Func<RestClient> restClientFactory)
@@ -39,7 +43,9 @@ namespace Resgrid.Services
 				Speed = speed ?? TtsConfig.DefaultSpeed
 			});
 
-			var response = await restClient.ExecuteAsync<GenerateSpeechResponse>(request, cancellationToken);
+			var response = await ExecuteWithTransientRetryAsync(
+				() => restClient.ExecuteAsync<GenerateSpeechResponse>(request, cancellationToken),
+				cancellationToken);
 
 			if (!response.IsSuccessful || response.Data == null || string.IsNullOrWhiteSpace(response.Data.Url))
 				throw CreateRequestFailure("generate speech audio", response);
@@ -74,10 +80,52 @@ namespace Resgrid.Services
 				Prompts = promptRequests
 			});
 
-			var response = await restClient.ExecuteAsync(request, cancellationToken);
+			var response = await ExecuteWithTransientRetryAsync(
+				() => restClient.ExecuteAsync(request, cancellationToken),
+				cancellationToken);
 
 			if (!response.IsSuccessful)
 				throw CreateRequestFailure("regenerate static prompts", response);
+		}
+
+		private static async Task<TResponse> ExecuteWithTransientRetryAsync<TResponse>(
+			Func<Task<TResponse>> sendAsync,
+			CancellationToken cancellationToken) where TResponse : RestResponse
+		{
+			TResponse response = null;
+
+			for (var attempt = 0; attempt <= MaxTransientRetries; attempt++)
+			{
+				if (attempt > 0)
+				{
+					// 300ms then 900ms, with ±25% jitter so retries from a dispatch
+					// fan-out don't land on the rate-limit window edge in lockstep.
+					var delayMilliseconds = BaseRetryDelayMilliseconds * Math.Pow(3, attempt - 1)
+						* (0.75 + (Random.Shared.NextDouble() * 0.5));
+					await Task.Delay(TimeSpan.FromMilliseconds(delayMilliseconds), cancellationToken);
+				}
+
+				response = await sendAsync();
+
+				if (!IsTransientFailure(response))
+					return response;
+			}
+
+			return response;
+		}
+
+		private static bool IsTransientFailure(RestResponse response)
+		{
+			if (response.IsSuccessful)
+				return false;
+
+			if (response.ErrorException is OperationCanceledException or TaskCanceledException)
+				return false;
+
+			// 429 (rate limited), any 5xx, or no response at all (network failure).
+			return response.StatusCode == HttpStatusCode.TooManyRequests
+				|| (int)response.StatusCode >= 500
+				|| response.StatusCode == 0;
 		}
 
 		private static Exception CreateRequestFailure(string operation, RestResponse response)

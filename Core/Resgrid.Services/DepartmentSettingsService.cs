@@ -304,6 +304,9 @@ namespace Resgrid.Services
 
 		public async Task<Coordinates> GetMapCenterCoordinatesAsync(Department department)
 		{
+			if (department == null)
+				return new Coordinates() { Latitude = 39.14086268299356, Longitude = -119.7583809782715 };
+
 			var address = await GetBigBoardCenterAddressDepartmentAsync(department.DepartmentId);
 			var gpsCoordinates = await GetBigBoardCenterGpsCoordinatesDepartmentAsync(department.DepartmentId);
 

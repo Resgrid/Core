@@ -73,8 +73,8 @@ namespace Resgrid.Config
 			"Thank you. Your response has been recorded."
 		});
 
-		public static int RateLimitPermitLimit = 60;
-		public static int RateLimitQueueLimit = 10;
+		public static int RateLimitPermitLimit = 600;
+		public static int RateLimitQueueLimit = 60;
 		public static int RateLimitWindowSeconds = 60;
 	}
 }

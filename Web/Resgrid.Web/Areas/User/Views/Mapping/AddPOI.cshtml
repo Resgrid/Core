@@ -127,30 +127,3 @@
 		</div>
 	</div>
 </div>
-
-
-@section Scripts
-{
-	<script>
-		$(document).ready(function () {
-			$('input[type=checkbox],input[type=radio]').iCheck({
-				checkboxClass: 'icheckbox_square-blue',
-				radioClass: 'iradio_square-blue'
-			});
-
-			$("#Type_Color").minicolors({
-				animationSpeed: 50,
-				animationEasing: 'swing',
-				changeDelay: 0,
-				control: 'hue',
-				defaultValue: '#0080ff',
-				format: 'hex',
-				showSpeed: 100,
-				hideSpeed: 100,
-				inline: false,
-				theme: 'bootstrap'
-			});
-		});
-	</script>
-
-}

@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Resgrid.Chatbot.Interfaces;
 using Resgrid.Chatbot.Localization;
@@ -34,6 +35,17 @@ namespace Resgrid.Chatbot.Handlers
 				{
 					statusId = actionTypeId;
 				}
+				else if (intent.Parameters.TryGetValue("statusName", out var statusNameInput) && !string.IsNullOrWhiteSpace(statusNameInput))
+				{
+					// "SET STATUS TO <name>": resolve against the department's custom personnel states
+					// first (this is the only text form that can reach custom statuses), then the
+					// standard status words.
+					var resolved = await ResolveStatusNameAsync(session.DepartmentId, statusNameInput);
+					if (resolved == null)
+						return new ChatbotResponse { Text = ChatbotResources.Get("Status_CouldNotDetermine", session.Culture), Processed = false };
+
+					statusId = resolved.Value;
+				}
 				else
 				{
 					return new ChatbotResponse { Text = ChatbotResources.Get("Status_CouldNotDetermine", session.Culture), Processed = false };
@@ -56,6 +68,34 @@ namespace Resgrid.Chatbot.Handlers
 				Framework.Logging.LogException(ex);
 				return new ChatbotResponse { Text = ChatbotResources.Get("Status_Error", session.Culture), Processed = false };
 			}
+		}
+
+		private async Task<int?> ResolveStatusNameAsync(int departmentId, string statusName)
+		{
+			var name = statusName.Trim().TrimEnd('?', '!', '.', ',');
+
+			var customStates = await _customStateService.GetAllActiveCustomStatesForDepartmentAsync(departmentId);
+			var customActions = customStates?.FirstOrDefault(x => x.Type == (int)Model.CustomStateTypes.Personnel);
+			if (customActions != null && !customActions.IsDeleted && customActions.GetActiveDetails()?.Any() == true)
+			{
+				var detail = customActions.GetActiveDetails()
+					.FirstOrDefault(d => string.Equals(d.ButtonText?.Trim(), name, StringComparison.OrdinalIgnoreCase)
+						|| string.Equals(d.ButtonText?.Replace(" ", ""), name.Replace(" ", ""), StringComparison.OrdinalIgnoreCase));
+
+				if (detail != null)
+					return detail.CustomStateDetailId;
+			}
+
+			// Standard status words (spaces optional).
+			return name.Replace(" ", "").ToLowerInvariant() switch
+			{
+				"responding" => (int)Model.ActionTypes.Responding,
+				"notresponding" => (int)Model.ActionTypes.NotResponding,
+				"onscene" => (int)Model.ActionTypes.OnScene,
+				"standingby" => (int)Model.ActionTypes.StandingBy,
+				"available" => (int)Model.ActionTypes.AvailableStation,
+				_ => (int?)null
+			};
 		}
 	}
 }

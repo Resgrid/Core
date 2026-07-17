@@ -113,8 +113,9 @@ namespace Resgrid.Services
 			if (message.Trim().ToLower() == "help" || message.Trim().ToLower() == "info")
 				payload.Type = TextCommandTypes.Help;
 
-			// Wanting to stop recieving text messages
-			if (message.Trim().ToLower() == "stop" || message.Trim().ToLower() == "end" || message.Trim().ToLower() == "quit" || message.Trim().ToLower() == "cancel" || message.Trim().ToLower() == "unsubscribe")
+			// Wanting to stop receiving text messages. Explicit words only (STOP/UNSUBSCRIBE) —
+			// END/QUIT/CANCEL must not trigger the opt-out flow; they carry other meanings.
+			if (message.Trim().ToLower() == "stop" || message.Trim().ToLower() == "unsubscribe")
 				payload.Type = TextCommandTypes.Stop;
 
 			if (message.Trim().ToLower() == "calls")

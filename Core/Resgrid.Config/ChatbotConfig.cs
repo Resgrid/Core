@@ -29,6 +29,12 @@ namespace Resgrid.Config
 		public static int MessagesPerUserPerMinute = 30;
 		public static int MessagesPerDepartmentPerMinute = 120;
 
+		// Outbound SMS replies from the chatbot are interactive content (help/command lists, call
+		// details) that users act on without opening the app, so they get a higher length cap than the
+		// notification default (SystemBehaviorConfig.SmsMaxLength). Kept under Twilio's 1600-char hard
+		// reject (error 21617); carriers deliver it as a concatenated message.
+		public static int SmsReplyMaxLength = 1500;
+
 		// Session Store
 		public static bool UseRedisSessionStore = false;
 		public static string RedisConnectionString = "";

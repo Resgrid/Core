@@ -30,18 +30,22 @@ namespace Resgrid.Chatbot.Handlers
 			var culture = session.Culture;
 			try
 			{
-				if (!intent.Parameters.TryGetValue("callId", out var callIdStr) || !int.TryParse(callIdStr, out var callId))
+				// The reference can be a raw call id ("1445"/"C1445") or a call number ("26-1") —
+				// see CallReferenceResolver. Tenant isolation (anti-IDOR) lives in the resolver: a call
+				// from another department resolves to null, indistinguishable from not-found.
+				intent.Parameters.TryGetValue("callId", out var reference);
+				if (string.IsNullOrWhiteSpace(reference))
+					intent.Parameters.TryGetValue("callRef", out reference);
+
+				if (string.IsNullOrWhiteSpace(reference))
 				{
 					return new ChatbotResponse { Text = ChatbotResources.Get("CallDetail_Specify", culture), Processed = false };
 				}
 
-				var call = await _callsService.GetCallByIdAsync(callId);
-
-				// Tenant isolation (anti-IDOR): a call that doesn't exist OR belongs to another
-				// department must be indistinguishable so call ids can't be enumerated across tenants.
-				if (call == null || call.DepartmentId != session.DepartmentId)
+				var call = await Services.CallReferenceResolver.ResolveAsync(_callsService, session.DepartmentId, reference);
+				if (call == null)
 				{
-					return new ChatbotResponse { Text = ChatbotResources.Get("Call_NotFound", culture, callId), Processed = true };
+					return new ChatbotResponse { Text = ChatbotResources.Get("Call_NoMatch", culture, reference), Processed = true };
 				}
 
 				// Authorization: the call is in the user's department, but they still need view permission.

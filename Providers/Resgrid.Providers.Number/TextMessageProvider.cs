@@ -26,11 +26,13 @@ namespace Resgrid.Providers.NumberProvider
 		private static int _maxZone = 4;
 		private static IEnumerable<AreaCodeCity> _areaCodes;
 
-		public async Task<bool> SendTextMessage(string number, string message, string departmentNumber, MobileCarriers carrier, int departmentId, bool forceGateway = false, bool isCall = false)
+		public async Task<bool> SendTextMessage(string number, string message, string departmentNumber, MobileCarriers carrier, int departmentId, bool forceGateway = false, bool isCall = false, int maxLengthOverride = 0)
 		{
 			// Single chokepoint for every outbound SMS path below (Twilio + SignalWire fallback): strip non-allow-listed
 			// URLs (carrier deliverability) and cap length (cost + avoid Twilio error 21617 at 1600 chars) before sending.
-			message = SmsContentHelper.PrepareForSms(message, Config.SystemBehaviorConfig.SmsMaxLength,
+			// Interactive senders (chatbot replies) can raise the cap per message via maxLengthOverride.
+			var maxLength = maxLengthOverride > 0 ? maxLengthOverride : Config.SystemBehaviorConfig.SmsMaxLength;
+			message = SmsContentHelper.PrepareForSms(message, maxLength,
 				(Config.SystemBehaviorConfig.SmsAllowedUrlDomains ?? string.Empty).Split(',', StringSplitOptions.RemoveEmptyEntries));
 
 			var wasTwillioSuccessful = await SendTextMessageViaTwillio(number, message, departmentNumber);

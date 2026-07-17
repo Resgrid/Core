@@ -53,6 +53,8 @@ namespace Resgrid.Chatbot.NLU.Providers
 			// "my staffing" — the my_status handler reports both status and staffing.
 			(R(@"^(my\s+)?staffing$"), "my_status", null),
 			(R(@"^(messages?|msgs?)$"), "list_messages", null),
+			// Unread/new message forms route to the same list handler (it lists unread only).
+			(R(@"^(any\s+|my\s+)?(unread|new)\s+(messages?|msgs?)$"), "list_messages", null),
 			(R(@"^(calendar|events?|cal)$"), "list_calendar", null),
 			(R(@"^shifts?$"), "list_shifts", null),
 			(R(@"^(personnel|staff)$"), "personnel_lookup", null),
@@ -86,6 +88,63 @@ namespace Resgrid.Chatbot.NLU.Providers
 				"delete_message", m => P("messageId", m.Groups[3].Value)),
 			(R(@"^(reply|respond)\s+(yes|no|acknowledge|ack)\s+to\s+(message|msg|#)?\s*#?(\d+)"),
 				"respond_to_message", m => P2("response", m.Groups[2].Value, "messageId", m.Groups[4].Value)),
+
+			// === Availability / Call Responder Queries (must precede the generic
+			// "who is X" personnel_lookup and "what ... calls" list_calls patterns) ===
+
+			// "who's available?", "who is around?", "anyone free?", "who can respond?"
+			(R(@"^(who'?s|who\s+is|who\s+are|anyone|anybody|any\s*one)\s+(around|available|free)(\s+to\s+respond)?$"),
+				"who_available", null),
+			(R(@"^who\s+can\s+respond$"),
+				"who_available", null),
+
+			// "units available?", "available units", "what units are available/free/in service"
+			(R(@"^(available|free)\s+units?$"),
+				"units_available", null),
+			(R(@"^units?\s+(are\s+)?(available|free|in\s+service)$"),
+				"units_available", null),
+			(R(@"^(what|which)\s+units?\s+(are\s+)?(available|free|in\s+service)$"),
+				"units_available", null),
+
+			// "who's on scene at the fire" — on-scene responders for a call.
+			(R(@"^(who'?s|who\s+is|who\s+are)\s+on\s*scene(\s+(?:at|on|for)\s+(.+))?$"),
+				"call_responders", m => P2("mode", "onscene", "callRef", m.Groups[3].Value.Trim())),
+
+			// "who's in route to the fire", "who is responding to c1445", "who's coming"
+			(R(@"^(who'?s|who\s+is|who\s+are)\s+((?:in|en)\s*route|responding|headed|heading|going|coming)(\s+(?:to|for)\s+(.+))?$"),
+				"call_responders", m => P2("mode", "enroute", "callRef", m.Groups[4].Value.Trim())),
+
+			// "who got dispatched to the medical", "who's dispatched to 26-1" — the full dispatch
+			// list (personnel, groups, roles and units) rather than live statuses.
+			(R(@"^(who'?s|who\s+is|who\s+are|who\s+got|who\s+was|who\s+were|who)\s+dispatched(\s+(?:to|on|for)\s+(.+))?$"),
+				"call_dispatched", m => P("callRef", m.Groups[3].Value.Trim())),
+
+			// "who's on call 26-1", "who is on the fire" — responding + on-scene for a call.
+			(R(@"^(who'?s|who\s+is|who\s+are)\s+on(\s+call)?(\s+(.+))?$"),
+				"call_responders", m => P2("mode", "all", "callRef", m.Groups[4].Value.Trim())),
+
+			// "what calls am I on?", "my calls" — calls the user was dispatched to.
+			(R(@"^(what\s+)?calls?\s+am\s+i\s+(on|dispatched\s+to|assigned\s+to)\b.*$"),
+				"my_calls", null),
+			(R(@"^my\s+calls?$"),
+				"my_calls", null),
+			(R(@"^what\s+am\s+i\s+dispatched\s+to$"),
+				"my_calls", null),
+
+			// "what calls is Rescue 6 on?" — calls a unit was dispatched to.
+			(R(@"^(what\s+)?calls?\s+(is|are)\s+(.+?)\s+(on|dispatched\s+to|assigned\s+to)$"),
+				"unit_calls", m => P("unitName", m.Groups[3].Value.Trim())),
+			(R(@"^what\s+is\s+(.+?)\s+dispatched\s+to$"),
+				"unit_calls", m => P("unitName", m.Groups[1].Value.Trim())),
+
+			// "what's my schedule?", "my schedule for 7/22" — shifts + RSVP'd events.
+			(R(@"^(what'?s\s+|what\s+is\s+)?my\s+schedule(\s+(?:for\s+|on\s+)?(.+))?$"),
+				"my_schedule", m => P("day", m.Groups[3].Value.Trim())),
+
+			// "poll members to see who's available for a red flag on 7/22" — the handler strips
+			// leading audience/verb filler from the question text.
+			(R(@"^(send\s+a\s+poll|send\s+poll|poll)\s+(.+)$"),
+				"create_poll", m => P("question", m.Groups[2].Value.Trim())),
 
 			// === Natural Language Query Commands ===
 			(R(@"^(show|list|get|what)\s+(are\s+)?(active|open)?\s*(calls|incidents)"),

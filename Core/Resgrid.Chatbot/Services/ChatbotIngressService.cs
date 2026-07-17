@@ -26,8 +26,12 @@ namespace Resgrid.Chatbot.Services
 		private readonly IChatbotDepartmentConfigService _departmentConfigService;
 		private readonly IChatbotRateLimiter _rateLimiter;
 		private readonly ISecurityPinService _securityPinService;
+		private readonly IMessageService _messageService;
 
 		private const int MaxPinAttempts = 3;
+
+		// Newest-first outstanding-poll scan depth for bare YES/NO replies.
+		private const int MaxPollCandidatesToScan = 5;
 
 		public ChatbotIngressService(
 			IChatbotUserIdentityService userIdentityService,
@@ -43,7 +47,8 @@ namespace Resgrid.Chatbot.Services
 			IAuthorizationService authorizationService,
 			IChatbotDepartmentConfigService departmentConfigService,
 			IChatbotRateLimiter rateLimiter,
-			ISecurityPinService securityPinService)
+			ISecurityPinService securityPinService,
+			IMessageService messageService)
 		{
 			_userIdentityService = userIdentityService;
 			_sessionManager = sessionManager;
@@ -59,6 +64,7 @@ namespace Resgrid.Chatbot.Services
 			_departmentConfigService = departmentConfigService;
 			_rateLimiter = rateLimiter;
 			_securityPinService = securityPinService;
+			_messageService = messageService;
 		}
 
 		public async Task<ChatbotResponse> ProcessMessageAsync(ChatbotMessage message)
@@ -455,6 +461,25 @@ namespace Resgrid.Chatbot.Services
 					}
 				}
 
+				// 5c. Bare YES/NO with no dialog pending: the user is most likely answering an
+				// outstanding poll message ("Poll: ... Reply YES or NO."). Resolved BEFORE the classifier
+				// so the reply never hits the cloud NLU; when no unanswered poll exists this falls through.
+				if (session.State == ChatbotDialogState.Idle)
+				{
+					string pollAnswer = null;
+					if (Localization.ChatbotResources.IsAffirmative(message.Text, session.Culture))
+						pollAnswer = "Yes";
+					else if (Localization.ChatbotResources.IsNegative(message.Text, session.Culture))
+						pollAnswer = "No";
+
+					if (pollAnswer != null)
+					{
+						var pollResponse = await TryRecordPollResponseAsync(identity.UserId, pollAnswer, session.Culture);
+						if (pollResponse != null)
+							return pollResponse;
+					}
+				}
+
 				// 6. Classify intent (explicit STOP/UNSUBSCRIBE already handled before the state machine).
 				var intent = await _intentRouter.ClassifyIntentAsync(message, session);
 
@@ -519,6 +544,51 @@ namespace Resgrid.Chatbot.Services
 					Processed = false
 				};
 			}
+		}
+
+		/// <summary>
+		/// Records a bare YES/NO reply against the user's most recent unanswered poll message. Returns
+		/// null when the user has no outstanding poll (the reply then flows on to normal classification).
+		/// </summary>
+		private async Task<ChatbotResponse> TryRecordPollResponseAsync(string userId, string answer, string culture)
+		{
+			try
+			{
+				var inbox = await _messageService.GetInboxMessagesByUserIdAsync(userId);
+				var pollCandidates = inbox?
+					.Where(m => m.Type == (int)Model.MessageTypes.Poll && !m.IsDeleted
+						&& (m.ExpireOn == null || m.ExpireOn > DateTime.UtcNow))
+					.OrderByDescending(m => m.SentOn)
+					.Take(MaxPollCandidatesToScan);
+
+				if (pollCandidates == null)
+					return null;
+
+				foreach (var poll in pollCandidates)
+				{
+					var recipient = await _messageService.GetMessageRecipientByMessageAndUserAsync(poll.MessageId, userId);
+					if (recipient == null || !string.IsNullOrWhiteSpace(recipient.Response))
+						continue;
+
+					recipient.Response = answer;
+					if (recipient.ReadOn == null)
+						recipient.ReadOn = DateTime.UtcNow;
+
+					await _messageService.SaveMessageRecipientAsync(recipient);
+
+					return new ChatbotResponse
+					{
+						Text = Localization.ChatbotResources.Get("Poll_ResponseRecorded", culture, answer, poll.Subject),
+						Processed = true
+					};
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
+
+			return null;
 		}
 
 		private async Task<ChatbotUserIdentity> ResolveUserIdentityAsync(ChatbotMessage message)

@@ -165,6 +165,34 @@ namespace Resgrid.Chatbot
 			builder.RegisterType<WeatherAlertHandler>()
 				.As<IChatbotActionHandler>()
 				.InstancePerLifetimeScope();
+
+			builder.RegisterType<AvailabilityActionHandler>()
+				.As<IChatbotActionHandler>()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<UnitsAvailableActionHandler>()
+				.As<IChatbotActionHandler>()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<CallRespondersActionHandler>()
+				.As<IChatbotActionHandler>()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<CallDispatchedActionHandler>()
+				.As<IChatbotActionHandler>()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<MyCallsActionHandler>()
+				.As<IChatbotActionHandler>()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<PollCreateHandler>()
+				.As<IChatbotActionHandler>()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<MyScheduleActionHandler>()
+				.As<IChatbotActionHandler>()
+				.InstancePerLifetimeScope();
 		}
 	}
 }

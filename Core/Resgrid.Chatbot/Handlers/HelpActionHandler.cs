@@ -123,6 +123,9 @@ namespace Resgrid.Chatbot.Handlers
 				+ "CALLS: list active calls\n"
 				+ "C<id>: call detail (e.g. C1445)\n"
 				+ "RESPOND TO C<id>: mark responding to a call\n"
+				+ "WHO'S ON <call>: who is responding/on scene\n"
+				+ "WHO'S DISPATCHED TO <call>: the dispatch list\n"
+				+ "WHAT CALLS AM I ON: your dispatched calls\n"
 				+ "DISPATCH <details>: create a new call\n"
 				+ "CLOSE CALL C<id>: close a call";
 		}
@@ -130,9 +133,10 @@ namespace Resgrid.Chatbot.Handlers
 		private static string BuildMessagesHelp()
 		{
 			return "Messages:\n"
-				+ "MESSAGES or MSG: list your messages\n"
+				+ "MESSAGES or NEW MESSAGES: list unread messages\n"
 				+ "#<id>: read a message\n"
 				+ "REPLY YES/NO TO #<id>: respond\n"
+				+ "YES or NO: answers your latest poll\n"
 				+ "DELETE MSG <id>: delete\n"
 				+ "SEND MESSAGE TO <name>: <text>";
 		}
@@ -141,6 +145,8 @@ namespace Resgrid.Chatbot.Handlers
 		{
 			return "Units:\n"
 				+ "UNITS: list unit statuses\n"
+				+ "UNITS AVAILABLE: units free to respond\n"
+				+ "WHAT CALLS IS <unit> ON: a unit's dispatched calls\n"
 				+ "SET UNIT <name> TO <status>";
 		}
 
@@ -148,6 +154,7 @@ namespace Resgrid.Chatbot.Handlers
 		{
 			return "Shifts:\n"
 				+ "SHIFTS: list your shifts\n"
+				+ "MY SCHEDULE [FOR <day>]: shifts + RSVP'd events\n"
 				+ "SIGNUP SHIFT <id>: take a shift\n"
 				+ "DROP SHIFT <id>: release a shift";
 		}
@@ -163,7 +170,9 @@ namespace Resgrid.Chatbot.Handlers
 		{
 			return "Personnel:\n"
 				+ "PERSONNEL: personnel status list\n"
-				+ "WHO IS <name> / WHERE IS <name>";
+				+ "WHO'S AVAILABLE: who can respond right now\n"
+				+ "WHO IS <name> / WHERE IS <name>\n"
+				+ "POLL <question>: yes/no poll to all members (admins)";
 		}
 
 		private static string BuildDepartmentsHelp()

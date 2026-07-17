@@ -40,6 +40,14 @@ namespace Resgrid.Chatbot.Services
 			["list_departments"] = ChatbotIntentType.ListDepartments,
 			["get_active_department"] = ChatbotIntentType.GetActiveDepartment,
 			["switch_department"] = ChatbotIntentType.SwitchDepartment,
+			["who_available"] = ChatbotIntentType.WhoIsAvailable,
+			["units_available"] = ChatbotIntentType.UnitsAvailable,
+			["call_responders"] = ChatbotIntentType.CallResponders,
+			["call_dispatched"] = ChatbotIntentType.CallDispatched,
+			["my_calls"] = ChatbotIntentType.MyCalls,
+			["unit_calls"] = ChatbotIntentType.UnitCalls,
+			["create_poll"] = ChatbotIntentType.CreatePoll,
+			["my_schedule"] = ChatbotIntentType.MySchedule,
 			["unknown"] = ChatbotIntentType.Unknown,
 		};
 

@@ -27,10 +27,10 @@ namespace Resgrid.Web.Tts.Services
 		private static readonly Dictionary<string, string> VoiceModelMap = new(StringComparer.OrdinalIgnoreCase)
 		{
 			// English variants
-			{ "en", "en_US-ryan-high.onnx" },
-			{ "en-us", "en_US-ryan-high.onnx" },
-			{ "en-029", "en_US-ryan-high.onnx" },
-			{ "mb-us1", "en_US-ryan-high.onnx" },
+			{ "en", DefaultEnglishModel },
+			{ "en-us", DefaultEnglishModel },
+			{ "en-029", DefaultEnglishModel },
+			{ "mb-us1", DefaultEnglishModel },
 
 			// Spanish
 			{ "es", "es_MX-claude-high.onnx" },

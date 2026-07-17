@@ -196,8 +196,12 @@ namespace Resgrid.Chatbot.Handlers
 					return new ChatbotResponse { Text = ChatbotResources.Get("Dept_NoActiveMemberships", culture), Processed = true };
 
 				DepartmentMember targetMembership = null;
-				// Trailing punctuation is never part of a department identifier ("switch 1?").
+				// Trailing punctuation is never part of a department identifier ("switch 1?"). An input
+				// that normalizes to empty (e.g. "switch ???") must be rejected here — an empty string
+				// would pass the name IndexOf check below and silently switch to the first department.
 				var trimmedId = departmentIdentifier.Trim().TrimEnd('?', '!', '.', ',');
+				if (trimmedId.Length == 0)
+					return new ChatbotResponse { Text = ChatbotResources.Get("Dept_SwitchSpecify", culture), Processed = true };
 
 				if (int.TryParse(trimmedId, out var listIndex) && listIndex >= 1 && listIndex <= activeMemberships.Count)
 					targetMembership = activeMemberships[listIndex - 1];

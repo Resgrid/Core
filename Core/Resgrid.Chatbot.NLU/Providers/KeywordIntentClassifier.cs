@@ -90,6 +90,10 @@ namespace Resgrid.Chatbot.NLU.Providers
 			// === Natural Language Query Commands ===
 			(R(@"^(show|list|get|what)\s+(are\s+)?(active|open)?\s*(calls|incidents)"),
 				"list_calls", null),
+			// Hyphenated call-number references ("what about c26-1") must match before the plain
+			// numeric form below — its \b sits at the hyphen and would bind just "c26" (the wrong call).
+			(R(@"^(show|tell|get|details?|what\s+about).*\bc?(\d{2,4}-\d+)\b"),
+				"call_detail", m => P("callRef", m.Groups[2].Value)),
 			(R(@"^(show|tell|get|details?|what\s+about).*\bc(\d+)\b"),
 				"call_detail", m => P("callId", m.Groups[m.Groups.Count - 1].Value)),
 			(R(@"^(show|list|get|what)\s+(are\s+)?(units?|apparatus|rigs?)"),

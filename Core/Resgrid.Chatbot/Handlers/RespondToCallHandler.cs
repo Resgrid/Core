@@ -32,12 +32,18 @@ namespace Resgrid.Chatbot.Handlers
 			var culture = session.Culture;
 			try
 			{
-				if (!intent.Parameters.TryGetValue("callId", out var callIdStr) || !int.TryParse(callIdStr, out var callId))
+				// The reference can be a raw call id ("1445"/"C1445"), a call number ("26-1"), or
+				// responder shorthand ("fire") matched against active calls — see CallReferenceResolver.
+				intent.Parameters.TryGetValue("callId", out var reference);
+				if (string.IsNullOrWhiteSpace(reference))
+					intent.Parameters.TryGetValue("callRef", out reference);
+
+				if (string.IsNullOrWhiteSpace(reference))
 					return new ChatbotResponse { Text = ChatbotResources.Get("Call_RespondWhich", culture), Processed = false };
 
-				var call = await _callsService.GetCallByIdAsync(callId);
-				if (call == null || call.DepartmentId != session.DepartmentId)
-					return new ChatbotResponse { Text = ChatbotResources.Get("Call_NotFound", culture, callId), Processed = true };
+				var call = await Services.CallReferenceResolver.ResolveAsync(_callsService, session.DepartmentId, reference);
+				if (call == null)
+					return new ChatbotResponse { Text = ChatbotResources.Get("Call_NoMatch", culture, reference), Processed = true };
 
 				await _actionLogsService.SetUserActionAsync(session.UserId, session.DepartmentId, (int)ActionTypes.Responding, string.Empty, call.CallId);
 

@@ -48,7 +48,8 @@ namespace Resgrid.Tests.Chatbot
 
 			var response = await handler.HandleAsync(new ChatbotMessage { Text = "C5" }, CallDetailIntent("5"), Session(departmentId: 1));
 
-			response.Text.Should().Contain("not found");
+			// Cross-department call resolves to the same no-match reply as a nonexistent one (anti-IDOR).
+			response.Text.Should().Contain("No active call found matching");
 			response.Text.Should().NotContain("Secret");
 			// Cross-department access must short-circuit before any permission check.
 			authz.Verify(a => a.CanUserViewCallAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never);

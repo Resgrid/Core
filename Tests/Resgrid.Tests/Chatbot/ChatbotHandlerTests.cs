@@ -339,7 +339,8 @@ namespace Resgrid.Tests.Chatbot
 			var handler = new RespondToCallHandler(calls.Object, actionLogs.Object);
 			var response = await handler.HandleAsync(Msg("respond to c7"), Intent(ChatbotIntentType.RespondToCall, ("callId", "7")), Session(departmentId: 1));
 
-			response.Text.Should().Contain("not found");
+			// Cross-department call resolves to the same no-match reply as a nonexistent one (anti-IDOR).
+			response.Text.Should().Contain("No active call found matching");
 			actionLogs.Verify(a => a.SetUserActionAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 

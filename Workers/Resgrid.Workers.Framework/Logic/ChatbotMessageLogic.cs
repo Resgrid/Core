@@ -41,7 +41,10 @@ namespace Resgrid.Workers.Framework.Logic
 			{
 				// Reply from the department's text number (To) back to the sender (From). Twilio is the
 				// primary transport; carrier only governs gateway fallback, so the default is fine here.
-				await textMessageProvider.SendTextMessage(item.From, response.Text, item.To, default(MobileCarriers), item.DepartmentId);
+				// Chatbot replies are interactive (help/command lists the user acts on over SMS), so they
+				// use the higher chatbot length cap instead of the notification default.
+				await textMessageProvider.SendTextMessage(item.From, response.Text, item.To, default(MobileCarriers), item.DepartmentId,
+					maxLengthOverride: Resgrid.Config.ChatbotConfig.SmsReplyMaxLength);
 			}
 
 			return true;

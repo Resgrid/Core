@@ -256,6 +256,19 @@ namespace Resgrid.Chatbot.Services
 				if (!isAuthorized)
 				{
 					var restrictedIntent = await _intentRouter.ClassifyIntentAsync(message, session);
+
+					// STOP (telecom opt-out) always works, even in restricted mode.
+					if (restrictedIntent.Type == ChatbotIntentType.Stop && IsSmsPlatform(message.Platform))
+					{
+						await _userProfileService.DisableTextMessagesForUserAsync(identity.UserId);
+						return new ChatbotResponse
+						{
+							Text = "Text messages are now turned off for this user, to enable again log in to Resgrid and update your profile.",
+							Processed = true,
+							Intent = restrictedIntent
+						};
+					}
+
 					if (restrictedIntent.Type == ChatbotIntentType.ListDepartments
 						|| restrictedIntent.Type == ChatbotIntentType.SwitchDepartment
 						|| restrictedIntent.Type == ChatbotIntentType.GetActiveDepartment)
@@ -403,13 +416,26 @@ namespace Resgrid.Chatbot.Services
 				// 6. Classify intent
 				var intent = await _intentRouter.ClassifyIntentAsync(message, session);
 
-				// 7. Special handling: Stop command ends session
+				// 7. STOP is the telecom opt-out keyword, never a session operation: on SMS it turns off
+				// all outbound SMS notifications (calls, messages, notifications) on the user's profile —
+				// same behavior as the legacy text-command path. Sessions are infrastructure; users don't
+				// start or end them.
 				if (intent.Type == ChatbotIntentType.Stop)
 				{
-					await _sessionManager.EndSessionAsync(session.SessionId);
+					if (IsSmsPlatform(message.Platform))
+					{
+						await _userProfileService.DisableTextMessagesForUserAsync(identity.UserId);
+						return new ChatbotResponse
+						{
+							Text = "Text messages are now turned off for this user, to enable again log in to Resgrid and update your profile.",
+							Processed = true,
+							Intent = intent
+						};
+					}
+
 					return new ChatbotResponse
 					{
-						Text = "Chatbot session ended. Text HELP to start a new session.",
+						Text = "To manage your notification settings, update your profile in Resgrid.",
 						Processed = true,
 						Intent = intent
 					};

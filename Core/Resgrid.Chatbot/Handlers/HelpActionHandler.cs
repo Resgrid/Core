@@ -9,6 +9,11 @@ using Resgrid.Model.Services;
 
 namespace Resgrid.Chatbot.Handlers
 {
+	/// <summary>
+	/// Two-level help. Bare HELP returns a short topic menu (SMS replies cost per segment, so the
+	/// full command dump is never sent unsolicited); HELP &lt;topic&gt; returns the commands for that
+	/// operation. Status/staffing topics reflect the department's custom states when configured.
+	/// </summary>
 	public class HelpActionHandler : IChatbotActionHandler
 	{
 		private readonly ICustomStateService _customStateService;
@@ -24,77 +29,162 @@ namespace Resgrid.Chatbot.Handlers
 		{
 			try
 			{
-				var customStates = await _customStateService.GetAllActiveCustomStatesForDepartmentAsync(session.DepartmentId);
-				var customActions = customStates?.FirstOrDefault(x => x.Type == (int)CustomStateTypes.Personnel);
-				var customStaffing = customStates?.FirstOrDefault(x => x.Type == (int)CustomStateTypes.Staffing);
+				string topic = null;
+				intent?.Parameters?.TryGetValue("topic", out topic);
+				topic = topic?.Trim().ToUpperInvariant();
 
-				var sb = new StringBuilder();
-				sb.AppendLine("Resgrid Chatbot Commands");
-				sb.AppendLine("----------------------");
-				sb.AppendLine("Quick Reference — text any command:");
-				sb.AppendLine();
-				sb.AppendLine("-- Core --");
-				sb.AppendLine("HELP: Show this help");
-				sb.AppendLine("STOP: End chatbot session");
-				sb.AppendLine("STATUS: Your current status & staffing");
-				sb.AppendLine("CALLS: List active calls");
-				sb.AppendLine("C#####: Call detail (e.g., C1445)");
-				sb.AppendLine("UNITS: List unit statuses");
-				sb.AppendLine("MSG: List messages");
-				sb.AppendLine("CALENDAR: Upcoming events");
-				sb.AppendLine("PERSONNEL: Personnel status list");
-				sb.AppendLine();
-				sb.AppendLine("-- Status --");
-
-				if (customActions != null && !customActions.IsDeleted && customActions.GetActiveDetails()?.Any() == true)
+				var text = topic switch
 				{
-					var details = customActions.GetActiveDetails();
-					for (int i = 0; i < details.Count; i++)
-					{
-						sb.AppendLine($"{details[i].ButtonText?.Replace(" ", "")} or {i + 1}: {details[i].ButtonText}");
-					}
-				}
-				else
-				{
-					sb.AppendLine("1 or RESPONDING: Responding");
-					sb.AppendLine("2 or NOTRESPONDING: Not Responding");
-					sb.AppendLine("3 or ONSCENE: On Scene");
-					sb.AppendLine("4 or STANDINGBY: Standing By");
-				}
+					"STATUS" => await BuildStatusHelpAsync(session.DepartmentId),
+					"STAFFING" => await BuildStaffingHelpAsync(session.DepartmentId),
+					"CALLS" => BuildCallsHelp(),
+					"MESSAGES" or "MSG" or "MESSAGE" => BuildMessagesHelp(),
+					"UNITS" or "UNIT" => BuildUnitsHelp(),
+					"SHIFTS" or "SHIFT" => BuildShiftsHelp(),
+					"CALENDAR" or "EVENTS" => BuildCalendarHelp(),
+					"PERSONNEL" or "STAFF" => BuildPersonnelHelp(),
+					"DEPARTMENTS" or "DEPARTMENT" or "DEPTS" or "DEPT" => BuildDepartmentsHelp(),
+					"STOP" => BuildStopHelp(),
+					null or "" => BuildTopicMenu(),
+					_ => $"Unknown help topic \"{topic}\".\n{BuildTopicMenu()}"
+				};
 
-				sb.AppendLine();
-				sb.AppendLine("-- Staffing --");
-
-				if (customStaffing != null && !customStaffing.IsDeleted && customStaffing.GetActiveDetails()?.Any() == true)
-				{
-					var details = customStaffing.GetActiveDetails();
-					for (int i = 0; i < details.Count; i++)
-					{
-						sb.AppendLine($"S{i + 1}: {details[i].ButtonText}");
-					}
-				}
-				else
-				{
-					sb.AppendLine("S1 or AVAILABLE: Available");
-					sb.AppendLine("S2 or DELAYED: Delayed");
-					sb.AppendLine("S3 or UNAVAILABLE: Unavailable");
-					sb.AppendLine("S4 or COMMITTED: Committed");
-					sb.AppendLine("S5 or ONSHIFT: On Shift");
-				}
-
-				sb.AppendLine();
-				sb.AppendLine("-- Departments --");
-				sb.AppendLine("DEPARTMENTS: List your departments");
-				sb.AppendLine("ACTIVE DEPARTMENT: Show current department");
-				sb.AppendLine("SWITCH DEPARTMENT [name]: Switch departments");
-
-				return new ChatbotResponse { Text = sb.ToString(), Processed = true };
+				return new ChatbotResponse { Text = text, Processed = true };
 			}
 			catch (Exception ex)
 			{
 				Framework.Logging.LogException(ex);
 				return new ChatbotResponse { Text = "Error generating help text.", Processed = false };
 			}
+		}
+
+		private static string BuildTopicMenu()
+		{
+			return "Resgrid Chatbot. Text a command, or HELP <topic> for details.\n"
+				+ "Topics: STATUS, STAFFING, CALLS, MESSAGES, UNITS, SHIFTS, CALENDAR, PERSONNEL, DEPARTMENTS, STOP";
+		}
+
+		private async Task<string> BuildStatusHelpAsync(int departmentId)
+		{
+			var sb = new StringBuilder();
+			sb.AppendLine("Status — text the word or number:");
+
+			var customActions = await GetCustomStateAsync(departmentId, CustomStateTypes.Personnel);
+			if (customActions != null)
+			{
+				var details = customActions.GetActiveDetails();
+				for (int i = 0; i < details.Count; i++)
+					sb.AppendLine($"{i + 1} or {details[i].ButtonText?.Replace(" ", "")}");
+			}
+			else
+			{
+				sb.AppendLine("1 or RESPONDING");
+				sb.AppendLine("2 or NOTRESPONDING");
+				sb.AppendLine("3 or ONSCENE");
+				sb.AppendLine("4 or STANDINGBY");
+			}
+
+			sb.Append("STATUS shows your current status & staffing.");
+			return sb.ToString();
+		}
+
+		private async Task<string> BuildStaffingHelpAsync(int departmentId)
+		{
+			var sb = new StringBuilder();
+			sb.AppendLine("Staffing — text the code or word:");
+
+			var customStaffing = await GetCustomStateAsync(departmentId, CustomStateTypes.Staffing);
+			if (customStaffing != null)
+			{
+				var details = customStaffing.GetActiveDetails();
+				for (int i = 0; i < details.Count; i++)
+					sb.AppendLine($"S{i + 1}: {details[i].ButtonText}");
+			}
+			else
+			{
+				sb.AppendLine("S1 or AVAILABLE");
+				sb.AppendLine("S2 or DELAYED");
+				sb.AppendLine("S3 or UNAVAILABLE");
+				sb.AppendLine("S4 or COMMITTED");
+				sb.AppendLine("S5 or ONSHIFT");
+			}
+
+			sb.Append("STATUS shows your current status & staffing.");
+			return sb.ToString();
+		}
+
+		private static string BuildCallsHelp()
+		{
+			return "Calls:\n"
+				+ "CALLS: list active calls\n"
+				+ "C<id>: call detail (e.g. C1445)\n"
+				+ "RESPOND TO C<id>: mark responding to a call\n"
+				+ "DISPATCH <details>: create a new call\n"
+				+ "CLOSE CALL C<id>: close a call";
+		}
+
+		private static string BuildMessagesHelp()
+		{
+			return "Messages:\n"
+				+ "MSG: list your messages\n"
+				+ "#<id>: read a message\n"
+				+ "REPLY YES/NO TO #<id>: respond\n"
+				+ "DELETE MSG <id>: delete\n"
+				+ "SEND MESSAGE TO <name>: <text>";
+		}
+
+		private static string BuildUnitsHelp()
+		{
+			return "Units:\n"
+				+ "UNITS: list unit statuses\n"
+				+ "SET UNIT <name> TO <status>";
+		}
+
+		private static string BuildShiftsHelp()
+		{
+			return "Shifts:\n"
+				+ "SHIFTS: list your shifts\n"
+				+ "SIGNUP SHIFT <id>: take a shift\n"
+				+ "DROP SHIFT <id>: release a shift";
+		}
+
+		private static string BuildCalendarHelp()
+		{
+			return "Calendar:\n"
+				+ "CALENDAR: upcoming events\n"
+				+ "RSVP YES/NO/MAYBE TO <event>";
+		}
+
+		private static string BuildPersonnelHelp()
+		{
+			return "Personnel:\n"
+				+ "PERSONNEL: personnel status list\n"
+				+ "WHO IS <name> / WHERE IS <name>";
+		}
+
+		private static string BuildDepartmentsHelp()
+		{
+			return "Departments:\n"
+				+ "DEPARTMENTS: list your departments\n"
+				+ "SWITCH <number or name>: change active department\n"
+				+ "ACTIVE DEPARTMENT: show current";
+		}
+
+		private static string BuildStopHelp()
+		{
+			return "STOP turns off ALL Resgrid text messages to this number (calls, messages, notifications). "
+				+ "Re-enable them on your Resgrid profile page.";
+		}
+
+		private async Task<CustomState> GetCustomStateAsync(int departmentId, CustomStateTypes type)
+		{
+			var customStates = await _customStateService.GetAllActiveCustomStatesForDepartmentAsync(departmentId);
+			var state = customStates?.FirstOrDefault(x => x.Type == (int)type);
+
+			if (state != null && !state.IsDeleted && state.GetActiveDetails()?.Any() == true)
+				return state;
+
+			return null;
 		}
 	}
 }

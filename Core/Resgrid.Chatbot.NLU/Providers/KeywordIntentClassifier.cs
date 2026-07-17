@@ -19,6 +19,9 @@ namespace Resgrid.Chatbot.NLU.Providers
 			(new Regex(@"^(not\s*responding|2)$", RegexOptions.IgnoreCase), "set_status", m => P("actionType", "2")),
 			(new Regex(@"^(on\s*scene|onscene|3)$", RegexOptions.IgnoreCase), "set_status", m => P("actionType", "3")),
 			(new Regex(@"^(standing\s*by|standingby|4)$", RegexOptions.IgnoreCase), "set_status", m => P("actionType", "4")),
+			// Responder shorthand for "responding" with no target call.
+			(new Regex(@"^(omw|on\s+my\s+way|enroute|en\s+route)$", RegexOptions.IgnoreCase),
+				"set_status", m => P("actionType", "1")),
 			(new Regex(@"^(i'?m|i\s+am)\s+(responding|on\s*scene|standing\s*by|en\s*route|available|not\s*responding)", RegexOptions.IgnoreCase),
 				"set_status", m => P("actionType", MapStatusWord(m.Groups[2].Value))),
 			(new Regex(@"^(set|change|mark)\s+(my\s+)?status\s+to\s+(.+)", RegexOptions.IgnoreCase),
@@ -38,21 +41,31 @@ namespace Resgrid.Chatbot.NLU.Providers
 			// === Query Commands (rigid) ===
 			(new Regex(@"^calls?$", RegexOptions.IgnoreCase), "list_calls", null),
 			(new Regex(@"^c(\d+)$", RegexOptions.IgnoreCase), "call_detail", m => P("callId", m.Groups[1].Value)),
+			// Call number form ("26-1" / "C26-1"): two-digit year + sequence — resolved by the handler.
+			(new Regex(@"^c?(\d{2,4}-\d+)$", RegexOptions.IgnoreCase), "call_detail", m => P("callRef", m.Groups[1].Value)),
 			(new Regex(@"^units?$", RegexOptions.IgnoreCase), "list_units", null),
 			(new Regex(@"^(my\s+)?status$", RegexOptions.IgnoreCase), "my_status", null),
+			// "my staffing" — the my_status handler reports both status and staffing.
+			(new Regex(@"^(my\s+)?staffing$", RegexOptions.IgnoreCase), "my_status", null),
 			(new Regex(@"^messages?$", RegexOptions.IgnoreCase), "list_messages", null),
-			(new Regex(@"^(calendar|events?)$", RegexOptions.IgnoreCase), "list_calendar", null),
+			(new Regex(@"^(calendar|events?|cal)$", RegexOptions.IgnoreCase), "list_calendar", null),
 			(new Regex(@"^shifts?$", RegexOptions.IgnoreCase), "list_shifts", null),
 			(new Regex(@"^(personnel|staff)$", RegexOptions.IgnoreCase), "personnel_lookup", null),
 			(new Regex(@"^weather$", RegexOptions.IgnoreCase), "weather_alert", null),
 
 			// === Help / Stop ===
 			(new Regex(@"^(help|info|commands|menu|what\s+can\s+you\s+do)$", RegexOptions.IgnoreCase), "help", null),
-			(new Regex(@"^(stop|end|quit|cancel|unsubscribe)$", RegexOptions.IgnoreCase), "stop", null),
+			// STOP is explicit-only (plus UNSUBSCRIBE, the other unambiguous opt-out word). END/QUIT/CANCEL
+			// must NOT trigger the opt-out flow — they carry other meanings in conversation flows.
+			(new Regex(@"^(stop|unsubscribe)$", RegexOptions.IgnoreCase), "stop", null),
 
 			// === Emergency ===
 			(new Regex(@"^(mayday|emergency|sos|help\s*me|officer\s*down|ff?\s*down|firefighter\s*down)$", RegexOptions.IgnoreCase),
 				"emergency_mayday", null),
+
+			// === Help topic detail (after Emergency so "help me" stays a mayday) ===
+			(new Regex(@"^(help|info|commands|menu)\s+(.+)$", RegexOptions.IgnoreCase),
+				"help", m => P("topic", m.Groups[2].Value.Trim())),
 
 			// === Link / Unlink ===
 			(new Regex(@"^(link|login|verify|auth)$", RegexOptions.IgnoreCase), "link_account", null),
@@ -111,8 +124,13 @@ namespace Resgrid.Chatbot.NLU.Providers
 				"close_call", m => P("callId", m.Groups[2].Value)),
 
 			// === Respond to Call ===
-			(new Regex(@"^(respond|en\s*route|going)\s+to\s+c?(\d+)", RegexOptions.IgnoreCase),
+			(new Regex(@"^(respond|en\s*route|going)\s+to\s+c?(\d+)$", RegexOptions.IgnoreCase),
 				"respond_to_call", m => P("callId", m.Groups[2].Value)),
+			// Responder shorthand: "omw to 26-1", "omw to fire", "enroute to c1445", "headed to Main St".
+			// The reference can be a call id, a call number (yy-N), or a term matched against active
+			// calls — resolved by the handler.
+			(new Regex(@"^(omw|on\s+my\s+way|respond(?:ing)?|going|headed|enroute|en\s+route)\s+(?:to\s+)?(.+)$", RegexOptions.IgnoreCase),
+				"respond_to_call", m => P("callRef", m.Groups[2].Value.Trim())),
 
 			// === Shift Drop (must precede shift signup/detail so 'drop shift 5' isn't misread) ===
 			(new Regex(@"^(drop|cancel|release)\s+(my\s+)?shift\s+#?(\d+)", RegexOptions.IgnoreCase),
@@ -147,6 +165,14 @@ namespace Resgrid.Chatbot.NLU.Providers
 				"switch_department", m => P("departmentIdentifier", m.Groups[4].Value.Trim())),
 			(new Regex(@"^(switch|change|set)\s+(my\s+)?(active\s+)?(department|dept)\s*$", RegexOptions.IgnoreCase),
 				"list_departments", null),
+
+			// SMS-style short forms — parity with the legacy SWITCH text command ("SWITCH" lists the
+			// options, "SWITCH <number or name>" switches). Placed after the wordier forms above so
+			// "switch department X" keeps binding the identifier without the "department" word in it.
+			(new Regex(@"^switch$", RegexOptions.IgnoreCase),
+				"list_departments", null),
+			(new Regex(@"^switch\s+(to\s+)?(.+)$", RegexOptions.IgnoreCase),
+				"switch_department", m => P("departmentIdentifier", m.Groups[2].Value.Trim())),
 		};
 
 		public Task<NLUResult> ClassifyAsync(string text, string context = null, int departmentId = 0)
@@ -155,6 +181,12 @@ namespace Resgrid.Chatbot.NLU.Providers
 				return Task.FromResult(new NLUResult { IntentName = "unknown", Confidence = 0, ProviderName = ProviderName });
 
 			var trimmed = text.Trim();
+
+			// Texters end questions/commands with punctuation ("My status?", "omw to 26-1."). The
+			// patterns are anchored, so strip trailing punctuation before matching.
+			trimmed = trimmed.TrimEnd('?', '!', '.', ',', ' ');
+			if (trimmed.Length == 0)
+				return Task.FromResult(new NLUResult { IntentName = "unknown", Confidence = 0, ProviderName = ProviderName });
 
 			// Check all patterns in priority order
 			foreach (var (pattern, intent, extractor) in _patterns)

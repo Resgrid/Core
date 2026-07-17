@@ -509,6 +509,18 @@ namespace Resgrid.Chatbot.Localization
 				"Виклик #{0} не знайдено.",
 				"لم يتم العثور على البلاغ #{0}."),
 
+			// Reference can be an id, a call number (26-1), or a shorthand term ("fire").
+			["Call_NoMatch"] = L(
+				"No active call found matching \"{0}\".",
+				"No se encontró ninguna llamada activa que coincida con \"{0}\".",
+				"Inget aktivt larm hittades som matchar \"{0}\".",
+				"Kein aktiver Einsatz gefunden, der \"{0}\" entspricht.",
+				"Aucun appel actif trouvé correspondant à \"{0}\".",
+				"Nessuna chiamata attiva trovata corrispondente a \"{0}\".",
+				"Nie znaleziono aktywnego zgłoszenia pasującego do \"{0}\".",
+				"Не знайдено активного виклику, що відповідає \"{0}\".",
+				"لم يتم العثور على بلاغ نشط يطابق \"{0}\"."),
+
 			["Call_CloseWhich"] = L(
 				"Which call would you like to close? Reply with the call number (e.g., C1445).",
 				"¿Qué llamada quieres cerrar? Responde con el número de llamada (p. ej., C1445).",

@@ -32,7 +32,7 @@ namespace Resgrid.Config
 		public static string PiperModelDirectory = "/usr/local/share/piper-voices";
 		public static string FfmpegExecutable = "ffmpeg";
 		public static string TempDirectory = "";
-		public static string CachePrefix = "tts";
+		public static string CachePrefix = "tts2";
 		public static int NormalizedSampleRate = 8000;
 		public static int NormalizedChannels = 1;
 		public static bool WarmupEnabled = true;

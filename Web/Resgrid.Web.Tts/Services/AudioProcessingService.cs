@@ -12,8 +12,11 @@ namespace Resgrid.Web.Tts.Services
 		private const float SpeedReferenceWpm = 175f;
 		private const float MinLengthScale = 0.25f;
 		private const float MaxLengthScale = 3.0f;
-		private const string DefaultEnglishModel = "en_US-norman-medium.onnx";
-		private const string TelephoneAudioFilter = "highpass=f=200, lowpass=f=3000, anequalizer=c0 f=2500 w=1000 g=3 t=1";
+		private const string DefaultEnglishModel = "en_US-ryan-high.onnx";
+		// Lowpass sits at 3400 Hz (the telephony band edge) rather than 3000 so
+		// sibilants survive the mulaw encode; loudnorm keeps clips at a consistent
+		// perceived level over the phone.
+		private const string TelephoneAudioFilter = "highpass=f=200, lowpass=f=3400, anequalizer=c0 f=2500 w=1000 g=3 t=1, loudnorm=I=-16:TP=-1.5:LRA=11";
 
 		/// <summary>
 		/// Maps eSpeak voice identifiers to Piper model filenames provisioned in the
@@ -24,10 +27,10 @@ namespace Resgrid.Web.Tts.Services
 		private static readonly Dictionary<string, string> VoiceModelMap = new(StringComparer.OrdinalIgnoreCase)
 		{
 			// English variants
-			{ "en", "en_US-norman-medium.onnx" },
-			{ "en-us", "en_US-norman-medium.onnx" },
-			{ "en-029", "en_US-norman-medium.onnx" },
-			{ "mb-us1", "en_US-norman-medium.onnx" },
+			{ "en", "en_US-ryan-high.onnx" },
+			{ "en-us", "en_US-ryan-high.onnx" },
+			{ "en-029", "en_US-ryan-high.onnx" },
+			{ "mb-us1", "en_US-ryan-high.onnx" },
 
 			// Spanish
 			{ "es", "es_MX-claude-high.onnx" },
@@ -202,8 +205,16 @@ namespace Resgrid.Web.Tts.Services
 			startInfo.ArgumentList.Add(outputFilePath);
 			startInfo.ArgumentList.Add("--length-scale");
 			startInfo.ArgumentList.Add(invocation.LengthScale.ToString("0.00", CultureInfo.InvariantCulture));
+			// 0.35s of silence between sentences — dispatch messages are strings of
+			// short sentences and need audible boundaries to stay intelligible.
 			startInfo.ArgumentList.Add("--sentence-silence");
-			startInfo.ArgumentList.Add("0.0");
+			startInfo.ArgumentList.Add("0.35");
+			// Lower generation noise than the Piper defaults (0.667/0.8): reduces
+			// prosody jitter that makes digits and short words sound mumbled.
+			startInfo.ArgumentList.Add("--noise-scale");
+			startInfo.ArgumentList.Add("0.333");
+			startInfo.ArgumentList.Add("--noise-w");
+			startInfo.ArgumentList.Add("0.4");
 
 			return startInfo;
 		}

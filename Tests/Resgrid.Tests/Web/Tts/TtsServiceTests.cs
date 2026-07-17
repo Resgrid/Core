@@ -51,9 +51,9 @@ namespace Resgrid.Tests.Web.Tts
 
 			_audioProcessingService
 				.Setup(x => x.GetEffectiveSynthesisProfile("en-us+klatt4", 165))
-				.Returns(("en_US-norman-medium.onnx", 165));
+				.Returns(("en_US-ryan-high.onnx", 165));
 			_cacheService
-				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en_US-norman-medium.onnx", 165))
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en_US-ryan-high.onnx", 165))
 				.Returns(CacheKey);
 			_cacheService
 				.Setup(x => x.TryGetCachedUrlAsync(CacheKey, It.IsAny<CancellationToken>()))
@@ -84,9 +84,9 @@ namespace Resgrid.Tests.Web.Tts
 
 			_audioProcessingService
 				.Setup(x => x.GetEffectiveSynthesisProfile("en-us+klatt4", 165))
-				.Returns(("en_US-norman-medium.onnx", 165));
+				.Returns(("en_US-ryan-high.onnx", 165));
 			_cacheService
-				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en_US-norman-medium.onnx", 165))
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en_US-ryan-high.onnx", 165))
 				.Returns(CacheKey);
 			_cacheService
 				.SetupSequence(x => x.TryGetCachedUrlAsync(CacheKey, It.IsAny<CancellationToken>()))
@@ -150,9 +150,9 @@ namespace Resgrid.Tests.Web.Tts
 
 			_audioProcessingService
 				.Setup(x => x.GetEffectiveSynthesisProfile("en-us+klatt4", 165))
-				.Returns(("en_US-norman-medium.onnx", 165));
+				.Returns(("en_US-ryan-high.onnx", 165));
 			_cacheService
-				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en_US-norman-medium.onnx", 165))
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en_US-ryan-high.onnx", 165))
 				.Returns(cacheKey);
 			_cacheService
 				.Setup(x => x.TryGetCachedUrlAsync(cacheKey, It.IsAny<CancellationToken>()))
@@ -189,9 +189,9 @@ namespace Resgrid.Tests.Web.Tts
 
 			_audioProcessingService
 				.Setup(x => x.GetEffectiveSynthesisProfile("en-us+klatt4", 165))
-				.Returns(("en_US-norman-medium.onnx", 165));
+				.Returns(("en_US-ryan-high.onnx", 165));
 			_cacheService
-				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en_US-norman-medium.onnx", 165))
+				.Setup(x => x.CreateCacheKey("Press 1 for yes", "en_US-ryan-high.onnx", 165))
 				.Returns(CacheKey);
 			_cacheService
 				.Setup(x => x.TryGetCachedUrlAsync(CacheKey, It.IsAny<CancellationToken>()))
@@ -249,13 +249,17 @@ namespace Resgrid.Tests.Web.Tts
 			startInfo.FileName.Should().Be("piper");
 			startInfo.ArgumentList.Should().Equal(
 				"--model",
-				Path.Combine("/usr/local/share/piper-voices", "en_US-norman-medium.onnx"),
+				Path.Combine("/usr/local/share/piper-voices", "en_US-ryan-high.onnx"),
 				"--output_file",
 				"/tmp/raw.wav",
 				"--length-scale",
 				"1.06",
 				"--sentence-silence",
-				"0.0");
+				"0.35",
+				"--noise-scale",
+				"0.333",
+				"--noise-w",
+				"0.4");
 		}
 
 		[Test]
@@ -270,13 +274,17 @@ namespace Resgrid.Tests.Web.Tts
 			startInfo.FileName.Should().Be("piper");
 			startInfo.ArgumentList.Should().Equal(
 				"--model",
-				Path.Combine("/usr/local/share/piper-voices", "en_US-norman-medium.onnx"),
+				Path.Combine("/usr/local/share/piper-voices", "en_US-ryan-high.onnx"),
 				"--output_file",
 				"/tmp/raw.wav",
 				"--length-scale",
 				"1.06",
 				"--sentence-silence",
-				"0.0");
+				"0.35",
+				"--noise-scale",
+				"0.333",
+				"--noise-w",
+				"0.4");
 		}
 
 		[Test]
@@ -290,13 +298,17 @@ namespace Resgrid.Tests.Web.Tts
 			startInfo.FileName.Should().Be("piper");
 			startInfo.ArgumentList.Should().Equal(
 				"--model",
-				Path.Combine("/usr/local/share/piper-voices", "en_US-norman-medium.onnx"),
+				Path.Combine("/usr/local/share/piper-voices", "en_US-ryan-high.onnx"),
 				"--output_file",
 				"/tmp/raw.wav",
 				"--length-scale",
 				"0.50",
 				"--sentence-silence",
-				"0.0");
+				"0.35",
+				"--noise-scale",
+				"0.333",
+				"--noise-w",
+				"0.4");
 		}
 
 		[Test]
@@ -321,7 +333,7 @@ namespace Resgrid.Tests.Web.Tts
 				"-acodec",
 				"pcm_mulaw",
 				"-af",
-				"highpass=f=200, lowpass=f=3000, anequalizer=c0 f=2500 w=1000 g=3 t=1",
+				"highpass=f=200, lowpass=f=3400, anequalizer=c0 f=2500 w=1000 g=3 t=1, loudnorm=I=-16:TP=-1.5:LRA=11",
 				"/tmp/normalized.wav");
 		}
 

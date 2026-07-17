@@ -160,6 +160,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var model = new NewLayerView();
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+
+			if (model.Department == null)
+				return Unauthorized();
+
 			model.CenterCoordinates = await _departmentSettingsService.GetMapCenterCoordinatesAsync(model.Department);
 
 			return View(model);
@@ -170,6 +174,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		public async Task<IActionResult> NewLayer(NewLayerView model)
 		{
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+
+			if (model.Department == null)
+				return Unauthorized();
+
 			model.CenterCoordinates = await _departmentSettingsService.GetMapCenterCoordinatesAsync(model.Department);
 
 			if (ModelState.IsValid)

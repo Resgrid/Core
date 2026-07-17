@@ -29,7 +29,7 @@ namespace Resgrid.Web.Tts.Configuration
 		public string TempDirectory { get; set; } = Path.Combine(Path.GetTempPath(), "resgrid-tts");
 
 		[Required]
-		public string CachePrefix { get; set; } = "tts";
+		public string CachePrefix { get; set; } = "tts2";
 
 		[Range(8000, 8000)]
 		public int NormalizedSampleRate { get; set; } = 8000;

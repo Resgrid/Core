@@ -42,6 +42,22 @@ namespace Resgrid.Tests.Chatbot
 			result.IntentName.Should().Be(expectedIntent, because: $"\"{text}\" should classify as {expectedIntent}");
 		}
 
+		[TestCase("Current status")]
+		[TestCase("Current staffing")]
+		[TestCase("my current status")]
+		[TestCase("my current staffing")]
+		public async Task Current_status_queries_are_exact_matches(string text)
+		{
+			// Arrange
+
+			// Act
+			var result = await _classifier.ClassifyAsync(text);
+
+			// Assert
+			result.IntentName.Should().Be("my_status");
+			result.Confidence.Should().Be(1.0, because: "the intent router rejects the 0.60 fuzzy fallback");
+		}
+
 		[Test]
 		public async Task WhoIsOnCall_extracts_call_reference()
 		{

@@ -273,9 +273,7 @@ namespace Resgrid.Providers.Cache
 
 		public bool IsConnected()
 		{
-			EstablishRedisConnection();
-
-			return _connection.IsConnected;
+			return _connection?.IsConnected ?? false;
 		}
 
 		private string SetCacheKeyForEnv(string cacheKey)
@@ -293,17 +291,6 @@ namespace Resgrid.Providers.Cache
 		private void EstablishRedisConnection()
 		{
 			int retry = 0;
-
-			try
-			{
-				if (_connection != null && _connection.IsConnected == false)
-				{
-					_connection.Close();
-					_connection = null;
-				}
-
-			}
-			catch { }
 
 			while (_connection == null && retry <= 3)
 			{

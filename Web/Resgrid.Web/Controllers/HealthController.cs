@@ -35,7 +35,7 @@ namespace Resgrid.Web.Controllers
 			result.WebsiteVersion = Assembly.GetEntryAssembly().GetName().Version.ToString();
 			result.SiteId = "0";
 			result.CacheOnline = _healthService.IsCacheProviderConnected();
-			result.ServiceBusOnline = _healthService.IsCacheProviderConnected();
+			result.ServiceBusOnline = await _healthService.IsServiceBusProviderConnected();
 
 			var dbTime = await _healthService.GetDatabaseTimestamp();
 

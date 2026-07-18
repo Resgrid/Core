@@ -55,9 +55,9 @@ namespace Resgrid.Chatbot.NLU.Providers
 			// Call number form ("26-1" / "C26-1"): two-digit year + sequence — resolved by the handler.
 			(R(@"^c?(\d{2,4}-\d+)$"), "call_detail", m => P("callRef", m.Groups[1].Value)),
 			(R(@"^units?$"), "list_units", null),
-			(R(@"^(my\s+)?status$"), "my_status", null),
-			// "my staffing" — the my_status handler reports both status and staffing.
-			(R(@"^(my\s+)?staffing$"), "my_status", null),
+			(R(@"^(my\s+)?(current\s+)?status$"), "my_status", null),
+			// Staffing queries use the my_status handler because it reports both status and staffing.
+			(R(@"^(my\s+)?(current\s+)?staffing$"), "my_status", null),
 			(R(@"^(messages?|msgs?)$"), "list_messages", null),
 			// Unread/new message forms route to the same list handler (it lists unread only).
 			(R(@"^(any\s+|my\s+)?(unread|new)\s+(messages?|msgs?)$"), "list_messages", null),

@@ -616,9 +616,9 @@ namespace Resgrid.Web
 
 			app.UseAuthentication();
 			app.UseAuthorization();
-
-			app.UseSession();
-
+			app.UseWhen(
+				context => !string.Equals(context.Request.Path.Value, "/health/getcurrent", StringComparison.OrdinalIgnoreCase),
+				authenticatedApp => authenticatedApp.UseSession());
 			app.UseMiddleware<Resgrid.Web.Middleware.Require2FAEnrollmentMiddleware>();
 
 			app.UseRequestLocalization();

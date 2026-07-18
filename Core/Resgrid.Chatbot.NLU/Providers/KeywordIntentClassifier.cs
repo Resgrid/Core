@@ -17,22 +17,28 @@ namespace Resgrid.Chatbot.NLU.Providers
 			// === Status Commands (rigid + natural language) ===
 			// The SMS shortcut numbers (1-4) are the user-facing scheme from the legacy text commands;
 			// the emitted actionType values are ActionTypes enum values (Responding=2, NotResponding=1,
-			// OnScene=3, StandingBy/Available=0) — the handler passes them straight to SetUserActionAsync.
-			(R(@"^(responding|1)$"), "set_status", m => P("actionType", "2")),
-			(R(@"^(not\s*responding|2)$"), "set_status", m => P("actionType", "1")),
+			// OnScene=3, StandingBy/Available=0). The handler maps them through department custom states.
+			// Bare response phrases acknowledge the user's most recent call dispatch. Explicit status
+			// commands ("set my status to ...") continue through the general status handler.
+			(R(@"^(responding|omw|on\s+my\s+way|enroute|en\s+route)$"),
+				"respond_to_call", m => P("response", "yes")),
+			(R(@"^(not\s*responding|not\s+going|unable\s+to\s+respond)$"),
+				"respond_to_call", m => P("response", "no")),
+			(R(@"^1$"), "set_status", m => P("actionType", "2")),
+			(R(@"^2$"), "set_status", m => P("actionType", "1")),
 			(R(@"^(on\s*scene|onscene|3)$"), "set_status", m => P("actionType", "3")),
 			(R(@"^(standing\s*by|standingby|4)$"), "set_status", m => P("actionType", "0")),
-			// Responder shorthand for "responding" with no target call.
-			(R(@"^(omw|on\s+my\s+way|enroute|en\s+route)$"),
-				"set_status", m => P("actionType", "2")),
-			(R(@"^(i'?m|i\s+am)\s+(responding|on\s*scene|standing\s*by|en\s*route|available|not\s*responding)"),
+			(R(@"^(i'?m|i\s+am)\s+(responding|on\s+my\s+way|en\s*route|not\s*responding|not\s+going)$"),
+				"respond_to_call", m => P("response", IsNegativeCallResponse(m.Groups[2].Value) ? "no" : "yes")),
+			(R(@"^(i'?m|i\s+am)\s+(on\s*scene|standing\s*by|available)"),
 				"set_status", m => P("actionType", MapStatusWord(m.Groups[2].Value))),
 			(R(@"^(set|change|mark)\s+(my\s+)?status\s+to\s+(.+)"),
 				"set_status", m => P("statusName", m.Groups[3].Value.Trim())),
 
 			// === Staffing Commands ===
 			// S1-S5 is the user-facing scheme; emitted staffingType values are UserStateTypes enum values
-			// (Available=0, Delayed=1, Unavailable=2, Committed=3, OnShift=4) — passed straight to CreateUserState.
+			// (Available=0, Delayed=1, Unavailable=2, Committed=3, OnShift=4). The handler maps them
+			// through the department's configured staffing levels.
 			(R(@"^(available|s1)$"), "set_staffing", m => P("staffingType", "0")),
 			(R(@"^(delayed|s2)$"), "set_staffing", m => P("staffingType", "1")),
 			(R(@"^(unavailable|s3)$"), "set_staffing", m => P("staffingType", "2")),
@@ -53,6 +59,8 @@ namespace Resgrid.Chatbot.NLU.Providers
 			// "my staffing" — the my_status handler reports both status and staffing.
 			(R(@"^(my\s+)?staffing$"), "my_status", null),
 			(R(@"^(messages?|msgs?)$"), "list_messages", null),
+			// Unread/new message forms route to the same list handler (it lists unread only).
+			(R(@"^(any\s+|my\s+)?(unread|new)\s+(messages?|msgs?)$"), "list_messages", null),
 			(R(@"^(calendar|events?|cal)$"), "list_calendar", null),
 			(R(@"^shifts?$"), "list_shifts", null),
 			(R(@"^(personnel|staff)$"), "personnel_lookup", null),
@@ -86,6 +94,63 @@ namespace Resgrid.Chatbot.NLU.Providers
 				"delete_message", m => P("messageId", m.Groups[3].Value)),
 			(R(@"^(reply|respond)\s+(yes|no|acknowledge|ack)\s+to\s+(message|msg|#)?\s*#?(\d+)"),
 				"respond_to_message", m => P2("response", m.Groups[2].Value, "messageId", m.Groups[4].Value)),
+
+			// === Availability / Call Responder Queries (must precede the generic
+			// "who is X" personnel_lookup and "what ... calls" list_calls patterns) ===
+
+			// "who's available?", "who is around?", "anyone free?", "who can respond?"
+			(R(@"^(who'?s|who\s+is|who\s+are|anyone|anybody|any\s*one)\s+(around|available|free)(\s+to\s+respond)?$"),
+				"who_available", null),
+			(R(@"^who\s+can\s+respond$"),
+				"who_available", null),
+
+			// "units available?", "available units", "what units are available/free/in service"
+			(R(@"^(available|free)\s+units?$"),
+				"units_available", null),
+			(R(@"^units?\s+(are\s+)?(available|free|in\s+service)$"),
+				"units_available", null),
+			(R(@"^(what|which)\s+units?\s+(are\s+)?(available|free|in\s+service)$"),
+				"units_available", null),
+
+			// "who's on scene at the fire" — on-scene responders for a call.
+			(R(@"^(who'?s|who\s+is|who\s+are)\s+on\s*scene(\s+(?:at|on|for)\s+(.+))?$"),
+				"call_responders", m => P2("mode", "onscene", "callRef", CleanReference(m.Groups[3].Value))),
+
+			// "who's in route to the fire", "who is responding to c1445", "who's coming"
+			(R(@"^(who'?s|who\s+is|who\s+are)\s+((?:in|en)\s*route|responding|headed|heading|going|coming)(\s+(?:to|for)\s+(.+))?$"),
+				"call_responders", m => P2("mode", "enroute", "callRef", CleanReference(m.Groups[4].Value))),
+
+			// "who got dispatched to the medical", "who's dispatched to 26-1" — the full dispatch
+			// list (personnel, groups, roles and units) rather than live statuses.
+			(R(@"^(who'?s|who\s+is|who\s+are|who\s+got|who\s+was|who\s+were|who)\s+dispatched(\s+(?:to|on|for)\s+(.+))?$"),
+				"call_dispatched", m => P("callRef", CleanReference(m.Groups[3].Value))),
+
+			// "who's on call 26-1", "who is on the fire" — responding + on-scene for a call.
+			(R(@"^(who'?s|who\s+is|who\s+are)\s+on(\s+call)?(\s+(.+))?$"),
+				"call_responders", m => P2("mode", "all", "callRef", CleanReference(m.Groups[4].Value))),
+
+			// "what calls am I on?", "my calls" — calls the user was dispatched to.
+			(R(@"^(what\s+)?calls?\s+am\s+i\s+(on|dispatched\s+to|assigned\s+to)\b.*$"),
+				"my_calls", null),
+			(R(@"^my\s+calls?$"),
+				"my_calls", null),
+			(R(@"^what\s+am\s+i\s+dispatched\s+to$"),
+				"my_calls", null),
+
+			// "what calls is Rescue 6 on?" — calls a unit was dispatched to.
+			(R(@"^(what\s+)?calls?\s+(is|are)\s+(.+?)\s+(on|dispatched\s+to|assigned\s+to)$"),
+				"unit_calls", m => P("unitName", m.Groups[3].Value.Trim())),
+			(R(@"^what\s+is\s+(.+?)\s+dispatched\s+to$"),
+				"unit_calls", m => P("unitName", m.Groups[1].Value.Trim())),
+
+			// "what's my schedule?", "my schedule for 7/22" — shifts + RSVP'd events.
+			(R(@"^(what'?s\s+|what\s+is\s+)?my\s+schedule(\s+(?:for\s+|on\s+)?(.+))?$"),
+				"my_schedule", m => P("day", m.Groups[3].Value.Trim())),
+
+			// "poll members to see who's available for a red flag on 7/22" — the handler strips
+			// leading audience/verb filler from the question text.
+			(R(@"^(send\s+a\s+poll|send\s+poll|poll)\s+(.+)$"),
+				"create_poll", m => P("question", m.Groups[2].Value.Trim())),
 
 			// === Natural Language Query Commands ===
 			(R(@"^(show|list|get|what)\s+(are\s+)?(active|open)?\s*(calls|incidents)"),
@@ -134,13 +199,15 @@ namespace Resgrid.Chatbot.NLU.Providers
 				"close_call", m => P("callId", m.Groups[2].Value)),
 
 			// === Respond to Call ===
+			(R(@"^(not\s*responding|not\s+going|unable\s+to\s+respond)\s+(?:to\s+)?(.+)$"),
+				"respond_to_call", m => P2("callRef", CleanReference(m.Groups[2].Value), "response", "no")),
 			(R(@"^(respond|en\s*route|going)\s+to\s+c?(\d+)$"),
-				"respond_to_call", m => P("callId", m.Groups[2].Value)),
+				"respond_to_call", m => P2("callId", m.Groups[2].Value, "response", "yes")),
 			// Responder shorthand: "omw to 26-1", "omw to fire", "enroute to c1445", "headed to Main St".
 			// The reference can be a call id, a call number (yy-N), or a term matched against active
 			// calls — resolved by the handler.
 			(R(@"^(omw|on\s+my\s+way|respond(?:ing)?|going|headed|enroute|en\s+route)\s+(?:to\s+)?(.+)$"),
-				"respond_to_call", m => P("callRef", m.Groups[2].Value.Trim())),
+				"respond_to_call", m => P2("callRef", CleanReference(m.Groups[2].Value), "response", "yes")),
 
 			// === Shift Drop (must precede shift signup/detail so 'drop shift 5' isn't misread) ===
 			(R(@"^(drop|cancel|release)\s+(my\s+)?shift\s+#?(\d+)"),
@@ -202,9 +269,9 @@ namespace Resgrid.Chatbot.NLU.Providers
 				: new[] { trimmed };
 
 			// Check all patterns in priority order
-			foreach (var candidate in candidates)
+			foreach (var (pattern, intent, extractor) in _patterns)
 			{
-				foreach (var (pattern, intent, extractor) in _patterns)
+				foreach (var candidate in candidates)
 				{
 					var match = pattern.Match(candidate);
 					if (match.Success)
@@ -268,6 +335,17 @@ namespace Resgrid.Chatbot.NLU.Providers
 		private static Dictionary<string, string> P2(string k1, string v1, string k2, string v2)
 		{
 			return new Dictionary<string, string> { [k1] = v1, [k2] = v2 };
+		}
+
+		private static string CleanReference(string value)
+		{
+			return value?.Trim().TrimEnd('?', '!', '.', ',');
+		}
+
+		private static bool IsNegativeCallResponse(string value)
+		{
+			var normalized = value?.ToLowerInvariant().Replace(" ", string.Empty);
+			return normalized == "notresponding" || normalized == "notgoing";
 		}
 
 		// ActionTypes enum values: Responding=2, NotResponding=1, OnScene=3, StandingBy/Available=0.

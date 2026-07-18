@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
@@ -29,6 +30,7 @@ namespace Resgrid.Tests.Services
 			protected readonly Mock<IDepartmentGroupsService> _departmentGroupsServiceMock;
 			protected readonly Mock<IDepartmentSettingsService> _departmentSettingsServiceMock;
 			protected readonly Mock<IEncryptionService> _encryptionServiceMock;
+			protected readonly Mock<ITextResponsePromptService> _textResponsePromptServiceMock;
 
 			protected with_the_calendar_service()
 			{
@@ -41,6 +43,7 @@ namespace Resgrid.Tests.Services
 				_departmentGroupsServiceMock = new Mock<IDepartmentGroupsService>();
 				_departmentSettingsServiceMock = new Mock<IDepartmentSettingsService>();
 				_encryptionServiceMock = new Mock<IEncryptionService>();
+				_textResponsePromptServiceMock = new Mock<ITextResponsePromptService>();
 
 				#region Departments
 				_testDepartment = new Department()
@@ -70,7 +73,70 @@ namespace Resgrid.Tests.Services
 				_calendarService = new CalendarService(_calendarItemRepositoryMock.Object, _calendarItemTypeRepositoryMock.Object,
 					_calendarItemAttendeeRepositoryMock.Object, _departmentsServiceMock.Object, _communicationServiceMock.Object,
 					_userProfileServiceMock.Object, _departmentGroupsServiceMock.Object, _departmentSettingsServiceMock.Object,
-					_encryptionServiceMock.Object, new Mock<ICalendarItemCheckInRepository>().Object);
+					_encryptionServiceMock.Object, new Mock<ICalendarItemCheckInRepository>().Object,
+					_textResponsePromptServiceMock.Object);
+			}
+		}
+
+		[TestFixture]
+		public class when_sending_calendar_rsvp_prompts : with_the_calendar_service
+		{
+			private const string UserId = "user-1";
+
+			protected override void Before_all_tests()
+			{
+				Resgrid.Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Add(_testDepartment.DepartmentId);
+				_userProfileServiceMock.Setup(x => x.GetAllProfilesForDepartmentAsync(999, false))
+					.ReturnsAsync(new Dictionary<string, UserProfile>());
+			}
+
+			protected override void After_all_tests()
+			{
+				Resgrid.Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Remove(_testDepartment.DepartmentId);
+			}
+
+			[Test]
+			public async Task should_record_prompt_when_delivery_is_accepted()
+			{
+				// Arrange
+				var calendarItem = CreateRsvpCalendarItem();
+				_communicationServiceMock.Setup(x => x.SendCalendarAsync(UserId, 999, It.IsAny<string>(),
+					It.IsAny<string>(), It.IsAny<string>(), null, _testDepartment)).ReturnsAsync(true);
+
+				// Act
+				await _calendarService.NotifyUsersAboutCalendarItemAsync(calendarItem, new List<string> { UserId });
+
+				// Assert
+				_textResponsePromptServiceMock.Verify(x => x.RecordCalendarRsvpPromptAsync(calendarItem, UserId,
+					It.IsAny<System.Threading.CancellationToken>()), Times.Once);
+			}
+
+			[Test]
+			public async Task should_not_record_prompt_when_delivery_is_rejected()
+			{
+				// Arrange
+				var calendarItem = CreateRsvpCalendarItem();
+				_communicationServiceMock.Setup(x => x.SendCalendarAsync(UserId, 999, It.IsAny<string>(),
+					It.IsAny<string>(), It.IsAny<string>(), null, _testDepartment)).ReturnsAsync(false);
+
+				// Act
+				await _calendarService.NotifyUsersAboutCalendarItemAsync(calendarItem, new List<string> { UserId });
+
+				// Assert
+				_textResponsePromptServiceMock.Verify(x => x.RecordCalendarRsvpPromptAsync(It.IsAny<CalendarItem>(), It.IsAny<string>(),
+					It.IsAny<System.Threading.CancellationToken>()), Times.Never);
+			}
+
+			private static CalendarItem CreateRsvpCalendarItem()
+			{
+				return new CalendarItem
+				{
+					CalendarItemId = 1,
+					DepartmentId = 999,
+					Title = "RSVP event",
+					Start = new DateTime(2026, 7, 18, 12, 0, 0, DateTimeKind.Utc),
+					SignupType = (int)CalendarItemSignupTypes.RSVP
+				};
 			}
 		}
 
@@ -576,6 +642,48 @@ namespace Resgrid.Tests.Services
 		[TestFixture]
 		public class when_handling_multi_day_events : with_the_calendar_service
 		{
+			[Test]
+			public async Task should_return_events_that_overlap_requested_range()
+			{
+				// Arrange
+				var windowStart = new DateTime(2026, 7, 17, 0, 0, 0, DateTimeKind.Utc);
+				var windowEnd = windowStart.AddDays(3);
+				var spansWindow = new CalendarItem
+				{
+					CalendarItemId = 1,
+					DepartmentId = 999,
+					IsV2Schedule = true,
+					Start = windowStart.AddDays(-2),
+					End = windowEnd.AddDays(2)
+				};
+				var endsAtWindowStart = new CalendarItem
+				{
+					CalendarItemId = 2,
+					DepartmentId = 999,
+					IsV2Schedule = true,
+					Start = windowStart.AddDays(-1),
+					End = windowStart
+				};
+				var startsAtWindowEnd = new CalendarItem
+				{
+					CalendarItemId = 3,
+					DepartmentId = 999,
+					IsV2Schedule = true,
+					Start = windowEnd,
+					End = windowEnd.AddHours(1)
+				};
+				_calendarItemRepositoryMock.Setup(x => x.GetAllCalendarItemsByDepartmentIdAsync(999))
+					.ReturnsAsync(new List<CalendarItem> { spansWindow, endsAtWindowStart, startsAtWindowEnd });
+
+				// Act
+				var result = await _calendarService.GetAllCalendarItemsForDepartmentInRangeAsync(999, windowStart, windowEnd);
+
+				// Assert
+				result.Should().Contain(spansWindow);
+				result.Should().Contain(endsAtWindowStart);
+				result.Should().NotContain(startsAtWindowEnd);
+			}
+
 			[Test]
 			public void should_detect_multi_day_event()
 			{

@@ -1550,6 +1550,448 @@ namespace Resgrid.Chatbot.Localization
 				"Błąd podczas zmiany działu.",
 				"Помилка зміни підрозділу.",
 				"حدث خطأ أثناء تبديل القسم."),
+
+			// ---- AvailabilityActionHandler (who's available/around) ----
+
+			["Avail_Header"] = L(
+				"Available to Respond ({0}):",
+				"Disponibles para responder ({0}):",
+				"Tillgängliga att svara ({0}):",
+				"Einsatzbereit ({0}):",
+				"Disponibles pour intervenir ({0}) :",
+				"Disponibili a rispondere ({0}):",
+				"Dostępni do reagowania ({0}):",
+				"Доступні для реагування ({0}):",
+				"متاحون للاستجابة ({0}):"),
+
+			["Avail_None"] = L(
+				"No personnel are currently available to respond.",
+				"No hay personal disponible para responder en este momento.",
+				"Ingen personal är tillgänglig att svara just nu.",
+				"Derzeit ist kein Personal einsatzbereit.",
+				"Aucun personnel n'est actuellement disponible pour intervenir.",
+				"Nessun membro del personale è attualmente disponibile a rispondere.",
+				"Obecnie żaden personel nie jest dostępny do reagowania.",
+				"Наразі немає доступного персоналу для реагування.",
+				"لا يوجد أفراد متاحون للاستجابة حاليًا."),
+
+			["Avail_Line"] = EnOnly("{0}, {1}: {2} / {3}"),
+
+			["Avail_Error"] = L(
+				"Error retrieving availability.",
+				"Error al recuperar la disponibilidad.",
+				"Det gick inte att hämta tillgängligheten.",
+				"Fehler beim Abrufen der Verfügbarkeit.",
+				"Erreur lors de la récupération de la disponibilité.",
+				"Errore durante il recupero della disponibilità.",
+				"Błąd podczas pobierania dostępności.",
+				"Помилка отримання доступності.",
+				"حدث خطأ أثناء استرداد التوفر."),
+
+			// ---- UnitsAvailableActionHandler (units available) ----
+
+			["UnitsAvail_Header"] = L(
+				"Available Units ({0}):",
+				"Unidades disponibles ({0}):",
+				"Tillgängliga enheter ({0}):",
+				"Verfügbare Einheiten ({0}):",
+				"Unités disponibles ({0}) :",
+				"Unità disponibili ({0}):",
+				"Dostępne jednostki ({0}):",
+				"Доступні підрозділи ({0}):",
+				"الوحدات المتاحة ({0}):"),
+
+			["UnitsAvail_None"] = L(
+				"No units are currently available.",
+				"No hay unidades disponibles en este momento.",
+				"Inga enheter är tillgängliga just nu.",
+				"Derzeit sind keine Einheiten verfügbar.",
+				"Aucune unité n'est actuellement disponible.",
+				"Nessuna unità è attualmente disponibile.",
+				"Obecnie żadna jednostka nie jest dostępna.",
+				"Наразі немає доступних підрозділів.",
+				"لا توجد وحدات متاحة حاليًا."),
+
+			["UnitsAvail_Line"] = EnOnly("{0} - {1}"),
+
+			["UnitsAvail_Error"] = L(
+				"Error retrieving unit availability.",
+				"Error al recuperar la disponibilidad de unidades.",
+				"Det gick inte att hämta enheternas tillgänglighet.",
+				"Fehler beim Abrufen der Einheitenverfügbarkeit.",
+				"Erreur lors de la récupération de la disponibilité des unités.",
+				"Errore durante il recupero della disponibilità delle unità.",
+				"Błąd podczas pobierania dostępności jednostek.",
+				"Помилка отримання доступності підрозділів.",
+				"حدث خطأ أثناء استرداد توفر الوحدات."),
+
+			// ---- CallRespondersActionHandler (who's on/en route/on scene for a call) ----
+
+			["CallResp_Specify"] = L(
+				"Which call? Reply WHO'S ON <call id, number or keyword> (e.g. WHO'S ON C1445).",
+				"¿Qué llamada? Responde WHO'S ON <id, número o palabra clave> (p. ej. WHO'S ON C1445).",
+				"Vilket larm? Svara WHO'S ON <id, nummer eller nyckelord> (t.ex. WHO'S ON C1445).",
+				"Welcher Einsatz? Antworten Sie WHO'S ON <ID, Nummer oder Stichwort> (z. B. WHO'S ON C1445).",
+				"Quel appel ? Répondez WHO'S ON <id, numéro ou mot-clé> (p. ex. WHO'S ON C1445).",
+				"Quale chiamata? Rispondi WHO'S ON <id, numero o parola chiave> (es. WHO'S ON C1445).",
+				"Które zgłoszenie? Odpowiedz WHO'S ON <id, numer lub słowo kluczowe> (np. WHO'S ON C1445).",
+				"Який виклик? Відповідайте WHO'S ON <id, номер або ключове слово> (напр. WHO'S ON C1445).",
+				"أي بلاغ؟ أرسل WHO'S ON <المعرف أو الرقم أو الكلمة المفتاحية> (مثال: WHO'S ON C1445)."),
+
+			["CallResp_HeaderAll"] = L(
+				"Responding & on scene for {0}:",
+				"Respondiendo y en escena para {0}:",
+				"Svarar och på plats för {0}:",
+				"Auf Anfahrt & vor Ort für {0}:",
+				"En route et sur les lieux pour {0} :",
+				"In risposta e sul posto per {0}:",
+				"W drodze i na miejscu dla {0}:",
+				"Реагують та на місці для {0}:",
+				"في الطريق وفي الموقع للبلاغ {0}:"),
+
+			["CallResp_HeaderEnroute"] = L(
+				"En route to {0}:",
+				"En camino a {0}:",
+				"På väg till {0}:",
+				"Auf Anfahrt zu {0}:",
+				"En route vers {0} :",
+				"In arrivo a {0}:",
+				"W drodze do {0}:",
+				"У дорозі до {0}:",
+				"في الطريق إلى {0}:"),
+
+			["CallResp_HeaderOnScene"] = L(
+				"On scene at {0}:",
+				"En escena en {0}:",
+				"På plats vid {0}:",
+				"Vor Ort bei {0}:",
+				"Sur les lieux de {0} :",
+				"Sul posto per {0}:",
+				"Na miejscu przy {0}:",
+				"На місці події {0}:",
+				"في موقع البلاغ {0}:"),
+
+			["CallResp_None"] = L(
+				"No personnel or units are currently responding to {0}.",
+				"Ningún personal ni unidad está respondiendo actualmente a {0}.",
+				"Ingen personal eller enhet svarar just nu på {0}.",
+				"Derzeit reagieren keine Einsatzkräfte oder Einheiten auf {0}.",
+				"Aucun personnel ni unité ne répond actuellement à {0}.",
+				"Nessun personale o unità sta attualmente rispondendo a {0}.",
+				"Żaden personel ani jednostka obecnie nie reaguje na {0}.",
+				"Наразі жоден персонал чи підрозділ не реагує на {0}.",
+				"لا يوجد أفراد أو وحدات يستجيبون حاليًا للبلاغ {0}."),
+
+			["CallResp_Line"] = EnOnly("{0} - {1}"),
+
+			["CallResp_Error"] = L(
+				"Error retrieving call responders.",
+				"Error al recuperar quiénes responden a la llamada.",
+				"Det gick inte att hämta vilka som svarar på larmet.",
+				"Fehler beim Abrufen der Einsatzkräfte.",
+				"Erreur lors de la récupération des intervenants.",
+				"Errore durante il recupero dei soccorritori della chiamata.",
+				"Błąd podczas pobierania osób reagujących na zgłoszenie.",
+				"Помилка отримання списку реагуючих на виклик.",
+				"حدث خطأ أثناء استرداد المستجيبين للبلاغ."),
+
+			// ---- Shared list section labels ----
+
+			["Section_Personnel"] = L(
+				"Personnel:",
+				"Personal:",
+				"Personal:",
+				"Personal:",
+				"Personnel :",
+				"Personale:",
+				"Personel:",
+				"Персонал:",
+				"الأفراد:"),
+
+			["Section_Units"] = L(
+				"Units:",
+				"Unidades:",
+				"Enheter:",
+				"Einheiten:",
+				"Unités :",
+				"Unità:",
+				"Jednostki:",
+				"Підрозділи:",
+				"الوحدات:"),
+
+			["Section_Groups"] = L(
+				"Groups:",
+				"Grupos:",
+				"Grupper:",
+				"Gruppen:",
+				"Groupes :",
+				"Gruppi:",
+				"Grupy:",
+				"Групи:",
+				"المجموعات:"),
+
+			["Section_Roles"] = L(
+				"Roles:",
+				"Roles:",
+				"Roller:",
+				"Rollen:",
+				"Rôles :",
+				"Ruoli:",
+				"Role:",
+				"Ролі:",
+				"الأدوار:"),
+
+			// ---- CallDispatchedActionHandler (who got dispatched) ----
+
+			["CallDisp_Header"] = L(
+				"Dispatched to {0}:",
+				"Despachados a {0}:",
+				"Utlarmade till {0}:",
+				"Alarmiert für {0}:",
+				"Engagés sur {0} :",
+				"Inviati a {0}:",
+				"Zadysponowani do {0}:",
+				"Відправлені на {0}:",
+				"تم إرسالهم إلى {0}:"),
+
+			["CallDisp_None"] = L(
+				"No dispatches are recorded for {0}.",
+				"No hay despachos registrados para {0}.",
+				"Inga utlarmningar är registrerade för {0}.",
+				"Für {0} sind keine Alarmierungen erfasst.",
+				"Aucun engagement enregistré pour {0}.",
+				"Nessun invio registrato per {0}.",
+				"Brak zarejestrowanych dyspozycji dla {0}.",
+				"Для {0} не зафіксовано жодних відправлень.",
+				"لا توجد عمليات إرسال مسجلة للبلاغ {0}."),
+
+			["CallDisp_Error"] = L(
+				"Error retrieving the dispatch list.",
+				"Error al recuperar la lista de despacho.",
+				"Det gick inte att hämta utlarmningslistan.",
+				"Fehler beim Abrufen der Alarmierungsliste.",
+				"Erreur lors de la récupération de la liste d'engagement.",
+				"Errore durante il recupero dell'elenco degli invii.",
+				"Błąd podczas pobierania listy dyspozycji.",
+				"Помилка отримання списку відправлень.",
+				"حدث خطأ أثناء استرداد قائمة الإرسال."),
+
+			// ---- MyCallsActionHandler (my calls / unit calls) ----
+
+			["MyCalls_Header"] = L(
+				"Your active calls:",
+				"Tus llamadas activas:",
+				"Dina aktiva larm:",
+				"Ihre aktiven Einsätze:",
+				"Vos appels actifs :",
+				"Le tue chiamate attive:",
+				"Twoje aktywne zgłoszenia:",
+				"Ваші активні виклики:",
+				"بلاغاتك النشطة:"),
+
+			["MyCalls_None"] = L(
+				"You are not dispatched to any active calls.",
+				"No estás despachado a ninguna llamada activa.",
+				"Du är inte utlarmad till några aktiva larm.",
+				"Sie sind zu keinem aktiven Einsatz alarmiert.",
+				"Vous n'êtes engagé sur aucun appel actif.",
+				"Non sei stato inviato a nessuna chiamata attiva.",
+				"Nie jesteś zadysponowany do żadnych aktywnych zgłoszeń.",
+				"Вас не відправлено на жодний активний виклик.",
+				"لم يتم إرسالك إلى أي بلاغات نشطة."),
+
+			["MyCalls_Error"] = L(
+				"Error retrieving your calls.",
+				"Error al recuperar tus llamadas.",
+				"Det gick inte att hämta dina larm.",
+				"Fehler beim Abrufen Ihrer Einsätze.",
+				"Erreur lors de la récupération de vos appels.",
+				"Errore durante il recupero delle tue chiamate.",
+				"Błąd podczas pobierania Twoich zgłoszeń.",
+				"Помилка отримання ваших викликів.",
+				"حدث خطأ أثناء استرداد بلاغاتك."),
+
+			["UnitCalls_Header"] = L(
+				"Active calls for {0}:",
+				"Llamadas activas de {0}:",
+				"Aktiva larm för {0}:",
+				"Aktive Einsätze für {0}:",
+				"Appels actifs pour {0} :",
+				"Chiamate attive per {0}:",
+				"Aktywne zgłoszenia dla {0}:",
+				"Активні виклики для {0}:",
+				"البلاغات النشطة للوحدة {0}:"),
+
+			["UnitCalls_None"] = L(
+				"{0} is not dispatched to any active calls.",
+				"{0} no está despachada a ninguna llamada activa.",
+				"{0} är inte utlarmad till några aktiva larm.",
+				"{0} ist zu keinem aktiven Einsatz alarmiert.",
+				"{0} n'est engagée sur aucun appel actif.",
+				"{0} non è stata inviata a nessuna chiamata attiva.",
+				"{0} nie jest zadysponowana do żadnych aktywnych zgłoszeń.",
+				"{0} не відправлено на жодний активний виклик.",
+				"لم يتم إرسال {0} إلى أي بلاغات نشطة."),
+
+			["UnitCalls_Specify"] = L(
+				"Which unit? Reply WHAT CALLS IS <unit name> ON.",
+				"¿Qué unidad? Responde WHAT CALLS IS <nombre de unidad> ON.",
+				"Vilken enhet? Svara WHAT CALLS IS <enhetsnamn> ON.",
+				"Welche Einheit? Antworten Sie WHAT CALLS IS <Einheitsname> ON.",
+				"Quelle unité ? Répondez WHAT CALLS IS <nom d'unité> ON.",
+				"Quale unità? Rispondi WHAT CALLS IS <nome unità> ON.",
+				"Która jednostka? Odpowiedz WHAT CALLS IS <nazwa jednostki> ON.",
+				"Який підрозділ? Відповідайте WHAT CALLS IS <назва підрозділу> ON.",
+				"أي وحدة؟ أرسل WHAT CALLS IS <اسم الوحدة> ON."),
+
+			// ---- PollCreateHandler / poll replies ----
+
+			["Poll_Usage"] = L(
+				"To poll members: POLL <yes/no question>, e.g. POLL Are you available for a red flag on 7/22?",
+				"Para encuestar a los miembros: POLL <pregunta de sí/no>, p. ej. POLL ¿Estás disponible el 22/7?",
+				"För att fråga medlemmarna: POLL <ja/nej-fråga>, t.ex. POLL Är du tillgänglig 22/7?",
+				"Um Mitglieder zu befragen: POLL <Ja/Nein-Frage>, z. B. POLL Bist du am 22.7. verfügbar?",
+				"Pour sonder les membres : POLL <question oui/non>, p. ex. POLL Es-tu disponible le 22/7 ?",
+				"Per un sondaggio ai membri: POLL <domanda sì/no>, es. POLL Sei disponibile il 22/7?",
+				"Aby przeprowadzić ankietę: POLL <pytanie tak/nie>, np. POLL Czy jesteś dostępny 22.07?",
+				"Щоб опитати членів: POLL <питання так/ні>, напр. POLL Чи доступні ви 22.07?",
+				"لاستطلاع الأعضاء: POLL <سؤال نعم/لا>، مثال: POLL هل أنت متاح يوم 22/7؟"),
+
+			["Poll_NoPermission"] = L(
+				"Only department admins can poll members.",
+				"Solo los administradores del departamento pueden encuestar a los miembros.",
+				"Endast avdelningsadministratörer kan skicka omröstningar till medlemmar.",
+				"Nur Abteilungsadministratoren können Mitglieder befragen.",
+				"Seuls les administrateurs du département peuvent sonder les membres.",
+				"Solo gli amministratori del dipartimento possono creare sondaggi.",
+				"Tylko administratorzy działu mogą przeprowadzać ankiety.",
+				"Лише адміністратори підрозділу можуть проводити опитування.",
+				"يمكن لمسؤولي القسم فقط استطلاع الأعضاء."),
+
+			["Poll_NoMembers"] = L(
+				"No members found to poll.",
+				"No se encontraron miembros para encuestar.",
+				"Inga medlemmar hittades att fråga.",
+				"Keine Mitglieder zum Befragen gefunden.",
+				"Aucun membre trouvé à sonder.",
+				"Nessun membro trovato per il sondaggio.",
+				"Nie znaleziono członków do ankiety.",
+				"Не знайдено членів для опитування.",
+				"لم يتم العثور على أعضاء للاستطلاع."),
+
+			["Poll_Confirm"] = L(
+				"Send the poll \"{0}\" to {1} members? Reply YES to send or NO to cancel.",
+				"¿Enviar la encuesta \"{0}\" a {1} miembros? Responde YES para enviar o NO para cancelar.",
+				"Skicka omröstningen \"{0}\" till {1} medlemmar? Svara YES för att skicka eller NO för att avbryta.",
+				"Umfrage \"{0}\" an {1} Mitglieder senden? Antworten Sie YES zum Senden oder NO zum Abbrechen.",
+				"Envoyer le sondage \"{0}\" à {1} membres ? Répondez YES pour envoyer ou NO pour annuler.",
+				"Inviare il sondaggio \"{0}\" a {1} membri? Rispondi YES per inviare o NO per annullare.",
+				"Wysłać ankietę \"{0}\" do {1} członków? Odpowiedz YES, aby wysłać, lub NO, aby anulować.",
+				"Надіслати опитування \"{0}\" {1} членам? Відповідайте YES, щоб надіслати, або NO, щоб скасувати.",
+				"إرسال الاستطلاع \"{0}\" إلى {1} من الأعضاء؟ أرسل YES للإرسال أو NO للإلغاء."),
+
+			["Poll_Sent"] = L(
+				"Poll sent to {0} members. They can answer by replying YES or NO.",
+				"Encuesta enviada a {0} miembros. Pueden contestar respondiendo YES o NO.",
+				"Omröstningen skickades till {0} medlemmar. De kan svara med YES eller NO.",
+				"Umfrage an {0} Mitglieder gesendet. Sie können mit YES oder NO antworten.",
+				"Sondage envoyé à {0} membres. Ils peuvent répondre par YES ou NO.",
+				"Sondaggio inviato a {0} membri. Possono rispondere con YES o NO.",
+				"Ankieta wysłana do {0} członków. Mogą odpowiedzieć YES lub NO.",
+				"Опитування надіслано {0} членам. Вони можуть відповісти YES або NO.",
+				"تم إرسال الاستطلاع إلى {0} من الأعضاء. يمكنهم الرد بـ YES أو NO."),
+
+			["Poll_Error"] = L(
+				"Error creating the poll.",
+				"Error al crear la encuesta.",
+				"Det gick inte att skapa omröstningen.",
+				"Fehler beim Erstellen der Umfrage.",
+				"Erreur lors de la création du sondage.",
+				"Errore durante la creazione del sondaggio.",
+				"Błąd podczas tworzenia ankiety.",
+				"Помилка створення опитування.",
+				"حدث خطأ أثناء إنشاء الاستطلاع."),
+
+			["Poll_ResponseRecorded"] = L(
+				"Recorded your \"{0}\" reply to {1}.",
+				"Se registró tu respuesta \"{0}\" a {1}.",
+				"Ditt svar \"{0}\" på {1} har registrerats.",
+				"Ihre Antwort \"{0}\" auf {1} wurde erfasst.",
+				"Votre réponse \"{0}\" à {1} a été enregistrée.",
+				"La tua risposta \"{0}\" a {1} è stata registrata.",
+				"Zapisano Twoją odpowiedź \"{0}\" na {1}.",
+				"Вашу відповідь \"{0}\" на {1} записано.",
+				"تم تسجيل ردك \"{0}\" على {1}."),
+
+			// ---- MyScheduleActionHandler (my schedule) ----
+
+			["Sched_Header"] = L(
+				"Your schedule for {0}:",
+				"Tu agenda para {0}:",
+				"Ditt schema för {0}:",
+				"Ihr Zeitplan für {0}:",
+				"Votre planning pour {0} :",
+				"Il tuo programma per {0}:",
+				"Twój harmonogram na {0}:",
+				"Ваш розклад на {0}:",
+				"جدولك ليوم {0}:"),
+
+			["Sched_None"] = L(
+				"Nothing on your schedule for {0}.",
+				"No hay nada en tu agenda para {0}.",
+				"Inget på ditt schema för {0}.",
+				"Nichts auf Ihrem Zeitplan für {0}.",
+				"Rien à votre planning pour {0}.",
+				"Niente in programma per {0}.",
+				"Brak pozycji w harmonogramie na {0}.",
+				"У вашому розкладі на {0} нічого немає.",
+				"لا يوجد شيء في جدولك ليوم {0}."),
+
+			["Sched_ShiftLine"] = L(
+				"Shift: {0} ({1})",
+				"Turno: {0} ({1})",
+				"Skift: {0} ({1})",
+				"Schicht: {0} ({1})",
+				"Garde : {0} ({1})",
+				"Turno: {0} ({1})",
+				"Zmiana: {0} ({1})",
+				"Зміна: {0} ({1})",
+				"المناوبة: {0} ({1})"),
+
+			["Sched_EventLine"] = EnOnly("{0}: {1}"),
+
+			["Sched_AllDay"] = L(
+				"All day",
+				"Todo el día",
+				"Hela dagen",
+				"Ganztägig",
+				"Toute la journée",
+				"Tutto il giorno",
+				"Cały dzień",
+				"Увесь день",
+				"طوال اليوم"),
+
+			["Sched_BadDate"] = L(
+				"I couldn't understand that date. Try MY SCHEDULE FOR 7/22.",
+				"No pude entender esa fecha. Prueba MY SCHEDULE FOR 7/22.",
+				"Jag förstod inte det datumet. Prova MY SCHEDULE FOR 7/22.",
+				"Ich konnte dieses Datum nicht verstehen. Versuchen Sie MY SCHEDULE FOR 7/22.",
+				"Je n'ai pas compris cette date. Essayez MY SCHEDULE FOR 7/22.",
+				"Non ho capito quella data. Prova MY SCHEDULE FOR 7/22.",
+				"Nie rozumiem tej daty. Spróbuj MY SCHEDULE FOR 7/22.",
+				"Не вдалося розпізнати цю дату. Спробуйте MY SCHEDULE FOR 7/22.",
+				"لم أفهم هذا التاريخ. جرّب MY SCHEDULE FOR 7/22."),
+
+			["Sched_Error"] = L(
+				"Error retrieving your schedule.",
+				"Error al recuperar tu agenda.",
+				"Det gick inte att hämta ditt schema.",
+				"Fehler beim Abrufen Ihres Zeitplans.",
+				"Erreur lors de la récupération de votre planning.",
+				"Errore durante il recupero del tuo programma.",
+				"Błąd podczas pobierania harmonogramu.",
+				"Помилка отримання вашого розкладу.",
+				"حدث خطأ أثناء استرداد جدولك."),
 		};
 	}
 }

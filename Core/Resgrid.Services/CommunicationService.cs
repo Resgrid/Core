@@ -577,6 +577,18 @@ namespace Resgrid.Services
 			if (profile == null)
 				profile = await _userProfileService.GetProfileByUserIdAsync(userId, false);
 
+			if (profile == null || (profile.SendNotificationSms && profile.MobileNumberVerified.IsContactMethodAllowedForSending()))
+			{
+				try
+				{
+					await _smsService.SendNotificationAsync(userId, departmentId, $"{title} {message}", departmentNumber, profile);
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+				}
+			}
+
 			if (profile == null || profile.SendNotificationEmail)
 			{
 				if (profile == null || profile.EmailVerified.IsContactMethodAllowedForSending())
@@ -625,6 +637,18 @@ namespace Resgrid.Services
 
 			if (profile == null)
 				profile = await _userProfileService.GetProfileByUserIdAsync(userId, false);
+
+			if (profile == null || (profile.SendNotificationSms && profile.MobileNumberVerified.IsContactMethodAllowedForSending()))
+			{
+				try
+				{
+					await _smsService.SendNotificationAsync(userId, departmentId, $"{title} {message}", departmentNumber, profile);
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+				}
+			}
 
 			if (profile == null || profile.SendNotificationEmail)
 			{

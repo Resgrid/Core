@@ -260,6 +260,9 @@ namespace Resgrid.Services
 
 		public async Task<CustomStateDetail> GetCustomPersonnelStaffingAsync(int departmentId, UserState state)
 		{
+			if (state == null)
+				return null;
+
 			if (state.State <= 25)
 			{
 				var detail = new CustomStateDetail();
@@ -282,6 +285,9 @@ namespace Resgrid.Services
 
 		public async Task<CustomStateDetail> GetCustomPersonnelStatusAsync(int departmentId, ActionLog state)
 		{
+			if (state == null)
+				return null;
+
 			if (state.ActionTypeId <= 25)
 			{
 				var detail = new CustomStateDetail();
@@ -304,6 +310,9 @@ namespace Resgrid.Services
 
 		public async Task<CustomStateDetail> GetCustomUnitStateAsync(UnitState state)
 		{
+			if (state == null)
+				return null;
+
 			if (state.State <= 25)
 			{
 				var detail = new CustomStateDetail();

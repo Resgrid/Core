@@ -28,7 +28,6 @@ namespace Resgrid.Tests.Services
 			protected Mock<IUserStateService> _userStateServiceMock;
 			protected Mock<IDepartmentsService> _departmentsServiceMock;
 			protected Mock<IChatbotOutboundService> _chatbotOutboundServiceMock;
-
 			protected ICommunicationService _communicationService;
 
 			protected with_the_communication_service()
@@ -50,10 +49,10 @@ namespace Resgrid.Tests.Services
 					.ReturnsAsync(new DepartmentMember());
 
 				_chatbotOutboundServiceMock = new Mock<IChatbotOutboundService>();
-
 				_communicationService = new CommunicationService(_smsServiceMock.Object, _emailServiceMock.Object, _pushServiceMock.Object,
 					_geoLocationProviderMock.Object, _outboundVoiceProviderMock.Object, _userProfileServiceMock.Object, _departmentSettingsServiceMock.Object,
-					_subscriptionsServiceMock.Object, _userStateServiceMock.Object, _chatbotOutboundServiceMock.Object, _departmentsServiceMock.Object);
+					_subscriptionsServiceMock.Object, _userStateServiceMock.Object, _chatbotOutboundServiceMock.Object,
+					_departmentsServiceMock.Object);
 			}
 		}
 
@@ -120,6 +119,52 @@ namespace Resgrid.Tests.Services
 				_smsServiceMock.Verify(m => m.SendCallAsync(call, cd, null, 1, null, null, payment));
 				_emailServiceMock.Verify(m => m.SendCallAsync(call, cd, null));
 				//_pushServiceMock.Verify(m => m.PushCall(It.IsAny<StandardPushCall>(), Users.TestUser1Id));
+			}
+
+			[TestCase(true, true)]
+			[TestCase(null, true)]
+			[TestCase(false, false)]
+			public async Task notification_sms_respects_mobile_verification(bool? mobileNumberVerified, bool shouldSend)
+			{
+				// Arrange
+				var profile = new UserProfile
+				{
+					UserId = TestData.Users.TestUser1Id,
+					SendNotificationSms = true,
+					MobileNumberVerified = mobileNumberVerified
+				};
+
+				// Act
+				await _communicationService.SendNotificationAsync(profile.UserId, 1,
+					"An event is coming up.", "15555550100", new Department(), "Notification", profile);
+
+				// Assert
+				_smsServiceMock.Verify(m => m.SendNotificationAsync(profile.UserId, 1,
+					"Notification An event is coming up.", "15555550100", profile),
+					shouldSend ? Times.Once() : Times.Never());
+			}
+
+			[TestCase(true, true)]
+			[TestCase(null, true)]
+			[TestCase(false, false)]
+			public async Task calendar_notification_sms_respects_mobile_verification(bool? mobileNumberVerified, bool shouldSend)
+			{
+				// Arrange
+				var profile = new UserProfile
+				{
+					UserId = TestData.Users.TestUser1Id,
+					SendNotificationSms = true,
+					MobileNumberVerified = mobileNumberVerified
+				};
+
+				// Act
+				await _communicationService.SendCalendarAsync(profile.UserId, 1,
+					"on 7/22 at 18:00. Reply YES or NO.", "15555550100", "New: Drill", profile);
+
+				// Assert
+				_smsServiceMock.Verify(m => m.SendNotificationAsync(profile.UserId, 1,
+					"New: Drill on 7/22 at 18:00. Reply YES or NO.", "15555550100", profile),
+					shouldSend ? Times.Once() : Times.Never());
 			}
 		}
 	}

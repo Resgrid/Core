@@ -9,7 +9,7 @@ namespace Resgrid.Chatbot.Interfaces
 		
 		// Phase 2: Multi-turn dialog methods called by IngressService
 		Task<ChatbotResponse> HandleContinuationAsync(ChatbotMessage message, ChatbotSession session);
-		bool IsMultiTurnIntent(ChatbotIntentType intentType);
+		bool NeedsParameterCollection(ChatbotIntent intent);
 		Task<ChatbotResponse> BeginDialogAsync(ChatbotIntent intent, ChatbotSession session);
 	}
 

@@ -53,7 +53,7 @@ Classify the user's message into exactly one of these intent categories:
 - my_status: User asks about their current status or staffing level
 - list_calls: User wants to see active/open calls/incidents
 - call_detail: User asks about a specific call by number/name
-- respond_to_call: User says they are responding/going/en route to a specific call
+- respond_to_call: User acknowledges or declines a call response. Bare phrases such as ""responding"", ""on my way"", ""omw"", ""not responding"", or ""not going"" apply to the user's most recent dispatch; a call reference is optional
 - close_call: User wants to close/cancel/end a call
 - dispatch_call: User wants to create/draft a new call or incident (dispatch role)
 - list_units: User wants to see unit statuses
@@ -70,6 +70,14 @@ Classify the user's message into exactly one of these intent categories:
 - shift_signup: User wants to sign up for a shift
 - shift_drop: User wants to drop a shift
 - personnel_lookup: User asks about personnel (who is X, where is X, list personnel)
+- who_available: User asks who is available/around/free to respond right now (e.g. ""who's around?"", ""who is available?"")
+- units_available: User asks which units are available/free/in service right now
+- call_responders: User asks who is on a call, responding, en route or on scene for a call (e.g. ""who's on call 26-1?"", ""who's in route to the fire?"")
+- call_dispatched: User asks who was dispatched/assigned to a call (the dispatch list: personnel, groups, roles, units)
+- my_calls: User asks what calls THEY are on/dispatched to (e.g. ""what calls am I on?"")
+- unit_calls: User asks what calls a specific unit is on/dispatched to (e.g. ""what calls is Rescue 6 on?"")
+- create_poll: User wants to poll/survey department members with a yes/no question (e.g. ""poll members to see who's available for a red flag on 7/22"")
+- my_schedule: User asks for their schedule (their shifts plus calendar events they RSVP'd to), optionally for a specific day
 - weather_alert: User asks about weather alerts or warnings
 - emergency_mayday: User signals emergency/distress (mayday, officer down, firefighter down)
 - link_account: User wants to link/authenticate their account
@@ -88,7 +96,8 @@ Respond with ONLY a JSON object. No explanation, no markdown, no additional text
 Extract any parameters mentioned:
 - For set_status: ""statusName"" (the status name), or ""actionType"" (numeric ID 1-4)
 - For set_staffing: ""staffingName"" (the staffing name), or ""staffingType"" (numeric S1-S5)
-- For call_detail/close_call/respond_to_call: ""callId"" (the call number)
+- For call_detail/close_call: ""callId"" (the call number)
+- For respond_to_call: ""callId"" or ""callRef"" when provided, and ""response"" (""yes"" for responding/going, ""no"" for not responding/not going)
 - For set_unit_status: ""unitName"", ""status""
 - For send_message: ""recipient"", ""body""
 - For respond_to_message: ""messageId"", ""response"" (yes/no)
@@ -98,6 +107,11 @@ Extract any parameters mentioned:
 - For personnel_lookup: ""query"" (the name/description)
 - For dispatch_call: ""description"" (the call description)
 - For switch_department: ""departmentIdentifier"" (the department name, code, or number to switch to)
+- For call_responders: ""callRef"" (call id, number or shorthand like ""the fire""; empty if not given), ""mode"" (""all"", ""enroute"" or ""onscene"" — enroute when the user asks who is responding/in route, onscene when they ask who is on scene, all otherwise)
+- For call_dispatched: ""callRef"" (call id, number or shorthand; empty if not given)
+- For unit_calls: ""unitName"" (the unit name, number or id)
+- For create_poll: ""question"" (the yes/no question to ask members, without the leading ""poll members to see"" filler)
+- For my_schedule: ""day"" (the day asked about, e.g. ""today"", ""tomorrow"", ""7/22""; empty for today)
 - For list_departments: no parameters needed
 - For get_active_department: no parameters needed
 

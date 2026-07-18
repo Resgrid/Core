@@ -1,3 +1,4 @@
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -135,6 +136,100 @@ namespace Resgrid.Tests.Chatbot
 			var fetched = await store.GetAsync(first.SessionId);
 			fetched.Should().NotBeNull();
 			fetched.SessionId.Should().Be(first.SessionId);
+		}
+
+		[Test]
+		public async Task SessionStore_InMemory_AppliesRequestedTtlBeforeExpiryCheck()
+		{
+			// Arrange
+			ChatbotConfig.UseRedisSessionStore = false;
+			var store = new RedisSessionStore(Mock.Of<ICacheProvider>());
+			var userId = "session-ttl-expiry-user-001";
+			var first = await store.GetOrCreateAsync(userId, 1, ChatbotPlatform.SmsTwilio, "", 30);
+			first.State = ChatbotDialogState.AwaitingConfirmation;
+			first.LastActivity = DateTime.UtcNow.AddMinutes(-10);
+
+			// Act
+			var second = await store.GetOrCreateAsync(userId, 1, ChatbotPlatform.SmsTwilio, "", 5);
+
+			// Assert
+			second.SessionId.Should().NotBe(first.SessionId);
+			second.State.Should().Be(ChatbotDialogState.Idle);
+			second.TtlMinutes.Should().Be(5);
+		}
+
+		[Test]
+		public async Task SessionStore_InMemory_PreservesValidSessionStateWhenApplyingRequestedTtl()
+		{
+			// Arrange
+			ChatbotConfig.UseRedisSessionStore = false;
+			var store = new RedisSessionStore(Mock.Of<ICacheProvider>());
+			var userId = "session-ttl-valid-user-001";
+			var first = await store.GetOrCreateAsync(userId, 1, ChatbotPlatform.SmsTwilio, "", 30);
+			first.State = ChatbotDialogState.AwaitingConfirmation;
+			first.PendingIntent = ChatbotIntentType.DispatchCall;
+			first.Context["description"] = "Structure fire";
+			first.LastActivity = DateTime.UtcNow.AddMinutes(-2);
+
+			// Act
+			var second = await store.GetOrCreateAsync(userId, 1, ChatbotPlatform.SmsTwilio, "", 5);
+
+			// Assert
+			second.SessionId.Should().Be(first.SessionId);
+			second.TtlMinutes.Should().Be(5);
+			second.State.Should().Be(ChatbotDialogState.AwaitingConfirmation);
+			second.PendingIntent.Should().Be(ChatbotIntentType.DispatchCall);
+			second.Context["description"].Should().Be("Structure fire");
+		}
+
+		[Test]
+		public async Task SessionStore_PruneWithoutCutoff_UsesEachSessionTtl()
+		{
+			// Arrange
+			ChatbotConfig.UseRedisSessionStore = false;
+			var store = new RedisSessionStore(Mock.Of<ICacheProvider>());
+			var shortSession = await store.GetOrCreateAsync("session-prune-short-user-001", 1,
+				ChatbotPlatform.SmsTwilio, "", 5);
+			var longSession = await store.GetOrCreateAsync("session-prune-long-user-001", 1,
+				ChatbotPlatform.SmsTwilio, "", 60);
+			shortSession.LastActivity = DateTime.UtcNow.AddMinutes(-10);
+			longSession.LastActivity = DateTime.UtcNow.AddMinutes(-10);
+
+			// Act
+			await store.PruneExpiredAsync();
+			var recreatedShortSession = await store.GetOrCreateAsync("session-prune-short-user-001", 1,
+				ChatbotPlatform.SmsTwilio, "", 60);
+			var retainedLongSession = await store.GetOrCreateAsync("session-prune-long-user-001", 1,
+				ChatbotPlatform.SmsTwilio, "", 60);
+
+			// Assert
+			recreatedShortSession.SessionId.Should().NotBe(shortSession.SessionId);
+			retainedLongSession.SessionId.Should().Be(longSession.SessionId);
+		}
+
+		[Test]
+		public async Task SessionStore_PruneWithCutoff_UsesExplicitCutoff()
+		{
+			// Arrange
+			ChatbotConfig.UseRedisSessionStore = false;
+			var store = new RedisSessionStore(Mock.Of<ICacheProvider>());
+			var olderSession = await store.GetOrCreateAsync("session-prune-cutoff-old-user-001", 1,
+				ChatbotPlatform.SmsTwilio, "", 60);
+			var newerSession = await store.GetOrCreateAsync("session-prune-cutoff-new-user-001", 1,
+				ChatbotPlatform.SmsTwilio, "", 60);
+			olderSession.LastActivity = DateTime.UtcNow.AddMinutes(-10);
+			newerSession.LastActivity = DateTime.UtcNow.AddMinutes(-2);
+
+			// Act
+			await store.PruneExpiredAsync(DateTime.UtcNow.AddMinutes(-5));
+			var recreatedOlderSession = await store.GetOrCreateAsync("session-prune-cutoff-old-user-001", 1,
+				ChatbotPlatform.SmsTwilio, "", 60);
+			var retainedNewerSession = await store.GetOrCreateAsync("session-prune-cutoff-new-user-001", 1,
+				ChatbotPlatform.SmsTwilio, "", 60);
+
+			// Assert
+			recreatedOlderSession.SessionId.Should().NotBe(olderSession.SessionId);
+			retainedNewerSession.SessionId.Should().Be(newerSession.SessionId);
 		}
 
 		// ---- Rate limiting -----------------------------------------------------------------------

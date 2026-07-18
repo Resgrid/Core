@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Resgrid.Framework
 {
@@ -14,6 +16,24 @@ namespace Resgrid.Framework
 				return string.Empty;
 
 			return extension.TrimStart('.').ToLowerInvariant();
+		}
+
+		public static string GetSafeFileName(string fileName)
+		{
+			if (string.IsNullOrWhiteSpace(fileName))
+				return string.Empty;
+
+			return Path.GetFileName(fileName.Replace('\\', '/'));
+		}
+
+		public static async Task<byte[]> ReadAllBytesAsync(Stream stream, CancellationToken cancellationToken = default)
+		{
+			if (stream == null)
+				throw new ArgumentNullException(nameof(stream));
+
+			using var buffer = new MemoryStream();
+			await stream.CopyToAsync(buffer, cancellationToken);
+			return buffer.ToArray();
 		}
 
 		public static string GetContentTypeByExtension(string strExtension)

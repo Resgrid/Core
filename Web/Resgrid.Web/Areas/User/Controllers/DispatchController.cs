@@ -1043,6 +1043,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					{
 						var cqi = new CallQueueItem();
 						cqi.Call = call;
+						cqi.SetBroadcastDispatches(newUserIds, newGroupIds, newUnitIds, newRoleIds);
 
 						if (newGroupIds.Any() || newUnitIds.Any() || newRoleIds.Any())
 							cqi.Profiles = (await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId)).Select(x => x.Value).ToList();

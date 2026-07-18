@@ -36,7 +36,15 @@ namespace Resgrid.Chatbot.Models
 		MessageDetail = 29,
 		DeleteMessage = 30,
 		RespondToMessage = 31,
-		ShiftDrop = 32
+		ShiftDrop = 32,
+		WhoIsAvailable = 33,
+		UnitsAvailable = 34,
+		CallResponders = 35,
+		CallDispatched = 36,
+		MyCalls = 37,
+		UnitCalls = 38,
+		CreatePoll = 39,
+		MySchedule = 40
 	}
 
 	public class ChatbotIntent

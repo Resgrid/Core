@@ -21,11 +21,14 @@ namespace Resgrid.Chatbot.Handlers
 	{
 		private readonly ICallsService _callsService;
 		private readonly IAuthorizationService _authorizationService;
+		private readonly IChatbotDepartmentConfigService _departmentConfigService;
 
-		public DispatchCallHandler(ICallsService callsService, IAuthorizationService authorizationService)
+		public DispatchCallHandler(ICallsService callsService, IAuthorizationService authorizationService,
+			IChatbotDepartmentConfigService departmentConfigService = null)
 		{
 			_callsService = callsService;
 			_authorizationService = authorizationService;
+			_departmentConfigService = departmentConfigService;
 		}
 
 		public ChatbotIntentType IntentType => ChatbotIntentType.DispatchCall;
@@ -35,6 +38,16 @@ namespace Resgrid.Chatbot.Handlers
 			var culture = session.Culture;
 			try
 			{
+				var config = _departmentConfigService == null
+					? null
+					: await _departmentConfigService.GetConfigAsync(session.DepartmentId);
+				if (config != null && !config.AllowDispatchViaChatbot)
+					return new ChatbotResponse
+					{
+						Text = "Creating calls through the chatbot is disabled for this department.",
+						Processed = false
+					};
+
 				if (!await _authorizationService.CanUserCreateCallAsync(session.UserId, session.DepartmentId))
 					return new ChatbotResponse { Text = ChatbotResources.Get("Call_NoCreatePermission", culture), Processed = false };
 

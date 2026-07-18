@@ -49,6 +49,10 @@ namespace Resgrid.Chatbot
 				.As<IChatbotUserSearchService>()
 				.InstancePerLifetimeScope();
 
+			builder.RegisterType<TextResponseResolver>()
+				.As<ITextResponseResolver>()
+				.InstancePerLifetimeScope();
+
 			// Default no-op Web Chat notifier; the real SignalR-backed notifier in the web layer
 			// overrides this (PreserveExistingDefaults keeps the real one winning regardless of order).
 			builder.RegisterType<NullChatbotWebChatNotifier>()
@@ -163,6 +167,34 @@ namespace Resgrid.Chatbot
 				.InstancePerLifetimeScope();
 
 			builder.RegisterType<WeatherAlertHandler>()
+				.As<IChatbotActionHandler>()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<AvailabilityActionHandler>()
+				.As<IChatbotActionHandler>()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<UnitsAvailableActionHandler>()
+				.As<IChatbotActionHandler>()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<CallRespondersActionHandler>()
+				.As<IChatbotActionHandler>()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<CallDispatchedActionHandler>()
+				.As<IChatbotActionHandler>()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<MyCallsActionHandler>()
+				.As<IChatbotActionHandler>()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<PollCreateHandler>()
+				.As<IChatbotActionHandler>()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<MyScheduleActionHandler>()
 				.As<IChatbotActionHandler>()
 				.InstancePerLifetimeScope();
 		}

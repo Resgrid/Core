@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Resgrid.Config;
 using Resgrid.Chatbot.Interfaces;
@@ -26,8 +27,13 @@ namespace Resgrid.Chatbot.Services
 		private readonly IChatbotDepartmentConfigService _departmentConfigService;
 		private readonly IChatbotRateLimiter _rateLimiter;
 		private readonly ISecurityPinService _securityPinService;
+		private readonly ITextResponseResolver _textResponseResolver;
 
 		private const int MaxPinAttempts = 3;
+
+		private const int MaxReplyTargets = 10;
+		private const string ReplyAnswerKey = "__replyAnswer";
+		private const string ReplyCountKey = "__replyCount";
 
 		public ChatbotIngressService(
 			IChatbotUserIdentityService userIdentityService,
@@ -43,7 +49,8 @@ namespace Resgrid.Chatbot.Services
 			IAuthorizationService authorizationService,
 			IChatbotDepartmentConfigService departmentConfigService,
 			IChatbotRateLimiter rateLimiter,
-			ISecurityPinService securityPinService)
+			ISecurityPinService securityPinService,
+			ITextResponseResolver textResponseResolver)
 		{
 			_userIdentityService = userIdentityService;
 			_sessionManager = sessionManager;
@@ -59,6 +66,7 @@ namespace Resgrid.Chatbot.Services
 			_departmentConfigService = departmentConfigService;
 			_rateLimiter = rateLimiter;
 			_securityPinService = securityPinService;
+			_textResponseResolver = textResponseResolver;
 		}
 
 		public async Task<ChatbotResponse> ProcessMessageAsync(ChatbotMessage message)
@@ -229,11 +237,15 @@ namespace Resgrid.Chatbot.Services
 				}
 
 				// 4. Get or create session
+				var sessionTtlMinutes = deptConfig?.SessionTtlMinutes > 0
+					? deptConfig.SessionTtlMinutes
+					: ChatbotConfig.DefaultSessionTimeoutMinutes;
 				var session = await _sessionManager.GetOrCreateSessionAsync(
 					identity.UserId,
 					department.DepartmentId,
 					message.Platform,
-					message.From);
+					message.From,
+					sessionTtlMinutes);
 
 				// Resolve the user's preferred language once per session so responses are localized
 				// (UserProfile.Language → supported culture; unknown/none falls back to English).
@@ -445,6 +457,20 @@ namespace Resgrid.Chatbot.Services
 					}
 				}
 
+				if (session.State == ChatbotDialogState.AwaitingResponseTarget)
+				{
+					var selectionResponse = await HandleReplyTargetSelectionAsync(message, session);
+					await _sessionManager.SaveSessionAsync(session);
+					return selectionResponse;
+				}
+
+				if (session.State == ChatbotDialogState.AwaitingParameter && session.PendingIntent.HasValue)
+				{
+					var parameterResponse = await HandleParameterContinuationAsync(message, session);
+					await _sessionManager.SaveSessionAsync(session);
+					return parameterResponse;
+				}
+
 				if (session.State != ChatbotDialogState.Idle)
 				{
 					var continuationResult = await _conversationEngine.HandleContinuationAsync(message, session);
@@ -452,6 +478,27 @@ namespace Resgrid.Chatbot.Services
 					{
 						await _sessionManager.SaveSessionAsync(session);
 						return continuationResult;
+					}
+				}
+
+				// 5c. Resolve a bare YES/NO against recent unanswered poll and calendar RSVP prompts before
+				// classification. One target is automatic; multiple targets start a numbered disambiguation.
+				if (session.State == ChatbotDialogState.Idle)
+				{
+					string shortAnswer = null;
+					if (Localization.ChatbotResources.IsAffirmative(message.Text, session.Culture))
+						shortAnswer = "Yes";
+					else if (IsExplicitNegativeAnswer(message.Text, session.Culture))
+						shortAnswer = "No";
+
+					if (shortAnswer != null)
+					{
+						var shortResponse = await TryResolveShortResponseAsync(session, shortAnswer);
+						if (shortResponse != null)
+						{
+							await _sessionManager.SaveSessionAsync(session);
+							return shortResponse;
+						}
 					}
 				}
 
@@ -482,7 +529,7 @@ namespace Resgrid.Chatbot.Services
 				}
 
 				// 8. Begin conversation for new multi-turn intents
-				if (_conversationEngine.IsMultiTurnIntent(intent.Type))
+				if (_conversationEngine.NeedsParameterCollection(intent))
 				{
 					var turnResult = await _conversationEngine.BeginDialogAsync(intent, session);
 					if (turnResult is ChatbotResponse dialogResponse && dialogResponse.Processed)
@@ -521,6 +568,173 @@ namespace Resgrid.Chatbot.Services
 			}
 		}
 
+		private async Task<ChatbotResponse> TryResolveShortResponseAsync(ChatbotSession session, string answer)
+		{
+			var targets = (await _textResponseResolver.GetPendingResponsesAsync(session.UserId,
+				session.DepartmentId, DateTime.UtcNow.AddDays(-1)))
+				.Take(MaxReplyTargets)
+				.ToList();
+
+			if (targets.Count == 0)
+				return null;
+
+			if (targets.Count == 1)
+				return await _textResponseResolver.RecordResponseAsync(targets[0], answer, session);
+
+			StoreReplyTargets(session, answer, targets);
+			return BuildReplyTargetPrompt(targets);
+		}
+
+		private async Task<ChatbotResponse> HandleReplyTargetSelectionAsync(ChatbotMessage message, ChatbotSession session)
+		{
+			if (IsCancel(message.Text))
+			{
+				session.Reset();
+				return new ChatbotResponse { Text = "Cancelled.", Processed = true };
+			}
+
+			var targets = ReadReplyTargets(session);
+			if (targets.Count == 0 || !session.Context.TryGetValue(ReplyAnswerKey, out var answer))
+			{
+				session.Reset();
+				return new ChatbotResponse
+				{
+					Text = "That reply request expired. Please send YES or NO again.",
+					Processed = true
+				};
+			}
+
+			var selected = SelectReplyTarget(message.Text, targets);
+			if (selected == null)
+				return BuildReplyTargetPrompt(targets, "I couldn't tell which one you meant.");
+
+			var response = await _textResponseResolver.RecordResponseAsync(selected, answer, session);
+			session.Reset();
+			return response ?? new ChatbotResponse
+			{
+				Text = "That item no longer needs a response. Send YES or NO again to check the remaining items.",
+				Processed = true
+			};
+		}
+
+		private async Task<ChatbotResponse> HandleParameterContinuationAsync(ChatbotMessage message, ChatbotSession session)
+		{
+			if (IsCancel(message.Text))
+			{
+				session.Reset();
+				return new ChatbotResponse { Text = "Cancelled.", Processed = true };
+			}
+
+			var pendingType = session.PendingIntent.Value;
+			var handler = _actionHandlers.FirstOrDefault(h => h.CanHandle(pendingType));
+			if (handler == null)
+			{
+				session.Reset();
+				return new ChatbotResponse { Text = "I couldn't continue that request. Please try the full command again.", Processed = false };
+			}
+
+			var intent = new ChatbotIntent { Type = pendingType, Confidence = 1.0 };
+			if (pendingType == ChatbotIntentType.SetStatus)
+				intent.Parameters["statusName"] = message.Text.Trim();
+			else if (pendingType == ChatbotIntentType.SetStaffing)
+				intent.Parameters["staffingName"] = message.Text.Trim();
+			else
+				intent.Parameters["value"] = message.Text.Trim();
+
+			session.State = ChatbotDialogState.Idle;
+			session.PendingIntent = null;
+			session.Context.Clear();
+			var response = await handler.HandleAsync(message, intent, session);
+			response.Intent = intent;
+			return response;
+		}
+
+		private static void StoreReplyTargets(ChatbotSession session, string answer,
+			IReadOnlyList<PendingTextResponse> targets)
+		{
+			session.State = ChatbotDialogState.AwaitingResponseTarget;
+			session.PendingIntent = null;
+			session.Context.Clear();
+			session.Context[ReplyAnswerKey] = answer;
+			session.Context[ReplyCountKey] = targets.Count.ToString();
+
+			for (var i = 0; i < targets.Count; i++)
+			{
+				var prefix = $"__reply:{i}:";
+				session.Context[prefix + "type"] = ((int)targets[i].Type).ToString();
+				session.Context[prefix + "source"] = targets[i].SourceId.ToString();
+				session.Context[prefix + "message"] = targets[i].MessageId.ToString();
+				session.Context[prefix + "label"] = targets[i].Label ?? string.Empty;
+			}
+		}
+
+		private static List<PendingTextResponse> ReadReplyTargets(ChatbotSession session)
+		{
+			var targets = new List<PendingTextResponse>();
+			if (!session.Context.TryGetValue(ReplyCountKey, out var countRaw)
+				|| !int.TryParse(countRaw, out var count) || count < 1 || count > MaxReplyTargets)
+				return targets;
+
+			for (var i = 0; i < count; i++)
+			{
+				var prefix = $"__reply:{i}:";
+				if (!session.Context.TryGetValue(prefix + "type", out var typeRaw)
+					|| !int.TryParse(typeRaw, out var type)
+					|| !session.Context.TryGetValue(prefix + "source", out var sourceRaw)
+					|| !int.TryParse(sourceRaw, out var sourceId)
+					|| !session.Context.TryGetValue(prefix + "message", out var messageRaw)
+					|| !int.TryParse(messageRaw, out var messageId))
+					continue;
+
+				session.Context.TryGetValue(prefix + "label", out var label);
+				targets.Add(new PendingTextResponse
+				{
+					Type = (PendingTextResponseType)type,
+					SourceId = sourceId,
+					MessageId = messageId,
+					Label = label
+				});
+			}
+
+			return targets;
+		}
+
+		private static PendingTextResponse SelectReplyTarget(string text, IReadOnlyList<PendingTextResponse> targets)
+		{
+			var input = text?.Trim().TrimEnd('?', '!', '.', ',').TrimStart('#');
+			if (int.TryParse(input, out var selection) && selection >= 1 && selection <= targets.Count)
+				return targets[selection - 1];
+
+			var matches = targets.Where(target =>
+				(target.Type == PendingTextResponseType.Poll && input?.IndexOf("poll", StringComparison.OrdinalIgnoreCase) >= 0)
+				|| (target.Type == PendingTextResponseType.CalendarRsvp
+					&& (input?.IndexOf("calendar", StringComparison.OrdinalIgnoreCase) >= 0
+						|| input?.IndexOf("event", StringComparison.OrdinalIgnoreCase) >= 0))
+				|| (!string.IsNullOrWhiteSpace(target.Label)
+					&& (input?.IndexOf(target.Label, StringComparison.OrdinalIgnoreCase) >= 0
+						|| (input?.Length >= 3 && target.Label.IndexOf(input, StringComparison.OrdinalIgnoreCase) >= 0))))
+				.ToList();
+
+			return matches.Count == 1 ? matches[0] : null;
+		}
+
+		private static ChatbotResponse BuildReplyTargetPrompt(IReadOnlyList<PendingTextResponse> targets,
+			string prefix = null)
+		{
+			var builder = new StringBuilder();
+			if (!string.IsNullOrWhiteSpace(prefix))
+				builder.AppendLine(prefix);
+			builder.AppendLine("Did you mean this YES/NO response for:");
+			for (var i = 0; i < targets.Count; i++)
+			{
+				var type = targets[i].Type == PendingTextResponseType.Poll ? "Poll" : "Calendar";
+				builder.AppendLine($"{i + 1}. {type}: {targets[i].Label}");
+			}
+			builder.Append("Reply with the number, or CANCEL.");
+
+			return new ChatbotResponse { Text = builder.ToString(), Processed = true };
+		}
+
 		private async Task<ChatbotUserIdentity> ResolveUserIdentityAsync(ChatbotMessage message)
 		{
 			// Platform-specific identity (already linked).
@@ -554,6 +768,34 @@ namespace Resgrid.Chatbot.Services
 		{
 			var t = text?.Trim().ToLowerInvariant();
 			return t == "no" || t == "n" || t == "cancel" || t == "stop";
+		}
+
+		private static bool IsCancel(string text)
+		{
+			var t = text?.Trim().TrimEnd('?', '!', '.', ',');
+			return string.Equals(t, "cancel", StringComparison.OrdinalIgnoreCase)
+				|| string.Equals(t, "never mind", StringComparison.OrdinalIgnoreCase)
+				|| string.Equals(t, "nevermind", StringComparison.OrdinalIgnoreCase);
+		}
+
+		private static bool IsExplicitNegativeAnswer(string text, string culture)
+		{
+			if (string.IsNullOrWhiteSpace(text))
+				return false;
+
+			var input = text.Trim();
+			foreach (var tokenList in new[]
+			{
+				Localization.ChatbotResources.Get("Confirm_NoTokens", "en"),
+				Localization.ChatbotResources.Get("Confirm_NoTokens", culture)
+			})
+			{
+				var answerTokens = tokenList.Split(',').Take(2);
+				if (answerTokens.Any(token => string.Equals(token.Trim(), input, StringComparison.OrdinalIgnoreCase)))
+					return true;
+			}
+
+			return false;
 		}
 
 		/// <summary>

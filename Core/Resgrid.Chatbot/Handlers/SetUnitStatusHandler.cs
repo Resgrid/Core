@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Resgrid.Chatbot.Interfaces;
@@ -53,12 +54,16 @@ namespace Resgrid.Chatbot.Handlers
 				if (!await _authorizationService.CanUserModifyUnitAsync(session.UserId, unit.UnitId))
 					return new ChatbotResponse { Text = ChatbotResources.Get("Unit_NoPermission", culture), Processed = false };
 
-				var customStates = await _customStateService.GetAllActiveCustomStatesForDepartmentAsync(session.DepartmentId);
-				var statusLower = statusName.Trim().ToLowerInvariant();
-				var matchedState = customStates?
-					.Where(s => s.Type == (int)CustomStateTypes.Unit)
-					.SelectMany(s => s.GetActiveDetails())
-					.FirstOrDefault(d => d.ButtonText != null && d.ButtonText.ToLowerInvariant() == statusLower);
+				var allowedStates = await GetAllowedStatesAsync(unit, session.DepartmentId);
+				var matchedState = Services.CustomStateMatcher.FindBySelection(allowedStates, statusName)
+					?? Services.CustomStateMatcher.FindByName(allowedStates, statusName);
+				var baseType = Services.CustomStateMatcher.UnitBaseTypeFor(statusName);
+				if (matchedState == null && baseType.HasValue)
+				{
+					matchedState = Services.CustomStateMatcher.FindByBaseType(allowedStates, baseType.Value);
+					if (matchedState == null && baseType == ActionBaseTypes.Enroute)
+						matchedState = Services.CustomStateMatcher.FindByBaseType(allowedStates, ActionBaseTypes.Responding);
+				}
 
 				if (matchedState == null)
 					return new ChatbotResponse { Text = ChatbotResources.Get("Unit_UnknownStatus", culture, statusName), Processed = true };
@@ -68,6 +73,7 @@ namespace Resgrid.Chatbot.Handlers
 				{
 					session.State = ChatbotDialogState.AwaitingConfirmation;
 					session.PendingIntent = ChatbotIntentType.SetUnitStatus;
+					session.Context.Clear();
 					session.Context["unitName"] = unit.Name;
 					session.Context["status"] = matchedState.ButtonText;
 					return new ChatbotResponse
@@ -86,6 +92,37 @@ namespace Resgrid.Chatbot.Handlers
 				Framework.Logging.LogException(ex);
 				return new ChatbotResponse { Text = ChatbotResources.Get("Unit_ErrorSet", culture), Processed = false };
 			}
+		}
+
+		private async Task<List<CustomStateDetail>> GetAllowedStatesAsync(Unit unit, int departmentId)
+		{
+			if (!string.IsNullOrWhiteSpace(unit.Type))
+			{
+				var unitType = await _unitsService.GetUnitTypeByNameAsync(departmentId, unit.Type);
+				if (unitType?.CustomStatesId > 0)
+				{
+					var assignedState = await _customStateService.GetCustomSateByIdAsync(unitType.CustomStatesId.Value);
+					if (assignedState == null || assignedState.IsDeleted
+						|| assignedState.DepartmentId != departmentId
+						|| assignedState.Type != (int)CustomStateTypes.Unit)
+						return new List<CustomStateDetail>();
+
+					return assignedState.GetActiveDetails();
+				}
+
+				return _customStateService.GetDefaultUnitStatuses() ?? new List<CustomStateDetail>();
+			}
+
+			// Legacy units without a type retain the existing department-wide lookup.
+			var customStates = await _customStateService.GetAllActiveCustomStatesForDepartmentAsync(departmentId);
+			var details = customStates?
+				.Where(x => x.Type == (int)CustomStateTypes.Unit)
+				.SelectMany(x => x.GetActiveDetails())
+				.ToList();
+
+			return details?.Count > 0
+				? details
+				: (_customStateService.GetDefaultUnitStatuses() ?? new List<CustomStateDetail>());
 		}
 	}
 }

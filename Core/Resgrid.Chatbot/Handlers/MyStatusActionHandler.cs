@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Resgrid.Chatbot.Interfaces;
 using Resgrid.Chatbot.Localization;
@@ -39,8 +40,9 @@ namespace Resgrid.Chatbot.Handlers
 			{
 				var profile = await _userProfileService.GetProfileByUserIdAsync(session.UserId);
 				var department = await _departmentsService.GetDepartmentByIdAsync(session.DepartmentId);
-				var userStatus = await _actionLogsService.GetLastActionLogForUserAsync(session.UserId);
-				var userStaffing = await _userStateService.GetLastUserStateByUserIdAsync(session.UserId);
+				var userStatus = await _actionLogsService.GetLastActionLogForUserAsync(session.UserId, session.DepartmentId);
+				var departmentStaffing = await _userStateService.GetLatestStatesForDepartmentAsync(session.DepartmentId);
+				var userStaffing = departmentStaffing?.FirstOrDefault(x => x.UserId == session.UserId);
 
 				var customStatus = await _customStateService.GetCustomPersonnelStatusAsync(session.DepartmentId, userStatus);
 				var customStaffing = await _customStateService.GetCustomPersonnelStaffingAsync(session.DepartmentId, userStaffing);

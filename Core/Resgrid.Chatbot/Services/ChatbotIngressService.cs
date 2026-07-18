@@ -237,11 +237,15 @@ namespace Resgrid.Chatbot.Services
 				}
 
 				// 4. Get or create session
+				var sessionTtlMinutes = deptConfig?.SessionTtlMinutes > 0
+					? deptConfig.SessionTtlMinutes
+					: ChatbotConfig.DefaultSessionTimeoutMinutes;
 				var session = await _sessionManager.GetOrCreateSessionAsync(
 					identity.UserId,
 					department.DepartmentId,
 					message.Platform,
-					message.From);
+					message.From,
+					sessionTtlMinutes);
 
 				// Resolve the user's preferred language once per session so responses are localized
 				// (UserProfile.Language → supported culture; unknown/none falls back to English).
@@ -250,9 +254,6 @@ namespace Resgrid.Chatbot.Services
 					var cultureProfile = await _userProfileService.GetProfileByUserIdAsync(identity.UserId);
 					session.Culture = Localization.ChatbotResources.NormalizeCulture(cultureProfile?.Language);
 				}
-
-				if (deptConfig?.SessionTtlMinutes > 0)
-					session.TtlMinutes = deptConfig.SessionTtlMinutes;
 
 				// Add message to session history
 				session.RecentMessages.Add(message);

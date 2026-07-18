@@ -27,11 +27,7 @@
     </div>
     <div class="col-sm-8">
         <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
-            <a href="@Url.Action("GetDocument", "Documents", new {area = "User", documentId = Model.Document.DocumentId})" class="btn btn-info">@localizer["ViewDocumentHeader"]</a>
-            @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || @Model.Document.UserId == Model.UserId)
-            {
-                <a href="@Url.Action("DeleteDocument", "Documents", new {area = "User", documentId = Model.Document.DocumentId})" class="btn btn-danger" data-confirm="@localizer["DeleteDocumentWarning"] @Model.Document.Name?" rel="nofollow">@localizer["DeleteDocumentButton"]</a>
-            }
+            <a asp-controller="Documents" asp-action="ViewDocument" asp-route-area="User" asp-route-documentId="@Model.Document.DocumentId" class="btn btn-info">@localizer["ViewDocumentHeader"]</a>
         </div>
     </div>
 </div>
@@ -99,7 +95,7 @@
 
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
-                                <a class="btn btn-white" asp-controller="Documents" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                <a class="btn btn-white" asp-controller="Documents" asp-action="ViewDocument" asp-route-area="User" asp-route-documentId="@Model.DocumentId">@commonLocalizer["Cancel"]</a>
                                 <button class="btn btn-primary" type="submit">@commonLocalizer["Update"]</button>
                             </div>
                         </div>

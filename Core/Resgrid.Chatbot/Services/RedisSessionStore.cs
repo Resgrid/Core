@@ -52,8 +52,13 @@ namespace Resgrid.Chatbot.Services
 			}
 		}
 
-		public async Task<ChatbotSession> GetOrCreateAsync(string userId, int departmentId, ChatbotPlatform platform, string identifier)
+		public async Task<ChatbotSession> GetOrCreateAsync(string userId, int departmentId, ChatbotPlatform platform,
+			string identifier, int ttlMinutes = 0)
 		{
+			ttlMinutes = ttlMinutes > 0
+				? ttlMinutes
+				: (ChatbotConfig.DefaultSessionTimeoutMinutes > 0 ? ChatbotConfig.DefaultSessionTimeoutMinutes : 30);
+
 			if (UseRedis())
 			{
 				try
@@ -63,6 +68,8 @@ namespace Resgrid.Chatbot.Services
 					if (!string.IsNullOrWhiteSpace(existingId))
 					{
 						var existing = await GetFromRedisAsync(existingId);
+						if (existing != null)
+							existing.TtlMinutes = ttlMinutes;
 						if (existing != null && !existing.IsExpired())
 						{
 							existing.LastActivity = DateTime.UtcNow;
@@ -71,7 +78,7 @@ namespace Resgrid.Chatbot.Services
 						}
 					}
 
-					var created = CreateNewSession(userId, departmentId, platform);
+					var created = CreateNewSession(userId, departmentId, platform, ttlMinutes);
 					await SaveToRedisAsync(created);
 					return created;
 				}
@@ -82,7 +89,7 @@ namespace Resgrid.Chatbot.Services
 				}
 			}
 
-			return GetOrCreateInMemory(userId, departmentId, platform);
+			return GetOrCreateInMemory(userId, departmentId, platform, ttlMinutes);
 		}
 
 		public async Task<ChatbotSession> GetAsync(string sessionId)
@@ -165,9 +172,8 @@ namespace Resgrid.Chatbot.Services
 		{
 			// Redis-backed sessions expire automatically via key TTL; only the in-memory fallback
 			// needs explicit pruning.
-			var effectiveCutoff = cutoff ?? DateTime.UtcNow.AddMinutes(-ChatbotConfig.DefaultSessionTimeoutMinutes);
 			var expired = _fallback.Values
-				.Where(s => s.LastActivity < effectiveCutoff)
+				.Where(s => cutoff.HasValue ? s.LastActivity < cutoff.Value : s.IsExpired())
 				.Select(s => s.SessionId)
 				.ToList();
 
@@ -177,12 +183,16 @@ namespace Resgrid.Chatbot.Services
 			return Task.CompletedTask;
 		}
 
-		private ChatbotSession GetOrCreateInMemory(string userId, int departmentId, ChatbotPlatform platform)
+		private ChatbotSession GetOrCreateInMemory(string userId, int departmentId, ChatbotPlatform platform,
+			int ttlMinutes)
 		{
 			var existing = _fallback.Values.FirstOrDefault(s =>
 				s.UserId == userId &&
 				s.DepartmentId == departmentId &&
 				s.Platform == platform);
+
+			if (existing != null)
+				existing.TtlMinutes = ttlMinutes;
 
 			if (existing != null && !existing.IsExpired())
 			{
@@ -193,7 +203,7 @@ namespace Resgrid.Chatbot.Services
 			if (existing != null)
 				_fallback.TryRemove(existing.SessionId, out _);
 
-			var session = CreateNewSession(userId, departmentId, platform);
+			var session = CreateNewSession(userId, departmentId, platform, ttlMinutes);
 			_fallback[session.SessionId] = session;
 			return session;
 		}
@@ -222,11 +232,9 @@ namespace Resgrid.Chatbot.Services
 			}
 		}
 
-		private static ChatbotSession CreateNewSession(string userId, int departmentId, ChatbotPlatform platform)
+		private static ChatbotSession CreateNewSession(string userId, int departmentId, ChatbotPlatform platform,
+			int ttlMinutes)
 		{
-			var ttlMinutes = ChatbotConfig.DefaultSessionTimeoutMinutes > 0
-				? ChatbotConfig.DefaultSessionTimeoutMinutes
-				: 30;
 			return new ChatbotSession
 			{
 				SessionId = Guid.NewGuid().ToString("N"),

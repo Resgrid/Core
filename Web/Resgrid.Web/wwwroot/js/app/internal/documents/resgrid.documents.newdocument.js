@@ -12,7 +12,7 @@ var resgrid;
                 });
 
                 $(document).on('submit', '#newDocumentForm', function () {
-                    $('#Document_Description').val(quill.root.innerHTML);
+                    $('#Description').val(quill.root.innerHTML);
 
                     return true;
                 });

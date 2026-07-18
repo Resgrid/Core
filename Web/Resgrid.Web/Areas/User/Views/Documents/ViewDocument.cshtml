@@ -1,0 +1,110 @@
+@using Resgrid.Web.Helpers
+@model Resgrid.Web.Areas.User.Models.Documents.ViewDocumentView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Documents.Documents> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ViewDocumentHeader"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-5">
+        <h2>@localizer["ViewDocumentHeader"]</h2>
+        <ol class="breadcrumb">
+            <li>
+                <a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+            </li>
+            <li>
+                <a asp-controller="Documents" asp-action="Index" asp-route-area="User">@commonLocalizer["DocumentsModule"]</a>
+            </li>
+            <li class="active">
+                <strong>@Model.Document.Name</strong>
+            </li>
+        </ol>
+    </div>
+    <div class="col-sm-7">
+        <div class="btn-group top-page-buttons" style="float:right;padding-right:15px;">
+            <a class="btn btn-primary" asp-controller="Documents" asp-action="GetDocument" asp-route-area="User" asp-route-documentId="@Model.Document.DocumentId">
+                <i class="fa fa-download"></i> @commonLocalizer["Download"]
+            </a>
+            @if (Model.CanEdit)
+            {
+                <a class="btn btn-info" asp-controller="Documents" asp-action="EditDocument" asp-route-area="User" asp-route-documentId="@Model.Document.DocumentId">
+                    <i class="fa fa-pencil"></i> @localizer["EditDocumentHeader"]
+                </a>
+            }
+            @if (Model.CanDelete)
+            {
+                <form asp-controller="Documents" asp-action="DeleteDocument" asp-route-area="User" method="post" style="display:inline;"
+                      onsubmit="return confirm('@localizer["DeleteDocumentWarning"]');">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="documentId" value="@Model.Document.DocumentId" />
+                    <button type="submit" class="btn btn-danger">
+                        <i class="fa fa-trash"></i> @localizer["DeleteDocumentButton"]
+                    </button>
+                </form>
+            }
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-12">
+        <div class="wrapper wrapper-content animated fadeInUp">
+            <div class="ibox">
+                <div class="ibox-title">
+                    <h5><i class="@Model.Document.GetIconType()" style="margin-right: 8px;"></i>@Model.Document.Name</h5>
+                </div>
+                <div class="ibox-content">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl class="dl-horizontal">
+                                <dt>@commonLocalizer["Name"]</dt>
+                                <dd>@Model.Document.Name</dd>
+                                <dt>@localizer["Category"]</dt>
+                                <dd>@(String.IsNullOrWhiteSpace(Model.Document.Category) ? commonLocalizer["None"] : Model.Document.Category)</dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl class="dl-horizontal">
+                                <dt>@commonLocalizer["UploadedBy"]</dt>
+                                <dd>@Model.UploadedByName</dd>
+                                <dt>@commonLocalizer["UploadedOn"]</dt>
+                                <dd>@Model.Document.AddedOn.TimeConverterToString(Model.Department)</dd>
+                            </dl>
+                        </div>
+                    </div>
+
+                    <div class="hr-line-dashed"></div>
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <h4>@commonLocalizer["Description"]</h4>
+                            <div class="well" style="min-height: 80px;">
+                                @if (String.IsNullOrWhiteSpace(Model.DescriptionHtml))
+                                {
+                                    <span class="text-muted">@commonLocalizer["None"]</span>
+                                }
+                                else
+                                {
+                                    @Html.Raw(Model.DescriptionHtml)
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="well" style="margin-bottom: 0;">
+                                <i class="@Model.Document.GetIconType() fa-2x" style="vertical-align: middle; margin-right: 10px;"></i>
+                                <strong>@(String.IsNullOrWhiteSpace(Model.Document.Filename) ? Model.Document.Name : Model.Document.Filename)</strong>
+                                <a class="btn btn-primary pull-right" asp-controller="Documents" asp-action="GetDocument" asp-route-area="User" asp-route-documentId="@Model.Document.DocumentId">
+                                    <i class="fa fa-download"></i> @commonLocalizer["Download"]
+                                </a>
+                                <div class="clearfix"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

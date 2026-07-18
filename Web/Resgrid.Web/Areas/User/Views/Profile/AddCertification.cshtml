@@ -38,7 +38,7 @@
 		<div class="wrapper wrapper-content">
 			<div class="ibox float-e-margins">
 				<div class="ibox-content">
-					<form id="edit_user" class="form-horizontal" role="form" asp-controller="Profile" asp-action="AddCertification" asp-route-area="User" method="post">
+					<form id="edit_user" class="form-horizontal" role="form" asp-controller="Profile" asp-action="AddCertification" asp-route-area="User" method="post" enctype="multipart/form-data">
 						@Html.AntiForgeryToken()
 						@Html.HiddenFor(m => m.UserId)
 						@if (!String.IsNullOrEmpty(Model.Message))

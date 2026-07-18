@@ -65,11 +65,18 @@ namespace Resgrid.Workers.Framework.Logic
 								|| notification.Type == EventTypes.CalendarEventUpcoming
 								|| notification.Type == EventTypes.CalendarEventUpdated)
 							{
-								var calendarItem = await _calendarService.GetCalendarItemByIdAsync(notification.ItemId);
-								if (calendarItem?.SignupType == (int)CalendarItemSignupTypes.RSVP)
+								try
 								{
-									rsvpItem = calendarItem;
-									text += " Reply YES or NO.";
+									var calendarItem = await _calendarService.GetCalendarItemByIdAsync(notification.ItemId);
+									if (calendarItem?.SignupType == (int)CalendarItemSignupTypes.RSVP)
+									{
+										rsvpItem = calendarItem;
+										text += " Reply YES or NO.";
+									}
+								}
+								catch (Exception ex)
+								{
+									Logging.LogException(ex);
 								}
 							}
 
@@ -84,8 +91,8 @@ namespace Resgrid.Workers.Framework.Logic
 										if (!_notificationService.AllowToSendViaSms(notification.Type))
 											profile.SendNotificationSms = false;
 
-										await _communicationService.SendNotificationAsync(user, notification.DepartmentId, text, queueItem.DepartmentTextNumber, queueItem.Department, "Notification", profile);
-										if (rsvpItem != null)
+										var sent = await _communicationService.SendNotificationAsync(user, notification.DepartmentId, text, queueItem.DepartmentTextNumber, queueItem.Department, "Notification", profile);
+										if (sent && rsvpItem != null)
 										{
 											try
 											{

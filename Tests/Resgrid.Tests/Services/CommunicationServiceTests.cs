@@ -121,20 +121,50 @@ namespace Resgrid.Tests.Services
 				//_pushServiceMock.Verify(m => m.PushCall(It.IsAny<StandardPushCall>(), Users.TestUser1Id));
 			}
 
-			[Test]
-			public async Task calendar_notifications_are_sent_by_sms_when_enabled()
+			[TestCase(true, true)]
+			[TestCase(null, true)]
+			[TestCase(false, false)]
+			public async Task notification_sms_respects_mobile_verification(bool? mobileNumberVerified, bool shouldSend)
 			{
+				// Arrange
 				var profile = new UserProfile
 				{
 					UserId = TestData.Users.TestUser1Id,
-					SendNotificationSms = true
+					SendNotificationSms = true,
+					MobileNumberVerified = mobileNumberVerified
 				};
 
+				// Act
+				await _communicationService.SendNotificationAsync(profile.UserId, 1,
+					"An event is coming up.", "15555550100", new Department(), "Notification", profile);
+
+				// Assert
+				_smsServiceMock.Verify(m => m.SendNotificationAsync(profile.UserId, 1,
+					"Notification An event is coming up.", "15555550100", profile),
+					shouldSend ? Times.Once() : Times.Never());
+			}
+
+			[TestCase(true, true)]
+			[TestCase(null, true)]
+			[TestCase(false, false)]
+			public async Task calendar_notification_sms_respects_mobile_verification(bool? mobileNumberVerified, bool shouldSend)
+			{
+				// Arrange
+				var profile = new UserProfile
+				{
+					UserId = TestData.Users.TestUser1Id,
+					SendNotificationSms = true,
+					MobileNumberVerified = mobileNumberVerified
+				};
+
+				// Act
 				await _communicationService.SendCalendarAsync(profile.UserId, 1,
 					"on 7/22 at 18:00. Reply YES or NO.", "15555550100", "New: Drill", profile);
 
+				// Assert
 				_smsServiceMock.Verify(m => m.SendNotificationAsync(profile.UserId, 1,
-					"New: Drill on 7/22 at 18:00. Reply YES or NO.", "15555550100", profile), Times.Once);
+					"New: Drill on 7/22 at 18:00. Reply YES or NO.", "15555550100", profile),
+					shouldSend ? Times.Once() : Times.Never());
 			}
 		}
 	}

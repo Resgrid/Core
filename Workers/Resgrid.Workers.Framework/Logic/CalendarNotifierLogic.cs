@@ -142,10 +142,10 @@ namespace Resgrid.Workers.Framework.Logic
 		private async Task SendCalendarReminderAsync(CalendarItem calendarItem, string userId, string message,
 			string departmentNumber, Department department, string title, UserProfile profile)
 		{
-			await _communicationService.SendNotificationAsync(userId, calendarItem.DepartmentId, message,
+			var sent = await _communicationService.SendNotificationAsync(userId, calendarItem.DepartmentId, message,
 				departmentNumber, department, title, profile);
 
-			if (calendarItem.SignupType == (int)CalendarItemSignupTypes.RSVP)
+			if (sent && calendarItem.SignupType == (int)CalendarItemSignupTypes.RSVP)
 			{
 				try
 				{

@@ -766,8 +766,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Profile_View)]
-		public async Task<IActionResult> AddCertification(AddCertificationView model, IFormFile fileToUpload)
+		public async Task<IActionResult> AddCertification(AddCertificationView model, IFormFile fileToUpload, CancellationToken cancellationToken)
 		{
 			if (fileToUpload != null && fileToUpload.Length > 0)
 			{
@@ -800,16 +801,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (fileToUpload != null && fileToUpload.Length > 0)
 				{
-					cert.Filetype = fileToUpload.ContentType;
-					cert.Filename = fileToUpload.FileName;
+					cert.Filetype = String.IsNullOrWhiteSpace(fileToUpload.ContentType) ? "application/octet-stream" : fileToUpload.ContentType;
+					cert.Filename = FileHelper.GetSafeFileName(fileToUpload.FileName);
 
-					byte[] uploadedFile = new byte[fileToUpload.OpenReadStream().Length];
-					fileToUpload.OpenReadStream().Read(uploadedFile, 0, uploadedFile.Length);
-
-					cert.Data = uploadedFile;
+					using (var uploadStream = fileToUpload.OpenReadStream())
+					{
+						cert.Data = await FileHelper.ReadAllBytesAsync(uploadStream, cancellationToken);
+					}
 				}
 
-				await _certificationService.SaveCertificationAsync(cert);
+				await _certificationService.SaveCertificationAsync(cert, cancellationToken);
 
 				if (model.UserId == UserId)
 					return RedirectToAction("Certifications", "Profile", new { area = "User" });
@@ -840,6 +841,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Profile_Update)]
 		public async Task<IActionResult> EditCertification(EditCertificationView model, IFormFile fileToUpload, CancellationToken cancellationToken)
 		{
@@ -874,13 +876,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (fileToUpload != null && fileToUpload.Length > 0)
 				{
-					cert.Filetype = fileToUpload.ContentType;
-					cert.Filename = fileToUpload.FileName;
+					cert.Filetype = String.IsNullOrWhiteSpace(fileToUpload.ContentType) ? "application/octet-stream" : fileToUpload.ContentType;
+					cert.Filename = FileHelper.GetSafeFileName(fileToUpload.FileName);
 
-					byte[] uploadedFile = new byte[fileToUpload.OpenReadStream().Length];
-					fileToUpload.OpenReadStream().Read(uploadedFile, 0, uploadedFile.Length);
-
-					cert.Data = uploadedFile;
+					using (var uploadStream = fileToUpload.OpenReadStream())
+					{
+						cert.Data = await FileHelper.ReadAllBytesAsync(uploadStream, cancellationToken);
+					}
 				}
 
 				await _certificationService.SaveCertificationAsync(cert, cancellationToken);
@@ -891,6 +893,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 					return RedirectToAction("Certifications", "Profile", new { area = "User", userId = cert.UserId });
 			}
 
+			var certificationTypes = await _certificationService.GetAllCertificationTypesByDepartmentAsync(DepartmentId);
+			model.CertificationTypes = new SelectList(certificationTypes, "Type", "Type");
 			return View(model);
 		}
 

@@ -33,6 +33,7 @@ namespace Resgrid.Workers.Framework.Logic
 			_communicationService = Bootstrapper.GetKernel().Resolve<ICommunicationService>();
 			_callsService = Bootstrapper.GetKernel().Resolve<ICallsService>();
 			_departmentSettingsService = Bootstrapper.GetKernel().Resolve<IDepartmentSettingsService>();
+			cqi?.ApplyBroadcastDispatchFilter();
 
 			if (cqi != null && cqi.Call != null && cqi.Call.HasAnyDispatches())
 			{

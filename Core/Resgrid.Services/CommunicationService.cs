@@ -577,7 +577,7 @@ namespace Resgrid.Services
 			if (profile == null)
 				profile = await _userProfileService.GetProfileByUserIdAsync(userId, false);
 
-			if (profile == null || profile.SendNotificationSms)
+			if (profile == null || (profile.SendNotificationSms && profile.MobileNumberVerified.IsContactMethodAllowedForSending()))
 			{
 				try
 				{
@@ -638,7 +638,7 @@ namespace Resgrid.Services
 			if (profile == null)
 				profile = await _userProfileService.GetProfileByUserIdAsync(userId, false);
 
-			if (profile == null || profile.SendNotificationSms)
+			if (profile == null || (profile.SendNotificationSms && profile.MobileNumberVerified.IsContactMethodAllowedForSending()))
 			{
 				try
 				{

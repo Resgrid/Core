@@ -63,7 +63,7 @@ namespace Resgrid.Services
 		public async Task<List<CalendarItem>> GetAllCalendarItemsForDepartmentInRangeAsync(int departmentId, DateTime startDate, DateTime endDate)
 		{
 			return (from ci in await GetAllCalendarItemsForDepartmentAsync(departmentId)
-				where ci.Start >= startDate && ci.End <= endDate
+				where ci.Start < endDate && ci.End >= startDate
 				select ci).ToList();
 		}
 
@@ -585,10 +585,11 @@ namespace Resgrid.Services
 		private async System.Threading.Tasks.Task SendCalendarPromptAsync(CalendarItem calendarItem, string userId, string message,
 			string departmentNumber, string title, UserProfile profile, Department department)
 		{
-			await _communicationService.SendCalendarAsync(userId, calendarItem.DepartmentId, message,
+			var sent = await _communicationService.SendCalendarAsync(userId, calendarItem.DepartmentId, message,
 				departmentNumber, title, profile, department);
 
-			if (_textResponsePromptService == null
+			if (!sent
+				|| _textResponsePromptService == null
 				|| calendarItem.SignupType != (int)CalendarItemSignupTypes.RSVP)
 				return;
 

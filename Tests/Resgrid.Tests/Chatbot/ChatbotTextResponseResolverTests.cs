@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using Resgrid.Chatbot.Handlers;
 using Resgrid.Chatbot.Interfaces;
 using Resgrid.Chatbot.Models;
 using Resgrid.Chatbot.Services;
 using Resgrid.Model;
+using Resgrid.Model.Identity;
 using Resgrid.Model.Messages;
 using Resgrid.Model.Services;
 using Resgrid.Services;
@@ -43,7 +45,12 @@ namespace Resgrid.Tests.Chatbot
 				new Message { MessageId = 3, Type = (int)MessageTypes.Poll, Subject = "Poll: Answered", SentOn = now.AddHours(-1) }
 			});
 			_messages.Setup(m => m.GetMessageRecipientByMessageAndUserAsync(1, "user-1"))
-				.ReturnsAsync(new MessageRecipient { MessageId = 1, UserId = "user-1" });
+				.ReturnsAsync(new MessageRecipient
+				{
+					MessageId = 1,
+					UserId = "user-1",
+					Note = TextResponsePromptMetadata.ForPoll(10)
+				});
 			_messages.Setup(m => m.GetMessageRecipientByMessageAndUserAsync(3, "user-1"))
 				.ReturnsAsync(new MessageRecipient { MessageId = 3, UserId = "user-1", Response = "Yes" });
 
@@ -64,7 +71,12 @@ namespace Resgrid.Tests.Chatbot
 				new Message { MessageId = 4, Type = (int)MessageTypes.Poll, Subject = "Poll: Staffing", SentOn = now.AddMinutes(-20) }
 			});
 			_messages.Setup(m => m.GetMessageRecipientByMessageAndUserAsync(4, "user-1"))
-				.ReturnsAsync(new MessageRecipient { MessageId = 4, UserId = "user-1" });
+				.ReturnsAsync(new MessageRecipient
+				{
+					MessageId = 4,
+					UserId = "user-1",
+					Note = TextResponsePromptMetadata.ForPoll(10)
+				});
 			_messages.Setup(m => m.GetMessageRecipientByMessageAndUserAsync(5, "user-1"))
 				.ReturnsAsync(new MessageRecipient
 				{
@@ -88,6 +100,30 @@ namespace Resgrid.Tests.Chatbot
 			pending.Should().HaveCount(2);
 			pending.Should().Contain(p => p.Type == PendingTextResponseType.Poll && p.SourceId == 4);
 			pending.Should().Contain(p => p.Type == PendingTextResponseType.CalendarRsvp && p.SourceId == 77);
+		}
+
+		[Test]
+		public async Task GetPendingResponses_ExcludesPollFromAnotherDepartment()
+		{
+			// Arrange
+			var now = DateTime.UtcNow;
+			_messages.Setup(m => m.GetInboxMessagesByUserIdAsync("user-1")).ReturnsAsync(new List<Message>
+			{
+				new Message { MessageId = 4, Type = (int)MessageTypes.Poll, Subject = "Poll: Staffing", SentOn = now }
+			});
+			_messages.Setup(m => m.GetMessageRecipientByMessageAndUserAsync(4, "user-1"))
+				.ReturnsAsync(new MessageRecipient
+				{
+					MessageId = 4,
+					UserId = "user-1",
+					Note = TextResponsePromptMetadata.ForPoll(20)
+				});
+
+			// Act
+			var pending = await _resolver.GetPendingResponsesAsync("user-1", 10, now.AddDays(-1));
+
+			// Assert
+			pending.Should().BeEmpty();
 		}
 
 		[Test]
@@ -148,14 +184,88 @@ namespace Resgrid.Tests.Chatbot
 		}
 
 		[Test]
+		public async Task RecordResponse_PollFromAnotherDepartment_DoesNotSaveResponse()
+		{
+			// Arrange
+			var recipient = new MessageRecipient
+			{
+				MessageId = 4,
+				UserId = "user-1",
+				Note = TextResponsePromptMetadata.ForPoll(20)
+			};
+			_messages.Setup(m => m.GetMessageRecipientByMessageAndUserAsync(4, "user-1"))
+				.ReturnsAsync(recipient);
+
+			// Act
+			var response = await _resolver.RecordResponseAsync(new PendingTextResponse
+			{
+				Type = PendingTextResponseType.Poll,
+				SourceId = 4,
+				MessageId = 4,
+				Label = "Staffing"
+			}, "Yes", new ChatbotSession { UserId = "user-1", DepartmentId = 10, Culture = "en" });
+
+			// Assert
+			response.Should().BeNull();
+			recipient.Response.Should().BeNull();
+			_messages.Verify(m => m.SaveMessageRecipientAsync(It.IsAny<MessageRecipient>(),
+				It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
+		public async Task PollCreateHandler_StoresDepartmentMetadataForEveryRecipient()
+		{
+			// Arrange
+			Message saved = null;
+			var departments = new Mock<IDepartmentsService>();
+			var profiles = new Mock<IUserProfileService>();
+			departments.Setup(d => d.GetDepartmentByIdAsync(10, true)).ReturnsAsync(new Department());
+			departments.Setup(d => d.GetDepartmentMemberAsync("admin", 10, true))
+				.ReturnsAsync(new DepartmentMember { UserId = "admin", IsAdmin = true });
+			departments.Setup(d => d.GetAllUsersForDepartmentAsync(10, false, false))
+				.ReturnsAsync(new List<IdentityUser>
+				{
+					new IdentityUser { UserId = "admin" },
+					new IdentityUser { UserId = "user-1" },
+					new IdentityUser { UserId = "user-2" }
+				});
+			profiles.Setup(p => p.GetProfileByUserIdAsync("admin", false)).ReturnsAsync((UserProfile)null);
+			_messages.Setup(m => m.SaveMessageAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()))
+				.Callback((Message message, CancellationToken _) => saved = message)
+				.ReturnsAsync((Message message, CancellationToken _) => message);
+			_messages.Setup(m => m.SendMessageAsync(It.IsAny<Message>(), It.IsAny<string>(), 10, true,
+				It.IsAny<CancellationToken>())).ReturnsAsync(true);
+			var handler = new PollCreateHandler(_messages.Object, departments.Object, profiles.Object);
+
+			// Act
+			var response = await handler.HandleAsync(new ChatbotMessage(), new ChatbotIntent
+			{
+				Type = ChatbotIntentType.CreatePoll,
+				Parameters = new Dictionary<string, string>
+				{
+					["question"] = "Available tonight?",
+					["__confirmed"] = "true"
+				}
+			}, new ChatbotSession { UserId = "admin", DepartmentId = 10, Culture = "en" });
+
+			// Assert
+			response.Processed.Should().BeTrue();
+			saved.Should().NotBeNull();
+			saved.MessageRecipients.Should().HaveCount(2).And.OnlyContain(r =>
+				r.Note == TextResponsePromptMetadata.ForPoll(10));
+		}
+
+		[Test]
 		public async Task PromptService_StoresCalendarMetadataAndOneDayExpiry()
 		{
+			// Arrange
 			Message saved = null;
 			_messages.Setup(m => m.SaveMessageAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()))
 				.Callback((Message message, CancellationToken _) => saved = message)
 				.ReturnsAsync((Message message, CancellationToken _) => message);
 			var service = new TextResponsePromptService(_messages.Object);
 
+			// Act
 			await service.RecordCalendarRsvpPromptAsync(new CalendarItem
 			{
 				CalendarItemId = 44,
@@ -164,10 +274,102 @@ namespace Resgrid.Tests.Chatbot
 				CreatorUserId = "creator"
 			}, "user-1");
 
+			// Assert
 			saved.Should().NotBeNull();
 			saved.Type.Should().Be((int)MessageTypes.CalendarRsvp);
 			saved.ExpireOn.Should().BeCloseTo(saved.SentOn.AddDays(1), TimeSpan.FromSeconds(1));
 			saved.MessageRecipients.Should().ContainSingle();
+			saved.MessageRecipients.Should().ContainSingle(r =>
+				r.UserId == "user-1" && r.Note == TextResponsePromptMetadata.ForCalendarRsvp(44));
+		}
+
+		[Test]
+		public async Task PromptService_ReusesMatchingUnexpiredCalendarPrompt()
+		{
+			// Arrange
+			var recipient = new MessageRecipient
+			{
+				MessageRecipientId = 21,
+				MessageId = 12,
+				UserId = "user-1",
+				Note = TextResponsePromptMetadata.ForCalendarRsvp(44)
+			};
+			var existing = new Message
+			{
+				MessageId = 12,
+				Subject = "Calendar RSVP: Old title",
+				Body = "Old body",
+				SentOn = DateTime.UtcNow.AddHours(-1),
+				ExpireOn = DateTime.UtcNow.AddHours(1),
+				Type = (int)MessageTypes.CalendarRsvp,
+				MessageRecipients = new List<MessageRecipient> { recipient }
+			};
+			Message saved = null;
+			_messages.Setup(m => m.GetInboxMessagesByUserIdAsync("user-1"))
+				.ReturnsAsync(new List<Message> { existing });
+			_messages.Setup(m => m.SaveMessageAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()))
+				.Callback((Message message, CancellationToken _) => saved = message)
+				.ReturnsAsync((Message message, CancellationToken _) => message);
+			var service = new TextResponsePromptService(_messages.Object);
+
+			// Act
+			await service.RecordCalendarRsvpPromptAsync(new CalendarItem
+			{
+				CalendarItemId = 44,
+				Title = "Updated title",
+				SignupType = (int)CalendarItemSignupTypes.RSVP,
+				CreatorUserId = "creator"
+			}, "user-1");
+
+			// Assert
+			saved.Should().BeSameAs(existing);
+			saved.MessageId.Should().Be(12);
+			saved.Subject.Should().Be("Calendar RSVP: Updated title");
+			saved.MessageRecipients.Should().ContainSingle().Which.Should().BeSameAs(recipient);
+			saved.ExpireOn.Should().BeCloseTo(DateTime.UtcNow.AddDays(1), TimeSpan.FromSeconds(1));
+		}
+
+		[Test]
+		public async Task PromptService_CreatesNewPromptWhenMatchingPromptIsExpired()
+		{
+			// Arrange
+			var expired = new Message
+			{
+				MessageId = 12,
+				SentOn = DateTime.UtcNow.AddDays(-2),
+				ExpireOn = DateTime.UtcNow.AddMinutes(-1),
+				Type = (int)MessageTypes.CalendarRsvp,
+				MessageRecipients = new List<MessageRecipient>
+				{
+					new MessageRecipient
+					{
+						MessageRecipientId = 21,
+						MessageId = 12,
+						UserId = "user-1",
+						Note = TextResponsePromptMetadata.ForCalendarRsvp(44)
+					}
+				}
+			};
+			Message saved = null;
+			_messages.Setup(m => m.GetInboxMessagesByUserIdAsync("user-1"))
+				.ReturnsAsync(new List<Message> { expired });
+			_messages.Setup(m => m.SaveMessageAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()))
+				.Callback((Message message, CancellationToken _) => saved = message)
+				.ReturnsAsync((Message message, CancellationToken _) => message);
+			var service = new TextResponsePromptService(_messages.Object);
+
+			// Act
+			await service.RecordCalendarRsvpPromptAsync(new CalendarItem
+			{
+				CalendarItemId = 44,
+				Title = "Live Fire Training",
+				SignupType = (int)CalendarItemSignupTypes.RSVP,
+				CreatorUserId = "creator"
+			}, "user-1");
+
+			// Assert
+			saved.Should().NotBeSameAs(expired);
+			saved.MessageId.Should().Be(0);
 			saved.MessageRecipients.Should().ContainSingle(r =>
 				r.UserId == "user-1" && r.Note == TextResponsePromptMetadata.ForCalendarRsvp(44));
 		}
@@ -241,7 +443,7 @@ namespace Resgrid.Tests.Chatbot
 				LastActivity = DateTime.UtcNow
 			};
 			var sessions = new Mock<IChatbotSessionManager>();
-			sessions.Setup(s => s.GetOrCreateSessionAsync("user-1", 10, ChatbotPlatform.WebChat, "web-user"))
+			sessions.Setup(s => s.GetOrCreateSessionAsync("user-1", 10, ChatbotPlatform.WebChat, "web-user", 12))
 				.ReturnsAsync(session);
 
 			var departments = new Mock<IDepartmentsService>();
@@ -253,6 +455,14 @@ namespace Resgrid.Tests.Chatbot
 			authorization.Setup(a => a.IsUserValidWithinLimitsAsync("user-1", 10)).ReturnsAsync(true);
 			var rateLimiter = new Mock<IChatbotRateLimiter>();
 			rateLimiter.Setup(r => r.TryAcquireAsync("user-1", 10, It.IsAny<int>(), It.IsAny<int>())).ReturnsAsync(true);
+			var departmentConfig = new Mock<IChatbotDepartmentConfigService>();
+			departmentConfig.Setup(c => c.GetConfigAsync(10, false)).ReturnsAsync(new ChatbotDepartmentConfig
+			{
+				DepartmentId = 10,
+				IsEnabled = true,
+				AllowedPlatforms = "*",
+				SessionTtlMinutes = 12
+			});
 
 			var poll = new PendingTextResponse
 			{
@@ -280,7 +490,7 @@ namespace Resgrid.Tests.Chatbot
 				Mock.Of<IDepartmentSettingsService>(),
 				limits.Object,
 				authorization.Object,
-				Mock.Of<IChatbotDepartmentConfigService>(),
+				departmentConfig.Object,
 				rateLimiter.Object,
 				Mock.Of<ISecurityPinService>(),
 				resolver.Object);

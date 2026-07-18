@@ -118,7 +118,7 @@ namespace Resgrid.Chatbot.Handlers
 					? null
 					: ResolveDispatchTimestamp(dispatch.LastDispatchedOn, dispatch.DispatchedOn, call);
 
-				if (dispatch == null && _departmentGroupsService != null)
+				if (_departmentGroupsService != null)
 				{
 					foreach (var groupDispatch in call?.GroupDispatches ?? new List<CallDispatchGroup>())
 					{
@@ -135,7 +135,7 @@ namespace Resgrid.Chatbot.Handlers
 					}
 				}
 
-				if (dispatch == null && _personnelRolesService != null && call?.RoleDispatches?.Any() == true)
+				if (_personnelRolesService != null && call?.RoleDispatches?.Any() == true)
 				{
 					if (userRoleIds == null)
 					{

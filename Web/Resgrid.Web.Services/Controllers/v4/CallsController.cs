@@ -1223,6 +1223,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				{
 					var cqi = new CallQueueItem();
 					cqi.Call = call;
+					cqi.SetBroadcastDispatches(newUserIds, newGroupIds, newUnitIds, newRoleIds);
 
 					if (newGroupIds.Any() || newUnitIds.Any() || newRoleIds.Any())
 						cqi.Profiles = (await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId)).Select(x => x.Value).ToList();

@@ -6,7 +6,8 @@ namespace Resgrid.Chatbot.Interfaces
 {
 	public interface IChatbotSessionStore
 	{
-		Task<ChatbotSession> GetOrCreateAsync(string userId, int departmentId, ChatbotPlatform platform, string identifier);
+		Task<ChatbotSession> GetOrCreateAsync(string userId, int departmentId, ChatbotPlatform platform,
+			string identifier, int ttlMinutes = 0);
 		Task<ChatbotSession> GetAsync(string sessionId);
 		Task SaveAsync(ChatbotSession session);
 		Task DeleteAsync(string sessionId);

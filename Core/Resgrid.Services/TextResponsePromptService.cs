@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Framework;
@@ -27,25 +28,41 @@ namespace Resgrid.Services
 				return;
 
 			var now = DateTime.UtcNow;
-			var message = new Message
+			var metadata = TextResponsePromptMetadata.ForCalendarRsvp(calendarItem.CalendarItemId);
+			var inbox = await _messageService.GetInboxMessagesByUserIdAsync(userId);
+			var message = inbox?.Find(candidate =>
+				!candidate.IsDeleted
+				&& candidate.Type == (int)MessageTypes.CalendarRsvp
+				&& (candidate.ExpireOn == null || candidate.ExpireOn > now)
+				&& candidate.MessageRecipients?.Any(recipient =>
+					!recipient.IsDeleted
+					&& string.Equals(recipient.UserId, userId, StringComparison.Ordinal)
+					&& TextResponsePromptMetadata.TryGetCalendarItemId(recipient.Note, out var calendarItemId)
+					&& calendarItemId == calendarItem.CalendarItemId) == true);
+
+			if (message == null)
 			{
-				Subject = ("Calendar RSVP: " + calendarItem.Title).Truncate(150),
-				Body = ($"Event #{calendarItem.CalendarItemId}: {calendarItem.Title}. Reply YES or NO.").Truncate(4000),
-				SendingUserId = calendarItem.CreatorUserId,
-				SentOn = now,
-				ExpireOn = now.AddDays(1),
-				SystemGenerated = true,
-				IsBroadcast = true,
-				Type = (int)MessageTypes.CalendarRsvp,
-				MessageRecipients = new List<MessageRecipient>
+				message = new Message
 				{
-					new MessageRecipient
+					MessageRecipients = new List<MessageRecipient>
 					{
-						UserId = userId,
-						Note = TextResponsePromptMetadata.ForCalendarRsvp(calendarItem.CalendarItemId)
+						new MessageRecipient
+						{
+							UserId = userId,
+							Note = metadata
+						}
 					}
-				}
-			};
+				};
+			}
+
+			message.Subject = ("Calendar RSVP: " + calendarItem.Title).Truncate(150);
+			message.Body = ($"Event #{calendarItem.CalendarItemId}: {calendarItem.Title}. Reply YES or NO.").Truncate(4000);
+			message.SendingUserId = calendarItem.CreatorUserId;
+			message.SentOn = now;
+			message.ExpireOn = now.AddDays(1);
+			message.SystemGenerated = true;
+			message.IsBroadcast = true;
+			message.Type = (int)MessageTypes.CalendarRsvp;
 
 			await _messageService.SaveMessageAsync(message, cancellationToken);
 		}

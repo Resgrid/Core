@@ -200,14 +200,14 @@ namespace Resgrid.Chatbot.NLU.Providers
 
 			// === Respond to Call ===
 			(R(@"^(not\s*responding|not\s+going|unable\s+to\s+respond)\s+(?:to\s+)?(.+)$"),
-				"respond_to_call", m => P2("callRef", m.Groups[2].Value.Trim(), "response", "no")),
+				"respond_to_call", m => P2("callRef", CleanReference(m.Groups[2].Value), "response", "no")),
 			(R(@"^(respond|en\s*route|going)\s+to\s+c?(\d+)$"),
 				"respond_to_call", m => P2("callId", m.Groups[2].Value, "response", "yes")),
 			// Responder shorthand: "omw to 26-1", "omw to fire", "enroute to c1445", "headed to Main St".
 			// The reference can be a call id, a call number (yy-N), or a term matched against active
 			// calls — resolved by the handler.
 			(R(@"^(omw|on\s+my\s+way|respond(?:ing)?|going|headed|enroute|en\s+route)\s+(?:to\s+)?(.+)$"),
-				"respond_to_call", m => P2("callRef", m.Groups[2].Value.Trim(), "response", "yes")),
+				"respond_to_call", m => P2("callRef", CleanReference(m.Groups[2].Value), "response", "yes")),
 
 			// === Shift Drop (must precede shift signup/detail so 'drop shift 5' isn't misread) ===
 			(R(@"^(drop|cancel|release)\s+(my\s+)?shift\s+#?(\d+)"),

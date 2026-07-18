@@ -137,5 +137,16 @@ namespace Resgrid.Tests.Chatbot
 			result.IntentName.Should().Be("respond_to_call");
 			result.Parameters["response"].Should().Be(expectedResponse);
 		}
+
+		[TestCase("omw to 26-1?", "26-1", "yes")]
+		[TestCase("not responding to the fire!", "the fire", "no")]
+		public async Task Referenced_call_response_cleans_call_reference(string text, string expectedReference, string expectedResponse)
+		{
+			var result = await _classifier.ClassifyAsync(text);
+
+			result.IntentName.Should().Be("respond_to_call");
+			result.Parameters["callRef"].Should().Be(expectedReference);
+			result.Parameters["response"].Should().Be(expectedResponse);
+		}
 	}
 }

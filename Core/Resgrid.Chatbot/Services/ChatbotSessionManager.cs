@@ -18,8 +18,9 @@ namespace Resgrid.Chatbot.Services
 			_sessionStore = sessionStore;
 		}
 
-		public Task<ChatbotSession> GetOrCreateSessionAsync(string userId, int departmentId, ChatbotPlatform platform, string fromIdentifier)
-			=> _sessionStore.GetOrCreateAsync(userId, departmentId, platform, fromIdentifier);
+		public Task<ChatbotSession> GetOrCreateSessionAsync(string userId, int departmentId, ChatbotPlatform platform,
+			string fromIdentifier, int ttlMinutes = 0)
+			=> _sessionStore.GetOrCreateAsync(userId, departmentId, platform, fromIdentifier, ttlMinutes);
 
 		public Task<ChatbotSession> GetSessionAsync(string sessionId)
 			=> _sessionStore.GetAsync(sessionId);

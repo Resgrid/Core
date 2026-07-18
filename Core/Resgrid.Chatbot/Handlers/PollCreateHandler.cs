@@ -7,6 +7,7 @@ using Resgrid.Chatbot.Localization;
 using Resgrid.Chatbot.Models;
 using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Messages;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Chatbot.Handlers
@@ -93,7 +94,10 @@ namespace Resgrid.Chatbot.Handlers
 				};
 
 				foreach (var userId in recipients)
+				{
 					msg.AddRecipient(userId);
+					msg.MessageRecipients.Last().Note = TextResponsePromptMetadata.ForPoll(session.DepartmentId);
+				}
 
 				var saved = await _messageService.SaveMessageAsync(msg);
 				await _messageService.SendMessageAsync(saved, senderName, session.DepartmentId);

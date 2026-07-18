@@ -20,7 +20,7 @@ namespace Resgrid.Chatbot.Handlers
 	/// </summary>
 	public class MyCallsActionHandler : IChatbotActionHandler
 	{
-		private const int MaxActiveCallsToScan = 25;
+		private const int MaxConcurrentCallPopulations = 5;
 		private const int MaxCallsToList = 10;
 
 		private readonly ICallsService _callsService;
@@ -118,9 +118,10 @@ namespace Resgrid.Chatbot.Handlers
 			var activeCalls = await _callsService.GetActiveCallsByDepartmentAsync(departmentId);
 			var populated = new List<Call>();
 
-			foreach (var call in (activeCalls ?? new List<Call>()).OrderByDescending(c => c.LoggedOn).Take(MaxActiveCallsToScan))
+			var orderedCalls = (activeCalls ?? new List<Call>()).OrderByDescending(c => c.LoggedOn);
+			foreach (var batch in orderedCalls.Chunk(MaxConcurrentCallPopulations))
 			{
-				populated.Add(await _callsService.PopulateCallData(call,
+				var populatedBatch = await Task.WhenAll(batch.Select(call => _callsService.PopulateCallData(call,
 					getDispatches: !forUnits,
 					getAttachments: false,
 					getNotes: false,
@@ -129,7 +130,8 @@ namespace Resgrid.Chatbot.Handlers
 					getRoleDispatches: false,
 					getProtocols: false,
 					getReferences: false,
-					getContacts: false));
+					getContacts: false)));
+				populated.AddRange(populatedBatch);
 			}
 
 			return populated;

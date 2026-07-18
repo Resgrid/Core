@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Resgrid.Chatbot.Interfaces;
 using Resgrid.Chatbot.Localization;
@@ -112,10 +111,6 @@ namespace Resgrid.Chatbot.Handlers
 			match = Services.CustomStateMatcher.FindByName(levels, fallback.ButtonText);
 			if (match != null)
 				return match;
-
-			var active = levels?.Where(x => x != null && !x.IsDeleted).OrderBy(x => x.Order).ToList();
-			if (active != null && staffingId >= 0 && staffingId < active.Count)
-				return active[staffingId];
 
 			return levels == null || levels.Count == 0 ? fallback : null;
 		}

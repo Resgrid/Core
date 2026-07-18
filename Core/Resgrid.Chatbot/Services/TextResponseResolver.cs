@@ -53,6 +53,10 @@ namespace Resgrid.Chatbot.Services
 
 				if (message.Type == (int)MessageTypes.Poll)
 				{
+					if (!TextResponsePromptMetadata.TryGetPollDepartmentId(recipient.Note, out var pollDepartmentId)
+						|| pollDepartmentId != departmentId)
+						continue;
+
 					pending.Add(new PendingTextResponse
 					{
 						Type = PendingTextResponseType.Poll,
@@ -98,6 +102,10 @@ namespace Resgrid.Chatbot.Services
 
 			if (target.Type == PendingTextResponseType.Poll)
 			{
+				if (!TextResponsePromptMetadata.TryGetPollDepartmentId(recipient.Note, out var pollDepartmentId)
+					|| pollDepartmentId != session.DepartmentId)
+					return null;
+
 				recipient.Response = answer;
 				recipient.ReadOn ??= DateTime.UtcNow;
 				await _messageService.SaveMessageRecipientAsync(recipient);

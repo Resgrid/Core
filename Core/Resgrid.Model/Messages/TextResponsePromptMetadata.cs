@@ -9,6 +9,7 @@ namespace Resgrid.Model.Messages
 	public static class TextResponsePromptMetadata
 	{
 		private const string CalendarRsvpPrefix = "calendar-rsvp:";
+		private const string PollPrefix = "poll:";
 
 		public static string ForCalendarRsvp(int calendarItemId)
 			=> CalendarRsvpPrefix + calendarItemId;
@@ -22,6 +23,20 @@ namespace Resgrid.Model.Messages
 
 			return int.TryParse(note.Substring(CalendarRsvpPrefix.Length), out calendarItemId)
 				&& calendarItemId > 0;
+		}
+
+		public static string ForPoll(int departmentId)
+			=> PollPrefix + departmentId;
+
+		public static bool TryGetPollDepartmentId(string note, out int departmentId)
+		{
+			departmentId = 0;
+			if (string.IsNullOrWhiteSpace(note)
+				|| !note.StartsWith(PollPrefix, StringComparison.OrdinalIgnoreCase))
+				return false;
+
+			return int.TryParse(note.Substring(PollPrefix.Length), out departmentId)
+				&& departmentId > 0;
 		}
 	}
 }

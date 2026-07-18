@@ -341,8 +341,9 @@ namespace Resgrid.Tests.Chatbot
 		}
 
 		[Test]
-		public async Task SetStaffing_AvailableShortcut_UsesFirstConfiguredCustomLevel()
+		public async Task SetStaffing_AvailableShortcut_DoesNotUseCustomLevelPosition()
 		{
+			// Arrange
 			var userStates = new Mock<IUserStateService>();
 			var customStates = new Mock<ICustomStateService>();
 			customStates.Setup(x => x.GetCustomPersonnelStaffingsOrDefaultsAsync(1)).ReturnsAsync(new List<CustomStateDetail>
@@ -352,11 +353,15 @@ namespace Resgrid.Tests.Chatbot
 			});
 
 			var handler = new StaffingActionHandler(userStates.Object, customStates.Object);
+
+			// Act
 			var response = await handler.HandleAsync(Msg("available"),
 				Intent(ChatbotIntentType.SetStaffing, ("staffingType", ((int)UserStateTypes.Available).ToString())), Session());
 
-			response.Text.Should().Contain("On Duty");
-			userStates.Verify(x => x.CreateUserState("user-1", 1, 201, It.IsAny<CancellationToken>()), Times.Once);
+			// Assert
+			response.Processed.Should().BeFalse();
+			userStates.Verify(x => x.CreateUserState(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(),
+				It.IsAny<CancellationToken>()), Times.Never);
 		}
 
 		[Test]
@@ -577,6 +582,110 @@ namespace Resgrid.Tests.Chatbot
 			response.Text.Should().Contain("Call #11");
 			actionLogs.Verify(x => x.SetUserActionAsync("user-1", 1, (int)ActionTypes.Responding,
 				It.IsAny<string>(), 11, (int)DestinationEntityTypes.Call, It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task RespondToCall_BareResponse_DirectAndNewerGroupDispatch_UsesNewestApplicableTimestamp()
+		{
+			// Arrange
+			var now = DateTime.UtcNow;
+			var groupDispatchedCall = new Call
+			{
+				CallId = 12,
+				Name = "Group Dispatched Call",
+				DepartmentId = 1,
+				State = (int)CallStates.Active,
+				LoggedOn = now.AddMinutes(-20),
+				Dispatches = new List<CallDispatch>
+				{
+					new CallDispatch { UserId = "user-1", DispatchedOn = now.AddMinutes(-15) }
+				},
+				GroupDispatches = new List<CallDispatchGroup>
+				{
+					new CallDispatchGroup { DepartmentGroupId = 5, DispatchedOn = now.AddMinutes(-1) }
+				}
+			};
+			var directDispatchedCall = new Call
+			{
+				CallId = 13,
+				Name = "Direct Call",
+				DepartmentId = 1,
+				State = (int)CallStates.Active,
+				LoggedOn = now.AddMinutes(-10),
+				Dispatches = new List<CallDispatch>
+				{
+					new CallDispatch { UserId = "user-1", DispatchedOn = now.AddMinutes(-5) }
+				}
+			};
+			var calls = CallsWithPopulatedDispatches(directDispatchedCall, groupDispatchedCall);
+			var groups = new Mock<IDepartmentGroupsService>();
+			groups.Setup(x => x.GetAllMembersForGroupAsync(5)).ReturnsAsync(new List<DepartmentGroupMember>
+			{
+				new DepartmentGroupMember { UserId = "user-1", DepartmentGroupId = 5 }
+			});
+			var actionLogs = new Mock<IActionLogsService>();
+			var handler = new RespondToCallHandler(calls.Object, actionLogs.Object, null, groups.Object);
+
+			// Act
+			var response = await handler.HandleAsync(Msg("responding"),
+				Intent(ChatbotIntentType.RespondToCall, ("response", "yes")), Session());
+
+			// Assert
+			response.Text.Should().Contain("Call #12");
+			actionLogs.Verify(x => x.SetUserActionAsync("user-1", 1, (int)ActionTypes.Responding,
+				It.IsAny<string>(), 12, (int)DestinationEntityTypes.Call, It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
+		public async Task RespondToCall_BareResponse_DirectAndNewerRoleDispatch_UsesNewestApplicableTimestamp()
+		{
+			// Arrange
+			var now = DateTime.UtcNow;
+			var roleDispatchedCall = new Call
+			{
+				CallId = 14,
+				Name = "Role Dispatched Call",
+				DepartmentId = 1,
+				State = (int)CallStates.Active,
+				LoggedOn = now.AddMinutes(-20),
+				Dispatches = new List<CallDispatch>
+				{
+					new CallDispatch { UserId = "user-1", DispatchedOn = now.AddMinutes(-15) }
+				},
+				RoleDispatches = new List<CallDispatchRole>
+				{
+					new CallDispatchRole { RoleId = 7, DispatchedOn = now.AddMinutes(-1) }
+				}
+			};
+			var directDispatchedCall = new Call
+			{
+				CallId = 15,
+				Name = "Direct Call",
+				DepartmentId = 1,
+				State = (int)CallStates.Active,
+				LoggedOn = now.AddMinutes(-10),
+				Dispatches = new List<CallDispatch>
+				{
+					new CallDispatch { UserId = "user-1", DispatchedOn = now.AddMinutes(-5) }
+				}
+			};
+			var calls = CallsWithPopulatedDispatches(directDispatchedCall, roleDispatchedCall);
+			var roles = new Mock<IPersonnelRolesService>();
+			roles.Setup(x => x.GetRolesForUserAsync("user-1", 1)).ReturnsAsync(new List<PersonnelRole>
+			{
+				new PersonnelRole { PersonnelRoleId = 7 }
+			});
+			var actionLogs = new Mock<IActionLogsService>();
+			var handler = new RespondToCallHandler(calls.Object, actionLogs.Object, null, null, roles.Object);
+
+			// Act
+			var response = await handler.HandleAsync(Msg("responding"),
+				Intent(ChatbotIntentType.RespondToCall, ("response", "yes")), Session());
+
+			// Assert
+			response.Text.Should().Contain("Call #14");
+			actionLogs.Verify(x => x.SetUserActionAsync("user-1", 1, (int)ActionTypes.Responding,
+				It.IsAny<string>(), 14, (int)DestinationEntityTypes.Call, It.IsAny<CancellationToken>()), Times.Once);
 		}
 
 		[Test]

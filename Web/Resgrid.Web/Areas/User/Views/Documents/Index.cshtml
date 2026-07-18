@@ -57,51 +57,61 @@
             </div>
         </div>
         <div class="col-lg-9 animated fadeInRight">
-            <div class="row">
-                <div class="col-lg-12">
-                    @foreach (var doc in Model.Documents)
+            <div class="ibox float-e-margins">
+                <div class="ibox-title">
+                    <h5>@commonLocalizer["DocumentsModule"]</h5>
+                </div>
+                <div class="ibox-content">
+                    @if (Model.Documents != null && Model.Documents.Count > 0)
                     {
-                        <div class="file-box">
-                            <div class="file">
-                                <a asp-controller="Documents" asp-action="GetDocument" asp-route-area="User" asp-route-documentId="@doc.DocumentId">
-                                    <span class="corner"></span>
-                                    <div class="icon">
-                                        <i class="@doc.GetIconType()"></i>
-                                    </div>
-                                </a>
-                                <div class="file-name">
-                                    @if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || doc.UserId == Model.UserId)
+                        <div class="table-responsive">
+                            <table class="table table-hover documents-table">
+                                <thead>
+                                    <tr>
+                                        <th>@commonLocalizer["Name"]</th>
+                                        <th>@localizer["Category"]</th>
+                                        <th>@commonLocalizer["UploadedOn"]</th>
+                                        <th class="text-right">@commonLocalizer["Actions"]</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var doc in Model.Documents)
                                     {
-                                        <a asp-controller="Documents" asp-action="EditDocument" asp-route-area="User" asp-route-documentId="@doc.DocumentId">@doc.Name</a>
+                                        <tr>
+                                            <td>
+                                                <a asp-controller="Documents" asp-action="ViewDocument" asp-route-area="User" asp-route-documentId="@doc.DocumentId">
+                                                    <i class="@doc.GetIconType() fa-lg" style="margin-right: 8px;"></i>
+                                                    <strong>@doc.Name</strong>
+                                                </a>
+                                                @if (doc.AdminsOnly)
+                                                {
+                                                    <span class="label label-warning" style="margin-left: 6px;">@localizer["AdminsOnlyLabel"]</span>
+                                                }
+                                            </td>
+                                            <td>@(String.IsNullOrWhiteSpace(doc.Category) ? commonLocalizer["None"] : doc.Category)</td>
+                                            <td>@doc.AddedOn.TimeConverterToString(Model.Department)</td>
+                                            <td class="text-right">
+                                                <a class="btn btn-xs btn-primary" asp-controller="Documents" asp-action="ViewDocument" asp-route-area="User" asp-route-documentId="@doc.DocumentId">
+                                                    <i class="fa fa-eye"></i> @commonLocalizer["View"]
+                                                </a>
+                                                <a class="btn btn-xs btn-default" asp-controller="Documents" asp-action="GetDocument" asp-route-area="User" asp-route-documentId="@doc.DocumentId">
+                                                    <i class="fa fa-download"></i> @commonLocalizer["Download"]
+                                                </a>
+                                            </td>
+                                        </tr>
                                     }
-                                    else
-                                    {
-                                        <a asp-controller="Documents" asp-action="GetDocument" asp-route-area="User" asp-route-documentId="@doc.DocumentId">@doc.Name</a>
-                                    }
-                                    <br />
-                                    <small>@commonLocalizer["Added"]: @doc.AddedOn.TimeConverterToString(Model.Department)</small>
-                                </div>
-                                @if (ClaimsAuthorizationHelper.CanDeleteDocument() && (ClaimsAuthorizationHelper.IsUserDepartmentAdmin() || doc.UserId == Model.UserId))
-                                {
-                                    <form asp-controller="Documents" asp-action="DeleteDocument" asp-route-area="User" method="post"
-                                          onsubmit="return confirm('WARNING: This will permanently delete the document \'@doc.Name\'. Are you sure?');"
-                                          style="display:inline;">
-                                        @Html.AntiForgeryToken()
-                                        <input type="hidden" name="documentId" value="@doc.DocumentId" />
-                                        <button type="submit" class="btn btn-xs btn-danger" title="Delete document">
-                                            <i class="fa fa-trash"></i> Delete
-                                        </button>
-                                    </form>
-                                }
-                            </div>
+                                </tbody>
+                            </table>
                         </div>
                     }
-
-
-
+                    else
+                    {
+                        <div class="alert alert-info" style="margin-bottom: 0;">
+                            No documents match the selected filters.
+                        </div>
+                    }
                 </div>
             </div>
         </div>
     </div>
 </div>
-}

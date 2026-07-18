@@ -277,3 +277,5 @@ Web/Resgrid.WebCore/wwwroot/lib/*
 opencode.json
 .dual-graph-pro/
 .mcp.json
+/.codex
+/.claude

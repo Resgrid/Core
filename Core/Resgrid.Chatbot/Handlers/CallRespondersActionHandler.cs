@@ -19,6 +19,13 @@ namespace Resgrid.Chatbot.Handlers
 	/// </summary>
 	public class CallRespondersActionHandler : IChatbotActionHandler
 	{
+		private enum ResponderMode
+		{
+			All,
+			EnRoute,
+			OnScene
+		}
+
 		private enum ResponderBucket
 		{
 			None,
@@ -56,8 +63,8 @@ namespace Resgrid.Chatbot.Handlers
 			var culture = session.Culture;
 			try
 			{
-				intent.Parameters.TryGetValue("mode", out var mode);
-				mode = string.IsNullOrWhiteSpace(mode) ? "all" : mode.Trim().ToLowerInvariant();
+				intent.Parameters.TryGetValue("mode", out var modeValue);
+				var mode = ParseResponderMode(modeValue);
 
 				var call = await ResolveCallAsync(intent, session.DepartmentId);
 				if (call == null)
@@ -68,11 +75,11 @@ namespace Resgrid.Chatbot.Handlers
 
 				var callLabel = string.IsNullOrWhiteSpace(call.Number) ? call.Name : $"{call.Number} {call.Name}";
 
-				// Latest status per person tied to this call.
+				// Current status per person tied to this call.
 				var actionLogs = await _actionLogsService.GetActionLogsForCallAsync(session.DepartmentId, call.CallId);
+				var currentActionLogs = await _actionLogsService.GetLastActionLogsForDepartmentAsync(session.DepartmentId) ?? new List<ActionLog>();
 				var latestPerUser = (actionLogs ?? new List<ActionLog>())
-					.GroupBy(x => x.UserId)
-					.Select(g => g.OrderByDescending(x => x.Timestamp).First())
+					.Where(x => currentActionLogs.Any(current => current.ActionLogId == x.ActionLogId && current.DestinationId == call.CallId))
 					.ToList();
 
 				var personnelLines = new StringBuilder();
@@ -94,11 +101,11 @@ namespace Resgrid.Chatbot.Handlers
 					}
 				}
 
-				// Latest status per unit tied to this call.
+				// Current status per unit tied to this call.
 				var unitStates = await _unitsService.GetUnitStatesForCallAsync(session.DepartmentId, call.CallId);
+				var currentUnitStates = await _unitsService.GetAllLatestStatusForUnitsByDepartmentIdAsync(session.DepartmentId) ?? new List<UnitState>();
 				var latestPerUnit = (unitStates ?? new List<UnitState>())
-					.GroupBy(x => x.UnitId)
-					.Select(g => g.OrderByDescending(x => x.Timestamp).First())
+					.Where(x => currentUnitStates.Any(current => current.UnitStateId == x.UnitStateId && current.DestinationId == call.CallId))
 					.ToList();
 
 				var unitLines = new StringBuilder();
@@ -129,8 +136,8 @@ namespace Resgrid.Chatbot.Handlers
 
 				var headerKey = mode switch
 				{
-					"enroute" => "CallResp_HeaderEnroute",
-					"onscene" => "CallResp_HeaderOnScene",
+					ResponderMode.EnRoute => "CallResp_HeaderEnroute",
+					ResponderMode.OnScene => "CallResp_HeaderOnScene",
 					_ => "CallResp_HeaderAll"
 				};
 
@@ -180,12 +187,22 @@ namespace Resgrid.Chatbot.Handlers
 			return activeCalls?.Count == 1 ? activeCalls[0] : null;
 		}
 
-		private static bool BucketMatches(ResponderBucket bucket, string mode)
+		private static ResponderMode ParseResponderMode(string value)
+		{
+			var normalized = value?.Trim();
+			return !int.TryParse(normalized, out _)
+				&& Enum.TryParse(normalized, true, out ResponderMode mode)
+				&& Enum.IsDefined(typeof(ResponderMode), mode)
+					? mode
+					: ResponderMode.All;
+		}
+
+		private static bool BucketMatches(ResponderBucket bucket, ResponderMode mode)
 		{
 			return mode switch
 			{
-				"enroute" => bucket == ResponderBucket.EnRoute,
-				"onscene" => bucket == ResponderBucket.OnScene,
+				ResponderMode.EnRoute => bucket == ResponderBucket.EnRoute,
+				ResponderMode.OnScene => bucket == ResponderBucket.OnScene,
 				_ => bucket != ResponderBucket.None
 			};
 		}

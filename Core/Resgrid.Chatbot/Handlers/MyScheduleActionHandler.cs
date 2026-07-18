@@ -40,17 +40,18 @@ namespace Resgrid.Chatbot.Handlers
 		public async Task<ChatbotResponse> HandleAsync(ChatbotMessage message, ChatbotIntent intent, ChatbotSession session)
 		{
 			var culture = session.Culture;
+			var cultureInfo = CultureInfo.GetCultureInfo(ChatbotResources.NormalizeCulture(culture));
 			try
 			{
 				var department = await _departmentsService.GetDepartmentByIdAsync(session.DepartmentId);
 				var nowLocal = DateTime.UtcNow.TimeConverter(department);
 
 				intent.Parameters.TryGetValue("day", out var dayText);
-				var targetDate = ParseDay(dayText, nowLocal);
+				var targetDate = ParseDay(dayText, nowLocal, cultureInfo);
 				if (targetDate == null)
 					return new ChatbotResponse { Text = ChatbotResources.Get("Sched_BadDate", culture), Processed = false };
 
-				var dateLabel = targetDate.Value.ToString("ddd M/d", CultureInfo.InvariantCulture);
+				var dateLabel = targetDate.Value.ToString("ddd M/d", cultureInfo);
 				var lines = new List<string>();
 
 				// Shifts: shift days on the target date the user is assigned to (shift personnel) or has
@@ -73,7 +74,7 @@ namespace Resgrid.Chatbot.Handlers
 							continue;
 
 						var shift = shiftDay.Shift ?? await _shiftsService.GetShiftByIdAsync(shiftDay.ShiftId);
-						var times = $"{shiftDay.Start:t} - {shiftDay.End:t}";
+						var times = $"{shiftDay.Start.ToString("t", cultureInfo)} - {shiftDay.End.ToString("t", cultureInfo)}";
 						lines.Add(ChatbotResources.Get("Sched_ShiftLine", culture, shift?.Name ?? $"Shift {shiftDay.ShiftId}", times));
 					}
 				}
@@ -95,7 +96,7 @@ namespace Resgrid.Chatbot.Handlers
 					if (attendee == null || attendee.AttendeeType == (int)CalendarItemAttendeeTypes.NotAttending)
 						continue;
 
-					var timeText = item.IsAllDay ? ChatbotResources.Get("Sched_AllDay", culture) : startLocal.ToString("t");
+					var timeText = item.IsAllDay ? ChatbotResources.Get("Sched_AllDay", culture) : startLocal.ToString("t", cultureInfo);
 					lines.Add(ChatbotResources.Get("Sched_EventLine", culture, timeText, item.Title?.Truncate(50)));
 				}
 
@@ -119,33 +120,41 @@ namespace Resgrid.Chatbot.Handlers
 
 		// Accepts: empty (today), "today", "tomorrow", a weekday name (next occurrence, today included),
 		// or a date ("7/22", "7/22/2026", "2026-07-22"). Returns null when unparseable.
-		private static DateTime? ParseDay(string dayText, DateTime nowLocal)
+		private static DateTime? ParseDay(string dayText, DateTime nowLocal, CultureInfo cultureInfo)
 		{
 			if (string.IsNullOrWhiteSpace(dayText))
 				return nowLocal.Date;
 
-			var text = dayText.Trim().TrimEnd('?', '!', '.', ',').ToLowerInvariant();
+			var text = dayText.Trim().TrimEnd('?', '!', '.', ',');
 
-			if (text == "today")
+			if (string.Equals(text, "today", StringComparison.OrdinalIgnoreCase))
 				return nowLocal.Date;
-			if (text == "tomorrow")
+			if (string.Equals(text, "tomorrow", StringComparison.OrdinalIgnoreCase))
 				return nowLocal.Date.AddDays(1);
 
 			foreach (DayOfWeek dow in Enum.GetValues(typeof(DayOfWeek)))
 			{
-				var name = dow.ToString().ToLowerInvariant();
-				if (text == name || text == name.Substring(0, 3))
+				var englishName = dow.ToString();
+				var localizedName = cultureInfo.DateTimeFormat.GetDayName(dow);
+				var localizedAbbreviation = cultureInfo.DateTimeFormat.GetAbbreviatedDayName(dow).TrimEnd('.');
+				if (string.Equals(text, englishName, StringComparison.OrdinalIgnoreCase)
+					|| string.Equals(text, englishName.Substring(0, 3), StringComparison.OrdinalIgnoreCase)
+					|| cultureInfo.CompareInfo.Compare(text, localizedName, CompareOptions.IgnoreCase) == 0
+					|| cultureInfo.CompareInfo.Compare(text, localizedAbbreviation, CompareOptions.IgnoreCase) == 0)
 				{
 					var daysAhead = ((int)dow - (int)nowLocal.DayOfWeek + 7) % 7;
 					return nowLocal.Date.AddDays(daysAhead);
 				}
 			}
 
-			if (DateTime.TryParse(text, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsed))
+			if (DateTime.TryParse(text, cultureInfo, DateTimeStyles.None, out var parsed))
 			{
 				// "7/22" parses with the current year; a date months in the past most likely means next
 				// year (people ask about upcoming days).
-				if (parsed.Date < nowLocal.Date.AddMonths(-1) && !text.Any(char.IsLetter) && text.Count(c => c == '/') == 1)
+				var dateSeparator = cultureInfo.DateTimeFormat.DateSeparator;
+				var hasSingleDateSeparator = !string.IsNullOrEmpty(dateSeparator)
+					&& text.Split(new[] { dateSeparator }, StringSplitOptions.None).Length == 2;
+				if (parsed.Date < nowLocal.Date.AddMonths(-1) && !text.Any(char.IsLetter) && hasSingleDateSeparator)
 					parsed = parsed.AddYears(1);
 				return parsed.Date;
 			}

@@ -921,7 +921,7 @@ namespace Resgrid.Web.Services.Controllers
 			}
 			catch (CryptographicException ex)
 			{
-				Framework.Logging.LogException(ex);
+				ReportVoiceVerificationDecryptionFailure(ex);
 				return await GetVoiceVerificationErrorResult();
 			}
 
@@ -1019,6 +1019,13 @@ namespace Resgrid.Web.Services.Controllers
 			}
 
 			return CreateVoiceContentResult(response);
+		}
+
+		protected virtual void ReportVoiceVerificationDecryptionFailure(CryptographicException exception)
+		{
+			Framework.Logging.LogException(
+				exception,
+				"Twilio VoiceVerification failed to decrypt a verification code");
 		}
 
 		private async Task<ContentResult> GetVoiceVerificationErrorResult()

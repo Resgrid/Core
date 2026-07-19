@@ -73,8 +73,6 @@ namespace Resgrid.Workers.Console.Tasks
 					}
 				}
 
-				Resgrid.Framework.Logging.LogException(lastException);
-				_logger.LogError(lastException, "TtsStaticPromptRefresh::Failed to refresh static prompts after {MaxRetries} attempts", MaxRetries);
 				throw lastException!;
 			}
 			catch (OperationCanceledException)
@@ -83,10 +81,19 @@ namespace Resgrid.Workers.Console.Tasks
 			}
 			catch (Exception ex)
 			{
-				Resgrid.Framework.Logging.LogException(ex);
-				_logger.LogError(ex, "TtsStaticPromptRefresh::Failed to refresh static prompts");
+				ReportTerminalFailure(ex);
 				throw;
 			}
+		}
+
+		protected virtual void ReportTerminalFailure(Exception exception)
+		{
+			Resgrid.Framework.Logging.LogException(
+				exception,
+				"TtsStaticPromptRefresh::Failed to refresh static prompts");
+			_logger.LogError(
+				exception,
+				"TtsStaticPromptRefresh::Failed to refresh static prompts");
 		}
 	}
 }

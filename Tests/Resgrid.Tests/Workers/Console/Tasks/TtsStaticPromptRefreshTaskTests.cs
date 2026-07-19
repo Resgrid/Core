@@ -55,6 +55,7 @@ namespace Resgrid.Tests.Workers.Console.Tasks
 		[Test]
 		public async Task process_async_should_throw_after_all_retries_exhausted()
 		{
+			// Arrange
 			var failure = new InvalidOperationException("refresh failed");
 			var ttsAudioService = new Mock<ITtsAudioService>(MockBehavior.Strict);
 			ttsAudioService
@@ -62,9 +63,10 @@ namespace Resgrid.Tests.Workers.Console.Tasks
 				.ThrowsAsync(failure);
 			SetWorkerContainer(ttsAudioService.Object);
 
-			var task = new TtsStaticPromptRefreshTask(Mock.Of<ILogger>());
+			var task = new TestableTtsStaticPromptRefreshTask(Mock.Of<ILogger>());
 			var progress = new Mock<IQuidjiboProgress>(MockBehavior.Loose);
 
+			// Act / Assert
 			await FluentActions
 				.Awaiting(() => task.ProcessAsync(new TtsStaticPromptRefreshCommand(1), progress.Object, CancellationToken.None))
 				.Should()
@@ -74,11 +76,13 @@ namespace Resgrid.Tests.Workers.Console.Tasks
 			ttsAudioService.Verify(
 				x => x.RegenerateStaticPromptsAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<CancellationToken>()),
 				Times.Exactly(3));
+			task.ReportedExceptions.Should().ContainSingle().Which.Should().BeSameAs(failure);
 		}
 
 		[Test]
 		public async Task process_async_should_rethrow_cancellation()
 		{
+			// Arrange
 			using var cancellationTokenSource = new CancellationTokenSource();
 			var ttsAudioService = new Mock<ITtsAudioService>(MockBehavior.Strict);
 			ttsAudioService
@@ -86,9 +90,10 @@ namespace Resgrid.Tests.Workers.Console.Tasks
 				.ThrowsAsync(new OperationCanceledException(cancellationTokenSource.Token));
 			SetWorkerContainer(ttsAudioService.Object);
 
-			var task = new TtsStaticPromptRefreshTask(Mock.Of<ILogger>());
+			var task = new TestableTtsStaticPromptRefreshTask(Mock.Of<ILogger>());
 			var progress = new Mock<IQuidjiboProgress>(MockBehavior.Loose);
 
+			// Act / Assert
 			await FluentActions
 				.Awaiting(() => task.ProcessAsync(new TtsStaticPromptRefreshCommand(1), progress.Object, cancellationTokenSource.Token))
 				.Should()
@@ -97,11 +102,13 @@ namespace Resgrid.Tests.Workers.Console.Tasks
 			ttsAudioService.Verify(
 				x => x.RegenerateStaticPromptsAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<CancellationToken>()),
 				Times.Once);
+			task.ReportedExceptions.Should().BeEmpty();
 		}
 
 		[Test]
 		public async Task process_async_should_succeed_on_retry_after_initial_failure()
 		{
+			// Arrange
 			var ttsAudioService = new Mock<ITtsAudioService>(MockBehavior.Strict);
 			var callCount = 0;
 			ttsAudioService
@@ -116,9 +123,10 @@ namespace Resgrid.Tests.Workers.Console.Tasks
 				});
 			SetWorkerContainer(ttsAudioService.Object);
 
-			var task = new TtsStaticPromptRefreshTask(Mock.Of<ILogger>());
+			var task = new TestableTtsStaticPromptRefreshTask(Mock.Of<ILogger>());
 			var progress = new Mock<IQuidjiboProgress>(MockBehavior.Loose);
 
+			// Act / Assert
 			await FluentActions
 				.Awaiting(() => task.ProcessAsync(new TtsStaticPromptRefreshCommand(1), progress.Object, CancellationToken.None))
 				.Should()
@@ -127,6 +135,7 @@ namespace Resgrid.Tests.Workers.Console.Tasks
 			ttsAudioService.Verify(
 				x => x.RegenerateStaticPromptsAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<CancellationToken>()),
 				Times.Exactly(2));
+			task.ReportedExceptions.Should().BeEmpty();
 		}
 
 		private void SetWorkerContainer(ITtsAudioService ttsAudioService)
@@ -138,6 +147,21 @@ namespace Resgrid.Tests.Workers.Console.Tasks
 			_testWorkerContainer = builder.Build();
 
 			WorkerBootstrapperContainerField.SetValue(null, _testWorkerContainer);
+		}
+
+		private sealed class TestableTtsStaticPromptRefreshTask : TtsStaticPromptRefreshTask
+		{
+			public TestableTtsStaticPromptRefreshTask(ILogger logger)
+				: base(logger)
+			{
+			}
+
+			public List<Exception> ReportedExceptions { get; } = new List<Exception>();
+
+			protected override void ReportTerminalFailure(Exception exception)
+			{
+				ReportedExceptions.Add(exception);
+			}
 		}
 	}
 }

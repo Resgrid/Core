@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Resgrid.Config;
+using Resgrid.Framework;
 using Sentry.Profiling;
 namespace Resgrid.Web
 {
@@ -56,6 +57,7 @@ namespace Resgrid.Web
 							options.AutoSessionTracking = true;
 							options.Release = Assembly.GetEntryAssembly().GetName().Version.ToString();
 							options.ProfilesSampleRate = ExternalErrorConfig.SentryProfilingSampleRate;
+							options.SetBeforeSendTransaction(SentryTransactionFilter.Filter);
 
 							// Requires NuGet package: Sentry.Profiling
 							// Note: By default, the profiler is initialized asynchronously. This can be tuned by passing a desired initialization timeout to the constructor.

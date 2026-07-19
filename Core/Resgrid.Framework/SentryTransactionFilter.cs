@@ -127,8 +127,12 @@ namespace Resgrid.Framework
 				return null;
 
 			var value = requestTarget.Trim();
-			if (Uri.TryCreate(value, UriKind.Absolute, out var uri))
+			if (Uri.TryCreate(value, UriKind.Absolute, out var uri) &&
+				(uri.Scheme.Equals(Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase) ||
+				 uri.Scheme.Equals(Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase)))
+			{
 				value = uri.AbsolutePath;
+			}
 			else
 			{
 				var suffixIndex = value.IndexOfAny(new[] { '?', '#' });

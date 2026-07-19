@@ -125,9 +125,9 @@ namespace Resgrid.Tests.Web.Services
 				.Returns(System.Threading.Tasks.Task.CompletedTask);
 		}
 
-		private TwilioController BuildController()
+		private TestableTwilioController BuildController()
 		{
-			return new TwilioController(
+			return new TestableTwilioController(
 				_departmentSettingsServiceMock.Object,
 				_numbersServiceMock.Object,
 				_limitsServiceMock.Object,
@@ -221,22 +221,28 @@ namespace Resgrid.Tests.Web.Services
 		[Test]
 		public async System.Threading.Tasks.Task should_return_generic_message_when_decryption_fails()
 		{
+			// Arrange
 			var profile = new UserProfile
 			{
 				UserId = "user1",
 				HomeVerificationCode = "ENC:broken",
 				HomeVerificationCodeExpiry = DateTime.UtcNow.AddMinutes(10)
 			};
+			var failure = new CryptographicException("bad");
 
 			_userProfileServiceMock.Setup(x => x.GetProfileByUserIdAsync("user1", true)).ReturnsAsync(profile);
-			_encryptionServiceMock.Setup(x => x.Decrypt("ENC:broken")).Throws(new CryptographicException("bad"));
+			_encryptionServiceMock.Setup(x => x.Decrypt("ENC:broken")).Throws(failure);
+			var controller = BuildController();
 
-			var result = await BuildController().VoiceVerification("user1", (int)ContactVerificationType.HomeNumber);
+			// Act
+			var result = await controller.VoiceVerification("user1", (int)ContactVerificationType.HomeNumber);
 
+			// Assert
 			var content = ((ContentResult)result).Content;
 			content.Should().Contain("<Play>");
 			content.Should().Contain(Uri.EscapeDataString("We couldn't complete your verification call. Please request a new code and try again. Goodbye."));
 			content.Should().NotContain("broken");
+			controller.ReportedDecryptionFailures.Should().ContainSingle().Which.Should().BeSameAs(failure);
 			_twilioVoiceResponseServiceMock.Verify(x => x.AppendPromptAsync(It.IsAny<VoiceResponse>(), "We couldn't complete your verification call. Please request a new code and try again. Goodbye.", It.IsAny<CancellationToken>(), It.IsAny<string>()), Times.Once);
 		}
 
@@ -474,6 +480,65 @@ namespace Resgrid.Tests.Web.Services
 			TwilioVoicePromptCatalog.RespondingToStation("Station 12").Should().Be("You have been marked responding to Station 12. Goodbye.");
 			TwilioVoicePromptCatalog.MainMenuGreeting("Pat", "Dept 1").Should().Be("Hello Pat. This is the Resgrid automated voice system for Dept 1.");
 			TwilioVoicePromptCatalog.StatusMarked("Available").Should().Be("You have been marked as Available. Goodbye.");
+		}
+
+		private sealed class TestableTwilioController : TwilioController
+		{
+			public TestableTwilioController(
+				IDepartmentSettingsService departmentSettingsService,
+				INumbersService numbersService,
+				ILimitsService limitsService,
+				ICallsService callsService,
+				IQueueService queueService,
+				IDepartmentsService departmentsService,
+				IUserProfileService userProfileService,
+				ITextCommandService textCommandService,
+				IActionLogsService actionLogsService,
+				IUserStateService userStateService,
+				ICommunicationService communicationService,
+				IGeoLocationProvider geoLocationProvider,
+				IDepartmentGroupsService departmentGroupsService,
+				ICustomStateService customStateService,
+				IUnitsService unitsService,
+				IUsersService usersService,
+				ICalendarService calendarService,
+				ICommunicationTestService communicationTestService,
+				IEncryptionService encryptionService,
+				ITwilioVoiceResponseService twilioVoiceResponseService,
+				IFeatureToggleService featureToggleService,
+				ITextDepartmentSwitchService textDepartmentSwitchService)
+				: base(
+					departmentSettingsService,
+					numbersService,
+					limitsService,
+					callsService,
+					queueService,
+					departmentsService,
+					userProfileService,
+					textCommandService,
+					actionLogsService,
+					userStateService,
+					communicationService,
+					geoLocationProvider,
+					departmentGroupsService,
+					customStateService,
+					unitsService,
+					usersService,
+					calendarService,
+					communicationTestService,
+					encryptionService,
+					twilioVoiceResponseService,
+					featureToggleService,
+					textDepartmentSwitchService)
+			{
+			}
+
+			public List<CryptographicException> ReportedDecryptionFailures { get; } = new List<CryptographicException>();
+
+			protected override void ReportVoiceVerificationDecryptionFailure(CryptographicException exception)
+			{
+				ReportedDecryptionFailures.Add(exception);
+			}
 		}
 
 	}

@@ -9,6 +9,7 @@ namespace Resgrid.Tests.Framework
 	public class SentryTransactionFilterTests
 	{
 		[TestCase("https://resgrid.example/wp-login.php")]
+		[TestCase("https://resgrid.example/wp-login.php?redirect=/User/Home")]
 		[TestCase("/wp-admin/install.php")]
 		[TestCase("/wordpress/wp-content/plugins/example/readme.txt")]
 		[TestCase("/vendor/phpunit/phpunit/src/Util/PHP/eval-stdin.php")]
@@ -31,6 +32,9 @@ namespace Resgrid.Tests.Framework
 		[TestCase("/User/WordpressSettings")]
 		[TestCase("/.well-known/acme-challenge/token")]
 		[TestCase("/Search?q=wp-login.php")]
+		[TestCase("/Search#wp-login.php")]
+		[TestCase("https://resgrid.example/Search?q=wp-login.php")]
+		[TestCase("https://resgrid.example/Search#wp-login.php")]
 		public void Plausible_resgrid_path_is_not_recognized_as_scanner_noise(string path)
 		{
 			// Act

@@ -41,9 +41,14 @@ namespace Resgrid.Web.Services.Models.v4.Commands
 		public int SortOrder { get; set; }
 		public int MinUnitPersonnel { get; set; }
 		public int MaxUnitPersonnel { get; set; }
+		public int MinUnits { get; set; }
+
 		public int MaxUnits { get; set; }
 		public int MinTimeInRole { get; set; }
 		public int MaxTimeInRole { get; set; }
+
+		/// <summary>Lane identification color (hex, e.g. "#e74c3c"); null = default styling.</summary>
+		public string Color { get; set; }
 
 		/// <summary>
 		/// When true the API rejects assigning/moving own-department resources into this lane unless
@@ -100,9 +105,14 @@ namespace Resgrid.Web.Services.Models.v4.Commands
 		public int SortOrder { get; set; }
 		public int MinUnitPersonnel { get; set; }
 		public int MaxUnitPersonnel { get; set; }
+		public int MinUnits { get; set; }
+
 		public int MaxUnits { get; set; }
 		public int MinTimeInRole { get; set; }
 		public int MaxTimeInRole { get; set; }
+
+		/// <summary>Lane identification color (hex, e.g. "#e74c3c"); null = default styling.</summary>
+		public string Color { get; set; }
 		public bool ForceRequirements { get; set; }
 
 		/// <summary>UnitTypeIds required to assign a unit to this lane (empty = unrestricted).</summary>

@@ -162,4 +162,12 @@ namespace Resgrid.Repositories.DataRepository
 			return await select(_unitOfWork.CreateOrGetConnection());
 		}
 	}
+
+	public class VoiceTransmissionLogRepository : RepositoryBase<VoiceTransmissionLog>, IVoiceTransmissionLogRepository
+	{
+		public VoiceTransmissionLogRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
+		{
+		}
+	}
 }

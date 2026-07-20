@@ -80,7 +80,7 @@
 											{
 												<span class="label label-default"
 													  title="@lane.Description"
-													  style="display:inline-block; margin: 0 4px 5px 0; font-weight: normal;">
+													  style="display:inline-block; margin: 0 4px 5px 0; font-weight: normal;@(string.IsNullOrWhiteSpace(lane.Color) ? null : $" background-color:{lane.Color};")">
 													@lane.Name
 												</span>
 											}

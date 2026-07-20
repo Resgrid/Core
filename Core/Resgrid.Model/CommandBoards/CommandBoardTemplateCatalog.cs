@@ -10,6 +10,9 @@ namespace Resgrid.Model.CommandBoards
 	/// </summary>
 	public static class CommandBoardTemplateCatalog
 	{
+		/// <summary>Lane identification palette — matches the app's LANE_COLORS swatches.</summary>
+		private static readonly string[] LanePalette = { "#e74c3c", "#e67e22", "#f1c40f", "#2ecc71", "#1abc9c", "#3498db", "#9b59b6", "#7f8c8d" };
+
 		public static IReadOnlyList<CommandBoardTemplate> All { get; } = BuildAll();
 
 		public static CommandBoardTemplate GetById(string id)
@@ -37,7 +40,8 @@ namespace Resgrid.Model.CommandBoards
 		#region Builders
 
 		private static CommandBoardTemplateLane L(string name, CommandNodeType laneType, string description,
-			string[] unitTypes = null, string[] personnelRoles = null, bool forceRequirements = false)
+			string[] unitTypes = null, string[] personnelRoles = null, bool forceRequirements = false,
+			int minUnits = 0, int maxUnits = 0, int minUnitPersonnel = 0, int maxUnitPersonnel = 0, int minTimeInRole = 0, int maxTimeInRole = 0)
 		{
 			return new CommandBoardTemplateLane
 			{
@@ -46,13 +50,48 @@ namespace Resgrid.Model.CommandBoards
 				Description = description,
 				SuggestedUnitTypes = unitTypes ?? Array.Empty<string>(),
 				SuggestedPersonnelRoles = personnelRoles ?? Array.Empty<string>(),
-				ForceRequirements = forceRequirements
+				ForceRequirements = forceRequirements,
+				MinUnits = minUnits,
+				MaxUnits = maxUnits,
+				MinUnitPersonnel = minUnitPersonnel,
+				MaxUnitPersonnel = maxUnitPersonnel,
+				MinTimeInRole = minTimeInRole,
+				MaxTimeInRole = maxTimeInRole
 			};
+		}
+
+		/// <summary>
+		/// Deterministic lane color: recognizable functions get a conventional color (medical red,
+		/// water blue, safety yellow, staging gray); everything else cycles the palette.
+		/// </summary>
+		private static string AutoColor(CommandBoardTemplateLane lane, int index)
+		{
+			var name = lane.Name?.ToLowerInvariant() ?? string.Empty;
+
+			if (lane.LaneType == CommandNodeType.Staging || name.Contains("staging") || name.Contains("accountability"))
+				return "#7f8c8d";
+			if (name.Contains("medical") || name.Contains("treatment") || name.Contains("triage") || name.Contains("aid station"))
+				return "#e74c3c";
+			if (name.Contains("safety"))
+				return "#f1c40f";
+			if (name.Contains("water") || name.Contains("boat") || name.Contains("swiftwater"))
+				return "#3498db";
+			if (name.Contains("rapid intervention") || name.Contains("backup"))
+				return "#e67e22";
+
+			return LanePalette[index % LanePalette.Length];
 		}
 
 		private static CommandBoardTemplate T(string id, string name, string category, string description,
 			string[] keywords, bool timer, int timerMinutes, params CommandBoardTemplateLane[] lanes)
 		{
+			// Every example ships with lane colors: explicit colors win, the rest are auto-assigned.
+			for (var i = 0; i < lanes.Length; i++)
+			{
+				if (string.IsNullOrWhiteSpace(lanes[i].Color))
+					lanes[i].Color = AutoColor(lanes[i], i);
+			}
+
 			return new CommandBoardTemplate
 			{
 				Id = id,
@@ -74,11 +113,11 @@ namespace Resgrid.Model.CommandBoards
 				T("fire-residential-structure", "Residential Structure Fire", "Fire Departments",
 					"A first-alarm residential fire board with tactical groups, water supply, rapid intervention and staging.",
 					new[] { "house", "dwelling", "first alarm", "rit", "residential" }, true, 15,
-					L("Fire Attack", CommandNodeType.Group, "Interior fire control and confinement.", new[] { "Engine", "Pumper" }),
-					L("Primary Search", CommandNodeType.Group, "Primary life-safety search.", new[] { "Truck", "Ladder", "Rescue" }),
+					L("Fire Attack", CommandNodeType.Group, "Interior fire control and confinement.", new[] { "Engine", "Pumper" }, minUnitPersonnel: 2, maxTimeInRole: 30),
+					L("Primary Search", CommandNodeType.Group, "Primary life-safety search.", new[] { "Truck", "Ladder", "Rescue" }, minUnitPersonnel: 2, maxTimeInRole: 30),
 					L("Ventilation", CommandNodeType.Group, "Coordinate horizontal and vertical ventilation.", new[] { "Truck", "Ladder" }),
-					L("Water Supply", CommandNodeType.Group, "Establish and maintain a sustained water source.", new[] { "Engine", "Tanker", "Tender" }),
-					L("Rapid Intervention", CommandNodeType.Group, "Dedicated firefighter rescue team.", new[] { "Rescue", "Squad", "Engine" }, new[] { "Firefighter" }),
+					L("Water Supply", CommandNodeType.Group, "Establish and maintain a sustained water source.", new[] { "Engine", "Tanker", "Tender" }, minUnits: 1),
+					L("Rapid Intervention", CommandNodeType.Group, "Dedicated firefighter rescue team.", new[] { "Rescue", "Squad", "Engine" }, new[] { "Firefighter" }, minUnits: 1, minUnitPersonnel: 2),
 					L("Staging", CommandNodeType.Staging, "Track unassigned responding resources.")),
 
 				T("fire-commercial-structure", "Commercial Structure Fire", "Fire Departments",
@@ -90,7 +129,7 @@ namespace Resgrid.Model.CommandBoards
 					L("Division D", CommandNodeType.Division, "Right-side exposure and operations."),
 					L("Roof Division", CommandNodeType.Division, "Roof access, ventilation and conditions.", new[] { "Truck", "Ladder" }),
 					L("Search Group", CommandNodeType.Group, "Primary and secondary searches.", new[] { "Truck", "Ladder", "Rescue" }),
-					L("Rapid Intervention", CommandNodeType.Group, "Dedicated firefighter rescue team.", new[] { "Rescue", "Squad", "Engine" }),
+					L("Rapid Intervention", CommandNodeType.Group, "Dedicated firefighter rescue team.", new[] { "Rescue", "Squad", "Engine" }, minUnits: 1, minUnitPersonnel: 2),
 					L("Staging", CommandNodeType.Staging, "Manage additional alarms and relief companies.")),
 
 				T("fire-wildland-wui", "Wildland / WUI Fire", "Fire Departments",
@@ -107,8 +146,8 @@ namespace Resgrid.Model.CommandBoards
 					"A hazmat branch layout separating entry, backup, decontamination, medical monitoring and support.",
 					new[] { "hazmat", "chemical", "spill", "cbrne", "decon", "entry" }, true, 20,
 					L("Hazmat Branch", CommandNodeType.Branch, "Coordinate all hazardous-materials operations."),
-					L("Entry Group", CommandNodeType.Group, "Hot-zone reconnaissance, control and product identification.", new[] { "Hazmat" }, new[] { "Hazmat Technician" }, true),
-					L("Backup Group", CommandNodeType.Group, "Dedicated backup for the entry team.", new[] { "Hazmat" }, new[] { "Hazmat Technician" }, true),
+					L("Entry Group", CommandNodeType.Group, "Hot-zone reconnaissance, control and product identification.", new[] { "Hazmat" }, new[] { "Hazmat Technician" }, true, minUnitPersonnel: 2, maxTimeInRole: 30),
+					L("Backup Group", CommandNodeType.Group, "Dedicated backup for the entry team.", new[] { "Hazmat" }, new[] { "Hazmat Technician" }, true, minUnitPersonnel: 2),
 					L("Decontamination", CommandNodeType.Group, "Technical and emergency decontamination corridor."),
 					L("Medical Monitoring", CommandNodeType.Group, "Pre-entry and post-entry medical monitoring.", new[] { "Ambulance", "Medic" }, new[] { "Paramedic", "EMT" }),
 					L("Staging", CommandNodeType.Staging, "Cold-zone resource accountability.")),
@@ -121,7 +160,7 @@ namespace Resgrid.Model.CommandBoards
 					L("Immediate Treatment", CommandNodeType.Group, "Treatment area for immediate/red patients."),
 					L("Delayed Treatment", CommandNodeType.Group, "Treatment area for delayed/yellow patients."),
 					L("Minor Treatment", CommandNodeType.Group, "Treatment area for minor/green patients."),
-					L("Transport Group", CommandNodeType.Group, "Ambulance loading, destination coordination and tracking.", new[] { "Ambulance", "Medic" }),
+					L("Transport Group", CommandNodeType.Group, "Ambulance loading, destination coordination and tracking.", new[] { "Ambulance", "Medic" }, minUnits: 2),
 					L("Ambulance Staging", CommandNodeType.Staging, "Check in and sequence transport units.", new[] { "Ambulance", "Medic" })),
 
 				T("ems-event-medical", "Planned Event Medical", "EMS",
@@ -129,8 +168,8 @@ namespace Resgrid.Model.CommandBoards
 					new[] { "festival", "concert", "sporting event", "aid station", "roving team", "special event" }, false, 0,
 					L("Medical Command", CommandNodeType.Branch, "Coordinate event medical operations and venue command."),
 					L("Main Aid Station", CommandNodeType.Group, "Fixed treatment and documentation location."),
-					L("Roving Team Alpha", CommandNodeType.TaskForce, "Mobile first-response team.", null, new[] { "Paramedic", "EMT" }),
-					L("Roving Team Bravo", CommandNodeType.TaskForce, "Mobile first-response team.", null, new[] { "Paramedic", "EMT" }),
+					L("Roving Team Alpha", CommandNodeType.TaskForce, "Mobile first-response team.", null, new[] { "Paramedic", "EMT" }, maxTimeInRole: 120),
+					L("Roving Team Bravo", CommandNodeType.TaskForce, "Mobile first-response team.", null, new[] { "Paramedic", "EMT" }, maxTimeInRole: 120),
 					L("Transport Group", CommandNodeType.Group, "Coordinate ambulance access, loading and hospitals.", new[] { "Ambulance", "Medic" }),
 					L("Medical Logistics", CommandNodeType.Group, "Restock supplies, oxygen, AEDs and responder rehab.")),
 
@@ -183,7 +222,7 @@ namespace Resgrid.Model.CommandBoards
 					L("Rescue Group", CommandNodeType.Group, "Coordinate rescue swimmers, boats and shore teams.", new[] { "Boat", "Rescue" }),
 					L("Upstream Safety", CommandNodeType.Group, "Watch for and communicate upstream hazards."),
 					L("Downstream Safety", CommandNodeType.Group, "Contain rescuers or subjects swept downstream."),
-					L("Boat Team", CommandNodeType.TaskForce, "Boat launch, operations and recovery.", new[] { "Boat" }),
+					L("Boat Team", CommandNodeType.TaskForce, "Boat launch, operations and recovery.", new[] { "Boat" }, minUnitPersonnel: 2),
 					L("Medical Group", CommandNodeType.Group, "Patient warming, treatment and transport.", new[] { "Ambulance", "Medic" }),
 					L("Staging", CommandNodeType.Staging, "Water-rescue resources and PPE accountability.")),
 
@@ -278,8 +317,8 @@ namespace Resgrid.Model.CommandBoards
 					"A confined-space board for entry, backup, rigging, atmospheric monitoring, medical and safety.",
 					new[] { "confined space", "permit space", "trench", "technical rescue", "entry team" }, true, 15,
 					L("Rescue Group", CommandNodeType.Group, "Coordinate the entry rescue plan."),
-					L("Entry Team", CommandNodeType.TaskForce, "Enter, assess and package the victim.", null, new[] { "Confined Space Technician" }, true),
-					L("Backup Team", CommandNodeType.TaskForce, "Ready team for entry-team rescue.", null, new[] { "Confined Space Technician" }, true),
+					L("Entry Team", CommandNodeType.TaskForce, "Enter, assess and package the victim.", null, new[] { "Confined Space Technician" }, true, minUnitPersonnel: 2, maxTimeInRole: 30),
+					L("Backup Team", CommandNodeType.TaskForce, "Ready team for entry-team rescue.", null, new[] { "Confined Space Technician" }, true, minUnitPersonnel: 2),
 					L("Rigging", CommandNodeType.Group, "Mechanical advantage, haul and lowering systems."),
 					L("Atmospheric Monitoring", CommandNodeType.Group, "Continuous air monitoring and ventilation."),
 					L("Medical", CommandNodeType.Group, "Victim and entrant medical support.", new[] { "Ambulance", "Medic" }),

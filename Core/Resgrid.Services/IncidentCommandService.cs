@@ -169,8 +169,16 @@ namespace Resgrid.Services
 						CallId = callId,
 						NodeType = role.LaneType,
 						Name = role.Name,
+						Color = role.Color,
 						SortOrder = role.SortOrder,
-						SourceRoleId = role.CommandDefinitionRoleId
+						SourceRoleId = role.CommandDefinitionRoleId,
+						MinUnitPersonnel = role.MinUnitPersonnel,
+						MaxUnitPersonnel = role.MaxUnitPersonnel,
+						MinUnits = role.MinUnits,
+						MaxUnits = role.MaxUnits,
+						MinTimeInRole = role.MinTimeInRole,
+						MaxTimeInRole = role.MaxTimeInRole,
+						ForceRequirements = role.ForceRequirements
 					};
 
 					await _commandStructureNodeRepository.InsertAsync(Touch(node), cancellationToken);
@@ -1060,6 +1068,23 @@ namespace Resgrid.Services
 			assignment.RequirementsWarning = violation != null;
 			assignment.RequirementsWarningMessage = violation;
 
+			// Early-rotation advisory (MinTimeInRole): rotating a resource out before the source lane's
+			// minimum stint never blocks — the IC may have good reason — but the move gets flagged.
+			if (!string.IsNullOrWhiteSpace(assignment.CommandStructureNodeId) && assignment.CommandStructureNodeId != targetNodeId)
+			{
+				var sourceNode = await _commandStructureNodeRepository.GetByIdAsync(assignment.CommandStructureNodeId);
+				if (sourceNode != null && sourceNode.MinTimeInRole > 0)
+				{
+					var minutesInLane = (DateTime.UtcNow - assignment.AssignedOn).TotalMinutes;
+					if (minutesInLane < sourceNode.MinTimeInRole)
+					{
+						var earlyWarning = $"Rotated out of lane '{sourceNode.Name}' after {Math.Round(minutesInLane)} of its minimum {sourceNode.MinTimeInRole} minutes.";
+						assignment.RequirementsWarning = true;
+						assignment.RequirementsWarningMessage = string.IsNullOrWhiteSpace(assignment.RequirementsWarningMessage) ? earlyWarning : $"{assignment.RequirementsWarningMessage} {earlyWarning}";
+					}
+				}
+			}
+
 			assignment.CommandStructureNodeId = targetNodeId;
 			assignment = await _resourceAssignmentRepository.SaveOrUpdateAsync(Touch(assignment), cancellationToken);
 
@@ -1094,12 +1119,50 @@ namespace Resgrid.Services
 		/// </summary>
 		private async Task<(string violation, bool enforced)> EvaluateNodeRequirementsAsync(CommandStructureNode node, int departmentId, int resourceKind, string resourceId)
 		{
-			if (node == null || !node.SourceRoleId.HasValue)
+			if (node == null)
 				return (null, false);
 
-			var role = await _commandsService.GetRoleWithRequirementsAsync(node.SourceRoleId.Value);
-			if (role == null)
+			// Ad-hoc (external mutual-aid style) units and personnel created at incident time always bypass
+			// lane requirements — even when the lane forces them — and never get an advisory warning. The IC
+			// vouches for outside resources; the department's unit types/roles don't apply to them.
+			if (resourceKind == (int)ResourceAssignmentKind.AdHocUnit || resourceKind == (int)ResourceAssignmentKind.AdHocPersonnel)
 				return (null, false);
+
+			var role = node.SourceRoleId.HasValue ? await _commandsService.GetRoleWithRequirementsAsync(node.SourceRoleId.Value) : null;
+			var enforced = node.ForceRequirements || (role?.ForceRequirements ?? false);
+			var isUnitKind = resourceKind == (int)ResourceAssignmentKind.RealUnit || resourceKind == (int)ResourceAssignmentKind.LinkedDeptUnit;
+
+			// Lane capacity (MaxUnits): every active unit-kind assignment occupies a slot — ad-hoc units
+			// included (they bypass qualification checks but still take up space in the lane).
+			if (isUnitKind && node.MaxUnits > 0)
+			{
+				var laneAssignments = await GetAssignmentsForCallAsync(departmentId, node.CallId);
+				var unitCount = laneAssignments.Count(a => a.ReleasedOn == null
+					&& a.CommandStructureNodeId == node.CommandStructureNodeId
+					&& (a.ResourceKind == (int)ResourceAssignmentKind.RealUnit || a.ResourceKind == (int)ResourceAssignmentKind.LinkedDeptUnit || a.ResourceKind == (int)ResourceAssignmentKind.AdHocUnit)
+					&& !(a.ResourceKind == resourceKind && a.ResourceId == resourceId));
+
+				if (unitCount >= node.MaxUnits)
+					return ($"Lane '{node.Name}' is at its maximum of {node.MaxUnits} unit(s).", enforced);
+			}
+
+			// Unit staffing (MinUnitPersonnel/MaxUnitPersonnel): riders currently on the unit's active
+			// role seats. Own-department units only — riders can't be resolved for linked-department units.
+			if (resourceKind == (int)ResourceAssignmentKind.RealUnit && (node.MinUnitPersonnel > 0 || node.MaxUnitPersonnel > 0)
+				&& int.TryParse(resourceId, out var staffedUnitId))
+			{
+				var riders = await _unitsService.GetActiveRolesForUnitAsync(staffedUnitId);
+				var riderCount = riders?.Count(r => !string.IsNullOrWhiteSpace(r.UserId)) ?? 0;
+
+				if (node.MinUnitPersonnel > 0 && riderCount < node.MinUnitPersonnel)
+					return ($"Lane '{node.Name}' requires at least {node.MinUnitPersonnel} personnel riding the unit (currently {riderCount}).", enforced);
+
+				if (node.MaxUnitPersonnel > 0 && riderCount > node.MaxUnitPersonnel)
+					return ($"Lane '{node.Name}' allows at most {node.MaxUnitPersonnel} personnel riding the unit (currently {riderCount}).", enforced);
+			}
+
+			if (role == null)
+				return (null, enforced);
 
 			string violation = null;
 
@@ -1107,7 +1170,7 @@ namespace Resgrid.Services
 			{
 				var requiredUnitTypes = role.RequiredUnitTypes?.Select(x => x.UnitTypeId).ToList();
 				if (requiredUnitTypes == null || requiredUnitTypes.Count == 0)
-					return (null, role.ForceRequirements);
+					return (null, enforced);
 
 				Unit unit = null;
 				if (int.TryParse(resourceId, out var unitId))
@@ -1136,14 +1199,14 @@ namespace Resgrid.Services
 			{
 				var requiredRoles = role.RequiredRoles?.Select(x => x.PersonnelRoleId).ToList();
 				if (requiredRoles == null || requiredRoles.Count == 0)
-					return (null, role.ForceRequirements);
+					return (null, enforced);
 
 				var userRoles = await _personnelRolesService.GetRolesForUserAsync(resourceId, departmentId);
 				if (userRoles == null || !userRoles.Any(x => requiredRoles.Contains(x.PersonnelRoleId)))
 					violation = $"This member does not hold a personnel role required by lane '{node.Name}'.";
 			}
 
-			return (violation, role.ForceRequirements);
+			return (violation, enforced);
 		}
 
 		public async Task<List<ResourceAssignment>> GetAssignmentsForCallAsync(int departmentId, int callId)

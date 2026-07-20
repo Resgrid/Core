@@ -11,5 +11,14 @@ namespace Resgrid.Model.Services
 		Task<IncidentReportSummary> GetIncidentSummaryAsync(int departmentId, int callId);
 		Task<IncidentAfterActionReport> GetAfterActionReportAsync(int departmentId, int callId);
 		Task<string> ExportTimelineCsvAsync(int departmentId, int callId);
+
+		/// <summary>NFIRS/NERIS-oriented key times and resource counts for federal/NFPA reporting.</summary>
+		Task<IncidentTimesReport> GetIncidentTimesReportAsync(int departmentId, int callId);
+
+		/// <summary>Per-resource lane utilization (which lanes, how long) across the incident.</summary>
+		Task<ResourceUtilizationReport> GetResourceUtilizationReportAsync(int departmentId, int callId);
+
+		/// <summary>Full after-action export as a multi-section CSV (summary, times, roles, lanes, utilization, timeline).</summary>
+		Task<string> ExportAfterActionCsvAsync(int departmentId, int callId);
 	}
 }

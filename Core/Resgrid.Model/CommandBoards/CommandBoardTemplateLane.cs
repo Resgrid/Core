@@ -23,5 +23,29 @@ namespace Resgrid.Model.CommandBoards
 		/// at least one suggested unit type or personnel role exists in the department.
 		/// </summary>
 		public bool ForceRequirements { get; set; }
+
+		/// <summary>
+		/// Lane identification color (hex). Carried onto the created definition role and, from there,
+		/// onto runtime board lanes and the map markers of assigned resources.
+		/// </summary>
+		public string Color { get; set; }
+
+		/// <summary>Minimum units this lane wants filled (0 = none; advisory under-filled indicator).</summary>
+		public int MinUnits { get; set; }
+
+		/// <summary>Maximum units in this lane at once (0 = unlimited).</summary>
+		public int MaxUnits { get; set; }
+
+		/// <summary>Minimum personnel riding a unit for it to fit this lane (0 = none).</summary>
+		public int MinUnitPersonnel { get; set; }
+
+		/// <summary>Maximum personnel riding a unit for it to fit this lane (0 = none).</summary>
+		public int MaxUnitPersonnel { get; set; }
+
+		/// <summary>Minimum minutes a resource should stay before rotating out (0 = none; advisory).</summary>
+		public int MinTimeInRole { get; set; }
+
+		/// <summary>Minutes before an assigned resource shows rotation-due (0 = none).</summary>
+		public int MaxTimeInRole { get; set; }
 	}
 }

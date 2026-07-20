@@ -665,11 +665,11 @@
             </param>
             <param name="cancellationToken"></param>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.ExternalToken(System.String,System.String,System.String,System.String,System.String,System.Threading.CancellationToken)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConnectController.ExternalToken(System.String,System.String,System.String,System.String,System.String,System.String,System.Threading.CancellationToken)">
             <summary>
             Exchanges an external SSO token (OIDC id_token or base64-encoded SAMLResponse) for a
             Resgrid access token. Supports grant_type=external_token with fields:
-              provider (saml2|oidc), external_token, department_code, scope (optional),
+              provider (saml2|oidc), external_token, department_code or department_token, scope (optional),
               totp_code (required when the user has Resgrid 2FA enrolled).
             SSO authentication does NOT bypass Resgrid's own Two-Factor Authentication.
             When the user has 2FA enabled in Resgrid, a valid totp_code must be supplied
@@ -1028,6 +1028,15 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.UpdateActionPlan(Resgrid.Web.Services.Models.v4.IncidentCommand.UpdateActionPlanInput)">
             <summary>Updates the incident action plan.</summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.UpdateCommandPost(Resgrid.Web.Services.Models.v4.IncidentCommand.UpdateCommandPostInput)">
+            <summary>Updates the command-post location used by maps and incident weather.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.AddNote(Resgrid.Web.Services.Models.v4.IncidentCommand.AddIncidentNoteInput)">
+            <summary>Adds an internal or public operational status note to the incident.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.AddAttachment(Resgrid.Web.Services.Models.v4.IncidentCommand.AddIncidentAttachmentInput,System.Threading.CancellationToken)">
+            <summary>Uploads an incident-level internal or public file using multipart/form-data.</summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.GetAccountability(System.Int32)">
             <summary>Gets the personnel accountability / PAR status (Green/Warning/Critical) for the incident.</summary>
         </member>
@@ -1083,6 +1092,15 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportingController.ExportIncident(System.Int32)">
             <summary>Exports the incident command timeline as a CSV file.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportingController.GetIncidentTimes(System.Int32)">
+            <summary>Gets the NFIRS/NERIS-oriented key-times report (alarm, command, benchmarks, resource counts).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportingController.GetResourceUtilization(System.Int32)">
+            <summary>Gets per-resource lane utilization (which lanes each resource worked and for how long).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentReportingController.ExportAfterAction(System.Int32)">
+            <summary>Exports the full after-action report (summary, times, lanes, utilization, timeline) as CSV.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.IncidentResourcesController">
             <summary>
@@ -1142,6 +1160,12 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentVoiceController.GetChannelsForCall(System.Int32)">
             <summary>Gets the open on-demand tactical channels for a call (visible to assigned units/users).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentVoiceController.LogTransmission(Resgrid.Web.Services.Models.v4.IncidentCommand.LogTransmissionInput)">
+            <summary>Logs one completed PTT transmission on an incident channel (who keyed up, start/end).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentVoiceController.GetTransmissionLog(System.Int32)">
+            <summary>Gets the PTT transmission log for a call's incident channels, newest first.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentVoiceController.CloseIncidentChannels(System.Int32)">
             <summary>Closes all open on-demand tactical channels for a call.</summary>
@@ -1515,6 +1539,12 @@
             </summary>
             <param name="protocolAttachmentId">ID of the protocol attachment</param>
             <returns></returns>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.PublicIncidentController">
+            <summary>
+            Anonymous, token-scoped public incident status feed. It exposes only records explicitly marked Public and only
+            while the Incident Commander/PIO has public sharing enabled. Disabling sharing revokes the token immediately.
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ReportingController">
              <summary>
@@ -6488,6 +6518,21 @@
             A predefined lane (role) within a command definition.
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Commands.CommandRoleResultData.Color">
+            <summary>Lane identification color (hex, e.g. "#e74c3c"); null = default styling.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Commands.CommandRoleResultData.ForceRequirements">
+            <summary>
+            When true the API rejects assigning/moving own-department resources into this lane unless
+            they match the requirement lists below; when false the requirements are advisory (UI hints).
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Commands.CommandRoleResultData.RequiredUnitTypes">
+            <summary>UnitTypeIds a unit must match to satisfy this lane (empty = unrestricted).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Commands.CommandRoleResultData.RequiredPersonnelRoles">
+            <summary>PersonnelRoleIds a member must hold (any one) to satisfy this lane (empty = unrestricted).</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Commands.CommandsResult">
             <summary>
             Result wrapper for a collection of command definitions.
@@ -6507,6 +6552,15 @@
             <summary>
             Input payload for a single lane within a command definition.
             </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Commands.SaveCommandLaneInput.Color">
+            <summary>Lane identification color (hex, e.g. "#e74c3c"); null = default styling.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Commands.SaveCommandLaneInput.RequiredUnitTypes">
+            <summary>UnitTypeIds required to assign a unit to this lane (empty = unrestricted).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Commands.SaveCommandLaneInput.RequiredPersonnelRoles">
+            <summary>PersonnelRoleIds required (any one) to assign a member to this lane (empty = unrestricted).</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.CommunicationTests.GetCommunicationTestsResult">
             <summary>
@@ -7476,6 +7530,16 @@
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.MoveResourceInput">
             <summary>Input to move a resource assignment to a different node.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IncidentCommand.ResourceAssignmentResult.Message">
+            <summary>
+            Human-readable requirements notice. On Status=failure: why the assignment was rejected (forced
+            lane requirements not met). On Status=success: an advisory warning when the resource doesn't
+            meet the lane's non-forced requirements (also stamped on Data.RequirementsWarning/-Message).
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.LogTransmissionInput">
+            <summary>Input logging one completed PTT transmission on an incident channel.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.IncidentCommandActionResult">
             <summary>Simple boolean action result (delete/release operations).</summary>

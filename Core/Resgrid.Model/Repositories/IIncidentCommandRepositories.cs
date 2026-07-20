@@ -41,4 +41,8 @@ namespace Resgrid.Model.Repositories
 	{
 		System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<IncidentAttachment>> GetAllMetadataByDepartmentIdAsync(int departmentId);
 	}
+
+	public interface IVoiceTransmissionLogRepository : IRepository<VoiceTransmissionLog>
+	{
+	}
 }

@@ -22,5 +22,11 @@ namespace Resgrid.Model.Services
 
 		/// <summary>Closes (soft-close) all open on-demand tactical channels for a call.</summary>
 		Task<bool> CloseIncidentChannelsForCallAsync(int departmentId, int callId, string userId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>Records one completed PTT transmission (who keyed up, on which channel, start/end).</summary>
+		Task<VoiceTransmissionLog> LogTransmissionAsync(VoiceTransmissionLog log, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>Gets the transmission log for a call's incident channels, newest first.</summary>
+		Task<List<VoiceTransmissionLog>> GetTransmissionLogForCallAsync(int departmentId, int callId);
 	}
 }

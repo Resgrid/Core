@@ -48,6 +48,51 @@
 						<span class="help-block m-b-none">Personnel must hold one of these roles to fit this lane. Leave empty for anyone.</span>
 					</div>
 					<div class="form-group">
+						<label for="assignment-color" class="control-label">Lane Color:</label>
+						<select class="form-control" id="assignment-color">
+							<option value="">None</option>
+							<option value="#e74c3c" style="background-color:#e74c3c;color:#fff;">Red</option>
+							<option value="#e67e22" style="background-color:#e67e22;color:#fff;">Orange</option>
+							<option value="#f1c40f" style="background-color:#f1c40f;">Yellow</option>
+							<option value="#2ecc71" style="background-color:#2ecc71;color:#fff;">Green</option>
+							<option value="#1abc9c" style="background-color:#1abc9c;color:#fff;">Teal</option>
+							<option value="#3498db" style="background-color:#3498db;color:#fff;">Blue</option>
+							<option value="#9b59b6" style="background-color:#9b59b6;color:#fff;">Purple</option>
+							<option value="#7f8c8d" style="background-color:#7f8c8d;color:#fff;">Gray</option>
+						</select>
+						<span class="help-block m-b-none">Identification color for this lane — board lanes and the map markers of assigned units/personnel are tinted with it.</span>
+					</div>
+					<div class="form-group">
+						<label class="control-label">Lane Limits (all optional):</label>
+						<div class="row" style="margin-bottom:5px;">
+							<div class="col-xs-6">
+								<label style="font-weight:normal;">Min Units <input id="assignment-minunits" type="number" min="0" class="form-control" placeholder="None" /></label>
+							</div>
+							<div class="col-xs-6">
+								<label style="font-weight:normal;">Max Units <input id="assignment-maxunits" type="number" min="0" class="form-control" placeholder="Unlimited" /></label>
+							</div>
+						</div>
+						<span class="help-block m-b-none">How many units this lane should have. Below Min Units the lane shows as under-filled (never blocks). At Max Units further unit assignments are blocked (Force on) or warned (Force off).</span>
+						<div class="row" style="margin:5px 0;">
+							<div class="col-xs-6">
+								<label style="font-weight:normal;">Min Unit Personnel <input id="assignment-minunitpersonnel" type="number" min="0" class="form-control" placeholder="None" /></label>
+							</div>
+							<div class="col-xs-6">
+								<label style="font-weight:normal;">Max Unit Personnel <input id="assignment-maxunitpersonnel" type="number" min="0" class="form-control" placeholder="Unlimited" /></label>
+							</div>
+						</div>
+						<span class="help-block m-b-none">Personnel riding a unit for it to fit this lane (e.g. an interior attack lane may require at least 2 on the truck). Checked when a unit is assigned; blocked or warned per Force Requirements.</span>
+						<div class="row" style="margin:5px 0;">
+							<div class="col-xs-6">
+								<label style="font-weight:normal;">Min Time in Role (min) <input id="assignment-mintimeinrole" type="number" min="0" class="form-control" placeholder="None" /></label>
+							</div>
+							<div class="col-xs-6">
+								<label style="font-weight:normal;">Max Time in Role (min) <input id="assignment-maxtimeinrole" type="number" min="0" class="form-control" placeholder="None" /></label>
+							</div>
+						</div>
+						<span class="help-block m-b-none">Rotation guidance in minutes. Rotating a resource out before Min Time flags the move (advisory only). Past Max Time the resource shows as rotation-due on the board — assignments are never auto-removed.</span>
+					</div>
+					<div class="form-group">
 						<label class="control-label">Force Requirements:</label>
 						<input id="forceRequirements" type="checkbox" />
 						<span class="help-block m-b-none">When checked the system blocks assigning units/personnel that don't meet the requirements above. Unchecked, the requirements are advisory only.</span>

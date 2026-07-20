@@ -263,6 +263,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 				assignment.ForceRequirements = form[$"assignmentLock_{i}"]
 					.Any(value => bool.TryParse(value, out var forceRequirements) && forceRequirements);
 
+				// Optional lane limits — blank/invalid values mean "no limit" (0).
+				assignment.MinUnits = ParseLimitField(form[$"assignmentMinUnits_{i}"]);
+				assignment.MaxUnits = ParseLimitField(form[$"assignmentMaxUnits_{i}"]);
+				assignment.MinUnitPersonnel = ParseLimitField(form[$"assignmentMinUnitPersonnel_{i}"]);
+				assignment.MaxUnitPersonnel = ParseLimitField(form[$"assignmentMaxUnitPersonnel_{i}"]);
+				assignment.MinTimeInRole = ParseLimitField(form[$"assignmentMinTimeInRole_{i}"]);
+				assignment.MaxTimeInRole = ParseLimitField(form[$"assignmentMaxTimeInRole_{i}"]);
+
+				// Lane identification color — only well-formed hex values are persisted.
+				string color = form[$"assignmentColor_{i}"];
+				assignment.Color = !string.IsNullOrWhiteSpace(color) && System.Text.RegularExpressions.Regex.IsMatch(color.Trim(), "^#[0-9a-fA-F]{3,8}$")
+					? color.Trim()
+					: null;
+
 				// The form is a full document: absent/empty pickers clear the lane's requirements.
 				assignment.RequiredUnitTypes = ParseIdCsv(form[$"assignmentUnitTypes_{i}"])
 					.Select(id => new CommandDefinitionRoleUnitType { UnitTypeId = id }).ToList();
@@ -273,6 +287,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return assignments;
+		}
+
+		/// <summary>Parses an optional non-negative lane-limit field; blank or invalid input means "no limit" (0).</summary>
+		private static int ParseLimitField(string value)
+		{
+			return int.TryParse(value, out var parsed) && parsed > 0 ? parsed : 0;
 		}
 
 		private static List<int> ParseIdCsv(string value)

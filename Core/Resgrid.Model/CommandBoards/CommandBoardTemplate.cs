@@ -81,6 +81,13 @@ namespace Resgrid.Model.CommandBoards
 					Description = lane.Description,
 					LaneType = (int)lane.LaneType,
 					SortOrder = index,
+					Color = lane.Color,
+					MinUnits = lane.MinUnits,
+					MaxUnits = lane.MaxUnits,
+					MinUnitPersonnel = lane.MinUnitPersonnel,
+					MaxUnitPersonnel = lane.MaxUnitPersonnel,
+					MinTimeInRole = lane.MinTimeInRole,
+					MaxTimeInRole = lane.MaxTimeInRole,
 					RequiredUnitTypes = matchedUnitTypes,
 					RequiredRoles = matchedPersonnelRoles,
 					ForceRequirements = lane.ForceRequirements && (matchedUnitTypes.Count > 0 || matchedPersonnelRoles.Count > 0)

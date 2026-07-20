@@ -67,6 +67,8 @@
 							<th style="max-width: 200px;font-size: 14px;">Name</th>
 							<th style="max-width: 120px;font-size: 14px;">Lane Type</th>
 							<th style="max-width: 300px;font-size: 14px;">Description</th>
+							<th style="max-width: 110px;font-size: 14px;">Color</th>
+							<th style="max-width: 170px;font-size: 14px;" title="Optional lane limits: units in lane, personnel per unit, rotation minutes">Limits</th>
 							<th style="max-width: 300px;font-size: 14px;">Requirements</th>
 							<th style="max-width: 90px;font-size: 16px;"><a id="addAssignmentButton" class="btn btn-success btn-xs" data-original-title="Add Lane" data-toggle="modal" data-target="#newAssignmentModal"><i class="icon-plus"></i> Add Lane</a></th>
 						</tr>
@@ -92,6 +94,25 @@
 								</td>
 								<td>
 									<textarea class="form-control" name="assignmentDescription_@i" rows="2" aria-label="Lane description">@assignment.Description</textarea>
+								</td>
+								<td>
+									<select class="form-control assignment-color-inline" name="assignmentColor_@i" aria-label="Lane color">
+										<option value="" selected="@(string.IsNullOrWhiteSpace(assignment.Color) ? "selected" : null)">None</option>
+										@foreach (var laneColor in Resgrid.Web.Areas.User.Models.Command.NewCommandView.LaneColors)
+										{
+											<option value="@laneColor.Value" style="background-color:@laneColor.Value;color:#fff;" selected="@(string.Equals(assignment.Color, laneColor.Value, StringComparison.OrdinalIgnoreCase) ? "selected" : null)">@laneColor.Name</option>
+										}
+									</select>
+								</td>
+								<td>
+									<div style="display:flex;flex-wrap:wrap;gap:3px;">
+										<input type="number" min="0" class="form-control" style="width:76px;display:inline-block;" name="assignmentMinUnits_@i" value="@(assignment.MinUnits > 0 ? assignment.MinUnits.ToString() : "")" placeholder="Min U" title="Minimum units this lane should have (advisory under-filled indicator)" aria-label="Minimum units" />
+										<input type="number" min="0" class="form-control" style="width:76px;display:inline-block;" name="assignmentMaxUnits_@i" value="@(assignment.MaxUnits > 0 ? assignment.MaxUnits.ToString() : "")" placeholder="Max U" title="Maximum units in this lane at once (blocks or warns per Force Requirements)" aria-label="Maximum units" />
+										<input type="number" min="0" class="form-control" style="width:76px;display:inline-block;" name="assignmentMinUnitPersonnel_@i" value="@(assignment.MinUnitPersonnel > 0 ? assignment.MinUnitPersonnel.ToString() : "")" placeholder="Min P" title="Minimum personnel riding a unit for it to fit this lane" aria-label="Minimum unit personnel" />
+										<input type="number" min="0" class="form-control" style="width:76px;display:inline-block;" name="assignmentMaxUnitPersonnel_@i" value="@(assignment.MaxUnitPersonnel > 0 ? assignment.MaxUnitPersonnel.ToString() : "")" placeholder="Max P" title="Maximum personnel riding a unit for it to fit this lane" aria-label="Maximum unit personnel" />
+										<input type="number" min="0" class="form-control" style="width:76px;display:inline-block;" name="assignmentMinTimeInRole_@i" value="@(assignment.MinTimeInRole > 0 ? assignment.MinTimeInRole.ToString() : "")" placeholder="Min T" title="Minimum minutes before rotating out (early rotation is flagged, never blocked)" aria-label="Minimum time in role (minutes)" />
+										<input type="number" min="0" class="form-control" style="width:76px;display:inline-block;" name="assignmentMaxTimeInRole_@i" value="@(assignment.MaxTimeInRole > 0 ? assignment.MaxTimeInRole.ToString() : "")" placeholder="Max T" title="Minutes before a resource shows rotation-due on the board" aria-label="Maximum time in role (minutes)" />
+									</div>
 								</td>
 								<td>
 									<select class="form-control assignment-unittypes-inline" name="assignmentUnitTypes_@i" multiple="multiple" aria-label="Required unit types">

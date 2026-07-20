@@ -104,6 +104,35 @@ namespace Resgrid.Web.Services.Models.v4.IncidentCommand
 		public Resgrid.Model.IncidentMapAnnotation Data { get; set; }
 	}
 
+	public class IncidentTimesReportResult : StandardApiResponseV4Base
+	{
+		public Resgrid.Model.IncidentTimesReport Data { get; set; }
+	}
+
+	public class ResourceUtilizationReportResult : StandardApiResponseV4Base
+	{
+		public Resgrid.Model.ResourceUtilizationReport Data { get; set; }
+	}
+
+	public class VoiceTransmissionLogResult : StandardApiResponseV4Base
+	{
+		public Resgrid.Model.VoiceTransmissionLog Data { get; set; }
+	}
+
+	public class VoiceTransmissionLogsResult : StandardApiResponseV4Base
+	{
+		public List<Resgrid.Model.VoiceTransmissionLog> Data { get; set; } = new List<Resgrid.Model.VoiceTransmissionLog>();
+	}
+
+	/// <summary>Input logging one completed PTT transmission on an incident channel.</summary>
+	public class LogTransmissionInput
+	{
+		public int CallId { get; set; }
+		public string DepartmentVoiceChannelId { get; set; }
+		public string StartedOn { get; set; }
+		public string EndedOn { get; set; }
+	}
+
 	public class IncidentNoteResult : StandardApiResponseV4Base
 	{
 		public Resgrid.Model.IncidentNote Data { get; set; }

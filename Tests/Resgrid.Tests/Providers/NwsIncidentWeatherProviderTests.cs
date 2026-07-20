@@ -4,7 +4,10 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Moq;
 using NUnit.Framework;
+using Resgrid.Model;
+using Resgrid.Model.Providers;
 using Resgrid.Providers.Weather;
 
 namespace Resgrid.Tests.Providers
@@ -16,8 +19,10 @@ namespace Resgrid.Tests.Providers
 		public async Task GetWeather_WithNwsResponses_MapsForecastObservationAndRadarOverlay()
 		{
 			// Arrange
-			using var httpClient = new HttpClient(new NwsWeatherHandler());
-			var provider = new NwsIncidentWeatherProvider(httpClient);
+			var handler = new NwsWeatherHandler();
+			using var httpClient = new HttpClient(handler);
+			var cacheProvider = CreatePassthroughCacheProvider();
+			var provider = new NwsIncidentWeatherProvider(httpClient, cacheProvider.Object);
 
 			// Act
 			var weather = await provider.GetWeatherAsync(41.1234m, -122.5678m, 1);
@@ -33,6 +38,31 @@ namespace Resgrid.Tests.Providers
 			weather.Overlays.Should().ContainSingle(x =>
 				x.Id == "noaa-mrms-base-reflectivity" && x.LayerIds == "3" && x.RefreshSeconds == 300);
 			weather.Overlays[0].ExportUrlTemplate.Should().Contain("mapservices.weather.noaa.gov");
+			handler.RequestCount.Should().Be(4);
+			cacheProvider.Verify(x => x.RetrieveAsync<IncidentWeather>(
+				It.IsAny<string>(), It.IsAny<Func<Task<IncidentWeather>>>(), TimeSpan.FromMinutes(5)), Times.Once);
+		}
+
+		[Test]
+		public async Task GetWeather_WithCachedWeather_DoesNotCallNws()
+		{
+			// Arrange
+			var cachedWeather = new IncidentWeather { Source = "Cached weather" };
+			var cacheProvider = new Mock<ICacheProvider>();
+			cacheProvider
+				.Setup(x => x.RetrieveAsync<IncidentWeather>(
+					It.IsAny<string>(), It.IsAny<Func<Task<IncidentWeather>>>(), It.IsAny<TimeSpan>()))
+				.ReturnsAsync(cachedWeather);
+			var handler = new NwsWeatherHandler();
+			using var httpClient = new HttpClient(handler);
+			var provider = new NwsIncidentWeatherProvider(httpClient, cacheProvider.Object);
+
+			// Act
+			var weather = await provider.GetWeatherAsync(41.1234m, -122.5678m, 1);
+
+			// Assert
+			weather.Should().BeSameAs(cachedWeather);
+			handler.RequestCount.Should().Be(0);
 		}
 
 		[TestCase(-91, 0)]
@@ -42,19 +72,36 @@ namespace Resgrid.Tests.Providers
 		public async Task GetWeather_WithInvalidCoordinates_RejectsRequest(decimal latitude, decimal longitude)
 		{
 			// Arrange
-			var provider = new NwsIncidentWeatherProvider(new HttpClient(new NwsWeatherHandler()));
+			var cacheProvider = CreatePassthroughCacheProvider();
+			using var httpClient = new HttpClient(new NwsWeatherHandler());
+			var provider = new NwsIncidentWeatherProvider(httpClient, cacheProvider.Object);
 
 			// Act
 			Func<Task> act = () => provider.GetWeatherAsync(latitude, longitude);
 
 			// Assert
 			await act.Should().ThrowAsync<ArgumentOutOfRangeException>();
+			cacheProvider.Verify(x => x.RetrieveAsync<IncidentWeather>(
+				It.IsAny<string>(), It.IsAny<Func<Task<IncidentWeather>>>(), It.IsAny<TimeSpan>()), Times.Never);
+		}
+
+		private static Mock<ICacheProvider> CreatePassthroughCacheProvider()
+		{
+			var cacheProvider = new Mock<ICacheProvider>();
+			cacheProvider
+				.Setup(x => x.RetrieveAsync<IncidentWeather>(
+					It.IsAny<string>(), It.IsAny<Func<Task<IncidentWeather>>>(), It.IsAny<TimeSpan>()))
+				.Returns((string _, Func<Task<IncidentWeather>> fallback, TimeSpan _) => fallback());
+			return cacheProvider;
 		}
 
 		private sealed class NwsWeatherHandler : HttpMessageHandler
 		{
+			public int RequestCount { get; private set; }
+
 			protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
 			{
+				RequestCount++;
 				var url = request.RequestUri.ToString();
 				string json;
 				if (url.Contains("/points/", StringComparison.OrdinalIgnoreCase))

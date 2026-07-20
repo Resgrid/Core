@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -22,18 +21,20 @@ namespace Resgrid.Providers.Weather
 	{
 		private const string NwsBaseUrl = "https://api.weather.gov";
 		private const string RadarServiceUrl = "https://mapservices.weather.noaa.gov/eventdriven/rest/services/radar/radar_base_reflectivity/MapServer";
+		private static readonly TimeSpan WeatherCacheExpiration = TimeSpan.FromMinutes(5);
 		private static readonly HttpClient SharedHttpClient = CreateHttpClient();
-		private static readonly ConcurrentDictionary<string, CacheEntry> Cache = new ConcurrentDictionary<string, CacheEntry>();
 		private readonly HttpClient _httpClient;
+		private readonly ICacheProvider _cacheProvider;
 
-		public NwsIncidentWeatherProvider() : this(SharedHttpClient)
+		public NwsIncidentWeatherProvider(ICacheProvider cacheProvider) : this(SharedHttpClient, cacheProvider)
 		{
 		}
 
 		/// <summary>Constructor exposed for deterministic provider tests with a stubbed HTTP handler.</summary>
-		public NwsIncidentWeatherProvider(HttpClient httpClient)
+		public NwsIncidentWeatherProvider(HttpClient httpClient, ICacheProvider cacheProvider)
 		{
 			_httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+			_cacheProvider = cacheProvider ?? throw new ArgumentNullException(nameof(cacheProvider));
 		}
 
 		public async Task<IncidentWeather> GetWeatherAsync(decimal latitude, decimal longitude, int forecastHours = 24, CancellationToken cancellationToken = default)
@@ -41,59 +42,61 @@ namespace Resgrid.Providers.Weather
 			ValidateCoordinates(latitude, longitude);
 			forecastHours = Math.Clamp(forecastHours, 1, 168);
 
-			var cacheKey = $"{Math.Round(latitude, 4)}:{Math.Round(longitude, 4)}:{forecastHours}";
-			if (Cache.TryGetValue(cacheKey, out var cached) && cached.ExpiresAtUtc > DateTime.UtcNow)
-				return cached.Weather;
+			var cacheKey = $"NwsIncidentWeather:{Math.Round(latitude, 4)}:{Math.Round(longitude, 4)}:{forecastHours}";
 
-			var pointUrl = $"{NwsBaseUrl}/points/{latitude.ToString("0.####", CultureInfo.InvariantCulture)},{longitude.ToString("0.####", CultureInfo.InvariantCulture)}";
-			using var pointDoc = await GetJsonAsync(pointUrl, cancellationToken);
-			var pointProperties = pointDoc.RootElement.GetProperty("properties");
-			var forecastUrl = GetString(pointProperties, "forecastHourly");
-			var stationsUrl = GetString(pointProperties, "observationStations");
-
-			if (string.IsNullOrWhiteSpace(forecastUrl))
-				throw new InvalidOperationException("NWS did not return an hourly forecast endpoint for the incident location.");
-
-			var weather = new IncidentWeather
+			async Task<IncidentWeather> getWeather()
 			{
-				Latitude = latitude,
-				Longitude = longitude,
-				Source = "National Weather Service",
-				Attribution = "NOAA / National Weather Service",
-				GeneratedAtUtc = DateTime.UtcNow,
-				ExpiresAtUtc = DateTime.UtcNow.AddMinutes(5)
-			};
+				var pointUrl = $"{NwsBaseUrl}/points/{latitude.ToString("0.####", CultureInfo.InvariantCulture)},{longitude.ToString("0.####", CultureInfo.InvariantCulture)}";
+				using var pointDoc = await GetJsonAsync(pointUrl, cancellationToken);
+				var pointProperties = pointDoc.RootElement.GetProperty("properties");
+				var forecastUrl = GetString(pointProperties, "forecastHourly");
+				var stationsUrl = GetString(pointProperties, "observationStations");
 
-			using (var forecastDoc = await GetJsonAsync(forecastUrl, cancellationToken))
-			{
-				var properties = forecastDoc.RootElement.GetProperty("properties");
-				weather.UpdatedAtUtc = GetDate(properties, "updated");
-				if (properties.TryGetProperty("periods", out var periods))
+				if (string.IsNullOrWhiteSpace(forecastUrl))
+					throw new InvalidOperationException("NWS did not return an hourly forecast endpoint for the incident location.");
+
+				var weather = new IncidentWeather
 				{
-					weather.HourlyForecast = periods.EnumerateArray()
-						.Take(forecastHours)
-						.Select(ParseForecastPeriod)
-						.ToList();
+					Latitude = latitude,
+					Longitude = longitude,
+					Source = "National Weather Service",
+					Attribution = "NOAA / National Weather Service",
+					GeneratedAtUtc = DateTime.UtcNow,
+					ExpiresAtUtc = DateTime.UtcNow.Add(WeatherCacheExpiration)
+				};
+
+				using (var forecastDoc = await GetJsonAsync(forecastUrl, cancellationToken))
+				{
+					var properties = forecastDoc.RootElement.GetProperty("properties");
+					weather.UpdatedAtUtc = GetDate(properties, "updated");
+					if (properties.TryGetProperty("periods", out var periods))
+					{
+						weather.HourlyForecast = periods.EnumerateArray()
+							.Take(forecastHours)
+							.Select(ParseForecastPeriod)
+							.ToList();
+					}
 				}
+
+				if (!string.IsNullOrWhiteSpace(stationsUrl))
+				{
+					try
+					{
+						weather.Current = await GetLatestObservationAsync(stationsUrl, cancellationToken);
+					}
+					catch (Exception ex) when (ex is HttpRequestException || ex is JsonException || ex is InvalidOperationException)
+					{
+						// A station observation can be delayed or temporarily unavailable. Forecast/radar data remains useful,
+						// so degrade only the current-conditions portion instead of failing the commander weather panel.
+						weather.Current = null;
+					}
+				}
+
+				weather.Overlays.Add(CreateRadarOverlay());
+				return weather;
 			}
 
-			if (!string.IsNullOrWhiteSpace(stationsUrl))
-			{
-				try
-				{
-					weather.Current = await GetLatestObservationAsync(stationsUrl, cancellationToken);
-				}
-				catch (Exception ex) when (ex is HttpRequestException || ex is JsonException || ex is InvalidOperationException)
-				{
-					// A station observation can be delayed or temporarily unavailable. Forecast/radar data remains useful,
-					// so degrade only the current-conditions portion instead of failing the commander weather panel.
-					weather.Current = null;
-				}
-			}
-
-			weather.Overlays.Add(CreateRadarOverlay());
-			Cache[cacheKey] = new CacheEntry(weather, weather.ExpiresAtUtc);
-			return weather;
+			return await _cacheProvider.RetrieveAsync(cacheKey, getWeather, WeatherCacheExpiration);
 		}
 
 		private async Task<IncidentWeatherObservation> GetLatestObservationAsync(string stationsUrl, CancellationToken cancellationToken)
@@ -263,18 +266,6 @@ namespace Resgrid.Providers.Weather
 		private static HttpClient CreateHttpClient()
 		{
 			return new HttpClient { Timeout = TimeSpan.FromSeconds(12) };
-		}
-
-		private sealed class CacheEntry
-		{
-			public CacheEntry(IncidentWeather weather, DateTime expiresAtUtc)
-			{
-				Weather = weather;
-				ExpiresAtUtc = expiresAtUtc;
-			}
-
-			public IncidentWeather Weather { get; }
-			public DateTime ExpiresAtUtc { get; }
 		}
 	}
 }

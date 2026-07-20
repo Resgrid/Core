@@ -11,6 +11,8 @@ var resgrid;
                 $('#SelectedType').select2();
                 $('#assignment-unittypes').select2({ placeholder: 'Any unit type', allowClear: true });
                 $('#assignment-personnelroles').select2({ placeholder: 'Any personnel', allowClear: true });
+                $('.assignment-unittypes-inline').select2({ placeholder: 'Any unit type', allowClear: true, width: '100%' });
+                $('.assignment-personnelroles-inline').select2({ placeholder: 'Any personnel', allowClear: true, width: '100%' });
 
                 // Continue numbering after any server-rendered lane rows (Edit page).
                 newcommand.assignmentCount = parseInt($('#assignments').data('next-index'), 10) || 0;
@@ -35,39 +37,44 @@ var resgrid;
                 var index = newcommand.assignmentCount++;
                 var description = $('#description-text').val();
                 var laneType = $('#assignment-lanetype').val() || '0';
-                var laneTypeName = $('#assignment-lanetype option:selected').text();
                 const forceRequirements = $('#forceRequirements').is(':checked') ? 'true' : 'false';
 
                 const unitTypeIds = $('#assignment-unittypes').val() || [];
-                const unitTypeNames = $('#assignment-unittypes option:selected').map(function () { return $(this).text(); }).get();
                 const roleIds = $('#assignment-personnelroles').val() || [];
-                const roleNames = $('#assignment-personnelroles option:selected').map(function () { return $(this).text(); }).get();
 
                 var row = $('<tr></tr>');
 
-                var nameCell = $('<td style="max-width: 215px;"></td>').text(name);
+                var nameCell = $('<td style="max-width: 215px;"></td>');
                 nameCell.append($('<input type="hidden">').attr('name', 'assignmentId_' + index).val('0'));
-                nameCell.append($('<input type="hidden">').attr('name', 'assignmentName_' + index).val(name));
+                nameCell.append($('<input type="text" class="form-control" aria-label="Lane name">').attr('name', 'assignmentName_' + index).val(name));
 
-                var laneCell = $('<td></td>').text(laneTypeName);
-                laneCell.append($('<input type="hidden">').attr('name', 'assignmentLaneType_' + index).val(laneType));
+                var laneCell = $('<td></td>');
+                var laneSelect = $('#assignment-lanetype').clone().removeAttr('id').attr({
+                    name: 'assignmentLaneType_' + index,
+                    'aria-label': 'Lane type'
+                }).val(laneType);
+                laneCell.append(laneSelect);
 
-                var descriptionCell = $('<td></td>').text(description);
-                descriptionCell.append($('<input type="hidden">').attr('name', 'assignmentDescription_' + index).val(description));
+                var descriptionCell = $('<td></td>');
+                descriptionCell.append($('<textarea class="form-control" rows="2" aria-label="Lane description"></textarea>')
+                    .attr('name', 'assignmentDescription_' + index).val(description));
 
                 const requirementsCell = $('<td></td>');
-                if (unitTypeNames.length > 0) {
-                    requirementsCell.append($('<div></div>').append($('<strong></strong>').text('Units: ')).append(document.createTextNode(unitTypeNames.join(', '))));
-                }
-                if (roleNames.length > 0) {
-                    requirementsCell.append($('<div></div>').append($('<strong></strong>').text('Roles: ')).append(document.createTextNode(roleNames.join(', '))));
-                }
-                if (forceRequirements === 'true') {
-                    requirementsCell.append($('<div></div>').append($('<span class="label label-warning">Enforced</span>')));
-                }
-                requirementsCell.append($('<input type="hidden">').attr('name', 'assignmentUnitTypes_' + index).val(unitTypeIds.join(',')));
-                requirementsCell.append($('<input type="hidden">').attr('name', 'assignmentRoles_' + index).val(roleIds.join(',')));
-                requirementsCell.append($('<input type="hidden">').attr('name', 'assignmentLock_' + index).val(forceRequirements));
+                var unitTypeSelect = $('<select class="form-control assignment-unittypes-inline" multiple="multiple"></select>').attr({
+                    name: 'assignmentUnitTypes_' + index,
+                    'aria-label': 'Required unit types'
+                }).append($('#assignment-unittypes option').clone().removeAttr('data-select2-id')).val(unitTypeIds);
+                var roleSelect = $('<select class="form-control assignment-personnelroles-inline" multiple="multiple"></select>').attr({
+                    name: 'assignmentRoles_' + index,
+                    'aria-label': 'Required personnel roles'
+                }).append($('#assignment-personnelroles option').clone().removeAttr('data-select2-id')).css('margin-top', '5px').val(roleIds);
+                var enforceContainer = $('<div style="margin-top:5px;"></div>');
+                enforceContainer.append($('<input type="hidden">').attr('name', 'assignmentLock_' + index).val('false'));
+                var enforceLabel = $('<label style="font-weight:normal; margin:0;"></label>');
+                enforceLabel.append($('<input type="checkbox" value="true">').attr('name', 'assignmentLock_' + index).prop('checked', forceRequirements === 'true'));
+                enforceLabel.append(document.createTextNode(' Enforce requirements'));
+                enforceContainer.append(enforceLabel);
+                requirementsCell.append(unitTypeSelect).append(roleSelect).append(enforceContainer);
 
                 var actionCell = $('<td style="text-align:center;"></td>');
                 actionCell.append($('<a class="tip-top" data-original-title="Remove this lane"><i class="fa fa-minus" style="color: red;"></i></a>').on('click', function () {
@@ -76,6 +83,8 @@ var resgrid;
 
                 row.append(nameCell).append(laneCell).append(descriptionCell).append(requirementsCell).append(actionCell);
                 $('#assignments tbody').first().append(row);
+                unitTypeSelect.select2({ placeholder: 'Any unit type', allowClear: true, width: '100%' });
+                roleSelect.select2({ placeholder: 'Any personnel', allowClear: true, width: '100%' });
             }
             newcommand.addAssignment = addAssignment;
         })(newcommand = commands.newcommand || (commands.newcommand = {}));

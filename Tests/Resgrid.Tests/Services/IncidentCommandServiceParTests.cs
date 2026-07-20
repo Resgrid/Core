@@ -43,6 +43,9 @@ namespace Resgrid.Tests.Services
 		private Mock<ICoreEventService> _coreEventService;
 		private Mock<IUnitsService> _unitsService;
 		private Mock<IPersonnelRolesService> _personnelRolesService;
+		private Mock<IIncidentNoteRepository> _noteRepo;
+		private Mock<IIncidentAttachmentRepository> _attachmentRepo;
+		private Mock<IIncidentWeatherProvider> _weatherProvider;
 		private IncidentCommandService _service;
 
 		[SetUp]
@@ -65,6 +68,9 @@ namespace Resgrid.Tests.Services
 			_coreEventService = new Mock<ICoreEventService>();
 			_unitsService = new Mock<IUnitsService>();
 			_personnelRolesService = new Mock<IPersonnelRolesService>();
+			_noteRepo = new Mock<IIncidentNoteRepository>();
+			_attachmentRepo = new Mock<IIncidentAttachmentRepository>();
+			_weatherProvider = new Mock<IIncidentWeatherProvider>();
 
 			// Timeline entries are append-only inserts; echo back the entry so WriteLogAsync resolves a non-null result.
 			_logRepo.Setup(x => x.InsertAsync(It.IsAny<CommandLogEntry>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
@@ -74,7 +80,7 @@ namespace Resgrid.Tests.Services
 				_objectiveRepo.Object, _timerRepo.Object, _annotationRepo.Object, _logRepo.Object, _transferRepo.Object,
 				_commandsService.Object, _callsService.Object, _checkInTimerService.Object, _voiceService.Object,
 				_roleRepo.Object, _eventAggregator.Object, _coreEventService.Object,
-				_unitsService.Object, _personnelRolesService.Object);
+				_unitsService.Object, _personnelRolesService.Object, _noteRepo.Object, _attachmentRepo.Object, _weatherProvider.Object);
 		}
 
 		private void ArrangeCall(bool checkInTimersEnabled = true, int departmentId = Dept)

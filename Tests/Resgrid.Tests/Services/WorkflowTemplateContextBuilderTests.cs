@@ -207,6 +207,37 @@ namespace Resgrid.Tests.Services
 		}
 
 		[TestFixture]
+		public class when_building_incident_command_variables : with_the_context_builder
+		{
+			[Test]
+			public async Task PublicIncidentNoteAdded_ShouldExposeShareableStatusFields()
+			{
+				// Arrange / Act
+				var ctx = await BuildContext(WorkflowTriggerEventType.PublicIncidentNoteAdded, new IncidentNoteAddedEvent
+				{
+					DepartmentId = 1,
+					CallId = 1001,
+					IncidentCommandId = "ic-1",
+					IncidentNoteId = "note-1",
+					Visibility = (int)IncidentContentVisibility.Public,
+					NoteType = (int)IncidentNoteType.Containment,
+					Title = "Containment update",
+					Body = "Forward progress stopped.",
+					ContainmentPercent = 40,
+					CreatedByUserId = "user-1"
+				});
+
+				// Assert
+				var incident = (ScriptObject)ctx["incident"];
+				incident["command_id"].Should().Be("ic-1");
+				incident["note_id"].Should().Be("note-1");
+				incident["body"].Should().Be("Forward progress stopped.");
+				incident["containment_percent"].Should().Be(40m);
+				incident["visibility"].Should().Be((int)IncidentContentVisibility.Public);
+			}
+		}
+
+		[TestFixture]
 		public class when_building_group_variables : with_the_context_builder
 		{
 			[Test]

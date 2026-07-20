@@ -6,6 +6,9 @@ using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Services.Filters;
 using Resgrid.Web.Services.Helpers;
+using System;
+using System.IO;
+using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
 using ICModels = Resgrid.Web.Services.Models.v4.IncidentCommand;
@@ -163,6 +166,223 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ResponseHelper.PopulateV4ResponseData(result);
 			return result;
 		}
+
+		/// <summary>Updates the command-post location used by maps and incident weather.</summary>
+		[HttpPut("UpdateCommandPost")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_Update)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageCommand)]
+		public async Task<ActionResult<ICModels.IncidentCommandResult>> UpdateCommandPost([FromBody] ICModels.UpdateCommandPostInput input)
+		{
+			if (input == null || string.IsNullOrWhiteSpace(input.IncidentCommandId))
+				return BadRequest();
+
+			try
+			{
+				var command = await _incidentCommandService.UpdateCommandPostAsync(DepartmentId, input.IncidentCommandId, input.Latitude, input.Longitude, UserId, CancellationToken.None);
+				var result = new ICModels.IncidentCommandResult
+				{
+					Data = command,
+					PageSize = command == null ? 0 : 1,
+					Status = command == null ? ResponseHelper.NotFound : ResponseHelper.Success
+				};
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
+			catch (ArgumentException ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
+
+		#region Notes and documents
+
+		/// <summary>Adds an internal or public operational status note to the incident.</summary>
+		[HttpPost("AddNote")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_Update)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageNotes)]
+		public async Task<ActionResult<ICModels.IncidentNoteResult>> AddNote([FromBody] ICModels.AddIncidentNoteInput input)
+		{
+			if (input == null || string.IsNullOrWhiteSpace(input.IncidentCommandId) || string.IsNullOrWhiteSpace(input.Body))
+				return BadRequest();
+
+			if (input.Visibility == (int)IncidentContentVisibility.Public && !await HasCapabilityAsync(input.IncidentCommandId, IncidentCapabilities.ManagePublicInformation))
+				return Forbid();
+
+			try
+			{
+				var note = await _incidentCommandService.AddNoteAsync(new IncidentNote
+				{
+					IncidentCommandId = input.IncidentCommandId,
+					DepartmentId = DepartmentId,
+					NoteType = input.NoteType,
+					Visibility = input.Visibility,
+					Title = input.Title,
+					Body = input.Body,
+					ContainmentPercent = input.ContainmentPercent
+				}, UserId, CancellationToken.None);
+
+				var result = new ICModels.IncidentNoteResult
+				{
+					Data = note,
+					PageSize = note == null ? 0 : 1,
+					Status = note == null ? ResponseHelper.NotFound : ResponseHelper.Created
+				};
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
+			catch (ArgumentException ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
+
+		[HttpGet("GetNotes/{callId}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		public async Task<ActionResult<ICModels.IncidentNotesResult>> GetNotes(int callId)
+		{
+			var notes = await _incidentCommandService.GetNotesForCallAsync(DepartmentId, callId);
+			var result = new ICModels.IncidentNotesResult { Data = notes, PageSize = notes.Count, Status = ResponseHelper.Success };
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		[HttpDelete("RemoveNote/{incidentNoteId}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_Update)]
+		public async Task<ActionResult<ICModels.IncidentCommandActionResult>> RemoveNote(string incidentNoteId)
+		{
+			var removed = await _incidentCommandService.RemoveNoteAsync(DepartmentId, incidentNoteId, UserId, CancellationToken.None);
+			var result = new ICModels.IncidentCommandActionResult { Data = removed, Status = removed ? ResponseHelper.Success : ResponseHelper.NotFound };
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>Uploads an incident-level internal or public file using multipart/form-data.</summary>
+		[HttpPost("AddAttachment")]
+		[Consumes("multipart/form-data")]
+		[RequestSizeLimit(26_214_400)]
+		[RequestFormLimits(MultipartBodyLengthLimit = 26_214_400)]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_Update)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageDocuments)]
+		public async Task<ActionResult<ICModels.IncidentAttachmentResult>> AddAttachment([FromForm] ICModels.AddIncidentAttachmentInput input, CancellationToken cancellationToken)
+		{
+			if (input == null || string.IsNullOrWhiteSpace(input.IncidentCommandId) || input.File == null || input.File.Length == 0)
+				return BadRequest();
+
+			if (input.Visibility == (int)IncidentContentVisibility.Public && !await HasCapabilityAsync(input.IncidentCommandId, IncidentCapabilities.ManagePublicInformation))
+				return Forbid();
+
+			try
+			{
+				await using var stream = new MemoryStream();
+				await input.File.CopyToAsync(stream, cancellationToken);
+				var attachment = await _incidentCommandService.AddAttachmentAsync(new IncidentAttachment
+				{
+					IncidentCommandId = input.IncidentCommandId,
+					DepartmentId = DepartmentId,
+					Visibility = input.Visibility,
+					FileName = input.File.FileName,
+					ContentType = input.File.ContentType,
+					Description = input.Description,
+					Data = stream.ToArray()
+				}, UserId, cancellationToken);
+
+				var result = new ICModels.IncidentAttachmentResult
+				{
+					Data = attachment,
+					PageSize = attachment == null ? 0 : 1,
+					Status = attachment == null ? ResponseHelper.NotFound : ResponseHelper.Created
+				};
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
+			catch (ArgumentException ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
+
+		[HttpGet("GetAttachments/{callId}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		public async Task<ActionResult<ICModels.IncidentAttachmentsResult>> GetAttachments(int callId)
+		{
+			var attachments = await _incidentCommandService.GetAttachmentsForCallAsync(DepartmentId, callId);
+			var result = new ICModels.IncidentAttachmentsResult { Data = attachments, PageSize = attachments.Count, Status = ResponseHelper.Success };
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		[HttpGet("DownloadAttachment/{incidentAttachmentId}")]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		public async Task<IActionResult> DownloadAttachment(string incidentAttachmentId)
+		{
+			var attachment = await _incidentCommandService.GetAttachmentAsync(DepartmentId, incidentAttachmentId);
+			if (attachment?.Data == null)
+				return NotFound();
+
+			return File(attachment.Data, attachment.ContentType ?? MediaTypeNames.Application.Octet, attachment.FileName);
+		}
+
+		[HttpDelete("RemoveAttachment/{incidentAttachmentId}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_Update)]
+		public async Task<ActionResult<ICModels.IncidentCommandActionResult>> RemoveAttachment(string incidentAttachmentId)
+		{
+			var removed = await _incidentCommandService.RemoveAttachmentAsync(DepartmentId, incidentAttachmentId, UserId, CancellationToken.None);
+			var result = new ICModels.IncidentCommandActionResult { Data = removed, Status = removed ? ResponseHelper.Success : ResponseHelper.NotFound };
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		#endregion Notes and documents
+
+		#region Public sharing and weather
+
+		[HttpPost("EnablePublicSharing/{incidentCommandId}")]
+		[Authorize(Policy = ResgridResources.Command_Update)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManagePublicInformation)]
+		public async Task<ActionResult<ICModels.IncidentCommandResult>> EnablePublicSharing(string incidentCommandId)
+		{
+			var command = await _incidentCommandService.EnablePublicSharingAsync(DepartmentId, incidentCommandId, UserId, CancellationToken.None);
+			var result = new ICModels.IncidentCommandResult { Data = command, PageSize = command == null ? 0 : 1, Status = command == null ? ResponseHelper.NotFound : ResponseHelper.Success };
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		[HttpPost("DisablePublicSharing/{incidentCommandId}")]
+		[Authorize(Policy = ResgridResources.Command_Update)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManagePublicInformation)]
+		public async Task<ActionResult<ICModels.IncidentCommandResult>> DisablePublicSharing(string incidentCommandId)
+		{
+			var command = await _incidentCommandService.DisablePublicSharingAsync(DepartmentId, incidentCommandId, UserId, CancellationToken.None);
+			var result = new ICModels.IncidentCommandResult { Data = command, PageSize = command == null ? 0 : 1, Status = command == null ? ResponseHelper.NotFound : ResponseHelper.Success };
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		[HttpGet("GetWeather/{callId}")]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		public async Task<ActionResult<ICModels.IncidentWeatherResult>> GetWeather(int callId, CancellationToken cancellationToken)
+		{
+			try
+			{
+				var weather = await _incidentCommandService.GetWeatherForIncidentAsync(DepartmentId, callId, cancellationToken);
+				var result = new ICModels.IncidentWeatherResult { Data = weather, PageSize = weather == null ? 0 : 1, Status = weather == null ? ResponseHelper.NotFound : ResponseHelper.Success };
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
+
+		#endregion Public sharing and weather
 
 		/// <summary>Gets the personnel accountability / PAR status (Green/Warning/Critical) for the incident.</summary>
 		[HttpGet("GetAccountability/{callId}")]
@@ -523,5 +743,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		#endregion Timeline
+
+		private async Task<bool> HasCapabilityAsync(string incidentCommandId, IncidentCapabilities required)
+		{
+			var command = await _incidentCommandService.GetCommandByIdAsync(incidentCommandId);
+			if (command == null || command.DepartmentId != DepartmentId)
+				return false;
+
+			var capabilities = await _incidentCommandService.GetCapabilitiesForUserAsync(DepartmentId, command.CallId, UserId);
+			return (capabilities & required) == required;
+		}
 	}
 }

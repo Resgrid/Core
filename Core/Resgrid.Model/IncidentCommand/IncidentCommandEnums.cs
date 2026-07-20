@@ -113,6 +113,14 @@ namespace Resgrid.Model
 		/// PAR sweep (<c>IncidentCommandService.EvaluateCriticalParAsync</c>) keyed on the subject user, and
 		/// doubles as the dedup marker so the alert only re-fires after the member checks in and lapses again.
 		/// </summary>
-		ParCritical = 22
+		ParCritical = 22,
+		IncidentNoteAdded = 23,
+		IncidentNoteRemoved = 24,
+		IncidentAttachmentAdded = 25,
+		IncidentAttachmentRemoved = 26,
+		ActionPlanUpdated = 27,
+		CommandPostUpdated = 28,
+		PublicSharingEnabled = 29,
+		PublicSharingDisabled = 30
 	}
 }

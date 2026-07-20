@@ -117,6 +117,8 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<IncidentMapAnnotationRepository>().As<IIncidentMapAnnotationRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CommandLogEntryRepository>().As<ICommandLogEntryRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CommandTransferRepository>().As<ICommandTransferRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<IncidentNoteRepository>().As<IIncidentNoteRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<IncidentAttachmentRepository>().As<IIncidentAttachmentRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<IncidentAdHocUnitRepository>().As<IIncidentAdHocUnitRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<IncidentAdHocPersonnelRepository>().As<IIncidentAdHocPersonnelRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<IncidentRoleAssignmentRepository>().As<IIncidentRoleAssignmentRepository>().InstancePerLifetimeScope();

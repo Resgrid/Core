@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
@@ -303,6 +304,30 @@ namespace Resgrid.Services
 					if (grp != null) MapGroupVariables(scriptObject, grp, "group");
 					break;
 				}
+				case WorkflowTriggerEventType.CommandEstablished:
+				case WorkflowTriggerEventType.CommandTransferred:
+				case WorkflowTriggerEventType.IncidentClosed:
+				case WorkflowTriggerEventType.ResourceAssigned:
+				case WorkflowTriggerEventType.ResourceReleased:
+				case WorkflowTriggerEventType.ObjectiveCompleted:
+				case WorkflowTriggerEventType.CriticalParDetected:
+				case WorkflowTriggerEventType.IncidentRoleAssigned:
+				case WorkflowTriggerEventType.AdHocResourceCreated:
+				case WorkflowTriggerEventType.IncidentChannelOpened:
+				case WorkflowTriggerEventType.PublicIncidentNoteAdded:
+				case WorkflowTriggerEventType.InternalIncidentNoteAdded:
+				case WorkflowTriggerEventType.PublicIncidentDocumentAdded:
+				case WorkflowTriggerEventType.InternalIncidentDocumentAdded:
+				case WorkflowTriggerEventType.IncidentNoteRemoved:
+				case WorkflowTriggerEventType.IncidentDocumentRemoved:
+				case WorkflowTriggerEventType.IncidentActionPlanUpdated:
+				case WorkflowTriggerEventType.IncidentCommandPostUpdated:
+				case WorkflowTriggerEventType.IncidentPublicSharingEnabled:
+				case WorkflowTriggerEventType.IncidentPublicSharingDisabled:
+				{
+					triggeringUserId = MapIncidentVariables(scriptObject, eventPayloadJson);
+					break;
+				}
 			}
 
 			await AddCommonUserVariablesAsync(scriptObject, triggeringUserId);
@@ -377,6 +402,62 @@ namespace Resgrid.Services
 			ts["time"] = deptNow.ToString("HH:mm:ss");
 			ts["day_of_week"] = deptNow.DayOfWeek.ToString();
 			obj["timestamp"] = ts;
+		}
+
+		private static string MapIncidentVariables(ScriptObject obj, string eventPayloadJson)
+		{
+			JObject payload;
+			try
+			{
+				payload = JObject.Parse(eventPayloadJson ?? "{}");
+			}
+			catch (JsonException)
+			{
+				payload = new JObject();
+			}
+
+			JToken Find(params string[] names)
+			{
+				foreach (var name in names)
+				{
+					if (payload.TryGetValue(name, StringComparison.OrdinalIgnoreCase, out var value))
+						return value;
+				}
+				return null;
+			}
+
+			string Text(params string[] names) => Find(names)?.Type == JTokenType.Null ? null : Find(names)?.ToString();
+			object Scalar(params string[] names)
+			{
+				var token = Find(names);
+				return token == null || token.Type == JTokenType.Null ? null : ((JValue)token).Value;
+			}
+
+			var incident = new ScriptObject();
+			incident["command_id"] = Text("IncidentCommandId");
+			incident["call_id"] = Scalar("CallId") ?? 0;
+			incident["department_id"] = Scalar("DepartmentId") ?? 0;
+			incident["user_id"] = Text("EstablishedByUserId", "ToUserId", "UserId", "CreatedByUserId", "UploadedByUserId", "UpdatedByUserId", "RemovedByUserId");
+			incident["name"] = Text("Name");
+			incident["visibility"] = Scalar("Visibility") ?? 0;
+			incident["note_id"] = Text("IncidentNoteId");
+			incident["note_type"] = Scalar("NoteType") ?? 0;
+			incident["title"] = Text("Title");
+			incident["body"] = Text("Body");
+			incident["containment_percent"] = Scalar("ContainmentPercent");
+			incident["attachment_id"] = Text("IncidentAttachmentId");
+			incident["file_name"] = Text("FileName");
+			incident["content_type"] = Text("ContentType");
+			incident["content_length"] = Scalar("ContentLength") ?? 0L;
+			incident["sha256_hash"] = Text("Sha256Hash");
+			incident["description"] = Text("Description");
+			incident["action_plan"] = Text("ActionPlan");
+			incident["latitude"] = Text("Latitude");
+			incident["longitude"] = Text("Longitude");
+			incident["enabled"] = Scalar("Enabled") ?? false;
+			obj["incident"] = incident;
+
+			return incident["user_id"]?.ToString();
 		}
 
 		private async Task AddCommonUserVariablesAsync(ScriptObject obj, string userId)

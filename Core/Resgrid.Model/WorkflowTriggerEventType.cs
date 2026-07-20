@@ -41,7 +41,17 @@
 		IncidentRoleAssigned = 34,
 		AdHocResourceCreated = 35,
 		IncidentChannelOpened = 36,
-		IncidentClosed = 37
+		IncidentClosed = 37,
+		PublicIncidentNoteAdded = 38,
+		InternalIncidentNoteAdded = 39,
+		PublicIncidentDocumentAdded = 40,
+		InternalIncidentDocumentAdded = 41,
+		IncidentNoteRemoved = 42,
+		IncidentDocumentRemoved = 43,
+		IncidentActionPlanUpdated = 44,
+		IncidentCommandPostUpdated = 45,
+		IncidentPublicSharingEnabled = 46,
+		IncidentPublicSharingDisabled = 47
 	}
 }
 

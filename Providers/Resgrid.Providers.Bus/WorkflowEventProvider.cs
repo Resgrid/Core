@@ -106,6 +106,16 @@ namespace Resgrid.Providers.Bus
 			_eventAggregator.AddListener<AdHocResourceCreatedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.AdHocResourceCreated, e));
 			_eventAggregator.AddListener<IncidentChannelOpenedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.IncidentChannelOpened, e));
 			_eventAggregator.AddListener<CriticalParDetectedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.CriticalParDetected, e));
+			_eventAggregator.AddListener<IncidentNoteAddedEvent>(e => HandleEvent(e.DepartmentId,
+				e.Visibility == (int)IncidentContentVisibility.Public ? WorkflowTriggerEventType.PublicIncidentNoteAdded : WorkflowTriggerEventType.InternalIncidentNoteAdded, e));
+			_eventAggregator.AddListener<IncidentAttachmentAddedEvent>(e => HandleEvent(e.DepartmentId,
+				e.Visibility == (int)IncidentContentVisibility.Public ? WorkflowTriggerEventType.PublicIncidentDocumentAdded : WorkflowTriggerEventType.InternalIncidentDocumentAdded, e));
+			_eventAggregator.AddListener<IncidentNoteRemovedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.IncidentNoteRemoved, e));
+			_eventAggregator.AddListener<IncidentAttachmentRemovedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.IncidentDocumentRemoved, e));
+			_eventAggregator.AddListener<IncidentActionPlanUpdatedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.IncidentActionPlanUpdated, e));
+			_eventAggregator.AddListener<IncidentCommandPostUpdatedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.IncidentCommandPostUpdated, e));
+			_eventAggregator.AddListener<IncidentPublicSharingChangedEvent>(e => HandleEvent(e.DepartmentId,
+				e.Enabled ? WorkflowTriggerEventType.IncidentPublicSharingEnabled : WorkflowTriggerEventType.IncidentPublicSharingDisabled, e));
 		}
 
 		private static async void HandleEvent(int departmentId, WorkflowTriggerEventType eventType, object eventObj)

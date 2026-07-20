@@ -40,6 +40,12 @@ namespace Resgrid.Model
 
 		public DateTime? ClosedOn { get; set; }
 
+		/// <summary>Whether the token-scoped public status feed is currently available.</summary>
+		public bool PublicShareEnabled { get; set; }
+
+		/// <summary>Random, rotatable token used by the anonymous public incident feed; never a numeric CallId.</summary>
+		public string PublicShareToken { get; set; }
+
 		/// <summary>Change cursor for offline delta sync + last-write-wins; stamped on every write.</summary>
 		public DateTime? ModifiedOn { get; set; }
 

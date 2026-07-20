@@ -75,43 +75,44 @@
 						@for (int i = 0; i < assignments.Count; i++)
 						{
 							var assignment = assignments[i];
-							var laneTypeName = Enum.IsDefined(typeof(CommandNodeType), assignment.LaneType)
-								? ((CommandNodeType)assignment.LaneType).ToString()
-								: CommandNodeType.Division.ToString();
 							var requiredUnitTypeIds = assignment.RequiredUnitTypes?.Select(x => x.UnitTypeId).ToList() ?? new System.Collections.Generic.List<int>();
 							var requiredRoleIds = assignment.RequiredRoles?.Select(x => x.PersonnelRoleId).ToList() ?? new System.Collections.Generic.List<int>();
-							var requiredUnitTypeNames = Model.UnitTypes.Where(x => requiredUnitTypeIds.Contains(x.UnitTypeId)).Select(x => x.Type).ToList();
-							var requiredRoleNames = Model.PersonnelRoles.Where(x => requiredRoleIds.Contains(x.PersonnelRoleId)).Select(x => x.Name).ToList();
 							<tr>
 								<td style="max-width: 215px;">
-									@assignment.Name
 									<input type="hidden" name="assignmentId_@i" value="@assignment.CommandDefinitionRoleId" />
-									<input type="hidden" name="assignmentName_@i" value="@assignment.Name" />
+									<input type="text" class="form-control" name="assignmentName_@i" value="@assignment.Name" aria-label="Lane name" />
 								</td>
 								<td>
-									@laneTypeName
-									<input type="hidden" name="assignmentLaneType_@i" value="@assignment.LaneType" />
+									<select class="form-control" name="assignmentLaneType_@i" aria-label="Lane type">
+										@foreach (CommandNodeType nodeType in Enum.GetValues(typeof(CommandNodeType)))
+										{
+											<option value="@((int)nodeType)" selected="@((int)nodeType == assignment.LaneType ? "selected" : null)">@nodeType.ToString()</option>
+										}
+									</select>
 								</td>
 								<td>
-									@assignment.Description
-									<input type="hidden" name="assignmentDescription_@i" value="@assignment.Description" />
+									<textarea class="form-control" name="assignmentDescription_@i" rows="2" aria-label="Lane description">@assignment.Description</textarea>
 								</td>
 								<td>
-									@if (requiredUnitTypeNames.Count > 0)
-									{
-										<div><strong>Units:</strong> @string.Join(", ", requiredUnitTypeNames)</div>
-									}
-									@if (requiredRoleNames.Count > 0)
-									{
-										<div><strong>Roles:</strong> @string.Join(", ", requiredRoleNames)</div>
-									}
-									@if (assignment.ForceRequirements)
-									{
-										<div><span class="label label-warning">Enforced</span></div>
-									}
-									<input type="hidden" name="assignmentUnitTypes_@i" value="@string.Join(",", requiredUnitTypeIds)" />
-									<input type="hidden" name="assignmentRoles_@i" value="@string.Join(",", requiredRoleIds)" />
-									<input type="hidden" name="assignmentLock_@i" value="@assignment.ForceRequirements.ToString().ToLower()" />
+									<select class="form-control assignment-unittypes-inline" name="assignmentUnitTypes_@i" multiple="multiple" aria-label="Required unit types">
+										@foreach (var unitType in Model.UnitTypes)
+										{
+											<option value="@unitType.UnitTypeId" selected="@(requiredUnitTypeIds.Contains(unitType.UnitTypeId) ? "selected" : null)">@unitType.Type</option>
+										}
+									</select>
+									<select class="form-control assignment-personnelroles-inline" name="assignmentRoles_@i" multiple="multiple" aria-label="Required personnel roles" style="margin-top:5px;">
+										@foreach (var role in Model.PersonnelRoles)
+										{
+											<option value="@role.PersonnelRoleId" selected="@(requiredRoleIds.Contains(role.PersonnelRoleId) ? "selected" : null)">@role.Name</option>
+										}
+									</select>
+									<div style="margin-top:5px;">
+										<input type="hidden" name="assignmentLock_@i" value="false" />
+										<label style="font-weight:normal; margin:0;">
+											<input type="checkbox" name="assignmentLock_@i" value="true" checked="@(assignment.ForceRequirements ? "checked" : null)" />
+											Enforce requirements
+										</label>
+									</div>
 								</td>
 								<td style="text-align:center;"><a onclick="$(this).parent().parent().remove();" class="tip-top" data-original-title="Remove this lane"><i class="fa fa-minus" style="color: red;"></i></a></td>
 							</tr>

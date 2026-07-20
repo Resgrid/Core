@@ -24,5 +24,11 @@ namespace Resgrid.Model
 
 		/// <summary>Active functional command-role assignments for the incident (§3.11).</summary>
 		public List<IncidentRoleAssignment> Roles { get; set; } = new List<IncidentRoleAssignment>();
+
+		/// <summary>Active internal and public operational status notes.</summary>
+		public List<IncidentNote> Notes { get; set; } = new List<IncidentNote>();
+
+		/// <summary>Active attachment metadata; binary content is downloaded separately.</summary>
+		public List<IncidentAttachment> Attachments { get; set; } = new List<IncidentAttachment>();
 	}
 }

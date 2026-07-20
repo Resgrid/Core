@@ -126,8 +126,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!ModelState.IsValid) return BadRequest(ModelState);
 			if (!await IsAdminAsync()) return Forbid();
 
-			if (!Enum.TryParse<SsoProviderType>(input.ProviderType, ignoreCase: true, out var providerType))
+			if (!Enum.TryParse<SsoProviderType>(input.ProviderType, ignoreCase: true, out var providerType) || !Enum.IsDefined(providerType))
 				return BadRequest(new { error = "Invalid providerType. Must be 'saml2' or 'oidc'." });
+
+			var validationError = ValidateSsoConfiguration(input, providerType, existing: null);
+			if (validationError != null)
+				return BadRequest(new { error = validationError });
 
 			// Enforce one config per provider type per department
 			var existing = await _ssoService.GetSsoConfigForDepartmentAsync(DepartmentId, providerType, cancellationToken);
@@ -174,6 +178,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 				ResponseHelper.PopulateV4ResponseNotFound(notFound);
 				return NotFound(notFound);
 			}
+
+			if (!Enum.TryParse<SsoProviderType>(input.ProviderType, ignoreCase: true, out var providerType) ||
+				!Enum.IsDefined(providerType) || providerType != (SsoProviderType)config.SsoProviderType)
+				return BadRequest(new { error = "providerType must match the existing SSO configuration." });
+
+			var validationError = ValidateSsoConfiguration(input, providerType, config);
+			if (validationError != null)
+				return BadRequest(new { error = validationError });
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
@@ -233,7 +245,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (!await IsAdminAsync()) return Forbid();
 
-			if (!Enum.TryParse<SsoProviderType>(providerType, ignoreCase: true, out var provider))
+			if (!Enum.TryParse<SsoProviderType>(providerType, ignoreCase: true, out var provider) || !Enum.IsDefined(provider))
 				return BadRequest(new { error = "Invalid providerType. Must be 'saml2' or 'oidc'." });
 
 			var success = await _ssoService.DeleteSsoConfigAsync(DepartmentId, provider, cancellationToken);
@@ -272,7 +284,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (!await IsAdminAsync()) return Forbid();
 
-			if (!Enum.TryParse<SsoProviderType>(providerType, ignoreCase: true, out var provider))
+			if (!Enum.TryParse<SsoProviderType>(providerType, ignoreCase: true, out var provider) || !Enum.IsDefined(provider))
 				return BadRequest(new { error = "Invalid providerType. Must be 'saml2' or 'oidc'." });
 
 			var config = await _ssoService.GetSsoConfigForDepartmentAsync(DepartmentId, provider, cancellationToken);
@@ -411,7 +423,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (!await IsAdminAsync()) return Forbid();
 
-			if (!Enum.TryParse<SsoProviderType>(providerType, ignoreCase: true, out var provider))
+			if (!Enum.TryParse<SsoProviderType>(providerType, ignoreCase: true, out var provider) || !Enum.IsDefined(provider))
 				return BadRequest(new { error = "Invalid providerType." });
 
 			var config = await _ssoService.GetSsoConfigForDepartmentAsync(DepartmentId, provider, cancellationToken);
@@ -438,6 +450,34 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			return department != null && department.IsUserAnAdmin(UserId);
+		}
+
+		private static string ValidateSsoConfiguration(SaveSsoConfigInput input, SsoProviderType providerType, DepartmentSsoConfig existing)
+		{
+			if (providerType == SsoProviderType.Oidc)
+			{
+				var clientId = input.ClientId ?? existing?.ClientId;
+				var authorityValue = input.Authority ?? existing?.Authority;
+				if (string.IsNullOrWhiteSpace(clientId))
+					return "OIDC clientId is required.";
+
+				if (!Uri.TryCreate(authorityValue, UriKind.Absolute, out var authority) || authority.Scheme != Uri.UriSchemeHttps)
+					return "OIDC authority must be a valid HTTPS URL.";
+
+				return null;
+			}
+
+			if (string.IsNullOrWhiteSpace(input.EntityId ?? existing?.EntityId))
+				return "SAML entityId is required.";
+
+			var assertionConsumerServiceUrl = input.AssertionConsumerServiceUrl ?? existing?.AssertionConsumerServiceUrl;
+			if (!Uri.TryCreate(assertionConsumerServiceUrl, UriKind.Absolute, out var acsUri) || acsUri.Scheme != Uri.UriSchemeHttps)
+				return "SAML assertionConsumerServiceUrl must be a valid HTTPS URL.";
+
+			if (string.IsNullOrWhiteSpace(input.IdpCertificate) && string.IsNullOrWhiteSpace(existing?.EncryptedIdpCertificate))
+				return "An IdP signing certificate is required to validate SAML assertions.";
+
+			return null;
 		}
 
 		private static DepartmentSsoConfig BuildConfigFromInput(

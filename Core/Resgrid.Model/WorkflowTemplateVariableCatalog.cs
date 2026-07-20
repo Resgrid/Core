@@ -102,6 +102,16 @@ namespace Resgrid.Model
 				case WorkflowTriggerEventType.IncidentRoleAssigned:
 				case WorkflowTriggerEventType.AdHocResourceCreated:
 				case WorkflowTriggerEventType.IncidentChannelOpened:
+				case WorkflowTriggerEventType.PublicIncidentNoteAdded:
+				case WorkflowTriggerEventType.InternalIncidentNoteAdded:
+				case WorkflowTriggerEventType.PublicIncidentDocumentAdded:
+				case WorkflowTriggerEventType.InternalIncidentDocumentAdded:
+				case WorkflowTriggerEventType.IncidentNoteRemoved:
+				case WorkflowTriggerEventType.IncidentDocumentRemoved:
+				case WorkflowTriggerEventType.IncidentActionPlanUpdated:
+				case WorkflowTriggerEventType.IncidentCommandPostUpdated:
+				case WorkflowTriggerEventType.IncidentPublicSharingEnabled:
+				case WorkflowTriggerEventType.IncidentPublicSharingDisabled:
 					list.AddRange(new[]
 					{
 						new TemplateVariableDescriptor("incident.command_id", "Incident command identifier", "string", false),
@@ -109,6 +119,22 @@ namespace Resgrid.Model
 						new TemplateVariableDescriptor("incident.department_id", "Department identifier", "int", false),
 						new TemplateVariableDescriptor("incident.user_id", "User associated with the event (when applicable)", "string", false),
 						new TemplateVariableDescriptor("incident.name", "Name associated with the event (objective/resource/channel)", "string", false),
+						new TemplateVariableDescriptor("incident.visibility", "Content visibility (0=Internal, 1=Public)", "int", false),
+						new TemplateVariableDescriptor("incident.note_id", "Incident note identifier", "string", false),
+						new TemplateVariableDescriptor("incident.note_type", "Operational note type", "int", false),
+						new TemplateVariableDescriptor("incident.title", "Status-note title", "string", false),
+						new TemplateVariableDescriptor("incident.body", "Status-note body", "string", false),
+						new TemplateVariableDescriptor("incident.containment_percent", "Optional containment percentage", "decimal", false),
+						new TemplateVariableDescriptor("incident.attachment_id", "Incident attachment identifier", "string", false),
+						new TemplateVariableDescriptor("incident.file_name", "Attachment file name", "string", false),
+						new TemplateVariableDescriptor("incident.content_type", "Attachment MIME type", "string", false),
+						new TemplateVariableDescriptor("incident.content_length", "Attachment size in bytes", "long", false),
+						new TemplateVariableDescriptor("incident.sha256_hash", "Attachment SHA-256 integrity hash", "string", false),
+						new TemplateVariableDescriptor("incident.description", "Attachment/event description", "string", false),
+						new TemplateVariableDescriptor("incident.action_plan", "Current incident action plan", "string", false),
+						new TemplateVariableDescriptor("incident.latitude", "Command-post latitude", "string", false),
+						new TemplateVariableDescriptor("incident.longitude", "Command-post longitude", "string", false),
+						new TemplateVariableDescriptor("incident.enabled", "Whether public sharing is enabled", "bool", false),
 					});
 					break;
 

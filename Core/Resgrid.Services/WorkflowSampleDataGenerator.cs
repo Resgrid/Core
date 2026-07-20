@@ -416,6 +416,51 @@ namespace Resgrid.Services
 					stt["department_number"] = "SFD1";
 					obj["shift_trade"] = stt;
 					break;
+
+				case WorkflowTriggerEventType.CommandEstablished:
+				case WorkflowTriggerEventType.CommandTransferred:
+				case WorkflowTriggerEventType.IncidentClosed:
+				case WorkflowTriggerEventType.ResourceAssigned:
+				case WorkflowTriggerEventType.ResourceReleased:
+				case WorkflowTriggerEventType.ObjectiveCompleted:
+				case WorkflowTriggerEventType.CriticalParDetected:
+				case WorkflowTriggerEventType.IncidentRoleAssigned:
+				case WorkflowTriggerEventType.AdHocResourceCreated:
+				case WorkflowTriggerEventType.IncidentChannelOpened:
+				case WorkflowTriggerEventType.PublicIncidentNoteAdded:
+				case WorkflowTriggerEventType.InternalIncidentNoteAdded:
+				case WorkflowTriggerEventType.PublicIncidentDocumentAdded:
+				case WorkflowTriggerEventType.InternalIncidentDocumentAdded:
+				case WorkflowTriggerEventType.IncidentNoteRemoved:
+				case WorkflowTriggerEventType.IncidentDocumentRemoved:
+				case WorkflowTriggerEventType.IncidentActionPlanUpdated:
+				case WorkflowTriggerEventType.IncidentCommandPostUpdated:
+				case WorkflowTriggerEventType.IncidentPublicSharingEnabled:
+				case WorkflowTriggerEventType.IncidentPublicSharingDisabled:
+					var incident = new ScriptObject();
+					incident["command_id"] = "f0d7c9bd-c692-4c63-b714-111111111111";
+					incident["call_id"] = 1001;
+					incident["department_id"] = 1;
+					incident["user_id"] = "00000000-0000-0000-0000-000000000001";
+					incident["name"] = "Oak Creek Wildfire";
+					incident["visibility"] = eventType == WorkflowTriggerEventType.PublicIncidentNoteAdded || eventType == WorkflowTriggerEventType.PublicIncidentDocumentAdded ? 1 : 0;
+					incident["note_id"] = "98e7cbdd-b3fa-4725-8332-222222222222";
+					incident["note_type"] = (int)IncidentNoteType.Containment;
+					incident["title"] = "Containment update";
+					incident["body"] = "Fire is 40% contained; forward progress has stopped on the east flank.";
+					incident["containment_percent"] = 40m;
+					incident["attachment_id"] = "35990439-23a1-43b5-a2dd-333333333333";
+					incident["file_name"] = "public-situation-map.pdf";
+					incident["content_type"] = "application/pdf";
+					incident["content_length"] = 284123L;
+					incident["sha256_hash"] = "9f86d081884c7d659a2feaa0c55ad015";
+					incident["description"] = "Current public situation map";
+					incident["action_plan"] = "Protect life, hold the east flank, and maintain evacuation routes.";
+					incident["latitude"] = "39.7817";
+					incident["longitude"] = "-89.6501";
+					incident["enabled"] = eventType == WorkflowTriggerEventType.IncidentPublicSharingEnabled;
+					obj["incident"] = incident;
+					break;
 			}
 		}
 	}

@@ -650,7 +650,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			// Build an encrypted token carrying departmentId:departmentCode so it can
 			// be passed safely over the public internet without exposing either value.
 			var plainToken = $"{department.DepartmentId}:{department.Code}";
-			var encryptedToken = _encryptionService.EncryptForDepartment(plainToken, department.DepartmentId, department.Code);
+			var encryptedToken = _encryptionService.Encrypt(plainToken);
 
 			var apiBase = Config.SystemBehaviorConfig.ResgridApiBaseUrl;
 
@@ -692,16 +692,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			var apiBase = Config.SystemBehaviorConfig.ResgridApiBaseUrl;
+			var configId = Guid.NewGuid().ToString();
+			var plainToken = $"{department.DepartmentId}:{department.Code}";
 
 			var model = new SsoConfigEditView
 			{
 				IsNew = true,
+				DepartmentSsoConfigId = configId,
 				ProviderType = providerType ?? "oidc",
+				EntityId = string.Equals(providerType, "saml2", StringComparison.OrdinalIgnoreCase)
+					? $"{apiBase}{Config.SsoConfig.SamlEntityIdBasePath}{configId}"
+					: null,
 				IsEnabled = true,
 				AllowLocalLogin = true,
 				ProviderTypes = BuildProviderTypeList(providerType ?? "oidc"),
 				RankList = await BuildRankListAsync(null),
-				AcsUrl = $"{apiBase}{Config.SsoConfig.SamlAcsPath}?departmentToken={Uri.EscapeDataString(_encryptionService.EncryptForDepartment($"{department.DepartmentId}:{department.Code}", department.DepartmentId, department.Code))}",
+				AcsUrl = $"{apiBase}{Config.SsoConfig.SamlAcsPath}?departmentToken={Uri.EscapeDataString(_encryptionService.Encrypt(plainToken))}",
 				ApiBaseUrl = apiBase
 			};
 
@@ -717,16 +723,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (!ModelState.IsValid)
 			{
-				model.ProviderTypes = BuildProviderTypeList(model.ProviderType);
-				model.RankList = await BuildRankListAsync(model.DefaultRankId);
+				await PopulateSsoEditViewContextAsync(model);
 				return View("SsoEdit", model);
 			}
 
-			if (!System.Enum.TryParse<SsoProviderType>(model.ProviderType, ignoreCase: true, out var providerType))
+			if (!System.Enum.TryParse<SsoProviderType>(model.ProviderType, ignoreCase: true, out var providerType) || !System.Enum.IsDefined(providerType))
 			{
 				ModelState.AddModelError("ProviderType", "Invalid provider type.");
-				model.ProviderTypes = BuildProviderTypeList(model.ProviderType);
-				model.RankList = await BuildRankListAsync(model.DefaultRankId);
+				await PopulateSsoEditViewContextAsync(model);
+				return View("SsoEdit", model);
+			}
+
+			ValidateSsoProviderConfiguration(model, providerType, hasStoredIdpCertificate: false);
+			if (!ModelState.IsValid)
+			{
+				await PopulateSsoEditViewContextAsync(model);
 				return View("SsoEdit", model);
 			}
 
@@ -734,15 +745,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (existing != null)
 			{
 				ModelState.AddModelError("", $"An SSO configuration for {model.ProviderType.ToUpperInvariant()} already exists. Use Edit to modify it.");
-				model.ProviderTypes = BuildProviderTypeList(model.ProviderType);
-				model.RankList = await BuildRankListAsync(model.DefaultRankId);
+				await PopulateSsoEditViewContextAsync(model);
 				return View("SsoEdit", model);
 			}
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var configId = Guid.TryParse(model.DepartmentSsoConfigId, out var parsedConfigId)
+				? parsedConfigId.ToString()
+				: Guid.NewGuid().ToString();
+			var apiBase = Config.SystemBehaviorConfig.ResgridApiBaseUrl;
+			var encryptedDepartmentToken = _encryptionService.Encrypt($"{department.DepartmentId}:{department.Code}");
 			var config = new DepartmentSsoConfig
 			{
-				DepartmentSsoConfigId = Guid.NewGuid().ToString(),
+				DepartmentSsoConfigId = configId,
 				DepartmentId = DepartmentId,
 				SsoProviderType = (int)providerType,
 				IsEnabled = model.IsEnabled,
@@ -750,8 +765,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 				EncryptedClientSecret = model.ClientSecret,
 				Authority = model.Authority,
 				MetadataUrl = model.MetadataUrl,
-				EntityId = model.EntityId,
-				AssertionConsumerServiceUrl = model.AssertionConsumerServiceUrl,
+				EntityId = providerType == SsoProviderType.Saml2 && string.IsNullOrWhiteSpace(model.EntityId)
+					? $"{apiBase}{Config.SsoConfig.SamlEntityIdBasePath}{configId}"
+					: model.EntityId,
+				AssertionConsumerServiceUrl = providerType == SsoProviderType.Saml2 && string.IsNullOrWhiteSpace(model.AssertionConsumerServiceUrl)
+					? $"{apiBase}{Config.SsoConfig.SamlAcsPath}?departmentToken={Uri.EscapeDataString(encryptedDepartmentToken)}"
+					: model.AssertionConsumerServiceUrl,
 				EncryptedIdpCertificate = model.IdpCertificate,
 				EncryptedSigningCertificate = model.SigningCertificate,
 				AttributeMappingJson = model.AttributeMappingJson,
@@ -805,7 +824,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				HasSigningCertificate = !string.IsNullOrWhiteSpace(config.EncryptedSigningCertificate),
 				ProviderTypes = BuildProviderTypeList(((SsoProviderType)config.SsoProviderType).ToString().ToLowerInvariant()),
 				RankList = await BuildRankListAsync(config.DefaultRankId),
-				AcsUrl = $"{apiBase}{Config.SsoConfig.SamlAcsPath}?departmentToken={Uri.EscapeDataString(_encryptionService.EncryptForDepartment($"{department.DepartmentId}:{department.Code}", department.DepartmentId, department.Code))}",
+				AcsUrl = $"{apiBase}{Config.SsoConfig.SamlAcsPath}?departmentToken={Uri.EscapeDataString(_encryptionService.Encrypt($"{department.DepartmentId}:{department.Code}"))}",
 				ApiBaseUrl = apiBase
 			};
 
@@ -821,8 +840,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (!ModelState.IsValid)
 			{
-				model.ProviderTypes = BuildProviderTypeList(model.ProviderType);
-				model.RankList = await BuildRankListAsync(model.DefaultRankId);
+				await PopulateSsoEditViewContextAsync(model);
 				return View("SsoEdit", model);
 			}
 
@@ -830,6 +848,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var config = configs?.FirstOrDefault(c => c.DepartmentSsoConfigId == model.DepartmentSsoConfigId);
 			if (config == null)
 				return NotFound();
+
+			var providerType = (SsoProviderType)config.SsoProviderType;
+			ValidateSsoProviderConfiguration(model, providerType, !string.IsNullOrWhiteSpace(config.EncryptedIdpCertificate));
+			if (!ModelState.IsValid)
+			{
+				model.HasClientSecret = !string.IsNullOrWhiteSpace(config.EncryptedClientSecret);
+				model.HasIdpCertificate = !string.IsNullOrWhiteSpace(config.EncryptedIdpCertificate);
+				model.HasSigningCertificate = !string.IsNullOrWhiteSpace(config.EncryptedSigningCertificate);
+				await PopulateSsoEditViewContextAsync(model);
+				return View("SsoEdit", model);
+			}
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
@@ -931,7 +960,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var configList = configs?.ToList() ?? new System.Collections.Generic.List<DepartmentSsoConfig>();
 
 			var plainToken = $"{department.DepartmentId}:{department.Code}";
-			var encryptedToken = _encryptionService.EncryptForDepartment(plainToken, department.DepartmentId, department.Code);
+			var encryptedToken = _encryptionService.Encrypt(plainToken);
 			var apiBase = Config.SystemBehaviorConfig.ResgridApiBaseUrl;
 
 			var model = new SsoIndexView
@@ -978,8 +1007,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return NotFound();
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
-			var encryptedToken = _encryptionService.EncryptForDepartment(
-				$"{department.DepartmentId}:{department.Code}", department.DepartmentId, department.Code);
+			var encryptedToken = _encryptionService.Encrypt($"{department.DepartmentId}:{department.Code}");
 
 			var model = new ScimSetupView
 			{
@@ -1024,8 +1052,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			await _ssoService.SaveSsoConfigAsync(config, department.Code, cancellationToken);
 
-			var encryptedToken = _encryptionService.EncryptForDepartment(
-				$"{department.DepartmentId}:{department.Code}", department.DepartmentId, department.Code);
+			var encryptedToken = _encryptionService.Encrypt($"{department.DepartmentId}:{department.Code}");
 
 			var model = new ScimSetupView
 			{
@@ -1150,6 +1177,33 @@ namespace Resgrid.Web.Areas.User.Controllers
 				new { Id = "oidc", Name = "OIDC (OpenID Connect) � Microsoft Entra, Okta, Google, Auth0" },
 				new { Id = "saml2", Name = "SAML 2.0 � Most enterprise / government IdPs" }
 			}, "Id", "Name", selected);
+
+		private void ValidateSsoProviderConfiguration(SsoConfigEditView model, SsoProviderType providerType, bool hasStoredIdpCertificate)
+		{
+			if (providerType == SsoProviderType.Oidc)
+			{
+				if (string.IsNullOrWhiteSpace(model.ClientId))
+					ModelState.AddModelError("ClientId", "OIDC client ID is required.");
+
+				if (!Uri.TryCreate(model.Authority, UriKind.Absolute, out var authority) || authority.Scheme != Uri.UriSchemeHttps)
+					ModelState.AddModelError("Authority", "OIDC authority must be a valid HTTPS URL.");
+
+				return;
+			}
+
+			if (!hasStoredIdpCertificate && string.IsNullOrWhiteSpace(model.IdpCertificate))
+				ModelState.AddModelError("IdpCertificate", "An IdP signing certificate is required to validate SAML assertions.");
+		}
+
+		private async Task PopulateSsoEditViewContextAsync(SsoConfigEditView model)
+		{
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var apiBase = Config.SystemBehaviorConfig.ResgridApiBaseUrl;
+			model.ProviderTypes = BuildProviderTypeList(model.ProviderType);
+			model.RankList = await BuildRankListAsync(model.DefaultRankId);
+			model.ApiBaseUrl = apiBase;
+			model.AcsUrl = $"{apiBase}{Config.SsoConfig.SamlAcsPath}?departmentToken={Uri.EscapeDataString(_encryptionService.Encrypt($"{department.DepartmentId}:{department.Code}"))}";
+		}
 
 		private async Task<SelectList> BuildRankListAsync(int? selectedRankId)
 		{

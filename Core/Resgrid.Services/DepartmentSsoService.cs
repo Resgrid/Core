@@ -1,17 +1,26 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security.Claims;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using System.Security.Cryptography.Xml;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
+using Microsoft.IdentityModel.Protocols;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Identity;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 
@@ -23,12 +32,15 @@ namespace Resgrid.Services
 	/// </summary>
 	public class DepartmentSsoService : IDepartmentSsoService
 	{
+		private static readonly TimeSpan TokenClockSkew = TimeSpan.FromMinutes(2);
+		private static readonly ConcurrentDictionary<string, ConfigurationManager<OpenIdConnectConfiguration>> OidcConfigurationManagers = new(StringComparer.OrdinalIgnoreCase);
 		private readonly IDepartmentSsoConfigRepository _ssoConfigRepository;
 		private readonly IDepartmentSecurityPolicyRepository _securityPolicyRepository;
 		private readonly IDepartmentMembersRepository _departmentMembersRepository;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IUserProfileService _userProfileService;
 		private readonly IEncryptionService _encryptionService;
+		private readonly ICacheProvider _cacheProvider;
 
 		public DepartmentSsoService(
 			IDepartmentSsoConfigRepository ssoConfigRepository,
@@ -36,7 +48,8 @@ namespace Resgrid.Services
 			IDepartmentMembersRepository departmentMembersRepository,
 			IDepartmentsService departmentsService,
 			IUserProfileService userProfileService,
-			IEncryptionService encryptionService)
+			IEncryptionService encryptionService,
+			ICacheProvider cacheProvider)
 		{
 			_ssoConfigRepository = ssoConfigRepository;
 			_securityPolicyRepository = securityPolicyRepository;
@@ -44,6 +57,7 @@ namespace Resgrid.Services
 			_departmentsService = departmentsService;
 			_userProfileService = userProfileService;
 			_encryptionService = encryptionService;
+			_cacheProvider = cacheProvider;
 		}
 
 		// ── SSO Config CRUD ───────────────────────────────────────────────────
@@ -65,22 +79,40 @@ namespace Resgrid.Services
 
 		public async Task<DepartmentSsoConfig> SaveSsoConfigAsync(DepartmentSsoConfig config, string departmentCode, CancellationToken cancellationToken = default)
 		{
-			// Encrypt sensitive fields before persisting
-			if (!string.IsNullOrWhiteSpace(config.EncryptedClientSecret))
-				config.EncryptedClientSecret = _encryptionService.EncryptForDepartment(config.EncryptedClientSecret, config.DepartmentId, departmentCode);
+			if (config == null)
+				throw new ArgumentNullException(nameof(config));
 
-			if (!string.IsNullOrWhiteSpace(config.EncryptedIdpCertificate))
-				config.EncryptedIdpCertificate = _encryptionService.EncryptForDepartment(config.EncryptedIdpCertificate, config.DepartmentId, departmentCode);
+			var providerType = (SsoProviderType)config.SsoProviderType;
+			var existing = await _ssoConfigRepository.GetByDepartmentIdAndTypeAsync(config.DepartmentId, providerType);
 
-			if (!string.IsNullOrWhiteSpace(config.EncryptedSigningCertificate))
-				config.EncryptedSigningCertificate = _encryptionService.EncryptForDepartment(config.EncryptedSigningCertificate, config.DepartmentId, departmentCode);
+			if (existing == null)
+			{
+				if (string.IsNullOrWhiteSpace(config.DepartmentSsoConfigId))
+					config.DepartmentSsoConfigId = Guid.NewGuid().ToString();
 
-			if (!string.IsNullOrWhiteSpace(config.EncryptedScimBearerToken))
-				config.EncryptedScimBearerToken = _encryptionService.EncryptForDepartment(config.EncryptedScimBearerToken, config.DepartmentId, departmentCode);
+				if (config.CreatedOn == default)
+					config.CreatedOn = DateTime.UtcNow;
 
+				config.EncryptedClientSecret = EncryptNewSecret(config.EncryptedClientSecret, config.DepartmentId, departmentCode);
+				config.EncryptedIdpCertificate = EncryptNewSecret(config.EncryptedIdpCertificate, config.DepartmentId, departmentCode);
+				config.EncryptedSigningCertificate = EncryptNewSecret(config.EncryptedSigningCertificate, config.DepartmentId, departmentCode);
+				config.EncryptedScimBearerToken = EncryptNewSecret(config.EncryptedScimBearerToken, config.DepartmentId, departmentCode);
+
+				return await _ssoConfigRepository.InsertAsync(config, cancellationToken);
+			}
+
+			// Blank secret fields mean "keep the stored value". The generic repository updates
+			// every column, so this preservation must happen before issuing the UPDATE.
+			config.DepartmentSsoConfigId = existing.DepartmentSsoConfigId;
+			config.CreatedByUserId = existing.CreatedByUserId;
+			config.CreatedOn = existing.CreatedOn;
+			config.EncryptedClientSecret = EncryptUpdatedSecret(config.EncryptedClientSecret, existing.EncryptedClientSecret, config.DepartmentId, departmentCode);
+			config.EncryptedIdpCertificate = EncryptUpdatedSecret(config.EncryptedIdpCertificate, existing.EncryptedIdpCertificate, config.DepartmentId, departmentCode);
+			config.EncryptedSigningCertificate = EncryptUpdatedSecret(config.EncryptedSigningCertificate, existing.EncryptedSigningCertificate, config.DepartmentId, departmentCode);
+			config.EncryptedScimBearerToken = EncryptUpdatedSecret(config.EncryptedScimBearerToken, existing.EncryptedScimBearerToken, config.DepartmentId, departmentCode);
 			config.UpdatedOn = DateTime.UtcNow;
 
-			return await _ssoConfigRepository.SaveOrUpdateAsync(config, cancellationToken);
+			return await _ssoConfigRepository.UpdateAsync(config, cancellationToken);
 		}
 
 		public async Task<bool> DeleteSsoConfigAsync(int departmentId, SsoProviderType providerType, CancellationToken cancellationToken = default)
@@ -117,10 +149,10 @@ namespace Resgrid.Services
 					return null;
 
 				if (providerType == SsoProviderType.Oidc)
-					return ValidateOidcToken(externalToken, config, departmentCode);
+					return await ValidateOidcTokenAsync(externalToken, config, cancellationToken);
 
 				if (providerType == SsoProviderType.Saml2)
-					return ValidateSamlResponse(externalToken, config, departmentCode);
+					return await ValidateSamlResponseAsync(externalToken, config, departmentCode);
 
 				return null;
 			}
@@ -414,26 +446,50 @@ namespace Resgrid.Services
 
 		// ── Private helpers ───────────────────────────────────────────────────
 
-		private ClaimsPrincipal ValidateOidcToken(string idToken, DepartmentSsoConfig config, string departmentCode)
+		private string EncryptNewSecret(string plaintext, int departmentId, string departmentCode)
+		{
+			return string.IsNullOrWhiteSpace(plaintext)
+				? null
+				: _encryptionService.EncryptForDepartment(plaintext, departmentId, departmentCode);
+		}
+
+		private string EncryptUpdatedSecret(string submittedValue, string storedCiphertext, int departmentId, string departmentCode)
+		{
+			if (string.IsNullOrWhiteSpace(submittedValue) || string.Equals(submittedValue, storedCiphertext, StringComparison.Ordinal))
+				return storedCiphertext;
+
+			return _encryptionService.EncryptForDepartment(submittedValue, departmentId, departmentCode);
+		}
+
+		private async Task<ClaimsPrincipal> ValidateOidcTokenAsync(string idToken, DepartmentSsoConfig config, CancellationToken cancellationToken)
 		{
 			try
 			{
-				var handler = new JwtSecurityTokenHandler();
-				var validationParameters = new TokenValidationParameters
-				{
-					ValidateIssuer = !string.IsNullOrWhiteSpace(config.Authority),
-					ValidIssuer = config.Authority,
-					ValidateAudience = !string.IsNullOrWhiteSpace(config.ClientId),
-					ValidAudience = config.ClientId,
-					ValidateLifetime = true,
-					ValidateIssuerSigningKey = false,
-					// Signature validation is intentionally skipped here — the token was
-					// already validated by the OIDC provider's userinfo endpoint in production.
-					// For strict validation, configure a JWKS endpoint via IConfigurationManager.
-					SignatureValidator = (token, _) => handler.ReadJwtToken(token)
-				};
+				if (string.IsNullOrWhiteSpace(idToken) || string.IsNullOrWhiteSpace(config.Authority) || string.IsNullOrWhiteSpace(config.ClientId))
+					return null;
 
-				return handler.ValidateToken(idToken, validationParameters, out _);
+				if (!Uri.TryCreate(config.Authority, UriKind.Absolute, out var authorityUri) || authorityUri.Scheme != Uri.UriSchemeHttps)
+					return null;
+
+				var authority = config.Authority.TrimEnd('/');
+				var manager = OidcConfigurationManagers.GetOrAdd(authority, static value =>
+					new ConfigurationManager<OpenIdConnectConfiguration>(
+						$"{value}/.well-known/openid-configuration",
+						new OpenIdConnectConfigurationRetriever(),
+						new HttpDocumentRetriever { RequireHttps = true }));
+
+				var oidcConfiguration = await manager.GetConfigurationAsync(cancellationToken);
+				var handler = new JwtSecurityTokenHandler();
+				try
+				{
+					return handler.ValidateToken(idToken, BuildOidcValidationParameters(config, oidcConfiguration), out _);
+				}
+				catch (SecurityTokenSignatureKeyNotFoundException)
+				{
+					manager.RequestRefresh();
+					oidcConfiguration = await manager.GetConfigurationAsync(cancellationToken);
+					return handler.ValidateToken(idToken, BuildOidcValidationParameters(config, oidcConfiguration), out _);
+				}
 			}
 			catch (Exception ex)
 			{
@@ -442,78 +498,292 @@ namespace Resgrid.Services
 			}
 		}
 
-		private ClaimsPrincipal ValidateSamlResponse(string base64SamlResponse, DepartmentSsoConfig config, string departmentCode)
+		private static TokenValidationParameters BuildOidcValidationParameters(DepartmentSsoConfig config, OpenIdConnectConfiguration oidcConfiguration)
 		{
-			// Decode the base64 SAMLResponse XML
-			string samlXml;
+			return new TokenValidationParameters
+			{
+				ValidateIssuer = true,
+				ValidIssuer = oidcConfiguration.Issuer,
+				ValidateAudience = true,
+				ValidAudience = config.ClientId,
+				ValidateLifetime = true,
+				RequireExpirationTime = true,
+				ValidateIssuerSigningKey = true,
+				RequireSignedTokens = true,
+				IssuerSigningKeys = oidcConfiguration.SigningKeys,
+				ClockSkew = TokenClockSkew
+			};
+		}
+
+		private async Task<ClaimsPrincipal> ValidateSamlResponseAsync(string base64SamlResponse, DepartmentSsoConfig config, string departmentCode)
+		{
 			try
 			{
-				samlXml = Encoding.UTF8.GetString(Convert.FromBase64String(base64SamlResponse));
+				if (string.IsNullOrWhiteSpace(base64SamlResponse) || base64SamlResponse.Length > 2_800_000 ||
+					string.IsNullOrWhiteSpace(config.EncryptedIdpCertificate) || string.IsNullOrWhiteSpace(config.EntityId) ||
+					string.IsNullOrWhiteSpace(config.AssertionConsumerServiceUrl))
+					return null;
+
+				var samlBytes = Convert.FromBase64String(base64SamlResponse);
+				if (samlBytes.Length > 2_000_000)
+					return null;
+
+				var document = LoadSamlDocument(samlBytes);
+				var response = document.DocumentElement;
+				if (response == null || response.LocalName != "Response" || response.NamespaceURI != "urn:oasis:names:tc:SAML:2.0:protocol")
+					return null;
+
+				var namespaces = new XmlNamespaceManager(document.NameTable);
+				namespaces.AddNamespace("samlp", "urn:oasis:names:tc:SAML:2.0:protocol");
+				namespaces.AddNamespace("saml", "urn:oasis:names:tc:SAML:2.0:assertion");
+				namespaces.AddNamespace("ds", SignedXml.XmlDsigNamespaceUrl);
+
+				var statusCode = response.SelectSingleNode("./samlp:Status/samlp:StatusCode", namespaces) as XmlElement;
+				if (statusCode?.GetAttribute("Value") != "urn:oasis:names:tc:SAML:2.0:status:Success")
+					return null;
+
+				var assertionNodes = response.SelectNodes("./saml:Assertion", namespaces);
+				if (assertionNodes?.Count != 1 || assertionNodes[0] is not XmlElement assertion || !HasUniqueSamlIds(document))
+					return null;
+
+				var certificatePem = _encryptionService.DecryptForDepartment(
+					config.EncryptedIdpCertificate, config.DepartmentId, departmentCode);
+				using var certificate = X509Certificate2.CreateFromPem(certificatePem);
+
+				var now = DateTime.UtcNow;
+				if (now + TokenClockSkew < certificate.NotBefore.ToUniversalTime() || now - TokenClockSkew >= certificate.NotAfter.ToUniversalTime())
+					return null;
+
+				if (!ValidateSamlSignature(document, response, assertion, namespaces, certificate) ||
+					!ValidateSamlDestinationAndConditions(response, assertion, namespaces, config, now, out var assertionExpiresOn))
+					return null;
+
+				var assertionId = assertion.GetAttribute("ID");
+				if (string.IsNullOrWhiteSpace(assertionId) ||
+					!await MarkSamlAssertionConsumedAsync(config.DepartmentSsoConfigId, assertionId, assertionExpiresOn, now))
+					return null;
+
+				var claims = ExtractSamlClaims(assertion, namespaces);
+				return claims.Count == 0 ? null : new ClaimsPrincipal(new ClaimsIdentity(claims, "SAML2"));
 			}
-			catch
+			catch (Exception ex)
 			{
+				Logging.LogException(ex);
 				return null;
 			}
+		}
 
-			// Parse the NameID (subject) and attributes from the SAML assertion XML.
-			// A full implementation would use Sustainsys.Saml2 to validate the XML signature
-			// against the stored IdP certificate. This parser extracts core claims for
-			// the provisioning pipeline without requiring a full SP registration at startup.
-			var claims = new List<Claim>();
-
-			var nameIdStart = samlXml.IndexOf("<saml:NameID", StringComparison.OrdinalIgnoreCase);
-			if (nameIdStart >= 0)
+		private static XmlDocument LoadSamlDocument(byte[] samlBytes)
+		{
+			var settings = new XmlReaderSettings
 			{
-				var nameIdEnd = samlXml.IndexOf("</saml:NameID>", nameIdStart, StringComparison.OrdinalIgnoreCase);
-				if (nameIdEnd > nameIdStart)
+				DtdProcessing = DtdProcessing.Prohibit,
+				XmlResolver = null,
+				MaxCharactersInDocument = 2_000_000
+			};
+
+			var document = new XmlDocument { PreserveWhitespace = true, XmlResolver = null };
+			using var stream = new MemoryStream(samlBytes, writable: false);
+			using var reader = XmlReader.Create(stream, settings);
+			document.Load(reader);
+			return document;
+		}
+
+		private static bool HasUniqueSamlIds(XmlDocument document)
+		{
+			var ids = new HashSet<string>(StringComparer.Ordinal);
+			var nodes = document.SelectNodes("//*[@ID]");
+			if (nodes == null)
+				return false;
+
+			foreach (XmlElement node in nodes)
+			{
+				var id = node.GetAttribute("ID");
+				if (string.IsNullOrWhiteSpace(id) || !ids.Add(id))
+					return false;
+			}
+
+			return ids.Count > 0;
+		}
+
+		private static bool ValidateSamlSignature(XmlDocument document, XmlElement response, XmlElement assertion,
+			XmlNamespaceManager namespaces, X509Certificate2 certificate)
+		{
+			var signature = assertion.SelectSingleNode("./ds:Signature", namespaces) as XmlElement;
+			var signedElement = assertion;
+			if (signature == null)
+			{
+				signature = response.SelectSingleNode("./ds:Signature", namespaces) as XmlElement;
+				signedElement = response;
+			}
+
+			if (signature == null)
+				return false;
+
+			var signedXml = new SignedXml(document);
+			signedXml.LoadXml(signature);
+			if (signedXml.SignedInfo.CanonicalizationMethod != SignedXml.XmlDsigExcC14NTransformUrl ||
+				!IsAllowedSamlSignatureAlgorithm(signedXml.SignedInfo.SignatureMethod) || signedXml.SignedInfo.References.Count != 1)
+				return false;
+
+			if (signedXml.SignedInfo.References[0] is not Reference reference ||
+				!IsAllowedSamlDigestAlgorithm(reference.DigestMethod) || !HasOnlyAllowedSamlTransforms(reference))
+				return false;
+
+			var id = signedElement.GetAttribute("ID");
+			if (string.IsNullOrWhiteSpace(id) || reference.Uri != $"#{id}" || !ReferenceEquals(signedXml.GetIdElement(document, id), signedElement))
+				return false;
+
+			return signedXml.CheckSignature(certificate, verifySignatureOnly: true);
+		}
+
+		private static bool HasOnlyAllowedSamlTransforms(Reference reference)
+		{
+			if (reference.TransformChain.Count is < 1 or > 2)
+				return false;
+
+			var hasEnvelopedSignatureTransform = false;
+			var hasExclusiveCanonicalizationTransform = false;
+			foreach (Transform transform in reference.TransformChain)
+			{
+				if (transform.Algorithm == SignedXml.XmlDsigEnvelopedSignatureTransformUrl && !hasEnvelopedSignatureTransform)
 				{
-					var tagEnd = samlXml.IndexOf('>', nameIdStart);
-					if (tagEnd >= 0 && tagEnd < nameIdEnd)
-					{
-						var nameId = samlXml.Substring(tagEnd + 1, nameIdEnd - tagEnd - 1).Trim();
-						claims.Add(new Claim(ClaimTypes.NameIdentifier, nameId));
-					}
+					hasEnvelopedSignatureTransform = true;
+					continue;
+				}
+
+				if (transform.Algorithm == SignedXml.XmlDsigExcC14NTransformUrl && !hasExclusiveCanonicalizationTransform)
+				{
+					hasExclusiveCanonicalizationTransform = true;
+					continue;
+				}
+
+				return false;
+			}
+
+			return hasEnvelopedSignatureTransform;
+		}
+
+		private static bool IsAllowedSamlSignatureAlgorithm(string algorithm)
+		{
+			return algorithm == SignedXml.XmlDsigRSASHA256Url ||
+				algorithm == "http://www.w3.org/2001/04/xmldsig-more#rsa-sha384" ||
+				algorithm == "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512";
+		}
+
+		private static bool IsAllowedSamlDigestAlgorithm(string algorithm)
+		{
+			return algorithm == SignedXml.XmlDsigSHA256Url ||
+				algorithm == "http://www.w3.org/2001/04/xmldsig-more#sha384" ||
+				algorithm == "http://www.w3.org/2001/04/xmlenc#sha512";
+		}
+
+		private static bool ValidateSamlDestinationAndConditions(XmlElement response, XmlElement assertion,
+			XmlNamespaceManager namespaces, DepartmentSsoConfig config, DateTime now, out DateTime assertionExpiresOn)
+		{
+			assertionExpiresOn = default;
+			var destination = response.GetAttribute("Destination");
+			if (!string.IsNullOrWhiteSpace(destination) && !string.Equals(destination, config.AssertionConsumerServiceUrl, StringComparison.Ordinal))
+				return false;
+
+			if (assertion.SelectSingleNode("./saml:Conditions", namespaces) is not XmlElement conditions ||
+				!TryReadSamlInstant(conditions.GetAttribute("NotOnOrAfter"), out assertionExpiresOn) ||
+				now - TokenClockSkew >= assertionExpiresOn)
+				return false;
+
+			if (TryReadSamlInstant(conditions.GetAttribute("NotBefore"), out var notBefore) && now + TokenClockSkew < notBefore)
+				return false;
+
+			var audienceNodes = conditions.SelectNodes("./saml:AudienceRestriction/saml:Audience", namespaces);
+			if (audienceNodes == null || !audienceNodes.Cast<XmlNode>().Any(node =>
+				string.Equals(node.InnerText.Trim(), config.EntityId, StringComparison.Ordinal)))
+				return false;
+
+			var confirmationNodes = assertion.SelectNodes("./saml:Subject/saml:SubjectConfirmation[@Method='urn:oasis:names:tc:SAML:2.0:cm:bearer']/saml:SubjectConfirmationData", namespaces);
+			return confirmationNodes != null && confirmationNodes.Cast<XmlElement>().Any(data =>
+				string.Equals(data.GetAttribute("Recipient"), config.AssertionConsumerServiceUrl, StringComparison.Ordinal) &&
+				TryReadSamlInstant(data.GetAttribute("NotOnOrAfter"), out var subjectExpiresOn) &&
+				now - TokenClockSkew < subjectExpiresOn);
+		}
+
+		private static bool TryReadSamlInstant(string value, out DateTime instant)
+		{
+			instant = default;
+			if (string.IsNullOrWhiteSpace(value))
+				return false;
+
+			try
+			{
+				instant = XmlConvert.ToDateTime(value, XmlDateTimeSerializationMode.Utc);
+				return true;
+			}
+			catch (FormatException)
+			{
+				return false;
+			}
+		}
+
+		private async Task<bool> MarkSamlAssertionConsumedAsync(string configId, string assertionId, DateTime expiresOn, DateTime now)
+		{
+			var remainingLifetime = expiresOn - now;
+			if (remainingLifetime <= TimeSpan.Zero)
+				return false;
+
+			var replayIdentifier = Convert.ToHexString(
+				SHA256.HashData(Encoding.UTF8.GetBytes($"{configId}:{assertionId}")));
+			return await _cacheProvider.IncrementAsync(
+				$"Sso:SamlAssertion:{replayIdentifier}", remainingLifetime) == 1;
+		}
+
+		private static List<Claim> ExtractSamlClaims(XmlElement assertion, XmlNamespaceManager namespaces)
+		{
+			var claims = new List<Claim>();
+			var nameId = assertion.SelectSingleNode("./saml:Subject/saml:NameID", namespaces)?.InnerText?.Trim();
+			if (!string.IsNullOrWhiteSpace(nameId))
+				claims.Add(new Claim(ClaimTypes.NameIdentifier, nameId));
+
+			var attributes = assertion.SelectNodes("./saml:AttributeStatement/saml:Attribute", namespaces);
+			if (attributes == null)
+				return claims;
+
+			foreach (XmlElement attribute in attributes)
+			{
+				var name = attribute.GetAttribute("Name");
+				if (string.IsNullOrWhiteSpace(name))
+					continue;
+
+				var values = attribute.SelectNodes("./saml:AttributeValue", namespaces);
+				if (values == null)
+					continue;
+
+				foreach (XmlNode valueNode in values)
+				{
+					var value = valueNode.InnerText?.Trim();
+					if (string.IsNullOrWhiteSpace(value))
+						continue;
+
+					claims.Add(new Claim(name, value));
+					var standardClaimType = GetStandardSamlClaimType(name);
+					if (standardClaimType != null && !string.Equals(standardClaimType, name, StringComparison.Ordinal))
+						claims.Add(new Claim(standardClaimType, value));
 				}
 			}
 
-			// Extract common SAML attribute values
-			ExtractSamlAttribute(samlXml, "email", ClaimTypes.Email, claims);
-			ExtractSamlAttribute(samlXml, "EmailAddress", ClaimTypes.Email, claims);
-			ExtractSamlAttribute(samlXml, "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/emailaddress", ClaimTypes.Email, claims);
-			ExtractSamlAttribute(samlXml, "givenname", ClaimTypes.GivenName, claims);
-			ExtractSamlAttribute(samlXml, "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/givenname", ClaimTypes.GivenName, claims);
-			ExtractSamlAttribute(samlXml, "surname", ClaimTypes.Surname, claims);
-			ExtractSamlAttribute(samlXml, "http://schemas.xmlsoap.org/ws/2005/05/identity/claims/surname", ClaimTypes.Surname, claims);
-
-			if (!claims.Any())
-				return null;
-
-			var identity = new ClaimsIdentity(claims, "SAML2");
-			return new ClaimsPrincipal(identity);
+			return claims;
 		}
 
-		private static void ExtractSamlAttribute(string samlXml, string attributeName, string claimType, List<Claim> claims)
+		private static string GetStandardSamlClaimType(string attributeName)
 		{
-			var marker = $"Name=\"{attributeName}\"";
-			var pos = samlXml.IndexOf(marker, StringComparison.OrdinalIgnoreCase);
-			if (pos < 0)
-				return;
+			if (attributeName.Equals("email", StringComparison.OrdinalIgnoreCase) || attributeName.Equals("EmailAddress", StringComparison.OrdinalIgnoreCase) || attributeName.Equals(ClaimTypes.Email, StringComparison.OrdinalIgnoreCase))
+				return ClaimTypes.Email;
 
-			var valueStart = samlXml.IndexOf("<saml:AttributeValue", pos, StringComparison.OrdinalIgnoreCase);
-			if (valueStart < 0)
-				return;
+			if (attributeName.Equals("givenname", StringComparison.OrdinalIgnoreCase) || attributeName.Equals("given_name", StringComparison.OrdinalIgnoreCase) || attributeName.Equals(ClaimTypes.GivenName, StringComparison.OrdinalIgnoreCase))
+				return ClaimTypes.GivenName;
 
-			var tagEnd = samlXml.IndexOf('>', valueStart);
-			if (tagEnd < 0)
-				return;
+			if (attributeName.Equals("surname", StringComparison.OrdinalIgnoreCase) || attributeName.Equals("family_name", StringComparison.OrdinalIgnoreCase) || attributeName.Equals(ClaimTypes.Surname, StringComparison.OrdinalIgnoreCase))
+				return ClaimTypes.Surname;
 
-			var valueEnd = samlXml.IndexOf("</saml:AttributeValue>", tagEnd, StringComparison.OrdinalIgnoreCase);
-			if (valueEnd <= tagEnd)
-				return;
-
-			var value = samlXml.Substring(tagEnd + 1, valueEnd - tagEnd - 1).Trim();
-			if (!string.IsNullOrWhiteSpace(value))
-				claims.Add(new Claim(claimType, value));
+			return null;
 		}
 
 		private static Dictionary<string, string> ResolveAttributeMapping(string attributeMappingJson)

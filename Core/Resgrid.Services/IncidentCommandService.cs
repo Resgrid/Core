@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model;
@@ -36,6 +39,9 @@ namespace Resgrid.Services
 		private readonly ICoreEventService _coreEventService;
 		private readonly IUnitsService _unitsService;
 		private readonly IPersonnelRolesService _personnelRolesService;
+		private readonly IIncidentNoteRepository _incidentNoteRepository;
+		private readonly IIncidentAttachmentRepository _incidentAttachmentRepository;
+		private readonly IIncidentWeatherProvider _incidentWeatherProvider;
 
 		public IncidentCommandService(
 			IIncidentCommandRepository incidentCommandRepository,
@@ -54,7 +60,10 @@ namespace Resgrid.Services
 			IEventAggregator eventAggregator,
 			ICoreEventService coreEventService,
 			IUnitsService unitsService,
-			IPersonnelRolesService personnelRolesService)
+			IPersonnelRolesService personnelRolesService,
+			IIncidentNoteRepository incidentNoteRepository,
+			IIncidentAttachmentRepository incidentAttachmentRepository,
+			IIncidentWeatherProvider incidentWeatherProvider)
 		{
 			_incidentCommandRepository = incidentCommandRepository;
 			_commandStructureNodeRepository = commandStructureNodeRepository;
@@ -73,6 +82,9 @@ namespace Resgrid.Services
 			_coreEventService = coreEventService;
 			_unitsService = unitsService;
 			_personnelRolesService = personnelRolesService;
+			_incidentNoteRepository = incidentNoteRepository;
+			_incidentAttachmentRepository = incidentAttachmentRepository;
+			_incidentWeatherProvider = incidentWeatherProvider;
 		}
 
 		#region Command lifecycle
@@ -115,6 +127,7 @@ namespace Resgrid.Services
 				EstablishedByUserId = userId,
 				EstablishedOn = DateTime.UtcNow,
 				CurrentCommanderUserId = userId,
+				PublicShareEnabled = false,
 				Status = (int)IncidentCommandStatus.Active
 			};
 
@@ -401,7 +414,9 @@ namespace Resgrid.Services
 				Timers = await GetActiveTimersForCallAsync(departmentId, callId),
 				Annotations = await GetAnnotationsForCallAsync(departmentId, callId),
 				Accountability = await GetAccountabilityForCallAsync(departmentId, callId),
-				Roles = await GetIncidentRolesAsync(departmentId, callId)
+				Roles = await GetIncidentRolesAsync(departmentId, callId),
+				Notes = await GetNotesForCallAsync(departmentId, callId),
+				Attachments = await GetAttachmentsForCallAsync(departmentId, callId)
 			};
 
 			return board;
@@ -428,6 +443,8 @@ namespace Resgrid.Services
 			var timers = ToCallLookup(await _incidentTimerRepository.GetAllByDepartmentIdAsync(departmentId), x => x.CallId);
 			var annotations = ToCallLookup(await _incidentMapAnnotationRepository.GetAllByDepartmentIdAsync(departmentId), x => x.CallId);
 			var roles = ToCallLookup(await _incidentRoleAssignmentRepository.GetAllByDepartmentIdAsync(departmentId), x => x.CallId);
+			var notes = ToCallLookup(await _incidentNoteRepository.GetAllByDepartmentIdAsync(departmentId), x => x.CallId);
+			var attachments = ToCallLookup(await _incidentAttachmentRepository.GetAllMetadataByDepartmentIdAsync(departmentId), x => x.CallId);
 
 			foreach (var command in active)
 			{
@@ -443,7 +460,9 @@ namespace Resgrid.Services
 					Objectives = objectives[callId].OrderBy(x => x.SortOrder).ToList(),
 					Timers = timers[callId].Where(x => x.Status != (int)IncidentTimerStatus.Stopped).ToList(),
 					Annotations = annotations[callId].Where(x => x.DeletedOn == null).ToList(),
-					Roles = roles[callId].Where(x => x.RemovedOn == null).ToList()
+					Roles = roles[callId].Where(x => x.RemovedOn == null).ToList(),
+					Notes = notes[callId].Where(x => x.DeletedOn == null).OrderBy(x => x.CreatedOn).ToList(),
+					Attachments = attachments[callId].Where(x => x.DeletedOn == null).OrderBy(x => x.UploadedOn).ToList()
 				};
 
 				// Accountability/PAR is the one per-incident read here, and it is READ-ONLY (no marker writes / SignalR
@@ -503,6 +522,14 @@ namespace Resgrid.Services
 			var roles = await _incidentRoleAssignmentRepository.GetAllByDepartmentIdAsync(departmentId);
 			if (roles != null)
 				changes.Roles = roles.Where(Changed).ToList();
+
+			var notes = await _incidentNoteRepository.GetAllByDepartmentIdAsync(departmentId);
+			if (notes != null)
+				changes.Notes = notes.Where(Changed).ToList();
+
+			var attachments = await _incidentAttachmentRepository.GetAllMetadataByDepartmentIdAsync(departmentId);
+			if (attachments != null)
+				changes.Attachments = attachments.Where(Changed).ToList();
 
 			// The timeline is append-only (no ModifiedOn); its natural cursor is OccurredOn.
 			var timeline = await _commandLogEntryRepository.GetAllByDepartmentIdAsync(departmentId);
@@ -568,8 +595,343 @@ namespace Resgrid.Services
 			command.IncidentActionPlan = actionPlan;
 			command = await _incidentCommandRepository.SaveOrUpdateAsync(Touch(command), cancellationToken);
 
-			await WriteLogAsync(command.IncidentCommandId, command.DepartmentId, command.CallId, CommandLogEntryType.Note, "Incident action plan updated", userId, cancellationToken);
+			await WriteLogAsync(command.IncidentCommandId, command.DepartmentId, command.CallId, CommandLogEntryType.ActionPlanUpdated, "Incident action plan updated", userId, cancellationToken);
+			_eventAggregator.SendMessage<IncidentActionPlanUpdatedEvent>(new IncidentActionPlanUpdatedEvent
+			{
+				DepartmentId = command.DepartmentId,
+				CallId = command.CallId,
+				IncidentCommandId = command.IncidentCommandId,
+				ActionPlan = actionPlan,
+				UpdatedByUserId = userId
+			});
 			return command;
+		}
+
+		public async Task<IncidentCommand> UpdateCommandPostAsync(int departmentId, string incidentCommandId, string latitude, string longitude, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (!TryParseCoordinates(latitude, longitude, out var latitudeValue, out var longitudeValue))
+				throw new ArgumentException("A valid latitude and longitude are required.");
+
+			var command = await GetOwnedCommandAsync(incidentCommandId, departmentId);
+			if (command == null)
+				return null;
+
+			command.CommandPostLatitude = latitudeValue.ToString("0.######", CultureInfo.InvariantCulture);
+			command.CommandPostLongitude = longitudeValue.ToString("0.######", CultureInfo.InvariantCulture);
+			command = await _incidentCommandRepository.SaveOrUpdateAsync(Touch(command), cancellationToken);
+
+			await WriteLogAsync(command.IncidentCommandId, command.DepartmentId, command.CallId, CommandLogEntryType.CommandPostUpdated, "Command post location updated", userId, cancellationToken);
+			_eventAggregator.SendMessage<IncidentCommandPostUpdatedEvent>(new IncidentCommandPostUpdatedEvent
+			{
+				DepartmentId = command.DepartmentId,
+				CallId = command.CallId,
+				IncidentCommandId = command.IncidentCommandId,
+				Latitude = command.CommandPostLatitude,
+				Longitude = command.CommandPostLongitude,
+				UpdatedByUserId = userId
+			});
+			return command;
+		}
+
+		public async Task<IncidentNote> AddNoteAsync(IncidentNote note, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (note == null || string.IsNullOrWhiteSpace(note.IncidentCommandId) || string.IsNullOrWhiteSpace(note.Body))
+				throw new ArgumentException("An incident command and note body are required.");
+			if (note.Body.Length > Resgrid.Config.IncidentCommandConfig.MaxNoteLength)
+				throw new ArgumentException($"Incident notes cannot exceed {Resgrid.Config.IncidentCommandConfig.MaxNoteLength} characters.");
+			if (!Enum.IsDefined(typeof(IncidentNoteType), note.NoteType) || !Enum.IsDefined(typeof(IncidentContentVisibility), note.Visibility))
+				throw new ArgumentException("The incident note type or visibility is invalid.");
+			if (note.ContainmentPercent.HasValue && (note.ContainmentPercent.Value < 0 || note.ContainmentPercent.Value > 100))
+				throw new ArgumentOutOfRangeException(nameof(note.ContainmentPercent), "Containment must be between 0 and 100 percent.");
+
+			var command = await GetOwnedCommandAsync(note.IncidentCommandId, note.DepartmentId);
+			if (command == null)
+				return null;
+
+			note.IncidentNoteId = Guid.NewGuid().ToString();
+			note.CallId = command.CallId;
+			note.Title = TrimToLength(note.Title, 250);
+			note.Body = note.Body.Trim();
+			note.CreatedByUserId = userId;
+			note.CreatedOn = DateTime.UtcNow;
+			note.DeletedOn = null;
+			note.DeletedByUserId = null;
+
+			var saved = await _incidentNoteRepository.InsertAsync(Touch(note), cancellationToken);
+			await WriteLogAsync(command.IncidentCommandId, command.DepartmentId, command.CallId, CommandLogEntryType.IncidentNoteAdded, $"Incident note added: {saved.Title ?? ((IncidentNoteType)saved.NoteType).ToString()}", userId, cancellationToken);
+			_eventAggregator.SendMessage<IncidentNoteAddedEvent>(new IncidentNoteAddedEvent
+			{
+				DepartmentId = saved.DepartmentId,
+				CallId = saved.CallId,
+				IncidentCommandId = saved.IncidentCommandId,
+				IncidentNoteId = saved.IncidentNoteId,
+				Visibility = saved.Visibility,
+				NoteType = saved.NoteType,
+				Title = saved.Title,
+				Body = saved.Body,
+				ContainmentPercent = saved.ContainmentPercent,
+				CreatedByUserId = userId
+			});
+			return saved;
+		}
+
+		public async Task<List<IncidentNote>> GetNotesForCallAsync(int departmentId, int callId, bool publicOnly = false)
+		{
+			var notes = await _incidentNoteRepository.GetAllByDepartmentIdAsync(departmentId);
+			if (notes == null)
+				return new List<IncidentNote>();
+
+			return notes.Where(x => x.CallId == callId && x.DeletedOn == null &&
+				(!publicOnly || x.Visibility == (int)IncidentContentVisibility.Public))
+				.OrderBy(x => x.CreatedOn)
+				.ToList();
+		}
+
+		public async Task<bool> RemoveNoteAsync(int departmentId, string incidentNoteId, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var note = await _incidentNoteRepository.GetByIdAsync(incidentNoteId);
+			if (note == null || note.DepartmentId != departmentId || note.DeletedOn.HasValue)
+				return false;
+			var capabilities = await GetCapabilitiesForUserAsync(departmentId, note.CallId, userId);
+			var required = IncidentCapabilities.ManageNotes;
+			if (note.Visibility == (int)IncidentContentVisibility.Public)
+				required |= IncidentCapabilities.ManagePublicInformation;
+			if ((capabilities & required) != required)
+				return false;
+
+			note.DeletedOn = DateTime.UtcNow;
+			note.DeletedByUserId = userId;
+			await _incidentNoteRepository.SaveOrUpdateAsync(Touch(note), cancellationToken);
+			await WriteLogAsync(note.IncidentCommandId, note.DepartmentId, note.CallId, CommandLogEntryType.IncidentNoteRemoved, "Incident note removed", userId, cancellationToken);
+			_eventAggregator.SendMessage<IncidentNoteRemovedEvent>(new IncidentNoteRemovedEvent
+			{
+				DepartmentId = note.DepartmentId,
+				CallId = note.CallId,
+				IncidentCommandId = note.IncidentCommandId,
+				IncidentNoteId = note.IncidentNoteId,
+				Visibility = note.Visibility,
+				RemovedByUserId = userId
+			});
+			return true;
+		}
+
+		public async Task<IncidentAttachment> AddAttachmentAsync(IncidentAttachment attachment, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (attachment == null || string.IsNullOrWhiteSpace(attachment.IncidentCommandId) || attachment.Data == null || attachment.Data.Length == 0)
+				throw new ArgumentException("An incident command and file data are required.");
+			if (!Enum.IsDefined(typeof(IncidentContentVisibility), attachment.Visibility))
+				throw new ArgumentException("The incident attachment visibility is invalid.");
+			if (attachment.Data.Length > Resgrid.Config.IncidentCommandConfig.MaxAttachmentBytes)
+				throw new ArgumentException($"Incident files cannot exceed {Resgrid.Config.IncidentCommandConfig.MaxAttachmentBytes} bytes.");
+
+			var safeFileName = Path.GetFileName(attachment.FileName ?? string.Empty);
+			if (string.IsNullOrWhiteSpace(safeFileName) || IsBlockedAttachment(safeFileName, attachment.ContentType))
+				throw new ArgumentException("The incident file name or type is not allowed.");
+
+			var command = await GetOwnedCommandAsync(attachment.IncidentCommandId, attachment.DepartmentId);
+			if (command == null)
+				return null;
+
+			attachment.IncidentAttachmentId = Guid.NewGuid().ToString();
+			attachment.CallId = command.CallId;
+			attachment.FileName = TrimToLength(safeFileName, 512);
+			attachment.ContentType = TrimToLength(string.IsNullOrWhiteSpace(attachment.ContentType) ? "application/octet-stream" : attachment.ContentType, 200);
+			attachment.ContentLength = attachment.Data.LongLength;
+			attachment.Sha256Hash = Convert.ToHexString(SHA256.HashData(attachment.Data)).ToLowerInvariant();
+			attachment.Description = TrimToLength(attachment.Description, 1000);
+			attachment.UploadedByUserId = userId;
+			attachment.UploadedOn = DateTime.UtcNow;
+			attachment.DeletedOn = null;
+			attachment.DeletedByUserId = null;
+
+			var saved = await _incidentAttachmentRepository.InsertAsync(Touch(attachment), cancellationToken);
+			await WriteLogAsync(command.IncidentCommandId, command.DepartmentId, command.CallId, CommandLogEntryType.IncidentAttachmentAdded, $"Incident file added: {saved.FileName}", userId, cancellationToken);
+			_eventAggregator.SendMessage<IncidentAttachmentAddedEvent>(new IncidentAttachmentAddedEvent
+			{
+				DepartmentId = saved.DepartmentId,
+				CallId = saved.CallId,
+				IncidentCommandId = saved.IncidentCommandId,
+				IncidentAttachmentId = saved.IncidentAttachmentId,
+				Visibility = saved.Visibility,
+				FileName = saved.FileName,
+				ContentType = saved.ContentType,
+				ContentLength = saved.ContentLength,
+				Sha256Hash = saved.Sha256Hash,
+				Description = saved.Description,
+				UploadedByUserId = userId
+			});
+			return saved;
+		}
+
+		public async Task<List<IncidentAttachment>> GetAttachmentsForCallAsync(int departmentId, int callId, bool publicOnly = false)
+		{
+			var attachments = await _incidentAttachmentRepository.GetAllMetadataByDepartmentIdAsync(departmentId);
+			if (attachments == null)
+				return new List<IncidentAttachment>();
+
+			return attachments.Where(x => x.CallId == callId && x.DeletedOn == null &&
+				(!publicOnly || x.Visibility == (int)IncidentContentVisibility.Public))
+				.OrderBy(x => x.UploadedOn)
+				.ToList();
+		}
+
+		public async Task<IncidentAttachment> GetAttachmentAsync(int departmentId, string incidentAttachmentId)
+		{
+			var attachment = await _incidentAttachmentRepository.GetByIdAsync(incidentAttachmentId);
+			return attachment != null && attachment.DepartmentId == departmentId && !attachment.DeletedOn.HasValue ? attachment : null;
+		}
+
+		public async Task<bool> RemoveAttachmentAsync(int departmentId, string incidentAttachmentId, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var attachment = await _incidentAttachmentRepository.GetByIdAsync(incidentAttachmentId);
+			if (attachment == null || attachment.DepartmentId != departmentId || attachment.DeletedOn.HasValue)
+				return false;
+			var capabilities = await GetCapabilitiesForUserAsync(departmentId, attachment.CallId, userId);
+			var required = IncidentCapabilities.ManageDocuments;
+			if (attachment.Visibility == (int)IncidentContentVisibility.Public)
+				required |= IncidentCapabilities.ManagePublicInformation;
+			if ((capabilities & required) != required)
+				return false;
+
+			attachment.DeletedOn = DateTime.UtcNow;
+			attachment.DeletedByUserId = userId;
+			await _incidentAttachmentRepository.SaveOrUpdateAsync(Touch(attachment), cancellationToken);
+			await WriteLogAsync(attachment.IncidentCommandId, attachment.DepartmentId, attachment.CallId, CommandLogEntryType.IncidentAttachmentRemoved, $"Incident file removed: {attachment.FileName}", userId, cancellationToken);
+			_eventAggregator.SendMessage<IncidentAttachmentRemovedEvent>(new IncidentAttachmentRemovedEvent
+			{
+				DepartmentId = attachment.DepartmentId,
+				CallId = attachment.CallId,
+				IncidentCommandId = attachment.IncidentCommandId,
+				IncidentAttachmentId = attachment.IncidentAttachmentId,
+				Visibility = attachment.Visibility,
+				FileName = attachment.FileName,
+				RemovedByUserId = userId
+			});
+			return true;
+		}
+
+		public async Task<IncidentCommand> EnablePublicSharingAsync(int departmentId, string incidentCommandId, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var command = await GetOwnedCommandAsync(incidentCommandId, departmentId);
+			if (command == null)
+				return null;
+
+			if (!command.PublicShareEnabled || string.IsNullOrWhiteSpace(command.PublicShareToken))
+				command.PublicShareToken = Convert.ToHexString(RandomNumberGenerator.GetBytes(32)).ToLowerInvariant();
+			command.PublicShareEnabled = true;
+			command = await _incidentCommandRepository.SaveOrUpdateAsync(Touch(command), cancellationToken);
+			await WriteLogAsync(command.IncidentCommandId, command.DepartmentId, command.CallId, CommandLogEntryType.PublicSharingEnabled, "Public incident sharing enabled", userId, cancellationToken);
+			_eventAggregator.SendMessage<IncidentPublicSharingChangedEvent>(new IncidentPublicSharingChangedEvent
+			{
+				DepartmentId = command.DepartmentId,
+				CallId = command.CallId,
+				IncidentCommandId = command.IncidentCommandId,
+				Enabled = true,
+				UpdatedByUserId = userId
+			});
+			return command;
+		}
+
+		public async Task<IncidentCommand> DisablePublicSharingAsync(int departmentId, string incidentCommandId, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var command = await GetOwnedCommandAsync(incidentCommandId, departmentId);
+			if (command == null)
+				return null;
+
+			command.PublicShareEnabled = false;
+			command.PublicShareToken = null;
+			command = await _incidentCommandRepository.SaveOrUpdateAsync(Touch(command), cancellationToken);
+			await WriteLogAsync(command.IncidentCommandId, command.DepartmentId, command.CallId, CommandLogEntryType.PublicSharingDisabled, "Public incident sharing disabled", userId, cancellationToken);
+			_eventAggregator.SendMessage<IncidentPublicSharingChangedEvent>(new IncidentPublicSharingChangedEvent
+			{
+				DepartmentId = command.DepartmentId,
+				CallId = command.CallId,
+				IncidentCommandId = command.IncidentCommandId,
+				Enabled = false,
+				UpdatedByUserId = userId
+			});
+			return command;
+		}
+
+		public async Task<IncidentPublicInformation> GetPublicInformationAsync(string publicShareToken)
+		{
+			if (!IsValidPublicShareToken(publicShareToken))
+				return null;
+			var command = await _incidentCommandRepository.GetByPublicShareTokenAsync(publicShareToken);
+			if (command == null)
+				return null;
+
+			var notes = await GetNotesForCallAsync(command.DepartmentId, command.CallId, true);
+			var attachments = await GetAttachmentsForCallAsync(command.DepartmentId, command.CallId, true);
+			var lastUpdated = new[]
+			{
+				command.ModifiedOn,
+				notes.Select(x => x.ModifiedOn).Where(x => x.HasValue).OrderByDescending(x => x).FirstOrDefault(),
+				attachments.Select(x => x.ModifiedOn).Where(x => x.HasValue).OrderByDescending(x => x).FirstOrDefault()
+			}.Where(x => x.HasValue).OrderByDescending(x => x).FirstOrDefault();
+
+			return new IncidentPublicInformation
+			{
+				IncidentCommandId = command.IncidentCommandId,
+				EstablishedOn = command.EstablishedOn,
+				Status = command.Status,
+				ClosedOn = command.ClosedOn,
+				LastUpdatedOn = lastUpdated,
+				Notes = notes.Select(x => new PublicIncidentNote
+				{
+					IncidentNoteId = x.IncidentNoteId,
+					NoteType = x.NoteType,
+					Title = x.Title,
+					Body = x.Body,
+					ContainmentPercent = x.ContainmentPercent,
+					CreatedOn = x.CreatedOn
+				}).ToList(),
+				Attachments = attachments.Select(x => new PublicIncidentAttachment
+				{
+					IncidentAttachmentId = x.IncidentAttachmentId,
+					FileName = x.FileName,
+					ContentType = x.ContentType,
+					ContentLength = x.ContentLength,
+					Sha256Hash = x.Sha256Hash,
+					Description = x.Description,
+					UploadedOn = x.UploadedOn
+				}).ToList()
+			};
+		}
+
+		public async Task<IncidentAttachment> GetPublicAttachmentAsync(string publicShareToken, string incidentAttachmentId)
+		{
+			if (!IsValidPublicShareToken(publicShareToken) || string.IsNullOrWhiteSpace(incidentAttachmentId))
+				return null;
+			var command = await _incidentCommandRepository.GetByPublicShareTokenAsync(publicShareToken);
+			if (command == null)
+				return null;
+
+			var attachment = await _incidentAttachmentRepository.GetByIdAsync(incidentAttachmentId);
+			return attachment != null && attachment.IncidentCommandId == command.IncidentCommandId &&
+			       attachment.Visibility == (int)IncidentContentVisibility.Public && !attachment.DeletedOn.HasValue
+				? attachment
+				: null;
+		}
+
+		public async Task<IncidentWeather> GetWeatherForIncidentAsync(int departmentId, int callId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var command = await GetCommandForCallAsync(departmentId, callId);
+			if (command == null)
+				return null;
+
+			decimal latitude;
+			decimal longitude;
+			if (!TryParseCoordinates(command.CommandPostLatitude, command.CommandPostLongitude, out latitude, out longitude))
+			{
+				var call = await _callsService.GetCallByIdAsync(callId);
+				var coordinates = call?.GeoLocationData?.Split(',');
+				if (call == null || call.DepartmentId != departmentId || coordinates == null || coordinates.Length < 2 ||
+				    !TryParseCoordinates(coordinates[0], coordinates[1], out latitude, out longitude))
+					throw new InvalidOperationException("The incident does not have a valid command-post or call location.");
+			}
+
+			return await _incidentWeatherProvider.GetWeatherAsync(latitude, longitude, Resgrid.Config.IncidentCommandConfig.ForecastHours, cancellationToken);
 		}
 
 		#endregion Command lifecycle
@@ -1072,6 +1434,45 @@ namespace Resgrid.Services
 			// Real-time: every command mutation flows through here, so push one board-changed signal.
 			await _coreEventService.IncidentCommandUpdatedAsync(departmentId, callId);
 			return saved;
+		}
+
+		private static bool TryParseCoordinates(string latitude, string longitude, out decimal latitudeValue, out decimal longitudeValue)
+		{
+			latitudeValue = 0;
+			longitudeValue = 0;
+			var validLatitude = decimal.TryParse(latitude?.Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out latitudeValue);
+			var validLongitude = decimal.TryParse(longitude?.Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out longitudeValue);
+			var valid = validLatitude && validLongitude;
+			return valid && latitudeValue >= -90 && latitudeValue <= 90 && longitudeValue >= -180 && longitudeValue <= 180;
+		}
+
+		private static string TrimToLength(string value, int maximumLength)
+		{
+			if (string.IsNullOrWhiteSpace(value))
+				return null;
+			value = value.Trim();
+			return value.Length <= maximumLength ? value : value.Substring(0, maximumLength);
+		}
+
+		private static bool IsBlockedAttachment(string fileName, string contentType)
+		{
+			var extension = Path.GetExtension(fileName)?.ToLowerInvariant();
+			var blockedExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+			{
+				".exe", ".dll", ".com", ".scr", ".msi", ".bat", ".cmd", ".ps1", ".vbs", ".js", ".jar"
+			};
+			if (!string.IsNullOrWhiteSpace(extension) && blockedExtensions.Contains(extension))
+				return true;
+
+			var normalizedContentType = contentType?.Split(';')[0].Trim().ToLowerInvariant();
+			return normalizedContentType == "application/x-msdownload" ||
+			       normalizedContentType == "application/x-msdos-program" ||
+			       normalizedContentType == "application/x-sh";
+		}
+
+		private static bool IsValidPublicShareToken(string token)
+		{
+			return !string.IsNullOrWhiteSpace(token) && token.Length == 64 && token.All(Uri.IsHexDigit);
 		}
 
 		#endregion Private helpers

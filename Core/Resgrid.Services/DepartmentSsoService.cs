@@ -728,6 +728,7 @@ namespace Resgrid.Services
 			var remainingLifetime = expiresOn - now;
 			if (remainingLifetime <= TimeSpan.Zero)
 				return false;
+			remainingLifetime += TokenClockSkew;
 
 			var replayIdentifier = Convert.ToHexString(
 				SHA256.HashData(Encoding.UTF8.GetBytes($"{configId}:{assertionId}")));

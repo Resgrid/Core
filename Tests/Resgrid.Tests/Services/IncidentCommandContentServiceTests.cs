@@ -101,8 +101,9 @@ namespace Resgrid.Tests.Services
 				e.CallId == CallId && e.Visibility == (int)IncidentContentVisibility.Public && e.ContainmentPercent == 40)), Times.Once);
 		}
 
-		[Test]
-		public async Task AddAttachment_WithAllowedDocument_ComputesIntegrityMetadata()
+		[TestCase("..\\plans\\iap.pdf")]
+		[TestCase("../plans/iap.pdf")]
+		public async Task AddAttachment_WithAllowedDocument_ComputesIntegrityMetadata(string fileName)
 		{
 			// Arrange
 			ArrangeOwnedCommand();
@@ -112,7 +113,7 @@ namespace Resgrid.Tests.Services
 				IncidentCommandId = "ic-1",
 				DepartmentId = DepartmentId,
 				Visibility = (int)IncidentContentVisibility.Internal,
-				FileName = "..\\plans\\iap.pdf",
+				FileName = fileName,
 				ContentType = "application/pdf",
 				Data = data
 			};

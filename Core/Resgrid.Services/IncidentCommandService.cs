@@ -724,7 +724,8 @@ namespace Resgrid.Services
 			if (attachment.Data.Length > Resgrid.Config.IncidentCommandConfig.MaxAttachmentBytes)
 				throw new ArgumentException($"Incident files cannot exceed {Resgrid.Config.IncidentCommandConfig.MaxAttachmentBytes} bytes.");
 
-			var safeFileName = Path.GetFileName(attachment.FileName ?? string.Empty);
+			// Browsers and API clients can submit either path separator regardless of the host OS.
+			var safeFileName = Path.GetFileName((attachment.FileName ?? string.Empty).Replace('\\', '/'));
 			if (string.IsNullOrWhiteSpace(safeFileName) || IsBlockedAttachment(safeFileName, attachment.ContentType))
 				throw new ArgumentException("The incident file name or type is not allowed.");
 

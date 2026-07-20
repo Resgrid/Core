@@ -137,6 +137,11 @@ namespace Resgrid.Tests.Services
 		public async Task ValidateExternalTokenAsync_SignedSamlAssertion_ValidatesOnceAndRejectsReplay()
 		{
 			// Arrange
+			var replayMarkerLifetime = TimeSpan.Zero;
+			_cacheProvider
+				.Setup(x => x.IncrementAsync(It.IsAny<string>(), It.IsAny<TimeSpan>()))
+				.Callback<string, TimeSpan>((_, lifetime) => replayMarkerLifetime = lifetime)
+				.ReturnsAsync(() => Interlocked.Increment(ref _samlReplayUseCount));
 			using var rsa = RSA.Create(2048);
 			using var certificate = CreateCertificate(rsa);
 			var config = CreateSamlConfig();
@@ -161,6 +166,36 @@ namespace Resgrid.Tests.Services
 			firstAttempt.FindFirst(ClaimTypes.NameIdentifier)?.Value.Should().Be("external-user");
 			firstAttempt.FindFirst(ClaimTypes.Email)?.Value.Should().Be("user@example.com");
 			replayAttempt.Should().BeNull();
+			replayMarkerLifetime.Should().BeGreaterThan(TimeSpan.FromMinutes(6));
+			replayMarkerLifetime.Should().BeLessThanOrEqualTo(TimeSpan.FromMinutes(7));
+		}
+
+		[Test]
+		public async Task ValidateExternalTokenAsync_SignedSamlAssertionPastRawExpiry_IsRejectedWithoutReplayMarker()
+		{
+			// Arrange
+			using var rsa = RSA.Create(2048);
+			using var certificate = CreateCertificate(rsa);
+			var config = CreateSamlConfig();
+			config.IsEnabled = true;
+			config.EncryptedIdpCertificate = "stored-certificate";
+			_ssoConfigRepository
+				.Setup(x => x.GetByDepartmentIdAndTypeAsync(config.DepartmentId, SsoProviderType.Saml2))
+				.ReturnsAsync(config);
+			_encryptionService
+				.Setup(x => x.DecryptForDepartment("stored-certificate", config.DepartmentId, "DEPT"))
+				.Returns(certificate.ExportCertificatePem());
+			var samlResponse = BuildSamlResponse(
+				config, rsa, signAssertion: true, expiresOn: DateTime.UtcNow.AddMinutes(-1));
+
+			// Act
+			var principal = await _service.ValidateExternalTokenAsync(
+				config.DepartmentId, SsoProviderType.Saml2, samlResponse, "DEPT");
+
+			// Assert
+			principal.Should().BeNull();
+			_cacheProvider.Verify(
+				x => x.IncrementAsync(It.IsAny<string>(), It.IsAny<TimeSpan>()), Times.Never);
 		}
 
 		[Test]
@@ -209,13 +244,14 @@ namespace Resgrid.Tests.Services
 			return request.CreateSelfSigned(DateTimeOffset.UtcNow.AddDays(-1), DateTimeOffset.UtcNow.AddDays(1));
 		}
 
-		private static string BuildSamlResponse(DepartmentSsoConfig config, RSA signingKey, bool signAssertion, string audience = null)
+		private static string BuildSamlResponse(DepartmentSsoConfig config, RSA signingKey, bool signAssertion,
+			string audience = null, DateTime? expiresOn = null)
 		{
 			var now = DateTime.UtcNow;
 			var assertionId = $"_{Guid.NewGuid():N}";
 			var responseId = $"_{Guid.NewGuid():N}";
 			var notBefore = XmlConvert.ToString(now.AddMinutes(-1), XmlDateTimeSerializationMode.Utc);
-			var notOnOrAfter = XmlConvert.ToString(now.AddMinutes(5), XmlDateTimeSerializationMode.Utc);
+			var notOnOrAfter = XmlConvert.ToString(expiresOn ?? now.AddMinutes(5), XmlDateTimeSerializationMode.Utc);
 			var issueInstant = XmlConvert.ToString(now, XmlDateTimeSerializationMode.Utc);
 			var xml = $"""
 				<samlp:Response xmlns:samlp="urn:oasis:names:tc:SAML:2.0:protocol" xmlns:saml="urn:oasis:names:tc:SAML:2.0:assertion" ID="{responseId}" Version="2.0" IssueInstant="{issueInstant}" Destination="{config.AssertionConsumerServiceUrl}">

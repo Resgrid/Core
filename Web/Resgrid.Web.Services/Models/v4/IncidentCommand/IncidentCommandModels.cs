@@ -57,6 +57,30 @@ namespace Resgrid.Web.Services.Models.v4.IncidentCommand
 		public string TargetNodeId { get; set; }
 	}
 
+	/// <summary>Input to update command-level details every resource should see.</summary>
+	public class UpdateCommandDetailsInput
+	{
+		public string IncidentCommandId { get; set; }
+		public System.DateTime? EstimatedEndOn { get; set; }
+		public string ImportantInformation { get; set; }
+	}
+
+	/// <summary>Input to set an objective's progress percentage (0-100; 100 completes it).</summary>
+	public class UpdateObjectiveProgressInput
+	{
+		public string TacticalObjectiveId { get; set; }
+		public int ProgressPercent { get; set; }
+	}
+
+	/// <summary>Input to transition an incident need's fulfillment status.</summary>
+	public class SetNeedStatusInput
+	{
+		public string IncidentNeedId { get; set; }
+		/// <summary>Maps to Resgrid.Model.IncidentNeedStatus.</summary>
+		public int Status { get; set; }
+		public int? QuantityFulfilled { get; set; }
+	}
+
 	public class IncidentCommandResult : StandardApiResponseV4Base
 	{
 		public Resgrid.Model.IncidentCommand Data { get; set; }
@@ -92,6 +116,22 @@ namespace Resgrid.Web.Services.Models.v4.IncidentCommand
 	public class TacticalObjectiveResult : StandardApiResponseV4Base
 	{
 		public Resgrid.Model.TacticalObjective Data { get; set; }
+	}
+
+	public class IncidentNeedResult : StandardApiResponseV4Base
+	{
+		public Resgrid.Model.IncidentNeed Data { get; set; }
+	}
+
+	public class IncidentNeedsResult : StandardApiResponseV4Base
+	{
+		public List<Resgrid.Model.IncidentNeed> Data { get; set; } = new List<Resgrid.Model.IncidentNeed>();
+	}
+
+	/// <summary>Read-only incident view for a responder or unit: commander, timing, objectives, needs, notes, attachments, own lane assignment.</summary>
+	public class ResourceIncidentViewResult : StandardApiResponseV4Base
+	{
+		public Resgrid.Model.ResourceIncidentView Data { get; set; }
 	}
 
 	public class IncidentTimerResult : StandardApiResponseV4Base

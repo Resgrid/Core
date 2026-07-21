@@ -35,6 +35,12 @@ namespace Resgrid.Model
 		/// <summary>NIMS/ICS escalation level for the incident (department defined).</summary>
 		public int IcsLevel { get; set; }
 
+		/// <summary>Optional commander-supplied estimate of when the incident will end.</summary>
+		public DateTime? EstimatedEndOn { get; set; }
+
+		/// <summary>Important information every resource on the incident should see (hazards, staging notes, ...).</summary>
+		public string ImportantInformation { get; set; }
+
 		/// <summary>Maps to <see cref="IncidentCommandStatus"/>.</summary>
 		public int Status { get; set; }
 

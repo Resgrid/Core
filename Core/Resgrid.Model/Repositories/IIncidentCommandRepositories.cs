@@ -17,6 +17,10 @@ namespace Resgrid.Model.Repositories
 	{
 	}
 
+	public interface IIncidentNeedRepository : IRepository<IncidentNeed>
+	{
+	}
+
 	public interface IIncidentTimerRepository : IRepository<IncidentTimer>
 	{
 	}

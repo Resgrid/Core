@@ -68,7 +68,10 @@ namespace Resgrid.Tests.Services
 				new Mock<IPersonnelRolesService>().Object,
 				_noteRepository.Object,
 				_attachmentRepository.Object,
-				_weatherProvider.Object);
+				_weatherProvider.Object,
+				new Mock<IIncidentNeedRepository>().Object,
+				new Mock<IUserProfileService>().Object,
+				new Mock<IIncidentCommandNotificationService>().Object);
 		}
 
 		[Test]

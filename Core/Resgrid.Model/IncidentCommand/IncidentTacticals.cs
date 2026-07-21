@@ -30,6 +30,18 @@ namespace Resgrid.Model
 
 		public DateTime? CompletedOn { get; set; }
 
+		/// <summary>Optional free-text detail describing the objective / how it will be met.</summary>
+		public string Description { get; set; }
+
+		/// <summary>Progress toward completion, 0-100. Complete objectives are implicitly 100.</summary>
+		public int ProgressPercent { get; set; }
+
+		/// <summary>Relative priority for triage/ordering (0 = unset; higher = more urgent).</summary>
+		public int Priority { get; set; }
+
+		/// <summary>Optional target time this objective should be complete by.</summary>
+		public DateTime? TargetCompleteOn { get; set; }
+
 		public int SortOrder { get; set; }
 
 		/// <summary>Change cursor for offline delta sync + last-write-wins; stamped on every write.</summary>

@@ -15,6 +15,9 @@ namespace Resgrid.Model
 
 		public List<TacticalObjective> Objectives { get; set; } = new List<TacticalObjective>();
 
+		/// <summary>Command-level needs (resources/logistics/etc.) tracked to fulfillment.</summary>
+		public List<IncidentNeed> Needs { get; set; } = new List<IncidentNeed>();
+
 		public List<IncidentTimer> Timers { get; set; } = new List<IncidentTimer>();
 
 		public List<IncidentMapAnnotation> Annotations { get; set; } = new List<IncidentMapAnnotation>();

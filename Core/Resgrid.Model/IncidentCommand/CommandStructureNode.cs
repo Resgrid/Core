@@ -60,6 +60,39 @@ namespace Resgrid.Model
 		/// <summary>When true, unmet lane requirements block assignment instead of warning. Seeded from the template role.</summary>
 		public bool ForceRequirements { get; set; }
 
+		/// <summary>Optional primary tactical objective this lane is working (FK to TacticalObjectives).</summary>
+		public string PrimaryObjectiveId { get; set; }
+
+		/// <summary>Optional secondary tactical objective this lane is working (FK to TacticalObjectives).</summary>
+		public string SecondaryObjectiveId { get; set; }
+
+		/// <summary>Optional incident need this lane is fulfilling (FK to IncidentNeeds).</summary>
+		public string LinkedNeedId { get; set; }
+
+		/// <summary>Primary lane lead when they are a Resgrid user; null for external leads.</summary>
+		public string PrimaryLeadUserId { get; set; }
+
+		/// <summary>Primary lane lead display name (external leads; ignored when PrimaryLeadUserId is set).</summary>
+		public string PrimaryLeadName { get; set; }
+
+		/// <summary>Primary lane lead contact phone (external leads).</summary>
+		public string PrimaryLeadPhone { get; set; }
+
+		/// <summary>Primary lane lead contact email (external leads).</summary>
+		public string PrimaryLeadEmail { get; set; }
+
+		/// <summary>Secondary lane lead when they are a Resgrid user; null for external leads.</summary>
+		public string SecondaryLeadUserId { get; set; }
+
+		/// <summary>Secondary lane lead display name (external leads; ignored when SecondaryLeadUserId is set).</summary>
+		public string SecondaryLeadName { get; set; }
+
+		/// <summary>Secondary lane lead contact phone (external leads).</summary>
+		public string SecondaryLeadPhone { get; set; }
+
+		/// <summary>Secondary lane lead contact email (external leads).</summary>
+		public string SecondaryLeadEmail { get; set; }
+
 		/// <summary>Soft-delete tombstone so a lane removed offline propagates on delta sync (null = live).</summary>
 		public DateTime? DeletedOn { get; set; }
 

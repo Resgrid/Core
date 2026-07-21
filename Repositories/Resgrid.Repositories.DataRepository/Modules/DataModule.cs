@@ -113,6 +113,7 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<CommandStructureNodeRepository>().As<ICommandStructureNodeRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ResourceAssignmentRepository>().As<IResourceAssignmentRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<TacticalObjectiveRepository>().As<ITacticalObjectiveRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<IncidentNeedRepository>().As<IIncidentNeedRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<IncidentTimerRepository>().As<IIncidentTimerRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<IncidentMapAnnotationRepository>().As<IIncidentMapAnnotationRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CommandLogEntryRepository>().As<ICommandLogEntryRepository>().InstancePerLifetimeScope();

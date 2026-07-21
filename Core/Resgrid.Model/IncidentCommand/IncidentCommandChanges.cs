@@ -23,6 +23,8 @@ namespace Resgrid.Model
 
 		public List<TacticalObjective> Objectives { get; set; } = new List<TacticalObjective>();
 
+		public List<IncidentNeed> Needs { get; set; } = new List<IncidentNeed>();
+
 		public List<IncidentTimer> Timers { get; set; } = new List<IncidentTimer>();
 
 		public List<IncidentMapAnnotation> Annotations { get; set; } = new List<IncidentMapAnnotation>();

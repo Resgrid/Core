@@ -43,7 +43,28 @@ namespace Resgrid.Model
 	public enum TacticalObjectiveStatus
 	{
 		Pending = 0,
-		Complete = 1
+		Complete = 1,
+		InProgress = 2
+	}
+
+	/// <summary>Category of an incident need (resource/logistics request tracked at the command level).</summary>
+	public enum IncidentNeedCategory
+	{
+		Resource = 0,
+		Logistics = 1,
+		Medical = 2,
+		Equipment = 3,
+		Staffing = 4,
+		Other = 5
+	}
+
+	/// <summary>Fulfillment state of an incident need.</summary>
+	public enum IncidentNeedStatus
+	{
+		Open = 0,
+		PartiallyMet = 1,
+		Met = 2,
+		Cancelled = 3
 	}
 
 	/// <summary>Type of incident timer (personnel PAR is handled by the Checkin feature, not these).</summary>
@@ -121,6 +142,12 @@ namespace Resgrid.Model
 		ActionPlanUpdated = 27,
 		CommandPostUpdated = 28,
 		PublicSharingEnabled = 29,
-		PublicSharingDisabled = 30
+		PublicSharingDisabled = 30,
+		NeedAdded = 31,
+		NeedUpdated = 32,
+		NeedMet = 33,
+		ObjectiveProgressUpdated = 34,
+		LaneLeadChanged = 35,
+		CommandDetailsUpdated = 36
 	}
 }

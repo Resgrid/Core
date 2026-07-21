@@ -195,6 +195,67 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 		}
 
+		/// <summary>Updates command-level details every resource should see: estimated end and important information.</summary>
+		[HttpPut("UpdateCommandDetails")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_Update)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageCommand)]
+		public async Task<ActionResult<ICModels.IncidentCommandResult>> UpdateCommandDetails([FromBody] ICModels.UpdateCommandDetailsInput input)
+		{
+			if (input == null || string.IsNullOrWhiteSpace(input.IncidentCommandId))
+				return BadRequest();
+
+			var command = await _incidentCommandService.UpdateCommandDetailsAsync(DepartmentId, input.IncidentCommandId, input.EstimatedEndOn, input.ImportantInformation, UserId, CancellationToken.None);
+			var result = new ICModels.IncidentCommandResult
+			{
+				Data = command,
+				PageSize = command == null ? 0 : 1,
+				Status = command == null ? ResponseHelper.NotFound : ResponseHelper.Success
+			};
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>
+		/// Read-only incident view for the calling responder (or, with unitId, a unit client): commander
+		/// contact, timing, important information, objectives, needs, notes and attachments (visibility-
+		/// filtered), plus the caller's own lane assignment with leads and lane objectives. Gated by the
+		/// Call resource claim — every dispatched responder/unit can read it, not only command staff.
+		/// </summary>
+		[HttpGet("GetResourceIncidentView/{callId}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<ICModels.ResourceIncidentViewResult>> GetResourceIncidentView(int callId, [FromQuery] int? unitId = null)
+		{
+			var result = new ICModels.ResourceIncidentViewResult();
+
+			// Command staff (any incident capability) also see command-only notes/attachments here.
+			var includePrivate = false;
+			try
+			{
+				includePrivate = await _incidentCommandService.GetCapabilitiesForUserAsync(DepartmentId, callId, UserId) != IncidentCapabilities.None;
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+			}
+
+			var view = await _incidentCommandService.GetResourceIncidentViewAsync(DepartmentId, callId, UserId, unitId, includePrivate);
+
+			if (view == null)
+			{
+				result.Status = ResponseHelper.NotFound;
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
+
+			result.Data = view;
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
 		#region Notes and documents
 
 		/// <summary>Adds an internal or public operational status note to the incident.</summary>
@@ -599,6 +660,32 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return result;
 		}
 
+		/// <summary>Sets a tactical objective's progress (0-100; 100 completes it).</summary>
+		[HttpPost("UpdateObjectiveProgress")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_Update)]
+		public async Task<ActionResult<ICModels.TacticalObjectiveResult>> UpdateObjectiveProgress([FromBody] ICModels.UpdateObjectiveProgressInput input)
+		{
+			if (input == null || string.IsNullOrWhiteSpace(input.TacticalObjectiveId))
+				return BadRequest();
+
+			var result = new ICModels.TacticalObjectiveResult();
+			var objective = await _incidentCommandService.UpdateObjectiveProgressAsync(DepartmentId, input.TacticalObjectiveId, input.ProgressPercent, UserId, CancellationToken.None);
+
+			if (objective == null)
+			{
+				result.Status = ResponseHelper.NotFound;
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
+
+			result.Data = objective;
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
 		/// <summary>Marks a tactical objective complete.</summary>
 		[HttpPost("CompleteObjective/{tacticalObjectiveId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
@@ -623,6 +710,80 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		#endregion Objectives
+
+		#region Needs
+
+		/// <summary>Creates or updates a command-level incident need (resources/logistics/etc.).</summary>
+		[HttpPost("SaveNeed")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_Update)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageObjectives)]
+		public async Task<ActionResult<ICModels.IncidentNeedResult>> SaveNeed([FromBody] IncidentNeed need)
+		{
+			if (need == null || string.IsNullOrWhiteSpace(need.IncidentCommandId) || string.IsNullOrWhiteSpace(need.Name))
+				return BadRequest();
+
+			need.DepartmentId = DepartmentId;
+
+			var result = new ICModels.IncidentNeedResult();
+			var saved = await _incidentCommandService.SaveNeedAsync(need, UserId, CancellationToken.None);
+
+			if (saved == null)
+			{
+				// Parent incident command not found / not owned by the caller's department.
+				result.Status = ResponseHelper.NotFound;
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
+
+			result.Data = saved;
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>Transitions an incident need's fulfillment status (Open/PartiallyMet/Met/Cancelled).</summary>
+		[HttpPost("SetNeedStatus")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_Update)]
+		public async Task<ActionResult<ICModels.IncidentNeedResult>> SetNeedStatus([FromBody] ICModels.SetNeedStatusInput input)
+		{
+			if (input == null || string.IsNullOrWhiteSpace(input.IncidentNeedId) || !Enum.IsDefined(typeof(IncidentNeedStatus), input.Status))
+				return BadRequest();
+
+			var result = new ICModels.IncidentNeedResult();
+			var need = await _incidentCommandService.SetNeedStatusAsync(DepartmentId, input.IncidentNeedId, (IncidentNeedStatus)input.Status, input.QuantityFulfilled, UserId, CancellationToken.None);
+
+			if (need == null)
+			{
+				result.Status = ResponseHelper.NotFound;
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
+
+			result.Data = need;
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>Gets the command-level needs for a call.</summary>
+		[HttpGet("GetNeeds/{callId}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		public async Task<ActionResult<ICModels.IncidentNeedsResult>> GetNeeds(int callId)
+		{
+			var result = new ICModels.IncidentNeedsResult();
+			result.Data = await _incidentCommandService.GetNeedsForCallAsync(DepartmentId, callId);
+			result.PageSize = result.Data.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		#endregion Needs
 
 		#region Timers
 

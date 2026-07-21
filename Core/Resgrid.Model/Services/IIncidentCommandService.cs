@@ -90,6 +90,32 @@ namespace Resgrid.Model.Services
 		Task<TacticalObjective> CompleteObjectiveAsync(int departmentId, string tacticalObjectiveId, string userId, CancellationToken cancellationToken = default(CancellationToken));
 		Task<List<TacticalObjective>> GetObjectivesForCallAsync(int departmentId, int callId);
 
+		/// <summary>
+		/// Sets an objective's progress (0-100, clamped). Progress over 0 moves a Pending objective to
+		/// InProgress; 100 completes it (stamping CompletedBy/On) exactly as <see cref="CompleteObjectiveAsync"/> would.
+		/// </summary>
+		Task<TacticalObjective> UpdateObjectiveProgressAsync(int departmentId, string tacticalObjectiveId, int progressPercent, string userId, CancellationToken cancellationToken = default(CancellationToken));
+
+		// Command-level needs (resources/logistics/etc.)
+		Task<IncidentNeed> SaveNeedAsync(IncidentNeed need, string userId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Transitions a need's fulfillment status (optionally updating the fulfilled quantity). Transitioning
+		/// to Met stamps MetBy/MetOn; leaving Met clears them.
+		/// </summary>
+		Task<IncidentNeed> SetNeedStatusAsync(int departmentId, string incidentNeedId, IncidentNeedStatus status, int? quantityFulfilled, string userId, CancellationToken cancellationToken = default(CancellationToken));
+		Task<List<IncidentNeed>> GetNeedsForCallAsync(int departmentId, int callId);
+
+		/// <summary>Updates command-level details every resource should see: estimated end and important information.</summary>
+		Task<IncidentCommand> UpdateCommandDetailsAsync(int departmentId, string incidentCommandId, System.DateTime? estimatedEndOn, string importantInformation, string userId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Read-only incident view for a responder (userId) or unit (unitId != null): commander contact, timing,
+		/// important information, objectives, needs, visibility-filtered notes/attachments, and the caller's own
+		/// lane assignment with leads and lane objectives. Null when the call has no incident command.
+		/// </summary>
+		Task<ResourceIncidentView> GetResourceIncidentViewAsync(int departmentId, int callId, string userId, int? unitId, bool includePrivate);
+
 		// Timers (scene/benchmark/role)
 		Task<IncidentTimer> StartTimerAsync(IncidentTimer timer, string userId, CancellationToken cancellationToken = default(CancellationToken));
 		Task<IncidentTimer> AcknowledgeTimerAsync(int departmentId, string incidentTimerId, string userId, CancellationToken cancellationToken = default(CancellationToken));

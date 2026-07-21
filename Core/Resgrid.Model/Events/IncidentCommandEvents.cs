@@ -182,4 +182,56 @@ namespace Resgrid.Model.Events
 		public bool Enabled { get; set; }
 		public string UpdatedByUserId { get; set; }
 	}
+
+	/// <summary>Raised when a resource assignment is moved between lanes.</summary>
+	public class IncidentResourceMovedEvent
+	{
+		public int DepartmentId { get; set; }
+		public int CallId { get; set; }
+		public string IncidentCommandId { get; set; }
+		public string ResourceAssignmentId { get; set; }
+		public int ResourceKind { get; set; }
+		public string ResourceId { get; set; }
+		public string FromNodeId { get; set; }
+		public string ToNodeId { get; set; }
+	}
+
+	/// <summary>Raised when a lane's primary or secondary lead changes.</summary>
+	public class LaneLeadChangedEvent
+	{
+		public int DepartmentId { get; set; }
+		public int CallId { get; set; }
+		public string IncidentCommandId { get; set; }
+		public string CommandStructureNodeId { get; set; }
+		public string LaneName { get; set; }
+		public bool IsPrimary { get; set; }
+		/// <summary>User id of the lead going off (null when the outgoing lead was external or the slot was empty).</summary>
+		public string PreviousLeadUserId { get; set; }
+		/// <summary>Display name of the lead going off (external leads; null when the slot was empty).</summary>
+		public string PreviousLeadName { get; set; }
+		/// <summary>User id of the lead coming on (null when the incoming lead is external or the slot was cleared).</summary>
+		public string NewLeadUserId { get; set; }
+		/// <summary>Display name of the lead coming on (external leads; null when the slot was cleared).</summary>
+		public string NewLeadName { get; set; }
+	}
+
+	/// <summary>Raised when an incident need is created or its status/fulfillment changes.</summary>
+	public class IncidentNeedChangedEvent
+	{
+		public int DepartmentId { get; set; }
+		public int CallId { get; set; }
+		public string IncidentCommandId { get; set; }
+		public string IncidentNeedId { get; set; }
+		public string Name { get; set; }
+		public int Status { get; set; }
+	}
+
+	/// <summary>Raised when command details (estimated end / important information) are updated.</summary>
+	public class IncidentCommandDetailsUpdatedEvent
+	{
+		public int DepartmentId { get; set; }
+		public int CallId { get; set; }
+		public string IncidentCommandId { get; set; }
+		public string UpdatedByUserId { get; set; }
+	}
 }

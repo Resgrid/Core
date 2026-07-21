@@ -138,6 +138,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		public async Task<IActionResult> ExportAfterAction(int callId)
 		{
 			var csv = await _incidentReportingService.ExportAfterActionCsvAsync(DepartmentId, callId);
+			if (string.IsNullOrEmpty(csv))
+				return NotFound();
+
 			var bytes = Encoding.UTF8.GetBytes(csv);
 			return File(bytes, "text/csv", $"incident-{callId}-after-action.csv");
 		}

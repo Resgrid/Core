@@ -33,6 +33,11 @@ namespace Resgrid.Model
 
 		public List<IncidentAdHocPersonnel> AdHocPersonnel { get; set; } = new List<IncidentAdHocPersonnel>();
 
+		public List<IncidentNote> Notes { get; set; } = new List<IncidentNote>();
+
+		/// <summary>Attachment metadata only; <see cref="IncidentAttachment.Data"/> is JSON-ignored.</summary>
+		public List<IncidentAttachment> Attachments { get; set; } = new List<IncidentAttachment>();
+
 		public List<CommandLogEntry> TimelineEntries { get; set; } = new List<CommandLogEntry>();
 	}
 }

@@ -111,7 +111,7 @@ namespace Resgrid.Tests.Services
 					UserId = "user1"
 				}
 			});
-			var service = new IncidentReportingService(commandService.Object);
+			var service = new IncidentReportingService(commandService.Object, new Mock<ICallsService>().Object, new Mock<IIncidentResourcesService>().Object);
 			return service.ExportTimelineCsvAsync(10, 7).GetAwaiter().GetResult();
 		}
 

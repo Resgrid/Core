@@ -21,6 +21,7 @@ namespace Resgrid.Services
 		private readonly IVoiceService _voiceService;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly ICommandLogEntryRepository _commandLogEntryRepository;
+		private readonly IVoiceTransmissionLogRepository _voiceTransmissionLogRepository;
 		private readonly IIncidentCommandRepository _incidentCommandRepository;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly ICoreEventService _coreEventService;
@@ -29,6 +30,7 @@ namespace Resgrid.Services
 			IVoiceService voiceService,
 			IDepartmentsService departmentsService,
 			ICommandLogEntryRepository commandLogEntryRepository,
+			IVoiceTransmissionLogRepository voiceTransmissionLogRepository,
 			IIncidentCommandRepository incidentCommandRepository,
 			IEventAggregator eventAggregator,
 			ICoreEventService coreEventService)
@@ -36,6 +38,7 @@ namespace Resgrid.Services
 			_voiceService = voiceService;
 			_departmentsService = departmentsService;
 			_commandLogEntryRepository = commandLogEntryRepository;
+			_voiceTransmissionLogRepository = voiceTransmissionLogRepository;
 			_incidentCommandRepository = incidentCommandRepository;
 			_eventAggregator = eventAggregator;
 			_coreEventService = coreEventService;
@@ -102,6 +105,35 @@ namespace Resgrid.Services
 
 			await WriteLogAsync(departmentId, callId, CommandLogEntryType.ChannelClosed, $"{channels.Count} tactical channel(s) closed", userId, cancellationToken);
 			return true;
+		}
+
+		public async Task<VoiceTransmissionLog> LogTransmissionAsync(VoiceTransmissionLog log, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (log == null || string.IsNullOrWhiteSpace(log.DepartmentVoiceChannelId) || string.IsNullOrWhiteSpace(log.UserId))
+				return null;
+
+			// The channel must be one of this call's open incident channels for the caller's department —
+			// prevents writing transmissions against another department's channel ids.
+			var channels = await GetChannelsForCallAsync(log.DepartmentId, log.CallId);
+			if (channels == null || channels.All(c => c.DepartmentVoiceChannelId != log.DepartmentVoiceChannelId))
+				return null;
+
+			if (string.IsNullOrWhiteSpace(log.VoiceTransmissionLogId))
+				log.VoiceTransmissionLogId = Guid.NewGuid().ToString();
+			if (log.StartedOn == default(DateTime))
+				log.StartedOn = DateTime.UtcNow;
+
+			// Append-only insert (see WriteLogAsync note about pre-set GUIDs and SaveOrUpdateAsync).
+			return await _voiceTransmissionLogRepository.InsertAsync(log, cancellationToken);
+		}
+
+		public async Task<List<VoiceTransmissionLog>> GetTransmissionLogForCallAsync(int departmentId, int callId)
+		{
+			var logs = await _voiceTransmissionLogRepository.GetAllByDepartmentIdAsync(departmentId);
+			if (logs == null)
+				return new List<VoiceTransmissionLog>();
+
+			return logs.Where(l => l.CallId == callId).OrderByDescending(l => l.StartedOn).ToList();
 		}
 
 		private async Task WriteLogAsync(int departmentId, int callId, CommandLogEntryType type, string description, string userId, CancellationToken cancellationToken)

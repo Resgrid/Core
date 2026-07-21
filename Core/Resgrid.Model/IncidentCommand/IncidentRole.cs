@@ -60,7 +60,10 @@ namespace Resgrid.Model
 		ManageChannels = 256,          // on-demand voice channels
 		ManageResources = 512,         // create ad-hoc resources / staging intake
 		ViewReports = 1024,
-		All = ViewBoard | ManageCommand | ManageStructure | AssignResources | ManageObjectives | ManageTimers | ManageAnnotations | ManageAccountability | ManageChannels | ManageResources | ViewReports
+		ManageNotes = 2048,            // operational/situation/safety notes
+		ManageDocuments = 4096,        // incident-level files and records
+		ManagePublicInformation = 8192,// public notes, documents, and share-link lifecycle
+		All = ViewBoard | ManageCommand | ManageStructure | AssignResources | ManageObjectives | ManageTimers | ManageAnnotations | ManageAccountability | ManageChannels | ManageResources | ViewReports | ManageNotes | ManageDocuments | ManagePublicInformation
 	}
 
 	/// <summary>
@@ -84,10 +87,11 @@ namespace Resgrid.Model
 
 				case IncidentRoleType.PlanningSectionChief:
 				case IncidentRoleType.SituationUnitLeader:
-					return IncidentCapabilities.ViewBoard | IncidentCapabilities.ManageObjectives | IncidentCapabilities.ManageAnnotations | IncidentCapabilities.ViewReports;
+					return IncidentCapabilities.ViewBoard | IncidentCapabilities.ManageObjectives | IncidentCapabilities.ManageAnnotations |
+					       IncidentCapabilities.ManageNotes | IncidentCapabilities.ManageDocuments | IncidentCapabilities.ViewReports;
 
 				case IncidentRoleType.DocumentationUnitLeader:
-					return IncidentCapabilities.ViewBoard | IncidentCapabilities.ViewReports;
+					return IncidentCapabilities.ViewBoard | IncidentCapabilities.ManageNotes | IncidentCapabilities.ManageDocuments | IncidentCapabilities.ViewReports;
 
 				case IncidentRoleType.LogisticsSectionChief:
 					return IncidentCapabilities.ViewBoard | IncidentCapabilities.ManageChannels | IncidentCapabilities.ManageResources;
@@ -96,11 +100,14 @@ namespace Resgrid.Model
 					return IncidentCapabilities.ViewBoard | IncidentCapabilities.ManageChannels;
 
 				case IncidentRoleType.FinanceAdminSectionChief:
-				case IncidentRoleType.PublicInformationOfficer:
 					return IncidentCapabilities.ViewBoard | IncidentCapabilities.ViewReports;
 
+				case IncidentRoleType.PublicInformationOfficer:
+					return IncidentCapabilities.ViewBoard | IncidentCapabilities.ManageNotes | IncidentCapabilities.ManageDocuments |
+					       IncidentCapabilities.ManagePublicInformation | IncidentCapabilities.ViewReports;
+
 				case IncidentRoleType.SafetyOfficer:
-					return IncidentCapabilities.ViewBoard | IncidentCapabilities.ManageAnnotations | IncidentCapabilities.ManageObjectives;
+					return IncidentCapabilities.ViewBoard | IncidentCapabilities.ManageAnnotations | IncidentCapabilities.ManageObjectives | IncidentCapabilities.ManageNotes;
 
 				case IncidentRoleType.LiaisonOfficer:
 					return IncidentCapabilities.ViewBoard | IncidentCapabilities.ManageResources;
@@ -137,7 +144,8 @@ namespace Resgrid.Model
 
 				case IncidentRoleType.ShelterMassCareCoordinator:
 				case IncidentRoleType.DamageAssessmentLead:
-					return IncidentCapabilities.ViewBoard | IncidentCapabilities.ManageObjectives | IncidentCapabilities.ViewReports;
+					return IncidentCapabilities.ViewBoard | IncidentCapabilities.ManageObjectives | IncidentCapabilities.ManageNotes |
+					       IncidentCapabilities.ManageDocuments | IncidentCapabilities.ViewReports;
 
 				default:
 					return IncidentCapabilities.ViewBoard;

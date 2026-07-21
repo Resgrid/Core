@@ -7,7 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using OpenIddict.Abstractions;
 using OpenIddict.Server.AspNetCore;
 using Resgrid.Config;
+using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.Sso;
@@ -36,6 +38,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 	[ApiExplorerSettings(GroupName = "v4")]
 	public class ConnectController : ControllerBase
 	{
+		private const string SamlRelayTokenPrefix = "saml-relay:";
+		private static readonly TimeSpan SamlRelayLifetime = TimeSpan.FromMinutes(5);
+
 		private readonly SignInManager<Model.Identity.IdentityUser> _signInManager;
 		private readonly UserManager<Model.Identity.IdentityUser> _userManager;
 		private readonly IUsersService _usersService;
@@ -44,6 +49,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly ISystemAuditsService _systemAuditsService;
 		private readonly IDepartmentSsoService _departmentSsoService;
 		private readonly IEncryptionService _encryptionService;
+		private readonly ICacheProvider _cacheProvider;
 
 		public ConnectController(
 			IUsersService usersService,
@@ -53,7 +59,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			UserManager<Model.Identity.IdentityUser> userManager,
 			ISystemAuditsService systemAuditsService,
 			IDepartmentSsoService departmentSsoService,
-			IEncryptionService encryptionService
+			IEncryptionService encryptionService,
+			ICacheProvider cacheProvider
 			)
 		{
 			_usersService = usersService;
@@ -64,6 +71,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_systemAuditsService = systemAuditsService;
 			_departmentSsoService = departmentSsoService;
 			_encryptionService = encryptionService;
+			_cacheProvider = cacheProvider;
 		}
 
 		/// <summary>
@@ -575,7 +583,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <summary>
 		/// Exchanges an external SSO token (OIDC id_token or base64-encoded SAMLResponse) for a
 		/// Resgrid access token. Supports grant_type=external_token with fields:
-		///   provider (saml2|oidc), external_token, department_code, scope (optional),
+		///   provider (saml2|oidc), external_token, department_code or department_token, scope (optional),
 		///   totp_code (required when the user has Resgrid 2FA enrolled).
 		/// SSO authentication does NOT bypass Resgrid's own Two-Factor Authentication.
 		/// When the user has 2FA enabled in Resgrid, a valid totp_code must be supplied
@@ -591,6 +599,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			[FromForm] string provider,
 			[FromForm] string external_token,
 			[FromForm] string department_code,
+			[FromForm] string department_token,
 			[FromForm] string scope,
 			[FromForm] string totp_code,
 			CancellationToken cancellationToken)
@@ -599,32 +608,43 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				System = (int)SystemAuditSystems.Api,
 				Type = (int)SystemAuditTypes.SsoLogin,
-				Username = department_code,
+				Username = department_code ?? "encrypted-department-token",
 				Successful = false,
 				IpAddress = IpAddressHelper.GetRequestIP(Request, true),
 				ServerName = Environment.MachineName,
 				Data = $"ExternalToken provider={provider}, {Request.Headers["User-Agent"]}"
 			};
 
-			if (string.IsNullOrWhiteSpace(provider) || string.IsNullOrWhiteSpace(external_token) || string.IsNullOrWhiteSpace(department_code))
+			if (string.IsNullOrWhiteSpace(provider) || string.IsNullOrWhiteSpace(external_token) ||
+				(string.IsNullOrWhiteSpace(department_code) && string.IsNullOrWhiteSpace(department_token)))
 			{
 				await _systemAuditsService.SaveSystemAuditAsync(audit);
-				return BadRequest(new { error = "invalid_request", error_description = "provider, external_token, and department_code are required." });
+				return BadRequest(new { error = "invalid_request", error_description = "provider, external_token, and either department_code or department_token are required." });
 			}
 
-			// Resolve department by department code
-			var department = await _departmentsService.GetDepartmentByNameAsync(department_code);
+			var department = await ResolveDepartmentAsync(department_token, department_code);
 			if (department == null)
 			{
 				await _systemAuditsService.SaveSystemAuditAsync(audit);
-				return Unauthorized(new { error = "invalid_grant", error_description = "Invalid department_code." });
+				return Unauthorized(new { error = "invalid_grant", error_description = "Invalid department identifier." });
 			}
 
 			// Parse provider type
-			if (!Enum.TryParse<SsoProviderType>(provider, ignoreCase: true, out var providerType))
+			if (!Enum.TryParse<SsoProviderType>(provider, ignoreCase: true, out var providerType) || !Enum.IsDefined(providerType))
 			{
 				await _systemAuditsService.SaveSystemAuditAsync(audit);
 				return BadRequest(new { error = "invalid_request", error_description = "provider must be 'saml2' or 'oidc'." });
+			}
+
+			if (providerType == SsoProviderType.Saml2 && external_token.StartsWith(SamlRelayTokenPrefix, StringComparison.Ordinal))
+			{
+				external_token = await ConsumeSamlRelayAsync(external_token);
+				if (string.IsNullOrWhiteSpace(external_token))
+				{
+					audit.Type = (int)SystemAuditTypes.SsoLoginFailed;
+					await _systemAuditsService.SaveSystemAuditAsync(audit);
+					return Unauthorized(new { error = "invalid_grant", error_description = "The SAML relay token is invalid, expired, or has already been used." });
+				}
 			}
 
 			// Validate the external token against the department's SSO config
@@ -756,18 +776,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 		///   POST /api/v4/connect/saml-mobile-callback?departmentCode=DEPT
 		/// </summary>
 		[HttpPost("saml-mobile-callback")]
-		[HttpGet("saml-mobile-callback")]
 		[AllowAnonymous]
 		[ProducesResponseType(StatusCodes.Status302Found)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
 		public async Task<IActionResult> SamlMobileCallback(
 			[FromQuery] string departmentToken,
 			[FromQuery] string departmentCode,
 			[FromForm] string SAMLResponse,
 			CancellationToken cancellationToken)
 		{
-			if (string.IsNullOrWhiteSpace(SAMLResponse))
-				return BadRequest(new { error = "invalid_request", error_description = "SAMLResponse is required." });
+			if (string.IsNullOrWhiteSpace(SAMLResponse) || SAMLResponse.Length > 2_800_000)
+				return BadRequest(new { error = "invalid_request", error_description = "SAMLResponse is required and must be within the supported size limit." });
 
 			if (string.IsNullOrWhiteSpace(departmentToken) && string.IsNullOrWhiteSpace(departmentCode))
 				return BadRequest(new { error = "invalid_request", error_description = "departmentToken or departmentCode query parameter is required." });
@@ -776,9 +796,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (department == null)
 				return BadRequest(new { error = "invalid_request", error_description = "Unknown or invalid department token." });
 
-			var encodedResponse = Uri.EscapeDataString(SAMLResponse);
-			// Pass the encrypted token to the deep link so the mobile app can use it with external-token
-			var encodedToken = Uri.EscapeDataString(departmentToken ?? Uri.EscapeDataString(department.Code));
+			// Keep the assertion out of the custom-scheme URL. Store it encrypted for five minutes
+			// and hand the app a single-use, cryptographically random relay value instead.
+			var relayId = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
+			var stored = await _cacheProvider.SetStringAsync(
+				GetSamlRelayCacheKey(relayId), _encryptionService.Encrypt(SAMLResponse), SamlRelayLifetime);
+			if (!stored)
+				return StatusCode(StatusCodes.Status503ServiceUnavailable,
+					new { error = "temporarily_unavailable", error_description = "SAML login relay is temporarily unavailable." });
+
+			var encodedResponse = Uri.EscapeDataString($"{SamlRelayTokenPrefix}{relayId}");
+			var callbackToken = _encryptionService.Encrypt($"{department.DepartmentId}:{department.Code}");
+			var encodedToken = Uri.EscapeDataString(callbackToken);
 
 			var deepLink = $"resgrid://auth/callback?saml_response={encodedResponse}&department_token={encodedToken}";
 			return Redirect(deepLink);
@@ -795,18 +824,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				try
 				{
-					// First pass: decrypt using just the system key to obtain the plain payload
 					var plain = _encryptionService.Decrypt(departmentToken);
 					var parts = plain.Split(':');
 					if (parts.Length >= 2 && int.TryParse(parts[0], out var deptId))
 					{
 						var deptCode = string.Join(":", parts.Skip(1));
-						// Second pass: verify with the department-specific key
-						var verify = _encryptionService.DecryptForDepartment(
-							_encryptionService.EncryptForDepartment(plain, deptId, deptCode),
-							deptId, deptCode);
-						if (verify == plain)
-							return await _departmentsService.GetDepartmentByIdAsync(deptId);
+						var department = await _departmentsService.GetDepartmentByIdAsync(deptId);
+						if (department != null && string.Equals(department.Code, deptCode, StringComparison.Ordinal))
+							return department;
 					}
 				}
 				catch
@@ -820,6 +845,41 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			return null;
 		}
+
+		private async Task<string> ConsumeSamlRelayAsync(string relayToken)
+		{
+			if (relayToken.Length != SamlRelayTokenPrefix.Length + 64)
+				return null;
+
+			var relayId = relayToken[SamlRelayTokenPrefix.Length..];
+			if (relayId.Any(character => !Uri.IsHexDigit(character)))
+				return null;
+
+			// Increment is atomic in Redis. Only the first exchange is allowed to read the assertion,
+			// including when callback and token requests land on different API instances.
+			var useCount = await _cacheProvider.IncrementAsync(GetSamlRelayUseCacheKey(relayId), SamlRelayLifetime);
+			if (useCount != 1)
+				return null;
+
+			var encryptedResponse = await _cacheProvider.GetStringAsync(GetSamlRelayCacheKey(relayId));
+			await _cacheProvider.RemoveAsync(GetSamlRelayCacheKey(relayId));
+			if (string.IsNullOrWhiteSpace(encryptedResponse))
+				return null;
+
+			try
+			{
+				return _encryptionService.Decrypt(encryptedResponse);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return null;
+			}
+		}
+
+		private static string GetSamlRelayCacheKey(string relayId) => $"Sso:SamlRelay:{relayId}";
+
+		private static string GetSamlRelayUseCacheKey(string relayId) => $"Sso:SamlRelayUse:{relayId}";
 
 		private IEnumerable<string> GetDestinations(Claim claim, ClaimsPrincipal principal)		{
 			// Note: by default, claims are NOT automatically included in the access and identity tokens.

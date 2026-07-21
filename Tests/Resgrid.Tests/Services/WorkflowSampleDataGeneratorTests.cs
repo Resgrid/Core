@@ -83,6 +83,22 @@ namespace Resgrid.Tests.Services
 			name.Should().NotBe("test");
 			name.Should().NotBe("value");
 		}
+
+		[Test]
+		public void GenerateSampleData_PublicIncidentDocumentAdded_IncludesValidSha256Hash()
+		{
+			// Arrange
+			var eventType = WorkflowTriggerEventType.PublicIncidentDocumentAdded;
+
+			// Act
+			var data = (ScriptObject)WorkflowSampleDataGenerator.GenerateSampleData(
+				eventType);
+			var incident = data["incident"] as ScriptObject;
+
+			// Assert
+			incident.Should().NotBeNull();
+			incident?["sha256_hash"]?.ToString().Should().MatchRegex("^[0-9a-fA-F]{64}$");
+		}
 	}
 }
 

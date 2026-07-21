@@ -24,6 +24,9 @@ namespace Resgrid.Model
 
 		public string Name { get; set; }
 
+		/// <summary>Display color for this lane (hex, e.g. "#e74c3c"); resources assigned to the lane inherit it on maps. Null = default.</summary>
+		public string Color { get; set; }
+
 		/// <summary>Parent node for branch/division/group hierarchies; null for top-level nodes.</summary>
 		public string ParentNodeId { get; set; }
 
@@ -35,6 +38,27 @@ namespace Resgrid.Model
 
 		/// <summary>The CommandDefinitionRole this node was seeded from, if any.</summary>
 		public int? SourceRoleId { get; set; }
+
+		/// <summary>Minimum personnel riding a unit for it to fill this lane (0 = no minimum). Seeded from the template role.</summary>
+		public int MinUnitPersonnel { get; set; }
+
+		/// <summary>Maximum personnel riding a unit for it to fill this lane (0 = no maximum). Seeded from the template role.</summary>
+		public int MaxUnitPersonnel { get; set; }
+
+		/// <summary>Minimum units this lane wants filled (0 = none; advisory readiness indicator, never blocks).</summary>
+		public int MinUnits { get; set; }
+
+		/// <summary>Maximum units in this lane at once (0 = unlimited). Seeded from the template role.</summary>
+		public int MaxUnits { get; set; }
+
+		/// <summary>Minimum minutes a resource should stay before rotating out (0 = none; advisory only).</summary>
+		public int MinTimeInRole { get; set; }
+
+		/// <summary>Maximum minutes a resource should work this lane before rotation (0 = none; surfaced as rotation-due).</summary>
+		public int MaxTimeInRole { get; set; }
+
+		/// <summary>When true, unmet lane requirements block assignment instead of warning. Seeded from the template role.</summary>
+		public bool ForceRequirements { get; set; }
 
 		/// <summary>Soft-delete tombstone so a lane removed offline propagates on delta sync (null = live).</summary>
 		public DateTime? DeletedOn { get; set; }

@@ -3,6 +3,7 @@
 @model List<Resgrid.Model.PersonnelRole>
 @{
     var templates = UnitRoleTemplateCatalog.All;
+    var categories = templates.Select(t => t.Category).Distinct().ToList();
     var templatesJs = templates.Select(t => new
     {
         id = t.Id,
@@ -25,15 +26,28 @@
                     before saving. Suggested qualifications are matched to your department's personnel roles by name.
                 </p>
 
-                <div class="input-group" style="max-width: 420px; margin-bottom: 16px;">
-                    <span class="input-group-addon"><i class="fa fa-search"></i></span>
-                    <input type="text" id="unitRoleTemplateSearch" class="form-control" placeholder="Search templates (e.g. engine, medic, patrol)..." autocomplete="off" onkeyup="resgrid.units.roletemplates.filter(this.value);" />
+                <div class="row" style="margin-bottom: 16px;">
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                            <input type="text" id="unitRoleTemplateSearch" class="form-control" placeholder="Search roles, units or disciplines..." autocomplete="off" oninput="resgrid.units.roletemplates.filter();" />
+                        </div>
+                    </div>
+                    <div class="col-sm-4">
+                        <select id="unitRoleTemplateCategory" class="form-control" onchange="resgrid.units.roletemplates.filter();">
+                            <option value="">All categories</option>
+                            @foreach (var category in categories)
+                            {
+                                <option value="@category.ToLowerInvariant()">@category</option>
+                            }
+                        </select>
+                    </div>
                 </div>
 
                 <div class="row" id="unitRoleTemplateGrid" style="max-height: 55vh; overflow-y: auto;">
                     @foreach (var t in templates)
                     {
-                        <div class="col-md-6 role-template-card" data-search="@t.SearchText" style="margin-bottom: 14px;">
+                        <div class="col-md-6 role-template-card" data-search="@t.SearchText" data-category="@t.Category.ToLowerInvariant()" style="margin-bottom: 14px;">
                             <div class="ibox" style="margin-bottom: 0;">
                                 <div class="ibox-content">
                                     <div class="clearfix" style="margin-bottom: 4px;">
@@ -144,14 +158,17 @@
             $('#unitRoleTemplatesModal').modal('hide');
         };
 
-        rt.filter = function (query) {
-            var q = (query || '').toLowerCase().trim();
+        rt.filter = function () {
+            var q = ($('#unitRoleTemplateSearch').val() || '').toLowerCase().trim();
+            var category = ($('#unitRoleTemplateCategory').val() || '').toLowerCase();
             var terms = q.length ? q.split(/[\s,]+/) : [];
             var visible = 0;
 
             $('#unitRoleTemplateGrid .role-template-card').each(function () {
                 var hay = $(this).attr('data-search') || '';
-                var match = terms.every(function (t) { return hay.indexOf(t) !== -1; });
+                var cardCategory = $(this).attr('data-category') || '';
+                var match = (!category || cardCategory === category) &&
+                    terms.every(function (t) { return hay.indexOf(t) !== -1; });
                 $(this).toggle(match);
                 if (match) { visible++; }
             });

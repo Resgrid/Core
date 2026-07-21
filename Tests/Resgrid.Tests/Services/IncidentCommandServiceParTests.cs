@@ -43,6 +43,9 @@ namespace Resgrid.Tests.Services
 		private Mock<ICoreEventService> _coreEventService;
 		private Mock<IUnitsService> _unitsService;
 		private Mock<IPersonnelRolesService> _personnelRolesService;
+		private Mock<IIncidentNoteRepository> _noteRepo;
+		private Mock<IIncidentAttachmentRepository> _attachmentRepo;
+		private Mock<IIncidentWeatherProvider> _weatherProvider;
 		private IncidentCommandService _service;
 
 		[SetUp]
@@ -65,6 +68,9 @@ namespace Resgrid.Tests.Services
 			_coreEventService = new Mock<ICoreEventService>();
 			_unitsService = new Mock<IUnitsService>();
 			_personnelRolesService = new Mock<IPersonnelRolesService>();
+			_noteRepo = new Mock<IIncidentNoteRepository>();
+			_attachmentRepo = new Mock<IIncidentAttachmentRepository>();
+			_weatherProvider = new Mock<IIncidentWeatherProvider>();
 
 			// Timeline entries are append-only inserts; echo back the entry so WriteLogAsync resolves a non-null result.
 			_logRepo.Setup(x => x.InsertAsync(It.IsAny<CommandLogEntry>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
@@ -74,7 +80,7 @@ namespace Resgrid.Tests.Services
 				_objectiveRepo.Object, _timerRepo.Object, _annotationRepo.Object, _logRepo.Object, _transferRepo.Object,
 				_commandsService.Object, _callsService.Object, _checkInTimerService.Object, _voiceService.Object,
 				_roleRepo.Object, _eventAggregator.Object, _coreEventService.Object,
-				_unitsService.Object, _personnelRolesService.Object);
+				_unitsService.Object, _personnelRolesService.Object, _noteRepo.Object, _attachmentRepo.Object, _weatherProvider.Object);
 		}
 
 		private void ArrangeCall(bool checkInTimersEnabled = true, int departmentId = Dept)
@@ -794,5 +800,112 @@ namespace Resgrid.Tests.Services
 			changes.Commands.Should().HaveCount(2);
 			changes.Commands.Should().Contain(c => c.IncidentCommandId == "c-legacy");
 		}
+		// Lane capacity / staffing / rotation constraints (MaxUnits, MinUnitPersonnel, MinTimeInRole) —
+		// denormalized onto the node at seeding and enforced with the same Force semantics.
+
+		private void ArrangeConstrainedLane(string nodeId = "node-1", int maxUnits = 0, int minUnitPersonnel = 0, int minTimeInRole = 0, bool force = true)
+		{
+			_commandRepo.Setup(x => x.GetByIdAsync("ic1")).ReturnsAsync(new IncidentCommand
+			{
+				IncidentCommandId = "ic1", DepartmentId = Dept, CallId = CallId, Status = (int)IncidentCommandStatus.Active
+			});
+
+			_nodeRepo.Setup(x => x.GetByIdAsync(nodeId)).ReturnsAsync(new CommandStructureNode
+			{
+				CommandStructureNodeId = nodeId, DepartmentId = Dept, CallId = CallId, Name = "Fire Attack",
+				MaxUnits = maxUnits, MinUnitPersonnel = minUnitPersonnel, MinTimeInRole = minTimeInRole, ForceRequirements = force
+			});
+
+			_assignmentRepo.Setup(x => x.InsertAsync(It.IsAny<ResourceAssignment>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((ResourceAssignment a, CancellationToken ct, bool b) => a);
+			_assignmentRepo.Setup(x => x.SaveOrUpdateAsync(It.IsAny<ResourceAssignment>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((ResourceAssignment a, CancellationToken ct, bool b) => a);
+		}
+
+		[Test]
+		public async Task AssignResourceAsync_Rejects_UnitOverForcedLaneCapacity()
+		{
+			ArrangeConstrainedLane(maxUnits: 1);
+			// One active unit already fills the lane's single slot.
+			_assignmentRepo.Setup(x => x.GetAllByDepartmentIdAsync(Dept)).ReturnsAsync(new List<ResourceAssignment>
+			{
+				new ResourceAssignment { ResourceAssignmentId = "existing", DepartmentId = Dept, CallId = CallId, CommandStructureNodeId = "node-1", ResourceKind = (int)ResourceAssignmentKind.RealUnit, ResourceId = "77" }
+			});
+
+			Func<Task> act = () => _service.AssignResourceAsync(NewAssignment((int)ResourceAssignmentKind.RealUnit, "5"), "user1");
+
+			await act.Should().ThrowAsync<CommandRequirementsNotMetException>();
+			_assignmentRepo.Verify(x => x.InsertAsync(It.IsAny<ResourceAssignment>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+		}
+
+		[Test]
+		public async Task AssignResourceAsync_AllowsAdHocUnit_EvenWhenForcedLaneIsFull()
+		{
+			// Ad-hoc (mutual aid) resources bypass every lane check — the IC vouches for them.
+			ArrangeConstrainedLane(maxUnits: 1);
+			_assignmentRepo.Setup(x => x.GetAllByDepartmentIdAsync(Dept)).ReturnsAsync(new List<ResourceAssignment>
+			{
+				new ResourceAssignment { ResourceAssignmentId = "existing", DepartmentId = Dept, CallId = CallId, CommandStructureNodeId = "node-1", ResourceKind = (int)ResourceAssignmentKind.RealUnit, ResourceId = "77" }
+			});
+
+			var saved = await _service.AssignResourceAsync(NewAssignment((int)ResourceAssignmentKind.AdHocUnit, "adhoc-1"), "user1");
+
+			saved.Should().NotBeNull();
+			saved.RequirementsWarning.Should().BeFalse();
+		}
+
+		[Test]
+		public async Task AssignResourceAsync_Rejects_UnderstaffedUnit_WhenLaneForcesMinPersonnel()
+		{
+			ArrangeConstrainedLane(minUnitPersonnel: 2);
+			_assignmentRepo.Setup(x => x.GetAllByDepartmentIdAsync(Dept)).ReturnsAsync(new List<ResourceAssignment>());
+			_unitsService.Setup(x => x.GetActiveRolesForUnitAsync(5)).ReturnsAsync(new List<UnitActiveRole>
+			{
+				new UnitActiveRole { UnitId = 5, Role = "Driver", UserId = "u1" } // 1 rider, lane needs 2
+			});
+
+			Func<Task> act = () => _service.AssignResourceAsync(NewAssignment((int)ResourceAssignmentKind.RealUnit, "5"), "user1");
+
+			await act.Should().ThrowAsync<CommandRequirementsNotMetException>();
+		}
+
+		[Test]
+		public async Task AssignResourceAsync_Warns_UnderstaffedUnit_WhenAdvisory()
+		{
+			ArrangeConstrainedLane(minUnitPersonnel: 2, force: false);
+			_assignmentRepo.Setup(x => x.GetAllByDepartmentIdAsync(Dept)).ReturnsAsync(new List<ResourceAssignment>());
+			_unitsService.Setup(x => x.GetActiveRolesForUnitAsync(5)).ReturnsAsync(new List<UnitActiveRole>());
+
+			var saved = await _service.AssignResourceAsync(NewAssignment((int)ResourceAssignmentKind.RealUnit, "5"), "user1");
+
+			saved.Should().NotBeNull();
+			saved.RequirementsWarning.Should().BeTrue();
+			saved.RequirementsWarningMessage.Should().Contain("at least 2 personnel");
+		}
+
+		[Test]
+		public async Task MoveResourceAsync_FlagsEarlyRotation_AsAdvisoryOnly()
+		{
+			// Source lane wants a 30-minute minimum stint; moving out after 5 minutes succeeds but is flagged.
+			ArrangeConstrainedLane(nodeId: "node-target", force: true);
+			_nodeRepo.Setup(x => x.GetByIdAsync("node-source")).ReturnsAsync(new CommandStructureNode
+			{
+				CommandStructureNodeId = "node-source", DepartmentId = Dept, CallId = CallId, Name = "Fire Attack", MinTimeInRole = 30
+			});
+			_assignmentRepo.Setup(x => x.GetByIdAsync("ra1")).ReturnsAsync(new ResourceAssignment
+			{
+				ResourceAssignmentId = "ra1", DepartmentId = Dept, CallId = CallId, IncidentCommandId = "ic1",
+				CommandStructureNodeId = "node-source", ResourceKind = (int)ResourceAssignmentKind.RealUnit, ResourceId = "5",
+				AssignedOn = DateTime.UtcNow.AddMinutes(-5)
+			});
+
+			var moved = await _service.MoveResourceAsync(Dept, "ra1", "node-target", "user1");
+
+			moved.Should().NotBeNull();
+			moved.CommandStructureNodeId.Should().Be("node-target");
+			moved.RequirementsWarning.Should().BeTrue();
+			moved.RequirementsWarningMessage.Should().Contain("minimum 30 minutes");
+		}
+
 	}
 }

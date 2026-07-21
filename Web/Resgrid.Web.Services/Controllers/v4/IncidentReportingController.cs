@@ -84,5 +84,65 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var bytes = Encoding.UTF8.GetBytes(csv);
 			return File(bytes, "text/csv", $"incident-{callId}-timeline.csv");
 		}
+
+		/// <summary>Gets the NFIRS/NERIS-oriented key-times report (alarm, command, benchmarks, resource counts).</summary>
+		[HttpGet("GetIncidentTimes/{callId}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		public async Task<ActionResult<ICModels.IncidentTimesReportResult>> GetIncidentTimes(int callId)
+		{
+			var result = new ICModels.IncidentTimesReportResult();
+			var report = await _incidentReportingService.GetIncidentTimesReportAsync(DepartmentId, callId);
+
+			if (report == null)
+			{
+				result.Status = ResponseHelper.NotFound;
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
+
+			result.Data = report;
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>Gets per-resource lane utilization (which lanes each resource worked and for how long).</summary>
+		[HttpGet("GetResourceUtilization/{callId}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		public async Task<ActionResult<ICModels.ResourceUtilizationReportResult>> GetResourceUtilization(int callId)
+		{
+			var result = new ICModels.ResourceUtilizationReportResult();
+			var report = await _incidentReportingService.GetResourceUtilizationReportAsync(DepartmentId, callId);
+
+			if (report == null)
+			{
+				result.Status = ResponseHelper.NotFound;
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
+
+			result.Data = report;
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>Exports the full after-action report (summary, times, lanes, utilization, timeline) as CSV.</summary>
+		[HttpGet("ExportAfterAction/{callId}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		public async Task<IActionResult> ExportAfterAction(int callId)
+		{
+			var csv = await _incidentReportingService.ExportAfterActionCsvAsync(DepartmentId, callId);
+			if (string.IsNullOrEmpty(csv))
+				return NotFound();
+
+			var bytes = Encoding.UTF8.GetBytes(csv);
+			return File(bytes, "text/csv", $"incident-{callId}-after-action.csv");
+		}
 	}
 }

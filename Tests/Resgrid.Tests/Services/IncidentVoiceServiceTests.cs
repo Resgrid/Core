@@ -50,7 +50,7 @@ namespace Resgrid.Tests.Services
 				.ReturnsAsync((CommandLogEntry e, CancellationToken ct, bool b) => e);
 
 			var service = new IncidentVoiceService(voiceService.Object, departmentsService.Object, logRepo.Object,
-				commandRepo.Object, eventAggregator.Object, coreEventService.Object);
+				new Mock<IVoiceTransmissionLogRepository>().Object, commandRepo.Object, eventAggregator.Object, coreEventService.Object);
 
 			var result = await service.CloseIncidentChannelsForCallAsync(10, 7, "user1");
 

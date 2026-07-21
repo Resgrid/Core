@@ -67,6 +67,8 @@
 							<th style="max-width: 200px;font-size: 14px;">Name</th>
 							<th style="max-width: 120px;font-size: 14px;">Lane Type</th>
 							<th style="max-width: 300px;font-size: 14px;">Description</th>
+							<th style="max-width: 110px;font-size: 14px;">Color</th>
+							<th style="max-width: 170px;font-size: 14px;" title="Optional lane limits: units in lane, personnel per unit, rotation minutes">Limits</th>
 							<th style="max-width: 300px;font-size: 14px;">Requirements</th>
 							<th style="max-width: 90px;font-size: 16px;"><a id="addAssignmentButton" class="btn btn-success btn-xs" data-original-title="Add Lane" data-toggle="modal" data-target="#newAssignmentModal"><i class="icon-plus"></i> Add Lane</a></th>
 						</tr>
@@ -75,43 +77,63 @@
 						@for (int i = 0; i < assignments.Count; i++)
 						{
 							var assignment = assignments[i];
-							var laneTypeName = Enum.IsDefined(typeof(CommandNodeType), assignment.LaneType)
-								? ((CommandNodeType)assignment.LaneType).ToString()
-								: CommandNodeType.Division.ToString();
 							var requiredUnitTypeIds = assignment.RequiredUnitTypes?.Select(x => x.UnitTypeId).ToList() ?? new System.Collections.Generic.List<int>();
 							var requiredRoleIds = assignment.RequiredRoles?.Select(x => x.PersonnelRoleId).ToList() ?? new System.Collections.Generic.List<int>();
-							var requiredUnitTypeNames = Model.UnitTypes.Where(x => requiredUnitTypeIds.Contains(x.UnitTypeId)).Select(x => x.Type).ToList();
-							var requiredRoleNames = Model.PersonnelRoles.Where(x => requiredRoleIds.Contains(x.PersonnelRoleId)).Select(x => x.Name).ToList();
 							<tr>
 								<td style="max-width: 215px;">
-									@assignment.Name
 									<input type="hidden" name="assignmentId_@i" value="@assignment.CommandDefinitionRoleId" />
-									<input type="hidden" name="assignmentName_@i" value="@assignment.Name" />
+									<input type="text" class="form-control" name="assignmentName_@i" value="@assignment.Name" aria-label="Lane name" />
 								</td>
 								<td>
-									@laneTypeName
-									<input type="hidden" name="assignmentLaneType_@i" value="@assignment.LaneType" />
+									<select class="form-control" name="assignmentLaneType_@i" aria-label="Lane type">
+										@foreach (CommandNodeType nodeType in Enum.GetValues(typeof(CommandNodeType)))
+										{
+											<option value="@((int)nodeType)" selected="@((int)nodeType == assignment.LaneType ? "selected" : null)">@nodeType.ToString()</option>
+										}
+									</select>
 								</td>
 								<td>
-									@assignment.Description
-									<input type="hidden" name="assignmentDescription_@i" value="@assignment.Description" />
+									<textarea class="form-control" name="assignmentDescription_@i" rows="2" aria-label="Lane description">@assignment.Description</textarea>
 								</td>
 								<td>
-									@if (requiredUnitTypeNames.Count > 0)
-									{
-										<div><strong>Units:</strong> @string.Join(", ", requiredUnitTypeNames)</div>
-									}
-									@if (requiredRoleNames.Count > 0)
-									{
-										<div><strong>Roles:</strong> @string.Join(", ", requiredRoleNames)</div>
-									}
-									@if (assignment.ForceRequirements)
-									{
-										<div><span class="label label-warning">Enforced</span></div>
-									}
-									<input type="hidden" name="assignmentUnitTypes_@i" value="@string.Join(",", requiredUnitTypeIds)" />
-									<input type="hidden" name="assignmentRoles_@i" value="@string.Join(",", requiredRoleIds)" />
-									<input type="hidden" name="assignmentLock_@i" value="@assignment.ForceRequirements.ToString().ToLower()" />
+									<select class="form-control assignment-color-inline" name="assignmentColor_@i" aria-label="Lane color">
+										<option value="" selected="@(string.IsNullOrWhiteSpace(assignment.Color) ? "selected" : null)">None</option>
+										@foreach (var laneColor in Resgrid.Web.Areas.User.Models.Command.NewCommandView.LaneColors)
+										{
+											<option value="@laneColor.Value" style="background-color:@laneColor.Value;color:#fff;" selected="@(string.Equals(assignment.Color, laneColor.Value, StringComparison.OrdinalIgnoreCase) ? "selected" : null)">@laneColor.Name</option>
+										}
+									</select>
+								</td>
+								<td>
+									<div style="display:flex;flex-wrap:wrap;gap:3px;">
+										<input type="number" min="0" class="form-control" style="width:76px;display:inline-block;" name="assignmentMinUnits_@i" value="@(assignment.MinUnits > 0 ? assignment.MinUnits.ToString() : "")" placeholder="Min U" title="Minimum units this lane should have (advisory under-filled indicator)" aria-label="Minimum units" />
+										<input type="number" min="0" class="form-control" style="width:76px;display:inline-block;" name="assignmentMaxUnits_@i" value="@(assignment.MaxUnits > 0 ? assignment.MaxUnits.ToString() : "")" placeholder="Max U" title="Maximum units in this lane at once (blocks or warns per Force Requirements)" aria-label="Maximum units" />
+										<input type="number" min="0" class="form-control" style="width:76px;display:inline-block;" name="assignmentMinUnitPersonnel_@i" value="@(assignment.MinUnitPersonnel > 0 ? assignment.MinUnitPersonnel.ToString() : "")" placeholder="Min P" title="Minimum personnel riding a unit for it to fit this lane" aria-label="Minimum unit personnel" />
+										<input type="number" min="0" class="form-control" style="width:76px;display:inline-block;" name="assignmentMaxUnitPersonnel_@i" value="@(assignment.MaxUnitPersonnel > 0 ? assignment.MaxUnitPersonnel.ToString() : "")" placeholder="Max P" title="Maximum personnel riding a unit for it to fit this lane" aria-label="Maximum unit personnel" />
+										<input type="number" min="0" class="form-control" style="width:76px;display:inline-block;" name="assignmentMinTimeInRole_@i" value="@(assignment.MinTimeInRole > 0 ? assignment.MinTimeInRole.ToString() : "")" placeholder="Min T" title="Minimum minutes before rotating out (early rotation is flagged, never blocked)" aria-label="Minimum time in role (minutes)" />
+										<input type="number" min="0" class="form-control" style="width:76px;display:inline-block;" name="assignmentMaxTimeInRole_@i" value="@(assignment.MaxTimeInRole > 0 ? assignment.MaxTimeInRole.ToString() : "")" placeholder="Max T" title="Minutes before a resource shows rotation-due on the board" aria-label="Maximum time in role (minutes)" />
+									</div>
+								</td>
+								<td>
+									<select class="form-control assignment-unittypes-inline" name="assignmentUnitTypes_@i" multiple="multiple" aria-label="Required unit types">
+										@foreach (var unitType in Model.UnitTypes)
+										{
+											<option value="@unitType.UnitTypeId" selected="@(requiredUnitTypeIds.Contains(unitType.UnitTypeId) ? "selected" : null)">@unitType.Type</option>
+										}
+									</select>
+									<select class="form-control assignment-personnelroles-inline" name="assignmentRoles_@i" multiple="multiple" aria-label="Required personnel roles" style="margin-top:5px;">
+										@foreach (var role in Model.PersonnelRoles)
+										{
+											<option value="@role.PersonnelRoleId" selected="@(requiredRoleIds.Contains(role.PersonnelRoleId) ? "selected" : null)">@role.Name</option>
+										}
+									</select>
+									<div style="margin-top:5px;">
+										<input type="hidden" name="assignmentLock_@i" value="false" />
+										<label style="font-weight:normal; margin:0;">
+											<input type="checkbox" name="assignmentLock_@i" value="true" checked="@(assignment.ForceRequirements ? "checked" : null)" />
+											Enforce requirements
+										</label>
+									</div>
 								</td>
 								<td style="text-align:center;"><a onclick="$(this).parent().parent().remove();" class="tip-top" data-original-title="Remove this lane"><i class="fa fa-minus" style="color: red;"></i></a></td>
 							</tr>

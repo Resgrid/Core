@@ -104,4 +104,82 @@ namespace Resgrid.Model.Events
 		public int DepartmentId { get; set; }
 		public int CallId { get; set; }
 	}
+
+	public class IncidentNoteAddedEvent
+	{
+		public int DepartmentId { get; set; }
+		public int CallId { get; set; }
+		public string IncidentCommandId { get; set; }
+		public string IncidentNoteId { get; set; }
+		public int Visibility { get; set; }
+		public int NoteType { get; set; }
+		public string Title { get; set; }
+		public string Body { get; set; }
+		public decimal? ContainmentPercent { get; set; }
+		public string CreatedByUserId { get; set; }
+	}
+
+	public class IncidentNoteRemovedEvent
+	{
+		public int DepartmentId { get; set; }
+		public int CallId { get; set; }
+		public string IncidentCommandId { get; set; }
+		public string IncidentNoteId { get; set; }
+		public int Visibility { get; set; }
+		public string RemovedByUserId { get; set; }
+	}
+
+	public class IncidentAttachmentAddedEvent
+	{
+		public int DepartmentId { get; set; }
+		public int CallId { get; set; }
+		public string IncidentCommandId { get; set; }
+		public string IncidentAttachmentId { get; set; }
+		public int Visibility { get; set; }
+		public string FileName { get; set; }
+		public string ContentType { get; set; }
+		public long ContentLength { get; set; }
+		public string Sha256Hash { get; set; }
+		public string Description { get; set; }
+		public string UploadedByUserId { get; set; }
+	}
+
+	public class IncidentAttachmentRemovedEvent
+	{
+		public int DepartmentId { get; set; }
+		public int CallId { get; set; }
+		public string IncidentCommandId { get; set; }
+		public string IncidentAttachmentId { get; set; }
+		public int Visibility { get; set; }
+		public string FileName { get; set; }
+		public string RemovedByUserId { get; set; }
+	}
+
+	public class IncidentActionPlanUpdatedEvent
+	{
+		public int DepartmentId { get; set; }
+		public int CallId { get; set; }
+		public string IncidentCommandId { get; set; }
+		public string ActionPlan { get; set; }
+		public string UpdatedByUserId { get; set; }
+	}
+
+	public class IncidentCommandPostUpdatedEvent
+	{
+		public int DepartmentId { get; set; }
+		public int CallId { get; set; }
+		public string IncidentCommandId { get; set; }
+		public string Latitude { get; set; }
+		public string Longitude { get; set; }
+		public string UpdatedByUserId { get; set; }
+	}
+
+	public class IncidentPublicSharingChangedEvent
+	{
+		public int DepartmentId { get; set; }
+		public int CallId { get; set; }
+		public string IncidentCommandId { get; set; }
+		public bool Enabled { get; set; }
+		public string UpdatedByUserId { get; set; }
+	}
 }

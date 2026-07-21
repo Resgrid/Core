@@ -11,6 +11,7 @@ using Resgrid.Model.Services;
 using Resgrid.Web.Areas.User.Models.Command;
 using Microsoft.AspNetCore.Authorization;
 using Resgrid.Providers.Claims;
+using Resgrid.Model.CommandBoards;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -53,12 +54,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Command_Create)]
-		public async Task<IActionResult> New()
+		public IActionResult Templates()
+		{
+			return View(CommandBoardTemplateCatalog.All);
+		}
+
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Command_Create)]
+		public async Task<IActionResult> New(string templateId = null)
 		{
 			var model = new NewCommandView();
 			model.Command = new CommandDefinition();
 
 			await PopulateSupportingDataAsync(model);
+
+			if (!string.IsNullOrWhiteSpace(templateId))
+			{
+				var template = CommandBoardTemplateCatalog.GetById(templateId);
+				if (template != null)
+					model.Command = template.CreateDefinition(model.UnitTypes, model.PersonnelRoles);
+			}
 
 			return View(model);
 		}
@@ -68,6 +83,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Command_Create)]
 		public async Task<IActionResult> New(NewCommandView model, IFormCollection form, CancellationToken cancellationToken)
 		{
+			if (model.Command == null)
+				model.Command = new CommandDefinition();
+
+			model.Command.Assignments = ParseAssignmentsFromForm(form);
+
 			if (string.IsNullOrWhiteSpace(model.Command?.Name))
 				ModelState.AddModelError("Command.Name", "Command name is required.");
 
@@ -75,7 +95,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				model.Command.DepartmentId = DepartmentId;
 				model.Command.CallTypeId = await ResolveCallTypeIdAsync(model.SelectedType);
-				model.Command.Assignments = ParseAssignmentsFromForm(form);
 
 				await _commandsService.Save(model.Command, cancellationToken);
 
@@ -109,10 +128,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Command_Update)]
 		public async Task<IActionResult> Edit(NewCommandView model, IFormCollection form, CancellationToken cancellationToken)
 		{
+			if (model.Command == null)
+				model.Command = new CommandDefinition();
+
 			var command = await _commandsService.GetCommandByIdAsync(model.Command.CommandDefinitionId);
 
 			if (command == null || command.DepartmentId != DepartmentId)
 				return RedirectToAction("Index");
+
+			var postedAssignments = ParseAssignmentsFromForm(form);
 
 			if (string.IsNullOrWhiteSpace(model.Command?.Name))
 				ModelState.AddModelError("Command.Name", "Command name is required.");
@@ -124,14 +148,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 				command.CallTypeId = await ResolveCallTypeIdAsync(model.SelectedType);
 				command.Timer = model.Command.Timer;
 				command.TimerMinutes = model.Command.TimerMinutes;
-				command.Assignments = ParseAssignmentsFromForm(form);
+				command.Assignments = postedAssignments;
 
 				await _commandsService.Save(command, cancellationToken);
 
 				return RedirectToAction("Index");
 			}
 
-			model.Command = command;
+			model.Command.CommandDefinitionId = command.CommandDefinitionId;
+			model.Command.Assignments = postedAssignments;
 			await PopulateSupportingDataAsync(model);
 			return View(model);
 		}
@@ -235,8 +260,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 				if (int.TryParse(form[$"assignmentLaneType_{i}"], out var laneType) && Enum.IsDefined(typeof(CommandNodeType), laneType))
 					assignment.LaneType = laneType;
 
-				if (bool.TryParse(form[$"assignmentLock_{i}"], out var forceRequirements))
-					assignment.ForceRequirements = forceRequirements;
+				assignment.ForceRequirements = form[$"assignmentLock_{i}"]
+					.Any(value => bool.TryParse(value, out var forceRequirements) && forceRequirements);
+
+				// Optional lane limits — blank/invalid values mean "no limit" (0).
+				assignment.MinUnits = ParseLimitField(form[$"assignmentMinUnits_{i}"]);
+				assignment.MaxUnits = ParseLimitField(form[$"assignmentMaxUnits_{i}"]);
+				assignment.MinUnitPersonnel = ParseLimitField(form[$"assignmentMinUnitPersonnel_{i}"]);
+				assignment.MaxUnitPersonnel = ParseLimitField(form[$"assignmentMaxUnitPersonnel_{i}"]);
+				assignment.MinTimeInRole = ParseLimitField(form[$"assignmentMinTimeInRole_{i}"]);
+				assignment.MaxTimeInRole = ParseLimitField(form[$"assignmentMaxTimeInRole_{i}"]);
+
+				// Lane identification color — only well-formed hex values are persisted.
+				string color = form[$"assignmentColor_{i}"];
+				assignment.Color = !string.IsNullOrWhiteSpace(color) && System.Text.RegularExpressions.Regex.IsMatch(color.Trim(), "^#[0-9a-fA-F]{3,8}$")
+					? color.Trim()
+					: null;
 
 				// The form is a full document: absent/empty pickers clear the lane's requirements.
 				assignment.RequiredUnitTypes = ParseIdCsv(form[$"assignmentUnitTypes_{i}"])
@@ -248,6 +287,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return assignments;
+		}
+
+		/// <summary>Parses an optional non-negative lane-limit field; blank or invalid input means "no limit" (0).</summary>
+		private static int ParseLimitField(string value)
+		{
+			return int.TryParse(value, out var parsed) && parsed > 0 ? parsed : 0;
 		}
 
 		private static List<int> ParseIdCsv(string value)

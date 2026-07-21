@@ -27,6 +27,8 @@ namespace Resgrid.Model
 
 		public int MaxUnitPersonnel { get; set; }
 
+		public int MinUnits { get; set; }
+
 		public int MaxUnits { get; set; }
 
 		public int MinTimeInRole { get; set; }
@@ -45,6 +47,12 @@ namespace Resgrid.Model
 		/// Display/ordering position of this lane within the command definition.
 		/// </summary>
 		public int SortOrder { get; set; }
+
+		/// <summary>
+		/// Display color for this lane (hex, e.g. "#e74c3c"). Seeded onto the runtime
+		/// CommandStructureNode so board lanes and map markers inherit it.
+		/// </summary>
+		public string Color { get; set; }
 
 		public virtual ICollection<CommandDefinitionRoleUnitType> RequiredUnitTypes { get; set; }
 

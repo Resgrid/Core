@@ -7,6 +7,7 @@ namespace Resgrid.Providers.Weather
 	{
 		protected override void Load(ContainerBuilder builder)
 		{
+			builder.RegisterType<NwsIncidentWeatherProvider>().As<IIncidentWeatherProvider>().SingleInstance();
 			builder.RegisterType<NwsWeatherAlertProvider>().As<IWeatherAlertProvider>().InstancePerLifetimeScope();
 			builder.RegisterType<EnvironmentCanadaWeatherAlertProvider>().As<IWeatherAlertProvider>().InstancePerLifetimeScope();
 			builder.RegisterType<MeteoAlarmWeatherAlertProvider>().As<IWeatherAlertProvider>().InstancePerLifetimeScope();

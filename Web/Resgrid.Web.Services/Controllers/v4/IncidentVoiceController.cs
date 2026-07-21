@@ -71,6 +71,60 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return result;
 		}
 
+		/// <summary>Logs one completed PTT transmission on an incident channel (who keyed up, start/end).</summary>
+		[HttpPost("LogTransmission")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		public async Task<ActionResult<ICModels.VoiceTransmissionLogResult>> LogTransmission([FromBody] ICModels.LogTransmissionInput input)
+		{
+			if (input == null || input.CallId <= 0 || string.IsNullOrWhiteSpace(input.DepartmentVoiceChannelId))
+				return BadRequest();
+
+			var result = new ICModels.VoiceTransmissionLogResult();
+
+			System.DateTime.TryParse(input.StartedOn, null, System.Globalization.DateTimeStyles.AdjustToUniversal | System.Globalization.DateTimeStyles.AssumeUniversal, out var startedOn);
+			System.DateTime? endedOn = null;
+			if (System.DateTime.TryParse(input.EndedOn, null, System.Globalization.DateTimeStyles.AdjustToUniversal | System.Globalization.DateTimeStyles.AssumeUniversal, out var parsedEnd))
+				endedOn = parsedEnd;
+
+			var saved = await _incidentVoiceService.LogTransmissionAsync(new VoiceTransmissionLog
+			{
+				DepartmentId = DepartmentId,
+				CallId = input.CallId,
+				DepartmentVoiceChannelId = input.DepartmentVoiceChannelId,
+				UserId = UserId,
+				StartedOn = startedOn,
+				EndedOn = endedOn
+			}, CancellationToken.None);
+
+			if (saved == null)
+			{
+				result.Status = ResponseHelper.NotFound;
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
+
+			result.Data = saved;
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>Gets the PTT transmission log for a call's incident channels, newest first.</summary>
+		[HttpGet("GetTransmissionLog/{callId}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		public async Task<ActionResult<ICModels.VoiceTransmissionLogsResult>> GetTransmissionLog(int callId)
+		{
+			var result = new ICModels.VoiceTransmissionLogsResult();
+			result.Data = await _incidentVoiceService.GetTransmissionLogForCallAsync(DepartmentId, callId);
+			result.PageSize = result.Data.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
 		/// <summary>Closes all open on-demand tactical channels for a call.</summary>
 		[HttpPost("CloseIncidentChannels/{callId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]

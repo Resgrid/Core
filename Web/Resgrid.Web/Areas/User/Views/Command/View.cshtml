@@ -88,11 +88,29 @@
 									var requiredRoleIds = assignment.RequiredRoles?.Select(x => x.PersonnelRoleId).ToList() ?? new System.Collections.Generic.List<int>();
 									var requiredUnitTypeNames = Model.UnitTypes.Where(x => requiredUnitTypeIds.Contains(x.UnitTypeId)).Select(x => x.Type).ToList();
 									var requiredRoleNames = Model.PersonnelRoles.Where(x => requiredRoleIds.Contains(x.PersonnelRoleId)).Select(x => x.Name).ToList();
+									var limitParts = new System.Collections.Generic.List<string>();
+									if (assignment.MinUnits > 0) { limitParts.Add($"min {assignment.MinUnits} unit(s)"); }
+									if (assignment.MaxUnits > 0) { limitParts.Add($"max {assignment.MaxUnits} unit(s)"); }
+									if (assignment.MinUnitPersonnel > 0) { limitParts.Add($"min {assignment.MinUnitPersonnel} riding"); }
+									if (assignment.MaxUnitPersonnel > 0) { limitParts.Add($"max {assignment.MaxUnitPersonnel} riding"); }
+									if (assignment.MinTimeInRole > 0) { limitParts.Add($"min {assignment.MinTimeInRole} min in lane"); }
+									if (assignment.MaxTimeInRole > 0) { limitParts.Add($"rotate after {assignment.MaxTimeInRole} min"); }
 									<tr>
 										<td>@(i + 1)</td>
-										<td>@assignment.Name</td>
+										<td>
+											@if (!string.IsNullOrWhiteSpace(assignment.Color))
+											{
+												<span style="display:inline-block;width:12px;height:12px;border-radius:6px;background-color:@assignment.Color;margin-right:6px;vertical-align:middle;"></span>
+											}@assignment.Name
+										</td>
 										<td>@laneTypeName</td>
-										<td>@assignment.Description</td>
+										<td>
+										@assignment.Description
+										@if (limitParts.Count > 0)
+										{
+											<br /><small class="text-muted">Limits: @string.Join(", ", limitParts)</small>
+										}
+									</td>
 										<td>
 											@if (requiredUnitTypeNames.Count == 0 && requiredRoleNames.Count == 0)
 											{

@@ -8,6 +8,7 @@ using Resgrid.Web.Services.Filters;
 using Resgrid.Web.Services.Helpers;
 using System;
 using System.IO;
+using System.Linq;
 using System.Net.Mime;
 using System.Threading;
 using System.Threading.Tasks;
@@ -60,6 +61,116 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			result.Data = command;
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>
+		/// Gets the most recent command for a call across ALL statuses (unlike GetCommandBoard, which only
+		/// resolves the active one). Lets the IC app detect a prior ended command and offer to reopen it.
+		/// </summary>
+		[HttpGet("GetCommandForCall/{callId}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		public async Task<ActionResult<ICModels.IncidentCommandResult>> GetCommandForCall(int callId)
+		{
+			var result = new ICModels.IncidentCommandResult();
+			var command = await _incidentCommandService.GetCommandForCallAsync(DepartmentId, callId);
+
+			if (command == null)
+			{
+				result.Status = ResponseHelper.NotFound;
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
+
+			result.Data = command;
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>
+		/// Reopens a previously closed command with a reason. Bootstrap-gated like EstablishCommand: after a
+		/// close there is no active command, so incident capabilities cannot be evaluated — the department-level
+		/// Command_Create claim is the gate.
+		/// </summary>
+		[HttpPut("ReopenCommand")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_Create)]
+		public async Task<ActionResult<ICModels.IncidentCommandResult>> ReopenCommand([FromBody] ICModels.ReopenCommandInput input)
+		{
+			if (input == null || string.IsNullOrWhiteSpace(input.IncidentCommandId))
+				return BadRequest();
+
+			var result = new ICModels.IncidentCommandResult();
+			try
+			{
+				var command = await _incidentCommandService.ReopenCommandAsync(DepartmentId, input.IncidentCommandId, input.Reason, UserId, CancellationToken.None);
+
+				if (command == null)
+				{
+					result.Status = ResponseHelper.NotFound;
+					ResponseHelper.PopulateV4ResponseData(result);
+					return result;
+				}
+
+				result.Data = command;
+				result.PageSize = 1;
+				result.Status = ResponseHelper.Success;
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
+
+		/// <summary>
+		/// List-card summaries for the department's commands: duration, resolved commander name, locations, and
+		/// active unit/personnel counts. Active only by default; includeClosed=true adds ended incidents.
+		/// </summary>
+		[HttpGet("GetCommandList")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		public async Task<ActionResult<ICModels.IncidentCommandSummariesResult>> GetCommandList([FromQuery] bool includeClosed = false)
+		{
+			var summaries = await _incidentCommandService.GetCommandSummariesForDepartmentAsync(DepartmentId, includeClosed);
+			var result = new ICModels.IncidentCommandSummariesResult
+			{
+				Data = summaries,
+				PageSize = summaries.Count,
+				Status = ResponseHelper.Success
+			};
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>
+		/// Board snapshot for one specific command instance — including a CLOSED one (read-only history view for
+		/// ended incidents). Child rows are filtered to that command, so a closed board isn't polluted by a newer
+		/// command on the same call.
+		/// </summary>
+		[HttpGet("GetCommandBoardById/{incidentCommandId}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		public async Task<ActionResult<ICModels.IncidentCommandBoardResult>> GetCommandBoardById(string incidentCommandId)
+		{
+			var result = new ICModels.IncidentCommandBoardResult();
+			var board = await _incidentCommandService.GetCommandBoardByIdAsync(DepartmentId, incidentCommandId);
+
+			if (board == null)
+			{
+				result.Status = ResponseHelper.NotFound;
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
+
+			result.Data = board;
 			result.PageSize = 1;
 			result.Status = ResponseHelper.Success;
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -214,6 +325,56 @@ namespace Resgrid.Web.Services.Controllers.v4
 			};
 			ResponseHelper.PopulateV4ResponseData(result);
 			return result;
+		}
+
+		/// <summary>
+		/// Updates core incident metadata (name, corrected start time, estimated end, important information, ICS
+		/// level) and the ICP/HQ, Staging, and Rehab locations. A location whose text is supplied without
+		/// coordinates is geocoded server-side on save.
+		/// </summary>
+		[HttpPut("UpdateCommandInfo")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_Update)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageCommand)]
+		public async Task<ActionResult<ICModels.IncidentCommandResult>> UpdateCommandInfo([FromBody] ICModels.UpdateCommandInfoInput input)
+		{
+			if (input == null || string.IsNullOrWhiteSpace(input.IncidentCommandId))
+				return BadRequest();
+
+			try
+			{
+				var command = await _incidentCommandService.UpdateCommandInfoAsync(DepartmentId, input.IncidentCommandId, new IncidentCommandInfoUpdate
+				{
+					Name = input.Name,
+					EstablishedOn = input.EstablishedOn,
+					EstimatedEndOn = input.EstimatedEndOn,
+					ClearEstimatedEndOn = input.ClearEstimatedEndOn,
+					ImportantInformation = input.ImportantInformation,
+					IcsLevel = input.IcsLevel,
+					CommandPostLocationText = input.CommandPostLocationText,
+					CommandPostLatitude = input.CommandPostLatitude,
+					CommandPostLongitude = input.CommandPostLongitude,
+					StagingLocationText = input.StagingLocationText,
+					StagingLatitude = input.StagingLatitude,
+					StagingLongitude = input.StagingLongitude,
+					RehabLocationText = input.RehabLocationText,
+					RehabLatitude = input.RehabLatitude,
+					RehabLongitude = input.RehabLongitude
+				}, UserId, CancellationToken.None);
+
+				var result = new ICModels.IncidentCommandResult
+				{
+					Data = command,
+					PageSize = command == null ? 0 : 1,
+					Status = command == null ? ResponseHelper.NotFound : ResponseHelper.Success
+				};
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
+			catch (ArgumentException ex)
+			{
+				return BadRequest(ex.Message);
+			}
 		}
 
 		/// <summary>
@@ -690,10 +851,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpPost("CompleteObjective/{tacticalObjectiveId}")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Command_Update)]
-		public async Task<ActionResult<ICModels.TacticalObjectiveResult>> CompleteObjective(string tacticalObjectiveId)
+		public async Task<ActionResult<ICModels.TacticalObjectiveResult>> CompleteObjective(string tacticalObjectiveId, [FromBody] ICModels.CompleteObjectiveInput input = null)
 		{
 			var result = new ICModels.TacticalObjectiveResult();
-			var objective = await _incidentCommandService.CompleteObjectiveAsync(DepartmentId, tacticalObjectiveId, UserId, CancellationToken.None);
+			var outcome = input != null && Enum.IsDefined(typeof(TacticalObjectiveOutcome), input.Outcome) ? (TacticalObjectiveOutcome)input.Outcome : TacticalObjectiveOutcome.NotSet;
+			var objective = await _incidentCommandService.CompleteObjectiveAsync(DepartmentId, tacticalObjectiveId, UserId, outcome, input?.Note, CancellationToken.None);
 
 			if (objective == null)
 			{
@@ -753,7 +915,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return BadRequest();
 
 			var result = new ICModels.IncidentNeedResult();
-			var need = await _incidentCommandService.SetNeedStatusAsync(DepartmentId, input.IncidentNeedId, (IncidentNeedStatus)input.Status, input.QuantityFulfilled, UserId, CancellationToken.None);
+			var need = await _incidentCommandService.SetNeedStatusAsync(DepartmentId, input.IncidentNeedId, (IncidentNeedStatus)input.Status, input.QuantityFulfilled, UserId, input.Note, CancellationToken.None);
 
 			if (need == null)
 			{
@@ -765,6 +927,62 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data = need;
 			result.PageSize = 1;
 			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>Audit trail for one need: every fulfillment change with note, author, and timestamp (newest first).</summary>
+		[HttpGet("GetNeedUpdates/{incidentNeedId}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		public async Task<ActionResult<ICModels.IncidentNeedUpdatesResult>> GetNeedUpdates(string incidentNeedId)
+		{
+			var updates = await _incidentCommandService.GetNeedUpdatesAsync(DepartmentId, incidentNeedId);
+			var result = new ICModels.IncidentNeedUpdatesResult { Data = updates, PageSize = updates.Count, Status = ResponseHelper.Success };
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>
+		/// Creates an Entity need requesting specific units/users/roles/groups; they are added to the call
+		/// and dispatched individually as "Requested by Incident Command".
+		/// </summary>
+		[HttpPost("RequestNeedEntities")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_Update)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageObjectives)]
+		public async Task<ActionResult<ICModels.IncidentNeedResult>> RequestNeedEntities([FromBody] ICModels.RequestNeedEntitiesInput input)
+		{
+			if (input == null || string.IsNullOrWhiteSpace(input.IncidentCommandId) || string.IsNullOrWhiteSpace(input.Name) || input.Entities == null || input.Entities.Count == 0)
+				return BadRequest();
+
+			try
+			{
+				var entities = input.Entities.Select(e => new IncidentNeedEntity { EntityKind = e.EntityKind, EntityId = e.EntityId }).ToList();
+				var need = await _incidentCommandService.RequestNeedEntitiesAsync(DepartmentId, input.IncidentCommandId, input.Name, input.Description, entities, UserId, CancellationToken.None);
+				var result = new ICModels.IncidentNeedResult
+				{
+					Data = need,
+					PageSize = need == null ? 0 : 1,
+					Status = need == null ? ResponseHelper.NotFound : ResponseHelper.Created
+				};
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
+			catch (ArgumentException ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
+
+		/// <summary>The requested entities under one Entity-category need.</summary>
+		[HttpGet("GetNeedEntities/{incidentNeedId}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		public async Task<ActionResult<ICModels.IncidentNeedEntitiesResult>> GetNeedEntities(string incidentNeedId)
+		{
+			var items = await _incidentCommandService.GetNeedEntitiesAsync(DepartmentId, incidentNeedId);
+			var result = new ICModels.IncidentNeedEntitiesResult { Data = items, PageSize = items.Count, Status = ResponseHelper.Success };
 			ResponseHelper.PopulateV4ResponseData(result);
 			return result;
 		}
@@ -886,6 +1104,94 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		#endregion Map annotations
+
+		/// <summary>
+		/// Creates or updates a NAMED incident map (name, description, framing, optional expiry). Audit
+		/// fields stamp server-side; the change logs to the incident timeline with author + ICS standing.
+		/// </summary>
+		[HttpPost("SaveIncidentMap")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_Update)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageAnnotations)]
+		public async Task<ActionResult<ICModels.IncidentMapResult>> SaveIncidentMap([FromBody] IncidentMap map)
+		{
+			if (map == null || string.IsNullOrWhiteSpace(map.IncidentCommandId) || string.IsNullOrWhiteSpace(map.Name))
+				return BadRequest();
+
+			map.DepartmentId = DepartmentId;
+
+			try
+			{
+				var saved = await _incidentCommandService.SaveIncidentMapAsync(map, UserId, CancellationToken.None);
+				var result = new ICModels.IncidentMapResult
+				{
+					Data = saved,
+					PageSize = saved == null ? 0 : 1,
+					Status = saved == null ? ResponseHelper.NotFound : ResponseHelper.Success
+				};
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
+			catch (ArgumentException ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
+
+		/// <summary>Soft-deletes a named incident map.</summary>
+		[HttpDelete("DeleteIncidentMap/{incidentMapId}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_Update)]
+		public async Task<ActionResult<ICModels.IncidentCommandActionResult>> DeleteIncidentMap(string incidentMapId)
+		{
+			var deleted = await _incidentCommandService.DeleteIncidentMapAsync(DepartmentId, incidentMapId, UserId, CancellationToken.None);
+			var result = new ICModels.IncidentCommandActionResult { Data = deleted, Status = deleted ? ResponseHelper.Success : ResponseHelper.NotFound };
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>Gets the incident's named tactical maps.</summary>
+		[HttpGet("GetIncidentMaps/{callId}")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_View)]
+		public async Task<ActionResult<ICModels.IncidentMapsResult>> GetIncidentMaps(int callId)
+		{
+			var maps = await _incidentCommandService.GetIncidentMapsForCallAsync(DepartmentId, callId);
+			var result = new ICModels.IncidentMapsResult { Data = maps, PageSize = maps.Count, Status = ResponseHelper.Success };
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>
+		/// Creates or updates the incident map's saved view (center + zoom). Logged to the incident
+		/// timeline with the author's name and ICS standing.
+		/// </summary>
+		[HttpPut("UpdateMapView")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_Update)]
+		[RequiresIncidentCapability(IncidentCapabilities.ManageAnnotations)]
+		public async Task<ActionResult<ICModels.IncidentCommandResult>> UpdateMapView([FromBody] ICModels.UpdateMapViewInput input)
+		{
+			if (input == null || string.IsNullOrWhiteSpace(input.IncidentCommandId))
+				return BadRequest();
+
+			try
+			{
+				var command = await _incidentCommandService.UpdateMapViewAsync(DepartmentId, input.IncidentCommandId, input.CenterLatitude, input.CenterLongitude, input.ZoomLevel, UserId, CancellationToken.None);
+				var result = new ICModels.IncidentCommandResult
+				{
+					Data = command,
+					PageSize = command == null ? 0 : 1,
+					Status = command == null ? ResponseHelper.NotFound : ResponseHelper.Success
+				};
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
+			catch (ArgumentException ex)
+			{
+				return BadRequest(ex.Message);
+			}
+		}
 
 		#region Timeline
 

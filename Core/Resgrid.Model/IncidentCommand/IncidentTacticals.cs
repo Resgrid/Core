@@ -30,6 +30,12 @@ namespace Resgrid.Model
 
 		public DateTime? CompletedOn { get; set; }
 
+		/// <summary>How the objective turned out at close-out. Maps to <see cref="TacticalObjectiveOutcome"/>.</summary>
+		public int Outcome { get; set; }
+
+		/// <summary>Optional close-out note recorded when the objective was completed.</summary>
+		public string CompletionNote { get; set; }
+
 		/// <summary>Optional free-text detail describing the objective / how it will be met.</summary>
 		public string Description { get; set; }
 
@@ -141,6 +147,9 @@ namespace Resgrid.Model
 
 		/// <summary>Maps to <see cref="IncidentMapAnnotationType"/>.</summary>
 		public int AnnotationType { get; set; }
+
+		/// <summary>The named <see cref="IncidentMap"/> this markup belongs to; null = the incident's main map.</summary>
+		public string IncidentMapId { get; set; }
 
 		/// <summary>The annotation geometry as a GeoJSON feature.</summary>
 		public string GeoJson { get; set; }

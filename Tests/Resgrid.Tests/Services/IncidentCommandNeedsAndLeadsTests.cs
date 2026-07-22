@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -7,6 +8,7 @@ using Moq;
 using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
+using Resgrid.Model.Queue;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Resgrid.Services;
@@ -30,6 +32,7 @@ namespace Resgrid.Tests.Services
 		private Mock<ITacticalObjectiveRepository> _objectiveRepo;
 		private Mock<ICommandLogEntryRepository> _logRepo;
 		private Mock<IIncidentNeedRepository> _needRepo;
+		private Mock<IIncidentNeedUpdateRepository> _needUpdateRepo;
 		private Mock<IIncidentNoteRepository> _noteRepo;
 		private Mock<IIncidentAttachmentRepository> _attachmentRepo;
 		private Mock<IUserProfileService> _userProfileService;
@@ -46,6 +49,9 @@ namespace Resgrid.Tests.Services
 			_objectiveRepo = new Mock<ITacticalObjectiveRepository>();
 			_logRepo = new Mock<ICommandLogEntryRepository>();
 			_needRepo = new Mock<IIncidentNeedRepository>();
+			_needUpdateRepo = new Mock<IIncidentNeedUpdateRepository>();
+			_needUpdateRepo.Setup(x => x.InsertAsync(It.IsAny<IncidentNeedUpdate>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((IncidentNeedUpdate e, CancellationToken ct, bool b) => e);
 			_noteRepo = new Mock<IIncidentNoteRepository>();
 			_attachmentRepo = new Mock<IIncidentAttachmentRepository>();
 			_userProfileService = new Mock<IUserProfileService>();
@@ -78,7 +84,12 @@ namespace Resgrid.Tests.Services
 				_eventAggregator.Object, new Mock<ICoreEventService>().Object,
 				new Mock<IUnitsService>().Object, new Mock<IPersonnelRolesService>().Object, _noteRepo.Object,
 				_attachmentRepo.Object, new Mock<IIncidentWeatherProvider>().Object,
-				_needRepo.Object, _userProfileService.Object, _notificationService.Object);
+				_needRepo.Object, _userProfileService.Object, _notificationService.Object,
+				new Mock<IGeoLocationProvider>().Object, new Mock<IDepartmentGroupsService>().Object,
+				new Mock<IIncidentAdHocUnitRepository>().Object, new Mock<IIncidentAdHocPersonnelRepository>().Object,
+				_needUpdateRepo.Object,
+				new Mock<IIncidentMapRepository>().Object,
+				new Mock<IIncidentNeedEntityRepository>().Object, new Mock<ICallDispatchStatusService>().Object, new Mock<IQueueService>().Object);
 		}
 
 		private static IncidentCommand OwnedCommand() => new IncidentCommand
@@ -135,6 +146,268 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task SetNeedStatus_PartialFillWithNote_WritesAuditRowAndNotedLogEntry()
+		{
+			_needRepo.Setup(x => x.GetByIdAsync("need-1")).ReturnsAsync(new IncidentNeed
+			{
+				IncidentNeedId = "need-1",
+				IncidentCommandId = CommandId,
+				DepartmentId = Dept,
+				CallId = CallId,
+				Name = "Engines",
+				QuantityRequested = 3,
+				QuantityFulfilled = 0,
+				Status = (int)IncidentNeedStatus.Open
+			});
+
+			IncidentNeedUpdate audit = null;
+			_needUpdateRepo.Setup(x => x.InsertAsync(It.IsAny<IncidentNeedUpdate>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.Callback((IncidentNeedUpdate e, CancellationToken ct, bool b) => audit = e)
+				.ReturnsAsync((IncidentNeedUpdate e, CancellationToken ct, bool b) => e);
+
+			CommandLogEntry logged = null;
+			_logRepo.Setup(x => x.InsertAsync(It.IsAny<CommandLogEntry>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.Callback((CommandLogEntry e, CancellationToken ct, bool b) => logged = e)
+				.ReturnsAsync((CommandLogEntry e, CancellationToken ct, bool b) => e);
+
+			var updated = await _service.SetNeedStatusAsync(Dept, "need-1", IncidentNeedStatus.PartiallyMet, 1, "user-2", "Engine 1 from mutual aid");
+
+			updated.Status.Should().Be((int)IncidentNeedStatus.PartiallyMet);
+			updated.QuantityFulfilled.Should().Be(1);
+
+			audit.Should().NotBeNull();
+			audit.PreviousStatus.Should().Be((int)IncidentNeedStatus.Open);
+			audit.NewStatus.Should().Be((int)IncidentNeedStatus.PartiallyMet);
+			audit.PreviousQuantityFulfilled.Should().Be(0);
+			audit.NewQuantityFulfilled.Should().Be(1);
+			audit.Note.Should().Be("Engine 1 from mutual aid");
+			audit.CreatedByUserId.Should().Be("user-2");
+			audit.CreatedOn.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));
+
+			logged.Description.Should().Contain("fill changed 0 to 1 of 3");
+			logged.Description.Should().Contain("Engine 1 from mutual aid");
+		}
+
+		[Test]
+		public async Task SetNeedStatus_ReducingFill_IsAllowedAndAudited()
+		{
+			_needRepo.Setup(x => x.GetByIdAsync("need-1")).ReturnsAsync(new IncidentNeed
+			{
+				IncidentNeedId = "need-1",
+				IncidentCommandId = CommandId,
+				DepartmentId = Dept,
+				CallId = CallId,
+				Name = "Engines",
+				QuantityRequested = 3,
+				QuantityFulfilled = 2,
+				Status = (int)IncidentNeedStatus.PartiallyMet
+			});
+
+			var updated = await _service.SetNeedStatusAsync(Dept, "need-1", IncidentNeedStatus.PartiallyMet, 1, "user-2", "Engine 1 called off to another incident");
+
+			updated.QuantityFulfilled.Should().Be(1);
+			_needUpdateRepo.Verify(x => x.InsertAsync(It.Is<IncidentNeedUpdate>(e =>
+				e.PreviousQuantityFulfilled == 2 && e.NewQuantityFulfilled == 1 && e.Note == "Engine 1 called off to another incident"), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Once);
+		}
+
+		[Test]
+		public async Task SetNeedStatus_CancelledUnfilled_LogsClosedWithoutBeingFilled()
+		{
+			_needRepo.Setup(x => x.GetByIdAsync("need-1")).ReturnsAsync(new IncidentNeed
+			{
+				IncidentNeedId = "need-1",
+				IncidentCommandId = CommandId,
+				DepartmentId = Dept,
+				CallId = CallId,
+				Name = "Engines",
+				QuantityRequested = 3,
+				QuantityFulfilled = 1,
+				Status = (int)IncidentNeedStatus.PartiallyMet
+			});
+
+			CommandLogEntry logged = null;
+			_logRepo.Setup(x => x.InsertAsync(It.IsAny<CommandLogEntry>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.Callback((CommandLogEntry e, CancellationToken ct, bool b) => logged = e)
+				.ReturnsAsync((CommandLogEntry e, CancellationToken ct, bool b) => e);
+
+			var updated = await _service.SetNeedStatusAsync(Dept, "need-1", IncidentNeedStatus.Cancelled, null, "user-2", "No longer needed");
+
+			updated.Status.Should().Be((int)IncidentNeedStatus.Cancelled);
+			logged.Description.Should().Contain("closed without being filled");
+			logged.Description.Should().Contain("No longer needed");
+		}
+
+		[Test]
+		public async Task GetNeedUpdates_ReturnsNewestFirst_WithResolvedAuthorNames()
+		{
+			_needUpdateRepo.Setup(x => x.GetAllByDepartmentIdAsync(Dept)).ReturnsAsync(new List<IncidentNeedUpdate>
+			{
+				new IncidentNeedUpdate { IncidentNeedUpdateId = "u1", IncidentNeedId = "need-1", DepartmentId = Dept, CreatedByUserId = "user-2", CreatedOn = DateTime.UtcNow.AddMinutes(-10) },
+				new IncidentNeedUpdate { IncidentNeedUpdateId = "u2", IncidentNeedId = "need-1", DepartmentId = Dept, CreatedByUserId = "user-2", CreatedOn = DateTime.UtcNow },
+				new IncidentNeedUpdate { IncidentNeedUpdateId = "other", IncidentNeedId = "need-9", DepartmentId = Dept, CreatedByUserId = "user-2", CreatedOn = DateTime.UtcNow }
+			});
+
+			var updates = await _service.GetNeedUpdatesAsync(Dept, "need-1");
+
+			updates.Select(x => x.IncidentNeedUpdateId).Should().Equal("u2", "u1");
+		}
+
+		[Test]
+		public async Task RequestNeedEntities_CreatesNeed_DispatchesSubset_AndLogsRequest()
+		{
+			var entityRepo = new Mock<IIncidentNeedEntityRepository>();
+			entityRepo.Setup(x => x.InsertAsync(It.IsAny<IncidentNeedEntity>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((IncidentNeedEntity e, CancellationToken ct, bool b) => e);
+			var dispatchStatus = new Mock<ICallDispatchStatusService>();
+			var queue = new Mock<IQueueService>();
+			CallQueueItem enqueued = null;
+			queue.Setup(x => x.EnqueueCallBroadcastAsync(It.IsAny<CallQueueItem>(), It.IsAny<CancellationToken>()))
+				.Callback((CallQueueItem cqi, CancellationToken ct) => enqueued = cqi)
+				.ReturnsAsync(true);
+
+			var callsService = new Mock<ICallsService>();
+			var call = new Call { CallId = CallId, DepartmentId = Dept, Name = "Structure Fire", NatureOfCall = "Working fire" };
+			callsService.Setup(x => x.GetCallByIdAsync(CallId, It.IsAny<bool>())).ReturnsAsync(call);
+			callsService
+				.Setup(x => x.PopulateCallData(It.IsAny<Call>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>()))
+				.ReturnsAsync((Call c, bool a1, bool a2, bool a3, bool a4, bool a5, bool a6, bool a7, bool a8, bool a9, bool a10) => c);
+			callsService.Setup(x => x.SaveCallAsync(It.IsAny<Call>(), It.IsAny<CancellationToken>())).ReturnsAsync((Call c, CancellationToken ct) => c);
+
+			var service = new IncidentCommandService(_commandRepo.Object, _nodeRepo.Object, _assignmentRepo.Object,
+				_objectiveRepo.Object, new Mock<IIncidentTimerRepository>().Object, new Mock<IIncidentMapAnnotationRepository>().Object,
+				_logRepo.Object, new Mock<ICommandTransferRepository>().Object,
+				new Mock<ICommandsService>().Object, callsService.Object, new Mock<ICheckInTimerService>().Object,
+				new Mock<IIncidentVoiceService>().Object, new Mock<IIncidentRoleAssignmentRepository>().Object,
+				_eventAggregator.Object, new Mock<ICoreEventService>().Object,
+				new Mock<IUnitsService>().Object, new Mock<IPersonnelRolesService>().Object, _noteRepo.Object,
+				_attachmentRepo.Object, new Mock<IIncidentWeatherProvider>().Object,
+				_needRepo.Object, _userProfileService.Object, _notificationService.Object,
+				new Mock<IGeoLocationProvider>().Object, new Mock<IDepartmentGroupsService>().Object,
+				new Mock<IIncidentAdHocUnitRepository>().Object, new Mock<IIncidentAdHocPersonnelRepository>().Object,
+				_needUpdateRepo.Object, new Mock<IIncidentMapRepository>().Object,
+				entityRepo.Object, dispatchStatus.Object, queue.Object);
+
+			CommandLogEntry logged = null;
+			_logRepo.Setup(x => x.InsertAsync(It.IsAny<CommandLogEntry>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.Callback((CommandLogEntry e, CancellationToken ct, bool b) => logged = e)
+				.ReturnsAsync((CommandLogEntry e, CancellationToken ct, bool b) => e);
+
+			var entities = new List<IncidentNeedEntity>
+			{
+				new IncidentNeedEntity { EntityKind = (int)NeedEntityKind.Unit, EntityId = "5" },
+				new IncidentNeedEntity { EntityKind = (int)NeedEntityKind.User, EntityId = "user-9" }
+			};
+
+			var need = await service.RequestNeedEntitiesAsync(Dept, CommandId, "Mutual aid engines", "Need two engines", entities, "user-2");
+
+			need.Should().NotBeNull();
+			need.Category.Should().Be((int)IncidentNeedCategory.Entity);
+			need.QuantityRequested.Should().Be(2);
+
+			// Subset dispatch was enqueued (only the requested entities), tagged as a command request.
+			enqueued.Should().NotBeNull();
+			enqueued.BroadcastOnlySelectedDispatches.Should().BeTrue();
+			enqueued.BroadcastUnitIds.Should().Contain(5);
+			enqueued.BroadcastUserIds.Should().Contain("user-9");
+			enqueued.Call.NatureOfCall.Should().Contain("Requested by Incident Command");
+
+			// Entity rows persisted with dispatch stamps, and the request landed on the log.
+			entityRepo.Verify(x => x.InsertAsync(It.Is<IncidentNeedEntity>(e => e.IncidentNeedId == need.IncidentNeedId && e.DispatchedOn != null), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Exactly(2));
+			logged.EntryType.Should().Be((int)CommandLogEntryType.NeedAdded);
+			logged.Description.Should().Contain("Mutual aid engines");
+			logged.Description.Should().Contain("dispatched to the call individually");
+		}
+
+		[Test]
+		public async Task RecordNeedEntityStatus_MatchingUnit_WritesResponseLogEntry()
+		{
+			var entityRepo = new Mock<IIncidentNeedEntityRepository>();
+			entityRepo.Setup(x => x.GetAllByDepartmentIdAsync(Dept)).ReturnsAsync(new List<IncidentNeedEntity>
+			{
+				new IncidentNeedEntity { IncidentNeedEntityId = "ne-1", IncidentNeedId = "need-1", IncidentCommandId = CommandId, DepartmentId = Dept, CallId = CallId, EntityKind = (int)NeedEntityKind.Unit, EntityId = "5" }
+			});
+			_needRepo.Setup(x => x.GetAllByDepartmentIdAsync(Dept)).ReturnsAsync(new List<IncidentNeed>
+			{
+				new IncidentNeed { IncidentNeedId = "need-1", DepartmentId = Dept, CallId = CallId, Name = "Mutual aid engines" }
+			});
+			_commandRepo.Setup(x => x.GetAllByDepartmentIdAsync(Dept)).ReturnsAsync(new List<IncidentCommand> { OwnedCommand() });
+
+			var service = new IncidentCommandService(_commandRepo.Object, _nodeRepo.Object, _assignmentRepo.Object,
+				_objectiveRepo.Object, new Mock<IIncidentTimerRepository>().Object, new Mock<IIncidentMapAnnotationRepository>().Object,
+				_logRepo.Object, new Mock<ICommandTransferRepository>().Object,
+				new Mock<ICommandsService>().Object, new Mock<ICallsService>().Object, new Mock<ICheckInTimerService>().Object,
+				new Mock<IIncidentVoiceService>().Object, new Mock<IIncidentRoleAssignmentRepository>().Object,
+				_eventAggregator.Object, new Mock<ICoreEventService>().Object,
+				new Mock<IUnitsService>().Object, new Mock<IPersonnelRolesService>().Object, _noteRepo.Object,
+				_attachmentRepo.Object, new Mock<IIncidentWeatherProvider>().Object,
+				_needRepo.Object, _userProfileService.Object, _notificationService.Object,
+				new Mock<IGeoLocationProvider>().Object, new Mock<IDepartmentGroupsService>().Object,
+				new Mock<IIncidentAdHocUnitRepository>().Object, new Mock<IIncidentAdHocPersonnelRepository>().Object,
+				_needUpdateRepo.Object, new Mock<IIncidentMapRepository>().Object,
+				entityRepo.Object, new Mock<ICallDispatchStatusService>().Object, new Mock<IQueueService>().Object);
+
+			CommandLogEntry logged = null;
+			_logRepo.Setup(x => x.InsertAsync(It.IsAny<CommandLogEntry>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.Callback((CommandLogEntry e, CancellationToken ct, bool b) => logged = e)
+				.ReturnsAsync((CommandLogEntry e, CancellationToken ct, bool b) => e);
+
+			await service.RecordNeedEntityStatusAsync(Dept, CallId, NeedEntityKind.Unit, "5", "Responding", "user-9");
+
+			logged.Should().NotBeNull();
+			logged.EntryType.Should().Be((int)CommandLogEntryType.NeedUpdated);
+			logged.Description.Should().Contain("responded to need 'Mutual aid engines'");
+			logged.Description.Should().Contain("Responding");
+		}
+
+		[Test]
+		public async Task SaveIncidentMap_New_StampsAuditAndLogsAttributedEntry()
+		{
+			var mapRepo = new Mock<IIncidentMapRepository>();
+			mapRepo.Setup(x => x.InsertAsync(It.IsAny<IncidentMap>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((IncidentMap e, CancellationToken ct, bool b) => e);
+			mapRepo.Setup(x => x.SaveOrUpdateAsync(It.IsAny<IncidentMap>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((IncidentMap e, CancellationToken ct, bool b) => e);
+
+			var service = new IncidentCommandService(_commandRepo.Object, _nodeRepo.Object, _assignmentRepo.Object,
+				_objectiveRepo.Object, new Mock<IIncidentTimerRepository>().Object, new Mock<IIncidentMapAnnotationRepository>().Object,
+				_logRepo.Object, new Mock<ICommandTransferRepository>().Object,
+				new Mock<ICommandsService>().Object, new Mock<ICallsService>().Object, new Mock<ICheckInTimerService>().Object,
+				new Mock<IIncidentVoiceService>().Object, new Mock<IIncidentRoleAssignmentRepository>().Object,
+				_eventAggregator.Object, new Mock<ICoreEventService>().Object,
+				new Mock<IUnitsService>().Object, new Mock<IPersonnelRolesService>().Object, _noteRepo.Object,
+				_attachmentRepo.Object, new Mock<IIncidentWeatherProvider>().Object,
+				_needRepo.Object, _userProfileService.Object, _notificationService.Object,
+				new Mock<IGeoLocationProvider>().Object, new Mock<IDepartmentGroupsService>().Object,
+				new Mock<IIncidentAdHocUnitRepository>().Object, new Mock<IIncidentAdHocPersonnelRepository>().Object,
+				_needUpdateRepo.Object, mapRepo.Object,
+				new Mock<IIncidentNeedEntityRepository>().Object, new Mock<ICallDispatchStatusService>().Object, new Mock<IQueueService>().Object);
+
+			CommandLogEntry logged = null;
+			_logRepo.Setup(x => x.InsertAsync(It.IsAny<CommandLogEntry>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.Callback((CommandLogEntry e, CancellationToken ct, bool b) => logged = e)
+				.ReturnsAsync((CommandLogEntry e, CancellationToken ct, bool b) => e);
+
+			var saved = await service.SaveIncidentMapAsync(new IncidentMap
+			{
+				IncidentCommandId = CommandId,
+				DepartmentId = Dept,
+				Name = "North sector cleanup",
+				Description = "Debris removal area",
+				ExpiresOn = DateTime.UtcNow.AddDays(2)
+			}, "user-2");
+
+			saved.Should().NotBeNull();
+			saved.CallId.Should().Be(CallId, "the authoritative CallId comes from the parent command");
+			saved.IncidentMapId.Should().NotBeNullOrEmpty();
+			saved.CreatedByUserId.Should().Be("user-2");
+			saved.CreatedOn.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(10));
+
+			logged.EntryType.Should().Be((int)CommandLogEntryType.MapViewUpdated);
+			logged.Description.Should().Contain("North sector cleanup");
+			logged.Description.Should().Contain("created");
+		}
+
+		[Test]
 		public async Task SetNeedStatus_ForeignDepartment_ReturnsNull()
 		{
 			_needRepo.Setup(x => x.GetByIdAsync("need-1")).ReturnsAsync(new IncidentNeed { IncidentNeedId = "need-1", DepartmentId = Dept + 1 });
@@ -142,6 +415,58 @@ namespace Resgrid.Tests.Services
 			var result = await _service.SetNeedStatusAsync(Dept, "need-1", IncidentNeedStatus.Met, null, "user-2");
 
 			result.Should().BeNull();
+		}
+
+		[Test]
+		public async Task CompleteObjective_WithOutcomeAndNote_StampsAuditAndLogsOutcome()
+		{
+			_objectiveRepo.Setup(x => x.GetByIdAsync("obj-1")).ReturnsAsync(new TacticalObjective
+			{
+				TacticalObjectiveId = "obj-1",
+				IncidentCommandId = CommandId,
+				DepartmentId = Dept,
+				CallId = CallId,
+				Name = "Primary search",
+				Status = (int)TacticalObjectiveStatus.InProgress,
+				ProgressPercent = 60
+			});
+
+			CommandLogEntry logged = null;
+			_logRepo.Setup(x => x.InsertAsync(It.IsAny<CommandLogEntry>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.Callback((CommandLogEntry e, CancellationToken ct, bool b) => logged = e)
+				.ReturnsAsync((CommandLogEntry e, CancellationToken ct, bool b) => e);
+
+			var completed = await _service.CompleteObjectiveAsync(Dept, "obj-1", "user-2", TacticalObjectiveOutcome.Partial, "North wing cleared; south wing inaccessible");
+
+			completed.Status.Should().Be((int)TacticalObjectiveStatus.Complete);
+			completed.Outcome.Should().Be((int)TacticalObjectiveOutcome.Partial);
+			completed.CompletionNote.Should().Be("North wing cleared; south wing inaccessible");
+			completed.CompletedByUserId.Should().Be("user-2");
+			completed.CompletedOn.Should().NotBeNull();
+
+			logged.EntryType.Should().Be((int)CommandLogEntryType.ObjectiveCompleted);
+			logged.Description.Should().Contain("Partial");
+			logged.Description.Should().Contain("North wing cleared; south wing inaccessible");
+		}
+
+		[Test]
+		public async Task UpdateObjectiveProgress_ReachingFull_ClosesOutAsSuccessful()
+		{
+			_objectiveRepo.Setup(x => x.GetByIdAsync("obj-1")).ReturnsAsync(new TacticalObjective
+			{
+				TacticalObjectiveId = "obj-1",
+				IncidentCommandId = CommandId,
+				DepartmentId = Dept,
+				CallId = CallId,
+				Name = "Primary search",
+				Status = (int)TacticalObjectiveStatus.InProgress,
+				ProgressPercent = 75
+			});
+
+			var completed = await _service.UpdateObjectiveProgressAsync(Dept, "obj-1", 100, "user-2");
+
+			completed.Status.Should().Be((int)TacticalObjectiveStatus.Complete);
+			completed.Outcome.Should().Be((int)TacticalObjectiveOutcome.Successful);
 		}
 
 		[Test]

@@ -26,9 +26,38 @@ namespace Resgrid.Model
 
 		public string CurrentCommanderUserId { get; set; }
 
+		/// <summary>Optional commander-supplied display name for the incident (falls back to the call name in UIs).</summary>
+		public string Name { get; set; }
+
+		/// <summary>Free-form description of where the ICP/HQ (command post) is ("Front lobby of 123 Main St").</summary>
+		public string CommandPostLocationText { get; set; }
+
 		public string CommandPostLatitude { get; set; }
 
 		public string CommandPostLongitude { get; set; }
+
+		/// <summary>Free-form description of where Staging is located.</summary>
+		public string StagingLocationText { get; set; }
+
+		public string StagingLatitude { get; set; }
+
+		public string StagingLongitude { get; set; }
+
+		/// <summary>Free-form description of where Rehab is located.</summary>
+		public string RehabLocationText { get; set; }
+
+		public string RehabLatitude { get; set; }
+
+		public string RehabLongitude { get; set; }
+
+		/// <summary>Saved incident-map view: center latitude (set once the IC pins the map's framing).</summary>
+		public string MapCenterLatitude { get; set; }
+
+		/// <summary>Saved incident-map view: center longitude.</summary>
+		public string MapCenterLongitude { get; set; }
+
+		/// <summary>Saved incident-map view: zoom level (0-22); null until the incident map is created.</summary>
+		public string MapZoomLevel { get; set; }
 
 		public string IncidentActionPlan { get; set; }
 

@@ -37,6 +37,18 @@ namespace Resgrid.Model.Repositories
 	{
 	}
 
+	public interface IIncidentNeedUpdateRepository : IRepository<IncidentNeedUpdate>
+	{
+	}
+
+	public interface IIncidentMapRepository : IRepository<IncidentMap>
+	{
+	}
+
+	public interface IIncidentNeedEntityRepository : IRepository<IncidentNeedEntity>
+	{
+	}
+
 	public interface IIncidentNoteRepository : IRepository<IncidentNote>
 	{
 	}

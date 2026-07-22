@@ -69,6 +69,9 @@ namespace Resgrid.Model
 		/// <summary>Optional incident need this lane is fulfilling (FK to IncidentNeeds).</summary>
 		public string LinkedNeedId { get; set; }
 
+		/// <summary>Optional named incident map attached to this lane (FK to IncidentMaps) — e.g. the area it is working.</summary>
+		public string LinkedMapId { get; set; }
+
 		/// <summary>Primary lane lead when they are a Resgrid user; null for external leads.</summary>
 		public string PrimaryLeadUserId { get; set; }
 

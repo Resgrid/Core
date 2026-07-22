@@ -22,6 +22,9 @@ namespace Resgrid.Model
 
 		public List<IncidentMapAnnotation> Annotations { get; set; } = new List<IncidentMapAnnotation>();
 
+		/// <summary>Named tactical maps for the incident (the main map lives on the Command itself).</summary>
+		public List<IncidentMap> Maps { get; set; } = new List<IncidentMap>();
+
 		/// <summary>Personnel accountability / PAR status (from the Checkin feature) for the incident.</summary>
 		public List<PersonnelCallCheckInStatus> Accountability { get; set; } = new List<PersonnelCallCheckInStatus>();
 

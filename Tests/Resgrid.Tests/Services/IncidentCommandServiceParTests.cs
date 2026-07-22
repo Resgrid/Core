@@ -87,7 +87,12 @@ namespace Resgrid.Tests.Services
 				_commandsService.Object, _callsService.Object, _checkInTimerService.Object, _voiceService.Object,
 				_roleRepo.Object, _eventAggregator.Object, _coreEventService.Object,
 				_unitsService.Object, _personnelRolesService.Object, _noteRepo.Object, _attachmentRepo.Object, _weatherProvider.Object,
-				_needRepo.Object, _userProfileService.Object, _commandNotificationService.Object);
+				_needRepo.Object, _userProfileService.Object, _commandNotificationService.Object,
+				new Mock<IGeoLocationProvider>().Object, new Mock<IDepartmentGroupsService>().Object,
+				new Mock<IIncidentAdHocUnitRepository>().Object, new Mock<IIncidentAdHocPersonnelRepository>().Object,
+				new Mock<IIncidentNeedUpdateRepository>().Object,
+				new Mock<IIncidentMapRepository>().Object,
+				new Mock<IIncidentNeedEntityRepository>().Object, new Mock<ICallDispatchStatusService>().Object, new Mock<IQueueService>().Object);
 		}
 
 		private void ArrangeCall(bool checkInTimersEnabled = true, int departmentId = Dept)
@@ -390,6 +395,11 @@ namespace Resgrid.Tests.Services
 		[Test]
 		public async Task MoveResourceAsync_Moves_WhenTargetNodeOnSameDeptAndCall()
 		{
+			// The parent command must be ACTIVE — ended commands are read-only and reject mutations.
+			_commandRepo.Setup(x => x.GetByIdAsync("ic1")).ReturnsAsync(new IncidentCommand
+			{
+				IncidentCommandId = "ic1", DepartmentId = Dept, CallId = CallId, Status = (int)IncidentCommandStatus.Active
+			});
 			_assignmentRepo.Setup(x => x.GetByIdAsync("ra1")).ReturnsAsync(new ResourceAssignment
 			{
 				ResourceAssignmentId = "ra1", DepartmentId = Dept, CallId = CallId, IncidentCommandId = "ic1"
@@ -733,6 +743,11 @@ namespace Resgrid.Tests.Services
 		[Test]
 		public async Task DeleteNodeAsync_SoftDeletes_SetsDeletedOnAndModifiedOn_AndPersistsInsteadOfHardDeleting()
 		{
+			// The parent command must be ACTIVE — ended commands are read-only and reject mutations.
+			_commandRepo.Setup(x => x.GetByIdAsync("ic1")).ReturnsAsync(new IncidentCommand
+			{
+				IncidentCommandId = "ic1", DepartmentId = Dept, CallId = CallId, Status = (int)IncidentCommandStatus.Active
+			});
 			CommandStructureNode persisted = null;
 			_nodeRepo.Setup(x => x.GetByIdAsync("node-1")).ReturnsAsync(new CommandStructureNode
 			{

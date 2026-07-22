@@ -1016,6 +1016,32 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.EstablishCommand(Resgrid.Web.Services.Models.v4.IncidentCommand.EstablishCommandInput)">
             <summary>Establishes command on a call, optionally seeding lanes from a command definition.</summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.GetCommandForCall(System.Int32)">
+            <summary>
+            Gets the most recent command for a call across ALL statuses (unlike GetCommandBoard, which only
+            resolves the active one). Lets the IC app detect a prior ended command and offer to reopen it.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.ReopenCommand(Resgrid.Web.Services.Models.v4.IncidentCommand.ReopenCommandInput)">
+            <summary>
+            Reopens a previously closed command with a reason. Bootstrap-gated like EstablishCommand: after a
+            close there is no active command, so incident capabilities cannot be evaluated — the department-level
+            Command_Create claim is the gate.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.GetCommandList(System.Boolean)">
+            <summary>
+            List-card summaries for the department's commands: duration, resolved commander name, locations, and
+            active unit/personnel counts. Active only by default; includeClosed=true adds ended incidents.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.GetCommandBoardById(System.String)">
+            <summary>
+            Board snapshot for one specific command instance — including a CLOSED one (read-only history view for
+            ended incidents). Child rows are filtered to that command, so a closed board isn't polluted by a newer
+            command on the same call.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.GetCommandBoard(System.Int32)">
             <summary>Gets the full live command board snapshot for a call.</summary>
         </member>
@@ -1033,6 +1059,13 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.UpdateCommandDetails(Resgrid.Web.Services.Models.v4.IncidentCommand.UpdateCommandDetailsInput)">
             <summary>Updates command-level details every resource should see: estimated end and important information.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.UpdateCommandInfo(Resgrid.Web.Services.Models.v4.IncidentCommand.UpdateCommandInfoInput)">
+            <summary>
+            Updates core incident metadata (name, corrected start time, estimated end, important information, ICS
+            level) and the ICP/HQ, Staging, and Rehab locations. A location whose text is supplied without
+            coordinates is geocoded server-side on save.
+            </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.GetResourceIncidentView(System.Int32,System.Nullable{System.Int32})">
             <summary>
@@ -1079,7 +1112,7 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.UpdateObjectiveProgress(Resgrid.Web.Services.Models.v4.IncidentCommand.UpdateObjectiveProgressInput)">
             <summary>Sets a tactical objective's progress (0-100; 100 completes it).</summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.CompleteObjective(System.String)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.CompleteObjective(System.String,Resgrid.Web.Services.Models.v4.IncidentCommand.CompleteObjectiveInput)">
             <summary>Marks a tactical objective complete.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.SaveNeed(Resgrid.Model.IncidentNeed)">
@@ -1087,6 +1120,18 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.SetNeedStatus(Resgrid.Web.Services.Models.v4.IncidentCommand.SetNeedStatusInput)">
             <summary>Transitions an incident need's fulfillment status (Open/PartiallyMet/Met/Cancelled).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.GetNeedUpdates(System.String)">
+            <summary>Audit trail for one need: every fulfillment change with note, author, and timestamp (newest first).</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.RequestNeedEntities(Resgrid.Web.Services.Models.v4.IncidentCommand.RequestNeedEntitiesInput)">
+            <summary>
+            Creates an Entity need requesting specific units/users/roles/groups; they are added to the call
+            and dispatched individually as "Requested by Incident Command".
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.GetNeedEntities(System.String)">
+            <summary>The requested entities under one Entity-category need.</summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.GetNeeds(System.Int32)">
             <summary>Gets the command-level needs for a call.</summary>
@@ -1102,6 +1147,24 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.DeleteAnnotation(System.String)">
             <summary>Removes a map annotation.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.SaveIncidentMap(Resgrid.Model.IncidentMap)">
+            <summary>
+            Creates or updates a NAMED incident map (name, description, framing, optional expiry). Audit
+            fields stamp server-side; the change logs to the incident timeline with author + ICS standing.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.DeleteIncidentMap(System.String)">
+            <summary>Soft-deletes a named incident map.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.GetIncidentMaps(System.Int32)">
+            <summary>Gets the incident's named tactical maps.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.UpdateMapView(Resgrid.Web.Services.Models.v4.IncidentCommand.UpdateMapViewInput)">
+            <summary>
+            Creates or updates the incident map's saved view (center + zoom). Logged to the incident
+            timeline with the author's name and ICS standing.
+            </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.GetTimeline(System.Int32)">
             <summary>Gets the append-only command (ICS-201) timeline for a call.</summary>
@@ -7557,14 +7620,48 @@
         <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.UpdateCommandDetailsInput">
             <summary>Input to update command-level details every resource should see.</summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.ReopenCommandInput">
+            <summary>Input to reopen a previously closed command, with the caller's reason for reopening.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.UpdateCommandInfoInput">
+            <summary>
+            Input to update core incident metadata and the ICP/HQ, Staging, and Rehab locations. Null fields are
+            left unchanged; empty strings clear. A location whose text is set while its coordinates are blank is
+            geocoded server-side on save.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.UpdateObjectiveProgressInput">
             <summary>Input to set an objective's progress percentage (0-100; 100 completes it).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.UpdateMapViewInput">
+            <summary>Input to create/update the incident map's saved view (center + zoom) for consistent framing.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IncidentCommand.UpdateMapViewInput.ZoomLevel">
+            <summary>Map zoom level, 0-22.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.CompleteObjectiveInput">
+            <summary>Optional close-out details when completing an objective.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IncidentCommand.CompleteObjectiveInput.Outcome">
+            <summary>Maps to Resgrid.Model.TacticalObjectiveOutcome (Successful/Partial/Unsuccessful).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IncidentCommand.CompleteObjectiveInput.Note">
+            <summary>Optional close-out note, recorded on the objective and the incident log.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.SetNeedStatusInput">
             <summary>Input to transition an incident need's fulfillment status.</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.IncidentCommand.SetNeedStatusInput.Status">
             <summary>Maps to Resgrid.Model.IncidentNeedStatus.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IncidentCommand.SetNeedStatusInput.QuantityFulfilled">
+            <summary>New fulfilled quantity — may be lower than the current value (a fill got called off).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IncidentCommand.SetNeedStatusInput.Note">
+            <summary>Optional context recorded on the audit trail and incident log ("Engine 1 from mutual aid").</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.IncidentCommandSummariesResult">
+            <summary>List-card summaries for the department's incident commands (active only or incl. closed).</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.IncidentCommand.ResourceAssignmentResult.Message">
             <summary>
@@ -7573,8 +7670,26 @@
             meet the lane's non-forced requirements (also stamped on Data.RequirementsWarning/-Message).
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.RequestNeedEntitiesInput">
+            <summary>Input to create an Entity need: specific units/users/roles/groups requested by command.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.NeedEntityInput">
+            <summary>One requested entity: kind maps to Resgrid.Model.NeedEntityKind (Unit/User/Role/Group).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.IncidentNeedEntitiesResult">
+            <summary>The requested entities under one Entity-category need.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.IncidentNeedUpdatesResult">
+            <summary>Audit trail for one need's fulfillment changes (newest first).</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.ResourceIncidentViewResult">
             <summary>Read-only incident view for a responder or unit: commander, timing, objectives, needs, notes, attachments, own lane assignment.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.IncidentMapResult">
+            <summary>A single named incident tactical map.</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.IncidentMapsResult">
+            <summary>The incident's named tactical maps.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.LogTransmissionInput">
             <summary>Input logging one completed PTT transmission on an incident channel.</summary>

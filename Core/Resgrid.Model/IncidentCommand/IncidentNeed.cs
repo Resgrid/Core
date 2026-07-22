@@ -74,4 +74,62 @@ namespace Resgrid.Model
 		[NotMapped]
 		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName" };
 	}
+
+	/// <summary>
+	/// Append-only audit row for one fulfillment change on an <see cref="IncidentNeed"/>: status and/or
+	/// fill-quantity transition, the caller's note ("Engine 1 from mutual aid"), who made it, and when.
+	/// </summary>
+	public class IncidentNeedUpdate : IEntity
+	{
+		public string IncidentNeedUpdateId { get; set; }
+
+		public string IncidentNeedId { get; set; }
+
+		public string IncidentCommandId { get; set; }
+
+		public int DepartmentId { get; set; }
+
+		public int CallId { get; set; }
+
+		/// <summary>Maps to <see cref="IncidentNeedStatus"/>.</summary>
+		public int PreviousStatus { get; set; }
+
+		/// <summary>Maps to <see cref="IncidentNeedStatus"/>.</summary>
+		public int NewStatus { get; set; }
+
+		public int PreviousQuantityFulfilled { get; set; }
+
+		public int NewQuantityFulfilled { get; set; }
+
+		/// <summary>Caller-supplied context for the change (which resource filled it, why it was called off, ...).</summary>
+		public string Note { get; set; }
+
+		public string CreatedByUserId { get; set; }
+
+		/// <summary>Resolved display name for CreatedByUserId; filled at read time, never persisted.</summary>
+		[NotMapped]
+		public string CreatedByUserName { get; set; }
+
+		public DateTime CreatedOn { get; set; }
+
+		[NotMapped]
+		public string TableName => "IncidentNeedUpdates";
+
+		[NotMapped]
+		public string IdName => "IncidentNeedUpdateId";
+
+		[NotMapped]
+		public int IdType => 1;
+
+		[NotMapped]
+		[JsonIgnore]
+		public object IdValue
+		{
+			get { return IncidentNeedUpdateId; }
+			set { IncidentNeedUpdateId = (string)value; }
+		}
+
+		[NotMapped]
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "CreatedByUserName" };
+	}
 }

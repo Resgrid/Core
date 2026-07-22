@@ -35,6 +35,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IActionLogsService _actionLogsService;
 		private readonly IMappingService _mappingService;
+		private readonly IIncidentCommandService _incidentCommandService;
 
 		public UnitStatusController(
 			ICallsService callsService,
@@ -42,7 +43,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IDepartmentGroupsService departmentGroupsService,
 			IDepartmentSettingsService departmentSettingsService,
 			IActionLogsService actionLogsService,
-			IMappingService mappingService
+			IMappingService mappingService,
+			IIncidentCommandService incidentCommandService
 			)
 		{
 			_callsService = callsService;
@@ -51,6 +53,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_departmentSettingsService = departmentSettingsService;
 			_actionLogsService = actionLogsService;
 			_mappingService = mappingService;
+			_incidentCommandService = incidentCommandService;
 		}
 		#endregion Members and Constructors
 
@@ -278,6 +281,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 					}
 
 					var savedState = await _unitsService.SetUnitStateAsync(state, DepartmentId);
+
+					// Entity-need response: a unit that command requested answering the call lands on the
+					// incident log. Best-effort — never blocks the status save.
+					if (state.DestinationType == (int)DestinationEntityTypes.Call && state.DestinationId > 0)
+					{
+						try
+						{
+							var stateLabel = Enum.IsDefined(typeof(UnitStateTypes), state.State) ? ((UnitStateTypes)state.State).ToString() : $"status {state.State}";
+							await _incidentCommandService.RecordNeedEntityStatusAsync(DepartmentId, state.DestinationId.Value, NeedEntityKind.Unit, state.UnitId.ToString(), stateLabel, UserId);
+						}
+						catch (Exception ex)
+						{
+							Resgrid.Framework.Logging.LogException(ex);
+						}
+					}
 
 					if (stateInput.Roles != null && stateInput.Roles.Count > 0)
 					{

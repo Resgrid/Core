@@ -50,6 +50,13 @@ namespace Resgrid.Model.Services
 		Task<List<IncidentRoleAssignment>> GetIncidentRolesAsync(int departmentId, int callId);
 		Task<IncidentCapabilities> GetCapabilitiesForUserAsync(int departmentId, int callId, string userId);
 		Task<IncidentCommand> CloseCommandAsync(int departmentId, string incidentCommandId, string userId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Reopens a previously closed command (Status back to Active, ClosedOn cleared), recording the caller's
+		/// reason on the timeline. Null when the command doesn't exist/isn't the caller's; throws
+		/// <see cref="System.InvalidOperationException"/> when another command is already active on the call.
+		/// </summary>
+		Task<IncidentCommand> ReopenCommandAsync(int departmentId, string incidentCommandId, string reason, string userId, CancellationToken cancellationToken = default(CancellationToken));
 		Task<CommandTransfer> TransferCommandAsync(int departmentId, string incidentCommandId, string fromUserId, string toUserId, string notes, CancellationToken cancellationToken = default(CancellationToken));
 		Task<IncidentCommand> UpdateActionPlanAsync(int departmentId, string incidentCommandId, string actionPlan, string userId, CancellationToken cancellationToken = default(CancellationToken));
 		Task<IncidentCommand> UpdateCommandPostAsync(int departmentId, string incidentCommandId, string latitude, string longitude, string userId, CancellationToken cancellationToken = default(CancellationToken));
@@ -87,7 +94,12 @@ namespace Resgrid.Model.Services
 
 		// Objectives / benchmarks
 		Task<TacticalObjective> SaveObjectiveAsync(TacticalObjective objective, string userId, CancellationToken cancellationToken = default(CancellationToken));
-		Task<TacticalObjective> CompleteObjectiveAsync(int departmentId, string tacticalObjectiveId, string userId, CancellationToken cancellationToken = default(CancellationToken));
+		/// <summary>
+		/// Completes (closes out) an objective, recording how it turned out
+		/// (<see cref="TacticalObjectiveOutcome"/>), an optional close-out note, and who/when. The outcome,
+		/// author, and note are written to the incident log.
+		/// </summary>
+		Task<TacticalObjective> CompleteObjectiveAsync(int departmentId, string tacticalObjectiveId, string userId, TacticalObjectiveOutcome outcome = TacticalObjectiveOutcome.NotSet, string note = null, CancellationToken cancellationToken = default(CancellationToken));
 		Task<List<TacticalObjective>> GetObjectivesForCallAsync(int departmentId, int callId);
 
 		/// <summary>
@@ -100,14 +112,59 @@ namespace Resgrid.Model.Services
 		Task<IncidentNeed> SaveNeedAsync(IncidentNeed need, string userId, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
-		/// Transitions a need's fulfillment status (optionally updating the fulfilled quantity). Transitioning
-		/// to Met stamps MetBy/MetOn; leaving Met clears them.
+		/// Transitions a need's fulfillment status (optionally updating the fulfilled quantity — up OR down).
+		/// Transitioning to Met stamps MetBy/MetOn; leaving Met clears them. Every call writes an
+		/// <see cref="IncidentNeedUpdate"/> audit row carrying the optional <paramref name="note"/>
+		/// ("Engine 1 from mutual aid", "called off", ...) with author and timestamp.
 		/// </summary>
-		Task<IncidentNeed> SetNeedStatusAsync(int departmentId, string incidentNeedId, IncidentNeedStatus status, int? quantityFulfilled, string userId, CancellationToken cancellationToken = default(CancellationToken));
+		Task<IncidentNeed> SetNeedStatusAsync(int departmentId, string incidentNeedId, IncidentNeedStatus status, int? quantityFulfilled, string userId, string note = null, CancellationToken cancellationToken = default(CancellationToken));
 		Task<List<IncidentNeed>> GetNeedsForCallAsync(int departmentId, int callId);
+
+		// Entity needs — requests for SPECIFIC units/users/roles/groups, dispatched individually
+
+		/// <summary>
+		/// Creates an Entity-category need requesting specific units/users/roles/groups. The entities are
+		/// added to the call's dispatch lists and dispatched INDIVIDUALLY (no full re-dispatch), tagged as
+		/// requested by Incident Command; the request is written to the incident log with author + entities.
+		/// </summary>
+		Task<IncidentNeed> RequestNeedEntitiesAsync(int departmentId, string incidentCommandId, string name, string description, List<IncidentNeedEntity> entities, string userId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>The requested entities under one Entity-category need.</summary>
+		Task<List<IncidentNeedEntity>> GetNeedEntitiesAsync(int departmentId, string incidentNeedId);
+
+		/// <summary>
+		/// Called by the status-save paths: when a unit/user that was requested via an entity need (directly,
+		/// or through a requested role/group) responds to the call, an incident-log entry records it.
+		/// Never throws — a logging failure must not break the status save.
+		/// </summary>
+		Task RecordNeedEntityStatusAsync(int departmentId, int callId, NeedEntityKind entityKind, string entityId, string statusText, string savedByUserId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>Audit trail for one need (newest first), with CreatedByUserName resolved for display.</summary>
+		Task<List<IncidentNeedUpdate>> GetNeedUpdatesAsync(int departmentId, string incidentNeedId);
 
 		/// <summary>Updates command-level details every resource should see: estimated end and important information.</summary>
 		Task<IncidentCommand> UpdateCommandDetailsAsync(int departmentId, string incidentCommandId, System.DateTime? estimatedEndOn, string importantInformation, string userId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Updates core incident metadata (name, corrected start time, estimated end, important information, ICS
+		/// level) and the ICP/HQ, Staging, and Rehab locations. Null fields in <paramref name="update"/> are left
+		/// unchanged; empty strings clear. A location whose text is set while its coordinates are blank is
+		/// geocoded from the text before saving.
+		/// </summary>
+		Task<IncidentCommand> UpdateCommandInfoAsync(int departmentId, string incidentCommandId, IncidentCommandInfoUpdate update, string userId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// List-card summaries (duration, resolved commander name, locations, active unit/personnel counts) for
+		/// the department's commands — active only by default, or every command including closed ones.
+		/// </summary>
+		Task<List<IncidentCommandSummary>> GetCommandSummariesForDepartmentAsync(int departmentId, bool includeClosed = false);
+
+		/// <summary>
+		/// Board snapshot for one SPECIFIC command instance (active or closed) — unlike
+		/// <see cref="GetCommandBoardAsync"/>, child rows are filtered to this command so a closed command's
+		/// board isn't polluted by a newer command on the same call. Read-only: no PAR sweep side effects.
+		/// </summary>
+		Task<IncidentCommandBoard> GetCommandBoardByIdAsync(int departmentId, string incidentCommandId);
 
 		/// <summary>
 		/// Read-only incident view for a responder (userId) or unit (unitId != null): commander contact, timing,
@@ -125,6 +182,27 @@ namespace Resgrid.Model.Services
 		Task<IncidentMapAnnotation> SaveAnnotationAsync(IncidentMapAnnotation annotation, string userId, CancellationToken cancellationToken = default(CancellationToken));
 		Task<bool> DeleteAnnotationAsync(int departmentId, string incidentMapAnnotationId, string userId, CancellationToken cancellationToken = default(CancellationToken));
 		Task<List<IncidentMapAnnotation>> GetAnnotationsForCallAsync(int departmentId, int callId);
+
+		/// <summary>
+		/// Creates or updates the incident map's saved view (center + zoom) so the tactical map opens with a
+		/// consistent framing for everyone. Logged to the incident timeline with the author's name and any
+		/// command/ICS standing they hold.
+		/// </summary>
+		Task<IncidentCommand> UpdateMapViewAsync(int departmentId, string incidentCommandId, string centerLatitude, string centerLongitude, string zoomLevel, string userId, CancellationToken cancellationToken = default(CancellationToken));
+
+		// Named incident maps (additional tactical maps beyond the incident's main map)
+
+		/// <summary>
+		/// Creates or updates a NAMED incident map (name, description, framing, optional expiry). Audit
+		/// fields are stamped server-side (CreatedBy/On on create, UpdatedBy/On on update) and the change is
+		/// logged to the incident timeline with the author's name and ICS standing.
+		/// </summary>
+		Task<IncidentMap> SaveIncidentMapAsync(IncidentMap map, string userId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>Soft-deletes a named incident map (its markup rows keep their linkage for history).</summary>
+		Task<bool> DeleteIncidentMapAsync(int departmentId, string incidentMapId, string userId, CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<List<IncidentMap>> GetIncidentMapsForCallAsync(int departmentId, int callId);
 
 		// Timeline
 		Task<List<CommandLogEntry>> GetTimelineForCallAsync(int departmentId, int callId);

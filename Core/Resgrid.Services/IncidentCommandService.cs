@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
+using Resgrid.Model.Queue;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 
@@ -45,6 +46,15 @@ namespace Resgrid.Services
 		private readonly IIncidentNeedRepository _incidentNeedRepository;
 		private readonly IUserProfileService _userProfileService;
 		private readonly IIncidentCommandNotificationService _incidentCommandNotificationService;
+		private readonly IGeoLocationProvider _geoLocationProvider;
+		private readonly IDepartmentGroupsService _departmentGroupsService;
+		private readonly IIncidentAdHocUnitRepository _incidentAdHocUnitRepository;
+		private readonly IIncidentAdHocPersonnelRepository _incidentAdHocPersonnelRepository;
+		private readonly IIncidentNeedUpdateRepository _incidentNeedUpdateRepository;
+		private readonly IIncidentMapRepository _incidentMapRepository;
+		private readonly IIncidentNeedEntityRepository _incidentNeedEntityRepository;
+		private readonly ICallDispatchStatusService _callDispatchStatusService;
+		private readonly IQueueService _queueService;
 
 		public IncidentCommandService(
 			IIncidentCommandRepository incidentCommandRepository,
@@ -69,7 +79,16 @@ namespace Resgrid.Services
 			IIncidentWeatherProvider incidentWeatherProvider,
 			IIncidentNeedRepository incidentNeedRepository,
 			IUserProfileService userProfileService,
-			IIncidentCommandNotificationService incidentCommandNotificationService)
+			IIncidentCommandNotificationService incidentCommandNotificationService,
+			IGeoLocationProvider geoLocationProvider,
+			IDepartmentGroupsService departmentGroupsService,
+			IIncidentAdHocUnitRepository incidentAdHocUnitRepository,
+			IIncidentAdHocPersonnelRepository incidentAdHocPersonnelRepository,
+			IIncidentNeedUpdateRepository incidentNeedUpdateRepository,
+			IIncidentMapRepository incidentMapRepository,
+			IIncidentNeedEntityRepository incidentNeedEntityRepository,
+			ICallDispatchStatusService callDispatchStatusService,
+			IQueueService queueService)
 		{
 			_incidentCommandRepository = incidentCommandRepository;
 			_commandStructureNodeRepository = commandStructureNodeRepository;
@@ -94,6 +113,15 @@ namespace Resgrid.Services
 			_incidentNeedRepository = incidentNeedRepository;
 			_userProfileService = userProfileService;
 			_incidentCommandNotificationService = incidentCommandNotificationService;
+			_geoLocationProvider = geoLocationProvider;
+			_departmentGroupsService = departmentGroupsService;
+			_incidentAdHocUnitRepository = incidentAdHocUnitRepository;
+			_incidentAdHocPersonnelRepository = incidentAdHocPersonnelRepository;
+			_incidentNeedUpdateRepository = incidentNeedUpdateRepository;
+			_incidentMapRepository = incidentMapRepository;
+			_incidentNeedEntityRepository = incidentNeedEntityRepository;
+			_callDispatchStatusService = callDispatchStatusService;
+			_queueService = queueService;
 		}
 
 		#region Command lifecycle
@@ -261,7 +289,40 @@ namespace Resgrid.Services
 				return new List<PersonnelCallCheckInStatus>();
 
 			var statuses = await _checkInTimerService.GetCallPersonnelCheckInStatusesAsync(call);
-			return statuses ?? new List<PersonnelCallCheckInStatus>();
+			return await EnrichCheckInStatusNamesAsync(statuses) ?? new List<PersonnelCallCheckInStatus>();
+		}
+
+		/// <summary>
+		/// The check-in timer service intentionally leaves FullName null; resolve it here so PAR rows (board,
+		/// bundle, log text) carry a member's name instead of their user id GUID.
+		/// </summary>
+		private async Task<List<PersonnelCallCheckInStatus>> EnrichCheckInStatusNamesAsync(List<PersonnelCallCheckInStatus> statuses)
+		{
+			if (statuses == null || statuses.Count == 0)
+				return statuses;
+
+			var missing = statuses.Where(s => string.IsNullOrWhiteSpace(s.FullName) && !string.IsNullOrWhiteSpace(s.UserId)).ToList();
+			if (missing.Count == 0)
+				return statuses;
+
+			try
+			{
+				var profiles = await _userProfileService.GetSelectedUserProfilesAsync(missing.Select(s => s.UserId).Distinct().ToList());
+				var profilesById = (profiles ?? new List<UserProfile>()).Where(p => p != null && !string.IsNullOrWhiteSpace(p.UserId))
+					.GroupBy(p => p.UserId).ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+
+				foreach (var status in missing)
+				{
+					if (profilesById.TryGetValue(status.UserId, out var profile))
+						status.FullName = profile.FullName.AsFirstNameLastName;
+				}
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+			}
+
+			return statuses;
 		}
 
 		public async Task<List<string>> EvaluateCriticalParAsync(int departmentId, int callId, CancellationToken cancellationToken = default(CancellationToken))
@@ -302,7 +363,8 @@ namespace Resgrid.Services
 					continue;
 
 				var overdueBy = Math.Abs(Math.Round(status.MinutesRemaining, 1));
-				var who = string.IsNullOrWhiteSpace(status.FullName) ? status.UserId : status.FullName;
+				// Always resolve through the label helper so the log carries "Full Name (Group)" — never a user GUID.
+				var who = await ResolveUserLabelAsync(departmentId, status.UserId, status.FullName);
 
 				// The marker (UserId = the SUBJECT member) is both the dedup record and — via WriteLogAsync —
 				// the real-time IncidentCommandUpdated push that refreshes the board/PAR view.
@@ -362,7 +424,8 @@ namespace Resgrid.Services
 				return null;
 			assignment = saved;
 
-			await WriteLogAsync(assignment.IncidentCommandId, assignment.DepartmentId, assignment.CallId, CommandLogEntryType.RoleAssigned, $"Role {(IncidentRoleType)assignment.RoleType} assigned", userId, cancellationToken);
+			await WriteLogAsync(assignment.IncidentCommandId, assignment.DepartmentId, assignment.CallId, CommandLogEntryType.RoleAssigned,
+				$"Role {(IncidentRoleType)assignment.RoleType} assigned to {await ResolveUserLabelAsync(assignment.DepartmentId, assignment.UserId)}", userId, cancellationToken);
 
 			_eventAggregator.SendMessage<IncidentRoleAssignedEvent>(new IncidentRoleAssignedEvent { DepartmentId = assignment.DepartmentId, CallId = assignment.CallId, UserId = assignment.UserId, RoleType = assignment.RoleType });
 			return assignment;
@@ -371,13 +434,14 @@ namespace Resgrid.Services
 		public async Task<bool> RemoveIncidentRoleAsync(int departmentId, string incidentRoleAssignmentId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var assignment = await _incidentRoleAssignmentRepository.GetByIdAsync(incidentRoleAssignmentId);
-			if (assignment == null || assignment.DepartmentId != departmentId)
+			if (assignment == null || assignment.DepartmentId != departmentId || !await IsCommandActiveAsync(assignment.IncidentCommandId))
 				return false;
 
 			assignment.RemovedOn = DateTime.UtcNow;
 			await _incidentRoleAssignmentRepository.SaveOrUpdateAsync(Touch(assignment), cancellationToken);
 
-			await WriteLogAsync(assignment.IncidentCommandId, assignment.DepartmentId, assignment.CallId, CommandLogEntryType.RoleRemoved, $"Role {(IncidentRoleType)assignment.RoleType} removed", userId, cancellationToken);
+			await WriteLogAsync(assignment.IncidentCommandId, assignment.DepartmentId, assignment.CallId, CommandLogEntryType.RoleRemoved,
+				$"Role {(IncidentRoleType)assignment.RoleType} removed from {await ResolveUserLabelAsync(assignment.DepartmentId, assignment.UserId)}", userId, cancellationToken);
 			return true;
 		}
 
@@ -434,7 +498,8 @@ namespace Resgrid.Services
 				Accountability = await GetAccountabilityForCallAsync(departmentId, callId),
 				Roles = await GetIncidentRolesAsync(departmentId, callId),
 				Notes = await GetNotesForCallAsync(departmentId, callId),
-				Attachments = await GetAttachmentsForCallAsync(departmentId, callId)
+				Attachments = await GetAttachmentsForCallAsync(departmentId, callId),
+				Maps = await GetIncidentMapsForCallAsync(departmentId, callId)
 			};
 
 			return board;
@@ -464,6 +529,7 @@ namespace Resgrid.Services
 			var roles = ToCallLookup(await _incidentRoleAssignmentRepository.GetAllByDepartmentIdAsync(departmentId), x => x.CallId);
 			var notes = ToCallLookup(await _incidentNoteRepository.GetAllByDepartmentIdAsync(departmentId), x => x.CallId);
 			var attachments = ToCallLookup(await _incidentAttachmentRepository.GetAllMetadataByDepartmentIdAsync(departmentId), x => x.CallId);
+			var maps = ToCallLookup(await _incidentMapRepository.GetAllByDepartmentIdAsync(departmentId), x => x.CallId);
 
 			foreach (var command in active)
 			{
@@ -482,7 +548,8 @@ namespace Resgrid.Services
 					Annotations = annotations[callId].Where(x => x.DeletedOn == null).ToList(),
 					Roles = roles[callId].Where(x => x.RemovedOn == null).ToList(),
 					Notes = notes[callId].Where(x => x.DeletedOn == null).OrderBy(x => x.CreatedOn).ToList(),
-					Attachments = attachments[callId].Where(x => x.DeletedOn == null).OrderBy(x => x.UploadedOn).ToList()
+					Attachments = attachments[callId].Where(x => x.DeletedOn == null).OrderBy(x => x.UploadedOn).ToList(),
+					Maps = maps[callId].Where(x => x.DeletedOn == null).OrderBy(x => x.CreatedOn).ToList()
 				};
 
 				// Accountability/PAR is the one per-incident read here, and it is READ-ONLY (no marker writes / SignalR
@@ -555,6 +622,10 @@ namespace Resgrid.Services
 			if (attachments != null)
 				changes.Attachments = attachments.Where(Changed).ToList();
 
+			var incidentMaps = await _incidentMapRepository.GetAllByDepartmentIdAsync(departmentId);
+			if (incidentMaps != null)
+				changes.Maps = incidentMaps.Where(Changed).ToList();
+
 			// The timeline is append-only (no ModifiedOn); its natural cursor is OccurredOn.
 			var timeline = await _commandLogEntryRepository.GetAllByDepartmentIdAsync(departmentId);
 			if (timeline != null)
@@ -582,10 +653,227 @@ namespace Resgrid.Services
 			return command;
 		}
 
-		public async Task<CommandTransfer> TransferCommandAsync(int departmentId, string incidentCommandId, string fromUserId, string toUserId, string notes, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<IncidentCommand> ReopenCommandAsync(int departmentId, string incidentCommandId, string reason, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var command = await _incidentCommandRepository.GetByIdAsync(incidentCommandId);
 			if (command == null || command.DepartmentId != departmentId)
+				return null;
+
+			// Idempotent: reopening an already-open command (offline replay / double tap) is a no-op.
+			if (command.Status == (int)IncidentCommandStatus.Active)
+				return command;
+
+			var active = await GetActiveCommandForCallAsync(departmentId, command.CallId);
+			if (active != null)
+				throw new InvalidOperationException("Another command is already active on this call; close it before reopening this one.");
+
+			command.Status = (int)IncidentCommandStatus.Active;
+			command.ClosedOn = null;
+			try
+			{
+				command = await _incidentCommandRepository.SaveOrUpdateAsync(Touch(command), cancellationToken);
+			}
+			catch (Exception)
+			{
+				// Check-then-update races under concurrency; the partial unique index
+				// (UX_IncidentCommands_Department_Call_Active) is the real guard.
+				if (await GetActiveCommandForCallAsync(departmentId, command.CallId) != null)
+					throw new InvalidOperationException("Another command is already active on this call; close it before reopening this one.");
+				throw;
+			}
+
+			var reopenedBy = await ResolveUserLabelAsync(departmentId, userId);
+			var description = string.IsNullOrWhiteSpace(reason)
+				? $"Command reopened by {reopenedBy}"
+				: $"Command reopened by {reopenedBy}: {TrimToLength(reason, 2000)}";
+			await WriteLogAsync(command.IncidentCommandId, command.DepartmentId, command.CallId, CommandLogEntryType.CommandReopened, description, userId, cancellationToken);
+
+			_eventAggregator.SendMessage<IncidentReopenedEvent>(new IncidentReopenedEvent
+			{
+				DepartmentId = command.DepartmentId,
+				CallId = command.CallId,
+				IncidentCommandId = command.IncidentCommandId,
+				Reason = reason,
+				ReopenedByUserId = userId
+			});
+			return command;
+		}
+
+		public async Task<IncidentCommand> UpdateCommandInfoAsync(int departmentId, string incidentCommandId, IncidentCommandInfoUpdate update, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (update == null)
+				throw new ArgumentNullException(nameof(update));
+
+			var command = await GetOwnedCommandAsync(incidentCommandId, departmentId);
+			if (command == null)
+				return null;
+
+			if (update.Name != null)
+				command.Name = TrimToLength(update.Name, 500);
+			if (update.EstablishedOn.HasValue)
+				command.EstablishedOn = update.EstablishedOn.Value;
+			if (update.EstimatedEndOn.HasValue)
+				command.EstimatedEndOn = update.EstimatedEndOn;
+			else if (update.ClearEstimatedEndOn)
+				command.EstimatedEndOn = null;
+			if (update.ImportantInformation != null)
+				command.ImportantInformation = TrimToLength(update.ImportantInformation, 8000);
+			if (update.IcsLevel.HasValue)
+				command.IcsLevel = update.IcsLevel.Value;
+
+			var commandPost = await ApplyLocationEditAsync(command.CommandPostLocationText, command.CommandPostLatitude, command.CommandPostLongitude,
+				update.CommandPostLocationText, update.CommandPostLatitude, update.CommandPostLongitude);
+			command.CommandPostLocationText = commandPost.text;
+			command.CommandPostLatitude = commandPost.latitude;
+			command.CommandPostLongitude = commandPost.longitude;
+
+			var staging = await ApplyLocationEditAsync(command.StagingLocationText, command.StagingLatitude, command.StagingLongitude,
+				update.StagingLocationText, update.StagingLatitude, update.StagingLongitude);
+			command.StagingLocationText = staging.text;
+			command.StagingLatitude = staging.latitude;
+			command.StagingLongitude = staging.longitude;
+
+			var rehab = await ApplyLocationEditAsync(command.RehabLocationText, command.RehabLatitude, command.RehabLongitude,
+				update.RehabLocationText, update.RehabLatitude, update.RehabLongitude);
+			command.RehabLocationText = rehab.text;
+			command.RehabLatitude = rehab.latitude;
+			command.RehabLongitude = rehab.longitude;
+
+			command = await _incidentCommandRepository.SaveOrUpdateAsync(Touch(command), cancellationToken);
+
+			await WriteLogAsync(command.IncidentCommandId, command.DepartmentId, command.CallId, CommandLogEntryType.CommandDetailsUpdated, "Incident information updated", userId, cancellationToken);
+
+			if (commandPost.changed)
+			{
+				_eventAggregator.SendMessage<IncidentCommandPostUpdatedEvent>(new IncidentCommandPostUpdatedEvent
+				{
+					DepartmentId = command.DepartmentId,
+					CallId = command.CallId,
+					IncidentCommandId = command.IncidentCommandId,
+					Latitude = command.CommandPostLatitude,
+					Longitude = command.CommandPostLongitude,
+					UpdatedByUserId = userId
+				});
+			}
+
+			_eventAggregator.SendMessage<IncidentCommandDetailsUpdatedEvent>(new IncidentCommandDetailsUpdatedEvent
+			{
+				DepartmentId = command.DepartmentId,
+				CallId = command.CallId,
+				IncidentCommandId = command.IncidentCommandId,
+				UpdatedByUserId = userId
+			});
+			return command;
+		}
+
+		public async Task<List<IncidentCommandSummary>> GetCommandSummariesForDepartmentAsync(int departmentId, bool includeClosed = false)
+		{
+			var commands = await _incidentCommandRepository.GetAllByDepartmentIdAsync(departmentId);
+			var selected = (commands ?? Enumerable.Empty<IncidentCommand>())
+				.Where(x => includeClosed || x.Status == (int)IncidentCommandStatus.Active)
+				.OrderByDescending(x => x.EstablishedOn)
+				.ToList();
+			if (selected.Count == 0)
+				return new List<IncidentCommandSummary>();
+
+			// "Assigned" = an unreleased assignment placed in a lane or staging (staging is itself a node type).
+			var assignments = await _resourceAssignmentRepository.GetAllByDepartmentIdAsync(departmentId);
+			var assignmentsByCommand = (assignments ?? Enumerable.Empty<ResourceAssignment>())
+				.Where(a => a.ReleasedOn == null && !string.IsNullOrWhiteSpace(a.CommandStructureNodeId))
+				.ToLookup(a => a.IncidentCommandId);
+
+			var profilesById = new Dictionary<string, UserProfile>(StringComparer.OrdinalIgnoreCase);
+			try
+			{
+				var commanderIds = selected.Select(x => x.CurrentCommanderUserId).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().ToList();
+				var profiles = commanderIds.Count > 0 ? await _userProfileService.GetSelectedUserProfilesAsync(commanderIds) : null;
+				foreach (var profile in (profiles ?? new List<UserProfile>()).Where(p => p != null && !string.IsNullOrWhiteSpace(p.UserId)))
+					profilesById[profile.UserId] = profile;
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+			}
+
+			static bool IsUnitKind(int kind) => kind == (int)ResourceAssignmentKind.RealUnit ||
+				kind == (int)ResourceAssignmentKind.LinkedDeptUnit || kind == (int)ResourceAssignmentKind.AdHocUnit;
+
+			var summaries = new List<IncidentCommandSummary>();
+			foreach (var command in selected)
+			{
+				Call call = null;
+				try
+				{
+					call = await _callsService.GetCallByIdAsync(command.CallId);
+				}
+				catch (Exception ex)
+				{
+					Resgrid.Framework.Logging.LogException(ex);
+				}
+
+				var activeAssignments = assignmentsByCommand[command.IncidentCommandId].ToList();
+				profilesById.TryGetValue(command.CurrentCommanderUserId ?? string.Empty, out var commanderProfile);
+
+				summaries.Add(new IncidentCommandSummary
+				{
+					IncidentCommandId = command.IncidentCommandId,
+					DepartmentId = command.DepartmentId,
+					CallId = command.CallId,
+					Name = command.Name,
+					CallName = call?.Name,
+					CallNumber = call?.Number,
+					CallAddress = call?.Address,
+					Status = command.Status,
+					EstablishedOn = command.EstablishedOn,
+					ClosedOn = command.ClosedOn,
+					CommanderUserId = command.CurrentCommanderUserId,
+					CommanderName = commanderProfile != null ? commanderProfile.FullName.AsFirstNameLastName : command.CurrentCommanderUserId,
+					CommandPostLocationText = command.CommandPostLocationText,
+					CommandPostLatitude = command.CommandPostLatitude,
+					CommandPostLongitude = command.CommandPostLongitude,
+					AssignedUnitCount = activeAssignments.Count(a => IsUnitKind(a.ResourceKind)),
+					AssignedPersonnelCount = activeAssignments.Count(a => !IsUnitKind(a.ResourceKind))
+				});
+			}
+
+			return summaries;
+		}
+
+		public async Task<IncidentCommandBoard> GetCommandBoardByIdAsync(int departmentId, string incidentCommandId)
+		{
+			var command = await GetOwnedCommandAsync(incidentCommandId, departmentId, requireActive: false);
+			if (command == null)
+				return null;
+
+			var callId = command.CallId;
+
+			// A call can carry several commands over its life (closed ones plus at most one active), and the
+			// per-call getters return rows across all of them — filter every child set to THIS command.
+			var board = new IncidentCommandBoard
+			{
+				Command = command,
+				Nodes = (await GetNodesForCallAsync(departmentId, callId)).Where(x => x.IncidentCommandId == incidentCommandId).ToList(),
+				Assignments = (await GetAssignmentsForCallAsync(departmentId, callId)).Where(x => x.IncidentCommandId == incidentCommandId && x.ReleasedOn == null).ToList(),
+				Objectives = (await GetObjectivesForCallAsync(departmentId, callId)).Where(x => x.IncidentCommandId == incidentCommandId).ToList(),
+				Needs = (await GetNeedsForCallAsync(departmentId, callId)).Where(x => x.IncidentCommandId == incidentCommandId).ToList(),
+				Timers = (await GetActiveTimersForCallAsync(departmentId, callId)).Where(x => x.IncidentCommandId == incidentCommandId).ToList(),
+				Annotations = (await GetAnnotationsForCallAsync(departmentId, callId)).Where(x => x.IncidentCommandId == incidentCommandId).ToList(),
+				Accountability = command.Status == (int)IncidentCommandStatus.Active
+					? await GetAccountabilityForCallAsync(departmentId, callId)
+					: new List<PersonnelCallCheckInStatus>(),
+				Roles = (await GetIncidentRolesAsync(departmentId, callId)).Where(x => x.IncidentCommandId == incidentCommandId).ToList(),
+				Notes = (await GetNotesForCallAsync(departmentId, callId)).Where(x => x.IncidentCommandId == incidentCommandId).ToList(),
+				Attachments = (await GetAttachmentsForCallAsync(departmentId, callId)).Where(x => x.IncidentCommandId == incidentCommandId).ToList(),
+				Maps = (await GetIncidentMapsForCallAsync(departmentId, callId)).Where(x => x.IncidentCommandId == incidentCommandId).ToList()
+			};
+
+			return board;
+		}
+
+		public async Task<CommandTransfer> TransferCommandAsync(int departmentId, string incidentCommandId, string fromUserId, string toUserId, string notes, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var command = await _incidentCommandRepository.GetByIdAsync(incidentCommandId);
+			if (command == null || command.DepartmentId != departmentId || command.Status != (int)IncidentCommandStatus.Active)
 				return null;
 
 			command.CurrentCommanderUserId = toUserId;
@@ -604,7 +892,8 @@ namespace Resgrid.Services
 			};
 			transfer = await _commandTransferRepository.InsertAsync(transfer, cancellationToken);
 
-			await WriteLogAsync(command.IncidentCommandId, command.DepartmentId, command.CallId, CommandLogEntryType.CommandTransferred, "Command transferred", fromUserId, cancellationToken);
+			await WriteLogAsync(command.IncidentCommandId, command.DepartmentId, command.CallId, CommandLogEntryType.CommandTransferred,
+				$"Command transferred from {await ResolveUserLabelAsync(departmentId, fromUserId)} to {await ResolveUserLabelAsync(departmentId, toUserId)}", fromUserId, cancellationToken);
 
 			_eventAggregator.SendMessage<CommandTransferredEvent>(new CommandTransferredEvent { DepartmentId = command.DepartmentId, CallId = command.CallId, IncidentCommandId = incidentCommandId, FromUserId = fromUserId, ToUserId = toUserId });
 
@@ -615,7 +904,7 @@ namespace Resgrid.Services
 		public async Task<IncidentCommand> UpdateActionPlanAsync(int departmentId, string incidentCommandId, string actionPlan, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var command = await _incidentCommandRepository.GetByIdAsync(incidentCommandId);
-			if (command == null || command.DepartmentId != departmentId)
+			if (command == null || command.DepartmentId != departmentId || command.Status != (int)IncidentCommandStatus.Active)
 				return null;
 
 			command.IncidentActionPlan = actionPlan;
@@ -854,7 +1143,14 @@ namespace Resgrid.Services
 			note.DeletedByUserId = null;
 
 			var saved = await _incidentNoteRepository.InsertAsync(Touch(note), cancellationToken);
-			await WriteLogAsync(command.IncidentCommandId, command.DepartmentId, command.CallId, CommandLogEntryType.IncidentNoteAdded, $"Incident note added: {saved.Title ?? ((IncidentNoteType)saved.NoteType).ToString()}", userId, cancellationToken);
+
+			// Public notes land verbatim on the incident log; non-public notes only leave an attributed marker
+			// (author, their command/ICS standing, and the note id) so the log never carries a private body.
+			var author = await BuildNoteAuthorLabelAsync(command, userId);
+			var logText = saved.Visibility == (int)IncidentContentVisibility.Public
+				? $"Note from {author}: {saved.Body}"
+				: $"{author} added a non-public note (note id {saved.IncidentNoteId})";
+			await WriteLogAsync(command.IncidentCommandId, command.DepartmentId, command.CallId, CommandLogEntryType.IncidentNoteAdded, logText, userId, cancellationToken);
 			_eventAggregator.SendMessage<IncidentNoteAddedEvent>(new IncidentNoteAddedEvent
 			{
 				DepartmentId = saved.DepartmentId,
@@ -886,7 +1182,7 @@ namespace Resgrid.Services
 		public async Task<bool> RemoveNoteAsync(int departmentId, string incidentNoteId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var note = await _incidentNoteRepository.GetByIdAsync(incidentNoteId);
-			if (note == null || note.DepartmentId != departmentId || note.DeletedOn.HasValue)
+			if (note == null || note.DepartmentId != departmentId || note.DeletedOn.HasValue || !await IsCommandActiveAsync(note.IncidentCommandId))
 				return false;
 			var capabilities = await GetCapabilitiesForUserAsync(departmentId, note.CallId, userId);
 			var required = IncidentCapabilities.ManageNotes;
@@ -981,7 +1277,7 @@ namespace Resgrid.Services
 		public async Task<bool> RemoveAttachmentAsync(int departmentId, string incidentAttachmentId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var attachment = await _incidentAttachmentRepository.GetByIdAsync(incidentAttachmentId);
-			if (attachment == null || attachment.DepartmentId != departmentId || attachment.DeletedOn.HasValue)
+			if (attachment == null || attachment.DepartmentId != departmentId || attachment.DeletedOn.HasValue || !await IsCommandActiveAsync(attachment.IncidentCommandId))
 				return false;
 			var capabilities = await GetCapabilitiesForUserAsync(departmentId, attachment.CallId, userId);
 			var required = IncidentCapabilities.ManageDocuments;
@@ -1009,7 +1305,8 @@ namespace Resgrid.Services
 
 		public async Task<IncidentCommand> EnablePublicSharingAsync(int departmentId, string incidentCommandId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var command = await GetOwnedCommandAsync(incidentCommandId, departmentId);
+			// Sharing toggles stay available after close — a public feed may need to be published/pulled post-incident.
+			var command = await GetOwnedCommandAsync(incidentCommandId, departmentId, requireActive: false);
 			if (command == null)
 				return null;
 
@@ -1031,7 +1328,7 @@ namespace Resgrid.Services
 
 		public async Task<IncidentCommand> DisablePublicSharingAsync(int departmentId, string incidentCommandId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var command = await GetOwnedCommandAsync(incidentCommandId, departmentId);
+			var command = await GetOwnedCommandAsync(incidentCommandId, departmentId, requireActive: false);
 			if (command == null)
 				return null;
 
@@ -1169,7 +1466,7 @@ namespace Resgrid.Services
 		public async Task<bool> DeleteNodeAsync(int departmentId, string commandStructureNodeId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var node = await _commandStructureNodeRepository.GetByIdAsync(commandStructureNodeId);
-			if (node == null || node.DepartmentId != departmentId)
+			if (node == null || node.DepartmentId != departmentId || !await IsCommandActiveAsync(node.IncidentCommandId))
 				return false;
 
 			// Soft-delete (tombstone) rather than hard-delete so the removal propagates to offline clients on the
@@ -1241,7 +1538,9 @@ namespace Resgrid.Services
 				return null;
 			assignment = saved;
 
-			await WriteLogAsync(assignment.IncidentCommandId, assignment.DepartmentId, assignment.CallId, CommandLogEntryType.ResourceAssigned, "Resource assigned", userId, cancellationToken);
+			var assignedLabel = await ResolveResourceLabelAsync(assignment.DepartmentId, assignment.ResourceKind, assignment.ResourceId);
+			await WriteLogAsync(assignment.IncidentCommandId, assignment.DepartmentId, assignment.CallId, CommandLogEntryType.ResourceAssigned,
+				string.IsNullOrWhiteSpace(assignedLaneName) ? $"Resource assigned: {assignedLabel}" : $"Resource assigned: {assignedLabel} to lane '{assignedLaneName}'", userId, cancellationToken);
 
 			_eventAggregator.SendMessage<IncidentResourceAssignedEvent>(new IncidentResourceAssignedEvent { DepartmentId = assignment.DepartmentId, CallId = assignment.CallId, IncidentCommandId = assignment.IncidentCommandId, ResourceKind = assignment.ResourceKind, ResourceId = assignment.ResourceId });
 
@@ -1252,7 +1551,7 @@ namespace Resgrid.Services
 		public async Task<ResourceAssignment> MoveResourceAsync(int departmentId, string resourceAssignmentId, string targetNodeId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var assignment = await _resourceAssignmentRepository.GetByIdAsync(resourceAssignmentId);
-			if (assignment == null || assignment.DepartmentId != departmentId)
+			if (assignment == null || assignment.DepartmentId != departmentId || !await IsCommandActiveAsync(assignment.IncidentCommandId))
 				return null;
 
 			// The target lane must exist and live on the SAME incident (department + call) as the assignment;
@@ -1291,7 +1590,8 @@ namespace Resgrid.Services
 			assignment.CommandStructureNodeId = targetNodeId;
 			assignment = await _resourceAssignmentRepository.SaveOrUpdateAsync(Touch(assignment), cancellationToken);
 
-			await WriteLogAsync(assignment.IncidentCommandId, assignment.DepartmentId, assignment.CallId, CommandLogEntryType.ResourceMoved, "Resource moved", userId, cancellationToken);
+			await WriteLogAsync(assignment.IncidentCommandId, assignment.DepartmentId, assignment.CallId, CommandLogEntryType.ResourceMoved,
+				$"Resource moved: {await ResolveResourceLabelAsync(assignment.DepartmentId, assignment.ResourceKind, assignment.ResourceId)} to lane '{targetNode.Name}'", userId, cancellationToken);
 
 			_eventAggregator.SendMessage<IncidentResourceMovedEvent>(new IncidentResourceMovedEvent
 			{
@@ -1315,13 +1615,14 @@ namespace Resgrid.Services
 		public async Task<bool> ReleaseResourceAsync(int departmentId, string resourceAssignmentId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var assignment = await _resourceAssignmentRepository.GetByIdAsync(resourceAssignmentId);
-			if (assignment == null || assignment.DepartmentId != departmentId)
+			if (assignment == null || assignment.DepartmentId != departmentId || !await IsCommandActiveAsync(assignment.IncidentCommandId))
 				return false;
 
 			assignment.ReleasedOn = DateTime.UtcNow;
 			await _resourceAssignmentRepository.SaveOrUpdateAsync(Touch(assignment), cancellationToken);
 
-			await WriteLogAsync(assignment.IncidentCommandId, assignment.DepartmentId, assignment.CallId, CommandLogEntryType.ResourceReleased, "Resource released", userId, cancellationToken);
+			await WriteLogAsync(assignment.IncidentCommandId, assignment.DepartmentId, assignment.CallId, CommandLogEntryType.ResourceReleased,
+				$"Resource released: {await ResolveResourceLabelAsync(assignment.DepartmentId, assignment.ResourceKind, assignment.ResourceId)}", userId, cancellationToken);
 
 			_eventAggregator.SendMessage<IncidentResourceReleasedEvent>(new IncidentResourceReleasedEvent { DepartmentId = assignment.DepartmentId, CallId = assignment.CallId, ResourceAssignmentId = assignment.ResourceAssignmentId });
 
@@ -1473,19 +1774,29 @@ namespace Resgrid.Services
 			return objective;
 		}
 
-		public async Task<TacticalObjective> CompleteObjectiveAsync(int departmentId, string tacticalObjectiveId, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<TacticalObjective> CompleteObjectiveAsync(int departmentId, string tacticalObjectiveId, string userId, TacticalObjectiveOutcome outcome = TacticalObjectiveOutcome.NotSet, string note = null, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var objective = await _tacticalObjectiveRepository.GetByIdAsync(tacticalObjectiveId);
-			if (objective == null || objective.DepartmentId != departmentId)
+			if (objective == null || objective.DepartmentId != departmentId || !await IsCommandActiveAsync(objective.IncidentCommandId))
 				return null;
 
 			objective.Status = (int)TacticalObjectiveStatus.Complete;
 			objective.ProgressPercent = 100;
 			objective.CompletedByUserId = userId;
 			objective.CompletedOn = DateTime.UtcNow;
+			objective.Outcome = (int)outcome;
+			objective.CompletionNote = TrimToLength(note, 2000);
 			objective = await _tacticalObjectiveRepository.SaveOrUpdateAsync(Touch(objective), cancellationToken);
 
-			await WriteLogAsync(objective.IncidentCommandId, objective.DepartmentId, objective.CallId, CommandLogEntryType.ObjectiveCompleted, $"Objective '{objective.Name}' completed", userId, cancellationToken);
+			// The log carries the close-out audit: outcome, author (never a GUID), and the note.
+			var description = $"Objective '{objective.Name}' completed";
+			if (outcome != TacticalObjectiveOutcome.NotSet)
+				description = $"{description} — {outcome}";
+			description = $"{description} by {await ResolveUserLabelAsync(departmentId, userId)}";
+			if (!string.IsNullOrWhiteSpace(objective.CompletionNote))
+				description = $"{description}: {objective.CompletionNote}";
+
+			await WriteLogAsync(objective.IncidentCommandId, objective.DepartmentId, objective.CallId, CommandLogEntryType.ObjectiveCompleted, description, userId, cancellationToken);
 
 			_eventAggregator.SendMessage<IncidentObjectiveCompletedEvent>(new IncidentObjectiveCompletedEvent { DepartmentId = objective.DepartmentId, CallId = objective.CallId, IncidentCommandId = objective.IncidentCommandId, TacticalObjectiveId = objective.TacticalObjectiveId, Name = objective.Name });
 			return objective;
@@ -1503,15 +1814,16 @@ namespace Resgrid.Services
 		public async Task<TacticalObjective> UpdateObjectiveProgressAsync(int departmentId, string tacticalObjectiveId, int progressPercent, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var objective = await _tacticalObjectiveRepository.GetByIdAsync(tacticalObjectiveId);
-			if (objective == null || objective.DepartmentId != departmentId)
+			if (objective == null || objective.DepartmentId != departmentId || !await IsCommandActiveAsync(objective.IncidentCommandId))
 				return null;
 
 			progressPercent = Math.Max(0, Math.Min(100, progressPercent));
 
 			// 100% IS completion — route through the completion stamping so the timeline, events, and
-			// CompletedBy/On behave exactly as an explicit CompleteObjective would.
+			// CompletedBy/On behave exactly as an explicit CompleteObjective would. Reaching 100% via
+			// progress implies the objective was achieved, so it closes out as Successful.
 			if (progressPercent == 100)
-				return await CompleteObjectiveAsync(departmentId, tacticalObjectiveId, userId, cancellationToken);
+				return await CompleteObjectiveAsync(departmentId, tacticalObjectiveId, userId, TacticalObjectiveOutcome.Successful, null, cancellationToken);
 
 			objective.ProgressPercent = progressPercent;
 			if (objective.Status == (int)TacticalObjectiveStatus.Pending && progressPercent > 0)
@@ -1576,13 +1888,17 @@ namespace Resgrid.Services
 			return need;
 		}
 
-		public async Task<IncidentNeed> SetNeedStatusAsync(int departmentId, string incidentNeedId, IncidentNeedStatus status, int? quantityFulfilled, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<IncidentNeed> SetNeedStatusAsync(int departmentId, string incidentNeedId, IncidentNeedStatus status, int? quantityFulfilled, string userId, string note = null, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var need = await _incidentNeedRepository.GetByIdAsync(incidentNeedId);
-			if (need == null || need.DepartmentId != departmentId)
+			if (need == null || need.DepartmentId != departmentId || !await IsCommandActiveAsync(need.IncidentCommandId))
 				return null;
 
+			var previousStatus = need.Status;
+			var previousQuantityFulfilled = need.QuantityFulfilled;
+
 			need.Status = (int)status;
+			// The fulfilled quantity may move DOWN as well as up (a filling resource got called off to another incident).
 			if (quantityFulfilled.HasValue)
 				need.QuantityFulfilled = Math.Max(0, quantityFulfilled.Value);
 
@@ -1601,9 +1917,43 @@ namespace Resgrid.Services
 
 			need = await _incidentNeedRepository.SaveOrUpdateAsync(Touch(need), cancellationToken);
 
+			note = TrimToLength(note, 2000);
+
+			// Append-only audit row: who changed what (status and/or fill), when, and their note.
+			await _incidentNeedUpdateRepository.InsertAsync(new IncidentNeedUpdate
+			{
+				IncidentNeedUpdateId = Guid.NewGuid().ToString(),
+				IncidentNeedId = need.IncidentNeedId,
+				IncidentCommandId = need.IncidentCommandId,
+				DepartmentId = need.DepartmentId,
+				CallId = need.CallId,
+				PreviousStatus = previousStatus,
+				NewStatus = need.Status,
+				PreviousQuantityFulfilled = previousQuantityFulfilled,
+				NewQuantityFulfilled = need.QuantityFulfilled,
+				Note = note,
+				CreatedByUserId = userId,
+				CreatedOn = DateTime.UtcNow
+			}, cancellationToken);
+
+			var actor = await ResolveUserLabelAsync(departmentId, userId);
+			string change;
+			if (status == IncidentNeedStatus.Met)
+				change = "filled";
+			else if (status == IncidentNeedStatus.Cancelled)
+				change = need.QuantityRequested > 0 && need.QuantityFulfilled < need.QuantityRequested ? "closed without being filled" : "closed";
+			else if (need.QuantityFulfilled != previousQuantityFulfilled)
+				change = $"fill changed {previousQuantityFulfilled} to {need.QuantityFulfilled}{(need.QuantityRequested > 0 ? $" of {need.QuantityRequested}" : string.Empty)}";
+			else
+				change = $"status changed to {status}";
+
+			var description = $"Need '{need.Name}' {change} by {actor}";
+			if (!string.IsNullOrWhiteSpace(note))
+				description = $"{description}: {note}";
+
 			await WriteLogAsync(need.IncidentCommandId, need.DepartmentId, need.CallId,
 				status == IncidentNeedStatus.Met ? CommandLogEntryType.NeedMet : CommandLogEntryType.NeedUpdated,
-				$"Need '{need.Name}' {(status == IncidentNeedStatus.Met ? "met" : $"status changed to {status}")}", userId, cancellationToken);
+				description, userId, cancellationToken);
 
 			_eventAggregator.SendMessage<IncidentNeedChangedEvent>(new IncidentNeedChangedEvent
 			{
@@ -1624,6 +1974,323 @@ namespace Resgrid.Services
 				return new List<IncidentNeed>();
 
 			return items.Where(x => x.CallId == callId).OrderBy(x => x.SortOrder).ThenBy(x => x.CreatedOn).ToList();
+		}
+
+		public async Task<List<IncidentNeedUpdate>> GetNeedUpdatesAsync(int departmentId, string incidentNeedId)
+		{
+			if (string.IsNullOrWhiteSpace(incidentNeedId))
+				return new List<IncidentNeedUpdate>();
+
+			var items = await _incidentNeedUpdateRepository.GetAllByDepartmentIdAsync(departmentId);
+			var updates = (items ?? Enumerable.Empty<IncidentNeedUpdate>())
+				.Where(x => string.Equals(x.IncidentNeedId, incidentNeedId, StringComparison.OrdinalIgnoreCase))
+				.OrderByDescending(x => x.CreatedOn)
+				.ToList();
+
+			// Resolve author display names in one profile batch so the UI never shows a raw user GUID.
+			try
+			{
+				var userIds = updates.Select(x => x.CreatedByUserId).Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().ToList();
+				var profiles = userIds.Count > 0 ? await _userProfileService.GetSelectedUserProfilesAsync(userIds) : null;
+				var profilesById = (profiles ?? new List<UserProfile>()).Where(p => p != null && !string.IsNullOrWhiteSpace(p.UserId))
+					.GroupBy(p => p.UserId).ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+
+				foreach (var update in updates)
+				{
+					update.CreatedByUserName = !string.IsNullOrWhiteSpace(update.CreatedByUserId) && profilesById.TryGetValue(update.CreatedByUserId, out var profile)
+						? profile.FullName.AsFirstNameLastName
+						: update.CreatedByUserId;
+				}
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+			}
+
+			return updates;
+		}
+
+		public async Task<IncidentNeed> RequestNeedEntitiesAsync(int departmentId, string incidentCommandId, string name, string description, List<IncidentNeedEntity> entities, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (string.IsNullOrWhiteSpace(name) || entities == null || entities.Count == 0)
+				throw new ArgumentException("A need name and at least one requested entity are required.");
+			if (entities.Any(e => !Enum.IsDefined(typeof(NeedEntityKind), e.EntityKind) || string.IsNullOrWhiteSpace(e.EntityId)))
+				throw new ArgumentException("Every requested entity needs a valid kind and id.");
+
+			var command = await GetOwnedCommandAsync(incidentCommandId, departmentId);
+			if (command == null)
+				return null;
+
+			var need = new IncidentNeed
+			{
+				IncidentNeedId = Guid.NewGuid().ToString(),
+				IncidentCommandId = command.IncidentCommandId,
+				DepartmentId = departmentId,
+				CallId = command.CallId,
+				Name = TrimToLength(name, 500),
+				Description = TrimToLength(description, 2000),
+				Category = (int)IncidentNeedCategory.Entity,
+				Status = (int)IncidentNeedStatus.Open,
+				QuantityRequested = entities.Count,
+				CreatedByUserId = userId,
+				CreatedOn = DateTime.UtcNow
+			};
+			need = await _incidentNeedRepository.InsertAsync(Touch(need), cancellationToken);
+
+			// Resolve display names + persist the request rows.
+			var labels = new List<string>();
+			foreach (var entity in entities)
+			{
+				entity.IncidentNeedEntityId = Guid.NewGuid().ToString();
+				entity.IncidentNeedId = need.IncidentNeedId;
+				entity.IncidentCommandId = command.IncidentCommandId;
+				entity.DepartmentId = departmentId;
+				entity.CallId = command.CallId;
+				entity.CreatedByUserId = userId;
+				entity.CreatedOn = DateTime.UtcNow;
+				entity.EntityName = TrimToLength(await ResolveNeedEntityNameAsync(departmentId, entity), 500);
+				labels.Add(entity.EntityName ?? entity.EntityId);
+			}
+
+			// Add the entities to the call and dispatch ONLY them (no full re-dispatch), tagged as a
+			// command request. Failures here must not lose the need itself.
+			var dispatched = false;
+			try
+			{
+				dispatched = await DispatchNeedEntitiesAsync(departmentId, command.CallId, entities, cancellationToken);
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+			}
+
+			foreach (var entity in entities)
+			{
+				if (dispatched)
+					entity.DispatchedOn = DateTime.UtcNow;
+				await _incidentNeedEntityRepository.InsertAsync(entity, cancellationToken);
+			}
+
+			var author = await BuildNoteAuthorLabelAsync(command, userId);
+			await WriteLogAsync(need.IncidentCommandId, need.DepartmentId, need.CallId, CommandLogEntryType.NeedAdded,
+				$"Need '{need.Name}' requested by {author}: {string.Join(", ", labels)}{(dispatched ? " — dispatched to the call individually" : string.Empty)}", userId, cancellationToken);
+
+			_eventAggregator.SendMessage<IncidentNeedChangedEvent>(new IncidentNeedChangedEvent
+			{
+				DepartmentId = need.DepartmentId,
+				CallId = need.CallId,
+				IncidentCommandId = need.IncidentCommandId,
+				IncidentNeedId = need.IncidentNeedId,
+				Name = need.Name,
+				Status = need.Status
+			});
+			return need;
+		}
+
+		public async Task<List<IncidentNeedEntity>> GetNeedEntitiesAsync(int departmentId, string incidentNeedId)
+		{
+			if (string.IsNullOrWhiteSpace(incidentNeedId))
+				return new List<IncidentNeedEntity>();
+
+			var items = await _incidentNeedEntityRepository.GetAllByDepartmentIdAsync(departmentId);
+			return (items ?? Enumerable.Empty<IncidentNeedEntity>())
+				.Where(x => string.Equals(x.IncidentNeedId, incidentNeedId, StringComparison.OrdinalIgnoreCase))
+				.OrderBy(x => x.CreatedOn)
+				.ToList();
+		}
+
+		public async Task RecordNeedEntityStatusAsync(int departmentId, int callId, NeedEntityKind entityKind, string entityId, string statusText, string savedByUserId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			try
+			{
+				var command = await GetActiveCommandForCallAsync(departmentId, callId);
+				if (command == null)
+					return;
+
+				var all = await _incidentNeedEntityRepository.GetAllByDepartmentIdAsync(departmentId);
+				var callEntities = (all ?? Enumerable.Empty<IncidentNeedEntity>()).Where(x => x.CallId == callId).ToList();
+				if (callEntities.Count == 0)
+					return;
+
+				// Direct match (the unit/user itself was requested) …
+				var matches = callEntities.Where(x => x.EntityKind == (int)entityKind && string.Equals(x.EntityId, entityId, StringComparison.OrdinalIgnoreCase)).ToList();
+
+				// … or an indirect match: the responder satisfies a requested role/group.
+				if (entityKind == NeedEntityKind.User)
+				{
+					if (callEntities.Any(x => x.EntityKind == (int)NeedEntityKind.Group))
+					{
+						var group = await _departmentGroupsService.GetGroupForUserAsync(entityId, departmentId);
+						if (group != null)
+							matches.AddRange(callEntities.Where(x => x.EntityKind == (int)NeedEntityKind.Group && x.EntityId == group.DepartmentGroupId.ToString()));
+					}
+					if (callEntities.Any(x => x.EntityKind == (int)NeedEntityKind.Role))
+					{
+						var roles = await _personnelRolesService.GetRolesForUserAsync(entityId, departmentId);
+						var roleIds = new HashSet<string>((roles ?? new List<PersonnelRole>()).Select(r => r.PersonnelRoleId.ToString()));
+						matches.AddRange(callEntities.Where(x => x.EntityKind == (int)NeedEntityKind.Role && roleIds.Contains(x.EntityId)));
+					}
+				}
+				else if (entityKind == NeedEntityKind.Unit && callEntities.Any(x => x.EntityKind == (int)NeedEntityKind.Group) && int.TryParse(entityId, out var respondingUnitId))
+				{
+					var unit = await _unitsService.GetUnitByIdAsync(respondingUnitId);
+					if (unit?.StationGroupId != null)
+						matches.AddRange(callEntities.Where(x => x.EntityKind == (int)NeedEntityKind.Group && x.EntityId == unit.StationGroupId.Value.ToString()));
+				}
+
+				if (matches.Count == 0)
+					return;
+
+				var needs = await _incidentNeedRepository.GetAllByDepartmentIdAsync(departmentId);
+				var needNamesById = (needs ?? Enumerable.Empty<IncidentNeed>()).GroupBy(n => n.IncidentNeedId).ToDictionary(g => g.Key, g => g.First().Name);
+
+				var label = entityKind == NeedEntityKind.Unit && int.TryParse(entityId, out var labelUnitId)
+					? await ResolveUnitLabelAsync(labelUnitId)
+					: await ResolveUserLabelAsync(departmentId, entityId);
+
+				foreach (var needId in matches.Select(m => m.IncidentNeedId).Distinct())
+				{
+					var needName = needNamesById.TryGetValue(needId, out var resolved) ? resolved : "Entity request";
+					await WriteLogAsync(command.IncidentCommandId, departmentId, callId, CommandLogEntryType.NeedUpdated,
+						$"{label} responded to need '{needName}' — {statusText}", savedByUserId, cancellationToken);
+				}
+			}
+			catch (Exception ex)
+			{
+				// A response-logging failure must never break the underlying status save.
+				Resgrid.Framework.Logging.LogException(ex);
+			}
+		}
+
+		/// <summary>Display-name snapshot for a requested entity (never a raw id in log text).</summary>
+		private async Task<string> ResolveNeedEntityNameAsync(int departmentId, IncidentNeedEntity entity)
+		{
+			try
+			{
+				switch ((NeedEntityKind)entity.EntityKind)
+				{
+					case NeedEntityKind.Unit:
+						if (int.TryParse(entity.EntityId, out var unitId))
+							return await ResolveUnitLabelAsync(unitId);
+						break;
+					case NeedEntityKind.User:
+						return await ResolveUserLabelAsync(departmentId, entity.EntityId);
+					case NeedEntityKind.Role:
+						if (int.TryParse(entity.EntityId, out var roleId))
+						{
+							var role = await _personnelRolesService.GetRoleByIdAsync(roleId);
+							if (role != null)
+								return $"role '{role.Name}'";
+						}
+						break;
+					case NeedEntityKind.Group:
+						if (int.TryParse(entity.EntityId, out var groupId))
+						{
+							var group = await _departmentGroupsService.GetGroupByIdAsync(groupId);
+							if (group != null)
+								return $"group '{group.Name}'";
+						}
+						break;
+				}
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+			}
+			return entity.EntityId;
+		}
+
+		/// <summary>
+		/// Adds the requested entities to the call's dispatch lists and broadcasts ONLY them (the same
+		/// subset-dispatch primitive EditCall uses), tagging the notification as a command request.
+		/// </summary>
+		private async Task<bool> DispatchNeedEntitiesAsync(int departmentId, int callId, List<IncidentNeedEntity> entities, CancellationToken cancellationToken)
+		{
+			var call = await _callsService.GetCallByIdAsync(callId);
+			if (call == null || call.DepartmentId != departmentId)
+				return false;
+			call = await _callsService.PopulateCallData(call, true, false, false, true, true, true, false, false, false);
+
+			// Defensive: a call with no prior dispatches of a type can come back with a null collection.
+			call.Dispatches ??= new List<CallDispatch>();
+			call.GroupDispatches ??= new List<CallDispatchGroup>();
+			call.UnitDispatches ??= new List<CallDispatchUnit>();
+			call.RoleDispatches ??= new List<CallDispatchRole>();
+
+			var newUserIds = new List<string>();
+			var newGroupIds = new List<int>();
+			var newUnitIds = new List<int>();
+			var newRoleIds = new List<int>();
+
+			foreach (var entity in entities)
+			{
+				switch ((NeedEntityKind)entity.EntityKind)
+				{
+					case NeedEntityKind.Unit:
+						if (int.TryParse(entity.EntityId, out var unitId) && !call.HasUnitBeenDispatched(unitId))
+						{
+							call.UnitDispatches.Add(new CallDispatchUnit { CallId = call.CallId, UnitId = unitId });
+							newUnitIds.Add(unitId);
+						}
+						break;
+					case NeedEntityKind.User:
+						if (!call.HasUserBeenDispatched(entity.EntityId))
+						{
+							call.Dispatches.Add(new CallDispatch { CallId = call.CallId, UserId = entity.EntityId });
+							newUserIds.Add(entity.EntityId);
+						}
+						break;
+					case NeedEntityKind.Group:
+						if (int.TryParse(entity.EntityId, out var groupId) && !call.HasGroupBeenDispatched(groupId))
+						{
+							call.GroupDispatches.Add(new CallDispatchGroup { CallId = call.CallId, DepartmentGroupId = groupId });
+							newGroupIds.Add(groupId);
+						}
+						break;
+					case NeedEntityKind.Role:
+						if (int.TryParse(entity.EntityId, out var roleId) && (call.RoleDispatches == null || !call.RoleDispatches.Any(r => r.RoleId == roleId)))
+						{
+							call.RoleDispatches.Add(new CallDispatchRole { CallId = call.CallId, RoleId = roleId });
+							newRoleIds.Add(roleId);
+						}
+						break;
+				}
+			}
+
+			if (newUserIds.Count == 0 && newGroupIds.Count == 0 && newUnitIds.Count == 0 && newRoleIds.Count == 0)
+				return false;
+
+			call = await _callsService.SaveCallAsync(call, cancellationToken);
+
+			try
+			{
+				await _callDispatchStatusService.ApplyDispatchStatusesAsync(call, newGroupIds, newUnitIds, cancellationToken);
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+			}
+
+			var cqi = new CallQueueItem { Call = call };
+			cqi.SetBroadcastDispatches(newUserIds, newGroupIds, newUnitIds, newRoleIds);
+			// The queue item's Call is a deep clone used only for notification content — tag it so the
+			// dispatched resources see this came from Incident Command, without touching the stored call.
+			cqi.Call.NatureOfCall = string.IsNullOrWhiteSpace(cqi.Call.NatureOfCall)
+				? "Requested by Incident Command"
+				: $"{cqi.Call.NatureOfCall} [Requested by Incident Command]";
+
+			try
+			{
+				var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(departmentId);
+				cqi.Profiles = profiles?.Values.ToList();
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+			}
+
+			await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
+			return true;
 		}
 
 		#endregion Needs
@@ -1664,7 +2331,7 @@ namespace Resgrid.Services
 		public async Task<IncidentTimer> AcknowledgeTimerAsync(int departmentId, string incidentTimerId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var timer = await _incidentTimerRepository.GetByIdAsync(incidentTimerId);
-			if (timer == null || timer.DepartmentId != departmentId)
+			if (timer == null || timer.DepartmentId != departmentId || !await IsCommandActiveAsync(timer.IncidentCommandId))
 				return null;
 
 			timer.AcknowledgedOn = DateTime.UtcNow;
@@ -1716,8 +2383,12 @@ namespace Resgrid.Services
 				return null;
 			annotation = saved;
 
-			if (isNew)
-				await WriteLogAsync(annotation.IncidentCommandId, annotation.DepartmentId, annotation.CallId, CommandLogEntryType.AnnotationAdded, "Map annotation added", userId, cancellationToken);
+			// Every map edit is logged with the author's name and command/ICS standing (spec: who + role + when).
+			var annotationCommand = await GetCommandByIdAsync(annotation.IncidentCommandId);
+			var annotationAuthor = annotationCommand != null ? await BuildNoteAuthorLabelAsync(annotationCommand, userId) : await ResolveUserLabelAsync(annotation.DepartmentId, userId);
+			var annotationKind = string.IsNullOrWhiteSpace(annotation.Label) ? ((IncidentMapAnnotationType)annotation.AnnotationType).ToString() : $"{(IncidentMapAnnotationType)annotation.AnnotationType} '{annotation.Label}'";
+			await WriteLogAsync(annotation.IncidentCommandId, annotation.DepartmentId, annotation.CallId, CommandLogEntryType.AnnotationAdded,
+				$"Incident map {(isNew ? "markup added" : "markup updated")} ({annotationKind}) by {annotationAuthor}", userId, cancellationToken);
 
 			return annotation;
 		}
@@ -1725,13 +2396,16 @@ namespace Resgrid.Services
 		public async Task<bool> DeleteAnnotationAsync(int departmentId, string incidentMapAnnotationId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var annotation = await _incidentMapAnnotationRepository.GetByIdAsync(incidentMapAnnotationId);
-			if (annotation == null || annotation.DepartmentId != departmentId)
+			if (annotation == null || annotation.DepartmentId != departmentId || !await IsCommandActiveAsync(annotation.IncidentCommandId))
 				return false;
 
 			annotation.DeletedOn = DateTime.UtcNow;
 			await _incidentMapAnnotationRepository.SaveOrUpdateAsync(Touch(annotation), cancellationToken);
 
-			await WriteLogAsync(annotation.IncidentCommandId, annotation.DepartmentId, annotation.CallId, CommandLogEntryType.AnnotationRemoved, "Map annotation removed", userId, cancellationToken);
+			var removalCommand = await GetCommandByIdAsync(annotation.IncidentCommandId);
+			var removalAuthor = removalCommand != null ? await BuildNoteAuthorLabelAsync(removalCommand, userId) : await ResolveUserLabelAsync(annotation.DepartmentId, userId);
+			await WriteLogAsync(annotation.IncidentCommandId, annotation.DepartmentId, annotation.CallId, CommandLogEntryType.AnnotationRemoved,
+				$"Incident map markup removed by {removalAuthor}", userId, cancellationToken);
 			return true;
 		}
 
@@ -1742,6 +2416,101 @@ namespace Resgrid.Services
 				return new List<IncidentMapAnnotation>();
 
 			return items.Where(x => x.CallId == callId && x.DeletedOn == null).ToList();
+		}
+
+		public async Task<IncidentCommand> UpdateMapViewAsync(int departmentId, string incidentCommandId, string centerLatitude, string centerLongitude, string zoomLevel, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (!TryParseCoordinates(centerLatitude, centerLongitude, out var latitudeValue, out var longitudeValue))
+				throw new ArgumentException("A valid map center latitude and longitude are required.");
+			if (!decimal.TryParse(zoomLevel?.Trim(), NumberStyles.Float, CultureInfo.InvariantCulture, out var zoomValue) || zoomValue < 0 || zoomValue > 22)
+				throw new ArgumentException("A valid map zoom level (0-22) is required.");
+
+			var command = await GetOwnedCommandAsync(incidentCommandId, departmentId);
+			if (command == null)
+				return null;
+
+			var isNew = string.IsNullOrWhiteSpace(command.MapZoomLevel);
+			command.MapCenterLatitude = latitudeValue.ToString("0.######", CultureInfo.InvariantCulture);
+			command.MapCenterLongitude = longitudeValue.ToString("0.######", CultureInfo.InvariantCulture);
+			command.MapZoomLevel = zoomValue.ToString("0.##", CultureInfo.InvariantCulture);
+			command = await _incidentCommandRepository.SaveOrUpdateAsync(Touch(command), cancellationToken);
+
+			// Log with the author's name and command/ICS standing (spec: who + role + when).
+			var author = await BuildNoteAuthorLabelAsync(command, userId);
+			await WriteLogAsync(command.IncidentCommandId, command.DepartmentId, command.CallId, CommandLogEntryType.MapViewUpdated,
+				$"Incident map {(isNew ? "created" : "view updated")} by {author}", userId, cancellationToken);
+
+			return command;
+		}
+
+		public async Task<IncidentMap> SaveIncidentMapAsync(IncidentMap map, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (map == null || string.IsNullOrWhiteSpace(map.IncidentCommandId) || string.IsNullOrWhiteSpace(map.Name))
+				throw new ArgumentException("An incident command and map name are required.");
+			if (!string.IsNullOrWhiteSpace(map.CenterLatitude) || !string.IsNullOrWhiteSpace(map.CenterLongitude))
+			{
+				if (!TryParseCoordinates(map.CenterLatitude, map.CenterLongitude, out _, out _))
+					throw new ArgumentException("A valid map center latitude and longitude are required.");
+			}
+
+			var command = await GetOwnedCommandAsync(map.IncidentCommandId, map.DepartmentId);
+			if (command == null)
+				return null;
+			map.CallId = command.CallId;
+			map.Name = TrimToLength(map.Name, 500);
+			map.Description = TrimToLength(map.Description, 2000);
+
+			var (saved, isNew, rejected) = await UpsertOwnedAsync(_incidentMapRepository, map, map.DepartmentId,
+				e => e.DepartmentId, (stored, incoming) =>
+				{
+					incoming.CreatedByUserId = stored.CreatedByUserId;
+					incoming.CreatedOn = stored.CreatedOn;
+					incoming.DeletedOn = stored.DeletedOn;
+					incoming.UpdatedByUserId = userId;
+					incoming.UpdatedOn = DateTime.UtcNow;
+				}, cancellationToken);
+			if (rejected)
+				return null;
+			map = saved;
+
+			if (isNew)
+			{
+				map.CreatedByUserId = userId;
+				map.CreatedOn = DateTime.UtcNow;
+				map = await _incidentMapRepository.SaveOrUpdateAsync(Touch(map), cancellationToken);
+			}
+
+			// Log with the author's name and command/ICS standing (spec: who + role + when).
+			var author = await BuildNoteAuthorLabelAsync(command, userId);
+			await WriteLogAsync(map.IncidentCommandId, map.DepartmentId, map.CallId, CommandLogEntryType.MapViewUpdated,
+				$"Incident map '{map.Name}' {(isNew ? "created" : "updated")} by {author}", userId, cancellationToken);
+
+			return map;
+		}
+
+		public async Task<bool> DeleteIncidentMapAsync(int departmentId, string incidentMapId, string userId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var map = await _incidentMapRepository.GetByIdAsync(incidentMapId);
+			if (map == null || map.DepartmentId != departmentId || map.DeletedOn.HasValue || !await IsCommandActiveAsync(map.IncidentCommandId))
+				return false;
+
+			map.DeletedOn = DateTime.UtcNow;
+			await _incidentMapRepository.SaveOrUpdateAsync(Touch(map), cancellationToken);
+
+			var mapCommand = await GetCommandByIdAsync(map.IncidentCommandId);
+			var author = mapCommand != null ? await BuildNoteAuthorLabelAsync(mapCommand, userId) : await ResolveUserLabelAsync(departmentId, userId);
+			await WriteLogAsync(map.IncidentCommandId, map.DepartmentId, map.CallId, CommandLogEntryType.MapViewUpdated,
+				$"Incident map '{map.Name}' removed by {author}", userId, cancellationToken);
+			return true;
+		}
+
+		public async Task<List<IncidentMap>> GetIncidentMapsForCallAsync(int departmentId, int callId)
+		{
+			var items = await _incidentMapRepository.GetAllByDepartmentIdAsync(departmentId);
+			if (items == null)
+				return new List<IncidentMap>();
+
+			return items.Where(x => x.CallId == callId && x.DeletedOn == null).OrderBy(x => x.CreatedOn).ToList();
 		}
 
 		#endregion Map annotations
@@ -1818,15 +2587,214 @@ namespace Resgrid.Services
 		/// <summary>
 		/// Loads the parent incident command and returns it only if it belongs to the given department (else null).
 		/// Gates create/update of child entities AND supplies the authoritative CallId to stamp onto them — a caller
-		/// must not be trusted to supply a CallId that matches the parent command.
+		/// must not be trusted to supply a CallId that matches the parent command. By default a CLOSED (ended)
+		/// command is also rejected: an ended command is read-only.
 		/// </summary>
-		private async Task<IncidentCommand> GetOwnedCommandAsync(string incidentCommandId, int departmentId)
+		private async Task<IncidentCommand> GetOwnedCommandAsync(string incidentCommandId, int departmentId, bool requireActive = true)
 		{
 			if (string.IsNullOrWhiteSpace(incidentCommandId))
 				return null;
 
 			var command = await _incidentCommandRepository.GetByIdAsync(incidentCommandId);
-			return command != null && command.DepartmentId == departmentId ? command : null;
+			if (command == null || command.DepartmentId != departmentId)
+				return null;
+
+			return requireActive && command.Status != (int)IncidentCommandStatus.Active ? null : command;
+		}
+
+		/// <summary>An ended (closed) command is read-only — mutations on its child rows are rejected.</summary>
+		private async Task<bool> IsCommandActiveAsync(string incidentCommandId)
+		{
+			if (string.IsNullOrWhiteSpace(incidentCommandId))
+				return false;
+
+			var command = await _incidentCommandRepository.GetByIdAsync(incidentCommandId);
+			return command != null && command.Status == (int)IncidentCommandStatus.Active;
+		}
+
+		/// <summary>
+		/// Human label for a member: "Full Name (Group Name)". Falls back progressively (name only, then the raw
+		/// user id) so log text composition never throws.
+		/// </summary>
+		private async Task<string> ResolveUserLabelAsync(int departmentId, string userId, string knownName = null)
+		{
+			if (string.IsNullOrWhiteSpace(userId))
+				return string.IsNullOrWhiteSpace(knownName) ? "Unknown member" : knownName;
+
+			var label = string.IsNullOrWhiteSpace(knownName) ? userId : knownName;
+			try
+			{
+				if (string.IsNullOrWhiteSpace(knownName))
+				{
+					var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
+					if (profile != null)
+						label = profile.FullName.AsFirstNameLastName;
+				}
+
+				var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+				if (!string.IsNullOrWhiteSpace(group?.Name))
+					label = $"{label} ({group.Name})";
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+			}
+			return label;
+		}
+
+		/// <summary>Human label for a unit: "Unit Name (Station/Group Name)".</summary>
+		private async Task<string> ResolveUnitLabelAsync(int unitId)
+		{
+			var label = $"Unit {unitId}";
+			try
+			{
+				var unit = await _unitsService.GetUnitByIdAsync(unitId);
+				if (unit != null)
+				{
+					label = unit.Name;
+					if (unit.StationGroupId.HasValue)
+					{
+						var group = await _departmentGroupsService.GetGroupByIdAsync(unit.StationGroupId.Value);
+						if (!string.IsNullOrWhiteSpace(group?.Name))
+							label = $"{label} ({group.Name})";
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+			}
+			return label;
+		}
+
+		/// <summary>
+		/// Human label for a polymorphic resource assignment target so timeline text never shows a raw id/GUID:
+		/// units as "Name (Group)", personnel as "Full Name (Group)", ad-hoc resources as "Name (Agency)".
+		/// </summary>
+		private async Task<string> ResolveResourceLabelAsync(int departmentId, int resourceKind, string resourceId)
+		{
+			try
+			{
+				switch ((ResourceAssignmentKind)resourceKind)
+				{
+					case ResourceAssignmentKind.RealUnit:
+					case ResourceAssignmentKind.LinkedDeptUnit:
+						if (int.TryParse(resourceId, out var unitId))
+							return await ResolveUnitLabelAsync(unitId);
+						break;
+					case ResourceAssignmentKind.RealPersonnel:
+					case ResourceAssignmentKind.LinkedDeptPersonnel:
+						return await ResolveUserLabelAsync(departmentId, resourceId);
+					case ResourceAssignmentKind.AdHocUnit:
+						var adHocUnit = await _incidentAdHocUnitRepository.GetByIdAsync(resourceId);
+						if (adHocUnit != null)
+							return string.IsNullOrWhiteSpace(adHocUnit.ExternalAgencyName) ? adHocUnit.Name : $"{adHocUnit.Name} ({adHocUnit.ExternalAgencyName})";
+						break;
+					case ResourceAssignmentKind.AdHocPersonnel:
+						var adHocPersonnel = await _incidentAdHocPersonnelRepository.GetByIdAsync(resourceId);
+						if (adHocPersonnel != null)
+							return string.IsNullOrWhiteSpace(adHocPersonnel.ExternalAgencyName) ? adHocPersonnel.Name : $"{adHocPersonnel.Name} ({adHocPersonnel.ExternalAgencyName})";
+						break;
+				}
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+			}
+			return "Unknown resource";
+		}
+
+		/// <summary>
+		/// Note-author attribution for the timeline: "Full Name (Group) [Incident Commander, Safety Officer]" —
+		/// the bracket names the author's command standing (IC and/or any ICS roles held on this incident).
+		/// </summary>
+		private async Task<string> BuildNoteAuthorLabelAsync(IncidentCommand command, string userId)
+		{
+			var label = await ResolveUserLabelAsync(command.DepartmentId, userId);
+
+			var standings = new List<string>();
+			if (string.Equals(userId, command.CurrentCommanderUserId, StringComparison.OrdinalIgnoreCase))
+				standings.Add("Incident Commander");
+
+			try
+			{
+				var roles = await GetIncidentRolesAsync(command.DepartmentId, command.CallId);
+				standings.AddRange(roles.Where(r => string.Equals(r.UserId, userId, StringComparison.OrdinalIgnoreCase))
+					.Select(r => ((IncidentRoleType)r.RoleType).ToString()));
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+			}
+
+			return standings.Count > 0 ? $"{label} [{string.Join(", ", standings.Distinct())}]" : label;
+		}
+
+		/// <summary>Forward-geocodes a free-text location; (null, null) when it can't be resolved.</summary>
+		private async Task<(string latitude, string longitude)> GeocodeLocationTextAsync(string locationText)
+		{
+			if (string.IsNullOrWhiteSpace(locationText))
+				return (null, null);
+
+			try
+			{
+				var result = await _geoLocationProvider.GetLatLonFromAddress(locationText.Trim());
+				var parts = result?.Split(',');
+				if (parts != null && parts.Length >= 2 && TryParseCoordinates(parts[0], parts[1], out var latitude, out var longitude))
+					return (latitude.ToString("0.######", CultureInfo.InvariantCulture), longitude.ToString("0.######", CultureInfo.InvariantCulture));
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+			}
+			return (null, null);
+		}
+
+		/// <summary>
+		/// Merges one location edit (free text + coordinates) over the stored values: null inputs leave the stored
+		/// value, empty strings clear it, and supplied coordinates must parse as a valid pair. Whenever the merged
+		/// text is set while the merged coordinates are blank, the text is geocoded to backfill them.
+		/// </summary>
+		private async Task<(string text, string latitude, string longitude, bool changed)> ApplyLocationEditAsync(
+			string currentText, string currentLatitude, string currentLongitude,
+			string newText, string newLatitude, string newLongitude)
+		{
+			var text = newText == null ? currentText : TrimToLength(newText, 1000);
+
+			string latitude;
+			string longitude;
+			if (newLatitude == null && newLongitude == null)
+			{
+				latitude = currentLatitude;
+				longitude = currentLongitude;
+			}
+			else if (string.IsNullOrWhiteSpace(newLatitude) || string.IsNullOrWhiteSpace(newLongitude))
+			{
+				latitude = null;
+				longitude = null;
+			}
+			else
+			{
+				if (!TryParseCoordinates(newLatitude, newLongitude, out var latitudeValue, out var longitudeValue))
+					throw new ArgumentException("A valid latitude and longitude are required.");
+				latitude = latitudeValue.ToString("0.######", CultureInfo.InvariantCulture);
+				longitude = longitudeValue.ToString("0.######", CultureInfo.InvariantCulture);
+			}
+
+			if (!string.IsNullOrWhiteSpace(text) && (string.IsNullOrWhiteSpace(latitude) || string.IsNullOrWhiteSpace(longitude)))
+			{
+				var geocoded = await GeocodeLocationTextAsync(text);
+				if (geocoded.latitude != null)
+				{
+					latitude = geocoded.latitude;
+					longitude = geocoded.longitude;
+				}
+			}
+
+			var changed = !string.Equals(text ?? string.Empty, currentText ?? string.Empty) ||
+				!string.Equals(latitude ?? string.Empty, currentLatitude ?? string.Empty) ||
+				!string.Equals(longitude ?? string.Empty, currentLongitude ?? string.Empty);
+			return (text, latitude, longitude, changed);
 		}
 
 		private async Task<CommandLogEntry> WriteLogAsync(string incidentCommandId, int departmentId, int callId, CommandLogEntryType type, string description, string userId, CancellationToken cancellationToken)

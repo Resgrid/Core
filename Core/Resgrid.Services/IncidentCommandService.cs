@@ -798,19 +798,26 @@ namespace Resgrid.Services
 			static bool IsUnitKind(int kind) => kind == (int)ResourceAssignmentKind.RealUnit ||
 				kind == (int)ResourceAssignmentKind.LinkedDeptUnit || kind == (int)ResourceAssignmentKind.AdHocUnit;
 
-			var summaries = new List<IncidentCommandSummary>();
-			foreach (var command in selected)
+			// Best-effort per call: a failing lookup only loses that call's display fields.
+			var callsById = new Dictionary<int, Call>();
+			foreach (var callId in selected.Select(x => x.CallId).Distinct())
 			{
-				Call call = null;
 				try
 				{
-					call = await _callsService.GetCallByIdAsync(command.CallId);
+					var loadedCall = await _callsService.GetCallByIdAsync(callId);
+					if (loadedCall != null)
+						callsById[callId] = loadedCall;
 				}
 				catch (Exception ex)
 				{
 					Resgrid.Framework.Logging.LogException(ex);
 				}
+			}
 
+			var summaries = new List<IncidentCommandSummary>();
+			foreach (var command in selected)
+			{
+				callsById.TryGetValue(command.CallId, out var call);
 				var activeAssignments = assignmentsByCommand[command.IncidentCommandId].ToList();
 				profilesById.TryGetValue(command.CurrentCommanderUserId ?? string.Empty, out var commanderProfile);
 
@@ -2460,6 +2467,10 @@ namespace Resgrid.Services
 			map.Name = TrimToLength(map.Name, 500);
 			map.Description = TrimToLength(map.Description, 2000);
 
+			// Server-stamped create audit; on updates the preserve callback restores the stored values.
+			map.CreatedByUserId = userId;
+			map.CreatedOn = DateTime.UtcNow;
+
 			var (saved, isNew, rejected) = await UpsertOwnedAsync(_incidentMapRepository, map, map.DepartmentId,
 				e => e.DepartmentId, (stored, incoming) =>
 				{
@@ -2472,13 +2483,6 @@ namespace Resgrid.Services
 			if (rejected)
 				return null;
 			map = saved;
-
-			if (isNew)
-			{
-				map.CreatedByUserId = userId;
-				map.CreatedOn = DateTime.UtcNow;
-				map = await _incidentMapRepository.SaveOrUpdateAsync(Touch(map), cancellationToken);
-			}
 
 			// Log with the author's name and command/ICS standing (spec: who + role + when).
 			var author = await BuildNoteAuthorLabelAsync(command, userId);

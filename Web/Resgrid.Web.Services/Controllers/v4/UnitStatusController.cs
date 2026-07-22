@@ -289,7 +289,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 						try
 						{
 							var stateLabel = Enum.IsDefined(typeof(UnitStateTypes), state.State) ? ((UnitStateTypes)state.State).ToString() : $"status {state.State}";
-							await _incidentCommandService.RecordNeedEntityStatusAsync(DepartmentId, state.DestinationId.Value, NeedEntityKind.Unit, state.UnitId.ToString(), stateLabel, UserId);
+							await _incidentCommandService.RecordNeedEntityStatusAsync(DepartmentId, state.DestinationId.Value, NeedEntityKind.Unit, state.UnitId.ToString(), stateLabel, UserId, cancellationToken);
 						}
 						catch (Exception ex)
 						{

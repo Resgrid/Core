@@ -175,7 +175,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 						}
 						catch (Exception ex)
 						{
-							Resgrid.Framework.Logging.LogException(ex);
+							Resgrid.Framework.Logging.LogException(ex, $"RecordNeedEntityStatusAsync failed for DepartmentId {DepartmentId}, DestinationId {destinationId}, UserId {input.UserId}");
 						}
 					}
 				}

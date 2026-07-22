@@ -10,17 +10,19 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 	[Migration(94)]
 	public class M0094_AddIncidentCommandNameAndLocationsPg : Migration
 	{
+		private static readonly string[] IncidentCommandColumns =
+		{
+			"name", "commandpostlocationtext",
+			"staginglocationtext", "staginglatitude", "staginglongitude",
+			"rehablocationtext", "rehablatitude", "rehablongitude"
+		};
+
 		public override void Up()
 		{
 			if (!Schema.Table("incidentcommands").Exists())
 				return;
 
-			foreach (var column in new[]
-			{
-				"name", "commandpostlocationtext",
-				"staginglocationtext", "staginglatitude", "staginglongitude",
-				"rehablocationtext", "rehablatitude", "rehablongitude"
-			})
+			foreach (var column in IncidentCommandColumns)
 			{
 				if (!Schema.Table("incidentcommands").Column(column).Exists())
 					Alter.Table("incidentcommands").AddColumn(column).AsCustom("citext").Nullable();
@@ -32,12 +34,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 			if (!Schema.Table("incidentcommands").Exists())
 				return;
 
-			foreach (var column in new[]
-			{
-				"name", "commandpostlocationtext",
-				"staginglocationtext", "staginglatitude", "staginglongitude",
-				"rehablocationtext", "rehablatitude", "rehablongitude"
-			})
+			foreach (var column in IncidentCommandColumns)
 			{
 				if (Schema.Table("incidentcommands").Column(column).Exists())
 					Delete.Column(column).FromTable("incidentcommands");

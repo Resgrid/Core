@@ -956,6 +956,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (input == null || string.IsNullOrWhiteSpace(input.IncidentCommandId) || string.IsNullOrWhiteSpace(input.Name) || input.Entities == null || input.Entities.Count == 0)
 				return BadRequest();
 
+			if (input.Entities.Any(e => !Enum.IsDefined(typeof(NeedEntityKind), e.EntityKind)))
+				return BadRequest();
+
 			try
 			{
 				var entities = input.Entities.Select(e => new IncidentNeedEntity { EntityKind = e.EntityKind, EntityId = e.EntityId }).ToList();

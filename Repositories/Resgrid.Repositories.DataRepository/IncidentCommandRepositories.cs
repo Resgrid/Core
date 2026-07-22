@@ -126,6 +126,30 @@ namespace Resgrid.Repositories.DataRepository
 		}
 	}
 
+	public class IncidentNeedUpdateRepository : RepositoryBase<IncidentNeedUpdate>, IIncidentNeedUpdateRepository
+	{
+		public IncidentNeedUpdateRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
+		{
+		}
+	}
+
+	public class IncidentMapRepository : RepositoryBase<IncidentMap>, IIncidentMapRepository
+	{
+		public IncidentMapRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
+		{
+		}
+	}
+
+	public class IncidentNeedEntityRepository : RepositoryBase<IncidentNeedEntity>, IIncidentNeedEntityRepository
+	{
+		public IncidentNeedEntityRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)
+			: base(connectionProvider, sqlConfiguration, unitOfWork, queryFactory)
+		{
+		}
+	}
+
 	public class IncidentNoteRepository : RepositoryBase<IncidentNote>, IIncidentNoteRepository
 	{
 		public IncidentNoteRepository(IConnectionProvider connectionProvider, SqlConfiguration sqlConfiguration, IUnitOfWork unitOfWork, IQueryFactory queryFactory)

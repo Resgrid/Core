@@ -47,6 +47,15 @@ namespace Resgrid.Model
 		InProgress = 2
 	}
 
+	/// <summary>How a completed tactical objective turned out (recorded at close-out).</summary>
+	public enum TacticalObjectiveOutcome
+	{
+		NotSet = 0,
+		Successful = 1,
+		Partial = 2,
+		Unsuccessful = 3
+	}
+
 	/// <summary>Category of an incident need (resource/logistics request tracked at the command level).</summary>
 	public enum IncidentNeedCategory
 	{
@@ -55,7 +64,22 @@ namespace Resgrid.Model
 		Medical = 2,
 		Equipment = 3,
 		Staffing = 4,
-		Other = 5
+		Other = 5,
+
+		/// <summary>
+		/// A request for SPECIFIC Resgrid entities (units/users/roles/groups) that get added to the call
+		/// and dispatched individually as "requested by command". See <see cref="IncidentNeedEntity"/>.
+		/// </summary>
+		Entity = 6
+	}
+
+	/// <summary>What kind of Resgrid entity an <see cref="IncidentNeedEntity"/> requests.</summary>
+	public enum NeedEntityKind
+	{
+		Unit = 0,
+		User = 1,
+		Role = 2,
+		Group = 3
 	}
 
 	/// <summary>Fulfillment state of an incident need.</summary>
@@ -148,6 +172,12 @@ namespace Resgrid.Model
 		NeedMet = 33,
 		ObjectiveProgressUpdated = 34,
 		LaneLeadChanged = 35,
-		CommandDetailsUpdated = 36
+		CommandDetailsUpdated = 36,
+
+		/// <summary>A previously closed command was reopened (the reopen reason is embedded in the description).</summary>
+		CommandReopened = 37,
+
+		/// <summary>The incident map's saved view (center/zoom) was created or changed.</summary>
+		MapViewUpdated = 38
 	}
 }

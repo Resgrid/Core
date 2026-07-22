@@ -65,11 +65,62 @@ namespace Resgrid.Web.Services.Models.v4.IncidentCommand
 		public string ImportantInformation { get; set; }
 	}
 
+	/// <summary>Input to reopen a previously closed command, with the caller's reason for reopening.</summary>
+	public class ReopenCommandInput
+	{
+		public string IncidentCommandId { get; set; }
+		public string Reason { get; set; }
+	}
+
+	/// <summary>
+	/// Input to update core incident metadata and the ICP/HQ, Staging, and Rehab locations. Null fields are
+	/// left unchanged; empty strings clear. A location whose text is set while its coordinates are blank is
+	/// geocoded server-side on save.
+	/// </summary>
+	public class UpdateCommandInfoInput
+	{
+		public string IncidentCommandId { get; set; }
+		public string Name { get; set; }
+		public System.DateTime? EstablishedOn { get; set; }
+		public System.DateTime? EstimatedEndOn { get; set; }
+		public bool ClearEstimatedEndOn { get; set; }
+		public string ImportantInformation { get; set; }
+		public int? IcsLevel { get; set; }
+		public string CommandPostLocationText { get; set; }
+		public string CommandPostLatitude { get; set; }
+		public string CommandPostLongitude { get; set; }
+		public string StagingLocationText { get; set; }
+		public string StagingLatitude { get; set; }
+		public string StagingLongitude { get; set; }
+		public string RehabLocationText { get; set; }
+		public string RehabLatitude { get; set; }
+		public string RehabLongitude { get; set; }
+	}
+
 	/// <summary>Input to set an objective's progress percentage (0-100; 100 completes it).</summary>
 	public class UpdateObjectiveProgressInput
 	{
 		public string TacticalObjectiveId { get; set; }
 		public int ProgressPercent { get; set; }
+	}
+
+	/// <summary>Input to create/update the incident map's saved view (center + zoom) for consistent framing.</summary>
+	public class UpdateMapViewInput
+	{
+		public string IncidentCommandId { get; set; }
+		public string CenterLatitude { get; set; }
+		public string CenterLongitude { get; set; }
+		/// <summary>Map zoom level, 0-22.</summary>
+		public string ZoomLevel { get; set; }
+	}
+
+	/// <summary>Optional close-out details when completing an objective.</summary>
+	public class CompleteObjectiveInput
+	{
+		/// <summary>Maps to Resgrid.Model.TacticalObjectiveOutcome (Successful/Partial/Unsuccessful).</summary>
+		public int Outcome { get; set; }
+		/// <summary>Optional close-out note, recorded on the objective and the incident log.</summary>
+		public string Note { get; set; }
 	}
 
 	/// <summary>Input to transition an incident need's fulfillment status.</summary>
@@ -78,7 +129,10 @@ namespace Resgrid.Web.Services.Models.v4.IncidentCommand
 		public string IncidentNeedId { get; set; }
 		/// <summary>Maps to Resgrid.Model.IncidentNeedStatus.</summary>
 		public int Status { get; set; }
+		/// <summary>New fulfilled quantity — may be lower than the current value (a fill got called off).</summary>
 		public int? QuantityFulfilled { get; set; }
+		/// <summary>Optional context recorded on the audit trail and incident log ("Engine 1 from mutual aid").</summary>
+		public string Note { get; set; }
 	}
 
 	public class IncidentCommandResult : StandardApiResponseV4Base
@@ -89,6 +143,12 @@ namespace Resgrid.Web.Services.Models.v4.IncidentCommand
 	public class IncidentCommandBoardResult : StandardApiResponseV4Base
 	{
 		public Resgrid.Model.IncidentCommandBoard Data { get; set; }
+	}
+
+	/// <summary>List-card summaries for the department's incident commands (active only or incl. closed).</summary>
+	public class IncidentCommandSummariesResult : StandardApiResponseV4Base
+	{
+		public List<Resgrid.Model.IncidentCommandSummary> Data { get; set; } = new List<Resgrid.Model.IncidentCommandSummary>();
 	}
 
 	public class CommandTransferResult : StandardApiResponseV4Base
@@ -128,6 +188,34 @@ namespace Resgrid.Web.Services.Models.v4.IncidentCommand
 		public List<Resgrid.Model.IncidentNeed> Data { get; set; } = new List<Resgrid.Model.IncidentNeed>();
 	}
 
+	/// <summary>Input to create an Entity need: specific units/users/roles/groups requested by command.</summary>
+	public class RequestNeedEntitiesInput
+	{
+		public string IncidentCommandId { get; set; }
+		public string Name { get; set; }
+		public string Description { get; set; }
+		public List<NeedEntityInput> Entities { get; set; } = new List<NeedEntityInput>();
+	}
+
+	/// <summary>One requested entity: kind maps to Resgrid.Model.NeedEntityKind (Unit/User/Role/Group).</summary>
+	public class NeedEntityInput
+	{
+		public int EntityKind { get; set; }
+		public string EntityId { get; set; }
+	}
+
+	/// <summary>The requested entities under one Entity-category need.</summary>
+	public class IncidentNeedEntitiesResult : StandardApiResponseV4Base
+	{
+		public List<Resgrid.Model.IncidentNeedEntity> Data { get; set; } = new List<Resgrid.Model.IncidentNeedEntity>();
+	}
+
+	/// <summary>Audit trail for one need's fulfillment changes (newest first).</summary>
+	public class IncidentNeedUpdatesResult : StandardApiResponseV4Base
+	{
+		public List<Resgrid.Model.IncidentNeedUpdate> Data { get; set; } = new List<Resgrid.Model.IncidentNeedUpdate>();
+	}
+
 	/// <summary>Read-only incident view for a responder or unit: commander, timing, objectives, needs, notes, attachments, own lane assignment.</summary>
 	public class ResourceIncidentViewResult : StandardApiResponseV4Base
 	{
@@ -142,6 +230,18 @@ namespace Resgrid.Web.Services.Models.v4.IncidentCommand
 	public class IncidentMapAnnotationResult : StandardApiResponseV4Base
 	{
 		public Resgrid.Model.IncidentMapAnnotation Data { get; set; }
+	}
+
+	/// <summary>A single named incident tactical map.</summary>
+	public class IncidentMapResult : StandardApiResponseV4Base
+	{
+		public Resgrid.Model.IncidentMap Data { get; set; }
+	}
+
+	/// <summary>The incident's named tactical maps.</summary>
+	public class IncidentMapsResult : StandardApiResponseV4Base
+	{
+		public List<Resgrid.Model.IncidentMap> Data { get; set; } = new List<Resgrid.Model.IncidentMap>();
 	}
 
 	public class IncidentTimesReportResult : StandardApiResponseV4Base

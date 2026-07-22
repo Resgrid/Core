@@ -71,7 +71,14 @@ namespace Resgrid.Tests.Services
 				_weatherProvider.Object,
 				new Mock<IIncidentNeedRepository>().Object,
 				new Mock<IUserProfileService>().Object,
-				new Mock<IIncidentCommandNotificationService>().Object);
+				new Mock<IIncidentCommandNotificationService>().Object,
+				new Mock<IGeoLocationProvider>().Object,
+				new Mock<IDepartmentGroupsService>().Object,
+				new Mock<IIncidentAdHocUnitRepository>().Object,
+				new Mock<IIncidentAdHocPersonnelRepository>().Object,
+				new Mock<IIncidentNeedUpdateRepository>().Object,
+				new Mock<IIncidentMapRepository>().Object,
+				new Mock<IIncidentNeedEntityRepository>().Object, new Mock<ICallDispatchStatusService>().Object, new Mock<IQueueService>().Object);
 		}
 
 		[Test]

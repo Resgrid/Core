@@ -37,6 +37,16 @@ namespace Resgrid.Model.Events
 		public string IncidentCommandId { get; set; }
 	}
 
+	/// <summary>A previously closed incident command was reopened.</summary>
+	public class IncidentReopenedEvent
+	{
+		public int DepartmentId { get; set; }
+		public int CallId { get; set; }
+		public string IncidentCommandId { get; set; }
+		public string Reason { get; set; }
+		public string ReopenedByUserId { get; set; }
+	}
+
 	/// <summary>Raised when a resource is assigned to a command structure node.</summary>
 	public class IncidentResourceAssignedEvent
 	{

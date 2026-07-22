@@ -29,6 +29,8 @@ namespace Resgrid.Model
 
 		public List<IncidentMapAnnotation> Annotations { get; set; } = new List<IncidentMapAnnotation>();
 
+		public List<IncidentMap> Maps { get; set; } = new List<IncidentMap>();
+
 		public List<IncidentRoleAssignment> Roles { get; set; } = new List<IncidentRoleAssignment>();
 
 		public List<IncidentAdHocUnit> AdHocUnits { get; set; } = new List<IncidentAdHocUnit>();

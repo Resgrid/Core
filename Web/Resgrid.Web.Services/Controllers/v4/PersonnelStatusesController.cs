@@ -36,6 +36,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly Model.Services.IAuthorizationService _authorizationService;
+		private readonly IIncidentCommandService _incidentCommandService;
 
 		public PersonnelStatusesController(
 			IUsersService usersService,
@@ -48,8 +49,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IMappingService mappingService,
 			IPersonnelRolesService personnelRolesService,
 			IDepartmentSettingsService departmentSettingsService,
-			Model.Services.IAuthorizationService authorizationService
-			)
+			Model.Services.IAuthorizationService authorizationService,
+			IIncidentCommandService incidentCommandService)
 		{
 			_usersService = usersService;
 			_actionLogsService = actionLogsService;
@@ -59,6 +60,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_departmentGroupsService = departmentGroupsService;
 			_callsService = callsService;
 			_mappingService = mappingService;
+			_incidentCommandService = incidentCommandService;
 			_personnelRolesService = personnelRolesService;
 			_departmentSettingsService = departmentSettingsService;
 			_authorizationService = authorizationService;
@@ -161,6 +163,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 						return BadRequest();
 
 					log = await _actionLogsService.SetUserActionAsync(input.UserId, DepartmentId, int.Parse(input.Type), geolocation, destinationId, destinationType, input.Note, cancellationToken);
+
+					// Entity-need response: a member that command requested answering the call lands on the
+					// incident log. Best-effort — never blocks the status save.
+					if (destinationType == (int)DestinationEntityTypes.Call)
+					{
+						try
+						{
+							var actionLabel = int.TryParse(input.Type, out var actionType) && Enum.IsDefined(typeof(ActionTypes), actionType) ? ((ActionTypes)actionType).ToString() : $"status {input.Type}";
+							await _incidentCommandService.RecordNeedEntityStatusAsync(DepartmentId, destinationId, NeedEntityKind.User, input.UserId, actionLabel, UserId, cancellationToken);
+						}
+						catch (Exception ex)
+						{
+							Resgrid.Framework.Logging.LogException(ex, $"RecordNeedEntityStatusAsync failed for DepartmentId {DepartmentId}, DestinationId {destinationId}, UserId {input.UserId}");
+						}
+					}
 				}
 
 				result.Id = log.ActionLogId.ToString();

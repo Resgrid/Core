@@ -8,6 +8,7 @@ using Resgrid.Framework.Testing;
 using Resgrid.Model;
 using Resgrid.Model.Helpers;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 using Resgrid.Services;
 
@@ -74,6 +75,7 @@ namespace Resgrid.Tests.Services
 					_calendarItemAttendeeRepositoryMock.Object, _departmentsServiceMock.Object, _communicationServiceMock.Object,
 					_userProfileServiceMock.Object, _departmentGroupsServiceMock.Object, _departmentSettingsServiceMock.Object,
 					_encryptionServiceMock.Object, new Mock<ICalendarItemCheckInRepository>().Object,
+					new Mock<IMessageRecipientRepository>().Object, new Mock<IUnitOfWork>().Object,
 					_textResponsePromptServiceMock.Object);
 			}
 		}

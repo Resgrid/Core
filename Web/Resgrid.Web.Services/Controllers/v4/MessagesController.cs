@@ -28,6 +28,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 	public class MessagesController : V4AuthenticatedApiControllerbase
 	{
 		#region Members and Constructors
+		private const int CalendarRsvpResponseTypeAttending = 1;
+		private const int CalendarRsvpResponseTypeNotAttending = 3;
+
 		private readonly ICallsService _callsService;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IUserProfileService _userProfileService;
@@ -449,7 +452,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				if (message.Type == (int)MessageTypes.CalendarRsvp)
 				{
-					if ((responseInput.Type != 1 && responseInput.Type != 3)
+					if ((responseInput.Type != CalendarRsvpResponseTypeAttending
+						&& responseInput.Type != CalendarRsvpResponseTypeNotAttending)
 						|| !TextResponsePromptMetadata.TryGetCalendarItemId(response.Note, out var calendarItemId))
 						return BadRequest();
 
@@ -464,7 +468,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 						|| !await _authorizationService.CanUserCheckInToCalendarEventAsync(UserId, calendarItemId))
 						return Unauthorized();
 
-					var attending = responseInput.Type == 1;
+					var attending = responseInput.Type == CalendarRsvpResponseTypeAttending;
 					var normalizedResponse = attending ? "Yes" : "No";
 					var attendeeType = attending
 						? (int)CalendarItemAttendeeTypes.RSVP

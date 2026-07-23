@@ -8,6 +8,9 @@ using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Messages;
 using Resgrid.Model.Repositories;
+using Resgrid.Repositories.DataRepository.Configs;
+using Resgrid.Repositories.DataRepository.Queries.Messages;
+using Resgrid.Repositories.DataRepository.Servers.SqlServer;
 using Resgrid.Services;
 using Resgrid.Web.Services.Controllers.v4;
 
@@ -28,6 +31,8 @@ namespace Resgrid.Tests.Services
 			};
 			repository.Setup(x => x.GetInboxMessagesByUserIdAsync("user-1"))
 				.ReturnsAsync(messages);
+			repository.Setup(x => x.GetUnreadMessageCountAsync("user-1"))
+				.ReturnsAsync(2);
 			var service = new MessageService(repository.Object, null, null, null, null, null);
 
 			var inbox = await service.GetInboxMessagesByUserIdAsync("user-1");
@@ -36,6 +41,8 @@ namespace Resgrid.Tests.Services
 			inbox.Should().HaveCount(2);
 			inbox.Should().OnlyContain(x => x.MessageId != 3);
 			unreadCount.Should().Be(2);
+			repository.Verify(x => x.GetInboxMessagesByUserIdAsync("user-1"), Times.Once);
+			repository.Verify(x => x.GetUnreadMessageCountAsync("user-1"), Times.Once);
 		}
 
 		[Test]
@@ -55,6 +62,25 @@ namespace Resgrid.Tests.Services
 			result.CalendarItemId.Should().Be("8521");
 			result.Responded.Should().BeTrue();
 			result.ResponseType.Should().Be("Yes");
+		}
+
+		[Test]
+		public void UnreadCountQueriesApplyUnreadAndActiveMessagePredicates()
+		{
+			var configurations = new SqlConfiguration[]
+			{
+				new SqlServerConfiguration(),
+				new PostgreSqlConfiguration()
+			};
+
+			foreach (var configuration in configurations)
+			{
+				var query = new SelectUnreadMessageCountQuery(configuration).GetQuery();
+
+				query.Should().Contain("ReadOn");
+				query.Should().Contain("ExpireOn");
+				query.Should().Contain("@CurrentDate");
+			}
 		}
 
 		private static Message CreateMessage(int id, DateTime? expireOn)

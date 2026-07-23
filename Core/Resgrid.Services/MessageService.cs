@@ -78,8 +78,7 @@ namespace Resgrid.Services
 
 		public async Task<int> GetUnreadMessagesCountByUserIdAsync(string userId)
 		{
-			var messages = await GetUnreadInboxMessagesByUserIdAsync(userId);
-			return messages.Count;
+			return await _messageRepository.GetUnreadMessageCountAsync(userId);
 		}
 
 		private static bool IsActiveInboxMessage(Message message)

@@ -114,8 +114,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data.AnalyticsApiKey = "";
 			result.Data.AnalyticsHost = "";
 
-			bool departmentModernApplicationSoundsEnabled = departmentId > 0
-				&& await _departmentSettingsService.GetModernNotificationsEnabledAsync(departmentId);
+			bool departmentModernApplicationSoundsEnabled = false;
+
+			if (departmentId > 0)
+			{
+				try
+				{
+					departmentModernApplicationSoundsEnabled = await _departmentSettingsService.GetModernNotificationsEnabledAsync(departmentId);
+				}
+				catch (System.Exception ex)
+				{
+					Resgrid.Framework.Logging.LogException(ex,
+						$"{nameof(BuildConfigResultAsync)}: {nameof(IDepartmentSettingsService.GetModernNotificationsEnabledAsync)} failed for departmentId {departmentId}.");
+				}
+			}
+
 			bool userModernApplicationSoundsEnabled = false;
 			var userId = GetCurrentUserId();
 

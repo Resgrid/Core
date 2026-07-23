@@ -15,6 +15,7 @@ using Resgrid.Web.Areas.User.Models.Messages;
 using Resgrid.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading;
+using Resgrid.Framework;
 using Resgrid.Model.Messages;
 
 namespace Resgrid.Web.Areas.User.Controllers
@@ -306,11 +307,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 				? (int)CalendarItemAttendeeTypes.RSVP
 				: (int)CalendarItemAttendeeTypes.NotAttending;
 
-			await _calendarService.SignupForEvent(calendarItemId, UserId, normalizedResponse,
-				attendeeType, cancellationToken);
-			recipient.Response = normalizedResponse;
-			recipient.ReadOn = DateTime.UtcNow;
-			await _messageService.SaveMessageRecipientAsync(recipient, cancellationToken);
+			try
+			{
+				await _calendarService.SignupForEventAndUpdateMessageRecipientAsync(calendarItemId, UserId,
+					normalizedResponse, attendeeType, recipient, cancellationToken);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex,
+					$"CalendarRsvp response transaction failed. messageId={messageId}, calendarItemId={calendarItemId}, UserId={UserId}.");
+				return StatusCode(StatusCodes.Status500InternalServerError,
+					"Unable to update your attendance. Please try again.");
+			}
 
 			return RedirectToAction("ViewMessage", new { messageId });
 		}

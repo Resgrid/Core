@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
+using Resgrid.Config;
 using Resgrid.Model;
 using Resgrid.Model.Messages;
 using Resgrid.Model.Providers;
@@ -19,10 +20,14 @@ namespace Resgrid.Tests.Services
 		private Mock<INovuProvider> _novuProvider;
 		private Mock<IDepartmentSettingsService> _departmentSettingsService;
 		private PushService _pushService;
+		private bool _departmentWasAlreadyBypassed;
 
 		[SetUp]
 		public void SetUp()
 		{
+			_departmentWasAlreadyBypassed = SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(DepartmentId);
+			SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Add(DepartmentId);
+
 			_notificationProvider = new Mock<INotificationProvider>();
 			_novuProvider = new Mock<INovuProvider>();
 			_departmentSettingsService = new Mock<IDepartmentSettingsService>();
@@ -59,6 +64,13 @@ namespace Resgrid.Tests.Services
 				new Mock<IUnitNotificationProvider>().Object,
 				_novuProvider.Object,
 				_departmentSettingsService.Object);
+		}
+
+		[TearDown]
+		public void TearDown()
+		{
+			if (!_departmentWasAlreadyBypassed)
+				SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Remove(DepartmentId);
 		}
 
 		[TestCase(true, false, PushSoundTypes.ModernMessage)]

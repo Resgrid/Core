@@ -306,6 +306,12 @@
   <data name="NotificationHeader" xml:space="preserve">
     <value>Notification Options</value>
   </data>
+  <data name="ModernApplicationSoundsLabel" xml:space="preserve">
+    <value>Enable Modern Application Sounds</value>
+  </data>
+  <data name="ModernApplicationSoundsHelp" xml:space="preserve">
+    <value>Use modern notification sounds instead of the legacy sounds. If your department enables modern sounds, they are used regardless of this setting.</value>
+  </data>
   <data name="NotificationOtherHeader" xml:space="preserve">
     <value>Other Notification Options</value>
   </data>

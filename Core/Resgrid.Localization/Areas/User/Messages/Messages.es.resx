@@ -228,4 +228,13 @@
   <data name="ViewMessageHeader" xml:space="preserve">
     <value>Ver mensaje</value>
   </data>
+  <data name="CalendarRsvp" xml:space="preserve">
+    <value>Confirmación del calendario</value>
+  </data>
+  <data name="Attending" xml:space="preserve">
+    <value>Asistiré</value>
+  </data>
+  <data name="NotAttending" xml:space="preserve">
+    <value>No asistiré</value>
+  </data>
 </root>

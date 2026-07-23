@@ -1433,7 +1433,7 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.MessagesController.RespondToMessage(Resgrid.Web.Services.Models.v4.Messages.RespondToMessageInput,System.Threading.CancellationToken)">
             <summary>
-            Deletes a message from the system
+            Records a user's response to a message. Calendar RSVP responses also update event attendance.
             </summary>
             <returns>Returns OK status code if successful</returns>
         </member>
@@ -6481,6 +6481,9 @@
             User Defined Field values for this contact
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.PerformCheckInInput.UserId">
+            <summary>Optional personnel user id when an incident commander checks in on that person's behalf.</summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.PerformCheckInInput.IdempotencyKey">
             <summary>Optional offline idempotency key (the client's outbox event id); a replayed check-in dedups on it.</summary>
         </member>
@@ -6906,6 +6909,12 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.AnalyticsHost">
             <summary>
             Analytics Host
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.EnableModernApplicationSounds">
+            <summary>
+            Whether the current user should use modern application notification sounds. This is
+            enabled when either the department-wide setting or the user's profile setting is enabled.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Configs.GetSystemConfigResult">
@@ -7912,12 +7921,12 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Messages.MessageResultData.Type">
             <summary>
-            Message Type (0 = Normal, 1 = Callback, 2 = Poll)
+            Message Type (0 = Normal, 1 = Callback, 2 = Poll, 3 = Weather Alert, 4 = Calendar RSVP)
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Messages.MessageResultData.ExpiredOn">
             <summary>
-            When does the message expire (used for Polls and Callbacks)
+            When the message expires
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Messages.MessageResultData.Responded">
@@ -7943,6 +7952,11 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Messages.MessageResultData.IsSystem">
             <summary>
             Was this message system generated (i.e. email import)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Messages.MessageResultData.CalendarItemId">
+            <summary>
+            Calendar item associated with a calendar RSVP message
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Messages.MessageResultData.Recipients">

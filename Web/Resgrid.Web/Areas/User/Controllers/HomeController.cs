@@ -743,6 +743,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				savedProfile.SendNotificationEmail = model.Profile.SendNotificationEmail;
 				savedProfile.SendNotificationPush = model.Profile.SendNotificationPush;
 				savedProfile.SendNotificationSms = model.Profile.SendNotificationSms;
+				savedProfile.EnableModernApplicationSounds = model.Profile.EnableModernApplicationSounds;
 				savedProfile.DoNotRecieveNewsletters = model.Profile.DoNotRecieveNewsletters;
 				savedProfile.HomeNumber = (homeResult != null && homeResult.IsValid && !string.IsNullOrWhiteSpace(homeResult.InternationalNumber))
 					? homeResult.InternationalNumber

@@ -68,6 +68,8 @@
   <data name="NormalUserLabel" xml:space="preserve"><value>مستخدم عادي</value></data>
   <data name="NotificationEmailLabel" xml:space="preserve"><value>البريد الإلكتروني</value></data>
   <data name="NotificationHeader" xml:space="preserve"><value>خيارات الإشعارات</value></data>
+  <data name="ModernApplicationSoundsLabel" xml:space="preserve"><value>تمكين أصوات التطبيق الحديثة</value></data>
+  <data name="ModernApplicationSoundsHelp" xml:space="preserve"><value>استخدم أصوات الإشعارات الحديثة بدلاً من الأصوات القديمة. إذا قام قسمك بتمكين الأصوات الحديثة، فسيتم استخدامها بغض النظر عن هذا الإعداد.</value></data>
   <data name="NotificationOtherHeader" xml:space="preserve"><value>خيارات الإشعارات الأخرى</value></data>
   <data name="NotificationPushLabel" xml:space="preserve"><value>إشعار فوري</value></data>
   <data name="PhysicalAddressHeader" xml:space="preserve"><value>العنوان الفعلي</value></data>

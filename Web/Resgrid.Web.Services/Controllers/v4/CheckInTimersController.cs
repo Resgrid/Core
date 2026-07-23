@@ -27,19 +27,22 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IUserProfileService _userProfileService;
+		private readonly IIncidentCommandService _incidentCommandService;
 
 		public CheckInTimersController(
 			ICheckInTimerService checkInTimerService,
 			ICallsService callsService,
 			IDepartmentSettingsService departmentSettingsService,
 			IDepartmentsService departmentsService,
-			IUserProfileService userProfileService)
+			IUserProfileService userProfileService,
+			IIncidentCommandService incidentCommandService)
 		{
 			_checkInTimerService = checkInTimerService;
 			_callsService = callsService;
 			_departmentSettingsService = departmentSettingsService;
 			_departmentsService = departmentsService;
 			_userProfileService = userProfileService;
+			_incidentCommandService = incidentCommandService;
 		}
 
 		#region Timer Configuration
@@ -382,12 +385,29 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!System.Enum.IsDefined(typeof(CheckInTimerTargetType), input.CheckInType))
 				return BadRequest("Invalid check-in type.");
 
+			var checkInUserId = UserId;
+			if (!string.IsNullOrWhiteSpace(input.UserId) && !string.Equals(input.UserId, UserId, System.StringComparison.OrdinalIgnoreCase))
+			{
+				if (input.CheckInType != (int)CheckInTimerTargetType.Personnel)
+					return BadRequest("A target user can only be supplied for a personnel check-in.");
+
+				var capabilities = await _incidentCommandService.GetCapabilitiesForUserAsync(DepartmentId, input.CallId, UserId);
+				if ((capabilities & IncidentCapabilities.ManageAccountability) != IncidentCapabilities.ManageAccountability)
+					return Forbid();
+
+				var personnelStatuses = await _checkInTimerService.GetCallPersonnelCheckInStatusesAsync(call);
+				if (personnelStatuses == null || !personnelStatuses.Any(status => string.Equals(status.UserId, input.UserId, System.StringComparison.OrdinalIgnoreCase)))
+					return BadRequest("The target user is not dispatched on this call or no personnel timer is active.");
+
+				checkInUserId = input.UserId;
+			}
+
 			var record = new CheckInRecord
 			{
 				DepartmentId = DepartmentId,
 				CallId = input.CallId,
 				CheckInType = input.CheckInType,
-				UserId = UserId,
+				UserId = checkInUserId,
 				UnitId = input.UnitId,
 				Latitude = input.Latitude,
 				Longitude = input.Longitude,

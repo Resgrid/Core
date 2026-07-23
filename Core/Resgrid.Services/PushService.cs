@@ -98,7 +98,7 @@ namespace Resgrid.Services
 
 			if (profile != null && profile.SendMessagePush)
 			{
-				string soundType = await GetSoundTypeAsync(message.DepartmentId, PushSoundTypes.Message, PushSoundTypes.ModernMessage);
+				string soundType = await GetSoundTypeAsync(message.DepartmentId, profile, PushSoundTypes.Message, PushSoundTypes.ModernMessage);
 
 				try
 				{
@@ -133,7 +133,7 @@ namespace Resgrid.Services
 
 			if (profile != null && profile.SendNotificationPush)
 			{
-				string soundType = await GetSoundTypeAsync(message.DepartmentId, PushSoundTypes.Notifiation, PushSoundTypes.ModernNotification);
+				string soundType = await GetSoundTypeAsync(message.DepartmentId, profile, PushSoundTypes.Notifiation, PushSoundTypes.ModernNotification);
 
 				try
 				{
@@ -166,7 +166,7 @@ namespace Resgrid.Services
 
 			if (profile != null && profile.SendMessagePush)
 			{
-				string soundType = await GetSoundTypeAsync(message.DepartmentId, PushSoundTypes.Message, PushSoundTypes.ModernChat);
+				string soundType = await GetSoundTypeAsync(message.DepartmentId, profile, PushSoundTypes.Message, PushSoundTypes.ModernChat);
 				await _notificationProvider.SendAllNotifications(message.Title, message.SubTitle, userId, message.Id, soundType, true, 1, "#000000");
 			}
 
@@ -190,7 +190,7 @@ namespace Resgrid.Services
 				if (priority != null)
 					color = priority.Color;
 
-				string soundType = await GetCallSoundTypeAsync(call, priority);
+				string soundType = await GetCallSoundTypeAsync(call, priority, profile);
 
 				// Legacy Push Notifications (Azure)
 				try
@@ -241,15 +241,28 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		private async Task<string> GetSoundTypeAsync(int? departmentId, PushSoundTypes legacyType, PushSoundTypes modernType)
+		private async Task<string> GetSoundTypeAsync(int? departmentId, UserProfile profile, PushSoundTypes legacyType, PushSoundTypes modernType)
 		{
+			bool useModern = await GetModernApplicationSoundsEnabledAsync(departmentId, profile);
+
+			return ((int)(useModern ? modernType : legacyType)).ToString();
+		}
+
+		private async Task<string> GetCallSoundTypeAsync(StandardPushCall call, DepartmentCallPriority priority, UserProfile profile = null)
+		{
+			bool useModern = await GetModernApplicationSoundsEnabledAsync(call.DepartmentId, profile);
+			return ConvertCallPriorityToSound((int)call.Priority, priority, useModern);
+		}
+
+		private async Task<bool> GetModernApplicationSoundsEnabledAsync(int? departmentId, UserProfile profile)
+		{
+			bool departmentEnabled = false;
+
 			if (departmentId.HasValue)
 			{
 				try
 				{
-					bool useModern = await _departmentSettingsService.GetModernNotificationsEnabledAsync(departmentId.Value);
-					if (useModern)
-						return ((int)modernType).ToString();
+					departmentEnabled = await _departmentSettingsService.GetModernNotificationsEnabledAsync(departmentId.Value);
 				}
 				catch (Exception ex)
 				{
@@ -257,26 +270,9 @@ namespace Resgrid.Services
 				}
 			}
 
-			return ((int)legacyType).ToString();
-		}
-
-		private async Task<string> GetCallSoundTypeAsync(StandardPushCall call, DepartmentCallPriority priority)
-		{
-			bool useModern = false;
-
-			if (call.DepartmentId.HasValue)
-			{
-				try
-				{
-					useModern = await _departmentSettingsService.GetModernNotificationsEnabledAsync(call.DepartmentId.Value);
-				}
-				catch (Exception ex)
-				{
-					Framework.Logging.LogException(ex);
-				}
-			}
-
-			return ConvertCallPriorityToSound((int)call.Priority, priority, useModern);
+			return ModernApplicationSoundSettings.IsEnabled(
+				departmentEnabled,
+				profile?.EnableModernApplicationSounds == true);
 		}
 
 		private string ConvertCallPriorityToSound(int priority, DepartmentCallPriority callPriority, bool useModern)

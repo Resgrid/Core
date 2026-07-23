@@ -228,4 +228,13 @@
   <data name="ViewMessageHeader" xml:space="preserve">
     <value>عرض الرسالة</value>
   </data>
+  <data name="CalendarRsvp" xml:space="preserve">
+    <value>الرد على دعوة التقويم</value>
+  </data>
+  <data name="Attending" xml:space="preserve">
+    <value>سأحضر</value>
+  </data>
+  <data name="NotAttending" xml:space="preserve">
+    <value>لن أحضر</value>
+  </data>
 </root>

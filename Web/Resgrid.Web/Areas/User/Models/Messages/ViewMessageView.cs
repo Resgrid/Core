@@ -11,5 +11,7 @@ namespace Resgrid.Web.Areas.User.Models.Messages
 		public Message Message { get; set; } 
 		public int UnreadMessages { get; set; }
 		public List<UserGroupRole> UserGroupsAndRoles { get; set; }
+		public bool CanRespondToCalendarRsvp { get; set; }
+		public int? CalendarRsvpAttendeeType { get; set; }
 	}
 }

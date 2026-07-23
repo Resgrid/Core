@@ -15,6 +15,7 @@ using Resgrid.Web.Areas.User.Models.Messages;
 using Resgrid.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using System.Threading;
+using Resgrid.Model.Messages;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
@@ -30,10 +31,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IShiftsService _shiftsService;
+		private readonly ICalendarService _calendarService;
 
 		public MessagesController(IMessageService messageService, IDepartmentsService departmentsService, IUsersService usersService,
 			ICommunicationService communicationService, Model.Services.IAuthorizationService authorizationService, IDepartmentGroupsService departmentGroupsService,
-			IPersonnelRolesService personnelRolesService, IShiftsService shiftsService)
+			IPersonnelRolesService personnelRolesService, IShiftsService shiftsService, ICalendarService calendarService)
 		{
 			_messageService = messageService;
 			_departmentsService = departmentsService;
@@ -43,6 +45,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_departmentGroupsService = departmentGroupsService;
 			_personnelRolesService = personnelRolesService;
 			_shiftsService = shiftsService;
+			_calendarService = calendarService;
 		}
 		#endregion Private Members and Constructors
 
@@ -245,11 +248,71 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.User = _usersService.GetUserById(UserId);
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.Message = await _messageService.GetMessageByIdAsync(messageId);
+			if (model.Message == null || (model.Message.ExpireOn.HasValue && model.Message.ExpireOn.Value <= DateTime.UtcNow))
+				return RedirectToAction("Inbox");
+
 			model.UnreadMessages = await _messageService.GetUnreadMessagesCountByUserIdAsync(UserId);
 			model.UserGroupsAndRoles = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, true, true, true);
+
+			if (model.Message.Type == (int)MessageTypes.CalendarRsvp)
+			{
+				var recipient = model.Message.MessageRecipients?.FirstOrDefault(x => x.UserId == UserId && !x.IsDeleted);
+				if (recipient != null
+					&& TextResponsePromptMetadata.TryGetCalendarItemId(recipient.Note, out var calendarItemId))
+				{
+					var calendarItem = await _calendarService.GetCalendarItemByIdAsync(calendarItemId);
+					if (calendarItem != null && calendarItem.DepartmentId == DepartmentId
+						&& calendarItem.SignupType == (int)CalendarItemSignupTypes.RSVP)
+					{
+						model.CanRespondToCalendarRsvp =
+							await _authorizationService.CanUserCheckInToCalendarEventAsync(UserId, calendarItemId);
+						var attendee = await _calendarService.GetCalendarItemAttendeeByUserAsync(calendarItemId, UserId);
+						model.CalendarRsvpAttendeeType = attendee?.AttendeeType;
+					}
+				}
+			}
+
 			await _messageService.ReadMessageRecipientAsync(messageId, UserId, cancellationToken);
 
 			return View(model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Messages_View)]
+		public async Task<IActionResult> CalendarRsvp(int messageId, bool attending, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserViewMessageAsync(UserId, messageId))
+				return Unauthorized();
+
+			var message = await _messageService.GetMessageByIdAsync(messageId);
+			if (message == null || message.Type != (int)MessageTypes.CalendarRsvp
+				|| (message.ExpireOn.HasValue && message.ExpireOn.Value <= DateTime.UtcNow))
+				return RedirectToAction("Inbox");
+
+			var recipient = message.MessageRecipients?.FirstOrDefault(x => x.UserId == UserId && !x.IsDeleted);
+			if (recipient == null
+				|| !TextResponsePromptMetadata.TryGetCalendarItemId(recipient.Note, out var calendarItemId))
+				return Unauthorized();
+
+			var calendarItem = await _calendarService.GetCalendarItemByIdAsync(calendarItemId);
+			if (calendarItem == null || calendarItem.DepartmentId != DepartmentId
+				|| calendarItem.SignupType != (int)CalendarItemSignupTypes.RSVP
+				|| !await _authorizationService.CanUserCheckInToCalendarEventAsync(UserId, calendarItemId))
+				return Unauthorized();
+
+			var normalizedResponse = attending ? "Yes" : "No";
+			var attendeeType = attending
+				? (int)CalendarItemAttendeeTypes.RSVP
+				: (int)CalendarItemAttendeeTypes.NotAttending;
+
+			await _calendarService.SignupForEvent(calendarItemId, UserId, normalizedResponse,
+				attendeeType, cancellationToken);
+			recipient.Response = normalizedResponse;
+			recipient.ReadOn = DateTime.UtcNow;
+			await _messageService.SaveMessageRecipientAsync(recipient, cancellationToken);
+
+			return RedirectToAction("ViewMessage", new { messageId });
 		}
 
 		[HttpGet]

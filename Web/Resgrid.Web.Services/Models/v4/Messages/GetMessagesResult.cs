@@ -63,12 +63,12 @@ public class MessageResultData
 	public DateTime SentOnUtc { get; set; }
 
 	/// <summary>
-	/// Message Type (0 = Normal, 1 = Callback, 2 = Poll)
+	/// Message Type (0 = Normal, 1 = Callback, 2 = Poll, 3 = Weather Alert, 4 = Calendar RSVP)
 	/// </summary>
 	public int Type { get; set; }
 
 	/// <summary>
-	/// When does the message expire (used for Polls and Callbacks)
+	/// When the message expires
 	/// </summary>
 	public DateTime? ExpiredOn { get; set; }
 
@@ -96,6 +96,11 @@ public class MessageResultData
 	/// Was this message system generated (i.e. email import)
 	/// </summary>
 	public bool IsSystem { get; set; }
+
+	/// <summary>
+	/// Calendar item associated with a calendar RSVP message
+	/// </summary>
+	public string CalendarItemId { get; set; }
 
 	/// <summary>
 	/// Recipients of this message

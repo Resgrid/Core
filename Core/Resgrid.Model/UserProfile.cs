@@ -198,6 +198,13 @@ namespace Resgrid.Model
 		[ProtoMember(52)]
 		public bool SecurityPinEnabled { get; set; }
 
+		/// <summary>
+		/// The user opted in to modern application notification sounds. The department-level
+		/// EnableModernNotifications setting overrides this to on for every user.
+		/// </summary>
+		[ProtoMember(53)]
+		public bool EnableModernApplicationSounds { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

@@ -43,9 +43,13 @@
           <h5>
             <span class="pull-right font-noraml">@Model.Message.SentOn.TimeConverterToString(Model.Department)</span>
 
-            @if (!String.IsNullOrWhiteSpace(Model.Message.SendingUserId))
+            @if (Model.Message.SystemGenerated)
 			{
-              <span class="font-noraml">From: </span>@(await UserHelper.GetFullNameForUser(Model.Message.SendingUserId))
+              <span class="font-noraml">@localizer["FromLabel"]: @commonLocalizer["System"]</span>
+			}
+            else if (!String.IsNullOrWhiteSpace(Model.Message.SendingUserId))
+			{
+              <span class="font-noraml">@localizer["FromLabel"]: </span>@(await UserHelper.GetFullNameForUser(Model.Message.SendingUserId))
 			}
 			else
 			{
@@ -83,6 +87,35 @@
         <div class="mail-body">
           @Html.Raw(Model.Message.Body)
         </div>
+
+        @if (Model.Message.Type == (int)MessageTypes.CalendarRsvp && Model.CanRespondToCalendarRsvp)
+		{
+          <div class="mail-attachment">
+            <div class="form-group">
+              <label class="control-label">@localizer["CalendarRsvp"]</label>
+              <div class="controls">
+                <div class="btn-group">
+                  <form asp-controller="Messages" asp-action="CalendarRsvp" asp-route-area="User" method="post" style="display: inline;">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="messageId" value="@Model.Message.MessageId" />
+                    <input type="hidden" name="attending" value="true" />
+                    <button type="submit" class="btn @(Model.CalendarRsvpAttendeeType == (int)CalendarItemAttendeeTypes.RSVP ? "btn-success" : "btn-default")">
+                      @commonLocalizer["Yes"] — @localizer["Attending"]
+                    </button>
+                  </form>
+                  <form asp-controller="Messages" asp-action="CalendarRsvp" asp-route-area="User" method="post" style="display: inline;">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="messageId" value="@Model.Message.MessageId" />
+                    <input type="hidden" name="attending" value="false" />
+                    <button type="submit" class="btn @(Model.CalendarRsvpAttendeeType == (int)CalendarItemAttendeeTypes.NotAttending ? "btn-danger" : "btn-default")">
+                      @commonLocalizer["No"] — @localizer["NotAttending"]
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+		}
 
         @if (Model.Message.Type == (int)MessageTypes.Poll || Model.Message.Type == (int)MessageTypes.Callback)
 		{

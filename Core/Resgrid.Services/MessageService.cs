@@ -50,14 +50,20 @@ namespace Resgrid.Services
 		public async Task<List<Message>> GetInboxMessagesByUserIdAsync(string userId)
 		{
 			var list = await _messageRepository.GetInboxMessagesByUserIdAsync(userId);
-			return list.OrderByDescending(x => x.SentOn).ToList();
+			return (list ?? Enumerable.Empty<Message>())
+				.Where(IsActiveInboxMessage)
+				.OrderByDescending(x => x.SentOn)
+				.ToList();
 		}
 
 		public async Task<List<Message>> GetUnreadInboxMessagesByUserIdAsync(string userId)
 		{
 			var messages = await _messageRepository.GetInboxMessagesByUserIdAsync(userId);
 
-			return messages.Where(m => !m.HasUserRead(userId)).OrderByDescending(x => x.SentOn).ToList();
+			return (messages ?? Enumerable.Empty<Message>())
+				.Where(m => IsActiveInboxMessage(m) && !m.HasUserRead(userId))
+				.OrderByDescending(x => x.SentOn)
+				.ToList();
 		}
 
 		public async Task<List<Message>> GetSentMessagesByUserIdAsync(string userId)
@@ -73,6 +79,13 @@ namespace Resgrid.Services
 		public async Task<int> GetUnreadMessagesCountByUserIdAsync(string userId)
 		{
 			return await _messageRepository.GetUnreadMessageCountAsync(userId);
+		}
+
+		private static bool IsActiveInboxMessage(Message message)
+		{
+			return message != null
+				&& !message.IsDeleted
+				&& (!message.ExpireOn.HasValue || message.ExpireOn.Value > DateTime.UtcNow);
 		}
 
 		public async Task<Message> MarkMessageAsDeletedAsync(int messageId, CancellationToken cancellationToken = default(CancellationToken))

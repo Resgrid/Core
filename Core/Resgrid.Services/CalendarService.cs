@@ -2,6 +2,7 @@
 using Resgrid.Model;
 using Resgrid.Model.Helpers;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 using System;
 using System.Collections.Generic;
@@ -26,11 +27,14 @@ namespace Resgrid.Services
 		private readonly IEncryptionService _encryptionService;
 		private readonly ICalendarItemCheckInRepository _calendarItemCheckInRepository;
 		private readonly ITextResponsePromptService _textResponsePromptService;
+		private readonly IMessageRecipientRepository _messageRecipientRepository;
+		private readonly IUnitOfWork _unitOfWork;
 
 		public CalendarService(ICalendarItemsRepository calendarItemRepository, ICalendarItemTypeRepository calendarItemTypeRepository,
 			ICalendarItemAttendeeRepository calendarItemAttendeeRepository, IDepartmentsService departmentsService, ICommunicationService communicationService,
 			IUserProfileService userProfileService, IDepartmentGroupsService departmentGroupsService, IDepartmentSettingsService departmentSettingsService,
 			IEncryptionService encryptionService, ICalendarItemCheckInRepository calendarItemCheckInRepository,
+			IMessageRecipientRepository messageRecipientRepository, IUnitOfWork unitOfWork,
 			ITextResponsePromptService textResponsePromptService = null)
 		{
 			_calendarItemRepository = calendarItemRepository;
@@ -43,6 +47,8 @@ namespace Resgrid.Services
 			_departmentSettingsService = departmentSettingsService;
 			_encryptionService = encryptionService;
 			_calendarItemCheckInRepository = calendarItemCheckInRepository;
+			_messageRecipientRepository = messageRecipientRepository;
+			_unitOfWork = unitOfWork;
 			_textResponsePromptService = textResponsePromptService;
 		}
 
@@ -477,6 +483,33 @@ namespace Resgrid.Services
 			attendee.Timestamp = DateTime.UtcNow;
 
 			return await _calendarItemAttendeeRepository.SaveOrUpdateAsync(attendee, cancellationToken);
+		}
+
+		public async Task<CalendarItemAttendee> SignupForEventAndUpdateMessageRecipientAsync(int calendarEventItemId,
+			string userId, string response, int attendeeType, MessageRecipient messageRecipient,
+			CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (messageRecipient == null)
+				throw new ArgumentNullException(nameof(messageRecipient));
+
+			_unitOfWork.CreateOrGetConnection();
+
+			try
+			{
+				var attendee = await SignupForEvent(calendarEventItemId, userId, response, attendeeType, cancellationToken);
+
+				messageRecipient.Response = response;
+				messageRecipient.ReadOn = DateTime.UtcNow;
+				await _messageRecipientRepository.SaveOrUpdateAsync(messageRecipient, cancellationToken);
+
+				_unitOfWork.CommitChanges();
+				return attendee;
+			}
+			catch
+			{
+				_unitOfWork.DiscardChanges();
+				throw;
+			}
 		}
 
 		public async Task<CalendarItemAttendee> GetCalendarItemAttendeeByUserAsync(int calendarEventItemId, string userId)

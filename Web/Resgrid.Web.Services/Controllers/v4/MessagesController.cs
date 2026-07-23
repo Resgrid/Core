@@ -13,6 +13,7 @@ using System.Threading;
 using Resgrid.Framework;
 using Resgrid.Model.Helpers;
 using Resgrid.Model.Providers;
+using Resgrid.Model.Messages;
 using Resgrid.Web.Services.Models.v4.Messages;
 using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
 
@@ -27,6 +28,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 	public class MessagesController : V4AuthenticatedApiControllerbase
 	{
 		#region Members and Constructors
+		private const int CalendarRsvpResponseTypeAttending = 1;
+		private const int CalendarRsvpResponseTypeNotAttending = 3;
+
 		private readonly ICallsService _callsService;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IUserProfileService _userProfileService;
@@ -37,6 +41,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IUnitsService _unitsService;
+		private readonly ICalendarService _calendarService;
 
 		public MessagesController(
 			ICallsService callsService,
@@ -48,7 +53,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IUsersService usersService,
 			IDepartmentGroupsService departmentGroupsService,
 			IPersonnelRolesService personnelRolesService,
-			IUnitsService unitsService)
+			IUnitsService unitsService,
+			ICalendarService calendarService)
 		{
 			_callsService = callsService;
 			_departmentsService = departmentsService;
@@ -60,6 +66,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_departmentGroupsService = departmentGroupsService;
 			_personnelRolesService = personnelRolesService;
 			_unitsService = unitsService;
+			_calendarService = calendarService;
 		}
 
 		#endregion Members and Constructors
@@ -418,11 +425,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		/// <summary>
-		/// Deletes a message from the system
+		/// Records a user's response to a message. Calendar RSVP responses also update event attendance.
 		/// </summary>
 		/// <returns>Returns OK status code if successful</returns>
 		[HttpPut("RespondToMessage")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		[Authorize(Policy = ResgridResources.Messages_View)]
 		public async Task<ActionResult<RespondToMessageResult>> RespondToMessage([FromBody] RespondToMessageInput responseInput,
@@ -433,15 +442,49 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (message != null)
 			{
+				if (message.ExpireOn.HasValue && message.ExpireOn.Value <= DateTime.UtcNow)
+					return NotFound();
 
-				var response = message.MessageRecipients.FirstOrDefault(x => x.UserId == UserId);
+				var response = message.MessageRecipients?.FirstOrDefault(x => x.UserId == UserId && !x.IsDeleted);
 
 				if (response == null)
 					return NotFound();
 
-				response.Response = responseInput.Type.ToString();
+				if (message.Type == (int)MessageTypes.CalendarRsvp)
+				{
+					if ((responseInput.Type != CalendarRsvpResponseTypeAttending
+						&& responseInput.Type != CalendarRsvpResponseTypeNotAttending)
+						|| !TextResponsePromptMetadata.TryGetCalendarItemId(response.Note, out var calendarItemId))
+						return BadRequest();
+
+					var calendarItem = await _calendarService.GetCalendarItemByIdAsync(calendarItemId);
+					if (calendarItem == null)
+						return NotFound();
+
+					if (calendarItem.DepartmentId != DepartmentId)
+						return Unauthorized();
+
+					if (calendarItem.SignupType != (int)CalendarItemSignupTypes.RSVP
+						|| !await _authorizationService.CanUserCheckInToCalendarEventAsync(UserId, calendarItemId))
+						return Unauthorized();
+
+					var attending = responseInput.Type == CalendarRsvpResponseTypeAttending;
+					var normalizedResponse = attending ? "Yes" : "No";
+					var attendeeType = attending
+						? (int)CalendarItemAttendeeTypes.RSVP
+						: (int)CalendarItemAttendeeTypes.NotAttending;
+
+					await _calendarService.SignupForEvent(calendarItemId, UserId, normalizedResponse,
+						attendeeType, cancellationToken);
+					response.Response = normalizedResponse;
+				}
+				else
+				{
+					response.Response = responseInput.Type.ToString();
+					response.Note = responseInput.Note;
+				}
+
 				response.ReadOn = DateTime.UtcNow;
-				response.Note = responseInput.Note;
 
 				var respondResult = await _messageService.SaveMessageRecipientAsync(response, cancellationToken);
 
@@ -516,7 +559,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			message.Type = savedMessage.Type;
 			message.ExpiredOn = savedMessage.ExpireOn;
 
-			if (!String.IsNullOrWhiteSpace(savedMessage.SendingUserId))
+			if (savedMessage.SystemGenerated)
+			{
+				message.SendingUserId = savedMessage.SendingUserId;
+				message.SendingName = "System";
+			}
+			else if (!String.IsNullOrWhiteSpace(savedMessage.SendingUserId))
 			{
 				message.SendingUserId = savedMessage.SendingUserId;
 
@@ -528,7 +576,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 			}
 
-			bool outboxMessage = savedMessage.SendingUserId == currentUserId;
+			bool outboxMessage = savedMessage.SendingUserId == currentUserId && !savedMessage.SystemGenerated;
 
 			if (!outboxMessage)
 			{
@@ -544,6 +592,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 					message.Note = respose.Note;
 					message.RespondedOn = respose.ReadOn;
+
+					if (savedMessage.Type == (int)MessageTypes.CalendarRsvp
+						&& TextResponsePromptMetadata.TryGetCalendarItemId(respose.Note, out var calendarItemId))
+						message.CalendarItemId = calendarItemId.ToString();
 				}
 				else
 				{

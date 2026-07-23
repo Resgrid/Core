@@ -722,6 +722,21 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="form-group">
+                            <label class="col-sm-4 control-label">@localizer["ModernApplicationSoundsLabel"]</label>
+                            <div class="col-sm-8">
+                                <div class="switch">
+                                    <div class="onoffswitch">
+                                        <input type="checkbox" class="onoffswitch-checkbox" asp-for="Profile.EnableModernApplicationSounds">
+                                        <label class="onoffswitch-label" for="Profile_EnableModernApplicationSounds">
+                                            <span class="onoffswitch-inner"></span>
+                                            <span class="onoffswitch-switch"></span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <span class="help-block m-b-none">@localizer["ModernApplicationSoundsHelp"]</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="ibox">

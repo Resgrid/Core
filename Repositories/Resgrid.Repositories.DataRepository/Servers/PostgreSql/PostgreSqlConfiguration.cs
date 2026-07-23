@@ -358,7 +358,8 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			SelectUnreadMessageCountQuery = @"
 					SELECT COUNT(*) FROM %SCHEMA%.%MESSAGESTABLE% m
 					LEFT OUTER JOIN %SCHEMA%.%MESSAGERECIPIENTSTABLE% mr ON m.MessageId = mr.MessageId
-					WHERE mr.UserId = %USERID% AND mr.IsDeleted = false AND m.IsDeleted = false";
+					WHERE mr.UserId = %USERID% AND mr.IsDeleted = false AND mr.ReadOn IS NULL
+						AND m.IsDeleted = false AND (m.ExpireOn IS NULL OR m.ExpireOn > %CURRENTDATE%)";
 			SelectMessageRecpByMessageUsQuery =
 				"SELECT * FROM %SCHEMA%.%TABLENAME% WHERE MessageId = %MESSAGEID% AND UserId = %USERID%";
 			SelectMessagesByUserQuery = @"

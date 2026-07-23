@@ -141,6 +141,9 @@ namespace Resgrid.Web.Services.Models.v4.CheckInTimers
 		[Range(0, int.MaxValue)]
 		public int CheckInType { get; set; }
 
+		/// <summary>Optional personnel user id when an incident commander checks in on that person's behalf.</summary>
+		public string UserId { get; set; }
+
 		public string Latitude { get; set; }
 		public string Longitude { get; set; }
 		public int? UnitId { get; set; }

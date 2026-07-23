@@ -9,6 +9,7 @@ using NUnit.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 using Resgrid.Services;
 
@@ -27,6 +28,8 @@ namespace Resgrid.Tests.Services
 		private Mock<IDepartmentSettingsService> _departmentSettingsService;
 		private Mock<IEncryptionService> _encryptionService;
 		private Mock<ICalendarItemCheckInRepository> _checkInRepo;
+		private Mock<IMessageRecipientRepository> _messageRecipientRepo;
+		private Mock<IUnitOfWork> _unitOfWork;
 		private CalendarService _service;
 
 		[SetUp]
@@ -42,6 +45,8 @@ namespace Resgrid.Tests.Services
 			_departmentSettingsService = new Mock<IDepartmentSettingsService>();
 			_encryptionService = new Mock<IEncryptionService>();
 			_checkInRepo = new Mock<ICalendarItemCheckInRepository>();
+			_messageRecipientRepo = new Mock<IMessageRecipientRepository>();
+			_unitOfWork = new Mock<IUnitOfWork>();
 
 			_service = new CalendarService(
 				_calendarItemRepo.Object,
@@ -53,7 +58,9 @@ namespace Resgrid.Tests.Services
 				_departmentGroupsService.Object,
 				_departmentSettingsService.Object,
 				_encryptionService.Object,
-				_checkInRepo.Object);
+				_checkInRepo.Object,
+				_messageRecipientRepo.Object,
+				_unitOfWork.Object);
 		}
 
 		#region Service Logic Tests

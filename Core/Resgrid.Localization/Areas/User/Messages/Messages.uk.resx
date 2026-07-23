@@ -179,4 +179,13 @@
   <data name="ViewMessageHeader" xml:space="preserve">
     <value>View Message</value>
   </data>
+  <data name="CalendarRsvp" xml:space="preserve">
+    <value>Відповідь на подію</value>
+  </data>
+  <data name="Attending" xml:space="preserve">
+    <value>Відвідаю</value>
+  </data>
+  <data name="NotAttending" xml:space="preserve">
+    <value>Не відвідаю</value>
+  </data>
 </root>

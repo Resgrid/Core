@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.Configs;
 using Resgrid.Config;
+using Resgrid.Model;
 using Microsoft.Diagnostics.Tracing.Parsers.Kernel;
 using Resgrid.Web.ServicesCore.Helpers;
 
@@ -21,10 +22,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 	{
 		#region Members and Constructors
 		private readonly IDepartmentSettingsService _departmentSettingsService;
+		private readonly IUserProfileService _userProfileService;
 
-		public ConfigController(IDepartmentSettingsService departmentSettingsService)
+		public ConfigController(IDepartmentSettingsService departmentSettingsService, IUserProfileService userProfileService)
 		{
 			_departmentSettingsService = departmentSettingsService;
+			_userProfileService = userProfileService;
 		}
 		#endregion Members and Constructors
 
@@ -111,6 +114,34 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data.AnalyticsApiKey = "";
 			result.Data.AnalyticsHost = "";
 
+			bool departmentModernApplicationSoundsEnabled = false;
+
+			if (departmentId > 0)
+			{
+				try
+				{
+					departmentModernApplicationSoundsEnabled = await _departmentSettingsService.GetModernNotificationsEnabledAsync(departmentId);
+				}
+				catch (System.Exception ex)
+				{
+					Resgrid.Framework.Logging.LogException(ex,
+						$"{nameof(BuildConfigResultAsync)}: {nameof(IDepartmentSettingsService.GetModernNotificationsEnabledAsync)} failed for departmentId {departmentId}.");
+				}
+			}
+
+			bool userModernApplicationSoundsEnabled = false;
+			var userId = GetCurrentUserId();
+
+			if (!string.IsNullOrWhiteSpace(userId))
+			{
+				var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
+				userModernApplicationSoundsEnabled = profile?.EnableModernApplicationSounds == true;
+			}
+
+			result.Data.EnableModernApplicationSounds = ModernApplicationSoundSettings.IsEnabled(
+				departmentModernApplicationSoundsEnabled,
+				userModernApplicationSoundsEnabled);
+
 			result.PageSize = 1;
 			result.Status = ResponseHelper.Success;
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -126,6 +157,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return ClaimsAuthorizationHelper.GetDepartmentId();
 
 			return 0;
+		}
+
+		private static string GetCurrentUserId()
+		{
+			var principal = ClaimsAuthorizationHelper.GetClaimsPrincipal();
+
+			if (principal?.Identity != null && principal.Identity.IsAuthenticated)
+				return ClaimsAuthorizationHelper.GetUserId();
+
+			return string.Empty;
 		}
 	}
 }

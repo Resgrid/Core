@@ -64,6 +64,10 @@ namespace Resgrid.Model.Services
 		Task<CalendarItemAttendee> SignupForEvent(int calendarEventItemId, string userId, string note, int attendeeType,
 			CancellationToken cancellationToken = default(CancellationToken));
 
+		Task<CalendarItemAttendee> SignupForEventAndUpdateMessageRecipientAsync(int calendarEventItemId, string userId,
+			string response, int attendeeType, MessageRecipient messageRecipient,
+			CancellationToken cancellationToken = default(CancellationToken));
+
 		Task<CalendarItemAttendee> GetCalendarItemAttendeeByUserAsync(int calendarEventItemId, string userId);
 
 		Task<List<CalendarItem>> GetCalendarItemsToNotifyAsync(DateTime timestamp);

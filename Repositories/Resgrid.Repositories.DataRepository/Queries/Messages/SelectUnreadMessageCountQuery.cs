@@ -20,10 +20,12 @@ namespace Resgrid.Repositories.DataRepository.Queries.Messages
 																 string.Empty,
 																 _sqlConfiguration.ParameterNotation,
 																new string[] {
-																				"%USERID%"
+																				"%USERID%",
+																				"%CURRENTDATE%"
 																			  },
-																 new string[] {
+																new string[] {
 																				"UserId",
+																				"CurrentDate"
 																			  },
 																 new string[] {
 																				"%MESSAGESTABLE%",

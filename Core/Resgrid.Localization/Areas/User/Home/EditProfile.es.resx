@@ -300,6 +300,12 @@
   <data name="NotificationHeader" xml:space="preserve">
     <value>Opciones de notificación</value>
   </data>
+  <data name="ModernApplicationSoundsLabel" xml:space="preserve">
+    <value>Activar sonidos modernos de la aplicación</value>
+  </data>
+  <data name="ModernApplicationSoundsHelp" xml:space="preserve">
+    <value>Usa sonidos de notificación modernos en lugar de los sonidos clásicos. Si tu departamento activa los sonidos modernos, se utilizarán independientemente de esta opción.</value>
+  </data>
   <data name="NotificationOtherHeader" xml:space="preserve">
     <value>Otras opciones de notificación</value>
   </data>

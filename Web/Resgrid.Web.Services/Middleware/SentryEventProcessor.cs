@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Resgrid.Web.Services.Helpers;
+using Resgrid.Web.Services.Middleware;
 using Resgrid.Web.ServicesCore.Helpers;
 using Sentry;
 using Sentry.Extensibility;
@@ -16,6 +17,9 @@ namespace Resgrid.Web.ServicesCore.Middleware
 		public SentryEvent Process(SentryEvent @event)
 		{
 			@event.SetExtra("Response:HasStarted", _httpContext.HttpContext?.Response.HasStarted);
+			if (@event.Request != null)
+				@event.Request.Url =
+					CapabilityPathRedactionMiddleware.RedactCapabilityUrl(@event.Request.Url);
 
 			try
 			{

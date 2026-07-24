@@ -103,7 +103,7 @@ namespace Resgrid.Repositories.NoSqlRepository
 			}
 		}
 
-		public async Task<UnitsLocation> InsertAsync(UnitsLocation location)
+		public async Task<UnitLocationWriteResult> InsertAsync(UnitsLocation location)
 		{
 			if (location == null)
 				throw new ArgumentNullException(nameof(location));
@@ -114,20 +114,35 @@ namespace Resgrid.Repositories.NoSqlRepository
 			{
 				await connection.OpenAsync();
 				var result = await connection.ExecuteScalarAsync<string>(
-					"INSERT INTO public.unitlocations (departmentid, unitid, data) VALUES (@departmentId, @unitId, CAST(@dataJson AS jsonb)) RETURNING id::text;",
+					@"INSERT INTO public.unitlocations
+						(departmentid, unitid, ""timestamp"", eventid, receivedon, sourcetype, sourceid, sourcepriority, data)
+					VALUES
+						(@departmentId, @unitId, @timestamp, @eventId, @receivedOn, @sourceType, @sourceId, @sourcePriority, CAST(@dataJson AS jsonb))
+					ON CONFLICT (eventid) WHERE eventid IS NOT NULL DO NOTHING
+					RETURNING id::text;",
 					new
 					{
 						departmentId = location.DepartmentId,
 						unitId = location.UnitId,
+						timestamp = ToPostgresTimestamp(location.Timestamp),
+						eventId = NullIfWhiteSpace(location.EventId),
+						receivedOn = location.ReceivedOn.HasValue ? ToPostgresTimestamp(location.ReceivedOn.Value) : (DateTime?)null,
+						sourceType = location.SourceType,
+						sourceId = NullIfWhiteSpace(location.SourceId),
+						sourcePriority = location.SourcePriority,
 						dataJson
 					});
+
+				if (string.IsNullOrWhiteSpace(result))
+					return UnitLocationWriteResult.Duplicate(location);
+
 				location.PgId = result;
 
-				return location;
+				return UnitLocationWriteResult.Inserted(location);
 			}
 		}
 
-		public async Task<UnitsLocation> UpdateAsync(UnitsLocation location)
+		public async Task<UnitLocationWriteResult> UpdateAsync(UnitsLocation location)
 		{
 			if (location == null)
 				throw new ArgumentNullException(nameof(location));
@@ -144,18 +159,47 @@ namespace Resgrid.Repositories.NoSqlRepository
 			{
 				await connection.OpenAsync();
 
-				await connection.ExecuteAsync(
-					"UPDATE public.unitlocations SET departmentid = @departmentId, unitid = @unitId, data = CAST(@dataJson AS jsonb) WHERE id = @id;",
+				var affectedRows = await connection.ExecuteAsync(
+					@"UPDATE public.unitlocations
+					SET departmentid = @departmentId,
+						unitid = @unitId,
+						""timestamp"" = @timestamp,
+						eventid = @eventId,
+						receivedon = @receivedOn,
+						sourcetype = @sourceType,
+						sourceid = @sourceId,
+						sourcepriority = @sourcePriority,
+						data = CAST(@dataJson AS jsonb)
+					WHERE id = @id;",
 					new
 					{
 						departmentId = location.DepartmentId,
 						unitId = location.UnitId,
+						timestamp = ToPostgresTimestamp(location.Timestamp),
+						eventId = NullIfWhiteSpace(location.EventId),
+						receivedOn = location.ReceivedOn.HasValue ? ToPostgresTimestamp(location.ReceivedOn.Value) : (DateTime?)null,
+						sourceType = location.SourceType,
+						sourceId = NullIfWhiteSpace(location.SourceId),
+						sourcePriority = location.SourcePriority,
 						dataJson,
 						id = pgId
 					});
 
-				return location;
+				if (affectedRows != 1)
+					throw new InvalidOperationException($"Unit location '{location.PgId}' was not found for update.");
+
+				return UnitLocationWriteResult.Inserted(location);
 			}
+		}
+
+		private static DateTime ToPostgresTimestamp(DateTime value)
+		{
+			return DateTime.SpecifyKind(value, DateTimeKind.Unspecified);
+		}
+
+		private static string NullIfWhiteSpace(string value)
+		{
+			return string.IsNullOrWhiteSpace(value) ? null : value;
 		}
 	}
 }

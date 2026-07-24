@@ -10,10 +10,23 @@ namespace Resgrid.Repositories.NoSqlRepository
 {
 	public class DocumentDbRepository : IDocumentDbRepository
 	{
+		private readonly Lazy<IUnitLocationsMongoRepository> _unitLocationsMongoRepository;
+
+		public DocumentDbRepository(Lazy<IUnitLocationsMongoRepository> unitLocationsMongoRepository)
+		{
+			_unitLocationsMongoRepository = unitLocationsMongoRepository;
+		}
+
 		public async Task<bool> UpdateDocumentDatabaseAsync()
 		{
 			try
 			{
+				if (DataConfig.DocDatabaseType == DatabaseTypes.MongoDb)
+				{
+					await _unitLocationsMongoRepository.Value.EnsureIndexesAsync();
+					return true;
+				}
+
 				if (DataConfig.DocDatabaseType != DatabaseTypes.Postgres)
 					return true;
 

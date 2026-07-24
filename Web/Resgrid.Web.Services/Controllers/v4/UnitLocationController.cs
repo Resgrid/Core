@@ -44,6 +44,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status503ServiceUnavailable)]
 		[Authorize(Policy = ResgridResources.Unit_View)]
 		public async Task<ActionResult<SaveUnitLocationResult>> SetUnitLocation(UnitLocationInput locationInput)
 		{
@@ -99,7 +100,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 						if (!String.IsNullOrWhiteSpace(locationInput.Heading) && locationInput.Heading != "NaN" && decimal.TryParse(locationInput.Heading, out var hdn))
 							location.Heading = hdn;
 
-						await _unitLocationEventProvider.EnqueueUnitLocationEventAsync(location);
+						if (!await _unitLocationEventProvider.EnqueueUnitLocationEventAsync(location))
+							return StatusCode(StatusCodes.Status503ServiceUnavailable);
 
 						result.Id = "";
 						result.PageSize = 0;

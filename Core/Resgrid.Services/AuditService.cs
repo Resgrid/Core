@@ -178,6 +178,20 @@ namespace Resgrid.Services
 					return "Calendar Check-In Deleted";
 				case AuditLogTypes.CalendarAdminCheckInPerformed:
 					return "Admin Calendar Check-In";
+				case AuditLogTypes.UnitTrackingDeviceCreated:
+					return "Unit Tracking Device Created";
+				case AuditLogTypes.UnitTrackingDeviceUpdated:
+					return "Unit Tracking Device Updated";
+				case AuditLogTypes.UnitTrackingDeviceDisabled:
+					return "Unit Tracking Device Disabled";
+				case AuditLogTypes.UnitTrackingDeviceDeleted:
+					return "Unit Tracking Device Deleted";
+				case AuditLogTypes.UnitTrackingCredentialCreated:
+					return "Unit Tracking Credential Created";
+				case AuditLogTypes.UnitTrackingCredentialRotated:
+					return "Unit Tracking Credential Rotated";
+				case AuditLogTypes.UnitTrackingCredentialRevoked:
+					return "Unit Tracking Credential Revoked";
 			}
 
 			return $"Unknown ({logType})";

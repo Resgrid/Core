@@ -39,6 +39,7 @@ reviews:
     - "!**/obj/**"
     - "!**/Tests/**"
     - "!**/.claude/**"
+    - "!**/.agent/**"
     - "!**/*.md"
   path_instructions: []
   abort_on_close: true

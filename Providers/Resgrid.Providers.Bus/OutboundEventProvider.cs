@@ -58,7 +58,7 @@ namespace Resgrid.Providers.Bus
 			_eventAggregator.AddListener(callClosedTopicHandler);
 			_eventAggregator.AddListener(incidentCommandUpdatedTopicHandler);
 			_eventAggregator.AddListener(personnelLocationUpdatedTopicHandler);
-			_eventAggregator.AddListener(unitLocationUpdatedTopicHandler);
+			_eventAggregator.AddAsyncListener(unitLocationUpdatedTopicHandler);
 		}
 
 		public Action<UnitStatusEvent> unitStatusHandler = async delegate (UnitStatusEvent message)
@@ -610,12 +610,13 @@ namespace Resgrid.Providers.Bus
 			_rabbitTopicProvider.PersonnelLocationUnidatedChanged(message);
 		};
 
-		public Action<UnitLocationUpdatedEvent> unitLocationUpdatedTopicHandler = async delegate (UnitLocationUpdatedEvent message)
+		public Func<UnitLocationUpdatedEvent, Task> unitLocationUpdatedTopicHandler = async delegate (UnitLocationUpdatedEvent message)
 		{
 			if (_rabbitTopicProvider == null)
 				_rabbitTopicProvider = new RabbitTopicProvider();
 
-			_rabbitTopicProvider.UnitLocationUpdatedChanged(message);
+			if (!await _rabbitTopicProvider.UnitLocationUpdatedChanged(message))
+				throw new InvalidOperationException("Unable to publish the Unit location realtime update.");
 		};
 		#endregion Topic Based Events
 	}

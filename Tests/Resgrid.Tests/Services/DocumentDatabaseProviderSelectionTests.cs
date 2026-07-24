@@ -62,13 +62,16 @@ namespace Resgrid.Tests.Services
 			DataConfig.DocDatabaseType = DatabaseTypes.Postgres;
 
 			var eventAggregator = new Mock<IEventAggregator>();
+			eventAggregator
+				.Setup(x => x.SendMessageAsync(It.IsAny<UnitLocationUpdatedEvent>()))
+				.Returns(Task.CompletedTask);
 			var unitLocationsDocRepository = new Mock<IUnitLocationsDocRepository>();
 			unitLocationsDocRepository
 				.Setup(x => x.InsertAsync(It.IsAny<UnitsLocation>()))
 				.ReturnsAsync((UnitsLocation location) =>
 				{
 					location.PgId = "314";
-					return location;
+					return UnitLocationWriteResult.Inserted(location);
 				});
 
 			var service = CreateUnitsService(
@@ -87,11 +90,75 @@ namespace Resgrid.Tests.Services
 
 			var result = await service.AddUnitLocationAsync(location, 7);
 
-			result.PgId.Should().Be("314");
+			result.Status.Should().Be(UnitLocationWriteStatus.Inserted);
+			result.Location.PgId.Should().Be("314");
 			unitLocationsDocRepository.Verify(x => x.InsertAsync(location), Times.Once);
 			eventAggregator.Verify(
-				x => x.SendMessage<UnitLocationUpdatedEvent>(It.Is<UnitLocationUpdatedEvent>(e => e.RecordId == "314" && e.UnitId == "12")),
+				x => x.SendMessageAsync(It.Is<UnitLocationUpdatedEvent>(e => e.RecordId == "314" && e.UnitId == "12")),
 				Times.Once);
+		}
+
+		[Test]
+		public async Task AddUnitLocationAsync_should_not_publish_realtime_event_for_duplicate()
+		{
+			DataConfig.DocDatabaseType = DatabaseTypes.Postgres;
+
+			var eventAggregator = new Mock<IEventAggregator>();
+			var unitLocationsDocRepository = new Mock<IUnitLocationsDocRepository>();
+			unitLocationsDocRepository
+				.Setup(x => x.InsertAsync(It.IsAny<UnitsLocation>()))
+				.ReturnsAsync((UnitsLocation location) => UnitLocationWriteResult.Duplicate(location));
+
+			var service = CreateUnitsService(
+				eventAggregator.Object,
+				new Lazy<IMongoRepository<UnitsLocation>>(() => throw new InvalidOperationException("Mongo repository should not be resolved in Postgres mode.")),
+				unitLocationsDocRepository.Object);
+			var location = new UnitsLocation
+			{
+				EventId = "duplicate-event",
+				DepartmentId = 7,
+				UnitId = 12,
+				Latitude = 39.7392m,
+				Longitude = -104.9903m,
+				Timestamp = DateTime.UtcNow
+			};
+
+			var result = await service.AddUnitLocationAsync(location, 7);
+
+			result.Status.Should().Be(UnitLocationWriteStatus.Duplicate);
+			eventAggregator.Verify(
+				x => x.SendMessageAsync(It.IsAny<UnitLocationUpdatedEvent>()),
+				Times.Never);
+		}
+
+		[Test]
+		public async Task AddUnitLocationAsync_should_propagate_storage_failure()
+		{
+			DataConfig.DocDatabaseType = DatabaseTypes.Postgres;
+
+			var unitLocationsDocRepository = new Mock<IUnitLocationsDocRepository>();
+			unitLocationsDocRepository
+				.Setup(x => x.InsertAsync(It.IsAny<UnitsLocation>()))
+				.ThrowsAsync(new InvalidOperationException("Document database unavailable."));
+
+			var service = CreateUnitsService(
+				new Mock<IEventAggregator>().Object,
+				new Lazy<IMongoRepository<UnitsLocation>>(() => throw new InvalidOperationException("Mongo repository should not be resolved in Postgres mode.")),
+				unitLocationsDocRepository.Object);
+			var location = new UnitsLocation
+			{
+				EventId = "failed-event",
+				DepartmentId = 7,
+				UnitId = 12,
+				Latitude = 39.7392m,
+				Longitude = -104.9903m,
+				Timestamp = DateTime.UtcNow
+			};
+
+			Func<Task> act = async () => await service.AddUnitLocationAsync(location, 7);
+
+			await act.Should().ThrowAsync<InvalidOperationException>()
+				.WithMessage("Document database unavailable.");
 		}
 
 		[Test]
@@ -196,6 +263,7 @@ namespace Resgrid.Tests.Services
 				new Mock<ICustomStateService>().Object,
 				mongoRepository,
 				unitLocationsDocRepository,
+				new Lazy<IUnitLocationsMongoRepository>(() => new Mock<IUnitLocationsMongoRepository>().Object),
 				new Mock<IUnitActiveRolesRepository>().Object,
 				new Mock<IDepartmentGroupsService>().Object,
 				new Mock<ILimitsService>().Object,

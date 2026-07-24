@@ -56,5 +56,8 @@
 		UnitCallStatusOverridesByUnitType = 52,
 		EnableModernNotifications = 53,
 		ForceChatbotSecurityPin = 54,
+		HardwareTrackingStaleAfterSeconds = 55,
+		HardwareTrackingMobileFallbackEnabled = 56,
+		HardwareTrackingLocationRetentionDays = 57,
 	}
 }

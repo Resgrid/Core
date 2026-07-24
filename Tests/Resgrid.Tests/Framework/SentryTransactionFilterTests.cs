@@ -82,5 +82,17 @@ namespace Resgrid.Tests.Framework
 			// Assert
 			result.Should().BeFalse();
 		}
+
+		[Test]
+		public void RedactCapabilityPath_RemovesTokenFromTraceValues()
+		{
+			const string token = "rgtrk_prefix12_super-secret-capability";
+
+			var result = SentryTransactionFilter.RedactCapabilityPath(
+				$"POST /api/v4/unit-trackers/c/{token}");
+
+			result.Should().Be("POST /api/v4/unit-trackers/c/[REDACTED]");
+			result.Should().NotContain(token);
+		}
 	}
 }

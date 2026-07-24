@@ -1,0 +1,92 @@
+@model Resgrid.Web.Areas.User.Models.UnitTracking.UnitTrackingEditorView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Units.Units> localizer
+
+<form class="form-horizontal"
+      asp-action="@(Model.IsEdit ? "Edit" : "New")"
+      asp-route-id="@Model.UnitTrackingDeviceId"
+      asp-route-unitId="@Model.Unit.UnitId"
+      method="post">
+    @Html.AntiForgeryToken()
+    <div asp-validation-summary="All" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="ProfileKey" class="col-sm-3 control-label">@localizer["TrackingProfile"]</label>
+        <div class="col-sm-9">
+            <select asp-for="ProfileKey" class="form-control" id="tracking-profile">
+                <option value="">@localizer["SelectTrackingProfile"]</option>
+                @foreach (var profile in Model.Profiles)
+                {
+                    <option value="@profile.Key"
+                            data-summary="@profile.SetupSummary"
+                            data-retry="@profile.RetryExpectation"
+                            data-certification="@profile.CertificationStatus"
+                            data-identifier-required="@profile.IdentifierRequired.ToString().ToLowerInvariant()">
+                        @profile.ManufacturerName — @profile.Model (@profile.CertificationStatus)
+                    </option>
+                }
+            </select>
+            <span asp-validation-for="ProfileKey" class="text-danger"></span>
+            <p class="help-block" id="profile-summary"></p>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="DisplayName" class="col-sm-3 control-label">@localizer["TrackingDisplayName"]</label>
+        <div class="col-sm-9"><input asp-for="DisplayName" class="form-control" /></div>
+    </div>
+    <div class="form-group">
+        <label asp-for="DeviceIdentifier" class="col-sm-3 control-label">@localizer["DeviceIdentifier"]</label>
+        <div class="col-sm-9">
+            <input asp-for="DeviceIdentifier" class="form-control" autocomplete="off" />
+            <p class="help-block">@localizer["DeviceIdentifierHelp"]</p>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="SecondaryIdentifier" class="col-sm-3 control-label">@localizer["SecondaryIdentifier"]</label>
+        <div class="col-sm-9"><input asp-for="SecondaryIdentifier" class="form-control" autocomplete="off" /></div>
+    </div>
+    <div class="form-group">
+        <label asp-for="FirmwareVersion" class="col-sm-3 control-label">@localizer["FirmwareVersion"]</label>
+        <div class="col-sm-9"><input asp-for="FirmwareVersion" class="form-control" /></div>
+    </div>
+    <div class="form-group">
+        <label asp-for="SourcePriority" class="col-sm-3 control-label">@localizer["SourcePriority"]</label>
+        <div class="col-sm-9"><input asp-for="SourcePriority" class="form-control" type="number" /></div>
+    </div>
+    <div class="form-group">
+        <label asp-for="AllowedSourceCidrs" class="col-sm-3 control-label">@localizer["AllowedSourceCidrs"]</label>
+        <div class="col-sm-9">
+            <input asp-for="AllowedSourceCidrs" class="form-control" placeholder="203.0.113.0/24, 2001:db8::/32" />
+            <p class="help-block">@localizer["AllowedSourceCidrsHelp"]</p>
+        </div>
+    </div>
+    @if (Model.IsEdit)
+    {
+        <div class="form-group">
+            <label asp-for="IsEnabled" class="col-sm-3 control-label">@localizer["TrackingEnabled"]</label>
+            <div class="col-sm-9"><input asp-for="IsEnabled" /></div>
+        </div>
+    }
+
+    <div class="form-group">
+        <div class="col-sm-9 col-sm-offset-3">
+            <a asp-action="Index" asp-route-unitId="@Model.Unit.UnitId" class="btn btn-white">@commonLocalizer["Cancel"]</a>
+            <button type="submit" class="btn btn-primary">@localizer["SaveTrackingBinding"]</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    (function () {
+        const select = document.getElementById("tracking-profile");
+        const summary = document.getElementById("profile-summary");
+        function updateProfileHelp() {
+            const option = select.options[select.selectedIndex];
+            summary.textContent = option && option.dataset.summary
+                ? option.dataset.summary + " " + (option.dataset.retry || "")
+                : "";
+        }
+        select.addEventListener("change", updateProfileHelp);
+        updateProfileHelp();
+    }());
+</script>

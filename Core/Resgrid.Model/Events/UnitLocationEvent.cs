@@ -42,6 +42,53 @@ namespace Resgrid.Model.Events
 		[ProtoMember(12)]
 		public decimal? Heading { get; set; }
 
+		[ProtoMember(13)]
+		public DateTime? ReceivedOn { get; set; }
+
+		[ProtoMember(14)]
+		public int SourceType { get; set; }
+
+		[ProtoMember(15)]
+		public string SourceId { get; set; }
+
+		[ProtoMember(16)]
+		public int SourcePriority { get; set; }
+
+		[ProtoMember(17)]
+		public int? TransportType { get; set; }
+
+		[ProtoMember(18)]
+		public string ProtocolKey { get; set; }
+
+		[ProtoMember(19)]
+		public bool? IsValidFix { get; set; }
+
+		[ProtoMember(20)]
+		public int? Satellites { get; set; }
+
+		[ProtoMember(21)]
+		public decimal? Hdop { get; set; }
+
+		[ProtoMember(22)]
+		public decimal? BatteryPercent { get; set; }
+
+		[ProtoMember(23)]
+		public decimal? ExternalPowerVolts { get; set; }
+
+		[ProtoMember(24)]
+		public int? SignalPercent { get; set; }
+
+		[ProtoMember(25)]
+		public bool? Ignition { get; set; }
+
+		[ProtoMember(26)]
+		public bool? IsMoving { get; set; }
+
+		[ProtoMember(27)]
+		public string AlarmCode { get; set; }
+
+		[ProtoMember(28)]
+		public int? TimestampSource { get; set; }
 
 		public UnitLocationEvent()
 		{

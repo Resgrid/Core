@@ -320,5 +320,11 @@ namespace Resgrid.Model.Services
 		/// chatbot/SMS actions (overrides the per-user opt-in).
 		/// </summary>
 		Task<bool> GetForceChatbotSecurityPinAsync(int departmentId, bool bypassCache = false);
+
+		Task<int> GetHardwareTrackingStaleAfterSecondsAsync(int departmentId, bool bypassCache = false);
+
+		Task<bool> GetHardwareTrackingMobileFallbackEnabledAsync(int departmentId, bool bypassCache = false);
+
+		Task<int> GetHardwareTrackingLocationRetentionDaysAsync(int departmentId, bool bypassCache = false);
 	}
 }

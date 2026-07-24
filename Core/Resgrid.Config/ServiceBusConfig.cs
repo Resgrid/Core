@@ -50,6 +50,9 @@
 		public static string RabbitUsername = "";
 		public static string RabbbitPassword = "";
 		public static string RabbbitExchange = "";
+		public static string UnitLocationQueueV2Name = "unitlocation-v2";
+		public static string UnitLocationRetryQueueV2Name = "unitlocation-v2.retry";
+		public static string UnitLocationDeadQueueV2Name = "unitlocation-v2.dead";
 		#endregion RabbitMQ Bus Values
 	}
 

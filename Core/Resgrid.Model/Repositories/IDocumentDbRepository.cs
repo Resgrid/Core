@@ -8,7 +8,7 @@ namespace Resgrid.Model.Repositories
 	public interface IDocumentDbRepository
 	{
 		/// <summary>
-		/// Updates the Postgres document database schema.
+		/// Updates the configured document database schema and indexes.
 		/// </summary>
 		/// <returns>If the operation was successful</returns>
 		Task<bool> UpdateDocumentDatabaseAsync();

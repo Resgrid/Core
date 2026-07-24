@@ -38,6 +38,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
     <ProjectReference Include="..\..\Core\Resgrid.Framework\Resgrid.Framework.csproj" />
+    <ProjectReference Include="..\..\Core\Resgrid.Localization\Resgrid.Localization.csproj" />
     <ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj" />
     <ProjectReference Include="..\..\Core\Resgrid.Services\Resgrid.Services.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.AddressVerification\Resgrid.Providers.AddressVerification.csproj" />
@@ -54,6 +55,7 @@
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Messaging\Resgrid.Providers.Messaging.csproj" />
     <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.DataRepository\Resgrid.Repositories.DataRepository.csproj" />
     <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.NoSqlRepository\Resgrid.Repositories.NoSqlRepository.csproj" />
+    <ProjectReference Include="..\..\Web\Resgrid.Web\Resgrid.Web.csproj" />
     <ProjectReference Include="..\..\Web\Resgrid.Web.Services\Resgrid.Web.Services.csproj" />
     <ProjectReference Include="..\..\Web\Resgrid.Web.Mcp\Resgrid.Web.Mcp.csproj" />
     <ProjectReference Include="..\..\Web\Resgrid.Web.Tts\Resgrid.Web.Tts.csproj" />

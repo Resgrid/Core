@@ -545,7 +545,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <img style="max-width:600px;" src="@Url.Action("GetCallImage", "Dispatch", new { Area = "User", callId = img.CallId, attachmentId = img.CallAttachmentId })" />
+                            <img style="max-width:600px;" src="@Url.Action("GetCallImage", "Dispatch", new { Area = "User", callId = img.CallId, attachmentId = img.CallAttachmentId, token = LinkHelper.GenerateCallImageToken(img.CallId, img.CallAttachmentId) })" />
                         </div>
                     </div>
                 }

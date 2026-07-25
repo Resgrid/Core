@@ -1323,12 +1323,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> GetAvailableNumbers(string country, string areaCode)
 		{
 			return Json(await _numbersService.GetAvailableNumbers(country, areaCode));
 		}
 
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> ProvisionNumber(string msisdn, string country, CancellationToken cancellationToken)
 		{
 			if (!await _limitsService.CanDepartmentProvisionNumberAsync(DepartmentId))
@@ -1346,6 +1348,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> ProvisionDefaultNumberAsync(string country, string areaCode, CancellationToken cancellationToken)
 		{
 			if (!await _limitsService.CanDepartmentProvisionNumberAsync(DepartmentId))
@@ -2310,21 +2313,36 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (queueItem != null)
 			{
-				var auditEvent = new AuditEvent();
-				auditEvent.Before = null;
-				auditEvent.DepartmentId = DepartmentId;
-				auditEvent.UserId = UserId;
-				auditEvent.Type = AuditLogTypes.DeleteDepartmentRequestedCancelled;
-				auditEvent.After = null;
-				auditEvent.Successful = true;
-				auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
-				auditEvent.ServerName = Environment.MachineName;
-				auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
-				_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+				try
+				{
+					var profile = await _userProfileService.GetProfileByUserIdAsync(UserId);
 
-				var profile = await _userProfileService.GetProfileByUserIdAsync(UserId);
+					if (profile == null)
+						return NotFound();
 
-				await _queueService.CancelPendingDepartmentDeletionRequest(DepartmentId, profile.FullName.AsFirstNameLastName, cancellationToken);
+					var cancelledItem = await _queueService.CancelPendingDepartmentDeletionRequest(DepartmentId, profile.FullName.AsFirstNameLastName, cancellationToken);
+
+					// Only audit when the cancellation actually persisted; a null result means no
+					// pending request was updated, so a success audit would be a false trail.
+					if (cancelledItem != null)
+					{
+						var auditEvent = new AuditEvent();
+						auditEvent.Before = queueItem.CloneJsonToString();
+						auditEvent.DepartmentId = DepartmentId;
+						auditEvent.UserId = UserId;
+						auditEvent.Type = AuditLogTypes.DeleteDepartmentRequestedCancelled;
+						auditEvent.After = cancelledItem.CloneJsonToString();
+						auditEvent.Successful = true;
+						auditEvent.IpAddress = IpAddressHelper.GetRequestIP(Request, true);
+						auditEvent.ServerName = Environment.MachineName;
+						auditEvent.UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}";
+						_eventAggregator.SendMessage<AuditEvent>(auditEvent);
+					}
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex, $"DepartmentController::CancelDepartmentDeleteRequest failed for DepartmentId {DepartmentId} by UserId {UserId}");
+				}
 			}
 
 			return RedirectToAction("Settings", "Department", new { area = "User" });

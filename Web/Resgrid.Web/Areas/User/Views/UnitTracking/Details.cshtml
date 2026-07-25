@@ -1,0 +1,232 @@
+@model Resgrid.Web.Areas.User.Models.UnitTracking.UnitTrackingDetailsView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Units.Units> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["ViewTrackingStatus"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-8">
+        <h2>@localizer["ViewTrackingStatus"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Units" asp-action="Index" asp-route-area="User">@commonLocalizer["UnitsModule"]</a></li>
+            <li><a asp-action="Index" asp-route-unitId="@Model.Unit.UnitId">@localizer["HardwareTracking"]</a></li>
+            <li class="active"><strong>@(Model.Device.DisplayName ?? Model.Device.UnitTrackingDeviceId)</strong></li>
+        </ol>
+    </div>
+    @if (Model.CanManage)
+    {
+        <div class="col-sm-4">
+            <div class="title-action">
+                <a asp-action="Edit" asp-route-id="@Model.Device.UnitTrackingDeviceId" class="btn btn-warning">
+                    @commonLocalizer["Edit"]
+                </a>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="wrapper wrapper-content">
+    @if (TempData["UnitTrackingSuccess"] != null)
+    {
+        <div class="alert alert-success">@TempData["UnitTrackingSuccess"]</div>
+    }
+    @if (TempData["UnitTrackingError"] != null)
+    {
+        <div class="alert alert-danger">@TempData["UnitTrackingError"]</div>
+    }
+    @if (TempData["UnitTrackingPreview"] != null)
+    {
+        <div class="alert alert-info">@TempData["UnitTrackingPreview"]</div>
+    }
+
+    <div class="row">
+        <div class="col-md-6">
+            <div class="ibox">
+                <div class="ibox-title"><h5>@localizer["TrackingStatus"]</h5></div>
+                <div class="ibox-content">
+                    <dl class="dl-horizontal">
+                        <dt>@commonLocalizer["Status"]</dt><dd><span class="label label-default">@Model.Status</span></dd>
+                        <dt>@localizer["TrackingProfile"]</dt><dd>@Model.Device.ModelKey</dd>
+                        <dt>@localizer["CertificationStatus"]</dt><dd>@(Model.Profile?.CertificationStatus.ToString() ?? "—")</dd>
+                        <dt>@localizer["DeviceIdentifier"]</dt><dd>@(Model.DisplayIdentifier ?? "—")</dd>
+                        <dt>@localizer["FirmwareVersion"]</dt><dd>@(Model.Device.FirmwareVersion ?? "—")</dd>
+                        <dt>@localizer["Protocol"]</dt><dd>@(Model.Device.ProtocolKey ?? "—")</dd>
+                        <dt>@localizer["Transport"]</dt><dd>@((Resgrid.Model.UnitTrackingTransportType)Model.Device.TransportType)</dd>
+                        <dt>@localizer["LastSeen"]</dt><dd>@(Model.Device.LastSeenOn?.ToString("g") ?? localizer["Never"])</dd>
+                        <dt>@localizer["LastValidFix"]</dt><dd>@(Model.Device.LastPositionOn?.ToString("g") ?? localizer["Never"])</dd>
+                        <dt>@localizer["LastReceived"]</dt><dd>@(Model.Device.LastReceivedOn?.ToString("g") ?? localizer["Never"])</dd>
+                        <dt>@localizer["LastErrorCode"]</dt><dd>@(Model.Device.LastErrorCode ?? "—")</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="ibox">
+                <div class="ibox-title"><h5>@localizer["Credentials"]</h5></div>
+                <div class="ibox-content">
+                    @if (!Model.Credentials.Any())
+                    {
+                        <div class="alert alert-warning">@localizer["NoCredentials"]</div>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>@localizer["AuthenticationMode"]</th>
+                                        <th>@localizer["CredentialPrefix"]</th>
+                                        <th>@localizer["ExpiresOn"]</th>
+                                        <th>@localizer["LastUsed"]</th>
+                                        @if (Model.CanManage)
+                                        {
+                                            <th>@commonLocalizer["Actions"]</th>
+                                        }
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                @foreach (var credential in Model.Credentials)
+                                {
+                                    <tr class="@(credential.RevokedOn.HasValue ? "text-muted" : "")">
+                                        <td>@((Resgrid.Model.UnitTrackingAuthMode)credential.AuthMode)</td>
+                                        <td>@credential.KeyPrefix…</td>
+                                        <td>@(credential.ExpiresOn?.ToString("g") ?? "—")</td>
+                                        <td>@(credential.LastUsedOn?.ToString("g") ?? localizer["Never"])</td>
+                                        @if (Model.CanManage)
+                                        {
+                                            <td>
+                                                @if (!credential.RevokedOn.HasValue)
+                                                {
+                                                    <form asp-action="RotateCredential" method="post" style="display:inline;">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="UnitTrackingDeviceId" value="@Model.Device.UnitTrackingDeviceId" />
+                                                        <input type="hidden" name="UnitTrackingCredentialId" value="@credential.UnitTrackingCredentialId" />
+                                                        <input type="hidden" name="OverlapHours" value="24" />
+                                                        <button type="submit" class="btn btn-xs btn-warning">@localizer["RotateCredential"]</button>
+                                                    </form>
+                                                    <form asp-action="RevokeCredential" method="post" style="display:inline;">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="id" value="@Model.Device.UnitTrackingDeviceId" />
+                                                        <input type="hidden" name="credentialId" value="@credential.UnitTrackingCredentialId" />
+                                                        <button type="submit" class="btn btn-xs btn-danger" data-confirm="@localizer["RevokeCredentialWarning"]">
+                                                            @localizer["RevokeCredential"]
+                                                        </button>
+                                                    </form>
+                                                }
+                                                else
+                                                {
+                                                    <span>@localizer["Revoked"]</span>
+                                                }
+                                            </td>
+                                        }
+                                    </tr>
+                                }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+
+                    @if (Model.CanManage && Model.Device.IsEnabled && Model.SupportedAuthModes.Any())
+                    {
+                        <hr />
+                        <h4>@localizer["CreateCredential"]</h4>
+                        <form asp-action="CreateCredential" method="post" class="form-horizontal">
+                            @Html.AntiForgeryToken()
+                            <input asp-for="CredentialInput.UnitTrackingDeviceId" type="hidden" />
+                            <div class="form-group">
+                                <label class="col-sm-4 control-label" for="credential-auth-mode">@localizer["AuthenticationMode"]</label>
+                                <div class="col-sm-8">
+                                    <select asp-for="CredentialInput.AuthMode" class="form-control" id="credential-auth-mode">
+                                        @foreach (var authMode in Model.SupportedAuthModes)
+                                        {
+                                            <option value="@((int)authMode)">@authMode</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group" id="custom-header-group" style="display:none;">
+                                <label asp-for="CredentialInput.HeaderName" class="col-sm-4 control-label">@localizer["HeaderName"]</label>
+                                <div class="col-sm-8"><input asp-for="CredentialInput.HeaderName" class="form-control" /></div>
+                            </div>
+                            <div class="form-group" id="basic-username-group" style="display:none;">
+                                <label asp-for="CredentialInput.BasicUsername" class="col-sm-4 control-label">@localizer["BasicUsername"]</label>
+                                <div class="col-sm-8"><input asp-for="CredentialInput.BasicUsername" class="form-control" /></div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-sm-8 col-sm-offset-4">
+                                    <button type="submit" class="btn btn-primary">@localizer["CreateCredential"]</button>
+                                </div>
+                            </div>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @if (Model.CanManage)
+    {
+        @if (Model.CanPreviewJson && string.Equals(Model.Device.PayloadAdapterKey, "resgrid-json-v1", StringComparison.OrdinalIgnoreCase))
+        {
+            <div class="ibox">
+                <div class="ibox-title"><h5>@localizer["SendTestJson"]</h5></div>
+                <div class="ibox-content">
+                    <p>@localizer["SendTestJsonDescription"]</p>
+                    <form asp-action="PreviewJson" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="UnitTrackingDeviceId" value="@Model.Device.UnitTrackingDeviceId" />
+                        <div class="form-group">
+                            <label for="tracking-preview-json">@localizer["JsonPayload"]</label>
+                            <textarea id="tracking-preview-json"
+                                      name="JsonPayload"
+                                      class="form-control"
+                                      rows="8">{"eventId":"preview-1","latitude":47.6062,"longitude":-122.3321,"timestamp":"2026-07-24T18:42:52Z"}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-info">@localizer["PreviewJson"]</button>
+                    </form>
+                </div>
+            </div>
+        }
+
+        <div class="ibox">
+            <div class="ibox-title"><h5>@localizer["TrackingBindingActions"]</h5></div>
+            <div class="ibox-content">
+                @if (Model.Device.IsEnabled)
+                {
+                    <form asp-action="Disable" method="post" style="display:inline;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@Model.Device.UnitTrackingDeviceId" />
+                        <button type="submit" class="btn btn-warning" data-confirm="@localizer["DisableTrackingWarning"]">
+                            @localizer["DisableTracking"]
+                        </button>
+                    </form>
+                }
+                <form asp-action="Delete" method="post" style="display:inline;">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@Model.Device.UnitTrackingDeviceId" />
+                    <button type="submit" class="btn btn-danger" data-confirm="@localizer["DeleteTrackingWarning"]">
+                        @commonLocalizer["Delete"]
+                    </button>
+                </form>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts
+{
+    <script>
+        (function () {
+            const mode = document.getElementById("credential-auth-mode");
+            if (!mode) return;
+            const custom = document.getElementById("custom-header-group");
+            const basic = document.getElementById("basic-username-group");
+            function updateCredentialFields() {
+                custom.style.display = mode.value === "@((int)Resgrid.Model.UnitTrackingAuthMode.CustomHeader)" ? "block" : "none";
+                basic.style.display = mode.value === "@((int)Resgrid.Model.UnitTrackingAuthMode.Basic)" ? "block" : "none";
+            }
+            mode.addEventListener("change", updateCredentialFields);
+            updateCredentialFields();
+        }());
+    </script>
+}

@@ -209,6 +209,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Protocol_View)]
 		public async Task<IActionResult> GetProtocol(int id)
 		{
+			if (!await _authorizationService.CanUserViewProtocolAsync(UserId, id))
+				return Unauthorized();
+
 			var template = await _protocolsService.GetProtocolByIdAsync(id);
 
 			return Json(template);

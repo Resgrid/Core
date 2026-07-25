@@ -188,13 +188,11 @@ namespace Resgrid.Workers.Framework.Logic
 							break;
 						case AuditLogTypes.DeleteDepartmentRequested:
 							auditLog.Message = $"{profile.FullName.AsFirstNameLastName} has requested that the Resgrid department be deleted";
-
-							auditLog.Data = "No Data";
+							auditLog.Data = GetDepartmentDeletionQueueItemAuditData(auditEvent.After, false);
 							break;
 						case AuditLogTypes.DeleteDepartmentRequestedCancelled:
 							auditLog.Message = $"{profile.FullName.AsFirstNameLastName} canceled the pending department deletion request";
-
-							auditLog.Data = "No Data";
+							auditLog.Data = GetDepartmentDeletionQueueItemAuditData(auditEvent.Before, true);
 							break;
 						case AuditLogTypes.CallReactivated:
 							auditLog.Message = $"{profile.FullName.AsFirstNameLastName} reactivated call";
@@ -804,6 +802,31 @@ namespace Resgrid.Workers.Framework.Logic
 			}
 
 			return success;
+		}
+
+		private static string GetDepartmentDeletionQueueItemAuditData(string queueItemJson, bool cancelled)
+		{
+			if (String.IsNullOrWhiteSpace(queueItemJson))
+				return "No Data";
+
+			try
+			{
+				var queueItem = JsonConvert.DeserializeObject<QueueItem>(queueItemJson);
+
+				if (queueItem == null)
+					return "No Data";
+
+				if (cancelled)
+					return $"QueueItemId: {queueItem.QueueItemId}; Scheduled deletion (UTC): {queueItem.ToBeCompletedOn:u}; OriginallyRequestedByUserId: {queueItem.QueuedByUserId}; QueuedOn (UTC): {queueItem.QueuedOn:u}";
+
+				return $"QueueItemId: {queueItem.QueueItemId}; Scheduled deletion (UTC): {queueItem.ToBeCompletedOn:u}; RequestedByUserId: {queueItem.QueuedByUserId}";
+			}
+			catch (Exception ex)
+			{
+				// A null/malformed payload must not drop the whole audit row via the outer catch.
+				Logging.LogException(ex, "AuditQueueLogic::Failed to deserialize department deletion queue item audit payload");
+				return "No Data";
+			}
 		}
 	}
 }

@@ -1,0 +1,88 @@
+@model Resgrid.Web.Areas.User.Models.UnitTracking.UnitTrackingIndexView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Units.Units> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["HardwareTracking"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-8">
+        <h2>@localizer["HardwareTracking"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="Units" asp-action="Index" asp-route-area="User">@commonLocalizer["UnitsModule"]</a></li>
+            <li><a asp-controller="Units" asp-action="EditUnit" asp-route-area="User" asp-route-unitId="@Model.Unit.UnitId">@Model.Unit.Name</a></li>
+            <li class="active"><strong>@localizer["HardwareTracking"]</strong></li>
+        </ol>
+    </div>
+    @if (Model.CanManage)
+    {
+        <div class="col-sm-4">
+            <div class="title-action">
+                <a asp-action="New" asp-route-unitId="@Model.Unit.UnitId" class="btn btn-primary">
+                    <i class="fa fa-plus"></i> @localizer["AddTrackingBinding"]
+                </a>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="wrapper wrapper-content">
+    @if (TempData["UnitTrackingSuccess"] != null)
+    {
+        <div class="alert alert-success">@TempData["UnitTrackingSuccess"]</div>
+    }
+    <div class="ibox">
+        <div class="ibox-title">
+            <h5>@Model.Unit.Name — @localizer["HardwareTracking"]</h5>
+        </div>
+        <div class="ibox-content">
+            <p>@localizer["HardwareTrackingDescription"]</p>
+            @if (!Model.Devices.Any())
+            {
+                <div class="alert alert-info">@localizer["NoTrackingBindings"]</div>
+            }
+            else
+            {
+                <div class="table-responsive">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>@commonLocalizer["Name"]</th>
+                                <th>@localizer["TrackingProfile"]</th>
+                                <th>@localizer["DeviceIdentifier"]</th>
+                                <th>@commonLocalizer["Status"]</th>
+                                <th>@localizer["LastSeen"]</th>
+                                <th>@localizer["LastValidFix"]</th>
+                                <th>@commonLocalizer["Actions"]</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var item in Model.Devices)
+                        {
+                            <tr>
+                                <td>@(item.Device.DisplayName ?? item.Device.UnitTrackingDeviceId)</td>
+                                <td>@item.Device.ModelKey</td>
+                                <td>@(item.DisplayIdentifier ?? "—")</td>
+                                <td><span class="label label-default">@item.Status</span></td>
+                                <td>@(item.Device.LastSeenOn?.ToString("g") ?? localizer["Never"])</td>
+                                <td>@(item.Device.LastPositionOn?.ToString("g") ?? localizer["Never"])</td>
+                                <td>
+                                    <a asp-action="Details" asp-route-id="@item.Device.UnitTrackingDeviceId" class="btn btn-xs btn-info">
+                                        @localizer["ViewTrackingStatus"]
+                                    </a>
+                                    @if (Model.CanManage)
+                                    {
+                                        <a asp-action="Edit" asp-route-id="@item.Device.UnitTrackingDeviceId" class="btn btn-xs btn-warning">
+                                            @commonLocalizer["Edit"]
+                                        </a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

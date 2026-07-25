@@ -304,8 +304,8 @@ namespace Resgrid.Model.Services
 		/// </summary>
 		/// <param name="location">The location.</param>
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-		/// <returns>Task&lt;UnitLocation&gt;.</returns>
-		Task<UnitsLocation> AddUnitLocationAsync(UnitsLocation location, int departmentId,
+		/// <returns>The idempotent document-store write result.</returns>
+		Task<UnitLocationWriteResult> AddUnitLocationAsync(UnitsLocation location, int departmentId,
 			CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>

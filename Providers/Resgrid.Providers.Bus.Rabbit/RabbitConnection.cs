@@ -133,13 +133,13 @@ namespace Resgrid.Providers.Bus.Rabbit
 									 autoDelete: false,
 									 arguments: null);
 
-						await channel.QueueDeclareAsync(queue: SetQueueNameForEnv(ServiceBusConfig.UnitLoactionQueueName),
-									 durable: false,
-									 exclusive: false,
-									 autoDelete: false,
-									 arguments: null);
+					await channel.QueueDeclareAsync(queue: SetQueueNameForEnv(ServiceBusConfig.UnitLoactionQueueName),
+								 durable: false,
+								 exclusive: false,
+								 autoDelete: false,
+								 arguments: null);
 
-						await channel.QueueDeclareAsync(queue: SetQueueNameForEnv(ServiceBusConfig.PersonnelLoactionQueueName),
+					await channel.QueueDeclareAsync(queue: SetQueueNameForEnv(ServiceBusConfig.PersonnelLoactionQueueName),
 									 durable: false,
 									 exclusive: false,
 									 autoDelete: false,
@@ -163,13 +163,15 @@ namespace Resgrid.Providers.Bus.Rabbit
 									 autoDelete: false,
 									 arguments: null);
 
-						await channel.QueueDeclareAsync(queue: SetQueueNameForEnv(ServiceBusConfig.ChatbotProcessingQueueName),
-									 durable: true,
-									 exclusive: false,
-									 autoDelete: false,
-									 arguments: null);
+					await channel.QueueDeclareAsync(queue: SetQueueNameForEnv(ServiceBusConfig.ChatbotProcessingQueueName),
+								 durable: true,
+								 exclusive: false,
+								 autoDelete: false,
+								 arguments: null);
 
-						return true;
+					await DeclareUnitLocationV2QueuesAsync(channel);
+
+					return true;
 					}
 					catch (Exception ex)
 					{
@@ -180,6 +182,61 @@ namespace Resgrid.Providers.Bus.Rabbit
 			}
 
 			return false;
+		}
+
+		private static async Task DeclareUnitLocationV2QueuesAsync(IChannel channel)
+		{
+			try
+			{
+				var unitLocationQueueV2Name = SetQueueNameForEnv(ServiceBusConfig.UnitLocationQueueV2Name);
+				var unitLocationRetryQueueV2Name = SetQueueNameForEnv(ServiceBusConfig.UnitLocationRetryQueueV2Name);
+				var unitLocationDeadQueueV2Name = SetQueueNameForEnv(ServiceBusConfig.UnitLocationDeadQueueV2Name);
+				var queueExchange = ServiceBusConfig.RabbbitExchange ?? string.Empty;
+				var queueTtlMilliseconds = (long)Math.Max(1, UnitTrackingConfig.QueueMessageTtlSeconds) * 1000L;
+				var retryTtlMilliseconds = (long)Math.Max(1, UnitTrackingConfig.UnitLocationRetryDelaySeconds) * 1000L;
+
+				await channel.QueueDeclareAsync(
+					queue: unitLocationDeadQueueV2Name,
+					durable: true,
+					exclusive: false,
+					autoDelete: false,
+					arguments: null);
+
+				await channel.QueueDeclareAsync(
+					queue: unitLocationRetryQueueV2Name,
+					durable: true,
+					exclusive: false,
+					autoDelete: false,
+					arguments: new System.Collections.Generic.Dictionary<string, object>
+					{
+						["x-message-ttl"] = retryTtlMilliseconds,
+						["x-dead-letter-exchange"] = queueExchange,
+						["x-dead-letter-routing-key"] = unitLocationQueueV2Name
+					});
+
+				await channel.QueueDeclareAsync(
+					queue: unitLocationQueueV2Name,
+					durable: true,
+					exclusive: false,
+					autoDelete: false,
+					arguments: new System.Collections.Generic.Dictionary<string, object>
+					{
+						["x-message-ttl"] = queueTtlMilliseconds,
+						["x-dead-letter-exchange"] = queueExchange,
+						["x-dead-letter-routing-key"] = unitLocationDeadQueueV2Name
+					});
+
+				if (!string.IsNullOrWhiteSpace(queueExchange))
+				{
+					await channel.QueueBindAsync(unitLocationQueueV2Name, queueExchange, unitLocationQueueV2Name);
+					await channel.QueueBindAsync(unitLocationRetryQueueV2Name, queueExchange, unitLocationRetryQueueV2Name);
+					await channel.QueueBindAsync(unitLocationDeadQueueV2Name, queueExchange, unitLocationDeadQueueV2Name);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
 		}
 
 		public static async Task<IConnection> CreateConnection(string clientName)

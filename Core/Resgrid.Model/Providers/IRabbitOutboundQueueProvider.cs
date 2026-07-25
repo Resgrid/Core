@@ -1,5 +1,7 @@
 ﻿﻿using Resgrid.Model.Events;
 using Resgrid.Model.Queue;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Resgrid.Model.Providers
@@ -14,6 +16,9 @@ namespace Resgrid.Model.Providers
 		Task<bool> EnqueueCqrsEvent(CqrsEvent cqrsEvent);
 		Task<bool> EnqueueAuditEvent(AuditEvent auditEvent);
 		Task<bool> EnqueueUnitLocationEvent(UnitLocationEvent unitLocationEvent);
+		Task<bool> EnqueueUnitLocationEvents(
+			IReadOnlyCollection<UnitLocationEvent> unitLocationEvents,
+			CancellationToken cancellationToken = default);
 		Task<bool> EnqueuePersonnelLocationEvent(PersonnelLocationEvent personnelLocationEvent);
 		Task<bool> EnqueueWorkflowEvent(WorkflowQueueItem item);
 		Task<bool> EnqueueChatbotMessage(ChatbotMessageQueueItem chatbotMessageQueue);

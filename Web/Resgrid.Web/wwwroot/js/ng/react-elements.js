@@ -1,2 +1,2 @@
-import "./chunks/elements-BK6xE-JG.min.js";
+import "./chunks/elements-33RDS2SM.min.js";
 //# sourceMappingURL=react-elements.js.map

@@ -16,6 +16,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 	{
 		private string _clientName;
 		private IChannel _channel;
+		private IChannel _unitLocationChannel;
 		public Func<CallQueueItem, Task> CallQueueReceived;
 		public Func<MessageQueueItem, Task> MessageQueueReceived;
 		public Func<DistributionListQueueItem, Task> DistributionListQueueReceived;
@@ -43,6 +44,16 @@ namespace Resgrid.Providers.Bus.Rabbit
 			if (connection != null)
 			{
 				_channel = await connection.CreateChannelAsync();
+
+				if (UnitLocationEventQueueReceived != null)
+				{
+					_unitLocationChannel = await connection.CreateChannelAsync();
+					var prefetchCount = (ushort)Math.Min(
+						ushort.MaxValue,
+						Math.Max(1, UnitTrackingConfig.UnitLocationQueuePrefetchCount));
+					await _unitLocationChannel.BasicQosAsync(0, prefetchCount, false);
+				}
+
 				await StartMonitoring();
 			}
 		}
@@ -438,44 +449,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 				if (UnitLocationEventQueueReceived != null)
 				{
-					var unitLocationQueueReceivedConsumer = new AsyncEventingBasicConsumer(_channel);
-					unitLocationQueueReceivedConsumer.ReceivedAsync += async (model, ea) =>
-					{
-						if (ea != null && ea.Body.Length > 0)
-						{
-							UnitLocationEvent unitLocation = null;
-							try
-							{
-								var body = ea.Body;
-								var message = Encoding.UTF8.GetString(body.ToArray());
-								unitLocation = ObjectSerialization.Deserialize<UnitLocationEvent>(message);
-							}
-							catch (Exception ex)
-							{
-								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
-							}
-
-							try
-							{
-								if (unitLocation != null)
-								{
-									if (UnitLocationEventQueueReceived != null)
-									{
-										await UnitLocationEventQueueReceived.Invoke(unitLocation);
-									}
-								}
-							}
-							catch (Exception ex)
-							{
-								Logging.LogException(ex);
-							}
-						}
-					};
-
-					String unitLocationEventQueueReceivedConsumerTag = await _channel.BasicConsumeAsync(
-							queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.UnitLoactionQueueName),
-							autoAck: true,
-							consumer: unitLocationQueueReceivedConsumer);
+					await StartUnitLocationConsumer(ServiceBusConfig.UnitLoactionQueueName);
+					await StartUnitLocationConsumer(ServiceBusConfig.UnitLocationQueueV2Name);
 				}
 
 				if (PersonnelLocationEventQueueReceived != null)
@@ -659,10 +634,118 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 		public bool IsConnected()
 		{
-			if (_channel == null)
+			if (_channel == null || (UnitLocationEventQueueReceived != null && _unitLocationChannel == null))
 				return false;
 
-			return _channel.IsOpen;
+			return _channel.IsOpen && (_unitLocationChannel?.IsOpen ?? true);
+		}
+
+		private async Task StartUnitLocationConsumer(string queueName)
+		{
+			var consumer = new AsyncEventingBasicConsumer(_unitLocationChannel);
+			consumer.ReceivedAsync += async (model, ea) =>
+			{
+				if (ea == null)
+					return;
+
+				try
+				{
+					if (ea.Body.Length == 0)
+						throw new InvalidOperationException("Unit location queue message body is empty.");
+
+					var message = Encoding.UTF8.GetString(ea.Body.ToArray());
+					var unitLocation = ObjectSerialization.Deserialize<UnitLocationEvent>(message)
+						?? throw new InvalidOperationException("Unit location queue message could not be deserialized.");
+
+					await UnitLocationEventQueueReceived.Invoke(unitLocation);
+					await _unitLocationChannel.BasicAckAsync(ea.DeliveryTag, false);
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+
+					if (await RetryOrDeadLetterUnitLocationAsync(ea, ex))
+						await _unitLocationChannel.BasicAckAsync(ea.DeliveryTag, false);
+					else
+						await _unitLocationChannel.BasicNackAsync(ea.DeliveryTag, false, true);
+				}
+			};
+
+			await _unitLocationChannel.BasicConsumeAsync(
+				queue: RabbitConnection.SetQueueNameForEnv(queueName),
+				autoAck: false,
+				consumer: consumer);
+		}
+
+		private async Task<bool> RetryOrDeadLetterUnitLocationAsync(BasicDeliverEventArgs ea, Exception exception)
+		{
+			var retryCount = GetRetryCount(ea.BasicProperties?.Headers);
+			var maxRetryAttempts = Math.Max(0, UnitTrackingConfig.UnitLocationMaxRetryAttempts);
+			var targetQueue = retryCount >= maxRetryAttempts
+				? ServiceBusConfig.UnitLocationDeadQueueV2Name
+				: ServiceBusConfig.UnitLocationRetryQueueV2Name;
+
+			try
+			{
+				var connection = await RabbitConnection.CreateConnection(_clientName);
+				if (connection == null)
+					return false;
+
+				var channelOptions = new CreateChannelOptions(true, true);
+				await using var channel = await connection.CreateChannelAsync(channelOptions);
+				var properties = new BasicProperties
+				{
+					DeliveryMode = DeliveryModes.Persistent,
+					MessageId = ea.BasicProperties?.MessageId,
+					Headers = new Dictionary<string, object>
+					{
+						["x-unitlocation-retry-count"] = retryCount + 1,
+						["x-previous-error"] = exception.GetType().Name
+					}
+				};
+
+				using var publishTimeout = new System.Threading.CancellationTokenSource(
+					TimeSpan.FromSeconds(Math.Max(1, UnitTrackingConfig.QueuePublishTimeoutSeconds)));
+
+				await channel.BasicPublishAsync(
+					exchange: ServiceBusConfig.RabbbitExchange,
+					routingKey: RabbitConnection.SetQueueNameForEnv(targetQueue),
+					mandatory: true,
+					basicProperties: properties,
+					body: ea.Body,
+					cancellationToken: publishTimeout.Token);
+
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return false;
+			}
+		}
+
+		private static int GetRetryCount(IDictionary<string, object> headers)
+		{
+			if (headers == null || !headers.TryGetValue("x-unitlocation-retry-count", out var value))
+				return 0;
+
+			switch (value)
+			{
+				case byte byteValue:
+					return byteValue;
+				case sbyte signedByteValue:
+					return Math.Max(0, (int)signedByteValue);
+				case short shortValue:
+					return Math.Max(0, (int)shortValue);
+				case int intValue:
+					return Math.Max(0, intValue);
+				case long longValue:
+					return (int)Math.Max(0, Math.Min(int.MaxValue, longValue));
+				case byte[] bytes when int.TryParse(Encoding.UTF8.GetString(bytes), out var parsed):
+					return Math.Max(0, parsed);
+				default:
+					return int.TryParse(value.ToString(), out var converted) ? Math.Max(0, converted) : 0;
+			}
 		}
 
 		private async Task<bool> RetryQueueItem(BasicDeliverEventArgs ea, Exception mex)

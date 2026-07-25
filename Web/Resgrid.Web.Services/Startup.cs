@@ -55,6 +55,7 @@ using System.Net.Http;
 using Resgrid.Providers.Messaging;
 using Resgrid.Web.Services;
 using Resgrid.Web.Services.Twilio;
+using Resgrid.Web.Services.ApplicationCore.UnitTracking;
 using Twilio.AspNet.Core;
 
 namespace Resgrid.Web.ServicesCore
@@ -651,6 +652,9 @@ namespace Resgrid.Web.ServicesCore
 			builder.RegisterType<IdentityUserStore>().As<IUserStore<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
 			builder.RegisterType<IdentityRoleStore>().As<IRoleStore<Model.Identity.IdentityRole>>().InstancePerLifetimeScope();
 			builder.RegisterType<ClaimsPrincipalFactory<Model.Identity.IdentityUser, Model.Identity.IdentityRole>>().As<IUserClaimsPrincipalFactory<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
+			builder.RegisterType<UnitTrackingHttpAuthenticationService>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<UnitTrackingJsonPayloadParser>().AsSelf().InstancePerLifetimeScope();
+			builder.RegisterType<UnitTrackingRateLimiter>().AsSelf().SingleInstance();
 
 			builder.RegisterType<UserValidator<Model.Identity.IdentityUser>>().As<IUserValidator<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
 			builder.RegisterType<PasswordValidator<Model.Identity.IdentityUser>>().As<IPasswordValidator<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
@@ -669,6 +673,7 @@ namespace Resgrid.Web.ServicesCore
 				ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedFor
 			};
 			app.UseForwardedHeaders(forwardOpts);
+			app.UseMiddleware<CapabilityPathRedactionMiddleware>();
 
 			//loggerFactory.AddConsole(Configuration.GetSection("Logging"));
 			//loggerFactory.AddDebug();

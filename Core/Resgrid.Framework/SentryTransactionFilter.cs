@@ -61,7 +61,15 @@ namespace Resgrid.Framework
 		/// </summary>
 		public static SentryTransaction Filter(SentryTransaction transaction)
 		{
-			if (transaction == null || transaction.Status != SpanStatus.NotFound)
+			if (transaction == null)
+				return null;
+
+			if (transaction.Request != null)
+				transaction.Request.Url = RedactCapabilityPath(transaction.Request.Url);
+
+			((IEventLike)transaction).TransactionName = RedactCapabilityPath(transaction.Name);
+
+			if (transaction.Status != SpanStatus.NotFound)
 				return transaction;
 
 			var requestTarget = transaction.Request?.Url;
@@ -69,6 +77,26 @@ namespace Resgrid.Framework
 				requestTarget = GetRequestTargetFromTransactionName(transaction.Name);
 
 			return ShouldDrop(transaction.Status, requestTarget) ? null : transaction;
+		}
+
+		public static string RedactCapabilityPath(string value)
+		{
+			const string prefix = "/api/v4/unit-trackers/c/";
+			if (string.IsNullOrWhiteSpace(value))
+				return value;
+
+			var start = value.IndexOf(prefix, StringComparison.OrdinalIgnoreCase);
+			if (start < 0)
+				return value;
+
+			var tokenStart = start + prefix.Length;
+			var tokenEnd = value.IndexOfAny(new[] { '?', '#', '/' }, tokenStart);
+			if (tokenEnd < 0)
+				tokenEnd = value.Length;
+
+			return value.Substring(0, tokenStart) +
+			       "[REDACTED]" +
+			       value.Substring(tokenEnd);
 		}
 
 		public static bool ShouldDrop(SpanStatus? status, string requestTarget)

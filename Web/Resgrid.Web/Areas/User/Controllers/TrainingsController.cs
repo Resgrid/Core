@@ -4,17 +4,20 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Services;
+using Resgrid.Providers.Claims;
 using Resgrid.Web.Areas.User.Models.Training;
 using Resgrid.Web.Helpers;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {
 	[Area("User")]
+	[Authorize]
 	public class TrainingsController : SecureBaseController
 	{
 		private readonly IDepartmentGroupsService _departmentGroupsService;
@@ -31,6 +34,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.Training_View)]
 		public async Task<IActionResult> Index()
 		{
 			var model = new TrainingIndexModel();
@@ -40,7 +44,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		
+		[Authorize(Policy = ResgridResources.Training_Create)]
 		public async Task<IActionResult> New()
 		{
 			var model = new NewTrainingModel();
@@ -52,6 +56,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[Authorize(Policy = ResgridResources.Training_Create)]
 		public async Task<IActionResult> New(NewTrainingModel model, IFormCollection form, ICollection<IFormFile> attachments)
 		{
 			model.Training.CreatedByUserId = UserId;
@@ -243,6 +248,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.Training_Update)]
 		public async Task<IActionResult> Edit(int trainingId)
 		{
 			var training = await _trainingService.GetTrainingByIdAsync(trainingId);
@@ -270,6 +276,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Training_Update)]
 		public async Task<IActionResult> Edit(int trainingId, EditTrainingModel model, IFormCollection form, ICollection<IFormFile> attachments)
 		{
 			var existingTraining = await _trainingService.GetTrainingByIdAsync(trainingId);
@@ -488,6 +495,14 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 		{
 			var attachment = await _trainingService.GetTrainingAttachmentByIdAsync(trainingAttachmentId);
 
+			if (attachment == null)
+				return null;
+
+			var training = await _trainingService.GetTrainingByIdAsync(attachment.TrainingId);
+
+			if (training == null || training.DepartmentId != DepartmentId)
+				return null;
+
 			return new FileContentResult(attachment.Data, attachment.FileType)
 			{
 				FileDownloadName = attachment.FileName
@@ -521,6 +536,9 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 			if (training == null)
 				return NotFound();
 
+			if (training.DepartmentId != DepartmentId)
+				return Unauthorized();
+
 			List<int> questions = form.Keys
 						.Where(k => k.StartsWith("question_"))
 						.Select(k => { var s = k.Replace("question_", ""); return int.TryParse(s, out var v) ? (int?)v : null; })
@@ -548,6 +566,7 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 		}
 
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.Training_Delete)]
 		public async Task<IActionResult> DeleteTraining(int trainingId)
 		{
 			var model = new ViewTrainingModel();
@@ -565,6 +584,7 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 		}
 
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.Training_Update)]
 		public async Task<IActionResult> ResetUserTraining(int trainingId, string userId)
 		{
 			var model = new ViewTrainingModel();
@@ -582,6 +602,7 @@ var extension = System.IO.Path.GetExtension(file.FileName)?.TrimStart('.') ?? st
 		}
 
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.Training_View)]
 		public async Task<IActionResult> Report(int trainingId)
 		{
 			var model = new TrainingReportView();

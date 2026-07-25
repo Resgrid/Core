@@ -1,0 +1,24 @@
+@model Resgrid.Web.Areas.User.Models.UnitTracking.UnitTrackingEditorView
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Units.Units> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["EditTrackingBinding"];
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-8">
+        <h2>@localizer["EditTrackingBinding"]</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Units" asp-action="Index" asp-route-area="User">@commonLocalizer["UnitsModule"]</a></li>
+            <li><a asp-action="Index" asp-route-unitId="@Model.Unit.UnitId">@localizer["HardwareTracking"]</a></li>
+            <li class="active"><strong>@localizer["EditTrackingBinding"]</strong></li>
+        </ol>
+    </div>
+</div>
+<div class="wrapper wrapper-content">
+    <div class="ibox">
+        <div class="ibox-title"><h5>@Model.Unit.Name</h5></div>
+        <div class="ibox-content">
+            <partial name="_Editor" model="Model" />
+        </div>
+    </div>
+</div>

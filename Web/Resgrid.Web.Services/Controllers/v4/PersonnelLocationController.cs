@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authorization;
 using Resgrid.Providers.Claims;
 using Resgrid.Model.Events;
 using Resgrid.Web.Services.Models.v4.PersonnelLocation;
+using Resgrid.Web.ServicesCore.Helpers;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -66,6 +67,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var deps = await _departmentsService.GetAllDepartmentsForUserAsync(user.UserId);
 
 			if (deps == null || !deps.Exists(x => x.DepartmentId == DepartmentId))
+				return Unauthorized();
+
+			if (locationInput.UserId != UserId && !ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 				return Unauthorized();
 
 			if (!this.ModelState.IsValid)

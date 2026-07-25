@@ -62,6 +62,8 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<DepartmentCallEmailsRepository>().As<IDepartmentCallEmailsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<MessageRepository>().As<IMessageRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<UnitLocationRepository>().As<IUnitLocationRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<UnitTrackingDevicesRepository>().As<IUnitTrackingDevicesRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<UnitTrackingCredentialsRepository>().As<IUnitTrackingCredentialsRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<PushUriRepository>().As<IPushUriRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<PlansRepository>().As<IPlansRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CallTypesRepository>().As<ICallTypesRepository>().InstancePerLifetimeScope();

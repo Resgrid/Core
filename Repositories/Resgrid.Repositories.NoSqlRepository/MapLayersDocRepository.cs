@@ -18,7 +18,7 @@ namespace Resgrid.Repositories.NoSqlRepository
 			using (var connection = new NpgsqlConnection(Config.DataConfig.DocumentConnectionString))
 			{
 				await connection.OpenAsync();
-				var mapLayersData = await connection.QueryAsync<MapLayer>($"SELECT data FROM public.maplayers ml WHERE ml.departmentid = {departmentId};");
+				var mapLayersData = await connection.QueryAsync<MapLayer>("SELECT data FROM public.maplayers ml WHERE ml.departmentid = @departmentId;", new { departmentId });
 
 				if (mapLayersData != null && mapLayersData.Any())
 				{
@@ -35,13 +35,16 @@ namespace Resgrid.Repositories.NoSqlRepository
 			using (var connection = new NpgsqlConnection(Config.DataConfig.DocumentConnectionString))
 			{
 				await connection.OpenAsync();
-				var mapLayersData = await connection.QueryAsync<MapLayer>($"SELECT data FROM public.maplayers ul WHERE ul.oid = '{id}';");
+				var mapLayersData = await connection.QueryAsync<MapLayer>("SELECT data FROM public.maplayers ul WHERE ul.oid = @id;", new { id });
 
-				if (mapLayersData != null)
+				if (mapLayersData != null && mapLayersData.Any())
 					return mapLayersData.FirstOrDefault();
 				else
 				{
-					var mapLayersData2 = await connection.QueryAsync<MapLayer>($"SELECT data FROM public.maplayers ul WHERE ul.id = {id};");
+					if (!int.TryParse(id, out var numericId))
+						return null;
+
+					var mapLayersData2 = await connection.QueryAsync<MapLayer>("SELECT data FROM public.maplayers ul WHERE ul.id = @numericId;", new { numericId });
 
 					if (mapLayersData2 != null)
 						return mapLayersData2.FirstOrDefault();
@@ -56,7 +59,7 @@ namespace Resgrid.Repositories.NoSqlRepository
 			using (var connection = new NpgsqlConnection(Config.DataConfig.DocumentConnectionString))
 			{
 				await connection.OpenAsync();
-				var mapLayersData = await connection.QueryAsync<MapLayer>($"SELECT data FROM public.maplayers ul WHERE ul.oid = '{id}';");
+				var mapLayersData = await connection.QueryAsync<MapLayer>("SELECT data FROM public.maplayers ul WHERE ul.oid = @id;", new { id });
 
 				if (mapLayersData != null)
 					return mapLayersData.FirstOrDefault();
@@ -70,7 +73,8 @@ namespace Resgrid.Repositories.NoSqlRepository
 			using (var connection = new NpgsqlConnection(Config.DataConfig.DocumentConnectionString))
 			{
 				await connection.OpenAsync();
-				var result = await connection.ExecuteScalarAsync<string>($"INSERT INTO public.maplayers (departmentid, data) VALUES ({mapLayer.DepartmentId}, '{JsonConvert.SerializeObject(mapLayer)}') RETURNING id;");
+				var result = await connection.ExecuteScalarAsync<string>("INSERT INTO public.maplayers (departmentid, data) VALUES (@departmentId, CAST(@data AS jsonb)) RETURNING id;",
+					new { departmentId = mapLayer.DepartmentId, data = JsonConvert.SerializeObject(mapLayer) });
 				mapLayer.PgId = result;
 
 				return mapLayer;
@@ -83,8 +87,9 @@ namespace Resgrid.Repositories.NoSqlRepository
 			{
 				await connection.OpenAsync();
 
-				if (!string.IsNullOrWhiteSpace(mapLayer.PgId))
-					await connection.ExecuteAsync($"UPDATE public.maplayers SET data = '{JsonConvert.SerializeObject(mapLayer)}' WHERE id = {mapLayer.PgId};");
+				if (!string.IsNullOrWhiteSpace(mapLayer.PgId) && int.TryParse(mapLayer.PgId, out var pgId))
+					await connection.ExecuteAsync("UPDATE public.maplayers SET data = CAST(@data AS jsonb) WHERE id = @pgId;",
+						new { data = JsonConvert.SerializeObject(mapLayer), pgId });
 
 
 				return mapLayer;

@@ -249,7 +249,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (ModelState.IsValid)
 			{
 				var newLayer = await _mappingService.GetMapLayersByIdAsync(model.Id);
-				newLayer.DepartmentId = DepartmentId;
+
+				if (newLayer == null || newLayer.IsDeleted)
+					return NotFound();
+
+				if (newLayer.DepartmentId != DepartmentId)
+					return Unauthorized();
+
 				newLayer.Name = model.Name;
 				newLayer.Color = model.Color;
 				newLayer.IsOnByDefault = model.IsOnByDefault;

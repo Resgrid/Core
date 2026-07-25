@@ -1693,12 +1693,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.Personnel_View)]
 		[ResponseCache(NoStore = true, Location = ResponseCacheLocation.None)]
 		public async Task<IActionResult> GetMembersForRole(int id)
 		{
 			var role = await _personnelRolesService.GetRoleByIdAsync(id);
 
-			return Json(role.Users.Select(x => x.UserId).ToList());
+			if (role == null || role.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			return Json(role.Users?.Select(x => x.UserId).ToList() ?? new List<string>());
 		}
 
 		[HttpGet]

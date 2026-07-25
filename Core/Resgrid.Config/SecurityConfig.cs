@@ -25,6 +25,13 @@ namespace Resgrid.Config
 		/// </summary>
 		public static string SystemApiKey = "";
 
+		/// <summary>
+		/// Shared secret required on the internal scheduled-report endpoint (User/Reports/InternalRunReport).
+		/// The report-delivery worker supplies this value as the "key" query parameter; requests without a
+		/// matching key are rejected. Must be set (non-empty) for scheduled report delivery to function.
+		/// </summary>
+		public static string InternalReportsToken = "";
+
 		// ── Encryption ───────────────────────────────────────────────────────────────
 
 		/// <summary>AES-256 master key used by IEncryptionService for system-wide encryption.</summary>

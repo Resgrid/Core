@@ -1,4 +1,4 @@
-﻿﻿using System.Text;
+﻿using System.Text;
 using Resgrid.Config;
 using Resgrid.Model.Queue;
 using Resgrid.Framework;
@@ -7,7 +7,9 @@ using RabbitMQ.Client;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using System.Collections.Generic;
+using System.Linq;
 using Resgrid.Model.Events;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Resgrid.Providers.Bus.Rabbit
@@ -90,7 +92,30 @@ namespace Resgrid.Providers.Bus.Rabbit
 		{
 			var serializedObject = ObjectSerialization.Serialize(unitLocationEvent);
 
-			return await SendMessage(ServiceBusConfig.UnitLoactionQueueName, serializedObject, false, "300000");
+			var expiration = ((long)Math.Max(1, UnitTrackingConfig.QueueMessageTtlSeconds) * 1000L).ToString();
+			return await SendMessage(ServiceBusConfig.UnitLocationQueueV2Name, serializedObject, true, expiration, true);
+		}
+
+		public async Task<bool> EnqueueUnitLocationEvents(
+			IReadOnlyCollection<UnitLocationEvent> unitLocationEvents,
+			CancellationToken cancellationToken = default)
+		{
+			if (unitLocationEvents == null)
+				throw new ArgumentNullException(nameof(unitLocationEvents));
+			if (unitLocationEvents.Count == 0)
+				return true;
+
+			var serializedMessages = unitLocationEvents
+				.Select(ObjectSerialization.Serialize)
+				.ToList();
+			var expiration =
+				((long)Math.Max(1, UnitTrackingConfig.QueueMessageTtlSeconds) * 1000L).ToString();
+
+			return await SendMessagesWithConfirmation(
+				ServiceBusConfig.UnitLocationQueueV2Name,
+				serializedMessages,
+				expiration,
+				cancellationToken);
 		}
 
 		public async Task<bool> EnqueuePersonnelLocationEvent(PersonnelLocationEvent personnelLocationEvent)
@@ -114,7 +139,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 			return await SendMessage(ServiceBusConfig.WorkflowQueueName, serializedObject);
 		}
 
-		private async Task<bool> SendMessage(string queueName, string message, bool durable = true, string expiration = "36000000")
+		private async Task<bool> SendMessage(string queueName, string message, bool durable = true, string expiration = "36000000",
+			bool requirePublisherConfirmation = false)
 		{
 			if (String.IsNullOrWhiteSpace(queueName))
 				throw new ArgumentNullException("queueName");
@@ -131,7 +157,13 @@ namespace Resgrid.Providers.Bus.Rabbit
 					// v7 IChannel skips the async Channel.Close/CloseOk handshake that releases the channel
 					// number back to the SessionManager, leaking channels until the connection hits its limit
 					// (ChannelAllocationException: "The connection cannot support any more channels").
-					await using (var channel = await connection.CreateChannelAsync())
+					var channelOptions = requirePublisherConfirmation
+						? new CreateChannelOptions(true, true)
+						: null;
+
+					await using (var channel = channelOptions == null
+						? await connection.CreateChannelAsync()
+						: await connection.CreateChannelAsync(channelOptions))
 					{
 						if (channel != null)
 						{
@@ -148,11 +180,18 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 							props.Expiration = expiration;
 
-							await channel.BasicPublishAsync(exchange: ServiceBusConfig.RabbbitExchange,
-											 routingKey: RabbitConnection.SetQueueNameForEnv(queueName),
-											 mandatory: true,
-											 basicProperties: props,
-											 body: Encoding.ASCII.GetBytes(message));
+							using var publishTimeout = requirePublisherConfirmation
+								? new System.Threading.CancellationTokenSource(
+									TimeSpan.FromSeconds(Math.Max(1, UnitTrackingConfig.QueuePublishTimeoutSeconds)))
+								: null;
+
+							await channel.BasicPublishAsync(
+								exchange: ServiceBusConfig.RabbbitExchange,
+								routingKey: RabbitConnection.SetQueueNameForEnv(queueName),
+								mandatory: true,
+								basicProperties: props,
+							body: Encoding.UTF8.GetBytes(message),
+							cancellationToken: publishTimeout?.Token ?? default);
 
 							return true;
 						}
@@ -168,6 +207,65 @@ namespace Resgrid.Providers.Bus.Rabbit
 				}
 
 				return false;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return false;
+			}
+		}
+
+		private async Task<bool> SendMessagesWithConfirmation(
+			string queueName,
+			IReadOnlyCollection<string> messages,
+			string expiration,
+			CancellationToken cancellationToken)
+		{
+			if (string.IsNullOrWhiteSpace(queueName))
+				throw new ArgumentNullException(nameof(queueName));
+			if (messages == null || messages.Count == 0)
+				return true;
+			if (messages.Any(string.IsNullOrWhiteSpace))
+				throw new ArgumentException("Queue messages cannot be empty.", nameof(messages));
+
+			try
+			{
+				var connection = await RabbitConnection.CreateConnection(_clientName);
+				if (connection == null)
+				{
+					Logging.LogError("RabbitOutboundQueueProvider->SendMessagesWithConfirmation connection is null.");
+					return false;
+				}
+
+				await using var channel =
+					await connection.CreateChannelAsync(new CreateChannelOptions(true, true), cancellationToken);
+				var props = new BasicProperties
+				{
+					DeliveryMode = DeliveryModes.Persistent,
+					Expiration = expiration,
+					Headers = new Dictionary<string, object>
+					{
+						["x-redelivered-count"] = 0
+					}
+				};
+
+				using var publishTimeout =
+					CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+				publishTimeout.CancelAfter(
+					TimeSpan.FromSeconds(Math.Max(1, UnitTrackingConfig.QueuePublishTimeoutSeconds)));
+
+				foreach (var message in messages)
+				{
+					await channel.BasicPublishAsync(
+						exchange: ServiceBusConfig.RabbbitExchange,
+						routingKey: RabbitConnection.SetQueueNameForEnv(queueName),
+						mandatory: true,
+						basicProperties: props,
+						body: Encoding.UTF8.GetBytes(message),
+						cancellationToken: publishTimeout.Token);
+				}
+
+				return true;
 			}
 			catch (Exception ex)
 			{

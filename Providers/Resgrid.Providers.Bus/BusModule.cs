@@ -14,6 +14,7 @@ namespace Resgrid.Providers.Bus
 			builder.RegisterType<PaymentProvider>().As<IPaymentProvider>().InstancePerLifetimeScope();
 			builder.RegisterType<UnitLocationEventProvider>().As<IUnitLocationEventProvider>().InstancePerLifetimeScope();
 			builder.RegisterType<PersonnelLocationEventProvider>().As<IPersonnelLocationEventProvider>().InstancePerLifetimeScope();
+			builder.RegisterType<Rabbit.RabbitOutboundQueueProvider>().As<IRabbitOutboundQueueProvider>().InstancePerLifetimeScope();
 
 			// Singletons
 			builder.RegisterType<OutboundQueueProvider>().As<IOutboundQueueProvider>().SingleInstance();

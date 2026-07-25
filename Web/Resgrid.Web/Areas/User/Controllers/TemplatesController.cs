@@ -221,6 +221,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
+				var existing = await _autofillsService.GetAutofillByIdAsync(model.Autofill.AutofillId);
+
+				if (existing == null || existing.DepartmentId != DepartmentId)
+					return Unauthorized();
+
 				model.Autofill.Type = (int)AutofillTypes.CallNote;
 				model.Autofill.DepartmentId = DepartmentId;
 				model.Autofill.AddedByUserId = UserId;
@@ -262,9 +267,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.Call_View)]
 		public async Task<IActionResult> GetTemplate(int id)
 		{
 			var template = await _templatesService.GetCallQuickTemplateByIdAsync(id);
+
+			if (template == null || template.DepartmentId != DepartmentId)
+				return Unauthorized();
 
 			return Json(template);
 		}

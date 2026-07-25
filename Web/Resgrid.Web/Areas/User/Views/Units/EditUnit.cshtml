@@ -129,6 +129,13 @@
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
                                 <a class="btn btn-white" asp-controller="Units" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                                <a class="btn btn-info"
+                                   asp-controller="UnitTracking"
+                                   asp-action="Index"
+                                   asp-route-area="User"
+                                   asp-route-unitId="@Model.Unit.UnitId">
+                                    <i class="fa fa-map-marker"></i> @localizer["HardwareTracking"]
+                                </a>
                                 <button class="btn btn-primary" type="submit">@commonLocalizer["Update"]</button>
                             </div>
                         </div>

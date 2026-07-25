@@ -13,41 +13,70 @@ namespace Resgrid.Workers.Framework.Logic
 	{
 		public static async Task<bool> ProcessUnitLocationQueueItem(UnitLocationEvent unitLocationEvent, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			bool success = true;
-
-			if (unitLocationEvent != null)
+			try
 			{
-				try
-				{
-					var unitService = Bootstrapper.GetKernel().Resolve<IUnitsService>();
+				if (unitLocationEvent == null)
+					throw new ArgumentNullException(nameof(unitLocationEvent));
 
-					if (unitLocationEvent.Latitude.HasValue && unitLocationEvent.Longitude.HasValue)
-					{
-						var unitLocation = new UnitsLocation();
-						unitLocation.DepartmentId = unitLocationEvent.DepartmentId;
-						unitLocation.UnitId = unitLocationEvent.UnitId;
-						unitLocation.Timestamp = unitLocationEvent.Timestamp;
-						unitLocation.Latitude = unitLocationEvent.Latitude.Value;
-						unitLocation.Longitude = unitLocationEvent.Longitude.Value;
-						unitLocation.Accuracy = unitLocationEvent.Accuracy;
-						unitLocation.Altitude = unitLocationEvent.Altitude;
-						unitLocation.AltitudeAccuracy = unitLocationEvent.AltitudeAccuracy;
-						unitLocation.Speed = unitLocationEvent.Speed;
-						unitLocation.Heading = unitLocationEvent.Heading;
+				if (unitLocationEvent.UnitId <= 0)
+					throw new InvalidOperationException("A Unit location queue event must identify a Unit.");
 
-						if (unitLocation.UnitId > 0)
-						{
-							await unitService.AddUnitLocationAsync(unitLocation, unitLocationEvent.DepartmentId, cancellationToken);
-						}
-					}
-				}
-				catch (Exception ex)
+				if (unitLocationEvent.DepartmentId <= 0)
+					throw new InvalidOperationException("A Unit location queue event must identify a Department.");
+
+				if (unitLocationEvent.IsValidFix == false)
 				{
-					Logging.LogException(ex);
+					Logging.LogInfo($"UnitLocationQueueLogic dropping invalid fix for UnitId {unitLocationEvent.UnitId}, EventId {unitLocationEvent.EventId}.");
+					return true;
 				}
+
+				if (!unitLocationEvent.Latitude.HasValue || !unitLocationEvent.Longitude.HasValue)
+					throw new InvalidOperationException("A valid Unit location queue event must contain latitude and longitude.");
+
+				var unitService = Bootstrapper.GetKernel().Resolve<IUnitsService>();
+				var timestamp = unitLocationEvent.Timestamp == default
+					? unitLocationEvent.ReceivedOn ?? DateTime.UtcNow
+					: unitLocationEvent.Timestamp;
+				var unitLocation = new UnitsLocation
+				{
+					EventId = unitLocationEvent.EventId,
+					DepartmentId = unitLocationEvent.DepartmentId,
+					UnitId = unitLocationEvent.UnitId,
+					Timestamp = timestamp,
+					ReceivedOn = unitLocationEvent.ReceivedOn ?? timestamp,
+					SourceType = unitLocationEvent.SourceType,
+					SourceId = unitLocationEvent.SourceId,
+					SourcePriority = unitLocationEvent.SourcePriority,
+					TransportType = unitLocationEvent.TransportType,
+					ProtocolKey = unitLocationEvent.ProtocolKey,
+					IsValidFix = unitLocationEvent.IsValidFix,
+					Latitude = unitLocationEvent.Latitude.Value,
+					Longitude = unitLocationEvent.Longitude.Value,
+					Accuracy = unitLocationEvent.Accuracy,
+					Altitude = unitLocationEvent.Altitude,
+					AltitudeAccuracy = unitLocationEvent.AltitudeAccuracy,
+					Speed = unitLocationEvent.Speed,
+					Heading = unitLocationEvent.Heading,
+					Satellites = unitLocationEvent.Satellites,
+					Hdop = unitLocationEvent.Hdop,
+					BatteryPercent = unitLocationEvent.BatteryPercent,
+					ExternalPowerVolts = unitLocationEvent.ExternalPowerVolts,
+					SignalPercent = unitLocationEvent.SignalPercent,
+					Ignition = unitLocationEvent.Ignition,
+					IsMoving = unitLocationEvent.IsMoving,
+					AlarmCode = unitLocationEvent.AlarmCode,
+					TimestampSource = unitLocationEvent.TimestampSource
+				};
+
+				await unitService.AddUnitLocationAsync(unitLocation, unitLocationEvent.DepartmentId, cancellationToken);
+
+				return true;
 			}
-
-			return success;
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				throw;
+			}
 		}
 	}
 }

@@ -24,6 +24,9 @@ namespace Resgrid.Services
 		private static string PersonnelOnUnitSetUnitStatusCacheKey = "DSetPersonnelOnUnitSetUnitStatus_{0}";
 		private static string ModernNotificationsCacheKey = "DSetModernNotifications_{0}";
 		private static string ForceChatbotSecurityPinCacheKey = "DSetForceChatbotSecurityPin_{0}";
+		private static string HardwareTrackingStaleAfterSecondsCacheKey = "DSetHardwareTrackingStale_{0}";
+		private static string HardwareTrackingMobileFallbackCacheKey = "DSetHardwareTrackingFallback_{0}";
+		private static string HardwareTrackingRetentionDaysCacheKey = "DSetHardwareTrackingRetention_{0}";
 		private static TimeSpan LongCacheLength = TimeSpan.FromDays(14);
 		private static TimeSpan ThatsNotLongThisIsLongCacheLength = TimeSpan.FromDays(365);
 		private static TimeSpan TwoYearCacheLength = TimeSpan.FromDays(730);
@@ -45,14 +48,10 @@ namespace Resgrid.Services
 		public async Task<DepartmentSetting> SaveOrUpdateSettingAsync(int departmentId, string setting, DepartmentSettingTypes type, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var savedSetting = await GetSettingByDepartmentIdType(departmentId, type);
+			await InvalidateSettingCacheAsync(departmentId, type);
 
 			if (savedSetting == null)
 			{
-				// First-time write still needs to clear any cache populated by the fallback
-				// "new DepartmentModuleSettings()" in GetDepartmentModuleSettingsAsync (cached 365 days).
-				if (type == DepartmentSettingTypes.ModuleSettings)
-					await _cacheProvider.RemoveAsync(string.Format(ModuleSettingsCacheKey, departmentId));
-
 				DepartmentSetting newSetting = new DepartmentSetting();
 				newSetting.DepartmentId = departmentId;
 				newSetting.Setting = setting;
@@ -62,35 +61,6 @@ namespace Resgrid.Services
 			}
 			else
 			{
-				// Clear out Cache
-				switch (type)
-				{
-					case DepartmentSettingTypes.BigBoardMapCenterGpsCoordinates:
-						await _cacheProvider.RemoveAsync(string.Format(BigBoardCenterGps, departmentId));
-						break;
-					case DepartmentSettingTypes.DisabledAutoAvailable:
-						await _cacheProvider.RemoveAsync(string.Format(DisableAutoAvailableCacheKey, departmentId));
-						break;
-					case DepartmentSettingTypes.StaffingSuppressStaffingLevels:
-						await _cacheProvider.RemoveAsync(string.Format(StaffingSupressInfo, departmentId));
-						break;
-					case DepartmentSettingTypes.ModuleSettings:
-						await _cacheProvider.RemoveAsync(string.Format(ModuleSettingsCacheKey, departmentId));
-						break;
-					case DepartmentSettingTypes.TtsLanguage:
-						await _cacheProvider.RemoveAsync(string.Format(TtsLanguageCacheKey, departmentId));
-						break;
-					case DepartmentSettingTypes.PersonnelOnUnitSetUnitStatus:
-						await _cacheProvider.RemoveAsync(string.Format(PersonnelOnUnitSetUnitStatusCacheKey, departmentId));
-						break;
-					case DepartmentSettingTypes.EnableModernNotifications:
-						await _cacheProvider.RemoveAsync(string.Format(ModernNotificationsCacheKey, departmentId));
-						break;
-					case DepartmentSettingTypes.ForceChatbotSecurityPin:
-						await _cacheProvider.RemoveAsync(string.Format(ForceChatbotSecurityPinCacheKey, departmentId));
-						break;
-				}
-
 				savedSetting.Setting = setting;
 				return await _departmentSettingsRepository.SaveOrUpdateAsync(savedSetting, cancellationToken);
 			}
@@ -103,7 +73,13 @@ namespace Resgrid.Services
 			var savedSetting = await GetSettingByDepartmentIdType(departmentId, type);
 
 			if (savedSetting != null)
-				return await _departmentSettingsRepository.DeleteAsync(savedSetting, cancellationToken);
+			{
+				var deleted = await _departmentSettingsRepository.DeleteAsync(savedSetting, cancellationToken);
+				if (deleted)
+					await InvalidateSettingCacheAsync(departmentId, type);
+
+				return deleted;
+			}
 
 			return false;
 		}
@@ -976,6 +952,117 @@ namespace Resgrid.Services
 			}
 
 			return bool.Parse(await getSetting());
+		}
+
+		public async Task<int> GetHardwareTrackingStaleAfterSecondsAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<string> getSetting()
+			{
+				var setting = await GetSettingByDepartmentIdType(
+					departmentId,
+					DepartmentSettingTypes.HardwareTrackingStaleAfterSeconds);
+				return setting?.Setting ?? "180";
+			}
+
+			var value = Config.SystemBehaviorConfig.CacheEnabled && !bypassCache
+				? await _cacheProvider.RetrieveAsync(
+					string.Format(HardwareTrackingStaleAfterSecondsCacheKey, departmentId),
+					getSetting,
+					LongCacheLength)
+				: await getSetting();
+
+			return int.TryParse(value, out var seconds) ? Math.Max(1, seconds) : 180;
+		}
+
+		public async Task<bool> GetHardwareTrackingMobileFallbackEnabledAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<string> getSetting()
+			{
+				var setting = await GetSettingByDepartmentIdType(
+					departmentId,
+					DepartmentSettingTypes.HardwareTrackingMobileFallbackEnabled);
+				return setting?.Setting ?? "true";
+			}
+
+			var value = Config.SystemBehaviorConfig.CacheEnabled && !bypassCache
+				? await _cacheProvider.RetrieveAsync(
+					string.Format(HardwareTrackingMobileFallbackCacheKey, departmentId),
+					getSetting,
+					LongCacheLength)
+				: await getSetting();
+
+			return !bool.TryParse(value, out var enabled) || enabled;
+		}
+
+		public async Task<int> GetHardwareTrackingLocationRetentionDaysAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<string> getSetting()
+			{
+				var setting = await GetSettingByDepartmentIdType(
+					departmentId,
+					DepartmentSettingTypes.HardwareTrackingLocationRetentionDays);
+				return setting?.Setting ?? UnitTrackingConfig.DefaultLocationRetentionDays.ToString();
+			}
+
+			var value = Config.SystemBehaviorConfig.CacheEnabled && !bypassCache
+				? await _cacheProvider.RetrieveAsync(
+					string.Format(HardwareTrackingRetentionDaysCacheKey, departmentId),
+					getSetting,
+					LongCacheLength)
+				: await getSetting();
+
+			var retentionDays = int.TryParse(value, out var parsed)
+				? parsed
+				: UnitTrackingConfig.DefaultLocationRetentionDays;
+
+			return Math.Min(
+				UnitTrackingConfig.MaximumLocationRetentionDays,
+				Math.Max(UnitTrackingConfig.MinimumLocationRetentionDays, retentionDays));
+		}
+
+		private async Task InvalidateSettingCacheAsync(int departmentId, DepartmentSettingTypes type)
+		{
+			string cacheKey = null;
+
+			switch (type)
+			{
+				case DepartmentSettingTypes.BigBoardMapCenterGpsCoordinates:
+					cacheKey = string.Format(BigBoardCenterGps, departmentId);
+					break;
+				case DepartmentSettingTypes.DisabledAutoAvailable:
+					cacheKey = string.Format(DisableAutoAvailableCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.StaffingSuppressStaffingLevels:
+					cacheKey = string.Format(StaffingSupressInfo, departmentId);
+					break;
+				case DepartmentSettingTypes.ModuleSettings:
+					cacheKey = string.Format(ModuleSettingsCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.TtsLanguage:
+					cacheKey = string.Format(TtsLanguageCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.PersonnelOnUnitSetUnitStatus:
+					cacheKey = string.Format(PersonnelOnUnitSetUnitStatusCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.EnableModernNotifications:
+					cacheKey = string.Format(ModernNotificationsCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.ForceChatbotSecurityPin:
+					cacheKey = string.Format(ForceChatbotSecurityPinCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.HardwareTrackingStaleAfterSeconds:
+					cacheKey = string.Format(HardwareTrackingStaleAfterSecondsCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.HardwareTrackingMobileFallbackEnabled:
+					cacheKey = string.Format(HardwareTrackingMobileFallbackCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.HardwareTrackingLocationRetentionDays:
+					cacheKey = string.Format(HardwareTrackingRetentionDaysCacheKey, departmentId);
+					break;
+			}
+
+			if (!string.IsNullOrWhiteSpace(cacheKey))
+				await _cacheProvider.RemoveAsync(cacheKey);
 		}
 
 		private static string GetDefaultTtsLanguage()

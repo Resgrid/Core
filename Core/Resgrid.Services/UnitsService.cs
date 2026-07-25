@@ -22,6 +22,7 @@ namespace Resgrid.Services
 		private readonly IUnitStateRoleRepository _unitStateRoleRepository;
 		private readonly Lazy<IMongoRepository<UnitsLocation>> _unitLocationRepository;
 		private readonly IUnitLocationsDocRepository _unitLocationsDocRepository;
+		private readonly Lazy<IUnitLocationsMongoRepository> _unitLocationsMongoRepository;
 		private readonly ISubscriptionsService _subscriptionsService;
 		private readonly IUserStateService _userStateService;
 		private readonly IEventAggregator _eventAggregator;
@@ -35,7 +36,8 @@ namespace Resgrid.Services
 			IUnitLogsRepository unitLogsRepository, IUnitTypesRepository unitTypesRepository, ISubscriptionsService subscriptionsService,
 			IUnitRolesRepository unitRolesRepository, IUnitStateRoleRepository unitStateRoleRepository, IUserStateService userStateService,
 			IEventAggregator eventAggregator, ICustomStateService customStateService, Lazy<IMongoRepository<UnitsLocation>> unitLocationRepository,
-			IUnitLocationsDocRepository unitLocationsDocRepository, IUnitActiveRolesRepository unitActiveRolesRepository,
+			IUnitLocationsDocRepository unitLocationsDocRepository, Lazy<IUnitLocationsMongoRepository> unitLocationsMongoRepository,
+			IUnitActiveRolesRepository unitActiveRolesRepository,
 			IDepartmentGroupsService departmentGroupsService, ILimitsService limitsService, IPersonnelRolesService personnelRolesService)
 		{
 			_unitsRepository = unitsRepository;
@@ -50,6 +52,7 @@ namespace Resgrid.Services
 			_customStateService = customStateService;
 			_unitLocationRepository = unitLocationRepository;
 			_unitLocationsDocRepository = unitLocationsDocRepository;
+			_unitLocationsMongoRepository = unitLocationsMongoRepository;
 			_unitActiveRolesRepository = unitActiveRolesRepository;
 			_departmentGroupsService = departmentGroupsService;
 			_limitsService = limitsService;
@@ -539,40 +542,41 @@ namespace Resgrid.Services
 			return unitStates;
 		}
 
-		public async Task<UnitsLocation> AddUnitLocationAsync(UnitsLocation location, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<UnitLocationWriteResult> AddUnitLocationAsync(UnitsLocation location, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			try
+			if (location == null)
+				throw new ArgumentNullException(nameof(location));
+
+			UnitLocationWriteResult result;
+
+			if (Config.DataConfig.DocDatabaseType == Config.DatabaseTypes.Postgres)
 			{
-				if (Config.DataConfig.DocDatabaseType == Config.DatabaseTypes.Postgres)
-				{
-					if (String.IsNullOrWhiteSpace(location.PgId))
-						location = await _unitLocationsDocRepository.InsertAsync(location);
-					else
-						location = await _unitLocationsDocRepository.UpdateAsync(location);
-				}
+				if (String.IsNullOrWhiteSpace(location.PgId))
+					result = await _unitLocationsDocRepository.InsertAsync(location);
 				else
-				{
-					if (location.Id.Timestamp == 0)
-						await _unitLocationRepository.Value.InsertOneAsync(location);
-					else
-						await _unitLocationRepository.Value.ReplaceOneAsync(location);
-				}
-
-				_eventAggregator.SendMessage<UnitLocationUpdatedEvent>(new UnitLocationUpdatedEvent()
-					{
-						DepartmentId = departmentId,
-						UnitId = location.UnitId.ToString(),
-						Latitude = double.Parse(location.Latitude.ToString()),
-						Longitude = double.Parse(location.Longitude.ToString()),
-						RecordId = location.GetId(),
-					});
+					result = await _unitLocationsDocRepository.UpdateAsync(location);
 			}
-			catch (Exception ex)
+			else
 			{
-				Framework.Logging.LogException(ex);
+				if (location.Id.Timestamp == 0)
+					result = await _unitLocationsMongoRepository.Value.InsertAsync(location);
+				else
+					result = await _unitLocationsMongoRepository.Value.UpdateAsync(location);
 			}
 
-			return location;
+			if (result.Status == UnitLocationWriteStatus.Inserted)
+			{
+				await _eventAggregator.SendMessageAsync(new UnitLocationUpdatedEvent
+				{
+					DepartmentId = departmentId,
+					UnitId = result.Location.UnitId.ToString(),
+					Latitude = (double)result.Location.Latitude,
+					Longitude = (double)result.Location.Longitude,
+					RecordId = result.Location.GetId(),
+				});
+			}
+
+			return result;
 		}
 
 		public async Task<UnitsLocation> GetLatestUnitLocationAsync(int unitId, DateTime? timestamp = null)

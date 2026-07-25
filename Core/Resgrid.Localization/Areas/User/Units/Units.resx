@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddTrackingBinding" xml:space="preserve">
+    <value>Add tracking binding</value>
+  </data>
+  <data name="AllowedSourceCidrs" xml:space="preserve">
+    <value>Allowed source networks</value>
+  </data>
+  <data name="AllowedSourceCidrsHelp" xml:space="preserve">
+    <value>Optional comma-separated IPv4 or IPv6 CIDR ranges permitted to send positions for this tracker.</value>
+  </data>
+  <data name="AuthenticationMode" xml:space="preserve">
+    <value>Authentication mode</value>
+  </data>
+  <data name="BasicUsername" xml:space="preserve">
+    <value>Basic authentication username</value>
+  </data>
+  <data name="BasicUsernameRequired" xml:space="preserve">
+    <value>A Basic authentication username is required.</value>
+  </data>
+  <data name="CertificationStatus" xml:space="preserve">
+    <value>Certification status</value>
+  </data>
+  <data name="CopyToClipboard" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="CreateCredential" xml:space="preserve">
+    <value>Create credential</value>
+  </data>
+  <data name="CredentialPrefix" xml:space="preserve">
+    <value>Credential prefix</value>
+  </data>
+  <data name="CredentialSaved" xml:space="preserve">
+    <value>I have saved this credential</value>
+  </data>
+  <data name="Credentials" xml:space="preserve">
+    <value>Credentials</value>
+  </data>
+  <data name="CredentialToken" xml:space="preserve">
+    <value>Credential token</value>
+  </data>
+  <data name="CustomHeaderRequired" xml:space="preserve">
+    <value>A custom header name is required.</value>
+  </data>
+  <data name="DeleteTrackingWarning" xml:space="preserve">
+    <value>Remove this tracking binding? Its credentials will be revoked and it will stop accepting positions.</value>
+  </data>
+  <data name="DeviceIdentifier" xml:space="preserve">
+    <value>Device identifier</value>
+  </data>
+  <data name="DeviceIdentifierHelp" xml:space="preserve">
+    <value>Use the identifier emitted by the device or forwarding service. It is normalized before storage.</value>
+  </data>
+  <data name="DisableTracking" xml:space="preserve">
+    <value>Disable tracking</value>
+  </data>
+  <data name="DisableTrackingWarning" xml:space="preserve">
+    <value>Disable this binding and revoke all of its credentials?</value>
+  </data>
+  <data name="EditTrackingBinding" xml:space="preserve">
+    <value>Edit tracking binding</value>
+  </data>
+  <data name="EndpointUrl" xml:space="preserve">
+    <value>HTTPS endpoint</value>
+  </data>
+  <data name="ExpiresOn" xml:space="preserve">
+    <value>Expires</value>
+  </data>
+  <data name="FirmwareVersion" xml:space="preserve">
+    <value>Firmware version</value>
+  </data>
+  <data name="HardwareTracking" xml:space="preserve">
+    <value>Hardware GPS tracking</value>
+  </data>
+  <data name="HardwareTrackingDescription" xml:space="preserve">
+    <value>Bind a hardware tracker or forwarding service to this Unit, issue credentials, and monitor delivery health.</value>
+  </data>
+  <data name="HeaderName" xml:space="preserve">
+    <value>Header name</value>
+  </data>
+  <data name="HeaderValue" xml:space="preserve">
+    <value>Header value</value>
+  </data>
+  <data name="LastErrorCode" xml:space="preserve">
+    <value>Last error code</value>
+  </data>
+  <data name="LastReceived" xml:space="preserve">
+    <value>Last received</value>
+  </data>
+  <data name="LastSeen" xml:space="preserve">
+    <value>Last seen</value>
+  </data>
+  <data name="LastUsed" xml:space="preserve">
+    <value>Last used</value>
+  </data>
+  <data name="LastValidFix" xml:space="preserve">
+    <value>Last valid fix</value>
+  </data>
+  <data name="JsonPayload" xml:space="preserve">
+    <value>JSON payload</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>Never</value>
+  </data>
+  <data name="NoCredentials" xml:space="preserve">
+    <value>No credentials have been issued for this binding.</value>
+  </data>
+  <data name="NoTrackingBindings" xml:space="preserve">
+    <value>No hardware tracking bindings are configured for this Unit.</value>
+  </data>
+  <data name="OneTimeCredentialHeader" xml:space="preserve">
+    <value>Save tracking credential</value>
+  </data>
+  <data name="OneTimeCredentialWarning" xml:space="preserve">
+    <value>This credential is shown only once. Copy the endpoint and secret into the tracker configuration before leaving this page.</value>
+  </data>
+  <data name="Protocol" xml:space="preserve">
+    <value>Protocol</value>
+  </data>
+  <data name="PreviewJson" xml:space="preserve">
+    <value>Validate test JSON</value>
+  </data>
+  <data name="PreviewJsonMalformed" xml:space="preserve">
+    <value>The JSON payload is malformed, contains duplicate fields, or exceeds the nesting limit.</value>
+  </data>
+  <data name="PreviewJsonPositionInvalid" xml:space="preserve">
+    <value>Each position requires a non-empty eventId and valid latitude and longitude values.</value>
+  </data>
+  <data name="PreviewJsonPositionsRequired" xml:space="preserve">
+    <value>A batch must contain at least one JSON position object.</value>
+  </data>
+  <data name="PreviewJsonRequired" xml:space="preserve">
+    <value>Enter a JSON payload to validate.</value>
+  </data>
+  <data name="PreviewJsonSuccess" xml:space="preserve">
+    <value>The preview parser accepted {0} position(s). Nothing was queued or stored.</value>
+  </data>
+  <data name="PreviewJsonTooLarge" xml:space="preserve">
+    <value>The JSON payload exceeds the configured request size limit.</value>
+  </data>
+  <data name="PreviewJsonTooManyPositions" xml:space="preserve">
+    <value>The JSON batch exceeds the configured position limit.</value>
+  </data>
+  <data name="RevokeCredential" xml:space="preserve">
+    <value>Revoke</value>
+  </data>
+  <data name="RevokeCredentialWarning" xml:space="preserve">
+    <value>Revoke this credential? The sender will no longer be able to use it.</value>
+  </data>
+  <data name="RetryExpectation" xml:space="preserve">
+    <value>Retry expectation:</value>
+  </data>
+  <data name="Revoked" xml:space="preserve">
+    <value>Revoked</value>
+  </data>
+  <data name="RotateCredential" xml:space="preserve">
+    <value>Rotate</value>
+  </data>
+  <data name="SaveTrackingBinding" xml:space="preserve">
+    <value>Save tracking binding</value>
+  </data>
+  <data name="SendTestJson" xml:space="preserve">
+    <value>Send test JSON</value>
+  </data>
+  <data name="SendTestJsonDescription" xml:space="preserve">
+    <value>Validate a generic Resgrid JSON payload without authenticating, queueing, or storing it. This preview is available only to department administrators outside production.</value>
+  </data>
+  <data name="SetupInstructions" xml:space="preserve">
+    <value>Setup instructions</value>
+  </data>
+  <data name="SecondaryIdentifier" xml:space="preserve">
+    <value>Secondary identifier</value>
+  </data>
+  <data name="SelectTrackingProfile" xml:space="preserve">
+    <value>Select a certified tracking profile</value>
+  </data>
+  <data name="SelectValidTrackingProfile" xml:space="preserve">
+    <value>Select a certified tracking profile.</value>
+  </data>
+  <data name="SourcePriority" xml:space="preserve">
+    <value>Source priority</value>
+  </data>
+  <data name="TrackingBindingActions" xml:space="preserve">
+    <value>Tracking binding actions</value>
+  </data>
+  <data name="TrackingBindingCreatedMessage" xml:space="preserve">
+    <value>Tracking binding created. Generate a credential to finish setup.</value>
+  </data>
+  <data name="TrackingBindingDeletedMessage" xml:space="preserve">
+    <value>Tracking binding removed.</value>
+  </data>
+  <data name="TrackingBindingDisabledMessage" xml:space="preserve">
+    <value>Tracking binding disabled and its credentials revoked.</value>
+  </data>
+  <data name="TrackingBindingUpdatedMessage" xml:space="preserve">
+    <value>Tracking binding updated.</value>
+  </data>
+  <data name="TrackingCredentialRevokedMessage" xml:space="preserve">
+    <value>Tracking credential revoked.</value>
+  </data>
+  <data name="TrackingDisplayName" xml:space="preserve">
+    <value>Display name</value>
+  </data>
+  <data name="TrackingEnabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="TrackingIdentifierRequired" xml:space="preserve">
+    <value>A device identifier is required for the selected profile.</value>
+  </data>
+  <data name="TrackingProfile" xml:space="preserve">
+    <value>Tracking profile</value>
+  </data>
+  <data name="TrackingStatus" xml:space="preserve">
+    <value>Tracking status</value>
+  </data>
+  <data name="Transport" xml:space="preserve">
+    <value>Transport</value>
+  </data>
+  <data name="UnsupportedTrackingAuth" xml:space="preserve">
+    <value>The selected authentication mode is not supported by this tracking profile.</value>
+  </data>
+  <data name="ViewTrackingStatus" xml:space="preserve">
+    <value>View tracking status</value>
+  </data>
+</root>

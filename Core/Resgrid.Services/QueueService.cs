@@ -13,6 +13,13 @@ namespace Resgrid.Services
 {
 	public class QueueService : IQueueService
 	{
+		// Shared predicate for pending department-deletion queue items. No ToBeCompletedOn filter:
+		// a past-due request that hasn't executed yet is still pending and must remain visible
+		// (and cancellable) until the worker completes it; the handler decides between reminders
+		// and execution. Keep both queries below on this single predicate so they can't drift.
+		private static readonly Func<QueueItem, bool> IsPendingDepartmentDeletion =
+			x => x.QueueType == (int)QueueTypes.DeleteDepartment && x.CompletedOn == null;
+
 		private readonly IQueueItemsRepository _queueItemsRepository;
 		private readonly IOutboundQueueProvider _outboundQueueProvider;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
@@ -47,8 +54,11 @@ namespace Resgrid.Services
 		public async Task<QueueItem> GetPendingDeleteDepartmentQueueItemAsync(int departmentId)
 		{
 			var allItems = await _queueItemsRepository.GetAllAsync();
-			var depItem = allItems.FirstOrDefault(x =>
-				x.SourceId == departmentId.ToString() && x.ToBeCompletedOn > DateTime.UtcNow && x.QueueType == (int)QueueTypes.DeleteDepartment && x.CompletedOn == null);
+
+			var depItem = allItems.Where(x =>
+				x.SourceId == departmentId.ToString() && IsPendingDepartmentDeletion(x))
+				.OrderByDescending(x => x.QueuedOn)
+				.FirstOrDefault();
 
 			return depItem;
 		}
@@ -56,8 +66,8 @@ namespace Resgrid.Services
 		public async Task<List<QueueItem>> GetAllPendingDeleteDepartmentQueueItemsAsync()
 		{
 			var allItems = await _queueItemsRepository.GetAllAsync();
-			var depItems = allItems.Where(x =>
-				x.ToBeCompletedOn > DateTime.UtcNow && x.QueueType == (int)QueueTypes.DeleteDepartment && x.CompletedOn == null).ToList();
+
+			var depItems = allItems.Where(IsPendingDepartmentDeletion).ToList();
 
 			return depItems;
 		}

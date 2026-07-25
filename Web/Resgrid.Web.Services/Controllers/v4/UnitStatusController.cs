@@ -36,6 +36,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IActionLogsService _actionLogsService;
 		private readonly IMappingService _mappingService;
 		private readonly IIncidentCommandService _incidentCommandService;
+		private readonly IDepartmentsService _departmentsService;
 
 		public UnitStatusController(
 			ICallsService callsService,
@@ -44,7 +45,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IDepartmentSettingsService departmentSettingsService,
 			IActionLogsService actionLogsService,
 			IMappingService mappingService,
-			IIncidentCommandService incidentCommandService
+			IIncidentCommandService incidentCommandService,
+			IDepartmentsService departmentsService
 			)
 		{
 			_callsService = callsService;
@@ -54,6 +56,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_actionLogsService = actionLogsService;
 			_mappingService = mappingService;
 			_incidentCommandService = incidentCommandService;
+			_departmentsService = departmentsService;
 		}
 		#endregion Members and Constructors
 
@@ -307,6 +310,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 							// status update (TryParse also covers the null/empty check).
 							if (!string.IsNullOrWhiteSpace(role.UserId) && int.TryParse(role.RoleId, out var unitStateRoleId))
 							{
+								// Only users that are members of this department can be placed in unit roles;
+								// otherwise status action logs could be written for arbitrary users.
+								var roleMember = await _departmentsService.GetDepartmentMemberAsync(role.UserId, DepartmentId);
+
+								if (roleMember == null)
+									continue;
+
 								var unitRole = new UnitStateRole();
 								unitRole.UnitStateId = savedState.UnitStateId;
 								unitRole.UserId = role.UserId;

@@ -128,7 +128,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 				DepartmentId = message.DepartmentId,
 				ItemId = message.RecordId,
 				Payload = JsonConvert.SerializeObject(message)
-			}.SerializeJson());
+			}.SerializeJson(), true);
 		}
 
 		private static async Task<bool> VerifyAndCreateClients(string clientName)
@@ -161,27 +161,40 @@ namespace Resgrid.Providers.Bus.Rabbit
 			return true;
 		}
 
-		private async Task<bool> SendMessage(string topicName, string message)
+		private async Task<bool> SendMessage(string topicName, string message, bool requirePublisherConfirmation = false)
 		{
-			await VerifyAndCreateClients(_clientName);
+			if (!await VerifyAndCreateClients(_clientName))
+				return false;
 
 			try
 			{
 				var connection = await RabbitConnection.CreateConnection(_clientName);
-				if (connection != null)
+				if (connection == null)
+					return false;
+
+				var channelOptions = requirePublisherConfirmation
+					? new CreateChannelOptions(true, true)
+					: null;
+				await using (var channel = channelOptions == null
+					? await connection.CreateChannelAsync()
+					: await connection.CreateChannelAsync(channelOptions))
 				{
-					// await using so the channel is closed via DisposeAsync(): the synchronous Dispose() on a
-					// v7 IChannel skips the async Channel.Close/CloseOk handshake that releases the channel
-					// number back to the SessionManager, leaking channels until the connection hits its limit
-					// (ChannelAllocationException: "The connection cannot support any more channels").
-					await using (var channel = await connection.CreateChannelAsync())
-					{
-						await channel.BasicPublishAsync(exchange: RabbitConnection.SetQueueNameForEnv(topicName),
-									 routingKey: "",
-									 //mandatory: false, //TODO: Not sure here. -SJ
-									 //basicProperties: null,
-									 body: Encoding.ASCII.GetBytes(message));
-					}
+					using var publishTimeout = requirePublisherConfirmation
+						? new System.Threading.CancellationTokenSource(
+							TimeSpan.FromSeconds(Math.Max(1, UnitTrackingConfig.QueuePublishTimeoutSeconds)))
+						: null;
+					await channel.BasicPublishAsync(
+						exchange: RabbitConnection.SetQueueNameForEnv(topicName),
+						routingKey: "",
+						mandatory: false,
+						basicProperties: new BasicProperties
+						{
+							DeliveryMode = requirePublisherConfirmation
+								? DeliveryModes.Persistent
+								: DeliveryModes.Transient
+						},
+						body: Encoding.ASCII.GetBytes(message),
+						cancellationToken: publishTimeout?.Token ?? default);
 				}
 
 				return true;

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -12,6 +13,7 @@ using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Web.Areas.User.Models.Orders;
+using Resgrid.Web.Helpers;
 using Resgrid.WebCore.Areas.User.Models.Orders;
 using Resgrid.Model.Providers;
 
@@ -90,6 +92,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		public async Task<IActionResult> Settings(OrderSetttingsView model, IFormCollection form, CancellationToken cancellationToken)
 		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Unauthorized();
+
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			var settings = await _resourceOrdersService.GetSettingsByDepartmentIdAsync(DepartmentId);
 
@@ -237,26 +242,45 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
+		[Authorize]
 		public async Task<IActionResult> View(int orderId)
 		{
 			var model = new ViewOrderView();
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.Order = await _resourceOrdersService.GetOrderByIdAsync(orderId);
 
+			if (model.Order == null)
+				return NotFound();
+
+			// Orders from other departments are only visible when they are open to mutual-aid fills
+			if (model.Order.DepartmentId != DepartmentId)
+			{
+				var visibleOrders = await _resourceOrdersService.GetOpenAvailableOrdersAsync(DepartmentId);
+
+				if (visibleOrders == null || !visibleOrders.Any(x => x.ResourceOrderId == orderId))
+					return Unauthorized();
+			}
+
 			return View(model);
 		}
 
+		[Authorize]
 		public async Task<IActionResult> AcceptFill(int fillId)
 		{
 			var model = new ViewOrderView();
 			model.Department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 			var fill = await _resourceOrdersService.GetOrderFillByIdAsync(fillId);
+
+			if (fill?.OrderItem?.Order == null || fill.OrderItem.Order.DepartmentId != DepartmentId)
+				return Unauthorized();
+
 			await _resourceOrdersService.SetFillStatusAsync(fillId, UserId, true);
 
 			return RedirectToAction("View", new {orderId = fill.OrderItem.Order.ResourceOrderId});
 		}
 
+		[Authorize]
 		public async Task<IActionResult> Fill(int orderId)
 		{
 			var model = new FillOrderView();
@@ -271,6 +295,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
+		[Authorize]
 		public async Task<IActionResult> FillItem(int id, bool error, string errorMessage)
 		{
 			var model = new FillItemView();
@@ -282,6 +307,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[Authorize]
 		public async Task<IActionResult> FillItem(FillItemInput data, CancellationToken cancellationToken)
 		{
 			var model = new FillItemView();

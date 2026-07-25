@@ -56,6 +56,14 @@ namespace Resgrid.Services
 			builder.RegisterType<CallEmailFactory>().As<ICallEmailFactory>().InstancePerLifetimeScope();
 			builder.RegisterType<JobsService>().As<IJobsService>().InstancePerLifetimeScope();
 			builder.RegisterType<UnitsService>().As<IUnitsService>().InstancePerLifetimeScope();
+			builder.RegisterType<UnitTrackingIdentifierService>().As<IUnitTrackingIdentifierService>().SingleInstance();
+			builder.RegisterType<UnitTrackingEventIdService>().As<IUnitTrackingEventIdService>().SingleInstance();
+			builder.RegisterType<UnitTrackingAuthenticationService>().As<IUnitTrackingAuthenticationService>().InstancePerLifetimeScope();
+			builder.RegisterType<UnitTrackingService>().As<IUnitTrackingService>().InstancePerLifetimeScope();
+			builder.RegisterType<UnitTrackingIngressService>().As<IUnitTrackingIngressService>().InstancePerLifetimeScope();
+			builder.RegisterType<UnitLocationSourceResolver>().As<IUnitLocationSourceResolver>().InstancePerLifetimeScope();
+			builder.RegisterType<UnitTrackingCatalogService>().As<IUnitTrackingCatalogService>().SingleInstance();
+			builder.RegisterType<UnitTrackingStatusService>().As<IUnitTrackingStatusService>().InstancePerLifetimeScope();
 			builder.RegisterType<DepartmentSettingsService>().As<IDepartmentSettingsService>().InstancePerLifetimeScope();
 			builder.RegisterType<FeatureToggleService>().As<IFeatureToggleService>().InstancePerLifetimeScope();
 			builder.RegisterType<CallDispatchStatusService>().As<ICallDispatchStatusService>().InstancePerLifetimeScope();

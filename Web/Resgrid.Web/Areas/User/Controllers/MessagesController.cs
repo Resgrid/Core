@@ -331,6 +331,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (messageRecipient != null)
 			{
+				if (messageRecipient.UserId != UserId)
+					return Unauthorized();
+
 				messageRecipient.Response = response.ToString();
 				messageRecipient.ReadOn = DateTime.UtcNow;
 				messageRecipient.Note = HttpUtility.UrlDecode(note);

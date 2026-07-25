@@ -8,6 +8,7 @@ using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using Resgrid.Framework;
@@ -2617,8 +2618,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[Authorize(Policy = ResgridResources.Call_View)]
 		public async Task<IActionResult> AttachCallFile(FileAttachInput model, IFormFile fileToUpload, CancellationToken cancellationToken)
 		{
+			if (!await _authorizationService.CanUserEditCallAsync(UserId, model.CallId))
+				return Unauthorized();
+
 			if (fileToUpload == null || fileToUpload.Length <= 0)
 				ModelState.AddModelError("fileToUpload", _dispatchLocalizer["AttachFileRequired"].Value);
 			else
@@ -2691,14 +2696,57 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public async Task<IActionResult> GetCallImage(int callId, int attachmentId)
+		public async Task<IActionResult> GetCallImage(int callId, int attachmentId, string token)
 		{
 			var callAttachment = await _callsService.GetCallAttachmentAsync(attachmentId);
 
-			if (callAttachment == null || callAttachment.CallId != callId)
-				return null;
+			if (callAttachment == null || callAttachment.CallId != callId || callAttachment.Call == null)
+				return NotFound();
+
+			// Authorized when the caller is an authenticated member of the call's department,
+			// or when presenting a valid per-image capability token (used by anonymous CallExportEx pages).
+			var isAuthorized = false;
+
+			if (User?.Identity != null && User.Identity.IsAuthenticated && callAttachment.Call.DepartmentId == DepartmentId)
+				isAuthorized = true;
+			else if (IsValidCallImageToken(callId, attachmentId, token))
+				isAuthorized = true;
+
+			if (!isAuthorized)
+				return Unauthorized();
 
 			return File(callAttachment.Data, "image/jpeg");
+		}
+
+		private static bool IsValidCallImageToken(int callId, int attachmentId, string token)
+		{
+			if (String.IsNullOrWhiteSpace(token))
+				return false;
+
+			try
+			{
+				var decoded = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token)).Trim();
+				var decrypted = SymmetricEncryption.Decrypt(decoded, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
+				var parts = decrypted.Split('|');
+
+				if (parts.Length != 3)
+					return false;
+
+				if (!Int32.TryParse(parts[0], out var tokenCallId) || tokenCallId != callId)
+					return false;
+
+				if (!Int32.TryParse(parts[1], out var tokenAttachmentId) || tokenAttachmentId != attachmentId)
+					return false;
+
+				if (!Int64.TryParse(parts[2], out var expiryEpoch) || expiryEpoch < DateTimeOffset.UtcNow.ToUnixTimeSeconds())
+					return false;
+
+				return true;
+			}
+			catch
+			{
+				return false;
+			}
 		}
 
 		[HttpGet]

@@ -163,6 +163,16 @@
 		WeatherAlertSettingsChanged,
 		// Feature Toggles
 		FeatureFlagChanged,
-		FeatureFlagOverrideChanged
+		FeatureFlagOverrideChanged,
+		// Unit hardware tracking
+		UnitTrackingDeviceCreated,
+		UnitTrackingDeviceUpdated,
+		UnitTrackingDeviceDisabled,
+		UnitTrackingDeviceDeleted,
+		UnitTrackingCredentialCreated,
+		UnitTrackingCredentialRotated,
+		UnitTrackingCredentialRevoked,
+		// Department deletion lifecycle
+		DeleteDepartmentRequestExecuted
 	}
 }

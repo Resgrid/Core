@@ -28,6 +28,11 @@ namespace Resgrid.Web.ServicesCore
 				{
 					logging.ClearProviders();
 					logging.AddConsole();
+					// Hosting request-start logs run before application middleware and would
+					// otherwise record capability credentials embedded in tracking URLs.
+					logging.AddFilter(
+						"Microsoft.AspNetCore.Hosting.Diagnostics",
+						LogLevel.Warning);
 				})
 				.ConfigureWebHostDefaults(webBuilder =>
 				{

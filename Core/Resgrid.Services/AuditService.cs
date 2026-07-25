@@ -190,9 +190,15 @@ namespace Resgrid.Services
 					return "Unit Tracking Credential Created";
 				case AuditLogTypes.UnitTrackingCredentialRotated:
 					return "Unit Tracking Credential Rotated";
-				case AuditLogTypes.UnitTrackingCredentialRevoked:
-					return "Unit Tracking Credential Revoked";
-			}
+			case AuditLogTypes.UnitTrackingCredentialRevoked:
+				return "Unit Tracking Credential Revoked";
+			case AuditLogTypes.DeleteDepartmentRequested:
+				return "Department Deletion Requested";
+			case AuditLogTypes.DeleteDepartmentRequestedCancelled:
+				return "Department Deletion Request Cancelled";
+			case AuditLogTypes.DeleteDepartmentRequestExecuted:
+				return "Department Deletion Executed";
+		}
 
 			return $"Unknown ({logType})";
 		}

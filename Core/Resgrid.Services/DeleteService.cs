@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -36,6 +37,7 @@ namespace Resgrid.Services
 		private readonly IQueueService _queueService;
 		private readonly IEmailService _emailService;
 		private readonly IDeleteRepository _deleteRepository;
+		private readonly IAuditLogsRepository _auditLogsRepository;
 
 		public DeleteService(IAuthorizationService authorizationService, IDepartmentsService departmentsService,
 			ICallsService callsService, IActionLogsService actionLogsService, IUsersService usersService,
@@ -44,7 +46,7 @@ namespace Resgrid.Services
 			IDistributionListsService distributionListsService, IShiftsService shiftsService, IUnitsService unitsService,
 			ICertificationService certificationService, ILogService logService, IInventoryService inventoryService,
 			IEventAggregator eventAggregator, IAddressService addressService, IQueueService queueService, IEmailService emailService,
-			IDeleteRepository deleteRepository)
+			IDeleteRepository deleteRepository, IAuditLogsRepository auditLogsRepository)
 		{
 			_authorizationService = authorizationService;
 			_departmentsService = departmentsService;
@@ -68,6 +70,7 @@ namespace Resgrid.Services
 			_queueService = queueService;
 			_emailService = emailService;
 			_deleteRepository = deleteRepository;
+			_auditLogsRepository = auditLogsRepository;
 		}
 
 		public async Task<DeleteUserResults> DeleteUserAsync(int departmentId, string authorizingUserId, string userIdToDelete)
@@ -201,32 +204,29 @@ namespace Resgrid.Services
 			if (!await _authorizationService.CanUserDeleteDepartmentAsync(authorizingUserId, departmentId))
 				return DeleteDepartmentResults.UnAuthorized;
 
+			// Only one pending deletion request per department; don't stack duplicates (and their emails).
+			var existingRequest = await _queueService.GetPendingDeleteDepartmentQueueItemAsync(departmentId);
+			if (existingRequest != null)
+				return DeleteDepartmentResults.NoFailure;
+
+			var result = await _queueService.EnqueuePendingDeleteDepartmentAsync(departmentId, authorizingUserId, cancellationToken);
+
 			var auditEvent = new AuditEvent();
 			auditEvent.Before = null;
 			auditEvent.DepartmentId = departmentId;
 			auditEvent.UserId = authorizingUserId;
 			auditEvent.Type = AuditLogTypes.DeleteDepartmentRequested;
-			auditEvent.After = null;
+			auditEvent.After = result?.CloneJsonToString();
 			auditEvent.Successful = true;
 			auditEvent.IpAddress = ipAddress;
 			auditEvent.ServerName = Environment.MachineName;
 			auditEvent.UserAgent = userAgent;
 			_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
-			var result = await _queueService.EnqueuePendingDeleteDepartmentAsync(departmentId, authorizingUserId, cancellationToken);
-
 			if (result != null)
 			{
 				var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
-
-				var ownerUserProfile = await _userProfileService.GetProfileByUserIdAsync(authorizingUserId);
-				var result2 = await _emailService.SendDeleteDepartmentEmail(ownerUserProfile.User.Email, ownerUserProfile.FullName.AsFirstNameLastName, result);
-
-				foreach (var adminUser in department.AdminUsers)
-				{
-					var adminUserProfile = await _userProfileService.GetProfileByUserIdAsync(adminUser);
-					var result1 = await _emailService.SendDeleteDepartmentEmail(adminUserProfile.User.Email, adminUserProfile.FullName.AsFirstNameLastName, result);
-				}
+				await SendDeleteDepartmentEmailToAllAdminsAsync(department, result);
 			}
 
 			return DeleteDepartmentResults.NoFailure;
@@ -237,27 +237,13 @@ namespace Resgrid.Services
 			if (!await _authorizationService.CanUserDeleteDepartmentAsync(item.QueuedByUserId, int.Parse(item.SourceId)))
 				return DeleteDepartmentResults.UnAuthorized;
 
-			if (item.ToBeCompletedOn.HasValue &&  DateTime.UtcNow >= item.ToBeCompletedOn.Value.AddDays(-10) && item.ReminderCount == 0)
-			{
-				/*
-				 * You have a pending department deletion request, it is within 10 days out and we have no yet sent a reminder.
-				 */
+			if (!item.ToBeCompletedOn.HasValue)
+				return DeleteDepartmentResults.Failure;
 
-				var department = await _departmentsService.GetDepartmentByIdAsync(int.Parse(item.SourceId));
+			var now = DateTime.UtcNow;
+			var reminderSent = false;
 
-				var ownerUserProfile = await _userProfileService.GetProfileByUserIdAsync(item.QueuedByUserId);
-				var result2 = await _emailService.SendDeleteDepartmentEmail(ownerUserProfile.User.Email, ownerUserProfile.FullName.AsFirstNameLastName, item);
-
-				foreach (var adminUser in department.AdminUsers)
-				{
-					var adminUserProfile = await _userProfileService.GetProfileByUserIdAsync(adminUser);
-					var result1 = await _emailService.SendDeleteDepartmentEmail(adminUserProfile.User.Email, adminUserProfile.FullName.AsFirstNameLastName, item);
-				}
-
-				item.ReminderCount += 1;
-				var result = await _queueService.UpdateQueueItem(item, cancellationToken);
-			}
-			else if (item.ToBeCompletedOn.HasValue && DateTime.UtcNow >= item.ToBeCompletedOn.Value)
+			if (now >= item.ToBeCompletedOn.Value)
 			{
 				/*
 				 * You have a pending department deletion request and it can be executed now.
@@ -265,9 +251,17 @@ namespace Resgrid.Services
 
 				try
 				{
+					// Write the execution audit record BEFORE the delete wipes the department's users:
+					// queued audit events resolve the user profile when processed, which would fail
+					// after the account is gone, and AuditLogs are not deleted with the department,
+					// so this row survives as the durable trail for the actual deletion.
+					await WriteDepartmentDeletionExecutedAuditLogAsync(item, cancellationToken);
+					Logging.LogInfo($"DeleteService::Executing pending department deletion for DepartmentId {item.SourceId}, requested by UserId {item.QueuedByUserId} on {item.QueuedOn:u}, scheduled for {item.ToBeCompletedOn:u}");
+
 					var result = await _deleteRepository.DeleteDepartmentAndUsersAsync(int.Parse(item.SourceId));
 
 					item.CompletedOn = DateTime.UtcNow;
+					item.Data = "Department deletion executed by the system.";
 					var result2 = await _queueService.UpdateQueueItem(item, cancellationToken);
 				}
 				catch (Exception e)
@@ -278,8 +272,103 @@ namespace Resgrid.Services
 					return DeleteDepartmentResults.Failure;
 				}
 			}
+			else if (now.Date >= item.ToBeCompletedOn.Value.Date && item.ReminderCount < 3)
+			{
+				/*
+				 * Deletion is scheduled for today (final reminder).
+				 */
+				await SendDeleteDepartmentReminderToAllAdminsAsync(item);
+				item.ReminderCount = 3;
+				reminderSent = true;
+			}
+			else if (now >= item.ToBeCompletedOn.Value.AddDays(-5) && item.ReminderCount < 2)
+			{
+				/*
+				 * Deletion is within 5 days and the 5-day reminder has not been sent yet.
+				 */
+				await SendDeleteDepartmentReminderToAllAdminsAsync(item);
+				item.ReminderCount = 2;
+				reminderSent = true;
+			}
+			else if (now >= item.ToBeCompletedOn.Value.AddDays(-14) && item.ReminderCount < 1)
+			{
+				/*
+				 * Deletion is within 14 days and the 14-day reminder has not been sent yet.
+				 */
+				await SendDeleteDepartmentReminderToAllAdminsAsync(item);
+				item.ReminderCount = 1;
+				reminderSent = true;
+			}
+
+			if (reminderSent)
+				await _queueService.UpdateQueueItem(item, cancellationToken);
 
 			return DeleteDepartmentResults.NoFailure;
+		}
+
+		private async Task SendDeleteDepartmentReminderToAllAdminsAsync(QueueItem item)
+		{
+			var department = await _departmentsService.GetDepartmentByIdAsync(int.Parse(item.SourceId));
+			await SendDeleteDepartmentEmailToAllAdminsAsync(department, item);
+		}
+
+		private async Task SendDeleteDepartmentEmailToAllAdminsAsync(Department department, QueueItem item)
+		{
+			if (department == null || item == null)
+				return;
+
+			// Notify the managing member AND every department admin, deduped, so no single
+			// person is the only one who knows a deletion is pending.
+			var adminUserIds = new List<string>();
+
+			if (!String.IsNullOrWhiteSpace(department.ManagingUserId))
+				adminUserIds.Add(department.ManagingUserId);
+
+			if (department.AdminUsers != null)
+				adminUserIds.AddRange(department.AdminUsers);
+
+			foreach (var adminUserId in adminUserIds.Distinct())
+			{
+				try
+				{
+					var adminUserProfile = await _userProfileService.GetProfileByUserIdAsync(adminUserId);
+
+					if (adminUserProfile?.User == null || String.IsNullOrWhiteSpace(adminUserProfile.User.Email))
+						continue;
+
+					await _emailService.SendDeleteDepartmentEmail(adminUserProfile.User.Email, adminUserProfile.FullName.AsFirstNameLastName, item);
+				}
+				catch (Exception ex)
+				{
+					// A single bad recipient must not block notifications to the remaining admins.
+					Logging.LogException(ex, $"DeleteService::Failed to send department deletion email to UserId {adminUserId} for DepartmentId {item.SourceId}");
+				}
+			}
+		}
+
+		private async Task WriteDepartmentDeletionExecutedAuditLogAsync(QueueItem item, CancellationToken cancellationToken)
+		{
+			try
+			{
+				var auditLog = new AuditLog();
+				auditLog.DepartmentId = int.Parse(item.SourceId);
+				auditLog.UserId = item.QueuedByUserId;
+				auditLog.LogType = (int)AuditLogTypes.DeleteDepartmentRequestExecuted;
+				auditLog.Message = $"The system executed the pending department deletion request for department id {item.SourceId}";
+				auditLog.Data = $"QueueItemId: {item.QueueItemId}; RequestedByUserId: {item.QueuedByUserId}; QueuedOn (UTC): {item.QueuedOn:u}; ScheduledFor (UTC): {item.ToBeCompletedOn:u}; RemindersSent: {item.ReminderCount}";
+				auditLog.Successful = true;
+				auditLog.IpAddress = null;
+				auditLog.UserAgent = null;
+				auditLog.ServerName = Environment.MachineName;
+				auditLog.LoggedOn = DateTime.UtcNow;
+
+				await _auditLogsRepository.SaveOrUpdateAsync(auditLog, cancellationToken);
+			}
+			catch (Exception ex)
+			{
+				// Auditing must never block the deletion itself.
+				Logging.LogException(ex, $"DeleteService::Failed to write department deletion executed audit log for DepartmentId {item.SourceId}");
+			}
 		}
 	}
 }

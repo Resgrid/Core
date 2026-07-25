@@ -189,12 +189,28 @@ namespace Resgrid.Workers.Framework.Logic
 						case AuditLogTypes.DeleteDepartmentRequested:
 							auditLog.Message = $"{profile.FullName.AsFirstNameLastName} has requested that the Resgrid department be deleted";
 
-							auditLog.Data = "No Data";
+							if (!String.IsNullOrWhiteSpace(auditEvent.After))
+							{
+								var deleteRequestedQueueItem = JsonConvert.DeserializeObject<QueueItem>(auditEvent.After);
+								auditLog.Data = $"QueueItemId: {deleteRequestedQueueItem.QueueItemId}; Scheduled deletion (UTC): {deleteRequestedQueueItem.ToBeCompletedOn:u}; RequestedByUserId: {deleteRequestedQueueItem.QueuedByUserId}";
+							}
+							else
+							{
+								auditLog.Data = "No Data";
+							}
 							break;
 						case AuditLogTypes.DeleteDepartmentRequestedCancelled:
 							auditLog.Message = $"{profile.FullName.AsFirstNameLastName} canceled the pending department deletion request";
 
-							auditLog.Data = "No Data";
+							if (!String.IsNullOrWhiteSpace(auditEvent.Before))
+							{
+								var deleteCancelledQueueItem = JsonConvert.DeserializeObject<QueueItem>(auditEvent.Before);
+								auditLog.Data = $"QueueItemId: {deleteCancelledQueueItem.QueueItemId}; Scheduled deletion (UTC): {deleteCancelledQueueItem.ToBeCompletedOn:u}; OriginallyRequestedByUserId: {deleteCancelledQueueItem.QueuedByUserId}; QueuedOn (UTC): {deleteCancelledQueueItem.QueuedOn:u}";
+							}
+							else
+							{
+								auditLog.Data = "No Data";
+							}
 							break;
 						case AuditLogTypes.CallReactivated:
 							auditLog.Message = $"{profile.FullName.AsFirstNameLastName} reactivated call";

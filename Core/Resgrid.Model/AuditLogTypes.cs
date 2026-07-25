@@ -171,6 +171,8 @@
 		UnitTrackingDeviceDeleted,
 		UnitTrackingCredentialCreated,
 		UnitTrackingCredentialRotated,
-		UnitTrackingCredentialRevoked
+		UnitTrackingCredentialRevoked,
+		// Department deletion lifecycle
+		DeleteDepartmentRequestExecuted
 	}
 }

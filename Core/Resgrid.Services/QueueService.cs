@@ -47,8 +47,13 @@ namespace Resgrid.Services
 		public async Task<QueueItem> GetPendingDeleteDepartmentQueueItemAsync(int departmentId)
 		{
 			var allItems = await _queueItemsRepository.GetAllAsync();
-			var depItem = allItems.FirstOrDefault(x =>
-				x.SourceId == departmentId.ToString() && x.ToBeCompletedOn > DateTime.UtcNow && x.QueueType == (int)QueueTypes.DeleteDepartment && x.CompletedOn == null);
+
+			// No ToBeCompletedOn filter: a past-due request that hasn't executed yet is still
+			// pending and must remain visible (and cancellable) until the worker completes it.
+			var depItem = allItems.Where(x =>
+				x.SourceId == departmentId.ToString() && x.QueueType == (int)QueueTypes.DeleteDepartment && x.CompletedOn == null)
+				.OrderByDescending(x => x.QueuedOn)
+				.FirstOrDefault();
 
 			return depItem;
 		}
@@ -56,8 +61,12 @@ namespace Resgrid.Services
 		public async Task<List<QueueItem>> GetAllPendingDeleteDepartmentQueueItemsAsync()
 		{
 			var allItems = await _queueItemsRepository.GetAllAsync();
+
+			// No ToBeCompletedOn filter: filtering to future-dated items makes past-due requests
+			// unreachable, so the deletion in HandlePendingDepartmentDeletionRequestAsync would
+			// never execute. The handler decides between reminders and execution.
 			var depItems = allItems.Where(x =>
-				x.ToBeCompletedOn > DateTime.UtcNow && x.QueueType == (int)QueueTypes.DeleteDepartment && x.CompletedOn == null).ToList();
+				x.QueueType == (int)QueueTypes.DeleteDepartment && x.CompletedOn == null).ToList();
 
 			return depItems;
 		}

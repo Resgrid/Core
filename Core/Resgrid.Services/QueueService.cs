@@ -13,6 +13,13 @@ namespace Resgrid.Services
 {
 	public class QueueService : IQueueService
 	{
+		// Shared predicate for pending department-deletion queue items. No ToBeCompletedOn filter:
+		// a past-due request that hasn't executed yet is still pending and must remain visible
+		// (and cancellable) until the worker completes it; the handler decides between reminders
+		// and execution. Keep both queries below on this single predicate so they can't drift.
+		private static readonly Func<QueueItem, bool> IsPendingDepartmentDeletion =
+			x => x.QueueType == (int)QueueTypes.DeleteDepartment && x.CompletedOn == null;
+
 		private readonly IQueueItemsRepository _queueItemsRepository;
 		private readonly IOutboundQueueProvider _outboundQueueProvider;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
@@ -48,10 +55,8 @@ namespace Resgrid.Services
 		{
 			var allItems = await _queueItemsRepository.GetAllAsync();
 
-			// No ToBeCompletedOn filter: a past-due request that hasn't executed yet is still
-			// pending and must remain visible (and cancellable) until the worker completes it.
 			var depItem = allItems.Where(x =>
-				x.SourceId == departmentId.ToString() && x.QueueType == (int)QueueTypes.DeleteDepartment && x.CompletedOn == null)
+				x.SourceId == departmentId.ToString() && IsPendingDepartmentDeletion(x))
 				.OrderByDescending(x => x.QueuedOn)
 				.FirstOrDefault();
 
@@ -62,11 +67,7 @@ namespace Resgrid.Services
 		{
 			var allItems = await _queueItemsRepository.GetAllAsync();
 
-			// No ToBeCompletedOn filter: filtering to future-dated items makes past-due requests
-			// unreachable, so the deletion in HandlePendingDepartmentDeletionRequestAsync would
-			// never execute. The handler decides between reminders and execution.
-			var depItems = allItems.Where(x =>
-				x.QueueType == (int)QueueTypes.DeleteDepartment && x.CompletedOn == null).ToList();
+			var depItems = allItems.Where(IsPendingDepartmentDeletion).ToList();
 
 			return depItems;
 		}

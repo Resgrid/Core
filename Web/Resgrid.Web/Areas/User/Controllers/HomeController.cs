@@ -1059,12 +1059,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_View)]
 		public async Task<IActionResult> ResetGroupToStandingBy(int groupId)
 		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && !ClaimsAuthorizationHelper.IsUserGroupAdmin(groupId))
+				return Unauthorized();
+
 			var group = await _departmentGroupsService.GetGroupByIdAsync(groupId);
 
 			if (group == null || group.DepartmentId != DepartmentId)
-				return Unauthorized();
-
-			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && !ClaimsAuthorizationHelper.IsUserGroupAdmin(groupId))
 				return Unauthorized();
 
 			await _actionLogsService.SetActionForDepartmentGroupAsync(groupId, (int)ActionTypes.StandingBy, String.Empty);

@@ -547,9 +547,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[AllowAnonymous]
-		public async Task<IActionResult> InternalRunReport(int type, int departmentId, string key)
+		public async Task<IActionResult> InternalRunReport(int type, int departmentId)
 		{
 			var expectedKey = Config.SecurityConfig.InternalReportsToken;
+			var key = Request.Headers["X-Internal-Reports-Token"].ToString();
 
 			if (String.IsNullOrWhiteSpace(expectedKey) || String.IsNullOrWhiteSpace(key) ||
 				!System.Security.Cryptography.CryptographicOperations.FixedTimeEquals(

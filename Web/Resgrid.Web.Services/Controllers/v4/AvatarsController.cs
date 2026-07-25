@@ -154,7 +154,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 		public async Task<ActionResult> Crop([FromBody] CropRequest model)
 		{
 			// extract original image ID and generate a new filename for the cropped result
-			var originalUri = new Uri(model.imgUrl);
+			if (model == null || string.IsNullOrWhiteSpace(model.imgUrl) ||
+				!Uri.TryCreate(model.imgUrl, UriKind.Absolute, out var originalUri))
+				return BadRequest();
+
 			var originalId = originalUri.Query.Replace("?id=", "");
 
 			var currentUserId = ClaimsAuthorizationHelper.GetUserId();

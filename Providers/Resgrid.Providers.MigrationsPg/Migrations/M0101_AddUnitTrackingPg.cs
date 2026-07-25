@@ -2,7 +2,10 @@ using FluentMigrator;
 
 namespace Resgrid.Providers.MigrationsPg.Migrations
 {
-	[Migration(101)]
+	// TransactionBehavior.None is required for CREATE UNIQUE INDEX CONCURRENTLY on the live units
+	// table (it cannot run inside a transaction). Statements self-commit, so all creates below are
+	// guarded with existence checks to stay safe on a re-run after a partial apply.
+	[Migration(101, TransactionBehavior.None)]
 	public class M0101_AddUnitTrackingPg : Migration
 	{
 		private const string DevicesTable = "unittrackingdevices";
@@ -39,11 +42,30 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("updatedbyuserid").AsCustom("citext").Nullable()
 					.WithColumn("updatedon").AsDateTime2().Nullable();
 
+			// ALTER TABLE ADD CONSTRAINT UNIQUE takes a SHARE ROW EXCLUSIVE lock on the live units
+			// table and fails if duplicates exist. Pre-validate duplicates, build the index online
+			// with CONCURRENTLY, then attach it as a constraint (brief lock) so it can still serve
+			// as the foreign key target below.
+			Execute.Sql(@"
+				DO $$
+				BEGIN
+					IF EXISTS (SELECT 1 FROM units GROUP BY departmentid, unitid HAVING COUNT(*) > 1) THEN
+						RAISE EXCEPTION 'uq_units_departmentid_unitid: duplicate (departmentid, unitid) rows exist in units; remove them before rerunning this migration';
+					END IF;
+				END $$;");
+
+			if (!Schema.Table("units").Index("uq_units_departmentid_unitid").Exists())
+			{
+				Execute.Sql(@"
+					CREATE UNIQUE INDEX CONCURRENTLY IF NOT EXISTS uq_units_departmentid_unitid
+					ON units (departmentid, unitid);");
+			}
+
 			if (!Schema.Table("units").Constraint("uq_units_departmentid_unitid").Exists())
 			{
-				Create.UniqueConstraint("uq_units_departmentid_unitid")
-					.OnTable("units")
-					.Columns("departmentid", "unitid");
+				Execute.Sql(@"
+					ALTER TABLE units
+					ADD CONSTRAINT uq_units_departmentid_unitid UNIQUE USING INDEX uq_units_departmentid_unitid;");
 			}
 
 			Create.ForeignKey("fk_unittrackingdevices_units_department_unit")

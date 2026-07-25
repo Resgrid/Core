@@ -37,7 +37,7 @@ namespace Resgrid.Repositories.NoSqlRepository
 				await connection.OpenAsync();
 				var mapLayersData = await connection.QueryAsync<MapLayer>("SELECT data FROM public.maplayers ul WHERE ul.oid = @id;", new { id });
 
-				if (mapLayersData != null)
+				if (mapLayersData != null && mapLayersData.Any())
 					return mapLayersData.FirstOrDefault();
 				else
 				{

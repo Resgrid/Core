@@ -545,7 +545,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <img style="max-width:600px;" src="@Url.Action("GetCallImage", "Dispatch", new { Area = "User", callId = img.CallId, attachmentId = img.CallAttachmentId, token = Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes(Resgrid.Framework.SymmetricEncryption.Encrypt($"{img.CallId}|{img.CallAttachmentId}", Resgrid.Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase))) })" />
+                            <img style="max-width:600px;" src="@Url.Action("GetCallImage", "Dispatch", new { Area = "User", callId = img.CallId, attachmentId = img.CallAttachmentId, token = LinkHelper.GenerateCallImageToken(img.CallId, img.CallAttachmentId) })" />
                         </div>
                     </div>
                 }

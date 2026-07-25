@@ -2726,8 +2726,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(token)).Trim();
 				var decrypted = SymmetricEncryption.Decrypt(decoded, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
+				var parts = decrypted.Split('|');
 
-				return String.Equals(decrypted, $"{callId}|{attachmentId}", StringComparison.Ordinal);
+				if (parts.Length != 3)
+					return false;
+
+				if (!Int32.TryParse(parts[0], out var tokenCallId) || tokenCallId != callId)
+					return false;
+
+				if (!Int32.TryParse(parts[1], out var tokenAttachmentId) || tokenAttachmentId != attachmentId)
+					return false;
+
+				if (!Int64.TryParse(parts[2], out var expiryEpoch) || expiryEpoch < DateTimeOffset.UtcNow.ToUnixTimeSeconds())
+					return false;
+
+				return true;
 			}
 			catch
 			{

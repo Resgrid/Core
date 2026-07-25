@@ -41,7 +41,7 @@ namespace Resgrid.Workers.Framework.Logic
 					var request = new RestRequest("User/Reports/InternalRunReport", Method.Get);
 					request.AddParameter("type", item.ScheduledTask.Data);
 					request.AddParameter("departmentId", item.Department.DepartmentId);
-					request.AddParameter("key", Config.SecurityConfig.InternalReportsToken);
+					request.AddHeader("X-Internal-Reports-Token", Config.SecurityConfig.InternalReportsToken);
 
 						var response = await client.ExecuteAsync(request);
 

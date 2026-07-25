@@ -102,8 +102,12 @@ namespace Resgrid.Web.Services.ApplicationCore.UnitTracking
 				errors.Add("device.uniqueId is required.");
 			if (!input.Position.Latitude.HasValue)
 				errors.Add("position.latitude is required.");
+			else if (input.Position.Latitude.Value < -90m || input.Position.Latitude.Value > 90m)
+				errors.Add("position.latitude must be within the range [-90, 90].");
 			if (!input.Position.Longitude.HasValue)
 				errors.Add("position.longitude is required.");
+			else if (input.Position.Longitude.Value < -180m || input.Position.Longitude.Value > 180m)
+				errors.Add("position.longitude must be within the range [-180, 180].");
 			if (!FirstTimestamp(
 				    input.Position.FixTime,
 				    input.Position.DeviceTime,

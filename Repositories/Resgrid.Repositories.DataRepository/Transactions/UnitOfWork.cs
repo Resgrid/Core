@@ -2,6 +2,7 @@
 using Resgrid.Model.Repositories.Queries;
 using System.Data.Common;
 using System.Threading;
+using System.Threading.Tasks;
 
 
 namespace Resgrid.Repositories.DataRepository.Transactions
@@ -37,6 +38,28 @@ namespace Resgrid.Repositories.DataRepository.Transactions
 			_semaphore.Release();
 
 			return Connection;
+		}
+
+		public async Task<DbConnection> CreateOrGetConnectionAsync(CancellationToken cancellationToken = default(CancellationToken))
+		{
+			await _semaphore.WaitAsync(cancellationToken);
+
+			try
+			{
+				if (Connection == null)
+				{
+					Connection = _connectionProvider.Create();
+					await Connection.OpenAsync(cancellationToken);
+
+					Transaction = Connection.BeginTransaction();
+				}
+
+				return Connection;
+			}
+			finally
+			{
+				_semaphore.Release();
+			}
 		}
 
 		public void DiscardChanges() => Transaction?.Rollback();

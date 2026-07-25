@@ -11,8 +11,10 @@ using System.Net.Mime;
 using System.Threading;
 using Resgrid.Framework;
 using System.Collections.Generic;
+using System.Linq;
 using Resgrid.Web.Services.Models.v4.PersonnelStaffing;
 using Resgrid.Model.Helpers;
+using Resgrid.Web.ServicesCore.Helpers;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -75,6 +77,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (string.IsNullOrEmpty(userId))
 				userId = UserId;
 
+			var member = await _departmentsService.GetDepartmentMemberAsync(userId, DepartmentId);
+
+			if (member == null)
+			{
+				result.Data = null;
+				result.PageSize = 0;
+				result.Status = ResponseHelper.NotFound;
+
+				ResponseHelper.PopulateV4ResponseData(result);
+
+				return result;
+			}
+
 			var userState = await _userStateService.GetLastUserStateByUserIdAsync(userId);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
@@ -128,7 +143,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (!await _authorizationService.IsUserValidWithinLimitsAsync(userToSetStatusFor.UserId, DepartmentId))
 					return Unauthorized();
 
-				// TODO: We need to check here if the user is a department admin, or the admin that the user is a part of
+				if (input.UserId != UserId && !ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+					return Unauthorized();
 
 				if (String.IsNullOrWhiteSpace(input.Note))
 					savedState = await _userStateService.CreateUserState(userToSetStatusFor.UserId, DepartmentId, int.Parse(input.Type), cancellationToken);
@@ -170,6 +186,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// Validate and parse Type once
 			if (!int.TryParse(input.Type, out var typeVal))
 				return BadRequest("`Type` must be a valid integer.");
+
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && input.UserIds.Any(x => x != UserId))
+				return Unauthorized();
 
 			List<string> logIds = new List<string>();
 			foreach (var userId in input.UserIds)

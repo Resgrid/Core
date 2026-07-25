@@ -1,4 +1,4 @@
-﻿﻿using System.Text;
+﻿using System.Text;
 using Resgrid.Config;
 using Resgrid.Model.Queue;
 using Resgrid.Framework;
@@ -190,8 +190,8 @@ namespace Resgrid.Providers.Bus.Rabbit
 								routingKey: RabbitConnection.SetQueueNameForEnv(queueName),
 								mandatory: true,
 								basicProperties: props,
-								body: Encoding.ASCII.GetBytes(message),
-								cancellationToken: publishTimeout?.Token ?? default);
+							body: Encoding.UTF8.GetBytes(message),
+							cancellationToken: publishTimeout?.Token ?? default);
 
 							return true;
 						}
@@ -261,7 +261,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 						routingKey: RabbitConnection.SetQueueNameForEnv(queueName),
 						mandatory: true,
 						basicProperties: props,
-						body: Encoding.ASCII.GetBytes(message),
+						body: Encoding.UTF8.GetBytes(message),
 						cancellationToken: publishTimeout.Token);
 				}
 

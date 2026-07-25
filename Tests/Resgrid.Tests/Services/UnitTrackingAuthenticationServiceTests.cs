@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
@@ -49,9 +50,14 @@ namespace Resgrid.Tests.Services
 		public void GenerateCredential_CreatesOneTimeTokenAndLowercaseHash()
 		{
 			var generated = _service.GenerateCredential();
+			var tokenPrefix = $"rgtrk_{generated.KeyPrefix}_";
+			var encodedSecret = generated.Token.Substring(tokenPrefix.Length);
 
-			generated.Token.Should().StartWith($"rgtrk_{generated.KeyPrefix}_");
+			generated.Token.Should().StartWith(tokenPrefix);
 			generated.KeyPrefix.Should().HaveLength(8);
+			generated.KeyPrefix.Should().MatchRegex("^[A-Za-z0-9_-]{8}$");
+			encodedSecret.Should().MatchRegex("^[A-Za-z0-9_-]{43}$");
+			generated.KeyPrefix.Should().NotBe(encodedSecret.Substring(0, 8));
 			generated.SecretHash.Should().MatchRegex("^[0-9a-f]{64}$");
 			_service.VerifySecret(generated.Token, generated.SecretHash).Should().BeTrue();
 			_service.VerifySecret(generated.Token + "x", generated.SecretHash).Should().BeFalse();
@@ -115,6 +121,45 @@ namespace Resgrid.Tests.Services
 			var result = await _service.AuthenticateAsync(generated.Token, now);
 
 			result.Should().BeNull();
+		}
+
+		[Test]
+		public async Task GetActiveCredentialsForDeviceAsync_NullCacheResult_ReturnsEmptyCollection()
+		{
+			// Arrange
+			var device = new UnitTrackingDevice
+			{
+				UnitTrackingDeviceId = "device-1",
+				IsEnabled = true
+			};
+			var cacheProvider = new Mock<ICacheProvider>();
+			_devicesRepository
+				.Setup(repository => repository.GetByIdAsync("device-1"))
+				.ReturnsAsync(device);
+			cacheProvider
+				.Setup(provider => provider.RetrieveAsync(
+					It.IsAny<string>(),
+					It.IsAny<Func<Task<UnitTrackingDevice>>>(),
+					It.IsAny<TimeSpan>()))
+				.Returns((string _, Func<Task<UnitTrackingDevice>> fallback, TimeSpan _) => fallback());
+			cacheProvider
+				.Setup(provider => provider.RetrieveAsync(
+					It.IsAny<string>(),
+					It.IsAny<Func<Task<List<UnitTrackingCredential>>>>(),
+					It.IsAny<TimeSpan>()))
+				.ReturnsAsync((List<UnitTrackingCredential>)null);
+			var service = new UnitTrackingAuthenticationService(
+				_credentialsRepository.Object,
+				_devicesRepository.Object,
+				new UnitTrackingIdentifierService(),
+				cacheProvider.Object);
+			SystemBehaviorConfig.CacheEnabled = true;
+
+			// Act
+			var result = await service.GetActiveCredentialsForDeviceAsync("device-1");
+
+			// Assert
+			result.Should().NotBeNull().And.BeEmpty();
 		}
 	}
 }

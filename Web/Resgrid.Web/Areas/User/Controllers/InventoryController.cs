@@ -169,6 +169,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (type == null)
 				return RedirectToAction("ManageTypes");
 
+			if (type.DepartmentId != DepartmentId)
+				return Unauthorized();
+
 			type.Type = model.Type.Type;
 			type.Description = model.Type.Description;
 			type.ExpiresDays = model.Type.ExpiresDays;

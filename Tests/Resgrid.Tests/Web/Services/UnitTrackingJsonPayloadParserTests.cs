@@ -148,6 +148,127 @@ namespace Resgrid.Tests.Web.Services
 			result.Status.Should().Be(UnitTrackingPayloadParseStatus.UnsupportedMediaType);
 		}
 
+		[Test]
+		public void Supports_KnownAdapters_RecognizesGenericAndPinnedTraccar()
+		{
+			_parser.Supports("resgrid-json-v1").Should().BeTrue();
+			_parser.Supports(" TRACCAR-JSON-V1 ").Should().BeTrue();
+			_parser.Supports("unknown-json-v1").Should().BeFalse();
+		}
+
+		[Test]
+		public async Task ParseAsync_TraccarFixture_MapsPinnedPositionAndSelectedAttributes()
+		{
+			var receivedOn = new DateTime(2026, 7, 24, 18, 42, 53, DateTimeKind.Utc);
+			var fixture = ReadFixture("sinotrack-st901-h02-position.json");
+
+			var result = await _parser.ParseAsync(
+				Request(fixture),
+				"traccar-json-v1",
+				receivedOn);
+
+			result.Status.Should().Be(UnitTrackingPayloadParseStatus.Success);
+			result.ReportedDeviceIdentifier.Should().Be("917000000000");
+			var position = result.Positions.Should().ContainSingle().Subject;
+			position.EventId.Should().StartWith("traccar:6.14.5:fingerprint:");
+			position.TimestampUtc.Should().Be(
+				new DateTime(2026, 7, 24, 18, 42, 51, 123, DateTimeKind.Utc));
+			position.ReceivedOnUtc.Should().Be(receivedOn);
+			position.Latitude.Should().Be(39.7392m);
+			position.Longitude.Should().Be(-104.9903m);
+			position.AccuracyMeters.Should().Be(4.8m);
+			position.AltitudeMeters.Should().Be(1608.2m);
+			position.SpeedMetersPerSecond.Should().Be(5.144440m);
+			position.HeadingDegrees.Should().Be(271.5m);
+			position.Satellites.Should().Be(11);
+			position.Hdop.Should().Be(0.8m);
+			position.BatteryPercent.Should().Be(87m);
+			position.ExternalPowerVolts.Should().Be(13.6m);
+			position.Ignition.Should().BeTrue();
+			position.IsMoving.Should().BeTrue();
+			position.AlarmCode.Should().Be("sos");
+			position.SignalPercent.Should().BeNull(
+				"Traccar rssi has no stable percentage unit in the pinned contract");
+			position.TimestampSource.Should().Be(TrackingTimestampSource.Device);
+			position.IsValidFix.Should().BeTrue();
+
+			var retry = await _parser.ParseAsync(
+				Request(fixture),
+				"traccar-json-v1",
+				receivedOn.AddSeconds(30));
+			retry.Positions.Should().ContainSingle()
+				.Which.EventId.Should().Be(position.EventId);
+		}
+
+		[Test]
+		public async Task ParseAsync_TraccarDeviceIdsDoNotMatch_RejectsPayload()
+		{
+			var request = Request("""
+				{
+				  "position": {
+				    "deviceId": 42,
+				    "fixTime": "2026-07-24T18:42:51.123Z",
+				    "valid": true,
+				    "latitude": 39.7392,
+				    "longitude": -104.9903
+				  },
+				  "device": {
+				    "id": 99,
+				    "uniqueId": "917000000000"
+				  }
+				}
+				""");
+
+			var result = await _parser.ParseAsync(
+				request,
+				"traccar-json-v1",
+				DateTime.UtcNow);
+
+			result.Status.Should().Be(UnitTrackingPayloadParseStatus.Invalid);
+			result.Errors.Should().Contain(error => error.Contains("must match"));
+			result.Positions.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task ParseAsync_TraccarHasNoValidTimestamp_RejectsPayload()
+		{
+			var request = Request("""
+				{
+				  "position": {
+				    "deviceId": 42,
+				    "fixTime": "not-a-time",
+				    "valid": true,
+				    "latitude": 39.7392,
+				    "longitude": -104.9903
+				  },
+				  "device": {
+				    "id": 42,
+				    "uniqueId": "917000000000"
+				  }
+				}
+				""");
+
+			var result = await _parser.ParseAsync(
+				request,
+				"traccar-json-v1",
+				DateTime.UtcNow);
+
+			result.Status.Should().Be(UnitTrackingPayloadParseStatus.Invalid);
+			result.Errors.Should().Contain(error => error.Contains("valid position"));
+			result.Positions.Should().BeEmpty();
+		}
+
+		private static string ReadFixture(string fileName) =>
+			System.IO.File.ReadAllText(
+				Path.Combine(
+					TestContext.CurrentContext.TestDirectory,
+					"Data",
+					"UnitTracking",
+					"Fixtures",
+					"traccar",
+					"v6.14.5",
+					fileName));
+
 		private static HttpRequest Request(string body)
 		{
 			var bytes = Encoding.UTF8.GetBytes(body);

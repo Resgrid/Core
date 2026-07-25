@@ -242,6 +242,39 @@ namespace Resgrid.Tests.Web.User
 		}
 
 		[Test]
+		public async Task Edit_DisableTransition_UsesCredentialRevocationNotification()
+		{
+			// Arrange
+			_trackingService
+				.Setup(service => service.UpdateDeviceAsync(
+					It.IsAny<UnitTrackingDevice>(),
+					DepartmentId,
+					UserId,
+					It.IsAny<CancellationToken>()))
+				.ReturnsAsync((UnitTrackingDevice device, int departmentId, string userId,
+					CancellationToken cancellationToken) => device);
+
+			// Act
+			var result = await _controller.Edit(
+				_device.UnitTrackingDeviceId,
+				new UnitTrackingEditorView
+				{
+					ProfileKey = _profile.Key,
+					DisplayName = "Updated Tracker",
+					DeviceIdentifier = _device.DeviceIdentifier,
+					IsEnabled = false,
+					SourcePriority = 25
+				},
+				CancellationToken.None);
+
+			// Assert
+			result.Should().BeOfType<RedirectToActionResult>()
+				.Which.ActionName.Should().Be(nameof(UnitTrackingController.Details));
+			_controller.TempData["UnitTrackingSuccess"]
+				.Should().Be("TrackingBindingDisabledMessage");
+		}
+
+		[Test]
 		public async Task CreateCredential_ValidBearer_DisplaysSecretOnceAndDisablesCaching()
 		{
 			// Arrange

@@ -83,7 +83,7 @@
         function updateProfileHelp() {
             const option = select.options[select.selectedIndex];
             summary.textContent = option && option.dataset.summary
-                ? option.dataset.summary + " " + (option.dataset.retry || "")
+                ? `${option.dataset.summary} ${option.dataset.retry || ""}`
                 : "";
         }
         select.addEventListener("change", updateProfileHelp);

@@ -54,12 +54,13 @@ namespace Resgrid.Services
 					{
 						UnitTrackingAuthMode.Bearer,
 						UnitTrackingAuthMode.Basic,
-						UnitTrackingAuthMode.CustomHeader
+						UnitTrackingAuthMode.CustomHeader,
+						UnitTrackingAuthMode.CapabilityPath
 					},
 					SetupSummary =
-						"The pinned Traccar forwarding adapter is delivered in WP5. Candidate profiles cannot be selected in production.",
+						"Configure Traccar v6.14.5 JSON position forwarding. Use a per-device capability URL when one Traccar server forwards multiple devices.",
 					RetryExpectation =
-						"Configure position-forwarding retries for 429 and 503 responses."
+						"Enable Traccar position-forwarding retries. Resgrid returns 202 after durable queue acceptance and 429 or 503 for retryable failures."
 				}
 			};
 

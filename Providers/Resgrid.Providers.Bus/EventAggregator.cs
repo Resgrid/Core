@@ -36,7 +36,7 @@ namespace Resgrid.Providers.Bus
 			return _hub.Subscribe<T>(listener);
 		}
 
-		public Guid AddAsyncListener<T>(Func<T, Task> listener)
+		public Guid AddAsyncListener<T>(Func<T, Task> listener, Action<Exception> onError = null)
 		{
 			if (listener == null)
 				throw new ArgumentNullException(nameof(listener));
@@ -45,7 +45,20 @@ namespace Resgrid.Providers.Bus
 			var listeners = _asyncListeners.GetOrAdd(
 				typeof(T),
 				_ => new ConcurrentDictionary<Guid, Func<object, Task>>());
-			listeners[token] = message => listener((T)message);
+			listeners[token] = async message =>
+			{
+				try
+				{
+					await listener((T)message);
+				}
+				catch (Exception ex)
+				{
+					if (onError == null)
+						throw;
+
+					onError(ex);
+				}
+			};
 
 			return token;
 		}

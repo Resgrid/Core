@@ -26,7 +26,7 @@ namespace Resgrid.Model.Providers
 		/// <returns>Returns the current IEventSubscriptionManager to allow for easy fluent additions.</returns>
 		Guid AddListener<T>(Action<T> listener);
 
-		Guid AddAsyncListener<T>(Func<T, Task> listener);
+		Guid AddAsyncListener<T>(Func<T, Task> listener, Action<Exception> onError = null);
 
 		/// <summary>
 		/// Removes the listener object from the EventAggregator

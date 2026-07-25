@@ -39,9 +39,10 @@ namespace Resgrid.Repositories.DataRepository
 				parameters.Add("DepartmentId", departmentId);
 				parameters.Add("UnitId", unitId);
 				var query = _queryFactory.GetQuery<SelectUnitTrackingDevicesByUnitQuery>();
+				var transaction = _unitOfWork?.Transaction;
 
 				return await WithConnectionAsync(connection =>
-					connection.QueryAsync<UnitTrackingDevice>(query, parameters, _unitOfWork.Transaction));
+					connection.QueryAsync<UnitTrackingDevice>(query, parameters, transaction));
 			}
 			catch (Exception ex)
 			{
@@ -58,12 +59,13 @@ namespace Resgrid.Repositories.DataRepository
 				parameters.Add("ProtocolKey", protocolKey);
 				parameters.Add("DeviceIdentifier", deviceIdentifier);
 				var query = _queryFactory.GetQuery<SelectUnitTrackingDeviceByProtocolIdentifierQuery>();
+				var transaction = _unitOfWork?.Transaction;
 
 				return await WithConnectionAsync(connection =>
 					connection.QuerySingleOrDefaultAsync<UnitTrackingDevice>(
 						query,
 						parameters,
-						_unitOfWork.Transaction));
+						transaction));
 			}
 			catch (Exception ex)
 			{

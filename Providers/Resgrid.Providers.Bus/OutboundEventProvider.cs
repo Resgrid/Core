@@ -616,7 +616,7 @@ namespace Resgrid.Providers.Bus
 				_rabbitTopicProvider = new RabbitTopicProvider();
 
 			if (!await _rabbitTopicProvider.UnitLocationUpdatedChanged(message))
-				throw new InvalidOperationException("Unable to publish the Unit location realtime update.");
+				Framework.Logging.LogError($"Unable to publish the Unit location realtime update for department {message.DepartmentId}.");
 		};
 		#endregion Topic Based Events
 	}

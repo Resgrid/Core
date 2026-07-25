@@ -30,6 +30,10 @@ namespace Resgrid.Tests.Services
 				.IsSelectable.Should().BeTrue();
 			profiles.Single(profile => profile.Key == "traccar-forwarder")
 				.IsSelectable.Should().BeFalse();
+			profiles.Single(profile => profile.Key == "traccar-forwarder")
+				.SupportedAuthModes.Should().Contain(UnitTrackingAuthMode.CapabilityPath);
+			profiles.Single(profile => profile.Key == "traccar-forwarder")
+				.SetupSummary.Should().Contain("v6.14.5");
 			profiles.Should().OnlyContain(profile =>
 				!string.IsNullOrWhiteSpace(profile.PayloadAdapterKey) &&
 				profile.SupportedAuthModes.Count > 0);

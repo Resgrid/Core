@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Resgrid.Config;
 using Resgrid.Model;
 using Resgrid.Model.Helpers;
 using Resgrid.Model.Services;
@@ -546,8 +547,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpGet]
 		[AllowAnonymous]
-		public async Task<IActionResult> InternalRunReport(int type, int departmentId)
+		public async Task<IActionResult> InternalRunReport(int type, int departmentId, string key)
 		{
+			var expectedKey = Config.SecurityConfig.InternalReportsToken;
+
+			if (String.IsNullOrWhiteSpace(expectedKey) || String.IsNullOrWhiteSpace(key) ||
+				!System.Security.Cryptography.CryptographicOperations.FixedTimeEquals(
+					Encoding.UTF8.GetBytes(key), Encoding.UTF8.GetBytes(expectedKey)))
+				return Unauthorized();
+
 			if (((ReportTypes)type) == ReportTypes.Staffing)
 			{
 				return View("StaffingReport", await CreateStaffingReportModel(departmentId));

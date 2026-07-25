@@ -2617,8 +2617,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[Authorize(Policy = ResgridResources.Call_View)]
 		public async Task<IActionResult> AttachCallFile(FileAttachInput model, IFormFile fileToUpload, CancellationToken cancellationToken)
 		{
+			if (!await _authorizationService.CanUserEditCallAsync(UserId, model.CallId))
+				return Unauthorized();
+
 			if (fileToUpload == null || fileToUpload.Length <= 0)
 				ModelState.AddModelError("fileToUpload", _dispatchLocalizer["AttachFileRequired"].Value);
 			else
@@ -2691,14 +2695,44 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public async Task<IActionResult> GetCallImage(int callId, int attachmentId)
+		public async Task<IActionResult> GetCallImage(int callId, int attachmentId, string token)
 		{
 			var callAttachment = await _callsService.GetCallAttachmentAsync(attachmentId);
 
-			if (callAttachment == null || callAttachment.CallId != callId)
-				return null;
+			if (callAttachment == null || callAttachment.CallId != callId || callAttachment.Call == null)
+				return NotFound();
+
+			// Authorized when the caller is an authenticated member of the call's department,
+			// or when presenting a valid per-image capability token (used by anonymous CallExportEx pages).
+			var isAuthorized = false;
+
+			if (User?.Identity != null && User.Identity.IsAuthenticated && callAttachment.Call.DepartmentId == DepartmentId)
+				isAuthorized = true;
+			else if (IsValidCallImageToken(callId, attachmentId, token))
+				isAuthorized = true;
+
+			if (!isAuthorized)
+				return Unauthorized();
 
 			return File(callAttachment.Data, "image/jpeg");
+		}
+
+		private static bool IsValidCallImageToken(int callId, int attachmentId, string token)
+		{
+			if (String.IsNullOrWhiteSpace(token))
+				return false;
+
+			try
+			{
+				var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(token)).Trim();
+				var decrypted = SymmetricEncryption.Decrypt(decoded, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
+
+				return String.Equals(decrypted, $"{callId}|{attachmentId}", StringComparison.Ordinal);
+			}
+			catch
+			{
+				return false;
+			}
 		}
 
 		[HttpGet]

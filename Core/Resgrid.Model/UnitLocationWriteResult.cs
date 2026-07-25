@@ -11,20 +11,17 @@ namespace Resgrid.Model
 		public UnitLocationWriteStatus Status { get; set; }
 		public UnitsLocation Location { get; set; }
 
-		public static UnitLocationWriteResult Inserted(UnitsLocation location)
-		{
-			return new UnitLocationWriteResult
-			{
-				Status = UnitLocationWriteStatus.Inserted,
-				Location = location
-			};
-		}
+		public static UnitLocationWriteResult Inserted(UnitsLocation location) =>
+			Create(UnitLocationWriteStatus.Inserted, location);
 
-		public static UnitLocationWriteResult Duplicate(UnitsLocation location)
+		public static UnitLocationWriteResult Duplicate(UnitsLocation location) =>
+			Create(UnitLocationWriteStatus.Duplicate, location);
+
+		private static UnitLocationWriteResult Create(UnitLocationWriteStatus status, UnitsLocation location)
 		{
 			return new UnitLocationWriteResult
 			{
-				Status = UnitLocationWriteStatus.Duplicate,
+				Status = status,
 				Location = location
 			};
 		}

@@ -96,6 +96,7 @@ namespace Resgrid.Web.Services.Models.v4.UnitTracking
 		public int SourcePriority { get; set; } = 100;
 
 		[MaxLength(2048)]
+		[AllowedSourceCidrs]
 		public string AllowedSourceCidrs { get; set; }
 
 		[MaxLength(128)]
@@ -121,6 +122,7 @@ namespace Resgrid.Web.Services.Models.v4.UnitTracking
 		public int SourcePriority { get; set; } = 100;
 
 		[MaxLength(2048)]
+		[AllowedSourceCidrs]
 		public string AllowedSourceCidrs { get; set; }
 
 		[MaxLength(128)]

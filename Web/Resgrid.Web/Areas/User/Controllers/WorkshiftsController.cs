@@ -107,11 +107,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
-		[Authorize(Policy = ResgridResources.Shift_Create)]
+		[Authorize(Policy = ResgridResources.Shift_Update)]
 		public async Task<IActionResult> Edit(NewWorkshiftView model, CancellationToken cancellationToken)
 		{
 			if (ModelState.IsValid)
 			{
+				var existingShift = await _workShiftsService.GetWorkshiftByIdAsync(model.Shift.WorkshiftId);
+
+				if (existingShift == null || existingShift.DepartmentId != DepartmentId)
+					return Unauthorized();
+
 				model.Shift.DepartmentId = DepartmentId;
 				model.Shift.AddedOn = DateTime.UtcNow;
 				model.Shift.AddedById = UserId;

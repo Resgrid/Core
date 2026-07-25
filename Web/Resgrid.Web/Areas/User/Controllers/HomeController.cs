@@ -1013,8 +1013,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return new StatusCodeResult((int)HttpStatusCode.NoContent);
 		}
 
+		[Authorize(Policy = ResgridResources.Department_View)]
 		public async Task<IActionResult> SetCustomUserAction(string userId, int actionType)
 		{
+			var member = await _departmentsService.GetDepartmentMemberAsync(userId, DepartmentId);
+
+			if (member == null)
+				return Unauthorized();
+
+			if (userId != UserId && !ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Unauthorized();
+
 			await _actionLogsService.SetUserActionAsync(userId, (await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId, actionType);
 
 			return new StatusCodeResult((int)HttpStatusCode.OK);
@@ -1023,6 +1032,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_View)]
 		public async Task<IActionResult> SetCustomStaffing(string userId, int staffingLevel)
 		{
+			var member = await _departmentsService.GetDepartmentMemberAsync(userId, DepartmentId);
+
+			if (member == null)
+				return Unauthorized();
+
+			if (userId != UserId && !ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Unauthorized();
+
 			await _userStateService.CreateUserState(userId, DepartmentId, staffingLevel);
 
 			return new StatusCodeResult((int)HttpStatusCode.NoContent);
@@ -1031,6 +1048,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_View)]
 		public async Task<IActionResult> ResetAllToStandingBy()
 		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Unauthorized();
+
 			await _actionLogsService.SetActionForEntireDepartmentAsync((await _departmentsService.GetDepartmentByUserIdAsync(UserId)).DepartmentId, (int)ActionTypes.StandingBy, String.Empty);
 
 			return RedirectToAction("Dashboard", "Home", new { area = "User" });
@@ -1039,6 +1059,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Department_View)]
 		public async Task<IActionResult> ResetGroupToStandingBy(int groupId)
 		{
+			var group = await _departmentGroupsService.GetGroupByIdAsync(groupId);
+
+			if (group == null || group.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && !ClaimsAuthorizationHelper.IsUserGroupAdmin(groupId))
+				return Unauthorized();
+
 			await _actionLogsService.SetActionForDepartmentGroupAsync(groupId, (int)ActionTypes.StandingBy, String.Empty);
 
 			return RedirectToAction("Dashboard", "Home", new { area = "User" });

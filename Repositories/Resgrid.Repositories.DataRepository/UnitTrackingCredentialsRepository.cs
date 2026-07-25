@@ -70,6 +70,25 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
+		public async Task<int> RevokeAllByDeviceIdAsync(string unitTrackingDeviceId, DateTime revokedOn)
+		{
+			try
+			{
+				var parameters = new DynamicParametersExtension();
+				parameters.Add("UnitTrackingDeviceId", unitTrackingDeviceId);
+				parameters.Add("RevokedOn", revokedOn);
+				var query = _queryFactory.GetUpdateQuery<RevokeUnitTrackingCredentialsByDeviceQuery, UnitTrackingCredential>(null);
+
+				return await WithConnectionAsync(connection =>
+					connection.ExecuteAsync(query, parameters, _unitOfWork.Transaction));
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				throw;
+			}
+		}
+
 		private async Task<TResult> WithConnectionAsync<TResult>(Func<DbConnection, Task<TResult>> action)
 		{
 			if (_unitOfWork?.Connection != null)

@@ -1323,12 +1323,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> GetAvailableNumbers(string country, string areaCode)
 		{
 			return Json(await _numbersService.GetAvailableNumbers(country, areaCode));
 		}
 
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> ProvisionNumber(string msisdn, string country, CancellationToken cancellationToken)
 		{
 			if (!await _limitsService.CanDepartmentProvisionNumberAsync(DepartmentId))
@@ -1346,6 +1348,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
+		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> ProvisionDefaultNumberAsync(string country, string areaCode, CancellationToken cancellationToken)
 		{
 			if (!await _limitsService.CanDepartmentProvisionNumberAsync(DepartmentId))

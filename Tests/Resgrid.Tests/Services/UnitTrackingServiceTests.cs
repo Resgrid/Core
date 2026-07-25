@@ -159,6 +159,80 @@ namespace Resgrid.Tests.Services
 				Times.Never);
 		}
 
+		[TestCase(null, null)]
+		[TestCase("", null)]
+		[TestCase("   ", null)]
+		[TestCase("10.0.0.0/8, 2001:db8::/32", "10.0.0.0/8,2001:db8::/32")]
+		public async Task CreateDeviceAsync_AllowedSourceCidrs_PersistsCanonicalValue(
+			string allowedSourceCidrs,
+			string expected)
+		{
+			// Arrange
+			var device = Device();
+			device.AllowedSourceCidrs = allowedSourceCidrs;
+
+			// Act
+			var result = await _service.CreateDeviceAsync(device, DepartmentId, UserId);
+
+			// Assert
+			result.AllowedSourceCidrs.Should().Be(expected);
+		}
+
+		[TestCase("not-a-cidr")]
+		[TestCase("10.0.0.1")]
+		[TestCase("10.0.0.0/33")]
+		[TestCase("2001:db8::/129")]
+		[TestCase("10.0.0.1/24")]
+		[TestCase("2001:0db8::/32")]
+		[TestCase(",")]
+		public async Task CreateDeviceAsync_InvalidAllowedSourceCidrs_RejectsBeforeSaving(string allowedSourceCidrs)
+		{
+			// Arrange
+			var device = Device();
+			device.AllowedSourceCidrs = allowedSourceCidrs;
+
+			// Act
+			Func<Task> act = () => _service.CreateDeviceAsync(device, DepartmentId, UserId);
+
+			// Assert
+			await act.Should().ThrowAsync<ArgumentException>()
+				.WithParameterName("allowedSourceCidrs");
+			_devicesRepository.Verify(
+				repository => repository.InsertAsync(
+					It.IsAny<UnitTrackingDevice>(),
+					It.IsAny<CancellationToken>(),
+					It.IsAny<bool>()),
+				Times.Never);
+		}
+
+		[Test]
+		public async Task UpdateDeviceAsync_InvalidAllowedSourceCidrs_RejectsBeforeSaving()
+		{
+			// Arrange
+			var existing = Device();
+			var update = Device();
+			update.AllowedSourceCidrs = "10.0.0.1/24";
+			_devicesRepository
+				.Setup(repository => repository.GetByIdAsync(existing.UnitTrackingDeviceId))
+				.ReturnsAsync(existing);
+			_credentialsRepository
+				.Setup(repository => repository.GetAllByDeviceIdAsync(existing.UnitTrackingDeviceId))
+				.ReturnsAsync(new List<UnitTrackingCredential>());
+
+			// Act
+			Func<Task> act = () => _service.UpdateDeviceAsync(update, DepartmentId, UserId);
+
+			// Assert
+			await act.Should().ThrowAsync<ArgumentException>()
+				.WithParameterName("allowedSourceCidrs");
+			_devicesRepository.Verify(
+				repository => repository.UpdateAsync(
+					It.IsAny<UnitTrackingDevice>(),
+					It.IsAny<CancellationToken>(),
+					It.IsAny<bool>()),
+				Times.Never);
+		}
+
 		[Test]
 		public async Task CreateCredentialAsync_EnabledDevice_ReturnsTokenWithoutExposingStoredHash()
 		{
@@ -330,6 +404,58 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task UpdateDeviceAsync_DisableTransition_AppliesChangesAndRevokesCredentialsAtomically()
+		{
+			// Arrange
+			var existing = Device();
+			var update = Device();
+			update.DisplayName = " Updated Tracker ";
+			update.ManufacturerKey = " New Manufacturer ";
+			update.ModelKey = " New Model ";
+			update.TransportType = (int)UnitTrackingTransportType.NativeHttps;
+			update.ProtocolKey = " New Protocol ";
+			update.PayloadAdapterKey = " New Adapter ";
+			update.DeviceIdentifier = " updated-device-5678 ";
+			update.SecondaryIdentifier = " secondary-42 ";
+			update.IsEnabled = false;
+			update.SourcePriority = 25;
+			update.AllowedSourceCidrs = "10.0.0.0/8, 2001:db8::/32";
+			update.FirmwareVersion = " 2.0.0 ";
+			var credentials = new List<UnitTrackingCredential>
+			{
+				Credential("credential-1", "hash-1")
+			};
+			_devicesRepository
+				.Setup(repository => repository.GetByIdAsync(existing.UnitTrackingDeviceId))
+				.ReturnsAsync(existing);
+			_credentialsRepository
+				.Setup(repository => repository.GetAllByDeviceIdAsync(existing.UnitTrackingDeviceId))
+				.ReturnsAsync(credentials);
+
+			// Act
+			var result = await _service.UpdateDeviceAsync(update, DepartmentId, UserId);
+
+			// Assert
+			result.DisplayName.Should().Be("Updated Tracker");
+			result.ManufacturerKey.Should().Be("new manufacturer");
+			result.ModelKey.Should().Be("new model");
+			result.TransportType.Should().Be((int)UnitTrackingTransportType.NativeHttps);
+			result.ProtocolKey.Should().Be("new protocol");
+			result.PayloadAdapterKey.Should().Be("new adapter");
+			result.DeviceIdentifier.Should().Be("UPDATED-DEVICE-5678");
+			result.SecondaryIdentifier.Should().Be("SECONDARY-42");
+			result.SourcePriority.Should().Be(25);
+			result.AllowedSourceCidrs.Should().Be("10.0.0.0/8,2001:db8::/32");
+			result.FirmwareVersion.Should().Be("2.0.0");
+			result.IsEnabled.Should().BeFalse();
+			result.LastStatus.Should().Be((int)UnitTrackingDeviceStatus.Disabled);
+			credentials.Should().OnlyContain(credential => credential.RevokedOn.HasValue);
+			_unitOfWork.Verify(unitOfWork => unitOfWork.CommitChanges(), Times.Once);
+			_auditEvents.Should().ContainSingle(audit =>
+				audit.Type == AuditLogTypes.UnitTrackingDeviceDisabled);
+		}
+
+		[Test]
 		public async Task RebindDeviceAsync_NewUnit_SoftDeletesOldBindingAndCreatesReplacement()
 		{
 			var device = Device();
@@ -352,9 +478,36 @@ namespace Resgrid.Tests.Services
 			result.UnitId.Should().Be(99);
 			result.DeviceIdentifier.Should().Be(device.DeviceIdentifier);
 			result.IsEnabled.Should().BeTrue();
+			result.LastStatus.Should().Be((int)UnitTrackingDeviceStatus.NeverSeen);
 			_unitOfWork.Verify(unitOfWork => unitOfWork.CommitChanges(), Times.Once);
 			_auditEvents.Should().Contain(audit => audit.Type == AuditLogTypes.UnitTrackingDeviceDeleted);
 			_auditEvents.Should().Contain(audit => audit.Type == AuditLogTypes.UnitTrackingDeviceCreated);
+		}
+
+		[Test]
+		public async Task RebindDeviceAsync_DisabledSource_PreservesDisabledState()
+		{
+			// Arrange
+			var device = Device();
+			device.IsEnabled = false;
+			device.LastStatus = (int)UnitTrackingDeviceStatus.Disabled;
+			_devicesRepository
+				.Setup(repository => repository.GetByIdAsync(device.UnitTrackingDeviceId))
+				.ReturnsAsync(device);
+			_credentialsRepository
+				.Setup(repository => repository.GetAllByDeviceIdAsync(device.UnitTrackingDeviceId))
+				.ReturnsAsync(new List<UnitTrackingCredential>());
+
+			// Act
+			var result = await _service.RebindDeviceAsync(
+				device.UnitTrackingDeviceId,
+				DepartmentId,
+				99,
+				UserId);
+
+			// Assert
+			result.IsEnabled.Should().BeFalse();
+			result.LastStatus.Should().Be((int)UnitTrackingDeviceStatus.Disabled);
 		}
 
 		private static UnitTrackingDevice Device()

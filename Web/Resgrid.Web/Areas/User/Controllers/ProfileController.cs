@@ -951,6 +951,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.Profile_View)]
 		public async Task<IActionResult>  ResetPasswordForUser(string userId)
 		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Unauthorized();
+
 			var model = new ResetPasswordForUserView();
 			model.UserId = userId;
 
@@ -969,6 +972,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult>  ResetPasswordForUser(ResetPasswordForUserView model)
 		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Unauthorized();
+
 			var department= await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 			if (model.UserId == department.ManagingUserId)

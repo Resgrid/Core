@@ -53,33 +53,34 @@ namespace Resgrid.Services
 			if (!IsEnabled(source?.Device))
 				return Invalid(receivedOn, "The tracking binding is not enabled.");
 
-			var device = source.Device;
-			var unit = await _unitsService.GetUnitByIdAsync(device.UnitId);
-			if (unit == null || unit.DepartmentId != device.DepartmentId)
-			{
-				await TryUpdateDeviceStatusAsync(device, receivedOn, null, "tenant-binding-invalid", cancellationToken);
-				return Invalid(receivedOn, "The tracking binding is invalid.");
-			}
+		var device = source.Device;
 
-			if (!IdentifierMatches(device.DeviceIdentifier, source.ReportedDeviceIdentifier))
-			{
-				await TryUpdateDeviceStatusAsync(device, receivedOn, null, "identifier-mismatch", cancellationToken);
-				return Invalid(receivedOn, "The reported device identifier does not match the binding.");
-			}
+		if (positions == null || positions.Count == 0)
+		{
+			await TryUpdateDeviceStatusAsync(device, receivedOn, null, "empty-payload", cancellationToken);
+			return Invalid(receivedOn, "At least one position is required.");
+		}
 
-			if (positions == null || positions.Count == 0)
-			{
-				await TryUpdateDeviceStatusAsync(device, receivedOn, null, "empty-payload", cancellationToken);
-				return Invalid(receivedOn, "At least one position is required.");
-			}
+		if (positions.Count > Math.Max(1, UnitTrackingConfig.MaxBatchPositions))
+		{
+			await TryUpdateDeviceStatusAsync(device, receivedOn, null, "batch-limit", cancellationToken);
+			return Invalid(receivedOn, "The position batch exceeds the configured limit.");
+		}
 
-			if (positions.Count > Math.Max(1, UnitTrackingConfig.MaxBatchPositions))
-			{
-				await TryUpdateDeviceStatusAsync(device, receivedOn, null, "batch-limit", cancellationToken);
-				return Invalid(receivedOn, "The position batch exceeds the configured limit.");
-			}
+		var unit = await _unitsService.GetUnitByIdAsync(device.UnitId);
+		if (unit == null || unit.DepartmentId != device.DepartmentId)
+		{
+			await TryUpdateDeviceStatusAsync(device, receivedOn, null, "tenant-binding-invalid", cancellationToken);
+			return Invalid(receivedOn, "The tracking binding is invalid.");
+		}
 
-			var retentionDays =
+		if (!IdentifierMatches(device.DeviceIdentifier, source.ReportedDeviceIdentifier))
+		{
+			await TryUpdateDeviceStatusAsync(device, receivedOn, null, "identifier-mismatch", cancellationToken);
+			return Invalid(receivedOn, "The reported device identifier does not match the binding.");
+		}
+
+		var retentionDays =
 				await _departmentSettingsService.GetHardwareTrackingLocationRetentionDaysAsync(device.DepartmentId);
 			var normalization = NormalizeAll(positions, retentionDays);
 			if (normalization.Errors.Count > 0)

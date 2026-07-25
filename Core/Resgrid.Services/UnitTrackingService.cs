@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Resgrid.Config;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
@@ -99,7 +101,7 @@ namespace Resgrid.Services
 				IsEnabled = device.IsEnabled,
 				IsDeleted = false,
 				SourcePriority = device.SourcePriority,
-				AllowedSourceCidrs = TrimToNull(device.AllowedSourceCidrs),
+				AllowedSourceCidrs = ValidateAllowedSourceCidrs(device.AllowedSourceCidrs),
 				LastStatus = device.IsEnabled
 					? (int)UnitTrackingDeviceStatus.NeverSeen
 					: (int)UnitTrackingDeviceStatus.Disabled,
@@ -132,9 +134,7 @@ namespace Resgrid.Services
 					"A physical tracker must be rebound by creating a new binding; UnitId cannot be edited in place.");
 			}
 
-			if (existing.IsEnabled && !device.IsEnabled)
-				return await DisableDeviceAsync(existing.UnitTrackingDeviceId, departmentId, userId, cancellationToken);
-
+			var disableRequested = existing.IsEnabled && !device.IsEnabled;
 			await ValidateUnitOwnershipAsync(existing.UnitId, departmentId);
 			var credentials = await GetCredentialEntitiesAsync(existing.UnitTrackingDeviceId);
 			var before = DeviceAuditSnapshot(existing);
@@ -150,10 +150,23 @@ namespace Resgrid.Services
 			existing.SecondaryIdentifier = _identifierService.Normalize(device.SecondaryIdentifier);
 			existing.IsEnabled = device.IsEnabled;
 			existing.SourcePriority = device.SourcePriority;
-			existing.AllowedSourceCidrs = TrimToNull(device.AllowedSourceCidrs);
+			existing.AllowedSourceCidrs = ValidateAllowedSourceCidrs(device.AllowedSourceCidrs);
 			existing.FirmwareVersion = TrimToNull(device.FirmwareVersion);
 			existing.UpdatedByUserId = userId;
 			existing.UpdatedOn = DateTime.UtcNow;
+			if (disableRequested)
+			{
+				return await PersistDisabledOrDeletedDeviceAsync(
+					existing,
+					oldCacheIdentity,
+					credentials,
+					before,
+					departmentId,
+					userId,
+					false,
+					cancellationToken);
+			}
+
 			if (device.IsEnabled && existing.LastStatus == (int)UnitTrackingDeviceStatus.Disabled)
 				existing.LastStatus = (int)UnitTrackingDeviceStatus.NeverSeen;
 
@@ -199,10 +212,11 @@ namespace Resgrid.Services
 			var oldCacheIdentity = CopyCacheIdentity(existing);
 			var now = DateTime.UtcNow;
 
-			_unitOfWork.CreateOrGetConnection();
+			await _unitOfWork.CreateOrGetConnectionAsync(cancellationToken);
 			UnitTrackingDevice replacement;
 			try
 			{
+				replacement = CopyForRebind(existing, newUnitId, userId, now);
 				existing.IsEnabled = false;
 				existing.IsDeleted = true;
 				existing.LastStatus = (int)UnitTrackingDeviceStatus.Disabled;
@@ -211,13 +225,13 @@ namespace Resgrid.Services
 				await _devicesRepository.UpdateAsync(existing, cancellationToken);
 				await RevokeCredentialsAsync(credentials, now, cancellationToken);
 
-				replacement = CopyForRebind(existing, newUnitId, userId, now);
 				await _devicesRepository.InsertAsync(replacement, cancellationToken);
 				_unitOfWork.CommitChanges();
 			}
-			catch
+			catch (Exception ex)
 			{
 				_unitOfWork.DiscardChanges();
+				Logging.LogException(ex, $"Unit tracking device rebind failed for device {deviceId} in department {departmentId}.");
 				throw;
 			}
 
@@ -383,6 +397,27 @@ namespace Resgrid.Services
 			var before = DeviceAuditSnapshot(device);
 			var oldCacheIdentity = CopyCacheIdentity(device);
 			var credentials = await GetCredentialEntitiesAsync(deviceId);
+			return await PersistDisabledOrDeletedDeviceAsync(
+				device,
+				oldCacheIdentity,
+				credentials,
+				before,
+				departmentId,
+				userId,
+				delete,
+				cancellationToken);
+		}
+
+		private async Task<UnitTrackingDevice> PersistDisabledOrDeletedDeviceAsync(
+			UnitTrackingDevice device,
+			UnitTrackingDevice oldCacheIdentity,
+			IEnumerable<UnitTrackingCredential> credentials,
+			object before,
+			int departmentId,
+			string userId,
+			bool delete,
+			CancellationToken cancellationToken)
+		{
 			var now = DateTime.UtcNow;
 
 			_unitOfWork.CreateOrGetConnection();
@@ -466,11 +501,13 @@ namespace Resgrid.Services
 			DateTime revokedOn,
 			CancellationToken cancellationToken)
 		{
-			foreach (var credential in credentials.Where(item => !item.RevokedOn.HasValue))
-			{
+			var pending = credentials.Where(item => !item.RevokedOn.HasValue).ToList();
+			if (pending.Count == 0)
+				return;
+
+			await _credentialsRepository.RevokeAllByDeviceIdAsync(pending[0].UnitTrackingDeviceId, revokedOn);
+			foreach (var credential in pending)
 				credential.RevokedOn = revokedOn;
-				await _credentialsRepository.UpdateAsync(credential, cancellationToken);
-			}
 		}
 
 		private async Task InvalidateDeviceAndCredentialsAsync(
@@ -649,11 +686,13 @@ namespace Resgrid.Services
 				PayloadAdapterKey = device.PayloadAdapterKey,
 				DeviceIdentifier = device.DeviceIdentifier,
 				SecondaryIdentifier = device.SecondaryIdentifier,
-				IsEnabled = true,
+				IsEnabled = device.IsEnabled,
 				IsDeleted = false,
 				SourcePriority = device.SourcePriority,
 				AllowedSourceCidrs = device.AllowedSourceCidrs,
-				LastStatus = (int)UnitTrackingDeviceStatus.NeverSeen,
+				LastStatus = device.IsEnabled
+					? (int)UnitTrackingDeviceStatus.NeverSeen
+					: (int)UnitTrackingDeviceStatus.Disabled,
 				FirmwareVersion = device.FirmwareVersion,
 				CreatedByUserId = userId,
 				CreatedOn = now
@@ -693,7 +732,9 @@ namespace Resgrid.Services
 		}
 
 		private static bool IsHttpTokenCharacter(char character) =>
-			char.IsLetterOrDigit(character) ||
+			(character >= 'a' && character <= 'z') ||
+			(character >= 'A' && character <= 'Z') ||
+			(character >= '0' && character <= '9') ||
 			"!#$%&'*+-.^_`|~".Contains(character);
 
 		private static void ValidateUserAndDepartment(string userId, int departmentId)
@@ -706,6 +747,41 @@ namespace Resgrid.Services
 
 		private static string NormalizeKey(string value) =>
 			string.IsNullOrWhiteSpace(value) ? null : value.Trim().ToLowerInvariant();
+
+		private static string ValidateAllowedSourceCidrs(string allowedSourceCidrs)
+		{
+			if (string.IsNullOrWhiteSpace(allowedSourceCidrs))
+				return null;
+
+			var entries = allowedSourceCidrs.Split(
+				',',
+				StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+			if (entries.Length == 0)
+			{
+				throw new ArgumentException(
+					"Allowed source CIDRs must contain at least one canonical CIDR entry.",
+					nameof(allowedSourceCidrs));
+			}
+
+			foreach (var entry in entries)
+			{
+				var parts = entry.Split('/', 2, StringSplitOptions.None);
+				if (parts.Length != 2 ||
+				    !IPAddress.TryParse(parts[0], out var address) ||
+				    !int.TryParse(parts[1], out var prefixLength) ||
+				    prefixLength < 0 ||
+				    prefixLength > address.GetAddressBytes().Length * 8 ||
+				    !IPNetwork.TryParse(entry, out var network) ||
+				    !string.Equals(entry, network.ToString(), StringComparison.Ordinal))
+				{
+					throw new ArgumentException(
+						"Allowed source CIDRs must contain only canonical IPv4 or IPv6 CIDR entries.",
+						nameof(allowedSourceCidrs));
+				}
+			}
+
+			return string.Join(",", entries);
+		}
 
 		private static string TrimToNull(string value) =>
 			string.IsNullOrWhiteSpace(value) ? null : value.Trim();

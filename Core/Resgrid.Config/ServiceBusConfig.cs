@@ -15,6 +15,9 @@
 		public static string PaymentQueueName = "paymenttest";
 		public static string AuditQueueName = "audittest";
 		public static string UnitLoactionQueueName = "unitlocationtest";
+		public static string UnitLocationQueueV2Name = "unitlocation-v2test";
+		public static string UnitLocationRetryQueueV2Name = "unitlocation-v2test.retry";
+		public static string UnitLocationDeadQueueV2Name = "unitlocation-v2test.dead";
 		public static string PersonnelLoactionQueueName = "personnellocationtest";
 		public static string SecurityRefreshQueueName = "securityrefreshtest";
 		public static string WorkflowQueueName = "workflowqueuetest";
@@ -29,6 +32,9 @@
 		public static string PaymentQueueName = "payment";
 		public static string AuditQueueName = "audit";
 		public static string UnitLoactionQueueName = "unitlocation";
+		public static string UnitLocationQueueV2Name = "unitlocation-v2";
+		public static string UnitLocationRetryQueueV2Name = "unitlocation-v2.retry";
+		public static string UnitLocationDeadQueueV2Name = "unitlocation-v2.dead";
 		public static string PersonnelLoactionQueueName = "personnellocation";
 		public static string SecurityRefreshQueueName = "securityrefresh";
 		public static string WorkflowQueueName = "workflowqueue";
@@ -50,9 +56,6 @@
 		public static string RabbitUsername = "";
 		public static string RabbbitPassword = "";
 		public static string RabbbitExchange = "";
-		public static string UnitLocationQueueV2Name = "unitlocation-v2";
-		public static string UnitLocationRetryQueueV2Name = "unitlocation-v2.retry";
-		public static string UnitLocationDeadQueueV2Name = "unitlocation-v2.dead";
 		#endregion RabbitMQ Bus Values
 	}
 

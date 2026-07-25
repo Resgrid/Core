@@ -67,6 +67,8 @@ namespace Resgrid.Framework
 			if (transaction.Request != null)
 				transaction.Request.Url = RedactCapabilityPath(transaction.Request.Url);
 
+			((IEventLike)transaction).TransactionName = RedactCapabilityPath(transaction.Name);
+
 			if (transaction.Status != SpanStatus.NotFound)
 				return transaction;
 

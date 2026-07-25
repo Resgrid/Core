@@ -1,0 +1,44 @@
+{
+  "position": {
+    "id": 0,
+    "attributes": {
+      "sat": 11,
+      "hdop": 0.8,
+      "batteryLevel": 87,
+      "power": 13.6,
+      "rssi": 4,
+      "ignition": true,
+      "motion": true,
+      "alarm": "sos",
+      "unsupportedNestedTelemetry": {
+        "ignored": true
+      }
+    },
+    "deviceId": 314,
+    "protocol": "h02",
+    "serverTime": "2026-07-24T18:42:52.001+00:00",
+    "deviceTime": "2026-07-24T18:42:50.000+00:00",
+    "fixTime": "2026-07-24T18:42:51.123+00:00",
+    "valid": true,
+    "latitude": 39.7392,
+    "longitude": -104.9903,
+    "altitude": 1608.2,
+    "speed": 10.0,
+    "course": 271.5,
+    "accuracy": 4.8,
+    "address": "Fixture address intentionally ignored"
+  },
+  "device": {
+    "id": 314,
+    "attributes": {
+      "fixtureSource": "independently-generated"
+    },
+    "name": "Long-tail SinoTrack ST-901 fixture",
+    "uniqueId": "917000000000",
+    "status": "online",
+    "model": "ST-901"
+  },
+  "departmentId": 999,
+  "unitId": 999,
+  "unsupportedEnvelopeField": "ignored"
+}

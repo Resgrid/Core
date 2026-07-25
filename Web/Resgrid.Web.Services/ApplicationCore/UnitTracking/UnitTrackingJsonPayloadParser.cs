@@ -36,16 +36,26 @@ namespace Resgrid.Web.Services.ApplicationCore.UnitTracking
 
 	public class UnitTrackingJsonPayloadParser
 	{
+		private const string ResgridJsonAdapterKey = "resgrid-json-v1";
+		private const string TraccarJsonAdapterKey = "traccar-json-v1";
 		private static readonly UTF8Encoding StrictUtf8 = new(false, true);
 
-		public bool Supports(string payloadAdapterKey) =>
-			string.Equals(
-				payloadAdapterKey?.Trim(),
-				"resgrid-json-v1",
-				StringComparison.OrdinalIgnoreCase);
+		public bool Supports(string payloadAdapterKey)
+		{
+			var normalized = payloadAdapterKey?.Trim();
+			return string.Equals(normalized, ResgridJsonAdapterKey, StringComparison.OrdinalIgnoreCase) ||
+			       string.Equals(normalized, TraccarJsonAdapterKey, StringComparison.OrdinalIgnoreCase);
+		}
+
+		public Task<UnitTrackingPayloadParseResult> ParseAsync(
+			HttpRequest request,
+			DateTime receivedOn,
+			CancellationToken cancellationToken = default) =>
+			ParseAsync(request, ResgridJsonAdapterKey, receivedOn, cancellationToken);
 
 		public async Task<UnitTrackingPayloadParseResult> ParseAsync(
 			HttpRequest request,
+			string payloadAdapterKey,
 			DateTime receivedOn,
 			CancellationToken cancellationToken = default)
 		{
@@ -105,6 +115,18 @@ namespace Resgrid.Web.Services.ApplicationCore.UnitTracking
 				FloatParseHandling = FloatParseHandling.Decimal,
 				MissingMemberHandling = MissingMemberHandling.Ignore
 			});
+
+			if (string.Equals(
+				    payloadAdapterKey?.Trim(),
+				    TraccarJsonAdapterKey,
+				    StringComparison.OrdinalIgnoreCase))
+				return TraccarJsonPayloadAdapter.Parse(root, serializer, receivedOn);
+
+			if (!string.Equals(
+				    payloadAdapterKey?.Trim(),
+				    ResgridJsonAdapterKey,
+				    StringComparison.OrdinalIgnoreCase))
+				return Invalid("The configured payload adapter is not supported.");
 
 			UnitTrackingPositionInput[] inputs;
 			string envelopeIdentifier = null;
@@ -235,7 +257,7 @@ namespace Resgrid.Web.Services.ApplicationCore.UnitTracking
 			CancellationToken cancellationToken)
 		{
 			using var buffer = new MemoryStream(Math.Min(maximumBytes, 16 * 1024));
-			var chunk = new byte[Math.Min(8192, maximumBytes + 1)];
+			var chunk = new byte[Math.Min(8192, maximumBytes)];
 			var total = 0;
 
 			while (true)

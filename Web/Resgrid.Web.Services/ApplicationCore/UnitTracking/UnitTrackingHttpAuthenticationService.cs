@@ -130,24 +130,20 @@ namespace Resgrid.Web.Services.ApplicationCore.UnitTracking
 			if (string.IsNullOrWhiteSpace(encoded))
 				return null;
 
-			try
-			{
-				var decodedBytes = Convert.FromBase64String(encoded);
-				var decoded = Encoding.UTF8.GetString(decodedBytes);
-				var separator = decoded.IndexOf(':');
-				if (separator <= 0 || separator == decoded.Length - 1)
-					return null;
-
-				return new PresentedCredential(
-					UnitTrackingAuthMode.Basic,
-					decoded.Substring(separator + 1),
-					decoded.Substring(0, separator),
-					null);
-			}
-			catch (FormatException)
-			{
+			var decodedBytes = new byte[(encoded.Length * 3 / 4) + 3];
+			if (!Convert.TryFromBase64String(encoded, decodedBytes, out var bytesWritten))
 				return null;
-			}
+
+			var decoded = Encoding.UTF8.GetString(decodedBytes, 0, bytesWritten);
+			var separator = decoded.IndexOf(':');
+			if (separator <= 0 || separator == decoded.Length - 1)
+				return null;
+
+			return new PresentedCredential(
+				UnitTrackingAuthMode.Basic,
+				decoded.Substring(separator + 1),
+				decoded.Substring(0, separator),
+				null);
 		}
 
 		private static bool MatchesEndpointCredential(

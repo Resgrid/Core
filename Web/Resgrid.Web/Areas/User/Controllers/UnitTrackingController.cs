@@ -214,6 +214,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!ModelState.IsValid)
 				return View(await BuildEditorAsync(context.Unit, model, cancellationToken));
 
+			var disableRequested = context.Device.IsEnabled && !model.IsEnabled;
 			ApplyUpdate(context.Device, model, profile);
 			try
 			{
@@ -222,7 +223,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 					DepartmentId,
 					UserId,
 					cancellationToken);
-				TempData["UnitTrackingSuccess"] = _localizer["TrackingBindingUpdatedMessage"].Value;
+				TempData["UnitTrackingSuccess"] = _localizer[
+					disableRequested
+						? "TrackingBindingDisabledMessage"
+						: "TrackingBindingUpdatedMessage"].Value;
 				return RedirectToAction(nameof(Details), new { id });
 			}
 			catch (ArgumentException ex)

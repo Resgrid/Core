@@ -254,6 +254,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
+				if (!await _authorizationService.CanUserModifyCalendarEntryAsync(UserId, model.Item.CalendarItemId))
+					return Unauthorized();
+
 				var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 
 				// Snapshot existing attendees before update so we can diff for notifications
@@ -310,6 +313,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			if (ModelState.IsValid)
 			{
+				if (item.CalendarItemId != 0 && !await _authorizationService.CanUserModifyCalendarEntryAsync(UserId, item.CalendarItemId))
+					return Json(new { success = false, message = "You are not authorized to modify this calendar entry." });
+
 				var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId, false);
 
 				var timeZone = "Etc/UTC";

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Model;
@@ -126,6 +127,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpGet]
 		public async Task<IActionResult> New()
 		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Unauthorized();
+
 			var model = new NotificationNewView();
 			model.Notification = new DepartmentNotification();
 
@@ -140,6 +144,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[HttpPost]
 		public async Task<IActionResult> New(NotificationNewView model, IFormCollection collection, CancellationToken cancellationToken)
 		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Unauthorized();
+
 			ViewBag.Types = model.Type.ToSelectList();
 			model.Notification.DepartmentId = DepartmentId;
 			model.Notification.EventType = (int)model.Type;
@@ -237,8 +244,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
+		[Authorize]
 		public async Task<IActionResult> Delete(int notificationId, CancellationToken cancellationToken)
 		{
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Unauthorized();
+
+			var notifications = await _notificationService.GetNotificationsByDepartmentAsync(DepartmentId);
+
+			if (notifications == null || !notifications.Any(x => x.DepartmentNotificationId == notificationId))
+				return Unauthorized();
+
 			await _notificationService.DeleteDepartmentNotificationByIdAsync(notificationId, cancellationToken);
 
 			return RedirectToAction("Index");

@@ -253,7 +253,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			if (call.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			if (!await _authorizationService.CanUserViewCallAsync(UserId, callId))
 				return Unauthorized();
@@ -1500,7 +1500,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			if (call.DepartmentId != DepartmentId)
-				Unauthorized();
+				return Unauthorized();
 
 			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);

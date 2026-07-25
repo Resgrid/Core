@@ -39,13 +39,16 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.WithColumn("UpdatedByUserId").AsString(128).Nullable()
 					.WithColumn("UpdatedOn").AsDateTime().Nullable();
 
-				Create.ForeignKey("FK_UnitTrackingDevices_Departments")
-					.FromTable(DevicesTable).ForeignColumn("DepartmentId")
-					.ToTable("Departments").PrimaryColumn("DepartmentId");
+			if (!Schema.Table("Units").Constraint("UQ_Units_DepartmentId_UnitId").Exists())
+			{
+				Create.UniqueConstraint("UQ_Units_DepartmentId_UnitId")
+					.OnTable("Units")
+					.Columns("DepartmentId", "UnitId");
+			}
 
-				Create.ForeignKey("FK_UnitTrackingDevices_Units")
-					.FromTable(DevicesTable).ForeignColumn("UnitId")
-					.ToTable("Units").PrimaryColumn("UnitId");
+			Create.ForeignKey("FK_UnitTrackingDevices_Units_Department_Unit")
+				.FromTable(DevicesTable).ForeignColumns("DepartmentId", "UnitId")
+				.ToTable("Units").PrimaryColumns("DepartmentId", "UnitId");
 			}
 
 			if (!Schema.Table(DevicesTable).Index("IX_UnitTrackingDevices_Department_Unit_Deleted").Exists())
@@ -139,6 +142,9 @@ namespace Resgrid.Providers.Migrations.Migrations
 
 			if (Schema.Table(DevicesTable).Exists())
 				Delete.Table(DevicesTable);
+
+			if (Schema.Table("Units").Constraint("UQ_Units_DepartmentId_UnitId").Exists())
+				Delete.UniqueConstraint("UQ_Units_DepartmentId_UnitId").FromTable("Units");
 		}
 	}
 }

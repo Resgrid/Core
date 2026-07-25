@@ -12,7 +12,9 @@ using System.Threading;
 using Resgrid.Web.Services.Models.v4.PersonnelStatuses;
 using Resgrid.Framework;
 using System.Collections.Generic;
+using System.Linq;
 using Resgrid.Model.Helpers;
+using Resgrid.Web.ServicesCore.Helpers;
 
 namespace Resgrid.Web.Services.Controllers.v4
 {
@@ -143,7 +145,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (DepartmentId != userToSetStatusFor.DepartmentId)
 					return Unauthorized();
 
-				// TODO: We need to check here if the user is a department admin, or the admin that the user is a part of
+				if (input.UserId != UserId && !ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+					return Unauthorized();
 
 				string geolocation = null;
 				if (!String.IsNullOrWhiteSpace(input.Latitude) && !String.IsNullOrWhiteSpace(input.Longitude))
@@ -211,6 +214,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (!ModelState.IsValid)
 				return BadRequest();
+
+			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin() && input.UserIds.Any(x => x != UserId))
+				return Unauthorized();
 
 			List<string> logIds = new List<string>();
 			foreach (var userId in input.UserIds)

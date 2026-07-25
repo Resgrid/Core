@@ -12,7 +12,7 @@ namespace Resgrid.Repositories.NoSqlRepository
 	{
 		private readonly IMongoCollection<UnitsLocation> _collection;
 		private readonly object _indexLock = new object();
-		private Task _ensureIndexesTask;
+		private Task? _ensureIndexesTask;
 
 		public UnitLocationsMongoRepository()
 		{
@@ -58,7 +58,24 @@ namespace Resgrid.Repositories.NoSqlRepository
 		{
 			lock (_indexLock)
 			{
-				return _ensureIndexesTask ??= CreateIndexesAsync();
+				return _ensureIndexesTask ??= CreateIndexesAndClearOnFailureAsync();
+			}
+		}
+
+		private async Task CreateIndexesAndClearOnFailureAsync()
+		{
+			try
+			{
+				await CreateIndexesAsync();
+			}
+			catch
+			{
+				lock (_indexLock)
+				{
+					_ensureIndexesTask = null;
+				}
+
+				throw;
 			}
 		}
 

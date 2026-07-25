@@ -39,13 +39,16 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("updatedbyuserid").AsCustom("citext").Nullable()
 					.WithColumn("updatedon").AsDateTime2().Nullable();
 
-				Create.ForeignKey("fk_unittrackingdevices_departments")
-					.FromTable(DevicesTable).ForeignColumn("departmentid")
-					.ToTable("departments").PrimaryColumn("departmentid");
+			if (!Schema.Table("units").Constraint("uq_units_departmentid_unitid").Exists())
+			{
+				Create.UniqueConstraint("uq_units_departmentid_unitid")
+					.OnTable("units")
+					.Columns("departmentid", "unitid");
+			}
 
-				Create.ForeignKey("fk_unittrackingdevices_units")
-					.FromTable(DevicesTable).ForeignColumn("unitid")
-					.ToTable("units").PrimaryColumn("unitid");
+			Create.ForeignKey("fk_unittrackingdevices_units_department_unit")
+				.FromTable(DevicesTable).ForeignColumns("departmentid", "unitid")
+				.ToTable("units").PrimaryColumns("departmentid", "unitid");
 			}
 
 			if (!Schema.Table(DevicesTable).Index("ix_unittrackingdevices_department_unit_deleted").Exists())
@@ -87,7 +90,7 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("headername").AsCustom("citext").Nullable()
 					.WithColumn("basicusername").AsCustom("citext").Nullable()
 					.WithColumn("keyprefix").AsCustom("citext").NotNullable()
-					.WithColumn("secrethash").AsCustom("citext").NotNullable()
+					.WithColumn("secrethash").AsString(64).NotNullable()
 					.WithColumn("validfrom").AsDateTime2().NotNullable()
 					.WithColumn("expireson").AsDateTime2().Nullable()
 					.WithColumn("revokedon").AsDateTime2().Nullable()
@@ -132,6 +135,9 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 
 			if (Schema.Table(DevicesTable).Exists())
 				Delete.Table(DevicesTable);
+
+			if (Schema.Table("units").Constraint("uq_units_departmentid_unitid").Exists())
+				Delete.UniqueConstraint("uq_units_departmentid_unitid").FromTable("units");
 		}
 	}
 }

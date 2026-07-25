@@ -133,6 +133,41 @@ namespace Resgrid.Tests.Web.Services
 		}
 
 		[Test]
+		public async Task PostPositions_TraccarBinding_SelectsPinnedAdapterAndForwardsUniqueId()
+		{
+			_device.PayloadAdapterKey = "traccar-json-v1";
+			SetBody("""
+				{
+				  "position": {
+				    "id": 123,
+				    "attributes": { "motion": true },
+				    "deviceId": 314,
+				    "protocol": "h02",
+				    "fixTime": "2026-07-24T18:42:51.123Z",
+				    "valid": true,
+				    "latitude": 39.7392,
+				    "longitude": -104.9903,
+				    "speed": 10.0
+				  },
+				  "device": {
+				    "id": 314,
+				    "uniqueId": "917000000000"
+				  }
+				}
+				""");
+
+			var result = await _controller.PostPositions("device-1");
+
+			result.Should().BeOfType<AcceptedResult>();
+			_ingressService.Verify(service => service.AcceptAsync(
+				It.Is<AuthenticatedTrackingSource>(source =>
+					source.ReportedDeviceIdentifier == "917000000000"),
+				It.Is<System.Collections.Generic.IReadOnlyCollection<CanonicalTrackingPosition>>(
+					positions => positions.Count == 1),
+				It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
 		public async Task PostPositions_KnownEndpointWithInvalidCredential_ReturnsUnauthorized()
 		{
 			_controller.Request.Headers.Authorization = "Bearer wrong-token";

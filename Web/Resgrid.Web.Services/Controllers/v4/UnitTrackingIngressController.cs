@@ -69,13 +69,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 			catch (Exception ex)
 			{
-				return Unavailable(ex, "Unit tracking endpoint authentication is unavailable.");
+				return Unavailable(ex, "Unit tracking endpoint authentication is unavailable.", unitTrackingDeviceId);
 			}
 
 			if (authentication.Status == UnitTrackingHttpAuthenticationStatus.NotFound)
 				return UnknownEndpointResponse();
 			if (authentication.Status != UnitTrackingHttpAuthenticationStatus.Authenticated)
-				return Unauthorized();
+			{
+				var failedLimit = _rateLimiter.CheckUnknownEndpoint(
+					HttpContext.Connection.RemoteIpAddress?.ToString());
+				return failedLimit.Allowed ? Unauthorized() : RateLimited(failedLimit);
+			}
 
 			return await AcceptAsync(authentication.Source);
 		}
@@ -137,10 +141,24 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Invalid("The configured payload adapter is not supported.");
 
 			var receivedOn = DateTime.UtcNow;
-			var parsed = await _payloadParser.ParseAsync(
-				Request,
-				receivedOn,
-				HttpContext.RequestAborted);
+			UnitTrackingPayloadParseResult parsed;
+			try
+			{
+				parsed = await _payloadParser.ParseAsync(
+					Request,
+					source.Device.PayloadAdapterKey,
+					receivedOn,
+					HttpContext.RequestAborted);
+			}
+			catch (OperationCanceledException) when (HttpContext.RequestAborted.IsCancellationRequested)
+			{
+				throw;
+			}
+			catch (Exception ex)
+			{
+				return Unavailable(ex, "Unit tracking payload parsing is unavailable.", source.Device?.UnitTrackingDeviceId);
+			}
+
 			var parseResponse = MapParseFailure(parsed);
 			if (parseResponse != null)
 				return parseResponse;
@@ -167,7 +185,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 			catch (Exception ex)
 			{
-				return Unavailable(ex, "Unit tracking ingress is unavailable.");
+				return Unavailable(ex, "Unit tracking ingress is unavailable.", source.Device?.UnitTrackingDeviceId);
 			}
 
 			return result.Status switch
@@ -222,9 +240,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			return StatusCode(StatusCodes.Status429TooManyRequests);
 		}
 
-		private IActionResult Unavailable(Exception exception, string message)
+		private IActionResult Unavailable(Exception exception, string message, string deviceId = null)
 		{
-			Logging.LogException(exception, message);
+			var context = string.IsNullOrWhiteSpace(deviceId)
+				? message
+				: $"{message} Device: {deviceId}.";
+			Logging.LogException(exception, context, HttpContext?.TraceIdentifier);
 			return StatusCode(StatusCodes.Status503ServiceUnavailable);
 		}
 

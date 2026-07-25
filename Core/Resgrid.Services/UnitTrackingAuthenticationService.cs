@@ -36,12 +36,10 @@ namespace Resgrid.Services
 		{
 			EnsurePepperConfigured();
 
-			var randomBytes = RandomNumberGenerator.GetBytes(32);
-			var encodedSecret = Convert.ToBase64String(randomBytes)
-				.TrimEnd('=')
-				.Replace('+', '-')
-				.Replace('/', '_');
-			var keyPrefix = encodedSecret.Substring(0, 8);
+			var secretBytes = RandomNumberGenerator.GetBytes(32);
+			var prefixBytes = RandomNumberGenerator.GetBytes(6);
+			var encodedSecret = EncodeBase64Url(secretBytes);
+			var keyPrefix = EncodeBase64Url(prefixBytes);
 			var token = $"rgtrk_{keyPrefix}_{encodedSecret}";
 
 			return new UnitTrackingGeneratedCredential
@@ -198,6 +196,7 @@ namespace Resgrid.Services
 					load,
 					TimeSpan.FromSeconds(Math.Max(1, Math.Min(60, UnitTrackingConfig.CredentialCacheSeconds))))
 				: await load();
+			cached ??= new List<UnitTrackingCredential>();
 			var now = utcNow ?? DateTime.UtcNow;
 
 			return cached
@@ -251,6 +250,12 @@ namespace Resgrid.Services
 
 		private static string NormalizeKey(string value) =>
 			string.IsNullOrWhiteSpace(value) ? null : value.Trim().ToLowerInvariant();
+
+		private static string EncodeBase64Url(byte[] value) =>
+			Convert.ToBase64String(value)
+				.TrimEnd('=')
+				.Replace('+', '-')
+				.Replace('/', '_');
 
 		private static UnitTrackingCredential SanitizeCredential(UnitTrackingCredential credential)
 		{

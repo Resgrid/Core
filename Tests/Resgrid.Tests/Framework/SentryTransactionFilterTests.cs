@@ -94,5 +94,58 @@ namespace Resgrid.Tests.Framework
 			result.Should().Be("POST /api/v4/unit-trackers/c/[REDACTED]");
 			result.Should().NotContain(token);
 		}
+
+		[Test]
+		public void Filter_CapabilityPathsInTraceValues_RedactsRequestUrlAndTransactionName()
+		{
+			// Arrange
+			const string token = "rgtrk_prefix12_super-secret-capability";
+			var transaction = new SentryTransaction(
+				$"POST /api/v4/unit-trackers/c/{token}",
+				"http.server")
+			{
+				Request = new SentryRequest
+				{
+					Url = $"https://resgrid.example/api/v4/unit-trackers/c/{token}"
+				}
+			};
+			SetStatus(transaction, SpanStatus.InternalError);
+
+			// Act
+			var result = SentryTransactionFilter.Filter(transaction);
+
+			// Assert
+			result.Should().BeSameAs(transaction);
+			result.Name.Should().Be("POST /api/v4/unit-trackers/c/[REDACTED]");
+			result.Request.Url.Should().Be("https://resgrid.example/api/v4/unit-trackers/c/[REDACTED]");
+			result.Name.Should().NotContain(token);
+			result.Request.Url.Should().NotContain(token);
+		}
+
+		[Test]
+		public void Filter_404WithCapabilityPathOnlyInTransactionName_RedactsName()
+		{
+			// Arrange
+			const string token = "rgtrk_prefix12_super-secret-capability";
+			var transaction = new SentryTransaction(
+				$"POST /api/v4/unit-trackers/c/{token}",
+				"http.server");
+			SetStatus(transaction, SpanStatus.NotFound);
+
+			// Act
+			var result = SentryTransactionFilter.Filter(transaction);
+
+			// Assert
+			result.Should().BeSameAs(transaction);
+			result.Name.Should().Be("POST /api/v4/unit-trackers/c/[REDACTED]");
+			result.Name.Should().NotContain(token);
+		}
+
+		private static void SetStatus(SentryTransaction transaction, SpanStatus status)
+		{
+			typeof(SentryTransaction)
+				.GetProperty(nameof(SentryTransaction.Status))
+				.SetValue(transaction, status);
+		}
 	}
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Framework;
 using Resgrid.Model;
@@ -17,7 +18,9 @@ using SixLabors.ImageSharp.Processing;
 namespace Resgrid.Web.Services.Controllers.v4
 {
 	/// <summary>
-	/// Used to interact with the user avatars (profile pictures) in the Resgrid system. The authentication header isn't required to access this method.
+	/// Used to interact with the user avatars (profile pictures) in the Resgrid system. Reading avatars does not
+	/// require authentication (they are embedded in pages via img tags), but uploading/cropping requires a
+	/// bearer token and callers can only modify their own avatar unless they are a department admin.
 	/// </summary>
 	[Route("api/v{VersionId:apiVersion}/[controller]")]
 	[ApiVersion("4.0")]
@@ -57,16 +60,37 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		[HttpPost("Upload")]
+		[Authorize(AuthenticationSchemes = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		public async Task<ActionResult> Upload([FromQuery] string id, int? type)
 		{
+			var currentUserId = ClaimsAuthorizationHelper.GetUserId();
+			var isDepartmentAdmin = ClaimsAuthorizationHelper.IsUserDepartmentAdmin();
+
+			if (type == null || type.Value == (int)ImageTypes.Avatar)
+			{
+				if (id != currentUserId && !isDepartmentAdmin)
+					return Unauthorized();
+			}
+			else if (!isDepartmentAdmin)
+			{
+				return Unauthorized();
+			}
+
 			var img = HttpContext.Request.Form.Files.Count > 0 ?
 				HttpContext.Request.Form.Files[0] : null;
 
+			if (img == null)
+				return BadRequest();
+
 			// check for a valid mediatype
 			if (!img.ContentType.StartsWith("image/"))
+				return BadRequest();
+
+			if (img.Length > 10000000)
 				return BadRequest();
 
 			// load the image from the upload and generate a new filename
@@ -121,15 +145,22 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		[HttpPut("Crop")]
+		[Authorize(AuthenticationSchemes = OpenIddict.Validation.AspNetCore.OpenIddictValidationAspNetCoreDefaults.AuthenticationScheme)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status201Created)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(StatusCodes.Status500InternalServerError)]
 		public async Task<ActionResult> Crop([FromBody] CropRequest model)
 		{
 			// extract original image ID and generate a new filename for the cropped result
 			var originalUri = new Uri(model.imgUrl);
 			var originalId = originalUri.Query.Replace("?id=", "");
+
+			var currentUserId = ClaimsAuthorizationHelper.GetUserId();
+
+			if (originalId != currentUserId && !ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+				return Unauthorized();
 
 			try
 			{

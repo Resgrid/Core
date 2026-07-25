@@ -29,6 +29,27 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					END IF;
 				END $$;");
 
+			// Drop a leftover INVALID index from a previously-failed CREATE INDEX CONCURRENTLY
+			// build before the existence check below. The check only tests the index name, so an
+			// invalid index would skip the create and then fail the ADD CONSTRAINT ... USING INDEX
+			// attach. Only invalid indexes are dropped: a valid one may already back the constraint
+			// (which cannot be dropped independently) on a re-run after a later step failed.
+			Execute.Sql(@"
+				DO $$
+				BEGIN
+					IF EXISTS (
+						SELECT 1
+						FROM pg_class c
+						JOIN pg_index i ON i.indexrelid = c.oid
+						JOIN pg_namespace n ON n.oid = c.relnamespace
+						WHERE c.relname = 'uq_units_departmentid_unitid'
+						AND n.nspname = current_schema()
+						AND NOT i.indisvalid
+					) THEN
+						DROP INDEX uq_units_departmentid_unitid;
+					END IF;
+				END $$;");
+
 			if (!Schema.Table("units").Index("uq_units_departmentid_unitid").Exists())
 			{
 				Execute.Sql(@"

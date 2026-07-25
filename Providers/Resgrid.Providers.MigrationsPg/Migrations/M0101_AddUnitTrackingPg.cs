@@ -13,6 +13,36 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 
 		public override void Up()
 		{
+			// The units unique constraint is independent of the devices table, so it runs
+			// unconditionally (each statement is self-guarded). With TransactionBehavior.None a
+			// re-run after a partial apply (e.g. the duplicate check failed after the devices
+			// table self-committed) would otherwise skip it because the devices table exists.
+			// ALTER TABLE ADD CONSTRAINT UNIQUE takes a SHARE ROW EXCLUSIVE lock on the live units
+			// table and fails if duplicates exist. Pre-validate duplicates, build the index online
+			// with CONCURRENTLY, then attach it as a constraint (brief lock) so it can still serve
+			// as the foreign key target below.
+			Execute.Sql(@"
+				DO $$
+				BEGIN
+					IF EXISTS (SELECT 1 FROM units GROUP BY departmentid, unitid HAVING COUNT(*) > 1) THEN
+						RAISE EXCEPTION 'uq_units_departmentid_unitid: duplicate (departmentid, unitid) rows exist in units; remove them before rerunning this migration';
+					END IF;
+				END $$;");
+
+			if (!Schema.Table("units").Index("uq_units_departmentid_unitid").Exists())
+			{
+				Execute.Sql(@"
+					CREATE UNIQUE INDEX CONCURRENTLY IF NOT EXISTS uq_units_departmentid_unitid
+					ON units (departmentid, unitid);");
+			}
+
+			if (!Schema.Table("units").Constraint("uq_units_departmentid_unitid").Exists())
+			{
+				Execute.Sql(@"
+					ALTER TABLE units
+					ADD CONSTRAINT uq_units_departmentid_unitid UNIQUE USING INDEX uq_units_departmentid_unitid;");
+			}
+
 			if (!Schema.Table(DevicesTable).Exists())
 			{
 				Create.Table(DevicesTable)
@@ -41,32 +71,6 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.WithColumn("createdon").AsDateTime2().NotNullable()
 					.WithColumn("updatedbyuserid").AsCustom("citext").Nullable()
 					.WithColumn("updatedon").AsDateTime2().Nullable();
-
-			// ALTER TABLE ADD CONSTRAINT UNIQUE takes a SHARE ROW EXCLUSIVE lock on the live units
-			// table and fails if duplicates exist. Pre-validate duplicates, build the index online
-			// with CONCURRENTLY, then attach it as a constraint (brief lock) so it can still serve
-			// as the foreign key target below.
-			Execute.Sql(@"
-				DO $$
-				BEGIN
-					IF EXISTS (SELECT 1 FROM units GROUP BY departmentid, unitid HAVING COUNT(*) > 1) THEN
-						RAISE EXCEPTION 'uq_units_departmentid_unitid: duplicate (departmentid, unitid) rows exist in units; remove them before rerunning this migration';
-					END IF;
-				END $$;");
-
-			if (!Schema.Table("units").Index("uq_units_departmentid_unitid").Exists())
-			{
-				Execute.Sql(@"
-					CREATE UNIQUE INDEX CONCURRENTLY IF NOT EXISTS uq_units_departmentid_unitid
-					ON units (departmentid, unitid);");
-			}
-
-			if (!Schema.Table("units").Constraint("uq_units_departmentid_unitid").Exists())
-			{
-				Execute.Sql(@"
-					ALTER TABLE units
-					ADD CONSTRAINT uq_units_departmentid_unitid UNIQUE USING INDEX uq_units_departmentid_unitid;");
-			}
 
 			Create.ForeignKey("fk_unittrackingdevices_units_department_unit")
 				.FromTable(DevicesTable).ForeignColumns("departmentid", "unitid")

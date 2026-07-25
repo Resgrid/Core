@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using Microsoft.AspNetCore.WebUtilities;
 using Resgrid.Config;
 using Resgrid.Framework;
 
@@ -14,7 +15,7 @@ namespace Resgrid.Web.Helpers
 			var payload = $"{callId}|{attachmentId}|{DateTimeOffset.UtcNow.AddHours(CallImageTokenLifetimeHours).ToUnixTimeSeconds()}";
 			var encrypted = SymmetricEncryption.Encrypt(payload, SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
 
-			return Convert.ToBase64String(Encoding.UTF8.GetBytes(encrypted));
+			return WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(encrypted));
 		}
 
 		public static string ExtratHref(string url)

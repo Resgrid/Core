@@ -8,6 +8,7 @@ using System.Net;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Localization;
 using Newtonsoft.Json;
 using Resgrid.Framework;
@@ -2724,7 +2725,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			try
 			{
-				var decoded = Encoding.UTF8.GetString(Convert.FromBase64String(token)).Trim();
+				var decoded = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token)).Trim();
 				var decrypted = SymmetricEncryption.Decrypt(decoded, Config.SystemBehaviorConfig.ExternalLinkUrlParamPassphrase);
 				var parts = decrypted.Split('|');
 

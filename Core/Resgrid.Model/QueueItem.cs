@@ -50,6 +50,9 @@ namespace Resgrid.Model
 		[ProtoMember(12)]
 		public int ReminderCount { get; set; }
 
+		[ProtoMember(13)]
+		public int AttemptCount { get; set; }
+
 		[NotMapped]
 		public int DequeueCount { get; set; }
 

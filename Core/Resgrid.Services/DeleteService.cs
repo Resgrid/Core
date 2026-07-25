@@ -266,14 +266,16 @@ namespace Resgrid.Services
 
 				try
 				{
-					// Write the execution audit record BEFORE the delete wipes the department's users:
-					// queued audit events resolve the user profile when processed, which would fail
-					// after the account is gone, and AuditLogs are not deleted with the department,
-					// so this row survives as the durable trail for the actual deletion.
-					await WriteDepartmentDeletionExecutedAuditLogAsync(item, departmentId, cancellationToken);
 					Logging.LogInfo($"DeleteService::Executing pending department deletion for DepartmentId {item.SourceId}, requested by UserId {item.QueuedByUserId} on {item.QueuedOn:u}, scheduled for {item.ToBeCompletedOn:u}");
 
 					var result = await _deleteRepository.DeleteDepartmentAndUsersAsync(departmentId);
+
+					// Write the execution audit record only after the delete succeeds: retried
+					// attempts must not each leave an "executed" row. The row is written directly
+					// (not via the queued audit events, which resolve the now-deleted user profile
+					// when processed), and AuditLogs are not deleted with the department, so it
+					// survives as the durable trail for the actual deletion.
+					await WriteDepartmentDeletionExecutedAuditLogAsync(item, departmentId, cancellationToken);
 
 					item.CompletedOn = DateTime.UtcNow;
 					item.Data = "Department deletion executed by the system.";
@@ -284,10 +286,33 @@ namespace Resgrid.Services
 					Logging.LogException(e);
 					Logging.SendExceptionEmail(e, "DeleteDepartment", departmentId);
 
-					// Set a terminal state: the pending-queue query no longer filters out past-due
-					// items, so without this the item is re-queued and re-tried every poll, writing
-					// a duplicate execution audit row and exception email each time.
-					await SetTerminalQueueItemStateAsync(item, $"Department deletion failed: {e.Message}", cancellationToken);
+					// Bounded retry: a transient failure (DB timeout/deadlock) must not permanently
+					// abort a scheduled deletion. The item stays pending (CompletedOn null) and is
+					// retried on the next poll until the attempt budget is exhausted; only then set
+					// a terminal state so it stops re-queuing.
+					const int maxAttempts = 5;
+					item.AttemptCount += 1;
+
+					if (item.AttemptCount >= maxAttempts)
+					{
+						await SetTerminalQueueItemStateAsync(item, $"Department deletion permanently failed after {item.AttemptCount} attempts: {e.Message}", cancellationToken);
+					}
+					else
+					{
+						item.Data = $"Department deletion attempt {item.AttemptCount} failed: {e.Message}";
+
+						try
+						{
+							await _queueService.UpdateQueueItem(item, cancellationToken);
+						}
+						catch (Exception updateEx)
+						{
+							// Persisting the retry state failed; the item stays pending and is retried
+							// next poll regardless, but don't let this mask the original exception or
+							// abort the worker's processing of other pending items.
+							Logging.LogException(updateEx, $"DeleteService::Failed to persist retry state for department deletion QueueItemId {item.QueueItemId}");
+						}
+					}
 
 					return DeleteDepartmentResults.Failure;
 				}

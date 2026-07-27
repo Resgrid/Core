@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Resgrid.Model.Repositories;
@@ -190,6 +191,58 @@ namespace Resgrid.Repositories.NoSqlRepository
 
 				return UnitLocationWriteResult.Inserted(location);
 			}
+		}
+
+		public async Task<int>
+			DeleteHardwareLocationsBeforeAsync(
+				int departmentId,
+				DateTime cutoffUtc,
+				int batchSize,
+				CancellationToken cancellationToken = default)
+		{
+			if (departmentId <= 0)
+				throw new ArgumentOutOfRangeException(
+					nameof(departmentId));
+			if (cutoffUtc.Kind != DateTimeKind.Utc)
+			{
+				throw new ArgumentException(
+					"The retention cutoff must be UTC.",
+					nameof(cutoffUtc));
+			}
+			if (batchSize <= 0)
+				throw new ArgumentOutOfRangeException(
+					nameof(batchSize));
+
+			using var connection = new NpgsqlConnection(
+				Config.DataConfig.DocumentConnectionString);
+			await connection.OpenAsync(cancellationToken);
+			var command = new Dapper.CommandDefinition(
+				@"WITH expired AS
+					(
+						SELECT id
+						FROM public.unitlocations
+						WHERE departmentid = @departmentId
+							AND sourcetype = @sourceType
+							AND ""timestamp"" < @cutoff
+						ORDER BY ""timestamp"", id
+						LIMIT @batchSize
+						FOR UPDATE SKIP LOCKED
+					)
+					DELETE FROM public.unitlocations AS locations
+					USING expired
+					WHERE locations.id = expired.id;",
+				new
+				{
+					departmentId,
+					sourceType =
+						(int)UnitLocationSourceType
+							.HardwareTracker,
+					cutoff =
+						ToPostgresTimestamp(cutoffUtc),
+					batchSize
+				},
+				cancellationToken: cancellationToken);
+			return await connection.ExecuteAsync(command);
 		}
 
 		private static DateTime ToPostgresTimestamp(DateTime value)

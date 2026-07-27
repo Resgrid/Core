@@ -14,6 +14,10 @@ namespace Resgrid.Config
 		public static int DefaultLocationRetentionDays = 90;
 		public static int MinimumLocationRetentionDays = 1;
 		public static int MaximumLocationRetentionDays = 3650;
+		public static bool LocationRetentionWorkerEnabled = false;
+		public static int LocationRetentionBatchSize = 1000;
+		public static int LocationRetentionMaxRowsPerRun = 100000;
+		public static int LocationRetentionHourUtc = 4;
 		public static int PerDeviceRequestsPerMinute = 120;
 		public static int PerDeviceRecordsPerMinute = 1200;
 		public static int UnknownEndpointRequestsPerMinute = 30;
@@ -39,8 +43,14 @@ namespace Resgrid.Config
 		public static int TeltonikaTcpPort = 5027;
 		public static int TeltonikaUdpPort = 5027;
 		public static bool EnableQueclink = false;
+		public static bool EnableQueclinkTcp = true;
+		public static bool EnableQueclinkUdp = false;
 		public static bool EnableGt06 = false;
+		public static bool EnableGt06Tcp = true;
+		public static bool EnableGt06Udp = false;
 		public static bool EnableTeltonika = false;
+		public static bool EnableTeltonikaTcp = true;
+		public static bool EnableTeltonikaUdp = false;
 		public static bool RawDiagnosticCaptureEnabled = false;
 	}
 }

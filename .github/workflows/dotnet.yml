@@ -66,6 +66,8 @@ jobs:
             dockerfile: Web/Resgrid.Web.Tts/Dockerfile
           - image: resgridllc/resgridworkersconsole
             dockerfile: Workers/Resgrid.Workers.Console/Dockerfile
+          - image: resgridllc/resgridtrackergateway
+            dockerfile: Workers/Resgrid.TrackerGateway/Dockerfile
 
     steps:
     - uses: actions/checkout@v4
@@ -145,6 +147,7 @@ jobs:
               .replace(/##\s*Summary by CodeRabbit[\s\S]*/i, '')
               .replace(/^(#+\s*)(Pull Request Description|PR Description)\s*$/gim, '$1Summary')
               .replace(/Pull Request Description|PR Description/gi, 'Summary')
+              .replace(/\bPR\b/g, 'Release')
               .trim() || 'No release notes provided.';
             fs.writeFileSync('release_notes.md', body);
           } else {

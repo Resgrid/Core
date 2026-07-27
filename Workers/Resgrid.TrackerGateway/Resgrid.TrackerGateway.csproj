@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<AssemblyName>Resgrid.TrackerGateway</AssemblyName>
+		<RootNamespace>Resgrid.TrackerGateway</RootNamespace>
+		<Configurations>Debug;Release;Docker</Configurations>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />
+		<ProjectReference Include="..\..\Core\Resgrid.Model\Resgrid.Model.csproj" />
+		<ProjectReference Include="..\..\Core\Resgrid.Services\Resgrid.Services.csproj" />
+		<ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus\Resgrid.Providers.Bus.csproj" />
+		<ProjectReference Include="..\..\Providers\Resgrid.Providers.Bus.Rabbit\Resgrid.Providers.Bus.Rabbit.csproj" />
+		<ProjectReference Include="..\..\Providers\Resgrid.Providers.Cache\Resgrid.Providers.Cache.csproj" />
+		<ProjectReference Include="..\..\Providers\Resgrid.Providers.Tracking\Resgrid.Providers.Tracking.csproj" />
+		<ProjectReference Include="..\..\Repositories\Resgrid.Repositories.DataRepository\Resgrid.Repositories.DataRepository.csproj" />
+	</ItemGroup>
+</Project>

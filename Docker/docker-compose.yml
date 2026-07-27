@@ -9,8 +9,8 @@ services:
       - resgrid.env
     restart: always
     networks:
-      - rgmain:
-          ipv4_address: 172.16.193.51
+      rgmain:
+        ipv4_address: 172.16.193.51
     depends_on:
       - api
       - events
@@ -31,8 +31,8 @@ services:
       - resgrid.env
     restart: always
     networks:
-      - rgmain:
-          ipv4_address: 172.16.193.52
+      rgmain:
+        ipv4_address: 172.16.193.52
     depends_on:
       - events
       - db
@@ -52,8 +52,8 @@ services:
       - resgrid.env
     restart: always
     networks:
-      - rgmain:
-          ipv4_address: 172.16.193.53
+      rgmain:
+        ipv4_address: 172.16.193.53
     depends_on:
       - db
       - redis
@@ -69,8 +69,8 @@ services:
       - resgrid.env
     restart: always
     networks:
-      - rgmain:
-          ipv4_address: 172.16.193.54
+      rgmain:
+        ipv4_address: 172.16.193.54
     depends_on:
       - db
       - redis
@@ -81,12 +81,36 @@ services:
       - WAIT_AFTER=90
       - WAIT_TIMEOUT=180
 
+  tracker-gateway:
+    profiles: ["tracking"]
+    image: "resgridllc/resgridtrackergateway:0.6.70"
+    env_file:
+      - resgrid.env
+    restart: always
+    ports:
+      - "5004:5004/tcp"
+      - "5004:5004/udp"
+      - "5023:5023/tcp"
+      - "5023:5023/udp"
+      - "5027:5027/tcp"
+      - "5027:5027/udp"
+    networks:
+      rgmain:
+        ipv4_address: 172.16.193.60
+    depends_on:
+      - db
+      - redis
+      - rabbitmq
+    environment:
+      - WAIT_HOSTS=db:1433,redis:6379,rabbitmq:15672
+      - WAIT_TIMEOUT=300
+
   db:
     ports:
       - "5157:1433"
     networks:
-      - rgmain:
-          ipv4_address: 172.16.193.55
+      rgmain:
+        ipv4_address: 172.16.193.55
     build: ./db
     environment:
       - SA_PASSWORD=Resgrid123!!
@@ -110,8 +134,8 @@ services:
      - "5158:6379"
     restart: always
     networks:
-      - rgmain:
-          ipv4_address: 172.16.193.56
+      rgmain:
+        ipv4_address: 172.16.193.56
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -123,8 +147,8 @@ services:
       - "5159:5672"
     restart: always
     networks:
-      - rgmain:
-          ipv4_address: 172.16.193.57
+      rgmain:
+        ipv4_address: 172.16.193.57
 
   elk:
     image: sebp/elk
@@ -134,8 +158,8 @@ services:
       - "5165:5044"
     restart: always
     networks:
-      - rgmain:
-          ipv4_address: 172.16.193.58
+      rgmain:
+        ipv4_address: 172.16.193.58
       
   mongodb:
     image: mongo:4.4.18
@@ -143,8 +167,8 @@ services:
       - 27017:27017
     restart: always
     networks:
-      - rgmain:
-          ipv4_address: 172.16.193.59
+      rgmain:
+        ipv4_address: 172.16.193.59
     environment:
       - MONGO_INITDB_DATABASE=resgrid
       - MONGO_INITDB_ROOT_USERNAME=resgridUser

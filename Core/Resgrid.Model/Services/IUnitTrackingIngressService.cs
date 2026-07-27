@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,6 +11,11 @@ namespace Resgrid.Model.Services
 		Task<TrackingIngressResult> AcceptAsync(
 			AuthenticatedTrackingSource source,
 			IReadOnlyCollection<CanonicalTrackingPosition> positions,
+			CancellationToken cancellationToken = default);
+
+		Task<TrackingIngressResult> AcceptHeartbeatAsync(
+			AuthenticatedTrackingSource source,
+			DateTime receivedOnUtc,
 			CancellationToken cancellationToken = default);
 	}
 }

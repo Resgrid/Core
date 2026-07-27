@@ -14,8 +14,14 @@ namespace Resgrid.Web.Services.Models.v4.UnitTracking
 		public string TransportTypeName { get; set; }
 		public string ProtocolKey { get; set; }
 		public string PayloadAdapterKey { get; set; }
+		public string DecoderVariant { get; set; }
+		public IReadOnlyCollection<string> SupportedTransports { get; set; } =
+			Array.Empty<string>();
+		public IReadOnlyCollection<string> CertifiedTransports { get; set; } =
+			Array.Empty<string>();
 		public int CertificationStatus { get; set; }
 		public string CertificationStatusName { get; set; }
+		public string ProtocolDocumentVersion { get; set; }
 		public bool IdentifierRequired { get; set; }
 		public bool IsSelectable { get; set; }
 		public IReadOnlyCollection<int> SupportedAuthModes { get; set; } = Array.Empty<int>();

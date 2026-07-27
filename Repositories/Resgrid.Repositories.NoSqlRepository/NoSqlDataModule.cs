@@ -15,6 +15,7 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<PersonnelLocationsDocRepository>().As<IPersonnelLocationsDocRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<UnitLocationsDocRepository>().As<IUnitLocationsDocRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<UnitLocationsMongoRepository>().As<IUnitLocationsMongoRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<UnitLocationRetentionRepository>().As<IUnitLocationRetentionRepository>().InstancePerLifetimeScope();
 		}
 	}
 }

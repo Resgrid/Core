@@ -430,6 +430,28 @@ namespace Resgrid.Workers.Console
 					Cron.MinuteIntervals(1),
 					stoppingToken);
 
+				if (UnitTrackingConfig.LocationRetentionWorkerEnabled)
+				{
+					var retentionHour =
+						UnitTrackingConfig
+							.LocationRetentionHourUtc >= 0 &&
+						UnitTrackingConfig
+							.LocationRetentionHourUtc <= 23
+							? UnitTrackingConfig
+								.LocationRetentionHourUtc
+							: 4;
+
+					_logger.Log(
+						LogLevel.Information,
+						"Scheduling Unit Tracking Location Retention");
+					await Client.ScheduleAsync(
+						"Unit Tracking Location Retention",
+						new Commands
+							.UnitTrackingRetentionCommand(24),
+						Cron.Daily(retentionHour, 30),
+						stoppingToken);
+				}
+
 				if (SystemBehaviorConfig.Utf8CleanupEnabled)
 				{
 					var utf8CleanupHour = SystemBehaviorConfig.Utf8CleanupHourUtc >= 0 && SystemBehaviorConfig.Utf8CleanupHourUtc <= 23

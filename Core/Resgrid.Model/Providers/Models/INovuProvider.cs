@@ -20,6 +20,19 @@ public interface INovuProvider
 	Task<bool> CreateUserSubscriber(string userId, string code, int departmentId, string email, string firstName, string lastName);
 
 	/// <summary>
+	/// Creates a Novu subscriber for an IC (Incident Command) app user. The IC app uses a distinct subscriber
+	/// id ({code}_IC_User_{userId}) so its Novu inbox is separate from the Responder app's.
+	/// </summary>
+	/// <param name="userId">The unique identifier of the user.</param>
+	/// <param name="code">The department code prefix.</param>
+	/// <param name="departmentId">The department the user belongs to.</param>
+	/// <param name="email">The user's email address.</param>
+	/// <param name="firstName">The user's first name.</param>
+	/// <param name="lastName">The user's last name.</param>
+	/// <returns>True if the subscriber was created successfully; otherwise, false.</returns>
+	Task<bool> CreateICUserSubscriber(string userId, string code, int departmentId, string email, string firstName, string lastName);
+
+	/// <summary>
 	/// Creates a Novu subscriber for a unit (device or group).
 	/// </summary>
 	/// <param name="unitId">The unique identifier of the unit.</param>
@@ -67,6 +80,24 @@ public interface INovuProvider
 	Task<bool> UpdateUserSubscriberApns(string userId, string code, string token);
 
 	/// <summary>
+	/// Updates the Firebase Cloud Messaging (FCM) token for an IC app user subscriber.
+	/// </summary>
+	/// <param name="userId">The unique identifier of the user.</param>
+	/// <param name="code">The department code prefix.</param>
+	/// <param name="token">The FCM token to associate with the user.</param>
+	/// <returns>True if the token was updated successfully; otherwise, false.</returns>
+	Task<bool> UpdateICUserSubscriberFcm(string userId, string code, string token);
+
+	/// <summary>
+	/// Updates the Apple Push Notification Service (APNS) token for an IC app user subscriber.
+	/// </summary>
+	/// <param name="userId">The unique identifier of the user.</param>
+	/// <param name="code">The department code prefix.</param>
+	/// <param name="token">The APNS token to associate with the user.</param>
+	/// <returns>True if the token was updated successfully; otherwise, false.</returns>
+	Task<bool> UpdateICUserSubscriberApns(string userId, string code, string token);
+
+	/// <summary>
 	/// Sends a dispatch notification to a unit.
 	/// </summary>
 	/// <param name="title">The notification title.</param>
@@ -94,4 +125,16 @@ public interface INovuProvider
 	Task<bool> SendUserMessage(string title, string body, string userId, string depCode, string eventCode, string type);
 
 	Task<bool> SendUserNotification(string title, string body, string userId, string depCode, string eventCode, string type);
+
+	/// <summary>
+	/// Sends a notification to an IC app user subscriber ({depCode}_IC_User_{userId}) via the user-notification workflow.
+	/// </summary>
+	/// <param name="title">The notification title.</param>
+	/// <param name="body">The notification body content.</param>
+	/// <param name="userId">The unique identifier of the user to notify.</param>
+	/// <param name="depCode">The department code.</param>
+	/// <param name="eventCode">The event code associated with the notification.</param>
+	/// <param name="type">The type of notification.</param>
+	/// <returns>True if the notification was sent successfully; otherwise, false.</returns>
+	Task<bool> SendICUserNotification(string title, string body, string userId, string depCode, string eventCode, string type);
 }

@@ -165,6 +165,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					push.DeviceId = registrationInput.Token;
 					push.Uuid = registrationInput.DeviceUuid;
 					push.DepartmentId = DepartmentId;
+					push.Source = registrationInput.Source;
 
 					CqrsEvent registerUnitPushEvent = new CqrsEvent();
 					registerUnitPushEvent.Type = (int)CqrsEventTypes.PushRegistration;

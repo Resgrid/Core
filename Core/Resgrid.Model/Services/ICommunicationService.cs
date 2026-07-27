@@ -66,9 +66,10 @@ namespace Resgrid.Model.Services
 		/// <param name="departmentNumber">The department number.</param>
 		/// <param name="title">The title.</param>
 		/// <param name="profile">The profile.</param>
+		/// <param name="sendToICApp">When true, the push goes to the user's IC app subscriber (separate Novu inbox) instead of the Responder one.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
-		Task<bool> SendNotificationAsync(string userId, int departmentId, string message, string departmentNumber, Department department, 
-			string title = "Notification", UserProfile profile = null);
+		Task<bool> SendNotificationAsync(string userId, int departmentId, string message, string departmentNumber, Department department,
+			string title = "Notification", UserProfile profile = null, bool sendToICApp = false);
 
 		/// <summary>
 		/// Sends the chat.

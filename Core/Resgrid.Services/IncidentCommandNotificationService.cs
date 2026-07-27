@@ -114,6 +114,28 @@ namespace Resgrid.Services
 				new List<string> { fromUserId, toUserId }, cancellationToken);
 		}
 
+		public async Task SendMessageToCommandAsync(int departmentId, string senderUserId, string title, string body, IEnumerable<string> recipientUserIds, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var senderName = await ResolveDisplayNameAsync(senderUserId, null) ?? "A department member";
+			var fullBody = $"From {senderName}: {body}";
+
+			var recipients = (recipientUserIds ?? Enumerable.Empty<string>())
+				.Where(u => !string.IsNullOrWhiteSpace(u))
+				.Distinct(StringComparer.OrdinalIgnoreCase);
+
+			foreach (var recipientUserId in recipients)
+			{
+				try
+				{
+					await SendToUserAsync(recipientUserId, departmentId, title, fullBody);
+				}
+				catch (Exception ex)
+				{
+					Resgrid.Framework.Logging.LogException(ex);
+				}
+			}
+		}
+
 		/// <summary>Routes one message to the resource behind an assignment: own-department users and units only.</summary>
 		private async Task NotifyResourceAsync(ResourceAssignment assignment, string title, string body, CancellationToken cancellationToken)
 		{
@@ -195,7 +217,8 @@ namespace Resgrid.Services
 			var departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(departmentId);
 			var profile = await _userProfileService.GetProfileByUserIdAsync(userId);
 
-			await _communicationService.SendNotificationAsync(userId, departmentId, body, departmentNumber, department, title, profile);
+			// Command notifications target the IC app's Novu subscriber so they land in the IC inbox, not the Responder one.
+			await _communicationService.SendNotificationAsync(userId, departmentId, body, departmentNumber, department, title, profile, true);
 		}
 
 		private async Task SendToUnitAsync(int unitId, int departmentId, int callId, string title, string body)

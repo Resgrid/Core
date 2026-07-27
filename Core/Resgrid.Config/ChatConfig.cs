@@ -14,6 +14,8 @@
 		public static string NovuUnitApnsProviderId = "unit-apns";
 		public static string NovuResponderFcmProviderId = "respond-firebase-cloud-messaging";
 		public static string NovuResponderApnsProviderId = "respond-apns";
+		public static string NovuICFcmProviderId = "ic-firebase-cloud-messaging";
+		public static string NovuICApnsProviderId = "ic-apns";
 		public static string NovuDispatchUnitWorkflowId = "unit-dispatch";
 		public static string NovuDispatchUserWorkflowId = "user-dispatch";
 		public static string NovuMessageUserWorkflowId = "user-message";

@@ -108,6 +108,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var novuSuccess = await _novuProvider.CreateUserSubscriber(UserId, department.Code, DepartmentId, profile.MembershipEmail, profile.FirstName, profile.LastName);
 
+			// The IC app uses a distinct Novu subscriber ({code}_IC_User_{userId}) so its inbox stays separate from the Responder app's.
+			await _novuProvider.CreateICUserSubscriber(UserId, department.Code, DepartmentId, profile.MembershipEmail, profile.FirstName, profile.LastName);
+
 			result.PageSize = 1;
 			result.Status = ResponseHelper.Success;
 			ResponseHelper.PopulateV4ResponseData(result);

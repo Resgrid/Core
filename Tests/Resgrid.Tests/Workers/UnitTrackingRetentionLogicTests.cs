@@ -117,7 +117,7 @@ namespace Resgrid.Tests.Workers
 					service
 						.GetHardwareTrackingLocationRetentionDaysAsync(
 							It.IsAny<int>(),
-							true))
+							false))
 				.ReturnsAsync(
 					(int departmentId, bool bypassCache) =>
 						departmentId == 1 ? 30 : 60);
@@ -202,7 +202,7 @@ namespace Resgrid.Tests.Workers
 					service
 						.GetHardwareTrackingLocationRetentionDaysAsync(
 							1,
-							true))
+							false))
 				.ReturnsAsync(30);
 			var requestedBatchSizes = new List<int>();
 			var results = new Queue<int>(
@@ -251,7 +251,7 @@ namespace Resgrid.Tests.Workers
 					service
 						.GetHardwareTrackingLocationRetentionDaysAsync(
 							2,
-							true),
+							false),
 				Times.Never);
 		}
 

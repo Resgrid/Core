@@ -1050,6 +1050,13 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.TransferCommand(Resgrid.Web.Services.Models.v4.IncidentCommand.TransferCommandInput)">
             <summary>Transfers command to another user.</summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.SendMessageToCommand(Resgrid.Web.Services.Models.v4.IncidentCommand.SendMessageToCommandInput)">
+            <summary>
+            Sends a free-form message from the caller directly to the incident's current commander (and, when
+            IncludeDeputies is set, any assigned Deputy Incident Commanders) over their configured notification
+            channels. Only usable on an active command with a current commander.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.CloseCommand(System.String)">
             <summary>Closes command on an incident.</summary>
         </member>
@@ -7159,6 +7166,11 @@
             Prefix
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Device.PushRegistrationInput.Source">
+            <summary>
+            Source app of the registration (e.g. "IC" for the Incident Command app). Null/empty means the default Responder app.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Device.PushRegistrationResult">
             <summary>
             Depicts a request to register for push notifications
@@ -7639,6 +7651,12 @@
         <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.ReopenCommandInput">
             <summary>Input to reopen a previously closed command, with the caller's reason for reopening.</summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.SendMessageToCommandInput">
+            <summary>Input to send a free-form message directly to the incident commander (and optionally deputies).</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.IncidentCommand.SendMessageToCommandInput.IncludeDeputies">
+            <summary>Also deliver to assigned Deputy Incident Commanders, not just the current commander.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.UpdateCommandInfoInput">
             <summary>
             Input to update core incident metadata and the ICP/HQ, Staging, and Rehab locations. Null fields are
@@ -7678,6 +7696,9 @@
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.IncidentCommandSummariesResult">
             <summary>List-card summaries for the department's incident commands (active only or incl. closed).</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.IncidentCommand.SendMessageToCommandResult">
+            <summary>Result of a send-to-command message; Data is the number of recipients the message was targeted at (attempted, not confirmed delivered — sends are best-effort over each recipient's configured channels).</summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.IncidentCommand.ResourceAssignmentResult.Message">
             <summary>

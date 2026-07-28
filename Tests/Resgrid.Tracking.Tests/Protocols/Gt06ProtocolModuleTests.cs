@@ -333,6 +333,122 @@ namespace Resgrid.Tracking.Tests.Protocols
 				.Be("tow");
 		}
 
+		[Test]
+		public void EnrichPositions_BoundedVariant_DecodesLevelBatteryAndSignal()
+		{
+			// Arrange
+			var session = AuthenticatedSession();
+			var frame = StatusLocationFrame(
+				alarm: 0x00,
+				battery: 6,
+				signal: 4);
+			var input = new ReadOnlySequence<byte>(frame);
+			var result = session.Parse(ref input);
+
+			// Act
+			((ITrackingProtocolPositionEnricher)session)
+				.EnrichPositions(
+					result.Message,
+					new UnitTrackingDevice
+					{
+						ModelKey = "jimi-vl103m",
+						ProtocolKey = "gt06"
+					});
+
+			// Assert
+			var position =
+				result.Message.Positions.Single();
+			position.BatteryPercent.Should().Be(100m);
+			position.SignalPercent.Should().Be(100);
+		}
+
+		[Test]
+		public void EnrichPositions_BoundedVariant_DiscardsInvalidLevelValues()
+		{
+			// Arrange
+			var session = AuthenticatedSession();
+			var frame = StatusLocationFrame(
+				alarm: 0x00,
+				battery: 7,
+				signal: 5);
+			var input = new ReadOnlySequence<byte>(frame);
+			var result = session.Parse(ref input);
+
+			// Act
+			((ITrackingProtocolPositionEnricher)session)
+				.EnrichPositions(
+					result.Message,
+					new UnitTrackingDevice
+					{
+						ModelKey = "jimi-vl103m",
+						ProtocolKey = "gt06"
+					});
+
+			// Assert
+			var position =
+				result.Message.Positions.Single();
+			position.BatteryPercent.Should().BeNull();
+			position.SignalPercent.Should().BeNull();
+		}
+
+		[Test]
+		public void EnrichPositions_UnverifiedVariant_PreservesNativeLowPercentages()
+		{
+			// Arrange
+			var session = AuthenticatedSession();
+			var frame = StatusLocationFrame(
+				alarm: 0x00,
+				battery: 6,
+				signal: 4);
+			var input = new ReadOnlySequence<byte>(frame);
+			var result = session.Parse(ref input);
+
+			// Act
+			((ITrackingProtocolPositionEnricher)session)
+				.EnrichPositions(
+					result.Message,
+					new UnitTrackingDevice
+					{
+						ModelKey = "jimi-jm-vl01",
+						ProtocolKey = "gt06"
+					});
+
+			// Assert
+			var position =
+				result.Message.Positions.Single();
+			position.BatteryPercent.Should().Be(6m);
+			position.SignalPercent.Should().Be(4);
+		}
+
+		[Test]
+		public void EnrichPositions_UnregisteredModel_LeavesBatteryAndSignalUnset()
+		{
+			// Arrange
+			var session = AuthenticatedSession();
+			var frame = StatusLocationFrame(
+				alarm: 0x00,
+				battery: 6,
+				signal: 4);
+			var input = new ReadOnlySequence<byte>(frame);
+			var result = session.Parse(ref input);
+
+			// Act
+			((ITrackingProtocolPositionEnricher)session)
+				.EnrichPositions(
+					result.Message,
+					new UnitTrackingDevice
+					{
+						ModelKey = "unknown-model",
+						ProtocolKey = "gt06"
+					});
+
+			// Assert
+			var position =
+				result.Message.Positions.Single();
+			position.BatteryPercent.Should().BeNull();
+			position.SignalPercent.Should().BeNull();
+		}
+
 		private static ITrackingProtocolSession
 			AuthenticatedSession()
 		{
@@ -412,7 +528,9 @@ namespace Resgrid.Tracking.Tests.Protocols
 		}
 
 		private static byte[] StatusLocationFrame(
-			byte alarm)
+			byte alarm,
+			byte battery = 6,
+			byte signal = 4)
 		{
 			var standard =
 				Fixture("location-standard.hex");
@@ -421,8 +539,8 @@ namespace Resgrid.Tracking.Tests.Protocols
 			var payload = new byte[30];
 			gps.CopyTo(payload, 0);
 			payload[26] = 0x02;
-			payload[27] = 6;
-			payload[28] = 4;
+			payload[27] = battery;
+			payload[28] = signal;
 			payload[29] = alarm;
 			return BuildShortFrame(
 				0x16,

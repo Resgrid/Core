@@ -104,6 +104,14 @@ services:
     environment:
       - WAIT_HOSTS=db:1433,redis:6379,rabbitmq:15672
       - WAIT_TIMEOUT=300
+      # LocalXpose tunneling for the raw TCP/UDP ingest ports (https://localxpose.io); disabled by default.
+      - "LOCALXPOSE_ENABLED=${LOCALXPOSE_ENABLED:-false}"
+      - "LOCALXPOSE_ACCESS_TOKEN=${LOCALXPOSE_ACCESS_TOKEN:-}"
+      - "LOCALXPOSE_REGION=${LOCALXPOSE_REGION:-us}"
+      - "LOCALXPOSE_TARGET_HOST=${LOCALXPOSE_TARGET_HOST:-localhost}"
+      - "LOCALXPOSE_TCP_PORTS=${LOCALXPOSE_TCP_PORTS:-5004 5023 5027}"
+      - "LOCALXPOSE_UDP_PORTS=${LOCALXPOSE_UDP_PORTS:-}"
+      - "LOCALXPOSE_RESERVED_ENDPOINTS=${LOCALXPOSE_RESERVED_ENDPOINTS:-}"
 
   db:
     ports:

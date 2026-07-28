@@ -49,12 +49,9 @@ namespace Resgrid.Workers.Console.Tasks
 					100,
 					$"Finishing the {Name} Task");
 			}
-			catch (Exception ex)
+			catch (OperationCanceledException)
+				when (cancellationToken.IsCancellationRequested)
 			{
-				Resgrid.Framework.Logging.LogException(ex);
-				_logger.LogError(
-					ex,
-					"UnitTrackingRetention::Failed");
 				throw;
 			}
 		}

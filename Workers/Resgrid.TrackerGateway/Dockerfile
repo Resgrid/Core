@@ -47,12 +47,33 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update \
     && rm -rf /var/lib/apt/lists/*
 RUN dotnet publish "Resgrid.TrackerGateway.csproj" -c Release -o /app/publish -p:Version=${BUILD_VERSION}
 ADD --checksum=sha256:2241be671073520e028b2f12df1e9ef0419014cffb5670b7a80b2080804be17d https://github.com/ufoscout/docker-compose-wait/releases/download/2.12.1/wait /app/publish/wait
-RUN chmod +x /app/publish/wait
+# LocalXpose CLI (https://localxpose.io) used to expose the TCP/UDP ingest ports; checksum tracks the current linux/amd64 artifact.
+ADD --checksum=sha256:b13e6914288e6c7d66744578e68b4eeacab5d629cd8fe3fb13863665d0a1ac95 https://api.localxpose.io/api/downloads/loclx-linux-amd64.zip /tmp/loclx.zip
+RUN DEBIAN_FRONTEND=noninteractive apt-get update \
+    && apt-get install -y --reinstall --no-install-recommends dash unzip \
+    && test -f /usr/bin/dash \
+    && unzip /tmp/loclx.zip -d /app/publish \
+    && rm -f /tmp/loclx.zip \
+    && rm -rf /var/lib/apt/lists/* \
+    && cp /src/Workers/Resgrid.TrackerGateway/localxpose-entrypoint.sh /app/publish/localxpose-entrypoint.sh \
+    && chmod +x /app/publish/wait /app/publish/loclx /app/publish/localxpose-entrypoint.sh
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /usr/share/zoneinfo /usr/share/zoneinfo
+# Hardened runtime has no shell; copy dash for the entrypoint and the CA bundle for loclx TLS.
+COPY --from=publish /usr/bin/dash /usr/bin/dash
+COPY --from=publish /etc/ssl/certs /etc/ssl/certs
 ENV TZ=Etc/UTC
+# Writable home for loclx state when tunnels are enabled (hardened runtime user has none).
+ENV HOME=/tmp
 COPY --from=publish /app/publish .
 ENV WAIT_COMMAND="dotnet Resgrid.TrackerGateway.dll"
-ENTRYPOINT ["./wait"]
+ENV LOCALXPOSE_ENABLED=false \
+    LOCALXPOSE_REGION=us \
+    LOCALXPOSE_TARGET_HOST=localhost \
+    LOCALXPOSE_TCP_PORTS="5004 5023 5027" \
+    LOCALXPOSE_UDP_PORTS="" \
+    LOCALXPOSE_RESERVED_ENDPOINTS="" \
+    LOCALXPOSE_RESTART_DELAY=5
+ENTRYPOINT ["./localxpose-entrypoint.sh"]

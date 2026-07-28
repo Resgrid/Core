@@ -60,6 +60,8 @@ namespace Resgrid.TrackerGateway.Sessions
 				}
 				catch (ObjectDisposedException)
 				{
+					// Expected race: the displaced session's CTS was already disposed by its own
+					// teardown after it was replaced in the dictionary; nothing left to cancel.
 				}
 
 				return new TrackingSessionGenerationLease(

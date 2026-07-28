@@ -353,9 +353,8 @@ namespace Resgrid.Providers.Tracking.Protocols.Teltonika
 				    out int longitudeValue) ||
 			    !reader.TryReadBigEndian(
 				    out int latitudeValue) ||
-			    !TryReadUInt16(
-				    ref reader,
-				    out var altitude) ||
+		    !reader.TryReadBigEndian(
+			    out short altitude) ||
 			    !TryReadUInt16(
 				    ref reader,
 				    out var angle) ||

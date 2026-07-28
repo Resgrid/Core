@@ -114,8 +114,22 @@ namespace Resgrid.TrackerGateway.Listeners
 				var listeners = GetListenerSnapshot();
 				for (var index = listeners.Count - 1; index >= 0; index--)
 				{
-					await listeners[index].StopAsync(shutdownCancellation.Token);
-					_readiness.MarkStopped(listeners[index].Definition);
+					try
+					{
+						await listeners[index].StopAsync(
+							shutdownCancellation.Token);
+						_readiness.MarkStopped(
+							listeners[index].Definition);
+					}
+					catch (Exception ex)
+					{
+						_logger.LogError(
+							ex,
+							"Tracking listener failed to stop cleanly for {ProtocolKey} over {Transport} on port {Port}; continuing shutdown.",
+							listeners[index].Definition.ProtocolKey,
+							listeners[index].Definition.Transport,
+							listeners[index].Definition.Port);
+					}
 				}
 			}
 			finally

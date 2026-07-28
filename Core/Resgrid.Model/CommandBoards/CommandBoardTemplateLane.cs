@@ -47,5 +47,11 @@ namespace Resgrid.Model.CommandBoards
 
 		/// <summary>Minutes before an assigned resource shows rotation-due (0 = none).</summary>
 		public int MaxTimeInRole { get; set; }
+
+		/// <summary>Minutes before the lane work-time indicator turns amber (0 = disabled; default 20).</summary>
+		public int WorkTimeAmberMinutes { get; set; } = 20;
+
+		/// <summary>Minutes before the lane work-time indicator turns red (0 = disabled; default 40).</summary>
+		public int WorkTimeRedMinutes { get; set; } = 40;
 	}
 }

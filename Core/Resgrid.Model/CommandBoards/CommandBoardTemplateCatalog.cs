@@ -41,7 +41,8 @@ namespace Resgrid.Model.CommandBoards
 
 		private static CommandBoardTemplateLane L(string name, CommandNodeType laneType, string description,
 			string[] unitTypes = null, string[] personnelRoles = null, bool forceRequirements = false,
-			int minUnits = 0, int maxUnits = 0, int minUnitPersonnel = 0, int maxUnitPersonnel = 0, int minTimeInRole = 0, int maxTimeInRole = 0)
+			int minUnits = 0, int maxUnits = 0, int minUnitPersonnel = 0, int maxUnitPersonnel = 0, int minTimeInRole = 0, int maxTimeInRole = 0,
+			int workTimeAmberMinutes = 20, int workTimeRedMinutes = 40)
 		{
 			return new CommandBoardTemplateLane
 			{
@@ -56,7 +57,9 @@ namespace Resgrid.Model.CommandBoards
 				MinUnitPersonnel = minUnitPersonnel,
 				MaxUnitPersonnel = maxUnitPersonnel,
 				MinTimeInRole = minTimeInRole,
-				MaxTimeInRole = maxTimeInRole
+				MaxTimeInRole = maxTimeInRole,
+				WorkTimeAmberMinutes = workTimeAmberMinutes,
+				WorkTimeRedMinutes = workTimeRedMinutes
 			};
 		}
 

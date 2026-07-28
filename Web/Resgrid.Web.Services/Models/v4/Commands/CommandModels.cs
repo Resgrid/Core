@@ -46,6 +46,8 @@ namespace Resgrid.Web.Services.Models.v4.Commands
 		public int MaxUnits { get; set; }
 		public int MinTimeInRole { get; set; }
 		public int MaxTimeInRole { get; set; }
+		public int WorkTimeAmberMinutes { get; set; }
+		public int WorkTimeRedMinutes { get; set; }
 
 		/// <summary>Lane identification color (hex, e.g. "#e74c3c"); null = default styling.</summary>
 		public string Color { get; set; }
@@ -110,6 +112,8 @@ namespace Resgrid.Web.Services.Models.v4.Commands
 		public int MaxUnits { get; set; }
 		public int MinTimeInRole { get; set; }
 		public int MaxTimeInRole { get; set; }
+		public int WorkTimeAmberMinutes { get; set; }
+		public int WorkTimeRedMinutes { get; set; }
 
 		/// <summary>Lane identification color (hex, e.g. "#e74c3c"); null = default styling.</summary>
 		public string Color { get; set; }

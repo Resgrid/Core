@@ -57,6 +57,12 @@ namespace Resgrid.Model
 		/// <summary>Maximum minutes a resource should work this lane before rotation (0 = none; surfaced as rotation-due).</summary>
 		public int MaxTimeInRole { get; set; }
 
+		/// <summary>Minutes on this lane before the work-time indicator turns amber (0 = disabled; client defaults to 20).</summary>
+		public int WorkTimeAmberMinutes { get; set; }
+
+		/// <summary>Minutes on this lane before the work-time indicator turns red (0 = disabled; client defaults to 40).</summary>
+		public int WorkTimeRedMinutes { get; set; }
+
 		/// <summary>When true, unmet lane requirements block assignment instead of warning. Seeded from the template role.</summary>
 		public bool ForceRequirements { get; set; }
 

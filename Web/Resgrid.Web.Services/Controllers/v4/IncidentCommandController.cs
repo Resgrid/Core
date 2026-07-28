@@ -7,6 +7,7 @@ using Resgrid.Providers.Claims;
 using Resgrid.Web.Services.Filters;
 using Resgrid.Web.Services.Helpers;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Mime;
@@ -27,10 +28,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 	{
 		#region Members and Constructors
 		private readonly IIncidentCommandService _incidentCommandService;
+		private readonly IIncidentCommandNotificationService _incidentCommandNotificationService;
 
-		public IncidentCommandController(IIncidentCommandService incidentCommandService)
+		public IncidentCommandController(IIncidentCommandService incidentCommandService,
+			IIncidentCommandNotificationService incidentCommandNotificationService)
 		{
 			_incidentCommandService = incidentCommandService;
+			_incidentCommandNotificationService = incidentCommandNotificationService;
 		}
 		#endregion Members and Constructors
 
@@ -221,6 +225,54 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			result.Data = transfer;
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>
+		/// Sends a free-form message from the caller directly to the incident's current commander (and, when
+		/// IncludeDeputies is set, any assigned Deputy Incident Commanders) over their configured notification
+		/// channels. Only usable on an active command with a current commander.
+		/// </summary>
+		[HttpPost("SendMessageToCommand")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Command_Update)]
+		public async Task<ActionResult<ICModels.SendMessageToCommandResult>> SendMessageToCommand([FromBody] ICModels.SendMessageToCommandInput input)
+		{
+			if (input == null || input.CallId <= 0 || string.IsNullOrWhiteSpace(input.Body))
+				return BadRequest();
+
+			var result = new ICModels.SendMessageToCommandResult();
+			var command = await _incidentCommandService.GetCommandForCallAsync(DepartmentId, input.CallId);
+
+			if (command == null || command.Status != (int)IncidentCommandStatus.Active || string.IsNullOrWhiteSpace(command.CurrentCommanderUserId))
+			{
+				result.Status = ResponseHelper.NotFound;
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
+
+			var recipients = new List<string> { command.CurrentCommanderUserId };
+
+			if (input.IncludeDeputies)
+			{
+				var roles = await _incidentCommandService.GetIncidentRolesAsync(DepartmentId, input.CallId);
+				if (roles != null)
+				{
+					recipients.AddRange(roles
+						.Where(r => r.RoleType == (int)IncidentRoleType.DeputyIncidentCommander && r.RemovedOn == null && !string.IsNullOrWhiteSpace(r.UserId))
+						.Select(r => r.UserId));
+				}
+			}
+
+			var targets = recipients.Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+			var title = string.IsNullOrWhiteSpace(input.Title) ? "Incident Message" : input.Title.Trim();
+
+			await _incidentCommandNotificationService.SendMessageToCommandAsync(DepartmentId, UserId, title, input.Body.Trim(), targets, CancellationToken.None);
+
+			result.Data = targets.Count;
 			result.PageSize = 1;
 			result.Status = ResponseHelper.Success;
 			ResponseHelper.PopulateV4ResponseData(result);

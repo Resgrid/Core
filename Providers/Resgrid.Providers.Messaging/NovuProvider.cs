@@ -81,6 +81,13 @@ namespace Resgrid.Providers.Messaging
 			return await CreateSubscriber($"{code}_User_{userId}", departmentId, email, firstName, lastName, null);
 		}
 
+		public async Task<bool> CreateICUserSubscriber(string userId, string code, int departmentId, string email,
+			string firstName, string lastName)
+		{
+			// The IC app gets its own subscriber id so its Novu inbox is separate from the Responder app's.
+			return await CreateSubscriber($"{code}_IC_User_{userId}", departmentId, email, firstName, lastName, null);
+		}
+
 		public async Task<bool> CreateUnitSubscriber(int unitId, string code, int departmentId, string unitName, string deviceId)
 		{
 			var data = new List<AdditionalData>();
@@ -225,6 +232,16 @@ namespace Resgrid.Providers.Messaging
 			return await UpdateSubscriberApns($"{code}_User_{userId}", token, ChatConfig.NovuResponderApnsProviderId, null);
 		}
 
+		public async Task<bool> UpdateICUserSubscriberFcm(string userId, string code, string token)
+		{
+			return await UpdateSubscriberFcm($"{code}_IC_User_{userId}", token, ChatConfig.NovuICFcmProviderId);
+		}
+
+		public async Task<bool> UpdateICUserSubscriberApns(string userId, string code, string token)
+		{
+			return await UpdateSubscriberApns($"{code}_IC_User_{userId}", token, ChatConfig.NovuICApnsProviderId, null);
+		}
+
 		public async Task<bool> UpdateUnitSubscriberFcm(int unitId, string code, string token)
 		{
 			return await UpdateSubscriberFcm($"{code}_Unit_{unitId}", token, ChatConfig.NovuUnitFcmProviderId);
@@ -362,6 +379,11 @@ namespace Resgrid.Providers.Messaging
 		public async Task<bool> SendUserNotification(string title, string body, string userId, string depCode, string eventCode, string type)
 		{
 			return await SendNotification(title, body, $"{depCode}_User_{userId}", eventCode, type, false, 0, null, ChatConfig.NovuNotificationUserWorkflowId, GetSoundFileNameFromType(type));
+		}
+
+		public async Task<bool> SendICUserNotification(string title, string body, string userId, string depCode, string eventCode, string type)
+		{
+			return await SendNotification(title, body, $"{depCode}_IC_User_{userId}", eventCode, type, false, 0, null, ChatConfig.NovuNotificationUserWorkflowId, GetSoundFileNameFromType(type));
 		}
 
 		#region Private Push Helpers

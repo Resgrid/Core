@@ -29,5 +29,10 @@
 		/// Prefix
 		/// </summary>
 		public string Prefix { get; set; }
+
+		/// <summary>
+		/// Source app of the registration (e.g. "IC" for the Incident Command app). Null/empty means the default Responder app.
+		/// </summary>
+		public string Source { get; set; }
 	}
 }

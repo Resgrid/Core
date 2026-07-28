@@ -566,8 +566,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 				TransportTypeName = profile.TransportType.ToString(),
 				ProtocolKey = profile.ProtocolKey,
 				PayloadAdapterKey = profile.PayloadAdapterKey,
+				DecoderVariant = profile.DecoderVariant,
+				SupportedTransports =
+					profile.SupportedTransports,
+				CertifiedTransports =
+					profile.CertifiedTransports,
 				CertificationStatus = (int)profile.CertificationStatus,
 				CertificationStatusName = profile.CertificationStatus.ToString(),
+				ProtocolDocumentVersion =
+					profile.ProtocolDocumentVersion,
 				IdentifierRequired = profile.IdentifierRequired,
 				IsSelectable = profile.IsSelectable,
 				SupportedAuthModes = profile.SupportedAuthModes

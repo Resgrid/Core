@@ -134,6 +134,67 @@ namespace Resgrid.Services
 			};
 		}
 
+		public async Task<TrackingIngressResult> AcceptHeartbeatAsync(
+			AuthenticatedTrackingSource source,
+			DateTime receivedOnUtc,
+			CancellationToken cancellationToken = default)
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			var receivedOn = EnsureUtc(
+				receivedOnUtc == default
+					? DateTime.UtcNow
+					: receivedOnUtc);
+
+			if (!IsEnabled(source?.Device))
+				return Invalid(
+					receivedOn,
+					"The tracking binding is not enabled.");
+
+			var device = source.Device;
+			var unit = await _unitsService.GetUnitByIdAsync(
+				device.UnitId);
+			if (unit == null ||
+			    unit.DepartmentId != device.DepartmentId)
+			{
+				await TryUpdateDeviceStatusAsync(
+					device,
+					receivedOn,
+					null,
+					"tenant-binding-invalid",
+					cancellationToken);
+				return Invalid(
+					receivedOn,
+					"The tracking binding is invalid.");
+			}
+
+			if (!IdentifierMatches(
+				    device.DeviceIdentifier,
+				    source.ReportedDeviceIdentifier))
+			{
+				await TryUpdateDeviceStatusAsync(
+					device,
+					receivedOn,
+					null,
+					"identifier-mismatch",
+					cancellationToken);
+				return Invalid(
+					receivedOn,
+					"The reported device identifier does not match the binding.");
+			}
+
+			await TryUpdateDeviceStatusAsync(
+				device,
+				receivedOn,
+				null,
+				null,
+				cancellationToken);
+			return new TrackingIngressResult
+			{
+				Status = TrackingIngressStatus.Accepted,
+				ReceivedOn = receivedOn
+			};
+		}
+
 		private NormalizationResult NormalizeAll(
 			IReadOnlyCollection<CanonicalTrackingPosition> positions,
 			int retentionDays)

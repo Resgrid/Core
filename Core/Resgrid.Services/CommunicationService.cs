@@ -566,7 +566,7 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public async Task<bool> SendNotificationAsync(string userId, int departmentId, string message, string departmentNumber, Department department, string title = "Notification", UserProfile profile = null)
+		public async Task<bool> SendNotificationAsync(string userId, int departmentId, string message, string departmentNumber, Department department, string title = "Notification", UserProfile profile = null, bool sendToICApp = false)
 		{
 			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(departmentId))
 				return false;
@@ -615,7 +615,10 @@ namespace Resgrid.Services
 
 				try
 				{
-					await _pushService.PushNotification(spm, userId, profile);
+					if (sendToICApp)
+						await _pushService.PushICNotification(spm, userId, profile);
+					else
+						await _pushService.PushNotification(spm, userId, profile);
 
 				}
 				catch (Exception ex)

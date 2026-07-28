@@ -12,6 +12,7 @@ namespace Resgrid.Model.Services
 		Task<bool> UnRegister(PushUri pushUri);
 		void UnRegisterNotificationOnly(PushUri pushUri);
 		Task<bool> PushNotification(StandardPushMessage message, string userId, UserProfile profile = null);
+		Task<bool> PushICNotification(StandardPushMessage message, string userId, UserProfile profile = null);
 		Task<bool> RegisterUnit(PushUri pushUri);
 		Task<bool> UnRegisterUnit(PushUri pushUri);
 		Task<bool> PushChat(StandardPushMessage message, string userId, UserProfile profile = null);

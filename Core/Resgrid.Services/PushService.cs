@@ -36,14 +36,23 @@ namespace Resgrid.Services
 				return false;
 
 			var code = pushUri.PushLocation;
+			// IC app registrations target the IC-specific Novu subscriber, keeping its inbox/push separate from the Responder app.
+			var isICApp = string.Equals(pushUri.Source, "IC", StringComparison.OrdinalIgnoreCase);
+
+			if (isICApp)
+				await EnsureICUserSubscriber(pushUri, code);
 
 			// 1) iOS -> APNS
 			if (pushUri.PlatformType == (int)Platforms.iOS)
-				return await _novuProvider.UpdateUserSubscriberApns(pushUri.UserId, code, pushUri.DeviceId);
+				return isICApp
+					? await _novuProvider.UpdateICUserSubscriberApns(pushUri.UserId, code, pushUri.DeviceId)
+					: await _novuProvider.UpdateUserSubscriberApns(pushUri.UserId, code, pushUri.DeviceId);
 
 			// 2) Android -> FCM
 			if (pushUri.PlatformType == (int)Platforms.Android)
-				return await _novuProvider.UpdateUserSubscriberFcm(pushUri.UserId, code, pushUri.DeviceId);
+				return isICApp
+					? await _novuProvider.UpdateICUserSubscriberFcm(pushUri.UserId, code, pushUri.DeviceId)
+					: await _novuProvider.UpdateUserSubscriberFcm(pushUri.UserId, code, pushUri.DeviceId);
 
 			// 3) TODO: Web Push (other platforms)
 			return false;
@@ -54,6 +63,20 @@ namespace Resgrid.Services
 			await _notificationProvider.UnRegisterPushByUserDeviceId(pushUri);
 
 			return true;
+		}
+
+		private async Task EnsureICUserSubscriber(PushUri pushUri, string code)
+		{
+			try
+			{
+				var profile = await _userProfileService.GetProfileByUserIdAsync(pushUri.UserId);
+				await _novuProvider.CreateICUserSubscriber(pushUri.UserId, code, pushUri.DepartmentId,
+					profile?.MembershipEmail, profile?.FirstName, profile?.LastName);
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+			}
 		}
 
 		public async Task<bool> RegisterUnit(PushUri pushUri)
@@ -147,6 +170,35 @@ namespace Resgrid.Services
 				{
 					if (!string.IsNullOrWhiteSpace(message.DepartmentCode))
 						await _novuProvider.SendUserNotification(message.Title, message.SubTitle, userId, message.DepartmentCode, string.Format("N{0}", message.MessageId), soundType);
+				}
+				catch (Exception ex)
+				{
+					Framework.Logging.LogException(ex);
+				}
+			}
+			return true;
+		}
+
+		/// <summary>
+		/// Pushes a notification to the user's IC app (distinct Novu subscriber) only — no legacy Azure path,
+		/// so devices running just the Responder app aren't alerted for IC-only events.
+		/// </summary>
+		public async Task<bool> PushICNotification(StandardPushMessage message, string userId, UserProfile profile = null)
+		{
+			if (message == null)
+				return false;
+
+			if (profile == null)
+				profile = await _userProfileService.GetProfileByUserIdAsync(userId);
+
+			if (profile != null && profile.SendNotificationPush)
+			{
+				string soundType = await GetSoundTypeAsync(message.DepartmentId, profile, PushSoundTypes.Notifiation, PushSoundTypes.ModernNotification);
+
+				try
+				{
+					if (!string.IsNullOrWhiteSpace(message.DepartmentCode))
+						await _novuProvider.SendICUserNotification(message.Title, message.SubTitle, userId, message.DepartmentCode, string.Format("N{0}", message.MessageId), soundType);
 				}
 				catch (Exception ex)
 				{

@@ -51,6 +51,14 @@ namespace Resgrid.Model
 		[ProtoMember(7)]
 		public int DepartmentId { get; set; }
 
+		/// <summary>
+		/// Source app of the registration (e.g. "IC" for the Incident Command app). Routes the Novu push
+		/// credential update to the app-specific subscriber; null/empty means the default Responder app.
+		/// </summary>
+		[NotMapped]
+		[ProtoMember(10)]
+		public string Source { get; set; }
+
 		[Required]
 		[ProtoMember(6)]
 		public DateTime CreatedOn { get; set; }

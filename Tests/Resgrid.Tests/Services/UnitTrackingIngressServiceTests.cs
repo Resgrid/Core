@@ -214,6 +214,63 @@ namespace Resgrid.Tests.Services
 			result.Accepted.Should().Be(0);
 		}
 
+		[Test]
+		public async Task AcceptHeartbeatAsync_ValidBinding_UpdatesLastSeenWithoutPublishing()
+		{
+			// Arrange
+			var source = Source();
+			source.ReportedDeviceIdentifier = "DEVICE-1234";
+
+			// Act
+			var result = await _service.AcceptHeartbeatAsync(
+				source,
+				_receivedOn);
+
+			// Assert
+			result.Status.Should().Be(
+				TrackingIngressStatus.Accepted);
+			result.ReceivedOn.Should().Be(_receivedOn);
+			source.Device.LastSeenOn.Should().Be(_receivedOn);
+			source.Device.LastStatus.Should().Be(
+				(int)UnitTrackingDeviceStatus.Online);
+			_eventProvider.Verify(
+				provider =>
+					provider.EnqueueUnitLocationEventsAsync(
+						It.IsAny<IReadOnlyCollection<UnitLocationEvent>>(),
+						It.IsAny<CancellationToken>()),
+				Times.Never);
+		}
+
+		[Test]
+		public async Task AcceptHeartbeatAsync_TenantBindingMismatch_RejectsHeartbeat()
+		{
+			// Arrange
+			_unitsService
+				.Setup(service =>
+					service.GetUnitByIdAsync(UnitId))
+				.ReturnsAsync(
+					new Unit
+					{
+						UnitId = UnitId,
+						DepartmentId = 999
+					});
+
+			// Act
+			var result = await _service.AcceptHeartbeatAsync(
+				Source(),
+				_receivedOn);
+
+			// Assert
+			result.Status.Should().Be(
+				TrackingIngressStatus.Invalid);
+			_eventProvider.Verify(
+				provider =>
+					provider.EnqueueUnitLocationEventsAsync(
+						It.IsAny<IReadOnlyCollection<UnitLocationEvent>>(),
+						It.IsAny<CancellationToken>()),
+				Times.Never);
+		}
+
 		private AuthenticatedTrackingSource Source()
 		{
 			return new AuthenticatedTrackingSource

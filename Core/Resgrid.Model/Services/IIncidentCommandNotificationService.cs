@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -30,5 +31,12 @@ namespace Resgrid.Model.Services
 
 		/// <summary>Notifies every active user and unit on the incident (plus both commanders) that command was transferred.</summary>
 		Task NotifyCommandTransferredAsync(IncidentCommand command, string fromUserId, string toUserId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Sends a free-form message from a department member directly to specific command users (e.g. the
+		/// incident commander and deputies). The sender's display name is prepended to the body so recipients
+		/// know who it came from on every channel.
+		/// </summary>
+		Task SendMessageToCommandAsync(int departmentId, string senderUserId, string title, string body, IEnumerable<string> recipientUserIds, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

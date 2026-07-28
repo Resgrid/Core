@@ -72,6 +72,16 @@ namespace Resgrid.Web.Services.Models.v4.IncidentCommand
 		public string Reason { get; set; }
 	}
 
+	/// <summary>Input to send a free-form message directly to the incident commander (and optionally deputies).</summary>
+	public class SendMessageToCommandInput
+	{
+		public int CallId { get; set; }
+		public string Title { get; set; }
+		public string Body { get; set; }
+		/// <summary>Also deliver to assigned Deputy Incident Commanders, not just the current commander.</summary>
+		public bool IncludeDeputies { get; set; }
+	}
+
 	/// <summary>
 	/// Input to update core incident metadata and the ICP/HQ, Staging, and Rehab locations. Null fields are
 	/// left unchanged; empty strings clear. A location whose text is set while its coordinates are blank is
@@ -154,6 +164,12 @@ namespace Resgrid.Web.Services.Models.v4.IncidentCommand
 	public class CommandTransferResult : StandardApiResponseV4Base
 	{
 		public Resgrid.Model.CommandTransfer Data { get; set; }
+	}
+
+	/// <summary>Result of a send-to-command message; Data is the number of recipients the message was targeted at (attempted, not confirmed delivered — sends are best-effort over each recipient's configured channels).</summary>
+	public class SendMessageToCommandResult : StandardApiResponseV4Base
+	{
+		public int Data { get; set; }
 	}
 
 	public class CommandNodeResult : StandardApiResponseV4Base

@@ -1,0 +1,113 @@
+groups:
+  - name: resgrid-tracker-gateway
+    rules:
+      - alert: ResgridTrackerGatewayNotReady
+        expr: resgrid_tracker_gateway_ready == 0
+        for: 2m
+        labels:
+          severity: critical
+          service: resgrid-tracker-gateway
+        annotations:
+          summary: Resgrid tracker gateway is not ready
+          description: One or more configured native listeners are not ready.
+
+      - alert: ResgridTrackerGatewayListenerMismatch
+        expr: resgrid_tracker_gateway_listeners_expected - resgrid_tracker_gateway_listeners_bound > 0
+        for: 2m
+        labels:
+          severity: critical
+          service: resgrid-tracker-gateway
+        annotations:
+          summary: A required Resgrid tracking listener is not bound
+          description: The number of bound native listeners is below the configured listener count.
+
+      - alert: ResgridTrackerGatewayConnectionSaturation
+        expr: sum(resgrid_tracking_connections_current) / clamp_min(sum(resgrid_tracker_gateway_connections_limit), 1) > 0.80
+        for: 10m
+        labels:
+          severity: warning
+          service: resgrid-tracker-gateway
+        annotations:
+          summary: Resgrid tracker gateway is approaching its connection limit
+          description: More than 80 percent of configured global session capacity has been used for ten minutes.
+
+      - alert: ResgridTrackerGatewayAdmissionRejections
+        expr: sum(increase(resgrid_tracking_connections_total{outcome="admission-rejected"}[5m])) > 10
+        for: 5m
+        labels:
+          severity: warning
+          service: resgrid-tracker-gateway
+        annotations:
+          summary: Resgrid tracker gateway is rejecting connections
+          description: Global or per-IP admission limits rejected more than ten sessions in five minutes.
+
+      - alert: ResgridTrackerGatewayPublishFailures
+        expr: sum(rate(resgrid_tracking_ingress_messages_total{outcome="unavailable"}[5m])) / clamp_min(sum(rate(resgrid_tracking_ingress_messages_total[5m])), 0.001) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+          service: resgrid-tracker-gateway
+        annotations:
+          summary: Resgrid tracking ingress publish failures are elevated
+          description: More than five percent of native messages have been unavailable for five minutes.
+
+      - alert: ResgridTrackerGatewayPublishLatency
+        expr: histogram_quantile(0.95, sum by (le, transport) (rate(resgrid_tracking_queue_publish_duration_seconds_bucket[10m]))) > 0.5
+        for: 10m
+        labels:
+          severity: warning
+          service: resgrid-tracker-gateway
+        annotations:
+          summary: Resgrid tracking queue publish latency is high
+          description: The p95 canonical ingress duration has exceeded 500 milliseconds for ten minutes.
+
+      - alert: ResgridTrackerGatewayParserFailureSpike
+        expr: sum by (protocol) (rate(resgrid_tracking_parse_failures_total[5m])) > 1
+        for: 5m
+        labels:
+          severity: warning
+          service: resgrid-tracker-gateway
+        annotations:
+          summary: Resgrid tracking parser failures are elevated
+          description: A bounded protocol parser is rejecting more than one frame per second.
+
+      - alert: ResgridTrackerGatewayAuthenticationFailureSpike
+        expr: sum by (transport) (rate(resgrid_tracking_auth_failures_total[5m])) > 1
+        for: 5m
+        labels:
+          severity: warning
+          service: resgrid-tracker-gateway
+        annotations:
+          summary: Resgrid tracking authentication failures are elevated
+          description: Unknown-device, mapping, or source-policy failures exceed one per second.
+
+      - alert: ResgridTrackerGatewayForcedShutdown
+        expr: sum(increase(resgrid_tracking_shutdown_forced_total[15m])) > 0
+        labels:
+          severity: warning
+          service: resgrid-tracker-gateway
+        annotations:
+          summary: Resgrid tracker gateway exhausted its graceful drain deadline
+          description: At least one listener required a forced shutdown during the last fifteen minutes.
+
+  - name: resgrid-unit-location-queues
+    rules:
+      - alert: ResgridUnitLocationDeadLetters
+        expr: sum(rabbitmq_detailed_queue_messages_ready{queue=~"^(DEV|QA|ST)?unitlocation-v2(test)?\\.dead$"}) > 0
+        for: 2m
+        labels:
+          severity: critical
+          service: resgrid-unit-location-worker
+        annotations:
+          summary: Resgrid v2 unit-location dead letters are present
+          description: Inspect and resolve dead-lettered hardware-location events before replay.
+
+      - alert: ResgridUnitLocationRetryBacklog
+        expr: sum(rabbitmq_detailed_queue_messages_ready{queue=~"^(DEV|QA|ST)?unitlocation-v2(test)?\\.retry$"}) > 1000
+        for: 10m
+        labels:
+          severity: warning
+          service: resgrid-unit-location-worker
+        annotations:
+          summary: Resgrid v2 unit-location retry backlog is growing
+          description: More than one thousand hardware-location events have remained in retry queues for ten minutes.

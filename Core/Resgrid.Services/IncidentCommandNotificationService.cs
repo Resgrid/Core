@@ -125,9 +125,14 @@ namespace Resgrid.Services
 
 			foreach (var recipientUserId in recipients)
 			{
+				cancellationToken.ThrowIfCancellationRequested();
 				try
 				{
 					await SendToUserAsync(recipientUserId, departmentId, title, fullBody);
+				}
+				catch (OperationCanceledException)
+				{
+					throw;
 				}
 				catch (Exception ex)
 				{

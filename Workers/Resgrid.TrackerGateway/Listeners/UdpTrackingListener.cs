@@ -80,6 +80,7 @@ namespace Resgrid.TrackerGateway.Listeners
 
 			try
 			{
+				DisableConnectionResetReporting(listenerSocket);
 				listenerSocket.Bind(
 					new IPEndPoint(IPAddress.IPv6Any, Definition.Port));
 				_listenerSocket = listenerSocket;
@@ -166,17 +167,27 @@ namespace Resgrid.TrackerGateway.Listeners
 					{
 						return;
 					}
-					catch (SocketException ex)
-						when (ex.SocketErrorCode == SocketError.MessageSize)
-					{
-						_logger.LogDebug(
-							"UDP tracking datagram exceeded the configured frame limit for {ProtocolKey}.",
-							Definition.ProtocolKey);
-						_metrics.RecordParseFailure(
-							Definition.ProtocolKey,
-							"frame-too-large");
-						continue;
-					}
+				catch (SocketException ex)
+					when (ex.SocketErrorCode == SocketError.MessageSize)
+				{
+					_logger.LogDebug(
+						"UDP tracking datagram exceeded the configured frame limit for {ProtocolKey}.",
+						Definition.ProtocolKey);
+					_metrics.RecordParseFailure(
+						Definition.ProtocolKey,
+						"frame-too-large");
+					continue;
+				}
+				catch (SocketException ex)
+				{
+					_logger.LogDebug(
+						ex,
+						"UDP tracking receive failed transiently for {ProtocolKey} on port {Port} ({SocketError}); continuing to receive.",
+						Definition.ProtocolKey,
+						Definition.Port,
+						ex.SocketErrorCode);
+					continue;
+				}
 
 					if (result.ReceivedBytes <= 0)
 						continue;
@@ -227,6 +238,35 @@ namespace Resgrid.TrackerGateway.Listeners
 				ArrayPool<byte>.Shared.Return(
 					receiveBuffer,
 					clearArray: true);
+			}
+		}
+
+		private void DisableConnectionResetReporting(
+			Socket socket)
+		{
+			if (!OperatingSystem.IsWindows())
+				return;
+
+			try
+			{
+				socket.IOControl(
+					-1744830452,
+					new byte[4],
+					null);
+			}
+			catch (SocketException ex)
+			{
+				_logger.LogDebug(
+					ex,
+					"UDP connection-reset reporting could not be disabled for {ProtocolKey} on port {Port}.",
+					Definition.ProtocolKey,
+					Definition.Port);
+			}
+			catch (PlatformNotSupportedException)
+			{
+			}
+			catch (ObjectDisposedException)
+			{
 			}
 		}
 

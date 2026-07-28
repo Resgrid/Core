@@ -686,7 +686,7 @@ namespace Resgrid.TrackerGateway.Health
 			}
 
 			public double[] Buckets { get; }
-			public long[] BucketCounts { get; }
+			public IReadOnlyList<long> BucketCounts { get; }
 			public long Count { get; }
 			public double Sum { get; }
 		}

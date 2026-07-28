@@ -107,8 +107,10 @@ namespace Resgrid.Providers.Tracking.Protocols.Teltonika
 			UnitTrackingIoMapping mapping,
 			ulong rawValue)
 		{
-			if (rawValue < mapping.MinimumRawValue.Value ||
-			    rawValue > mapping.MaximumRawValue.Value)
+			if ((mapping.MinimumRawValue.HasValue &&
+			     rawValue < mapping.MinimumRawValue.Value) ||
+			    (mapping.MaximumRawValue.HasValue &&
+			     rawValue > mapping.MaximumRawValue.Value))
 				return;
 
 			var value = rawValue * mapping.Multiplier;

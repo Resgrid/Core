@@ -116,8 +116,7 @@ namespace Resgrid.Workers.Framework.Logic
 					var retentionDays =
 						await _departmentSettingsService
 							.GetHardwareTrackingLocationRetentionDaysAsync(
-								departmentId,
-								bypassCache: true)
+								departmentId)
 							.WaitAsync(cancellationToken);
 					var cutoffUtc =
 						runUtc.AddDays(-retentionDays);

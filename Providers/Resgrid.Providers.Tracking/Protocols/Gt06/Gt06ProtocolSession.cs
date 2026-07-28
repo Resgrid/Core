@@ -319,6 +319,60 @@ namespace Resgrid.Providers.Tracking.Protocols.Gt06
 					StringComparison.OrdinalIgnoreCase));
 			if (!string.IsNullOrEmpty(alarmCode))
 				position.AlarmCode = alarmCode;
+
+			var profile = UnitTrackingCatalog.GetProfile(
+				device.ModelKey);
+			if (profile == null ||
+			    !string.Equals(
+				    profile.ProtocolKey,
+				    TrackingProtocolKeys.Gt06,
+				    StringComparison.OrdinalIgnoreCase) ||
+			    !string.Equals(
+				    device.ProtocolKey,
+				    TrackingProtocolKeys.Gt06,
+				    StringComparison.OrdinalIgnoreCase))
+				return;
+
+			var levelEncoded = string.Equals(
+				profile.DecoderVariant,
+				"gt06-vl103-bounded",
+				StringComparison.OrdinalIgnoreCase) ||
+				string.Equals(
+					profile.DecoderVariant,
+					"gt06-jm-vl03-a0-bounded",
+					StringComparison.OrdinalIgnoreCase);
+			var nativeEncoded = string.Equals(
+				profile.DecoderVariant,
+				"gt06-jm-vl01-unverified",
+				StringComparison.OrdinalIgnoreCase) ||
+				string.Equals(
+					profile.DecoderVariant,
+					"gt06-jm-vl02-unverified",
+					StringComparison.OrdinalIgnoreCase) ||
+				string.Equals(
+					profile.DecoderVariant,
+					"gt06-jm-vl04-unverified",
+					StringComparison.OrdinalIgnoreCase);
+			if (protocolData.Metadata.Battery.HasValue)
+			{
+				position.BatteryPercent = levelEncoded
+					? BatteryLevelToPercent(
+						protocolData.Metadata.Battery.Value)
+					: nativeEncoded
+						? BatteryNativeToPercent(
+							protocolData.Metadata.Battery.Value)
+						: null;
+			}
+			if (protocolData.Metadata.Signal.HasValue)
+			{
+				position.SignalPercent = levelEncoded
+					? SignalLevelToPercent(
+						protocolData.Metadata.Signal.Value)
+					: nativeEncoded
+						? SignalNativeToPercent(
+							protocolData.Metadata.Signal.Value)
+						: null;
+			}
 		}
 
 		private static bool TryParsePosition(
@@ -390,14 +444,12 @@ namespace Resgrid.Providers.Tracking.Protocols.Gt06
 				         type) &&
 			         payload.Length >= 30)
 			{
-				var status = payload[26];
-				position.Ignition =
-					(status & (1 << 1)) != 0;
-				position.BatteryPercent =
-					NormalizeBattery(payload[27]);
-				position.SignalPercent =
-					NormalizeSignal(payload[28]);
-				metadata.Alarm = payload[29];
+			var status = payload[26];
+			position.Ignition =
+				(status & (1 << 1)) != 0;
+			metadata.Battery = payload[27];
+			metadata.Signal = payload[28];
+			metadata.Alarm = payload[29];
 				position.AlarmCode =
 					MapStatusAlarm(status);
 			}
@@ -409,23 +461,36 @@ namespace Resgrid.Providers.Tracking.Protocols.Gt06
 			return true;
 		}
 
-		private static decimal? NormalizeBattery(
+		private static decimal? BatteryLevelToPercent(
 			byte value)
 		{
-			if (value <= 6)
-				return value * 100m / 6m;
-			return value <= 100
-				? value
-				: null;
+			return value <= 6
+				? value * 100m / 6m
+				: (decimal?)null;
 		}
 
-		private static int? NormalizeSignal(byte value)
+		private static int? SignalLevelToPercent(
+			byte value)
 		{
-			if (value <= 4)
-				return value * 25;
+			return value <= 4
+				? value * 25
+				: (int?)null;
+		}
+
+		private static decimal? BatteryNativeToPercent(
+			byte value)
+		{
 			return value <= 100
 				? value
-				: null;
+				: (decimal?)null;
+		}
+
+		private static int? SignalNativeToPercent(
+			byte value)
+		{
+			return value <= 100
+				? value
+				: (int?)null;
 		}
 
 		private static string MapStatusAlarm(byte status)
@@ -655,5 +720,7 @@ namespace Resgrid.Providers.Tracking.Protocols.Gt06
 	internal sealed class Gt06PositionMetadata
 	{
 		public byte? Alarm { get; set; }
+		public byte? Battery { get; set; }
+		public byte? Signal { get; set; }
 	}
 }

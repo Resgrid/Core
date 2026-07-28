@@ -39,6 +39,9 @@ namespace Resgrid.Services
 			// IC app registrations target the IC-specific Novu subscriber, keeping its inbox/push separate from the Responder app.
 			var isICApp = string.Equals(pushUri.Source, "IC", StringComparison.OrdinalIgnoreCase);
 
+			if (isICApp)
+				await EnsureICUserSubscriber(pushUri, code);
+
 			// 1) iOS -> APNS
 			if (pushUri.PlatformType == (int)Platforms.iOS)
 				return isICApp
@@ -60,6 +63,20 @@ namespace Resgrid.Services
 			await _notificationProvider.UnRegisterPushByUserDeviceId(pushUri);
 
 			return true;
+		}
+
+		private async Task EnsureICUserSubscriber(PushUri pushUri, string code)
+		{
+			try
+			{
+				var profile = await _userProfileService.GetProfileByUserIdAsync(pushUri.UserId);
+				await _novuProvider.CreateICUserSubscriber(pushUri.UserId, code, pushUri.DepartmentId,
+					profile?.MembershipEmail, profile?.FirstName, profile?.LastName);
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+			}
 		}
 
 		public async Task<bool> RegisterUnit(PushUri pushUri)

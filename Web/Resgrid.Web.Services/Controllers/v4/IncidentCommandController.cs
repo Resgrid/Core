@@ -238,7 +238,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// </summary>
 		[HttpPost("SendMessageToCommand")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		[Authorize(Policy = ResgridResources.Command_View)]
+		[Authorize(Policy = ResgridResources.Command_Update)]
 		public async Task<ActionResult<ICModels.SendMessageToCommandResult>> SendMessageToCommand([FromBody] ICModels.SendMessageToCommandInput input)
 		{
 			if (input == null || input.CallId <= 0 || string.IsNullOrWhiteSpace(input.Body))

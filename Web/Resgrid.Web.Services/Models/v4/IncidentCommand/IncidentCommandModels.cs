@@ -166,7 +166,7 @@ namespace Resgrid.Web.Services.Models.v4.IncidentCommand
 		public Resgrid.Model.CommandTransfer Data { get; set; }
 	}
 
-	/// <summary>Result of a send-to-command message; Data is the number of users the message was delivered to.</summary>
+	/// <summary>Result of a send-to-command message; Data is the number of recipients the message was targeted at (attempted, not confirmed delivered — sends are best-effort over each recipient's configured channels).</summary>
 	public class SendMessageToCommandResult : StandardApiResponseV4Base
 	{
 		public int Data { get; set; }

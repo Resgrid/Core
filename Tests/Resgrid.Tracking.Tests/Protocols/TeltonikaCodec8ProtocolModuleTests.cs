@@ -153,6 +153,30 @@ namespace Resgrid.Tracking.Tests.Protocols
 		}
 
 		[Test]
+		public void Parse_NegativeAltitude_PreservesBelowSeaLevelValue()
+		{
+			// Arrange
+			var session = AuthenticatedSession();
+			var frame = Fixture("codec8-location.hex");
+			BinaryPrimitives.WriteInt16BigEndian(
+				frame.AsSpan(27, 2),
+				-12);
+			RewriteCrc(frame);
+			var input = new ReadOnlySequence<byte>(
+				frame);
+
+			// Act
+			var result = session.Parse(ref input);
+
+			// Assert
+			result.Status.Should().Be(
+				ProtocolParseStatus.Positions);
+			result.Message.Positions.Single()
+				.AltitudeMeters.Should()
+				.Be(-12m);
+		}
+
+		[Test]
 		public void Parse_Codec8ExtendedGoldenFrame_MapsCanonicalPosition()
 		{
 			// Arrange

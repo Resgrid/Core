@@ -168,18 +168,31 @@ namespace Resgrid.TrackerGateway.Listeners
 				{
 					return;
 				}
-				catch (SocketException)
-					when (cancellationToken.IsCancellationRequested)
-				{
-					return;
-				}
+			catch (SocketException)
+				when (cancellationToken.IsCancellationRequested)
+			{
+				return;
+			}
+			catch (SocketException ex)
+			{
+				_logger.LogWarning(
+					ex,
+					"TCP tracking accept failed transiently for {ProtocolKey} on port {Port}; continuing to accept.",
+					Definition.ProtocolKey,
+					Definition.Port);
+				continue;
+			}
 
+			TrackingConnectionLease admissionLease = null;
+			EndPoint remoteEndPoint = null;
+			try
+			{
 				connectionSocket.NoDelay = true;
-				var remoteEndPoint = connectionSocket.RemoteEndPoint;
+				remoteEndPoint = connectionSocket.RemoteEndPoint;
 				var remoteAddress = (remoteEndPoint as IPEndPoint)?.Address;
 				if (!_connectionAdmission.TryAcquire(
 					    remoteAddress,
-					    out var admissionLease))
+					    out admissionLease))
 				{
 					_logger.LogDebug(
 						"TCP tracking connection rejected by admission limits from {RemoteEndpoint}.",
@@ -202,7 +215,28 @@ namespace Resgrid.TrackerGateway.Listeners
 					remoteEndPoint,
 					_sessionCancellation.Token);
 			}
+			catch (SocketException ex)
+			{
+				_logger.LogDebug(
+					ex,
+					"TCP tracking connection setup failed for {ProtocolKey} from {RemoteEndpoint}; closing the connection.",
+					Definition.ProtocolKey,
+					TrackingEndpointMasker.Mask(remoteEndPoint));
+				admissionLease?.Dispose();
+				connectionSocket.Dispose();
+			}
+			catch (ObjectDisposedException ex)
+			{
+				_logger.LogDebug(
+					ex,
+					"TCP tracking connection setup failed for {ProtocolKey} from {RemoteEndpoint}; closing the connection.",
+					Definition.ProtocolKey,
+					TrackingEndpointMasker.Mask(remoteEndPoint));
+				admissionLease?.Dispose();
+				connectionSocket.Dispose();
+			}
 		}
+	}
 
 		private async Task ProcessConnectionAsync(
 			long connectionId,

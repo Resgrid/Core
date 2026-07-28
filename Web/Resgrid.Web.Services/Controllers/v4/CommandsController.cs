@@ -173,6 +173,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 						MaxUnits = lane.MaxUnits,
 						MinTimeInRole = lane.MinTimeInRole,
 						MaxTimeInRole = lane.MaxTimeInRole,
+						WorkTimeAmberMinutes = lane.WorkTimeAmberMinutes,
+						WorkTimeRedMinutes = lane.WorkTimeRedMinutes,
 						ForceRequirements = lane.ForceRequirements
 					};
 
@@ -253,6 +255,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 						MaxUnits = lane.MaxUnits,
 						MinTimeInRole = lane.MinTimeInRole,
 						MaxTimeInRole = lane.MaxTimeInRole,
+						WorkTimeAmberMinutes = lane.WorkTimeAmberMinutes,
+						WorkTimeRedMinutes = lane.WorkTimeRedMinutes,
 						ForceRequirements = lane.ForceRequirements,
 						RequiredUnitTypes = lane.RequiredUnitTypes?.Select(x => x.UnitTypeId).ToList() ?? new List<int>(),
 						RequiredPersonnelRoles = lane.RequiredRoles?.Select(x => x.PersonnelRoleId).ToList() ?? new List<int>()

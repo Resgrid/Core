@@ -35,6 +35,12 @@ namespace Resgrid.Model
 
 		public int MaxTimeInRole { get; set; }
 
+		/// <summary>Minutes on the lane before the work-time indicator turns amber (0 = disabled; seeded onto runtime nodes).</summary>
+		public int WorkTimeAmberMinutes { get; set; }
+
+		/// <summary>Minutes on the lane before the work-time indicator turns red (0 = disabled; seeded onto runtime nodes).</summary>
+		public int WorkTimeRedMinutes { get; set; }
+
 		public bool ForceRequirements { get; set; }
 
 		/// <summary>

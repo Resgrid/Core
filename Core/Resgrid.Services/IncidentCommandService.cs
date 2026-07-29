@@ -215,6 +215,8 @@ namespace Resgrid.Services
 						MaxUnits = role.MaxUnits,
 						MinTimeInRole = role.MinTimeInRole,
 						MaxTimeInRole = role.MaxTimeInRole,
+						WorkTimeAmberMinutes = role.WorkTimeAmberMinutes,
+						WorkTimeRedMinutes = role.WorkTimeRedMinutes,
 						ForceRequirements = role.ForceRequirements
 					};
 

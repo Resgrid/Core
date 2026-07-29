@@ -88,6 +88,8 @@ namespace Resgrid.Model.CommandBoards
 					MaxUnitPersonnel = lane.MaxUnitPersonnel,
 					MinTimeInRole = lane.MinTimeInRole,
 					MaxTimeInRole = lane.MaxTimeInRole,
+					WorkTimeAmberMinutes = lane.WorkTimeAmberMinutes,
+					WorkTimeRedMinutes = lane.WorkTimeRedMinutes,
 					RequiredUnitTypes = matchedUnitTypes,
 					RequiredRoles = matchedPersonnelRoles,
 					ForceRequirements = lane.ForceRequirements && (matchedUnitTypes.Count > 0 || matchedPersonnelRoles.Count > 0)

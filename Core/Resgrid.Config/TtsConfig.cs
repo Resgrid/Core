@@ -24,6 +24,14 @@ namespace Resgrid.Config
 		public static int S3PresignedUrlExpiryMinutes = 60;
 		public static string S3PublicBaseUrl = "";
 
+		/// <summary>
+		/// When true, voice webhooks degrade to Twilio's native &lt;Say&gt; verb (billed per
+		/// use by Twilio) if TTS audio can't be produced in time or generation fails.
+		/// Default off: an unavailable prompt is skipped so a TTS outage surfaces as
+		/// missing audio in the call — and in the logs — rather than as extra spend.
+		/// </summary>
+		public static bool TwilioSayFallbackEnabled = false;
+
 		public static string DefaultVoice = "en-us+klatt4";
 		public static int DefaultSpeed = 150;
 		public static int MaxConcurrentGenerations = 4;
@@ -70,7 +78,8 @@ namespace Resgrid.Config
 			"No status selection made. Returning to the main menu.",
 			"Invalid staffing selection. Returning to the main menu.",
 			"No staffing selection made. Returning to the main menu.",
-			"Thank you. Your response has been recorded."
+			"Thank you. Your response has been recorded.",
+			"Please wait while we prepare your dispatch information."
 		});
 
 		public static int RateLimitPermitLimit = 600;

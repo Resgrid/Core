@@ -162,6 +162,134 @@ namespace Resgrid.Tests.Web.Services
 		}
 
 		[Test]
+		public async Task append_prompt_async_should_fall_back_to_say_when_tts_generation_fails_and_fallback_enabled()
+		{
+			// A TTS microservice outage previously bubbled InvalidOperationException out of the
+			// voice webhooks, returning a 500 that Twilio reads to callers as "an application
+			// error has occurred". With the paid fallback enabled the service must degrade to
+			// a native <Say> verb instead.
+			var originalFallbackEnabled = Resgrid.Config.TtsConfig.TwilioSayFallbackEnabled;
+			Resgrid.Config.TtsConfig.TwilioSayFallbackEnabled = true;
+			try
+			{
+				var ttsAudioService = new Mock<ITtsAudioService>();
+				ttsAudioService
+					.Setup(x => x.GenerateSpeechUrlAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int?>(), It.IsAny<CancellationToken>()))
+					.ThrowsAsync(new InvalidOperationException("The TTS service failed to generate speech audio."));
+
+				var service = new TwilioVoiceResponseService(ttsAudioService.Object);
+				var response = new VoiceResponse();
+
+				await service.AppendPromptAsync(response, "Hello from Resgrid", CancellationToken.None);
+
+				var xml = response.ToString();
+				xml.Should().Contain("<Say>Hello from Resgrid</Say>");
+				xml.Should().NotContain("<Play>");
+			}
+			finally
+			{
+				Resgrid.Config.TtsConfig.TwilioSayFallbackEnabled = originalFallbackEnabled;
+			}
+		}
+
+		[Test]
+		public async Task append_prompt_async_should_fall_back_to_say_within_a_gather_when_tts_generation_fails_and_fallback_enabled()
+		{
+			var originalFallbackEnabled = Resgrid.Config.TtsConfig.TwilioSayFallbackEnabled;
+			Resgrid.Config.TtsConfig.TwilioSayFallbackEnabled = true;
+			try
+			{
+				var ttsAudioService = new Mock<ITtsAudioService>();
+				ttsAudioService
+					.Setup(x => x.GenerateSpeechUrlAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int?>(), It.IsAny<CancellationToken>()))
+					.ThrowsAsync(new InvalidOperationException("The TTS service failed to generate speech audio."));
+
+				var service = new TwilioVoiceResponseService(ttsAudioService.Object);
+				var gather = new global::Twilio.TwiML.Voice.Gather(numDigits: 1);
+
+				await service.AppendPromptAsync(gather, "Press 1 to respond", CancellationToken.None);
+
+				gather.ToString().Should().Contain("<Say>Press 1 to respond</Say>");
+			}
+			finally
+			{
+				Resgrid.Config.TtsConfig.TwilioSayFallbackEnabled = originalFallbackEnabled;
+			}
+		}
+
+		[Test]
+		public async Task append_prompt_async_should_skip_prompt_when_tts_generation_fails_and_fallback_disabled()
+		{
+			// Default posture: the paid <Say> fallback is off, so a failed prompt is skipped
+			// (no <Say>, no <Play>) and no exception escapes the webhook.
+			Resgrid.Config.TtsConfig.TwilioSayFallbackEnabled.Should().BeFalse(
+				"the Say fallback must default to disabled so TTS failures don't incur Twilio <Say> charges");
+
+			var ttsAudioService = new Mock<ITtsAudioService>();
+			ttsAudioService
+				.Setup(x => x.GenerateSpeechUrlAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int?>(), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new InvalidOperationException("The TTS service failed to generate speech audio."));
+
+			var service = new TwilioVoiceResponseService(ttsAudioService.Object);
+			var response = new VoiceResponse();
+
+			await service.AppendPromptAsync(response, "Hello from Resgrid", CancellationToken.None);
+
+			var xml = response.ToString();
+			xml.Should().NotContain("<Say>");
+			xml.Should().NotContain("<Play>");
+		}
+
+		[Test]
+		public void append_say_fallback_should_be_a_no_op_when_disabled_and_emit_say_when_enabled()
+		{
+			var originalFallbackEnabled = Resgrid.Config.TtsConfig.TwilioSayFallbackEnabled;
+			try
+			{
+				var service = new TwilioVoiceResponseService(Mock.Of<ITtsAudioService>());
+
+				Resgrid.Config.TtsConfig.TwilioSayFallbackEnabled = false;
+				var disabledResponse = new VoiceResponse();
+				service.AppendSayFallback(disabledResponse, "Hello from Resgrid");
+				disabledResponse.ToString().Should().NotContain("<Say>");
+
+				Resgrid.Config.TtsConfig.TwilioSayFallbackEnabled = true;
+				var enabledResponse = new VoiceResponse();
+				service.AppendSayFallback(enabledResponse, "Hello from Resgrid");
+				enabledResponse.ToString().Should().Contain("<Say>Hello from Resgrid</Say>");
+			}
+			finally
+			{
+				Resgrid.Config.TtsConfig.TwilioSayFallbackEnabled = originalFallbackEnabled;
+			}
+		}
+
+		[Test]
+		public async Task append_prompt_async_should_still_throw_when_request_is_cancelled_even_if_generation_faults()
+		{
+			// Caller-driven cancellation is control flow (the dispatch playback timeout uses it
+			// to fall back to the pre-warm/redirect loop) and must not be swallowed by the
+			// <Say> degradation path.
+			var ttsAudioService = new Mock<ITtsAudioService>();
+			ttsAudioService
+				.Setup(x => x.GenerateSpeechUrlAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int?>(), It.IsAny<CancellationToken>()))
+				.Returns<string, string, int?, CancellationToken>(async (_, _, _, _) =>
+				{
+					await Task.Delay(Timeout.Infinite);
+					return new Uri("https://tts.example.com/tts/audio/never.wav");
+				});
+
+			var service = new TwilioVoiceResponseService(ttsAudioService.Object);
+			var response = new VoiceResponse();
+			using var requestCancellation = new CancellationTokenSource(TimeSpan.FromMilliseconds(50));
+
+			await FluentActions
+				.Awaiting(() => service.AppendPromptAsync(response, "Hello from Resgrid", requestCancellation.Token))
+				.Should()
+				.ThrowAsync<OperationCanceledException>();
+		}
+
+		[Test]
 		public async Task append_prompt_async_should_emit_a_play_per_chunk_for_multi_chunk_text()
 		{
 			// Regression (Sentry RESGRID-API-78): the dispatch playback path now routes long text

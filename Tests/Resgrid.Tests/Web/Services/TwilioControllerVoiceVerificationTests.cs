@@ -288,7 +288,7 @@ namespace Resgrid.Tests.Web.Services
 			var result = await BuildController().VoiceCall("user1", 42);
 
 			var content = ((ContentResult)result).Content;
-			var dispatchPrompt = Uri.EscapeDataString("Call 42, Priority High Address 123 Main St Nature Structure fire.");
+			var dispatchPrompt = Uri.EscapeDataString("Call 42, Priority High. Address 123 Main St. Nature Structure fire.");
 			var menuPrompt = Uri.EscapeDataString(TwilioVoicePromptCatalog.OutboundDispatchMenu);
 
 			content.Should().Contain(dispatchPrompt);
@@ -308,9 +308,9 @@ namespace Resgrid.Tests.Web.Services
 			};
 
 			InvokeBuildDispatchPrompt(typeof(TwilioController), call, "123 Main St")
-				.Should().Be("Call 42, Priority High Address 123 Main St Nature Structure fire.");
+				.Should().Be("Call 42, Priority High. Address 123 Main St. Nature Structure fire.");
 			InvokeBuildDispatchPrompt(typeof(TwilioController), call, null)
-				.Should().Be("Call 42, Priority High Nature Structure fire.");
+				.Should().Be("Call 42, Priority High. Nature Structure fire.");
 		}
 
 		[TestCase("1", "https://resgridapi.local/api/Twilio/VoiceCall?userId=user1&amp;callId=42")]

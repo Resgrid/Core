@@ -211,6 +211,9 @@ namespace Resgrid.Services
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(d.DepartmentId, dispatchCode, DepartmentSettingTypes.InternalDispatchEmail, cancellationToken);
 			}
 
+			// New departments get modern notification sounds enabled by default
+			await _departmentSettingsService.SaveOrUpdateSettingAsync(d.DepartmentId, true.ToString(), DepartmentSettingTypes.EnableModernNotifications, cancellationToken);
+
 			return d;
 		}
 

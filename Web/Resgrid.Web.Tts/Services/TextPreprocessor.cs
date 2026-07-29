@@ -8,9 +8,10 @@ namespace Resgrid.Web.Tts.Services
 	/// Transforms dispatch jargon, abbreviations, and codes into expanded,
 	/// pronounceable English that the TTS engine renders clearly.
 	///
-	/// The preprocessor runs <em>before</em> the cache key is computed so that
-	/// two requests that differ only by abbreviation style share the same
-	/// synthesised audio.
+	/// The preprocessor runs inside audio generation, <em>after</em> the cache
+	/// key has been computed from the raw request text (see TtsService) — two
+	/// requests that only differ by abbreviation style therefore cache as
+	/// separate entries even though they synthesise identical speech.
 	///
 	/// Expansion rules are deliberately conservative — we only touch terms
 	/// that the engine routinely gets wrong.  Everything else is passed through
@@ -245,10 +246,14 @@ namespace Resgrid.Web.Tts.Services
 		private static string ExpandAbbreviations(string text)
 		{
 			// Sort keys longest-first so "ALSEMS" is matched before "ALS".
+			// Matching is case-sensitive: short tokens like "SO", "PASS", "CO" and "PI"
+			// collide with ordinary English words when lowercased, and CAD feeds emit
+			// these codes in upper case (the map carries explicit casing variants such
+			// as "HAZMAT"/"HazMat" where more than one form is expected).
 			foreach (var kvp in AbbreviationMap.OrderByDescending(k => k.Key.Length))
 			{
 				var pattern = $@"\b{Regex.Escape(kvp.Key)}\b";
-				text = Regex.Replace(text, pattern, kvp.Value, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+				text = Regex.Replace(text, pattern, kvp.Value, RegexOptions.CultureInvariant);
 			}
 
 			return text;
@@ -262,10 +267,13 @@ namespace Resgrid.Web.Tts.Services
 		/// </summary>
 		private static string ExpandDispatchShorthand(string text)
 		{
+			// Case-sensitive for the same reason as ExpandAbbreviations: "APT", "PT",
+			// "RM" and "ADV" lowercased are (parts of) ordinary words, and CAD systems
+			// emit shorthand in upper case.
 			foreach (var kvp in DispatchShorthandMap.OrderByDescending(k => k.Key.Length))
 			{
 				var pattern = $@"\b{Regex.Escape(kvp.Key)}\b";
-				text = Regex.Replace(text, pattern, kvp.Value, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+				text = Regex.Replace(text, pattern, kvp.Value, RegexOptions.CultureInvariant);
 			}
 
 			return text;
@@ -335,11 +343,13 @@ namespace Resgrid.Web.Tts.Services
 			// after a house/building number (e.g. "123 Main St" → "123 Main Street").
 			// The pattern anchors to a leading digit (\b\d+\b), then lazily skips
 			// over the street name (one or more words) before matching the suffix.
+			// The house number and street name are captured and re-emitted — only
+			// the suffix itself is rewritten.
 
 			foreach (var kvp in AddressAbbreviationMap.OrderByDescending(k => k.Key.Length))
 			{
-				var pattern = $@"\b\d+\b[\s\w,]*?\b{Regex.Escape(kvp.Key)}\b";
-				text = Regex.Replace(text, pattern, kvp.Value, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+				var pattern = $@"(\b\d+\b[\s\w,]*?)\b{Regex.Escape(kvp.Key)}\b";
+				text = Regex.Replace(text, pattern, "${1}" + kvp.Value, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 			}
 
 			return text;
@@ -411,8 +421,13 @@ namespace Resgrid.Web.Tts.Services
 		[GeneratedRegex(@"\b(?<prefix>[A-Z])(?<number>\d+)\b", RegexOptions.CultureInvariant)]
 		private static partial Regex UnitIdentifierExpandoRegex();
 
-		/// <summary>Matches standalone digits 1-20 followed by a space and a letter.</summary>
-		[GeneratedRegex(@"\b(?<digits>(?:[1-9]|1[0-9]|20))\s(?<letter>[A-Za-z])", RegexOptions.CultureInvariant)]
+		/// <summary>
+		/// Matches standalone digits 1-20 followed by a space and a letter.
+		/// The negative lookbehind skips digits that are part of a spaced
+		/// digit-by-digit run produced by ExpandLongNumbers (e.g. "1 2 3 4 5 Elm"),
+		/// which must stay uniformly digit-form rather than ending "...4 five Elm".
+		/// </summary>
+		[GeneratedRegex(@"(?<!\d\s)\b(?<digits>(?:[1-9]|1[0-9]|20))\s(?<letter>[A-Za-z])", RegexOptions.CultureInvariant)]
 		private static partial Regex NumberToWordRegex();
 
 		/// <summary>Matches a run of 4+ consecutive digits not surrounded by other digits.</summary>

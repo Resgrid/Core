@@ -38,6 +38,11 @@ namespace Resgrid.Providers.NumberProvider
 					options.Url = new Uri(string.Format(Config.NumberProviderConfig.TwilioVoiceCallApiUrl, profile.UserId, call.CallId));
 					options.Method = "GET";
 					options.MachineDetection = "Enable";
+					// Async AMD: without it Twilio holds the webhook (and the callee hears
+					// silence for several seconds) until machine detection completes. Nothing
+					// branches on AnsweredBy, so run detection asynchronously and start the
+					// dispatch TwiML the moment the call is answered.
+					options.AsyncAmd = "true";
 					//options.IfMachine = "Continue";
 
 					var phoneCall = await CallResource.CreateAsync(options);
@@ -53,6 +58,8 @@ namespace Resgrid.Providers.NumberProvider
 					options.Url = new Uri(string.Format(Config.NumberProviderConfig.TwilioVoiceCallApiUrl, profile.UserId, call.CallId));
 					options.Method = "GET";
 					options.MachineDetection = "Enable";
+					// Async AMD — see the mobile branch above.
+					options.AsyncAmd = "true";
 					//options.IfMachine = "Continue";
 
 					var phoneCall = await CallResource.CreateAsync(options);

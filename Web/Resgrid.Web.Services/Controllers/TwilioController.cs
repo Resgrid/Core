@@ -93,6 +93,34 @@ namespace Resgrid.Web.Services.Controllers
 
 		private const int MAX_DISPATCH_RETRY = 3;
 
+		// Shared time budget for ALL TTS prompt playback within a single webhook request.
+		// A TTS service that is down fails fast and degrades to <Say> inside
+		// TwilioVoiceResponseService, but a HUNG service eats the full RestClient
+		// timeout per attempt (with retries, ~16s for one prompt) — enough to blow
+		// Twilio's 15-second webhook limit before any fallback fires. The budget
+		// starts on the first prompt append; once it expires every remaining prompt
+		// in the request falls back to Twilio's native <Say> voice immediately.
+		private static readonly TimeSpan TtsPromptBudget = TimeSpan.FromSeconds(6);
+		private CancellationTokenSource _ttsBudgetCts;
+
+		private CancellationToken GetTtsPromptBudgetToken()
+		{
+			if (_ttsBudgetCts == null)
+			{
+				_ttsBudgetCts = CancellationTokenSource.CreateLinkedTokenSource(HttpContext?.RequestAborted ?? CancellationToken.None);
+				_ttsBudgetCts.CancelAfter(TtsPromptBudget);
+				HttpContext?.Response.RegisterForDispose(_ttsBudgetCts);
+			}
+
+			return _ttsBudgetCts.Token;
+		}
+
+		// True when the TTS budget expired on its own (the caller hasn't hung up),
+		// which is the only cancellation we convert into a <Say> fallback.
+		private bool TtsBudgetExpired =>
+			_ttsBudgetCts != null && _ttsBudgetCts.IsCancellationRequested
+			&& !(HttpContext?.RequestAborted.IsCancellationRequested ?? false);
+
 		[HttpGet("IncomingMessage")]
 		[Produces("application/xml")]
 		public async Task<ActionResult> IncomingMessage([FromQuery] TwilioMessage request)
@@ -562,9 +590,13 @@ namespace Resgrid.Web.Services.Controllers
 										{
 											string[] points = call.GeoLocationData.Split(char.Parse(","));
 
+											// The task must be awaited — appending it directly stringifies as
+											// "System.Threading.Tasks.Task`1[System.String]" in the SMS reply.
+											// Bounded like the voice path so a slow geocoder can't stall the webhook.
 											if (points != null && points.Length == 2)
 											{
-												callText.Append(_geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1])) + Environment.NewLine);
+												callText.Append(await _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]))
+													.WaitAsync(TimeSpan.FromSeconds(2), HttpContext?.RequestAborted ?? CancellationToken.None) + Environment.NewLine);
 											}
 										}
 										catch
@@ -700,7 +732,7 @@ namespace Resgrid.Web.Services.Controllers
 			// not yet cached, we play a brief "please wait" prompt and redirect
 			// back to this endpoint, giving the TTS service time to complete
 			// generation in the background.
-			var dispatchReady = await TryAppendDispatchPlaybackAsync(response, call);
+			var (dispatchReady, dispatchText) = await TryAppendDispatchPlaybackAsync(response, call);
 			if (!dispatchReady)
 			{
 				// Parse and increment the retry counter from the incoming request.
@@ -709,37 +741,43 @@ namespace Resgrid.Web.Services.Controllers
 
 				if (retryCount >= MAX_DISPATCH_RETRY)
 				{
-					// Exceeded retry cap — fall back to a static error prompt.
-					await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.CallClosed);
-					response.Hangup();
+					// The dispatch audio never became ready within the retry budget. If the paid
+					// <Say> fallback is enabled, speak the dispatch with Twilio's native voice;
+					// otherwise this is a no-op and the caller goes straight to the menu, where
+					// "press 1" re-enters VoiceCall with a fresh retry budget. Either way do NOT
+					// play the "call closed" prompt (a new call is not closed) and hang up.
+					_twilioVoiceResponseService.AppendSayFallback(response, dispatchText);
+				}
+				else
+				{
+					// Dispatch audio isn't ready yet. Pre-warm it in the background
+					// and redirect back — by the time Twilio re-fetches this endpoint
+					// the audio should be cached.
+					var ttsLanguage = await GetDepartmentTtsLanguageAsync(call.DepartmentId);
+
+					// Fire off TTS generation in the background. The TTS microservice
+					// caches the result, so the redirect will find it once ready.
+					_twilioVoiceResponseService.PreWarmPromptAsync(dispatchText, ttsLanguage)
+						.ContinueWith(t =>
+						{
+							if (t.IsFaulted && t.Exception != null)
+								Logging.LogException(t.Exception);
+						}, TaskContinuationOptions.OnlyOnFaulted);
+
+					// We're only in this loop because TTS is already slow — the shared
+					// per-request budget bounds the "please wait" prompt (falling back to
+					// <Say>) so a hung TTS service can't stall this webhook past Twilio's
+					// 15-second limit.
+					await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.PleaseWaitForDispatch, call.DepartmentId);
+					var nextRetry = retryCount + 1;
+					response.Redirect(
+						new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/VoiceCall?userId={userId}&callId={callId}&retry={nextRetry}"),
+						"GET");
 					return CreateVoiceContentResult(response);
 				}
-
-				// Dispatch audio isn't ready yet. Pre-warm it in the background
-				// and redirect back — by the time Twilio re-fetches this endpoint
-				// the audio should be cached.
-				var address = await ResolveCallAddressAsync(call);
-				var dispatchText = BuildDispatchPrompt(call, address);
-				var ttsLanguage = await GetDepartmentTtsLanguageAsync(call.DepartmentId);
-
-				// Fire off TTS generation in the background. The TTS microservice
-				// caches the result, so the redirect will find it once ready.
-				_twilioVoiceResponseService.PreWarmPromptAsync(dispatchText, ttsLanguage)
-					.ContinueWith(t =>
-					{
-						if (t.IsFaulted && t.Exception != null)
-							Logging.LogException(t.Exception);
-					}, TaskContinuationOptions.OnlyOnFaulted);
-
-				await AppendVoicePromptAsync(response, TwilioVoicePromptCatalog.PleaseWaitForDispatch);
-				var nextRetry = retryCount + 1;
-				response.Redirect(
-					new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/VoiceCall?userId={userId}&callId={callId}&retry={nextRetry}"),
-					"GET");
-				return CreateVoiceContentResult(response);
 			}
 
-			// Dispatch is ready (fast path or retry with cached audio).
+			// Dispatch is ready (fast path, retry with cached audio, or native-voice fallback).
 			var gather = new Gather(numDigits: 1, action: new Uri($"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/Twilio/VoiceCallAction?userId={userId}&callId={callId}"), method: "GET")
 			{
 				BargeIn = true
@@ -1062,12 +1100,21 @@ namespace Resgrid.Web.Services.Controllers
 
 				if (calls != null && calls.Any())
 				{
-					prompts.Add($"There are {calls.Count()} active calls for department {department.Name}.");
+					// Join the listing into ONE prompt: the TTS layer chunks long text on
+					// sentence boundaries and generates the chunks in parallel, whereas one
+					// prompt per call would issue that many sequential TTS round-trips and
+					// risk running past Twilio's 15-second webhook limit on big lists.
+					var lines = new List<string>
+					{
+						$"There are {calls.Count()} active calls for department {department.Name}."
+					};
 
 					foreach (var call in calls)
 					{
-						prompts.Add($"{call.Name}, Priority {call.GetPriorityText()} Address {call.Address} Nature {StringHelpers.StripHtmlTagsCharArray(call.NatureOfCall)}.");
+						lines.Add($"{call.Name}, Priority {call.GetPriorityText()}. Address {call.Address}. Nature {StringHelpers.StripHtmlTagsCharArray(call.NatureOfCall)}.");
 					}
+
+					prompts.Add(string.Join(" ", lines));
 				}
 				else
 				{
@@ -1082,6 +1129,11 @@ namespace Resgrid.Web.Services.Controllers
 
 				if (allUsers != null && allUsers.Any())
 				{
+					// One joined prompt (see the active-calls branch above): chunked and
+					// generated in parallel by the TTS layer instead of one sequential
+					// round-trip per person.
+					var lines = new List<string>();
+
 					foreach (var user in allUsers)
 					{
 						var lastActionLog = lastUserActionlogs.FirstOrDefault(x => x.UserId == user.UserId);
@@ -1089,8 +1141,12 @@ namespace Resgrid.Web.Services.Controllers
 						var staffingLevel = await _customStateService.GetCustomPersonnelStaffingAsync(department.DepartmentId, userState);
 						var status = await _customStateService.GetCustomPersonnelStatusAsync(department.DepartmentId, lastActionLog);
 
-						prompts.Add($"{user.LastName}, {user.FirstName}, Status {status.ButtonText} Staffing Level {staffingLevel.ButtonText}.");
+						// A user with no recorded action log or state resolves to a null detail;
+						// dereferencing it here 500s the webhook and Twilio speaks "application error".
+						lines.Add($"{user.LastName}, {user.FirstName}, Status {status?.ButtonText ?? "Unknown"} Staffing Level {staffingLevel?.ButtonText ?? "Unknown"}.");
 					}
+
+					prompts.Add(string.Join(" ", lines));
 				}
 			}
 			else if (twilioRequest.Digits == "3")
@@ -1101,13 +1157,21 @@ namespace Resgrid.Web.Services.Controllers
 
 				if (units != null && units.Any())
 				{
+					// One joined prompt (see the active-calls branch above).
+					var lines = new List<string>();
+
 					foreach (var unit in units)
 					{
 						var unitState = states.FirstOrDefault(x => x.UnitId == unit.UnitId);
 						var unitStatus = await _customStateService.GetCustomUnitStateAsync(unitState);
 
-						prompts.Add($"{unit.Name}, Status {unitStatus.ButtonText}.");
+						// Units beyond the plan limit (or with a deleted custom state) have no
+						// resolvable state; a null dereference here 500s the webhook and Twilio
+						// speaks "application error" mid-menu.
+						lines.Add($"{unit.Name}, Status {unitStatus?.ButtonText ?? "Unknown"}.");
 					}
+
+					prompts.Add(string.Join(" ", lines));
 				}
 				else
 				{
@@ -1120,10 +1184,16 @@ namespace Resgrid.Web.Services.Controllers
 
 				if (upcomingItems != null && upcomingItems.Any())
 				{
+					// One joined prompt (see the active-calls branch above). Each line gets a
+					// terminal period so the joined text chunks on sentence boundaries.
+					var lines = new List<string>();
+
 					foreach (var item in upcomingItems)
 					{
-						prompts.Add($"{item.Title}, {item.Start.TimeConverter(department).ToShortDateString()}, {item.Start.TimeConverter(department).ToShortTimeString()}, {item.Location}");
+						lines.Add($"{item.Title}, {item.Start.TimeConverter(department).ToShortDateString()}, {item.Start.TimeConverter(department).ToShortTimeString()}, {item.Location}.");
 					}
+
+					prompts.Add(string.Join(" ", lines));
 				}
 				else
 				{
@@ -1275,25 +1345,48 @@ namespace Resgrid.Web.Services.Controllers
 		private async System.Threading.Tasks.Task AppendVoicePromptAsync(VoiceResponse response, string text, int? departmentId = null)
 		{
 			var ttsLanguage = await GetDepartmentTtsLanguageAsync(departmentId);
-			await _twilioVoiceResponseService.AppendPromptAsync(response, text, HttpContext?.RequestAborted ?? CancellationToken.None, ttsLanguage);
+
+			try
+			{
+				await _twilioVoiceResponseService.AppendPromptAsync(response, text, GetTtsPromptBudgetToken(), ttsLanguage);
+			}
+			catch (OperationCanceledException) when (TtsBudgetExpired)
+			{
+				_twilioVoiceResponseService.AppendSayFallback(response, text);
+			}
 		}
 
 		private async System.Threading.Tasks.Task AppendVoicePromptAsync(Gather gather, string text, int? departmentId = null)
 		{
 			var ttsLanguage = await GetDepartmentTtsLanguageAsync(departmentId);
-			await _twilioVoiceResponseService.AppendPromptAsync(gather, text, HttpContext?.RequestAborted ?? CancellationToken.None, ttsLanguage);
+
+			try
+			{
+				await _twilioVoiceResponseService.AppendPromptAsync(gather, text, GetTtsPromptBudgetToken(), ttsLanguage);
+			}
+			catch (OperationCanceledException) when (TtsBudgetExpired)
+			{
+				_twilioVoiceResponseService.AppendSayFallback(gather, text);
+			}
 		}
 
+		// The plural variants append prompt-by-prompt (rather than delegating to the
+		// service's AppendPromptsAsync) so a budget expiry mid-list only downgrades
+		// the remaining prompts to <Say> — prompts already appended are kept.
 		private async System.Threading.Tasks.Task AppendVoicePromptsAsync(VoiceResponse response, IEnumerable<string> prompts, int? departmentId = null)
 		{
-			var ttsLanguage = await GetDepartmentTtsLanguageAsync(departmentId);
-			await _twilioVoiceResponseService.AppendPromptsAsync(response, prompts, HttpContext?.RequestAborted ?? CancellationToken.None, ttsLanguage);
+			foreach (var prompt in prompts)
+			{
+				await AppendVoicePromptAsync(response, prompt, departmentId);
+			}
 		}
 
 		private async System.Threading.Tasks.Task AppendVoicePromptsAsync(Gather gather, IEnumerable<string> prompts, int? departmentId = null)
 		{
-			var ttsLanguage = await GetDepartmentTtsLanguageAsync(departmentId);
-			await _twilioVoiceResponseService.AppendPromptsAsync(gather, prompts, HttpContext?.RequestAborted ?? CancellationToken.None, ttsLanguage);
+			foreach (var prompt in prompts)
+			{
+				await AppendVoicePromptAsync(gather, prompt, departmentId);
+			}
 		}
 
 		private async Task<string> GetDepartmentTtsLanguageAsync(int? departmentId)
@@ -1314,7 +1407,10 @@ namespace Resgrid.Web.Services.Controllers
 			return ttsLanguage;
 		}
 
-		private async System.Threading.Tasks.Task<bool> TryAppendDispatchPlaybackAsync(VoiceResponse response, Call call)
+		// Returns the dispatch text alongside readiness so the caller's retry branch
+		// reuses it instead of re-resolving the address (a second geocoder round-trip).
+		// DispatchText is null only when a recorded dispatch-audio attachment was played.
+		private async System.Threading.Tasks.Task<(bool Ready, string DispatchText)> TryAppendDispatchPlaybackAsync(VoiceResponse response, Call call)
 		{
 			if (call.Attachments != null)
 			{
@@ -1329,7 +1425,7 @@ namespace Resgrid.Web.Services.Controllers
 						{
 							Url = audioUri
 						});
-						return true;
+						return (true, null);
 					}
 				}
 			}
@@ -1352,13 +1448,13 @@ namespace Resgrid.Web.Services.Controllers
 				// multi-chunk-aware AppendPromptAsync (one <Play> per chunk) instead of GetPromptUrlAsync,
 				// which only supports single-chunk text and throws ArgumentException otherwise.
 				await _twilioVoiceResponseService.AppendPromptAsync(response, dispatchText, linkedCts.Token, ttsLanguage);
-				return true;
+				return (true, dispatchText);
 			}
 			catch (OperationCanceledException) when (timeoutCts.IsCancellationRequested)
 			{
 				// TTS generation is taking too long — return false so the caller
 				// can pre-warm in the background and redirect.
-				return false;
+				return (false, dispatchText);
 			}
 		}
 
@@ -1372,8 +1468,12 @@ namespace Resgrid.Web.Services.Controllers
 				{
 					string[] points = call.GeoLocationData.Split(char.Parse(","));
 
+					// Bound the reverse-geocode: it's an external HTTP call with no timeout of
+					// its own, and it runs inside a Twilio webhook whose total budget is 15s.
+					// On timeout the catch swallows and the dispatch is spoken without an address.
 					if (points != null && points.Length == 2)
-						address = await _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]));
+						address = await _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]))
+							.WaitAsync(TimeSpan.FromSeconds(2), HttpContext?.RequestAborted ?? CancellationToken.None);
 				}
 				catch
 				{
@@ -1385,10 +1485,13 @@ namespace Resgrid.Web.Services.Controllers
 
 		private static string BuildDispatchPrompt(Call call, string address)
 		{
+			// Periods between the segments give the TTS engine sentence boundaries
+			// (Piper inserts 0.35s of silence per sentence), which keeps the priority,
+			// address and nature audibly separated instead of running together.
 			var nature = StringHelpers.StripHtmlTagsCharArray(call.NatureOfCall);
 			var prompt = !String.IsNullOrWhiteSpace(address)
-				? string.Format("{0}, Priority {1} Address {2} Nature {3}", call.Name, call.GetPriorityText(), address, nature)
-				: string.Format("{0}, Priority {1} Nature {2}", call.Name, call.GetPriorityText(), nature);
+				? string.Format("{0}, Priority {1}. Address {2}. Nature {3}", call.Name, call.GetPriorityText(), address, nature)
+				: string.Format("{0}, Priority {1}. Nature {2}", call.Name, call.GetPriorityText(), nature);
 
 			return prompt.EndsWith(".", StringComparison.Ordinal) || prompt.EndsWith("!", StringComparison.Ordinal) || prompt.EndsWith("?", StringComparison.Ordinal)
 				? prompt

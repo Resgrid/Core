@@ -18,6 +18,19 @@ namespace Resgrid.Web.Services.Twilio
 		System.Threading.Tasks.Task AppendPromptsAsync(Gather gather, IEnumerable<string> prompts, CancellationToken cancellationToken = default, string voice = null);
 
 		/// <summary>
+		/// Appends the text as Twilio-native &lt;Say&gt; verbs, split into the same
+		/// chunks the TTS pipeline would use so no single verb exceeds Twilio's
+		/// per-&lt;Say&gt; text limit. Used when the TTS time budget is exhausted.
+		/// </summary>
+		void AppendSayFallback(VoiceResponse response, string text);
+
+		/// <summary>
+		/// Appends the text as Twilio-native &lt;Say&gt; verbs inside a Gather,
+		/// split into the same chunks the TTS pipeline would use.
+		/// </summary>
+		void AppendSayFallback(Gather gather, string text);
+
+		/// <summary>
 		/// Kicks off TTS generation for the given text in the background so that
 		/// a subsequent call to GetPromptUrlAsync (or AppendPromptAsync) will find
 		/// the URL already cached. Does not throw on failure — the cache entry is

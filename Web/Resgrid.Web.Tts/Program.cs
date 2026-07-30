@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Resgrid.Config;
@@ -40,7 +41,7 @@ if (!string.IsNullOrWhiteSpace(ExternalErrorConfig.ExternalErrorServiceUrlForTts
 				if (samplingContext.CustomSamplingContext.TryGetValue("__HttpPath", out var httpPath))
 				{
 					var pathValue = httpPath?.ToString();
-					if (string.Equals(pathValue, "/health", StringComparison.OrdinalIgnoreCase) ||
+					if ((pathValue is not null && pathValue.StartsWith("/health", StringComparison.OrdinalIgnoreCase)) ||
 					    string.Equals(pathValue, "/livez", StringComparison.OrdinalIgnoreCase) ||
 					    string.Equals(pathValue, "/readyz", StringComparison.OrdinalIgnoreCase))
 					{
@@ -69,8 +70,13 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpClient();
 builder.Services.AddTtsConfiguration();
 builder.Services.Configure<ForwardedHeadersOptions>(TtsRequestIdentity.ConfigureForwardedHeaders);
+// Shallow (config-presence) check backs /health for the k8s probes; the full check runs
+// functional probes against Redis, S3 and the Piper/ffmpeg pipeline and only executes
+// when /health/full is called explicitly.
+builder.Services.AddSingleton<TtsFullHealthCheck>();
 builder.Services.AddHealthChecks()
-	.AddCheck<TtsDependencyHealthCheck>("tts_dependencies");
+	.AddCheck<TtsDependencyHealthCheck>("tts_dependencies", tags: new[] { "live" })
+	.AddCheck<TtsFullHealthCheck>("tts_full", tags: new[] { "full" });
 builder.Services.AddRateLimiter(options =>
 {
 	options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
@@ -124,28 +130,62 @@ if (app.Environment.IsDevelopment())
 app.UseForwardedHeaders();
 app.UseRateLimiter();
 
+// Deep-probe gate: /health/full runs a real Piper/ffmpeg synthesis plus Redis and
+// S3 round-trips, and this service is internet-reachable (Twilio fetches playback
+// audio from it). Restricted to trusted monitoring via the shared key
+// (SystemBehaviorConfig.FullHealthCheckKey); an unconfigured key fails closed.
+// The shallow /health endpoint stays public for the k8s probes.
+app.UseWhen(
+	context => context.Request.Path.StartsWithSegments("/health/full", StringComparison.OrdinalIgnoreCase),
+	healthApp => healthApp.Use(async (context, next) =>
+	{
+		if (!TtsHealthCheckAccess.IsAuthorized(context.Request))
+		{
+			context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+			return;
+		}
+
+		await next();
+	}));
+
+// Shallow liveness endpoint: configuration presence only, no external calls. This is
+// what the k8s liveness/readiness/startup probes point at.
 app.MapHealthChecks("/health", new HealthCheckOptions
 {
-	ResponseWriter = static async (context, report) =>
-	{
-		context.Response.ContentType = "application/json";
+	Predicate = registration => !registration.Tags.Contains("full"),
+	ResponseWriter = WriteHealthResponseAsync
+});
 
-		var payload = new
-		{
-			status = report.Status.ToString(),
-			checks = report.Entries.ToDictionary(
-				entry => entry.Key,
-				entry => new
-				{
-					status = entry.Value.Status.ToString(),
-					description = entry.Value.Description
-				})
-		};
-
-		await context.Response.WriteAsync(JsonSerializer.Serialize(payload), context.RequestAborted);
-	}
+// Deep functional probe: Redis round-trip, S3 reachability, and a real Piper/ffmpeg
+// synthesis. For monitoring and diagnostics — do not wire probes to this endpoint.
+// Requires the X-Resgrid-Health-Key header (gate registered above).
+app.MapHealthChecks("/health/full", new HealthCheckOptions
+{
+	ResponseWriter = WriteHealthResponseAsync
 });
 app.MapControllers();
+
+static async Task WriteHealthResponseAsync(HttpContext context, HealthReport report)
+{
+	context.Response.ContentType = "application/json";
+
+	var payload = new
+	{
+		status = report.Status.ToString(),
+		checks = report.Entries.ToDictionary(
+			entry => entry.Key,
+			entry => new
+			{
+				status = entry.Value.Status.ToString(),
+				description = entry.Value.Description,
+				data = entry.Value.Data.Count > 0
+					? entry.Value.Data.ToDictionary(item => item.Key, item => item.Value?.ToString())
+					: null
+			})
+	};
+
+	await context.Response.WriteAsync(JsonSerializer.Serialize(payload), context.RequestAborted);
+}
 
 app.Run();
 

@@ -37,8 +37,12 @@ namespace Resgrid.Providers.NumberProvider
 					var options = new CreateCallOptions(new PhoneNumber(profile.GetPhoneNumber()), new PhoneNumber(number));
 					options.Url = new Uri(string.Format(Config.NumberProviderConfig.TwilioVoiceCallApiUrl, profile.UserId, call.CallId));
 					options.Method = "GET";
-					options.MachineDetection = "Enable";
-					//options.IfMachine = "Continue";
+					// No machine detection: nothing consumes AnsweredBy (no AMD status
+					// callback endpoint exists, IfMachine handling was never enabled), so
+					// AMD would only add Twilio's per-call detection fee — and, in its
+					// synchronous form, a multi-second answer delay. The webhook fires the
+					// moment the call is answered and dispatch playback starts immediately;
+					// a voicemail simply records the dispatch prompt.
 
 					var phoneCall = await CallResource.CreateAsync(options);
 					return true;
@@ -52,8 +56,7 @@ namespace Resgrid.Providers.NumberProvider
 					var options = new CreateCallOptions(new PhoneNumber(profile.GetHomePhoneNumber()), new PhoneNumber(number));
 					options.Url = new Uri(string.Format(Config.NumberProviderConfig.TwilioVoiceCallApiUrl, profile.UserId, call.CallId));
 					options.Method = "GET";
-					options.MachineDetection = "Enable";
-					//options.IfMachine = "Continue";
+					// No machine detection — see the mobile branch above.
 
 					var phoneCall = await CallResource.CreateAsync(options);
 					return true;

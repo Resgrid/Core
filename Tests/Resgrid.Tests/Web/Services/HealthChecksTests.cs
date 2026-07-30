@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
@@ -140,6 +141,125 @@ namespace Resgrid.Tests.Web.Services
 			var result = await check.CheckHealthAsync(new HealthCheckContext());
 
 			result.Status.Should().Be(HealthStatus.Unhealthy);
+		}
+	}
+
+	[TestFixture]
+	public class FullHealthCheckAccessTests
+	{
+		private string _originalKey;
+
+		[SetUp]
+		public void SetUp()
+		{
+			_originalKey = Resgrid.Config.SystemBehaviorConfig.FullHealthCheckKey;
+		}
+
+		[TearDown]
+		public void TearDown()
+		{
+			Resgrid.Config.SystemBehaviorConfig.FullHealthCheckKey = _originalKey;
+		}
+
+		private static HttpRequest CreateRequest(string headerValue = null)
+		{
+			var context = new DefaultHttpContext();
+
+			if (headerValue != null)
+				context.Request.Headers[FullHealthCheckAccess.HeaderName] = headerValue;
+
+			return context.Request;
+		}
+
+		[Test]
+		public void is_authorized_should_fail_closed_when_no_key_is_configured()
+		{
+			Resgrid.Config.SystemBehaviorConfig.FullHealthCheckKey = "";
+
+			FullHealthCheckAccess.IsAuthorized(CreateRequest("anything")).Should().BeFalse();
+		}
+
+		[Test]
+		public void is_authorized_should_reject_missing_header()
+		{
+			Resgrid.Config.SystemBehaviorConfig.FullHealthCheckKey = "monitor-key";
+
+			FullHealthCheckAccess.IsAuthorized(CreateRequest()).Should().BeFalse();
+		}
+
+		[Test]
+		public void is_authorized_should_reject_wrong_key()
+		{
+			Resgrid.Config.SystemBehaviorConfig.FullHealthCheckKey = "monitor-key";
+
+			FullHealthCheckAccess.IsAuthorized(CreateRequest("wrong-key")).Should().BeFalse();
+		}
+
+		[Test]
+		public void is_authorized_should_accept_matching_key()
+		{
+			Resgrid.Config.SystemBehaviorConfig.FullHealthCheckKey = "monitor-key";
+
+			FullHealthCheckAccess.IsAuthorized(CreateRequest("monitor-key")).Should().BeTrue();
+		}
+	}
+
+	[TestFixture]
+	public class TtsHealthCheckAccessTests
+	{
+		private string _originalKey;
+
+		[SetUp]
+		public void SetUp()
+		{
+			_originalKey = Resgrid.Config.SystemBehaviorConfig.FullHealthCheckKey;
+		}
+
+		[TearDown]
+		public void TearDown()
+		{
+			Resgrid.Config.SystemBehaviorConfig.FullHealthCheckKey = _originalKey;
+		}
+
+		private static HttpRequest CreateRequest(string headerValue = null)
+		{
+			var context = new DefaultHttpContext();
+
+			if (headerValue != null)
+				context.Request.Headers[TtsHealthCheckAccess.HeaderName] = headerValue;
+
+			return context.Request;
+		}
+
+		[Test]
+		public void is_authorized_should_fail_closed_when_no_key_is_configured()
+		{
+			Resgrid.Config.SystemBehaviorConfig.FullHealthCheckKey = "";
+
+			TtsHealthCheckAccess.IsAuthorized(CreateRequest("anything")).Should().BeFalse();
+		}
+
+		[Test]
+		public void is_authorized_should_reject_missing_or_wrong_key()
+		{
+			Resgrid.Config.SystemBehaviorConfig.FullHealthCheckKey = "monitor-key";
+
+			TtsHealthCheckAccess.IsAuthorized(CreateRequest()).Should().BeFalse();
+			TtsHealthCheckAccess.IsAuthorized(CreateRequest("wrong-key")).Should().BeFalse();
+		}
+
+		[Test]
+		public void is_authorized_should_accept_matching_key()
+		{
+			Resgrid.Config.SystemBehaviorConfig.FullHealthCheckKey = "monitor-key";
+
+			TtsHealthCheckAccess.IsAuthorized(CreateRequest("monitor-key")).Should().BeTrue();
+		}
+
+		[Test]
+		public void header_name_should_match_the_api_gate_so_one_monitoring_key_works_for_both()
+		{
+			TtsHealthCheckAccess.HeaderName.Should().Be(FullHealthCheckAccess.HeaderName);
 		}
 	}
 

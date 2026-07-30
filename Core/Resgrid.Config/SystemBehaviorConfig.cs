@@ -113,6 +113,14 @@ namespace Resgrid.Config
 		public static string ApiTokenEncryptionPassphrase = "";
 
 		/// <summary>
+		/// Shared key trusted monitoring must present (X-Resgrid-Health-Key header) to call
+		/// the deep /health/full endpoint, which runs real SQL/Redis/TTS probes and returns
+		/// dependency detail. Empty (the default) disables /health/full entirely; the
+		/// shallow /health liveness endpoint is unaffected.
+		/// </summary>
+		public static string FullHealthCheckKey = "";
+
+		/// <summary>
 		/// The length the API token will be valid for once a user logs into the app
 		/// </summary>
 		public static int APITokenMonthsTTL = 12;

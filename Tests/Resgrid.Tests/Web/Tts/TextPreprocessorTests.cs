@@ -65,6 +65,9 @@ namespace Resgrid.Tests.Web.Tts
 		[TestCase("RP ADV 2 VEH MVC", "Reporting Party Advised two Vehicle Motor Vehicle Collision.")]
 		[TestCase("HAZMAT spill", "Hazardous Materials spill.")]
 		[TestCase("HazMat spill", "Hazardous Materials spill.")]
+		[TestCase("debris etc on roadway", "debris et cetera on roadway.")]
+		[TestCase("debris ETC on roadway", "debris et cetera on roadway.")]
+		[TestCase("debris Etc on roadway", "debris et cetera on roadway.")]
 		public void Preprocess_ExpandsUppercaseDispatchCodes(string input, string expected)
 		{
 			_preprocessor.Preprocess(input, EnglishVoice).Should().Be(expected);

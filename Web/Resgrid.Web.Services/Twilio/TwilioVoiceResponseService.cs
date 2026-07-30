@@ -56,7 +56,7 @@ namespace Resgrid.Web.Services.Twilio
 			}
 		}
 
-		public void AppendSayFallback(VoiceResponse response, string text)
+		public void AppendSayFallback(TwiML parent, string text)
 		{
 			if (!TtsConfig.TwilioSayFallbackEnabled)
 			{
@@ -66,21 +66,7 @@ namespace Resgrid.Web.Services.Twilio
 
 			foreach (var chunk in ChunkText(text))
 			{
-				response.Append(new Say(chunk));
-			}
-		}
-
-		public void AppendSayFallback(Gather gather, string text)
-		{
-			if (!TtsConfig.TwilioSayFallbackEnabled)
-			{
-				LogSayFallbackSkipped(text);
-				return;
-			}
-
-			foreach (var chunk in ChunkText(text))
-			{
-				gather.Append(new Say(chunk));
+				parent.Append(new Say(chunk));
 			}
 		}
 

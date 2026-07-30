@@ -4736,6 +4736,15 @@
             to its Call and department-ownership checked, then (3) a <c>CallId</c> on a bound request body object.
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Health.FullHealthCheckAccess">
+            <summary>
+            Gates the deep /health/full endpoint. The probes it triggers (SQL, Redis, TTS
+            microservice) and the dependency detail it returns are for trusted monitoring
+            only, so callers must present the configured shared key. An unconfigured key
+            fails closed and disables the endpoint. The shallow /health liveness endpoint
+            stays public.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Health.HealthResponseWriter">
             <summary>
             Shared JSON writer for the /health and /health/full endpoints. Matches the payload
@@ -11034,17 +11043,13 @@
               resource lookups using this strongly typed resource class.
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Twilio.ITwilioVoiceResponseService.AppendSayFallback(Twilio.TwiML.VoiceResponse,System.String)">
+        <member name="M:Resgrid.Web.Services.Twilio.ITwilioVoiceResponseService.AppendSayFallback(Twilio.TwiML.TwiML,System.String)">
             <summary>
-            Appends the text as Twilio-native &lt;Say&gt; verbs, split into the same
-            chunks the TTS pipeline would use so no single verb exceeds Twilio's
-            per-&lt;Say&gt; text limit. Used when the TTS time budget is exhausted.
-            </summary>
-        </member>
-        <member name="M:Resgrid.Web.Services.Twilio.ITwilioVoiceResponseService.AppendSayFallback(Twilio.TwiML.Voice.Gather,System.String)">
-            <summary>
-            Appends the text as Twilio-native &lt;Say&gt; verbs inside a Gather,
-            split into the same chunks the TTS pipeline would use.
+            Appends the text as Twilio-native &lt;Say&gt; verbs to the given TwiML
+            parent (VoiceResponse, Gather, ...), split into the same chunks the TTS
+            pipeline would use so no single verb exceeds Twilio's per-&lt;Say&gt;
+            text limit. No-op unless TtsConfig.TwilioSayFallbackEnabled. Used when
+            the TTS time budget is exhausted or generation has already failed.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Twilio.ITwilioVoiceResponseService.PreWarmPromptAsync(System.String,System.String)">

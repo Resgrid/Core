@@ -125,7 +125,12 @@ namespace Resgrid.Web.Tts.Services
 
 			// Communications
 			{ "PX",    "Phone Extension" },
+			// All casings of "etc" are safe to expand (no English-word collision),
+			// so list each explicitly for the case-sensitive matcher — same pattern
+			// as HAZMAT/HazMat in AbbreviationMap.
 			{ "etc",   "et cetera" },
+			{ "ETC",   "et cetera" },
+			{ "Etc",   "et cetera" },
 
 			// Geographical
 			{ "NH",    "Northbound" },

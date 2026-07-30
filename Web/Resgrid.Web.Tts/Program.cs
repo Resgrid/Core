@@ -130,6 +130,24 @@ if (app.Environment.IsDevelopment())
 app.UseForwardedHeaders();
 app.UseRateLimiter();
 
+// Deep-probe gate: /health/full runs a real Piper/ffmpeg synthesis plus Redis and
+// S3 round-trips, and this service is internet-reachable (Twilio fetches playback
+// audio from it). Restricted to trusted monitoring via the shared key
+// (SystemBehaviorConfig.FullHealthCheckKey); an unconfigured key fails closed.
+// The shallow /health endpoint stays public for the k8s probes.
+app.UseWhen(
+	context => context.Request.Path.StartsWithSegments("/health/full", StringComparison.OrdinalIgnoreCase),
+	healthApp => healthApp.Use(async (context, next) =>
+	{
+		if (!TtsHealthCheckAccess.IsAuthorized(context.Request))
+		{
+			context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+			return;
+		}
+
+		await next();
+	}));
+
 // Shallow liveness endpoint: configuration presence only, no external calls. This is
 // what the k8s liveness/readiness/startup probes point at.
 app.MapHealthChecks("/health", new HealthCheckOptions
@@ -140,6 +158,7 @@ app.MapHealthChecks("/health", new HealthCheckOptions
 
 // Deep functional probe: Redis round-trip, S3 reachability, and a real Piper/ffmpeg
 // synthesis. For monitoring and diagnostics — do not wire probes to this endpoint.
+// Requires the X-Resgrid-Health-Key header (gate registered above).
 app.MapHealthChecks("/health/full", new HealthCheckOptions
 {
 	ResponseWriter = WriteHealthResponseAsync

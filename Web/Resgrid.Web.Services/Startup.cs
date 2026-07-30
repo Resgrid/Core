@@ -734,6 +734,23 @@ namespace Resgrid.Web.ServicesCore
 
 			app.UseIpRateLimiting();
 
+			// Deep-probe gate: /health/full runs real SQL/Redis/TTS probes and returns
+			// dependency detail, so it is restricted to trusted monitoring via the
+			// configured shared key (SystemBehaviorConfig.FullHealthCheckKey). An
+			// unconfigured key fails closed. The shallow /health endpoint stays public.
+			app.UseWhen(
+				context => context.Request.Path.StartsWithSegments("/health/full", StringComparison.OrdinalIgnoreCase),
+				healthApp => healthApp.Use(async (context, next) =>
+				{
+					if (!Resgrid.Web.Services.Health.FullHealthCheckAccess.IsAuthorized(context.Request))
+					{
+						context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+						return;
+					}
+
+					await next.Invoke();
+				}));
+
 			app.UseEndpoints(endpoints =>
 			{
 				endpoints.MapControllers();
@@ -750,6 +767,8 @@ namespace Resgrid.Web.ServicesCore
 
 				// Deep dependency probe: SQL, Redis, and TTS microservice reachability.
 				// For monitoring and diagnostics — do not wire probes to this endpoint.
+				// Requires the X-Resgrid-Health-Key header (gate registered above);
+				// without a configured FullHealthCheckKey the endpoint returns 401.
 				endpoints.MapHealthChecks("/health/full", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions
 				{
 					ResponseWriter = Resgrid.Web.Services.Health.HealthResponseWriter.WriteAsync

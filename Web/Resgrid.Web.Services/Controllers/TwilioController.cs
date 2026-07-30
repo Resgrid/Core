@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 using System.Security.Cryptography;
@@ -593,9 +594,14 @@ namespace Resgrid.Web.Services.Controllers
 											// The task must be awaited — appending it directly stringifies as
 											// "System.Threading.Tasks.Task`1[System.String]" in the SMS reply.
 											// Bounded like the voice path so a slow geocoder can't stall the webhook.
-											if (points != null && points.Length == 2)
+											// TryParse with InvariantCulture: malformed coordinates skip the lookup
+											// instead of throwing, and a comma-decimal server culture can't silently
+											// misread "47.606" as 47606.
+											if (points != null && points.Length == 2
+												&& double.TryParse(points[0], NumberStyles.Float, CultureInfo.InvariantCulture, out var latitude)
+												&& double.TryParse(points[1], NumberStyles.Float, CultureInfo.InvariantCulture, out var longitude))
 											{
-												callText.Append(await _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]))
+												callText.Append(await _geoLocationProvider.GetAproxAddressFromLatLong(latitude, longitude)
 													.WaitAsync(TimeSpan.FromSeconds(2), HttpContext?.RequestAborted ?? CancellationToken.None) + Environment.NewLine);
 											}
 										}
@@ -1471,8 +1477,13 @@ namespace Resgrid.Web.Services.Controllers
 					// Bound the reverse-geocode: it's an external HTTP call with no timeout of
 					// its own, and it runs inside a Twilio webhook whose total budget is 15s.
 					// On timeout the catch swallows and the dispatch is spoken without an address.
-					if (points != null && points.Length == 2)
-						address = await _geoLocationProvider.GetAproxAddressFromLatLong(double.Parse(points[0]), double.Parse(points[1]))
+					// TryParse with InvariantCulture: malformed coordinates skip the lookup
+					// instead of throwing, and a comma-decimal server culture can't silently
+					// misread "47.606" as 47606.
+					if (points != null && points.Length == 2
+						&& double.TryParse(points[0], NumberStyles.Float, CultureInfo.InvariantCulture, out var latitude)
+						&& double.TryParse(points[1], NumberStyles.Float, CultureInfo.InvariantCulture, out var longitude))
+						address = await _geoLocationProvider.GetAproxAddressFromLatLong(latitude, longitude)
 							.WaitAsync(TimeSpan.FromSeconds(2), HttpContext?.RequestAborted ?? CancellationToken.None);
 				}
 				catch

@@ -1,0 +1,35 @@
+@{
+	ViewBag.Title = "Resgrid | Assistant";
+	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+	ViewBag.LoadAngular = true;
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>Assistant</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+			</li>
+			<li class="active">
+				<strong>Assistant</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<rg-chatbot></rg-chatbot>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+}

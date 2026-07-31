@@ -452,6 +452,18 @@ namespace Resgrid.Workers.Console
 						stoppingToken);
 				}
 
+				_logger.Log(LogLevel.Information, "Scheduling Chat Retention");
+				await Client.ScheduleAsync("Chat Retention",
+					new Commands.ChatRetentionCommand(25),
+					Cron.Daily(4, 45),
+					stoppingToken);
+
+				_logger.Log(LogLevel.Information, "Scheduling Chat Export Processor");
+				await Client.ScheduleAsync("Chat Export Processor",
+					new Commands.ChatExportCommand(26),
+					Cron.MinuteIntervals(5),
+					stoppingToken);
+
 				if (SystemBehaviorConfig.Utf8CleanupEnabled)
 				{
 					var utf8CleanupHour = SystemBehaviorConfig.Utf8CleanupHourUtc >= 0 && SystemBehaviorConfig.Utf8CleanupHourUtc <= 23

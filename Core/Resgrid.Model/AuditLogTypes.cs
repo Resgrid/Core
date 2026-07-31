@@ -173,6 +173,19 @@
 		UnitTrackingCredentialRotated,
 		UnitTrackingCredentialRevoked,
 		// Department deletion lifecycle
-		DeleteDepartmentRequestExecuted
+		DeleteDepartmentRequestExecuted,
+		// Chat moderation
+		ChatMessageDeletedByModerator,
+		ChatUserMuted,
+		ChatUserUnmuted,
+		ChatUserBanned,
+		ChatUserUnbanned,
+		ChatChannelLocked,
+		ChatChannelUnlocked,
+		ChatChannelArchived,
+		ChatFlagResolved,
+		ChatSettingsChanged,
+		ChatExportRequested,
+		ChatExportDownloaded
 	}
 }

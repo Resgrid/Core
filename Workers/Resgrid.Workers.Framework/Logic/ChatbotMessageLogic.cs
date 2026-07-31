@@ -41,12 +41,24 @@ namespace Resgrid.Workers.Framework.Logic
 
 				if (response != null && !string.IsNullOrWhiteSpace(response.Text))
 				{
-					// Reply from the department's text number (To) back to the sender (From). Twilio is the
-					// primary transport; carrier only governs gateway fallback, so the default is fine here.
-					// Chatbot replies are interactive (help/command lists the user acts on over SMS), so they
-					// use the higher chatbot length cap instead of the notification default.
-					await textMessageProvider.SendTextMessage(item.From, response.Text, item.To, default(MobileCarriers), item.DepartmentId,
-						maxLengthOverride: Resgrid.Config.ChatbotConfig.SmsReplyMaxLength);
+					if ((ChatbotPlatform)item.Platform == ChatbotPlatform.WebChat)
+					{
+						// WebChat replies go back through the platform adapter (chat channel + SignalR),
+						// never over SMS — From is a Resgrid user id here, not a phone number.
+						var adapterRegistry = Bootstrapper.GetKernel().Resolve<Resgrid.Providers.Chatbot.Interfaces.IChatbotAdapterRegistry>();
+						var adapter = adapterRegistry.GetAdapter(ChatbotPlatform.WebChat);
+						if (adapter != null)
+							await adapter.SendRichResponseAsync(item.From, response);
+					}
+					else
+					{
+						// Reply from the department's text number (To) back to the sender (From). Twilio is the
+						// primary transport; carrier only governs gateway fallback, so the default is fine here.
+						// Chatbot replies are interactive (help/command lists the user acts on over SMS), so they
+						// use the higher chatbot length cap instead of the notification default.
+						await textMessageProvider.SendTextMessage(item.From, response.Text, item.To, default(MobileCarriers), item.DepartmentId,
+							maxLengthOverride: Resgrid.Config.ChatbotConfig.SmsReplyMaxLength);
+					}
 				}
 			}
 			catch (Exception ex)

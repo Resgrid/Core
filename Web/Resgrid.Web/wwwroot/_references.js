@@ -674,7 +674,6 @@
 /// <reference path="js/app/internal/mapping/resgrid.mapping.importpois.js" />
 /// <reference path="js/app/internal/mapping/resgrid.mapping.index.js" />
 /// <reference path="js/app/internal/mapping/resgrid.mapping.viewtype.js" />
-/// <reference path="js/app/internal/messages/resgrid.messages.chat.js" />
 /// <reference path="js/app/internal/messages/resgrid.messages.compose.js" />
 /// <reference path="js/app/internal/messages/resgrid.messages.inbox.js" />
 /// <reference path="js/app/internal/messages/resgrid.messages.outbox.js" />

@@ -17,10 +17,7 @@
 
     <link rel="stylesheet" href="/css/int-bundle.css" />
 
-    @if (ViewBag.LoadAngular == true)
-    {
-        <link rel="stylesheet" href="~/js/ng/react-elements.css" asp-append-version="true" />
-    }
+    <link rel="stylesheet" href="~/js/ng/react-elements.css" asp-append-version="true" />
 
     <link rel="shortcut icon" href="~/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="~/images/apple-touch-icon.png">
@@ -121,6 +118,7 @@
         window.rgApiBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl";
         window.rgGoogleMapsKey = "@Resgrid.Config.MappingConfig.GoogleMapsJSKey";
         window.rgChannelUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridEventingBaseUrl";
+        window.rgIsDepartmentAdmin = "@(ClaimsAuthorizationHelper.IsUserDepartmentAdmin().ToString().ToLowerInvariant())";
 
         resgrid.absoluteBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl";
         resgrid.absoluteApiBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl";
@@ -129,10 +127,7 @@
         localStorage.setItem("RgWebApp.auth-tokens", '@Html.Raw(await JavasriptHelpers.GetApiToken())');
     </script>
 
-    @if (ViewBag.LoadAngular == true)
-    {
-        <script type="module" src="~/js/ng/react-elements.js" asp-append-version="true"></script>
-    }
+    <script type="module" src="~/js/ng/react-elements.js" asp-append-version="true"></script>
 
     @if (IsSectionDefined("Scripts"))
     {
@@ -145,6 +140,6 @@
         resgrid.init();
     </script>
 
-    @*@await Html.PartialAsync("_ChatWidget")*@
+    <rg-chat></rg-chat>
 </body>
 </html>

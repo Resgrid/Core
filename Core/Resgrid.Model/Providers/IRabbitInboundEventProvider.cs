@@ -16,5 +16,11 @@ namespace Resgrid.Model.Providers
 							   Func<int, PersonnelLocationUpdatedEvent, Task> personnelLocationUpdated,
 							   Func<int, UnitLocationUpdatedEvent, Task> unitLocationUpdated,
 							   Func<int, string, Task> incidentCommandUpdated);
+
+		/// <summary>
+		/// Registers the chat event callback separately so hosts that don't relay chat (workers, TTS)
+		/// need no changes. The callback receives (departmentId, ChatEventRaised JSON payload).
+		/// </summary>
+		void RegisterForChatEvents(Func<int, string, Task> chatEvent);
 	}
 }

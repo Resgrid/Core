@@ -44,6 +44,18 @@
 					<a asp-controller="Contacts" asp-action="Index" asp-route-area="User"><i class="fa fa-address-book"></i> <span class="nav-label" data-i18n="nav.contacts">@commonLocalizer["ContactsModule"]</span></a>
 				</li>
 			}
+			<li class="@Html.IsSelected(controller: "Chat", action: "Index")">
+				<a asp-controller="Chat" asp-action="Index" asp-route-area="User"><i class="fa fa-comments"></i> <span class="nav-label">Chat</span></a>
+			</li>
+			<li class="@Html.IsSelected(controller: "Chat", action: "Chatbot")">
+				<a asp-controller="Chat" asp-action="Chatbot" asp-route-area="User"><i class="fa fa-magic"></i> <span class="nav-label">Assistant</span></a>
+			</li>
+			@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+			{
+				<li class="@Html.IsSelected(controller: "Chat", action: "Moderation")">
+					<a asp-controller="Chat" asp-action="Moderation" asp-route-area="User"><i class="fa fa-gavel"></i> <span class="nav-label">Chat Moderation</span></a>
+				</li>
+			}
 			@if (SettingsHelper.IsMappingEnabled())
 			{
 				<li class="@Html.IsSelected(controller: "Mapping")">

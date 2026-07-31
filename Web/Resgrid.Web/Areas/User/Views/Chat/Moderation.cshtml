@@ -1,0 +1,35 @@
+@{
+	ViewBag.Title = "Resgrid | Chat Moderation";
+	Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
+	ViewBag.LoadAngular = true;
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+	<div class="col-sm-8">
+		<h2>Chat Moderation</h2>
+		<ol class="breadcrumb">
+			<li>
+				<a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a>
+			</li>
+			<li class="active">
+				<strong>Chat Moderation</strong>
+			</li>
+		</ol>
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-xs-12">
+		<div class="wrapper wrapper-content">
+			<div class="ibox float-e-margins">
+				<div class="ibox-content">
+					<rg-chat-moderation></rg-chat-moderation>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section Scripts
+{
+}

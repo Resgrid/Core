@@ -20,14 +20,16 @@ namespace Resgrid.Web.Eventing
 	{
 		private readonly IHubContext<EventingHub> _eventingHub;
 		private readonly IHubContext<GeolocationHub> _geolocationHub;
+		private readonly IHubContext<ChatHub> _chatHub;
 		private readonly IServiceProvider _serviceProvider;
 		private readonly IRabbitInboundEventProvider _rabbitInboundEventProvider;
 
-		public Worker(IServiceProvider serviceProvider, IHubContext<EventingHub> eventingHub, IHubContext<GeolocationHub> geolocationHub)
+		public Worker(IServiceProvider serviceProvider, IHubContext<EventingHub> eventingHub, IHubContext<GeolocationHub> geolocationHub, IHubContext<ChatHub> chatHub)
 		{
 			_serviceProvider = serviceProvider;
 			_eventingHub = eventingHub;
 			_geolocationHub = geolocationHub;
+			_chatHub = chatHub;
 
 			using var scope = _serviceProvider.CreateScope();
 			_rabbitInboundEventProvider = scope.ServiceProvider.GetRequiredService<IRabbitInboundEventProvider>();
@@ -47,6 +49,8 @@ namespace Resgrid.Web.Eventing
 															  PersonnelLocationUpdated,
 															  UnitLocationUpdated,
 															  IncidentCommandUpdated);
+
+				_rabbitInboundEventProvider.RegisterForChatEvents(ChatEventReceived);
 
 				_rabbitInboundEventProvider.Start("Eventing-Web", "EventingWeb").ConfigureAwait(false);
 
@@ -179,6 +183,48 @@ namespace Resgrid.Web.Eventing
 
 			if (group != null)
 				await group.SendAsync("onUnitLocationUpdated", location);
+		}
+
+		/// <summary>
+		/// Routes a chat event envelope to SignalR clients. Targeted events (chatbot, personal badges)
+		/// go to the user's personal group; channel-list events also go to the department group; all
+		/// others go to the channel group. The client event name is the envelope Kind and the argument
+		/// is the payload JSON.
+		/// </summary>
+		public async Task ChatEventReceived(int departmentId, string payloadJson)
+		{
+			try
+			{
+				if (string.IsNullOrWhiteSpace(payloadJson))
+					return;
+
+				var chatEvent = Newtonsoft.Json.JsonConvert.DeserializeObject<ChatEventRaised>(payloadJson);
+				if (chatEvent == null || string.IsNullOrWhiteSpace(chatEvent.Kind))
+					return;
+
+				if (!string.IsNullOrWhiteSpace(chatEvent.TargetUserId))
+				{
+					await _chatHub.Clients.Group($"chatuser:{chatEvent.DepartmentId}:{chatEvent.TargetUserId.ToLowerInvariant()}")
+						.SendAsync(chatEvent.Kind, chatEvent.PayloadJson);
+					return;
+				}
+
+				if (chatEvent.Kind == ChatEventKinds.ChannelUpdated || chatEvent.Kind == ChatEventKinds.ChannelProvisioned)
+				{
+					await _chatHub.Clients.Group($"chatdept:{chatEvent.DepartmentId}")
+						.SendAsync(chatEvent.Kind, chatEvent.PayloadJson);
+				}
+
+				if (!string.IsNullOrWhiteSpace(chatEvent.ChatChannelId))
+				{
+					await _chatHub.Clients.Group($"chat:{chatEvent.ChatChannelId}")
+						.SendAsync(chatEvent.Kind, chatEvent.PayloadJson);
+				}
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+			}
 		}
 
 		public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;

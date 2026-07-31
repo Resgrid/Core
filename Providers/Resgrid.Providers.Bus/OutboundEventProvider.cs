@@ -59,6 +59,7 @@ namespace Resgrid.Providers.Bus
 			_eventAggregator.AddListener(incidentCommandUpdatedTopicHandler);
 			_eventAggregator.AddListener(personnelLocationUpdatedTopicHandler);
 			_eventAggregator.AddAsyncListener(unitLocationUpdatedTopicHandler);
+			_eventAggregator.AddListener(chatEventTopicHandler);
 		}
 
 		public Action<UnitStatusEvent> unitStatusHandler = async delegate (UnitStatusEvent message)
@@ -592,6 +593,14 @@ namespace Resgrid.Providers.Bus
 				_rabbitTopicProvider = new RabbitTopicProvider();
 
 			_rabbitTopicProvider.IncidentCommandUpdated(message);
+		};
+
+		public Action<ChatEventRaised> chatEventTopicHandler = async delegate (ChatEventRaised message)
+		{
+			if (_rabbitTopicProvider == null)
+				_rabbitTopicProvider = new RabbitTopicProvider();
+
+			await _rabbitTopicProvider.ChatEventOccurred(message);
 		};
 
 		public Action<CallClosedEvent> callClosedTopicHandler = async delegate (CallClosedEvent message)

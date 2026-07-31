@@ -300,7 +300,7 @@ namespace Resgrid.Web.Eventing
 						// If the request is for our hub...
 						var path = context.HttpContext.Request.Path;
 						if (!string.IsNullOrEmpty(accessToken) &&
-							(path.StartsWithSegments("/geolocationHub")))
+							(path.StartsWithSegments("/geolocationHub") || path.StartsWithSegments("/chatHub")))
 						{
 							// Read the token out of the query string
 							var token = System.Uri.UnescapeDataString(accessToken);
@@ -390,6 +390,7 @@ namespace Resgrid.Web.Eventing
 
 				endpoints.MapHub<EventingHub>("/eventingHub");
 				endpoints.MapHub<GeolocationHub>("/geolocationHub");
+				endpoints.MapHub<ChatHub>("/chatHub");
 			});
 		}
 	}

@@ -757,6 +757,8 @@ namespace Resgrid.Web.ServicesCore
 
 				endpoints.MapHub<EventingHub>("/eventingHub");
 
+				endpoints.MapHub<ChatHub>("/chatHub");
+
 				// Shallow liveness: process is up and serving requests, no external calls.
 				// Point k8s liveness probes here.
 				endpoints.MapHealthChecks("/health", new Microsoft.AspNetCore.Diagnostics.HealthChecks.HealthCheckOptions

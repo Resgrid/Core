@@ -225,6 +225,61 @@ namespace Resgrid.Services
 			return true;
 		}
 
+		public async Task<bool> PushChatMessage(StandardPushMessage message, string userId, string eventCode, int unreadCount, UserProfile profile = null)
+		{
+			if (message == null || string.IsNullOrWhiteSpace(userId))
+				return false;
+
+			if (profile == null)
+				profile = await _userProfileService.GetProfileByUserIdAsync(userId);
+
+			if (profile == null || !profile.SendMessagePush)
+				return false;
+
+			string soundType = await GetSoundTypeAsync(message.DepartmentId, profile, PushSoundTypes.Message, PushSoundTypes.ModernChat);
+
+			try
+			{
+				await _notificationProvider.SendAllNotifications(message.Title, message.SubTitle, userId, eventCode, soundType, true, unreadCount, "#000000");
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex);
+			}
+
+			try
+			{
+				if (!string.IsNullOrWhiteSpace(message.DepartmentCode))
+				{
+					await _novuProvider.SendUserChatMessage(message.Title, message.SubTitle, userId, message.DepartmentCode, eventCode, soundType, unreadCount);
+					await _novuProvider.SendICUserChatMessage(message.Title, message.SubTitle, userId, message.DepartmentCode, eventCode, soundType, unreadCount);
+				}
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex);
+			}
+
+			return true;
+		}
+
+		public async Task<bool> PushChatMessageUnit(StandardPushMessage message, int unitId, string eventCode, int unreadCount)
+		{
+			if (message == null || unitId <= 0 || string.IsNullOrWhiteSpace(message.DepartmentCode))
+				return false;
+
+			try
+			{
+				await _novuProvider.SendUnitChatMessage(message.Title, message.SubTitle, unitId, message.DepartmentCode, eventCode, ((int)PushSoundTypes.ModernChat).ToString(), unreadCount);
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex);
+			}
+
+			return true;
+		}
+
 		public async Task<bool> PushCall(StandardPushCall call, string userId, UserProfile profile = null, DepartmentCallPriority priority = null)
 		{
 			if (Config.SystemBehaviorConfig.DoNotBroadcast && !Config.SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Contains(call.DepartmentId.GetValueOrDefault()))

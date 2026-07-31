@@ -1,0 +1,608 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Resgrid.Model;
+using Resgrid.Model.Services;
+using Resgrid.Web.Services.Helpers;
+using Resgrid.Web.Services.Models.v4.Chat;
+using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
+
+namespace Resgrid.Web.Services.Controllers.v4
+{
+	/// <summary>
+	/// Chat moderation: flags, moderator actions (delete/mute/ban/lock), department chat settings and
+	/// records-request exports
+	/// </summary>
+	[Route("api/v{VersionId:apiVersion}/[controller]")]
+	[ApiVersion("4.0")]
+	[ApiExplorerSettings(GroupName = "v4")]
+	public class ChatModerationController : V4AuthenticatedApiControllerbase
+	{
+		#region Members and Constructors
+
+		private readonly IChatModerationService _chatModerationService;
+		private readonly IChatChannelService _chatChannelService;
+		private readonly IChatPermissionService _chatPermissionService;
+		private readonly IChatMessageService _chatMessageService;
+		private readonly IFeatureToggleService _featureToggleService;
+		private readonly IAuthorizationService _authorizationService;
+
+		public ChatModerationController(
+			IChatModerationService chatModerationService,
+			IChatChannelService chatChannelService,
+			IChatPermissionService chatPermissionService,
+			IChatMessageService chatMessageService,
+			IFeatureToggleService featureToggleService,
+			IAuthorizationService authorizationService)
+		{
+			_chatModerationService = chatModerationService;
+			_chatChannelService = chatChannelService;
+			_chatPermissionService = chatPermissionService;
+			_chatMessageService = chatMessageService;
+			_featureToggleService = featureToggleService;
+			_authorizationService = authorizationService;
+		}
+
+		#endregion Members and Constructors
+
+		#region Flags
+
+		/// <summary>
+		/// Returns flagged messages for the department filtered by status. Department admins only.
+		/// </summary>
+		/// <param name="status">Flag status filter (0 = Open, 1 = Reviewed, 2 = Dismissed, 3 = ActionTaken)</param>
+		/// <param name="page">Page number</param>
+		/// <param name="pageSize">Page size</param>
+		/// <returns>Array of ChatFlagResultData objects</returns>
+		[HttpGet("GetFlags")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<GetChatFlagsResult>> GetFlags(int status = 0, int page = 0, int pageSize = 50)
+		{
+			if (!await ChatEnabledAsync())
+				return NotFound();
+
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			var result = new GetChatFlagsResult();
+			var flags = await _chatModerationService.GetFlagsAsync(DepartmentId, (ChatFlagStatus)status, page, pageSize);
+
+			if (flags != null && flags.Any())
+			{
+				foreach (var flag in flags)
+				{
+					result.Data.Add(ConvertFlagResultData(flag));
+				}
+
+				result.Page = page;
+				result.PageSize = result.Data.Count;
+				result.Status = ResponseHelper.Success;
+			}
+			else
+			{
+				result.PageSize = 0;
+				result.Status = ResponseHelper.NotFound;
+			}
+
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>
+		/// Resolves a message flag with a resolution status and note. Department admins only.
+		/// </summary>
+		/// <param name="flagId">Chat message flag identifier</param>
+		/// <param name="input">Resolution status and note</param>
+		/// <returns>ChatActionResult indicating whether the flag was resolved</returns>
+		[HttpPut("ResolveFlag")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<ChatActionResult>> ResolveFlag(string flagId, [FromBody] ResolveFlagInput input, CancellationToken cancellationToken)
+		{
+			if (!await ChatEnabledAsync())
+				return NotFound();
+
+			if (input == null || String.IsNullOrWhiteSpace(flagId))
+				return BadRequest();
+
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			var result = new ChatActionResult();
+			var resolved = await _chatModerationService.ResolveFlagAsync(flagId, DepartmentId, UserId, (ChatFlagStatus)input.Resolution, input.ResolutionNote, cancellationToken);
+
+			result.Success = resolved != null;
+			result.Status = result.Success ? ResponseHelper.Updated : ResponseHelper.NotFound;
+
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		#endregion Flags
+
+		#region Moderator Actions
+
+		/// <summary>
+		/// Deletes a message as a moderator (tombstone delete with audit). Requires channel moderator rights.
+		/// </summary>
+		/// <param name="messageId">Chat message identifier</param>
+		/// <param name="reason">Reason for the deletion</param>
+		/// <returns>ChatActionResult indicating whether the message was deleted</returns>
+		[HttpDelete("DeleteMessage")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<ChatActionResult>> DeleteMessage(string messageId, string reason, CancellationToken cancellationToken)
+		{
+			if (!await ChatEnabledAsync())
+				return NotFound();
+
+			var message = await _chatMessageService.GetMessageByIdAsync(messageId);
+			if (message == null || message.DepartmentId != DepartmentId)
+				return NotFound();
+
+			var channel = await _chatChannelService.GetChannelByIdAsync(message.ChatChannelId);
+			if (channel == null || channel.DepartmentId != DepartmentId)
+				return NotFound();
+
+			if (!await _chatPermissionService.CanModerateChannelAsync(channel, UserId))
+				return Unauthorized();
+
+			var result = new ChatActionResult();
+			result.Success = await _chatModerationService.ModeratorDeleteMessageAsync(messageId, UserId, reason, cancellationToken);
+			result.Status = result.Success ? ResponseHelper.Deleted : ResponseHelper.Failure;
+
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>
+		/// Mutes (or unmutes) a user in a channel. Requires channel moderator rights.
+		/// </summary>
+		/// <param name="channelId">Chat channel identifier</param>
+		/// <param name="input">Target user and mute expiration (null MutedUntil = unmute)</param>
+		/// <returns>ChatActionResult indicating whether the mute was applied</returns>
+		[HttpPost("MuteUser")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<ChatActionResult>> MuteUser(string channelId, [FromBody] MuteUserInput input, CancellationToken cancellationToken)
+		{
+			if (!await ChatEnabledAsync())
+				return NotFound();
+
+			if (input == null || String.IsNullOrWhiteSpace(input.TargetUserId))
+				return BadRequest();
+
+			var channel = await _chatChannelService.GetChannelByIdAsync(channelId);
+			if (channel == null || channel.DepartmentId != DepartmentId)
+				return NotFound();
+
+			if (!await _chatPermissionService.CanModerateChannelAsync(channel, UserId))
+				return Unauthorized();
+
+			var result = new ChatActionResult();
+			result.Success = await _chatModerationService.SetUserMutedAsync(channelId, input.TargetUserId, input.MutedUntil, UserId, null, cancellationToken);
+			result.Status = result.Success ? ResponseHelper.Updated : ResponseHelper.Failure;
+
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>
+		/// Bans (or unbans) a user from a channel. Requires channel moderator rights.
+		/// </summary>
+		/// <param name="channelId">Chat channel identifier</param>
+		/// <param name="input">Target user and whether they are banned</param>
+		/// <returns>ChatActionResult indicating whether the ban was applied</returns>
+		[HttpPost("BanUser")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<ChatActionResult>> BanUser(string channelId, [FromBody] BanUserInput input, CancellationToken cancellationToken)
+		{
+			if (!await ChatEnabledAsync())
+				return NotFound();
+
+			if (input == null || String.IsNullOrWhiteSpace(input.TargetUserId))
+				return BadRequest();
+
+			var channel = await _chatChannelService.GetChannelByIdAsync(channelId);
+			if (channel == null || channel.DepartmentId != DepartmentId)
+				return NotFound();
+
+			if (!await _chatPermissionService.CanModerateChannelAsync(channel, UserId))
+				return Unauthorized();
+
+			var result = new ChatActionResult();
+			result.Success = await _chatModerationService.SetUserBannedAsync(channelId, input.TargetUserId, input.Banned, UserId, null, cancellationToken);
+			result.Status = result.Success ? ResponseHelper.Updated : ResponseHelper.Failure;
+
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>
+		/// Locks (or unlocks) a channel so only moderators can post. Requires channel moderator rights.
+		/// </summary>
+		/// <param name="channelId">Chat channel identifier</param>
+		/// <param name="input">Whether to lock and the reason</param>
+		/// <returns>ChatActionResult indicating whether the lock state was changed</returns>
+		[HttpPost("LockChannel")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<ChatActionResult>> LockChannel(string channelId, [FromBody] LockChannelInput input, CancellationToken cancellationToken)
+		{
+			if (!await ChatEnabledAsync())
+				return NotFound();
+
+			if (input == null)
+				return BadRequest();
+
+			var channel = await _chatChannelService.GetChannelByIdAsync(channelId);
+			if (channel == null || channel.DepartmentId != DepartmentId)
+				return NotFound();
+
+			if (!await _chatPermissionService.CanModerateChannelAsync(channel, UserId))
+				return Unauthorized();
+
+			var result = new ChatActionResult();
+			result.Success = await _chatModerationService.SetChannelLockedAsync(channelId, input.Locked, UserId, input.Reason, cancellationToken);
+			result.Status = result.Success ? ResponseHelper.Updated : ResponseHelper.Failure;
+
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>
+		/// Returns the moderation audit trail for the department (optionally limited to one channel).
+		/// Department admins only.
+		/// </summary>
+		/// <param name="channelId">Optional channel to limit the audit trail to</param>
+		/// <param name="page">Page number</param>
+		/// <param name="pageSize">Page size</param>
+		/// <returns>Array of ChatModerationActionResultData objects</returns>
+		[HttpGet("GetActions")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<GetChatModerationActionsResult>> GetActions(string channelId = null, int page = 0, int pageSize = 50)
+		{
+			if (!await ChatEnabledAsync())
+				return NotFound();
+
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			var result = new GetChatModerationActionsResult();
+			var actions = await _chatModerationService.GetModerationActionsAsync(DepartmentId, channelId, page, pageSize);
+
+			if (actions != null && actions.Any())
+			{
+				foreach (var action in actions)
+				{
+					result.Data.Add(ConvertModerationActionResultData(action));
+				}
+
+				result.Page = page;
+				result.PageSize = result.Data.Count;
+				result.Status = ResponseHelper.Success;
+			}
+			else
+			{
+				result.PageSize = 0;
+				result.Status = ResponseHelper.NotFound;
+			}
+
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		#endregion Moderator Actions
+
+		#region Settings
+
+		/// <summary>
+		/// Returns the per-department chat settings. Department admins only.
+		/// </summary>
+		/// <returns>ChatSettingsResultData with the department's chat settings</returns>
+		[HttpGet("GetSettings")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<GetChatSettingsResult>> GetSettings()
+		{
+			if (!await ChatEnabledAsync())
+				return NotFound();
+
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			var result = new GetChatSettingsResult();
+			var settings = await _chatChannelService.GetDepartmentSettingsAsync(DepartmentId);
+
+			if (settings != null)
+			{
+				result.Data = ConvertSettingsResultData(settings);
+				result.PageSize = 1;
+				result.Status = ResponseHelper.Success;
+			}
+			else
+			{
+				result.PageSize = 0;
+				result.Status = ResponseHelper.NotFound;
+			}
+
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>
+		/// Updates the per-department chat settings. Department admins only.
+		/// </summary>
+		/// <param name="input">New settings values</param>
+		/// <returns>GetChatSettingsResult with the saved settings</returns>
+		[HttpPut("UpdateSettings")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<GetChatSettingsResult>> UpdateSettings([FromBody] UpdateChatSettingsInput input, CancellationToken cancellationToken)
+		{
+			if (!await ChatEnabledAsync())
+				return NotFound();
+
+			if (input == null)
+				return BadRequest();
+
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			var settings = await _chatChannelService.GetDepartmentSettingsAsync(DepartmentId) ?? new ChatDepartmentSetting();
+
+			settings.DepartmentId = DepartmentId;
+			settings.RetentionDays = input.RetentionDays;
+			settings.AllowImages = input.AllowImages;
+			settings.AllowGifs = input.AllowGifs;
+			settings.AllowLocationSharing = input.AllowLocationSharing;
+			settings.UrgentOverridesMute = input.UrgentOverridesMute;
+			settings.MaxAttachmentSizeMb = input.MaxAttachmentSizeMb;
+			settings.ChatbotEnabled = input.ChatbotEnabled;
+
+			var result = new GetChatSettingsResult();
+			var saved = await _chatChannelService.SaveDepartmentSettingsAsync(settings, cancellationToken);
+
+			if (saved != null)
+			{
+				result.Data = ConvertSettingsResultData(saved);
+				result.PageSize = 1;
+				result.Status = ResponseHelper.Updated;
+			}
+			else
+			{
+				result.PageSize = 0;
+				result.Status = ResponseHelper.Failure;
+			}
+
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		#endregion Settings
+
+		#region Exports
+
+		/// <summary>
+		/// Queues a chat transcript export job (records requests / FOIA). Department admins only.
+		/// </summary>
+		/// <param name="input">Channel, date range and format for the export</param>
+		/// <returns>GetChatExportsResult containing the queued export job</returns>
+		[HttpPost("RequestExport")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<GetChatExportsResult>> RequestExport([FromBody] RequestExportInput input, CancellationToken cancellationToken)
+		{
+			if (!await ChatEnabledAsync())
+				return NotFound();
+
+			if (input == null)
+				return BadRequest();
+
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			var result = new GetChatExportsResult();
+			var export = await _chatModerationService.RequestExportAsync(DepartmentId, UserId, input.ChatChannelId, input.StartDate, input.EndDate, (ChatExportFormat)input.Format, cancellationToken);
+
+			if (export != null)
+			{
+				result.Data.Add(ConvertExportResultData(export));
+				result.PageSize = 1;
+				result.Status = ResponseHelper.Queued;
+			}
+			else
+			{
+				result.PageSize = 0;
+				result.Status = ResponseHelper.Failure;
+			}
+
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>
+		/// Returns the chat transcript export jobs for the department. Department admins only.
+		/// </summary>
+		/// <returns>Array of ChatExportResultData objects</returns>
+		[HttpGet("GetExports")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<GetChatExportsResult>> GetExports()
+		{
+			if (!await ChatEnabledAsync())
+				return NotFound();
+
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			var result = new GetChatExportsResult();
+			var exports = await _chatModerationService.GetExportsAsync(DepartmentId);
+
+			if (exports != null && exports.Any())
+			{
+				foreach (var export in exports)
+				{
+					result.Data.Add(ConvertExportResultData(export));
+				}
+
+				result.PageSize = result.Data.Count;
+				result.Status = ResponseHelper.Success;
+			}
+			else
+			{
+				result.PageSize = 0;
+				result.Status = ResponseHelper.NotFound;
+			}
+
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>
+		/// Downloads a completed chat transcript export. Department admins only; the download is audited.
+		/// </summary>
+		/// <param name="exportId">Chat export identifier</param>
+		/// <returns>The export file</returns>
+		[HttpGet("DownloadExport")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<IActionResult> DownloadExport(string exportId, CancellationToken cancellationToken)
+		{
+			if (!await ChatEnabledAsync())
+				return NotFound();
+
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			var export = await _chatModerationService.GetExportForDownloadAsync(exportId, DepartmentId, UserId, cancellationToken);
+
+			if (export == null || export.Data == null)
+				return NotFound();
+
+			string contentType;
+			string extension;
+
+			switch ((ChatExportFormat)export.Format)
+			{
+				case ChatExportFormat.Json:
+					contentType = "application/json";
+					extension = "json";
+					break;
+				case ChatExportFormat.Csv:
+					contentType = "text/csv";
+					extension = "csv";
+					break;
+				default:
+					contentType = "application/zip";
+					extension = "zip";
+					break;
+			}
+
+			return File(export.Data, contentType, $"chat-export-{exportId}.{extension}");
+		}
+
+		#endregion Exports
+
+		#region Private Helpers
+
+		private Task<bool> ChatEnabledAsync()
+		{
+			return _featureToggleService.IsEnabledAsync(FeatureFlagKeys.ChatSystem, DepartmentId);
+		}
+
+		private static ChatFlagResultData ConvertFlagResultData(ChatMessageFlag flag)
+		{
+			return new ChatFlagResultData
+			{
+				ChatMessageFlagId = flag.ChatMessageFlagId,
+				ChatMessageId = flag.ChatMessageId,
+				ChatChannelId = flag.ChatChannelId,
+				FlaggedByUserId = flag.FlaggedByUserId,
+				Reason = flag.Reason,
+				Note = flag.Note,
+				FlaggedOn = flag.FlaggedOn,
+				Status = flag.Status,
+				ReviewedByUserId = flag.ReviewedByUserId,
+				ReviewedOn = flag.ReviewedOn,
+				ResolutionNote = flag.ResolutionNote
+			};
+		}
+
+		private static ChatModerationActionResultData ConvertModerationActionResultData(ChatModerationAction action)
+		{
+			return new ChatModerationActionResultData
+			{
+				ChatModerationActionId = action.ChatModerationActionId,
+				ChatChannelId = action.ChatChannelId,
+				ChatMessageId = action.ChatMessageId,
+				TargetUserId = action.TargetUserId,
+				TargetUnitId = action.TargetUnitId,
+				ActionType = action.ActionType,
+				PerformedByUserId = action.PerformedByUserId,
+				PerformedOn = action.PerformedOn,
+				Reason = action.Reason,
+				DetailsJson = action.DetailsJson
+			};
+		}
+
+		private static ChatSettingsResultData ConvertSettingsResultData(ChatDepartmentSetting settings)
+		{
+			return new ChatSettingsResultData
+			{
+				ChatDepartmentSettingId = settings.ChatDepartmentSettingId,
+				RetentionDays = settings.RetentionDays,
+				AllowImages = settings.AllowImages,
+				AllowGifs = settings.AllowGifs,
+				AllowLocationSharing = settings.AllowLocationSharing,
+				UrgentOverridesMute = settings.UrgentOverridesMute,
+				MaxAttachmentSizeMb = settings.MaxAttachmentSizeMb,
+				ChatbotEnabled = settings.ChatbotEnabled
+			};
+		}
+
+		private static ChatExportResultData ConvertExportResultData(ChatExport export)
+		{
+			return new ChatExportResultData
+			{
+				ChatExportId = export.ChatExportId,
+				ChatChannelId = export.ChatChannelId,
+				RequestedByUserId = export.RequestedByUserId,
+				RequestedOn = export.RequestedOn,
+				StartDate = export.StartDate,
+				EndDate = export.EndDate,
+				Format = export.Format,
+				Status = export.Status,
+				CompletedOn = export.CompletedOn,
+				Error = export.Error
+			};
+		}
+
+		#endregion Private Helpers
+	}
+}

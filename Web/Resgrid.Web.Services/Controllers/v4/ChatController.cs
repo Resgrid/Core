@@ -1567,16 +1567,30 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var messageIds = messages.Select(x => x.ChatMessageId).ToList();
 			var reactions = await _chatMessageService.GetReactionsForMessagesAsync(messageIds);
 			var attachments = await _chatMessageService.GetAttachmentMetadataForMessagesAsync(messageIds);
-			var moderationByChannel = new Dictionary<string, bool>();
+
+			// Batch-fetch every distinct channel in one query, then compute the moderation flag once per
+			// channel — up front, out of the per-message loop.
+			var distinctChannelIds = messages
+				.Select(x => x.ChatChannelId)
+				.Where(id => !string.IsNullOrWhiteSpace(id))
+				.Distinct(StringComparer.OrdinalIgnoreCase)
+				.ToList();
+
+			var channelsById = (await _chatChannelService.GetChannelsByIdsAsync(distinctChannelIds))
+				.GroupBy(c => c.ChatChannelId, StringComparer.OrdinalIgnoreCase)
+				.ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
+
+			var moderationByChannel = new Dictionary<string, bool>(StringComparer.OrdinalIgnoreCase);
+			foreach (var channelId in distinctChannelIds)
+			{
+				var canModerate = channelsById.TryGetValue(channelId, out var channel)
+					&& await _chatPermissionService.CanModerateChannelAsync(channel, UserId);
+				moderationByChannel[channelId] = canModerate;
+			}
 
 			foreach (var message in messages)
 			{
-				if (!moderationByChannel.TryGetValue(message.ChatChannelId, out var canModerate))
-				{
-					var channel = await _chatChannelService.GetChannelByIdAsync(message.ChatChannelId);
-					canModerate = channel != null && await _chatPermissionService.CanModerateChannelAsync(channel, UserId);
-					moderationByChannel.Add(message.ChatChannelId, canModerate);
-				}
+				moderationByChannel.TryGetValue(message.ChatChannelId ?? string.Empty, out var canModerate);
 
 				data.Add(ConvertMessageResultData(message,
 					reactions?.Where(x => x.ChatMessageId == message.ChatMessageId),

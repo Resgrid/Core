@@ -61,9 +61,10 @@ Rules you must always follow:
 			if (!await _chatCompletionClient.IsAvailableAsync(departmentId))
 				return null;
 
+			var maxTokens = Config.ChatbotConfig.CloudNluMaxTokens > 0 ? (int?)Config.ChatbotConfig.CloudNluMaxTokens : null;
 			var reply = await _chatCompletionClient.CompleteAsync(departmentId, SystemPrompt,
 				new List<ChatCompletionTurn> { new ChatCompletionTurn("user", message.Text.Trim()) },
-				Config.ChatbotConfig.CloudNluMaxTokens);
+				maxTokens);
 
 			if (string.IsNullOrWhiteSpace(reply))
 				return null;

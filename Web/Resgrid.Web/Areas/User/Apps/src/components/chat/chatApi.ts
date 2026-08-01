@@ -231,15 +231,26 @@ export async function uploadAttachment(channelId: string, messageId: string, fil
 // Attachments require a bearer header, so <img> cannot load them directly. Fetch a blob URL.
 export async function fetchAttachmentObjectUrl(attachmentId: string, thumbnail = false): Promise<string> {
   const path = thumbnail ? 'api/v4/Chat/GetAttachmentThumbnail' : 'api/v4/Chat/GetAttachment';
-  const response = await fetch(buildApiUrl(path, { attachmentId }), { headers: apiAuthHeaders() });
-  if (!response.ok) {
-    if (response.status === 401) {
-      setAuthError(true);
+  try {
+    const response = await fetch(buildApiUrl(path, { attachmentId }), { headers: apiAuthHeaders() });
+    if (!response.ok) {
+      if (response.status === 401) {
+        setAuthError(true);
+      }
+      throw new ApiError(response.status, `${response.status} ${response.statusText}`);
     }
-    throw new ApiError(response.status, `${response.status} ${response.statusText}`);
+    const blob = await response.blob();
+    return URL.createObjectURL(blob);
+  } catch (error) {
+    // Re-throw HTTP errors already mapped above untouched; wrap only transport-level failures
+    // (offline, DNS, CORS, abort, blob read) as a typed ApiError (status 0 = no HTTP response)
+    // so callers get a uniform error with context instead of a bare TypeError.
+    if (error instanceof ApiError) {
+      throw error;
+    }
+    const detail = error instanceof Error ? error.message : String(error);
+    throw new ApiError(0, `Attachment ${thumbnail ? 'thumbnail' : 'full'} request failed for ${attachmentId}: ${detail}`);
   }
-  const blob = await response.blob();
-  return URL.createObjectURL(blob);
 }
 
 // ---- Search / GIFs / presence / flags ----

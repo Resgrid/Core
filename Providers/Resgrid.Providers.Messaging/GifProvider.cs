@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json.Linq;
 using Resgrid.Config;
@@ -66,7 +67,7 @@ namespace Resgrid.Providers.Messaging
 				}
 				catch (Exception ex)
 				{
-					Logging.LogException(ex);
+					LogSanitizedException(ex);
 					return new List<GifSearchResult>();
 				}
 			}
@@ -91,9 +92,26 @@ namespace Resgrid.Providers.Messaging
 			}
 			catch (Exception ex)
 			{
-				Logging.LogException(ex);
+				LogSanitizedException(ex);
 				return new List<GifSearchResult>();
 			}
+		}
+
+		// GetStringAsync failures can carry the request URL (with key=/api_key=) in the exception
+		// message; scrub configured keys and any key query params before emitting to logs.
+		private static void LogSanitizedException(Exception ex)
+		{
+			var text = ex?.ToString() ?? string.Empty;
+
+			if (!string.IsNullOrWhiteSpace(ChatConfig.GiphyApiKey))
+				text = text.Replace(ChatConfig.GiphyApiKey, "***");
+
+			if (!string.IsNullOrWhiteSpace(ChatConfig.TenorApiKey))
+				text = text.Replace(ChatConfig.TenorApiKey, "***");
+
+			text = Regex.Replace(text, @"(?i)\b(api_key|key)=[^&\s""']+", "$1=***");
+
+			Logging.LogError(text);
 		}
 
 		private static async Task<List<GifSearchResult>> GiphyRequestAsync(string url)

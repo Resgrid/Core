@@ -17,6 +17,9 @@ namespace Resgrid.Model.Services
 		/// <summary>Raw channel lookup; the CALLER must verify the user can access the returned channel.</summary>
 		Task<ChatChannel> GetChannelByIdAsync(string chatChannelId);
 
+		/// <summary>Batch channel lookup (single query, distinct ids). The CALLER must verify access per channel. Missing ids are simply absent from the result; order is not guaranteed.</summary>
+		Task<List<ChatChannel>> GetChannelsByIdsAsync(IEnumerable<string> chatChannelIds);
+
 		/// <summary>
 		/// Assembles the channel list for a user: implicit-audience channels they can access (department,
 		/// groups, active incidents) plus explicit memberships (DMs, ad-hoc, custom, chatbot). Excludes

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
@@ -34,6 +35,12 @@ namespace Resgrid.Web.Eventing.Hubs
 		private static readonly ConcurrentDictionary<string, DateTime> LastTypingTimestamps =
 			new ConcurrentDictionary<string, DateTime>(StringComparer.OrdinalIgnoreCase);
 
+		// Typing timestamps are only useful for the brief throttle window; anything older is dead weight.
+		// Sweep opportunistically (single sweeper per interval) so the dictionary can't grow unbounded as
+		// users disconnect or channels are archived.
+		private static readonly TimeSpan TypingCleanupInterval = TimeSpan.FromMinutes(5);
+		private static long _lastTypingCleanupTicks = DateTime.MinValue.Ticks;
+
 		public ChatHub(IChatChannelService chatChannelService, IChatPermissionService chatPermissionService,
 			IChatMessageService chatMessageService, IChatPresenceService chatPresenceService)
 		{
@@ -53,7 +60,7 @@ namespace Resgrid.Web.Eventing.Hubs
 				Context.Items[DepartmentIdContextKey] = departmentId;
 				Context.Items[UserIdContextKey] = userId;
 
-				UserConnections.GetOrAdd(userId, _ => new ConcurrentDictionary<string, byte>())[Context.ConnectionId] = 0;
+				AddUserConnection(userId, Context.ConnectionId);
 			}
 
 			await base.OnConnectedAsync();
@@ -64,15 +71,52 @@ namespace Resgrid.Web.Eventing.Hubs
 			var userId = Context.Items.TryGetValue(UserIdContextKey, out var userIdValue) ? userIdValue as string : null;
 			var departmentId = Context.Items.TryGetValue(DepartmentIdContextKey, out var departmentIdValue) && departmentIdValue is int id ? id : 0;
 
-			if (!string.IsNullOrWhiteSpace(userId) && UserConnections.TryGetValue(userId, out var connections))
-			{
-				connections.TryRemove(Context.ConnectionId, out _);
-
-				if (connections.IsEmpty && UserConnections.TryRemove(userId, out _) && departmentId > 0)
-					await Clients.Group($"chatdept:{departmentId}").SendAsync("chatPresenceChanged", userId, false);
-			}
+			if (!string.IsNullOrWhiteSpace(userId) && RemoveUserConnection(userId, Context.ConnectionId) && departmentId > 0)
+				await Clients.Group($"chatdept:{departmentId}").SendAsync("chatPresenceChanged", userId, false);
 
 			await base.OnDisconnectedAsync(exception);
+		}
+
+		// Add/Remove serialize on the per-user connection set so the "set is empty -> drop it from the map"
+		// transition can't race a concurrent add. Without this, an add that fetched the same set via GetOrAdd
+		// just before the set was removed from the map would orphan its connection, defeating server-side
+		// eviction on access revocation.
+		private static void AddUserConnection(string userId, string connectionId)
+		{
+			while (true)
+			{
+				var set = UserConnections.GetOrAdd(userId, _ => new ConcurrentDictionary<string, byte>());
+				lock (set)
+				{
+					// The set may have been removed from the map by a concurrent disconnect after GetOrAdd
+					// returned it; only add when it is still the live set for this user, else retry.
+					if (UserConnections.TryGetValue(userId, out var current) && ReferenceEquals(current, set))
+					{
+						set[connectionId] = 0;
+						return;
+					}
+				}
+			}
+		}
+
+		/// <summary>Removes a connection; returns true only when it was the user's last (presence went offline).</summary>
+		private static bool RemoveUserConnection(string userId, string connectionId)
+		{
+			if (!UserConnections.TryGetValue(userId, out var set))
+				return false;
+
+			lock (set)
+			{
+				set.TryRemove(connectionId, out _);
+
+				if (set.IsEmpty)
+				{
+					UserConnections.TryRemove(userId, out _);
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		public async Task Connect()
@@ -118,6 +162,8 @@ namespace Resgrid.Web.Eventing.Hubs
 			if (isTyping)
 			{
 				var now = DateTime.UtcNow;
+				PruneStaleTypingTimestamps(now);
+
 				var throttleKey = $"{userId}:{channelId}";
 
 				if (LastTypingTimestamps.TryGetValue(throttleKey, out var lastTyping) &&
@@ -135,6 +181,25 @@ namespace Resgrid.Web.Eventing.Hubs
 				DisplayName = displayName,
 				IsTyping = isTyping
 			});
+		}
+
+		// Evicts typing timestamps older than one cleanup interval. Interlocked guards ensure a single
+		// thread sweeps per interval; the value-checked TryRemove never drops an entry refreshed mid-sweep.
+		private static void PruneStaleTypingTimestamps(DateTime now)
+		{
+			var last = Interlocked.Read(ref _lastTypingCleanupTicks);
+			if (now.Ticks - last < TypingCleanupInterval.Ticks)
+				return;
+
+			if (Interlocked.CompareExchange(ref _lastTypingCleanupTicks, now.Ticks, last) != last)
+				return;
+
+			var cutoff = now - TypingCleanupInterval;
+			foreach (var entry in LastTypingTimestamps)
+			{
+				if (entry.Value < cutoff)
+					LastTypingTimestamps.TryRemove(entry);
+			}
 		}
 
 		public async Task MarkRead(string channelId, long seq, int? asUnitId = null)

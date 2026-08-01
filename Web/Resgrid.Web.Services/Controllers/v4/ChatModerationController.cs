@@ -1,9 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Config;
 using Resgrid.Framework;
@@ -36,6 +38,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IAuthorizationService _authorizationService;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly ICacheProvider _cacheProvider;
+		private readonly UserManager<Model.Identity.IdentityUser> _userManager;
+
+		// Rule 87: bulk transcript exports carry PII and require MFA re-authentication within a short window.
+		// The bearer API is stateless (no session), so a fresh step-up proof is held server-side in the cache,
+		// written by VerifyExportMfa after a valid TOTP and read by RequestExport.
+		private const int ExportMfaWindowMinutes = 5;
 
 		public ChatModerationController(
 			IChatModerationService chatModerationService,
@@ -45,7 +53,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IFeatureToggleService featureToggleService,
 			IAuthorizationService authorizationService,
 			IEventAggregator eventAggregator,
-			ICacheProvider cacheProvider)
+			ICacheProvider cacheProvider,
+			UserManager<Model.Identity.IdentityUser> userManager)
 		{
 			_chatModerationService = chatModerationService;
 			_chatChannelService = chatChannelService;
@@ -55,7 +64,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_authorizationService = authorizationService;
 			_eventAggregator = eventAggregator;
 			_cacheProvider = cacheProvider;
+			_userManager = userManager;
 		}
+
+		private static string GetExportMfaProofCacheKey(string userId) => $"chat:export:mfa:{userId}";
 
 		#endregion Members and Constructors
 
@@ -532,6 +544,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
 				return Unauthorized();
 
+			// Rule 87: require a recent MFA step-up before releasing PII. Blocks callers without 2FA enrolled.
+			var mfaGate = await CheckRecentExportMfaAsync();
+			if (mfaGate != null)
+				return mfaGate;
+
 			// Per-department rate limit: bulk transcript exports carry PII, so cap how many a department
 			// can queue per window to blunt exfiltration/abuse (a compromised admin can't drain the
 			// department in a loop). Keyed by department, not user, so it holds across admins.
@@ -559,6 +576,87 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			ResponseHelper.PopulateV4ResponseData(result);
 			return result;
+		}
+
+		/// <summary>
+		/// Establishes a recent-MFA step-up proof for chat transcript exports. Verifies the caller's current
+		/// authenticator (TOTP) code and, on success, records a server-side proof valid for a short window so
+		/// a subsequent RequestExport can release PII. Department admins with 2FA enrolled only.
+		/// </summary>
+		/// <param name="input">The caller's current authenticator (TOTP) code</param>
+		/// <returns>ChatActionResult indicating whether the step-up succeeded</returns>
+		[HttpPost("VerifyExportMfa")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
+		[ProducesResponseType(StatusCodes.Status403Forbidden)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<ChatActionResult>> VerifyExportMfa([FromBody] VerifyExportMfaInput input, CancellationToken cancellationToken)
+		{
+			if (!await ChatEnabledAsync())
+				return NotFound();
+
+			if (input == null || string.IsNullOrWhiteSpace(input.TotpCode))
+				return BadRequest();
+
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			var user = await _userManager.GetUserAsync(User);
+			if (user == null)
+				return Unauthorized();
+
+			// A caller with no 2FA enrolled can never obtain a proof — exports stay blocked until they enroll.
+			if (!await _userManager.GetTwoFactorEnabledAsync(user))
+				return StatusCode(StatusCodes.Status403Forbidden, new { error = "mfa_enrollment_required", error_description = "Two-Factor Authentication must be enabled to export chat transcripts." });
+
+			var valid = await _userManager.VerifyTwoFactorTokenAsync(
+				user,
+				_userManager.Options.Tokens.AuthenticatorTokenProvider,
+				input.TotpCode.Trim());
+
+			var result = new ChatActionResult();
+
+			if (!valid)
+			{
+				result.Success = false;
+				result.Status = ResponseHelper.Failure;
+				ResponseHelper.PopulateV4ResponseData(result);
+				return StatusCode(StatusCodes.Status401Unauthorized, result);
+			}
+
+			await _cacheProvider.SetStringAsync(
+				GetExportMfaProofCacheKey(user.Id),
+				DateTime.UtcNow.ToString("O", CultureInfo.InvariantCulture),
+				TimeSpan.FromMinutes(ExportMfaWindowMinutes));
+
+			result.Success = true;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>
+		/// Enforces the Rule 87 recent-MFA requirement for PII exports. Returns null when the caller may
+		/// proceed, or the HTTP result to return otherwise: 403 when 2FA is not enrolled (must enroll before
+		/// any export), 401 when no fresh step-up proof exists (must call VerifyExportMfa first).
+		/// </summary>
+		private async Task<ActionResult<GetChatExportsResult>> CheckRecentExportMfaAsync()
+		{
+			var user = await _userManager.GetUserAsync(User);
+			if (user == null)
+				return Unauthorized();
+
+			if (!await _userManager.GetTwoFactorEnabledAsync(user))
+				return StatusCode(StatusCodes.Status403Forbidden, new { error = "mfa_enrollment_required", error_description = "Two-Factor Authentication must be enabled to export chat transcripts." });
+
+			var proof = await _cacheProvider.GetStringAsync(GetExportMfaProofCacheKey(user.Id));
+			if (!string.IsNullOrEmpty(proof)
+				&& DateTime.TryParse(proof, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var verifiedAt)
+				&& DateTime.UtcNow <= verifiedAt.AddMinutes(ExportMfaWindowMinutes))
+				return null;
+
+			return StatusCode(StatusCodes.Status401Unauthorized, new { error = "mfa_required", error_description = $"Recent Two-Factor verification is required. Call VerifyExportMfa with your current code, then retry within {ExportMfaWindowMinutes} minutes." });
 		}
 
 		/// <summary>

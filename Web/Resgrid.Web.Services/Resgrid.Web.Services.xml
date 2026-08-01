@@ -450,6 +450,9 @@
             SignalR (chatMessageReceived). Idempotent via clientMessageId.
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatbotController.BuildMessageSentResult(Resgrid.Model.ChatMessage,System.String)">
+            <summary>Builds the V4-populated send-result envelope shared by the success and failure paths.</summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ChatbotController.NewChatSession">
             <summary>
             Resets the chatbot conversational session (context/pending intents). Message history remains.
@@ -821,6 +824,22 @@
             </summary>
             <param name="input">Channel, date range and format for the export</param>
             <returns>GetChatExportsResult containing the queued export job</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatModerationController.VerifyExportMfa(Resgrid.Web.Services.Models.v4.Chat.VerifyExportMfaInput,System.Threading.CancellationToken)">
+            <summary>
+            Establishes a recent-MFA step-up proof for chat transcript exports. Verifies the caller's current
+            authenticator (TOTP) code and, on success, records a server-side proof valid for a short window so
+            a subsequent RequestExport can release PII. Department admins with 2FA enrolled only.
+            </summary>
+            <param name="input">The caller's current authenticator (TOTP) code</param>
+            <returns>ChatActionResult indicating whether the step-up succeeded</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatModerationController.CheckRecentExportMfaAsync">
+            <summary>
+            Enforces the Rule 87 recent-MFA requirement for PII exports. Returns null when the caller may
+            proceed, or the HTTP result to return otherwise: 403 when 2FA is not enrolled (must enroll before
+            any export), 401 when no fresh step-up proof exists (must call VerifyExportMfa first).
+            </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ChatModerationController.GetExports">
             <summary>
@@ -8229,6 +8248,11 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Chat.RequestExportInput.Format">
             <summary>
             Export format (0 = Json, 1 = Csv, 2 = Zip)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.VerifyExportMfaInput.TotpCode">
+            <summary>
+            The caller's current authenticator (TOTP) code, used to establish a recent-MFA step-up proof for PII exports
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.PerformCheckInInput.UserId">

@@ -302,7 +302,9 @@ export function applyHubMessage(payload: HubMessagePayload): void {
       LastMessageSeq: Math.max(channel.LastMessageSeq, message.MessageSeq),
       LastMessageOn: message.SentOn,
     };
-    if (!isActive && !message.ThreadRootMessageId) {
+    // Mirror the main-list routing above: any message that lands in the channel list (non-thread, or a
+    // threaded reply flagged AlsoSendToChannel) must bump the unread badge when the channel is inactive.
+    if (!isActive && (!message.ThreadRootMessageId || message.AlsoSendToChannel)) {
       patch.UnreadCount = Math.max(0, message.MessageSeq - channel.MyLastReadSeq);
     }
     patchChannel(message.ChatChannelId, patch);

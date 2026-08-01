@@ -107,6 +107,17 @@ namespace Resgrid.Workers.Framework.Logic
 			var moderationActions = (await moderationRepository.GetByDepartmentAsync(export.DepartmentId, export.ChatChannelId, 0, 10000))?.ToList()
 				?? new List<ChatModerationAction>();
 
+			// Chain-of-custody watermark stamped into every file in the archive (not just the manifest) so an
+			// individual transcript extracted and shared in isolation still traces back to this export and the
+			// user who requested it.
+			var generatedOn = DateTime.UtcNow;
+			var watermark = new ExportWatermark(
+				export.ChatExportId,
+				export.DepartmentId,
+				export.RequestedByUserId,
+				export.RequestedOn,
+				generatedOn);
+
 			using var zipStream = new MemoryStream();
 			using (var archive = new ZipArchive(zipStream, ZipArchiveMode.Create, leaveOpen: true))
 			{
@@ -136,18 +147,24 @@ namespace Resgrid.Workers.Framework.Logic
 
 					WriteJsonEntry(archive, $"{baseName}.json", new
 					{
+						Watermark = watermark,
 						Channel = channel,
 						Messages = channelMessages,
 						EditHistory = edits
 					});
 
-					WriteCsvEntry(archive, $"{baseName}.csv", channelMessages);
+					WriteCsvEntry(archive, $"{baseName}.csv", channelMessages, watermark);
 				}
 
-				WriteJsonEntry(archive, "moderation-log.json", moderationActions);
+				WriteJsonEntry(archive, "moderation-log.json", new
+				{
+					Watermark = watermark,
+					Actions = moderationActions
+				});
 
 				WriteJsonEntry(archive, "export-manifest.json", new
 				{
+					Watermark = watermark,
 					export.ChatExportId,
 					export.DepartmentId,
 					export.ChatChannelId,
@@ -155,7 +172,7 @@ namespace Resgrid.Workers.Framework.Logic
 					export.EndDate,
 					export.RequestedByUserId,
 					export.RequestedOn,
-					GeneratedOn = DateTime.UtcNow,
+					GeneratedOn = generatedOn,
 					MessageCount = messages.Count,
 					Truncated = messages.Count >= MaxMessagesPerExport
 				});
@@ -164,11 +181,16 @@ namespace Resgrid.Workers.Framework.Logic
 			return zipStream.ToArray();
 		}
 
-		private static void WriteCsvEntry(ZipArchive archive, string entryName, List<ChatMessage> messages)
+		private static void WriteCsvEntry(ZipArchive archive, string entryName, List<ChatMessage> messages, ExportWatermark watermark)
 		{
 			var entry = archive.CreateEntry(entryName, CompressionLevel.Optimal);
 			using var stream = entry.Open();
 			using var writer = new StreamWriter(stream, Encoding.UTF8);
+
+			// Watermark rows: '#'-prefixed so comment-aware CSV readers skip them; they keep the requester,
+			// export id and confidentiality notice attached to the file itself.
+			foreach (var line in watermark.ToCommentLines())
+				writer.WriteLine(line);
 
 			writer.WriteLine("MessageSeq,SentOnUtc,SenderDisplayName,SenderUserId,SenderUnitId,MessageType,Priority,Body,EditedOn,DeletedOn,DeletedByUserId");
 
@@ -230,6 +252,43 @@ namespace Resgrid.Workers.Framework.Logic
 
 			JsonSerializer.CreateDefault().Serialize(jsonWriter, payload);
 			jsonWriter.Flush();
+		}
+
+		/// <summary>
+		/// Chain-of-custody watermark embedded in every file of a chat transcript export. Serialized into
+		/// each JSON entry and rendered as leading '#'-comment rows in each CSV so any file, extracted and
+		/// shared alone, still identifies the export, the requesting user and the confidentiality notice.
+		/// </summary>
+		private sealed class ExportWatermark
+		{
+			private const string ConfidentialNotice =
+				"CONFIDENTIAL — Resgrid chat records export. Distribution is restricted and logged; this file is traceable to the requesting user and export id below.";
+
+			public ExportWatermark(string exportId, int departmentId, string requestedByUserId, DateTime requestedOn, DateTime generatedOn)
+			{
+				ExportId = exportId;
+				DepartmentId = departmentId;
+				RequestedByUserId = requestedByUserId;
+				RequestedOn = requestedOn;
+				GeneratedOn = generatedOn;
+			}
+
+			public string Notice => ConfidentialNotice;
+			public string ExportId { get; }
+			public int DepartmentId { get; }
+			public string RequestedByUserId { get; }
+			public DateTime RequestedOn { get; }
+			public DateTime GeneratedOn { get; }
+
+			public IEnumerable<string> ToCommentLines()
+			{
+				yield return "# " + ConfidentialNotice;
+				yield return "# ExportId: " + ExportId;
+				yield return "# DepartmentId: " + DepartmentId.ToString(CultureInfo.InvariantCulture);
+				yield return "# RequestedByUserId: " + RequestedByUserId;
+				yield return "# RequestedOnUtc: " + RequestedOn.ToString("O", CultureInfo.InvariantCulture);
+				yield return "# GeneratedOnUtc: " + GeneratedOn.ToString("O", CultureInfo.InvariantCulture);
+			}
 		}
 	}
 }

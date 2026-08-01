@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import './chat.css';
 import { getCurrentUserId, isDepartmentAdmin, type ChatChannelDto, type ChatMessageDto } from './types';
 import { useChatBootstrap } from './useChatBootstrap';
@@ -38,14 +38,23 @@ export default function ChatPageElement(_props: ChatPageElementProps) {
   const canModerate = isDepartmentAdmin();
   const activeChannel = channels.find((channel) => channel.ChatChannelId === activeChannelId) ?? null;
 
-  const openChannel = (channelId: string, messageId?: string) => {
+  // Stable identities: ChannelRow and MessageBubble are memo'd, so these callbacks must not be recreated
+  // each render or those children re-render on every ChatPageElement state change (defeating their memo).
+  const openChannel = useCallback((channelId: string, messageId?: string) => {
     setActiveChannelId(channelId);
     setActiveChannel(channelId);
     setHighlightMessage(messageId ?? null);
     setResults(null);
     setThread(null);
     setAsideTab('members');
-  };
+  }, []);
+
+  const openThread = useCallback((message: ChatMessageDto) => {
+    setThread(message);
+    setAsideTab('thread');
+  }, []);
+
+  const openFlag = useCallback((message: ChatMessageDto) => setFlagTarget(message), []);
 
   const runSearch = () => {
     const query = search.trim();
@@ -130,11 +139,8 @@ export default function ChatPageElement(_props: ChatPageElementProps) {
               channel={activeChannel}
               currentUserId={currentUserId}
               canModerate={canModerate}
-              onOpenThread={(message) => {
-                setThread(message);
-                setAsideTab('thread');
-              }}
-              onFlag={(message) => setFlagTarget(message)}
+              onOpenThread={openThread}
+              onFlag={openFlag}
             />
           ) : (
             <div className="rgchat-empty">

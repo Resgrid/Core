@@ -106,6 +106,9 @@ namespace Resgrid.Chatbot.NLU
 
 			if (address.AddressFamily == AddressFamily.InterNetworkV6)
 			{
+				if (address.IsIPv4MappedToIPv6)
+					return IsBlockedAddress(address.MapToIPv4()); // ::ffff:a.b.c.d -> run IPv4 checks
+
 				if (IPAddress.IPv6Loopback.Equals(address))
 					return true; // ::1
 

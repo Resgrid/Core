@@ -82,7 +82,7 @@ export default function ChannelList({ channels, activeChannelId, filter, loading
           <div className="rgchat-group__label">{group.label}</div>
           {group.channels.map((channel) => {
             const channelMessages = messagesByChannel[channel.ChatChannelId] ?? EMPTY_MESSAGES;
-            const lastMessage = channelMessages[channelMessages.length - 1];
+            const lastMessage = channelMessages.at(-1);
             const preview = messagePreview(lastMessage) || channel.Topic || '';
             return (
               <ChannelRow

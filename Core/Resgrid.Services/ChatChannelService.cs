@@ -60,6 +60,20 @@ namespace Resgrid.Services
 			return await _chatChannelRepository.GetByIdAsync(chatChannelId);
 		}
 
+		public async Task<List<ChatChannel>> GetChannelsByIdsAsync(IEnumerable<string> chatChannelIds)
+		{
+			var ids = chatChannelIds?
+				.Where(id => !string.IsNullOrWhiteSpace(id))
+				.Distinct(StringComparer.OrdinalIgnoreCase)
+				.ToList();
+
+			if (ids == null || ids.Count == 0)
+				return new List<ChatChannel>();
+
+			var channels = await _chatChannelRepository.GetByIdsAsync(ids);
+			return channels?.ToList() ?? new List<ChatChannel>();
+		}
+
 		public async Task<List<ChatChannel>> GetChannelsForUserAsync(int departmentId, string userId, int? activeUnitId, bool includeArchived = false)
 		{
 			async Task<List<ChatChannel>> getChannels()
@@ -205,6 +219,18 @@ namespace Resgrid.Services
 
 		public async Task<ChatChannel> CreateAdHocGroupChannelAsync(int departmentId, string creatorUserId, string name, List<string> memberUserIds, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			// Validate all member memberships before any write, so an invalid member never leaves an
+			// orphaned channel or partial member rows to roll back.
+			var validatedMemberIds = memberUserIds == null
+				? new List<string>()
+				: memberUserIds.Where(m => !string.IsNullOrWhiteSpace(m) && !string.Equals(m, creatorUserId, StringComparison.OrdinalIgnoreCase)).Distinct().ToList();
+
+			foreach (var memberId in validatedMemberIds)
+			{
+				if (!await _departmentsService.IsUserInDepartmentAsync(departmentId, memberId))
+					throw new UnauthorizedAccessException("Every member must belong to this department.");
+			}
+
 			var channel = new ChatChannel
 			{
 				ChatChannelId = Guid.NewGuid().ToString(),
@@ -219,15 +245,9 @@ namespace Resgrid.Services
 
 			await AddMemberRowAsync(channel, ChatParticipantType.User, creatorUserId, null, null, creatorUserId, cancellationToken, isModerator: true);
 
-			if (memberUserIds != null)
+			foreach (var memberId in validatedMemberIds)
 			{
-				foreach (var memberId in memberUserIds.Where(m => !string.IsNullOrWhiteSpace(m) && !string.Equals(m, creatorUserId, StringComparison.OrdinalIgnoreCase)).Distinct())
-				{
-					if (!await _departmentsService.IsUserInDepartmentAsync(departmentId, memberId))
-						throw new UnauthorizedAccessException("Every member must belong to this department.");
-
-					await AddMemberRowAsync(channel, ChatParticipantType.User, memberId, null, null, creatorUserId, cancellationToken);
-				}
+				await AddMemberRowAsync(channel, ChatParticipantType.User, memberId, null, null, creatorUserId, cancellationToken);
 			}
 
 			PublishChannelEvent(channel, ChatEventKinds.ChannelProvisioned);

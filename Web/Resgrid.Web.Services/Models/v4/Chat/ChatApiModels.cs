@@ -1418,4 +1418,13 @@ public class RequestExportInput
 	public int Format { get; set; }
 }
 
+public class VerifyExportMfaInput
+{
+	/// <summary>
+	/// The caller's current authenticator (TOTP) code, used to establish a recent-MFA step-up proof for PII exports
+	/// </summary>
+	[Required]
+	public string TotpCode { get; set; }
+}
+
 #endregion Inputs

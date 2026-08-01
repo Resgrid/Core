@@ -385,22 +385,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				});
 
 				if (!queued)
-				{
-					var failedResult = new ChatbotMessageSentResult
-					{
-						Data = new ChatbotMessageSentResultData
-						{
-							ChatMessageId = message.ChatMessageId,
-							MessageSeq = message.MessageSeq,
-							SentOn = message.SentOn
-						},
-						PageSize = 1,
-						Status = ResponseHelper.Failure
-					};
-
-					ResponseHelper.PopulateV4ResponseData(failedResult);
-					return StatusCode(StatusCodes.Status500InternalServerError, failedResult);
-				}
+					return StatusCode(StatusCodes.Status500InternalServerError, BuildMessageSentResult(message, ResponseHelper.Failure));
 
 				// Typing indicator to the user's devices while the worker runs the pipeline.
 				_eventAggregator.SendMessage<Resgrid.Model.Events.ChatEventRaised>(new Resgrid.Model.Events.ChatEventRaised
@@ -412,26 +397,32 @@ namespace Resgrid.Web.Services.Controllers.v4
 					PayloadJson = Newtonsoft.Json.JsonConvert.SerializeObject(new { channel.ChatChannelId, IsTyping = true })
 				});
 
-				var result = new ChatbotMessageSentResult
-				{
-					Data = new ChatbotMessageSentResultData
-					{
-						ChatMessageId = message.ChatMessageId,
-						MessageSeq = message.MessageSeq,
-						SentOn = message.SentOn
-					},
-					PageSize = 1,
-					Status = ResponseHelper.Created
-				};
-
-				ResponseHelper.PopulateV4ResponseData(result);
-				return result;
+				return BuildMessageSentResult(message, ResponseHelper.Created);
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
 				return BadRequest(new { error = "Unable to send message." });
 			}
+		}
+
+		/// <summary>Builds the V4-populated send-result envelope shared by the success and failure paths.</summary>
+		private static ChatbotMessageSentResult BuildMessageSentResult(ChatMessage message, string status)
+		{
+			var result = new ChatbotMessageSentResult
+			{
+				Data = new ChatbotMessageSentResultData
+				{
+					ChatMessageId = message.ChatMessageId,
+					MessageSeq = message.MessageSeq,
+					SentOn = message.SentOn
+				},
+				PageSize = 1,
+				Status = status
+			};
+
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
 		}
 
 		/// <summary>

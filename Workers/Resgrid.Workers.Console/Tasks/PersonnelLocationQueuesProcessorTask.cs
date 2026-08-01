@@ -29,7 +29,8 @@ namespace Resgrid.Workers.Console.Tasks
 				progress.Report(1, $"Starting the {Name} Task");
 
 			RabbitInboundQueueProvider queue = new RabbitInboundQueueProvider();
-			queue.PersonnelLocationEventQueueReceived += OnPersonnelLocationEventQueueReceived;
+			queue.PersonnelLocationEventQueueReceived += personnelLocationEvent =>
+				OnPersonnelLocationEventQueueReceived(personnelLocationEvent, cancellationToken);
 
 			await queue.Start("QueueProcessor-PersonnelLocation");
 
@@ -42,10 +43,12 @@ namespace Resgrid.Workers.Console.Tasks
 				progress.Report(100, $"Finishing the {Name} Task");
 		}
 
-		private async Task OnPersonnelLocationEventQueueReceived(PersonnelLocationEvent personnelLocationEvent)
+		private async Task OnPersonnelLocationEventQueueReceived(
+			PersonnelLocationEvent personnelLocationEvent,
+			CancellationToken cancellationToken)
 		{
 			_logger.LogInformation($"{Name}: Personnel Location Queue Received with an id of {personnelLocationEvent.EventId}, starting processing...");
-			await PersonnelLocationQueueLogic.ProcessPersonnelLocationQueueItem(personnelLocationEvent);
+			await PersonnelLocationQueueLogic.ProcessPersonnelLocationQueueItem(personnelLocationEvent, cancellationToken);
 			_logger.LogInformation($"{Name}: Finished processing of Personnel Location queue item with an id of {personnelLocationEvent.EventId}.");
 		}
 	}

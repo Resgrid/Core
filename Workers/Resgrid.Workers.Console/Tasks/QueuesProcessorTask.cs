@@ -130,7 +130,7 @@ namespace Resgrid.Workers.Console.Tasks
 		private async Task OnPersonnelLocationEventQueueReceived(PersonnelLocationEvent personnelLocationEvent)
 		{
 			_logger.LogInformation($"{Name}: Personnel Location Queue Received with an id of {personnelLocationEvent.EventId}, starting processing...");
-			await PersonnelLocationQueueLogic.ProcessPersonnelLocationQueueItem(personnelLocationEvent);
+			await PersonnelLocationQueueLogic.ProcessPersonnelLocationQueueItem(personnelLocationEvent, _cancellationToken);
 			_logger.LogInformation($"{Name}: Finished processing of Personnel Location queue item with an id of {personnelLocationEvent.EventId}.");
 		}
 

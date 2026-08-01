@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model.Identity;
 using Resgrid.Model;
@@ -265,23 +266,23 @@ namespace Resgrid.Services
 			return _identityRepository.GetAll().Count();
 		}
 
-		public async Task<PersonnelLocation> SavePersonnelLocationAsync(PersonnelLocation personnelLocation)
+		public async Task<PersonnelLocation> SavePersonnelLocationAsync(PersonnelLocation personnelLocation, CancellationToken cancellationToken = default)
 		{
 			try
 			{
 				if (Config.DataConfig.DocDatabaseType == Config.DatabaseTypes.Postgres)
 				{
 					if (String.IsNullOrWhiteSpace(personnelLocation.PgId))
-						personnelLocation = await _personnelLocationsDocRepository.InsertAsync(personnelLocation);
+						personnelLocation = await _personnelLocationsDocRepository.InsertAsync(personnelLocation, cancellationToken);
 					else
-						personnelLocation = await _personnelLocationsDocRepository.UpdateAsync(personnelLocation);
+						personnelLocation = await _personnelLocationsDocRepository.UpdateAsync(personnelLocation, cancellationToken);
 				}
 				else
 				{
 					if (personnelLocation.Id.Timestamp == 0)
-						await _personnelLocationRepository.Value.InsertOneAsync(personnelLocation);
+						await _personnelLocationRepository.Value.InsertOneAsync(personnelLocation, cancellationToken);
 					else
-						await _personnelLocationRepository.Value.ReplaceOneAsync(personnelLocation);
+						await _personnelLocationRepository.Value.ReplaceOneAsync(personnelLocation, cancellationToken);
 				}
 
 				_eventAggregator.SendMessage<PersonnelLocationUpdatedEvent>(new PersonnelLocationUpdatedEvent() {
@@ -291,6 +292,10 @@ namespace Resgrid.Services
 					Longitude = personnelLocation.Longitude,
 					RecordId = personnelLocation.GetId(),
 				});
+			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				throw;
 			}
 			catch (Exception ex)
 			{

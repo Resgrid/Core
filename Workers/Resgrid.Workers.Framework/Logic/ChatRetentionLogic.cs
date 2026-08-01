@@ -20,6 +20,7 @@ namespace Resgrid.Workers.Framework.Logic
 	{
 		private const int BatchSize = 1000;
 		private const int MaximumMessagesPerRun = 100000;
+		private const int ExportRetentionDays = 7;
 
 		public async Task<Tuple<bool, string>> Process(CancellationToken cancellationToken)
 		{
@@ -28,10 +29,17 @@ namespace Resgrid.Workers.Framework.Logic
 				var settingsRepository = Bootstrapper.GetKernel().Resolve<IChatDepartmentSettingRepository>();
 				var channelRepository = Bootstrapper.GetKernel().Resolve<IChatChannelRepository>();
 				var messageRepository = Bootstrapper.GetKernel().Resolve<IChatMessageRepository>();
+				var exportRepository = Bootstrapper.GetKernel().Resolve<IChatExportRepository>();
 
 				var runUtc = DateTime.UtcNow;
 				var totalDeleted = 0;
 				var departmentsProcessed = 0;
+
+				// Export results carry a full transcript blob; they are download-once artifacts and are
+				// purged unconditionally after a short window regardless of message retention settings.
+				var exportsDeleted = await exportRepository.DeleteOldChatExportsAsync(runUtc.AddDays(-ExportRetentionDays));
+				if (exportsDeleted > 0)
+					Logging.LogInfo($"Chat retention purged {exportsDeleted} export(s) older than {ExportRetentionDays} days.");
 
 				// Only departments that saved chat settings can have a non-default retention policy;
 				// the config default is keep-forever, so everyone else is skipped outright.

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace Resgrid.Web.Services.Models.v4.Chat;
 
@@ -253,9 +254,89 @@ public class ChatAttachmentUploadedResult : StandardApiResponseV4Base
 	public string ChatAttachmentId { get; set; }
 }
 
+/// <summary>
+/// Gets the caller's chatbot conversation channel
+/// </summary>
+public class ChatbotChannelResult : StandardApiResponseV4Base
+{
+	/// <summary>
+	/// Response Data
+	/// </summary>
+	public ChatbotChannelResultData Data { get; set; }
+}
+
+/// <summary>
+/// Result of sending a message to the chatbot
+/// </summary>
+public class ChatbotMessageSentResult : StandardApiResponseV4Base
+{
+	/// <summary>
+	/// Response Data
+	/// </summary>
+	public ChatbotMessageSentResultData Data { get; set; }
+}
+
+/// <summary>
+/// Result of resetting the chatbot conversational session
+/// </summary>
+public class ChatbotSessionResetResult : StandardApiResponseV4Base
+{
+	/// <summary>
+	/// Whether the session was reset
+	/// </summary>
+	public bool Success { get; set; }
+}
+
 #endregion Result Objects
 
 #region Result Data
+
+/// <summary>
+/// Chatbot conversation channel data
+/// </summary>
+public class ChatbotChannelResultData
+{
+	/// <summary>
+	/// Chat channel identifier
+	/// </summary>
+	public string ChatChannelId { get; set; }
+
+	/// <summary>
+	/// Name of the channel
+	/// </summary>
+	public string Name { get; set; }
+
+	/// <summary>
+	/// Highest message sequence in the channel
+	/// </summary>
+	public long LastMessageSeq { get; set; }
+
+	/// <summary>
+	/// When the last message was sent
+	/// </summary>
+	public DateTime? LastMessageOn { get; set; }
+}
+
+/// <summary>
+/// Chatbot message send data
+/// </summary>
+public class ChatbotMessageSentResultData
+{
+	/// <summary>
+	/// Chat message identifier
+	/// </summary>
+	public string ChatMessageId { get; set; }
+
+	/// <summary>
+	/// Per-channel monotonic message sequence
+	/// </summary>
+	public long MessageSeq { get; set; }
+
+	/// <summary>
+	/// When the message was sent (UTC)
+	/// </summary>
+	public DateTime SentOn { get; set; }
+}
 
 /// <summary>
 /// Chat channel data
@@ -586,9 +667,9 @@ public class ChatMemberResultData
 	public DateTime? RemovedOn { get; set; }
 
 	/// <summary>
-	/// Highest message sequence this member has read
+	/// Highest message sequence this member has read (moderators only)
 	/// </summary>
-	public long LastReadSeq { get; set; }
+	public long? LastReadSeq { get; set; }
 
 	/// <summary>
 	/// When the member last advanced their read pointer
@@ -596,19 +677,19 @@ public class ChatMemberResultData
 	public DateTime? LastReadOn { get; set; }
 
 	/// <summary>
-	/// Highest message sequence delivered to any of this member's devices
+	/// Highest message sequence delivered to any of this member's devices (moderators only)
 	/// </summary>
-	public long LastDeliveredSeq { get; set; }
+	public long? LastDeliveredSeq { get; set; }
 
 	/// <summary>
-	/// Member cannot post until this UTC time (null = not muted)
+	/// Member cannot post until this UTC time (null = not muted, moderators only)
 	/// </summary>
 	public DateTime? MutedUntil { get; set; }
 
 	/// <summary>
-	/// Is the member banned from the channel
+	/// Is the member banned from the channel (moderators only)
 	/// </summary>
-	public bool IsBanned { get; set; }
+	public bool? IsBanned { get; set; }
 
 	/// <summary>
 	/// The member's notification preference (0 = Default, 1 = All, 2 = MentionsOnly, 3 = Muted)
@@ -940,11 +1021,14 @@ public class CreateAdHocChannelInput
 	/// <summary>
 	/// Name of the channel
 	/// </summary>
+	[Required]
+	[StringLength(100)]
 	public string Name { get; set; }
 
 	/// <summary>
 	/// UserIds of the initial members
 	/// </summary>
+	[Required]
 	public List<string> MemberUserIds { get; set; }
 }
 
@@ -956,11 +1040,14 @@ public class CreateCustomChannelInput
 	/// <summary>
 	/// Name of the channel
 	/// </summary>
+	[Required]
+	[StringLength(100)]
 	public string Name { get; set; }
 
 	/// <summary>
 	/// Topic of the channel
 	/// </summary>
+	[StringLength(500)]
 	public string Topic { get; set; }
 
 	/// <summary>
@@ -977,6 +1064,7 @@ public class ChatAccessRuleInput
 	/// <summary>
 	/// Rule type (0 = GroupMembership, 1 = Role, 2 = User)
 	/// </summary>
+	[Range(0, 2)]
 	public int RuleType { get; set; }
 
 	/// <summary>
@@ -1003,11 +1091,13 @@ public class UpdateChannelInput
 	/// <summary>
 	/// New name for the channel
 	/// </summary>
+	[StringLength(100)]
 	public string Name { get; set; }
 
 	/// <summary>
 	/// New topic for the channel
 	/// </summary>
+	[StringLength(500)]
 	public string Topic { get; set; }
 }
 
@@ -1019,6 +1109,7 @@ public class AddMembersInput
 	/// <summary>
 	/// UserIds to add to the channel
 	/// </summary>
+	[Required]
 	public List<string> UserIds { get; set; }
 }
 
@@ -1030,6 +1121,7 @@ public class SetNotificationPreferenceInput
 	/// <summary>
 	/// Notification preference (0 = Default, 1 = All, 2 = MentionsOnly, 3 = Muted)
 	/// </summary>
+	[Range(0, 3)]
 	public int Preference { get; set; }
 }
 
@@ -1041,21 +1133,26 @@ public class SendChatMessageInput
 	/// <summary>
 	/// Client idempotency key; resends return the original message
 	/// </summary>
+	[StringLength(100)]
 	public string ClientMessageId { get; set; }
 
 	/// <summary>
 	/// Body of the message
 	/// </summary>
+	[Required]
+	[StringLength(4000)]
 	public string Body { get; set; }
 
 	/// <summary>
 	/// Message type (0 = Text, 1 = Image, 2 = Gif, 3 = Location)
 	/// </summary>
+	[Range(0, 3)]
 	public int MessageType { get; set; }
 
 	/// <summary>
 	/// Message priority (0 = Normal, 1 = Urgent)
 	/// </summary>
+	[Range(0, 1)]
 	public int Priority { get; set; }
 
 	/// <summary>
@@ -1081,6 +1178,7 @@ public class SendChatMessageInput
 	/// <summary>
 	/// JSON payload for link previews, GIFs or shared locations
 	/// </summary>
+	[StringLength(8000)]
 	public string MetadataJson { get; set; }
 
 	/// <summary>
@@ -1097,6 +1195,7 @@ public class ChatMentionInput
 	/// <summary>
 	/// Mention type (0 = User, 1 = Unit, 2 = Role, 3 = Group, 4 = Everyone)
 	/// </summary>
+	[Range(0, 4)]
 	public int MentionType { get; set; }
 
 	/// <summary>
@@ -1128,6 +1227,8 @@ public class EditMessageInput
 	/// <summary>
 	/// New body for the message
 	/// </summary>
+	[Required]
+	[StringLength(4000)]
 	public string Body { get; set; }
 }
 
@@ -1139,6 +1240,8 @@ public class AddReactionInput
 	/// <summary>
 	/// Unicode emoji string (e.g. "👍")
 	/// </summary>
+	[Required]
+	[StringLength(64)]
 	public string Emoji { get; set; }
 }
 
@@ -1166,11 +1269,13 @@ public class FlagMessageInput
 	/// <summary>
 	/// Reason for the flag (0 = Other, 1 = Inappropriate, 2 = Harassment, 3 = Spam, 4 = SensitiveInformation, 5 = PolicyViolation)
 	/// </summary>
+	[Range(0, 5)]
 	public int Reason { get; set; }
 
 	/// <summary>
 	/// Optional note describing the issue
 	/// </summary>
+	[StringLength(1000)]
 	public string Note { get; set; }
 }
 
@@ -1182,11 +1287,13 @@ public class ResolveFlagInput
 	/// <summary>
 	/// Resolution status (1 = Reviewed, 2 = Dismissed, 3 = ActionTaken)
 	/// </summary>
+	[Range(1, 3)]
 	public int Resolution { get; set; }
 
 	/// <summary>
 	/// Note from the reviewing moderator
 	/// </summary>
+	[StringLength(1000)]
 	public string ResolutionNote { get; set; }
 }
 
@@ -1198,6 +1305,7 @@ public class MuteUserInput
 	/// <summary>
 	/// UserId to mute
 	/// </summary>
+	[Required]
 	public string TargetUserId { get; set; }
 
 	/// <summary>
@@ -1214,6 +1322,7 @@ public class BanUserInput
 	/// <summary>
 	/// UserId to ban or unban
 	/// </summary>
+	[Required]
 	public string TargetUserId { get; set; }
 
 	/// <summary>
@@ -1235,6 +1344,7 @@ public class LockChannelInput
 	/// <summary>
 	/// Reason for the lock/unlock
 	/// </summary>
+	[StringLength(1000)]
 	public string Reason { get; set; }
 }
 
@@ -1246,6 +1356,7 @@ public class UpdateChatSettingsInput
 	/// <summary>
 	/// Days to retain messages (0 = keep forever)
 	/// </summary>
+	[Range(0, 3650)]
 	public int RetentionDays { get; set; }
 
 	/// <summary>
@@ -1271,6 +1382,7 @@ public class UpdateChatSettingsInput
 	/// <summary>
 	/// Maximum attachment size in megabytes
 	/// </summary>
+	[Range(1, 100)]
 	public int MaxAttachmentSizeMb { get; set; }
 
 	/// <summary>
@@ -1302,6 +1414,7 @@ public class RequestExportInput
 	/// <summary>
 	/// Export format (0 = Json, 1 = Csv, 2 = Zip)
 	/// </summary>
+	[Range(0, 2)]
 	public int Format { get; set; }
 }
 

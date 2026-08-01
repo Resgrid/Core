@@ -11,5 +11,7 @@ namespace Resgrid.Chatbot.Services
 	public class NullChatbotWebChatNotifier : IChatbotWebChatNotifier
 	{
 		public Task PushToUserAsync(string userId, string text) => Task.CompletedTask;
+
+		public Task PushToUserAsync(string userId, string text, int departmentId) => Task.CompletedTask;
 	}
 }

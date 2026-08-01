@@ -42,6 +42,11 @@ function readString(value: unknown): string | undefined {
   return typeof value === 'string' && value.length > 0 ? value : undefined;
 }
 
+// Only https:// URLs may be rendered as href/src targets (blocks javascript:, data:, etc).
+export function isSafeUrl(url: string | null | undefined): boolean {
+  return typeof url === 'string' && /^https:\/\//i.test(url);
+}
+
 // Parses MetadataJson defensively; tolerates both camelCase and PascalCase keys.
 export function parseMetadata(metadataJson: string | null | undefined): ChatMessageMetadata {
   if (!metadataJson) {
@@ -72,10 +77,11 @@ export function parseMetadata(metadataJson: string | null | undefined): ChatMess
   const gif = (raw.gif ?? raw.Gif) as Record<string, unknown> | undefined;
   if (gif) {
     const url = readString(gif.url ?? gif.Url ?? gif.gifUrl ?? gif.GifUrl);
-    if (url) {
+    if (url && isSafeUrl(url)) {
+      const previewUrl = readString(gif.previewUrl ?? gif.PreviewUrl);
       result.gif = {
         url,
-        previewUrl: readString(gif.previewUrl ?? gif.PreviewUrl),
+        previewUrl: previewUrl && isSafeUrl(previewUrl) ? previewUrl : undefined,
         width: readNumber(gif.width ?? gif.Width),
         height: readNumber(gif.height ?? gif.Height),
       };
@@ -85,12 +91,13 @@ export function parseMetadata(metadataJson: string | null | undefined): ChatMess
   const link = (raw.link ?? raw.Link) as Record<string, unknown> | undefined;
   if (link) {
     const url = readString(link.url ?? link.Url);
-    if (url) {
+    if (url && isSafeUrl(url)) {
+      const imageUrl = readString(link.imageUrl ?? link.ImageUrl);
       result.link = {
         url,
         title: readString(link.title ?? link.Title),
         description: readString(link.description ?? link.Description),
-        imageUrl: readString(link.imageUrl ?? link.ImageUrl),
+        imageUrl: imageUrl && isSafeUrl(imageUrl) ? imageUrl : undefined,
       };
     }
   }

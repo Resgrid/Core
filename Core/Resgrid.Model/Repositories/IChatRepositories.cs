@@ -13,6 +13,9 @@ namespace Resgrid.Model.Repositories
 		/// <summary>All channels anchored to a call (Incident + IncidentLane + IncidentCommand).</summary>
 		Task<IEnumerable<ChatChannel>> GetByCallIdAsync(int callId);
 
+		/// <summary>The single channel anchored to a call of a specific type (e.g. Incident or IncidentCommand), or null.</summary>
+		Task<ChatChannel> GetByCallIdAndTypeAsync(int callId, int channelType);
+
 		Task<ChatChannel> GetByCommandStructureNodeIdAsync(string commandStructureNodeId);
 
 		Task<ChatChannel> GetByGroupIdAsync(int groupId);
@@ -34,6 +37,28 @@ namespace Resgrid.Model.Repositories
 
 		/// <summary>Channels in the department carrying a per-channel retention override.</summary>
 		Task<IEnumerable<ChatChannel>> GetWithRetentionOverrideAsync(int departmentId);
+
+		/// <summary>Every channel in the department; archived rows excluded unless <paramref name="includeArchived"/>.</summary>
+		Task<IEnumerable<ChatChannel>> GetAllByDepartmentIdAsync(int departmentId, bool includeArchived);
+
+		/// <summary>
+		/// Targeted name/topic update: never touches LastMessageSeq/LastMessageOn so the atomic
+		/// sequence allocator is never rewound by a stale full-row write.
+		/// </summary>
+		Task<bool> UpdateChannelInfoAsync(string chatChannelId, string name, string topic, DateTime modifiedOn, CancellationToken cancellationToken);
+
+		/// <summary>Targeted archive flag update (see <see cref="UpdateChannelInfoAsync"/>).</summary>
+		Task<bool> SetArchivedAsync(string chatChannelId, bool archived, DateTime? archivedOn, DateTime modifiedOn, CancellationToken cancellationToken);
+
+		/// <summary>Targeted lock flag update (see <see cref="UpdateChannelInfoAsync"/>).</summary>
+		Task<bool> SetLockedAsync(string chatChannelId, bool locked, string lockedByUserId, DateTime? lockedOn, DateTime modifiedOn, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Atomically creates a DM channel plus its member rows in one transaction. The channel insert
+		/// uses insert-if-absent on (DepartmentId, DmKey) so a losing racer simply reads the winner;
+		/// member rows are only written when this call wins the insert. Returns the persisted channel.
+		/// </summary>
+		Task<ChatChannel> CreateDirectMessageChannelAsync(ChatChannel channel, IEnumerable<ChatChannelMember> members, CancellationToken cancellationToken);
 	}
 
 	public interface IChatChannelAccessRuleRepository : IRepository<ChatChannelAccessRule>
@@ -61,6 +86,18 @@ namespace Resgrid.Model.Repositories
 		Task<bool> AdvanceReadPointerAsync(string chatChannelMemberId, long seq, DateTime readOn);
 
 		Task<bool> AdvanceDeliveredPointerAsync(string chatChannelMemberId, long seq);
+
+		/// <summary>Targeted mute update: touches only MutedUntil/ModifiedOn so concurrent pointer advances are never rewound.</summary>
+		Task<bool> SetMemberMutedAsync(string chatChannelMemberId, DateTime? mutedUntil, CancellationToken cancellationToken);
+
+		/// <summary>Targeted ban update (see <see cref="SetMemberMutedAsync"/>).</summary>
+		Task<bool> SetMemberBannedAsync(string chatChannelMemberId, bool isBanned, string bannedByUserId, CancellationToken cancellationToken);
+
+		/// <summary>Targeted notification-preference update (see <see cref="SetMemberMutedAsync"/>).</summary>
+		Task<bool> SetMemberNotificationPreferenceAsync(string chatChannelMemberId, int notificationPreference, CancellationToken cancellationToken);
+
+		/// <summary>Targeted active flag update: reactivate clears RemovedOn (restamps JoinedOn), deactivate sets it (see <see cref="SetMemberMutedAsync"/>).</summary>
+		Task<bool> SetMemberActiveAsync(string chatChannelMemberId, bool isActive, CancellationToken cancellationToken);
 	}
 
 	public interface IChatMessageRepository : IRepository<ChatMessage>
@@ -100,11 +137,26 @@ namespace Resgrid.Model.Repositories
 
 		/// <summary>Messages for a records-request export, oldest first, capped at maxRows.</summary>
 		Task<IEnumerable<ChatMessage>> GetForExportAsync(int departmentId, string chatChannelId, DateTime? from, DateTime? to, int maxRows);
+
+		/// <summary>
+		/// Targeted body edit: UPDATE ... WHERE ChatMessageId AND DeletedOn IS NULL so a concurrent
+		/// tombstone is never un-deleted and ThreadReplyCount increments are never lost. False = already deleted.
+		/// </summary>
+		Task<bool> UpdateBodyAsync(string chatMessageId, string body, DateTime editedOn, CancellationToken cancellationToken);
+
+		/// <summary>Targeted tombstone (body/metadata cleared, DeletedOn/DeletedByUserId stamped) guarded by DeletedOn IS NULL.</summary>
+		Task<bool> TombstoneAsync(string chatMessageId, DateTime deletedOn, string deletedByUserId, CancellationToken cancellationToken);
+
+		/// <summary>Targeted pin update guarded by DeletedOn IS NULL.</summary>
+		Task<bool> SetPinnedAsync(string chatMessageId, DateTime? pinnedOn, string pinnedByUserId, CancellationToken cancellationToken);
 	}
 
 	public interface IChatMessageEditRepository : IRepository<ChatMessageEdit>
 	{
 		Task<IEnumerable<ChatMessageEdit>> GetByMessageIdAsync(string chatMessageId);
+
+		/// <summary>Batched edit-history fetch for exports: all edit rows for the given messages in one query.</summary>
+		Task<IEnumerable<ChatMessageEdit>> GetChatExportEditsByMessageIdsAsync(IEnumerable<string> messageIds);
 	}
 
 	public interface IChatAttachmentRepository : IRepository<ChatAttachment>
@@ -133,11 +185,17 @@ namespace Resgrid.Model.Repositories
 
 		/// <summary>Stamps AcknowledgedOn on the user's pending ack rows for a message; returns rows affected.</summary>
 		Task<int> AcknowledgeAsync(string chatMessageId, string userId, DateTime acknowledgedOn);
+
+		/// <summary>Single bulk multi-row INSERT of provisioned ack rows (chunked); returns rows written.</summary>
+		Task<int> BulkInsertAcksAsync(IEnumerable<ChatMessageAck> acks, CancellationToken cancellationToken);
 	}
 
 	public interface IChatMessageFlagRepository : IRepository<ChatMessageFlag>
 	{
 		Task<IEnumerable<ChatMessageFlag>> GetByStatusAsync(int departmentId, int status, int page, int pageSize);
+
+		/// <summary>The active (Open) flag by this user on this message, when one exists (dedupe).</summary>
+		Task<ChatMessageFlag> GetActiveFlagAsync(string chatMessageId, string flaggedByUserId);
 	}
 
 	public interface IChatModerationActionRepository : IRepository<ChatModerationAction>
@@ -156,5 +214,14 @@ namespace Resgrid.Model.Repositories
 
 		/// <summary>Export rows without the result Data blob for listing.</summary>
 		Task<IEnumerable<ChatExport>> GetMetadataByDepartmentIdAsync(int departmentId);
+
+		/// <summary>Atomically moves a queued export to Running; true only for the worker that won the row.</summary>
+		Task<bool> ClaimChatExportAsync(string chatExportId);
+
+		/// <summary>Returns Running exports older than the given age to Queued (crashed-worker recovery); rows requeued.</summary>
+		Task<int> RequeueStaleRunningChatExportsAsync(TimeSpan stale);
+
+		/// <summary>Hard-deletes export rows (incl. the result Data blob) requested before the cutoff; rows deleted.</summary>
+		Task<int> DeleteOldChatExportsAsync(DateTime olderThanUtc);
 	}
 }

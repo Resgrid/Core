@@ -5,7 +5,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Resgrid.Config;
+using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Events;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.Chat;
@@ -30,6 +34,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IChatMessageService _chatMessageService;
 		private readonly IFeatureToggleService _featureToggleService;
 		private readonly IAuthorizationService _authorizationService;
+		private readonly IEventAggregator _eventAggregator;
+		private readonly ICacheProvider _cacheProvider;
 
 		public ChatModerationController(
 			IChatModerationService chatModerationService,
@@ -37,7 +43,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IChatPermissionService chatPermissionService,
 			IChatMessageService chatMessageService,
 			IFeatureToggleService featureToggleService,
-			IAuthorizationService authorizationService)
+			IAuthorizationService authorizationService,
+			IEventAggregator eventAggregator,
+			ICacheProvider cacheProvider)
 		{
 			_chatModerationService = chatModerationService;
 			_chatChannelService = chatChannelService;
@@ -45,6 +53,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_chatMessageService = chatMessageService;
 			_featureToggleService = featureToggleService;
 			_authorizationService = authorizationService;
+			_eventAggregator = eventAggregator;
+			_cacheProvider = cacheProvider;
 		}
 
 		#endregion Members and Constructors
@@ -110,6 +120,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await ChatEnabledAsync())
 				return NotFound();
 
+			if (!ModelState.IsValid)
+				return BadRequest();
+
 			if (input == null || String.IsNullOrWhiteSpace(flagId))
 				return BadRequest();
 
@@ -117,7 +130,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Unauthorized();
 
 			var result = new ChatActionResult();
-			var resolved = await _chatModerationService.ResolveFlagAsync(flagId, DepartmentId, UserId, (ChatFlagStatus)input.Resolution, input.ResolutionNote, cancellationToken);
+			ChatMessageFlag resolved;
+
+			try
+			{
+				resolved = await _chatModerationService.ResolveFlagAsync(flagId, DepartmentId, UserId, (ChatFlagStatus)input.Resolution, input.ResolutionNote, cancellationToken, BuildModerationContext("DepartmentAdmin"));
+			}
+			catch (UnauthorizedAccessException)
+			{
+				return StatusCode(StatusCodes.Status403Forbidden);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(ex.Message);
+			}
 
 			result.Success = resolved != null;
 			result.Status = result.Success ? ResponseHelper.Updated : ResponseHelper.NotFound;
@@ -157,7 +183,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Unauthorized();
 
 			var result = new ChatActionResult();
-			result.Success = await _chatModerationService.ModeratorDeleteMessageAsync(messageId, UserId, reason, cancellationToken);
+
+			try
+			{
+				result.Success = await _chatModerationService.ModeratorDeleteMessageAsync(messageId, UserId, reason, cancellationToken, BuildModerationContext("ChannelModerator"));
+			}
+			catch (UnauthorizedAccessException)
+			{
+				return StatusCode(StatusCodes.Status403Forbidden);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(ex.Message);
+			}
+
 			result.Status = result.Success ? ResponseHelper.Deleted : ResponseHelper.Failure;
 
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -180,6 +219,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await ChatEnabledAsync())
 				return NotFound();
 
+			if (!ModelState.IsValid)
+				return BadRequest();
+
 			if (input == null || String.IsNullOrWhiteSpace(input.TargetUserId))
 				return BadRequest();
 
@@ -191,7 +233,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Unauthorized();
 
 			var result = new ChatActionResult();
-			result.Success = await _chatModerationService.SetUserMutedAsync(channelId, input.TargetUserId, input.MutedUntil, UserId, null, cancellationToken);
+
+			try
+			{
+				result.Success = await _chatModerationService.SetUserMutedAsync(channelId, input.TargetUserId, input.MutedUntil, UserId, null, cancellationToken, BuildModerationContext("ChannelModerator"));
+			}
+			catch (UnauthorizedAccessException)
+			{
+				return StatusCode(StatusCodes.Status403Forbidden);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(ex.Message);
+			}
+
 			result.Status = result.Success ? ResponseHelper.Updated : ResponseHelper.Failure;
 
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -214,6 +269,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await ChatEnabledAsync())
 				return NotFound();
 
+			if (!ModelState.IsValid)
+				return BadRequest();
+
 			if (input == null || String.IsNullOrWhiteSpace(input.TargetUserId))
 				return BadRequest();
 
@@ -225,7 +283,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Unauthorized();
 
 			var result = new ChatActionResult();
-			result.Success = await _chatModerationService.SetUserBannedAsync(channelId, input.TargetUserId, input.Banned, UserId, null, cancellationToken);
+
+			try
+			{
+				result.Success = await _chatModerationService.SetUserBannedAsync(channelId, input.TargetUserId, input.Banned, UserId, null, cancellationToken, BuildModerationContext("ChannelModerator"));
+			}
+			catch (UnauthorizedAccessException)
+			{
+				return StatusCode(StatusCodes.Status403Forbidden);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(ex.Message);
+			}
+
 			result.Status = result.Success ? ResponseHelper.Updated : ResponseHelper.Failure;
 
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -248,6 +319,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await ChatEnabledAsync())
 				return NotFound();
 
+			if (!ModelState.IsValid)
+				return BadRequest();
+
 			if (input == null)
 				return BadRequest();
 
@@ -259,7 +333,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Unauthorized();
 
 			var result = new ChatActionResult();
-			result.Success = await _chatModerationService.SetChannelLockedAsync(channelId, input.Locked, UserId, input.Reason, cancellationToken);
+
+			try
+			{
+				result.Success = await _chatModerationService.SetChannelLockedAsync(channelId, input.Locked, UserId, input.Reason, cancellationToken, BuildModerationContext("ChannelModerator"));
+			}
+			catch (UnauthorizedAccessException)
+			{
+				return StatusCode(StatusCodes.Status403Forbidden);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(ex.Message);
+			}
+
 			result.Status = result.Success ? ResponseHelper.Updated : ResponseHelper.Failure;
 
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -364,6 +451,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await ChatEnabledAsync())
 				return NotFound();
 
+			if (!ModelState.IsValid)
+				return BadRequest();
+
 			if (input == null)
 				return BadRequest();
 
@@ -371,6 +461,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return Unauthorized();
 
 			var settings = await _chatChannelService.GetDepartmentSettingsAsync(DepartmentId) ?? new ChatDepartmentSetting();
+			var beforeJson = settings.CloneJsonToString();
 
 			settings.DepartmentId = DepartmentId;
 			settings.RetentionDays = input.RetentionDays;
@@ -386,6 +477,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (saved != null)
 			{
+				_eventAggregator.SendMessage<AuditEvent>(new AuditEvent
+				{
+					DepartmentId = DepartmentId,
+					UserId = UserId,
+					Type = AuditLogTypes.ChatSettingsChanged,
+					Before = beforeJson,
+					After = saved.CloneJsonToString(),
+					Successful = true,
+					IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+					ServerName = Environment.MachineName,
+					UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}"
+				});
+
 				result.Data = ConvertSettingsResultData(saved);
 				result.PageSize = 1;
 				result.Status = ResponseHelper.Updated;
@@ -419,14 +523,27 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await ChatEnabledAsync())
 				return NotFound();
 
+			if (!ModelState.IsValid)
+				return BadRequest();
+
 			if (input == null)
 				return BadRequest();
 
 			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
 				return Unauthorized();
 
+			// Per-department rate limit: bulk transcript exports carry PII, so cap how many a department
+			// can queue per window to blunt exfiltration/abuse (a compromised admin can't drain the
+			// department in a loop). Keyed by department, not user, so it holds across admins.
+			if (await IsExportRateLimitedAsync())
+			{
+				var limited = new GetChatExportsResult { Status = ResponseHelper.Failure };
+				ResponseHelper.PopulateV4ResponseData(limited);
+				return StatusCode(StatusCodes.Status429TooManyRequests, limited);
+			}
+
 			var result = new GetChatExportsResult();
-			var export = await _chatModerationService.RequestExportAsync(DepartmentId, UserId, input.ChatChannelId, input.StartDate, input.EndDate, (ChatExportFormat)input.Format, cancellationToken);
+			var export = await _chatModerationService.RequestExportAsync(DepartmentId, UserId, input.ChatChannelId, input.StartDate, input.EndDate, (ChatExportFormat)input.Format, cancellationToken, BuildModerationContext("DepartmentAdmin"));
 
 			if (export != null)
 			{
@@ -500,7 +617,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
 				return Unauthorized();
 
-			var export = await _chatModerationService.GetExportForDownloadAsync(exportId, DepartmentId, UserId, cancellationToken);
+			var export = await _chatModerationService.GetExportForDownloadAsync(exportId, DepartmentId, UserId, cancellationToken, BuildModerationContext("DepartmentAdmin"));
 
 			if (export == null || export.Data == null)
 				return NotFound();
@@ -534,6 +651,36 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private Task<bool> ChatEnabledAsync()
 		{
 			return _featureToggleService.IsEnabledAsync(FeatureFlagKeys.ChatSystem, DepartmentId);
+		}
+
+		/// <summary>
+		/// Per-department sliding-window rate limit for transcript exports. Returns true when the
+		/// department has exceeded ChatConfig.ExportRateLimitPerWindow for the current window.
+		/// </summary>
+		private async Task<bool> IsExportRateLimitedAsync()
+		{
+			if (ChatConfig.ExportRateLimitPerWindow <= 0 || ChatConfig.ExportRateLimitWindowSeconds <= 0)
+				return false;
+
+			var count = await _cacheProvider.IncrementAsync($"chat:rl:export:{DepartmentId}", TimeSpan.FromSeconds(ChatConfig.ExportRateLimitWindowSeconds));
+
+			return count > ChatConfig.ExportRateLimitPerWindow;
+		}
+
+		/// <summary>
+		/// Captures the request's forensic context (ip, user-agent, trace id) for the moderation audit
+		/// trail. <paramref name="actorRole"/> records the authority the action was taken under
+		/// (department admin vs channel moderator).
+		/// </summary>
+		private ChatModerationContext BuildModerationContext(string actorRole)
+		{
+			return new ChatModerationContext
+			{
+				IpAddress = HttpContext?.Connection?.RemoteIpAddress?.ToString(),
+				UserAgent = Request?.Headers != null ? Request.Headers["User-Agent"].ToString() : null,
+				TraceId = HttpContext?.TraceIdentifier,
+				ActorRole = actorRole
+			};
 		}
 
 		private static ChatFlagResultData ConvertFlagResultData(ChatMessageFlag flag)

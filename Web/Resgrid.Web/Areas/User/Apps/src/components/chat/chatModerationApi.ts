@@ -1,7 +1,6 @@
 // Typed fetch wrappers for the v4 ChatModeration API (admin-only surfaces).
-import { getAccessToken } from '../../runtime/auth';
-import { getBrowserConfig } from '../../runtime/browserConfig';
-import { ChatApiError } from './chatApi';
+import { ApiError, apiAuthHeaders, buildApiUrl, type ApiQuery } from '../../runtime/api';
+import { chatRequest, isApiStatus } from './chatApi';
 import type {
   ApiItemResult,
   ApiListResult,
@@ -11,56 +10,28 @@ import type {
   ChatSettingsDto,
 } from './types';
 
-function buildUrl(path: string, query?: Record<string, string | number | boolean | null | undefined>): string {
-  const { apiBaseUrl } = getBrowserConfig();
-  const url = new URL(path, `${apiBaseUrl}/`);
-  if (query) {
-    for (const [key, value] of Object.entries(query)) {
-      if (value !== null && value !== undefined && value !== '') {
-        url.searchParams.set(key, String(value));
-      }
-    }
-  }
-  return url.toString();
-}
-
-function authHeaders(extra?: HeadersInit): Headers {
-  const headers = new Headers(extra);
-  headers.set('Accept', 'application/json');
-  const token = getAccessToken();
-  if (token.length > 0) {
-    headers.set('Authorization', `Bearer ${token}`);
-  }
-  return headers;
-}
-
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(path, { ...init, headers: authHeaders(init?.headers) });
-  if (!response.ok) {
-    throw new ChatApiError(response.status, `${response.status} ${response.statusText}`);
-  }
-  const text = await response.text();
-  return (text.length > 0 ? JSON.parse(text) : {}) as T;
-}
-
-async function sendJson<T>(method: string, path: string, body?: unknown, query?: Record<string, string | number | boolean | null | undefined>): Promise<T> {
+async function sendJson<T>(method: string, path: string, body?: unknown, query?: ApiQuery): Promise<T> {
   const headers: Record<string, string> = {};
   if (body !== undefined) {
     headers['Content-Type'] = 'application/json';
   }
-  return request<T>(buildUrl(path, query), {
-    method,
-    headers,
-    body: body !== undefined ? JSON.stringify(body) : undefined,
-  });
+  return chatRequest<T>(
+    path,
+    {
+      method,
+      headers,
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+    },
+    query,
+  );
 }
 
-async function listOrEmpty<T>(path: string, query?: Record<string, string | number | boolean | null | undefined>): Promise<T[]> {
+async function listOrEmpty<T>(path: string, query?: ApiQuery): Promise<T[]> {
   try {
-    const result = await request<ApiListResult<T>>(buildUrl(path, query));
+    const result = await chatRequest<ApiListResult<T>>(path, undefined, query);
     return result.Data ?? [];
   } catch (error) {
-    if (error instanceof ChatApiError && error.status === 404) {
+    if (isApiStatus(error, 404)) {
       return [];
     }
     throw error;
@@ -80,7 +51,7 @@ export async function resolveFlag(flagId: string, resolution: number, resolution
 // ---- Actions ----
 
 export async function moderatorDeleteMessage(messageId: string, reason: string): Promise<void> {
-  await request<unknown>(buildUrl('api/v4/ChatModeration/DeleteMessage', { messageId, reason }), { method: 'DELETE' });
+  await chatRequest<unknown>('api/v4/ChatModeration/DeleteMessage', { method: 'DELETE' }, { messageId, reason });
 }
 
 export async function muteUser(channelId: string, targetUserId: string, mutedUntil: string | null): Promise<void> {
@@ -103,10 +74,10 @@ export async function getActions(channelId: string | undefined, page = 0): Promi
 
 export async function getSettings(): Promise<ChatSettingsDto | null> {
   try {
-    const result = await request<ApiItemResult<ChatSettingsDto>>(buildUrl('api/v4/ChatModeration/GetSettings'));
+    const result = await chatRequest<ApiItemResult<ChatSettingsDto>>('api/v4/ChatModeration/GetSettings');
     return result.Data ?? null;
   } catch (error) {
-    if (error instanceof ChatApiError && error.status === 404) {
+    if (isApiStatus(error, 404)) {
       return null;
     }
     throw error;
@@ -143,9 +114,9 @@ export async function getExports(): Promise<ChatExportDto[]> {
 }
 
 export async function downloadExport(exportId: string): Promise<void> {
-  const response = await fetch(buildUrl('api/v4/ChatModeration/DownloadExport', { exportId }), { headers: authHeaders() });
+  const response = await fetch(buildApiUrl('api/v4/ChatModeration/DownloadExport', { exportId }), { headers: apiAuthHeaders() });
   if (!response.ok) {
-    throw new ChatApiError(response.status, `${response.status} ${response.statusText}`);
+    throw new ApiError(response.status, `${response.status} ${response.statusText}`);
   }
   const blob = await response.blob();
   const objectUrl = URL.createObjectURL(blob);

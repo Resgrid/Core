@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { memo, useRef, useState } from 'react';
 import { ChatMessageType, type ChatMessageDto } from '../types';
-import { formatClockTime, linkifySegments, parseMetadata } from '../chatFormat';
+import { formatClockTime, isSafeUrl, linkifySegments, parseMetadata } from '../chatFormat';
 import Avatar from './Avatar';
 import ReactionChips from './ReactionChips';
 import AttachmentImage from './AttachmentImage';
 import { QUICK_REACTIONS } from './emoji';
+import { usePopoverClose } from './usePopoverClose';
 
 export interface MessageBubbleCallbacks {
   onReact: (message: ChatMessageDto, emoji: string, mine: boolean) => void;
@@ -14,6 +15,8 @@ export interface MessageBubbleCallbacks {
   onFlag?: (message: ChatMessageDto) => void;
   onPin?: (message: ChatMessageDto, pinned: boolean) => void;
   onOpenImage?: (url: string) => void;
+  onRetrySend?: (message: ChatMessageDto) => void;
+  onDiscardFailed?: (message: ChatMessageDto) => void;
 }
 
 interface MessageBubbleProps extends MessageBubbleCallbacks {
@@ -23,6 +26,7 @@ interface MessageBubbleProps extends MessageBubbleCallbacks {
   online?: boolean;
   canModerate?: boolean;
   variant?: 'default' | 'bot';
+  highlighted?: boolean;
 }
 
 function BubbleText({ body }: { body: string }) {
@@ -41,15 +45,20 @@ function BubbleText({ body }: { body: string }) {
   );
 }
 
-export default function MessageBubble(props: MessageBubbleProps) {
+function MessageBubble(props: MessageBubbleProps) {
   const { message, currentUserId, showAuthor, online, canModerate, variant } = props;
   const [editing, setEditing] = useState(false);
   const [editText, setEditText] = useState(message.Body ?? '');
   const [showReactions, setShowReactions] = useState(false);
+  const [showOverflow, setShowOverflow] = useState(false);
+  const actionsRef = useRef<HTMLDivElement | null>(null);
+  usePopoverClose(actionsRef, showReactions, () => setShowReactions(false));
 
   const isMine = !!message.SenderUserId && message.SenderUserId === currentUserId;
   const isDeleted = !!message.DeletedOn;
   const isUrgent = message.Priority === 1;
+  const isFailed = message.ClientStatus === 'failed';
+  const isPending = message.ClientStatus === 'pending';
   const metadata = parseMetadata(message.MetadataJson);
 
   const bubbleClasses = ['rgchat-bubble'];
@@ -59,12 +68,15 @@ export default function MessageBubble(props: MessageBubbleProps) {
   if (isDeleted) {
     bubbleClasses.push('rgchat-bubble--tomb');
   }
+  if (isFailed) {
+    bubbleClasses.push('rgchat-bubble--failed');
+  }
   if (variant === 'bot') {
     bubbleClasses.push('rgchat-bubble--bot');
   }
 
-  const canEdit = isMine && message.MessageType === ChatMessageType.Text && !isDeleted;
-  const canDelete = (isMine || canModerate) && !isDeleted;
+  const canEdit = isMine && message.MessageType === ChatMessageType.Text && !isDeleted && !isFailed;
+  const canDelete = (isMine || canModerate) && !isDeleted && !isFailed;
 
   const renderContent = () => {
     if (isDeleted) {
@@ -84,13 +96,22 @@ export default function MessageBubble(props: MessageBubbleProps) {
             ) : (
               <span className="rgchat-convo__sub">📷 Photo</span>
             )}
-            {message.Body ? <div style={{ marginTop: 4 }}><BubbleText body={message.Body} /></div> : null}
+            {message.Body ? <div className="rgchat-bubble__caption"><BubbleText body={message.Body} /></div> : null}
           </>
         );
       }
       case ChatMessageType.Gif:
-        return metadata.gif ? (
-          <img className="rgchat-bubble__img" src={metadata.gif.url} alt="GIF" />
+        // Belt-and-braces: parseMetadata already drops unsafe URLs; re-check at render.
+        return metadata.gif && isSafeUrl(metadata.gif.url) ? (
+          <img
+            className="rgchat-bubble__img"
+            src={metadata.gif.url}
+            alt="GIF"
+            loading="lazy"
+            decoding="async"
+            width={metadata.gif.width}
+            height={metadata.gif.height}
+          />
         ) : (
           <span>GIF</span>
         );
@@ -103,7 +124,7 @@ export default function MessageBubble(props: MessageBubbleProps) {
         return (
           <a className="rgchat-bubble__location" href={href} target="_blank" rel="noopener noreferrer">
             <div className="rgchat-bubble__location-map">📍</div>
-            <div style={{ marginTop: 4 }}>{location.label ?? 'Shared location'}</div>
+            <div className="rgchat-bubble__caption">{location.label ?? 'Shared location'}</div>
           </a>
         );
       }
@@ -111,7 +132,7 @@ export default function MessageBubble(props: MessageBubbleProps) {
         return (
           <>
             {message.Body ? <BubbleText body={message.Body} /> : null}
-            {metadata.link ? (
+            {metadata.link && isSafeUrl(metadata.link.url) ? (
               <a className="rgchat-link" href={metadata.link.url} target="_blank" rel="noopener noreferrer">
                 <div className="rgchat-link__body">
                   <div className="rgchat-link__title">{metadata.link.title ?? metadata.link.url}</div>
@@ -127,11 +148,14 @@ export default function MessageBubble(props: MessageBubbleProps) {
   };
 
   return (
-    <div className={`rgchat-msg${isMine ? ' rgchat-msg--mine' : ''}`}>
+    <div
+      className={`rgchat-msg${isMine ? ' rgchat-msg--mine' : ''}${showOverflow ? ' rgchat-msg--actions-open' : ''}`}
+      id={`rgchat-msg-${message.ChatMessageId}`}
+    >
       {showAuthor ? (
         <Avatar name={message.SenderDisplayName} userId={message.SenderUserId} online={online} showPresence={!isMine && !!message.SenderUserId} />
       ) : (
-        <span style={{ width: 36, flexShrink: 0 }} />
+        <span className="rgchat-msg__spacer" />
       )}
 
       <div className="rgchat-msg__col">
@@ -142,7 +166,7 @@ export default function MessageBubble(props: MessageBubbleProps) {
           </div>
         )}
 
-        <div className={bubbleClasses.join(' ')}>
+        <div className={`${bubbleClasses.join(' ')}${props.highlighted ? ' rgchat-bubble--flash' : ''}`}>
           {isUrgent && !isDeleted && <span className="rgchat-bubble__urgent-tag">⚠ Urgent</span>}
 
           {editing ? (
@@ -154,7 +178,7 @@ export default function MessageBubble(props: MessageBubbleProps) {
                 rows={2}
                 autoFocus
               />
-              <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
+              <div className="rgchat-bubble__editrow">
                 <button
                   type="button"
                   className="rgchat-btn rgchat-btn--primary"
@@ -176,11 +200,28 @@ export default function MessageBubble(props: MessageBubbleProps) {
             <>
               {renderContent()}
               {message.EditedOn && !isDeleted && <span className="rgchat-bubble__edited">(edited)</span>}
+              {isPending && <span className="rgchat-bubble__status">Sending…</span>}
             </>
           )}
         </div>
 
-        {!isDeleted && (
+        {isFailed && (
+          <div className="rgchat-failed">
+            <span className="rgchat-failed__label">Not sent.</span>
+            {props.onRetrySend && (
+              <button type="button" className="rgchat-failed__action" onClick={() => props.onRetrySend?.(message)}>
+                Retry
+              </button>
+            )}
+            {props.onDiscardFailed && (
+              <button type="button" className="rgchat-failed__action rgchat-failed__action--danger" onClick={() => props.onDiscardFailed?.(message)}>
+                Delete
+              </button>
+            )}
+          </div>
+        )}
+
+        {!isDeleted && !isFailed && (
           <ReactionChips
             reactions={message.Reactions}
             currentUserId={currentUserId}
@@ -195,24 +236,25 @@ export default function MessageBubble(props: MessageBubbleProps) {
         )}
       </div>
 
-      {!isDeleted && !editing && (
-        <div className="rgchat-msg__actions">
-          <div style={{ position: 'relative' }}>
+      {!isDeleted && !editing && !isFailed && (
+        <div className="rgchat-msg__actions" ref={actionsRef}>
+          <div className="rgchat-msg__actionwrap">
             <button
               type="button"
               className="rgchat-msg__action"
               title="React"
+              aria-label="Add reaction"
               onClick={() => setShowReactions((value) => !value)}
             >
               😊
             </button>
             {showReactions && (
-              <div className="rgchat-popover" style={{ left: 'auto', right: 0, bottom: 28, display: 'flex', gap: 2, padding: 6 }}>
+              <div className="rgchat-popover rgchat-popover--reactions">
                 {QUICK_REACTIONS.map((emoji) => (
                   <button
                     key={emoji}
                     type="button"
-                    style={{ border: 'none', background: 'transparent', fontSize: 18, cursor: 'pointer' }}
+                    className="rgchat-popover__emoji"
                     onClick={() => {
                       props.onReact(message, emoji, false);
                       setShowReactions(false);
@@ -225,32 +267,46 @@ export default function MessageBubble(props: MessageBubbleProps) {
             )}
           </div>
           {props.onOpenThread && (
-            <button type="button" className="rgchat-msg__action" title="Reply in thread" onClick={() => props.onOpenThread?.(message)}>
+            <button type="button" className="rgchat-msg__action" title="Reply in thread" aria-label="Reply in thread" onClick={() => props.onOpenThread?.(message)}>
               💬
             </button>
           )}
           {canEdit && (
-            <button type="button" className="rgchat-msg__action" title="Edit" onClick={() => { setEditText(message.Body ?? ''); setEditing(true); }}>
+            <button type="button" className="rgchat-msg__action" title="Edit" aria-label="Edit message" onClick={() => { setEditText(message.Body ?? ''); setEditing(true); }}>
               ✏️
             </button>
           )}
           {props.onPin && canModerate && (
-            <button type="button" className="rgchat-msg__action" title={message.PinnedOn ? 'Unpin' : 'Pin'} onClick={() => props.onPin?.(message, !message.PinnedOn)}>
+            <button type="button" className="rgchat-msg__action" title={message.PinnedOn ? 'Unpin' : 'Pin'} aria-label={message.PinnedOn ? 'Unpin message' : 'Pin message'} onClick={() => props.onPin?.(message, !message.PinnedOn)}>
               📌
             </button>
           )}
           {props.onFlag && !isMine && (
-            <button type="button" className="rgchat-msg__action" title="Flag" onClick={() => props.onFlag?.(message)}>
+            <button type="button" className="rgchat-msg__action" title="Flag" aria-label="Report message" onClick={() => props.onFlag?.(message)}>
               🚩
             </button>
           )}
           {canDelete && props.onDelete && (
-            <button type="button" className="rgchat-msg__action" title="Delete" onClick={() => props.onDelete?.(message)}>
+            <button type="button" className="rgchat-msg__action" title="Delete" aria-label="Delete message" onClick={() => props.onDelete?.(message)}>
               🗑️
             </button>
           )}
         </div>
       )}
+
+      {!isDeleted && !editing && !isFailed && (
+        <button
+          type="button"
+          className="rgchat-msg__overflow"
+          title="Message actions"
+          aria-label="Message actions"
+          onClick={() => setShowOverflow((value) => !value)}
+        >
+          ⋯
+        </button>
+      )}
     </div>
   );
 }
+
+export default memo(MessageBubble);

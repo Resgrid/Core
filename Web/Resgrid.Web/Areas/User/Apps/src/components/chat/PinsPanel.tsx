@@ -24,7 +24,15 @@ export default function PinsPanel({ channelId, canModerate }: PinsPanelProps) {
   useEffect(load, [channelId]);
 
   if (loading) {
-    return <div className="rgchat-aside__section rgchat-convo__sub">Loading…</div>;
+    return (
+      <div className="rgchat-aside__section" aria-hidden="true">
+        {[0, 1].map((index) => (
+          <div key={index} className="rgchat-skeletonrow">
+            <span className="rgchat-skeleton rgchat-skeleton--bubble" style={{ width: '88%' }} />
+          </div>
+        ))}
+      </div>
+    );
   }
 
   if (pins.length === 0) {
@@ -34,8 +42,8 @@ export default function PinsPanel({ channelId, canModerate }: PinsPanelProps) {
   return (
     <div className="rgchat-aside__section">
       {pins.map((pin) => (
-        <div key={pin.ChatMessageId} className="rgchat-bubble" style={{ marginBottom: 8 }}>
-          <div className="rgchat-msg__meta" style={{ margin: '0 0 4px' }}>
+        <div key={pin.ChatMessageId} className="rgchat-bubble rgchat-pin">
+          <div className="rgchat-msg__meta rgchat-pin__meta">
             <span className="rgchat-msg__author">{pin.SenderDisplayName ?? 'Unknown'}</span>
             <span>{formatRelativeDay(pin.SentOn)}</span>
           </div>

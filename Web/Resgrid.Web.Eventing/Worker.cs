@@ -187,9 +187,10 @@ namespace Resgrid.Web.Eventing
 
 		/// <summary>
 		/// Routes a chat event envelope to SignalR clients. Targeted events (chatbot, personal badges)
-		/// go to the user's personal group; channel-list events also go to the department group; all
-		/// others go to the channel group. The client event name is the envelope Kind and the argument
-		/// is the payload JSON.
+		/// go to the user's personal group; channel-list events go to the department group as a
+		/// metadata-free refresh hint and to the channel group with the full DTO; all others go to
+		/// the channel group. The client event name is the envelope Kind and the argument is the
+		/// payload JSON.
 		/// </summary>
 		public async Task ChatEventReceived(int departmentId, string payloadJson)
 		{
@@ -202,29 +203,131 @@ namespace Resgrid.Web.Eventing
 				if (chatEvent == null || string.IsNullOrWhiteSpace(chatEvent.Kind))
 					return;
 
+				if (chatEvent.Kind == ChatEventKinds.AccessRevoked)
+				{
+					await ChatAccessRevokedReceived(chatEvent);
+					return;
+				}
+
 				if (!string.IsNullOrWhiteSpace(chatEvent.TargetUserId))
 				{
 					await _chatHub.Clients.Group($"chatuser:{chatEvent.DepartmentId}:{chatEvent.TargetUserId.ToLowerInvariant()}")
-						.SendAsync(chatEvent.Kind, chatEvent.PayloadJson);
+						.SendAsync(chatEvent.Kind, GuardChatPayloadSize(chatEvent));
 					return;
 				}
 
 				if (chatEvent.Kind == ChatEventKinds.ChannelUpdated || chatEvent.Kind == ChatEventKinds.ChannelProvisioned)
 				{
+					var hint = Newtonsoft.Json.JsonConvert.SerializeObject(new
+					{
+						ChatChannelId = chatEvent.ChatChannelId,
+						DepartmentId = chatEvent.DepartmentId,
+						eventKind = chatEvent.Kind
+					});
+
 					await _chatHub.Clients.Group($"chatdept:{chatEvent.DepartmentId}")
-						.SendAsync(chatEvent.Kind, chatEvent.PayloadJson);
+						.SendAsync(chatEvent.Kind, hint);
+
+					if (!string.IsNullOrWhiteSpace(chatEvent.ChatChannelId))
+					{
+						await _chatHub.Clients.Group($"chat:{chatEvent.ChatChannelId}")
+							.SendAsync(chatEvent.Kind, GuardChatPayloadSize(chatEvent));
+					}
+
+					return;
 				}
 
 				if (!string.IsNullOrWhiteSpace(chatEvent.ChatChannelId))
 				{
 					await _chatHub.Clients.Group($"chat:{chatEvent.ChatChannelId}")
-						.SendAsync(chatEvent.Kind, chatEvent.PayloadJson);
+						.SendAsync(chatEvent.Kind, GuardChatPayloadSize(chatEvent));
 				}
 			}
 			catch (Exception ex)
 			{
 				Resgrid.Framework.Logging.LogException(ex);
 			}
+		}
+
+		/// <summary>
+		/// Server-side eviction for revoked channel access (ban/remove/lock): removes every tracked
+		/// connection for the user from the channel group, then notifies the user's devices so the
+		/// client can drop the channel from its UI.
+		/// </summary>
+		private async Task ChatAccessRevokedReceived(ChatEventRaised chatEvent)
+		{
+			ChatAccessRevokedPayload payload = null;
+
+			try
+			{
+				if (!string.IsNullOrWhiteSpace(chatEvent.PayloadJson))
+					payload = Newtonsoft.Json.JsonConvert.DeserializeObject<ChatAccessRevokedPayload>(chatEvent.PayloadJson);
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+			}
+
+			var userId = payload?.UserId;
+			var channelId = !string.IsNullOrWhiteSpace(payload?.ChannelId) ? payload.ChannelId : chatEvent.ChatChannelId;
+
+			if (string.IsNullOrWhiteSpace(userId))
+				return;
+
+			if (!string.IsNullOrWhiteSpace(channelId) && ChatHub.UserConnections.TryGetValue(userId, out var connections))
+			{
+				foreach (var connectionId in connections.Keys)
+				{
+					try
+					{
+						await _chatHub.Groups.RemoveFromGroupAsync(connectionId, $"chat:{channelId}");
+					}
+					catch (Exception ex)
+					{
+						Resgrid.Framework.Logging.LogException(ex);
+					}
+				}
+			}
+
+			await _chatHub.Clients.Group($"chatuser:{chatEvent.DepartmentId}:{userId.ToLowerInvariant()}")
+				.SendAsync(chatEvent.Kind, chatEvent.PayloadJson);
+		}
+
+		/// <summary>
+		/// Defensive guard against oversized realtime payloads (SignalR/Redis backplane limits):
+		/// beyond ~64KB the message Body is truncated and flagged; clients fetch the full body via REST.
+		/// </summary>
+		private static string GuardChatPayloadSize(ChatEventRaised chatEvent)
+		{
+			const int maxPayloadChars = 64 * 1024;
+			var payloadJson = chatEvent.PayloadJson;
+
+			if (string.IsNullOrEmpty(payloadJson) || payloadJson.Length <= maxPayloadChars)
+				return payloadJson;
+
+			try
+			{
+				var obj = Newtonsoft.Json.Linq.JObject.Parse(payloadJson);
+
+				if (obj["Body"] != null)
+				{
+					var body = obj["Body"].ToString();
+					obj["Body"] = body.Length > 1024 ? body.Substring(0, 1024) : body;
+					obj["BodyTruncated"] = true;
+
+					Resgrid.Framework.Logging.LogInfo($"Chat event {chatEvent.Kind} payload was {payloadJson.Length} chars; truncated Body for realtime fan-out.");
+
+					return obj.ToString(Newtonsoft.Json.Formatting.None);
+				}
+
+				Resgrid.Framework.Logging.LogInfo($"Chat event {chatEvent.Kind} payload was {payloadJson.Length} chars with no Body to truncate; relaying unchanged.");
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+			}
+
+			return payloadJson;
 		}
 
 		public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;

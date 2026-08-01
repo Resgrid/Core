@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
@@ -8,11 +9,14 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Config;
+using Resgrid.Framework;
 using Resgrid.Model;
+using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Resgrid.Web.Services.Helpers;
+using Resgrid.Web.Services.Models.v4;
 using Resgrid.Web.Services.Models.v4.Chat;
 using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
 
@@ -41,10 +45,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IChatModerationService _chatModerationService;
 		private readonly IChatPresenceService _chatPresenceService;
 		private readonly IChatAttachmentRepository _chatAttachmentRepository;
-		private readonly IChatChannelMemberRepository _chatChannelMemberRepository;
 		private readonly IGifProvider _gifProvider;
 		private readonly IFeatureToggleService _featureToggleService;
 		private readonly IAuthorizationService _authorizationService;
+		private readonly ICacheProvider _cacheProvider;
+		private readonly IEventAggregator _eventAggregator;
 
 		public ChatController(
 			IChatChannelService chatChannelService,
@@ -53,10 +58,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IChatModerationService chatModerationService,
 			IChatPresenceService chatPresenceService,
 			IChatAttachmentRepository chatAttachmentRepository,
-			IChatChannelMemberRepository chatChannelMemberRepository,
 			IGifProvider gifProvider,
 			IFeatureToggleService featureToggleService,
-			IAuthorizationService authorizationService)
+			IAuthorizationService authorizationService,
+			ICacheProvider cacheProvider,
+			IEventAggregator eventAggregator)
 		{
 			_chatChannelService = chatChannelService;
 			_chatPermissionService = chatPermissionService;
@@ -64,10 +70,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_chatModerationService = chatModerationService;
 			_chatPresenceService = chatPresenceService;
 			_chatAttachmentRepository = chatAttachmentRepository;
-			_chatChannelMemberRepository = chatChannelMemberRepository;
 			_gifProvider = gifProvider;
 			_featureToggleService = featureToggleService;
 			_authorizationService = authorizationService;
+			_cacheProvider = cacheProvider;
+			_eventAggregator = eventAggregator;
 		}
 
 		#endregion Members and Constructors
@@ -89,7 +96,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var result = new GetChatChannelsResult();
 			var channels = await _chatChannelService.GetChannelsForUserAsync(DepartmentId, UserId, activeUnitId);
-			var memberRows = await _chatChannelMemberRepository.GetActiveByUserIdAsync(DepartmentId, UserId);
+			var memberRows = await _chatChannelService.GetActiveMembershipsForUserAsync(DepartmentId, UserId);
 
 			var membersByChannel = new Dictionary<string, ChatChannelMember>();
 			if (memberRows != null)
@@ -144,7 +151,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (!await _chatPermissionService.CanAccessChannelAsync(channel, UserId, null))
 					return Unauthorized();
 
-				var member = await _chatChannelMemberRepository.GetUserMemberAsync(channel.ChatChannelId, UserId);
+				var member = await _chatChannelService.GetUserMembershipAsync(channel.ChatChannelId, UserId);
 
 				result.Data = ConvertChannelResultData(channel, member);
 				result.PageSize = 1;
@@ -174,6 +181,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await ChatEnabledAsync())
 				return NotFound();
 
+			if (!ModelState.IsValid)
+				return BadRequest();
+
 			if (input == null || (String.IsNullOrWhiteSpace(input.TargetUserId) && !input.TargetUnitId.HasValue))
 				return BadRequest();
 
@@ -182,7 +192,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (channel != null)
 			{
-				var member = await _chatChannelMemberRepository.GetUserMemberAsync(channel.ChatChannelId, UserId);
+				var member = await _chatChannelService.GetUserMembershipAsync(channel.ChatChannelId, UserId);
 
 				result.Data = ConvertChannelResultData(channel, member);
 				result.PageSize = 1;
@@ -211,6 +221,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (!await ChatEnabledAsync())
 				return NotFound();
+
+			if (!ModelState.IsValid)
+				return BadRequest();
 
 			if (input == null || String.IsNullOrWhiteSpace(input.Name) || input.MemberUserIds == null || input.MemberUserIds.Count <= 0)
 				return BadRequest();
@@ -248,6 +261,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (!await ChatEnabledAsync())
 				return NotFound();
+
+			if (!ModelState.IsValid)
+				return BadRequest();
 
 			if (input == null || String.IsNullOrWhiteSpace(input.Name))
 				return BadRequest();
@@ -304,6 +320,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await ChatEnabledAsync())
 				return NotFound();
 
+			if (!ModelState.IsValid)
+				return BadRequest();
+
 			var channel = await _chatChannelService.GetChannelByIdAsync(channelId);
 			if (channel == null || channel.DepartmentId != DepartmentId)
 				return NotFound();
@@ -355,6 +374,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Success = await _chatChannelService.SetChannelArchivedAsync(channelId, true, UserId, cancellationToken);
 			result.Status = result.Success ? ResponseHelper.Success : ResponseHelper.Failure;
 
+			if (result.Success)
+			{
+				_eventAggregator.SendMessage<AuditEvent>(new AuditEvent
+				{
+					DepartmentId = DepartmentId,
+					UserId = UserId,
+					Type = AuditLogTypes.ChatChannelArchived,
+					After = channel.CloneJsonToString(),
+					Successful = true,
+					IpAddress = IpAddressHelper.GetRequestIP(Request, true),
+					ServerName = Environment.MachineName,
+					UserAgent = $"{Request.Headers["User-Agent"]} {Request.Headers["Accept-Language"]}"
+				});
+			}
+
 			ResponseHelper.PopulateV4ResponseData(result);
 			return result;
 		}
@@ -386,12 +420,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var result = new GetChatMembersResult();
 			var members = await _chatChannelService.GetMembersAsync(channelId);
+			var canModerate = await _chatPermissionService.CanModerateChannelAsync(channel, UserId);
 
 			if (members != null && members.Any())
 			{
 				foreach (var member in members)
 				{
-					result.Data.Add(ConvertMemberResultData(member));
+					result.Data.Add(ConvertMemberResultData(member, canModerate));
 				}
 
 				result.PageSize = result.Data.Count;
@@ -424,6 +459,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await ChatEnabledAsync())
 				return NotFound();
 
+			if (!ModelState.IsValid)
+				return BadRequest();
+
 			if (input == null || input.UserIds == null || input.UserIds.Count <= 0)
 				return BadRequest();
 
@@ -431,25 +469,44 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (channel == null || channel.DepartmentId != DepartmentId)
 				return NotFound();
 
-			if (channel.ChannelType != (int)ChatChannelType.DirectMessage &&
-				channel.ChannelType != (int)ChatChannelType.AdHocGroup &&
+			if (channel.ChannelType == (int)ChatChannelType.DirectMessage)
+				return BadRequest("Members cannot be added to a direct message channel.");
+
+			if (channel.ChannelType != (int)ChatChannelType.AdHocGroup &&
 				channel.ChannelType != (int)ChatChannelType.CustomLocked)
 				return BadRequest();
 
-			var requesterMember = await _chatChannelMemberRepository.GetUserMemberAsync(channelId, UserId);
+			var requesterMember = await _chatChannelService.GetUserMembershipAsync(channelId, UserId);
 			var isActiveMember = requesterMember != null && !requesterMember.RemovedOn.HasValue;
+			var canModerate = await _chatPermissionService.CanModerateChannelAsync(channel, UserId);
 
-			if (!isActiveMember && !await _chatPermissionService.CanModerateChannelAsync(channel, UserId))
+			if (channel.ChannelType == (int)ChatChannelType.CustomLocked && !canModerate)
+				return StatusCode(StatusCodes.Status403Forbidden);
+
+			if (!isActiveMember && !canModerate)
 				return Unauthorized();
 
 			var result = new GetChatMembersResult();
-			var added = await _chatChannelService.AddMembersAsync(channelId, input.UserIds, UserId, cancellationToken);
+			List<ChatChannelMember> added;
+
+			try
+			{
+				added = await _chatChannelService.AddMembersAsync(channelId, input.UserIds, UserId, cancellationToken);
+			}
+			catch (UnauthorizedAccessException)
+			{
+				return StatusCode(StatusCodes.Status403Forbidden);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(ex.Message);
+			}
 
 			if (added != null && added.Any())
 			{
 				foreach (var member in added)
 				{
-					result.Data.Add(ConvertMemberResultData(member));
+					result.Data.Add(ConvertMemberResultData(member, canModerate));
 				}
 
 				result.PageSize = result.Data.Count;
@@ -515,6 +572,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (!await ChatEnabledAsync())
 				return NotFound();
+
+			if (!ModelState.IsValid)
+				return BadRequest();
 
 			var channel = await _chatChannelService.GetChannelByIdAsync(channelId);
 			if (channel == null || channel.DepartmentId != DepartmentId)
@@ -695,14 +755,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await ChatEnabledAsync())
 				return NotFound();
 
+			if (!ModelState.IsValid)
+				return BadRequest();
+
 			if (input == null || String.IsNullOrWhiteSpace(channelId))
 				return BadRequest();
+
+			if (await IsRateLimitedAsync("send", ChatConfig.SendRateLimitPerWindow))
+				return RateLimitedResult<ChatMessageSentResult>();
 
 			var request = new ChatMessageSendRequest
 			{
 				ChatChannelId = channelId,
 				DepartmentId = DepartmentId,
-				SenderUserId = UserId,
 				AsUnitId = input.AsUnitId,
 				AsIncidentCommander = input.AsIncidentCommander,
 				Body = input.Body,
@@ -711,8 +776,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				ThreadRootMessageId = input.ThreadRootMessageId,
 				AlsoSendToChannel = input.AlsoSendToChannel,
 				ClientMessageId = input.ClientMessageId,
-				MetadataJson = input.MetadataJson,
-				AsBot = false
+				MetadataJson = input.MetadataJson
 			};
 
 			if (input.Mentions != null && input.Mentions.Any())
@@ -732,7 +796,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 			}
 
-			var message = await _chatMessageService.SendMessageAsync(request, cancellationToken);
+			ChatMessage message;
+
+			try
+			{
+				message = await _chatMessageService.SendMessageAsync(UserId, request, cancellationToken);
+			}
+			catch (UnauthorizedAccessException)
+			{
+				return StatusCode(StatusCodes.Status403Forbidden);
+			}
+			catch (InvalidOperationException ex)
+			{
+				return BadRequest(ex.Message);
+			}
 
 			if (message == null)
 				return BadRequest();
@@ -760,6 +837,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (!await ChatEnabledAsync())
 				return NotFound();
+
+			if (!ModelState.IsValid)
+				return BadRequest();
 
 			if (input == null || String.IsNullOrWhiteSpace(input.Body))
 				return BadRequest();
@@ -819,8 +899,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await ChatEnabledAsync())
 				return NotFound();
 
+			if (!ModelState.IsValid)
+				return BadRequest();
+
 			if (input == null || String.IsNullOrWhiteSpace(input.Emoji))
 				return BadRequest();
+
+			if (await IsRateLimitedAsync("reaction", ChatConfig.ReactionRateLimitPerWindow))
+				return RateLimitedResult<ChatActionResult>();
 
 			var accessCheck = await CheckMessageChannelAccessAsync(messageId);
 			if (accessCheck != null)
@@ -872,11 +958,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <returns>ChatActionResult; Success is true when a pending acknowledgment was stamped</returns>
 		[HttpPost("Ack")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<ChatActionResult>> Ack(string messageId, CancellationToken cancellationToken)
 		{
 			if (!await ChatEnabledAsync())
 				return NotFound();
+
+			var accessCheck = await CheckMessageChannelAccessAsync(messageId);
+			if (accessCheck != null)
+				return accessCheck;
 
 			var result = new ChatActionResult();
 			var acknowledged = await _chatMessageService.AcknowledgeMessageAsync(messageId, UserId, cancellationToken);
@@ -988,6 +1079,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await ChatEnabledAsync())
 				return NotFound();
 
+			if (!ModelState.IsValid)
+				return BadRequest();
+
 			if (input == null)
 				return BadRequest();
 
@@ -1092,10 +1186,23 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (String.IsNullOrWhiteSpace(channelId) || String.IsNullOrWhiteSpace(messageId) || file == null || file.Length <= 0)
 				return BadRequest();
 
-			if (file.Length > (long)ChatConfig.MaxAttachmentSizeMb * 1024 * 1024)
+			if (await IsRateLimitedAsync("upload", ChatConfig.UploadRateLimitPerWindow))
+				return RateLimitedResult<ChatAttachmentUploadedResult>();
+
+			var settings = await _chatChannelService.GetDepartmentSettingsAsync(DepartmentId);
+
+			var maxAttachmentSizeMb = ChatConfig.MaxAttachmentSizeMb;
+			if (settings != null && settings.MaxAttachmentSizeMb > 0)
+				maxAttachmentSizeMb = Math.Min(settings.MaxAttachmentSizeMb, ChatConfig.MaxAttachmentSizeMb);
+
+			if (file.Length > (long)maxAttachmentSizeMb * 1024 * 1024)
 				return BadRequest();
 
 			if (!AllowedAttachmentContentTypes.Contains(file.ContentType, StringComparer.OrdinalIgnoreCase))
+				return BadRequest();
+
+			if (settings != null && !settings.AllowImages &&
+				file.ContentType.StartsWith("image/", StringComparison.OrdinalIgnoreCase))
 				return BadRequest();
 
 			var channel = await _chatChannelService.GetChannelByIdAsync(channelId);
@@ -1225,7 +1332,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public async Task<ActionResult<GetChatMessagesResult>> Search(string q, string channelId = null, DateTime? from = null, DateTime? to = null, int page = 0, int pageSize = 50)
+		public async Task<ActionResult<GetChatMessagesResult>> Search([StringLength(200)] string q, string channelId = null, DateTime? from = null, DateTime? to = null, int page = 0, int pageSize = 50)
 		{
 			if (!await ChatEnabledAsync())
 				return NotFound();
@@ -1254,10 +1361,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("SearchGifs")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public async Task<ActionResult<GetGifSearchResult>> SearchGifs(string q = null, int limit = 25, int offset = 0)
+		public async Task<ActionResult<GetGifSearchResult>> SearchGifs([StringLength(200)] string q = null, int limit = 25, int offset = 0)
 		{
 			if (!await ChatEnabledAsync())
 				return NotFound();
+
+			if (await IsRateLimitedAsync("gifsearch", ChatConfig.GifSearchRateLimitPerWindow))
+				return RateLimitedResult<GetGifSearchResult>();
 
 			var result = new GetGifSearchResult();
 
@@ -1310,6 +1420,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var ids = userIds.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).ToList();
 
+			if (ids.Count > 200)
+				return BadRequest();
+
 			var result = new GetChatPresenceResult();
 			var online = await _chatPresenceService.GetOnlineUsersAsync(DepartmentId, ids);
 
@@ -1339,6 +1452,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await ChatEnabledAsync())
 				return NotFound();
 
+			if (!ModelState.IsValid)
+				return BadRequest();
+
 			if (input == null)
 				return BadRequest();
 
@@ -1363,6 +1479,23 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private Task<bool> ChatEnabledAsync()
 		{
 			return _featureToggleService.IsEnabledAsync(FeatureFlagKeys.ChatSystem, DepartmentId);
+		}
+
+		private async Task<bool> IsRateLimitedAsync(string action, int limitPerWindow)
+		{
+			if (limitPerWindow <= 0 || ChatConfig.RateLimitWindowSeconds <= 0)
+				return false;
+
+			var count = await _cacheProvider.IncrementAsync($"chat:rl:{action}:{UserId}", TimeSpan.FromSeconds(ChatConfig.RateLimitWindowSeconds));
+
+			return count > limitPerWindow;
+		}
+
+		private ActionResult<T> RateLimitedResult<T>() where T : StandardApiResponseV4Base, new()
+		{
+			var result = new T { Status = ResponseHelper.Failure };
+			ResponseHelper.PopulateV4ResponseData(result);
+			return StatusCode(StatusCodes.Status429TooManyRequests, result);
 		}
 
 		/// <summary>
@@ -1434,18 +1567,27 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var messageIds = messages.Select(x => x.ChatMessageId).ToList();
 			var reactions = await _chatMessageService.GetReactionsForMessagesAsync(messageIds);
 			var attachments = await _chatMessageService.GetAttachmentMetadataForMessagesAsync(messageIds);
+			var moderationByChannel = new Dictionary<string, bool>();
 
 			foreach (var message in messages)
 			{
+				if (!moderationByChannel.TryGetValue(message.ChatChannelId, out var canModerate))
+				{
+					var channel = await _chatChannelService.GetChannelByIdAsync(message.ChatChannelId);
+					canModerate = channel != null && await _chatPermissionService.CanModerateChannelAsync(channel, UserId);
+					moderationByChannel.Add(message.ChatChannelId, canModerate);
+				}
+
 				data.Add(ConvertMessageResultData(message,
 					reactions?.Where(x => x.ChatMessageId == message.ChatMessageId),
-					attachments?.Where(x => x.ChatMessageId == message.ChatMessageId)));
+					attachments?.Where(x => x.ChatMessageId == message.ChatMessageId),
+					canModerate));
 			}
 
 			return data;
 		}
 
-		private static ChatMessageResultData ConvertMessageResultData(ChatMessage message, IEnumerable<ChatMessageReaction> reactions, IEnumerable<ChatAttachment> attachments)
+		private static ChatMessageResultData ConvertMessageResultData(ChatMessage message, IEnumerable<ChatMessageReaction> reactions, IEnumerable<ChatAttachment> attachments, bool includeModeratorInternals)
 		{
 			var data = new ChatMessageResultData
 			{
@@ -1469,9 +1611,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 				SentOn = message.SentOn,
 				EditedOn = message.EditedOn,
 				DeletedOn = message.DeletedOn,
-				DeletedByUserId = message.DeletedByUserId,
+				DeletedByUserId = includeModeratorInternals ? message.DeletedByUserId : null,
 				PinnedOn = message.PinnedOn,
-				PinnedByUserId = message.PinnedByUserId
+				PinnedByUserId = includeModeratorInternals ? message.PinnedByUserId : null
 			};
 
 			if (reactions != null)
@@ -1528,7 +1670,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			};
 		}
 
-		private static ChatMemberResultData ConvertMemberResultData(ChatChannelMember member)
+		private static ChatMemberResultData ConvertMemberResultData(ChatChannelMember member, bool includeModeratorInternals)
 		{
 			return new ChatMemberResultData
 			{
@@ -1541,11 +1683,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 				IsModerator = member.IsModerator,
 				JoinedOn = member.JoinedOn,
 				RemovedOn = member.RemovedOn,
-				LastReadSeq = member.LastReadSeq,
+				LastReadSeq = includeModeratorInternals ? member.LastReadSeq : null,
 				LastReadOn = member.LastReadOn,
-				LastDeliveredSeq = member.LastDeliveredSeq,
-				MutedUntil = member.MutedUntil,
-				IsBanned = member.IsBanned,
+				LastDeliveredSeq = includeModeratorInternals ? member.LastDeliveredSeq : null,
+				MutedUntil = includeModeratorInternals ? member.MutedUntil : null,
+				IsBanned = includeModeratorInternals ? member.IsBanned : null,
 				NotificationPreference = member.NotificationPreference
 			};
 		}

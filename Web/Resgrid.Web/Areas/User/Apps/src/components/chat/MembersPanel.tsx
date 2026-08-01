@@ -1,6 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
-import { getMembers, getPersonnelRecipients, getPresence, removeMember } from './chatApi';
+import { getMembers, getPersonnelRecipients, removeMember } from './chatApi';
 import { banUser, muteUser } from './chatModerationApi';
+import { seedPresenceFor } from './chatActions';
+import { setChannelMembers } from './chatStore';
+import { useChatStore, shallowArrayEqual } from './useChatStore';
 import Avatar from './atoms/Avatar';
 import type { ChatMemberDto } from './types';
 
@@ -11,24 +14,35 @@ interface MembersPanelProps {
 }
 
 const MUTE_DURATION_MS = 24 * 60 * 60 * 1000;
+const EMPTY_MEMBERS: ChatMemberDto[] = [];
 
 export default function MembersPanel({ channelId, canModerate, currentUserId }: MembersPanelProps) {
-  const [members, setMembers] = useState<ChatMemberDto[]>([]);
+  const members = useChatStore((state) => state.membersByChannel[channelId] ?? EMPTY_MEMBERS, shallowArrayEqual);
+  const online = useChatStore((state) => state.onlineUserIds, shallowArrayEqual);
   const [names, setNames] = useState<Record<string, string>>({});
-  const [online, setOnline] = useState<string[]>([]);
   const [busyUserId, setBusyUserId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
-    const [memberRows, personnel] = await Promise.all([getMembers(channelId), getPersonnelRecipients().catch(() => [])]);
-    setMembers(memberRows);
-    const nameMap: Record<string, string> = {};
-    for (const person of personnel) {
-      nameMap[person.userId] = person.name;
+    // Independent loads: a failure of one must not drop the other (members is the primary data,
+    // personnel names are display enrichment), so settle each and handle it on its own.
+    const [membersResult, personnelResult] = await Promise.allSettled([getMembers(channelId), getPersonnelRecipients()]);
+
+    if (membersResult.status === 'fulfilled') {
+      setChannelMembers(channelId, membersResult.value);
+      void seedPresenceFor(membersResult.value.map((member) => member.UserId));
+    } else {
+      // Leave any already-loaded members in place rather than wiping the panel on a transient error.
+      console.error('Failed to load channel members.', membersResult.reason);
     }
-    setNames(nameMap);
-    const userIds = memberRows.map((member) => member.UserId).filter((id): id is string => !!id);
-    if (userIds.length > 0) {
-      setOnline(await getPresence(userIds).catch(() => []));
+
+    if (personnelResult.status === 'fulfilled') {
+      const nameMap: Record<string, string> = {};
+      for (const person of personnelResult.value) {
+        nameMap[person.userId] = person.name;
+      }
+      setNames(nameMap);
+    } else {
+      console.error('Failed to load personnel names.', personnelResult.reason);
     }
   }, [channelId]);
 
@@ -67,7 +81,7 @@ export default function MembersPanel({ channelId, canModerate, currentUserId }: 
             {member.IsBanned && <span className="rgchat-tag">Banned</span>}
             {isMuted && <span className="rgchat-tag">Muted</span>}
             {canModerate && userId && userId !== currentUserId && (
-              <div style={{ display: 'flex', gap: 4 }}>
+              <div className="rgchat-member__actions">
                 <button
                   type="button"
                   className="rgchat-iconbtn"

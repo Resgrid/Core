@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { createAdHocChannel, createDirectMessage, getPersonnelRecipients, type PersonRecipient } from './chatApi';
 import { initialsFor, colorFor } from './chatFormat';
+import Dialog from './atoms/Dialog';
 import type { ChatChannelDto } from './types';
 
 interface NewConversationDialogProps {
@@ -63,56 +64,55 @@ export default function NewConversationDialog({ currentUserId, onClose, onCreate
   };
 
   return (
-    <div className="rgchat-dialog__backdrop" onClick={onClose}>
-      <div className="rgchat-dialog" onClick={(event) => event.stopPropagation()}>
-        <div className="rgchat-dialog__head">New conversation</div>
-        <div className="rgchat-dialog__body">
-          {error && <div className="rgchat-error">{error}</div>}
-          <input
-            className="rgchat-input"
-            placeholder="Search personnel"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            autoFocus
-          />
-          {selected.length > 1 && (
-            <input
-              className="rgchat-input"
-              placeholder="Group name"
-              value={groupName}
-              onChange={(event) => setGroupName(event.target.value)}
-              style={{ marginTop: 8 }}
-            />
-          )}
-          <div style={{ marginTop: 8, maxHeight: 300, overflowY: 'auto' }}>
-            {filtered.map((person) => (
-              <label key={person.userId} className="rgchat-pick">
-                <input
-                  type="checkbox"
-                  checked={selected.includes(person.userId)}
-                  onChange={() => toggle(person.userId)}
-                />
-                <span
-                  className="rgchat-avatar rgchat-avatar--sm"
-                  style={{ backgroundColor: colorFor(person.userId) }}
-                >
-                  {initialsFor(person.name)}
-                </span>
-                <span>{person.name}</span>
-              </label>
-            ))}
-            {filtered.length === 0 && <div className="rgchat-convo__sub" style={{ padding: 8 }}>No matches.</div>}
-          </div>
-        </div>
-        <div className="rgchat-dialog__foot">
+    <Dialog
+      title="New conversation"
+      onClose={onClose}
+      footer={
+        <>
           <button type="button" className="rgchat-btn rgchat-btn--ghost" onClick={onClose}>
             Cancel
           </button>
           <button type="button" className="rgchat-btn rgchat-btn--primary" onClick={() => void create()} disabled={busy || selected.length === 0}>
             {selected.length > 1 ? 'Create group' : 'Start chat'}
           </button>
-        </div>
+        </>
+      }
+    >
+      {error && <div className="rgchat-error">{error}</div>}
+      <input
+        className="rgchat-input"
+        placeholder="Search personnel"
+        value={query}
+        onChange={(event) => setQuery(event.target.value)}
+        autoFocus
+      />
+      {selected.length > 1 && (
+        <input
+          className="rgchat-input rgchat-dialog__field"
+          placeholder="Group name"
+          value={groupName}
+          onChange={(event) => setGroupName(event.target.value)}
+        />
+      )}
+      <div className="rgchat-dialog__list">
+        {filtered.map((person) => (
+          <label key={person.userId} className="rgchat-pick">
+            <input
+              type="checkbox"
+              checked={selected.includes(person.userId)}
+              onChange={() => toggle(person.userId)}
+            />
+            <span
+              className="rgchat-avatar rgchat-avatar--sm"
+              style={{ backgroundColor: colorFor(person.userId) }}
+            >
+              {initialsFor(person.name)}
+            </span>
+            <span>{person.name}</span>
+          </label>
+        ))}
+        {filtered.length === 0 && <div className="rgchat-popover__note">No matches.</div>}
       </div>
-    </div>
+    </Dialog>
   );
 }

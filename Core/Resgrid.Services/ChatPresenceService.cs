@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Config;
 using Resgrid.Model.Providers;
@@ -45,13 +46,32 @@ namespace Resgrid.Services
 		{
 			var online = new List<string>();
 
-			if (userIds == null)
+			if (userIds == null || userIds.Count == 0)
 				return online;
 
-			foreach (var userId in userIds)
+			// No batch/MGET on ICacheProvider: bound-parallel per-user GETs instead of a sequential loop.
+			using (var throttler = new SemaphoreSlim(8))
 			{
-				if (await IsOnlineAsync(departmentId, userId))
-					online.Add(userId);
+				async Task LookupAsync(string userId)
+				{
+					await throttler.WaitAsync();
+					try
+					{
+						if (await IsOnlineAsync(departmentId, userId))
+							lock (online)
+								online.Add(userId);
+					}
+					finally
+					{
+						throttler.Release();
+					}
+				}
+
+				var lookups = new List<Task>();
+				foreach (var userId in userIds)
+					lookups.Add(LookupAsync(userId));
+
+				await Task.WhenAll(lookups);
 			}
 
 			return online;

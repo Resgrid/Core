@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Resgrid.Repositories.NoSqlRepository
@@ -103,28 +104,28 @@ namespace Resgrid.Repositories.NoSqlRepository
 			}
 		}
 
-		public async Task<PersonnelLocation> InsertAsync(PersonnelLocation location)
+		public async Task<PersonnelLocation> InsertAsync(PersonnelLocation location, CancellationToken cancellationToken = default)
 		{
 			var dataJson = JsonConvert.SerializeObject(location);
 
 			using (var connection = new NpgsqlConnection(Config.DataConfig.DocumentConnectionString))
 			{
-				await connection.OpenAsync();
-				var result = await connection.ExecuteScalarAsync<string>(
+				await connection.OpenAsync(cancellationToken);
+				var result = await connection.ExecuteScalarAsync<string>(new Dapper.CommandDefinition(
 					"INSERT INTO public.personnellocations (departmentid, userid, data) VALUES (@departmentId, @userId, CAST(@dataJson AS jsonb)) RETURNING id::text;",
 					new
 					{
 						departmentId = location.DepartmentId,
 						userId = location.UserId,
 						dataJson
-					});
+					}, cancellationToken: cancellationToken));
 				location.PgId = result;
 
 				return location;
 			}
 		}
 
-		public async Task<PersonnelLocation> UpdateAsync(PersonnelLocation location)
+		public async Task<PersonnelLocation> UpdateAsync(PersonnelLocation location, CancellationToken cancellationToken = default)
 		{
 			if (location == null)
 				throw new ArgumentNullException(nameof(location));
@@ -139,9 +140,9 @@ namespace Resgrid.Repositories.NoSqlRepository
 
 			using (var connection = new NpgsqlConnection(Config.DataConfig.DocumentConnectionString))
 			{
-				await connection.OpenAsync();
+				await connection.OpenAsync(cancellationToken);
 
-				await connection.ExecuteAsync(
+				await connection.ExecuteAsync(new Dapper.CommandDefinition(
 					"UPDATE public.personnellocations SET departmentid = @departmentId, userid = @userId, data = CAST(@dataJson AS jsonb) WHERE id = @id;",
 					new
 					{
@@ -149,7 +150,7 @@ namespace Resgrid.Repositories.NoSqlRepository
 						userId = location.UserId,
 						dataJson,
 						id = pgId
-					});
+					}, cancellationToken: cancellationToken));
 
 				return location;
 			}

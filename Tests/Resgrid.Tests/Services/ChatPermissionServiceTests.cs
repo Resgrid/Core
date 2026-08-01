@@ -346,10 +346,39 @@ namespace Resgrid.Tests.Services
 					DepartmentId = 1,
 					UnitDispatches = new List<CallDispatchUnit> { new CallDispatchUnit { CallId = 42, UnitId = 7 } }
 				});
+				_unitsServiceMock.Setup(x => x.GetUnitByIdAsync(7)).ReturnsAsync(new Unit { UnitId = 7, DepartmentId = 1, Name = "Engine 6" });
+				_unitsServiceMock.Setup(x => x.GetActiveRolesForUnitAsync(7)).ReturnsAsync(new List<UnitActiveRole>
+				{
+					new UnitActiveRole { UnitId = 7, UserId = TestData.Users.TestUser1Id }
+				});
 
 				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, 7);
 
 				result.Should().BeTrue();
+			}
+
+			[Test]
+			public async Task unit_dispatched_user_who_does_not_crew_the_unit_should_not_have_access_to_incident_channel()
+			{
+				var channel = CreateChannel(ChatChannelType.Incident);
+				channel.CallId = 42;
+				_callsServiceMock.Setup(x => x.GetCallByIdAsync(42, It.IsAny<bool>())).ReturnsAsync(new Call
+				{
+					CallId = 42,
+					DepartmentId = 1,
+					UnitDispatches = new List<CallDispatchUnit> { new CallDispatchUnit { CallId = 42, UnitId = 7 } }
+				});
+				// User claims unit 7 as their active unit, but crews nothing.
+				_unitsServiceMock.Setup(x => x.GetUnitByIdAsync(7)).ReturnsAsync(new Unit { UnitId = 7, DepartmentId = 1, Name = "Engine 6" });
+				_unitsServiceMock.Setup(x => x.GetActiveRolesForUnitAsync(7)).ReturnsAsync(new List<UnitActiveRole>
+				{
+					new UnitActiveRole { UnitId = 7, UserId = TestData.Users.TestUser2Id }
+				});
+				_incidentCommandServiceMock.Setup(x => x.GetAssignmentsForCallAsync(1, 42)).ReturnsAsync(new List<ResourceAssignment>());
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, 7);
+
+				result.Should().BeFalse();
 			}
 
 			[Test]
@@ -768,6 +797,49 @@ namespace Resgrid.Tests.Services
 				_incidentCommandServiceMock.Setup(x => x.GetCommandForCallAsync(1, 42)).ReturnsAsync((IncidentCommand)null);
 
 				var result = await _chatPermissionService.CanSendAsIcAsync(TestData.Users.TestUser1Id, 42, 1);
+
+				result.Should().BeFalse();
+			}
+		}
+
+		[TestFixture]
+		public class when_evaluating_unit_sending : with_the_chat_permission_service
+		{
+			[Test]
+			public async Task active_crew_member_should_send_as_unit()
+			{
+				_unitsServiceMock.Setup(x => x.GetUnitByIdAsync(7)).ReturnsAsync(new Unit { UnitId = 7, DepartmentId = 1, Name = "Engine 6" });
+				_unitsServiceMock.Setup(x => x.GetActiveRolesForUnitAsync(7)).ReturnsAsync(new List<UnitActiveRole>
+				{
+					new UnitActiveRole { UnitId = 7, UserId = TestData.Users.TestUser1Id }
+				});
+
+				var result = await _chatPermissionService.CanSendAsUnitAsync(TestData.Users.TestUser1Id, 7, 1);
+
+				result.Should().BeTrue();
+			}
+
+			[Test]
+			public async Task department_member_who_does_not_crew_the_unit_should_not_send_as_unit()
+			{
+				_departmentsServiceMock.Setup(x => x.IsUserInDepartmentAsync(1, TestData.Users.TestUser1Id)).ReturnsAsync(true);
+				_unitsServiceMock.Setup(x => x.GetUnitByIdAsync(7)).ReturnsAsync(new Unit { UnitId = 7, DepartmentId = 1, Name = "Engine 6" });
+				_unitsServiceMock.Setup(x => x.GetActiveRolesForUnitAsync(7)).ReturnsAsync(new List<UnitActiveRole>
+				{
+					new UnitActiveRole { UnitId = 7, UserId = TestData.Users.TestUser2Id }
+				});
+
+				var result = await _chatPermissionService.CanSendAsUnitAsync(TestData.Users.TestUser1Id, 7, 1);
+
+				result.Should().BeFalse();
+			}
+
+			[Test]
+			public async Task unit_from_another_department_should_not_send_as_unit()
+			{
+				_unitsServiceMock.Setup(x => x.GetUnitByIdAsync(7)).ReturnsAsync(new Unit { UnitId = 7, DepartmentId = 2, Name = "Engine 6" });
+
+				var result = await _chatPermissionService.CanSendAsUnitAsync(TestData.Users.TestUser1Id, 7, 1);
 
 				result.Should().BeFalse();
 			}

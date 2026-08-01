@@ -3,7 +3,7 @@ import './chat.css';
 import { getCurrentUserId, isDepartmentAdmin, type ChatChannelDto, type ChatMessageDto } from './types';
 import { useChatBootstrap } from './useChatBootstrap';
 import { useChatStore, shallowArrayEqual } from './useChatStore';
-import { setActiveChannel } from './chatStore';
+import { setActiveChannel, setHighlightMessage } from './chatStore';
 import { flagChatMessage } from './chatActions';
 import { searchMessages } from './chatApi';
 import { channelDisplayName, formatRelativeDay } from './chatFormat';
@@ -14,6 +14,7 @@ import MembersPanel from './MembersPanel';
 import PinsPanel from './PinsPanel';
 import NewConversationDialog from './NewConversationDialog';
 import FlagDialog from './FlagDialog';
+import { NoticeToast, AuthErrorNotice } from './atoms/StatusBanners';
 
 type AsideTab = 'members' | 'pins' | 'thread';
 
@@ -22,7 +23,7 @@ export interface ChatPageElementProps {
 }
 
 export default function ChatPageElement(_props: ChatPageElementProps) {
-  const { available, loaded } = useChatBootstrap();
+  const { available, loaded } = useChatBootstrap({ connectImmediately: true });
   const channels = useChatStore((state) => state.channels, shallowArrayEqual);
 
   const [activeChannelId, setActiveChannelId] = useState<string | null>(null);
@@ -37,9 +38,10 @@ export default function ChatPageElement(_props: ChatPageElementProps) {
   const canModerate = isDepartmentAdmin();
   const activeChannel = channels.find((channel) => channel.ChatChannelId === activeChannelId) ?? null;
 
-  const openChannel = (channelId: string) => {
+  const openChannel = (channelId: string, messageId?: string) => {
     setActiveChannelId(channelId);
     setActiveChannel(channelId);
+    setHighlightMessage(messageId ?? null);
     setResults(null);
     setThread(null);
     setAsideTab('members');
@@ -66,6 +68,7 @@ export default function ChatPageElement(_props: ChatPageElementProps) {
 
   return (
     <div className="rgchat-root">
+      <AuthErrorNotice />
       <div className="rgchat-page">
         <div className="rgchat-page__sidebar">
           <div className="rgchat-page__sidebar-head">
@@ -80,11 +83,11 @@ export default function ChatPageElement(_props: ChatPageElementProps) {
                 }
               }}
             />
-            <button type="button" className="rgchat-iconbtn" title="New conversation" onClick={() => setShowNew(true)} style={{ color: '#2f4050' }}>
+            <button type="button" className="rgchat-iconbtn rgchat-iconbtn--dark" title="New conversation" aria-label="New conversation" onClick={() => setShowNew(true)}>
               ＋
             </button>
           </div>
-          <ChannelList channels={channels} activeChannelId={activeChannelId} filter={search} onSelect={openChannel} />
+          <ChannelList channels={channels} activeChannelId={activeChannelId} filter={results ? undefined : search} loading={!loaded} onSelect={openChannel} />
         </div>
 
         <div className="rgchat-page__center">
@@ -95,7 +98,7 @@ export default function ChatPageElement(_props: ChatPageElementProps) {
                   <div className="rgchat-convo__title">Search results</div>
                   <div className="rgchat-convo__sub">{results.length} match{results.length === 1 ? '' : 'es'}</div>
                 </div>
-                <button type="button" className="rgchat-iconbtn" title="Close search" onClick={() => setResults(null)}>
+                <button type="button" className="rgchat-iconbtn" title="Close search" aria-label="Close search" onClick={() => setResults(null)}>
                   ✕
                 </button>
               </div>
@@ -108,7 +111,7 @@ export default function ChatPageElement(_props: ChatPageElementProps) {
                       key={message.ChatMessageId}
                       type="button"
                       className="rgchat-chan"
-                      onClick={() => openChannel(message.ChatChannelId)}
+                      onClick={() => openChannel(message.ChatChannelId, message.ChatMessageId)}
                     >
                       <div className="rgchat-chan__body">
                         <div className="rgchat-chan__name">
@@ -135,7 +138,7 @@ export default function ChatPageElement(_props: ChatPageElementProps) {
             />
           ) : (
             <div className="rgchat-empty">
-              <div style={{ fontSize: 40 }}>💬</div>
+              <div className="rgchat-empty__icon" aria-hidden="true">💬</div>
               <div>Select a conversation to start chatting.</div>
             </div>
           )}
@@ -184,6 +187,8 @@ export default function ChatPageElement(_props: ChatPageElementProps) {
       {flagTarget && (
         <FlagDialog onClose={() => setFlagTarget(null)} onSubmit={(reason, note) => void flagChatMessage(flagTarget, reason, note)} />
       )}
+
+      <NoticeToast />
     </div>
   );
 }

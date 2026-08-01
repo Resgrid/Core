@@ -158,6 +158,15 @@
   <data name="ContactsModule" xml:space="preserve">
     <value>Контакти</value>
   </data>
+  <data name="ChatModule" xml:space="preserve">
+    <value>Chat</value>
+  </data>
+  <data name="AssistantModule" xml:space="preserve">
+    <value>Assistant</value>
+  </data>
+  <data name="ChatModerationModule" xml:space="preserve">
+    <value>Chat Moderation</value>
+  </data>
   <data name="ContactUs" xml:space="preserve">
     <value>Зв'яжіться з нами</value>
   </data>

@@ -4,7 +4,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using CommonServiceLocator;
+using Microsoft.Data.SqlClient;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using Npgsql;
 using Resgrid.Framework;
 using Resgrid.Config;
 using Resgrid.Model;
@@ -58,9 +61,9 @@ namespace Resgrid.Services
 			_eventAggregator = eventAggregator;
 		}
 
-		public async Task<ChatMessage> SendMessageAsync(ChatMessageSendRequest request, CancellationToken cancellationToken = default(CancellationToken))
+		public async Task<ChatMessage> SendMessageAsync(string senderUserId, ChatMessageSendRequest request, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			if (request == null || string.IsNullOrWhiteSpace(request.ChatChannelId))
+			if (request == null || string.IsNullOrWhiteSpace(request.ChatChannelId) || string.IsNullOrWhiteSpace(senderUserId))
 				return null;
 
 			var channel = await _chatChannelRepository.GetByIdAsync(request.ChatChannelId);
@@ -68,29 +71,44 @@ namespace Resgrid.Services
 				return null;
 
 			// Idempotent resend from the mobile offline outbox.
-			if (!string.IsNullOrWhiteSpace(request.ClientMessageId) && !string.IsNullOrWhiteSpace(request.SenderUserId))
+			if (!string.IsNullOrWhiteSpace(request.ClientMessageId))
 			{
-				var existing = await _chatMessageRepository.GetByClientMessageIdAsync(channel.ChatChannelId, request.SenderUserId, request.ClientMessageId);
+				var existing = await _chatMessageRepository.GetByClientMessageIdAsync(channel.ChatChannelId, senderUserId, request.ClientMessageId);
 				if (existing != null)
 					return existing;
 			}
 
-			if (!request.AsBot)
-			{
-				if (string.IsNullOrWhiteSpace(request.SenderUserId))
-					return null;
+			if (!await _chatPermissionService.CanPostAsync(channel, senderUserId, request.AsUnitId))
+				return null;
 
-				if (!await _chatPermissionService.CanPostAsync(channel, request.SenderUserId, request.AsUnitId))
-					return null;
-
-				if (request.AsIncidentCommander &&
-					(!channel.CallId.HasValue || !await _chatPermissionService.CanSendAsIcAsync(request.SenderUserId, channel.CallId.Value, channel.DepartmentId)))
-					return null;
-			}
+			if (request.AsIncidentCommander &&
+				(!channel.CallId.HasValue || !await _chatPermissionService.CanSendAsIcAsync(senderUserId, channel.CallId.Value, channel.DepartmentId)))
+				return null;
 
 			var settings = await _chatChannelService.GetDepartmentSettingsAsync(channel.DepartmentId);
 			if (!ValidateContent(request, settings))
 				return null;
+
+			// Urgent and @everyone are moderator-only: silently downgrade instead of failing the send.
+			var priority = request.Priority;
+			var mentions = request.Mentions;
+			var requiresModerator = priority == ChatMessagePriority.Urgent ||
+				(mentions != null && mentions.Any(m => m.MentionType == (int)ChatMentionType.Everyone));
+			if (requiresModerator && !await _chatPermissionService.CanModerateChannelAsync(channel, senderUserId))
+			{
+				priority = ChatMessagePriority.Normal;
+				if (mentions != null)
+					mentions = mentions.Where(m => m.MentionType != (int)ChatMentionType.Everyone).ToList();
+			}
+
+			// User mentions must target a resolvable audience member; anything else is dropped.
+			if (mentions != null && mentions.Any(m => m.MentionType == (int)ChatMentionType.User && !string.IsNullOrWhiteSpace(m.TargetUserId)))
+			{
+				var audience = new HashSet<string>(await _chatPermissionService.ResolveChannelAudienceUserIdsAsync(channel), StringComparer.OrdinalIgnoreCase);
+				mentions = mentions
+					.Where(m => m.MentionType != (int)ChatMentionType.User || (!string.IsNullOrWhiteSpace(m.TargetUserId) && audience.Contains(m.TargetUserId)))
+					.ToList();
+			}
 
 			ChatMessage threadRoot = null;
 			if (!string.IsNullOrWhiteSpace(request.ThreadRootMessageId))
@@ -100,9 +118,13 @@ namespace Resgrid.Services
 					return null;
 			}
 
-			var senderDisplayName = await ResolveSenderDisplayNameAsync(request, channel);
+			var senderDisplayName = await ResolveSenderDisplayNameAsync(senderUserId, request.AsUnitId, request.AsIncidentCommander, false, null);
 
 			var seq = await _chatChannelRepository.AllocateNextMessageSeqAsync(channel.ChatChannelId, DateTime.UtcNow);
+
+			// Keep the in-memory channel current: notification badge counts read LastMessageSeq.
+			channel.LastMessageSeq = seq;
+			channel.LastMessageOn = DateTime.UtcNow;
 
 			var message = new ChatMessage
 			{
@@ -110,16 +132,16 @@ namespace Resgrid.Services
 				ChatChannelId = channel.ChatChannelId,
 				DepartmentId = channel.DepartmentId,
 				MessageSeq = seq,
-				SenderParticipantType = request.AsBot ? (int)ChatParticipantType.Bot : (request.AsUnitId.HasValue ? (int)ChatParticipantType.Unit : (int)ChatParticipantType.User),
-				SenderUserId = request.SenderUserId,
+				SenderParticipantType = request.AsUnitId.HasValue ? (int)ChatParticipantType.Unit : (int)ChatParticipantType.User,
+				SenderUserId = senderUserId,
 				SenderUnitId = request.AsUnitId,
 				SenderDisplayName = senderDisplayName,
 				Body = request.Body,
 				MessageType = (int)request.MessageType,
-				Priority = (int)request.Priority,
+				Priority = (int)priority,
 				ThreadRootMessageId = request.ThreadRootMessageId,
 				AlsoSendToChannel = request.AlsoSendToChannel,
-				MetadataJson = request.MetadataJson,
+				MetadataJson = ValidateMetadataJson(request.MessageType, request.MetadataJson),
 				ClientMessageId = request.ClientMessageId,
 				SentOn = DateTime.UtcNow
 			};
@@ -131,9 +153,9 @@ namespace Resgrid.Services
 			catch (Exception)
 			{
 				// Unique (Channel, Sender, ClientMessageId) index backstops concurrent resends.
-				if (!string.IsNullOrWhiteSpace(request.ClientMessageId) && !string.IsNullOrWhiteSpace(request.SenderUserId))
+				if (!string.IsNullOrWhiteSpace(request.ClientMessageId))
 				{
-					var winner = await _chatMessageRepository.GetByClientMessageIdAsync(channel.ChatChannelId, request.SenderUserId, request.ClientMessageId);
+					var winner = await _chatMessageRepository.GetByClientMessageIdAsync(channel.ChatChannelId, senderUserId, request.ClientMessageId);
 					if (winner != null)
 						return winner;
 				}
@@ -152,37 +174,66 @@ namespace Resgrid.Services
 				});
 			}
 
-			await SaveMentionsAsync(request, message, cancellationToken);
+			await SaveMentionsAsync(mentions, message, cancellationToken);
 
 			if (message.Priority == (int)ChatMessagePriority.Urgent)
 				await ProvisionAcksAsync(channel, message, cancellationToken);
 
-			// The sender has obviously read their own message.
-			if (!request.AsBot && !string.IsNullOrWhiteSpace(request.SenderUserId))
+			// The sender has obviously read their own message. A rule-based CustomLocked poster has no
+			// membership row (EnsureMemberStateAsync won't self-grant one) — pointers just don't advance.
+			ChatChannelMember member = null;
+			try
 			{
-				var member = await _chatChannelService.EnsureMemberStateAsync(channel.ChatChannelId, channel.DepartmentId, request.SenderUserId, request.AsUnitId, cancellationToken);
-				if (member != null)
-					await AdvancePointersAsync(member, seq, markRead: true);
+				member = await _chatChannelService.EnsureMemberStateAsync(channel.ChatChannelId, channel.DepartmentId, senderUserId, request.AsUnitId, cancellationToken);
 			}
+			catch (UnauthorizedAccessException)
+			{
+			}
+
+			if (member != null)
+				await AdvancePointersAsync(member, seq, markRead: true);
 
 			PublishEvent(channel, ChatEventKinds.MessageReceived, BuildMessageDto(message));
 
-			// Push fan-out off the request path: per-recipient Novu calls can be slow for large channels,
-			// and a push failure must never fail the send. Fresh resolution inside the task keeps us off
-			// the request's disposed lifetime scope (ChatProvisioningEventService pattern).
-			var mentionsForPush = request.Mentions;
-			_ = Task.Run(async () =>
+			FireAndForgetNotify(channel, message, mentions);
+
+			return message;
+		}
+
+		public async Task<ChatMessage> SendBotMessageAsync(string channelId, string departmentId, string body, string senderDisplayName, string metadataJson = null)
+		{
+			if (string.IsNullOrWhiteSpace(channelId) || string.IsNullOrWhiteSpace(body) || body.Length > ChatConfig.MaxMessageLength)
+				return null;
+
+			var channel = await _chatChannelRepository.GetByIdAsync(channelId);
+			if (channel == null || !string.Equals(channel.DepartmentId.ToString(), departmentId, StringComparison.OrdinalIgnoreCase))
+				return null;
+
+			var seq = await _chatChannelRepository.AllocateNextMessageSeqAsync(channel.ChatChannelId, DateTime.UtcNow);
+			channel.LastMessageSeq = seq;
+			channel.LastMessageOn = DateTime.UtcNow;
+
+			var message = new ChatMessage
 			{
-				try
-				{
-					var notifier = ServiceLocator.Current.GetInstance<IChatNotificationService>();
-					await notifier.NotifyMessageSentAsync(channel, message, mentionsForPush);
-				}
-				catch (Exception ex)
-				{
-					Logging.LogException(ex);
-				}
-			});
+				ChatMessageId = Guid.NewGuid().ToString(),
+				ChatChannelId = channel.ChatChannelId,
+				DepartmentId = channel.DepartmentId,
+				MessageSeq = seq,
+				SenderParticipantType = (int)ChatParticipantType.Bot,
+				SenderUserId = null,
+				SenderDisplayName = string.IsNullOrWhiteSpace(senderDisplayName) ? "Resgrid Assistant" : senderDisplayName,
+				Body = body,
+				MessageType = (int)ChatMessageType.Bot,
+				Priority = (int)ChatMessagePriority.Normal,
+				MetadataJson = ValidateMetadataJson(ChatMessageType.Bot, metadataJson),
+				SentOn = DateTime.UtcNow
+			};
+
+			await _chatMessageRepository.InsertAsync(message, CancellationToken.None);
+
+			PublishEvent(channel, ChatEventKinds.MessageReceived, BuildMessageDto(message));
+
+			FireAndForgetNotify(channel, message, null);
 
 			return message;
 		}
@@ -224,15 +275,19 @@ namespace Resgrid.Services
 
 			await SaveEditHistoryAsync(message, ChatMessageEditType.Edit, editorUserId, cancellationToken);
 
-			message.Body = newBody;
-			message.EditedOn = DateTime.UtcNow;
+			// Targeted update guarded by DeletedOn IS NULL: a concurrent tombstone wins, and the edit
+			// never resurrects it or clobbers ThreadReplyCount increments.
+			var editedOn = DateTime.UtcNow;
+			if (!await _chatMessageRepository.UpdateBodyAsync(chatMessageId, newBody, editedOn, cancellationToken))
+				return null;
 
-			var saved = await _chatMessageRepository.UpdateAsync(message, cancellationToken);
+			message.Body = newBody;
+			message.EditedOn = editedOn;
 
 			var channel = await _chatChannelRepository.GetByIdAsync(message.ChatChannelId);
-			PublishEvent(channel, ChatEventKinds.MessageEdited, BuildMessageDto(saved));
+			PublishEvent(channel, ChatEventKinds.MessageEdited, BuildMessageDto(message));
 
-			return saved;
+			return message;
 		}
 
 		public async Task<bool> DeleteMessageAsync(string chatMessageId, string byUserId, bool asModerator, string reason, CancellationToken cancellationToken = default(CancellationToken))
@@ -247,12 +302,14 @@ namespace Resgrid.Services
 
 			await SaveEditHistoryAsync(message, asModerator && !isSender ? ChatMessageEditType.ModeratorDelete : ChatMessageEditType.SenderDelete, byUserId, cancellationToken);
 
+			var deletedOn = DateTime.UtcNow;
+			if (!await _chatMessageRepository.TombstoneAsync(chatMessageId, deletedOn, byUserId, cancellationToken))
+				return false;
+
 			message.Body = null;
 			message.MetadataJson = null;
-			message.DeletedOn = DateTime.UtcNow;
+			message.DeletedOn = deletedOn;
 			message.DeletedByUserId = byUserId;
-
-			await _chatMessageRepository.UpdateAsync(message, cancellationToken);
 
 			var channel = await _chatChannelRepository.GetByIdAsync(message.ChatChannelId);
 			PublishEvent(channel, ChatEventKinds.MessageDeleted, new
@@ -276,6 +333,13 @@ namespace Resgrid.Services
 			if (message == null || message.DeletedOn.HasValue)
 				return false;
 
+			// Banned or currently-muted participants can't react; silently skip.
+			var member = unitId.HasValue
+				? await _chatChannelMemberRepository.GetUnitMemberAsync(message.ChatChannelId, unitId.Value)
+				: await _chatChannelMemberRepository.GetUserMemberAsync(message.ChatChannelId, userId);
+			if (member != null && (member.IsBanned || (member.MutedUntil.HasValue && member.MutedUntil.Value > DateTime.UtcNow)))
+				return false;
+
 			try
 			{
 				await _chatMessageReactionRepository.InsertAsync(new ChatMessageReaction
@@ -291,7 +355,7 @@ namespace Resgrid.Services
 					ReactedOn = DateTime.UtcNow
 				}, cancellationToken);
 			}
-			catch (Exception)
+			catch (Exception ex) when (IsUniqueViolation(ex))
 			{
 				// Unique index: reacting twice with the same emoji is a no-op.
 				return true;
@@ -339,10 +403,12 @@ namespace Resgrid.Services
 			if (message == null || message.DeletedOn.HasValue)
 				return false;
 
-			message.PinnedOn = pinned ? DateTime.UtcNow : (DateTime?)null;
-			message.PinnedByUserId = pinned ? byUserId : null;
+			var pinnedOn = pinned ? DateTime.UtcNow : (DateTime?)null;
+			if (!await _chatMessageRepository.SetPinnedAsync(chatMessageId, pinnedOn, pinned ? byUserId : null, cancellationToken))
+				return false;
 
-			await _chatMessageRepository.UpdateAsync(message, cancellationToken);
+			message.PinnedOn = pinnedOn;
+			message.PinnedByUserId = pinned ? byUserId : null;
 
 			var channel = await _chatChannelRepository.GetByIdAsync(message.ChatChannelId);
 			PublishEvent(channel, ChatEventKinds.ChannelUpdated, new { message.ChatChannelId, PinnedMessageId = message.ChatMessageId, Pinned = pinned });
@@ -434,7 +500,7 @@ namespace Resgrid.Services
 			if (channelIds.Count == 0)
 				return new List<ChatMessage>();
 
-			var results = await _chatMessageRepository.SearchAsync(departmentId, channelIds, query, from, to, Math.Max(page, 0), pageSize <= 0 ? 25 : Math.Min(pageSize, 100));
+			var results = await _chatMessageRepository.SearchAsync(departmentId, channelIds, query, from, to, Math.Max(page, 1), pageSize <= 0 ? 25 : Math.Min(pageSize, 100));
 			return results?.ToList() ?? new List<ChatMessage>();
 		}
 
@@ -469,37 +535,83 @@ namespace Resgrid.Services
 			}
 		}
 
-		private async Task<string> ResolveSenderDisplayNameAsync(ChatMessageSendRequest request, ChatChannel channel)
+		/// <summary>
+		/// Server-side metadata validation: the JSON must parse; link urls must be http/https; GIF urls
+		/// must be https on a known GIF CDN host. Invalid payloads are dropped (null), never fatal.
+		/// </summary>
+		private static string ValidateMetadataJson(ChatMessageType messageType, string metadataJson)
 		{
-			if (!string.IsNullOrWhiteSpace(request.SenderDisplayName))
-				return request.SenderDisplayName;
+			if (string.IsNullOrWhiteSpace(metadataJson))
+				return metadataJson;
 
-			if (request.AsBot)
+			try
+			{
+				var metadata = JObject.Parse(metadataJson);
+				var url = metadata.Value<string>("url");
+				if (string.IsNullOrWhiteSpace(url))
+					return metadataJson;
+
+				if (messageType == ChatMessageType.Gif)
+				{
+					if (!Uri.TryCreate(url, UriKind.Absolute, out var gifUri) || gifUri.Scheme != Uri.UriSchemeHttps || !IsGifCdnHost(gifUri.Host))
+						return null;
+				}
+				else
+				{
+					if (!Uri.TryCreate(url, UriKind.Absolute, out var linkUri) ||
+						(linkUri.Scheme != Uri.UriSchemeHttp && linkUri.Scheme != Uri.UriSchemeHttps))
+						return null;
+				}
+
+				return metadataJson;
+			}
+			catch (Exception)
+			{
+				return null;
+			}
+		}
+
+		private static bool IsGifCdnHost(string host)
+		{
+			if (string.IsNullOrWhiteSpace(host) || ChatConfig.GifCdnHosts == null)
+				return false;
+
+			return ChatConfig.GifCdnHosts.Any(cdn =>
+				string.Equals(host, cdn, StringComparison.OrdinalIgnoreCase) ||
+				host.EndsWith("." + cdn, StringComparison.OrdinalIgnoreCase));
+		}
+
+		private async Task<string> ResolveSenderDisplayNameAsync(string senderUserId, int? asUnitId, bool asIncidentCommander, bool asBot, string displayNameOverride)
+		{
+			if (!string.IsNullOrWhiteSpace(displayNameOverride))
+				return displayNameOverride;
+
+			if (asBot)
 				return "Resgrid Assistant";
 
 			string profileName = null;
-			var profile = await _userProfileService.GetProfileByUserIdAsync(request.SenderUserId);
+			var profile = await _userProfileService.GetProfileByUserIdAsync(senderUserId);
 			if (profile != null)
 				profileName = $"{profile.FirstName} {profile.LastName}".Trim();
 
-			if (request.AsUnitId.HasValue)
+			if (asUnitId.HasValue)
 			{
-				var unit = await _unitsService.GetUnitByIdAsync(request.AsUnitId.Value);
+				var unit = await _unitsService.GetUnitByIdAsync(asUnitId.Value);
 				return unit?.Name ?? profileName ?? "Unit";
 			}
 
-			if (request.AsIncidentCommander)
+			if (asIncidentCommander)
 				return string.IsNullOrWhiteSpace(profileName) ? "Incident Commander" : $"Incident Commander ({profileName})";
 
 			return string.IsNullOrWhiteSpace(profileName) ? "Unknown" : profileName;
 		}
 
-		private async Task SaveMentionsAsync(ChatMessageSendRequest request, ChatMessage message, CancellationToken cancellationToken)
+		private async Task SaveMentionsAsync(List<ChatMessageMention> mentions, ChatMessage message, CancellationToken cancellationToken)
 		{
-			if (request.Mentions == null || request.Mentions.Count == 0)
+			if (mentions == null || mentions.Count == 0)
 				return;
 
-			foreach (var mention in request.Mentions)
+			foreach (var mention in mentions)
 			{
 				mention.ChatMessageMentionId = Guid.NewGuid().ToString();
 				mention.ChatMessageId = message.ChatMessageId;
@@ -513,21 +625,19 @@ namespace Resgrid.Services
 		private async Task ProvisionAcksAsync(ChatChannel channel, ChatMessage message, CancellationToken cancellationToken)
 		{
 			var audience = await _chatPermissionService.ResolveChannelAudienceUserIdsAsync(channel);
+			var requiredUserIds = audience.Where(u => !string.Equals(u, message.SenderUserId, StringComparison.OrdinalIgnoreCase)).ToList();
 
-			foreach (var userId in audience.Where(u => !string.Equals(u, message.SenderUserId, StringComparison.OrdinalIgnoreCase)))
+			await _chatMessageAckRepository.BulkInsertAcksAsync(requiredUserIds.Select(userId => new ChatMessageAck
 			{
-				await _chatMessageAckRepository.InsertAsync(new ChatMessageAck
-				{
-					ChatMessageAckId = Guid.NewGuid().ToString(),
-					ChatMessageId = message.ChatMessageId,
-					ChatChannelId = message.ChatChannelId,
-					DepartmentId = message.DepartmentId,
-					UserId = userId,
-					RequiredOn = message.SentOn
-				}, cancellationToken);
-			}
+				ChatMessageAckId = Guid.NewGuid().ToString(),
+				ChatMessageId = message.ChatMessageId,
+				ChatChannelId = message.ChatChannelId,
+				DepartmentId = message.DepartmentId,
+				UserId = userId,
+				RequiredOn = message.SentOn
+			}), cancellationToken);
 
-			PublishEvent(channel, ChatEventKinds.AckRequired, new { message.ChatMessageId, message.ChatChannelId, message.MessageSeq, RequiredCount = audience.Count });
+			PublishEvent(channel, ChatEventKinds.AckRequired, new { message.ChatMessageId, message.ChatChannelId, message.MessageSeq, RequiredCount = requiredUserIds.Count });
 		}
 
 		private async Task SaveEditHistoryAsync(ChatMessage message, ChatMessageEditType editType, string byUserId, CancellationToken cancellationToken)
@@ -543,6 +653,38 @@ namespace Resgrid.Services
 				EditedByUserId = byUserId,
 				EditedOn = DateTime.UtcNow
 			}, cancellationToken);
+		}
+
+		/// <summary>
+		/// Push fan-out off the request path: per-recipient Novu calls can be slow for large channels,
+		/// and a push failure must never fail the send. Fresh resolution inside the task keeps us off
+		/// the request's disposed lifetime scope (ChatProvisioningEventService pattern).
+		/// </summary>
+		private void FireAndForgetNotify(ChatChannel channel, ChatMessage message, List<ChatMessageMention> mentions)
+		{
+			_ = Task.Run(async () =>
+			{
+				try
+				{
+					var notifier = ServiceLocator.Current.GetInstance<IChatNotificationService>();
+					await notifier.NotifyMessageSentAsync(channel, message, mentions);
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+				}
+			});
+		}
+
+		private static bool IsUniqueViolation(Exception ex)
+		{
+			if (ex is PostgresException postgres)
+				return postgres.SqlState == "23505";
+
+			if (ex is SqlException sql)
+				return sql.Number == 2601 || sql.Number == 2627;
+
+			return false;
 		}
 
 		private object BuildMessageDto(ChatMessage message)

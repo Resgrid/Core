@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using Newtonsoft.Json;
+using ProtoBuf;
 
 namespace Resgrid.Model
 {
@@ -11,63 +12,86 @@ namespace Resgrid.Model
 	/// types (department, group, incident) is resolved at read time by ChatPermissionService; explicit
 	/// membership rows exist only where required (see <see cref="ChatChannelMember"/>).
 	/// </summary>
+	[ProtoContract]
 	public class ChatChannel : IEntity, IChangeTracked
 	{
+		[ProtoMember(1)]
 		public string ChatChannelId { get; set; }
 
+		[ProtoMember(2)]
 		public int DepartmentId { get; set; }
 
 		/// <summary>Maps to <see cref="ChatChannelType"/>.</summary>
+		[ProtoMember(3)]
 		public int ChannelType { get; set; }
 
+		[ProtoMember(4)]
 		public string Name { get; set; }
 
+		[ProtoMember(5)]
 		public string Topic { get; set; }
 
+		[ProtoMember(6)]
 		public string CreatedByUserId { get; set; }
 
+		[ProtoMember(7)]
 		public DateTime CreatedOn { get; set; }
 
 		/// <summary>Anchor for GroupDefault channels (FK DepartmentGroups).</summary>
+		[ProtoMember(8)]
 		public int? GroupId { get; set; }
 
 		/// <summary>Anchor for Incident/IncidentLane/IncidentCommand channels.</summary>
+		[ProtoMember(9)]
 		public int? CallId { get; set; }
 
 		/// <summary>Anchor for IncidentCommand/IncidentLane channels (FK IncidentCommands).</summary>
+		[ProtoMember(10)]
 		public string IncidentCommandId { get; set; }
 
 		/// <summary>Anchor for IncidentLane channels (FK CommandStructureNodes).</summary>
+		[ProtoMember(11)]
 		public string CommandStructureNodeId { get; set; }
 
 		/// <summary>Anchor for Chatbot channels: the user this bot conversation belongs to.</summary>
+		[ProtoMember(12)]
 		public string OwnerUserId { get; set; }
 
 		/// <summary>
 		/// Normalized participant identity key for DM dedup, unique per department when set.
 		/// Sorted, e.g. "u:{idA}|u:{idB}" or "u:{userId}|unit:{unitId}".
 		/// </summary>
+		[ProtoMember(13)]
 		public string DmKey { get; set; }
 
+		[ProtoMember(14)]
 		public bool IsArchived { get; set; }
 
+		[ProtoMember(15)]
 		public DateTime? ArchivedOn { get; set; }
 
 		/// <summary>Locked = only moderators can post; everyone with access can still read.</summary>
+		[ProtoMember(16)]
 		public bool IsLocked { get; set; }
 
+		[ProtoMember(17)]
 		public string LockedByUserId { get; set; }
 
+		[ProtoMember(18)]
 		public DateTime? LockedOn { get; set; }
 
 		/// <summary>Per-channel monotonic message sequence high-water mark; allocated atomically on send.</summary>
+		[ProtoMember(19)]
 		public long LastMessageSeq { get; set; }
 
+		[ProtoMember(20)]
 		public DateTime? LastMessageOn { get; set; }
 
 		/// <summary>Overrides the department retention policy for this channel when set (days; 0 = keep forever).</summary>
+		[ProtoMember(21)]
 		public int? RetentionOverrideDays { get; set; }
 
+		[ProtoMember(22)]
 		public DateTime? ModifiedOn { get; set; }
 
 		[NotMapped]

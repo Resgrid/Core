@@ -3,6 +3,7 @@ import {
   ChatMessageType,
   toMessageDto,
   type ChatChannelDto,
+  type ChatMemberDto,
   type ChatMessageDto,
   type HubDeletedPayload,
   type HubMessagePayload,
@@ -17,17 +18,25 @@ export interface TypingEntry {
   expiresAt: number;
 }
 
+export type ChatConnectionStatus = 'connected' | 'reconnecting' | 'offline';
+
 export interface ChatState {
   chatAvailable: boolean;
   channelsLoaded: boolean;
   channels: ChatChannelDto[];
   messagesByChannel: Record<string, ChatMessageDto[]>;
+  threadMessagesByRoot: Record<string, ChatMessageDto[]>;
   hasMoreByChannel: Record<string, boolean>;
+  membersByChannel: Record<string, ChatMemberDto[]>;
   typingByChannel: Record<string, TypingEntry[]>;
   botTypingByChannel: Record<string, boolean>;
   onlineUserIds: string[];
   pendingAckMessageIds: string[];
   activeChannelId: string | null;
+  connectionStatus: ChatConnectionStatus;
+  authError: boolean;
+  notice: string | null;
+  highlightMessageId: string | null;
 }
 
 type Listener = () => void;
@@ -39,12 +48,18 @@ let state: ChatState = {
   channelsLoaded: false,
   channels: [],
   messagesByChannel: {},
+  threadMessagesByRoot: {},
   hasMoreByChannel: {},
+  membersByChannel: {},
   typingByChannel: {},
   botTypingByChannel: {},
   onlineUserIds: [],
   pendingAckMessageIds: [],
   activeChannelId: null,
+  connectionStatus: 'offline',
+  authError: false,
+  notice: null,
+  highlightMessageId: null,
 };
 
 const listeners = new Set<Listener>();
@@ -99,8 +114,10 @@ function mergeMessages(existing: ChatMessageDto[], incoming: ChatMessageDto[]): 
   for (const message of incoming) {
     const index = result.findIndex((candidate) => messageKeyMatch(candidate, message));
     if (index >= 0) {
-      // Prefer the message with the real (non-pending) sequence + newest data.
-      result[index] = { ...result[index], ...message };
+      // Prefer the incoming row (fresher edit/delete flags) but never let a pending/failed
+      // client status leak back onto a server-acknowledged message.
+      const { ClientStatus: _drop, ...rest } = message;
+      result[index] = { ...result[index], ...rest, ClientStatus: undefined };
     } else {
       result.push(message);
     }
@@ -129,6 +146,17 @@ export function upsertChannel(channel: ChatChannelDto): void {
   setState({ channels });
 }
 
+export function removeChannel(channelId: string): void {
+  const channels = state.channels.filter((candidate) => candidate.ChatChannelId !== channelId);
+  const messagesByChannel = { ...state.messagesByChannel };
+  delete messagesByChannel[channelId];
+  setState({
+    channels,
+    messagesByChannel,
+    activeChannelId: state.activeChannelId === channelId ? null : state.activeChannelId,
+  });
+}
+
 function patchChannel(channelId: string, patch: Partial<ChatChannelDto>): void {
   const index = state.channels.findIndex((candidate) => candidate.ChatChannelId === channelId);
   if (index < 0) {
@@ -143,11 +171,36 @@ export function setActiveChannel(channelId: string | null): void {
   setState({ activeChannelId: channelId });
 }
 
+// ---- Connection / auth / notices ----
+
+export function setConnectionStatus(status: ChatConnectionStatus): void {
+  if (state.connectionStatus !== status) {
+    setState({ connectionStatus: status });
+  }
+}
+
+export function setAuthError(hasError: boolean): void {
+  if (state.authError !== hasError) {
+    setState({ authError: hasError });
+  }
+}
+
+export function setNotice(notice: string | null): void {
+  setState({ notice });
+}
+
+export function setHighlightMessage(messageId: string | null): void {
+  setState({ highlightMessageId: messageId });
+}
+
 // ---- Messages ----
 
+// Bootstrap page load: MERGE into any messages that arrived via the hub while the fetch
+// was in flight instead of replacing the list and dropping them.
 export function setChannelMessages(channelId: string, messages: ChatMessageDto[], hasMore: boolean): void {
+  const existing = state.messagesByChannel[channelId] ?? [];
   setState({
-    messagesByChannel: { ...state.messagesByChannel, [channelId]: sortMessages(messages) },
+    messagesByChannel: { ...state.messagesByChannel, [channelId]: mergeMessages(existing, messages) },
     hasMoreByChannel: { ...state.hasMoreByChannel, [channelId]: hasMore },
   });
 }
@@ -171,9 +224,76 @@ export function upsertMessage(message: ChatMessageDto): void {
   upsertMessages(message.ChatChannelId, [message]);
 }
 
+export function removeMessageLocally(channelId: string, messageId: string): void {
+  const existing = state.messagesByChannel[channelId];
+  if (!existing) {
+    return;
+  }
+  setState({
+    messagesByChannel: {
+      ...state.messagesByChannel,
+      [channelId]: existing.filter((message) => message.ChatMessageId !== messageId),
+    },
+  });
+}
+
+export function markMessageFailed(channelId: string, clientMessageId: string): void {
+  const existing = state.messagesByChannel[channelId] ?? [];
+  const target = existing.find((message) => message.ClientMessageId === clientMessageId);
+  if (!target) {
+    return;
+  }
+  setState({
+    messagesByChannel: {
+      ...state.messagesByChannel,
+      [channelId]: existing.map((message) =>
+        message.ClientMessageId === clientMessageId ? { ...message, ClientStatus: 'failed' as const } : message,
+      ),
+    },
+  });
+}
+
+export function markMessagePending(channelId: string, clientMessageId: string): void {
+  const existing = state.messagesByChannel[channelId] ?? [];
+  const target = existing.find((message) => message.ClientMessageId === clientMessageId);
+  if (!target) {
+    return;
+  }
+  setState({
+    messagesByChannel: {
+      ...state.messagesByChannel,
+      [channelId]: existing.map((message) =>
+        message.ClientMessageId === clientMessageId ? { ...message, ClientStatus: 'pending' as const } : message,
+      ),
+    },
+  });
+}
+
+// ---- Thread replies (live) ----
+
+export function setThreadMessages(rootMessageId: string, messages: ChatMessageDto[]): void {
+  const existing = state.threadMessagesByRoot[rootMessageId] ?? [];
+  setState({
+    threadMessagesByRoot: { ...state.threadMessagesByRoot, [rootMessageId]: mergeMessages(existing, messages) },
+  });
+}
+
+export function upsertThreadMessage(rootMessageId: string, message: ChatMessageDto): void {
+  const existing = state.threadMessagesByRoot[rootMessageId] ?? [];
+  setState({
+    threadMessagesByRoot: { ...state.threadMessagesByRoot, [rootMessageId]: mergeMessages(existing, [message]) },
+  });
+}
+
 export function applyHubMessage(payload: HubMessagePayload): void {
   const message = toMessageDto(payload);
-  upsertMessage(message);
+
+  // Thread-only replies are broadcast to the channel group but must not land in the main list.
+  if (message.ThreadRootMessageId && !message.AlsoSendToChannel) {
+    upsertThreadMessage(message.ThreadRootMessageId, message);
+  } else {
+    upsertMessage(message);
+  }
 
   const channel = state.channels.find((candidate) => candidate.ChatChannelId === message.ChatChannelId);
   if (channel) {
@@ -182,7 +302,7 @@ export function applyHubMessage(payload: HubMessagePayload): void {
       LastMessageSeq: Math.max(channel.LastMessageSeq, message.MessageSeq),
       LastMessageOn: message.SentOn,
     };
-    if (!isActive) {
+    if (!isActive && !message.ThreadRootMessageId) {
       patch.UnreadCount = Math.max(0, message.MessageSeq - channel.MyLastReadSeq);
     }
     patchChannel(message.ChatChannelId, patch);
@@ -193,42 +313,67 @@ export function applyHubEdit(payload: HubMessagePayload): void {
   const existing = (state.messagesByChannel[payload.ChatChannelId] ?? []).find(
     (candidate) => candidate.ChatMessageId === payload.ChatMessageId,
   );
-  if (!existing) {
+  if (existing) {
+    upsertMessages(payload.ChatChannelId, [{ ...existing, Body: payload.Body, EditedOn: payload.EditedOn }]);
     return;
   }
-  upsertMessages(payload.ChatChannelId, [{ ...existing, Body: payload.Body, EditedOn: payload.EditedOn }]);
+  if (payload.ThreadRootMessageId) {
+    const thread = state.threadMessagesByRoot[payload.ThreadRootMessageId] ?? [];
+    const reply = thread.find((candidate) => candidate.ChatMessageId === payload.ChatMessageId);
+    if (reply) {
+      upsertThreadMessage(payload.ThreadRootMessageId, { ...reply, Body: payload.Body, EditedOn: payload.EditedOn });
+    }
+  }
 }
 
 export function applyHubDelete(payload: HubDeletedPayload): void {
   const existing = (state.messagesByChannel[payload.ChatChannelId] ?? []).find(
     (candidate) => candidate.ChatMessageId === payload.ChatMessageId,
   );
-  if (!existing) {
+  if (existing) {
+    upsertMessages(payload.ChatChannelId, [
+      { ...existing, DeletedOn: payload.DeletedOn, Body: null },
+    ]);
     return;
   }
-  upsertMessages(payload.ChatChannelId, [
-    { ...existing, DeletedOn: payload.DeletedOn, Body: null },
-  ]);
+  for (const [rootId, thread] of Object.entries(state.threadMessagesByRoot)) {
+    const reply = thread.find((candidate) => candidate.ChatMessageId === payload.ChatMessageId);
+    if (reply) {
+      upsertThreadMessage(rootId, { ...reply, DeletedOn: payload.DeletedOn, Body: null });
+      return;
+    }
+  }
 }
 
 export function applyHubReaction(payload: HubReactionPayload): void {
+  const applyTo = (existing: ChatMessageDto): ChatMessageDto => {
+    const reactions = existing.Reactions.filter(
+      (reaction) => !(reaction.Emoji === payload.Emoji && reaction.UserId === payload.UserId && reaction.UnitId === payload.UnitId),
+    );
+    if (payload.Added) {
+      reactions.push({
+        Emoji: payload.Emoji,
+        ParticipantType: payload.UnitId ? 1 : 0,
+        UserId: payload.UserId,
+        UnitId: payload.UnitId,
+      });
+    }
+    return { ...existing, Reactions: reactions };
+  };
+
   const messages = state.messagesByChannel[payload.ChatChannelId] ?? [];
   const existing = messages.find((candidate) => candidate.ChatMessageId === payload.ChatMessageId);
-  if (!existing) {
+  if (existing) {
+    upsertMessages(payload.ChatChannelId, [applyTo(existing)]);
     return;
   }
-  const reactions = existing.Reactions.filter(
-    (reaction) => !(reaction.Emoji === payload.Emoji && reaction.UserId === payload.UserId && reaction.UnitId === payload.UnitId),
-  );
-  if (payload.Added) {
-    reactions.push({
-      Emoji: payload.Emoji,
-      ParticipantType: payload.UnitId ? 1 : 0,
-      UserId: payload.UserId,
-      UnitId: payload.UnitId,
-    });
+  for (const [rootId, thread] of Object.entries(state.threadMessagesByRoot)) {
+    const reply = thread.find((candidate) => candidate.ChatMessageId === payload.ChatMessageId);
+    if (reply) {
+      upsertThreadMessage(rootId, applyTo(reply));
+      return;
+    }
   }
-  upsertMessages(payload.ChatChannelId, [{ ...existing, Reactions: reactions }]);
 }
 
 export function applyHubReceipt(_payload: HubReceiptPayload): void {
@@ -261,8 +406,10 @@ export function markChannelRead(channelId: string, seq: number): void {
   });
 }
 
-export function totalUnread(): number {
-  return state.channels.reduce((total, channel) => total + (channel.UnreadCount > 0 ? channel.UnreadCount : 0), 0);
+// ---- Members ----
+
+export function setChannelMembers(channelId: string, members: ChatMemberDto[]): void {
+  setState({ membersByChannel: { ...state.membersByChannel, [channelId]: members } });
 }
 
 // ---- Typing ----
@@ -324,6 +471,10 @@ export function setBotTyping(channelId: string, isTyping: boolean): void {
 
 export function setPresenceBulk(userIds: string[]): void {
   setState({ onlineUserIds: Array.from(new Set(userIds)) });
+}
+
+export function seedPresence(userIds: string[]): void {
+  setPresenceBulk(Array.from(new Set([...state.onlineUserIds, ...userIds])));
 }
 
 export function setPresence(userId: string, isOnline: boolean): void {
@@ -397,6 +548,7 @@ export function createOptimisticMessage(
     PinnedByUserId: null,
     Reactions: [],
     Attachments: [],
+    ClientStatus: 'pending',
   };
 }
 

@@ -1,7 +1,9 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getThread, sendMessage } from './chatApi';
 import { newClientMessageId } from './chatFormat';
 import { toggleReaction, saveMessageEdit } from './chatActions';
+import { setThreadMessages, upsertThreadMessage } from './chatStore';
+import { useChatStore, shallowArrayEqual } from './useChatStore';
 import Composer, { type ComposerSendPayload } from './atoms/Composer';
 import MessageBubble from './atoms/MessageBubble';
 import type { ChatChannelDto, ChatMessageDto } from './types';
@@ -13,17 +15,21 @@ interface ThreadPanelProps {
   onClose: () => void;
 }
 
+const EMPTY: ChatMessageDto[] = [];
+
 export default function ThreadPanel({ channel, rootMessage, currentUserId, onClose }: ThreadPanelProps) {
-  const [replies, setReplies] = useState<ChatMessageDto[]>([]);
+  const rootId = rootMessage.ChatMessageId;
+  // Live replies: hub thread events are routed here by the store; the REST fetch seeds/merges.
+  const replies = useChatStore((state) => state.threadMessagesByRoot[rootId] ?? EMPTY, shallowArrayEqual);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let active = true;
     setLoading(true);
-    getThread(rootMessage.ChatMessageId)
+    getThread(rootId)
       .then((result) => {
         if (active) {
-          setReplies([...result].sort((a, b) => a.MessageSeq - b.MessageSeq));
+          setThreadMessages(rootId, result);
         }
       })
       .catch((error) => console.error('Failed to load thread.', error))
@@ -35,27 +41,32 @@ export default function ThreadPanel({ channel, rootMessage, currentUserId, onClo
     return () => {
       active = false;
     };
-  }, [rootMessage.ChatMessageId]);
+  }, [rootId]);
 
   const handleSend = async (payload: ComposerSendPayload) => {
+    const clientMessageId = newClientMessageId();
     const created = await sendMessage(channel.ChatChannelId, {
       Body: payload.body,
       MessageType: payload.messageType,
       Priority: payload.priority,
       MetadataJson: payload.metadataJson,
-      ClientMessageId: newClientMessageId(),
-      ThreadRootMessageId: rootMessage.ChatMessageId,
+      ClientMessageId: clientMessageId,
+      ThreadRootMessageId: rootId,
       AlsoSendToChannel: false,
     });
     if (created) {
-      setReplies((current) => [...current, created]);
+      // Dedupes against the hub echo by ClientMessageId inside the store merge.
+      upsertThreadMessage(rootId, created);
     }
   };
+
+  const handleReact = useCallback((target: ChatMessageDto, emoji: string, mine: boolean) => void toggleReaction(target, emoji, mine), []);
+  const handleSaveEdit = useCallback((target: ChatMessageDto, body: string) => void saveMessageEdit(target, body), []);
 
   return (
     <div className="rgchat-convo">
       <div className="rgchat-convo__head">
-        <button type="button" className="rgchat-iconbtn" onClick={onClose} title="Close thread">
+        <button type="button" className="rgchat-iconbtn" onClick={onClose} title="Close thread" aria-label="Close thread">
           ‹
         </button>
         <div className="rgchat-convo__head-body">
@@ -69,19 +80,24 @@ export default function ThreadPanel({ channel, rootMessage, currentUserId, onClo
           message={rootMessage}
           currentUserId={currentUserId}
           showAuthor
-          onReact={(target, emoji, mine) => void toggleReaction(target, emoji, mine)}
-          onSaveEdit={(target, body) => void saveMessageEdit(target, body)}
+          onReact={handleReact}
+          onSaveEdit={handleSaveEdit}
         />
         <div className="rgchat-daydivider">Replies</div>
-        {loading && <div className="rgchat-convo__sub" style={{ textAlign: 'center' }}>Loading…</div>}
+        {loading && replies.length === 0 && (
+          <div className="rgchat-skeletonrow" aria-hidden="true">
+            <span className="rgchat-skeleton rgchat-skeleton--avatar" />
+            <span className="rgchat-skeleton rgchat-skeleton--bubble" style={{ width: '70%' }} />
+          </div>
+        )}
         {replies.map((reply) => (
           <MessageBubble
             key={reply.ChatMessageId}
             message={reply}
             currentUserId={currentUserId}
             showAuthor
-            onReact={(target, emoji, mine) => void toggleReaction(target, emoji, mine)}
-            onSaveEdit={(target, body) => void saveMessageEdit(target, body)}
+            onReact={handleReact}
+            onSaveEdit={handleSaveEdit}
           />
         ))}
       </div>

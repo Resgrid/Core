@@ -1,8 +1,9 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ChatMessageType, type GifDto } from '../types';
 import { searchGifs } from '../chatApi';
 import { stringifyMetadata } from '../chatFormat';
 import { EMOJI_SET } from './emoji';
+import { usePopoverClose } from './usePopoverClose';
 
 export interface ComposerSendPayload {
   body: string;
@@ -24,6 +25,11 @@ interface ComposerProps {
 
 type Popover = 'emoji' | 'gif' | null;
 
+const MAX_LENGTH = 4000;
+const COUNTER_THRESHOLD = 300;
+// ~5 rows of text, then the textarea scrolls.
+const MAX_TEXTAREA_HEIGHT = 122;
+
 export default function Composer({
   onSend,
   onTyping,
@@ -40,9 +46,27 @@ export default function Composer({
   const [gifs, setGifs] = useState<GifDto[]>([]);
   const [gifLoading, setGifLoading] = useState(false);
 
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const textRef = useRef<HTMLTextAreaElement | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
   const typingActiveRef = useRef(false);
   const typingTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const closePopover = useCallback(() => setPopover(null), []);
+  usePopoverClose(rootRef, popover !== null, closePopover);
+
+  const autoGrow = () => {
+    const textarea = textRef.current;
+    if (!textarea) {
+      return;
+    }
+    textarea.style.height = 'auto';
+    textarea.style.height = `${Math.min(textarea.scrollHeight, MAX_TEXTAREA_HEIGHT)}px`;
+  };
+
+  useEffect(() => {
+    autoGrow();
+  }, [text]);
 
   const stopTyping = () => {
     if (typingActiveRef.current) {
@@ -114,6 +138,17 @@ export default function Composer({
     }
   };
 
+  const handlePaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    if (!allowImages) {
+      return;
+    }
+    const file = Array.from(event.clipboardData?.files ?? []).find((item) => item.type.startsWith('image/'));
+    if (file) {
+      event.preventDefault();
+      void handleFile(file);
+    }
+  };
+
   const pickGif = async (gif: GifDto) => {
     setPopover(null);
     await onSend({
@@ -156,8 +191,10 @@ export default function Composer({
     };
   }, [popover, gifQuery]);
 
+  const remaining = MAX_LENGTH - text.length;
+
   return (
-    <div className="rgchat-composer">
+    <div className="rgchat-composer" ref={rootRef}>
       {popover === 'emoji' && (
         <div className="rgchat-popover">
           <div className="rgchat-emojigrid">
@@ -180,13 +217,22 @@ export default function Composer({
             autoFocus
           />
           {gifLoading ? (
-            <div className="rgchat-convo__sub" style={{ padding: 8 }}>Searching…</div>
+            <div className="rgchat-popover__note">Searching…</div>
           ) : gifs.length === 0 ? (
-            <div className="rgchat-convo__sub" style={{ padding: 8 }}>No GIFs found.</div>
+            <div className="rgchat-popover__note">No GIFs found.</div>
           ) : (
             <div className="rgchat-gifgrid">
               {gifs.map((gif) => (
-                <img key={gif.Id} src={gif.PreviewUrl} alt={gif.Title} onClick={() => void pickGif(gif)} />
+                <img
+                  key={gif.Id}
+                  src={gif.PreviewUrl}
+                  alt={gif.Title}
+                  loading="lazy"
+                  decoding="async"
+                  width={gif.Width}
+                  height={gif.Height}
+                  onClick={() => void pickGif(gif)}
+                />
               ))}
             </div>
           )}
@@ -195,44 +241,74 @@ export default function Composer({
 
       <div className="rgchat-composer__row">
         <div className="rgchat-composer__tools">
-          <button type="button" className="rgchat-iconbtn" title="Emoji" onClick={() => setPopover(popover === 'emoji' ? null : 'emoji')} style={{ color: '#7b8794' }}>
+          <button
+            type="button"
+            className="rgchat-iconbtn rgchat-composer__tool"
+            title="Emoji"
+            aria-label="Insert emoji"
+            onClick={() => setPopover(popover === 'emoji' ? null : 'emoji')}
+          >
             😊
           </button>
           {allowGifs && (
-            <button type="button" className="rgchat-iconbtn" title="GIF" onClick={() => setPopover(popover === 'gif' ? null : 'gif')} style={{ color: '#7b8794', fontWeight: 700, fontSize: 12 }}>
+            <button
+              type="button"
+              className="rgchat-iconbtn rgchat-composer__tool rgchat-composer__tool--gif"
+              title="GIF"
+              aria-label="Insert GIF"
+              onClick={() => setPopover(popover === 'gif' ? null : 'gif')}
+            >
               GIF
             </button>
           )}
           {allowImages && (
-            <button type="button" className="rgchat-iconbtn" title="Attach image" onClick={() => fileRef.current?.click()} style={{ color: '#7b8794' }}>
+            <button
+              type="button"
+              className="rgchat-iconbtn rgchat-composer__tool"
+              title="Attach image"
+              aria-label="Attach image"
+              onClick={() => fileRef.current?.click()}
+            >
               📎
             </button>
           )}
         </div>
 
         <textarea
+          ref={textRef}
           className="rgchat-composer__text"
           value={text}
           placeholder={placeholder}
           onChange={(event) => handleChange(event.target.value)}
           onKeyDown={handleKeyDown}
+          onPaste={handlePaste}
           disabled={disabled}
           rows={1}
+          maxLength={MAX_LENGTH}
         />
 
-        <button type="button" className="rgchat-send" title="Send" onClick={() => void submitText()} disabled={disabled || text.trim().length === 0}>
+        {remaining <= COUNTER_THRESHOLD && <span className="rgchat-composer__count">{remaining}</span>}
+
+        <button
+          type="button"
+          className="rgchat-send"
+          title="Send"
+          aria-label="Send message"
+          onClick={() => void submitText()}
+          disabled={disabled || text.trim().length === 0}
+        >
           ➤
         </button>
       </div>
 
       {allowUrgent && (
-        <label className="rgchat-composer__urgent" style={{ marginTop: 6 }}>
+        <label className="rgchat-composer__urgent">
           <input type="checkbox" checked={urgent} onChange={(event) => setUrgent(event.target.checked)} />
           Send as urgent (requires acknowledgment)
         </label>
       )}
 
-      <input ref={fileRef} type="file" accept="image/*" style={{ display: 'none' }} onChange={(event) => void handleFile(event.target.files?.[0])} />
+      <input ref={fileRef} type="file" accept="image/*" className="rgchat-fileinput" onChange={(event) => void handleFile(event.target.files?.[0])} />
     </div>
   );
 }

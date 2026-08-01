@@ -370,7 +370,7 @@ namespace Resgrid.Web.Eventing
 			app.UseCors(x => x
 				.AllowAnyMethod()
 				.AllowAnyHeader()
-				.SetIsOriginAllowed(origin => true) // allow any origin
+				.SetIsOriginAllowed(IsAllowedOrigin)
 				.AllowCredentials()); // allow credentials
 
 			app.UseAuthentication();
@@ -392,6 +392,33 @@ namespace Resgrid.Web.Eventing
 				endpoints.MapHub<GeolocationHub>("/geolocationHub");
 				endpoints.MapHub<ChatHub>("/chatHub");
 			});
+		}
+
+		private static bool IsAllowedOrigin(string origin)
+		{
+			if (string.IsNullOrWhiteSpace(origin) || !Uri.TryCreate(origin, UriKind.Absolute, out var originUri))
+				return false;
+
+			var configuredBaseUrls = new[]
+			{
+				SystemBehaviorConfig.ResgridBaseUrl,
+				SystemBehaviorConfig.ResgridApiBaseUrl,
+				SystemBehaviorConfig.ResgridEventingBaseUrl
+			};
+
+			foreach (var baseUrl in configuredBaseUrls)
+			{
+				if (string.IsNullOrWhiteSpace(baseUrl) || !Uri.TryCreate(baseUrl, UriKind.Absolute, out var baseUri))
+					continue;
+
+				if (string.Equals(originUri.Host, baseUri.Host, StringComparison.OrdinalIgnoreCase))
+					return true;
+
+				if (originUri.Host.EndsWith("." + baseUri.Host, StringComparison.OrdinalIgnoreCase))
+					return true;
+			}
+
+			return false;
 		}
 	}
 }

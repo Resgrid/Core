@@ -39,5 +39,17 @@ namespace Resgrid.Model.Events
 		public const string ThreadUpdated = "chatThreadUpdated";
 		public const string ChatbotMessageReceived = "chatbotMessageReceived";
 		public const string ChatbotTyping = "chatbotTyping";
+		public const string AccessRevoked = "chatAccessRevoked";
+	}
+
+	/// <summary>
+	/// Payload for <see cref="ChatEventKinds.AccessRevoked"/> (ban/remove/lock). Tells the eventing
+	/// host which user lost access to which channel so it can evict their connections from the
+	/// channel group and notify their devices.
+	/// </summary>
+	public class ChatAccessRevokedPayload
+	{
+		public string ChannelId { get; set; }
+		public string UserId { get; set; }
 	}
 }

@@ -30,6 +30,6 @@ namespace Resgrid.Chatbot.Interfaces
 	{
 		Task<bool> IsAvailableAsync(int departmentId);
 
-		Task<string> CompleteAsync(int departmentId, string systemPrompt, List<ChatCompletionTurn> turns, int maxTokens = 512);
+		Task<string> CompleteAsync(int departmentId, string systemPrompt, List<ChatCompletionTurn> turns, int? maxTokens = null);
 	}
 }

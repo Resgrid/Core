@@ -12,6 +12,7 @@ using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Web.Services.Helpers;
+using Resgrid.Web.Services.Models.v4.Chat;
 using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
 
 namespace Resgrid.Web.Services.Controllers.v4
@@ -101,7 +102,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
-				return BadRequest(new { error = ex.Message });
+				return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred." });
 			}
 		}
 
@@ -129,7 +130,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
-				return BadRequest(new { error = ex.Message });
+				return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred." });
 			}
 		}
 
@@ -157,7 +158,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
-				return BadRequest(new { error = ex.Message });
+				return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred." });
 			}
 		}
 
@@ -185,7 +186,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
-				return BadRequest(new { error = ex.Message });
+				return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred." });
 			}
 		}
 
@@ -214,7 +215,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
-				return BadRequest(new { error = ex.Message });
+				return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred." });
 			}
 		}
 
@@ -254,7 +255,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
-				return BadRequest(new { error = ex.Message });
+				return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred." });
 			}
 		}
 
@@ -274,6 +275,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
 					return Unauthorized();
+
+				if (!string.IsNullOrWhiteSpace(request.LlmApiEndpoint) &&
+					!Resgrid.Chatbot.NLU.LlmEndpointValidator.IsValid(request.LlmApiEndpoint, out var llmEndpointError))
+					return BadRequest(new { error = llmEndpointError });
 
 				var config = new ChatbotDepartmentConfig
 				{
@@ -299,7 +304,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
-				return BadRequest(new { error = ex.Message });
+				return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred." });
 			}
 		}
 
@@ -310,7 +315,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// </summary>
 		[HttpGet("GetChatChannel")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		public async Task<IActionResult> GetChatChannel()
+		public async Task<ActionResult<ChatbotChannelResult>> GetChatChannel()
 		{
 			if (!await ChatbotChatEnabledAsync())
 				return NotFound();
@@ -319,7 +324,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (channel == null)
 				return NotFound();
 
-			return Ok(new { channel.ChatChannelId, channel.Name, channel.LastMessageSeq, channel.LastMessageOn });
+			var result = new ChatbotChannelResult
+			{
+				Data = new ChatbotChannelResultData
+				{
+					ChatChannelId = channel.ChatChannelId,
+					Name = channel.Name,
+					LastMessageSeq = channel.LastMessageSeq,
+					LastMessageOn = channel.LastMessageOn
+				},
+				PageSize = 1,
+				Status = ResponseHelper.Success
+			};
+
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
 		}
 
 		/// <summary>
@@ -329,7 +348,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// </summary>
 		[HttpPost("SendChatMessage")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		public async Task<IActionResult> SendChatMessage([FromBody] ChatbotChatMessageRequest request)
+		public async Task<ActionResult<ChatbotMessageSentResult>> SendChatMessage([FromBody] ChatbotChatMessageRequest request)
 		{
 			if (!await ChatbotChatEnabledAsync())
 				return NotFound();
@@ -343,11 +362,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (channel == null)
 					return NotFound();
 
-				var message = await _chatMessageService.SendMessageAsync(new ChatMessageSendRequest
+				var message = await _chatMessageService.SendMessageAsync(UserId, new ChatMessageSendRequest
 				{
 					ChatChannelId = channel.ChatChannelId,
 					DepartmentId = DepartmentId,
-					SenderUserId = UserId,
 					Body = request.Text.Trim(),
 					MessageType = ChatMessageType.Text,
 					Priority = ChatMessagePriority.Normal,
@@ -357,7 +375,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (message == null)
 					return BadRequest(new { error = "Unable to send message." });
 
-				await _queueService.EnqueueChatbotMessageAsync(new Resgrid.Model.Queue.ChatbotMessageQueueItem
+				var queued = await _queueService.EnqueueChatbotMessageAsync(new Resgrid.Model.Queue.ChatbotMessageQueueItem
 				{
 					DepartmentId = DepartmentId,
 					From = UserId,
@@ -365,6 +383,24 @@ namespace Resgrid.Web.Services.Controllers.v4
 					MessageId = message.ChatMessageId,
 					Platform = (int)Resgrid.Chatbot.Models.ChatbotPlatform.WebChat
 				});
+
+				if (!queued)
+				{
+					var failedResult = new ChatbotMessageSentResult
+					{
+						Data = new ChatbotMessageSentResultData
+						{
+							ChatMessageId = message.ChatMessageId,
+							MessageSeq = message.MessageSeq,
+							SentOn = message.SentOn
+						},
+						PageSize = 1,
+						Status = ResponseHelper.Failure
+					};
+
+					ResponseHelper.PopulateV4ResponseData(failedResult);
+					return StatusCode(StatusCodes.Status500InternalServerError, failedResult);
+				}
 
 				// Typing indicator to the user's devices while the worker runs the pipeline.
 				_eventAggregator.SendMessage<Resgrid.Model.Events.ChatEventRaised>(new Resgrid.Model.Events.ChatEventRaised
@@ -376,7 +412,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 					PayloadJson = Newtonsoft.Json.JsonConvert.SerializeObject(new { channel.ChatChannelId, IsTyping = true })
 				});
 
-				return Ok(new { message.ChatMessageId, message.MessageSeq, message.SentOn });
+				var result = new ChatbotMessageSentResult
+				{
+					Data = new ChatbotMessageSentResultData
+					{
+						ChatMessageId = message.ChatMessageId,
+						MessageSeq = message.MessageSeq,
+						SentOn = message.SentOn
+					},
+					PageSize = 1,
+					Status = ResponseHelper.Created
+				};
+
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
 			}
 			catch (Exception ex)
 			{
@@ -390,7 +439,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// </summary>
 		[HttpPost("NewChatSession")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
-		public async Task<IActionResult> NewChatSession()
+		public async Task<ActionResult<ChatbotSessionResetResult>> NewChatSession()
 		{
 			if (!await ChatbotChatEnabledAsync())
 				return NotFound();
@@ -401,12 +450,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (session != null)
 					await _chatbotSessionManager.EndSessionAsync(session.SessionId);
 
-				return Ok(new { success = true });
+				var result = new ChatbotSessionResetResult
+				{
+					Success = true,
+					PageSize = 1,
+					Status = ResponseHelper.Success
+				};
+
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
-				return BadRequest(new { error = ex.Message });
+				return BadRequest(new { error = "Unable to reset the chat session." });
 			}
 		}
 

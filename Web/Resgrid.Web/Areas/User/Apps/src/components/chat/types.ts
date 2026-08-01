@@ -41,6 +41,40 @@ export const ChatFlagStatus = {
   ActionTaken: 3,
 } as const;
 
+// Server -> client event names. Mirror Core/Resgrid.Model/Events/ChatEvents.cs (ChatEventKinds)
+// plus the hub-direct events emitted by the eventing host.
+export const CHAT_HUB_EVENTS = {
+  MessageReceived: 'chatMessageReceived',
+  MessageEdited: 'chatMessageEdited',
+  MessageDeleted: 'chatMessageDeleted',
+  ReactionUpdated: 'chatReactionUpdated',
+  ReceiptUpdated: 'chatReceiptUpdated',
+  ChannelUpdated: 'chatChannelUpdated',
+  ChannelProvisioned: 'chatChannelProvisioned',
+  ModerationApplied: 'chatModerationApplied',
+  AckRequired: 'chatMessageAckRequired',
+  ThreadUpdated: 'chatThreadUpdated',
+  ChatbotMessageReceived: 'chatbotMessageReceived',
+  ChatbotTyping: 'chatbotTyping',
+  AccessRevoked: 'chatAccessRevoked',
+  Typing: 'chatTyping',
+  PresenceChanged: 'chatPresenceChanged',
+  Connected: 'onChatConnected',
+} as const;
+
+// Client -> server hub method names.
+export const CHAT_HUB_METHODS = {
+  Connect: 'Connect',
+  Heartbeat: 'Heartbeat',
+  JoinChannel: 'JoinChannel',
+  LeaveChannel: 'LeaveChannel',
+  Typing: 'Typing',
+  MarkRead: 'MarkRead',
+} as const;
+
+// Client-side lifecycle for optimistic messages (not part of the wire DTO).
+export type MessageSendStatus = 'pending' | 'sent' | 'failed';
+
 export interface ApiResultBase {
   PageSize: number;
   Page: number;
@@ -114,6 +148,7 @@ export interface ChatMessageDto {
   PinnedByUserId: string | null;
   Reactions: ChatReactionDto[];
   Attachments: ChatAttachmentDto[];
+  ClientStatus?: MessageSendStatus;
 }
 
 export interface ChatMemberDto {
@@ -294,22 +329,14 @@ export interface HubAckRequiredPayload {
   RequiredCount: number;
 }
 
-export interface HubChannelPayload {
-  ChatChannelId: string;
-  [key: string]: unknown;
-}
-
 export interface HubChatbotTypingPayload {
   ChatChannelId: string;
   IsTyping: boolean;
 }
 
-export interface HubTypingPayload {
-  channelId: string;
-  userId: string | null;
-  unitId: number | null;
-  displayName: string | null;
-  isTyping: boolean;
+export interface HubAccessRevokedPayload {
+  ChannelId: string;
+  UserId: string;
 }
 
 export function toMessageDto(payload: HubMessagePayload): ChatMessageDto {
@@ -328,6 +355,11 @@ export function toMessageDto(payload: HubMessagePayload): ChatMessageDto {
 
 export function getCurrentUserId(): string {
   const value = (window as unknown as { userId?: string }).userId;
+  return typeof value === 'string' ? value : '';
+}
+
+export function getCurrentDisplayName(): string {
+  const value = (window as unknown as { rgUserDisplayName?: string }).rgUserDisplayName;
   return typeof value === 'string' ? value : '';
 }
 

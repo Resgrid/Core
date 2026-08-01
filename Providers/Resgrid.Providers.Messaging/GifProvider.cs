@@ -22,6 +22,16 @@ namespace Resgrid.Providers.Messaging
 			Timeout = TimeSpan.FromSeconds(10)
 		};
 
+		private static readonly TimeSpan SearchCacheDuration = TimeSpan.FromSeconds(60);
+		private const int MaxOffset = 5000;
+
+		private readonly ICacheProvider _cacheProvider;
+
+		public GifProvider(ICacheProvider cacheProvider)
+		{
+			_cacheProvider = cacheProvider;
+		}
+
 		public bool IsConfigured
 		{
 			get
@@ -41,18 +51,30 @@ namespace Resgrid.Providers.Messaging
 			if (!IsConfigured || string.IsNullOrWhiteSpace(query))
 				return new List<GifSearchResult>();
 
-			try
-			{
-				if (string.Equals(ChatConfig.GifProvider, "tenor", StringComparison.OrdinalIgnoreCase))
-					return await TenorRequestAsync($"https://tenor.googleapis.com/v2/search?q={Uri.EscapeDataString(query)}&key={ChatConfig.TenorApiKey}&limit={Clamp(limit)}&pos={offset}");
+			// Short per-query cache: identical searches are common (picker re-open, scroll re-fetch)
+			// and each uncached call burns provider API quota.
+			var cacheKey = $"gifsearch:{ChatConfig.GifProvider?.ToLowerInvariant()}:{query.Trim().ToLowerInvariant()}:{Clamp(limit)}:{ClampOffset(offset)}";
 
-				return await GiphyRequestAsync($"https://api.giphy.com/v1/gifs/search?api_key={ChatConfig.GiphyApiKey}&q={Uri.EscapeDataString(query)}&limit={Clamp(limit)}&offset={offset}&rating=pg-13");
-			}
-			catch (Exception ex)
+			async Task<List<GifSearchResult>> search()
 			{
-				Logging.LogException(ex);
-				return new List<GifSearchResult>();
+				try
+				{
+					if (string.Equals(ChatConfig.GifProvider, "tenor", StringComparison.OrdinalIgnoreCase))
+						return await TenorRequestAsync($"https://tenor.googleapis.com/v2/search?q={Uri.EscapeDataString(query)}&key={ChatConfig.TenorApiKey}&limit={Clamp(limit)}&pos={ClampOffset(offset)}");
+
+					return await GiphyRequestAsync($"https://api.giphy.com/v1/gifs/search?api_key={ChatConfig.GiphyApiKey}&q={Uri.EscapeDataString(query)}&limit={Clamp(limit)}&offset={ClampOffset(offset)}&rating=pg-13");
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+					return new List<GifSearchResult>();
+				}
 			}
+
+			if (_cacheProvider != null)
+				return await _cacheProvider.RetrieveAsync(cacheKey, search, SearchCacheDuration) ?? new List<GifSearchResult>();
+
+			return await search();
 		}
 
 		public async Task<List<GifSearchResult>> TrendingAsync(int limit)
@@ -89,7 +111,7 @@ namespace Resgrid.Providers.Messaging
 					Width = ParseInt(item.SelectToken("images.fixed_width.width")),
 					Height = ParseInt(item.SelectToken("images.fixed_width.height"))
 				})
-				.Where(r => !string.IsNullOrWhiteSpace(r.GifUrl))
+				.Where(r => !string.IsNullOrWhiteSpace(r.GifUrl) && IsAllowedCdnUrl(r.GifUrl) && IsAllowedCdnUrl(r.PreviewUrl))
 				.ToList();
 		}
 
@@ -115,8 +137,33 @@ namespace Resgrid.Providers.Messaging
 						Height = dims != null && dims.Count > 1 ? ParseInt(dims[1]) : 0
 					};
 				})
-				.Where(r => !string.IsNullOrWhiteSpace(r.GifUrl))
+				.Where(r => !string.IsNullOrWhiteSpace(r.GifUrl) && IsAllowedCdnUrl(r.GifUrl) && IsAllowedCdnUrl(r.PreviewUrl))
 				.ToList();
+		}
+
+		private static bool IsAllowedCdnUrl(string url)
+		{
+			if (string.IsNullOrWhiteSpace(url))
+				return true;
+
+			if (!Uri.TryCreate(url, UriKind.Absolute, out var uri) || uri.Scheme != Uri.UriSchemeHttps)
+				return false;
+
+			var allowedHosts = ChatConfig.GifCdnHosts;
+			if (allowedHosts == null || allowedHosts.Length == 0)
+				return true;
+
+			return allowedHosts.Any(host => !string.IsNullOrWhiteSpace(host)
+				&& (uri.Host.Equals(host, StringComparison.OrdinalIgnoreCase)
+					|| uri.Host.EndsWith("." + host, StringComparison.OrdinalIgnoreCase)));
+		}
+
+		private static int ClampOffset(int offset)
+		{
+			if (offset <= 0)
+				return 0;
+
+			return Math.Min(offset, MaxOffset);
 		}
 
 		private static int Clamp(int limit)

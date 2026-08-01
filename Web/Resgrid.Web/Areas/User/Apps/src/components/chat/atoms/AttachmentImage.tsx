@@ -8,16 +8,17 @@ interface AttachmentImageProps {
 }
 
 // Chat attachments require a bearer header, so the raw endpoint cannot be used as an <img src>.
-// Fetch the bytes as a blob and render an object URL, revoking it on unmount.
+// Render the thumbnail inline as a blob object URL; fetch the full image lazily on click.
 export default function AttachmentImage({ attachmentId, fileName, onOpen }: AttachmentImageProps) {
   const [objectUrl, setObjectUrl] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);
+  const [opening, setOpening] = useState(false);
 
   useEffect(() => {
     let active = true;
     let created: string | null = null;
 
-    fetchAttachmentObjectUrl(attachmentId)
+    fetchAttachmentObjectUrl(attachmentId, true)
       .then((url) => {
         if (active) {
           created = url;
@@ -40,20 +41,33 @@ export default function AttachmentImage({ attachmentId, fileName, onOpen }: Atta
     };
   }, [attachmentId]);
 
+  const handleOpen = () => {
+    if (!onOpen || opening) {
+      return;
+    }
+    setOpening(true);
+    fetchAttachmentObjectUrl(attachmentId, false)
+      .then((fullUrl) => onOpen(fullUrl))
+      .catch(() => undefined)
+      .finally(() => setOpening(false));
+  };
+
   if (failed) {
     return <span className="rgchat-convo__sub">Unable to load image</span>;
   }
 
   if (!objectUrl) {
-    return <span className="rgchat-convo__sub">Loading image…</span>;
+    return <span className="rgchat-skeleton rgchat-skeleton--img" aria-hidden="true" />;
   }
 
   return (
     <img
-      className="rgchat-bubble__img"
+      className={`rgchat-bubble__img${opening ? ' rgchat-bubble__img--busy' : ''}`}
       src={objectUrl}
       alt={fileName}
-      onClick={() => onOpen?.(objectUrl)}
+      loading="lazy"
+      decoding="async"
+      onClick={handleOpen}
     />
   );
 }

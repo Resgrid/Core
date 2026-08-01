@@ -128,6 +128,9 @@ namespace Resgrid.Model
 
 		public bool ChatbotEnabled { get; set; }
 
+		/// <summary>Per-department opt-in for the chatbot's conversational LLM fallback (also requires ChatConfig.ChatbotFallbackEnabled).</summary>
+		public bool ChatbotFallbackEnabled { get; set; }
+
 		public DateTime? ModifiedOn { get; set; }
 
 		[NotMapped]

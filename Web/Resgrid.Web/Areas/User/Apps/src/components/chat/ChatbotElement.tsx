@@ -1,40 +1,57 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import './chat.css';
-import { getCurrentUserId, type ChatbotChannelInfo, type ChatMessageDto } from './types';
+import { ChatChannelType, getCurrentUserId, type ChatChannelDto, type ChatbotChannelInfo, type ChatMessageDto } from './types';
 import { getChatbotChannel, sendChatbotMessage, newChatbotSession } from './chatApi';
-import { chatHub } from './chatHub';
-import { createOptimisticMessage, setBotTyping, upsertMessage } from './chatStore';
-import { loadInitialMessages, toggleReaction } from './chatActions';
-import { newClientMessageId } from './chatFormat';
+import { createOptimisticMessage, markMessageFailed, setBotTyping, upsertMessage } from './chatStore';
 import { useChatStore, shallowArrayEqual } from './useChatStore';
-import Composer, { type ComposerSendPayload } from './atoms/Composer';
-import MessageBubble from './atoms/MessageBubble';
+import { newClientMessageId } from './chatFormat';
+import ConversationView from './ConversationView';
+import type { ComposerSendPayload } from './atoms/Composer';
 
-const EMPTY: ChatMessageDto[] = [];
+const EMPTY_MESSAGES: ChatMessageDto[] = [];
+const BOT_TYPING_TIMEOUT_MS = 60000;
 
 export interface ChatbotElementProps {
   hostElement?: HTMLElement;
 }
 
+function toChannelDto(info: ChatbotChannelInfo): ChatChannelDto {
+  return {
+    ChatChannelId: info.ChatChannelId,
+    ChannelType: ChatChannelType.Chatbot,
+    Name: info.Name,
+    Topic: 'Resgrid AI assistant',
+    GroupId: null,
+    CallId: null,
+    CommandStructureNodeId: null,
+    OwnerUserId: null,
+    IsArchived: false,
+    IsLocked: false,
+    LastMessageSeq: info.LastMessageSeq,
+    LastMessageOn: info.LastMessageOn,
+    CreatedOn: new Date().toISOString(),
+    UnreadCount: 0,
+    NotificationPreference: 0,
+    MyLastReadSeq: 0,
+  };
+}
+
 export default function ChatbotElement(_props: ChatbotElementProps) {
-  const [channel, setChannel] = useState<ChatbotChannelInfo | null>(null);
+  const [channel, setChannel] = useState<ChatChannelDto | null>(null);
   const [available, setAvailable] = useState(true);
   const [ready, setReady] = useState(false);
 
   const currentUserId = getCurrentUserId();
   const channelId = channel?.ChatChannelId ?? '';
 
-  const messages = useChatStore((state) => (channelId ? state.messagesByChannel[channelId] ?? EMPTY : EMPTY), shallowArrayEqual);
-  const botTyping = useChatStore((state) => (channelId ? state.botTypingByChannel[channelId] ?? false : false));
-
-  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const messages = useChatStore((state) => (channelId ? state.messagesByChannel[channelId] ?? EMPTY_MESSAGES : EMPTY_MESSAGES), shallowArrayEqual);
+  const botTypingRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    void chatHub.acquire();
     getChatbotChannel()
       .then((info) => {
         if (info) {
-          setChannel(info);
+          setChannel(toChannelDto(info));
         } else {
           setAvailable(false);
         }
@@ -42,38 +59,55 @@ export default function ChatbotElement(_props: ChatbotElementProps) {
       .catch(() => setAvailable(false))
       .finally(() => setReady(true));
     return () => {
-      chatHub.release();
+      if (botTypingRef.current) {
+        clearTimeout(botTypingRef.current);
+      }
     };
   }, []);
 
+  // Hub echo (bot reply rendered) clears the client-side typing timeout.
   useEffect(() => {
-    if (!channelId) {
+    if (!channelId || !botTypingRef.current) {
       return;
     }
-    void chatHub.joinChannel(channelId);
-    void loadInitialMessages(channelId).catch((error) => console.error('Failed to load assistant messages.', error));
-  }, [channelId]);
-
-  useLayoutEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [messages, botTyping]);
-
-  const handleSend = async (payload: ComposerSendPayload) => {
-    if (!channelId || payload.body.trim().length === 0) {
-      return;
-    }
-    const clientMessageId = newClientMessageId();
-    upsertMessage(createOptimisticMessage(channelId, 0, currentUserId, 'You', payload.body, clientMessageId));
-    setBotTyping(channelId, true);
-    try {
-      await sendChatbotMessage(payload.body, clientMessageId);
-    } catch (error) {
-      console.error('Failed to message the assistant.', error);
+    const last = messages[messages.length - 1];
+    if (last && last.SenderUserId !== currentUserId) {
+      clearTimeout(botTypingRef.current);
+      botTypingRef.current = null;
       setBotTyping(channelId, false);
     }
-  };
+  }, [messages, channelId, currentUserId]);
+
+  const handleSend = useCallback(
+    async (payload: ComposerSendPayload) => {
+      if (!channelId || payload.body.trim().length === 0) {
+        return;
+      }
+      const clientMessageId = newClientMessageId();
+      upsertMessage(createOptimisticMessage(channelId, 0, currentUserId, 'You', payload.body, clientMessageId));
+      setBotTyping(channelId, true);
+      if (botTypingRef.current) {
+        clearTimeout(botTypingRef.current);
+      }
+      // Safety: never leave the typing row stuck if the hub echo never arrives.
+      botTypingRef.current = setTimeout(() => {
+        botTypingRef.current = null;
+        setBotTyping(channelId, false);
+      }, BOT_TYPING_TIMEOUT_MS);
+      try {
+        await sendChatbotMessage(payload.body, clientMessageId);
+      } catch (error) {
+        console.error('Failed to message the assistant.', error);
+        markMessageFailed(channelId, clientMessageId);
+        if (botTypingRef.current) {
+          clearTimeout(botTypingRef.current);
+          botTypingRef.current = null;
+        }
+        setBotTyping(channelId, false);
+      }
+    },
+    [channelId, currentUserId],
+  );
 
   const startNewConversation = async () => {
     try {
@@ -91,46 +125,43 @@ export default function ChatbotElement(_props: ChatbotElementProps) {
     );
   }
 
+  if (!channel) {
+    return (
+      <div className="rgchat-root">
+        <div className="rgchat-convo rgchat-bot rgchat-botframe">
+          <div className="rgchat-skeletons" aria-hidden="true">
+            {[70, 85, 60].map((width, index) => (
+              <div key={index} className="rgchat-skeletonrow">
+                <span className="rgchat-skeleton rgchat-skeleton--avatar" />
+                <span className="rgchat-skeleton rgchat-skeleton--bubble" style={{ width: `${width}%` }} />
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="rgchat-root">
-      <div className="rgchat-convo rgchat-bot" style={{ height: 'calc(100vh - 220px)', minHeight: 480, border: '1px solid var(--rgchat-border)', borderRadius: 12, overflow: 'hidden' }}>
-        <div className="rgchat-convo__head rgchat-bot__head" style={{ color: '#fff' }}>
-          <span className="rgchat-avatar rgchat-avatar--sm" style={{ backgroundColor: 'rgba(255,255,255,0.2)' }}>🤖</span>
-          <div className="rgchat-convo__head-body">
-            <div className="rgchat-convo__title" style={{ color: '#fff' }}>{channel?.Name ?? 'Assistant'}</div>
-            <div className="rgchat-convo__sub" style={{ color: 'rgba(255,255,255,0.75)' }}>Resgrid AI assistant</div>
-          </div>
-          <button type="button" className="rgchat-iconbtn" title="New conversation" onClick={() => void startNewConversation()} style={{ color: '#fff' }}>
-            ＋
-          </button>
-        </div>
-
-        <div className="rgchat-convo__scroll" ref={scrollRef}>
-          {!ready && <div className="rgchat-convo__sub" style={{ textAlign: 'center' }}>Loading…</div>}
-          {ready && messages.length === 0 && (
-            <div className="rgchat-empty">
-              <div style={{ fontSize: 40 }}>🤖</div>
-              <div>Ask the assistant about calls, personnel, units and more.</div>
-            </div>
-          )}
-          {messages.map((message) => (
-            <MessageBubble
-              key={message.ChatMessageId}
-              message={message}
-              currentUserId={currentUserId}
-              showAuthor
-              variant="bot"
-              onReact={(target, emoji, mine) => void toggleReaction(target, emoji, mine)}
-            />
-          ))}
-          {botTyping && (
-            <div className="rgchat-typing">
-              <span className="rgchat-dots"><span /><span /><span /></span> Assistant is typing
-            </div>
-          )}
-        </div>
-
-        <Composer onSend={handleSend} onTyping={() => undefined} allowGifs={false} allowImages={false} allowUrgent={false} placeholder="Ask the assistant…" />
+      <div className="rgchat-botframe">
+        <ConversationView
+          channel={channel}
+          currentUserId={currentUserId}
+          variant="bot"
+          sendOverride={handleSend}
+          headerRight={
+            <button
+              type="button"
+              className="rgchat-iconbtn rgchat-iconbtn--inherit"
+              title="New conversation"
+              aria-label="New assistant conversation"
+              onClick={() => void startNewConversation()}
+            >
+              ＋
+            </button>
+          }
+        />
       </div>
     </div>
   );

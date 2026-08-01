@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using ProtoBuf;
+using Resgrid.Config;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
@@ -18,6 +20,9 @@ namespace Resgrid.Services
 	{
 		private static readonly TimeSpan CacheLength = TimeSpan.FromSeconds(60);
 		private static readonly TimeSpan VersionCacheLength = TimeSpan.FromDays(1);
+
+		/// <summary>Shared version key rolled into every per-user channel-list cache key; bumped by InvalidateChannelCacheAsync.</summary>
+		internal const string ChannelListVersionCacheKey = "chatchannellistver";
 
 		private readonly IChatChannelMemberRepository _chatChannelMemberRepository;
 		private readonly IChatChannelAccessRuleRepository _chatChannelAccessRuleRepository;
@@ -133,7 +138,9 @@ namespace Resgrid.Services
 			if (unit == null || unit.DepartmentId != departmentId)
 				return false;
 
-			return await _departmentsService.IsUserInDepartmentAsync(departmentId, userId);
+			// The user must actively crew the unit — mere department membership is not enough to speak as it.
+			var activeRoles = await _unitsService.GetActiveRolesForUnitAsync(unitId);
+			return activeRoles != null && activeRoles.Any(r => string.Equals(r.UserId, userId, StringComparison.OrdinalIgnoreCase));
 		}
 
 		public async Task<bool> CanSendAsIcAsync(string userId, int callId, int departmentId)
@@ -210,6 +217,9 @@ namespace Resgrid.Services
 				return;
 
 			await _cacheProvider.IncrementAsync(GetVersionKey(chatChannelId), VersionCacheLength);
+
+			// Roll every per-user channel-list cache key forward too (channel set/visibility changed).
+			await _cacheProvider.IncrementAsync(ChannelListVersionCacheKey, VersionCacheLength);
 		}
 
 		private async Task<bool> EvaluateAccessAsync(ChatChannel channel, string userId, int? activeUnitId)
@@ -344,12 +354,40 @@ namespace Resgrid.Services
 
 			foreach (var groupRule in ruleList.Where(r => r.RuleType == (int)ChatAccessRuleType.GroupMembership && r.GroupId.HasValue))
 			{
-				var members = await _departmentGroupsService.GetAllMembersForGroupAsync(groupRule.GroupId.Value);
-				if (members != null && members.Any(m => string.Equals(m.UserId, userId, StringComparison.OrdinalIgnoreCase)))
+				var memberUserIds = await GetGroupRosterUserIdsAsync(groupRule.GroupId.Value);
+				if (memberUserIds != null && memberUserIds.Any(id => string.Equals(id, userId, StringComparison.OrdinalIgnoreCase)))
 					return true;
 			}
 
 			return false;
+		}
+
+		/// <summary>Group roster lookup cached briefly: access-rule evaluation walks every group rule per user, which would otherwise N+1 the group-membership table.</summary>
+		private async Task<List<string>> GetGroupRosterUserIdsAsync(int groupId)
+		{
+			async Task<GroupRosterCache> getRoster()
+			{
+				var members = await _departmentGroupsService.GetAllMembersForGroupAsync(groupId);
+				return new GroupRosterCache
+				{
+					UserIds = members?.Where(m => !string.IsNullOrWhiteSpace(m.UserId)).Select(m => m.UserId).ToList() ?? new List<string>()
+				};
+			}
+
+			if (SystemBehaviorConfig.CacheEnabled)
+			{
+				var cached = await _cacheProvider.RetrieveAsync($"chatperm:grouproster:{groupId}", getRoster, CacheLength);
+				return cached?.UserIds;
+			}
+
+			return (await getRoster()).UserIds;
+		}
+
+		[ProtoContract]
+		public class GroupRosterCache
+		{
+			[ProtoMember(1)]
+			public List<string> UserIds { get; set; } = new List<string>();
 		}
 
 		private async Task<bool> IsInIncidentAudienceAsync(ChatChannel channel, string userId, int? activeUnitId)
@@ -368,7 +406,9 @@ namespace Resgrid.Services
 				if (call.Dispatches != null && call.Dispatches.Any(d => string.Equals(d.UserId, userId, StringComparison.OrdinalIgnoreCase)))
 					return true;
 
-				if (activeUnitId.HasValue && call.UnitDispatches != null && call.UnitDispatches.Any(d => d.UnitId == activeUnitId.Value))
+				// A caller-supplied activeUnitId only grants access when the user actually crews that unit.
+				if (activeUnitId.HasValue && call.UnitDispatches != null && call.UnitDispatches.Any(d => d.UnitId == activeUnitId.Value)
+					&& await CanSendAsUnitAsync(userId, activeUnitId.Value, channel.DepartmentId))
 					return true;
 
 				if (call.GroupDispatches != null && call.GroupDispatches.Any())
@@ -395,10 +435,26 @@ namespace Resgrid.Services
 			{
 				foreach (var assignment in assignments.Where(a => !a.ReleasedOn.HasValue))
 				{
-					if (MatchesResource(assignment, userId, activeUnitId))
+					if (await MatchesResourceForIncidentAccessAsync(assignment, userId, activeUnitId, channel.DepartmentId))
 						return true;
 				}
 			}
+
+			return false;
+		}
+
+		/// <summary>
+		/// Incident-channel resource matching: personnel matches grant directly; unit matches only when the
+		/// user actively crews the matched unit (a caller-supplied activeUnitId alone is not proof).
+		/// </summary>
+		private async Task<bool> MatchesResourceForIncidentAccessAsync(ResourceAssignment assignment, string userId, int? activeUnitId, int departmentId)
+		{
+			if (assignment.ResourceKind == (int)ResourceAssignmentKind.RealPersonnel || assignment.ResourceKind == (int)ResourceAssignmentKind.LinkedDeptPersonnel)
+				return string.Equals(assignment.ResourceId, userId, StringComparison.OrdinalIgnoreCase);
+
+			if (activeUnitId.HasValue && (assignment.ResourceKind == (int)ResourceAssignmentKind.RealUnit || assignment.ResourceKind == (int)ResourceAssignmentKind.LinkedDeptUnit)
+				&& assignment.ResourceId == activeUnitId.Value.ToString())
+				return await CanSendAsUnitAsync(userId, activeUnitId.Value, departmentId);
 
 			return false;
 		}

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Dialog from './atoms/Dialog';
 
 interface FlagDialogProps {
   onClose: () => void;
@@ -19,36 +20,11 @@ export default function FlagDialog({ onClose, onSubmit }: FlagDialogProps) {
   const [note, setNote] = useState('');
 
   return (
-    <div className="rgchat-dialog__backdrop" onClick={onClose}>
-      <div className="rgchat-dialog" onClick={(event) => event.stopPropagation()}>
-        <div className="rgchat-dialog__head">Report message</div>
-        <div className="rgchat-dialog__body">
-          <div className="rgchat-form-row">
-            <label htmlFor="rgchat-flag-reason">Reason</label>
-            <select
-              id="rgchat-flag-reason"
-              className="rgchat-input"
-              style={{ width: 200 }}
-              value={reason}
-              onChange={(event) => setReason(Number(event.target.value))}
-            >
-              {REASONS.map((item) => (
-                <option key={item.value} value={item.value}>
-                  {item.label}
-                </option>
-              ))}
-            </select>
-          </div>
-          <textarea
-            className="rgchat-input"
-            placeholder="Add a note (optional)"
-            value={note}
-            rows={3}
-            onChange={(event) => setNote(event.target.value)}
-            style={{ marginTop: 8 }}
-          />
-        </div>
-        <div className="rgchat-dialog__foot">
+    <Dialog
+      title="Report message"
+      onClose={onClose}
+      footer={
+        <>
           <button type="button" className="rgchat-btn rgchat-btn--ghost" onClick={onClose}>
             Cancel
           </button>
@@ -62,8 +38,31 @@ export default function FlagDialog({ onClose, onSubmit }: FlagDialogProps) {
           >
             Report
           </button>
-        </div>
+        </>
+      }
+    >
+      <div className="rgchat-form-row">
+        <label htmlFor="rgchat-flag-reason">Reason</label>
+        <select
+          id="rgchat-flag-reason"
+          className="rgchat-input rgchat-dialog__select"
+          value={reason}
+          onChange={(event) => setReason(Number(event.target.value))}
+        >
+          {REASONS.map((item) => (
+            <option key={item.value} value={item.value}>
+              {item.label}
+            </option>
+          ))}
+        </select>
       </div>
-    </div>
+      <textarea
+        className="rgchat-input rgchat-dialog__field"
+        placeholder="Add a note (optional)"
+        value={note}
+        rows={3}
+        onChange={(event) => setNote(event.target.value)}
+      />
+    </Dialog>
   );
 }

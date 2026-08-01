@@ -527,11 +527,25 @@ namespace Resgrid.Workers.Console
 				{
 					UpdateDatabase(scope.ServiceProvider);
 					await UpdateOidcDatabaseAsync(logger, scope.ServiceProvider);
-					await UpdateDocumentDatabaseAsync(logger, scope.ServiceProvider);
+
+					// Dispatch and the other core queues do not depend on the document database.
+					// Release them as soon as the core/OIDC migrations are complete so a slow or
+					// unavailable document store cannot prevent emergency notifications.
+					_databaseUpgradeState.MarkCompleted();
+
+					try
+					{
+						await UpdateDocumentDatabaseAsync(logger, scope.ServiceProvider);
+					}
+					catch (Exception ex)
+					{
+						logger.Log(LogLevel.Error, ex,
+							"Document Database upgrade failed; core queue processing will remain available.");
+					}
 				}
 
-				_databaseUpgradeState.MarkCompleted();
-				_logger.Log(LogLevel.Information, "Completed updating the Resgrid Database!");
+				_logger.Log(LogLevel.Information,
+					"Completed updating the core Resgrid databases; document database migration was attempted independently.");
 			}
 			catch (Exception ex)
 			{

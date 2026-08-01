@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Config;
@@ -19,7 +20,7 @@ namespace Resgrid.Repositories.NoSqlRepository
 
 		public MongoRepository()
 		{
-			var database = new MongoClient(DataConfig.NoSqlConnectionString).GetDatabase(DataConfig.NoSqlDatabaseName);
+			var database = MongoClientFactory.Create().GetDatabase(DataConfig.NoSqlDatabaseName);
 			_collection = database.GetCollection<TDocument>(GetCollectionName(typeof(TDocument)));
 		}
 
@@ -87,9 +88,9 @@ namespace Resgrid.Repositories.NoSqlRepository
 			_collection.InsertOne(document);
 		}
 
-		public virtual async Task InsertOneAsync(TDocument document)
+		public virtual async Task InsertOneAsync(TDocument document, CancellationToken cancellationToken = default)
 		{
-			await _collection.InsertOneAsync(document);
+			await _collection.InsertOneAsync(document, null, cancellationToken);
 		}
 
 		public void InsertMany(ICollection<TDocument> documents)
@@ -109,10 +110,10 @@ namespace Resgrid.Repositories.NoSqlRepository
 			_collection.FindOneAndReplace(filter, document);
 		}
 
-		public virtual async Task ReplaceOneAsync(TDocument document)
+		public virtual async Task ReplaceOneAsync(TDocument document, CancellationToken cancellationToken = default)
 		{
 			var filter = Builders<TDocument>.Filter.Eq(doc => doc.Id, document.Id);
-			await _collection.FindOneAndReplaceAsync(filter, document);
+			await _collection.FindOneAndReplaceAsync(filter, document, null, cancellationToken);
 		}
 
 		public void DeleteOne(Expression<Func<TDocument, bool>> filterExpression)

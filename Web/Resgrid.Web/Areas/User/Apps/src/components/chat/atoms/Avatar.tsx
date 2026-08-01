@@ -17,6 +17,9 @@ export default function Avatar({ name, userId, size = 'md', online, showPresence
     classes.push('rgchat-avatar--sm');
   }
 
+  // Matches the .rgchat-avatar / --sm CSS box so the intrinsic size is declared (no layout shift).
+  const dimension = size === 'sm' ? 30 : 38;
+
   const avatarUrl =
     userId && userId.length > 0 && !imageFailed
       ? `${getBrowserConfig().apiBaseUrl}/api/v4/Avatars/Get?id=${encodeURIComponent(userId)}`
@@ -25,7 +28,16 @@ export default function Avatar({ name, userId, size = 'md', online, showPresence
   return (
     <span className={classes.join(' ')} style={{ backgroundColor: colorFor(userId ?? name) }}>
       {avatarUrl ? (
-        <img className="rgchat-avatar__img" src={avatarUrl} alt="" onError={() => setImageFailed(true)} />
+        <img
+          className="rgchat-avatar__img"
+          src={avatarUrl}
+          alt=""
+          width={dimension}
+          height={dimension}
+          loading="lazy"
+          decoding="async"
+          onError={() => setImageFailed(true)}
+        />
       ) : (
         initialsFor(name)
       )}

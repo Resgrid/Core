@@ -16,7 +16,9 @@ namespace Resgrid.Providers.Bus.Rabbit
 	{
 		private string _clientName;
 		private IChannel _channel;
+		private IChannel _callChannel;
 		private IChannel _unitLocationChannel;
+		private IChannel _personnelLocationChannel;
 		public Func<CallQueueItem, Task> CallQueueReceived;
 		public Func<MessageQueueItem, Task> MessageQueueReceived;
 		public Func<DistributionListQueueItem, Task> DistributionListQueueReceived;
@@ -45,6 +47,14 @@ namespace Resgrid.Providers.Bus.Rabbit
 			{
 				_channel = await connection.CreateChannelAsync();
 
+				if (CallQueueReceived != null)
+				{
+					// Call dispatch has its own channel so no unrelated queue callback can delay an
+					// emergency notification, regardless of which backing store that callback uses.
+					_callChannel = await connection.CreateChannelAsync();
+					await _callChannel.BasicQosAsync(0, 1, false);
+				}
+
 				if (UnitLocationEventQueueReceived != null)
 				{
 					_unitLocationChannel = await connection.CreateChannelAsync();
@@ -52,6 +62,14 @@ namespace Resgrid.Providers.Bus.Rabbit
 						ushort.MaxValue,
 						Math.Max(1, UnitTrackingConfig.UnitLocationQueuePrefetchCount));
 					await _unitLocationChannel.BasicQosAsync(0, prefetchCount, false);
+				}
+
+				if (PersonnelLocationEventQueueReceived != null)
+				{
+					// Personnel location storage must never serialize dispatch callbacks behind a slow
+					// Mongo/DocumentDB operation. Rabbit dispatches callbacks sequentially per channel.
+					_personnelLocationChannel = await connection.CreateChannelAsync();
+					await _personnelLocationChannel.BasicQosAsync(0, 1, false);
 				}
 
 				await StartMonitoring();
@@ -64,7 +82,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 			{
 				if (CallQueueReceived != null)
 				{
-					var callQueueReceivedConsumer = new AsyncEventingBasicConsumer(_channel);
+					var callQueueReceivedConsumer = new AsyncEventingBasicConsumer(_callChannel);
 					callQueueReceivedConsumer.ReceivedAsync += async (model, ea) =>
 					{
 						if (ea != null && ea.Body.Length > 0)
@@ -78,7 +96,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 							}
 							catch (Exception ex)
 							{
-								await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
+								await _callChannel.BasicNackAsync(ea.DeliveryTag, false, false);
 								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
 							}
 
@@ -89,7 +107,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 									if (CallQueueReceived != null)
 									{
 										await CallQueueReceived.Invoke(cqi);
-										await _channel.BasicAckAsync(ea.DeliveryTag, false);
+										await _callChannel.BasicAckAsync(ea.DeliveryTag, false);
 									}
 								}
 							}
@@ -97,14 +115,14 @@ namespace Resgrid.Providers.Bus.Rabbit
 							{
 								Logging.LogException(ex);
 								if (await RetryQueueItem(ea, ex))
-									await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
+									await _callChannel.BasicNackAsync(ea.DeliveryTag, false, false);
 								else
-									await _channel.BasicNackAsync(ea.DeliveryTag, false, true);
+									await _callChannel.BasicNackAsync(ea.DeliveryTag, false, true);
 							}
 						}
 					};
 
-					String callQueueReceivedConsumerTag = await _channel.BasicConsumeAsync(
+					String callQueueReceivedConsumerTag = await _callChannel.BasicConsumeAsync(
 							queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.CallBroadcastQueueName),
 							autoAck: false,
 							consumer: callQueueReceivedConsumer);
@@ -455,43 +473,34 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 				if (PersonnelLocationEventQueueReceived != null)
 				{
-					var personnelLocationQueueReceivedConsumer = new AsyncEventingBasicConsumer(_channel);
+					var personnelLocationQueueReceivedConsumer = new AsyncEventingBasicConsumer(_personnelLocationChannel);
 					personnelLocationQueueReceivedConsumer.ReceivedAsync += async (model, ea) =>
 					{
-						if (ea != null && ea.Body.Length > 0)
-						{
-							PersonnelLocationEvent personnelLocation = null;
-							try
-							{
-								var body = ea.Body;
-								var message = Encoding.UTF8.GetString(body.ToArray());
-								personnelLocation = ObjectSerialization.Deserialize<PersonnelLocationEvent>(message);
-							}
-							catch (Exception ex)
-							{
-								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
-							}
+						if (ea == null)
+							return;
 
-							try
-							{
-								if (personnelLocation != null)
-								{
-									if (PersonnelLocationEventQueueReceived != null)
-									{
-										await PersonnelLocationEventQueueReceived.Invoke(personnelLocation);
-									}
-								}
-							}
-							catch (Exception ex)
-							{
-								Logging.LogException(ex);
-							}
+						try
+						{
+							if (ea.Body.Length == 0)
+								throw new InvalidOperationException("Personnel location queue message body is empty.");
+
+							var message = Encoding.UTF8.GetString(ea.Body.ToArray());
+							var personnelLocation = ObjectSerialization.Deserialize<PersonnelLocationEvent>(message)
+								?? throw new InvalidOperationException("Personnel location queue message could not be deserialized.");
+
+							await PersonnelLocationEventQueueReceived.Invoke(personnelLocation);
+							await _personnelLocationChannel.BasicAckAsync(ea.DeliveryTag, false);
+						}
+						catch (Exception ex)
+						{
+							Logging.LogException(ex);
+							await _personnelLocationChannel.BasicNackAsync(ea.DeliveryTag, false, false);
 						}
 					};
 
-					String personnelLocationEventQueueReceivedConsumerTag = await _channel.BasicConsumeAsync(
+					String personnelLocationEventQueueReceivedConsumerTag = await _personnelLocationChannel.BasicConsumeAsync(
 						queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.PersonnelLoactionQueueName),
-						autoAck: true,
+						autoAck: false,
 						consumer: personnelLocationQueueReceivedConsumer);
 				}
 
@@ -634,10 +643,16 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 		public bool IsConnected()
 		{
-			if (_channel == null || (UnitLocationEventQueueReceived != null && _unitLocationChannel == null))
+			if (_channel == null ||
+				(CallQueueReceived != null && _callChannel == null) ||
+				(UnitLocationEventQueueReceived != null && _unitLocationChannel == null) ||
+				(PersonnelLocationEventQueueReceived != null && _personnelLocationChannel == null))
 				return false;
 
-			return _channel.IsOpen && (_unitLocationChannel?.IsOpen ?? true);
+			return _channel.IsOpen &&
+				(_callChannel?.IsOpen ?? true) &&
+				(_unitLocationChannel?.IsOpen ?? true) &&
+				(_personnelLocationChannel?.IsOpen ?? true);
 		}
 
 		private async Task StartUnitLocationConsumer(string queueName)

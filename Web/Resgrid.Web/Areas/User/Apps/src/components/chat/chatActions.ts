@@ -5,7 +5,7 @@ import {
   deleteMessage,
   editMessage,
   getMessages,
-  markRead,
+  getPresence,
   pinMessage,
   removeReaction,
   sendMessage,
@@ -19,7 +19,11 @@ import {
   clearPendingAck,
   createOptimisticMessage,
   markChannelRead,
+  markMessageFailed,
+  markMessagePending,
   prependChannelMessages,
+  removeMessageLocally,
+  seedPresence,
   setChannelMessages,
   upsertMessage,
   upsertMessages,
@@ -49,6 +53,49 @@ export async function loadOlderMessages(channelId: string): Promise<void> {
   prependChannelMessages(channelId, page.messages, page.hasMore);
 }
 
+// Files of failed image sends are kept in-memory so Retry can re-upload without re-picking.
+const pendingFiles = new Map<string, File>();
+
+async function deliverMessage(
+  channelId: string,
+  clientMessageId: string,
+  payload: ComposerSendPayload,
+  threadRootMessageId: string | null,
+): Promise<void> {
+  const created = await sendMessage(channelId, {
+    Body: payload.body,
+    MessageType: payload.messageType,
+    Priority: payload.priority,
+    MetadataJson: payload.metadataJson,
+    ClientMessageId: clientMessageId,
+    ThreadRootMessageId: threadRootMessageId,
+  });
+
+  if (created) {
+    upsertMessage(created);
+
+    if (payload.messageType === ChatMessageType.Image && payload.file) {
+      const attachmentId = await uploadAttachment(channelId, created.ChatMessageId, payload.file);
+      if (attachmentId) {
+        upsertMessages(channelId, [
+          {
+            ...created,
+            Attachments: [
+              {
+                ChatAttachmentId: attachmentId,
+                FileName: payload.file.name,
+                ContentType: payload.file.type,
+                Size: payload.file.size,
+              },
+            ],
+          },
+        ]);
+      }
+    }
+  }
+  pendingFiles.delete(clientMessageId);
+}
+
 export async function sendComposerMessage(
   channel: ChatChannelDto,
   currentUserId: string,
@@ -69,42 +116,49 @@ export async function sendComposerMessage(
     payload.metadataJson,
   );
   upsertMessage(optimistic);
+  if (payload.file) {
+    pendingFiles.set(clientMessageId, payload.file);
+  }
 
   try {
-    const created = await sendMessage(channel.ChatChannelId, {
-      Body: payload.body,
-      MessageType: payload.messageType,
-      Priority: payload.priority,
-      MetadataJson: payload.metadataJson,
-      ClientMessageId: clientMessageId,
-      ThreadRootMessageId: threadRootMessageId,
-    });
-
-    if (created) {
-      upsertMessage(created);
-
-      if (payload.messageType === ChatMessageType.Image && payload.file) {
-        const attachmentId = await uploadAttachment(channel.ChatChannelId, created.ChatMessageId, payload.file);
-        if (attachmentId) {
-          upsertMessages(channel.ChatChannelId, [
-            {
-              ...created,
-              Attachments: [
-                {
-                  ChatAttachmentId: attachmentId,
-                  FileName: payload.file.name,
-                  ContentType: payload.file.type,
-                  Size: payload.file.size,
-                },
-              ],
-            },
-          ]);
-        }
-      }
-    }
+    await deliverMessage(channel.ChatChannelId, clientMessageId, payload, threadRootMessageId);
   } catch (error) {
     console.error('Failed to send chat message.', error);
+    markMessageFailed(channel.ChatChannelId, clientMessageId);
   }
+}
+
+// Re-send a failed optimistic message, reusing its ClientMessageId so the echo dedupes.
+export async function retryFailedMessage(channel: ChatChannelDto, message: ChatMessageDto): Promise<void> {
+  if (!message.ClientMessageId) {
+    return;
+  }
+  const clientMessageId = message.ClientMessageId;
+  markMessagePending(channel.ChatChannelId, clientMessageId);
+  try {
+    await deliverMessage(
+      channel.ChatChannelId,
+      clientMessageId,
+      {
+        body: message.Body ?? '',
+        messageType: message.MessageType,
+        priority: message.Priority,
+        metadataJson: message.MetadataJson,
+        file: pendingFiles.get(clientMessageId),
+      },
+      message.ThreadRootMessageId,
+    );
+  } catch (error) {
+    console.error('Failed to resend chat message.', error);
+    markMessageFailed(channel.ChatChannelId, clientMessageId);
+  }
+}
+
+export function discardFailedMessage(message: ChatMessageDto): void {
+  if (message.ClientMessageId) {
+    pendingFiles.delete(message.ClientMessageId);
+  }
+  removeMessageLocally(message.ChatChannelId, message.ChatMessageId);
 }
 
 export async function toggleReaction(message: ChatMessageDto, emoji: string, mine: boolean): Promise<void> {
@@ -171,11 +225,52 @@ export async function acknowledgeMessage(message: ChatMessageDto): Promise<void>
   }
 }
 
+// ---- Read pointer (hub invoke only, throttled to 1/sec/channel with a trailing call) ----
+
+const MARK_READ_THROTTLE_MS = 1000;
+const lastMarkReadAt = new Map<string, number>();
+const markReadTimers = new Map<string, ReturnType<typeof setTimeout>>();
+
 export function markConversationRead(channel: ChatChannelDto, seq: number): void {
   if (seq <= channel.MyLastReadSeq) {
     return;
   }
   markChannelRead(channel.ChatChannelId, seq);
-  chatHub.markRead(channel.ChatChannelId, seq);
-  markRead(channel.ChatChannelId, seq).catch(() => undefined);
+
+  const now = Date.now();
+  const last = lastMarkReadAt.get(channel.ChatChannelId) ?? 0;
+  if (now - last >= MARK_READ_THROTTLE_MS) {
+    lastMarkReadAt.set(channel.ChatChannelId, now);
+    chatHub.markRead(channel.ChatChannelId, seq);
+    return;
+  }
+  const pending = markReadTimers.get(channel.ChatChannelId);
+  if (pending) {
+    clearTimeout(pending);
+  }
+  markReadTimers.set(
+    channel.ChatChannelId,
+    setTimeout(() => {
+      markReadTimers.delete(channel.ChatChannelId);
+      lastMarkReadAt.set(channel.ChatChannelId, Date.now());
+      chatHub.markRead(channel.ChatChannelId, seq);
+    }, MARK_READ_THROTTLE_MS - (now - last)),
+  );
+}
+
+// ---- Presence seeding ----
+
+const PRESENCE_SEED_CAP = 200;
+
+export async function seedPresenceFor(userIds: (string | null | undefined)[]): Promise<void> {
+  const ids = Array.from(new Set(userIds.filter((id): id is string => !!id))).slice(0, PRESENCE_SEED_CAP);
+  if (ids.length === 0) {
+    return;
+  }
+  try {
+    const online = await getPresence(ids);
+    seedPresence(online);
+  } catch {
+    // Presence is best-effort.
+  }
 }

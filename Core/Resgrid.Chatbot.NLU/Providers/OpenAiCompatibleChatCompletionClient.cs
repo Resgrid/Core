@@ -33,20 +33,30 @@ namespace Resgrid.Chatbot.NLU.Providers
 
 		public async Task<bool> IsAvailableAsync(int departmentId)
 		{
-			var (_, apiKey, _, _) = await ResolveAsync(departmentId);
+			var (_, apiKey, _, _, _) = await ResolveAsync(departmentId);
 			return !string.IsNullOrWhiteSpace(apiKey);
 		}
 
-		public async Task<string> CompleteAsync(int departmentId, string systemPrompt, List<ChatCompletionTurn> turns, int maxTokens = 512)
+		public async Task<string> CompleteAsync(int departmentId, string systemPrompt, List<ChatCompletionTurn> turns, int? maxTokens = null)
 		{
 			try
 			{
 				if (turns == null || turns.Count == 0)
 					return null;
 
-				var (endpoint, apiKey, model, isAnthropic) = await ResolveAsync(departmentId);
+				var (endpoint, apiKey, model, isAnthropic, isDepartmentOverride) = await ResolveAsync(departmentId);
 				if (string.IsNullOrWhiteSpace(apiKey) || string.IsNullOrWhiteSpace(endpoint))
 					return null;
+
+				// SSRF guard: the effective endpoint (system config or department override) must be an
+				// absolute https URI resolving only to public addresses.
+				if (!LlmEndpointValidator.IsValid(endpoint, out var endpointError))
+				{
+					Logging.LogError($"Chat completion rejected for department {departmentId}: invalid LLM endpoint ({endpointError})");
+					return null;
+				}
+
+				var effectiveMaxTokens = maxTokens ?? (ChatbotConfig.CloudNluMaxTokens > 0 ? ChatbotConfig.CloudNluMaxTokens : 512);
 
 				object requestBody;
 				if (isAnthropic)
@@ -54,7 +64,7 @@ namespace Resgrid.Chatbot.NLU.Providers
 					requestBody = new
 					{
 						model,
-						max_tokens = maxTokens,
+						max_tokens = effectiveMaxTokens,
 						temperature = ChatbotConfig.CloudNluTemperature,
 						system = systemPrompt,
 						messages = turns.Select(t => new { role = NormalizeRole(t.Role), content = t.Content }).ToArray()
@@ -70,55 +80,69 @@ namespace Resgrid.Chatbot.NLU.Providers
 						model,
 						messages,
 						temperature = ChatbotConfig.CloudNluTemperature,
-						max_tokens = maxTokens
+						max_tokens = effectiveMaxTokens
 					};
 				}
 
-				var request = new HttpRequestMessage(HttpMethod.Post, endpoint)
-				{
-					Content = new StringContent(JsonConvert.SerializeObject(requestBody), Encoding.UTF8, "application/json")
-				};
+				var bodyJson = JsonConvert.SerializeObject(requestBody);
+				var maxRetries = ChatbotConfig.CloudNluMaxRetries >= 0 ? ChatbotConfig.CloudNluMaxRetries : 0;
 
-				var departmentLlm = departmentId > 0 && _configService != null
-					? await _configService.GetLlmOverrideAsync(departmentId)
-					: null;
-
-				if (isAnthropic)
+				for (var attempt = 0; attempt <= maxRetries; attempt++)
 				{
-					request.Headers.Add("x-api-key", apiKey);
-					request.Headers.Add("anthropic-version", "2023-06-01");
-				}
-				else if (departmentLlm == null && ChatbotConfig.CloudNluProvider == CloudNluProviderType.AzureOpenAI)
-				{
-					request.Headers.Add("api-key", apiKey);
-				}
-				else
-				{
-					request.Headers.Add("Authorization", $"Bearer {apiKey}");
-				}
+					if (attempt > 0)
+						await Task.Delay(TimeSpan.FromMilliseconds(250 * Math.Pow(2, attempt - 1)));
 
-				using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(
-					ChatbotConfig.CloudNluTimeoutSeconds > 0 ? ChatbotConfig.CloudNluTimeoutSeconds : 15));
+					using var request = new HttpRequestMessage(HttpMethod.Post, endpoint)
+					{
+						Content = new StringContent(bodyJson, Encoding.UTF8, "application/json")
+					};
 
-				var response = await _httpClient.SendAsync(request, cts.Token);
-				var responseBody = await response.Content.ReadAsStringAsync();
+					if (isAnthropic)
+					{
+						request.Headers.Add("x-api-key", apiKey);
+						request.Headers.Add("anthropic-version", "2023-06-01");
+					}
+					else if (!isDepartmentOverride && ChatbotConfig.CloudNluProvider == CloudNluProviderType.AzureOpenAI)
+					{
+						request.Headers.Add("api-key", apiKey);
+					}
+					else if (isDepartmentOverride && IsAzureOpenAiHost(endpoint))
+					{
+						request.Headers.Add("api-key", apiKey);
+					}
+					else
+					{
+						request.Headers.Add("Authorization", $"Bearer {apiKey}");
+					}
 
-				if (!response.IsSuccessStatusCode)
-				{
-					Logging.LogError($"Chat completion error (HTTP {(int)response.StatusCode}): {responseBody.Truncate(300)}");
+					using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(
+						ChatbotConfig.CloudNluTimeoutSeconds > 0 ? ChatbotConfig.CloudNluTimeoutSeconds : 15));
+
+					using var response = await _httpClient.SendAsync(request, cts.Token);
+
+					if (response.IsSuccessStatusCode)
+					{
+						var responseBody = await response.Content.ReadAsStringAsync();
+						var root = JObject.Parse(responseBody);
+
+						if (isAnthropic)
+						{
+							var blocks = root["content"] as JArray;
+							return blocks != null && blocks.Count > 0 ? blocks[0]?["text"]?.ToString() : null;
+						}
+
+						var choices = root["choices"] as JArray;
+						return choices != null && choices.Count > 0 ? choices[0]?["message"]?["content"]?.ToString() : null;
+					}
+
+					if (attempt < maxRetries && IsRetryable(response.StatusCode))
+						continue;
+
+					Logging.LogError($"Chat completion error (HTTP {(int)response.StatusCode}){FormatRequestId(response)}.");
 					return null;
 				}
 
-				var root = JObject.Parse(responseBody);
-
-				if (isAnthropic)
-				{
-					var blocks = root["content"] as JArray;
-					return blocks != null && blocks.Count > 0 ? blocks[0]?["text"]?.ToString() : null;
-				}
-
-				var choices = root["choices"] as JArray;
-				return choices != null && choices.Count > 0 ? choices[0]?["message"]?["content"]?.ToString() : null;
+				return null;
 			}
 			catch (Exception ex)
 			{
@@ -127,7 +151,7 @@ namespace Resgrid.Chatbot.NLU.Providers
 			}
 		}
 
-		private async Task<(string endpoint, string apiKey, string model, bool isAnthropic)> ResolveAsync(int departmentId)
+		private async Task<(string endpoint, string apiKey, string model, bool isAnthropic, bool isDepartmentOverride)> ResolveAsync(int departmentId)
 		{
 			DepartmentLlmOverride departmentLlm = null;
 			if (departmentId > 0 && _configService != null)
@@ -153,7 +177,38 @@ namespace Resgrid.Chatbot.NLU.Providers
 				isAnthropic = ChatbotConfig.CloudNluProvider == CloudNluProviderType.Anthropic;
 			}
 
-			return (endpoint, apiKey, model, isAnthropic);
+			return (endpoint, apiKey, model, isAnthropic, departmentLlm != null);
+		}
+
+		private static bool IsRetryable(System.Net.HttpStatusCode statusCode)
+		{
+			var code = (int)statusCode;
+			return code == 429 || code >= 500;
+		}
+
+		private static string FormatRequestId(HttpResponseMessage response)
+		{
+			string[] headers = { "x-request-id", "request-id", "apim-request-id" };
+			foreach (var header in headers)
+			{
+				if (response.Headers.TryGetValues(header, out var values))
+				{
+					var value = values.FirstOrDefault();
+					if (!string.IsNullOrWhiteSpace(value))
+						return $" request-id: {value}";
+				}
+			}
+
+			return string.Empty;
+		}
+
+		private static bool IsAzureOpenAiHost(string endpoint)
+		{
+			if (!Uri.TryCreate(endpoint, UriKind.Absolute, out var uri))
+				return false;
+
+			return uri.Host.IndexOf(".openai.azure.com", StringComparison.OrdinalIgnoreCase) >= 0
+				|| uri.Host.IndexOf(".cognitiveservices.azure.com", StringComparison.OrdinalIgnoreCase) >= 0;
 		}
 
 		private static string ResolveEndpoint()

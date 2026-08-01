@@ -554,13 +554,23 @@ namespace Resgrid.Chatbot.Services
 
 				// Unknown intent: try the guard-railed conversational LLM fallback before giving up.
 				// Operational commands never reach here — matched intents dispatched above — so the
-				// fallback can only produce informational replies.
-				var fallbackResponse = await _conversationalFallback.TryHandleAsync(message, session);
-				if (fallbackResponse != null)
+				// fallback can only produce informational replies. The LLM is an external/network
+				// dependency: a failure or timeout must degrade to the plain "didn't understand" reply,
+				// never bubble up to the generic error handler (which would lose the informational answer).
+				try
 				{
-					fallbackResponse.Intent = intent;
-					await _sessionManager.SaveSessionAsync(session);
-					return fallbackResponse;
+					var fallbackResponse = await _conversationalFallback.TryHandleAsync(message, session);
+					if (fallbackResponse != null)
+					{
+						fallbackResponse.Intent = intent;
+						await _sessionManager.SaveSessionAsync(session);
+						return fallbackResponse;
+					}
+				}
+				catch (Exception fallbackEx)
+				{
+					Logging.LogException(fallbackEx,
+						$"Chatbot conversational fallback failed (intent={intent?.Type}, sessionId={session?.SessionId}, messageId={message?.MessageId}); using the default response.");
 				}
 
 				return new ChatbotResponse

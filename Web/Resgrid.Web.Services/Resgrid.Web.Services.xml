@@ -835,6 +835,19 @@
             <param name="exportId">Chat export identifier</param>
             <returns>The export file</returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatModerationController.IsExportRateLimitedAsync">
+            <summary>
+            Per-department sliding-window rate limit for transcript exports. Returns true when the
+            department has exceeded ChatConfig.ExportRateLimitPerWindow for the current window.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatModerationController.BuildModerationContext(System.String)">
+            <summary>
+            Captures the request's forensic context (ip, user-agent, trace id) for the moderation audit
+            trail. <paramref name="actorRole"/> records the authority the action was taken under
+            (department admin vs channel moderator).
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CheckInTimersController">
             <summary>
             Check-in timer operations for call accountability
@@ -5169,14 +5182,6 @@
             part of the shallow /health liveness endpoint.
             </summary>
         </member>
-        <member name="T:Resgrid.Web.Services.Hubs.ChatHub">
-            <summary>
-            Realtime chat hub. Carries only ephemeral traffic (channel group membership, typing, presence,
-            read/delivered pointers) — message writes go through the REST API and fan back out via the
-            RabbitMQ eventing topic and the eventing host's Worker. Group naming: chat:{channelId} per channel,
-            chatuser:{deptId}:{userId} for personal events, chatdept:{deptId} for channel-list updates.
-            </summary>
-        </member>
         <member name="P:Resgrid.Web.Services.Middleware.ResgridAuthenticationEvents.OnAuthenticationFailed">
             <summary>
             Gets or sets the on authentication failed.
@@ -7141,6 +7146,81 @@
             Identifier of the created attachment
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatbotChannelResult">
+            <summary>
+            Gets the caller's chatbot conversation channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatbotChannelResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatbotMessageSentResult">
+            <summary>
+            Result of sending a message to the chatbot
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatbotMessageSentResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatbotSessionResetResult">
+            <summary>
+            Result of resetting the chatbot conversational session
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatbotSessionResetResult.Success">
+            <summary>
+            Whether the session was reset
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatbotChannelResultData">
+            <summary>
+            Chatbot conversation channel data
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatbotChannelResultData.ChatChannelId">
+            <summary>
+            Chat channel identifier
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatbotChannelResultData.Name">
+            <summary>
+            Name of the channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatbotChannelResultData.LastMessageSeq">
+            <summary>
+            Highest message sequence in the channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatbotChannelResultData.LastMessageOn">
+            <summary>
+            When the last message was sent
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatbotMessageSentResultData">
+            <summary>
+            Chatbot message send data
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatbotMessageSentResultData.ChatMessageId">
+            <summary>
+            Chat message identifier
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatbotMessageSentResultData.MessageSeq">
+            <summary>
+            Per-channel monotonic message sequence
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatbotMessageSentResultData.SentOn">
+            <summary>
+            When the message was sent (UTC)
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatChannelResultData">
             <summary>
             Chat channel data
@@ -7463,7 +7543,7 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMemberResultData.LastReadSeq">
             <summary>
-            Highest message sequence this member has read
+            Highest message sequence this member has read (moderators only)
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMemberResultData.LastReadOn">
@@ -7473,17 +7553,17 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMemberResultData.LastDeliveredSeq">
             <summary>
-            Highest message sequence delivered to any of this member's devices
+            Highest message sequence delivered to any of this member's devices (moderators only)
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMemberResultData.MutedUntil">
             <summary>
-            Member cannot post until this UTC time (null = not muted)
+            Member cannot post until this UTC time (null = not muted, moderators only)
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMemberResultData.IsBanned">
             <summary>
-            Is the member banned from the channel
+            Is the member banned from the channel (moderators only)
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMemberResultData.NotificationPreference">

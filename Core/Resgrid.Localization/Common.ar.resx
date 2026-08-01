@@ -35,6 +35,15 @@
   <data name="Committed" xml:space="preserve"><value>ملتزم</value></data>
   <data name="Connect" xml:space="preserve"><value>اتصال</value></data>
   <data name="ContactsModule" xml:space="preserve"><value>جهات الاتصال</value></data>
+  <data name="ChatModule" xml:space="preserve">
+    <value>Chat</value>
+  </data>
+  <data name="AssistantModule" xml:space="preserve">
+    <value>Assistant</value>
+  </data>
+  <data name="ChatModerationModule" xml:space="preserve">
+    <value>Chat Moderation</value>
+  </data>
   <data name="ContactUs" xml:space="preserve"><value>اتصل بنا</value></data>
   <data name="CreatedOn" xml:space="preserve"><value>أُنشئ في</value></data>
   <data name="CustomStatuses" xml:space="preserve"><value>الحالات المخصصة</value></data>

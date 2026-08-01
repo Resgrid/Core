@@ -1,6 +1,6 @@
 // Typed fetch wrappers for the v4 Chat + Chatbot APIs. Bearer + base URL follow runtime/api.ts.
-import { getAccessToken } from '../../runtime/auth';
-import { getBrowserConfig } from '../../runtime/browserConfig';
+import { ApiError, apiAuthHeaders, apiFetchJson, buildApiUrl, type ApiQuery } from '../../runtime/api';
+import { setAuthError } from './chatStore';
 import type {
   ApiItemResult,
   ApiListResult,
@@ -13,62 +13,42 @@ import type {
   SendMessageOptions,
 } from './types';
 
-export class ChatApiError extends Error {
-  public readonly status: number;
+export { ApiError as ChatApiError };
 
-  constructor(status: number, message: string) {
-    super(message);
-    this.name = 'ChatApiError';
-    this.status = status;
-  }
+export function isApiStatus(error: unknown, status: number): boolean {
+  return error instanceof ApiError && error.status === status;
 }
 
-function buildUrl(path: string, query?: Record<string, string | number | boolean | null | undefined>): string {
-  const { apiBaseUrl } = getBrowserConfig();
-  const url = new URL(path, `${apiBaseUrl}/`);
-  if (query) {
-    for (const [key, value] of Object.entries(query)) {
-      if (value !== null && value !== undefined && value !== '') {
-        url.searchParams.set(key, String(value));
-      }
+// Shared wrapper: surfaces 401s to the store so chat surfaces can show a session notice.
+export async function chatRequest<T>(path: string, init?: RequestInit, query?: ApiQuery): Promise<T> {
+  try {
+    return await apiFetchJson<T>(path, init, query);
+  } catch (error) {
+    if (isApiStatus(error, 401)) {
+      setAuthError(true);
     }
+    throw error;
   }
-  return url.toString();
 }
 
-function authHeaders(extra?: HeadersInit): Headers {
-  const headers = new Headers(extra);
-  headers.set('Accept', 'application/json');
-  const token = getAccessToken();
-  if (token.length > 0) {
-    headers.set('Authorization', `Bearer ${token}`);
-  }
-  return headers;
+async function getJson<T>(path: string, query?: ApiQuery): Promise<T> {
+  return chatRequest<T>(path, undefined, query);
 }
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(path, { ...init, headers: authHeaders(init?.headers) });
-  if (!response.ok) {
-    throw new ChatApiError(response.status, `${response.status} ${response.statusText}`);
-  }
-  const text = await response.text();
-  return (text.length > 0 ? JSON.parse(text) : {}) as T;
-}
-
-async function getJson<T>(path: string, query?: Record<string, string | number | boolean | null | undefined>): Promise<T> {
-  return request<T>(buildUrl(path, query));
-}
-
-async function sendJson<T>(method: string, path: string, body?: unknown, query?: Record<string, string | number | boolean | null | undefined>): Promise<T> {
+async function sendJson<T>(method: string, path: string, body?: unknown, query?: ApiQuery): Promise<T> {
   const headers: Record<string, string> = {};
   if (body !== undefined) {
     headers['Content-Type'] = 'application/json';
   }
-  return request<T>(buildUrl(path, query), {
-    method,
-    headers,
-    body: body !== undefined ? JSON.stringify(body) : undefined,
-  });
+  return chatRequest<T>(
+    path,
+    {
+      method,
+      headers,
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+    },
+    query,
+  );
 }
 
 // ---- Channels ----
@@ -83,7 +63,7 @@ export async function getChannels(activeUnitId?: number): Promise<GetChannelsOut
     const result = await getJson<ApiListResult<ChatChannelDto>>('api/v4/Chat/GetChannels', { activeUnitId });
     return { available: true, channels: result.Data ?? [] };
   } catch (error) {
-    if (error instanceof ChatApiError && error.status === 404) {
+    if (isApiStatus(error, 404)) {
       return { available: false, channels: [] };
     }
     throw error;
@@ -133,7 +113,7 @@ export async function addMembers(channelId: string, userIds: string[]): Promise<
 }
 
 export async function removeMember(channelId: string, userId: string): Promise<void> {
-  await request<unknown>(buildUrl('api/v4/Chat/RemoveMember', { channelId, userId }), { method: 'DELETE' });
+  await chatRequest<unknown>('api/v4/Chat/RemoveMember', { method: 'DELETE' }, { channelId, userId });
 }
 
 // ---- Messages ----
@@ -180,7 +160,7 @@ export async function editMessage(messageId: string, body: string): Promise<Chat
 }
 
 export async function deleteMessage(messageId: string): Promise<void> {
-  await request<unknown>(buildUrl('api/v4/Chat/DeleteMessage', { messageId }), { method: 'DELETE' });
+  await chatRequest<unknown>('api/v4/Chat/DeleteMessage', { method: 'DELETE' }, { messageId });
 }
 
 // ---- Reactions / acks / read / pins ----
@@ -190,7 +170,7 @@ export async function addReaction(messageId: string, emoji: string): Promise<voi
 }
 
 export async function removeReaction(messageId: string, emoji: string): Promise<void> {
-  await request<unknown>(buildUrl('api/v4/Chat/RemoveReaction', { messageId, emoji }), { method: 'DELETE' });
+  await chatRequest<unknown>('api/v4/Chat/RemoveReaction', { method: 'DELETE' }, { messageId, emoji });
 }
 
 export async function ackMessage(messageId: string): Promise<void> {
@@ -208,15 +188,11 @@ export async function getMyPendingAcks(): Promise<PendingAck[]> {
     const result = await getJson<ApiListResult<PendingAck>>('api/v4/Chat/GetMyPendingAcks');
     return result.Data ?? [];
   } catch (error) {
-    if (error instanceof ChatApiError && error.status === 404) {
+    if (isApiStatus(error, 404)) {
       return [];
     }
     throw error;
   }
-}
-
-export async function markRead(channelId: string, seq: number, asUnitId?: number): Promise<void> {
-  await sendJson<unknown>('PUT', 'api/v4/Chat/MarkRead', { Seq: seq, AsUnitId: asUnitId ?? null }, { channelId });
 }
 
 export async function pinMessage(messageId: string): Promise<void> {
@@ -224,7 +200,7 @@ export async function pinMessage(messageId: string): Promise<void> {
 }
 
 export async function unpinMessage(messageId: string): Promise<void> {
-  await request<unknown>(buildUrl('api/v4/Chat/UnpinMessage', { messageId }), { method: 'DELETE' });
+  await chatRequest<unknown>('api/v4/Chat/UnpinMessage', { method: 'DELETE' }, { messageId });
 }
 
 export async function getPins(channelId: string): Promise<ChatMessageDto[]> {
@@ -232,7 +208,7 @@ export async function getPins(channelId: string): Promise<ChatMessageDto[]> {
     const result = await getJson<ApiListResult<ChatMessageDto>>('api/v4/Chat/GetPins', { channelId });
     return result.Data ?? [];
   } catch (error) {
-    if (error instanceof ChatApiError && error.status === 404) {
+    if (isApiStatus(error, 404)) {
       return [];
     }
     throw error;
@@ -244,9 +220,10 @@ export async function getPins(channelId: string): Promise<ChatMessageDto[]> {
 export async function uploadAttachment(channelId: string, messageId: string, file: File): Promise<string | null> {
   const form = new FormData();
   form.append('file', file, file.name);
-  const result = await request<{ ChatAttachmentId?: string }>(
-    buildUrl('api/v4/Chat/UploadAttachment', { channelId, messageId }),
+  const result = await chatRequest<{ ChatAttachmentId?: string }>(
+    'api/v4/Chat/UploadAttachment',
     { method: 'POST', body: form },
+    { channelId, messageId },
   );
   return result.ChatAttachmentId ?? null;
 }
@@ -254,9 +231,12 @@ export async function uploadAttachment(channelId: string, messageId: string, fil
 // Attachments require a bearer header, so <img> cannot load them directly. Fetch a blob URL.
 export async function fetchAttachmentObjectUrl(attachmentId: string, thumbnail = false): Promise<string> {
   const path = thumbnail ? 'api/v4/Chat/GetAttachmentThumbnail' : 'api/v4/Chat/GetAttachment';
-  const response = await fetch(buildUrl(path, { attachmentId }), { headers: authHeaders() });
+  const response = await fetch(buildApiUrl(path, { attachmentId }), { headers: apiAuthHeaders() });
   if (!response.ok) {
-    throw new ChatApiError(response.status, `${response.status} ${response.statusText}`);
+    if (response.status === 401) {
+      setAuthError(true);
+    }
+    throw new ApiError(response.status, `${response.status} ${response.statusText}`);
   }
   const blob = await response.blob();
   return URL.createObjectURL(blob);
@@ -302,7 +282,7 @@ export async function getChatbotChannel(): Promise<ChatbotChannelInfo | null> {
       LastMessageOn: (raw.LastMessageOn ?? raw.lastMessageOn ?? null) as string | null,
     };
   } catch (error) {
-    if (error instanceof ChatApiError && error.status === 404) {
+    if (isApiStatus(error, 404)) {
       return null;
     }
     throw error;

@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Messages;
 using Resgrid.Model.Repositories;
@@ -14,21 +16,27 @@ namespace Resgrid.Services
 	/// enforced exactly once: Muted suppresses everything except urgent (when the department allows the
 	/// override), MentionsOnly requires a direct/@everyone mention or an urgent message, Default/All
 	/// always notify. Unit participants additionally alert the unit-device subscriber ("Engine 6" rig).
+	/// Users currently online are suppressed (they receive the message over SignalR instead).
 	/// </summary>
 	public class ChatNotificationService : IChatNotificationService
 	{
+		private const int MaxConcurrentPushes = 8;
+
 		private readonly IChatPermissionService _chatPermissionService;
 		private readonly IChatChannelService _chatChannelService;
 		private readonly IChatChannelMemberRepository _chatChannelMemberRepository;
+		private readonly IChatPresenceService _chatPresenceService;
 		private readonly IPushService _pushService;
 		private readonly IDepartmentsService _departmentsService;
 
 		public ChatNotificationService(IChatPermissionService chatPermissionService, IChatChannelService chatChannelService,
-			IChatChannelMemberRepository chatChannelMemberRepository, IPushService pushService, IDepartmentsService departmentsService)
+			IChatChannelMemberRepository chatChannelMemberRepository, IChatPresenceService chatPresenceService,
+			IPushService pushService, IDepartmentsService departmentsService)
 		{
 			_chatPermissionService = chatPermissionService;
 			_chatChannelService = chatChannelService;
 			_chatChannelMemberRepository = chatChannelMemberRepository;
+			_chatPresenceService = chatPresenceService;
 			_pushService = pushService;
 			_departmentsService = departmentsService;
 		}
@@ -64,6 +72,11 @@ namespace Resgrid.Services
 				mentions?.Where(m => m.MentionType == (int)ChatMentionType.User && !string.IsNullOrWhiteSpace(m.TargetUserId)).Select(m => m.TargetUserId) ?? Enumerable.Empty<string>(),
 				StringComparer.OrdinalIgnoreCase);
 
+			// Presence suppression: online users already get the message over SignalR.
+			var onlineUsers = new HashSet<string>(
+				await _chatPresenceService.GetOnlineUsersAsync(channel.DepartmentId, audience),
+				StringComparer.OrdinalIgnoreCase);
+
 			var isDm = channel.ChannelType == (int)ChatChannelType.DirectMessage;
 			var eventCode = $"{(isDm ? "t" : "g")}:{channel.ChatChannelId}";
 			var title = BuildTitle(channel, message, isDm, isUrgent);
@@ -78,33 +91,61 @@ namespace Resgrid.Services
 				DepartmentCode = department.Code
 			};
 
-			foreach (var userId in audience)
+			using (var throttler = new SemaphoreSlim(MaxConcurrentPushes))
 			{
-				if (string.Equals(userId, message.SenderUserId, StringComparison.OrdinalIgnoreCase))
-					continue;
+				var pushes = new List<Task>();
 
-				membersByUser.TryGetValue(userId, out var member);
+				foreach (var userId in audience)
+				{
+					if (string.Equals(userId, message.SenderUserId, StringComparison.OrdinalIgnoreCase))
+						continue;
 
-				if (!ShouldNotify(member, isUrgent, urgentOverridesMute, mentionedEveryone || mentionedUsers.Contains(userId)))
-					continue;
+					if (onlineUsers.Contains(userId))
+						continue;
 
-				var unread = (int)Math.Max(0, channel.LastMessageSeq - (member?.LastReadSeq ?? 0));
+					membersByUser.TryGetValue(userId, out var member);
 
-				await _pushService.PushChatMessage(pushMessage, userId, eventCode, Math.Max(unread, 1));
+					if (!ShouldNotify(member, isUrgent, urgentOverridesMute, mentionedEveryone || mentionedUsers.Contains(userId)))
+						continue;
+
+					var unread = (int)Math.Max(0, channel.LastMessageSeq - (member?.LastReadSeq ?? 0));
+
+					pushes.Add(SendThrottledAsync(throttler, () => _pushService.PushChatMessage(pushMessage, userId, eventCode, Math.Max(unread, 1))));
+				}
+
+				// Unit participants (DM to "Engine 6", unit invited to a group chat): alert the rig device.
+				foreach (var unitMember in memberRows.Where(m => m.ParticipantType == (int)ChatParticipantType.Unit && m.UnitId.HasValue && !m.RemovedOn.HasValue && !m.IsBanned))
+				{
+					if (message.SenderUnitId.HasValue && message.SenderUnitId.Value == unitMember.UnitId.Value)
+						continue;
+
+					if (!ShouldNotify(unitMember, isUrgent, urgentOverridesMute, mentionedEveryone))
+						continue;
+
+					var unread = (int)Math.Max(0, channel.LastMessageSeq - unitMember.LastReadSeq);
+
+					pushes.Add(SendThrottledAsync(throttler, () => _pushService.PushChatMessageUnit(pushMessage, unitMember.UnitId.Value, eventCode, Math.Max(unread, 1))));
+				}
+
+				await Task.WhenAll(pushes);
 			}
+		}
 
-			// Unit participants (DM to "Engine 6", unit invited to a group chat): alert the rig device.
-			foreach (var unitMember in memberRows.Where(m => m.ParticipantType == (int)ChatParticipantType.Unit && m.UnitId.HasValue && !m.RemovedOn.HasValue && !m.IsBanned))
+		/// <summary>Bounded-concurrency send: one recipient's failure is logged, never fails the fan-out.</summary>
+		private static async Task SendThrottledAsync(SemaphoreSlim throttler, Func<Task> send)
+		{
+			await throttler.WaitAsync();
+			try
 			{
-				if (message.SenderUnitId.HasValue && message.SenderUnitId.Value == unitMember.UnitId.Value)
-					continue;
-
-				if (!ShouldNotify(unitMember, isUrgent, urgentOverridesMute, mentionedEveryone))
-					continue;
-
-				var unread = (int)Math.Max(0, channel.LastMessageSeq - unitMember.LastReadSeq);
-
-				await _pushService.PushChatMessageUnit(pushMessage, unitMember.UnitId.Value, eventCode, Math.Max(unread, 1));
+				await send();
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
+			finally
+			{
+				throttler.Release();
 			}
 		}
 

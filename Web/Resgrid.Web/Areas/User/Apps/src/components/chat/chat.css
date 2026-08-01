@@ -7,28 +7,43 @@
 .rgchat-root {
   --rgchat-dark: #2f4050;
   --rgchat-accent: #1ab394;
-  --rgchat-accent-ink: #148f77;
+  --rgchat-accent-ink: #0f7a63;
   --rgchat-bg: #f5f7fa;
   --rgchat-panel: #ffffff;
   --rgchat-border: #e3e8ef;
-  --rgchat-muted: #7b8794;
+  --rgchat-muted: #5b6b7c;
   --rgchat-ink: #1f2d3d;
-  --rgchat-urgent: #ed5565;
+  --rgchat-urgent: #d8364c;
+  --rgchat-own-bg: #e7f6f2;
+  --rgchat-own-ink: #17352d;
+  --rgchat-own-border: #bfe6da;
+  --rgchat-hover: rgba(47, 64, 80, 0.06);
+  --rgchat-bubble-bg: #ffffff;
+  --rgchat-input-bg: #ffffff;
+  --rgchat-shadow-pop: 0 12px 30px rgba(15, 23, 42, 0.2);
   color: var(--rgchat-ink);
   font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  font-size: 13px;
+  font-size: 14px;
   line-height: 1.45;
 }
 
-.rgchat-hidden {
-  display: none !important;
+.rgchat-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 /* ---- Floating panel ---- */
 .rgchat-fab {
   position: fixed;
-  right: 22px;
-  bottom: 22px;
+  right: 24px;
+  bottom: 24px;
   z-index: 12000;
   display: inline-flex;
   align-items: center;
@@ -42,7 +57,7 @@
   font-weight: 600;
   cursor: pointer;
   box-shadow: 0 10px 30px rgba(15, 23, 42, 0.28);
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 160ms ease, box-shadow 160ms ease;
 }
 
 .rgchat-fab:hover {
@@ -66,26 +81,32 @@
 
 .rgchat-panel {
   position: fixed;
-  right: 22px;
-  bottom: 22px;
+  right: 24px;
+  bottom: 24px;
   z-index: 12000;
-  width: 380px;
+  width: 384px;
   height: 560px;
-  max-height: calc(100vh - 44px);
+  max-height: calc(100vh - 48px);
   display: flex;
   flex-direction: column;
   background: var(--rgchat-panel);
   border: 1px solid var(--rgchat-border);
-  border-radius: 14px;
+  border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 18px 48px rgba(15, 23, 42, 0.28);
+  animation: rgchat-panel-in 160ms ease;
+}
+
+@keyframes rgchat-panel-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.985); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .rgchat-panel__head {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 12px 14px;
+  gap: 8px;
+  padding: 12px 16px;
   background: var(--rgchat-dark);
   color: #fff;
 }
@@ -94,9 +115,13 @@
   font-size: 15px;
   font-weight: 700;
   flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
   gap: 8px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .rgchat-iconbtn {
@@ -105,20 +130,32 @@
   color: inherit;
   cursor: pointer;
   padding: 6px;
+  min-width: 32px;
+  min-height: 32px;
   border-radius: 8px;
   font-size: 15px;
   line-height: 1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  transition: background-color 140ms ease;
 }
 
 .rgchat-iconbtn:hover {
   background: rgba(255, 255, 255, 0.16);
 }
 
-.rgchat-panel--light .rgchat-iconbtn:hover {
-  background: rgba(15, 23, 42, 0.06);
+.rgchat-iconbtn--inherit {
+  color: inherit;
+}
+
+.rgchat-iconbtn--dark {
+  color: var(--rgchat-dark);
+}
+
+.rgchat-panel--light .rgchat-iconbtn:hover,
+.rgchat-iconbtn--dark:hover {
+  background: var(--rgchat-hover);
 }
 
 .rgchat-panel__body {
@@ -137,20 +174,21 @@
 }
 
 .rgchat-list__search {
-  padding: 10px;
+  padding: 8px;
   background: var(--rgchat-panel);
   border-bottom: 1px solid var(--rgchat-border);
 }
 
 .rgchat-input {
   width: 100%;
-  padding: 8px 10px;
+  padding: 8px 12px;
   border: 1px solid var(--rgchat-border);
   border-radius: 8px;
-  font-size: 13px;
+  font-size: 14px;
   outline: none;
-  background: #fff;
+  background: var(--rgchat-input-bg);
   color: var(--rgchat-ink);
+  transition: border-color 140ms ease, box-shadow 140ms ease;
 }
 
 .rgchat-input:focus {
@@ -159,7 +197,7 @@
 }
 
 .rgchat-group__label {
-  padding: 10px 14px 4px;
+  padding: 12px 16px 4px;
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
@@ -172,15 +210,17 @@
   align-items: center;
   gap: 10px;
   width: 100%;
-  padding: 9px 12px;
+  padding: 8px 12px;
   border: none;
   background: transparent;
   cursor: pointer;
   text-align: left;
+  color: var(--rgchat-ink);
+  transition: background-color 140ms ease;
 }
 
 .rgchat-chan:hover {
-  background: rgba(47, 64, 80, 0.06);
+  background: var(--rgchat-hover);
 }
 
 .rgchat-chan--active {
@@ -194,7 +234,7 @@
 
 .rgchat-chan__name {
   font-weight: 600;
-  font-size: 13px;
+  font-size: 14px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -237,8 +277,8 @@
 /* ---- Avatar ---- */
 .rgchat-avatar {
   position: relative;
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
   color: #fff;
   font-size: 13px;
@@ -247,12 +287,12 @@
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .rgchat-avatar--sm {
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   font-size: 11px;
 }
 
@@ -260,6 +300,7 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border-radius: 50%;
 }
 
 .rgchat-avatar__dot {
@@ -269,7 +310,7 @@
   width: 11px;
   height: 11px;
   border-radius: 50%;
-  border: 2px solid #fff;
+  border: 2px solid var(--rgchat-panel);
   background: #cbd2d9;
 }
 
@@ -284,13 +325,14 @@
   display: flex;
   flex-direction: column;
   background: var(--rgchat-panel);
+  position: relative;
 }
 
 .rgchat-convo__head {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 10px 12px;
+  padding: 8px 12px;
   border-bottom: 1px solid var(--rgchat-border);
 }
 
@@ -326,23 +368,115 @@
 .rgchat-loadmore {
   align-self: center;
   margin-bottom: 8px;
-  padding: 5px 12px;
+  padding: 6px 14px;
   border: 1px solid var(--rgchat-border);
   border-radius: 999px;
-  background: #fff;
+  background: var(--rgchat-panel);
   color: var(--rgchat-muted);
   font-size: 12px;
   cursor: pointer;
+  transition: background-color 140ms ease;
+}
+
+.rgchat-loadmore:hover {
+  background: var(--rgchat-hover);
 }
 
 .rgchat-daydivider {
   align-self: center;
   margin: 8px 0;
   font-size: 11px;
+  font-weight: 600;
   color: var(--rgchat-muted);
   background: rgba(47, 64, 80, 0.08);
-  padding: 2px 10px;
+  padding: 3px 12px;
   border-radius: 999px;
+}
+
+.rgchat-newdivider {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--rgchat-accent-ink);
+}
+
+.rgchat-newdivider::before,
+.rgchat-newdivider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--rgchat-accent);
+  opacity: 0.5;
+}
+
+.rgchat-jumppill {
+  position: absolute;
+  bottom: 64px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;
+  border: 1px solid var(--rgchat-border);
+  background: var(--rgchat-panel);
+  color: var(--rgchat-ink);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.18);
+  animation: rgchat-panel-in 140ms ease;
+  transition: background-color 140ms ease;
+}
+
+.rgchat-jumppill:hover {
+  background: var(--rgchat-hover);
+}
+
+/* ---- Status bars / toasts ---- */
+.rgchat-statusbar {
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+  background: rgba(248, 172, 89, 0.16);
+  color: #8a5a10;
+  border-bottom: 1px solid rgba(248, 172, 89, 0.4);
+}
+
+.rgchat-statusbar--offline {
+  background: rgba(216, 54, 76, 0.1);
+  color: #a32738;
+  border-bottom-color: rgba(216, 54, 76, 0.3);
+}
+
+.rgchat-toast {
+  position: fixed;
+  right: 24px;
+  bottom: 96px;
+  z-index: 12200;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 320px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--rgchat-dark);
+  color: #fff;
+  font-size: 13px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.3);
+  animation: rgchat-panel-in 160ms ease;
+}
+
+.rgchat-toast__close {
+  border: none;
+  background: transparent;
+  color: #fff;
+  cursor: pointer;
+  font-size: 12px;
+  padding: 4px;
 }
 
 /* ---- Message bubbles ---- */
@@ -350,10 +484,21 @@
   display: flex;
   gap: 8px;
   max-width: 100%;
+  animation: rgchat-msg-in 160ms ease;
+}
+
+@keyframes rgchat-msg-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .rgchat-msg--mine {
   flex-direction: row-reverse;
+}
+
+.rgchat-msg__spacer {
+  width: 38px;
+  flex-shrink: 0;
 }
 
 .rgchat-msg__col {
@@ -372,12 +517,12 @@
   gap: 6px;
   align-items: baseline;
   margin: 0 4px 2px;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--rgchat-muted);
 }
 
 .rgchat-msg__author {
-  font-weight: 600;
+  font-weight: 700;
   color: var(--rgchat-ink);
 }
 
@@ -385,26 +530,28 @@
   position: relative;
   padding: 8px 12px;
   border-radius: 16px;
-  background: #fff;
+  background: var(--rgchat-bubble-bg);
   border: 1px solid var(--rgchat-border);
   word-break: break-word;
   white-space: pre-wrap;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
 }
 
 .rgchat-msg--mine .rgchat-bubble {
-  background: var(--rgchat-accent);
-  border-color: var(--rgchat-accent);
-  color: #fff;
+  background: var(--rgchat-own-bg);
+  border-color: var(--rgchat-own-border);
+  border-left: 3px solid var(--rgchat-accent);
+  color: var(--rgchat-own-ink);
 }
 
 .rgchat-msg--mine .rgchat-bubble a {
-  color: #eafff8;
+  color: var(--rgchat-accent-ink);
   text-decoration: underline;
 }
 
 .rgchat-bubble--urgent {
   border-color: var(--rgchat-urgent);
-  box-shadow: 0 0 0 2px rgba(237, 85, 101, 0.25);
+  box-shadow: 0 0 0 2px rgba(216, 54, 76, 0.22);
 }
 
 .rgchat-bubble--tomb {
@@ -412,6 +559,21 @@
   color: var(--rgchat-muted);
   background: transparent;
   border-style: dashed;
+  box-shadow: none;
+}
+
+.rgchat-bubble--failed {
+  border-color: var(--rgchat-urgent);
+  background: rgba(216, 54, 76, 0.06);
+}
+
+.rgchat-bubble--flash {
+  animation: rgchat-flash 2.2s ease;
+}
+
+@keyframes rgchat-flash {
+  0%, 55% { background: rgba(248, 172, 89, 0.35); border-color: #f8ac59; }
+  100% { background: inherit; }
 }
 
 .rgchat-bubble__urgent-tag {
@@ -424,14 +586,21 @@
   color: var(--rgchat-urgent);
 }
 
-.rgchat-msg--mine .rgchat-bubble__urgent-tag {
-  color: #fff5f6;
+.rgchat-bubble__edited,
+.rgchat-bubble__status {
+  font-size: 11px;
+  opacity: 0.75;
+  margin-left: 6px;
 }
 
-.rgchat-bubble__edited {
-  font-size: 10px;
-  opacity: 0.7;
-  margin-left: 6px;
+.rgchat-bubble__caption {
+  margin-top: 4px;
+}
+
+.rgchat-bubble__editrow {
+  display: flex;
+  gap: 6px;
+  margin-top: 6px;
 }
 
 .rgchat-bubble__img {
@@ -440,6 +609,11 @@
   border-radius: 10px;
   display: block;
   cursor: pointer;
+}
+
+.rgchat-bubble__img--busy {
+  opacity: 0.6;
+  cursor: wait;
 }
 
 .rgchat-bubble__location {
@@ -468,7 +642,7 @@
   overflow: hidden;
   text-decoration: none;
   color: inherit;
-  background: #fff;
+  background: var(--rgchat-panel);
 }
 
 .rgchat-link__body {
@@ -484,6 +658,39 @@
   font-size: 12px;
 }
 
+/* ---- Failed sends ---- */
+.rgchat-failed {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 3px 4px 0;
+  font-size: 12px;
+  color: var(--rgchat-urgent);
+}
+
+.rgchat-failed__label {
+  font-weight: 600;
+}
+
+.rgchat-failed__action {
+  border: none;
+  background: transparent;
+  color: var(--rgchat-accent-ink);
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.rgchat-failed__action:hover {
+  background: var(--rgchat-hover);
+}
+
+.rgchat-failed__action--danger {
+  color: var(--rgchat-urgent);
+}
+
 /* ---- Reactions ---- */
 .rgchat-reactions {
   display: flex;
@@ -496,12 +703,25 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  padding: 1px 7px;
+  padding: 2px 8px;
   border-radius: 999px;
   border: 1px solid var(--rgchat-border);
-  background: #fff;
+  background: var(--rgchat-panel);
+  color: var(--rgchat-ink);
   font-size: 12px;
   cursor: pointer;
+  animation: rgchat-pop-in 140ms ease;
+  transition: transform 140ms ease, box-shadow 140ms ease, border-color 140ms ease;
+}
+
+.rgchat-reaction:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(15, 23, 42, 0.12);
+}
+
+@keyframes rgchat-pop-in {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 .rgchat-reaction--mine {
@@ -509,16 +729,26 @@
   background: rgba(26, 179, 148, 0.12);
 }
 
-/* ---- Hover actions ---- */
+/* ---- Hover / keyboard actions ---- */
 .rgchat-msg__actions {
-  display: none;
+  display: inline-flex;
   gap: 2px;
   align-items: center;
   margin: 0 4px;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 140ms ease, visibility 140ms ease;
 }
 
-.rgchat-msg:hover .rgchat-msg__actions {
-  display: inline-flex;
+.rgchat-msg:hover .rgchat-msg__actions,
+.rgchat-msg:focus-within .rgchat-msg__actions,
+.rgchat-msg--actions-open .rgchat-msg__actions {
+  opacity: 1;
+  visibility: visible;
+}
+
+.rgchat-msg__actionwrap {
+  position: relative;
 }
 
 .rgchat-msg__action {
@@ -526,13 +756,35 @@
   background: transparent;
   cursor: pointer;
   font-size: 13px;
-  padding: 3px;
+  padding: 4px;
+  min-width: 28px;
+  min-height: 28px;
   border-radius: 6px;
   color: var(--rgchat-muted);
+  transition: background-color 140ms ease;
 }
 
 .rgchat-msg__action:hover {
-  background: rgba(47, 64, 80, 0.1);
+  background: var(--rgchat-hover);
+}
+
+.rgchat-msg__overflow {
+  display: none;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  line-height: 1;
+  padding: 4px 6px;
+  border-radius: 6px;
+  color: var(--rgchat-muted);
+  align-self: center;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .rgchat-msg__overflow {
+    display: inline-flex;
+  }
 }
 
 .rgchat-thread-link {
@@ -547,12 +799,16 @@
   text-align: left;
 }
 
+.rgchat-thread-link:hover {
+  text-decoration: underline;
+}
+
 /* ---- Typing / receipts ---- */
 .rgchat-typing {
   padding: 2px 12px 6px;
   font-size: 12px;
   color: var(--rgchat-muted);
-  min-height: 20px;
+  min-height: 22px;
 }
 
 .rgchat-dots span {
@@ -578,19 +834,13 @@
   40% { opacity: 1; }
 }
 
-.rgchat-receipt {
-  align-self: flex-end;
-  font-size: 11px;
-  color: var(--rgchat-muted);
-  margin: 0 4px 4px;
-}
-
 /* ---- Composer ---- */
 .rgchat-composer {
   border-top: 1px solid var(--rgchat-border);
   padding: 8px 10px;
   background: var(--rgchat-panel);
   position: relative;
+  box-shadow: 0 -4px 14px rgba(15, 23, 42, 0.05);
 }
 
 .rgchat-composer__row {
@@ -602,15 +852,18 @@
 .rgchat-composer__text {
   flex: 1;
   resize: none;
-  max-height: 120px;
+  max-height: 122px;
   min-height: 38px;
   padding: 9px 12px;
   border: 1px solid var(--rgchat-border);
   border-radius: 18px;
   font-family: inherit;
-  font-size: 13px;
+  font-size: 14px;
   outline: none;
+  background: var(--rgchat-input-bg);
   color: var(--rgchat-ink);
+  overflow-y: auto;
+  transition: border-color 140ms ease;
 }
 
 .rgchat-composer__text:focus {
@@ -627,6 +880,12 @@
   cursor: pointer;
   font-size: 16px;
   flex-shrink: 0;
+  transition: transform 140ms ease, box-shadow 140ms ease;
+}
+
+.rgchat-send:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(26, 179, 148, 0.4);
 }
 
 .rgchat-send:disabled {
@@ -639,29 +898,86 @@
   gap: 2px;
 }
 
+.rgchat-composer__tool {
+  color: var(--rgchat-muted);
+}
+
+.rgchat-composer__tool--gif {
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.rgchat-composer__count {
+  align-self: center;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--rgchat-muted);
+  padding: 0 2px;
+}
+
 .rgchat-composer__urgent {
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  font-size: 11px;
+  margin-top: 8px;
+  font-size: 12px;
   color: var(--rgchat-urgent);
   cursor: pointer;
   user-select: none;
 }
 
+.rgchat-fileinput {
+  display: none;
+}
+
 .rgchat-popover {
   position: absolute;
-  bottom: 52px;
+  bottom: 56px;
   left: 10px;
   right: 10px;
   max-height: 240px;
   overflow-y: auto;
-  background: #fff;
+  background: var(--rgchat-panel);
   border: 1px solid var(--rgchat-border);
   border-radius: 12px;
-  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.2);
+  box-shadow: var(--rgchat-shadow-pop);
   padding: 8px;
   z-index: 5;
+  animation: rgchat-pop-in 140ms ease;
+}
+
+.rgchat-popover--reactions {
+  left: auto;
+  right: 0;
+  bottom: 30px;
+  display: flex;
+  gap: 2px;
+  padding: 6px;
+  max-height: none;
+  overflow: visible;
+  width: max-content;
+}
+
+.rgchat-popover__note {
+  padding: 8px;
+  font-size: 12px;
+  color: var(--rgchat-muted);
+}
+
+.rgchat-popover__emoji {
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  min-width: 32px;
+  min-height: 32px;
+  transition: background-color 140ms ease;
+}
+
+.rgchat-popover__emoji:hover {
+  background: var(--rgchat-hover);
 }
 
 .rgchat-emojigrid {
@@ -675,12 +991,15 @@
   background: transparent;
   font-size: 18px;
   padding: 4px;
+  min-width: 32px;
+  min-height: 32px;
   border-radius: 6px;
   cursor: pointer;
+  transition: background-color 140ms ease;
 }
 
 .rgchat-emojigrid button:hover {
-  background: rgba(47, 64, 80, 0.08);
+  background: var(--rgchat-hover);
 }
 
 .rgchat-gifgrid {
@@ -704,9 +1023,9 @@
   align-items: center;
   gap: 10px;
   padding: 8px 12px;
-  background: rgba(237, 85, 101, 0.12);
-  border-bottom: 1px solid rgba(237, 85, 101, 0.3);
-  color: #b83240;
+  background: rgba(216, 54, 76, 0.1);
+  border-bottom: 1px solid rgba(216, 54, 76, 0.3);
+  color: #a32738;
   font-size: 12px;
   font-weight: 600;
 }
@@ -716,10 +1035,90 @@
   border: none;
   background: var(--rgchat-urgent);
   color: #fff;
-  padding: 5px 12px;
+  padding: 6px 12px;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 700;
+}
+
+/* ---- Skeletons ---- */
+.rgchat-skeletons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 4px 0;
+}
+
+.rgchat-skeletonrow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rgchat-skeletonrow--chan {
+  padding: 8px 12px;
+}
+
+.rgchat-skeleton {
+  display: inline-block;
+  border-radius: 8px;
+  background: linear-gradient(90deg, rgba(47, 64, 80, 0.08) 25%, rgba(47, 64, 80, 0.16) 50%, rgba(47, 64, 80, 0.08) 75%);
+  background-size: 200% 100%;
+  animation: rgchat-shimmer 1.4s infinite;
+}
+
+.rgchat-skeleton--avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.rgchat-skeleton--bubble {
+  height: 38px;
+  border-radius: 14px;
+}
+
+.rgchat-skeleton--line {
+  height: 14px;
+  width: 60%;
+}
+
+.rgchat-skeleton--img {
+  width: 240px;
+  height: 160px;
+  border-radius: 10px;
+}
+
+@keyframes rgchat-shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+/* ---- Lightbox ---- */
+.rgchat-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 12300;
+  background: rgba(15, 23, 42, 0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  cursor: zoom-out;
+  animation: rgchat-fade-in 140ms ease;
+}
+
+.rgchat-lightbox img {
+  max-width: 100%;
+  max-height: 100%;
+  border-radius: 10px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes rgchat-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* ---- Empty / states ---- */
@@ -735,6 +1134,10 @@
   text-align: center;
 }
 
+.rgchat-empty__icon {
+  font-size: 40px;
+}
+
 .rgchat-btn {
   border: none;
   border-radius: 8px;
@@ -742,6 +1145,7 @@
   font-weight: 600;
   cursor: pointer;
   font-size: 13px;
+  transition: background-color 140ms ease, opacity 140ms ease;
 }
 
 .rgchat-btn--primary {
@@ -775,17 +1179,21 @@
   align-items: center;
   justify-content: center;
   padding: 16px;
+  animation: rgchat-fade-in 140ms ease;
 }
 
 .rgchat-dialog {
   width: 100%;
-  max-width: 420px;
+  max-width: 424px;
   max-height: 80vh;
   display: flex;
   flex-direction: column;
-  background: #fff;
-  border-radius: 14px;
+  background: var(--rgchat-panel);
+  color: var(--rgchat-ink);
+  border-radius: 16px;
   overflow: hidden;
+  outline: none;
+  animation: rgchat-panel-in 160ms ease;
 }
 
 .rgchat-dialog__head {
@@ -810,17 +1218,32 @@
   gap: 8px;
 }
 
+.rgchat-dialog__field {
+  margin-top: 8px;
+}
+
+.rgchat-dialog__select {
+  width: 200px;
+}
+
+.rgchat-dialog__list {
+  margin-top: 8px;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
 .rgchat-pick {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 7px 8px;
+  padding: 8px;
   border-radius: 8px;
   cursor: pointer;
+  transition: background-color 140ms ease;
 }
 
 .rgchat-pick:hover {
-  background: rgba(47, 64, 80, 0.06);
+  background: var(--rgchat-hover);
 }
 
 /* ---- Full page (3-pane) ---- */
@@ -881,6 +1304,7 @@
   font-weight: 600;
   color: var(--rgchat-muted);
   font-size: 12px;
+  transition: color 140ms ease;
 }
 
 .rgchat-aside__tab--active {
@@ -908,6 +1332,11 @@
   text-overflow: ellipsis;
 }
 
+.rgchat-member__actions {
+  display: flex;
+  gap: 4px;
+}
+
 .rgchat-tag {
   font-size: 10px;
   font-weight: 700;
@@ -915,6 +1344,14 @@
   border-radius: 999px;
   background: rgba(47, 64, 80, 0.1);
   color: var(--rgchat-dark);
+}
+
+.rgchat-pin {
+  margin-bottom: 8px;
+}
+
+.rgchat-pin__meta {
+  margin: 0 0 4px;
 }
 
 @media (max-width: 900px) {
@@ -934,6 +1371,20 @@
 }
 
 /* ---- Chatbot ---- */
+.rgchat-botframe {
+  height: calc(100vh - 220px);
+  min-height: 480px;
+  border: 1px solid var(--rgchat-border);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.rgchat-botframe .rgchat-convo {
+  flex: 1;
+}
+
 .rgchat-bot .rgchat-bubble--bot {
   background: #eef4ff;
   border-color: #d7e3ff;
@@ -942,6 +1393,15 @@
 
 .rgchat-bot__head {
   background: linear-gradient(135deg, #5b6bc0, #2f4050);
+  color: #fff;
+}
+
+.rgchat-bot__head .rgchat-convo__title {
+  color: #fff;
+}
+
+.rgchat-bot__head .rgchat-convo__sub {
+  color: rgba(255, 255, 255, 0.78);
 }
 
 /* ---- Moderation ---- */
@@ -949,7 +1409,7 @@
   border: 1px solid var(--rgchat-border);
   border-radius: 12px;
   overflow: hidden;
-  background: #fff;
+  background: var(--rgchat-panel);
 }
 
 .rgchat-mod__tabs {
@@ -969,7 +1429,7 @@
 
 .rgchat-mod__tab--active {
   color: var(--rgchat-dark);
-  background: #fff;
+  background: var(--rgchat-panel);
   box-shadow: inset 0 -2px 0 var(--rgchat-accent);
 }
 
@@ -1018,9 +1478,9 @@
   font-weight: 700;
 }
 
-.rgchat-pill--open { background: rgba(248, 172, 89, 0.2); color: #b9770f; }
+.rgchat-pill--open { background: rgba(248, 172, 89, 0.2); color: #8a5a10; }
 .rgchat-pill--done { background: rgba(26, 179, 148, 0.16); color: var(--rgchat-accent-ink); }
-.rgchat-pill--muted { background: rgba(123, 135, 148, 0.16); color: var(--rgchat-muted); }
+.rgchat-pill--muted { background: rgba(91, 107, 124, 0.16); color: var(--rgchat-muted); }
 
 .rgchat-error {
   padding: 10px 12px;
@@ -1030,4 +1490,68 @@
   color: #991b1b;
   font-size: 12px;
   margin: 8px 0;
+}
+
+/* ---- Dark mode ---- */
+@media (prefers-color-scheme: dark) {
+  .rgchat-root {
+    --rgchat-dark: #141c26;
+    --rgchat-bg: #131a23;
+    --rgchat-panel: #1c2632;
+    --rgchat-border: #2c3a4a;
+    --rgchat-muted: #9aa8b8;
+    --rgchat-ink: #e6edf4;
+    --rgchat-own-bg: #123c33;
+    --rgchat-own-ink: #d9f3ea;
+    --rgchat-own-border: #1f5c4c;
+    --rgchat-hover: rgba(255, 255, 255, 0.07);
+    --rgchat-bubble-bg: #223041;
+    --rgchat-input-bg: #141c26;
+    --rgchat-shadow-pop: 0 12px 30px rgba(0, 0, 0, 0.55);
+  }
+
+  .rgchat-daydivider {
+    background: rgba(255, 255, 255, 0.09);
+  }
+
+  .rgchat-chan--active {
+    background: rgba(26, 179, 148, 0.2);
+  }
+
+  .rgchat-reaction--mine {
+    background: rgba(26, 179, 148, 0.22);
+  }
+
+  .rgchat-skeleton {
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.06) 25%, rgba(255, 255, 255, 0.14) 50%, rgba(255, 255, 255, 0.06) 75%);
+    background-size: 200% 100%;
+  }
+
+  .rgchat-bot .rgchat-bubble--bot {
+    background: #223152;
+    border-color: #31436e;
+    color: #e6edf4;
+  }
+
+  .rgchat-tag {
+    background: rgba(255, 255, 255, 0.12);
+    color: #cdd8e4;
+  }
+
+  .rgchat-error {
+    background: rgba(216, 54, 76, 0.14);
+    border-color: rgba(216, 54, 76, 0.4);
+    color: #f3b4bd;
+  }
+}
+
+/* ---- Reduced motion ---- */
+@media (prefers-reduced-motion: reduce) {
+  .rgchat-root *,
+  .rgchat-root *::before,
+  .rgchat-root *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

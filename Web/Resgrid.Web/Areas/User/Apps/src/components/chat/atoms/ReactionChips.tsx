@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { ChatReactionDto } from '../types';
 
 interface ReactionChipsProps {
@@ -25,7 +26,7 @@ function group(reactions: ChatReactionDto[], currentUserId: string): Grouped[] {
   return Array.from(map.values());
 }
 
-export default function ReactionChips({ reactions, currentUserId, onToggle }: ReactionChipsProps) {
+function ReactionChips({ reactions, currentUserId, onToggle }: ReactionChipsProps) {
   if (reactions.length === 0) {
     return null;
   }
@@ -47,3 +48,5 @@ export default function ReactionChips({ reactions, currentUserId, onToggle }: Re
     </div>
   );
 }
+
+export default memo(ReactionChips);

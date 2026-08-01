@@ -5,18 +5,20 @@ import { useChatBootstrap } from './useChatBootstrap';
 import { useChatStore, shallowArrayEqual } from './useChatStore';
 import { setActiveChannel } from './chatStore';
 import { flagChatMessage } from './chatActions';
+import { channelDisplayName } from './chatFormat';
 import ChannelList from './ChannelList';
 import ConversationView from './ConversationView';
 import ThreadPanel from './ThreadPanel';
 import NewConversationDialog from './NewConversationDialog';
 import FlagDialog from './FlagDialog';
+import { NoticeToast, AuthErrorNotice } from './atoms/StatusBanners';
 
 export interface ChatPanelElementProps {
   hostElement?: HTMLElement;
 }
 
 export default function ChatPanelElement({ hostElement }: ChatPanelElementProps) {
-  const { available, loaded } = useChatBootstrap();
+  const { available, loaded, connect } = useChatBootstrap();
   const channels = useChatStore((state) => state.channels, shallowArrayEqual);
   const unread = useChatStore((state) => state.channels.reduce((total, channel) => total + Math.max(0, channel.UnreadCount), 0));
 
@@ -36,6 +38,12 @@ export default function ChatPanelElement({ hostElement }: ChatPanelElementProps)
     }
   }, [hostElement, loaded, available]);
 
+  const openPanel = () => {
+    setOpen(true);
+    // Lazy realtime: the hub only connects the first time the panel is opened.
+    connect();
+  };
+
   const openChannel = (channelId: string) => {
     setActiveChannelId(channelId);
     setActiveChannel(channelId);
@@ -48,10 +56,15 @@ export default function ChatPanelElement({ hostElement }: ChatPanelElementProps)
 
   if (!open) {
     return (
-      <button type="button" className="rgchat-root rgchat-fab" onClick={() => setOpen(true)}>
-        <span>💬</span>
+      <button type="button" className="rgchat-root rgchat-fab" aria-label="Open chat" onClick={openPanel}>
+        <span aria-hidden="true">💬</span>
         <span>Chat</span>
-        {unread > 0 && <span className="rgchat-fab__badge">{unread > 99 ? '99+' : unread}</span>}
+        {unread > 0 && (
+          <span className="rgchat-fab__badge" aria-live="polite">
+            <span className="rgchat-sr-only">{unread} unread messages</span>
+            <span aria-hidden="true">{unread > 99 ? '99+' : unread}</span>
+          </span>
+        )}
       </button>
     );
   }
@@ -65,6 +78,7 @@ export default function ChatPanelElement({ hostElement }: ChatPanelElementProps)
               type="button"
               className="rgchat-iconbtn"
               title="Back to conversations"
+              aria-label="Back to conversations"
               onClick={() => {
                 setActiveChannelId(null);
                 setActiveChannel(null);
@@ -75,20 +89,21 @@ export default function ChatPanelElement({ hostElement }: ChatPanelElementProps)
             </button>
           )}
           <div className="rgchat-panel__title">
-            <span>💬</span>
-            <span>{activeChannel ? '' : 'Chat'}</span>
+            <span aria-hidden="true">💬</span>
+            <span>{activeChannel ? channelDisplayName(activeChannel) : 'Chat'}</span>
           </div>
           {!activeChannel && (
-            <button type="button" className="rgchat-iconbtn" title="New conversation" onClick={() => setShowNew(true)}>
+            <button type="button" className="rgchat-iconbtn" title="New conversation" aria-label="New conversation" onClick={() => setShowNew(true)}>
               ＋
             </button>
           )}
-          <button type="button" className="rgchat-iconbtn" title="Minimize" onClick={() => setOpen(false)}>
+          <button type="button" className="rgchat-iconbtn" title="Minimize" aria-label="Minimize chat" onClick={() => setOpen(false)}>
             —
           </button>
         </div>
 
         <div className="rgchat-panel__body">
+          <AuthErrorNotice />
           {thread && activeChannel ? (
             <ThreadPanel
               channel={activeChannel}
@@ -113,7 +128,7 @@ export default function ChatPanelElement({ hostElement }: ChatPanelElementProps)
                   onChange={(event) => setSearch(event.target.value)}
                 />
               </div>
-              <ChannelList channels={channels} activeChannelId={activeChannelId} filter={search} onSelect={openChannel} />
+              <ChannelList channels={channels} activeChannelId={activeChannelId} filter={search} loading={!loaded} onSelect={openChannel} />
             </>
           )}
         </div>
@@ -136,6 +151,8 @@ export default function ChatPanelElement({ hostElement }: ChatPanelElementProps)
           onSubmit={(reason, note) => void flagChatMessage(flagTarget, reason, note)}
         />
       )}
+
+      <NoticeToast />
     </div>
   );
 }

@@ -10,6 +10,7 @@
 		CallClosed = 6,
 		PersonnelLocationUpdated = 7,
 		UnitLocationUpdated = 8,
-		IncidentCommandUpdated = 9
+		IncidentCommandUpdated = 9,
+		ChatEvent = 10
 	}
 }

@@ -35,7 +35,9 @@ namespace Resgrid.Workers.Framework.Logic
 
 					if (!String.IsNullOrWhiteSpace(personnelLocation.UserId))
 					{
-						await usersService.SavePersonnelLocationAsync(personnelLocation);
+						using var operationTimeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+						operationTimeout.CancelAfter(TimeSpan.FromSeconds(Math.Max(1, Config.DataConfig.DocumentOperationTimeoutSeconds)));
+						await usersService.SavePersonnelLocationAsync(personnelLocation, operationTimeout.Token);
 					}
 				}
 				catch (Exception ex)

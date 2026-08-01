@@ -67,8 +67,8 @@ namespace Resgrid.Tests.Services
 				.Returns(Task.CompletedTask);
 			var unitLocationsDocRepository = new Mock<IUnitLocationsDocRepository>();
 			unitLocationsDocRepository
-				.Setup(x => x.InsertAsync(It.IsAny<UnitsLocation>()))
-				.ReturnsAsync((UnitsLocation location) =>
+				.Setup(x => x.InsertAsync(It.IsAny<UnitsLocation>(), It.IsAny<System.Threading.CancellationToken>()))
+				.ReturnsAsync((UnitsLocation location, System.Threading.CancellationToken _) =>
 				{
 					location.PgId = "314";
 					return UnitLocationWriteResult.Inserted(location);
@@ -88,11 +88,12 @@ namespace Resgrid.Tests.Services
 				Timestamp = DateTime.UtcNow
 			};
 
-			var result = await service.AddUnitLocationAsync(location, 7);
+			using var cancellationTokenSource = new System.Threading.CancellationTokenSource();
+			var result = await service.AddUnitLocationAsync(location, 7, cancellationTokenSource.Token);
 
 			result.Status.Should().Be(UnitLocationWriteStatus.Inserted);
 			result.Location.PgId.Should().Be("314");
-			unitLocationsDocRepository.Verify(x => x.InsertAsync(location), Times.Once);
+			unitLocationsDocRepository.Verify(x => x.InsertAsync(location, cancellationTokenSource.Token), Times.Once);
 			eventAggregator.Verify(
 				x => x.SendMessageAsync(It.Is<UnitLocationUpdatedEvent>(e => e.RecordId == "314" && e.UnitId == "12")),
 				Times.Once);
@@ -106,8 +107,8 @@ namespace Resgrid.Tests.Services
 			var eventAggregator = new Mock<IEventAggregator>();
 			var unitLocationsDocRepository = new Mock<IUnitLocationsDocRepository>();
 			unitLocationsDocRepository
-				.Setup(x => x.InsertAsync(It.IsAny<UnitsLocation>()))
-				.ReturnsAsync((UnitsLocation location) => UnitLocationWriteResult.Duplicate(location));
+				.Setup(x => x.InsertAsync(It.IsAny<UnitsLocation>(), It.IsAny<System.Threading.CancellationToken>()))
+				.ReturnsAsync((UnitsLocation location, System.Threading.CancellationToken _) => UnitLocationWriteResult.Duplicate(location));
 
 			var service = CreateUnitsService(
 				eventAggregator.Object,
@@ -138,7 +139,7 @@ namespace Resgrid.Tests.Services
 
 			var unitLocationsDocRepository = new Mock<IUnitLocationsDocRepository>();
 			unitLocationsDocRepository
-				.Setup(x => x.InsertAsync(It.IsAny<UnitsLocation>()))
+				.Setup(x => x.InsertAsync(It.IsAny<UnitsLocation>(), It.IsAny<System.Threading.CancellationToken>()))
 				.ThrowsAsync(new InvalidOperationException("Document database unavailable."));
 
 			var service = CreateUnitsService(
@@ -193,8 +194,8 @@ namespace Resgrid.Tests.Services
 			var eventAggregator = new Mock<IEventAggregator>();
 			var personnelLocationsDocRepository = new Mock<IPersonnelLocationsDocRepository>();
 			personnelLocationsDocRepository
-				.Setup(x => x.InsertAsync(It.IsAny<PersonnelLocation>()))
-				.ReturnsAsync((PersonnelLocation location) =>
+				.Setup(x => x.InsertAsync(It.IsAny<PersonnelLocation>(), It.IsAny<System.Threading.CancellationToken>()))
+				.ReturnsAsync((PersonnelLocation location, System.Threading.CancellationToken _) =>
 				{
 					location.PgId = "512";
 					return location;
@@ -214,10 +215,11 @@ namespace Resgrid.Tests.Services
 				Timestamp = DateTime.UtcNow
 			};
 
-			var result = await service.SavePersonnelLocationAsync(location);
+			using var cancellationTokenSource = new System.Threading.CancellationTokenSource();
+			var result = await service.SavePersonnelLocationAsync(location, cancellationTokenSource.Token);
 
 			result.PgId.Should().Be("512");
-			personnelLocationsDocRepository.Verify(x => x.InsertAsync(location), Times.Once);
+			personnelLocationsDocRepository.Verify(x => x.InsertAsync(location, cancellationTokenSource.Token), Times.Once);
 			eventAggregator.Verify(
 				x => x.SendMessage<PersonnelLocationUpdatedEvent>(It.Is<PersonnelLocationUpdatedEvent>(e => e.RecordId == "512" && e.UserId == "user-1")),
 				Times.Once);

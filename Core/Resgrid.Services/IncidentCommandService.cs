@@ -6,6 +6,8 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using CommonServiceLocator;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
@@ -1469,6 +1471,23 @@ namespace Resgrid.Services
 				$"Lane '{node.Name}' {(isNew ? "added" : "updated")}", userId, cancellationToken);
 
 			await PublishLeadChangesAsync(storedLeads, node, isNew, userId, cancellationToken);
+
+			if (isNew)
+			{
+				// Best-effort chat lane channel provisioning; resolved lazily to keep chat out of this
+				// service's constructor graph, and a chat failure must never fail the lane save.
+				try
+				{
+					var chatChannelService = ServiceLocator.Current.GetInstance<IChatChannelService>();
+					await chatChannelService.EnsureLaneChannelAsync(node, cancellationToken);
+				}
+				catch (Exception ex)
+				{
+					// Best-effort and explicitly non-fatal to the lane save — log at Error, not Fatal.
+					Logging.LogError(ex, "Best-effort chat lane channel provisioning failed after lane save.");
+				}
+			}
+
 			return node;
 		}
 
@@ -1484,6 +1503,21 @@ namespace Resgrid.Services
 			await _commandStructureNodeRepository.SaveOrUpdateAsync(Touch(node), cancellationToken);
 
 			await WriteLogAsync(node.IncidentCommandId, node.DepartmentId, node.CallId, CommandLogEntryType.NodeRemoved, $"Lane '{node.Name}' removed", userId, cancellationToken);
+
+			// Best-effort: archive the lane's chat channel alongside the tombstoned node.
+			try
+			{
+				var chatChannelService = ServiceLocator.Current.GetInstance<IChatChannelService>();
+				var laneChannel = (await ServiceLocator.Current.GetInstance<Resgrid.Model.Repositories.IChatChannelRepository>().GetByCommandStructureNodeIdAsync(commandStructureNodeId));
+				if (laneChannel != null && !laneChannel.IsArchived)
+					await chatChannelService.SetChannelArchivedAsync(laneChannel.ChatChannelId, true, userId, cancellationToken);
+			}
+			catch (Exception ex)
+			{
+				// Best-effort and explicitly non-fatal to the node delete — log at Error, not Fatal.
+				Logging.LogError(ex, "Best-effort chat lane channel archival failed after lane delete.");
+			}
+
 			return true;
 		}
 

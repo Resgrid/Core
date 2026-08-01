@@ -26,6 +26,24 @@ namespace Resgrid.Workers.Framework.Logic
 			{
 				var chatbotIngressService = Bootstrapper.GetKernel().Resolve<IChatbotIngressService>();
 				var textMessageProvider = Bootstrapper.GetKernel().Resolve<ITextMessageProvider>();
+				var cacheProvider = Bootstrapper.GetKernel().Resolve<ICacheProvider>();
+
+				// Idempotency: the bus is at-least-once, so a redelivered item must not produce a second
+				// bot reply. Keyed on the platform/persisted message id with a 24h marker. A cache
+				// outage must never drop the message, so failures here fall through to processing.
+				var idempotencyKey = string.IsNullOrWhiteSpace(item.MessageId) ? null : $"chatbotmsg:{item.MessageId}";
+				if (idempotencyKey != null && cacheProvider != null)
+				{
+					try
+					{
+						if (!string.IsNullOrEmpty(await cacheProvider.GetStringAsync(idempotencyKey)))
+							return true;
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex, "Chatbot idempotency check failed; processing anyway.");
+					}
+				}
 
 				var message = new ChatbotMessage
 				{
@@ -41,12 +59,37 @@ namespace Resgrid.Workers.Framework.Logic
 
 				if (response != null && !string.IsNullOrWhiteSpace(response.Text))
 				{
-					// Reply from the department's text number (To) back to the sender (From). Twilio is the
-					// primary transport; carrier only governs gateway fallback, so the default is fine here.
-					// Chatbot replies are interactive (help/command lists the user acts on over SMS), so they
-					// use the higher chatbot length cap instead of the notification default.
-					await textMessageProvider.SendTextMessage(item.From, response.Text, item.To, default(MobileCarriers), item.DepartmentId,
-						maxLengthOverride: Resgrid.Config.ChatbotConfig.SmsReplyMaxLength);
+					if ((ChatbotPlatform)item.Platform == ChatbotPlatform.WebChat)
+					{
+						// WebChat replies go back through the user's chatbot chat channel (persisted +
+						// SignalR fan-out), never over SMS — From is a Resgrid user id here, not a phone
+						// number. The ingress-resolved DepartmentId is passed through so the reply lands
+						// in the department the message actually came from.
+						var notifier = Bootstrapper.GetKernel().Resolve<IChatbotWebChatNotifier>();
+						if (notifier != null)
+							await notifier.PushToUserAsync(item.From, response.Text, item.DepartmentId);
+					}
+					else
+					{
+						// Reply from the department's text number (To) back to the sender (From). Twilio is the
+						// primary transport; carrier only governs gateway fallback, so the default is fine here.
+						// Chatbot replies are interactive (help/command lists the user acts on over SMS), so they
+						// use the higher chatbot length cap instead of the notification default.
+						await textMessageProvider.SendTextMessage(item.From, response.Text, item.To, default(MobileCarriers), item.DepartmentId,
+							maxLengthOverride: Resgrid.Config.ChatbotConfig.SmsReplyMaxLength);
+					}
+
+					if (idempotencyKey != null && cacheProvider != null)
+					{
+						try
+						{
+							await cacheProvider.SetStringAsync(idempotencyKey, "1", TimeSpan.FromHours(24));
+						}
+						catch (Exception ex)
+						{
+							Logging.LogException(ex, "Chatbot idempotency marker write failed.");
+						}
+					}
 				}
 			}
 			catch (Exception ex)

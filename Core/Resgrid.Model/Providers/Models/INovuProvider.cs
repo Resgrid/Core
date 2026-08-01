@@ -137,4 +137,17 @@ public interface INovuProvider
 	/// <param name="type">The type of notification.</param>
 	/// <returns>True if the notification was sent successfully; otherwise, false.</returns>
 	Task<bool> SendICUserNotification(string title, string body, string userId, string depCode, string eventCode, string type);
+
+	/// <summary>
+	/// Sends a realtime-chat push to a user subscriber ({depCode}_User_{userId}) via the chat workflow.
+	/// EventCode carries the channel deep-link (t:{channelId} for DMs, g:{channelId} for group-ish channels);
+	/// count is the recipient's total unread badge.
+	/// </summary>
+	Task<bool> SendUserChatMessage(string title, string body, string userId, string depCode, string eventCode, string type, int count);
+
+	/// <summary>Chat push to an IC app subscriber ({depCode}_IC_User_{userId}).</summary>
+	Task<bool> SendICUserChatMessage(string title, string body, string userId, string depCode, string eventCode, string type, int count);
+
+	/// <summary>Chat push to a unit-device subscriber ({depCode}_Unit_{unitId}), e.g. the Unit app on the rig.</summary>
+	Task<bool> SendUnitChatMessage(string title, string body, int unitId, string depCode, string eventCode, string type, int count);
 }

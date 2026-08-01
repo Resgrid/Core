@@ -12,5 +12,11 @@ namespace Resgrid.Model
 		/// specific department) the original text-command handling in TwilioController is used instead.
 		/// </summary>
 		public const string ChatbotTwilioTextIntegration = "Chatbot.TwilioTextIntegration";
+
+		/// <summary>
+		/// Gates the realtime chat system (channels, DMs, incident chat, chatbot conversation) across the
+		/// API, web UI and mobile apps. Free for all plans; used for staged rollout only. Seeded by M0108.
+		/// </summary>
+		public const string ChatSystem = "Chat.System";
 	}
 }

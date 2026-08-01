@@ -12,5 +12,12 @@ namespace Resgrid.Chatbot.Interfaces
 	public interface IChatbotWebChatNotifier
 	{
 		Task PushToUserAsync(string userId, string text);
+
+		/// <summary>
+		/// Pushes to the user's chatbot channel in a specific (ingress-resolved) department. When
+		/// <paramref name="departmentId"/> is &lt;= 0 the notifier falls back to resolving the user's
+		/// first active department membership.
+		/// </summary>
+		Task PushToUserAsync(string userId, string text, int departmentId);
 	}
 }

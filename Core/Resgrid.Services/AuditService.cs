@@ -198,6 +198,30 @@ namespace Resgrid.Services
 				return "Department Deletion Request Cancelled";
 			case AuditLogTypes.DeleteDepartmentRequestExecuted:
 				return "Department Deletion Executed";
+			case AuditLogTypes.ChatMessageDeletedByModerator:
+				return "Chat Message Deleted by Moderator";
+			case AuditLogTypes.ChatUserMuted:
+				return "Chat User Muted";
+			case AuditLogTypes.ChatUserUnmuted:
+				return "Chat User Unmuted";
+			case AuditLogTypes.ChatUserBanned:
+				return "Chat User Banned";
+			case AuditLogTypes.ChatUserUnbanned:
+				return "Chat User Unbanned";
+			case AuditLogTypes.ChatChannelLocked:
+				return "Chat Channel Locked";
+			case AuditLogTypes.ChatChannelUnlocked:
+				return "Chat Channel Unlocked";
+			case AuditLogTypes.ChatChannelArchived:
+				return "Chat Channel Archived";
+			case AuditLogTypes.ChatFlagResolved:
+				return "Chat Flag Resolved";
+			case AuditLogTypes.ChatSettingsChanged:
+				return "Chat Settings Changed";
+			case AuditLogTypes.ChatExportRequested:
+				return "Chat Export Requested";
+			case AuditLogTypes.ChatExportDownloaded:
+				return "Chat Export Downloaded";
 		}
 
 			return $"Unknown ({logType})";

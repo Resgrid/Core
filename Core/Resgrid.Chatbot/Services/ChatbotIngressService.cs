@@ -28,6 +28,7 @@ namespace Resgrid.Chatbot.Services
 		private readonly IChatbotRateLimiter _rateLimiter;
 		private readonly ISecurityPinService _securityPinService;
 		private readonly ITextResponseResolver _textResponseResolver;
+		private readonly IChatbotConversationalFallback _conversationalFallback;
 
 		private const int MaxPinAttempts = 3;
 
@@ -50,7 +51,8 @@ namespace Resgrid.Chatbot.Services
 			IChatbotDepartmentConfigService departmentConfigService,
 			IChatbotRateLimiter rateLimiter,
 			ISecurityPinService securityPinService,
-			ITextResponseResolver textResponseResolver)
+			ITextResponseResolver textResponseResolver,
+			IChatbotConversationalFallback conversationalFallback)
 		{
 			_userIdentityService = userIdentityService;
 			_sessionManager = sessionManager;
@@ -67,6 +69,7 @@ namespace Resgrid.Chatbot.Services
 			_rateLimiter = rateLimiter;
 			_securityPinService = securityPinService;
 			_textResponseResolver = textResponseResolver;
+			_conversationalFallback = conversationalFallback;
 		}
 
 		public async Task<ChatbotResponse> ProcessMessageAsync(ChatbotMessage message)
@@ -549,7 +552,27 @@ namespace Resgrid.Chatbot.Services
 					return response;
 				}
 
-				// Unknown intent
+				// Unknown intent: try the guard-railed conversational LLM fallback before giving up.
+				// Operational commands never reach here — matched intents dispatched above — so the
+				// fallback can only produce informational replies. The LLM is an external/network
+				// dependency: a failure or timeout must degrade to the plain "didn't understand" reply,
+				// never bubble up to the generic error handler (which would lose the informational answer).
+				try
+				{
+					var fallbackResponse = await _conversationalFallback.TryHandleAsync(message, session);
+					if (fallbackResponse != null)
+					{
+						fallbackResponse.Intent = intent;
+						await _sessionManager.SaveSessionAsync(session);
+						return fallbackResponse;
+					}
+				}
+				catch (Exception fallbackEx)
+				{
+					Logging.LogException(fallbackEx,
+						$"Chatbot conversational fallback failed (intent={intent?.Type}, sessionId={session?.SessionId}, messageId={message?.MessageId}); using the default response.");
+				}
+
 				return new ChatbotResponse
 				{
 					Text = "I didn't understand that command. Text HELP to see available commands.",
@@ -739,6 +762,13 @@ namespace Resgrid.Chatbot.Services
 		{
 			// Platform-specific identity (already linked).
 			var identity = await _userIdentityService.GetIdentityAsync(message.Platform, message.From);
+
+			// WebChat arrives from our own authenticated API/hub, so From IS the Resgrid user id —
+			// auto-link on first use instead of demanding a manual linking flow.
+			if (identity == null && message.Platform == ChatbotPlatform.WebChat && !string.IsNullOrWhiteSpace(message.From))
+			{
+				identity = await _userIdentityService.LinkUserAsync(message.From, ChatbotPlatform.WebChat, message.From, null, "webchat-auto");
+			}
 
 			// Generic lookup for a number already linked to a Resgrid user (any platform). Note: this
 			// does NOT auto-link new numbers — that is handled (with optional confirmation) in the ingress.

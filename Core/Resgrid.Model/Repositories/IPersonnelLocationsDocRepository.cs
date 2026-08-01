@@ -10,7 +10,7 @@ namespace Resgrid.Model.Repositories
 		Task<List<PersonnelLocation>> GetLatestLocationsByDepartmentIdAsync(int departmentId);
 		Task<PersonnelLocation> GetByIdAsync(string id);
 		Task<PersonnelLocation> GetByOldIdAsync(string id);
-		Task<PersonnelLocation> InsertAsync(PersonnelLocation location);
-		Task<PersonnelLocation> UpdateAsync(PersonnelLocation location);
+		Task<PersonnelLocation> InsertAsync(PersonnelLocation location, System.Threading.CancellationToken cancellationToken = default);
+		Task<PersonnelLocation> UpdateAsync(PersonnelLocation location, System.Threading.CancellationToken cancellationToken = default);
 	}
 }

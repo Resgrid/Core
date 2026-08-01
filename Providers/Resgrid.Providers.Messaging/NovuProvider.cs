@@ -386,6 +386,21 @@ namespace Resgrid.Providers.Messaging
 			return await SendNotification(title, body, $"{depCode}_IC_User_{userId}", eventCode, type, false, 0, null, ChatConfig.NovuNotificationUserWorkflowId, GetSoundFileNameFromType(type));
 		}
 
+		public async Task<bool> SendUserChatMessage(string title, string body, string userId, string depCode, string eventCode, string type, int count)
+		{
+			return await SendNotification(title, body, $"{depCode}_User_{userId}", eventCode, type, false, count, null, ChatConfig.NovuChatWorkflowId, GetSoundFileNameFromType(type));
+		}
+
+		public async Task<bool> SendICUserChatMessage(string title, string body, string userId, string depCode, string eventCode, string type, int count)
+		{
+			return await SendNotification(title, body, $"{depCode}_IC_User_{userId}", eventCode, type, false, count, null, ChatConfig.NovuChatWorkflowId, GetSoundFileNameFromType(type));
+		}
+
+		public async Task<bool> SendUnitChatMessage(string title, string body, int unitId, string depCode, string eventCode, string type, int count)
+		{
+			return await SendNotification(title, body, $"{depCode}_Unit_{unitId}", eventCode, type, false, count, null, ChatConfig.NovuChatWorkflowId, GetSoundFileNameFromType(type));
+		}
+
 		#region Private Push Helpers
 
 		private string GetSoundFileNameFromType(string type)

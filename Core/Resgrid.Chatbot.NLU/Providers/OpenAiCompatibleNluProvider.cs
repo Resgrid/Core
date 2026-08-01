@@ -214,7 +214,7 @@ If the user's message doesn't clearly match any intent, set intent to ""unknown"
 				var json = JsonConvert.SerializeObject(requestBody);
 				var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-				var request = new HttpRequestMessage(HttpMethod.Post, endpoint)
+				using var request = new HttpRequestMessage(HttpMethod.Post, endpoint)
 				{
 					Content = content
 				};
@@ -241,7 +241,7 @@ If the user's message doesn't clearly match any intent, set intent to ""unknown"
 				using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(
 					ChatbotConfig.CloudNluTimeoutSeconds > 0 ? ChatbotConfig.CloudNluTimeoutSeconds : 10));
 
-				var response = await _httpClient.SendAsync(request, cts.Token);
+				using var response = await _httpClient.SendAsync(request, cts.Token);
 				var responseBody = await response.Content.ReadAsStringAsync();
 
 				sw.Stop();

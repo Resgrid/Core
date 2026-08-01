@@ -438,6 +438,442 @@
             key: omit (null) to keep the existing one, send "" to clear it, or send a value to set it.
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatbotController.GetChatChannel">
+            <summary>
+            Gets (creating if needed) the caller's chatbot conversation channel.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatbotController.SendChatMessage(Resgrid.Web.Services.Controllers.v4.ChatbotChatMessageRequest)">
+            <summary>
+            Sends a message to the chatbot. The message is persisted to the caller's chatbot channel and
+            processed asynchronously by the chatbot pipeline; the reply arrives in the same channel over
+            SignalR (chatMessageReceived). Idempotent via clientMessageId.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatbotController.BuildMessageSentResult(Resgrid.Model.ChatMessage,System.String)">
+            <summary>Builds the V4-populated send-result envelope shared by the success and failure paths.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatbotController.NewChatSession">
+            <summary>
+            Resets the chatbot conversational session (context/pending intents). Message history remains.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.ChatController">
+            <summary>
+            Realtime chat system interaction (channels, messages, reactions, attachments and presence)
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.GetChannels(System.Nullable{System.Int32})">
+            <summary>
+            Returns all the chat channels the current user can access, with per-channel unread counts.
+            </summary>
+            <param name="activeUnitId">Optional unit the user is actively operating as</param>
+            <returns>Array of ChatChannelResultData objects for the channels the user can access</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.GetChannel(System.String)">
+            <summary>
+            Gets a single chat channel by its Id.
+            </summary>
+            <param name="channelId">Chat channel identifier</param>
+            <returns>ChatChannelResultData object for the requested channel</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.CreateDirectMessage(Resgrid.Web.Services.Models.v4.Chat.CreateDirectMessageInput,System.Threading.CancellationToken)">
+            <summary>
+            Finds or creates the 1:1 direct message channel between the current user and a user or unit.
+            </summary>
+            <param name="input">Target user or unit for the direct message</param>
+            <returns>ChatChannelCreatedResult with the existing or newly created channel</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.CreateAdHocChannel(Resgrid.Web.Services.Models.v4.Chat.CreateAdHocChannelInput,System.Threading.CancellationToken)">
+            <summary>
+            Creates an ad-hoc group channel with an explicit member list.
+            </summary>
+            <param name="input">Name and initial members of the channel</param>
+            <returns>ChatChannelCreatedResult with the newly created channel</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.CreateCustomChannel(Resgrid.Web.Services.Models.v4.Chat.CreateCustomChannelInput,System.Threading.CancellationToken)">
+            <summary>
+            Creates a permission-locked custom channel. Only department admins can create custom channels.
+            </summary>
+            <param name="input">Name, topic and OR-evaluated access rules for the channel</param>
+            <returns>ChatChannelCreatedResult with the newly created channel</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.UpdateChannel(System.String,Resgrid.Web.Services.Models.v4.Chat.UpdateChannelInput,System.Threading.CancellationToken)">
+            <summary>
+            Updates a channel's name and topic. Requires channel moderator rights.
+            </summary>
+            <param name="channelId">Chat channel identifier</param>
+            <param name="input">New name and topic</param>
+            <returns>GetChatChannelResult with the updated channel</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.ArchiveChannel(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Archives a channel. Requires channel moderator rights.
+            </summary>
+            <param name="channelId">Chat channel identifier</param>
+            <returns>ChatActionResult indicating whether the channel was archived</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.GetMembers(System.String)">
+            <summary>
+            Returns the members of a chat channel.
+            </summary>
+            <param name="channelId">Chat channel identifier</param>
+            <returns>Array of ChatMemberResultData objects for the channel</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.AddMembers(System.String,Resgrid.Web.Services.Models.v4.Chat.AddMembersInput,System.Threading.CancellationToken)">
+            <summary>
+            Adds members to a DM, ad-hoc or custom locked channel. The requester must be an active member
+            of the channel or a channel moderator.
+            </summary>
+            <param name="channelId">Chat channel identifier</param>
+            <param name="input">UserIds to add</param>
+            <returns>Array of ChatMemberResultData objects for the added members</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.RemoveMember(System.String,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Removes a member from a channel. Users can always remove themselves (leave); removing another
+            member requires channel moderator rights.
+            </summary>
+            <param name="channelId">Chat channel identifier</param>
+            <param name="userId">UserId of the member to remove</param>
+            <returns>ChatActionResult indicating whether the member was removed</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.SetNotificationPreference(System.String,Resgrid.Web.Services.Models.v4.Chat.SetNotificationPreferenceInput,System.Threading.CancellationToken)">
+            <summary>
+            Sets the current user's notification preference for a channel.
+            </summary>
+            <param name="channelId">Chat channel identifier</param>
+            <param name="input">Notification preference to apply</param>
+            <returns>ChatActionResult indicating whether the preference was saved</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.GetMessages(System.String,System.Nullable{System.Int64},System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Returns a keyset page of messages for a channel, newest first, enriched with reactions and
+            attachment metadata.
+            </summary>
+            <param name="channelId">Chat channel identifier</param>
+            <param name="beforeSeq">Return messages with a sequence lower than this (null = latest page)</param>
+            <param name="limit">Maximum number of messages to return</param>
+            <returns>Array of ChatMessageResultData objects for the page</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.GetMessagesAfter(System.String,System.Int64,System.Int32,System.Threading.CancellationToken)">
+            <summary>
+            Delta sync for reconnect: returns every message after the supplied sequence, ascending,
+            enriched with reactions and attachment metadata.
+            </summary>
+            <param name="channelId">Chat channel identifier</param>
+            <param name="afterSeq">Return messages with a sequence higher than this</param>
+            <param name="limit">Maximum number of messages to return</param>
+            <returns>Array of ChatMessageResultData objects sent after the sequence</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.GetThread(System.String,System.Nullable{System.Int64},System.Int32)">
+            <summary>
+            Returns a keyset page of replies for a message thread, newest first.
+            </summary>
+            <param name="messageId">Thread root chat message identifier</param>
+            <param name="beforeSeq">Return replies with a sequence lower than this (null = latest page)</param>
+            <param name="limit">Maximum number of replies to return</param>
+            <returns>Array of ChatMessageResultData objects for the thread page</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.GetMessage(System.String)">
+            <summary>
+            Returns a single message by id (with reactions and attachment metadata), access-checked via its
+            channel. Used for resolving flag/report context.
+            </summary>
+            <param name="messageId">Chat message identifier</param>
+            <returns>GetChatMessageResult with the message, or NotFound</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.SendMessage(System.String,Resgrid.Web.Services.Models.v4.Chat.SendChatMessageInput,System.Threading.CancellationToken)">
+            <summary>
+            Sends a message to a channel. Supports unit and incident-commander identities, threads,
+            urgent priority and mentions. Resending with the same ClientMessageId returns the original.
+            </summary>
+            <param name="channelId">Chat channel identifier</param>
+            <param name="input">Message content and options</param>
+            <returns>ChatMessageSentResult with the persisted message</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.EditMessage(System.String,Resgrid.Web.Services.Models.v4.Chat.EditMessageInput,System.Threading.CancellationToken)">
+            <summary>
+            Edits a message's body. Only the original sender can edit; the prior body is preserved for audit.
+            </summary>
+            <param name="messageId">Chat message identifier</param>
+            <param name="input">New message body</param>
+            <returns>GetChatMessageResult with the updated message</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.DeleteMessage(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Deletes a message the current user sent (tombstone delete).
+            </summary>
+            <param name="messageId">Chat message identifier</param>
+            <returns>ChatActionResult indicating whether the message was deleted</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.AddReaction(System.String,Resgrid.Web.Services.Models.v4.Chat.AddReactionInput,System.Threading.CancellationToken)">
+            <summary>
+            Adds an emoji reaction to a message.
+            </summary>
+            <param name="messageId">Chat message identifier</param>
+            <param name="input">Emoji to react with</param>
+            <returns>ChatActionResult indicating whether the reaction was added</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.RemoveReaction(System.String,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Removes the current user's emoji reaction from a message.
+            </summary>
+            <param name="messageId">Chat message identifier</param>
+            <param name="emoji">Emoji to remove</param>
+            <returns>ChatActionResult indicating whether the reaction was removed</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.Ack(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Acknowledges an urgent message for the current user.
+            </summary>
+            <param name="messageId">Chat message identifier</param>
+            <returns>ChatActionResult; Success is true when a pending acknowledgment was stamped</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.GetAcks(System.String)">
+            <summary>
+            Returns the acknowledgment status rows for an urgent message. Only the message sender or a
+            channel moderator can view acks.
+            </summary>
+            <param name="messageId">Chat message identifier</param>
+            <returns>Array of ChatAckResultData objects for the message</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.GetMyPendingAcks">
+            <summary>
+            Returns the current user's pending urgent-message acknowledgments across the department.
+            </summary>
+            <returns>Array of ChatAckResultData objects still awaiting acknowledgment</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.MarkRead(System.String,Resgrid.Web.Services.Models.v4.Chat.MarkReadInput,System.Threading.CancellationToken)">
+            <summary>
+            Advances the current user's read pointer for a channel (monotonic).
+            </summary>
+            <param name="channelId">Chat channel identifier</param>
+            <param name="input">Sequence read and optional unit identity</param>
+            <returns>ChatActionResult indicating whether the pointer advanced</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.PinMessage(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Pins a message in its channel. Requires channel moderator rights.
+            </summary>
+            <param name="messageId">Chat message identifier</param>
+            <returns>ChatActionResult indicating whether the message was pinned</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.UnpinMessage(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Unpins a message in its channel. Requires channel moderator rights.
+            </summary>
+            <param name="messageId">Chat message identifier</param>
+            <returns>ChatActionResult indicating whether the message was unpinned</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.GetPins(System.String)">
+            <summary>
+            Returns the pinned messages for a channel.
+            </summary>
+            <param name="channelId">Chat channel identifier</param>
+            <returns>Array of ChatMessageResultData objects for the pinned messages</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.UploadAttachment(System.String,System.String,Microsoft.AspNetCore.Http.IFormFile,System.Threading.CancellationToken)">
+            <summary>
+            Uploads an attachment for a message the current user already sent, using multipart/form-data.
+            Allowed types: png, jpeg, gif, webp and pdf up to the configured size limit.
+            </summary>
+            <param name="channelId">Chat channel identifier</param>
+            <param name="messageId">Chat message identifier the attachment belongs to</param>
+            <param name="file">The file being uploaded</param>
+            <returns>ChatAttachmentUploadedResult with the new attachment identifier</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.GetAttachment(System.String)">
+            <summary>
+            Downloads a chat attachment's file data.
+            </summary>
+            <param name="attachmentId">Chat attachment identifier</param>
+            <returns>The attachment file</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.GetAttachmentThumbnail(System.String)">
+            <summary>
+            Downloads a chat attachment's thumbnail (falls back to the full file when no thumbnail exists).
+            </summary>
+            <param name="attachmentId">Chat attachment identifier</param>
+            <returns>The attachment thumbnail image</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.Search(System.String,System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Int32,System.Int32)">
+            <summary>
+            Searches message bodies across every channel the user can access (or one channel when supplied).
+            </summary>
+            <param name="q">Search text</param>
+            <param name="channelId">Optional channel to limit the search to</param>
+            <param name="from">Optional start of the date range</param>
+            <param name="to">Optional end of the date range</param>
+            <param name="page">Page number</param>
+            <param name="pageSize">Page size</param>
+            <returns>Array of ChatMessageResultData objects matching the search</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.SearchGifs(System.String,System.Int32,System.Int32)">
+            <summary>
+            Searches the configured GIF provider. An empty query returns trending GIFs; when no provider is
+            configured an empty successful result is returned.
+            </summary>
+            <param name="q">Search text (empty for trending)</param>
+            <param name="limit">Maximum number of GIFs to return</param>
+            <param name="offset">Result offset for paging</param>
+            <returns>Array of GifResultData objects from the provider</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.GetPresence(System.String)">
+            <summary>
+            Returns which of the requested users are currently online in chat.
+            </summary>
+            <param name="userIds">Comma-separated list of UserIds to check</param>
+            <returns>GetChatPresenceResult with the subset of UserIds currently online</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.FlagMessage(System.String,Resgrid.Web.Services.Models.v4.Chat.FlagMessageInput,System.Threading.CancellationToken)">
+            <summary>
+            Flags a message for moderator review.
+            </summary>
+            <param name="messageId">Chat message identifier</param>
+            <param name="input">Reason and optional note for the flag</param>
+            <returns>ChatActionResult indicating whether the flag was recorded</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.CheckMessageChannelAccessAsync(System.String)">
+            <summary>
+            Verifies the message exists in this department and the user can access its channel.
+            Returns null when access is allowed, otherwise the error result to return.
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.ChatModerationController">
+            <summary>
+            Chat moderation: flags, moderator actions (delete/mute/ban/lock), department chat settings and
+            records-request exports
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatModerationController.GetFlags(System.Int32,System.Int32,System.Int32)">
+            <summary>
+            Returns flagged messages for the department filtered by status. Department admins only.
+            </summary>
+            <param name="status">Flag status filter (0 = Open, 1 = Reviewed, 2 = Dismissed, 3 = ActionTaken)</param>
+            <param name="page">Page number</param>
+            <param name="pageSize">Page size</param>
+            <returns>Array of ChatFlagResultData objects</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatModerationController.ResolveFlag(System.String,Resgrid.Web.Services.Models.v4.Chat.ResolveFlagInput,System.Threading.CancellationToken)">
+            <summary>
+            Resolves a message flag with a resolution status and note. Department admins only.
+            </summary>
+            <param name="flagId">Chat message flag identifier</param>
+            <param name="input">Resolution status and note</param>
+            <returns>ChatActionResult indicating whether the flag was resolved</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatModerationController.DeleteMessage(System.String,System.String,System.Threading.CancellationToken)">
+            <summary>
+            Deletes a message as a moderator (tombstone delete with audit). Requires channel moderator rights.
+            </summary>
+            <param name="messageId">Chat message identifier</param>
+            <param name="reason">Reason for the deletion</param>
+            <returns>ChatActionResult indicating whether the message was deleted</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatModerationController.MuteUser(System.String,Resgrid.Web.Services.Models.v4.Chat.MuteUserInput,System.Threading.CancellationToken)">
+            <summary>
+            Mutes (or unmutes) a user in a channel. Requires channel moderator rights.
+            </summary>
+            <param name="channelId">Chat channel identifier</param>
+            <param name="input">Target user and mute expiration (null MutedUntil = unmute)</param>
+            <returns>ChatActionResult indicating whether the mute was applied</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatModerationController.BanUser(System.String,Resgrid.Web.Services.Models.v4.Chat.BanUserInput,System.Threading.CancellationToken)">
+            <summary>
+            Bans (or unbans) a user from a channel. Requires channel moderator rights.
+            </summary>
+            <param name="channelId">Chat channel identifier</param>
+            <param name="input">Target user and whether they are banned</param>
+            <returns>ChatActionResult indicating whether the ban was applied</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatModerationController.LockChannel(System.String,Resgrid.Web.Services.Models.v4.Chat.LockChannelInput,System.Threading.CancellationToken)">
+            <summary>
+            Locks (or unlocks) a channel so only moderators can post. Requires channel moderator rights.
+            </summary>
+            <param name="channelId">Chat channel identifier</param>
+            <param name="input">Whether to lock and the reason</param>
+            <returns>ChatActionResult indicating whether the lock state was changed</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatModerationController.GetActions(System.String,System.Int32,System.Int32)">
+            <summary>
+            Returns the moderation audit trail for the department (optionally limited to one channel).
+            Department admins only.
+            </summary>
+            <param name="channelId">Optional channel to limit the audit trail to</param>
+            <param name="page">Page number</param>
+            <param name="pageSize">Page size</param>
+            <returns>Array of ChatModerationActionResultData objects</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatModerationController.GetSettings">
+            <summary>
+            Returns the per-department chat settings. Department admins only.
+            </summary>
+            <returns>ChatSettingsResultData with the department's chat settings</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatModerationController.UpdateSettings(Resgrid.Web.Services.Models.v4.Chat.UpdateChatSettingsInput,System.Threading.CancellationToken)">
+            <summary>
+            Updates the per-department chat settings. Department admins only.
+            </summary>
+            <param name="input">New settings values</param>
+            <returns>GetChatSettingsResult with the saved settings</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatModerationController.RequestExport(Resgrid.Web.Services.Models.v4.Chat.RequestExportInput,System.Threading.CancellationToken)">
+            <summary>
+            Queues a chat transcript export job (records requests / FOIA). Department admins only.
+            </summary>
+            <param name="input">Channel, date range and format for the export</param>
+            <returns>GetChatExportsResult containing the queued export job</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatModerationController.VerifyExportMfa(Resgrid.Web.Services.Models.v4.Chat.VerifyExportMfaInput,System.Threading.CancellationToken)">
+            <summary>
+            Establishes a recent-MFA step-up proof for chat transcript exports. Verifies the caller's current
+            authenticator (TOTP) code and, on success, records a server-side proof valid for a short window so
+            a subsequent RequestExport can release PII. Department admins with 2FA enrolled only.
+            </summary>
+            <param name="input">The caller's current authenticator (TOTP) code</param>
+            <returns>ChatActionResult indicating whether the step-up succeeded</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatModerationController.GetMfaEnrolledUserOrErrorAsync">
+            <summary>
+            Resolves the current user and enforces the export MFA-enrollment precondition shared by the verify
+            and gate paths. On success returns the user with a null error; otherwise returns a null user and
+            the HTTP result to return: 401 when the principal can't be resolved, 403 when 2FA is not enrolled.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatModerationController.CheckRecentExportMfaAsync">
+            <summary>
+            Enforces the Rule 87 recent-MFA requirement for PII exports. Returns null when the caller may
+            proceed, or the HTTP result to return otherwise: 403 when 2FA is not enrolled (must enroll before
+            any export), 401 when no fresh step-up proof exists (must call VerifyExportMfa first).
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatModerationController.GetExports">
+            <summary>
+            Returns the chat transcript export jobs for the department. Department admins only.
+            </summary>
+            <returns>Array of ChatExportResultData objects</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatModerationController.DownloadExport(System.String,System.Threading.CancellationToken)">
+            <summary>
+            Downloads a completed chat transcript export. Department admins only; the download is audited.
+            </summary>
+            <param name="exportId">Chat export identifier</param>
+            <returns>The export file</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatModerationController.IsExportRateLimitedAsync">
+            <summary>
+            Per-department sliding-window rate limit for transcript exports. Returns true when the
+            department has exceeded ChatConfig.ExportRateLimitPerWindow for the current window.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatModerationController.BuildModerationContext(System.String)">
+            <summary>
+            Captures the request's forensic context (ip, user-agent, trace id) for the moderation audit
+            trail. <paramref name="actorRole"/> records the authority the action was taken under
+            (department admin vs channel moderator).
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CheckInTimersController">
             <summary>
             Check-in timer operations for call accountability
@@ -6529,6 +6965,1301 @@
         <member name="P:Resgrid.Web.Services.Models.v4.CallTypes.ContactResultData.UdfValues">
             <summary>
             User Defined Field values for this contact
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.GetChatChannelsResult">
+            <summary>
+            Gets the chat channels for the current user
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.GetChatChannelsResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Chat.GetChatChannelsResult.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.GetChatChannelResult">
+            <summary>
+            Gets a single chat channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.GetChatChannelResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.GetChatMessagesResult">
+            <summary>
+            Gets a page of chat messages
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.GetChatMessagesResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Chat.GetChatMessagesResult.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.GetChatMessageResult">
+            <summary>
+            Gets a single chat message
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.GetChatMessageResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.GetChatMembersResult">
+            <summary>
+            Gets the members of a chat channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.GetChatMembersResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Chat.GetChatMembersResult.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.GetChatAcksResult">
+            <summary>
+            Gets acknowledgment rows for an urgent chat message (or the user's pending acks)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.GetChatAcksResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Chat.GetChatAcksResult.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.GetChatFlagsResult">
+            <summary>
+            Gets flagged chat messages for moderator review
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.GetChatFlagsResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Chat.GetChatFlagsResult.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.GetChatModerationActionsResult">
+            <summary>
+            Gets the chat moderation audit trail
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.GetChatModerationActionsResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Chat.GetChatModerationActionsResult.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.GetChatSettingsResult">
+            <summary>
+            Gets the per-department chat settings
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.GetChatSettingsResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.GetChatExportsResult">
+            <summary>
+            Gets the chat transcript export jobs for a department
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.GetChatExportsResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Chat.GetChatExportsResult.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.GetGifSearchResult">
+            <summary>
+            Gets GIF search results from the configured GIF provider
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.GetGifSearchResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Chat.GetGifSearchResult.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.GetChatPresenceResult">
+            <summary>
+            Gets chat presence (which of the requested users are currently online)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.GetChatPresenceResult.OnlineUserIds">
+            <summary>
+            UserIds from the request that are currently online
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Chat.GetChatPresenceResult.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatChannelCreatedResult">
+            <summary>
+            Result of creating (or finding) a chat channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatChannelCreatedResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatMessageSentResult">
+            <summary>
+            Result of sending a chat message
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageSentResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatActionResult">
+            <summary>
+            Result of a simple chat write operation
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatActionResult.Success">
+            <summary>
+            Whether the operation succeeded
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatAttachmentUploadedResult">
+            <summary>
+            Result of uploading a chat attachment
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatAttachmentUploadedResult.ChatAttachmentId">
+            <summary>
+            Identifier of the created attachment
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatbotChannelResult">
+            <summary>
+            Gets the caller's chatbot conversation channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatbotChannelResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatbotMessageSentResult">
+            <summary>
+            Result of sending a message to the chatbot
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatbotMessageSentResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatbotSessionResetResult">
+            <summary>
+            Result of resetting the chatbot conversational session
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatbotSessionResetResult.Success">
+            <summary>
+            Whether the session was reset
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatbotChannelResultData">
+            <summary>
+            Chatbot conversation channel data
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatbotChannelResultData.ChatChannelId">
+            <summary>
+            Chat channel identifier
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatbotChannelResultData.Name">
+            <summary>
+            Name of the channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatbotChannelResultData.LastMessageSeq">
+            <summary>
+            Highest message sequence in the channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatbotChannelResultData.LastMessageOn">
+            <summary>
+            When the last message was sent
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatbotMessageSentResultData">
+            <summary>
+            Chatbot message send data
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatbotMessageSentResultData.ChatMessageId">
+            <summary>
+            Chat message identifier
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatbotMessageSentResultData.MessageSeq">
+            <summary>
+            Per-channel monotonic message sequence
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatbotMessageSentResultData.SentOn">
+            <summary>
+            When the message was sent (UTC)
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatChannelResultData">
+            <summary>
+            Chat channel data
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatChannelResultData.ChatChannelId">
+            <summary>
+            Chat channel identifier
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatChannelResultData.ChannelType">
+            <summary>
+            Channel type (0 = DirectMessage, 1 = AdHocGroup, 2 = DepartmentDefault, 3 = GroupDefault, 4 = CustomLocked, 5 = Incident, 6 = IncidentLane, 7 = IncidentCommand, 8 = Chatbot)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatChannelResultData.Name">
+            <summary>
+            Name of the channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatChannelResultData.Topic">
+            <summary>
+            Topic of the channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatChannelResultData.GroupId">
+            <summary>
+            Group anchor for GroupDefault channels
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatChannelResultData.CallId">
+            <summary>
+            Call anchor for incident channels
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatChannelResultData.CommandStructureNodeId">
+            <summary>
+            Command structure node anchor for incident lane channels
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatChannelResultData.OwnerUserId">
+            <summary>
+            Owner user for chatbot channels
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatChannelResultData.IsArchived">
+            <summary>
+            Is the channel archived
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatChannelResultData.IsLocked">
+            <summary>
+            Is the channel locked (only moderators can post)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatChannelResultData.LastMessageSeq">
+            <summary>
+            Highest message sequence in the channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatChannelResultData.LastMessageOn">
+            <summary>
+            When the last message was sent
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatChannelResultData.CreatedOn">
+            <summary>
+            When the channel was created
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatChannelResultData.UnreadCount">
+            <summary>
+            Number of messages the current user has not read
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatChannelResultData.NotificationPreference">
+            <summary>
+            The current user's notification preference for this channel (0 = Default, 1 = All, 2 = MentionsOnly, 3 = Muted)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatChannelResultData.MyLastReadSeq">
+            <summary>
+            The current user's last read message sequence for this channel
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData">
+            <summary>
+            Chat message data
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.ChatMessageId">
+            <summary>
+            Chat message identifier
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.ChatChannelId">
+            <summary>
+            Chat channel identifier the message belongs to
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.DepartmentId">
+            <summary>
+            Department identifier
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.MessageSeq">
+            <summary>
+            Per-channel monotonic message sequence
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.SenderParticipantType">
+            <summary>
+            Sender participant type (0 = User, 1 = Unit, 2 = Bot)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.SenderUserId">
+            <summary>
+            The human behind the message (null only for bot messages)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.SenderUnitId">
+            <summary>
+            Unit the message was sent as, when sent as a unit identity
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.SenderDisplayName">
+            <summary>
+            Display identity snapshot at send time
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.Body">
+            <summary>
+            Body of the message
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.MessageType">
+            <summary>
+            Message type (0 = Text, 1 = Image, 2 = Gif, 3 = Location, 4 = System, 5 = Bot)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.Priority">
+            <summary>
+            Message priority (0 = Normal, 1 = Urgent)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.ThreadRootMessageId">
+            <summary>
+            Root message when this is a thread reply
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.ThreadReplyCount">
+            <summary>
+            Reply count maintained on thread roots
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.LastThreadReplyOn">
+            <summary>
+            When the last thread reply was made
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.AlsoSendToChannel">
+            <summary>
+            Thread reply flagged to also appear in the main channel stream
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.MetadataJson">
+            <summary>
+            JSON payload for link previews, GIFs or shared locations
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.ClientMessageId">
+            <summary>
+            Client-supplied idempotency key
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.SentOn">
+            <summary>
+            When the message was sent (UTC)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.EditedOn">
+            <summary>
+            When the message was last edited
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.DeletedOn">
+            <summary>
+            When the message was deleted (tombstone)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.DeletedByUserId">
+            <summary>
+            Who deleted the message
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.PinnedOn">
+            <summary>
+            When the message was pinned
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.PinnedByUserId">
+            <summary>
+            Who pinned the message
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.Reactions">
+            <summary>
+            Emoji reactions on this message
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.Attachments">
+            <summary>
+            Attachment metadata for this message (no file data)
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.#ctor">
+            <summary>
+            Default constructor
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatAttachmentResultData">
+            <summary>
+            Chat attachment metadata (file data is downloaded separately)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatAttachmentResultData.ChatAttachmentId">
+            <summary>
+            Chat attachment identifier
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatAttachmentResultData.FileName">
+            <summary>
+            Original file name
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatAttachmentResultData.ContentType">
+            <summary>
+            Mime content type of the file
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatAttachmentResultData.Size">
+            <summary>
+            Size of the file in bytes
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatReactionResultData">
+            <summary>
+            An emoji reaction on a chat message
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatReactionResultData.Emoji">
+            <summary>
+            Unicode emoji string
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatReactionResultData.ParticipantType">
+            <summary>
+            Participant type of the reactor (0 = User, 1 = Unit, 2 = Bot)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatReactionResultData.UserId">
+            <summary>
+            UserId of the reactor
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatReactionResultData.UnitId">
+            <summary>
+            UnitId of the reactor when reacting as a unit
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatMemberResultData">
+            <summary>
+            A chat channel member's state
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMemberResultData.ChatChannelMemberId">
+            <summary>
+            Chat channel member identifier
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMemberResultData.ChatChannelId">
+            <summary>
+            Chat channel identifier
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMemberResultData.ParticipantType">
+            <summary>
+            Participant type (0 = User, 1 = Unit, 2 = Bot)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMemberResultData.UserId">
+            <summary>
+            UserId of the member when a person
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMemberResultData.UnitId">
+            <summary>
+            UnitId of the member when a unit-shared identity
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMemberResultData.DisplayNameOverride">
+            <summary>
+            Display identity override for the member
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMemberResultData.IsModerator">
+            <summary>
+            Is the member a channel moderator
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMemberResultData.JoinedOn">
+            <summary>
+            When the member joined the channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMemberResultData.RemovedOn">
+            <summary>
+            Set when the participant left or was removed
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMemberResultData.LastReadSeq">
+            <summary>
+            Highest message sequence this member has read (moderators only)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMemberResultData.LastReadOn">
+            <summary>
+            When the member last advanced their read pointer
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMemberResultData.LastDeliveredSeq">
+            <summary>
+            Highest message sequence delivered to any of this member's devices (moderators only)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMemberResultData.MutedUntil">
+            <summary>
+            Member cannot post until this UTC time (null = not muted, moderators only)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMemberResultData.IsBanned">
+            <summary>
+            Is the member banned from the channel (moderators only)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMemberResultData.NotificationPreference">
+            <summary>
+            The member's notification preference (0 = Default, 1 = All, 2 = MentionsOnly, 3 = Muted)
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatAckResultData">
+            <summary>
+            An acknowledgment row for an urgent chat message
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatAckResultData.ChatMessageAckId">
+            <summary>
+            Chat message ack identifier
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatAckResultData.ChatMessageId">
+            <summary>
+            Chat message identifier the ack belongs to
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatAckResultData.ChatChannelId">
+            <summary>
+            Chat channel identifier
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatAckResultData.UserId">
+            <summary>
+            UserId the acknowledgment is required from
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatAckResultData.UnitId">
+            <summary>
+            The unit this ack requirement was expanded from
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatAckResultData.RequiredOn">
+            <summary>
+            When the acknowledgment was required (message send time)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatAckResultData.AcknowledgedOn">
+            <summary>
+            When the user acknowledged (null = still pending)
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatFlagResultData">
+            <summary>
+            A user report ("flag") of a chat message
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatFlagResultData.ChatMessageFlagId">
+            <summary>
+            Chat message flag identifier
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatFlagResultData.ChatMessageId">
+            <summary>
+            Chat message identifier that was flagged
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatFlagResultData.ChatChannelId">
+            <summary>
+            Chat channel identifier
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatFlagResultData.FlaggedByUserId">
+            <summary>
+            UserId of the flagger
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatFlagResultData.Reason">
+            <summary>
+            Reason for the flag (0 = Other, 1 = Inappropriate, 2 = Harassment, 3 = Spam, 4 = SensitiveInformation, 5 = PolicyViolation)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatFlagResultData.Note">
+            <summary>
+            Optional note from the flagger
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatFlagResultData.FlaggedOn">
+            <summary>
+            When the message was flagged
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatFlagResultData.Status">
+            <summary>
+            Flag status (0 = Open, 1 = Reviewed, 2 = Dismissed, 3 = ActionTaken)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatFlagResultData.ReviewedByUserId">
+            <summary>
+            UserId of the reviewing moderator
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatFlagResultData.ReviewedOn">
+            <summary>
+            When the flag was reviewed
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatFlagResultData.ResolutionNote">
+            <summary>
+            Note from the reviewing moderator
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatModerationActionResultData">
+            <summary>
+            An immutable chat moderation audit record
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatModerationActionResultData.ChatModerationActionId">
+            <summary>
+            Chat moderation action identifier
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatModerationActionResultData.ChatChannelId">
+            <summary>
+            Chat channel identifier the action applies to
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatModerationActionResultData.ChatMessageId">
+            <summary>
+            Chat message identifier the action applies to
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatModerationActionResultData.TargetUserId">
+            <summary>
+            UserId the action targeted
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatModerationActionResultData.TargetUnitId">
+            <summary>
+            UnitId the action targeted
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatModerationActionResultData.ActionType">
+            <summary>
+            Moderation action type (maps to ChatModerationActionType)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatModerationActionResultData.PerformedByUserId">
+            <summary>
+            UserId of the moderator that performed the action
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatModerationActionResultData.PerformedOn">
+            <summary>
+            When the action was performed
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatModerationActionResultData.Reason">
+            <summary>
+            Reason supplied for the action
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatModerationActionResultData.DetailsJson">
+            <summary>
+            Structured details of the action
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatSettingsResultData">
+            <summary>
+            Per-department chat settings
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatSettingsResultData.ChatDepartmentSettingId">
+            <summary>
+            Chat department setting identifier
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatSettingsResultData.RetentionDays">
+            <summary>
+            Days to retain messages (0 = keep forever)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatSettingsResultData.AllowImages">
+            <summary>
+            Are image attachments allowed
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatSettingsResultData.AllowGifs">
+            <summary>
+            Are GIFs allowed
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatSettingsResultData.AllowLocationSharing">
+            <summary>
+            Is location sharing allowed
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatSettingsResultData.UrgentOverridesMute">
+            <summary>
+            When true, urgent messages notify even members who muted the channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatSettingsResultData.MaxAttachmentSizeMb">
+            <summary>
+            Maximum attachment size in megabytes
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatSettingsResultData.ChatbotEnabled">
+            <summary>
+            Is the chatbot enabled for the department
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatExportResultData">
+            <summary>
+            A chat transcript export job (no result data blob)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatExportResultData.ChatExportId">
+            <summary>
+            Chat export identifier
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatExportResultData.ChatChannelId">
+            <summary>
+            Channel the export is limited to (null = all department channels)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatExportResultData.RequestedByUserId">
+            <summary>
+            UserId that requested the export
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatExportResultData.RequestedOn">
+            <summary>
+            When the export was requested
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatExportResultData.StartDate">
+            <summary>
+            Start of the export date range
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatExportResultData.EndDate">
+            <summary>
+            End of the export date range
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatExportResultData.Format">
+            <summary>
+            Export format (0 = Json, 1 = Csv, 2 = Zip)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatExportResultData.Status">
+            <summary>
+            Export status (0 = Queued, 1 = Running, 2 = Complete, 3 = Failed)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatExportResultData.CompletedOn">
+            <summary>
+            When the export completed
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatExportResultData.Error">
+            <summary>
+            Error message when the export failed
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.GifResultData">
+            <summary>
+            A GIF search hit from the configured GIF provider
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.GifResultData.Id">
+            <summary>
+            Provider identifier for the GIF
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.GifResultData.Title">
+            <summary>
+            Title of the GIF
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.GifResultData.PreviewUrl">
+            <summary>
+            Small preview/thumbnail url for the picker grid
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.GifResultData.GifUrl">
+            <summary>
+            Full GIF url to embed in the message metadata
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.GifResultData.Width">
+            <summary>
+            Width of the GIF in pixels
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.GifResultData.Height">
+            <summary>
+            Height of the GIF in pixels
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.CreateDirectMessageInput">
+            <summary>
+            Input to create (or find) a 1:1 direct message channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.CreateDirectMessageInput.TargetUserId">
+            <summary>
+            Target user for the DM (mutually exclusive with TargetUnitId)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.CreateDirectMessageInput.TargetUnitId">
+            <summary>
+            Target unit for the DM (mutually exclusive with TargetUserId)
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.CreateAdHocChannelInput">
+            <summary>
+            Input to create an ad-hoc group channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.CreateAdHocChannelInput.Name">
+            <summary>
+            Name of the channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.CreateAdHocChannelInput.MemberUserIds">
+            <summary>
+            UserIds of the initial members
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.CreateCustomChannelInput">
+            <summary>
+            Input to create a permission-locked custom channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.CreateCustomChannelInput.Name">
+            <summary>
+            Name of the channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.CreateCustomChannelInput.Topic">
+            <summary>
+            Topic of the channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.CreateCustomChannelInput.Rules">
+            <summary>
+            Access rules for the channel (OR-evaluated)
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatAccessRuleInput">
+            <summary>
+            An access rule for a custom locked channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatAccessRuleInput.RuleType">
+            <summary>
+            Rule type (0 = GroupMembership, 1 = Role, 2 = User)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatAccessRuleInput.GroupId">
+            <summary>
+            Group for GroupMembership rules
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatAccessRuleInput.PersonnelRoleId">
+            <summary>
+            Personnel role for Role rules
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatAccessRuleInput.UserId">
+            <summary>
+            User for User rules
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.UpdateChannelInput">
+            <summary>
+            Input to update a channel's name/topic
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.UpdateChannelInput.Name">
+            <summary>
+            New name for the channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.UpdateChannelInput.Topic">
+            <summary>
+            New topic for the channel
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.AddMembersInput">
+            <summary>
+            Input to add members to a channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.AddMembersInput.UserIds">
+            <summary>
+            UserIds to add to the channel
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.SetNotificationPreferenceInput">
+            <summary>
+            Input to set the current user's notification preference for a channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.SetNotificationPreferenceInput.Preference">
+            <summary>
+            Notification preference (0 = Default, 1 = All, 2 = MentionsOnly, 3 = Muted)
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.SendChatMessageInput">
+            <summary>
+            Input to send a chat message
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.SendChatMessageInput.ClientMessageId">
+            <summary>
+            Client idempotency key; resends return the original message
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.SendChatMessageInput.Body">
+            <summary>
+            Body of the message
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.SendChatMessageInput.MessageType">
+            <summary>
+            Message type (0 = Text, 1 = Image, 2 = Gif, 3 = Location)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.SendChatMessageInput.Priority">
+            <summary>
+            Message priority (0 = Normal, 1 = Urgent)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.SendChatMessageInput.AsUnitId">
+            <summary>
+            Send as a unit identity ("Engine 6")
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.SendChatMessageInput.AsIncidentCommander">
+            <summary>
+            Send as the Incident Commander identity
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.SendChatMessageInput.ThreadRootMessageId">
+            <summary>
+            Root message when replying in a thread
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.SendChatMessageInput.AlsoSendToChannel">
+            <summary>
+            Thread reply flagged to also appear in the main channel stream
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.SendChatMessageInput.MetadataJson">
+            <summary>
+            JSON payload for link previews, GIFs or shared locations
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.SendChatMessageInput.Mentions">
+            <summary>
+            Resolved mentions from the client (targets validated server-side)
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatMentionInput">
+            <summary>
+            An @mention inside a chat message
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMentionInput.MentionType">
+            <summary>
+            Mention type (0 = User, 1 = Unit, 2 = Role, 3 = Group, 4 = Everyone)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMentionInput.TargetUserId">
+            <summary>
+            Mentioned user for User mentions
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMentionInput.TargetUnitId">
+            <summary>
+            Mentioned unit for Unit mentions
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMentionInput.TargetRoleId">
+            <summary>
+            Mentioned role for Role mentions
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMentionInput.TargetGroupId">
+            <summary>
+            Mentioned group for Group mentions
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.EditMessageInput">
+            <summary>
+            Input to edit a message's body
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.EditMessageInput.Body">
+            <summary>
+            New body for the message
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.AddReactionInput">
+            <summary>
+            Input to add an emoji reaction to a message
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.AddReactionInput.Emoji">
+            <summary>
+            Unicode emoji string (e.g. "👍")
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.MarkReadInput">
+            <summary>
+            Input to advance the read pointer for a channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.MarkReadInput.Seq">
+            <summary>
+            Highest message sequence read
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.MarkReadInput.AsUnitId">
+            <summary>
+            Advance the read pointer as this unit identity
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.FlagMessageInput">
+            <summary>
+            Input to flag a message for moderator review
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.FlagMessageInput.Reason">
+            <summary>
+            Reason for the flag (0 = Other, 1 = Inappropriate, 2 = Harassment, 3 = Spam, 4 = SensitiveInformation, 5 = PolicyViolation)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.FlagMessageInput.Note">
+            <summary>
+            Optional note describing the issue
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.ResolveFlagInput">
+            <summary>
+            Input to resolve a message flag
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ResolveFlagInput.Resolution">
+            <summary>
+            Resolution status (1 = Reviewed, 2 = Dismissed, 3 = ActionTaken)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ResolveFlagInput.ResolutionNote">
+            <summary>
+            Note from the reviewing moderator
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.MuteUserInput">
+            <summary>
+            Input to mute a user in a channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.MuteUserInput.TargetUserId">
+            <summary>
+            UserId to mute
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.MuteUserInput.MutedUntil">
+            <summary>
+            Mute until this UTC time (null = unmute)
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.BanUserInput">
+            <summary>
+            Input to ban (or unban) a user from a channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.BanUserInput.TargetUserId">
+            <summary>
+            UserId to ban or unban
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.BanUserInput.Banned">
+            <summary>
+            True to ban, false to unban
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.LockChannelInput">
+            <summary>
+            Input to lock (or unlock) a channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.LockChannelInput.Locked">
+            <summary>
+            True to lock, false to unlock
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.LockChannelInput.Reason">
+            <summary>
+            Reason for the lock/unlock
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.UpdateChatSettingsInput">
+            <summary>
+            Input to update the per-department chat settings
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.UpdateChatSettingsInput.RetentionDays">
+            <summary>
+            Days to retain messages (0 = keep forever)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.UpdateChatSettingsInput.AllowImages">
+            <summary>
+            Are image attachments allowed
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.UpdateChatSettingsInput.AllowGifs">
+            <summary>
+            Are GIFs allowed
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.UpdateChatSettingsInput.AllowLocationSharing">
+            <summary>
+            Is location sharing allowed
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.UpdateChatSettingsInput.UrgentOverridesMute">
+            <summary>
+            When true, urgent messages notify even members who muted the channel
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.UpdateChatSettingsInput.MaxAttachmentSizeMb">
+            <summary>
+            Maximum attachment size in megabytes
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.UpdateChatSettingsInput.ChatbotEnabled">
+            <summary>
+            Is the chatbot enabled for the department
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.RequestExportInput">
+            <summary>
+            Input to request a chat transcript export
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.RequestExportInput.ChatChannelId">
+            <summary>
+            Limit the export to one channel (null = all department channels)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.RequestExportInput.StartDate">
+            <summary>
+            Start of the export date range
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.RequestExportInput.EndDate">
+            <summary>
+            End of the export date range
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.RequestExportInput.Format">
+            <summary>
+            Export format (0 = Json, 1 = Csv, 2 = Zip)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.VerifyExportMfaInput.TotpCode">
+            <summary>
+            The caller's current authenticator (TOTP) code, used to establish a recent-MFA step-up proof for PII exports
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.PerformCheckInInput.UserId">

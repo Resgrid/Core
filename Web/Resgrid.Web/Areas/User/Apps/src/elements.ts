@@ -3,6 +3,10 @@ import { defineReactElement, type PropDefinition } from './runtime/customElement
 import type { MapElementProps } from './components/map/MapElement';
 import type { ShiftsCalendarElementProps } from './components/shifts/ShiftsCalendarElement';
 import type { OmnibarElementProps } from './components/omnibar/OmnibarElement';
+import type { ChatPanelElementProps } from './components/chat/ChatPanelElement';
+import type { ChatPageElementProps } from './components/chat/ChatPageElement';
+import type { ChatbotElementProps } from './components/chat/ChatbotElement';
+import type { ChatModerationElementProps } from './components/chat/ChatModerationElement';
 
 const mapProps: readonly PropDefinition[] = [
   { attribute: 'showbuttons', property: 'showButtons', type: 'boolean', defaultValue: false },
@@ -42,4 +46,28 @@ defineReactElement<OmnibarElementProps>(
   'rg-omnibar',
   () => import('./components/omnibar/OmnibarElement'),
   omnibarProps,
+);
+
+defineReactElement<ChatPanelElementProps>(
+  'rg-chat',
+  () => import('./components/chat/ChatPanelElement'),
+  [],
+);
+
+defineReactElement<ChatPageElementProps>(
+  'rg-chat-page',
+  () => import('./components/chat/ChatPageElement'),
+  [],
+);
+
+defineReactElement<ChatbotElementProps>(
+  'rg-chatbot',
+  () => import('./components/chat/ChatbotElement'),
+  [],
+);
+
+defineReactElement<ChatModerationElementProps>(
+  'rg-chat-moderation',
+  () => import('./components/chat/ChatModerationElement'),
+  [],
 );

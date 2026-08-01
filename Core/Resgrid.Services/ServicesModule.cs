@@ -17,6 +17,13 @@ namespace Resgrid.Services
 			builder.RegisterType<EncryptionService>().As<IEncryptionService>().InstancePerLifetimeScope();
 			builder.RegisterType<WorkflowService>().As<IWorkflowService>().InstancePerLifetimeScope();
 			builder.RegisterType<IncidentCommandService>().As<IIncidentCommandService>().InstancePerLifetimeScope();
+			builder.RegisterType<ChatChannelService>().As<IChatChannelService>().InstancePerLifetimeScope();
+			builder.RegisterType<ChatPermissionService>().As<IChatPermissionService>().InstancePerLifetimeScope();
+			builder.RegisterType<ChatMessageService>().As<IChatMessageService>().InstancePerLifetimeScope();
+			builder.RegisterType<ChatPresenceService>().As<IChatPresenceService>().InstancePerLifetimeScope();
+			builder.RegisterType<ChatModerationService>().As<IChatModerationService>().InstancePerLifetimeScope();
+			builder.RegisterType<ChatNotificationService>().As<IChatNotificationService>().InstancePerLifetimeScope();
+			builder.RegisterType<ChatProvisioningEventService>().As<IChatProvisioningEventService>().SingleInstance().AutoActivate();
 			builder.RegisterType<IncidentCommandNotificationService>().As<IIncidentCommandNotificationService>().InstancePerLifetimeScope();
 			builder.RegisterType<IncidentVoiceService>().As<IIncidentVoiceService>().InstancePerLifetimeScope();
 			builder.RegisterType<MutualAidService>().As<IMutualAidService>().InstancePerLifetimeScope();

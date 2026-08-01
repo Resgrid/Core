@@ -28,6 +28,10 @@
 		public static string NoSqlConnectionString = "mongodb://resgrid:resgrid123@rgdevserver:27017";
 		public static string NoSqlDatabaseName = "resgrid";
 		public static string NoSqlApplicationName = "Resgrid";
+		public static int NoSqlServerSelectionTimeoutSeconds = 5;
+		public static int NoSqlConnectTimeoutSeconds = 5;
+		public static int NoSqlSocketTimeoutSeconds = 10;
+		public static int DocumentOperationTimeoutSeconds = 10;
 
 		public static string UsersIdentityRoleId = "38b461d7-e848-46ef-8c06-ece5b618d9d1";
 		public static string AdminsIdentityRoleId = "1f6a03a8-62f4-4179-80fc-2eb96266cf04";

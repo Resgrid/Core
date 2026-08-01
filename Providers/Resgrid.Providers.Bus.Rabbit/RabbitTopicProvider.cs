@@ -118,6 +118,19 @@ namespace Resgrid.Providers.Bus.Rabbit
 			}.SerializeJson());
 		}
 
+		public async Task<bool> ChatEventOccurred(ChatEventRaised message)
+		{
+			return await SendMessage(Topics.EventingTopic, new EventingMessage
+			{
+				Id = Guid.NewGuid(),
+				Type = (int)EventingTypes.ChatEvent,
+				TimeStamp = DateTime.UtcNow,
+				DepartmentId = message.DepartmentId,
+				ItemId = message.ChatChannelId,
+				Payload = JsonConvert.SerializeObject(message)
+			}.SerializeJson());
+		}
+
 		public async Task<bool> UnitLocationUpdatedChanged(UnitLocationUpdatedEvent message)
 		{
 			return await SendMessage(Topics.EventingTopic, new EventingMessage
@@ -193,7 +206,9 @@ namespace Resgrid.Providers.Bus.Rabbit
 								? DeliveryModes.Persistent
 								: DeliveryModes.Transient
 						},
-						body: Encoding.ASCII.GetBytes(message),
+						// UTF8: chat payloads carry emoji/unicode; superset of the ASCII previously used and
+						// the inbound consumer already decodes UTF8.
+						body: Encoding.UTF8.GetBytes(message),
 						cancellationToken: publishTimeout?.Token ?? default);
 				}
 

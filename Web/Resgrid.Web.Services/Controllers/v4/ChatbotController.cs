@@ -12,6 +12,7 @@ using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Web.Services.Helpers;
+using Resgrid.Web.Services.Models.v4.Chat;
 using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
 
 namespace Resgrid.Web.Services.Controllers.v4
@@ -32,6 +33,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IChatbotDepartmentConfigService _departmentConfigService;
 		private readonly IAuthorizationService _authorizationService;
+		private readonly IChatChannelService _chatChannelService;
+		private readonly IChatMessageService _chatMessageService;
+		private readonly IQueueService _queueService;
+		private readonly Resgrid.Model.Providers.IEventAggregator _eventAggregator;
+		private readonly IFeatureToggleService _featureToggleService;
+		private readonly IChatbotSessionManager _chatbotSessionManager;
 
 		public ChatbotController(
 			IChatbotUserIdentityService userIdentityService,
@@ -40,7 +47,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IUserProfileService userProfileService,
 			IDepartmentsService departmentsService,
 			IChatbotDepartmentConfigService departmentConfigService,
-			IAuthorizationService authorizationService)
+			IAuthorizationService authorizationService,
+			IChatChannelService chatChannelService,
+			IChatMessageService chatMessageService,
+			IQueueService queueService,
+			Resgrid.Model.Providers.IEventAggregator eventAggregator,
+			IFeatureToggleService featureToggleService,
+			IChatbotSessionManager chatbotSessionManager)
 		{
 			_userIdentityService = userIdentityService;
 			_oauthLinkingService = oauthLinkingService;
@@ -49,6 +62,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_departmentsService = departmentsService;
 			_departmentConfigService = departmentConfigService;
 			_authorizationService = authorizationService;
+			_chatChannelService = chatChannelService;
+			_chatMessageService = chatMessageService;
+			_queueService = queueService;
+			_eventAggregator = eventAggregator;
+			_featureToggleService = featureToggleService;
+			_chatbotSessionManager = chatbotSessionManager;
 		}
 
 		/// <summary>
@@ -83,7 +102,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
-				return BadRequest(new { error = ex.Message });
+				return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred." });
 			}
 		}
 
@@ -111,7 +130,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
-				return BadRequest(new { error = ex.Message });
+				return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred." });
 			}
 		}
 
@@ -139,7 +158,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
-				return BadRequest(new { error = ex.Message });
+				return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred." });
 			}
 		}
 
@@ -167,7 +186,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
-				return BadRequest(new { error = ex.Message });
+				return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred." });
 			}
 		}
 
@@ -196,7 +215,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
-				return BadRequest(new { error = ex.Message });
+				return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred." });
 			}
 		}
 
@@ -236,7 +255,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
-				return BadRequest(new { error = ex.Message });
+				return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred." });
 			}
 		}
 
@@ -256,6 +275,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
 					return Unauthorized();
+
+				if (!string.IsNullOrWhiteSpace(request.LlmApiEndpoint) &&
+					!Resgrid.Chatbot.NLU.LlmEndpointValidator.IsValid(request.LlmApiEndpoint, out var llmEndpointError))
+					return BadRequest(new { error = llmEndpointError });
 
 				var config = new ChatbotDepartmentConfig
 				{
@@ -281,9 +304,176 @@ namespace Resgrid.Web.Services.Controllers.v4
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
-				return BadRequest(new { error = ex.Message });
+				return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred." });
 			}
 		}
+
+		#region Web Chat conversation
+
+		/// <summary>
+		/// Gets (creating if needed) the caller's chatbot conversation channel.
+		/// </summary>
+		[HttpGet("GetChatChannel")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<ActionResult<ChatbotChannelResult>> GetChatChannel()
+		{
+			if (!await ChatbotChatEnabledAsync())
+				return NotFound();
+
+			var channel = await _chatChannelService.EnsureChatbotChannelAsync(DepartmentId, UserId);
+			if (channel == null)
+				return NotFound();
+
+			var result = new ChatbotChannelResult
+			{
+				Data = new ChatbotChannelResultData
+				{
+					ChatChannelId = channel.ChatChannelId,
+					Name = channel.Name,
+					LastMessageSeq = channel.LastMessageSeq,
+					LastMessageOn = channel.LastMessageOn
+				},
+				PageSize = 1,
+				Status = ResponseHelper.Success
+			};
+
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>
+		/// Sends a message to the chatbot. The message is persisted to the caller's chatbot channel and
+		/// processed asynchronously by the chatbot pipeline; the reply arrives in the same channel over
+		/// SignalR (chatMessageReceived). Idempotent via clientMessageId.
+		/// </summary>
+		[HttpPost("SendChatMessage")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<ActionResult<ChatbotMessageSentResult>> SendChatMessage([FromBody] ChatbotChatMessageRequest request)
+		{
+			if (!await ChatbotChatEnabledAsync())
+				return NotFound();
+
+			if (request == null || string.IsNullOrWhiteSpace(request.Text))
+				return BadRequest(new { error = "Message text is required." });
+
+			try
+			{
+				var channel = await _chatChannelService.EnsureChatbotChannelAsync(DepartmentId, UserId);
+				if (channel == null)
+					return NotFound();
+
+				var message = await _chatMessageService.SendMessageAsync(UserId, new ChatMessageSendRequest
+				{
+					ChatChannelId = channel.ChatChannelId,
+					DepartmentId = DepartmentId,
+					Body = request.Text.Trim(),
+					MessageType = ChatMessageType.Text,
+					Priority = ChatMessagePriority.Normal,
+					ClientMessageId = request.ClientMessageId
+				});
+
+				if (message == null)
+					return BadRequest(new { error = "Unable to send message." });
+
+				var queued = await _queueService.EnqueueChatbotMessageAsync(new Resgrid.Model.Queue.ChatbotMessageQueueItem
+				{
+					DepartmentId = DepartmentId,
+					From = UserId,
+					Body = message.Body,
+					MessageId = message.ChatMessageId,
+					Platform = (int)Resgrid.Chatbot.Models.ChatbotPlatform.WebChat
+				});
+
+				if (!queued)
+					return StatusCode(StatusCodes.Status500InternalServerError, BuildMessageSentResult(message, ResponseHelper.Failure));
+
+				// Typing indicator to the user's devices while the worker runs the pipeline.
+				_eventAggregator.SendMessage<Resgrid.Model.Events.ChatEventRaised>(new Resgrid.Model.Events.ChatEventRaised
+				{
+					DepartmentId = DepartmentId,
+					ChatChannelId = channel.ChatChannelId,
+					Kind = Resgrid.Model.Events.ChatEventKinds.ChatbotTyping,
+					TargetUserId = UserId,
+					PayloadJson = Newtonsoft.Json.JsonConvert.SerializeObject(new { channel.ChatChannelId, IsTyping = true })
+				});
+
+				return BuildMessageSentResult(message, ResponseHelper.Created);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return BadRequest(new { error = "Unable to send message." });
+			}
+		}
+
+		/// <summary>Builds the V4-populated send-result envelope shared by the success and failure paths.</summary>
+		private static ChatbotMessageSentResult BuildMessageSentResult(ChatMessage message, string status)
+		{
+			var result = new ChatbotMessageSentResult
+			{
+				Data = new ChatbotMessageSentResultData
+				{
+					ChatMessageId = message.ChatMessageId,
+					MessageSeq = message.MessageSeq,
+					SentOn = message.SentOn
+				},
+				PageSize = 1,
+				Status = status
+			};
+
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>
+		/// Resets the chatbot conversational session (context/pending intents). Message history remains.
+		/// </summary>
+		[HttpPost("NewChatSession")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<ActionResult<ChatbotSessionResetResult>> NewChatSession()
+		{
+			if (!await ChatbotChatEnabledAsync())
+				return NotFound();
+
+			try
+			{
+				var session = await _chatbotSessionManager.GetOrCreateSessionAsync(UserId, DepartmentId, Resgrid.Chatbot.Models.ChatbotPlatform.WebChat, UserId);
+				if (session != null)
+					await _chatbotSessionManager.EndSessionAsync(session.SessionId);
+
+				var result = new ChatbotSessionResetResult
+				{
+					Success = true,
+					PageSize = 1,
+					Status = ResponseHelper.Success
+				};
+
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return BadRequest(new { error = "Unable to reset the chat session." });
+			}
+		}
+
+		private async Task<bool> ChatbotChatEnabledAsync()
+		{
+			if (!await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.ChatSystem, DepartmentId))
+				return false;
+
+			var settings = await _chatChannelService.GetDepartmentSettingsAsync(DepartmentId);
+			return settings == null || settings.ChatbotEnabled;
+		}
+
+		#endregion Web Chat conversation
+	}
+
+	public class ChatbotChatMessageRequest
+	{
+		public string Text { get; set; }
+		public string ClientMessageId { get; set; }
 	}
 
 	public class UnlinkRequest

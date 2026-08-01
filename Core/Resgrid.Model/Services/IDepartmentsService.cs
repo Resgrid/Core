@@ -139,6 +139,12 @@ namespace Resgrid.Model.Services
 
 		Task<bool> IsUserInDepartmentAsync(int departmentId, string userId);
 
+		/// <summary>
+		/// Returns which of the supplied user ids are members of the department, resolved in a single query
+		/// (no per-user round trips). Use to batch-validate membership before bulk operations.
+		/// </summary>
+		Task<HashSet<string>> GetMemberUserIdsInDepartmentAsync(int departmentId, IEnumerable<string> userIds);
+
 		Task<List<string>> GetAllDepartmentNamesAsync();
 
 		Task<List<DepartmentMember>> GetAllDepartmentsForUserAsync(string userId);

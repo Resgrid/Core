@@ -213,19 +213,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		[HttpGet]
-		[Authorize(Policy = ResgridResources.Call_View)]
-		public async Task<IActionResult> Chat()
-		{
-			var modal = new ChatView();
-			modal.DepartmentId = DepartmentId;
-			modal.UserId = UserId;
-			modal.Name = ClaimsAuthorizationHelper.GetFullName();
-
-			return View(modal);
-		}
-
-
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Call_Create)]

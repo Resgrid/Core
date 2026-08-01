@@ -28,6 +28,11 @@ namespace Resgrid.Chatbot.NLU
 			builder.RegisterType<EntityExtractor>()
 				.As<IEntityExtractor>()
 				.InstancePerLifetimeScope();
+
+			// Free-form chat completion (conversational fallback) sharing the cloud provider resolution
+			builder.RegisterType<OpenAiCompatibleChatCompletionClient>()
+				.As<IChatCompletionClient>()
+				.InstancePerLifetimeScope();
 		}
 	}
 }

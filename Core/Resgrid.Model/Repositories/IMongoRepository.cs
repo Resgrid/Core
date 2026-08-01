@@ -32,7 +32,7 @@ namespace Resgrid.Model.Repositories
 
 		void InsertOne(TDocument document);
 
-		Task InsertOneAsync(TDocument document);
+		Task InsertOneAsync(TDocument document, System.Threading.CancellationToken cancellationToken = default);
 
 		void InsertMany(ICollection<TDocument> documents);
 
@@ -40,7 +40,7 @@ namespace Resgrid.Model.Repositories
 
 		void ReplaceOne(TDocument document);
 
-		Task ReplaceOneAsync(TDocument document);
+		Task ReplaceOneAsync(TDocument document, System.Threading.CancellationToken cancellationToken = default);
 
 		void DeleteOne(Expression<Func<TDocument, bool>> filterExpression);
 

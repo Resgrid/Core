@@ -768,6 +768,30 @@ namespace Resgrid.Services
 			return false;
 		}
 
+		public async Task<HashSet<string>> GetMemberUserIdsInDepartmentAsync(int departmentId, IEnumerable<string> userIds)
+		{
+			var candidates = userIds?
+				.Where(id => !string.IsNullOrWhiteSpace(id))
+				.ToHashSet(StringComparer.Ordinal);
+
+			var result = new HashSet<string>(StringComparer.Ordinal);
+			if (candidates == null || candidates.Count == 0)
+				return result;
+
+			// One query for the department's members (no per-user round trips), filtered to the candidates.
+			var members = await _departmentMembersRepository.GetAllDepartmentMembersUnlimitedAsync(departmentId);
+			if (members != null)
+			{
+				foreach (var member in members)
+				{
+					if (member?.UserId != null && candidates.Contains(member.UserId))
+						result.Add(member.UserId);
+				}
+			}
+
+			return result;
+		}
+
 		public async Task<List<string>> GetAllDepartmentNamesAsync()
 		{
 			return (from d in await _departmentRepository.GetAllAsync()

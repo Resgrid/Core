@@ -104,7 +104,7 @@ namespace Resgrid.Repositories.NoSqlRepository
 			}
 		}
 
-		public async Task<UnitLocationWriteResult> InsertAsync(UnitsLocation location)
+		public async Task<UnitLocationWriteResult> InsertAsync(UnitsLocation location, CancellationToken cancellationToken = default)
 		{
 			if (location == null)
 				throw new ArgumentNullException(nameof(location));
@@ -113,8 +113,8 @@ namespace Resgrid.Repositories.NoSqlRepository
 
 			using (var connection = new NpgsqlConnection(Config.DataConfig.DocumentConnectionString))
 			{
-				await connection.OpenAsync();
-				var result = await connection.ExecuteScalarAsync<string>(
+				await connection.OpenAsync(cancellationToken);
+				var result = await connection.ExecuteScalarAsync<string>(new Dapper.CommandDefinition(
 					@"INSERT INTO public.unitlocations
 						(departmentid, unitid, ""timestamp"", eventid, receivedon, sourcetype, sourceid, sourcepriority, data)
 					VALUES
@@ -132,7 +132,7 @@ namespace Resgrid.Repositories.NoSqlRepository
 						sourceId = NullIfWhiteSpace(location.SourceId),
 						sourcePriority = location.SourcePriority,
 						dataJson
-					});
+					}, cancellationToken: cancellationToken));
 
 				if (string.IsNullOrWhiteSpace(result))
 					return UnitLocationWriteResult.Duplicate(location);
@@ -143,7 +143,7 @@ namespace Resgrid.Repositories.NoSqlRepository
 			}
 		}
 
-		public async Task<UnitLocationWriteResult> UpdateAsync(UnitsLocation location)
+		public async Task<UnitLocationWriteResult> UpdateAsync(UnitsLocation location, CancellationToken cancellationToken = default)
 		{
 			if (location == null)
 				throw new ArgumentNullException(nameof(location));
@@ -158,9 +158,9 @@ namespace Resgrid.Repositories.NoSqlRepository
 
 			using (var connection = new NpgsqlConnection(Config.DataConfig.DocumentConnectionString))
 			{
-				await connection.OpenAsync();
+				await connection.OpenAsync(cancellationToken);
 
-				var affectedRows = await connection.ExecuteAsync(
+				var affectedRows = await connection.ExecuteAsync(new Dapper.CommandDefinition(
 					@"UPDATE public.unitlocations
 					SET departmentid = @departmentId,
 						unitid = @unitId,
@@ -184,7 +184,7 @@ namespace Resgrid.Repositories.NoSqlRepository
 						sourcePriority = location.SourcePriority,
 						dataJson,
 						id = pgId
-					});
+					}, cancellationToken: cancellationToken));
 
 				if (affectedRows != 1)
 					throw new InvalidOperationException($"Unit location '{location.PgId}' was not found for update.");

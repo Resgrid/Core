@@ -17,20 +17,20 @@ namespace Resgrid.Repositories.NoSqlRepository
 
 		public UnitLocationsMongoRepository()
 		{
-			var database = new MongoClient(DataConfig.NoSqlConnectionString).GetDatabase(DataConfig.NoSqlDatabaseName);
+			var database = MongoClientFactory.Create().GetDatabase(DataConfig.NoSqlDatabaseName);
 			_collection = database.GetCollection<UnitsLocation>("unitLocations");
 		}
 
-		public async Task<UnitLocationWriteResult> InsertAsync(UnitsLocation location)
+		public async Task<UnitLocationWriteResult> InsertAsync(UnitsLocation location, CancellationToken cancellationToken = default)
 		{
 			if (location == null)
 				throw new ArgumentNullException(nameof(location));
 
-			await EnsureIndexesAsync();
+			await EnsureIndexesAsync().WaitAsync(cancellationToken);
 
 			try
 			{
-				await _collection.InsertOneAsync(location);
+				await _collection.InsertOneAsync(location, null, cancellationToken);
 				return UnitLocationWriteResult.Inserted(location);
 			}
 			catch (MongoWriteException ex) when (ex.WriteError?.Category == ServerErrorCategory.DuplicateKey)
@@ -39,15 +39,15 @@ namespace Resgrid.Repositories.NoSqlRepository
 			}
 		}
 
-		public async Task<UnitLocationWriteResult> UpdateAsync(UnitsLocation location)
+		public async Task<UnitLocationWriteResult> UpdateAsync(UnitsLocation location, CancellationToken cancellationToken = default)
 		{
 			if (location == null)
 				throw new ArgumentNullException(nameof(location));
 
-			await EnsureIndexesAsync();
+			await EnsureIndexesAsync().WaitAsync(cancellationToken);
 
 			var filter = Builders<UnitsLocation>.Filter.Eq(document => document.Id, location.Id);
-			var result = await _collection.ReplaceOneAsync(filter, location);
+			var result = await _collection.ReplaceOneAsync(filter, location, new ReplaceOptions(), cancellationToken);
 
 			if (result.MatchedCount != 1)
 				throw new InvalidOperationException($"Unit location '{location.Id}' was not found for update.");

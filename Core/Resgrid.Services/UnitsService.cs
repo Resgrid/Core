@@ -552,16 +552,16 @@ namespace Resgrid.Services
 			if (Config.DataConfig.DocDatabaseType == Config.DatabaseTypes.Postgres)
 			{
 				if (String.IsNullOrWhiteSpace(location.PgId))
-					result = await _unitLocationsDocRepository.InsertAsync(location);
+					result = await _unitLocationsDocRepository.InsertAsync(location, cancellationToken);
 				else
-					result = await _unitLocationsDocRepository.UpdateAsync(location);
+					result = await _unitLocationsDocRepository.UpdateAsync(location, cancellationToken);
 			}
 			else
 			{
 				if (location.Id.Timestamp == 0)
-					result = await _unitLocationsMongoRepository.Value.InsertAsync(location);
+					result = await _unitLocationsMongoRepository.Value.InsertAsync(location, cancellationToken);
 				else
-					result = await _unitLocationsMongoRepository.Value.UpdateAsync(location);
+					result = await _unitLocationsMongoRepository.Value.UpdateAsync(location, cancellationToken);
 			}
 
 			if (result.Status == UnitLocationWriteStatus.Inserted)

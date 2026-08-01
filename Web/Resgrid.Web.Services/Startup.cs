@@ -710,11 +710,13 @@ namespace Resgrid.Web.ServicesCore
 				twilioApp => twilioApp.UseTwilioRequestValidation());
 
 			//app.UseCors("_resgridWebsiteAllowSpecificOrigins");
-			// global cors policy
+			// global cors policy: only the configured Resgrid base hosts (and their subdomains) may call
+			// credentialed endpoints. Derived from SystemBehaviorConfig base URLs.
+			var allowedCorsHosts = GetAllowedCorsHosts();
 			app.UseCors(x => x
 				.AllowAnyMethod()
 				.AllowAnyHeader()
-				.SetIsOriginAllowed(origin => true) // allow any origin
+				.SetIsOriginAllowed(origin => IsAllowedCorsOrigin(origin, allowedCorsHosts))
 				.AllowCredentials()); // allow credentials
 
 			app.UseRouting();
@@ -774,6 +776,39 @@ namespace Resgrid.Web.ServicesCore
 					ResponseWriter = Resgrid.Web.Services.Health.HealthResponseWriter.WriteAsync
 				});
 			});
+		}
+
+		private static HashSet<string> GetAllowedCorsHosts()
+		{
+			var hosts = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+			foreach (var url in new[]
+			{
+				Config.SystemBehaviorConfig.ResgridBaseUrl,
+				Config.SystemBehaviorConfig.ResgridApiBaseUrl,
+				Config.SystemBehaviorConfig.ResgridEventingBaseUrl
+			})
+			{
+				if (!String.IsNullOrWhiteSpace(url) && Uri.TryCreate(url, UriKind.Absolute, out var uri) && !String.IsNullOrWhiteSpace(uri.Host))
+					hosts.Add(uri.Host);
+			}
+
+			return hosts;
+		}
+
+		private static bool IsAllowedCorsOrigin(string origin, HashSet<string> allowedHosts)
+		{
+			if (String.IsNullOrWhiteSpace(origin) || !Uri.TryCreate(origin, UriKind.Absolute, out var uri))
+				return false;
+
+			foreach (var host in allowedHosts)
+			{
+				if (uri.Host.Equals(host, StringComparison.OrdinalIgnoreCase) ||
+					uri.Host.EndsWith($".{host}", StringComparison.OrdinalIgnoreCase))
+					return true;
+			}
+
+			return false;
 		}
 	}
 }

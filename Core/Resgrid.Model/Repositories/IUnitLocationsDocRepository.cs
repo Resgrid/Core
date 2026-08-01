@@ -12,8 +12,8 @@ namespace Resgrid.Model.Repositories
 		Task<List<UnitsLocation>> GetLatestLocationsByDepartmentIdAsync(int departmentId);
 		Task<UnitsLocation> GetByIdAsync(string id);
 		Task<UnitsLocation> GetByOldIdAsync(string id);
-		Task<UnitLocationWriteResult> InsertAsync(UnitsLocation location);
-		Task<UnitLocationWriteResult> UpdateAsync(UnitsLocation location);
+		Task<UnitLocationWriteResult> InsertAsync(UnitsLocation location, CancellationToken cancellationToken = default);
+		Task<UnitLocationWriteResult> UpdateAsync(UnitsLocation location, CancellationToken cancellationToken = default);
 		Task<int> DeleteHardwareLocationsBeforeAsync(
 			int departmentId,
 			DateTime cutoffUtc,

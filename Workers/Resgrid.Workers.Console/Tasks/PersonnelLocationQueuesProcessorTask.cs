@@ -6,6 +6,7 @@ using Resgrid.Model.Events;
 using Resgrid.Providers.Bus.Rabbit;
 using Resgrid.Workers.Console.Commands;
 using Resgrid.Workers.Framework.Logic;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -29,7 +30,8 @@ namespace Resgrid.Workers.Console.Tasks
 				progress.Report(1, $"Starting the {Name} Task");
 
 			RabbitInboundQueueProvider queue = new RabbitInboundQueueProvider();
-			queue.PersonnelLocationEventQueueReceived += OnPersonnelLocationEventQueueReceived;
+			queue.PersonnelLocationEventQueueReceived += personnelLocationEvent =>
+				OnPersonnelLocationEventQueueReceived(personnelLocationEvent, cancellationToken);
 
 			await queue.Start("QueueProcessor-PersonnelLocation");
 
@@ -42,11 +44,26 @@ namespace Resgrid.Workers.Console.Tasks
 				progress.Report(100, $"Finishing the {Name} Task");
 		}
 
-		private async Task OnPersonnelLocationEventQueueReceived(PersonnelLocationEvent personnelLocationEvent)
+		private async Task OnPersonnelLocationEventQueueReceived(
+			PersonnelLocationEvent personnelLocationEvent,
+			CancellationToken cancellationToken)
 		{
-			_logger.LogInformation($"{Name}: Personnel Location Queue Received with an id of {personnelLocationEvent.EventId}, starting processing...");
-			await PersonnelLocationQueueLogic.ProcessPersonnelLocationQueueItem(personnelLocationEvent);
-			_logger.LogInformation($"{Name}: Finished processing of Personnel Location queue item with an id of {personnelLocationEvent.EventId}.");
+			// Invoked fire-and-forget by the queue provider, so a thrown exception would surface as an
+			// unobserved task exception and could tear down the consumer. Contain per-item failures here.
+			try
+			{
+				_logger.LogInformation($"{Name}: Personnel Location Queue Received with an id of {personnelLocationEvent.EventId}, starting processing...");
+				await PersonnelLocationQueueLogic.ProcessPersonnelLocationQueueItem(personnelLocationEvent, cancellationToken);
+				_logger.LogInformation($"{Name}: Finished processing of Personnel Location queue item with an id of {personnelLocationEvent.EventId}.");
+			}
+			catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+			{
+				// Expected during shutdown — not an error.
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, $"{Name}: Error processing Personnel Location queue item with an id of {personnelLocationEvent?.EventId}.");
+			}
 		}
 	}
 }

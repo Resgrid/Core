@@ -210,7 +210,10 @@ namespace Resgrid.Services
 			// We can't queue up any attachment data as it'll be too large.
 			cqi.Call.Attachments = null;
 
-			return await _outboundQueueProvider.EnqueueCall(cqi);
+			if (!await _outboundQueueProvider.EnqueueCall(cqi))
+				throw new InvalidOperationException("Failed to enqueue call broadcast for processing.");
+
+			return true;
 			//}
 			//else
 			//{

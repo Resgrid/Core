@@ -8,6 +8,7 @@ namespace Resgrid.Providers.Messaging
 		protected override void Load(ContainerBuilder builder)
 		{
 			builder.RegisterType<NovuProvider>().As<INovuProvider>().InstancePerLifetimeScope();
+			builder.RegisterType<GifProvider>().As<IGifProvider>().InstancePerLifetimeScope();
 		}
 	}
 }

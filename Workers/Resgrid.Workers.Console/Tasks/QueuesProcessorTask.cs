@@ -129,9 +129,24 @@ namespace Resgrid.Workers.Console.Tasks
 
 		private async Task OnPersonnelLocationEventQueueReceived(PersonnelLocationEvent personnelLocationEvent)
 		{
-			_logger.LogInformation($"{Name}: Personnel Location Queue Received with an id of {personnelLocationEvent.EventId}, starting processing...");
-			await PersonnelLocationQueueLogic.ProcessPersonnelLocationQueueItem(personnelLocationEvent);
-			_logger.LogInformation($"{Name}: Finished processing of Personnel Location queue item with an id of {personnelLocationEvent.EventId}.");
+			// Invoked fire-and-forget by the queue provider; contain per-item failures so one bad item
+			// can't surface as an unobserved task exception. The provider nacks this queue with
+			// requeue:false, so a rethrow would be dropped (not retried) anyway — logging + acking here
+			// is equivalent for delivery and matches the sibling PersonnelLocationQueuesProcessorTask.
+			try
+			{
+				_logger.LogInformation($"{Name}: Personnel Location Queue Received with an id of {personnelLocationEvent.EventId}, starting processing...");
+				await PersonnelLocationQueueLogic.ProcessPersonnelLocationQueueItem(personnelLocationEvent, _cancellationToken);
+				_logger.LogInformation($"{Name}: Finished processing of Personnel Location queue item with an id of {personnelLocationEvent.EventId}.");
+			}
+			catch (OperationCanceledException) when (_cancellationToken.IsCancellationRequested)
+			{
+				// Expected during shutdown — not an error.
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, $"{Name}: Error processing Personnel Location queue item with an id of {personnelLocationEvent?.EventId}.");
+			}
 		}
 
 		private async Task OnSecurityRefreshEventQueueReceived(SecurityRefreshEvent securityRefreshEvent)

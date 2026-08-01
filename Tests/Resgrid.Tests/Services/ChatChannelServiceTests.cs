@@ -77,6 +77,11 @@ namespace Resgrid.Tests.Services
 				// Cross-tenant validation passes by default; negative tests override this.
 				_departmentsServiceMock.Setup(x => x.IsUserInDepartmentAsync(It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(true);
 
+				// Batch membership check (ad-hoc group creation): by default every queried id is a member.
+				_departmentsServiceMock
+					.Setup(x => x.GetMemberUserIdsInDepartmentAsync(It.IsAny<int>(), It.IsAny<IEnumerable<string>>()))
+					.ReturnsAsync((int _, IEnumerable<string> ids) => ids == null ? new HashSet<string>() : new HashSet<string>(ids));
+
 				_chatChannelService = new ChatChannelService(
 					_chatChannelRepositoryMock.Object,
 					_chatChannelMemberRepositoryMock.Object,

@@ -245,7 +245,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var context = string.IsNullOrWhiteSpace(deviceId)
 				? message
 				: $"{message} Device: {deviceId}.";
-			Logging.LogException(exception, context, HttpContext?.TraceIdentifier);
+			// Handled, transient dependency outage surfaced as a retryable 503 — Error, not Fatal.
+			Logging.LogError(exception, context, HttpContext?.TraceIdentifier);
 			return StatusCode(StatusCodes.Status503ServiceUnavailable);
 		}
 

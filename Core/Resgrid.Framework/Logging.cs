@@ -62,18 +62,40 @@ namespace Resgrid.Framework
 			}
 		}
 
-		public static void LogException(Exception exception, string extraMessage = "", string correlationId = "", 
+		public static void LogException(Exception exception, string extraMessage = "", string correlationId = "",
 			[CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerMemberName = "", [CallerLineNumber] int callerLineNumber = 0)
 		{
 			Initialize(null);
-			string msgToLog = string.Format("{0}\r\n{4}\r\n\r\nAssemblyName:{5}\r\nCallerFilePath:{1}\r\nCallerMemberName:{2}\r\nCallerLineNumber:{3}r\nCorrelationId:{6}", extraMessage,
-				callerFilePath, callerMemberName, callerLineNumber, exception.ToString(), Assembly.GetExecutingAssembly().FullName, correlationId);
-
+			string msgToLog = BuildExceptionMessage(exception, extraMessage, correlationId, callerFilePath, callerMemberName, callerLineNumber);
 
 			if (_logger != null)
 				_logger.Fatal(exception, msgToLog);
 
 			Console.WriteLine(exception.ToString() + $" {extraMessage}");
+		}
+
+		/// <summary>
+		/// Logs a handled exception at Error level (not Fatal). Use for expected/transient failures that are
+		/// surfaced to the caller (e.g. a dependency outage returning 503), reserving Fatal for conditions
+		/// that take the process down.
+		/// </summary>
+		public static void LogError(Exception exception, string extraMessage = "", string correlationId = "",
+			[CallerFilePath] string callerFilePath = "", [CallerMemberName] string callerMemberName = "", [CallerLineNumber] int callerLineNumber = 0)
+		{
+			Initialize(null);
+			string msgToLog = BuildExceptionMessage(exception, extraMessage, correlationId, callerFilePath, callerMemberName, callerLineNumber);
+
+			if (_logger != null)
+				_logger.Error(exception, msgToLog);
+
+			Console.WriteLine(exception.ToString() + $" {extraMessage}");
+		}
+
+		private static string BuildExceptionMessage(Exception exception, string extraMessage, string correlationId,
+			string callerFilePath, string callerMemberName, int callerLineNumber)
+		{
+			return string.Format("{0}\r\n{4}\r\n\r\nAssemblyName:{5}\r\nCallerFilePath:{1}\r\nCallerMemberName:{2}\r\nCallerLineNumber:{3}\r\nCorrelationId:{6}", extraMessage,
+				callerFilePath, callerMemberName, callerLineNumber, exception.ToString(), Assembly.GetExecutingAssembly().FullName, correlationId);
 		}
 
 		public static void LogError(string message)

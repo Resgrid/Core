@@ -1483,7 +1483,8 @@ namespace Resgrid.Services
 				}
 				catch (Exception ex)
 				{
-					Logging.LogException(ex);
+					// Best-effort and explicitly non-fatal to the lane save — log at Error, not Fatal.
+					Logging.LogError(ex, "Best-effort chat lane channel provisioning failed after lane save.");
 				}
 			}
 
@@ -1513,7 +1514,8 @@ namespace Resgrid.Services
 			}
 			catch (Exception ex)
 			{
-				Logging.LogException(ex);
+				// Best-effort and explicitly non-fatal to the node delete — log at Error, not Fatal.
+				Logging.LogError(ex, "Best-effort chat lane channel archival failed after lane delete.");
 			}
 
 			return true;

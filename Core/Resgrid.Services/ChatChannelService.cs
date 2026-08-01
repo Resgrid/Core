@@ -225,11 +225,10 @@ namespace Resgrid.Services
 				? new List<string>()
 				: memberUserIds.Where(m => !string.IsNullOrWhiteSpace(m) && !string.Equals(m, creatorUserId, StringComparison.OrdinalIgnoreCase)).Distinct().ToList();
 
-			foreach (var memberId in validatedMemberIds)
-			{
-				if (!await _departmentsService.IsUserInDepartmentAsync(departmentId, memberId))
-					throw new UnauthorizedAccessException("Every member must belong to this department.");
-			}
+			// Batch-validate all memberships in a single query instead of one round trip per member.
+			var membersInDepartment = await _departmentsService.GetMemberUserIdsInDepartmentAsync(departmentId, validatedMemberIds);
+			if (validatedMemberIds.Any(id => !membersInDepartment.Contains(id)))
+				throw new UnauthorizedAccessException("Every member must belong to this department.");
 
 			var channel = new ChatChannel
 			{

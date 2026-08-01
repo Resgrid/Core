@@ -834,6 +834,13 @@
             <param name="input">The caller's current authenticator (TOTP) code</param>
             <returns>ChatActionResult indicating whether the step-up succeeded</returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatModerationController.GetMfaEnrolledUserOrErrorAsync">
+            <summary>
+            Resolves the current user and enforces the export MFA-enrollment precondition shared by the verify
+            and gate paths. On success returns the user with a null error; otherwise returns a null user and
+            the HTTP result to return: 401 when the principal can't be resolved, 403 when 2FA is not enrolled.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ChatModerationController.CheckRecentExportMfaAsync">
             <summary>
             Enforces the Rule 87 recent-MFA requirement for PII exports. Returns null when the caller may

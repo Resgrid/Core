@@ -72,7 +72,18 @@ namespace Resgrid.Web.Eventing.Hubs
 			var departmentId = Context.Items.TryGetValue(DepartmentIdContextKey, out var departmentIdValue) && departmentIdValue is int id ? id : 0;
 
 			if (!string.IsNullOrWhiteSpace(userId) && RemoveUserConnection(userId, Context.ConnectionId) && departmentId > 0)
-				await Clients.Group($"chatdept:{departmentId}").SendAsync("chatPresenceChanged", userId, false);
+			{
+				try
+				{
+					await Clients.Group($"chatdept:{departmentId}").SendAsync("chatPresenceChanged", userId, false);
+				}
+				catch (Exception ex)
+				{
+					// Best-effort presence broadcast: the connection is already removed, so a transport
+					// failure here must not abort the disconnect flow. Log with context and continue.
+					Resgrid.Framework.Logging.LogException(ex, $"ChatHub presence-offline broadcast failed for user {userId} in department {departmentId}.");
+				}
+			}
 
 			await base.OnDisconnectedAsync(exception);
 		}

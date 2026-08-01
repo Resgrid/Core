@@ -97,6 +97,14 @@ namespace Resgrid.Providers.Messaging
 			}
 		}
 
+		// Belt-and-suspenders scrub for key=/api_key= query params. A bounded match timeout caps regex work
+		// on pathological input (ReDoS guard); on timeout the literal-key replacements have already removed
+		// the real secrets, so falling through without the query-param scrub is safe.
+		private static readonly Regex KeyQueryParamRegex = new Regex(
+			@"\b(api_key|key)=[^&\s""']+",
+			RegexOptions.IgnoreCase | RegexOptions.CultureInvariant,
+			TimeSpan.FromMilliseconds(250));
+
 		// GetStringAsync failures can carry the request URL (with key=/api_key=) in the exception
 		// message; scrub configured keys and any key query params before emitting to logs.
 		private static void LogSanitizedException(Exception ex)
@@ -109,7 +117,14 @@ namespace Resgrid.Providers.Messaging
 			if (!string.IsNullOrWhiteSpace(ChatConfig.TenorApiKey))
 				text = text.Replace(ChatConfig.TenorApiKey, "***");
 
-			text = Regex.Replace(text, @"(?i)\b(api_key|key)=[^&\s""']+", "$1=***");
+			try
+			{
+				text = KeyQueryParamRegex.Replace(text, "$1=***");
+			}
+			catch (RegexMatchTimeoutException)
+			{
+				// Query-param scrub timed out; literal key replacements above already removed the secrets.
+			}
 
 			Logging.LogError(text);
 		}

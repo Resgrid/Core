@@ -45,6 +45,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 		// written by VerifyExportMfa after a valid TOTP and read by RequestExport.
 		private const int ExportMfaWindowMinutes = 5;
 
+		// TOTP is only a 6-digit code, so verification attempts are throttled per user to defeat brute force.
+		// A code rotates every ~30s, so a legitimate caller needs very few tries per window. Fixed (not
+		// config-gated) so the brute-force guard can never be accidentally disabled by a zero/misconfig.
+		private const int MfaVerifyMaxAttemptsPerWindow = 5;
+		private static readonly TimeSpan MfaVerifyRateLimitWindow = TimeSpan.FromMinutes(1);
+		private static string GetMfaVerifyRateLimitCacheKey(string userId) => $"chat:rl:mfa:{userId}";
+
 		public ChatModerationController(
 			IChatModerationService chatModerationService,
 			IChatChannelService chatChannelService,
@@ -602,13 +609,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
 				return Unauthorized();
 
-			var user = await _userManager.GetUserAsync(User);
-			if (user == null)
-				return Unauthorized();
-
 			// A caller with no 2FA enrolled can never obtain a proof — exports stay blocked until they enroll.
-			if (!await _userManager.GetTwoFactorEnabledAsync(user))
-				return StatusCode(StatusCodes.Status403Forbidden, new { error = "mfa_enrollment_required", error_description = "Two-Factor Authentication must be enabled to export chat transcripts." });
+			var (user, mfaError) = await GetMfaEnrolledUserOrErrorAsync();
+			if (mfaError != null)
+				return mfaError;
+
+			// Brute-force guard: cap TOTP verification attempts per user per window before we ever verify.
+			var attempts = await _cacheProvider.IncrementAsync(GetMfaVerifyRateLimitCacheKey(user.Id), MfaVerifyRateLimitWindow);
+			if (attempts > MfaVerifyMaxAttemptsPerWindow)
+				return StatusCode(StatusCodes.Status429TooManyRequests, new { error = "rate_limited", error_description = "Too many verification attempts. Wait a minute and try again." });
 
 			var valid = await _userManager.VerifyTwoFactorTokenAsync(
 				user,
@@ -619,11 +628,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (!valid)
 			{
+				// Feed the Identity failed-access counter so repeated wrong codes escalate to account lockout.
+				await _userManager.AccessFailedAsync(user);
 				result.Success = false;
 				result.Status = ResponseHelper.Failure;
 				ResponseHelper.PopulateV4ResponseData(result);
 				return StatusCode(StatusCodes.Status401Unauthorized, result);
 			}
+
+			// Successful step-up clears the failed-access counter (standard post-auth reset) so prior typos
+			// don't accumulate toward an account lockout.
+			await _userManager.ResetAccessFailedCountAsync(user);
 
 			await _cacheProvider.SetStringAsync(
 				GetExportMfaProofCacheKey(user.Id),
@@ -637,18 +652,32 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		/// <summary>
+		/// Resolves the current user and enforces the export MFA-enrollment precondition shared by the verify
+		/// and gate paths. On success returns the user with a null error; otherwise returns a null user and
+		/// the HTTP result to return: 401 when the principal can't be resolved, 403 when 2FA is not enrolled.
+		/// </summary>
+		private async Task<(Model.Identity.IdentityUser User, ActionResult Error)> GetMfaEnrolledUserOrErrorAsync()
+		{
+			var user = await _userManager.GetUserAsync(User);
+			if (user == null)
+				return (null, Unauthorized());
+
+			if (!await _userManager.GetTwoFactorEnabledAsync(user))
+				return (null, StatusCode(StatusCodes.Status403Forbidden, new { error = "mfa_enrollment_required", error_description = "Two-Factor Authentication must be enabled to export chat transcripts." }));
+
+			return (user, null);
+		}
+
+		/// <summary>
 		/// Enforces the Rule 87 recent-MFA requirement for PII exports. Returns null when the caller may
 		/// proceed, or the HTTP result to return otherwise: 403 when 2FA is not enrolled (must enroll before
 		/// any export), 401 when no fresh step-up proof exists (must call VerifyExportMfa first).
 		/// </summary>
 		private async Task<ActionResult<GetChatExportsResult>> CheckRecentExportMfaAsync()
 		{
-			var user = await _userManager.GetUserAsync(User);
-			if (user == null)
-				return Unauthorized();
-
-			if (!await _userManager.GetTwoFactorEnabledAsync(user))
-				return StatusCode(StatusCodes.Status403Forbidden, new { error = "mfa_enrollment_required", error_description = "Two-Factor Authentication must be enabled to export chat transcripts." });
+			var (user, mfaError) = await GetMfaEnrolledUserOrErrorAsync();
+			if (mfaError != null)
+				return mfaError;
 
 			var proof = await _cacheProvider.GetStringAsync(GetExportMfaProofCacheKey(user.Id));
 			if (!string.IsNullOrEmpty(proof)

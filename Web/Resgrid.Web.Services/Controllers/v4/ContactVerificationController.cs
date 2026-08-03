@@ -45,34 +45,56 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!ModelState.IsValid)
 				return BadRequest();
 
-			bool sent;
+			ContactVerificationSendStatus sendStatus;
 
 			switch (model.Type)
 			{
 				case ContactVerificationType.Email:
-					sent = await _contactVerificationService.SendEmailVerificationCodeAsync(UserId, DepartmentId, cancellationToken);
+					sendStatus = await _contactVerificationService.SendEmailVerificationCodeAsync(UserId, DepartmentId, cancellationToken);
 					break;
 
 				case ContactVerificationType.MobileNumber:
 					var mobileDepNumber = model.DepartmentNumber
 						?? await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
-					sent = await _contactVerificationService.SendMobileVerificationCodeAsync(UserId, DepartmentId, mobileDepNumber, cancellationToken);
+					sendStatus = await _contactVerificationService.SendMobileVerificationCodeAsync(UserId, DepartmentId, mobileDepNumber, cancellationToken);
 					break;
 
 				case ContactVerificationType.HomeNumber:
 					var homeDepNumber = model.DepartmentNumber
 						?? await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
-					sent = await _contactVerificationService.SendHomeVerificationCodeAsync(UserId, DepartmentId, homeDepNumber, cancellationToken);
+					sendStatus = await _contactVerificationService.SendHomeVerificationCodeAsync(UserId, DepartmentId, homeDepNumber, cancellationToken);
 					break;
 
 				default:
 					return BadRequest();
 			}
 
-			if (!sent)
-				return Ok(new SendVerificationCodeResult { Successful = false, ErrorMessage = "Unable to send verification code. You may have exceeded the rate limit or the contact method is not set." });
+			if (sendStatus != ContactVerificationSendStatus.Sent)
+			{
+				return Ok(new SendVerificationCodeResult
+				{
+					Successful = false,
+					ErrorCode = sendStatus.ToString(),
+					ErrorMessage = GetSendErrorMessage(sendStatus)
+				});
+			}
 
 			return Ok(new SendVerificationCodeResult { Successful = true });
+		}
+
+		private static string GetSendErrorMessage(ContactVerificationSendStatus sendStatus)
+		{
+			switch (sendStatus)
+			{
+				case ContactVerificationSendStatus.ContactNotConfigured:
+					return "The selected contact method is not configured.";
+				case ContactVerificationSendStatus.InvalidContact:
+					return "The selected contact method is not valid for verification delivery.";
+				case ContactVerificationSendStatus.RateLimited:
+					return "Too many verification attempts. Please try again later.";
+				default:
+					return "Unable to deliver the verification code. Please try again.";
+			}
 		}
 
 		/// <summary>

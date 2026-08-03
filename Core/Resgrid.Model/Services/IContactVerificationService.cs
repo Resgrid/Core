@@ -12,25 +12,22 @@ namespace Resgrid.Model.Services
 	{
 		/// <summary>
 		/// Generates a verification code and sends it to the user's email address.
-		/// Returns <c>false</c> if the user has no email, if rate limits are exceeded,
-		/// or if the send fails.
+		/// Returns a status describing whether the code was sent or why it could not be sent.
 		/// </summary>
-		Task<bool> SendEmailVerificationCodeAsync(string userId, int departmentId, CancellationToken cancellationToken = default);
+		Task<ContactVerificationSendStatus> SendEmailVerificationCodeAsync(string userId, int departmentId, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Generates a verification code and sends it via SMS to the user's mobile number.
-		/// Returns <c>false</c> if the user has no mobile number, if rate limits are exceeded,
-		/// or if the send fails.
+		/// Returns a status describing whether the code was sent or why it could not be sent.
 		/// </summary>
-		Task<bool> SendMobileVerificationCodeAsync(string userId, int departmentId, string departmentNumber, CancellationToken cancellationToken = default);
+		Task<ContactVerificationSendStatus> SendMobileVerificationCodeAsync(string userId, int departmentId, string departmentNumber, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Generates a verification code and delivers it via a Twilio voice call to the
 		/// user's home number, speaking the digits and repeating multiple times.
-		/// Returns <c>false</c> if the user has no home number, if rate limits are exceeded,
-		/// or if the call fails.
+		/// Returns a status describing whether the call was placed or why it could not be placed.
 		/// </summary>
-		Task<bool> SendHomeVerificationCodeAsync(string userId, int departmentId, string departmentNumber, CancellationToken cancellationToken = default);
+		Task<ContactVerificationSendStatus> SendHomeVerificationCodeAsync(string userId, int departmentId, string departmentNumber, CancellationToken cancellationToken = default);
 
 		/// <summary>
 		/// Validates the supplied <paramref name="code"/> against the stored code for the given

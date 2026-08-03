@@ -411,6 +411,15 @@
   <data name="VerificationRateLimited" xml:space="preserve">
     <value>Demasiados intentos de verificación. Por favor inténtelo más tarde.</value>
   </data>
+  <data name="VerificationContactNotConfigured" xml:space="preserve">
+    <value>El método de contacto seleccionado no está configurado.</value>
+  </data>
+  <data name="VerificationInvalidContact" xml:space="preserve">
+    <value>El método de contacto seleccionado no es válido para recibir la verificación.</value>
+  </data>
+  <data name="VerificationDeliveryFailed" xml:space="preserve">
+    <value>No se pudo enviar el código de verificación. Por favor, inténtelo de nuevo.</value>
+  </data>
 
   <!-- Password requirements box -->
   <data name="PasswordRequirementsHeader" xml:space="preserve"><value>Requisitos de contraseña</value></data>

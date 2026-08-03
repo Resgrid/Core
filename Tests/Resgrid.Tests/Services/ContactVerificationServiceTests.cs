@@ -26,7 +26,8 @@ namespace Resgrid.Tests.Services
 			protected Mock<IPhoneNumberProcesserProvider> _phoneNumberProcesserMock;
 			protected IContactVerificationService _contactVerificationService;
 
-			protected with_the_contact_verification_service()
+			[SetUp]
+			public void SetUp()
 			{
 				_userProfileServiceMock = new Mock<IUserProfileService>();
 				_usersServiceMock = new Mock<IUsersService>();
@@ -112,7 +113,7 @@ namespace Resgrid.Tests.Services
 
 				var result = await _contactVerificationService.SendEmailVerificationCodeAsync("user1", 1);
 
-				result.Should().BeTrue();
+				result.Should().Be(ContactVerificationSendStatus.Sent);
 				savedProfile.Should().NotBeNull();
 				// The service encrypts the code before persisting; verify the stored value is ciphertext.
 				savedProfile.EmailVerificationCode.Should().StartWith("ENC:");
@@ -125,8 +126,58 @@ namespace Resgrid.Tests.Services
 		public class when_sending_phone_verification : with_the_contact_verification_service
 		{
 			[Test]
+			public async Task should_preserve_international_mobile_number_when_validating_and_sending()
+			{
+				// Arrange
+				const string phoneNumber = "+447700900123";
+				var profile = BuildProfile(mobile: phoneNumber);
+				_userProfileServiceMock
+					.Setup(s => s.GetProfileByUserIdAsync("user1", true))
+					.ReturnsAsync(profile);
+				_userProfileServiceMock
+					.Setup(s => s.SaveProfileAsync(It.IsAny<int>(), It.IsAny<UserProfile>(), It.IsAny<CancellationToken>()))
+					.ReturnsAsync(profile);
+				_smsServiceMock
+					.Setup(s => s.SendSmsVerificationCodeAsync(phoneNumber, It.IsAny<string>(), It.IsAny<string>()))
+					.ReturnsAsync(true);
+
+				// Act
+				var result = await _contactVerificationService.SendMobileVerificationCodeAsync("user1", 1, "15555550123");
+
+				// Assert
+				result.Should().Be(ContactVerificationSendStatus.Sent);
+				_phoneNumberProcesserMock.Verify(p => p.Process(phoneNumber, null), Times.Once);
+				_smsServiceMock.Verify(s => s.SendSmsVerificationCodeAsync(phoneNumber, It.IsAny<string>(), "15555550123"), Times.Once);
+			}
+
+			[Test]
+			public async Task should_preserve_international_home_number_when_validating_and_calling()
+			{
+				// Arrange
+				const string phoneNumber = "+447700900123";
+				var profile = BuildProfile(home: phoneNumber);
+				_userProfileServiceMock
+					.Setup(s => s.GetProfileByUserIdAsync("user1", true))
+					.ReturnsAsync(profile);
+				_userProfileServiceMock
+					.Setup(s => s.SaveProfileAsync(It.IsAny<int>(), It.IsAny<UserProfile>(), It.IsAny<CancellationToken>()))
+					.ReturnsAsync(profile);
+
+				// Act
+				var result = await _contactVerificationService.SendHomeVerificationCodeAsync("user1", 1, "15555550123");
+
+				// Assert
+				result.Should().Be(ContactVerificationSendStatus.Sent);
+				_phoneNumberProcesserMock.Verify(p => p.Process(phoneNumber, null), Times.Once);
+				_outboundVoiceProviderMock.Verify(
+					v => v.SendVoiceVerificationCallAsync(phoneNumber, "user1", (int)ContactVerificationType.HomeNumber),
+					Times.Once);
+			}
+
+			[Test]
 			public async Task should_reset_home_voice_consumption_when_sending_a_new_home_code()
 			{
+				// Arrange
 				var profile = BuildProfile();
 				profile.HomeVerificationVoiceCodeConsumed = true;
 				UserProfile savedProfile = null;
@@ -139,11 +190,78 @@ namespace Resgrid.Tests.Services
 					.Callback<int, UserProfile, CancellationToken>((_, p, _) => savedProfile = p)
 					.ReturnsAsync(profile);
 
+				// Act
 				var result = await _contactVerificationService.SendHomeVerificationCodeAsync("user1", 1, "15555550123");
 
-				result.Should().BeTrue();
+				// Assert
+				result.Should().Be(ContactVerificationSendStatus.Sent);
 				savedProfile.Should().NotBeNull();
 				savedProfile!.HomeVerificationVoiceCodeConsumed.Should().BeFalse();
+			}
+
+			[Test]
+			public async Task should_return_invalid_contact_when_home_number_cannot_be_parsed()
+			{
+				// Arrange
+				var profile = BuildProfile(home: "+447700900123");
+				_userProfileServiceMock
+					.Setup(s => s.GetProfileByUserIdAsync("user1", true))
+					.ReturnsAsync(profile);
+				_phoneNumberProcesserMock
+					.Setup(p => p.Process(profile.HomeNumber, It.IsAny<string>()))
+					.Returns(new PhoneNumberResult { IsValid = false });
+
+				// Act
+				var result = await _contactVerificationService.SendHomeVerificationCodeAsync("user1", 1, "15555550123");
+
+				// Assert
+				result.Should().Be(ContactVerificationSendStatus.InvalidContact);
+				_outboundVoiceProviderMock.Verify(
+					v => v.SendVoiceVerificationCallAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()),
+					Times.Never);
+			}
+
+			[Test]
+			public async Task should_return_rate_limited_when_home_send_limit_is_reached()
+			{
+				// Arrange
+				var profile = BuildProfile();
+				profile.HomeVerificationCodeExpiry = DateTime.UtcNow.AddMinutes(10);
+				profile.HomeVerificationAttempts = Resgrid.Config.VerificationConfig.MaxVerificationSendsPerHour;
+				_userProfileServiceMock
+					.Setup(s => s.GetProfileByUserIdAsync("user1", true))
+					.ReturnsAsync(profile);
+
+				// Act
+				var result = await _contactVerificationService.SendHomeVerificationCodeAsync("user1", 1, "15555550123");
+
+				// Assert
+				result.Should().Be(ContactVerificationSendStatus.RateLimited);
+				_outboundVoiceProviderMock.Verify(
+					v => v.SendVoiceVerificationCallAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()),
+					Times.Never);
+			}
+
+			[Test]
+			public async Task should_return_delivery_failed_when_home_call_cannot_be_placed()
+			{
+				// Arrange
+				var profile = BuildProfile();
+				_userProfileServiceMock
+					.Setup(s => s.GetProfileByUserIdAsync("user1", true))
+					.ReturnsAsync(profile);
+				_userProfileServiceMock
+					.Setup(s => s.SaveProfileAsync(It.IsAny<int>(), It.IsAny<UserProfile>(), It.IsAny<CancellationToken>()))
+					.ReturnsAsync(profile);
+				_outboundVoiceProviderMock
+					.Setup(v => v.SendVoiceVerificationCallAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()))
+					.ReturnsAsync(false);
+
+				// Act
+				var result = await _contactVerificationService.SendHomeVerificationCodeAsync("user1", 1, "15555550123");
+
+				// Assert
+				result.Should().Be(ContactVerificationSendStatus.DeliveryFailed);
 			}
 		}
 

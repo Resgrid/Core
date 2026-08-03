@@ -44,25 +44,25 @@ namespace Resgrid.Services
 			_phoneNumberProcesser = phoneNumberProcesser;
 		}
 
-		public async Task<bool> SendEmailVerificationCodeAsync(string userId, int departmentId, CancellationToken cancellationToken = default)
+		public async Task<ContactVerificationSendStatus> SendEmailVerificationCodeAsync(string userId, int departmentId, CancellationToken cancellationToken = default)
 		{
 			var profile = await _userProfileService.GetProfileByUserIdAsync(userId, bypassCache: true);
 			if (profile == null)
-				return false;
+				return ContactVerificationSendStatus.ContactNotConfigured;
 
 			var user = _usersService.GetUserById(userId);
 			if (user == null)
-				return false;
+				return ContactVerificationSendStatus.ContactNotConfigured;
 
 			string emailAddress = !string.IsNullOrWhiteSpace(profile.MembershipEmail)
 				? profile.MembershipEmail
 				: user.Email;
 
 			if (string.IsNullOrWhiteSpace(emailAddress))
-				return false;
+				return ContactVerificationSendStatus.ContactNotConfigured;
 
 			if (!IsWithinHourlySendLimit(profile.EmailVerificationCodeExpiry, profile.EmailVerificationAttempts))
-				return false;
+				return ContactVerificationSendStatus.RateLimited;
 
 			string code = GenerateCode();
 			profile.EmailVerificationCode = _encryptionService.Encrypt(code);
@@ -74,27 +74,27 @@ namespace Resgrid.Services
 
 			await WriteAuditAsync(userId, departmentId, ContactVerificationType.Email, sent, "Send", null, cancellationToken);
 
-			return sent;
+			return sent ? ContactVerificationSendStatus.Sent : ContactVerificationSendStatus.DeliveryFailed;
 		}
 
-		public async Task<bool> SendMobileVerificationCodeAsync(string userId, int departmentId, string departmentNumber, CancellationToken cancellationToken = default)
+		public async Task<ContactVerificationSendStatus> SendMobileVerificationCodeAsync(string userId, int departmentId, string departmentNumber, CancellationToken cancellationToken = default)
 		{
 			var profile = await _userProfileService.GetProfileByUserIdAsync(userId, bypassCache: true);
 			if (profile == null || string.IsNullOrWhiteSpace(profile.MobileNumber))
-				return false;
+				return ContactVerificationSendStatus.ContactNotConfigured;
 
 			// Normalize to E.164 and validate before sending so an invalid/local-format number (e.g. a bare
 			// "082446..." with no country code) is rejected here instead of throwing a Twilio "Invalid 'To'" error.
-			var mobileResult = _phoneNumberProcesser.Process(profile.GetPhoneNumber());
+			var mobileResult = _phoneNumberProcesser.Process(profile.MobileNumber);
 			if (mobileResult == null || !mobileResult.IsValid || string.IsNullOrWhiteSpace(mobileResult.InternationalNumber))
 			{
 				Logging.LogInfo($"Mobile verification SMS skipped for user {userId}: phone number is not a valid sendable number (needs international format, e.g. +<country code><number>).");
 				await WriteAuditAsync(userId, departmentId, ContactVerificationType.MobileNumber, false, "Send-InvalidNumber", null, cancellationToken);
-				return false;
+				return ContactVerificationSendStatus.InvalidContact;
 			}
 
 			if (!IsWithinHourlySendLimit(profile.MobileVerificationCodeExpiry, profile.MobileVerificationAttempts))
-				return false;
+				return ContactVerificationSendStatus.RateLimited;
 
 			string code = GenerateCode();
 			profile.MobileVerificationCode = _encryptionService.Encrypt(code);
@@ -107,26 +107,26 @@ namespace Resgrid.Services
 
 			await WriteAuditAsync(userId, departmentId, ContactVerificationType.MobileNumber, sent, "Send", null, cancellationToken);
 
-			return sent;
+			return sent ? ContactVerificationSendStatus.Sent : ContactVerificationSendStatus.DeliveryFailed;
 		}
 
-		public async Task<bool> SendHomeVerificationCodeAsync(string userId, int departmentId, string departmentNumber, CancellationToken cancellationToken = default)
+		public async Task<ContactVerificationSendStatus> SendHomeVerificationCodeAsync(string userId, int departmentId, string departmentNumber, CancellationToken cancellationToken = default)
 		{
 			var profile = await _userProfileService.GetProfileByUserIdAsync(userId, bypassCache: true);
 			if (profile == null || string.IsNullOrWhiteSpace(profile.HomeNumber))
-				return false;
+				return ContactVerificationSendStatus.ContactNotConfigured;
 
 			// Validate/normalize before placing the Twilio voice call so an invalid number doesn't throw "Invalid 'To'".
-			var homeResult = _phoneNumberProcesser.Process(profile.GetHomePhoneNumber());
+			var homeResult = _phoneNumberProcesser.Process(profile.HomeNumber);
 			if (homeResult == null || !homeResult.IsValid || string.IsNullOrWhiteSpace(homeResult.InternationalNumber))
 			{
 				Logging.LogInfo($"Home verification call skipped for user {userId}: phone number is not a valid sendable number.");
 				await WriteAuditAsync(userId, departmentId, ContactVerificationType.HomeNumber, false, "SendVoice-InvalidNumber", null, cancellationToken);
-				return false;
+				return ContactVerificationSendStatus.InvalidContact;
 			}
 
 			if (!IsWithinHourlySendLimit(profile.HomeVerificationCodeExpiry, profile.HomeVerificationAttempts))
-				return false;
+				return ContactVerificationSendStatus.RateLimited;
 
 			string code = GenerateCode();
 			profile.HomeVerificationCode = _encryptionService.Encrypt(code);
@@ -143,7 +143,7 @@ namespace Resgrid.Services
 
 			await WriteAuditAsync(userId, departmentId, ContactVerificationType.HomeNumber, sent, "SendVoice", null, cancellationToken);
 
-			return sent;
+			return sent ? ContactVerificationSendStatus.Sent : ContactVerificationSendStatus.DeliveryFailed;
 		}
 
 		public async Task<bool> ConfirmVerificationCodeAsync(string userId, int departmentId, ContactVerificationType type, string code, string ipAddress = null, CancellationToken cancellationToken = default)

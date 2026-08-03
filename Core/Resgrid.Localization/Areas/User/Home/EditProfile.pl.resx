@@ -365,6 +365,15 @@
   <data name="VerificationRateLimited" xml:space="preserve">
     <value>Too many verification attempts. Please try again later.</value>
   </data>
+  <data name="VerificationContactNotConfigured" xml:space="preserve">
+    <value>The selected contact method is not configured.</value>
+  </data>
+  <data name="VerificationInvalidContact" xml:space="preserve">
+    <value>The selected contact method is not valid for verification delivery.</value>
+  </data>
+  <data name="VerificationDeliveryFailed" xml:space="preserve">
+    <value>Unable to deliver the verification code. Please try again.</value>
+  </data>
 
   <!-- Password requirements box -->
   <data name="PasswordRequirementsHeader" xml:space="preserve"><value>Wymagania dotyczące hasła</value></data>

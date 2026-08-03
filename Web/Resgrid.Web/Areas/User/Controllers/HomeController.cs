@@ -1138,25 +1138,29 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (request == null || !Enum.IsDefined(typeof(ContactVerificationType), request.Type))
 				return BadRequest();
 
-			bool sent;
+			ContactVerificationSendStatus sendStatus;
 			string departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(DepartmentId);
 
 			switch (request.Type)
 			{
 				case ContactVerificationType.Email:
-					sent = await _contactVerificationService.SendEmailVerificationCodeAsync(UserId, DepartmentId, cancellationToken);
+					sendStatus = await _contactVerificationService.SendEmailVerificationCodeAsync(UserId, DepartmentId, cancellationToken);
 					break;
 				case ContactVerificationType.MobileNumber:
-					sent = await _contactVerificationService.SendMobileVerificationCodeAsync(UserId, DepartmentId, departmentNumber, cancellationToken);
+					sendStatus = await _contactVerificationService.SendMobileVerificationCodeAsync(UserId, DepartmentId, departmentNumber, cancellationToken);
 					break;
 				case ContactVerificationType.HomeNumber:
-					sent = await _contactVerificationService.SendHomeVerificationCodeAsync(UserId, DepartmentId, departmentNumber, cancellationToken);
+					sendStatus = await _contactVerificationService.SendHomeVerificationCodeAsync(UserId, DepartmentId, departmentNumber, cancellationToken);
 					break;
 				default:
 					return BadRequest();
 			}
 
-			return Json(new { success = sent });
+			return Json(new
+			{
+				success = sendStatus == ContactVerificationSendStatus.Sent,
+				errorCode = sendStatus == ContactVerificationSendStatus.Sent ? null : sendStatus.ToString()
+			});
 		}
 
 		[HttpPost]

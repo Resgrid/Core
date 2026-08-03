@@ -205,6 +205,26 @@ namespace Resgrid.Model
 		[ProtoMember(53)]
 		public bool EnableModernApplicationSounds { get; set; }
 
+		// ── Verification send-window tracking (separate from the daily confirm-attempt counters) ──
+
+		[ProtoMember(54)]
+		public int EmailVerificationSendCount { get; set; }
+
+		[ProtoMember(55)]
+		public int MobileVerificationSendCount { get; set; }
+
+		[ProtoMember(56)]
+		public int HomeVerificationSendCount { get; set; }
+
+		[ProtoMember(57)]
+		public DateTime? EmailVerificationSendWindowStart { get; set; }
+
+		[ProtoMember(58)]
+		public DateTime? MobileVerificationSendWindowStart { get; set; }
+
+		[ProtoMember(59)]
+		public DateTime? HomeVerificationSendWindowStart { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

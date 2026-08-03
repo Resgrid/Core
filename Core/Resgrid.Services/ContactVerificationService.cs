@@ -44,25 +44,28 @@ namespace Resgrid.Services
 			_phoneNumberProcesser = phoneNumberProcesser;
 		}
 
-		public async Task<bool> SendEmailVerificationCodeAsync(string userId, int departmentId, CancellationToken cancellationToken = default)
+		public async Task<ContactVerificationSendStatus> SendEmailVerificationCodeAsync(string userId, int departmentId, CancellationToken cancellationToken = default)
 		{
 			var profile = await _userProfileService.GetProfileByUserIdAsync(userId, bypassCache: true);
 			if (profile == null)
-				return false;
+				return ContactVerificationSendStatus.ContactNotConfigured;
 
 			var user = _usersService.GetUserById(userId);
 			if (user == null)
-				return false;
+				return ContactVerificationSendStatus.ContactNotConfigured;
 
 			string emailAddress = !string.IsNullOrWhiteSpace(profile.MembershipEmail)
 				? profile.MembershipEmail
 				: user.Email;
 
 			if (string.IsNullOrWhiteSpace(emailAddress))
-				return false;
+				return ContactVerificationSendStatus.ContactNotConfigured;
 
-			if (!IsWithinHourlySendLimit(profile.EmailVerificationCodeExpiry, profile.EmailVerificationAttempts))
-				return false;
+			if (!TryRecordSend(profile.EmailVerificationSendWindowStart, profile.EmailVerificationSendCount, out DateTime emailWindowStart, out int emailSendCount))
+				return ContactVerificationSendStatus.RateLimited;
+
+			profile.EmailVerificationSendWindowStart = emailWindowStart;
+			profile.EmailVerificationSendCount = emailSendCount;
 
 			string code = GenerateCode();
 			profile.EmailVerificationCode = _encryptionService.Encrypt(code);
@@ -74,27 +77,30 @@ namespace Resgrid.Services
 
 			await WriteAuditAsync(userId, departmentId, ContactVerificationType.Email, sent, "Send", null, cancellationToken);
 
-			return sent;
+			return sent ? ContactVerificationSendStatus.Sent : ContactVerificationSendStatus.DeliveryFailed;
 		}
 
-		public async Task<bool> SendMobileVerificationCodeAsync(string userId, int departmentId, string departmentNumber, CancellationToken cancellationToken = default)
+		public async Task<ContactVerificationSendStatus> SendMobileVerificationCodeAsync(string userId, int departmentId, string departmentNumber, CancellationToken cancellationToken = default)
 		{
 			var profile = await _userProfileService.GetProfileByUserIdAsync(userId, bypassCache: true);
 			if (profile == null || string.IsNullOrWhiteSpace(profile.MobileNumber))
-				return false;
+				return ContactVerificationSendStatus.ContactNotConfigured;
 
 			// Normalize to E.164 and validate before sending so an invalid/local-format number (e.g. a bare
 			// "082446..." with no country code) is rejected here instead of throwing a Twilio "Invalid 'To'" error.
-			var mobileResult = _phoneNumberProcesser.Process(profile.GetPhoneNumber());
+			var mobileResult = _phoneNumberProcesser.Process(profile.MobileNumber);
 			if (mobileResult == null || !mobileResult.IsValid || string.IsNullOrWhiteSpace(mobileResult.InternationalNumber))
 			{
 				Logging.LogInfo($"Mobile verification SMS skipped for user {userId}: phone number is not a valid sendable number (needs international format, e.g. +<country code><number>).");
 				await WriteAuditAsync(userId, departmentId, ContactVerificationType.MobileNumber, false, "Send-InvalidNumber", null, cancellationToken);
-				return false;
+				return ContactVerificationSendStatus.InvalidContact;
 			}
 
-			if (!IsWithinHourlySendLimit(profile.MobileVerificationCodeExpiry, profile.MobileVerificationAttempts))
-				return false;
+			if (!TryRecordSend(profile.MobileVerificationSendWindowStart, profile.MobileVerificationSendCount, out DateTime mobileWindowStart, out int mobileSendCount))
+				return ContactVerificationSendStatus.RateLimited;
+
+			profile.MobileVerificationSendWindowStart = mobileWindowStart;
+			profile.MobileVerificationSendCount = mobileSendCount;
 
 			string code = GenerateCode();
 			profile.MobileVerificationCode = _encryptionService.Encrypt(code);
@@ -107,26 +113,29 @@ namespace Resgrid.Services
 
 			await WriteAuditAsync(userId, departmentId, ContactVerificationType.MobileNumber, sent, "Send", null, cancellationToken);
 
-			return sent;
+			return sent ? ContactVerificationSendStatus.Sent : ContactVerificationSendStatus.DeliveryFailed;
 		}
 
-		public async Task<bool> SendHomeVerificationCodeAsync(string userId, int departmentId, string departmentNumber, CancellationToken cancellationToken = default)
+		public async Task<ContactVerificationSendStatus> SendHomeVerificationCodeAsync(string userId, int departmentId, string departmentNumber, CancellationToken cancellationToken = default)
 		{
 			var profile = await _userProfileService.GetProfileByUserIdAsync(userId, bypassCache: true);
 			if (profile == null || string.IsNullOrWhiteSpace(profile.HomeNumber))
-				return false;
+				return ContactVerificationSendStatus.ContactNotConfigured;
 
 			// Validate/normalize before placing the Twilio voice call so an invalid number doesn't throw "Invalid 'To'".
-			var homeResult = _phoneNumberProcesser.Process(profile.GetHomePhoneNumber());
+			var homeResult = _phoneNumberProcesser.Process(profile.HomeNumber);
 			if (homeResult == null || !homeResult.IsValid || string.IsNullOrWhiteSpace(homeResult.InternationalNumber))
 			{
 				Logging.LogInfo($"Home verification call skipped for user {userId}: phone number is not a valid sendable number.");
 				await WriteAuditAsync(userId, departmentId, ContactVerificationType.HomeNumber, false, "SendVoice-InvalidNumber", null, cancellationToken);
-				return false;
+				return ContactVerificationSendStatus.InvalidContact;
 			}
 
-			if (!IsWithinHourlySendLimit(profile.HomeVerificationCodeExpiry, profile.HomeVerificationAttempts))
-				return false;
+			if (!TryRecordSend(profile.HomeVerificationSendWindowStart, profile.HomeVerificationSendCount, out DateTime homeWindowStart, out int homeSendCount))
+				return ContactVerificationSendStatus.RateLimited;
+
+			profile.HomeVerificationSendWindowStart = homeWindowStart;
+			profile.HomeVerificationSendCount = homeSendCount;
 
 			string code = GenerateCode();
 			profile.HomeVerificationCode = _encryptionService.Encrypt(code);
@@ -143,7 +152,7 @@ namespace Resgrid.Services
 
 			await WriteAuditAsync(userId, departmentId, ContactVerificationType.HomeNumber, sent, "SendVoice", null, cancellationToken);
 
-			return sent;
+			return sent ? ContactVerificationSendStatus.Sent : ContactVerificationSendStatus.DeliveryFailed;
 		}
 
 		public async Task<bool> ConfirmVerificationCodeAsync(string userId, int departmentId, ContactVerificationType type, string code, string ipAddress = null, CancellationToken cancellationToken = default)
@@ -297,6 +306,8 @@ namespace Resgrid.Services
 				updatedProfile.MobileVerificationVoiceCodeConsumed = false;
 				updatedProfile.MobileVerificationAttempts = 0;
 				updatedProfile.MobileVerificationAttemptsResetDate = null;
+				updatedProfile.MobileVerificationSendCount = 0;
+				updatedProfile.MobileVerificationSendWindowStart = null;
 			}
 
 			if (!string.Equals(existingProfile.HomeNumber ?? string.Empty, updatedProfile.HomeNumber ?? string.Empty, StringComparison.OrdinalIgnoreCase))
@@ -307,6 +318,8 @@ namespace Resgrid.Services
 				updatedProfile.HomeVerificationVoiceCodeConsumed = false;
 				updatedProfile.HomeVerificationAttempts = 0;
 				updatedProfile.HomeVerificationAttemptsResetDate = null;
+				updatedProfile.HomeVerificationSendCount = 0;
+				updatedProfile.HomeVerificationSendWindowStart = null;
 			}
 
 			if (!string.Equals(existingProfile.MembershipEmail ?? string.Empty, updatedProfile.MembershipEmail ?? string.Empty, StringComparison.OrdinalIgnoreCase))
@@ -316,6 +329,8 @@ namespace Resgrid.Services
 				updatedProfile.EmailVerificationCodeExpiry = null;
 				updatedProfile.EmailVerificationAttempts = 0;
 				updatedProfile.EmailVerificationAttemptsResetDate = null;
+				updatedProfile.EmailVerificationSendCount = 0;
+				updatedProfile.EmailVerificationSendWindowStart = null;
 			}
 
 			return Task.CompletedTask;
@@ -336,22 +351,34 @@ namespace Resgrid.Services
 		}
 
 		/// <summary>
-		/// Returns <c>true</c> if a new send is allowed, based on the current code expiry window
-		/// acting as a proxy for the hourly send count. A new send is blocked if there is already
-		/// a valid (non-expired) code and the slot count would exceed the hourly limit.
-		/// In practice, with VerificationCodeExpiryMinutes=30 and MaxVerificationSendsPerHour=3,
-		/// a user can send up to 3 codes within a 60-minute window.
+		/// Enforces the hourly send cap using dedicated send-window state, kept separate from the
+		/// daily confirm-attempt counters used by <see cref="ConfirmVerificationCodeAsync"/>.
+		/// Returns <c>false</c> when <see cref="Resgrid.Config.VerificationConfig.MaxVerificationSendsPerHour"/>
+		/// has been reached inside the current one-hour window; otherwise returns <c>true</c> with the
+		/// updated window start and send count, which the caller must persist before delivering the code
+		/// so the send is recorded even if delivery fails.
 		/// </summary>
-		private static bool IsWithinHourlySendLimit(DateTime? codeExpiry, int existingAttempts)
+		private static bool TryRecordSend(DateTime? windowStart, int sendCount, out DateTime newWindowStart, out int newSendCount)
 		{
-			// If the existing code hasn't expired yet AND we've already reached the send cap, block.
-			if (codeExpiry.HasValue
-				&& DateTime.UtcNow < codeExpiry.Value
-				&& existingAttempts >= Config.VerificationConfig.MaxVerificationSendsPerHour)
+			DateTime now = DateTime.UtcNow;
+
+			if (!windowStart.HasValue || now - windowStart.Value >= TimeSpan.FromHours(1))
 			{
+				// No window yet, or the previous window has elapsed — start a new one.
+				newWindowStart = now;
+				newSendCount = 1;
+				return true;
+			}
+
+			newWindowStart = windowStart.Value;
+
+			if (sendCount >= Config.VerificationConfig.MaxVerificationSendsPerHour)
+			{
+				newSendCount = sendCount;
 				return false;
 			}
 
+			newSendCount = sendCount + 1;
 			return true;
 		}
 

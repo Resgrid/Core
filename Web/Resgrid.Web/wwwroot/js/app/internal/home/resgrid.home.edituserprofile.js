@@ -67,6 +67,19 @@ var resgrid;
                     return $('input[name="__RequestVerificationToken"]').val();
                 }
 
+                function getSendFailureLabel(errorCode) {
+                    switch (errorCode) {
+                        case 'ContactNotConfigured':
+                            return rgVerifyLabels.contactNotConfigured;
+                        case 'InvalidContact':
+                            return rgVerifyLabels.invalidContact;
+                        case 'RateLimited':
+                            return rgVerifyLabels.rateLimited;
+                        default:
+                            return rgVerifyLabels.deliveryFailed;
+                    }
+                }
+
                 // Send verification code button clicked
                 $(document).on('click', '.rg-send-code', function () {
                     var contactType = parseInt($(this).data('contact-type'), 10);
@@ -90,7 +103,7 @@ var resgrid;
                             $(w.codeEntry).show();
                             $btn.hide();
                         } else {
-                            $(w.msgSpan).text(rgVerifyLabels.rateLimited).css('color', '#a94442').show();
+                            $(w.msgSpan).text(getSendFailureLabel(result && result.errorCode)).css('color', '#a94442').show();
                             $btn.prop('disabled', false).text('Verify');
                         }
                     }).fail(function () {

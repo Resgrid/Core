@@ -105,6 +105,9 @@
   <data name="VerificationSuccessful" xml:space="preserve"><value>نجح التحقق.</value></data>
   <data name="VerificationFailed" xml:space="preserve"><value>فشل التحقق. يُرجى التحقق من الرمز والمحاولة مجدداً.</value></data>
   <data name="VerificationRateLimited" xml:space="preserve"><value>محاولات تحقق كثيرة جداً. يُرجى المحاولة لاحقاً.</value></data>
+  <data name="VerificationContactNotConfigured" xml:space="preserve"><value>طريقة الاتصال المحددة غير مهيأة.</value></data>
+  <data name="VerificationInvalidContact" xml:space="preserve"><value>طريقة الاتصال المحددة غير صالحة لإرسال رمز التحقق.</value></data>
+  <data name="VerificationDeliveryFailed" xml:space="preserve"><value>تعذر إرسال رمز التحقق. يُرجى المحاولة مرة أخرى.</value></data>
   <data name="PasswordRequirementsHeader" xml:space="preserve"><value>متطلبات كلمة المرور</value></data>
   <data name="PasswordRequirementsLength" xml:space="preserve"><value>على الأقل {0} أحرف</value></data>
   <data name="PasswordRequirementsDigit" xml:space="preserve"><value>رقم واحد على الأقل</value></data>

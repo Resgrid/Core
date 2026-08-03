@@ -19,6 +19,7 @@ namespace Resgrid.Web.Services.Models.v4.ContactVerification
 	public class SendVerificationCodeResult
 	{
 		public bool Successful { get; set; }
+		public string ErrorCode { get; set; }
 		public string ErrorMessage { get; set; }
 	}
 

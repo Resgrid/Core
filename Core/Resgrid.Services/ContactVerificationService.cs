@@ -61,8 +61,11 @@ namespace Resgrid.Services
 			if (string.IsNullOrWhiteSpace(emailAddress))
 				return ContactVerificationSendStatus.ContactNotConfigured;
 
-			if (!IsWithinHourlySendLimit(profile.EmailVerificationCodeExpiry, profile.EmailVerificationAttempts))
+			if (!TryRecordSend(profile.EmailVerificationSendWindowStart, profile.EmailVerificationSendCount, out DateTime emailWindowStart, out int emailSendCount))
 				return ContactVerificationSendStatus.RateLimited;
+
+			profile.EmailVerificationSendWindowStart = emailWindowStart;
+			profile.EmailVerificationSendCount = emailSendCount;
 
 			string code = GenerateCode();
 			profile.EmailVerificationCode = _encryptionService.Encrypt(code);
@@ -93,8 +96,11 @@ namespace Resgrid.Services
 				return ContactVerificationSendStatus.InvalidContact;
 			}
 
-			if (!IsWithinHourlySendLimit(profile.MobileVerificationCodeExpiry, profile.MobileVerificationAttempts))
+			if (!TryRecordSend(profile.MobileVerificationSendWindowStart, profile.MobileVerificationSendCount, out DateTime mobileWindowStart, out int mobileSendCount))
 				return ContactVerificationSendStatus.RateLimited;
+
+			profile.MobileVerificationSendWindowStart = mobileWindowStart;
+			profile.MobileVerificationSendCount = mobileSendCount;
 
 			string code = GenerateCode();
 			profile.MobileVerificationCode = _encryptionService.Encrypt(code);
@@ -125,8 +131,11 @@ namespace Resgrid.Services
 				return ContactVerificationSendStatus.InvalidContact;
 			}
 
-			if (!IsWithinHourlySendLimit(profile.HomeVerificationCodeExpiry, profile.HomeVerificationAttempts))
+			if (!TryRecordSend(profile.HomeVerificationSendWindowStart, profile.HomeVerificationSendCount, out DateTime homeWindowStart, out int homeSendCount))
 				return ContactVerificationSendStatus.RateLimited;
+
+			profile.HomeVerificationSendWindowStart = homeWindowStart;
+			profile.HomeVerificationSendCount = homeSendCount;
 
 			string code = GenerateCode();
 			profile.HomeVerificationCode = _encryptionService.Encrypt(code);
@@ -297,6 +306,8 @@ namespace Resgrid.Services
 				updatedProfile.MobileVerificationVoiceCodeConsumed = false;
 				updatedProfile.MobileVerificationAttempts = 0;
 				updatedProfile.MobileVerificationAttemptsResetDate = null;
+				updatedProfile.MobileVerificationSendCount = 0;
+				updatedProfile.MobileVerificationSendWindowStart = null;
 			}
 
 			if (!string.Equals(existingProfile.HomeNumber ?? string.Empty, updatedProfile.HomeNumber ?? string.Empty, StringComparison.OrdinalIgnoreCase))
@@ -307,6 +318,8 @@ namespace Resgrid.Services
 				updatedProfile.HomeVerificationVoiceCodeConsumed = false;
 				updatedProfile.HomeVerificationAttempts = 0;
 				updatedProfile.HomeVerificationAttemptsResetDate = null;
+				updatedProfile.HomeVerificationSendCount = 0;
+				updatedProfile.HomeVerificationSendWindowStart = null;
 			}
 
 			if (!string.Equals(existingProfile.MembershipEmail ?? string.Empty, updatedProfile.MembershipEmail ?? string.Empty, StringComparison.OrdinalIgnoreCase))
@@ -316,6 +329,8 @@ namespace Resgrid.Services
 				updatedProfile.EmailVerificationCodeExpiry = null;
 				updatedProfile.EmailVerificationAttempts = 0;
 				updatedProfile.EmailVerificationAttemptsResetDate = null;
+				updatedProfile.EmailVerificationSendCount = 0;
+				updatedProfile.EmailVerificationSendWindowStart = null;
 			}
 
 			return Task.CompletedTask;
@@ -336,22 +351,34 @@ namespace Resgrid.Services
 		}
 
 		/// <summary>
-		/// Returns <c>true</c> if a new send is allowed, based on the current code expiry window
-		/// acting as a proxy for the hourly send count. A new send is blocked if there is already
-		/// a valid (non-expired) code and the slot count would exceed the hourly limit.
-		/// In practice, with VerificationCodeExpiryMinutes=30 and MaxVerificationSendsPerHour=3,
-		/// a user can send up to 3 codes within a 60-minute window.
+		/// Enforces the hourly send cap using dedicated send-window state, kept separate from the
+		/// daily confirm-attempt counters used by <see cref="ConfirmVerificationCodeAsync"/>.
+		/// Returns <c>false</c> when <see cref="Resgrid.Config.VerificationConfig.MaxVerificationSendsPerHour"/>
+		/// has been reached inside the current one-hour window; otherwise returns <c>true</c> with the
+		/// updated window start and send count, which the caller must persist before delivering the code
+		/// so the send is recorded even if delivery fails.
 		/// </summary>
-		private static bool IsWithinHourlySendLimit(DateTime? codeExpiry, int existingAttempts)
+		private static bool TryRecordSend(DateTime? windowStart, int sendCount, out DateTime newWindowStart, out int newSendCount)
 		{
-			// If the existing code hasn't expired yet AND we've already reached the send cap, block.
-			if (codeExpiry.HasValue
-				&& DateTime.UtcNow < codeExpiry.Value
-				&& existingAttempts >= Config.VerificationConfig.MaxVerificationSendsPerHour)
+			DateTime now = DateTime.UtcNow;
+
+			if (!windowStart.HasValue || now - windowStart.Value >= TimeSpan.FromHours(1))
 			{
+				// No window yet, or the previous window has elapsed — start a new one.
+				newWindowStart = now;
+				newSendCount = 1;
+				return true;
+			}
+
+			newWindowStart = windowStart.Value;
+
+			if (sendCount >= Config.VerificationConfig.MaxVerificationSendsPerHour)
+			{
+				newSendCount = sendCount;
 				return false;
 			}
 
+			newSendCount = sendCount + 1;
 			return true;
 		}
 

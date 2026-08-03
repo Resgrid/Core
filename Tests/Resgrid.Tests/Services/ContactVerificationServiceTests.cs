@@ -119,6 +119,64 @@ namespace Resgrid.Tests.Services
 				savedProfile.EmailVerificationCode.Should().StartWith("ENC:");
 				savedProfile.EmailVerificationCodeExpiry.Should().NotBeNull();
 				savedProfile.EmailVerificationCodeExpiry!.Value.Should().BeAfter(DateTime.UtcNow);
+				// The send is recorded in dedicated send-window state, persisted before delivery.
+				savedProfile.EmailVerificationSendCount.Should().Be(1);
+				savedProfile.EmailVerificationSendWindowStart.Should().NotBeNull();
+			}
+
+			[Test]
+			public async Task should_allow_send_and_reset_count_after_window_elapses()
+			{
+				var profile = BuildProfile();
+				profile.EmailVerificationSendWindowStart = DateTime.UtcNow.AddMinutes(-61); // window elapsed
+				profile.EmailVerificationSendCount = Resgrid.Config.VerificationConfig.MaxVerificationSendsPerHour;
+				UserProfile savedProfile = null;
+
+				_userProfileServiceMock
+					.Setup(s => s.GetProfileByUserIdAsync("user1", true))
+					.ReturnsAsync(profile);
+				_usersServiceMock
+					.Setup(s => s.GetUserById("user1", true))
+					.Returns(new IdentityUser { Email = "user@example.com" });
+				_userProfileServiceMock
+					.Setup(s => s.SaveProfileAsync(It.IsAny<int>(), It.IsAny<UserProfile>(), It.IsAny<CancellationToken>()))
+					.Callback<int, UserProfile, CancellationToken>((_, p, _) => savedProfile = p)
+					.ReturnsAsync(profile);
+				_emailServiceMock
+					.Setup(e => e.SendEmailVerificationCodeAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+					.ReturnsAsync(true);
+
+				var result = await _contactVerificationService.SendEmailVerificationCodeAsync("user1", 1);
+
+				result.Should().Be(ContactVerificationSendStatus.Sent);
+				savedProfile!.EmailVerificationSendCount.Should().Be(1);
+				savedProfile.EmailVerificationSendWindowStart!.Value.Should().BeAfter(DateTime.UtcNow.AddMinutes(-1));
+			}
+
+			[Test]
+			public async Task should_not_block_sends_based_on_confirm_attempt_counters()
+			{
+				// Confirm-attempt state at its daily cap must not affect the send flow.
+				var profile = BuildProfile();
+				profile.EmailVerificationAttempts = Resgrid.Config.VerificationConfig.MaxVerificationAttemptsPerDay;
+				profile.EmailVerificationCodeExpiry = DateTime.UtcNow.AddMinutes(10);
+
+				_userProfileServiceMock
+					.Setup(s => s.GetProfileByUserIdAsync("user1", true))
+					.ReturnsAsync(profile);
+				_usersServiceMock
+					.Setup(s => s.GetUserById("user1", true))
+					.Returns(new IdentityUser { Email = "user@example.com" });
+				_userProfileServiceMock
+					.Setup(s => s.SaveProfileAsync(It.IsAny<int>(), It.IsAny<UserProfile>(), It.IsAny<CancellationToken>()))
+					.ReturnsAsync(profile);
+				_emailServiceMock
+					.Setup(e => e.SendEmailVerificationCodeAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+					.ReturnsAsync(true);
+
+				var result = await _contactVerificationService.SendEmailVerificationCodeAsync("user1", 1);
+
+				result.Should().Be(ContactVerificationSendStatus.Sent);
 			}
 		}
 
@@ -226,8 +284,8 @@ namespace Resgrid.Tests.Services
 			{
 				// Arrange
 				var profile = BuildProfile();
-				profile.HomeVerificationCodeExpiry = DateTime.UtcNow.AddMinutes(10);
-				profile.HomeVerificationAttempts = Resgrid.Config.VerificationConfig.MaxVerificationSendsPerHour;
+				profile.HomeVerificationSendWindowStart = DateTime.UtcNow.AddMinutes(-10);
+				profile.HomeVerificationSendCount = Resgrid.Config.VerificationConfig.MaxVerificationSendsPerHour;
 				_userProfileServiceMock
 					.Setup(s => s.GetProfileByUserIdAsync("user1", true))
 					.ReturnsAsync(profile);

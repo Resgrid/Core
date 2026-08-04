@@ -751,6 +751,57 @@ namespace Resgrid.Tests.Services
 
 				result.Should().BeFalse();
 			}
+
+			[Test]
+			public async Task should_process_when_before_and_current_data_are_empty()
+			{
+				var notification = new DepartmentNotification
+				{
+					EventType = (int)EventTypes.UnitStatusChanged,
+					Everyone = true,
+					DepartmentId = 1,
+					BeforeData = "",
+					CurrentData = null
+				};
+
+				var processedNotification = new ProcessedNotification
+				{
+					DepartmentId = 1,
+					MessageId = "123456",
+					Data = new NotificationItem() { StateId = 3, DepartmentId = 1, PreviousStateId = 2 }.SerializeProto(),
+					Type = EventTypes.UnitStatusChanged
+				};
+
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
+
+				result.Should().BeTrue();
+			}
+
+			[Test]
+			public async Task should_not_throw_when_no_previous_unit_state_exists()
+			{
+				var notification = new DepartmentNotification
+				{
+					EventType = (int)EventTypes.UnitStatusChanged,
+					Everyone = true,
+					DepartmentId = 1,
+					BeforeData = ((int)UnitStateTypes.Available).ToString(),
+					CurrentData = "-1"
+				};
+
+				// StateId 1 has no mocked prior unit state, so the previous-state lookup returns null
+				var processedNotification = new ProcessedNotification
+				{
+					DepartmentId = 1,
+					MessageId = "123456",
+					Data = new NotificationItem() { StateId = 1, DepartmentId = 1, PreviousStateId = 0 }.SerializeProto(),
+					Type = EventTypes.UnitStatusChanged
+				};
+
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
+
+				result.Should().BeFalse();
+			}
 		}
 
 		[TestFixture]
@@ -898,6 +949,57 @@ namespace Resgrid.Tests.Services
 					DepartmentId = 1,
 					MessageId = "123456",
 					Data = new NotificationItem() { StateId = 3, DepartmentId = 1, PreviousStateId = 2 }.SerializeProto(),
+					Type = EventTypes.PersonnelStaffingChanged
+				};
+
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
+
+				result.Should().BeFalse();
+			}
+
+			[Test]
+			public async Task should_process_when_before_and_current_data_are_empty()
+			{
+				var notification = new DepartmentNotification
+				{
+					EventType = (int)EventTypes.PersonnelStaffingChanged,
+					Everyone = true,
+					DepartmentId = 1,
+					BeforeData = "",
+					CurrentData = null
+				};
+
+				var processedNotification = new ProcessedNotification
+				{
+					DepartmentId = 1,
+					MessageId = "123456",
+					Data = new NotificationItem() { StateId = 1, DepartmentId = 1, PreviousStateId = 1 }.SerializeProto(),
+					Type = EventTypes.PersonnelStaffingChanged
+				};
+
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
+
+				result.Should().BeTrue();
+			}
+
+			[Test]
+			public async Task should_not_throw_when_no_previous_user_state_exists()
+			{
+				var notification = new DepartmentNotification
+				{
+					EventType = (int)EventTypes.PersonnelStaffingChanged,
+					Everyone = true,
+					DepartmentId = 1,
+					BeforeData = ((int)UserStateTypes.Unavailable).ToString(),
+					CurrentData = "-1"
+				};
+
+				// StateId 1 has no mocked previous user state, so the previous-state lookup returns null
+				var processedNotification = new ProcessedNotification
+				{
+					DepartmentId = 1,
+					MessageId = "123456",
+					Data = new NotificationItem() { StateId = 1, DepartmentId = 1, PreviousStateId = 0 }.SerializeProto(),
 					Type = EventTypes.PersonnelStaffingChanged
 				};
 
@@ -1058,6 +1160,93 @@ namespace Resgrid.Tests.Services
 				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
 
 				result.Should().BeFalse();
+			}
+
+			[Test]
+			public async Task should_process_when_before_and_current_data_are_empty()
+			{
+				var notification = new DepartmentNotification
+				{
+					EventType = (int)EventTypes.PersonnelStatusChanged,
+					Everyone = true,
+					DepartmentId = 1,
+					BeforeData = "",
+					CurrentData = null
+				};
+
+				var processedNotification = new ProcessedNotification
+				{
+					DepartmentId = 1,
+					MessageId = "123456",
+					Data = new NotificationItem() { StateId = 2, DepartmentId = 1, PreviousStateId = 1 }.SerializeProto(),
+					Type = EventTypes.PersonnelStatusChanged
+				};
+
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
+
+				result.Should().BeTrue();
+			}
+
+			[Test]
+			public async Task should_not_throw_when_no_previous_action_log_exists()
+			{
+				var notification = new DepartmentNotification
+				{
+					EventType = (int)EventTypes.PersonnelStatusChanged,
+					Everyone = true,
+					DepartmentId = 1,
+					BeforeData = ((int)ActionTypes.NotResponding).ToString(),
+					CurrentData = "-1"
+				};
+
+				// StateId 1 has no mocked previous action log, so the previous-state lookup returns null
+				var processedNotification = new ProcessedNotification
+				{
+					DepartmentId = 1,
+					MessageId = "123456",
+					Data = new NotificationItem() { StateId = 1, DepartmentId = 1, PreviousStateId = 0 }.SerializeProto(),
+					Type = EventTypes.PersonnelStatusChanged
+				};
+
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
+
+				result.Should().BeFalse();
+			}
+		}
+
+		[TestFixture]
+		public class when_getting_the_group_for_an_event : with_the_notification_service
+		{
+			[Test]
+			public async Task should_return_group_for_personnel_staffing_changed()
+			{
+				var processedNotification = new ProcessedNotification
+				{
+					MessageId = "123456",
+					Data = new NotificationItem() { StateId = 1, PreviousStateId = 0 }.SerializeProto(),
+					Type = EventTypes.PersonnelStaffingChanged
+				};
+
+				var group = await _notificationServiceMock.GetGroupForEventAsync(processedNotification);
+
+				group.Should().NotBeNull();
+				group.DepartmentGroupId.Should().Be(1);
+			}
+
+			[Test]
+			public async Task should_return_group_for_personnel_status_changed()
+			{
+				var processedNotification = new ProcessedNotification
+				{
+					MessageId = "123456",
+					Data = new NotificationItem() { StateId = 1, PreviousStateId = 0 }.SerializeProto(),
+					Type = EventTypes.PersonnelStatusChanged
+				};
+
+				var group = await _notificationServiceMock.GetGroupForEventAsync(processedNotification);
+
+				group.Should().NotBeNull();
+				group.DepartmentGroupId.Should().Be(1);
 			}
 		}
 

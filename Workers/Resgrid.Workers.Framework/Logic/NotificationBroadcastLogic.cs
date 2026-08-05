@@ -6,6 +6,7 @@ using Resgrid.Model.Services;
 using Resgrid.Workers.Framework.Workers.Notification;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Autofac;
 
@@ -13,8 +14,16 @@ namespace Resgrid.Workers.Framework.Logic
 {
 	public class NotificationBroadcastLogic
 	{
-		public static async Task<bool> ProcessNotificationItem(NotificationItem ni, string messageId, string body)
+		public static async Task<bool> ProcessNotificationItem(NotificationItem ni, string messageId, string body,
+			CancellationToken cancellationToken = default(CancellationToken))
 		{
+			if (ni?.Type == (int)EventTypes.ModerationRequestCompleted)
+			{
+				var moderationService = Bootstrapper.GetKernel().Resolve<IModerationService>();
+				await moderationService.NotifyReportersAsync(ni.Value, cancellationToken);
+				return true;
+			}
+
 			if (ni != null)
 			{
 				var _notificationService = Bootstrapper.GetKernel().Resolve<INotificationService>();

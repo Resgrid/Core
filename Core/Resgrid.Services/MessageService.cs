@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Queue;
 using Resgrid.Model.Repositories;
@@ -39,6 +40,8 @@ namespace Resgrid.Services
 
 		public async Task<Message> SaveMessageAsync(Message message, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			message.Subject = message.Subject?.Truncate(Message.MaximumSubjectLength);
+			message.Body = message.Body?.Truncate(Message.MaximumBodyLength);
 			message.SentOn = message.SentOn.ToUniversalTime();
 
 			if (message.ReadOn.HasValue)

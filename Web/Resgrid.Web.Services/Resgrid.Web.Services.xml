@@ -1889,6 +1889,27 @@
             <param name="messageId">MessageId of the message to delete</param>
             <returns>Returns OK status code if successful</returns>
         </member>
+        <member name="T:Resgrid.Web.Services.Controllers.v4.ModerationController">
+            <summary>Department and group-scoped moderation requests across supported content types.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ModerationController.Flag(Resgrid.Web.Services.Models.v4.Moderation.FlagModerationInput,System.Threading.CancellationToken)">
+            <summary>Reports an accessible chat message, Message, call note or call image.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ModerationController.GetMyStatus(System.Int32,System.String)">
+            <summary>Returns the caller's private flag status for one content item.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ModerationController.GetRequests(System.Nullable{System.Int32},System.Nullable{System.Int32},System.String,System.String,System.Nullable{System.DateTime},System.Nullable{System.DateTime},System.Int32,System.Int32)">
+            <summary>Scoped dashboard/report search for pending and completed moderation requests.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ModerationController.GetRequest(System.String)">
+            <summary>Returns a scoped moderation request and its complete action history.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ModerationController.Complete(System.String,Resgrid.Web.Services.Models.v4.Moderation.CompleteModerationInput,System.Threading.CancellationToken)">
+            <summary>Completes a scoped request with no action or by removing the live content.</summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ModerationController.DownloadEvidence(System.String,System.Threading.CancellationToken)">
+            <summary>Downloads retained moderation evidence or original content for an authorized administrator.</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.MutualAidController">
             <summary>
             Mutual-aid resource aggregation for incident command: own-department + linked-department units/personnel,
@@ -7440,6 +7461,11 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.DeletedByUserId">
             <summary>
             Who deleted the message
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.IsModerated">
+            <summary>
+            Whether the tombstone represents a moderation action
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatMessageResultData.PinnedOn">

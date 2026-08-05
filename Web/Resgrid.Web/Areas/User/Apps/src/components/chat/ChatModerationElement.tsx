@@ -1,31 +1,37 @@
 import { useState } from 'react';
 import './chat.css';
 import FlagsTab from './moderation/FlagsTab';
+import ReportsTab from './moderation/ReportsTab';
 import ActionsTab from './moderation/ActionsTab';
 import SettingsTab from './moderation/SettingsTab';
 import ExportsTab from './moderation/ExportsTab';
+import { moderationText } from './moderationI18n';
 
-type ModTab = 'flags' | 'actions' | 'settings' | 'exports';
-
-const TABS: { key: ModTab; label: string }[] = [
-  { key: 'flags', label: 'Flags' },
-  { key: 'actions', label: 'Actions log' },
-  { key: 'settings', label: 'Settings' },
-  { key: 'exports', label: 'Exports' },
-];
+type ModTab = 'requests' | 'reports' | 'actions' | 'settings' | 'exports';
 
 export interface ChatModerationElementProps {
   hostElement?: HTMLElement;
+  departmentAdmin?: boolean;
 }
 
-export default function ChatModerationElement(_props: ChatModerationElementProps) {
-  const [tab, setTab] = useState<ModTab>('flags');
+export default function ChatModerationElement({ departmentAdmin = false }: ChatModerationElementProps) {
+  const [tab, setTab] = useState<ModTab>('requests');
+  const sharedTabs: { key: ModTab; label: string }[] = [
+    { key: 'requests', label: moderationText('TabRequests') },
+    { key: 'reports', label: moderationText('TabReports') },
+  ];
+  const departmentTabs: { key: ModTab; label: string }[] = [
+    { key: 'actions', label: moderationText('TabChatControls') },
+    { key: 'settings', label: moderationText('TabChatSettings') },
+    { key: 'exports', label: moderationText('TabChatExports') },
+  ];
+  const tabs = departmentAdmin ? [...sharedTabs, ...departmentTabs] : sharedTabs;
 
   return (
     <div className="rgchat-root">
       <div className="rgchat-mod">
         <div className="rgchat-mod__tabs">
-          {TABS.map((item) => (
+          {tabs.map((item) => (
             <button
               key={item.key}
               type="button"
@@ -37,7 +43,8 @@ export default function ChatModerationElement(_props: ChatModerationElementProps
           ))}
         </div>
         <div className="rgchat-mod__body">
-          {tab === 'flags' && <FlagsTab />}
+          {tab === 'requests' && <FlagsTab />}
+          {tab === 'reports' && <ReportsTab />}
           {tab === 'actions' && <ActionsTab />}
           {tab === 'settings' && <SettingsTab />}
           {tab === 'exports' && <ExportsTab />}

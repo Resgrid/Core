@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="RequiredModerationContext" xml:space="preserve"><value>Se requieren el departamento, el usuario que reporta y el elemento.</value></data>
+  <data name="RequestReopenedAudit" xml:space="preserve"><value>La solicitud se reabrió tras un nuevo reporte.</value></data>
+  <data name="RequestOutsideScope" xml:space="preserve"><value>Esta solicitud está fuera de su ámbito de moderación.</value></data>
+  <data name="OnlyPendingRequests" xml:space="preserve"><value>Solo se pueden completar las solicitudes de moderación pendientes.</value></data>
+  <data name="ContentCouldNotBeRemoved" xml:space="preserve"><value>No se pudo eliminar el contenido reportado.</value></data>
+  <data name="EvidenceOutsideScope" xml:space="preserve"><value>Esta evidencia está fuera de su ámbito de moderación.</value></data>
+  <data name="EvidenceDownloadedAudit" xml:space="preserve"><value>Se descargó la evidencia original.</value></data>
+  <data name="ChatMessageUnavailable" xml:space="preserve"><value>El mensaje de chat no está disponible o no se puede reportar.</value></data>
+  <data name="MessageUnavailable" xml:space="preserve"><value>El mensaje no está disponible o no se puede reportar.</value></data>
+  <data name="InvalidCallNoteId" xml:space="preserve"><value>El identificador de la nota de llamada no es válido.</value></data>
+  <data name="CallNoteUnavailable" xml:space="preserve"><value>La nota de llamada no está disponible o no se puede reportar.</value></data>
+  <data name="InvalidCallImageId" xml:space="preserve"><value>El identificador de la imagen de llamada no es válido.</value></data>
+  <data name="CallImageUnavailable" xml:space="preserve"><value>La imagen de llamada no está disponible o no se puede reportar.</value></data>
+  <data name="ModeratedMessageSubject" xml:space="preserve"><value>Contenido eliminado por moderación</value></data>
+  <data name="ModeratedMessageBody" xml:space="preserve"><value>Este mensaje fue eliminado por moderación.</value></data>
+  <data name="ModeratedCallNote" xml:space="preserve"><value>Esta nota de llamada fue eliminada por moderación.</value></data>
+  <data name="MessageRemovedByModeration" xml:space="preserve"><value>Este mensaje fue eliminado por moderación.</value></data>
+  <data name="CompletionContentRemoved" xml:space="preserve"><value>El contenido reportado fue eliminado.</value></data>
+  <data name="CompletionNoContentRemoved" xml:space="preserve"><value>La solicitud fue revisada y no se eliminó ningún contenido.</value></data>
+  <data name="CompletionAdminNoteHtml" xml:space="preserve"><value>&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Nota del administrador:&lt;/strong&gt; {0}</value></data>
+  <data name="CompletionSubject" xml:space="preserve"><value>Solicitud de moderación completada</value></data>
+  <data name="CompletionBody" xml:space="preserve"><value>Su reporte de moderación sobre {0} {1} se ha completado. {2}{3}</value></data>
+  <data name="SystemSenderName" xml:space="preserve"><value>Sistema</value></data>
+  <data name="ItemTypeChatMessage" xml:space="preserve"><value>mensaje de chat</value></data>
+  <data name="ItemTypeMessage" xml:space="preserve"><value>mensaje</value></data>
+  <data name="ItemTypeCallNote" xml:space="preserve"><value>nota de llamada</value></data>
+  <data name="ItemTypeCallImage" xml:space="preserve"><value>imagen de llamada</value></data>
+  <data name="TabRequests" xml:space="preserve"><value>Solicitudes</value></data>
+  <data name="TabReports" xml:space="preserve"><value>Informes</value></data>
+  <data name="TabChatControls" xml:space="preserve"><value>Controles del chat</value></data>
+  <data name="TabChatSettings" xml:space="preserve"><value>Configuración del chat</value></data>
+  <data name="TabChatExports" xml:space="preserve"><value>Exportaciones del chat</value></data>
+  <data name="ReportsDescription" xml:space="preserve"><value>Busque solicitudes de moderación nuevas y completadas por el usuario que agregó el contenido o por quien lo reportó.</value></data>
+  <data name="Status" xml:space="preserve"><value>Estado</value></data>
+  <data name="All" xml:space="preserve"><value>Todos</value></data>
+  <data name="Pending" xml:space="preserve"><value>Pendiente</value></data>
+  <data name="Completed" xml:space="preserve"><value>Completada</value></data>
+  <data name="ContentType" xml:space="preserve"><value>Tipo de contenido</value></data>
+  <data name="AddedByUserId" xml:space="preserve"><value>Agregado por ID de usuario</value></data>
+  <data name="ReportedByUserId" xml:space="preserve"><value>Reportado por ID de usuario</value></data>
+  <data name="From" xml:space="preserve"><value>Desde</value></data>
+  <data name="To" xml:space="preserve"><value>Hasta</value></data>
+  <data name="Refresh" xml:space="preserve"><value>Actualizar</value></data>
+  <data name="LoadingModerationRequests" xml:space="preserve"><value>Cargando solicitudes de moderación…</value></data>
+  <data name="NoMatchingRequests" xml:space="preserve"><value>Ninguna solicitud de moderación coincide con estos filtros.</value></data>
+  <data name="Item" xml:space="preserve"><value>Elemento</value></data>
+  <data name="OriginalEvidence" xml:space="preserve"><value>Evidencia original</value></data>
+  <data name="AddedBy" xml:space="preserve"><value>Agregado por</value></data>
+  <data name="Reports" xml:space="preserve"><value>Reportes</value></data>
+  <data name="Action" xml:space="preserve"><value>Acción</value></data>
+  <data name="ContentRemoved" xml:space="preserve"><value>Contenido eliminado</value></data>
+  <data name="NoAction" xml:space="preserve"><value>Sin acción</value></data>
+  <data name="UnknownContentType" xml:space="preserve"><value>Tipo de contenido desconocido</value></data>
+  <data name="IdFormat" xml:space="preserve"><value>ID {0}</value></data>
+  <data name="CallFormat" xml:space="preserve"><value>Llamada {0}</value></data>
+  <data name="DownloadRetainedEvidence" xml:space="preserve"><value>Descargar evidencia conservada</value></data>
+  <data name="SystemOrUnknown" xml:space="preserve"><value>Sistema o desconocido</value></data>
+  <data name="GroupFormat" xml:space="preserve"><value>grupo {0}</value></data>
+  <data name="CompletionNotePlaceholder" xml:space="preserve"><value>Nota de finalización enviada a los usuarios que reportaron (opcional)</value></data>
+  <data name="RemoveContent" xml:space="preserve"><value>Eliminar contenido</value></data>
+  <data name="CompleteNoAction" xml:space="preserve"><value>Completar sin acción</value></data>
+  <data name="CompletedBy" xml:space="preserve"><value>Completada por</value></data>
+  <data name="NoCompletionNote" xml:space="preserve"><value>Sin nota de finalización.</value></data>
+  <data name="HideAuditTrail" xml:space="preserve"><value>Ocultar registro de auditoría</value></data>
+  <data name="AuditTrailCount" xml:space="preserve"><value>Registro de auditoría ({0})</value></data>
+  <data name="By" xml:space="preserve"><value>por</value></data>
+  <data name="NoNote" xml:space="preserve"><value>Sin nota.</value></data>
+  <data name="ActorReporter" xml:space="preserve"><value>Usuario que reportó</value></data>
+  <data name="ActorDepartmentAdmin" xml:space="preserve"><value>Administrador del departamento</value></data>
+  <data name="ActorGroupAdmin" xml:space="preserve"><value>Administrador del grupo</value></data>
+  <data name="ActorLegacyImport" xml:space="preserve"><value>Importación heredada</value></data>
+  <data name="UnknownRole" xml:space="preserve"><value>Rol desconocido</value></data>
+  <data name="NoIp" xml:space="preserve"><value>Sin dirección IP</value></data>
+  <data name="TraceFormat" xml:space="preserve"><value>seguimiento {0}</value></data>
+  <data name="NotAvailable" xml:space="preserve"><value>no disponible</value></data>
+  <data name="NoValue" xml:space="preserve"><value>—</value></data>
+  <data name="UnableLoadRequests" xml:space="preserve"><value>No se pudieron cargar las solicitudes de moderación.</value></data>
+  <data name="UnableCompleteRequest" xml:space="preserve"><value>No se pudo completar la solicitud de moderación.</value></data>
+  <data name="ReasonOther" xml:space="preserve"><value>Otro</value></data>
+  <data name="ReasonInappropriate" xml:space="preserve"><value>Contenido inapropiado</value></data>
+  <data name="ReasonHarassment" xml:space="preserve"><value>Acoso o abuso</value></data>
+  <data name="ReasonSpam" xml:space="preserve"><value>Correo no deseado</value></data>
+  <data name="ReasonSensitiveInformation" xml:space="preserve"><value>Información confidencial</value></data>
+  <data name="ReasonPolicyViolation" xml:space="preserve"><value>Infracción de políticas</value></data>
+  <data name="ActionReportSubmitted" xml:space="preserve"><value>Reporte enviado</value></data>
+  <data name="ActionRequestReopened" xml:space="preserve"><value>Solicitud reabierta</value></data>
+  <data name="ActionCompletedNoAction" xml:space="preserve"><value>Completada sin acción</value></data>
+  <data name="ActionContentRemoved" xml:space="preserve"><value>Contenido eliminado</value></data>
+  <data name="ActionEvidenceDownloaded" xml:space="preserve"><value>Evidencia descargada</value></data>
+  <data name="ModerationReportStatus" xml:space="preserve"><value>Estado del reporte de moderación</value></data>
+  <data name="ReportMessage" xml:space="preserve"><value>Reportar mensaje para moderación</value></data>
+  <data name="Close" xml:space="preserve"><value>Cerrar</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Cancelar</value></data>
+  <data name="Report" xml:space="preserve"><value>Reportar</value></data>
+  <data name="CheckingReportStatus" xml:space="preserve"><value>Comprobando el estado del reporte…</value></data>
+  <data name="StatusLabel" xml:space="preserve"><value>Estado</value></data>
+  <data name="ContentWasRemoved" xml:space="preserve"><value>El contenido fue eliminado</value></data>
+  <data name="NoContentWasRemoved" xml:space="preserve"><value>No se eliminó ningún contenido</value></data>
+  <data name="ModeratorNoteLabel" xml:space="preserve"><value>Nota del moderador</value></data>
+  <data name="Reason" xml:space="preserve"><value>Motivo</value></data>
+  <data name="AddNoteOptional" xml:space="preserve"><value>Agregue una nota (opcional)</value></data>
+  <data name="YourModerationReportIs" xml:space="preserve"><value>Su reporte de moderación está</value></data>
+  <data name="ReportForModeration" xml:space="preserve"><value>Reportar para moderación</value></data>
+  <data name="WhyReviewMessage" xml:space="preserve"><value>Explique por qué se debe revisar este mensaje</value></data>
+  <data name="ModerationReportSubmitted" xml:space="preserve"><value>Su reporte de moderación fue enviado.</value></data>
+  <data name="LegacyActionDeleteMessage" xml:space="preserve"><value>Eliminar mensaje</value></data>
+  <data name="LegacyActionMuteUser" xml:space="preserve"><value>Silenciar usuario</value></data>
+  <data name="LegacyActionBanUser" xml:space="preserve"><value>Bloquear usuario</value></data>
+  <data name="LegacyActionUnbanUser" xml:space="preserve"><value>Desbloquear usuario</value></data>
+  <data name="LegacyActionLockChannel" xml:space="preserve"><value>Bloquear canal</value></data>
+  <data name="LegacyActionUnlockChannel" xml:space="preserve"><value>Desbloquear canal</value></data>
+  <data name="LegacyActionResolveFlag" xml:space="preserve"><value>Resolver reporte</value></data>
+  <data name="ActionNumberFormat" xml:space="preserve"><value>Acción n.º {0}</value></data>
+  <data name="Loading" xml:space="preserve"><value>Cargando…</value></data>
+  <data name="NoModerationActivity" xml:space="preserve"><value>No hay actividad de moderación.</value></data>
+  <data name="Target" xml:space="preserve"><value>Objetivo</value></data>
+  <data name="When" xml:space="preserve"><value>Cuándo</value></data>
+  <data name="UnitFormat" xml:space="preserve"><value>Unidad {0}</value></data>
+  <data name="Previous" xml:space="preserve"><value>Anterior</value></data>
+  <data name="PageFormat" xml:space="preserve"><value>Página {0}</value></data>
+  <data name="Next" xml:space="preserve"><value>Siguiente</value></data>
+  <data name="AllowImageAttachments" xml:space="preserve"><value>Permitir imágenes adjuntas</value></data>
+  <data name="AllowGifs" xml:space="preserve"><value>Permitir GIF</value></data>
+  <data name="AllowLocationSharing" xml:space="preserve"><value>Permitir compartir la ubicación</value></data>
+  <data name="UrgentOverridesMute" xml:space="preserve"><value>Los mensajes urgentes ignoran el silencio</value></data>
+  <data name="AssistantEnabled" xml:space="preserve"><value>Asistente activado</value></data>
+  <data name="MessageRetention" xml:space="preserve"><value>Conservación de mensajes (días, 0 = para siempre)</value></data>
+  <data name="MaxAttachmentSize" xml:space="preserve"><value>Tamaño máximo de archivo adjunto (MB)</value></data>
+  <data name="Saving" xml:space="preserve"><value>Guardando…</value></data>
+  <data name="SaveSettings" xml:space="preserve"><value>Guardar configuración</value></data>
+  <data name="Saved" xml:space="preserve"><value>Guardado</value></data>
+  <data name="FailedSaveSettings" xml:space="preserve"><value>No se pudo guardar la configuración de moderación.</value></data>
+  <data name="ExportQueued" xml:space="preserve"><value>En cola</value></data>
+  <data name="ExportRunning" xml:space="preserve"><value>En curso</value></data>
+  <data name="ExportComplete" xml:space="preserve"><value>Completada</value></data>
+  <data name="ExportFailed" xml:space="preserve"><value>Fallida</value></data>
+  <data name="FailedRequestExport" xml:space="preserve"><value>No se pudo solicitar una exportación del chat.</value></data>
+  <data name="Format" xml:space="preserve"><value>Formato</value></data>
+  <data name="StartDate" xml:space="preserve"><value>Fecha de inicio</value></data>
+  <data name="EndDate" xml:space="preserve"><value>Fecha de fin</value></data>
+  <data name="Requesting" xml:space="preserve"><value>Solicitando…</value></data>
+  <data name="RequestExport" xml:space="preserve"><value>Solicitar exportación</value></data>
+  <data name="Requested" xml:space="preserve"><value>Solicitada</value></data>
+  <data name="Range" xml:space="preserve"><value>Intervalo</value></data>
+  <data name="Download" xml:space="preserve"><value>Descargar</value></data>
+  <data name="NoExportJobs" xml:space="preserve"><value>No hay tareas de exportación.</value></data>
+  <data name="Now" xml:space="preserve"><value>Ahora</value></data>
+  <data name="EvidenceFileNameFormat" xml:space="preserve"><value>evidencia-moderacion-{0}</value></data>
+  <data name="MessageDeleted" xml:space="preserve"><value>Este mensaje fue eliminado.</value></data>
+</root>

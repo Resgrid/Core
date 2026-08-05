@@ -64,17 +64,17 @@
   <data name="FileType" xml:space="preserve"><value>نوع الملف</value></data>
   <data name="FindAddress" xml:space="preserve"><value>البحث عن عنوان</value></data>
   <data name="FindW3wLocation" xml:space="preserve"><value>البحث عن موقع w3w</value></data>
-  <data name="FlagCallNoteHeader" xml:space="preserve"><value>تعليم ملاحظة البلاغ</value></data>
-  <data name="FlagCallImageHeader" xml:space="preserve"><value>تعليم صورة البلاغ</value></data>
+  <data name="FlagCallNoteHeader" xml:space="preserve"><value>الإبلاغ عن ملاحظة البلاغ للمراجعة</value></data>
+  <data name="FlagCallImageHeader" xml:space="preserve"><value>الإبلاغ عن صورة البلاغ للمراجعة</value></data>
   <data name="FlagCallFileHeader" xml:space="preserve"><value>تعليم ملف البلاغ</value></data>
   <data name="CallImageAddedByLabel" xml:space="preserve"><value>أضيفت الصورة بواسطة</value></data>
   <data name="CallImageTimestampLabel" xml:space="preserve"><value>طابع وقت الصورة</value></data>
   <data name="CallFileAddedByLabel" xml:space="preserve"><value>أضيف الملف بواسطة</value></data>
   <data name="CallFileTimestampLabel" xml:space="preserve"><value>طابع وقت الملف</value></data>
-  <data name="FlagImage" xml:space="preserve"><value>تعليم الصورة</value></data>
+  <data name="FlagImage" xml:space="preserve"><value>الإبلاغ عن الصورة</value></data>
   <data name="FlagFile" xml:space="preserve"><value>تعليم الملف</value></data>
-  <data name="FlaggedReasonLabel" xml:space="preserve"><value>سبب التعليم</value></data>
-  <data name="FlaggedReasonPlaceholder" xml:space="preserve"><value>سبب التعليم</value></data>
+  <data name="FlaggedReasonLabel" xml:space="preserve"><value>سبب الإبلاغ</value></data>
+  <data name="FlaggedReasonPlaceholder" xml:space="preserve"><value>سبب الإبلاغ</value></data>
   <data name="GPSLabel" xml:space="preserve"><value>GPS</value></data>
   <data name="IncidentIdLabel" xml:space="preserve"><value>معرف الحادثة</value></data>
   <data name="IncidentIdPlaceholder" xml:space="preserve"><value>معرف الحادثة الخارجي الرئيسي أو الأصل</value></data>

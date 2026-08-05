@@ -217,7 +217,7 @@
     <value>Assistant</value>
   </data>
   <data name="ChatModerationModule" xml:space="preserve">
-    <value>Chat Moderation</value>
+    <value>Moderation</value>
   </data>
   <data name="ContactUs" xml:space="preserve">
     <value>Contact Us</value>

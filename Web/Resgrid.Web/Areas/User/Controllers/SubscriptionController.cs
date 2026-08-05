@@ -175,7 +175,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (model.Payment != null)
 			{
-				if (model.Payment.EndingOn == DateTime.MaxValue)
+				// DateTime.MaxValue loses sub-millisecond precision when it crosses the billing API's
+				// JSON boundary. Treat any value on its sentinel date as non-expiring so it is not
+				// shifted into year 10000 when the department has a positive UTC offset.
+				if (model.Payment.EndingOn.Date == DateTime.MaxValue.Date)
 					model.Expires = "Never";
 				else
 					model.Expires = TimeConverterHelper.TimeConverter(model.Payment.EndingOn, department).ToString("D");

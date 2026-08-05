@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import './chat.css';
 import { getCurrentUserId, isDepartmentAdmin, type ChatChannelDto, type ChatMessageDto } from './types';
 import { useChatBootstrap } from './useChatBootstrap';
@@ -14,6 +14,7 @@ import MembersPanel from './MembersPanel';
 import PinsPanel from './PinsPanel';
 import NewConversationDialog from './NewConversationDialog';
 import FlagDialog from './FlagDialog';
+import { getMyModerationRequest, type ModerationRequestDto } from './moderationApi';
 import { NoticeToast, AuthErrorNotice } from './atoms/StatusBanners';
 
 type AsideTab = 'members' | 'pins' | 'thread';
@@ -33,6 +34,8 @@ export default function ChatPageElement(_props: ChatPageElementProps) {
   const [thread, setThread] = useState<ChatMessageDto | null>(null);
   const [showNew, setShowNew] = useState(false);
   const [flagTarget, setFlagTarget] = useState<ChatMessageDto | null>(null);
+  const [flagStatus, setFlagStatus] = useState<ModerationRequestDto | null | undefined>(undefined);
+  const flagRequestToken = useRef(0);
 
   const currentUserId = getCurrentUserId();
   const canModerate = isDepartmentAdmin();
@@ -54,7 +57,22 @@ export default function ChatPageElement(_props: ChatPageElementProps) {
     setAsideTab('thread');
   }, []);
 
-  const openFlag = useCallback((message: ChatMessageDto) => setFlagTarget(message), []);
+  const openFlag = useCallback((message: ChatMessageDto) => {
+    const requestToken = ++flagRequestToken.current;
+    setFlagTarget(message);
+    setFlagStatus(undefined);
+    getMyModerationRequest(0, message.ChatMessageId)
+      .then((status) => {
+        if (requestToken === flagRequestToken.current) {
+          setFlagStatus(status);
+        }
+      })
+      .catch(() => {
+        if (requestToken === flagRequestToken.current) {
+          setFlagStatus(null);
+        }
+      });
+  }, []);
 
   const runSearch = () => {
     const query = search.trim();
@@ -191,7 +209,12 @@ export default function ChatPageElement(_props: ChatPageElementProps) {
       )}
 
       {flagTarget && (
-        <FlagDialog onClose={() => setFlagTarget(null)} onSubmit={(reason, note) => void flagChatMessage(flagTarget, reason, note)} />
+        <FlagDialog
+          existingRequest={flagStatus}
+          statusLoading={flagStatus === undefined}
+          onClose={() => setFlagTarget(null)}
+          onSubmit={(reason, note) => void flagChatMessage(flagTarget, reason, note)}
+        />
       )}
 
       <NoticeToast />

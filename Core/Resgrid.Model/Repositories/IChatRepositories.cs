@@ -144,8 +144,8 @@ namespace Resgrid.Model.Repositories
 		/// </summary>
 		Task<bool> UpdateBodyAsync(string chatMessageId, string body, DateTime editedOn, CancellationToken cancellationToken);
 
-		/// <summary>Targeted tombstone (body/metadata cleared, DeletedOn/DeletedByUserId stamped) guarded by DeletedOn IS NULL.</summary>
-		Task<bool> TombstoneAsync(string chatMessageId, DateTime deletedOn, string deletedByUserId, CancellationToken cancellationToken);
+		/// <summary>Targeted tombstone (body/metadata cleared, deletion and moderation state stamped) guarded by DeletedOn IS NULL.</summary>
+		Task<bool> TombstoneAsync(string chatMessageId, DateTime deletedOn, string deletedByUserId, bool isModerated, CancellationToken cancellationToken);
 
 		/// <summary>Targeted pin update guarded by DeletedOn IS NULL.</summary>
 		Task<bool> SetPinnedAsync(string chatMessageId, DateTime? pinnedOn, string pinnedByUserId, CancellationToken cancellationToken);

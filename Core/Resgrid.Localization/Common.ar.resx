@@ -42,7 +42,7 @@
     <value>Assistant</value>
   </data>
   <data name="ChatModerationModule" xml:space="preserve">
-    <value>Chat Moderation</value>
+    <value>مراجعة المحتوى</value>
   </data>
   <data name="ContactUs" xml:space="preserve"><value>اتصل بنا</value></data>
   <data name="CreatedOn" xml:space="preserve"><value>أُنشئ في</value></data>

@@ -189,7 +189,7 @@ export function formatRelativeDay(iso: string | null | undefined): string {
     return date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
   }
   if (diffDays === 1) {
-    return 'Yesterday';
+    return new Intl.RelativeTimeFormat(undefined, { numeric: 'auto' }).format(-1, 'day');
   }
   if (diffDays < 7) {
     return date.toLocaleDateString([], { weekday: 'short' });

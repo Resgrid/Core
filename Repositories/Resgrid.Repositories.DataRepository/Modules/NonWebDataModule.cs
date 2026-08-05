@@ -69,6 +69,9 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<ChatModerationActionRepository>().As<IChatModerationActionRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ChatDepartmentSettingRepository>().As<IChatDepartmentSettingRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ChatExportRepository>().As<IChatExportRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ModerationRequestRepository>().As<IModerationRequestRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ModerationReportRepository>().As<IModerationReportRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ModerationActionRepository>().As<IModerationActionRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<UnitLocationRepository>().As<IUnitLocationRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<PushUriRepository>().As<IPushUriRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<PlansRepository>().As<IPlansRepository>().InstancePerLifetimeScope();

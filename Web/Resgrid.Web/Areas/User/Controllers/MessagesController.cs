@@ -14,6 +14,7 @@ using Resgrid.Web.Areas.User.Models;
 using Resgrid.Web.Areas.User.Models.Messages;
 using Resgrid.Web.Helpers;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Localization;
 using System.Threading;
 using Resgrid.Framework;
 using Resgrid.Model.Messages;
@@ -33,10 +34,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IPersonnelRolesService _personnelRolesService;
 		private readonly IShiftsService _shiftsService;
 		private readonly ICalendarService _calendarService;
+		private readonly IModerationService _moderationService;
+		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Moderation.Moderation> _moderationLocalizer;
 
 		public MessagesController(IMessageService messageService, IDepartmentsService departmentsService, IUsersService usersService,
 			ICommunicationService communicationService, Model.Services.IAuthorizationService authorizationService, IDepartmentGroupsService departmentGroupsService,
-			IPersonnelRolesService personnelRolesService, IShiftsService shiftsService, ICalendarService calendarService)
+			IPersonnelRolesService personnelRolesService, IShiftsService shiftsService, ICalendarService calendarService,
+			IModerationService moderationService,
+			IStringLocalizer<Resgrid.Localization.Areas.User.Moderation.Moderation> moderationLocalizer)
 		{
 			_messageService = messageService;
 			_departmentsService = departmentsService;
@@ -47,6 +52,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_personnelRolesService = personnelRolesService;
 			_shiftsService = shiftsService;
 			_calendarService = calendarService;
+			_moderationService = moderationService;
+			_moderationLocalizer = moderationLocalizer;
 		}
 		#endregion Private Members and Constructors
 
@@ -254,6 +261,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.UnreadMessages = await _messageService.GetUnreadMessagesCountByUserIdAsync(UserId);
 			model.UserGroupsAndRoles = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, true, true, true);
+			var moderationRequest = await _moderationService.GetReporterRequestAsync(DepartmentId, UserId,
+				ModerationItemType.Message, messageId.ToString());
+			model.HasModerationReport = moderationRequest != null;
+			model.ModerationStatus = moderationRequest?.Status;
+			model.ModerationAdminNote = moderationRequest?.AdminNote;
+			model.ModerationMessage = TempData["ModerationMessage"] as string;
 
 			if (model.Message.Type == (int)MessageTypes.CalendarRsvp)
 			{
@@ -276,6 +289,26 @@ namespace Resgrid.Web.Areas.User.Controllers
 			await _messageService.ReadMessageRecipientAsync(messageId, UserId, cancellationToken);
 
 			return View(model);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Messages_View)]
+		public async Task<IActionResult> FlagMessage(int messageId, string note, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserViewMessageAsync(UserId, messageId))
+				return Unauthorized();
+
+			var message = await _messageService.GetMessageByIdAsync(messageId);
+			if (message == null || message.SystemGenerated ||
+				string.Equals(message.SendingUserId, UserId, StringComparison.OrdinalIgnoreCase))
+				return Unauthorized();
+
+			await _moderationService.FlagAsync(DepartmentId, UserId, ModerationItemType.Message,
+				messageId.ToString(), ModerationReason.Other, note, BuildModerationContext("Reporter"),
+				cancellationToken);
+			TempData["ModerationMessage"] = _moderationLocalizer["ModerationReportSubmitted"].Value;
+			return RedirectToAction(nameof(ViewMessage), new { messageId });
 		}
 
 		[HttpPost]
@@ -506,6 +539,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return Json(messagesJson);
+		}
+
+		private ChatModerationContext BuildModerationContext(string actorRole)
+		{
+			return new ChatModerationContext
+			{
+				IpAddress = HttpContext?.Connection?.RemoteIpAddress?.ToString(),
+				UserAgent = Request?.Headers["User-Agent"].ToString(),
+				TraceId = HttpContext?.TraceIdentifier,
+				ActorRole = actorRole
+			};
 		}
 	}
 }

@@ -114,7 +114,9 @@ var resgrid;
 
             function initDropDown(selector, url) {
                 $.getJSON(url, function (data) {
-                    var $sel = $(selector).empty().append('<option value="">-- Any --</option>');
+                    // "Any" must post "-1", not "" — the notification engine treats the value as a
+                    // state id and an empty string used to make the setting never match.
+                    var $sel = $(selector).empty().append('<option value="-1">-- Any --</option>');
                     $.each(data, function (i, item) { $sel.append('<option value="' + item.Id + '">' + item.Name + '</option>'); });
                 });
             }
@@ -127,21 +129,21 @@ var resgrid;
             function setUnitStateDataDropdowns() {
                 $('#beforeStateControl').empty().append('<select id="Notification_BeforeData" name="Notification.BeforeData" style="width:100%"></select>');
                 $('#currentStateControl').empty().append('<select id="Notification_CurrentData" name="Notification.CurrentData" style="width:100%"></select>');
-                var url = resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetUnitStatusesLevelsForDepartmentCombined?includeAny=True';
+                var url = resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetUnitStatusesLevelsForDepartmentCombined?includeAny=False';
                 initDropDown('#Notification_BeforeData', url);
                 initDropDown('#Notification_CurrentData', url);
             }
             function setPersonnelStaffingDataDropdowns() {
                 $('#beforeStateControl').empty().append('<select id="Notification_BeforeData" name="Notification.BeforeData" style="width:100%"></select>');
                 $('#currentStateControl').empty().append('<select id="Notification_CurrentData" name="Notification.CurrentData" style="width:100%"></select>');
-                var url = resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetPersonnelStaffingLevelsForDepartment?includeAny=True';
+                var url = resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetPersonnelStaffingLevelsForDepartment?includeAny=False';
                 initDropDown('#Notification_BeforeData', url);
                 initDropDown('#Notification_CurrentData', url);
             }
             function setPersonnelStatusDataDropdowns() {
                 $('#beforeStateControl').empty().append('<select id="Notification_BeforeData" name="Notification.BeforeData" style="width:100%"></select>');
                 $('#currentStateControl').empty().append('<select id="Notification_CurrentData" name="Notification.CurrentData" style="width:100%"></select>');
-                var url = resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetPersonnelStatusesForDepartment?includeAny=True';
+                var url = resgrid.absoluteBaseUrl + '/User/CustomStatuses/GetPersonnelStatusesForDepartment?includeAny=False';
                 initDropDown('#Notification_BeforeData', url);
                 initDropDown('#Notification_CurrentData', url);
             }

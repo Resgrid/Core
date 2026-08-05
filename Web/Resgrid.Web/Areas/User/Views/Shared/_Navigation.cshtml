@@ -50,10 +50,10 @@
 			<li class="@Html.IsSelected(controller: "Chat", action: "Chatbot")">
 				<a asp-controller="Chat" asp-action="Chatbot" asp-route-area="User"><i class="fa fa-magic"></i> <span class="nav-label" data-i18n="nav.assistant">@commonLocalizer["AssistantModule"]</span></a>
 			</li>
-			@if (ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
+			@if (ClaimsAuthorizationHelper.IsUserDepartmentOrGroupAdmin(0))
 			{
-				<li class="@Html.IsSelected(controller: "Chat", action: "Moderation")">
-					<a asp-controller="Chat" asp-action="Moderation" asp-route-area="User"><i class="fa fa-gavel"></i> <span class="nav-label" data-i18n="nav.chatModeration">@commonLocalizer["ChatModerationModule"]</span></a>
+				<li class="@Html.IsSelected(controller: "Moderation", action: "Index")">
+					<a asp-controller="Moderation" asp-action="Index" asp-route-area="User"><i class="fa fa-gavel"></i> <span class="nav-label" data-i18n="nav.moderation">@commonLocalizer["ChatModerationModule"]</span></a>
 				</li>
 			}
 			@if (SettingsHelper.IsMappingEnabled())

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="RequiredModerationContext" xml:space="preserve"><value>القسم والمستخدم المبلّغ والعنصر مطلوبة.</value></data>
+  <data name="RequestReopenedAudit" xml:space="preserve"><value>أُعيد فتح الطلب بعد بلاغ جديد.</value></data>
+  <data name="RequestOutsideScope" xml:space="preserve"><value>هذا الطلب خارج نطاق مراجعتك.</value></data>
+  <data name="OnlyPendingRequests" xml:space="preserve"><value>لا يمكن إكمال إلا طلبات المراجعة المعلّقة.</value></data>
+  <data name="ContentCouldNotBeRemoved" xml:space="preserve"><value>تعذّرت إزالة المحتوى المبلّغ عنه.</value></data>
+  <data name="EvidenceOutsideScope" xml:space="preserve"><value>هذا الدليل خارج نطاق مراجعتك.</value></data>
+  <data name="EvidenceDownloadedAudit" xml:space="preserve"><value>تم تنزيل الدليل الأصلي.</value></data>
+  <data name="ChatMessageUnavailable" xml:space="preserve"><value>رسالة المحادثة غير متاحة أو لا يمكن الإبلاغ عنها.</value></data>
+  <data name="MessageUnavailable" xml:space="preserve"><value>الرسالة غير متاحة أو لا يمكن الإبلاغ عنها.</value></data>
+  <data name="InvalidCallNoteId" xml:space="preserve"><value>معرّف ملاحظة البلاغ غير صالح.</value></data>
+  <data name="CallNoteUnavailable" xml:space="preserve"><value>ملاحظة البلاغ غير متاحة أو لا يمكن الإبلاغ عنها.</value></data>
+  <data name="InvalidCallImageId" xml:space="preserve"><value>معرّف صورة البلاغ غير صالح.</value></data>
+  <data name="CallImageUnavailable" xml:space="preserve"><value>صورة البلاغ غير متاحة أو لا يمكن الإبلاغ عنها.</value></data>
+  <data name="ModeratedMessageSubject" xml:space="preserve"><value>أُزيل المحتوى بعد المراجعة</value></data>
+  <data name="ModeratedMessageBody" xml:space="preserve"><value>أُزيلت هذه الرسالة بعد مراجعة المحتوى.</value></data>
+  <data name="ModeratedCallNote" xml:space="preserve"><value>أُزيلت ملاحظة البلاغ هذه بعد مراجعة المحتوى.</value></data>
+  <data name="MessageRemovedByModeration" xml:space="preserve"><value>أُزيلت هذه الرسالة بعد مراجعة المحتوى.</value></data>
+  <data name="CompletionContentRemoved" xml:space="preserve"><value>تمت إزالة المحتوى المبلّغ عنه.</value></data>
+  <data name="CompletionNoContentRemoved" xml:space="preserve"><value>تمت مراجعة الطلب ولم تتم إزالة أي محتوى.</value></data>
+  <data name="CompletionAdminNoteHtml" xml:space="preserve"><value>&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;ملاحظة المسؤول:&lt;/strong&gt; {0}</value></data>
+  <data name="CompletionSubject" xml:space="preserve"><value>اكتمل طلب مراجعة المحتوى</value></data>
+  <data name="CompletionBody" xml:space="preserve"><value>اكتمل بلاغ المراجعة الخاص بك بشأن {0} {1}. {2}{3}</value></data>
+  <data name="SystemSenderName" xml:space="preserve"><value>النظام</value></data>
+  <data name="ItemTypeChatMessage" xml:space="preserve"><value>رسالة محادثة</value></data>
+  <data name="ItemTypeMessage" xml:space="preserve"><value>رسالة</value></data>
+  <data name="ItemTypeCallNote" xml:space="preserve"><value>ملاحظة بلاغ</value></data>
+  <data name="ItemTypeCallImage" xml:space="preserve"><value>صورة بلاغ</value></data>
+  <data name="TabRequests" xml:space="preserve"><value>الطلبات</value></data>
+  <data name="TabReports" xml:space="preserve"><value>التقارير</value></data>
+  <data name="TabChatControls" xml:space="preserve"><value>عناصر تحكم المحادثة</value></data>
+  <data name="TabChatSettings" xml:space="preserve"><value>إعدادات المحادثة</value></data>
+  <data name="TabChatExports" xml:space="preserve"><value>تصدير المحادثة</value></data>
+  <data name="ReportsDescription" xml:space="preserve"><value>ابحث في طلبات المراجعة الجديدة والمكتملة حسب المستخدم الذي أضاف المحتوى أو المستخدم الذي أبلغ عنه.</value></data>
+  <data name="Status" xml:space="preserve"><value>الحالة</value></data>
+  <data name="All" xml:space="preserve"><value>الكل</value></data>
+  <data name="Pending" xml:space="preserve"><value>معلّق</value></data>
+  <data name="Completed" xml:space="preserve"><value>مكتمل</value></data>
+  <data name="ContentType" xml:space="preserve"><value>نوع المحتوى</value></data>
+  <data name="AddedByUserId" xml:space="preserve"><value>أضافه معرّف المستخدم</value></data>
+  <data name="ReportedByUserId" xml:space="preserve"><value>أبلغ عنه معرّف المستخدم</value></data>
+  <data name="From" xml:space="preserve"><value>من</value></data>
+  <data name="To" xml:space="preserve"><value>إلى</value></data>
+  <data name="Refresh" xml:space="preserve"><value>تحديث</value></data>
+  <data name="LoadingModerationRequests" xml:space="preserve"><value>جارٍ تحميل طلبات المراجعة…</value></data>
+  <data name="NoMatchingRequests" xml:space="preserve"><value>لا توجد طلبات مراجعة تطابق عوامل التصفية هذه.</value></data>
+  <data name="Item" xml:space="preserve"><value>العنصر</value></data>
+  <data name="OriginalEvidence" xml:space="preserve"><value>الدليل الأصلي</value></data>
+  <data name="AddedBy" xml:space="preserve"><value>أضافه</value></data>
+  <data name="Reports" xml:space="preserve"><value>البلاغات</value></data>
+  <data name="Action" xml:space="preserve"><value>الإجراء</value></data>
+  <data name="ContentRemoved" xml:space="preserve"><value>تمت إزالة المحتوى</value></data>
+  <data name="NoAction" xml:space="preserve"><value>لا إجراء</value></data>
+  <data name="UnknownContentType" xml:space="preserve"><value>نوع محتوى غير معروف</value></data>
+  <data name="IdFormat" xml:space="preserve"><value>المعرّف {0}</value></data>
+  <data name="CallFormat" xml:space="preserve"><value>البلاغ {0}</value></data>
+  <data name="DownloadRetainedEvidence" xml:space="preserve"><value>تنزيل الدليل المحفوظ</value></data>
+  <data name="SystemOrUnknown" xml:space="preserve"><value>النظام أو غير معروف</value></data>
+  <data name="GroupFormat" xml:space="preserve"><value>المجموعة {0}</value></data>
+  <data name="CompletionNotePlaceholder" xml:space="preserve"><value>ملاحظة الإكمال التي ستُرسل إلى المستخدمين المبلّغين (اختياري)</value></data>
+  <data name="RemoveContent" xml:space="preserve"><value>إزالة المحتوى</value></data>
+  <data name="CompleteNoAction" xml:space="preserve"><value>إكمال بلا إجراء</value></data>
+  <data name="CompletedBy" xml:space="preserve"><value>أكمله</value></data>
+  <data name="NoCompletionNote" xml:space="preserve"><value>لا توجد ملاحظة إكمال.</value></data>
+  <data name="HideAuditTrail" xml:space="preserve"><value>إخفاء سجل التدقيق</value></data>
+  <data name="AuditTrailCount" xml:space="preserve"><value>سجل التدقيق ({0})</value></data>
+  <data name="By" xml:space="preserve"><value>بواسطة</value></data>
+  <data name="NoNote" xml:space="preserve"><value>لا توجد ملاحظة.</value></data>
+  <data name="ActorReporter" xml:space="preserve"><value>المستخدم المبلّغ</value></data>
+  <data name="ActorDepartmentAdmin" xml:space="preserve"><value>مسؤول القسم</value></data>
+  <data name="ActorGroupAdmin" xml:space="preserve"><value>مسؤول المجموعة</value></data>
+  <data name="ActorLegacyImport" xml:space="preserve"><value>استيراد قديم</value></data>
+  <data name="UnknownRole" xml:space="preserve"><value>دور غير معروف</value></data>
+  <data name="NoIp" xml:space="preserve"><value>لا يوجد عنوان IP</value></data>
+  <data name="TraceFormat" xml:space="preserve"><value>التتبّع {0}</value></data>
+  <data name="NotAvailable" xml:space="preserve"><value>غير متاح</value></data>
+  <data name="NoValue" xml:space="preserve"><value>—</value></data>
+  <data name="UnableLoadRequests" xml:space="preserve"><value>تعذّر تحميل طلبات المراجعة.</value></data>
+  <data name="UnableCompleteRequest" xml:space="preserve"><value>تعذّر إكمال طلب المراجعة.</value></data>
+  <data name="ReasonOther" xml:space="preserve"><value>أخرى</value></data>
+  <data name="ReasonInappropriate" xml:space="preserve"><value>محتوى غير لائق</value></data>
+  <data name="ReasonHarassment" xml:space="preserve"><value>مضايقة أو إساءة</value></data>
+  <data name="ReasonSpam" xml:space="preserve"><value>محتوى غير مرغوب فيه</value></data>
+  <data name="ReasonSensitiveInformation" xml:space="preserve"><value>معلومات حساسة</value></data>
+  <data name="ReasonPolicyViolation" xml:space="preserve"><value>مخالفة السياسات</value></data>
+  <data name="ActionReportSubmitted" xml:space="preserve"><value>تم إرسال البلاغ</value></data>
+  <data name="ActionRequestReopened" xml:space="preserve"><value>أُعيد فتح الطلب</value></data>
+  <data name="ActionCompletedNoAction" xml:space="preserve"><value>اكتمل بلا إجراء</value></data>
+  <data name="ActionContentRemoved" xml:space="preserve"><value>تمت إزالة المحتوى</value></data>
+  <data name="ActionEvidenceDownloaded" xml:space="preserve"><value>تم تنزيل الدليل</value></data>
+  <data name="ModerationReportStatus" xml:space="preserve"><value>حالة بلاغ المراجعة</value></data>
+  <data name="ReportMessage" xml:space="preserve"><value>الإبلاغ عن الرسالة للمراجعة</value></data>
+  <data name="Close" xml:space="preserve"><value>إغلاق</value></data>
+  <data name="Cancel" xml:space="preserve"><value>إلغاء</value></data>
+  <data name="Report" xml:space="preserve"><value>إبلاغ</value></data>
+  <data name="CheckingReportStatus" xml:space="preserve"><value>جارٍ التحقق من حالة البلاغ…</value></data>
+  <data name="StatusLabel" xml:space="preserve"><value>الحالة</value></data>
+  <data name="ContentWasRemoved" xml:space="preserve"><value>تمت إزالة المحتوى</value></data>
+  <data name="NoContentWasRemoved" xml:space="preserve"><value>لم تتم إزالة أي محتوى</value></data>
+  <data name="ModeratorNoteLabel" xml:space="preserve"><value>ملاحظة المراجع</value></data>
+  <data name="Reason" xml:space="preserve"><value>السبب</value></data>
+  <data name="AddNoteOptional" xml:space="preserve"><value>أضف ملاحظة (اختياري)</value></data>
+  <data name="YourModerationReportIs" xml:space="preserve"><value>حالة بلاغ المراجعة الخاص بك هي</value></data>
+  <data name="ReportForModeration" xml:space="preserve"><value>الإبلاغ للمراجعة</value></data>
+  <data name="WhyReviewMessage" xml:space="preserve"><value>اشرح سبب ضرورة مراجعة هذه الرسالة</value></data>
+  <data name="ModerationReportSubmitted" xml:space="preserve"><value>تم إرسال بلاغ المراجعة الخاص بك.</value></data>
+  <data name="LegacyActionDeleteMessage" xml:space="preserve"><value>حذف الرسالة</value></data>
+  <data name="LegacyActionMuteUser" xml:space="preserve"><value>كتم المستخدم</value></data>
+  <data name="LegacyActionBanUser" xml:space="preserve"><value>حظر المستخدم</value></data>
+  <data name="LegacyActionUnbanUser" xml:space="preserve"><value>إلغاء حظر المستخدم</value></data>
+  <data name="LegacyActionLockChannel" xml:space="preserve"><value>قفل القناة</value></data>
+  <data name="LegacyActionUnlockChannel" xml:space="preserve"><value>فتح القناة</value></data>
+  <data name="LegacyActionResolveFlag" xml:space="preserve"><value>حل البلاغ</value></data>
+  <data name="ActionNumberFormat" xml:space="preserve"><value>الإجراء رقم {0}</value></data>
+  <data name="Loading" xml:space="preserve"><value>جارٍ التحميل…</value></data>
+  <data name="NoModerationActivity" xml:space="preserve"><value>لا توجد أنشطة مراجعة.</value></data>
+  <data name="Target" xml:space="preserve"><value>الهدف</value></data>
+  <data name="When" xml:space="preserve"><value>الوقت</value></data>
+  <data name="UnitFormat" xml:space="preserve"><value>الوحدة {0}</value></data>
+  <data name="Previous" xml:space="preserve"><value>السابق</value></data>
+  <data name="PageFormat" xml:space="preserve"><value>الصفحة {0}</value></data>
+  <data name="Next" xml:space="preserve"><value>التالي</value></data>
+  <data name="AllowImageAttachments" xml:space="preserve"><value>السماح بإرفاق الصور</value></data>
+  <data name="AllowGifs" xml:space="preserve"><value>السماح بصور GIF</value></data>
+  <data name="AllowLocationSharing" xml:space="preserve"><value>السماح بمشاركة الموقع</value></data>
+  <data name="UrgentOverridesMute" xml:space="preserve"><value>الرسائل العاجلة تتجاوز الكتم</value></data>
+  <data name="AssistantEnabled" xml:space="preserve"><value>المساعد مفعّل</value></data>
+  <data name="MessageRetention" xml:space="preserve"><value>الاحتفاظ بالرسائل (بالأيام، 0 = دائمًا)</value></data>
+  <data name="MaxAttachmentSize" xml:space="preserve"><value>الحد الأقصى لحجم المرفق (ميغابايت)</value></data>
+  <data name="Saving" xml:space="preserve"><value>جارٍ الحفظ…</value></data>
+  <data name="SaveSettings" xml:space="preserve"><value>حفظ الإعدادات</value></data>
+  <data name="Saved" xml:space="preserve"><value>تم الحفظ</value></data>
+  <data name="FailedSaveSettings" xml:space="preserve"><value>تعذّر حفظ إعدادات المراجعة.</value></data>
+  <data name="ExportQueued" xml:space="preserve"><value>في قائمة الانتظار</value></data>
+  <data name="ExportRunning" xml:space="preserve"><value>قيد التشغيل</value></data>
+  <data name="ExportComplete" xml:space="preserve"><value>مكتمل</value></data>
+  <data name="ExportFailed" xml:space="preserve"><value>فشل</value></data>
+  <data name="FailedRequestExport" xml:space="preserve"><value>تعذّر طلب تصدير المحادثة.</value></data>
+  <data name="Format" xml:space="preserve"><value>التنسيق</value></data>
+  <data name="StartDate" xml:space="preserve"><value>تاريخ البدء</value></data>
+  <data name="EndDate" xml:space="preserve"><value>تاريخ الانتهاء</value></data>
+  <data name="Requesting" xml:space="preserve"><value>جارٍ الطلب…</value></data>
+  <data name="RequestExport" xml:space="preserve"><value>طلب التصدير</value></data>
+  <data name="Requested" xml:space="preserve"><value>تاريخ الطلب</value></data>
+  <data name="Range" xml:space="preserve"><value>النطاق</value></data>
+  <data name="Download" xml:space="preserve"><value>تنزيل</value></data>
+  <data name="NoExportJobs" xml:space="preserve"><value>لا توجد مهام تصدير.</value></data>
+  <data name="Now" xml:space="preserve"><value>الآن</value></data>
+  <data name="EvidenceFileNameFormat" xml:space="preserve"><value>دليل-المراجعة-{0}</value></data>
+  <data name="MessageDeleted" xml:space="preserve"><value>تم حذف هذه الرسالة.</value></data>
+</root>

@@ -186,6 +186,11 @@
 		ChatFlagResolved,
 		ChatSettingsChanged,
 		ChatExportRequested,
-		ChatExportDownloaded
+		ChatExportDownloaded,
+		// General moderation
+		ModerationReportSubmitted,
+		ModerationRequestReopened,
+		ModerationRequestCompleted,
+		ModerationEvidenceDownloaded
 	}
 }

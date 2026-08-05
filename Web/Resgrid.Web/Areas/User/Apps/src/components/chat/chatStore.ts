@@ -334,7 +334,7 @@ export function applyHubDelete(payload: HubDeletedPayload): void {
   );
   if (existing) {
     upsertMessages(payload.ChatChannelId, [
-      { ...existing, DeletedOn: payload.DeletedOn, Body: null },
+      { ...existing, DeletedOn: payload.DeletedOn, IsModerated: payload.IsModerated ?? payload.DeletedByModerator, Body: null },
     ]);
     return;
   }
@@ -546,6 +546,7 @@ export function createOptimisticMessage(
     EditedOn: null,
     DeletedOn: null,
     DeletedByUserId: null,
+    IsModerated: false,
     PinnedOn: null,
     PinnedByUserId: null,
     Reactions: [],

@@ -8,7 +8,11 @@ var resgrid;
 			$(document).ready(function () {
 				resgrid.common.analytics.track('Templates - New');
 
-				let quillDescription = new Quill('#editor-container2', {
+				let editorContainer = document.querySelector('#editor-container2');
+				if (!editorContainer)
+					return;
+
+				let quillDescription = new Quill(editorContainer, {
 					placeholder: '',
 					theme: 'snow'
 				});

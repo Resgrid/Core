@@ -1491,7 +1491,7 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
-		public async Task<bool> TombstoneAsync(string chatMessageId, DateTime deletedOn, string deletedByUserId, CancellationToken cancellationToken)
+		public async Task<bool> TombstoneAsync(string chatMessageId, DateTime deletedOn, string deletedByUserId, bool isModerated, CancellationToken cancellationToken)
 		{
 			try
 			{
@@ -1499,10 +1499,11 @@ namespace Resgrid.Repositories.DataRepository
 				parameters.Add("Id", chatMessageId);
 				parameters.Add("DeletedOn", deletedOn, DbType.DateTime2);
 				parameters.Add("DeletedByUserId", deletedByUserId);
+				parameters.Add("IsModerated", isModerated);
 				var notation = _sqlConfiguration.ParameterNotation;
 				var sql = DataConfig.DatabaseType == DatabaseTypes.Postgres
-					? $"UPDATE {_sqlConfiguration.SchemaName}.chatmessages SET body = NULL, metadatajson = NULL, deletedon = {notation}DeletedOn, deletedbyuserid = {notation}DeletedByUserId WHERE chatmessageid = {notation}Id AND deletedon IS NULL"
-					: $"UPDATE {_sqlConfiguration.SchemaName}.[ChatMessages] SET [Body] = NULL, [MetadataJson] = NULL, [DeletedOn] = {notation}DeletedOn, [DeletedByUserId] = {notation}DeletedByUserId WHERE [ChatMessageId] = {notation}Id AND [DeletedOn] IS NULL";
+					? $"UPDATE {_sqlConfiguration.SchemaName}.chatmessages SET body = NULL, metadatajson = NULL, deletedon = {notation}DeletedOn, deletedbyuserid = {notation}DeletedByUserId, ismoderated = {notation}IsModerated WHERE chatmessageid = {notation}Id AND deletedon IS NULL"
+					: $"UPDATE {_sqlConfiguration.SchemaName}.[ChatMessages] SET [Body] = NULL, [MetadataJson] = NULL, [DeletedOn] = {notation}DeletedOn, [DeletedByUserId] = {notation}DeletedByUserId, [IsModerated] = {notation}IsModerated WHERE [ChatMessageId] = {notation}Id AND [DeletedOn] IS NULL";
 
 				var execute = new Func<DbConnection, Task<int>>(connection =>
 					connection.ExecuteAsync(sql, parameters, _unitOfWork.Transaction));

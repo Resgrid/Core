@@ -88,7 +88,7 @@ namespace Resgrid.Workers.Console.Tasks
 		private async Task OnNotificationQueueReceived(NotificationItem ni)
 		{
 			_logger.LogInformation($"{Name}: Notification Queue Received with a type of {ni.Type} and id of {ni.ItemId}, starting processing...");
-			await NotificationBroadcastLogic.ProcessNotificationItem(ni, Guid.NewGuid().ToString(), "");
+			await NotificationBroadcastLogic.ProcessNotificationItem(ni, Guid.NewGuid().ToString(), "", _cancellationToken);
 			_logger.LogInformation($"{Name}: Finished processing of Notification with type of {ni.Type} and id of {ni.ItemId}.");
 		}
 

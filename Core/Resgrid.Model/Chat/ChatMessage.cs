@@ -69,6 +69,9 @@ namespace Resgrid.Model
 
 		public string DeletedByUserId { get; set; }
 
+		/// <summary>True when the tombstone was applied by a moderator rather than the sender.</summary>
+		public bool IsModerated { get; set; }
+
 		public DateTime? PinnedOn { get; set; }
 
 		public string PinnedByUserId { get; set; }

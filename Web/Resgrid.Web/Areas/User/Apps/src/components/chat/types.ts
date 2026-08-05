@@ -144,6 +144,7 @@ export interface ChatMessageDto {
   EditedOn: string | null;
   DeletedOn: string | null;
   DeletedByUserId: string | null;
+  IsModerated: boolean;
   PinnedOn: string | null;
   PinnedByUserId: string | null;
   Reactions: ChatReactionDto[];
@@ -296,6 +297,7 @@ export interface HubDeletedPayload {
   MessageSeq: number;
   DeletedOn: string;
   DeletedByModerator: boolean;
+  IsModerated: boolean;
 }
 
 export interface HubReactionPayload {
@@ -346,6 +348,7 @@ export function toMessageDto(payload: HubMessagePayload): ChatMessageDto {
     LastThreadReplyOn: null,
     DeletedOn: null,
     DeletedByUserId: null,
+    IsModerated: false,
     PinnedOn: null,
     PinnedByUserId: null,
     Reactions: [],

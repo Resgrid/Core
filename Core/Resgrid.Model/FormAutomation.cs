@@ -41,9 +41,9 @@ namespace Resgrid.Model
 		public string IdName => "FormAutomationId";
 
 		[NotMapped]
-		public int IdType => 0;
+		public int IdType => 1;
 
 		[NotMapped]
-		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "TableName", "IdName", "Department", "Message" };
+		public IEnumerable<string> IgnoredProperties => new string[] { "IdValue", "IdType", "TableName", "IdName", "Form" };
 	}
 }

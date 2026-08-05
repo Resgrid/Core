@@ -150,16 +150,16 @@
     <value>A description of the nature of the call</value>
   </data>
   <data name="CallNoteAddedByLabel" xml:space="preserve">
-    <value>Call Note Added By</value>
+    <value>Note d’appel ajoutée par</value>
   </data>
   <data name="CallNoteAddedOnLabel" xml:space="preserve">
-    <value>Call Note Added On</value>
+    <value>Note d’appel ajoutée le</value>
   </data>
   <data name="CallNotesHeader" xml:space="preserve">
     <value>Call Notes</value>
   </data>
   <data name="CallNoteTextLabel" xml:space="preserve">
-    <value>Call Note Text</value>
+    <value>Texte de la note d’appel</value>
   </data>
   <data name="CallNumber" xml:space="preserve">
     <value>Call Number</value>
@@ -234,7 +234,7 @@
     <value>This is an unauthenticated page for viewing this call only. You are not logged into Resgrid. Do not share this url.</value>
   </data>
   <data name="FileName" xml:space="preserve">
-    <value>File Name</value>
+    <value>Nom du fichier</value>
   </data>
   <data name="FileType" xml:space="preserve">
     <value>File Type</value>
@@ -246,10 +246,10 @@
     <value>Find w3w Location</value>
   </data>
   <data name="FlagCallNoteHeader" xml:space="preserve">
-    <value>Flag Call Note</value>
+    <value>Signaler la note d’appel pour modération</value>
   </data>
   <data name="FlagCallImageHeader" xml:space="preserve">
-    <value>Signaler l'image de l'appel</value>
+    <value>Signaler l’image de l’appel pour modération</value>
   </data>
   <data name="FlagCallFileHeader" xml:space="preserve">
     <value>Signaler le fichier de l'appel</value>
@@ -267,16 +267,16 @@
     <value>Horodatage du fichier</value>
   </data>
   <data name="FlagImage" xml:space="preserve">
-    <value>Signaler l'image</value>
+    <value>Signaler l’image</value>
   </data>
   <data name="FlagFile" xml:space="preserve">
     <value>Signaler le fichier</value>
   </data>
   <data name="FlaggedReasonLabel" xml:space="preserve">
-    <value>Flagged Reason</value>
+    <value>Motif du signalement</value>
   </data>
   <data name="FlaggedReasonPlaceholder" xml:space="preserve">
-    <value>Reason for flagging</value>
+    <value>Motif du signalement</value>
   </data>
   <data name="GPSLabel" xml:space="preserve">
     <value>GPS</value>

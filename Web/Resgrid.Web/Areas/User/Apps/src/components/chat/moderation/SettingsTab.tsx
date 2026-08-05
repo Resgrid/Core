@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { getSettings, updateSettings } from '../chatModerationApi';
 import type { ChatSettingsDto } from '../types';
+import { moderationText } from '../moderationI18n';
 
 const DEFAULT_SETTINGS: ChatSettingsDto = {
   ChatDepartmentSettingId: null,
@@ -15,15 +16,15 @@ const DEFAULT_SETTINGS: ChatSettingsDto = {
 
 interface ToggleRow {
   key: keyof ChatSettingsDto;
-  label: string;
+  labelKey: string;
 }
 
 const TOGGLES: ToggleRow[] = [
-  { key: 'AllowImages', label: 'Allow image attachments' },
-  { key: 'AllowGifs', label: 'Allow GIFs' },
-  { key: 'AllowLocationSharing', label: 'Allow location sharing' },
-  { key: 'UrgentOverridesMute', label: 'Urgent messages override mute' },
-  { key: 'ChatbotEnabled', label: 'Assistant (chatbot) enabled' },
+  { key: 'AllowImages', labelKey: 'AllowImageAttachments' },
+  { key: 'AllowGifs', labelKey: 'AllowGifs' },
+  { key: 'AllowLocationSharing', labelKey: 'AllowLocationSharing' },
+  { key: 'UrgentOverridesMute', labelKey: 'UrgentOverridesMute' },
+  { key: 'ChatbotEnabled', labelKey: 'AssistantEnabled' },
 ];
 
 export default function SettingsTab() {
@@ -53,20 +54,20 @@ export default function SettingsTab() {
         setSaved(true);
       }
     } catch (error) {
-      console.error('Failed to save chat settings.', error);
+      console.error(moderationText('FailedSaveSettings'), error);
     } finally {
       setSaving(false);
     }
   };
 
   if (loading) {
-    return <div className="rgchat-convo__sub">Loading…</div>;
+    return <div className="rgchat-convo__sub">{moderationText('Loading')}</div>;
   }
 
   return (
     <div style={{ maxWidth: 480 }}>
       <div className="rgchat-form-row">
-        <label htmlFor="rgchat-retention">Message retention (days, 0 = forever)</label>
+        <label htmlFor="rgchat-retention">{moderationText('MessageRetention')}</label>
         <input
           id="rgchat-retention"
           className="rgchat-input"
@@ -79,7 +80,7 @@ export default function SettingsTab() {
       </div>
 
       <div className="rgchat-form-row">
-        <label htmlFor="rgchat-maxsize">Max attachment size (MB)</label>
+        <label htmlFor="rgchat-maxsize">{moderationText('MaxAttachmentSize')}</label>
         <input
           id="rgchat-maxsize"
           className="rgchat-input"
@@ -93,7 +94,7 @@ export default function SettingsTab() {
 
       {TOGGLES.map((toggle) => (
         <div className="rgchat-form-row" key={toggle.key}>
-          <label htmlFor={`rgchat-${toggle.key}`}>{toggle.label}</label>
+          <label htmlFor={`rgchat-${toggle.key}`}>{moderationText(toggle.labelKey)}</label>
           <input
             id={`rgchat-${toggle.key}`}
             type="checkbox"
@@ -105,9 +106,9 @@ export default function SettingsTab() {
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 12 }}>
         <button type="button" className="rgchat-btn rgchat-btn--primary" onClick={() => void save()} disabled={saving}>
-          {saving ? 'Saving…' : 'Save settings'}
+          {saving ? moderationText('Saving') : moderationText('SaveSettings')}
         </button>
-        {saved && <span className="rgchat-pill rgchat-pill--done">Saved</span>}
+        {saved && <span className="rgchat-pill rgchat-pill--done">{moderationText('Saved')}</span>}
       </div>
     </div>
   );

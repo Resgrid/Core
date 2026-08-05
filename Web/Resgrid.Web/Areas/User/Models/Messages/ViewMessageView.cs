@@ -13,5 +13,9 @@ namespace Resgrid.Web.Areas.User.Models.Messages
 		public List<UserGroupRole> UserGroupsAndRoles { get; set; }
 		public bool CanRespondToCalendarRsvp { get; set; }
 		public int? CalendarRsvpAttendeeType { get; set; }
+		public bool HasModerationReport { get; set; }
+		public int? ModerationStatus { get; set; }
+		public string ModerationAdminNote { get; set; }
+		public string ModerationMessage { get; set; }
 	}
 }

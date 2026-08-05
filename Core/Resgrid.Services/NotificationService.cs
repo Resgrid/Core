@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -461,7 +462,7 @@ namespace Resgrid.Services
 						return await _departmentGroupsService.GetGroupByIdAsync(unitEvent.Unit.StationGroupId.GetValueOrDefault());
 					}
 				}
-				else if (notification.Type == EventTypes.PersonnelStatusChanged)
+				else if (notification.Type == EventTypes.PersonnelStaffingChanged)
 				{
 					var userStaffing = await _userStateService.GetUserStateByIdAsync(dynamicData.StateId);
 
@@ -498,94 +499,88 @@ namespace Resgrid.Services
 			switch (notification.Type)
 			{
 				case EventTypes.UnitStatusChanged:
-					if (!String.IsNullOrWhiteSpace(setting.BeforeData) && !String.IsNullOrWhiteSpace(setting.CurrentData))
 					{
-						if (setting.BeforeData.Contains("-1") && setting.CurrentData.Contains("-1"))
+						// Empty Before/Current data means "Any": the post-Telerik UI posts "" for the
+						// default Any option, so settings saved that way must still match every change.
+						var beforeData = String.IsNullOrWhiteSpace(setting.BeforeData) ? "-1" : setting.BeforeData;
+						var currentData = String.IsNullOrWhiteSpace(setting.CurrentData) ? "-1" : setting.CurrentData;
+
+						if (!int.TryParse(beforeData, NumberStyles.Integer, CultureInfo.InvariantCulture, out int beforeStateValue) ||
+							!int.TryParse(currentData, NumberStyles.Integer, CultureInfo.InvariantCulture, out int currentStateValue))
+							return false;
+
+						bool beforeAny = beforeStateValue == -1;
+						bool currentAny = currentStateValue == -1;
+
+						if (beforeAny && currentAny)
 							return true;
 
-						bool beforeAny = setting.BeforeData.Contains("-1");
-						bool currentAny = setting.CurrentData.Contains("-1");
-
 						UnitState beforeState = null;
-						UnitState currentState = null;
-
-						currentState = await _unitsService.GetUnitStateByIdAsync(dynamicData.StateId);
+						UnitState currentState = await _unitsService.GetUnitStateByIdAsync(dynamicData.StateId);
 
 						if (currentState != null)
 						{
 							if (!beforeAny)
 								beforeState = await _unitsService.GetLastUnitStateBeforeIdAsync(currentState.UnitId, currentState.UnitStateId);
 
-							if ((currentAny || currentState.State == int.Parse(setting.CurrentData)) &&
-								(beforeAny || beforeState.State == int.Parse(setting.BeforeData)))
+							if ((currentAny || currentState.State == currentStateValue) &&
+								(beforeAny || (beforeState != null && beforeState.State == beforeStateValue)))
 								return true;
 						}
 					}
-					else
-					{
-						return false;
-					}
 					break;
 				case EventTypes.PersonnelStaffingChanged:
-					if (!String.IsNullOrWhiteSpace(setting.BeforeData) && !String.IsNullOrWhiteSpace(setting.CurrentData))
 					{
-						if (setting.BeforeData.Contains("-1") && setting.CurrentData.Contains("-1"))
+						// Empty Before/Current data means "Any": the post-Telerik UI posts "" for the
+						// default Any option, so settings saved that way must still match every change.
+						var beforeData = String.IsNullOrWhiteSpace(setting.BeforeData) ? "-1" : setting.BeforeData;
+						var currentData = String.IsNullOrWhiteSpace(setting.CurrentData) ? "-1" : setting.CurrentData;
+
+						if (beforeData.Contains("-1") && currentData.Contains("-1"))
 							return true;
 
-						bool beforeAny = false;
-						if (!string.IsNullOrWhiteSpace(setting.BeforeData))
-							beforeAny = setting.BeforeData.Contains("-1");
-
-						bool currentAny = false;
-						if (!string.IsNullOrWhiteSpace(setting.CurrentData))
-							currentAny = setting.CurrentData.Contains("-1");
+						bool beforeAny = beforeData.Contains("-1");
+						bool currentAny = currentData.Contains("-1");
 
 						UserState beforeState = null;
-						UserState currentState = null;
-
-						currentState = await _userStateService.GetUserStateByIdAsync((int)dynamicData.StateId);
+						UserState currentState = await _userStateService.GetUserStateByIdAsync((int)dynamicData.StateId);
 
 						if (currentState != null)
 						{
 							if (!beforeAny)
 								beforeState = await _userStateService.GetPreviousUserStateAsync(currentState.UserId, currentState.UserStateId);
 
-							if ((currentAny || currentState.State == int.Parse(setting.CurrentData)) &&
-								(beforeAny || beforeState.State == int.Parse(setting.BeforeData)))
+							if ((currentAny || currentState.State == int.Parse(currentData)) &&
+								(beforeAny || (beforeState != null && beforeState.State == int.Parse(beforeData))))
 								return true;
 						}
-
-						return false;
-					}
-					else
-					{
-						return false;
 					}
 					break;
 				case EventTypes.PersonnelStatusChanged:
-					if (!String.IsNullOrWhiteSpace(setting.BeforeData) && !String.IsNullOrWhiteSpace(setting.CurrentData))
 					{
-						if (setting.BeforeData.Contains("-1") && setting.CurrentData.Contains("-1"))
+						// Empty Before/Current data means "Any": the post-Telerik UI posts "" for the
+						// default Any option, so settings saved that way must still match every change.
+						var beforeData = String.IsNullOrWhiteSpace(setting.BeforeData) ? "-1" : setting.BeforeData;
+						var currentData = String.IsNullOrWhiteSpace(setting.CurrentData) ? "-1" : setting.CurrentData;
+
+						if (beforeData.Contains("-1") && currentData.Contains("-1"))
 							return true;
 
-						bool beforeAny = setting.BeforeData.Contains("-1");
-						bool currentAny = setting.CurrentData.Contains("-1");
+						bool beforeAny = beforeData.Contains("-1");
+						bool currentAny = currentData.Contains("-1");
 
 						ActionLog beforeState = null;
-						ActionLog currentState = null;
+						ActionLog currentState = await _actionLogsService.GetActionLogByIdAsync((int)dynamicData.StateId);
 
-						currentState = await _actionLogsService.GetActionLogByIdAsync((int)dynamicData.StateId);
+						if (currentState != null)
+						{
+							if (!beforeAny)
+								beforeState = await _actionLogsService.GetPreviousActionLogAsync(currentState.UserId, currentState.ActionLogId);
 
-						if (!beforeAny)
-							beforeState = await _actionLogsService.GetPreviousActionLogAsync(currentState.UserId, currentState.ActionLogId);
-
-						if ((currentAny || currentState.ActionTypeId == int.Parse(setting.CurrentData)) &&
-							(beforeAny || beforeState.ActionTypeId == int.Parse(setting.BeforeData)))
-							return true;
-					}
-					else
-					{
-						return false;
+							if ((currentAny || currentState.ActionTypeId == int.Parse(currentData)) &&
+								(beforeAny || (beforeState != null && beforeState.ActionTypeId == int.Parse(beforeData))))
+								return true;
+						}
 					}
 					break;
 				case EventTypes.RolesInGroupAvailabilityAlert:

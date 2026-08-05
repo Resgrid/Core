@@ -1,43 +1,52 @@
-using System.Data;
 using FluentMigrator;
 
 namespace Resgrid.Providers.MigrationsPg.Migrations
 {
-	[Migration(111)]
+	// Foreign keys are added without scanning existing rows while ACCESS EXCLUSIVE is held.
+	// TransactionBehavior.None makes each Execute.Sql call self-commit, so validation runs later.
+	[Migration(111, TransactionBehavior.None)]
 	public class M0111_CascadeCommunicationTestDeletesPg : Migration
 	{
 		public override void Up()
 		{
-			Delete.ForeignKey("fk_communicationtestresults_communicationtestruns")
-				.OnTable("communicationtestresults");
-			Delete.ForeignKey("fk_communicationtestruns_communicationtests")
-				.OnTable("communicationtestruns");
+			Execute.Sql(@"ALTER TABLE communicationtestresults
+				DROP CONSTRAINT IF EXISTS fk_communicationtestresults_communicationtestruns;
+			ALTER TABLE communicationtestresults
+				ADD CONSTRAINT fk_communicationtestresults_communicationtestruns
+				FOREIGN KEY (communicationtestrunid) REFERENCES communicationtestruns (communicationtestrunid)
+				ON DELETE CASCADE NOT VALID;");
+			Execute.Sql(@"ALTER TABLE communicationtestresults
+				VALIDATE CONSTRAINT fk_communicationtestresults_communicationtestruns;");
 
-			Create.ForeignKey("fk_communicationtestruns_communicationtests")
-				.FromTable("communicationtestruns").ForeignColumn("communicationtestid")
-				.ToTable("communicationtests").PrimaryColumn("communicationtestid")
-				.OnDelete(Rule.Cascade);
-
-			Create.ForeignKey("fk_communicationtestresults_communicationtestruns")
-				.FromTable("communicationtestresults").ForeignColumn("communicationtestrunid")
-				.ToTable("communicationtestruns").PrimaryColumn("communicationtestrunid")
-				.OnDelete(Rule.Cascade);
+			Execute.Sql(@"ALTER TABLE communicationtestruns
+				DROP CONSTRAINT IF EXISTS fk_communicationtestruns_communicationtests;
+			ALTER TABLE communicationtestruns
+				ADD CONSTRAINT fk_communicationtestruns_communicationtests
+				FOREIGN KEY (communicationtestid) REFERENCES communicationtests (communicationtestid)
+				ON DELETE CASCADE NOT VALID;");
+			Execute.Sql(@"ALTER TABLE communicationtestruns
+				VALIDATE CONSTRAINT fk_communicationtestruns_communicationtests;");
 		}
 
 		public override void Down()
 		{
-			Delete.ForeignKey("fk_communicationtestresults_communicationtestruns")
-				.OnTable("communicationtestresults");
-			Delete.ForeignKey("fk_communicationtestruns_communicationtests")
-				.OnTable("communicationtestruns");
+			Execute.Sql(@"ALTER TABLE communicationtestruns
+				DROP CONSTRAINT IF EXISTS fk_communicationtestruns_communicationtests;
+			ALTER TABLE communicationtestruns
+				ADD CONSTRAINT fk_communicationtestruns_communicationtests
+				FOREIGN KEY (communicationtestid) REFERENCES communicationtests (communicationtestid)
+				NOT VALID;");
+			Execute.Sql(@"ALTER TABLE communicationtestruns
+				VALIDATE CONSTRAINT fk_communicationtestruns_communicationtests;");
 
-			Create.ForeignKey("fk_communicationtestruns_communicationtests")
-				.FromTable("communicationtestruns").ForeignColumn("communicationtestid")
-				.ToTable("communicationtests").PrimaryColumn("communicationtestid");
-
-			Create.ForeignKey("fk_communicationtestresults_communicationtestruns")
-				.FromTable("communicationtestresults").ForeignColumn("communicationtestrunid")
-				.ToTable("communicationtestruns").PrimaryColumn("communicationtestrunid");
+			Execute.Sql(@"ALTER TABLE communicationtestresults
+				DROP CONSTRAINT IF EXISTS fk_communicationtestresults_communicationtestruns;
+			ALTER TABLE communicationtestresults
+				ADD CONSTRAINT fk_communicationtestresults_communicationtestruns
+				FOREIGN KEY (communicationtestrunid) REFERENCES communicationtestruns (communicationtestrunid)
+				NOT VALID;");
+			Execute.Sql(@"ALTER TABLE communicationtestresults
+				VALIDATE CONSTRAINT fk_communicationtestresults_communicationtestruns;");
 		}
 	}
 }

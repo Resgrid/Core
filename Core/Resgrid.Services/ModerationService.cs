@@ -4,9 +4,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Resgrid.Framework;
 using Resgrid.Localization.Areas.User.Moderation;
 using Resgrid.Model;
+using Resgrid.Model.Events;
+using Resgrid.Model.Providers;
+using Resgrid.Model.Queue;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -38,6 +43,8 @@ namespace Resgrid.Services
 		private readonly IAuthorizationService _authorizationService;
 		private readonly IAuditService _auditService;
 		private readonly IUserProfileService _userProfileService;
+		private readonly IUnitOfWork _unitOfWork;
+		private readonly IOutboundQueueProvider _outboundQueueProvider;
 
 		public ModerationService(IModerationRequestRepository moderationRequestRepository,
 			IModerationReportRepository moderationReportRepository, IModerationActionRepository moderationActionRepository,
@@ -47,7 +54,8 @@ namespace Resgrid.Services
 			ICallNotesRepository callNotesRepository, ICallAttachmentRepository callAttachmentRepository,
 			ICallsService callsService, IDepartmentGroupsService departmentGroupsService,
 			IAuthorizationService authorizationService, IAuditService auditService,
-			IUserProfileService userProfileService)
+			IUserProfileService userProfileService, IUnitOfWork unitOfWork,
+			IOutboundQueueProvider outboundQueueProvider)
 		{
 			_moderationRequestRepository = moderationRequestRepository;
 			_moderationReportRepository = moderationReportRepository;
@@ -65,6 +73,8 @@ namespace Resgrid.Services
 			_authorizationService = authorizationService;
 			_auditService = auditService;
 			_userProfileService = userProfileService;
+			_unitOfWork = unitOfWork;
+			_outboundQueueProvider = outboundQueueProvider;
 		}
 
 		public async Task<ModerationReport> FlagAsync(int departmentId, string reportedByUserId,
@@ -111,8 +121,13 @@ namespace Resgrid.Services
 				{
 					request = await _moderationRequestRepository.InsertAsync(request, cancellationToken);
 				}
-				catch
+				catch (OperationCanceledException)
 				{
+					throw;
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
 					// The unique department/type/item index is the race backstop. If another reporter won
 					// the insert, join that request; otherwise preserve the original failure.
 					var concurrent = await _moderationRequestRepository.GetByItemAsync(departmentId, (int)itemType, itemId);
@@ -129,70 +144,106 @@ namespace Resgrid.Services
 			if (existingReport != null)
 				return existingReport;
 
-			if (request.Status == (int)ModerationRequestStatus.Completed)
-			{
-				var previousStatus = request.Status;
-				request.Status = (int)ModerationRequestStatus.Pending;
-				request.Disposition = (int)ModerationDisposition.None;
-				request.CompletedByUserId = null;
-				request.CompletedOn = null;
-				request.AdminNote = null;
-				request.ModifiedOn = DateTime.UtcNow;
-				await _moderationRequestRepository.UpdateAsync(request, cancellationToken);
-
-				await RecordActionAsync(request, ModerationActionType.RequestReopened, reportedByUserId,
-					ModerationResources.GetCurrent("RequestReopenedAudit"), previousStatus, request.Status,
-					context, null, cancellationToken);
-				await RecordDepartmentAuditAsync(request, AuditLogTypes.ModerationRequestReopened,
-					reportedByUserId, context, new { request.ItemType, request.ItemId }, cancellationToken);
-			}
-
-			var groupMember = await _departmentGroupsService.GetGroupMemberForUserAsync(reportedByUserId, departmentId);
-			var report = new ModerationReport
-			{
-				ModerationReportId = Guid.NewGuid().ToString(),
-				ModerationRequestId = request.ModerationRequestId,
-				DepartmentId = departmentId,
-				ReportedByUserId = reportedByUserId,
-				ReporterGroupId = groupMember?.DepartmentGroupId,
-				Reason = (int)reason,
-				Note = note,
-				ReportedOn = DateTime.UtcNow
-			};
+			var reopenRequest = request.Status == (int)ModerationRequestStatus.Completed;
+			if (reopenRequest)
+				await _unitOfWork.CreateOrGetConnectionAsync(cancellationToken);
 
 			try
 			{
-				report = await _moderationReportRepository.InsertAsync(report, cancellationToken);
+				if (reopenRequest)
+				{
+					var previousStatus = request.Status;
+					request.Status = (int)ModerationRequestStatus.Pending;
+					request.Disposition = (int)ModerationDisposition.None;
+					request.CompletedByUserId = null;
+					request.CompletedOn = null;
+					request.AdminNote = null;
+					request.ModifiedOn = DateTime.UtcNow;
+					await _moderationRequestRepository.UpdateAsync(request, cancellationToken);
+
+					// The update holds the request row for this transaction. Recheck after acquiring it so
+					// concurrent submissions can still return the winning report without a failed transaction.
+					existingReport = await _moderationReportRepository.GetByRequestAndReporterAsync(
+						request.ModerationRequestId, reportedByUserId);
+					if (existingReport != null)
+					{
+						_unitOfWork.DiscardChanges();
+						return existingReport;
+					}
+
+					await RecordActionAsync(request, ModerationActionType.RequestReopened, reportedByUserId,
+						ModerationResources.GetCurrent("RequestReopenedAudit"), previousStatus, request.Status,
+						context, null, cancellationToken);
+					await RecordDepartmentAuditAsync(request, AuditLogTypes.ModerationRequestReopened,
+						reportedByUserId, context, new { request.ItemType, request.ItemId }, cancellationToken);
+				}
+
+				var groupMember = await _departmentGroupsService.GetGroupMemberForUserAsync(reportedByUserId, departmentId);
+				var report = new ModerationReport
+				{
+					ModerationReportId = Guid.NewGuid().ToString(),
+					ModerationRequestId = request.ModerationRequestId,
+					DepartmentId = departmentId,
+					ReportedByUserId = reportedByUserId,
+					ReporterGroupId = groupMember?.DepartmentGroupId,
+					Reason = (int)reason,
+					Note = note,
+					ReportedOn = DateTime.UtcNow
+				};
+
+				try
+				{
+					report = await _moderationReportRepository.InsertAsync(report, cancellationToken);
+				}
+				catch (OperationCanceledException)
+				{
+					throw;
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+					if (reopenRequest)
+						throw;
+
+					// A unique request/reporter index prevents duplicate reports under concurrent submissions.
+					var concurrent = await _moderationReportRepository.GetByRequestAndReporterAsync(
+						request.ModerationRequestId, reportedByUserId);
+					if (concurrent == null)
+						throw;
+
+					return concurrent;
+				}
+				request.ModifiedOn = report.ReportedOn;
+				await _moderationRequestRepository.UpdateAsync(request, cancellationToken);
+
+				await RecordActionAsync(request, ModerationActionType.ReportSubmitted, reportedByUserId, note,
+					null, request.Status, context,
+					new
+					{
+						report.ModerationReportId,
+						report.ReporterGroupId,
+						Reason = reason.ToString()
+					},
+					cancellationToken, createdRequest);
+
+				await RecordDepartmentAuditAsync(request, AuditLogTypes.ModerationReportSubmitted,
+					reportedByUserId, context,
+					new { report.ModerationReportId, report.ReporterGroupId, Reason = reason.ToString(), note },
+					cancellationToken);
+
+				cancellationToken.ThrowIfCancellationRequested();
+				if (reopenRequest)
+					_unitOfWork.CommitChanges();
+
+				return report;
 			}
 			catch
 			{
-				// A unique request/reporter index prevents duplicate reports under concurrent submissions.
-				var concurrent = await _moderationReportRepository.GetByRequestAndReporterAsync(
-					request.ModerationRequestId, reportedByUserId);
-				if (concurrent == null)
-					throw;
+				if (reopenRequest)
+					_unitOfWork.DiscardChanges();
 
-				return concurrent;
+				throw;
 			}
-			request.ModifiedOn = report.ReportedOn;
-			await _moderationRequestRepository.UpdateAsync(request, cancellationToken);
-
-			await RecordActionAsync(request, ModerationActionType.ReportSubmitted, reportedByUserId, note,
-				null, request.Status, context,
-				new
-				{
-					report.ModerationReportId,
-					report.ReporterGroupId,
-					Reason = reason.ToString()
-				},
-				cancellationToken, createdRequest);
-
-			await RecordDepartmentAuditAsync(request, AuditLogTypes.ModerationReportSubmitted,
-				reportedByUserId, context,
-				new { report.ModerationReportId, report.ReporterGroupId, Reason = reason.ToString(), note },
-				cancellationToken);
-
-			return report;
 		}
 
 		public async Task<bool> CanModerateAsync(int departmentId, string userId)
@@ -250,6 +301,13 @@ namespace Resgrid.Services
 			return request;
 		}
 
+		public async Task<List<ModerationRequest>> GetReporterRequestsAsync(int departmentId, string reporterUserId,
+			ModerationItemType itemType, IEnumerable<string> itemIds)
+		{
+			return (await _moderationRequestRepository.GetByItemsAndReporterAsync(departmentId, (int)itemType,
+				itemIds, reporterUserId))?.ToList() ?? new List<ModerationRequest>();
+		}
+
 		public async Task<ModerationRequest> CompleteRequestAsync(string moderationRequestId, int departmentId,
 			string completedByUserId, ModerationDisposition disposition, string adminNote,
 			ChatModerationContext context = null, CancellationToken cancellationToken = default(CancellationToken))
@@ -269,32 +327,73 @@ namespace Resgrid.Services
 			if (request.Status != (int)ModerationRequestStatus.Pending)
 				throw new InvalidOperationException(ModerationResources.GetCurrent("OnlyPendingRequests"));
 
-			if (disposition == ModerationDisposition.ContentRemoved && !await RemoveLiveContentAsync(request, completedByUserId, cancellationToken))
-				throw new InvalidOperationException(ModerationResources.GetCurrent("ContentCouldNotBeRemoved"));
+			var useTransaction = disposition == ModerationDisposition.ContentRemoved;
+			if (useTransaction)
+				await _unitOfWork.CreateOrGetConnectionAsync(cancellationToken);
 
-			var previousStatus = request.Status;
-			request.Status = (int)ModerationRequestStatus.Completed;
-			request.Disposition = (int)disposition;
-			request.CompletedByUserId = completedByUserId;
-			request.CompletedOn = DateTime.UtcNow;
-			request.ModifiedOn = request.CompletedOn.Value;
-			request.AdminNote = adminNote;
-			request = await _moderationRequestRepository.UpdateAsync(request, cancellationToken);
+			try
+			{
+				if (useTransaction && !await RemoveLiveContentAsync(request, completedByUserId, cancellationToken))
+					throw new InvalidOperationException(ModerationResources.GetCurrent("ContentCouldNotBeRemoved"));
 
-			var actionType = disposition == ModerationDisposition.ContentRemoved
-				? ModerationActionType.ContentRemoved
-				: ModerationActionType.CompletedNoAction;
-			await RecordActionAsync(request, actionType, completedByUserId, adminNote, previousStatus,
-				request.Status, context, new { Disposition = disposition.ToString() }, cancellationToken);
-			await RecordDepartmentAuditAsync(request, AuditLogTypes.ModerationRequestCompleted,
-				completedByUserId, context, new { Disposition = disposition.ToString(), adminNote }, cancellationToken);
+				var previousStatus = request.Status;
+				request.Status = (int)ModerationRequestStatus.Completed;
+				request.Disposition = (int)disposition;
+				request.CompletedByUserId = completedByUserId;
+				request.CompletedOn = DateTime.UtcNow;
+				request.ModifiedOn = request.CompletedOn.Value;
+				request.AdminNote = adminNote;
+				request = await _moderationRequestRepository.UpdateAsync(request, cancellationToken);
 
-			await NotifyReportersAsync(request, reports, disposition, adminNote, cancellationToken);
+				var actionType = useTransaction
+					? ModerationActionType.ContentRemoved
+					: ModerationActionType.CompletedNoAction;
+				await RecordActionAsync(request, actionType, completedByUserId, adminNote, previousStatus,
+					request.Status, context, new { Disposition = disposition.ToString() }, cancellationToken);
+				await RecordDepartmentAuditAsync(request, AuditLogTypes.ModerationRequestCompleted,
+					completedByUserId, context, new { Disposition = disposition.ToString(), adminNote }, cancellationToken);
 
-			var actions = (await _moderationActionRepository.GetByRequestAsync(request.ModerationRequestId))?.ToList()
-				?? new List<ModerationAction>();
-			await ApplyViewerScopeAsync(request, reports, actions, completedByUserId);
+				var actions = (await _moderationActionRepository.GetByRequestAsync(request.ModerationRequestId))?.ToList()
+					?? new List<ModerationAction>();
+				await ApplyViewerScopeAsync(request, reports, actions, completedByUserId);
+
+				cancellationToken.ThrowIfCancellationRequested();
+				if (useTransaction)
+					_unitOfWork.CommitChanges();
+			}
+			catch
+			{
+				if (useTransaction)
+					_unitOfWork.DiscardChanges();
+
+				throw;
+			}
+
+			if (!await _outboundQueueProvider.EnqueueNotification(new NotificationItem
+			{
+				DepartmentId = request.DepartmentId,
+				Type = (int)EventTypes.ModerationRequestCompleted,
+				Value = request.ModerationRequestId
+			}))
+			{
+				Logging.LogError($"Unable to enqueue reporter notifications for moderation request {request.ModerationRequestId}.");
+			}
+
 			return request;
+		}
+
+		public async Task NotifyReportersAsync(string moderationRequestId,
+			CancellationToken cancellationToken = default(CancellationToken))
+		{
+			cancellationToken.ThrowIfCancellationRequested();
+			var request = await _moderationRequestRepository.GetByIdAsync(moderationRequestId);
+			if (request == null || request.Status != (int)ModerationRequestStatus.Completed)
+				return;
+
+			var reports = (await _moderationReportRepository.GetByRequestAsync(moderationRequestId))?.ToList()
+				?? new List<ModerationReport>();
+			await NotifyReportersAsync(request, reports, (ModerationDisposition)request.Disposition,
+				request.AdminNote, cancellationToken);
 		}
 
 		public async Task<bool> RecordEvidenceAccessAsync(string moderationRequestId, int departmentId,
@@ -520,12 +619,19 @@ namespace Resgrid.Services
 			List<int> visibleGroupIds, string viewerUserId)
 		{
 			var result = requests?.ToList() ?? new List<ModerationRequest>();
+			if (result.Count == 0)
+				return result;
+
+			var requestIds = result.Select(x => x.ModerationRequestId).Distinct().ToList();
+			var reportsByRequest = (await _moderationReportRepository.GetByRequestIdsAsync(requestIds) ??
+				Enumerable.Empty<ModerationReport>()).ToLookup(x => x.ModerationRequestId);
+			var actionsByRequest = (await _moderationActionRepository.GetByRequestIdsAsync(requestIds) ??
+				Enumerable.Empty<ModerationAction>()).ToLookup(x => x.ModerationRequestId);
+
 			foreach (var request in result)
 			{
-				var reports = (await _moderationReportRepository.GetByRequestAsync(request.ModerationRequestId))?.ToList()
-					?? new List<ModerationReport>();
-				var actions = (await _moderationActionRepository.GetByRequestAsync(request.ModerationRequestId))?.ToList()
-					?? new List<ModerationAction>();
+				var reports = reportsByRequest[request.ModerationRequestId].ToList();
+				var actions = actionsByRequest[request.ModerationRequestId].ToList();
 
 				if (visibleGroupIds == null)
 				{
@@ -682,6 +788,8 @@ namespace Resgrid.Services
 					SystemGenerated = true,
 					SentOn = DateTime.UtcNow
 				}, cancellationToken);
+				if (message == null)
+					continue;
 
 				await _messageService.SendMessageAsync(message,
 					ModerationResources.Get("SystemSenderName", culture), request.DepartmentId, false, cancellationToken);

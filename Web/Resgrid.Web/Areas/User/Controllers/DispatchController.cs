@@ -1779,6 +1779,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 			call.Department = await _departmentsService.GetDepartmentByIdAsync(call.DepartmentId);
 			call = await _callsService.PopulateCallData(call, false, false, true, false, false, false, false, false, false);
 			var personnelNames = await _departmentsService.GetAllPersonnelNamesForDepartmentAsync(DepartmentId);
+			var callNoteIds = call.CallNotes
+				.Select(x => x.CallNoteId.ToString(CultureInfo.InvariantCulture))
+				.ToList();
+			var reporterCallNoteRequests = await _moderationService.GetReporterRequestsAsync(DepartmentId, UserId,
+				ModerationItemType.CallNote, callNoteIds);
+			var flaggedCallNoteIds = reporterCallNoteRequests.Select(x => x.ItemId).ToHashSet(StringComparer.Ordinal);
 			List<CallNoteJson> callNotes = new List<CallNoteJson>();
 
 			foreach (var callNote in call.CallNotes)
@@ -1789,8 +1795,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					CallNoteJson note = new CallNoteJson();
 					note.CallNoteId = callNote.CallNoteId;
-					note.IsFlagged = await _moderationService.GetReporterRequestAsync(DepartmentId, UserId,
-						ModerationItemType.CallNote, callNote.CallNoteId.ToString(CultureInfo.InvariantCulture)) != null;
+					note.IsFlagged = flaggedCallNoteIds.Contains(callNote.CallNoteId.ToString(CultureInfo.InvariantCulture));
 					note.Name = name.Name;
 					note.Timestamp = callNote.Timestamp.TimeConverter(call.Department).FormatForDepartment(call.Department);
 					note.Note = callNote.Note;

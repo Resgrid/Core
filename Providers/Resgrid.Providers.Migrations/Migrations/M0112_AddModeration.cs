@@ -1,4 +1,5 @@
 using FluentMigrator;
+using System.Data;
 
 namespace Resgrid.Providers.Migrations.Migrations
 {
@@ -115,20 +116,36 @@ namespace Resgrid.Providers.Migrations.Migrations
 					.OnColumn("PerformedOn").Ascending();
 			}
 
-			Create.ForeignKey("FK_ModerationReports_ModerationRequests")
-				.FromTable("ModerationReports").ForeignColumn("ModerationRequestId")
-				.ToTable("ModerationRequests").PrimaryColumn("ModerationRequestId");
+			if (!Schema.Table("ModerationReports").Constraint("FK_ModerationReports_ModerationRequests").Exists())
+			{
+				Create.ForeignKey("FK_ModerationReports_ModerationRequests")
+					.FromTable("ModerationReports").ForeignColumn("ModerationRequestId")
+					.ToTable("ModerationRequests").PrimaryColumn("ModerationRequestId");
+			}
 
-			Create.ForeignKey("FK_ModerationActions_ModerationRequests")
-				.FromTable("ModerationActions").ForeignColumn("ModerationRequestId")
-				.ToTable("ModerationRequests").PrimaryColumn("ModerationRequestId");
+			if (!Schema.Table("ModerationActions").Constraint("FK_ModerationActions_ModerationRequests").Exists())
+			{
+				Create.ForeignKey("FK_ModerationActions_ModerationRequests")
+					.FromTable("ModerationActions").ForeignColumn("ModerationRequestId")
+					.ToTable("ModerationRequests").PrimaryColumn("ModerationRequestId");
+			}
 
-			ImportLegacyFlags();
+			Execute.WithConnection((connection, transaction) =>
+			{
+				using var command = connection.CreateCommand();
+				command.Transaction = transaction;
+				command.CommandText = "SELECT TOP (1) 1 FROM ModerationRequests;";
+
+				if (command.ExecuteScalar() == null)
+					ImportLegacyFlags(connection, transaction);
+			});
 		}
 
-		private void ImportLegacyFlags()
+		private static void ImportLegacyFlags(IDbConnection connection, IDbTransaction transaction)
 		{
-			Execute.Sql(@"
+			using var command = connection.CreateCommand();
+			command.Transaction = transaction;
+			command.CommandText = @"
 INSERT INTO ModerationRequests
     (ModerationRequestId, DepartmentId, ItemType, ItemId, ChatChannelId, ContentAuthorUserId,
      ContentAuthorUnitId, ContentCreatedOn, OriginalText, OriginalFileName, OriginalContentType,
@@ -174,8 +191,8 @@ INSERT INTO ModerationRequests
      ContentCreatedOn, OriginalText, OriginalMetadataJson, Status, Disposition, CreatedOn, ModifiedOn)
 SELECT CONCAT('callnote-', n.CallNoteId), c.DepartmentId, 2, CONVERT(varchar(32), n.CallNoteId),
        n.CallId, n.UserId, n.Timestamp, n.Note,
-       CONCAT('{""source"":', n.Source, ',""latitude"":', COALESCE(CONVERT(varchar(64), n.Latitude), 'null'),
-              ',""longitude"":', COALESCE(CONVERT(varchar(64), n.Longitude), 'null'), '}'),
+       (SELECT n.Source AS [source], n.Latitude AS [latitude], n.Longitude AS [longitude]
+        FOR JSON PATH, INCLUDE_NULL_VALUES, WITHOUT_ARRAY_WRAPPER),
        0, 0, COALESCE(n.FlaggedOn, n.Timestamp), COALESCE(n.FlaggedOn, n.Timestamp)
 FROM CallNotes n
 INNER JOIN Calls c ON c.CallId = n.CallId
@@ -201,8 +218,8 @@ INSERT INTO ModerationRequests
 SELECT CONCAT('callimage-', a.CallAttachmentId), c.DepartmentId, 3,
        CONVERT(varchar(32), a.CallAttachmentId), a.CallId, a.UserId, a.Timestamp, a.FileName,
        'image/jpeg', a.Data,
-       CONCAT('{""name"":""', COALESCE(REPLACE(a.Name, '""', '\""'), ''),
-              '"",""size"":', COALESCE(CONVERT(varchar(32), a.Size), 'null'), '}'),
+       (SELECT COALESCE(a.Name, '') AS [name], a.Size AS [size]
+        FOR JSON PATH, INCLUDE_NULL_VALUES, WITHOUT_ARRAY_WRAPPER),
        0, 0, COALESCE(a.FlaggedOn, a.Timestamp, GETUTCDATE()),
        COALESCE(a.FlaggedOn, a.Timestamp, GETUTCDATE())
 FROM CallAttachments a
@@ -231,7 +248,8 @@ SELECT r.ModerationRequestId, r.ModerationRequestId, r.DepartmentId, 0,
         WHERE rp.ModerationRequestId = r.ModerationRequestId ORDER BY rp.ReportedOn),
        r.CreatedOn, r.Status, 'LegacyImport', HOST_NAME(), '{""imported"":true}', r.OriginalText,
        r.OriginalContent, r.OriginalMetadataJson
-FROM ModerationRequests r;");
+FROM ModerationRequests r;";
+			command.ExecuteNonQuery();
 		}
 
 		public override void Down()

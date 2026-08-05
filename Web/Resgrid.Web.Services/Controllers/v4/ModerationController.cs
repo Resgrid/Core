@@ -95,13 +95,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			int? itemType = null, string contentAuthorUserId = null, string reportedByUserId = null,
 			DateTime? from = null, DateTime? to = null, int page = 1, int pageSize = 50)
 		{
-			if (!await _moderationService.CanModerateAsync(DepartmentId, UserId))
-				return Unauthorized();
-
 			if (status.HasValue && !Enum.IsDefined(typeof(ModerationRequestStatus), status.Value))
 				return BadRequest();
 			if (itemType.HasValue && !Enum.IsDefined(typeof(ModerationItemType), itemType.Value))
 				return BadRequest();
+
+			if (!await _moderationService.CanModerateAsync(DepartmentId, UserId))
+				return Unauthorized();
 
 			var requests = await _moderationService.SearchRequestsAsync(DepartmentId, UserId,
 				new ModerationSearchCriteria
@@ -120,7 +120,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				Data = requests.Select(x => ConvertRequest(x, true)).ToList(),
 				Page = Math.Max(page, 1),
-				PageSize = requests.Count,
+				PageSize = Math.Max(pageSize, 1),
 				Status = requests.Count > 0 ? ResponseHelper.Success : ResponseHelper.NotFound
 			};
 			ResponseHelper.PopulateV4ResponseData(result);
@@ -185,9 +185,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 		}
 
-		/// <summary>Downloads permanently retained image evidence for an authorized administrator.</summary>
+		/// <summary>Downloads retained moderation evidence or original content for an authorized administrator.</summary>
 		[HttpGet("DownloadEvidence")]
-		public async Task<IActionResult> DownloadEvidence(string requestId)
+		public async Task<IActionResult> DownloadEvidence(string requestId, CancellationToken cancellationToken)
 		{
 			if (!await _moderationService.CanModerateAsync(DepartmentId, UserId))
 				return Unauthorized();
@@ -197,8 +197,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return NotFound();
 
 			var isDepartmentAdmin = await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId);
-			await _moderationService.RecordEvidenceAccessAsync(requestId, DepartmentId, UserId,
-				BuildContext(isDepartmentAdmin ? "DepartmentAdmin" : "GroupAdmin"));
+			try
+			{
+				await _moderationService.RecordEvidenceAccessAsync(requestId, DepartmentId, UserId,
+					BuildContext(isDepartmentAdmin ? "DepartmentAdmin" : "GroupAdmin"), cancellationToken);
+			}
+			catch (UnauthorizedAccessException)
+			{
+				return Unauthorized();
+			}
 
 			return File(request.OriginalContent,
 				string.IsNullOrWhiteSpace(request.OriginalContentType) ? "application/octet-stream" : request.OriginalContentType,

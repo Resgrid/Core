@@ -7,6 +7,8 @@ namespace Resgrid.Model.Repositories
 	public interface IModerationRequestRepository : IRepository<ModerationRequest>
 	{
 		Task<ModerationRequest> GetByItemAsync(int departmentId, int itemType, string itemId);
+		Task<IEnumerable<ModerationRequest>> GetByItemsAndReporterAsync(int departmentId, int itemType,
+			IEnumerable<string> itemIds, string reporterUserId);
 
 		Task<IEnumerable<ModerationRequest>> SearchAsync(int departmentId, ModerationSearchCriteria criteria,
 			IEnumerable<int> visibleGroupIds, string reporterUserId);
@@ -16,10 +18,12 @@ namespace Resgrid.Model.Repositories
 	{
 		Task<ModerationReport> GetByRequestAndReporterAsync(string moderationRequestId, string reportedByUserId);
 		Task<IEnumerable<ModerationReport>> GetByRequestAsync(string moderationRequestId);
+		Task<IEnumerable<ModerationReport>> GetByRequestIdsAsync(IEnumerable<string> moderationRequestIds);
 	}
 
 	public interface IModerationActionRepository : IRepository<ModerationAction>
 	{
 		Task<IEnumerable<ModerationAction>> GetByRequestAsync(string moderationRequestId);
+		Task<IEnumerable<ModerationAction>> GetByRequestIdsAsync(IEnumerable<string> moderationRequestIds);
 	}
 }

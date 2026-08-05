@@ -1,4 +1,5 @@
 using FluentMigrator;
+using System.Data;
 
 namespace Resgrid.Providers.MigrationsPg.Migrations
 {
@@ -115,44 +116,71 @@ namespace Resgrid.Providers.MigrationsPg.Migrations
 					.OnColumn("performedon").Ascending();
 			}
 
-			Create.ForeignKey("fk_moderationreports_moderationrequests")
-				.FromTable("moderationreports").ForeignColumn("moderationrequestid")
-				.ToTable("moderationrequests").PrimaryColumn("moderationrequestid");
+			if (!Schema.Table("moderationreports").Constraint("fk_moderationreports_moderationrequests").Exists())
+			{
+				Create.ForeignKey("fk_moderationreports_moderationrequests")
+					.FromTable("moderationreports").ForeignColumn("moderationrequestid")
+					.ToTable("moderationrequests").PrimaryColumn("moderationrequestid");
+			}
 
-			Create.ForeignKey("fk_moderationactions_moderationrequests")
-				.FromTable("moderationactions").ForeignColumn("moderationrequestid")
-				.ToTable("moderationrequests").PrimaryColumn("moderationrequestid");
+			if (!Schema.Table("moderationactions").Constraint("fk_moderationactions_moderationrequests").Exists())
+			{
+				Create.ForeignKey("fk_moderationactions_moderationrequests")
+					.FromTable("moderationactions").ForeignColumn("moderationrequestid")
+					.ToTable("moderationrequests").PrimaryColumn("moderationrequestid");
+			}
 
-			ImportLegacyFlags();
+			Execute.WithConnection((connection, transaction) =>
+			{
+				using var command = connection.CreateCommand();
+				command.Transaction = transaction;
+				command.CommandText = "SELECT 1 FROM moderationrequests LIMIT 1;";
+
+				if (command.ExecuteScalar() == null)
+					ImportLegacyFlags(connection, transaction);
+			});
 		}
 
-		private void ImportLegacyFlags()
+		private static void ImportLegacyFlags(IDbConnection connection, IDbTransaction transaction)
 		{
-			Execute.Sql(@"
+			using var command = connection.CreateCommand();
+			command.Transaction = transaction;
+			command.CommandText = @"
 INSERT INTO moderationrequests
     (moderationrequestid, departmentid, itemtype, itemid, chatchannelid, contentauthoruserid,
      contentauthorunitid, contentcreatedon, originaltext, originalfilename, originalcontenttype,
      originalcontent, originalmetadatajson, status, disposition, createdon, modifiedon,
      completedbyuserid, completedon, adminnote)
-SELECT MIN(f.chatmessageflagid::text), f.departmentid, 0, f.chatmessageid, MIN(f.chatchannelid::text),
-       MIN(m.senderuserid::text), MIN(m.senderunitid), MIN(m.senton),
-       COALESCE(MIN(m.body), (SELECT e.priorbody FROM chatmessageedits e
-                              WHERE e.chatmessageid = f.chatmessageid ORDER BY e.editedon DESC LIMIT 1)),
-       (SELECT ca.filename FROM chatattachments ca
-        WHERE ca.chatmessageid = f.chatmessageid ORDER BY ca.uploadedon LIMIT 1),
-       (SELECT ca.contenttype FROM chatattachments ca
-        WHERE ca.chatmessageid = f.chatmessageid ORDER BY ca.uploadedon LIMIT 1),
-       (SELECT ca.data FROM chatattachments ca
-        WHERE ca.chatmessageid = f.chatmessageid ORDER BY ca.uploadedon LIMIT 1),
-       MIN(m.metadatajson),
-       CASE WHEN SUM(CASE WHEN f.status = 0 THEN 1 ELSE 0 END) > 0 THEN 0 ELSE 1 END,
-       CASE WHEN SUM(CASE WHEN f.status = 0 THEN 1 ELSE 0 END) > 0 THEN 0
-            WHEN SUM(CASE WHEN f.status = 3 THEN 1 ELSE 0 END) > 0 THEN 2 ELSE 1 END,
-       MIN(f.flaggedon), MAX(COALESCE(f.reviewedon, f.flaggedon)), MAX(f.reviewedbyuserid::text),
-       MAX(f.reviewedon), MAX(f.resolutionnote)
-FROM chatmessageflags f
-LEFT JOIN chatmessages m ON m.chatmessageid = f.chatmessageid
-GROUP BY f.departmentid, f.chatmessageid;
+SELECT flagged.moderationrequestid, flagged.departmentid, 0, flagged.chatmessageid,
+	   flagged.chatchannelid, flagged.contentauthoruserid, flagged.contentauthorunitid,
+	   flagged.contentcreatedon, flagged.originaltext, attachment.filename, attachment.contenttype,
+	   attachment.data, flagged.originalmetadatajson, flagged.status, flagged.disposition,
+	   flagged.createdon, flagged.modifiedon, flagged.completedbyuserid, flagged.completedon,
+	   flagged.adminnote
+FROM (
+	SELECT MIN(f.chatmessageflagid::text) AS moderationrequestid, f.departmentid, f.chatmessageid,
+		   MIN(f.chatchannelid::text) AS chatchannelid, MIN(m.senderuserid::text) AS contentauthoruserid,
+		   MIN(m.senderunitid) AS contentauthorunitid, MIN(m.senton) AS contentcreatedon,
+		   COALESCE(MIN(m.body), (SELECT e.priorbody FROM chatmessageedits e
+								  WHERE e.chatmessageid = f.chatmessageid ORDER BY e.editedon DESC LIMIT 1)) AS originaltext,
+		   MIN(m.metadatajson) AS originalmetadatajson,
+		   CASE WHEN SUM(CASE WHEN f.status = 0 THEN 1 ELSE 0 END) > 0 THEN 0 ELSE 1 END AS status,
+		   CASE WHEN SUM(CASE WHEN f.status = 0 THEN 1 ELSE 0 END) > 0 THEN 0
+				WHEN SUM(CASE WHEN f.status = 3 THEN 1 ELSE 0 END) > 0 THEN 2 ELSE 1 END AS disposition,
+		   MIN(f.flaggedon) AS createdon, MAX(COALESCE(f.reviewedon, f.flaggedon)) AS modifiedon,
+		   MAX(f.reviewedbyuserid::text) AS completedbyuserid, MAX(f.reviewedon) AS completedon,
+		   MAX(f.resolutionnote) AS adminnote
+	FROM chatmessageflags f
+	LEFT JOIN chatmessages m ON m.chatmessageid = f.chatmessageid
+	GROUP BY f.departmentid, f.chatmessageid
+) flagged
+LEFT JOIN LATERAL (
+	SELECT ca.filename, ca.contenttype, ca.data
+	FROM chatattachments ca
+	WHERE ca.chatmessageid = flagged.chatmessageid
+	ORDER BY ca.uploadedon
+	LIMIT 1
+) attachment ON true;
 
 INSERT INTO moderationreports
     (moderationreportid, moderationrequestid, departmentid, reportedbyuserid, reportergroupid,
@@ -228,7 +256,8 @@ SELECT r.moderationrequestid, r.moderationrequestid, r.departmentid, 0,
         WHERE rp.moderationrequestid = r.moderationrequestid ORDER BY rp.reportedon LIMIT 1),
        r.createdon, r.status, 'LegacyImport', inet_server_addr()::text, '{""imported"":true}',
        r.originaltext, r.originalcontent, r.originalmetadatajson
-FROM moderationrequests r;");
+FROM moderationrequests r;";
+			command.ExecuteNonQuery();
 		}
 
 		public override void Down()

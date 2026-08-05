@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import './chat.css';
 import { getCurrentUserId, isDepartmentAdmin, type ChatChannelDto, type ChatMessageDto } from './types';
 import { useChatBootstrap } from './useChatBootstrap';
@@ -35,6 +35,7 @@ export default function ChatPageElement(_props: ChatPageElementProps) {
   const [showNew, setShowNew] = useState(false);
   const [flagTarget, setFlagTarget] = useState<ChatMessageDto | null>(null);
   const [flagStatus, setFlagStatus] = useState<ModerationRequestDto | null | undefined>(undefined);
+  const flagRequestToken = useRef(0);
 
   const currentUserId = getCurrentUserId();
   const canModerate = isDepartmentAdmin();
@@ -57,11 +58,20 @@ export default function ChatPageElement(_props: ChatPageElementProps) {
   }, []);
 
   const openFlag = useCallback((message: ChatMessageDto) => {
+    const requestToken = ++flagRequestToken.current;
     setFlagTarget(message);
     setFlagStatus(undefined);
     getMyModerationRequest(0, message.ChatMessageId)
-      .then(setFlagStatus)
-      .catch(() => setFlagStatus(null));
+      .then((status) => {
+        if (requestToken === flagRequestToken.current) {
+          setFlagStatus(status);
+        }
+      })
+      .catch(() => {
+        if (requestToken === flagRequestToken.current) {
+          setFlagStatus(null);
+        }
+      });
   }, []);
 
   const runSearch = () => {

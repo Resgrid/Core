@@ -1907,8 +1907,8 @@
         <member name="M:Resgrid.Web.Services.Controllers.v4.ModerationController.Complete(System.String,Resgrid.Web.Services.Models.v4.Moderation.CompleteModerationInput,System.Threading.CancellationToken)">
             <summary>Completes a scoped request with no action or by removing the live content.</summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.ModerationController.DownloadEvidence(System.String)">
-            <summary>Downloads permanently retained image evidence for an authorized administrator.</summary>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ModerationController.DownloadEvidence(System.String,System.Threading.CancellationToken)">
+            <summary>Downloads retained moderation evidence or original content for an authorized administrator.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.MutualAidController">
             <summary>

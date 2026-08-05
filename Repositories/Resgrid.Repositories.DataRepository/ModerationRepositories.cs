@@ -39,10 +39,66 @@ namespace Resgrid.Repositories.DataRepository
 				parameters.Add("ItemId", itemId);
 				var notation = _sqlConfiguration.ParameterNotation;
 				var sql = DataConfig.DatabaseType == DatabaseTypes.Postgres
-					? $"SELECT * FROM {_sqlConfiguration.SchemaName}.moderationrequests WHERE departmentid = {notation}DepartmentId AND itemtype = {notation}ItemType AND itemid = {notation}ItemId"
-					: $"SELECT * FROM {_sqlConfiguration.SchemaName}.[ModerationRequests] WHERE [DepartmentId] = {notation}DepartmentId AND [ItemType] = {notation}ItemType AND [ItemId] = {notation}ItemId";
+					? $@"SELECT moderationrequestid, departmentid, itemtype, itemid, callid,
+	chatchannelid, contentauthoruserid, contentauthorunitid, contentcreatedon,
+	originalsubject, originaltext, originalfilename, originalcontenttype,
+	originalmetadatajson, status, disposition, createdon, modifiedon,
+	completedbyuserid, completedon, adminnote
+FROM {_sqlConfiguration.SchemaName}.moderationrequests WHERE departmentid = {notation}DepartmentId AND itemtype = {notation}ItemType AND itemid = {notation}ItemId"
+					: $@"SELECT [ModerationRequestId], [DepartmentId], [ItemType], [ItemId], [CallId],
+	[ChatChannelId], [ContentAuthorUserId], [ContentAuthorUnitId], [ContentCreatedOn],
+	[OriginalSubject], [OriginalText], [OriginalFileName], [OriginalContentType],
+	[OriginalMetadataJson], [Status], [Disposition], [CreatedOn], [ModifiedOn],
+	[CompletedByUserId], [CompletedOn], [AdminNote]
+FROM {_sqlConfiguration.SchemaName}.[ModerationRequests] WHERE [DepartmentId] = {notation}DepartmentId AND [ItemType] = {notation}ItemType AND [ItemId] = {notation}ItemId";
 
 				return (await QueryAsync(sql, parameters)).FirstOrDefault();
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				throw;
+			}
+		}
+
+		public async Task<IEnumerable<ModerationRequest>> GetByItemsAndReporterAsync(int departmentId, int itemType,
+			IEnumerable<string> itemIds, string reporterUserId)
+		{
+			try
+			{
+				var ids = itemIds?.Where(x => !string.IsNullOrWhiteSpace(x)).Distinct().ToList() ?? new List<string>();
+				if (ids.Count == 0)
+					return new List<ModerationRequest>();
+
+				var parameters = new DynamicParametersExtension();
+				parameters.Add("DepartmentId", departmentId);
+				parameters.Add("ItemType", itemType);
+				parameters.Add("ItemIds", ids);
+				parameters.Add("ReporterUserId", reporterUserId);
+				var notation = _sqlConfiguration.ParameterNotation;
+				var sql = DataConfig.DatabaseType == DatabaseTypes.Postgres
+					? $@"SELECT r.moderationrequestid, r.departmentid, r.itemtype, r.itemid, r.callid,
+	r.chatchannelid, r.contentauthoruserid, r.contentauthorunitid, r.contentcreatedon,
+	r.originalsubject, r.originaltext, r.originalfilename, r.originalcontenttype,
+	r.originalmetadatajson, r.status, r.disposition, r.createdon, r.modifiedon,
+	r.completedbyuserid, r.completedon, r.adminnote
+FROM {_sqlConfiguration.SchemaName}.moderationrequests r
+WHERE r.departmentid = {notation}DepartmentId AND r.itemtype = {notation}ItemType
+	AND r.itemid IN {notation}ItemIds
+	AND EXISTS (SELECT 1 FROM {_sqlConfiguration.SchemaName}.moderationreports p
+		WHERE p.moderationrequestid = r.moderationrequestid AND p.reportedbyuserid = {notation}ReporterUserId)"
+					: $@"SELECT r.[ModerationRequestId], r.[DepartmentId], r.[ItemType], r.[ItemId], r.[CallId],
+	r.[ChatChannelId], r.[ContentAuthorUserId], r.[ContentAuthorUnitId], r.[ContentCreatedOn],
+	r.[OriginalSubject], r.[OriginalText], r.[OriginalFileName], r.[OriginalContentType],
+	r.[OriginalMetadataJson], r.[Status], r.[Disposition], r.[CreatedOn], r.[ModifiedOn],
+	r.[CompletedByUserId], r.[CompletedOn], r.[AdminNote]
+FROM {_sqlConfiguration.SchemaName}.[ModerationRequests] r
+WHERE r.[DepartmentId] = {notation}DepartmentId AND r.[ItemType] = {notation}ItemType
+	AND r.[ItemId] IN {notation}ItemIds
+	AND EXISTS (SELECT 1 FROM {_sqlConfiguration.SchemaName}.[ModerationReports] p
+		WHERE p.[ModerationRequestId] = r.[ModerationRequestId] AND p.[ReportedByUserId] = {notation}ReporterUserId)";
+
+				return await QueryAsync(sql, parameters);
 			}
 			catch (Exception ex)
 			{
@@ -219,6 +275,38 @@ OFFSET {notation}Offset ROWS FETCH NEXT {notation}PageSize ROWS ONLY";
 			return QueryAsync(moderationRequestId, null);
 		}
 
+		public async Task<IEnumerable<ModerationReport>> GetByRequestIdsAsync(IEnumerable<string> moderationRequestIds)
+		{
+			try
+			{
+				var ids = moderationRequestIds?.Distinct().ToList() ?? new List<string>();
+				if (ids.Count == 0)
+					return new List<ModerationReport>();
+
+				var notation = _sqlConfiguration.ParameterNotation;
+				var sql = DataConfig.DatabaseType == DatabaseTypes.Postgres
+					? $"SELECT * FROM {_sqlConfiguration.SchemaName}.moderationreports WHERE moderationrequestid IN {notation}Ids ORDER BY moderationrequestid, reportedon"
+					: $"SELECT * FROM {_sqlConfiguration.SchemaName}.[ModerationReports] WHERE [ModerationRequestId] IN {notation}Ids ORDER BY [ModerationRequestId], [ReportedOn]";
+
+				var select = new Func<DbConnection, Task<IEnumerable<ModerationReport>>>(connection =>
+					connection.QueryAsync<ModerationReport>(sql, new { Ids = ids }, _unitOfWork.Transaction));
+
+				if (_unitOfWork?.Connection == null)
+				{
+					using var connection = _connectionProvider.Create();
+					await connection.OpenAsync();
+					return await select(connection);
+				}
+
+				return await select(_unitOfWork.CreateOrGetConnection());
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				throw;
+			}
+		}
+
 		private async Task<IEnumerable<ModerationReport>> QueryAsync(string moderationRequestId, string reportedByUserId)
 		{
 			try
@@ -296,6 +384,46 @@ WHERE [ModerationRequestId] = {notation}ModerationRequestId ORDER BY [PerformedO
 
 				var select = new Func<DbConnection, Task<IEnumerable<ModerationAction>>>(connection =>
 					connection.QueryAsync<ModerationAction>(sql, parameters, _unitOfWork.Transaction));
+
+				if (_unitOfWork?.Connection == null)
+				{
+					using var connection = _connectionProvider.Create();
+					await connection.OpenAsync();
+					return await select(connection);
+				}
+
+				return await select(_unitOfWork.CreateOrGetConnection());
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				throw;
+			}
+		}
+
+		public async Task<IEnumerable<ModerationAction>> GetByRequestIdsAsync(IEnumerable<string> moderationRequestIds)
+		{
+			try
+			{
+				var ids = moderationRequestIds?.Distinct().ToList() ?? new List<string>();
+				if (ids.Count == 0)
+					return new List<ModerationAction>();
+
+				var notation = _sqlConfiguration.ParameterNotation;
+				var sql = DataConfig.DatabaseType == DatabaseTypes.Postgres
+					? $@"SELECT moderationactionid, moderationrequestid, departmentid, actiontype,
+	performedbyuserid, performedon, note, previousstatus, newstatus, actorrole, ipaddress,
+	useragent, traceid, servername, detailsjson, evidencetext, evidencemetadatajson
+FROM {_sqlConfiguration.SchemaName}.moderationactions
+WHERE moderationrequestid IN {notation}Ids ORDER BY moderationrequestid, performedon"
+					: $@"SELECT [ModerationActionId], [ModerationRequestId], [DepartmentId], [ActionType],
+	[PerformedByUserId], [PerformedOn], [Note], [PreviousStatus], [NewStatus], [ActorRole], [IpAddress],
+	[UserAgent], [TraceId], [ServerName], [DetailsJson], [EvidenceText], [EvidenceMetadataJson]
+FROM {_sqlConfiguration.SchemaName}.[ModerationActions]
+WHERE [ModerationRequestId] IN {notation}Ids ORDER BY [ModerationRequestId], [PerformedOn]";
+
+				var select = new Func<DbConnection, Task<IEnumerable<ModerationAction>>>(connection =>
+					connection.QueryAsync<ModerationAction>(sql, new { Ids = ids }, _unitOfWork.Transaction));
 
 				if (_unitOfWork?.Connection == null)
 				{

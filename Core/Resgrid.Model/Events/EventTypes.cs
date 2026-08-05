@@ -76,7 +76,10 @@ namespace Resgrid.Model.Events
 		WeatherAlertReceived = 22,
 
 		[NotMapped]
-		WeatherAlertExpired = 23
+		WeatherAlertExpired = 23,
+
+		[NotMapped]
+		ModerationRequestCompleted = 24
 	}
 
 	public static class EventOptions
@@ -148,7 +151,8 @@ namespace Resgrid.Model.Events
 			EventTypes.ShiftUpdated,
 			EventTypes.ShiftDaysAdded,
 			EventTypes.WeatherAlertReceived,
-			EventTypes.WeatherAlertExpired
+			EventTypes.WeatherAlertExpired,
+			EventTypes.ModerationRequestCompleted
 		};
 	}
 }

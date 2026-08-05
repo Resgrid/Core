@@ -33,6 +33,9 @@ const ACTION_LABEL_KEYS: Record<number, string> = {
   4: 'ActionEvidenceDownloaded',
 };
 
+const PAGE_SIZE = 100;
+const FILTER_DEBOUNCE_MS = 300;
+
 interface ModerationRequestsTableProps {
   reportMode?: boolean;
 }
@@ -54,9 +57,12 @@ export default function ModerationRequestsTable({ reportMode = false }: Moderati
   const [itemType, setItemType] = useState(-1);
   const [contentAuthorUserId, setContentAuthorUserId] = useState('');
   const [reportedByUserId, setReportedByUserId] = useState('');
+  const [debouncedContentAuthorUserId, setDebouncedContentAuthorUserId] = useState('');
+  const [debouncedReportedByUserId, setDebouncedReportedByUserId] = useState('');
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [requests, setRequests] = useState<ModerationRequestDto[]>([]);
+  const [page, setPage] = useState(1);
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [expanded, setExpanded] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
@@ -68,6 +74,18 @@ export default function ModerationRequestsTable({ reportMode = false }: Moderati
     getPersonnelRecipients().then(setPeople).catch(() => setPeople([]));
   }, []);
 
+  useEffect(() => {
+    if (contentAuthorUserId === debouncedContentAuthorUserId && reportedByUserId === debouncedReportedByUserId) return undefined;
+
+    const timer = window.setTimeout(() => {
+      setDebouncedContentAuthorUserId(contentAuthorUserId);
+      setDebouncedReportedByUserId(reportedByUserId);
+      setPage(1);
+    }, FILTER_DEBOUNCE_MS);
+
+    return () => window.clearTimeout(timer);
+  }, [contentAuthorUserId, debouncedContentAuthorUserId, reportedByUserId, debouncedReportedByUserId]);
+
   const personName = useCallback((userId?: string | null) => {
     if (!userId) return moderationText('SystemOrUnknown');
     const person = people.find((item) => item.userId === userId);
@@ -77,13 +95,13 @@ export default function ModerationRequestsTable({ reportMode = false }: Moderati
   const search = useMemo<ModerationSearch>(() => ({
     status: status < 0 ? undefined : status,
     itemType: itemType < 0 ? undefined : itemType,
-    contentAuthorUserId: contentAuthorUserId.trim() || undefined,
-    reportedByUserId: reportedByUserId.trim() || undefined,
+    contentAuthorUserId: debouncedContentAuthorUserId.trim() || undefined,
+    reportedByUserId: debouncedReportedByUserId.trim() || undefined,
     from: from ? new Date(`${from}T00:00:00`).toISOString() : undefined,
     to: to ? new Date(`${to}T23:59:59.999`).toISOString() : undefined,
-    page: 1,
-    pageSize: 100,
-  }), [contentAuthorUserId, from, itemType, reportedByUserId, status, to]);
+    page,
+    pageSize: PAGE_SIZE,
+  }), [debouncedContentAuthorUserId, debouncedReportedByUserId, from, itemType, page, status, to]);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -130,7 +148,7 @@ export default function ModerationRequestsTable({ reportMode = false }: Moderati
       <div className="rgchat-mod__filters">
         <label>
           <span>{moderationText('Status')}</span>
-          <select className="rgchat-input" value={status} onChange={(event) => setStatus(Number(event.target.value))}>
+          <select className="rgchat-input" value={status} onChange={(event) => { setStatus(Number(event.target.value)); setPage(1); }}>
             <option value={-1}>{moderationText('All')}</option>
             <option value={0}>{moderationText('Pending')}</option>
             <option value={1}>{moderationText('Completed')}</option>
@@ -138,7 +156,7 @@ export default function ModerationRequestsTable({ reportMode = false }: Moderati
         </label>
         <label>
           <span>{moderationText('ContentType')}</span>
-          <select className="rgchat-input" value={itemType} onChange={(event) => setItemType(Number(event.target.value))}>
+          <select className="rgchat-input" value={itemType} onChange={(event) => { setItemType(Number(event.target.value)); setPage(1); }}>
             <option value={-1}>{moderationText('All')}</option>
             {Object.entries(ITEM_LABEL_KEYS).map(([value, key]) => <option key={value} value={value}>{moderationText(key)}</option>)}
           </select>
@@ -161,11 +179,11 @@ export default function ModerationRequestsTable({ reportMode = false }: Moderati
             </datalist>
             <label>
               <span>{moderationText('From')}</span>
-              <input type="date" className="rgchat-input" value={from} onChange={(event) => setFrom(event.target.value)} />
+              <input type="date" className="rgchat-input" value={from} onChange={(event) => { setFrom(event.target.value); setPage(1); }} />
             </label>
             <label>
               <span>{moderationText('To')}</span>
-              <input type="date" className="rgchat-input" value={to} onChange={(event) => setTo(event.target.value)} />
+              <input type="date" className="rgchat-input" value={to} onChange={(event) => { setTo(event.target.value); setPage(1); }} />
             </label>
           </>
         )}
@@ -205,7 +223,7 @@ export default function ModerationRequestsTable({ reportMode = false }: Moderati
                   <td>
                     <strong>{moderationText(ITEM_LABEL_KEYS[request.ItemType] ?? 'UnknownContentType')}</strong>
                     <div className="rgchat-convo__sub">{moderationText('IdFormat', request.ItemId)}</div>
-                    {request.CallId && <div className="rgchat-convo__sub">{moderationText('CallFormat', request.CallId)}</div>}
+                    {request.CallId !== null && request.CallId !== undefined && <div className="rgchat-convo__sub">{moderationText('CallFormat', request.CallId)}</div>}
                   </td>
                   <td className="rgchat-mod__evidence">
                     {request.OriginalSubject && <strong>{request.OriginalSubject}</strong>}
@@ -225,7 +243,7 @@ export default function ModerationRequestsTable({ reportMode = false }: Moderati
                     {request.Reports.map((report) => (
                       <div key={report.ModerationReportId} className="rgchat-mod__report">
                         <strong>{personName(report.ReportedByUserId)}</strong>
-                        {report.ReporterGroupId && <span className="rgchat-convo__sub"> · {moderationText('GroupFormat', report.ReporterGroupId)}</span>}
+                        {report.ReporterGroupId !== null && report.ReporterGroupId !== undefined && <span className="rgchat-convo__sub"> · {moderationText('GroupFormat', report.ReporterGroupId)}</span>}
                         <div>{moderationText(REASON_LABEL_KEYS[report.Reason] ?? 'ReasonOther')}{report.Note ? ` — ${report.Note}` : ''}</div>
                         <div className="rgchat-convo__sub">{formatTimestamp(report.ReportedOn)}</div>
                       </div>
@@ -279,6 +297,16 @@ export default function ModerationRequestsTable({ reportMode = false }: Moderati
             })}
           </tbody>
         </table>
+      </div>
+
+      <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
+        <button type="button" className="rgchat-btn rgchat-btn--ghost" disabled={page === 1} onClick={() => setPage((value) => Math.max(1, value - 1))}>
+          {moderationText('Previous')}
+        </button>
+        <span className="rgchat-convo__sub" style={{ alignSelf: 'center' }}>{moderationText('PageFormat', page)}</span>
+        <button type="button" className="rgchat-btn rgchat-btn--ghost" disabled={requests.length < PAGE_SIZE} onClick={() => setPage((value) => value + 1)}>
+          {moderationText('Next')}
+        </button>
       </div>
     </div>
   );

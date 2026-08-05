@@ -184,6 +184,30 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task FlagAsyncReturnsConcurrentReportWhenReportInsertLosesRace()
+		{
+			var request = CreateRequest();
+			var concurrent = CreateReport(request, "reporter", 10);
+			SetupMessageEvidence();
+			_requests.Setup(x => x.GetByItemAsync(7, (int)ModerationItemType.Message, "42")).ReturnsAsync(request);
+			_reports.Setup(x => x.GetByRequestAndReporterAsync(request.ModerationRequestId, "reporter"))
+				.ReturnsAsync((ModerationReport)null);
+			_reports.Setup(x => x.GetByRequestAndReporterAsync(request.ModerationRequestId, "reporter", false))
+				.ReturnsAsync(concurrent);
+			_reports.Setup(x => x.InsertAsync(It.IsAny<ModerationReport>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ThrowsAsync(new InvalidOperationException("Unique constraint violation."));
+
+			var result = await CreateService().FlagAsync(7, "reporter", ModerationItemType.Message, "42",
+				ModerationReason.Spam, null);
+
+			result.Should().BeSameAs(concurrent);
+			_reports.Verify(x => x.GetByRequestAndReporterAsync(request.ModerationRequestId, "reporter"), Times.Once);
+			_reports.Verify(x => x.GetByRequestAndReporterAsync(request.ModerationRequestId, "reporter", false), Times.Once);
+			_unitOfWork.Verify(x => x.CommitChanges(), Times.Never);
+			_unitOfWork.Verify(x => x.DiscardChanges(), Times.Once);
+		}
+
+		[Test]
 		public async Task SubmittingReportRollsBackWhenAuditPersistenceFails()
 		{
 			var request = CreateRequest();
@@ -345,7 +369,7 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
-		public async Task NotifyReportersRecordsGuardBeforeSendingAndSkipsRetry()
+		public async Task NotifyReportersRecordsGuardAfterSuccessfulSendingAndRetriesFailure()
 		{
 			var request = CreateRequest();
 			request.Status = (int)ModerationRequestStatus.Completed;
@@ -353,6 +377,7 @@ namespace Resgrid.Tests.Services
 			var reports = new List<ModerationReport> { CreateReport(request, "reporter", 10) };
 			var storedActions = new List<ModerationAction>();
 			var operations = new List<string>();
+			var sendFailure = new InvalidOperationException("Send failed.");
 
 			_requests.Setup(x => x.GetByIdAsync(request.ModerationRequestId)).ReturnsAsync(request);
 			_reports.Setup(x => x.GetByRequestAsync(request.ModerationRequestId)).ReturnsAsync(reports);
@@ -373,18 +398,24 @@ namespace Resgrid.Tests.Services
 					operations.Add("message");
 					return value;
 				});
-			_messages.Setup(x => x.SendMessageAsync(It.IsAny<Message>(), It.IsAny<string>(), 7, false,
-				It.IsAny<CancellationToken>())).ReturnsAsync(true);
+			_messages.SetupSequence(x => x.SendMessageAsync(It.IsAny<Message>(), It.IsAny<string>(), 7, false,
+				It.IsAny<CancellationToken>()))
+				.ThrowsAsync(sendFailure)
+				.ReturnsAsync(true);
 
 			var service = CreateService();
+			Func<Task> firstAttempt = () => service.NotifyReportersAsync(request.ModerationRequestId);
+			await firstAttempt.Should().ThrowAsync<InvalidOperationException>();
+			storedActions.Should().BeEmpty();
+
 			await service.NotifyReportersAsync(request.ModerationRequestId);
 			await service.NotifyReportersAsync(request.ModerationRequestId);
 
-			operations.Should().Equal("action", "message");
+			operations.Should().Equal("message", "message", "action");
 			storedActions.Should().ContainSingle(x => x.ActionType == (int)ModerationActionType.ReportersNotified);
-			_reports.Verify(x => x.GetByRequestAsync(request.ModerationRequestId), Times.Once);
+			_reports.Verify(x => x.GetByRequestAsync(request.ModerationRequestId), Times.Exactly(2));
 			_messages.Verify(x => x.SendMessageAsync(It.IsAny<Message>(), It.IsAny<string>(), 7, false,
-				It.IsAny<CancellationToken>()), Times.Once);
+				It.IsAny<CancellationToken>()), Times.Exactly(2));
 		}
 
 		[Test]

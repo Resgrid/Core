@@ -17,6 +17,8 @@ namespace Resgrid.Model.Repositories
 	public interface IModerationReportRepository : IRepository<ModerationReport>
 	{
 		Task<ModerationReport> GetByRequestAndReporterAsync(string moderationRequestId, string reportedByUserId);
+		Task<ModerationReport> GetByRequestAndReporterAsync(string moderationRequestId, string reportedByUserId,
+			bool useUnitOfWork);
 		Task<IEnumerable<ModerationReport>> GetByRequestAsync(string moderationRequestId);
 		Task<IEnumerable<ModerationReport>> GetByRequestIdsAsync(IEnumerable<string> moderationRequestIds);
 	}

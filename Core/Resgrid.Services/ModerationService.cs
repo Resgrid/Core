@@ -201,7 +201,13 @@ namespace Resgrid.Services
 				catch (Exception ex)
 				{
 					Logging.LogException(ex);
-					throw;
+					var concurrent = await _moderationReportRepository.GetByRequestAndReporterAsync(
+						request.ModerationRequestId, reportedByUserId, useUnitOfWork: false);
+					if (concurrent == null)
+						throw;
+
+					_unitOfWork.DiscardChanges();
+					return concurrent;
 				}
 				request.ModifiedOn = report.ReportedOn;
 				await _moderationRequestRepository.UpdateAsync(request, cancellationToken);
@@ -381,10 +387,10 @@ namespace Resgrid.Services
 
 			var reports = (await _moderationReportRepository.GetByRequestAsync(moderationRequestId))?.ToList()
 				?? new List<ModerationReport>();
-			await RecordActionAsync(request, ModerationActionType.ReportersNotified, null, null,
-				request.Status, request.Status, null, null, cancellationToken);
 			await NotifyReportersAsync(request, reports, (ModerationDisposition)request.Disposition,
 				request.AdminNote, cancellationToken);
+			await RecordActionAsync(request, ModerationActionType.ReportersNotified, null, null,
+				request.Status, request.Status, null, null, cancellationToken);
 		}
 
 		public async Task<bool> RecordEvidenceAccessAsync(string moderationRequestId, int departmentId,

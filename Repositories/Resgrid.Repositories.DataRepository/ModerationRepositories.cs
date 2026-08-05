@@ -270,6 +270,13 @@ OFFSET {notation}Offset ROWS FETCH NEXT {notation}PageSize ROWS ONLY";
 			return rows.FirstOrDefault();
 		}
 
+		public async Task<ModerationReport> GetByRequestAndReporterAsync(string moderationRequestId,
+			string reportedByUserId, bool useUnitOfWork)
+		{
+			var rows = await QueryAsync(moderationRequestId, reportedByUserId, useUnitOfWork);
+			return rows.FirstOrDefault();
+		}
+
 		public Task<IEnumerable<ModerationReport>> GetByRequestAsync(string moderationRequestId)
 		{
 			return QueryAsync(moderationRequestId, null);
@@ -307,7 +314,8 @@ OFFSET {notation}Offset ROWS FETCH NEXT {notation}PageSize ROWS ONLY";
 			}
 		}
 
-		private async Task<IEnumerable<ModerationReport>> QueryAsync(string moderationRequestId, string reportedByUserId)
+		private async Task<IEnumerable<ModerationReport>> QueryAsync(string moderationRequestId, string reportedByUserId,
+			bool useUnitOfWork = true)
 		{
 			try
 			{
@@ -328,10 +336,11 @@ OFFSET {notation}Offset ROWS FETCH NEXT {notation}PageSize ROWS ONLY";
 					? $"SELECT * FROM {_sqlConfiguration.SchemaName}.moderationreports WHERE moderationrequestid = {notation}ModerationRequestId{reporterClause} ORDER BY reportedon"
 					: $"SELECT * FROM {_sqlConfiguration.SchemaName}.[ModerationReports] WHERE [ModerationRequestId] = {notation}ModerationRequestId{reporterClause} ORDER BY [ReportedOn]";
 
+				var transaction = useUnitOfWork ? _unitOfWork?.Transaction : null;
 				var select = new Func<DbConnection, Task<IEnumerable<ModerationReport>>>(connection =>
-					connection.QueryAsync<ModerationReport>(sql, parameters, _unitOfWork.Transaction));
+					connection.QueryAsync<ModerationReport>(sql, parameters, transaction));
 
-				if (_unitOfWork?.Connection == null)
+				if (!useUnitOfWork || _unitOfWork?.Connection == null)
 				{
 					using var connection = _connectionProvider.Create();
 					await connection.OpenAsync();

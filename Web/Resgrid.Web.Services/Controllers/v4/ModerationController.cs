@@ -120,7 +120,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				Data = requests.Select(x => ConvertRequest(x, true)).ToList(),
 				Page = Math.Max(page, 1),
-				PageSize = Math.Max(pageSize, 1),
+				PageSize = Math.Min(Math.Max(pageSize, 1), 200),
 				Status = requests.Count > 0 ? ResponseHelper.Success : ResponseHelper.NotFound
 			};
 			ResponseHelper.PopulateV4ResponseData(result);

@@ -42,13 +42,13 @@ namespace Resgrid.Repositories.DataRepository
 					? $@"SELECT moderationrequestid, departmentid, itemtype, itemid, callid,
 	chatchannelid, contentauthoruserid, contentauthorunitid, contentcreatedon,
 	originalsubject, originaltext, originalfilename, originalcontenttype,
-	originalmetadatajson, status, disposition, createdon, modifiedon,
+	originalcontent, originalmetadatajson, status, disposition, createdon, modifiedon,
 	completedbyuserid, completedon, adminnote
 FROM {_sqlConfiguration.SchemaName}.moderationrequests WHERE departmentid = {notation}DepartmentId AND itemtype = {notation}ItemType AND itemid = {notation}ItemId"
 					: $@"SELECT [ModerationRequestId], [DepartmentId], [ItemType], [ItemId], [CallId],
 	[ChatChannelId], [ContentAuthorUserId], [ContentAuthorUnitId], [ContentCreatedOn],
 	[OriginalSubject], [OriginalText], [OriginalFileName], [OriginalContentType],
-	[OriginalMetadataJson], [Status], [Disposition], [CreatedOn], [ModifiedOn],
+	[OriginalContent], [OriginalMetadataJson], [Status], [Disposition], [CreatedOn], [ModifiedOn],
 	[CompletedByUserId], [CompletedOn], [AdminNote]
 FROM {_sqlConfiguration.SchemaName}.[ModerationRequests] WHERE [DepartmentId] = {notation}DepartmentId AND [ItemType] = {notation}ItemType AND [ItemId] = {notation}ItemId";
 
@@ -289,7 +289,7 @@ OFFSET {notation}Offset ROWS FETCH NEXT {notation}PageSize ROWS ONLY";
 					: $"SELECT * FROM {_sqlConfiguration.SchemaName}.[ModerationReports] WHERE [ModerationRequestId] IN {notation}Ids ORDER BY [ModerationRequestId], [ReportedOn]";
 
 				var select = new Func<DbConnection, Task<IEnumerable<ModerationReport>>>(connection =>
-					connection.QueryAsync<ModerationReport>(sql, new { Ids = ids }, _unitOfWork.Transaction));
+					connection.QueryAsync<ModerationReport>(sql, new { Ids = ids }, _unitOfWork?.Transaction));
 
 				if (_unitOfWork?.Connection == null)
 				{

@@ -42,7 +42,8 @@ namespace Resgrid.Model
 		RequestReopened = 1,
 		CompletedNoAction = 2,
 		ContentRemoved = 3,
-		EvidenceDownloaded = 4
+		EvidenceDownloaded = 4,
+		ReportersNotified = 5
 	}
 
 	/// <summary>

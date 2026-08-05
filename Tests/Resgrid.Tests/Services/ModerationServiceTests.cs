@@ -137,6 +137,9 @@ namespace Resgrid.Tests.Services
 			storedActions.Should().HaveCount(2);
 			storedActions.Count(x => x.EvidenceText == "Original body").Should().Be(1);
 			_requests.Verify(x => x.InsertAsync(It.IsAny<ModerationRequest>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Once);
+			_unitOfWork.Verify(x => x.CreateOrGetConnectionAsync(It.IsAny<CancellationToken>()), Times.Exactly(2));
+			_unitOfWork.Verify(x => x.CommitChanges(), Times.Exactly(2));
+			_unitOfWork.Verify(x => x.DiscardChanges(), Times.Never);
 		}
 
 		[Test]
@@ -175,6 +178,32 @@ namespace Resgrid.Tests.Services
 
 			await action.Should().ThrowAsync<OperationCanceledException>();
 			_reports.Verify(x => x.GetByRequestAndReporterAsync(request.ModerationRequestId, "reporter"), Times.Once);
+			_unitOfWork.Verify(x => x.CreateOrGetConnectionAsync(cancellationToken), Times.Once);
+			_unitOfWork.Verify(x => x.CommitChanges(), Times.Never);
+			_unitOfWork.Verify(x => x.DiscardChanges(), Times.Once);
+		}
+
+		[Test]
+		public async Task SubmittingReportRollsBackWhenAuditPersistenceFails()
+		{
+			var request = CreateRequest();
+			SetupMessageEvidence();
+			_requests.Setup(x => x.GetByItemAsync(7, (int)ModerationItemType.Message, "42")).ReturnsAsync(request);
+			_requests.Setup(x => x.UpdateAsync(It.IsAny<ModerationRequest>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((ModerationRequest value, CancellationToken _, bool _) => value);
+			_reports.Setup(x => x.InsertAsync(It.IsAny<ModerationReport>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((ModerationReport value, CancellationToken _, bool _) => value);
+			_audit.Setup(x => x.SaveAuditLogAsync(It.Is<AuditLog>(audit =>
+				audit.LogType == (int)AuditLogTypes.ModerationReportSubmitted), It.IsAny<CancellationToken>()))
+				.ThrowsAsync(new InvalidOperationException("Audit persistence failed."));
+
+			Func<Task> action = () => CreateService().FlagAsync(7, "reporter", ModerationItemType.Message, "42",
+				ModerationReason.Spam, null);
+
+			await action.Should().ThrowAsync<InvalidOperationException>();
+			_unitOfWork.Verify(x => x.CreateOrGetConnectionAsync(It.IsAny<CancellationToken>()), Times.Once);
+			_unitOfWork.Verify(x => x.CommitChanges(), Times.Never);
+			_unitOfWork.Verify(x => x.DiscardChanges(), Times.Once);
 		}
 
 		[Test]
@@ -316,6 +345,49 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task NotifyReportersRecordsGuardBeforeSendingAndSkipsRetry()
+		{
+			var request = CreateRequest();
+			request.Status = (int)ModerationRequestStatus.Completed;
+			request.Disposition = (int)ModerationDisposition.NoAction;
+			var reports = new List<ModerationReport> { CreateReport(request, "reporter", 10) };
+			var storedActions = new List<ModerationAction>();
+			var operations = new List<string>();
+
+			_requests.Setup(x => x.GetByIdAsync(request.ModerationRequestId)).ReturnsAsync(request);
+			_reports.Setup(x => x.GetByRequestAsync(request.ModerationRequestId)).ReturnsAsync(reports);
+			_actions.Setup(x => x.GetByRequestAsync(request.ModerationRequestId))
+				.ReturnsAsync(() => storedActions.ToList());
+			_actions.Setup(x => x.InsertAsync(It.IsAny<ModerationAction>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((ModerationAction value, CancellationToken _, bool _) =>
+				{
+					storedActions.Add(value);
+					operations.Add("action");
+					return value;
+				});
+			_userProfiles.Setup(x => x.GetProfileByUserIdAsync("reporter", It.IsAny<bool>()))
+				.ReturnsAsync(new UserProfile { UserId = "reporter", Language = "en" });
+			_messages.Setup(x => x.SaveMessageAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>()))
+				.ReturnsAsync((Message value, CancellationToken _) =>
+				{
+					operations.Add("message");
+					return value;
+				});
+			_messages.Setup(x => x.SendMessageAsync(It.IsAny<Message>(), It.IsAny<string>(), 7, false,
+				It.IsAny<CancellationToken>())).ReturnsAsync(true);
+
+			var service = CreateService();
+			await service.NotifyReportersAsync(request.ModerationRequestId);
+			await service.NotifyReportersAsync(request.ModerationRequestId);
+
+			operations.Should().Equal("action", "message");
+			storedActions.Should().ContainSingle(x => x.ActionType == (int)ModerationActionType.ReportersNotified);
+			_reports.Verify(x => x.GetByRequestAsync(request.ModerationRequestId), Times.Once);
+			_messages.Verify(x => x.SendMessageAsync(It.IsAny<Message>(), It.IsAny<string>(), 7, false,
+				It.IsAny<CancellationToken>()), Times.Once);
+		}
+
+		[Test]
 		public async Task NotifyReportersHonorsCancellationBeforeLoadingRecipients()
 		{
 			var cancellationToken = new CancellationToken(true);
@@ -352,6 +424,32 @@ namespace Resgrid.Tests.Services
 			_unitOfWork.Verify(x => x.CreateOrGetConnectionAsync(It.IsAny<CancellationToken>()), Times.Once);
 			_unitOfWork.Verify(x => x.CommitChanges(), Times.Never);
 			_unitOfWork.Verify(x => x.DiscardChanges(), Times.Once);
+		}
+
+		[Test]
+		public async Task CompletingWithoutRemovingContentCommitsStatusActionAndAuditTogether()
+		{
+			var request = CreateRequest();
+			_requests.Setup(x => x.GetByIdAsync(request.ModerationRequestId)).ReturnsAsync(request);
+			_requests.Setup(x => x.UpdateAsync(It.IsAny<ModerationRequest>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((ModerationRequest value, CancellationToken _, bool _) => value);
+			_reports.Setup(x => x.GetByRequestAsync(request.ModerationRequestId))
+				.ReturnsAsync(new List<ModerationReport>());
+			_authorization.Setup(x => x.CanUserModifyDepartmentAsync("department-admin", 7)).ReturnsAsync(true);
+
+			var completed = await CreateService().CompleteRequestAsync(request.ModerationRequestId, 7,
+				"department-admin", ModerationDisposition.NoAction, null);
+
+			completed.Status.Should().Be((int)ModerationRequestStatus.Completed);
+			_actions.Verify(x => x.InsertAsync(It.Is<ModerationAction>(action =>
+				action.ActionType == (int)ModerationActionType.CompletedNoAction),
+				It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Once);
+			_audit.Verify(x => x.SaveAuditLogAsync(It.Is<AuditLog>(audit =>
+				audit.LogType == (int)AuditLogTypes.ModerationRequestCompleted),
+				It.IsAny<CancellationToken>()), Times.Once);
+			_unitOfWork.Verify(x => x.CreateOrGetConnectionAsync(It.IsAny<CancellationToken>()), Times.Once);
+			_unitOfWork.Verify(x => x.CommitChanges(), Times.Once);
+			_unitOfWork.Verify(x => x.DiscardChanges(), Times.Never);
 		}
 
 		[Test]

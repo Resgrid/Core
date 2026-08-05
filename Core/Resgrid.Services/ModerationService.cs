@@ -145,8 +145,7 @@ namespace Resgrid.Services
 				return existingReport;
 
 			var reopenRequest = request.Status == (int)ModerationRequestStatus.Completed;
-			if (reopenRequest)
-				await _unitOfWork.CreateOrGetConnectionAsync(cancellationToken);
+			await _unitOfWork.CreateOrGetConnectionAsync(cancellationToken);
 
 			try
 			{
@@ -202,16 +201,7 @@ namespace Resgrid.Services
 				catch (Exception ex)
 				{
 					Logging.LogException(ex);
-					if (reopenRequest)
-						throw;
-
-					// A unique request/reporter index prevents duplicate reports under concurrent submissions.
-					var concurrent = await _moderationReportRepository.GetByRequestAndReporterAsync(
-						request.ModerationRequestId, reportedByUserId);
-					if (concurrent == null)
-						throw;
-
-					return concurrent;
+					throw;
 				}
 				request.ModifiedOn = report.ReportedOn;
 				await _moderationRequestRepository.UpdateAsync(request, cancellationToken);
@@ -232,15 +222,13 @@ namespace Resgrid.Services
 					cancellationToken);
 
 				cancellationToken.ThrowIfCancellationRequested();
-				if (reopenRequest)
-					_unitOfWork.CommitChanges();
+				_unitOfWork.CommitChanges();
 
 				return report;
 			}
 			catch
 			{
-				if (reopenRequest)
-					_unitOfWork.DiscardChanges();
+				_unitOfWork.DiscardChanges();
 
 				throw;
 			}
@@ -327,13 +315,12 @@ namespace Resgrid.Services
 			if (request.Status != (int)ModerationRequestStatus.Pending)
 				throw new InvalidOperationException(ModerationResources.GetCurrent("OnlyPendingRequests"));
 
-			var useTransaction = disposition == ModerationDisposition.ContentRemoved;
-			if (useTransaction)
-				await _unitOfWork.CreateOrGetConnectionAsync(cancellationToken);
+			var removeContent = disposition == ModerationDisposition.ContentRemoved;
+			await _unitOfWork.CreateOrGetConnectionAsync(cancellationToken);
 
 			try
 			{
-				if (useTransaction && !await RemoveLiveContentAsync(request, completedByUserId, cancellationToken))
+				if (removeContent && !await RemoveLiveContentAsync(request, completedByUserId, cancellationToken))
 					throw new InvalidOperationException(ModerationResources.GetCurrent("ContentCouldNotBeRemoved"));
 
 				var previousStatus = request.Status;
@@ -345,7 +332,7 @@ namespace Resgrid.Services
 				request.AdminNote = adminNote;
 				request = await _moderationRequestRepository.UpdateAsync(request, cancellationToken);
 
-				var actionType = useTransaction
+				var actionType = removeContent
 					? ModerationActionType.ContentRemoved
 					: ModerationActionType.CompletedNoAction;
 				await RecordActionAsync(request, actionType, completedByUserId, adminNote, previousStatus,
@@ -358,13 +345,11 @@ namespace Resgrid.Services
 				await ApplyViewerScopeAsync(request, reports, actions, completedByUserId);
 
 				cancellationToken.ThrowIfCancellationRequested();
-				if (useTransaction)
-					_unitOfWork.CommitChanges();
+				_unitOfWork.CommitChanges();
 			}
 			catch
 			{
-				if (useTransaction)
-					_unitOfWork.DiscardChanges();
+				_unitOfWork.DiscardChanges();
 
 				throw;
 			}
@@ -390,8 +375,14 @@ namespace Resgrid.Services
 			if (request == null || request.Status != (int)ModerationRequestStatus.Completed)
 				return;
 
+			var actions = await _moderationActionRepository.GetByRequestAsync(moderationRequestId);
+			if (actions?.Any(x => x.ActionType == (int)ModerationActionType.ReportersNotified) == true)
+				return;
+
 			var reports = (await _moderationReportRepository.GetByRequestAsync(moderationRequestId))?.ToList()
 				?? new List<ModerationReport>();
+			await RecordActionAsync(request, ModerationActionType.ReportersNotified, null, null,
+				request.Status, request.Status, null, null, cancellationToken);
 			await NotifyReportersAsync(request, reports, (ModerationDisposition)request.Disposition,
 				request.AdminNote, cancellationToken);
 		}

@@ -303,13 +303,14 @@ namespace Resgrid.Services
 			await SaveEditHistoryAsync(message, asModerator && !isSender ? ChatMessageEditType.ModeratorDelete : ChatMessageEditType.SenderDelete, byUserId, cancellationToken);
 
 			var deletedOn = DateTime.UtcNow;
-			if (!await _chatMessageRepository.TombstoneAsync(chatMessageId, deletedOn, byUserId, cancellationToken))
+			if (!await _chatMessageRepository.TombstoneAsync(chatMessageId, deletedOn, byUserId, asModerator, cancellationToken))
 				return false;
 
 			message.Body = null;
 			message.MetadataJson = null;
 			message.DeletedOn = deletedOn;
 			message.DeletedByUserId = byUserId;
+			message.IsModerated = asModerator;
 
 			var channel = await _chatChannelRepository.GetByIdAsync(message.ChatChannelId);
 			PublishEvent(channel, ChatEventKinds.MessageDeleted, new
@@ -318,7 +319,8 @@ namespace Resgrid.Services
 				message.ChatChannelId,
 				message.MessageSeq,
 				message.DeletedOn,
-				DeletedByModerator = asModerator && !isSender
+				DeletedByModerator = asModerator,
+				message.IsModerated
 			});
 
 			return true;
@@ -707,7 +709,8 @@ namespace Resgrid.Services
 				message.MetadataJson,
 				message.ClientMessageId,
 				message.SentOn,
-				message.EditedOn
+				message.EditedOn,
+				message.IsModerated
 			};
 		}
 

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="RequiredModerationContext" xml:space="preserve"><value>Wymagane są dział, osoba zgłaszająca i element.</value></data>
+  <data name="RequestReopenedAudit" xml:space="preserve"><value>Wniosek został ponownie otwarty po nowym zgłoszeniu.</value></data>
+  <data name="RequestOutsideScope" xml:space="preserve"><value>Ten wniosek znajduje się poza zakresem Twojej moderacji.</value></data>
+  <data name="OnlyPendingRequests" xml:space="preserve"><value>Można zakończyć tylko oczekujące wnioski o moderację.</value></data>
+  <data name="ContentCouldNotBeRemoved" xml:space="preserve"><value>Nie udało się usunąć zgłoszonej treści.</value></data>
+  <data name="EvidenceOutsideScope" xml:space="preserve"><value>Ten materiał dowodowy znajduje się poza zakresem Twojej moderacji.</value></data>
+  <data name="EvidenceDownloadedAudit" xml:space="preserve"><value>Pobrano oryginalny materiał dowodowy.</value></data>
+  <data name="ChatMessageUnavailable" xml:space="preserve"><value>Wiadomość czatu jest niedostępna lub nie można jej zgłosić.</value></data>
+  <data name="MessageUnavailable" xml:space="preserve"><value>Wiadomość jest niedostępna lub nie można jej zgłosić.</value></data>
+  <data name="InvalidCallNoteId" xml:space="preserve"><value>Identyfikator notatki ze zgłoszenia jest nieprawidłowy.</value></data>
+  <data name="CallNoteUnavailable" xml:space="preserve"><value>Notatka ze zgłoszenia jest niedostępna lub nie można jej zgłosić.</value></data>
+  <data name="InvalidCallImageId" xml:space="preserve"><value>Identyfikator obrazu ze zgłoszenia jest nieprawidłowy.</value></data>
+  <data name="CallImageUnavailable" xml:space="preserve"><value>Obraz ze zgłoszenia jest niedostępny lub nie można go zgłosić.</value></data>
+  <data name="ModeratedMessageSubject" xml:space="preserve"><value>Treść usunięta przez moderację</value></data>
+  <data name="ModeratedMessageBody" xml:space="preserve"><value>Ta wiadomość została usunięta przez moderację.</value></data>
+  <data name="ModeratedCallNote" xml:space="preserve"><value>Ta notatka ze zgłoszenia została usunięta przez moderację.</value></data>
+  <data name="MessageRemovedByModeration" xml:space="preserve"><value>Ta wiadomość została usunięta przez moderację.</value></data>
+  <data name="CompletionContentRemoved" xml:space="preserve"><value>Zgłoszona treść została usunięta.</value></data>
+  <data name="CompletionNoContentRemoved" xml:space="preserve"><value>Wniosek został rozpatrzony i nie usunięto żadnej treści.</value></data>
+  <data name="CompletionAdminNoteHtml" xml:space="preserve"><value>&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Notatka administratora:&lt;/strong&gt; {0}</value></data>
+  <data name="CompletionSubject" xml:space="preserve"><value>Wniosek o moderację zakończony</value></data>
+  <data name="CompletionBody" xml:space="preserve"><value>Twoje zgłoszenie do moderacji dotyczące elementu {0} {1} zostało zakończone. {2}{3}</value></data>
+  <data name="SystemSenderName" xml:space="preserve"><value>System</value></data>
+  <data name="ItemTypeChatMessage" xml:space="preserve"><value>wiadomość czatu</value></data>
+  <data name="ItemTypeMessage" xml:space="preserve"><value>wiadomość</value></data>
+  <data name="ItemTypeCallNote" xml:space="preserve"><value>notatka ze zgłoszenia</value></data>
+  <data name="ItemTypeCallImage" xml:space="preserve"><value>obraz ze zgłoszenia</value></data>
+  <data name="TabRequests" xml:space="preserve"><value>Wnioski</value></data>
+  <data name="TabReports" xml:space="preserve"><value>Raporty</value></data>
+  <data name="TabChatControls" xml:space="preserve"><value>Kontrola czatu</value></data>
+  <data name="TabChatSettings" xml:space="preserve"><value>Ustawienia czatu</value></data>
+  <data name="TabChatExports" xml:space="preserve"><value>Eksporty czatu</value></data>
+  <data name="ReportsDescription" xml:space="preserve"><value>Wyszukuj nowe i zakończone wnioski o moderację według użytkownika, który dodał treść, lub użytkownika, który ją zgłosił.</value></data>
+  <data name="Status" xml:space="preserve"><value>Stan</value></data>
+  <data name="All" xml:space="preserve"><value>Wszystkie</value></data>
+  <data name="Pending" xml:space="preserve"><value>Oczekujący</value></data>
+  <data name="Completed" xml:space="preserve"><value>Zakończony</value></data>
+  <data name="ContentType" xml:space="preserve"><value>Typ treści</value></data>
+  <data name="AddedByUserId" xml:space="preserve"><value>Dodał użytkownik o identyfikatorze</value></data>
+  <data name="ReportedByUserId" xml:space="preserve"><value>Zgłosił użytkownik o identyfikatorze</value></data>
+  <data name="From" xml:space="preserve"><value>Od</value></data>
+  <data name="To" xml:space="preserve"><value>Do</value></data>
+  <data name="Refresh" xml:space="preserve"><value>Odśwież</value></data>
+  <data name="LoadingModerationRequests" xml:space="preserve"><value>Ładowanie wniosków o moderację…</value></data>
+  <data name="NoMatchingRequests" xml:space="preserve"><value>Żaden wniosek o moderację nie pasuje do tych filtrów.</value></data>
+  <data name="Item" xml:space="preserve"><value>Element</value></data>
+  <data name="OriginalEvidence" xml:space="preserve"><value>Oryginalny materiał dowodowy</value></data>
+  <data name="AddedBy" xml:space="preserve"><value>Dodane przez</value></data>
+  <data name="Reports" xml:space="preserve"><value>Zgłoszenia</value></data>
+  <data name="Action" xml:space="preserve"><value>Działanie</value></data>
+  <data name="ContentRemoved" xml:space="preserve"><value>Treść usunięta</value></data>
+  <data name="NoAction" xml:space="preserve"><value>Bez działania</value></data>
+  <data name="UnknownContentType" xml:space="preserve"><value>Nieznany typ treści</value></data>
+  <data name="IdFormat" xml:space="preserve"><value>ID {0}</value></data>
+  <data name="CallFormat" xml:space="preserve"><value>Zgłoszenie {0}</value></data>
+  <data name="DownloadRetainedEvidence" xml:space="preserve"><value>Pobierz zachowany materiał dowodowy</value></data>
+  <data name="SystemOrUnknown" xml:space="preserve"><value>System lub nieznany</value></data>
+  <data name="GroupFormat" xml:space="preserve"><value>grupa {0}</value></data>
+  <data name="CompletionNotePlaceholder" xml:space="preserve"><value>Notatka końcowa wysyłana zgłaszającym użytkownikom (opcjonalnie)</value></data>
+  <data name="RemoveContent" xml:space="preserve"><value>Usuń treść</value></data>
+  <data name="CompleteNoAction" xml:space="preserve"><value>Zakończ bez działania</value></data>
+  <data name="CompletedBy" xml:space="preserve"><value>Zakończone przez</value></data>
+  <data name="NoCompletionNote" xml:space="preserve"><value>Brak notatki końcowej.</value></data>
+  <data name="HideAuditTrail" xml:space="preserve"><value>Ukryj dziennik audytu</value></data>
+  <data name="AuditTrailCount" xml:space="preserve"><value>Dziennik audytu ({0})</value></data>
+  <data name="By" xml:space="preserve"><value>przez</value></data>
+  <data name="NoNote" xml:space="preserve"><value>Brak notatki.</value></data>
+  <data name="ActorReporter" xml:space="preserve"><value>Osoba zgłaszająca</value></data>
+  <data name="ActorDepartmentAdmin" xml:space="preserve"><value>Administrator działu</value></data>
+  <data name="ActorGroupAdmin" xml:space="preserve"><value>Administrator grupy</value></data>
+  <data name="ActorLegacyImport" xml:space="preserve"><value>Import starszych danych</value></data>
+  <data name="UnknownRole" xml:space="preserve"><value>Nieznana rola</value></data>
+  <data name="NoIp" xml:space="preserve"><value>Brak adresu IP</value></data>
+  <data name="TraceFormat" xml:space="preserve"><value>ślad {0}</value></data>
+  <data name="NotAvailable" xml:space="preserve"><value>niedostępne</value></data>
+  <data name="NoValue" xml:space="preserve"><value>—</value></data>
+  <data name="UnableLoadRequests" xml:space="preserve"><value>Nie można załadować wniosków o moderację.</value></data>
+  <data name="UnableCompleteRequest" xml:space="preserve"><value>Nie można zakończyć wniosku o moderację.</value></data>
+  <data name="ReasonOther" xml:space="preserve"><value>Inne</value></data>
+  <data name="ReasonInappropriate" xml:space="preserve"><value>Nieodpowiednia treść</value></data>
+  <data name="ReasonHarassment" xml:space="preserve"><value>Nękanie lub przemoc</value></data>
+  <data name="ReasonSpam" xml:space="preserve"><value>Niechciana treść</value></data>
+  <data name="ReasonSensitiveInformation" xml:space="preserve"><value>Informacje poufne</value></data>
+  <data name="ReasonPolicyViolation" xml:space="preserve"><value>Naruszenie zasad</value></data>
+  <data name="ActionReportSubmitted" xml:space="preserve"><value>Zgłoszenie przesłane</value></data>
+  <data name="ActionRequestReopened" xml:space="preserve"><value>Wniosek ponownie otwarty</value></data>
+  <data name="ActionCompletedNoAction" xml:space="preserve"><value>Zakończono bez działania</value></data>
+  <data name="ActionContentRemoved" xml:space="preserve"><value>Treść usunięta</value></data>
+  <data name="ActionEvidenceDownloaded" xml:space="preserve"><value>Materiał dowodowy pobrany</value></data>
+  <data name="ModerationReportStatus" xml:space="preserve"><value>Stan zgłoszenia do moderacji</value></data>
+  <data name="ReportMessage" xml:space="preserve"><value>Zgłoś wiadomość do moderacji</value></data>
+  <data name="Close" xml:space="preserve"><value>Zamknij</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Anuluj</value></data>
+  <data name="Report" xml:space="preserve"><value>Zgłoś</value></data>
+  <data name="CheckingReportStatus" xml:space="preserve"><value>Sprawdzanie stanu zgłoszenia…</value></data>
+  <data name="StatusLabel" xml:space="preserve"><value>Stan</value></data>
+  <data name="ContentWasRemoved" xml:space="preserve"><value>Treść została usunięta</value></data>
+  <data name="NoContentWasRemoved" xml:space="preserve"><value>Nie usunięto żadnej treści</value></data>
+  <data name="ModeratorNoteLabel" xml:space="preserve"><value>Notatka moderatora</value></data>
+  <data name="Reason" xml:space="preserve"><value>Powód</value></data>
+  <data name="AddNoteOptional" xml:space="preserve"><value>Dodaj notatkę (opcjonalnie)</value></data>
+  <data name="YourModerationReportIs" xml:space="preserve"><value>Twoje zgłoszenie do moderacji ma stan</value></data>
+  <data name="ReportForModeration" xml:space="preserve"><value>Zgłoś do moderacji</value></data>
+  <data name="WhyReviewMessage" xml:space="preserve"><value>Wyjaśnij, dlaczego ta wiadomość powinna zostać sprawdzona</value></data>
+  <data name="ModerationReportSubmitted" xml:space="preserve"><value>Twoje zgłoszenie do moderacji zostało przesłane.</value></data>
+  <data name="LegacyActionDeleteMessage" xml:space="preserve"><value>Usuń wiadomość</value></data>
+  <data name="LegacyActionMuteUser" xml:space="preserve"><value>Wycisz użytkownika</value></data>
+  <data name="LegacyActionBanUser" xml:space="preserve"><value>Zablokuj użytkownika</value></data>
+  <data name="LegacyActionUnbanUser" xml:space="preserve"><value>Odblokuj użytkownika</value></data>
+  <data name="LegacyActionLockChannel" xml:space="preserve"><value>Zablokuj kanał</value></data>
+  <data name="LegacyActionUnlockChannel" xml:space="preserve"><value>Odblokuj kanał</value></data>
+  <data name="LegacyActionResolveFlag" xml:space="preserve"><value>Rozstrzygnij zgłoszenie</value></data>
+  <data name="ActionNumberFormat" xml:space="preserve"><value>Działanie nr {0}</value></data>
+  <data name="Loading" xml:space="preserve"><value>Ładowanie…</value></data>
+  <data name="NoModerationActivity" xml:space="preserve"><value>Brak aktywności moderacyjnej.</value></data>
+  <data name="Target" xml:space="preserve"><value>Cel</value></data>
+  <data name="When" xml:space="preserve"><value>Czas</value></data>
+  <data name="UnitFormat" xml:space="preserve"><value>Jednostka {0}</value></data>
+  <data name="Previous" xml:space="preserve"><value>Poprzednia</value></data>
+  <data name="PageFormat" xml:space="preserve"><value>Strona {0}</value></data>
+  <data name="Next" xml:space="preserve"><value>Następna</value></data>
+  <data name="AllowImageAttachments" xml:space="preserve"><value>Zezwalaj na załączniki graficzne</value></data>
+  <data name="AllowGifs" xml:space="preserve"><value>Zezwalaj na pliki GIF</value></data>
+  <data name="AllowLocationSharing" xml:space="preserve"><value>Zezwalaj na udostępnianie lokalizacji</value></data>
+  <data name="UrgentOverridesMute" xml:space="preserve"><value>Pilne wiadomości pomijają wyciszenie</value></data>
+  <data name="AssistantEnabled" xml:space="preserve"><value>Asystent włączony</value></data>
+  <data name="MessageRetention" xml:space="preserve"><value>Przechowywanie wiadomości (dni, 0 = bezterminowo)</value></data>
+  <data name="MaxAttachmentSize" xml:space="preserve"><value>Maksymalny rozmiar załącznika (MB)</value></data>
+  <data name="Saving" xml:space="preserve"><value>Zapisywanie…</value></data>
+  <data name="SaveSettings" xml:space="preserve"><value>Zapisz ustawienia</value></data>
+  <data name="Saved" xml:space="preserve"><value>Zapisano</value></data>
+  <data name="FailedSaveSettings" xml:space="preserve"><value>Nie udało się zapisać ustawień moderacji.</value></data>
+  <data name="ExportQueued" xml:space="preserve"><value>W kolejce</value></data>
+  <data name="ExportRunning" xml:space="preserve"><value>W toku</value></data>
+  <data name="ExportComplete" xml:space="preserve"><value>Zakończony</value></data>
+  <data name="ExportFailed" xml:space="preserve"><value>Niepowodzenie</value></data>
+  <data name="FailedRequestExport" xml:space="preserve"><value>Nie udało się zażądać eksportu czatu.</value></data>
+  <data name="Format" xml:space="preserve"><value>Format</value></data>
+  <data name="StartDate" xml:space="preserve"><value>Data początkowa</value></data>
+  <data name="EndDate" xml:space="preserve"><value>Data końcowa</value></data>
+  <data name="Requesting" xml:space="preserve"><value>Wysyłanie żądania…</value></data>
+  <data name="RequestExport" xml:space="preserve"><value>Zażądaj eksportu</value></data>
+  <data name="Requested" xml:space="preserve"><value>Zażądano</value></data>
+  <data name="Range" xml:space="preserve"><value>Zakres</value></data>
+  <data name="Download" xml:space="preserve"><value>Pobierz</value></data>
+  <data name="NoExportJobs" xml:space="preserve"><value>Brak zadań eksportu.</value></data>
+  <data name="Now" xml:space="preserve"><value>Teraz</value></data>
+  <data name="EvidenceFileNameFormat" xml:space="preserve"><value>dowod-moderacji-{0}</value></data>
+  <data name="MessageDeleted" xml:space="preserve"><value>Ta wiadomość została usunięta.</value></data>
+</root>

@@ -3,6 +3,7 @@
 @using Resgrid.Web.Helpers
 @model Resgrid.Web.Areas.User.Models.Messages.ViewMessageView
 @inject IStringLocalizer<Resgrid.Localization.Areas.User.Messages.Messages> localizer
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Moderation.Moderation> moderationLocalizer
 @{
   ViewBag.Title = "Resgrid | " + @localizer["ViewMessageHeader"];
   Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
@@ -14,7 +15,7 @@
       <div class="ibox float-e-margins">
         <div class="ibox-content mailbox-content">
           <div class="file-manager">
-            <a title="Add a new message" class="btn btn-block btn-primary compose-mail" href="@Url.Action("Compose", "Messages", new {area = "User"})">@localizer["ComposeMessageHeader"]</a>
+            <a title="@localizer["ComposeMessageHeader"]" class="btn btn-block btn-primary compose-mail" href="@Url.Action("Compose", "Messages", new {area = "User"})">@localizer["ComposeMessageHeader"]</a>
 
             <div class="space-25"></div>
             <h5>@localizer["FoldersHeader"]</h5>
@@ -87,6 +88,35 @@
         <div class="mail-body">
           @Html.Raw(Model.Message.Body)
         </div>
+
+        @if (!String.IsNullOrWhiteSpace(Model.ModerationMessage))
+		{
+          <div class="alert alert-success">@Model.ModerationMessage</div>
+		}
+        @if (Model.HasModerationReport)
+		{
+          <div class="alert alert-info">
+            @moderationLocalizer["YourModerationReportIs"] <strong>@(Model.ModerationStatus == (int)ModerationRequestStatus.Completed ? moderationLocalizer["Completed"] : moderationLocalizer["Pending"])</strong>.
+            @if (!String.IsNullOrWhiteSpace(Model.ModerationAdminNote))
+			{
+              <div>@Model.ModerationAdminNote</div>
+			}
+          </div>
+		}
+        else if (!Model.Message.SystemGenerated && !String.Equals(Model.Message.SendingUserId, Model.User.Id, StringComparison.OrdinalIgnoreCase))
+		{
+          <div class="mail-attachment">
+            <form asp-controller="Messages" asp-action="FlagMessage" asp-route-area="User" method="post" class="form-inline">
+              @Html.AntiForgeryToken()
+              <input type="hidden" name="messageId" value="@Model.Message.MessageId" />
+              <div class="form-group" style="min-width: 60%;">
+                <label class="sr-only" for="moderation-note">@moderationLocalizer["Reason"]</label>
+                <input id="moderation-note" name="note" maxlength="4000" class="form-control" style="width: 100%;" placeholder="@moderationLocalizer["WhyReviewMessage"]" />
+              </div>
+              <button type="submit" class="btn btn-warning"><i class="fa fa-flag-o"></i> @moderationLocalizer["ReportForModeration"]</button>
+            </form>
+          </div>
+		}
 
         @if (Model.Message.Type == (int)MessageTypes.CalendarRsvp && Model.CanRespondToCalendarRsvp)
 		{
@@ -336,8 +366,8 @@
           </div>
         </div>
         <div class="mail-body text-right tooltip-demo">
-          <button title="" data-placement="top" data-toggle="tooltip" type="button" data-original-title="Print" class="btn btn-sm btn-white" onclick="$('#mailMessage').printThis();"><i class="fa fa-print"></i> @commonLocalizer["Print"]</button>
-          <a title="" asp-controller="Messages" asp-action="DeleteMessage" asp-route-area="User" asp-route-messageId="@Model.Message.MessageId" data-placement="top" data-toggle="tooltip" data-original-title="Trash" class="btn btn-sm btn-white"><i class="fa fa-trash-o"></i> @commonLocalizer["Delete"]</a>
+          <button title="" data-placement="top" data-toggle="tooltip" type="button" data-original-title="@commonLocalizer["Print"]" class="btn btn-sm btn-white" onclick="$('#mailMessage').printThis();"><i class="fa fa-print"></i> @commonLocalizer["Print"]</button>
+          <a title="" asp-controller="Messages" asp-action="DeleteMessage" asp-route-area="User" asp-route-messageId="@Model.Message.MessageId" data-placement="top" data-toggle="tooltip" data-original-title="@commonLocalizer["Delete"]" class="btn btn-sm btn-white"><i class="fa fa-trash-o"></i> @commonLocalizer["Delete"]</a>
         </div>
         <div class="clearfix"></div>
 

@@ -13,6 +13,9 @@ namespace Resgrid.Model
 	[Table("Messages")]
 	public class Message : IEntity
 	{
+		public const int MaximumSubjectLength = 150;
+		public const int MaximumBodyLength = 4000;
+
 		[Key]
 		[Required]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -20,7 +23,7 @@ namespace Resgrid.Model
 		public int MessageId { get; set; }
 
 		[Required]
-		[MaxLength(150)]
+		[MaxLength(MaximumSubjectLength)]
 		[ProtoMember(2)]
 		public string Subject { get; set; }
 
@@ -43,7 +46,7 @@ namespace Resgrid.Model
 		public bool SystemGenerated { get; set; }
 
 		[Required]
-		[MaxLength(4000)]
+		[MaxLength(MaximumBodyLength)]
 		[ProtoMember(7)]
 		public string Body { get; set; }
 

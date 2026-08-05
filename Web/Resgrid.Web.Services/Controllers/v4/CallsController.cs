@@ -18,6 +18,7 @@ using System.Net.Mime;
 using System.Threading;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
+using System.Globalization;
 using Resgrid.Model.Events;
 using Resgrid.Model.Queue;
 using Resgrid.Web.Services.Models.v4.CallProtocols;
@@ -163,11 +164,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Call_View)]
 		public async Task<ActionResult<GetCallResult>> GetCall(string callId, [FromQuery] string departmentId = null)
 		{
-			if (String.IsNullOrWhiteSpace(callId))
+			if (!int.TryParse(callId, NumberStyles.Integer, CultureInfo.InvariantCulture, out int parsedCallId))
 				return BadRequest();
 
 			var result = new CallResult();
-			var c = await _callsService.GetCallByIdAsync(int.Parse(callId));
+			var c = await _callsService.GetCallByIdAsync(parsedCallId);
 
 			if (c == null)
 			{
@@ -180,7 +181,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (c.DepartmentId != effectiveDepartmentId)
 				return Unauthorized();
 
-			if (!IsSystemApiKeyRequest && !await _authorizationService.CanUserViewCallAsync(UserId, int.Parse(callId)))
+			if (!IsSystemApiKeyRequest && !await _authorizationService.CanUserViewCallAsync(UserId, parsedCallId))
 				return Unauthorized();
 
 			c = await _callsService.PopulateCallData(c, false, true, true, false, false, false, true, true, true);
@@ -853,12 +854,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			var result = new EditCallResult();
 
-			var canDoOperation = await _authorizationService.CanUserEditCallAsync(UserId, int.Parse(editCallInput.Id));
+			if (editCallInput == null || !ModelState.IsValid ||
+				!int.TryParse(editCallInput.Id, NumberStyles.Integer, CultureInfo.InvariantCulture, out int callId))
+				return BadRequest();
+
+			var canDoOperation = await _authorizationService.CanUserEditCallAsync(UserId, callId);
 
 			if (!canDoOperation)
 				return Unauthorized();
 
-			var call = await _callsService.GetCallByIdAsync(int.Parse(editCallInput.Id));
+			var call = await _callsService.GetCallByIdAsync(callId);
 
 			call = await _callsService.PopulateCallData(call, true, true, true, true, true, true, true, true, true);
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
@@ -868,9 +873,6 @@ namespace Resgrid.Web.Services.Controllers.v4
 				ResponseHelper.PopulateV4ResponseNotFound(result);
 				return Ok(result);
 			}
-
-			if (!ModelState.IsValid)
-				return BadRequest();
 
 			if (call.DepartmentId != DepartmentId)
 				return Unauthorized();

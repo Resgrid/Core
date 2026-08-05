@@ -43,6 +43,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IChatPermissionService _chatPermissionService;
 		private readonly IChatMessageService _chatMessageService;
 		private readonly IChatModerationService _chatModerationService;
+		private readonly IModerationService _moderationService;
 		private readonly IChatPresenceService _chatPresenceService;
 		private readonly IChatAttachmentRepository _chatAttachmentRepository;
 		private readonly IGifProvider _gifProvider;
@@ -56,6 +57,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IChatPermissionService chatPermissionService,
 			IChatMessageService chatMessageService,
 			IChatModerationService chatModerationService,
+			IModerationService moderationService,
 			IChatPresenceService chatPresenceService,
 			IChatAttachmentRepository chatAttachmentRepository,
 			IGifProvider gifProvider,
@@ -68,6 +70,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_chatPermissionService = chatPermissionService;
 			_chatMessageService = chatMessageService;
 			_chatModerationService = chatModerationService;
+			_moderationService = moderationService;
 			_chatPresenceService = chatPresenceService;
 			_chatAttachmentRepository = chatAttachmentRepository;
 			_gifProvider = gifProvider;
@@ -1276,6 +1279,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (attachment == null || attachment.DepartmentId != DepartmentId || attachment.Data == null)
 				return NotFound();
 
+			var message = await _chatMessageService.GetMessageByIdAsync(attachment.ChatMessageId);
+			if (message == null || message.DeletedOn.HasValue)
+				return NotFound();
+
 			var channel = await _chatChannelService.GetChannelByIdAsync(attachment.ChatChannelId);
 			if (channel == null || channel.DepartmentId != DepartmentId)
 				return NotFound();
@@ -1302,6 +1309,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var attachment = await _chatAttachmentRepository.GetByIdAsync(attachmentId);
 			if (attachment == null || attachment.DepartmentId != DepartmentId || (attachment.ThumbnailData == null && attachment.Data == null))
+				return NotFound();
+
+			var message = await _chatMessageService.GetMessageByIdAsync(attachment.ChatMessageId);
+			if (message == null || message.DeletedOn.HasValue)
 				return NotFound();
 
 			var channel = await _chatChannelService.GetChannelByIdAsync(attachment.ChatChannelId);
@@ -1463,7 +1474,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return accessCheck;
 
 			var result = new ChatActionResult();
-			var flag = await _chatModerationService.FlagMessageAsync(messageId, UserId, (ChatFlagReason)input.Reason, input.Note, cancellationToken);
+			var flag = await _moderationService.FlagAsync(DepartmentId, UserId,
+				ModerationItemType.ChatMessage, messageId, (ModerationReason)input.Reason, input.Note,
+				BuildModerationContext("Reporter"), cancellationToken);
 
 			result.Success = flag != null;
 			result.Status = result.Success ? ResponseHelper.Created : ResponseHelper.Failure;
@@ -1626,6 +1639,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				EditedOn = message.EditedOn,
 				DeletedOn = message.DeletedOn,
 				DeletedByUserId = includeModeratorInternals ? message.DeletedByUserId : null,
+				IsModerated = message.IsModerated,
 				PinnedOn = message.PinnedOn,
 				PinnedByUserId = includeModeratorInternals ? message.PinnedByUserId : null
 			};
@@ -1717,6 +1731,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 				UnitId = ack.UnitId,
 				RequiredOn = ack.RequiredOn,
 				AcknowledgedOn = ack.AcknowledgedOn
+			};
+		}
+
+		private ChatModerationContext BuildModerationContext(string actorRole)
+		{
+			return new ChatModerationContext
+			{
+				IpAddress = HttpContext?.Connection?.RemoteIpAddress?.ToString(),
+				UserAgent = Request?.Headers["User-Agent"].ToString(),
+				TraceId = HttpContext?.TraceIdentifier,
+				ActorRole = actorRole
 			};
 		}
 

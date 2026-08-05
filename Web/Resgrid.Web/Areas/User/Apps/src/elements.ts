@@ -69,5 +69,5 @@ defineReactElement<ChatbotElementProps>(
 defineReactElement<ChatModerationElementProps>(
   'rg-chat-moderation',
   () => import('./components/chat/ChatModerationElement'),
-  [],
+  [{ attribute: 'departmentadmin', property: 'departmentAdmin', type: 'boolean', defaultValue: false }],
 );

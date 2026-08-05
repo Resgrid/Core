@@ -295,10 +295,10 @@
     <value>Find w3w Location</value>
   </data>
   <data name="FlagCallNoteHeader" xml:space="preserve">
-    <value>Flag Call Note</value>
+    <value>Report Call Note for Moderation</value>
   </data>
   <data name="FlagCallImageHeader" xml:space="preserve">
-    <value>Flag Call Image</value>
+    <value>Report Call Image for Moderation</value>
   </data>
   <data name="FlagCallFileHeader" xml:space="preserve">
     <value>Flag Call File</value>
@@ -316,16 +316,16 @@
     <value>File Timestamp</value>
   </data>
   <data name="FlagImage" xml:space="preserve">
-    <value>Flag Image</value>
+    <value>Report Image</value>
   </data>
   <data name="FlagFile" xml:space="preserve">
     <value>Flag File</value>
   </data>
   <data name="FlaggedReasonLabel" xml:space="preserve">
-    <value>Flagged Reason</value>
+    <value>Report Reason</value>
   </data>
   <data name="FlaggedReasonPlaceholder" xml:space="preserve">
-    <value>Reason for flagging</value>
+    <value>Reason for reporting</value>
   </data>
   <data name="GPSLabel" xml:space="preserve">
     <value>GPS</value>

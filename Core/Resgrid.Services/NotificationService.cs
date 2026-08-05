@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -504,11 +505,15 @@ namespace Resgrid.Services
 						var beforeData = String.IsNullOrWhiteSpace(setting.BeforeData) ? "-1" : setting.BeforeData;
 						var currentData = String.IsNullOrWhiteSpace(setting.CurrentData) ? "-1" : setting.CurrentData;
 
-						if (beforeData.Contains("-1") && currentData.Contains("-1"))
-							return true;
+						if (!int.TryParse(beforeData, NumberStyles.Integer, CultureInfo.InvariantCulture, out int beforeStateValue) ||
+							!int.TryParse(currentData, NumberStyles.Integer, CultureInfo.InvariantCulture, out int currentStateValue))
+							return false;
 
-						bool beforeAny = beforeData.Contains("-1");
-						bool currentAny = currentData.Contains("-1");
+						bool beforeAny = beforeStateValue == -1;
+						bool currentAny = currentStateValue == -1;
+
+						if (beforeAny && currentAny)
+							return true;
 
 						UnitState beforeState = null;
 						UnitState currentState = await _unitsService.GetUnitStateByIdAsync(dynamicData.StateId);
@@ -518,8 +523,8 @@ namespace Resgrid.Services
 							if (!beforeAny)
 								beforeState = await _unitsService.GetLastUnitStateBeforeIdAsync(currentState.UnitId, currentState.UnitStateId);
 
-							if ((currentAny || currentState.State == int.Parse(currentData)) &&
-								(beforeAny || (beforeState != null && beforeState.State == int.Parse(beforeData))))
+							if ((currentAny || currentState.State == currentStateValue) &&
+								(beforeAny || (beforeState != null && beforeState.State == beforeStateValue)))
 								return true;
 						}
 					}

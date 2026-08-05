@@ -14,5 +14,7 @@ namespace Resgrid.WebCore.Areas.User.Models.Dispatch
 		public string FlagNote { get; set; }
 		public string FlaggedOn { get; set; }
 		public string FlaggedBy { get; set; }
+		public int? ModerationStatus { get; set; }
+		public string ModerationAdminNote { get; set; }
 	}
 }

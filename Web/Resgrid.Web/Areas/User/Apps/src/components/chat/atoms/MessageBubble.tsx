@@ -6,6 +6,7 @@ import ReactionChips from './ReactionChips';
 import AttachmentImage from './AttachmentImage';
 import { QUICK_REACTIONS } from './emoji';
 import { usePopoverClose } from './usePopoverClose';
+import { moderationText } from '../moderationI18n';
 
 export interface MessageBubbleCallbacks {
   onReact: (message: ChatMessageDto, emoji: string, mine: boolean) => void;
@@ -80,7 +81,7 @@ function MessageBubble(props: MessageBubbleProps) {
 
   const renderContent = () => {
     if (isDeleted) {
-      return <span>This message was deleted</span>;
+      return <span>{message.IsModerated ? moderationText('MessageRemovedByModeration') : moderationText('MessageDeleted')}</span>;
     }
     switch (message.MessageType) {
       case ChatMessageType.Image: {
@@ -282,7 +283,7 @@ function MessageBubble(props: MessageBubbleProps) {
             </button>
           )}
           {props.onFlag && !isMine && (
-            <button type="button" className="rgchat-msg__action" title="Flag" aria-label="Report message" onClick={() => props.onFlag?.(message)}>
+            <button type="button" className="rgchat-msg__action" title={moderationText('Report')} aria-label={moderationText('ReportMessage')} onClick={() => props.onFlag?.(message)}>
               🚩
             </button>
           )}

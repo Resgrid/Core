@@ -2,19 +2,22 @@ import { useCallback, useEffect, useState } from 'react';
 import { getActions } from '../chatModerationApi';
 import { formatRelativeDay } from '../chatFormat';
 import type { ChatModerationActionDto } from '../types';
+import { moderationText } from '../moderationI18n';
 
-const ACTION_LABELS: Record<number, string> = {
-  0: 'Delete message',
-  1: 'Mute user',
-  2: 'Ban user',
-  3: 'Unban user',
-  4: 'Lock channel',
-  5: 'Unlock channel',
-  6: 'Resolve flag',
+const ACTION_LABEL_KEYS: Record<number, string> = {
+  0: 'LegacyActionDeleteMessage',
+  1: 'LegacyActionMuteUser',
+  2: 'LegacyActionBanUser',
+  3: 'LegacyActionUnbanUser',
+  4: 'LegacyActionLockChannel',
+  5: 'LegacyActionUnlockChannel',
+  6: 'LegacyActionResolveFlag',
 };
 
 function actionLabel(actionType: number): string {
-  return ACTION_LABELS[actionType] ?? `Action #${actionType}`;
+  return ACTION_LABEL_KEYS[actionType]
+    ? moderationText(ACTION_LABEL_KEYS[actionType])
+    : moderationText('ActionNumberFormat', actionType);
 }
 
 export default function ActionsTab() {
@@ -34,24 +37,24 @@ export default function ActionsTab() {
 
   return (
     <div>
-      {loading && <div className="rgchat-convo__sub">Loading…</div>}
-      {!loading && actions.length === 0 && <div className="rgchat-convo__sub">No moderation activity.</div>}
+      {loading && <div className="rgchat-convo__sub">{moderationText('Loading')}</div>}
+      {!loading && actions.length === 0 && <div className="rgchat-convo__sub">{moderationText('NoModerationActivity')}</div>}
 
       <table className="rgchat-table">
         <thead>
           <tr>
-            <th>Action</th>
-            <th>Target</th>
-            <th>Reason</th>
-            <th>When</th>
+            <th>{moderationText('Action')}</th>
+            <th>{moderationText('Target')}</th>
+            <th>{moderationText('Reason')}</th>
+            <th>{moderationText('When')}</th>
           </tr>
         </thead>
         <tbody>
           {actions.map((action) => (
             <tr key={action.ChatModerationActionId}>
               <td>{actionLabel(action.ActionType)}</td>
-              <td>{action.TargetUserId ?? (action.TargetUnitId ? `Unit ${action.TargetUnitId}` : action.ChatMessageId ? 'Message' : '—')}</td>
-              <td>{action.Reason || '—'}</td>
+              <td>{action.TargetUserId ?? (action.TargetUnitId ? moderationText('UnitFormat', action.TargetUnitId) : action.ChatMessageId ? moderationText('ItemTypeMessage') : moderationText('NoValue'))}</td>
+              <td>{action.Reason || moderationText('NoValue')}</td>
               <td>{formatRelativeDay(action.PerformedOn)}</td>
             </tr>
           ))}
@@ -60,11 +63,11 @@ export default function ActionsTab() {
 
       <div style={{ display: 'flex', gap: 8, marginTop: 12 }}>
         <button type="button" className="rgchat-btn rgchat-btn--ghost" disabled={page === 0} onClick={() => setPage((value) => Math.max(0, value - 1))}>
-          Previous
+          {moderationText('Previous')}
         </button>
-        <span className="rgchat-convo__sub" style={{ alignSelf: 'center' }}>Page {page + 1}</span>
+        <span className="rgchat-convo__sub" style={{ alignSelf: 'center' }}>{moderationText('PageFormat', page + 1)}</span>
         <button type="button" className="rgchat-btn rgchat-btn--ghost" disabled={actions.length < 50} onClick={() => setPage((value) => value + 1)}>
-          Next
+          {moderationText('Next')}
         </button>
       </div>
     </div>

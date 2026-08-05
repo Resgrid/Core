@@ -1,6 +1,7 @@
 ﻿@using Microsoft.AspNetCore.Http
 @using System.Web
 @inject IHttpContextAccessor HttpContextAccessor
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Moderation.Moderation> moderationLocalizer
 <!DOCTYPE html>
 <html>
 <head>
@@ -120,6 +121,7 @@
         window.rgChannelUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridEventingBaseUrl";
         window.rgIsDepartmentAdmin = "@(ClaimsAuthorizationHelper.IsUserDepartmentAdmin().ToString().ToLowerInvariant())";
         window.rgUserDisplayName = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(ClaimsAuthorizationHelper.GetFullName() ?? ""));
+        window.rgModerationI18n = @Html.Raw(System.Text.Json.JsonSerializer.Serialize(moderationLocalizer.GetAllStrings(true).ToDictionary(x => x.Name, x => x.Value)));
 
         resgrid.absoluteBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridBaseUrl";
         resgrid.absoluteApiBaseUrl = "@Resgrid.Config.SystemBehaviorConfig.ResgridApiBaseUrl";

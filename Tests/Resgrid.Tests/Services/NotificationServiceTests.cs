@@ -752,6 +752,33 @@ namespace Resgrid.Tests.Services
 				result.Should().BeFalse();
 			}
 
+			[TestCase("invalid", "-1")]
+			[TestCase("-1", "invalid")]
+			[TestCase("-1", "invalid-1")]
+			public async Task should_not_process_non_numeric_filter_data(string beforeData, string currentData)
+			{
+				var notification = new DepartmentNotification
+				{
+					EventType = (int)EventTypes.UnitStatusChanged,
+					Everyone = true,
+					DepartmentId = 1,
+					BeforeData = beforeData,
+					CurrentData = currentData
+				};
+
+				var processedNotification = new ProcessedNotification
+				{
+					DepartmentId = 1,
+					MessageId = "123456",
+					Data = new NotificationItem() { StateId = 3, DepartmentId = 1, PreviousStateId = 2 }.SerializeProto(),
+					Type = EventTypes.UnitStatusChanged
+				};
+
+				var result = await _notificationServiceMock.ValidateNotificationForProcessingAsync(processedNotification, notification);
+
+				result.Should().BeFalse();
+			}
+
 			[Test]
 			public async Task should_process_when_before_and_current_data_are_empty()
 			{

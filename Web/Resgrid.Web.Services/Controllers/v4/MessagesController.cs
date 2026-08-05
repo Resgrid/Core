@@ -385,7 +385,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 								if (departmentRoles.Any(x => x.PersonnelRoleId == roleId))
 								{
 									var roleMembers =
-										await _personnelRolesService.GetAllMembersOfRoleAsync(int.Parse(role.Id));
+										await _personnelRolesService.GetAllMembersOfRoleAsync(roleId);
 
 									foreach (var member in roleMembers)
 									{

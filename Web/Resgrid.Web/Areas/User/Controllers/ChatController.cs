@@ -28,13 +28,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		/// <summary>
 		/// Chat moderation console (flags, actions, settings, exports), rendered by the
-		/// &lt;rg-chat-moderation&gt; React element. Department administrators only.
+		/// &lt;rg-chat-moderation&gt; React element. Department and group administrators.
 		/// </summary>
 		[HttpGet]
-		[Authorize(Policy = ResgridResources.Department_Update)]
 		public IActionResult Moderation()
 		{
-			return View();
+			return RedirectToAction("Index", "Moderation", new { Area = "User" });
 		}
 	}
 }

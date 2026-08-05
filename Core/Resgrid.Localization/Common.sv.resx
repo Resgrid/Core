@@ -165,7 +165,7 @@
     <value>Assistant</value>
   </data>
   <data name="ChatModerationModule" xml:space="preserve">
-    <value>Chat Moderation</value>
+    <value>Moderering</value>
   </data>
   <data name="ContactUs" xml:space="preserve">
     <value>Kontakta oss</value>
@@ -633,4 +633,3 @@
     <value>POI</value>
   </data>
 </root>
-

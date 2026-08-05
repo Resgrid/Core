@@ -22,6 +22,7 @@ namespace Resgrid.Services
 			builder.RegisterType<ChatMessageService>().As<IChatMessageService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChatPresenceService>().As<IChatPresenceService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChatModerationService>().As<IChatModerationService>().InstancePerLifetimeScope();
+			builder.RegisterType<ModerationService>().As<IModerationService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChatNotificationService>().As<IChatNotificationService>().InstancePerLifetimeScope();
 			builder.RegisterType<ChatProvisioningEventService>().As<IChatProvisioningEventService>().SingleInstance().AutoActivate();
 			builder.RegisterType<IncidentCommandNotificationService>().As<IIncidentCommandNotificationService>().InstancePerLifetimeScope();

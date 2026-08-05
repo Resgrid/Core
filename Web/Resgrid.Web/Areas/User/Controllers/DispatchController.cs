@@ -71,6 +71,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly ICheckInTimerService _checkInTimerService;
 		private readonly IWeatherAlertService _weatherAlertService;
 		private readonly ICallDispatchStatusService _callDispatchStatusService;
+		private readonly IModerationService _moderationService;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> _dispatchLocalizer;
 		private readonly IStringLocalizer<Resgrid.Localization.Common> _commonLocalizer;
 
@@ -83,7 +84,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						IShiftsService shiftsService, IContactsService contactsService, IMappingService mappingService,
 			IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService,
 			ICheckInTimerService checkInTimerService, IWeatherAlertService weatherAlertService,
-			ICallDispatchStatusService callDispatchStatusService,
+			ICallDispatchStatusService callDispatchStatusService, IModerationService moderationService,
 			IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> dispatchLocalizer, IStringLocalizer<Resgrid.Localization.Common> commonLocalizer)
 		{
 			_departmentsService = departmentsService;
@@ -114,6 +115,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_checkInTimerService = checkInTimerService;
 			_weatherAlertService = weatherAlertService;
 			_callDispatchStatusService = callDispatchStatusService;
+			_moderationService = moderationService;
 			_dispatchLocalizer = dispatchLocalizer;
 			_commonLocalizer = commonLocalizer;
 		}
@@ -1465,10 +1467,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		[Authorize(Policy = ResgridResources.Call_Update)]
+		[Authorize(Policy = ResgridResources.Call_View)]
 		public async Task<IActionResult> FlagCallNote(int callId, int callNoteId)
 		{
-			if (!await _authorizationService.CanUserEditCallAsync(UserId, callId))
+			if (!await _authorizationService.CanUserViewCallAsync(UserId, callId))
 				return Unauthorized();
 
 			var call = await _callsService.GetCallByIdAsync(callId);
@@ -1492,25 +1494,31 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CallId = call.CallId;
 			model.CallNoteId = note.CallNoteId;
 			model.CallNote = note.Note;
-			model.IsFlagged = note.IsFlagged;
-			model.FlagNote = note.FlaggedReason;
+			var moderationRequest = await _moderationService.GetReporterRequestAsync(DepartmentId, UserId,
+				ModerationItemType.CallNote, note.CallNoteId.ToString(CultureInfo.InvariantCulture));
+			var ownReport = moderationRequest?.Reports?.FirstOrDefault();
+			model.IsFlagged = moderationRequest != null;
+			model.FlagNote = ownReport?.Note;
+			model.ModerationStatus = moderationRequest?.Status;
+			model.ModerationAdminNote = moderationRequest?.AdminNote;
 			model.AddedOn = note.Timestamp.FormatForDepartment(department);
 			model.AddedBy = names.FirstOrDefault(x => x.UserId == note.UserId)?.Name;
 
-			if (note.IsFlagged)
+			if (ownReport != null)
 			{
-				model.FlaggedOn = note.Timestamp.FormatForDepartment(department);
-				model.FlaggedBy = names.FirstOrDefault(x => x.UserId == note.FlaggedByUserId)?.Name;
+				model.FlaggedOn = ownReport.ReportedOn.FormatForDepartment(department);
+				model.FlaggedBy = names.FirstOrDefault(x => x.UserId == ownReport.ReportedByUserId)?.Name;
 			}
 
 			return View(model);
 		}
 
 		[HttpPost]
-		[Authorize(Policy = ResgridResources.Call_Update)]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Call_View)]
 		public async Task<IActionResult> FlagCallNote(FlagCallNoteView model, CancellationToken cancellationToken)
 		{
-			if (!await _authorizationService.CanUserEditCallAsync(UserId, model.CallId))
+			if (!await _authorizationService.CanUserViewCallAsync(UserId, model.CallId))
 				return Unauthorized();
 
 			var call = await _callsService.GetCallByIdAsync(model.CallId);
@@ -1532,22 +1540,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (ModelState.IsValid)
 			{
-				note.IsFlagged = model.IsFlagged;
-
-				if (note.IsFlagged)
-				{
-					note.FlaggedReason = model.FlagNote;
-					note.FlaggedOn = DateTime.UtcNow;
-					note.FlaggedByUserId = UserId;
-				}
-				else
-				{
-					note.FlaggedReason = null;
-					note.FlaggedOn = null;
-					note.FlaggedByUserId = null;
-				}
-
-				await _callsService.SaveCallNoteAsync(note, cancellationToken);
+				await _moderationService.FlagAsync(DepartmentId, UserId, ModerationItemType.CallNote,
+					note.CallNoteId.ToString(CultureInfo.InvariantCulture), ModerationReason.Other, model.FlagNote,
+					BuildModerationContext("Reporter"), cancellationToken);
 
 				return RedirectToAction("ViewCall", "Dispatch", new { Area = "User", callId = model.CallId });
 			}
@@ -1556,10 +1551,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		[Authorize(Policy = ResgridResources.Call_Update)]
+		[Authorize(Policy = ResgridResources.Call_View)]
 		public async Task<IActionResult> FlagCallImage(int callId, int callAttachmentId)
 		{
-			if (!await _authorizationService.CanUserEditCallAsync(UserId, callId))
+			if (!await _authorizationService.CanUserViewCallAsync(UserId, callId))
 				return Unauthorized();
 
 			var call = await _callsService.GetCallByIdAsync(callId);
@@ -1575,7 +1570,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var attachment = call.Attachments.FirstOrDefault(x => x.CallAttachmentId == callAttachmentId);
 
-			if (attachment == null)
+			if (attachment == null || attachment.IsDeleted || attachment.CallAttachmentType != (int)CallAttachmentTypes.Image)
 				return Unauthorized();
 
 			var names = await _usersService.GetUserGroupAndRolesByDepartmentIdAsync(DepartmentId, false, false, false);
@@ -1584,29 +1579,33 @@ namespace Resgrid.Web.Areas.User.Controllers
 			model.CallId = call.CallId;
 			model.CallAttachmentId = attachment.CallAttachmentId;
 			model.FileName = attachment.FileName;
-			model.IsFlagged = attachment.IsFlagged;
-			model.FlagNote = attachment.FlaggedReason;
+			var moderationRequest = await _moderationService.GetReporterRequestAsync(DepartmentId, UserId,
+				ModerationItemType.CallImage, attachment.CallAttachmentId.ToString(CultureInfo.InvariantCulture));
+			var ownReport = moderationRequest?.Reports?.FirstOrDefault();
+			model.IsFlagged = moderationRequest != null;
+			model.FlagNote = ownReport?.Note;
+			model.ModerationStatus = moderationRequest?.Status;
+			model.ModerationAdminNote = moderationRequest?.AdminNote;
 			model.AddedOn = attachment.Timestamp.HasValue
 				? attachment.Timestamp.Value.FormatForDepartment(department)
 				: string.Empty;
 			model.AddedBy = names.FirstOrDefault(x => x.UserId == attachment.UserId)?.Name;
 
-			if (attachment.IsFlagged)
+			if (ownReport != null)
 			{
-				model.FlaggedOn = attachment.FlaggedOn.HasValue
-					? attachment.FlaggedOn.Value.FormatForDepartment(department)
-					: string.Empty;
-				model.FlaggedBy = names.FirstOrDefault(x => x.UserId == attachment.FlaggedByUserId)?.Name;
+				model.FlaggedOn = ownReport.ReportedOn.FormatForDepartment(department);
+				model.FlaggedBy = names.FirstOrDefault(x => x.UserId == ownReport.ReportedByUserId)?.Name;
 			}
 
 			return View(model);
 		}
 
 		[HttpPost]
-		[Authorize(Policy = ResgridResources.Call_Update)]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Call_View)]
 		public async Task<IActionResult> FlagCallImage(FlagCallImageView model, CancellationToken cancellationToken)
 		{
-			if (!await _authorizationService.CanUserEditCallAsync(UserId, model.CallId))
+			if (!await _authorizationService.CanUserViewCallAsync(UserId, model.CallId))
 				return Unauthorized();
 
 			var call = await _callsService.GetCallByIdAsync(model.CallId);
@@ -1621,27 +1620,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var attachment = call.Attachments.FirstOrDefault(x => x.CallAttachmentId == model.CallAttachmentId);
 
-			if (attachment == null)
+			if (attachment == null || attachment.IsDeleted || attachment.CallAttachmentType != (int)CallAttachmentTypes.Image)
 				return Unauthorized();
 
 			if (ModelState.IsValid)
 			{
-				attachment.IsFlagged = model.IsFlagged;
-
-				if (attachment.IsFlagged)
-				{
-					attachment.FlaggedReason = model.FlagNote;
-					attachment.FlaggedOn = DateTime.UtcNow;
-					attachment.FlaggedByUserId = UserId;
-				}
-				else
-				{
-					attachment.FlaggedReason = null;
-					attachment.FlaggedOn = null;
-					attachment.FlaggedByUserId = null;
-				}
-
-				await _callsService.SaveCallAttachmentAsync(attachment, cancellationToken);
+				await _moderationService.FlagAsync(DepartmentId, UserId, ModerationItemType.CallImage,
+					attachment.CallAttachmentId.ToString(CultureInfo.InvariantCulture), ModerationReason.Other,
+					model.FlagNote, BuildModerationContext("Reporter"), cancellationToken);
 
 				return RedirectToAction("ViewCall", "Dispatch", new { Area = "User", callId = model.CallId });
 			}
@@ -1803,7 +1789,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 				{
 					CallNoteJson note = new CallNoteJson();
 					note.CallNoteId = callNote.CallNoteId;
-					note.IsFlagged = callNote.IsFlagged;
+					note.IsFlagged = await _moderationService.GetReporterRequestAsync(DepartmentId, UserId,
+						ModerationItemType.CallNote, callNote.CallNoteId.ToString(CultureInfo.InvariantCulture)) != null;
 					note.Name = name.Name;
 					note.Timestamp = callNote.Timestamp.TimeConverter(call.Department).FormatForDepartment(call.Department);
 					note.Note = callNote.Note;
@@ -2687,7 +2674,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var callAttachment = await _callsService.GetCallAttachmentAsync(attachmentId);
 
-			if (callAttachment == null || callAttachment.CallId != callId || callAttachment.Call == null)
+			if (callAttachment == null || callAttachment.CallId != callId || callAttachment.Call == null ||
+				callAttachment.IsDeleted || callAttachment.Data == null)
 				return NotFound();
 
 			// Authorized when the caller is an authenticated member of the call's department,
@@ -2703,6 +2691,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return Unauthorized();
 
 			return File(callAttachment.Data, "image/jpeg");
+		}
+
+		private ChatModerationContext BuildModerationContext(string actorRole)
+		{
+			return new ChatModerationContext
+			{
+				IpAddress = HttpContext?.Connection?.RemoteIpAddress?.ToString(),
+				UserAgent = Request?.Headers["User-Agent"].ToString(),
+				TraceId = HttpContext?.TraceIdentifier,
+				ActorRole = actorRole
+			};
 		}
 
 		private static bool IsValidCallImageToken(int callId, int attachmentId, string token)

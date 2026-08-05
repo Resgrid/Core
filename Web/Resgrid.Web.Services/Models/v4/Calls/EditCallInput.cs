@@ -13,6 +13,7 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// <summary>
 		/// Id of the call to update
 		/// </summary>
+		[Required]
 		public string Id { get; set; }
 
 		/// <summary>

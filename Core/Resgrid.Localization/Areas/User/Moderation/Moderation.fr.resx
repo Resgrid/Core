@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="RequiredModerationContext" xml:space="preserve"><value>Le service, l’auteur du signalement et l’élément sont obligatoires.</value></data>
+  <data name="RequestReopenedAudit" xml:space="preserve"><value>La demande a été rouverte après un nouveau signalement.</value></data>
+  <data name="RequestOutsideScope" xml:space="preserve"><value>Cette demande ne relève pas de votre périmètre de modération.</value></data>
+  <data name="OnlyPendingRequests" xml:space="preserve"><value>Seules les demandes de modération en attente peuvent être terminées.</value></data>
+  <data name="ContentCouldNotBeRemoved" xml:space="preserve"><value>Le contenu signalé n’a pas pu être supprimé.</value></data>
+  <data name="EvidenceOutsideScope" xml:space="preserve"><value>Cette preuve ne relève pas de votre périmètre de modération.</value></data>
+  <data name="EvidenceDownloadedAudit" xml:space="preserve"><value>Preuve d’origine téléchargée.</value></data>
+  <data name="ChatMessageUnavailable" xml:space="preserve"><value>Le message de discussion est indisponible ou ne peut pas être signalé.</value></data>
+  <data name="MessageUnavailable" xml:space="preserve"><value>Le message est indisponible ou ne peut pas être signalé.</value></data>
+  <data name="InvalidCallNoteId" xml:space="preserve"><value>L’identifiant de la note d’appel n’est pas valide.</value></data>
+  <data name="CallNoteUnavailable" xml:space="preserve"><value>La note d’appel est indisponible ou ne peut pas être signalée.</value></data>
+  <data name="InvalidCallImageId" xml:space="preserve"><value>L’identifiant de l’image d’appel n’est pas valide.</value></data>
+  <data name="CallImageUnavailable" xml:space="preserve"><value>L’image d’appel est indisponible ou ne peut pas être signalée.</value></data>
+  <data name="ModeratedMessageSubject" xml:space="preserve"><value>Contenu supprimé par la modération</value></data>
+  <data name="ModeratedMessageBody" xml:space="preserve"><value>Ce message a été supprimé par la modération.</value></data>
+  <data name="ModeratedCallNote" xml:space="preserve"><value>Cette note d’appel a été supprimée par la modération.</value></data>
+  <data name="MessageRemovedByModeration" xml:space="preserve"><value>Ce message a été supprimé par la modération.</value></data>
+  <data name="CompletionContentRemoved" xml:space="preserve"><value>Le contenu signalé a été supprimé.</value></data>
+  <data name="CompletionNoContentRemoved" xml:space="preserve"><value>La demande a été examinée et aucun contenu n’a été supprimé.</value></data>
+  <data name="CompletionAdminNoteHtml" xml:space="preserve"><value>&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Note de l’administrateur :&lt;/strong&gt; {0}</value></data>
+  <data name="CompletionSubject" xml:space="preserve"><value>Demande de modération terminée</value></data>
+  <data name="CompletionBody" xml:space="preserve"><value>Votre signalement de modération concernant {0} {1} est terminé. {2}{3}</value></data>
+  <data name="SystemSenderName" xml:space="preserve"><value>Système</value></data>
+  <data name="ItemTypeChatMessage" xml:space="preserve"><value>message de discussion</value></data>
+  <data name="ItemTypeMessage" xml:space="preserve"><value>message</value></data>
+  <data name="ItemTypeCallNote" xml:space="preserve"><value>note d’appel</value></data>
+  <data name="ItemTypeCallImage" xml:space="preserve"><value>image d’appel</value></data>
+  <data name="TabRequests" xml:space="preserve"><value>Demandes</value></data>
+  <data name="TabReports" xml:space="preserve"><value>Rapports</value></data>
+  <data name="TabChatControls" xml:space="preserve"><value>Contrôles de discussion</value></data>
+  <data name="TabChatSettings" xml:space="preserve"><value>Paramètres de discussion</value></data>
+  <data name="TabChatExports" xml:space="preserve"><value>Exports de discussion</value></data>
+  <data name="ReportsDescription" xml:space="preserve"><value>Recherchez les demandes de modération nouvelles et terminées par l’utilisateur qui a ajouté le contenu ou celui qui l’a signalé.</value></data>
+  <data name="Status" xml:space="preserve"><value>État</value></data>
+  <data name="All" xml:space="preserve"><value>Tous</value></data>
+  <data name="Pending" xml:space="preserve"><value>En attente</value></data>
+  <data name="Completed" xml:space="preserve"><value>Terminée</value></data>
+  <data name="ContentType" xml:space="preserve"><value>Type de contenu</value></data>
+  <data name="AddedByUserId" xml:space="preserve"><value>Ajouté par l’ID utilisateur</value></data>
+  <data name="ReportedByUserId" xml:space="preserve"><value>Signalé par l’ID utilisateur</value></data>
+  <data name="From" xml:space="preserve"><value>Du</value></data>
+  <data name="To" xml:space="preserve"><value>Au</value></data>
+  <data name="Refresh" xml:space="preserve"><value>Actualiser</value></data>
+  <data name="LoadingModerationRequests" xml:space="preserve"><value>Chargement des demandes de modération…</value></data>
+  <data name="NoMatchingRequests" xml:space="preserve"><value>Aucune demande de modération ne correspond à ces filtres.</value></data>
+  <data name="Item" xml:space="preserve"><value>Élément</value></data>
+  <data name="OriginalEvidence" xml:space="preserve"><value>Preuve d’origine</value></data>
+  <data name="AddedBy" xml:space="preserve"><value>Ajouté par</value></data>
+  <data name="Reports" xml:space="preserve"><value>Signalements</value></data>
+  <data name="Action" xml:space="preserve"><value>Action</value></data>
+  <data name="ContentRemoved" xml:space="preserve"><value>Contenu supprimé</value></data>
+  <data name="NoAction" xml:space="preserve"><value>Aucune action</value></data>
+  <data name="UnknownContentType" xml:space="preserve"><value>Type de contenu inconnu</value></data>
+  <data name="IdFormat" xml:space="preserve"><value>ID {0}</value></data>
+  <data name="CallFormat" xml:space="preserve"><value>Appel {0}</value></data>
+  <data name="DownloadRetainedEvidence" xml:space="preserve"><value>Télécharger la preuve conservée</value></data>
+  <data name="SystemOrUnknown" xml:space="preserve"><value>Système ou inconnu</value></data>
+  <data name="GroupFormat" xml:space="preserve"><value>groupe {0}</value></data>
+  <data name="CompletionNotePlaceholder" xml:space="preserve"><value>Note de clôture envoyée aux utilisateurs ayant signalé (facultatif)</value></data>
+  <data name="RemoveContent" xml:space="preserve"><value>Supprimer le contenu</value></data>
+  <data name="CompleteNoAction" xml:space="preserve"><value>Terminer sans action</value></data>
+  <data name="CompletedBy" xml:space="preserve"><value>Terminée par</value></data>
+  <data name="NoCompletionNote" xml:space="preserve"><value>Aucune note de clôture.</value></data>
+  <data name="HideAuditTrail" xml:space="preserve"><value>Masquer le journal d’audit</value></data>
+  <data name="AuditTrailCount" xml:space="preserve"><value>Journal d’audit ({0})</value></data>
+  <data name="By" xml:space="preserve"><value>par</value></data>
+  <data name="NoNote" xml:space="preserve"><value>Aucune note.</value></data>
+  <data name="ActorReporter" xml:space="preserve"><value>Auteur du signalement</value></data>
+  <data name="ActorDepartmentAdmin" xml:space="preserve"><value>Administrateur du service</value></data>
+  <data name="ActorGroupAdmin" xml:space="preserve"><value>Administrateur du groupe</value></data>
+  <data name="ActorLegacyImport" xml:space="preserve"><value>Importation héritée</value></data>
+  <data name="UnknownRole" xml:space="preserve"><value>Rôle inconnu</value></data>
+  <data name="NoIp" xml:space="preserve"><value>Aucune adresse IP</value></data>
+  <data name="TraceFormat" xml:space="preserve"><value>trace {0}</value></data>
+  <data name="NotAvailable" xml:space="preserve"><value>indisponible</value></data>
+  <data name="NoValue" xml:space="preserve"><value>—</value></data>
+  <data name="UnableLoadRequests" xml:space="preserve"><value>Impossible de charger les demandes de modération.</value></data>
+  <data name="UnableCompleteRequest" xml:space="preserve"><value>Impossible de terminer la demande de modération.</value></data>
+  <data name="ReasonOther" xml:space="preserve"><value>Autre</value></data>
+  <data name="ReasonInappropriate" xml:space="preserve"><value>Contenu inapproprié</value></data>
+  <data name="ReasonHarassment" xml:space="preserve"><value>Harcèlement ou abus</value></data>
+  <data name="ReasonSpam" xml:space="preserve"><value>Courrier indésirable</value></data>
+  <data name="ReasonSensitiveInformation" xml:space="preserve"><value>Informations sensibles</value></data>
+  <data name="ReasonPolicyViolation" xml:space="preserve"><value>Violation de la politique</value></data>
+  <data name="ActionReportSubmitted" xml:space="preserve"><value>Signalement envoyé</value></data>
+  <data name="ActionRequestReopened" xml:space="preserve"><value>Demande rouverte</value></data>
+  <data name="ActionCompletedNoAction" xml:space="preserve"><value>Terminée sans action</value></data>
+  <data name="ActionContentRemoved" xml:space="preserve"><value>Contenu supprimé</value></data>
+  <data name="ActionEvidenceDownloaded" xml:space="preserve"><value>Preuve téléchargée</value></data>
+  <data name="ModerationReportStatus" xml:space="preserve"><value>État du signalement de modération</value></data>
+  <data name="ReportMessage" xml:space="preserve"><value>Signaler le message pour modération</value></data>
+  <data name="Close" xml:space="preserve"><value>Fermer</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Annuler</value></data>
+  <data name="Report" xml:space="preserve"><value>Signaler</value></data>
+  <data name="CheckingReportStatus" xml:space="preserve"><value>Vérification de l’état du signalement…</value></data>
+  <data name="StatusLabel" xml:space="preserve"><value>État</value></data>
+  <data name="ContentWasRemoved" xml:space="preserve"><value>Le contenu a été supprimé</value></data>
+  <data name="NoContentWasRemoved" xml:space="preserve"><value>Aucun contenu n’a été supprimé</value></data>
+  <data name="ModeratorNoteLabel" xml:space="preserve"><value>Note du modérateur</value></data>
+  <data name="Reason" xml:space="preserve"><value>Motif</value></data>
+  <data name="AddNoteOptional" xml:space="preserve"><value>Ajouter une note (facultatif)</value></data>
+  <data name="YourModerationReportIs" xml:space="preserve"><value>Votre signalement de modération est</value></data>
+  <data name="ReportForModeration" xml:space="preserve"><value>Signaler pour modération</value></data>
+  <data name="WhyReviewMessage" xml:space="preserve"><value>Expliquez pourquoi ce message doit être examiné</value></data>
+  <data name="ModerationReportSubmitted" xml:space="preserve"><value>Votre signalement de modération a été envoyé.</value></data>
+  <data name="LegacyActionDeleteMessage" xml:space="preserve"><value>Supprimer le message</value></data>
+  <data name="LegacyActionMuteUser" xml:space="preserve"><value>Mettre l’utilisateur en sourdine</value></data>
+  <data name="LegacyActionBanUser" xml:space="preserve"><value>Bannir l’utilisateur</value></data>
+  <data name="LegacyActionUnbanUser" xml:space="preserve"><value>Annuler le bannissement</value></data>
+  <data name="LegacyActionLockChannel" xml:space="preserve"><value>Verrouiller le canal</value></data>
+  <data name="LegacyActionUnlockChannel" xml:space="preserve"><value>Déverrouiller le canal</value></data>
+  <data name="LegacyActionResolveFlag" xml:space="preserve"><value>Résoudre le signalement</value></data>
+  <data name="ActionNumberFormat" xml:space="preserve"><value>Action n° {0}</value></data>
+  <data name="Loading" xml:space="preserve"><value>Chargement…</value></data>
+  <data name="NoModerationActivity" xml:space="preserve"><value>Aucune activité de modération.</value></data>
+  <data name="Target" xml:space="preserve"><value>Cible</value></data>
+  <data name="When" xml:space="preserve"><value>Date</value></data>
+  <data name="UnitFormat" xml:space="preserve"><value>Unité {0}</value></data>
+  <data name="Previous" xml:space="preserve"><value>Précédent</value></data>
+  <data name="PageFormat" xml:space="preserve"><value>Page {0}</value></data>
+  <data name="Next" xml:space="preserve"><value>Suivant</value></data>
+  <data name="AllowImageAttachments" xml:space="preserve"><value>Autoriser les images jointes</value></data>
+  <data name="AllowGifs" xml:space="preserve"><value>Autoriser les GIF</value></data>
+  <data name="AllowLocationSharing" xml:space="preserve"><value>Autoriser le partage de position</value></data>
+  <data name="UrgentOverridesMute" xml:space="preserve"><value>Les messages urgents ignorent la sourdine</value></data>
+  <data name="AssistantEnabled" xml:space="preserve"><value>Assistant activé</value></data>
+  <data name="MessageRetention" xml:space="preserve"><value>Conservation des messages (jours, 0 = illimitée)</value></data>
+  <data name="MaxAttachmentSize" xml:space="preserve"><value>Taille maximale des pièces jointes (Mo)</value></data>
+  <data name="Saving" xml:space="preserve"><value>Enregistrement…</value></data>
+  <data name="SaveSettings" xml:space="preserve"><value>Enregistrer les paramètres</value></data>
+  <data name="Saved" xml:space="preserve"><value>Enregistré</value></data>
+  <data name="FailedSaveSettings" xml:space="preserve"><value>Impossible d’enregistrer les paramètres de modération.</value></data>
+  <data name="ExportQueued" xml:space="preserve"><value>En attente</value></data>
+  <data name="ExportRunning" xml:space="preserve"><value>En cours</value></data>
+  <data name="ExportComplete" xml:space="preserve"><value>Terminé</value></data>
+  <data name="ExportFailed" xml:space="preserve"><value>Échec</value></data>
+  <data name="FailedRequestExport" xml:space="preserve"><value>Impossible de demander un export de discussion.</value></data>
+  <data name="Format" xml:space="preserve"><value>Format</value></data>
+  <data name="StartDate" xml:space="preserve"><value>Date de début</value></data>
+  <data name="EndDate" xml:space="preserve"><value>Date de fin</value></data>
+  <data name="Requesting" xml:space="preserve"><value>Demande en cours…</value></data>
+  <data name="RequestExport" xml:space="preserve"><value>Demander l’export</value></data>
+  <data name="Requested" xml:space="preserve"><value>Demandé</value></data>
+  <data name="Range" xml:space="preserve"><value>Période</value></data>
+  <data name="Download" xml:space="preserve"><value>Télécharger</value></data>
+  <data name="NoExportJobs" xml:space="preserve"><value>Aucune tâche d’export.</value></data>
+  <data name="Now" xml:space="preserve"><value>Maintenant</value></data>
+  <data name="EvidenceFileNameFormat" xml:space="preserve"><value>preuve-moderation-{0}</value></data>
+  <data name="MessageDeleted" xml:space="preserve"><value>Ce message a été supprimé.</value></data>
+</root>

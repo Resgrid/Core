@@ -535,6 +535,11 @@ public class ChatMessageResultData
 	public string DeletedByUserId { get; set; }
 
 	/// <summary>
+	/// Whether the tombstone represents a moderation action
+	/// </summary>
+	public bool IsModerated { get; set; }
+
+	/// <summary>
 	/// When the message was pinned
 	/// </summary>
 	public DateTime? PinnedOn { get; set; }

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
@@ -19,6 +20,33 @@ namespace Resgrid.Tests.Services
 	[TestFixture]
 	public class MessageServiceInboxTests
 	{
+		[Test]
+		public async Task SaveMessageTruncatesValuesToDatabaseColumnLengths()
+		{
+			var repository = new Mock<IMessageRepository>();
+			repository
+				.Setup(x => x.SaveOrUpdateAsync(It.IsAny<Message>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((Message savedMessage, CancellationToken _, bool _) => savedMessage);
+			var service = new MessageService(repository.Object, null, null, null, null, null);
+			var message = new Message
+			{
+				Subject = new string('s', Message.MaximumSubjectLength + 1),
+				Body = new string('b', Message.MaximumBodyLength + 1),
+				SentOn = DateTime.UtcNow
+			};
+
+			var savedMessage = await service.SaveMessageAsync(message);
+
+			savedMessage.Subject.Should().HaveLength(Message.MaximumSubjectLength);
+			savedMessage.Body.Should().HaveLength(Message.MaximumBodyLength);
+			repository.Verify(
+				x => x.SaveOrUpdateAsync(
+					It.Is<Message>(value => value.Subject.Length == Message.MaximumSubjectLength && value.Body.Length == Message.MaximumBodyLength),
+					It.IsAny<CancellationToken>(),
+					It.IsAny<bool>()),
+				Times.Once);
+		}
+
 		[Test]
 		public async Task InboxAndUnreadCountExcludeExpiredMessages()
 		{

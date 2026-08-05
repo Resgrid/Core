@@ -1437,6 +1437,66 @@
   padding: 16px;
 }
 
+.rgchat-mod__filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 10px;
+  padding-bottom: 14px;
+}
+
+.rgchat-mod__filters label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 150px;
+  color: var(--rgchat-muted);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.rgchat-table-wrap {
+  overflow-x: auto;
+}
+
+.rgchat-mod__evidence {
+  min-width: 230px;
+  max-width: 380px;
+  overflow-wrap: anywhere;
+}
+
+.rgchat-mod__report {
+  min-width: 190px;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rgchat-border);
+}
+
+.rgchat-mod__report:last-child {
+  margin-bottom: 0;
+  border-bottom: 0;
+}
+
+.rgchat-mod__actions {
+  min-width: 280px;
+}
+
+.rgchat-mod__actions textarea {
+  width: 100%;
+  margin-bottom: 6px;
+  resize: vertical;
+}
+
+.rgchat-mod__audit {
+  min-width: 320px;
+  margin: 8px 0 0;
+  padding-left: 18px;
+}
+
+.rgchat-mod__audit li {
+  margin-bottom: 8px;
+}
+
 .rgchat-table {
   width: 100%;
   border-collapse: collapse;

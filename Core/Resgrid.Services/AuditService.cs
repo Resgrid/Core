@@ -222,6 +222,14 @@ namespace Resgrid.Services
 				return "Chat Export Requested";
 			case AuditLogTypes.ChatExportDownloaded:
 				return "Chat Export Downloaded";
+			case AuditLogTypes.ModerationReportSubmitted:
+				return "Moderation Report Submitted";
+			case AuditLogTypes.ModerationRequestReopened:
+				return "Moderation Request Reopened";
+			case AuditLogTypes.ModerationRequestCompleted:
+				return "Moderation Request Completed";
+			case AuditLogTypes.ModerationEvidenceDownloaded:
+				return "Moderation Evidence Downloaded";
 		}
 
 			return $"Unknown ({logType})";

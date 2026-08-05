@@ -7,6 +7,7 @@ using NUnit.Framework;
 using Resgrid.Config;
 using Resgrid.Chatbot.Models;
 using Resgrid.Chatbot.Services;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
@@ -31,6 +32,43 @@ namespace Resgrid.Tests.Chatbot
 		}
 
 		// ---- Per-department LLM override ---------------------------------------------------------
+
+		[Test]
+		public void DepartmentConfig_SerializesForDistributedCache()
+		{
+			var createdAt = DateTime.UtcNow.AddDays(-1);
+			var updatedAt = DateTime.UtcNow;
+			var config = new ChatbotDepartmentConfig
+			{
+				Id = "config-id",
+				DepartmentId = 5,
+				IsEnabled = true,
+				AllowedPlatforms = "Discord,Telegram",
+				MaxSessionsPerUser = 4,
+				SessionTtlMinutes = 45,
+				AllowDispatchViaChatbot = true,
+				RequireConfirmationForStatusChange = true,
+				LlmApiEndpoint = "https://dept.example/v1/chat/completions",
+				LlmApiKey = "ENCRYPTED",
+				LlmModelName = "dept-model",
+				MessagesPerUserPerMinute = 12,
+				MessagesPerDepartmentPerMinute = 120,
+				RequireLinkingConfirmation = false,
+				ProactiveNotificationsEnabled = true,
+				CreatedAt = createdAt,
+				UpdatedAt = updatedAt
+			};
+
+			var serialized = ObjectSerialization.Serialize(config);
+			var deserialized = ObjectSerialization.Deserialize<ChatbotDepartmentConfig>(serialized);
+
+			deserialized.Should().BeEquivalentTo(config, options => options
+				.Excluding(value => value.IdValue)
+				.Excluding(value => value.TableName)
+				.Excluding(value => value.IdName)
+				.Excluding(value => value.IdType)
+				.Excluding(value => value.IgnoredProperties));
+		}
 
 		[Test]
 		public async Task GetLlmOverride_WhenEndpointAndKeyConfigured_ReturnsDecryptedOverride()

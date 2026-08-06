@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Resgrid.Chatbot.Models;
@@ -11,17 +12,22 @@ namespace Resgrid.Providers.Chatbot.Services
 	/// </summary>
 	public class ChatbotAdapterRegistry : IChatbotAdapterRegistry
 	{
-		private readonly Dictionary<ChatbotPlatform, IChatbotPlatformAdapter> _adapters;
+		// Adapters are resolved lazily: WebChatAdapter's notifier pulls in the chat services, which
+		// reach AuthorizationService -> CallsService -> CommunicationService -> ChatbotOutboundService
+		// and back into this registry. Deferring adapter activation until first GetAdapter call keeps
+		// that loop out of the container's constructor chain (Autofac circular dependency exception).
+		private readonly Lazy<Dictionary<ChatbotPlatform, IChatbotPlatformAdapter>> _adapters;
 
-		public ChatbotAdapterRegistry(IEnumerable<IChatbotPlatformAdapter> adapters)
+		public ChatbotAdapterRegistry(Lazy<IEnumerable<IChatbotPlatformAdapter>> adapters)
 		{
-			_adapters = (adapters ?? Enumerable.Empty<IChatbotPlatformAdapter>())
-				.GroupBy(a => a.Platform)
-				.ToDictionary(g => g.Key, g => g.First());
+			_adapters = new Lazy<Dictionary<ChatbotPlatform, IChatbotPlatformAdapter>>(() =>
+				(adapters?.Value ?? Enumerable.Empty<IChatbotPlatformAdapter>())
+					.GroupBy(a => a.Platform)
+					.ToDictionary(g => g.Key, g => g.First()));
 		}
 
 		public IChatbotPlatformAdapter GetAdapter(ChatbotPlatform platform)
-			=> _adapters.TryGetValue(platform, out var adapter) ? adapter : null;
+			=> _adapters.Value.TryGetValue(platform, out var adapter) ? adapter : null;
 
 		/// <summary>
 		/// Whether the bot may send an un-prompted message on this platform. SMS is delivered by the

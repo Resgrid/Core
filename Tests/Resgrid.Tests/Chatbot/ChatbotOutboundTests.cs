@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentAssertions;
@@ -30,7 +31,7 @@ namespace Resgrid.Tests.Chatbot
 		[Test]
 		public void Registry_CanInitiateProactively_ReflectsPlatformConstraints()
 		{
-			var registry = new ChatbotAdapterRegistry(new List<IChatbotPlatformAdapter>());
+			var registry = new ChatbotAdapterRegistry(new Lazy<IEnumerable<IChatbotPlatformAdapter>>(() => new List<IChatbotPlatformAdapter>()));
 
 			registry.CanInitiateProactively(ChatbotPlatform.Slack).Should().BeTrue();
 			registry.CanInitiateProactively(ChatbotPlatform.WebChat).Should().BeTrue();
@@ -47,10 +48,28 @@ namespace Resgrid.Tests.Chatbot
 		public void Registry_GetAdapter_ResolvesByPlatform()
 		{
 			var slack = new SlackBotAdapter();
-			var registry = new ChatbotAdapterRegistry(new List<IChatbotPlatformAdapter> { slack });
+			var registry = new ChatbotAdapterRegistry(new Lazy<IEnumerable<IChatbotPlatformAdapter>>(() => new List<IChatbotPlatformAdapter> { slack }));
 
 			registry.GetAdapter(ChatbotPlatform.Slack).Should().BeSameAs(slack);
 			registry.GetAdapter(ChatbotPlatform.Discord).Should().BeNull();
+		}
+
+		[Test]
+		public void Registry_DoesNotResolveAdaptersUntilFirstGetAdapter()
+		{
+			// Guards the circular-dependency fix: constructing the registry (which happens inside the
+			// CommunicationService -> ChatbotOutboundService activation chain) must not materialize the
+			// adapters, because WebChatAdapter's dependency graph loops back through CallsService.
+			var resolved = false;
+			var registry = new ChatbotAdapterRegistry(new Lazy<IEnumerable<IChatbotPlatformAdapter>>(() =>
+			{
+				resolved = true;
+				return new List<IChatbotPlatformAdapter>();
+			}));
+
+			resolved.Should().BeFalse();
+			registry.GetAdapter(ChatbotPlatform.Slack);
+			resolved.Should().BeTrue();
 		}
 
 		// ---- ChatbotOutboundService ----

@@ -2,7 +2,7 @@
 # - PRs on any branch: build + test
 # - Merged PRs into master: build + test + Docker Hub publish + GitHub Release
 
-name: .NET
+name: Dotnet
 
 on:
   pull_request:

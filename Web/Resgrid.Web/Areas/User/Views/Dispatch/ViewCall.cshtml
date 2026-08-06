@@ -975,15 +975,34 @@
         } catch (e) { }
 
         if (Array.isArray(callFormFields)) {
+            // form-render inserts label/option/description content as HTML and its sanitizer is a
+            // no-op unless DOMPurify is loaded (it isn't). CallFormData is API-writable, so escape
+            // the HTML-rendered props and show them as plain text.
+            var escapeHtml = function (value) {
+                return typeof value === 'string'
+                    ? value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;')
+                    : value;
+            };
+            callFormFields.forEach(function (field) {
+                if (!field || typeof field !== 'object') return;
+                field.label = escapeHtml(field.label);
+                field.description = escapeHtml(field.description);
+                if (Array.isArray(field.values)) {
+                    field.values.forEach(function (option) {
+                        if (option && typeof option === 'object') option.label = escapeHtml(option.label);
+                    });
+                }
+            });
+
             var newCallForm = $('#fb-template').formRender({
                 dataType: 'json',
-                formData: callFormData,
+                formData: JSON.stringify(callFormFields),
                 notify: {
                     error: function(message) {
 
                     },
                     success: function(message) {
-                        $('input, textarea, select', '.rendered-form').attr('readonly', true).attr('disabled', true)
+                        $('input, textarea, select, button', '#fb-template .rendered-form').attr('readonly', true).attr('disabled', true)
                     },
                     warning: function(message) {
 

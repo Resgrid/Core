@@ -1,8 +1,9 @@
 ﻿<div class="footer fixed_full">
 	<div class="pull-right">
-		Version @typeof(Startup).Assembly.GetName().Version
+		<rg-assistant label="@commonLocalizer["AssistantModule"]" closelabel="@commonLocalizer["Close"]"></rg-assistant>
+		<rg-chat label="@commonLocalizer["ChatModule"]"></rg-chat>
 	</div>
 	<div>
-		<strong>Copyright</strong> Resgrid, LLC &copy; @DateTime.Now.Year All Rights Reserved.
+		<strong>Copyright</strong> Resgrid, LLC &copy; @DateTime.Now.Year All Rights Reserved. <span class="text-muted">Version @typeof(Startup).Assembly.GetName().Version</span>
 	</div>
 </div>

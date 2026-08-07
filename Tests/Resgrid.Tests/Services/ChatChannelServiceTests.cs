@@ -525,6 +525,64 @@ namespace Resgrid.Tests.Services
 		}
 
 		[TestFixture]
+		public class when_listing_channels_for_users : with_the_chat_channel_service
+		{
+			private ChatChannel SetupDepartmentChannel()
+			{
+				var departmentChannel = new ChatChannel
+				{
+					ChatChannelId = "dept-chan",
+					DepartmentId = 1,
+					ChannelType = (int)ChatChannelType.DepartmentDefault,
+					Name = "First Battalion",
+					CreatedOn = DateTime.UtcNow
+				};
+				_chatChannelRepositoryMock.Setup(x => x.GetDepartmentDefaultAsync(1)).ReturnsAsync(departmentChannel);
+				return departmentChannel;
+			}
+
+			[Test]
+			public async Task department_admin_should_get_every_group_channel_provisioned()
+			{
+				SetupDepartmentChannel();
+				_chatPermissionServiceMock.Setup(x => x.IsDepartmentAdminAsync(1, "admin-a")).ReturnsAsync(true);
+				_departmentGroupsServiceMock.Setup(x => x.GetAllGroupsForDepartmentAsync(1)).ReturnsAsync(new List<DepartmentGroup>
+				{
+					new DepartmentGroup { DepartmentGroupId = 9, DepartmentId = 1, Name = "Station 1" },
+					new DepartmentGroup { DepartmentGroupId = 10, DepartmentId = 1, Name = "Station 2" }
+				});
+				_chatChannelRepositoryMock.Setup(x => x.GetByGroupIdAsync(It.IsAny<int>())).ReturnsAsync((ChatChannel)null);
+
+				var result = await _chatChannelService.GetChannelsForUserAsync(1, "admin-a", null);
+
+				result.Should().Contain(c => c.ChannelType == (int)ChatChannelType.GroupDefault && c.GroupId == 9);
+				result.Should().Contain(c => c.ChannelType == (int)ChatChannelType.GroupDefault && c.GroupId == 10);
+				_chatChannelRepositoryMock.Verify(x => x.InsertAsync(It.Is<ChatChannel>(c => c.ChannelType == (int)ChatChannelType.GroupDefault),
+					It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Exactly(2));
+				_departmentGroupsServiceMock.Verify(x => x.GetGroupForUserAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+			}
+
+			[Test]
+			public async Task non_admin_should_only_get_their_own_group_channel()
+			{
+				SetupDepartmentChannel();
+				_chatPermissionServiceMock.Setup(x => x.IsDepartmentAdminAsync(1, "user-a")).ReturnsAsync(false);
+				_departmentGroupsServiceMock.Setup(x => x.GetGroupForUserAsync("user-a", 1)).ReturnsAsync(new DepartmentGroup
+				{
+					DepartmentGroupId = 9,
+					DepartmentId = 1,
+					Name = "Station 1"
+				});
+				_chatChannelRepositoryMock.Setup(x => x.GetByGroupIdAsync(9)).ReturnsAsync((ChatChannel)null);
+
+				var result = await _chatChannelService.GetChannelsForUserAsync(1, "user-a", null);
+
+				result.Should().ContainSingle(c => c.ChannelType == (int)ChatChannelType.GroupDefault).Which.GroupId.Should().Be(9);
+				_departmentGroupsServiceMock.Verify(x => x.GetAllGroupsForDepartmentAsync(It.IsAny<int>()), Times.Never);
+			}
+		}
+
+		[TestFixture]
 		public class when_creating_ad_hoc_group_channels : with_the_chat_channel_service
 		{
 			[Test]

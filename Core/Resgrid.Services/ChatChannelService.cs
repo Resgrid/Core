@@ -84,12 +84,30 @@ namespace Resgrid.Services
 				if (departmentChannel != null)
 					results[departmentChannel.ChatChannelId] = departmentChannel;
 
-				var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
-				if (group != null)
+				// Department admins get every group's default channel (provisioned lazily right here);
+				// everyone else gets only the group they belong to.
+				if (await _chatPermissionService.IsDepartmentAdminAsync(departmentId, userId))
 				{
-					var groupChannel = await EnsureGroupChannelAsync(group);
-					if (groupChannel != null)
-						results[groupChannel.ChatChannelId] = groupChannel;
+					var allGroups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(departmentId);
+					if (allGroups != null)
+					{
+						foreach (var departmentGroup in allGroups)
+						{
+							var groupChannel = await EnsureGroupChannelAsync(departmentGroup);
+							if (groupChannel != null)
+								results[groupChannel.ChatChannelId] = groupChannel;
+						}
+					}
+				}
+				else
+				{
+					var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+					if (group != null)
+					{
+						var groupChannel = await EnsureGroupChannelAsync(group);
+						if (groupChannel != null)
+							results[groupChannel.ChatChannelId] = groupChannel;
+					}
 				}
 
 				// Chatbot channels are provisioned when a chatbot session starts — the list path only

@@ -57,6 +57,27 @@ namespace Resgrid.Web.Tts.Health
 				validationErrors.Add("Redis connection string is not configured.");
 			}
 
+			// Synthesis writes Piper/ffmpeg intermediates under TempDirectory; with a
+			// read-only root filesystem this only works when the temp volume is actually
+			// mounted, so prove writability here where the k8s probes will see it fail
+			// instead of surfacing as 500s on the first uncached prompt.
+			try
+			{
+				var tempRoot = Path.GetFullPath(string.IsNullOrWhiteSpace(_ttsOptions.TempDirectory)
+					? Path.GetTempPath()
+					: _ttsOptions.TempDirectory);
+
+				Directory.CreateDirectory(tempRoot);
+
+				var probeFilePath = Path.Combine(tempRoot, $"health-probe-{Guid.NewGuid():N}.tmp");
+				File.WriteAllBytes(probeFilePath, new byte[] { 1 });
+				File.Delete(probeFilePath);
+			}
+			catch (Exception ex)
+			{
+				validationErrors.Add($"The TTS temp directory '{_ttsOptions.TempDirectory}' is not writable: {ex.Message}");
+			}
+
 			if (validationErrors.Count == 0)
 			{
 				return Task.FromResult(HealthCheckResult.Healthy("TTS configuration is ready."));

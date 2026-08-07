@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { getChannels, getMyPendingAcks } from './chatApi';
 import { chatHub } from './chatHub';
-import { setChannels, setChatAvailable, setPendingAcks, chatStore } from './chatStore';
+import { setChannels, setChannelsLoadFailed, setChatAvailable, setPendingAcks, chatStore } from './chatStore';
 import { seedPresenceFor } from './chatActions';
 import { useChatStore } from './useChatStore';
 
 export interface ChatBootstrap {
   available: boolean;
   loaded: boolean;
+  loadFailed: boolean;
   reload: () => void;
   connect: () => void;
 }
@@ -35,6 +36,7 @@ export function useChatBootstrap(options?: ChatBootstrapOptions): ChatBootstrap 
   const connectedRef = useRef(false);
 
   const reload = useCallback(() => {
+    setChannelsLoadFailed(false);
     getChannels()
       .then((outcome) => {
         setChatAvailable(outcome.available);
@@ -43,7 +45,12 @@ export function useChatBootstrap(options?: ChatBootstrapOptions): ChatBootstrap 
           void seedPresenceFor(outcome.channels.map((channel) => channel.OwnerUserId));
         }
       })
-      .catch((error) => console.error('Failed to load chat channels.', error));
+      .catch((error) => {
+        // Non-404 failure (network, 500, expired token): surface a retryable error state
+        // instead of leaving the skeleton loader up forever.
+        setChannelsLoadFailed(true);
+        console.error('Failed to load chat channels.', error);
+      });
   }, []);
 
   const connect = useCallback(() => {
@@ -69,9 +76,11 @@ export function useChatBootstrap(options?: ChatBootstrapOptions): ChatBootstrap 
       .then((acks) => setPendingAcks(acks.map((ack) => ack.ChatMessageId)))
       .catch(() => undefined);
 
-    // Badge freshness while the hub is disconnected (FAB never opened on this page).
+    // Badge freshness while the hub is disconnected (panel never opened on this page).
+    // Skip once the server said chat is unavailable (404) — no point re-asking every poll.
     const poll = setInterval(() => {
-      if (chatStore.getState().connectionStatus !== 'connected') {
+      const state = chatStore.getState();
+      if (state.chatAvailable && state.connectionStatus !== 'connected') {
         reload();
       }
     }, BADGE_POLL_INTERVAL_MS);
@@ -84,5 +93,6 @@ export function useChatBootstrap(options?: ChatBootstrapOptions): ChatBootstrap 
 
   const available = useChatStore((state) => state.chatAvailable);
   const loaded = useChatStore((state) => state.channelsLoaded);
-  return { available, loaded, reload, connect };
+  const loadFailed = useChatStore((state) => state.channelsLoadFailed);
+  return { available, loaded, loadFailed, reload, connect };
 }

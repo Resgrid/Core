@@ -1,4 +1,10 @@
-﻿<nav class="navbar-default navbar-static-side" role="navigation">
+﻿@inject Resgrid.Model.Services.IFeatureToggleService featureToggleService
+@{
+	// Chat.System flag gates every chat surface (chat, assistant, moderation). When it is off
+	// the nav items are hidden entirely; the API 404s the endpoints regardless.
+	var chatSystemEnabled = await featureToggleService.IsEnabledAsync(FeatureFlagKeys.ChatSystem, ClaimsAuthorizationHelper.GetDepartmentId());
+}
+<nav class="navbar-default navbar-static-side" role="navigation">
 	<div class="sidebar-collapse">
 		<ul class="nav" id="side-menu">
 			<li class="nav-header">
@@ -18,6 +24,10 @@
 						@if (SettingsHelper.IsMessagingEnabled())
 						{
 							<li><a asp-controller="Messages" asp-action="Inbox" asp-route-area="User">@commonLocalizer["Mailbox"]</a></li>
+						}
+						@if (chatSystemEnabled)
+						{
+							<li><a asp-controller="Chat" asp-action="Index" asp-route-area="User">@commonLocalizer["ChatModule"]</a></li>
 						}
 						<li><a asp-controller="Profile" asp-action="YourDepartments" asp-route-area="User">@commonLocalizer["YourDepartments"]</a></li>
 						<li><a asp-controller="TwoFactor" asp-action="Index" asp-route-area="User"><i class="fa fa-shield"></i> Two-Factor Authentication</a></li>
@@ -42,18 +52,6 @@
 			{
 				<li class="@Html.IsSelected(controller: "Contacts")">
 					<a asp-controller="Contacts" asp-action="Index" asp-route-area="User"><i class="fa fa-address-book"></i> <span class="nav-label" data-i18n="nav.contacts">@commonLocalizer["ContactsModule"]</span></a>
-				</li>
-			}
-			<li class="@Html.IsSelected(controller: "Chat", action: "Index")">
-				<a asp-controller="Chat" asp-action="Index" asp-route-area="User"><i class="fa fa-comments"></i> <span class="nav-label" data-i18n="nav.chat">@commonLocalizer["ChatModule"]</span></a>
-			</li>
-			<li class="@Html.IsSelected(controller: "Chat", action: "Chatbot")">
-				<a asp-controller="Chat" asp-action="Chatbot" asp-route-area="User"><i class="fa fa-magic"></i> <span class="nav-label" data-i18n="nav.assistant">@commonLocalizer["AssistantModule"]</span></a>
-			</li>
-			@if (ClaimsAuthorizationHelper.IsUserDepartmentOrGroupAdmin(0))
-			{
-				<li class="@Html.IsSelected(controller: "Moderation", action: "Index")">
-					<a asp-controller="Moderation" asp-action="Index" asp-route-area="User"><i class="fa fa-gavel"></i> <span class="nav-label" data-i18n="nav.moderation">@commonLocalizer["ChatModerationModule"]</span></a>
 				</li>
 			}
 			@if (SettingsHelper.IsMappingEnabled())

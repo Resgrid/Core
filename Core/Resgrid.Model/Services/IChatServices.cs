@@ -151,6 +151,9 @@ namespace Resgrid.Model.Services
 		/// </summary>
 		Task<List<string>> ResolveChannelAudienceUserIdsAsync(ChatChannel channel);
 
+		/// <summary>True when the user can administer the department (used to widen provisioning/visibility, e.g. every group default channel).</summary>
+		Task<bool> IsDepartmentAdminAsync(int departmentId, string userId);
+
 		/// <summary>Drops cached permission evaluations for a channel (membership/roles changed) and bumps the channel-list cache version.</summary>
 		Task InvalidateChannelCacheAsync(string chatChannelId);
 	}

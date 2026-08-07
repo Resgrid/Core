@@ -39,36 +39,41 @@
   border: 0;
 }
 
-/* ---- Floating panel ---- */
-.rgchat-fab {
-  position: fixed;
-  right: 24px;
-  bottom: 24px;
-  z-index: 12000;
+/* ---- Footer toggle button ---- */
+rg-chat {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Rendered inline inside the fixed site footer (right side), so it never overlaps page
+   content. The footer stays light in both color schemes, so colors are fixed here. */
+.rgchat-footerbtn {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 12px 18px;
+  gap: 6px;
+  padding: 4px 14px;
   border: none;
   border-radius: 999px;
-  background: var(--rgchat-dark);
+  background: #1ab394;
   color: #fff;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
+  line-height: 20px;
   cursor: pointer;
-  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.28);
-  transition: transform 160ms ease, box-shadow 160ms ease;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.18);
+  transition: background-color 140ms ease, box-shadow 140ms ease, transform 140ms ease;
 }
 
-.rgchat-fab:hover {
+.rgchat-footerbtn:hover {
+  background: #18a689;
   transform: translateY(-1px);
-  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.34);
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.24);
 }
 
-.rgchat-fab__badge {
-  min-width: 20px;
-  height: 20px;
-  padding: 0 6px;
+.rgchat-footerbtn__badge {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
   border-radius: 999px;
   background: var(--rgchat-urgent);
   color: #fff;
@@ -79,14 +84,16 @@
   justify-content: center;
 }
 
+/* ---- Floating panel ---- */
 .rgchat-panel {
   position: fixed;
   right: 24px;
-  bottom: 24px;
+  /* Clears the fixed site footer so the panel never covers the copyright bar. */
+  bottom: 56px;
   z-index: 12000;
   width: 384px;
   height: 560px;
-  max-height: calc(100vh - 48px);
+  max-height: calc(100vh - 80px);
   display: flex;
   flex-direction: column;
   background: var(--rgchat-panel);
@@ -1370,6 +1377,78 @@
   }
 }
 
+/* ---- Assistant footer button + slide-out drawer ---- */
+rg-assistant {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+.rgchat-footerbtn--assistant {
+  background: #2f4050;
+}
+
+.rgchat-footerbtn--assistant:hover {
+  background: #263544;
+}
+
+.rgchat-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 12050;
+  width: 420px;
+  max-width: calc(100vw - 24px);
+  display: flex;
+  flex-direction: column;
+  background: var(--rgchat-panel);
+  border-left: 1px solid var(--rgchat-border);
+  box-shadow: -18px 0 48px rgba(15, 23, 42, 0.25);
+  animation: rgchat-drawer-in 200ms ease;
+}
+
+@keyframes rgchat-drawer-in {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.rgchat-drawer__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: var(--rgchat-dark);
+  color: #fff;
+}
+
+.rgchat-drawer__head .rgchat-panel__title {
+  flex: 1;
+}
+
+.rgchat-drawer__body {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* The embedded chatbot fills the drawer edge-to-edge instead of its standalone framed layout. */
+.rgchat-drawer__body .rgchat-root {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.rgchat-drawer__body .rgchat-botframe {
+  flex: 1;
+  height: auto;
+  min-height: 0;
+  border: 0;
+  border-radius: 0;
+}
+
 /* ---- Chatbot ---- */
 .rgchat-botframe {
   height: calc(100vh - 220px);
@@ -1552,58 +1631,9 @@
   margin: 8px 0;
 }
 
-/* ---- Dark mode ---- */
-@media (prefers-color-scheme: dark) {
-  .rgchat-root {
-    --rgchat-dark: #141c26;
-    --rgchat-bg: #131a23;
-    --rgchat-panel: #1c2632;
-    --rgchat-border: #2c3a4a;
-    --rgchat-muted: #9aa8b8;
-    --rgchat-ink: #e6edf4;
-    --rgchat-own-bg: #123c33;
-    --rgchat-own-ink: #d9f3ea;
-    --rgchat-own-border: #1f5c4c;
-    --rgchat-hover: rgba(255, 255, 255, 0.07);
-    --rgchat-bubble-bg: #223041;
-    --rgchat-input-bg: #141c26;
-    --rgchat-shadow-pop: 0 12px 30px rgba(0, 0, 0, 0.55);
-  }
-
-  .rgchat-daydivider {
-    background: rgba(255, 255, 255, 0.09);
-  }
-
-  .rgchat-chan--active {
-    background: rgba(26, 179, 148, 0.2);
-  }
-
-  .rgchat-reaction--mine {
-    background: rgba(26, 179, 148, 0.22);
-  }
-
-  .rgchat-skeleton {
-    background: linear-gradient(90deg, rgba(255, 255, 255, 0.06) 25%, rgba(255, 255, 255, 0.14) 50%, rgba(255, 255, 255, 0.06) 75%);
-    background-size: 200% 100%;
-  }
-
-  .rgchat-bot .rgchat-bubble--bot {
-    background: #223152;
-    border-color: #31436e;
-    color: #e6edf4;
-  }
-
-  .rgchat-tag {
-    background: rgba(255, 255, 255, 0.12);
-    color: #cdd8e4;
-  }
-
-  .rgchat-error {
-    background: rgba(216, 54, 76, 0.14);
-    border-color: rgba(216, 54, 76, 0.4);
-    color: #f3b4bd;
-  }
-}
+/* NOTE: no dark-mode block on purpose. The Resgrid web app (Inspinia md-skin) is light-only, so the
+   chat surfaces stay light regardless of the OS color-scheme preference — a dark chat pane on the
+   white app chrome looked broken. */
 
 /* ---- Reduced motion ---- */
 @media (prefers-reduced-motion: reduce) {

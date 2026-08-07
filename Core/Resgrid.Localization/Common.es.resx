@@ -181,7 +181,7 @@
     <value>Certificaciones</value>
   </data>
   <data name="Close" xml:space="preserve">
-    <value>Cerca</value>
+    <value>Cerrar</value>
   </data>
   <data name="Closed" xml:space="preserve">
     <value>Cerrado</value>
@@ -208,7 +208,7 @@
     <value>Chat</value>
   </data>
   <data name="AssistantModule" xml:space="preserve">
-    <value>Assistant</value>
+    <value>Asistente</value>
   </data>
   <data name="ChatModerationModule" xml:space="preserve">
     <value>Moderación</value>

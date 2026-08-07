@@ -15,10 +15,12 @@ import { NoticeToast, AuthErrorNotice } from './atoms/StatusBanners';
 
 export interface ChatPanelElementProps {
   hostElement?: HTMLElement;
+  // Localized label supplied by the Razor host via the element attribute (commonLocalizer).
+  label?: string;
 }
 
-export default function ChatPanelElement({ hostElement }: ChatPanelElementProps) {
-  const { available, loaded, connect } = useChatBootstrap();
+export default function ChatPanelElement({ hostElement, label = 'Chat' }: ChatPanelElementProps) {
+  const { available, loaded, loadFailed, reload, connect } = useChatBootstrap();
   const channels = useChatStore((state) => state.channels, shallowArrayEqual);
   const unread = useChatStore((state) => state.channels.reduce((total, channel) => total + Math.max(0, channel.UnreadCount), 0));
 
@@ -32,11 +34,15 @@ export default function ChatPanelElement({ hostElement }: ChatPanelElementProps)
   const currentUserId = getCurrentUserId();
   const activeChannel = channels.find((channel) => channel.ChatChannelId === activeChannelId) ?? null;
 
+  // Feature-flag gate: the footer button stays hidden until the server confirms the
+  // Chat.System flag is on for this department (GetChannels 404s when it is off).
+  const chatReady = loaded && available;
+
   useEffect(() => {
     if (hostElement) {
-      hostElement.style.display = loaded && !available ? 'none' : '';
+      hostElement.style.display = chatReady ? '' : 'none';
     }
-  }, [hostElement, loaded, available]);
+  }, [hostElement, chatReady]);
 
   const openPanel = () => {
     setOpen(true);
@@ -50,17 +56,19 @@ export default function ChatPanelElement({ hostElement }: ChatPanelElementProps)
     setThread(null);
   };
 
-  if (loaded && !available) {
+  if (!chatReady) {
     return null;
   }
 
   if (!open) {
+    // Collapsed state renders inline inside the site footer (see _Footer.cshtml) so the
+    // button never overlaps page content the way the old floating FAB did.
     return (
-      <button type="button" className="rgchat-root rgchat-fab" aria-label="Open chat" onClick={openPanel}>
+      <button type="button" className="rgchat-root rgchat-footerbtn" aria-label={label} onClick={openPanel}>
         <span aria-hidden="true">💬</span>
-        <span>Chat</span>
+        <span>{label}</span>
         {unread > 0 && (
-          <span className="rgchat-fab__badge" aria-live="polite">
+          <span className="rgchat-footerbtn__badge" aria-live="polite">
             <span className="rgchat-sr-only">{unread} unread messages</span>
             <span aria-hidden="true">{unread > 99 ? '99+' : unread}</span>
           </span>
@@ -90,7 +98,7 @@ export default function ChatPanelElement({ hostElement }: ChatPanelElementProps)
           )}
           <div className="rgchat-panel__title">
             <span aria-hidden="true">💬</span>
-            <span>{activeChannel ? channelDisplayName(activeChannel) : 'Chat'}</span>
+            <span>{activeChannel ? channelDisplayName(activeChannel) : label}</span>
           </div>
           {!activeChannel && (
             <button type="button" className="rgchat-iconbtn" title="New conversation" aria-label="New conversation" onClick={() => setShowNew(true)}>
@@ -128,7 +136,15 @@ export default function ChatPanelElement({ hostElement }: ChatPanelElementProps)
                   onChange={(event) => setSearch(event.target.value)}
                 />
               </div>
-              <ChannelList channels={channels} activeChannelId={activeChannelId} filter={search} loading={!loaded} onSelect={openChannel} />
+              <ChannelList
+                channels={channels}
+                activeChannelId={activeChannelId}
+                filter={search}
+                loading={!loaded}
+                loadFailed={loadFailed}
+                onRetry={reload}
+                onSelect={openChannel}
+              />
             </>
           )}
         </div>

@@ -62,6 +62,8 @@
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Migrations\Resgrid.Providers.Migrations.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Number\Resgrid.Providers.Number.csproj" />
     <ProjectReference Include="..\..\Providers\Resgrid.Providers.Pdf\Resgrid.Providers.Pdf.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Voip\Resgrid.Providers.Voip.csproj" />
+    <ProjectReference Include="..\..\Providers\Resgrid.Providers.Weather\Resgrid.Providers.Weather.csproj" />
     <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.DataRepository\Resgrid.Repositories.DataRepository.csproj" />
     <ProjectReference Include="..\..\Repositories\Resgrid.Repositories.NoSqlRepository\Resgrid.Repositories.NoSqlRepository.csproj" />
   </ItemGroup>

@@ -682,7 +682,7 @@ namespace Resgrid.Services
 					AddIfSet(userIds, role.UserId);
 		}
 
-		private async Task<bool> IsDepartmentAdminAsync(int departmentId, string userId)
+		public async Task<bool> IsDepartmentAdminAsync(int departmentId, string userId)
 		{
 			return await _authorizationService.CanUserModifyDepartmentAsync(userId, departmentId);
 		}

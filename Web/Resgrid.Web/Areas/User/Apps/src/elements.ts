@@ -4,6 +4,7 @@ import type { MapElementProps } from './components/map/MapElement';
 import type { ShiftsCalendarElementProps } from './components/shifts/ShiftsCalendarElement';
 import type { OmnibarElementProps } from './components/omnibar/OmnibarElement';
 import type { ChatPanelElementProps } from './components/chat/ChatPanelElement';
+import type { AssistantPanelElementProps } from './components/chat/AssistantPanelElement';
 import type { ChatPageElementProps } from './components/chat/ChatPageElement';
 import type { ChatbotElementProps } from './components/chat/ChatbotElement';
 import type { ChatModerationElementProps } from './components/chat/ChatModerationElement';
@@ -51,7 +52,16 @@ defineReactElement<OmnibarElementProps>(
 defineReactElement<ChatPanelElementProps>(
   'rg-chat',
   () => import('./components/chat/ChatPanelElement'),
-  [],
+  [{ attribute: 'label', property: 'label', type: 'string', defaultValue: 'Chat' }],
+);
+
+defineReactElement<AssistantPanelElementProps>(
+  'rg-assistant',
+  () => import('./components/chat/AssistantPanelElement'),
+  [
+    { attribute: 'label', property: 'label', type: 'string', defaultValue: 'Assistant' },
+    { attribute: 'closelabel', property: 'closeLabel', type: 'string', defaultValue: 'Close' },
+  ],
 );
 
 defineReactElement<ChatPageElementProps>(

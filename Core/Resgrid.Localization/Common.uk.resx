@@ -159,10 +159,10 @@
     <value>Контакти</value>
   </data>
   <data name="ChatModule" xml:space="preserve">
-    <value>Chat</value>
+    <value>Чат</value>
   </data>
   <data name="AssistantModule" xml:space="preserve">
-    <value>Assistant</value>
+    <value>Асистент</value>
   </data>
   <data name="ChatModerationModule" xml:space="preserve">
     <value>Модерація</value>

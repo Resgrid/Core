@@ -16,7 +16,11 @@ namespace Resgrid.Model.Services
 	{
 		#region Evaluation (hot path)
 
-		/// <summary>Returns whether a flag is enabled for a department, falling back to defaultValue when unknown.</summary>
+		/// <summary>
+		/// Returns whether a flag is enabled for a department, falling back to defaultValue when the flag
+		/// is unknown. Never throws: if evaluation itself fails (flag store unreachable) the error is
+		/// logged and the answer is false — gated features fail shut instead of 500ing their callers.
+		/// </summary>
 		Task<bool> IsEnabledAsync(string key, int departmentId, bool defaultValue = false, IDictionary<string, string> context = null);
 
 		/// <summary>Full evaluation including the value and the reason (source) it resolved that way.</summary>

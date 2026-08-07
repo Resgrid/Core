@@ -9,6 +9,8 @@ interface ChannelListProps {
   activeChannelId: string | null;
   filter?: string;
   loading?: boolean;
+  loadFailed?: boolean;
+  onRetry?: () => void;
   onSelect: (channelId: string) => void;
 }
 
@@ -56,8 +58,23 @@ export function ChannelListSkeleton() {
   );
 }
 
-export default function ChannelList({ channels, activeChannelId, filter, loading, onSelect }: ChannelListProps) {
+export default function ChannelList({ channels, activeChannelId, filter, loading, loadFailed, onRetry, onSelect }: ChannelListProps) {
   const messagesByChannel = useChatStore((state) => state.messagesByChannel);
+
+  // Load failures leave channelsLoaded false, so check the error state before the skeleton.
+  if (loadFailed) {
+    return (
+      <div className="rgchat-empty" role="alert">
+        <div className="rgchat-empty__icon" aria-hidden="true">⚠️</div>
+        <div>Couldn&apos;t load conversations.</div>
+        {onRetry && (
+          <button type="button" className="rgchat-btn rgchat-btn--ghost" onClick={onRetry}>
+            Retry
+          </button>
+        )}
+      </div>
+    );
+  }
 
   if (loading) {
     return <ChannelListSkeleton />;

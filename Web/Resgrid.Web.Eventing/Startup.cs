@@ -332,6 +332,10 @@ namespace Resgrid.Web.Eventing
 			builder.RegisterModule(new MarketingModule());
 			builder.RegisterModule(new PdfProviderModule());
 			builder.RegisterModule(new MessagingProviderModule());
+			// The chat hub's service chain (ChatChannelService -> ChatPermissionService ->
+			// IncidentCommandService -> IncidentVoiceService) needs the weather and voip providers.
+			builder.RegisterModule(new Resgrid.Providers.Voip.VoipProviderModule());
+			builder.RegisterModule(new Resgrid.Providers.Weather.WeatherProviderModule());
 
 			builder.RegisterType<IdentityUserStore>().As<IUserStore<Model.Identity.IdentityUser>>().InstancePerLifetimeScope();
 			builder.RegisterType<IdentityRoleStore>().As<IRoleStore<Model.Identity.IdentityRole>>().InstancePerLifetimeScope();

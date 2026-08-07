@@ -23,6 +23,7 @@ export type ChatConnectionStatus = 'connected' | 'reconnecting' | 'offline';
 export interface ChatState {
   chatAvailable: boolean;
   channelsLoaded: boolean;
+  channelsLoadFailed: boolean;
   channels: ChatChannelDto[];
   messagesByChannel: Record<string, ChatMessageDto[]>;
   threadMessagesByRoot: Record<string, ChatMessageDto[]>;
@@ -46,6 +47,7 @@ const TYPING_TTL_MS = 5000;
 let state: ChatState = {
   chatAvailable: true,
   channelsLoaded: false,
+  channelsLoadFailed: false,
   channels: [],
   messagesByChannel: {},
   threadMessagesByRoot: {},
@@ -132,7 +134,13 @@ export function setChatAvailable(available: boolean): void {
 }
 
 export function setChannels(channels: ChatChannelDto[]): void {
-  setState({ channels, channelsLoaded: true });
+  setState({ channels, channelsLoaded: true, channelsLoadFailed: false });
+}
+
+export function setChannelsLoadFailed(failed: boolean): void {
+  if (state.channelsLoadFailed !== failed) {
+    setState({ channelsLoadFailed: failed });
+  }
 }
 
 export function upsertChannel(channel: ChatChannelDto): void {

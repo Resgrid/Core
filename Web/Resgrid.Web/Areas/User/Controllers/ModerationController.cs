@@ -11,15 +11,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 	public class ModerationController : SecureBaseController
 	{
 		private readonly IDepartmentGroupsService _departmentGroupsService;
+		private readonly IFeatureToggleService _featureToggleService;
 
-		public ModerationController(IDepartmentGroupsService departmentGroupsService)
+		public ModerationController(IDepartmentGroupsService departmentGroupsService, IFeatureToggleService featureToggleService)
 		{
 			_departmentGroupsService = departmentGroupsService;
+			_featureToggleService = featureToggleService;
 		}
 
 		[HttpGet]
 		public async Task<IActionResult> Index()
 		{
+			if (!await _featureToggleService.IsEnabledAsync(Resgrid.Model.FeatureFlagKeys.ChatSystem, DepartmentId))
+				return RedirectToAction("Dashboard", "Home", new { Area = "User" });
+
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin() &&
 				!await _departmentGroupsService.IsUserAGroupAdminAsync(UserId, DepartmentId))
 				return Unauthorized();

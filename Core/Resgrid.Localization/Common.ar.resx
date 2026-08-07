@@ -36,10 +36,10 @@
   <data name="Connect" xml:space="preserve"><value>اتصال</value></data>
   <data name="ContactsModule" xml:space="preserve"><value>جهات الاتصال</value></data>
   <data name="ChatModule" xml:space="preserve">
-    <value>Chat</value>
+    <value>الدردشة</value>
   </data>
   <data name="AssistantModule" xml:space="preserve">
-    <value>Assistant</value>
+    <value>المساعد</value>
   </data>
   <data name="ChatModerationModule" xml:space="preserve">
     <value>مراجعة المحتوى</value>

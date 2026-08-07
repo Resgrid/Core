@@ -162,7 +162,7 @@
     <value>Chat</value>
   </data>
   <data name="AssistantModule" xml:space="preserve">
-    <value>Assistant</value>
+    <value>Assistent</value>
   </data>
   <data name="ChatModerationModule" xml:space="preserve">
     <value>Moderation</value>

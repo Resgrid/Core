@@ -24,7 +24,7 @@ export interface ChatPageElementProps {
 }
 
 export default function ChatPageElement(_props: ChatPageElementProps) {
-  const { available, loaded } = useChatBootstrap({ connectImmediately: true });
+  const { available, loaded, loadFailed, reload } = useChatBootstrap({ connectImmediately: true });
   const channels = useChatStore((state) => state.channels, shallowArrayEqual);
 
   const [activeChannelId, setActiveChannelId] = useState<string | null>(null);
@@ -114,7 +114,15 @@ export default function ChatPageElement(_props: ChatPageElementProps) {
               ＋
             </button>
           </div>
-          <ChannelList channels={channels} activeChannelId={activeChannelId} filter={results ? undefined : search} loading={!loaded} onSelect={openChannel} />
+          <ChannelList
+            channels={channels}
+            activeChannelId={activeChannelId}
+            filter={results ? undefined : search}
+            loading={!loaded}
+            loadFailed={loadFailed}
+            onRetry={reload}
+            onSelect={openChannel}
+          />
         </div>
 
         <div className="rgchat-page__center">

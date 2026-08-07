@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Resgrid.Config;
+using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
@@ -84,12 +85,51 @@ namespace Resgrid.Services
 				if (departmentChannel != null)
 					results[departmentChannel.ChatChannelId] = departmentChannel;
 
-				var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
-				if (group != null)
+				// Loaded once: source for the admin group-channel matching here AND the
+				// implicit-audience pass further down.
+				var allChannels = await _chatChannelRepository.GetAllByDepartmentIdAsync(departmentId, includeArchived);
+
+				// Department admins get every group's default channel; everyone else gets only the group
+				// they belong to. Existing channels come from the bulk load above — only groups with no
+				// channel yet hit the provisioning path, and a failure there is contained per group so one
+				// bad group can never blank the admin's whole channel list.
+				if (await _chatPermissionService.IsDepartmentAdminAsync(departmentId, userId))
 				{
-					var groupChannel = await EnsureGroupChannelAsync(group);
-					if (groupChannel != null)
-						results[groupChannel.ChatChannelId] = groupChannel;
+					var allGroups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(departmentId);
+					if (allGroups != null && allGroups.Count > 0)
+					{
+						var groupChannelsByGroupId = allChannels?
+							.Where(c => c.ChannelType == (int)ChatChannelType.GroupDefault && c.GroupId.HasValue)
+							.GroupBy(c => c.GroupId.Value)
+							.ToDictionary(g => g.Key, g => g.First());
+
+						foreach (var departmentGroup in allGroups)
+						{
+							try
+							{
+								ChatChannel groupChannel;
+								if (groupChannelsByGroupId == null || !groupChannelsByGroupId.TryGetValue(departmentGroup.DepartmentGroupId, out groupChannel))
+									groupChannel = await EnsureGroupChannelAsync(departmentGroup);
+
+								if (groupChannel != null)
+									results[groupChannel.ChatChannelId] = groupChannel;
+							}
+							catch (Exception ex)
+							{
+								Logging.LogException(ex);
+							}
+						}
+					}
+				}
+				else
+				{
+					var group = await _departmentGroupsService.GetGroupForUserAsync(userId, departmentId);
+					if (group != null)
+					{
+						var groupChannel = await EnsureGroupChannelAsync(group);
+						if (groupChannel != null)
+							results[groupChannel.ChatChannelId] = groupChannel;
+					}
 				}
 
 				// Chatbot channels are provisioned when a chatbot session starts — the list path only
@@ -115,7 +155,6 @@ namespace Resgrid.Services
 
 				// Implicit-audience channels (custom rule-based + active incident channels): evaluate access
 				// per channel; evaluations are cached by the permission service.
-				var allChannels = await _chatChannelRepository.GetAllByDepartmentIdAsync(departmentId, includeArchived);
 				if (allChannels != null)
 				{
 					foreach (var channel in allChannels)

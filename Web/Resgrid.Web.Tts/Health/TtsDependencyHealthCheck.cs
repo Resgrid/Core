@@ -9,13 +9,16 @@ namespace Resgrid.Web.Tts.Health
 	{
 		private readonly S3StorageOptions _s3Options;
 		private readonly TtsOptions _ttsOptions;
+		private readonly ILogger<TtsDependencyHealthCheck> _logger;
 
 		public TtsDependencyHealthCheck(
 			IOptions<S3StorageOptions> s3Options,
-			IOptions<TtsOptions> ttsOptions)
+			IOptions<TtsOptions> ttsOptions,
+			ILogger<TtsDependencyHealthCheck> logger)
 		{
 			_s3Options = s3Options.Value;
 			_ttsOptions = ttsOptions.Value;
+			_logger = logger;
 		}
 
 		public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
@@ -55,6 +58,44 @@ namespace Resgrid.Web.Tts.Health
 			if (string.IsNullOrWhiteSpace(CacheConfig.RedisConnectionString))
 			{
 				validationErrors.Add("Redis connection string is not configured.");
+			}
+
+			// Synthesis writes Piper/ffmpeg intermediates under TempDirectory; with a
+			// read-only root filesystem this only works when the temp volume is actually
+			// mounted, so prove writability here where the k8s probes will see it fail
+			// instead of surfacing as 500s on the first uncached prompt.
+			try
+			{
+				var tempRoot = Path.GetFullPath(string.IsNullOrWhiteSpace(_ttsOptions.TempDirectory)
+					? Path.GetTempPath()
+					: _ttsOptions.TempDirectory);
+
+				Directory.CreateDirectory(tempRoot);
+
+				// Mirror the synthesis workload (AudioProcessingService): a per-job child directory
+				// under the temp root with the intermediates written inside it.
+				var probeDirectory = Path.Combine(tempRoot, $"health-probe-{Guid.NewGuid():N}");
+				try
+				{
+					Directory.CreateDirectory(probeDirectory);
+					File.WriteAllBytes(Path.Combine(probeDirectory, "probe.tmp"), new byte[] { 1 });
+				}
+				finally
+				{
+					try
+					{
+						Directory.Delete(probeDirectory, recursive: true);
+					}
+					catch (DirectoryNotFoundException)
+					{
+						// Creation itself failed; nothing to clean up.
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				_logger.LogError(ex, "TTS temp directory probe failed for {TempDirectory}", _ttsOptions.TempDirectory);
+				validationErrors.Add($"The TTS temp directory '{_ttsOptions.TempDirectory}' is not writable: {ex.Message}");
 			}
 
 			if (validationErrors.Count == 0)

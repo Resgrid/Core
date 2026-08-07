@@ -24,8 +24,10 @@ namespace Resgrid.Repositories.DataRepository
 
 			if (Config.DataConfig.DatabaseType == DatabaseTypes.SqlServer)
 			{
-				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
+				using (var db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
+					await db.OpenAsync();
+
 					using (var transaction = db.BeginTransaction())
 					{
 						var result = await db.ExecuteAsync(@"
@@ -171,13 +173,13 @@ namespace Resgrid.Repositories.DataRepository
 								DELETE FROM [dbo].[AspNetUsersExt] WHERE UserId = @ManagingUserId
 								DELETE FROM [dbo].[AspNetUsers] WHERE Id = @ManagingUserId
 						",
-							new { DepartmentId = departmentId });
+							new { DepartmentId = departmentId }, transaction);
 
 						transaction.Commit();
 					}
 				}
 
-				return false;
+				return true;
 			}
 
 			return false;

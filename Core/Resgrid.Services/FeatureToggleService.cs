@@ -64,8 +64,20 @@ namespace Resgrid.Services
 
 		public async Task<bool> IsEnabledAsync(string key, int departmentId, bool defaultValue = false, IDictionary<string, string> context = null)
 		{
-			var evaluation = await EvaluateInternalAsync(key, departmentId, context, defaultValue, new HashSet<int>());
-			return evaluation.IsEnabled;
+			try
+			{
+				var evaluation = await EvaluateInternalAsync(key, departmentId, context, defaultValue, new HashSet<int>());
+				return evaluation.IsEnabled;
+			}
+			catch (Exception ex)
+			{
+				// Fail shut: a flag-store outage (cache AND database unreachable) must never 500 every
+				// gated page/endpoint — the feature simply reads as disabled until the store recovers.
+				// Deliberately ignores defaultValue here: that is the "flag not defined" default, not
+				// the "evaluation infrastructure down" answer.
+				Logging.LogException(ex, $"FeatureToggle evaluation failed for '{key}' in department {departmentId}; failing shut (disabled)");
+				return false;
+			}
 		}
 
 		public async Task<FeatureFlagEvaluation> EvaluateAsync(string key, int departmentId, IDictionary<string, string> context = null)

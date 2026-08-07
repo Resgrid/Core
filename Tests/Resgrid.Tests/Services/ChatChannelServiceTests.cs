@@ -563,6 +563,49 @@ namespace Resgrid.Tests.Services
 			}
 
 			[Test]
+			public async Task admin_existing_group_channels_should_come_from_bulk_load_without_per_group_lookups()
+			{
+				SetupDepartmentChannel();
+				_chatPermissionServiceMock.Setup(x => x.IsDepartmentAdminAsync(1, "admin-a")).ReturnsAsync(true);
+				_departmentGroupsServiceMock.Setup(x => x.GetAllGroupsForDepartmentAsync(1)).ReturnsAsync(new List<DepartmentGroup>
+				{
+					new DepartmentGroup { DepartmentGroupId = 9, DepartmentId = 1, Name = "Station 1" },
+					new DepartmentGroup { DepartmentGroupId = 10, DepartmentId = 1, Name = "Station 2" }
+				});
+				_chatChannelRepositoryMock.Setup(x => x.GetAllByDepartmentIdAsync(1, false)).ReturnsAsync(new List<ChatChannel>
+				{
+					new ChatChannel { ChatChannelId = "group-9", DepartmentId = 1, ChannelType = (int)ChatChannelType.GroupDefault, GroupId = 9, Name = "Station 1" },
+					new ChatChannel { ChatChannelId = "group-10", DepartmentId = 1, ChannelType = (int)ChatChannelType.GroupDefault, GroupId = 10, Name = "Station 2" }
+				});
+
+				var result = await _chatChannelService.GetChannelsForUserAsync(1, "admin-a", null);
+
+				result.Should().Contain(c => c.ChatChannelId == "group-9");
+				result.Should().Contain(c => c.ChatChannelId == "group-10");
+				_chatChannelRepositoryMock.Verify(x => x.GetByGroupIdAsync(It.IsAny<int>()), Times.Never);
+				_chatChannelRepositoryMock.Verify(x => x.InsertAsync(It.IsAny<ChatChannel>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()), Times.Never);
+			}
+
+			[Test]
+			public async Task admin_single_group_provisioning_failure_should_not_abort_the_channel_list()
+			{
+				SetupDepartmentChannel();
+				_chatPermissionServiceMock.Setup(x => x.IsDepartmentAdminAsync(1, "admin-a")).ReturnsAsync(true);
+				_departmentGroupsServiceMock.Setup(x => x.GetAllGroupsForDepartmentAsync(1)).ReturnsAsync(new List<DepartmentGroup>
+				{
+					new DepartmentGroup { DepartmentGroupId = 9, DepartmentId = 1, Name = "Station 1" },
+					new DepartmentGroup { DepartmentGroupId = 10, DepartmentId = 1, Name = "Station 2" }
+				});
+				_chatChannelRepositoryMock.Setup(x => x.GetByGroupIdAsync(9)).ThrowsAsync(new InvalidOperationException("db down"));
+				_chatChannelRepositoryMock.Setup(x => x.GetByGroupIdAsync(10)).ReturnsAsync((ChatChannel)null);
+
+				var result = await _chatChannelService.GetChannelsForUserAsync(1, "admin-a", null);
+
+				result.Should().Contain(c => c.ChannelType == (int)ChatChannelType.GroupDefault && c.GroupId == 10);
+				result.Should().Contain(c => c.ChannelType == (int)ChatChannelType.DepartmentDefault);
+			}
+
+			[Test]
 			public async Task non_admin_should_only_get_their_own_group_channel()
 			{
 				SetupDepartmentChannel();

@@ -9,13 +9,16 @@ namespace Resgrid.Web.Tts.Health
 	{
 		private readonly S3StorageOptions _s3Options;
 		private readonly TtsOptions _ttsOptions;
+		private readonly ILogger<TtsDependencyHealthCheck> _logger;
 
 		public TtsDependencyHealthCheck(
 			IOptions<S3StorageOptions> s3Options,
-			IOptions<TtsOptions> ttsOptions)
+			IOptions<TtsOptions> ttsOptions,
+			ILogger<TtsDependencyHealthCheck> logger)
 		{
 			_s3Options = s3Options.Value;
 			_ttsOptions = ttsOptions.Value;
+			_logger = logger;
 		}
 
 		public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
@@ -69,12 +72,29 @@ namespace Resgrid.Web.Tts.Health
 
 				Directory.CreateDirectory(tempRoot);
 
-				var probeFilePath = Path.Combine(tempRoot, $"health-probe-{Guid.NewGuid():N}.tmp");
-				File.WriteAllBytes(probeFilePath, new byte[] { 1 });
-				File.Delete(probeFilePath);
+				// Mirror the synthesis workload (AudioProcessingService): a per-job child directory
+				// under the temp root with the intermediates written inside it.
+				var probeDirectory = Path.Combine(tempRoot, $"health-probe-{Guid.NewGuid():N}");
+				try
+				{
+					Directory.CreateDirectory(probeDirectory);
+					File.WriteAllBytes(Path.Combine(probeDirectory, "probe.tmp"), new byte[] { 1 });
+				}
+				finally
+				{
+					try
+					{
+						Directory.Delete(probeDirectory, recursive: true);
+					}
+					catch (DirectoryNotFoundException)
+					{
+						// Creation itself failed; nothing to clean up.
+					}
+				}
 			}
 			catch (Exception ex)
 			{
+				_logger.LogError(ex, "TTS temp directory probe failed for {TempDirectory}", _ttsOptions.TempDirectory);
 				validationErrors.Add($"The TTS temp directory '{_ttsOptions.TempDirectory}' is not writable: {ex.Message}");
 			}
 

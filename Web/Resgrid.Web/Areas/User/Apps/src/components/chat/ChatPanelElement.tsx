@@ -36,13 +36,15 @@ export default function ChatPanelElement({ hostElement, label = 'Chat' }: ChatPa
 
   // Feature-flag gate: the footer button stays hidden until the server confirms the
   // Chat.System flag is on for this department (GetChannels 404s when it is off).
-  const chatReady = loaded && available;
+  // A non-404 load failure keeps the button visible so the failure view (with its
+  // retry control) stays reachable — only a confirmed flag-off hides chat.
+  const chatVisible = loadFailed || (loaded && available);
 
   useEffect(() => {
     if (hostElement) {
-      hostElement.style.display = chatReady ? '' : 'none';
+      hostElement.style.display = chatVisible ? '' : 'none';
     }
-  }, [hostElement, chatReady]);
+  }, [hostElement, chatVisible]);
 
   const openPanel = () => {
     setOpen(true);
@@ -56,7 +58,7 @@ export default function ChatPanelElement({ hostElement, label = 'Chat' }: ChatPa
     setThread(null);
   };
 
-  if (!chatReady) {
+  if (!chatVisible) {
     return null;
   }
 

@@ -121,6 +121,8 @@ namespace Resgrid.Chatbot.Services
 			else
 				config.LlmApiKey = _encryptionService.Encrypt(newPlaintextLlmKey);
 
+			ValidateColumnLengths(config);
+
 			if (existing == null)
 			{
 				config.Id = Guid.NewGuid().ToString("N");
@@ -149,6 +151,26 @@ namespace Resgrid.Chatbot.Services
 			{
 				Logging.LogException(ex);
 			}
+		}
+
+		/// <summary>
+		/// Guards against SQL truncation (error 8152) by validating string fields against the
+		/// ChatbotDepartmentConfigs column sizes (M0068/M0070) before hitting the database.
+		/// LlmApiKey is checked post-encryption since the ciphertext is what gets stored.
+		/// </summary>
+		private static void ValidateColumnLengths(ChatbotDepartmentConfig config)
+		{
+			if (config.AllowedPlatforms != null && config.AllowedPlatforms.Length > 500)
+				throw new ArgumentException("AllowedPlatforms cannot exceed 500 characters.", nameof(config));
+
+			if (config.LlmApiEndpoint != null && config.LlmApiEndpoint.Length > 500)
+				throw new ArgumentException("LlmApiEndpoint cannot exceed 500 characters.", nameof(config));
+
+			if (config.LlmModelName != null && config.LlmModelName.Length > 200)
+				throw new ArgumentException("LlmModelName cannot exceed 200 characters.", nameof(config));
+
+			if (config.LlmApiKey != null && config.LlmApiKey.Length > 1000)
+				throw new ArgumentException("Encrypted LlmApiKey cannot exceed 1000 characters; supply a shorter API key.", nameof(config));
 		}
 
 		private static string CacheKey(int departmentId) => $"ChatbotDeptConfig_{departmentId}";

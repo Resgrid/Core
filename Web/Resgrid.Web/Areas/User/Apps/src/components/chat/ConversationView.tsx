@@ -318,6 +318,9 @@ export default function ConversationView(props: ConversationViewProps) {
                 onPin={canModerate ? handlePin : undefined}
                 onFlag={props.onFlag}
                 onOpenImage={handleOpenImage}
+                // Deliberately variant, not isBot: the footer drawer (variant='bot') sends via
+                // sendOverride, which handleRetry would bypass. On the chat page the assistant
+                // channel retries through the generic send, which feeds the bot pipeline.
                 onRetrySend={variant === 'bot' ? undefined : handleRetry}
                 onDiscardFailed={handleDiscard}
               />

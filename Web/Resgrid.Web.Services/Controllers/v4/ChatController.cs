@@ -826,7 +826,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var channel = await _chatChannelService.GetChannelByIdAsync(channelId);
 			if (channel != null && channel.ChannelType == (int)ChatChannelType.Chatbot && !String.IsNullOrWhiteSpace(message.Body))
 			{
-				await _queueService.EnqueueChatbotMessageAsync(new Resgrid.Model.Queue.ChatbotMessageQueueItem
+				var queued = await _queueService.EnqueueChatbotMessageAsync(new Resgrid.Model.Queue.ChatbotMessageQueueItem
 				{
 					DepartmentId = DepartmentId,
 					From = UserId,
@@ -834,6 +834,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 					MessageId = message.ChatMessageId,
 					Platform = (int)Resgrid.Chatbot.Models.ChatbotPlatform.WebChat
 				});
+
+				// The message persisted but the assistant will never see it; surface the failure the
+				// same way ChatbotController.SendChatMessage does instead of pretending it was sent.
+				if (!queued)
+				{
+					var failedResult = new ChatMessageSentResult();
+					failedResult.Data = (await ConvertMessagesAsync(new List<ChatMessage> { message })).FirstOrDefault();
+					failedResult.PageSize = 1;
+					failedResult.Status = ResponseHelper.Failure;
+
+					ResponseHelper.PopulateV4ResponseData(failedResult);
+					return StatusCode(StatusCodes.Status500InternalServerError, failedResult);
+				}
 
 				// Typing indicator to the user's devices while the worker runs the pipeline.
 				_eventAggregator.SendMessage<ChatEventRaised>(new ChatEventRaised

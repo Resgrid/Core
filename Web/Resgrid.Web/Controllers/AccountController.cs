@@ -782,17 +782,23 @@ namespace Resgrid.Web.Controllers
 		[HttpPost]
 		public IActionResult SetLanugage(string culture, string returnUrl)
 		{
-			if (!String.IsNullOrWhiteSpace(culture))
+			// Whitelist the shipped locales: this anonymous endpoint gets scanner garbage ("'",
+			// paths, SQL fragments) and RequestCulture/CultureInfo throw on invalid names.
+			// Anything not supported is silently ignored instead of turning into a 500.
+			var supported = String.IsNullOrWhiteSpace(culture)
+				? null
+				: Resgrid.Localization.SupportedLocales.GetSupportedCultures()
+					.FirstOrDefault(c => String.Equals(c, culture.Trim(), StringComparison.OrdinalIgnoreCase));
+
+			if (supported != null)
 			{
-				Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName, CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(culture)), new CookieOptions { Expires = DateTime.UtcNow.AddYears(1) });
+				Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName, CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(supported)), new CookieOptions { Expires = DateTime.UtcNow.AddYears(1) });
 				// This guy I think is causing issues with like DateTime rendering mm/dd/yy vs dd/mm/yy, so need to look into that more. -SJ
 				//Thread.CurrentThread.CurrentCulture = System.Globalization.CultureInfo.GetCultureInfo(culture);
-				Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.GetCultureInfo(culture);
+				Thread.CurrentThread.CurrentUICulture = System.Globalization.CultureInfo.GetCultureInfo(supported);
 
 				if (!String.IsNullOrWhiteSpace(returnUrl))
 					return RedirectToLocal(returnUrl);
-				else
-					return RedirectToAction("LogOn");
 			}
 
 			return RedirectToAction("LogOn");

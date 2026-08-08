@@ -312,7 +312,16 @@ export default function Composer({
         </label>
       )}
 
-      <input ref={fileRef} type="file" accept="image/*" className="rgchat-fileinput" onChange={(event) => void handleFile(event.target.files?.[0])} />
+      {allowImages && (
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          className="rgchat-fileinput"
+          style={{ display: 'none' }}
+          onChange={(event) => void handleFile(event.target.files?.[0])}
+        />
+      )}
     </div>
   );
 }

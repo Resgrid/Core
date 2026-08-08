@@ -74,5 +74,66 @@ namespace Resgrid.Tests.Services
 			payload.Value<bool>("DeletedByModerator").Should().Be(expectedModerated);
 			payload.Value<bool>("IsModerated").Should().Be(expectedModerated);
 		}
+
+		// Double-tapping a reaction fires two AddReaction calls; the second must no-op without
+		// attempting the insert (the unique-index violation would flood the error log).
+		[TestCase("🙏", true, false)]  // same emoji already present -> success, no insert
+		[TestCase("🔥", true, true)]   // different emoji -> insert proceeds
+		public async Task AddReactionAsync_is_idempotent_for_duplicate_reactions(string emoji, bool expectedResult, bool expectInsert)
+		{
+			var message = new ChatMessage
+			{
+				ChatMessageId = "message-1",
+				ChatChannelId = "channel-1",
+				DepartmentId = 1,
+				SenderUserId = "sender",
+				Body = "body"
+			};
+			var channel = new ChatChannel { ChatChannelId = message.ChatChannelId, DepartmentId = message.DepartmentId };
+			var channelRepository = new Mock<IChatChannelRepository>();
+			var messageRepository = new Mock<IChatMessageRepository>();
+			var reactionRepository = new Mock<IChatMessageReactionRepository>();
+
+			messageRepository.Setup(x => x.GetByIdAsync(message.ChatMessageId)).ReturnsAsync(message);
+			channelRepository.Setup(x => x.GetByIdAsync(channel.ChatChannelId)).ReturnsAsync(channel);
+			reactionRepository
+				.Setup(x => x.GetByMessageIdsAsync(It.IsAny<System.Collections.Generic.IEnumerable<string>>()))
+				.ReturnsAsync(new[]
+				{
+					new ChatMessageReaction
+					{
+						ChatMessageId = message.ChatMessageId,
+						ParticipantType = (int)ChatParticipantType.User,
+						UserId = "USER-1",
+						Emoji = "🙏"
+					}
+				});
+			reactionRepository
+				.Setup(x => x.InsertAsync(It.IsAny<ChatMessageReaction>(), It.IsAny<CancellationToken>(), false))
+				.ReturnsAsync((ChatMessageReaction reaction, CancellationToken _, bool __) => reaction);
+
+			var service = new ChatMessageService(
+				channelRepository.Object,
+				messageRepository.Object,
+				Mock.Of<IChatMessageEditRepository>(),
+				Mock.Of<IChatAttachmentRepository>(),
+				reactionRepository.Object,
+				Mock.Of<IChatMessageMentionRepository>(),
+				Mock.Of<IChatMessageAckRepository>(),
+				Mock.Of<IChatChannelMemberRepository>(),
+				Mock.Of<IChatChannelService>(),
+				Mock.Of<IChatPermissionService>(),
+				Mock.Of<IUserProfileService>(),
+				Mock.Of<IUnitsService>(),
+				Mock.Of<IEventAggregator>());
+
+			// Case-insensitive user match: stored UserId is "USER-1", caller sends "user-1".
+			var result = await service.AddReactionAsync(message.ChatMessageId, "user-1", null, emoji);
+
+			result.Should().Be(expectedResult);
+			reactionRepository.Verify(
+				x => x.InsertAsync(It.IsAny<ChatMessageReaction>(), It.IsAny<CancellationToken>(), false),
+				expectInsert ? Times.Once() : Times.Never());
+		}
 	}
 }

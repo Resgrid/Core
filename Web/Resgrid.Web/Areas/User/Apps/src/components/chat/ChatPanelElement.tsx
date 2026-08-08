@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import './chat.css';
-import { getCurrentUserId, type ChatChannelDto, type ChatMessageDto } from './types';
+import { ChatChannelType, getCurrentUserId, type ChatChannelDto, type ChatMessageDto } from './types';
 import { useChatBootstrap } from './useChatBootstrap';
 import { useChatStore, shallowArrayEqual } from './useChatStore';
 import { setActiveChannel } from './chatStore';
@@ -21,8 +21,11 @@ export interface ChatPanelElementProps {
 
 export default function ChatPanelElement({ hostElement, label = 'Chat' }: ChatPanelElementProps) {
   const { available, loaded, loadFailed, reload, connect } = useChatBootstrap();
-  const channels = useChatStore((state) => state.channels, shallowArrayEqual);
-  const unread = useChatStore((state) => state.channels.reduce((total, channel) => total + Math.max(0, channel.UnreadCount), 0));
+  const allChannels = useChatStore((state) => state.channels, shallowArrayEqual);
+  // The assistant has its own footer button/drawer (rg-assistant); keep its channel — and its
+  // unread count — out of the chat popout entirely.
+  const channels = allChannels.filter((channel) => channel.ChannelType !== ChatChannelType.Chatbot);
+  const unread = channels.reduce((total, channel) => total + Math.max(0, channel.UnreadCount), 0);
 
   const [open, setOpen] = useState(false);
   const [activeChannelId, setActiveChannelId] = useState<string | null>(null);

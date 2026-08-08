@@ -36,6 +36,13 @@ namespace Resgrid.Tests.Chatbot
 		[TestCase("Whats my schedule?", "my_schedule")]
 		[TestCase("my unread messages?", "list_messages")]
 		[TestCase("new messages", "list_messages")]
+		[TestCase("When is the next event?", "list_calendar")]
+		[TestCase("when's the next meeting", "list_calendar")]
+		[TestCase("What is upcoming in the calendar?", "list_calendar")]
+		[TestCase("what's coming up", "list_calendar")]
+		[TestCase("upcoming events", "list_calendar")]
+		[TestCase("next events", "list_calendar")]
+		[TestCase("Whats my schedule", "my_schedule")]
 		public async Task Classifies_intent(string text, string expectedIntent)
 		{
 			var result = await _classifier.ClassifyAsync(text);

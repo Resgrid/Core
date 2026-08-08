@@ -57,8 +57,8 @@ export default function ConversationView(props: ConversationViewProps) {
   const channelId = channel.ChatChannelId;
   // Assistant conversations are restricted regardless of where they're opened (footer drawer uses
   // variant='bot'; the chat page renders the same channel with the default variant): text only —
-  // no emoji picker, GIFs, images, urgent priority, reactions, threads or deletes. Pin, flag and
-  // editing your own messages stay available.
+  // no emoji picker, GIFs, images, urgent priority, reactions, threads, deletes or edits. Pin and
+  // flag stay available.
   const isBot = variant === 'bot' || channel.ChannelType === ChatChannelType.Chatbot;
 
   const allMessages = useChatStore((state) => state.messagesByChannel[channelId] ?? EMPTY_MESSAGES, shallowArrayEqual);
@@ -313,7 +313,7 @@ export default function ConversationView(props: ConversationViewProps) {
                 showAckStatus={message.Priority === 1 && (message.SenderUserId === currentUserId || !!canModerate)}
                 onReact={isBot ? undefined : handleReact}
                 onOpenThread={isBot ? undefined : props.onOpenThread}
-                onSaveEdit={handleSaveEdit}
+                onSaveEdit={isBot ? undefined : handleSaveEdit}
                 onDelete={isBot ? undefined : handleDelete}
                 onPin={canModerate ? handlePin : undefined}
                 onFlag={props.onFlag}

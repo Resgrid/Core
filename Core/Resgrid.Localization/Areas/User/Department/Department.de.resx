@@ -588,19 +588,19 @@
     <value>Allgemeine Einstellungen speichern</value>
   </data>
   <data name="ChatbotSettingsHeader" xml:space="preserve">
-    <value>Chatbot-Einstellungen</value>
+    <value>Assistenten-Einstellungen</value>
   </data>
   <data name="ChatbotSettingsNav" xml:space="preserve">
-    <value>Chatbot</value>
+    <value>Assistent</value>
   </data>
   <data name="ChatbotConfiguration" xml:space="preserve">
-    <value>Chatbot-Konfiguration</value>
+    <value>Assistenten-Konfiguration</value>
   </data>
   <data name="ChatbotEnable" xml:space="preserve">
-    <value>Chatbot aktivieren</value>
+    <value>Assistenten aktivieren</value>
   </data>
   <data name="ChatbotEnableHelp" xml:space="preserve">
-    <value>Mitgliedern dieser Abteilung erlauben, mit dem Chatbot zu interagieren.</value>
+    <value>Mitgliedern dieser Abteilung erlauben, mit dem Assistenten zu interagieren.</value>
   </data>
   <data name="ChatbotAllowedPlatforms" xml:space="preserve">
     <value>Zugelassene Plattformen</value>
@@ -609,10 +609,10 @@
     <value>Durch Kommas getrennte Plattformnamen, die diese Abteilung zulässt, oder * für alle. Gültige Namen: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, Teams, Signal, WebChat.</value>
   </data>
   <data name="ChatbotAllowDispatch" xml:space="preserve">
-    <value>Disposition über den Chatbot zulassen</value>
+    <value>Disposition über den Assistenten zulassen</value>
   </data>
   <data name="ChatbotAllowDispatchHelp" xml:space="preserve">
-    <value>Berechtigten Benutzern erlauben, über den Chatbot Einsätze zu erstellen oder zu disponieren.</value>
+    <value>Berechtigten Benutzern erlauben, über den Assistenten Einsätze zu erstellen oder zu disponieren.</value>
   </data>
   <data name="ChatbotConfirmStatusChanges" xml:space="preserve">
     <value>Statusänderungen bestätigen</value>
@@ -630,7 +630,7 @@
     <value>Proaktive Benachrichtigungen</value>
   </data>
   <data name="ChatbotProactiveNotificationsHelp" xml:space="preserve">
-    <value>Dem Chatbot erlauben, proaktive Benachrichtigungen (Einsätze, Erinnerungen) an verknüpfte Benutzer zu senden.</value>
+    <value>Dem Assistenten erlauben, proaktive Benachrichtigungen (Einsätze, Erinnerungen) an verknüpfte Benutzer zu senden.</value>
   </data>
   <data name="ChatbotMessagesPerUser" xml:space="preserve">
     <value>Nachrichten / Benutzer / Minute</value>
@@ -648,7 +648,7 @@
     <value>KI-/LLM-Anbieter der Abteilung (optional)</value>
   </data>
   <data name="ChatbotLlmIntro" xml:space="preserve">
-    <value>Leer lassen, um den KI-Anbieter des Resgrid-Systems zu verwenden. Um die Verarbeitung Ihres Chatbots bei Ihrem eigenen Anbieter zu belassen, geben Sie einen OpenAI-kompatiblen Endpunkt, ein Modell und einen API-Schlüssel ein.</value>
+    <value>Leer lassen, um den KI-Anbieter des Resgrid-Systems zu verwenden. Um die Verarbeitung Ihres Assistenten bei Ihrem eigenen Anbieter zu belassen, geben Sie einen OpenAI-kompatiblen Endpunkt, ein Modell und einen API-Schlüssel ein.</value>
   </data>
   <data name="ChatbotLlmEndpoint" xml:space="preserve">
     <value>LLM-Endpunkt</value>
@@ -672,10 +672,10 @@
     <value>Abbrechen</value>
   </data>
   <data name="ChatbotSaved" xml:space="preserve">
-    <value>Chatbot-Einstellungen gespeichert.</value>
+    <value>Assistenten-Einstellungen gespeichert.</value>
   </data>
   <data name="ChatbotSaveError" xml:space="preserve">
-    <value>Beim Speichern Ihrer Chatbot-Einstellungen ist ein Fehler aufgetreten.</value>
+    <value>Beim Speichern Ihrer Assistenten-Einstellungen ist ein Fehler aufgetreten.</value>
   </data>
   <data name="EnableModernNotifications" xml:space="preserve">
     <value>Enable Modern Notifications</value>
@@ -687,6 +687,6 @@
     <value>Sicherheits-PIN erforderlich</value>
   </data>
   <data name="ForceChatbotSecurityPinHelp" xml:space="preserve">
-    <value>Verlangt, dass jedes Mitglied gefährliche oder abteilungsweite Chatbot-/SMS-Aktionen mit seiner persönlichen 4-stelligen Sicherheits-PIN bestätigt. Mitglieder ohne PIN erhalten eine zufällig generierte (einsehbar auf ihrer Profilseite).</value>
+    <value>Verlangt, dass jedes Mitglied gefährliche oder abteilungsweite Assistenten-/SMS-Aktionen mit seiner persönlichen 4-stelligen Sicherheits-PIN bestätigt. Mitglieder ohne PIN erhalten eine zufällig generierte (einsehbar auf ihrer Profilseite).</value>
   </data>
 </root>

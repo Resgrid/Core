@@ -45,7 +45,7 @@ namespace Resgrid.Chatbot.Handlers
 
 				var msg = new Message
 				{
-					Subject = "Message via chatbot",
+					Subject = "Message via assistant",
 					Body = body.Truncate(4000),
 					SendingUserId = session.UserId,
 					SentOn = DateTime.UtcNow,

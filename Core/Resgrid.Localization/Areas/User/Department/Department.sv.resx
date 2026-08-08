@@ -588,19 +588,19 @@
     <value>Spara Allmänna Inställningar</value>
   </data>
   <data name="ChatbotSettingsHeader" xml:space="preserve">
-    <value>Chatbot-inställningar</value>
+    <value>Assistentinställningar</value>
   </data>
   <data name="ChatbotSettingsNav" xml:space="preserve">
-    <value>Chatbot</value>
+    <value>Assistent</value>
   </data>
   <data name="ChatbotConfiguration" xml:space="preserve">
-    <value>Chatbot-konfiguration</value>
+    <value>Assistentkonfiguration</value>
   </data>
   <data name="ChatbotEnable" xml:space="preserve">
-    <value>Aktivera chatbot</value>
+    <value>Aktivera assistent</value>
   </data>
   <data name="ChatbotEnableHelp" xml:space="preserve">
-    <value>Tillåt medlemmar i denna avdelning att interagera med chatboten.</value>
+    <value>Tillåt medlemmar i denna avdelning att interagera med assistenten.</value>
   </data>
   <data name="ChatbotAllowedPlatforms" xml:space="preserve">
     <value>Tillåtna plattformar</value>
@@ -609,10 +609,10 @@
     <value>Kommaseparerade plattformsnamn som denna avdelning tillåter, eller * för alla. Giltiga namn: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, Teams, Signal, WebChat.</value>
   </data>
   <data name="ChatbotAllowDispatch" xml:space="preserve">
-    <value>Tillåt utlarmning via chatboten</value>
+    <value>Tillåt utlarmning via assistenten</value>
   </data>
   <data name="ChatbotAllowDispatchHelp" xml:space="preserve">
-    <value>Tillåt behöriga användare att skapa eller larma ut ärenden via chatboten.</value>
+    <value>Tillåt behöriga användare att skapa eller larma ut ärenden via assistenten.</value>
   </data>
   <data name="ChatbotConfirmStatusChanges" xml:space="preserve">
     <value>Bekräfta statusändringar</value>
@@ -630,7 +630,7 @@
     <value>Proaktiva aviseringar</value>
   </data>
   <data name="ChatbotProactiveNotificationsHelp" xml:space="preserve">
-    <value>Tillåt chatboten att skicka proaktiva aviseringar (ärenden, påminnelser) till kopplade användare.</value>
+    <value>Tillåt assistenten att skicka proaktiva aviseringar (ärenden, påminnelser) till kopplade användare.</value>
   </data>
   <data name="ChatbotMessagesPerUser" xml:space="preserve">
     <value>Meddelanden / användare / minut</value>
@@ -648,7 +648,7 @@
     <value>Avdelningens AI-/LLM-leverantör (valfritt)</value>
   </data>
   <data name="ChatbotLlmIntro" xml:space="preserve">
-    <value>Lämna dessa tomma för att använda Resgrids system-AI-leverantör. För att behålla din chatbots bearbetning hos din egen leverantör, ange en OpenAI-kompatibel slutpunkt, modell och API-nyckel.</value>
+    <value>Lämna dessa tomma för att använda Resgrids system-AI-leverantör. För att behålla din assistents bearbetning hos din egen leverantör, ange en OpenAI-kompatibel slutpunkt, modell och API-nyckel.</value>
   </data>
   <data name="ChatbotLlmEndpoint" xml:space="preserve">
     <value>LLM-slutpunkt</value>
@@ -672,10 +672,10 @@
     <value>Avbryt</value>
   </data>
   <data name="ChatbotSaved" xml:space="preserve">
-    <value>Chatbot-inställningarna sparades.</value>
+    <value>Assistentinställningarna sparades.</value>
   </data>
   <data name="ChatbotSaveError" xml:space="preserve">
-    <value>Ett fel uppstod när dina chatbot-inställningar skulle sparas.</value>
+    <value>Ett fel uppstod när dina assistentinställningar skulle sparas.</value>
   </data>
   <data name="EnableModernNotifications" xml:space="preserve">
     <value>Enable Modern Notifications</value>
@@ -687,6 +687,6 @@
     <value>Kräv säkerhets-PIN</value>
   </data>
   <data name="ForceChatbotSecurityPinHelp" xml:space="preserve">
-    <value>Kräver att varje medlem bekräftar farliga eller avdelningsövergripande chatbot-/SMS-åtgärder med sin personliga 4-siffriga säkerhets-PIN. Medlemmar utan PIN får en slumpmässigt genererad (visas på deras profilsida).</value>
+    <value>Kräver att varje medlem bekräftar farliga eller avdelningsövergripande assistent-/SMS-åtgärder med sin personliga 4-siffriga säkerhets-PIN. Medlemmar utan PIN får en slumpmässigt genererad (visas på deras profilsida).</value>
   </data>
 </root>

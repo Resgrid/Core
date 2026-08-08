@@ -60,7 +60,7 @@ namespace Resgrid.Chatbot.Handlers
 
 		private static string BuildTopicMenu()
 		{
-			return "Resgrid Chatbot. Text a command, or HELP <topic> for details.\n"
+			return "Resgrid Assistant. Text a command, or HELP <topic> for details.\n"
 				+ "Topics: STATUS, STAFFING, CALLS, MESSAGES, UNITS, SHIFTS, CALENDAR, PERSONNEL, DEPARTMENTS, STOP";
 		}
 

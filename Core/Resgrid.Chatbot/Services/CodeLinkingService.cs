@@ -119,7 +119,7 @@ namespace Resgrid.Chatbot.Services
 				"code",
 				code);
 
-			return LinkResult.Ok("Account linked successfully! You can now use all chatbot features.", identity);
+			return LinkResult.Ok("Account linked successfully! You can now use all assistant features.", identity);
 		}
 
 		private static string GenerateRandomCode()

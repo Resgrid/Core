@@ -282,15 +282,17 @@ export async function flagMessage(messageId: string, reason: number, note: strin
 export async function getChatbotChannel(): Promise<ChatbotChannelInfo | null> {
   try {
     const raw = await getJson<Record<string, unknown>>('api/v4/Chatbot/GetChatChannel');
-    const channelId = (raw.ChatChannelId ?? raw.chatChannelId) as string | undefined;
+    // The v4 envelope nests the payload under Data; tolerate a flat payload too.
+    const data = ((raw.Data ?? raw.data) ?? raw) as Record<string, unknown>;
+    const channelId = (data.ChatChannelId ?? data.chatChannelId) as string | undefined;
     if (!channelId) {
       return null;
     }
     return {
       ChatChannelId: channelId,
-      Name: (raw.Name ?? raw.name ?? 'Assistant') as string,
-      LastMessageSeq: Number(raw.LastMessageSeq ?? raw.lastMessageSeq ?? 0),
-      LastMessageOn: (raw.LastMessageOn ?? raw.lastMessageOn ?? null) as string | null,
+      Name: (data.Name ?? data.name ?? 'Assistant') as string,
+      LastMessageSeq: Number(data.LastMessageSeq ?? data.lastMessageSeq ?? 0),
+      LastMessageOn: (data.LastMessageOn ?? data.lastMessageOn ?? null) as string | null,
     };
   } catch (error) {
     if (isApiStatus(error, 404)) {

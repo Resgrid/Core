@@ -44,7 +44,7 @@ namespace Resgrid.Chatbot.Handlers
 				if (config != null && !config.AllowDispatchViaChatbot)
 					return new ChatbotResponse
 					{
-						Text = "Creating calls through the chatbot is disabled for this department.",
+						Text = "Creating calls through the assistant is disabled for this department.",
 						Processed = false
 					};
 

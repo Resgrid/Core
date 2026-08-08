@@ -51,6 +51,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IAuthorizationService _authorizationService;
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IEventAggregator _eventAggregator;
+		private readonly IQueueService _queueService;
 
 		public ChatController(
 			IChatChannelService chatChannelService,
@@ -64,7 +65,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IFeatureToggleService featureToggleService,
 			IAuthorizationService authorizationService,
 			ICacheProvider cacheProvider,
-			IEventAggregator eventAggregator)
+			IEventAggregator eventAggregator,
+			IQueueService queueService)
 		{
 			_chatChannelService = chatChannelService;
 			_chatPermissionService = chatPermissionService;
@@ -78,6 +80,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_authorizationService = authorizationService;
 			_cacheProvider = cacheProvider;
 			_eventAggregator = eventAggregator;
+			_queueService = queueService;
 		}
 
 		#endregion Members and Constructors
@@ -816,6 +819,32 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (message == null)
 				return BadRequest();
+
+			// The assistant channel is also reachable from the regular chat page, so sends that arrive
+			// through this generic endpoint must still feed the chatbot pipeline (the dedicated
+			// ChatbotController.SendChatMessage does the same for the assistant panel).
+			var channel = await _chatChannelService.GetChannelByIdAsync(channelId);
+			if (channel != null && channel.ChannelType == (int)ChatChannelType.Chatbot && !String.IsNullOrWhiteSpace(message.Body))
+			{
+				await _queueService.EnqueueChatbotMessageAsync(new Resgrid.Model.Queue.ChatbotMessageQueueItem
+				{
+					DepartmentId = DepartmentId,
+					From = UserId,
+					Body = message.Body,
+					MessageId = message.ChatMessageId,
+					Platform = (int)Resgrid.Chatbot.Models.ChatbotPlatform.WebChat
+				});
+
+				// Typing indicator to the user's devices while the worker runs the pipeline.
+				_eventAggregator.SendMessage<ChatEventRaised>(new ChatEventRaised
+				{
+					DepartmentId = DepartmentId,
+					ChatChannelId = channel.ChatChannelId,
+					Kind = ChatEventKinds.ChatbotTyping,
+					TargetUserId = UserId,
+					PayloadJson = Newtonsoft.Json.JsonConvert.SerializeObject(new { channel.ChatChannelId, IsTyping = true })
+				});
+			}
 
 			var result = new ChatMessageSentResult();
 			result.Data = (await ConvertMessagesAsync(new List<ChatMessage> { message })).FirstOrDefault();

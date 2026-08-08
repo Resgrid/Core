@@ -588,19 +588,19 @@
     <value>Зберегти Загальні Налаштування</value>
   </data>
   <data name="ChatbotSettingsHeader" xml:space="preserve">
-    <value>Налаштування чат-бота</value>
+    <value>Налаштування асистента</value>
   </data>
   <data name="ChatbotSettingsNav" xml:space="preserve">
-    <value>Чат-бот</value>
+    <value>Асистент</value>
   </data>
   <data name="ChatbotConfiguration" xml:space="preserve">
-    <value>Конфігурація чат-бота</value>
+    <value>Конфігурація асистента</value>
   </data>
   <data name="ChatbotEnable" xml:space="preserve">
-    <value>Увімкнути чат-бота</value>
+    <value>Увімкнути асистента</value>
   </data>
   <data name="ChatbotEnableHelp" xml:space="preserve">
-    <value>Дозволити учасникам цього підрозділу взаємодіяти з чат-ботом.</value>
+    <value>Дозволити учасникам цього підрозділу взаємодіяти з асистентом.</value>
   </data>
   <data name="ChatbotAllowedPlatforms" xml:space="preserve">
     <value>Дозволені платформи</value>
@@ -609,10 +609,10 @@
     <value>Назви платформ, розділені комами, дозволені для цього підрозділу, або * для всіх. Дійсні назви: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, Teams, Signal, WebChat.</value>
   </data>
   <data name="ChatbotAllowDispatch" xml:space="preserve">
-    <value>Дозволити диспетчеризацію через чат-бот</value>
+    <value>Дозволити диспетчеризацію через асистент</value>
   </data>
   <data name="ChatbotAllowDispatchHelp" xml:space="preserve">
-    <value>Дозволити уповноваженим користувачам створювати або диспетчеризувати виклики через чат-бот.</value>
+    <value>Дозволити уповноваженим користувачам створювати або диспетчеризувати виклики через асистент.</value>
   </data>
   <data name="ChatbotConfirmStatusChanges" xml:space="preserve">
     <value>Підтверджувати зміни статусу</value>
@@ -630,7 +630,7 @@
     <value>Проактивні сповіщення</value>
   </data>
   <data name="ChatbotProactiveNotificationsHelp" xml:space="preserve">
-    <value>Дозволити чат-боту надсилати проактивні сповіщення (виклики, нагадування) прив'язаним користувачам.</value>
+    <value>Дозволити асистенту надсилати проактивні сповіщення (виклики, нагадування) прив'язаним користувачам.</value>
   </data>
   <data name="ChatbotMessagesPerUser" xml:space="preserve">
     <value>Повідомлення / користувач / хвилина</value>
@@ -648,7 +648,7 @@
     <value>Постачальник ШІ / LLM підрозділу (необов'язково)</value>
   </data>
   <data name="ChatbotLlmIntro" xml:space="preserve">
-    <value>Залиште ці поля порожніми, щоб використовувати системного постачальника ШІ Resgrid. Щоб обробка вашого чат-бота залишалася у вашого власного постачальника, введіть сумісну з OpenAI кінцеву точку, модель і ключ API.</value>
+    <value>Залиште ці поля порожніми, щоб використовувати системного постачальника ШІ Resgrid. Щоб обробка вашого асистента залишалася у вашого власного постачальника, введіть сумісну з OpenAI кінцеву точку, модель і ключ API.</value>
   </data>
   <data name="ChatbotLlmEndpoint" xml:space="preserve">
     <value>Кінцева точка LLM</value>
@@ -672,10 +672,10 @@
     <value>Скасувати</value>
   </data>
   <data name="ChatbotSaved" xml:space="preserve">
-    <value>Налаштування чат-бота збережено.</value>
+    <value>Налаштування асистента збережено.</value>
   </data>
   <data name="ChatbotSaveError" xml:space="preserve">
-    <value>Під час збереження налаштувань чат-бота сталася помилка.</value>
+    <value>Під час збереження налаштувань асистента сталася помилка.</value>
   </data>
   <data name="EnableModernNotifications" xml:space="preserve">
     <value>Enable Modern Notifications</value>
@@ -687,6 +687,6 @@
     <value>Вимагати PIN-код безпеки</value>
   </data>
   <data name="ForceChatbotSecurityPinHelp" xml:space="preserve">
-    <value>Вимагає, щоб кожен учасник підтверджував небезпечні або загальновідомчі дії чат-бота/SMS своїм особистим 4-значним PIN-кодом безпеки. Учасники без PIN-коду отримують випадково згенерований (доступний на сторінці профілю).</value>
+    <value>Вимагає, щоб кожен учасник підтверджував небезпечні або загальновідомчі дії асистента/SMS своїм особистим 4-значним PIN-кодом безпеки. Учасники без PIN-коду отримують випадково згенерований (доступний на сторінці профілю).</value>
   </data>
 </root>

@@ -588,19 +588,19 @@
     <value>Zapisz Ustawienia Og&#xF3;lne</value>
   </data>
   <data name="ChatbotSettingsHeader" xml:space="preserve">
-    <value>Ustawienia chatbota</value>
+    <value>Ustawienia asystenta</value>
   </data>
   <data name="ChatbotSettingsNav" xml:space="preserve">
-    <value>Chatbot</value>
+    <value>Asystent</value>
   </data>
   <data name="ChatbotConfiguration" xml:space="preserve">
-    <value>Konfiguracja chatbota</value>
+    <value>Konfiguracja asystenta</value>
   </data>
   <data name="ChatbotEnable" xml:space="preserve">
-    <value>Włącz chatbota</value>
+    <value>Włącz asystenta</value>
   </data>
   <data name="ChatbotEnableHelp" xml:space="preserve">
-    <value>Zezwól członkom tego działu na interakcję z chatbotem.</value>
+    <value>Zezwól członkom tego działu na interakcję z asystentem.</value>
   </data>
   <data name="ChatbotAllowedPlatforms" xml:space="preserve">
     <value>Dozwolone platformy</value>
@@ -609,10 +609,10 @@
     <value>Nazwy platform oddzielone przecinkami dozwolone dla tego działu lub * dla wszystkich. Prawidłowe nazwy: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, Teams, Signal, WebChat.</value>
   </data>
   <data name="ChatbotAllowDispatch" xml:space="preserve">
-    <value>Zezwól na dysponowanie przez chatbota</value>
+    <value>Zezwól na dysponowanie przez asystenta</value>
   </data>
   <data name="ChatbotAllowDispatchHelp" xml:space="preserve">
-    <value>Zezwól uprawnionym użytkownikom na tworzenie lub dysponowanie zgłoszeniami przez chatbota.</value>
+    <value>Zezwól uprawnionym użytkownikom na tworzenie lub dysponowanie zgłoszeniami przez asystenta.</value>
   </data>
   <data name="ChatbotConfirmStatusChanges" xml:space="preserve">
     <value>Potwierdzaj zmiany statusu</value>
@@ -630,7 +630,7 @@
     <value>Powiadomienia proaktywne</value>
   </data>
   <data name="ChatbotProactiveNotificationsHelp" xml:space="preserve">
-    <value>Zezwól chatbotowi na wysyłanie proaktywnych powiadomień (zgłoszenia, przypomnienia) do powiązanych użytkowników.</value>
+    <value>Zezwól asystentowi na wysyłanie proaktywnych powiadomień (zgłoszenia, przypomnienia) do powiązanych użytkowników.</value>
   </data>
   <data name="ChatbotMessagesPerUser" xml:space="preserve">
     <value>Wiadomości / użytkownik / minuta</value>
@@ -648,7 +648,7 @@
     <value>Dostawca AI / LLM działu (opcjonalnie)</value>
   </data>
   <data name="ChatbotLlmIntro" xml:space="preserve">
-    <value>Pozostaw te pola puste, aby użyć systemowego dostawcy AI Resgrid. Aby przetwarzanie chatbota pozostało u własnego dostawcy, podaj punkt końcowy zgodny z OpenAI, model i klucz API.</value>
+    <value>Pozostaw te pola puste, aby użyć systemowego dostawcy AI Resgrid. Aby przetwarzanie asystenta pozostało u własnego dostawcy, podaj punkt końcowy zgodny z OpenAI, model i klucz API.</value>
   </data>
   <data name="ChatbotLlmEndpoint" xml:space="preserve">
     <value>Punkt końcowy LLM</value>
@@ -672,10 +672,10 @@
     <value>Anuluj</value>
   </data>
   <data name="ChatbotSaved" xml:space="preserve">
-    <value>Zapisano ustawienia chatbota.</value>
+    <value>Zapisano ustawienia asystenta.</value>
   </data>
   <data name="ChatbotSaveError" xml:space="preserve">
-    <value>Wystąpił błąd podczas zapisywania ustawień chatbota.</value>
+    <value>Wystąpił błąd podczas zapisywania ustawień asystenta.</value>
   </data>
   <data name="EnableModernNotifications" xml:space="preserve">
     <value>Enable Modern Notifications</value>
@@ -687,6 +687,6 @@
     <value>Wymagaj kodu PIN bezpieczeństwa</value>
   </data>
   <data name="ForceChatbotSecurityPinHelp" xml:space="preserve">
-    <value>Wymaga, aby każdy członek potwierdzał niebezpieczne lub obejmujące cały wydział akcje chatbota/SMS swoim osobistym 4-cyfrowym kodem PIN bezpieczeństwa. Członkowie bez kodu PIN otrzymują losowo wygenerowany (widoczny na stronie profilu).</value>
+    <value>Wymaga, aby każdy członek potwierdzał niebezpieczne lub obejmujące cały wydział akcje asystenta/SMS swoim osobistym 4-cyfrowym kodem PIN bezpieczeństwa. Członkowie bez kodu PIN otrzymują losowo wygenerowany (widoczny na stronie profilu).</value>
   </data>
 </root>

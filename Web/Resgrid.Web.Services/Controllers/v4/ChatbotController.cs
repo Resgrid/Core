@@ -470,7 +470,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return false;
 
 			var settings = await _chatChannelService.GetDepartmentSettingsAsync(DepartmentId);
-			return settings == null || settings.ChatbotEnabled;
+			if (settings != null && !settings.ChatbotEnabled)
+				return false;
+
+			// Honor the admin toggle from Department Settings > Assistant. Matching the ingress
+			// pipeline's semantics, a missing config row means enabled.
+			var config = await _departmentConfigService.GetConfigAsync(DepartmentId);
+			return config == null || config.IsEnabled;
 		}
 
 		#endregion Web Chat conversation

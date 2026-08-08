@@ -667,19 +667,19 @@
     <value>Select the eSpeak-NG language or dialect to use for this department's voice prompts.</value>
   </data>
   <data name="ChatbotSettingsHeader" xml:space="preserve">
-    <value>Chatbot Settings</value>
+    <value>Assistant Settings</value>
   </data>
   <data name="ChatbotSettingsNav" xml:space="preserve">
-    <value>Chatbot</value>
+    <value>Assistant</value>
   </data>
   <data name="ChatbotConfiguration" xml:space="preserve">
-    <value>Chatbot Configuration</value>
+    <value>Assistant Configuration</value>
   </data>
   <data name="ChatbotEnable" xml:space="preserve">
-    <value>Enable Chatbot</value>
+    <value>Enable Assistant</value>
   </data>
   <data name="ChatbotEnableHelp" xml:space="preserve">
-    <value>Allow members of this department to interact with the chatbot.</value>
+    <value>Allow members of this department to interact with the assistant.</value>
   </data>
   <data name="ChatbotAllowedPlatforms" xml:space="preserve">
     <value>Allowed Platforms</value>
@@ -688,10 +688,10 @@
     <value>Comma-separated platform names this department allows, or * for all. Valid names: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, Teams, Signal, WebChat.</value>
   </data>
   <data name="ChatbotAllowDispatch" xml:space="preserve">
-    <value>Allow Dispatch via Chatbot</value>
+    <value>Allow Dispatch via Assistant</value>
   </data>
   <data name="ChatbotAllowDispatchHelp" xml:space="preserve">
-    <value>Allow authorized users to create or dispatch calls through the chatbot.</value>
+    <value>Allow authorized users to create or dispatch calls through the assistant.</value>
   </data>
   <data name="ChatbotConfirmStatusChanges" xml:space="preserve">
     <value>Confirm Status Changes</value>
@@ -709,7 +709,7 @@
     <value>Proactive Notifications</value>
   </data>
   <data name="ChatbotProactiveNotificationsHelp" xml:space="preserve">
-    <value>Allow the chatbot to push proactive notifications (calls, reminders) to linked users.</value>
+    <value>Allow the assistant to push proactive notifications (calls, reminders) to linked users.</value>
   </data>
   <data name="ChatbotMessagesPerUser" xml:space="preserve">
     <value>Messages / User / Minute</value>
@@ -727,7 +727,7 @@
     <value>Department AI / LLM Provider (optional)</value>
   </data>
   <data name="ChatbotLlmIntro" xml:space="preserve">
-    <value>Leave these blank to use the Resgrid system AI provider. To keep your chatbot processing with your own provider, enter an OpenAI-compatible endpoint, model, and API key.</value>
+    <value>Leave these blank to use the Resgrid system AI provider. To keep your assistant processing with your own provider, enter an OpenAI-compatible endpoint, model, and API key.</value>
   </data>
   <data name="ChatbotLlmEndpoint" xml:space="preserve">
     <value>LLM Endpoint</value>
@@ -751,10 +751,10 @@
     <value>Cancel</value>
   </data>
   <data name="ChatbotSaved" xml:space="preserve">
-    <value>Chatbot settings saved.</value>
+    <value>Assistant settings saved.</value>
   </data>
   <data name="ChatbotSaveError" xml:space="preserve">
-    <value>An error occurred saving your chatbot settings.</value>
+    <value>An error occurred saving your assistant settings.</value>
   </data>
   <data name="EnableModernNotifications" xml:space="preserve">
     <value>Enable Modern Notifications</value>
@@ -766,6 +766,6 @@
     <value>Require Security PIN</value>
   </data>
   <data name="ForceChatbotSecurityPinHelp" xml:space="preserve">
-    <value>Require every member to confirm dangerous or department-wide chatbot/text actions with their personal 4-digit security PIN. Members without a PIN get a randomly generated one (viewable on their profile page).</value>
+    <value>Require every member to confirm dangerous or department-wide assistant/text actions with their personal 4-digit security PIN. Members without a PIN get a randomly generated one (viewable on their profile page).</value>
   </data>
 </root>

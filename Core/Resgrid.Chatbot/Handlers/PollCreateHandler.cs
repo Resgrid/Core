@@ -79,7 +79,7 @@ namespace Resgrid.Chatbot.Handlers
 				}
 
 				var profile = await _userProfileService.GetProfileByUserIdAsync(session.UserId);
-				var senderName = profile?.FullName?.AsFirstNameLastName ?? "Chatbot";
+				var senderName = profile?.FullName?.AsFirstNameLastName ?? "Assistant";
 
 				var msg = new Message
 				{

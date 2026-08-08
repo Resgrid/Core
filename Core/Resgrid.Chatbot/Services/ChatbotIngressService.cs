@@ -190,7 +190,7 @@ namespace Resgrid.Chatbot.Services
 					if (switchableDepartments.Count == 0)
 					{
 						return await _templateRenderer.RenderResponseAsync("error",
-							new Services.ErrorModel { Message = "Your department's plan does not support chatbot features. Please upgrade your plan." },
+							new Services.ErrorModel { Message = "Your department's plan does not support assistant features. Please upgrade your plan." },
 							message.Platform, new ChatbotIntent { Type = ChatbotIntentType.Unknown });
 					}
 				}
@@ -205,14 +205,14 @@ namespace Resgrid.Chatbot.Services
 					if (!deptConfig.IsEnabled)
 					{
 						return await _templateRenderer.RenderResponseAsync("error",
-							new Services.ErrorModel { Message = "The chatbot is not enabled for your department. Please contact your administrator." },
+							new Services.ErrorModel { Message = "The assistant is not enabled for your department. Please contact your administrator." },
 							message.Platform, new ChatbotIntent { Type = ChatbotIntentType.Unknown });
 					}
 
 					if (!IsPlatformAllowed(deptConfig.AllowedPlatforms, message.Platform))
 					{
 						return await _templateRenderer.RenderResponseAsync("error",
-							new Services.ErrorModel { Message = "This channel isn't enabled for your department's chatbot." },
+							new Services.ErrorModel { Message = "This channel isn't enabled for your department's assistant." },
 							message.Platform, new ChatbotIntent { Type = ChatbotIntentType.Unknown });
 					}
 				}
@@ -310,7 +310,7 @@ namespace Resgrid.Chatbot.Services
 					}
 
 					var optionsBuilder = new System.Text.StringBuilder();
-					optionsBuilder.AppendLine("Your active department's plan does not support chatbot features, but you belong to other departments that do:");
+					optionsBuilder.AppendLine("Your active department's plan does not support assistant features, but you belong to other departments that do:");
 					for (int i = 0; i < switchableDepartments.Count; i++)
 					{
 						var switchableDept = await _departmentsService.GetDepartmentByIdAsync(switchableDepartments[i].DepartmentId);

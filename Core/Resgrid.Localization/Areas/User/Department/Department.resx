@@ -361,6 +361,6 @@
     <value>Require Security PIN</value>
   </data>
   <data name="ForceChatbotSecurityPinHelp" xml:space="preserve">
-    <value>Require every member to confirm dangerous or department-wide chatbot/text actions with their personal 4-digit security PIN. Members without a PIN get a randomly generated one (viewable on their profile page).</value>
+    <value>Require every member to confirm dangerous or department-wide assistant/text actions with their personal 4-digit security PIN. Members without a PIN get a randomly generated one (viewable on their profile page).</value>
   </data>
 </root>

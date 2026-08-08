@@ -637,19 +637,19 @@
     <value>حفظ الإعدادات العامة</value>
   </data>
   <data name="ChatbotSettingsHeader" xml:space="preserve">
-    <value>إعدادات روبوت الدردشة</value>
+    <value>إعدادات المساعد</value>
   </data>
   <data name="ChatbotSettingsNav" xml:space="preserve">
-    <value>روبوت الدردشة</value>
+    <value>المساعد</value>
   </data>
   <data name="ChatbotConfiguration" xml:space="preserve">
-    <value>تكوين روبوت الدردشة</value>
+    <value>تكوين المساعد</value>
   </data>
   <data name="ChatbotEnable" xml:space="preserve">
-    <value>تفعيل روبوت الدردشة</value>
+    <value>تفعيل المساعد</value>
   </data>
   <data name="ChatbotEnableHelp" xml:space="preserve">
-    <value>السماح لأعضاء هذا القسم بالتفاعل مع روبوت الدردشة.</value>
+    <value>السماح لأعضاء هذا القسم بالتفاعل مع المساعد.</value>
   </data>
   <data name="ChatbotAllowedPlatforms" xml:space="preserve">
     <value>المنصات المسموح بها</value>
@@ -658,10 +658,10 @@
     <value>أسماء المنصات مفصولة بفواصل المسموح بها لهذا القسم، أو * للكل. الأسماء الصالحة: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, Teams, Signal, WebChat.</value>
   </data>
   <data name="ChatbotAllowDispatch" xml:space="preserve">
-    <value>السماح بالإرسال عبر روبوت الدردشة</value>
+    <value>السماح بالإرسال عبر المساعد</value>
   </data>
   <data name="ChatbotAllowDispatchHelp" xml:space="preserve">
-    <value>السماح للمستخدمين المصرّح لهم بإنشاء أو إرسال المكالمات عبر روبوت الدردشة.</value>
+    <value>السماح للمستخدمين المصرّح لهم بإنشاء أو إرسال المكالمات عبر المساعد.</value>
   </data>
   <data name="ChatbotConfirmStatusChanges" xml:space="preserve">
     <value>تأكيد تغييرات الحالة</value>
@@ -679,7 +679,7 @@
     <value>الإشعارات الاستباقية</value>
   </data>
   <data name="ChatbotProactiveNotificationsHelp" xml:space="preserve">
-    <value>السماح لروبوت الدردشة بإرسال إشعارات استباقية (مكالمات، تذكيرات) إلى المستخدمين المرتبطين.</value>
+    <value>السماح للمساعد بإرسال إشعارات استباقية (مكالمات، تذكيرات) إلى المستخدمين المرتبطين.</value>
   </data>
   <data name="ChatbotMessagesPerUser" xml:space="preserve">
     <value>الرسائل / المستخدم / الدقيقة</value>
@@ -697,7 +697,7 @@
     <value>مزوّد الذكاء الاصطناعي / LLM للقسم (اختياري)</value>
   </data>
   <data name="ChatbotLlmIntro" xml:space="preserve">
-    <value>اترك هذه الحقول فارغة لاستخدام مزوّد الذكاء الاصطناعي لنظام Resgrid. للإبقاء على معالجة روبوت الدردشة لدى مزوّدك الخاص، أدخل نقطة نهاية متوافقة مع OpenAI ونموذجًا ومفتاح API.</value>
+    <value>اترك هذه الحقول فارغة لاستخدام مزوّد الذكاء الاصطناعي لنظام Resgrid. للإبقاء على معالجة المساعد لدى مزوّدك الخاص، أدخل نقطة نهاية متوافقة مع OpenAI ونموذجًا ومفتاح API.</value>
   </data>
   <data name="ChatbotLlmEndpoint" xml:space="preserve">
     <value>نقطة نهاية LLM</value>
@@ -721,10 +721,10 @@
     <value>إلغاء</value>
   </data>
   <data name="ChatbotSaved" xml:space="preserve">
-    <value>تم حفظ إعدادات روبوت الدردشة.</value>
+    <value>تم حفظ إعدادات المساعد.</value>
   </data>
   <data name="ChatbotSaveError" xml:space="preserve">
-    <value>حدث خطأ أثناء حفظ إعدادات روبوت الدردشة.</value>
+    <value>حدث خطأ أثناء حفظ إعدادات المساعد.</value>
   </data>
   <data name="EnableModernNotifications" xml:space="preserve">
     <value>Enable Modern Notifications</value>
@@ -736,6 +736,6 @@
     <value>طلب رمز PIN الأمان</value>
   </data>
   <data name="ForceChatbotSecurityPinHelp" xml:space="preserve">
-    <value>يتطلب من كل عضو تأكيد الإجراءات الخطرة أو على مستوى القسم عبر روبوت الدردشة/الرسائل النصية باستخدام رمز PIN الأمان الشخصي المكون من 4 أرقام. يحصل الأعضاء الذين ليس لديهم رمز PIN على رمز يتم إنشاؤه عشوائيًا (يمكن عرضه في صفحة ملفهم الشخصي).</value>
+    <value>يتطلب من كل عضو تأكيد الإجراءات الخطرة أو على مستوى القسم عبر المساعد/الرسائل النصية باستخدام رمز PIN الأمان الشخصي المكون من 4 أرقام. يحصل الأعضاء الذين ليس لديهم رمز PIN على رمز يتم إنشاؤه عشوائيًا (يمكن عرضه في صفحة ملفهم الشخصي).</value>
   </data>
 </root>

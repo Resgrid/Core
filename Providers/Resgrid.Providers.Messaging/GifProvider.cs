@@ -12,9 +12,9 @@ using Resgrid.Model.Providers;
 namespace Resgrid.Providers.Messaging
 {
 	/// <summary>
-	/// GIF search proxy for chat. Talks to Giphy or Tenor (per ChatConfig.GifProvider) server-side so
-	/// the API key never reaches clients. Failures return empty result sets — GIF search is never a
-	/// hard dependency.
+	/// GIF search proxy for chat. Talks to Giphy server-side so the API key never reaches clients.
+	/// Results are capped to a workplace-safe content rating (ChatConfig.GifRating, "g" by default).
+	/// Failures return empty result sets — GIF search is never a hard dependency.
 	/// </summary>
 	public class GifProvider : IGifProvider
 	{
@@ -25,6 +25,9 @@ namespace Resgrid.Providers.Messaging
 
 		private static readonly TimeSpan SearchCacheDuration = TimeSpan.FromSeconds(60);
 		private const int MaxOffset = 5000;
+
+		// Giphy content ratings this proxy will ever request; "r" is deliberately not allowed.
+		private static readonly string[] AllowedRatings = { "g", "pg", "pg-13" };
 
 		private readonly ICacheProvider _cacheProvider;
 
@@ -40,9 +43,6 @@ namespace Resgrid.Providers.Messaging
 				if (string.Equals(ChatConfig.GifProvider, "giphy", StringComparison.OrdinalIgnoreCase))
 					return !string.IsNullOrWhiteSpace(ChatConfig.GiphyApiKey);
 
-				if (string.Equals(ChatConfig.GifProvider, "tenor", StringComparison.OrdinalIgnoreCase))
-					return !string.IsNullOrWhiteSpace(ChatConfig.TenorApiKey);
-
 				return false;
 			}
 		}
@@ -54,16 +54,13 @@ namespace Resgrid.Providers.Messaging
 
 			// Short per-query cache: identical searches are common (picker re-open, scroll re-fetch)
 			// and each uncached call burns provider API quota.
-			var cacheKey = $"gifsearch:{ChatConfig.GifProvider?.ToLowerInvariant()}:{query.Trim().ToLowerInvariant()}:{Clamp(limit)}:{ClampOffset(offset)}";
+			var cacheKey = $"gifsearch:giphy:{Rating()}:{query.Trim().ToLowerInvariant()}:{Clamp(limit)}:{ClampOffset(offset)}";
 
 			async Task<List<GifSearchResult>> search()
 			{
 				try
 				{
-					if (string.Equals(ChatConfig.GifProvider, "tenor", StringComparison.OrdinalIgnoreCase))
-						return await TenorRequestAsync($"https://tenor.googleapis.com/v2/search?q={Uri.EscapeDataString(query)}&key={ChatConfig.TenorApiKey}&limit={Clamp(limit)}&pos={ClampOffset(offset)}");
-
-					return await GiphyRequestAsync($"https://api.giphy.com/v1/gifs/search?api_key={ChatConfig.GiphyApiKey}&q={Uri.EscapeDataString(query)}&limit={Clamp(limit)}&offset={ClampOffset(offset)}&rating=pg-13");
+					return await GiphyRequestAsync($"https://api.giphy.com/v1/gifs/search?api_key={ChatConfig.GiphyApiKey}&q={Uri.EscapeDataString(query)}&limit={Clamp(limit)}&offset={ClampOffset(offset)}&rating={Rating()}");
 				}
 				catch (Exception ex)
 				{
@@ -85,16 +82,20 @@ namespace Resgrid.Providers.Messaging
 
 			try
 			{
-				if (string.Equals(ChatConfig.GifProvider, "tenor", StringComparison.OrdinalIgnoreCase))
-					return await TenorRequestAsync($"https://tenor.googleapis.com/v2/featured?key={ChatConfig.TenorApiKey}&limit={Clamp(limit)}");
-
-				return await GiphyRequestAsync($"https://api.giphy.com/v1/gifs/trending?api_key={ChatConfig.GiphyApiKey}&limit={Clamp(limit)}&rating=pg-13");
+				return await GiphyRequestAsync($"https://api.giphy.com/v1/gifs/trending?api_key={ChatConfig.GiphyApiKey}&limit={Clamp(limit)}&rating={Rating()}");
 			}
 			catch (Exception ex)
 			{
 				LogSanitizedException(ex);
 				return new List<GifSearchResult>();
 			}
+		}
+
+		/// <summary>Sanitized content rating: only g/pg/pg-13 ever reach the provider; default "g".</summary>
+		private static string Rating()
+		{
+			var rating = ChatConfig.GifRating?.Trim().ToLowerInvariant();
+			return AllowedRatings.Contains(rating) ? rating : "g";
 		}
 
 		// Belt-and-suspenders scrub for key=/api_key= query params. A bounded match timeout caps regex work
@@ -113,9 +114,6 @@ namespace Resgrid.Providers.Messaging
 
 			if (!string.IsNullOrWhiteSpace(ChatConfig.GiphyApiKey))
 				text = text.Replace(ChatConfig.GiphyApiKey, "***");
-
-			if (!string.IsNullOrWhiteSpace(ChatConfig.TenorApiKey))
-				text = text.Replace(ChatConfig.TenorApiKey, "***");
 
 			try
 			{
@@ -143,32 +141,6 @@ namespace Resgrid.Providers.Messaging
 					GifUrl = (string)item.SelectToken("images.fixed_width.url"),
 					Width = ParseInt(item.SelectToken("images.fixed_width.width")),
 					Height = ParseInt(item.SelectToken("images.fixed_width.height"))
-				})
-				.Where(r => !string.IsNullOrWhiteSpace(r.GifUrl) && IsAllowedCdnUrl(r.GifUrl) && IsAllowedCdnUrl(r.PreviewUrl))
-				.ToList();
-		}
-
-		private static async Task<List<GifSearchResult>> TenorRequestAsync(string url)
-		{
-			var json = await _httpClient.GetStringAsync(url);
-			var payload = JObject.Parse(json);
-
-			return (payload["results"] as JArray ?? new JArray())
-				.Select(item =>
-				{
-					var gif = item.SelectToken("media_formats.gif") ?? item.SelectToken("media_formats.tinygif");
-					var preview = item.SelectToken("media_formats.tinygif") ?? gif;
-					var dims = gif?["dims"] as JArray;
-
-					return new GifSearchResult
-					{
-						Id = (string)item["id"],
-						Title = (string)item["title"] ?? (string)item["content_description"],
-						PreviewUrl = (string)preview?["url"],
-						GifUrl = (string)gif?["url"],
-						Width = dims != null && dims.Count > 0 ? ParseInt(dims[0]) : 0,
-						Height = dims != null && dims.Count > 1 ? ParseInt(dims[1]) : 0
-					};
 				})
 				.Where(r => !string.IsNullOrWhiteSpace(r.GifUrl) && IsAllowedCdnUrl(r.GifUrl) && IsAllowedCdnUrl(r.PreviewUrl))
 				.ToList();

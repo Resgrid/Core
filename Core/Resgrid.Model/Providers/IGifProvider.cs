@@ -17,8 +17,8 @@ namespace Resgrid.Model.Providers
 	}
 
 	/// <summary>
-	/// Server-side GIF search proxy (Giphy or Tenor per ChatConfig.GifProvider) so provider API keys
-	/// never ship to clients.
+	/// Server-side GIF search proxy (Giphy, per ChatConfig.GifProvider) so provider API keys never
+	/// ship to clients. Results are capped to a workplace-safe content rating (ChatConfig.GifRating).
 	/// </summary>
 	public interface IGifProvider
 	{

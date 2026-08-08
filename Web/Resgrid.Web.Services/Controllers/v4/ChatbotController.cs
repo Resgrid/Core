@@ -447,6 +447,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 				if (session != null)
 					await _chatbotSessionManager.EndSessionAsync(session.SessionId);
 
+				// Visible confirmation in the conversation (fans out over SignalR to every client);
+				// without it the reset is silent and looks like the button did nothing.
+				var channel = await _chatChannelService.EnsureChatbotChannelAsync(DepartmentId, UserId);
+				if (channel != null)
+					await _chatMessageService.SendBotMessageAsync(channel.ChatChannelId,
+						DepartmentId.ToString(System.Globalization.CultureInfo.InvariantCulture),
+						"Starting a new conversation — your previous context has been cleared.", "Resgrid Assistant");
+
 				var result = new ChatbotSessionResetResult
 				{
 					Success = true,

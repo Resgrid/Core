@@ -741,6 +741,11 @@ public class ChatAckResultData
 	/// When the user acknowledged (null = still pending)
 	/// </summary>
 	public DateTime? AcknowledgedOn { get; set; }
+
+	/// <summary>
+	/// Display name of the user the acknowledgment is required from (populated by GetAcks)
+	/// </summary>
+	public string DisplayName { get; set; }
 }
 
 /// <summary>

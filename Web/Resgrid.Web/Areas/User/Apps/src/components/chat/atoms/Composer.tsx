@@ -19,6 +19,7 @@ interface ComposerProps {
   allowGifs?: boolean;
   allowImages?: boolean;
   allowUrgent?: boolean;
+  allowEmoji?: boolean;
   placeholder?: string;
   disabled?: boolean;
 }
@@ -36,6 +37,7 @@ export default function Composer({
   allowGifs = true,
   allowImages = true,
   allowUrgent = true,
+  allowEmoji = true,
   placeholder = 'Write a message…',
   disabled = false,
 }: ComposerProps) {
@@ -241,15 +243,17 @@ export default function Composer({
 
       <div className="rgchat-composer__row">
         <div className="rgchat-composer__tools">
-          <button
-            type="button"
-            className="rgchat-iconbtn rgchat-composer__tool"
-            title="Emoji"
-            aria-label="Insert emoji"
-            onClick={() => setPopover(popover === 'emoji' ? null : 'emoji')}
-          >
-            😊
-          </button>
+          {allowEmoji && (
+            <button
+              type="button"
+              className="rgchat-iconbtn rgchat-composer__tool"
+              title="Emoji"
+              aria-label="Insert emoji"
+              onClick={() => setPopover(popover === 'emoji' ? null : 'emoji')}
+            >
+              😊
+            </button>
+          )}
           {allowGifs && (
             <button
               type="button"

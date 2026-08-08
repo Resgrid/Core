@@ -640,7 +640,9 @@ namespace Resgrid.Services
 				RequiredOn = message.SentOn
 			}), cancellationToken);
 
-			PublishEvent(channel, ChatEventKinds.AckRequired, new { message.ChatMessageId, message.ChatChannelId, message.MessageSeq, RequiredCount = requiredUserIds.Count });
+			// SenderUserId lets clients skip the "acknowledge" banner for the sender's own message
+			// (the sender has no ack row — see requiredUserIds above).
+			PublishEvent(channel, ChatEventKinds.AckRequired, new { message.ChatMessageId, message.ChatChannelId, message.MessageSeq, RequiredCount = requiredUserIds.Count, message.SenderUserId });
 		}
 
 		private async Task SaveEditHistoryAsync(ChatMessage message, ChatMessageEditType editType, string byUserId, CancellationToken cancellationToken)

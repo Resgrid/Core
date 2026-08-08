@@ -4,12 +4,13 @@ import { formatClockTime, isSafeUrl, linkifySegments, parseMetadata } from '../c
 import Avatar from './Avatar';
 import ReactionChips from './ReactionChips';
 import AttachmentImage from './AttachmentImage';
+import AckStatus from './AckStatus';
 import { QUICK_REACTIONS } from './emoji';
 import { usePopoverClose } from './usePopoverClose';
 import { moderationText } from '../moderationI18n';
 
 export interface MessageBubbleCallbacks {
-  onReact: (message: ChatMessageDto, emoji: string, mine: boolean) => void;
+  onReact?: (message: ChatMessageDto, emoji: string, mine: boolean) => void;
   onOpenThread?: (message: ChatMessageDto) => void;
   onSaveEdit?: (message: ChatMessageDto, body: string) => void;
   onDelete?: (message: ChatMessageDto) => void;
@@ -28,6 +29,8 @@ interface MessageBubbleProps extends MessageBubbleCallbacks {
   canModerate?: boolean;
   variant?: 'default' | 'bot';
   highlighted?: boolean;
+  /** Render the urgent-message acknowledgment roll-up (sender/moderator only). */
+  showAckStatus?: boolean;
 }
 
 function BubbleText({ body }: { body: string }) {
@@ -222,11 +225,13 @@ function MessageBubble(props: MessageBubbleProps) {
           </div>
         )}
 
+        {isUrgent && !isDeleted && !isFailed && props.showAckStatus && <AckStatus messageId={message.ChatMessageId} />}
+
         {!isDeleted && !isFailed && (
           <ReactionChips
             reactions={message.Reactions}
             currentUserId={currentUserId}
-            onToggle={(emoji, mine) => props.onReact(message, emoji, mine)}
+            onToggle={(emoji, mine) => props.onReact?.(message, emoji, mine)}
           />
         )}
 
@@ -239,34 +244,36 @@ function MessageBubble(props: MessageBubbleProps) {
 
       {!isDeleted && !editing && !isFailed && (
         <div className="rgchat-msg__actions" ref={actionsRef}>
-          <div className="rgchat-msg__actionwrap">
-            <button
-              type="button"
-              className="rgchat-msg__action"
-              title="React"
-              aria-label="Add reaction"
-              onClick={() => setShowReactions((value) => !value)}
-            >
-              😊
-            </button>
-            {showReactions && (
-              <div className="rgchat-popover rgchat-popover--reactions">
-                {QUICK_REACTIONS.map((emoji) => (
-                  <button
-                    key={emoji}
-                    type="button"
-                    className="rgchat-popover__emoji"
-                    onClick={() => {
-                      props.onReact(message, emoji, false);
-                      setShowReactions(false);
-                    }}
-                  >
-                    {emoji}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
+          {props.onReact && (
+            <div className="rgchat-msg__actionwrap">
+              <button
+                type="button"
+                className="rgchat-msg__action"
+                title="React"
+                aria-label="Add reaction"
+                onClick={() => setShowReactions((value) => !value)}
+              >
+                😊
+              </button>
+              {showReactions && (
+                <div className="rgchat-popover rgchat-popover--reactions">
+                  {QUICK_REACTIONS.map((emoji) => (
+                    <button
+                      key={emoji}
+                      type="button"
+                      className="rgchat-popover__emoji"
+                      onClick={() => {
+                        props.onReact?.(message, emoji, false);
+                        setShowReactions(false);
+                      }}
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
           {props.onOpenThread && (
             <button type="button" className="rgchat-msg__action" title="Reply in thread" aria-label="Reply in thread" onClick={() => props.onOpenThread?.(message)}>
               💬

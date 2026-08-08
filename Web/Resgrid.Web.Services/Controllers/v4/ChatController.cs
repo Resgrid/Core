@@ -52,6 +52,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IQueueService _queueService;
+		private readonly IUserProfileService _userProfileService;
 
 		public ChatController(
 			IChatChannelService chatChannelService,
@@ -66,7 +67,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IAuthorizationService authorizationService,
 			ICacheProvider cacheProvider,
 			IEventAggregator eventAggregator,
-			IQueueService queueService)
+			IQueueService queueService,
+			IUserProfileService userProfileService)
 		{
 			_chatChannelService = chatChannelService;
 			_chatPermissionService = chatPermissionService;
@@ -81,6 +83,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_cacheProvider = cacheProvider;
 			_eventAggregator = eventAggregator;
 			_queueService = queueService;
+			_userProfileService = userProfileService;
 		}
 
 		#endregion Members and Constructors
@@ -770,6 +773,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (await IsRateLimitedAsync("send", ChatConfig.SendRateLimitPerWindow))
 				return RateLimitedResult<ChatMessageSentResult>();
 
+			// Assistant conversations are plain text only: no threads, no attachments/GIFs, no urgent
+			// priority. Enforced here so every client (web and mobile) gets the same behavior.
+			var channel = await _chatChannelService.GetChannelByIdAsync(channelId);
+			var isChatbotChannel = channel != null && channel.ChannelType == (int)ChatChannelType.Chatbot;
+			if (isChatbotChannel && ((ChatMessageType)input.MessageType != ChatMessageType.Text || !String.IsNullOrWhiteSpace(input.ThreadRootMessageId)))
+				return BadRequest("Assistant conversations only support plain text messages.");
+
+			// Urgent (ack-required) priority is a channel-level broadcast concept; thread replies
+			// always send as normal priority no matter what the client asked for.
+			var isThreadReply = !String.IsNullOrWhiteSpace(input.ThreadRootMessageId);
+
 			var request = new ChatMessageSendRequest
 			{
 				ChatChannelId = channelId,
@@ -778,7 +792,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				AsIncidentCommander = input.AsIncidentCommander,
 				Body = input.Body,
 				MessageType = (ChatMessageType)input.MessageType,
-				Priority = (ChatMessagePriority)input.Priority,
+				Priority = isChatbotChannel || isThreadReply ? ChatMessagePriority.Normal : (ChatMessagePriority)input.Priority,
 				ThreadRootMessageId = input.ThreadRootMessageId,
 				AlsoSendToChannel = input.AlsoSendToChannel,
 				ClientMessageId = input.ClientMessageId,
@@ -823,8 +837,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			// The assistant channel is also reachable from the regular chat page, so sends that arrive
 			// through this generic endpoint must still feed the chatbot pipeline (the dedicated
 			// ChatbotController.SendChatMessage does the same for the assistant panel).
-			var channel = await _chatChannelService.GetChannelByIdAsync(channelId);
-			if (channel != null && channel.ChannelType == (int)ChatChannelType.Chatbot && !String.IsNullOrWhiteSpace(message.Body))
+			if (isChatbotChannel && !String.IsNullOrWhiteSpace(message.Body))
 			{
 				var queued = await _queueService.EnqueueChatbotMessageAsync(new Resgrid.Model.Queue.ChatbotMessageQueueItem
 				{
@@ -916,6 +929,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await ChatEnabledAsync())
 				return NotFound();
 
+			if (await IsChatbotMessageChannelAsync(messageId))
+				return BadRequest("Messages can't be deleted in assistant conversations.");
+
 			var result = new ChatActionResult();
 			result.Success = await _chatMessageService.DeleteMessageAsync(messageId, UserId, false, null, cancellationToken);
 			result.Status = result.Success ? ResponseHelper.Deleted : ResponseHelper.Failure;
@@ -957,6 +973,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (accessCheck != null)
 				return accessCheck;
 
+			if (await IsChatbotMessageChannelAsync(messageId))
+				return BadRequest("Reactions aren't available in assistant conversations.");
+
 			var result = new ChatActionResult();
 			result.Success = await _chatMessageService.AddReactionAsync(messageId, UserId, null, input.Emoji, cancellationToken);
 			result.Status = result.Success ? ResponseHelper.Created : ResponseHelper.Failure;
@@ -987,6 +1006,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var accessCheck = await CheckMessageChannelAccessAsync(messageId);
 			if (accessCheck != null)
 				return accessCheck;
+
+			if (await IsChatbotMessageChannelAsync(messageId))
+				return BadRequest("Reactions aren't available in assistant conversations.");
 
 			var result = new ChatActionResult();
 			result.Success = await _chatMessageService.RemoveReactionAsync(messageId, UserId, null, emoji, cancellationToken);
@@ -1055,9 +1077,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (acks != null && acks.Any())
 			{
+				var profiles = await _userProfileService.GetSelectedUserProfilesAsync(acks.Select(a => a.UserId).Distinct().ToList());
+				var namesByUserId = (profiles ?? new List<UserProfile>())
+					.Where(p => p?.UserId != null)
+					.ToDictionary(p => p.UserId, p => p.FullName?.AsFirstNameLastName, StringComparer.OrdinalIgnoreCase);
+
 				foreach (var ack in acks)
 				{
-					result.Data.Add(ConvertAckResultData(ack));
+					var data = ConvertAckResultData(ack);
+					if (ack.UserId != null && namesByUserId.TryGetValue(ack.UserId, out var name))
+						data.DisplayName = name;
+
+					result.Data.Add(data);
 				}
 
 				result.PageSize = result.Data.Count;
@@ -1253,6 +1284,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var channel = await _chatChannelService.GetChannelByIdAsync(channelId);
 			if (channel == null || channel.DepartmentId != DepartmentId)
 				return NotFound();
+
+			if (channel.ChannelType == (int)ChatChannelType.Chatbot)
+				return BadRequest("Attachments aren't available in assistant conversations.");
 
 			if (!await _chatPermissionService.CanPostAsync(channel, UserId, null))
 				return Unauthorized();
@@ -1551,6 +1585,20 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var result = new T { Status = ResponseHelper.Failure };
 			ResponseHelper.PopulateV4ResponseData(result);
 			return StatusCode(StatusCodes.Status429TooManyRequests, result);
+		}
+
+		/// <summary>
+		/// True when the message lives in an assistant (chatbot) conversation, where reactions,
+		/// threads and deletes are not available.
+		/// </summary>
+		private async Task<bool> IsChatbotMessageChannelAsync(string messageId)
+		{
+			var message = await _chatMessageService.GetMessageByIdAsync(messageId);
+			if (message == null)
+				return false;
+
+			var channel = await _chatChannelService.GetChannelByIdAsync(message.ChatChannelId);
+			return channel != null && channel.ChannelType == (int)ChatChannelType.Chatbot;
 		}
 
 		/// <summary>

@@ -24,17 +24,24 @@
 		/// <summary>Novu workflow triggered for realtime chat message push notifications.</summary>
 		public static string NovuChatWorkflowId = "user-chat-message";
 
-		/// <summary>GIF search provider: "giphy" or "tenor". Empty disables GIF search.</summary>
+		/// <summary>
+		/// GIF search provider: "giphy" is the only supported value (Tenor stopped accepting new API
+		/// clients in January 2026 and was removed). Empty disables GIF search.
+		/// </summary>
 		public static string GifProvider = "";
 		public static string GiphyApiKey = "";
-		public static string TenorApiKey = "";
+
+		/// <summary>
+		/// Giphy content-rating cap for GIF search/trending results. Allowed values: "g", "pg",
+		/// "pg-13" — anything else (including "r") falls back to the workplace-safe default "g".
+		/// </summary>
+		public static string GifRating = "g";
 
 		/// <summary>Allowed CDN hosts for GIF message metadata urls (https only); anything else is dropped server-side.</summary>
 		public static string[] GifCdnHosts = new[]
 		{
 			"giphy.com", "i.giphy.com", "media.giphy.com",
-			"media0.giphy.com", "media1.giphy.com", "media2.giphy.com", "media3.giphy.com", "media4.giphy.com",
-			"tenor.com", "media.tenor.com", "c.tenor.com"
+			"media0.giphy.com", "media1.giphy.com", "media2.giphy.com", "media3.giphy.com", "media4.giphy.com"
 		};
 
 		public static int MaxMessageLength = 4000;

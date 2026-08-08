@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
-import { ChatMessageType, getCurrentDisplayName, type ChatChannelDto, type ChatMessageDto } from './types';
+import { ChatChannelType, ChatMessageType, getCurrentDisplayName, type ChatChannelDto, type ChatMessageDto } from './types';
 import { chatHub } from './chatHub';
 import { useChatStore, shallowArrayEqual } from './useChatStore';
 import { chatStore, setHighlightMessage, type TypingEntry } from './chatStore';
@@ -55,6 +55,11 @@ function SkeletonRows() {
 export default function ConversationView(props: ConversationViewProps) {
   const { channel, currentUserId, canModerate, variant } = props;
   const channelId = channel.ChatChannelId;
+  // Assistant conversations are restricted regardless of where they're opened (footer drawer uses
+  // variant='bot'; the chat page renders the same channel with the default variant): text only —
+  // no emoji picker, GIFs, images, urgent priority, reactions, threads or deletes. Pin, flag and
+  // editing your own messages stay available.
+  const isBot = variant === 'bot' || channel.ChannelType === ChatChannelType.Chatbot;
 
   const allMessages = useChatStore((state) => state.messagesByChannel[channelId] ?? EMPTY_MESSAGES, shallowArrayEqual);
   const hasMore = useChatStore((state) => state.hasMoreByChannel[channelId] ?? false);
@@ -305,12 +310,13 @@ export default function ConversationView(props: ConversationViewProps) {
                 canModerate={canModerate}
                 variant={variant}
                 highlighted={message.ChatMessageId === highlightMessageId}
-                onReact={handleReact}
-                onOpenThread={variant === 'bot' ? undefined : props.onOpenThread}
+                showAckStatus={message.Priority === 1 && (message.SenderUserId === currentUserId || !!canModerate)}
+                onReact={isBot ? undefined : handleReact}
+                onOpenThread={isBot ? undefined : props.onOpenThread}
                 onSaveEdit={handleSaveEdit}
-                onDelete={handleDelete}
+                onDelete={isBot ? undefined : handleDelete}
                 onPin={canModerate ? handlePin : undefined}
-                onFlag={variant === 'bot' ? undefined : props.onFlag}
+                onFlag={props.onFlag}
                 onOpenImage={handleOpenImage}
                 onRetrySend={variant === 'bot' ? undefined : handleRetry}
                 onDiscardFailed={handleDiscard}
@@ -331,10 +337,11 @@ export default function ConversationView(props: ConversationViewProps) {
       <Composer
         onSend={handleSend}
         onTyping={handleTyping}
-        allowUrgent={variant !== 'bot'}
-        allowGifs={variant !== 'bot'}
-        allowImages={variant !== 'bot'}
-        placeholder={variant === 'bot' ? 'Ask the assistant…' : 'Write a message…'}
+        allowUrgent={!isBot}
+        allowGifs={!isBot}
+        allowImages={!isBot}
+        allowEmoji={!isBot}
+        placeholder={isBot ? 'Ask the assistant…' : 'Write a message…'}
       />
 
       {lightboxUrl && <Lightbox url={lightboxUrl} onClose={handleCloseLightbox} />}

@@ -744,7 +744,9 @@ rg-chat {
   margin: 0 4px;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 140ms ease, visibility 140ms ease;
+  /* Hide instantly on unhover (no exit transition): fading out leaves a trail of visible
+     action rows behind a fast-moving pointer. The fade-in below is applied on hover only. */
+  transition: none;
 }
 
 .rgchat-msg:hover .rgchat-msg__actions,
@@ -752,10 +754,54 @@ rg-chat {
 .rgchat-msg--actions-open .rgchat-msg__actions {
   opacity: 1;
   visibility: visible;
+  transition: opacity 140ms ease;
 }
 
 .rgchat-msg__actionwrap {
   position: relative;
+}
+
+/* ---- Urgent acknowledgment roll-up ---- */
+.rgchat-ackstatus {
+  margin-top: 2px;
+}
+
+.rgchat-ackstatus__summary {
+  border: 0;
+  background: none;
+  padding: 0;
+  font-size: 12px;
+  color: var(--rgchat-danger, #dc2626);
+  cursor: pointer;
+}
+
+.rgchat-ackstatus__summary--done {
+  color: var(--rgchat-success, #16a34a);
+}
+
+.rgchat-ackstatus__list {
+  margin-top: 4px;
+  padding: 6px 10px;
+  border: 1px solid var(--rgchat-border);
+  border-radius: 8px;
+  background: var(--rgchat-panel);
+  font-size: 12px;
+  min-width: 200px;
+}
+
+.rgchat-ackstatus__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 1px 0;
+}
+
+.rgchat-ackstatus__row--pending {
+  opacity: 0.6;
+}
+
+.rgchat-ackstatus__time {
+  white-space: nowrap;
 }
 
 .rgchat-msg__action {
@@ -951,6 +997,16 @@ rg-chat {
   padding: 8px;
   z-index: 5;
   animation: rgchat-pop-in 140ms ease;
+}
+
+/* Narrow hosts (footer chat popout / assistant drawer): the quick-reactions row would extend
+   past the panel edge and get clipped, so wrap it into a compact grid instead. */
+.rgchat-panel .rgchat-popover--reactions,
+.rgchat-drawer .rgchat-popover--reactions {
+  flex-wrap: wrap;
+  justify-content: center;
+  width: max-content;
+  max-width: 128px;
 }
 
 .rgchat-popover--reactions {

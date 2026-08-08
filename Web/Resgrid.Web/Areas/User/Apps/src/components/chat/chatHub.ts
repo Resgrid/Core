@@ -200,7 +200,8 @@ class ChatHub {
     });
     connection.on(CHAT_HUB_EVENTS.AckRequired, (arg: unknown) => {
       const payload = parsePayload<HubAckRequiredPayload>(arg);
-      if (payload) {
+      // The sender never has to acknowledge their own urgent message.
+      if (payload && payload.SenderUserId !== getCurrentUserId()) {
         addPendingAck(payload.ChatMessageId);
       }
     });

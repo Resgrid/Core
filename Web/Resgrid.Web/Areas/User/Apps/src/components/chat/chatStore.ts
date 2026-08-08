@@ -33,6 +33,7 @@ export interface ChatState {
   botTypingByChannel: Record<string, boolean>;
   onlineUserIds: string[];
   pendingAckMessageIds: string[];
+  ackRevisionByMessage: Record<string, number>;
   activeChannelId: string | null;
   connectionStatus: ChatConnectionStatus;
   authError: boolean;
@@ -57,6 +58,7 @@ let state: ChatState = {
   botTypingByChannel: {},
   onlineUserIds: [],
   pendingAckMessageIds: [],
+  ackRevisionByMessage: {},
   activeChannelId: null,
   connectionStatus: 'offline',
   authError: false,
@@ -386,9 +388,18 @@ export function applyHubReaction(payload: HubReactionPayload): void {
   }
 }
 
-export function applyHubReceipt(_payload: HubReceiptPayload): void {
-  // Read/ack receipts drive per-member read pointers surfaced by GetMembers; the conversation
-  // view refreshes members to render the "seen by" line, so nothing is mutated on the message here.
+export function applyHubReceipt(payload: HubReceiptPayload): void {
+  // Read receipts drive per-member read pointers surfaced by GetMembers; the conversation
+  // view refreshes members to render the "seen by" line, so nothing is mutated on the message.
+  // Ack receipts bump a per-message revision so the urgent-message ack status refetches live.
+  if (payload.Type === 'ack' && payload.ChatMessageId) {
+    setState({
+      ackRevisionByMessage: {
+        ...state.ackRevisionByMessage,
+        [payload.ChatMessageId]: (state.ackRevisionByMessage[payload.ChatMessageId] ?? 0) + 1,
+      },
+    });
+  }
 }
 
 export function applyHubThreadUpdated(payload: HubThreadUpdatedPayload): void {

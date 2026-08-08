@@ -329,6 +329,7 @@ export interface HubAckRequiredPayload {
   ChatChannelId: string;
   MessageSeq: number;
   RequiredCount: number;
+  SenderUserId?: string | null;
 }
 
 export interface HubChatbotTypingPayload {

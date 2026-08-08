@@ -734,6 +734,12 @@
             <param name="input">Reason and optional note for the flag</param>
             <returns>ChatActionResult indicating whether the flag was recorded</returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.IsChatbotMessageChannelAsync(System.String)">
+            <summary>
+            True when the message lives in an assistant (chatbot) conversation, where reactions,
+            threads and deletes are not available.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.CheckMessageChannelAccessAsync(System.String)">
             <summary>
             Verifies the message exists in this department and the user can access its channel.
@@ -7661,6 +7667,11 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatAckResultData.AcknowledgedOn">
             <summary>
             When the user acknowledged (null = still pending)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatAckResultData.DisplayName">
+            <summary>
+            Display name of the user the acknowledgment is required from (populated by GetAcks)
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Chat.ChatFlagResultData">

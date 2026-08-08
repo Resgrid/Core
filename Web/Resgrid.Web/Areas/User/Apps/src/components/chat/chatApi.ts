@@ -277,6 +277,23 @@ export async function flagMessage(messageId: string, reason: number, note: strin
   await sendJson<unknown>('POST', 'api/v4/Chat/FlagMessage', { Reason: reason, Note: note }, { messageId });
 }
 
+// ---- Urgent-message acknowledgments ----
+
+export interface ChatAckDto {
+  ChatMessageAckId: string;
+  ChatMessageId: string;
+  UserId: string;
+  DisplayName?: string | null;
+  RequiredOn: string;
+  AcknowledgedOn?: string | null;
+}
+
+/** Sender/moderator only — the server returns 401 for everyone else. */
+export async function getAcks(messageId: string): Promise<ChatAckDto[]> {
+  const result = await getJson<ApiListResult<ChatAckDto>>('api/v4/Chat/GetAcks', { messageId });
+  return result.Data ?? [];
+}
+
 // ---- Chatbot ----
 
 export async function getChatbotChannel(): Promise<ChatbotChannelInfo | null> {

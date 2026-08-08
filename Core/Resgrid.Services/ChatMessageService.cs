@@ -343,6 +343,19 @@ namespace Resgrid.Services
 			if (member != null && (member.IsBanned || (member.MutedUntil.HasValue && member.MutedUntil.Value > DateTime.UtcNow)))
 				return false;
 
+			// Double-taps are common: bail out before the insert so the ordinary duplicate never
+			// reaches the database (RepositoryBase logs every insert exception, so relying on the
+			// unique-violation catch below alone floods the error log). The catch still covers the
+			// genuine concurrent race two requests can win simultaneously.
+			var existingReactions = await _chatMessageReactionRepository.GetByMessageIdsAsync(new[] { chatMessageId });
+			var alreadyReacted = existingReactions != null && existingReactions.Any(r =>
+				string.Equals(r.Emoji, emoji, StringComparison.Ordinal)
+				&& (unitId.HasValue
+					? r.UnitId == unitId
+					: r.UserId != null && string.Equals(r.UserId, userId, StringComparison.OrdinalIgnoreCase)));
+			if (alreadyReacted)
+				return true;
+
 			try
 			{
 				await _chatMessageReactionRepository.InsertAsync(new ChatMessageReaction

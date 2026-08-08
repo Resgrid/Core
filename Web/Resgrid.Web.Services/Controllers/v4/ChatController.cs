@@ -902,6 +902,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (input == null || String.IsNullOrWhiteSpace(input.Body))
 				return BadRequest();
 
+			if (await IsChatbotMessageChannelAsync(messageId))
+				return BadRequest("Messages can't be edited in assistant conversations.");
+
 			var message = await _chatMessageService.EditMessageAsync(messageId, UserId, input.Body, cancellationToken);
 
 			if (message == null)
@@ -1589,7 +1592,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 		/// <summary>
 		/// True when the message lives in an assistant (chatbot) conversation, where reactions,
-		/// threads and deletes are not available.
+		/// threads, deletes and edits are not available.
 		/// </summary>
 		private async Task<bool> IsChatbotMessageChannelAsync(string messageId)
 		{

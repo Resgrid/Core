@@ -79,7 +79,7 @@ function MessageBubble(props: MessageBubbleProps) {
     bubbleClasses.push('rgchat-bubble--bot');
   }
 
-  const canEdit = isMine && message.MessageType === ChatMessageType.Text && !isDeleted && !isFailed;
+  const canEdit = isMine && message.MessageType === ChatMessageType.Text && !isDeleted && !isFailed && !!props.onSaveEdit;
   const canDelete = (isMine || canModerate) && !isDeleted && !isFailed;
 
   const renderContent = () => {

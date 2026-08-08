@@ -173,6 +173,14 @@ namespace Resgrid.Chatbot.NLU.Providers
 				"list_messages", null),
 			(R(@"^(show|list|get|what'?s)\s+(on\s+)?(the\s+)?(calendar|schedule|agenda)"),
 				"list_calendar", null),
+			// Upcoming-calendar phrasings: "when is the next event?", "what is upcoming in the
+			// calendar?", "upcoming events", "what's coming up", "next events".
+			(R(@"^when('?s|\s+is)\s+(the\s+)?next\s+(event|meeting|training|class)(s|es)?$"),
+				"list_calendar", null),
+			(R(@"^(what('?s|\s+is)\s+)?(upcoming|coming\s+up)(\s+(events?|meetings?|trainings?))?(\s+(on|in)\s+(the\s+)?(calendar|schedule|agenda))?$"),
+				"list_calendar", null),
+			(R(@"^(next|upcoming)\s+(events?|meetings?|trainings?)$"),
+				"list_calendar", null),
 			(R(@"^(show|list|get|my)\s+shifts?"),
 				"list_shifts", null),
 			(R(@"^(weather\s+)?(alerts?|warnings?)"),

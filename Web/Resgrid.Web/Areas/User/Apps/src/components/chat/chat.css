@@ -999,10 +999,14 @@ rg-chat {
   animation: rgchat-pop-in 140ms ease;
 }
 
-/* Narrow hosts (footer chat popout / assistant drawer): the quick-reactions row would extend
-   past the panel edge and get clipped, so wrap it into a compact grid instead. */
+/* Narrow hosts (footer chat popout / assistant drawer): anchored to the right edge of the
+   actions row, the quick-reactions popover extends left past the panel edge and gets clipped.
+   Anchor it to the LEFT edge instead so it grows rightward over the message area, and wrap it
+   into a compact grid as a guard for very narrow widths. */
 .rgchat-panel .rgchat-popover--reactions,
 .rgchat-drawer .rgchat-popover--reactions {
+  left: 0;
+  right: auto;
   flex-wrap: wrap;
   justify-content: center;
   width: max-content;

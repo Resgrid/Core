@@ -55,6 +55,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
 				return Unauthorized();
 
+			// Same SSRF guard as the v4 API config writer (ChatbotController.UpdateConfig).
+			if (!string.IsNullOrWhiteSpace(model.LlmApiEndpoint) &&
+				!Resgrid.Chatbot.NLU.LlmEndpointValidator.IsValid(model.LlmApiEndpoint, out var llmEndpointError))
+				ModelState.AddModelError(nameof(model.LlmApiEndpoint), llmEndpointError);
+
+			if (!ModelState.IsValid)
+			{
+				var existing = await _chatbotConfigService.GetConfigAsync(DepartmentId);
+				model.HasLlmApiKey = !string.IsNullOrWhiteSpace(existing?.LlmApiKey);
+				model.LlmApiKey = null;
+				return View(model);
+			}
+
 			try
 			{
 				var config = new ChatbotDepartmentConfig

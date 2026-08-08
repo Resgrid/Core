@@ -1701,9 +1701,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <returns>Array of CallResult objects for each call in the department within the range</returns>
 		[HttpGet("GetCalls")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[Authorize(Policy = ResgridResources.Call_View)]
 		public async Task<ActionResult<ActiveCallsResult>> GetCalls(DateTime startDate, DateTime endDate)
 		{
+			// Missing query params bind to DateTime.MinValue (0001-01-01), which is below the SQL
+			// Server datetime floor (1753-01-01) and throws SqlDateTime overflow at the repository.
+			var sqlMinDate = new DateTime(1753, 1, 1);
+			if (startDate < sqlMinDate || endDate < sqlMinDate)
+				return BadRequest("startDate and endDate are required and must be valid dates (on or after 1753-01-01).");
+
+			if (endDate < startDate)
+				return BadRequest("endDate must be on or after startDate.");
+
 			var result = new ActiveCallsResult();
 
 			var calls = (await _callsService.GetAllCallsByDepartmentDateRangeAsync(DepartmentId, startDate, endDate)).OrderByDescending(x => x.LoggedOn);

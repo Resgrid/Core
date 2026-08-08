@@ -266,6 +266,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// </summary>
 		[HttpPut("Config")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		public async Task<IActionResult> UpdateConfig([FromBody] ChatbotConfigRequest request)
 		{
 			try
@@ -300,6 +301,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 				await _departmentConfigService.SaveConfigAsync(config, request.LlmApiKey);
 
 				return Ok(new { success = true });
+			}
+			catch (ArgumentException ex)
+			{
+				// Field-length (column size) validation from the config service.
+				return BadRequest(new { error = ex.Message });
 			}
 			catch (Exception ex)
 			{

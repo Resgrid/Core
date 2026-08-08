@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Resgrid.Web.Attributes;
 
 namespace Resgrid.Web.Areas.User.Models
 {
@@ -35,9 +36,11 @@ namespace Resgrid.Web.Areas.User.Models
 
 		/// <summary>
 		/// Write-only: a new API key to store. Never populated on read (see HasLlmApiKey).
-		/// Cap is 700 so the AES+base64 ciphertext fits the 1000-char LlmApiKey column.
+		/// Cap is 700 UTF-8 bytes (encryption operates on bytes) so the AES+base64 ciphertext
+		/// fits the 1000-char LlmApiKey column; StringLength adds the client-side char cap.
 		/// </summary>
 		[StringLength(700, ErrorMessage = "API key cannot exceed 700 characters.")]
+		[MaxUtf8Bytes(700, ErrorMessage = "API key cannot exceed 700 bytes when UTF-8 encoded (non-ASCII characters count as multiple bytes).")]
 		public string LlmApiKey { get; set; }
 
 		/// <summary>True when an LLM API key is already stored (so the UI can indicate it without exposing it).</summary>

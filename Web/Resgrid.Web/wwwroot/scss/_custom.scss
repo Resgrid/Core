@@ -16,3 +16,34 @@
     box-shadow: 1px 1px 0 1px rgba(0,0,0,0.05);
     padding: 10px;
 }
+
+/* Side module bar vs. the fixed footer.
+   .footer.fixed_full spans the whole window width, so it runs underneath the sidebar.
+   The sidebar was position:absolute at z-index 2001 (over the footer's 1000), so module
+   links painted on top of the footer bar, and on a short window the tail of the list
+   ended up under the footer with no way to scroll it into view. Pin the sidebar to the
+   viewport, give it its own scroll, and let the footer paint above it. */
+
+.footer.fixed_full {
+  z-index: 2002;
+}
+
+nav.navbar-static-side {
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (min-width: 768px) {
+  nav.navbar-static-side {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+  }
+}
+
+/* Gutter so the last module can be scrolled clear of the fixed footer bar. */
+nav.navbar-static-side .sidebar-collapse {
+  padding-bottom: 60px;
+}

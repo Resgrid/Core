@@ -1147,9 +1147,11 @@ public class SendChatMessageInput
 	public string ClientMessageId { get; set; }
 
 	/// <summary>
-	/// Body of the message
+	/// Body of the message. Image messages carry the picture as an attachment and send an
+	/// empty body (the body is only an optional caption), so empty strings are accepted —
+	/// null is still rejected.
 	/// </summary>
-	[Required]
+	[Required(AllowEmptyStrings = true)]
 	[StringLength(4000)]
 	public string Body { get; set; }
 

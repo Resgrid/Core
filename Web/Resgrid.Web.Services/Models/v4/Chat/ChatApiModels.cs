@@ -1147,9 +1147,11 @@ public class SendChatMessageInput
 	public string ClientMessageId { get; set; }
 
 	/// <summary>
-	/// Body of the message
+	/// Body of the message. Image messages carry the picture as an attachment and send an
+	/// empty body (the body is only an optional caption), so empty strings are accepted —
+	/// null is still rejected.
 	/// </summary>
-	[Required]
+	[Required(AllowEmptyStrings = true)]
 	[StringLength(4000)]
 	public string Body { get; set; }
 
@@ -1437,4 +1439,95 @@ public class VerifyExportMfaInput
 	public string TotpCode { get; set; }
 }
 
+/// <summary>
+/// A command-board question for the incident assistant. Answered synchronously so the board can show
+/// the reply in place instead of waiting on the chat channel round-trip.
+/// </summary>
+public class AskIncidentAssistantInput
+{
+	/// <summary>
+	/// The commander's question, in their own words ("PAR", "who's in Division A", "what am I missing")
+	/// </summary>
+	[Required]
+	public string Question { get; set; }
+
+	/// <summary>
+	/// Call id of the incident the question is about (the board the caller has open)
+	/// </summary>
+	public int CallId { get; set; }
+}
+
 #endregion Inputs
+
+#region Incident assistant
+
+/// <summary>
+/// Answer to a command-board question
+/// </summary>
+public class IncidentAssistantAnswerResult : StandardApiResponseV4Base
+{
+	/// <summary>
+	/// Response Data
+	/// </summary>
+	public IncidentAssistantAnswerResultData Data { get; set; }
+}
+
+/// <summary>
+/// The assistant's answer plus what it understood the question to be
+/// </summary>
+public class IncidentAssistantAnswerResultData
+{
+	/// <summary>
+	/// The answer text, ready to display
+	/// </summary>
+	public string Answer { get; set; }
+
+	/// <summary>
+	/// Name of the intent the question was classified as ("IncidentPar", "Unknown", ...)
+	/// </summary>
+	public string Intent { get; set; }
+
+	/// <summary>
+	/// Classifier confidence, 0.0 - 1.0
+	/// </summary>
+	public double Confidence { get; set; }
+
+	/// <summary>
+	/// False when the assistant couldn't answer (unresolved incident, no permission, rate limited)
+	/// </summary>
+	public bool Processed { get; set; }
+}
+
+/// <summary>
+/// Suggested questions for an incident, tailored to its type
+/// </summary>
+public class IncidentAssistantSuggestionsResult : StandardApiResponseV4Base
+{
+	/// <summary>
+	/// Response Data
+	/// </summary>
+	public IncidentAssistantSuggestionsResultData Data { get; set; }
+}
+
+/// <summary>
+/// Incident-type suggestions the command board shows as one-tap prompts
+/// </summary>
+public class IncidentAssistantSuggestionsResultData
+{
+	/// <summary>
+	/// Inferred incident family ("Structure fire", "Wildland fire", "Mass casualty incident", ...)
+	/// </summary>
+	public string IncidentType { get; set; }
+
+	/// <summary>
+	/// Machine-readable incident family key, matching the app's own playbook ids
+	/// </summary>
+	public string IncidentTypeKey { get; set; }
+
+	/// <summary>
+	/// Questions worth putting in front of the commander for this incident type
+	/// </summary>
+	public List<string> Questions { get; set; } = new List<string>();
+}
+
+#endregion Incident assistant

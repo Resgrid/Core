@@ -494,7 +494,8 @@ namespace Resgrid.Tests.Chatbot
 				rateLimiter.Object,
 				Mock.Of<ISecurityPinService>(),
 				resolver.Object,
-				Mock.Of<IChatbotConversationalFallback>());
+				Mock.Of<IChatbotConversationalFallback>(),
+				Mock.Of<Resgrid.Model.Repositories.IChatbotMessageLogRepository>());
 
 			var first = await ingress.ProcessMessageAsync(new ChatbotMessage
 			{

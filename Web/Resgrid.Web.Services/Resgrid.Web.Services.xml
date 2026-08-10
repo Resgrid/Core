@@ -458,6 +458,28 @@
             Resets the chatbot conversational session (context/pending intents). Message history remains.
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatbotController.AskIncident(Resgrid.Web.Services.Models.v4.Chat.AskIncidentAssistantInput)">
+            <summary>
+            Asks the incident assistant a question about a command board and returns the answer
+            synchronously. Unlike SendChatMessage (queued, reply fans out over SignalR), a commander
+            working a board needs the answer in the same round-trip, so the chatbot pipeline runs inline.
+            The same authorization, per-department gating and rate limiting apply — this is the pipeline,
+            not a bypass of it.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatbotController.IncidentSuggestions(System.Int32)">
+            <summary>
+            Questions worth putting in front of the commander for this incident, chosen from the ICS
+            playbook inferred from the call's type/name/nature. The IC app ships the same playbooks so it
+            can build these offline; this endpoint keeps a server-side department in sync with them.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Controllers.v4.ChatbotChatMessageRequest.CallId">
+            <summary>
+            Optional: the incident (call id) the sender has open on a command board, so incident
+            questions resolve against that board instead of guessing. 0 or absent for general chat.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ChatController">
             <summary>
             Realtime chat system interaction (channels, messages, reactions, attachments and presence)
@@ -8046,7 +8068,9 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Chat.SendChatMessageInput.Body">
             <summary>
-            Body of the message
+            Body of the message. Image messages carry the picture as an attachment and send an
+            empty body (the body is only an optional caption), so empty strings are accepted —
+            null is still rejected.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Chat.SendChatMessageInput.MessageType">
@@ -8297,6 +8321,87 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Chat.VerifyExportMfaInput.TotpCode">
             <summary>
             The caller's current authenticator (TOTP) code, used to establish a recent-MFA step-up proof for PII exports
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.AskIncidentAssistantInput">
+            <summary>
+            A command-board question for the incident assistant. Answered synchronously so the board can show
+            the reply in place instead of waiting on the chat channel round-trip.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.AskIncidentAssistantInput.Question">
+            <summary>
+            The commander's question, in their own words ("PAR", "who's in Division A", "what am I missing")
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.AskIncidentAssistantInput.CallId">
+            <summary>
+            Call id of the incident the question is about (the board the caller has open)
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.IncidentAssistantAnswerResult">
+            <summary>
+            Answer to a command-board question
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.IncidentAssistantAnswerResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.IncidentAssistantAnswerResultData">
+            <summary>
+            The assistant's answer plus what it understood the question to be
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.IncidentAssistantAnswerResultData.Answer">
+            <summary>
+            The answer text, ready to display
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.IncidentAssistantAnswerResultData.Intent">
+            <summary>
+            Name of the intent the question was classified as ("IncidentPar", "Unknown", ...)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.IncidentAssistantAnswerResultData.Confidence">
+            <summary>
+            Classifier confidence, 0.0 - 1.0
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.IncidentAssistantAnswerResultData.Processed">
+            <summary>
+            False when the assistant couldn't answer (unresolved incident, no permission, rate limited)
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.IncidentAssistantSuggestionsResult">
+            <summary>
+            Suggested questions for an incident, tailored to its type
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.IncidentAssistantSuggestionsResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.IncidentAssistantSuggestionsResultData">
+            <summary>
+            Incident-type suggestions the command board shows as one-tap prompts
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.IncidentAssistantSuggestionsResultData.IncidentType">
+            <summary>
+            Inferred incident family ("Structure fire", "Wildland fire", "Mass casualty incident", ...)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.IncidentAssistantSuggestionsResultData.IncidentTypeKey">
+            <summary>
+            Machine-readable incident family key, matching the app's own playbook ids
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.IncidentAssistantSuggestionsResultData.Questions">
+            <summary>
+            Questions worth putting in front of the commander for this incident type
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.CheckInTimers.PerformCheckInInput.UserId">

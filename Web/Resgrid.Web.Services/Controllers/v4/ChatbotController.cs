@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -39,6 +40,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly Resgrid.Model.Providers.IEventAggregator _eventAggregator;
 		private readonly IFeatureToggleService _featureToggleService;
 		private readonly IChatbotSessionManager _chatbotSessionManager;
+		private readonly IChatbotIngressService _chatbotIngressService;
+		private readonly ICallsService _callsService;
 
 		public ChatbotController(
 			IChatbotUserIdentityService userIdentityService,
@@ -53,7 +56,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IQueueService queueService,
 			Resgrid.Model.Providers.IEventAggregator eventAggregator,
 			IFeatureToggleService featureToggleService,
-			IChatbotSessionManager chatbotSessionManager)
+			IChatbotSessionManager chatbotSessionManager,
+			IChatbotIngressService chatbotIngressService,
+			ICallsService callsService)
 		{
 			_userIdentityService = userIdentityService;
 			_oauthLinkingService = oauthLinkingService;
@@ -68,6 +73,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_eventAggregator = eventAggregator;
 			_featureToggleService = featureToggleService;
 			_chatbotSessionManager = chatbotSessionManager;
+			_chatbotIngressService = chatbotIngressService;
+			_callsService = callsService;
 		}
 
 		/// <summary>
@@ -387,7 +394,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 					From = UserId,
 					Body = message.Body,
 					MessageId = message.ChatMessageId,
-					Platform = (int)Resgrid.Chatbot.Models.ChatbotPlatform.WebChat
+					Platform = (int)Resgrid.Chatbot.Models.ChatbotPlatform.WebChat,
+					// Optional: which incident the sender has open, so board questions ("PAR") resolve
+					// against it. Treated as a hint — the pipeline re-checks scoping and permission.
+					IncidentCallId = request.CallId > 0 ? request.CallId : (int?)null
 				});
 
 				if (!queued)
@@ -472,6 +482,120 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 		}
 
+		#endregion Web Chat conversation
+
+		#region Incident command assistant
+
+		/// <summary>
+		/// Asks the incident assistant a question about a command board and returns the answer
+		/// synchronously. Unlike SendChatMessage (queued, reply fans out over SignalR), a commander
+		/// working a board needs the answer in the same round-trip, so the chatbot pipeline runs inline.
+		/// The same authorization, per-department gating and rate limiting apply — this is the pipeline,
+		/// not a bypass of it.
+		/// </summary>
+		[HttpPost("AskIncident")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		public async Task<ActionResult<IncidentAssistantAnswerResult>> AskIncident([FromBody] AskIncidentAssistantInput input)
+		{
+			if (!await ChatbotChatEnabledAsync())
+				return NotFound();
+
+			if (input == null || string.IsNullOrWhiteSpace(input.Question))
+				return BadRequest(new { error = "A question is required." });
+
+			try
+			{
+				var message = new ChatbotMessage
+				{
+					MessageId = Guid.NewGuid().ToString(),
+					From = UserId,
+					To = DepartmentId.ToString(System.Globalization.CultureInfo.InvariantCulture),
+					Text = input.Question.Trim(),
+					Platform = ChatbotPlatform.WebChat,
+					Timestamp = DateTime.UtcNow
+				};
+
+				if (input.CallId > 0)
+					message.PlatformMetadata["incidentCallId"] = input.CallId;
+
+				var response = await _chatbotIngressService.ProcessMessageAsync(message);
+
+				var result = new IncidentAssistantAnswerResult
+				{
+					Data = new IncidentAssistantAnswerResultData
+					{
+						Answer = response?.Text ?? string.Empty,
+						Intent = response?.Intent?.Type.ToString() ?? ChatbotIntentType.Unknown.ToString(),
+						Confidence = response?.Intent?.Confidence ?? 0,
+						Processed = response?.Processed ?? false
+					},
+					PageSize = 1,
+					Status = ResponseHelper.Success
+				};
+
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return BadRequest(new { error = "Unable to answer that right now." });
+			}
+		}
+
+		/// <summary>
+		/// Questions worth putting in front of the commander for this incident, chosen from the ICS
+		/// playbook inferred from the call's type/name/nature. The IC app ships the same playbooks so it
+		/// can build these offline; this endpoint keeps a server-side department in sync with them.
+		/// </summary>
+		[HttpGet("IncidentSuggestions")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		public async Task<ActionResult<IncidentAssistantSuggestionsResult>> IncidentSuggestions([FromQuery] int callId)
+		{
+			if (!await ChatbotChatEnabledAsync())
+				return NotFound();
+
+			try
+			{
+				Resgrid.Model.Call call = null;
+
+				if (callId > 0)
+				{
+					call = await _callsService.GetCallByIdAsync(callId);
+
+					// Tenant isolation: a call from another department reads as not-found, and the caller
+					// still needs view permission on their own department's call.
+					if (call != null && (call.DepartmentId != DepartmentId || !await _authorizationService.CanUserViewCallAsync(UserId, callId)))
+						call = null;
+				}
+
+				var playbook = IcsPlaybooks.Infer(call);
+
+				var result = new IncidentAssistantSuggestionsResult
+				{
+					Data = new IncidentAssistantSuggestionsResultData
+					{
+						IncidentType = playbook.DisplayName,
+						IncidentTypeKey = playbook.Type.ToString(),
+						Questions = playbook.SuggestedQuestions.ToList()
+					},
+					PageSize = 1,
+					Status = ResponseHelper.Success
+				};
+
+				ResponseHelper.PopulateV4ResponseData(result);
+				return result;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return StatusCode(StatusCodes.Status500InternalServerError, new { error = "An unexpected error occurred." });
+			}
+		}
+
+		#endregion Incident command assistant
+
 		private async Task<bool> ChatbotChatEnabledAsync()
 		{
 			if (!await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.ChatSystem, DepartmentId))
@@ -486,14 +610,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var config = await _departmentConfigService.GetConfigAsync(DepartmentId);
 			return config == null || config.IsEnabled;
 		}
-
-		#endregion Web Chat conversation
 	}
 
 	public class ChatbotChatMessageRequest
 	{
 		public string Text { get; set; }
 		public string ClientMessageId { get; set; }
+
+		/// <summary>
+		/// Optional: the incident (call id) the sender has open on a command board, so incident
+		/// questions resolve against that board instead of guessing. 0 or absent for general chat.
+		/// </summary>
+		public int CallId { get; set; }
 	}
 
 	public class UnlinkRequest

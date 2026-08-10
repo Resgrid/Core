@@ -553,7 +553,13 @@ namespace Resgrid.Services
 
 		/// <summary>
 		/// Server-side metadata validation: the JSON must parse; link urls must be http/https; GIF urls
-		/// must be https on a known GIF CDN host. Invalid payloads are dropped (null), never fatal.
+		/// (both the animation and its preview) must be https on a known GIF CDN host. Invalid payloads
+		/// are dropped (null), never fatal.
+		///
+		/// Clients send a nested envelope — { "gif": { "url", "previewUrl" } }, { "link": { "url" } } —
+		/// so the urls are read from that section first. Older mobile builds wrote the url flat at the
+		/// root, which is still read as a fallback: checking both shapes is what stops a caller from
+		/// evading the CDN allowlist just by picking the shape the validator does not look at.
 		/// </summary>
 		private static string ValidateMetadataJson(ChatMessageType messageType, string metadataJson)
 		{
@@ -563,21 +569,29 @@ namespace Resgrid.Services
 			try
 			{
 				var metadata = JObject.Parse(metadataJson);
-				var url = metadata.Value<string>("url");
-				if (string.IsNullOrWhiteSpace(url))
-					return metadataJson;
 
 				if (messageType == ChatMessageType.Gif)
 				{
-					if (!Uri.TryCreate(url, UriKind.Absolute, out var gifUri) || gifUri.Scheme != Uri.UriSchemeHttps || !IsGifCdnHost(gifUri.Host))
+					var gif = ReadSection(metadata, "gif");
+					var gifUrl = ReadUrl(gif, "url", "gifUrl") ?? ReadUrl(metadata, "url", "gifUrl");
+					if (string.IsNullOrWhiteSpace(gifUrl))
+						return metadataJson;
+
+					var previewUrl = ReadUrl(gif, "previewUrl") ?? ReadUrl(metadata, "previewUrl");
+					if (!IsAllowedGifUrl(gifUrl) || (!string.IsNullOrWhiteSpace(previewUrl) && !IsAllowedGifUrl(previewUrl)))
 						return null;
+
+					return metadataJson;
 				}
-				else
-				{
-					if (!Uri.TryCreate(url, UriKind.Absolute, out var linkUri) ||
-						(linkUri.Scheme != Uri.UriSchemeHttp && linkUri.Scheme != Uri.UriSchemeHttps))
-						return null;
-				}
+
+				var link = ReadSection(metadata, "link");
+				var url = ReadUrl(link, "url") ?? ReadUrl(metadata, "url");
+				if (string.IsNullOrWhiteSpace(url))
+					return metadataJson;
+
+				if (!Uri.TryCreate(url, UriKind.Absolute, out var linkUri) ||
+					(linkUri.Scheme != Uri.UriSchemeHttp && linkUri.Scheme != Uri.UriSchemeHttps))
+					return null;
 
 				return metadataJson;
 			}
@@ -585,6 +599,39 @@ namespace Resgrid.Services
 			{
 				return null;
 			}
+		}
+
+		/// <summary>Case-insensitive lookup of a nested metadata object ("gif", "link", ...).</summary>
+		private static JObject ReadSection(JObject metadata, string name)
+		{
+			return metadata?.GetValue(name, StringComparison.OrdinalIgnoreCase) as JObject;
+		}
+
+		/// <summary>Case-insensitive lookup of the first non-empty string among the given property names.</summary>
+		private static string ReadUrl(JObject source, params string[] names)
+		{
+			if (source == null)
+				return null;
+
+			foreach (var name in names)
+			{
+				if (source.GetValue(name, StringComparison.OrdinalIgnoreCase) is JValue value &&
+					value.Type == JTokenType.String)
+				{
+					var url = (string)value;
+					if (!string.IsNullOrWhiteSpace(url))
+						return url;
+				}
+			}
+
+			return null;
+		}
+
+		private static bool IsAllowedGifUrl(string url)
+		{
+			return Uri.TryCreate(url, UriKind.Absolute, out var uri) &&
+				uri.Scheme == Uri.UriSchemeHttps &&
+				IsGifCdnHost(uri.Host);
 		}
 
 		private static bool IsGifCdnHost(string host)

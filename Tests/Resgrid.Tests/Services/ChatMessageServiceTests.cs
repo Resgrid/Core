@@ -135,5 +135,65 @@ namespace Resgrid.Tests.Services
 				x => x.InsertAsync(It.IsAny<ChatMessageReaction>(), It.IsAny<CancellationToken>(), false),
 				expectInsert ? Times.Once() : Times.Never());
 		}
+		/// <summary>
+		/// Metadata url validation is a pure static helper on the service, so it is exercised directly
+		/// rather than through the full SendMessageAsync dependency graph.
+		/// </summary>
+		private static string ValidateMetadataJson(ChatMessageType messageType, string metadataJson)
+		{
+			var method = typeof(ChatMessageService).GetMethod(
+				"ValidateMetadataJson",
+				System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Static);
+
+			return (string)method.Invoke(null, new object[] { messageType, metadataJson });
+		}
+
+		// Clients send GIF urls nested under "gif"; the allowlist has to reach into that section.
+		// Reading only the root url meant every real payload skipped validation entirely.
+		[TestCase("{\"gif\":{\"url\":\"https://media.giphy.com/media/a/giphy.gif\"}}", true)]
+		[TestCase("{\"gif\":{\"url\":\"https://media3.giphy.com/media/a/giphy.gif\"}}", true)]
+		[TestCase("{\"gif\":{\"url\":\"https://evil.example.com/a.gif\"}}", false)]
+		[TestCase("{\"gif\":{\"url\":\"http://media.giphy.com/media/a/giphy.gif\"}}", false)]
+		[TestCase("{\"GifUrl\":\"https://evil.example.com/a.gif\"}", false)]
+		[TestCase("{\"GifUrl\":\"https://media.giphy.com/media/a/giphy.gif\"}", true)]
+		public void ValidateMetadataJson_should_enforce_the_gif_cdn_allowlist(string metadataJson, bool expectKept)
+		{
+			var result = ValidateMetadataJson(ChatMessageType.Gif, metadataJson);
+
+			if (expectKept)
+				result.Should().Be(metadataJson);
+			else
+				result.Should().BeNull();
+		}
+
+		[Test]
+		public void ValidateMetadataJson_should_reject_a_gif_preview_url_off_the_allowlist()
+		{
+			var metadataJson = "{\"gif\":{\"url\":\"https://media.giphy.com/media/a/giphy.gif\",\"previewUrl\":\"https://evil.example.com/p.gif\"}}";
+
+			ValidateMetadataJson(ChatMessageType.Gif, metadataJson).Should().BeNull();
+		}
+
+		// Location payloads carry no url at all and must survive untouched.
+		[Test]
+		public void ValidateMetadataJson_should_keep_location_metadata()
+		{
+			var metadataJson = "{\"location\":{\"latitude\":37.7,\"longitude\":-122.4}}";
+
+			ValidateMetadataJson(ChatMessageType.Location, metadataJson).Should().Be(metadataJson);
+		}
+
+		[TestCase("{\"link\":{\"url\":\"https://resgrid.com\"}}", true)]
+		[TestCase("{\"link\":{\"url\":\"javascript:alert(1)\"}}", false)]
+		[TestCase("{\"url\":\"https://resgrid.com\"}", true)]
+		public void ValidateMetadataJson_should_require_http_schemes_for_link_urls(string metadataJson, bool expectKept)
+		{
+			var result = ValidateMetadataJson(ChatMessageType.Text, metadataJson);
+
+			if (expectKept)
+				result.Should().Be(metadataJson);
+			else
+				result.Should().BeNull();
+		}
 	}
 }

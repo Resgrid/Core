@@ -8,6 +8,25 @@ var resgrid;
 (function (resgrid) {
     var main;
     (function (main) {
+        // Expired auth cookies leave background polls (DataTables ajax, etc.) failing with 401s;
+        // the ajaxError handler below redirects to login, so only the 401 alert is silenced here.
+        // Every other DataTables error keeps the library's default alert so real problems surface.
+        if ($.fn.dataTable) {
+            $.fn.dataTable.ext.errMode = function (settings, techNote, message) {
+                if (settings && settings.jqXHR && settings.jqXHR.status === 401) {
+                    if (window.console && console.warn) { console.warn(message); }
+                    return;
+                }
+                alert(message);
+            };
+        }
+
+        $(document).ajaxError(function (event, jqxhr) {
+            if (jqxhr && jqxhr.status === 401) {
+                window.location.assign(resgrid.absoluteBaseUrl + '/Account/LogOn?returnUrl=' + encodeURIComponent(window.location.pathname + window.location.search));
+            }
+        });
+
         $(document).ready(function () {
             $('#top-icons-area').load(resgrid.absoluteBaseUrl + '/User/Department/TopIconsArea');
 

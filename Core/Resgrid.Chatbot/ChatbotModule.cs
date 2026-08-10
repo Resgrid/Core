@@ -62,6 +62,16 @@ namespace Resgrid.Chatbot
 				.InstancePerLifetimeScope()
 				.PreserveExistingDefaults();
 
+			// Incident command (ICS) assistant: resolves which incident a question is about and turns
+			// the loaded board into answers. Scoped, not singleton — both depend on per-scope services.
+			builder.RegisterType<IncidentContextResolver>()
+				.As<IIncidentContextResolver>()
+				.InstancePerLifetimeScope();
+
+			builder.RegisterType<IncidentBoardNarrator>()
+				.As<IIncidentBoardNarrator>()
+				.InstancePerLifetimeScope();
+
 			// Guard-railed conversational LLM fallback for unmatched utterances.
 			builder.RegisterType<ConversationalFallbackService>()
 				.As<IChatbotConversationalFallback>()
@@ -202,6 +212,11 @@ namespace Resgrid.Chatbot
 				.InstancePerLifetimeScope();
 
 			builder.RegisterType<MyScheduleActionHandler>()
+				.As<IChatbotActionHandler>()
+				.InstancePerLifetimeScope();
+
+			// Fields every incident-command (ICS) question via CanHandle.
+			builder.RegisterType<IncidentCommandActionHandler>()
 				.As<IChatbotActionHandler>()
 				.InstancePerLifetimeScope();
 		}

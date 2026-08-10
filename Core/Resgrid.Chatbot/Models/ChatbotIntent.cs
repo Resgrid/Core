@@ -44,7 +44,50 @@ namespace Resgrid.Chatbot.Models
 		MyCalls = 37,
 		UnitCalls = 38,
 		CreatePoll = 39,
-		MySchedule = 40
+		MySchedule = 40,
+
+		// === Incident Command (ICS) — the questions an Incident Commander asks while working a
+		// command board. Every one is READ-ONLY: the assistant reports the board, it never mutates
+		// it (mutations stay with the explicit command-board actions and their confirmation gates).
+
+		/// <summary>Overall incident snapshot / size-up ("what's the status of this incident").</summary>
+		IncidentStatus = 41,
+
+		/// <summary>Personnel accountability report ("PAR", "who's overdue for check-in").</summary>
+		IncidentPar = 42,
+
+		/// <summary>What's working the incident, optionally scoped to a lane ("who's in Division A").</summary>
+		IncidentResources = 43,
+
+		/// <summary>Tactical objectives / benchmarks and what's still open.</summary>
+		IncidentObjectives = 44,
+
+		/// <summary>Command-level needs (ordered resources/logistics) and what hasn't been filled.</summary>
+		IncidentNeeds = 45,
+
+		/// <summary>ICS position assignments — who holds which role, and which key roles are unfilled.</summary>
+		IncidentRoles = 46,
+
+		/// <summary>Recent incident (ICS-201) timeline entries.</summary>
+		IncidentTimeline = 47,
+
+		/// <summary>Incident timers — what's running, what's due.</summary>
+		IncidentTimers = 48,
+
+		/// <summary>Span-of-control check: lanes over/under their configured resource limits.</summary>
+		IncidentSpanOfControl = 49,
+
+		/// <summary>Transfer-of-command / ICS-201 style briefing built from the live board.</summary>
+		IncidentBriefing = 50,
+
+		/// <summary>Incident-type ICS checklist ("what am I missing on a structure fire").</summary>
+		IncidentChecklist = 51,
+
+		/// <summary>Weather at the incident (ICP coordinates first, then the call's).</summary>
+		IncidentWeather = 52,
+
+		/// <summary>Operational status notes recorded on the incident.</summary>
+		IncidentNotes = 53
 	}
 
 	public class ChatbotIntent

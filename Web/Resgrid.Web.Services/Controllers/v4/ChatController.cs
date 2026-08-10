@@ -94,17 +94,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// Returns all the chat channels the current user can access, with per-channel unread counts.
 		/// </summary>
 		/// <param name="activeUnitId">Optional unit the user is actively operating as</param>
+		/// <param name="includeArchived">Include archived channels — the point-in-time record of closed incidents and calls. Off by default so the everyday list stays current.</param>
 		/// <returns>Array of ChatChannelResultData objects for the channels the user can access</returns>
 		[HttpGet("GetChannels")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public async Task<ActionResult<GetChatChannelsResult>> GetChannels(int? activeUnitId = null)
+		public async Task<ActionResult<GetChatChannelsResult>> GetChannels(int? activeUnitId = null, bool includeArchived = false)
 		{
 			if (!await ChatEnabledAsync())
 				return NotFound();
 
 			var result = new GetChatChannelsResult();
-			var channels = await _chatChannelService.GetChannelsForUserAsync(DepartmentId, UserId, activeUnitId);
+			var channels = await _chatChannelService.GetChannelsForUserAsync(DepartmentId, UserId, activeUnitId, includeArchived);
 			var memberRows = await _chatChannelService.GetActiveMembershipsForUserAsync(DepartmentId, UserId);
 
 			var membersByChannel = new Dictionary<string, ChatChannelMember>();

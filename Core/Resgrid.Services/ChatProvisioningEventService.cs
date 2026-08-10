@@ -2,8 +2,10 @@ using System;
 using System.Threading.Tasks;
 using Autofac;
 using Resgrid.Framework;
+using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
+using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -32,6 +34,8 @@ namespace Resgrid.Services
 			_eventAggregator.AddAsyncListener<CallAddedEvent>(OnCallAddedAsync);
 			_eventAggregator.AddAsyncListener<CallClosedEvent>(OnCallClosedAsync);
 			_eventAggregator.AddAsyncListener<CommandEstablishedEvent>(OnCommandEstablishedAsync);
+			_eventAggregator.AddAsyncListener<IncidentClosedEvent>(OnIncidentClosedAsync);
+			_eventAggregator.AddAsyncListener<LaneLeadChangedEvent>(OnLaneLeadChangedAsync);
 			_eventAggregator.AddAsyncListener<IncidentReopenedEvent>(OnIncidentReopenedAsync);
 		}
 
@@ -67,14 +71,55 @@ namespace Resgrid.Services
 				if (command == null)
 					return;
 
-				await chatChannelService.EnsureIncidentChannelAsync(message.DepartmentId, message.CallId, null);
-				await chatChannelService.EnsureCommandChannelAsync(command);
-
-				// Lane channels for template-seeded nodes; later ad-hoc lanes are handled by SaveNodeAsync.
-				// Batched: one existing-channel read for the call, then insert only the missing lanes.
+				// Same entry point the read-path backfill uses, so establish and heal-on-read can never
+				// drift apart. One existing-channel read, then only the missing rows are inserted.
+				// Template-seeded lanes are covered here; later ad-hoc lanes come via SaveNodeAsync.
 				var nodes = await incidentCommandService.GetNodesForCallAsync(message.DepartmentId, message.CallId);
-				await chatChannelService.EnsureLaneChannelsAsync(nodes);
+				await chatChannelService.EnsureIncidentChannelsAsync(command, nodes);
 			});
+		}
+
+		/// <summary>
+		/// A lane lead changed hands, so who can see the lane and "All Leads" channels changed with it.
+		/// Both audiences are derived live from the board, but the permission service caches its verdicts —
+		/// without this the outgoing lead keeps access, and the incoming one is locked out, until the cache
+		/// expires on its own.
+		/// </summary>
+		private Task OnLaneLeadChangedAsync(LaneLeadChangedEvent message)
+		{
+			if (message == null)
+				return Task.CompletedTask;
+
+			return RunAsync(async scope =>
+			{
+				var channelRepository = scope.Resolve<IChatChannelRepository>();
+				var permissionService = scope.Resolve<IChatPermissionService>();
+
+				var leadsChannel = await channelRepository.GetByCallIdAndTypeAsync(message.CallId, (int)ChatChannelType.IncidentLeads);
+				if (leadsChannel != null)
+					await permissionService.InvalidateChannelCacheAsync(leadsChannel.ChatChannelId);
+
+				if (!string.IsNullOrWhiteSpace(message.CommandStructureNodeId))
+				{
+					var laneChannel = await channelRepository.GetByCommandStructureNodeIdAsync(message.CommandStructureNodeId);
+					if (laneChannel != null)
+						await permissionService.InvalidateChannelCacheAsync(laneChannel.ChatChannelId);
+				}
+			});
+		}
+
+		/// <summary>
+		/// Command closed: freeze its command and lane channels into a point-in-time record. Scoped to the
+		/// command, NOT the call — the call may still be running, and its own incident channel has to stay
+		/// live. (The call-level freeze is CallClosedEvent's job.)
+		/// </summary>
+		private Task OnIncidentClosedAsync(IncidentClosedEvent message)
+		{
+			if (message == null || string.IsNullOrWhiteSpace(message.IncidentCommandId))
+				return Task.CompletedTask;
+
+			return RunAsync(scope => scope.Resolve<IChatChannelService>()
+				.SetCommandChannelsArchivedAsync(message.IncidentCommandId, true));
 		}
 
 		private Task OnIncidentReopenedAsync(IncidentReopenedEvent message)
@@ -82,8 +127,21 @@ namespace Resgrid.Services
 			if (message == null)
 				return Task.CompletedTask;
 
-			return RunAsync(scope => scope.Resolve<IChatChannelService>()
-				.SetIncidentChannelsArchivedAsync(message.CallId, false));
+			return RunAsync(async scope =>
+			{
+				var chatChannelService = scope.Resolve<IChatChannelService>();
+
+				// Thaw the reopened command's own channels first — this is the part that must happen even
+				// when the underlying call is closed.
+				if (!string.IsNullOrWhiteSpace(message.IncidentCommandId))
+					await chatChannelService.SetCommandChannelsArchivedAsync(message.IncidentCommandId, false);
+
+				// The call's incident channel only comes back when the call itself is open again; reopening
+				// command on a closed call must not resurrect the call-wide conversation.
+				var call = await scope.Resolve<ICallsService>().GetCallByIdAsync(message.CallId);
+				if (call != null && !call.ClosedOn.HasValue)
+					await chatChannelService.SetIncidentChannelsArchivedAsync(message.CallId, false);
+			});
 		}
 
 		/// <summary>

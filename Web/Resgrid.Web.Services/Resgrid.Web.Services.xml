@@ -485,11 +485,12 @@
             Realtime chat system interaction (channels, messages, reactions, attachments and presence)
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.GetChannels(System.Nullable{System.Int32})">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.GetChannels(System.Nullable{System.Int32},System.Boolean)">
             <summary>
             Returns all the chat channels the current user can access, with per-channel unread counts.
             </summary>
             <param name="activeUnitId">Optional unit the user is actively operating as</param>
+            <param name="includeArchived">Include archived channels — the point-in-time record of closed incidents and calls. Off by default so the everyday list stays current.</param>
             <returns>Array of ChatChannelResultData objects for the channels the user can access</returns>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.GetChannel(System.String)">

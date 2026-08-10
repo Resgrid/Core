@@ -23,6 +23,9 @@ namespace Resgrid.Services
 	{
 		private static readonly TimeSpan ChannelListCacheLength = TimeSpan.FromSeconds(45);
 
+		/// <summary>How long a completed incident-channel backfill suppresses the next sweep for that command.</summary>
+		private static readonly TimeSpan IncidentBackfillCacheLength = TimeSpan.FromMinutes(30);
+
 		private readonly IChatChannelRepository _chatChannelRepository;
 		private readonly IChatChannelMemberRepository _chatChannelMemberRepository;
 		private readonly IChatChannelAccessRuleRepository _chatChannelAccessRuleRepository;
@@ -703,6 +706,87 @@ namespace Resgrid.Services
 			}, () => _chatChannelRepository.GetByCallIdAndTypeAsync(command.CallId, (int)ChatChannelType.IncidentCommand), cancellationToken);
 		}
 
+		public async Task<ChatChannel> EnsureLeadsChannelAsync(IncidentCommand command, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (command == null)
+				return null;
+
+			var existing = await _chatChannelRepository.GetByCallIdAndTypeAsync(command.CallId, (int)ChatChannelType.IncidentLeads);
+			if (existing != null)
+				return existing;
+
+			return await InsertProvisionedChannelAsync(new ChatChannel
+			{
+				ChatChannelId = Guid.NewGuid().ToString(),
+				DepartmentId = command.DepartmentId,
+				ChannelType = (int)ChatChannelType.IncidentLeads,
+				Name = "All Leads",
+				CallId = command.CallId,
+				IncidentCommandId = command.IncidentCommandId,
+				CreatedOn = DateTime.UtcNow
+			}, () => _chatChannelRepository.GetByCallIdAndTypeAsync(command.CallId, (int)ChatChannelType.IncidentLeads), cancellationToken);
+		}
+
+		public async Task EnsureIncidentChannelsAsync(IncidentCommand command, IEnumerable<CommandStructureNode> nodes, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (command == null || command.CallId <= 0)
+				return;
+
+			// A closed command's channels are a frozen record. Anything created now would be unarchived,
+			// so the freeze would silently lift for a channel nobody ever posted in.
+			if (command.Status != (int)IncidentCommandStatus.Active)
+				return;
+
+			var markerKey = $"chat:incidentbackfill:{command.IncidentCommandId}";
+
+			try
+			{
+				if (!string.IsNullOrEmpty(await _cacheProvider.GetStringAsync(markerKey)))
+					return;
+			}
+			catch (Exception ex)
+			{
+				// A cache outage must not stop the backfill — worst case it runs again on the next read.
+				Logging.LogException(ex);
+			}
+
+			try
+			{
+				// One read of the call's channels covers every check below, instead of a lookup per Ensure*.
+				var existing = (await _chatChannelRepository.GetByCallIdAsync(command.CallId))?.ToList() ?? new List<ChatChannel>();
+
+				if (!existing.Any(c => c.ChannelType == (int)ChatChannelType.Incident))
+					await EnsureIncidentChannelAsync(command.DepartmentId, command.CallId, null, cancellationToken);
+
+				if (!existing.Any(c => c.ChannelType == (int)ChatChannelType.IncidentCommand))
+					await EnsureCommandChannelAsync(command, cancellationToken);
+
+				if (!existing.Any(c => c.ChannelType == (int)ChatChannelType.IncidentLeads))
+					await EnsureLeadsChannelAsync(command, cancellationToken);
+
+				var provisionedNodeIds = new HashSet<string>(
+					existing.Where(c => c.ChannelType == (int)ChatChannelType.IncidentLane && !string.IsNullOrWhiteSpace(c.CommandStructureNodeId))
+						.Select(c => c.CommandStructureNodeId),
+					StringComparer.OrdinalIgnoreCase);
+
+				var missingLanes = (nodes ?? Enumerable.Empty<CommandStructureNode>())
+					.Where(n => n != null && !n.DeletedOn.HasValue && !provisionedNodeIds.Contains(n.CommandStructureNodeId))
+					.ToList();
+
+				// Serialized deliberately: these share the caller's unit-of-work connection, which is not
+				// concurrency-safe. Bounded by the lane count on a once-per-incident path.
+				foreach (var node in missingLanes)
+					await EnsureLaneChannelAsync(node, cancellationToken);
+
+				await _cacheProvider.SetStringAsync(markerKey, "1", IncidentBackfillCacheLength);
+			}
+			catch (Exception ex)
+			{
+				// Best-effort: chat provisioning must never cost the caller their board or incident view.
+				Logging.LogException(ex);
+			}
+		}
+
 		public async Task<ChatChannel> EnsureChatbotChannelAsync(int departmentId, string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var existing = await _chatChannelRepository.GetChatbotChannelAsync(departmentId, userId);
@@ -743,7 +827,26 @@ namespace Resgrid.Services
 		public async Task<bool> SetIncidentChannelsArchivedAsync(int callId, bool archived, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var affected = await _chatChannelRepository.SetArchivedByCallIdAsync(callId, archived, archived ? DateTime.UtcNow : (DateTime?)null);
-			var affectedList = affected?.ToList() ?? new List<string>();
+			return await PublishArchiveChangeAsync(affected);
+		}
+
+		public async Task<bool> SetCommandChannelsArchivedAsync(string incidentCommandId, bool archived, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (string.IsNullOrWhiteSpace(incidentCommandId))
+				return false;
+
+			var affected = await _chatChannelRepository.SetArchivedByIncidentCommandIdAsync(incidentCommandId, archived, archived ? DateTime.UtcNow : (DateTime?)null);
+			return await PublishArchiveChangeAsync(affected);
+		}
+
+		/// <summary>
+		/// Drops the cached permission evaluations for every channel whose archived flag just moved and
+		/// tells connected clients to re-read it — a frozen channel has to stop accepting posts on every
+		/// device immediately, not whenever the cache happens to expire.
+		/// </summary>
+		private async Task<bool> PublishArchiveChangeAsync(IEnumerable<string> affectedChannelIds)
+		{
+			var affectedList = affectedChannelIds?.ToList() ?? new List<string>();
 
 			foreach (var channelId in affectedList)
 				await _chatPermissionService.InvalidateChannelCacheAsync(channelId);

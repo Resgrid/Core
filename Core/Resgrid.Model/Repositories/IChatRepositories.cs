@@ -35,6 +35,9 @@ namespace Resgrid.Model.Repositories
 		/// <summary>Archives (or unarchives) every channel anchored to a call; returns affected channel ids.</summary>
 		Task<IEnumerable<string>> SetArchivedByCallIdAsync(int callId, bool archived, DateTime? archivedOn);
 
+		/// <summary>Archives/unarchives every channel anchored to one incident command (the command channel and its lane channels), returning the affected channel ids.</summary>
+		Task<IEnumerable<string>> SetArchivedByIncidentCommandIdAsync(string incidentCommandId, bool archived, DateTime? archivedOn);
+
 		/// <summary>Channels in the department carrying a per-channel retention override.</summary>
 		Task<IEnumerable<ChatChannel>> GetWithRetentionOverrideAsync(int departmentId);
 

@@ -103,11 +103,34 @@ namespace Resgrid.Model.Services
 
 		Task<ChatChannel> EnsureCommandChannelAsync(IncidentCommand command, CancellationToken cancellationToken = default(CancellationToken));
 
+		/// <summary>Ensures the incident's "All Leads" channel: the IC and every lane's primary/secondary lead.</summary>
+		Task<ChatChannel> EnsureLeadsChannelAsync(IncidentCommand command, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Backfills every chat channel an ACTIVE incident should have — the call's incident channel, the
+		/// command and "All Leads" channels, and one per live lane — inserting only what is missing.
+		///
+		/// Exists for incidents that were established before those channels were a thing: rather than a
+		/// one-off migration, the read paths call this and the incident heals itself the first time someone
+		/// opens it. Idempotent, and guarded by a short-lived marker so a board that refreshes on a timer
+		/// pays one cache read instead of a channel query. Closed commands are skipped — provisioning a
+		/// channel there would create it unarchived and quietly un-freeze a point-in-time record.
+		/// </summary>
+		Task EnsureIncidentChannelsAsync(IncidentCommand command, IEnumerable<CommandStructureNode> nodes, CancellationToken cancellationToken = default(CancellationToken));
+
 		/// <summary>Provisions the per-user chatbot channel; only call when a chatbot session starts (never on the channel-list path).</summary>
 		Task<ChatChannel> EnsureChatbotChannelAsync(int departmentId, string userId, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>Archives every channel anchored to a call (call closed); unarchive on reopen.</summary>
 		Task<bool> SetIncidentChannelsArchivedAsync(int callId, bool archived, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Archives every channel anchored to ONE incident command — its command channel and its lane
+		/// channels — leaving the call's own incident channel alone. Used when command is closed while the
+		/// call itself keeps running: the command conversation becomes a point-in-time record while the
+		/// call channel stays live. Unarchive on reopen.
+		/// </summary>
+		Task<bool> SetCommandChannelsArchivedAsync(string incidentCommandId, bool archived, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>Department chat settings (config defaults when no row exists); no authorization — safe for any department-scoped caller.</summary>
 		Task<ChatDepartmentSetting> GetDepartmentSettingsAsync(int departmentId);

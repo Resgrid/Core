@@ -24,7 +24,12 @@
       "Bash(brew --prefix dotnet)",
       "Bash(/opt/homebrew/opt/dotnet/bin/dotnet build:*)",
       "Bash(brew info:*)",
-      "mcp__graperoot-pro__graph_register_edit"
+      "mcp__graperoot-pro__graph_register_edit",
+      "mcp__graperoot-pro__graph_grep_all",
+      "Bash(/usr/local/share/dotnet/dotnet build *)",
+      "Bash(awk 'NR>=94 && /HttpGet\\\\\\(\"IncomingMessage\"\\\\\\)/{f=1} f{print NR\": \"$0} f && /^\\\\t\\\\t\\\\}$/{c++; if\\(c==1\\) exit}')",
+      "Bash(dotnet test *)",
+      "Bash(git -C /Volumes/USBSSD/dev/Resgrid/Core log --oneline -1 -- Providers/Resgrid.Providers.Migrations/Migrations/M0094_AddIncidentCommandNameAndLocations.cs)"
     ]
   },
   "enableAllProjectMcpServers": true,
@@ -50,6 +55,17 @@
           {
             "type": "command",
             "command": "DG_DATA_DIR=\"/Volumes/USBSSD/dev/Resgrid/Core/.dual-graph-pro\" /Users/shawn/.graperoot-pro/venv/bin/python3 \"/Users/shawn/.graperoot-pro/graph_sync.py\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/shawn/.graperoot-pro/venv/bin/python3 \"/Users/shawn/.graperoot-pro/stop_hook.py\""
           }
         ]
       }

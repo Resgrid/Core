@@ -45,6 +45,47 @@ namespace Resgrid.Model
 
 		/// <summary>The caller's active lane assignment, when they have one (null otherwise).</summary>
 		public ResourceLaneAssignmentView MyAssignment { get; set; }
+
+		/// <summary>
+		/// ICS positions filled on this incident, with contact details, so a responder can reach the right
+		/// person directly instead of going through command. Empty when nobody holds a position.
+		/// </summary>
+		public List<IncidentRoleContactInfo> Roles { get; set; } = new List<IncidentRoleContactInfo>();
+
+		/// <summary>
+		/// Chat channels the CALLER can actually reach, resolved server-side so clients never have to
+		/// guess at access. Null means "not available to you" — the caller is not command staff, holds no
+		/// lane lead slot, or the channel has not been provisioned.
+		/// </summary>
+		public IncidentChatChannels Chat { get; set; } = new IncidentChatChannels();
+	}
+
+	/// <summary>Who holds an ICS position on the incident, with the contact details to reach them.</summary>
+	public class IncidentRoleContactInfo
+	{
+		/// <summary>Maps to <see cref="IncidentRoleType"/>.</summary>
+		public int RoleType { get; set; }
+
+		public IncidentContactInfo Contact { get; set; }
+	}
+
+	/// <summary>The incident's chat channels, filtered to the ones the caller may open.</summary>
+	public class IncidentChatChannels
+	{
+		/// <summary>The call-wide incident channel (everyone on the call).</summary>
+		public string IncidentChannelId { get; set; }
+
+		/// <summary>The private command channel — only set for command staff (IC or an ICS role holder).</summary>
+		public string CommandChannelId { get; set; }
+
+		/// <summary>The "All Leads" channel — only set for the IC and lane primary/secondary leads.</summary>
+		public string LeadsChannelId { get; set; }
+
+		/// <summary>The caller's own lane channel, when they are assigned to a lane.</summary>
+		public string LaneChannelId { get; set; }
+
+		/// <summary>True once the incident is closed: the conversations are readable but frozen.</summary>
+		public bool IsFrozen { get; set; }
 	}
 
 	/// <summary>Contact card for a person relevant to a resource (commander or lane lead).</summary>

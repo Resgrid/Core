@@ -203,6 +203,10 @@ namespace Resgrid.Services
 					await AddCommandStaffAsync(channel.DepartmentId, channel.CallId.GetValueOrDefault(), userIds);
 					break;
 
+				case ChatChannelType.IncidentLeads:
+					await AddLaneLeadsAsync(channel.DepartmentId, channel.CallId.GetValueOrDefault(), userIds);
+					break;
+
 				default: // DirectMessage, AdHocGroup
 					await AddExplicitMemberAudienceAsync(channel, userIds);
 					break;
@@ -273,6 +277,12 @@ namespace Resgrid.Services
 
 					return await IsCommandStaffAsync(channel.DepartmentId, channel.CallId.GetValueOrDefault(), userId);
 
+				case ChatChannelType.IncidentLeads:
+					if (await IsDepartmentAdminAsync(channel.DepartmentId, userId))
+						return true;
+
+					return await IsLaneLeadOrCommanderAsync(channel.DepartmentId, channel.CallId.GetValueOrDefault(), userId);
+
 				default:
 					return false;
 			}
@@ -300,6 +310,7 @@ namespace Resgrid.Services
 				case ChatChannelType.Incident:
 				case ChatChannelType.IncidentLane:
 				case ChatChannelType.IncidentCommand:
+				case ChatChannelType.IncidentLeads:
 					if (!channel.CallId.HasValue)
 						return false;
 
@@ -490,6 +501,54 @@ namespace Resgrid.Services
 			}
 
 			return false;
+		}
+
+		/// <summary>
+		/// "All Leads" audience: the Incident Commander plus every lane's primary and secondary lead.
+		/// Deliberately derived from the lanes on each check rather than stored as membership — a lead who
+		/// is replaced on the board loses the channel without anyone having to remember to remove them.
+		/// </summary>
+		private async Task<bool> IsLaneLeadOrCommanderAsync(int departmentId, int callId, string userId)
+		{
+			if (callId <= 0)
+				return false;
+
+			var command = await _incidentCommandService.GetCommandForCallAsync(departmentId, callId);
+			if (command != null &&
+				(string.Equals(command.CurrentCommanderUserId, userId, StringComparison.OrdinalIgnoreCase) ||
+				 string.Equals(command.EstablishedByUserId, userId, StringComparison.OrdinalIgnoreCase)))
+				return true;
+
+			var nodes = await _incidentCommandService.GetNodesForCallAsync(departmentId, callId);
+			if (nodes == null)
+				return false;
+
+			return nodes.Any(n => !n.DeletedOn.HasValue &&
+				(string.Equals(n.PrimaryLeadUserId, userId, StringComparison.OrdinalIgnoreCase) ||
+				 string.Equals(n.SecondaryLeadUserId, userId, StringComparison.OrdinalIgnoreCase)));
+		}
+
+		private async Task AddLaneLeadsAsync(int departmentId, int callId, HashSet<string> userIds)
+		{
+			if (callId <= 0)
+				return;
+
+			var command = await _incidentCommandService.GetCommandForCallAsync(departmentId, callId);
+			if (command != null)
+			{
+				AddIfSet(userIds, command.CurrentCommanderUserId);
+				AddIfSet(userIds, command.EstablishedByUserId);
+			}
+
+			var nodes = await _incidentCommandService.GetNodesForCallAsync(departmentId, callId);
+			if (nodes == null)
+				return;
+
+			foreach (var node in nodes.Where(n => !n.DeletedOn.HasValue))
+			{
+				AddIfSet(userIds, node.PrimaryLeadUserId);
+				AddIfSet(userIds, node.SecondaryLeadUserId);
+			}
 		}
 
 		private async Task<bool> IsCommandStaffAsync(int departmentId, int callId, string userId)

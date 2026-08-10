@@ -11,7 +11,14 @@ namespace Resgrid.Model
 		Incident = 5,
 		IncidentLane = 6,
 		IncidentCommand = 7,
-		Chatbot = 8
+		Chatbot = 8,
+
+		/// <summary>
+		/// Incident Commander plus every lane's primary and secondary lead — command talking to the
+		/// people running the lanes, without the lane crews. Membership is derived live from the lanes,
+		/// so demoting a lead removes their access on the next check.
+		/// </summary>
+		IncidentLeads = 9
 	}
 
 	/// <summary>Who a chat participant is: a person, a unit-shared identity ("Engine 6"), or the chatbot.</summary>

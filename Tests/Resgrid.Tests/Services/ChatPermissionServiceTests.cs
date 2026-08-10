@@ -915,5 +915,132 @@ namespace Resgrid.Tests.Services
 				audience.Should().BeEquivalentTo(new[] { TestData.Users.TestUser1Id, TestData.Users.TestUser2Id, TestData.Users.TestUser3Id });
 			}
 		}
+
+		/// <summary>
+		/// The "All Leads" channel: the Incident Commander talking to the people running the lanes, and
+		/// nobody else. Membership is derived from the board on every check, so promoting or demoting a
+		/// lead changes access with no membership bookkeeping.
+		/// </summary>
+		[TestFixture]
+		public class when_evaluating_the_all_leads_channel : with_the_chat_permission_service
+		{
+			private static ChatChannel BuildLeadsChannel()
+			{
+				var channel = CreateChannel(ChatChannelType.IncidentLeads);
+				channel.CallId = 42;
+				return channel;
+			}
+
+			private void GivenCommand(string commanderUserId)
+			{
+				_incidentCommandServiceMock.Setup(x => x.GetCommandForCallAsync(1, 42)).ReturnsAsync(new IncidentCommand
+				{
+					CallId = 42,
+					DepartmentId = 1,
+					CurrentCommanderUserId = commanderUserId,
+					EstablishedByUserId = commanderUserId
+				});
+			}
+
+			private void GivenLanes(params CommandStructureNode[] nodes)
+			{
+				_incidentCommandServiceMock.Setup(x => x.GetNodesForCallAsync(1, 42)).ReturnsAsync(new List<CommandStructureNode>(nodes));
+			}
+
+			[Test]
+			public async Task the_incident_commander_should_have_access()
+			{
+				GivenCommand(TestData.Users.TestUser1Id);
+				GivenLanes();
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(BuildLeadsChannel(), TestData.Users.TestUser1Id, null);
+
+				result.Should().BeTrue();
+			}
+
+			[TestCase(true)]
+			[TestCase(false)]
+			public async Task a_lane_lead_should_have_access(bool isPrimary)
+			{
+				GivenCommand(TestData.Users.TestUser1Id);
+				GivenLanes(new CommandStructureNode
+				{
+					CommandStructureNodeId = "node-1",
+					CallId = 42,
+					DepartmentId = 1,
+					PrimaryLeadUserId = isPrimary ? TestData.Users.TestUser2Id : null,
+					SecondaryLeadUserId = isPrimary ? null : TestData.Users.TestUser2Id
+				});
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(BuildLeadsChannel(), TestData.Users.TestUser2Id, null);
+
+				result.Should().BeTrue();
+			}
+
+			[Test]
+			public async Task a_lead_who_has_been_replaced_should_lose_access()
+			{
+				GivenCommand(TestData.Users.TestUser1Id);
+				// TestUser3 used to lead this lane; the board now shows TestUser2.
+				GivenLanes(new CommandStructureNode
+				{
+					CommandStructureNodeId = "node-1",
+					CallId = 42,
+					DepartmentId = 1,
+					PrimaryLeadUserId = TestData.Users.TestUser2Id
+				});
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(BuildLeadsChannel(), TestData.Users.TestUser3Id, null);
+
+				result.Should().BeFalse();
+			}
+
+			[Test]
+			public async Task a_lead_on_a_deleted_lane_should_lose_access()
+			{
+				GivenCommand(TestData.Users.TestUser1Id);
+				GivenLanes(new CommandStructureNode
+				{
+					CommandStructureNodeId = "node-1",
+					CallId = 42,
+					DepartmentId = 1,
+					PrimaryLeadUserId = TestData.Users.TestUser2Id,
+					DeletedOn = DateTime.UtcNow
+				});
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(BuildLeadsChannel(), TestData.Users.TestUser2Id, null);
+
+				result.Should().BeFalse();
+			}
+
+			[Test]
+			public async Task an_ics_role_holder_who_leads_no_lane_should_not_have_access()
+			{
+				GivenCommand(TestData.Users.TestUser1Id);
+				GivenLanes();
+				_incidentCommandServiceMock.Setup(x => x.GetIncidentRolesAsync(1, 42)).ReturnsAsync(new List<IncidentRoleAssignment>
+				{
+					new IncidentRoleAssignment { CallId = 42, UserId = TestData.Users.TestUser3Id }
+				});
+
+				// A Safety Officer belongs in the Command channel, not the leads channel.
+				var result = await _chatPermissionService.CanAccessChannelAsync(BuildLeadsChannel(), TestData.Users.TestUser3Id, null);
+
+				result.Should().BeFalse();
+			}
+
+			[Test]
+			public async Task the_audience_should_be_the_commander_and_every_lane_lead()
+			{
+				GivenCommand(TestData.Users.TestUser1Id);
+				GivenLanes(
+					new CommandStructureNode { CommandStructureNodeId = "node-1", CallId = 42, DepartmentId = 1, PrimaryLeadUserId = TestData.Users.TestUser2Id },
+					new CommandStructureNode { CommandStructureNodeId = "node-2", CallId = 42, DepartmentId = 1, SecondaryLeadUserId = TestData.Users.TestUser3Id });
+
+				var audience = await _chatPermissionService.ResolveChannelAudienceUserIdsAsync(BuildLeadsChannel());
+
+				audience.Should().BeEquivalentTo(new[] { TestData.Users.TestUser1Id, TestData.Users.TestUser2Id, TestData.Users.TestUser3Id });
+			}
+		}
 	}
 }

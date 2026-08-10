@@ -106,6 +106,9 @@ namespace Resgrid.Model.Services
 		/// <summary>Ensures the incident's "All Leads" channel: the IC and every lane's primary/secondary lead.</summary>
 		Task<ChatChannel> EnsureLeadsChannelAsync(IncidentCommand command, CancellationToken cancellationToken = default(CancellationToken));
 
+		/// <summary>Ensures the incident's line to the dispatch desk.</summary>
+		Task<ChatChannel> EnsureDispatchChannelAsync(int departmentId, int callId, string incidentCommandId, CancellationToken cancellationToken = default(CancellationToken));
+
 		/// <summary>
 		/// Backfills every chat channel an ACTIVE incident should have — the call's incident channel, the
 		/// command and "All Leads" channels, and one per live lane — inserting only what is missing.

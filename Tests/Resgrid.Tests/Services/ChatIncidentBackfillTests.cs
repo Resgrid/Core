@@ -98,6 +98,7 @@ namespace Resgrid.Tests.Services
 			_inserted.Should().Contain(c => c.ChannelType == (int)ChatChannelType.Incident);
 			_inserted.Should().Contain(c => c.ChannelType == (int)ChatChannelType.IncidentCommand);
 			_inserted.Should().Contain(c => c.ChannelType == (int)ChatChannelType.IncidentLeads);
+			_inserted.Should().Contain(c => c.ChannelType == (int)ChatChannelType.IncidentDispatch);
 			_inserted.Should().Contain(c => c.ChannelType == (int)ChatChannelType.IncidentLane && c.CommandStructureNodeId == "node-1");
 			_inserted.Should().Contain(c => c.ChannelType == (int)ChatChannelType.IncidentLane && c.CommandStructureNodeId == "node-2");
 		}
@@ -114,8 +115,9 @@ namespace Resgrid.Tests.Services
 
 			await BuildService().EnsureIncidentChannelsAsync(BuildCommand(), new[] { BuildNode("node-1"), BuildNode("node-2") });
 
-			_inserted.Should().HaveCount(2);
+			_inserted.Should().HaveCount(3);
 			_inserted.Should().Contain(c => c.ChannelType == (int)ChatChannelType.IncidentLeads);
+			_inserted.Should().Contain(c => c.ChannelType == (int)ChatChannelType.IncidentDispatch);
 			_inserted.Should().Contain(c => c.ChannelType == (int)ChatChannelType.IncidentLane && c.CommandStructureNodeId == "node-2");
 		}
 

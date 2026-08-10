@@ -470,6 +470,25 @@ namespace Resgrid.Services
 			foreach (var role in roles.Where(r => string.Equals(r.UserId, userId)))
 				caps |= IncidentRoleCapabilityMap.GetCapabilities((IncidentRoleType)role.RoleType);
 
+			// A department that has deliberately chosen who commands can let those people assist on a board
+			// without holding an ICS role on it — that is how a dispatcher helps work an incident from the
+			// Dispatch app. CanAssistWithCommandAsync (not CanUseCommandAsync) is the right question: the
+			// permission is open by default, and granting board authority off that open default would hand
+			// every member rights nobody asked for.
+			// Resolved through the service locator (matching this file's other cross-cutting lookups) so the
+			// permission side, which has no dependency on this service, does not close a DI cycle.
+			try
+			{
+				if (await ServiceLocator.Current.GetInstance<ICommandAccessService>().CanAssistWithCommandAsync(departmentId, userId))
+					caps |= IncidentRoleCapabilityMap.CommandAssistCapabilities;
+			}
+			catch (Exception ex)
+			{
+				// Fail closed: an unresolvable permission grants nothing extra, leaving the caller with
+				// whatever their commander standing and ICS roles already earned them.
+				Resgrid.Framework.Logging.LogException(ex);
+			}
+
 			return caps;
 		}
 
@@ -1098,6 +1117,9 @@ namespace Resgrid.Services
 					.GetByCallIdAsync(callId))?.ToList() ?? new List<ChatChannel>();
 
 				view.Chat.IncidentChannelId = channels.FirstOrDefault(c => c.ChannelType == (int)ChatChannelType.Incident)?.ChatChannelId;
+
+				// Anyone on the incident can raise dispatch; no command standing required.
+				view.Chat.DispatchChannelId = channels.FirstOrDefault(c => c.ChannelType == (int)ChatChannelType.IncidentDispatch)?.ChatChannelId;
 
 				if (isCommandStaff)
 					view.Chat.CommandChannelId = channels.FirstOrDefault(c => c.ChannelType == (int)ChatChannelType.IncidentCommand)?.ChatChannelId;

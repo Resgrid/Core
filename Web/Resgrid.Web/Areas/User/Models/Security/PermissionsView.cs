@@ -94,6 +94,12 @@ namespace Resgrid.Web.Areas.User.Models.Security
 		public int UseCalendarSync { get; set; }
 		public SelectList UseCalendarSyncPermissions { get; set; }
 
+		public int DispatchAppLogin { get; set; }
+		public SelectList DispatchAppLoginPermissions { get; set; }
+
+		public int CommandAppLogin { get; set; }
+		public SelectList CommandAppLoginPermissions { get; set; }
+
 		// Two-Factor Authentication enforcement
 		public int Require2FAForAdmins { get; set; }
 		public SelectList Require2FAForAdminsOptions { get; set; }

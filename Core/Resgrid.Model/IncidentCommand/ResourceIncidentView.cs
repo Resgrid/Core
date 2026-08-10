@@ -84,6 +84,12 @@ namespace Resgrid.Model
 		/// <summary>The caller's own lane channel, when they are assigned to a lane.</summary>
 		public string LaneChannelId { get; set; }
 
+		/// <summary>
+		/// The incident's line to the dispatch desk. Available to everyone on the incident — a crew
+		/// needing dispatch shouldn't have to route through command to reach them.
+		/// </summary>
+		public string DispatchChannelId { get; set; }
+
 		/// <summary>True once the incident is closed: the conversations are readable but frozen.</summary>
 		public bool IsFrozen { get; set; }
 	}

@@ -195,11 +195,12 @@ namespace Resgrid.Tests.Web.Services
 		private ActionExecutingContext BuildContext(
 			IDictionary<string, object> args,
 			IDictionary<string, object> routeValues = null,
-			bool authenticated = true)
+			bool authenticated = true,
+			ICommandAccessService commandAccessService = null)
 		{
 			var httpContext = new DefaultHttpContext
 			{
-				RequestServices = new StubServiceProvider(_service.Object)
+				RequestServices = new StubServiceProvider(_service.Object, commandAccessService)
 			};
 
 			if (authenticated)
@@ -240,16 +241,103 @@ namespace Resgrid.Tests.Web.Services
 		private sealed class StubServiceProvider : IServiceProvider
 		{
 			private readonly IIncidentCommandService _service;
+			private readonly ICommandAccessService _commandAccessService;
 
-			public StubServiceProvider(IIncidentCommandService service)
+			public StubServiceProvider(IIncidentCommandService service, ICommandAccessService commandAccessService = null)
 			{
 				_service = service;
+				_commandAccessService = commandAccessService;
 			}
 
 			public object GetService(Type serviceType)
-				=> serviceType == typeof(IIncidentCommandService) ? _service : null;
+			{
+				if (serviceType == typeof(IIncidentCommandService))
+					return _service;
+
+				// Null when a test doesn't supply one — the filter then skips the commander gate, which is
+				// what keeps the pre-existing capability tests exercising only capabilities.
+				if (serviceType == typeof(ICommandAccessService))
+					return _commandAccessService;
+
+				return null;
+			}
+		}
+
+		private static ICommandAccessService CommandGate(bool allowed)
+		{
+			var mock = new Mock<ICommandAccessService>();
+			mock.Setup(x => x.CanUseCommandAsync(It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(allowed);
+			return mock.Object;
 		}
 
 		#endregion Helpers
+
+		#region Commander permission gate
+
+		[Test]
+		public async Task Returns403_WhenTheDepartmentHasNotAuthorizedTheUserAsACommander()
+		{
+			// The capability check never even runs: a member the department hasn't authorized has no
+			// business on the board surface, whatever ICS role happens to be recorded against them.
+			_service.Setup(s => s.GetCommandByIdAsync("cmd-1"))
+				.ReturnsAsync(new IncidentCommand { CallId = 5, DepartmentId = DepartmentId });
+			_service.Setup(s => s.GetCapabilitiesForUserAsync(DepartmentId, 5, UserId)).ReturnsAsync(IncidentCapabilities.All);
+
+			var filter = new RequiresIncidentCapabilityAttribute(IncidentCapabilities.AssignResources);
+			var context = BuildContext(
+				args: new Dictionary<string, object> { ["node"] = new CommandStructureNode { IncidentCommandId = "cmd-1" } },
+				commandAccessService: CommandGate(false));
+
+			var nextCalled = await Invoke(filter, context);
+
+			nextCalled.Should().BeFalse();
+			context.Result.Should().BeOfType<ObjectResult>()
+				.Which.StatusCode.Should().Be(StatusCodes.Status403Forbidden);
+			_service.Verify(s => s.GetCapabilitiesForUserAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+		}
+
+		[Test]
+		public async Task AllowsRequest_WhenAuthorizedAsACommanderAndHoldingTheCapability()
+		{
+			// A dispatcher granted the command permission assists through the same path: the gate passes,
+			// then the assist capability set carries the action.
+			_service.Setup(s => s.GetCommandByIdAsync("cmd-1"))
+				.ReturnsAsync(new IncidentCommand { CallId = 5, DepartmentId = DepartmentId });
+			_service.Setup(s => s.GetCapabilitiesForUserAsync(DepartmentId, 5, UserId))
+				.ReturnsAsync(IncidentRoleCapabilityMap.CommandAssistCapabilities);
+
+			var filter = new RequiresIncidentCapabilityAttribute(IncidentCapabilities.AssignResources);
+			var context = BuildContext(
+				args: new Dictionary<string, object> { ["node"] = new CommandStructureNode { IncidentCommandId = "cmd-1" } },
+				commandAccessService: CommandGate(true));
+
+			var nextCalled = await Invoke(filter, context);
+
+			nextCalled.Should().BeTrue();
+			context.Result.Should().BeNull();
+		}
+
+		[Test]
+		public async Task TheAssistSetCoversWhatDispatchNeedsAndNothingMore()
+		{
+			await Task.CompletedTask;
+			var assist = IncidentRoleCapabilityMap.CommandAssistCapabilities;
+
+			// What a dispatcher assisting an incident actually does.
+			assist.Should().HaveFlag(IncidentCapabilities.ViewBoard);
+			assist.Should().HaveFlag(IncidentCapabilities.AssignResources);
+			assist.Should().HaveFlag(IncidentCapabilities.ManageResources);
+			assist.Should().HaveFlag(IncidentCapabilities.ManageTimers);
+			assist.Should().HaveFlag(IncidentCapabilities.ManageAccountability);
+
+            // Assisting is not commanding: the shape of the incident and its lifecycle stay with whoever
+            // actually holds command.
+			assist.Should().NotHaveFlag(IncidentCapabilities.ManageCommand);
+			assist.Should().NotHaveFlag(IncidentCapabilities.ManageStructure);
+			assist.Should().NotHaveFlag(IncidentCapabilities.ManagePublicInformation);
+			assist.Should().NotHaveFlag(IncidentCapabilities.ManageDocuments);
+		}
+
+		#endregion Commander permission gate
 	}
 }

@@ -79,6 +79,18 @@ namespace Resgrid.Web.Services.Models.v4.Security
 		public bool CanCreateWorkflow { get; set; }
 
 		/// <summary>
+		/// Can the user sign in to the Dispatch app. Dispatch exposes private command, unit and responder
+		/// traffic, so departments can restrict it to admins or selected roles; defaults to everyone.
+		/// </summary>
+		public bool CanLoginToDispatchApp { get; set; }
+
+		/// <summary>
+		/// Can the user act as a commander: sign in to the IC app, establish command, and read command
+		/// boards. Restrictable to admins or selected roles; defaults to everyone.
+		/// </summary>
+		public bool CanLoginToCommandApp { get; set; }
+
+		/// <summary>
 		/// Can the user manage workflow credentials
 		/// </summary>
 		public bool CanManageWorkflowCredentials { get; set; }

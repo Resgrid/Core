@@ -323,6 +323,26 @@
                                             <div id="calSyncRolesDiv" style="display: none;"><select id="calSyncRoles" name="calSyncRoles"></select></div>
                                         </td>
                                     </tr>
+                                    <tr>
+                                        <td>Dispatch App Login</td>
+                                        <td style="max-width: 350px">Controls who can sign in to the Dispatch app. Dispatch shows private command, unit and responder communications for every incident, so restrict this if your members are not all dispatchers.</td>
+                                        <td>@Html.DropDownListFor(m => m.DispatchAppLogin, Model.DispatchAppLoginPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="dispatchAppLoginNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="dispatchAppLoginRolesDiv" style="display: none;"><select id="dispatchAppLoginRoles" name="dispatchAppLoginRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Command App Login</td>
+                                        <td style="max-width: 350px">Controls who can act as a commander: sign in to the IC app, establish incident command on a call, and view command boards. Narrowing this beyond Everyone also lets the people you pick help work any command board (assign and move resources, run timers and accountability) without holding an ICS position on it &mdash; useful for giving dispatchers a hand in the Dispatch app. While set to Everyone, board actions stay limited to the incident commander and assigned ICS roles.</td>
+                                        <td>@Html.DropDownListFor(m => m.CommandAppLogin, Model.CommandAppLoginPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="commandAppLoginNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="commandAppLoginRolesDiv" style="display: none;"><select id="commandAppLoginRoles" name="commandAppLoginRoles"></select></div>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
                         </div>

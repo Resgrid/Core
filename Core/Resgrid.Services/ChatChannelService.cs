@@ -727,6 +727,27 @@ namespace Resgrid.Services
 			}, () => _chatChannelRepository.GetByCallIdAndTypeAsync(command.CallId, (int)ChatChannelType.IncidentLeads), cancellationToken);
 		}
 
+		public async Task<ChatChannel> EnsureDispatchChannelAsync(int departmentId, int callId, string incidentCommandId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (callId <= 0)
+				return null;
+
+			var existing = await _chatChannelRepository.GetByCallIdAndTypeAsync(callId, (int)ChatChannelType.IncidentDispatch);
+			if (existing != null)
+				return existing;
+
+			return await InsertProvisionedChannelAsync(new ChatChannel
+			{
+				ChatChannelId = Guid.NewGuid().ToString(),
+				DepartmentId = departmentId,
+				ChannelType = (int)ChatChannelType.IncidentDispatch,
+				Name = "Dispatch",
+				CallId = callId,
+				IncidentCommandId = incidentCommandId,
+				CreatedOn = DateTime.UtcNow
+			}, () => _chatChannelRepository.GetByCallIdAndTypeAsync(callId, (int)ChatChannelType.IncidentDispatch), cancellationToken);
+		}
+
 		public async Task EnsureIncidentChannelsAsync(IncidentCommand command, IEnumerable<CommandStructureNode> nodes, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (command == null || command.CallId <= 0)
@@ -763,6 +784,9 @@ namespace Resgrid.Services
 
 				if (!existing.Any(c => c.ChannelType == (int)ChatChannelType.IncidentLeads))
 					await EnsureLeadsChannelAsync(command, cancellationToken);
+
+				if (!existing.Any(c => c.ChannelType == (int)ChatChannelType.IncidentDispatch))
+					await EnsureDispatchChannelAsync(command.DepartmentId, command.CallId, command.IncidentCommandId, cancellationToken);
 
 				var provisionedNodeIds = new HashSet<string>(
 					existing.Where(c => c.ChannelType == (int)ChatChannelType.IncidentLane && !string.IsNullOrWhiteSpace(c.CommandStructureNodeId))

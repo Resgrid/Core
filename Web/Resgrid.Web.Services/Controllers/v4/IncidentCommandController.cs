@@ -30,12 +30,30 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IIncidentCommandService _incidentCommandService;
 		private readonly IIncidentCommandNotificationService _incidentCommandNotificationService;
 
+		private readonly ICommandAccessService _commandAccessService;
+
 		public IncidentCommandController(IIncidentCommandService incidentCommandService,
-			IIncidentCommandNotificationService incidentCommandNotificationService)
+			IIncidentCommandNotificationService incidentCommandNotificationService,
+			ICommandAccessService commandAccessService)
 		{
 			_incidentCommandService = incidentCommandService;
 			_incidentCommandNotificationService = incidentCommandNotificationService;
+			_commandAccessService = commandAccessService;
 		}
+
+		/// <summary>
+		/// Whether the caller may act as a commander (CommandAppLogin). Gates establishing command.
+		/// The Command_View / Command_Create policies above are plan-level claims; this is the
+		/// department's own choice about which of its members command incidents.
+		/// </summary>
+		private Task<bool> CanCommandAsync() => _commandAccessService.CanUseCommandAsync(DepartmentId, UserId);
+
+		/// <summary>
+		/// Whether the caller may READ command boards — the same commander gate as everything else on this
+		/// surface. A dispatcher who needs to work boards is given the command permission too (it grants
+		/// the assist capability set); dispatch authorization on its own is not a way in.
+		/// </summary>
+		private Task<bool> CanReadBoardsAsync() => CanCommandAsync();
 		#endregion Members and Constructors
 
 		#region Command lifecycle
@@ -52,6 +70,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (input == null || input.CallId <= 0)
 				return BadRequest();
+
+			if (!await CanCommandAsync())
+				return Unauthorized();
 
 			var result = new ICModels.IncidentCommandResult();
 			var command = await _incidentCommandService.EstablishCommandAsync(DepartmentId, input.CallId, UserId, input.CommandDefinitionId, CancellationToken.None);
@@ -143,6 +164,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentCommandSummariesResult>> GetCommandList([FromQuery] bool includeClosed = false)
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			var summaries = await _incidentCommandService.GetCommandSummariesForDepartmentAsync(DepartmentId, includeClosed);
 			var result = new ICModels.IncidentCommandSummariesResult
 			{
@@ -164,6 +188,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentCommandBoardResult>> GetCommandBoardById(string incidentCommandId)
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			var result = new ICModels.IncidentCommandBoardResult();
 			var board = await _incidentCommandService.GetCommandBoardByIdAsync(DepartmentId, incidentCommandId);
 
@@ -187,6 +214,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentCommandBoardResult>> GetCommandBoard(int callId)
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			var result = new ICModels.IncidentCommandBoardResult();
 			var board = await _incidentCommandService.GetCommandBoardAsync(DepartmentId, callId);
 

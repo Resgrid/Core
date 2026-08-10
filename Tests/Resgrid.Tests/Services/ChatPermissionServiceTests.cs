@@ -28,6 +28,7 @@ namespace Resgrid.Tests.Services
 			protected Mock<IUnitsService> _unitsServiceMock;
 			protected Mock<ICallsService> _callsServiceMock;
 			protected Mock<IIncidentCommandService> _incidentCommandServiceMock;
+			protected Mock<IDispatchAccessService> _dispatchAccessServiceMock;
 			protected Mock<ICacheProvider> _cacheProviderMock;
 
 			protected with_the_chat_permission_service()
@@ -53,6 +54,7 @@ namespace Resgrid.Tests.Services
 				_unitsServiceMock = new Mock<IUnitsService>();
 				_callsServiceMock = new Mock<ICallsService>();
 				_incidentCommandServiceMock = new Mock<IIncidentCommandService>();
+				_dispatchAccessServiceMock = new Mock<IDispatchAccessService>();
 				_cacheProviderMock = new Mock<ICacheProvider>();
 
 				// No cached results so the evaluation logic always runs.
@@ -61,6 +63,10 @@ namespace Resgrid.Tests.Services
 
 				// Default: nobody is a department admin unless a test says otherwise.
 				_authorizationServiceMock.Setup(x => x.CanUserModifyDepartmentAsync(It.IsAny<string>(), It.IsAny<int>())).ReturnsAsync(false);
+
+				// Default: nobody is authorized for dispatch unless a test opts in.
+				_dispatchAccessServiceMock.Setup(x => x.CanUseDispatchAsync(It.IsAny<int>(), It.IsAny<string>())).ReturnsAsync(false);
+				_dispatchAccessServiceMock.Setup(x => x.GetDispatchUserIdsAsync(It.IsAny<int>())).ReturnsAsync(new List<string>());
 
 				_chatPermissionService = new ChatPermissionService(
 					_chatChannelMemberRepositoryMock.Object,
@@ -72,6 +78,7 @@ namespace Resgrid.Tests.Services
 					_unitsServiceMock.Object,
 					_callsServiceMock.Object,
 					_incidentCommandServiceMock.Object,
+					_dispatchAccessServiceMock.Object,
 					_cacheProviderMock.Object);
 			}
 
@@ -541,6 +548,36 @@ namespace Resgrid.Tests.Services
 				{
 					new IncidentRoleAssignment { CallId = 42, UserId = TestData.Users.TestUser1Id }
 				});
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, null);
+
+				result.Should().BeTrue();
+			}
+
+			[Test]
+			public async Task an_authorized_dispatcher_should_not_have_access_to_command_channel()
+			{
+				// The command channel stays internal to the people running the incident so they can talk
+				// candidly. Dispatch reaches command through the incident's dispatch channel instead.
+				var channel = CreateChannel(ChatChannelType.IncidentCommand);
+				channel.CallId = 42;
+				_incidentCommandServiceMock.Setup(x => x.GetCommandForCallAsync(1, 42)).ReturnsAsync((IncidentCommand)null);
+				_incidentCommandServiceMock.Setup(x => x.GetIncidentRolesAsync(1, 42)).ReturnsAsync(new List<IncidentRoleAssignment>());
+				_dispatchAccessServiceMock.Setup(x => x.CanUseDispatchAsync(1, TestData.Users.TestUser1Id)).ReturnsAsync(true);
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, null);
+
+				result.Should().BeFalse();
+			}
+
+			[Test]
+			public async Task an_authorized_dispatcher_should_have_access_to_the_shared_incident_channel()
+			{
+				// The call-wide conversation everyone on the incident shares — the desk follows it even
+				// when nobody has dispatched them to the call.
+				var channel = CreateChannel(ChatChannelType.Incident);
+				channel.CallId = 42;
+				_dispatchAccessServiceMock.Setup(x => x.CanUseDispatchAsync(1, TestData.Users.TestUser1Id)).ReturnsAsync(true);
 
 				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, null);
 
@@ -1040,6 +1077,103 @@ namespace Resgrid.Tests.Services
 				var audience = await _chatPermissionService.ResolveChannelAudienceUserIdsAsync(BuildLeadsChannel());
 
 				audience.Should().BeEquivalentTo(new[] { TestData.Users.TestUser1Id, TestData.Users.TestUser2Id, TestData.Users.TestUser3Id });
+			}
+		}
+
+		/// <summary>
+		/// The incident's line to the dispatch desk. Two ways in — being on the incident, or being
+		/// authorized to work dispatch — and department-admin alone is deliberately not one of them.
+		/// </summary>
+		[TestFixture]
+		public class when_evaluating_the_incident_dispatch_channel : with_the_chat_permission_service
+		{
+			private static ChatChannel BuildDispatchChannel()
+			{
+				var channel = CreateChannel(ChatChannelType.IncidentDispatch);
+				channel.CallId = 42;
+				return channel;
+			}
+
+			private void GivenNobodyOnTheIncident()
+			{
+				_incidentCommandServiceMock.Setup(x => x.GetCommandForCallAsync(1, 42)).ReturnsAsync((IncidentCommand)null);
+				_incidentCommandServiceMock.Setup(x => x.GetIncidentRolesAsync(1, 42)).ReturnsAsync(new List<IncidentRoleAssignment>());
+				_incidentCommandServiceMock.Setup(x => x.GetAssignmentsForCallAsync(1, 42)).ReturnsAsync(new List<ResourceAssignment>());
+				_callsServiceMock.Setup(x => x.GetCallByIdAsync(42, It.IsAny<bool>())).ReturnsAsync(new Call { CallId = 42, DepartmentId = 1 });
+			}
+
+			[Test]
+			public async Task an_authorized_dispatcher_should_have_access()
+			{
+				GivenNobodyOnTheIncident();
+				_dispatchAccessServiceMock.Setup(x => x.CanUseDispatchAsync(1, TestData.Users.TestUser1Id)).ReturnsAsync(true);
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(BuildDispatchChannel(), TestData.Users.TestUser1Id, null);
+
+				result.Should().BeTrue();
+			}
+
+			[Test]
+			public async Task someone_dispatched_to_the_call_should_have_access()
+			{
+				// A crew raising dispatch does not need dispatch authorization themselves.
+				_callsServiceMock.Setup(x => x.GetCallByIdAsync(42, It.IsAny<bool>())).ReturnsAsync(new Call
+				{
+					CallId = 42,
+					DepartmentId = 1,
+					Dispatches = new List<CallDispatch> { new CallDispatch { CallId = 42, UserId = TestData.Users.TestUser2Id } }
+				});
+				_incidentCommandServiceMock.Setup(x => x.GetCommandForCallAsync(1, 42)).ReturnsAsync((IncidentCommand)null);
+				_incidentCommandServiceMock.Setup(x => x.GetIncidentRolesAsync(1, 42)).ReturnsAsync(new List<IncidentRoleAssignment>());
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(BuildDispatchChannel(), TestData.Users.TestUser2Id, null);
+
+				result.Should().BeTrue();
+			}
+
+			[Test]
+			public async Task an_unauthorized_member_who_is_not_on_the_incident_should_be_refused()
+			{
+				GivenNobodyOnTheIncident();
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(BuildDispatchChannel(), TestData.Users.TestUser3Id, null);
+
+				result.Should().BeFalse();
+			}
+
+			[Test]
+			public async Task a_department_admin_without_dispatch_authorization_should_be_refused()
+			{
+				// Every other incident channel widens to department admins. This one must not: the point of
+				// the permission is that an admin who is not a dispatcher stays out of dispatch traffic.
+				GivenNobodyOnTheIncident();
+				_authorizationServiceMock.Setup(x => x.CanUserModifyDepartmentAsync(TestData.Users.TestUser3Id, 1)).ReturnsAsync(true);
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(BuildDispatchChannel(), TestData.Users.TestUser3Id, null);
+
+				result.Should().BeFalse();
+			}
+
+			[Test]
+			public async Task the_audience_should_be_the_incident_plus_every_dispatcher()
+			{
+				_callsServiceMock.Setup(x => x.GetCallByIdAsync(42, It.IsAny<bool>())).ReturnsAsync(new Call
+				{
+					CallId = 42,
+					DepartmentId = 1,
+					Dispatches = new List<CallDispatch> { new CallDispatch { CallId = 42, UserId = TestData.Users.TestUser1Id } }
+				});
+				_incidentCommandServiceMock.Setup(x => x.GetCommandForCallAsync(1, 42)).ReturnsAsync((IncidentCommand)null);
+				_incidentCommandServiceMock.Setup(x => x.GetIncidentRolesAsync(1, 42)).ReturnsAsync(new List<IncidentRoleAssignment>());
+				_incidentCommandServiceMock.Setup(x => x.GetAssignmentsForCallAsync(1, 42)).ReturnsAsync(new List<ResourceAssignment>());
+				_dispatchAccessServiceMock.Setup(x => x.GetDispatchUserIdsAsync(1))
+					.ReturnsAsync(new List<string> { TestData.Users.TestUser2Id, TestData.Users.TestUser3Id });
+
+				var audience = await _chatPermissionService.ResolveChannelAudienceUserIdsAsync(BuildDispatchChannel());
+
+				audience.Should().Contain(TestData.Users.TestUser1Id);
+				audience.Should().Contain(TestData.Users.TestUser2Id);
+				audience.Should().Contain(TestData.Users.TestUser3Id);
 			}
 		}
 	}

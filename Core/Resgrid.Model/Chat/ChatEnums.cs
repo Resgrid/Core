@@ -18,7 +18,15 @@ namespace Resgrid.Model
 		/// people running the lanes, without the lane crews. Membership is derived live from the lanes,
 		/// so demoting a lead removes their access on the next check.
 		/// </summary>
-		IncidentLeads = 9
+		IncidentLeads = 9,
+
+		/// <summary>
+		/// The incident's line to the dispatch desk: everyone working the incident on one side, every
+		/// dispatch-authorized user on the other. Per-call rather than department-wide so dispatchers can
+		/// tell which incident is talking to them, and audience-wide on the dispatch side so whichever
+		/// dispatcher is on shift picks it up.
+		/// </summary>
+		IncidentDispatch = 10
 	}
 
 	/// <summary>Who a chat participant is: a person, a unit-shared identity ("Engine 6"), or the chatbot.</summary>

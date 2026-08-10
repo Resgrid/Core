@@ -41,38 +41,69 @@ namespace Resgrid.Providers.Bus.Rabbit
 		public async Task Start(string clientName)
 		{
 			_clientName = clientName;
+
+			// Dispose any channels from a previous Start (the watchdog re-calls Start after a
+			// disconnect). Disposal also removes them from automatic-recovery tracking, so a late
+			// connection recovery can't resurrect the old consumers alongside the new ones and
+			// double-process dispatches.
+			await DisposeChannelsAsync();
+
 			var connection = await RabbitConnection.CreateConnection(clientName);
 
 			if (connection != null)
 			{
-				_channel = await connection.CreateChannelAsync();
-
-				if (CallQueueReceived != null)
+				try
 				{
-					// Call dispatch has its own channel so no unrelated queue callback can delay an
-					// emergency notification, regardless of which backing store that callback uses.
-					_callChannel = await connection.CreateChannelAsync();
-					await _callChannel.BasicQosAsync(0, 1, false);
-				}
+					_channel = await connection.CreateChannelAsync();
 
-				if (UnitLocationEventQueueReceived != null)
+					if (CallQueueReceived != null)
+					{
+						// Call dispatch has its own channel so no unrelated queue callback can delay an
+						// emergency notification, regardless of which backing store that callback uses.
+						_callChannel = await connection.CreateChannelAsync();
+						await _callChannel.BasicQosAsync(0, 1, false);
+					}
+
+					if (UnitLocationEventQueueReceived != null)
+					{
+						_unitLocationChannel = await connection.CreateChannelAsync();
+						var prefetchCount = (ushort)Math.Min(
+							ushort.MaxValue,
+							Math.Max(1, UnitTrackingConfig.UnitLocationQueuePrefetchCount));
+						await _unitLocationChannel.BasicQosAsync(0, prefetchCount, false);
+					}
+
+					if (PersonnelLocationEventQueueReceived != null)
+					{
+						// Personnel location storage must never serialize dispatch callbacks behind a slow
+						// Mongo/DocumentDB operation. Rabbit dispatches callbacks sequentially per channel.
+						_personnelLocationChannel = await connection.CreateChannelAsync();
+						await _personnelLocationChannel.BasicQosAsync(0, 1, false);
+					}
+
+					await StartMonitoring();
+				}
+				catch (RabbitMQ.Client.Exceptions.ChannelAllocationException)
 				{
-					_unitLocationChannel = await connection.CreateChannelAsync();
-					var prefetchCount = (ushort)Math.Min(
-						ushort.MaxValue,
-						Math.Max(1, UnitTrackingConfig.UnitLocationQueuePrefetchCount));
-					await _unitLocationChannel.BasicQosAsync(0, prefetchCount, false);
+					// The shared connection is open but out of channel numbers, so the watchdog's
+					// retry would get the same exhausted connection back from CreateConnection forever
+					// (the IsOpen guards can't see exhaustion). Dispose our channels first (clean close
+					// releases their numbers while the connection is still alive), then force-reset the
+					// connection so the retry builds a fresh one.
+					await DisposeChannelsAsync();
+					await RabbitConnection.ForceResetAsync();
+					throw;
 				}
-
-				if (PersonnelLocationEventQueueReceived != null)
+				catch
 				{
-					// Personnel location storage must never serialize dispatch callbacks behind a slow
-					// Mongo/DocumentDB operation. Rabbit dispatches callbacks sequentially per channel.
-					_personnelLocationChannel = await connection.CreateChannelAsync();
-					await _personnelLocationChannel.BasicQosAsync(0, 1, false);
+					// A partial startup must not linger: if StartMonitoring fails after the channels
+					// were created, every channel is open but consumers are incomplete, so IsConnected()
+					// would report healthy while nothing (or only some queues) is being consumed and the
+					// host watchdog would never rebuild. Tear everything down — nulled fields make
+					// IsConnected() false — and let the caller's retry path handle the failure.
+					await DisposeChannelsAsync();
+					throw;
 				}
-
-				await StartMonitoring();
 			}
 		}
 
@@ -637,6 +668,30 @@ namespace Resgrid.Providers.Bus.Rabbit
 							queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.ChatbotProcessingQueueName),
 							autoAck: false,
 							consumer: chatbotMessageQueueReceivedConsumer);
+				}
+			}
+		}
+
+		private async Task DisposeChannelsAsync()
+		{
+			var channels = new[] { _channel, _callChannel, _unitLocationChannel, _personnelLocationChannel };
+			_channel = null;
+			_callChannel = null;
+			_unitLocationChannel = null;
+			_personnelLocationChannel = null;
+
+			foreach (var channel in channels)
+			{
+				if (channel == null)
+					continue;
+
+				try
+				{
+					await channel.DisposeAsync();
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
 				}
 			}
 		}

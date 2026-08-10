@@ -7,6 +7,12 @@ namespace Resgrid.Model.Providers
 	public interface IRabbitInboundEventProvider
 	{
 		Task Start(string clientName, string queueName);
+
+		/// <summary>
+		/// True when the consumer channel exists and is open. Hosts poll this to detect a dead
+		/// consumer (e.g. after the shared connection was force-reset) and re-call Start.
+		/// </summary>
+		bool IsConnected();
 		void RegisterForEvents(Func<int, string, Task> personnelStatusChanged,
 							   Func<int, string, Task> unitStatusChanged,
 							   Func<int, string, Task> callStatusChanged,

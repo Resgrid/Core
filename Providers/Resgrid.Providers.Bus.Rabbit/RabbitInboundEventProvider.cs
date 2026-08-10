@@ -32,8 +32,51 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 		public async Task Start(string clientName, string queueName)
 		{
-			await VerifyAndCreateClients(clientName);
-			await StartMonitoring(queueName);
+			// Dispose any channel from a previous Start (the host watchdog re-calls Start after a
+			// disconnect). Disposal also removes it from automatic-recovery tracking, so a late
+			// connection recovery can't resurrect the old consumer alongside the new one and
+			// double-deliver events.
+			await DisposeChannelAsync();
+
+			if (!await VerifyAndCreateClients(clientName))
+				return;
+
+			// _channel stays null when the connection couldn't be created; skip monitoring so the
+			// caller sees IsConnected() == false and can retry instead of an NRE killing the task.
+			if (_channel == null)
+				return;
+
+			try
+			{
+				await StartMonitoring(queueName);
+			}
+			catch
+			{
+				// If consumer registration fails the channel is open but consumes nothing, so
+				// IsConnected() would report healthy and the host watchdog would never rebuild.
+				// Tear the channel down (nulled field makes IsConnected() false) and rethrow for
+				// the caller's retry path.
+				await DisposeChannelAsync();
+				throw;
+			}
+		}
+
+		private async Task DisposeChannelAsync()
+		{
+			var channel = _channel;
+			_channel = null;
+
+			if (channel == null)
+				return;
+
+			try
+			{
+				await channel.DisposeAsync();
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
 		}
 
 		private async Task<bool> VerifyAndCreateClients(string clientName)
@@ -55,6 +98,13 @@ namespace Resgrid.Providers.Bus.Rabbit
 			catch (Exception ex)
 			{
 				Framework.Logging.LogException(ex);
+
+				// Exhausted channel numbers leave the connection open but unusable, and the host
+				// watchdog's retry would get the same connection back forever — reset it so the
+				// next Start builds a fresh one.
+				if (ex is RabbitMQ.Client.Exceptions.ChannelAllocationException)
+					await RabbitConnection.ForceResetAsync();
+
 				return false;
 			}
 

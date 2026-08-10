@@ -181,38 +181,28 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 			try
 			{
-				var connection = await RabbitConnection.CreateConnection(_clientName);
-				if (connection == null)
-					return false;
+				return await PublishAsync(topicName, message, requirePublisherConfirmation);
+			}
+			catch (RabbitMQ.Client.Exceptions.ChannelAllocationException ex)
+			{
+				// The shared connection still reports IsOpen when its channel numbers are exhausted,
+				// so the normal reconnect guards never fire and every send fails until the process
+				// restarts. Hard-reset the connection and retry the publish once on a fresh one.
+				Framework.Logging.LogException(ex);
 
-				var channelOptions = requirePublisherConfirmation
-					? new CreateChannelOptions(true, true)
-					: null;
-				await using (var channel = channelOptions == null
-					? await connection.CreateChannelAsync()
-					: await connection.CreateChannelAsync(channelOptions))
+				try
 				{
-					using var publishTimeout = requirePublisherConfirmation
-						? new System.Threading.CancellationTokenSource(
-							TimeSpan.FromSeconds(Math.Max(1, UnitTrackingConfig.QueuePublishTimeoutSeconds)))
-						: null;
-					await channel.BasicPublishAsync(
-						exchange: RabbitConnection.SetQueueNameForEnv(topicName),
-						routingKey: "",
-						mandatory: false,
-						basicProperties: new BasicProperties
-						{
-							DeliveryMode = requirePublisherConfirmation
-								? DeliveryModes.Persistent
-								: DeliveryModes.Transient
-						},
-						// UTF8: chat payloads carry emoji/unicode; superset of the ASCII previously used and
-						// the inbound consumer already decodes UTF8.
-						body: Encoding.UTF8.GetBytes(message),
-						cancellationToken: publishTimeout?.Token ?? default);
-				}
+					await RabbitConnection.ForceResetAsync();
 
-				return true;
+					if (!await VerifyAndCreateClients(_clientName))
+						return false;
+
+					return await PublishAsync(topicName, message, requirePublisherConfirmation);
+				}
+				catch (Exception retryEx)
+				{
+					Framework.Logging.LogException(retryEx);
+				}
 			}
 			catch (Exception ex)
 			{
@@ -220,6 +210,42 @@ namespace Resgrid.Providers.Bus.Rabbit
 			}
 
 			return false;
+		}
+
+		private async Task<bool> PublishAsync(string topicName, string message, bool requirePublisherConfirmation)
+		{
+			var connection = await RabbitConnection.CreateConnection(_clientName);
+			if (connection == null)
+				return false;
+
+			var channelOptions = requirePublisherConfirmation
+				? new CreateChannelOptions(true, true)
+				: null;
+			await using (var channel = channelOptions == null
+				? await connection.CreateChannelAsync()
+				: await connection.CreateChannelAsync(channelOptions))
+			{
+				using var publishTimeout = requirePublisherConfirmation
+					? new System.Threading.CancellationTokenSource(
+						TimeSpan.FromSeconds(Math.Max(1, UnitTrackingConfig.QueuePublishTimeoutSeconds)))
+					: null;
+				await channel.BasicPublishAsync(
+					exchange: RabbitConnection.SetQueueNameForEnv(topicName),
+					routingKey: "",
+					mandatory: false,
+					basicProperties: new BasicProperties
+					{
+						DeliveryMode = requirePublisherConfirmation
+							? DeliveryModes.Persistent
+							: DeliveryModes.Transient
+					},
+					// UTF8: chat payloads carry emoji/unicode; superset of the ASCII previously used and
+					// the inbound consumer already decodes UTF8.
+					body: Encoding.UTF8.GetBytes(message),
+					cancellationToken: publishTimeout?.Token ?? default);
+			}
+
+			return true;
 		}
 	}
 }

@@ -56,6 +56,16 @@ namespace Resgrid.Tests
 					.As<IUnitOfWork>()
 					.InstancePerLifetimeScope();
 
+				// IncidentCommandService resolves chat services lazily through the ServiceLocator for
+				// its best-effort lane channel hooks. The real ChatChannelService can't activate in
+				// this container (its repository graph isn't registered), which logged an activation
+				// error on every lane save/delete test. Loose mocks turn the hooks into no-ops:
+				// un-setup async members return completed tasks with null results.
+				builder.RegisterInstance(new Moq.Mock<Resgrid.Model.Services.IChatChannelService>().Object)
+					.As<Resgrid.Model.Services.IChatChannelService>();
+				builder.RegisterInstance(new Moq.Mock<IChatChannelRepository>().Object)
+					.As<IChatChannelRepository>();
+
 				// UDF mock repositories
 				builder.RegisterType<MockUdfDefinitionRepository>()
 					.As<IUdfDefinitionRepository>()

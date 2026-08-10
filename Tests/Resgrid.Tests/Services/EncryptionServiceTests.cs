@@ -47,13 +47,39 @@ namespace Resgrid.Tests.Services
 			}
 
 			[Test]
-			public void ShouldProduceBase64Output()
+			public void ShouldProduceVersionedBase64Output()
 			{
 				var cipher = Sut.Encrypt("test");
+				cipher.Should().StartWith("enc2:", "new ciphertexts carry the GCM format prefix");
+
 				byte[] bytes = null;
-				Action act = () => { bytes = Convert.FromBase64String(cipher); };
+				Action act = () => { bytes = Convert.FromBase64String(cipher.Substring("enc2:".Length)); };
 				act.Should().NotThrow();
 				bytes.Should().NotBeNull();
+			}
+
+			[Test]
+			public void ShouldThrowOnTamperedCiphertext()
+			{
+				var cipher = Sut.Encrypt("integrity matters");
+
+				// Flip one character in the Base64 body (past the prefix and nonce region).
+				var chars = cipher.ToCharArray();
+				var index = chars.Length - 2;
+				chars[index] = chars[index] == 'A' ? 'B' : 'A';
+
+				Action act = () => Sut.Decrypt(new string(chars));
+				act.Should().Throw<CryptographicException>("GCM authenticates the payload, so any tampering must fail the tag check");
+			}
+
+			[Test]
+			public void ShouldDecryptLegacyCbcCiphertext()
+			{
+				// Fixed pre-GCM (AES-256-CBC/PKCS7, IV-prefixed, unversioned Base64) ciphertext of
+				// "legacy global secret" under the fixture's test key/salt/iterations. Guards the
+				// legacy fallback path that existing data at rest depends on.
+				const string legacyCipher = "AQIDBAUGBwgJCgsMDQ4PEPTtkp0LPqxjlBC8ofdOfEjmKsxM3zYWcppjkR3460HA";
+				Sut.Decrypt(legacyCipher).Should().Be("legacy global secret");
 			}
 
 			[Test]
@@ -121,12 +147,14 @@ namespace Resgrid.Tests.Services
 			[Test]
 			public void DifferentDepartmentsShouldProduceDifferentCiphertexts()
 			{
+				// Deterministic with GCM: a wrong key always fails the authentication tag check.
+				// (Under the old CBC format this was a flaky padding-check assertion.)
 				const string plainText = "shared secret";
 				Sut.EncryptForDepartment(plainText, 1, "DEPT1"); // ensures keys differ
 				var cipher2 = Sut.EncryptForDepartment(plainText, 2, "DEPT2");
 
 				Action act = () => Sut.DecryptForDepartment(cipher2, 1, "DEPT1");
-				act.Should().Throw<Exception>("wrong department key should fail to decrypt");
+				act.Should().Throw<CryptographicException>("wrong department key must fail the GCM tag check");
 			}
 
 			[Test]
@@ -136,7 +164,17 @@ namespace Resgrid.Tests.Services
 				var cipher = Sut.EncryptForDepartment(plainText, 5, "ORIG");
 
 				Action act = () => Sut.DecryptForDepartment(cipher, 5, "DIFF");
-				act.Should().Throw<Exception>("changed department code produces a different key");
+				act.Should().Throw<CryptographicException>("changed department code produces a different key, which must fail the GCM tag check");
+			}
+
+			[Test]
+			public void ShouldDecryptLegacyCbcDepartmentCiphertext()
+			{
+				// Fixed pre-GCM (AES-256-CBC/PKCS7, IV-prefixed, unversioned Base64) ciphertext of
+				// "legacy department secret" for department 5 / code "ORIG" under the fixture's test
+				// key/salt/iterations. Guards the legacy fallback for stored department credentials.
+				const string legacyCipher = "BwgJCgsMDQ4PEBESExQVFpXSN+nRnbOBO6F8HQ/JWEeucx3tCtsB9fO+TMX4ia4W";
+				Sut.DecryptForDepartment(legacyCipher, 5, "ORIG").Should().Be("legacy department secret");
 			}
 
 			[Test]

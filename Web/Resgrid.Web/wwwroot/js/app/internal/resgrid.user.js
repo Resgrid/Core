@@ -8,6 +8,16 @@ var resgrid;
 (function (resgrid) {
     var main;
     (function (main) {
+        // jQuery Validation 1.19.0 crashes on blur of contenteditable elements that have no name
+        // attribute (Quill editors: errorsFor -> escapeCssMeta(undefined) -> TypeError). Keep
+        // contenteditable out of validation entirely; Quill content is posted via hidden inputs.
+        // Runs before document ready, so unobtrusive validation picks the default up when it parses.
+        if ($.validator) {
+            $.validator.setDefaults({
+                ignore: ':hidden, [contenteditable]'
+            });
+        }
+
         // Expired auth cookies leave background polls (DataTables ajax, etc.) failing with 401s;
         // the ajaxError handler below redirects to login, so only the 401 alert is silenced here.
         // Every other DataTables error keeps the library's default alert so real problems surface.

@@ -1257,7 +1257,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public async Task<ActionResult<ChatAttachmentUploadedResult>> UploadAttachment(string channelId, string messageId, [FromForm] IFormFile file, CancellationToken cancellationToken)
+		public async Task<ActionResult<ChatAttachmentUploadedResult>> UploadAttachment(string channelId, string messageId, IFormFile file, CancellationToken cancellationToken)
 		{
 			if (!await ChatEnabledAsync())
 				return NotFound();

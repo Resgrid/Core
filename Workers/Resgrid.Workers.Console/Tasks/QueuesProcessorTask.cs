@@ -53,11 +53,58 @@ namespace Resgrid.Workers.Console.Tasks
 			queue.WorkflowQueueReceived += OnWorkflowQueueReceived;
 			queue.ChatbotMessageQueueReceived += OnChatbotMessageReceived;
 
-			await queue.Start("QueueProcessor-CQRS");
+			try
+			{
+				await queue.Start("QueueProcessor-CQRS");
+			}
+			catch (Exception ex)
+			{
+				// A failed initial start (broker briefly down at boot, partial startup torn down by
+				// the provider) must not kill this task before the watchdog loop below exists —
+				// the loop sees IsConnected() == false and retries.
+				Resgrid.Framework.Logging.LogException(ex);
+			}
+
+			// Watchdog: the consumer channels die silently if the shared Rabbit connection is ever
+			// replaced (e.g. RabbitConnection.ForceResetAsync after channel exhaustion, or a failed
+			// automatic recovery) — nothing restarts them and dispatch processing stops until the pod
+			// is bounced. Rebuild the consumers after ~10s of continuous disconnect, retrying at most
+			// once a minute so a hard broker outage doesn't spin.
+			int disconnectedChecks = 0;
+			DateTime lastRestartAttemptUtc = DateTime.MinValue;
 
 			while (!_cancellationToken.IsCancellationRequested)
 			{
 				Thread.Sleep(500);
+
+				if (queue.IsConnected())
+				{
+					disconnectedChecks = 0;
+					continue;
+				}
+
+				disconnectedChecks++;
+
+				if (disconnectedChecks >= 20 && (DateTime.UtcNow - lastRestartAttemptUtc) >= TimeSpan.FromSeconds(60))
+				{
+					lastRestartAttemptUtc = DateTime.UtcNow;
+
+					try
+					{
+						_logger.LogWarning($"{Name}: Queue consumers disconnected; restarting queue monitoring.");
+						await queue.Start("QueueProcessor-CQRS");
+
+						if (queue.IsConnected())
+						{
+							disconnectedChecks = 0;
+							_logger.LogInformation($"{Name}: Queue monitoring restarted.");
+						}
+					}
+					catch (Exception ex)
+					{
+						Resgrid.Framework.Logging.LogException(ex);
+					}
+				}
 			}
 
 			if (progress != null)

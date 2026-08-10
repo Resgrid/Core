@@ -22,21 +22,6 @@ var resgrid;
                     }
                 });
             });
-            function switchInputs(value) {
-                if (value) {
-                    if (value === "Internal") {
-                        $('#resgridEmail').show();
-                        $('#externalEmail').hide();
-                    }
-                    else {
-                        $('#resgridEmail').hide();
-                        $('#externalEmail').show();
-                        $('#emailError').hide();
-                        $("#submit_action").removeAttr("disabled");
-                        $('#List_EmailAddress').removeClass('input-validation-error');
-                    }
-                }
-            }
             function validateEmailAddress(emailAddress) {
                 if (emailAddress) {
                     if (!expression.test(emailAddress)) {
@@ -65,16 +50,12 @@ var resgrid;
                         });
                     }
                 }
-                else if ($('#Type').select2('data').text === 'Internal') {
+                else {
+                    // New lists are always Internal (forced server-side), so a blank address is an error.
                     $('#emailError').text('You need to specify an email address for the Internal type..');
                     $('#emailError').show();
                     $('#List_EmailAddress').addClass('input-validation-error');
                     $('#submit_action').attr("disabled", "disabled");
-                }
-                else {
-                    $('#emailError').hide();
-                    $("#submit_action").removeAttr("disabled");
-                    $('#List_EmailAddress').removeClass('input-validation-error');
                 }
             }
             newlist.validateEmailAddress = validateEmailAddress;

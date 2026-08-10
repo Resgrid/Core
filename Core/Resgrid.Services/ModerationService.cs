@@ -200,11 +200,16 @@ namespace Resgrid.Services
 				}
 				catch (Exception ex)
 				{
-					Logging.LogException(ex);
+					// A unique-constraint failure here is the expected duplicate-report race: another
+					// submission from the same reporter won the insert. Only log when no concurrent
+					// winner exists — that's a real failure being rethrown, not the recovered race.
 					var concurrent = await _moderationReportRepository.GetByRequestAndReporterAsync(
 						request.ModerationRequestId, reportedByUserId, useUnitOfWork: false);
 					if (concurrent == null)
+					{
+						Logging.LogException(ex);
 						throw;
+					}
 
 					_unitOfWork.DiscardChanges();
 					return concurrent;

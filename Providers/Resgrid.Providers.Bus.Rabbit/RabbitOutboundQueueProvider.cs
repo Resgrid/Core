@@ -151,69 +151,93 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 			try
 			{
-				var connection = await RabbitConnection.CreateConnection(_clientName);
-				if (connection != null)
+				return await PublishAsync(queueName, message, durable, expiration, requirePublisherConfirmation);
+			}
+			catch (RabbitMQ.Client.Exceptions.ChannelAllocationException ex)
+			{
+				// The shared connection still reports IsOpen when its channel numbers are exhausted,
+				// so the normal reconnect guards never fire and every send fails until the process
+				// restarts. Hard-reset the connection and retry the publish once on a fresh one.
+				Logging.LogException(ex);
+
+				try
 				{
-					// await using so the channel is closed via DisposeAsync(): the synchronous Dispose() on a
-					// v7 IChannel skips the async Channel.Close/CloseOk handshake that releases the channel
-					// number back to the SessionManager, leaking channels until the connection hits its limit
-					// (ChannelAllocationException: "The connection cannot support any more channels").
-					var channelOptions = requirePublisherConfirmation
-						? new CreateChannelOptions(true, true)
-						: null;
-
-					await using (var channel = channelOptions == null
-						? await connection.CreateChannelAsync()
-						: await connection.CreateChannelAsync(channelOptions))
-					{
-						if (channel != null)
-						{
-							var props = new BasicProperties();
-							props.Headers = new Dictionary<string, object>();
-
-							if (durable)
-							{
-								props.DeliveryMode = DeliveryModes.Persistent;
-								props.Headers.Add("x-redelivered-count", 0);
-							}
-							else
-								props.DeliveryMode = DeliveryModes.Transient;
-
-							props.Expiration = expiration;
-
-							using var publishTimeout = requirePublisherConfirmation
-								? new System.Threading.CancellationTokenSource(
-									TimeSpan.FromSeconds(Math.Max(1, UnitTrackingConfig.QueuePublishTimeoutSeconds)))
-								: null;
-
-							await channel.BasicPublishAsync(
-								exchange: ServiceBusConfig.RabbbitExchange,
-								routingKey: RabbitConnection.SetQueueNameForEnv(queueName),
-								mandatory: true,
-								basicProperties: props,
-							body: Encoding.UTF8.GetBytes(message),
-							cancellationToken: publishTimeout?.Token ?? default);
-
-							return true;
-						}
-						else
-						{
-							Logging.LogError("RabbitOutboundQueueProvider->SendMessage channel is null.");
-						}
-					}
+					await RabbitConnection.ForceResetAsync();
+					return await PublishAsync(queueName, message, durable, expiration, requirePublisherConfirmation);
 				}
-				else
+				catch (Exception retryEx)
 				{
-					Logging.LogError("RabbitOutboundQueueProvider->SendMessage connection is null.");
+					Logging.LogException(retryEx);
+					return false;
 				}
-
-				return false;
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
 				return false;
 			}
+		}
+
+		private async Task<bool> PublishAsync(string queueName, string message, bool durable, string expiration,
+			bool requirePublisherConfirmation)
+		{
+			var connection = await RabbitConnection.CreateConnection(_clientName);
+			if (connection != null)
+			{
+				// await using so the channel is closed via DisposeAsync(): the synchronous Dispose() on a
+				// v7 IChannel skips the async Channel.Close/CloseOk handshake that releases the channel
+				// number back to the SessionManager, leaking channels until the connection hits its limit
+				// (ChannelAllocationException: "The connection cannot support any more channels").
+				var channelOptions = requirePublisherConfirmation
+					? new CreateChannelOptions(true, true)
+					: null;
+
+				await using (var channel = channelOptions == null
+					? await connection.CreateChannelAsync()
+					: await connection.CreateChannelAsync(channelOptions))
+				{
+					if (channel != null)
+					{
+						var props = new BasicProperties();
+						props.Headers = new Dictionary<string, object>();
+
+						if (durable)
+						{
+							props.DeliveryMode = DeliveryModes.Persistent;
+							props.Headers.Add("x-redelivered-count", 0);
+						}
+						else
+							props.DeliveryMode = DeliveryModes.Transient;
+
+						props.Expiration = expiration;
+
+						using var publishTimeout = requirePublisherConfirmation
+							? new System.Threading.CancellationTokenSource(
+								TimeSpan.FromSeconds(Math.Max(1, UnitTrackingConfig.QueuePublishTimeoutSeconds)))
+							: null;
+
+						await channel.BasicPublishAsync(
+							exchange: ServiceBusConfig.RabbbitExchange,
+							routingKey: RabbitConnection.SetQueueNameForEnv(queueName),
+							mandatory: true,
+							basicProperties: props,
+						body: Encoding.UTF8.GetBytes(message),
+						cancellationToken: publishTimeout?.Token ?? default);
+
+						return true;
+					}
+					else
+					{
+						Logging.LogError("RabbitOutboundQueueProvider->SendMessage channel is null.");
+					}
+				}
+			}
+			else
+			{
+				Logging.LogError("RabbitOutboundQueueProvider->SendMessage connection is null.");
+			}
+
+			return false;
 		}
 
 		private async Task<bool> SendMessagesWithConfirmation(
@@ -231,48 +255,74 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 			try
 			{
-				var connection = await RabbitConnection.CreateConnection(_clientName);
-				if (connection == null)
+				return await PublishBatchAsync(queueName, messages, expiration, cancellationToken);
+			}
+			catch (RabbitMQ.Client.Exceptions.ChannelAllocationException ex)
+			{
+				// Same recovery as SendMessage: exhausted channel numbers leave the connection open
+				// but unusable, so reset it and retry the batch once.
+				Logging.LogException(ex);
+
+				try
 				{
-					Logging.LogError("RabbitOutboundQueueProvider->SendMessagesWithConfirmation connection is null.");
+					await RabbitConnection.ForceResetAsync();
+					return await PublishBatchAsync(queueName, messages, expiration, cancellationToken);
+				}
+				catch (Exception retryEx)
+				{
+					Logging.LogException(retryEx);
 					return false;
 				}
-
-				await using var channel =
-					await connection.CreateChannelAsync(new CreateChannelOptions(true, true), cancellationToken);
-				var props = new BasicProperties
-				{
-					DeliveryMode = DeliveryModes.Persistent,
-					Expiration = expiration,
-					Headers = new Dictionary<string, object>
-					{
-						["x-redelivered-count"] = 0
-					}
-				};
-
-				using var publishTimeout =
-					CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-				publishTimeout.CancelAfter(
-					TimeSpan.FromSeconds(Math.Max(1, UnitTrackingConfig.QueuePublishTimeoutSeconds)));
-
-				foreach (var message in messages)
-				{
-					await channel.BasicPublishAsync(
-						exchange: ServiceBusConfig.RabbbitExchange,
-						routingKey: RabbitConnection.SetQueueNameForEnv(queueName),
-						mandatory: true,
-						basicProperties: props,
-						body: Encoding.UTF8.GetBytes(message),
-						cancellationToken: publishTimeout.Token);
-				}
-
-				return true;
 			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
 				return false;
 			}
+		}
+
+		private async Task<bool> PublishBatchAsync(
+			string queueName,
+			IReadOnlyCollection<string> messages,
+			string expiration,
+			CancellationToken cancellationToken)
+		{
+			var connection = await RabbitConnection.CreateConnection(_clientName);
+			if (connection == null)
+			{
+				Logging.LogError("RabbitOutboundQueueProvider->SendMessagesWithConfirmation connection is null.");
+				return false;
+			}
+
+			await using var channel =
+				await connection.CreateChannelAsync(new CreateChannelOptions(true, true), cancellationToken);
+			var props = new BasicProperties
+			{
+				DeliveryMode = DeliveryModes.Persistent,
+				Expiration = expiration,
+				Headers = new Dictionary<string, object>
+				{
+					["x-redelivered-count"] = 0
+				}
+			};
+
+			using var publishTimeout =
+				CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+			publishTimeout.CancelAfter(
+				TimeSpan.FromSeconds(Math.Max(1, UnitTrackingConfig.QueuePublishTimeoutSeconds)));
+
+			foreach (var message in messages)
+			{
+				await channel.BasicPublishAsync(
+					exchange: ServiceBusConfig.RabbbitExchange,
+					routingKey: RabbitConnection.SetQueueNameForEnv(queueName),
+					mandatory: true,
+					basicProperties: props,
+					body: Encoding.UTF8.GetBytes(message),
+					cancellationToken: publishTimeout.Token);
+			}
+
+			return true;
 		}
 
 		public async Task<bool> VerifyAndCreateClients()

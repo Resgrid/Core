@@ -35,26 +35,78 @@ namespace Resgrid.Web.Eventing
 			_rabbitInboundEventProvider = scope.ServiceProvider.GetRequiredService<IRabbitInboundEventProvider>();
 		}
 
-		protected override Task ExecuteAsync(CancellationToken stoppingToken = default)
+		protected override async Task ExecuteAsync(CancellationToken stoppingToken = default)
 		{
 			Console.WriteLine("Starting Eventing Worker");
 			stoppingToken.ThrowIfCancellationRequested();
 
-				_rabbitInboundEventProvider.RegisterForEvents(PersonnelStatusUpdated,
-															  UnitStatusUpdated,
-															  CallsUpdated,
-															  PersonnelStaffingUpdated,
-															  CallAdded,
-															  CallClosed,
-															  PersonnelLocationUpdated,
-															  UnitLocationUpdated,
-															  IncidentCommandUpdated);
+			_rabbitInboundEventProvider.RegisterForEvents(PersonnelStatusUpdated,
+														  UnitStatusUpdated,
+														  CallsUpdated,
+														  PersonnelStaffingUpdated,
+														  CallAdded,
+														  CallClosed,
+														  PersonnelLocationUpdated,
+														  UnitLocationUpdated,
+														  IncidentCommandUpdated);
 
-				_rabbitInboundEventProvider.RegisterForChatEvents(ChatEventReceived);
+			_rabbitInboundEventProvider.RegisterForChatEvents(ChatEventReceived);
 
-				_rabbitInboundEventProvider.Start("Eventing-Web", "EventingWeb").ConfigureAwait(false);
+			await StartProviderAsync();
 
-			return Task.CompletedTask;
+			// Watchdog: the consumer channel dies silently if the shared Rabbit connection is ever
+			// replaced (e.g. RabbitConnection.ForceResetAsync after channel exhaustion, or a failed
+			// automatic recovery) — nothing restarts it and SignalR clients stop receiving updates
+			// until the pod is bounced. Rebuild the consumer after ~10s of continuous disconnect,
+			// retrying at most once a minute so a hard broker outage doesn't spin.
+			int disconnectedChecks = 0;
+			DateTime lastRestartAttemptUtc = DateTime.MinValue;
+
+			while (!stoppingToken.IsCancellationRequested)
+			{
+				try
+				{
+					await Task.Delay(500, stoppingToken);
+				}
+				catch (OperationCanceledException)
+				{
+					break;
+				}
+
+				if (_rabbitInboundEventProvider.IsConnected())
+				{
+					disconnectedChecks = 0;
+					continue;
+				}
+
+				disconnectedChecks++;
+
+				if (disconnectedChecks >= 20 && (DateTime.UtcNow - lastRestartAttemptUtc) >= TimeSpan.FromSeconds(60))
+				{
+					lastRestartAttemptUtc = DateTime.UtcNow;
+
+					Console.WriteLine("Eventing Worker: Rabbit consumer disconnected; restarting event monitoring.");
+					await StartProviderAsync();
+
+					if (_rabbitInboundEventProvider.IsConnected())
+					{
+						disconnectedChecks = 0;
+						Console.WriteLine("Eventing Worker: Event monitoring restarted.");
+					}
+				}
+			}
+		}
+
+		private async Task StartProviderAsync()
+		{
+			try
+			{
+				await _rabbitInboundEventProvider.Start("Eventing-Web", "EventingWeb");
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+			}
 		}
 
 		//public async Task StartAsync(CancellationToken cancellationToken = default)

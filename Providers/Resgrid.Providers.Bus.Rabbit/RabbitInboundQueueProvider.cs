@@ -41,6 +41,13 @@ namespace Resgrid.Providers.Bus.Rabbit
 		public async Task Start(string clientName)
 		{
 			_clientName = clientName;
+
+			// Dispose any channels from a previous Start (the watchdog re-calls Start after a
+			// disconnect). Disposal also removes them from automatic-recovery tracking, so a late
+			// connection recovery can't resurrect the old consumers alongside the new ones and
+			// double-process dispatches.
+			await DisposeChannelsAsync();
+
 			var connection = await RabbitConnection.CreateConnection(clientName);
 
 			if (connection != null)
@@ -637,6 +644,30 @@ namespace Resgrid.Providers.Bus.Rabbit
 							queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.ChatbotProcessingQueueName),
 							autoAck: false,
 							consumer: chatbotMessageQueueReceivedConsumer);
+				}
+			}
+		}
+
+		private async Task DisposeChannelsAsync()
+		{
+			var channels = new[] { _channel, _callChannel, _unitLocationChannel, _personnelLocationChannel };
+			_channel = null;
+			_callChannel = null;
+			_unitLocationChannel = null;
+			_personnelLocationChannel = null;
+
+			foreach (var channel in channels)
+			{
+				if (channel == null)
+					continue;
+
+				try
+				{
+					await channel.DisposeAsync();
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
 				}
 			}
 		}

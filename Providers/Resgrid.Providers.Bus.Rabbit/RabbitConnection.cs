@@ -239,6 +239,43 @@ namespace Resgrid.Providers.Bus.Rabbit
 			}
 		}
 
+		/// <summary>
+		/// Disposes the shared connection and clears cached state so the next CreateConnection call
+		/// builds a fresh one. Needed when the connection is open but unusable — e.g. its channel
+		/// numbers are exhausted (ChannelAllocationException) — which the IsOpen guards can never
+		/// detect. Raises ConnectionReset so cached declaration state is cleared.
+		/// </summary>
+		public static async Task ForceResetAsync()
+		{
+			IConnection connection;
+
+			await _semaphore.WaitAsync();
+			try
+			{
+				connection = _connection;
+				_connection = null;
+				_factory = null;
+			}
+			finally
+			{
+				_semaphore.Release();
+			}
+
+			RaiseConnectionReset();
+
+			if (connection != null)
+			{
+				try
+				{
+					await connection.DisposeAsync();
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+				}
+			}
+		}
+
 		public static async Task<IConnection> CreateConnection(string clientName)
 		{
 			if (_connection == null)

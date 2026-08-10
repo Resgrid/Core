@@ -32,8 +32,39 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 		public async Task Start(string clientName, string queueName)
 		{
-			await VerifyAndCreateClients(clientName);
+			// Dispose any channel from a previous Start (the host watchdog re-calls Start after a
+			// disconnect). Disposal also removes it from automatic-recovery tracking, so a late
+			// connection recovery can't resurrect the old consumer alongside the new one and
+			// double-deliver events.
+			await DisposeChannelAsync();
+
+			if (!await VerifyAndCreateClients(clientName))
+				return;
+
+			// _channel stays null when the connection couldn't be created; skip monitoring so the
+			// caller sees IsConnected() == false and can retry instead of an NRE killing the task.
+			if (_channel == null)
+				return;
+
 			await StartMonitoring(queueName);
+		}
+
+		private async Task DisposeChannelAsync()
+		{
+			var channel = _channel;
+			_channel = null;
+
+			if (channel == null)
+				return;
+
+			try
+			{
+				await channel.DisposeAsync();
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
 		}
 
 		private async Task<bool> VerifyAndCreateClients(string clientName)

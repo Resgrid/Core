@@ -98,6 +98,13 @@ namespace Resgrid.Providers.Bus.Rabbit
 			catch (Exception ex)
 			{
 				Framework.Logging.LogException(ex);
+
+				// Exhausted channel numbers leave the connection open but unusable, and the host
+				// watchdog's retry would get the same connection back forever — reset it so the
+				// next Start builds a fresh one.
+				if (ex is RabbitMQ.Client.Exceptions.ChannelAllocationException)
+					await RabbitConnection.ForceResetAsync();
+
 				return false;
 			}
 

@@ -83,6 +83,17 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 					await StartMonitoring();
 				}
+				catch (RabbitMQ.Client.Exceptions.ChannelAllocationException)
+				{
+					// The shared connection is open but out of channel numbers, so the watchdog's
+					// retry would get the same exhausted connection back from CreateConnection forever
+					// (the IsOpen guards can't see exhaustion). Dispose our channels first (clean close
+					// releases their numbers while the connection is still alive), then force-reset the
+					// connection so the retry builds a fresh one.
+					await DisposeChannelsAsync();
+					await RabbitConnection.ForceResetAsync();
+					throw;
+				}
 				catch
 				{
 					// A partial startup must not linger: if StartMonitoring fails after the channels

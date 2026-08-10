@@ -12,6 +12,25 @@ namespace Resgrid.Chatbot.NLU.Providers
 		public string ProviderName => "Keyword";
 		public int Priority => 0;
 
+		/// <summary>
+		/// Capturing alternation of ICS position vocabulary (NIMS command/general staff plus the
+		/// fireground/EMS/HazMat positions Resgrid models in <c>IncidentRoleType</c>, and the
+		/// non-modeled-but-always-asked RIT/RIC). Used by the incident_roles patterns so a role lookup
+		/// only fires on an actual position name — "who is Smith" must stay a personnel lookup.
+		/// A <c>const</c> (not a static field) so it is available to the <c>_patterns</c> initializer.
+		/// </summary>
+		private const string RoleWords =
+			@"(ic|incident\s+commander|deputy(\s+incident)?(\s+commander)?|commander|unified\s+command|safety(\s+officer)?|" +
+			@"ops(\s+chief)?|operations(\s+section)?(\s+chief)?|planning(\s+section)?(\s+chief)?|logistics(\s+section)?(\s+chief)?|" +
+			@"finance(\s+admin)?(\s+section)?(\s+chief)?|pio|public\s+information\s+officer|liaison(\s+officer)?|" +
+			@"staging(\s+area)?\s+manager|resources?\s+unit\s+leader|situation\s+unit\s+leader|documentation\s+unit\s+leader|" +
+			@"communications\s+unit\s+leader|division\s+supervisor|group\s+supervisor|branch\s+director|" +
+			@"strike\s+team\s+leader|task\s+force\s+leader|medical\s+unit\s+leader|rehab(\s+officer)?|medical\s+branch\s+director|" +
+			@"triage(\s+officer)?|treatment(\s+officer)?|transport(\s+officer)?|hazmat\s+group\s+supervisor|decon(\s+officer)?|" +
+			@"entry\s+team\s+leader|search\s+group\s+supervisor|air\s+operations(\s+branch)?(\s+director)?|" +
+			@"shelter(\s+mass\s+care)?\s+coordinator|mass\s+care\s+coordinator|damage\s+assessment\s+lead|" +
+			@"rit|ric|rapid\s+intervention(\s+team|\s+crew)?|accountability\s+officer)";
+
 		private static readonly List<(Regex pattern, string intent, Func<Match, Dictionary<string, string>> extractParams)> _patterns = new()
 		{
 			// === Status Commands (rigid + natural language) ===
@@ -94,6 +113,112 @@ namespace Resgrid.Chatbot.NLU.Providers
 				"delete_message", m => P("messageId", m.Groups[3].Value)),
 			(R(@"^(reply|respond)\s+(yes|no|acknowledge|ack)\s+to\s+(message|msg|#)?\s*#?(\d+)"),
 				"respond_to_message", m => P2("response", m.Groups[2].Value, "messageId", m.Groups[4].Value)),
+
+			// === Incident Command (ICS) board questions ===
+			// Placed BEFORE the responder/personnel/unit query blocks: phrasings like "what units do I
+			// have on scene" or "who is working Division A" would otherwise bind the department-wide
+			// list_units / call_responders patterns instead of the incident board. Every pattern here
+			// is deliberately narrow (it names an ICS concept) so general queries keep their meaning.
+			// A trailing "for <ref>" scopes the answer to a specific call; without one the handler
+			// falls back to the incident context the client sent, then to the user's only active command.
+
+			// PAR / accountability — the single most-asked question on a working incident.
+			(R(@"^(par|par\s+check|accountability|accountability\s+check|personnel\s+accountability(\s+report)?)(\s+(?:for|on)\s+(.+))?$"),
+				"incident_par", m => P("callRef", CleanReference(m.Groups[4].Value))),
+			(R(@"^(give|get|run|do)\s+(me\s+)?(a\s+|the\s+)?par(\s+check)?(\s+(?:for|on)\s+(.+))?$"),
+				"incident_par", m => P("callRef", CleanReference(m.Groups[6].Value))),
+			(R(@"^(who'?s|who\s+is|who\s+are|anyone)\s+(overdue|unaccounted(\s+for)?|not\s+accounted\s+for|missing)(\s+.*)?$"),
+				"incident_par", null),
+
+			// Span of control — must precede the generic resources patterns ("which lanes are over...").
+			(R(@"^span(\s+of\s+control)?(\s+check)?$"), "incident_span_of_control", null),
+			(R(@"^(what|which)\s+(lanes?|divisions?|groups?|branches|sectors?)\s+(are\s+)?(over|under)\s*-?\s*(staffed|filled|loaded|manned|resourced)?$"),
+				"incident_span_of_control", null),
+			(R(@"^(am\s+i|are\s+we)\s+(over|under)\s*-?\s*(staffed|filled|loaded|manned|resourced)$"),
+				"incident_span_of_control", null),
+
+			// Resources on the incident, optionally scoped to one lane.
+			(R(@"^(who'?s|who\s+is|who\s+are|what'?s|what\s+is|what)\s+(assigned\s+to|working|in|on)\s+(division|group|branch|sector|strike\s+team|task\s+force|staging|lane)\s*(.*)$"),
+				"incident_resources", m => P("laneName", BuildLaneName(m.Groups[3].Value, m.Groups[4].Value))),
+			(R(@"^(what|which)\s+(resources|units?|crews?|companies|apparatus|personnel)\s+(do\s+i\s+have|do\s+we\s+have|are|is)\s+(on\s*scene|assigned|working|committed|on\s+(?:the\s+)?incident)(\s+.*)?$"),
+				"incident_resources", null),
+			(R(@"^(incident\s+)?(resources|assignments|resource\s+list)$"), "incident_resources", null),
+			(R(@"^(what|who)\s+(do\s+i|do\s+we)\s+have\s+(on\s*scene|working|committed|assigned)(\s+.*)?$"),
+				"incident_resources", null),
+			(R(@"^(who'?s|who\s+is|what'?s|what\s+is|what)\s+(un|not\s+)assigned$"), "incident_resources", m => P("laneName", "unassigned")),
+
+			// Objectives / benchmarks.
+			(R(@"^(incident\s+)?(objectives?|benchmarks?|tactical\s+objectives?)$"), "incident_objectives", null),
+			(R(@"^(what|which)\s+(objectives?|benchmarks?)\s+(are\s+)?(open|outstanding|incomplete|remaining|left|still\s+open|not\s+(?:done|complete))$"),
+				"incident_objectives", null),
+			(R(@"^(what'?s|what\s+is)\s+(still\s+)?(open|outstanding|left|remaining|incomplete)(\s+on\s+(?:the\s+|this\s+)?(incident|scene|board))?$"),
+				"incident_objectives", null),
+			(R(@"^(what'?s|what\s+is)\s+(my|our|the)\s+next\s+benchmark$"), "incident_objectives", null),
+
+			// Needs / resource orders.
+			(R(@"^(incident\s+)?(needs?|resource\s+orders?|orders?)$"), "incident_needs", null),
+			(R(@"^(what|which)\s+(needs?|orders?|requests?)\s+(are\s+)?(open|unfilled|outstanding|pending|not\s+(?:met|filled))$"),
+				"incident_needs", null),
+			(R(@"^what\s+(did|have)\s+(i|we)\s+order(ed)?(\s+.*)?$"), "incident_needs", null),
+			(R(@"^(what'?s|what\s+is)\s+(not\s+)?(been\s+)?(filled|met|arrived)$"), "incident_needs", null),
+			(R(@"^what\s+(am\s+i|are\s+we)\s+(waiting\s+on|short\s+on|short)$"), "incident_needs", null),
+
+			// ICS positions / command roles.
+			(R(@"^(ics\s+)?(roles?|positions?|command\s+staff|general\s+staff)$"), "incident_roles", null),
+			// Role lookups are keyed off explicit ICS position vocabulary (RoleWords) so an open-ended
+			// "who is <name>" stays a personnel_lookup instead of being swallowed here.
+			(R(@"^(who'?s|who\s+is|who\s+has)\s+(my|the|our)?\s*" + RoleWords + @"\s*\??$"),
+				"incident_roles", m => P("roleQuery", m.Groups[3].Value.Trim())),
+			(R(@"^(what|which)\s+(ics\s+)?(roles?|positions?)\s+(are\s+)?(unfilled|open|vacant|empty|not\s+assigned|missing)$"),
+				"incident_roles", null),
+			(R(@"^(do\s+i|do\s+we|have\s+i|have\s+we)\s+(have|got|assigned)\s+(an?\s+)?" + RoleWords + @"\s*\??$"),
+				"incident_roles", m => P("roleQuery", m.Groups[4].Value.Trim())),
+
+			// Incident (ICS-201) timeline.
+			(R(@"^(incident\s+)?(timeline|incident\s+log|command\s+log|log)$"), "incident_timeline", null),
+			(R(@"^what\s+(has\s+)?happened(\s+(?:in\s+)?(?:the\s+)?last\s+(\d+)\s*(minutes?|mins?|hours?|hrs?))?(\s+.*)?$"),
+				"incident_timeline", m => P("minutes", ToMinutes(m.Groups[3].Value, m.Groups[4].Value))),
+			(R(@"^(read|show|give|list)\s+(me\s+)?(the\s+)?last\s+(\d+)\s+(log\s+)?(entries|entry|events)$"),
+				"incident_timeline", m => P("count", m.Groups[4].Value)),
+
+			// Incident timers (PAR/benchmark reminders).
+			(R(@"^(incident\s+)?timers?$"), "incident_timers", null),
+			(R(@"^(what|which)\s+timers?\s+(are\s+)?(running|due|up|active)$"), "incident_timers", null),
+			(R(@"^(what'?s|what\s+is|when'?s|when\s+is)\s+(my|the|our)\s+next\s+(par|check\s*-?\s*in|timer)(\s+.*)?$"),
+				"incident_timers", null),
+
+			// Transfer-of-command / ICS-201 briefing.
+			(R(@"^(briefing|brief\s+me|transfer\s+of\s+command|ics\s*-?\s*201|command\s+brief(ing)?)$"),
+				"incident_briefing", null),
+			(R(@"^(give|draft|write|prepare|build|make)\s+(me\s+)?(a\s+|the\s+)?(briefing|brief|transfer\s+of\s+command(\s+briefing)?|ics\s*-?\s*201|hand\s*-?\s*off(\s+briefing)?)$"),
+				"incident_briefing", null),
+
+			// Incident-type ICS checklist / playbook.
+			(R(@"^(checklist|playbook|what\s+am\s+i\s+missing|what\s+are\s+we\s+missing|what'?s\s+next)$"),
+				"incident_checklist", null),
+			(R(@"^(what|anything)\s+(am\s+i|are\s+we)\s+(missing|forgetting)(\s+.*)?$"), "incident_checklist", null),
+			(R(@"^what\s+should\s+(i|we)\s+(be\s+)?(doing|do|consider|think\s+about)(\s+.*)?$"), "incident_checklist", null),
+			(R(@"^(checklist|playbook)\s+(?:for\s+)?(?:an?\s+)?(.+)$"),
+				"incident_checklist", m => P("incidentType", m.Groups[2].Value.Trim())),
+
+			// Weather at the incident location (distinct from the department-wide weather alerts).
+			(R(@"^(incident\s+weather|scene\s+weather|weather\s+(?:at|on)\s+(?:the\s+)?(?:scene|incident|icp|command\s+post))$"),
+				"incident_weather", null),
+			(R(@"^(what'?s|what\s+is)\s+(the\s+)?(wind|weather)\s*(doing|at\s+(?:the\s+)?(?:scene|incident|icp))?$"),
+				"incident_weather", null),
+			(R(@"^(wind|wind\s+direction|wind\s+speed)$"), "incident_weather", null),
+
+			// Operational status notes on the incident.
+			(R(@"^(incident\s+)?(notes|situation\s+updates?)$"), "incident_notes", null),
+			(R(@"^(what|any)\s+(notes|situation\s+updates?)(\s+.*)?$"), "incident_notes", null),
+
+			// Overall incident status / size-up. Last in the block so the sharper questions above win.
+			(R(@"^(incident|command|scene)\s+(status|summary|snapshot|overview)$"), "incident_status", null),
+			(R(@"^(size\s*-?\s*up|sizeup|sitrep|situation\s+report|can\s+report|status\s+board)$"), "incident_status", null),
+			(R(@"^(what'?s|what\s+is)\s+(the\s+)?(status|situation|picture)\s+(of|on|at)\s+(the\s+|this\s+)?(incident|command|scene|call)$"),
+				"incident_status", null),
+			(R(@"^(where\s+(do|are)\s+we\s+(stand|at)|how\s+are\s+we\s+doing|how'?s\s+it\s+going\s+out\s+there)\s*$"),
+				"incident_status", null),
 
 			// === Availability / Call Responder Queries (must precede the generic
 			// "who is X" personnel_lookup and "what ... calls" list_calls patterns) ===
@@ -348,6 +473,34 @@ namespace Resgrid.Chatbot.NLU.Providers
 		private static string CleanReference(string value)
 		{
 			return value?.Trim().TrimEnd('?', '!', '.', ',');
+		}
+
+		/// <summary>
+		/// Rebuilds the lane reference an incident question named ("division a", "staging", "group 2")
+		/// from the ICS node word and whatever followed it. The handler matches this loosely against the
+		/// board's lane names, so "division" alone (no designator) is passed through as-is.
+		/// </summary>
+		private static string BuildLaneName(string nodeWord, string remainder)
+		{
+			var designator = CleanReference(remainder);
+			var word = nodeWord?.Trim() ?? string.Empty;
+			return string.IsNullOrWhiteSpace(designator) ? word : $"{word} {designator}".Trim();
+		}
+
+		/// <summary>
+		/// Normalizes a "last N minutes/hours" timeline window to whole minutes. Returns an empty string
+		/// when the question carried no window, letting the handler apply its own default.
+		/// </summary>
+		private static string ToMinutes(string amount, string unit)
+		{
+			if (!int.TryParse(amount?.Trim(), out var value) || value <= 0)
+				return string.Empty;
+
+			var u = unit?.Trim().ToLowerInvariant() ?? string.Empty;
+			if (u.StartsWith("h"))
+				value *= 60;
+
+			return value.ToString();
 		}
 
 		private static bool IsNegativeCallResponse(string value)

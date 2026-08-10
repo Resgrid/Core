@@ -1992,6 +1992,155 @@ namespace Resgrid.Chatbot.Localization
 				"Błąd podczas pobierania harmonogramu.",
 				"Помилка отримання вашого розкладу.",
 				"حدث خطأ أثناء استرداد جدولك."),
+
+			// ---- Incident command (ICS) assistant ----
+			// English-only for now (EnOnly): these are dense operational strings whose ICS terminology
+			// needs a subject-matter translator per locale rather than a literal translation. A missing
+			// culture falls back to English at lookup time, so non-English users still get an answer.
+
+			["Incident_NoActiveCommand"] = EnOnly("I don't see an incident command established that you're working. Open a command board, or ask again with the call number (for example: PAR for 26-1)."),
+			["Incident_NoCommandOnCall"] = EnOnly("No incident command has been established on {0} yet."),
+			["Incident_BoardUnavailable"] = EnOnly("I couldn't read the command board for that incident. Try again in a moment."),
+			["Incident_Error"] = EnOnly("Something went wrong reading the incident. Try again in a moment."),
+			["Incident_WhichOne"] = EnOnly("You have more than one incident running. Which one?"),
+			["Incident_WhichOneHint"] = EnOnly("Ask again with the call number, for example: PAR for 26-1"),
+			["Incident_Unknown"] = EnOnly("unknown"),
+
+			// Status / size-up
+			["Incident_Elapsed"] = EnOnly("Command running {0}."),
+			["Incident_Commander"] = EnOnly("IC: {0}."),
+			["Incident_CommandPost"] = EnOnly("ICP: {0}."),
+			["Incident_Staging"] = EnOnly("Staging: {0}."),
+			["Incident_ResourceCounts"] = EnOnly("{0} units and {1} personnel across {2} lanes ({3} unassigned)."),
+			["Incident_ParSummary"] = EnOnly("PAR: {0} tracked, {1} overdue, {2} approaching."),
+			["Incident_ObjectiveSummary"] = EnOnly("Objectives: {0} of {1} complete."),
+			["Incident_OpenNeeds"] = EnOnly("{0} needs still open."),
+			["Incident_TimersDue"] = EnOnly("{0} timer(s) due now."),
+			["Incident_Important"] = EnOnly("Important: {0}"),
+			["Incident_EstimatedEnd"] = EnOnly("Estimated end: {0}."),
+
+			// Accountability (PAR)
+			["Incident_ParNone"] = EnOnly("No personnel accountability is being tracked on {0} — nobody has checked in and no check-in timer is running."),
+			["Incident_ParHeader"] = EnOnly("PAR for {0}: {1} personnel tracked."),
+			["Incident_ParCounts"] = EnOnly("{0} green, {1} approaching, {2} overdue."),
+			["Incident_ParCriticalHeader"] = EnOnly("Overdue — not accounted for:"),
+			["Incident_ParWarningHeader"] = EnOnly("Approaching check-in:"),
+			["Incident_ParOverdueRow"] = EnOnly("- {0}: {1} min overdue"),
+			["Incident_ParDueRow"] = EnOnly("- {0}: due in {1} min"),
+			["Incident_ParAllGood"] = EnOnly("Everyone is accounted for."),
+
+			// Resources
+			["Incident_NoResources"] = EnOnly("Nothing is assigned to {0} yet."),
+			["Incident_ResourcesHeader"] = EnOnly("{0}: {1} units and {2} personnel working."),
+			["Incident_LaneLine"] = EnOnly("- {0}: {1} — {2}"),
+			["Incident_UnassignedLine"] = EnOnly("- Unassigned pool: {0}"),
+			["Incident_ExternalResources"] = EnOnly("- External / mutual aid resources tracked: {0}"),
+			["Incident_NoUnassigned"] = EnOnly("Everything tracked on {0} is placed in a lane."),
+			["Incident_UnassignedHeader"] = EnOnly("Unassigned on {0} ({1}):"),
+			["Incident_LaneNotFound"] = EnOnly("I don't see a lane called \"{0}\". Lanes on the board: {1}"),
+			["Incident_NoLanes"] = EnOnly("none yet"),
+			["Incident_NoLanesYet"] = EnOnly("No lanes have been created on {0} yet, so there's no span of control to check."),
+			["Incident_LaneHeader"] = EnOnly("{0} ({1}): {2} resources."),
+			["Incident_LaneLead"] = EnOnly("Lead: {0}."),
+			["Incident_LaneEmpty"] = EnOnly("Nothing is assigned to this lane."),
+			["Incident_LaneObjective"] = EnOnly("Primary objective: {0} ({1}%)."),
+			["Incident_TimeInLane"] = EnOnly("({0} in lane)"),
+
+			// Span of control
+			["Incident_SpanHeader"] = EnOnly("{0}: {1} lanes, {2} resources assigned."),
+			["Incident_SpanAllGood"] = EnOnly("Span of control looks reasonable — every lane is within its limits and no lane is over {0} resources."),
+			["Incident_SpanOverRow"] = EnOnly("- {0} is carrying {1} resources (limit {2}) — consider splitting it or adding a supervisor."),
+			["Incident_SpanUnderRow"] = EnOnly("- {0} has {1} resources against a minimum of {2}."),
+			["Incident_SpanNoLead"] = EnOnly("- No lead assigned: {0}"),
+
+			// Objectives
+			["Incident_NoObjectives"] = EnOnly("No tactical objectives have been set on {0} yet."),
+			["Incident_ObjectivesHeader"] = EnOnly("{0}: {1} of {2} objectives complete. Still open:"),
+			["Incident_ObjectivesAllComplete"] = EnOnly("Every objective on the board is complete."),
+			["Incident_ObjectiveRow"] = EnOnly("{0} — {1} ({2}%){3}"),
+			["Incident_ObjectiveOverdue"] = EnOnly(" [past target]"),
+			["Incident_MissingBenchmarks"] = EnOnly("Common {0} benchmarks not on the board yet: {1}"),
+
+			// Needs
+			["Incident_NoNeeds"] = EnOnly("No needs have been recorded on {0}."),
+			["Incident_NeedsHeader"] = EnOnly("{0}: {1} needs outstanding ({2} met, {3} cancelled)."),
+			["Incident_NeedsAllMet"] = EnOnly("Everything ordered has been filled."),
+			["Incident_NeedRow"] = EnOnly("- {0} [{1}] {2} — open {3}"),
+			["Incident_NeedQuantity"] = EnOnly("{0}/{1}"),
+
+			// Roles
+			["Incident_RolesHeader"] = EnOnly("{0}: {1} ICS position(s) assigned."),
+			["Incident_RoleRow"] = EnOnly("{0}: {1}"),
+			["Incident_RolesUnfilled"] = EnOnly("Unfilled positions a {0} usually needs: {1}"),
+			["Incident_RoleFilled"] = EnOnly("{0}: {1}"),
+			["Incident_RoleUnfilled"] = EnOnly("No {0} is assigned on {1}."),
+			["Incident_RoleUnknown"] = EnOnly("I don't recognize the position \"{0}\". Ask for ICS roles to see everything assigned."),
+			["Incident_NoRit"] = EnOnly("I don't see a RIT/RIC lane on {0}. On a working incident that's worth assigning before crews go interior."),
+			["Incident_RitFound"] = EnOnly("{0} is standing by with {1} resource(s)."),
+
+			// Timeline / notes
+			["Incident_TimelineEmpty"] = EnOnly("Nothing has been logged on {0} yet."),
+			["Incident_TimelineEmptyWindow"] = EnOnly("Nothing has been logged in the last {0} minutes on {1}."),
+			["Incident_TimelineHeader"] = EnOnly("{0} — last {1} log entries:"),
+			["Incident_TimelineWindowHeader"] = EnOnly("{0} — last {1} minutes ({2} entries):"),
+			["Incident_TimelineRow"] = EnOnly("- {0}: {1}{2}"),
+			["Incident_NoNotes"] = EnOnly("No status notes have been recorded on {0}."),
+			["Incident_NotesHeader"] = EnOnly("{0} — {1} status note(s):"),
+			["Incident_NoteRow"] = EnOnly("- {0}: {1} ({2})"),
+
+			// Timers
+			["Incident_NoTimers"] = EnOnly("No timers are running on {0}."),
+			["Incident_TimersHeader"] = EnOnly("{0}: {1} timer(s)."),
+			["Incident_TimerDueRow"] = EnOnly("- {0}: DUE NOW"),
+			["Incident_TimerRunningRow"] = EnOnly("- {0}: due in {1}"),
+			["Incident_TimerNoDueRow"] = EnOnly("- {0}: running"),
+
+			// Briefing (ICS-201 / transfer of command)
+			["Incident_BriefingHeader"] = EnOnly("TRANSFER OF COMMAND BRIEFING — {0}"),
+			["Incident_BriefingSituation"] = EnOnly("SITUATION"),
+			["Incident_BriefingType"] = EnOnly("Incident type: {0}"),
+			["Incident_BriefingAddress"] = EnOnly("Location: {0}"),
+			["Incident_BriefingEstablished"] = EnOnly("Command established: {0} (running {1})"),
+			["Incident_BriefingImportant"] = EnOnly("Important information: {0}"),
+			["Incident_BriefingCommand"] = EnOnly("COMMAND"),
+			["Incident_BriefingCommander"] = EnOnly("Incident Commander: {0}"),
+			["Incident_BriefingIcp"] = EnOnly("Command post: {0}"),
+			["Incident_BriefingStaging"] = EnOnly("Staging: {0}"),
+			["Incident_BriefingRehab"] = EnOnly("Rehab: {0}"),
+			["Incident_BriefingObjectives"] = EnOnly("OBJECTIVES"),
+			["Incident_BriefingNoObjectives"] = EnOnly("- No objectives recorded"),
+			["Incident_BriefingActionPlan"] = EnOnly("Action plan: {0}"),
+			["Incident_BriefingOrganization"] = EnOnly("ORGANIZATION AND RESOURCES"),
+			["Incident_BriefingNoLanes"] = EnOnly("- No lanes established"),
+			["Incident_BriefingLaneRow"] = EnOnly("{0} (lead: {1}) — {2} resources: {3}"),
+			["Incident_NoLead"] = EnOnly("no lead"),
+			["Incident_BriefingAccountability"] = EnOnly("ACCOUNTABILITY"),
+			["Incident_BriefingNoPar"] = EnOnly("No personnel accountability is being tracked."),
+			["Incident_BriefingNeeds"] = EnOnly("OUTSTANDING NEEDS"),
+			["Incident_BriefingNoNeeds"] = EnOnly("- None"),
+
+			// Checklist
+			["Incident_ChecklistHeader"] = EnOnly("{0} checklist for {1}."),
+			["Incident_ChecklistDone"] = EnOnly("Already done on the board: {0}."),
+			["Incident_ChecklistOutstanding"] = EnOnly("Not showing on the board yet:"),
+			["Incident_ChecklistConfirm"] = EnOnly("Standard {0} items to confirm:"),
+			["Incident_ChecklistDisclaimer"] = EnOnly("This is general ICS guidance, not your department's policy — your SOGs and your judgement come first."),
+			["Incident_CheckCommand"] = EnOnly("Command established with a named IC"),
+			["Incident_CheckIcp"] = EnOnly("Command post location set"),
+			["Incident_CheckActionPlan"] = EnOnly("Action plan or objectives recorded"),
+			["Incident_CheckSafety"] = EnOnly("Safety Officer assigned"),
+			["Incident_CheckPar"] = EnOnly("Accountability / check-in running"),
+			["Incident_CheckStaging"] = EnOnly("Staging designated"),
+
+			// Weather
+			["Incident_WeatherUnavailable"] = EnOnly("I couldn't get current conditions for {0}."),
+			["Incident_WeatherHeader"] = EnOnly("Weather at {0}:"),
+			["Incident_WeatherConditions"] = EnOnly("Conditions: {0}"),
+			["Incident_WeatherTemperature"] = EnOnly("Temperature: {0}C / {1}F"),
+			["Incident_WeatherWind"] = EnOnly("Wind: from the {0} at {1} kph / {2} mph{3}"),
+			["Incident_WeatherGusts"] = EnOnly(", gusting {0} kph / {1} mph"),
+			["Incident_WeatherHumidity"] = EnOnly("Relative humidity: {0}%"),
+			["Incident_WeatherDownwind"] = EnOnly("Downwind side is to the {0} — keep staging and rehab out of it."),
 		};
 	}
 }

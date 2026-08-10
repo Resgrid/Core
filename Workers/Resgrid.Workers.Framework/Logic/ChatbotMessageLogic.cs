@@ -55,6 +55,11 @@ namespace Resgrid.Workers.Framework.Logic
 					Timestamp = DateTime.UtcNow
 				};
 
+				// Command-board questions carry the incident the sender has open so "PAR" means "PAR on
+				// this board". The ingress copies it onto the session; authorization is re-checked there.
+				if (item.IncidentCallId.HasValue && item.IncidentCallId.Value > 0)
+					message.PlatformMetadata["incidentCallId"] = item.IncidentCallId.Value;
+
 				var response = await chatbotIngressService.ProcessMessageAsync(message);
 
 				if (response != null && !string.IsNullOrWhiteSpace(response.Text))

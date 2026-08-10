@@ -87,6 +87,19 @@ Classify the user's message into exactly one of these intent categories:
 - switch_department: User wants to switch/change their active department to a different one
 - help: User asks for help/commands/menu
 - stop: User wants to stop/end/cancel/unsubscribe
+- incident_status: Incident Commander asks for the overall state of a working incident / a size-up / sitrep (e.g. ""what's the status of this incident?"", ""where do we stand?"")
+- incident_par: IC asks for personnel accountability (PAR) or who is overdue/unaccounted for on the incident
+- incident_resources: IC asks what units/crews/personnel are working the incident, or who is assigned to a specific lane such as a Division, Group, Branch, Sector, Strike Team, Task Force or Staging
+- incident_span_of_control: IC asks whether lanes are over or under their resource limits (span of control)
+- incident_objectives: IC asks about tactical objectives / benchmarks and which are still open
+- incident_needs: IC asks about command-level needs / resource orders and what has not been filled yet
+- incident_roles: IC asks who holds an ICS position (Safety Officer, Operations, Staging Manager, RIT, ...) or which positions are unfilled
+- incident_timeline: IC asks what has happened on the incident / to read the incident (ICS-201) log
+- incident_timers: IC asks which incident timers are running or due next
+- incident_briefing: IC asks for a transfer-of-command / ICS-201 style briefing or hand-off summary
+- incident_checklist: IC asks what they are missing or what they should be doing for this type of incident (structure fire, wildland, MVA, EMS, MCI, HazMat, natural disaster, search and rescue, ...)
+- incident_weather: IC asks about weather or wind AT THE INCIDENT / command post
+- incident_notes: IC asks about operational status notes recorded on the incident
 - unknown: Cannot determine the intent
 
 Respond with ONLY a JSON object. No explanation, no markdown, no additional text.
@@ -114,6 +127,11 @@ Extract any parameters mentioned:
 - For my_schedule: ""day"" (the day asked about, e.g. ""today"", ""tomorrow"", ""7/22""; empty for today)
 - For list_departments: no parameters needed
 - For get_active_department: no parameters needed
+- For any incident_* intent: ""callRef"" (the call id/number the question is about; omit when the user didn't name one — the assistant already knows which incident is open)
+- For incident_resources: ""laneName"" (the Division/Group/Branch/Sector/Strike Team/Task Force/Staging the question scopes to, e.g. ""division a""; ""unassigned"" when they ask who is unassigned)
+- For incident_roles: ""roleQuery"" (the ICS position asked about, e.g. ""safety officer"", ""staging manager"", ""rit"")
+- For incident_timeline: ""minutes"" (how far back to read, in minutes) or ""count"" (how many entries)
+- For incident_checklist: ""incidentType"" (the incident type named, e.g. ""structure fire"", ""wildland"", ""mva"", ""mci"", ""hazmat"", ""search and rescue""; omit to infer it from the call)
 
 Confidence should be between 0.0 and 1.0 based on how certain you are.
 If the user's message doesn't clearly match any intent, set intent to ""unknown"" with confidence 0.0.";

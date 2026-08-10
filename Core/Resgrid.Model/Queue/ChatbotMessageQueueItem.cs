@@ -32,5 +32,13 @@ namespace Resgrid.Model.Queue
 		/// <summary>ChatbotPlatform value (kept as int so Resgrid.Model stays free of the Chatbot dependency).</summary>
 		[ProtoMember(6)]
 		public int Platform { get; set; }
+
+		/// <summary>
+		/// The incident (call) the sender had open when they asked, so a command-board question like
+		/// "PAR" resolves against the board they are looking at. Null for SMS and general web chat. It's
+		/// only a hint — the pipeline still re-checks department scoping and view permission.
+		/// </summary>
+		[ProtoMember(7)]
+		public int? IncidentCallId { get; set; }
 	}
 }

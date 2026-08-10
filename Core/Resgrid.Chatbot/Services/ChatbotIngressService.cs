@@ -258,6 +258,16 @@ namespace Resgrid.Chatbot.Services
 					session.Culture = Localization.ChatbotResources.NormalizeCulture(cultureProfile?.Language);
 				}
 
+				// Carry the incident the client has open (the IC app's command board sends it) onto the
+				// session so incident intents default to that board. Re-sent with every message, so
+				// switching boards updates it and a message from a non-board surface clears it —
+				// otherwise a stale board would silently answer questions about a different incident.
+				var incidentCallId = message.GetMetaString("incidentCallId");
+				if (!string.IsNullOrWhiteSpace(incidentCallId) && int.TryParse(incidentCallId, out var parsedIncidentCallId) && parsedIncidentCallId > 0)
+					session.Context[Services.IncidentContextResolver.IncidentCallIdContextKey] = parsedIncidentCallId.ToString();
+				else
+					session.Context.Remove(Services.IncidentContextResolver.IncidentCallIdContextKey);
+
 				// Add message to session history
 				session.RecentMessages.Add(message);
 				if (session.RecentMessages.Count > 20)

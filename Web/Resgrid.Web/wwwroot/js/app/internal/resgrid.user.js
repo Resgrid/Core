@@ -8,6 +8,21 @@ var resgrid;
 (function (resgrid) {
     var main;
     (function (main) {
+        // Expired auth cookies leave background polls (DataTables ajax, etc.) failing with 401s;
+        // send the user back to the login page instead of surfacing broken-table errors.
+        if ($.fn.dataTable) {
+            $.fn.dataTable.ext.errMode = 'none';
+            $(document).on('error.dt', function (e, settings, techNote, message) {
+                if (window.console && console.warn) { console.warn(message); }
+            });
+        }
+
+        $(document).ajaxError(function (event, jqxhr) {
+            if (jqxhr && jqxhr.status === 401) {
+                window.location.assign(resgrid.absoluteBaseUrl + '/Account/LogOn?returnUrl=' + encodeURIComponent(window.location.pathname + window.location.search));
+            }
+        });
+
         $(document).ready(function () {
             $('#top-icons-area').load(resgrid.absoluteBaseUrl + '/User/Department/TopIconsArea');
 

@@ -32,5 +32,17 @@ namespace Resgrid.Model.Repositories
 		/// <param name="pageSize">Page size.</param>
 		/// <returns>Task&lt;IEnumerable&lt;SystemAudit&gt;&gt;.</returns>
 		Task<IEnumerable<SystemAudit>> GetByDepartmentIdPagedAsync(int departmentId, DateTime startDate, DateTime endDate, int page, int pageSize);
+
+		/// <summary>
+		/// Gets a date-ranged, paged set of system audits of a single type across all users and
+		/// departments (e.g. every account-deletion request platform-wide).
+		/// </summary>
+		/// <param name="type">The <see cref="SystemAuditTypes"/> value (stored as an int).</param>
+		/// <param name="startDate">Inclusive lower bound on LoggedOn (UTC).</param>
+		/// <param name="endDate">Exclusive upper bound on LoggedOn (UTC).</param>
+		/// <param name="page">1-based page number.</param>
+		/// <param name="pageSize">Page size.</param>
+		/// <returns>Task&lt;IEnumerable&lt;SystemAudit&gt;&gt;.</returns>
+		Task<IEnumerable<SystemAudit>> GetByTypePagedAsync(int type, DateTime startDate, DateTime endDate, int page, int pageSize);
 	}
 }

@@ -122,5 +122,52 @@ namespace Resgrid.Repositories.DataRepository
 				throw;
 			}
 		}
+
+		public async Task<IEnumerable<SystemAudit>> GetByTypePagedAsync(int type, DateTime startDate, DateTime endDate, int page, int pageSize)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<SystemAudit>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParametersExtension();
+					dynamicParameters.Add("Type", type);
+					dynamicParameters.Add("StartDate", startDate);
+					dynamicParameters.Add("EndDate", endDate);
+					var safePage = page < 1 ? 1 : page;
+					var safePageSize = pageSize < 1 ? 1 : pageSize;
+					dynamicParameters.Add("Offset", (safePage - 1) * safePageSize);
+					dynamicParameters.Add("PageSize", safePageSize);
+
+					var query = _queryFactory.GetQuery<SelectSystemAuditsByTypePagedQuery>();
+
+					return await x.QueryAsync<SystemAudit>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, extraMessage: $"GetByTypePagedAsync Type: {type}");
+
+				throw;
+			}
+		}
 	}
 }

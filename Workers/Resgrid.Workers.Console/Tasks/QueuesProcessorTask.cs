@@ -53,7 +53,17 @@ namespace Resgrid.Workers.Console.Tasks
 			queue.WorkflowQueueReceived += OnWorkflowQueueReceived;
 			queue.ChatbotMessageQueueReceived += OnChatbotMessageReceived;
 
-			await queue.Start("QueueProcessor-CQRS");
+			try
+			{
+				await queue.Start("QueueProcessor-CQRS");
+			}
+			catch (Exception ex)
+			{
+				// A failed initial start (broker briefly down at boot, partial startup torn down by
+				// the provider) must not kill this task before the watchdog loop below exists —
+				// the loop sees IsConnected() == false and retries.
+				Resgrid.Framework.Logging.LogException(ex);
+			}
 
 			// Watchdog: the consumer channels die silently if the shared Rabbit connection is ever
 			// replaced (e.g. RabbitConnection.ForceResetAsync after channel exhaustion, or a failed

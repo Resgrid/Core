@@ -52,34 +52,47 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 			if (connection != null)
 			{
-				_channel = await connection.CreateChannelAsync();
-
-				if (CallQueueReceived != null)
+				try
 				{
-					// Call dispatch has its own channel so no unrelated queue callback can delay an
-					// emergency notification, regardless of which backing store that callback uses.
-					_callChannel = await connection.CreateChannelAsync();
-					await _callChannel.BasicQosAsync(0, 1, false);
-				}
+					_channel = await connection.CreateChannelAsync();
 
-				if (UnitLocationEventQueueReceived != null)
+					if (CallQueueReceived != null)
+					{
+						// Call dispatch has its own channel so no unrelated queue callback can delay an
+						// emergency notification, regardless of which backing store that callback uses.
+						_callChannel = await connection.CreateChannelAsync();
+						await _callChannel.BasicQosAsync(0, 1, false);
+					}
+
+					if (UnitLocationEventQueueReceived != null)
+					{
+						_unitLocationChannel = await connection.CreateChannelAsync();
+						var prefetchCount = (ushort)Math.Min(
+							ushort.MaxValue,
+							Math.Max(1, UnitTrackingConfig.UnitLocationQueuePrefetchCount));
+						await _unitLocationChannel.BasicQosAsync(0, prefetchCount, false);
+					}
+
+					if (PersonnelLocationEventQueueReceived != null)
+					{
+						// Personnel location storage must never serialize dispatch callbacks behind a slow
+						// Mongo/DocumentDB operation. Rabbit dispatches callbacks sequentially per channel.
+						_personnelLocationChannel = await connection.CreateChannelAsync();
+						await _personnelLocationChannel.BasicQosAsync(0, 1, false);
+					}
+
+					await StartMonitoring();
+				}
+				catch
 				{
-					_unitLocationChannel = await connection.CreateChannelAsync();
-					var prefetchCount = (ushort)Math.Min(
-						ushort.MaxValue,
-						Math.Max(1, UnitTrackingConfig.UnitLocationQueuePrefetchCount));
-					await _unitLocationChannel.BasicQosAsync(0, prefetchCount, false);
+					// A partial startup must not linger: if StartMonitoring fails after the channels
+					// were created, every channel is open but consumers are incomplete, so IsConnected()
+					// would report healthy while nothing (or only some queues) is being consumed and the
+					// host watchdog would never rebuild. Tear everything down — nulled fields make
+					// IsConnected() false — and let the caller's retry path handle the failure.
+					await DisposeChannelsAsync();
+					throw;
 				}
-
-				if (PersonnelLocationEventQueueReceived != null)
-				{
-					// Personnel location storage must never serialize dispatch callbacks behind a slow
-					// Mongo/DocumentDB operation. Rabbit dispatches callbacks sequentially per channel.
-					_personnelLocationChannel = await connection.CreateChannelAsync();
-					await _personnelLocationChannel.BasicQosAsync(0, 1, false);
-				}
-
-				await StartMonitoring();
 			}
 		}
 

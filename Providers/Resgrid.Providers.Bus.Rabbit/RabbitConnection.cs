@@ -34,35 +34,46 @@ namespace Resgrid.Providers.Bus.Rabbit
 
 				try
 				{
-					_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
-					_connection = await _factory.CreateConnectionAsync(clientName);
-				}
-				catch (Exception ex)
-				{
-					Logging.LogException(ex);
-
-					if (!String.IsNullOrWhiteSpace(ServiceBusConfig.RabbitHostname2))
+					// Re-check inside the lock: concurrent callers (e.g. several publishers recovering
+					// through ForceResetAsync at once) all pass the unsynchronized null check above and
+					// queue on the semaphore. Without this re-check each waiter would create its own
+					// IConnection in turn — orphaning the previous one undisposed and inflating the
+					// broker's connection count. Only the first acquirer may create the connection.
+					if (_connection == null)
 					{
 						try
 						{
-							_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname2, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+							_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
 							_connection = await _factory.CreateConnectionAsync(clientName);
 						}
-						catch (Exception ex2)
+						catch (Exception ex)
 						{
-							Logging.LogException(ex2);
+							Logging.LogException(ex);
 
-							if (!String.IsNullOrWhiteSpace(ServiceBusConfig.RabbitHostname3))
+							if (!String.IsNullOrWhiteSpace(ServiceBusConfig.RabbitHostname2))
 							{
 								try
 								{
-									_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname3, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+									_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname2, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
 									_connection = await _factory.CreateConnectionAsync(clientName);
 								}
-								catch (Exception ex3)
+								catch (Exception ex2)
 								{
-									Logging.LogException(ex3);
-									throw;
+									Logging.LogException(ex2);
+
+									if (!String.IsNullOrWhiteSpace(ServiceBusConfig.RabbitHostname3))
+									{
+										try
+										{
+											_factory = new ConnectionFactory() { HostName = ServiceBusConfig.RabbitHostname3, UserName = ServiceBusConfig.RabbitUsername, Password = ServiceBusConfig.RabbbitPassword };
+											_connection = await _factory.CreateConnectionAsync(clientName);
+										}
+										catch (Exception ex3)
+										{
+											Logging.LogException(ex3);
+											throw;
+										}
+									}
 								}
 							}
 						}

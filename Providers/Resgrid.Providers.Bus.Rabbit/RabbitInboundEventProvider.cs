@@ -46,7 +46,19 @@ namespace Resgrid.Providers.Bus.Rabbit
 			if (_channel == null)
 				return;
 
-			await StartMonitoring(queueName);
+			try
+			{
+				await StartMonitoring(queueName);
+			}
+			catch
+			{
+				// If consumer registration fails the channel is open but consumes nothing, so
+				// IsConnected() would report healthy and the host watchdog would never rebuild.
+				// Tear the channel down (nulled field makes IsConnected() false) and rethrow for
+				// the caller's retry path.
+				await DisposeChannelAsync();
+				throw;
+			}
 		}
 
 		private async Task DisposeChannelAsync()

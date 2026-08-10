@@ -269,6 +269,7 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<ChatbotIdentityRepository>().As<IChatbotIdentityRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ChatbotLinkingCodeRepository>().As<IChatbotLinkingCodeRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<ChatbotDepartmentConfigRepository>().As<IChatbotDepartmentConfigRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<ChatbotMessageLogRepository>().As<IChatbotMessageLogRepository>().InstancePerLifetimeScope();
 
 			// UTF-8 / PostgreSQL-migration data maintenance
 			builder.RegisterType<Utf8MaintenanceRepository>().As<IUtf8MaintenanceRepository>().InstancePerLifetimeScope();

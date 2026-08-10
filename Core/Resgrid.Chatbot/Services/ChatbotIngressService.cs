@@ -7,6 +7,7 @@ using Resgrid.Config;
 using Resgrid.Chatbot.Interfaces;
 using Resgrid.Chatbot.Models;
 using Resgrid.Framework;
+using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Chatbot.Services
@@ -29,6 +30,7 @@ namespace Resgrid.Chatbot.Services
 		private readonly ISecurityPinService _securityPinService;
 		private readonly ITextResponseResolver _textResponseResolver;
 		private readonly IChatbotConversationalFallback _conversationalFallback;
+		private readonly IChatbotMessageLogRepository _messageLogRepository;
 
 		private const int MaxPinAttempts = 3;
 
@@ -52,7 +54,8 @@ namespace Resgrid.Chatbot.Services
 			IChatbotRateLimiter rateLimiter,
 			ISecurityPinService securityPinService,
 			ITextResponseResolver textResponseResolver,
-			IChatbotConversationalFallback conversationalFallback)
+			IChatbotConversationalFallback conversationalFallback,
+			IChatbotMessageLogRepository messageLogRepository)
 		{
 			_userIdentityService = userIdentityService;
 			_sessionManager = sessionManager;
@@ -70,12 +73,17 @@ namespace Resgrid.Chatbot.Services
 			_securityPinService = securityPinService;
 			_textResponseResolver = textResponseResolver;
 			_conversationalFallback = conversationalFallback;
+			_messageLogRepository = messageLogRepository;
 		}
 
 		public async Task<ChatbotResponse> ProcessMessageAsync(ChatbotMessage message)
 		{
 			if (message == null || string.IsNullOrWhiteSpace(message.Text))
 				return new ChatbotResponse { Text = string.Empty, Processed = false };
+
+			// Hoisted so the outer catch can attribute a pipeline-error audit row to the right
+			// department/user when the failure happened after session resolution.
+			ChatbotSession session = null;
 
 			try
 			{
@@ -243,7 +251,7 @@ namespace Resgrid.Chatbot.Services
 				var sessionTtlMinutes = deptConfig?.SessionTtlMinutes > 0
 					? deptConfig.SessionTtlMinutes
 					: ChatbotConfig.DefaultSessionTimeoutMinutes;
-				var session = await _sessionManager.GetOrCreateSessionAsync(
+				session = await _sessionManager.GetOrCreateSessionAsync(
 					identity.UserId,
 					department.DepartmentId,
 					message.Platform,
@@ -567,11 +575,15 @@ namespace Resgrid.Chatbot.Services
 				// fallback can only produce informational replies. The LLM is an external/network
 				// dependency: a failure or timeout must degrade to the plain "didn't understand" reply,
 				// never bubble up to the generic error handler (which would lose the informational answer).
+				var unhandledReason = Model.ChatbotMessageLog.ReasonUnmatched;
 				try
 				{
 					var fallbackResponse = await _conversationalFallback.TryHandleAsync(message, session);
 					if (fallbackResponse != null)
 					{
+						// The LLM answered but no structured intent could — still a coverage gap
+						// worth mining, so it's audited before the reply goes out.
+						await LogUnhandledMessageAsync(message, session, intent, Model.ChatbotMessageLog.ReasonFallbackAnswered, processed: true);
 						fallbackResponse.Intent = intent;
 						await _sessionManager.SaveSessionAsync(session);
 						return fallbackResponse;
@@ -581,7 +593,10 @@ namespace Resgrid.Chatbot.Services
 				{
 					Logging.LogException(fallbackEx,
 						$"Chatbot conversational fallback failed (intent={intent?.Type}, sessionId={session?.SessionId}, messageId={message?.MessageId}); using the default response.");
+					unhandledReason = Model.ChatbotMessageLog.ReasonFallbackError;
 				}
+
+				await LogUnhandledMessageAsync(message, session, intent, unhandledReason, processed: false);
 
 				return new ChatbotResponse
 				{
@@ -593,11 +608,51 @@ namespace Resgrid.Chatbot.Services
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
+				await LogUnhandledMessageAsync(message, session, null, Model.ChatbotMessageLog.ReasonPipelineError, processed: false, error: ex.Message);
 				return new ChatbotResponse
 				{
 					Text = "An error occurred processing your request. Please try again later.",
 					Processed = false
 				};
+			}
+		}
+
+		/// <summary>
+		/// Best-effort audit write for a message the pipeline couldn't handle with a structured
+		/// intent, so unmet feature requests can be analyzed later (ChatbotMessageLog table).
+		/// Must never affect the reply path: failures are logged and swallowed, and a missing
+		/// repository is a no-op.
+		/// </summary>
+		private async Task LogUnhandledMessageAsync(ChatbotMessage message, ChatbotSession session,
+			ChatbotIntent intent, string reason, bool processed, string error = null)
+		{
+			if (_messageLogRepository == null)
+				return;
+
+			try
+			{
+				var errorInfo = string.IsNullOrWhiteSpace(error) ? reason : $"{reason}: {error}";
+				if (errorInfo.Length > 500)
+					errorInfo = errorInfo.Substring(0, 500);
+
+				await _messageLogRepository.InsertAsync(new Model.ChatbotMessageLog
+				{
+					Id = Guid.NewGuid().ToString("N"),
+					DepartmentId = session?.DepartmentId ?? 0,
+					UserId = session?.UserId,
+					SessionId = session?.SessionId,
+					Platform = (int)message.Platform,
+					Direction = "inbound",
+					MessageText = message.Text,
+					IntentType = intent != null ? (int?)intent.Type : null,
+					Processed = processed,
+					ErrorInfo = errorInfo,
+					Timestamp = DateTime.UtcNow
+				}, System.Threading.CancellationToken.None);
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, "Failed to write chatbot unhandled-message audit entry.");
 			}
 		}
 

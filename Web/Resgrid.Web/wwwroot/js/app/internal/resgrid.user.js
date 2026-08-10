@@ -9,12 +9,16 @@ var resgrid;
     var main;
     (function (main) {
         // Expired auth cookies leave background polls (DataTables ajax, etc.) failing with 401s;
-        // send the user back to the login page instead of surfacing broken-table errors.
+        // the ajaxError handler below redirects to login, so only the 401 alert is silenced here.
+        // Every other DataTables error keeps the library's default alert so real problems surface.
         if ($.fn.dataTable) {
-            $.fn.dataTable.ext.errMode = 'none';
-            $(document).on('error.dt', function (e, settings, techNote, message) {
-                if (window.console && console.warn) { console.warn(message); }
-            });
+            $.fn.dataTable.ext.errMode = function (settings, techNote, message) {
+                if (settings && settings.jqXHR && settings.jqXHR.status === 401) {
+                    if (window.console && console.warn) { console.warn(message); }
+                    return;
+                }
+                alert(message);
+            };
         }
 
         $(document).ajaxError(function (event, jqxhr) {

@@ -127,8 +127,10 @@ namespace Resgrid.Chatbot.Services
 			catch (Exception ex)
 			{
 				// A board read failure must not take the whole answer down — the caller degrades to
-				// "I couldn't read the board for that incident".
+				// "I couldn't read the board for that incident". The flag keeps this distinct from
+				// "no command established", which would be a false statement here.
 				Logging.LogException(ex, $"Chatbot incident context: board read failed for call {call.CallId}.");
+				context.BoardReadFailed = true;
 				return context;
 			}
 

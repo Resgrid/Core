@@ -36,10 +36,17 @@ namespace Resgrid.Chatbot.Interfaces
 		public bool IsUnauthorized { get; set; }
 
 		/// <summary>
+		/// Set when the call resolved but reading its command board threw — the board's state is
+		/// unknown, which is different from "no command established".
+		/// </summary>
+		public bool BoardReadFailed { get; set; }
+
+		/// <summary>
 		/// True when a call resolved but no incident command has been established on it — the assistant
 		/// can still say something useful ("no command established"), so it isn't the same as not-found.
+		/// A failed board read is excluded: an unreadable board says nothing about whether command exists.
 		/// </summary>
-		public bool HasNoCommand => Call != null && Board?.Command == null;
+		public bool HasNoCommand => Call != null && Board?.Command == null && !BoardReadFailed;
 
 		public bool IsResolved => Call != null && Board?.Command != null;
 	}

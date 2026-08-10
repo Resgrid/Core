@@ -77,6 +77,9 @@ namespace Resgrid.Chatbot.Handlers
 				if (context.Call == null)
 					return new ChatbotResponse { Text = ChatbotResources.Get("Incident_NoActiveCommand", culture), Processed = false };
 
+				if (context.BoardReadFailed)
+					return new ChatbotResponse { Text = ChatbotResources.Get("Incident_BoardUnavailable", culture), Processed = false };
+
 				if (context.HasNoCommand)
 					return new ChatbotResponse
 					{

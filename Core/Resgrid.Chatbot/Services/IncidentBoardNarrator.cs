@@ -157,7 +157,8 @@ namespace Resgrid.Chatbot.Services
 			var board = context.Board;
 			var liveAssignments = LiveAssignments(board);
 			var liveNodes = LiveNodes(board);
-			var resourceNames = await BuildResourceNameLookupAsync(context, session);
+			var names = await GetPersonNamesAsync(session);
+			var resourceNames = await BuildResourceNameLookupAsync(context, session, names);
 
 			// "Who is unassigned?" — everything tracked on the incident but not yet placed in a lane.
 			if (!string.IsNullOrWhiteSpace(laneName) && laneName.Trim().Equals("unassigned", StringComparison.OrdinalIgnoreCase))
@@ -182,7 +183,6 @@ namespace Resgrid.Chatbot.Services
 						liveNodes.Count == 0 ? ChatbotResources.Get("Incident_NoLanes", culture) : string.Join(", ", liveNodes.Select(n => n.Name)));
 
 				var inLane = liveAssignments.Where(a => string.Equals(a.CommandStructureNodeId, node.CommandStructureNodeId, StringComparison.OrdinalIgnoreCase)).ToList();
-				var names = await GetPersonNamesAsync(session);
 
 				var laneSb = new StringBuilder();
 				laneSb.AppendLine(ChatbotResources.Get("Incident_LaneHeader", culture, node.Name, NodeTypeName(node.NodeType), inLane.Count));
@@ -564,7 +564,7 @@ namespace Resgrid.Chatbot.Services
 			var command = board.Command;
 			var names = await GetPersonNamesAsync(session);
 			var department = await _departmentsService.GetDepartmentByIdAsync(session.DepartmentId);
-			var resourceNames = await BuildResourceNameLookupAsync(context, session);
+			var resourceNames = await BuildResourceNameLookupAsync(context, session, names);
 			var playbook = IcsPlaybooks.Infer(context.Call, command.Name);
 
 			var sb = new StringBuilder();
@@ -776,7 +776,7 @@ namespace Resgrid.Chatbot.Services
 			var board = context.Board;
 			var command = board.Command;
 			var names = await GetPersonNamesAsync(session);
-			var resourceNames = await BuildResourceNameLookupAsync(context, session);
+			var resourceNames = await BuildResourceNameLookupAsync(context, session, names);
 			var playbook = IcsPlaybooks.Infer(context.Call, command.Name);
 			var liveNodes = LiveNodes(board);
 			var liveAssignments = LiveAssignments(board);
@@ -932,11 +932,12 @@ namespace Resgrid.Chatbot.Services
 		/// Department units and personnel come from their rosters; ad-hoc (external) resources come from
 		/// the incident itself, so they only resolve when the caller asked for them to be loaded.
 		/// </summary>
-		private async Task<Dictionary<string, string>> BuildResourceNameLookupAsync(IncidentContext context, ChatbotSession session)
+		private async Task<Dictionary<string, string>> BuildResourceNameLookupAsync(IncidentContext context, ChatbotSession session,
+			Dictionary<string, UserProfile> profiles = null)
 		{
 			var lookup = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
-			var profiles = await GetPersonNamesAsync(session);
+			profiles = profiles ?? await GetPersonNamesAsync(session);
 			foreach (var pair in profiles)
 			{
 				var name = pair.Value?.FullName.AsFirstNameLastName;
@@ -1014,8 +1015,13 @@ namespace Resgrid.Chatbot.Services
 				&& (n.Name.IndexOf(needle, StringComparison.OrdinalIgnoreCase) >= 0
 					|| needle.IndexOf(n.Name, StringComparison.OrdinalIgnoreCase) >= 0)).ToList();
 
-			if (contains.Count > 0)
+			if (contains.Count == 1)
 				return contains[0];
+
+			// Two or more lanes contain the needle ("division" with Division A and Division B on the
+			// board): picking one would answer about the wrong lane, so refuse rather than guess.
+			if (contains.Count > 1)
+				return null;
 
 			// Last resort: the commander named an ICS type with no designator ("who's in staging"). The
 			// needle must be a substring OF the type word, never the other way round — "Division Z" must

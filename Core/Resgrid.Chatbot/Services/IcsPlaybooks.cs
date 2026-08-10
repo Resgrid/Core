@@ -662,12 +662,29 @@ namespace Resgrid.Chatbot.Services
 			{
 				if (string.Equals(playbook.DisplayName, needle, StringComparison.OrdinalIgnoreCase))
 					return playbook;
-
-				if (playbook.Keywords.Any(k => needle.Contains(k)))
-					return playbook;
 			}
 
-			return null;
+			// Same longest-keyword-wins scoring as Infer, so "vehicle fire" resolves to the vehicle
+			// playbook even though a fire playbook appears earlier in the list.
+			IncidentPlaybook best = null;
+			var bestScore = 0;
+
+			foreach (var playbook in Playbooks)
+			{
+				var score = playbook.Keywords
+					.Where(keyword => ContainsPhrase(needle, keyword))
+					.Select(keyword => keyword.Length)
+					.DefaultIfEmpty(0)
+					.Max();
+
+				if (score > bestScore)
+				{
+					bestScore = score;
+					best = playbook;
+				}
+			}
+
+			return best;
 		}
 
 		/// <summary>
@@ -697,7 +714,7 @@ namespace Resgrid.Chatbot.Services
 			foreach (var playbook in Playbooks)
 			{
 				var score = playbook.Keywords
-					.Where(keyword => haystack.Contains(keyword))
+					.Where(keyword => ContainsPhrase(haystack, keyword))
 					.Select(keyword => keyword.Length)
 					.DefaultIfEmpty(0)
 					.Max();
@@ -710,6 +727,28 @@ namespace Resgrid.Chatbot.Services
 			}
 
 			return best ?? GeneralPlaybook;
+		}
+
+		/// <summary>
+		/// Whole-phrase containment: the keyword must sit on word boundaries so "od" doesn't match
+		/// inside "flood" and "brush" doesn't match inside "toothbrush". Both inputs are lowercase.
+		/// </summary>
+		private static bool ContainsPhrase(string haystack, string phrase)
+		{
+			var index = 0;
+			while ((index = haystack.IndexOf(phrase, index, StringComparison.Ordinal)) >= 0)
+			{
+				var endIndex = index + phrase.Length;
+				var startsOnBoundary = index == 0 || !char.IsLetterOrDigit(haystack[index - 1]);
+				var endsOnBoundary = endIndex >= haystack.Length || !char.IsLetterOrDigit(haystack[endIndex]);
+
+				if (startsOnBoundary && endsOnBoundary)
+					return true;
+
+				index++;
+			}
+
+			return false;
 		}
 
 		/// <summary>

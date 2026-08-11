@@ -1,4 +1,10 @@
-﻿$(document).ready(function () {
+﻿// Bundled react-elements.css inlines the Leaflet marker as a data URI, which breaks
+// L.Icon.Default's CSS path detection. Pin the image path explicitly.
+if (typeof L !== 'undefined' && L.Icon && L.Icon.Default) {
+	L.Icon.Default.imagePath = '/lib/leaflet/dist/images/';
+}
+
+$(document).ready(function () {
 
 
 	// Add body-small class if window less than 768px

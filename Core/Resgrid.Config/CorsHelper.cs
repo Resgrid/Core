@@ -8,8 +8,11 @@ namespace Resgrid.Config
 	/// An origin is allowed when it matches any of:
 	/// 1. An entry in <see cref="ApiConfig.CorsAllowedOrigins"/>. Entries with a scheme
 	///    ("http://localhost:8081") must match the origin's scheme, host and port exactly; bare
-	///    hosts ("dispatch.example.com") match that host on any scheme/port. A single "*" entry
-	///    allows every origin and is intended only for isolated on-prem or development installs.
+	///    hosts ("dispatch.example.com") match that host on any scheme/port; wildcard hosts
+	///    ("*.resgrid.com") match the apex and every subdomain on any scheme/port. An entry equal
+	///    to the raw Origin header value also matches verbatim, which covers desktop-app origins
+	///    like Electron's "app://." that are not standard URIs. A single "*" entry allows every
+	///    origin and is intended only for isolated on-prem or development installs.
 	/// 2. The host of one of the configured base urls (ResgridBaseUrl, ResgridApiBaseUrl,
 	///    ResgridEventingBaseUrl), or any subdomain of one of those hosts.
 	/// 3. The widest safe parent domain of a base-url host, or any subdomain of it. This is what
@@ -82,7 +85,16 @@ namespace Resgrid.Config
 		/// </summary>
 		public static bool IsAllowedOrigin(string origin)
 		{
-			if (String.IsNullOrWhiteSpace(origin) || !Uri.TryCreate(origin, UriKind.Absolute, out var originUri) || String.IsNullOrWhiteSpace(originUri.Host))
+			if (String.IsNullOrWhiteSpace(origin))
+				return false;
+
+			// Verbatim config match before URI parsing: desktop-app origins such as
+			// Electron's custom-scheme "app://." are not reliably parseable as absolute
+			// URIs, so an exact entry must be honored without going through Uri.
+			if (MatchesConfiguredOriginVerbatim(origin))
+				return true;
+
+			if (!Uri.TryCreate(origin, UriKind.Absolute, out var originUri) || String.IsNullOrWhiteSpace(originUri.Host))
 				return false;
 
 			if (MatchesConfiguredOrigin(originUri))
@@ -109,6 +121,25 @@ namespace Resgrid.Config
 			return false;
 		}
 
+		private static bool MatchesConfiguredOriginVerbatim(string origin)
+		{
+			var configured = ApiConfig.CorsAllowedOrigins;
+			if (String.IsNullOrWhiteSpace(configured))
+				return false;
+
+			foreach (var rawEntry in configured.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries))
+			{
+				var entry = rawEntry.Trim();
+				if (entry.Length == 0)
+					continue;
+
+				if (entry == "*" || String.Equals(entry, origin, StringComparison.OrdinalIgnoreCase))
+					return true;
+			}
+
+			return false;
+		}
+
 		private static bool MatchesConfiguredOrigin(Uri originUri)
 		{
 			var configured = ApiConfig.CorsAllowedOrigins;
@@ -123,6 +154,17 @@ namespace Resgrid.Config
 
 				if (entry == "*")
 					return true;
+
+				if (entry.StartsWith("*.", StringComparison.Ordinal))
+				{
+					// Wildcard host: "*.resgrid.com" allows the apex and every subdomain,
+					// on any scheme and port.
+					var suffix = entry.Substring(2);
+					if (suffix.Length > 0 && HostMatchesOrIsSubdomainOf(originUri.Host, suffix))
+						return true;
+
+					continue;
+				}
 
 				if (entry.Contains("://"))
 				{

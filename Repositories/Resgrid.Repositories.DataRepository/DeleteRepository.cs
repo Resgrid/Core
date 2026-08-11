@@ -143,6 +143,7 @@ namespace Resgrid.Repositories.DataRepository
 								DELETE FROM [dbo].[DepartmentVoiceChannels] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[DepartmentVoices] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[CallQuickTemplates] WHERE DepartmentId = @DepartmentId
+								DELETE FROM [dbo].[DepartmentCallPruning] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[Departments] WHERE DepartmentId = @DepartmentId
 
 								-- Delete the managing member's user

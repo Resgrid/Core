@@ -148,6 +148,32 @@ namespace Resgrid.Tests.Config
 		}
 
 		[Test]
+		public void should_match_wildcard_host_entries_for_apex_and_subdomains()
+		{
+			ApiConfig.CorsAllowedOrigins = "*.resgrid.com, *.resgrid.io";
+
+			CorsHelper.IsAllowedOrigin("https://resgrid.com").Should().BeTrue();
+			CorsHelper.IsAllowedOrigin("https://dispatch.resgrid.com").Should().BeTrue();
+			CorsHelper.IsAllowedOrigin("http://unit.resgrid.com:3000").Should().BeTrue();
+			CorsHelper.IsAllowedOrigin("https://app.resgrid.io").Should().BeTrue();
+			CorsHelper.IsAllowedOrigin("https://evilresgrid.com").Should().BeFalse();
+			CorsHelper.IsAllowedOrigin("https://resgrid.com.evil.com").Should().BeFalse();
+			CorsHelper.IsAllowedOrigin("https://resgrid.org").Should().BeFalse();
+		}
+
+		[Test]
+		public void should_match_electron_custom_scheme_origin_verbatim()
+		{
+			ApiConfig.CorsAllowedOrigins = "app://., http://localhost:8081";
+
+			CorsHelper.IsAllowedOrigin("app://.").Should().BeTrue();
+			CorsHelper.IsAllowedOrigin("APP://.").Should().BeTrue();
+			CorsHelper.IsAllowedOrigin("app://evil").Should().BeFalse();
+			// The sandboxed-iframe/file:// "null" origin must stay blocked unless listed.
+			CorsHelper.IsAllowedOrigin("null").Should().BeFalse();
+		}
+
+		[Test]
 		public void should_allow_everything_with_a_wildcard_entry()
 		{
 			ApiConfig.CorsAllowedOrigins = "*";

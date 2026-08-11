@@ -20,7 +20,8 @@
 		/// to the API and eventing hubs, on top of the configured base urls, their subdomains and
 		/// their shared parent domain (see Resgrid.Config.CorsHelper). Entries with a scheme match
 		/// the exact origin ("http://localhost:8081"); bare hosts match that host on any scheme and
-		/// port ("dispatch.example.com"). A single "*" allows every origin — intended only for
+		/// port ("dispatch.example.com"); wildcard hosts match the apex and every subdomain on any
+		/// scheme and port ("*.resgrid.com"). A single "*" allows every origin — intended only for
 		/// isolated on-prem or development installs.
 		/// </summary>
 		public static string CorsAllowedOrigins = "";

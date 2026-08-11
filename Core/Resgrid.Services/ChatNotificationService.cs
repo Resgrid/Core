@@ -72,9 +72,11 @@ namespace Resgrid.Services
 				mentions?.Where(m => m.MentionType == (int)ChatMentionType.User && !string.IsNullOrWhiteSpace(m.TargetUserId)).Select(m => m.TargetUserId) ?? Enumerable.Empty<string>(),
 				StringComparer.OrdinalIgnoreCase);
 
-			// Presence suppression: online users already get the message over SignalR.
-			var onlineUsers = new HashSet<string>(
-				await _chatPresenceService.GetOnlineUsersAsync(channel.DepartmentId, audience),
+			// Active-channel suppression: only viewers with THIS conversation open are skipped — they see
+			// the message live over SignalR. Online-but-elsewhere users still get a push so background
+			// channels can alert them.
+			var activeUsers = new HashSet<string>(
+				await _chatPresenceService.GetUsersActiveInChannelAsync(channel.DepartmentId, audience, channel.ChatChannelId),
 				StringComparer.OrdinalIgnoreCase);
 
 			var isDm = channel.ChannelType == (int)ChatChannelType.DirectMessage;
@@ -100,7 +102,7 @@ namespace Resgrid.Services
 					if (string.Equals(userId, message.SenderUserId, StringComparison.OrdinalIgnoreCase))
 						continue;
 
-					if (onlineUsers.Contains(userId))
+					if (activeUsers.Contains(userId))
 						continue;
 
 					membersByUser.TryGetValue(userId, out var member);
@@ -117,6 +119,9 @@ namespace Resgrid.Services
 				foreach (var unitMember in memberRows.Where(m => m.ParticipantType == (int)ChatParticipantType.Unit && m.UnitId.HasValue && !m.RemovedOn.HasValue && !m.IsBanned))
 				{
 					if (message.SenderUnitId.HasValue && message.SenderUnitId.Value == unitMember.UnitId.Value)
+						continue;
+
+					if (await _chatPresenceService.IsUnitActiveInChannelAsync(channel.DepartmentId, unitMember.UnitId.Value, channel.ChatChannelId))
 						continue;
 
 					if (!ShouldNotify(unitMember, isUrgent, urgentOverridesMute, mentionedEveryone))

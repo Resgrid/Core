@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Resgrid.Config;
 using Resgrid.Framework;
+using Sentry;
 using Sentry.Profiling;
 
 namespace Resgrid.Web.ServicesCore
@@ -64,6 +65,10 @@ namespace Resgrid.Web.ServicesCore
 							options.Release = Assembly.GetEntryAssembly().GetName().Version.ToString();
 							options.ProfilesSampleRate = ExternalErrorConfig.SentryProfilingSampleRate;
 							options.SetBeforeSendTransaction(SentryTransactionFilter.Filter);
+
+							// Client aborted/malformed requests (e.g. "Unexpected end of request content"
+							// when a mobile upload drops mid-body) are not actionable server errors.
+							options.AddExceptionFilterForType<Microsoft.AspNetCore.Server.Kestrel.Core.BadHttpRequestException>();
 
 							// Requires NuGet package: Sentry.Profiling
 							// Note: By default, the profiler is initialized asynchronously. This can be tuned by passing a desired initialization timeout to the constructor.

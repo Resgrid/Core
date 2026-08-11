@@ -48,8 +48,8 @@ export default function NewConversationDialog({ currentUserId, onClose, onCreate
       if (selected.length === 1) {
         channel = await createDirectMessage(selected[0]);
       } else {
-        const name = groupName.trim().length > 0 ? groupName.trim() : 'New group';
-        channel = await createAdHocChannel(name, selected);
+        // Empty name is fine — the server names the group after its members.
+        channel = await createAdHocChannel(groupName.trim(), selected);
       }
       if (channel) {
         onCreated(channel);
@@ -89,7 +89,7 @@ export default function NewConversationDialog({ currentUserId, onClose, onCreate
       {selected.length > 1 && (
         <input
           className="rgchat-input rgchat-dialog__field"
-          placeholder="Group name"
+          placeholder="Group name (optional)"
           value={groupName}
           onChange={(event) => setGroupName(event.target.value)}
         />

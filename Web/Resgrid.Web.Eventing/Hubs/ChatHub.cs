@@ -278,5 +278,32 @@ namespace Resgrid.Web.Eventing.Hubs
 			if (departmentId > 0 && !string.IsNullOrWhiteSpace(userId))
 				await _chatPresenceService.TouchAsync(departmentId, userId);
 		}
+
+		/// <summary>
+		/// Marks the channel the caller is actively viewing (null/empty clears it). Push notifications for
+		/// a channel are suppressed only for viewers active in that channel — merely being online no longer
+		/// suppresses them. Clients call this on conversation open/close and on app foreground/background.
+		/// </summary>
+		public async Task SetActiveChannel(string channelId, int? asUnitId = null)
+		{
+			var departmentId = ClaimsAuthorizationHelper.GetDepartmentId();
+			var userId = ClaimsAuthorizationHelper.GetUserId();
+
+			if (departmentId <= 0 || string.IsNullOrWhiteSpace(userId))
+				return;
+
+			if (string.IsNullOrWhiteSpace(channelId))
+			{
+				await _chatPresenceService.ClearActiveChannelAsync(departmentId, userId);
+				return;
+			}
+
+			// Access-check before recording, so a forged channelId can't suppress someone else's pushes.
+			var access = await ResolveAccessibleChannelAsync(channelId, asUnitId);
+			if (access == null)
+				return;
+
+			await _chatPresenceService.SetActiveChannelAsync(departmentId, userId, channelId, asUnitId);
+		}
 	}
 }

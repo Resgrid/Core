@@ -1029,9 +1029,8 @@ public class CreateDirectMessageInput
 public class CreateAdHocChannelInput
 {
 	/// <summary>
-	/// Name of the channel
+	/// Name of the channel. Optional — when omitted the server names the group after its members.
 	/// </summary>
-	[Required]
 	[StringLength(100)]
 	public string Name { get; set; }
 

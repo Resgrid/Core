@@ -869,6 +869,38 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
+		public async Task<IEnumerable<ChatChannelMember>> GetActiveByChannelIdsAsync(IEnumerable<string> chatChannelIds)
+		{
+			try
+			{
+				var ids = chatChannelIds?.ToList() ?? new List<string>();
+				if (ids.Count == 0)
+					return new List<ChatChannelMember>();
+
+				var notation = _sqlConfiguration.ParameterNotation;
+				var sql = DataConfig.DatabaseType == DatabaseTypes.Postgres
+					? $"SELECT * FROM {_sqlConfiguration.SchemaName}.chatchannelmembers WHERE chatchannelid IN {notation}Ids AND removedon IS NULL"
+					: $"SELECT * FROM {_sqlConfiguration.SchemaName}.[ChatChannelMembers] WHERE [ChatChannelId] IN {notation}Ids AND [RemovedOn] IS NULL";
+
+				var select = new Func<DbConnection, Task<IEnumerable<ChatChannelMember>>>(connection =>
+					connection.QueryAsync<ChatChannelMember>(sql, new { Ids = ids }, _unitOfWork.Transaction));
+
+				if (_unitOfWork?.Connection == null)
+				{
+					using var connection = _connectionProvider.Create();
+					await connection.OpenAsync();
+					return await select(connection);
+				}
+
+				return await select(_unitOfWork.CreateOrGetConnection());
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				throw;
+			}
+		}
+
 		public async Task<bool> AdvanceReadPointerAsync(string chatChannelMemberId, long seq, DateTime readOn)
 		{
 			try

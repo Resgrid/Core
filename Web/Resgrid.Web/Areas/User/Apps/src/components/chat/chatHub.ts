@@ -143,6 +143,7 @@ class ChatHub {
       for (const [channelId, asUnitId] of this.joinedChannels.entries()) {
         await this.invokeJoin(channelId, asUnitId);
       }
+      this.reportActiveChannel();
       this.startHeartbeat();
     })();
 
@@ -274,6 +275,7 @@ class ChatHub {
         await this.invokeJoin(channelId, asUnitId);
         await this.deltaSync(channelId);
       }
+      this.reportActiveChannel();
       this.notifyChannelsRefresh();
     } catch (error) {
       console.error('Chat hub reconnect sync failed.', error);
@@ -364,6 +366,23 @@ class ChatHub {
   public markRead(channelId: string, seq: number, asUnitId?: number): void {
     if (this.connection && this.connection.state === HubConnectionState.Connected) {
       this.connection.invoke(CHAT_HUB_METHODS.MarkRead, channelId, seq, asUnitId ?? null).catch(() => undefined);
+    }
+  }
+
+  // Tells the server which conversation is on screen so pushes for it are suppressed while
+  // everything else still alerts. Remembered locally and re-reported after reconnects.
+  private activeChannelReported: string | null = null;
+
+  public setActiveChannel(channelId: string | null): void {
+    this.activeChannelReported = channelId;
+    this.reportActiveChannel();
+  }
+
+  private reportActiveChannel(): void {
+    if (this.connection && this.connection.state === HubConnectionState.Connected) {
+      this.connection
+        .invoke(CHAT_HUB_METHODS.SetActiveChannel, this.activeChannelReported, null)
+        .catch(() => undefined);
     }
   }
 }

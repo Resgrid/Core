@@ -7984,7 +7984,7 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Chat.CreateAdHocChannelInput.Name">
             <summary>
-            Name of the channel
+            Name of the channel. Optional — when omitted the server names the group after its members.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Chat.CreateAdHocChannelInput.MemberUserIds">

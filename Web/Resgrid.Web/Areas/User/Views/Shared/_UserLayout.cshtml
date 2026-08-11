@@ -40,7 +40,10 @@
                 window.Sentry.init({
                     dsn: '@Resgrid.Config.ExternalErrorConfig.ExternalErrorServiceUrlForWebsite',
                     integrations: [window.Sentry.breadcrumbsIntegration({ console: false })],
-                    tracesSampleRate: @Resgrid.Config.ExternalErrorConfig.SentryPerfSampleRate
+                    tracesSampleRate: @Resgrid.Config.ExternalErrorConfig.SentryPerfSampleRate,
+                    // Safari masks injected extension scripts as webkit-masked-url://; those
+                    // frames are browser-extension code, not ours.
+                    denyUrls: [/webkit-masked-url:\/\//i]
                 });
             }
         </script>

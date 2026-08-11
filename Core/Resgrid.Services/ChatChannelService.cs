@@ -254,7 +254,12 @@ namespace Resgrid.Services
 				saved = await _chatChannelRepository.GetByDmKeyAsync(departmentId, dmKey);
 
 			if (saved != null && string.Equals(saved.ChatChannelId, channel.ChatChannelId, StringComparison.OrdinalIgnoreCase))
+			{
+				// Roll the channel-list cache version so both participants see the new DM on their
+				// next GetChannels instead of waiting out the 45s per-user list cache.
+				await _chatPermissionService.InvalidateChannelCacheAsync(saved.ChatChannelId);
 				PublishChannelEvent(saved, ChatEventKinds.ChannelProvisioned);
+			}
 
 			return saved;
 		}
@@ -291,6 +296,7 @@ namespace Resgrid.Services
 				await AddMemberRowAsync(channel, ChatParticipantType.User, memberId, null, null, creatorUserId, cancellationToken);
 			}
 
+			await _chatPermissionService.InvalidateChannelCacheAsync(channel.ChatChannelId);
 			PublishChannelEvent(channel, ChatEventKinds.ChannelProvisioned);
 
 			return channel;
@@ -327,6 +333,7 @@ namespace Resgrid.Services
 				}
 			}
 
+			await _chatPermissionService.InvalidateChannelCacheAsync(channel.ChatChannelId);
 			PublishChannelEvent(channel, ChatEventKinds.ChannelProvisioned);
 
 			return channel;
@@ -381,6 +388,15 @@ namespace Resgrid.Services
 		public async Task<List<ChatChannelMember>> GetActiveMembershipsForUserAsync(int departmentId, string userId)
 		{
 			var members = await _chatChannelMemberRepository.GetActiveByUserIdAsync(departmentId, userId);
+			return members?.ToList() ?? new List<ChatChannelMember>();
+		}
+
+		public async Task<List<ChatChannelMember>> GetActiveMembersForChannelsAsync(List<string> chatChannelIds)
+		{
+			if (chatChannelIds == null || chatChannelIds.Count == 0)
+				return new List<ChatChannelMember>();
+
+			var members = await _chatChannelMemberRepository.GetActiveByChannelIdsAsync(chatChannelIds);
 			return members?.ToList() ?? new List<ChatChannelMember>();
 		}
 

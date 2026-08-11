@@ -130,6 +130,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 					result.Data.Add(ConvertChannelResultData(channel, member));
 				}
 
+				await ResolveDirectMessageNamesAsync(result.Data);
+
 				result.PageSize = result.Data.Count;
 				result.Status = ResponseHelper.Success;
 			}
@@ -168,6 +170,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var member = await _chatChannelService.GetUserMembershipAsync(channel.ChatChannelId, UserId);
 
 				result.Data = ConvertChannelResultData(channel, member);
+				await ResolveDirectMessageNamesAsync(new List<ChatChannelResultData> { result.Data });
 				result.PageSize = 1;
 				result.Status = ResponseHelper.Success;
 			}
@@ -209,6 +212,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				var member = await _chatChannelService.GetUserMembershipAsync(channel.ChatChannelId, UserId);
 
 				result.Data = ConvertChannelResultData(channel, member);
+				await ResolveDirectMessageNamesAsync(new List<ChatChannelResultData> { result.Data });
 				result.PageSize = 1;
 				result.Status = ResponseHelper.Created;
 			}
@@ -239,11 +243,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!ModelState.IsValid)
 				return BadRequest();
 
-			if (input == null || String.IsNullOrWhiteSpace(input.Name) || input.MemberUserIds == null || input.MemberUserIds.Count <= 0)
+			if (input == null || input.MemberUserIds == null || input.MemberUserIds.Count <= 0)
 				return BadRequest();
 
+			// No name supplied: name the group after its members (Slack-style), capped to the column length.
+			var name = input.Name?.Trim();
+			if (String.IsNullOrWhiteSpace(name))
+				name = await BuildGroupNameFromMembersAsync(input.MemberUserIds);
+
 			var result = new ChatChannelCreatedResult();
-			var channel = await _chatChannelService.CreateAdHocGroupChannelAsync(DepartmentId, UserId, input.Name, input.MemberUserIds, cancellationToken);
+			var channel = await _chatChannelService.CreateAdHocGroupChannelAsync(DepartmentId, UserId, name, input.MemberUserIds, cancellationToken);
 
 			if (channel != null)
 			{
@@ -1771,6 +1780,110 @@ namespace Resgrid.Web.Services.Controllers.v4
 			}
 
 			return data;
+		}
+
+		private const int MaxDerivedGroupNameLength = 100;
+
+		// "Alice Smith, Bob Jones" from the invited members (creator excluded — matches how Slack labels
+		// unnamed group DMs). Falls back to "New group" only if no profile resolves.
+		private async Task<string> BuildGroupNameFromMembersAsync(List<string> memberUserIds)
+		{
+			var ids = memberUserIds?
+				.Where(id => !String.IsNullOrWhiteSpace(id) && !String.Equals(id, UserId, StringComparison.OrdinalIgnoreCase))
+				.Distinct(StringComparer.OrdinalIgnoreCase)
+				.ToList() ?? new List<string>();
+
+			var names = new List<string>();
+			if (ids.Count > 0)
+			{
+				var profiles = await _userProfileService.GetSelectedUserProfilesAsync(ids);
+				foreach (var profile in profiles ?? new List<UserProfile>())
+				{
+					var name = profile?.FullName?.AsFirstNameLastName;
+					if (!String.IsNullOrWhiteSpace(name))
+						names.Add(name);
+				}
+			}
+
+			if (names.Count == 0)
+				return "New group";
+
+			names.Sort(StringComparer.OrdinalIgnoreCase);
+
+			var joined = String.Join(", ", names);
+			if (joined.Length <= MaxDerivedGroupNameLength)
+				return joined;
+
+			// Too long: keep whole names and count the rest ("Alice Smith, Bob Jones +3").
+			var kept = new List<string>();
+			var length = 0;
+			foreach (var name in names)
+			{
+				var addition = (kept.Count == 0 ? 0 : 2) + name.Length;
+				if (length + addition + 6 > MaxDerivedGroupNameLength)
+					break;
+
+				kept.Add(name);
+				length += addition;
+			}
+
+			if (kept.Count == 0)
+				kept.Add(names[0].Length > MaxDerivedGroupNameLength - 6 ? names[0].Substring(0, MaxDerivedGroupNameLength - 6) : names[0]);
+
+			var remaining = names.Count - kept.Count;
+			return remaining > 0 ? $"{String.Join(", ", kept)} +{remaining}" : String.Join(", ", kept);
+		}
+
+		// DM channels have no stored Name; label each with the counterpart participant so multiple
+		// DMs stay distinguishable in every client list. Unit counterparts already carry a
+		// DisplayNameOverride stamped at creation; user counterparts resolve via profile lookup.
+		private async Task ResolveDirectMessageNamesAsync(List<ChatChannelResultData> channels)
+		{
+			var dmChannels = channels?.Where(c => c != null && c.ChannelType == (int)ChatChannelType.DirectMessage && String.IsNullOrWhiteSpace(c.Name)).ToList();
+			if (dmChannels == null || dmChannels.Count == 0)
+				return;
+
+			var members = await _chatChannelService.GetActiveMembersForChannelsAsync(dmChannels.Select(c => c.ChatChannelId).ToList());
+			if (members == null || members.Count == 0)
+				return;
+
+			var counterparts = new Dictionary<string, ChatChannelMember>(StringComparer.OrdinalIgnoreCase);
+			foreach (var member in members)
+			{
+				if (member.UserId != null && String.Equals(member.UserId, UserId, StringComparison.OrdinalIgnoreCase))
+					continue;
+
+				if (!counterparts.ContainsKey(member.ChatChannelId))
+					counterparts.Add(member.ChatChannelId, member);
+			}
+
+			var userIds = counterparts.Values
+				.Where(m => String.IsNullOrWhiteSpace(m.DisplayNameOverride) && !String.IsNullOrWhiteSpace(m.UserId))
+				.Select(m => m.UserId)
+				.Distinct()
+				.ToList();
+
+			var namesByUserId = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+			if (userIds.Count > 0)
+			{
+				var profiles = await _userProfileService.GetSelectedUserProfilesAsync(userIds);
+				foreach (var profile in profiles ?? new List<UserProfile>())
+				{
+					if (profile?.UserId != null && !namesByUserId.ContainsKey(profile.UserId))
+						namesByUserId.Add(profile.UserId, profile.FullName?.AsFirstNameLastName);
+				}
+			}
+
+			foreach (var channel in dmChannels)
+			{
+				if (!counterparts.TryGetValue(channel.ChatChannelId, out var counterpart))
+					continue;
+
+				if (!String.IsNullOrWhiteSpace(counterpart.DisplayNameOverride))
+					channel.Name = counterpart.DisplayNameOverride;
+				else if (counterpart.UserId != null && namesByUserId.TryGetValue(counterpart.UserId, out var name) && !String.IsNullOrWhiteSpace(name))
+					channel.Name = name;
+			}
 		}
 
 		private static ChatChannelResultData ConvertChannelResultData(ChatChannel channel, ChatChannelMember member)

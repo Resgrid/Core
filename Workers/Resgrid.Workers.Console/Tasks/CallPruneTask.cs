@@ -49,6 +49,14 @@ namespace Resgrid.Workers.Console.Tasks
 						item.PruneSettings.Department =
 							await _departmentsService.GetDepartmentByIdAsync(item.PruneSettings.DepartmentId);
 
+						if (item.PruneSettings.Department == null)
+						{
+							// Orphaned pruning row for a deleted department; skip it so we don't
+							// null-ref in CallPruneLogic or spam error logs every run.
+							Resgrid.Framework.Logging.LogWarning($"CallPrune::Skipping orphaned pruning settings for deleted DepartmentId:{item.PruneSettings.DepartmentId}");
+							continue;
+						}
+
 						var result = await logic.Process(item);
 
 						if (result.Item1)

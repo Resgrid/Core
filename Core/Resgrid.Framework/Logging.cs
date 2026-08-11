@@ -108,6 +108,16 @@ namespace Resgrid.Framework
 
 		}
 
+		public static void LogWarning(string message)
+		{
+			Initialize(null);
+
+
+			if (_logger != null)
+				_logger.Warning(message);
+
+		}
+
 		public static void LogDebug(string message)
 		{
 			Initialize(null);

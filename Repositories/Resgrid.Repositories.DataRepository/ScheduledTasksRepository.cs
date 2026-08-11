@@ -9,6 +9,7 @@ using System.Configuration;
 using Dapper;
 using System;
 using System.Data.Common;
+using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Framework;
 using Resgrid.Model.Repositories.Connection;
@@ -63,7 +64,8 @@ namespace Resgrid.Repositories.DataRepository
 																					FROM scheduledtasks st
 																					INNER JOIN departmentmembers dm ON dm.userid = st.userid
 																					INNER JOIN departments d ON d.departmentid = dm.departmentid
-																					WHERE st.departmentid = 0 AND st.active = true AND st.tasktype = any (@types)", new { types = types });
+																					WHERE st.departmentid = 0 AND st.active = true AND st.tasktype = any (@types)
+																						AND dm.isdeleted = false AND (dm.isdisabled IS NULL OR dm.isdisabled = false)", new { types = types });
 
 					return knownDepartments.Concat(unknownDepartments);
 				}
@@ -81,7 +83,8 @@ namespace Resgrid.Repositories.DataRepository
 																					FROM ScheduledTasks st
 																					INNER JOIN DepartmentMembers dm ON dm.UserId = st.UserId
 																					INNER JOIN Departments d ON d.DepartmentId = dm.DepartmentId
-																					WHERE st.DepartmentId = 0 AND st.Active = 1 AND st.TaskType IN @types", new { types = types });
+																					WHERE st.DepartmentId = 0 AND st.Active = 1 AND st.TaskType IN @types
+																						AND dm.IsDeleted = 0 AND (dm.IsDisabled IS NULL OR dm.IsDisabled = 0)", new { types = types });
 
 					return knownDepartments.Concat(unknownDepartments);
 				}
@@ -131,6 +134,120 @@ namespace Resgrid.Repositories.DataRepository
 				throw;
 			}
 
+		}
+
+		public async Task<bool> DeleteAllTasksForUserAsync(string userId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (Config.DataConfig.DatabaseType == DatabaseTypes.Postgres)
+			{
+				using (var db = new NpgsqlConnection(DataConfig.CoreConnectionString))
+				{
+					await db.OpenAsync(cancellationToken);
+
+					// Logs and their tasks go together: never leave tasks whose logs are already gone.
+					using (var transaction = db.BeginTransaction())
+					{
+						try
+						{
+							await db.ExecuteAsync(new Dapper.CommandDefinition(@"DELETE FROM scheduledtasklogs WHERE scheduledtaskid IN (SELECT scheduledtaskid FROM scheduledtasks WHERE userid = @userId)", new { userId = userId }, transaction: transaction, cancellationToken: cancellationToken));
+							await db.ExecuteAsync(new Dapper.CommandDefinition(@"DELETE FROM scheduledtasks WHERE userid = @userId", new { userId = userId }, transaction: transaction, cancellationToken: cancellationToken));
+
+							transaction.Commit();
+						}
+						catch
+						{
+							transaction.Rollback();
+							throw;
+						}
+					}
+				}
+			}
+			else
+			{
+				using (var db = new SqlConnection(DataConfig.CoreConnectionString))
+				{
+					await db.OpenAsync(cancellationToken);
+
+					using (var transaction = db.BeginTransaction())
+					{
+						try
+						{
+							await db.ExecuteAsync(new Dapper.CommandDefinition(@"DELETE FROM ScheduledTaskLogs WHERE ScheduledTaskId IN (SELECT ScheduledTaskId FROM ScheduledTasks WHERE UserId = @userId)", new { userId = userId }, transaction: transaction, cancellationToken: cancellationToken));
+							await db.ExecuteAsync(new Dapper.CommandDefinition(@"DELETE FROM ScheduledTasks WHERE UserId = @userId", new { userId = userId }, transaction: transaction, cancellationToken: cancellationToken));
+
+							transaction.Commit();
+						}
+						catch
+						{
+							transaction.Rollback();
+							throw;
+						}
+					}
+				}
+			}
+
+			return true;
+		}
+
+		public async Task<bool> DeleteAllTasksForUserInDepartmentAsync(string userId, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			// Fail closed: a non-positive id would match the legacy DepartmentId = 0 rows,
+			// which belong to the user across departments and must survive a single-department revoke.
+			if (departmentId <= 0)
+			{
+				Logging.LogWarning($"DeleteAllTasksForUserInDepartmentAsync called with non-positive departmentId {departmentId} for user {userId}; skipping delete.");
+				return false;
+			}
+
+			if (Config.DataConfig.DatabaseType == DatabaseTypes.Postgres)
+			{
+				using (var db = new NpgsqlConnection(DataConfig.CoreConnectionString))
+				{
+					await db.OpenAsync(cancellationToken);
+
+					// Logs and their tasks go together: never leave tasks whose logs are already gone.
+					using (var transaction = db.BeginTransaction())
+					{
+						try
+						{
+							await db.ExecuteAsync(new Dapper.CommandDefinition(@"DELETE FROM scheduledtasklogs WHERE scheduledtaskid IN (SELECT scheduledtaskid FROM scheduledtasks WHERE userid = @userId AND departmentid = @departmentId)", new { userId = userId, departmentId = departmentId }, transaction: transaction, cancellationToken: cancellationToken));
+							await db.ExecuteAsync(new Dapper.CommandDefinition(@"DELETE FROM scheduledtasks WHERE userid = @userId AND departmentid = @departmentId", new { userId = userId, departmentId = departmentId }, transaction: transaction, cancellationToken: cancellationToken));
+
+							transaction.Commit();
+						}
+						catch
+						{
+							transaction.Rollback();
+							throw;
+						}
+					}
+				}
+			}
+			else
+			{
+				using (var db = new SqlConnection(DataConfig.CoreConnectionString))
+				{
+					await db.OpenAsync(cancellationToken);
+
+					using (var transaction = db.BeginTransaction())
+					{
+						try
+						{
+							await db.ExecuteAsync(new Dapper.CommandDefinition(@"DELETE FROM ScheduledTaskLogs WHERE ScheduledTaskId IN (SELECT ScheduledTaskId FROM ScheduledTasks WHERE UserId = @userId AND DepartmentId = @departmentId)", new { userId = userId, departmentId = departmentId }, transaction: transaction, cancellationToken: cancellationToken));
+							await db.ExecuteAsync(new Dapper.CommandDefinition(@"DELETE FROM ScheduledTasks WHERE UserId = @userId AND DepartmentId = @departmentId", new { userId = userId, departmentId = departmentId }, transaction: transaction, cancellationToken: cancellationToken));
+
+							transaction.Commit();
+						}
+						catch
+						{
+							transaction.Rollback();
+							throw;
+						}
+					}
+				}
+			}
+
+			return true;
 		}
 
 		public List<Department> GetDepartmentsForSelectedTasks(List<int> scheduleTasksIds)

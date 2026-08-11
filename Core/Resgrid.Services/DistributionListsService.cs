@@ -107,5 +107,23 @@ namespace Resgrid.Services
 
 			return true;
 		}
+
+		public async Task<bool> RemoveUserFromAllListsInDepartmentAsync(string userId, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var members = await _distributionListMemberRepository.GetDistributionListMemberByUserIdAsync(userId);
+
+			if (members == null || !members.Any())
+				return true;
+
+			var departmentLists = await GetDistributionListsByDepartmentIdAsync(departmentId);
+			var departmentListIds = departmentLists.Select(x => x.DistributionListId).ToHashSet();
+
+			foreach (var member in members.Where(x => departmentListIds.Contains(x.DistributionListId)))
+			{
+				await _distributionListMemberRepository.DeleteAsync(member, cancellationToken);
+			}
+
+			return true;
+		}
 	}
 }

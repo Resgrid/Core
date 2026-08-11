@@ -49,6 +49,11 @@ namespace Resgrid.Providers.Cache
 			}
 			catch (TimeoutException)
 			{ }
+			catch (RedisConnectionException ex)
+			{
+				// Transient connection drop (idle reset, failover); fallback below handles it.
+				Logging.LogError(ex);
+			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
@@ -66,6 +71,10 @@ namespace Resgrid.Providers.Cache
 					}
 					catch (TimeoutException)
 					{ }
+					catch (RedisConnectionException ex)
+					{
+						Logging.LogError(ex);
+					}
 					catch (Exception ex)
 					{
 						Logging.LogException(ex);
@@ -85,6 +94,12 @@ namespace Resgrid.Providers.Cache
 					IDatabase cache = _connection.GetDatabase();
 					cache.KeyDelete(SetCacheKeyForEnv(cacheKey));
 				}
+			}
+			catch (TimeoutException)
+			{ }
+			catch (RedisConnectionException ex)
+			{
+				Logging.LogError(ex);
 			}
 			catch (Exception ex)
 			{
@@ -125,6 +140,11 @@ namespace Resgrid.Providers.Cache
 			}
 			catch (TimeoutException)
 			{ }
+			catch (RedisConnectionException ex)
+			{
+				// Transient connection drop (idle reset, failover); fallback below handles it.
+				Logging.LogError(ex);
+			}
 			catch (Exception ex)
 			{
 				Logging.LogException(ex);
@@ -142,6 +162,10 @@ namespace Resgrid.Providers.Cache
 					}
 					catch (TimeoutException)
 					{ }
+					catch (RedisConnectionException ex)
+					{
+						Logging.LogError(ex);
+					}
 					catch (Exception ex)
 					{
 						Logging.LogException(ex);
@@ -168,6 +192,10 @@ namespace Resgrid.Providers.Cache
 					}
 					catch (TimeoutException)
 					{ }
+					catch (RedisConnectionException ex)
+					{
+						Logging.LogError(ex);
+					}
 					catch (Exception ex)
 					{
 						Logging.LogException(ex);
@@ -194,6 +222,12 @@ namespace Resgrid.Providers.Cache
 
 						if (cacheValue.HasValue)
 							return cacheValue.ToString();
+					}
+					catch (TimeoutException)
+					{ }
+					catch (RedisConnectionException ex)
+					{
+						Logging.LogError(ex);
 					}
 					catch (Exception ex)
 					{
@@ -226,6 +260,12 @@ namespace Resgrid.Providers.Cache
 
 					return true;
 				}
+			}
+			catch (TimeoutException)
+			{ }
+			catch (RedisConnectionException ex)
+			{
+				Logging.LogError(ex);
 			}
 			catch (Exception ex)
 			{
@@ -262,6 +302,12 @@ namespace Resgrid.Providers.Cache
 
 					return (long)result;
 				}
+			}
+			catch (TimeoutException)
+			{ }
+			catch (RedisConnectionException ex)
+			{
+				Logging.LogError(ex);
 			}
 			catch (Exception ex)
 			{
@@ -310,6 +356,11 @@ namespace Resgrid.Providers.Cache
 					options.ConnectTimeout = Math.Min(options.ConnectTimeout, 1000);
 					options.SyncTimeout = 1000;
 					options.AsyncTimeout = 1000;
+
+					// Ping every 30s so idle connections aren't reset by intermediate
+					// idle timeouts (conntrack/LB/redis server timeout) before the
+					// default 60s keep-alive fires.
+					options.KeepAlive = 30;
 
 					_connection = ConnectionMultiplexer.Connect(options);
 				}

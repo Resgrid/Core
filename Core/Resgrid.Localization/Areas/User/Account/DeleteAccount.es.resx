@@ -86,6 +86,9 @@
   <data name="DeleteAreYouSure3" xml:space="preserve">
     <value>Ten en cuenta que los datos suministrados a Resgrid para un departamento son propiedad de ese departamento y pueden estar sujetos a políticas de retención de datos. Eliminar tu cuenta aquí borrará tu información personal (PII) y tu acceso, pero no todos los datos.</value>
   </data>
+  <data name="DeleteAreYouSure4" xml:space="preserve">
+    <value>Eliminar su cuenta la desactivará en TODOS los departamentos de los que sea miembro, no solo en el actual. Todas sus automatizaciones programadas (entregas de informes, cambios de estado programados y cambios de personal programados) serán eliminadas, y dejará de recibir notificaciones y comunicaciones de todos los departamentos.</value>
+  </data>
   <data name="DepartmentOwnerError" xml:space="preserve">
     <value>No puedes eliminar tu cuenta porque eres propietario de un departamento. Si deseas eliminar el departamento, debes acceder a eso a través de la página de configuración del departamento. Si deseas conservar el departamento, elige a otra persona como propietario del departamento y luego intenta eliminar tu cuenta.</value>
   </data>

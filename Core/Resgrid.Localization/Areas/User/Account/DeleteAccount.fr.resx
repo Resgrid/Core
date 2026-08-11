@@ -86,6 +86,9 @@
   <data name="DeleteAreYouSure3" xml:space="preserve">
     <value>Please note, data supplied to Resgrid for a department is owned by that department and could be subject to data retention policies and laws governing the jurisdiction of the department. Deleting your account here will clear your PII (Personally Identifiable Information) and delete your login but won’t clear all data. You will need to make a request to the department you were apart of for additional if you want all data cleared.</value>
   </data>
+  <data name="DeleteAreYouSure4" xml:space="preserve">
+    <value>La suppression de votre compte le désactivera dans TOUS les départements dont vous êtes membre, pas seulement dans votre département actuel. Toutes vos automatisations planifiées (envois de rapports, changements de statut planifiés et changements d'effectifs planifiés) seront supprimées, et vous ne recevrez plus de notifications ni de communications d'aucun département.</value>
+  </data>
   <data name="DepartmentOwnerError" xml:space="preserve">
     <value>You are unable to delete your account because you are a Department Owner in a department. If you wish to delete the department you will need to access that though the Department Settings page. If you want to retain the department please choose another person as the Department Owner and then try and delete your account again.</value>
   </data>

@@ -156,5 +156,17 @@ namespace Resgrid.Model.Services
 		Task<List<ScheduledTask>> GetAllUpcomingStatusScheduledTasksAsync();
 
 		Task<List<ScheduledTask>> GetAllUpcomingOrRecurringReportDeliveryTasksAsync();
+
+		/// <summary>
+		/// Deletes every scheduled task (status changes, staffing changes, report deliveries) owned
+		/// by a user across all departments. Used when a user account is deleted/deactivated.
+		/// </summary>
+		Task<bool> DeleteAllTasksForUserAsync(string userId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Deletes every scheduled task owned by a user that is scoped to a single department. Used
+		/// when a user is removed from one department but remains in others.
+		/// </summary>
+		Task<bool> DeleteAllTasksForUserInDepartmentAsync(string userId, int departmentId, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

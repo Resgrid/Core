@@ -72,6 +72,23 @@ namespace Resgrid.Tests.Mocks
 
 		public Task<IEnumerable<ScheduledTask>> GetAllUpcomingOrRecurringReportDeliveryTasksAsync()
 			=> Task.FromResult<IEnumerable<ScheduledTask>>(new List<ScheduledTask>());
+
+		public Task<bool> DeleteAllTasksForUserAsync(string userId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			_tasks.RemoveAll(t => t.UserId == userId);
+			return Task.FromResult(true);
+		}
+
+		public Task<bool> DeleteAllTasksForUserInDepartmentAsync(string userId, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			// Mirror the real repository: fail closed on non-positive ids so legacy
+			// DepartmentId = 0 rows survive a single-department revoke.
+			if (departmentId <= 0)
+				return Task.FromResult(false);
+
+			_tasks.RemoveAll(t => t.UserId == userId && t.DepartmentId == departmentId);
+			return Task.FromResult(true);
+		}
 	}
 }
 

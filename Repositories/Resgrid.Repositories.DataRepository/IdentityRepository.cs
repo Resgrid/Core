@@ -465,45 +465,101 @@ namespace Resgrid.Repositories.DataRepository
 		{
 			if (DataConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
-				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
+				using (var db = new NpgsqlConnection(DataConfig.CoreConnectionString))
 				{
-					var deleteId = Guid.NewGuid().ToString();
-					var maskedEmail = deleteId + "@resgrid.del";
-					// Full de-provisioning: mask the normalized columns too (so ASP.NET Identity's normalized
-					// lookups can't find the row), null the password hash, rotate the security stamp, and lock
-					// the account so a deleted user can no longer authenticate.
-					var result = await db.ExecuteAsync(@"UPDATE public.aspnetusers
-													 SET username = @deleteId,
-													 normalizedusername = @normalizedDeleteId,
-													 email = @maskedEmail,
-													 normalizedemail = @normalizedMaskedEmail,
-													 passwordhash = NULL,
-													 securitystamp = @securityStamp,
-													 emailconfirmed = false,
-													 lockoutenabled = true,
-													 lockoutend = @lockoutEnd
-													 WHERE id = @userId",
-									new { userId = userId, deleteId = deleteId, normalizedDeleteId = deleteId.ToUpperInvariant(), maskedEmail = maskedEmail, normalizedMaskedEmail = maskedEmail.ToUpperInvariant(), securityStamp = Guid.NewGuid().ToString(), lockoutEnd = new DateTimeOffset(9999, 12, 31, 23, 59, 59, TimeSpan.Zero) });
+					await db.OpenAsync();
+
+					// The whole de-provision is atomic: either the account is fully fuzzed and all
+					// re-entry vectors are removed, or nothing changes and the operation can be retried.
+					using (var transaction = db.BeginTransaction())
+					{
+						try
+						{
+							var deleteId = Guid.NewGuid().ToString();
+							var maskedEmail = deleteId + "@resgrid.del";
+							// Full de-provisioning: mask the normalized columns too (so ASP.NET Identity's normalized
+							// lookups can't find the row), null the password hash, rotate the security stamp, and lock
+							// the account so a deleted user can no longer authenticate.
+							var result = await db.ExecuteAsync(@"UPDATE public.aspnetusers
+															 SET username = @deleteId,
+															 normalizedusername = @normalizedDeleteId,
+															 email = @maskedEmail,
+															 normalizedemail = @normalizedMaskedEmail,
+															 passwordhash = NULL,
+															 securitystamp = @securityStamp,
+															 emailconfirmed = false,
+															 phonenumber = NULL,
+															 phonenumberconfirmed = false,
+															 twofactorenabled = false,
+															 lockoutenabled = true,
+															 lockoutend = @lockoutEnd
+															 WHERE id = @userId",
+											new { userId = userId, deleteId = deleteId, normalizedDeleteId = deleteId.ToUpperInvariant(), maskedEmail = maskedEmail, normalizedMaskedEmail = maskedEmail.ToUpperInvariant(), securityStamp = Guid.NewGuid().ToString(), lockoutEnd = new DateTimeOffset(9999, 12, 31, 23, 59, 59, TimeSpan.Zero) }, transaction);
+
+							// External login mappings, recovery secrets, device push registrations and chatbot
+							// platform links can all be used to reach or re-enter the account -- remove them too.
+							await db.ExecuteAsync(@"DELETE FROM public.aspnetuserlogins WHERE userid = @userId", new { userId = userId }, transaction);
+							await db.ExecuteAsync(@"UPDATE public.aspnetusersext SET securityquestion = NULL, securityanswer = NULL, securityanswersalt = NULL WHERE userid = @userId", new { userId = userId }, transaction);
+							await db.ExecuteAsync(@"DELETE FROM public.pushuris WHERE userid = @userId", new { userId = userId }, transaction);
+							await db.ExecuteAsync(@"DELETE FROM public.chatbotuseridentities WHERE userid = @userId", new { userId = userId }, transaction);
+							await db.ExecuteAsync(@"DELETE FROM public.chatbotlinkingcodes WHERE userid = @userId", new { userId = userId }, transaction);
+
+							transaction.Commit();
+						}
+						catch
+						{
+							transaction.Rollback();
+							throw;
+						}
+					}
 				}
 			}
 			else
 			{
-				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
+				using (var db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
-					var deleteId = Guid.NewGuid().ToString();
-					var maskedEmail = deleteId + "@resgrid.del";
-					var result = await db.ExecuteAsync(@"UPDATE AspNetUsers
-													 SET UserName = @deleteId,
-													 NormalizedUserName = @normalizedDeleteId,
-													 Email = @maskedEmail,
-													 NormalizedEmail = @normalizedMaskedEmail,
-													 PasswordHash = NULL,
-													 SecurityStamp = @securityStamp,
-													 EmailConfirmed = 0,
-													 LockoutEnabled = 1,
-													 LockoutEnd = @lockoutEnd
-													 WHERE Id = @userId",
-									new { userId = userId, deleteId = deleteId, normalizedDeleteId = deleteId.ToUpperInvariant(), maskedEmail = maskedEmail, normalizedMaskedEmail = maskedEmail.ToUpperInvariant(), securityStamp = Guid.NewGuid().ToString(), lockoutEnd = new DateTimeOffset(9999, 12, 31, 23, 59, 59, TimeSpan.Zero) });
+					await db.OpenAsync();
+
+					// The whole de-provision is atomic: either the account is fully fuzzed and all
+					// re-entry vectors are removed, or nothing changes and the operation can be retried.
+					using (var transaction = db.BeginTransaction())
+					{
+						try
+						{
+							var deleteId = Guid.NewGuid().ToString();
+							var maskedEmail = deleteId + "@resgrid.del";
+							var result = await db.ExecuteAsync(@"UPDATE AspNetUsers
+															 SET UserName = @deleteId,
+															 NormalizedUserName = @normalizedDeleteId,
+															 Email = @maskedEmail,
+															 NormalizedEmail = @normalizedMaskedEmail,
+															 PasswordHash = NULL,
+															 SecurityStamp = @securityStamp,
+															 EmailConfirmed = 0,
+															 PhoneNumber = NULL,
+															 PhoneNumberConfirmed = 0,
+															 TwoFactorEnabled = 0,
+															 LockoutEnabled = 1,
+															 LockoutEnd = @lockoutEnd
+															 WHERE Id = @userId",
+											new { userId = userId, deleteId = deleteId, normalizedDeleteId = deleteId.ToUpperInvariant(), maskedEmail = maskedEmail, normalizedMaskedEmail = maskedEmail.ToUpperInvariant(), securityStamp = Guid.NewGuid().ToString(), lockoutEnd = new DateTimeOffset(9999, 12, 31, 23, 59, 59, TimeSpan.Zero) }, transaction);
+
+							// External login mappings, recovery secrets, device push registrations and chatbot
+							// platform links can all be used to reach or re-enter the account -- remove them too.
+							await db.ExecuteAsync(@"DELETE FROM AspNetUserLogins WHERE UserId = @userId", new { userId = userId }, transaction);
+							await db.ExecuteAsync(@"UPDATE AspNetUsersExt SET SecurityQuestion = NULL, SecurityAnswer = NULL, SecurityAnswerSalt = NULL WHERE UserId = @userId", new { userId = userId }, transaction);
+							await db.ExecuteAsync(@"DELETE FROM PushUris WHERE UserId = @userId", new { userId = userId }, transaction);
+							await db.ExecuteAsync(@"DELETE FROM ChatbotUserIdentities WHERE UserId = @userId", new { userId = userId }, transaction);
+							await db.ExecuteAsync(@"DELETE FROM ChatbotLinkingCodes WHERE UserId = @userId", new { userId = userId }, transaction);
+
+							transaction.Commit();
+						}
+						catch
+						{
+							transaction.Rollback();
+							throw;
+						}
+					}
 				}
 			}
 
@@ -518,6 +574,8 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					var result = await db.ExecuteAsync(@"DELETE FROM ""OpenIddictTokens"" WHERE ""Subject"" = @userId",
 									new { userId = userId });
+					await db.ExecuteAsync(@"DELETE FROM ""OpenIddictAuthorizations"" WHERE ""Subject"" = @userId",
+									new { userId = userId });
 				}
 			}
 			else
@@ -525,6 +583,9 @@ namespace Resgrid.Repositories.DataRepository
 				using (IDbConnection db = new SqlConnection(OidcConfig.ConnectionString))
 				{
 					var result = await db.ExecuteAsync(@"DELETE FROM OpenIddictTokens
+													 WHERE Subject = @userId",
+									new { userId = userId });
+					await db.ExecuteAsync(@"DELETE FROM OpenIddictAuthorizations
 													 WHERE Subject = @userId",
 									new { userId = userId });
 				}

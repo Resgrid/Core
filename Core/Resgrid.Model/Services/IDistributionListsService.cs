@@ -73,5 +73,11 @@ namespace Resgrid.Model.Services
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns>Task&lt;System.Boolean&gt;.</returns>
 		Task<bool> RemoveUserFromAllListsAsync(string userId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
+		/// Removes a user from every distribution list belonging to a single department. Used when a
+		/// user is removed from one department but remains in others.
+		/// </summary>
+		Task<bool> RemoveUserFromAllListsInDepartmentAsync(string userId, int departmentId, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

@@ -101,6 +101,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[Authorize(Policy = ResgridResources.Command_View)]
 		public async Task<ActionResult<ICModels.IncidentCommandResult>> GetCommandForCall(int callId)
 		{
+			if (!await CanReadBoardsAsync())
+				return Unauthorized();
+
 			var result = new ICModels.IncidentCommandResult();
 			var command = await _incidentCommandService.GetCommandForCallAsync(DepartmentId, callId);
 
@@ -130,6 +133,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (input == null || string.IsNullOrWhiteSpace(input.IncidentCommandId))
 				return BadRequest();
+
+			if (!await CanCommandAsync())
+				return Unauthorized();
 
 			var result = new ICModels.IncidentCommandResult();
 			try
@@ -273,6 +279,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		{
 			if (input == null || input.CallId <= 0 || string.IsNullOrWhiteSpace(input.Body))
 				return BadRequest();
+
+			if (!await CanCommandAsync())
+				return Unauthorized();
 
 			var result = new ICModels.SendMessageToCommandResult();
 			var command = await _incidentCommandService.GetCommandForCallAsync(DepartmentId, input.CallId);

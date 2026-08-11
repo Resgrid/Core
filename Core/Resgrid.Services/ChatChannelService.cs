@@ -692,7 +692,7 @@ namespace Resgrid.Services
 
 			var existing = await _chatChannelRepository.GetByCallIdAndTypeAsync(command.CallId, (int)ChatChannelType.IncidentCommand);
 			if (existing != null)
-				return existing;
+				return await RebindCommandScopedChannelAsync(existing, command.IncidentCommandId, cancellationToken);
 
 			return await InsertProvisionedChannelAsync(new ChatChannel
 			{
@@ -713,7 +713,7 @@ namespace Resgrid.Services
 
 			var existing = await _chatChannelRepository.GetByCallIdAndTypeAsync(command.CallId, (int)ChatChannelType.IncidentLeads);
 			if (existing != null)
-				return existing;
+				return await RebindCommandScopedChannelAsync(existing, command.IncidentCommandId, cancellationToken);
 
 			return await InsertProvisionedChannelAsync(new ChatChannel
 			{
@@ -734,7 +734,7 @@ namespace Resgrid.Services
 
 			var existing = await _chatChannelRepository.GetByCallIdAndTypeAsync(callId, (int)ChatChannelType.IncidentDispatch);
 			if (existing != null)
-				return existing;
+				return await RebindCommandScopedChannelAsync(existing, incidentCommandId, cancellationToken);
 
 			return await InsertProvisionedChannelAsync(new ChatChannel
 			{
@@ -746,6 +746,36 @@ namespace Resgrid.Services
 				IncidentCommandId = incidentCommandId,
 				CreatedOn = DateTime.UtcNow
 			}, () => _chatChannelRepository.GetByCallIdAndTypeAsync(callId, (int)ChatChannelType.IncidentDispatch), cancellationToken);
+		}
+
+		/// <summary>
+		/// A call can host sequential incident commands (close command, establish a new one later), but its
+		/// command/leads/dispatch channels are singletons per call and get reused. A reused channel still
+		/// carries the closed command's id and archived state, so without this the new command's channels
+		/// stay frozen and its close/reopen archive sweeps match nothing. Targeted update — a full-row
+		/// write would rewind the atomic LastMessageSeq allocator.
+		/// </summary>
+		private async Task<ChatChannel> RebindCommandScopedChannelAsync(ChatChannel channel, string incidentCommandId, CancellationToken cancellationToken)
+		{
+			if (channel == null || string.IsNullOrWhiteSpace(incidentCommandId))
+				return channel;
+
+			var commandChanged = !string.Equals(channel.IncidentCommandId, incidentCommandId, StringComparison.OrdinalIgnoreCase);
+			if (!commandChanged && !channel.IsArchived)
+				return channel;
+
+			await _chatChannelRepository.RebindToIncidentCommandAsync(channel.ChatChannelId, incidentCommandId, DateTime.UtcNow, cancellationToken);
+
+			channel.IncidentCommandId = incidentCommandId;
+			channel.IsArchived = false;
+			channel.ArchivedOn = null;
+			channel.ModifiedOn = DateTime.UtcNow;
+
+			// The archive flag gates posting per cached permission verdicts; clients also need to re-read it.
+			await _chatPermissionService.InvalidateChannelCacheAsync(channel.ChatChannelId);
+			PublishChannelEvent(channel, ChatEventKinds.ChannelUpdated);
+
+			return channel;
 		}
 
 		public async Task EnsureIncidentChannelsAsync(IncidentCommand command, IEnumerable<CommandStructureNode> nodes, CancellationToken cancellationToken = default(CancellationToken))
@@ -779,14 +809,25 @@ namespace Resgrid.Services
 				if (!existing.Any(c => c.ChannelType == (int)ChatChannelType.Incident))
 					await EnsureIncidentChannelAsync(command.DepartmentId, command.CallId, null, cancellationToken);
 
-				if (!existing.Any(c => c.ChannelType == (int)ChatChannelType.IncidentCommand))
+				// Command-scoped channels are reused across sequential commands on the same call, so a
+				// found channel still needs rebinding to this command (and unarchiving) — see the helper.
+				var commandChannel = existing.FirstOrDefault(c => c.ChannelType == (int)ChatChannelType.IncidentCommand);
+				if (commandChannel == null)
 					await EnsureCommandChannelAsync(command, cancellationToken);
+				else
+					await RebindCommandScopedChannelAsync(commandChannel, command.IncidentCommandId, cancellationToken);
 
-				if (!existing.Any(c => c.ChannelType == (int)ChatChannelType.IncidentLeads))
+				var leadsChannel = existing.FirstOrDefault(c => c.ChannelType == (int)ChatChannelType.IncidentLeads);
+				if (leadsChannel == null)
 					await EnsureLeadsChannelAsync(command, cancellationToken);
+				else
+					await RebindCommandScopedChannelAsync(leadsChannel, command.IncidentCommandId, cancellationToken);
 
-				if (!existing.Any(c => c.ChannelType == (int)ChatChannelType.IncidentDispatch))
+				var dispatchChannel = existing.FirstOrDefault(c => c.ChannelType == (int)ChatChannelType.IncidentDispatch);
+				if (dispatchChannel == null)
 					await EnsureDispatchChannelAsync(command.DepartmentId, command.CallId, command.IncidentCommandId, cancellationToken);
+				else
+					await RebindCommandScopedChannelAsync(dispatchChannel, command.IncidentCommandId, cancellationToken);
 
 				var provisionedNodeIds = new HashSet<string>(
 					existing.Where(c => c.ChannelType == (int)ChatChannelType.IncidentLane && !string.IsNullOrWhiteSpace(c.CommandStructureNodeId))

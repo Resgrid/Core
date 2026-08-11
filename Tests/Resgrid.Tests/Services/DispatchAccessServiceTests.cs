@@ -111,6 +111,33 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task a_non_member_is_refused_even_when_the_permission_is_not_configured()
+		{
+			// The open default means "everyone in the department", never "everyone on the platform" —
+			// this gate is asked about a channel's department, not necessarily the caller's own.
+			GivenPermission(null);
+			_departmentsService.Setup(x => x.GetDepartmentMemberAsync("stranger", DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync((DepartmentMember)null);
+
+			var result = await BuildService().CanUseDispatchAsync(DepartmentId, "stranger");
+
+			result.Should().BeFalse();
+		}
+
+		[TestCase(true, false)]
+		[TestCase(false, true)]
+		public async Task a_disabled_or_deleted_member_is_refused_even_when_the_permission_is_not_configured(bool disabled, bool deleted)
+		{
+			GivenPermission(null);
+			_departmentsService.Setup(x => x.GetDepartmentMemberAsync("former", DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(new DepartmentMember { UserId = "former", DepartmentId = DepartmentId, IsDisabled = disabled, IsDeleted = deleted });
+
+			var result = await BuildService().CanUseDispatchAsync(DepartmentId, "former");
+
+			result.Should().BeFalse();
+		}
+
+		[Test]
 		public async Task an_evaluation_failure_fails_closed()
 		{
 			// Erring open here would leak private traffic, which is the exact thing this gate exists for.

@@ -927,4 +927,10 @@
   <data name="PwdErrorNoLowercase" xml:space="preserve"><value>La password deve contenere almeno una lettera minuscola.</value></data>
   <data name="PwdErrorTooShort" xml:space="preserve"><value>La password deve essere lunga almeno {0} caratteri.</value></data>
   <data name="PwdMinLengthTooLow" xml:space="preserve"><value>La lunghezza minima della password non può essere inferiore al valore predefinito di sistema di 8 caratteri.</value></data>
+  <data name="PermUseCalendarSyncLabel" xml:space="preserve"><value>Use Calendar Sync</value></data>
+  <data name="PermUseCalendarSyncNote" xml:space="preserve"><value>Controls who can activate and use calendar subscription URLs to sync Resgrid calendar events to external calendar applications.</value></data>
+  <data name="PermDispatchAppLoginLabel" xml:space="preserve"><value>Dispatch App Login</value></data>
+  <data name="PermDispatchAppLoginNote" xml:space="preserve"><value>Controls who can sign in to the Dispatch app. Dispatch shows private command, unit and responder communications for every incident, so restrict this if your members are not all dispatchers.</value></data>
+  <data name="PermCommandAppLoginLabel" xml:space="preserve"><value>Command App Login</value></data>
+  <data name="PermCommandAppLoginNote" xml:space="preserve"><value>Controls who can act as a commander: sign in to the IC app, establish incident command on a call, and view command boards. Narrowing this beyond Everyone also lets the people you pick help work any command board (assign and move resources, run timers and accountability) without holding an ICS position on it &#8212; useful for giving dispatchers a hand in the Dispatch app. While set to Everyone, board actions stay limited to the incident commander and assigned ICS roles.</value></data>
 </root>

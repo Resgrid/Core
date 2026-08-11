@@ -314,8 +314,8 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Use Calendar Sync</td>
-                                        <td style="max-width: 350px">Controls who can activate and use calendar subscription URLs to sync Resgrid calendar events to external calendar applications.</td>
+                                        <td>@localizer["PermUseCalendarSyncLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermUseCalendarSyncNote"]</td>
                                         <td>@Html.DropDownListFor(m => m.UseCalendarSync, Model.UseCalendarSyncPermissions)</td>
                                         <td>@localizer["PermissionNA"]</td>
                                         <td>
@@ -324,8 +324,8 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Dispatch App Login</td>
-                                        <td style="max-width: 350px">Controls who can sign in to the Dispatch app. Dispatch shows private command, unit and responder communications for every incident, so restrict this if your members are not all dispatchers.</td>
+                                        <td>@localizer["PermDispatchAppLoginLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermDispatchAppLoginNote"]</td>
                                         <td>@Html.DropDownListFor(m => m.DispatchAppLogin, Model.DispatchAppLoginPermissions)</td>
                                         <td>@localizer["PermissionNA"]</td>
                                         <td>
@@ -334,8 +334,8 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Command App Login</td>
-                                        <td style="max-width: 350px">Controls who can act as a commander: sign in to the IC app, establish incident command on a call, and view command boards. Narrowing this beyond Everyone also lets the people you pick help work any command board (assign and move resources, run timers and accountability) without holding an ICS position on it &mdash; useful for giving dispatchers a hand in the Dispatch app. While set to Everyone, board actions stay limited to the incident commander and assigned ICS roles.</td>
+                                        <td>@localizer["PermCommandAppLoginLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermCommandAppLoginNote"]</td>
                                         <td>@Html.DropDownListFor(m => m.CommandAppLogin, Model.CommandAppLoginPermissions)</td>
                                         <td>@localizer["PermissionNA"]</td>
                                         <td>

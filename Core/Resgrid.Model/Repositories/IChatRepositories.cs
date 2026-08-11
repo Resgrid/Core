@@ -57,6 +57,12 @@ namespace Resgrid.Model.Repositories
 		Task<bool> SetLockedAsync(string chatChannelId, bool locked, string lockedByUserId, DateTime? lockedOn, DateTime modifiedOn, CancellationToken cancellationToken);
 
 		/// <summary>
+		/// Rebinds a reused command-scoped channel (command/leads/dispatch) to a new incident command and
+		/// clears its archived state in one targeted update (see <see cref="UpdateChannelInfoAsync"/>).
+		/// </summary>
+		Task<bool> RebindToIncidentCommandAsync(string chatChannelId, string incidentCommandId, DateTime modifiedOn, CancellationToken cancellationToken);
+
+		/// <summary>
 		/// Atomically creates a DM channel plus its member rows in one transaction. The channel insert
 		/// uses insert-if-absent on (DepartmentId, DmKey) so a losing racer simply reads the winner;
 		/// member rows are only written when this call wins the insert. Returns the persisted channel.

@@ -28,6 +28,7 @@ namespace Resgrid.Tests.Services
 
 		private Mock<IChatChannelRepository> _channelRepository;
 		private Mock<ICacheProvider> _cacheProvider;
+		private Mock<IChatPermissionService> _permissionService;
 		private List<ChatChannel> _inserted;
 
 		[SetUp]
@@ -35,6 +36,7 @@ namespace Resgrid.Tests.Services
 		{
 			_channelRepository = new Mock<IChatChannelRepository>();
 			_cacheProvider = new Mock<ICacheProvider>();
+			_permissionService = new Mock<IChatPermissionService>();
 			_inserted = new List<ChatChannel>();
 
 			// No marker set: the backfill runs.
@@ -56,7 +58,7 @@ namespace Resgrid.Tests.Services
 				Mock.Of<IChatChannelMemberRepository>(),
 				Mock.Of<IChatChannelAccessRuleRepository>(),
 				Mock.Of<IChatDepartmentSettingRepository>(),
-				Mock.Of<IChatPermissionService>(),
+				_permissionService.Object,
 				Mock.Of<IDepartmentsService>(),
 				Mock.Of<IDepartmentGroupsService>(),
 				Mock.Of<IUnitsService>(),
@@ -186,6 +188,47 @@ namespace Resgrid.Tests.Services
 			await BuildService().EnsureIncidentChannelsAsync(command, new[] { BuildNode("node-1") });
 
 			_inserted.Should().BeEmpty();
+		}
+
+		[Test]
+		public async Task channels_reused_from_a_prior_command_are_rebound_and_unarchived()
+		{
+			// Command #1 closed (its channels archived and still carrying its id), then command #2
+			// established on the same call. The reused channels must come back to life under command #2.
+			var archivedOn = DateTime.UtcNow.AddHours(-2);
+			GivenExistingChannels(
+				new ChatChannel { ChatChannelId = "a", CallId = CallId, ChannelType = (int)ChatChannelType.Incident },
+				new ChatChannel { ChatChannelId = "b", CallId = CallId, ChannelType = (int)ChatChannelType.IncidentCommand, IncidentCommandId = "command-0", IsArchived = true, ArchivedOn = archivedOn },
+				new ChatChannel { ChatChannelId = "c", CallId = CallId, ChannelType = (int)ChatChannelType.IncidentLeads, IncidentCommandId = "command-0", IsArchived = true, ArchivedOn = archivedOn },
+				new ChatChannel { ChatChannelId = "d", CallId = CallId, ChannelType = (int)ChatChannelType.IncidentDispatch, IncidentCommandId = "command-0", IsArchived = true, ArchivedOn = archivedOn });
+
+			await BuildService().EnsureIncidentChannelsAsync(BuildCommand(), new CommandStructureNode[0]);
+
+			_inserted.Should().BeEmpty();
+			_channelRepository.Verify(x => x.RebindToIncidentCommandAsync("b", CommandId, It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Once);
+			_channelRepository.Verify(x => x.RebindToIncidentCommandAsync("c", CommandId, It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Once);
+			_channelRepository.Verify(x => x.RebindToIncidentCommandAsync("d", CommandId, It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Once);
+
+			// Archived state gates posting through cached permission verdicts — stale entries must die now.
+			_permissionService.Verify(x => x.InvalidateChannelCacheAsync("b"), Times.Once);
+			_permissionService.Verify(x => x.InvalidateChannelCacheAsync("c"), Times.Once);
+			_permissionService.Verify(x => x.InvalidateChannelCacheAsync("d"), Times.Once);
+		}
+
+		[Test]
+		public async Task channels_already_bound_to_the_active_command_are_not_rewritten()
+		{
+			// The steady state — same command, nothing archived — must stay a pure read.
+			GivenExistingChannels(
+				new ChatChannel { ChatChannelId = "a", CallId = CallId, ChannelType = (int)ChatChannelType.Incident },
+				new ChatChannel { ChatChannelId = "b", CallId = CallId, ChannelType = (int)ChatChannelType.IncidentCommand, IncidentCommandId = CommandId },
+				new ChatChannel { ChatChannelId = "c", CallId = CallId, ChannelType = (int)ChatChannelType.IncidentLeads, IncidentCommandId = CommandId },
+				new ChatChannel { ChatChannelId = "d", CallId = CallId, ChannelType = (int)ChatChannelType.IncidentDispatch, IncidentCommandId = CommandId });
+
+			await BuildService().EnsureIncidentChannelsAsync(BuildCommand(), new CommandStructureNode[0]);
+
+			_inserted.Should().BeEmpty();
+			_channelRepository.Verify(x => x.RebindToIncidentCommandAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Never);
 		}
 	}
 }

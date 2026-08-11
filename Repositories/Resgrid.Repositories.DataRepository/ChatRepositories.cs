@@ -533,6 +533,38 @@ namespace Resgrid.Repositories.DataRepository
 			}
 		}
 
+		public async Task<bool> RebindToIncidentCommandAsync(string chatChannelId, string incidentCommandId, DateTime modifiedOn, CancellationToken cancellationToken)
+		{
+			try
+			{
+				var parameters = new DynamicParametersExtension();
+				parameters.Add("Id", chatChannelId);
+				parameters.Add("IncidentCommandId", incidentCommandId);
+				parameters.Add("ModifiedOn", modifiedOn, DbType.DateTime2);
+				var notation = _sqlConfiguration.ParameterNotation;
+				var sql = DataConfig.DatabaseType == DatabaseTypes.Postgres
+					? $"UPDATE {_sqlConfiguration.SchemaName}.chatchannels SET incidentcommandid = {notation}IncidentCommandId, isarchived = FALSE, archivedon = NULL, modifiedon = {notation}ModifiedOn WHERE chatchannelid = {notation}Id"
+					: $"UPDATE {_sqlConfiguration.SchemaName}.[ChatChannels] SET [IncidentCommandId] = {notation}IncidentCommandId, [IsArchived] = 0, [ArchivedOn] = NULL, [ModifiedOn] = {notation}ModifiedOn WHERE [ChatChannelId] = {notation}Id";
+
+				var execute = new Func<DbConnection, Task<int>>(connection =>
+					connection.ExecuteAsync(sql, parameters, _unitOfWork.Transaction));
+
+				if (_unitOfWork?.Connection == null)
+				{
+					using var connection = _connectionProvider.Create();
+					await connection.OpenAsync(cancellationToken);
+					return await execute(connection) > 0;
+				}
+
+				return await execute(_unitOfWork.CreateOrGetConnection()) > 0;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				throw;
+			}
+		}
+
 		public async Task<ChatChannel> CreateDirectMessageChannelAsync(ChatChannel channel, IEnumerable<ChatChannelMember> members, CancellationToken cancellationToken)
 		{
 			try

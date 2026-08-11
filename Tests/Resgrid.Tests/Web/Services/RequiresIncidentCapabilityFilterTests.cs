@@ -196,11 +196,15 @@ namespace Resgrid.Tests.Web.Services
 			IDictionary<string, object> args,
 			IDictionary<string, object> routeValues = null,
 			bool authenticated = true,
-			ICommandAccessService commandAccessService = null)
+			ICommandAccessService commandAccessService = null,
+			bool withoutCommandAccessService = false)
 		{
+			// Tests that don't exercise the commander gate get an allow-all gate so they keep testing
+			// only capabilities; withoutCommandAccessService simulates a misconfigured host (filter must 500).
 			var httpContext = new DefaultHttpContext
 			{
-				RequestServices = new StubServiceProvider(_service.Object, commandAccessService)
+				RequestServices = new StubServiceProvider(_service.Object,
+					withoutCommandAccessService ? null : commandAccessService ?? CommandGate(true))
 			};
 
 			if (authenticated)
@@ -254,8 +258,6 @@ namespace Resgrid.Tests.Web.Services
 				if (serviceType == typeof(IIncidentCommandService))
 					return _service;
 
-				// Null when a test doesn't supply one — the filter then skips the commander gate, which is
-				// what keeps the pre-existing capability tests exercising only capabilities.
 				if (serviceType == typeof(ICommandAccessService))
 					return _commandAccessService;
 
@@ -273,6 +275,25 @@ namespace Resgrid.Tests.Web.Services
 		#endregion Helpers
 
 		#region Commander permission gate
+
+		[Test]
+		public async Task Returns500_WhenTheCommanderGateServiceCannotBeResolved()
+		{
+			// The department gate is mandatory; a host that cannot resolve it is misconfigured and must
+			// deny loudly instead of silently dropping the check.
+			var filter = new RequiresIncidentCapabilityAttribute(IncidentCapabilities.AssignResources);
+			var context = BuildContext(
+				args: new Dictionary<string, object> { ["callId"] = 7 },
+				routeValues: new Dictionary<string, object> { ["callId"] = 7 },
+				withoutCommandAccessService: true);
+
+			var nextCalled = await Invoke(filter, context);
+
+			nextCalled.Should().BeFalse();
+			context.Result.Should().BeOfType<StatusCodeResult>()
+				.Which.StatusCode.Should().Be(StatusCodes.Status500InternalServerError);
+			_service.Verify(s => s.GetCapabilitiesForUserAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+		}
 
 		[Test]
 		public async Task Returns403_WhenTheDepartmentHasNotAuthorizedTheUserAsACommander()

@@ -14,8 +14,8 @@ namespace Resgrid.Services
 	///
 	/// Both answer the same question against a different <see cref="PermissionTypes"/> value, and both
 	/// gate access to private traffic, so the rules that matter live in one place: a missing permission
-	/// row means everyone, the department's managing user counts as an admin, and an evaluation failure
-	/// denies rather than allows.
+	/// row means every active department member, the department's managing user counts as an admin, and
+	/// an evaluation failure denies rather than allows.
 	/// </summary>
 	public abstract class PermissionGateServiceBase
 	{
@@ -138,19 +138,23 @@ namespace Resgrid.Services
 		/// <summary>
 		/// Mirrors how the department rights endpoint decides every other permission: department admin,
 		/// group admin, and the user's personnel roles evaluated against the permission row. A missing row
-		/// means everyone, which <see cref="IPermissionsService.IsUserAllowed"/> already handles.
+		/// means every active department member.
 		/// </summary>
 		private async Task<bool> EvaluateAsync(int departmentId, string userId)
 		{
 			try
 			{
+				// Membership comes first: a missing permission row means "everyone in the department",
+				// never "everyone on the platform". These gates are asked about a channel's or incident's
+				// department — not necessarily the caller's own — so the open default must not admit
+				// non-members, or members who were disabled or removed.
+				var membership = await _departmentsService.GetDepartmentMemberAsync(userId, departmentId, false);
+				if (membership == null || membership.IsDisabled.GetValueOrDefault() || membership.IsDeleted)
+					return false;
+
 				var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(departmentId, PermissionType);
 				if (permission == null)
 					return true;
-
-				var membership = await _departmentsService.GetDepartmentMemberAsync(userId, departmentId, false);
-				if (membership == null)
-					return false;
 
 				var isDepartmentAdmin = membership.IsAdmin.GetValueOrDefault();
 

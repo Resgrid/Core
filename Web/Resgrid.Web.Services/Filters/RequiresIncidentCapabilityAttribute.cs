@@ -56,6 +56,28 @@ namespace Resgrid.Web.Services.Filters
 				return;
 			}
 
+			// The department's own gate on who may work a command board at all. Checked before capabilities
+			// because a member the department hasn't authorized as a commander shouldn't reach the board
+			// surface whatever ICS role happens to be recorded against them.
+			var commandAccess = context.HttpContext.RequestServices?.GetService(typeof(ICommandAccessService)) as ICommandAccessService;
+			if (commandAccess == null)
+			{
+				// This gate is mandatory on the board surface. Unresolvable here means the host is
+				// misconfigured — deny loudly rather than silently dropping a security check while the
+				// capability evaluation carries on without it.
+				context.Result = new StatusCodeResult(StatusCodes.Status500InternalServerError);
+				return;
+			}
+
+			if (!await commandAccess.CanUseCommandAsync(departmentId, userId))
+			{
+				context.Result = new ObjectResult("You are not authorized to work incident command for this department.")
+				{
+					StatusCode = StatusCodes.Status403Forbidden
+				};
+				return;
+			}
+
 			var callId = await ResolveCallIdAsync(context, service, departmentId);
 			if (callId == null || callId.Value <= 0)
 			{

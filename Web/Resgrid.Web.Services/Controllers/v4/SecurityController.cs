@@ -97,6 +97,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var createWorkflowPermission = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.CreateWorkflow);
 			var manageWorkflowCredentialPermission = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.ManageWorkflowCredentials);
 			var viewWorkflowRunsPermission = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.ViewWorkflowRuns);
+			var dispatchAppLoginPermission = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.DispatchAppLogin);
+			var commandAppLoginPermission = await _permissionsService.GetPermissionByDepartmentTypeAsync(DepartmentId, PermissionTypes.CommandAppLogin);
 
 			result.Data.CanViewPII = _permissionsService.IsUserAllowed(viewPIIPermission, result.Data.IsAdmin, isGroupAdmin, roles);
 			result.Data.CanCreateCalls = _permissionsService.IsUserAllowed(createCallPermission, result.Data.IsAdmin, isGroupAdmin, roles);
@@ -105,6 +107,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data.CanCreateWorkflow = _permissionsService.IsUserAllowed(createWorkflowPermission, result.Data.IsAdmin, isGroupAdmin, roles);
 			result.Data.CanManageWorkflowCredentials = _permissionsService.IsUserAllowed(manageWorkflowCredentialPermission, result.Data.IsAdmin, isGroupAdmin, roles);
 			result.Data.CanViewWorkflowRuns = _permissionsService.IsUserAllowed(viewWorkflowRunsPermission, result.Data.IsAdmin, isGroupAdmin, roles);
+			result.Data.CanLoginToDispatchApp = _permissionsService.IsUserAllowed(dispatchAppLoginPermission, result.Data.IsAdmin, isGroupAdmin, roles);
+			result.Data.CanLoginToCommandApp = _permissionsService.IsUserAllowed(commandAppLoginPermission, result.Data.IsAdmin, isGroupAdmin, roles);
 
 			var novuSuccess = await _novuProvider.CreateUserSubscriber(UserId, department.Code, DepartmentId, profile.MembershipEmail, profile.FirstName, profile.LastName);
 

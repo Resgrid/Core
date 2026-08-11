@@ -15,6 +15,11 @@ namespace Resgrid.Repositories.DataRepository
 {
 	public class SystemAuditsRepository : RepositoryBase<SystemAudit>, ISystemAuditsRepository
 	{
+		// Callers control page/pageSize; without a ceiling one request could pull the whole audit
+		// table, and (page - 1) * pageSize in int arithmetic can overflow into a negative OFFSET
+		// the database rejects.
+		private const int MaxPageSize = 1000;
+
 		private readonly IConnectionProvider _connectionProvider;
 		private readonly SqlConfiguration _sqlConfiguration;
 		private readonly IQueryFactory _queryFactory;
@@ -39,9 +44,8 @@ namespace Resgrid.Repositories.DataRepository
 					dynamicParameters.Add("UserId", userId);
 					dynamicParameters.Add("StartDate", startDate);
 					dynamicParameters.Add("EndDate", endDate);
-					var safePage = page < 1 ? 1 : page;
-					var safePageSize = pageSize < 1 ? 1 : pageSize;
-					dynamicParameters.Add("Offset", (safePage - 1) * safePageSize);
+					var (offset, safePageSize) = NormalizePaging(page, pageSize);
+					dynamicParameters.Add("Offset", offset);
 					dynamicParameters.Add("PageSize", safePageSize);
 
 					var query = _queryFactory.GetQuery<SelectSystemAuditsByUserIdPagedQuery>();
@@ -86,9 +90,8 @@ namespace Resgrid.Repositories.DataRepository
 					dynamicParameters.Add("DepartmentId", departmentId);
 					dynamicParameters.Add("StartDate", startDate);
 					dynamicParameters.Add("EndDate", endDate);
-					var safePage = page < 1 ? 1 : page;
-					var safePageSize = pageSize < 1 ? 1 : pageSize;
-					dynamicParameters.Add("Offset", (safePage - 1) * safePageSize);
+					var (offset, safePageSize) = NormalizePaging(page, pageSize);
+					dynamicParameters.Add("Offset", offset);
 					dynamicParameters.Add("PageSize", safePageSize);
 
 					var query = _queryFactory.GetQuery<SelectSystemAuditsByDepartmentIdPagedQuery>();
@@ -121,6 +124,60 @@ namespace Resgrid.Repositories.DataRepository
 
 				throw;
 			}
+		}
+
+		public async Task<IEnumerable<SystemAudit>> GetByTypePagedAsync(int type, DateTime startDate, DateTime endDate, int page, int pageSize)
+		{
+			try
+			{
+				var selectFunction = new Func<DbConnection, Task<IEnumerable<SystemAudit>>>(async x =>
+				{
+					var dynamicParameters = new DynamicParametersExtension();
+					dynamicParameters.Add("Type", type);
+					dynamicParameters.Add("StartDate", startDate);
+					dynamicParameters.Add("EndDate", endDate);
+					var (offset, safePageSize) = NormalizePaging(page, pageSize);
+					dynamicParameters.Add("Offset", offset);
+					dynamicParameters.Add("PageSize", safePageSize);
+
+					var query = _queryFactory.GetQuery<SelectSystemAuditsByTypePagedQuery>();
+
+					return await x.QueryAsync<SystemAudit>(sql: query,
+						param: dynamicParameters,
+						transaction: _unitOfWork.Transaction);
+				});
+
+				DbConnection conn = null;
+				if (_unitOfWork?.Connection == null)
+				{
+					using (conn = _connectionProvider.Create())
+					{
+						await conn.OpenAsync();
+
+						return await selectFunction(conn);
+					}
+				}
+				else
+				{
+					conn = _unitOfWork.CreateOrGetConnection();
+
+					return await selectFunction(conn);
+				}
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, extraMessage: $"GetByTypePagedAsync Type: {type}");
+
+				throw;
+			}
+		}
+
+		private static (long Offset, int PageSize) NormalizePaging(int page, int pageSize)
+		{
+			var safePage = page < 1 ? 1 : page;
+			var safePageSize = pageSize < 1 ? 1 : (pageSize > MaxPageSize ? MaxPageSize : pageSize);
+
+			return ((safePage - 1L) * safePageSize, safePageSize);
 		}
 	}
 }

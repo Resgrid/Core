@@ -35,6 +35,9 @@ namespace Resgrid.Model.Repositories
 		/// <summary>Archives (or unarchives) every channel anchored to a call; returns affected channel ids.</summary>
 		Task<IEnumerable<string>> SetArchivedByCallIdAsync(int callId, bool archived, DateTime? archivedOn);
 
+		/// <summary>Archives/unarchives every channel anchored to one incident command (the command channel and its lane channels), returning the affected channel ids.</summary>
+		Task<IEnumerable<string>> SetArchivedByIncidentCommandIdAsync(string incidentCommandId, bool archived, DateTime? archivedOn);
+
 		/// <summary>Channels in the department carrying a per-channel retention override.</summary>
 		Task<IEnumerable<ChatChannel>> GetWithRetentionOverrideAsync(int departmentId);
 
@@ -52,6 +55,12 @@ namespace Resgrid.Model.Repositories
 
 		/// <summary>Targeted lock flag update (see <see cref="UpdateChannelInfoAsync"/>).</summary>
 		Task<bool> SetLockedAsync(string chatChannelId, bool locked, string lockedByUserId, DateTime? lockedOn, DateTime modifiedOn, CancellationToken cancellationToken);
+
+		/// <summary>
+		/// Rebinds a reused command-scoped channel (command/leads/dispatch) to a new incident command and
+		/// clears its archived state in one targeted update (see <see cref="UpdateChannelInfoAsync"/>).
+		/// </summary>
+		Task<bool> RebindToIncidentCommandAsync(string chatChannelId, string incidentCommandId, DateTime modifiedOn, CancellationToken cancellationToken);
 
 		/// <summary>
 		/// Atomically creates a DM channel plus its member rows in one transaction. The channel insert

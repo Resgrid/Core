@@ -261,10 +261,32 @@ namespace Resgrid.Services
 			return messages?.ToList() ?? new List<ChatMessage>();
 		}
 
+		/// <summary>
+		/// True when the channel is archived, i.e. frozen as a point-in-time record: a closed incident
+		/// command's channel and its lane channels, or a closed call's channel. Posting is already blocked
+		/// by <c>IChatPermissionService.CanPostAsync</c>; this is the matching gate for mutating what is
+		/// already there. Moderation (flagging, moderator delete) deliberately does NOT consult it.
+		/// A missing channel reads as frozen — fail closed rather than allow an unanchored edit.
+		/// </summary>
+		private async Task<bool> IsChannelFrozenAsync(string chatChannelId)
+		{
+			if (string.IsNullOrWhiteSpace(chatChannelId))
+				return true;
+
+			var channel = await _chatChannelRepository.GetByIdAsync(chatChannelId);
+			return channel == null || channel.IsArchived;
+		}
+
 		public async Task<ChatMessage> EditMessageAsync(string chatMessageId, string editorUserId, string newBody, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var message = await _chatMessageRepository.GetByIdAsync(chatMessageId);
 			if (message == null || message.DeletedOn.HasValue)
+				return null;
+
+			// An archived channel is a point-in-time record (a closed incident command/lane chat, a closed
+			// call). CanPostAsync already refuses new messages there; the history has to be just as
+			// immutable, or the record could still be rewritten after the fact.
+			if (await IsChannelFrozenAsync(message.ChatChannelId))
 				return null;
 
 			if (!string.Equals(message.SenderUserId, editorUserId, StringComparison.OrdinalIgnoreCase))
@@ -301,6 +323,12 @@ namespace Resgrid.Services
 				return false;
 
 			var isModeratorDelete = asModerator && !isSender;
+
+			// Frozen channel: the author can no longer retract what they said, but moderation still has to
+			// work — flagged content on a closed incident must remain removable.
+			if (!isModeratorDelete && await IsChannelFrozenAsync(message.ChatChannelId))
+				return false;
+
 			await SaveEditHistoryAsync(message, isModeratorDelete ? ChatMessageEditType.ModeratorDelete : ChatMessageEditType.SenderDelete, byUserId, cancellationToken);
 
 			var deletedOn = DateTime.UtcNow;
@@ -334,6 +362,9 @@ namespace Resgrid.Services
 
 			var message = await _chatMessageRepository.GetByIdAsync(chatMessageId);
 			if (message == null || message.DeletedOn.HasValue)
+				return false;
+
+			if (await IsChannelFrozenAsync(message.ChatChannelId))
 				return false;
 
 			// Banned or currently-muted participants can't react; silently skip.
@@ -387,6 +418,9 @@ namespace Resgrid.Services
 		{
 			var message = await _chatMessageRepository.GetByIdAsync(chatMessageId);
 			if (message == null)
+				return false;
+
+			if (await IsChannelFrozenAsync(message.ChatChannelId))
 				return false;
 
 			var participantType = unitId.HasValue ? (int)ChatParticipantType.Unit : (int)ChatParticipantType.User;

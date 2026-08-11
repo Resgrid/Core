@@ -38,8 +38,8 @@ namespace Resgrid.Tests.Services
 				.Setup(x => x.SetUserActionAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
 				.ReturnsAsync(new ActionLog());
 			_unitsService
-				.Setup(x => x.SetUnitStateAsync(It.IsAny<UnitState>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
-				.ReturnsAsync((UnitState state, int _, CancellationToken __) => state);
+				.Setup(x => x.SetUnitStateAsync(It.IsAny<UnitState>(), It.IsAny<int>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
+				.ReturnsAsync((UnitState state, int _, CancellationToken __, bool ___) => state);
 
 			_service = new CallDispatchStatusService(
 				_departmentSettingsService.Object,
@@ -85,7 +85,8 @@ namespace Resgrid.Tests.Services
 					s.DestinationId == 12 &&
 					s.DestinationType == (int)DestinationEntityTypes.Call),
 				7,
-				It.IsAny<CancellationToken>()), Times.Once);
+				It.IsAny<CancellationToken>(),
+				true), Times.Once);
 		}
 
 		[Test]
@@ -116,7 +117,8 @@ namespace Resgrid.Tests.Services
 					s.DestinationId == 22 &&
 					s.DestinationType == (int)DestinationEntityTypes.Call),
 				7,
-				It.IsAny<CancellationToken>()), Times.Once);
+				It.IsAny<CancellationToken>(),
+				true), Times.Once);
 		}
 
 		[Test]
@@ -144,7 +146,8 @@ namespace Resgrid.Tests.Services
 					s.DestinationId == 32 &&
 					s.DestinationType == (int)DestinationEntityTypes.Call),
 				7,
-				It.IsAny<CancellationToken>()), Times.Once);
+				It.IsAny<CancellationToken>(),
+				true), Times.Once);
 		}
 
 		[Test]
@@ -181,11 +184,13 @@ namespace Resgrid.Tests.Services
 			_unitsService.Verify(x => x.SetUnitStateAsync(
 				It.Is<UnitState>(s => s.UnitId == 11 && s.State == 44 && s.DestinationId == 42),
 				7,
-				It.IsAny<CancellationToken>()), Times.Once);
+				It.IsAny<CancellationToken>(),
+				true), Times.Once);
 			_unitsService.Verify(x => x.SetUnitStateAsync(
 				It.Is<UnitState>(s => s.UnitId == 12 && s.State == (int)UnitStateTypes.Responding && s.DestinationId == 42),
 				7,
-				It.IsAny<CancellationToken>()), Times.Once);
+				It.IsAny<CancellationToken>(),
+				true), Times.Once);
 		}
 
 		[Test]
@@ -220,7 +225,8 @@ namespace Resgrid.Tests.Services
 			_unitsService.Verify(x => x.SetUnitStateAsync(
 				It.Is<UnitState>(s => s.UnitId == 11 && s.State == 77 && s.DestinationId == 52),
 				7,
-				It.IsAny<CancellationToken>()), Times.Once);
+				It.IsAny<CancellationToken>(),
+				true), Times.Once);
 		}
 	}
 }

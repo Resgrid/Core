@@ -33,12 +33,13 @@ namespace Resgrid.Services
 		private readonly IUnitsService _unitsService;
 		private readonly ICallsService _callsService;
 		private readonly IIncidentCommandService _incidentCommandService;
+		private readonly IDispatchAccessService _dispatchAccessService;
 		private readonly ICacheProvider _cacheProvider;
 
 		public ChatPermissionService(IChatChannelMemberRepository chatChannelMemberRepository, IChatChannelAccessRuleRepository chatChannelAccessRuleRepository,
 			IAuthorizationService authorizationService, IDepartmentsService departmentsService, IDepartmentGroupsService departmentGroupsService,
 			IPersonnelRolesService personnelRolesService, IUnitsService unitsService, ICallsService callsService,
-			IIncidentCommandService incidentCommandService, ICacheProvider cacheProvider)
+			IIncidentCommandService incidentCommandService, IDispatchAccessService dispatchAccessService, ICacheProvider cacheProvider)
 		{
 			_chatChannelMemberRepository = chatChannelMemberRepository;
 			_chatChannelAccessRuleRepository = chatChannelAccessRuleRepository;
@@ -49,6 +50,7 @@ namespace Resgrid.Services
 			_unitsService = unitsService;
 			_callsService = callsService;
 			_incidentCommandService = incidentCommandService;
+			_dispatchAccessService = dispatchAccessService;
 			_cacheProvider = cacheProvider;
 		}
 
@@ -193,6 +195,9 @@ namespace Resgrid.Services
 
 				case ChatChannelType.Incident:
 					await AddIncidentAudienceAsync(channel, userIds);
+					// The desk follows the incident's shared conversation, not just its own dispatch line.
+					foreach (var dispatcherId in await _dispatchAccessService.GetDispatchUserIdsAsync(channel.DepartmentId))
+						AddIfSet(userIds, dispatcherId);
 					break;
 
 				case ChatChannelType.IncidentLane:
@@ -201,6 +206,16 @@ namespace Resgrid.Services
 
 				case ChatChannelType.IncidentCommand:
 					await AddCommandStaffAsync(channel.DepartmentId, channel.CallId.GetValueOrDefault(), userIds);
+					break;
+
+				case ChatChannelType.IncidentLeads:
+					await AddLaneLeadsAsync(channel.DepartmentId, channel.CallId.GetValueOrDefault(), userIds);
+					break;
+
+				case ChatChannelType.IncidentDispatch:
+					await AddIncidentAudienceAsync(channel, userIds);
+					foreach (var dispatcherId in await _dispatchAccessService.GetDispatchUserIdsAsync(channel.DepartmentId))
+						AddIfSet(userIds, dispatcherId);
 					break;
 
 				default: // DirectMessage, AdHocGroup
@@ -259,6 +274,11 @@ namespace Resgrid.Services
 					if (await IsDepartmentAdminAsync(channel.DepartmentId, userId))
 						return true;
 
+					// Authorized dispatchers see every call's shared incident conversation — that is the
+					// desk's job. The private command channel stays closed to them.
+					if (await _dispatchAccessService.CanUseDispatchAsync(channel.DepartmentId, userId))
+						return true;
+
 					return await IsInIncidentAudienceAsync(channel, userId, activeUnitId);
 
 				case ChatChannelType.IncidentLane:
@@ -271,7 +291,26 @@ namespace Resgrid.Services
 					if (await IsDepartmentAdminAsync(channel.DepartmentId, userId))
 						return true;
 
+					// Command staff ONLY — deliberately not widened to dispatch. Dispatch reaches command
+					// through the incident's dispatch channel; this one stays internal to the people running
+					// the incident so command can talk candidly.
 					return await IsCommandStaffAsync(channel.DepartmentId, channel.CallId.GetValueOrDefault(), userId);
+
+				case ChatChannelType.IncidentLeads:
+					if (await IsDepartmentAdminAsync(channel.DepartmentId, userId))
+						return true;
+
+					return await IsLaneLeadOrCommanderAsync(channel.DepartmentId, channel.CallId.GetValueOrDefault(), userId);
+
+				case ChatChannelType.IncidentDispatch:
+					// Deliberately NOT widened to department admins the way the other incident channels are.
+					// The whole point of the DispatchAppLogin permission is that an admin the department has
+					// not authorized for dispatch stays out of dispatch traffic; they still get in if they
+					// are actually working the incident.
+					if (await _dispatchAccessService.CanUseDispatchAsync(channel.DepartmentId, userId))
+						return true;
+
+					return await IsInIncidentAudienceAsync(channel, userId, activeUnitId);
 
 				default:
 					return false;
@@ -300,6 +339,8 @@ namespace Resgrid.Services
 				case ChatChannelType.Incident:
 				case ChatChannelType.IncidentLane:
 				case ChatChannelType.IncidentCommand:
+				case ChatChannelType.IncidentLeads:
+				case ChatChannelType.IncidentDispatch:
 					if (!channel.CallId.HasValue)
 						return false;
 
@@ -490,6 +531,54 @@ namespace Resgrid.Services
 			}
 
 			return false;
+		}
+
+		/// <summary>
+		/// "All Leads" audience: the Incident Commander plus every lane's primary and secondary lead.
+		/// Deliberately derived from the lanes on each check rather than stored as membership — a lead who
+		/// is replaced on the board loses the channel without anyone having to remember to remove them.
+		/// </summary>
+		private async Task<bool> IsLaneLeadOrCommanderAsync(int departmentId, int callId, string userId)
+		{
+			if (callId <= 0)
+				return false;
+
+			var command = await _incidentCommandService.GetCommandForCallAsync(departmentId, callId);
+			if (command != null &&
+				(string.Equals(command.CurrentCommanderUserId, userId, StringComparison.OrdinalIgnoreCase) ||
+				 string.Equals(command.EstablishedByUserId, userId, StringComparison.OrdinalIgnoreCase)))
+				return true;
+
+			var nodes = await _incidentCommandService.GetNodesForCallAsync(departmentId, callId);
+			if (nodes == null)
+				return false;
+
+			return nodes.Any(n => !n.DeletedOn.HasValue &&
+				(string.Equals(n.PrimaryLeadUserId, userId, StringComparison.OrdinalIgnoreCase) ||
+				 string.Equals(n.SecondaryLeadUserId, userId, StringComparison.OrdinalIgnoreCase)));
+		}
+
+		private async Task AddLaneLeadsAsync(int departmentId, int callId, HashSet<string> userIds)
+		{
+			if (callId <= 0)
+				return;
+
+			var command = await _incidentCommandService.GetCommandForCallAsync(departmentId, callId);
+			if (command != null)
+			{
+				AddIfSet(userIds, command.CurrentCommanderUserId);
+				AddIfSet(userIds, command.EstablishedByUserId);
+			}
+
+			var nodes = await _incidentCommandService.GetNodesForCallAsync(departmentId, callId);
+			if (nodes == null)
+				return;
+
+			foreach (var node in nodes.Where(n => !n.DeletedOn.HasValue))
+			{
+				AddIfSet(userIds, node.PrimaryLeadUserId);
+				AddIfSet(userIds, node.SecondaryLeadUserId);
+			}
 		}
 
 		private async Task<bool> IsCommandStaffAsync(int departmentId, int callId, string userId)

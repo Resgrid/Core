@@ -394,6 +394,32 @@ namespace Resgrid.Web.Areas.User.Controllers
 			useCalendarSyncPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
 			model.UseCalendarSyncPermissions = new SelectList(useCalendarSyncPermissions, "Id", "Name");
 
+			// Dispatch app login: defaults to Everyone so departments that never configure it are unaffected.
+			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.DispatchAppLogin))
+				model.DispatchAppLogin = permissions.First(x => x.PermissionType == (int)PermissionTypes.DispatchAppLogin).Action;
+			else
+				model.DispatchAppLogin = 3;
+
+			var dispatchAppLoginPermissions = new List<dynamic>();
+			dispatchAppLoginPermissions.Add(new { Id = 3, Name = "Everyone" });
+			dispatchAppLoginPermissions.Add(new { Id = 0, Name = "Department Admins" });
+			dispatchAppLoginPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
+			dispatchAppLoginPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			model.DispatchAppLoginPermissions = new SelectList(dispatchAppLoginPermissions, "Id", "Name");
+
+			// Commander access: defaults to Everyone so departments that never configure it are unaffected.
+			if (permissions.Any(x => x.PermissionType == (int)PermissionTypes.CommandAppLogin))
+				model.CommandAppLogin = permissions.First(x => x.PermissionType == (int)PermissionTypes.CommandAppLogin).Action;
+			else
+				model.CommandAppLogin = 3;
+
+			var commandAppLoginPermissions = new List<dynamic>();
+			commandAppLoginPermissions.Add(new { Id = 3, Name = "Everyone" });
+			commandAppLoginPermissions.Add(new { Id = 0, Name = "Department Admins" });
+			commandAppLoginPermissions.Add(new { Id = 1, Name = "Department and Group Admins" });
+			commandAppLoginPermissions.Add(new { Id = 2, Name = "Department Admins and Select Roles" });
+			model.CommandAppLoginPermissions = new SelectList(commandAppLoginPermissions, "Id", "Name");
+
 
 			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
 			model.IsManagingUser = department.ManagingUserId == UserId;

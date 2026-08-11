@@ -485,11 +485,12 @@
             Realtime chat system interaction (channels, messages, reactions, attachments and presence)
             </summary>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.GetChannels(System.Nullable{System.Int32})">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.GetChannels(System.Nullable{System.Int32},System.Boolean)">
             <summary>
             Returns all the chat channels the current user can access, with per-channel unread counts.
             </summary>
             <param name="activeUnitId">Optional unit the user is actively operating as</param>
+            <param name="includeArchived">Include archived channels — the point-in-time record of closed incidents and calls. Off by default so the everyday list stays current.</param>
             <returns>Array of ChatChannelResultData objects for the channels the user can access</returns>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.GetChannel(System.String)">
@@ -1477,6 +1478,20 @@
             <summary>
             Live incident command: establish/transfer/close command, edit the command structure (lanes), assign
             resources, manage objectives, timers, map annotations, and read the action timeline for a Call.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.CanCommandAsync">
+            <summary>
+            Whether the caller may act as a commander (CommandAppLogin). Gates establishing command.
+            The Command_View / Command_Create policies above are plan-level claims; this is the
+            department's own choice about which of its members command incidents.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.CanReadBoardsAsync">
+            <summary>
+            Whether the caller may READ command boards — the same commander gate as everything else on this
+            surface. A dispatcher who needs to work boards is given the command permission too (it grants
+            the assist capability set); dispatch authorization on its own is not a way in.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.IncidentCommandController.EstablishCommand(Resgrid.Web.Services.Models.v4.IncidentCommand.EstablishCommandInput)">
@@ -11111,6 +11126,18 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Security.DepartmentRightsResultData.CanCreateWorkflow">
             <summary>
             Can the user create/edit workflows
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Security.DepartmentRightsResultData.CanLoginToDispatchApp">
+            <summary>
+            Can the user sign in to the Dispatch app. Dispatch exposes private command, unit and responder
+            traffic, so departments can restrict it to admins or selected roles; defaults to everyone.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Security.DepartmentRightsResultData.CanLoginToCommandApp">
+            <summary>
+            Can the user act as a commander: sign in to the IC app, establish command, and read command
+            boards. Restrictable to admins or selected roles; defaults to everyone.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Security.DepartmentRightsResultData.CanManageWorkflowCredentials">

@@ -470,6 +470,25 @@ namespace Resgrid.Services
 			foreach (var role in roles.Where(r => string.Equals(r.UserId, userId)))
 				caps |= IncidentRoleCapabilityMap.GetCapabilities((IncidentRoleType)role.RoleType);
 
+			// A department that has deliberately chosen who commands can let those people assist on a board
+			// without holding an ICS role on it — that is how a dispatcher helps work an incident from the
+			// Dispatch app. CanAssistWithCommandAsync (not CanUseCommandAsync) is the right question: the
+			// permission is open by default, and granting board authority off that open default would hand
+			// every member rights nobody asked for.
+			// Resolved through the service locator (matching this file's other cross-cutting lookups) so the
+			// permission side, which has no dependency on this service, does not close a DI cycle.
+			try
+			{
+				if (await ServiceLocator.Current.GetInstance<ICommandAccessService>().CanAssistWithCommandAsync(departmentId, userId))
+					caps |= IncidentRoleCapabilityMap.CommandAssistCapabilities;
+			}
+			catch (Exception ex)
+			{
+				// Fail closed: an unresolvable permission grants nothing extra, leaving the caller with
+				// whatever their commander standing and ICS roles already earned them.
+				Resgrid.Framework.Logging.LogException(ex);
+			}
+
 			return caps;
 		}
 
@@ -505,6 +524,11 @@ namespace Resgrid.Services
 				Attachments = await GetAttachmentsForCallAsync(departmentId, callId),
 				Maps = await GetIncidentMapsForCallAsync(departmentId, callId)
 			};
+
+			// Heal incidents established before the chat channels existed. Reuses the nodes already read
+			// for the board rather than querying them again, and the call is cache-guarded internally so
+			// this polled read does not re-sweep on every refresh.
+			await BackfillIncidentChatChannelsAsync(command, departmentId, callId, board.Nodes);
 
 			return board;
 		}
@@ -1031,7 +1055,92 @@ namespace Resgrid.Services
 				}
 			}
 
+			await BackfillIncidentChatChannelsAsync(command, departmentId, callId);
+			await PopulateResourceViewContactsAndChatAsync(view, command, departmentId, callId, userId);
+
 			return view;
+		}
+
+		/// <summary>
+		/// Heals incidents that pre-date the incident chat channels: the first time someone opens the
+		/// board or the responder view, any missing channel is created. Deliberately a lazy backfill on
+		/// the read paths rather than a migration, so nothing has to be swept over the whole estate — an
+		/// incident nobody looks at costs nothing. Best-effort and internally cache-guarded; never throws.
+		/// </summary>
+		private async Task BackfillIncidentChatChannelsAsync(IncidentCommand command, int departmentId, int callId, List<CommandStructureNode> knownNodes = null)
+		{
+			try
+			{
+				var nodes = knownNodes ?? await GetNodesForCallAsync(departmentId, callId);
+				await ServiceLocator.Current.GetInstance<IChatChannelService>().EnsureIncidentChannelsAsync(command, nodes);
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+			}
+		}
+
+		/// <summary>
+		/// Fills in who holds which ICS position and which chat channels this caller may open. Both are
+		/// resolved here rather than client-side so a responder app never has to infer access: a channel id
+		/// it does not receive is one it cannot open.
+		/// </summary>
+		private async Task PopulateResourceViewContactsAndChatAsync(ResourceIncidentView view, IncidentCommand command, int departmentId, int callId, string userId)
+		{
+			var nodes = await GetNodesForCallAsync(departmentId, callId) ?? new List<CommandStructureNode>();
+			var roles = await GetIncidentRolesAsync(departmentId, callId) ?? new List<IncidentRoleAssignment>();
+			var activeRoles = roles.Where(r => !r.RemovedOn.HasValue).ToList();
+
+			foreach (var role in activeRoles.OrderBy(r => r.RoleType))
+			{
+				var contact = await BuildUserContactAsync(role.UserId);
+				if (contact != null)
+					view.Roles.Add(new IncidentRoleContactInfo { RoleType = role.RoleType, Contact = contact });
+			}
+
+			var isCommander = string.Equals(command.CurrentCommanderUserId, userId, StringComparison.OrdinalIgnoreCase)
+				|| string.Equals(command.EstablishedByUserId, userId, StringComparison.OrdinalIgnoreCase);
+
+			var isCommandStaff = isCommander || activeRoles.Any(r => string.Equals(r.UserId, userId, StringComparison.OrdinalIgnoreCase));
+
+			var isLaneLead = nodes.Any(n => !n.DeletedOn.HasValue
+				&& (string.Equals(n.PrimaryLeadUserId, userId, StringComparison.OrdinalIgnoreCase)
+					|| string.Equals(n.SecondaryLeadUserId, userId, StringComparison.OrdinalIgnoreCase)));
+
+			view.Chat.IsFrozen = command.Status != (int)IncidentCommandStatus.Active;
+
+			try
+			{
+				// Resolved through the service locator, matching DeleteNodeAsync: the chat side depends on
+				// this service, so constructor-injecting it back would close a DI cycle.
+				var channels = (await ServiceLocator.Current.GetInstance<Resgrid.Model.Repositories.IChatChannelRepository>()
+					.GetByCallIdAsync(callId))?.ToList() ?? new List<ChatChannel>();
+
+				view.Chat.IncidentChannelId = channels.FirstOrDefault(c => c.ChannelType == (int)ChatChannelType.Incident)?.ChatChannelId;
+
+				// Anyone on the incident can raise dispatch; no command standing required.
+				view.Chat.DispatchChannelId = channels.FirstOrDefault(c => c.ChannelType == (int)ChatChannelType.IncidentDispatch)?.ChatChannelId;
+
+				if (isCommandStaff)
+					view.Chat.CommandChannelId = channels.FirstOrDefault(c => c.ChannelType == (int)ChatChannelType.IncidentCommand)?.ChatChannelId;
+
+				if (isCommander || isLaneLead)
+					view.Chat.LeadsChannelId = channels.FirstOrDefault(c => c.ChannelType == (int)ChatChannelType.IncidentLeads)?.ChatChannelId;
+
+				var myNodeId = view.MyAssignment?.CommandStructureNodeId;
+				if (!string.IsNullOrWhiteSpace(myNodeId))
+				{
+					view.Chat.LaneChannelId = channels
+						.FirstOrDefault(c => c.ChannelType == (int)ChatChannelType.IncidentLane
+							&& string.Equals(c.CommandStructureNodeId, myNodeId, StringComparison.OrdinalIgnoreCase))?.ChatChannelId;
+				}
+			}
+			catch (Exception ex)
+			{
+				// Chat is supplementary to the incident view — a lookup failure must not cost the responder
+				// their objectives, needs and lane assignment.
+				Resgrid.Framework.Logging.LogException(ex);
+			}
 		}
 
 		/// <summary>Contact card for a Resgrid user (name from the profile; phone/email as the profile exposes them).</summary>

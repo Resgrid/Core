@@ -314,13 +314,33 @@
                                         </td>
                                     </tr>
                                     <tr>
-                                        <td>Use Calendar Sync</td>
-                                        <td style="max-width: 350px">Controls who can activate and use calendar subscription URLs to sync Resgrid calendar events to external calendar applications.</td>
+                                        <td>@localizer["PermUseCalendarSyncLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermUseCalendarSyncNote"]</td>
                                         <td>@Html.DropDownListFor(m => m.UseCalendarSync, Model.UseCalendarSyncPermissions)</td>
                                         <td>@localizer["PermissionNA"]</td>
                                         <td>
                                             <span id="calSyncNoRolesSpan">@localizer["PermissionNoRoles"]</span>
                                             <div id="calSyncRolesDiv" style="display: none;"><select id="calSyncRoles" name="calSyncRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermDispatchAppLoginLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermDispatchAppLoginNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.DispatchAppLogin, Model.DispatchAppLoginPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="dispatchAppLoginNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="dispatchAppLoginRolesDiv" style="display: none;"><select id="dispatchAppLoginRoles" name="dispatchAppLoginRoles"></select></div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>@localizer["PermCommandAppLoginLabel"]</td>
+                                        <td style="max-width: 350px">@localizer["PermCommandAppLoginNote"]</td>
+                                        <td>@Html.DropDownListFor(m => m.CommandAppLogin, Model.CommandAppLoginPermissions)</td>
+                                        <td>@localizer["PermissionNA"]</td>
+                                        <td>
+                                            <span id="commandAppLoginNoRolesSpan">@localizer["PermissionNoRoles"]</span>
+                                            <div id="commandAppLoginRolesDiv" style="display: none;"><select id="commandAppLoginRoles" name="commandAppLoginRoles"></select></div>
                                         </td>
                                     </tr>
                                 </tbody>

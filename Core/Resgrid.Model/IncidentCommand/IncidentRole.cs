@@ -72,6 +72,19 @@ namespace Resgrid.Model
 	/// </summary>
 	public static class IncidentRoleCapabilityMap
 	{
+		/// <summary>
+		/// What a command-authorized user gets on a board they hold no ICS role on — the "help work the
+		/// board" subset: see it, move resources on and off, bring ad-hoc resources in, and keep the
+		/// timers and accountability running.
+		///
+		/// Deliberately excludes ManageCommand (closing, transferring, the action plan) and
+		/// ManageStructure (creating and deleting lanes): assisting is not commanding, and the shape of
+		/// the incident stays with whoever actually holds it.
+		/// </summary>
+		public const IncidentCapabilities CommandAssistCapabilities =
+			IncidentCapabilities.ViewBoard | IncidentCapabilities.AssignResources | IncidentCapabilities.ManageResources |
+			IncidentCapabilities.ManageTimers | IncidentCapabilities.ManageAccountability;
+
 		public static IncidentCapabilities GetCapabilities(IncidentRoleType role)
 		{
 			switch (role)

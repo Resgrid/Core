@@ -782,6 +782,60 @@ var resgrid;
                 initPermRoles("#calSyncRoles", 28);
                 ////////////////////////////////////////////////////////
 
+                // Dispatch App Login
+                ////////////////////////////////////////////////////////
+                $('#DispatchAppLogin').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=29&perm=' + val,
+                        type: 'GET'
+                    }).done(function (results) {
+                    });
+                    if ($("#DispatchAppLogin").val() === "2") {
+                        $('#dispatchAppLoginNoRolesSpan').hide();
+                        $('#dispatchAppLoginRolesDiv').show();
+                    } else {
+                        $('#dispatchAppLoginNoRolesSpan').show();
+                        $('#dispatchAppLoginRolesDiv').hide();
+                    }
+                });
+                if ($("#DispatchAppLogin").val() === "2") {
+                    $('#dispatchAppLoginNoRolesSpan').hide();
+                    $('#dispatchAppLoginRolesDiv').show();
+                } else {
+                    $('#dispatchAppLoginNoRolesSpan').show();
+                    $('#dispatchAppLoginRolesDiv').hide();
+                }
+                initPermRoles("#dispatchAppLoginRoles", 29);
+                ////////////////////////////////////////////////////////
+
+                // Command App Login
+                ////////////////////////////////////////////////////////
+                $('#CommandAppLogin').change(function () {
+                    var val = this.value;
+                    $.ajax({
+                        url: resgrid.absoluteBaseUrl + '/User/Security/SetPermission?type=30&perm=' + val,
+                        type: 'GET'
+                    }).done(function (results) {
+                    });
+                    if ($("#CommandAppLogin").val() === "2") {
+                        $('#commandAppLoginNoRolesSpan').hide();
+                        $('#commandAppLoginRolesDiv').show();
+                    } else {
+                        $('#commandAppLoginNoRolesSpan').show();
+                        $('#commandAppLoginRolesDiv').hide();
+                    }
+                });
+                if ($("#CommandAppLogin").val() === "2") {
+                    $('#commandAppLoginNoRolesSpan').hide();
+                    $('#commandAppLoginRolesDiv').show();
+                } else {
+                    $('#commandAppLoginNoRolesSpan').show();
+                    $('#commandAppLoginRolesDiv').hide();
+                }
+                initPermRoles("#commandAppLoginRoles", 30);
+                ////////////////////////////////////////////////////////
+
             });
         })(permissions = security.permissions || (security.permissions = {}));
     })(security = resgrid.security || (resgrid.security = {}));

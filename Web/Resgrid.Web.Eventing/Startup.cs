@@ -371,10 +371,13 @@ namespace Resgrid.Web.Eventing
 
 			//app.UseHttpsRedirection();
 
+			// global cors policy: the configured Resgrid base hosts, their subdomains, sibling apps
+			// under the same parent domain (dispatch.resgrid.com alongside events.resgrid.com) and any
+			// extra origins in ApiConfig.CorsAllowedOrigins. See Resgrid.Config.CorsHelper.
 			app.UseCors(x => x
 				.AllowAnyMethod()
 				.AllowAnyHeader()
-				.SetIsOriginAllowed(IsAllowedOrigin)
+				.SetIsOriginAllowed(CorsHelper.IsAllowedOrigin)
 				.AllowCredentials()); // allow credentials
 
 			app.UseAuthentication();
@@ -398,31 +401,5 @@ namespace Resgrid.Web.Eventing
 			});
 		}
 
-		private static bool IsAllowedOrigin(string origin)
-		{
-			if (string.IsNullOrWhiteSpace(origin) || !Uri.TryCreate(origin, UriKind.Absolute, out var originUri))
-				return false;
-
-			var configuredBaseUrls = new[]
-			{
-				SystemBehaviorConfig.ResgridBaseUrl,
-				SystemBehaviorConfig.ResgridApiBaseUrl,
-				SystemBehaviorConfig.ResgridEventingBaseUrl
-			};
-
-			foreach (var baseUrl in configuredBaseUrls)
-			{
-				if (string.IsNullOrWhiteSpace(baseUrl) || !Uri.TryCreate(baseUrl, UriKind.Absolute, out var baseUri))
-					continue;
-
-				if (string.Equals(originUri.Host, baseUri.Host, StringComparison.OrdinalIgnoreCase))
-					return true;
-
-				if (originUri.Host.EndsWith("." + baseUri.Host, StringComparison.OrdinalIgnoreCase))
-					return true;
-			}
-
-			return false;
-		}
 	}
 }

@@ -131,6 +131,13 @@ namespace Resgrid.Repositories.DataRepository
 								DELETE FROM [dbo].[CallUnits] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[CallProtocols] WHERE CallId IN (SELECT CallId FROM [dbo].[Calls] WHERE DepartmentId = @DepartmentId)
 								DELETE FROM [dbo].[CallLogs] WHERE DepartmentId = @DepartmentId
+
+								-- Command definitions reference CallTypes (CallTypeId), so their tree must go first
+								DELETE FROM [dbo].[CommandDefinitionRolePersonnelRoles] WHERE CommandDefinitionRoleId IN (SELECT CommandDefinitionRoleId FROM [dbo].[CommandDefinitionRoles] WHERE CommandDefinitionId IN (SELECT CommandDefinitionId FROM [dbo].[CommandDefinitions] WHERE DepartmentId = @DepartmentId))
+								DELETE FROM [dbo].[CommandDefinitionRoleUnitTypes] WHERE CommandDefinitionRoleId IN (SELECT CommandDefinitionRoleId FROM [dbo].[CommandDefinitionRoles] WHERE CommandDefinitionId IN (SELECT CommandDefinitionId FROM [dbo].[CommandDefinitions] WHERE DepartmentId = @DepartmentId))
+								DELETE FROM [dbo].[CommandDefinitionRoles] WHERE CommandDefinitionId IN (SELECT CommandDefinitionId FROM [dbo].[CommandDefinitions] WHERE DepartmentId = @DepartmentId)
+								DELETE FROM [dbo].[CommandDefinitions] WHERE DepartmentId = @DepartmentId
+
 								DELETE FROM [dbo].[CallTypes] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[CallVideoFeeds] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[DepartmentCallEmails] WHERE DepartmentId = @DepartmentId
@@ -253,7 +260,6 @@ namespace Resgrid.Repositories.DataRepository
 								DELETE FROM [dbo].[Notes] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[Payments] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[PersonnelRoles] WHERE DepartmentId = @DepartmentId
-								DELETE FROM [dbo].[CommandDefinitions] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[UnitTypes] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[DispatchProtocols] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[Forms] WHERE DepartmentId = @DepartmentId

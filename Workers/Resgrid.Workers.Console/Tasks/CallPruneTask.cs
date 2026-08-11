@@ -53,7 +53,7 @@ namespace Resgrid.Workers.Console.Tasks
 						{
 							// Orphaned pruning row for a deleted department; skip it so we don't
 							// null-ref in CallPruneLogic or spam error logs every run.
-							_logger.LogWarning($"CallPrune::Skipping orphaned pruning settings for deleted DepartmentId:{item.PruneSettings.DepartmentId}");
+							Resgrid.Framework.Logging.LogWarning($"CallPrune::Skipping orphaned pruning settings for deleted DepartmentId:{item.PruneSettings.DepartmentId}");
 							continue;
 						}
 

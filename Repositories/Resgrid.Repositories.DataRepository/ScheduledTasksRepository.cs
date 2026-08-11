@@ -9,6 +9,7 @@ using System.Configuration;
 using Dapper;
 using System;
 using System.Data.Common;
+using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Framework;
 using Resgrid.Model.Repositories.Connection;
@@ -135,44 +136,44 @@ namespace Resgrid.Repositories.DataRepository
 
 		}
 
-		public async Task<bool> DeleteAllTasksForUserAsync(string userId)
+		public async Task<bool> DeleteAllTasksForUserAsync(string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (Config.DataConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
 				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
 				{
-					await db.ExecuteAsync(@"DELETE FROM scheduledtasklogs WHERE scheduledtaskid IN (SELECT scheduledtaskid FROM scheduledtasks WHERE userid = @userId)", new { userId = userId });
-					await db.ExecuteAsync(@"DELETE FROM scheduledtasks WHERE userid = @userId", new { userId = userId });
+					await db.ExecuteAsync(new Dapper.CommandDefinition(@"DELETE FROM scheduledtasklogs WHERE scheduledtaskid IN (SELECT scheduledtaskid FROM scheduledtasks WHERE userid = @userId)", new { userId = userId }, cancellationToken: cancellationToken));
+					await db.ExecuteAsync(new Dapper.CommandDefinition(@"DELETE FROM scheduledtasks WHERE userid = @userId", new { userId = userId }, cancellationToken: cancellationToken));
 				}
 			}
 			else
 			{
 				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
-					await db.ExecuteAsync(@"DELETE FROM ScheduledTaskLogs WHERE ScheduledTaskId IN (SELECT ScheduledTaskId FROM ScheduledTasks WHERE UserId = @userId)", new { userId = userId });
-					await db.ExecuteAsync(@"DELETE FROM ScheduledTasks WHERE UserId = @userId", new { userId = userId });
+					await db.ExecuteAsync(new Dapper.CommandDefinition(@"DELETE FROM ScheduledTaskLogs WHERE ScheduledTaskId IN (SELECT ScheduledTaskId FROM ScheduledTasks WHERE UserId = @userId)", new { userId = userId }, cancellationToken: cancellationToken));
+					await db.ExecuteAsync(new Dapper.CommandDefinition(@"DELETE FROM ScheduledTasks WHERE UserId = @userId", new { userId = userId }, cancellationToken: cancellationToken));
 				}
 			}
 
 			return true;
 		}
 
-		public async Task<bool> DeleteAllTasksForUserInDepartmentAsync(string userId, int departmentId)
+		public async Task<bool> DeleteAllTasksForUserInDepartmentAsync(string userId, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (Config.DataConfig.DatabaseType == DatabaseTypes.Postgres)
 			{
 				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
 				{
-					await db.ExecuteAsync(@"DELETE FROM scheduledtasklogs WHERE scheduledtaskid IN (SELECT scheduledtaskid FROM scheduledtasks WHERE userid = @userId AND departmentid = @departmentId)", new { userId = userId, departmentId = departmentId });
-					await db.ExecuteAsync(@"DELETE FROM scheduledtasks WHERE userid = @userId AND departmentid = @departmentId", new { userId = userId, departmentId = departmentId });
+					await db.ExecuteAsync(new Dapper.CommandDefinition(@"DELETE FROM scheduledtasklogs WHERE scheduledtaskid IN (SELECT scheduledtaskid FROM scheduledtasks WHERE userid = @userId AND departmentid = @departmentId)", new { userId = userId, departmentId = departmentId }, cancellationToken: cancellationToken));
+					await db.ExecuteAsync(new Dapper.CommandDefinition(@"DELETE FROM scheduledtasks WHERE userid = @userId AND departmentid = @departmentId", new { userId = userId, departmentId = departmentId }, cancellationToken: cancellationToken));
 				}
 			}
 			else
 			{
 				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
 				{
-					await db.ExecuteAsync(@"DELETE FROM ScheduledTaskLogs WHERE ScheduledTaskId IN (SELECT ScheduledTaskId FROM ScheduledTasks WHERE UserId = @userId AND DepartmentId = @departmentId)", new { userId = userId, departmentId = departmentId });
-					await db.ExecuteAsync(@"DELETE FROM ScheduledTasks WHERE UserId = @userId AND DepartmentId = @departmentId", new { userId = userId, departmentId = departmentId });
+					await db.ExecuteAsync(new Dapper.CommandDefinition(@"DELETE FROM ScheduledTaskLogs WHERE ScheduledTaskId IN (SELECT ScheduledTaskId FROM ScheduledTasks WHERE UserId = @userId AND DepartmentId = @departmentId)", new { userId = userId, departmentId = departmentId }, cancellationToken: cancellationToken));
+					await db.ExecuteAsync(new Dapper.CommandDefinition(@"DELETE FROM ScheduledTasks WHERE UserId = @userId AND DepartmentId = @departmentId", new { userId = userId, departmentId = departmentId }, cancellationToken: cancellationToken));
 				}
 			}
 

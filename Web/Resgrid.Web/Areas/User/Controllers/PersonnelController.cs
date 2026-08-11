@@ -710,7 +710,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					if (result == DeleteUserResults.UserIsManagingDepartmentAdmin)
 						ModelState.AddModelError("", "Cannot delete the Managing User");
 					else
-						ModelState.AddModelError("", "Error while trying to delete this person, please try again latter.");
+						ModelState.AddModelError("", "Error while trying to delete this person, please try again later.");
 				}
 				else
 				{

@@ -114,9 +114,9 @@ namespace Resgrid.Services
 			await _scheduledTasksService.DeleteAllTasksForUserInDepartmentAsync(userId, departmentId, cancellationToken);
 
 			// Soft-delete the membership last (this also writes the audit event and clears caches).
-			await _departmentsService.DeleteUserAsync(departmentId, userId, revokingUserId, cancellationToken);
+			var member = await _departmentsService.DeleteUserAsync(departmentId, userId, revokingUserId, cancellationToken);
 
-			return true;
+			return member != null && member.IsDeleted;
 		}
 
 		public async Task<DeleteUserResults> DeleteUserAccountAsync(int departmentId, string authorizingUserId, string userIdToDelete, string ipAddress, string userAgent, CancellationToken cancellationToken = default(CancellationToken))
@@ -144,6 +144,25 @@ namespace Resgrid.Services
 						return DeleteUserResults.UserIsManagingDepartmentAdmin;
 				}
 
+				// Strip roles and group memberships before touching the membership rows so a
+				// failure part-way through leaves the memberships intact and the whole
+				// operation retryable (mirrors the ordering in RevokeDepartmentAccessAsync).
+				foreach (var dm in departments)
+				{
+					await _personnelRolesService.RemoveUserFromAllRolesAsync(userIdToDelete, dm.DepartmentId, cancellationToken);
+					await _departmentGroupsService.DeleteUserFromGroupsAsync(userIdToDelete, dm.DepartmentId, cancellationToken);
+				}
+			}
+
+			// Kill every remaining automation and subscription for the user across all
+			// departments: distribution lists, scheduled status/staffing changes and
+			// scheduled report deliveries. Still runs before the membership rows are
+			// soft-deleted below so a failure here keeps the operation retryable.
+			await _distributionListsService.RemoveUserFromAllListsAsync(userIdToDelete, cancellationToken);
+			await _scheduledTasksService.DeleteAllTasksForUserAsync(userIdToDelete, cancellationToken);
+
+			if (departments != null && departments.Any())
+			{
 				foreach (var dm in departments)
 				{
 					var auditEvent = new AuditEvent();
@@ -167,17 +186,8 @@ namespace Resgrid.Services
 					_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 					await _departmentsService.SaveDepartmentMemberAsync(dm, cancellationToken);
-
-					await _personnelRolesService.RemoveUserFromAllRolesAsync(userIdToDelete, dm.DepartmentId, cancellationToken);
-					await _departmentGroupsService.DeleteUserFromGroupsAsync(userIdToDelete, dm.DepartmentId, cancellationToken);
 				}
 			}
-
-			// Kill every remaining automation and subscription for the user across all
-			// departments: distribution lists, scheduled status/staffing changes and
-			// scheduled report deliveries.
-			await _distributionListsService.RemoveUserFromAllListsAsync(userIdToDelete, cancellationToken);
-			await _scheduledTasksService.DeleteAllTasksForUserAsync(userIdToDelete, cancellationToken);
 
 			var userProfile = await _userProfileService.GetProfileByUserIdAsync(userIdToDelete, true);
 

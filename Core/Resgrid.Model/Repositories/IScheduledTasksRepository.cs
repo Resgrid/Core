@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Resgrid.Model.Repositories
@@ -23,13 +24,13 @@ namespace Resgrid.Model.Repositories
 		/// Deletes every scheduled task (and their logs) owned by a user, across all departments.
 		/// Used when a user account is deleted/deactivated.
 		/// </summary>
-		Task<bool> DeleteAllTasksForUserAsync(string userId);
+		Task<bool> DeleteAllTasksForUserAsync(string userId, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Deletes every scheduled task (and their logs) owned by a user that is scoped to a single
 		/// department. Legacy rows with DepartmentId = 0 are left alone; the active-task queries
 		/// resolve those through non-deleted department memberships.
 		/// </summary>
-		Task<bool> DeleteAllTasksForUserInDepartmentAsync(string userId, int departmentId);
+		Task<bool> DeleteAllTasksForUserInDepartmentAsync(string userId, int departmentId, CancellationToken cancellationToken = default(CancellationToken));
 	}
 }

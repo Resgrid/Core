@@ -1165,7 +1165,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 						{
 							await _departmentsService.SetActiveDepartmentForUserAsync(UserId, defaultDepartment.DepartmentId,
 								user, cancellationToken);
-							await _deleteService.RevokeDepartmentAccessAsync(UserId, departmentToRemove.DepartmentId, UserId, cancellationToken);
+							var revoked = await _deleteService.RevokeDepartmentAccessAsync(UserId, departmentToRemove.DepartmentId, UserId, cancellationToken);
+
+							if (!revoked)
+							{
+								Resgrid.Framework.Logging.LogError($"DeleteDepartmentLink: failed to revoke department {departmentToRemove.DepartmentId} access for user {UserId}");
+								return RedirectToAction("YourDepartments");
+							}
 
 							await _signInManager.SignOutAsync();
 
@@ -1193,7 +1199,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 							{
 								await _departmentsService.SetActiveDepartmentForUserAsync(UserId, nextDepartmentUp.DepartmentId,
 									user, cancellationToken);
-								await _deleteService.RevokeDepartmentAccessAsync(UserId, departmentToRemove.DepartmentId, UserId, cancellationToken);
+								var revoked = await _deleteService.RevokeDepartmentAccessAsync(UserId, departmentToRemove.DepartmentId, UserId, cancellationToken);
+
+								if (!revoked)
+								{
+									Resgrid.Framework.Logging.LogError($"DeleteDepartmentLink: failed to revoke department {departmentToRemove.DepartmentId} access for user {UserId}");
+									return RedirectToAction("YourDepartments");
+								}
 
 								await _signInManager.SignOutAsync();
 
@@ -1217,7 +1229,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 					{
 						if (departmentToRemove.DepartmentId != defaultDepartment.DepartmentId)
 						{
-							await _deleteService.RevokeDepartmentAccessAsync(UserId, departmentToRemove.DepartmentId, UserId, cancellationToken);
+							var revoked = await _deleteService.RevokeDepartmentAccessAsync(UserId, departmentToRemove.DepartmentId, UserId, cancellationToken);
+
+							if (!revoked)
+								Resgrid.Framework.Logging.LogError($"DeleteDepartmentLink: failed to revoke department {departmentToRemove.DepartmentId} access for user {UserId}");
 						}
 						else
 						{

@@ -234,7 +234,9 @@ namespace Resgrid.Services
 
 		public async Task<bool> DeleteAllTasksForUserAsync(string userId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var result = await _scheduledTaskRepository.DeleteAllTasksForUserAsync(userId);
+			cancellationToken.ThrowIfCancellationRequested();
+
+			var result = await _scheduledTaskRepository.DeleteAllTasksForUserAsync(userId, cancellationToken);
 			InvalidateScheduledTasksCache();
 
 			return result;
@@ -242,7 +244,9 @@ namespace Resgrid.Services
 
 		public async Task<bool> DeleteAllTasksForUserInDepartmentAsync(string userId, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var result = await _scheduledTaskRepository.DeleteAllTasksForUserInDepartmentAsync(userId, departmentId);
+			cancellationToken.ThrowIfCancellationRequested();
+
+			var result = await _scheduledTaskRepository.DeleteAllTasksForUserInDepartmentAsync(userId, departmentId, cancellationToken);
 			InvalidateScheduledTasksCache();
 
 			return result;

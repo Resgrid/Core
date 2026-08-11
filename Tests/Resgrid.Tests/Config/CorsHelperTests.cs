@@ -84,6 +84,35 @@ namespace Resgrid.Tests.Config
 		}
 
 		[Test]
+		public void should_not_widen_the_parent_domain_past_a_shared_hosting_suffix()
+		{
+			// A deployment on shared hosting must not treat the platform apex as its parent —
+			// every other tenant is an attacker-controlled sibling. Widening still works one
+			// level below the suffix, scoped to the deployment's own tenant name.
+			SystemBehaviorConfig.ResgridBaseUrl = "https://myorg.github.io";
+			SystemBehaviorConfig.ResgridApiBaseUrl = "https://api.myorg.github.io";
+			SystemBehaviorConfig.ResgridEventingBaseUrl = "";
+
+			CorsHelper.IsAllowedOrigin("https://myorg.github.io").Should().BeTrue();
+			CorsHelper.IsAllowedOrigin("https://dispatch.myorg.github.io").Should().BeTrue();
+			CorsHelper.IsAllowedOrigin("https://attacker.github.io").Should().BeFalse();
+			CorsHelper.IsAllowedOrigin("https://github.io").Should().BeFalse();
+		}
+
+		[Test]
+		public void should_not_widen_the_parent_domain_past_a_paas_suffix()
+		{
+			SystemBehaviorConfig.ResgridBaseUrl = "https://resgrid-web.azurewebsites.net";
+			SystemBehaviorConfig.ResgridApiBaseUrl = "https://resgrid-api.azurewebsites.net";
+			SystemBehaviorConfig.ResgridEventingBaseUrl = "https://resgrid-app.herokuapp.com";
+
+			CorsHelper.IsAllowedOrigin("https://resgrid-web.azurewebsites.net").Should().BeTrue();
+			CorsHelper.IsAllowedOrigin("https://attacker.azurewebsites.net").Should().BeFalse();
+			CorsHelper.IsAllowedOrigin("https://attacker.herokuapp.com").Should().BeFalse();
+			CorsHelper.IsAllowedOrigin("https://azurewebsites.net").Should().BeFalse();
+		}
+
+		[Test]
 		public void should_not_widen_single_label_or_ip_hosts()
 		{
 			SystemBehaviorConfig.ResgridBaseUrl = "https://localhost";

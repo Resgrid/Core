@@ -16,17 +16,29 @@ namespace Resgrid.Config
 	///    lets sibling apps call the API without being listed explicitly: with a base url of
 	///    qaapi.resgrid.dev the parent is resgrid.dev, so qadispatch.resgrid.dev is allowed.
 	///    Parent widening never crosses a public registry suffix (resgrid.co.uk will not widen
-	///    to co.uk) and is skipped entirely for IP addresses and single-label hosts.
+	///    to co.uk) or a known shared-hosting suffix (myorg.github.io will not widen to
+	///    github.io) and is skipped entirely for IP addresses and single-label hosts.
 	/// </summary>
 	public static class CorsHelper
 	{
-		// Multi-part public registry suffixes that must never be treated as a shared parent
-		// domain. Widening api.resgrid.co.uk to co.uk would allow every site registered under
-		// that suffix to make credentialed calls, so parent widening stops just short of these.
-		// Single-part TLDs (com, dev, net, ...) need no listing: widening already stops at two
-		// labels, so a bare TLD can never be produced as a parent.
-		private static readonly HashSet<string> _publicRegistrySuffixes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+		// Suffixes that must never be treated as a shared parent domain, because mutually
+		// untrusting parties register siblings directly under them. Two kinds live here:
+		//
+		// 1. Multi-part public registry suffixes (co.uk, com.au, ...). Widening api.resgrid.co.uk
+		//    to co.uk would allow every site registered under that suffix to make credentialed
+		//    calls. Single-part TLDs (com, dev, net, ...) need no listing: widening already stops
+		//    at two labels, so a bare TLD can never be produced as a parent.
+		// 2. Private shared-hosting suffixes (github.io, azurewebsites.net, herokuapp.com, ...).
+		//    A deployment served from myorg.github.io must not widen to github.io — every other
+		//    tenant on the platform is an attacker-controlled sibling. Widening still works one
+		//    level below the suffix (api.myorg.github.io widens to myorg.github.io).
+		//
+		// This is a curated snapshot of the common cases, not the full Public Suffix List. A
+		// deployment under a suffix not listed here should not rely on parent widening at all —
+		// list its sibling origins explicitly in ApiConfig.CorsAllowedOrigins instead.
+		private static readonly HashSet<string> _unsafeParentSuffixes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
 		{
+			// Public registry suffixes.
 			"co.uk", "org.uk", "me.uk", "ltd.uk", "plc.uk", "net.uk", "sch.uk", "ac.uk", "gov.uk", "nhs.uk",
 			"com.au", "net.au", "org.au", "edu.au", "gov.au", "id.au", "asn.au",
 			"co.nz", "net.nz", "org.nz", "govt.nz", "ac.nz",
@@ -37,7 +49,30 @@ namespace Resgrid.Config
 			"co.in", "net.in", "org.in", "gen.in", "firm.in", "ind.in",
 			"com.cn", "net.cn", "org.cn", "gov.cn",
 			"com.sg", "com.hk", "com.tw", "com.my", "com.ph", "com.tr", "com.ar", "com.co",
-			"co.id", "co.kr", "co.th", "co.il"
+			"co.id", "co.kr", "co.th", "co.il",
+
+			// Private shared-hosting suffixes: code hosting pages.
+			"github.io", "gitlab.io", "bitbucket.io",
+
+			// Microsoft Azure.
+			"azurewebsites.net", "azurestaticapps.net", "azurecontainerapps.io", "cloudapp.net",
+			"cloudapp.azure.com", "trafficmanager.net", "azureedge.net", "azurefd.net",
+
+			// Amazon AWS (amazonaws.com blankets S3/ELB/execute-api regional hosts).
+			"amazonaws.com", "cloudfront.net", "elasticbeanstalk.com", "amplifyapp.com", "awsapprunner.com",
+
+			// Google Cloud / Firebase.
+			"appspot.com", "web.app", "firebaseapp.com", "run.app",
+
+			// Cloudflare.
+			"pages.dev", "workers.dev", "r2.dev", "trycloudflare.com",
+
+			// Other common PaaS / static hosting / tunnels.
+			"herokuapp.com", "netlify.app", "vercel.app", "now.sh", "surge.sh", "glitch.me",
+			"onrender.com", "fly.dev", "railway.app", "deno.dev", "koyeb.app",
+			"ondigitalocean.app", "digitaloceanspaces.com",
+			"repl.co", "replit.app",
+			"ngrok.io", "ngrok.app", "ngrok-free.app", "ngrok.dev", "loca.lt"
 		};
 
 		/// <summary>
@@ -120,14 +155,15 @@ namespace Resgrid.Config
 			var labels = baseUri.Host.Split('.');
 
 			// Walk from the full host toward the apex (never past two labels), stopping before
-			// any public registry suffix; the last safe candidate is the widest usable parent.
-			// qaapi.resgrid.dev -> resgrid.dev; api.resgrid.co.uk -> resgrid.co.uk (co.uk unsafe);
+			// any public registry or shared-hosting suffix; the last safe candidate is the widest
+			// usable parent. qaapi.resgrid.dev -> resgrid.dev; api.resgrid.co.uk -> resgrid.co.uk
+			// (co.uk unsafe); api.myorg.github.io -> myorg.github.io (github.io unsafe);
 			// resgrid.com / localhost -> null (base-host matching already covers them).
 			string widest = null;
 			for (int start = 1; start <= labels.Length - 2; start++)
 			{
 				var candidate = String.Join(".", labels, start, labels.Length - start);
-				if (_publicRegistrySuffixes.Contains(candidate))
+				if (_unsafeParentSuffixes.Contains(candidate))
 					break;
 
 				widest = candidate;

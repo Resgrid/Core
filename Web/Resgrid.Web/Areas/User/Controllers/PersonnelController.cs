@@ -691,8 +691,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				if (model.AreYouSure)
 				{
-					var member = await _departmentsService.DeleteUserAsync(DepartmentId, model.UserId, UserId, cancellationToken);
-					//var result = await _deleteService.DeleteUser(DepartmentId, UserId, model.UserId);
+					var result = await _deleteService.DeleteUserAsync(DepartmentId, UserId, model.UserId, cancellationToken);
 
 					_userProfileService.ClearUserProfileFromCache(model.UserId);
 					_userProfileService.ClearAllUserProfilesFromCache(model.Department.DepartmentId);
@@ -703,12 +702,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 					_eventAggregator.SendMessage<DepartmentSettingsChangedEvent>(new DepartmentSettingsChangedEvent() { DepartmentId = DepartmentId });
 
-					if (member != null && member.IsDeleted)
+					if (result == DeleteUserResults.NoFailure)
 					{
 						return RedirectToAction("Index", "Personnel", new { area = "User" });
 					}
 
-					ModelState.AddModelError("", "Error while trying to delete this person, please try again latter.");
+					if (result == DeleteUserResults.UserIsManagingDepartmentAdmin)
+						ModelState.AddModelError("", "Cannot delete the Managing User");
+					else
+						ModelState.AddModelError("", "Error while trying to delete this person, please try again latter.");
 				}
 				else
 				{

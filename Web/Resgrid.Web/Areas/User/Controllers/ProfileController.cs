@@ -50,13 +50,14 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly SignInManager<IdentityUser> _signInManager;
 		private readonly IDepartmentSsoService _departmentSsoService;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> _secLocalizer;
+		private readonly IDeleteService _deleteService;
 
 		public ProfileController(IDepartmentsService departmentsService, IUsersService usersService, Model.Services.IAuthorizationService authorizationService,
 			IUserProfileService userProfileService, IScheduledTasksService scheduledTasksService, ICertificationService certificationService,
 			ICustomStateService customStateService, IImageService imageService, IOptions<AppOptions> appOptionsAccessor,
 			IEmailService emailService, UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager,
 			IDepartmentSsoService departmentSsoService,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> secLocalizer)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Security.Security> secLocalizer, IDeleteService deleteService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -72,6 +73,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_signInManager = signInManager;
 			_departmentSsoService = departmentSsoService;
 			_secLocalizer = secLocalizer;
+			_deleteService = deleteService;
 		}
 		#endregion Private Members and Constructors
 
@@ -1163,7 +1165,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						{
 							await _departmentsService.SetActiveDepartmentForUserAsync(UserId, defaultDepartment.DepartmentId,
 								user, cancellationToken);
-							await _departmentsService.DeleteUserAsync(departmentToRemove.DepartmentId, UserId, UserId, cancellationToken);
+							await _deleteService.RevokeDepartmentAccessAsync(UserId, departmentToRemove.DepartmentId, UserId, cancellationToken);
 
 							await _signInManager.SignOutAsync();
 
@@ -1191,7 +1193,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 							{
 								await _departmentsService.SetActiveDepartmentForUserAsync(UserId, nextDepartmentUp.DepartmentId,
 									user, cancellationToken);
-								await _departmentsService.DeleteUserAsync(departmentToRemove.DepartmentId, UserId, UserId, cancellationToken);
+								await _deleteService.RevokeDepartmentAccessAsync(UserId, departmentToRemove.DepartmentId, UserId, cancellationToken);
 
 								await _signInManager.SignOutAsync();
 
@@ -1215,7 +1217,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					{
 						if (departmentToRemove.DepartmentId != defaultDepartment.DepartmentId)
 						{
-							await _departmentsService.DeleteUserAsync(departmentToRemove.DepartmentId, UserId, UserId, cancellationToken);
+							await _deleteService.RevokeDepartmentAccessAsync(UserId, departmentToRemove.DepartmentId, UserId, cancellationToken);
 						}
 						else
 						{

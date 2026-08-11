@@ -232,6 +232,22 @@ namespace Resgrid.Services
 			return new List<ScheduledTask>();
 		}
 
+		public async Task<bool> DeleteAllTasksForUserAsync(string userId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var result = await _scheduledTaskRepository.DeleteAllTasksForUserAsync(userId);
+			InvalidateScheduledTasksCache();
+
+			return result;
+		}
+
+		public async Task<bool> DeleteAllTasksForUserInDepartmentAsync(string userId, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var result = await _scheduledTaskRepository.DeleteAllTasksForUserInDepartmentAsync(userId, departmentId);
+			InvalidateScheduledTasksCache();
+
+			return result;
+		}
+
 		public async Task<List<ScheduledTask>> GetUpcomingScheduledTasksAsync(DateTime currentTime, List<ScheduledTask> tasks)
 		{
 			//Logging.LogTrace("ScheduledTasksService: Entering GetUpcomingScheduledTaks");

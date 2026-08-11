@@ -38,6 +38,7 @@ namespace Resgrid.Services
 		private readonly IEmailService _emailService;
 		private readonly IDeleteRepository _deleteRepository;
 		private readonly IAuditLogsRepository _auditLogsRepository;
+		private readonly IScheduledTasksService _scheduledTasksService;
 
 		public DeleteService(IAuthorizationService authorizationService, IDepartmentsService departmentsService,
 			ICallsService callsService, IActionLogsService actionLogsService, IUsersService usersService,
@@ -46,7 +47,7 @@ namespace Resgrid.Services
 			IDistributionListsService distributionListsService, IShiftsService shiftsService, IUnitsService unitsService,
 			ICertificationService certificationService, ILogService logService, IInventoryService inventoryService,
 			IEventAggregator eventAggregator, IAddressService addressService, IQueueService queueService, IEmailService emailService,
-			IDeleteRepository deleteRepository, IAuditLogsRepository auditLogsRepository)
+			IDeleteRepository deleteRepository, IAuditLogsRepository auditLogsRepository, IScheduledTasksService scheduledTasksService)
 		{
 			_authorizationService = authorizationService;
 			_departmentsService = departmentsService;
@@ -71,59 +72,80 @@ namespace Resgrid.Services
 			_emailService = emailService;
 			_deleteRepository = deleteRepository;
 			_auditLogsRepository = auditLogsRepository;
+			_scheduledTasksService = scheduledTasksService;
 		}
 
-		public async Task<DeleteUserResults> DeleteUserAsync(int departmentId, string authorizingUserId, string userIdToDelete)
+		public async Task<DeleteUserResults> DeleteUserAsync(int departmentId, string authorizingUserId, string userIdToDelete, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (!await _authorizationService.CanUserDeleteUserAsync(departmentId, authorizingUserId, userIdToDelete))
 				return DeleteUserResults.UnAuthroized;
 
-			var department = await _departmentsService.GetDepartmentByUserIdAsync(userIdToDelete);
+			var department = await _departmentsService.GetDepartmentByIdAsync(departmentId);
 
-			if (department.ManagingUserId == userIdToDelete)
+			if (department != null && department.ManagingUserId == userIdToDelete)
 				return DeleteUserResults.UserIsManagingDepartmentAdmin;
 
-			var member = await  _departmentsService.GetDepartmentMemberAsync(userIdToDelete, departmentId);
-			member.IsDeleted = true;
-			await _departmentsService.SaveDepartmentMemberAsync(member);
+			var memberships = await _departmentsService.GetAllDepartmentsForUserAsync(userIdToDelete);
+			var hasOtherActiveMemberships = memberships != null && memberships.Any(x => x.DepartmentId != departmentId && !x.IsDeleted);
 
-			//_certificationService.DeleteAllCertificationsForUser(userIdToDelete);
-			//_distributionListsService.RemoveUserFromAllLists(userIdToDelete);
-			//_personnelRolesService.RemoveUserFromAllRoles(userIdToDelete);
-			//_userStateService.DeleteStatesForUser(userIdToDelete);
-			//_workLogsService.ClearInvestigationByLogsForUser(userIdToDelete);
-			//_workLogsService.DeleteLogsForUser(userIdToDelete, department.ManagingUserId);
-			//_messageService.DeleteMessagesForUser(userIdToDelete);
-			////_userProfileService.DeletProfileForUser(userIdToDelete);
-			//_pushUriService.DeletePushUrisForUser(userIdToDelete);
-			//_actionLogsService.DeleteActionLogsForUser(userIdToDelete);
-			//_callsService.DeleteDispatchesForUserAndRemapCalls(department.ManagingUserId, userIdToDelete);
-			//_departmentGroupsService.DeleteUserFromGroups(userIdToDelete);
-			//_usersService.DeleteUser(userIdToDelete);
+			if (!hasOtherActiveMemberships)
+			{
+				// This is the user's only department: deactivate the whole account (same flow as the
+				// self-service "Delete My Account") so we don't strand a login with no departments.
+				return await DeactivateUserAccountCoreAsync(userIdToDelete, departmentId, null, null, cancellationToken);
+			}
+
+			// The user belongs to other departments: revoke this department's access and
+			// communications only. Their account, login and PII stay untouched so they can
+			// keep using their remaining departments.
+			await RevokeDepartmentAccessAsync(userIdToDelete, departmentId, authorizingUserId, cancellationToken);
 
 			return DeleteUserResults.NoFailure;
 		}
 
+		public async Task<bool> RevokeDepartmentAccessAsync(string userId, int departmentId, string revokingUserId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			// Strip everything that would keep the department reaching the user: roles,
+			// group memberships, distribution lists and their scheduled automations
+			// (status changes, staffing changes, report deliveries) for this department.
+			await _personnelRolesService.RemoveUserFromAllRolesAsync(userId, departmentId, cancellationToken);
+			await _departmentGroupsService.DeleteUserFromGroupsAsync(userId, departmentId, cancellationToken);
+			await _distributionListsService.RemoveUserFromAllListsInDepartmentAsync(userId, departmentId, cancellationToken);
+			await _scheduledTasksService.DeleteAllTasksForUserInDepartmentAsync(userId, departmentId, cancellationToken);
+
+			// Soft-delete the membership last (this also writes the audit event and clears caches).
+			await _departmentsService.DeleteUserAsync(departmentId, userId, revokingUserId, cancellationToken);
+
+			return true;
+		}
+
 		public async Task<DeleteUserResults> DeleteUserAccountAsync(int departmentId, string authorizingUserId, string userIdToDelete, string ipAddress, string userAgent, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			//if (!await _authorizationService.CanUserDeleteUserAsync(departmentId, authorizingUserId, userIdToDelete))
-			//	return DeleteUserResults.UnAuthroized;
-
 			if (authorizingUserId != userIdToDelete)
 				return DeleteUserResults.UnAuthroized;
 
+			return await DeactivateUserAccountCoreAsync(userIdToDelete, departmentId, ipAddress, userAgent, cancellationToken);
+		}
+
+		private async Task<DeleteUserResults> DeactivateUserAccountCoreAsync(string userIdToDelete, int departmentId, string ipAddress, string userAgent, CancellationToken cancellationToken)
+		{
 			var departments = await _departmentsService.GetAllDepartmentsForUserAsync(userIdToDelete);
 
 			if (departments != null && departments.Any())
 			{
+				// Check every membership before mutating anything, and check the department each
+				// membership actually points at -- not just the user's primary department -- so we
+				// never leave a half-deleted account behind an early return.
 				foreach (var dm in departments)
 				{
-					var dep = await _departmentsService.GetDepartmentByUserIdAsync(userIdToDelete);
+					var dep = await _departmentsService.GetDepartmentByIdAsync(dm.DepartmentId);
 
-					if (dep.ManagingUserId == userIdToDelete)
+					if (dep != null && dep.ManagingUserId == userIdToDelete)
 						return DeleteUserResults.UserIsManagingDepartmentAdmin;
+				}
 
-
+				foreach (var dm in departments)
+				{
 					var auditEvent = new AuditEvent();
 					auditEvent.Before = dm.CloneJsonToString();
 					auditEvent.DepartmentId = dm.DepartmentId;
@@ -145,8 +167,17 @@ namespace Resgrid.Services
 					_eventAggregator.SendMessage<AuditEvent>(auditEvent);
 
 					await _departmentsService.SaveDepartmentMemberAsync(dm, cancellationToken);
+
+					await _personnelRolesService.RemoveUserFromAllRolesAsync(userIdToDelete, dm.DepartmentId, cancellationToken);
+					await _departmentGroupsService.DeleteUserFromGroupsAsync(userIdToDelete, dm.DepartmentId, cancellationToken);
 				}
 			}
+
+			// Kill every remaining automation and subscription for the user across all
+			// departments: distribution lists, scheduled status/staffing changes and
+			// scheduled report deliveries.
+			await _distributionListsService.RemoveUserFromAllListsAsync(userIdToDelete, cancellationToken);
+			await _scheduledTasksService.DeleteAllTasksForUserAsync(userIdToDelete, cancellationToken);
 
 			var userProfile = await _userProfileService.GetProfileByUserIdAsync(userIdToDelete, true);
 
@@ -168,6 +199,16 @@ namespace Resgrid.Services
 				userProfile.VoiceForCall = false;
 				userProfile.VoiceCallHome = false;
 				userProfile.VoiceCallMobile = false;
+				userProfile.MembershipEmail = null;
+				userProfile.EmailVerified = false;
+				userProfile.MobileNumberVerified = false;
+				userProfile.HomeNumberVerified = false;
+				userProfile.EmailVerificationCode = null;
+				userProfile.MobileVerificationCode = null;
+				userProfile.HomeVerificationCode = null;
+				userProfile.CalendarSyncToken = null;
+				userProfile.SecurityPin = null;
+				userProfile.SecurityPinEnabled = false;
 
 				if (userProfile.HomeAddressId.HasValue)
 					await _addressService.DeleteAddress(userProfile.HomeAddressId.Value, cancellationToken);

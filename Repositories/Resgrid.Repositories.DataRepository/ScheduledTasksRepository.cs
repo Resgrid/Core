@@ -63,7 +63,8 @@ namespace Resgrid.Repositories.DataRepository
 																					FROM scheduledtasks st
 																					INNER JOIN departmentmembers dm ON dm.userid = st.userid
 																					INNER JOIN departments d ON d.departmentid = dm.departmentid
-																					WHERE st.departmentid = 0 AND st.active = true AND st.tasktype = any (@types)", new { types = types });
+																					WHERE st.departmentid = 0 AND st.active = true AND st.tasktype = any (@types)
+																						AND dm.isdeleted = false AND (dm.isdisabled IS NULL OR dm.isdisabled = false)", new { types = types });
 
 					return knownDepartments.Concat(unknownDepartments);
 				}
@@ -81,7 +82,8 @@ namespace Resgrid.Repositories.DataRepository
 																					FROM ScheduledTasks st
 																					INNER JOIN DepartmentMembers dm ON dm.UserId = st.UserId
 																					INNER JOIN Departments d ON d.DepartmentId = dm.DepartmentId
-																					WHERE st.DepartmentId = 0 AND st.Active = 1 AND st.TaskType IN @types", new { types = types });
+																					WHERE st.DepartmentId = 0 AND st.Active = 1 AND st.TaskType IN @types
+																						AND dm.IsDeleted = 0 AND (dm.IsDisabled IS NULL OR dm.IsDisabled = 0)", new { types = types });
 
 					return knownDepartments.Concat(unknownDepartments);
 				}
@@ -131,6 +133,50 @@ namespace Resgrid.Repositories.DataRepository
 				throw;
 			}
 
+		}
+
+		public async Task<bool> DeleteAllTasksForUserAsync(string userId)
+		{
+			if (Config.DataConfig.DatabaseType == DatabaseTypes.Postgres)
+			{
+				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
+				{
+					await db.ExecuteAsync(@"DELETE FROM scheduledtasklogs WHERE scheduledtaskid IN (SELECT scheduledtaskid FROM scheduledtasks WHERE userid = @userId)", new { userId = userId });
+					await db.ExecuteAsync(@"DELETE FROM scheduledtasks WHERE userid = @userId", new { userId = userId });
+				}
+			}
+			else
+			{
+				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
+				{
+					await db.ExecuteAsync(@"DELETE FROM ScheduledTaskLogs WHERE ScheduledTaskId IN (SELECT ScheduledTaskId FROM ScheduledTasks WHERE UserId = @userId)", new { userId = userId });
+					await db.ExecuteAsync(@"DELETE FROM ScheduledTasks WHERE UserId = @userId", new { userId = userId });
+				}
+			}
+
+			return true;
+		}
+
+		public async Task<bool> DeleteAllTasksForUserInDepartmentAsync(string userId, int departmentId)
+		{
+			if (Config.DataConfig.DatabaseType == DatabaseTypes.Postgres)
+			{
+				using (IDbConnection db = new NpgsqlConnection(DataConfig.CoreConnectionString))
+				{
+					await db.ExecuteAsync(@"DELETE FROM scheduledtasklogs WHERE scheduledtaskid IN (SELECT scheduledtaskid FROM scheduledtasks WHERE userid = @userId AND departmentid = @departmentId)", new { userId = userId, departmentId = departmentId });
+					await db.ExecuteAsync(@"DELETE FROM scheduledtasks WHERE userid = @userId AND departmentid = @departmentId", new { userId = userId, departmentId = departmentId });
+				}
+			}
+			else
+			{
+				using (IDbConnection db = new SqlConnection(DataConfig.CoreConnectionString))
+				{
+					await db.ExecuteAsync(@"DELETE FROM ScheduledTaskLogs WHERE ScheduledTaskId IN (SELECT ScheduledTaskId FROM ScheduledTasks WHERE UserId = @userId AND DepartmentId = @departmentId)", new { userId = userId, departmentId = departmentId });
+					await db.ExecuteAsync(@"DELETE FROM ScheduledTasks WHERE UserId = @userId AND DepartmentId = @departmentId", new { userId = userId, departmentId = departmentId });
+				}
+			}
+
+			return true;
 		}
 
 		public List<Department> GetDepartmentsForSelectedTasks(List<int> scheduleTasksIds)

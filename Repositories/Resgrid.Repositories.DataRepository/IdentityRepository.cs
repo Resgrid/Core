@@ -480,10 +480,21 @@ namespace Resgrid.Repositories.DataRepository
 													 passwordhash = NULL,
 													 securitystamp = @securityStamp,
 													 emailconfirmed = false,
+													 phonenumber = NULL,
+													 phonenumberconfirmed = false,
+													 twofactorenabled = false,
 													 lockoutenabled = true,
 													 lockoutend = @lockoutEnd
 													 WHERE id = @userId",
 									new { userId = userId, deleteId = deleteId, normalizedDeleteId = deleteId.ToUpperInvariant(), maskedEmail = maskedEmail, normalizedMaskedEmail = maskedEmail.ToUpperInvariant(), securityStamp = Guid.NewGuid().ToString(), lockoutEnd = new DateTimeOffset(9999, 12, 31, 23, 59, 59, TimeSpan.Zero) });
+
+					// External login mappings, recovery secrets, device push registrations and chatbot
+					// platform links can all be used to reach or re-enter the account -- remove them too.
+					await db.ExecuteAsync(@"DELETE FROM public.aspnetuserlogins WHERE userid = @userId", new { userId = userId });
+					await db.ExecuteAsync(@"UPDATE public.aspnetusersext SET securityquestion = NULL, securityanswer = NULL, securityanswersalt = NULL WHERE userid = @userId", new { userId = userId });
+					await db.ExecuteAsync(@"DELETE FROM public.pushuris WHERE userid = @userId", new { userId = userId });
+					await db.ExecuteAsync(@"DELETE FROM public.chatbotuseridentities WHERE userid = @userId", new { userId = userId });
+					await db.ExecuteAsync(@"DELETE FROM public.chatbotlinkingcodes WHERE userid = @userId", new { userId = userId });
 				}
 			}
 			else
@@ -500,10 +511,21 @@ namespace Resgrid.Repositories.DataRepository
 													 PasswordHash = NULL,
 													 SecurityStamp = @securityStamp,
 													 EmailConfirmed = 0,
+													 PhoneNumber = NULL,
+													 PhoneNumberConfirmed = 0,
+													 TwoFactorEnabled = 0,
 													 LockoutEnabled = 1,
 													 LockoutEnd = @lockoutEnd
 													 WHERE Id = @userId",
 									new { userId = userId, deleteId = deleteId, normalizedDeleteId = deleteId.ToUpperInvariant(), maskedEmail = maskedEmail, normalizedMaskedEmail = maskedEmail.ToUpperInvariant(), securityStamp = Guid.NewGuid().ToString(), lockoutEnd = new DateTimeOffset(9999, 12, 31, 23, 59, 59, TimeSpan.Zero) });
+
+					// External login mappings, recovery secrets, device push registrations and chatbot
+					// platform links can all be used to reach or re-enter the account -- remove them too.
+					await db.ExecuteAsync(@"DELETE FROM AspNetUserLogins WHERE UserId = @userId", new { userId = userId });
+					await db.ExecuteAsync(@"UPDATE AspNetUsersExt SET SecurityQuestion = NULL, SecurityAnswer = NULL, SecurityAnswerSalt = NULL WHERE UserId = @userId", new { userId = userId });
+					await db.ExecuteAsync(@"DELETE FROM PushUris WHERE UserId = @userId", new { userId = userId });
+					await db.ExecuteAsync(@"DELETE FROM ChatbotUserIdentities WHERE UserId = @userId", new { userId = userId });
+					await db.ExecuteAsync(@"DELETE FROM ChatbotLinkingCodes WHERE UserId = @userId", new { userId = userId });
 				}
 			}
 
@@ -518,6 +540,8 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					var result = await db.ExecuteAsync(@"DELETE FROM ""OpenIddictTokens"" WHERE ""Subject"" = @userId",
 									new { userId = userId });
+					await db.ExecuteAsync(@"DELETE FROM ""OpenIddictAuthorizations"" WHERE ""Subject"" = @userId",
+									new { userId = userId });
 				}
 			}
 			else
@@ -525,6 +549,9 @@ namespace Resgrid.Repositories.DataRepository
 				using (IDbConnection db = new SqlConnection(OidcConfig.ConnectionString))
 				{
 					var result = await db.ExecuteAsync(@"DELETE FROM OpenIddictTokens
+													 WHERE Subject = @userId",
+									new { userId = userId });
+					await db.ExecuteAsync(@"DELETE FROM OpenIddictAuthorizations
 													 WHERE Subject = @userId",
 									new { userId = userId });
 				}

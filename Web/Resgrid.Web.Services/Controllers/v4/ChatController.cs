@@ -105,6 +105,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!await ChatEnabledAsync())
 				return NotFound();
 
+			// The active unit is caller-supplied; only honor it when the user actually crews that unit,
+			// otherwise treat the request as personal so unit channels and member rows can't be probed.
+			if (activeUnitId.HasValue && !await _chatPermissionService.CanSendAsUnitAsync(UserId, activeUnitId.Value, DepartmentId))
+				activeUnitId = null;
+
 			var result = new GetChatChannelsResult();
 			var channels = await _chatChannelService.GetChannelsForUserAsync(DepartmentId, UserId, activeUnitId, includeArchived);
 

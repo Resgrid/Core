@@ -370,18 +370,21 @@ class ChatHub {
   }
 
   // Tells the server which conversation is on screen so pushes for it are suppressed while
-  // everything else still alerts. Remembered locally and re-reported after reconnects.
+  // everything else still alerts. Remembered locally (with the acting unit, so unit push
+  // suppression tracks the viewer too) and re-reported after reconnects.
   private activeChannelReported: string | null = null;
+  private activeChannelUnitId: number | null = null;
 
-  public setActiveChannel(channelId: string | null): void {
+  public setActiveChannel(channelId: string | null, asUnitId?: number): void {
     this.activeChannelReported = channelId;
+    this.activeChannelUnitId = channelId ? asUnitId ?? null : null;
     this.reportActiveChannel();
   }
 
   private reportActiveChannel(): void {
     if (this.connection && this.connection.state === HubConnectionState.Connected) {
       this.connection
-        .invoke(CHAT_HUB_METHODS.SetActiveChannel, this.activeChannelReported, null)
+        .invoke(CHAT_HUB_METHODS.SetActiveChannel, this.activeChannelReported, this.activeChannelUnitId)
         .catch(() => undefined);
     }
   }

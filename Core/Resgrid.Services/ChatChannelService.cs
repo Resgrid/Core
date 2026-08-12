@@ -158,7 +158,9 @@ namespace Resgrid.Services
 
 				// Channels where the active unit is the participant (Dispatch/IC ↔ unit DMs, units
 				// invited to groups) — the unit's operator must see them without a personal member row.
-				if (activeUnitId.HasValue)
+				// The caller-supplied unit only counts when the user actually crews it; otherwise any
+				// department member could list another unit's private channels.
+				if (activeUnitId.HasValue && await _chatPermissionService.CanSendAsUnitAsync(userId, activeUnitId.Value, departmentId))
 				{
 					var unitMemberships = await _chatChannelMemberRepository.GetActiveByUnitIdAsync(departmentId, activeUnitId.Value);
 					var unitChannelIds = unitMemberships?

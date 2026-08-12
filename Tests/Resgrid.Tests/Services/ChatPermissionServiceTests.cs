@@ -182,6 +182,57 @@ namespace Resgrid.Tests.Services
 			}
 
 			[Test]
+			public async Task dm_unit_member_should_have_access_when_the_user_crews_the_unit()
+			{
+				var channel = CreateChannel(ChatChannelType.DirectMessage);
+				_chatChannelMemberRepositoryMock.Setup(x => x.GetUserMemberAsync(channel.ChatChannelId, TestData.Users.TestUser1Id)).ReturnsAsync((ChatChannelMember)null);
+				_chatChannelMemberRepositoryMock.Setup(x => x.GetUnitMemberAsync(channel.ChatChannelId, 7)).ReturnsAsync(new ChatChannelMember
+				{
+					ChatChannelMemberId = Guid.NewGuid().ToString(),
+					ChatChannelId = channel.ChatChannelId,
+					DepartmentId = channel.DepartmentId,
+					ParticipantType = (int)ChatParticipantType.Unit,
+					UnitId = 7,
+					JoinedOn = DateTime.UtcNow
+				});
+				_unitsServiceMock.Setup(x => x.GetUnitByIdAsync(7)).ReturnsAsync(new Unit { UnitId = 7, DepartmentId = 1, Name = "Engine 6" });
+				_unitsServiceMock.Setup(x => x.GetActiveRolesForUnitAsync(7)).ReturnsAsync(new List<UnitActiveRole>
+				{
+					new UnitActiveRole { UnitId = 7, UserId = TestData.Users.TestUser1Id }
+				});
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, 7);
+
+				result.Should().BeTrue();
+			}
+
+			[Test]
+			public async Task dm_unit_member_should_not_grant_access_when_the_user_does_not_crew_the_unit()
+			{
+				var channel = CreateChannel(ChatChannelType.DirectMessage);
+				_chatChannelMemberRepositoryMock.Setup(x => x.GetUserMemberAsync(channel.ChatChannelId, TestData.Users.TestUser1Id)).ReturnsAsync((ChatChannelMember)null);
+				_chatChannelMemberRepositoryMock.Setup(x => x.GetUnitMemberAsync(channel.ChatChannelId, 7)).ReturnsAsync(new ChatChannelMember
+				{
+					ChatChannelMemberId = Guid.NewGuid().ToString(),
+					ChatChannelId = channel.ChatChannelId,
+					DepartmentId = channel.DepartmentId,
+					ParticipantType = (int)ChatParticipantType.Unit,
+					UnitId = 7,
+					JoinedOn = DateTime.UtcNow
+				});
+				// User claims unit 7 as their active unit, but crews nothing.
+				_unitsServiceMock.Setup(x => x.GetUnitByIdAsync(7)).ReturnsAsync(new Unit { UnitId = 7, DepartmentId = 1, Name = "Engine 6" });
+				_unitsServiceMock.Setup(x => x.GetActiveRolesForUnitAsync(7)).ReturnsAsync(new List<UnitActiveRole>
+				{
+					new UnitActiveRole { UnitId = 7, UserId = TestData.Users.TestUser2Id }
+				});
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, 7);
+
+				result.Should().BeFalse();
+			}
+
+			[Test]
 			public async Task department_default_department_member_should_have_access()
 			{
 				var channel = CreateChannel(ChatChannelType.DepartmentDefault);

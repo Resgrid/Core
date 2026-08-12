@@ -45,7 +45,7 @@ namespace Resgrid.Services
 
 				var unitId = ParseUnitId(active);
 				if (unitId.HasValue)
-					await _cacheProvider.SetStringAsync(GetUnitActiveKey(departmentId, unitId.Value), ParseChannelId(active), GetTtl());
+					await ClaimUnitMarkerAsync(departmentId, unitId.Value, ParseChannelId(active), userId, refreshOnly: true);
 			}
 		}
 
@@ -98,19 +98,19 @@ namespace Resgrid.Services
 			{
 				await _cacheProvider.RemoveAsync(activeKey);
 				if (existingUnitId.HasValue)
-					await _cacheProvider.RemoveAsync(GetUnitActiveKey(departmentId, existingUnitId.Value));
+					await RemoveUnitMarkerIfOwnedAsync(departmentId, existingUnitId.Value, userId);
 				return;
 			}
 
 			// Acting unit changed (or dropped): clear the stale unit marker so the old rig isn't suppressed.
 			if (existingUnitId.HasValue && existingUnitId != unitId)
-				await _cacheProvider.RemoveAsync(GetUnitActiveKey(departmentId, existingUnitId.Value));
+				await RemoveUnitMarkerIfOwnedAsync(departmentId, existingUnitId.Value, userId);
 
 			var value = unitId.HasValue ? $"{channelId}|{unitId.Value}" : channelId;
 			await _cacheProvider.SetStringAsync(activeKey, value, GetTtl());
 
 			if (unitId.HasValue)
-				await _cacheProvider.SetStringAsync(GetUnitActiveKey(departmentId, unitId.Value), channelId, GetTtl());
+				await ClaimUnitMarkerAsync(departmentId, unitId.Value, channelId, userId, refreshOnly: false);
 		}
 
 		public async Task ClearActiveChannelAsync(int departmentId, string userId)
@@ -158,11 +158,64 @@ namespace Resgrid.Services
 			if (unitId <= 0 || string.IsNullOrWhiteSpace(channelId))
 				return false;
 
-			var value = await _cacheProvider.GetStringAsync(GetUnitActiveKey(departmentId, unitId));
-			return string.Equals(value, channelId, StringComparison.OrdinalIgnoreCase);
+			var marker = await _cacheProvider.GetStringAsync(GetUnitActiveKey(departmentId, unitId));
+			var owner = ParseUnitMarkerOwner(marker);
+
+			if (owner == null || !string.Equals(ParseChannelId(marker), channelId, StringComparison.OrdinalIgnoreCase))
+				return false;
+
+			// The marker is only a hint naming its owner; the owner's personal marker is authoritative.
+			// An orphaned marker (owner moved on, or clobbered by a raced write) must not suppress pushes.
+			var ownerActive = await _cacheProvider.GetStringAsync(GetActiveKey(departmentId, owner));
+			return ParseUnitId(ownerActive) == unitId
+				&& string.Equals(ParseChannelId(ownerActive), channelId, StringComparison.OrdinalIgnoreCase);
+		}
+
+		// Several viewers can operate the same unit, but the unit mirror is a single shared key — so it
+		// records WHOSE activity it reflects ("channelId|ownerUserId") and is only refreshed or removed
+		// by that owner. ICacheProvider has no compare-and-set, so the owner checks are best-effort
+		// read-then-write; the short TTL and the owner cross-check in IsUnitActiveInChannelAsync bound
+		// the damage of a raced write to a few extra (never missing) pushes.
+		private async Task ClaimUnitMarkerAsync(int departmentId, int unitId, string channelId, string userId, bool refreshOnly)
+		{
+			var key = GetUnitActiveKey(departmentId, unitId);
+
+			if (refreshOnly)
+			{
+				var owner = ParseUnitMarkerOwner(await _cacheProvider.GetStringAsync(key));
+				if (owner != null && !string.Equals(owner, userId?.ToLowerInvariant(), StringComparison.OrdinalIgnoreCase))
+					return;
+			}
+
+			await _cacheProvider.SetStringAsync(key, $"{channelId}|{userId?.ToLowerInvariant()}", GetTtl());
+		}
+
+		private async Task RemoveUnitMarkerIfOwnedAsync(int departmentId, int unitId, string userId)
+		{
+			var key = GetUnitActiveKey(departmentId, unitId);
+			var owner = ParseUnitMarkerOwner(await _cacheProvider.GetStringAsync(key));
+
+			// Another viewer of the same unit claimed the marker since — their activity stands.
+			if (owner != null && !string.Equals(owner, userId?.ToLowerInvariant(), StringComparison.OrdinalIgnoreCase))
+				return;
+
+			await _cacheProvider.RemoveAsync(key);
+		}
+
+		private static string ParseUnitMarkerOwner(string value)
+		{
+			if (string.IsNullOrWhiteSpace(value))
+				return null;
+
+			var separator = value.IndexOf('|');
+			if (separator < 0 || separator >= value.Length - 1)
+				return null;
+
+			return value.Substring(separator + 1);
 		}
 
 		// Active markers store "channelId" or "channelId|unitId" when the viewer is acting as a unit.
+		// The unit mirror key stores "channelId|ownerUserId" (see ClaimUnitMarkerAsync).
 		private static string ParseChannelId(string value)
 		{
 			if (string.IsNullOrWhiteSpace(value))

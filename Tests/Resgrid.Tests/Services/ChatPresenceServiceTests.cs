@@ -140,6 +140,47 @@ namespace Resgrid.Tests.Services
 				active.Should().ContainSingle();
 				_cacheProviderMock.Verify(x => x.SetStringAsync("chatactive:1:user-a", It.IsAny<string>(), It.IsAny<TimeSpan>()), Times.AtLeast(2));
 			}
+
+			[Test]
+			public async Task another_viewers_clear_does_not_remove_the_current_owners_unit_marker()
+			{
+				await _chatPresenceService.SetActiveChannelAsync(1, "user-a", "chan-1", 7);
+				await _chatPresenceService.SetActiveChannelAsync(1, "user-b", "chan-1", 7);
+
+				// user-a leaves; user-b now owns the marker and is still viewing.
+				await _chatPresenceService.ClearActiveChannelAsync(1, "user-a");
+
+				(await _chatPresenceService.IsUnitActiveInChannelAsync(1, 7, "chan-1")).Should().BeTrue();
+			}
+
+			[Test]
+			public async Task heartbeat_does_not_reclaim_a_unit_marker_owned_by_another_viewer()
+			{
+				await _chatPresenceService.SetActiveChannelAsync(1, "user-a", "chan-1", 7);
+				await _chatPresenceService.SetActiveChannelAsync(1, "user-b", "chan-2", 7);
+
+				// user-a's heartbeat must not flip the marker back to chan-1 over user-b's claim.
+				await _chatPresenceService.TouchAsync(1, "user-a");
+
+				(await _chatPresenceService.IsUnitActiveInChannelAsync(1, 7, "chan-2")).Should().BeTrue();
+				(await _chatPresenceService.IsUnitActiveInChannelAsync(1, 7, "chan-1")).Should().BeFalse();
+			}
+
+			[Test]
+			public async Task orphaned_unit_marker_whose_owner_moved_on_does_not_suppress()
+			{
+				_cache["chatactiveunit:1:7"] = "chan-1|user-a";
+
+				(await _chatPresenceService.IsUnitActiveInChannelAsync(1, 7, "chan-1")).Should().BeFalse();
+			}
+
+			[Test]
+			public async Task legacy_unowned_unit_marker_does_not_suppress()
+			{
+				_cache["chatactiveunit:1:7"] = "chan-1";
+
+				(await _chatPresenceService.IsUnitActiveInChannelAsync(1, 7, "chan-1")).Should().BeFalse();
+			}
 		}
 	}
 }

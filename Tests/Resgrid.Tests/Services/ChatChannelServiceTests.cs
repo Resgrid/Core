@@ -630,6 +630,7 @@ namespace Resgrid.Tests.Services
 			{
 				SetupDepartmentChannel();
 				_chatPermissionServiceMock.Setup(x => x.IsDepartmentAdminAsync(1, "user-a")).ReturnsAsync(false);
+				_chatPermissionServiceMock.Setup(x => x.CanSendAsUnitAsync("user-a", 7, 1)).ReturnsAsync(true);
 
 				var unitDm = new ChatChannel { ChatChannelId = "dm-unit-7", DepartmentId = 1, ChannelType = (int)ChatChannelType.DirectMessage, DmKey = "u:dispatcher|unit:7" };
 				_chatChannelMemberRepositoryMock.Setup(x => x.GetActiveByUnitIdAsync(1, 7)).ReturnsAsync(new List<ChatChannelMember>
@@ -641,6 +642,19 @@ namespace Resgrid.Tests.Services
 				var result = await _chatChannelService.GetChannelsForUserAsync(1, "user-a", 7);
 
 				result.Should().Contain(c => c.ChatChannelId == "dm-unit-7");
+			}
+
+			[Test]
+			public async Task active_unit_the_user_does_not_crew_should_not_expose_unit_channels()
+			{
+				SetupDepartmentChannel();
+				_chatPermissionServiceMock.Setup(x => x.IsDepartmentAdminAsync(1, "user-a")).ReturnsAsync(false);
+				_chatPermissionServiceMock.Setup(x => x.CanSendAsUnitAsync("user-a", 7, 1)).ReturnsAsync(false);
+
+				var result = await _chatChannelService.GetChannelsForUserAsync(1, "user-a", 7);
+
+				result.Should().NotContain(c => c.ChatChannelId == "dm-unit-7");
+				_chatChannelMemberRepositoryMock.Verify(x => x.GetActiveByUnitIdAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
 			}
 
 			[Test]

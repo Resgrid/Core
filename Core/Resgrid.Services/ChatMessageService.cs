@@ -693,8 +693,11 @@ namespace Resgrid.Services
 
 			if (asUnitId.HasValue)
 			{
+				// Multiple people can be logged in as the same unit — keep the individual visible
+				// ("Engine 6 (Alice Smith)") so dispatchers and IC know who is typing.
 				var unit = await _unitsService.GetUnitByIdAsync(asUnitId.Value);
-				return unit?.Name ?? profileName ?? "Unit";
+				var unitName = unit?.Name ?? "Unit";
+				return string.IsNullOrWhiteSpace(profileName) ? unitName : $"{unitName} ({profileName})";
 			}
 
 			if (asIncidentCommander)

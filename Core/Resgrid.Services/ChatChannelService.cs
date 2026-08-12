@@ -156,6 +156,25 @@ namespace Resgrid.Services
 							results[channel.ChatChannelId] = channel;
 				}
 
+				// Channels where the active unit is the participant (Dispatch/IC ↔ unit DMs, units
+				// invited to groups) — the unit's operator must see them without a personal member row.
+				if (activeUnitId.HasValue)
+				{
+					var unitMemberships = await _chatChannelMemberRepository.GetActiveByUnitIdAsync(departmentId, activeUnitId.Value);
+					var unitChannelIds = unitMemberships?
+						.Select(m => m.ChatChannelId)
+						.Distinct()
+						.Where(id => !results.ContainsKey(id))
+						.ToList();
+					if (unitChannelIds != null && unitChannelIds.Count > 0)
+					{
+						var channels = await _chatChannelRepository.GetByIdsAsync(unitChannelIds);
+						if (channels != null)
+							foreach (var channel in channels)
+								results[channel.ChatChannelId] = channel;
+					}
+				}
+
 				// Implicit-audience channels (custom rule-based + active incident channels): evaluate access
 				// per channel; evaluations are cached by the permission service.
 				if (allChannels != null)
@@ -388,6 +407,12 @@ namespace Resgrid.Services
 		public async Task<List<ChatChannelMember>> GetActiveMembershipsForUserAsync(int departmentId, string userId)
 		{
 			var members = await _chatChannelMemberRepository.GetActiveByUserIdAsync(departmentId, userId);
+			return members?.ToList() ?? new List<ChatChannelMember>();
+		}
+
+		public async Task<List<ChatChannelMember>> GetActiveMembershipsForUnitAsync(int departmentId, int unitId)
+		{
+			var members = await _chatChannelMemberRepository.GetActiveByUnitIdAsync(departmentId, unitId);
 			return members?.ToList() ?? new List<ChatChannelMember>();
 		}
 

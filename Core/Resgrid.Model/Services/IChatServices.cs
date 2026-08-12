@@ -59,6 +59,9 @@ namespace Resgrid.Model.Services
 		/// <summary>Active member rows for a set of channels in one query — used to label DM channels with the counterpart's name.</summary>
 		Task<List<ChatChannelMember>> GetActiveMembersForChannelsAsync(List<string> chatChannelIds);
 
+		/// <summary>A unit's active (not-removed) memberships across the department — read pointers/preferences for unit-participant channels.</summary>
+		Task<List<ChatChannelMember>> GetActiveMembershipsForUnitAsync(int departmentId, int unitId);
+
 		/// <summary>A user's member row for a single channel (null if none); does not lazily create one.</summary>
 		Task<ChatChannelMember> GetUserMembershipAsync(string chatChannelId, string userId);
 

@@ -122,6 +122,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 				}
 			}
 
+			// Acting as a unit: the unit's member rows carry the read pointer/preferences for channels
+			// where the unit (not the person) is the participant. Personal rows still win when both exist.
+			if (activeUnitId.HasValue)
+			{
+				var unitMemberRows = await _chatChannelService.GetActiveMembershipsForUnitAsync(DepartmentId, activeUnitId.Value);
+				foreach (var member in unitMemberRows)
+				{
+					if (!membersByChannel.ContainsKey(member.ChatChannelId))
+						membersByChannel.Add(member.ChatChannelId, member);
+				}
+			}
+
 			if (channels != null && channels.Any())
 			{
 				foreach (var channel in channels)
@@ -130,7 +142,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					result.Data.Add(ConvertChannelResultData(channel, member));
 				}
 
-				await ResolveDirectMessageNamesAsync(result.Data);
+				await ResolveDirectMessageNamesAsync(result.Data, activeUnitId);
 
 				result.PageSize = result.Data.Count;
 				result.Status = ResponseHelper.Success;
@@ -1837,7 +1849,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 		// DM channels have no stored Name; label each with the counterpart participant so multiple
 		// DMs stay distinguishable in every client list. Unit counterparts already carry a
 		// DisplayNameOverride stamped at creation; user counterparts resolve via profile lookup.
-		private async Task ResolveDirectMessageNamesAsync(List<ChatChannelResultData> channels)
+		// activeUnitId identifies the viewer when they act as a unit, so the unit's own row is
+		// never chosen as the counterpart (a rig viewing its DM with dispatch must see the dispatcher).
+		private async Task ResolveDirectMessageNamesAsync(List<ChatChannelResultData> channels, int? activeUnitId = null)
 		{
 			var dmChannels = channels?.Where(c => c != null && c.ChannelType == (int)ChatChannelType.DirectMessage && String.IsNullOrWhiteSpace(c.Name)).ToList();
 			if (dmChannels == null || dmChannels.Count == 0)
@@ -1851,6 +1865,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			foreach (var member in members)
 			{
 				if (member.UserId != null && String.Equals(member.UserId, UserId, StringComparison.OrdinalIgnoreCase))
+					continue;
+
+				if (activeUnitId.HasValue && member.UnitId.HasValue && member.UnitId.Value == activeUnitId.Value)
 					continue;
 
 				if (!counterparts.ContainsKey(member.ChatChannelId))

@@ -56,6 +56,12 @@ namespace Resgrid.Model.Services
 		/// <summary>A user's active (not-removed) explicit memberships across the department — used for unread/preference lookups.</summary>
 		Task<List<ChatChannelMember>> GetActiveMembershipsForUserAsync(int departmentId, string userId);
 
+		/// <summary>Active member rows for a set of channels in one query — used to label DM channels with the counterpart's name.</summary>
+		Task<List<ChatChannelMember>> GetActiveMembersForChannelsAsync(List<string> chatChannelIds);
+
+		/// <summary>A unit's active (not-removed) memberships across the department — read pointers/preferences for unit-participant channels.</summary>
+		Task<List<ChatChannelMember>> GetActiveMembershipsForUnitAsync(int departmentId, int unitId);
+
 		/// <summary>A user's member row for a single channel (null if none); does not lazily create one.</summary>
 		Task<ChatChannelMember> GetUserMembershipAsync(string chatChannelId, string userId);
 
@@ -274,6 +280,21 @@ namespace Resgrid.Model.Services
 
 		/// <summary>Bulk presence lookup; returns the subset of userIds currently online.</summary>
 		Task<List<string>> GetOnlineUsersAsync(int departmentId, List<string> userIds);
+
+		/// <summary>
+		/// Records the channel the user currently has open (null/empty clears it). When the user is acting
+		/// as a unit, the unit's active channel is recorded too so rig-device pushes can be suppressed.
+		/// </summary>
+		Task SetActiveChannelAsync(int departmentId, string userId, string channelId, int? unitId = null);
+
+		/// <summary>Clears the user's (and their acting unit's) active-channel marker.</summary>
+		Task ClearActiveChannelAsync(int departmentId, string userId);
+
+		/// <summary>Bulk lookup: the subset of userIds actively viewing the given channel right now.</summary>
+		Task<List<string>> GetUsersActiveInChannelAsync(int departmentId, List<string> userIds, string channelId);
+
+		/// <summary>True when the unit's device currently has the given channel open.</summary>
+		Task<bool> IsUnitActiveInChannelAsync(int departmentId, int unitId, string channelId);
 	}
 
 	/// <summary>

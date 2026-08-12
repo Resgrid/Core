@@ -3,7 +3,8 @@ import './chat.css';
 import { ChatChannelType, getCurrentUserId, type ChatChannelDto, type ChatMessageDto } from './types';
 import { useChatBootstrap } from './useChatBootstrap';
 import { useChatStore, shallowArrayEqual } from './useChatStore';
-import { setActiveChannel } from './chatStore';
+import { setActiveChannel, upsertChannel } from './chatStore';
+import { chatHub } from './chatHub';
 import { flagChatMessage } from './chatActions';
 import { channelDisplayName } from './chatFormat';
 import ChannelList from './ChannelList';
@@ -48,6 +49,13 @@ export default function ChatPanelElement({ hostElement, label = 'Chat' }: ChatPa
       hostElement.style.display = chatVisible ? '' : 'none';
     }
   }, [hostElement, chatVisible]);
+
+  // Report the on-screen conversation so the server suppresses its pushes; a minimized panel
+  // counts as not viewing. Cleared on unmount (page navigation).
+  useEffect(() => {
+    chatHub.setActiveChannel(open && activeChannelId ? activeChannelId : null);
+  }, [open, activeChannelId]);
+  useEffect(() => () => chatHub.setActiveChannel(null), []);
 
   const openPanel = () => {
     setOpen(true);
@@ -161,6 +169,9 @@ export default function ChatPanelElement({ hostElement, label = 'Chat' }: ChatPa
           onClose={() => setShowNew(false)}
           onCreated={(channel: ChatChannelDto) => {
             setShowNew(false);
+            // Seed the store immediately: the channel-list refetch races the hub event, and the
+            // conversation can only open if the channel exists in state.
+            upsertChannel(channel);
             openChannel(channel.ChatChannelId);
           }}
         />

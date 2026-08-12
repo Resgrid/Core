@@ -88,6 +88,12 @@ namespace Resgrid.Model.Repositories
 		/// <summary>Active (not removed) explicit memberships for a user across the department.</summary>
 		Task<IEnumerable<ChatChannelMember>> GetActiveByUserIdAsync(int departmentId, string userId);
 
+		/// <summary>Active (not removed) member rows for a set of channels in one query.</summary>
+		Task<IEnumerable<ChatChannelMember>> GetActiveByChannelIdsAsync(IEnumerable<string> chatChannelIds);
+
+		/// <summary>Active (not removed) unit-participant memberships for a unit across the department.</summary>
+		Task<IEnumerable<ChatChannelMember>> GetActiveByUnitIdAsync(int departmentId, int unitId);
+
 		/// <summary>
 		/// Monotonic read/delivered pointer update: only advances when the supplied seq is higher than the
 		/// stored one (single UPDATE ... WHERE seq &lt; @seq).

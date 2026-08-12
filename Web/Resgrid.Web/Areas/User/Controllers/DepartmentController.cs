@@ -1450,9 +1450,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 		{
 			var result = new List<RecipientJson>();
 
-			var stations = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
-			var roles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId);
-			var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId);
+			// Repositories swallow DB exceptions and return null; treat as empty so a
+			// transient failure degrades to an empty grid instead of a 500.
+			var stations = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId) ?? new List<DepartmentGroup>();
+			var roles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId) ?? new List<PersonnelRole>();
+			var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId) ?? new Dictionary<string, UserProfile>();
 
 			if (filter == 0 || filter == 1)
 			{

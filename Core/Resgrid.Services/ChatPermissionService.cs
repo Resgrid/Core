@@ -246,7 +246,14 @@ namespace Resgrid.Services
 
 				case ChatChannelType.DirectMessage:
 				case ChatChannelType.AdHocGroup:
-					return await HasActiveMembershipAsync(channel.ChatChannelId, userId, activeUnitId);
+					if (await HasActiveMembershipAsync(channel.ChatChannelId, userId, null))
+						return true;
+
+					// The unit's member row only grants access when the caller actually crews the claimed
+					// unit — a caller-supplied activeUnitId alone must not open another unit's channels.
+					return activeUnitId.HasValue
+						&& await CanSendAsUnitAsync(userId, activeUnitId.Value, channel.DepartmentId)
+						&& await HasActiveMembershipAsync(channel.ChatChannelId, userId, activeUnitId);
 
 				case ChatChannelType.DepartmentDefault:
 					return await _departmentsService.IsUserInDepartmentAsync(channel.DepartmentId, userId);

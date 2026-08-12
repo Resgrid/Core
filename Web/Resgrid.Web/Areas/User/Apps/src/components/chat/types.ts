@@ -70,6 +70,7 @@ export const CHAT_HUB_METHODS = {
   LeaveChannel: 'LeaveChannel',
   Typing: 'Typing',
   MarkRead: 'MarkRead',
+  SetActiveChannel: 'SetActiveChannel',
 } as const;
 
 // Client-side lifecycle for optimistic messages (not part of the wire DTO).

@@ -1326,7 +1326,7 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 					LEFT JOIN (SELECT dgm1.*
 						FROM %SCHEMA%.%GROUPMEMBERSSTABLE% dgm1
 						INNER JOIN %SCHEMA%.%DEPARTMENTMEMBERSSTABLE% dm ON dgm1.UserId = dm.UserId
-						WHERE dm.IsDeleted = false) AS dgm ON dgm.DepartmentGroupId = dg.DepartmentGroupId
+						WHERE dm.IsDeleted = false AND dm.DepartmentId = %DID%) AS dgm ON dgm.DepartmentGroupId = dg.DepartmentGroupId
 					WHERE dg.DepartmentId = %DID%";
 			SelectAllGroupsByParentIdQuery = @"
 					SELECT %SCHEMA%.%GROUPSTABLE%.*, %SCHEMA%.%GROUPMEMBERSSTABLE%.*

@@ -1,9 +1,10 @@
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import './chat.css';
 import { getCurrentUserId, isDepartmentAdmin, type ChatChannelDto, type ChatMessageDto } from './types';
 import { useChatBootstrap } from './useChatBootstrap';
 import { useChatStore, shallowArrayEqual } from './useChatStore';
-import { setActiveChannel, setHighlightMessage } from './chatStore';
+import { setActiveChannel, setHighlightMessage, upsertChannel } from './chatStore';
+import { chatHub } from './chatHub';
 import { flagChatMessage } from './chatActions';
 import { searchMessages } from './chatApi';
 import { channelDisplayName, formatRelativeDay } from './chatFormat';
@@ -40,6 +41,12 @@ export default function ChatPageElement(_props: ChatPageElementProps) {
   const currentUserId = getCurrentUserId();
   const canModerate = isDepartmentAdmin();
   const activeChannel = channels.find((channel) => channel.ChatChannelId === activeChannelId) ?? null;
+
+  // Report the on-screen conversation so the server suppresses its pushes; cleared on unmount.
+  useEffect(() => {
+    chatHub.setActiveChannel(activeChannelId);
+  }, [activeChannelId]);
+  useEffect(() => () => chatHub.setActiveChannel(null), []);
 
   // Stable identities: ChannelRow and MessageBubble are memo'd, so these callbacks must not be recreated
   // each render or those children re-render on every ChatPageElement state change (defeating their memo).
@@ -211,6 +218,9 @@ export default function ChatPageElement(_props: ChatPageElementProps) {
           onClose={() => setShowNew(false)}
           onCreated={(channel: ChatChannelDto) => {
             setShowNew(false);
+            // Seed the store immediately: the channel-list refetch races the hub event, and the
+            // conversation can only open if the channel exists in state.
+            upsertChannel(channel);
             openChannel(channel.ChatChannelId);
           }}
         />

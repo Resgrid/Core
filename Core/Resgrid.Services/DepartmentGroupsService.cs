@@ -105,42 +105,8 @@ namespace Resgrid.Services
 
 		public async Task<List<DepartmentGroup>> GetAllGroupsForDepartmentAsync(int departmentId)
 		{
-			//List<DepartmentGroup> departmentGroups = new List<DepartmentGroup>();
-
-			//var groups = await GetAllGroupsForDepartmentUnlimitedAsync(departmentId);
-
-			//int limit = 0;
-			//if (Config.SystemBehaviorConfig.RedirectHomeToLogin)
-			//	limit = int.MaxValue;
-			//else
-			//	limit = (await _subscriptionsService.GetCurrentPlanForDepartmentAsync(departmentId)).GetLimitForTypeAsInt(PlanLimitTypes.Groups);
-
-			//int count = groups.Count < limit ? groups.Count : limit;
-
-			//// Only return users up to the plans group limit
-			//for (int i = 0; i < count; i++)
-			//{
-			//	departmentGroups.Add(groups[i]);
-			//}
-
-			var departmentGroups = await GetAllGroupsForDepartmentUnlimitedAsync(departmentId);
-
-			foreach (var group in departmentGroups)
-			{
-				if (group.ParentDepartmentGroupId.HasValue)
-				{
-					group.Parent = await GetGroupByIdAsync(group.ParentDepartmentGroupId.Value, false);
-				}
-
-				var childGroups = await _departmentGroupsRepository.GetAllGroupsByParentGroupIdAsync(group.DepartmentGroupId);
-
-				if (childGroups != null && childGroups.Any())
-					group.Children = childGroups.ToList();
-				else
-					group.Children = new List<DepartmentGroup>();
-			}
-
-			return departmentGroups;
+			// GetAllGroupsForDepartmentUnlimitedAsync already resolves addresses, parents and children
+			return await GetAllGroupsForDepartmentUnlimitedAsync(departmentId);
 		}
 
 		public async Task InvalidateGroupInCache(int groupId)
@@ -150,27 +116,73 @@ namespace Resgrid.Services
 
 		public async Task<List<DepartmentGroup>> GetAllGroupsForDepartmentUnlimitedAsync(int departmentId)
 		{
-			var groups = await _departmentGroupsRepository.GetAllGroupsByDepartmentIdAsync(departmentId);
+			// Repository returns null when the underlying query throws (it logs and swallows)
+			var groups = (await _departmentGroupsRepository.GetAllGroupsByDepartmentIdAsync(departmentId))?.ToList();
+
+			if (groups == null)
+				return new List<DepartmentGroup>();
+
+			foreach (var addressId in groups.Where(x => x.AddressId.HasValue && x.Address == null).Select(x => x.AddressId.Value).Distinct().ToList())
+			{
+				var address = await _addressService.GetAddressByIdAsync(addressId);
+
+				foreach (var g in groups.Where(x => x.AddressId == addressId && x.Address == null))
+					g.Address = address;
+			}
+
+			// The result set already contains every group in the department, so parent and
+			// child links resolve in memory instead of issuing per-group queries.
+			var groupsById = groups.ToDictionary(x => x.DepartmentGroupId);
+			var childrenByParentId = groups
+				.Where(x => x.ParentDepartmentGroupId.HasValue)
+				.GroupBy(x => x.ParentDepartmentGroupId.Value)
+				.ToDictionary(x => x.Key, x => x.ToList());
 
 			foreach (var g in groups)
 			{
-				if (g.AddressId.HasValue && g.Address == null)
-					g.Address = await _addressService.GetAddressByIdAsync(g.AddressId.Value);
-
 				if (g.ParentDepartmentGroupId.HasValue)
 				{
-					g.Parent = await GetGroupByIdAsync(g.ParentDepartmentGroupId.Value, false);
+					if (groupsById.TryGetValue(g.ParentDepartmentGroupId.Value, out var parent))
+						g.Parent = CopyWithoutRelations(parent);
+					else
+						g.Parent = await GetGroupByIdAsync(g.ParentDepartmentGroupId.Value, false);
 				}
 
-				var childGroups = await _departmentGroupsRepository.GetAllGroupsByParentGroupIdAsync(g.DepartmentGroupId);
-
-				if (childGroups != null && childGroups.Any())
-					g.Children = childGroups.ToList();
+				if (childrenByParentId.TryGetValue(g.DepartmentGroupId, out var children))
+					g.Children = children;
 				else
 					g.Children = new List<DepartmentGroup>();
 			}
 
-			return groups.ToList();
+			return groups;
+		}
+
+		// Parent links point at a detached copy so the group graph stays acyclic;
+		// Children reference the shared in-memory list instances.
+		private static DepartmentGroup CopyWithoutRelations(DepartmentGroup group)
+		{
+			return new DepartmentGroup
+			{
+				DepartmentGroupId = group.DepartmentGroupId,
+				DepartmentId = group.DepartmentId,
+				Type = group.Type,
+				AddressId = group.AddressId,
+				Address = group.Address,
+				ParentDepartmentGroupId = group.ParentDepartmentGroupId,
+				Members = group.Members,
+				Name = group.Name,
+				Geofence = group.Geofence,
+				GeofenceColor = group.GeofenceColor,
+				DispatchEmail = group.DispatchEmail,
+				MessageEmail = group.MessageEmail,
+				Latitude = group.Latitude,
+				Longitude = group.Longitude,
+				What3Words = group.What3Words,
+				DispatchToPrinter = group.DispatchToPrinter,
+				PrinterData = group.PrinterData,
+				DispatchToFax = group.DispatchToFax,
+				FaxNumber = group.FaxNumber
+			};
 		}
 
 		public async Task<List<DepartmentGroup>> GetAllGroupsForDepartmentUnlimitedThinAsync(int departmentId)

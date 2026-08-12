@@ -156,6 +156,27 @@ namespace Resgrid.Services
 							results[channel.ChatChannelId] = channel;
 				}
 
+				// Channels where the active unit is the participant (Dispatch/IC ↔ unit DMs, units
+				// invited to groups) — the unit's operator must see them without a personal member row.
+				// The caller-supplied unit only counts when the user actually crews it; otherwise any
+				// department member could list another unit's private channels.
+				if (activeUnitId.HasValue && await _chatPermissionService.CanSendAsUnitAsync(userId, activeUnitId.Value, departmentId))
+				{
+					var unitMemberships = await _chatChannelMemberRepository.GetActiveByUnitIdAsync(departmentId, activeUnitId.Value);
+					var unitChannelIds = unitMemberships?
+						.Select(m => m.ChatChannelId)
+						.Distinct()
+						.Where(id => !results.ContainsKey(id))
+						.ToList();
+					if (unitChannelIds != null && unitChannelIds.Count > 0)
+					{
+						var channels = await _chatChannelRepository.GetByIdsAsync(unitChannelIds);
+						if (channels != null)
+							foreach (var channel in channels)
+								results[channel.ChatChannelId] = channel;
+					}
+				}
+
 				// Implicit-audience channels (custom rule-based + active incident channels): evaluate access
 				// per channel; evaluations are cached by the permission service.
 				if (allChannels != null)
@@ -254,7 +275,12 @@ namespace Resgrid.Services
 				saved = await _chatChannelRepository.GetByDmKeyAsync(departmentId, dmKey);
 
 			if (saved != null && string.Equals(saved.ChatChannelId, channel.ChatChannelId, StringComparison.OrdinalIgnoreCase))
+			{
+				// Roll the channel-list cache version so both participants see the new DM on their
+				// next GetChannels instead of waiting out the 45s per-user list cache.
+				await _chatPermissionService.InvalidateChannelCacheAsync(saved.ChatChannelId);
 				PublishChannelEvent(saved, ChatEventKinds.ChannelProvisioned);
+			}
 
 			return saved;
 		}
@@ -291,6 +317,7 @@ namespace Resgrid.Services
 				await AddMemberRowAsync(channel, ChatParticipantType.User, memberId, null, null, creatorUserId, cancellationToken);
 			}
 
+			await _chatPermissionService.InvalidateChannelCacheAsync(channel.ChatChannelId);
 			PublishChannelEvent(channel, ChatEventKinds.ChannelProvisioned);
 
 			return channel;
@@ -327,6 +354,7 @@ namespace Resgrid.Services
 				}
 			}
 
+			await _chatPermissionService.InvalidateChannelCacheAsync(channel.ChatChannelId);
 			PublishChannelEvent(channel, ChatEventKinds.ChannelProvisioned);
 
 			return channel;
@@ -381,6 +409,21 @@ namespace Resgrid.Services
 		public async Task<List<ChatChannelMember>> GetActiveMembershipsForUserAsync(int departmentId, string userId)
 		{
 			var members = await _chatChannelMemberRepository.GetActiveByUserIdAsync(departmentId, userId);
+			return members?.ToList() ?? new List<ChatChannelMember>();
+		}
+
+		public async Task<List<ChatChannelMember>> GetActiveMembershipsForUnitAsync(int departmentId, int unitId)
+		{
+			var members = await _chatChannelMemberRepository.GetActiveByUnitIdAsync(departmentId, unitId);
+			return members?.ToList() ?? new List<ChatChannelMember>();
+		}
+
+		public async Task<List<ChatChannelMember>> GetActiveMembersForChannelsAsync(List<string> chatChannelIds)
+		{
+			if (chatChannelIds == null || chatChannelIds.Count == 0)
+				return new List<ChatChannelMember>();
+
+			var members = await _chatChannelMemberRepository.GetActiveByChannelIdsAsync(chatChannelIds);
 			return members?.ToList() ?? new List<ChatChannelMember>();
 		}
 

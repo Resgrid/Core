@@ -1227,5 +1227,156 @@ namespace Resgrid.Tests.Services
 				audience.Should().Contain(TestData.Users.TestUser3Id);
 			}
 		}
+
+		[TestFixture]
+		public class when_evaluating_the_unit_dispatch_channel : with_the_chat_permission_service
+		{
+			private ChatChannel BuildUnitDispatchChannel()
+			{
+				var channel = CreateChannel(ChatChannelType.UnitDispatch);
+				channel.Name = "Engine 6 Dispatch";
+				channel.DmKey = "unitdispatch:7";
+				return channel;
+			}
+
+			private void GivenUnitSevenCrewedBy(string userId)
+			{
+				_unitsServiceMock.Setup(x => x.GetUnitByIdAsync(7)).ReturnsAsync(new Unit { UnitId = 7, DepartmentId = 1, Name = "Engine 6" });
+				_unitsServiceMock.Setup(x => x.GetActiveRolesForUnitAsync(7)).ReturnsAsync(new List<UnitActiveRole>
+				{
+					new UnitActiveRole { UnitId = 7, UserId = userId }
+				});
+			}
+
+			private void GivenTheUnitMemberRow(ChatChannel channel)
+			{
+				_chatChannelMemberRepositoryMock.Setup(x => x.GetUnitMemberAsync(channel.ChatChannelId, 7)).ReturnsAsync(new ChatChannelMember
+				{
+					ChatChannelMemberId = Guid.NewGuid().ToString(),
+					ChatChannelId = channel.ChatChannelId,
+					DepartmentId = channel.DepartmentId,
+					ParticipantType = (int)ChatParticipantType.Unit,
+					UnitId = 7,
+					JoinedOn = DateTime.UtcNow
+				});
+			}
+
+			[Test]
+			public async Task an_authorized_dispatcher_should_have_access()
+			{
+				_dispatchAccessServiceMock.Setup(x => x.CanUseDispatchAsync(1, TestData.Users.TestUser1Id)).ReturnsAsync(true);
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(BuildUnitDispatchChannel(), TestData.Users.TestUser1Id, null);
+
+				result.Should().BeTrue();
+			}
+
+			[Test]
+			public async Task the_unit_crew_should_have_access()
+			{
+				var channel = BuildUnitDispatchChannel();
+				GivenUnitSevenCrewedBy(TestData.Users.TestUser1Id);
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, 7);
+
+				result.Should().BeTrue();
+			}
+
+			[Test]
+			public async Task a_caller_who_does_not_crew_the_claimed_unit_should_be_refused()
+			{
+				var channel = BuildUnitDispatchChannel();
+				GivenUnitSevenCrewedBy(TestData.Users.TestUser2Id);
+				GivenTheUnitMemberRow(channel);
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, 7);
+
+				result.Should().BeFalse();
+			}
+
+			[Test]
+			public async Task a_stale_user_member_row_should_not_grant_access()
+			{
+				// An ex-dispatcher's lazy read-pointer row outlives their dispatch authorization. Access
+				// is proven against the channel's own unit, so crewing some other unit plus the stale row
+				// must not reopen this unit's dispatch line.
+				var channel = BuildUnitDispatchChannel();
+				GivenUnitSevenCrewedBy(TestData.Users.TestUser2Id);
+				_chatChannelMemberRepositoryMock.Setup(x => x.GetUserMemberAsync(channel.ChatChannelId, TestData.Users.TestUser1Id))
+					.ReturnsAsync(CreateUserMember(channel, TestData.Users.TestUser1Id));
+				_unitsServiceMock.Setup(x => x.GetUnitByIdAsync(9)).ReturnsAsync(new Unit { UnitId = 9, DepartmentId = 1, Name = "Engine 9" });
+				_unitsServiceMock.Setup(x => x.GetActiveRolesForUnitAsync(9)).ReturnsAsync(new List<UnitActiveRole>
+				{
+					new UnitActiveRole { UnitId = 9, UserId = TestData.Users.TestUser1Id }
+				});
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, 9);
+
+				result.Should().BeFalse();
+			}
+
+			[Test]
+			public async Task the_owning_unit_should_fall_back_to_the_member_row_when_the_dm_key_is_missing()
+			{
+				var channel = BuildUnitDispatchChannel();
+				channel.DmKey = null;
+				GivenUnitSevenCrewedBy(TestData.Users.TestUser1Id);
+				_chatChannelMemberRepositoryMock.Setup(x => x.GetByChannelIdAsync(channel.ChatChannelId)).ReturnsAsync(new List<ChatChannelMember>
+				{
+					new ChatChannelMember
+					{
+						ChatChannelMemberId = Guid.NewGuid().ToString(),
+						ChatChannelId = channel.ChatChannelId,
+						DepartmentId = channel.DepartmentId,
+						ParticipantType = (int)ChatParticipantType.Unit,
+						UnitId = 7,
+						JoinedOn = DateTime.UtcNow
+					}
+				});
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(channel, TestData.Users.TestUser1Id, 7);
+
+				result.Should().BeTrue();
+			}
+
+			[Test]
+			public async Task a_department_admin_without_dispatch_authorization_should_be_refused()
+			{
+				// Same stance as the incident dispatch channel: admin standing alone must not open
+				// dispatch traffic.
+				_authorizationServiceMock.Setup(x => x.CanUserModifyDepartmentAsync(TestData.Users.TestUser3Id, 1)).ReturnsAsync(true);
+
+				var result = await _chatPermissionService.CanAccessChannelAsync(BuildUnitDispatchChannel(), TestData.Users.TestUser3Id, null);
+
+				result.Should().BeFalse();
+			}
+
+			[Test]
+			public async Task the_audience_should_be_the_unit_crew_plus_every_dispatcher()
+			{
+				var channel = BuildUnitDispatchChannel();
+				GivenUnitSevenCrewedBy(TestData.Users.TestUser1Id);
+				_chatChannelMemberRepositoryMock.Setup(x => x.GetByChannelIdAsync(channel.ChatChannelId)).ReturnsAsync(new List<ChatChannelMember>
+				{
+					new ChatChannelMember
+					{
+						ChatChannelMemberId = Guid.NewGuid().ToString(),
+						ChatChannelId = channel.ChatChannelId,
+						DepartmentId = channel.DepartmentId,
+						ParticipantType = (int)ChatParticipantType.Unit,
+						UnitId = 7,
+						JoinedOn = DateTime.UtcNow
+					}
+				});
+				_dispatchAccessServiceMock.Setup(x => x.GetDispatchUserIdsAsync(1))
+					.ReturnsAsync(new List<string> { TestData.Users.TestUser2Id, TestData.Users.TestUser3Id });
+
+				var audience = await _chatPermissionService.ResolveChannelAudienceUserIdsAsync(channel);
+
+				audience.Should().Contain(TestData.Users.TestUser1Id);
+				audience.Should().Contain(TestData.Users.TestUser2Id);
+				audience.Should().Contain(TestData.Users.TestUser3Id);
+			}
+		}
 	}
 }

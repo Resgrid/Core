@@ -26,7 +26,16 @@ namespace Resgrid.Model
 		/// tell which incident is talking to them, and audience-wide on the dispatch side so whichever
 		/// dispatcher is on shift picks it up.
 		/// </summary>
-		IncidentDispatch = 10
+		IncidentDispatch = 10,
+
+		/// <summary>
+		/// A unit's standing line to the dispatch desk: the unit-shared identity ("Engine 6") on one side,
+		/// every dispatch-authorized user on the other. Department-wide and permanent, unlike
+		/// <see cref="IncidentDispatch"/> which is scoped to one call — this is where a unit reaches
+		/// dispatch when there is no incident to anchor the conversation. One per unit, provisioned the
+		/// first time the unit's operator lists channels.
+		/// </summary>
+		UnitDispatch = 11
 	}
 
 	/// <summary>Who a chat participant is: a person, a unit-shared identity ("Engine 6"), or the chatbot.</summary>

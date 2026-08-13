@@ -30,6 +30,7 @@ namespace Resgrid.Tests.Services
 			protected Mock<IDepartmentGroupsService> _departmentGroupsServiceMock;
 			protected Mock<IUnitsService> _unitsServiceMock;
 			protected Mock<IUserProfileService> _userProfileServiceMock;
+			protected Mock<ICallsService> _callsServiceMock;
 			protected Mock<IEventAggregator> _eventAggregatorMock;
 			protected Mock<ICacheProvider> _cacheProviderMock;
 			protected Mock<IUnitOfWork> _unitOfWorkMock;
@@ -57,6 +58,7 @@ namespace Resgrid.Tests.Services
 				_departmentGroupsServiceMock = new Mock<IDepartmentGroupsService>();
 				_unitsServiceMock = new Mock<IUnitsService>();
 				_userProfileServiceMock = new Mock<IUserProfileService>();
+				_callsServiceMock = new Mock<ICallsService>();
 				_eventAggregatorMock = new Mock<IEventAggregator>();
 				_cacheProviderMock = new Mock<ICacheProvider>();
 				_unitOfWorkMock = new Mock<IUnitOfWork>();
@@ -93,6 +95,7 @@ namespace Resgrid.Tests.Services
 					_departmentGroupsServiceMock.Object,
 					_unitsServiceMock.Object,
 					_userProfileServiceMock.Object,
+					_callsServiceMock.Object,
 					_eventAggregatorMock.Object,
 					_cacheProviderMock.Object,
 					_unitOfWorkMock.Object);
@@ -666,6 +669,134 @@ namespace Resgrid.Tests.Services
 				await _chatChannelService.GetChannelsForUserAsync(1, "user-a", null);
 
 				_chatChannelMemberRepositoryMock.Verify(x => x.GetActiveByUnitIdAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+			}
+
+			[Test]
+			public async Task an_active_unit_should_get_its_dispatch_line_provisioned_into_the_list()
+			{
+				SetupDepartmentChannel();
+				_chatPermissionServiceMock.Setup(x => x.IsDepartmentAdminAsync(1, "user-a")).ReturnsAsync(false);
+				_chatPermissionServiceMock.Setup(x => x.CanSendAsUnitAsync("user-a", 7, 1)).ReturnsAsync(true);
+				_unitsServiceMock.Setup(x => x.GetUnitByIdAsync(7)).ReturnsAsync(new Unit { UnitId = 7, DepartmentId = 1, Name = "Engine 6" });
+				_chatChannelRepositoryMock.Setup(x => x.GetByDmKeyAsync(1, "unitdispatch:7")).ReturnsAsync((ChatChannel)null);
+
+				var result = await _chatChannelService.GetChannelsForUserAsync(1, "user-a", 7);
+
+				result.Should().Contain(c => c.ChannelType == (int)ChatChannelType.UnitDispatch && c.Name == "Engine 6 Dispatch");
+			}
+
+			[Test]
+			public async Task a_unit_dispatch_provisioning_failure_should_not_abort_the_channel_list()
+			{
+				SetupDepartmentChannel();
+				_chatPermissionServiceMock.Setup(x => x.IsDepartmentAdminAsync(1, "user-a")).ReturnsAsync(false);
+				_chatPermissionServiceMock.Setup(x => x.CanSendAsUnitAsync("user-a", 7, 1)).ReturnsAsync(true);
+				_unitsServiceMock.Setup(x => x.GetUnitByIdAsync(7)).ThrowsAsync(new InvalidOperationException("units down"));
+
+				var result = await _chatChannelService.GetChannelsForUserAsync(1, "user-a", 7);
+
+				result.Should().Contain(c => c.ChannelType == (int)ChatChannelType.DepartmentDefault);
+			}
+
+			[Test]
+			public async Task incident_leads_and_dispatch_channels_should_be_listed_for_users_with_access()
+			{
+				SetupDepartmentChannel();
+				_chatPermissionServiceMock.Setup(x => x.IsDepartmentAdminAsync(1, "user-a")).ReturnsAsync(false);
+
+				var leads = new ChatChannel { ChatChannelId = "leads-1", DepartmentId = 1, ChannelType = (int)ChatChannelType.IncidentLeads, CallId = 42, Name = "Barn Fire All Leads" };
+				var dispatch = new ChatChannel { ChatChannelId = "dispatch-1", DepartmentId = 1, ChannelType = (int)ChatChannelType.IncidentDispatch, CallId = 42, Name = "Barn Fire Dispatch" };
+				var unitDispatch = new ChatChannel { ChatChannelId = "unit-dispatch-7", DepartmentId = 1, ChannelType = (int)ChatChannelType.UnitDispatch, DmKey = "unitdispatch:7", Name = "Engine 6 Dispatch" };
+				_chatChannelRepositoryMock.Setup(x => x.GetAllByDepartmentIdAsync(1, false)).ReturnsAsync(new List<ChatChannel> { leads, dispatch, unitDispatch });
+
+				_chatPermissionServiceMock.Setup(x => x.CanAccessChannelAsync(leads, "user-a", null)).ReturnsAsync(true);
+				_chatPermissionServiceMock.Setup(x => x.CanAccessChannelAsync(dispatch, "user-a", null)).ReturnsAsync(true);
+				_chatPermissionServiceMock.Setup(x => x.CanAccessChannelAsync(unitDispatch, "user-a", null)).ReturnsAsync(true);
+
+				var result = await _chatChannelService.GetChannelsForUserAsync(1, "user-a", null);
+
+				result.Should().Contain(c => c.ChatChannelId == "leads-1");
+				result.Should().Contain(c => c.ChatChannelId == "dispatch-1");
+				result.Should().Contain(c => c.ChatChannelId == "unit-dispatch-7");
+			}
+
+			[Test]
+			public async Task incident_leads_and_dispatch_channels_should_stay_hidden_without_access()
+			{
+				SetupDepartmentChannel();
+				_chatPermissionServiceMock.Setup(x => x.IsDepartmentAdminAsync(1, "user-a")).ReturnsAsync(false);
+
+				var leads = new ChatChannel { ChatChannelId = "leads-1", DepartmentId = 1, ChannelType = (int)ChatChannelType.IncidentLeads, CallId = 42 };
+				var unitDispatch = new ChatChannel { ChatChannelId = "unit-dispatch-7", DepartmentId = 1, ChannelType = (int)ChatChannelType.UnitDispatch, DmKey = "unitdispatch:7" };
+				_chatChannelRepositoryMock.Setup(x => x.GetAllByDepartmentIdAsync(1, false)).ReturnsAsync(new List<ChatChannel> { leads, unitDispatch });
+
+				var result = await _chatChannelService.GetChannelsForUserAsync(1, "user-a", null);
+
+				result.Should().NotContain(c => c.ChatChannelId == "leads-1");
+				result.Should().NotContain(c => c.ChatChannelId == "unit-dispatch-7");
+			}
+		}
+
+		[TestFixture]
+		public class when_ensuring_unit_dispatch_channels : with_the_chat_channel_service
+		{
+			[Test]
+			public async Task a_missing_channel_should_be_created_with_the_unit_as_the_member()
+			{
+				_unitsServiceMock.Setup(x => x.GetUnitByIdAsync(7)).ReturnsAsync(new Unit { UnitId = 7, DepartmentId = 1, Name = "Engine 6" });
+				_chatChannelRepositoryMock.Setup(x => x.GetByDmKeyAsync(1, "unitdispatch:7")).ReturnsAsync((ChatChannel)null);
+
+				List<ChatChannelMember> capturedMembers = null;
+				_chatChannelRepositoryMock
+					.Setup(x => x.CreateDirectMessageChannelAsync(It.IsAny<ChatChannel>(), It.IsAny<IEnumerable<ChatChannelMember>>(), It.IsAny<CancellationToken>()))
+					.Callback((ChatChannel c, IEnumerable<ChatChannelMember> m, CancellationToken t) => capturedMembers = m.ToList())
+					.ReturnsAsync((ChatChannel c, IEnumerable<ChatChannelMember> m, CancellationToken t) => c);
+
+				var result = await _chatChannelService.EnsureUnitDispatchChannelAsync(1, 7);
+
+				result.Should().NotBeNull();
+				result.ChannelType.Should().Be((int)ChatChannelType.UnitDispatch);
+				result.Name.Should().Be("Engine 6 Dispatch");
+				result.DmKey.Should().Be("unitdispatch:7");
+				capturedMembers.Should().ContainSingle(m => m.ParticipantType == (int)ChatParticipantType.Unit && m.UnitId == 7);
+			}
+
+			[Test]
+			public async Task an_existing_channel_should_be_returned_without_creating_another()
+			{
+				var existing = new ChatChannel { ChatChannelId = "ud-7", DepartmentId = 1, ChannelType = (int)ChatChannelType.UnitDispatch, DmKey = "unitdispatch:7", Name = "Engine 6 Dispatch" };
+				_unitsServiceMock.Setup(x => x.GetUnitByIdAsync(7)).ReturnsAsync(new Unit { UnitId = 7, DepartmentId = 1, Name = "Engine 6" });
+				_chatChannelRepositoryMock.Setup(x => x.GetByDmKeyAsync(1, "unitdispatch:7")).ReturnsAsync(existing);
+
+				var result = await _chatChannelService.EnsureUnitDispatchChannelAsync(1, 7);
+
+				result.Should().BeSameAs(existing);
+				_chatChannelRepositoryMock.Verify(x => x.CreateDirectMessageChannelAsync(It.IsAny<ChatChannel>(), It.IsAny<IEnumerable<ChatChannelMember>>(), It.IsAny<CancellationToken>()), Times.Never);
+				_chatChannelRepositoryMock.Verify(x => x.UpdateChannelInfoAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Never);
+			}
+
+			[Test]
+			public async Task a_renamed_unit_should_refresh_the_channel_name()
+			{
+				var existing = new ChatChannel { ChatChannelId = "ud-7", DepartmentId = 1, ChannelType = (int)ChatChannelType.UnitDispatch, DmKey = "unitdispatch:7", Name = "Engine 6 Dispatch" };
+				_unitsServiceMock.Setup(x => x.GetUnitByIdAsync(7)).ReturnsAsync(new Unit { UnitId = 7, DepartmentId = 1, Name = "Rescue 1" });
+				_chatChannelRepositoryMock.Setup(x => x.GetByDmKeyAsync(1, "unitdispatch:7")).ReturnsAsync(existing);
+
+				var result = await _chatChannelService.EnsureUnitDispatchChannelAsync(1, 7);
+
+				result.Name.Should().Be("Rescue 1 Dispatch");
+				_chatChannelRepositoryMock.Verify(x => x.UpdateChannelInfoAsync("ud-7", "Rescue 1 Dispatch", It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Once);
+			}
+
+			[Test]
+			public async Task a_unit_from_another_department_should_not_get_a_channel()
+			{
+				_unitsServiceMock.Setup(x => x.GetUnitByIdAsync(7)).ReturnsAsync(new Unit { UnitId = 7, DepartmentId = 2, Name = "Engine 6" });
+
+				var result = await _chatChannelService.EnsureUnitDispatchChannelAsync(1, 7);
+
+				result.Should().BeNull();
+				_chatChannelRepositoryMock.Verify(x => x.CreateDirectMessageChannelAsync(It.IsAny<ChatChannel>(), It.IsAny<IEnumerable<ChatChannelMember>>(), It.IsAny<CancellationToken>()), Times.Never);
 			}
 		}
 

@@ -11,6 +11,9 @@ export const ChatChannelType = {
   IncidentLane: 6,
   IncidentCommand: 7,
   Chatbot: 8,
+  IncidentLeads: 9,
+  IncidentDispatch: 10,
+  UnitDispatch: 11,
 } as const;
 
 export const ChatMessageType = {

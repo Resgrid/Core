@@ -116,6 +116,14 @@ namespace Resgrid.Model.Services
 		Task<ChatChannel> EnsureDispatchChannelAsync(int departmentId, int callId, string incidentCommandId, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
+		/// Ensures the unit's standing line to the dispatch desk: the unit-shared identity plus every
+		/// dispatch-authorized user. Department-wide and permanent (not call-scoped). The unit is stamped
+		/// as an explicit member row so its operators see the channel through the unit-membership pass;
+		/// the dispatch side is an implicit audience. Also refreshes the channel name if the unit was renamed.
+		/// </summary>
+		Task<ChatChannel> EnsureUnitDispatchChannelAsync(int departmentId, int unitId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
 		/// Backfills every chat channel an ACTIVE incident should have — the call's incident channel, the
 		/// command and "All Leads" channels, and one per live lane — inserting only what is missing.
 		///

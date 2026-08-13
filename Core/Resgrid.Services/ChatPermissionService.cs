@@ -218,6 +218,13 @@ namespace Resgrid.Services
 						AddIfSet(userIds, dispatcherId);
 					break;
 
+				case ChatChannelType.UnitDispatch:
+					// The unit's member row resolves to its active crew; the desk side is every dispatcher.
+					await AddExplicitMemberAudienceAsync(channel, userIds);
+					foreach (var dispatcherId in await _dispatchAccessService.GetDispatchUserIdsAsync(channel.DepartmentId))
+						AddIfSet(userIds, dispatcherId);
+					break;
+
 				default: // DirectMessage, AdHocGroup
 					await AddExplicitMemberAudienceAsync(channel, userIds);
 					break;
@@ -318,6 +325,17 @@ namespace Resgrid.Services
 						return true;
 
 					return await IsInIncidentAudienceAsync(channel, userId, activeUnitId);
+
+				case ChatChannelType.UnitDispatch:
+					// Same stance as IncidentDispatch: dispatch authorization, not admin standing, opens
+					// dispatch traffic. The unit side comes through its member row, and only for a caller
+					// who actually crews the unit.
+					if (await _dispatchAccessService.CanUseDispatchAsync(channel.DepartmentId, userId))
+						return true;
+
+					return activeUnitId.HasValue
+						&& await CanSendAsUnitAsync(userId, activeUnitId.Value, channel.DepartmentId)
+						&& await HasActiveMembershipAsync(channel.ChatChannelId, userId, activeUnitId);
 
 				default:
 					return false;

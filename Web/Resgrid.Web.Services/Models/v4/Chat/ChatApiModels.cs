@@ -349,7 +349,7 @@ public class ChatChannelResultData
 	public string ChatChannelId { get; set; }
 
 	/// <summary>
-	/// Channel type (0 = DirectMessage, 1 = AdHocGroup, 2 = DepartmentDefault, 3 = GroupDefault, 4 = CustomLocked, 5 = Incident, 6 = IncidentLane, 7 = IncidentCommand, 8 = Chatbot)
+	/// Channel type (0 = DirectMessage, 1 = AdHocGroup, 2 = DepartmentDefault, 3 = GroupDefault, 4 = CustomLocked, 5 = Incident, 6 = IncidentLane, 7 = IncidentCommand, 8 = Chatbot, 9 = IncidentLeads, 10 = IncidentDispatch, 11 = UnitDispatch)
 	/// </summary>
 	public int ChannelType { get; set; }
 

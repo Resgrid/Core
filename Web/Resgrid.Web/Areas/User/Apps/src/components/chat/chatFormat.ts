@@ -237,6 +237,8 @@ export function groupChannels(channels: ChatChannelDto[]): ChannelGroup[] {
       case ChatChannelType.Incident:
       case ChatChannelType.IncidentLane:
       case ChatChannelType.IncidentCommand:
+      case ChatChannelType.IncidentLeads:
+      case ChatChannelType.IncidentDispatch:
         incidents.push(channel);
         break;
       default:

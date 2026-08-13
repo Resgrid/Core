@@ -35,6 +35,7 @@ namespace Resgrid.Services
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IUnitsService _unitsService;
 		private readonly IUserProfileService _userProfileService;
+		private readonly ICallsService _callsService;
 		private readonly IEventAggregator _eventAggregator;
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IUnitOfWork _unitOfWork;
@@ -42,7 +43,7 @@ namespace Resgrid.Services
 		public ChatChannelService(IChatChannelRepository chatChannelRepository, IChatChannelMemberRepository chatChannelMemberRepository,
 			IChatChannelAccessRuleRepository chatChannelAccessRuleRepository, IChatDepartmentSettingRepository chatDepartmentSettingRepository,
 			IChatPermissionService chatPermissionService, IDepartmentsService departmentsService, IDepartmentGroupsService departmentGroupsService,
-			IUnitsService unitsService, IUserProfileService userProfileService, IEventAggregator eventAggregator,
+			IUnitsService unitsService, IUserProfileService userProfileService, ICallsService callsService, IEventAggregator eventAggregator,
 			ICacheProvider cacheProvider, IUnitOfWork unitOfWork)
 		{
 			_chatChannelRepository = chatChannelRepository;
@@ -54,6 +55,7 @@ namespace Resgrid.Services
 			_departmentGroupsService = departmentGroupsService;
 			_unitsService = unitsService;
 			_userProfileService = userProfileService;
+			_callsService = callsService;
 			_eventAggregator = eventAggregator;
 			_cacheProvider = cacheProvider;
 			_unitOfWork = unitOfWork;
@@ -162,6 +164,20 @@ namespace Resgrid.Services
 				// department member could list another unit's private channels.
 				if (activeUnitId.HasValue && await _chatPermissionService.CanSendAsUnitAsync(userId, activeUnitId.Value, departmentId))
 				{
+					// The unit's standing dispatch line is provisioned on the unit's first channel list
+					// rather than at unit creation, so pre-existing units heal themselves. Best-effort:
+					// the list must survive a provisioning failure.
+					try
+					{
+						var unitDispatchChannel = await EnsureUnitDispatchChannelAsync(departmentId, activeUnitId.Value);
+						if (unitDispatchChannel != null)
+							results[unitDispatchChannel.ChatChannelId] = unitDispatchChannel;
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex);
+					}
+
 					var unitMemberships = await _chatChannelMemberRepository.GetActiveByUnitIdAsync(departmentId, activeUnitId.Value);
 					var unitChannelIds = unitMemberships?
 						.Select(m => m.ChatChannelId)
@@ -177,8 +193,9 @@ namespace Resgrid.Services
 					}
 				}
 
-				// Implicit-audience channels (custom rule-based + active incident channels): evaluate access
-				// per channel; evaluations are cached by the permission service.
+				// Implicit-audience channels (custom rule-based, incident channels including the leads and
+				// dispatch lines, and unit dispatch lines): evaluate access per channel; evaluations are
+				// cached by the permission service.
 				if (allChannels != null)
 				{
 					foreach (var channel in allChannels)
@@ -188,7 +205,9 @@ namespace Resgrid.Services
 
 						var type = (ChatChannelType)channel.ChannelType;
 						if (type != ChatChannelType.CustomLocked && type != ChatChannelType.Incident &&
-							type != ChatChannelType.IncidentLane && type != ChatChannelType.IncidentCommand)
+							type != ChatChannelType.IncidentLane && type != ChatChannelType.IncidentCommand &&
+							type != ChatChannelType.IncidentLeads && type != ChatChannelType.IncidentDispatch &&
+							type != ChatChannelType.UnitDispatch)
 							continue;
 
 						if (await _chatPermissionService.CanAccessChannelAsync(channel, userId, activeUnitId))
@@ -666,12 +685,16 @@ namespace Resgrid.Services
 			if (existing != null)
 				return existing;
 
+			// Callers without the call in hand (the backfill) pass no name; resolve it here so healed
+			// channels get the real call name instead of the "Call {id}" fallback.
+			var name = !string.IsNullOrWhiteSpace(callName) ? callName.Trim() : await ResolveIncidentPrefixAsync(callId, null);
+
 			return await InsertProvisionedChannelAsync(new ChatChannel
 			{
 				ChatChannelId = Guid.NewGuid().ToString(),
 				DepartmentId = departmentId,
 				ChannelType = (int)ChatChannelType.Incident,
-				Name = string.IsNullOrWhiteSpace(callName) ? $"Call {callId}" : callName,
+				Name = name,
 				CallId = callId,
 				CreatedOn = DateTime.UtcNow
 			}, () => _chatChannelRepository.GetByCallIdAndTypeAsync(callId, (int)ChatChannelType.Incident), cancellationToken);
@@ -682,16 +705,36 @@ namespace Resgrid.Services
 			if (node == null)
 				return null;
 
+			return await EnsureLaneChannelCoreAsync(node, await ResolveLanePrefixAsync(node.CallId), cancellationToken);
+		}
+
+		/// <summary>
+		/// Incident-scoped channel names all start with the incident (or call) name; the incident channel's
+		/// own name IS that prefix, so prefer reusing it over re-deriving from the call.
+		/// </summary>
+		private async Task<string> ResolveLanePrefixAsync(int callId)
+		{
+			var incidentChannel = await _chatChannelRepository.GetByCallIdAndTypeAsync(callId, (int)ChatChannelType.Incident);
+			if (!string.IsNullOrWhiteSpace(incidentChannel?.Name))
+				return incidentChannel.Name;
+
+			return await ResolveIncidentPrefixAsync(callId, null);
+		}
+
+		private async Task<ChatChannel> EnsureLaneChannelCoreAsync(CommandStructureNode node, string prefix, CancellationToken cancellationToken)
+		{
+			var desiredName = BuildLaneChannelName(prefix, node.Name);
+
 			var existing = await _chatChannelRepository.GetByCommandStructureNodeIdAsync(node.CommandStructureNodeId);
 			if (existing != null)
-				return existing;
+				return await ApplyProvisionedNameAsync(existing, desiredName, cancellationToken);
 
 			return await InsertProvisionedChannelAsync(new ChatChannel
 			{
 				ChatChannelId = Guid.NewGuid().ToString(),
 				DepartmentId = node.DepartmentId,
 				ChannelType = (int)ChatChannelType.IncidentLane,
-				Name = node.Name,
+				Name = desiredName,
 				CallId = node.CallId,
 				IncidentCommandId = node.IncidentCommandId,
 				CommandStructureNodeId = node.CommandStructureNodeId,
@@ -715,6 +758,11 @@ namespace Resgrid.Services
 					.Select(c => c.CommandStructureNodeId),
 				StringComparer.OrdinalIgnoreCase);
 
+			var prefix = (existing ?? Enumerable.Empty<ChatChannel>())
+				.FirstOrDefault(c => c.ChannelType == (int)ChatChannelType.Incident)?.Name;
+			if (string.IsNullOrWhiteSpace(prefix))
+				prefix = await ResolveIncidentPrefixAsync(callId, null);
+
 			foreach (var node in nodeList)
 			{
 				if (provisionedNodeIds.Contains(node.CommandStructureNodeId))
@@ -723,7 +771,7 @@ namespace Resgrid.Services
 				// Provisioning inserts are serialized deliberately: they share the caller's unit-of-work
 				// connection (single DbConnection is not concurrency-safe). N is the template lane count
 				// (single digits) on a cold, once-per-incident path, so this is not a hot loop.
-				await EnsureLaneChannelAsync(node, cancellationToken);
+				await EnsureLaneChannelCoreAsync(node, prefix, cancellationToken);
 				provisionedNodeIds.Add(node.CommandStructureNodeId);
 			}
 		}
@@ -733,20 +781,8 @@ namespace Resgrid.Services
 			if (command == null)
 				return null;
 
-			var existing = await _chatChannelRepository.GetByCallIdAndTypeAsync(command.CallId, (int)ChatChannelType.IncidentCommand);
-			if (existing != null)
-				return await RebindCommandScopedChannelAsync(existing, command.IncidentCommandId, cancellationToken);
-
-			return await InsertProvisionedChannelAsync(new ChatChannel
-			{
-				ChatChannelId = Guid.NewGuid().ToString(),
-				DepartmentId = command.DepartmentId,
-				ChannelType = (int)ChatChannelType.IncidentCommand,
-				Name = "Command",
-				CallId = command.CallId,
-				IncidentCommandId = command.IncidentCommandId,
-				CreatedOn = DateTime.UtcNow
-			}, () => _chatChannelRepository.GetByCallIdAndTypeAsync(command.CallId, (int)ChatChannelType.IncidentCommand), cancellationToken);
+			return await EnsureCommandScopedChannelCoreAsync(command.DepartmentId, command.CallId, command.IncidentCommandId,
+				ChatChannelType.IncidentCommand, await ResolveIncidentPrefixAsync(command.CallId, command.Name), cancellationToken);
 		}
 
 		public async Task<ChatChannel> EnsureLeadsChannelAsync(IncidentCommand command, CancellationToken cancellationToken = default(CancellationToken))
@@ -754,20 +790,8 @@ namespace Resgrid.Services
 			if (command == null)
 				return null;
 
-			var existing = await _chatChannelRepository.GetByCallIdAndTypeAsync(command.CallId, (int)ChatChannelType.IncidentLeads);
-			if (existing != null)
-				return await RebindCommandScopedChannelAsync(existing, command.IncidentCommandId, cancellationToken);
-
-			return await InsertProvisionedChannelAsync(new ChatChannel
-			{
-				ChatChannelId = Guid.NewGuid().ToString(),
-				DepartmentId = command.DepartmentId,
-				ChannelType = (int)ChatChannelType.IncidentLeads,
-				Name = "All Leads",
-				CallId = command.CallId,
-				IncidentCommandId = command.IncidentCommandId,
-				CreatedOn = DateTime.UtcNow
-			}, () => _chatChannelRepository.GetByCallIdAndTypeAsync(command.CallId, (int)ChatChannelType.IncidentLeads), cancellationToken);
+			return await EnsureCommandScopedChannelCoreAsync(command.DepartmentId, command.CallId, command.IncidentCommandId,
+				ChatChannelType.IncidentLeads, await ResolveIncidentPrefixAsync(command.CallId, command.Name), cancellationToken);
 		}
 
 		public async Task<ChatChannel> EnsureDispatchChannelAsync(int departmentId, int callId, string incidentCommandId, CancellationToken cancellationToken = default(CancellationToken))
@@ -775,20 +799,37 @@ namespace Resgrid.Services
 			if (callId <= 0)
 				return null;
 
-			var existing = await _chatChannelRepository.GetByCallIdAndTypeAsync(callId, (int)ChatChannelType.IncidentDispatch);
+			return await EnsureCommandScopedChannelCoreAsync(departmentId, callId, incidentCommandId,
+				ChatChannelType.IncidentDispatch, await ResolveIncidentPrefixAsync(callId, null), cancellationToken);
+		}
+
+		/// <summary>
+		/// Shared ensure for the three command-scoped singletons (Command/All Leads/Dispatch): an existing
+		/// channel is rebound to the current command and renamed if the incident prefix drifted; a missing
+		/// one is created under its "{prefix} {suffix}" name.
+		/// </summary>
+		private async Task<ChatChannel> EnsureCommandScopedChannelCoreAsync(int departmentId, int callId, string incidentCommandId,
+			ChatChannelType channelType, string prefix, CancellationToken cancellationToken)
+		{
+			var desiredName = BuildCommandScopedChannelName(channelType, prefix);
+
+			var existing = await _chatChannelRepository.GetByCallIdAndTypeAsync(callId, (int)channelType);
 			if (existing != null)
-				return await RebindCommandScopedChannelAsync(existing, incidentCommandId, cancellationToken);
+			{
+				var rebound = await RebindCommandScopedChannelAsync(existing, incidentCommandId, cancellationToken);
+				return await ApplyProvisionedNameAsync(rebound, desiredName, cancellationToken);
+			}
 
 			return await InsertProvisionedChannelAsync(new ChatChannel
 			{
 				ChatChannelId = Guid.NewGuid().ToString(),
 				DepartmentId = departmentId,
-				ChannelType = (int)ChatChannelType.IncidentDispatch,
-				Name = "Dispatch",
+				ChannelType = (int)channelType,
+				Name = desiredName,
 				CallId = callId,
 				IncidentCommandId = incidentCommandId,
 				CreatedOn = DateTime.UtcNow
-			}, () => _chatChannelRepository.GetByCallIdAndTypeAsync(callId, (int)ChatChannelType.IncidentDispatch), cancellationToken);
+			}, () => _chatChannelRepository.GetByCallIdAndTypeAsync(callId, (int)channelType), cancellationToken);
 		}
 
 		/// <summary>
@@ -821,6 +862,69 @@ namespace Resgrid.Services
 			return channel;
 		}
 
+		public async Task<ChatChannel> EnsureUnitDispatchChannelAsync(int departmentId, int unitId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (unitId <= 0)
+				return null;
+
+			var unit = await _unitsService.GetUnitByIdAsync(unitId);
+			if (unit == null || unit.DepartmentId != departmentId)
+				return null;
+
+			var dmKey = BuildUnitDispatchKey(unitId);
+			var desiredName = BuildUnitDispatchChannelName(unit.Name);
+
+			var existing = await _chatChannelRepository.GetByDmKeyAsync(departmentId, dmKey);
+			if (existing != null)
+				return await ApplyProvisionedNameAsync(existing, desiredName, cancellationToken);
+
+			var channel = new ChatChannel
+			{
+				ChatChannelId = Guid.NewGuid().ToString(),
+				DepartmentId = departmentId,
+				ChannelType = (int)ChatChannelType.UnitDispatch,
+				Name = desiredName,
+				CreatedOn = DateTime.UtcNow,
+				DmKey = dmKey
+			};
+
+			// The unit rides an explicit member row (like a unit DM) so its operators surface the channel
+			// through the unit-membership pass; the dispatch side stays an implicit audience.
+			var members = new List<ChatChannelMember>
+			{
+				NewMemberRow(channel, ChatParticipantType.Unit, null, unitId, unit.Name, null)
+			};
+
+			ChatChannel saved;
+			try
+			{
+				// Same atomic channel+members insert the DM path uses; the unique (DepartmentId, DmKey)
+				// index backstops concurrent provisioning.
+				saved = await _chatChannelRepository.CreateDirectMessageChannelAsync(channel, members, cancellationToken);
+			}
+			catch (Exception)
+			{
+				var winner = await _chatChannelRepository.GetByDmKeyAsync(departmentId, dmKey);
+				if (winner != null)
+					return winner;
+
+				throw;
+			}
+
+			if (saved == null)
+				saved = await _chatChannelRepository.GetByDmKeyAsync(departmentId, dmKey);
+
+			if (saved != null && string.Equals(saved.ChatChannelId, channel.ChatChannelId, StringComparison.OrdinalIgnoreCase))
+			{
+				// Roll the list caches so the dispatch desk sees the unit's new line without waiting out
+				// the 45s per-user list cache.
+				await _chatPermissionService.InvalidateChannelCacheAsync(saved.ChatChannelId);
+				PublishChannelEvent(saved, ChatEventKinds.ChannelProvisioned);
+			}
+
+			return saved;
+		}
+
 		public async Task EnsureIncidentChannelsAsync(IncidentCommand command, IEnumerable<CommandStructureNode> nodes, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (command == null || command.CallId <= 0)
@@ -849,42 +953,51 @@ namespace Resgrid.Services
 				// One read of the call's channels covers every check below, instead of a lookup per Ensure*.
 				var existing = (await _chatChannelRepository.GetByCallIdAsync(command.CallId))?.ToList() ?? new List<ChatChannel>();
 
-				if (!existing.Any(c => c.ChannelType == (int)ChatChannelType.Incident))
-					await EnsureIncidentChannelAsync(command.DepartmentId, command.CallId, null, cancellationToken);
+				// Every incident-scoped channel is named "{incident name, or call name} {suffix}". This is
+				// the one place the command is in hand, so names set before the command existed (or before
+				// it was renamed by a re-establish) are refreshed here alongside the missing-channel fill.
+				var prefix = await ResolveIncidentPrefixAsync(command.CallId, command.Name);
+
+				var incidentChannel = existing.FirstOrDefault(c => c.ChannelType == (int)ChatChannelType.Incident);
+				if (incidentChannel == null)
+					await EnsureIncidentChannelAsync(command.DepartmentId, command.CallId, prefix, cancellationToken);
+				else
+					await ApplyProvisionedNameAsync(incidentChannel, prefix, cancellationToken);
 
 				// Command-scoped channels are reused across sequential commands on the same call, so a
 				// found channel still needs rebinding to this command (and unarchiving) — see the helper.
-				var commandChannel = existing.FirstOrDefault(c => c.ChannelType == (int)ChatChannelType.IncidentCommand);
-				if (commandChannel == null)
-					await EnsureCommandChannelAsync(command, cancellationToken);
-				else
-					await RebindCommandScopedChannelAsync(commandChannel, command.IncidentCommandId, cancellationToken);
+				foreach (var channelType in new[] { ChatChannelType.IncidentCommand, ChatChannelType.IncidentLeads, ChatChannelType.IncidentDispatch })
+				{
+					var channel = existing.FirstOrDefault(c => c.ChannelType == (int)channelType);
+					if (channel == null)
+					{
+						await EnsureCommandScopedChannelCoreAsync(command.DepartmentId, command.CallId, command.IncidentCommandId, channelType, prefix, cancellationToken);
+					}
+					else
+					{
+						var rebound = await RebindCommandScopedChannelAsync(channel, command.IncidentCommandId, cancellationToken);
+						await ApplyProvisionedNameAsync(rebound, BuildCommandScopedChannelName(channelType, prefix), cancellationToken);
+					}
+				}
 
-				var leadsChannel = existing.FirstOrDefault(c => c.ChannelType == (int)ChatChannelType.IncidentLeads);
-				if (leadsChannel == null)
-					await EnsureLeadsChannelAsync(command, cancellationToken);
-				else
-					await RebindCommandScopedChannelAsync(leadsChannel, command.IncidentCommandId, cancellationToken);
+				var lanesByNodeId = existing
+					.Where(c => c.ChannelType == (int)ChatChannelType.IncidentLane && !string.IsNullOrWhiteSpace(c.CommandStructureNodeId))
+					.GroupBy(c => c.CommandStructureNodeId, StringComparer.OrdinalIgnoreCase)
+					.ToDictionary(g => g.Key, g => g.First(), StringComparer.OrdinalIgnoreCase);
 
-				var dispatchChannel = existing.FirstOrDefault(c => c.ChannelType == (int)ChatChannelType.IncidentDispatch);
-				if (dispatchChannel == null)
-					await EnsureDispatchChannelAsync(command.DepartmentId, command.CallId, command.IncidentCommandId, cancellationToken);
-				else
-					await RebindCommandScopedChannelAsync(dispatchChannel, command.IncidentCommandId, cancellationToken);
-
-				var provisionedNodeIds = new HashSet<string>(
-					existing.Where(c => c.ChannelType == (int)ChatChannelType.IncidentLane && !string.IsNullOrWhiteSpace(c.CommandStructureNodeId))
-						.Select(c => c.CommandStructureNodeId),
-					StringComparer.OrdinalIgnoreCase);
-
-				var missingLanes = (nodes ?? Enumerable.Empty<CommandStructureNode>())
-					.Where(n => n != null && !n.DeletedOn.HasValue && !provisionedNodeIds.Contains(n.CommandStructureNodeId))
+				var liveNodes = (nodes ?? Enumerable.Empty<CommandStructureNode>())
+					.Where(n => n != null && !n.DeletedOn.HasValue)
 					.ToList();
 
 				// Serialized deliberately: these share the caller's unit-of-work connection, which is not
 				// concurrency-safe. Bounded by the lane count on a once-per-incident path.
-				foreach (var node in missingLanes)
-					await EnsureLaneChannelAsync(node, cancellationToken);
+				foreach (var node in liveNodes)
+				{
+					if (lanesByNodeId.TryGetValue(node.CommandStructureNodeId, out var laneChannel))
+						await ApplyProvisionedNameAsync(laneChannel, BuildLaneChannelName(prefix, node.Name), cancellationToken);
+					else
+						await EnsureLaneChannelCoreAsync(node, prefix, cancellationToken);
+				}
 
 				await _cacheProvider.SetStringAsync(markerKey, "1", IncidentBackfillCacheLength);
 			}
@@ -1095,6 +1208,83 @@ namespace Resgrid.Services
 			parts.Sort(StringComparer.Ordinal);
 
 			return string.Join("|", parts);
+		}
+
+		/// <summary>
+		/// UnitDispatch channels ride the (DepartmentId, DmKey) unique index for dedup — not a DM, but the
+		/// same one-channel-per-identity constraint, and the prefix keeps the keyspaces disjoint.
+		/// </summary>
+		private static string BuildUnitDispatchKey(int unitId) => $"unitdispatch:{unitId}";
+
+		/// <summary>
+		/// The incident prefix every incident-scoped channel name starts with: the incident's own name when
+		/// command gave it one, otherwise the call's name, otherwise the call id.
+		/// </summary>
+		private async Task<string> ResolveIncidentPrefixAsync(int callId, string incidentName)
+		{
+			if (!string.IsNullOrWhiteSpace(incidentName))
+				return incidentName.Trim();
+
+			try
+			{
+				var call = await _callsService.GetCallByIdAsync(callId);
+				if (!string.IsNullOrWhiteSpace(call?.Name))
+					return call.Name.Trim();
+			}
+			catch (Exception ex)
+			{
+				// Naming is cosmetic next to provisioning — never let a call lookup break channel creation.
+				Logging.LogException(ex);
+			}
+
+			return $"Call {callId}";
+		}
+
+		private static string BuildCommandScopedChannelName(ChatChannelType channelType, string prefix)
+		{
+			switch (channelType)
+			{
+				case ChatChannelType.IncidentCommand:
+					// The "(private)" marker is part of the contract with the apps: it is how the command
+					// channel reads as command-staff-only in a flat channel list.
+					return $"{prefix} Command (private)";
+
+				case ChatChannelType.IncidentLeads:
+					return $"{prefix} All Leads";
+
+				case ChatChannelType.IncidentDispatch:
+					return $"{prefix} Dispatch";
+
+				default:
+					return prefix;
+			}
+		}
+
+		private static string BuildLaneChannelName(string prefix, string laneName)
+			=> string.IsNullOrWhiteSpace(laneName) ? prefix : $"{prefix} {laneName.Trim()}";
+
+		private static string BuildUnitDispatchChannelName(string unitName)
+			=> string.IsNullOrWhiteSpace(unitName) ? "Dispatch" : $"{unitName.Trim()} Dispatch";
+
+		/// <summary>
+		/// Applies the computed provisioning name to an existing channel when it drifted — the incident got
+		/// its name after establish, a lane or unit was renamed. Targeted update (never a full-row write,
+		/// which would rewind the atomic LastMessageSeq allocator), and clients are told to re-read.
+		/// </summary>
+		private async Task<ChatChannel> ApplyProvisionedNameAsync(ChatChannel channel, string desiredName, CancellationToken cancellationToken)
+		{
+			if (channel == null || string.IsNullOrWhiteSpace(desiredName) || string.Equals(channel.Name, desiredName, StringComparison.Ordinal))
+				return channel;
+
+			channel.Name = desiredName;
+			channel.ModifiedOn = DateTime.UtcNow;
+
+			await _chatChannelRepository.UpdateChannelInfoAsync(channel.ChatChannelId, channel.Name, channel.Topic, channel.ModifiedOn.Value, cancellationToken);
+
+			await _chatPermissionService.InvalidateChannelCacheAsync(channel.ChatChannelId);
+			PublishChannelEvent(channel, ChatEventKinds.ChannelUpdated);
+
+			return channel;
 		}
 	}
 }

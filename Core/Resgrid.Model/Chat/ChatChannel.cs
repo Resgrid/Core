@@ -58,8 +58,9 @@ namespace Resgrid.Model
 		public string OwnerUserId { get; set; }
 
 		/// <summary>
-		/// Normalized participant identity key for DM dedup, unique per department when set.
-		/// Sorted, e.g. "u:{idA}|u:{idB}" or "u:{userId}|unit:{unitId}".
+		/// Normalized identity key for one-channel-per-identity dedup, unique per department when set.
+		/// DMs use the sorted participant pair ("u:{idA}|u:{idB}", "u:{userId}|unit:{unitId}");
+		/// UnitDispatch channels use "unitdispatch:{unitId}".
 		/// </summary>
 		[ProtoMember(13)]
 		public string DmKey { get; set; }

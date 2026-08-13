@@ -327,15 +327,19 @@ namespace Resgrid.Services
 					return await IsInIncidentAudienceAsync(channel, userId, activeUnitId);
 
 				case ChatChannelType.UnitDispatch:
+				{
 					// Same stance as IncidentDispatch: dispatch authorization, not admin standing, opens
-					// dispatch traffic. The unit side comes through its member row, and only for a caller
-					// who actually crews the unit.
+					// dispatch traffic.
 					if (await _dispatchAccessService.CanUseDispatchAsync(channel.DepartmentId, userId))
 						return true;
 
-					return activeUnitId.HasValue
-						&& await CanSendAsUnitAsync(userId, activeUnitId.Value, channel.DepartmentId)
-						&& await HasActiveMembershipAsync(channel.ChatChannelId, userId, activeUnitId);
+					// The unit side is proven against the channel's OWN unit, never the caller-supplied
+					// activeUnitId or a leftover user member row (lazy read-pointer rows outlive access) —
+					// crewing some other unit must not open this unit's dispatch line.
+					var owningUnitId = await GetUnitDispatchChannelUnitIdAsync(channel);
+					return owningUnitId.HasValue
+						&& await CanSendAsUnitAsync(userId, owningUnitId.Value, channel.DepartmentId);
+				}
 
 				default:
 					return false;
@@ -379,6 +383,22 @@ namespace Resgrid.Services
 				default:
 					return false;
 			}
+		}
+
+		/// <summary>
+		/// The unit a UnitDispatch channel belongs to: parsed from its "unitdispatch:{unitId}" DmKey,
+		/// falling back to the channel's unit member row.
+		/// </summary>
+		private async Task<int?> GetUnitDispatchChannelUnitIdAsync(ChatChannel channel)
+		{
+			const string keyPrefix = "unitdispatch:";
+			if (!string.IsNullOrWhiteSpace(channel.DmKey)
+				&& channel.DmKey.StartsWith(keyPrefix, StringComparison.OrdinalIgnoreCase)
+				&& int.TryParse(channel.DmKey.Substring(keyPrefix.Length), out var unitId))
+				return unitId;
+
+			var members = await _chatChannelMemberRepository.GetByChannelIdAsync(channel.ChatChannelId);
+			return members?.FirstOrDefault(m => m.ParticipantType == (int)ChatParticipantType.Unit && !m.RemovedOn.HasValue && m.UnitId.HasValue)?.UnitId;
 		}
 
 		private async Task<bool> HasActiveMembershipAsync(string chatChannelId, string userId, int? activeUnitId)

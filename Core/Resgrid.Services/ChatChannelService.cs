@@ -686,13 +686,13 @@ namespace Resgrid.Services
 
 		public async Task<ChatChannel> EnsureIncidentChannelAsync(int departmentId, int callId, string callName, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			var existing = await _chatChannelRepository.GetByCallIdAndTypeAsync(callId, (int)ChatChannelType.Incident);
-			if (existing != null)
-				return existing;
-
 			// Callers without the call in hand (the backfill) pass no name; resolve it here so healed
 			// channels get the real call name instead of the "Call {id}" fallback.
 			var name = !string.IsNullOrWhiteSpace(callName) ? callName.Trim() : await ResolveIncidentPrefixAsync(callId, null);
+
+			var existing = await _chatChannelRepository.GetByCallIdAndTypeAsync(callId, (int)ChatChannelType.Incident);
+			if (existing != null)
+				return await ApplyProvisionedNameAsync(existing, name, cancellationToken);
 
 			return await InsertProvisionedChannelAsync(new ChatChannel
 			{
@@ -1223,7 +1223,8 @@ namespace Resgrid.Services
 
 		/// <summary>
 		/// The incident prefix every incident-scoped channel name starts with: the incident's own name when
-		/// command gave it one, otherwise the call's name, otherwise the call id.
+		/// command gave it one, otherwise the call's number-prefixed name ("26-45 Structure Fire"), otherwise
+		/// the call id. The bare "Call {id}" form is a last resort — it names nothing a responder recognizes.
 		/// </summary>
 		private async Task<string> ResolveIncidentPrefixAsync(int callId, string incidentName)
 		{
@@ -1233,8 +1234,10 @@ namespace Resgrid.Services
 			try
 			{
 				var call = await _callsService.GetCallByIdAsync(callId);
-				if (!string.IsNullOrWhiteSpace(call?.Name))
-					return call.Name.Trim();
+
+				var displayName = call?.GetDisplayName();
+				if (!string.IsNullOrWhiteSpace(displayName))
+					return displayName;
 			}
 			catch (Exception ex)
 			{

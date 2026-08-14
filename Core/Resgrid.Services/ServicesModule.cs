@@ -122,9 +122,15 @@ namespace Resgrid.Services
 					if (string.IsNullOrWhiteSpace(TtsConfig.ServiceBaseUrl))
 						throw new InvalidOperationException("TtsConfig.ServiceBaseUrl must be configured before using the TTS service.");
 
+					// 30s: long enough to ride out a cold TTS generation (Piper model load +
+					// synthesis + normalization + upload can take 10-20s on constrained pods).
+					// Twilio webhooks never block on this — they bound their own waits with
+					// short CancellationTokens and fall back to "please wait"/<Say> — so the
+					// long timeout only affects background pre-warms and worker tasks, where
+					// waiting out the generation is exactly what we want.
 					var options = new RestClientOptions(TtsConfig.ServiceBaseUrl.TrimEnd('/'))
 					{
-						Timeout = TimeSpan.FromSeconds(5)
+						Timeout = TimeSpan.FromSeconds(30)
 					};
 
 					return new RestClient(options, configureSerialization: serializer => serializer.UseNewtonsoftJson());

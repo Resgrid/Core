@@ -105,7 +105,8 @@ namespace Resgrid.Services
 				Config = config,
 				StaffingGate = staffingGate,
 				Now = now,
-				Result = result
+				Result = result,
+				CancellationToken = cancellationToken
 			};
 
 			await BuildUnitCandidatesAsync(context);
@@ -299,6 +300,13 @@ namespace Resgrid.Services
 			public int StaffingGate { get; set; }
 			public DateTime Now { get; set; }
 			public DispatchRecommendationResult Result { get; set; }
+			/// <summary>
+			/// Carried on the context rather than threaded through every private fill
+			/// method. Checked at the boundaries that repeat slow external I/O (routed
+			/// ETA lookups, per-station geocoding) so an abandoned request stops calling
+			/// the mapping provider.
+			/// </summary>
+			public CancellationToken CancellationToken { get; set; }
 			public List<UnitCandidate> UnitCandidates { get; set; } = new List<UnitCandidate>();
 			public List<PersonnelCandidate> PersonnelCandidates { get; set; } = new List<PersonnelCandidate>();
 			public Dictionary<int, DateTime> UnitLastDispatched { get; set; } = new Dictionary<int, DateTime>();
@@ -941,6 +949,8 @@ namespace Resgrid.Services
 
 				foreach (var entry in shortlist)
 				{
+					context.CancellationToken.ThrowIfCancellationRequested();
+
 					var eta = await _geoService.GetEtaInSecondsAsync(
 						FormatPoint(entry.Candidate.Latitude.Value, entry.Candidate.Longitude.Value),
 						FormatPoint(anchor.Latitude, anchor.Longitude));
@@ -1048,6 +1058,8 @@ namespace Resgrid.Services
 
 				foreach (var entry in shortlist)
 				{
+					context.CancellationToken.ThrowIfCancellationRequested();
+
 					var eta = await _geoService.GetEtaInSecondsAsync(
 						FormatPoint(entry.Candidate.Latitude.Value, entry.Candidate.Longitude.Value),
 						FormatPoint(anchor.Latitude, anchor.Longitude));
@@ -1133,6 +1145,10 @@ namespace Resgrid.Services
 
 			foreach (var requirement in enabled)
 			{
+				// Resolving a station's coordinates can fall through to address geocoding,
+				// so this loop is external I/O per requirement.
+				context.CancellationToken.ThrowIfCancellationRequested();
+
 				var station = await _departmentGroupsService.GetGroupByIdAsync(requirement.DepartmentGroupId, false);
 
 				if (station == null)
@@ -1143,7 +1159,7 @@ namespace Resgrid.Services
 				if (requirement.UnitTypeId.HasValue)
 					EvaluateUnitCoverage(context, requirement, station, stationPoint, committedUnitIds);
 				else if (requirement.PersonnelRoleId.HasValue)
-					EvaluateRoleCoverage(context, requirement, station, committedUserIds);
+					EvaluateRoleCoverage(context, requirement, station, stationPoint, committedUserIds);
 			}
 		}
 
@@ -1153,8 +1169,7 @@ namespace Resgrid.Services
 			var typeUnits = context.UnitCandidates.Where(c => c.UnitTypeId == requirement.UnitTypeId.Value).ToList();
 
 			List<UnitCandidate> remaining;
-			if (requirement.RadiusMeters.HasValue && requirement.RadiusMeters.Value > 0 && stationPoint.HasValue
-				&& typeUnits.Any(c => c.Latitude.HasValue))
+			if (UseRadiusCoverage(context, requirement, stationPoint, typeUnits.Any(c => c.Latitude.HasValue)))
 			{
 				remaining = typeUnits
 					.Where(c => !committedUnitIds.Contains(c.Unit.UnitId))
@@ -1201,16 +1216,28 @@ namespace Resgrid.Services
 		}
 
 		private void EvaluateRoleCoverage(RecommendationContext context, StationCoverageRequirement requirement,
-			DepartmentGroup station, HashSet<string> committedUserIds)
+			DepartmentGroup station, GeoMath.GeoPoint? stationPoint, HashSet<string> committedUserIds)
 		{
 			var roleHolders = context.PersonnelCandidates
 				.Where(c => c.RoleIds.Contains(requirement.PersonnelRoleId.Value))
 				.ToList();
 
-			var remaining = roleHolders
-				.Where(c => !committedUserIds.Contains(c.UserId))
-				.Where(c => c.StationGroupId == requirement.DepartmentGroupId)
-				.ToList();
+			List<PersonnelCandidate> remaining;
+			if (UseRadiusCoverage(context, requirement, stationPoint, roleHolders.Any(c => c.Latitude.HasValue)))
+			{
+				remaining = roleHolders
+					.Where(c => !committedUserIds.Contains(c.UserId))
+					.Where(c => c.Latitude.HasValue && c.Longitude.HasValue
+						&& GeoMath.HaversineMeters(stationPoint.Value.Latitude, stationPoint.Value.Longitude, c.Latitude.Value, c.Longitude.Value) <= requirement.RadiusMeters.Value)
+					.ToList();
+			}
+			else
+			{
+				remaining = roleHolders
+					.Where(c => !committedUserIds.Contains(c.UserId))
+					.Where(c => c.StationGroupId == requirement.DepartmentGroupId)
+					.ToList();
+			}
 
 			if (remaining.Count >= requirement.MinimumAvailableCount)
 				return;
@@ -1233,6 +1260,26 @@ namespace Resgrid.Services
 			});
 
 			context.Result.Notes.Add($"Station '{station.Name}' drops below minimum role coverage ({remaining.Count}/{requirement.MinimumAvailableCount}); move-up recommended.");
+		}
+
+		/// <summary>
+		/// Whether a coverage requirement should be measured by distance from the station
+		/// rather than by station assignment. RadiusMeters is a closest-unit concept —
+		/// station-based departments define "at this station" by assignment/geofence — so
+		/// the mode is checked explicitly instead of inferring it from whether candidates
+		/// happen to carry a fix (units are only located in closest-unit mode, personnel
+		/// carry ActionLog coordinates in both, which would otherwise split the behaviour).
+		/// Falls back to assignment when no candidate has a location, so a department with
+		/// no position data reports real coverage instead of a phantom gap.
+		/// </summary>
+		private static bool UseRadiusCoverage(RecommendationContext context, StationCoverageRequirement requirement,
+			GeoMath.GeoPoint? stationPoint, bool anyCandidateLocated)
+		{
+			return context.Result.ModeUsed == DispatchRecommendationModes.ClosestUnit
+				&& requirement.RadiusMeters.HasValue
+				&& requirement.RadiusMeters.Value > 0
+				&& stationPoint.HasValue
+				&& anyCandidateLocated;
 		}
 
 		private static double DistanceToStation(UnitCandidate candidate, GeoMath.GeoPoint? stationPoint)

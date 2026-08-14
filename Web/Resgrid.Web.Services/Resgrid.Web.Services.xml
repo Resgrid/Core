@@ -27,6 +27,14 @@
             <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
             <returns><br /></returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.EmailController.QueueCallBroadcastAsync(Resgrid.Model.Call,System.Threading.CancellationToken,System.Boolean)">
+            <param name="allowRunCardEnrichment">
+            False for calls raised through a group's dispatch address. That path deliberately
+            builds its dispatch list from one group's units and members, and the recommendation
+            engine scores against the whole department, so enriching there would pull in other
+            stations and break the scoping the caller asked for by emailing that address.
+            </param>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.SignalWireController.ValidateSignalWireRequest">
             <summary>
             Validates the inbound SignalWire webhook signature. SignalWire's Compatibility API uses
@@ -6618,6 +6626,26 @@
             User Defined Field values for this call
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Calls.EscalateCallResult">
+            <summary>
+            Outcome of a "Strike Next Alarm" escalation.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.EscalateCallResult.Id">
+            <summary>Call identifier</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.EscalateCallResult.Success">
+            <summary>False when no run card matched or the next alarm level adds nothing</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.EscalateCallResult.NewAlarmLevel">
+            <summary>Alarm level after the escalation; unchanged when Success is false</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.EscalateCallResult.AddedUnits">
+            <summary>Units added by this escalation</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.EscalateCallResult.AddedPersonnel">
+            <summary>Personnel added by this escalation</summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.GetCallResult">
             <summary>
             Gets the calls current active, been dispatched and not closed or deleted
@@ -11238,6 +11266,46 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.RunCards.RunCardSelectionData.StateId">
             <summary>Built-in state value or CustomStateDetailId</summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.RunCards.RunCardsResult">
+            <summary>
+            All run cards for the department.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.RunCards.RunCardsResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.RunCards.RunCardResult">
+            <summary>
+            A single run card.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.RunCards.RunCardResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.RunCards.SaveRunCardResult">
+            <summary>
+            Identifier of the saved run card.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.RunCards.SaveRunCardResult.Id">
+            <summary>
+            Run card identifier
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.RunCards.RunCardRecommendationResult">
+            <summary>
+            Preview of what the department's run cards would dispatch for a prospective call.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.RunCards.RunCardRecommendationResult.Data">
+            <summary>
+            Response Data
+            </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Security.DepartmentRightsResult.Data">
             <summary>

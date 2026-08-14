@@ -59,7 +59,7 @@ namespace Resgrid.Model
 				var lat = GetNumber(obj, "lat") ?? GetNumber(obj, "k");
 				var lon = GetNumber(obj, "lng") ?? GetNumber(obj, "A") ?? GetNumber(obj, "a") ?? GetNumber(obj, "lon");
 
-				if (!lat.HasValue || !lon.HasValue)
+				if (!lat.HasValue || !lon.HasValue || !IsValidCoordinate(lat.Value, lon.Value))
 					return null;
 
 				points.Add(new GeoPoint(lat.Value, lon.Value));
@@ -160,7 +160,27 @@ namespace Resgrid.Model
 			if (lat == 0 && lon == 0)
 				return null;
 
+			if (!IsValidCoordinate(lat, lon))
+				return null;
+
 			return new GeoPoint(lat, lon);
+		}
+
+		/// <summary>
+		/// A coordinate is only usable if it is finite and on the globe. Both parsers
+		/// admit non-finite values otherwise — double.TryParse accepts "NaN"/"Infinity"
+		/// and Json.NET accepts bare NaN/Infinity literals — and a NaN distance sorts
+		/// ahead of every real one, which would make a station with corrupt coordinates
+		/// look like the nearest one to every call.
+		/// </summary>
+		private static bool IsValidCoordinate(double latitude, double longitude)
+		{
+			if (double.IsNaN(latitude) || double.IsInfinity(latitude)
+				|| double.IsNaN(longitude) || double.IsInfinity(longitude))
+				return false;
+
+			return latitude >= -90d && latitude <= 90d
+				&& longitude >= -180d && longitude <= 180d;
 		}
 
 		/// <summary>

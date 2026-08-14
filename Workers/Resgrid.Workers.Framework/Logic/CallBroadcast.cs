@@ -73,6 +73,8 @@ namespace Resgrid.Workers.Framework.Logic
 				var department = await _departmentsService.GetDepartmentByIdAsync(cqi.Call.DepartmentId);
 				cqi.Call.Department = department;
 
+				StartDispatchVoicePreWarm(cqi);
+
 				// Dispatch Personnel
 				if (cqi.Call.Dispatches != null && cqi.Call.Dispatches.Any())
 				{
@@ -328,6 +330,61 @@ namespace Resgrid.Workers.Framework.Logic
 			}
 
 			return true;
+		}
+
+		/// <summary>
+		/// Kicks off TTS generation for the dispatch voice prompt in the background,
+		/// in parallel with placing the outbound calls. Cold generation (Piper model
+		/// load + synthesis + normalization) takes longer than the voice webhook's
+		/// per-request budget, so without this every recipient answering during the
+		/// cold window hears "please wait" loops. Ring time (typically 10-30s) absorbs
+		/// the generation, so by the time anyone answers the audio URL is a cache hit.
+		/// Fire-and-forget: dialing must never wait on audio generation.
+		/// </summary>
+		private static void StartDispatchVoicePreWarm(CallQueueItem cqi)
+		{
+			try
+			{
+				// A recorded dispatch-audio attachment is played instead of TTS.
+				if (cqi.CallDispatchAttachmentId > 0)
+					return;
+
+				// No recipient takes dispatches by phone; don't generate audio nobody will hear.
+				if (cqi.Profiles == null || !cqi.Profiles.Any(x => x.VoiceForCall))
+					return;
+
+				var call = cqi.Call;
+
+				_ = Task.Run(async () =>
+				{
+					try
+					{
+						var ttsAudioService = Bootstrapper.GetKernel().Resolve<ITtsAudioService>();
+						var geoLocationProvider = Bootstrapper.GetKernel().Resolve<IGeoLocationProvider>();
+						var departmentSettingsService = Bootstrapper.GetKernel().Resolve<IDepartmentSettingsService>();
+
+						// Text and chunking must match the Twilio voice webhook exactly —
+						// the TTS cache key is a hash of the chunk text. CallPriority was
+						// already populated above, mirroring the webhook's own load.
+						var address = await Resgrid.Services.DispatchVoicePromptBuilder.ResolveDispatchAddressAsync(call, geoLocationProvider);
+						var ttsLanguage = await departmentSettingsService.GetTtsLanguageForDepartmentAsync(call.DepartmentId);
+						var dispatchText = Resgrid.Services.DispatchVoicePromptBuilder.BuildDispatchPrompt(call, address);
+
+						foreach (var chunk in Resgrid.Services.DispatchVoicePromptBuilder.ChunkText(dispatchText))
+						{
+							await ttsAudioService.GenerateSpeechUrlAsync(chunk, ttsLanguage);
+						}
+					}
+					catch (Exception ex)
+					{
+						Logging.LogException(ex);
+					}
+				});
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
 		}
 	}
 }

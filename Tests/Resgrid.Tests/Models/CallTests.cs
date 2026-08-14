@@ -46,5 +46,43 @@ namespace Resgrid.Tests.Models
 
 			call.DidDispatchCountChange().Should().BeFalse();
 		}
+
+		[Test]
+		public void GetDisplayName_PrefixesTheNumberOntoTheName()
+		{
+			var call = new Call { Number = "26-45", Name = "Structure Fire" };
+
+			call.GetDisplayName().Should().Be("26-45 Structure Fire");
+		}
+
+		[Test]
+		public void GetDisplayName_ReturnsTheNameAlone_WhenThereIsNoNumber()
+		{
+			var call = new Call { Name = "Structure Fire" };
+
+			call.GetDisplayName().Should().Be("Structure Fire");
+		}
+
+		[Test]
+		public void GetDisplayName_ReturnsTheNumberAlone_WhenThereIsNoName()
+		{
+			var call = new Call { Number = "26-45" };
+
+			call.GetDisplayName().Should().Be("26-45");
+		}
+
+		[Test]
+		public void GetDisplayName_DoesNotDoubleUpWhenTheNameAlreadyLeadsWithTheNumber()
+		{
+			var call = new Call { Number = "26-45", Name = "26-45 Structure Fire" };
+
+			call.GetDisplayName().Should().Be("26-45 Structure Fire");
+		}
+
+		[Test]
+		public void GetDisplayName_IsEmpty_WhenTheCallHasNeither()
+		{
+			new Call().GetDisplayName().Should().BeEmpty();
+		}
 	}
 }

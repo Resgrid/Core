@@ -229,6 +229,29 @@ namespace Resgrid.Model
 			return Number;
 		}
 
+		/// <summary>
+		/// The human-readable label for this call: the call number prefixed onto the call name, i.e.
+		/// "26-45 Structure Fire". Either half can be missing on a partially-populated call, so this
+		/// degrades to whichever one is set rather than emitting a stray separator.
+		/// </summary>
+		public string GetDisplayName()
+		{
+			var number = Number?.Trim();
+			var name = Name?.Trim();
+
+			if (String.IsNullOrWhiteSpace(name))
+				return String.IsNullOrWhiteSpace(number) ? String.Empty : number;
+
+			if (String.IsNullOrWhiteSpace(number))
+				return name;
+
+			// Departments that already fold the number into the name shouldn't get it twice.
+			if (name.StartsWith(number, StringComparison.OrdinalIgnoreCase))
+				return name;
+
+			return $"{number} {name}";
+		}
+
 		public bool HasUserBeenDispatched(string userId)
 		{
 			if (Dispatches != null && Dispatches.Any())

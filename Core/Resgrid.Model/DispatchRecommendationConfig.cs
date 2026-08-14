@@ -14,6 +14,22 @@ namespace Resgrid.Model
 		public const int DefaultMaxLocationAgeSeconds = 1800;
 		public const int DefaultEtaShortlistSize = 5;
 
+		/// <summary>A fix older than a day cannot inform where a resource is now.</summary>
+		public const int MaximumLocationAgeSeconds = 86400;
+
+		/// <summary>Beyond this a radius stops narrowing anything; 0 already means "no cap".</summary>
+		public const int MaximumRadiusMeters = 500000;
+
+		/// <summary>
+		/// Each shortlisted candidate costs one routed-ETA call to the mapping provider,
+		/// issued while the caller waits to create the call, so this bound is what keeps a
+		/// mistyped setting from turning one dispatch into thousands of external requests.
+		/// </summary>
+		public const int MaximumEtaShortlistSize = 25;
+
+		/// <summary>A rest period beyond a day would hold every resource back indefinitely.</summary>
+		public const int MaximumRestPeriodMinutes = 1440;
+
 		public DispatchRecommendationConfig()
 		{
 			MaxLocationAgeSeconds = DefaultMaxLocationAgeSeconds;

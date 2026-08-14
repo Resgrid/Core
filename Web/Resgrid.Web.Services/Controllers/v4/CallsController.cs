@@ -1356,7 +1356,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[Authorize(Policy = ResgridResources.Call_Update)]
-		public async Task<IActionResult> EscalateCall(string callId, CancellationToken cancellationToken)
+		public async Task<ActionResult<EscalateCallResult>> EscalateCall(string callId, CancellationToken cancellationToken)
 		{
 			if (string.IsNullOrWhiteSpace(callId) || !int.TryParse(callId, out var parsedCallId))
 				return BadRequest();
@@ -1386,7 +1386,21 @@ namespace Resgrid.Web.Services.Controllers.v4
 			var escalationResult = await _dispatchRecommendationService.EnrichCallForDispatchAsync(call, previousAlarmLevel + 1, false, cancellationToken);
 
 			if (!escalationResult.MatchedRunCardId.HasValue || !escalationResult.HasRecommendations)
-				return Ok(new { success = false, newAlarmLevel = previousAlarmLevel, addedUnits = 0, addedPersonnel = 0 });
+			{
+				var noopResult = new EscalateCallResult
+				{
+					Id = parsedCallId.ToString(),
+					Success = false,
+					NewAlarmLevel = previousAlarmLevel,
+					AddedUnits = 0,
+					AddedPersonnel = 0,
+					PageSize = 0,
+					Status = ResponseHelper.Success
+				};
+				ResponseHelper.PopulateV4ResponseData(noopResult);
+
+				return Ok(noopResult);
+			}
 
 			var newUnitIds = escalationResult.Units.Select(u => u.UnitId).ToList();
 			var newUserIds = escalationResult.Personnel.Select(p => p.UserId).ToList();
@@ -1422,7 +1436,19 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent() { DepartmentId = DepartmentId, Call = escalatedCall });
 
-			return Ok(new { success = true, newAlarmLevel = escalatedCall.AlarmLevel, addedUnits = newUnitIds.Count, addedPersonnel = newUserIds.Count });
+			var result = new EscalateCallResult
+			{
+				Id = escalatedCall.CallId.ToString(),
+				Success = true,
+				NewAlarmLevel = escalatedCall.AlarmLevel,
+				AddedUnits = newUnitIds.Count,
+				AddedPersonnel = newUserIds.Count,
+				PageSize = 0,
+				Status = ResponseHelper.Updated
+			};
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
 		}
 
 		/// <summary>

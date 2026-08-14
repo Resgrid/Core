@@ -95,6 +95,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> Save([FromBody] RunCardEditInput input, CancellationToken cancellationToken)
 		{
@@ -115,6 +116,12 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (input.AlarmLevels == null || !input.AlarmLevels.Any())
 				return Json(new { success = false, message = "A run card needs at least one alarm level." });
+
+			if (input.AlarmLevels.Any(l => l.AlarmLevel < 1))
+				return Json(new { success = false, message = "Run card alarm levels start at 1." });
+
+			if (input.AlarmLevels.GroupBy(l => l.AlarmLevel).Any(g => g.Count() > 1))
+				return Json(new { success = false, message = "A run card cannot define the same alarm level twice." });
 
 			RunCard card;
 			if (input.RunCardId > 0)
@@ -196,6 +203,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Department_Update)]
 		public async Task<IActionResult> Delete([FromForm] int runCardId, CancellationToken cancellationToken)
 		{

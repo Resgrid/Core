@@ -10,6 +10,7 @@ using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
 using Resgrid.Web.Services.Controllers.Version3;
+using Resgrid.Web.Services.Helpers;
 using Resgrid.Web.Services.Models.v4.RunCards;
 using IAuthorizationService = Resgrid.Model.Services.IAuthorizationService;
 
@@ -44,14 +45,30 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("GetAllRunCards")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Call_View)]
-		public async Task<ActionResult<List<RunCardData>>> GetAllRunCards()
+		public async Task<ActionResult<RunCardsResult>> GetAllRunCards()
 		{
 			if (!await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, DepartmentId))
 				return NotFound();
 
+			var result = new RunCardsResult();
+
 			var cards = await _runCardsService.GetAllRunCardsForDepartmentAsync(DepartmentId);
 
-			return Ok(cards.Select(ConvertRunCardData).ToList());
+			if (cards != null && cards.Any())
+			{
+				result.Data = cards.Select(ConvertRunCardData).ToList();
+				result.PageSize = result.Data.Count;
+				result.Status = ResponseHelper.Success;
+			}
+			else
+			{
+				result.PageSize = 0;
+				result.Status = ResponseHelper.NotFound;
+			}
+
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
 		}
 
 		/// <summary>
@@ -60,7 +77,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("GetRunCard")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Call_View)]
-		public async Task<ActionResult<RunCardData>> GetRunCard(int runCardId)
+		public async Task<ActionResult<RunCardResult>> GetRunCard(int runCardId)
 		{
 			if (!await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, DepartmentId))
 				return NotFound();
@@ -70,7 +87,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (card == null || card.DepartmentId != DepartmentId)
 				return NotFound();
 
-			return Ok(ConvertRunCardData(card));
+			var result = new RunCardResult
+			{
+				Data = ConvertRunCardData(card),
+				PageSize = 1,
+				Status = ResponseHelper.Success
+			};
+
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
 		}
 
 		/// <summary>
@@ -81,10 +107,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public async Task<ActionResult> SaveRunCard([FromBody] RunCardData input, CancellationToken cancellationToken)
+		public async Task<ActionResult<SaveRunCardResult>> SaveRunCard([FromBody] RunCardData input, CancellationToken cancellationToken)
 		{
 			if (input == null || string.IsNullOrWhiteSpace(input.Name) || input.Triggers == null || !input.Triggers.Any()
 				|| input.AlarmLevels == null || !input.AlarmLevels.Any())
+				return BadRequest();
+
+			// Alarm levels are 1-based and unique per card; reject here so the caller gets a
+			// 400 rather than a unique-index violation surfacing as a 500.
+			if (input.AlarmLevels.Any(l => l.AlarmLevel < 1)
+				|| input.AlarmLevels.GroupBy(l => l.AlarmLevel).Any(g => g.Count() > 1))
 				return BadRequest();
 
 			if (!await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, DepartmentId))
@@ -169,7 +201,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			var saved = await _runCardsService.SaveRunCardAsync(card, cancellationToken);
 
-			return Ok(new { runCardId = saved.RunCardId });
+			var result = new SaveRunCardResult
+			{
+				Id = saved.RunCardId.ToString(),
+				PageSize = 0,
+				Status = input.RunCardId > 0 ? ResponseHelper.Updated : ResponseHelper.Created
+			};
+
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
 		}
 
 		/// <summary>
@@ -178,7 +219,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpDelete("DeleteRunCard")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Department_Update)]
-		public async Task<ActionResult> DeleteRunCard(int runCardId, CancellationToken cancellationToken)
+		public async Task<ActionResult<SaveRunCardResult>> DeleteRunCard(int runCardId, CancellationToken cancellationToken)
 		{
 			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
 				return Unauthorized();
@@ -190,7 +231,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			await _runCardsService.DeleteRunCardAsync(runCardId, cancellationToken);
 
-			return Ok();
+			var result = new SaveRunCardResult
+			{
+				Id = runCardId.ToString(),
+				PageSize = 0,
+				Status = ResponseHelper.Deleted
+			};
+
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
 		}
 
 		/// <summary>
@@ -200,12 +250,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("GetRecommendation")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Call_View)]
-		public async Task<ActionResult<DispatchRecommendationResult>> GetRecommendation(int priority, string type, double? latitude, double? longitude, int alarmLevel = 1)
+		public async Task<ActionResult<RunCardRecommendationResult>> GetRecommendation(int priority, string type, double? latitude, double? longitude, int alarmLevel = 1)
 		{
 			if (!await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, DepartmentId))
 				return NotFound();
 
-			var result = await _dispatchRecommendationService.GetRecommendationAsync(new DispatchRecommendationRequest
+			var recommendation = await _dispatchRecommendationService.GetRecommendationAsync(new DispatchRecommendationRequest
 			{
 				DepartmentId = DepartmentId,
 				Priority = priority,
@@ -214,6 +264,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 				Longitude = longitude,
 				TargetAlarmLevel = alarmLevel
 			});
+
+			var result = new RunCardRecommendationResult
+			{
+				Data = recommendation,
+				PageSize = 1,
+				// No matching card is a valid answer, not a failure: the caller falls back to
+				// the manual dispatch flow.
+				Status = recommendation.MatchedRunCardId.HasValue ? ResponseHelper.Success : ResponseHelper.NotFound
+			};
+
+			ResponseHelper.PopulateV4ResponseData(result);
 
 			return Ok(result);
 		}

@@ -12,6 +12,7 @@ namespace Resgrid.Web.Tts.Services
 		private readonly IAudioProcessingService _audioProcessingService;
 		private readonly TtsOptions _options;
 		private readonly ILogger<TtsService> _logger;
+		private readonly IHostApplicationLifetime? _applicationLifetime;
 		private readonly SemaphoreSlim _generationSemaphore;
 		private readonly ConcurrentDictionary<string, GenerationLock> _generationLocks = new(StringComparer.Ordinal);
 
@@ -19,12 +20,14 @@ namespace Resgrid.Web.Tts.Services
 			ICacheService cacheService,
 			IAudioProcessingService audioProcessingService,
 			IOptions<TtsOptions> options,
-			ILogger<TtsService> logger)
+			ILogger<TtsService> logger,
+			IHostApplicationLifetime? applicationLifetime = null)
 		{
 			_cacheService = cacheService;
 			_audioProcessingService = audioProcessingService;
 			_options = options.Value;
 			_logger = logger;
+			_applicationLifetime = applicationLifetime;
 			_generationSemaphore = new SemaphoreSlim(_options.MaxConcurrentGenerations, _options.MaxConcurrentGenerations);
 		}
 
@@ -155,9 +158,18 @@ namespace Resgrid.Web.Tts.Services
 					return CreateResponse(cacheKey, request, cachedUrl, cached: true);
 				}
 
+				// Generation and storage run on the application-lifetime token, NOT the
+				// caller's. A caller that gives up (HTTP client timeout, aborted Twilio
+				// webhook) must not kill an in-flight Piper run — cold generation can
+				// exceed short client timeouts, and cancelling here meant every retry
+				// restarted synthesis from scratch and the cache never filled. Letting
+				// it finish means the caller's retry (or the next caller of the same
+				// text) gets an instant cache hit.
+				var generationToken = _applicationLifetime?.ApplicationStopping ?? CancellationToken.None;
+
 				var generationTimer = Stopwatch.StartNew();
-				var audioBytes = await _audioProcessingService.GenerateNormalizedWavAsync(request.Text, request.Voice, request.Speed, cancellationToken);
-				var objectUrl = await _cacheService.StoreAsync(cacheKey, audioBytes, cancellationToken);
+				var audioBytes = await _audioProcessingService.GenerateNormalizedWavAsync(request.Text, request.Voice, request.Speed, generationToken);
+				var objectUrl = await _cacheService.StoreAsync(cacheKey, audioBytes, generationToken);
 				generationTimer.Stop();
 
 				_logger.LogInformation("Generated audio for {Hash} in {ElapsedMilliseconds} ms", cacheKey.Hash, generationTimer.ElapsedMilliseconds);

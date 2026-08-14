@@ -51,7 +51,8 @@ namespace Resgrid.Services
 		public async Task<DepartmentSetting> SaveOrUpdateSettingAsync(int departmentId, string setting, DepartmentSettingTypes type, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var savedSetting = await GetSettingByDepartmentIdType(departmentId, type);
-			await InvalidateSettingCacheAsync(departmentId, type);
+
+			DepartmentSetting result;
 
 			if (savedSetting == null)
 			{
@@ -60,15 +61,21 @@ namespace Resgrid.Services
 				newSetting.Setting = setting;
 				newSetting.SettingType = (int)type;
 
-				return await _departmentSettingsRepository.SaveOrUpdateAsync(newSetting, cancellationToken);
+				result = await _departmentSettingsRepository.SaveOrUpdateAsync(newSetting, cancellationToken);
 			}
 			else
 			{
 				savedSetting.Setting = setting;
-				return await _departmentSettingsRepository.SaveOrUpdateAsync(savedSetting, cancellationToken);
+				result = await _departmentSettingsRepository.SaveOrUpdateAsync(savedSetting, cancellationToken);
 			}
 
-			return null;
+			// Invalidate after the write commits, never before: dropping the key first lets a
+			// concurrent reader miss, re-read the pre-write value from the database and store
+			// it again, where it then survives for the full cache TTL. A throwing write skips
+			// this and leaves the still-correct cached value in place. Mirrors DeleteSettingAsync.
+			await InvalidateSettingCacheAsync(departmentId, type);
+
+			return result;
 		}
 
 		public async Task<bool> DeleteSettingAsync(int departmentId, DepartmentSettingTypes type, CancellationToken cancellationToken = default(CancellationToken))
@@ -908,7 +915,7 @@ namespace Resgrid.Services
 					var config = ObjectSerialization.Deserialize<DispatchRecommendationConfig>(value);
 
 					if (config != null)
-						return config;
+						return ClampDispatchRecommendationConfig(config);
 				}
 				catch (Exception)
 				{
@@ -917,6 +924,37 @@ namespace Resgrid.Services
 			}
 
 			return new DispatchRecommendationConfig();
+		}
+
+		/// <summary>
+		/// Bounds the tuning values on the way out, the way retention days are bounded in
+		/// GetHardwareTrackingLocationRetentionDaysAsync. Clamping on read rather than on
+		/// save also covers values already stored and any writer other than the settings
+		/// page. Zero keeps its "no limit" meaning for the age and radius knobs.
+		/// </summary>
+		private static DispatchRecommendationConfig ClampDispatchRecommendationConfig(DispatchRecommendationConfig config)
+		{
+			config.MaxLocationAgeSeconds = ClampToRange(config.MaxLocationAgeSeconds, DispatchRecommendationConfig.MaximumLocationAgeSeconds);
+			config.PersonnelMaxLocationAgeSeconds = ClampToRange(config.PersonnelMaxLocationAgeSeconds, DispatchRecommendationConfig.MaximumLocationAgeSeconds);
+			config.MaxRadiusMeters = ClampToRange(config.MaxRadiusMeters, DispatchRecommendationConfig.MaximumRadiusMeters);
+			config.RestPeriodMinutes = ClampToRange(config.RestPeriodMinutes, DispatchRecommendationConfig.MaximumRestPeriodMinutes);
+
+			config.EtaShortlistSize = config.EtaShortlistSize > 0
+				? Math.Min(config.EtaShortlistSize, DispatchRecommendationConfig.MaximumEtaShortlistSize)
+				: DispatchRecommendationConfig.DefaultEtaShortlistSize;
+
+			if (config.UnitMinimumStaffingLevel < 0)
+				config.UnitMinimumStaffingLevel = 0;
+
+			return config;
+		}
+
+		private static int ClampToRange(int value, int maximum)
+		{
+			if (value <= 0)
+				return 0;
+
+			return Math.Min(value, maximum);
 		}
 
 		public async Task<DepartmentSetting> SetDispatchRecommendationConfigAsync(int departmentId, DispatchRecommendationConfig config, CancellationToken cancellationToken = default(CancellationToken))

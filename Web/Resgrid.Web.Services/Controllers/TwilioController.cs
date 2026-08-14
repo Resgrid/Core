@@ -18,6 +18,7 @@ using Resgrid.Model.Helpers;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
 using Resgrid.Model.Services;
+using Resgrid.Services;
 using Resgrid.Web.Services.Models;
 using Resgrid.Web.Services.Twilio;
 using Twilio.AspNet.Common;
@@ -106,6 +107,13 @@ namespace Resgrid.Web.Services.Controllers
 		// in the request falls back to Twilio's native <Say> voice immediately.
 		private static readonly TimeSpan TtsPromptBudget = TimeSpan.FromSeconds(6);
 		private CancellationTokenSource _ttsBudgetCts;
+
+		// Run card enrichment on the text-to-call path runs bulk status/location queries and,
+		// when routed ETA is enabled, external routing calls per requirement — unbounded, that
+		// can outlast the same 15-second webhook limit and take the dispatch down with it,
+		// since the broadcast is enqueued after it. Recommendations are an enhancement to the
+		// dispatch, so they get a slice of the budget and are dropped if they overrun.
+		private static readonly TimeSpan RunCardEnrichmentBudget = TimeSpan.FromSeconds(5);
 
 		private CancellationToken GetTtsPromptBudgetToken()
 		{
@@ -358,18 +366,29 @@ namespace Resgrid.Web.Services.Controllers
 						{
 							if (await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, savedCall.DepartmentId))
 							{
-								var recommendation = await _dispatchRecommendationService.EnrichCallForDispatchAsync(savedCall, 1, true);
-
-								if (recommendation.MatchedRunCardId.HasValue && recommendation.AutoDispatch && recommendation.HasRecommendations)
+								// Linked to RequestAborted so a caller that goes away also stops the
+								// work, and cancelled after the budget so a slow mapping provider
+								// cannot eat the webhook. The engine honours the token at its
+								// external-I/O boundaries, so this stops the calls rather than just
+								// abandoning the await.
+								using (var enrichmentCts = CancellationTokenSource.CreateLinkedTokenSource(HttpContext?.RequestAborted ?? CancellationToken.None))
 								{
-									savedCall = await _callsService.SaveCallAsync(savedCall);
-									await _dispatchRecommendationService.RecordActivationAsync(savedCall, recommendation, null);
+									enrichmentCts.CancelAfter(RunCardEnrichmentBudget);
+
+									var recommendation = await _dispatchRecommendationService.EnrichCallForDispatchAsync(savedCall, 1, true, enrichmentCts.Token);
+
+									if (recommendation.MatchedRunCardId.HasValue && recommendation.AutoDispatch && recommendation.HasRecommendations)
+									{
+										savedCall = await _callsService.SaveCallAsync(savedCall, enrichmentCts.Token);
+										await _dispatchRecommendationService.RecordActivationAsync(savedCall, recommendation, null, enrichmentCts.Token);
+									}
 								}
 							}
 						}
 						catch (Exception ex)
 						{
-							// A recommendation failure must never block the text-to-call dispatch itself.
+							// A recommendation failure — including overrunning the budget above —
+							// must never block the text-to-call dispatch itself.
 							Logging.LogException(ex);
 						}
 
@@ -751,6 +770,16 @@ namespace Resgrid.Web.Services.Controllers
 				response.Hangup();
 				return CreateVoiceContentResult(response);
 			}
+
+			// Load the department's custom priority so GetPriorityText() speaks its real
+			// name. The broadcast worker loads it the same way before pre-warming the
+			// dispatch TTS — the prompt text (and therefore the TTS cache key) must match.
+			try
+			{
+				if (call.CallPriority == null)
+					call.CallPriority = await _callsService.GetCallPrioritiesByIdAsync(call.DepartmentId, call.Priority, false);
+			}
+			catch { /* enum fallback text still works */ }
 
 			// For outbound calls, allow a brief pause for the audio bridge to
 			// stabilize after the callee answers before attempting playback.
@@ -1488,49 +1517,19 @@ namespace Resgrid.Web.Services.Controllers
 			}
 		}
 
+		// Address resolution and prompt building are shared with the call broadcast
+		// worker (which pre-warms the dispatch TTS audio during ring time) via
+		// DispatchVoicePromptBuilder — both sides must produce identical text so the
+		// pre-warmed audio's cache key matches what this webhook requests.
 		private async Task<string> ResolveCallAddressAsync(Call call)
 		{
-			var address = call.Address;
-
-			if (String.IsNullOrWhiteSpace(address) && !string.IsNullOrWhiteSpace(call.GeoLocationData) && call.GeoLocationData.Length > 1)
-			{
-				try
-				{
-					string[] points = call.GeoLocationData.Split(char.Parse(","));
-
-					// Bound the reverse-geocode: it's an external HTTP call with no timeout of
-					// its own, and it runs inside a Twilio webhook whose total budget is 15s.
-					// On timeout the catch swallows and the dispatch is spoken without an address.
-					// TryParse with InvariantCulture: malformed coordinates skip the lookup
-					// instead of throwing, and a comma-decimal server culture can't silently
-					// misread "47.606" as 47606.
-					if (points != null && points.Length == 2
-						&& double.TryParse(points[0], NumberStyles.Float, CultureInfo.InvariantCulture, out var latitude)
-						&& double.TryParse(points[1], NumberStyles.Float, CultureInfo.InvariantCulture, out var longitude))
-						address = await _geoLocationProvider.GetAproxAddressFromLatLong(latitude, longitude)
-							.WaitAsync(TimeSpan.FromSeconds(2), HttpContext?.RequestAborted ?? CancellationToken.None);
-				}
-				catch
-				{
-				}
-			}
-
-			return String.IsNullOrWhiteSpace(address) ? call.Address : address;
+			return await DispatchVoicePromptBuilder.ResolveDispatchAddressAsync(call, _geoLocationProvider,
+				HttpContext?.RequestAborted ?? CancellationToken.None);
 		}
 
 		private static string BuildDispatchPrompt(Call call, string address)
 		{
-			// Periods between the segments give the TTS engine sentence boundaries
-			// (Piper inserts 0.35s of silence per sentence), which keeps the priority,
-			// address and nature audibly separated instead of running together.
-			var nature = StringHelpers.StripHtmlTagsCharArray(call.NatureOfCall);
-			var prompt = !String.IsNullOrWhiteSpace(address)
-				? string.Format("{0}, Priority {1}. Address {2}. Nature {3}", call.Name, call.GetPriorityText(), address, nature)
-				: string.Format("{0}, Priority {1}. Nature {2}", call.Name, call.GetPriorityText(), nature);
-
-			return prompt.EndsWith(".", StringComparison.Ordinal) || prompt.EndsWith("!", StringComparison.Ordinal) || prompt.EndsWith("?", StringComparison.Ordinal)
-				? prompt
-				: $"{prompt}.";
+			return DispatchVoicePromptBuilder.BuildDispatchPrompt(call, address);
 		}
 
 		private static ContentResult CreateVoiceContentResult(VoiceResponse response)

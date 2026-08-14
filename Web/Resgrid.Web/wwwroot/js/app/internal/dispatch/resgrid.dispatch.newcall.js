@@ -202,6 +202,10 @@ var resgrid;
                 });
                 personnelTable.on('draw', function() {
                     $('#personnelGrid thead th:first').html('<label><input type="checkbox" id="checkAllPersonnel"/></label>');
+
+                    // The rows are new DOM on every draw, so any run card recommendation has
+                    // to be re-applied here rather than only when the response arrives.
+                    applyRecommendationSelections();
                 });
 
                 var groupsTable = $("#groupsGrid").DataTable({
@@ -506,17 +510,59 @@ var resgrid;
                 var pascal = name.charAt(0).toUpperCase() + name.slice(1);
                 return obj[pascal];
             }
+
+            // Ids the current recommendation ticked, so a later one can untick exactly those
+            // and leave the dispatcher's own selections alone. The sequence number lets a
+            // slow earlier response be discarded instead of overwriting a newer one.
+            var recommendationSequence = 0;
+            var recommendedUnitIds = [];
+            var recommendedUserIds = [];
+
+            function clearRecommendationSelections() {
+                recommendedUnitIds.forEach(function (id) {
+                    $('input[name="dispatchUnit_' + id + '"]').prop('checked', false);
+                });
+                recommendedUserIds.forEach(function (id) {
+                    $('input[name="dispatchUser_' + id + '"]').prop('checked', false);
+                });
+
+                recommendedUnitIds = [];
+                recommendedUserIds = [];
+            }
+
+            // Personnel checkboxes are rendered by the DataTable, so they may not exist when
+            // the recommendation lands and are rebuilt unchecked on every redraw. This is
+            // called both on response and from the grid's draw handler.
+            function applyRecommendationSelections() {
+                recommendedUnitIds.forEach(function (id) {
+                    $('input[name="dispatchUnit_' + id + '"]').prop('checked', true);
+                });
+                recommendedUserIds.forEach(function (id) {
+                    $('input[name="dispatchUser_' + id + '"]').prop('checked', true);
+                });
+            }
+            newcall.applyRecommendationSelections = applyRecommendationSelections;
+
             function checkForRecommendations() {
                 var callPriorityVal = $('#CallPriority').val();
                 var callTypeVal = $('#Call_Type').val();
                 var lat = $('#Latitude').val();
                 var lon = $('#Longitude').val();
+                var requestSequence = ++recommendationSequence;
 
                 $.ajax({
                     url: resgrid.absoluteBaseUrl + '/User/Dispatch/GetDispatchRecommendation',
                     data: { priority: callPriorityVal, type: callTypeVal, latitude: lat || null, longitude: lon || null },
                     type: 'GET'
                 }).done(function (response) {
+                    if (requestSequence !== recommendationSequence) {
+                        return;
+                    }
+
+                    // Drop the previous recommendation's ticks before deciding what this one
+                    // shows, so no-match and auto-dispatch responses clear them too.
+                    clearRecommendationSelections();
+
                     var panel = $('#runCardPanel');
                     var row = $('#runCardPanelRow');
                     var result = prop(response, 'result');
@@ -563,12 +609,10 @@ var resgrid;
                     // Pre-check recommended resources when NOT auto-dispatching (dispatcher
                     // reviews and can uncheck; the normal form post picks these up).
                     if (!autoDispatch) {
-                        units.forEach(function (u) {
-                            $('input[name="dispatchUnit_' + prop(u, 'unitId') + '"]').prop('checked', true);
-                        });
-                        personnel.forEach(function (p) {
-                            $('input[name="dispatchUser_' + prop(p, 'userId') + '"]').prop('checked', true);
-                        });
+                        recommendedUnitIds = units.map(function (u) { return prop(u, 'unitId'); });
+                        recommendedUserIds = personnel.map(function (p) { return prop(p, 'userId'); });
+
+                        applyRecommendationSelections();
                     }
                 });
             }

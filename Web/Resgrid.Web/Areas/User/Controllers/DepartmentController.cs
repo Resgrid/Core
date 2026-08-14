@@ -1925,6 +1925,20 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if ((!unitTypeId.HasValue && !personnelRoleId.HasValue) || (unitTypeId.HasValue && personnelRoleId.HasValue))
 				return Json(new { success = false, message = "Select a unit type or a personnel role (not both)." });
 
+			if (unitTypeId.HasValue)
+			{
+				var unitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
+				if (unitTypes == null || unitTypes.All(t => t.UnitTypeId != unitTypeId.Value))
+					return Json(new { success = false, message = "Invalid unit type." });
+			}
+
+			if (personnelRoleId.HasValue)
+			{
+				var roles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId);
+				if (roles == null || roles.All(r => r.PersonnelRoleId != personnelRoleId.Value))
+					return Json(new { success = false, message = "Invalid personnel role." });
+			}
+
 			if (minimumAvailableCount < 1)
 				return Json(new { success = false, message = "Minimum available count must be at least 1." });
 

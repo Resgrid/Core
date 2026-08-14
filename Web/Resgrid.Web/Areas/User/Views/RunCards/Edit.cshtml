@@ -4,6 +4,12 @@
 @{
     ViewBag.Title = "Resgrid | " + localizer["RunCardsHeader"];
 
+    // Both payloads are emitted through Html.Raw into a script block and carry
+    // admin-entered free text (card/level names, type and role names, status button
+    // text), so escape HTML-significant characters to keep a name like "</script>"
+    // from breaking out of the block.
+    var jsonSettings = new JsonSerializerSettings { StringEscapeHandling = StringEscapeHandling.EscapeHtml };
+
     var cardJson = JsonConvert.SerializeObject(new
     {
         runCardId = Model.RunCard.RunCardId,
@@ -47,7 +53,7 @@
             isCustomState = s.IsCustomState,
             stateId = s.StateId
         })
-    });
+    }, jsonSettings);
 
     var lookupsJson = JsonConvert.SerializeObject(new
     {
@@ -59,7 +65,7 @@
         unitStatusOptions = Model.UnitStatusOptions.ToDictionary(kv => kv.Key.ToString(), kv => kv.Value.Select(o => new { stateId = o.StateId, isCustomState = o.IsCustomState, text = o.Text })),
         personnelStatusOptions = Model.PersonnelStatusOptions.Select(o => new { stateId = o.StateId, isCustomState = o.IsCustomState, text = o.Text }),
         staffingOptions = Model.StaffingOptions.Select(o => new { stateId = o.StateId, isCustomState = o.IsCustomState, text = o.Text })
-    });
+    }, jsonSettings);
 }
 
 <div class="row wrapper border-bottom white-bg page-heading">
@@ -210,6 +216,7 @@
 
                     <div class="hr-line-dashed"></div>
                     <div class="form-group">
+                        <form id="saveCardForm">@Html.AntiForgeryToken()</form>
                         <a class="btn btn-white" asp-controller="RunCards" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
                         <button class="btn btn-primary" type="button" id="saveCardButton">@commonLocalizer["Save"]</button>
                     </div>
@@ -462,6 +469,9 @@
                 url: '@Url.Action("Save", "RunCards", new { area = "User" })',
                 type: 'POST',
                 contentType: 'application/json',
+                // JSON bodies cannot carry the token as a field, so it travels in the
+                // header the antiforgery options look for (see PerformCheckIn).
+                headers: { 'RequestVerificationToken': $('#saveCardForm input[name="__RequestVerificationToken"]').val() },
                 data: JSON.stringify(payload),
                 success: function (response) {
                     if (response.success) {

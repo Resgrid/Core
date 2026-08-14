@@ -55,6 +55,15 @@ namespace Resgrid.Tests.Services
 			}
 
 			[Test]
+			public void should_return_null_for_non_finite_or_out_of_range_vertices()
+			{
+				GeoMath.ParseGeofence("[{\"lat\":NaN,\"lng\":-104.9},{\"lat\":39.8,\"lng\":-104.9},{\"lat\":39.8,\"lng\":-104.8}]").Should().BeNull();
+				GeoMath.ParseGeofence("[{\"lat\":\"NaN\",\"lng\":\"-104.9\"},{\"lat\":\"39.8\",\"lng\":\"-104.9\"},{\"lat\":\"39.8\",\"lng\":\"-104.8\"}]").Should().BeNull();
+				GeoMath.ParseGeofence("[{\"lat\":500,\"lng\":-104.9},{\"lat\":39.8,\"lng\":-104.9},{\"lat\":39.8,\"lng\":-104.8}]").Should().BeNull();
+				GeoMath.ParseGeofence("[{\"lat\":39.7,\"lng\":-500},{\"lat\":39.8,\"lng\":-104.9},{\"lat\":39.8,\"lng\":-104.8}]").Should().BeNull();
+			}
+
+			[Test]
 			public void should_return_null_for_degenerate_polygons()
 			{
 				GeoMath.ParseGeofence("[]").Should().BeNull();
@@ -167,6 +176,27 @@ namespace Resgrid.Tests.Services
 				var blob = GeoMath.ParseLatLonString("39.7392,-104.9903");
 				blob.Should().NotBeNull();
 				blob.Value.Longitude.Should().BeApproximately(-104.9903, 0.0001);
+			}
+
+			[Test]
+			public void should_reject_non_finite_and_out_of_range_coordinates()
+			{
+				GeoMath.ParseCoordinatePair("NaN", "-104.9").Should().BeNull();
+				GeoMath.ParseCoordinatePair("39.7", "NaN").Should().BeNull();
+				GeoMath.ParseCoordinatePair("Infinity", "-104.9").Should().BeNull();
+				GeoMath.ParseCoordinatePair("39.7", "-Infinity").Should().BeNull();
+				GeoMath.ParseCoordinatePair("90.1", "-104.9").Should().BeNull();
+				GeoMath.ParseCoordinatePair("-90.1", "-104.9").Should().BeNull();
+				GeoMath.ParseCoordinatePair("39.7", "180.1").Should().BeNull();
+				GeoMath.ParseCoordinatePair("39.7", "-180.1").Should().BeNull();
+				GeoMath.ParseLatLonString("NaN,-104.9").Should().BeNull();
+			}
+
+			[Test]
+			public void should_accept_coordinates_on_the_range_boundaries()
+			{
+				GeoMath.ParseCoordinatePair("90", "180").Should().NotBeNull();
+				GeoMath.ParseCoordinatePair("-90", "-180").Should().NotBeNull();
 			}
 
 			[Test]

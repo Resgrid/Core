@@ -462,6 +462,109 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public void cancelling_the_request_stops_routed_eta_lookups()
+		{
+			BuildCard(engineCount: 1);
+			_departmentSettingsService.Setup(x => x.GetDispatchRecommendationModeAsync(DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(DispatchRecommendationModes.ClosestUnit);
+			_config.UseRoutedEta = true;
+
+			var now = DateTime.UtcNow;
+			_unitsService.Setup(x => x.GetLatestUnitLocationsAsync(DepartmentId))
+				.ReturnsAsync(new List<UnitsLocation>
+				{
+					new UnitsLocation { UnitId = 1, Latitude = 39.7501m, Longitude = -104.9501m, Timestamp = now },
+					new UnitsLocation { UnitId = 2, Latitude = 39.76m, Longitude = -104.96m, Timestamp = now }
+				});
+
+			// The caller gives up while the first routed ETA lookup is in flight; the loop
+			// must not keep calling the mapping provider for the rest of the shortlist.
+			var cancellation = new CancellationTokenSource();
+			_geoService.Setup(x => x.GetEtaInSecondsAsync(It.IsAny<string>(), It.IsAny<string>()))
+				.ReturnsAsync(() =>
+				{
+					cancellation.Cancel();
+					return 120d;
+				});
+
+			Assert.ThrowsAsync<OperationCanceledException>(async () =>
+				await _service.GetRecommendationAsync(BuildRequest(), cancellation.Token));
+
+			_geoService.Verify(x => x.GetEtaInSecondsAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Once);
+		}
+
+		[Test]
+		public async Task move_up_pass_measures_role_coverage_by_radius_in_closest_unit_mode()
+		{
+			BuildCard(roleCount: 1);
+			_config.MoveUpRecommendationsEnabled = true;
+			_departmentSettingsService.Setup(x => x.GetDispatchRecommendationModeAsync(DepartmentId, It.IsAny<bool>()))
+				.ReturnsAsync(DispatchRecommendationModes.ClosestUnit);
+
+			// user-1 sits at Station A, user-2 is 100km away. Station A requires one
+			// firefighter within 5km; user-1 gets dispatched to the call, so the radius
+			// leaves the station uncovered even though user-2 is still available.
+			var now = DateTime.UtcNow;
+			_personnelLocationResolver.Setup(x => x.GetLatestLocationsAsync(DepartmentId, It.IsAny<int>(), It.IsAny<DateTime?>()))
+				.ReturnsAsync(new Dictionary<string, ResolvedPersonnelLocation>
+				{
+					{ "user-1", new ResolvedPersonnelLocation { UserId = "user-1", Latitude = 39.7501, Longitude = -104.9501, Timestamp = now } },
+					{ "user-2", new ResolvedPersonnelLocation { UserId = "user-2", Latitude = 40.75, Longitude = -104.95, Timestamp = now } }
+				});
+
+			_runCardsService.Setup(x => x.GetStationCoverageRequirementsForDepartmentAsync(DepartmentId))
+				.ReturnsAsync(new List<StationCoverageRequirement>
+				{
+					new StationCoverageRequirement
+					{
+						StationCoverageRequirementId = 1,
+						DepartmentId = DepartmentId,
+						DepartmentGroupId = StationAId,
+						PersonnelRoleId = FirefighterRoleId,
+						MinimumAvailableCount = 1,
+						RadiusMeters = 5000,
+						IsEnabled = true
+					}
+				});
+
+			var result = await _service.GetRecommendationAsync(BuildRequest());
+
+			result.Personnel.Should().ContainSingle(p => p.UserId == "user-1");
+			result.MoveUps.Should().ContainSingle(m => m.StationGroupId == StationAId
+				&& m.PersonnelRoleId == FirefighterRoleId && m.AvailableAfterDispatch == 0);
+		}
+
+		[Test]
+		public async Task move_up_pass_ignores_radius_for_role_coverage_in_station_based_mode()
+		{
+			BuildCard(roleCount: 1);
+			_config.MoveUpRecommendationsEnabled = true;
+
+			// Same requirement, but the department dispatches station-based, where "at this
+			// station" means group assignment. user-2 is assigned to Station B, so Station A
+			// is genuinely uncovered once user-1 goes on the call; the radius is not applied.
+			_runCardsService.Setup(x => x.GetStationCoverageRequirementsForDepartmentAsync(DepartmentId))
+				.ReturnsAsync(new List<StationCoverageRequirement>
+				{
+					new StationCoverageRequirement
+					{
+						StationCoverageRequirementId = 1,
+						DepartmentId = DepartmentId,
+						DepartmentGroupId = StationAId,
+						PersonnelRoleId = FirefighterRoleId,
+						MinimumAvailableCount = 1,
+						RadiusMeters = 5000,
+						IsEnabled = true
+					}
+				});
+
+			var result = await _service.GetRecommendationAsync(BuildRequest());
+
+			result.MoveUps.Should().ContainSingle(m => m.StationGroupId == StationAId
+				&& m.SuggestedUserId == "user-2" && m.FromStationGroupId == StationBId);
+		}
+
+		[Test]
 		public async Task enrich_call_adds_dispatch_rows_without_duplicates_and_stamps_run_card()
 		{
 			BuildCard(engineCount: 2, roleCount: 1);

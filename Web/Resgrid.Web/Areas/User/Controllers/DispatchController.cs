@@ -603,6 +603,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		/// added resources via selective broadcast.
 		/// </summary>
 		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Call_Update)]
 		public async Task<IActionResult> EscalateCall([FromForm] int callId, CancellationToken cancellationToken)
 		{
@@ -613,6 +614,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (call == null || call.DepartmentId != DepartmentId)
 				return Json(new { success = false, message = "Call not found." });
+
+			// The Call_Update claim and the department check above are not enough on their
+			// own: escalating dispatches units and notifies personnel, so it takes the same
+			// per-call authority as editing the call (department admin, or the call's
+			// reporting user), matching UpdateCall and the v4 EscalateCall endpoint.
+			if (!await _authorizationService.CanUserEditCallAsync(UserId, callId))
+				return Unauthorized();
 
 			if (call.State != (int)CallStates.Active)
 				return Json(new { success = false, message = "Only active calls can be escalated." });

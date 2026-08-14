@@ -267,6 +267,50 @@ namespace Resgrid.Tests.Services
 		}
 
 		[Test]
+		public async Task the_call_number_prefixes_the_call_name_on_every_incident_channel()
+		{
+			// What a responder scanning the channel list actually recognizes: "26-45 Structure Fire",
+			// not the call id.
+			GivenExistingChannels();
+			_callsService.Setup(x => x.GetCallByIdAsync(CallId, It.IsAny<bool>()))
+				.ReturnsAsync(new Call { CallId = CallId, DepartmentId = 1, Number = "26-45", Name = "Structure Fire" });
+
+			await BuildService().EnsureIncidentChannelsAsync(BuildCommand(), new[] { BuildNode("Staging") });
+
+			_inserted.Should().Contain(c => c.ChannelType == (int)ChatChannelType.Incident && c.Name == "26-45 Structure Fire");
+			_inserted.Should().Contain(c => c.ChannelType == (int)ChatChannelType.IncidentCommand && c.Name == "26-45 Structure Fire Command (private)");
+			_inserted.Should().Contain(c => c.ChannelType == (int)ChatChannelType.IncidentLeads && c.Name == "26-45 Structure Fire All Leads");
+			_inserted.Should().Contain(c => c.ChannelType == (int)ChatChannelType.IncidentDispatch && c.Name == "26-45 Structure Fire Dispatch");
+			_inserted.Should().Contain(c => c.ChannelType == (int)ChatChannelType.IncidentLane && c.Name == "26-45 Structure Fire Staging");
+		}
+
+		[Test]
+		public async Task an_incident_channel_stuck_on_the_call_id_fallback_is_renamed()
+		{
+			// Channels created when the call lookup failed carry the bare "Call {id}" fallback forever —
+			// the next ensure (call added, call edited) has to heal them in place.
+			var existing = new ChatChannel { ChatChannelId = "a", CallId = CallId, ChannelType = (int)ChatChannelType.Incident, Name = $"Call {CallId}" };
+			_channelRepository.Setup(x => x.GetByCallIdAndTypeAsync(CallId, (int)ChatChannelType.Incident)).ReturnsAsync(existing);
+
+			await BuildService().EnsureIncidentChannelAsync(1, CallId, "26-45 Structure Fire");
+
+			_inserted.Should().BeEmpty();
+			_channelRepository.Verify(x => x.UpdateChannelInfoAsync("a", "26-45 Structure Fire", It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Once);
+			_permissionService.Verify(x => x.InvalidateChannelCacheAsync("a"), Times.Once);
+		}
+
+		[Test]
+		public async Task an_incident_channel_already_carrying_the_call_name_is_not_rewritten()
+		{
+			var existing = new ChatChannel { ChatChannelId = "a", CallId = CallId, ChannelType = (int)ChatChannelType.Incident, Name = "26-45 Structure Fire" };
+			_channelRepository.Setup(x => x.GetByCallIdAndTypeAsync(CallId, (int)ChatChannelType.Incident)).ReturnsAsync(existing);
+
+			await BuildService().EnsureIncidentChannelAsync(1, CallId, "26-45 Structure Fire");
+
+			_channelRepository.Verify(x => x.UpdateChannelInfoAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Never);
+		}
+
+		[Test]
 		public async Task stale_channel_names_are_refreshed_when_the_incident_is_named()
 		{
 			// Channels provisioned at call time (or by an old backfill) carry pre-incident names; naming

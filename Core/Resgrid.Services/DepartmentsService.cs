@@ -102,7 +102,9 @@ namespace Resgrid.Services
 
 				if (department == null && departmentId > 0)
 				{
-					Logging.LogError($"GetDepartmentById(): Did not pull department info back for id {departmentId}");
+					// Warning, not error: the id is caller-supplied (SCIM/API requests probe with
+					// arbitrary values), so a miss is a normal not-found, not a system fault.
+					Logging.LogWarning($"GetDepartmentById(): Did not pull department info back for id {departmentId}");
 				}
 
 				return department;

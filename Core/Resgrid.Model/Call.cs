@@ -185,6 +185,20 @@ namespace Resgrid.Model
 
 		public string IndoorMapFloorId { get; set; }
 
+		/// <summary>
+		/// Current alarm level (1-based). Only advanced by explicit escalation
+		/// ("Strike Next Alarm") when a run card with multiple alarm levels is active.
+		/// </summary>
+		[ProtoMember(35)]
+		public int AlarmLevel { get; set; } = 1;
+
+		/// <summary>
+		/// Run card that matched this call at creation/escalation time; drives
+		/// escalation lookups and the dispatch audit trail.
+		/// </summary>
+		[ProtoMember(36)]
+		public int? ActiveRunCardId { get; set; }
+
 		public bool CheckInTimersEnabled { get; set; }
 
 		[NotMapped]
@@ -332,7 +346,7 @@ namespace Resgrid.Model
 			if (PreviousDispatchCount == 0)
 				return false;
 
-			return PreviousDispatchCount == DispatchCount;
+			return PreviousDispatchCount != DispatchCount;
 		}
 
 		public bool HasValidGeolocationData()

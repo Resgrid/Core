@@ -502,6 +502,12 @@ namespace Resgrid.Repositories.DataRepository
 
 					if (property.PropertyType.IsGenericType && property.PropertyType.GetGenericTypeDefinition() == typeof(ICollection<>))
 					{
+						// Self-referencing collections (e.g. DepartmentGroup.Children) cannot be synced
+						// here: the generated DELETE filters on the parent's own PK column, so it would
+						// delete the parent row itself rather than removed children.
+						if (property.PropertyType.GetGenericArguments()[0] == entity.GetType())
+							continue;
+
 						var collection = (IEnumerable)property.GetValue(entity, null);
 						object obj = null;
 

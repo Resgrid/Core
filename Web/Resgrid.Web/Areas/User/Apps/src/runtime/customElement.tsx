@@ -17,6 +17,33 @@ export interface HostedReactElementProps {
 
 type ComponentLoader<TProps> = () => Promise<{ default: ComponentType<TProps> }>;
 
+// A deploy rotates the hashed chunk filenames, so a page loaded before the deploy 404s
+// when it lazily imports an element chunk. One forced reload picks up the fresh HTML and
+// hashes; the session flag stops a reload loop when the failure is anything else.
+const CHUNK_RELOAD_FLAG = 'rg-elements-chunk-reload';
+
+function recoverFromChunkLoadFailure(tagName: string, error: unknown): void {
+  try {
+    if (!sessionStorage.getItem(CHUNK_RELOAD_FLAG)) {
+      sessionStorage.setItem(CHUNK_RELOAD_FLAG, '1');
+      window.location.reload();
+      return;
+    }
+  } catch {
+    // sessionStorage unavailable (private browsing) — fall through to the console
+  }
+
+  console.error(`Failed to load the component for <${tagName}>`, error);
+}
+
+function clearChunkReloadFlag(): void {
+  try {
+    sessionStorage.removeItem(CHUNK_RELOAD_FLAG);
+  } catch {
+    // ignore
+  }
+}
+
 function parseAttributeValue(rawValue: string | null, definition: PropDefinition): unknown {
   if (rawValue === null) {
     return definition.defaultValue;
@@ -90,7 +117,16 @@ export function defineReactElement<TProps extends object>(
         this.componentPromise = loader();
       }
 
-      const module = await this.componentPromise;
+      let module: { default: ComponentType<TProps & HostedReactElementProps> };
+      try {
+        module = await this.componentPromise;
+      } catch (error) {
+        // Drop the failed promise so a later render can retry instead of re-awaiting the failure.
+        this.componentPromise = null;
+        throw error;
+      }
+
+      clearChunkReloadFlag();
       this.component = module.default;
       return this.component;
     }
@@ -117,7 +153,9 @@ export function defineReactElement<TProps extends object>(
       }
 
       if (!this.component) {
-        void this.loadComponentAsync().then(() => this.renderComponent());
+        void this.loadComponentAsync()
+          .then(() => this.renderComponent())
+          .catch((error: unknown) => recoverFromChunkLoadFailure(tagName, error));
         return;
       }
 

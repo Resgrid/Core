@@ -46,13 +46,16 @@ namespace Resgrid.Web.Services.Controllers
 		private readonly IUnitsService _unitsService;
 		private readonly IGeoLocationProvider _geoLocationProvider;
 		private readonly ICallDispatchStatusService _callDispatchStatusService;
+		private readonly IDispatchRecommendationService _dispatchRecommendationService;
+		private readonly IFeatureToggleService _featureToggleService;
 
 		public EmailController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
 			ILimitsService limitsService, ICallsService callsService, IQueueService queueService, IDepartmentsService departmentsService,
 			IUserProfileService userProfileService, ITextCommandService textCommandService, IActionLogsService actionLogsService,
 			IUserStateService userStateService, ICommunicationService communicationService, IDistributionListsService distributionListsService,
 			IUsersService usersService, IEmailService emailService, IDepartmentGroupsService departmentGroupsService, IMessageService messageService,
-			IFileService fileService, IUnitsService unitsService, IGeoLocationProvider geoLocationProvider, ICallDispatchStatusService callDispatchStatusService)
+			IFileService fileService, IUnitsService unitsService, IGeoLocationProvider geoLocationProvider, ICallDispatchStatusService callDispatchStatusService,
+			IDispatchRecommendationService dispatchRecommendationService, IFeatureToggleService featureToggleService)
 		{
 			_departmentSettingsService = departmentSettingsService;
 			_numbersService = numbersService;
@@ -74,6 +77,8 @@ namespace Resgrid.Web.Services.Controllers
 			_unitsService = unitsService;
 			_geoLocationProvider = geoLocationProvider;
 			_callDispatchStatusService = callDispatchStatusService;
+			_dispatchRecommendationService = dispatchRecommendationService;
+			_featureToggleService = featureToggleService;
 		}
 		#endregion Private Readonly Properties and Constructors
 
@@ -639,6 +644,28 @@ namespace Resgrid.Web.Services.Controllers
 		private async Task QueueCallBroadcastAsync(Call savedCall, CancellationToken cancellationToken)
 		{
 			var call = await _callsService.PopulateCallData(savedCall, true, false, false, true, true, true, false, false, false);
+
+			// Run card auto-dispatch for email-originated calls: additively merge
+			// recommended resources when the resolved auto-dispatch decision is on.
+			try
+			{
+				if (await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, call.DepartmentId))
+				{
+					var recommendation = await _dispatchRecommendationService.EnrichCallForDispatchAsync(call, 1, true, cancellationToken);
+
+					if (recommendation.MatchedRunCardId.HasValue && recommendation.AutoDispatch && recommendation.HasRecommendations)
+					{
+						call = await _callsService.SaveCallAsync(call, cancellationToken);
+						await _dispatchRecommendationService.RecordActivationAsync(call, recommendation, null, cancellationToken);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				// A recommendation failure must never block the email-originated dispatch itself.
+				Logging.LogException(ex);
+			}
+
 			var cqi = new CallQueueItem();
 			cqi.Call = call;
 

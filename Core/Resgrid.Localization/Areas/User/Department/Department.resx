@@ -363,4 +363,208 @@
   <data name="ForceChatbotSecurityPinHelp" xml:space="preserve">
     <value>Require every member to confirm dangerous or department-wide assistant/text actions with their personal 4-digit security PIN. Members without a PIN get a randomly generated one (viewable on their profile page).</value>
   </data>
+  <data name="RunCardSettingsHeader" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DispatchRecommendationModeLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DispatchRecommendationModeHelp" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DispatchAutoDispatchLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="DispatchAutoDispatchHelp" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RestPeriodLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RestPeriodHelp" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StaffingGateLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StaffingGateHelp" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MoveUpEnabledLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MoveUpEnabledHelp" xml:space="preserve">
+    <value />
+  </data>
+  <data name="ClosestUnitTuningHeader" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MaxLocationAgeLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="PersonnelMaxLocationAgeLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MaxRadiusLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="IncludeStaleLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="UseRoutedEtaLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="UseRoutedEtaHelp" xml:space="preserve">
+    <value />
+  </data>
+  <data name="EtaShortlistSizeLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StationCoverageHeader" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StationCoverageHelp" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StationCoverageStationLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StationCoverageTargetLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StationCoverageMinCountLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StationCoverageRadiusLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StationCoverageEnabledLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardsHeader" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardsHelp" xml:space="preserve">
+    <value />
+  </data>
+  <data name="NewRunCardButton" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardEditButton" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardDeleteConfirm" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardNameLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardDescriptionLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardDisabledLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardGeneralTab" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardDefaultLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardManualOnlyLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardPrePopulateLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardAutoDispatchOptionLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardNoGateLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardHomeStationLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardNoHomeStationLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardTriggersHeader" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardTriggersHelp" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardTriggerTypeLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardTriggerPriorityOption" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardTriggerTypeOption" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardTriggerBothOption" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardAddTriggerButton" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardAlarmLevelsHeader" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardAlarmLevelsHelp" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardAlarmLevelLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardAlarmLevelNamePlaceholder" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardAddAlarmLevelButton" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardUnitRequirementsLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardRoleRequirementsLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardAddUnitRequirementButton" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardAddRoleRequirementButton" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardSelectionsHeader" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardSelectionsHelp" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardStaffingSelectionsLabel" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardTestHeader" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardTestHelp" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardRunTestButton" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardSavedMessage" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CallPriority" xml:space="preserve">
+    <value />
+  </data>
+  <data name="CallType" xml:space="preserve">
+    <value />
+  </data>
+  <data name="RunCardsNav" xml:space="preserve">
+    <value />
+  </data>
 </root>

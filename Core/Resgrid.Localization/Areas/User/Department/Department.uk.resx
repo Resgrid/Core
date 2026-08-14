@@ -689,4 +689,208 @@
   <data name="ForceChatbotSecurityPinHelp" xml:space="preserve">
     <value>Вимагає, щоб кожен учасник підтверджував небезпечні або загальновідомчі дії асистента/SMS своїм особистим 4-значним PIN-кодом безпеки. Учасники без PIN-коду отримують випадково згенерований (доступний на сторінці профілю).</value>
   </data>
+  <data name="RunCardSettingsHeader" xml:space="preserve">
+    <value>Картки виїзду та автоматична диспетчеризація</value>
+  </data>
+  <data name="DispatchRecommendationModeLabel" xml:space="preserve">
+    <value>Режим автоматичного вибору ресурсів</value>
+  </data>
+  <data name="DispatchRecommendationModeHelp" xml:space="preserve">
+    <value>Як система обирає підрозділи та персонал для картки виїзду: за зоною реагування станції, що містить виклик (з переходом до найближчої станції в разі нестачі), або за найближчими доступними ресурсами.</value>
+  </data>
+  <data name="DispatchAutoDispatchLabel" xml:space="preserve">
+    <value>Автоматично відправляти рекомендовані ресурси</value>
+  </data>
+  <data name="DispatchAutoDispatchHelp" xml:space="preserve">
+    <value>Якщо увімкнено, відповідні картки відправляють ресурси одразу під час створення виклику. Якщо вимкнено, рекомендації попередньо заповнюють сторінку нового виклику для перегляду диспетчером.</value>
+  </data>
+  <data name="RestPeriodLabel" xml:space="preserve">
+    <value>Період відпочинку (хвилини)</value>
+  </data>
+  <data name="RestPeriodHelp" xml:space="preserve">
+    <value>Після відправлення підрозділ або особа отримують нижчий пріоритет протягом цієї кількості хвилин, щоб ті самі ресурси не відправлялися поспіль. 0 вимикає.</value>
+  </data>
+  <data name="StaffingGateLabel" xml:space="preserve">
+    <value>Мінімальна укомплектованість підрозділу для відправлення</value>
+  </data>
+  <data name="StaffingGateHelp" xml:space="preserve">
+    <value>Підрозділи з укомплектованістю нижче цього рівня не обираються, навіть якщо їхній статус відповідає. Підрозділи без визначених ролей завжди проходять.</value>
+  </data>
+  <data name="MoveUpEnabledLabel" xml:space="preserve">
+    <value>Увімкнути рекомендації щодо передислокації / заповнення</value>
+  </data>
+  <data name="MoveUpEnabledHelp" xml:space="preserve">
+    <value>Після вибору перевіряє мінімальне покриття станцій і рекомендує передислокацію ресурсів до оголених станцій.</value>
+  </data>
+  <data name="ClosestUnitTuningHeader" xml:space="preserve">
+    <value>Налаштування реагування найближчого підрозділу</value>
+  </data>
+  <data name="MaxLocationAgeLabel" xml:space="preserve">
+    <value>Максимальний вік місцезнаходження підрозділу (секунди)</value>
+  </data>
+  <data name="PersonnelMaxLocationAgeLabel" xml:space="preserve">
+    <value>Максимальний вік місцезнаходження персоналу (секунди)</value>
+  </data>
+  <data name="MaxRadiusLabel" xml:space="preserve">
+    <value>Максимальний радіус реагування (метри)</value>
+  </data>
+  <data name="IncludeStaleLabel" xml:space="preserve">
+    <value>Враховувати застарілі місцезнаходження</value>
+  </data>
+  <data name="UseRoutedEtaLabel" xml:space="preserve">
+    <value>Сортувати за розрахунковим часом у дорозі</value>
+  </data>
+  <data name="UseRoutedEtaHelp" xml:space="preserve">
+    <value>Пересортовує найближчих кандидатів за часом у дорозі замість відстані по прямій. Використовує картографічного провайдера і може додати вартість та затримку.</value>
+  </data>
+  <data name="EtaShortlistSizeLabel" xml:space="preserve">
+    <value>Розмір короткого списку для ETA</value>
+  </data>
+  <data name="StationCoverageHeader" xml:space="preserve">
+    <value>Мінімальне покриття станцій</value>
+  </data>
+  <data name="StationCoverageHelp" xml:space="preserve">
+    <value>Визначає мінімальну кількість кожного типу підрозділів або ролі персоналу, що має залишатися доступною на станції. Якщо відправлення знижує покриття нижче мінімуму, система рекомендує передислокацію.</value>
+  </data>
+  <data name="StationCoverageStationLabel" xml:space="preserve">
+    <value>Станція</value>
+  </data>
+  <data name="StationCoverageTargetLabel" xml:space="preserve">
+    <value>Тип підрозділу / Роль</value>
+  </data>
+  <data name="StationCoverageMinCountLabel" xml:space="preserve">
+    <value>Мінімум доступних</value>
+  </data>
+  <data name="StationCoverageRadiusLabel" xml:space="preserve">
+    <value>Радіус (метри, режим найближчого підрозділу)</value>
+  </data>
+  <data name="StationCoverageEnabledLabel" xml:space="preserve">
+    <value>Увімкнено</value>
+  </data>
+  <data name="RunCardsHeader" xml:space="preserve">
+    <value>Картки виїзду</value>
+  </data>
+  <data name="RunCardsHelp" xml:space="preserve">
+    <value>Заздалегідь сплановані пакети реагування, що зіставляються з викликами за пріоритетом і типом. Кожна картка визначає типи підрозділів і ролі персоналу для кожного рівня тривоги та які статуси вважаються доступними.</value>
+  </data>
+  <data name="NewRunCardButton" xml:space="preserve">
+    <value>Нова картка виїзду</value>
+  </data>
+  <data name="RunCardEditButton" xml:space="preserve">
+    <value>Редагувати</value>
+  </data>
+  <data name="RunCardDeleteConfirm" xml:space="preserve">
+    <value>Видалити цю картку? Виклики, що вже її використали, зберігають історію відправлень.</value>
+  </data>
+  <data name="RunCardNameLabel" xml:space="preserve">
+    <value>Назва</value>
+  </data>
+  <data name="RunCardDescriptionLabel" xml:space="preserve">
+    <value>Опис</value>
+  </data>
+  <data name="RunCardDisabledLabel" xml:space="preserve">
+    <value>Вимкнено</value>
+  </data>
+  <data name="RunCardGeneralTab" xml:space="preserve">
+    <value>Загальні</value>
+  </data>
+  <data name="RunCardDefaultLabel" xml:space="preserve">
+    <value>За замовчуванням відділу</value>
+  </data>
+  <data name="RunCardManualOnlyLabel" xml:space="preserve">
+    <value>Лише вручну (без автоматичного вибору)</value>
+  </data>
+  <data name="RunCardPrePopulateLabel" xml:space="preserve">
+    <value>Попередньо заповнити для перегляду диспетчером</value>
+  </data>
+  <data name="RunCardAutoDispatchOptionLabel" xml:space="preserve">
+    <value>Відправляти автоматично</value>
+  </data>
+  <data name="RunCardNoGateLabel" xml:space="preserve">
+    <value>Без перевірки укомплектованості</value>
+  </data>
+  <data name="RunCardHomeStationLabel" xml:space="preserve">
+    <value>Домашня станція (якщо виклик без локації)</value>
+  </data>
+  <data name="RunCardNoHomeStationLabel" xml:space="preserve">
+    <value>Немає</value>
+  </data>
+  <data name="RunCardTriggersHeader" xml:space="preserve">
+    <value>Тригери</value>
+  </data>
+  <data name="RunCardTriggersHelp" xml:space="preserve">
+    <value>Картка відповідає виклику, коли спрацьовує будь-який тригер. Перемагає найточніший збіг (пріоритет + тип перед типом, перед пріоритетом).</value>
+  </data>
+  <data name="RunCardTriggerTypeLabel" xml:space="preserve">
+    <value>Тип тригера</value>
+  </data>
+  <data name="RunCardTriggerPriorityOption" xml:space="preserve">
+    <value>Пріоритет виклику</value>
+  </data>
+  <data name="RunCardTriggerTypeOption" xml:space="preserve">
+    <value>Тип виклику</value>
+  </data>
+  <data name="RunCardTriggerBothOption" xml:space="preserve">
+    <value>Пріоритет і тип</value>
+  </data>
+  <data name="RunCardAddTriggerButton" xml:space="preserve">
+    <value>Додати тригер</value>
+  </data>
+  <data name="RunCardAlarmLevelsHeader" xml:space="preserve">
+    <value>Рівні тривоги</value>
+  </data>
+  <data name="RunCardAlarmLevelsHelp" xml:space="preserve">
+    <value>Вимоги кожного рівня додаються: ескалація до рівня 2 відправляє ресурси рівня 2 на додачу до вже призначених.</value>
+  </data>
+  <data name="RunCardAlarmLevelLabel" xml:space="preserve">
+    <value>Тривога</value>
+  </data>
+  <data name="RunCardAlarmLevelNamePlaceholder" xml:space="preserve">
+    <value>Необов'язкова назва, напр. Робоча пожежа</value>
+  </data>
+  <data name="RunCardAddAlarmLevelButton" xml:space="preserve">
+    <value>Додати рівень тривоги</value>
+  </data>
+  <data name="RunCardUnitRequirementsLabel" xml:space="preserve">
+    <value>Вимоги до типів підрозділів</value>
+  </data>
+  <data name="RunCardRoleRequirementsLabel" xml:space="preserve">
+    <value>Вимоги до ролей персоналу</value>
+  </data>
+  <data name="RunCardAddUnitRequirementButton" xml:space="preserve">
+    <value>Додати тип підрозділу</value>
+  </data>
+  <data name="RunCardAddRoleRequirementButton" xml:space="preserve">
+    <value>Додати роль</value>
+  </data>
+  <data name="RunCardSelectionsHeader" xml:space="preserve">
+    <value>Статуси для відправлення</value>
+  </data>
+  <data name="RunCardSelectionsHelp" xml:space="preserve">
+    <value>Які статуси підрозділів, персоналу та рівні готовності вважаються доступними для цієї картки. Залиште розділ порожнім, щоб використовувати стандартні правила доступності.</value>
+  </data>
+  <data name="RunCardStaffingSelectionsLabel" xml:space="preserve">
+    <value>Рівні готовності</value>
+  </data>
+  <data name="RunCardTestHeader" xml:space="preserve">
+    <value>Тест / Симуляція</value>
+  </data>
+  <data name="RunCardTestHelp" xml:space="preserve">
+    <value>Попередній перегляд того, що картки відправили б зараз для пріоритету, типу та локації — нічого не відправляється.</value>
+  </data>
+  <data name="RunCardRunTestButton" xml:space="preserve">
+    <value>Запустити тест</value>
+  </data>
+  <data name="RunCardSavedMessage" xml:space="preserve">
+    <value>Картку збережено.</value>
+  </data>
+  <data name="CallPriority" xml:space="preserve">
+    <value>Пріоритет виклику</value>
+  </data>
+  <data name="CallType" xml:space="preserve">
+    <value>Тип виклику</value>
+  </data>
+  <data name="RunCardsNav" xml:space="preserve">
+    <value>Картки виїзду</value>
+  </data>
 </root>

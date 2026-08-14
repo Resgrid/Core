@@ -102,6 +102,29 @@ namespace Resgrid.Workers.Framework.Logic
 									//      The relationship between the two objects cannot be defined because they are attached to different ObjectContext objects.
 									// So I'm wrapping this in a try catch to prevent all calls form being dropped.
 									var savedCall = await _callsService.SaveCallAsync(newCall);
+
+									// Run card auto-dispatch for imported email calls.
+									try
+									{
+										var featureToggleService = Bootstrapper.GetKernel().Resolve<IFeatureToggleService>();
+										if (await featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, savedCall.DepartmentId))
+										{
+											var dispatchRecommendationService = Bootstrapper.GetKernel().Resolve<IDispatchRecommendationService>();
+											var recommendation = await dispatchRecommendationService.EnrichCallForDispatchAsync(savedCall, 1, true);
+
+											if (recommendation.MatchedRunCardId.HasValue && recommendation.AutoDispatch && recommendation.HasRecommendations)
+											{
+												savedCall = await _callsService.SaveCallAsync(savedCall);
+												await dispatchRecommendationService.RecordActivationAsync(savedCall, recommendation, null);
+											}
+										}
+									}
+									catch (Exception recEx)
+									{
+										// A recommendation failure must never block the imported call's dispatch.
+										Logging.LogException(recEx);
+									}
+
 									var cqi = new CallQueueItem();
 									cqi.Call = savedCall;
 

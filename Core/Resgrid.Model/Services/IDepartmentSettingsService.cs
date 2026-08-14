@@ -294,6 +294,21 @@ namespace Resgrid.Model.Services
 
 		Task<bool> GetPersonnelOnUnitSetUnitStatusAsync(int departmentId, bool bypassCache = false);
 
+		/// <summary>Department-wide dispatch recommendation mode (Off / StationBased / ClosestUnit). Cached.</summary>
+		Task<DispatchRecommendationModes> GetDispatchRecommendationModeAsync(int departmentId, bool bypassCache = false);
+
+		Task<DepartmentSetting> SetDispatchRecommendationModeAsync(int departmentId, DispatchRecommendationModes mode, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>True = matched run cards auto-dispatch; false = recommendations pre-populate for dispatcher review. Cached.</summary>
+		Task<bool> GetDispatchRecommendationAutoDispatchAsync(int departmentId, bool bypassCache = false);
+
+		Task<DepartmentSetting> SetDispatchRecommendationAutoDispatchAsync(int departmentId, bool enabled, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>Engine tuning (location age/radius, ETA re-rank, rest period, staffing gate, move-up). Never null. Cached.</summary>
+		Task<DispatchRecommendationConfig> GetDispatchRecommendationConfigAsync(int departmentId, bool bypassCache = false);
+
+		Task<DepartmentSetting> SetDispatchRecommendationConfigAsync(int departmentId, DispatchRecommendationConfig config, CancellationToken cancellationToken = default(CancellationToken));
+
 		Task<DepartmentSetting> SetDepartmentModuleSettingsAsync(int departmentId, DepartmentModuleSettings settings, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>

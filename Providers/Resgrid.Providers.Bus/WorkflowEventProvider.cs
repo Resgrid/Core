@@ -116,6 +116,12 @@ namespace Resgrid.Providers.Bus
 			_eventAggregator.AddListener<IncidentCommandPostUpdatedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.IncidentCommandPostUpdated, e));
 			_eventAggregator.AddListener<IncidentPublicSharingChangedEvent>(e => HandleEvent(e.DepartmentId,
 				e.Enabled ? WorkflowTriggerEventType.IncidentPublicSharingEnabled : WorkflowTriggerEventType.IncidentPublicSharingDisabled, e));
+
+			// Run card dispatch system
+			_eventAggregator.AddListener<RunCardActivatedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.RunCardActivated, e));
+			_eventAggregator.AddListener<CallAlarmEscalatedEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.CallAlarmEscalated, e));
+			_eventAggregator.AddListener<DispatchShortfallEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.DispatchShortfallDetected, e));
+			_eventAggregator.AddListener<StationCoverageGapEvent>(e => HandleEvent(e.DepartmentId, WorkflowTriggerEventType.StationCoverageGapDetected, e));
 		}
 
 		private static async void HandleEvent(int departmentId, WorkflowTriggerEventType eventType, object eventObj)

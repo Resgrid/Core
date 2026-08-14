@@ -57,6 +57,7 @@ namespace Resgrid.Web.Services.Controllers
 	private readonly ITwilioVoiceResponseService _twilioVoiceResponseService;
 	private readonly IFeatureToggleService _featureToggleService;
 	private readonly ITextDepartmentSwitchService _textDepartmentSwitchService;
+	private readonly IDispatchRecommendationService _dispatchRecommendationService;
 
 	public TwilioController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
 		ILimitsService limitsService, ICallsService callsService, IQueueService queueService, IDepartmentsService departmentsService,
@@ -65,7 +66,8 @@ namespace Resgrid.Web.Services.Controllers
 		IDepartmentGroupsService departmentGroupsService, ICustomStateService customStateService, IUnitsService unitsService,
 		IUsersService usersService, ICalendarService calendarService, ICommunicationTestService communicationTestService,
 		IEncryptionService encryptionService, ITwilioVoiceResponseService twilioVoiceResponseService,
-		IFeatureToggleService featureToggleService, ITextDepartmentSwitchService textDepartmentSwitchService)
+		IFeatureToggleService featureToggleService, ITextDepartmentSwitchService textDepartmentSwitchService,
+		IDispatchRecommendationService dispatchRecommendationService)
 	{
 		_departmentSettingsService = departmentSettingsService;
 		_numbersService = numbersService;
@@ -89,6 +91,7 @@ namespace Resgrid.Web.Services.Controllers
 		_twilioVoiceResponseService = twilioVoiceResponseService;
 		_featureToggleService = featureToggleService;
 		_textDepartmentSwitchService = textDepartmentSwitchService;
+		_dispatchRecommendationService = dispatchRecommendationService;
 	}
 		#endregion Private Readonly Properties and Constructors
 
@@ -348,6 +351,27 @@ namespace Resgrid.Web.Services.Controllers
 						}
 
 						var savedCall = await _callsService.SaveCallAsync(c);
+
+						// Run card auto-dispatch for text-to-call: additively merge
+						// recommended units/personnel when auto-dispatch resolves on.
+						try
+						{
+							if (await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, savedCall.DepartmentId))
+							{
+								var recommendation = await _dispatchRecommendationService.EnrichCallForDispatchAsync(savedCall, 1, true);
+
+								if (recommendation.MatchedRunCardId.HasValue && recommendation.AutoDispatch && recommendation.HasRecommendations)
+								{
+									savedCall = await _callsService.SaveCallAsync(savedCall);
+									await _dispatchRecommendationService.RecordActivationAsync(savedCall, recommendation, null);
+								}
+							}
+						}
+						catch (Exception ex)
+						{
+							// A recommendation failure must never block the text-to-call dispatch itself.
+							Logging.LogException(ex);
+						}
 
 						var cqi = new CallQueueItem();
 						cqi.Call = savedCall;

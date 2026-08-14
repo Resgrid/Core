@@ -768,4 +768,208 @@
   <data name="ForceChatbotSecurityPinHelp" xml:space="preserve">
     <value>Require every member to confirm dangerous or department-wide assistant/text actions with their personal 4-digit security PIN. Members without a PIN get a randomly generated one (viewable on their profile page).</value>
   </data>
+  <data name="RunCardSettingsHeader" xml:space="preserve">
+    <value>Run Cards &amp; Automatic Dispatch</value>
+  </data>
+  <data name="DispatchRecommendationModeLabel" xml:space="preserve">
+    <value>Automatic resource selection mode</value>
+  </data>
+  <data name="DispatchRecommendationModeHelp" xml:space="preserve">
+    <value>How the system selects units and personnel to fill a run card: by the station response area containing the call (cascading to the next nearest station on shortfall) or by the closest available resources.</value>
+  </data>
+  <data name="DispatchAutoDispatchLabel" xml:space="preserve">
+    <value>Automatically dispatch recommended resources</value>
+  </data>
+  <data name="DispatchAutoDispatchHelp" xml:space="preserve">
+    <value>When on, matched run cards dispatch resources immediately on call creation. When off, recommendations pre-populate the New Call page for dispatcher review.</value>
+  </data>
+  <data name="RestPeriodLabel" xml:space="preserve">
+    <value>Rest period (minutes)</value>
+  </data>
+  <data name="RestPeriodHelp" xml:space="preserve">
+    <value>After a unit or person is dispatched, deprioritize them for this many minutes so the same resources are not dispatched back to back. 0 disables.</value>
+  </data>
+  <data name="StaffingGateLabel" xml:space="preserve">
+    <value>Minimum unit staffing to dispatch</value>
+  </data>
+  <data name="StaffingGateHelp" xml:space="preserve">
+    <value>Units staffed below this level are not selected even when their status matches. Units without defined roles always pass.</value>
+  </data>
+  <data name="MoveUpEnabledLabel" xml:space="preserve">
+    <value>Enable move-up / backfill recommendations</value>
+  </data>
+  <data name="MoveUpEnabledHelp" xml:space="preserve">
+    <value>After dispatch selection, check station coverage minimums and recommend relocating resources to depleted stations.</value>
+  </data>
+  <data name="ClosestUnitTuningHeader" xml:space="preserve">
+    <value>Closest Unit Response Tuning</value>
+  </data>
+  <data name="MaxLocationAgeLabel" xml:space="preserve">
+    <value>Maximum unit location age (seconds)</value>
+  </data>
+  <data name="PersonnelMaxLocationAgeLabel" xml:space="preserve">
+    <value>Maximum personnel location age (seconds)</value>
+  </data>
+  <data name="MaxRadiusLabel" xml:space="preserve">
+    <value>Maximum response radius (meters)</value>
+  </data>
+  <data name="IncludeStaleLabel" xml:space="preserve">
+    <value>Include stale locations</value>
+  </data>
+  <data name="UseRoutedEtaLabel" xml:space="preserve">
+    <value>Order by driving ETA</value>
+  </data>
+  <data name="UseRoutedEtaHelp" xml:space="preserve">
+    <value>Re-rank the closest candidates using routed drive time instead of straight-line distance. Uses the mapping provider and may add cost and latency.</value>
+  </data>
+  <data name="EtaShortlistSizeLabel" xml:space="preserve">
+    <value>ETA shortlist size</value>
+  </data>
+  <data name="StationCoverageHeader" xml:space="preserve">
+    <value>Station Coverage Minimums</value>
+  </data>
+  <data name="StationCoverageHelp" xml:space="preserve">
+    <value>Define the minimum number of each unit type or personnel role that should remain available at a station. When a dispatch would drop coverage below a minimum, the system recommends move-ups.</value>
+  </data>
+  <data name="StationCoverageStationLabel" xml:space="preserve">
+    <value>Station</value>
+  </data>
+  <data name="StationCoverageTargetLabel" xml:space="preserve">
+    <value>Unit Type / Role</value>
+  </data>
+  <data name="StationCoverageMinCountLabel" xml:space="preserve">
+    <value>Minimum Available</value>
+  </data>
+  <data name="StationCoverageRadiusLabel" xml:space="preserve">
+    <value>Radius (meters, closest-unit mode)</value>
+  </data>
+  <data name="StationCoverageEnabledLabel" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="RunCardsHeader" xml:space="preserve">
+    <value>Run Cards</value>
+  </data>
+  <data name="RunCardsHelp" xml:space="preserve">
+    <value>Pre-planned response packages matched to calls by priority and type. Each card defines the unit types and personnel roles to dispatch per alarm level and which statuses count as available.</value>
+  </data>
+  <data name="NewRunCardButton" xml:space="preserve">
+    <value>New Run Card</value>
+  </data>
+  <data name="RunCardEditButton" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="RunCardDeleteConfirm" xml:space="preserve">
+    <value>Delete this run card? Calls already using it keep their dispatch history.</value>
+  </data>
+  <data name="RunCardNameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="RunCardDescriptionLabel" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="RunCardDisabledLabel" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="RunCardGeneralTab" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="RunCardDefaultLabel" xml:space="preserve">
+    <value>Department default</value>
+  </data>
+  <data name="RunCardManualOnlyLabel" xml:space="preserve">
+    <value>Manual only (no automatic selection)</value>
+  </data>
+  <data name="RunCardPrePopulateLabel" xml:space="preserve">
+    <value>Pre-populate for dispatcher review</value>
+  </data>
+  <data name="RunCardAutoDispatchOptionLabel" xml:space="preserve">
+    <value>Dispatch automatically</value>
+  </data>
+  <data name="RunCardNoGateLabel" xml:space="preserve">
+    <value>No staffing gate</value>
+  </data>
+  <data name="RunCardHomeStationLabel" xml:space="preserve">
+    <value>Home station (used when a call has no location)</value>
+  </data>
+  <data name="RunCardNoHomeStationLabel" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="RunCardTriggersHeader" xml:space="preserve">
+    <value>Triggers</value>
+  </data>
+  <data name="RunCardTriggersHelp" xml:space="preserve">
+    <value>A card matches a call when any trigger matches. The most specific match wins (priority + type beats type, which beats priority).</value>
+  </data>
+  <data name="RunCardTriggerTypeLabel" xml:space="preserve">
+    <value>Trigger type</value>
+  </data>
+  <data name="RunCardTriggerPriorityOption" xml:space="preserve">
+    <value>Call Priority</value>
+  </data>
+  <data name="RunCardTriggerTypeOption" xml:space="preserve">
+    <value>Call Type</value>
+  </data>
+  <data name="RunCardTriggerBothOption" xml:space="preserve">
+    <value>Priority and Type</value>
+  </data>
+  <data name="RunCardAddTriggerButton" xml:space="preserve">
+    <value>Add Trigger</value>
+  </data>
+  <data name="RunCardAlarmLevelsHeader" xml:space="preserve">
+    <value>Alarm Levels</value>
+  </data>
+  <data name="RunCardAlarmLevelsHelp" xml:space="preserve">
+    <value>Each alarm level's requirements are additive: escalating to level 2 dispatches level 2's resources on top of what is already assigned.</value>
+  </data>
+  <data name="RunCardAlarmLevelLabel" xml:space="preserve">
+    <value>Alarm</value>
+  </data>
+  <data name="RunCardAlarmLevelNamePlaceholder" xml:space="preserve">
+    <value>Optional name, e.g. Working Fire</value>
+  </data>
+  <data name="RunCardAddAlarmLevelButton" xml:space="preserve">
+    <value>Add Alarm Level</value>
+  </data>
+  <data name="RunCardUnitRequirementsLabel" xml:space="preserve">
+    <value>Unit type requirements</value>
+  </data>
+  <data name="RunCardRoleRequirementsLabel" xml:space="preserve">
+    <value>Personnel role requirements</value>
+  </data>
+  <data name="RunCardAddUnitRequirementButton" xml:space="preserve">
+    <value>Add Unit Type</value>
+  </data>
+  <data name="RunCardAddRoleRequirementButton" xml:space="preserve">
+    <value>Add Role</value>
+  </data>
+  <data name="RunCardSelectionsHeader" xml:space="preserve">
+    <value>Dispatchable Statuses</value>
+  </data>
+  <data name="RunCardSelectionsHelp" xml:space="preserve">
+    <value>Which unit statuses, personnel statuses and staffing levels count as available for this card. Leave a section empty to use the standard availability rules.</value>
+  </data>
+  <data name="RunCardStaffingSelectionsLabel" xml:space="preserve">
+    <value>Staffing levels</value>
+  </data>
+  <data name="RunCardTestHeader" xml:space="preserve">
+    <value>Test / Simulate</value>
+  </data>
+  <data name="RunCardTestHelp" xml:space="preserve">
+    <value>Preview what this department's run cards would dispatch for a priority, type and location right now — nothing is dispatched.</value>
+  </data>
+  <data name="RunCardRunTestButton" xml:space="preserve">
+    <value>Run Test</value>
+  </data>
+  <data name="RunCardSavedMessage" xml:space="preserve">
+    <value>Run card saved.</value>
+  </data>
+  <data name="CallPriority" xml:space="preserve">
+    <value>Call Priority</value>
+  </data>
+  <data name="CallType" xml:space="preserve">
+    <value>Call Type</value>
+  </data>
+  <data name="RunCardsNav" xml:space="preserve">
+    <value>Run Cards</value>
+  </data>
 </root>

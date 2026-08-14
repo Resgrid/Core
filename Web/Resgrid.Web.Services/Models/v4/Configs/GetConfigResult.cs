@@ -112,6 +112,21 @@ namespace Resgrid.Web.Services.Models.v4.Configs
 		public string OpenWeatherApiKey { get; set; }
 
 		/// <summary>
+		/// True when the run card dispatch system is enabled for this department
+		/// </summary>
+		public bool DispatchRunCardsEnabled { get; set; }
+
+		/// <summary>
+		/// Department dispatch recommendation mode (0 = off, 1 = station based, 2 = closest unit)
+		/// </summary>
+		public int DispatchRecommendationMode { get; set; }
+
+		/// <summary>
+		/// True when matched run cards auto-dispatch; false = recommendations pre-populate for review
+		/// </summary>
+		public bool DispatchRecommendationAutoDispatch { get; set; }
+
+		/// <summary>
 		/// API url for Novu
 		/// </summary>
 		public string NovuBackendApiUrl { get; set; }

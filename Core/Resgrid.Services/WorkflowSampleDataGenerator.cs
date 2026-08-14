@@ -461,6 +461,47 @@ namespace Resgrid.Services
 					incident["enabled"] = eventType == WorkflowTriggerEventType.IncidentPublicSharingEnabled;
 					obj["incident"] = incident;
 					break;
+
+				case WorkflowTriggerEventType.RunCardActivated:
+					var runCard = new ScriptObject();
+					runCard["call_id"] = 1001;
+					runCard["run_card_id"] = 7;
+					runCard["run_card_name"] = "Structure Fire - First Alarm";
+					runCard["alarm_level"] = 1;
+					runCard["mode"] = 1;
+					runCard["was_auto_dispatched"] = true;
+					runCard["unit_count"] = 3;
+					runCard["personnel_count"] = 6;
+					obj["run_card"] = runCard;
+					break;
+
+				case WorkflowTriggerEventType.CallAlarmEscalated:
+					var escalation = new ScriptObject();
+					escalation["call_id"] = 1001;
+					escalation["previous_alarm_level"] = 1;
+					escalation["new_alarm_level"] = 2;
+					escalation["added_unit_count"] = 2;
+					escalation["added_personnel_count"] = 4;
+					obj["escalation"] = escalation;
+					break;
+
+				case WorkflowTriggerEventType.DispatchShortfallDetected:
+					var shortfall = new ScriptObject();
+					shortfall["call_id"] = 1001;
+					shortfall["run_card_id"] = 7;
+					shortfall["alarm_level"] = 1;
+					shortfall["shortfall_count"] = 1;
+					shortfall["summary"] = "Unit type Ladder: 0/1";
+					obj["shortfall"] = shortfall;
+					break;
+
+				case WorkflowTriggerEventType.StationCoverageGapDetected:
+					var coverageGap = new ScriptObject();
+					coverageGap["call_id"] = 1001;
+					coverageGap["gap_count"] = 1;
+					coverageGap["summary"] = "Station 1: 0/1 Engine";
+					obj["coverage_gap"] = coverageGap;
+					break;
 			}
 		}
 	}

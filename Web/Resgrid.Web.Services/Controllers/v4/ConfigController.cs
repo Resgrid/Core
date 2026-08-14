@@ -23,11 +23,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 		#region Members and Constructors
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IUserProfileService _userProfileService;
+		private readonly IFeatureToggleService _featureToggleService;
 
-		public ConfigController(IDepartmentSettingsService departmentSettingsService, IUserProfileService userProfileService)
+		public ConfigController(IDepartmentSettingsService departmentSettingsService, IUserProfileService userProfileService,
+			IFeatureToggleService featureToggleService)
 		{
 			_departmentSettingsService = departmentSettingsService;
 			_userProfileService = userProfileService;
+			_featureToggleService = featureToggleService;
 		}
 		#endregion Members and Constructors
 
@@ -141,6 +144,26 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data.EnableModernApplicationSounds = ModernApplicationSoundSettings.IsEnabled(
 				departmentModernApplicationSoundsEnabled,
 				userModernApplicationSoundsEnabled);
+
+			if (departmentId > 0)
+			{
+				try
+				{
+					result.Data.DispatchRunCardsEnabled = await _featureToggleService.IsEnabledAsync(Resgrid.Model.FeatureFlagKeys.DispatchRunCards, departmentId);
+
+					if (result.Data.DispatchRunCardsEnabled)
+					{
+						result.Data.DispatchRecommendationMode = (int)await _departmentSettingsService.GetDispatchRecommendationModeAsync(departmentId);
+						result.Data.DispatchRecommendationAutoDispatch = await _departmentSettingsService.GetDispatchRecommendationAutoDispatchAsync(departmentId);
+					}
+				}
+				catch (System.Exception ex)
+				{
+					// A settings/flag store failure must not break config bootstrap for the apps.
+					Resgrid.Framework.Logging.LogException(ex,
+						$"{nameof(BuildConfigResultAsync)}: run card dispatch settings lookup failed for departmentId {departmentId}.");
+				}
+			}
 
 			result.PageSize = 1;
 			result.Status = ResponseHelper.Success;

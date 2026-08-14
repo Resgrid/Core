@@ -529,7 +529,8 @@ namespace Resgrid.Tests.Web.Services
 					encryptionService,
 					twilioVoiceResponseService,
 					featureToggleService,
-					textDepartmentSwitchService)
+					textDepartmentSwitchService,
+					Mock.Of<IDispatchRecommendationService>())
 			{
 			}
 

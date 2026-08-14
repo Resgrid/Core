@@ -1,0 +1,484 @@
+@model Resgrid.Web.Areas.User.Models.RunCards.EditRunCardModel
+@using Newtonsoft.Json
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.Department.Department> localizer
+@{
+    ViewBag.Title = "Resgrid | " + localizer["RunCardsHeader"];
+
+    var cardJson = JsonConvert.SerializeObject(new
+    {
+        runCardId = Model.RunCard.RunCardId,
+        name = Model.RunCard.Name,
+        description = Model.RunCard.Description,
+        isDisabled = Model.RunCard.IsDisabled,
+        dispatchModeOverride = Model.RunCard.DispatchModeOverride,
+        autoDispatchOverride = Model.RunCard.AutoDispatchOverride,
+        minimumStaffingLevelOverride = Model.RunCard.MinimumStaffingLevelOverride,
+        homeStationGroupId = Model.RunCard.HomeStationGroupId,
+        triggers = (Model.RunCard.Triggers ?? new List<Resgrid.Model.RunCardTrigger>()).Select(t => new
+        {
+            runCardTriggerId = t.RunCardTriggerId,
+            triggerType = t.TriggerType,
+            priority = t.Priority,
+            callTypeId = t.CallTypeId
+        }),
+        alarmLevels = (Model.RunCard.AlarmLevels ?? new List<Resgrid.Model.RunCardAlarmLevel>()).Select(l => new
+        {
+            runCardAlarmLevelId = l.RunCardAlarmLevelId,
+            alarmLevel = l.AlarmLevel,
+            name = l.Name,
+            unitRequirements = (l.UnitRequirements ?? new List<Resgrid.Model.RunCardUnitRequirement>()).Select(r => new
+            {
+                runCardUnitRequirementId = r.RunCardUnitRequirementId,
+                unitTypeId = r.UnitTypeId,
+                requiredCount = r.RequiredCount
+            }),
+            roleRequirements = (l.RoleRequirements ?? new List<Resgrid.Model.RunCardRoleRequirement>()).Select(r => new
+            {
+                runCardRoleRequirementId = r.RunCardRoleRequirementId,
+                personnelRoleId = r.PersonnelRoleId,
+                requiredCount = r.RequiredCount
+            })
+        }),
+        selections = (Model.RunCard.AvailabilitySelections ?? new List<Resgrid.Model.RunCardAvailabilitySelection>()).Select(s => new
+        {
+            runCardAvailabilitySelectionId = s.RunCardAvailabilitySelectionId,
+            selectionType = s.SelectionType,
+            unitTypeId = s.UnitTypeId,
+            isCustomState = s.IsCustomState,
+            stateId = s.StateId
+        })
+    });
+
+    var lookupsJson = JsonConvert.SerializeObject(new
+    {
+        priorities = Model.CallPriorities.Items.Cast<Resgrid.Model.DepartmentCallPriority>().Select(p => new { id = p.DepartmentCallPriorityId, name = p.Name }),
+        callTypes = Model.CallTypes.Select(t => new { id = t.CallTypeId, name = t.Type }),
+        stations = Model.StationGroups.Select(s => new { id = s.DepartmentGroupId, name = s.Name }),
+        unitTypes = Model.UnitTypes.Select(t => new { id = t.UnitTypeId, name = t.Type }),
+        roles = Model.PersonnelRoles.Select(r => new { id = r.PersonnelRoleId, name = r.Name }),
+        unitStatusOptions = Model.UnitStatusOptions.ToDictionary(kv => kv.Key.ToString(), kv => kv.Value.Select(o => new { stateId = o.StateId, isCustomState = o.IsCustomState, text = o.Text })),
+        personnelStatusOptions = Model.PersonnelStatusOptions.Select(o => new { stateId = o.StateId, isCustomState = o.IsCustomState, text = o.Text }),
+        staffingOptions = Model.StaffingOptions.Select(o => new { stateId = o.StateId, isCustomState = o.IsCustomState, text = o.Text })
+    });
+}
+
+<div class="row wrapper border-bottom white-bg page-heading">
+    <div class="col-sm-8">
+        <h2>@(Model.IsNew ? localizer["NewRunCardButton"] : Model.RunCard.Name)</h2>
+        <ol class="breadcrumb">
+            <li><a asp-controller="Home" asp-action="Dashboard" asp-route-area="User">@commonLocalizer["HomeModule"]</a></li>
+            <li><a asp-controller="RunCards" asp-action="Index" asp-route-area="User">@localizer["RunCardsHeader"]</a></li>
+            <li class="active"><strong>@(Model.IsNew ? localizer["NewRunCardButton"] : Model.RunCard.Name)</strong></li>
+        </ol>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-xs-12">
+        <div class="wrapper wrapper-content">
+            <div class="ibox float-e-margins">
+                <div class="ibox-content">
+                    <div class="alert alert-danger" id="saveError" style="display: none"></div>
+                    <div class="alert alert-success" id="saveSuccess" style="display: none">@localizer["RunCardSavedMessage"]</div>
+
+                    <div class="tabs-container">
+                        <ul class="nav nav-tabs">
+                            <li class="active"><a data-toggle="tab" href="#tab-general">@localizer["RunCardGeneralTab"]</a></li>
+                            <li><a data-toggle="tab" href="#tab-triggers">@localizer["RunCardTriggersHeader"]</a></li>
+                            <li><a data-toggle="tab" href="#tab-alarms">@localizer["RunCardAlarmLevelsHeader"]</a></li>
+                            <li><a data-toggle="tab" href="#tab-selections">@localizer["RunCardSelectionsHeader"]</a></li>
+                            <li><a data-toggle="tab" href="#tab-test">@localizer["RunCardTestHeader"]</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div id="tab-general" class="tab-pane active">
+                                <div class="panel-body form-horizontal">
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">@localizer["RunCardNameLabel"]</label>
+                                        <div class="col-sm-9"><input type="text" id="cardName" class="form-control" maxlength="100" /></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">@localizer["RunCardDescriptionLabel"]</label>
+                                        <div class="col-sm-9"><input type="text" id="cardDescription" class="form-control" maxlength="500" /></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">@localizer["RunCardDisabledLabel"]</label>
+                                        <div class="col-sm-9"><input type="checkbox" id="cardDisabled" /></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">@localizer["DispatchRecommendationModeLabel"]</label>
+                                        <div class="col-sm-9">
+                                            <select id="cardModeOverride" class="form-control" style="width: 70%">
+                                                <option value="">@localizer["RunCardDefaultLabel"]</option>
+                                                <option value="0">@localizer["RunCardManualOnlyLabel"]</option>
+                                                <option value="1">Station Based</option>
+                                                <option value="2">Closest Unit</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">@localizer["DispatchAutoDispatchLabel"]</label>
+                                        <div class="col-sm-9">
+                                            <select id="cardAutoOverride" class="form-control" style="width: 70%">
+                                                <option value="">@localizer["RunCardDefaultLabel"]</option>
+                                                <option value="0">@localizer["RunCardPrePopulateLabel"]</option>
+                                                <option value="1">@localizer["RunCardAutoDispatchOptionLabel"]</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">@localizer["StaffingGateLabel"]</label>
+                                        <div class="col-sm-9">
+                                            <select id="cardStaffingOverride" class="form-control" style="width: 70%">
+                                                <option value="">@localizer["RunCardDefaultLabel"]</option>
+                                                <option value="0">@localizer["RunCardNoGateLabel"]</option>
+                                                <option value="2">Partially Staffed</option>
+                                                <option value="3">Degraded</option>
+                                                <option value="4">Fully Staffed</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">@localizer["RunCardHomeStationLabel"]</label>
+                                        <div class="col-sm-9"><select id="cardHomeStation" class="form-control" style="width: 70%"></select></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="tab-triggers" class="tab-pane">
+                                <div class="panel-body">
+                                    <p class="text-muted">@localizer["RunCardTriggersHelp"]</p>
+                                    <table class="table table-striped" id="triggersTable">
+                                        <thead>
+                                            <tr>
+                                                <th>@localizer["RunCardTriggerTypeLabel"]</th>
+                                                <th>@localizer["CallPriority"]</th>
+                                                <th>@localizer["CallType"]</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                    <button type="button" class="btn btn-white" id="addTriggerButton">@localizer["RunCardAddTriggerButton"]</button>
+                                </div>
+                            </div>
+
+                            <div id="tab-alarms" class="tab-pane">
+                                <div class="panel-body">
+                                    <p class="text-muted">@localizer["RunCardAlarmLevelsHelp"]</p>
+                                    <div id="alarmLevels"></div>
+                                    <button type="button" class="btn btn-white" id="addAlarmLevelButton">@localizer["RunCardAddAlarmLevelButton"]</button>
+                                </div>
+                            </div>
+
+                            <div id="tab-selections" class="tab-pane">
+                                <div class="panel-body">
+                                    <p class="text-muted">@localizer["RunCardSelectionsHelp"]</p>
+                                    <h4>@localizer["UnitCallDispatchStatusLabel"]</h4>
+                                    <div id="unitStatusSelections"></div>
+                                    <h4>@localizer["PersonCallDispatchStatusLabel"]</h4>
+                                    <div id="personnelStatusSelections" class="row" style="margin-left: 0"></div>
+                                    <h4>@localizer["RunCardStaffingSelectionsLabel"]</h4>
+                                    <div id="staffingSelections" class="row" style="margin-left: 0"></div>
+                                </div>
+                            </div>
+
+                            <div id="tab-test" class="tab-pane">
+                                <div class="panel-body form-horizontal">
+                                    <p class="text-muted">@localizer["RunCardTestHelp"]</p>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">@localizer["CallPriority"]</label>
+                                        <div class="col-sm-9"><select id="testPriority" class="form-control" style="width: 50%"></select></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">@localizer["CallType"]</label>
+                                        <div class="col-sm-9"><select id="testCallType" class="form-control" style="width: 50%"></select></div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label">Latitude / Longitude</label>
+                                        <div class="col-sm-9">
+                                            <input type="text" id="testLatitude" class="form-control" style="width: 24%; display: inline-block" placeholder="39.7392" />
+                                            <input type="text" id="testLongitude" class="form-control" style="width: 24%; display: inline-block" placeholder="-104.9903" />
+                                            <input type="number" id="testAlarmLevel" class="form-control" style="width: 15%; display: inline-block" min="1" value="1" title="@localizer["RunCardAlarmLevelsHeader"]" />
+                                            <button type="button" class="btn btn-primary" id="runTestButton">@localizer["RunCardRunTestButton"]</button>
+                                        </div>
+                                    </div>
+                                    <pre id="testResults" style="display: none; max-height: 500px; overflow: auto"></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="hr-line-dashed"></div>
+                    <div class="form-group">
+                        <a class="btn btn-white" asp-controller="RunCards" asp-action="Index" asp-route-area="User">@commonLocalizer["Cancel"]</a>
+                        <button class="btn btn-primary" type="button" id="saveCardButton">@commonLocalizer["Save"]</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+<script>
+    $(function () {
+        var card = @Html.Raw(cardJson);
+        var lookups = @Html.Raw(lookupsJson);
+
+        card.triggers = card.triggers || [];
+        card.alarmLevels = card.alarmLevels || [];
+        card.selections = card.selections || [];
+
+        function optionList(items, selected, allowEmpty, emptyText) {
+            var html = allowEmpty ? '<option value="">' + (emptyText || '') + '</option>' : '';
+            $.each(items, function (i, item) {
+                var sel = (selected !== null && selected !== undefined && String(selected) === String(item.id)) ? ' selected' : '';
+                html += '<option value="' + item.id + '"' + sel + '>' + $('<span>').text(item.name).html() + '</option>';
+            });
+            return html;
+        }
+
+        // ── General tab ──
+        $('#cardName').val(card.name || '');
+        $('#cardDescription').val(card.description || '');
+        $('#cardDisabled').prop('checked', card.isDisabled === true);
+        $('#cardModeOverride').val(card.dispatchModeOverride === null || card.dispatchModeOverride === undefined ? '' : String(card.dispatchModeOverride));
+        $('#cardAutoOverride').val(card.autoDispatchOverride === null || card.autoDispatchOverride === undefined ? '' : String(card.autoDispatchOverride));
+        $('#cardStaffingOverride').val(card.minimumStaffingLevelOverride === null || card.minimumStaffingLevelOverride === undefined ? '' : String(card.minimumStaffingLevelOverride));
+        $('#cardHomeStation').html(optionList(lookups.stations, card.homeStationGroupId, true, '@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardNoHomeStationLabel"].Value))'));
+
+        // ── Triggers tab ──
+        function renderTriggers() {
+            var $body = $('#triggersTable tbody').empty();
+            $.each(card.triggers, function (index, trigger) {
+                var row = '<tr data-index="' + index + '">';
+                row += '<td><select class="form-control trigger-type">';
+                row += '<option value="0"' + (trigger.triggerType === 0 ? ' selected' : '') + '>@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardTriggerPriorityOption"].Value))</option>';
+                row += '<option value="1"' + (trigger.triggerType === 1 ? ' selected' : '') + '>@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardTriggerTypeOption"].Value))</option>';
+                row += '<option value="2"' + (trigger.triggerType === 2 ? ' selected' : '') + '>@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardTriggerBothOption"].Value))</option>';
+                row += '</select></td>';
+                row += '<td><select class="form-control trigger-priority">' + optionList(lookups.priorities, trigger.priority, true) + '</select></td>';
+                row += '<td><select class="form-control trigger-calltype">' + optionList(lookups.callTypes, trigger.callTypeId, true) + '</select></td>';
+                row += '<td><button type="button" class="btn btn-danger btn-xs remove-trigger">@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(commonLocalizer["Delete"].Value))</button></td>';
+                row += '</tr>';
+                $body.append(row);
+            });
+        }
+
+        $('#addTriggerButton').on('click', function () {
+            card.triggers.push({ runCardTriggerId: 0, triggerType: 2, priority: null, callTypeId: null });
+            renderTriggers();
+        });
+
+        $('#triggersTable').on('click', '.remove-trigger', function () {
+            card.triggers.splice($(this).closest('tr').data('index'), 1);
+            renderTriggers();
+        });
+
+        $('#triggersTable').on('change', 'select', function () {
+            var index = $(this).closest('tr').data('index');
+            var $row = $(this).closest('tr');
+            card.triggers[index].triggerType = parseInt($row.find('.trigger-type').val(), 10);
+            var priority = $row.find('.trigger-priority').val();
+            var callType = $row.find('.trigger-calltype').val();
+            card.triggers[index].priority = priority === '' ? null : parseInt(priority, 10);
+            card.triggers[index].callTypeId = callType === '' ? null : parseInt(callType, 10);
+        });
+
+        // ── Alarm levels tab ──
+        function requirementRows(requirements, items, cssClass) {
+            var html = '';
+            $.each(requirements, function (i, requirement) {
+                var itemId = requirement.unitTypeId !== undefined ? requirement.unitTypeId : requirement.personnelRoleId;
+                html += '<div class="form-inline m-b-xs ' + cssClass + '" data-req-index="' + i + '">';
+                html += '<select class="form-control req-item">' + optionList(items, itemId, false) + '</select> ';
+                html += '<input type="number" class="form-control req-count" style="width: 80px" min="1" value="' + (requirement.requiredCount || 1) + '" /> ';
+                html += '<button type="button" class="btn btn-danger btn-xs remove-req">@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(commonLocalizer["Delete"].Value))</button>';
+                html += '</div>';
+            });
+            return html;
+        }
+
+        function renderAlarmLevels() {
+            var $container = $('#alarmLevels').empty();
+            card.alarmLevels.sort(function (a, b) { return a.alarmLevel - b.alarmLevel; });
+
+            $.each(card.alarmLevels, function (index, level) {
+                var html = '<div class="panel panel-default" data-level-index="' + index + '">';
+                html += '<div class="panel-heading"><strong>@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardAlarmLevelLabel"].Value)) ' + level.alarmLevel + '</strong> ';
+                html += '<input type="text" class="form-control level-name" style="width: 250px; display: inline-block" placeholder="@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardAlarmLevelNamePlaceholder"].Value))" value="' + $('<span>').text(level.name || '').html() + '" /> ';
+                html += '<button type="button" class="btn btn-danger btn-xs pull-right remove-level">@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(commonLocalizer["Delete"].Value))</button></div>';
+                html += '<div class="panel-body">';
+                html += '<h5>@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardUnitRequirementsLabel"].Value))</h5>';
+                html += '<div class="unit-reqs">' + requirementRows(level.unitRequirements || [], lookups.unitTypes, 'unit-req') + '</div>';
+                html += '<button type="button" class="btn btn-white btn-xs add-unit-req">@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardAddUnitRequirementButton"].Value))</button>';
+                html += '<h5>@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardRoleRequirementsLabel"].Value))</h5>';
+                html += '<div class="role-reqs">' + requirementRows(level.roleRequirements || [], lookups.roles, 'role-req') + '</div>';
+                html += '<button type="button" class="btn btn-white btn-xs add-role-req">@Html.Raw(System.Web.HttpUtility.JavaScriptStringEncode(localizer["RunCardAddRoleRequirementButton"].Value))</button>';
+                html += '</div></div>';
+                $container.append(html);
+            });
+        }
+
+        $('#addAlarmLevelButton').on('click', function () {
+            var next = card.alarmLevels.length > 0 ? Math.max.apply(null, card.alarmLevels.map(function (l) { return l.alarmLevel; })) + 1 : 1;
+            card.alarmLevels.push({ runCardAlarmLevelId: 0, alarmLevel: next, name: '', unitRequirements: [], roleRequirements: [] });
+            renderAlarmLevels();
+        });
+
+        $('#alarmLevels').on('click', '.remove-level', function () {
+            card.alarmLevels.splice($(this).closest('.panel').data('level-index'), 1);
+            $.each(card.alarmLevels, function (i, level) { level.alarmLevel = i + 1; });
+            renderAlarmLevels();
+        });
+
+        $('#alarmLevels').on('click', '.add-unit-req', function () {
+            var level = card.alarmLevels[$(this).closest('.panel').data('level-index')];
+            level.unitRequirements = level.unitRequirements || [];
+            level.unitRequirements.push({ runCardUnitRequirementId: 0, unitTypeId: lookups.unitTypes.length ? lookups.unitTypes[0].id : 0, requiredCount: 1 });
+            renderAlarmLevels();
+        });
+
+        $('#alarmLevels').on('click', '.add-role-req', function () {
+            var level = card.alarmLevels[$(this).closest('.panel').data('level-index')];
+            level.roleRequirements = level.roleRequirements || [];
+            level.roleRequirements.push({ runCardRoleRequirementId: 0, personnelRoleId: lookups.roles.length ? lookups.roles[0].id : 0, requiredCount: 1 });
+            renderAlarmLevels();
+        });
+
+        $('#alarmLevels').on('click', '.remove-req', function () {
+            var level = card.alarmLevels[$(this).closest('.panel').data('level-index')];
+            var $req = $(this).closest('div[data-req-index]');
+            if ($req.hasClass('unit-req')) {
+                level.unitRequirements.splice($req.data('req-index'), 1);
+            } else {
+                level.roleRequirements.splice($req.data('req-index'), 1);
+            }
+            renderAlarmLevels();
+        });
+
+        $('#alarmLevels').on('change', '.level-name', function () {
+            card.alarmLevels[$(this).closest('.panel').data('level-index')].name = $(this).val();
+        });
+
+        $('#alarmLevels').on('change', '.req-item, .req-count', function () {
+            var level = card.alarmLevels[$(this).closest('.panel').data('level-index')];
+            var $req = $(this).closest('div[data-req-index]');
+            var target = $req.hasClass('unit-req') ? level.unitRequirements[$req.data('req-index')] : level.roleRequirements[$req.data('req-index')];
+            var itemId = parseInt($req.find('.req-item').val(), 10);
+            if ($req.hasClass('unit-req')) { target.unitTypeId = itemId; } else { target.personnelRoleId = itemId; }
+            target.requiredCount = parseInt($req.find('.req-count').val(), 10) || 1;
+        });
+
+        // ── Selections tab ──
+        function isSelected(selectionType, unitTypeId, option) {
+            return card.selections.some(function (s) {
+                return s.selectionType === selectionType
+                    && String(s.unitTypeId || '') === String(unitTypeId || '')
+                    && s.isCustomState === option.isCustomState
+                    && s.stateId === option.stateId;
+            });
+        }
+
+        function checkboxes(selectionType, unitTypeId, options) {
+            var html = '';
+            $.each(options, function (i, option) {
+                var checked = isSelected(selectionType, unitTypeId, option) ? ' checked' : '';
+                html += '<label class="checkbox-inline" style="margin-right: 12px">';
+                html += '<input type="checkbox" class="selection-check" data-selection-type="' + selectionType + '" data-unit-type-id="' + (unitTypeId || '') + '" data-custom="' + option.isCustomState + '" data-state-id="' + option.stateId + '"' + checked + '> ' + $('<span>').text(option.text).html();
+                html += '</label>';
+            });
+            return html;
+        }
+
+        function renderSelections() {
+            var $units = $('#unitStatusSelections').empty();
+            $.each(lookups.unitTypes, function (i, unitType) {
+                var options = lookups.unitStatusOptions[String(unitType.id)] || [];
+                $units.append('<div class="m-b-sm"><strong>' + $('<span>').text(unitType.name).html() + '</strong><br/>' + checkboxes(1, unitType.id, options) + '</div>');
+            });
+            $('#personnelStatusSelections').html(checkboxes(2, null, lookups.personnelStatusOptions));
+            $('#staffingSelections').html(checkboxes(3, null, lookups.staffingOptions));
+        }
+
+        $('#tab-selections').on('change', '.selection-check', function () {
+            var $check = $(this);
+            var selection = {
+                runCardAvailabilitySelectionId: 0,
+                selectionType: parseInt($check.data('selection-type'), 10),
+                unitTypeId: $check.data('unit-type-id') === '' ? null : parseInt($check.data('unit-type-id'), 10),
+                isCustomState: String($check.data('custom')) === 'true',
+                stateId: parseInt($check.data('state-id'), 10)
+            };
+
+            if ($check.is(':checked')) {
+                card.selections.push(selection);
+            } else {
+                card.selections = card.selections.filter(function (s) {
+                    return !(s.selectionType === selection.selectionType
+                        && String(s.unitTypeId || '') === String(selection.unitTypeId || '')
+                        && s.isCustomState === selection.isCustomState
+                        && s.stateId === selection.stateId);
+                });
+            }
+        });
+
+        // ── Test tab ──
+        $('#testPriority').html(optionList(lookups.priorities, null, false));
+        $('#testCallType').html(optionList(lookups.callTypes.map(function (t) { return { id: t.name, name: t.name }; }), null, true));
+
+        $('#runTestButton').on('click', function () {
+            $.getJSON('@Url.Action("Preview", "RunCards", new { area = "User" })', {
+                priority: $('#testPriority').val(),
+                type: $('#testCallType').val(),
+                latitude: $('#testLatitude').val() || null,
+                longitude: $('#testLongitude').val() || null,
+                alarmLevel: $('#testAlarmLevel').val() || 1
+            }, function (response) {
+                if (response.success) {
+                    $('#testResults').show().text(JSON.stringify(response.result, null, 2));
+                }
+            });
+        });
+
+        // ── Save ──
+        $('#saveCardButton').on('click', function () {
+            var payload = {
+                runCardId: card.runCardId || 0,
+                name: $('#cardName').val(),
+                description: $('#cardDescription').val(),
+                isDisabled: $('#cardDisabled').is(':checked'),
+                dispatchModeOverride: $('#cardModeOverride').val() === '' ? null : parseInt($('#cardModeOverride').val(), 10),
+                autoDispatchOverride: $('#cardAutoOverride').val() === '' ? null : parseInt($('#cardAutoOverride').val(), 10),
+                minimumStaffingLevelOverride: $('#cardStaffingOverride').val() === '' ? null : parseInt($('#cardStaffingOverride').val(), 10),
+                homeStationGroupId: $('#cardHomeStation').val() === '' ? null : parseInt($('#cardHomeStation').val(), 10),
+                triggers: card.triggers,
+                alarmLevels: card.alarmLevels,
+                selections: card.selections
+            };
+
+            $.ajax({
+                url: '@Url.Action("Save", "RunCards", new { area = "User" })',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(payload),
+                success: function (response) {
+                    if (response.success) {
+                        window.location.href = '@Url.Action("Index", "RunCards", new { area = "User" })';
+                    } else {
+                        $('#saveError').show().text(response.message);
+                    }
+                },
+                error: function () {
+                    $('#saveError').show().text('Save failed.');
+                }
+            });
+        });
+
+        renderTriggers();
+        renderAlarmLevels();
+        renderSelections();
+    });
+</script>
+}

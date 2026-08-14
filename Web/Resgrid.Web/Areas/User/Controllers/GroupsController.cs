@@ -616,6 +616,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 		[Authorize(Policy = ResgridResources.GenericGroup_Update)]
 		public async Task<IActionResult> SaveGeofence([FromBody]SaveGeofenceModel model, CancellationToken cancellationToken)
 		{
+			// Not an [ApiController]; a body that fails to bind leaves model null instead of auto-400ing
+			if (model == null)
+				return new StatusCodeResult((int)HttpStatusCode.BadRequest);
+
 			var group = await _departmentGroupsService.GetGroupByIdAsync(model.DepartmentGroupId);
 
 			if (group == null)
@@ -626,6 +630,16 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (!await _authorizationService.CanUserEditDepartmentGroupAsync(UserId, model.DepartmentGroupId))
 				return Unauthorized();
+
+			// An empty fence clears the response area; anything else must parse as a
+			// polygon (>= 3 vertices) or downstream dispatch containment silently skips it.
+			if (!string.IsNullOrWhiteSpace(model.GeoFence) && GeoMath.ParseGeofence(model.GeoFence) == null)
+			{
+				model.Success = false;
+				model.Message = "The geofence is not a valid polygon. Draw an area with at least three points and try again.";
+
+				return Json(model);
+			}
 
 			group.GeofenceColor = model.Color;
 			group.Geofence = model.GeoFence;

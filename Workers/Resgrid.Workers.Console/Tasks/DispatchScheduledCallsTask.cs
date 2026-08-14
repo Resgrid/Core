@@ -41,8 +41,33 @@ namespace Resgrid.Workers.Console.Tasks
 				{
 					foreach (var call in pendingCalls)
 					{
+						var populatedCall = await callsService.PopulateCallData(call, true, false, false, true, true, true, true, false, false);
+
+						// Run card auto-dispatch: scheduled calls are enriched at dispatch
+						// time, when the call's location and resource picture are final.
+						try
+						{
+							var featureToggleService = Bootstrapper.GetKernel().Resolve<IFeatureToggleService>();
+							if (await featureToggleService.IsEnabledAsync(Resgrid.Model.FeatureFlagKeys.DispatchRunCards, populatedCall.DepartmentId))
+							{
+								var dispatchRecommendationService = Bootstrapper.GetKernel().Resolve<IDispatchRecommendationService>();
+								var recommendation = await dispatchRecommendationService.EnrichCallForDispatchAsync(populatedCall, 1, true, cancellationToken);
+
+								if (recommendation.MatchedRunCardId.HasValue && recommendation.AutoDispatch && recommendation.HasRecommendations)
+								{
+									populatedCall = await callsService.SaveCallAsync(populatedCall, cancellationToken);
+									await dispatchRecommendationService.RecordActivationAsync(populatedCall, recommendation, null, cancellationToken);
+								}
+							}
+						}
+						catch (Exception recEx)
+						{
+							// A recommendation failure must never block the scheduled dispatch.
+							Resgrid.Framework.Logging.LogException(recEx);
+						}
+
 						var cqi = new CallQueueItem();
-						cqi.Call = await callsService.PopulateCallData(call, true, false, false, true, true, true, true, false, false);
+						cqi.Call = populatedCall;
 
 						if (cqi.Call.Dispatches != null && cqi.Call.Dispatches.Any())
 							cqi.Profiles = await userProfileService.GetSelectedUserProfilesAsync(cqi.Call.Dispatches.Select(x => x.UserId).ToList());

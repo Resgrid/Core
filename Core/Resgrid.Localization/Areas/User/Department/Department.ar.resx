@@ -738,4 +738,208 @@
   <data name="ForceChatbotSecurityPinHelp" xml:space="preserve">
     <value>يتطلب من كل عضو تأكيد الإجراءات الخطرة أو على مستوى القسم عبر المساعد/الرسائل النصية باستخدام رمز PIN الأمان الشخصي المكون من 4 أرقام. يحصل الأعضاء الذين ليس لديهم رمز PIN على رمز يتم إنشاؤه عشوائيًا (يمكن عرضه في صفحة ملفهم الشخصي).</value>
   </data>
+  <data name="RunCardSettingsHeader" xml:space="preserve">
+    <value>بطاقات الإرسال والإرسال التلقائي</value>
+  </data>
+  <data name="DispatchRecommendationModeLabel" xml:space="preserve">
+    <value>وضع الاختيار التلقائي للموارد</value>
+  </data>
+  <data name="DispatchRecommendationModeHelp" xml:space="preserve">
+    <value>كيفية اختيار النظام للوحدات والأفراد لملء بطاقة الإرسال: حسب منطقة استجابة المحطة التي تحتوي على النداء (مع الانتقال إلى أقرب محطة عند النقص) أو حسب أقرب الموارد المتاحة.</value>
+  </data>
+  <data name="DispatchAutoDispatchLabel" xml:space="preserve">
+    <value>إرسال الموارد الموصى بها تلقائيًا</value>
+  </data>
+  <data name="DispatchAutoDispatchHelp" xml:space="preserve">
+    <value>عند التفعيل، ترسل بطاقات الإرسال المطابقة الموارد فور إنشاء النداء. عند الإيقاف، تُملأ التوصيات مسبقًا في صفحة النداء الجديد لمراجعة المرسل.</value>
+  </data>
+  <data name="RestPeriodLabel" xml:space="preserve">
+    <value>فترة الراحة (بالدقائق)</value>
+  </data>
+  <data name="RestPeriodHelp" xml:space="preserve">
+    <value>بعد إرسال وحدة أو شخص، يتم خفض أولويتهم لهذا العدد من الدقائق حتى لا تُرسل الموارد نفسها بشكل متتالٍ. 0 لتعطيل الخاصية.</value>
+  </data>
+  <data name="StaffingGateLabel" xml:space="preserve">
+    <value>الحد الأدنى لطاقم الوحدة للإرسال</value>
+  </data>
+  <data name="StaffingGateHelp" xml:space="preserve">
+    <value>الوحدات التي يقل طاقمها عن هذا المستوى لا يتم اختيارها حتى لو تطابقت حالتها. الوحدات بدون أدوار محددة تمر دائمًا.</value>
+  </data>
+  <data name="MoveUpEnabledLabel" xml:space="preserve">
+    <value>تمكين توصيات إعادة التمركز / سد النقص</value>
+  </data>
+  <data name="MoveUpEnabledHelp" xml:space="preserve">
+    <value>بعد الاختيار، يتحقق من الحد الأدنى لتغطية المحطات ويوصي بنقل الموارد إلى المحطات المستنزفة.</value>
+  </data>
+  <data name="ClosestUnitTuningHeader" xml:space="preserve">
+    <value>ضبط استجابة أقرب وحدة</value>
+  </data>
+  <data name="MaxLocationAgeLabel" xml:space="preserve">
+    <value>أقصى عمر لموقع الوحدة (بالثواني)</value>
+  </data>
+  <data name="PersonnelMaxLocationAgeLabel" xml:space="preserve">
+    <value>أقصى عمر لموقع الأفراد (بالثواني)</value>
+  </data>
+  <data name="MaxRadiusLabel" xml:space="preserve">
+    <value>أقصى نصف قطر للاستجابة (بالأمتار)</value>
+  </data>
+  <data name="IncludeStaleLabel" xml:space="preserve">
+    <value>تضمين المواقع القديمة</value>
+  </data>
+  <data name="UseRoutedEtaLabel" xml:space="preserve">
+    <value>الترتيب حسب وقت الوصول المقدر بالقيادة</value>
+  </data>
+  <data name="UseRoutedEtaHelp" xml:space="preserve">
+    <value>يعيد ترتيب أقرب المرشحين باستخدام وقت القيادة بدلاً من المسافة المستقيمة. يستخدم مزود الخرائط وقد يضيف تكلفة وتأخيرًا.</value>
+  </data>
+  <data name="EtaShortlistSizeLabel" xml:space="preserve">
+    <value>حجم القائمة المختصرة لوقت الوصول</value>
+  </data>
+  <data name="StationCoverageHeader" xml:space="preserve">
+    <value>الحد الأدنى لتغطية المحطات</value>
+  </data>
+  <data name="StationCoverageHelp" xml:space="preserve">
+    <value>يحدد الحد الأدنى لعدد كل نوع وحدة أو دور أفراد يجب أن يظل متاحًا في المحطة. عندما يؤدي الإرسال إلى انخفاض التغطية دون الحد الأدنى، يوصي النظام بإعادة التمركز.</value>
+  </data>
+  <data name="StationCoverageStationLabel" xml:space="preserve">
+    <value>المحطة</value>
+  </data>
+  <data name="StationCoverageTargetLabel" xml:space="preserve">
+    <value>نوع الوحدة / الدور</value>
+  </data>
+  <data name="StationCoverageMinCountLabel" xml:space="preserve">
+    <value>الحد الأدنى المتاح</value>
+  </data>
+  <data name="StationCoverageRadiusLabel" xml:space="preserve">
+    <value>نصف القطر (بالأمتار، وضع أقرب وحدة)</value>
+  </data>
+  <data name="StationCoverageEnabledLabel" xml:space="preserve">
+    <value>مُفعّل</value>
+  </data>
+  <data name="RunCardsHeader" xml:space="preserve">
+    <value>بطاقات الإرسال</value>
+  </data>
+  <data name="RunCardsHelp" xml:space="preserve">
+    <value>حزم استجابة مخطط لها مسبقًا تُطابق مع النداءات حسب الأولوية والنوع. تحدد كل بطاقة أنواع الوحدات وأدوار الأفراد لكل مستوى إنذار والحالات التي تعتبر متاحة.</value>
+  </data>
+  <data name="NewRunCardButton" xml:space="preserve">
+    <value>بطاقة إرسال جديدة</value>
+  </data>
+  <data name="RunCardEditButton" xml:space="preserve">
+    <value>تعديل</value>
+  </data>
+  <data name="RunCardDeleteConfirm" xml:space="preserve">
+    <value>حذف هذه البطاقة؟ تحتفظ النداءات التي استخدمتها بالفعل بسجل الإرسال الخاص بها.</value>
+  </data>
+  <data name="RunCardNameLabel" xml:space="preserve">
+    <value>الاسم</value>
+  </data>
+  <data name="RunCardDescriptionLabel" xml:space="preserve">
+    <value>الوصف</value>
+  </data>
+  <data name="RunCardDisabledLabel" xml:space="preserve">
+    <value>معطلة</value>
+  </data>
+  <data name="RunCardGeneralTab" xml:space="preserve">
+    <value>عام</value>
+  </data>
+  <data name="RunCardDefaultLabel" xml:space="preserve">
+    <value>الافتراضي للإدارة</value>
+  </data>
+  <data name="RunCardManualOnlyLabel" xml:space="preserve">
+    <value>يدوي فقط (بدون اختيار تلقائي)</value>
+  </data>
+  <data name="RunCardPrePopulateLabel" xml:space="preserve">
+    <value>تعبئة مسبقة لمراجعة المرسل</value>
+  </data>
+  <data name="RunCardAutoDispatchOptionLabel" xml:space="preserve">
+    <value>إرسال تلقائي</value>
+  </data>
+  <data name="RunCardNoGateLabel" xml:space="preserve">
+    <value>بدون شرط طاقم</value>
+  </data>
+  <data name="RunCardHomeStationLabel" xml:space="preserve">
+    <value>المحطة الأم (تُستخدم عندما لا يكون للنداء موقع)</value>
+  </data>
+  <data name="RunCardNoHomeStationLabel" xml:space="preserve">
+    <value>لا شيء</value>
+  </data>
+  <data name="RunCardTriggersHeader" xml:space="preserve">
+    <value>المشغلات</value>
+  </data>
+  <data name="RunCardTriggersHelp" xml:space="preserve">
+    <value>تتطابق البطاقة مع النداء عندما يتطابق أي مشغل. يفوز التطابق الأكثر تحديدًا (الأولوية + النوع يتغلب على النوع، الذي يتغلب على الأولوية).</value>
+  </data>
+  <data name="RunCardTriggerTypeLabel" xml:space="preserve">
+    <value>نوع المشغل</value>
+  </data>
+  <data name="RunCardTriggerPriorityOption" xml:space="preserve">
+    <value>أولوية النداء</value>
+  </data>
+  <data name="RunCardTriggerTypeOption" xml:space="preserve">
+    <value>نوع النداء</value>
+  </data>
+  <data name="RunCardTriggerBothOption" xml:space="preserve">
+    <value>الأولوية والنوع</value>
+  </data>
+  <data name="RunCardAddTriggerButton" xml:space="preserve">
+    <value>إضافة مشغل</value>
+  </data>
+  <data name="RunCardAlarmLevelsHeader" xml:space="preserve">
+    <value>مستويات الإنذار</value>
+  </data>
+  <data name="RunCardAlarmLevelsHelp" xml:space="preserve">
+    <value>متطلبات كل مستوى إنذار تراكمية: التصعيد إلى المستوى 2 يرسل موارد المستوى 2 بالإضافة إلى ما تم تعيينه بالفعل.</value>
+  </data>
+  <data name="RunCardAlarmLevelLabel" xml:space="preserve">
+    <value>إنذار</value>
+  </data>
+  <data name="RunCardAlarmLevelNamePlaceholder" xml:space="preserve">
+    <value>اسم اختياري، مثل حريق مؤكد</value>
+  </data>
+  <data name="RunCardAddAlarmLevelButton" xml:space="preserve">
+    <value>إضافة مستوى إنذار</value>
+  </data>
+  <data name="RunCardUnitRequirementsLabel" xml:space="preserve">
+    <value>متطلبات أنواع الوحدات</value>
+  </data>
+  <data name="RunCardRoleRequirementsLabel" xml:space="preserve">
+    <value>متطلبات أدوار الأفراد</value>
+  </data>
+  <data name="RunCardAddUnitRequirementButton" xml:space="preserve">
+    <value>إضافة نوع وحدة</value>
+  </data>
+  <data name="RunCardAddRoleRequirementButton" xml:space="preserve">
+    <value>إضافة دور</value>
+  </data>
+  <data name="RunCardSelectionsHeader" xml:space="preserve">
+    <value>الحالات القابلة للإرسال</value>
+  </data>
+  <data name="RunCardSelectionsHelp" xml:space="preserve">
+    <value>الحالات وأوضاع الجاهزية التي تعتبر متاحة لهذه البطاقة. اترك القسم فارغًا لاستخدام قواعد التوفر القياسية.</value>
+  </data>
+  <data name="RunCardStaffingSelectionsLabel" xml:space="preserve">
+    <value>مستويات الجاهزية</value>
+  </data>
+  <data name="RunCardTestHeader" xml:space="preserve">
+    <value>اختبار / محاكاة</value>
+  </data>
+  <data name="RunCardTestHelp" xml:space="preserve">
+    <value>معاينة ما سترسله البطاقات الآن لأولوية ونوع وموقع — لا يتم إرسال أي شيء.</value>
+  </data>
+  <data name="RunCardRunTestButton" xml:space="preserve">
+    <value>تشغيل الاختبار</value>
+  </data>
+  <data name="RunCardSavedMessage" xml:space="preserve">
+    <value>تم حفظ البطاقة.</value>
+  </data>
+  <data name="CallPriority" xml:space="preserve">
+    <value>أولوية النداء</value>
+  </data>
+  <data name="CallType" xml:space="preserve">
+    <value>نوع النداء</value>
+  </data>
+  <data name="RunCardsNav" xml:space="preserve">
+    <value>بطاقات الإرسال</value>
+  </data>
 </root>

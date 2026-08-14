@@ -43,6 +43,10 @@
                 }
                 @if (ClaimsAuthorizationHelper.CanCreateCall())
                 {
+                    if (Model.Call.State == 0 && Model.Call.ActiveRunCardId.HasValue)
+                    {
+                        <button class="btn btn-danger" id="strikeNextAlarmButton" data-call-id="@Model.Call.CallId">Strike Alarm @(Model.Call.AlarmLevel + 1)</button>
+                    }
                     <a class="btn btn-primary" asp-controller="Dispatch" asp-action="UpdateCall" asp-route-area="User" asp-route-callId="@Model.Call.CallId">@localizer["UpdateCallHeader"]</a>
                     <a style="text-decoration:none;" class="btn btn-warning" asp-controller="Dispatch" asp-action="CloseCall" asp-route-area="User" asp-route-callId="@Model.Call.CallId">@localizer["CloseCallHeader"]</a>
                 }
@@ -50,6 +54,29 @@
         </div>
     </div>
 </div>
+
+@if (Model.Call.ActiveRunCardId.HasValue)
+{
+    <script>
+        $(function () {
+            $('#strikeNextAlarmButton').on('click', function () {
+                if (!confirm('Escalate this call to alarm level @(Model.Call.AlarmLevel + 1)? The run card\'s next-alarm resources will be dispatched.')) {
+                    return;
+                }
+
+                $.post('@Url.Action("EscalateCall", "Dispatch", new { area = "User" })', {
+                    callId: $(this).data('call-id')
+                }, function (response) {
+                    if (response.success) {
+                        window.location.reload();
+                    } else {
+                        alert(response.message);
+                    }
+                });
+            });
+        });
+    </script>
+}
 
 <div class="row">
     <div class="col-lg-8">

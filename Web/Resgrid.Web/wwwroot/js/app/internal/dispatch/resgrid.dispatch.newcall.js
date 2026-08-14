@@ -51,10 +51,16 @@ var resgrid;
 
                 $("#CallPriority").change(function () {
                     checkForProtocols();
+                    newcall.checkForRecommendations();
                 });
 
                 $("#Call_Type").change(function () {
                     checkForProtocols();
+                    newcall.checkForRecommendations();
+                });
+
+                $("#Latitude, #Longitude").change(function () {
+                    newcall.checkForRecommendations();
                 });
 
                 let noteQuillDescription = new Quill('#note-container', {
@@ -493,7 +499,83 @@ var resgrid;
             }
             newcall.getStatusField = getStatusField;
 
+            // ── Run card recommendations (pre-populate mode) ──
+            function prop(obj, name) {
+                if (!obj) return undefined;
+                if (obj[name] !== undefined) return obj[name];
+                var pascal = name.charAt(0).toUpperCase() + name.slice(1);
+                return obj[pascal];
+            }
+            function checkForRecommendations() {
+                var callPriorityVal = $('#CallPriority').val();
+                var callTypeVal = $('#Call_Type').val();
+                var lat = $('#Latitude').val();
+                var lon = $('#Longitude').val();
+
+                $.ajax({
+                    url: resgrid.absoluteBaseUrl + '/User/Dispatch/GetDispatchRecommendation',
+                    data: { priority: callPriorityVal, type: callTypeVal, latitude: lat || null, longitude: lon || null },
+                    type: 'GET'
+                }).done(function (response) {
+                    var panel = $('#runCardPanel');
+                    var row = $('#runCardPanelRow');
+                    var result = prop(response, 'result');
+
+                    if (!response || !prop(response, 'success') || !result || !prop(result, 'matchedRunCardId')) {
+                        row.hide();
+                        return;
+                    }
+
+                    var autoDispatch = prop(result, 'autoDispatch') === true;
+                    var units = prop(result, 'units') || [];
+                    var personnel = prop(result, 'personnel') || [];
+                    var shortfalls = prop(result, 'shortfalls') || [];
+                    var notes = prop(result, 'notes') || [];
+
+                    var html = '<strong>' + $('<span>').text(prop(result, 'matchedRunCardName') || '').html() + '</strong>';
+                    if (autoDispatch) {
+                        html += ' <span class="label label-warning">Auto-dispatch is ON — recommended resources will be dispatched automatically on save.</span>';
+                    }
+
+                    if (units.length) {
+                        html += '<div><b>Units:</b> ' + units.map(function (u) {
+                            var text = prop(u, 'unitName') || ('#' + prop(u, 'unitId'));
+                            var distance = prop(u, 'distanceMeters');
+                            if (distance) text += ' (' + (distance / 1000).toFixed(1) + ' km)';
+                            return $('<span>').text(text).html();
+                        }).join(', ') + '</div>';
+                    }
+                    if (personnel.length) {
+                        html += '<div><b>Personnel:</b> ' + personnel.length + ' recommended</div>';
+                    }
+                    if (shortfalls.length) {
+                        html += '<div class="text-danger"><b>Shortfalls:</b> ' + shortfalls.map(function (s) {
+                            return $('<span>').text((prop(s, 'typeOrRoleName') || ('#' + prop(s, 'typeOrRoleId'))) + ': ' + prop(s, 'filledCount') + '/' + prop(s, 'requiredCount')).html();
+                        }).join(', ') + '</div>';
+                    }
+                    if (notes.length) {
+                        html += '<div class="text-muted" style="font-size: 11px;">' + notes.map(function (n) { return $('<span>').text(n).html(); }).join('<br/>') + '</div>';
+                    }
+
+                    panel.html(html);
+                    row.show();
+
+                    // Pre-check recommended resources when NOT auto-dispatching (dispatcher
+                    // reviews and can uncheck; the normal form post picks these up).
+                    if (!autoDispatch) {
+                        units.forEach(function (u) {
+                            $('input[name="dispatchUnit_' + prop(u, 'unitId') + '"]').prop('checked', true);
+                        });
+                        personnel.forEach(function (p) {
+                            $('input[name="dispatchUser_' + prop(p, 'userId') + '"]').prop('checked', true);
+                        });
+                    }
+                });
+            }
+            newcall.checkForRecommendations = checkForRecommendations;
+
             checkForProtocols();
+            checkForRecommendations();
         })(newcall = dispatch.newcall || (dispatch.newcall = {}));
     })(dispatch = resgrid.dispatch || (resgrid.dispatch = {}));
 })(resgrid || (resgrid = {}));

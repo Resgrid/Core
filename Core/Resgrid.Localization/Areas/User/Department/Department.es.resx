@@ -624,4 +624,208 @@
   <data name="ForceChatbotSecurityPinHelp" xml:space="preserve">
     <value>Exige que cada miembro confirme las acciones peligrosas o de todo el departamento del asistente/mensajes de texto con su PIN de seguridad personal de 4 dígitos. Los miembros sin PIN reciben uno generado aleatoriamente (visible en su página de perfil).</value>
   </data>
+  <data name="RunCardSettingsHeader" xml:space="preserve">
+    <value>Tarjetas de despacho y despacho automático</value>
+  </data>
+  <data name="DispatchRecommendationModeLabel" xml:space="preserve">
+    <value>Modo de selección automática de recursos</value>
+  </data>
+  <data name="DispatchRecommendationModeHelp" xml:space="preserve">
+    <value>Cómo el sistema selecciona unidades y personal para completar una tarjeta de despacho: por el área de respuesta de la estación que contiene la llamada (pasando a la estación más cercana si falta) o por los recursos disponibles más cercanos.</value>
+  </data>
+  <data name="DispatchAutoDispatchLabel" xml:space="preserve">
+    <value>Despachar automáticamente los recursos recomendados</value>
+  </data>
+  <data name="DispatchAutoDispatchHelp" xml:space="preserve">
+    <value>Si está activado, las tarjetas coincidentes despachan los recursos inmediatamente al crear la llamada. Si está desactivado, las recomendaciones se preseleccionan en la página de Nueva Llamada para revisión del despachador.</value>
+  </data>
+  <data name="RestPeriodLabel" xml:space="preserve">
+    <value>Período de descanso (minutos)</value>
+  </data>
+  <data name="RestPeriodHelp" xml:space="preserve">
+    <value>Después de un despacho, la unidad o persona se despriorizará durante estos minutos para no despachar los mismos recursos consecutivamente. 0 lo desactiva.</value>
+  </data>
+  <data name="StaffingGateLabel" xml:space="preserve">
+    <value>Dotación mínima de la unidad para despachar</value>
+  </data>
+  <data name="StaffingGateHelp" xml:space="preserve">
+    <value>Las unidades con dotación inferior a este nivel no se seleccionan aunque su estado coincida. Las unidades sin roles definidos siempre pasan.</value>
+  </data>
+  <data name="MoveUpEnabledLabel" xml:space="preserve">
+    <value>Habilitar recomendaciones de cobertura / reubicación</value>
+  </data>
+  <data name="MoveUpEnabledHelp" xml:space="preserve">
+    <value>Tras la selección, comprueba los mínimos de cobertura de las estaciones y recomienda reubicar recursos a las estaciones descubiertas.</value>
+  </data>
+  <data name="ClosestUnitTuningHeader" xml:space="preserve">
+    <value>Ajustes de respuesta de unidad más cercana</value>
+  </data>
+  <data name="MaxLocationAgeLabel" xml:space="preserve">
+    <value>Antigüedad máxima de la ubicación de la unidad (segundos)</value>
+  </data>
+  <data name="PersonnelMaxLocationAgeLabel" xml:space="preserve">
+    <value>Antigüedad máxima de la ubicación del personal (segundos)</value>
+  </data>
+  <data name="MaxRadiusLabel" xml:space="preserve">
+    <value>Radio máximo de respuesta (metros)</value>
+  </data>
+  <data name="IncludeStaleLabel" xml:space="preserve">
+    <value>Incluir ubicaciones obsoletas</value>
+  </data>
+  <data name="UseRoutedEtaLabel" xml:space="preserve">
+    <value>Ordenar por tiempo estimado de conducción</value>
+  </data>
+  <data name="UseRoutedEtaHelp" xml:space="preserve">
+    <value>Reordena los candidatos más cercanos usando el tiempo de conducción en lugar de la distancia en línea recta. Usa el proveedor de mapas y puede añadir coste y latencia.</value>
+  </data>
+  <data name="EtaShortlistSizeLabel" xml:space="preserve">
+    <value>Tamaño de la lista corta para ETA</value>
+  </data>
+  <data name="StationCoverageHeader" xml:space="preserve">
+    <value>Mínimos de cobertura de estaciones</value>
+  </data>
+  <data name="StationCoverageHelp" xml:space="preserve">
+    <value>Define el número mínimo de cada tipo de unidad o rol de personal que debe permanecer disponible en una estación. Si un despacho reduce la cobertura por debajo del mínimo, el sistema recomienda reubicaciones.</value>
+  </data>
+  <data name="StationCoverageStationLabel" xml:space="preserve">
+    <value>Estación</value>
+  </data>
+  <data name="StationCoverageTargetLabel" xml:space="preserve">
+    <value>Tipo de unidad / Rol</value>
+  </data>
+  <data name="StationCoverageMinCountLabel" xml:space="preserve">
+    <value>Mínimo disponible</value>
+  </data>
+  <data name="StationCoverageRadiusLabel" xml:space="preserve">
+    <value>Radio (metros, modo unidad más cercana)</value>
+  </data>
+  <data name="StationCoverageEnabledLabel" xml:space="preserve">
+    <value>Habilitado</value>
+  </data>
+  <data name="RunCardsHeader" xml:space="preserve">
+    <value>Tarjetas de despacho</value>
+  </data>
+  <data name="RunCardsHelp" xml:space="preserve">
+    <value>Paquetes de respuesta predefinidos que se asignan a llamadas por prioridad y tipo. Cada tarjeta define los tipos de unidad y roles de personal a despachar por nivel de alarma y qué estados cuentan como disponibles.</value>
+  </data>
+  <data name="NewRunCardButton" xml:space="preserve">
+    <value>Nueva tarjeta de despacho</value>
+  </data>
+  <data name="RunCardEditButton" xml:space="preserve">
+    <value>Editar</value>
+  </data>
+  <data name="RunCardDeleteConfirm" xml:space="preserve">
+    <value>¿Eliminar esta tarjeta? Las llamadas que ya la usaron conservan su historial de despacho.</value>
+  </data>
+  <data name="RunCardNameLabel" xml:space="preserve">
+    <value>Nombre</value>
+  </data>
+  <data name="RunCardDescriptionLabel" xml:space="preserve">
+    <value>Descripción</value>
+  </data>
+  <data name="RunCardDisabledLabel" xml:space="preserve">
+    <value>Deshabilitada</value>
+  </data>
+  <data name="RunCardGeneralTab" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="RunCardDefaultLabel" xml:space="preserve">
+    <value>Predeterminado del departamento</value>
+  </data>
+  <data name="RunCardManualOnlyLabel" xml:space="preserve">
+    <value>Solo manual (sin selección automática)</value>
+  </data>
+  <data name="RunCardPrePopulateLabel" xml:space="preserve">
+    <value>Preseleccionar para revisión del despachador</value>
+  </data>
+  <data name="RunCardAutoDispatchOptionLabel" xml:space="preserve">
+    <value>Despachar automáticamente</value>
+  </data>
+  <data name="RunCardNoGateLabel" xml:space="preserve">
+    <value>Sin control de dotación</value>
+  </data>
+  <data name="RunCardHomeStationLabel" xml:space="preserve">
+    <value>Estación base (si la llamada no tiene ubicación)</value>
+  </data>
+  <data name="RunCardNoHomeStationLabel" xml:space="preserve">
+    <value>Ninguna</value>
+  </data>
+  <data name="RunCardTriggersHeader" xml:space="preserve">
+    <value>Disparadores</value>
+  </data>
+  <data name="RunCardTriggersHelp" xml:space="preserve">
+    <value>Una tarjeta coincide cuando cualquiera de sus disparadores coincide. Gana la coincidencia más específica (prioridad + tipo supera a tipo, que supera a prioridad).</value>
+  </data>
+  <data name="RunCardTriggerTypeLabel" xml:space="preserve">
+    <value>Tipo de disparador</value>
+  </data>
+  <data name="RunCardTriggerPriorityOption" xml:space="preserve">
+    <value>Prioridad de llamada</value>
+  </data>
+  <data name="RunCardTriggerTypeOption" xml:space="preserve">
+    <value>Tipo de llamada</value>
+  </data>
+  <data name="RunCardTriggerBothOption" xml:space="preserve">
+    <value>Prioridad y tipo</value>
+  </data>
+  <data name="RunCardAddTriggerButton" xml:space="preserve">
+    <value>Añadir disparador</value>
+  </data>
+  <data name="RunCardAlarmLevelsHeader" xml:space="preserve">
+    <value>Niveles de alarma</value>
+  </data>
+  <data name="RunCardAlarmLevelsHelp" xml:space="preserve">
+    <value>Los requisitos de cada nivel son aditivos: escalar al nivel 2 despacha los recursos del nivel 2 además de los ya asignados.</value>
+  </data>
+  <data name="RunCardAlarmLevelLabel" xml:space="preserve">
+    <value>Alarma</value>
+  </data>
+  <data name="RunCardAlarmLevelNamePlaceholder" xml:space="preserve">
+    <value>Nombre opcional, p. ej. Incendio declarado</value>
+  </data>
+  <data name="RunCardAddAlarmLevelButton" xml:space="preserve">
+    <value>Añadir nivel de alarma</value>
+  </data>
+  <data name="RunCardUnitRequirementsLabel" xml:space="preserve">
+    <value>Requisitos de tipos de unidad</value>
+  </data>
+  <data name="RunCardRoleRequirementsLabel" xml:space="preserve">
+    <value>Requisitos de roles de personal</value>
+  </data>
+  <data name="RunCardAddUnitRequirementButton" xml:space="preserve">
+    <value>Añadir tipo de unidad</value>
+  </data>
+  <data name="RunCardAddRoleRequirementButton" xml:space="preserve">
+    <value>Añadir rol</value>
+  </data>
+  <data name="RunCardSelectionsHeader" xml:space="preserve">
+    <value>Estados despachables</value>
+  </data>
+  <data name="RunCardSelectionsHelp" xml:space="preserve">
+    <value>Qué estados de unidad, estados de personal y niveles de dotación cuentan como disponibles para esta tarjeta. Deje una sección vacía para usar las reglas de disponibilidad estándar.</value>
+  </data>
+  <data name="RunCardStaffingSelectionsLabel" xml:space="preserve">
+    <value>Niveles de dotación</value>
+  </data>
+  <data name="RunCardTestHeader" xml:space="preserve">
+    <value>Probar / Simular</value>
+  </data>
+  <data name="RunCardTestHelp" xml:space="preserve">
+    <value>Vista previa de lo que las tarjetas despacharían ahora para una prioridad, tipo y ubicación — no se despacha nada.</value>
+  </data>
+  <data name="RunCardRunTestButton" xml:space="preserve">
+    <value>Ejecutar prueba</value>
+  </data>
+  <data name="RunCardSavedMessage" xml:space="preserve">
+    <value>Tarjeta guardada.</value>
+  </data>
+  <data name="CallPriority" xml:space="preserve">
+    <value>Prioridad de llamada</value>
+  </data>
+  <data name="CallType" xml:space="preserve">
+    <value>Tipo de llamada</value>
+  </data>
+  <data name="RunCardsNav" xml:space="preserve">
+    <value>Tarjetas de despacho</value>
+  </data>
 </root>

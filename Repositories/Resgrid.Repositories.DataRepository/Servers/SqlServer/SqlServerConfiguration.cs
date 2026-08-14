@@ -1712,6 +1712,65 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 				ORDER BY [Timestamp] DESC";
 			#endregion CheckIns
 
+			#region RunCards
+			RunCardsTableName = "RunCards";
+			RunCardTriggersTableName = "RunCardTriggers";
+			RunCardAlarmLevelsTableName = "RunCardAlarmLevels";
+			RunCardUnitRequirementsTableName = "RunCardUnitRequirements";
+			RunCardRoleRequirementsTableName = "RunCardRoleRequirements";
+			RunCardAvailabilitySelectionsTableName = "RunCardAvailabilitySelections";
+			StationCoverageRequirementsTableName = "StationCoverageRequirements";
+
+			SelectRunCardTriggersByRunCardIdQuery = @"
+				SELECT *
+				FROM %SCHEMA%.%TABLENAME%
+				WHERE [RunCardId] = %RCID%";
+			SelectRunCardTriggersByDepartmentIdQuery = @"
+				SELECT t.*
+				FROM %SCHEMA%.RunCardTriggers t
+				INNER JOIN %SCHEMA%.RunCards rc ON t.[RunCardId] = rc.[RunCardId]
+				WHERE rc.[DepartmentId] = %DID%";
+			SelectRunCardAlarmLevelsByRunCardIdQuery = @"
+				SELECT *
+				FROM %SCHEMA%.%TABLENAME%
+				WHERE [RunCardId] = %RCID%
+				ORDER BY [AlarmLevel] ASC";
+			SelectRunCardUnitRequirementsByRunCardIdQuery = @"
+				SELECT r.*
+				FROM %SCHEMA%.RunCardUnitRequirements r
+				INNER JOIN %SCHEMA%.RunCardAlarmLevels l ON r.[RunCardAlarmLevelId] = l.[RunCardAlarmLevelId]
+				WHERE l.[RunCardId] = %RCID%
+				ORDER BY r.[SortOrder] ASC";
+			SelectRunCardRoleRequirementsByRunCardIdQuery = @"
+				SELECT r.*
+				FROM %SCHEMA%.RunCardRoleRequirements r
+				INNER JOIN %SCHEMA%.RunCardAlarmLevels l ON r.[RunCardAlarmLevelId] = l.[RunCardAlarmLevelId]
+				WHERE l.[RunCardId] = %RCID%
+				ORDER BY r.[SortOrder] ASC";
+			SelectRunCardAvailabilitySelectionsByRunCardIdQuery = @"
+				SELECT *
+				FROM %SCHEMA%.%TABLENAME%
+				WHERE [RunCardId] = %RCID%";
+			SelectLastUnitDispatchTimesByDepartmentQuery = @"
+				SELECT du.[UnitId], MAX(du.[DispatchedOn]) AS [LastDispatchedOn]
+				FROM %SCHEMA%.CallDispatchUnits du
+				INNER JOIN %SCHEMA%.Calls c ON du.[CallId] = c.[CallId]
+				WHERE c.[DepartmentId] = %DID% AND du.[DispatchedOn] IS NOT NULL
+				GROUP BY du.[UnitId]";
+			SelectLastUserDispatchTimesByDepartmentQuery = @"
+				SELECT d.[UserId], MAX(d.[DispatchedOn]) AS [LastDispatchedOn]
+				FROM %SCHEMA%.CallDispatches d
+				INNER JOIN %SCHEMA%.Calls c ON d.[CallId] = c.[CallId]
+				WHERE c.[DepartmentId] = %DID% AND d.[DispatchedOn] IS NOT NULL
+				GROUP BY d.[UserId]";
+			RunCardActivationsTableName = "RunCardActivations";
+			SelectRunCardActivationsByCallIdQuery = @"
+				SELECT *
+				FROM %SCHEMA%.%TABLENAME%
+				WHERE [CallId] = %CALLID%
+				ORDER BY [CreatedOn] DESC";
+			#endregion RunCards
+
 			#region CalendarItemCheckIns
 			CalendarItemCheckInsTableName = "CalendarItemCheckIns";
 			SelectCalendarItemCheckInByItemAndUserQuery = @"

@@ -237,6 +237,11 @@ namespace Resgrid.Services
 			if (string.IsNullOrWhiteSpace(targetUserId) && !targetUnitId.HasValue)
 				return null;
 
+			// A DM with yourself would put the same user in the member list twice and violate
+			// the unique (ChatChannelId, UserId) member index; the clients never offer it.
+			if (!targetUnitId.HasValue && string.Equals(creatorUserId, targetUserId, StringComparison.OrdinalIgnoreCase))
+				return null;
+
 			var dmKey = BuildDmKey(creatorUserId, targetUserId, targetUnitId);
 
 			var existing = await _chatChannelRepository.GetByDmKeyAsync(departmentId, dmKey);

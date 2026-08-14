@@ -221,6 +221,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (input == null || (String.IsNullOrWhiteSpace(input.TargetUserId) && !input.TargetUnitId.HasValue))
 				return BadRequest();
 
+			if (!input.TargetUnitId.HasValue && String.Equals(input.TargetUserId, UserId, StringComparison.OrdinalIgnoreCase))
+				return BadRequest();
+
 			var result = new ChatChannelCreatedResult();
 			var channel = await _chatChannelService.GetOrCreateDirectMessageChannelAsync(DepartmentId, UserId, input.TargetUserId, input.TargetUnitId, cancellationToken);
 

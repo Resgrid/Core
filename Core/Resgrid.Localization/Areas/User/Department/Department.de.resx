@@ -689,4 +689,208 @@
   <data name="ForceChatbotSecurityPinHelp" xml:space="preserve">
     <value>Verlangt, dass jedes Mitglied gefährliche oder abteilungsweite Assistenten-/SMS-Aktionen mit seiner persönlichen 4-stelligen Sicherheits-PIN bestätigt. Mitglieder ohne PIN erhalten eine zufällig generierte (einsehbar auf ihrer Profilseite).</value>
   </data>
+  <data name="RunCardSettingsHeader" xml:space="preserve">
+    <value>Alarm- und Ausrückeordnung &amp; automatische Alarmierung</value>
+  </data>
+  <data name="DispatchRecommendationModeLabel" xml:space="preserve">
+    <value>Modus der automatischen Ressourcenauswahl</value>
+  </data>
+  <data name="DispatchRecommendationModeHelp" xml:space="preserve">
+    <value>Wie das System Einheiten und Personal zur Erfüllung einer Ausrückeordnung auswählt: nach dem Wachbereich, in dem der Einsatz liegt (bei Engpässen kaskadierend zur nächstgelegenen Wache), oder nach den nächstgelegenen verfügbaren Ressourcen.</value>
+  </data>
+  <data name="DispatchAutoDispatchLabel" xml:space="preserve">
+    <value>Empfohlene Ressourcen automatisch alarmieren</value>
+  </data>
+  <data name="DispatchAutoDispatchHelp" xml:space="preserve">
+    <value>Wenn aktiviert, alarmieren passende Ausrückeordnungen die Ressourcen sofort bei Einsatzerstellung. Wenn deaktiviert, werden Empfehlungen auf der Seite "Neuer Einsatz" zur Prüfung durch den Disponenten vorausgewählt.</value>
+  </data>
+  <data name="RestPeriodLabel" xml:space="preserve">
+    <value>Ruhezeit (Minuten)</value>
+  </data>
+  <data name="RestPeriodHelp" xml:space="preserve">
+    <value>Nach einer Alarmierung werden Einheit oder Person für diese Anzahl Minuten nachrangig behandelt, damit nicht immer dieselben Ressourcen hintereinander alarmiert werden. 0 deaktiviert.</value>
+  </data>
+  <data name="StaffingGateLabel" xml:space="preserve">
+    <value>Mindestbesetzung für Alarmierung</value>
+  </data>
+  <data name="StaffingGateHelp" xml:space="preserve">
+    <value>Einheiten unterhalb dieser Besetzung werden nicht ausgewählt, auch wenn ihr Status passt. Einheiten ohne definierte Rollen bestehen immer.</value>
+  </data>
+  <data name="MoveUpEnabledLabel" xml:space="preserve">
+    <value>Nachrück-/Auffüllempfehlungen aktivieren</value>
+  </data>
+  <data name="MoveUpEnabledHelp" xml:space="preserve">
+    <value>Nach der Auswahl werden die Mindestabdeckungen der Wachen geprüft und Verlegungen zu entblößten Wachen empfohlen.</value>
+  </data>
+  <data name="ClosestUnitTuningHeader" xml:space="preserve">
+    <value>Feineinstellung nächstgelegene Einheit</value>
+  </data>
+  <data name="MaxLocationAgeLabel" xml:space="preserve">
+    <value>Maximales Alter der Einheitenposition (Sekunden)</value>
+  </data>
+  <data name="PersonnelMaxLocationAgeLabel" xml:space="preserve">
+    <value>Maximales Alter der Personalposition (Sekunden)</value>
+  </data>
+  <data name="MaxRadiusLabel" xml:space="preserve">
+    <value>Maximaler Einsatzradius (Meter)</value>
+  </data>
+  <data name="IncludeStaleLabel" xml:space="preserve">
+    <value>Veraltete Positionen einbeziehen</value>
+  </data>
+  <data name="UseRoutedEtaLabel" xml:space="preserve">
+    <value>Nach Fahrzeit-ETA sortieren</value>
+  </data>
+  <data name="UseRoutedEtaHelp" xml:space="preserve">
+    <value>Die nächstgelegenen Kandidaten werden anhand der Fahrzeit statt der Luftlinie neu sortiert. Nutzt den Kartenanbieter und kann Kosten und Latenz verursachen.</value>
+  </data>
+  <data name="EtaShortlistSizeLabel" xml:space="preserve">
+    <value>Größe der ETA-Auswahlliste</value>
+  </data>
+  <data name="StationCoverageHeader" xml:space="preserve">
+    <value>Mindestabdeckung der Wachen</value>
+  </data>
+  <data name="StationCoverageHelp" xml:space="preserve">
+    <value>Legt fest, wie viele Einheiten eines Typs oder Personen einer Rolle an einer Wache mindestens verfügbar bleiben sollen. Fällt die Abdeckung durch eine Alarmierung darunter, empfiehlt das System Nachrückungen.</value>
+  </data>
+  <data name="StationCoverageStationLabel" xml:space="preserve">
+    <value>Wache</value>
+  </data>
+  <data name="StationCoverageTargetLabel" xml:space="preserve">
+    <value>Einheitentyp / Rolle</value>
+  </data>
+  <data name="StationCoverageMinCountLabel" xml:space="preserve">
+    <value>Mindestens verfügbar</value>
+  </data>
+  <data name="StationCoverageRadiusLabel" xml:space="preserve">
+    <value>Radius (Meter, Modus nächstgelegene Einheit)</value>
+  </data>
+  <data name="StationCoverageEnabledLabel" xml:space="preserve">
+    <value>Aktiviert</value>
+  </data>
+  <data name="RunCardsHeader" xml:space="preserve">
+    <value>Ausrückeordnungen</value>
+  </data>
+  <data name="RunCardsHelp" xml:space="preserve">
+    <value>Vorgeplante Einsatzpakete, die Einsätzen nach Priorität und Typ zugeordnet werden. Jede Ordnung definiert je Alarmstufe die zu alarmierenden Einheitentypen und Personalrollen sowie die als verfügbar geltenden Status.</value>
+  </data>
+  <data name="NewRunCardButton" xml:space="preserve">
+    <value>Neue Ausrückeordnung</value>
+  </data>
+  <data name="RunCardEditButton" xml:space="preserve">
+    <value>Bearbeiten</value>
+  </data>
+  <data name="RunCardDeleteConfirm" xml:space="preserve">
+    <value>Diese Ausrückeordnung löschen? Bereits damit erstellte Einsätze behalten ihre Alarmierungshistorie.</value>
+  </data>
+  <data name="RunCardNameLabel" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="RunCardDescriptionLabel" xml:space="preserve">
+    <value>Beschreibung</value>
+  </data>
+  <data name="RunCardDisabledLabel" xml:space="preserve">
+    <value>Deaktiviert</value>
+  </data>
+  <data name="RunCardGeneralTab" xml:space="preserve">
+    <value>Allgemein</value>
+  </data>
+  <data name="RunCardDefaultLabel" xml:space="preserve">
+    <value>Standard der Organisation</value>
+  </data>
+  <data name="RunCardManualOnlyLabel" xml:space="preserve">
+    <value>Nur manuell (keine automatische Auswahl)</value>
+  </data>
+  <data name="RunCardPrePopulateLabel" xml:space="preserve">
+    <value>Zur Prüfung durch Disponenten vorbelegen</value>
+  </data>
+  <data name="RunCardAutoDispatchOptionLabel" xml:space="preserve">
+    <value>Automatisch alarmieren</value>
+  </data>
+  <data name="RunCardNoGateLabel" xml:space="preserve">
+    <value>Keine Besetzungsprüfung</value>
+  </data>
+  <data name="RunCardHomeStationLabel" xml:space="preserve">
+    <value>Heimatwache (wenn ein Einsatz keinen Standort hat)</value>
+  </data>
+  <data name="RunCardNoHomeStationLabel" xml:space="preserve">
+    <value>Keine</value>
+  </data>
+  <data name="RunCardTriggersHeader" xml:space="preserve">
+    <value>Auslöser</value>
+  </data>
+  <data name="RunCardTriggersHelp" xml:space="preserve">
+    <value>Eine Ordnung passt zu einem Einsatz, wenn ein beliebiger Auslöser zutrifft. Der spezifischste Treffer gewinnt (Priorität + Typ vor Typ, vor Priorität).</value>
+  </data>
+  <data name="RunCardTriggerTypeLabel" xml:space="preserve">
+    <value>Auslösertyp</value>
+  </data>
+  <data name="RunCardTriggerPriorityOption" xml:space="preserve">
+    <value>Einsatzpriorität</value>
+  </data>
+  <data name="RunCardTriggerTypeOption" xml:space="preserve">
+    <value>Einsatztyp</value>
+  </data>
+  <data name="RunCardTriggerBothOption" xml:space="preserve">
+    <value>Priorität und Typ</value>
+  </data>
+  <data name="RunCardAddTriggerButton" xml:space="preserve">
+    <value>Auslöser hinzufügen</value>
+  </data>
+  <data name="RunCardAlarmLevelsHeader" xml:space="preserve">
+    <value>Alarmstufen</value>
+  </data>
+  <data name="RunCardAlarmLevelsHelp" xml:space="preserve">
+    <value>Die Anforderungen jeder Alarmstufe sind additiv: Eine Eskalation auf Stufe 2 alarmiert die Ressourcen der Stufe 2 zusätzlich zu den bereits zugewiesenen.</value>
+  </data>
+  <data name="RunCardAlarmLevelLabel" xml:space="preserve">
+    <value>Alarm</value>
+  </data>
+  <data name="RunCardAlarmLevelNamePlaceholder" xml:space="preserve">
+    <value>Optionaler Name, z. B. Vollbrand</value>
+  </data>
+  <data name="RunCardAddAlarmLevelButton" xml:space="preserve">
+    <value>Alarmstufe hinzufügen</value>
+  </data>
+  <data name="RunCardUnitRequirementsLabel" xml:space="preserve">
+    <value>Anforderungen Einheitentypen</value>
+  </data>
+  <data name="RunCardRoleRequirementsLabel" xml:space="preserve">
+    <value>Anforderungen Personalrollen</value>
+  </data>
+  <data name="RunCardAddUnitRequirementButton" xml:space="preserve">
+    <value>Einheitentyp hinzufügen</value>
+  </data>
+  <data name="RunCardAddRoleRequirementButton" xml:space="preserve">
+    <value>Rolle hinzufügen</value>
+  </data>
+  <data name="RunCardSelectionsHeader" xml:space="preserve">
+    <value>Alarmierbare Status</value>
+  </data>
+  <data name="RunCardSelectionsHelp" xml:space="preserve">
+    <value>Welche Einheiten-, Personalstatus und Bereitschaftsstufen für diese Ordnung als verfügbar gelten. Ein leerer Abschnitt nutzt die Standard-Verfügbarkeitsregeln.</value>
+  </data>
+  <data name="RunCardStaffingSelectionsLabel" xml:space="preserve">
+    <value>Bereitschaftsstufen</value>
+  </data>
+  <data name="RunCardTestHeader" xml:space="preserve">
+    <value>Testen / Simulieren</value>
+  </data>
+  <data name="RunCardTestHelp" xml:space="preserve">
+    <value>Vorschau, was die Ausrückeordnungen für Priorität, Typ und Standort jetzt alarmieren würden — es wird nichts alarmiert.</value>
+  </data>
+  <data name="RunCardRunTestButton" xml:space="preserve">
+    <value>Test ausführen</value>
+  </data>
+  <data name="RunCardSavedMessage" xml:space="preserve">
+    <value>Ausrückeordnung gespeichert.</value>
+  </data>
+  <data name="CallPriority" xml:space="preserve">
+    <value>Einsatzpriorität</value>
+  </data>
+  <data name="CallType" xml:space="preserve">
+    <value>Einsatztyp</value>
+  </data>
+  <data name="RunCardsNav" xml:space="preserve">
+    <value>Ausrückeordnungen</value>
+  </data>
 </root>

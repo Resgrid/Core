@@ -51,7 +51,13 @@
 		IncidentActionPlanUpdated = 44,
 		IncidentCommandPostUpdated = 45,
 		IncidentPublicSharingEnabled = 46,
-		IncidentPublicSharingDisabled = 47
+		IncidentPublicSharingDisabled = 47,
+
+		// Run card dispatch system
+		RunCardActivated = 48,
+		CallAlarmEscalated = 49,
+		DispatchShortfallDetected = 50,
+		StationCoverageGapDetected = 51
 	}
 }
 

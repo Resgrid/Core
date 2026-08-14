@@ -159,6 +159,9 @@ namespace Resgrid.Services
 			builder.RegisterType<CustomMapService>().As<ICustomMapService>().SingleInstance();
 			builder.RegisterType<RouteService>().As<IRouteService>().SingleInstance();
 			builder.RegisterType<CheckInTimerService>().As<ICheckInTimerService>().InstancePerLifetimeScope();
+			builder.RegisterType<RunCardsService>().As<IRunCardsService>().InstancePerLifetimeScope();
+			builder.RegisterType<PersonnelLocationResolver>().As<IPersonnelLocationResolver>().InstancePerLifetimeScope();
+			builder.RegisterType<DispatchRecommendationService>().As<IDispatchRecommendationService>().InstancePerLifetimeScope();
 
 			// UDF Services
 			builder.RegisterType<UserDefinedFieldsService>().As<IUserDefinedFieldsService>().InstancePerLifetimeScope();

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Threading.Tasks;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
@@ -98,8 +100,70 @@ namespace Resgrid.Services
 			{
 				return route.Seconds;
 			}
-			
+
 			return -1;
+		}
+
+		public async Task<GeoMath.GeoPoint?> GetStationCoordinatesAsync(DepartmentGroup group)
+		{
+			if (group == null)
+				return null;
+
+			var stored = GeoMath.ParseCoordinatePair(group.Latitude, group.Longitude);
+			if (stored.HasValue)
+				return stored;
+
+			var polygon = GeoMath.ParseGeofence(group.Geofence);
+			if (polygon != null)
+				return GeoMath.Centroid(polygon);
+
+			var geocoded = await _departmentGroupsService.GetMapCenterCoordinatesForGroupAsync(group.DepartmentGroupId);
+			if (geocoded != null && geocoded.Latitude.HasValue && geocoded.Longitude.HasValue
+				&& !(geocoded.Latitude.Value == 0 && geocoded.Longitude.Value == 0))
+				return new GeoMath.GeoPoint(geocoded.Latitude.Value, geocoded.Longitude.Value);
+
+			return null;
+		}
+
+		public async Task<List<StationDistanceResult>> GetStationsContainingPointAsync(int departmentId, double latitude, double longitude)
+		{
+			var stations = await OrderStationsByDistanceAsync(departmentId, latitude, longitude);
+
+			return stations.Where(s => s.ContainsPoint).ToList();
+		}
+
+		public async Task<List<StationDistanceResult>> OrderStationsByDistanceAsync(int departmentId, double latitude, double longitude)
+		{
+			var results = new List<StationDistanceResult>();
+			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(departmentId);
+
+			if (stations == null)
+				return results;
+
+			foreach (var station in stations)
+			{
+				var polygon = GeoMath.ParseGeofence(station.Geofence);
+				var coordinates = await GetStationCoordinatesAsync(station);
+
+				// A station with neither coordinates nor a fence can't participate in
+				// distance ordering or containment; skip it rather than guessing.
+				if (coordinates == null && polygon == null)
+					continue;
+
+				var stationPoint = coordinates ?? GeoMath.Centroid(polygon);
+
+				results.Add(new StationDistanceResult
+				{
+					Station = station,
+					Latitude = stationPoint.Latitude,
+					Longitude = stationPoint.Longitude,
+					DistanceMeters = GeoMath.HaversineMeters(latitude, longitude, stationPoint.Latitude, stationPoint.Longitude),
+					HasGeofence = polygon != null,
+					ContainsPoint = polygon != null && GeoMath.IsPointInPolygon(latitude, longitude, polygon)
+				});
+			}
+
+			return results.OrderBy(r => r.DistanceMeters).ToList();
 		}
 	}
 }

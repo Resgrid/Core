@@ -53,6 +53,7 @@ namespace Resgrid.Web.Tts.Configuration
 			options.DefaultSpeed = TtsConfig.DefaultSpeed;
 			options.MaxConcurrentGenerations = TtsConfig.MaxConcurrentGenerations;
 			options.MaxTextLength = TtsConfig.MaxTextLength;
+			options.GenerationTimeoutSeconds = TtsConfig.GenerationTimeoutSeconds;
 			options.PiperExecutable = string.IsNullOrWhiteSpace(TtsConfig.PiperExecutable) ? options.PiperExecutable : TtsConfig.PiperExecutable;
 			options.PiperModelDirectory = string.IsNullOrWhiteSpace(TtsConfig.PiperModelDirectory) ? options.PiperModelDirectory : TtsConfig.PiperModelDirectory;
 			options.FfmpegExecutable = string.IsNullOrWhiteSpace(TtsConfig.FfmpegExecutable) ? options.FfmpegExecutable : TtsConfig.FfmpegExecutable;

@@ -165,7 +165,13 @@ namespace Resgrid.Web.Tts.Services
 				// restarted synthesis from scratch and the cache never filled. Letting
 				// it finish means the caller's retry (or the next caller of the same
 				// text) gets an instant cache hit.
-				var generationToken = _applicationLifetime?.ApplicationStopping ?? CancellationToken.None;
+				// A server-side timeout still bounds the run so a wedged Piper or ffmpeg
+				// cannot hold a generation slot until shutdown. It is sized above a cold
+				// model load, and application shutdown still cancels immediately.
+				using var generationCts = CancellationTokenSource.CreateLinkedTokenSource(
+					_applicationLifetime?.ApplicationStopping ?? CancellationToken.None);
+				generationCts.CancelAfter(TimeSpan.FromSeconds(_options.GenerationTimeoutSeconds));
+				var generationToken = generationCts.Token;
 
 				var generationTimer = Stopwatch.StartNew();
 				var audioBytes = await _audioProcessingService.GenerateNormalizedWavAsync(request.Text, request.Voice, request.Speed, generationToken);

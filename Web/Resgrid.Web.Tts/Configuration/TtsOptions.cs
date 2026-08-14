@@ -16,6 +16,16 @@ namespace Resgrid.Web.Tts.Configuration
 		[Range(1, 10000)]
 		public int MaxTextLength { get; set; } = 1000;
 
+		/// <summary>
+		/// Upper bound, in seconds, on a single synthesis + storage run. Generation is
+		/// deliberately decoupled from the caller's token, so this is the only thing that
+		/// stops a wedged Piper or ffmpeg process from holding a generation slot until the
+		/// application shuts down. Must stay well above a cold model load (first request for
+		/// a voice pays the model-file read) plus the S3 upload.
+		/// </summary>
+		[Range(1, 3600)]
+		public int GenerationTimeoutSeconds { get; set; } = 300;
+
 		[Required]
 		public string PiperExecutable { get; set; } = "piper";
 

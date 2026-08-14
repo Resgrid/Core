@@ -614,6 +614,17 @@ var resgrid;
 
                         applyRecommendationSelections();
                     }
+                }).fail(function () {
+                    if (requestSequence !== recommendationSequence) {
+                        return;
+                    }
+
+                    // A failed lookup leaves no recommendation to show, so drop the previous
+                    // one's ticks and panel instead of letting stale resources ride along on
+                    // the save.
+                    clearRecommendationSelections();
+                    $('#runCardPanel').empty();
+                    $('#runCardPanelRow').hide();
                 });
             }
             newcall.checkForRecommendations = checkForRecommendations;

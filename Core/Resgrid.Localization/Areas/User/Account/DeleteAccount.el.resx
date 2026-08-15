@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CheckToDelete" xml:space="preserve">
+    <value>Επιλέξτε το παρακάτω πλαίσιο για να επιβεβαιώσετε ότι κατανοείτε τα παραπάνω και επιθυμείτε να διαγράψετε τον λογαριασμό σας.</value>
+  </data>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>Επιλέξτε το Πλαίσιο για Επιβεβαίωση</value>
+  </data>
+  <data name="DeleteAccountHeader" xml:space="preserve">
+    <value>Διαγραφή του Λογαριασμού Σας</value>
+  </data>
+  <data name="DeleteAreYouSure1" xml:space="preserve">
+    <value>Εδώ μπορείτε να διαγράψετε τον προσωπικό σας λογαριασμό στο σύστημα Resgrid. Αν είστε Κάτοχος Λογαριασμού σε οποιοδήποτε τμήμα στο σύστημα Resgrid, πρέπει να διαγράψετε τον λογαριασμό σας διαγράφοντας εκείνο το τμήμα ή να μεταβιβάσετε την κυριότητα του Τμήματος σε κάποιον άλλον μέσω της επεξεργασίας των Ρυθμίσεων Τμήματος.</value>
+  </data>
+  <data name="DeleteAreYouSure2" xml:space="preserve">
+    <value>Αν επιθυμείτε να αποχωρήσετε από ένα τμήμα, συνιστάται οι διαχειριστές του Τμήματος να διαγράψουν τον λογαριασμό για εσάς μέσω της λίστας Προσωπικού. Αν όμως αυτό δεν είναι εφικτό, μπορείτε να διαγράψετε τον δικό σας λογαριασμό εδώ.</value>
+  </data>
+  <data name="DeleteAreYouSure3" xml:space="preserve">
+    <value>Λάβετε υπόψη ότι τα δεδομένα που παρέχονται στο Resgrid για ένα τμήμα ανήκουν σε εκείνο το τμήμα και ενδέχεται να υπόκεινται σε πολιτικές διατήρησης δεδομένων και στους νόμους που διέπουν τη δικαιοδοσία του τμήματος. Η διαγραφή του λογαριασμού σας εδώ θα διαγράψει τα προσωπικά σας αναγνωριστικά στοιχεία (PII) και τη σύνδεσή σας, αλλά δεν θα διαγράψει όλα τα δεδομένα. Θα χρειαστεί να υποβάλετε αίτημα στο τμήμα στο οποίο ανήκατε για επιπλέον ενέργειες, αν θέλετε να διαγραφούν όλα τα δεδομένα.</value>
+  </data>
+  <data name="DeleteAreYouSure4" xml:space="preserve">
+    <value>Η διαγραφή του λογαριασμού σας θα τον απενεργοποιήσει σε ΚΑΘΕ τμήμα στο οποίο είστε μέλος, όχι μόνο στο τρέχον. Όλες οι προγραμματισμένες αυτοματοποιήσεις σας (παραδόσεις αναφορών, προγραμματισμένες αλλαγές κατάστασης και προγραμματισμένες αλλαγές στελέχωσης) θα αφαιρεθούν και θα σταματήσετε να λαμβάνετε ειδοποιήσεις και επικοινωνίες από όλα τα τμήματα.</value>
+  </data>
+  <data name="DepartmentOwnerError" xml:space="preserve">
+    <value>Δεν μπορείτε να διαγράψετε τον λογαριασμό σας επειδή είστε Κάτοχος Τμήματος σε ένα τμήμα. Αν επιθυμείτε να διαγράψετε το τμήμα, θα χρειαστεί να το κάνετε μέσω της σελίδας Ρυθμίσεων Τμήματος. Αν θέλετε να διατηρήσετε το τμήμα, επιλέξτε άλλο άτομο ως Κάτοχο Τμήματος και δοκιμάστε ξανά να διαγράψετε τον λογαριασμό σας.</value>
+  </data>
+</root>

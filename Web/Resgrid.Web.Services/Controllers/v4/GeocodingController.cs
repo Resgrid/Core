@@ -47,6 +47,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			try
 			{
 				var coordinates = await _geoLocationProvider.GetLatLonFromAddress(address);
+				result.Data.LookupSucceeded = true;
 
 				if (!string.IsNullOrEmpty(coordinates))
 				{
@@ -57,6 +58,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 					{
 						result.Data.Latitude = lat;
 						result.Data.Longitude = lng;
+						result.Data.Address = address;
 					}
 				}
 			}
@@ -67,6 +69,65 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ResponseHelper.PopulateV4ResponseData(result);
 
 			return Ok(result);
+		}
+
+		/// <summary>
+		/// Converts a what3words address ("filled.count.soap") into geographic coordinates.
+		/// Proxied server-side: the what3words API rejects browser origins, so the Dispatch and
+		/// BigBoard web builds cannot call it directly.
+		/// </summary>
+		/// <param name="words">what3words address, with or without the leading "///".</param>
+		[HttpGet("What3WordsLookup")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<ForwardGeocodeResult>> What3WordsLookup([FromQuery] string words)
+		{
+			if (string.IsNullOrWhiteSpace(words))
+				return BadRequest();
+
+			var result = new ForwardGeocodeResult();
+			var normalizedWords = words.Trim().TrimStart('/');
+
+			try
+			{
+				var coordinates = await _geoLocationProvider.GetCoordinatesFromW3WAsync(normalizedWords);
+				result.Data.LookupSucceeded = true;
+
+				if (coordinates != null && coordinates.Latitude.HasValue && coordinates.Longitude.HasValue)
+				{
+					result.Data.Latitude = coordinates.Latitude.Value;
+					result.Data.Longitude = coordinates.Longitude.Value;
+					result.Data.Address = $"///{normalizedWords}";
+				}
+			}
+			catch { /* provider errors are non-fatal */ }
+
+			result.PageSize = 1;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// Converts an Open Location Code (plus code) into geographic coordinates. Full codes resolve on
+		/// their own; a short code ("8FW4+Q3 Zottegem") needs the locality it was shortened against, so
+		/// the caller passes the whole string through.
+		/// </summary>
+		/// <param name="code">Plus code, optionally followed by a locality.</param>
+		[HttpGet("PlusCodeLookup")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<ForwardGeocodeResult>> PlusCodeLookup([FromQuery] string code)
+		{
+			if (string.IsNullOrWhiteSpace(code))
+				return BadRequest();
+
+			// Plus codes geocode as an ordinary address query; this exists as its own endpoint so the
+			// client can report "that is not a valid plus code" rather than "address not found".
+			return await ForwardGeocode(code.Trim());
 		}
 
 		/// <summary>
@@ -86,6 +147,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				var address = await _geoLocationProvider.GetAddressFromLatLong(lat, lon);
 				result.Data.Address = address ?? string.Empty;
+				result.Data.LookupSucceeded = true;
 			}
 			catch { /* provider errors are non-fatal */ }
 

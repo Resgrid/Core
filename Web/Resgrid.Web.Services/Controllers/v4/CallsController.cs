@@ -545,6 +545,42 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// <param name="newCallInput"></param>
 		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
 		/// <returns></returns>
+		/// <summary>
+		/// Gets the department's new-call field policy: which built-in fields the call form should show
+		/// and which it must require before the call can be created.
+		/// </summary>
+		/// <remarks>
+		/// An empty rule list means the stock form -- every field visible, nothing extra required.
+		/// Clients apply this for usability; the same policy is enforced on SaveCall regardless.
+		/// </remarks>
+		[HttpGet("GetNewCallFieldPolicy")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[Authorize(Policy = ResgridResources.Call_View)]
+		public async Task<ActionResult<NewCallFieldPolicyResult>> GetNewCallFieldPolicy()
+		{
+			var result = new NewCallFieldPolicyResult();
+			var policy = await _departmentSettingsService.GetNewCallFieldPolicyAsync(DepartmentId);
+
+			if (policy?.Rules != null)
+			{
+				foreach (var rule in policy.Rules)
+				{
+					result.Data.Rules.Add(new NewCallFieldRuleData
+					{
+						Key = rule.Key,
+						Visible = rule.Visible,
+						Required = rule.Visible && rule.Required
+					});
+				}
+			}
+
+			result.PageSize = result.Data.Rules.Count;
+			result.Status = ResponseHelper.Success;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
 		[HttpPost("SaveCall")]
 		[Consumes(MediaTypeNames.Application.Json)]
 		[ProducesResponseType(StatusCodes.Status200OK)]
@@ -579,6 +615,30 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (newCallInput.DestinationPoiId.HasValue && newCallInput.DestinationPoiId.Value > 0 && destinationPoi == null)
 				return BadRequest();
+
+			// The department's new-call field policy is enforced here, not only in the clients: an old
+			// build, an offline-queued call or a third-party integration must not be able to put an
+			// incomplete call in front of the crews. Departments with no policy configured are unaffected.
+			var fieldPolicy = await _departmentSettingsService.GetNewCallFieldPolicyAsync(effectiveDepartmentId);
+			var fieldViolations = NewCallFieldPolicyValidator.Validate(fieldPolicy, new NewCallFieldValues
+			{
+				Note = newCallInput.Note,
+				Address = newCallInput.Address,
+				Geolocation = newCallInput.Geolocation,
+				What3Words = newCallInput.What3Words,
+				ContactName = newCallInput.ContactName,
+				ContactInfo = newCallInput.ContactInfo,
+				ExternalId = newCallInput.ExternalId,
+				IncidentId = newCallInput.IncidentId,
+				ReferenceId = newCallInput.ReferenceId,
+				DestinationPoiId = newCallInput.DestinationPoiId,
+				IndoorMapZoneId = newCallInput.IndoorMapZoneId,
+				DispatchOn = newCallInput.DispatchOn,
+				HasDispatchList = !string.IsNullOrWhiteSpace(newCallInput.DispatchList)
+			});
+
+			if (fieldViolations.Count > 0)
+				return BadRequest(NewCallFieldPolicyValidator.DescribeViolations(fieldViolations));
 
 			var call = new Call
 			{
@@ -1888,6 +1948,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			callResult.CallId = call.CallId.ToString();
 			callResult.Priority = call.Priority;
 			callResult.Name = StringHelpers.SanitizeHtmlInString(call.Name);
+
+			// Calls created before run cards existed have AlarmLevel 0; normalise to 1 so clients can
+			// treat the value as a level number rather than "0 means unknown".
+			callResult.AlarmLevel = Math.Max(1, call.AlarmLevel);
+			callResult.ActiveRunCardId = call.ActiveRunCardId;
 
 			if (!String.IsNullOrWhiteSpace(call.NatureOfCall))
 				callResult.Nature = StringHelpers.SanitizeHtmlInString(call.NatureOfCall);

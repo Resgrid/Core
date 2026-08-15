@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Resgrid.Model.Services;
@@ -24,13 +24,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IDepartmentSettingsService _departmentSettingsService;
 		private readonly IUserProfileService _userProfileService;
 		private readonly IFeatureToggleService _featureToggleService;
+		private readonly IDepartmentsService _departmentsService;
 
 		public ConfigController(IDepartmentSettingsService departmentSettingsService, IUserProfileService userProfileService,
-			IFeatureToggleService featureToggleService)
+			IFeatureToggleService featureToggleService, IDepartmentsService departmentsService)
 		{
 			_departmentSettingsService = departmentSettingsService;
 			_userProfileService = userProfileService;
 			_featureToggleService = featureToggleService;
+			_departmentsService = departmentsService;
 		}
 		#endregion Members and Constructors
 
@@ -79,6 +81,16 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (key == InfoConfig.DispatchAppKey)
 			{
 				result.Data.OpenWeatherApiKey = MappingConfig.DispatchOpenWeatherApiKey;
+
+				// The Dispatch app geocodes addresses, what3words and plus codes on the new-call and
+				// edit-call screens exactly like the Responder app does; without these it fell back to
+				// "Google Maps API key not configured" on every lookup.
+				result.Data.GoogleMapsKey = !string.IsNullOrWhiteSpace(MappingConfig.DispatchAppGoogleMapsKey)
+					? MappingConfig.DispatchAppGoogleMapsKey
+					: MappingConfig.GoogleMapsApiKey;
+				result.Data.W3WKey = !string.IsNullOrWhiteSpace(MappingConfig.DispatchAppWhat3WordsKey)
+					? MappingConfig.DispatchAppWhat3WordsKey
+					: MappingConfig.What3WordsApiKey;
 			}
 			else if (key == InfoConfig.ResponderAppKey)
 			{
@@ -102,6 +114,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Data.MapAccessToken = mapConfig.AccessToken;
 			result.Data.MapAttribution = mapConfig.Attribution;
 			result.Data.IsDepartmentMapOverride = mapConfig.IsDepartmentOverride;
+
+			// Every client map -- new-call pickers, live maps, board maps -- opens here. Without it each
+			// app fell back to its own hardcoded coordinates, which is how departments ended up staring
+			// at the wrong continent.
+			await PopulateMapCenterAsync(result, departmentId);
+			await PopulateUnitStatusThresholdsAsync(result, departmentId);
+
 			result.Data.EventingUrl = SystemBehaviorConfig.ResgridEventingBaseUrl;
 
 			result.Data.PersonnelLocationStaleSeconds = MappingConfig.PersonnelLocationStaleSeconds;
@@ -170,6 +189,75 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ResponseHelper.PopulateV4ResponseData(result);
 
 			return result;
+		}
+
+		/// <summary>
+		/// Loads the department's time-in-status thresholds for the board. Failure-safe: with no
+		/// thresholds the board simply highlights nothing, which is the pre-feature behaviour.
+		/// </summary>
+		private async Task PopulateUnitStatusThresholdsAsync(GetConfigResult result, int departmentId)
+		{
+			if (departmentId <= 0)
+				return;
+
+			try
+			{
+				var thresholds = await _departmentSettingsService.GetUnitStatusThresholdsAsync(departmentId);
+
+				foreach (var threshold in thresholds?.Thresholds ?? new System.Collections.Generic.List<Resgrid.Model.UnitStatusThreshold>())
+				{
+					result.Data.UnitStatusThresholds.Add(new UnitStatusThresholdData
+					{
+						BaseType = threshold.BaseType,
+						WarnSeconds = threshold.WarnSeconds,
+						AlertSeconds = threshold.AlertSeconds
+					});
+				}
+			}
+			catch (System.Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex,
+					$"{nameof(PopulateUnitStatusThresholdsAsync)}: threshold lookup failed for departmentId {departmentId}.");
+			}
+		}
+
+		/// <summary>
+		/// Resolves the department's default map center. Always leaves the result populated: the
+		/// settings service falls back from configured coordinates to the department address to a
+		/// system default, and a lookup failure here must not break config bootstrap for the apps.
+		/// </summary>
+		private async Task PopulateMapCenterAsync(GetConfigResult result, int departmentId)
+		{
+			// Seeded first so an unauthenticated caller or a failed lookup still ships a usable center
+			// instead of 0,0 -- these are the same system defaults the settings service falls back to.
+			result.Data.MapCenterLatitude = 39.14086268299356;
+			result.Data.MapCenterLongitude = -119.7583809782715;
+			result.Data.MapCenterZoomLevel = 9;
+
+			if (departmentId <= 0)
+				return;
+
+			try
+			{
+				var department = await _departmentsService.GetDepartmentByIdAsync(departmentId, false);
+				var coordinates = await _departmentSettingsService.GetMapCenterCoordinatesAsync(department);
+
+				if (coordinates?.Latitude != null && coordinates.Longitude != null)
+				{
+					result.Data.MapCenterLatitude = coordinates.Latitude.Value;
+					result.Data.MapCenterLongitude = coordinates.Longitude.Value;
+				}
+
+				var zoomLevel = await _departmentSettingsService.GetBigBoardMapZoomLevelForDepartmentAsync(departmentId);
+
+				if (zoomLevel.HasValue && zoomLevel.Value > 0)
+					result.Data.MapCenterZoomLevel = zoomLevel.Value;
+			}
+			catch (System.Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex,
+					$"{nameof(PopulateMapCenterAsync)}: map center lookup failed for departmentId {departmentId}.");
+			}
 		}
 
 		private static int GetCurrentDepartmentId()

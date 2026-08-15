@@ -253,7 +253,15 @@ namespace Resgrid.Services
 			dm.IsHidden = false;
 			dm.IsDisabled = false;
 
-			return await _departmentMembersRepository.SaveOrUpdateAsync(dm, cancellationToken);
+			var saved = await _departmentMembersRepository.SaveOrUpdateAsync(dm, cancellationToken);
+
+			// The member row just changed its deleted/hidden/disabled flags and the department's user
+			// list gained a name back -- both are cached reads that would otherwise serve the old answer.
+			InvalidateDepartmentUsersInCache(departmentId);
+			InvalidateDepartmentMemberInCache(userId, departmentId);
+			SendMembershipVisibilityRefresh(departmentId);
+
+			return saved;
 		}
 
 		public async Task<DepartmentMember> AddExistingUserAsync(int departmentId, string userId, CancellationToken cancellationToken = default(CancellationToken))
@@ -282,7 +290,30 @@ namespace Resgrid.Services
 
 			await _limitsService.InvalidateDepartmentsEntityLimitsCache(departmentId);
 
-			return await _departmentMembersRepository.SaveOrUpdateAsync(dm, cancellationToken);
+			var saved = await _departmentMembersRepository.SaveOrUpdateAsync(dm, cancellationToken);
+
+			// A lookup for this user/department pair may already have been cached as "not a member",
+			// and the department's user list does not have the new name on it yet.
+			InvalidateDepartmentUsersInCache(departmentId);
+			InvalidateDepartmentMemberInCache(userId, departmentId);
+			SendMembershipVisibilityRefresh(departmentId);
+
+			return saved;
+		}
+
+		/// <summary>
+		/// Department membership and admin standing feed every visibility matrix (admins are always in
+		/// the allow list). Without a rebuild, a user added or removed today keeps yesterday's answer.
+		/// </summary>
+		private void SendMembershipVisibilityRefresh(int departmentId)
+		{
+			if (departmentId <= 0)
+				return;
+
+			_eventAggregator.SendMessage<SecurityRefreshEvent>(new SecurityRefreshEvent() { DepartmentId = departmentId, Type = SecurityCacheTypes.WhoCanViewUnits });
+			_eventAggregator.SendMessage<SecurityRefreshEvent>(new SecurityRefreshEvent() { DepartmentId = departmentId, Type = SecurityCacheTypes.WhoCanViewUnitLocations });
+			_eventAggregator.SendMessage<SecurityRefreshEvent>(new SecurityRefreshEvent() { DepartmentId = departmentId, Type = SecurityCacheTypes.WhoCanViewPersonnel });
+			_eventAggregator.SendMessage<SecurityRefreshEvent>(new SecurityRefreshEvent() { DepartmentId = departmentId, Type = SecurityCacheTypes.WhoCanViewPersonnelLocations });
 		}
 
 		public async Task<DepartmentMember> DeleteUserAsync(int departmentId, string userIdToDelete, string deletingUserId, CancellationToken cancellationToken = default(CancellationToken))
@@ -311,6 +342,7 @@ namespace Resgrid.Services
 					InvalidatePersonnelNamesInCache(departmentId);
 					_usersService.ClearCacheForDepartment(departmentId);
 					InvalidateDepartmentMembers();
+					SendMembershipVisibilityRefresh(departmentId);
 
 					return member2;
 				}
@@ -349,6 +381,7 @@ namespace Resgrid.Services
 				});
 
 				InvalidateDepartmentUsersInCache(d.DepartmentId);
+				SendMembershipVisibilityRefresh(d.DepartmentId);
 
 				return saved;
 			}
@@ -425,6 +458,7 @@ namespace Resgrid.Services
 				});
 
 				InvalidateDepartmentUsersInCache(departmentId);
+				SendMembershipVisibilityRefresh(departmentId);
 
 				return saved;
 			}
@@ -674,6 +708,7 @@ namespace Resgrid.Services
 			InvalidateDepartmentMemberInCache(departmentMember.UserId, departmentMember.DepartmentId);
 			InvalidateDepartmentUserInCache(departmentMember.UserId, departmentMember.User);
 			await InvalidateAllDepartmentsCache(departmentMember.DepartmentId);
+			SendMembershipVisibilityRefresh(departmentMember.DepartmentId);
 
 			return saved;
 		}

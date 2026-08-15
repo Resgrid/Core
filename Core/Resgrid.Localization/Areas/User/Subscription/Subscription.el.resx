@@ -1,0 +1,471 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="BillingUpdateSuccessHeader" xml:space="preserve">
+    <value>Επιτυχής Ενημέρωση Χρέωσης</value>
+  </data>
+  <data name="BillingUpdateSuccessInfo" xml:space="preserve">
+    <value>Σας ευχαριστούμε που ενημερώσατε τα στοιχεία χρέωσής σας. Η νέα σας κάρτα δεν χρεώθηκε τώρα, αλλά θα χρησιμοποιηθεί όταν ανανεωθεί η συνδρομή στον κανονικό της χρόνο.</value>
+  </data>
+  <data name="BuyAddonHeader" xml:space="preserve">
+    <value>Αγορά Πρόσθετου</value>
+  </data>
+  <data name="BuyAddonInfo1" xml:space="preserve">
+    <value>Αγοράζετε το ακόλουθο πρόσθετο</value>
+  </data>
+  <data name="BuyAddonInfo2" xml:space="preserve">
+    <value>Η παραπάνω αγορά πρόσθετου θα προστεθεί στην υπάρχουσα συνδρομή σας και θα κατανεμηθεί αναλογικά για τον χρόνο που απομένει στην τρέχουσα συχνότητα χρέωσής σας. Θα χρεωθεί η τρέχουσα κάρτα σας· βεβαιωθείτε ότι είναι ενημερωμένη για να αποφύγετε διακοπή υπηρεσίας.</value>
+  </data>
+  <data name="BuyAddonWarning" xml:space="preserve">
+    <value>Προειδοποίηση</value>
+  </data>
+  <data name="BuyAddonWarningText" xml:space="preserve">
+    <value>Έχετε ήδη ακυρωμένο πρόσθετο αυτού του τύπου με χρόνο που απομένει. Για να αποφύγετε διπλή χρέωση, περιμένετε μέχρι εκείνη τη στιγμή για να προσθέσετε ξανά αυτό το πρόσθετο. Αν δεν θέλετε να περιμένετε, μπορείτε να το προσθέσετε τώρα και ένα μέρος του χρόνου που απομένει μπορεί να κατανεμηθεί αναλογικά. Ο χρόνος που απομένει λήγει στις</value>
+  </data>
+  <data name="BuyNow" xml:space="preserve">
+    <value>Αγορά Τώρα</value>
+  </data>
+  <data name="BuyNowHeader" xml:space="preserve">
+    <value>Αγορά Τώρα</value>
+  </data>
+  <data name="BuyFollowingHeader" xml:space="preserve">
+    <value>Αγοράζετε το ακόλουθο πακέτο</value>
+  </data>
+  <data name="For" xml:space="preserve">
+    <value>για</value>
+  </data>
+  <data name="Year" xml:space="preserve">
+    <value>έτος</value>
+  </data>
+  <data name="Month" xml:space="preserve">
+    <value>μήνα</value>
+  </data>
+  <data name="NextPaymentWIllBeOn" xml:space="preserve">
+    <value>Η επόμενη πληρωμή σας θα είναι στις</value>
+  </data>
+  <data name="SwitchingFromYearly" xml:space="preserve">
+    <value>Μεταβαίνετε από ετήσιο σε μηνιαίο πακέτο και διατηρείτε την πίστωση από το ετήσιο πακέτο σας. Μόλις εξαντληθεί αυτή η πίστωση, θα χρεώνεστε με κανονικό μηνιαίο πρόγραμμα.</value>
+  </data>
+  <data name="EstimatedTotal" xml:space="preserve">
+    <value>Το εκτιμώμενο σύνολο αναβάθμισής σας είναι</value>
+  </data>
+  <data name="EstimatedTotalWarning" xml:space="preserve">
+    <value>Εκτιμώμενο κόστος· το πραγματικό κόστος μπορεί να διαφέρει ελαφρώς.</value>
+  </data>
+  <data name="CreditCardBillingHeader" xml:space="preserve">
+    <value>Διεύθυνση Χρέωσης Πιστωτικής Κάρτας</value>
+  </data>
+  <data name="BillingStreet" xml:space="preserve">
+    <value>Διεύθυνση οδού χρέωσης της πιστωτικής κάρτας</value>
+  </data>
+  <data name="BillingStreetWarning" xml:space="preserve">
+    <value>Πρέπει να ταιριάζει με τη διεύθυνση στην οποία αποστέλλονται οι λογαριασμοί της πιστωτικής κάρτας</value>
+  </data>
+  <data name="BillingPostalCode" xml:space="preserve">
+    <value>Ταχυδρομικός κώδικας χρέωσης</value>
+  </data>
+  <data name="BillingCountry" xml:space="preserve">
+    <value>Χώρα χρέωσης</value>
+  </data>
+  <data name="SSLInfo" xml:space="preserve">
+    <value>Οι πληροφορίες πληρωμής προστατεύονται με κρυπτογράφηση SSL. &lt;b&gt;Το Resgrid ΔΕΝ αποθηκεύει στοιχεία πληρωμής.&lt;/b&gt;</value>
+  </data>
+  <data name="FirstNameCard" xml:space="preserve">
+    <value>Όνομα στην κάρτα</value>
+  </data>
+  <data name="LastNameCard" xml:space="preserve">
+    <value>Επώνυμο στην κάρτα</value>
+  </data>
+  <data name="CCNumber" xml:space="preserve">
+    <value>Πλήρης αριθμός πιστωτικής κάρτας</value>
+  </data>
+  <data name="CCVCode" xml:space="preserve">
+    <value>Αριθμός CVV/CVC</value>
+  </data>
+  <data name="CCVCodeInfo" xml:space="preserve">
+    <value>3ψήφιος ή 4ψήφιος αριθμός στην κάρτα</value>
+  </data>
+  <data name="CCVCodeMoreInfo" xml:space="preserve">
+    <value>περισσότερες πληροφορίες</value>
+  </data>
+  <data name="CCExpiration" xml:space="preserve">
+    <value>Λήξη Πιστωτικής Κάρτας</value>
+  </data>
+  <data name="CancelSubscriptionHeader" xml:space="preserve">
+    <value>Ακύρωση Συνδρομής</value>
+  </data>
+  <data name="CancelSubscriptionInfo1" xml:space="preserve">
+    <value>Λυπούμαστε που ακυρώνετε τη συνδρομή σας. Συμπληρώστε την παρακάτω φόρμα για να ολοκληρώσετε το αίτημα ακύρωσης της συνδρομής σας. Το πεδίο αιτιολογίας είναι προαιρετικό· βεβαιωθείτε ότι έχετε επιλέξει το πλαίσιο επιβεβαίωσης και πατήστε OK στο μήνυμα επιβεβαίωσης του προγράμματος περιήγησης όταν εμφανιστεί.</value>
+  </data>
+  <data name="CancelSubscriptionInfoData" xml:space="preserve">
+    <value>Το τμήμα σας και όλα τα δεδομένα σας δεν θα αφαιρεθούν· θα ακυρωθεί μόνο η ανανέωση της συνδρομής σας. Για τον υπόλοιπο χρόνο της συνδρομής σας θα εξακολουθείτε να έχετε πρόσβαση στις υπάρχουσες δυνατότητες αυτού του πακέτου.</value>
+  </data>
+  <data name="Plan" xml:space="preserve">
+    <value>Πακέτο</value>
+  </data>
+  <data name="CurrentPlan" xml:space="preserve">
+    <value>Τρέχον Πακέτο</value>
+  </data>
+  <data name="BoughtOn" xml:space="preserve">
+    <value>Αγοράστηκε Στις</value>
+  </data>
+  <data name="Confirm" xml:space="preserve">
+    <value>Επιβεβαίωση</value>
+  </data>
+  <data name="Reason" xml:space="preserve">
+    <value>Αιτιολογία</value>
+  </data>
+  <data name="BackToSubs" xml:space="preserve">
+    <value>Επιστροφή στις Συνδρομές</value>
+  </data>
+  <data name="CancelSub" xml:space="preserve">
+    <value>Ακύρωση Συνδρομής</value>
+  </data>
+  <data name="CancelSubWarning" xml:space="preserve">
+    <value>ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Αυτό θα ακυρώσει την ενεργή συνδρομή σας. Είστε βέβαιοι;</value>
+  </data>
+  <data name="CancelFailureHeader" xml:space="preserve">
+    <value>Αποτυχία Ακύρωσης</value>
+  </data>
+  <data name="CancelFailureInfo" xml:space="preserve">
+    <value>Δεν μπορέσαμε να ακυρώσουμε τη συνδρομή σας. Αυτό μπορεί να οφείλεται στο ότι δεν έχετε ενεργή συνδρομή (δηλαδή είστε στο δωρεάν πακέτο) ή σε προσωρινό πρόβλημα με τον πάροχο πληρωμών. Δοκιμάστε ξανά σε λίγα λεπτά. Αν το πρόβλημα επιμείνει, επικοινωνήστε μαζί μας για να το επιλύσουμε.</value>
+  </data>
+  <data name="CancelSuccessHeader" xml:space="preserve">
+    <value>Η Συνδρομή Ακυρώθηκε</value>
+  </data>
+  <data name="CancelSuccessInfo" xml:space="preserve">
+    <value>Η συνδρομή σας ακυρώθηκε. Μπορεί να χρειαστούν λίγα λεπτά για να το αντικατοπτρίσει το σύστημα, αλλά η κάρτα σας δεν θα χρεώνεται πλέον. Θα διατηρήσουμε τα δεδομένα σας ασφαλή σε περίπτωση που θέλετε να επιστρέψετε ή να χρησιμοποιήσετε το δωρεάν πακέτο Resgrid.</value>
+  </data>
+  <data name="SubscriptionHeader" xml:space="preserve">
+    <value>Πακέτο Συνδρομής και Χρέωση</value>
+  </data>
+  <data name="ViewPaymentHistory" xml:space="preserve">
+    <value>Προβολή Ιστορικού Πληρωμών</value>
+  </data>
+  <data name="ChangeBillingInfo" xml:space="preserve">
+    <value>Αλλαγή Στοιχείων Χρέωσης</value>
+  </data>
+  <data name="Canceled" xml:space="preserve">
+    <value>Ακυρωμένη</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Ενεργή</value>
+  </data>
+  <data name="PlanExpires" xml:space="preserve">
+    <value>Το Πακέτο Λήγει</value>
+  </data>
+  <data name="PlanRenews" xml:space="preserve">
+    <value>Το Πακέτο Ανανεώνεται</value>
+  </data>
+  <data name="Personnel" xml:space="preserve">
+    <value>Προσωπικό</value>
+  </data>
+  <data name="Groups" xml:space="preserve">
+    <value>Ομάδες</value>
+  </data>
+  <data name="Units" xml:space="preserve">
+    <value>Μονάδες</value>
+  </data>
+  <data name="Warning" xml:space="preserve">
+    <value>Προειδοποίηση</value>
+  </data>
+  <data name="Standard" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="Premium" xml:space="preserve">
+    <value>Premium</value>
+  </data>
+  <data name="Professional" xml:space="preserve">
+    <value>Professional</value>
+  </data>
+  <data name="Ultimate" xml:space="preserve">
+    <value>Ultimate</value>
+  </data>
+  <data name="Enterprise" xml:space="preserve">
+    <value>Enterprise</value>
+  </data>
+  <data name="Unified" xml:space="preserve">
+    <value>Unified</value>
+  </data>
+  <data name="InboundTexting" xml:space="preserve">
+    <value>Εισερχόμενα SMS</value>
+  </data>
+  <data name="TelephoneAlerting" xml:space="preserve">
+    <value>Τηλεφωνική Ειδοποίηση</value>
+  </data>
+  <data name="Price" xml:space="preserve">
+    <value>Τιμή</value>
+  </data>
+  <data name="PerYear" xml:space="preserve">
+    <value>ανά έτος</value>
+  </data>
+  <data name="PerMonth" xml:space="preserve">
+    <value>ανά μήνα</value>
+  </data>
+  <data name="Amount" xml:space="preserve">
+    <value>Ποσό</value>
+  </data>
+  <data name="BuyingFollowingPlan" xml:space="preserve">
+    <value>Αγοράζετε το ακόλουθο πακέτο</value>
+  </data>
+  <data name="BuyMonthly" xml:space="preserve">
+    <value>Μηνιαία Αγορά</value>
+  </data>
+  <data name="BuyNowContact1" xml:space="preserve">
+    <value>Διατίθενται επίσης μεγαλύτερα πακέτα, ιδιωτική φιλοξενία, υποστήριξη προτεραιότητας, υποστήριξη ανοιχτού κώδικα και υπηρεσίες υλοποίησης.</value>
+  </data>
+  <data name="BuyNowContact2" xml:space="preserve">
+    <value>για περισσότερες πληροφορίες.</value>
+  </data>
+  <data name="BuyYearly" xml:space="preserve">
+    <value>Ετήσια Αγορά</value>
+  </data>
+  <data name="ChangePlanBody" xml:space="preserve">
+    <value>Αν επιθυμείτε να πραγματοποιήσετε την αλλαγή στη συνδρομή σας, πατήστε το κουμπί «Αλλαγή Πακέτου» παρακάτω. Ο πάροχος πληρωμών μας θα υπολογίσει την αναλογική κατανομή του χρόνου του τρέχοντος πακέτου σας, θα καθορίσει το οφειλόμενο υπόλοιπο και θα χρεώσει την κάρτα σας (αν χρειάζεται). Θα λάβετε email με τις λεπτομέρειες μόλις ολοκληρωθεί η αλλαγή.</value>
+  </data>
+  <data name="ContactUs" xml:space="preserve">
+    <value>Επικοινωνήστε μαζί μας</value>
+  </data>
+  <data name="Cost" xml:space="preserve">
+    <value>Κόστος</value>
+  </data>
+  <data name="Customer" xml:space="preserve">
+    <value>Πελάτης</value>
+  </data>
+  <data name="Department" xml:space="preserve">
+    <value>Τμήμα</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Περιγραφή</value>
+  </data>
+  <data name="EndDate" xml:space="preserve">
+    <value>Ημερομηνία Λήξης</value>
+  </data>
+  <data name="Invoice" xml:space="preserve">
+    <value>Τιμολόγιο</value>
+  </data>
+  <data name="InvoiceDate" xml:space="preserve">
+    <value>Ημερομηνία Τιμολογίου</value>
+  </data>
+  <data name="Method" xml:space="preserve">
+    <value>Μέθοδος</value>
+  </data>
+  <data name="PaymentCompleteBody" xml:space="preserve">
+    <value>Σας ευχαριστούμε για την αγορά σας. Η πληρωμή σας ολοκληρώθηκε και το πρόσθετο ή η αναβάθμιση πακέτου θα είναι σύντομα διαθέσιμα. Ίσως χρειαστεί να αποσυνδεθείτε και να συνδεθείτε ξανά για να δείτε τις αλλαγές.</value>
+  </data>
+  <data name="PaymentCompleteHeader" xml:space="preserve">
+    <value>Η Πληρωμή Ολοκληρώθηκε</value>
+  </data>
+  <data name="PaymentFailedBody" xml:space="preserve">
+    <value>Λυπούμαστε, αλλά παρουσιάστηκε πρόβλημα κατά την επεξεργασία της πληρωμής σας. Πατήστε το κουμπί επιστροφής στο πρόγραμμα περιήγησής σας και επαληθεύστε τα στοιχεία πληρωμής σας (δηλαδή ταχυδρομικό κώδικα, αριθμό CCV, ημερομηνία λήξης).</value>
+  </data>
+  <data name="PaymentFailedHeader" xml:space="preserve">
+    <value>Η Πληρωμή Απέτυχε</value>
+  </data>
+  <data name="PaymentHistoryHeader" xml:space="preserve">
+    <value>Ιστορικό Πληρωμών</value>
+  </data>
+  <data name="PaymentPendingBody" xml:space="preserve">
+    <value>Λόγω υψηλότερου από το αναμενόμενο όγκου, η πληρωμή σας βρίσκεται αυτή τη στιγμή σε ουρά. Μπορείτε να φύγετε από αυτή τη σελίδα και να χρησιμοποιείτε κανονικά το Resgrid. Μόλις επεξεργαστούμε την πληρωμή, ο λογαριασμός σας θα αναβαθμιστεί και θα λάβετε email από εμάς. Αν δεν λάβετε email εντός 30 λεπτών, επικοινωνήστε μαζί μας στο team@resgrid.com.</value>
+  </data>
+  <data name="PaymentPendingHeader" xml:space="preserve">
+    <value>Η Πληρωμή Εκκρεμεί</value>
+  </data>
+  <data name="PaymentProcessingBody" xml:space="preserve">
+    <value>Σας ευχαριστούμε για την αγορά σας. Η πληρωμή σας βρίσκεται σε επεξεργασία. Περιμένετε μέχρι να ολοκληρώσει ο πάροχος πληρωμών μας και το τμήμα σας θα αναβαθμιστεί.</value>
+  </data>
+  <data name="PaymentProcessingHeader" xml:space="preserve">
+    <value>Επεξεργασία Πληρωμής</value>
+  </data>
+  <data name="PayPal" xml:space="preserve">
+    <value>PayPal</value>
+  </data>
+  <data name="Period" xml:space="preserve">
+    <value>Περίοδος</value>
+  </data>
+  <data name="Processor" xml:space="preserve">
+    <value>Πάροχος</value>
+  </data>
+  <data name="PurchaseDate" xml:space="preserve">
+    <value>Ημερομηνία Αγοράς</value>
+  </data>
+  <data name="StartDate" xml:space="preserve">
+    <value>Ημερομηνία Έναρξης</value>
+  </data>
+  <data name="Stripe" xml:space="preserve">
+    <value>Stripe</value>
+  </data>
+  <data name="StripeBillingInfoUpdateSuccessBody" xml:space="preserve">
+    <value>Σας ευχαριστούμε που ενημερώσατε τα στοιχεία χρέωσής σας. Η νέα σας κάρτα δεν χρεώθηκε τώρα, αλλά θα χρησιμοποιηθεί όταν ανανεωθεί η συνδρομή στον κανονικό της χρόνο.</value>
+  </data>
+  <data name="StripeBillingInfoUpdateSuccessHeader" xml:space="preserve">
+    <value>Επιτυχής Ενημέρωση Χρέωσης</value>
+  </data>
+  <data name="StripePaymentProcessingBody" xml:space="preserve">
+    <value>Σας ευχαριστούμε για την αγορά σας. Η πληρωμή σας βρίσκεται σε επεξεργασία. Περιμένετε μέχρι να ολοκληρώσει το Stripe, ο πάροχος πληρωμών μας, και το τμήμα σας θα αναβαθμιστεί.</value>
+  </data>
+  <data name="StripePaymentProcessingHeader" xml:space="preserve">
+    <value>Επεξεργασία Πληρωμής</value>
+  </data>
+  <data name="System" xml:space="preserve">
+    <value>Σύστημα</value>
+  </data>
+  <data name="Thanks" xml:space="preserve">
+    <value>Σας Ευχαριστούμε!</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Σύνολο</value>
+  </data>
+  <data name="Transaction" xml:space="preserve">
+    <value>Συναλλαγή</value>
+  </data>
+  <data name="TransactionId" xml:space="preserve">
+    <value>Αναγνωριστικό Συναλλαγής</value>
+  </data>
+  <data name="UnableToPurchaseBody" xml:space="preserve">
+    <value>Σας ευχαριστούμε για το ενδιαφέρον σας να αγοράσετε πακέτο για την υπηρεσία Resgrid. Έχουμε ήδη ένα προσεχές πακέτο για το τμήμα σας και επιτρέπουμε μόνο 1 μελλοντικό πακέτο ανά πελάτη. Αν θέλετε να αγοράσετε πολλαπλά έτη, επικοινωνήστε μαζί μας και θα χαρούμε να σας εξυπηρετήσουμε.</value>
+  </data>
+  <data name="UnableToPurchaseHeader" xml:space="preserve">
+    <value>Δεν Είναι Δυνατή η Αγορά</value>
+  </data>
+  <data name="UpcomingPlan" xml:space="preserve">
+    <value>Προσεχές Πακέτο</value>
+  </data>
+  <data name="UpdateBillingInfoHeader" xml:space="preserve">
+    <value>Ενημέρωση Στοιχείων Χρέωσης</value>
+  </data>
+  <data name="UpgradePlanHeader" xml:space="preserve">
+    <value>Αλλαγή Πακέτου</value>
+  </data>
+  <data name="ViewInvoice" xml:space="preserve">
+    <value>Προβολή Τιμολογίου</value>
+  </data>
+  <data name="YourCurrentPlan" xml:space="preserve">
+    <value>Βρίσκεστε αυτή τη στιγμή στο ακόλουθο πακέτο</value>
+  </data>
+  <data name="BuyPTTAddonInfo1" xml:space="preserve">
+    <value>Διαχειρίζεστε το Πρόσθετο PTT</value>
+  </data>
+  <data name="BuyPTTAddonInfo2" xml:space="preserve">
+    <value>Στο παρακάτω πλαίσιο αριθμού ορίστε το πλήθος των πακέτων 10 Ταυτόχρονων Χρηστών Push-To-Talk που επιθυμείτε να αγοράσετε σε μηνιαία βάση. Αν αυξήσετε τον αριθμό, θα χρεωθείτε άμεσα· αν τον μειώσετε, η ανανέωσή σας θα γίνει με το μειωμένο πλήθος. Αν ορίσετε μηδέν, δεν θα χρεωθείτε (το PTT δεν θα ανανεωθεί). Για αυτή τη Συνδρομή Πρόσθετου PTT θα χρησιμοποιηθεί η κάρτα που έχετε καταχωρίσει για την κανονική σας συνδρομή Resgrid. </value>
+  </data>
+  <data name="ManageYourSubscription" xml:space="preserve">
+    <value>Διαχειριστείτε τη Συνδρομή Σας</value>
+  </data>
+</root>

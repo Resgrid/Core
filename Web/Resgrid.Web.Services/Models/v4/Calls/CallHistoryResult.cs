@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Newtonsoft.Json;
+using Resgrid.Web.Services.Helpers;
+
 namespace Resgrid.Web.Services.Models.v4.Calls
 {
 	/// <summary>
@@ -35,6 +38,7 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// <summary>
 		/// Timestamp of the history event in UTC/GMT
 		/// </summary>
+		[JsonConverter(typeof(UtcDateTimeConverter))]
 		public DateTime TimestampUtc { get; set; }
 
 		/// <summary>

@@ -1,0 +1,295 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Index -->
+  <data name="PageHeader" xml:space="preserve">
+    <value>Πεδία Οριζόμενα από τον Χρήστη</value>
+  </data>
+  <data name="PageSubHeader" xml:space="preserve">
+    <value>Διαχείριση προσαρμοσμένων πεδίων για οντότητες του τμήματος</value>
+  </data>
+  <data name="EntityType" xml:space="preserve">
+    <value>Τύπος Οντότητας</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>Έκδοση</value>
+  </data>
+  <data name="FieldCount" xml:space="preserve">
+    <value>Πεδία</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Ενέργειες</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Ενεργό</value>
+  </data>
+  <data name="NoDefinition" xml:space="preserve">
+    <value>Δεν έχει διαμορφωθεί</value>
+  </data>
+  <data name="Configure" xml:space="preserve">
+    <value>Διαμόρφωση</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Επεξεργασία</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Διαγραφή</value>
+  </data>
+  <data name="DeleteDefinitionConfirm" xml:space="preserve">
+    <value>Διαγραφή όλης της διαμόρφωσης πεδίων για {0}; Η ενέργεια δεν μπορεί να αναιρεθεί.</value>
+  </data>
+  <data name="UdfSummaryTitle" xml:space="preserve">
+    <value>Ορισμοί Πεδίων ανά Οντότητα</value>
+  </data>
+  <!-- Edit / New Definition -->
+  <data name="EditDefinitionHeader" xml:space="preserve">
+    <value>Διαμόρφωση Πεδίων — {0}</value>
+  </data>
+  <data name="NewDefinitionHeader" xml:space="preserve">
+    <value>Διαμόρφωση Πεδίων — {0}</value>
+  </data>
+  <data name="FieldsSection" xml:space="preserve">
+    <value>Ορισμοί Πεδίων</value>
+  </data>
+  <data name="AddField" xml:space="preserve">
+    <value>Προσθήκη Πεδίου</value>
+  </data>
+  <data name="NoFieldsAdded" xml:space="preserve">
+    <value>Δεν έχουν προστεθεί ακόμη πεδία. Κάντε κλικ στο «Προσθήκη Πεδίου» για να ορίσετε το πρώτο πεδίο.</value>
+  </data>
+  <data name="FieldName" xml:space="preserve">
+    <value>Όνομα Συστήματος</value>
+  </data>
+  <data name="FieldLabel" xml:space="preserve">
+    <value>Ετικέτα</value>
+  </data>
+  <data name="FieldDataType" xml:space="preserve">
+    <value>Τύπος Δεδομένων</value>
+  </data>
+  <data name="FieldRequired" xml:space="preserve">
+    <value>Υποχρεωτικό</value>
+  </data>
+  <data name="FieldEnabled" xml:space="preserve">
+    <value>Ενεργοποιημένο</value>
+  </data>
+  <data name="FieldVisibleMobile" xml:space="preserve">
+    <value>Κινητά</value>
+  </data>
+  <data name="FieldVisibleReports" xml:space="preserve">
+    <value>Αναφορές</value>
+  </data>
+  <data name="FieldOrder" xml:space="preserve">
+    <value>Σειρά</value>
+  </data>
+  <data name="RemoveField" xml:space="preserve">
+    <value>Αφαίρεση</value>
+  </data>
+  <data name="RemoveFieldConfirm" xml:space="preserve">
+    <value>Αφαίρεση αυτού του πεδίου;</value>
+  </data>
+  <data name="SaveDefinition" xml:space="preserve">
+    <value>Αποθήκευση Ορισμού</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Ακύρωση</value>
+  </data>
+  <!-- Field modal / form labels -->
+  <data name="FieldModalTitle" xml:space="preserve">
+    <value>Λεπτομέρειες Πεδίου</value>
+  </data>
+  <data name="FieldNameHelp" xml:space="preserve">
+    <value>Εσωτερικό αναγνωριστικό (γράμματα, ψηφία, κάτω παύλες· πρέπει να ξεκινά με γράμμα ή κάτω παύλα). Πρέπει να είναι μοναδικό εντός αυτού του τύπου οντότητας.</value>
+  </data>
+  <data name="FieldLabelHelp" xml:space="preserve">
+    <value>Αναγνώσιμη ετικέτα που εμφανίζεται στους χρήστες.</value>
+  </data>
+  <data name="FieldDescription" xml:space="preserve">
+    <value>Περιγραφή / Επεξήγηση</value>
+  </data>
+  <data name="FieldPlaceholder" xml:space="preserve">
+    <value>Κείμενο Υποδείγματος</value>
+  </data>
+  <data name="FieldDefaultValue" xml:space="preserve">
+    <value>Προεπιλεγμένη Τιμή</value>
+  </data>
+  <data name="FieldGroupName" xml:space="preserve">
+    <value>Ομάδα / Ενότητα</value>
+  </data>
+  <data name="FieldIsReadOnly" xml:space="preserve">
+    <value>Μόνο για Ανάγνωση</value>
+  </data>
+  <data name="FieldIsReadOnlyHelp" xml:space="preserve">
+    <value>Όταν είναι ενεργοποιημένο, το πεδίο εμφανίζεται αλλά δεν μπορεί να επεξεργαστεί από τους χρήστες.</value>
+  </data>
+  <data name="ValidationSection" xml:space="preserve">
+    <value>Κανόνες Επικύρωσης</value>
+  </data>
+  <data name="ValidationMinLength" xml:space="preserve">
+    <value>Ελάχιστο Μήκος</value>
+  </data>
+  <data name="ValidationMaxLength" xml:space="preserve">
+    <value>Μέγιστο Μήκος</value>
+  </data>
+  <data name="ValidationMinValue" xml:space="preserve">
+    <value>Ελάχιστη Τιμή</value>
+  </data>
+  <data name="ValidationMaxValue" xml:space="preserve">
+    <value>Μέγιστη Τιμή</value>
+  </data>
+  <data name="ValidationRegex" xml:space="preserve">
+    <value>Μοτίβο Regex</value>
+  </data>
+  <data name="ValidationRegexError" xml:space="preserve">
+    <value>Μήνυμα Σφάλματος Regex</value>
+  </data>
+  <data name="DropdownOptions" xml:space="preserve">
+    <value>Επιλογές (Κλειδί=Ετικέτα, μία ανά γραμμή)</value>
+  </data>
+  <data name="DropdownOptionsHelp" xml:space="preserve">
+    <value>Εισαγάγετε μία επιλογή ανά γραμμή σε μορφή Κλειδί=Ετικέτα, π.χ. "yes=Ναι" ή "no=Όχι".</value>
+  </data>
+  <!-- Field visibility -->
+  <data name="FieldVisibility" xml:space="preserve">
+    <value>Ποιος Μπορεί να Δει Αυτό το Πεδίο;</value>
+  </data>
+  <data name="VisibilityEveryone" xml:space="preserve">
+    <value>Όλοι</value>
+  </data>
+  <data name="VisibilityGroupAdmins" xml:space="preserve">
+    <value>Διαχειριστές Τμήματος και Ομάδας</value>
+  </data>
+  <data name="VisibilityDeptAdmins" xml:space="preserve">
+    <value>Μόνο Διαχειριστές Τμήματος</value>
+  </data>
+  <data name="FieldVisibilityHelp" xml:space="preserve">
+    <value>Ελέγχει ποιος μπορεί να δει και να συμπληρώσει αυτό το πεδίο. Οι χρήστες που δεν πληρούν την απαίτηση δεν θα το βλέπουν κατά την προσθήκη ή προβολή εγγραφών.</value>
+  </data>
+  <data name="ModalSave" xml:space="preserve">
+    <value>Προσθήκη Πεδίου</value>
+  </data>
+  <data name="ModalClose" xml:space="preserve">
+    <value>Κλείσιμο</value>
+  </data>
+  <!-- Breadcrumb / shared -->
+  <data name="Home" xml:space="preserve">
+    <value>Αρχική</value>
+  </data>
+  <data name="New" xml:space="preserve">
+    <value>Νέο</value>
+  </data>
+  <data name="UdfModule" xml:space="preserve">
+    <value>Πεδία Οριζόμενα από τον Χρήστη</value>
+  </data>
+  <!-- Entity type names -->
+  <data name="EntityCall" xml:space="preserve">
+    <value>Κλήση</value>
+  </data>
+  <data name="EntityPersonnel" xml:space="preserve">
+    <value>Προσωπικό</value>
+  </data>
+  <data name="EntityUnit" xml:space="preserve">
+    <value>Μονάδα</value>
+  </data>
+  <data name="EntityContact" xml:space="preserve">
+    <value>Επαφή</value>
+  </data>
+  <!-- Preview -->
+  <data name="Preview" xml:space="preserve">
+    <value>Προεπισκόπηση</value>
+  </data>
+  <data name="PreviewModalTitle" xml:space="preserve">
+    <value>Προεπισκόπηση Πεδίων — {0}</value>
+  </data>
+  <data name="PreviewWarningTitle" xml:space="preserve">
+    <value>Μόνο Προεπισκόπηση</value>
+  </data>
+  <data name="PreviewWarningBody" xml:space="preserve">
+    <value>Αυτό είναι ένα δείγμα του πώς θα φαίνονται και θα αποδίδονται τα πεδία στη σελίδα. Δεν θα αποθηκευτούν δεδομένα.</value>
+  </data>
+  <data name="PreviewNoFields" xml:space="preserve">
+    <value>Δεν υπάρχουν ενεργοποιημένα πεδία για προεπισκόπηση.</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Κλείσιμο</value>
+  </data>
+  <!-- Notifications -->
+  <data name="DefinitionSaved" xml:space="preserve">
+    <value>Ο ορισμός πεδίων αποθηκεύτηκε με επιτυχία.</value>
+  </data>
+  <data name="DefinitionDeleted" xml:space="preserve">
+    <value>Ο ορισμός πεδίων διαγράφηκε.</value>
+  </data>
+  <data name="ValidationErrors" xml:space="preserve">
+    <value>Διορθώστε τα παρακάτω σφάλματα πριν από την αποθήκευση.</value>
+  </data>
+  <data name="ValidationMachineNameRequired" xml:space="preserve">
+    <value>Το όνομα συστήματος είναι υποχρεωτικό.</value>
+  </data>
+  <data name="ValidationMachineNamePattern" xml:space="preserve">
+    <value>Χρησιμοποιήστε μόνο γράμματα, ψηφία και κάτω παύλες, ξεκινώντας με γράμμα ή κάτω παύλα.</value>
+  </data>
+  <data name="ValidationDuplicateMachineNames" xml:space="preserve">
+    <value>Διπλότυπα ονόματα συστήματος: {0}. Κάθε όνομα συστήματος πρέπει να είναι μοναδικό εντός αυτού του τύπου οντότητας.</value>
+  </data>
+</root>
+

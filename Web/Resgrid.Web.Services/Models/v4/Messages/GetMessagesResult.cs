@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Newtonsoft.Json;
+using Resgrid.Web.Services.Helpers;
+
 namespace Resgrid.Web.Services.Models.v4.Messages;
 
 /// <summary>
@@ -60,6 +63,7 @@ public class MessageResultData
 	/// <summary>
 	/// When the message was sent on (UTC Time)
 	/// </summary>
+	[JsonConverter(typeof(UtcDateTimeConverter))]
 	public DateTime SentOnUtc { get; set; }
 
 	/// <summary>

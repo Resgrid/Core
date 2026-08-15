@@ -1,0 +1,321 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddOption" xml:space="preserve">
+    <value>Προσθήκη Επιλογής (Κουμπιού)</value>
+  </data>
+  <data name="Available" xml:space="preserve">
+    <value>Διαθέσιμος</value>
+  </data>
+  <data name="BaseType" xml:space="preserve">
+    <value>Βασικός Τύπος</value>
+  </data>
+  <data name="ButtonBackgroundColorLabel" xml:space="preserve">
+    <value>Χρώμα Φόντου Κουμπιού</value>
+  </data>
+  <data name="ButtonColorLabel" xml:space="preserve">
+    <value>Χρώμα Κουμπιού</value>
+  </data>
+  <data name="ButtonPreview" xml:space="preserve">
+    <value>Προεπισκόπηση Κουμπιού</value>
+  </data>
+  <data name="ButtonsHelp" xml:space="preserve">
+    <value>Αυτά είναι τα κουμπιά που θα βλέπουν οι χρήστες σας στις εφαρμογές για κινητά και στον ιστότοπο.</value>
+  </data>
+  <data name="ButtonText" xml:space="preserve">
+    <value>Κείμενο Κουμπιού</value>
+  </data>
+  <data name="ButtonTextColorLabel" xml:space="preserve">
+    <value>Χρώμα Κειμένου Κουμπιού</value>
+  </data>
+  <data name="ButtonTextLabel" xml:space="preserve">
+    <value>Κείμενο Κουμπιού</value>
+  </data>
+  <data name="Calls" xml:space="preserve">
+    <value>Κλήσεις</value>
+  </data>
+  <data name="CallsAndStations" xml:space="preserve">
+    <value>Κλήσεις και Σταθμοί</value>
+  </data>
+  <data name="ChangesWarning" xml:space="preserve">
+    <value>Οι αλλαγές στις προσαρμοσμένες καταστάσεις μπορεί να χρειαστούν έως και 30 λεπτά για να διαδοθούν πλήρως στο δίκτυο Resgrid. Οι χρήστες εφαρμογών για κινητά ενθαρρύνονται να κάνουν χειροκίνητο επανασυγχρονισμό (Ρυθμίσεις-&gt;Σύνθετες Ρυθμίσεις-&gt;Επανασυγχρονισμός).</value>
+  </data>
+  <data name="Cleared" xml:space="preserve">
+    <value>Απαλλάχθηκε</value>
+  </data>
+  <data name="CurrentPersonnelStatusesHeader" xml:space="preserve">
+    <value>Προσαρμοσμένες Καταστάσεις Προσωπικού (Ενέργειες)</value>
+  </data>
+  <data name="CurrentUnitStatusesHeader" xml:space="preserve">
+    <value>Τρέχουσες Καταστάσεις Μονάδων</value>
+  </data>
+  <data name="CustomPersonnelStaffingLevelsHeader" xml:space="preserve">
+    <value>Προσαρμοσμένα Επίπεδα Στελέχωσης Προσωπικού</value>
+  </data>
+  <data name="CustomStatusDescPlaceholder" xml:space="preserve">
+    <value>Μια περιγραφή των προσαρμοσμένων καταστάσεων.</value>
+  </data>
+  <data name="CustomStatusesHeader" xml:space="preserve">
+    <value>Προσαρμοσμένες Καταστάσεις</value>
+  </data>
+  <data name="CustomStatusNamePlaceholder" xml:space="preserve">
+    <value>Όνομα Συνόλου Προσαρμοσμένων Καταστάσεων (π.χ. «Οι Καταστάσεις Μου»)</value>
+  </data>
+  <data name="DefaultPersonnelActions" xml:space="preserve">
+    <value>Προεπιλεγμένες Ενέργειες/Καταστάσεις Προσωπικού</value>
+  </data>
+  <data name="DefaultPersonnelStaffing" xml:space="preserve">
+    <value>Προεπιλεγμένη Στελέχωση Προσωπικού</value>
+  </data>
+  <data name="DeleteCustomStatusWarning" xml:space="preserve">
+    <value>ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Αυτό θα διαγράψει οριστικά αυτό το σύνολο καταστάσεων και τα κουμπιά σας θα επανέλθουν στις προεπιλογές για αυτόν τον τύπο μονάδας. Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτό το σύνολο καταστάσεων;</value>
+  </data>
+  <data name="DetailTypeLabel" xml:space="preserve">
+    <value>Τύπος Λεπτομέρειας</value>
+  </data>
+  <data name="Dispatched" xml:space="preserve">
+    <value>Απεστάλη</value>
+  </data>
+  <data name="EditCustomStateDetailHeader" xml:space="preserve">
+    <value>Επεξεργασία Λεπτομέρειας Προσαρμοσμένης Κατάστασης</value>
+  </data>
+  <data name="EditEntryHeader" xml:space="preserve">
+    <value>Επεξεργασία Προσαρμοσμένων Καταστάσεων</value>
+  </data>
+  <data name="EditingSet" xml:space="preserve">
+    <value>Επεξεργασία Συνόλου</value>
+  </data>
+  <data name="EditPersonnelStatuses" xml:space="preserve">
+    <value>Επεξεργασία Καταστάσεων Προσωπικού</value>
+  </data>
+  <data name="EditStaffingLevels" xml:space="preserve">
+    <value>Επεξεργασία Επιπέδων Στελέχωσης</value>
+  </data>
+  <data name="Investigating" xml:space="preserve">
+    <value>Διερεύνηση</value>
+  </data>
+  <data name="MadeContact" xml:space="preserve">
+    <value>Έγινε Επαφή</value>
+  </data>
+  <data name="NewCustomStatusesHeader" xml:space="preserve">
+    <value>Νέες Προσαρμοσμένες Καταστάσεις</value>
+  </data>
+  <data name="NewOptionHeader" xml:space="preserve">
+    <value>Νέα Επιλογή</value>
+  </data>
+  <data name="NoDetail" xml:space="preserve">
+    <value>Χωρίς Λεπτομέρεια</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Καμία</value>
+  </data>
+  <data name="NoNote" xml:space="preserve">
+    <value>Χωρίς Σημείωση</value>
+  </data>
+  <data name="NoteTypeLabel" xml:space="preserve">
+    <value>Τύπος Σημείωσης</value>
+  </data>
+  <data name="NotResponding" xml:space="preserve">
+    <value>Δεν Ανταποκρίνεται</value>
+  </data>
+  <data name="OnScene" xml:space="preserve">
+    <value>Στο Σημείο</value>
+  </data>
+  <data name="PersonnelActions" xml:space="preserve">
+    <value>Ενέργειες Προσωπικού</value>
+  </data>
+  <data name="PersonnelStaffing" xml:space="preserve">
+    <value>Στελέχωση Προσωπικού</value>
+  </data>
+  <data name="PersonnelStatusesLabel" xml:space="preserve">
+    <value>Καταστάσεις Προσωπικού</value>
+  </data>
+  <data name="PreviewButton" xml:space="preserve">
+    <value>Προεπισκόπηση Κουμπιού</value>
+  </data>
+  <data name="RequireGPSLabel" xml:space="preserve">
+    <value>Απαίτηση GPS</value>
+  </data>
+  <data name="Responding" xml:space="preserve">
+    <value>Ανταποκρίνεται</value>
+  </data>
+  <data name="Returning" xml:space="preserve">
+    <value>Επιστρέφει</value>
+  </data>
+  <data name="SetCustomStaffingLevels" xml:space="preserve">
+    <value>Ορισμός Προσαρμοσμένων Επιπέδων Στελέχωσης</value>
+  </data>
+  <data name="SetCustomStatuses" xml:space="preserve">
+    <value>Ορισμός Προσαρμοσμένων Καταστάσεων</value>
+  </data>
+  <data name="StaffingLevelsLabel" xml:space="preserve">
+    <value>Επίπεδα Στελέχωσης</value>
+  </data>
+  <data name="Staging" xml:space="preserve">
+    <value>Χώρος Αναμονής</value>
+  </data>
+  <data name="Stations" xml:space="preserve">
+    <value>Σταθμοί</value>
+  </data>
+  <data name="TextColorLabel" xml:space="preserve">
+    <value>Χρώμα Κειμένου</value>
+  </data>
+  <data name="Unavailable" xml:space="preserve">
+    <value>Μη Διαθέσιμος</value>
+  </data>
+  <data name="UnitStatus" xml:space="preserve">
+    <value>Κατάσταση Μονάδας</value>
+  </data>
+  <data name="Enroute" xml:space="preserve">
+    <value>Καθ' Οδόν</value>
+  </data>
+  <data name="Transporting" xml:space="preserve">
+    <value>Μεταφέρει</value>
+  </data>
+  <data name="Delivering" xml:space="preserve">
+    <value>Παραδίδει</value>
+  </data>
+  <data name="AtPatient" xml:space="preserve">
+    <value>Στον Ασθενή</value>
+  </data>
+  <data name="AtHospital" xml:space="preserve">
+    <value>Στο Νοσοκομείο</value>
+  </data>
+  <data name="Searching" xml:space="preserve">
+    <value>Έρευνα</value>
+  </data>
+  <data name="Loading" xml:space="preserve">
+    <value>Φόρτωση</value>
+  </data>
+  <data name="Standby" xml:space="preserve">
+    <value>Αναμονή</value>
+  </data>
+  <data name="OnPatrol" xml:space="preserve">
+    <value>Σε Περιπολία</value>
+  </data>
+  <data name="Maintenance" xml:space="preserve">
+    <value>Συντήρηση</value>
+  </data>
+  <data name="OnBreak" xml:space="preserve">
+    <value>Σε Διάλειμμα</value>
+  </data>
+  <data name="Completed" xml:space="preserve">
+    <value>Ολοκληρώθηκε</value>
+  </data>
+</root>

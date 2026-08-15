@@ -1,0 +1,751 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ActiveCalls" xml:space="preserve">
+    <value>Ενεργές Κλήσεις</value>
+  </data>
+  <data name="ActiveCallsHelp" xml:space="preserve">
+    <value>Προσθήκη ενεργής κλήσης</value>
+  </data>
+  <data name="AddArchivedCall" xml:space="preserve">
+    <value>Προσθήκη Αρχειοθετημένης Κλήσης</value>
+  </data>
+  <data name="AddArchivedCallHeader" xml:space="preserve">
+    <value>Προσθήκη Αρχειοθετημένης Κλήσης</value>
+  </data>
+  <data name="AddArchivedCallHelp" xml:space="preserve">
+    <value>Προσθήκη αρχειοθετημένης κλήσης</value>
+  </data>
+  <data name="AddedBy" xml:space="preserve">
+    <value>Προστέθηκε Από</value>
+  </data>
+  <data name="AddFile" xml:space="preserve">
+    <value>Προσθήκη Αρχείου</value>
+  </data>
+  <data name="AddFilePlaceholder" xml:space="preserve">
+    <value>Εισαγάγετε όνομα συνημμένου</value>
+  </data>
+  <data name="AddImage" xml:space="preserve">
+    <value>Προσθήκη Εικόνας</value>
+  </data>
+  <data name="AdditionalContactLabel" xml:space="preserve">
+    <value>Πρόσθετες Επαφές</value>
+  </data>
+  <data name="AddLinkedCall" xml:space="preserve">
+    <value>Προσθήκη Συνδεδεμένης Κλήσης</value>
+  </data>
+  <data name="AddNote" xml:space="preserve">
+    <value>Προσθήκη Σημείωσης</value>
+  </data>
+  <data name="AddNotePlaceholder" xml:space="preserve">
+    <value>Εισαγάγετε σημείωση εδώ...</value>
+  </data>
+  <data name="AlertNotesHeader" xml:space="preserve">
+    <value>Σημειώσεις Ειδοποίησης για την Επαφή</value>
+  </data>
+  <data name="ArchivedCallsHeader" xml:space="preserve">
+    <value>Αρχειοθετημένες Κλήσεις</value>
+  </data>
+  <data name="AttachedImages" xml:space="preserve">
+    <value>Συνημμένες Εικόνες</value>
+  </data>
+  <data name="CallContactType" xml:space="preserve">
+    <value>Τύπος Επαφής Κλήσης</value>
+  </data>
+  <data name="CallDocumentsHeader" xml:space="preserve">
+    <value>Έγγραφα Κλήσης</value>
+  </data>
+  <data name="CallExportHeader" xml:space="preserve">
+    <value>Εξαγωγή Κλήσης Resgrid</value>
+  </data>
+  <data name="CallForm" xml:space="preserve">
+    <value>Φόρμα Κλήσης</value>
+  </data>
+  <data name="CallFormLabel" xml:space="preserve">
+    <value>Φόρμα Κλήσης</value>
+  </data>
+  <data name="CallIdentifierLabel" xml:space="preserve">
+    <value>Αναγνωριστικό Κλήσης</value>
+  </data>
+  <data name="CallIdentifierPlaceholder" xml:space="preserve">
+    <value>Αναγνωριστικό CAD ή Αναγνωριστικό Συστήματος Εισερχόμενης Κλήσης</value>
+  </data>
+  <data name="CallIdLabel" xml:space="preserve">
+    <value>Αναγνωριστικό</value>
+  </data>
+  <data name="CallLinksLabel" xml:space="preserve">
+    <value>Σύνδεσμοι Κλήσης</value>
+  </data>
+  <data name="CallNatureLabel" xml:space="preserve">
+    <value>Φύση της Κλήσης</value>
+  </data>
+  <data name="CallNaturePlaceholder" xml:space="preserve">
+    <value>Μια περιγραφή της φύσης της κλήσης</value>
+  </data>
+  <data name="CallNoteAddedByLabel" xml:space="preserve">
+    <value>Σημείωση Κλήσης Προστέθηκε Από</value>
+  </data>
+  <data name="CallNoteAddedOnLabel" xml:space="preserve">
+    <value>Σημείωση Κλήσης Προστέθηκε Στις</value>
+  </data>
+  <data name="CallNotesHeader" xml:space="preserve">
+    <value>Σημειώσεις Κλήσης</value>
+  </data>
+  <data name="CallNoteTextLabel" xml:space="preserve">
+    <value>Κείμενο Σημείωσης Κλήσης</value>
+  </data>
+  <data name="CallNumber" xml:space="preserve">
+    <value>Αριθμός Κλήσης</value>
+  </data>
+  <data name="CallNumberLabel" xml:space="preserve">
+    <value>Αριθμός</value>
+  </data>
+  <data name="CallsLinkedFromThisHeader" xml:space="preserve">
+    <value>Κλήσεις Συνδεδεμένες Από (Γονικές Κλήσεις)</value>
+  </data>
+  <data name="CallsLinkedToThisHeader" xml:space="preserve">
+    <value>Κλήσεις Συνδεδεμένες Προς (Θυγατρικές Κλήσεις)</value>
+  </data>
+  <data name="CallTemplatesLabel" xml:space="preserve">
+    <value>Πρότυπα Κλήσεων</value>
+  </data>
+  <data name="CloseCall" xml:space="preserve">
+    <value>Κλείσιμο Κλήσης</value>
+  </data>
+  <data name="CloseCallHeader" xml:space="preserve">
+    <value>Κλείσιμο Κλήσης</value>
+  </data>
+  <data name="ClosedByLabel" xml:space="preserve">
+    <value>Έκλεισε Από</value>
+  </data>
+  <data name="ClosedOnLabel" xml:space="preserve">
+    <value>Έκλεισε Στις</value>
+  </data>
+  <data name="CompletedNotesLabel" xml:space="preserve">
+    <value>Σημειώσεις Ολοκλήρωσης</value>
+  </data>
+  <data name="CompletedNotesPlaceholder" xml:space="preserve">
+    <value>Σημειώσεις σχετικά με το κλείσιμο της κλήσης ή τον λόγο κλεισίματος</value>
+  </data>
+  <data name="CompletedTypeLabel" xml:space="preserve">
+    <value>Τύπος Ολοκλήρωσης</value>
+  </data>
+  <data name="Contacts" xml:space="preserve">
+    <value>Επαφές</value>
+  </data>
+  <data name="CreateCall" xml:space="preserve">
+    <value>Δημιουργία και Αποστολή Κλήσης</value>
+  </data>
+  <data name="DeleteCall" xml:space="preserve">
+    <value>Διαγραφή Κλήσης</value>
+  </data>
+  <data name="DeleteCallHeader" xml:space="preserve">
+    <value>Διαγραφή Κλήσης</value>
+  </data>
+  <data name="DeleteReasonLabel" xml:space="preserve">
+    <value>Λόγος Διαγραφής</value>
+  </data>
+  <data name="DeleteReasonPlaceholder" xml:space="preserve">
+    <value>Ο λόγος διαγραφής της κλήσης</value>
+  </data>
+  <data name="DispatchAudio" xml:space="preserve">
+    <value>Ήχος Αποστολής</value>
+  </data>
+  <data name="DispatchedPersonnel" xml:space="preserve">
+    <value>Απεσταλμένο Προσωπικό</value>
+  </data>
+  <data name="DispatchedUnits" xml:space="preserve">
+    <value>Απεσταλμένες Μονάδες</value>
+  </data>
+  <data name="DispatchLabel" xml:space="preserve">
+    <value>Αποστολή</value>
+  </data>
+  <data name="DrivingDirections" xml:space="preserve">
+    <value>Οδηγίες Οδήγησης από</value>
+  </data>
+  <data name="ExportUnauthHeader" xml:space="preserve">
+    <value>Αυτή είναι μια μη πιστοποιημένη σελίδα για την προβολή αυτής της κλήσης μόνο. Δεν είστε συνδεδεμένοι στο Resgrid. Μην μοιραστείτε αυτή τη διεύθυνση URL.</value>
+  </data>
+  <data name="FileName" xml:space="preserve">
+    <value>Όνομα Αρχείου</value>
+  </data>
+  <data name="FileType" xml:space="preserve">
+    <value>Τύπος Αρχείου</value>
+  </data>
+  <data name="FindAddress" xml:space="preserve">
+    <value>Εύρεση Διεύθυνσης</value>
+  </data>
+  <data name="FindW3wLocation" xml:space="preserve">
+    <value>Εύρεση Τοποθεσίας w3w</value>
+  </data>
+  <data name="FlagCallNoteHeader" xml:space="preserve">
+    <value>Αναφορά Σημείωσης Κλήσης για Εποπτεία</value>
+  </data>
+  <data name="FlagCallImageHeader" xml:space="preserve">
+    <value>Αναφορά Εικόνας Κλήσης για Εποπτεία</value>
+  </data>
+  <data name="FlagCallFileHeader" xml:space="preserve">
+    <value>Επισήμανση Αρχείου Κλήσης</value>
+  </data>
+  <data name="CallImageAddedByLabel" xml:space="preserve">
+    <value>Εικόνα Προστέθηκε Από</value>
+  </data>
+  <data name="CallImageTimestampLabel" xml:space="preserve">
+    <value>Χρονική Σήμανση Εικόνας</value>
+  </data>
+  <data name="CallFileAddedByLabel" xml:space="preserve">
+    <value>Αρχείο Προστέθηκε Από</value>
+  </data>
+  <data name="CallFileTimestampLabel" xml:space="preserve">
+    <value>Χρονική Σήμανση Αρχείου</value>
+  </data>
+  <data name="FlagImage" xml:space="preserve">
+    <value>Αναφορά Εικόνας</value>
+  </data>
+  <data name="FlagFile" xml:space="preserve">
+    <value>Επισήμανση Αρχείου</value>
+  </data>
+  <data name="FlaggedReasonLabel" xml:space="preserve">
+    <value>Λόγος Αναφοράς</value>
+  </data>
+  <data name="FlaggedReasonPlaceholder" xml:space="preserve">
+    <value>Λόγος αναφοράς</value>
+  </data>
+  <data name="GPSLabel" xml:space="preserve">
+    <value>GPS</value>
+  </data>
+  <data name="IncidentIdLabel" xml:space="preserve">
+    <value>Αναγνωριστικό Περιστατικού</value>
+  </data>
+  <data name="IncidentIdPlaceholder" xml:space="preserve">
+    <value>Κύριο ή Γονικό Εξωτερικό Αναγνωριστικό Περιστατικού</value>
+  </data>
+  <data name="IsFlaggedLabel" xml:space="preserve">
+    <value>Έχει Επισημανθεί</value>
+  </data>
+  <data name="LearnMore" xml:space="preserve">
+    <value>Μάθετε Περισσότερα.</value>
+  </data>
+  <data name="LinkedCalls" xml:space="preserve">
+    <value>Συνδεδεμένες Κλήσεις</value>
+  </data>
+  <data name="LocationLabel" xml:space="preserve">
+    <value>Τοποθεσία</value>
+  </data>
+  <data name="LocationPlaceholder" xml:space="preserve">
+    <value>Πλήρης Διεύθυνση της κλήσης (Οδός, Πόλη, Νομός, Ταχυδρομικός Κώδικας)</value>
+  </data>
+  <data name="LoggedByLabel" xml:space="preserve">
+    <value>Καταγράφηκε Από</value>
+  </data>
+  <data name="LoggedOnLabel" xml:space="preserve">
+    <value>Καταγράφηκε Στις</value>
+  </data>
+  <data name="MapPageLabel" xml:space="preserve">
+    <value>Σελίδα Χάρτη</value>
+  </data>
+  <data name="MapPagePlaceholder" xml:space="preserve">
+    <value>Σελίδα Χαρτοβιβλίου</value>
+  </data>
+  <data name="NameLabel" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="NamePlaceholder" xml:space="preserve">
+    <value>Όνομα της Κλήσης</value>
+  </data>
+  <data name="NewCallFormHeader" xml:space="preserve">
+    <value>Φόρμα Νέας Κλήσης</value>
+  </data>
+  <data name="NewCallHeader" xml:space="preserve">
+    <value>Νέα Κλήση</value>
+  </data>
+  <data name="NoAttachments" xml:space="preserve">
+    <value>Χωρίς Συνημμένα</value>
+  </data>
+  <data name="NoFiles" xml:space="preserve">
+    <value>Δεν έχουν επισυναφθεί αρχεία σε αυτή την Κλήση</value>
+  </data>
+  <data name="NotClosed" xml:space="preserve">
+    <value>Δεν Έκλεισε</value>
+  </data>
+  <data name="Note" xml:space="preserve">
+    <value>Σημείωση</value>
+  </data>
+  <data name="NotesLabel" xml:space="preserve">
+    <value>Σημειώσεις</value>
+  </data>
+  <data name="NotesPlaceholder" xml:space="preserve">
+    <value>Σημειώσεις για την κλήση</value>
+  </data>
+  <data name="NotSupplied" xml:space="preserve">
+    <value>Δεν Δόθηκε</value>
+  </data>
+  <data name="NoType" xml:space="preserve">
+    <value>Χωρίς Τύπο</value>
+  </data>
+  <data name="PersonnelActivityLabel" xml:space="preserve">
+    <value>Δραστηριότητα Προσωπικού</value>
+  </data>
+  <data name="PersonnelDispatchLabel" xml:space="preserve">
+    <value>Προσωπικό</value>
+  </data>
+  <data name="PersonnelEvents" xml:space="preserve">
+    <value>Συμβάντα Προσωπικού</value>
+  </data>
+  <data name="PrimaryContactLabel" xml:space="preserve">
+    <value>Κύρια Επαφή</value>
+  </data>
+  <data name="PrioirtyLabel" xml:space="preserve">
+    <value>Προτεραιότητα</value>
+  </data>
+  <data name="ProtocolQuestionHeader" xml:space="preserve">
+    <value>Απαντήστε στις Ερωτήσεις Πρωτοκόλλου</value>
+  </data>
+  <data name="ProtocolsLabel" xml:space="preserve">
+    <value>Πρωτόκολλα</value>
+  </data>
+  <data name="ProtocolText" xml:space="preserve">
+    <value>Κείμενο Πρωτοκόλλου</value>
+  </data>
+  <data name="NotifyCancelledHelp" xml:space="preserve">
+    <value>Αν επιλεγεί, οι οντότητες που αφαιρέθηκαν από τη λίστα αποστολής θα λάβουν ειδοποίηση ακύρωσης για αυτή την κλήση.</value>
+  </data>
+  <data name="NotifyCancelledLabel" xml:space="preserve">
+    <value>Ειδοποίηση Ακυρωμένων</value>
+  </data>
+  <data name="RedispatchCallHelp" xml:space="preserve">
+    <value>Αν θέλετε να αναμεταδώσετε αυτή την κλήση, επιλέξτε αυτό το πλαίσιο. Αυτό θα στείλει την κλήση σε όλους τους επιλεγμένους χρήστες, ανεξάρτητα από το αν συμπεριλήφθηκαν στην πρώτη αποστολή.</value>
+  </data>
+  <data name="RedispatchCallLabel" xml:space="preserve">
+    <value>Επαναποστολή</value>
+  </data>
+  <data name="ReferenceIdLabel" xml:space="preserve">
+    <value>Αναγνωριστικό Αναφοράς</value>
+  </data>
+  <data name="ReferenceIdPlaceholder" xml:space="preserve">
+    <value>Αριθμός Συνεργάτη ή Αναφοράς</value>
+  </data>
+  <data name="RegenerateCallLabel" xml:space="preserve">
+    <value>Επαναδημιουργία Αριθμών Κλήσεων</value>
+  </data>
+  <data name="RegenerateCallWarning" xml:space="preserve">
+    <value>ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Αυτή η διαδικασία θα ενημερώσει ΟΛΟΥΣ τους αριθμούς κλήσεων Resgrid (π.χ. 16-55) βάσει ημερομηνίας. Αυτή η διαδικασία δεν είναι αναστρέψιμη.</value>
+  </data>
+  <data name="ReopenCall" xml:space="preserve">
+    <value>Επανάνοιγμα Κλήσης</value>
+  </data>
+  <data name="ReportContactLabel" xml:space="preserve">
+    <value>Στοιχεία Επικοινωνίας Αναφέροντος</value>
+  </data>
+  <data name="ReportContactPlaceholder" xml:space="preserve">
+    <value>Τηλέφωνο ή διεύθυνση email του Αναφέροντος</value>
+  </data>
+  <data name="ReportNameLabel" xml:space="preserve">
+    <value>Όνομα Αναφέροντος</value>
+  </data>
+  <data name="ReportNamePlaceholder" xml:space="preserve">
+    <value>Όνομα του Ατόμου που Αναφέρει την κλήση</value>
+  </data>
+  <data name="SelectCallLabel" xml:space="preserve">
+    <value>Επιλογή Κλήσης</value>
+  </data>
+  <data name="SelectCallNoteLabel" xml:space="preserve">
+    <value>Σημείωση για τον Σύνδεσμο (Προαιρετικό)</value>
+  </data>
+  <data name="SelectCallTemplateHeader" xml:space="preserve">
+    <value>Επιλογή Προτύπου Κλήσης</value>
+  </data>
+  <data name="SelectCallToLinkHeader" xml:space="preserve">
+    <value>Επιλογή Κλήσης προς Σύνδεση</value>
+  </data>
+  <data name="SendNotificationLabel" xml:space="preserve">
+    <value>Αποστολή Ειδοποίησης</value>
+  </data>
+  <data name="SetTemplateButton" xml:space="preserve">
+    <value>Ορισμός Προτύπου</value>
+  </data>
+  <data name="StateLabel" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="Template" xml:space="preserve">
+    <value>Πρότυπο</value>
+  </data>
+  <data name="TimestampLabel" xml:space="preserve">
+    <value>Χρονική Σήμανση</value>
+  </data>
+  <data name="TypeLabel" xml:space="preserve">
+    <value>Τύπος</value>
+  </data>
+  <data name="UnitActivityLabel" xml:space="preserve">
+    <value>Δραστηριότητα Μονάδας</value>
+  </data>
+  <data name="UnitEvents" xml:space="preserve">
+    <value>Συμβάντα Μονάδας</value>
+  </data>
+  <data name="UnitsDispatchLabel" xml:space="preserve">
+    <value>Μονάδες</value>
+  </data>
+  <data name="UpdateCallHeader" xml:space="preserve">
+    <value>Ενημέρωση Κλήσης</value>
+  </data>
+  <data name="ViewCallHeader" xml:space="preserve">
+    <value>Προβολή Κλήσης</value>
+  </data>
+  <data name="ViewText" xml:space="preserve">
+    <value>Προβολή Κειμένου</value>
+  </data>
+  <data name="W3wHelp" xml:space="preserve">
+    <value>Αυτή είναι μια διεύθυνση what3words.</value>
+  </data>
+  <data name="CheckInTimersLabel" xml:space="preserve">
+    <value>Χρονόμετρα Παρουσίας</value>
+  </data>
+  <data name="EnableCheckInTimers" xml:space="preserve">
+    <value>Ενεργοποίηση Χρονομέτρων Παρουσίας</value>
+  </data>
+  <data name="CheckInTimersHeader" xml:space="preserve">
+    <value>Χρονόμετρα Παρουσίας</value>
+  </data>
+  <data name="CheckInTimerTarget" xml:space="preserve">
+    <value>Στόχος</value>
+  </data>
+  <data name="CheckInTimerType" xml:space="preserve">
+    <value>Τύπος</value>
+  </data>
+  <data name="CheckInTimerLastCheckIn" xml:space="preserve">
+    <value>Τελευταία Παρουσία</value>
+  </data>
+  <data name="CheckInTimerTimeRemaining" xml:space="preserve">
+    <value>Υπολειπόμενος Χρόνος</value>
+  </data>
+  <data name="CheckInTimerStatus" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="CheckInTimerActions" xml:space="preserve">
+    <value>Ενέργειες</value>
+  </data>
+  <data name="CheckInTimerPerformCheckIn" xml:space="preserve">
+    <value>Δήλωση Παρουσίας</value>
+  </data>
+  <data name="CheckInTimerShowHistory" xml:space="preserve">
+    <value>Εμφάνιση Ιστορικού Παρουσιών</value>
+  </data>
+  <data name="CheckInTimerHistoryTimestamp" xml:space="preserve">
+    <value>Χρονική Σήμανση</value>
+  </data>
+  <data name="CheckInTimerHistoryWho" xml:space="preserve">
+    <value>Ποιος</value>
+  </data>
+  <data name="CheckInTimerHistoryType" xml:space="preserve">
+    <value>Τύπος</value>
+  </data>
+  <data name="CheckInTimerHistoryUnit" xml:space="preserve">
+    <value>Μονάδα</value>
+  </data>
+  <data name="CheckInTimerHistoryLocation" xml:space="preserve">
+    <value>Τοποθεσία</value>
+  </data>
+  <data name="CheckInTimerHistoryNote" xml:space="preserve">
+    <value>Σημείωση</value>
+  </data>
+  <data name="CheckInTimerConfigSection" xml:space="preserve">
+    <value>Διαμόρφωση Χρονομέτρων Παρουσίας</value>
+  </data>
+  <data name="CheckInTimerLogSection" xml:space="preserve">
+    <value>Αρχείο Παρουσιών</value>
+  </data>
+  <data name="CheckInTimerDuration" xml:space="preserve">
+    <value>Διάρκεια (λεπ.)</value>
+  </data>
+  <data name="CheckInTimerWarning" xml:space="preserve">
+    <value>Όριο Προειδοποίησης (λεπ.)</value>
+  </data>
+  <data name="CheckInTimerSource" xml:space="preserve">
+    <value>Πηγή</value>
+  </data>
+  <data name="VideoFeeds" xml:space="preserve">
+    <value>Ροές Βίντεο</value>
+  </data>
+  <data name="AddVideoFeed" xml:space="preserve">
+    <value>Προσθήκη Ροής Βίντεο</value>
+  </data>
+  <data name="EditVideoFeed" xml:space="preserve">
+    <value>Επεξεργασία Ροής Βίντεο</value>
+  </data>
+  <data name="DeleteVideoFeed" xml:space="preserve">
+    <value>Διαγραφή Ροής Βίντεο</value>
+  </data>
+  <data name="VideoFeedName" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="VideoFeedUrl" xml:space="preserve">
+    <value>Διεύθυνση URL</value>
+  </data>
+  <data name="VideoFeedType" xml:space="preserve">
+    <value>Τύπος Ροής</value>
+  </data>
+  <data name="VideoFeedFormat" xml:space="preserve">
+    <value>Μορφή Ροής</value>
+  </data>
+  <data name="VideoFeedDescription" xml:space="preserve">
+    <value>Περιγραφή</value>
+  </data>
+  <data name="VideoFeedStatus" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="VideoFeedLocation" xml:space="preserve">
+    <value>Τοποθεσία</value>
+  </data>
+  <data name="VideoFeedAddedBy" xml:space="preserve">
+    <value>Προστέθηκε Από</value>
+  </data>
+  <data name="VideoFeedAddedOn" xml:space="preserve">
+    <value>Προστέθηκε Στις</value>
+  </data>
+  <data name="VideoFeedSortOrder" xml:space="preserve">
+    <value>Σειρά Ταξινόμησης</value>
+  </data>
+  <data name="VideoFeedActive" xml:space="preserve">
+    <value>Ενεργή</value>
+  </data>
+  <data name="VideoFeedInactive" xml:space="preserve">
+    <value>Ανενεργή</value>
+  </data>
+  <data name="VideoFeedError" xml:space="preserve">
+    <value>Σφάλμα</value>
+  </data>
+  <data name="VideoFeedDrone" xml:space="preserve">
+    <value>Drone</value>
+  </data>
+  <data name="VideoFeedFixedCamera" xml:space="preserve">
+    <value>Σταθερή Κάμερα</value>
+  </data>
+  <data name="VideoFeedBodyCam" xml:space="preserve">
+    <value>Κάμερα Σώματος</value>
+  </data>
+  <data name="VideoFeedTrafficCam" xml:space="preserve">
+    <value>Κάμερα Κυκλοφορίας</value>
+  </data>
+  <data name="VideoFeedWeatherCam" xml:space="preserve">
+    <value>Κάμερα Καιρού</value>
+  </data>
+  <data name="VideoFeedSatellite" xml:space="preserve">
+    <value>Δορυφορική Ροή</value>
+  </data>
+  <data name="VideoFeedWebCam" xml:space="preserve">
+    <value>Διαδικτυακή Κάμερα</value>
+  </data>
+  <data name="VideoFeedOther" xml:space="preserve">
+    <value>Άλλη</value>
+  </data>
+  <data name="ConfirmDeleteVideoFeed" xml:space="preserve">
+    <value>Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτή τη ροή βίντεο;</value>
+  </data>
+  <data name="NoVideoFeeds" xml:space="preserve">
+    <value>Δεν έχουν προστεθεί ροές βίντεο σε αυτή την κλήση.</value>
+  </data>
+  <data name="Additional" xml:space="preserve"><value>Πρόσθετα</value></data>
+  <data name="AllOfGroupDispatched" xml:space="preserve"><value>Όλη η ομάδα {0} Απεστάλη</value></data>
+  <data name="AreYouSure" xml:space="preserve"><value>Είστε βέβαιοι;</value></data>
+  <data name="CallUpdatedTitle" xml:space="preserve"><value>Η Κλήση Ενημερώθηκε</value></data>
+  <data name="CallUpdatedMessage" xml:space="preserve"><value>Αυτή η κλήση ενημερώθηκε· ανανεώστε τη σελίδα για να δείτε τις τελευταίες πληροφορίες.</value></data>
+  <data name="CallsForYear" xml:space="preserve"><value>Κλήσεις για το Έτος</value></data>
+  <data name="CheckInFailed" xml:space="preserve"><value>Αποτυχία δήλωσης παρουσίας. Δοκιμάστε ξανά.</value></data>
+  <data name="CheckInStatusOk" xml:space="preserve"><value>ΕΝΤΑΞΕΙ</value></data>
+  <data name="CheckInStatusOverdue" xml:space="preserve"><value>ΕΚΠΡΟΘΕΣΜΟ</value></data>
+  <data name="CustomFields" xml:space="preserve"><value>Προσαρμοσμένα Πεδία</value></data>
+  <data name="Destination" xml:space="preserve"><value>Προορισμός</value></data>
+  <data name="DestinationHelp" xml:space="preserve"><value>Επιλέξτε σημείο ενδιαφέροντος προορισμού, όπως νοσοκομείο, καταφύγιο, κέντρο μεταφοράς ή χώρο αναμονής.</value></data>
+  <data name="DispatchChat" xml:space="preserve"><value>Συνομιλία Αποστολής</value></data>
+  <data name="DispatchTime" xml:space="preserve"><value>Ώρα Αποστολής</value></data>
+  <data name="EnterMessageHere" xml:space="preserve"><value>Εισαγάγετε μήνυμα εδώ...</value></data>
+  <data name="ETA" xml:space="preserve"><value>Εκτιμώμενη Ώρα Άφιξης</value></data>
+  <data name="GoToDispatch" xml:space="preserve"><value>Μετάβαση στην Αποστολή</value></data>
+  <data name="GoToHome" xml:space="preserve"><value>Μετάβαση στην Αρχική</value></data>
+  <data name="Group" xml:space="preserve"><value>Ομάδα</value></data>
+  <data name="GroupSelected" xml:space="preserve"><value>(Επιλέχθηκε Ομάδα)</value></data>
+  <data name="IndoorLocation" xml:space="preserve"><value>Τοποθεσία Εσωτερικού Χώρου</value></data>
+  <data name="InvalidCoordinates" xml:space="preserve"><value>Εισαγάγετε έγκυρες αριθμητικές τιμές γεωγραφικού πλάτους και μήκους.</value></data>
+  <data name="Latitude" xml:space="preserve"><value>Γεωγραφικό Πλάτος</value></data>
+  <data name="LatitudeShort" xml:space="preserve"><value>Πλάτος</value></data>
+  <data name="Longitude" xml:space="preserve"><value>Γεωγραφικό Μήκος</value></data>
+  <data name="LongitudeShort" xml:space="preserve"><value>Μήκος</value></data>
+  <data name="NoteAlerts" xml:space="preserve"><value>Ειδοποιήσεις Σημειώσεων</value></data>
+  <data name="OnlineUsers" xml:space="preserve"><value>Συνδεδεμένοι Χρήστες</value></data>
+  <data name="PersonnelCount" xml:space="preserve"><value>Πλήθος Προσωπικού</value></data>
+  <data name="PrintExportView" xml:space="preserve"><value>Προβολή Εκτύπωσης (Εξαγωγής)</value></data>
+  <data name="Primary" xml:space="preserve"><value>Κύρια</value></data>
+  <data name="ProtocolTextFor" xml:space="preserve"><value>Κείμενο Πρωτοκόλλου για {0}</value></data>
+  <data name="QuestionsFor" xml:space="preserve"><value>Ερωτήσεις για {0}</value></data>
+  <data name="RemoveThisCallLink" xml:space="preserve"><value>Αφαίρεση αυτού του συνδέσμου κλήσης</value></data>
+  <data name="RequestSent" xml:space="preserve"><value>Το Αίτημα Στάλθηκε!</value></data>
+  <data name="ReopenCallConfirmText" xml:space="preserve"><value>Είστε βέβαιοι ότι θέλετε να ανοίξετε ξανά αυτή την κλήση; Αυτό θα διαγράψει όλα τα σχετικά δεδομένα κλεισίματος, συμπεριλαμβανομένου του ποιος έκλεισε την κλήση, πότε έκλεισε, της κατάστασης κλεισίματος και τυχόν σημειώσεων κλεισίματος.</value></data>
+  <data name="ReopenCallRequestSentMessage" xml:space="preserve"><value>Το αίτημά σας για επανάνοιγμα της κλήσης βρίσκεται σε επεξεργασία. Ελέγξτε τη σελίδα πίνακα Ανοιχτών Κλήσεων για να δείτε την κλήση.</value></data>
+  <data name="RouteFrom" xml:space="preserve"><value>Διαδρομή από {0}</value></data>
+  <data name="SearchDestinationPois" xml:space="preserve"><value>Αναζήτηση σημείων ενδιαφέροντος προορισμού...</value></data>
+  <data name="SearchIndoorLocations" xml:space="preserve"><value>Αναζήτηση τοποθεσιών εσωτερικού χώρου...</value></data>
+  <data name="SetPinOnMap" xml:space="preserve"><value>Ορισμός Πινέζας στον Χάρτη</value></data>
+  <data name="Staffing" xml:space="preserve"><value>Στελέχωση</value></data>
+  <data name="UngroupedUsersUnits" xml:space="preserve"><value>Χρήστες/Μονάδες Εκτός Ομάδας</value></data>
+  <data name="WhatThreeWordsNotFound" xml:space="preserve"><value>Το What3Words δεν μπόρεσε να βρει τοποθεσία για αυτές τις λέξεις. Βεβαιωθείτε ότι είναι 3 λέξεις χωρισμένες με τελείες.</value></data>
+  <data name="WhatThreeWordsPlaceholder" xml:space="preserve"><value>what.three.words</value></data>
+  <data name="AnswerQuestions" xml:space="preserve"><value>Απάντηση σε Ερωτήσεις</value></data>
+  <data name="CallPriorityLow" xml:space="preserve"><value>Χαμηλή</value></data>
+  <data name="CallPriorityMedium" xml:space="preserve"><value>Μεσαία</value></data>
+  <data name="CallPriorityHigh" xml:space="preserve"><value>Υψηλή</value></data>
+  <data name="CallPriorityEmergency" xml:space="preserve"><value>Έκτακτης Ανάγκης</value></data>
+  <data name="Cancelled" xml:space="preserve"><value>Ακυρώθηκε</value></data>
+  <data name="CheckInTimerTargetUnitType" xml:space="preserve"><value>Τύπος Μονάδας</value></data>
+  <data name="CheckInTimerTargetHazmatExposure" xml:space="preserve"><value>Έκθεση σε Επικίνδυνα Υλικά</value></data>
+  <data name="CheckInTimerTargetSectorRotation" xml:space="preserve"><value>Εναλλαγή Τομέα</value></data>
+  <data name="CheckInTimerTargetRehab" xml:space="preserve"><value>Αποκατάσταση</value></data>
+  <data name="File" xml:space="preserve"><value>Αρχείο</value></data>
+  <data name="Inactive" xml:space="preserve"><value>Ανενεργή</value></data>
+  <data name="InvalidDestinationPoi" xml:space="preserve"><value>Επιλέξτε έγκυρο σημείο ενδιαφέροντος προορισμού.</value></data>
+  <data name="LoggedOff" xml:space="preserve"><value>αποσυνδέθηκε.</value></data>
+  <data name="AttachFileRequired" xml:space="preserve"><value>Πρέπει να επιλέξετε αρχείο για επισύναψη.</value></data>
+  <data name="DocumentTypeNotImportable" xml:space="preserve"><value>Ο τύπος εγγράφου ({0}) δεν μπορεί να εισαχθεί.</value></data>
+  <data name="FileTooLarge10Mb" xml:space="preserve"><value>Το αρχείο είναι πολύ μεγάλο· πρέπει να είναι μικρότερο από 10MB.</value></data>
+  <data name="NoLocation" xml:space="preserve"><value>Χωρίς Τοποθεσία</value></data>
+  <data name="GenericCall" xml:space="preserve"><value>Γενική Κλήση</value></data>
+  <data name="SelectContact" xml:space="preserve"><value>Επιλογή Επαφής</value></data>
+  <data name="NoDestination" xml:space="preserve"><value>Χωρίς Προορισμό</value></data>
+  <data name="Pois" xml:space="preserve"><value>Σημεία Ενδιαφέροντος</value></data>
+  <data name="Override" xml:space="preserve"><value>Παράκαμψη</value></data>
+  <data name="RouteDistance" xml:space="preserve"><value>Απόσταση</value></data>
+  <data name="RouteDuration" xml:space="preserve"><value>Διάρκεια</value></data>
+  <data name="RouteStep" xml:space="preserve"><value>Βήμα</value></data>
+  <data name="RouteUnitKilometers" xml:space="preserve"><value>χλμ</value></data>
+  <data name="RouteUnitMinutes" xml:space="preserve"><value>λεπ.</value></data>
+  <data name="ScheduleDispatchLabel" xml:space="preserve">
+    <value>Προγραμματισμός Αποστολής</value>
+  </data>
+  <data name="ScheduleDispatchPlaceholder" xml:space="preserve">
+    <value>Επιλέξτε μελλοντική ημερομηνία και ώρα...</value>
+  </data>
+  <data name="ScheduleDispatchHelp" xml:space="preserve">
+    <value>Προαιρετικά ορίστε μελλοντική ημερομηνία/ώρα για καθυστέρηση της αποστολής. Πρέπει να είναι τουλάχιστον 15 λεπτά στο μέλλον.</value>
+  </data>
+  <data name="ScheduleDispatchValidationError" xml:space="preserve">
+    <value>Η προγραμματισμένη αποστολή πρέπει να είναι τουλάχιστον 15 λεπτά στο μέλλον.</value>
+  </data>
+  <data name="ScheduledDispatchDate" xml:space="preserve">
+    <value>Προγραμματισμένη Ημερομηνία Αποστολής</value>
+  </data>
+</root>

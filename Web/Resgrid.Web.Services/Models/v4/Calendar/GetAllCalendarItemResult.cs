@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Newtonsoft.Json;
+using Resgrid.Web.Services.Helpers;
+
 namespace Resgrid.Web.Services.Models.v4.Calendar;
 
 /// <summary>
@@ -37,6 +40,7 @@ public class GetAllCalendarItemResultData
 	/// <summary>
 	/// Start Time in UTC
 	/// </summary>
+	[JsonConverter(typeof(UtcDateTimeConverter))]
 	public DateTime StartUtc { get; set; }
 
 	/// <summary>
@@ -47,6 +51,7 @@ public class GetAllCalendarItemResultData
 	/// <summary>
 	/// End Time in UTC
 	/// </summary>
+	[JsonConverter(typeof(UtcDateTimeConverter))]
 	public DateTime EndUtc { get; set; }
 
 	/// <summary>

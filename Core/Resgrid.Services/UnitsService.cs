@@ -76,7 +76,30 @@ namespace Resgrid.Services
 
 			_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = saved.DepartmentId });
 
+			// The unit visibility matrix is keyed by unit id and by station group; a new unit is absent
+			// from it and a re-stationed unit is filed under the wrong group until it is rebuilt.
+			SendUnitVisibilityRefresh(saved.DepartmentId);
+
 			return saved;
+		}
+
+		/// <summary>
+		/// Both unit matrices are derived from the department's unit list and each unit's station group,
+		/// so any unit create/update/delete invalidates both.
+		/// </summary>
+		private void SendUnitVisibilityRefresh(int departmentId)
+		{
+			_eventAggregator.SendMessage<SecurityRefreshEvent>(new SecurityRefreshEvent()
+			{
+				DepartmentId = departmentId,
+				Type = SecurityCacheTypes.WhoCanViewUnits
+			});
+
+			_eventAggregator.SendMessage<SecurityRefreshEvent>(new SecurityRefreshEvent()
+			{
+				DepartmentId = departmentId,
+				Type = SecurityCacheTypes.WhoCanViewUnitLocations
+			});
 		}
 
 		public async Task<UnitLog> SaveUnitLogAsync(UnitLog unitLog, CancellationToken cancellationToken = default(CancellationToken))
@@ -155,6 +178,7 @@ namespace Resgrid.Services
 				await _limitsService.InvalidateDepartmentsEntityLimitsCache(unit.DepartmentId);
 
 				_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = unit.DepartmentId });
+				SendUnitVisibilityRefresh(unit.DepartmentId);
 
 				return true;
 			}
@@ -433,6 +457,7 @@ namespace Resgrid.Services
 				throw new ArgumentException("DepartmentGroupId cannot be null", "departmentGroupId");
 
 			var units = await _unitsRepository.GetAllUnitsByGroupIdAsync(departmentGroupId);
+			var touchedDepartmentIds = new HashSet<int>();
 
 			foreach (var unit in units)
 			{
@@ -440,8 +465,16 @@ namespace Resgrid.Services
 				unit.StationGroup = null;
 
 
-				await _unitsRepository.SaveOrUpdateAsync(unit, cancellationToken);
+				var saved = await _unitsRepository.SaveOrUpdateAsync(unit, cancellationToken);
+
+				if (saved != null)
+					touchedDepartmentIds.Add(saved.DepartmentId);
 			}
+
+			// Un-stationing a unit moves it out of its station group's bucket in both unit matrices;
+			// without a rebuild the group's old viewers keep seeing it.
+			foreach (var departmentId in touchedDepartmentIds)
+				SendUnitVisibilityRefresh(departmentId);
 
 			return true;
 		}

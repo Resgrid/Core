@@ -3,6 +3,9 @@ using Resgrid.Web.Services.Models.v4.UserDefinedFields;
 using System;
 using System.Collections.Generic;
 
+using Newtonsoft.Json;
+using Resgrid.Web.Services.Helpers;
+
 namespace Resgrid.Web.Services.Models.v4.CallTypes
 {
 	/// <summary>
@@ -95,6 +98,7 @@ namespace Resgrid.Web.Services.Models.v4.CallTypes
 
 		public bool IsDeleted { get; set; }
 
+		[JsonConverter(typeof(UtcDateTimeConverter))]
 		public DateTime AddedOnUtc { get; set; }
 
 		public string AddedOn { get; set; }
@@ -103,6 +107,7 @@ namespace Resgrid.Web.Services.Models.v4.CallTypes
 
 		public string AddedByUserName { get; set; }
 
+		[JsonConverter(typeof(UtcDateTimeConverter))]
 		public DateTime? EditedOnUtc { get; set; }
 
 		public string EditedOn { get; set; }

@@ -1,0 +1,527 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Shared -->
+  <data name="Cancel" xml:space="preserve">
+    <value>Ακύρωση</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Αποθήκευση</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Περιγραφή</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Ενέργειες</value>
+  </data>
+  <!-- Index -->
+  <data name="RoutesPageTitle" xml:space="preserve">
+    <value>Διαδρομές</value>
+  </data>
+  <data name="RoutesHeader" xml:space="preserve">
+    <value>Διαδρομές</value>
+  </data>
+  <data name="NewRoute" xml:space="preserve">
+    <value>Νέα Διαδρομή</value>
+  </data>
+  <data name="ActiveRoutes" xml:space="preserve">
+    <value>Σε Εξέλιξη</value>
+  </data>
+  <data name="ArchivedRoutes" xml:space="preserve">
+    <value>Αρχειοθετημένες Διαδρομές</value>
+  </data>
+  <data name="Stops" xml:space="preserve">
+    <value>Στάσεις</value>
+  </data>
+  <data name="Profile" xml:space="preserve">
+    <value>Προφίλ</value>
+  </data>
+  <data name="Created" xml:space="preserve">
+    <value>Δημιουργήθηκε</value>
+  </data>
+  <data name="View" xml:space="preserve">
+    <value>Προβολή</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Επεξεργασία</value>
+  </data>
+  <data name="History" xml:space="preserve">
+    <value>Ιστορικό</value>
+  </data>
+  <data name="DeleteRoutePlanConfirm" xml:space="preserve">
+    <value>Διαγραφή αυτού του σχεδίου διαδρομής;</value>
+  </data>
+  <!-- Instances -->
+  <data name="RouteHistoryPageTitle" xml:space="preserve">
+    <value>Ιστορικό Διαδρομών</value>
+  </data>
+  <data name="RouteHistoryHeaderPrefix" xml:space="preserve">
+    <value>Ιστορικό Διαδρομών</value>
+  </data>
+  <data name="HistoryBreadcrumb" xml:space="preserve">
+    <value>Ιστορικό</value>
+  </data>
+  <data name="Unit" xml:space="preserve">
+    <value>Μονάδα</value>
+  </data>
+  <data name="Started" xml:space="preserve">
+    <value>Ξεκίνησε</value>
+  </data>
+  <data name="Ended" xml:space="preserve">
+    <value>Έληξε</value>
+  </data>
+  <data name="Detail" xml:space="preserve">
+    <value>Λεπτομέρεια</value>
+  </data>
+  <!-- ActiveRoutes -->
+  <data name="ActiveRoutesPageTitle" xml:space="preserve">
+    <value>Διαδρομές σε Εξέλιξη</value>
+  </data>
+  <data name="ActiveRoutesHeader" xml:space="preserve">
+    <value>Διαδρομές σε Εξέλιξη</value>
+  </data>
+  <data name="ActiveBreadcrumb" xml:space="preserve">
+    <value>Σε Εξέλιξη</value>
+  </data>
+  <data name="NoActiveRoutes" xml:space="preserve">
+    <value>Καμία Διαδρομή σε Εξέλιξη</value>
+  </data>
+  <data name="NoActiveRoutesMessage" xml:space="preserve">
+    <value>Δεν υπάρχουν εκτελέσεις διαδρομών σε εξέλιξη αυτή τη στιγμή.</value>
+  </data>
+  <data name="ArchivedRoutesPageTitle" xml:space="preserve">
+    <value>Αρχειοθετημένες Διαδρομές</value>
+  </data>
+  <data name="ArchivedRoutesHeader" xml:space="preserve">
+    <value>Αρχειοθετημένες Διαδρομές</value>
+  </data>
+  <data name="ArchivedBreadcrumb" xml:space="preserve">
+    <value>Αρχειοθετημένες</value>
+  </data>
+  <data name="NoArchivedRoutes" xml:space="preserve">
+    <value>Καμία Αρχειοθετημένη Διαδρομή</value>
+  </data>
+  <data name="NoArchivedRoutesMessage" xml:space="preserve">
+    <value>Δεν υπάρχουν αρχειοθετημένα σχέδια διαδρομής.</value>
+  </data>
+  <data name="ArchivedRouteDetailPageTitle" xml:space="preserve">
+    <value>Λεπτομέρειες Αρχειοθετημένης Διαδρομής</value>
+  </data>
+  <data name="UnitLabel" xml:space="preserve">
+    <value>Μονάδα</value>
+  </data>
+  <data name="StopsLabel" xml:space="preserve">
+    <value>Στάσεις</value>
+  </data>
+  <data name="StartedLabel" xml:space="preserve">
+    <value>Ξεκίνησε</value>
+  </data>
+  <data name="ViewDetails" xml:space="preserve">
+    <value>Προβολή Λεπτομερειών</value>
+  </data>
+  <!-- New -->
+  <data name="NewRoutePageTitle" xml:space="preserve">
+    <value>Νέα Διαδρομή</value>
+  </data>
+  <data name="NewRoutePlanHeader" xml:space="preserve">
+    <value>Νέο Σχέδιο Διαδρομής</value>
+  </data>
+  <data name="NewBreadcrumb" xml:space="preserve">
+    <value>Νέα</value>
+  </data>
+  <data name="RouteDetailsTitle" xml:space="preserve">
+    <value>Λεπτομέρειες Διαδρομής</value>
+  </data>
+  <data name="UnitField" xml:space="preserve">
+    <value>Μονάδα</value>
+  </data>
+  <data name="UnitAssignAtStart" xml:space="preserve">
+    <value>-- Ανάθεση κατά την έναρξη --</value>
+  </data>
+  <data name="StatusDraft" xml:space="preserve">
+    <value>Πρόχειρη</value>
+  </data>
+  <data name="StatusActive" xml:space="preserve">
+    <value>Ενεργή</value>
+  </data>
+  <data name="StatusPaused" xml:space="preserve">
+    <value>Σε Παύση</value>
+  </data>
+  <data name="StatusArchived" xml:space="preserve">
+    <value>Αρχειοθετημένη</value>
+  </data>
+  <data name="RouteColor" xml:space="preserve">
+    <value>Χρώμα Διαδρομής</value>
+  </data>
+  <data name="RouteProfile" xml:space="preserve">
+    <value>Προφίλ Διαδρομής</value>
+  </data>
+  <data name="ProfileDriving" xml:space="preserve">
+    <value>Οδήγηση</value>
+  </data>
+  <data name="ProfileWalking" xml:space="preserve">
+    <value>Πεζή</value>
+  </data>
+  <data name="ProfileCycling" xml:space="preserve">
+    <value>Ποδήλατο</value>
+  </data>
+  <data name="ProfileDrivingTraffic" xml:space="preserve">
+    <value>Οδήγηση (Κυκλοφορία)</value>
+  </data>
+  <data name="GeofenceRadius" xml:space="preserve">
+    <value>Ακτίνα Γεωφράχτη (μ)</value>
+  </data>
+  <data name="UseStationAsStart" xml:space="preserve">
+    <value>Χρήση Σταθμού ως Αφετηρία</value>
+  </data>
+  <data name="UseStationAsEnd" xml:space="preserve">
+    <value>Χρήση Σταθμού ως Τερματισμό</value>
+  </data>
+  <data name="OptimizeStopOrder" xml:space="preserve">
+    <value>Βελτιστοποίηση Σειράς Στάσεων</value>
+  </data>
+  <data name="MapAndStopsTitle" xml:space="preserve">
+    <value>Χάρτης και Στάσεις</value>
+  </data>
+  <data name="MapAndStopsHelp" xml:space="preserve">
+    <value>Οι στάσεις μπορούν να διαχειριστούν μετά τη δημιουργία της διαδρομής μέσω του API ή της φόρμας επεξεργασίας.</value>
+  </data>
+  <data name="CreateRoute" xml:space="preserve">
+    <value>Δημιουργία Διαδρομής</value>
+  </data>
+  <!-- StartRoute -->
+  <data name="StartRoutePageTitle" xml:space="preserve">
+    <value>Έναρξη Διαδρομής</value>
+  </data>
+  <data name="StartRouteHeader" xml:space="preserve">
+    <value>Έναρξη Διαδρομής</value>
+  </data>
+  <data name="StartRouteBreadcrumb" xml:space="preserve">
+    <value>Έναρξη Διαδρομής</value>
+  </data>
+  <data name="AssignUnit" xml:space="preserve">
+    <value>Ανάθεση Μονάδας</value>
+  </data>
+  <data name="SelectUnitPlaceholder" xml:space="preserve">
+    <value>-- Επιλέξτε Μονάδα --</value>
+  </data>
+  <data name="AssignUnitHelp" xml:space="preserve">
+    <value>Επιλέξτε τη μονάδα που θα εκτελέσει αυτή τη διαδρομή.</value>
+  </data>
+  <data name="RouteInfoLabel" xml:space="preserve">
+    <value>Πληροφορίες Διαδρομής</value>
+  </data>
+  <data name="MinEstimated" xml:space="preserve">
+    <value>λεπτά εκτιμώμενα</value>
+  </data>
+  <data name="StartRouteNow" xml:space="preserve">
+    <value>Έναρξη Διαδρομής Τώρα</value>
+  </data>
+  <!-- Edit -->
+  <data name="EditRoutePageTitle" xml:space="preserve">
+    <value>Επεξεργασία Διαδρομής</value>
+  </data>
+  <data name="EditRoutePlanHeader" xml:space="preserve">
+    <value>Επεξεργασία Σχεδίου Διαδρομής</value>
+  </data>
+  <data name="EditBreadcrumb" xml:space="preserve">
+    <value>Επεξεργασία</value>
+  </data>
+  <data name="StopsTableHash" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="StopType" xml:space="preserve">
+    <value>Τύπος</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Διεύθυνση</value>
+  </data>
+  <data name="Priority" xml:space="preserve">
+    <value>Προτεραιότητα</value>
+  </data>
+  <data name="SaveChanges" xml:space="preserve">
+    <value>Αποθήκευση Αλλαγών</value>
+  </data>
+  <!-- View -->
+  <data name="RouteDetailPageTitle" xml:space="preserve">
+    <value>Λεπτομέρειες Διαδρομής</value>
+  </data>
+  <data name="ViewBreadcrumb" xml:space="preserve">
+    <value>Προβολή</value>
+  </data>
+  <data name="RouteMapTitle" xml:space="preserve">
+    <value>Χάρτης Διαδρομής</value>
+  </data>
+  <data name="DetailsTitle" xml:space="preserve">
+    <value>Λεπτομέρειες</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="ProfileLabel" xml:space="preserve">
+    <value>Προφίλ</value>
+  </data>
+  <data name="GeofenceLabel" xml:space="preserve">
+    <value>Γεωφράχτης</value>
+  </data>
+  <data name="DistanceLabel" xml:space="preserve">
+    <value>Απόσταση</value>
+  </data>
+  <data name="DurationLabel" xml:space="preserve">
+    <value>Διάρκεια</value>
+  </data>
+  <!-- InstanceDetail -->
+  <data name="RouteInstanceDetailPageTitle" xml:space="preserve">
+    <value>Λεπτομέρειες Εκτέλεσης Διαδρομής</value>
+  </data>
+  <data name="RouteInstanceHeaderPrefix" xml:space="preserve">
+    <value>Εκτέλεση Διαδρομής</value>
+  </data>
+  <data name="InstanceDetailBreadcrumb" xml:space="preserve">
+    <value>Λεπτομέρειες Εκτέλεσης</value>
+  </data>
+  <data name="InstanceInfoTitle" xml:space="preserve">
+    <value>Πληροφορίες Εκτέλεσης</value>
+  </data>
+  <data name="StartedDt" xml:space="preserve">
+    <value>Ξεκίνησε</value>
+  </data>
+  <data name="EndedDt" xml:space="preserve">
+    <value>Έληξε</value>
+  </data>
+  <data name="Progress" xml:space="preserve">
+    <value>Πρόοδος</value>
+  </data>
+  <data name="StopTimelineTitle" xml:space="preserve">
+    <value>Χρονολόγιο Στάσεων</value>
+  </data>
+  <data name="StopStatusPending" xml:space="preserve">
+    <value>Εκκρεμής</value>
+  </data>
+  <data name="StopStatusCheckedIn" xml:space="preserve">
+    <value>Άφιξη</value>
+  </data>
+  <data name="StopStatusCompleted" xml:space="preserve">
+    <value>Ολοκληρώθηκε</value>
+  </data>
+  <data name="StopStatusSkipped" xml:space="preserve">
+    <value>Παραλείφθηκε</value>
+  </data>
+  <data name="StopStatusUnknown" xml:space="preserve">
+    <value>Άγνωστη</value>
+  </data>
+  <data name="StopInPrefix" xml:space="preserve">
+    <value>Άφιξη:</value>
+  </data>
+  <data name="StopOutPrefix" xml:space="preserve">
+    <value>Αναχώρηση:</value>
+  </data>
+  <data name="StopDwellPrefix" xml:space="preserve">
+    <value>Παραμονή:</value>
+  </data>
+  <data name="StopSkipPrefix" xml:space="preserve">
+    <value>Παράλειψη:</value>
+  </data>
+  <data name="StopLabel" xml:space="preserve">
+    <value>Στάση</value>
+  </data>
+  <!-- Add Stop Modal -->
+  <data name="AddStop" xml:space="preserve">
+    <value>Προσθήκη Στάσης</value>
+  </data>
+  <data name="StopTypeManual" xml:space="preserve">
+    <value>Χειροκίνητη</value>
+  </data>
+  <data name="StopTypeScheduledCall" xml:space="preserve">
+    <value>Προγραμματισμένη Κλήση</value>
+  </data>
+  <data name="StopTypeWaypoint" xml:space="preserve">
+    <value>Σημείο Διαδρομής</value>
+  </data>
+  <data name="LinkedCall" xml:space="preserve">
+    <value>Συνδεδεμένη Κλήση</value>
+  </data>
+  <data name="LoadingCalls" xml:space="preserve">
+    <value>Φόρτωση κλήσεων...</value>
+  </data>
+  <data name="PriorityNormal" xml:space="preserve">
+    <value>Κανονική</value>
+  </data>
+  <data name="PriorityHigh" xml:space="preserve">
+    <value>Υψηλή</value>
+  </data>
+  <data name="PriorityCritical" xml:space="preserve">
+    <value>Κρίσιμη</value>
+  </data>
+  <data name="PriorityOptional" xml:space="preserve">
+    <value>Προαιρετική</value>
+  </data>
+  <data name="Find" xml:space="preserve">
+    <value>Εύρεση</value>
+  </data>
+  <data name="What3Words" xml:space="preserve">
+    <value>What3Words</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Τοποθεσία</value>
+  </data>
+  <data name="ClickMapToSetLocation" xml:space="preserve">
+    <value>Κάντε κλικ στον χάρτη για να ορίσετε τοποθεσία ή χρησιμοποιήστε τη διεύθυνση / What3Words παραπάνω.</value>
+  </data>
+  <data name="PlannedArrival" xml:space="preserve">
+    <value>Προγραμματισμένη Άφιξη</value>
+  </data>
+  <data name="PlannedDeparture" xml:space="preserve">
+    <value>Προγραμματισμένη Αναχώρηση</value>
+  </data>
+  <data name="EstDwellMinutes" xml:space="preserve">
+    <value>Εκτ. Παραμονή (λεπ.)</value>
+  </data>
+  <data name="SelectContact" xml:space="preserve">
+    <value>Επιλογή Επαφής</value>
+  </data>
+  <data name="SelectContactPlaceholder" xml:space="preserve">
+    <value>-- Πληκτρολογήστε χειροκίνητα ή επιλέξτε υπάρχουσα --</value>
+  </data>
+  <data name="ContactAutofillHelp" xml:space="preserve">
+    <value>Η επιλογή επαφής συμπληρώνει αυτόματα το όνομα και τον αριθμό παρακάτω.</value>
+  </data>
+  <data name="ContactName" xml:space="preserve">
+    <value>Όνομα Επαφής</value>
+  </data>
+  <data name="ContactNumber" xml:space="preserve">
+    <value>Αριθμός Επαφής</value>
+  </data>
+  <data name="Notes" xml:space="preserve">
+    <value>Σημειώσεις</value>
+  </data>
+  <!-- Directions -->
+  <data name="Directions" xml:space="preserve">
+    <value>Οδηγίες</value>
+  </data>
+  <data name="Print" xml:space="preserve">
+    <value>Εκτύπωση</value>
+  </data>
+  <data name="StartRoute" xml:space="preserve">
+    <value>Έναρξη Διαδρομής</value>
+  </data>
+  <data name="TurnByTurnDirections" xml:space="preserve">
+    <value>Αναλυτικές Οδηγίες Πλοήγησης</value>
+  </data>
+  <data name="CalculatingRoute" xml:space="preserve">
+    <value>Υπολογισμός διαδρομής&amp;#x2026;</value>
+  </data>
+  <data name="DirectionsError" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η ανάκτηση οδηγιών οδήγησης. Οι διευθύνσεις ή οι συντεταγμένες των στάσεων ενδέχεται να μην είναι προσβάσιμες οδικώς. Οι στάσεις παρατίθενται παρακάτω με τη σειρά.</value>
+  </data>
+  <data name="StopSummary" xml:space="preserve">
+    <value>Σύνοψη Στάσεων</value>
+  </data>
+  <data name="StopName" xml:space="preserve">
+    <value>Όνομα Στάσης</value>
+  </data>
+  <data name="DwellMin" xml:space="preserve">
+    <value>Παραμονή (λεπ.)</value>
+  </data>
+  <data name="Contact" xml:space="preserve">
+    <value>Επαφή</value>
+  </data>
+  <!-- ArchivedView -->
+  <data name="RouteIsArchived" xml:space="preserve">
+    <value>Αυτή η διαδρομή είναι αρχειοθετημένη και δεν μπορεί να ξεκινήσει, να επεξεργαστεί ή να διαγραφεί.</value>
+  </data>
+  <data name="BackToArchivedRoutes" xml:space="preserve">
+    <value>Επιστροφή στις Αρχειοθετημένες Διαδρομές</value>
+  </data>
+  <!-- Edit form location pickers -->
+  <data name="StartLocation" xml:space="preserve">
+    <value>Τοποθεσία Έναρξης</value>
+  </data>
+  <data name="EndLocation" xml:space="preserve">
+    <value>Τοποθεσία Λήξης</value>
+  </data>
+  <data name="EnterAddress" xml:space="preserve">
+    <value>Εισαγάγετε διεύθυνση</value>
+  </data>
+  <data name="ClickMapToSetStartLocation" xml:space="preserve">
+    <value>Κάντε κλικ στον χάρτη για να ορίσετε την τοποθεσία έναρξης ή χρησιμοποιήστε τη διεύθυνση / What3Words / συντεταγμένες παραπάνω.</value>
+  </data>
+  <data name="ClickMapToSetEndLocation" xml:space="preserve">
+    <value>Κάντε κλικ στον χάρτη για να ορίσετε την τοποθεσία λήξης ή χρησιμοποιήστε τη διεύθυνση / What3Words / συντεταγμένες παραπάνω.</value>
+  </data>
+  <data name="Apply" xml:space="preserve">
+    <value>Εφαρμογή</value>
+  </data>
+  <data name="Latitude" xml:space="preserve">
+    <value>Γεωγραφικό Πλάτος</value>
+  </data>
+  <data name="Longitude" xml:space="preserve">
+    <value>Γεωγραφικό Μήκος</value>
+  </data>
+  <data name="FindLocationVia" xml:space="preserve">
+    <value>Εύρεση τοποθεσίας μέσω</value>
+  </data>
+</root>

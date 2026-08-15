@@ -84,7 +84,7 @@
     <PackageReference Include="GeoJSON.Net" Version="1.4.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.3.1" />
     <PackageReference Include="MimeKit" Version="4.16.0" />
-    <PackageReference Include="MongoDB.Driver" Version="3.2.1" />
+    <PackageReference Include="MongoDB.Driver" Version="3.11.0" />
     <PackageReference Include="protobuf-net" Version="3.2.46" />
     <PackageReference Include="Stripe.net" Version="47.4.0" />
     <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />

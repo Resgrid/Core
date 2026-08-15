@@ -942,4 +942,112 @@
   <data name="RunCardsNav" xml:space="preserve">
     <value>بطاقات الإرسال</value>
   </data>
+  <data name="DefaultMapCenterHelp" xml:space="preserve">
+    <value>تفتح جميع الخرائط في Resgrid والتطبيقات عند هذه النقطة. اترك الحقلين فارغين وسنستنتجهما من عنوان القسم عند الحفظ التالي؛ املأهما لتحديد موقع دقيق لن يتم استبداله أبدًا.</value>
+  </data>
+  <data name="NewCallFieldsLabel" xml:space="preserve">
+    <value>حقول نموذج البلاغ الجديد</value>
+  </data>
+  <data name="NewCallFieldsHelp" xml:space="preserve">
+    <value>اختر الحقول المدمجة التي تظهر في النموذج وأيها يجب إكماله قبل إنشاء البلاغ وإرساله إلى الميدان. الاسم والطبيعة والأولوية والنوع تظهر دائمًا وهي مطلوبة دائمًا.</value>
+  </data>
+  <data name="NewCallFieldsFieldColumn" xml:space="preserve">
+    <value>الحقل</value>
+  </data>
+  <data name="NewCallFieldsVisibleColumn" xml:space="preserve">
+    <value>مرئي</value>
+  </data>
+  <data name="NewCallFieldsRequiredColumn" xml:space="preserve">
+    <value>مطلوب</value>
+  </data>
+  <data name="NewCallField_address" xml:space="preserve">
+    <value>العنوان</value>
+  </data>
+  <data name="NewCallField_geolocation" xml:space="preserve">
+    <value>إحداثيات GPS</value>
+  </data>
+  <data name="NewCallField_what3words" xml:space="preserve">
+    <value>what3words</value>
+  </data>
+  <data name="NewCallField_pluscode" xml:space="preserve">
+    <value>Plus Code</value>
+  </data>
+  <data name="NewCallField_destinationPoi" xml:space="preserve">
+    <value>الوجهة</value>
+  </data>
+  <data name="NewCallField_indoorLocation" xml:space="preserve">
+    <value>موقع داخلي</value>
+  </data>
+  <data name="NewCallField_note" xml:space="preserve">
+    <value>ملاحظة</value>
+  </data>
+  <data name="NewCallField_contactName" xml:space="preserve">
+    <value>جهة الاتصال الرئيسية</value>
+  </data>
+  <data name="NewCallField_contactInfo" xml:space="preserve">
+    <value>معلومات الاتصال بالمبلّغ</value>
+  </data>
+  <data name="NewCallField_externalId" xml:space="preserve">
+    <value>معرّف خارجي</value>
+  </data>
+  <data name="NewCallField_incidentId" xml:space="preserve">
+    <value>معرّف الحادث</value>
+  </data>
+  <data name="NewCallField_referenceId" xml:space="preserve">
+    <value>المعرّف المرجعي</value>
+  </data>
+  <data name="NewCallField_protocols" xml:space="preserve">
+    <value>البروتوكولات</value>
+  </data>
+  <data name="NewCallField_linkedCall" xml:space="preserve">
+    <value>بلاغ مرتبط</value>
+  </data>
+  <data name="NewCallField_dispatchOn" xml:space="preserve">
+    <value>إرسال مجدول</value>
+  </data>
+  <data name="NewCallField_dispatchList" xml:space="preserve">
+    <value>مستلمو الإرسال</value>
+  </data>
+  <data name="UnitStatusThresholdsLabel" xml:space="preserve">
+    <value>مؤقتات حالة الوحدة</value>
+  </data>
+  <data name="UnitStatusThresholdsHelp" xml:space="preserve">
+    <value>يُبرز وحدة على لوحة Big Board عندما تبقى في حالة ما فترة طويلة — مثلاً مُرسلة لأكثر من أربع دقائق دون الإبلاغ عن المغادرة. اترك العمودين عند 0 لعدم المراقبة.</value>
+  </data>
+  <data name="UnitStatusThresholdsStatusColumn" xml:space="preserve">
+    <value>الحالة</value>
+  </data>
+  <data name="UnitStatusThresholdsWarnColumn" xml:space="preserve">
+    <value>تحذير بعد (دقائق)</value>
+  </data>
+  <data name="UnitStatusThresholdsAlertColumn" xml:space="preserve">
+    <value>إنذار بعد (دقائق)</value>
+  </data>
+  <data name="UnitStatusBaseType_6" xml:space="preserve">
+    <value>مُرسلة</value>
+  </data>
+  <data name="UnitStatusBaseType_2" xml:space="preserve">
+    <value>مستجيبة</value>
+  </data>
+  <data name="UnitStatusBaseType_11" xml:space="preserve">
+    <value>في الطريق</value>
+  </data>
+  <data name="UnitStatusBaseType_3" xml:space="preserve">
+    <value>في الموقع</value>
+  </data>
+  <data name="UnitStatusBaseType_9" xml:space="preserve">
+    <value>في الانتظار</value>
+  </data>
+  <data name="UnitStatusBaseType_14" xml:space="preserve">
+    <value>عند المريض</value>
+  </data>
+  <data name="UnitStatusBaseType_12" xml:space="preserve">
+    <value>نقل</value>
+  </data>
+  <data name="UnitStatusBaseType_15" xml:space="preserve">
+    <value>في المستشفى</value>
+  </data>
+  <data name="UnitStatusBaseType_8" xml:space="preserve">
+    <value>عائدة</value>
+  </data>
 </root>

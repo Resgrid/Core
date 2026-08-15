@@ -26,7 +26,6 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="9.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="9.0.3" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="9.0.3" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.3" />
     <!-- MCP SDK from https://github.com/modelcontextprotocol/csharp-sdk -->
     <!-- TODO: Add as project reference or wait for NuGet package -->
     <!-- <PackageReference Include="ModelContextProtocol" Version="0.6.0" /> -->
@@ -37,7 +36,6 @@
     <PackageReference Include="Sentry.Profiling" Version="5.4.0" />
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="9.0.3" />
     <PackageReference Include="System.IO.Pipelines" Version="9.0.0" />
-    <PackageReference Include="System.Text.Json" Version="9.0.4" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Core\Resgrid.Config\Resgrid.Config.csproj" />

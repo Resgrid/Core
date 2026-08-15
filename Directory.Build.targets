@@ -1,0 +1,27 @@
+<Project>
+  <!--
+    Security pins for vulnerable transitive dependencies.
+
+    None of these are used directly by Resgrid code. They are pulled in by
+    third-party packages that still reference versions carrying published
+    advisories, so we raise the resolved version here rather than in each
+    of the ~25 affected projects.
+
+      Microsoft.Extensions.Caching.Memory  6.0.1 via Microsoft.Azure.NotificationHubs
+      System.Security.Cryptography.Xml     8.0.2 via Microsoft.AspNetCore.Identity 2.3.1
+      System.Text.Json                     8.0.0 via Postmark / Azure.Identity
+      System.Net.Http                      4.3.0 via NETStandard.Library 1.6.1 (Geocoding.*)
+      System.Text.RegularExpressions       4.3.0 via NETStandard.Library 1.6.1 (Geocoding.*)
+
+    Drop a pin once every consumer has moved past the vulnerable range.
+    Verify with the NuGet audit:
+    dotnet list Resgrid.sln package, with the vulnerable and include-transitive switches.
+  -->
+  <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="9.0.19" />
+    <PackageReference Include="System.Security.Cryptography.Xml" Version="9.0.19" />
+    <PackageReference Include="System.Text.Json" Version="9.0.19" />
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
+    <PackageReference Include="System.Text.RegularExpressions" Version="4.3.1" />
+  </ItemGroup>
+</Project>

@@ -293,13 +293,21 @@
             <param name="callId">CallId to get data for</param>
             <returns></returns>
         </member>
-        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.SaveCall(Resgrid.Web.Services.Models.v4.Calls.NewCallInput,System.Threading.CancellationToken)">
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.GetNewCallFieldPolicy">
             <summary>
             Saves a call in the Resgrid system
             </summary>
             <param name="newCallInput"></param>
             <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
             <returns></returns>
+            <summary>
+            Gets the department's new-call field policy: which built-in fields the call form should show
+            and which it must require before the call can be created.
+            </summary>
+            <remarks>
+            An empty rule list means the stock form -- every field visible, nothing extra required.
+            Clients apply this for usability; the same policy is enforced on SaveCall regardless.
+            </remarks>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.CallsController.EditCall(Resgrid.Web.Services.Models.v4.Calls.EditCallInput,System.Threading.CancellationToken)">
             <summary>
@@ -775,6 +783,14 @@
             <param name="input">Reason and optional note for the flag</param>
             <returns>ChatActionResult indicating whether the flag was recorded</returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.EnsureIncidentChannelForCallAsync(System.Int32)">
+            <summary>
+            Creates the call's incident channel if provisioning never ran for it. Only active, non-deleted
+            calls in the caller's own department qualify — the same stance the provisioning listener takes
+            — so this cannot conjure a channel for a closed call or one belonging to another department.
+            Best-effort: a failure here must not blank the channel list.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.IsChatbotMessageChannelAsync(System.String)">
             <summary>
             True when the message lives in an assistant (chatbot) conversation, where reactions,
@@ -1113,6 +1129,19 @@
             <returns></returns>
             <param name="key">The key to get config data for</param>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConfigController.PopulateUnitStatusThresholdsAsync(Resgrid.Web.Services.Models.v4.Configs.GetConfigResult,System.Int32)">
+            <summary>
+            Loads the department's time-in-status thresholds for the board. Failure-safe: with no
+            thresholds the board simply highlights nothing, which is the pre-feature behaviour.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ConfigController.PopulateMapCenterAsync(Resgrid.Web.Services.Models.v4.Configs.GetConfigResult,System.Int32)">
+            <summary>
+            Resolves the department's default map center. Always leaves the result populated: the
+            settings service falls back from configured coordinates to the department address to a
+            system default, and a lookup failure here must not break config bootstrap for the apps.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.ConnectController">
             <summary>
             Service to generate an authentication token that is required to communicate with all other v4 services
@@ -1422,6 +1451,22 @@
             </summary>
             <param name="address">Address string to geocode.</param>
             <returns>ForwardGeocodeResult with Latitude/Longitude, or nulls if not found.</returns>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.GeocodingController.What3WordsLookup(System.String)">
+            <summary>
+            Converts a what3words address ("filled.count.soap") into geographic coordinates.
+            Proxied server-side: the what3words API rejects browser origins, so the Dispatch and
+            BigBoard web builds cannot call it directly.
+            </summary>
+            <param name="words">what3words address, with or without the leading "///".</param>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.GeocodingController.PlusCodeLookup(System.String)">
+            <summary>
+            Converts an Open Location Code (plus code) into geographic coordinates. Full codes resolve on
+            their own; a short code ("8FW4+Q3 Zottegem") needs the locality it was shortened against, so
+            the caller passes the whole string through.
+            </summary>
+            <param name="code">Plus code, optionally followed by a locality.</param>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.GeocodingController.ReverseGeocode(System.Double,System.Double)">
             <summary>
@@ -5323,6 +5368,27 @@
             part of the shallow /health liveness endpoint.
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Services.Helpers.UtcDateTimeConverter">
+             <summary>
+             Serialises a <see cref="T:System.DateTime"/> that is known to hold a UTC instant with an explicit "Z".
+            
+             Values read back from the repositories carry <see cref="F:System.DateTimeKind.Unspecified"/>, and
+             Newtonsoft's default round-trip handling writes those with no zone marker at all
+             ("2026-08-12T13:05:22"). Every JavaScript client then parses that as *local* time, so a unit
+             whose status changed a moment ago reads as hours old in any department that is not on UTC.
+            
+             Apply this to response properties whose value is a UTC instant. Do not apply it to the
+             department-local companions (e.g. CurrentStatusTimestamp) -- those really are local wall time
+             and marking them UTC would shift them the other way.
+             </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Helpers.UtcDateTimeConverter.NormalizeToUtc(System.Object)">
+            <summary>
+            A JsonToken.Date comes back from the reader untouched, so whatever Kind the reader inferred
+            survives. Normalised the same way WriteJson does, otherwise a value only round-trips when
+            the reader happened to see a "Z".
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Middleware.ResgridAuthenticationEvents.OnAuthenticationFailed">
             <summary>
             Gets or sets the on authentication failed.
@@ -6446,6 +6512,19 @@
             Call Type
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.AlarmLevel">
+            <summary>
+            Current alarm level (1-based). Only moves above 1 when the call has been escalated through
+            a run card ("Strike Next Alarm"); clients show it so a dispatcher can see the call is
+            already running at a higher level before striking again.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.ActiveRunCardId">
+            <summary>
+            The run card driving this call's dispatch, or null when no card matched. Clients use it to
+            decide whether escalation is available at all.
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Calls.CallResultData.LoggedOnUtc">
             <summary>
             When was the call Logged On in UTC time
@@ -6655,6 +6734,35 @@
             <summary>
             Response Data
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Calls.NewCallFieldPolicyResult">
+            <summary>
+            The department's new-call form policy: which built-in fields the call form shows, and which it
+            requires before a call can be created.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallFieldPolicyResult.Data">
+            <summary>
+            Response Data
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallFieldPolicyResultData.Rules">
+            <summary>
+            Rules for the fields the department has configured. A field with no rule here is visible and
+            optional, which is how Resgrid behaved before this setting existed -- so an empty list means
+            "stock form" and clients should not hide or require anything.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallFieldRuleData.Key">
+            <summary>
+            Stable field key. See Resgrid.Model.NewCallFieldKeys for the full set.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallFieldRuleData.Visible">
+            <summary>False hides the field from the call form entirely.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Calls.NewCallFieldRuleData.Required">
+            <summary>True blocks call creation until the field has a value.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Calls.NewCallInput">
             <summary>
@@ -8865,6 +8973,29 @@
             The attribution for the rendered map
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.MapCenterLatitude">
+            <summary>
+            Latitude every map in every client should open on for this department. Resolved from the
+            department's configured map center, falling back to its address and finally to a system
+            default, so this is always populated.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.MapCenterLongitude">
+            <summary>
+            Longitude every map in every client should open on for this department.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.MapCenterZoomLevel">
+            <summary>
+            Zoom level to open department-wide maps at. Defaults to 9 when the department has not set one.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.UnitStatusThresholds">
+            <summary>
+            How long a unit may sit in a status before the board flags it, keyed by the status's canonical
+            base type. Empty means the department has configured no thresholds and nothing is highlighted.
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Configs.GetConfigResultData.PersonnelLocationStaleSeconds">
             <summary>
             How many seconds to prevent a duplicate gps location from being logged for personnel
@@ -8940,6 +9071,18 @@
             Whether the current user should use modern application notification sounds. This is
             enabled when either the department-wide setting or the user's profile setting is enabled.
             </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Configs.UnitStatusThresholdData">
+            <summary>One time-in-status threshold for the board's unit highlighting.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.UnitStatusThresholdData.BaseType">
+            <summary>The ActionBaseTypes value this applies to.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.UnitStatusThresholdData.WarnSeconds">
+            <summary>Seconds after which the unit is highlighted. 0 disables the warning.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Configs.UnitStatusThresholdData.AlertSeconds">
+            <summary>Seconds after which the unit is escalated to a high-priority alert. 0 disables it.</summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Configs.GetSystemConfigResult">
             <summary>
@@ -9537,6 +9680,18 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Geocoding.ForwardGeocodeData.Longitude">
             <summary>Longitude of the geocoded location, or null if not found.</summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Geocoding.ForwardGeocodeData.Address">
+            <summary>
+            Normalised address for the resolved point when the provider supplies one. Clients that show
+            the resolved address fall back to the text the user typed when this is empty.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Geocoding.ForwardGeocodeData.LookupSucceeded">
+            <summary>
+            True when the lookup ran successfully and simply matched nothing, false when the lookup
+            itself failed. Clients need the difference to say "address not found" instead of "try again".
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Geocoding.ReverseGeocodeResult">
             <summary>
             Result of a reverse geocode (coordinates → address) request.
@@ -9547,6 +9702,12 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Geocoding.ReverseGeocodeData.Address">
             <summary>Human-readable address for the supplied coordinates, or empty if not found.</summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Geocoding.ReverseGeocodeData.LookupSucceeded">
+            <summary>
+            True when the lookup ran successfully and simply matched nothing, false when the lookup
+            itself failed. Clients need the difference to say "address not found" instead of "try again".
+            </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Groups.GroupResult">
             <summary>
@@ -12055,7 +12216,14 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Statuses.StatusResultData.BColor">
             <summary>
-            Button color
+            Button color, always a CSS hex colour ("#5CB85C")
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Statuses.StatusResultData.BaseType">
+            <summary>
+            The canonical meaning of this status (see <see cref="T:Resgrid.Model.ActionBaseTypes"/>).
+            Departments name and colour their statuses freely, so this is the only field a client can use
+            to answer "does this status mean available / responding / on scene".
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Statuses.StatusResultData.Color">
@@ -13006,17 +13174,26 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Units.UnitsInfoResultData.CurrentStatusColor">
             <summary>
-            The current status/state of the Unit color
+            The current status/state of the Unit color, always a CSS hex colour ("#5CB85C").
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Units.UnitsInfoResultData.CurrentStatusBaseType">
+            <summary>
+            The base type the unit's current custom status maps to (see <see cref="T:Resgrid.Model.ActionBaseTypes"/>),
+            or null when the status has no base type. Clients need this to answer "is this unit
+            available/responding/on scene" -- the status id itself is department-specific and the unit's
+            TypeId is the unit type, not a status.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Units.UnitsInfoResultData.CurrentStatusTimestamp">
             <summary>
-            The Timestamp of the status
+            The Timestamp of the status, in the department's timezone.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Units.UnitsInfoResultData.CurrentStatusTimestampUtc">
             <summary>
-            The Timestamp of the status in UTC/GMT
+            The Timestamp of the status in UTC/GMT. Serialised with an explicit "Z" -- without it clients
+            parsed the value as local time and reported unit statuses hours stale.
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Units.UnitsInfoResultData.Latitude">

@@ -1,0 +1,463 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Καιρικές Ειδοποιήσεις</value>
+  </data>
+  <data name="WeatherAlerts" xml:space="preserve">
+    <value>Καιρικές Ειδοποιήσεις</value>
+  </data>
+  <data name="ActiveAlerts" xml:space="preserve">
+    <value>Ενεργές Καιρικές Ειδοποιήσεις</value>
+  </data>
+  <data name="AlertHistory" xml:space="preserve">
+    <value>Ιστορικό Ειδοποιήσεων</value>
+  </data>
+  <data name="AlertSources" xml:space="preserve">
+    <value>Πηγές Ειδοποιήσεων</value>
+  </data>
+  <data name="MonitoringZones" xml:space="preserve">
+    <value>Ζώνες Παρακολούθησης</value>
+  </data>
+  <data name="Settings" xml:space="preserve">
+    <value>Ρυθμίσεις</value>
+  </data>
+  <data name="ViewHistory" xml:space="preserve">
+    <value>Προβολή Ιστορικού</value>
+  </data>
+  <data name="BackToAlerts" xml:space="preserve">
+    <value>Επιστροφή στις Ειδοποιήσεις</value>
+  </data>
+  <data name="BackToSettings" xml:space="preserve">
+    <value>Επιστροφή στις Ρυθμίσεις</value>
+  </data>
+  <data name="ManageZones" xml:space="preserve">
+    <value>Διαχείριση Ζωνών</value>
+  </data>
+  <data name="Details" xml:space="preserve">
+    <value>Λεπτομέρειες</value>
+  </data>
+  <data name="NoActiveAlerts" xml:space="preserve">
+    <value>Καμία ενεργή καιρική ειδοποίηση για το τμήμα σας.</value>
+  </data>
+  <data name="UnableToLoad" xml:space="preserve">
+    <value>Δεν είναι δυνατή η φόρτωση καιρικών ειδοποιήσεων. Ελέγξτε τη διαμόρφωσή σας.</value>
+  </data>
+  <data name="LoadingAlerts" xml:space="preserve">
+    <value>Φόρτωση καιρικών ειδοποιήσεων...</value>
+  </data>
+  <data name="LoadingHistory" xml:space="preserve">
+    <value>Φόρτωση ιστορικού...</value>
+  </data>
+  <data name="Event" xml:space="preserve">
+    <value>Συμβάν</value>
+  </data>
+  <data name="Severity" xml:space="preserve">
+    <value>Σοβαρότητα</value>
+  </data>
+  <data name="Area" xml:space="preserve">
+    <value>Περιοχή</value>
+  </data>
+  <data name="Expires" xml:space="preserve">
+    <value>Λήγει</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="Category" xml:space="preserve">
+    <value>Κατηγορία</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Ενέργειες</value>
+  </data>
+  <data name="SeverityExtreme" xml:space="preserve">
+    <value>Ακραία</value>
+  </data>
+  <data name="SeveritySevere" xml:space="preserve">
+    <value>Σοβαρή</value>
+  </data>
+  <data name="SeverityModerate" xml:space="preserve">
+    <value>Μέτρια</value>
+  </data>
+  <data name="SeverityMinor" xml:space="preserve">
+    <value>Ήπια</value>
+  </data>
+  <data name="SeverityUnknown" xml:space="preserve">
+    <value>Άγνωστη</value>
+  </data>
+  <data name="UrgencyImmediate" xml:space="preserve">
+    <value>Άμεσο</value>
+  </data>
+  <data name="UrgencyExpected" xml:space="preserve">
+    <value>Αναμενόμενο</value>
+  </data>
+  <data name="UrgencyFuture" xml:space="preserve">
+    <value>Μελλοντικό</value>
+  </data>
+  <data name="UrgencyPast" xml:space="preserve">
+    <value>Παρελθόν</value>
+  </data>
+  <data name="UrgencyUnknown" xml:space="preserve">
+    <value>Άγνωστο</value>
+  </data>
+  <data name="CategoryMet" xml:space="preserve">
+    <value>Μετεωρολογική</value>
+  </data>
+  <data name="CategoryFire" xml:space="preserve">
+    <value>Πυρκαγιά</value>
+  </data>
+  <data name="CategoryHealth" xml:space="preserve">
+    <value>Υγεία</value>
+  </data>
+  <data name="CategoryEnv" xml:space="preserve">
+    <value>Περιβαλλοντική</value>
+  </data>
+  <data name="CategoryOther" xml:space="preserve">
+    <value>Άλλη</value>
+  </data>
+  <data name="StatusActive" xml:space="preserve">
+    <value>Ενεργή</value>
+  </data>
+  <data name="StatusUpdated" xml:space="preserve">
+    <value>Ενημερώθηκε</value>
+  </data>
+  <data name="StatusExpired" xml:space="preserve">
+    <value>Έληξε</value>
+  </data>
+  <data name="StatusCancelled" xml:space="preserve">
+    <value>Ακυρώθηκε</value>
+  </data>
+  <data name="SourceTypeNWS" xml:space="preserve">
+    <value>National Weather Service</value>
+  </data>
+  <data name="SourceTypeEC" xml:space="preserve">
+    <value>Environment Canada</value>
+  </data>
+  <data name="SourceTypeMeteoAlarm" xml:space="preserve">
+    <value>MeteoAlarm (Ευρώπη)</value>
+  </data>
+  <data name="AddSource" xml:space="preserve">
+    <value>Προσθήκη Πηγής</value>
+  </data>
+  <data name="SourceName" xml:space="preserve">
+    <value>Όνομα Πηγής</value>
+  </data>
+  <data name="SourceType" xml:space="preserve">
+    <value>Τύπος Πηγής</value>
+  </data>
+  <data name="AreaFilter" xml:space="preserve">
+    <value>Φίλτρο Περιοχής (κωδικοί ζωνών JSON)</value>
+  </data>
+  <data name="PollInterval" xml:space="preserve">
+    <value>Διάστημα Ανίχνευσης (λεπτά)</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Αποθήκευση</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Ακύρωση</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Διαγραφή</value>
+  </data>
+  <data name="DeleteSourceConfirm" xml:space="preserve">
+    <value>Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτή την πηγή;</value>
+  </data>
+  <data name="FailedToSaveSource" xml:space="preserve">
+    <value>Αποτυχία αποθήκευσης πηγής. Δοκιμάστε ξανά.</value>
+  </data>
+  <data name="FailedToDeleteSource" xml:space="preserve">
+    <value>Αποτυχία διαγραφής πηγής. Δοκιμάστε ξανά.</value>
+  </data>
+  <data name="AddZone" xml:space="preserve">
+    <value>Προσθήκη Ζώνης Παρακολούθησης</value>
+  </data>
+  <data name="EditZone" xml:space="preserve">
+    <value>Επεξεργασία Ζώνης Παρακολούθησης</value>
+  </data>
+  <data name="ZoneName" xml:space="preserve">
+    <value>Όνομα Ζώνης</value>
+  </data>
+  <data name="ZoneCode" xml:space="preserve">
+    <value>Κωδικός Ζώνης</value>
+  </data>
+  <data name="CenterLocation" xml:space="preserve">
+    <value>Κεντρική Τοποθεσία</value>
+  </data>
+  <data name="RadiusMiles" xml:space="preserve">
+    <value>Ακτίνα (μίλια)</value>
+  </data>
+  <data name="PrimaryZone" xml:space="preserve">
+    <value>Κύρια Ζώνη</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Ενεργή</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>Ανενεργή</value>
+  </data>
+  <data name="Primary" xml:space="preserve">
+    <value>Κύρια</value>
+  </data>
+  <data name="Enable" xml:space="preserve">
+    <value>Ενεργοποίηση</value>
+  </data>
+  <data name="Disable" xml:space="preserve">
+    <value>Απενεργοποίηση</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Επεξεργασία</value>
+  </data>
+  <data name="NoZonesConfigured" xml:space="preserve">
+    <value>Δεν έχουν διαμορφωθεί ζώνες παρακολούθησης. Προσθέστε μια ζώνη παρακάτω για να ορίσετε τις γεωγραφικές περιοχές που θέλετε να παρακολουθείτε για καιρικές ειδοποιήσεις.</value>
+  </data>
+  <data name="DeleteZoneConfirm" xml:space="preserve">
+    <value>Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτή τη ζώνη;</value>
+  </data>
+  <data name="FailedToSaveZone" xml:space="preserve">
+    <value>Αποτυχία αποθήκευσης ζώνης. Δοκιμάστε ξανά.</value>
+  </data>
+  <data name="FailedToDeleteZone" xml:space="preserve">
+    <value>Αποτυχία διαγραφής ζώνης. Δοκιμάστε ξανά.</value>
+  </data>
+  <data name="FailedToToggleZone" xml:space="preserve">
+    <value>Αποτυχία ενημέρωσης κατάστασης ζώνης. Δοκιμάστε ξανά.</value>
+  </data>
+  <data name="EnterZoneName" xml:space="preserve">
+    <value>Εισαγάγετε όνομα ζώνης.</value>
+  </data>
+  <data name="SaveZone" xml:space="preserve">
+    <value>Αποθήκευση Ζώνης</value>
+  </data>
+  <data name="Options" xml:space="preserve">
+    <value>Επιλογές</value>
+  </data>
+  <data name="StartDate" xml:space="preserve">
+    <value>Ημερομηνία Έναρξης</value>
+  </data>
+  <data name="EndDate" xml:space="preserve">
+    <value>Ημερομηνία Λήξης</value>
+  </data>
+  <data name="SearchHistory" xml:space="preserve">
+    <value>Αναζήτηση</value>
+  </data>
+  <data name="SelectDates" xml:space="preserve">
+    <value>Επιλέξτε ημερομηνία έναρξης και λήξης.</value>
+  </data>
+  <data name="NoHistoryFound" xml:space="preserve">
+    <value>Δεν βρέθηκε ιστορικό ειδοποιήσεων για το επιλεγμένο εύρος ημερομηνιών.</value>
+  </data>
+  <data name="FailedToLoadHistory" xml:space="preserve">
+    <value>Δεν είναι δυνατή η φόρτωση του ιστορικού ειδοποιήσεων.</value>
+  </data>
+  <data name="AlertDetail" xml:space="preserve">
+    <value>Λεπτομέρειες Ειδοποίησης</value>
+  </data>
+  <data name="Headline" xml:space="preserve">
+    <value>Επικεφαλίδα</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Περιγραφή</value>
+  </data>
+  <data name="Instructions" xml:space="preserve">
+    <value>Οδηγίες</value>
+  </data>
+  <data name="AreaDescription" xml:space="preserve">
+    <value>Περιγραφή Περιοχής</value>
+  </data>
+  <data name="Urgency" xml:space="preserve">
+    <value>Επείγον</value>
+  </data>
+  <data name="Certainty" xml:space="preserve">
+    <value>Βεβαιότητα</value>
+  </data>
+  <data name="EffectiveDate" xml:space="preserve">
+    <value>Ημερομηνία Ισχύος</value>
+  </data>
+  <data name="OnsetDate" xml:space="preserve">
+    <value>Ημερομηνία Έναρξης</value>
+  </data>
+  <data name="ExpiresDate" xml:space="preserve">
+    <value>Ημερομηνία Λήξης</value>
+  </data>
+  <data name="SentDate" xml:space="preserve">
+    <value>Ημερομηνία Αποστολής</value>
+  </data>
+  <data name="FirstSeen" xml:space="preserve">
+    <value>Πρώτη Εμφάνιση</value>
+  </data>
+  <data name="LastUpdated" xml:space="preserve">
+    <value>Τελευταία Ενημέρωση</value>
+  </data>
+  <data name="Sender" xml:space="preserve">
+    <value>Αποστολέας</value>
+  </data>
+  <data name="ExternalId" xml:space="preserve">
+    <value>Εξωτερικό Αναγνωριστικό</value>
+  </data>
+  <data name="NotificationSent" xml:space="preserve">
+    <value>Στάλθηκε Ειδοποίηση</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Ναι</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Όχι</value>
+  </data>
+  <data name="ConfiguredSources" xml:space="preserve">
+    <value>Διαμορφωμένες Πηγές</value>
+  </data>
+  <data name="PollIntervalMinutes" xml:space="preserve">
+    <value>Διάστημα Ανίχνευσης</value>
+  </data>
+  <data name="LastPoll" xml:space="preserve">
+    <value>Τελευταία Ανίχνευση</value>
+  </data>
+  <data name="SourceStatus" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="Healthy" xml:space="preserve">
+    <value>Υγιής</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Σφάλμα</value>
+  </data>
+  <data name="NeverPolled" xml:space="preserve">
+    <value>Ποτέ Δεν Ανιχνεύθηκε</value>
+  </data>
+  <data name="NoSourcesConfigured" xml:space="preserve">
+    <value>Δεν έχουν διαμορφωθεί πηγές καιρικών ειδοποιήσεων. Προσθέστε μια πηγή για να αρχίσετε να λαμβάνετε καιρικές ειδοποιήσεις.</value>
+  </data>
+  <data name="WeatherAlertMessage" xml:space="preserve">
+    <value>Καιρική Ειδοποίηση: {0}</value>
+  </data>
+  <data name="AlertExpires" xml:space="preserve">
+    <value>Λήγει: {0}</value>
+  </data>
+  <data name="AlertArea" xml:space="preserve">
+    <value>Περιοχή: {0}</value>
+  </data>
+  <data name="AlertInstructions" xml:space="preserve">
+    <value>Οδηγίες: {0}</value>
+  </data>
+  <data name="NotificationSettings" xml:space="preserve">
+    <value>Ρυθμίσεις Ειδοποιήσεων</value>
+  </data>
+  <data name="NotificationSettingsDesc" xml:space="preserve">
+    <value>Διαμορφώστε ποιες καιρικές ειδοποιήσεις δημιουργούν αυτόματα μηνύματα προς τα μέλη του τμήματος.</value>
+  </data>
+  <data name="EnableWeatherAlerts" xml:space="preserve">
+    <value>Ενεργοποίηση Καιρικών Ειδοποιήσεων</value>
+  </data>
+  <data name="MinimumSeverityDisplay" xml:space="preserve">
+    <value>Ελάχιστη Σοβαρότητα προς Εμφάνιση</value>
+  </data>
+  <data name="MinimumSeverityDisplayHelp" xml:space="preserve">
+    <value>Μόνο ειδοποιήσεις σε αυτή τη σοβαρότητα ή ανώτερη θα εμφανίζονται στον πίνακα ελέγχου.</value>
+  </data>
+  <data name="AutoMessageSeverity" xml:space="preserve">
+    <value>Όριο Σοβαρότητας Αυτόματου Μηνύματος</value>
+  </data>
+  <data name="AutoMessageSeverityHelp" xml:space="preserve">
+    <value>Ειδοποιήσεις σε αυτή τη σοβαρότητα ή ανώτερη θα στέλνουν αυτόματα μήνυμα σε όλα τα μέλη του τμήματος. Χαμηλότερη τιμή = υψηλότερη σοβαρότητα (Ακραία=0, Σοβαρή=1, Μέτρια=2, Ήπια=3).</value>
+  </data>
+  <data name="ExcludedEventsLabel" xml:space="preserve">
+    <value>Εξαιρούμενα Συμβάντα Ειδοποιήσεων</value>
+  </data>
+  <data name="ExcludedEventsPlaceholder" xml:space="preserve">
+    <value>π.χ. Προειδοποίηση Ανέμων Λίμνης, Προειδοποίηση Ανέμων</value>
+  </data>
+  <data name="ExcludedEventsHelp" xml:space="preserve">
+    <value>Λίστα τίτλων συμβάντων ειδοποίησης χωρισμένη με κόμμα, τα οποία δεν πρέπει να δημιουργούν αυτόματα μηνύματα. Οι ειδοποιήσεις θα εξακολουθούν να εμφανίζονται στον πίνακα ελέγχου, αλλά δεν θα δημιουργείται μήνυμα Resgrid για αυτά τα συμβάντα.</value>
+  </data>
+  <data name="EnableCallIntegration" xml:space="preserve">
+    <value>Επισύναψη Καιρικού Πλαισίου στις Κλήσεις</value>
+  </data>
+  <data name="EnableCallIntegrationHelp" xml:space="preserve">
+    <value>Όταν είναι ενεργοποιημένο, οι ενεργές καιρικές ειδοποιήσεις κοντά στην τοποθεσία μιας κλήσης θα επισυνάπτονται ως σημείωση κλήσης.</value>
+  </data>
+  <data name="SaveSettings" xml:space="preserve">
+    <value>Αποθήκευση Ρυθμίσεων</value>
+  </data>
+  <data name="SettingsSaved" xml:space="preserve">
+    <value>Οι ρυθμίσεις αποθηκεύτηκαν με επιτυχία.</value>
+  </data>
+  <data name="FailedToSaveSettings" xml:space="preserve">
+    <value>Αποτυχία αποθήκευσης ρυθμίσεων. Δοκιμάστε ξανά.</value>
+  </data>
+  <data name="FailedToLoadSettings" xml:space="preserve">
+    <value>Αποτυχία φόρτωσης ρυθμίσεων.</value>
+  </data>
+  <data name="FailedToToggleSource" xml:space="preserve">
+    <value>Αποτυχία ενημέρωσης κατάστασης πηγής. Δοκιμάστε ξανά.</value>
+  </data>
+  <data name="EditSource" xml:space="preserve">
+    <value>Επεξεργασία Πηγής</value>
+  </data>
+  <data name="AddEditSource" xml:space="preserve">
+    <value>Προσθήκη / Επεξεργασία Πηγής</value>
+  </data>
+  <data name="EnterSourceName" xml:space="preserve">
+    <value>Εισαγάγετε όνομα πηγής.</value>
+  </data>
+  <data name="AreaFilterHelp" xml:space="preserve">
+    <value>Λίστα κωδικών πολιτειών, επαρχιών ή ζωνών NWS χωρισμένη με κόμμα.</value>
+  </data>
+</root>

@@ -1,0 +1,618 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Index -->
+  <data name="WorkflowsHeader" xml:space="preserve">
+    <value>Ροές Εργασίας</value>
+  </data>
+  <data name="DepartmentWorkflows" xml:space="preserve">
+    <value>Ροές Εργασίας Τμήματος</value>
+  </data>
+  <data name="NewWorkflow" xml:space="preserve">
+    <value>Νέα Ροή Εργασίας</value>
+  </data>
+  <data name="Credentials" xml:space="preserve">
+    <value>Διαπιστευτήρια</value>
+  </data>
+  <data name="PendingRuns" xml:space="preserve">
+    <value>Εκκρεμείς Εκτελέσεις</value>
+  </data>
+  <data name="NoWorkflowsCreated" xml:space="preserve">
+    <value>Δεν έχουν δημιουργηθεί ακόμη ροές εργασίας.</value>
+  </data>
+  <data name="CreateFirstWorkflow" xml:space="preserve">
+    <value>Δημιουργήστε την πρώτη σας ροή εργασίας.</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="TriggerEvent" xml:space="preserve">
+    <value>Συμβάν Ενεργοποίησης</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="Created" xml:space="preserve">
+    <value>Δημιουργήθηκε</value>
+  </data>
+  <data name="Actions" xml:space="preserve">
+    <value>Ενέργειες</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Ενεργοποιημένη</value>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>Απενεργοποιημένη</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Επεξεργασία</value>
+  </data>
+  <data name="Runs" xml:space="preserve">
+    <value>Εκτελέσεις</value>
+  </data>
+  <data name="Health" xml:space="preserve">
+    <value>Υγεία</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Διαγραφή</value>
+  </data>
+  <data name="DeleteWorkflowConfirm" xml:space="preserve">
+    <value>Διαγραφή ροής εργασίας {0};</value>
+  </data>
+  <!-- New Workflow -->
+  <data name="NewWorkflowHeader" xml:space="preserve">
+    <value>Νέα Ροή Εργασίας</value>
+  </data>
+  <data name="CreateWorkflow" xml:space="preserve">
+    <value>Δημιουργία Ροής Εργασίας</value>
+  </data>
+  <data name="Description" xml:space="preserve">
+    <value>Περιγραφή</value>
+  </data>
+  <data name="MaxRetryCount" xml:space="preserve">
+    <value>Μέγιστο Πλήθος Επαναλήψεων</value>
+  </data>
+  <data name="RetryBackoffBaseSeconds" xml:space="preserve">
+    <value>Βάση Καθυστέρησης Επανάληψης (δευτερόλεπτα)</value>
+  </data>
+  <data name="NamePlaceholder" xml:space="preserve">
+    <value>π.χ. Ειδοποίηση Slack σε Νέα Κλήση</value>
+  </data>
+  <data name="DescriptionPlaceholder" xml:space="preserve">
+    <value>Προαιρετική περιγραφή</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Ακύρωση</value>
+  </data>
+  <!-- Edit Workflow -->
+  <data name="EditWorkflowHeader" xml:space="preserve">
+    <value>Επεξεργασία Ροής Εργασίας</value>
+  </data>
+  <data name="WorkflowSettings" xml:space="preserve">
+    <value>Ρυθμίσεις Ροής Εργασίας</value>
+  </data>
+  <data name="MaxRetries" xml:space="preserve">
+    <value>Μέγιστες Επαναλήψεις</value>
+  </data>
+  <data name="BackoffSeconds" xml:space="preserve">
+    <value>Καθυστέρηση (δευτ.)</value>
+  </data>
+  <data name="SaveChanges" xml:space="preserve">
+    <value>Αποθήκευση Αλλαγών</value>
+  </data>
+  <data name="Steps" xml:space="preserve">
+    <value>Βήματα</value>
+  </data>
+  <data name="AddStep" xml:space="preserve">
+    <value>Προσθήκη Βήματος</value>
+  </data>
+  <data name="ActionType" xml:space="preserve">
+    <value>Τύπος Ενέργειας</value>
+  </data>
+  <data name="Order" xml:space="preserve">
+    <value>Σειρά</value>
+  </data>
+  <data name="TemplatePeek" xml:space="preserve">
+    <value>Πρότυπο (πρώτοι 120 χαρακτήρες)</value>
+  </data>
+  <data name="Yes" xml:space="preserve">
+    <value>Ναι</value>
+  </data>
+  <data name="No" xml:space="preserve">
+    <value>Όχι</value>
+  </data>
+  <data name="DeleteStepConfirm" xml:space="preserve">
+    <value>Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτό το βήμα; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.</value>
+  </data>
+  <data name="DeleteStep" xml:space="preserve">
+    <value>Διαγραφή Βήματος</value>
+  </data>
+  <data name="TemplateVariables" xml:space="preserve">
+    <value>Μεταβλητές Προτύπου</value>
+  </data>
+  <data name="CommonVariables" xml:space="preserve">
+    <value>Κοινές μεταβλητές (πάντα διαθέσιμες):</value>
+  </data>
+  <data name="CallEventVariables" xml:space="preserve">
+    <value>Μεταβλητές συμβάντος κλήσης:</value>
+  </data>
+  <!-- Credentials -->
+  <data name="WorkflowCredentialsHeader" xml:space="preserve">
+    <value>Διαπιστευτήρια Ροών Εργασίας</value>
+  </data>
+  <data name="StoredCredentials" xml:space="preserve">
+    <value>Αποθηκευμένα Διαπιστευτήρια</value>
+  </data>
+  <data name="AddCredential" xml:space="preserve">
+    <value>Προσθήκη Διαπιστευτηρίου</value>
+  </data>
+  <data name="NoCredentialsConfigured" xml:space="preserve">
+    <value>Δεν έχουν διαμορφωθεί διαπιστευτήρια. Προσθέστε διαπιστευτήρια για χρήση σε βήματα ενεργειών ροής εργασίας.</value>
+  </data>
+  <data name="Type" xml:space="preserve">
+    <value>Τύπος</value>
+  </data>
+  <data name="SecretData" xml:space="preserve">
+    <value>Απόρρητα Δεδομένα</value>
+  </data>
+  <data name="DeleteCredentialConfirm" xml:space="preserve">
+    <value>Διαγραφή διαπιστευτηρίου {0};</value>
+  </data>
+  <!-- New / Edit Credential -->
+  <data name="ValidationErrorHeader" xml:space="preserve">
+    <value>Διορθώστε τα ακόλουθα σφάλματα πριν από την αποθήκευση.</value>
+  </data>
+  <data name="AddCredentialHeader" xml:space="preserve">
+    <value>Προσθήκη Διαπιστευτηρίου</value>
+  </data>
+  <data name="EditCredentialHeader" xml:space="preserve">
+    <value>Επεξεργασία Διαπιστευτηρίου</value>
+  </data>
+  <data name="CredentialDetails" xml:space="preserve">
+    <value>Λεπτομέρειες Διαπιστευτηρίου</value>
+  </data>
+  <data name="CredentialType" xml:space="preserve">
+    <value>Τύπος</value>
+  </data>
+  <data name="SaveCredential" xml:space="preserve">
+    <value>Αποθήκευση Διαπιστευτηρίου</value>
+  </data>
+  <data name="ExistingSecretsInfo" xml:space="preserve">
+    <value>Τα υπάρχοντα απόρρητα αποθηκεύονται κρυπτογραφημένα και δεν μπορούν να εμφανιστούν. Συμπληρώστε τα παρακάτω πεδία για να τα αντικαταστήσετε ή αφήστε τα όλα κενά για να διατηρήσετε τα τρέχοντα απόρρητα.</value>
+  </data>
+  <!-- Credential Fields - SMTP -->
+  <data name="SmtpSettings" xml:space="preserve">
+    <value>Ρυθμίσεις SMTP</value>
+  </data>
+  <data name="SmtpHost" xml:space="preserve">
+    <value>Διακομιστής</value>
+  </data>
+  <data name="SmtpPort" xml:space="preserve">
+    <value>Θύρα</value>
+  </data>
+  <data name="SmtpUsername" xml:space="preserve">
+    <value>Όνομα Χρήστη</value>
+  </data>
+  <data name="SmtpPassword" xml:space="preserve">
+    <value>Κωδικός Πρόσβασης</value>
+  </data>
+  <data name="SmtpUseSsl" xml:space="preserve">
+    <value>Χρήση SSL/TLS</value>
+  </data>
+  <data name="SmtpFromAddress" xml:space="preserve">
+    <value>Διεύθυνση Αποστολέα</value>
+  </data>
+  <data name="SmtpFromAddressHelp" xml:space="preserve">
+    <value>Η διεύθυνση email που θα εμφανίζεται στο πεδίο «Από» των απεσταλμένων μηνυμάτων.</value>
+  </data>
+  <!-- Credential Fields - Twilio -->
+  <data name="TwilioSettings" xml:space="preserve">
+    <value>Ρυθμίσεις Twilio</value>
+  </data>
+  <data name="TwilioAccountSid" xml:space="preserve">
+    <value>Account SID</value>
+  </data>
+  <data name="TwilioAuthToken" xml:space="preserve">
+    <value>Auth Token</value>
+  </data>
+  <data name="TwilioFromNumber" xml:space="preserve">
+    <value>Αριθμός Αποστολέα</value>
+  </data>
+  <data name="TwilioFromNumberHelp" xml:space="preserve">
+    <value>Μορφή E.164, π.χ. +15551234567</value>
+  </data>
+  <!-- Credential Fields - FTP -->
+  <data name="FtpSettings" xml:space="preserve">
+    <value>Ρυθμίσεις FTP</value>
+  </data>
+  <data name="FtpHost" xml:space="preserve">
+    <value>Διακομιστής</value>
+  </data>
+  <data name="FtpPort" xml:space="preserve">
+    <value>Θύρα</value>
+  </data>
+  <data name="FtpUsername" xml:space="preserve">
+    <value>Όνομα Χρήστη</value>
+  </data>
+  <data name="FtpPassword" xml:space="preserve">
+    <value>Κωδικός Πρόσβασης</value>
+  </data>
+  <data name="FtpPassiveMode" xml:space="preserve">
+    <value>Χρήση Παθητικής Λειτουργίας</value>
+  </data>
+  <!-- Credential Fields - SFTP -->
+  <data name="SftpSettings" xml:space="preserve">
+    <value>Ρυθμίσεις SFTP</value>
+  </data>
+  <data name="SftpHost" xml:space="preserve">
+    <value>Διακομιστής</value>
+  </data>
+  <data name="SftpPort" xml:space="preserve">
+    <value>Θύρα</value>
+  </data>
+  <data name="SftpUsername" xml:space="preserve">
+    <value>Όνομα Χρήστη</value>
+  </data>
+  <data name="SftpPassword" xml:space="preserve">
+    <value>Κωδικός Πρόσβασης</value>
+  </data>
+  <data name="SftpPrivateKey" xml:space="preserve">
+    <value>Ιδιωτικό Κλειδί (PEM)</value>
+  </data>
+  <data name="SftpPrivateKeyHelp" xml:space="preserve">
+    <value>Δώστε είτε κωδικό πρόσβασης είτε ιδιωτικό κλειδί (ή και τα δύο αν το κλειδί προστατεύεται με φράση πρόσβασης).</value>
+  </data>
+  <!-- Credential Fields - AWS S3 -->
+  <data name="AwsS3Settings" xml:space="preserve">
+    <value>Ρυθμίσεις AWS S3</value>
+  </data>
+  <data name="AwsAccessKeyId" xml:space="preserve">
+    <value>Access Key ID</value>
+  </data>
+  <data name="AwsSecretAccessKey" xml:space="preserve">
+    <value>Secret Access Key</value>
+  </data>
+  <data name="AwsRegion" xml:space="preserve">
+    <value>Περιοχή</value>
+  </data>
+  <data name="AwsBucketName" xml:space="preserve">
+    <value>Όνομα Bucket</value>
+  </data>
+  <!-- Credential Fields - HTTP Bearer -->
+  <data name="HttpBearerSettings" xml:space="preserve">
+    <value>Διακριτικό HTTP Bearer</value>
+  </data>
+  <data name="HttpBearerToken" xml:space="preserve">
+    <value>Διακριτικό Bearer</value>
+  </data>
+  <data name="HttpBearerHelp" xml:space="preserve">
+    <value>Αποστέλλεται ως Authorization: Bearer &lt;token&gt;</value>
+  </data>
+  <!-- Credential Fields - HTTP Basic -->
+  <data name="HttpBasicSettings" xml:space="preserve">
+    <value>Βασικός Έλεγχος Ταυτότητας HTTP</value>
+  </data>
+  <data name="HttpBasicUsername" xml:space="preserve">
+    <value>Όνομα Χρήστη</value>
+  </data>
+  <data name="HttpBasicPassword" xml:space="preserve">
+    <value>Κωδικός Πρόσβασης</value>
+  </data>
+  <!-- Credential Fields - HTTP API Key -->
+  <data name="HttpApiKeySettings" xml:space="preserve">
+    <value>Κλειδί API HTTP</value>
+  </data>
+  <data name="ApiKeyHeaderName" xml:space="preserve">
+    <value>Όνομα Κεφαλίδας</value>
+  </data>
+  <data name="ApiKeyHeaderNameHelp" xml:space="preserve">
+    <value>Το όνομα της κεφαλίδας HTTP που μεταφέρει το κλειδί API.</value>
+  </data>
+  <data name="ApiKeyValue" xml:space="preserve">
+    <value>Κλειδί API</value>
+  </data>
+  <!-- Credential Fields - Microsoft Teams -->
+  <data name="TeamsSettings" xml:space="preserve">
+    <value>Webhook Microsoft Teams</value>
+  </data>
+  <data name="TeamsWebhookUrl" xml:space="preserve">
+    <value>Διεύθυνση URL Εισερχόμενου Webhook</value>
+  </data>
+  <data name="TeamsWebhookHelp" xml:space="preserve">
+    <value>Δημιουργήστε έναν σύνδεσμο Incoming Webhook μέσα στο επιθυμητό κανάλι Teams.</value>
+  </data>
+  <!-- Credential Fields - Slack -->
+  <data name="SlackSettings" xml:space="preserve">
+    <value>Slack</value>
+  </data>
+  <data name="SlackWebhookUrl" xml:space="preserve">
+    <value>Διεύθυνση URL Εισερχόμενου Webhook</value>
+  </data>
+  <data name="SlackBotToken" xml:space="preserve">
+    <value>Διακριτικό Bot</value>
+  </data>
+  <data name="SlackHelp" xml:space="preserve">
+    <value>Δώστε διεύθυνση URL webhook, διακριτικό bot ή και τα δύο.</value>
+  </data>
+  <!-- Credential Fields - Discord -->
+  <data name="DiscordSettings" xml:space="preserve">
+    <value>Discord</value>
+  </data>
+  <data name="DiscordWebhookUrl" xml:space="preserve">
+    <value>Διεύθυνση URL Webhook</value>
+  </data>
+  <data name="DiscordBotToken" xml:space="preserve">
+    <value>Διακριτικό Bot</value>
+  </data>
+  <data name="DiscordHelp" xml:space="preserve">
+    <value>Δώστε διεύθυνση URL webhook, διακριτικό bot ή και τα δύο.</value>
+  </data>
+  <!-- Credential Fields - Azure Blob Storage -->
+  <data name="AzureBlobSettings" xml:space="preserve">
+    <value>Azure Blob Storage</value>
+  </data>
+  <data name="AzureConnectionString" xml:space="preserve">
+    <value>Συμβολοσειρά Σύνδεσης</value>
+  </data>
+  <data name="AzureContainerName" xml:space="preserve">
+    <value>Όνομα Container</value>
+  </data>
+  <!-- Credential Fields - Box -->
+  <data name="BoxSettings" xml:space="preserve">
+    <value>Box</value>
+  </data>
+  <data name="BoxClientId" xml:space="preserve">
+    <value>Client ID</value>
+  </data>
+  <data name="BoxClientSecret" xml:space="preserve">
+    <value>Client Secret</value>
+  </data>
+  <data name="BoxEnterpriseId" xml:space="preserve">
+    <value>Enterprise ID</value>
+  </data>
+  <data name="BoxPublicKeyId" xml:space="preserve">
+    <value>Public Key ID</value>
+  </data>
+  <data name="BoxPrivateKey" xml:space="preserve">
+    <value>Ιδιωτικό Κλειδί (PEM)</value>
+  </data>
+  <data name="BoxPrivateKeyHelp" xml:space="preserve">
+    <value>Το ιδιωτικό κλειδί RSA από τη διαμόρφωση της εφαρμογής Box JWT (μορφή PEM).</value>
+  </data>
+  <data name="BoxPrivateKeyPassword" xml:space="preserve">
+    <value>Φράση Πρόσβασης Ιδιωτικού Κλειδιού</value>
+  </data>
+  <data name="BoxPrivateKeyPasswordHelp" xml:space="preserve">
+    <value>Προαιρετική φράση πρόσβασης για την αποκρυπτογράφηση του ιδιωτικού κλειδιού, αν προστατεύεται με φράση πρόσβασης.</value>
+  </data>
+  <!-- Credential Fields - Dropbox -->
+  <data name="DropboxSettings" xml:space="preserve">
+    <value>Dropbox</value>
+  </data>
+  <data name="DropboxRefreshToken" xml:space="preserve">
+    <value>Refresh Token</value>
+  </data>
+  <data name="DropboxRefreshTokenHelp" xml:space="preserve">
+    <value>Διακριτικό ανανέωσης OAuth2 μακράς διάρκειας που λαμβάνεται από τη ροή εξουσιοδότησης OAuth2 του Dropbox.</value>
+  </data>
+  <data name="DropboxAppKey" xml:space="preserve">
+    <value>App Key</value>
+  </data>
+  <data name="DropboxAppSecret" xml:space="preserve">
+    <value>App Secret</value>
+  </data>
+  <!-- Pending Runs -->
+  <data name="PendingRunningWorkflows" xml:space="preserve">
+    <value>Εκκρεμείς / Εκτελούμενες Ροές Εργασίας</value>
+  </data>
+  <data name="ActiveRuns" xml:space="preserve">
+    <value>Ενεργές Εκτελέσεις</value>
+  </data>
+  <data name="ClearAllPending" xml:space="preserve">
+    <value>Εκκαθάριση Όλων των Εκκρεμών</value>
+  </data>
+  <data name="ClearAllPendingConfirm" xml:space="preserve">
+    <value>Ακύρωση ΟΛΩΝ των εκκρεμών εκτελέσεων για αυτό το τμήμα;</value>
+  </data>
+  <data name="NoPendingRuns" xml:space="preserve">
+    <value>Καμία εκκρεμής ή εκτελούμενη εκτέλεση ροής εργασίας.</value>
+  </data>
+  <data name="RunId" xml:space="preserve">
+    <value>Αναγνωριστικό Εκτέλεσης</value>
+  </data>
+  <data name="Workflow" xml:space="preserve">
+    <value>Ροή Εργασίας</value>
+  </data>
+  <data name="Queued" xml:space="preserve">
+    <value>Σε Ουρά</value>
+  </data>
+  <data name="Attempt" xml:space="preserve">
+    <value>Προσπάθεια</value>
+  </data>
+  <data name="CancelRun" xml:space="preserve">
+    <value>Ακύρωση</value>
+  </data>
+  <data name="CancelRunConfirm" xml:space="preserve">
+    <value>Ακύρωση αυτής της εκτέλεσης;</value>
+  </data>
+  <!-- Runs -->
+  <data name="WorkflowRunsHeader" xml:space="preserve">
+    <value>Εκτελέσεις Ροής Εργασίας</value>
+  </data>
+  <data name="RunHistory" xml:space="preserve">
+    <value>Ιστορικό Εκτελέσεων</value>
+  </data>
+  <data name="NoRunsFound" xml:space="preserve">
+    <value>Δεν βρέθηκαν εκτελέσεις για αυτή τη ροή εργασίας.</value>
+  </data>
+  <data name="Started" xml:space="preserve">
+    <value>Ξεκίνησε</value>
+  </data>
+  <data name="Completed" xml:space="preserve">
+    <value>Ολοκληρώθηκε</value>
+  </data>
+  <data name="Error" xml:space="preserve">
+    <value>Σφάλμα</value>
+  </data>
+  <data name="Previous" xml:space="preserve">
+    <value>Προηγούμενη</value>
+  </data>
+  <data name="Next" xml:space="preserve">
+    <value>Επόμενη</value>
+  </data>
+  <!-- Health -->
+  <data name="WorkflowHealthHeader" xml:space="preserve">
+    <value>Υγεία Ροής Εργασίας</value>
+  </data>
+  <data name="NoHealthData" xml:space="preserve">
+    <value>Δεν υπάρχουν ακόμη διαθέσιμα δεδομένα υγείας για αυτή τη ροή εργασίας.</value>
+  </data>
+  <data name="Last24Hours" xml:space="preserve">
+    <value>Τελευταίες 24 Ώρες</value>
+  </data>
+  <data name="Last7Days" xml:space="preserve">
+    <value>Τελευταίες 7 Ημέρες</value>
+  </data>
+  <data name="Last30Days" xml:space="preserve">
+    <value>Τελευταίες 30 Ημέρες</value>
+  </data>
+  <data name="Successful" xml:space="preserve">
+    <value>Επιτυχείς</value>
+  </data>
+  <data name="Failed" xml:space="preserve">
+    <value>Αποτυχημένες</value>
+  </data>
+  <data name="Total" xml:space="preserve">
+    <value>Σύνολο</value>
+  </data>
+  <data name="SuccessRate" xml:space="preserve">
+    <value>Ποσοστό επιτυχίας</value>
+  </data>
+  <data name="Performance" xml:space="preserve">
+    <value>Απόδοση</value>
+  </data>
+  <data name="AvgDuration" xml:space="preserve">
+    <value>Μέση Διάρκεια</value>
+  </data>
+  <data name="LastRun" xml:space="preserve">
+    <value>Τελευταία Εκτέλεση</value>
+  </data>
+  <data name="LastError" xml:space="preserve">
+    <value>Τελευταίο Σφάλμα</value>
+  </data>
+  <data name="ViewRuns" xml:space="preserve">
+    <value>Προβολή Εκτελέσεων</value>
+  </data>
+  <data name="Never" xml:space="preserve">
+    <value>Ποτέ</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Καμία</value>
+  </data>
+  <!-- Breadcrumb / shared -->
+  <data name="Home" xml:space="preserve">
+    <value>Αρχική</value>
+  </data>
+  <data name="New" xml:space="preserve">
+    <value>Νέα</value>
+  </data>
+  <data name="Pending" xml:space="preserve">
+    <value>Εκκρεμής</value>
+  </data>
+  <!-- Run Detail -->
+  <data name="RunDetailPageTitle" xml:space="preserve">
+    <value>Λεπτομέρειες Εκτέλεσης</value>
+  </data>
+  <data name="RunSummary" xml:space="preserve">
+    <value>Σύνοψη Εκτέλεσης</value>
+  </data>
+  <data name="StepLogs" xml:space="preserve">
+    <value>Καταγραφές Βημάτων</value>
+  </data>
+  <data name="NoStepLogs" xml:space="preserve">
+    <value>Δεν καταγράφηκαν βήματα για αυτή την εκτέλεση.</value>
+  </data>
+  <data name="StepPrefix" xml:space="preserve">
+    <value>Βήμα:</value>
+  </data>
+  <data name="StepSkippedByCondition" xml:space="preserve">
+    <value>Το βήμα παραλείφθηκε λόγω συνθήκης.</value>
+  </data>
+  <data name="ConditionEvaluatedTo" xml:space="preserve">
+    <value>Η συνθήκη αποτιμήθηκε ως:</value>
+  </data>
+  <data name="Result" xml:space="preserve">
+    <value>Αποτέλεσμα</value>
+  </data>
+  <data name="RenderedOutput" xml:space="preserve">
+    <value>Αποδοθέν Αποτέλεσμα</value>
+  </data>
+  <!-- New workflow form -->
+  <data name="AllEventTypesUsed" xml:space="preserve">
+    <value>Όλοι οι διαθέσιμοι τύποι συμβάντων ενεργοποίησης έχουν ήδη διαμορφωμένη ροή εργασίας. Διαγράψτε μια υπάρχουσα ροή εργασίας για να ελευθερώσετε τον τύπο συμβάντος της.</value>
+  </data>
+  <data name="TriggerEventHelp" xml:space="preserve">
+    <value>Κάθε τύπος συμβάντος μπορεί να έχει μόνο μία ροή εργασίας. Εμφανίζονται μόνο οι μη χρησιμοποιούμενοι τύποι συμβάντων.</value>
+  </data>
+  <data name="Detail" xml:space="preserve">
+    <value>Λεπτομέρεια</value>
+  </data>
+</root>
+

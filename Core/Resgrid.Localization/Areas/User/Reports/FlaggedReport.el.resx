@@ -1,0 +1,162 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ReportTitle" xml:space="preserve">
+    <value>Αναφορά Επισημασμένων Σημειώσεων, Εικόνων και Αρχείων Κλήσεων</value>
+  </data>
+  <data name="ReportIndexDescription" xml:space="preserve">
+    <value>Αυτή η αναφορά εμφανίζει όλες τις επισημασμένες σημειώσεις κλήσεων, τις επισημασμένες εικόνες κλήσεων και τα επισημασμένα αρχεία κλήσεων του τμήματος, συμπεριλαμβανομένων των σχετικών πληροφοριών κλήσης, του περιεχομένου ή του ονόματος αρχείου, των λεπτομερειών επισήμανσης και του λόγου για τον οποίο επισημάνθηκε κάθε στοιχείο.</value>
+  </data>
+  <data name="ReportStartDate" xml:space="preserve">
+    <value>Ημερομηνία Έναρξης Αναφοράς</value>
+  </data>
+  <data name="ReportEndDate" xml:space="preserve">
+    <value>Ημερομηνία Λήξης Αναφοράς</value>
+  </data>
+  <data name="RunReport" xml:space="preserve">
+    <value>Εκτέλεση Αναφοράς</value>
+  </data>
+  <data name="DateFilterApplied" xml:space="preserve">
+    <value>Εφαρμόστηκε Φίλτρο Ημερομηνίας</value>
+  </data>
+  <data name="FlaggedNotesSection" xml:space="preserve">
+    <value>Επισημασμένες Σημειώσεις</value>
+  </data>
+  <data name="FlaggedImagesSection" xml:space="preserve">
+    <value>Επισημασμένες Εικόνες</value>
+  </data>
+  <data name="FlaggedFilesSection" xml:space="preserve">
+    <value>Επισημασμένα Αρχεία</value>
+  </data>
+  <data name="FlaggedCountSuffix" xml:space="preserve">
+    <value>επισημασμένα</value>
+  </data>
+  <data name="NoFlaggedNotesFound" xml:space="preserve">
+    <value>Δεν βρέθηκαν επισημασμένες σημειώσεις κλήσεων για αυτό το τμήμα.</value>
+  </data>
+  <data name="NoFlaggedImagesFound" xml:space="preserve">
+    <value>Δεν βρέθηκαν επισημασμένες εικόνες κλήσεων για αυτό το τμήμα.</value>
+  </data>
+  <data name="NoFlaggedFilesFound" xml:space="preserve">
+    <value>Δεν βρέθηκαν επισημασμένα αρχεία κλήσεων για αυτό το τμήμα.</value>
+  </data>
+  <data name="CallNumberHeader" xml:space="preserve">
+    <value>Κλήση #</value>
+  </data>
+  <data name="CallNameHeader" xml:space="preserve">
+    <value>Όνομα Κλήσης</value>
+  </data>
+  <data name="CallTypeHeader" xml:space="preserve">
+    <value>Τύπος</value>
+  </data>
+  <data name="CallAddressHeader" xml:space="preserve">
+    <value>Διεύθυνση</value>
+  </data>
+  <data name="CallLoggedOnHeader" xml:space="preserve">
+    <value>Καταγραφή Κλήσης</value>
+  </data>
+  <data name="NoteHeader" xml:space="preserve">
+    <value>Σημείωση</value>
+  </data>
+  <data name="NoteByHeader" xml:space="preserve">
+    <value>Σημείωση Από</value>
+  </data>
+  <data name="NoteTimestampHeader" xml:space="preserve">
+    <value>Χρονική Σήμανση Σημείωσης</value>
+  </data>
+  <data name="FlagInfoHeader" xml:space="preserve">
+    <value>Πληροφορίες Επισήμανσης</value>
+  </data>
+  <data name="FileNameHeader" xml:space="preserve">
+    <value>Όνομα Αρχείου</value>
+  </data>
+  <data name="ImageByHeader" xml:space="preserve">
+    <value>Εικόνα Από</value>
+  </data>
+  <data name="ImageTimestampHeader" xml:space="preserve">
+    <value>Χρονική Σήμανση Εικόνας</value>
+  </data>
+  <data name="FileTypeHeader" xml:space="preserve">
+    <value>Τύπος Αρχείου</value>
+  </data>
+  <data name="FileByHeader" xml:space="preserve">
+    <value>Αρχείο Από</value>
+  </data>
+  <data name="FileTimestampHeader" xml:space="preserve">
+    <value>Χρονική Σήμανση Αρχείου</value>
+  </data>
+  <data name="FlaggedByLabel" xml:space="preserve">
+    <value>Επισημάνθηκε Από</value>
+  </data>
+  <data name="FlaggedOnLabel" xml:space="preserve">
+    <value>Επισημάνθηκε Στις</value>
+  </data>
+  <data name="ReasonLabel" xml:space="preserve">
+    <value>Αιτιολογία</value>
+  </data>
+  <data name="DateRangeLabel" xml:space="preserve">
+    <value>Εύρος ημερομηνιών</value>
+  </data>
+  <data name="ReportGeneratedLabel" xml:space="preserve">
+    <value>Η αναφορά δημιουργήθηκε</value>
+  </data>
+</root>
+
+

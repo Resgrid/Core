@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
@@ -53,6 +53,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IQueueService _queueService;
 		private readonly IUserProfileService _userProfileService;
+		private readonly ICallsService _callsService;
 
 		public ChatController(
 			IChatChannelService chatChannelService,
@@ -68,9 +69,11 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ICacheProvider cacheProvider,
 			IEventAggregator eventAggregator,
 			IQueueService queueService,
-			IUserProfileService userProfileService)
+			IUserProfileService userProfileService,
+			ICallsService callsService)
 		{
 			_chatChannelService = chatChannelService;
+			_callsService = callsService;
 			_chatPermissionService = chatPermissionService;
 			_chatMessageService = chatMessageService;
 			_chatModerationService = chatModerationService;
@@ -111,6 +114,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 				activeUnitId = null;
 
 			var result = new GetChatChannelsResult();
+
+			// A call's incident channel is provisioned off the CallAddedEvent. If that event was dropped
+			// -- broker restart, worker down, or the call predates the chat rollout -- the call ends up
+			// with no conversation and the desk concludes the feature does not exist. Asking for a
+			// specific call's channels is the moment to heal that: Ensure is idempotent and renames in
+			// place, so this is a no-op whenever provisioning already worked.
+			if (callId.HasValue)
+				await EnsureIncidentChannelForCallAsync(callId.Value);
+
 			var channels = await _chatChannelService.GetChannelsForUserAsync(DepartmentId, UserId, activeUnitId, includeArchived);
 
 			if (callId.HasValue && channels != null)
@@ -1605,6 +1617,29 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private Task<bool> ChatEnabledAsync()
 		{
 			return _featureToggleService.IsEnabledAsync(FeatureFlagKeys.ChatSystem, DepartmentId);
+		}
+
+		/// <summary>
+		/// Creates the call's incident channel if provisioning never ran for it. Only active, non-deleted
+		/// calls in the caller's own department qualify — the same stance the provisioning listener takes
+		/// — so this cannot conjure a channel for a closed call or one belonging to another department.
+		/// Best-effort: a failure here must not blank the channel list.
+		/// </summary>
+		private async Task EnsureIncidentChannelForCallAsync(int callId)
+		{
+			try
+			{
+				var call = await _callsService.GetCallByIdAsync(callId, false);
+
+				if (call == null || call.DepartmentId != DepartmentId || call.IsDeleted || call.State != (int)CallStates.Active)
+					return;
+
+				await _chatChannelService.EnsureIncidentChannelAsync(call.DepartmentId, call.CallId, call.GetDisplayName());
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
 		}
 
 		private async Task<bool> IsRateLimitedAsync(string action, int limitPerWindow)

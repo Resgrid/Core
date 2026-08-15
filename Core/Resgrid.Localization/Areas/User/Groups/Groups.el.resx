@@ -1,0 +1,287 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- Index page -->
+  <data name="IndexPageTitle" xml:space="preserve">
+    <value>Ομάδες Τμήματος</value>
+  </data>
+  <data name="GroupsHeading" xml:space="preserve">
+    <value>Ομάδες</value>
+  </data>
+  <data name="AddNewGroup" xml:space="preserve">
+    <value>Προσθήκη Νέας Ομάδας</value>
+  </data>
+  <data name="AddNewGroupTitle" xml:space="preserve">
+    <value>Προσθήκη νέας Ομάδας</value>
+  </data>
+  <data name="GroupName" xml:space="preserve">
+    <value>Όνομα Ομάδας</value>
+  </data>
+  <data name="Parent" xml:space="preserve">
+    <value>Γονική</value>
+  </data>
+  <data name="DispatchEmail" xml:space="preserve">
+    <value>Email Αποστολής</value>
+  </data>
+  <data name="MessageEmail" xml:space="preserve">
+    <value>Email Μηνυμάτων</value>
+  </data>
+  <data name="Members" xml:space="preserve">
+    <value>Μέλη</value>
+  </data>
+  <data name="Organizational" xml:space="preserve">
+    <value>Οργανωτική</value>
+  </data>
+  <data name="Station" xml:space="preserve">
+    <value>Σταθμός</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Καμία</value>
+  </data>
+  <data name="Geofence" xml:space="preserve">
+    <value>Γεωφράχτης</value>
+  </data>
+
+  <!-- Delete Group page -->
+  <data name="DeleteGroupPageTitle" xml:space="preserve">
+    <value>Διαγραφή Ομάδας</value>
+  </data>
+  <data name="DeleteGroupHeading" xml:space="preserve">
+    <value>Διαγραφή Ομάδας</value>
+  </data>
+  <data name="DeleteGroupConfirmQuestion" xml:space="preserve">
+    <value>Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτή την ομάδα;</value>
+  </data>
+  <data name="DeleteGroupWarning" xml:space="preserve">
+    <value>Αν επιλέξετε να διαγράψετε αυτή την ομάδα, οι πληροφορίες της ομάδας, για παράδειγμα οι διευθύνσεις αποστολής και μηνυμάτων, θα αφαιρεθούν μαζί με την ομάδα και δεν θα μπορούν να χρησιμοποιηθούν ξανά.</value>
+  </data>
+  <data name="DeleteGroupActiveUsersWarning" xml:space="preserve">
+    <value>Αυτή η ομάδα έχει ενεργούς χρήστες. Πρέπει να μετακινήσετε ή να διαγράψετε τους χρήστες για να μπορέσετε να διαγράψετε την ομάδα.</value>
+  </data>
+  <data name="DeleteGroupChildGroupsWarning" xml:space="preserve">
+    <value>Αυτή η ομάδα έχει θυγατρικές ομάδες. Θα χρειαστεί να μετακινήσετε ή να διαγράψετε τη θυγατρική ομάδα πριν διαγράψετε την ομάδα.</value>
+  </data>
+  <data name="DeleteGroupUnitsWarning" xml:space="preserve">
+    <value>Αυτή η ομάδα έχει ανατεθειμένες μονάδες. Θα χρειαστεί να μετακινήσετε τη μονάδα σε άλλη Ομάδα Σταθμού ή να τη διαγράψετε για να μπορέσετε να διαγράψετε την ομάδα.</value>
+  </data>
+  <data name="DeleteGroupShiftsWarning" xml:space="preserve">
+    <value>Αυτή η ομάδα έχει ανατεθειμένες ομάδες βαρδιών. Θα χρειαστεί να αφαιρέσετε αυτές τις ομάδες βαρδιών, δηλαδή τις Βάρδιες που έχουν ανατεθεί σε Σταθμό\Ομάδα, για να μπορέσετε να διαγράψετε την ομάδα.</value>
+  </data>
+  <data name="DeleteGroupCheckboxHint" xml:space="preserve">
+    <value>Κάντε κλικ στο παρακάτω πλαίσιο για να διαγράψετε αυτή την ομάδα.</value>
+  </data>
+  <data name="DeleteGroupPermanentWarning" xml:space="preserve">
+    <value>Αν επιλέξετε να διαγράψετε αυτή την ομάδα, οι παρακάτω πληροφορίες θα διαγραφούν οριστικά. Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.</value>
+  </data>
+  <data name="DeleteGroupDataDeleted" xml:space="preserve">
+    <value>Δεδομένα που Διαγράφονται</value>
+  </data>
+  <data name="DeleteGroupDataGroupData" xml:space="preserve">
+    <value>Δεδομένα Ομάδας</value>
+  </data>
+  <data name="DeleteGroupDataPersonnelMemberships" xml:space="preserve">
+    <value>Συμμετοχές Προσωπικού σε Ομάδα</value>
+  </data>
+  <data name="DeleteGroupDataUnitMemberships" xml:space="preserve">
+    <value>Συμμετοχές Μονάδων σε Ομάδα</value>
+  </data>
+  <data name="DeleteGroupDataInventory" xml:space="preserve">
+    <value>Απόθεμα Ομάδας</value>
+  </data>
+  <data name="DeleteGroupDataShiftData" xml:space="preserve">
+    <value>Δεδομένα Βαρδιών Ομάδας</value>
+  </data>
+  <data name="ConfirmDeleteLabel" xml:space="preserve">
+    <value>Επιβεβαίωση Διαγραφής;</value>
+  </data>
+  <data name="DeleteGroupButton" xml:space="preserve">
+    <value>Διαγραφή Ομάδας</value>
+  </data>
+
+  <!-- New Group page -->
+  <data name="NewGroupPageTitle" xml:space="preserve">
+    <value>Νέα Ομάδα</value>
+  </data>
+  <data name="NewGroupHeading" xml:space="preserve">
+    <value>Νέα Ομάδα</value>
+  </data>
+  <data name="GroupType" xml:space="preserve">
+    <value>Τύπος ομάδας</value>
+  </data>
+  <data name="OrganizationalGroup" xml:space="preserve">
+    <value>Οργανωτική Ομάδα</value>
+  </data>
+  <data name="StationGroup" xml:space="preserve">
+    <value>Ομάδα Σταθμού</value>
+  </data>
+  <data name="ParentGroup" xml:space="preserve">
+    <value>Γονική Ομάδα</value>
+  </data>
+  <data name="StationAddress" xml:space="preserve">
+    <value>Διεύθυνση Σταθμού</value>
+  </data>
+  <data name="StationAddressDescription" xml:space="preserve">
+    <value>Οι ομάδες σταθμού απαιτούν φυσική τοποθεσία (καθώς το προσωπικό και οι μονάδες μπορούν να ανταποκρίνονται σε αυτές). Εισαγάγετε Διεύθυνση ή Συντεταγμένες GPS ή διεύθυνση what3words.</value>
+  </data>
+  <data name="Street" xml:space="preserve">
+    <value>Οδός</value>
+  </data>
+  <data name="City" xml:space="preserve">
+    <value>Πόλη</value>
+  </data>
+  <data name="StateProvince" xml:space="preserve">
+    <value>Νομός/Επαρχία</value>
+  </data>
+  <data name="ZipPostalCode" xml:space="preserve">
+    <value>Ταχυδρομικός Κώδικας</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>Χώρα</value>
+  </data>
+  <data name="Or" xml:space="preserve">
+    <value>Ή</value>
+  </data>
+  <data name="GpsCoordinates" xml:space="preserve">
+    <value>Συντεταγμένες GPS</value>
+  </data>
+  <data name="LatitudeHint" xml:space="preserve">
+    <value>Γεωγραφικό Πλάτος (Δεκαδική Σημειογραφία: π.χ. 39.1517)</value>
+  </data>
+  <data name="LongitudeHint" xml:space="preserve">
+    <value>Γεωγραφικό Μήκος (Δεκαδική Σημειογραφία: π.χ. -119.4571)</value>
+  </data>
+  <data name="What3WordsAddress" xml:space="preserve">
+    <value>Διεύθυνση what3words</value>
+  </data>
+  <data name="What3WordsHint" xml:space="preserve">
+    <value>Διεύθυνση w3w (π.χ. humble.echo.sticky)</value>
+  </data>
+  <data name="PrintNodePrinter" xml:space="preserve">
+    <value>Εκτυπωτής PrintNode</value>
+  </data>
+  <data name="PrintNodeDescription" xml:space="preserve">
+    <value>Το PrintNode είναι μια υπηρεσία που μας επιτρέπει να στέλνουμε εργασίες εκτύπωσης σε τοπικό υπολογιστή ή διακομιστή στο δίκτυό σας, σε συγκεκριμένο εκτυπωτή. Πρέπει να έχετε ενεργό λογαριασμό PrintNode και το λογισμικό του ρυθμισμένο με τον εκτυπωτή ενεργό.</value>
+  </data>
+  <data name="SelectPrinter" xml:space="preserve">
+    <value>Επιλογή Εκτυπωτή</value>
+  </data>
+  <data name="UsersOneGroupNote" xml:space="preserve">
+    <value>Οι χρήστες μπορούν να ανήκουν μόνο σε μία ομάδα κάθε φορά. Αν δεν βλέπετε τον χρήστη σας στη λίστα, ανήκει ήδη σε ομάδα.</value>
+  </data>
+  <data name="GroupAdmins" xml:space="preserve">
+    <value>Διαχειριστές Ομάδας</value>
+  </data>
+  <data name="GroupUsers" xml:space="preserve">
+    <value>Χρήστες Ομάδας</value>
+  </data>
+  <data name="SaveGroup" xml:space="preserve">
+    <value>Αποθήκευση Ομάδας</value>
+  </data>
+  <data name="ApiKey" xml:space="preserve">
+    <value>Κλειδί API:</value>
+  </data>
+  <data name="GetPrinters" xml:space="preserve">
+    <value>Λήψη Εκτυπωτών</value>
+  </data>
+  <data name="Printer" xml:space="preserve">
+    <value>Εκτυπωτής</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Κλείσιμο</value>
+  </data>
+
+  <!-- Edit Group page -->
+  <data name="EditGroupPageTitle" xml:space="preserve">
+    <value>Επεξεργασία Ομάδας</value>
+  </data>
+  <data name="EditGroupHeading" xml:space="preserve">
+    <value>Επεξεργασία Ομάδας</value>
+  </data>
+  <data name="PrintCallsToPrinter" xml:space="preserve">
+    <value>Εκτύπωση Κλήσεων σε Εκτυπωτή</value>
+  </data>
+  <data name="PrintCallsToPrinterHint" xml:space="preserve">
+    <value>Η ενεργοποίηση αυτής της επιλογής θα εκτυπώνει μια κλήση στον επιλεγμένο Εκτυπωτή όταν μια μονάδα ή άτομο από αυτή την ομάδα συνδέεται (αποστέλλεται) σε μια κλήση</value>
+  </data>
+
+  <!-- Geofence page -->
+  <data name="GeofencePageTitle" xml:space="preserve">
+    <value>Γεωφράχτης Σταθμού</value>
+  </data>
+  <data name="GeofenceHeading" xml:space="preserve">
+    <value>Γεωφράχτης Σταθμού</value>
+  </data>
+  <data name="GeofenceStationBreadcrumb" xml:space="preserve">
+    <value>Γεωφράχτης Σταθμού</value>
+  </data>
+  <data name="GeofenceDescription" xml:space="preserve">
+    <value>Παρακάτω μπορείτε να δημιουργήσετε γεωφράχτη για τον σταθμό σας. Τα πεδία με μπλε πλάγια γράμματα είναι υποχρεωτικά. Οι γεωφράχτες σάς επιτρέπουν να δημιουργήσετε ένα όριο στον χάρτη που αποτελεί την περιοχή ανταπόκρισης αυτού του σταθμού. Θα χρησιμοποιηθεί για την αυτόματη δρομολόγηση κλήσεων και τον καθορισμό ανταποκρίσεων. Για να δημιουργήσετε τον γεωφράχτη, κάντε πρώτα κλικ στον χάρτη για να ορίσετε το σημείο έναρξης και μετά ξανά κλικ για να σχεδιάσετε γραμμή· συνεχίστε να σχεδιάζετε γραμμές μέχρι να περικλείσετε την περιοχή ανταπόκρισης.</value>
+  </data>
+  <data name="DistrictColor" xml:space="preserve">
+    <value>Χρώμα Περιοχής</value>
+  </data>
+  <data name="SaveGeofence" xml:space="preserve">
+    <value>Αποθήκευση Γεωφράχτη</value>
+  </data>
+  <data name="ClearGeofence" xml:space="preserve">
+    <value>Εκκαθάριση Γεωφράχτη</value>
+  </data>
+</root>

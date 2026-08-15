@@ -15,10 +15,10 @@
     <PackageReference Include="Box.V2.Core" Version="6.5.0" />
     <PackageReference Include="Dropbox.Api" Version="7.0.0" />
     <PackageReference Include="FluentFTP" Version="54.1.1" />
-    <PackageReference Include="HtmlSanitizer" Version="9.0.892" />
+    <PackageReference Include="HtmlSanitizer" Version="9.2.995" />
     <PackageReference Include="MailKit" Version="4.16.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="SSH.NET" Version="2024.2.0" />
+    <PackageReference Include="SSH.NET" Version="2026.0.0" />
     <PackageReference Include="Twilio" Version="7.9.1" />
   </ItemGroup>
   <ItemGroup>

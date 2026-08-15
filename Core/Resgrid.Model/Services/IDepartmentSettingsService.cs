@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -90,11 +90,55 @@ namespace Resgrid.Model.Services
 		Task<bool> IsTestingEnabledForDepartmentAsync(int departmentId);
 
 		/// <summary>
+		/// Gets the department's new-call field policy: which built-in fields the call form shows and
+		/// which it requires. Returns an empty policy (everything visible, nothing required) when the
+		/// department has not configured one, which is how Resgrid behaved before the setting existed.
+		/// </summary>
+		/// <summary>
+		/// Gets how long a unit may sit in a status before the board highlights it. Returns an empty set
+		/// (no highlighting) when the department has not configured any, which is the pre-feature
+		/// behaviour.
+		/// </summary>
+		Task<UnitStatusThresholds> GetUnitStatusThresholdsAsync(int departmentId, bool bypassCache = false);
+
+		/// <summary>
+		/// Saves the department's time-in-status thresholds, returning the normalised set that was stored.
+		/// </summary>
+		Task<UnitStatusThresholds> SaveUnitStatusThresholdsAsync(int departmentId, UnitStatusThresholds thresholds,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		Task<NewCallFieldPolicy> GetNewCallFieldPolicyAsync(int departmentId, bool bypassCache = false);
+
+		/// <summary>
+		/// Saves the department's new-call field policy, returning the normalised policy that was stored.
+		/// </summary>
+		Task<NewCallFieldPolicy> SaveNewCallFieldPolicyAsync(int departmentId, NewCallFieldPolicy policy,
+			CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
 		/// Gets the map center coordinates asynchronous.
 		/// </summary>
 		/// <param name="department">The department.</param>
 		/// <returns>Task&lt;Coordinates&gt;.</returns>
 		Task<Coordinates> GetMapCenterCoordinatesAsync(Department department);
+
+		/// <summary>
+		/// Persists the department's default map center.
+		/// </summary>
+		/// <remarks>
+		/// Supplied coordinates always win and are stored verbatim. When both are blank the department's
+		/// own address is geocoded and the result stored instead, so a department that never touches
+		/// these fields still gets its maps centred on itself rather than on the system default. An
+		/// operator who has set coordinates by hand is never overwritten by a geocode.
+		/// </remarks>
+		/// <param name="departmentId">The department identifier.</param>
+		/// <param name="latitude">Operator-supplied latitude, or null/blank to geocode the address.</param>
+		/// <param name="longitude">Operator-supplied longitude, or null/blank to geocode the address.</param>
+		/// <param name="address">The department's address, used only when no coordinates were supplied.</param>
+		/// <param name="cancellationToken">Cancellation token.</param>
+		/// <returns>The coordinates that were stored, or null when nothing could be resolved.</returns>
+		Task<Coordinates> SaveMapCenterCoordinatesAsync(int departmentId, string latitude, string longitude, Address address,
+			CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
 		/// Gets the disable automatic available for department asynchronous.

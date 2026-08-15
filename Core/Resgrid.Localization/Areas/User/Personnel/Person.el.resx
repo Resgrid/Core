@@ -1,0 +1,399 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AccountInformationHeader" xml:space="preserve">
+    <value>Πληροφορίες Λογαριασμού</value>
+  </data>
+  <data name="AddAPerson" xml:space="preserve">
+    <value>Προσθήκη Ατόμου</value>
+  </data>
+  <data name="AddAPersonHelp" xml:space="preserve">
+    <value>Προσθήκη ενός ατόμου</value>
+  </data>
+  <data name="AddExistingUserHeader" xml:space="preserve">
+    <value>Προστέθηκε Υπάρχων Χρήστης</value>
+  </data>
+  <data name="AddPersonHeader" xml:space="preserve">
+    <value>Προσθήκη Ατόμου</value>
+  </data>
+  <data name="AddRank" xml:space="preserve">
+    <value>Προσθήκη Βαθμού</value>
+  </data>
+  <data name="AddRoleHeader" xml:space="preserve">
+    <value>Προσθήκη Ρόλου</value>
+  </data>
+  <data name="CallOptionsLabel" xml:space="preserve">
+    <value>Επιλογές Κλήσεων</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Αλλαγή Κωδικού Πρόσβασης</value>
+  </data>
+  <data name="CheckToDelete" xml:space="preserve">
+    <value>Κάντε κλικ στο παρακάτω πλαίσιο για να διαγράψετε αυτόν τον χρήστη.</value>
+  </data>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>Επιβεβαίωση Διαγραφής;</value>
+  </data>
+  <data name="ConfirmPasswordHelp" xml:space="preserve">
+    <value>Επιβεβαιώστε τον κωδικό πρόσβασης του χρήστη (πρέπει να ταιριάζει με τον παραπάνω)</value>
+  </data>
+  <data name="ConfirmPasswordLabel" xml:space="preserve">
+    <value>Επιβεβαίωση Κωδικού Πρόσβασης</value>
+  </data>
+  <data name="ContactDetailsHeader" xml:space="preserve">
+    <value>Στοιχεία Επικοινωνίας</value>
+  </data>
+  <data name="DeleteAreYouSure" xml:space="preserve">
+    <value>Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτόν τον χρήστη;</value>
+  </data>
+  <data name="DeleteAreYouSure2" xml:space="preserve">
+    <value>Αν επιλέξετε να διαγράψετε αυτόν τον χρήστη, οι παρακάτω πληροφορίες θα διαγραφούν οριστικά. Η συνιστώμενη διαδικασία είναι να απενεργοποιήσετε τον χρήστη αν αποχωρήσει από το τμήμα ή τον οργανισμό. Διαγράψτε τον χρήστη μόνο αφού περάσει αρκετός χρόνος, αν ο λογαριασμός ήταν λάθος ή δεν χρησιμοποιήθηκε ποτέ.</value>
+  </data>
+  <data name="DeletePersonHeader" xml:space="preserve">
+    <value>Διαγραφή Ατόμου</value>
+  </data>
+  <data name="EditRoleHeader" xml:space="preserve">
+    <value>Επεξεργασία Ρόλου</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="EmailAddressHelp" xml:space="preserve">
+    <value>Οι διευθύνσεις email πρέπει να είναι μοναδικές</value>
+  </data>
+  <data name="EmailAddressLabel" xml:space="preserve">
+    <value>Διεύθυνση Email</value>
+  </data>
+  <data name="EmailAddressPlaceholder" xml:space="preserve">
+    <value>Διεύθυνση Email (πρέπει να είναι μοναδική)</value>
+  </data>
+  <data name="ExistingUserHelp1" xml:space="preserve">
+    <value>Αυτός ο χρήστης</value>
+  </data>
+  <data name="ExistingUserHelp2" xml:space="preserve">
+    <value>, με βάση τη διεύθυνση email, είχε ήδη λογαριασμό Resgrid σε άλλο τμήμα. Ο λογαριασμός χρήστη προστέθηκε πλέον &lt;b&gt;με τις προηγούμενες ρυθμίσεις προφίλ του (όνομα, αριθμοί τηλεφώνου, προτιμήσεις κ.λπ.)&lt;/b&gt; στο τμήμα. Επειδή ο χρήστης ανήκει σε πολλά τμήματα, πρέπει να ενεργοποιήσει αυτό το τμήμα για να δει τις πληροφορίες του από την επιλογή «Προβολή των Τμημάτων Σας» στο αναπτυσσόμενο μενού του προφίλ του (κάτω από τη φωτογραφία προφίλ στην επάνω αριστερή γωνία).</value>
+  </data>
+  <data name="FirstNameLabel" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="FirstNamePlaceholder" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="GroupLabel" xml:space="preserve">
+    <value>Ομάδα</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Αρχική</value>
+  </data>
+  <data name="IDNumberLabel" xml:space="preserve">
+    <value>Αριθμός Ταυτότητας</value>
+  </data>
+  <data name="IDNumberPlaceholder" xml:space="preserve">
+    <value>Προσαρμοσμένος Αριθμός Ταυτοποίησης</value>
+  </data>
+  <data name="IsGroupAdminLabel" xml:space="preserve">
+    <value>Είναι Διαχειριστής Ομάδας;</value>
+  </data>
+  <data name="LastNameLabel" xml:space="preserve">
+    <value>Επώνυμο</value>
+  </data>
+  <data name="LastNamePlaceholder" xml:space="preserve">
+    <value>Επώνυμο</value>
+  </data>
+  <data name="ManageInvites" xml:space="preserve">
+    <value>Διαχείριση Προσκλήσεων</value>
+  </data>
+  <data name="ManageInvitesHelp" xml:space="preserve">
+    <value>Πρόσκληση πολλών ατόμων</value>
+  </data>
+  <data name="ManageRoles" xml:space="preserve">
+    <value>Διαχείριση Ρόλων</value>
+  </data>
+  <data name="MessageOptionsLabel" xml:space="preserve">
+    <value>Επιλογές Μηνυμάτων</value>
+  </data>
+  <data name="Mobile" xml:space="preserve">
+    <value>Κινητό</value>
+  </data>
+  <data name="MobileCarrierLabel" xml:space="preserve">
+    <value>Πάροχος Κινητής</value>
+  </data>
+  <data name="MobileNumberLabel" xml:space="preserve">
+    <value>Αριθμός Κινητού</value>
+  </data>
+  <data name="MobileNumberPlaceholder" xml:space="preserve">
+    <value>Αριθμός Κινητού Τηλεφώνου</value>
+  </data>
+  <data name="NewPasswordHelp" xml:space="preserve">
+    <value>Οι κωδικοί πρόσβασης πρέπει να έχουν 8 χαρακτήρες ή περισσότερους και να περιλαμβάνουν ένα ψηφίο (αριθμό), ένα κεφαλαίο και ένα πεζό γράμμα</value>
+  </data>
+  <data name="NewPasswordLabel" xml:space="preserve">
+    <value>Νέος Κωδικός Πρόσβασης</value>
+  </data>
+  <data name="NoPersonnelInDepartment" xml:space="preserve">
+    <value>Δεν Υπάρχει Προσωπικό στο Τμήμα</value>
+  </data>
+  <data name="NoPersonnelInThisGroup" xml:space="preserve">
+    <value>Δεν Υπάρχει Προσωπικό σε Αυτή την Ομάδα</value>
+  </data>
+  <data name="NotificationOptionsLabel" xml:space="preserve">
+    <value>Επιλογές Ειδοποιήσεων</value>
+  </data>
+  <data name="NotifyUser" xml:space="preserve">
+    <value>Ειδοποίηση Χρήστη;</value>
+  </data>
+  <data name="NotifyWarning" xml:space="preserve">
+    <value>Αποεπιλέξτε το αν δεν θέλετε το Resgrid να ειδοποιήσει τον χρήστη για τη δημιουργία αυτού του λογαριασμού.</value>
+  </data>
+  <data name="RequirePasswordChange" xml:space="preserve">
+    <value>Απαίτηση Αλλαγής Κωδικού Πρόσβασης</value>
+  </data>
+  <data name="RequirePasswordChangeHelp" xml:space="preserve">
+    <value>Ο χρήστης θα υποχρεωθεί να αλλάξει τον κωδικό πρόσβασής του κατά την πρώτη σύνδεση.</value>
+  </data>
+  <data name="NoUnGroupedPersonnel" xml:space="preserve">
+    <value>Δεν Υπάρχει Προσωπικό Εκτός Ομάδας</value>
+  </data>
+  <data name="PersonnelHeader" xml:space="preserve">
+    <value>Προσωπικό</value>
+  </data>
+  <data name="PhoneNumbers" xml:space="preserve">
+    <value>Αριθμός/οί Τηλεφώνου</value>
+  </data>
+  <data name="Push" xml:space="preserve">
+    <value>Push</value>
+  </data>
+  <data name="RankDeleteWarning" xml:space="preserve">
+    <value>ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Αυτό θα διαγράψει οριστικά αυτόν τον βαθμό. Είστε βέβαιοι ότι θέλετε να διαγράψετε τον βαθμό</value>
+  </data>
+  <data name="RanksHeader" xml:space="preserve">
+    <value>Βαθμοί Προσωπικού</value>
+  </data>
+  <data name="ReactivatePersonHeader" xml:space="preserve">
+    <value>Επανενεργοποίηση Ατόμου</value>
+  </data>
+  <data name="ReactivatePersonText1" xml:space="preserve">
+    <value>Αυτός ο χρήστης</value>
+  </data>
+  <data name="ReactivatePersonText2" xml:space="preserve">
+    <value>με βάση τη διεύθυνση email, είχε ήδη λογαριασμό στο τμήμα</value>
+  </data>
+  <data name="ReactivatePersonText3" xml:space="preserve">
+    <value>αλλά διαγράφηκε προηγουμένως. Ο λογαριασμός χρήστη επαναφέρθηκε και ενεργοποιήθηκε ξανά μέσα σε αυτό το τμήμα και θα εμφανίζεται &lt;b&gt;με τις προηγούμενες ρυθμίσεις προφίλ του (όνομα, αριθμοί τηλεφώνου, προτιμήσεις κ.λπ.)&lt;/b&gt; στο τμήμα.</value>
+  </data>
+  <data name="RoleDeleteWarning" xml:space="preserve">
+    <value>ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Αυτό θα διαγράψει οριστικά αυτόν τον ρόλο. Είστε βέβαιοι ότι θέλετε να διαγράψετε τον ρόλο</value>
+  </data>
+  <data name="RoleDescriptionPlaceholder" xml:space="preserve">
+    <value>Μια περιγραφή του ρόλου</value>
+  </data>
+  <data name="RoleNamePlaceholder" xml:space="preserve">
+    <value>Όνομα του Ρόλου</value>
+  </data>
+  <data name="RolesHeader" xml:space="preserve">
+    <value>Ρόλοι Προσωπικού</value>
+  </data>
+  <data name="RolesLabel" xml:space="preserve">
+    <value>Ρόλοι</value>
+  </data>
+  <data name="SetPersonStaffingHeader" xml:space="preserve">
+    <value>Ορισμός Στελέχωσης Ατόμου</value>
+  </data>
+  <data name="SetPersonStatusHeader" xml:space="preserve">
+    <value>Ορισμός Κατάστασης Ατόμου</value>
+  </data>
+  <data name="SetStaffing" xml:space="preserve">
+    <value>Ορισμός Στελέχωσης</value>
+  </data>
+  <data name="SetStaffingForSelectedPersonnel" xml:space="preserve">
+    <value>Ορισμός Στελέχωσης για Επιλεγμένο Προσωπικό</value>
+  </data>
+  <data name="SetStatus" xml:space="preserve">
+    <value>Ορισμός Κατάστασης</value>
+  </data>
+  <data name="SetStatusForSelectedPersonnel" xml:space="preserve">
+    <value>Ορισμός Κατάστασης για Επιλεγμένο Προσωπικό</value>
+  </data>
+  <data name="SpecialNote" xml:space="preserve">
+    <value>Ειδική Σημείωση</value>
+  </data>
+  <data name="SpecialNoteText" xml:space="preserve">
+    <value>Τα υποκείμενα δεδομένα χρήστη διατηρούνται στο σύστημα ώστε οι καταγραφές, οι αναφορές και το ιστορικό να διατηρούνται σωστά για το τμήμα. Συνιστάται να τροποποιηθούν ώστε να αφαιρεθούν όλα τα PII/PHI στον λογαριασμό χρήστη, δηλαδή αριθμοί τηλεφώνου, διευθύνσεις κ.λπ., πριν διαγράψετε τον χρήστη.</value>
+  </data>
+  <data name="Staffing" xml:space="preserve">
+    <value>Στελέχωση</value>
+  </data>
+  <data name="State" xml:space="preserve">
+    <value>Νομός</value>
+  </data>
+  <data name="Text" xml:space="preserve">
+    <value>SMS</value>
+  </data>
+  <data name="TextWarning" xml:space="preserve">
+    <value>Ενδέχεται να επιβαρυνθείτε με πρόσθετες χρεώσεις για SMS ανάλογα με το πρόγραμμα κινητής σας.</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>Χρήστης</value>
+  </data>
+  <data name="UserDetailHeader" xml:space="preserve">
+    <value>Λεπτομέρειες Χρήστη</value>
+  </data>
+  <data name="UsernameHelp" xml:space="preserve">
+    <value>Το Όνομα Χρήστη πρέπει να είναι μοναδικό</value>
+  </data>
+  <data name="UsernameLabel" xml:space="preserve">
+    <value>Όνομα Χρήστη</value>
+  </data>
+  <data name="UsersInRank" xml:space="preserve">
+    <value>Χρήστες στον Βαθμό</value>
+  </data>
+  <data name="UsersInRole" xml:space="preserve">
+    <value>Χρήστες στον Ρόλο</value>
+  </data>
+  <data name="ViewPersonHeader" xml:space="preserve">
+    <value>Προβολή Ατόμου</value>
+  </data>
+  <data name="GenerateReport" xml:space="preserve">
+    <value>Δημιουργία Αναφοράς</value>
+  </data>
+  <data name="ViewPersonEventsHeader" xml:space="preserve">
+    <value>Προβολή Συμβάντων Ατόμου</value>
+  </data>
+  <data name="ViewEvents" xml:space="preserve">
+    <value>Προβολή Συμβάντων</value>
+  </data>
+  <data name="EventsFor" xml:space="preserve">
+    <value>Συμβάντα για</value>
+  </data>
+  <data name="AreYouSurePersonnel" xml:space="preserve">
+    <value>Είστε βέβαιοι ότι θέλετε να διαγράψετε οριστικά όλες τις καταστάσεις για αυτό το άτομο;</value>
+  </data>
+  <data name="ClearAllStatuses" xml:space="preserve">
+    <value>Εκκαθάριση όλων των Καταστάσεων για το Άτομο</value>
+  </data>
+  <data name="DeleteAll" xml:space="preserve">
+    <value>Διαγραφή Όλων</value>
+  </data>
+  <data name="YesImSure" xml:space="preserve">
+    <value>Ναι, είμαι βέβαιος</value>
+  </data>
+  <data name="ViewRoleHeader" xml:space="preserve">
+    <value>Προβολή Ρόλου</value>
+  </data>
+</root>

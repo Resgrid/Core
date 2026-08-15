@@ -13,6 +13,10 @@ EXPOSE 5027/tcp 5027/udp
 FROM dhi.io/dotnet:9.0.314-sdk-debian13@sha256:a3acd51de0af79878e26292b3053aab513c6ca4476ddb2f9f11adb9c04aa7c89 AS build
 ARG BUILD_VERSION
 WORKDIR /src
+## Root MSBuild files must be present for the restore layer, otherwise the
+## security pins in Directory.Build.targets are missing from project.assets.json.
+COPY ["Directory.Build.props", "./"]
+COPY ["Directory.Build.targets", "./"]
 
 COPY ["Workers/Resgrid.TrackerGateway/Resgrid.TrackerGateway.csproj", "Workers/Resgrid.TrackerGateway/"]
 COPY ["Core/Resgrid.Config/Resgrid.Config.csproj", "Core/Resgrid.Config/"]

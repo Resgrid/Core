@@ -1,0 +1,77 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <!-- Page titles -->
+  <data name="PageTitle" xml:space="preserve"><value>Έλεγχος Ταυτότητας Δύο Παραγόντων</value></data>
+  <data name="SetupPageTitle" xml:space="preserve"><value>Ενεργοποίηση Ελέγχου Ταυτότητας Δύο Παραγόντων</value></data>
+  <data name="DisablePageTitle" xml:space="preserve"><value>Απενεργοποίηση Ελέγχου Ταυτότητας Δύο Παραγόντων</value></data>
+  <data name="RecoveryCodesPageTitle" xml:space="preserve"><value>Κωδικοί Ανάκτησης</value></data>
+  <data name="VerifyPageTitle" xml:space="preserve"><value>Επαλήθευση Ταυτότητας</value></data>
+
+  <!-- Breadcrumbs -->
+  <data name="BreadcrumbTwoFactor" xml:space="preserve"><value>Έλεγχος Ταυτότητας Δύο Παραγόντων</value></data>
+  <data name="BreadcrumbSetup" xml:space="preserve"><value>Ρύθμιση</value></data>
+  <data name="BreadcrumbDisable" xml:space="preserve"><value>Απενεργοποίηση</value></data>
+  <data name="BreadcrumbRecoveryCodes" xml:space="preserve"><value>Κωδικοί Ανάκτησης</value></data>
+
+  <!-- Index -->
+  <data name="AuthenticatorAppHeader" xml:space="preserve"><value>Εφαρμογή Ελέγχου Ταυτότητας (TOTP)</value></data>
+  <data name="TwoFactorEnabledAlert" xml:space="preserve"><value>Ο έλεγχος ταυτότητας δύο παραγόντων είναι &lt;strong&gt;ενεργοποιημένος&lt;/strong&gt; στον λογαριασμό σας.</value></data>
+  <data name="TwoFactorDisabledAlert" xml:space="preserve"><value>Ο έλεγχος ταυτότητας δύο παραγόντων &lt;strong&gt;δεν είναι ενεργοποιημένος&lt;/strong&gt;. Ενεργοποιήστε τον τώρα για να ασφαλίσετε τον λογαριασμό σας με εφαρμογή ελέγχου ταυτότητας όπως το Google Authenticator, το Microsoft Authenticator ή το Authy.</value></data>
+  <data name="RecoveryCodesRemainingText" xml:space="preserve"><value>Σας απομένουν {0} κωδικός/κωδικοί ανάκτησης.</value></data>
+  <data name="RecoveryCodesWarningText" xml:space="preserve"><value>Σας απομένουν μόνο {0} κωδικός/κωδικοί ανάκτησης. Δημιουργήστε νέους κωδικούς ανάκτησης προτού εξαντληθούν.</value></data>
+  <data name="RegenerateRecoveryCodesButton" xml:space="preserve"><value>Επαναδημιουργία Κωδικών Ανάκτησης</value></data>
+  <data name="Disable2FAButton" xml:space="preserve"><value>Απενεργοποίηση 2FA</value></data>
+  <data name="EnableAuthenticatorButton" xml:space="preserve"><value>Ενεργοποίηση Εφαρμογής Ελέγχου Ταυτότητας</value></data>
+
+  <!-- Enable 2FA -->
+  <data name="SetupHeader" xml:space="preserve"><value>Ρύθμιση Εφαρμογής Ελέγχου Ταυτότητας</value></data>
+  <data name="EnforcedWarning" xml:space="preserve"><value>Το τμήμα σας απαιτεί έλεγχο ταυτότητας δύο παραγόντων για τους διαχειριστές. Ολοκληρώστε τη ρύθμιση προτού συνεχίσετε.</value></data>
+  <data name="SetupInstructions" xml:space="preserve"><value>Για να χρησιμοποιήσετε εφαρμογή ελέγχου ταυτότητας, ακολουθήστε αυτά τα βήματα:</value></data>
+  <data name="SetupStep1" xml:space="preserve"><value>Κατεβάστε μια εφαρμογή ελέγχου ταυτότητας όπως το {0}, το {1} ή το {2}.</value></data>
+  <data name="SetupStep2QR" xml:space="preserve"><value>Σαρώστε τον παρακάτω κωδικό QR με την εφαρμογή σας ή εισαγάγετε το κλειδί χειροκίνητα:</value></data>
+  <data name="SetupStep3" xml:space="preserve"><value>Μόλις τον σαρώσετε, εισαγάγετε τον 6ψήφιο κωδικό που εμφανίζεται στην εφαρμογή ελέγχου ταυτότητας:</value></data>
+  <data name="VerificationCodeLabel" xml:space="preserve"><value>Κωδικός Επαλήθευσης</value></data>
+  <data name="VerificationCodePlaceholder" xml:space="preserve"><value>000000</value></data>
+  <data name="VerifyAndEnableButton" xml:space="preserve"><value>Επαλήθευση και Ενεργοποίηση</value></data>
+  <data name="InvalidCodeError" xml:space="preserve"><value>Ο κωδικός επαλήθευσης δεν είναι έγκυρος. Ελέγξτε την εφαρμογή ελέγχου ταυτότητας και δοκιμάστε ξανά.</value></data>
+
+  <!-- Recovery Codes -->
+  <data name="SaveRecoveryCodesHeader" xml:space="preserve"><value>Αποθηκεύστε τους Κωδικούς Ανάκτησής Σας</value></data>
+  <data name="SaveRecoveryCodesWarning" xml:space="preserve"><value>Σημαντικό: Φυλάξτε αυτούς τους κωδικούς ανάκτησης σε ασφαλές μέρος. Κάθε κωδικός μπορεί να χρησιμοποιηθεί μόνο μία φορά. Αν χάσετε την πρόσβαση στην εφαρμογή ελέγχου ταυτότητας, μπορείτε να χρησιμοποιήσετε έναν κωδικό ανάκτησης για να συνδεθείτε.</value></data>
+  <data name="DoneButton" xml:space="preserve"><value>Ολοκληρώθηκε</value></data>
+
+  <!-- Disable 2FA -->
+  <data name="DisableWarning" xml:space="preserve"><value>Η απενεργοποίηση του 2FA θα μειώσει την ασφάλεια του λογαριασμού σας. Το κλειδί ελέγχου ταυτότητάς σας θα επαναφερθεί.</value></data>
+  <data name="DisableConfirmationText" xml:space="preserve"><value>Εισαγάγετε τον τρέχοντα κωδικό ελέγχου ταυτότητας για να επιβεβαιώσετε ότι θέλετε να απενεργοποιήσετε το 2FA:</value></data>
+  <data name="AuthenticatorCodeLabel" xml:space="preserve"><value>Κωδικός Ελέγχου Ταυτότητας</value></data>
+  <data name="Disable2FAConfirmButton" xml:space="preserve"><value>Απενεργοποίηση 2FA</value></data>
+
+  <!-- Step-Up Verify -->
+  <data name="VerifyIdentityHeader" xml:space="preserve"><value>Επιβεβαιώστε την Ταυτότητά Σας</value></data>
+  <data name="VerifyIdentityDescription" xml:space="preserve"><value>Αυτή η ενέργεια απαιτεί πρόσφατη επαλήθευση ελέγχου ταυτότητας δύο παραγόντων. Εισαγάγετε τον τρέχοντα κωδικό από την εφαρμογή ελέγχου ταυτότητάς σας.</value></data>
+  <data name="VerifyButton" xml:space="preserve"><value>Επαλήθευση</value></data>
+
+  <!-- Login 2FA -->
+  <data name="LoginTwoFactorHeader" xml:space="preserve"><value>Έλεγχος Ταυτότητας Δύο Παραγόντων</value></data>
+  <data name="LoginTwoFactorDescription" xml:space="preserve"><value>Η σύνδεσή σας προστατεύεται με εφαρμογή ελέγχου ταυτότητας. Εισαγάγετε τον 6ψήφιο κωδικό από την εφαρμογή σας παρακάτω.</value></data>
+  <data name="AuthenticatorCodeInputLabel" xml:space="preserve"><value>Κωδικός Ελέγχου Ταυτότητας</value></data>
+  <data name="RememberBrowserLabel" xml:space="preserve"><value>Να μην ερωτηθώ ξανά σε αυτή τη συσκευή για 30 ημέρες</value></data>
+  <data name="VerifyCodeButton" xml:space="preserve"><value>Επαλήθευση Κωδικού</value></data>
+  <data name="UseRecoveryCodeLink" xml:space="preserve"><value>Χάσατε την πρόσβαση στην εφαρμογή σας; Χρησιμοποιήστε κωδικό ανάκτησης</value></data>
+
+  <!-- Recovery Code Login -->
+  <data name="RecoveryCodeLoginHeader" xml:space="preserve"><value>Σύνδεση με Κωδικό Ανάκτησης</value></data>
+  <data name="RecoveryCodeLoginDescription" xml:space="preserve"><value>Έχετε χάσει την πρόσβαση στην εφαρμογή ελέγχου ταυτότητάς σας. Εισαγάγετε έναν από τους κωδικούς ανάκτησής σας παρακάτω. Κάθε κωδικός ανάκτησης μπορεί να χρησιμοποιηθεί μόνο μία φορά.</value></data>
+  <data name="RecoveryCodeInputLabel" xml:space="preserve"><value>Κωδικός Ανάκτησης</value></data>
+  <data name="RecoveryCodePlaceholder" xml:space="preserve"><value>xxxx-xxxx-xxxx</value></data>
+  <data name="LoginWithRecoveryCodeButton" xml:space="preserve"><value>Σύνδεση με Κωδικό Ανάκτησης</value></data>
+  <data name="UseAuthenticatorAppLink" xml:space="preserve"><value>Χρήση εφαρμογής ελέγχου ταυτότητας αντ' αυτού</value></data>
+  <data name="InvalidCodeLogin" xml:space="preserve"><value>Μη έγκυρος κωδικός ελέγχου ταυτότητας.</value></data>
+  <data name="InvalidRecoveryCode" xml:space="preserve"><value>Μη έγκυρος κωδικός ανάκτησης.</value></data>
+</root>
+

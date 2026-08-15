@@ -358,6 +358,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				data.CurrentStatusId = state.State.ToString();
 
 				data.CurrentStatusTimestamp = state.Timestamp.TimeConverter(new Department() { TimeZone = timeZone });
+
 				data.CurrentStatusTimestampUtc = state.Timestamp;
 				data.Note = state.Note;
 
@@ -421,7 +422,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (customState != null)
 			{
 				data.CurrentStatus = customState.ButtonText;
-				data.CurrentStatusColor = customState.ButtonColor;
+
+				// ButtonColor is either a hex value or a legacy bootstrap label class; clients cannot
+				// render the latter and were prefixing the former with a second '#'. Resolve to a plain
+				// hex colour here so every client can use the value verbatim.
+				data.CurrentStatusColor = customState.ButtonClassToColor();
+				data.CurrentStatusBaseType = customState.BaseType;
 			}
 
 			return data;

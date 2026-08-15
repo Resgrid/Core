@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -220,6 +220,58 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
+		/// <summary>
+		/// Adds a model error for every field the department's new-call policy requires but the form
+		/// left blank. Keyed to the form fields so the messages land next to the inputs.
+		/// </summary>
+		private async Task ApplyNewCallFieldPolicyAsync(NewCallView model, IFormCollection collection)
+		{
+			var policy = await _departmentSettingsService.GetNewCallFieldPolicyAsync(DepartmentId);
+
+			if (policy == null || policy.IsEmpty)
+				return;
+
+			// The dispatch lists, protocols and linked calls are posted as one form key per selected
+			// item, and are only unpacked further down -- read the same keys here so the policy sees
+			// what was actually submitted instead of flagging every one of them as missing.
+			var keys = collection?.Keys?.ToList() ?? new List<string>();
+
+			bool HasKeyStartingWith(string prefix) => keys.Any(x => x.StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
+
+			var values = new NewCallFieldValues
+			{
+				Note = model.Call?.Notes,
+				Address = model.Call?.Address,
+				Geolocation = model.Call?.GeoLocationData,
+				What3Words = model.What3Word,
+				ContactName = model.Call?.ContactName,
+				ContactInfo = model.Call?.ContactNumber,
+				ExternalId = model.Call?.ExternalIdentifier,
+				IncidentId = model.Call?.IncidentNumber,
+				ReferenceId = model.Call?.ReferenceNumber,
+				DestinationPoiId = model.Call?.DestinationPoiId,
+				IndoorMapZoneId = collection?["IndoorMapZoneId"].FirstOrDefault(),
+				// A pending protocol only counts when it is actually ticked, matching how the list is
+				// unpacked below.
+				HasProtocols = HasKeyStartingWith("activeProtocol_") ||
+							   keys.Any(x => x.StartsWith("pendingProtocol_", StringComparison.OrdinalIgnoreCase) && collection[x] == "1"),
+				HasLinkedCall = HasKeyStartingWith("linkedCall_"),
+				DispatchOn = model.ScheduleDispatchDate,
+				// Only the four prefixes the dispatch lists actually post. A bare "dispatch" prefix also
+				// swallows anything else the form happens to name that way.
+				HasDispatchList = HasKeyStartingWith("dispatchUser_") ||
+								  HasKeyStartingWith("dispatchGroup_") ||
+								  HasKeyStartingWith("dispatchUnit_") ||
+								  HasKeyStartingWith("dispatchRole_")
+			};
+
+			foreach (var violation in NewCallFieldPolicyValidator.Validate(policy, values))
+			{
+				ModelState.AddModelError($"NewCallField_{violation.Key}",
+					$"{violation.Key} is required by this department before a call can be created.");
+			}
+		}
+
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Call_Create)]
@@ -233,6 +285,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (model.Call?.DestinationPoiId.HasValue == true && model.Call.DestinationPoiId.Value > 0 && destinationPoi == null)
 				ModelState.AddModelError("Call.DestinationPoiId", _dispatchLocalizer["InvalidDestinationPoi"].Value);
+
+			// Same policy the apps apply and the v4 API enforces: a call-taker cannot forward an
+			// incident to the field until the information the crews need is on it. Departments with no
+			// policy configured are unaffected.
+			await ApplyNewCallFieldPolicyAsync(model, collection);
 
 			if (ModelState.IsValid)
 			{

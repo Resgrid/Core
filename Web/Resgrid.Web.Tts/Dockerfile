@@ -11,7 +11,10 @@ FROM dhi.io/dotnet:9.0.314-sdk-debian13@sha256:a3acd51de0af79878e26292b3053aab51
 ARG BUILD_VERSION
 WORKDIR /src
 
+## Directory.Build.targets carries the transitive security pins; this stage
+## publishes with --no-restore, so it must be present before dotnet restore.
 COPY ["Directory.Build.props", "./"]
+COPY ["Directory.Build.targets", "./"]
 COPY ["Web/Resgrid.Web.Tts/Resgrid.Web.Tts.csproj", "Web/Resgrid.Web.Tts/"]
 COPY ["Core/Resgrid.Config/Resgrid.Config.csproj", "Core/Resgrid.Config/"]
 RUN dotnet restore "Web/Resgrid.Web.Tts/Resgrid.Web.Tts.csproj"

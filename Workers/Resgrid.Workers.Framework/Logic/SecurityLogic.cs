@@ -13,7 +13,12 @@ namespace Resgrid.Workers.Framework.Logic
 {
 	public class SecurityLogic
 	{
-		private static TimeSpan Day30CacheLength = TimeSpan.FromDays(30);
+		/// <summary>
+		/// The matrix is a snapshot of units, groups, roles and memberships at build time; anything
+		/// created afterwards is missing from it. It is rebuilt on every input change now, so this is
+		/// only the backstop for a dropped queue message -- a day, not a month.
+		/// </summary>
+		private static TimeSpan MatrixCacheLength = TimeSpan.FromHours(24);
 		private static string WhoCanViewUnitsCacheKey = "ViewUnitsSecurityMaxtix_{0}";
 		private static string WhoCanViewUnitLocationsCacheKey = "ViewUnitLocationsSecurityMaxtix_{0}";
 		private static string WhoCanViewPersonnelCacheKey = "ViewUsersSecurityMaxtix_{0}";
@@ -48,7 +53,26 @@ namespace Resgrid.Workers.Framework.Logic
 			_authorizationService = Bootstrapper.GetKernel().Resolve<IAuthorizationService>();
 		}
 
+		/// <summary>
+		/// A rebuild that throws must not take the caller down with it. The all-departments sweep would
+		/// abandon every department after the failing one, and the queue handler has no catch of its
+		/// own -- a single department with unparsable permission data would stall the rest.
+		/// </summary>
 		public async Task<Tuple<bool, string>> Process(SecurityQueueItem item)
+		{
+			try
+			{
+				return await ProcessInternalAsync(item);
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+
+				return new Tuple<bool, string>(false, ex.Message);
+			}
+		}
+
+		private async Task<Tuple<bool, string>> ProcessInternalAsync(SecurityQueueItem item)
 		{
 			bool success = true;
 			string result = String.Empty;
@@ -60,7 +84,7 @@ namespace Resgrid.Workers.Framework.Logic
 				async Task<VisibilityPayloadUnits> getWhoCanViewUnits()
 				{
 					var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(item.DepartmentId, PermissionTypes.ViewGroupUnits);
-					var unitsPayload = new VisibilityPayloadUnits();
+					var unitsPayload = new VisibilityPayloadUnits() { GeneratedOn = DateTime.UtcNow };
 					var units = await _unitsService.GetUnitsForDepartmentAsync(item.DepartmentId);
 
 					if (permission == null || (permission.Action == (int)PermissionActions.Everyone && !permission.LockToGroup))
@@ -193,7 +217,7 @@ namespace Resgrid.Workers.Framework.Logic
 				if (Config.SystemBehaviorConfig.CacheEnabled)
 				{
 					await _cacheProvider.RemoveAsync(string.Format(WhoCanViewUnitsCacheKey, item.DepartmentId));
-					await _cacheProvider.RetrieveAsync(string.Format(WhoCanViewUnitsCacheKey, item.DepartmentId), getWhoCanViewUnits, Day30CacheLength);
+					await _cacheProvider.RetrieveAsync(string.Format(WhoCanViewUnitsCacheKey, item.DepartmentId), getWhoCanViewUnits, MatrixCacheLength);
 				}
 			}
 			else if (item.Type == SecurityCacheTypes.WhoCanViewUnitLocations)
@@ -201,7 +225,7 @@ namespace Resgrid.Workers.Framework.Logic
 				async Task<VisibilityPayloadUnits> getWhoCanViewUnitLocations()
 				{
 					var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(item.DepartmentId, PermissionTypes.CanSeeUnitLocations);
-					var unitsPayload = new VisibilityPayloadUnits();
+					var unitsPayload = new VisibilityPayloadUnits() { GeneratedOn = DateTime.UtcNow };
 					var units = await _unitsService.GetUnitsForDepartmentAsync(item.DepartmentId);
 
 					if (permission == null || (permission.Action == (int)PermissionActions.Everyone && !permission.LockToGroup))
@@ -334,7 +358,7 @@ namespace Resgrid.Workers.Framework.Logic
 				if (Config.SystemBehaviorConfig.CacheEnabled)
 				{
 					await _cacheProvider.RemoveAsync(string.Format(WhoCanViewUnitLocationsCacheKey, item.DepartmentId));
-					await _cacheProvider.RetrieveAsync(string.Format(WhoCanViewUnitLocationsCacheKey, item.DepartmentId), getWhoCanViewUnitLocations, Day30CacheLength);
+					await _cacheProvider.RetrieveAsync(string.Format(WhoCanViewUnitLocationsCacheKey, item.DepartmentId), getWhoCanViewUnitLocations, MatrixCacheLength);
 				}
 			}
 			else if (item.Type == SecurityCacheTypes.WhoCanViewPersonnel)
@@ -342,7 +366,7 @@ namespace Resgrid.Workers.Framework.Logic
 				async Task<VisibilityPayloadUsers> getWhoCanViewUsers()
 				{
 					var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(item.DepartmentId, PermissionTypes.ViewGroupUsers);
-					var usersPayload = new VisibilityPayloadUsers();
+					var usersPayload = new VisibilityPayloadUsers() { GeneratedOn = DateTime.UtcNow };
 					var allUsers = await _departmentMembersRepository.GetAllDepartmentMembersUnlimitedAsync(item.DepartmentId);
 
 					if (permission == null || (permission.Action == (int)PermissionActions.Everyone && !permission.LockToGroup))
@@ -481,7 +505,7 @@ namespace Resgrid.Workers.Framework.Logic
 				if (Config.SystemBehaviorConfig.CacheEnabled)
 				{
 					await _cacheProvider.RemoveAsync(string.Format(WhoCanViewPersonnelCacheKey, item.DepartmentId));
-					await _cacheProvider.RetrieveAsync(string.Format(WhoCanViewPersonnelCacheKey, item.DepartmentId), getWhoCanViewUsers, Day30CacheLength);
+					await _cacheProvider.RetrieveAsync(string.Format(WhoCanViewPersonnelCacheKey, item.DepartmentId), getWhoCanViewUsers, MatrixCacheLength);
 				}
 			}
 			else if (item.Type == SecurityCacheTypes.WhoCanViewPersonnelLocations)
@@ -489,7 +513,7 @@ namespace Resgrid.Workers.Framework.Logic
 				async Task<VisibilityPayloadUsers> getWhoCanViewUserLocations()
 				{
 					var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(item.DepartmentId, PermissionTypes.CanSeePersonnelLocations);
-					var usersPayload = new VisibilityPayloadUsers();
+					var usersPayload = new VisibilityPayloadUsers() { GeneratedOn = DateTime.UtcNow };
 					var allUsers = await _departmentMembersRepository.GetAllDepartmentMembersUnlimitedAsync(item.DepartmentId);
 
 					if (permission == null || (permission.Action == (int)PermissionActions.Everyone && !permission.LockToGroup))
@@ -628,29 +652,46 @@ namespace Resgrid.Workers.Framework.Logic
 				if (Config.SystemBehaviorConfig.CacheEnabled)
 				{
 					await _cacheProvider.RemoveAsync(string.Format(WhoCanViewPersonnelLocationsCacheKey, item.DepartmentId));
-					await _cacheProvider.RetrieveAsync(string.Format(WhoCanViewPersonnelLocationsCacheKey, item.DepartmentId), getWhoCanViewUserLocations, Day30CacheLength);
+					await _cacheProvider.RetrieveAsync(string.Format(WhoCanViewPersonnelLocationsCacheKey, item.DepartmentId), getWhoCanViewUserLocations, MatrixCacheLength);
 				}
 			}
 
 			return new Tuple<bool, string>(success, result);
 		}
 
+		/// <summary>
+		/// Every department is still attempted when one fails -- a single department with unusable
+		/// permission data must not cost the rest of the system its rebuild. The result reports whether
+		/// anything failed, so a caller can tell a clean sweep from a partial one; without that the
+		/// sweep looks successful no matter how many matrices were left stale.
+		/// </summary>
 		public async Task<Tuple<bool, string>> UpdatedCachedSecurityForAllDepartments()
 		{
-			bool success = true;
-			string result = String.Empty;
-
 			var departments = await _departmentsService.GetAllAsync();
+			var failures = new List<string>();
+
+			async Task rebuild(int departmentId, SecurityCacheTypes type)
+			{
+				var processed = await Process(new SecurityQueueItem() { DepartmentId = departmentId, Type = type });
+
+				if (processed == null || !processed.Item1)
+					failures.Add($"{departmentId}/{type}: {processed?.Item2}".Trim());
+			}
 
 			foreach (var department in departments)
 			{
-				await Process(new SecurityQueueItem() { DepartmentId = department.DepartmentId, Type = SecurityCacheTypes.WhoCanViewUnits });
-				await Process(new SecurityQueueItem() { DepartmentId = department.DepartmentId, Type = SecurityCacheTypes.WhoCanViewUnitLocations });
-				await Process(new SecurityQueueItem() { DepartmentId = department.DepartmentId, Type = SecurityCacheTypes.WhoCanViewPersonnel });
-				await Process(new SecurityQueueItem() { DepartmentId = department.DepartmentId, Type = SecurityCacheTypes.WhoCanViewPersonnelLocations });
+				await rebuild(department.DepartmentId, SecurityCacheTypes.WhoCanViewUnits);
+				await rebuild(department.DepartmentId, SecurityCacheTypes.WhoCanViewUnitLocations);
+				await rebuild(department.DepartmentId, SecurityCacheTypes.WhoCanViewPersonnel);
+				await rebuild(department.DepartmentId, SecurityCacheTypes.WhoCanViewPersonnelLocations);
 			}
 
-			return new Tuple<bool, string>(success, result);
+			if (!failures.Any())
+				return new Tuple<bool, string>(true, String.Empty);
+
+			// Capped: a system-wide outage would otherwise build a result string per department.
+			return new Tuple<bool, string>(false,
+				$"{failures.Count} security matrix rebuild(s) failed: {String.Join("; ", failures.Take(10))}");
 		}
 	}
 }

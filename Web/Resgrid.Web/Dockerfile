@@ -31,6 +31,10 @@ RUN curl -sL https://deb.nodesource.com/setup_20.x  | bash -
 RUN apt-get -y install nodejs
 ARG BUILD_VERSION
 WORKDIR /src
+## Root MSBuild files must be present for the restore layer, otherwise the
+## security pins in Directory.Build.targets are missing from project.assets.json.
+COPY ["Directory.Build.props", "./"]
+COPY ["Directory.Build.targets", "./"]
 COPY ["Web/Resgrid.Web/Resgrid.Web.csproj", "Web/Resgrid.Web/"]
 COPY ["Providers/Resgrid.Providers.Bus.Rabbit/Resgrid.Providers.Bus.Rabbit.csproj", "Providers/Resgrid.Providers.Bus.Rabbit/"]
 COPY ["Core/Resgrid.Framework/Resgrid.Framework.csproj", "Core/Resgrid.Framework/"]

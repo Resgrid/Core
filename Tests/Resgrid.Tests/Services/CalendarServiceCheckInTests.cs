@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -304,7 +304,8 @@ namespace Resgrid.Tests.Services
 				new Mock<IDocumentsService>().Object,
 				new Mock<INotesService>().Object,
 				new Mock<ICacheProvider>().Object,
-				new Mock<IContactsService>().Object);
+				new Mock<IContactsService>().Object,
+				new Mock<IEventAggregator>().Object);
 		}
 
 		[Test]

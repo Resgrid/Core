@@ -1,0 +1,166 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="PageTitle" xml:space="preserve">
+    <value>Σύνδεσμοι Τμημάτων</value>
+  </data>
+  <data name="DepartmentLinks" xml:space="preserve">
+    <value>Σύνδεσμοι Τμημάτων</value>
+  </data>
+  <data name="NewDepartmentLinks" xml:space="preserve">
+    <value>Νέοι Σύνδεσμοι Τμημάτων</value>
+  </data>
+  <data name="FromDepartment" xml:space="preserve">
+    <value>Από Τμήμα</value>
+  </data>
+  <data name="ToDepartment" xml:space="preserve">
+    <value>Προς Τμήμα</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Ενεργοποιημένος</value>
+  </data>
+  <data name="SharedData" xml:space="preserve">
+    <value>Κοινόχρηστα Δεδομένα</value>
+  </data>
+  <data name="LinkEnabled" xml:space="preserve">
+    <value>Ο Σύνδεσμος Ενεργοποιήθηκε</value>
+  </data>
+  <data name="LinkDisabled" xml:space="preserve">
+    <value>Ο Σύνδεσμος Απενεργοποιήθηκε</value>
+  </data>
+  <data name="Calls" xml:space="preserve">
+    <value>Κλήσεις</value>
+  </data>
+  <data name="Personnel" xml:space="preserve">
+    <value>Προσωπικό</value>
+  </data>
+  <data name="Units" xml:space="preserve">
+    <value>Μονάδες</value>
+  </data>
+  <data name="Orders" xml:space="preserve">
+    <value>Παραγγελίες</value>
+  </data>
+  <data name="NoDataShared" xml:space="preserve">
+    <value>Δεν Μοιράζονται Δεδομένα</value>
+  </data>
+  <data name="Enable" xml:space="preserve">
+    <value>Ενεργοποίηση</value>
+  </data>
+  <data name="Disable" xml:space="preserve">
+    <value>Απενεργοποίηση</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Διαγραφή</value>
+  </data>
+  <data name="ViewData" xml:space="preserve">
+    <value>Προβολή Δεδομένων</value>
+  </data>
+  <data name="YourDepartmentLinkCode" xml:space="preserve">
+    <value>Ο Κωδικός Συνδέσμου του Τμήματός Σας</value>
+  </data>
+  <data name="DeleteLinkConfirm" xml:space="preserve">
+    <value>ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Αυτό θα διαγράψει οριστικά αυτόν τον σύνδεσμο. Είστε βέβαιοι ότι θέλετε να τον διαγράψετε;</value>
+  </data>
+  <data name="EnableDepartmentLinkTitle" xml:space="preserve">
+    <value>Ενεργοποίηση Συνδέσμου Τμήματος</value>
+  </data>
+  <data name="EnableLinkDescription" xml:space="preserve">
+    <value>Οι Σύνδεσμοι Τμημάτων μοιράζονται δεδομένα προς μία κατεύθυνση. Παρακάτω μπορείτε να ενεργοποιήσετε έναν σύνδεσμο και να ορίσετε το χρώμα του. Το χρώμα του συνδέσμου θα χρησιμοποιηθεί για τον χρωματισμό κλήσεων, προσωπικού και μονάδων ώστε να αναγνωρίζονται ως προερχόμενα από αυτόν τον σύνδεσμο.</value>
+  </data>
+  <data name="LinkColor" xml:space="preserve">
+    <value>Χρώμα Συνδέσμου</value>
+  </data>
+  <data name="SaveAndEnableLink" xml:space="preserve">
+    <value>Αποθήκευση και Ενεργοποίηση Συνδέσμου</value>
+  </data>
+  <data name="NewDepartmentLinkTitle" xml:space="preserve">
+    <value>Νέος Σύνδεσμος Τμήματος</value>
+  </data>
+  <data name="NewLinkDescription" xml:space="preserve">
+    <value>Οι Σύνδεσμοι Τμημάτων μοιράζονται δεδομένα προς μία κατεύθυνση. Παρακάτω μπορείτε να ρυθμίσετε και να μοιραστείτε δεδομένα με άλλο τμήμα και μόλις εκείνο ενεργοποιήσει τον σύνδεσμο θα μπορεί να δει τις πληροφορίες που μοιραστήκατε. Για να δει το τμήμα σας τα δεδομένα εκείνου του τμήματος, εκείνο πρέπει να δημιουργήσει σύνδεσμο προς το τμήμα σας και εσείς να τον ενεργοποιήσετε.</value>
+  </data>
+  <data name="LinkCode" xml:space="preserve">
+    <value>Κωδικός Συνδέσμου</value>
+  </data>
+  <data name="TypeColor" xml:space="preserve">
+    <value>Χρώμα Τύπου</value>
+  </data>
+  <data name="TypeColorHelp" xml:space="preserve">
+    <value>Αυτό είναι το χρώμα που θα εφαρμοστεί για την αναγνώριση Κλήσεων\Μονάδων\Προσωπικού για αυτόν τον σύνδεσμο τμήματος</value>
+  </data>
+  <data name="ShareCalls" xml:space="preserve">
+    <value>Κοινή Χρήση Κλήσεων</value>
+  </data>
+  <data name="ShareUnits" xml:space="preserve">
+    <value>Κοινή Χρήση Μονάδων</value>
+  </data>
+  <data name="SharePersonnel" xml:space="preserve">
+    <value>Κοινή Χρήση Προσωπικού</value>
+  </data>
+  <data name="ShareOrders" xml:space="preserve">
+    <value>Κοινή Χρήση Παραγγελιών</value>
+  </data>
+  <data name="SaveLink" xml:space="preserve">
+    <value>Αποθήκευση Συνδέσμου</value>
+  </data>
+  <data name="ViewDepartmentLinkTitle" xml:space="preserve">
+    <value>Προβολή Συνδέσμου Τμήματος</value>
+  </data>
+</root>

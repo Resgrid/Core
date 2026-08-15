@@ -1,5 +1,8 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
+
+using Newtonsoft.Json;
+using Resgrid.Web.Services.Helpers;
 
 namespace Resgrid.Web.Services.Models.v4.CallVideoFeeds
 {
@@ -27,6 +30,7 @@ namespace Resgrid.Web.Services.Models.v4.CallVideoFeeds
 		public decimal? Longitude { get; set; }
 		public string AddedByUserId { get; set; }
 		public string AddedOnFormatted { get; set; }
+		[JsonConverter(typeof(UtcDateTimeConverter))]
 		public DateTime AddedOnUtc { get; set; }
 		public int SortOrder { get; set; }
 		public string FullName { get; set; }

@@ -49,6 +49,8 @@ namespace Resgrid.Web.Services.Controllers
 	private readonly IChatbotIngressService _chatbotIngressService;
 	private readonly IUsersService _usersService;
 	private readonly ITextDepartmentSwitchService _textDepartmentSwitchService;
+	private readonly IDispatchRecommendationService _dispatchRecommendationService;
+	private readonly IFeatureToggleService _featureToggleService;
 
 	public SignalWireController(IDepartmentSettingsService departmentSettingsService, INumbersService numbersService,
 		ILimitsService limitsService, ICallsService callsService, IQueueService queueService, IDepartmentsService departmentsService,
@@ -56,7 +58,8 @@ namespace Resgrid.Web.Services.Controllers
 		IUserStateService userStateService, ICommunicationService communicationService, IGeoLocationProvider geoLocationProvider,
 		IDepartmentGroupsService departmentGroupsService, ICustomStateService customStateService, IUnitsService unitsService,
 		ICommunicationTestService communicationTestService, IChatbotIngressService chatbotIngressService, IUsersService usersService,
-		ITextDepartmentSwitchService textDepartmentSwitchService)
+		ITextDepartmentSwitchService textDepartmentSwitchService, IDispatchRecommendationService dispatchRecommendationService,
+		IFeatureToggleService featureToggleService)
 	{
 		_departmentSettingsService = departmentSettingsService;
 		_numbersService = numbersService;
@@ -77,6 +80,8 @@ namespace Resgrid.Web.Services.Controllers
 		_chatbotIngressService = chatbotIngressService;
 		_usersService = usersService;
 		_textDepartmentSwitchService = textDepartmentSwitchService;
+		_dispatchRecommendationService = dispatchRecommendationService;
+		_featureToggleService = featureToggleService;
 	}
 	#endregion Private Readonly Properties and Constructors
 
@@ -253,6 +258,27 @@ namespace Resgrid.Web.Services.Controllers
 							}
 
 							var savedCall = await _callsService.SaveCallAsync(c, cancellationToken);
+
+							// Run card auto-dispatch for text-to-call: additively merge
+							// recommended units/personnel when auto-dispatch resolves on.
+							try
+							{
+								if (await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, savedCall.DepartmentId))
+								{
+									var recommendation = await _dispatchRecommendationService.EnrichCallForDispatchAsync(savedCall, 1, true, cancellationToken);
+
+									if (recommendation.MatchedRunCardId.HasValue && recommendation.AutoDispatch && recommendation.HasRecommendations)
+									{
+										savedCall = await _callsService.SaveCallAsync(savedCall, cancellationToken);
+										await _dispatchRecommendationService.RecordActivationAsync(savedCall, recommendation, null, cancellationToken);
+									}
+								}
+							}
+							catch (Exception ex)
+							{
+								// A recommendation failure must never block the text-to-call dispatch itself.
+								Logging.LogException(ex);
+							}
 
 							var cqi = new CallQueueItem();
 							cqi.Call = savedCall;

@@ -74,6 +74,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IModerationService _moderationService;
 		private readonly IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> _dispatchLocalizer;
 		private readonly IStringLocalizer<Resgrid.Localization.Common> _commonLocalizer;
+		private readonly IDispatchRecommendationService _dispatchRecommendationService;
+		private readonly IFeatureToggleService _featureToggleService;
 
 		public DispatchController(IDepartmentsService departmentsService, IUsersService usersService, ICallsService callsService,
 			IDepartmentGroupsService departmentGroupsService, ICommunicationService communicationService, IQueueService queueService,
@@ -85,7 +87,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService,
 			ICheckInTimerService checkInTimerService, IWeatherAlertService weatherAlertService,
 			ICallDispatchStatusService callDispatchStatusService, IModerationService moderationService,
-			IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> dispatchLocalizer, IStringLocalizer<Resgrid.Localization.Common> commonLocalizer)
+			IStringLocalizer<Resgrid.Localization.Areas.User.Dispatch.Call> dispatchLocalizer, IStringLocalizer<Resgrid.Localization.Common> commonLocalizer,
+			IDispatchRecommendationService dispatchRecommendationService, IFeatureToggleService featureToggleService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -118,6 +121,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_moderationService = moderationService;
 			_dispatchLocalizer = dispatchLocalizer;
 			_commonLocalizer = commonLocalizer;
+			_dispatchRecommendationService = dispatchRecommendationService;
+			_featureToggleService = featureToggleService;
 		}
 		#endregion Private Members and Constructors
 
@@ -478,7 +483,29 @@ namespace Resgrid.Web.Areas.User.Controllers
 					}
 					catch { /* If no addy, no addy */ }
 				}
+
+				// Run card auto-dispatch: additively merge recommended resources into the
+				// call before save (only applies when the resolved auto-dispatch decision
+				// is on; pre-populate mode rides the form selections instead).
+				DispatchRecommendationResult recommendationResult = null;
+				if (shouldDispatchNow && await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, DepartmentId))
+				{
+					recommendationResult = await _dispatchRecommendationService.EnrichCallForDispatchAsync(model.Call, 1, true, cancellationToken);
+
+					if (recommendationResult.AutoDispatch)
+					{
+						foreach (var recommendedUnit in recommendationResult.Units.Where(u => !dispatchingUnitIds.Contains(u.UnitId)))
+							dispatchingUnitIds.Add(recommendedUnit.UnitId);
+
+						foreach (var recommendedUser in recommendationResult.Personnel.Where(p => !dispatchingUserIds.Contains(p.UserId)))
+							dispatchingUserIds.Add(recommendedUser.UserId);
+					}
+				}
+
 				var call = await _callsService.SaveCallAsync(model.Call, cancellationToken);
+
+				if (recommendationResult != null && recommendationResult.MatchedRunCardId.HasValue && recommendationResult.AutoDispatch)
+					await _dispatchRecommendationService.RecordActivationAsync(call, recommendationResult, UserId, cancellationToken);
 
 				// Attach weather alerts as call notes if enabled
 				await _weatherAlertService.AttachWeatherAlertsToCallAsync(call, cancellationToken);
@@ -543,6 +570,109 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return View("NewCall", model);
+		}
+
+		/// <summary>
+		/// Run card recommendation preview for the New Call page (pre-populate mode).
+		/// Called by JS whenever priority/type/location change; returns the full
+		/// explainability result so the page can pre-check grids and render the panel.
+		/// </summary>
+		[HttpGet]
+		[Authorize(Policy = ResgridResources.Call_Create)]
+		public async Task<IActionResult> GetDispatchRecommendation(int priority, string type, double? latitude, double? longitude, int alarmLevel = 1)
+		{
+			if (!await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, DepartmentId))
+				return Json(new { success = false });
+
+			var result = await _dispatchRecommendationService.GetRecommendationAsync(new DispatchRecommendationRequest
+			{
+				DepartmentId = DepartmentId,
+				Priority = priority,
+				CallTypeName = type,
+				Latitude = latitude,
+				Longitude = longitude,
+				TargetAlarmLevel = alarmLevel
+			});
+
+			return Json(new { success = true, result });
+		}
+
+		/// <summary>
+		/// "Strike Next Alarm": escalates the call to its next alarm level, additively
+		/// dispatching that level's run card requirements and notifying only the newly
+		/// added resources via selective broadcast.
+		/// </summary>
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Call_Update)]
+		public async Task<IActionResult> EscalateCall([FromForm] int callId, CancellationToken cancellationToken)
+		{
+			if (!await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, DepartmentId))
+				return Json(new { success = false, message = "Run cards are not enabled for this department." });
+
+			var call = await _callsService.GetCallByIdAsync(callId);
+
+			if (call == null || call.DepartmentId != DepartmentId)
+				return Json(new { success = false, message = "Call not found." });
+
+			// The Call_Update claim and the department check above are not enough on their
+			// own: escalating dispatches units and notifies personnel, so it takes the same
+			// per-call authority as editing the call (department admin, or the call's
+			// reporting user), matching UpdateCall and the v4 EscalateCall endpoint.
+			if (!await _authorizationService.CanUserEditCallAsync(UserId, callId))
+				return Unauthorized();
+
+			if (call.State != (int)CallStates.Active)
+				return Json(new { success = false, message = "Only active calls can be escalated." });
+
+			call = await _callsService.PopulateCallData(call, true, false, false, true, true, true, false, false, false);
+
+			var previousAlarmLevel = Math.Max(1, call.AlarmLevel);
+			var targetAlarmLevel = previousAlarmLevel + 1;
+
+			var result = await _dispatchRecommendationService.EnrichCallForDispatchAsync(call, targetAlarmLevel, false, cancellationToken);
+
+			if (!result.MatchedRunCardId.HasValue)
+				return Json(new { success = false, message = "No run card matches this call; nothing to escalate." });
+
+			if (!result.HasRecommendations)
+				return Json(new { success = false, message = "The run card has no additional resources for the next alarm level.", result });
+
+			var newUnitIds = result.Units.Select(u => u.UnitId).ToList();
+			var newUserIds = result.Personnel.Select(p => p.UserId).ToList();
+
+			var savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
+
+			await _dispatchRecommendationService.RecordActivationAsync(savedCall, result, UserId, cancellationToken);
+
+			if (newUnitIds.Any())
+				await _callDispatchStatusService.ApplyDispatchStatusesAsync(savedCall, null, newUnitIds, cancellationToken);
+
+			var cqi = new CallQueueItem();
+			cqi.Call = savedCall;
+
+			if (newUserIds.Any())
+				cqi.Profiles = await _userProfileService.GetSelectedUserProfilesAsync(newUserIds);
+			else
+				cqi.Profiles = new List<UserProfile>();
+
+			cqi.SetBroadcastDispatches(newUserIds, new List<int>(), newUnitIds, new List<int>());
+
+			await _queueService.EnqueueCallBroadcastAsync(cqi, cancellationToken);
+
+			_eventAggregator.SendMessage<CallAlarmEscalatedEvent>(new CallAlarmEscalatedEvent
+			{
+				DepartmentId = DepartmentId,
+				CallId = savedCall.CallId,
+				PreviousAlarmLevel = previousAlarmLevel,
+				NewAlarmLevel = savedCall.AlarmLevel,
+				AddedUnitIds = newUnitIds,
+				AddedUserIds = newUserIds
+			});
+
+			_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent() { DepartmentId = DepartmentId, Call = savedCall });
+
+			return Json(new { success = true, newAlarmLevel = savedCall.AlarmLevel, addedUnits = newUnitIds.Count, addedPersonnel = newUserIds.Count, result });
 		}
 
 		[HttpGet]

@@ -32,6 +32,7 @@ namespace Resgrid.Services
 			_lifetimeScope = lifetimeScope;
 
 			_eventAggregator.AddAsyncListener<CallAddedEvent>(OnCallAddedAsync);
+			_eventAggregator.AddAsyncListener<CallUpdatedEvent>(OnCallUpdatedAsync);
 			_eventAggregator.AddAsyncListener<CallClosedEvent>(OnCallClosedAsync);
 			_eventAggregator.AddAsyncListener<CommandEstablishedEvent>(OnCommandEstablishedAsync);
 			_eventAggregator.AddAsyncListener<IncidentClosedEvent>(OnIncidentClosedAsync);
@@ -45,7 +46,26 @@ namespace Resgrid.Services
 				return Task.CompletedTask;
 
 			return RunAsync(scope => scope.Resolve<IChatChannelService>()
-				.EnsureIncidentChannelAsync(message.Call.DepartmentId, message.Call.CallId, message.Call.Name));
+				.EnsureIncidentChannelAsync(message.Call.DepartmentId, message.Call.CallId, message.Call.GetDisplayName()));
+		}
+
+		/// <summary>
+		/// The incident channel's name IS the call's display name, and every other incident-scoped channel
+		/// takes its prefix from that channel — so an edited call name or number has to flow back through.
+		/// Ensure is idempotent and renames in place, so this is a no-op when nothing naming-related changed.
+		/// </summary>
+		private Task OnCallUpdatedAsync(CallUpdatedEvent message)
+		{
+			if (message?.Call == null || message.Call.CallId <= 0)
+				return Task.CompletedTask;
+
+			// Ensure creates when the channel is missing, so a closed or deleted call would gain a live
+			// channel nobody asked for. Only running calls get provisioned (or renamed) here.
+			if (message.Call.IsDeleted || message.Call.State != (int)CallStates.Active)
+				return Task.CompletedTask;
+
+			return RunAsync(scope => scope.Resolve<IChatChannelService>()
+				.EnsureIncidentChannelAsync(message.Call.DepartmentId, message.Call.CallId, message.Call.GetDisplayName()));
 		}
 
 		private Task OnCallClosedAsync(CallClosedEvent message)

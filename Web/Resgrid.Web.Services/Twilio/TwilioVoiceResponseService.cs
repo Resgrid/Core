@@ -116,111 +116,12 @@ namespace Resgrid.Web.Services.Twilio
 			}
 		}
 
-		private IEnumerable<string> ChunkText(string text)
+		// Chunking lives in DispatchVoicePromptBuilder so the call broadcast worker
+		// pre-warms exactly the chunks this service will request — the TTS cache key
+		// is a hash of the exact chunk text.
+		private static IEnumerable<string> ChunkText(string text)
 		{
-			if (string.IsNullOrWhiteSpace(text))
-				yield break;
-
-			var normalized = Regex.Replace(text, @"\s+", " ").Trim();
-			var maxLength = TtsConfig.MaxTextLength > 0 ? TtsConfig.MaxTextLength : 1000;
-
-			if (normalized.Length <= maxLength)
-			{
-				yield return normalized;
-				yield break;
-			}
-
-			var sentences = Regex.Split(normalized, @"(?<=[\.\!\?])\s+")
-				.Where(sentence => !string.IsNullOrWhiteSpace(sentence));
-			var builder = new StringBuilder();
-
-			foreach (var sentence in sentences)
-			{
-				var trimmed = sentence.Trim();
-
-				if (trimmed.Length > maxLength)
-				{
-					foreach (var fragment in ChunkLongSentence(trimmed, maxLength))
-					{
-						if (builder.Length > 0)
-						{
-							yield return builder.ToString();
-							builder.Clear();
-						}
-
-						yield return fragment;
-					}
-
-					continue;
-				}
-
-				if (builder.Length == 0)
-				{
-					builder.Append(trimmed);
-					continue;
-				}
-
-				if (builder.Length + 1 + trimmed.Length <= maxLength)
-				{
-					builder.Append(' ').Append(trimmed);
-					continue;
-				}
-
-				yield return builder.ToString();
-				builder.Clear();
-				builder.Append(trimmed);
-			}
-
-			if (builder.Length > 0)
-			{
-				yield return builder.ToString();
-			}
-		}
-
-		private static IEnumerable<string> ChunkLongSentence(string sentence, int maxLength)
-		{
-			var words = sentence.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-			var builder = new StringBuilder();
-
-			foreach (var word in words)
-			{
-				if (word.Length > maxLength)
-				{
-					if (builder.Length > 0)
-					{
-						yield return builder.ToString();
-						builder.Clear();
-					}
-
-					for (var index = 0; index < word.Length; index += maxLength)
-					{
-						yield return word.Substring(index, Math.Min(maxLength, word.Length - index));
-					}
-
-					continue;
-				}
-
-				if (builder.Length == 0)
-				{
-					builder.Append(word);
-					continue;
-				}
-
-				if (builder.Length + 1 + word.Length <= maxLength)
-				{
-					builder.Append(' ').Append(word);
-					continue;
-				}
-
-				yield return builder.ToString();
-				builder.Clear();
-				builder.Append(word);
-			}
-
-			if (builder.Length > 0)
-			{
-				yield return builder.ToString();
-			}
+			return global::Resgrid.Services.DispatchVoicePromptBuilder.ChunkText(text);
 		}
 
 		private static Play CreatePlay(Uri url)

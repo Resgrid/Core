@@ -139,7 +139,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 						if (!String.IsNullOrWhiteSpace(triggerEndsOn))
 							trigger.EndsOn = DateTime.Parse(triggerEndsOn);
 
-						trigger.Priority = triggerType;
+						trigger.Priority = triggerCallPriotity;
 						trigger.CallType = triggerCallType;
 
 						model.Protocol.Triggers.Add(trigger);

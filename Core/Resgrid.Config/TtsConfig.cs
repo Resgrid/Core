@@ -36,6 +36,13 @@ namespace Resgrid.Config
 		public static int DefaultSpeed = 150;
 		public static int MaxConcurrentGenerations = 4;
 		public static int MaxTextLength = 1000;
+
+		/// <summary>
+		/// Upper bound, in seconds, on a single synthesis + storage run in the TTS service.
+		/// Generation doesn't observe the caller's cancellation token, so this bounds a
+		/// wedged Piper/ffmpeg process. Keep it well above a cold model load.
+		/// </summary>
+		public static int GenerationTimeoutSeconds = 300;
 		public static string PiperExecutable = "piper";
 		public static string PiperModelDirectory = "/usr/local/share/piper-voices";
 		public static string FfmpegExecutable = "ffmpeg";

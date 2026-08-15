@@ -18,5 +18,11 @@ namespace Resgrid.Model
 		/// API, web UI and mobile apps. Free for all plans; used for staged rollout only. Seeded by M0108.
 		/// </summary>
 		public const string ChatSystem = "Chat.System";
+
+		/// <summary>
+		/// Gates the run card dispatch system (run cards, station-based dispatching, closest unit
+		/// response, move-up recommendations) across the web UI and API. Seeded by M0116.
+		/// </summary>
+		public const string DispatchRunCards = "Dispatch.RunCards";
 	}
 }

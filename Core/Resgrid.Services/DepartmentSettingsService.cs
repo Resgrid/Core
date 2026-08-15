@@ -27,6 +27,9 @@ namespace Resgrid.Services
 		private static string HardwareTrackingStaleAfterSecondsCacheKey = "DSetHardwareTrackingStale_{0}";
 		private static string HardwareTrackingMobileFallbackCacheKey = "DSetHardwareTrackingFallback_{0}";
 		private static string HardwareTrackingRetentionDaysCacheKey = "DSetHardwareTrackingRetention_{0}";
+		private static string DispatchRecommendationModeCacheKey = "DSetDispatchRecMode_{0}";
+		private static string DispatchRecommendationAutoDispatchCacheKey = "DSetDispatchRecAuto_{0}";
+		private static string DispatchRecommendationConfigCacheKey = "DSetDispatchRecConfig_{0}";
 		private static TimeSpan LongCacheLength = TimeSpan.FromDays(14);
 		private static TimeSpan ThatsNotLongThisIsLongCacheLength = TimeSpan.FromDays(365);
 		private static TimeSpan TwoYearCacheLength = TimeSpan.FromDays(730);
@@ -48,7 +51,8 @@ namespace Resgrid.Services
 		public async Task<DepartmentSetting> SaveOrUpdateSettingAsync(int departmentId, string setting, DepartmentSettingTypes type, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var savedSetting = await GetSettingByDepartmentIdType(departmentId, type);
-			await InvalidateSettingCacheAsync(departmentId, type);
+
+			DepartmentSetting result;
 
 			if (savedSetting == null)
 			{
@@ -57,15 +61,21 @@ namespace Resgrid.Services
 				newSetting.Setting = setting;
 				newSetting.SettingType = (int)type;
 
-				return await _departmentSettingsRepository.SaveOrUpdateAsync(newSetting, cancellationToken);
+				result = await _departmentSettingsRepository.SaveOrUpdateAsync(newSetting, cancellationToken);
 			}
 			else
 			{
 				savedSetting.Setting = setting;
-				return await _departmentSettingsRepository.SaveOrUpdateAsync(savedSetting, cancellationToken);
+				result = await _departmentSettingsRepository.SaveOrUpdateAsync(savedSetting, cancellationToken);
 			}
 
-			return null;
+			// Invalidate after the write commits, never before: dropping the key first lets a
+			// concurrent reader miss, re-read the pre-write value from the database and store
+			// it again, where it then survives for the full cache TTL. A throwing write skips
+			// this and leaves the still-correct cached value in place. Mirrors DeleteSettingAsync.
+			await InvalidateSettingCacheAsync(departmentId, type);
+
+			return result;
 		}
 
 		public async Task<bool> DeleteSettingAsync(int departmentId, DepartmentSettingTypes type, CancellationToken cancellationToken = default(CancellationToken))
@@ -837,6 +847,125 @@ namespace Resgrid.Services
 				DepartmentSettingTypes.UnitCallStatusOverridesByUnitType, cancellationToken);
 		}
 
+		public async Task<DispatchRecommendationModes> GetDispatchRecommendationModeAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<string> getSetting()
+			{
+				var s = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.DispatchRecommendationMode);
+				return s?.Setting ?? ((int)DispatchRecommendationModes.Off).ToString();
+			}
+
+			string value;
+			if (Config.SystemBehaviorConfig.CacheEnabled && !bypassCache)
+				value = await _cacheProvider.RetrieveAsync<string>(string.Format(DispatchRecommendationModeCacheKey, departmentId), getSetting, LongCacheLength);
+			else
+				value = await getSetting();
+
+			if (int.TryParse(value, out var mode) && Enum.IsDefined(typeof(DispatchRecommendationModes), mode))
+				return (DispatchRecommendationModes)mode;
+
+			return DispatchRecommendationModes.Off;
+		}
+
+		public async Task<DepartmentSetting> SetDispatchRecommendationModeAsync(int departmentId, DispatchRecommendationModes mode, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return await SaveOrUpdateSettingAsync(departmentId, ((int)mode).ToString(), DepartmentSettingTypes.DispatchRecommendationMode, cancellationToken);
+		}
+
+		public async Task<bool> GetDispatchRecommendationAutoDispatchAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<string> getSetting()
+			{
+				var s = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.DispatchRecommendationAutoDispatch);
+				return s?.Setting ?? "false";
+			}
+
+			string value;
+			if (Config.SystemBehaviorConfig.CacheEnabled && !bypassCache)
+				value = await _cacheProvider.RetrieveAsync<string>(string.Format(DispatchRecommendationAutoDispatchCacheKey, departmentId), getSetting, LongCacheLength);
+			else
+				value = await getSetting();
+
+			return bool.TryParse(value, out var enabled) && enabled;
+		}
+
+		public async Task<DepartmentSetting> SetDispatchRecommendationAutoDispatchAsync(int departmentId, bool enabled, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			return await SaveOrUpdateSettingAsync(departmentId, enabled.ToString(), DepartmentSettingTypes.DispatchRecommendationAutoDispatch, cancellationToken);
+		}
+
+		public async Task<DispatchRecommendationConfig> GetDispatchRecommendationConfigAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<string> getSetting()
+			{
+				var s = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.DispatchRecommendationConfig);
+				return s?.Setting ?? string.Empty;
+			}
+
+			string value;
+			if (Config.SystemBehaviorConfig.CacheEnabled && !bypassCache)
+				value = await _cacheProvider.RetrieveAsync<string>(string.Format(DispatchRecommendationConfigCacheKey, departmentId), getSetting, LongCacheLength);
+			else
+				value = await getSetting();
+
+			if (!String.IsNullOrWhiteSpace(value))
+			{
+				try
+				{
+					var config = ObjectSerialization.Deserialize<DispatchRecommendationConfig>(value);
+
+					if (config != null)
+						return ClampDispatchRecommendationConfig(config);
+				}
+				catch (Exception)
+				{
+					// A corrupt setting blob falls back to defaults rather than breaking dispatch.
+				}
+			}
+
+			return new DispatchRecommendationConfig();
+		}
+
+		/// <summary>
+		/// Bounds the tuning values on the way out, the way retention days are bounded in
+		/// GetHardwareTrackingLocationRetentionDaysAsync. Clamping on read rather than on
+		/// save also covers values already stored and any writer other than the settings
+		/// page. Zero keeps its "no limit" meaning for the age and radius knobs.
+		/// </summary>
+		private static DispatchRecommendationConfig ClampDispatchRecommendationConfig(DispatchRecommendationConfig config)
+		{
+			config.MaxLocationAgeSeconds = ClampToRange(config.MaxLocationAgeSeconds, DispatchRecommendationConfig.MaximumLocationAgeSeconds);
+			config.PersonnelMaxLocationAgeSeconds = ClampToRange(config.PersonnelMaxLocationAgeSeconds, DispatchRecommendationConfig.MaximumLocationAgeSeconds);
+			config.MaxRadiusMeters = ClampToRange(config.MaxRadiusMeters, DispatchRecommendationConfig.MaximumRadiusMeters);
+			config.RestPeriodMinutes = ClampToRange(config.RestPeriodMinutes, DispatchRecommendationConfig.MaximumRestPeriodMinutes);
+
+			config.EtaShortlistSize = config.EtaShortlistSize > 0
+				? Math.Min(config.EtaShortlistSize, DispatchRecommendationConfig.MaximumEtaShortlistSize)
+				: DispatchRecommendationConfig.DefaultEtaShortlistSize;
+
+			if (config.UnitMinimumStaffingLevel < 0)
+				config.UnitMinimumStaffingLevel = 0;
+
+			return config;
+		}
+
+		private static int ClampToRange(int value, int maximum)
+		{
+			if (value <= 0)
+				return 0;
+
+			return Math.Min(value, maximum);
+		}
+
+		public async Task<DepartmentSetting> SetDispatchRecommendationConfigAsync(int departmentId, DispatchRecommendationConfig config, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (config == null)
+				config = new DispatchRecommendationConfig();
+
+			return await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(config),
+				DepartmentSettingTypes.DispatchRecommendationConfig, cancellationToken);
+		}
+
 		public async Task<bool> GetPersonnelOnUnitSetUnitStatusAsync(int departmentId, bool bypassCache = false)
 		{
 			async Task<string> getSetting()
@@ -1058,6 +1187,15 @@ namespace Resgrid.Services
 					break;
 				case DepartmentSettingTypes.HardwareTrackingLocationRetentionDays:
 					cacheKey = string.Format(HardwareTrackingRetentionDaysCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.DispatchRecommendationMode:
+					cacheKey = string.Format(DispatchRecommendationModeCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.DispatchRecommendationAutoDispatch:
+					cacheKey = string.Format(DispatchRecommendationAutoDispatchCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.DispatchRecommendationConfig:
+					cacheKey = string.Format(DispatchRecommendationConfigCacheKey, departmentId);
 					break;
 			}
 

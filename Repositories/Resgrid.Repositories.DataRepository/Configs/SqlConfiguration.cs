@@ -552,6 +552,26 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string SelectCheckInRecordsByDepartmentIdAndDateRangeQuery { get; set; }
 		#endregion CheckIns
 
+		#region RunCards
+		public string RunCardsTableName { get; set; }
+		public string RunCardTriggersTableName { get; set; }
+		public string RunCardAlarmLevelsTableName { get; set; }
+		public string RunCardUnitRequirementsTableName { get; set; }
+		public string RunCardRoleRequirementsTableName { get; set; }
+		public string RunCardAvailabilitySelectionsTableName { get; set; }
+		public string StationCoverageRequirementsTableName { get; set; }
+		public string SelectRunCardTriggersByRunCardIdQuery { get; set; }
+		public string SelectRunCardTriggersByDepartmentIdQuery { get; set; }
+		public string SelectRunCardAlarmLevelsByRunCardIdQuery { get; set; }
+		public string SelectRunCardUnitRequirementsByRunCardIdQuery { get; set; }
+		public string SelectRunCardRoleRequirementsByRunCardIdQuery { get; set; }
+		public string SelectRunCardAvailabilitySelectionsByRunCardIdQuery { get; set; }
+		public string SelectLastUnitDispatchTimesByDepartmentQuery { get; set; }
+		public string SelectLastUserDispatchTimesByDepartmentQuery { get; set; }
+		public string RunCardActivationsTableName { get; set; }
+		public string SelectRunCardActivationsByCallIdQuery { get; set; }
+		#endregion RunCards
+
 		#region CalendarItemCheckIns
 		public string CalendarItemCheckInsTableName { get; set; }
 		public string SelectCalendarItemCheckInByItemAndUserQuery { get; set; }

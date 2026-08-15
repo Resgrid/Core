@@ -64,6 +64,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IContactsService _contactsService;
 		private readonly ICheckInTimerService _checkInTimerService;
 		private readonly ISecurityPinService _securityPinService;
+		private readonly IRunCardsService _runCardsService;
+		private readonly IFeatureToggleService _featureToggleService;
 
 		public DepartmentController(IDepartmentsService departmentsService, IUsersService usersService, IActionLogsService actionLogsService,
 			IEmailService emailService, IDepartmentGroupsService departmentGroupsService, IUserProfileService userProfileService, IDeleteService deleteService,
@@ -72,7 +74,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			ICertificationService certificationService, INumbersService numbersService, IScheduledTasksService scheduledTasksService, IPersonnelRolesService personnelRolesService,
 			IEventAggregator eventAggregator, ICustomStateService customStateService, ICqrsProvider cqrsProvider, IPrinterProvider printerProvider, IQueueService queueService,
 			IDocumentsService documentsService, INotesService notesService, IContactsService contactsService, ICheckInTimerService checkInTimerService,
-			ISecurityPinService securityPinService)
+			ISecurityPinService securityPinService, IRunCardsService runCardsService, IFeatureToggleService featureToggleService)
 		{
 			_departmentsService = departmentsService;
 			_usersService = usersService;
@@ -103,6 +105,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_contactsService = contactsService;
 			_checkInTimerService = checkInTimerService;
 			_securityPinService = securityPinService;
+			_runCardsService = runCardsService;
+			_featureToggleService = featureToggleService;
 		}
 
 		#endregion Private Members and Constructors
@@ -1773,6 +1777,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			await PopulateDispatchSettingsUnitTypeOverridesAsync(model,
 				await _departmentSettingsService.GetUnitCallStatusOverridesByUnitTypeAsync(DepartmentId));
 
+			await PopulateRunCardRecommendationSettingsAsync(model);
+
 			return View(model);
 		}
 
@@ -1819,16 +1825,158 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.AutoEnableCheckInTimers.ToString(),
 					DepartmentSettingTypes.CheckInTimersAutoEnableForNewCalls, cancellationToken);
 
+				if (await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, DepartmentId))
+				{
+					var mode = Enum.IsDefined(typeof(DispatchRecommendationModes), model.DispatchRecommendationMode)
+						? (DispatchRecommendationModes)model.DispatchRecommendationMode
+						: Model.DispatchRecommendationModes.Off;
+
+					await _departmentSettingsService.SetDispatchRecommendationModeAsync(DepartmentId, mode, cancellationToken);
+					await _departmentSettingsService.SetDispatchRecommendationAutoDispatchAsync(DepartmentId, model.DispatchRecommendationAutoDispatch, cancellationToken);
+					await _departmentSettingsService.SetDispatchRecommendationConfigAsync(DepartmentId, new DispatchRecommendationConfig
+					{
+						MaxLocationAgeSeconds = Math.Max(0, model.RecommendationMaxLocationAgeSeconds),
+						MaxRadiusMeters = Math.Max(0, model.RecommendationMaxRadiusMeters),
+						IncludeStaleLocations = model.RecommendationIncludeStaleLocations,
+						PersonnelMaxLocationAgeSeconds = Math.Max(0, model.RecommendationPersonnelMaxLocationAgeSeconds),
+						UseRoutedEta = model.RecommendationUseRoutedEta,
+						EtaShortlistSize = model.RecommendationEtaShortlistSize > 0 ? model.RecommendationEtaShortlistSize : DispatchRecommendationConfig.DefaultEtaShortlistSize,
+						RestPeriodMinutes = Math.Max(0, model.RecommendationRestPeriodMinutes),
+						UnitMinimumStaffingLevel = Math.Max(0, model.RecommendationUnitMinimumStaffingLevel),
+						MoveUpRecommendationsEnabled = model.RecommendationMoveUpEnabled
+					}, cancellationToken);
+				}
+
 				ModelState.Clear();
 				model.UnitTypeStatusOverrides = new List<UnitTypeDispatchStatusOverrideView>();
 				await PopulateDispatchSettingsUnitTypeOverridesAsync(model, unitTypeStatusOverrides);
+				await PopulateRunCardRecommendationSettingsAsync(model, false);
 				model.SaveSuccess = true;
 				return View(model);
 			}
 
 			await PopulateDispatchSettingsUnitTypeOverridesAsync(model);
+			await PopulateRunCardRecommendationSettingsAsync(model, false);
 			model.SaveSuccess = false;
 			return View(model);
+		}
+
+		private async Task PopulateRunCardRecommendationSettingsAsync(DispatchSettingsView model, bool loadValues = true)
+		{
+			model.RunCardsFeatureEnabled = await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, DepartmentId);
+
+			if (!model.RunCardsFeatureEnabled)
+				return;
+
+			if (loadValues)
+			{
+				model.DispatchRecommendationMode = (int)await _departmentSettingsService.GetDispatchRecommendationModeAsync(DepartmentId, true);
+				model.DispatchRecommendationAutoDispatch = await _departmentSettingsService.GetDispatchRecommendationAutoDispatchAsync(DepartmentId, true);
+
+				var config = await _departmentSettingsService.GetDispatchRecommendationConfigAsync(DepartmentId, true);
+				model.RecommendationMaxLocationAgeSeconds = config.MaxLocationAgeSeconds;
+				model.RecommendationMaxRadiusMeters = config.MaxRadiusMeters;
+				model.RecommendationIncludeStaleLocations = config.IncludeStaleLocations;
+				model.RecommendationPersonnelMaxLocationAgeSeconds = config.PersonnelMaxLocationAgeSeconds;
+				model.RecommendationUseRoutedEta = config.UseRoutedEta;
+				model.RecommendationEtaShortlistSize = config.EtaShortlistSize;
+				model.RecommendationRestPeriodMinutes = config.RestPeriodMinutes;
+				model.RecommendationUnitMinimumStaffingLevel = config.UnitMinimumStaffingLevel;
+				model.RecommendationMoveUpEnabled = config.MoveUpRecommendationsEnabled;
+			}
+
+			model.DispatchRecommendationModes = new SelectList(new[]
+			{
+				new SelectListItem { Value = ((int)Model.DispatchRecommendationModes.Off).ToString(), Text = "Off (Manual Dispatch)" },
+				new SelectListItem { Value = ((int)Model.DispatchRecommendationModes.StationBased).ToString(), Text = "Station Based Dispatching" },
+				new SelectListItem { Value = ((int)Model.DispatchRecommendationModes.ClosestUnit).ToString(), Text = "Closest Unit Response" }
+			}, "Value", "Text", model.DispatchRecommendationMode);
+
+			model.StaffingLevelOptions = new SelectList(new[]
+			{
+				new SelectListItem { Value = "0", Text = "Off (No Staffing Gate)" },
+				new SelectListItem { Value = ((int)UnitStaffingLevel.PartiallyStaffed).ToString(), Text = "At Least Partially Staffed" },
+				new SelectListItem { Value = ((int)UnitStaffingLevel.Degraded).ToString(), Text = "At Least Degraded" },
+				new SelectListItem { Value = ((int)UnitStaffingLevel.FullyStaffed).ToString(), Text = "Fully Staffed Only" }
+			}, "Value", "Text", model.RecommendationUnitMinimumStaffingLevel);
+
+			model.StationCoverageRequirements = await _runCardsService.GetStationCoverageRequirementsForDepartmentAsync(DepartmentId);
+			model.StationGroups = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId) ?? new List<DepartmentGroup>();
+			model.PersonnelRoles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId) ?? new List<PersonnelRole>();
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> SaveStationCoverageRequirement([FromForm] int stationCoverageRequirementId, [FromForm] int departmentGroupId,
+			[FromForm] int? unitTypeId, [FromForm] int? personnelRoleId, [FromForm] int minimumAvailableCount, [FromForm] int? radiusMeters,
+			[FromForm] bool isEnabled, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			if (!await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, DepartmentId))
+				return Json(new { success = false, message = "Run cards are not enabled for this department." });
+
+			var stations = await _departmentGroupsService.GetAllStationGroupsForDepartmentAsync(DepartmentId);
+			if (stations == null || stations.All(s => s.DepartmentGroupId != departmentGroupId))
+				return Json(new { success = false, message = "Invalid station group." });
+
+			if ((!unitTypeId.HasValue && !personnelRoleId.HasValue) || (unitTypeId.HasValue && personnelRoleId.HasValue))
+				return Json(new { success = false, message = "Select a unit type or a personnel role (not both)." });
+
+			if (unitTypeId.HasValue)
+			{
+				var unitTypes = await _unitsService.GetUnitTypesForDepartmentAsync(DepartmentId);
+				if (unitTypes == null || unitTypes.All(t => t.UnitTypeId != unitTypeId.Value))
+					return Json(new { success = false, message = "Invalid unit type." });
+			}
+
+			if (personnelRoleId.HasValue)
+			{
+				var roles = await _personnelRolesService.GetRolesForDepartmentAsync(DepartmentId);
+				if (roles == null || roles.All(r => r.PersonnelRoleId != personnelRoleId.Value))
+					return Json(new { success = false, message = "Invalid personnel role." });
+			}
+
+			if (minimumAvailableCount < 1)
+				return Json(new { success = false, message = "Minimum available count must be at least 1." });
+
+			var requirement = new StationCoverageRequirement
+			{
+				StationCoverageRequirementId = stationCoverageRequirementId,
+				DepartmentId = DepartmentId,
+				DepartmentGroupId = departmentGroupId,
+				UnitTypeId = unitTypeId,
+				PersonnelRoleId = personnelRoleId,
+				MinimumAvailableCount = minimumAvailableCount,
+				RadiusMeters = radiusMeters.HasValue && radiusMeters.Value > 0 ? radiusMeters : null,
+				IsEnabled = isEnabled
+			};
+
+			if (stationCoverageRequirementId > 0)
+			{
+				var existing = await _runCardsService.GetStationCoverageRequirementsForDepartmentAsync(DepartmentId);
+				if (existing.All(r => r.StationCoverageRequirementId != stationCoverageRequirementId))
+					return Json(new { success = false, message = "Coverage requirement not found." });
+			}
+
+			var saved = await _runCardsService.SaveStationCoverageRequirementAsync(requirement, cancellationToken);
+
+			return Json(new { success = true, id = saved.StationCoverageRequirementId });
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		[Authorize(Policy = ResgridResources.Department_Update)]
+		public async Task<IActionResult> DeleteStationCoverageRequirement([FromForm] int stationCoverageRequirementId, CancellationToken cancellationToken)
+		{
+			if (!await _authorizationService.CanUserModifyDepartmentAsync(UserId, DepartmentId))
+				return Unauthorized();
+
+			var deleted = await _runCardsService.DeleteStationCoverageRequirementAsync(stationCoverageRequirementId, DepartmentId, cancellationToken);
+
+			return Json(new { success = deleted });
 		}
 
 		private async Task PopulateDispatchSettingsSelectionsAsync(DispatchSettingsView model)

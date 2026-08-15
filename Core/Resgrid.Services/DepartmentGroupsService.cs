@@ -77,9 +77,12 @@ namespace Resgrid.Services
 			DepartmentGroup saved;
 			try
 			{
-				saved = await _departmentGroupsRepository.SaveOrUpdateAsync(departmentGroup, cancellationToken);
+				// firstLevelOnly: the reflection cascade must not run for DepartmentGroup — its
+				// self-referencing Children collection makes SyncChildArrayUpdates emit
+				// DELETE FROM DepartmentGroups WHERE DepartmentGroupId = @id, deleting the group
+				// being saved. Members are saved explicitly below.
+				saved = await _departmentGroupsRepository.SaveOrUpdateAsync(departmentGroup, cancellationToken, true);
 
-				// Members is in IgnoredProperties so the ORM cascade skips it — save each member explicitly.
 				if (departmentGroup.Members != null && departmentGroup.Members.Any())
 				{
 					foreach (var member in departmentGroup.Members)

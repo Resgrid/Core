@@ -689,4 +689,208 @@
   <data name="ForceChatbotSecurityPinHelp" xml:space="preserve">
     <value>Kräver att varje medlem bekräftar farliga eller avdelningsövergripande assistent-/SMS-åtgärder med sin personliga 4-siffriga säkerhets-PIN. Medlemmar utan PIN får en slumpmässigt genererad (visas på deras profilsida).</value>
   </data>
+  <data name="RunCardSettingsHeader" xml:space="preserve">
+    <value>Larmplaner och automatisk utlarmning</value>
+  </data>
+  <data name="DispatchRecommendationModeLabel" xml:space="preserve">
+    <value>Läge för automatiskt resursval</value>
+  </data>
+  <data name="DispatchRecommendationModeHelp" xml:space="preserve">
+    <value>Hur systemet väljer enheter och personal för att fylla en larmplan: efter det stationsområde som innehåller larmet (med kaskad till närmaste station vid brist) eller efter närmast tillgängliga resurser.</value>
+  </data>
+  <data name="DispatchAutoDispatchLabel" xml:space="preserve">
+    <value>Larma rekommenderade resurser automatiskt</value>
+  </data>
+  <data name="DispatchAutoDispatchHelp" xml:space="preserve">
+    <value>När aktiverat larmar matchande larmplaner resurser direkt när larmet skapas. När avaktiverat förifylls rekommendationerna på sidan Nytt larm för operatörens granskning.</value>
+  </data>
+  <data name="RestPeriodLabel" xml:space="preserve">
+    <value>Viloperiod (minuter)</value>
+  </data>
+  <data name="RestPeriodHelp" xml:space="preserve">
+    <value>Efter utlarmning nedprioriteras enheten eller personen under detta antal minuter så att samma resurser inte larmas gång på gång. 0 inaktiverar.</value>
+  </data>
+  <data name="StaffingGateLabel" xml:space="preserve">
+    <value>Lägsta bemanning för utlarmning</value>
+  </data>
+  <data name="StaffingGateHelp" xml:space="preserve">
+    <value>Enheter bemannade under denna nivå väljs inte även om deras status matchar. Enheter utan definierade roller passerar alltid.</value>
+  </data>
+  <data name="MoveUpEnabledLabel" xml:space="preserve">
+    <value>Aktivera rekommendationer för omflyttning/täckning</value>
+  </data>
+  <data name="MoveUpEnabledHelp" xml:space="preserve">
+    <value>Efter valet kontrolleras stationernas minimitäckning och omflyttning till tömda stationer rekommenderas.</value>
+  </data>
+  <data name="ClosestUnitTuningHeader" xml:space="preserve">
+    <value>Inställningar för närmaste enhet</value>
+  </data>
+  <data name="MaxLocationAgeLabel" xml:space="preserve">
+    <value>Maximal ålder för enhetens position (sekunder)</value>
+  </data>
+  <data name="PersonnelMaxLocationAgeLabel" xml:space="preserve">
+    <value>Maximal ålder för personalens position (sekunder)</value>
+  </data>
+  <data name="MaxRadiusLabel" xml:space="preserve">
+    <value>Maximal insatsradie (meter)</value>
+  </data>
+  <data name="IncludeStaleLabel" xml:space="preserve">
+    <value>Inkludera inaktuella positioner</value>
+  </data>
+  <data name="UseRoutedEtaLabel" xml:space="preserve">
+    <value>Sortera efter beräknad körtid</value>
+  </data>
+  <data name="UseRoutedEtaHelp" xml:space="preserve">
+    <value>Rangordnar de närmaste kandidaterna efter körtid i stället för fågelvägen. Använder kartleverantören och kan medföra kostnad och fördröjning.</value>
+  </data>
+  <data name="EtaShortlistSizeLabel" xml:space="preserve">
+    <value>Storlek på ETA-urvalslista</value>
+  </data>
+  <data name="StationCoverageHeader" xml:space="preserve">
+    <value>Stationernas minimitäckning</value>
+  </data>
+  <data name="StationCoverageHelp" xml:space="preserve">
+    <value>Anger det minsta antal av varje enhetstyp eller personalroll som ska förbli tillgängligt på en station. Om en utlarmning sänker täckningen under miniminivån rekommenderar systemet omflyttningar.</value>
+  </data>
+  <data name="StationCoverageStationLabel" xml:space="preserve">
+    <value>Station</value>
+  </data>
+  <data name="StationCoverageTargetLabel" xml:space="preserve">
+    <value>Enhetstyp / Roll</value>
+  </data>
+  <data name="StationCoverageMinCountLabel" xml:space="preserve">
+    <value>Minst tillgängliga</value>
+  </data>
+  <data name="StationCoverageRadiusLabel" xml:space="preserve">
+    <value>Radie (meter, läget närmaste enhet)</value>
+  </data>
+  <data name="StationCoverageEnabledLabel" xml:space="preserve">
+    <value>Aktiverad</value>
+  </data>
+  <data name="RunCardsHeader" xml:space="preserve">
+    <value>Larmplaner</value>
+  </data>
+  <data name="RunCardsHelp" xml:space="preserve">
+    <value>Förplanerade insatspaket som matchas mot larm efter prioritet och typ. Varje plan anger enhetstyper och personalroller per larmnivå och vilka statusar som räknas som tillgängliga.</value>
+  </data>
+  <data name="NewRunCardButton" xml:space="preserve">
+    <value>Ny larmplan</value>
+  </data>
+  <data name="RunCardEditButton" xml:space="preserve">
+    <value>Redigera</value>
+  </data>
+  <data name="RunCardDeleteConfirm" xml:space="preserve">
+    <value>Ta bort denna larmplan? Larm som redan använt den behåller sin historik.</value>
+  </data>
+  <data name="RunCardNameLabel" xml:space="preserve">
+    <value>Namn</value>
+  </data>
+  <data name="RunCardDescriptionLabel" xml:space="preserve">
+    <value>Beskrivning</value>
+  </data>
+  <data name="RunCardDisabledLabel" xml:space="preserve">
+    <value>Inaktiverad</value>
+  </data>
+  <data name="RunCardGeneralTab" xml:space="preserve">
+    <value>Allmänt</value>
+  </data>
+  <data name="RunCardDefaultLabel" xml:space="preserve">
+    <value>Organisationens standard</value>
+  </data>
+  <data name="RunCardManualOnlyLabel" xml:space="preserve">
+    <value>Endast manuellt (inget automatiskt val)</value>
+  </data>
+  <data name="RunCardPrePopulateLabel" xml:space="preserve">
+    <value>Förifyll för operatörsgranskning</value>
+  </data>
+  <data name="RunCardAutoDispatchOptionLabel" xml:space="preserve">
+    <value>Larma automatiskt</value>
+  </data>
+  <data name="RunCardNoGateLabel" xml:space="preserve">
+    <value>Ingen bemanningskontroll</value>
+  </data>
+  <data name="RunCardHomeStationLabel" xml:space="preserve">
+    <value>Hemstation (används när larmet saknar plats)</value>
+  </data>
+  <data name="RunCardNoHomeStationLabel" xml:space="preserve">
+    <value>Ingen</value>
+  </data>
+  <data name="RunCardTriggersHeader" xml:space="preserve">
+    <value>Utlösare</value>
+  </data>
+  <data name="RunCardTriggersHelp" xml:space="preserve">
+    <value>En plan matchar ett larm när någon utlösare matchar. Den mest specifika matchningen vinner (prioritet + typ slår typ, som slår prioritet).</value>
+  </data>
+  <data name="RunCardTriggerTypeLabel" xml:space="preserve">
+    <value>Utlösartyp</value>
+  </data>
+  <data name="RunCardTriggerPriorityOption" xml:space="preserve">
+    <value>Larmprioritet</value>
+  </data>
+  <data name="RunCardTriggerTypeOption" xml:space="preserve">
+    <value>Larmtyp</value>
+  </data>
+  <data name="RunCardTriggerBothOption" xml:space="preserve">
+    <value>Prioritet och typ</value>
+  </data>
+  <data name="RunCardAddTriggerButton" xml:space="preserve">
+    <value>Lägg till utlösare</value>
+  </data>
+  <data name="RunCardAlarmLevelsHeader" xml:space="preserve">
+    <value>Larmnivåer</value>
+  </data>
+  <data name="RunCardAlarmLevelsHelp" xml:space="preserve">
+    <value>Varje larmnivås krav är additiva: eskalering till nivå 2 larmar nivå 2:s resurser utöver de redan tilldelade.</value>
+  </data>
+  <data name="RunCardAlarmLevelLabel" xml:space="preserve">
+    <value>Larm</value>
+  </data>
+  <data name="RunCardAlarmLevelNamePlaceholder" xml:space="preserve">
+    <value>Valfritt namn, t.ex. Konstaterad brand</value>
+  </data>
+  <data name="RunCardAddAlarmLevelButton" xml:space="preserve">
+    <value>Lägg till larmnivå</value>
+  </data>
+  <data name="RunCardUnitRequirementsLabel" xml:space="preserve">
+    <value>Krav på enhetstyper</value>
+  </data>
+  <data name="RunCardRoleRequirementsLabel" xml:space="preserve">
+    <value>Krav på personalroller</value>
+  </data>
+  <data name="RunCardAddUnitRequirementButton" xml:space="preserve">
+    <value>Lägg till enhetstyp</value>
+  </data>
+  <data name="RunCardAddRoleRequirementButton" xml:space="preserve">
+    <value>Lägg till roll</value>
+  </data>
+  <data name="RunCardSelectionsHeader" xml:space="preserve">
+    <value>Larmbara statusar</value>
+  </data>
+  <data name="RunCardSelectionsHelp" xml:space="preserve">
+    <value>Vilka enhetsstatusar, personalstatusar och beredskapsnivåer som räknas som tillgängliga för denna plan. Lämna en sektion tom för standardregler.</value>
+  </data>
+  <data name="RunCardStaffingSelectionsLabel" xml:space="preserve">
+    <value>Beredskapsnivåer</value>
+  </data>
+  <data name="RunCardTestHeader" xml:space="preserve">
+    <value>Testa / Simulera</value>
+  </data>
+  <data name="RunCardTestHelp" xml:space="preserve">
+    <value>Förhandsvisar vad larmplanerna skulle larma nu för en prioritet, typ och plats — inget larmas.</value>
+  </data>
+  <data name="RunCardRunTestButton" xml:space="preserve">
+    <value>Kör test</value>
+  </data>
+  <data name="RunCardSavedMessage" xml:space="preserve">
+    <value>Larmplan sparad.</value>
+  </data>
+  <data name="CallPriority" xml:space="preserve">
+    <value>Larmprioritet</value>
+  </data>
+  <data name="CallType" xml:space="preserve">
+    <value>Larmtyp</value>
+  </data>
+  <data name="RunCardsNav" xml:space="preserve">
+    <value>Larmplaner</value>
+  </data>
 </root>

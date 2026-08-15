@@ -510,6 +510,51 @@ namespace Resgrid.Model
 						new TemplateVariableDescriptor("group.address.country", "Country", "string", false),
 					});
 					break;
+
+				case WorkflowTriggerEventType.RunCardActivated:
+					list.AddRange(new[]
+					{
+						new TemplateVariableDescriptor("run_card.call_id", "Call ID", "int", false),
+						new TemplateVariableDescriptor("run_card.run_card_id", "Run card ID", "int", false),
+						new TemplateVariableDescriptor("run_card.run_card_name", "Run card name", "string", false),
+						new TemplateVariableDescriptor("run_card.alarm_level", "Alarm level", "int", false),
+						new TemplateVariableDescriptor("run_card.mode", "Dispatch mode used (1 = station based, 2 = closest unit)", "int", false),
+						new TemplateVariableDescriptor("run_card.was_auto_dispatched", "True when resources were auto-dispatched", "bool", false),
+						new TemplateVariableDescriptor("run_card.unit_count", "Number of units recommended", "int", false),
+						new TemplateVariableDescriptor("run_card.personnel_count", "Number of personnel recommended", "int", false),
+					});
+					break;
+
+				case WorkflowTriggerEventType.CallAlarmEscalated:
+					list.AddRange(new[]
+					{
+						new TemplateVariableDescriptor("escalation.call_id", "Call ID", "int", false),
+						new TemplateVariableDescriptor("escalation.previous_alarm_level", "Alarm level before escalation", "int", false),
+						new TemplateVariableDescriptor("escalation.new_alarm_level", "Alarm level after escalation", "int", false),
+						new TemplateVariableDescriptor("escalation.added_unit_count", "Units added by the escalation", "int", false),
+						new TemplateVariableDescriptor("escalation.added_personnel_count", "Personnel added by the escalation", "int", false),
+					});
+					break;
+
+				case WorkflowTriggerEventType.DispatchShortfallDetected:
+					list.AddRange(new[]
+					{
+						new TemplateVariableDescriptor("shortfall.call_id", "Call ID", "int", false),
+						new TemplateVariableDescriptor("shortfall.run_card_id", "Run card ID", "int", false),
+						new TemplateVariableDescriptor("shortfall.alarm_level", "Alarm level", "int", false),
+						new TemplateVariableDescriptor("shortfall.shortfall_count", "Number of unfilled requirements", "int", false),
+						new TemplateVariableDescriptor("shortfall.summary", "Human-readable shortfall summary", "string", false),
+					});
+					break;
+
+				case WorkflowTriggerEventType.StationCoverageGapDetected:
+					list.AddRange(new[]
+					{
+						new TemplateVariableDescriptor("coverage_gap.call_id", "Call ID that triggered the gap (0 when none)", "int", false),
+						new TemplateVariableDescriptor("coverage_gap.gap_count", "Number of stations below minimum coverage", "int", false),
+						new TemplateVariableDescriptor("coverage_gap.summary", "Human-readable coverage gap summary", "string", false),
+					});
+					break;
 			}
 
 			return list.AsReadOnly();

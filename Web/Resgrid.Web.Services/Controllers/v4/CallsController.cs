@@ -57,6 +57,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 		private readonly ICommunicationService _communicationService;
 		private readonly IWeatherAlertService _weatherAlertService;
 		private readonly ICallDispatchStatusService _callDispatchStatusService;
+		private readonly IDispatchRecommendationService _dispatchRecommendationService;
+		private readonly IFeatureToggleService _featureToggleService;
 
 		public CallsController(
 			ICallsService callsService,
@@ -79,7 +81,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			IUserDefinedFieldsService userDefinedFieldsService,
 			ICommunicationService communicationService,
 			IWeatherAlertService weatherAlertService,
-			ICallDispatchStatusService callDispatchStatusService
+			ICallDispatchStatusService callDispatchStatusService,
+			IDispatchRecommendationService dispatchRecommendationService,
+			IFeatureToggleService featureToggleService
 			)
 		{
 			_callsService = callsService;
@@ -103,6 +107,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			_communicationService = communicationService;
 			_weatherAlertService = weatherAlertService;
 			_callDispatchStatusService = callDispatchStatusService;
+			_dispatchRecommendationService = dispatchRecommendationService;
+			_featureToggleService = featureToggleService;
 		}
 		#endregion Members and Constructors
 
@@ -203,7 +209,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				foreach (var callProtocol in c.Protocols)
 				{
-					var protocol = await _protocolsService.GetProtocolByIdAsync(callProtocol.CallProtocolId);
+					var protocol = await _protocolsService.GetProtocolByIdAsync(callProtocol.DispatchProtocolId);
 					if (protocol != null)
 						protocols.Add(protocol);
 				}
@@ -755,7 +761,17 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (call.DispatchOn.HasValue && call.DispatchOn.Value <= DateTime.UtcNow)
 				call.HasBeenDispatched = true;
 
+			// Run card auto-dispatch: additively merge recommended resources before save
+			// (only applies when the resolved auto-dispatch decision is on). Covers all
+			// API-originated calls, including chatbot/MCP sources.
+			DispatchRecommendationResult recommendationResult = null;
+			if (shouldDispatchNow && await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, effectiveDepartmentId))
+				recommendationResult = await _dispatchRecommendationService.EnrichCallForDispatchAsync(call, 1, true, cancellationToken);
+
 			var savedCall = await _callsService.SaveCallAsync(call, cancellationToken);
+
+			if (recommendationResult != null && recommendationResult.MatchedRunCardId.HasValue && recommendationResult.AutoDispatch)
+				await _dispatchRecommendationService.RecordActivationAsync(savedCall, recommendationResult, UserId, cancellationToken);
 
 			// Attach weather alerts as call notes if enabled
 			await _weatherAlertService.AttachWeatherAlertsToCallAsync(savedCall, cancellationToken);
@@ -1324,6 +1340,112 @@ namespace Resgrid.Web.Services.Controllers.v4
 			result.Id = savedCall.CallId.ToString();
 			result.PageSize = 0;
 			result.Status = ResponseHelper.Updated;
+			ResponseHelper.PopulateV4ResponseData(result);
+
+			return Ok(result);
+		}
+
+		/// <summary>
+		/// "Strike Next Alarm": escalates a call to its next alarm level, additively
+		/// dispatching the active run card's next-level requirements and notifying only
+		/// the newly added resources.
+		/// </summary>
+		/// <param name="callId">The call to escalate</param>
+		/// <returns></returns>
+		[HttpPut("EscalateCall")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[Authorize(Policy = ResgridResources.Call_Update)]
+		public async Task<ActionResult<EscalateCallResult>> EscalateCall(string callId, CancellationToken cancellationToken)
+		{
+			if (string.IsNullOrWhiteSpace(callId) || !int.TryParse(callId, out var parsedCallId))
+				return BadRequest();
+
+			var canDoOperation = await _authorizationService.CanUserEditCallAsync(UserId, parsedCallId);
+
+			if (!canDoOperation)
+				return Unauthorized();
+
+			if (!await _featureToggleService.IsEnabledAsync(FeatureFlagKeys.DispatchRunCards, DepartmentId))
+				return BadRequest();
+
+			var call = await _callsService.GetCallByIdAsync(parsedCallId);
+
+			if (call == null)
+				return NotFound();
+
+			if (call.DepartmentId != DepartmentId)
+				return Unauthorized();
+
+			if (call.State != (int)CallStates.Active)
+				return BadRequest();
+
+			call = await _callsService.PopulateCallData(call, true, false, false, true, true, true, false, false, false);
+
+			var previousAlarmLevel = Math.Max(1, call.AlarmLevel);
+			var escalationResult = await _dispatchRecommendationService.EnrichCallForDispatchAsync(call, previousAlarmLevel + 1, false, cancellationToken);
+
+			if (!escalationResult.MatchedRunCardId.HasValue || !escalationResult.HasRecommendations)
+			{
+				var noopResult = new EscalateCallResult
+				{
+					Id = parsedCallId.ToString(),
+					Success = false,
+					NewAlarmLevel = previousAlarmLevel,
+					AddedUnits = 0,
+					AddedPersonnel = 0,
+					PageSize = 0,
+					Status = ResponseHelper.Success
+				};
+				ResponseHelper.PopulateV4ResponseData(noopResult);
+
+				return Ok(noopResult);
+			}
+
+			var newUnitIds = escalationResult.Units.Select(u => u.UnitId).ToList();
+			var newUserIds = escalationResult.Personnel.Select(p => p.UserId).ToList();
+
+			var escalatedCall = await _callsService.SaveCallAsync(call, cancellationToken);
+
+			await _dispatchRecommendationService.RecordActivationAsync(escalatedCall, escalationResult, UserId, cancellationToken);
+
+			if (newUnitIds.Any())
+				await _callDispatchStatusService.ApplyDispatchStatusesAsync(escalatedCall, null, newUnitIds, cancellationToken);
+
+			var escalationCqi = new CallQueueItem();
+			escalationCqi.Call = escalatedCall;
+
+			if (newUserIds.Any())
+				escalationCqi.Profiles = await _userProfileService.GetSelectedUserProfilesAsync(newUserIds);
+			else
+				escalationCqi.Profiles = new List<UserProfile>();
+
+			escalationCqi.SetBroadcastDispatches(newUserIds, new List<int>(), newUnitIds, new List<int>());
+
+			await _queueService.EnqueueCallBroadcastAsync(escalationCqi, cancellationToken);
+
+			_eventAggregator.SendMessage<CallAlarmEscalatedEvent>(new CallAlarmEscalatedEvent
+			{
+				DepartmentId = DepartmentId,
+				CallId = escalatedCall.CallId,
+				PreviousAlarmLevel = previousAlarmLevel,
+				NewAlarmLevel = escalatedCall.AlarmLevel,
+				AddedUnitIds = newUnitIds,
+				AddedUserIds = newUserIds
+			});
+
+			_eventAggregator.SendMessage<CallUpdatedEvent>(new CallUpdatedEvent() { DepartmentId = DepartmentId, Call = escalatedCall });
+
+			var result = new EscalateCallResult
+			{
+				Id = escalatedCall.CallId.ToString(),
+				Success = true,
+				NewAlarmLevel = escalatedCall.AlarmLevel,
+				AddedUnits = newUnitIds.Count,
+				AddedPersonnel = newUserIds.Count,
+				PageSize = 0,
+				Status = ResponseHelper.Updated
+			};
 			ResponseHelper.PopulateV4ResponseData(result);
 
 			return Ok(result);

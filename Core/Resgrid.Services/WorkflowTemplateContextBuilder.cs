@@ -328,6 +328,71 @@ namespace Resgrid.Services
 					triggeringUserId = MapIncidentVariables(scriptObject, eventPayloadJson);
 					break;
 				}
+				case WorkflowTriggerEventType.RunCardActivated:
+				{
+					var evt = TryDeserialize<RunCardActivatedEvent>(eventPayloadJson);
+					if (evt != null)
+					{
+						var rc = new ScriptObject();
+						rc["call_id"] = evt.CallId;
+						rc["run_card_id"] = evt.RunCardId;
+						rc["run_card_name"] = evt.RunCardName ?? string.Empty;
+						rc["alarm_level"] = evt.AlarmLevel;
+						rc["mode"] = evt.ModeUsed;
+						rc["was_auto_dispatched"] = evt.WasAutoDispatched;
+						rc["unit_count"] = evt.UnitIds?.Count ?? 0;
+						rc["personnel_count"] = evt.UserIds?.Count ?? 0;
+						scriptObject["run_card"] = rc;
+					}
+					break;
+				}
+				case WorkflowTriggerEventType.CallAlarmEscalated:
+				{
+					var evt = TryDeserialize<CallAlarmEscalatedEvent>(eventPayloadJson);
+					if (evt != null)
+					{
+						var esc = new ScriptObject();
+						esc["call_id"] = evt.CallId;
+						esc["previous_alarm_level"] = evt.PreviousAlarmLevel;
+						esc["new_alarm_level"] = evt.NewAlarmLevel;
+						esc["added_unit_count"] = evt.AddedUnitIds?.Count ?? 0;
+						esc["added_personnel_count"] = evt.AddedUserIds?.Count ?? 0;
+						scriptObject["escalation"] = esc;
+					}
+					break;
+				}
+				case WorkflowTriggerEventType.DispatchShortfallDetected:
+				{
+					var evt = TryDeserialize<DispatchShortfallEvent>(eventPayloadJson);
+					if (evt != null)
+					{
+						var sf = new ScriptObject();
+						sf["call_id"] = evt.CallId;
+						sf["run_card_id"] = evt.RunCardId;
+						sf["alarm_level"] = evt.AlarmLevel;
+						sf["shortfall_count"] = evt.Shortfalls?.Count ?? 0;
+						sf["summary"] = evt.Shortfalls != null
+							? string.Join("; ", evt.Shortfalls.Select(s => $"{(s.IsUnitRequirement ? "Unit type" : "Role")} {s.TypeOrRoleName ?? s.TypeOrRoleId.ToString()}: {s.FilledCount}/{s.RequiredCount}"))
+							: string.Empty;
+						scriptObject["shortfall"] = sf;
+					}
+					break;
+				}
+				case WorkflowTriggerEventType.StationCoverageGapDetected:
+				{
+					var evt = TryDeserialize<StationCoverageGapEvent>(eventPayloadJson);
+					if (evt != null)
+					{
+						var gap = new ScriptObject();
+						gap["call_id"] = evt.CallId ?? 0;
+						gap["gap_count"] = evt.MoveUps?.Count ?? 0;
+						gap["summary"] = evt.MoveUps != null
+							? string.Join("; ", evt.MoveUps.Select(m => $"{m.StationGroupName}: {m.AvailableAfterDispatch}/{m.MinimumRequired} {(m.UnitTypeName ?? m.PersonnelRoleName ?? string.Empty)}"))
+							: string.Empty;
+						scriptObject["coverage_gap"] = gap;
+					}
+					break;
+				}
 			}
 
 			await AddCommonUserVariablesAsync(scriptObject, triggeringUserId);

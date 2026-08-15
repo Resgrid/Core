@@ -34,6 +34,25 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 		public bool? SaveSuccess { get; set; }
 		public string Message { get; set; }
 
+		// Run Card / Recommendation Settings (feature-flag gated)
+		public bool RunCardsFeatureEnabled { get; set; }
+		public int DispatchRecommendationMode { get; set; }
+		public SelectList DispatchRecommendationModes { get; set; }
+		public bool DispatchRecommendationAutoDispatch { get; set; }
+		public int RecommendationMaxLocationAgeSeconds { get; set; }
+		public int RecommendationMaxRadiusMeters { get; set; }
+		public bool RecommendationIncludeStaleLocations { get; set; }
+		public int RecommendationPersonnelMaxLocationAgeSeconds { get; set; }
+		public bool RecommendationUseRoutedEta { get; set; }
+		public int RecommendationEtaShortlistSize { get; set; }
+		public int RecommendationRestPeriodMinutes { get; set; }
+		public int RecommendationUnitMinimumStaffingLevel { get; set; }
+		public SelectList StaffingLevelOptions { get; set; }
+		public bool RecommendationMoveUpEnabled { get; set; }
+		public List<StationCoverageRequirement> StationCoverageRequirements { get; set; }
+		public List<DepartmentGroup> StationGroups { get; set; }
+		public List<PersonnelRole> PersonnelRoles { get; set; }
+
 		public DispatchSettingsView()
 		{
 			ShiftDispatchStatus = -1;
@@ -46,6 +65,9 @@ namespace Resgrid.Web.Areas.User.Models.Departments
 			UnitTypes = new List<UnitType>();
 			CallTypes = new List<CallType>();
 			StateNames = new Dictionary<string, string>();
+			StationCoverageRequirements = new List<StationCoverageRequirement>();
+			StationGroups = new List<DepartmentGroup>();
+			PersonnelRoles = new List<PersonnelRole>();
 		}
 	}
 

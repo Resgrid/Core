@@ -59,5 +59,8 @@
 		HardwareTrackingStaleAfterSeconds = 55,
 		HardwareTrackingMobileFallbackEnabled = 56,
 		HardwareTrackingLocationRetentionDays = 57,
+		DispatchRecommendationMode = 58,
+		DispatchRecommendationAutoDispatch = 59,
+		DispatchRecommendationConfig = 60,
 	}
 }

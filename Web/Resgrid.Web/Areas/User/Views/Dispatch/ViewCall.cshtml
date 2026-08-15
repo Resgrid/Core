@@ -43,6 +43,11 @@
                 }
                 @if (ClaimsAuthorizationHelper.CanCreateCall())
                 {
+                    if (Model.Call.State == 0 && Model.Call.ActiveRunCardId.HasValue)
+                    {
+                        <button class="btn btn-danger" id="strikeNextAlarmButton" data-call-id="@Model.Call.CallId">Strike Alarm @(Model.Call.AlarmLevel + 1)</button>
+                        <form id="escalateCallForm">@Html.AntiForgeryToken()</form>
+                    }
                     <a class="btn btn-primary" asp-controller="Dispatch" asp-action="UpdateCall" asp-route-area="User" asp-route-callId="@Model.Call.CallId">@localizer["UpdateCallHeader"]</a>
                     <a style="text-decoration:none;" class="btn btn-warning" asp-controller="Dispatch" asp-action="CloseCall" asp-route-area="User" asp-route-callId="@Model.Call.CallId">@localizer["CloseCallHeader"]</a>
                 }
@@ -951,6 +956,32 @@
 
 @section Scripts
     {
+    @if (Model.Call.ActiveRunCardId.HasValue)
+    {
+        <script type="text/javascript">
+            // Bound here rather than in the view body: the layout loads jQuery after
+            // RenderBody, so a handler registered inline never gets attached.
+            $(function () {
+                $('#strikeNextAlarmButton').on('click', function () {
+                    if (!confirm('Escalate this call to alarm level @(Model.Call.AlarmLevel + 1)? The run card\'s next-alarm resources will be dispatched.')) {
+                        return;
+                    }
+
+                    $.post('@Url.Action("EscalateCall", "Dispatch", new { area = "User" })', {
+                        __RequestVerificationToken: $('#escalateCallForm input[name="__RequestVerificationToken"]').val(),
+                        callId: $(this).data('call-id')
+                    }, function (response) {
+                        if (response.success) {
+                            window.location.reload();
+                        } else {
+                            alert(response.message);
+                        }
+                    });
+                });
+            });
+        </script>
+    }
+
     <script type="text/javascript">
         var callId = @(Model.Call.CallId);
         var callState = @(Model.Call.State);

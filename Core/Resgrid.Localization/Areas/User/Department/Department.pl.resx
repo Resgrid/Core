@@ -689,4 +689,208 @@
   <data name="ForceChatbotSecurityPinHelp" xml:space="preserve">
     <value>Wymaga, aby każdy członek potwierdzał niebezpieczne lub obejmujące cały wydział akcje asystenta/SMS swoim osobistym 4-cyfrowym kodem PIN bezpieczeństwa. Członkowie bez kodu PIN otrzymują losowo wygenerowany (widoczny na stronie profilu).</value>
   </data>
+  <data name="RunCardSettingsHeader" xml:space="preserve">
+    <value>Karty dysponowania i automatyczne dysponowanie</value>
+  </data>
+  <data name="DispatchRecommendationModeLabel" xml:space="preserve">
+    <value>Tryb automatycznego doboru zasobów</value>
+  </data>
+  <data name="DispatchRecommendationModeHelp" xml:space="preserve">
+    <value>Jak system dobiera jednostki i personel do karty dysponowania: według obszaru chronionego stacji obejmującego zdarzenie (z kaskadą do najbliższej stacji przy braku) lub według najbliższych dostępnych zasobów.</value>
+  </data>
+  <data name="DispatchAutoDispatchLabel" xml:space="preserve">
+    <value>Automatycznie dysponuj rekomendowane zasoby</value>
+  </data>
+  <data name="DispatchAutoDispatchHelp" xml:space="preserve">
+    <value>Gdy włączone, dopasowane karty dysponują zasoby natychmiast przy tworzeniu zgłoszenia. Gdy wyłączone, rekomendacje są wstępnie zaznaczane na stronie nowego zgłoszenia do weryfikacji dyspozytora.</value>
+  </data>
+  <data name="RestPeriodLabel" xml:space="preserve">
+    <value>Okres odpoczynku (minuty)</value>
+  </data>
+  <data name="RestPeriodHelp" xml:space="preserve">
+    <value>Po zadysponowaniu jednostka lub osoba ma obniżony priorytet przez podaną liczbę minut, aby te same zasoby nie były dysponowane raz za razem. 0 wyłącza.</value>
+  </data>
+  <data name="StaffingGateLabel" xml:space="preserve">
+    <value>Minimalna obsada jednostki do zadysponowania</value>
+  </data>
+  <data name="StaffingGateHelp" xml:space="preserve">
+    <value>Jednostki obsadzone poniżej tego poziomu nie są wybierane, nawet gdy ich status pasuje. Jednostki bez zdefiniowanych ról zawsze przechodzą.</value>
+  </data>
+  <data name="MoveUpEnabledLabel" xml:space="preserve">
+    <value>Włącz rekomendacje przesunięć / uzupełnień</value>
+  </data>
+  <data name="MoveUpEnabledHelp" xml:space="preserve">
+    <value>Po doborze sprawdza minimalne pokrycie stacji i rekomenduje przesunięcie zasobów do ogołoconych stacji.</value>
+  </data>
+  <data name="ClosestUnitTuningHeader" xml:space="preserve">
+    <value>Strojenie odpowiedzi najbliższej jednostki</value>
+  </data>
+  <data name="MaxLocationAgeLabel" xml:space="preserve">
+    <value>Maksymalny wiek lokalizacji jednostki (sekundy)</value>
+  </data>
+  <data name="PersonnelMaxLocationAgeLabel" xml:space="preserve">
+    <value>Maksymalny wiek lokalizacji personelu (sekundy)</value>
+  </data>
+  <data name="MaxRadiusLabel" xml:space="preserve">
+    <value>Maksymalny promień odpowiedzi (metry)</value>
+  </data>
+  <data name="IncludeStaleLabel" xml:space="preserve">
+    <value>Uwzględniaj nieaktualne lokalizacje</value>
+  </data>
+  <data name="UseRoutedEtaLabel" xml:space="preserve">
+    <value>Sortuj według szacowanego czasu dojazdu</value>
+  </data>
+  <data name="UseRoutedEtaHelp" xml:space="preserve">
+    <value>Zmienia kolejność najbliższych kandydatów według czasu dojazdu zamiast odległości w linii prostej. Korzysta z dostawcy map i może zwiększyć koszty i opóźnienia.</value>
+  </data>
+  <data name="EtaShortlistSizeLabel" xml:space="preserve">
+    <value>Rozmiar krótkiej listy ETA</value>
+  </data>
+  <data name="StationCoverageHeader" xml:space="preserve">
+    <value>Minimalne pokrycie stacji</value>
+  </data>
+  <data name="StationCoverageHelp" xml:space="preserve">
+    <value>Określa minimalną liczbę każdego typu jednostki lub roli personelu, jaka powinna pozostać dostępna na stacji. Gdy dysponowanie obniży pokrycie poniżej minimum, system rekomenduje przesunięcia.</value>
+  </data>
+  <data name="StationCoverageStationLabel" xml:space="preserve">
+    <value>Stacja</value>
+  </data>
+  <data name="StationCoverageTargetLabel" xml:space="preserve">
+    <value>Typ jednostki / Rola</value>
+  </data>
+  <data name="StationCoverageMinCountLabel" xml:space="preserve">
+    <value>Minimum dostępnych</value>
+  </data>
+  <data name="StationCoverageRadiusLabel" xml:space="preserve">
+    <value>Promień (metry, tryb najbliższej jednostki)</value>
+  </data>
+  <data name="StationCoverageEnabledLabel" xml:space="preserve">
+    <value>Włączone</value>
+  </data>
+  <data name="RunCardsHeader" xml:space="preserve">
+    <value>Karty dysponowania</value>
+  </data>
+  <data name="RunCardsHelp" xml:space="preserve">
+    <value>Wstępnie zaplanowane pakiety odpowiedzi dopasowywane do zgłoszeń według priorytetu i typu. Każda karta określa typy jednostek i role personelu do zadysponowania na każdy stopień alarmu oraz statusy uznawane za dostępne.</value>
+  </data>
+  <data name="NewRunCardButton" xml:space="preserve">
+    <value>Nowa karta dysponowania</value>
+  </data>
+  <data name="RunCardEditButton" xml:space="preserve">
+    <value>Edytuj</value>
+  </data>
+  <data name="RunCardDeleteConfirm" xml:space="preserve">
+    <value>Usunąć tę kartę? Zgłoszenia, które już z niej korzystały, zachowują historię dysponowania.</value>
+  </data>
+  <data name="RunCardNameLabel" xml:space="preserve">
+    <value>Nazwa</value>
+  </data>
+  <data name="RunCardDescriptionLabel" xml:space="preserve">
+    <value>Opis</value>
+  </data>
+  <data name="RunCardDisabledLabel" xml:space="preserve">
+    <value>Wyłączona</value>
+  </data>
+  <data name="RunCardGeneralTab" xml:space="preserve">
+    <value>Ogólne</value>
+  </data>
+  <data name="RunCardDefaultLabel" xml:space="preserve">
+    <value>Domyślne ustawienie jednostki</value>
+  </data>
+  <data name="RunCardManualOnlyLabel" xml:space="preserve">
+    <value>Tylko ręcznie (bez automatycznego doboru)</value>
+  </data>
+  <data name="RunCardPrePopulateLabel" xml:space="preserve">
+    <value>Wstępnie zaznacz do weryfikacji dyspozytora</value>
+  </data>
+  <data name="RunCardAutoDispatchOptionLabel" xml:space="preserve">
+    <value>Dysponuj automatycznie</value>
+  </data>
+  <data name="RunCardNoGateLabel" xml:space="preserve">
+    <value>Bez kontroli obsady</value>
+  </data>
+  <data name="RunCardHomeStationLabel" xml:space="preserve">
+    <value>Stacja macierzysta (gdy zgłoszenie nie ma lokalizacji)</value>
+  </data>
+  <data name="RunCardNoHomeStationLabel" xml:space="preserve">
+    <value>Brak</value>
+  </data>
+  <data name="RunCardTriggersHeader" xml:space="preserve">
+    <value>Wyzwalacze</value>
+  </data>
+  <data name="RunCardTriggersHelp" xml:space="preserve">
+    <value>Karta pasuje do zgłoszenia, gdy pasuje dowolny wyzwalacz. Wygrywa najbardziej szczegółowe dopasowanie (priorytet + typ przed typem, przed priorytetem).</value>
+  </data>
+  <data name="RunCardTriggerTypeLabel" xml:space="preserve">
+    <value>Typ wyzwalacza</value>
+  </data>
+  <data name="RunCardTriggerPriorityOption" xml:space="preserve">
+    <value>Priorytet zgłoszenia</value>
+  </data>
+  <data name="RunCardTriggerTypeOption" xml:space="preserve">
+    <value>Typ zgłoszenia</value>
+  </data>
+  <data name="RunCardTriggerBothOption" xml:space="preserve">
+    <value>Priorytet i typ</value>
+  </data>
+  <data name="RunCardAddTriggerButton" xml:space="preserve">
+    <value>Dodaj wyzwalacz</value>
+  </data>
+  <data name="RunCardAlarmLevelsHeader" xml:space="preserve">
+    <value>Stopnie alarmowe</value>
+  </data>
+  <data name="RunCardAlarmLevelsHelp" xml:space="preserve">
+    <value>Wymagania każdego stopnia są addytywne: eskalacja do stopnia 2 dysponuje zasoby stopnia 2 oprócz już przydzielonych.</value>
+  </data>
+  <data name="RunCardAlarmLevelLabel" xml:space="preserve">
+    <value>Alarm</value>
+  </data>
+  <data name="RunCardAlarmLevelNamePlaceholder" xml:space="preserve">
+    <value>Opcjonalna nazwa, np. Pożar rozwinięty</value>
+  </data>
+  <data name="RunCardAddAlarmLevelButton" xml:space="preserve">
+    <value>Dodaj stopień alarmowy</value>
+  </data>
+  <data name="RunCardUnitRequirementsLabel" xml:space="preserve">
+    <value>Wymagane typy jednostek</value>
+  </data>
+  <data name="RunCardRoleRequirementsLabel" xml:space="preserve">
+    <value>Wymagane role personelu</value>
+  </data>
+  <data name="RunCardAddUnitRequirementButton" xml:space="preserve">
+    <value>Dodaj typ jednostki</value>
+  </data>
+  <data name="RunCardAddRoleRequirementButton" xml:space="preserve">
+    <value>Dodaj rolę</value>
+  </data>
+  <data name="RunCardSelectionsHeader" xml:space="preserve">
+    <value>Statusy do dysponowania</value>
+  </data>
+  <data name="RunCardSelectionsHelp" xml:space="preserve">
+    <value>Które statusy jednostek, statusy personelu i poziomy gotowości liczą się jako dostępne dla tej karty. Pozostaw sekcję pustą, aby użyć standardowych reguł dostępności.</value>
+  </data>
+  <data name="RunCardStaffingSelectionsLabel" xml:space="preserve">
+    <value>Poziomy gotowości</value>
+  </data>
+  <data name="RunCardTestHeader" xml:space="preserve">
+    <value>Test / Symulacja</value>
+  </data>
+  <data name="RunCardTestHelp" xml:space="preserve">
+    <value>Podgląd tego, co karty zadysponowałyby teraz dla priorytetu, typu i lokalizacji — nic nie jest dysponowane.</value>
+  </data>
+  <data name="RunCardRunTestButton" xml:space="preserve">
+    <value>Uruchom test</value>
+  </data>
+  <data name="RunCardSavedMessage" xml:space="preserve">
+    <value>Karta zapisana.</value>
+  </data>
+  <data name="CallPriority" xml:space="preserve">
+    <value>Priorytet zgłoszenia</value>
+  </data>
+  <data name="CallType" xml:space="preserve">
+    <value>Typ zgłoszenia</value>
+  </data>
+  <data name="RunCardsNav" xml:space="preserve">
+    <value>Karty dysponowania</value>
+  </data>
 </root>

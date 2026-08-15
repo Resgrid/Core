@@ -217,6 +217,16 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<CheckInTimerOverrideRepository>().As<ICheckInTimerOverrideRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CheckInRecordRepository>().As<ICheckInRecordRepository>().InstancePerLifetimeScope();
 
+			// Run Card Repositories
+			builder.RegisterType<RunCardsRepository>().As<IRunCardsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RunCardTriggersRepository>().As<IRunCardTriggersRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RunCardAlarmLevelsRepository>().As<IRunCardAlarmLevelsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RunCardUnitRequirementsRepository>().As<IRunCardUnitRequirementsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RunCardRoleRequirementsRepository>().As<IRunCardRoleRequirementsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RunCardAvailabilitySelectionsRepository>().As<IRunCardAvailabilitySelectionsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<StationCoverageRequirementsRepository>().As<IStationCoverageRequirementsRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<RunCardActivationsRepository>().As<IRunCardActivationsRepository>().InstancePerLifetimeScope();
+
 			// Calendar Check-In Repositories
 			builder.RegisterType<CalendarItemCheckInRepository>().As<ICalendarItemCheckInRepository>().InstancePerLifetimeScope();
 

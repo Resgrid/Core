@@ -242,6 +242,19 @@ namespace Resgrid.Tests.Services
 			}
 
 			[Test]
+			public async Task self_target_dm_should_return_null_without_insert()
+			{
+				var result = await _chatChannelService.GetOrCreateDirectMessageChannelAsync(1, "user-a", "USER-A", null);
+
+				result.Should().BeNull();
+				_chatChannelRepositoryMock.Verify(x => x.GetByDmKeyAsync(It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+				_chatChannelRepositoryMock.Verify(x => x.CreateDirectMessageChannelAsync(
+					It.IsAny<ChatChannel>(),
+					It.IsAny<IEnumerable<ChatChannelMember>>(),
+					It.IsAny<CancellationToken>()), Times.Never);
+			}
+
+			[Test]
 			public async Task dm_key_should_be_sorted_regardless_of_initiator()
 			{
 				_chatChannelRepositoryMock.Setup(x => x.GetByDmKeyAsync(1, It.IsAny<string>())).ReturnsAsync((ChatChannel)null);

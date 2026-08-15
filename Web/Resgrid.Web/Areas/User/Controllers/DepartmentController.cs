@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -242,6 +243,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Use24HourTime = model.Department.Use24HourTime.Value;
 			else
 				model.Use24HourTime = false;
+
+			model.NewCallFields = await BuildNewCallFieldRowsAsync();
+			model.UnitStatusThresholds = await BuildUnitStatusThresholdRowsAsync();
 
 			var address = await _departmentSettingsService.GetBigBoardCenterAddressDepartmentAsync(DepartmentId);
 			var zoomLevel = await _departmentSettingsService.GetBigBoardMapZoomLevelForDepartmentAsync(DepartmentId);
@@ -569,9 +573,39 @@ namespace Resgrid.Web.Areas.User.Controllers
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.UnitsSort.ToString(), DepartmentSettingTypes.UnitsSortOrder, cancellationToken);
 				await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, model.CallsSort.ToString(), DepartmentSettingTypes.CallsSortOrder, cancellationToken);
 
-				if (!String.IsNullOrWhiteSpace(model.MapCenterGpsCoordinatesLatitude) && !String.IsNullOrWhiteSpace(model.MapCenterGpsCoordinatesLongitude))
-					await _departmentSettingsService.SaveOrUpdateSettingAsync(DepartmentId, StringHelpers.SanitizeCoordinatesString(model.MapCenterGpsCoordinatesLatitude) + "," + StringHelpers.SanitizeCoordinatesString(model.MapCenterGpsCoordinatesLongitude),
-						DepartmentSettingTypes.BigBoardMapCenterGpsCoordinates, cancellationToken);
+				await _departmentSettingsService.SaveUnitStatusThresholdsAsync(DepartmentId, new UnitStatusThresholds
+				{
+					Thresholds = (model.UnitStatusThresholds ?? new List<UnitStatusThresholdRow>())
+						.Select(x => new UnitStatusThreshold
+						{
+							BaseType = x.BaseType,
+							// Entered in minutes, stored in seconds — the board works in seconds and a
+							// dispatcher should never have to think in them.
+							WarnSeconds = Math.Max(0, x.WarnMinutes) * 60,
+							AlertSeconds = Math.Max(0, x.AlertMinutes) * 60
+						})
+						.ToList()
+				}, cancellationToken);
+
+				await _departmentSettingsService.SaveNewCallFieldPolicyAsync(DepartmentId, new NewCallFieldPolicy
+				{
+					Rules = (model.NewCallFields ?? new List<NewCallFieldPolicyRow>())
+						.Select(x => new NewCallFieldRule { Key = x.Key, Visible = x.Visible, Required = x.Required })
+						.ToList()
+				}, cancellationToken);
+
+				// Coordinates the operator typed are stored verbatim. Leaving both blank means "work it
+				// out from our address" -- the service geocodes it and stores the result, so a department
+				// that never touches these fields still gets every map centred on itself instead of on
+				// the system default. A hand-set pin is never overwritten by the geocoder.
+				var savedMapCenter = await _departmentSettingsService.SaveMapCenterCoordinatesAsync(DepartmentId,
+					model.MapCenterGpsCoordinatesLatitude, model.MapCenterGpsCoordinatesLongitude, departmentAddress, cancellationToken);
+
+				if (savedMapCenter != null)
+				{
+					model.MapCenterGpsCoordinatesLatitude = savedMapCenter.Latitude.Value.ToString(CultureInfo.InvariantCulture);
+					model.MapCenterGpsCoordinatesLongitude = savedMapCenter.Longitude.Value.ToString(CultureInfo.InvariantCulture);
+				}
 
 				model.SuppressStaffingInfo = new DepartmentSuppressStaffingInfo();
 
@@ -951,6 +985,71 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 
 			return View(model);
+		}
+
+		/// <summary>
+		/// Builds the time-in-status threshold grid. Only the base types a dispatcher would plausibly
+		/// time are offered -- there is no value in warning that a unit has been "available" too long.
+		/// </summary>
+		private async Task<List<UnitStatusThresholdRow>> BuildUnitStatusThresholdRowsAsync()
+		{
+			var stored = await _departmentSettingsService.GetUnitStatusThresholdsAsync(DepartmentId);
+			var rows = new List<UnitStatusThresholdRow>();
+
+			foreach (var baseType in TimeableUnitBaseTypes)
+			{
+				var threshold = stored.Find((int)baseType);
+
+				rows.Add(new UnitStatusThresholdRow
+				{
+					BaseType = (int)baseType,
+					WarnMinutes = threshold != null ? threshold.WarnSeconds / 60 : 0,
+					AlertMinutes = threshold != null ? threshold.AlertSeconds / 60 : 0
+				});
+			}
+
+			return rows;
+		}
+
+		/// <summary>
+		/// Statuses where "how long has it been like this?" is an operationally useful question. The
+		/// customer case that drove this: a unit dispatched for more than four minutes that has not
+		/// reported responding.
+		/// </summary>
+		private static readonly ActionBaseTypes[] TimeableUnitBaseTypes = new[]
+		{
+			ActionBaseTypes.Dispatched,
+			ActionBaseTypes.Responding,
+			ActionBaseTypes.Enroute,
+			ActionBaseTypes.OnScene,
+			ActionBaseTypes.Staging,
+			ActionBaseTypes.AtPatient,
+			ActionBaseTypes.Transporting,
+			ActionBaseTypes.AtHospital,
+			ActionBaseTypes.Returning
+		};
+
+		/// <summary>
+		/// Builds the new-call field policy grid for the settings screen: every configurable built-in
+		/// field, pre-ticked from the department's stored policy. Fields with no stored rule default to
+		/// visible and optional, matching how the form behaved before the setting existed.
+		/// </summary>
+		private async Task<List<NewCallFieldPolicyRow>> BuildNewCallFieldRowsAsync()
+		{
+			var policy = await _departmentSettingsService.GetNewCallFieldPolicyAsync(DepartmentId);
+			var rows = new List<NewCallFieldPolicyRow>();
+
+			foreach (var key in NewCallFieldKeys.All)
+			{
+				rows.Add(new NewCallFieldPolicyRow
+				{
+					Key = key,
+					Visible = policy.IsVisible(key),
+					Required = policy.IsRequired(key)
+				});
+			}
+
+			return rows;
 		}
 
 		[HttpPost]

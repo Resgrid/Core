@@ -1,0 +1,414 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AllDay" xml:space="preserve">
+    <value>Ολοήμερο</value>
+  </data>
+  <data name="CalendarHeader" xml:space="preserve">
+    <value>Ημερολόγιο</value>
+  </data>
+  <data name="CalendarItemHeader" xml:space="preserve">
+    <value>Λεπτομέρειες Συμβάντος</value>
+  </data>
+  <data name="CalendarTypesDeleteWarning" xml:space="preserve">
+    <value>ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Αυτό θα διαγράψει οριστικά αυτόν τον τύπο. Είστε βέβαιοι ότι θέλετε να διαγράψετε τον τύπο</value>
+  </data>
+  <data name="CalendarTypesHeader" xml:space="preserve">
+    <value>Τύποι Ημερολογίου</value>
+  </data>
+  <data name="DaysOfTheWeek" xml:space="preserve">
+    <value>Ημέρες της Εβδομάδας</value>
+  </data>
+  <data name="DeleteEvent" xml:space="preserve">
+    <value>Διαγραφή Συμβάντος</value>
+  </data>
+  <data name="DeleteEventConfirm" xml:space="preserve">
+    <value>Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτό το συμβάν; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.</value>
+  </data>
+  <data name="DeleteEventOccurrences" xml:space="preserve">
+    <value>Διαγραφή Συμβάντος και Επαναλήψεων</value>
+  </data>
+  <data name="DeleteEventOccurrencesConfirm" xml:space="preserve">
+    <value>Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτό το συμβάν και όλες τις επαναλήψεις του; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.</value>
+  </data>
+  <data name="EditCalendarTypeHeader" xml:space="preserve">
+    <value>Επεξεργασία Τύπου Ημερολογίου</value>
+  </data>
+  <data name="EditEntryeHeader" xml:space="preserve">
+    <value>Επεξεργασία Καταχώρισης Ημερολογίου</value>
+  </data>
+  <data name="EditEntryWarning" xml:space="preserve">
+    <value>Αυτό είναι το γονικό στοιχείο επανάληψης. Αν επιλέξετε το πλαίσιο «Εφαρμογή σε όλα», θα ενημερωθούν όλα τα στοιχεία επανάληψης με τα δεδομένα αυτού του στοιχείου. Αν διαγράψετε αυτό το στοιχείο, θα διαγραφούν και όλα τα θυγατρικά στοιχεία επανάληψης.</value>
+  </data>
+  <data name="EditEvent" xml:space="preserve">
+    <value>Επεξεργασία Συμβάντος</value>
+  </data>
+  <data name="EditRecurrenceParent" xml:space="preserve">
+    <value>Επεξεργασία Γονικού</value>
+  </data>
+  <data name="EndOnHelp" xml:space="preserve">
+    <value>Αφήστε το κενό για να μην λήγει ποτέ</value>
+  </data>
+  <data name="EndOnLabel" xml:space="preserve">
+    <value>Λήξη Στις</value>
+  </data>
+  <data name="EntitiesToNotify" xml:space="preserve">
+    <value>Οντότητες προς Ειδοποίηση</value>
+  </data>
+  <data name="First" xml:space="preserve">
+    <value>πρώτη</value>
+  </data>
+  <data name="Forth" xml:space="preserve">
+    <value>τέταρτη</value>
+  </data>
+  <data name="Last" xml:space="preserve">
+    <value>τελευταία</value>
+  </data>
+  <data name="ManageTypes" xml:space="preserve">
+    <value>Διαχείριση Τύπων</value>
+  </data>
+  <data name="ManageTypesHelp" xml:space="preserve">
+    <value>Διαχείριση Τύπων Ημερολογίου</value>
+  </data>
+  <data name="NewCalendarEntryHeader" xml:space="preserve">
+    <value>Νέα Καταχώριση Ημερολογίου</value>
+  </data>
+  <data name="NewCalendarTypeHeader" xml:space="preserve">
+    <value>Νέος Τύπος Ημερολογίου</value>
+  </data>
+  <data name="NewEntry" xml:space="preserve">
+    <value>Νέα Καταχώριση</value>
+  </data>
+  <data name="NewEntryHelp" xml:space="preserve">
+    <value>Προσθήκη νέας καταχώρισης ημερολογίου</value>
+  </data>
+  <data name="NoCustomTypes" xml:space="preserve">
+    <value>Χωρίς Προσαρμοσμένους Τύπους</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Κανένα</value>
+  </data>
+  <data name="NoNote" xml:space="preserve">
+    <value>Χωρίς Σημείωση</value>
+  </data>
+  <data name="NoUpcomingItems" xml:space="preserve">
+    <value>Δεν Υπάρχουν Προσεχή Στοιχεία</value>
+  </data>
+  <data name="RecurrenceChildWarning" xml:space="preserve">
+    <value>Αυτό είναι θυγατρικό στοιχείο επανάληψης. Δεν μπορείτε να αλλάξετε τις ρυθμίσεις επανάληψης για αυτό το στοιχείο. Αν χρειάζεται να αλλάξετε το μοτίβο επανάληψης για αυτή την καταχώριση, θα πρέπει να την αφαιρέσετε και να την προσθέσετε ξανά από τη γονική καταχώριση.</value>
+  </data>
+  <data name="RecurrenceParentWarning" xml:space="preserve">
+    <value>Αυτό είναι το γονικό στοιχείο επανάληψης. Δεν μπορείτε να αλλάξετε τις ρυθμίσεις επανάληψης για αυτό το στοιχείο. Αν χρειάζεται να αλλάξετε μοτίβο επανάληψης, πρέπει πρώτα να το αφαιρέσετε και μετά να δημιουργήσετε νέα καταχώριση επανάληψης. Μπορείτε να αλλάξετε οποιαδήποτε άλλη λεπτομέρεια της καταχώρισης.</value>
+  </data>
+  <data name="Reminder" xml:space="preserve">
+    <value>Υπενθύμιση</value>
+  </data>
+  <data name="RemoveHelp" xml:space="preserve">
+    <value>Αφαίρεση από αυτό το συμβάν</value>
+  </data>
+  <data name="RemoveMe" xml:space="preserve">
+    <value>Αφαίρεσέ με</value>
+  </data>
+  <data name="RepeatOn" xml:space="preserve">
+    <value>Επανάληψη Την</value>
+  </data>
+  <data name="RSVP" xml:space="preserve">
+    <value>Απάντηση</value>
+  </data>
+  <data name="Second" xml:space="preserve">
+    <value>δεύτερη</value>
+  </data>
+  <data name="Signup" xml:space="preserve">
+    <value>Δήλωση Συμμετοχής (Απάντηση)</value>
+  </data>
+  <data name="Third" xml:space="preserve">
+    <value>τρίτη</value>
+  </data>
+  <data name="TitleCalendarPlaceholder" xml:space="preserve">
+    <value>Τίτλος της καταχώρισης ημερολογίου</value>
+  </data>
+  <data name="TitlePlaceholder" xml:space="preserve">
+    <value>Τίτλος της καταχώρισης ημερολογίου</value>
+  </data>
+  <data name="TypeColor" xml:space="preserve">
+    <value>Χρώμα Τύπου</value>
+  </data>
+  <data name="TypeName" xml:space="preserve">
+    <value>Όνομα Τύπου</value>
+  </data>
+  <data name="Upcoming" xml:space="preserve">
+    <value>Προσεχή</value>
+  </data>
+  <data name="AllDayEvent" xml:space="preserve">
+    <value>Ολοήμερο Συμβάν</value>
+  </data>
+  <data name="DateRange" xml:space="preserve">
+    <value>{0} — {1}</value>
+  </data>
+  <data name="DownloadIcs" xml:space="preserve">
+    <value>Λήψη .ics</value>
+  </data>
+  <data name="SubscribeCalendar" xml:space="preserve">
+    <value>Εγγραφή στο Ημερολόγιο</value>
+  </data>
+  <data name="CalendarSyncTitle" xml:space="preserve">
+    <value>Συγχρονισμός Ημερολογίου</value>
+  </data>
+  <data name="CalendarSyncDescription" xml:space="preserve">
+    <value>Εγγραφείτε στο ημερολόγιο του τμήματός σας στο Google Calendar, το Microsoft Outlook, το Apple Calendar ή οποιαδήποτε εφαρμογή υποστηρίζει ροές iCal.</value>
+  </data>
+  <data name="ActivateCalendarSync" xml:space="preserve">
+    <value>Ενεργοποίηση Συγχρονισμού Ημερολογίου</value>
+  </data>
+  <data name="RegenerateCalendarSync" xml:space="preserve">
+    <value>Επαναδημιουργία Κλειδιού Συγχρονισμού</value>
+  </data>
+  <data name="CalendarSyncActivateHelp" xml:space="preserve">
+    <value>Για να συγχρονίσετε το ημερολόγιο του τμήματός σας με εξωτερική εφαρμογή ημερολογίου, πρέπει πρώτα να ενεργοποιήσετε τον συγχρονισμό ημερολογίου. Αυτό δημιουργεί μια μοναδική διεύθυνση URL συνδρομής. Αν η διεύθυνση URL παραβιαστεί, μπορείτε να την επαναδημιουργήσετε ώστε να ακυρωθεί η παλιά.</value>
+  </data>
+  <data name="CopyToClipboard" xml:space="preserve">
+    <value>Αντιγραφή στο Πρόχειρο</value>
+  </data>
+  <data name="SubscriptionUrl" xml:space="preserve">
+    <value>Διεύθυνση URL Συνδρομής</value>
+  </data>
+  <data name="WebCalLink" xml:space="preserve">
+    <value>Άνοιγμα σε Εφαρμογή Ημερολογίου</value>
+  </data>
+  <data name="CalendarSyncActive" xml:space="preserve">
+    <value>Ο συγχρονισμός ημερολογίου είναι ενεργός. Χρησιμοποιήστε την παρακάτω διεύθυνση URL για εγγραφή.</value>
+  </data>
+  <data name="CalendarSyncInactive" xml:space="preserve">
+    <value>Ο συγχρονισμός ημερολογίου δεν έχει ενεργοποιηθεί ακόμη. Κάντε κλικ στο παρακάτω κουμπί για να δημιουργήσετε τη διεύθυνση URL συνδρομής σας.</value>
+  </data>
+  <data name="Types" xml:space="preserve">
+    <value>Τύποι</value>
+  </data>
+  <data name="CheckIn" xml:space="preserve">
+    <value>Δήλωση Άφιξης</value>
+  </data>
+  <data name="CheckOut" xml:space="preserve">
+    <value>Δήλωση Αναχώρησης</value>
+  </data>
+  <data name="CheckInTime" xml:space="preserve">
+    <value>Ώρα Άφιξης</value>
+  </data>
+  <data name="CheckOutTime" xml:space="preserve">
+    <value>Ώρα Αναχώρησης</value>
+  </data>
+  <data name="Duration" xml:space="preserve">
+    <value>Διάρκεια</value>
+  </data>
+  <data name="CheckInSuccessful" xml:space="preserve">
+    <value>Η δήλωση άφιξης ολοκληρώθηκε</value>
+  </data>
+  <data name="CheckOutSuccessful" xml:space="preserve">
+    <value>Η δήλωση αναχώρησης ολοκληρώθηκε</value>
+  </data>
+  <data name="EditCheckInTimes" xml:space="preserve">
+    <value>Επεξεργασία Ωρών Άφιξης</value>
+  </data>
+  <data name="ManualOverride" xml:space="preserve">
+    <value>Χειροκίνητη Παράκαμψη</value>
+  </data>
+  <data name="AdminCheckIn" xml:space="preserve">
+    <value>Δήλωση Άφιξης από Διαχειριστή</value>
+  </data>
+  <data name="CheckInOnBehalf" xml:space="preserve">
+    <value>Δήλωση Άφιξης για Λογαριασμό Άλλου</value>
+  </data>
+  <data name="EventAttendanceReport" xml:space="preserve">
+    <value>Αναφορά Παρουσιών Συμβάντος</value>
+  </data>
+  <data name="TotalEventsAttended" xml:space="preserve">
+    <value>Σύνολο Συμβάντων που Παρακολουθήθηκαν</value>
+  </data>
+  <data name="TotalHours" xml:space="preserve">
+    <value>Συνολικές Ώρες</value>
+  </data>
+  <data name="NoCheckInRecord" xml:space="preserve">
+    <value>Δεν βρέθηκε εγγραφή άφιξης</value>
+  </data>
+  <data name="AlreadyCheckedIn" xml:space="preserve">
+    <value>Έχει ήδη δηλωθεί άφιξη</value>
+  </data>
+  <data name="NotCheckedIn" xml:space="preserve">
+    <value>Δεν έχει δηλωθεί άφιξη</value>
+  </data>
+  <data name="NotCheckedOut" xml:space="preserve">
+    <value>Δεν έχει δηλωθεί αναχώρηση</value>
+  </data>
+  <data name="LateRSVP" xml:space="preserve">
+    <value>Καθυστερημένη Απάντηση</value>
+  </data>
+  <data name="CustomTimes" xml:space="preserve">
+    <value>Προσαρμοσμένες Ώρες</value>
+  </data>
+  <data name="Unauthorized" xml:space="preserve">
+    <value>Μη εξουσιοδοτημένο</value>
+  </data>
+  <data name="CheckInDeleted" xml:space="preserve">
+    <value>Η δήλωση άφιξης διαγράφηκε</value>
+  </data>
+  <data name="CheckInNote" xml:space="preserve">
+    <value>Σημείωση Άφιξης</value>
+  </data>
+  <data name="CheckOutNote" xml:space="preserve">
+    <value>Σημείωση Αναχώρησης</value>
+  </data>
+  <data name="CheckedInBy" xml:space="preserve">
+    <value>Δήλωση Άφιξης Από</value>
+  </data>
+  <data name="CheckedOutBy" xml:space="preserve">
+    <value>Δήλωση Αναχώρησης Από</value>
+  </data>
+  <data name="CheckInDisabled" xml:space="preserve">
+    <value>Απενεργοποιημένη</value>
+  </data>
+  <data name="CheckInSelfService" xml:space="preserve">
+    <value>Αυτόματη Δήλωση Άφιξης/Αναχώρησης</value>
+  </data>
+  <data name="CheckInAdminOnly" xml:space="preserve">
+    <value>Μόνο Δημιουργός και Διαχειριστές</value>
+  </data>
+  <data name="CheckInNotYetAvailable" xml:space="preserve">
+    <value>Η δήλωση άφιξης ανοίγει 15 λεπτά πριν την έναρξη του συμβάντος.</value>
+  </data>
+  <data name="Attendees" xml:space="preserve">
+    <value>Συμμετέχοντες</value>
+  </data>
+  <data name="AttendeesAddedDirectly" xml:space="preserve">
+    <value>Οι επιλεγμένες ομάδες/άτομα θα προστεθούν ως συμμετέχοντες και θα ειδοποιηθούν απευθείας.</value>
+  </data>
+  <data name="EntitiesToNotifyHelp" xml:space="preserve">
+    <value>Οι επιλεγμένες ομάδες/άτομα θα ειδοποιηθούν για αυτό το συμβάν.</value>
+  </data>
+  <data name="PrintSignupSheet" xml:space="preserve">
+    <value>Εκτύπωση Φύλλου Δηλώσεων</value>
+  </data>
+  <data name="CheckInClosed" xml:space="preserve">
+    <value>Η δήλωση άφιξης δεν είναι πλέον διαθέσιμη για αυτό το συμβάν.</value>
+  </data>
+  <data name="CheckInBy" xml:space="preserve">
+    <value>Δήλωση άφιξης από {0}</value>
+  </data>
+  <data name="CheckOutBy" xml:space="preserve">
+    <value>Δήλωση αναχώρησης από {0}</value>
+  </data>
+</root>

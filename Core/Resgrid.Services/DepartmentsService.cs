@@ -285,6 +285,21 @@ namespace Resgrid.Services
 			return await _departmentMembersRepository.SaveOrUpdateAsync(dm, cancellationToken);
 		}
 
+		/// <summary>
+		/// Department membership and admin standing feed every visibility matrix (admins are always in
+		/// the allow list). Without a rebuild, a user added or removed today keeps yesterday's answer.
+		/// </summary>
+		private void SendMembershipVisibilityRefresh(int departmentId)
+		{
+			if (departmentId <= 0)
+				return;
+
+			_eventAggregator.SendMessage<SecurityRefreshEvent>(new SecurityRefreshEvent() { DepartmentId = departmentId, Type = SecurityCacheTypes.WhoCanViewUnits });
+			_eventAggregator.SendMessage<SecurityRefreshEvent>(new SecurityRefreshEvent() { DepartmentId = departmentId, Type = SecurityCacheTypes.WhoCanViewUnitLocations });
+			_eventAggregator.SendMessage<SecurityRefreshEvent>(new SecurityRefreshEvent() { DepartmentId = departmentId, Type = SecurityCacheTypes.WhoCanViewPersonnel });
+			_eventAggregator.SendMessage<SecurityRefreshEvent>(new SecurityRefreshEvent() { DepartmentId = departmentId, Type = SecurityCacheTypes.WhoCanViewPersonnelLocations });
+		}
+
 		public async Task<DepartmentMember> DeleteUserAsync(int departmentId, string userIdToDelete, string deletingUserId, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var member = await _departmentMembersRepository.GetDepartmentMemberByDepartmentIdAndUserIdAsync(departmentId, userIdToDelete);
@@ -311,6 +326,7 @@ namespace Resgrid.Services
 					InvalidatePersonnelNamesInCache(departmentId);
 					_usersService.ClearCacheForDepartment(departmentId);
 					InvalidateDepartmentMembers();
+					SendMembershipVisibilityRefresh(departmentId);
 
 					return member2;
 				}
@@ -425,6 +441,7 @@ namespace Resgrid.Services
 				});
 
 				InvalidateDepartmentUsersInCache(departmentId);
+				SendMembershipVisibilityRefresh(departmentId);
 
 				return saved;
 			}
@@ -674,6 +691,7 @@ namespace Resgrid.Services
 			InvalidateDepartmentMemberInCache(departmentMember.UserId, departmentMember.DepartmentId);
 			InvalidateDepartmentUserInCache(departmentMember.UserId, departmentMember.User);
 			await InvalidateAllDepartmentsCache(departmentMember.DepartmentId);
+			SendMembershipVisibilityRefresh(departmentMember.DepartmentId);
 
 			return saved;
 		}

@@ -84,7 +84,8 @@ var resgrid;
                 'it': '/images/flags/32/Italy.png',
                 'pl': '/images/flags/32/Poland.png',
                 'uk': '/images/flags/32/Ukraine.png',
-                'ar': '/images/flags/32/Saudi-Arabia.png'
+                'ar': '/images/flags/32/Saudi-Arabia.png',
+                'el': '/images/flags/32/Greece.png'
             };
 
             if (langCookieValue) {

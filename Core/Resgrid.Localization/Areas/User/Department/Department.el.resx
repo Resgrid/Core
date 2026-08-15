@@ -1,0 +1,1083 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="DeleteDepartmentSettingsInfo" xml:space="preserve">
+    <value>Ζητήστε τη διαγραφή του τμήματός σας. Πρόκειται για μόνιμη και μη αναστρέψιμη ενέργεια που χρειάζεται 25 ημέρες για να ολοκληρωθεί και εκτελείται εκτός ωραρίου. Κατά την περίοδο αναμονής μπορείτε να ακυρώσετε το αίτημα αν το επιθυμείτε.</value>
+  </data>
+  <data name="RequestDepartmentDeletion" xml:space="preserve">
+    <value>Αίτημα Διαγραφής Τμήματος</value>
+  </data>
+  <data name="DeleteDepartmentCurrentlyPendingInfo" xml:space="preserve">
+    <value>Το τμήμα σας έχει εκκρεμές αίτημα διαγραφής. Αν θέλετε να προχωρήσει αυτό το αίτημα, δεν χρειάζεται να κάνετε τίποτα· μετά την παρακάτω χρονική σήμανση (κατά τη νυχτερινή μας διαδικασία) το τμήμα σας και όλα του τα δεδομένα θα αφαιρεθούν. Αν θέλετε να ακυρώσετε το αίτημα και να μην διαγραφεί το τμήμα, πατήστε το κουμπί «Ακύρωση Διαγραφής Τμήματος» παρακάτω. Σημειώστε ότι οποιεσδήποτε αλλαγές σε διαχειριστές και κατόχους θα εμποδίσουν την ολοκλήρωση της διαδικασίας· συνιστάται να χρησιμοποιείτε το σύστημα μόνο σε λειτουργία ανάγνωσης για να κατεβάσετε δεδομένα που θέλετε να διατηρήσετε.</value>
+  </data>
+  <data name="MappingSettingsHeader" xml:space="preserve">
+    <value>Ρυθμίσεις Χαρτογράφησης</value>
+  </data>
+  <data name="SavedMappingSettings" xml:space="preserve">
+    <value>Οι Ρυθμίσεις Χαρτογράφησης αποθηκεύτηκαν με επιτυχία.</value>
+  </data>
+  <data name="MappingSettingsPersonnelHeader" xml:space="preserve">
+    <value>Ρυθμίσεις Χαρτογράφησης Προσωπικού</value>
+  </data>
+  <data name="MappingSettingsUnitsHeader" xml:space="preserve">
+    <value>Ρυθμίσεις Χαρτογράφησης Μονάδων</value>
+  </data>
+  <data name="MappingSettingsPersonnelAllowOverwriteLabel" xml:space="preserve">
+    <value>Να επιτρέπεται σε κατάσταση χωρίς δεδομένα τοποθεσίας να αποκρύπτει την προηγούμενη τοποθεσία</value>
+  </data>
+  <data name="MappingSettingsPersonnelTTLLabel" xml:space="preserve">
+    <value>TTL σε Λεπτά για Τοποθεσίες Προσωπικού</value>
+  </data>
+  <data name="MappingSettingsUnitAllowOverwriteLabel" xml:space="preserve">
+    <value>Να επιτρέπεται σε κατάσταση μονάδας χωρίς δεδομένα τοποθεσίας να αποκρύπτει την προηγούμενη τοποθεσία</value>
+  </data>
+  <data name="MappingSettingsUnitTTLLabel" xml:space="preserve">
+    <value>TTL σε Λεπτά για Τοποθεσίες Μονάδων</value>
+  </data>
+  <data name="PersonnelAllowOverwriteHelp" xml:space="preserve">
+    <value>Αν είναι ενεργοποιημένο και έρθει κατάσταση για τον χρήστη (π.χ. Σε Αναμονή) χωρίς γεωτοποθεσία, θα αποκρύψει την τοποθεσία του χρήστη στον χάρτη. Διαφορετικά θα εμφανίζεται η τελευταία τοποθεσία του χρήστη, ακόμη και αν είναι παλαιότερη.</value>
+  </data>
+  <data name="UnitAllowOverwriteHelp" xml:space="preserve">
+    <value>Αν είναι ενεργοποιημένο και έρθει κατάσταση για τη μονάδα (π.χ. Στη Βάση) χωρίς γεωτοποθεσία, θα αποκρύψει την τοποθεσία της μονάδας στον χάρτη. Διαφορετικά θα εμφανίζεται η τελευταία τοποθεσία, ακόμη και αν είναι παλαιότερη.</value>
+  </data>
+  <data name="PersonnelTTLHelp" xml:space="preserve">
+    <value>Σε Λεπτά, για πόσο ισχύουν οι τοποθεσίες ώστε να εμφανίζονται στον χάρτη. Δηλαδή η τιμή 60 σημαίνει ότι ο δείκτης ενός ατόμου θα εμφανίζεται στους χάρτες έως και 60 λεπτά, μετά δεν θα εμφανίζεται. Η τιμή 0 απενεργοποιεί το TTL και μια τοποθεσία, ανεξάρτητα από την παλαιότητά της, θα εμφανίζεται στον χάρτη.</value>
+  </data>
+  <data name="UnitTTLHelp" xml:space="preserve">
+    <value>Σε Λεπτά, για πόσο ισχύουν οι τοποθεσίες ώστε να εμφανίζονται στον χάρτη. Δηλαδή η τιμή 60 σημαίνει ότι ο δείκτης μιας μονάδας θα εμφανίζεται στους χάρτες έως και 60 λεπτά, μετά δεν θα εμφανίζεται. Η τιμή 0 απενεργοποιεί το TTL και μια τοποθεσία, ανεξάρτητα από την παλαιότητά της, θα εμφανίζεται στον χάρτη.</value>
+  </data>
+  <data name="GroupDispatchSettingsHeader" xml:space="preserve">
+    <value>Ρυθμίσεις Αποστολής Ομάδων</value>
+  </data>
+  <data name="UnitDispatchSettingsHeader" xml:space="preserve">
+    <value>Ρυθμίσεις Αποστολής Μονάδων</value>
+  </data>
+  <data name="UnitDispatchAlsoDispatchToAssignedPersonnelLabel" xml:space="preserve">
+    <value>Αποστολή Επίσης στο Ανατεθειμένο Προσωπικό</value>
+  </data>
+  <data name="UnitDispatchAlsoDispatchToGroupLabel" xml:space="preserve">
+    <value>Αποστολή Επίσης σε Ολόκληρη την Ομάδα</value>
+  </data>
+  <data name="ShiftSettingsHeader" xml:space="preserve">
+    <value>Ρυθμίσεις Βαρδιών</value>
+  </data>
+  <data name="SaveShiftSettingsText" xml:space="preserve">
+    <value>Οι Ρυθμίσεις Βαρδιών αποθηκεύτηκαν με επιτυχία.</value>
+  </data>
+  <data name="ShiftSignupSettingsHeader" xml:space="preserve">
+    <value>Ρυθμίσεις Δήλωσης Συμμετοχής σε Βάρδιες</value>
+  </data>
+  <data name="ShiftSignupsMultipleGroupsHeader" xml:space="preserve">
+    <value>Να Επιτρέπονται Δηλώσεις για Πολλαπλές Ομάδες</value>
+  </data>
+  <data name="PersonnelOnUnitSetUnitStatusLabel" xml:space="preserve">
+    <value>Το Προσωπικό σε Μονάδα Ορίζει την Κατάσταση Μονάδας</value>
+  </data>
+  <data name="AccountOwner" xml:space="preserve">
+    <value>Κάτοχος Λογαριασμού</value>
+  </data>
+  <data name="Address" xml:space="preserve">
+    <value>Διεύθυνση</value>
+  </data>
+  <data name="AddressError" xml:space="preserve">
+    <value>Δεν μπορέσαμε να επαληθεύσουμε τη διεύθυνση που δώσατε. Ελέγξτε ότι είναι σωστή πριν συνεχίσετε.</value>
+  </data>
+  <data name="AddressHelp" xml:space="preserve">
+    <value>Αυτή είναι η διεύθυνση του τμήματός σας· μπορεί να είναι η διεύθυνση ενός μεμονωμένου σταθμού ή του γραφείου της περιφέρειάς σας. Αυτή η διεύθυνση χρησιμοποιείται για τον εντοπισμό της περιφέρειας και της περιοχής σας και ως εφεδρική για ορισμένες λειτουργίες (π.χ. κεντράρισμα του big board).</value>
+  </data>
+  <data name="ApiRssSettings" xml:space="preserve">
+    <value>Ρυθμίσεις API και RSS</value>
+  </data>
+  <data name="ApiSettingsHeader" xml:space="preserve">
+    <value>Ρυθμίσεις API</value>
+  </data>
+  <data name="CallSettingsHeader" xml:space="preserve">
+    <value>Ρυθμίσεις Εισαγωγής Κλήσεων</value>
+  </data>
+  <data name="CallSorting" xml:space="preserve">
+    <value>Ταξινόμηση Κλήσεων</value>
+  </data>
+  <data name="City" xml:space="preserve">
+    <value>Πόλη</value>
+  </data>
+  <data name="CityLabel" xml:space="preserve">
+    <value>Πόλη</value>
+  </data>
+  <data name="CompletedOn" xml:space="preserve">
+    <value>Ολοκληρώθηκε Στις</value>
+  </data>
+  <data name="Country" xml:space="preserve">
+    <value>Χώρα</value>
+  </data>
+  <data name="CountryLabel" xml:space="preserve">
+    <value>Χώρα</value>
+  </data>
+  <data name="DefaultMapCenterLabel" xml:space="preserve">
+    <value>Προεπιλεγμένες Συντεταγμένες GPS Κέντρου Χάρτη</value>
+  </data>
+  <data name="DeleteInvite" xml:space="preserve">
+    <value>Διαγραφή Πρόσκλησης</value>
+  </data>
+  <data name="DeleteInviteWarning" xml:space="preserve">
+    <value>ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Αυτό θα διαγράψει οριστικά αυτή την πρόσκληση και ο σύνδεσμος που έχει ο χρήστης στο email θα οδηγεί σε σφάλμα. Είστε βέβαιοι ότι θέλετε να διαγράψετε την πρόσκληση;</value>
+  </data>
+  <data name="DepartmentAddressHeader" xml:space="preserve">
+    <value>Διεύθυνση Τμήματος</value>
+  </data>
+  <data name="DepartmentName" xml:space="preserve">
+    <value>Όνομα Τμήματος</value>
+  </data>
+  <data name="DepartmentSettingsHeader" xml:space="preserve">
+    <value>Ρυθμίσεις Τμήματος</value>
+  </data>
+  <data name="DisableAutoAvailable" xml:space="preserve">
+    <value>Απενεργοποίηση Αυτόματης Διαθεσιμότητας</value>
+  </data>
+  <data name="DisableAutoAvailableHelp" xml:space="preserve">
+    <value>Απενεργοποίηση της αυτόματης ρύθμισης της κατάστασης του προσωπικού σε Διαθέσιμος μετά από μία ώρα</value>
+  </data>
+  <data name="DispatchImportEmail" xml:space="preserve">
+    <value>Email Εισαγωγής Αποστολών</value>
+  </data>
+  <data name="DispatchImportEmailHelp" xml:space="preserve">
+    <value>Αυτή είναι η διεύθυνση email γενικής κλήσης· όλοι οι χρήστες του τμήματός σας (που έχουν ενεργοποιημένες τις ειδοποιήσεις κλήσεων) θα λαμβάνουν την ειδοποίηση κλήσης</value>
+  </data>
+  <data name="DispatchSettings" xml:space="preserve">
+    <value>Ρυθμίσεις Αποστολής</value>
+  </data>
+  <data name="DispatchSettingsHeader" xml:space="preserve">
+    <value>Ρυθμίσεις Αποστολής</value>
+  </data>
+  <data name="EmailAddress" xml:space="preserve">
+    <value>Διεύθυνση Email</value>
+  </data>
+  <data name="EmailAddresses" xml:space="preserve">
+    <value>Διευθύνσεις Email</value>
+  </data>
+  <data name="EmailAddressesHelp" xml:space="preserve">
+    <value>Εισαγάγετε τις διευθύνσεις email χωρισμένες με κόμμα (π.χ. "test1@test.com, test2@test.com")</value>
+  </data>
+  <data name="EmailType" xml:space="preserve">
+    <value>Τύπος Email</value>
+  </data>
+  <data name="ForceDepartmentUpdate" xml:space="preserve">
+    <value>Εξαναγκασμός Ενημέρωσης Τμήματος</value>
+  </data>
+  <data name="ForceDepartmentUpdateInfo" xml:space="preserve">
+    <value>Το Resgrid αποθηκεύει προσωρινά ορισμένα δεδομένα τμήματος για βελτίωση της απόδοσης. Παραδείγματα δεδομένων που αποθηκεύονται προσωρινά είναι τα επίπεδα στελέχωσης, οι ρυθμίσεις τμήματος και οι ρόλοι\ομάδες\ονόματα προσωπικού. Αν αντιμετωπίζετε προβλήματα όπου ορισμένα δεδομένα τμήματος είναι λανθασμένα, ίσως θέλετε να εκκαθαρίσετε την προσωρινή μνήμη του τμήματός σας.</value>
+  </data>
+  <data name="InvitesHeader" xml:space="preserve">
+    <value>Προσκλήσεις</value>
+  </data>
+  <data name="LatitudePlaceholder" xml:space="preserve">
+    <value>Γεωγραφικό Πλάτος Κέντρου Χάρτη</value>
+  </data>
+  <data name="LatitudePlaceholderHelp" xml:space="preserve">
+    <value>Γεωγραφικό Πλάτος (Δεκαδική Σημειογραφία: π.χ. 39.1517)</value>
+  </data>
+  <data name="LongitudePlaceholder" xml:space="preserve">
+    <value>Γεωγραφικό Μήκος Κέντρου Χάρτη</value>
+  </data>
+  <data name="LongitudePlaceholderHelp" xml:space="preserve">
+    <value>Γεωγραφικό Μήκος (Δεκαδική Σημειογραφία: π.χ. -119.4571)</value>
+  </data>
+  <data name="MinutesToKeepOpen" xml:space="preserve">
+    <value>Λεπτά διατήρησης της κλήσης ανοιχτής</value>
+  </data>
+  <data name="MinutesToKeepOpenHelp" xml:space="preserve">
+    <value>Η παραπάνω τιμή θα κρατά τις κλήσεις που εισάγονται μέσω email ανοιχτές για τόσο χρόνο και μετά θα κλείνουν. Πρέπει επίσης να είναι επιλεγμένο το πλαίσιο Περικοπής για να γίνεται αυτόματο κλείσιμο.</value>
+  </data>
+  <data name="Pending" xml:space="preserve">
+    <value>Εκκρεμής</value>
+  </data>
+  <data name="PersonCallDispatchStatusLabel" xml:space="preserve">
+    <value>Κατάσταση Αποστολής Ατόμου σε Κλήση</value>
+  </data>
+  <data name="PersonCallReleaseStatusLabel" xml:space="preserve">
+    <value>Κατάσταση Αποδέσμευσης Ατόμου από Κλήση</value>
+  </data>
+  <data name="UnitCallDispatchStatusLabel" xml:space="preserve">
+    <value>Κατάσταση Αποστολής Μονάδας σε Κλήση</value>
+  </data>
+  <data name="UnitCallReleaseStatusLabel" xml:space="preserve">
+    <value>Κατάσταση Αποδέσμευσης Μονάδας από Κλήση</value>
+  </data>
+  <data name="UnitDefaultStatusesHelp" xml:space="preserve">
+    <value>Αυτές οι προεπιλεγμένες καταστάσεις μονάδων χρησιμοποιούν μόνο τους ενσωματωμένους τύπους κατάστασης μονάδας. Χρησιμοποιήστε τον παρακάτω πίνακα παρακάμψεων τύπου μονάδας όταν ένας τύπος μονάδας χρειάζεται δικές του προσαρμοσμένες καταστάσεις.</value>
+  </data>
+  <data name="UnitTypeStatusOverridesHeader" xml:space="preserve">
+    <value>Παρακάμψεις Κατάστασης ανά Τύπο Μονάδας</value>
+  </data>
+  <data name="UnitTypeStatusOverridesHelp" xml:space="preserve">
+    <value>Εδώ εμφανίζονται μόνο οι τύποι μονάδων με προσαρμοσμένες καταστάσεις. Αφήστε μια τιμή στην Προεπιλογή για να χρησιμοποιηθεί η παραπάνω ενσωματωμένη κατάσταση σε επίπεδο τμήματος.</value>
+  </data>
+  <data name="PersonnelSorting" xml:space="preserve">
+    <value>Ταξινόμηση Προσωπικού</value>
+  </data>
+  <data name="PersonnelStaffingResetHeader" xml:space="preserve">
+    <value>Επαναφορά Στελέχωσης Προσωπικού</value>
+  </data>
+  <data name="PersonnelStaffingResetInfo" xml:space="preserve">
+    <value>Αν χρειάζεται να επαναφέρετε καθημερινά το επίπεδο στελέχωσης όλου του προσωπικού σας, μπορείτε να το διαμορφώσετε εδώ. Ένα παράδειγμα θα ήταν η επαναφορά της στελέχωσης σε μη διαθέσιμη κάθε ημέρα, ώστε τις ημέρες υψηλού κινδύνου να είστε βέβαιοι ότι το προσωπικό που έχει σημανθεί ως διαθέσιμο δήλωσε διαθεσιμότητα μετά την επαναφορά.</value>
+  </data>
+  <data name="PersonnelStatusResetHeader" xml:space="preserve">
+    <value>Επαναφορά Κατάστασης Προσωπικού</value>
+  </data>
+  <data name="PersonnelStatusResetInfo" xml:space="preserve">
+    <value>Αν χρειάζεται να επαναφέρετε καθημερινά τις καταστάσεις όλου του προσωπικού σας, μπορείτε να το διαμορφώσετε εδώ. Ένα παράδειγμα θα ήταν η επαναφορά της κατάστασης σε «Σε Αναμονή» κάθε ημέρα, ώστε να γνωρίζετε ότι η κατάσταση του προσωπικού έχει μηδενιστεί.</value>
+  </data>
+  <data name="PostalCodeLabel" xml:space="preserve">
+    <value>Ταχυδρομικός Κώδικας</value>
+  </data>
+  <data name="Provision" xml:space="preserve">
+    <value>Δημιουργία Διευθύνσεων URL Rss\Atom</value>
+  </data>
+  <data name="ProvisionFailureBody" xml:space="preserve">
+    <value>Το Resgrid δεν μπόρεσε να δεσμεύσει τον αριθμό που ζητήσατε· δοκιμάστε ξανά με άλλον αριθμό. Αν δεν μπορείτε να δεσμεύσετε αριθμό, επικοινωνήστε μαζί μας για να μας ενημερώσετε.</value>
+  </data>
+  <data name="ProvisionFailureHeader" xml:space="preserve">
+    <value>Αποτυχία Δέσμευσης</value>
+  </data>
+  <data name="PruneCalls" xml:space="preserve">
+    <value>Περικοπή (Αυτόματο Κλείσιμο) Κλήσεων</value>
+  </data>
+  <data name="PruneCallsHelp" xml:space="preserve">
+    <value>Αυτό θα κλείνει αυτόματα τις κλήσεις που δημιουργούνται αυτόματα (π.χ. μέσω διαδικασίας εισαγωγής email, μηνύματος ή ήχου)</value>
+  </data>
+  <data name="Regenerate" xml:space="preserve">
+    <value>Επαναδημιουργία Διευθύνσεων URL RSS</value>
+  </data>
+  <data name="RegenerateWarning" xml:space="preserve">
+    <value>ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Η επαναδημιουργία των διευθύνσεων URL Rss\Atom θα απαιτήσει από όλους τους αναγνώστες\καταναλωτές να ενημερωθούν σε νέα διεύθυνση URL. Είστε βέβαιοι ότι θέλετε να τις επαναδημιουργήσετε;</value>
+  </data>
+  <data name="ResendInvite" xml:space="preserve">
+    <value>Επαναποστολή Πρόσκλησης</value>
+  </data>
+  <data name="ResendInviteWarning" xml:space="preserve">
+    <value>ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Αυτό θα στείλει ξανά αυτή την πρόσκληση στη διεύθυνση email της πρόσκλησης και θα επαναφέρει την ημερομηνία αποστολής. Είστε βέβαιοι ότι θέλετε να στείλετε ξανά αυτή την πρόσκληση;</value>
+  </data>
+  <data name="ResetStaffingDaily" xml:space="preserve">
+    <value>Καθημερινή Επαναφορά Στελέχωσης;</value>
+  </data>
+  <data name="ResetStaffingLevelTo" xml:space="preserve">
+    <value>Επαναφορά Επιπέδου Στελέχωσης Σε</value>
+  </data>
+  <data name="ResetStatusDaily" xml:space="preserve">
+    <value>Καθημερινή Επαναφορά Κατάστασης;</value>
+  </data>
+  <data name="ResetStatusDailyTime" xml:space="preserve">
+    <value>Ώρα Επαναφοράς Κατάστασης</value>
+  </data>
+  <data name="ResetStatusDailyTo" xml:space="preserve">
+    <value>Επαναφορά Κατάστασης Σε</value>
+  </data>
+  <data name="RssActiveCallFeedHeader" xml:space="preserve">
+    <value>Ροή RSS Ενεργών Κλήσεων</value>
+  </data>
+  <data name="RssActiveCallFeedInfo" xml:space="preserve">
+    <value>Το Resgrid επιτρέπει την πρόσβαση στις ενεργές κλήσεις του τμήματός σας μέσω ροής RSS. Αυτό επιτρέπει σε οποιονδήποτε αναγνώστη ροών (όπως αναγνώστη ιστολογίων ή ακόμη και το Microsoft Outlook) να εμφανίζει ενεργά και να ειδοποιεί για νέες κλήσεις. Για μέγιστη συμβατότητα, το Resgrid θα δημιουργήσει μοναδική διεύθυνση URL για αναγνώστες RSS 2.0. Αυτή η διεύθυνση URL δεν έχει άλλη προστασία (όνομα χρήστη\κωδικό κ.λπ.), οπότε είναι σημαντικό να μην κοινοποιείται δημόσια αν δεν θέλετε τα δεδομένα ενεργών κλήσεων να είναι δημόσια.</value>
+  </data>
+  <data name="RssActiveCallNoFeedInfo" xml:space="preserve">
+    <value>Το τμήμα σας δεν έχει δεσμευμένες διευθύνσεις URL ροής RSS. Κάντε κλικ στο παρακάτω κουμπί για να δεσμεύσετε τις διευθύνσεις URL RSS σας. Δεσμεύστε διευθύνσεις URL RSS\Atom μόνο όταν τις χρειάζεται το τμήμα σας.</value>
+  </data>
+  <data name="SavedDispatchSettings" xml:space="preserve">
+    <value>Οι Ρυθμίσεις Αποστολής αποθηκεύτηκαν με επιτυχία.</value>
+  </data>
+  <data name="SendInvites" xml:space="preserve">
+    <value>Αποστολή Προσκλήσεων</value>
+  </data>
+  <data name="SentOn" xml:space="preserve">
+    <value>Στάλθηκε Στις</value>
+  </data>
+  <data name="SetStatusforShiftPersonnelOnDispatchLabel" xml:space="preserve">
+    <value>Ορισμός Κατάστασης για Προσωπικό Βάρδιας κατά την Αποστολή</value>
+  </data>
+  <data name="ShiftSettings" xml:space="preserve">
+    <value>Ρυθμίσεις Βαρδιών</value>
+  </data>
+  <data name="State" xml:space="preserve">
+    <value>Νομός/Επαρχία</value>
+  </data>
+  <data name="StateLabel" xml:space="preserve">
+    <value>Νομός/Επαρχία</value>
+  </data>
+  <data name="Street" xml:space="preserve">
+    <value>Οδός</value>
+  </data>
+  <data name="StreetLabel" xml:space="preserve">
+    <value>Οδός</value>
+  </data>
+  <data name="TimeResetStaffingDaily" xml:space="preserve">
+    <value>Ώρα Επαναφοράς Στελέχωσης</value>
+  </data>
+  <data name="TimeZone" xml:space="preserve">
+    <value>Ζώνη Ώρας</value>
+  </data>
+  <data name="UnitSorting" xml:space="preserve">
+    <value>Ταξινόμηση Μονάδων</value>
+  </data>
+  <data name="Use24HourTime" xml:space="preserve">
+    <value>Χρήση 24ωρης Μορφής Ώρας</value>
+  </data>
+  <data name="UseShiftForGroupDispatchLabel" xml:space="preserve">
+    <value>Χρήση Βάρδιας για Αποστολή Ομάδας</value>
+  </data>
+  <data name="Zip" xml:space="preserve">
+    <value>Ταχυδρομικός Κώδικας</value>
+  </data>
+  <data name="DeleteDepartmentHeader" xml:space="preserve">
+    <value>Διαγραφή Τμήματος</value>
+  </data>
+  <data name="DeleteDepartmentInfo" xml:space="preserve">
+    <value>Εδώ μπορείτε να ζητήσετε τη διαγραφή του τμήματός σας. Μόνο ο Κάτοχος Λογαριασμού μπορεί να ζητήσει τη διαγραφή του τμήματος. Όλοι οι χρήστες και τα δεδομένα που σχετίζονται με το τμήμα σας θα αφαιρεθούν από το σύστημα Resgrid μετά την ολοκλήρωση της διαδικασίας. Αυτή η διαδικασία δεν είναι αναστρέψιμη! Οποιαδήποτε στιγμή πριν ολοκληρωθεί, μπορείτε να ακυρώσετε το αίτημα και να διατηρήσετε τα δεδομένα σας. Το τμήμα σας θα διαγραφεί 25 ημέρες μετά την υποβολή του αιτήματος.</value>
+  </data>
+  <data name="RequestDeletion" xml:space="preserve">
+    <value>Αίτημα Διαγραφής</value>
+  </data>
+  <data name="CheckToDelete" xml:space="preserve">
+    <value>Επιλέξτε το παρακάτω πλαίσιο για να επιβεβαιώσετε το αίτημα διαγραφής σας</value>
+  </data>
+  <data name="ConfirmDelete" xml:space="preserve">
+    <value>Κατανοώ και συμφωνώ με τη διαδικασία διαγραφής</value>
+  </data>
+  <data name="CancelDepartmentDeletion" xml:space="preserve">
+    <value>Ακύρωση Διαγραφής Τμήματος</value>
+  </data>
+  <data name="DeleteDepartmentSettingsHeader" xml:space="preserve">
+    <value>Διαγραφή του Τμήματός Σας</value>
+  </data>
+  <data name="EnableSupressStaffings" xml:space="preserve">
+    <value>Ενεργοποίηση Καταστολής Στελέχωσης</value>
+  </data>
+  <data name="SupressStaffingsHeader" xml:space="preserve">
+    <value>Καταστολή (Σίγαση) για Αυτά τα Επίπεδα Στελέχωσης</value>
+  </data>
+  <data name="SupressStaffingsInfo" xml:space="preserve">
+    <value>Επιλέξτε παρακάτω τα Επίπεδα Στελέχωσης Προσωπικού για τα οποία δεν θα λαμβάνονται ειδοποιήσεις, αποστολές, ειδοποιήσεις συναγερμού, μηνύματα ή οποιαδήποτε άλλη επικοινωνία. Συνήθως πρόκειται για τα επίπεδα «Εκτός Υπηρεσίας» ή «Σε Άδεια».</value>
+  </data>
+  <data name="AddContact" xml:space="preserve">
+    <value>Προσθήκη Επαφής</value>
+  </data>
+  <data name="ContactTypeLabel" xml:space="preserve">
+    <value>Τύπος Επαφής</value>
+  </data>
+  <data name="DepartmentModuleSettingsInfo" xml:space="preserve">
+    <value>Εδώ μπορείτε να ελέγξετε πληροφορίες υψηλού επιπέδου για κάθε Ενότητα του συστήματος Resgrid. Νέες επιλογές ενοτήτων υψηλού επιπέδου θα προστίθενται εδώ. Αυτές οι ρυθμίσεις βρίσκονται σε πρώιμο στάδιο και ενδέχεται να μην έχουν ακόμη εφαρμοστεί σε όλα τα μέρη του συστήματος Resgrid. Για παράδειγμα, αν απενεργοποιήσετε την ενότητα Εκπαίδευσης, μπορεί να εμφανίζεται ακόμη σε κάποια οθόνη βαθιά μέσα σε άλλη λειτουργία. Θα εργαστούμε στο μέλλον ώστε να διασφαλιστεί η συνέπεια.</value>
+  </data>
+  <data name="DisabledCalendarLabel" xml:space="preserve">
+    <value>Ημερολόγιο</value>
+  </data>
+  <data name="DisabledInventoryLabel" xml:space="preserve">
+    <value>Απόθεμα</value>
+  </data>
+  <data name="DisabledLogsLabel" xml:space="preserve">
+    <value>Καταγραφές</value>
+  </data>
+  <data name="DisabledMaintenanceLabel" xml:space="preserve">
+    <value>Συντήρηση</value>
+  </data>
+  <data name="DisabledNotesLabel" xml:space="preserve">
+    <value>Σημειώσεις</value>
+  </data>
+  <data name="DisabledReportsLabel" xml:space="preserve">
+    <value>Αναφορές</value>
+  </data>
+  <data name="DisabledTrainingLabel" xml:space="preserve">
+    <value>Εκπαίδευση</value>
+  </data>
+  <data name="DisableMappingLabel" xml:space="preserve">
+    <value>Χαρτογράφηση</value>
+  </data>
+  <data name="DisableMessagingLabel" xml:space="preserve">
+    <value>Μηνύματα</value>
+  </data>
+  <data name="DisableShiftsLabel" xml:space="preserve">
+    <value>Βάρδιες</value>
+  </data>
+  <data name="DispatchSettingsModuleHeader" xml:space="preserve">
+    <value>Ενότητες Τμήματος</value>
+  </data>
+  <data name="ReportsDocumentsLabel" xml:space="preserve">
+    <value>Απενεργοποίηση Εγγράφων</value>
+  </data>
+  <data name="SavedModuleSettings" xml:space="preserve">
+    <value>Οι Ρυθμίσεις Ενοτήτων Τμήματος Αποθηκεύτηκαν</value>
+  </data>
+  <data name="PersonnelOnUnitSetUnitStatusHelp" xml:space="preserve">
+    <value>Όταν μια μονάδα υποβάλλει κατάσταση και υπάρχουν χρήστες σε ρόλους, η κατάσταση των χρηστών θα οριστεί σε Επί Μονάδας.</value>
+  </data>
+  <data name="CallDispatchSettingsHeader" xml:space="preserve">
+    <value>Ρυθμίσεις Κλήσεων και Αποστολής</value>
+  </data>
+  <data name="CallDispatchSettingsNav" xml:space="preserve">
+    <value>Ρυθμίσεις Κλήσεων και Αποστολής</value>
+  </data>
+  <data name="SavedCallDispatchSettings" xml:space="preserve">
+    <value>Οι Ρυθμίσεις Κλήσεων και Αποστολής αποθηκεύτηκαν με επιτυχία.</value>
+  </data>
+  <data name="CheckInTimerSettingsHeader" xml:space="preserve">
+    <value>Ρυθμίσεις Χρονομέτρων Παρουσίας</value>
+  </data>
+  <data name="CheckInTimerGeneralHeader" xml:space="preserve">
+    <value>Γενικές Ρυθμίσεις</value>
+  </data>
+  <data name="CheckInTimerAutoEnableLabel" xml:space="preserve">
+    <value>Αυτόματη Ενεργοποίηση Χρονομέτρων Παρουσίας για Νέες Κλήσεις</value>
+  </data>
+  <data name="CheckInTimerAutoEnableHelp" xml:space="preserve">
+    <value>Όταν είναι ενεργοποιημένο, όλες οι νέες κλήσεις θα έχουν αυτόματα ενεργά χρονόμετρα παρουσίας.</value>
+  </data>
+  <data name="CheckInTimerDefaultConfigsHeader" xml:space="preserve">
+    <value>Προεπιλεγμένες Διαμορφώσεις Χρονομέτρων</value>
+  </data>
+  <data name="CheckInTimerDefaultConfigsHelp" xml:space="preserve">
+    <value>Αυτές ορίζουν τα προεπιλεγμένα διαστήματα παρουσίας για κάθε τύπο στόχου. Ισχύουν για όλες τις κλήσεις εκτός αν παρακαμφθούν από τους παρακάτω κανόνες τύπου/προτεραιότητας κλήσης.</value>
+  </data>
+  <data name="CheckInTimerOverridesHeader" xml:space="preserve">
+    <value>Παρακάμψεις Τύπου / Προτεραιότητας Κλήσης</value>
+  </data>
+  <data name="CheckInTimerOverridesHelp" xml:space="preserve">
+    <value>Οι παρακάμψεις υπερισχύουν των προεπιλεγμένων χρονομέτρων όταν μια κλήση ταιριάζει με τον καθορισμένο τύπο ή/και προτεραιότητα.</value>
+  </data>
+  <data name="CheckInTimerTargetTypeLabel" xml:space="preserve">
+    <value>Τύπος Στόχου</value>
+  </data>
+  <data name="CheckInTimerUnitTypeLabel" xml:space="preserve">
+    <value>Τύπος Μονάδας</value>
+  </data>
+  <data name="CheckInTimerDurationLabel" xml:space="preserve">
+    <value>Διάρκεια (λεπτά)</value>
+  </data>
+  <data name="CheckInTimerWarningLabel" xml:space="preserve">
+    <value>Όριο Προειδοποίησης (λεπτά)</value>
+  </data>
+  <data name="CheckInTimerEnabledLabel" xml:space="preserve">
+    <value>Ενεργοποιημένο</value>
+  </data>
+  <data name="CheckInTimerCallTypeLabel" xml:space="preserve">
+    <value>Αναγνωριστικό Τύπου Κλήσης</value>
+  </data>
+  <data name="CheckInTimerCallPriorityLabel" xml:space="preserve">
+    <value>Προτεραιότητα Κλήσης</value>
+  </data>
+  <data name="CheckInTimerAddConfigButton" xml:space="preserve">
+    <value>Προσθήκη Διαμόρφωσης Χρονομέτρου</value>
+  </data>
+  <data name="CheckInTimerAddOverrideButton" xml:space="preserve">
+    <value>Προσθήκη Παράκαμψης</value>
+  </data>
+  <data name="CheckInTimerAddNewDefault" xml:space="preserve">
+    <value>Προσθήκη Νέου Προεπιλεγμένου Χρονομέτρου</value>
+  </data>
+  <data name="CheckInTimerAddNewOverride" xml:space="preserve">
+    <value>Προσθήκη Νέας Παράκαμψης</value>
+  </data>
+  <data name="CheckInTimerNoneOption" xml:space="preserve">
+    <value>-- Κανένα --</value>
+  </data>
+  <data name="CheckInTimerAnyOption" xml:space="preserve">
+    <value>-- Οποιοδήποτε --</value>
+  </data>
+  <data name="CheckInTimerTargetPersonnel" xml:space="preserve">
+    <value>Προσωπικό</value>
+  </data>
+  <data name="CheckInTimerTargetUnitType" xml:space="preserve">
+    <value>Τύπος Μονάδας</value>
+  </data>
+  <data name="CheckInTimerTargetIC" xml:space="preserve">
+    <value>Διοικητής Συμβάντος</value>
+  </data>
+  <data name="CheckInTimerTargetPAR" xml:space="preserve">
+    <value>PAR (Λογοδοσία Προσωπικού)</value>
+  </data>
+  <data name="CheckInTimerTargetHazmat" xml:space="preserve">
+    <value>Έκθεση σε Επικίνδυνα Υλικά</value>
+  </data>
+  <data name="CheckInTimerTargetSectorRotation" xml:space="preserve">
+    <value>Εναλλαγή Τομέα</value>
+  </data>
+  <data name="CheckInTimerTargetRehab" xml:space="preserve">
+    <value>Αποκατάσταση</value>
+  </data>
+  <data name="CheckInTimerLeaveBlankForAny" xml:space="preserve">
+    <value>αφήστε το κενό για οποιοδήποτε</value>
+  </data>
+  <data name="CheckInTimerYes" xml:space="preserve">
+    <value>Ναι</value>
+  </data>
+  <data name="CheckInTimerNo" xml:space="preserve">
+    <value>Όχι</value>
+  </data>
+  <data name="CheckInTimerDeleteConfirm" xml:space="preserve">
+    <value>Διαγραφή αυτής της διαμόρφωσης χρονομέτρου;</value>
+  </data>
+  <data name="CheckInTimerOverrideDeleteConfirm" xml:space="preserve">
+    <value>Διαγραφή αυτής της παράκαμψης;</value>
+  </data>
+  <data name="CheckInTimerSourceDefault" xml:space="preserve">
+    <value>Προεπιλογή</value>
+  </data>
+  <data name="CheckInTimerSourceOverride" xml:space="preserve">
+    <value>Παράκαμψη</value>
+  </data>
+  <data name="CheckInTimerPriorityLow" xml:space="preserve">
+    <value>Χαμηλή</value>
+  </data>
+  <data name="CheckInTimerPriorityMedium" xml:space="preserve">
+    <value>Μεσαία</value>
+  </data>
+  <data name="CheckInTimerPriorityHigh" xml:space="preserve">
+    <value>Υψηλή</value>
+  </data>
+  <data name="CheckInTimerPriorityEmergency" xml:space="preserve">
+    <value>Έκτακτης Ανάγκης</value>
+  </data>
+  <data name="CheckInTimerSaveGeneral" xml:space="preserve">
+    <value>Αποθήκευση Γενικών Ρυθμίσεων</value>
+  </data>
+  <data name="CheckInTimerActiveStatesLabel" xml:space="preserve">
+    <value>Ενεργές Καταστάσεις</value>
+  </data>
+  <data name="CheckInTimerLeaveEmptyForAllStates" xml:space="preserve">
+    <value>Αφήστε το κενό για «Όλες τις Καταστάσεις».</value>
+  </data>
+  <data name="CheckInTimerAllStates" xml:space="preserve">
+    <value>Όλες</value>
+  </data>
+  <data name="TtsLanguage" xml:space="preserve">
+    <value>Γλώσσα TTS</value>
+  </data>
+  <data name="TtsLanguageHelp" xml:space="preserve">
+    <value>Επιλέξτε τη γλώσσα ή διάλεκτο eSpeak-NG που θα χρησιμοποιηθεί για τα φωνητικά μηνύματα αυτού του τμήματος.</value>
+  </data>
+  <data name="ChatbotSettingsHeader" xml:space="preserve">
+    <value>Ρυθμίσεις Βοηθού</value>
+  </data>
+  <data name="ChatbotSettingsNav" xml:space="preserve">
+    <value>Βοηθός</value>
+  </data>
+  <data name="ChatbotConfiguration" xml:space="preserve">
+    <value>Διαμόρφωση Βοηθού</value>
+  </data>
+  <data name="ChatbotEnable" xml:space="preserve">
+    <value>Ενεργοποίηση Βοηθού</value>
+  </data>
+  <data name="ChatbotEnableHelp" xml:space="preserve">
+    <value>Επιτρέψτε στα μέλη αυτού του τμήματος να αλληλεπιδρούν με τον βοηθό.</value>
+  </data>
+  <data name="ChatbotAllowedPlatforms" xml:space="preserve">
+    <value>Επιτρεπόμενες Πλατφόρμες</value>
+  </data>
+  <data name="ChatbotAllowedPlatformsHelp" xml:space="preserve">
+    <value>Ονόματα πλατφορμών χωρισμένα με κόμμα που επιτρέπει αυτό το τμήμα ή * για όλες. Έγκυρα ονόματα: SmsTwilio, SmsSignalWire, Discord, Slack, Telegram, WhatsApp, Teams, Signal, WebChat.</value>
+  </data>
+  <data name="ChatbotAllowDispatch" xml:space="preserve">
+    <value>Να Επιτρέπεται Αποστολή μέσω Βοηθού</value>
+  </data>
+  <data name="ChatbotAllowDispatchHelp" xml:space="preserve">
+    <value>Επιτρέψτε σε εξουσιοδοτημένους χρήστες να δημιουργούν ή να στέλνουν κλήσεις μέσω του βοηθού.</value>
+  </data>
+  <data name="ChatbotConfirmStatusChanges" xml:space="preserve">
+    <value>Επιβεβαίωση Αλλαγών Κατάστασης</value>
+  </data>
+  <data name="ChatbotConfirmStatusChangesHelp" xml:space="preserve">
+    <value>Απαίτηση ρητής επιβεβαίωσης πριν από επικίνδυνες ενέργειες ή ενέργειες αλλαγής κατάστασης.</value>
+  </data>
+  <data name="ChatbotConfirmPhoneLinking" xml:space="preserve">
+    <value>Επιβεβαίωση Σύνδεσης Τηλεφώνου</value>
+  </data>
+  <data name="ChatbotConfirmPhoneLinkingHelp" xml:space="preserve">
+    <value>Απαίτηση εφάπαξ επιβεβαίωσης «Απαντήστε YES» πριν από τη σύνδεση αριθμού SMS με αντίστοιχο λογαριασμό.</value>
+  </data>
+  <data name="ChatbotProactiveNotifications" xml:space="preserve">
+    <value>Προληπτικές Ειδοποιήσεις</value>
+  </data>
+  <data name="ChatbotProactiveNotificationsHelp" xml:space="preserve">
+    <value>Επιτρέψτε στον βοηθό να στέλνει προληπτικές ειδοποιήσεις (κλήσεις, υπενθυμίσεις) σε συνδεδεμένους χρήστες.</value>
+  </data>
+  <data name="ChatbotMessagesPerUser" xml:space="preserve">
+    <value>Μηνύματα / Χρήστη / Λεπτό</value>
+  </data>
+  <data name="ChatbotMessagesPerUserHelp" xml:space="preserve">
+    <value>Όριο ρυθμού ανά χρήστη. Αφήστε το κενό για χρήση της προεπιλογής του συστήματος.</value>
+  </data>
+  <data name="ChatbotMessagesPerDept" xml:space="preserve">
+    <value>Μηνύματα / Τμήμα / Λεπτό</value>
+  </data>
+  <data name="ChatbotMessagesPerDeptHelp" xml:space="preserve">
+    <value>Όριο ρυθμού ανά τμήμα. Αφήστε το κενό για χρήση της προεπιλογής του συστήματος.</value>
+  </data>
+  <data name="ChatbotLlmHeader" xml:space="preserve">
+    <value>Πάροχος AI / LLM Τμήματος (προαιρετικό)</value>
+  </data>
+  <data name="ChatbotLlmIntro" xml:space="preserve">
+    <value>Αφήστε τα κενά για χρήση του παρόχου AI του συστήματος Resgrid. Για να διατηρήσετε την επεξεργασία του βοηθού στον δικό σας πάροχο, εισαγάγετε τελικό σημείο συμβατό με OpenAI, μοντέλο και κλειδί API.</value>
+  </data>
+  <data name="ChatbotLlmEndpoint" xml:space="preserve">
+    <value>Τελικό Σημείο LLM</value>
+  </data>
+  <data name="ChatbotLlmModel" xml:space="preserve">
+    <value>Μοντέλο LLM</value>
+  </data>
+  <data name="ChatbotLlmApiKey" xml:space="preserve">
+    <value>Κλειδί API LLM</value>
+  </data>
+  <data name="ChatbotLlmApiKeyHelpHasKey" xml:space="preserve">
+    <value>Υπάρχει αποθηκευμένο κλειδί. Αφήστε το κενό για να το διατηρήσετε ή εισαγάγετε νέα τιμή για να το αντικαταστήσετε.</value>
+  </data>
+  <data name="ChatbotLlmApiKeyHelpNoKey" xml:space="preserve">
+    <value>Δεν έχει αποθηκευτεί κλειδί. Το κλειδί κρυπτογραφείται κατά την αποθήκευση και δεν εμφανίζεται ποτέ.</value>
+  </data>
+  <data name="ChatbotSave" xml:space="preserve">
+    <value>Αποθήκευση</value>
+  </data>
+  <data name="ChatbotCancel" xml:space="preserve">
+    <value>Ακύρωση</value>
+  </data>
+  <data name="ChatbotSaved" xml:space="preserve">
+    <value>Οι ρυθμίσεις βοηθού αποθηκεύτηκαν.</value>
+  </data>
+  <data name="ChatbotSaveError" xml:space="preserve">
+    <value>Παρουσιάστηκε σφάλμα κατά την αποθήκευση των ρυθμίσεων βοηθού.</value>
+  </data>
+  <data name="EnableModernNotifications" xml:space="preserve">
+    <value>Ενεργοποίηση Σύγχρονων Ειδοποιήσεων</value>
+  </data>
+  <data name="EnableModernNotificationsHelp" xml:space="preserve">
+    <value>Όταν είναι ενεργοποιημένο, οι ειδοποιήσεις push θα χρησιμοποιούν τους σύγχρονους ήχους ειδοποίησης αντί για τους παλαιούς για όλους τους χρήστες αυτού του τμήματος.</value>
+  </data>
+  <data name="ForceChatbotSecurityPin" xml:space="preserve">
+    <value>Απαίτηση PIN Ασφαλείας</value>
+  </data>
+  <data name="ForceChatbotSecurityPinHelp" xml:space="preserve">
+    <value>Απαιτήστε από κάθε μέλος να επιβεβαιώνει επικίνδυνες ενέργειες ή ενέργειες σε επίπεδο τμήματος μέσω βοηθού/μηνυμάτων με το προσωπικό του 4ψήφιο PIN ασφαλείας. Τα μέλη χωρίς PIN λαμβάνουν ένα τυχαία δημιουργημένο (ορατό στη σελίδα προφίλ τους).</value>
+  </data>
+  <data name="RunCardSettingsHeader" xml:space="preserve">
+    <value>Κάρτες Εξόδου και Αυτόματη Αποστολή</value>
+  </data>
+  <data name="DispatchRecommendationModeLabel" xml:space="preserve">
+    <value>Λειτουργία αυτόματης επιλογής πόρων</value>
+  </data>
+  <data name="DispatchRecommendationModeHelp" xml:space="preserve">
+    <value>Πώς επιλέγει το σύστημα μονάδες και προσωπικό για να καλύψει μια κάρτα εξόδου: βάσει της περιοχής ανταπόκρισης του σταθμού που περιέχει την κλήση (με μετάβαση στον επόμενο πλησιέστερο σταθμό σε περίπτωση έλλειψης) ή βάσει των πλησιέστερων διαθέσιμων πόρων.</value>
+  </data>
+  <data name="DispatchAutoDispatchLabel" xml:space="preserve">
+    <value>Αυτόματη αποστολή προτεινόμενων πόρων</value>
+  </data>
+  <data name="DispatchAutoDispatchHelp" xml:space="preserve">
+    <value>Όταν είναι ενεργό, οι κάρτες εξόδου που ταιριάζουν στέλνουν πόρους αμέσως με τη δημιουργία της κλήσης. Όταν είναι ανενεργό, οι προτάσεις προσυμπληρώνουν τη σελίδα Νέας Κλήσης για έλεγχο από τον διαβιβαστή.</value>
+  </data>
+  <data name="RestPeriodLabel" xml:space="preserve">
+    <value>Περίοδος ανάπαυσης (λεπτά)</value>
+  </data>
+  <data name="RestPeriodHelp" xml:space="preserve">
+    <value>Μετά την αποστολή μιας μονάδας ή ενός ατόμου, υποβαθμίστε την προτεραιότητά τους για τόσα λεπτά ώστε να μην αποστέλλονται οι ίδιοι πόροι διαδοχικά. Το 0 απενεργοποιεί τη λειτουργία.</value>
+  </data>
+  <data name="StaffingGateLabel" xml:space="preserve">
+    <value>Ελάχιστη στελέχωση μονάδας για αποστολή</value>
+  </data>
+  <data name="StaffingGateHelp" xml:space="preserve">
+    <value>Μονάδες με στελέχωση κάτω από αυτό το επίπεδο δεν επιλέγονται ακόμη και αν η κατάστασή τους ταιριάζει. Μονάδες χωρίς καθορισμένους ρόλους περνούν πάντα.</value>
+  </data>
+  <data name="MoveUpEnabledLabel" xml:space="preserve">
+    <value>Ενεργοποίηση προτάσεων μετακίνησης / αναπλήρωσης</value>
+  </data>
+  <data name="MoveUpEnabledHelp" xml:space="preserve">
+    <value>Μετά την επιλογή αποστολής, ελέγξτε τα ελάχιστα όρια κάλυψης σταθμών και προτείνετε μετακίνηση πόρων σε σταθμούς με έλλειψη.</value>
+  </data>
+  <data name="ClosestUnitTuningHeader" xml:space="preserve">
+    <value>Ρύθμιση Ανταπόκρισης Πλησιέστερης Μονάδας</value>
+  </data>
+  <data name="MaxLocationAgeLabel" xml:space="preserve">
+    <value>Μέγιστη παλαιότητα τοποθεσίας μονάδας (δευτερόλεπτα)</value>
+  </data>
+  <data name="PersonnelMaxLocationAgeLabel" xml:space="preserve">
+    <value>Μέγιστη παλαιότητα τοποθεσίας προσωπικού (δευτερόλεπτα)</value>
+  </data>
+  <data name="MaxRadiusLabel" xml:space="preserve">
+    <value>Μέγιστη ακτίνα ανταπόκρισης (μέτρα)</value>
+  </data>
+  <data name="IncludeStaleLabel" xml:space="preserve">
+    <value>Συμπερίληψη παλαιών τοποθεσιών</value>
+  </data>
+  <data name="UseRoutedEtaLabel" xml:space="preserve">
+    <value>Ταξινόμηση κατά εκτιμώμενο χρόνο οδήγησης</value>
+  </data>
+  <data name="UseRoutedEtaHelp" xml:space="preserve">
+    <value>Επανακατάταξη των πλησιέστερων υποψηφίων με βάση τον χρόνο οδήγησης αντί για την ευθεία απόσταση. Χρησιμοποιεί τον πάροχο χαρτογράφησης και ενδέχεται να προσθέσει κόστος και καθυστέρηση.</value>
+  </data>
+  <data name="EtaShortlistSizeLabel" xml:space="preserve">
+    <value>Μέγεθος βραχείας λίστας εκτιμώμενου χρόνου άφιξης</value>
+  </data>
+  <data name="StationCoverageHeader" xml:space="preserve">
+    <value>Ελάχιστα Όρια Κάλυψης Σταθμών</value>
+  </data>
+  <data name="StationCoverageHelp" xml:space="preserve">
+    <value>Ορίστε τον ελάχιστο αριθμό κάθε τύπου μονάδας ή ρόλου προσωπικού που πρέπει να παραμένει διαθέσιμος σε έναν σταθμό. Όταν μια αποστολή θα μείωνε την κάλυψη κάτω από το ελάχιστο, το σύστημα προτείνει μετακινήσεις.</value>
+  </data>
+  <data name="StationCoverageStationLabel" xml:space="preserve">
+    <value>Σταθμός</value>
+  </data>
+  <data name="StationCoverageTargetLabel" xml:space="preserve">
+    <value>Τύπος Μονάδας / Ρόλος</value>
+  </data>
+  <data name="StationCoverageMinCountLabel" xml:space="preserve">
+    <value>Ελάχιστοι Διαθέσιμοι</value>
+  </data>
+  <data name="StationCoverageRadiusLabel" xml:space="preserve">
+    <value>Ακτίνα (μέτρα, λειτουργία πλησιέστερης μονάδας)</value>
+  </data>
+  <data name="StationCoverageEnabledLabel" xml:space="preserve">
+    <value>Ενεργοποιημένο</value>
+  </data>
+  <data name="RunCardsHeader" xml:space="preserve">
+    <value>Κάρτες Εξόδου</value>
+  </data>
+  <data name="RunCardsHelp" xml:space="preserve">
+    <value>Προσχεδιασμένα πακέτα ανταπόκρισης που αντιστοιχίζονται σε κλήσεις βάσει προτεραιότητας και τύπου. Κάθε κάρτα ορίζει τους τύπους μονάδων και τους ρόλους προσωπικού που θα αποσταλούν ανά επίπεδο συναγερμού και ποιες καταστάσεις θεωρούνται διαθέσιμες.</value>
+  </data>
+  <data name="NewRunCardButton" xml:space="preserve">
+    <value>Νέα Κάρτα Εξόδου</value>
+  </data>
+  <data name="RunCardEditButton" xml:space="preserve">
+    <value>Επεξεργασία</value>
+  </data>
+  <data name="RunCardDeleteConfirm" xml:space="preserve">
+    <value>Διαγραφή αυτής της κάρτας εξόδου; Οι κλήσεις που τη χρησιμοποιούν ήδη διατηρούν το ιστορικό αποστολής τους.</value>
+  </data>
+  <data name="RunCardNameLabel" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="RunCardDescriptionLabel" xml:space="preserve">
+    <value>Περιγραφή</value>
+  </data>
+  <data name="RunCardDisabledLabel" xml:space="preserve">
+    <value>Απενεργοποιημένη</value>
+  </data>
+  <data name="RunCardGeneralTab" xml:space="preserve">
+    <value>Γενικά</value>
+  </data>
+  <data name="RunCardDefaultLabel" xml:space="preserve">
+    <value>Προεπιλογή τμήματος</value>
+  </data>
+  <data name="RunCardManualOnlyLabel" xml:space="preserve">
+    <value>Μόνο χειροκίνητα (χωρίς αυτόματη επιλογή)</value>
+  </data>
+  <data name="RunCardPrePopulateLabel" xml:space="preserve">
+    <value>Προσυμπλήρωση για έλεγχο από τον διαβιβαστή</value>
+  </data>
+  <data name="RunCardAutoDispatchOptionLabel" xml:space="preserve">
+    <value>Αυτόματη αποστολή</value>
+  </data>
+  <data name="RunCardNoGateLabel" xml:space="preserve">
+    <value>Χωρίς όριο στελέχωσης</value>
+  </data>
+  <data name="RunCardHomeStationLabel" xml:space="preserve">
+    <value>Σταθμός βάσης (χρησιμοποιείται όταν μια κλήση δεν έχει τοποθεσία)</value>
+  </data>
+  <data name="RunCardNoHomeStationLabel" xml:space="preserve">
+    <value>Κανένας</value>
+  </data>
+  <data name="RunCardTriggersHeader" xml:space="preserve">
+    <value>Κανόνες Ενεργοποίησης</value>
+  </data>
+  <data name="RunCardTriggersHelp" xml:space="preserve">
+    <value>Μια κάρτα ταιριάζει με μια κλήση όταν ταιριάζει οποιοσδήποτε κανόνας ενεργοποίησης. Υπερισχύει η πιο συγκεκριμένη αντιστοίχιση (προτεραιότητα + τύπος υπερισχύει του τύπου, ο οποίος υπερισχύει της προτεραιότητας).</value>
+  </data>
+  <data name="RunCardTriggerTypeLabel" xml:space="preserve">
+    <value>Τύπος κανόνα</value>
+  </data>
+  <data name="RunCardTriggerPriorityOption" xml:space="preserve">
+    <value>Προτεραιότητα Κλήσης</value>
+  </data>
+  <data name="RunCardTriggerTypeOption" xml:space="preserve">
+    <value>Τύπος Κλήσης</value>
+  </data>
+  <data name="RunCardTriggerBothOption" xml:space="preserve">
+    <value>Προτεραιότητα και Τύπος</value>
+  </data>
+  <data name="RunCardAddTriggerButton" xml:space="preserve">
+    <value>Προσθήκη Κανόνα Ενεργοποίησης</value>
+  </data>
+  <data name="RunCardAlarmLevelsHeader" xml:space="preserve">
+    <value>Επίπεδα Συναγερμού</value>
+  </data>
+  <data name="RunCardAlarmLevelsHelp" xml:space="preserve">
+    <value>Οι απαιτήσεις κάθε επιπέδου συναγερμού είναι αθροιστικές: η κλιμάκωση στο επίπεδο 2 στέλνει τους πόρους του επιπέδου 2 επιπλέον όσων έχουν ήδη ανατεθεί.</value>
+  </data>
+  <data name="RunCardAlarmLevelLabel" xml:space="preserve">
+    <value>Συναγερμός</value>
+  </data>
+  <data name="RunCardAlarmLevelNamePlaceholder" xml:space="preserve">
+    <value>Προαιρετικό όνομα, π.χ. Ενεργή Πυρκαγιά</value>
+  </data>
+  <data name="RunCardAddAlarmLevelButton" xml:space="preserve">
+    <value>Προσθήκη Επιπέδου Συναγερμού</value>
+  </data>
+  <data name="RunCardUnitRequirementsLabel" xml:space="preserve">
+    <value>Απαιτήσεις τύπων μονάδων</value>
+  </data>
+  <data name="RunCardRoleRequirementsLabel" xml:space="preserve">
+    <value>Απαιτήσεις ρόλων προσωπικού</value>
+  </data>
+  <data name="RunCardAddUnitRequirementButton" xml:space="preserve">
+    <value>Προσθήκη Τύπου Μονάδας</value>
+  </data>
+  <data name="RunCardAddRoleRequirementButton" xml:space="preserve">
+    <value>Προσθήκη Ρόλου</value>
+  </data>
+  <data name="RunCardSelectionsHeader" xml:space="preserve">
+    <value>Καταστάσεις Επιλέξιμες για Αποστολή</value>
+  </data>
+  <data name="RunCardSelectionsHelp" xml:space="preserve">
+    <value>Ποιες καταστάσεις μονάδων, καταστάσεις προσωπικού και επίπεδα στελέχωσης θεωρούνται διαθέσιμα για αυτή την κάρτα. Αφήστε μια ενότητα κενή για να χρησιμοποιηθούν οι τυπικοί κανόνες διαθεσιμότητας.</value>
+  </data>
+  <data name="RunCardStaffingSelectionsLabel" xml:space="preserve">
+    <value>Επίπεδα στελέχωσης</value>
+  </data>
+  <data name="RunCardTestHeader" xml:space="preserve">
+    <value>Δοκιμή / Προσομοίωση</value>
+  </data>
+  <data name="RunCardTestHelp" xml:space="preserve">
+    <value>Δείτε τι θα έστελναν οι κάρτες εξόδου αυτού του τμήματος για μια προτεραιότητα, τύπο και τοποθεσία αυτή τη στιγμή — δεν αποστέλλεται τίποτα.</value>
+  </data>
+  <data name="RunCardRunTestButton" xml:space="preserve">
+    <value>Εκτέλεση Δοκιμής</value>
+  </data>
+  <data name="RunCardSavedMessage" xml:space="preserve">
+    <value>Η κάρτα εξόδου αποθηκεύτηκε.</value>
+  </data>
+  <data name="CallPriority" xml:space="preserve">
+    <value>Προτεραιότητα Κλήσης</value>
+  </data>
+  <data name="CallType" xml:space="preserve">
+    <value>Τύπος Κλήσης</value>
+  </data>
+  <data name="RunCardsNav" xml:space="preserve">
+    <value>Κάρτες Εξόδου</value>
+  </data>
+  <data name="DefaultMapCenterHelp" xml:space="preserve">
+    <value>Όλοι οι χάρτες στο Resgrid και στις εφαρμογές ανοίγουν εδώ. Αφήστε και τα δύο πεδία κενά και θα τα υπολογίσουμε από τη διεύθυνση του τμήματος στην επόμενη αποθήκευση· συμπληρώστε τα για να ορίσετε ακριβές σημείο, το οποίο δεν αντικαθίσταται ποτέ.</value>
+  </data>
+  <data name="NewCallFieldsLabel" xml:space="preserve">
+    <value>Πεδία φόρμας νέας κλήσης</value>
+  </data>
+  <data name="NewCallFieldsHelp" xml:space="preserve">
+    <value>Επιλέξτε ποια ενσωματωμένα πεδία εμφανίζονται στη φόρμα και ποια πρέπει να συμπληρωθούν πριν η κλήση δημιουργηθεί και σταλεί. Όνομα, φύση, προτεραιότητα και τύπος εμφανίζονται πάντα και είναι πάντα υποχρεωτικά.</value>
+  </data>
+  <data name="NewCallFieldsFieldColumn" xml:space="preserve">
+    <value>Πεδίο</value>
+  </data>
+  <data name="NewCallFieldsVisibleColumn" xml:space="preserve">
+    <value>Ορατό</value>
+  </data>
+  <data name="NewCallFieldsRequiredColumn" xml:space="preserve">
+    <value>Απαιτείται</value>
+  </data>
+  <data name="NewCallField_address" xml:space="preserve">
+    <value>Διεύθυνση</value>
+  </data>
+  <data name="NewCallField_geolocation" xml:space="preserve">
+    <value>Συντεταγμένες GPS</value>
+  </data>
+  <data name="NewCallField_what3words" xml:space="preserve">
+    <value>what3words</value>
+  </data>
+  <data name="NewCallField_pluscode" xml:space="preserve">
+    <value>Plus Code</value>
+  </data>
+  <data name="NewCallField_destinationPoi" xml:space="preserve">
+    <value>Προορισμός</value>
+  </data>
+  <data name="NewCallField_indoorLocation" xml:space="preserve">
+    <value>Εσωτερική θέση</value>
+  </data>
+  <data name="NewCallField_note" xml:space="preserve">
+    <value>Σημείωση</value>
+  </data>
+  <data name="NewCallField_contactName" xml:space="preserve">
+    <value>Κύρια επαφή</value>
+  </data>
+  <data name="NewCallField_contactInfo" xml:space="preserve">
+    <value>Στοιχεία επικοινωνίας αναφέροντος</value>
+  </data>
+  <data name="NewCallField_externalId" xml:space="preserve">
+    <value>Εξωτερικό αναγνωριστικό</value>
+  </data>
+  <data name="NewCallField_incidentId" xml:space="preserve">
+    <value>Αναγνωριστικό συμβάντος</value>
+  </data>
+  <data name="NewCallField_referenceId" xml:space="preserve">
+    <value>Αναφορά</value>
+  </data>
+  <data name="NewCallField_protocols" xml:space="preserve">
+    <value>Πρωτόκολλα</value>
+  </data>
+  <data name="NewCallField_linkedCall" xml:space="preserve">
+    <value>Συνδεδεμένη κλήση</value>
+  </data>
+  <data name="NewCallField_dispatchOn" xml:space="preserve">
+    <value>Προγραμματισμένη αποστολή</value>
+  </data>
+  <data name="NewCallField_dispatchList" xml:space="preserve">
+    <value>Παραλήπτες αποστολής</value>
+  </data>
+  <data name="UnitStatusThresholdsLabel" xml:space="preserve">
+    <value>Χρονόμετρα κατάστασης μονάδας</value>
+  </data>
+  <data name="UnitStatusThresholdsHelp" xml:space="preserve">
+    <value>Επισημαίνει μια μονάδα στο Big Board όταν παραμένει πολύ ώρα σε μία κατάσταση — για παράδειγμα, απεσταλμένη για πάνω από τέσσερα λεπτά χωρίς να δηλώσει αναχώρηση. Αφήστε και τις δύο στήλες στο 0 για να μην παρακολουθείται τίποτα.</value>
+  </data>
+  <data name="UnitStatusThresholdsStatusColumn" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="UnitStatusThresholdsWarnColumn" xml:space="preserve">
+    <value>Προειδοποίηση μετά (λεπτά)</value>
+  </data>
+  <data name="UnitStatusThresholdsAlertColumn" xml:space="preserve">
+    <value>Συναγερμός μετά (λεπτά)</value>
+  </data>
+  <data name="UnitStatusBaseType_6" xml:space="preserve">
+    <value>Απεσταλμένη</value>
+  </data>
+  <data name="UnitStatusBaseType_2" xml:space="preserve">
+    <value>Μεταβαίνει</value>
+  </data>
+  <data name="UnitStatusBaseType_11" xml:space="preserve">
+    <value>Καθοδόν</value>
+  </data>
+  <data name="UnitStatusBaseType_3" xml:space="preserve">
+    <value>Στο σημείο</value>
+  </data>
+  <data name="UnitStatusBaseType_9" xml:space="preserve">
+    <value>Αναμονή</value>
+  </data>
+  <data name="UnitStatusBaseType_14" xml:space="preserve">
+    <value>Στον ασθενή</value>
+  </data>
+  <data name="UnitStatusBaseType_12" xml:space="preserve">
+    <value>Μεταφορά</value>
+  </data>
+  <data name="UnitStatusBaseType_15" xml:space="preserve">
+    <value>Στο νοσοκομείο</value>
+  </data>
+  <data name="UnitStatusBaseType_8" xml:space="preserve">
+    <value>Επιστροφή</value>
+  </data>
+</root>

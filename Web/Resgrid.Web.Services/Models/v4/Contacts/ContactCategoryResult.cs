@@ -1,5 +1,8 @@
 ﻿using System;
 
+using Newtonsoft.Json;
+using Resgrid.Web.Services.Helpers;
+
 namespace Resgrid.Web.Services.Models.v4.CallTypes
 {
 	/// <summary>
@@ -41,6 +44,7 @@ namespace Resgrid.Web.Services.Models.v4.CallTypes
 		/// <summary>
 		/// Date and time when this category was created in UTC
 		/// </summary>
+		[JsonConverter(typeof(UtcDateTimeConverter))]
 		public DateTime AddedOnUtc { get; set; }
 
 		/// <summary>
@@ -61,6 +65,7 @@ namespace Resgrid.Web.Services.Models.v4.CallTypes
 		/// <summary>
 		/// Date and time when this category was last modified, null if never edited in UTC
 		/// </summary>
+		[JsonConverter(typeof(UtcDateTimeConverter))]
 		public DateTime? EditedOnUtc { get; set; }
 
 		/// <summary>

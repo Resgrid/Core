@@ -1,0 +1,456 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AccountInfoHeader" xml:space="preserve">
+    <value>Πληροφορίες Λογαριασμού</value>
+  </data>
+  <data name="AddressLabel" xml:space="preserve">
+    <value>Διεύθυνση</value>
+  </data>
+  <data name="AddressPlaceholder" xml:space="preserve">
+    <value>Φυσική Διεύθυνση Οδού</value>
+  </data>
+  <data name="CallEmailLabel" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="CallOptionsHeader" xml:space="preserve">
+    <value>Επιλογές Κλήσεων</value>
+  </data>
+  <data name="CallPushlLabel" xml:space="preserve">
+    <value>Push</value>
+  </data>
+  <data name="CallTextlLabel" xml:space="preserve">
+    <value>SMS</value>
+  </data>
+  <data name="Certifications" xml:space="preserve">
+    <value>Πιστοποιήσεις</value>
+  </data>
+  <data name="ChangeUserPassword" xml:space="preserve">
+    <value>Αλλαγή Κωδικού Πρόσβασης Χρήστη</value>
+  </data>
+  <data name="CityLabel" xml:space="preserve">
+    <value>Πόλη</value>
+  </data>
+  <data name="CityPlaceholder" xml:space="preserve">
+    <value>Φυσική Πόλη</value>
+  </data>
+  <data name="ConfirmPasswordHelp" xml:space="preserve">
+    <value>Αν αλλάζετε τον κωδικό πρόσβασής σας, πρέπει να εισαγάγετε ξανά τον ΝΕΟ κωδικό εδώ</value>
+  </data>
+  <data name="ConfirmPasswordLabel" xml:space="preserve">
+    <value>Επιβεβαίωση Κωδικού Πρόσβασης</value>
+  </data>
+  <data name="CountryLabel" xml:space="preserve">
+    <value>Χώρα</value>
+  </data>
+  <data name="CurrentPasswordHelp" xml:space="preserve">
+    <value>Αν αλλάζετε τον κωδικό πρόσβασής σας, πρέπει να εισαγάγετε εδώ τον τρέχοντα κωδικό (όχι τον νέο)</value>
+  </data>
+  <data name="CurrentPasswordLabel" xml:space="preserve">
+    <value>Τρέχων Κωδικός Πρόσβασης</value>
+  </data>
+  <data name="DeleteUserAccount" xml:space="preserve">
+    <value>Διαγραφή του Λογαριασμού Σας</value>
+  </data>
+  <data name="DeleteUserAccountInfo" xml:space="preserve">
+    <value>Διαγράψτε τον δικό σας λογαριασμό Resgrid σε όλα τα τμήματα στα οποία είστε μέλος</value>
+  </data>
+  <data name="DepartmentAdminLabel" xml:space="preserve">
+    <value>Διαχειριστής Τμήματος</value>
+  </data>
+  <data name="DepartmentSettingsHeader" xml:space="preserve">
+    <value>Ρυθμίσεις Τμήματος</value>
+  </data>
+  <data name="DisableUserLabel" xml:space="preserve">
+    <value>Απενεργοποίηση Χρήστη</value>
+  </data>
+  <data name="EditTitle" xml:space="preserve">
+    <value>Επεξεργασία</value>
+  </data>
+  <data name="EmailAddressHelper" xml:space="preserve">
+    <value>Οι διευθύνσεις email πρέπει να είναι μοναδικές</value>
+  </data>
+  <data name="EmailAddressLabel" xml:space="preserve">
+    <value>Διεύθυνση Email</value>
+  </data>
+  <data name="EmailAddressPlaceholder" xml:space="preserve">
+    <value>Διεύθυνση Email</value>
+  </data>
+  <data name="ErrorSpan" xml:space="preserve">
+    <value>Υπήρξαν σφάλματα στο παρακάτω προφίλ και δεν ήταν δυνατή η αποθήκευσή του. Διορθώστε τα παρακάτω σφάλματα και δοκιμάστε να αποθηκεύσετε ξανά.</value>
+  </data>
+  <data name="FirstNameLabel" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="FirstNamePlaceholder" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="GroupLabel" xml:space="preserve">
+    <value>Ομάδα</value>
+  </data>
+  <data name="HideUserLabel" xml:space="preserve">
+    <value>Απόκρυψη Χρήστη</value>
+  </data>
+  <data name="HomeNumberLabel" xml:space="preserve">
+    <value>Αριθμός Οικίας</value>
+  </data>
+  <data name="HomeNumberPlaceholder" xml:space="preserve">
+    <value>Τηλέφωνο Οικίας</value>
+  </data>
+  <data name="IDNumberLabel" xml:space="preserve">
+    <value>Αριθμός Ταυτότητας</value>
+  </data>
+  <data name="IDNumberPlaceholder" xml:space="preserve">
+    <value>Προσαρμοσμένος Αριθμός Ταυτοποίησης</value>
+  </data>
+  <data name="IsGroupAdminLabel" xml:space="preserve">
+    <value>Είναι Διαχειριστής Ομάδας;</value>
+  </data>
+  <data name="LanguagesHelp" xml:space="preserve">
+    <value>Σημείωση: Η πολυγλωσσική υποστήριξη στο Resgrid δεν είναι πλήρης. Ορισμένα τμήματα του ιστότοπου θα εξακολουθούν να είναι στα Αγγλικά και εργαζόμαστε για τη μετάφραση όλων. Οι υπηρεσίες υποστήριξής μας (Helpdesk, Github, Discord κ.λπ.) και η τεκμηρίωση είναι διαθέσιμες μόνο στα Αγγλικά.</value>
+  </data>
+  <data name="LastNameLabel" xml:space="preserve">
+    <value>Επώνυμο</value>
+  </data>
+  <data name="LastNamePlaceholder" xml:space="preserve">
+    <value>Επώνυμο</value>
+  </data>
+  <data name="MailingAddressLabel" xml:space="preserve">
+    <value>Διεύθυνση</value>
+  </data>
+  <data name="MailingAddressPlaceholder" xml:space="preserve">
+    <value>Ταχυδρομική Διεύθυνση Οδού</value>
+  </data>
+  <data name="MailingCityLabel" xml:space="preserve">
+    <value>Πόλη</value>
+  </data>
+  <data name="MailingCityPlaceholder" xml:space="preserve">
+    <value>Ταχυδρομική Πόλη</value>
+  </data>
+  <data name="MailingCountryLabel" xml:space="preserve">
+    <value>Χώρα</value>
+  </data>
+  <data name="MailingPostalCodeLabel" xml:space="preserve">
+    <value>Ταχυδρομικός Κώδικας</value>
+  </data>
+  <data name="MailingPostalCodePlaceholder" xml:space="preserve">
+    <value>Ταχυδρομικός Κώδικας Αλληλογραφίας</value>
+  </data>
+  <data name="MailingStateLabel" xml:space="preserve">
+    <value>Νομός</value>
+  </data>
+  <data name="MailingStatePlaceholder" xml:space="preserve">
+    <value>Νομός\Επαρχία Αλληλογραφίας</value>
+  </data>
+  <data name="MessageEmailLabel" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="MessageOptionsHeader" xml:space="preserve">
+    <value>Επιλογές Μηνυμάτων</value>
+  </data>
+  <data name="MessagePushLabel" xml:space="preserve">
+    <value>Push</value>
+  </data>
+  <data name="MessageTextLabel" xml:space="preserve">
+    <value>SMS</value>
+  </data>
+  <data name="MobileCarrierLabel" xml:space="preserve">
+    <value>Πάροχος Κινητής</value>
+  </data>
+  <data name="MobileCarrierPlaceholder" xml:space="preserve">
+    <value />
+  </data>
+  <data name="MobileNumberLabel" xml:space="preserve">
+    <value>Αριθμός Κινητού</value>
+  </data>
+  <data name="MobileNumberPlaceholder" xml:space="preserve">
+    <value>Αριθμός Κινητού Τηλεφώνου</value>
+  </data>
+  <data name="NewPasswordHelp" xml:space="preserve">
+    <value>Αφήστε το κενό αν δεν θέλετε να αλλάξετε τον κωδικό πρόσβασής σας</value>
+  </data>
+  <data name="NewPasswordLabel" xml:space="preserve">
+    <value>Νέος Κωδικός Πρόσβασης</value>
+  </data>
+  <data name="NewsletterLabel" xml:space="preserve">
+    <value>Να Μην Λαμβάνω Ενημερωτικά Δελτία</value>
+  </data>
+  <data name="NewUsernameHelp" xml:space="preserve">
+    <value>Αφήστε το κενό αν δεν θέλετε να αλλάξετε το Όνομα Χρήστη σας (δηλαδή να κρατήσετε το τρέχον όνομα με το οποίο συνδέεστε)</value>
+  </data>
+  <data name="NewUsernameLabel" xml:space="preserve">
+    <value>Νέο Όνομα Χρήστη</value>
+  </data>
+  <data name="NormalUserLabel" xml:space="preserve">
+    <value>Κανονικός Χρήστης</value>
+  </data>
+  <data name="NotificationEmailLabel" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="NotificationHeader" xml:space="preserve">
+    <value>Επιλογές Ειδοποιήσεων</value>
+  </data>
+  <data name="ModernApplicationSoundsLabel" xml:space="preserve">
+    <value>Ενεργοποίηση Σύγχρονων Ήχων Εφαρμογής</value>
+  </data>
+  <data name="ModernApplicationSoundsHelp" xml:space="preserve">
+    <value>Χρησιμοποιήστε σύγχρονους ήχους ειδοποιήσεων αντί για τους παλαιούς. Αν το τμήμα σας ενεργοποιήσει τους σύγχρονους ήχους, χρησιμοποιούνται ανεξάρτητα από αυτή τη ρύθμιση.</value>
+  </data>
+  <data name="NotificationOtherHeader" xml:space="preserve">
+    <value>Άλλες Επιλογές Ειδοποιήσεων</value>
+  </data>
+  <data name="NotificationPushLabel" xml:space="preserve">
+    <value>Push</value>
+  </data>
+  <data name="PhysicalAddressHeader" xml:space="preserve">
+    <value>Φυσική Διεύθυνση</value>
+  </data>
+  <data name="PostalCodeLabel" xml:space="preserve">
+    <value>Ταχυδρομικός Κώδικας</value>
+  </data>
+  <data name="PostalCodePlaceholder" xml:space="preserve">
+    <value>Φυσικός Ταχυδρομικός Κώδικας</value>
+  </data>
+  <data name="ProfileTitle" xml:space="preserve">
+    <value>Προφίλ</value>
+  </data>
+  <data name="ReportDelivery" xml:space="preserve">
+    <value>Παράδοση Αναφορών</value>
+  </data>
+  <data name="RolesLabel" xml:space="preserve">
+    <value>Ρόλοι</value>
+  </data>
+  <data name="SameAsPhysical" xml:space="preserve">
+    <value>Ίδια με τη Φυσική;</value>
+  </data>
+  <data name="SetPictureHelpText" xml:space="preserve">
+    <value>οι αλλαγές φωτογραφίας μπορεί να χρειαστούν έως και 24 ώρες</value>
+  </data>
+  <data name="SetPictureLabel" xml:space="preserve">
+    <value>κάντε κλικ εδώ για να ορίσετε φωτογραφία</value>
+  </data>
+  <data name="StaffingSchedule" xml:space="preserve">
+    <value>Προγράμματα Στελέχωσης</value>
+  </data>
+  <data name="StateLabel" xml:space="preserve">
+    <value>Νομός</value>
+  </data>
+  <data name="StatePlaceholder" xml:space="preserve">
+    <value>Φυσικός Νομός\Επαρχία</value>
+  </data>
+  <data name="TelephoneCallHome" xml:space="preserve">
+    <value>Κλήση Οικίας</value>
+  </data>
+  <data name="TelephoneCallMobile" xml:space="preserve">
+    <value>Κλήση Κινητού</value>
+  </data>
+  <data name="TelephoneEnable" xml:space="preserve">
+    <value>Ενεργοποιημένο</value>
+  </data>
+  <data name="TelephoneHeader" xml:space="preserve">
+    <value>Επιλογές Τηλεφώνου (Φωνής)</value>
+  </data>
+  <data name="TelephoneWrongPlanHeader" xml:space="preserve">
+    <value>Λανθασμένο Πακέτο</value>
+  </data>
+  <data name="TelephoneWrongPlanText" xml:space="preserve">
+    <value>Το τρέχον πακέτο του τμήματός σας δεν υποστηρίζει Τηλεφωνική Ειδοποίηση με φωνή. Αναβαθμίστε το πακέτο σας σε Ultimate ή ανώτερο για να αποκτήσετε αυτή τη δυνατότητα.</value>
+  </data>
+  <data name="TimeZoneLabel" xml:space="preserve">
+    <value>Ζώνη Ώρας</value>
+  </data>
+  <data name="Title" xml:space="preserve">
+    <value>Επεξεργασία Προφίλ</value>
+  </data>
+  <data name="UserTypeLabel" xml:space="preserve">
+    <value>Τύπος Χρήστη</value>
+  </data>
+  <data name="EmailNotVerifiedWarning" xml:space="preserve">
+    <value>Η διεύθυνση email σας δεν έχει επαληθευτεί. Επαληθεύστε την για να διασφαλίσετε ότι λαμβάνετε αποστολές και ειδοποιήσεις.</value>
+  </data>
+  <data name="MobileNotVerifiedWarning" xml:space="preserve">
+    <value>Ο αριθμός κινητού σας δεν έχει επαληθευτεί. Επαληθεύστε τον για να διασφαλίσετε ότι λαμβάνετε αποστολές και ειδοποιήσεις SMS.</value>
+  </data>
+  <data name="HomeNotVerifiedWarning" xml:space="preserve">
+    <value>Ο αριθμός οικίας σας δεν έχει επαληθευτεί. Επαληθεύστε τον για να διασφαλίσετε ότι λαμβάνετε αποστολές με φωνητική κλήση.</value>
+  </data>
+  <data name="GrandfatheredEmailWarning" xml:space="preserve">
+    <value>Συνιστούμε να επαληθεύσετε τη διεύθυνση email σας για να διασφαλιστεί η αδιάλειπτη παράδοση αποστολών και ειδοποιήσεων.</value>
+  </data>
+  <data name="GrandfatheredMobileWarning" xml:space="preserve">
+    <value>Συνιστούμε να επαληθεύσετε τον αριθμό κινητού σας για να διασφαλιστεί η αδιάλειπτη παράδοση αποστολών και ειδοποιήσεων SMS.</value>
+  </data>
+  <data name="GrandfatheredHomeWarning" xml:space="preserve">
+    <value>Συνιστούμε να επαληθεύσετε τον αριθμό οικίας σας για να διασφαλιστεί η αδιάλειπτη παράδοση αποστολών με φωνητική κλήση.</value>
+  </data>
+  <data name="VerifyButtonLabel" xml:space="preserve">
+    <value>Επαλήθευση</value>
+  </data>
+  <data name="VerificationCodePlaceholder" xml:space="preserve">
+    <value>Εισαγάγετε κωδικό επαλήθευσης</value>
+  </data>
+  <data name="VerificationCodeSent" xml:space="preserve">
+    <value>Στάλθηκε κωδικός επαλήθευσης.</value>
+  </data>
+  <data name="VerificationCodeVoiceCallSent" xml:space="preserve">
+    <value>Πραγματοποιείται κλήση επαλήθευσης. Απαντήστε και σημειώστε τον κωδικό που θα σας υπαγορευτεί.</value>
+  </data>
+  <data name="VerificationSuccessful" xml:space="preserve">
+    <value>Η επαλήθευση ολοκληρώθηκε με επιτυχία.</value>
+  </data>
+  <data name="VerificationFailed" xml:space="preserve">
+    <value>Η επαλήθευση απέτυχε. Ελέγξτε τον κωδικό και δοκιμάστε ξανά.</value>
+  </data>
+  <data name="VerificationRateLimited" xml:space="preserve">
+    <value>Πάρα πολλές προσπάθειες επαλήθευσης. Δοκιμάστε ξανά αργότερα.</value>
+  </data>
+  <data name="VerificationContactNotConfigured" xml:space="preserve">
+    <value>Η επιλεγμένη μέθοδος επικοινωνίας δεν έχει διαμορφωθεί.</value>
+  </data>
+  <data name="VerificationInvalidContact" xml:space="preserve">
+    <value>Η επιλεγμένη μέθοδος επικοινωνίας δεν είναι έγκυρη για παράδοση επαλήθευσης.</value>
+  </data>
+  <data name="VerificationDeliveryFailed" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η παράδοση του κωδικού επαλήθευσης. Δοκιμάστε ξανά.</value>
+  </data>
+
+  <!-- Password requirements box -->
+  <data name="PasswordRequirementsHeader" xml:space="preserve"><value>Απαιτήσεις Κωδικού Πρόσβασης</value></data>
+  <data name="PasswordRequirementsLength" xml:space="preserve"><value>Τουλάχιστον {0} χαρακτήρες</value></data>
+  <data name="PasswordRequirementsDigit" xml:space="preserve"><value>Τουλάχιστον ένα ψηφίο (αριθμός)</value></data>
+  <data name="PasswordRequirementsCase" xml:space="preserve"><value>Τουλάχιστον ένα κεφαλαίο και ένα πεζό γράμμα</value></data>
+  <data name="SecurityPinEnabledHelp" xml:space="preserve">
+    <value>Όταν είναι ενεργοποιημένο, οι επικίνδυνες ενέργειες μέσω βοηθού/μηνυμάτων ζητούν το PIN σας ως επιπλέον βήμα ασφαλείας. Αν το ενεργοποιήσετε χωρίς PIN, δημιουργείται τυχαίο PIN για εσάς.</value>
+  </data>
+  <data name="SecurityPinEnabledLabel" xml:space="preserve">
+    <value>Απαίτηση PIN Ασφαλείας</value>
+  </data>
+  <data name="SecurityPinForcedHelp" xml:space="preserve">
+    <value>Το τμήμα σας απαιτεί PIN ασφαλείας για επικίνδυνες ενέργειες μέσω βοηθού/μηνυμάτων, οπότε αυτή η επιλογή είναι πάντα ενεργή.</value>
+  </data>
+  <data name="SecurityPinHelp" xml:space="preserve">
+    <value>Το 4ψήφιο PIN ασφαλείας σας επιβεβαιώνει επικίνδυνες ενέργειες ή ενέργειες σε επίπεδο τμήματος που εκτελούνται μέσω μηνύματος ή βοηθού. Αποφύγετε επαναλαμβανόμενα ψηφία (0000) και ακολουθίες (1234, 4321). Αφήστε το κενό για να διατηρήσετε το τρέχον PIN σας.</value>
+  </data>
+  <data name="SecurityPinLabel" xml:space="preserve">
+    <value>PIN Ασφαλείας</value>
+  </data>
+  <data name="SecurityPinPlaceholder" xml:space="preserve">
+    <value>4ψήφιο PIN</value>
+  </data>
+</root>

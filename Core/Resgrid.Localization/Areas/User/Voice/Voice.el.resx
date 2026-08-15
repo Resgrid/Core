@@ -1,0 +1,189 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddAudio" xml:space="preserve">
+    <value>Νέα Ροή Ήχου</value>
+  </data>
+  <data name="AddAudioButton" xml:space="preserve">
+    <value>Προσθήκη Ροής Ήχου</value>
+  </data>
+  <data name="AddVoice" xml:space="preserve">
+    <value>Νέο Φωνητικό Κανάλι</value>
+  </data>
+  <data name="AudioStreamNameLabel" xml:space="preserve">
+    <value>Όνομα Ροής Ήχου</value>
+  </data>
+  <data name="AudioStreams" xml:space="preserve">
+    <value>Ροές Ήχου</value>
+  </data>
+  <data name="AudioStreamUrlLabel" xml:space="preserve">
+    <value>Διεύθυνση URL Ροής Ήχου</value>
+  </data>
+  <data name="ChannelName" xml:space="preserve">
+    <value>Όνομα Καναλιού</value>
+  </data>
+  <data name="EditAudio" xml:space="preserve">
+    <value>Επεξεργασία Ροής Ήχου</value>
+  </data>
+  <data name="IsDefault" xml:space="preserve">
+    <value>Είναι Προεπιλεγμένο</value>
+  </data>
+  <data name="Participants" xml:space="preserve">
+    <value>Συμμετέχοντες</value>
+  </data>
+  <data name="PTTNotPurchased" xml:space="preserve">
+    <value>Το Πρόσθετο Push-To-Talk Δεν Έχει Αγοραστεί</value>
+  </data>
+  <data name="PTTNotPurchasedInfo" xml:space="preserve">
+    <value>Το τμήμα σας δεν έχει αγοράσει το πρόσθετο Push-To-Talk. Το Διαχειριστικό Μέλος του τμήματός σας μπορεί να αγοράσει το πρόσθετο από τη σελίδα Συνδρομής και Χρέωσης. Το Push-To-Talk επιτρέπει στο τμήμα σας να ενεργοποιήσει φωνητικές επικοινωνίες σε πραγματικό χρόνο μέσω των εφαρμογών Resgrid.</value>
+  </data>
+  <data name="SaveEditAudioButton" xml:space="preserve">
+    <value>Αποθήκευση Ροής Ήχου</value>
+  </data>
+  <data name="VoiceChannels" xml:space="preserve">
+    <value>Φωνητικά Κανάλια (PTT)</value>
+  </data>
+  <data name="VoiceHeader" xml:space="preserve">
+    <value>Ήχος και Push-To-Talk</value>
+  </data>
+  <data name="AddPTTChannel" xml:space="preserve">
+    <value>Προσθήκη Καναλιού PTT</value>
+  </data>
+  <data name="AudioStream" xml:space="preserve">
+    <value>Ροή Ήχου</value>
+  </data>
+  <data name="DefaultChannelWarning" xml:space="preserve">
+    <value>Μπορείτε να έχετε μόνο 1 κανάλι ορισμένο ως προεπιλογή κάθε φορά. Για να ορίσετε άλλο κανάλι ως προεπιλογή, πρέπει πρώτα να απενεργοποιήσετε την επιλογή προεπιλογής στο τρέχον κανάλι.</value>
+  </data>
+  <data name="EditPTTChannelHeader" xml:space="preserve">
+    <value>Επεξεργασία Καναλιού Push-To-Talk</value>
+  </data>
+  <data name="IsDefaultHelp" xml:space="preserve">
+    <value>Σημειώστε ότι μπορεί να υπάρχει μόνο ένα προεπιλεγμένο κανάλι κάθε φορά· η επιλογή νέου προεπιλεγμένου καναλιού θα απενεργοποιήσει την προεπιλογή για το υπάρχον.</value>
+  </data>
+  <data name="NewPTTChannelHeader" xml:space="preserve">
+    <value>Νέο Κανάλι Push-To-Talk</value>
+  </data>
+  <data name="PushToTalk" xml:space="preserve">
+    <value>Push-To-Talk</value>
+  </data>
+  <data name="SavePTTChannel" xml:space="preserve">
+    <value>Αποθήκευση Καναλιού PTT</value>
+  </data>
+</root>

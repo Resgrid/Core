@@ -1,0 +1,357 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddUnitsToLog" xml:space="preserve">
+    <value>Προσθήκη Μονάδας στην Καταγραφή</value>
+  </data>
+  <data name="Attachments" xml:space="preserve">
+    <value>Συνημμένα</value>
+  </data>
+  <data name="BodyLocation" xml:space="preserve">
+    <value>Τοποθεσία Σορού</value>
+  </data>
+  <data name="BodyLocationReq" xml:space="preserve">
+    <value>Η Τοποθεσία Σορού είναι υποχρεωτική.</value>
+  </data>
+  <data name="CallAddress" xml:space="preserve">
+    <value>Διεύθυνση Κλήσης (Τοποθεσία)</value>
+  </data>
+  <data name="CallName" xml:space="preserve">
+    <value>Όνομα Κλήσης</value>
+  </data>
+  <data name="CallPriority" xml:space="preserve">
+    <value>Προτεραιότητα Κλήσης</value>
+  </data>
+  <data name="CallTimestamp" xml:space="preserve">
+    <value>Χρονική Σήμανση Κλήσης</value>
+  </data>
+  <data name="CaseNumber" xml:space="preserve">
+    <value>Αρ. Υπόθεσης</value>
+  </data>
+  <data name="Cause" xml:space="preserve">
+    <value>Αιτία</value>
+  </data>
+  <data name="Condition" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="Coroner" xml:space="preserve">
+    <value>Ιατροδικαστής</value>
+  </data>
+  <data name="Date" xml:space="preserve">
+    <value>Ημερομηνία</value>
+  </data>
+  <data name="DeleteWarning" xml:space="preserve">
+    <value>ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Αυτό θα διαγράψει οριστικά αυτή την καταγραφή. Είστε βέβαιοι ότι θέλετε να διαγράψετε την καταγραφή;</value>
+  </data>
+  <data name="DestinationLocation" xml:space="preserve">
+    <value>Τοποθεσία Προορισμού</value>
+  </data>
+  <data name="Dispatched" xml:space="preserve">
+    <value>Απεστάλη</value>
+  </data>
+  <data name="Investigator" xml:space="preserve">
+    <value>Ερευνητής</value>
+  </data>
+  <data name="Location" xml:space="preserve">
+    <value>Τοποθεσία</value>
+  </data>
+  <data name="LogInfo" xml:space="preserve">
+    <value>Πληροφορίες Καταγραφής</value>
+  </data>
+  <data name="LogsForYear" xml:space="preserve">
+    <value>Καταγραφές για το Έτος</value>
+  </data>
+  <data name="LogsHeader" xml:space="preserve">
+    <value>Καταγραφές</value>
+  </data>
+  <data name="Meeting" xml:space="preserve">
+    <value>Σύσκεψη</value>
+  </data>
+  <data name="MeetingEndReq" xml:space="preserve">
+    <value>Η ώρα λήξης της σύσκεψης είναι υποχρεωτική.</value>
+  </data>
+  <data name="MeetingLocationReq" xml:space="preserve">
+    <value>Η τοποθεσία της σύσκεψης είναι υποχρεωτική.</value>
+  </data>
+  <data name="MeetingStartReq" xml:space="preserve">
+    <value>Η ώρα έναρξης της σύσκεψης είναι υποχρεωτική.</value>
+  </data>
+  <data name="MeetingType" xml:space="preserve">
+    <value>Τύπος Σύσκεψης</value>
+  </data>
+  <data name="MeetingTypeReq" xml:space="preserve">
+    <value>Ο τύπος σύσκεψης είναι υποχρεωτικός.</value>
+  </data>
+  <data name="Narrative" xml:space="preserve">
+    <value>Αφήγηση</value>
+  </data>
+  <data name="NatureOfCall" xml:space="preserve">
+    <value>Φύση της Κλήσης</value>
+  </data>
+  <data name="NewCall" xml:space="preserve">
+    <value>Νέα Κλήση</value>
+  </data>
+  <data name="NewLog" xml:space="preserve">
+    <value>Νέα Καταγραφή</value>
+  </data>
+  <data name="NewLogHeader" xml:space="preserve">
+    <value>Νέα Καταγραφή</value>
+  </data>
+  <data name="NewLogInfo" xml:space="preserve">
+    <value>Παρακάτω μπορείτε να προσθέσετε νέα καταγραφή στο σύστημα (π.χ. αναφορά εξόδου, εργασία σταθμού, εκπαίδευση, συμβάν κ.λπ.). Οι καταγραφές μπορούν να χρησιμοποιηθούν για την καταγραφή πληροφοριών σχετικά με εξόδους, συσκέψεις και εκπαιδεύσεις. Τα πεδία με μπλε πλάγια γράμματα είναι υποχρεωτικά.</value>
+  </data>
+  <data name="OtherAttendees" xml:space="preserve">
+    <value>Άλλοι Συμμετέχοντες</value>
+  </data>
+  <data name="OthersHavingContact" xml:space="preserve">
+    <value>Άλλοι που Είχαν Επαφή με τη Σορό</value>
+  </data>
+  <data name="Personnel" xml:space="preserve">
+    <value>Προσωπικό</value>
+  </data>
+  <data name="PersonnelRequired" xml:space="preserve">
+    <value>απαιτούμενο προσωπικό</value>
+  </data>
+  <data name="PresidingPeople" xml:space="preserve">
+    <value>Προεδρεύον/τα Άτομο/α</value>
+  </data>
+  <data name="PronouncedDeceasedBy" xml:space="preserve">
+    <value>Διαπίστωση Θανάτου Από</value>
+  </data>
+  <data name="PronouncedDeceasedByReq" xml:space="preserve">
+    <value>Η Διαπίστωση Θανάτου Από είναι υποχρεωτική.</value>
+  </data>
+  <data name="PronouncedDeceasedDateReq" xml:space="preserve">
+    <value>Η ημερομηνία είναι υποχρεωτική.</value>
+  </data>
+  <data name="SelectCall" xml:space="preserve">
+    <value>Επιλογή Κλήσης</value>
+  </data>
+  <data name="SeniorOIC" xml:space="preserve">
+    <value>Αρχαιότερος (Επικεφαλής)</value>
+  </data>
+  <data name="TrainingEndError" xml:space="preserve">
+    <value>Η ώρα λήξης της εκπαίδευσης είναι υποχρεωτική.</value>
+  </data>
+  <data name="TrainingStartError" xml:space="preserve">
+    <value>Η ώρα έναρξης της εκπαίδευσης είναι υποχρεωτική.</value>
+  </data>
+  <data name="UnitPersonnel" xml:space="preserve">
+    <value>Προσωπικό Μονάδας</value>
+  </data>
+  <data name="Units" xml:space="preserve">
+    <value>Μονάδες</value>
+  </data>
+  <data name="UnitsAndPersonnel" xml:space="preserve">
+    <value>Μονάδες και Προσωπικό</value>
+  </data>
+  <data name="WorkLogEndRequired" xml:space="preserve">
+    <value>Η ώρα λήξης εργασίας είναι υποχρεωτική.</value>
+  </data>
+  <data name="WorkLogStartRequired" xml:space="preserve">
+    <value>Η ώρα έναρξης εργασίας είναι υποχρεωτική.</value>
+  </data>
+  <data name="ViewLogHeader" xml:space="preserve">
+    <value>Προβολή Καταγραφής</value>
+  </data>
+  <data name="BackToLogs" xml:space="preserve">
+    <value>Επιστροφή στις Καταγραφές</value>
+  </data>
+  <data name="GeneralInformation" xml:space="preserve">
+    <value>Γενικές Πληροφορίες</value>
+  </data>
+  <data name="LogSummary" xml:space="preserve">
+    <value>Σύνοψη Καταγραφής</value>
+  </data>
+  <data name="LogId" xml:space="preserve">
+    <value>Αναγνωριστικό Καταγραφής</value>
+  </data>
+  <data name="LogType" xml:space="preserve">
+    <value>Τύπος Καταγραφής</value>
+  </data>
+  <data name="LoggedOn" xml:space="preserve">
+    <value>Καταγράφηκε Στις</value>
+  </data>
+  <data name="LoggedBy" xml:space="preserve">
+    <value>Καταγράφηκε Από</value>
+  </data>
+  <data name="Duration" xml:space="preserve">
+    <value>Διάρκεια</value>
+  </data>
+  <data name="CallInformation" xml:space="preserve">
+    <value>Πληροφορίες Κλήσης</value>
+  </data>
+  <data name="CallNumber" xml:space="preserve">
+    <value>Αριθμός Κλήσης</value>
+  </data>
+  <data name="ViewFullCall" xml:space="preserve">
+    <value>Προβολή Πλήρους Κλήσης</value>
+  </data>
+  <data name="TrainingInformation" xml:space="preserve">
+    <value>Πληροφορίες Εκπαίδευσης</value>
+  </data>
+  <data name="MeetingInformation" xml:space="preserve">
+    <value>Πληροφορίες Σύσκεψης</value>
+  </data>
+  <data name="CoronerInformation" xml:space="preserve">
+    <value>Πληροφορίες Ιατροδικαστή</value>
+  </data>
+  <data name="LogDetails" xml:space="preserve">
+    <value>Λεπτομέρειες Καταγραφής</value>
+  </data>
+  <data name="ConditionInitialReport" xml:space="preserve">
+    <value>Κατάσταση / Αρχική Αναφορά</value>
+  </data>
+  <data name="PersonnelNotAssignedUnit" xml:space="preserve">
+    <value>Χωρίς Ανάθεση σε Μονάδα</value>
+  </data>
+  <data name="PrintExport" xml:space="preserve">
+    <value>Εκτύπωση / Εξαγωγή</value>
+  </data>
+  <data name="PrintExportView" xml:space="preserve">
+    <value>Προβολή Εκτύπωσης (Εξαγωγής)</value>
+  </data>
+  <data name="DeleteLog" xml:space="preserve">
+    <value>Διαγραφή Καταγραφής</value>
+  </data>
+  <data name="DeleteLogConfirm" xml:space="preserve">
+    <value>Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτή την καταγραφή; Αυτή η ενέργεια δεν μπορεί να αναιρεθεί.</value>
+  </data>
+  <data name="LogReport" xml:space="preserve">
+    <value>Αναφορά Καταγραφής</value>
+  </data>
+  <data name="GeneratedLabel" xml:space="preserve">
+    <value>Δημιουργήθηκε</value>
+  </data>
+  <data name="ExternalId" xml:space="preserve">
+    <value>Εξωτερικό Αναγνωριστικό</value>
+  </data>
+  <data name="NoType" xml:space="preserve">
+    <value>Χωρίς Τύπο</value>
+  </data>
+  <data name="NotSupplied" xml:space="preserve">
+    <value>Δεν Δόθηκε</value>
+  </data>
+  <data name="Presiding" xml:space="preserve">
+    <value>Προεδρεύων</value>
+  </data>
+  <data name="WorkLogInformation" xml:space="preserve">
+    <value>Πληροφορίες Καταγραφής Εργασίας</value>
+  </data>
+</root>

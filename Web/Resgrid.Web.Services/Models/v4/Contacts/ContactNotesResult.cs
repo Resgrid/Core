@@ -1,7 +1,9 @@
 ﻿using System;
 using Resgrid.Web.Services.Models.v4.CallTypes;
 using System.Collections.Generic;
-using Humanizer;
+
+using Newtonsoft.Json;
+using Resgrid.Web.Services.Helpers;
 
 namespace Resgrid.Web.Services.Models.v4.Contacts
 {
@@ -43,12 +45,14 @@ namespace Resgrid.Web.Services.Models.v4.Contacts
 
 		public int Visibility { get; set; } // 0 Internal, 1 Visible to Client
 
+		[JsonConverter(typeof(UtcDateTimeConverter))]
 		public DateTime? ExpiresOnUtc { get; set; }
 
 		public string ExpiresOn { get; set; }
 
 		public bool IsDeleted { get; set; }
 
+		[JsonConverter(typeof(UtcDateTimeConverter))]
 		public DateTime AddedOnUtc { get; set; }
 
 		public string AddedOn { get; set; }
@@ -57,6 +61,7 @@ namespace Resgrid.Web.Services.Models.v4.Contacts
 
 		public string AddedByName { get; set; }
 
+		[JsonConverter(typeof(UtcDateTimeConverter))]
 		public DateTime? EditedOnUtc { get; set; }
 
 		public string EditedOn { get; set; }

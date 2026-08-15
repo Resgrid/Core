@@ -1,0 +1,208 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="CommunicationTestModule" xml:space="preserve">
+    <value>Δοκιμές Επικοινωνίας</value>
+  </data>
+  <data name="CommunicationTestsHeader" xml:space="preserve">
+    <value>Δοκιμές Επικοινωνίας</value>
+  </data>
+  <data name="NewTest" xml:space="preserve">
+    <value>Νέα Δοκιμή</value>
+  </data>
+  <data name="EditTest" xml:space="preserve">
+    <value>Επεξεργασία Δοκιμής</value>
+  </data>
+  <data name="DeleteTest" xml:space="preserve">
+    <value>Διαγραφή Δοκιμής</value>
+  </data>
+  <data name="DeleteTestWarning" xml:space="preserve">
+    <value>Είστε βέβαιοι ότι θέλετε να διαγράψετε αυτή τη δοκιμή;</value>
+  </data>
+  <data name="TestDefinitions" xml:space="preserve">
+    <value>Ορισμοί Δοκιμών</value>
+  </data>
+  <data name="TestName" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="TestDescription" xml:space="preserve">
+    <value>Περιγραφή</value>
+  </data>
+  <data name="ScheduleType" xml:space="preserve">
+    <value>Τύπος Προγραμματισμού</value>
+  </data>
+  <data name="OnDemand" xml:space="preserve">
+    <value>Κατά Παραγγελία</value>
+  </data>
+  <data name="Weekly" xml:space="preserve">
+    <value>Εβδομαδιαία</value>
+  </data>
+  <data name="Monthly" xml:space="preserve">
+    <value>Μηνιαία</value>
+  </data>
+  <data name="DaysOfWeek" xml:space="preserve">
+    <value>Ημέρες της Εβδομάδας</value>
+  </data>
+  <data name="DayOfMonth" xml:space="preserve">
+    <value>Ημέρα του Μήνα</value>
+  </data>
+  <data name="Time" xml:space="preserve">
+    <value>Ώρα</value>
+  </data>
+  <data name="ChannelsToTest" xml:space="preserve">
+    <value>Κανάλια προς Δοκιμή</value>
+  </data>
+  <data name="SMS" xml:space="preserve">
+    <value>SMS</value>
+  </data>
+  <data name="Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Voice" xml:space="preserve">
+    <value>Φωνή</value>
+  </data>
+  <data name="Push" xml:space="preserve">
+    <value>Push</value>
+  </data>
+  <data name="Active" xml:space="preserve">
+    <value>Ενεργή</value>
+  </data>
+  <data name="Inactive" xml:space="preserve">
+    <value>Ανενεργή</value>
+  </data>
+  <data name="ResponseWindow" xml:space="preserve">
+    <value>Παράθυρο Απόκρισης</value>
+  </data>
+  <data name="ResponseWindowMinutes" xml:space="preserve">
+    <value>Παράθυρο Απόκρισης (λεπτά)</value>
+  </data>
+  <data name="CreateTest" xml:space="preserve">
+    <value>Δημιουργία Δοκιμής</value>
+  </data>
+  <data name="SaveChanges" xml:space="preserve">
+    <value>Αποθήκευση Αλλαγών</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Ακύρωση</value>
+  </data>
+  <data name="RecentTestRuns" xml:space="preserve">
+    <value>Πρόσφατες Εκτελέσεις Δοκιμών</value>
+  </data>
+  <data name="RunNow" xml:space="preserve">
+    <value>Εκτέλεση Τώρα</value>
+  </data>
+  <data name="RunCode" xml:space="preserve">
+    <value>Κωδικός Εκτέλεσης</value>
+  </data>
+  <data name="Started" xml:space="preserve">
+    <value>Ξεκίνησε</value>
+  </data>
+  <data name="Status" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="UsersTested" xml:space="preserve">
+    <value>Χρήστες που Δοκιμάστηκαν</value>
+  </data>
+  <data name="Responses" xml:space="preserve">
+    <value>Απαντήσεις</value>
+  </data>
+  <data name="ViewReport" xml:space="preserve">
+    <value>Προβολή Αναφοράς</value>
+  </data>
+  <data name="ReportHeader" xml:space="preserve">
+    <value>Αναφορά Δοκιμής Επικοινωνίας</value>
+  </data>
+  <data name="RunDetails" xml:space="preserve">
+    <value>Λεπτομέρειες Εκτέλεσης</value>
+  </data>
+  <data name="PerUserResults" xml:space="preserve">
+    <value>Αποτελέσματα ανά Χρήστη</value>
+  </data>
+  <data name="User" xml:space="preserve">
+    <value>Χρήστης</value>
+  </data>
+  <data name="Contact" xml:space="preserve">
+    <value>Επαφή</value>
+  </data>
+  <data name="Carrier" xml:space="preserve">
+    <value>Πάροχος</value>
+  </data>
+  <data name="VerificationStatus" xml:space="preserve">
+    <value>Κατάσταση Επαλήθευσης</value>
+  </data>
+  <data name="Responded" xml:space="preserve">
+    <value>Απάντησε</value>
+  </data>
+  <data name="NoResponse" xml:space="preserve">
+    <value>Καμία Απάντηση</value>
+  </data>
+  <data name="NotSent" xml:space="preserve">
+    <value>Δεν Στάλθηκε</value>
+  </data>
+  <data name="ResponseRate" xml:space="preserve">
+    <value>Ποσοστό Απόκρισης</value>
+  </data>
+  <data name="ThankYouResponse" xml:space="preserve">
+    <value>Η απάντησή σας στη δοκιμή επικοινωνίας καταγράφηκε. Ευχαριστούμε.</value>
+  </data>
+  <data name="TestResponseReceived" xml:space="preserve">
+    <value>Το Resgrid έλαβε την απάντησή σας στη δοκιμή επικοινωνίας. Ευχαριστούμε.</value>
+  </data>
+</root>

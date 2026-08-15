@@ -1,5 +1,8 @@
 ﻿using System;
 
+using Newtonsoft.Json;
+using Resgrid.Web.Services.Helpers;
+
 namespace Resgrid.Web.Services.Models.v4.PersonnelStaffing
 {
 	/// <summary>
@@ -36,6 +39,7 @@ namespace Resgrid.Web.Services.Models.v4.PersonnelStaffing
 		/// <summary>
 		/// The timestamp of the last staffing. This is converted UTC version of the timestamp.
 		/// </summary>
+		[JsonConverter(typeof(UtcDateTimeConverter))]
 		public DateTime TimestampUtc { get; set; }
 
 		/// <summary>

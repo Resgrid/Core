@@ -39,9 +39,16 @@ namespace Resgrid.Web.Services.Models.v4.Statuses
 		public string Text { get; set; }
 
 		/// <summary>
-		/// Button color
+		/// Button color, always a CSS hex colour ("#5CB85C")
 		/// </summary>
 		public string BColor { get; set; }
+
+		/// <summary>
+		/// The canonical meaning of this status (see <see cref="Resgrid.Model.ActionBaseTypes"/>).
+		/// Departments name and colour their statuses freely, so this is the only field a client can use
+		/// to answer "does this status mean available / responding / on scene".
+		/// </summary>
+		public int BaseType { get; set; }
 
 		/// <summary>
 		/// Text color

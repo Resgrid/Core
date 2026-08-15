@@ -15,6 +15,10 @@ WORKDIR /app
 FROM dhi.io/dotnet:9.0.314-sdk-debian13@sha256:a3acd51de0af79878e26292b3053aab513c6ca4476ddb2f9f11adb9c04aa7c89 AS build
 ARG BUILD_VERSION
 WORKDIR /src
+## Root MSBuild files must be present for the restore layer, otherwise the
+## security pins in Directory.Build.targets are missing from project.assets.json.
+COPY ["Directory.Build.props", "./"]
+COPY ["Directory.Build.targets", "./"]
 
 COPY ["Workers/Resgrid.Workers.Console/Resgrid.Workers.Console.csproj", "Workers/Resgrid.Workers.Console/"]
 COPY ["Providers/Resgrid.Providers.Bus.Rabbit/Resgrid.Providers.Bus.Rabbit.csproj", "Providers/Resgrid.Providers.Bus.Rabbit/"]

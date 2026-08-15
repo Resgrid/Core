@@ -62,5 +62,17 @@
 		DispatchRecommendationMode = 58,
 		DispatchRecommendationAutoDispatch = 59,
 		DispatchRecommendationConfig = 60,
+
+		/// <summary>
+		/// ProtoBuf-serialized <see cref="NewCallFieldPolicy"/>: which built-in new-call fields a
+		/// department shows, and which it requires before a call can be created.
+		/// </summary>
+		NewCallFieldPolicy = 61,
+
+		/// <summary>
+		/// ProtoBuf-serialized <see cref="UnitStatusThresholds"/>: how long a unit may sit in a status
+		/// before the board highlights it.
+		/// </summary>
+		UnitStatusThresholds = 62,
 	}
 }

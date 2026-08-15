@@ -469,7 +469,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 						PoiTypeId = poiType.PoiTypeId,
 						Name = poiType.Name,
 						Color = poiType.Color,
-						ImagePath = null,
+						ImagePath = PoiIconHelper.ResolveIconName(poiType.Image),
 						PoiImage = poiType.Image,
 						Marker = poiType.Marker,
 						IsDestination = poiType.IsDestination
@@ -631,7 +631,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				PoiTypeId = poiType.PoiTypeId,
 				Name = poiType.Name,
 				Color = poiType.Color,
-				ImagePath = null,
+				ImagePath = PoiIconHelper.ResolveIconName(poiType.Image),
 				PoiImage = poiType.Image,
 				Marker = poiType.Marker,
 				IsDestination = poiType.IsDestination
@@ -651,7 +651,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				Latitude = poi.Latitude,
 				Longitude = poi.Longitude,
 				Color = poiType.Color,
-				ImagePath = null,
+				ImagePath = PoiIconHelper.ResolveIconName(poiType.Image),
 				PoiImage = poiType.Image,
 				Marker = poiType.Marker,
 				IsDestination = poiType.IsDestination
@@ -667,7 +667,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 				Latitude = poi.Latitude,
 				Title = GetPoiTitle(poi, poiType),
 				InfoWindowContent = GetPoiInfoWindowContent(poi, poiType),
-				ImagePath = null,
+				ImagePath = PoiIconHelper.ResolveIconName(poiType.Image),
 				PoiImage = poiType.Image,
 				Marker = poiType.Marker,
 				Color = poiType.Color,

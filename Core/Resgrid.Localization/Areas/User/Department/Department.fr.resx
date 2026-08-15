@@ -893,4 +893,112 @@
   <data name="RunCardsNav" xml:space="preserve">
     <value>Plans de départ</value>
   </data>
+  <data name="DefaultMapCenterHelp" xml:space="preserve">
+    <value>Toutes les cartes de Resgrid et des applications s'ouvrent ici. Laissez les deux champs vides et nous les déduirons de l'adresse du service ci-dessus au prochain enregistrement ; remplissez-les pour fixer un point précis, qui ne sera jamais écrasé.</value>
+  </data>
+  <data name="NewCallFieldsLabel" xml:space="preserve">
+    <value>Champs du formulaire d'intervention</value>
+  </data>
+  <data name="NewCallFieldsHelp" xml:space="preserve">
+    <value>Choisissez les champs intégrés qui apparaissent sur le formulaire et ceux qui doivent être remplis avant qu'une intervention puisse être créée et envoyée sur le terrain. Nom, nature, priorité et type sont toujours affichés et toujours requis.</value>
+  </data>
+  <data name="NewCallFieldsFieldColumn" xml:space="preserve">
+    <value>Champ</value>
+  </data>
+  <data name="NewCallFieldsVisibleColumn" xml:space="preserve">
+    <value>Visible</value>
+  </data>
+  <data name="NewCallFieldsRequiredColumn" xml:space="preserve">
+    <value>Requis</value>
+  </data>
+  <data name="NewCallField_address" xml:space="preserve">
+    <value>Adresse</value>
+  </data>
+  <data name="NewCallField_geolocation" xml:space="preserve">
+    <value>Coordonnées GPS</value>
+  </data>
+  <data name="NewCallField_what3words" xml:space="preserve">
+    <value>what3words</value>
+  </data>
+  <data name="NewCallField_pluscode" xml:space="preserve">
+    <value>Plus Code</value>
+  </data>
+  <data name="NewCallField_destinationPoi" xml:space="preserve">
+    <value>Destination</value>
+  </data>
+  <data name="NewCallField_indoorLocation" xml:space="preserve">
+    <value>Localisation intérieure</value>
+  </data>
+  <data name="NewCallField_note" xml:space="preserve">
+    <value>Note</value>
+  </data>
+  <data name="NewCallField_contactName" xml:space="preserve">
+    <value>Contact principal</value>
+  </data>
+  <data name="NewCallField_contactInfo" xml:space="preserve">
+    <value>Coordonnées du déclarant</value>
+  </data>
+  <data name="NewCallField_externalId" xml:space="preserve">
+    <value>ID externe de l'intervention</value>
+  </data>
+  <data name="NewCallField_incidentId" xml:space="preserve">
+    <value>ID de l'incident</value>
+  </data>
+  <data name="NewCallField_referenceId" xml:space="preserve">
+    <value>ID de référence</value>
+  </data>
+  <data name="NewCallField_protocols" xml:space="preserve">
+    <value>Protocoles</value>
+  </data>
+  <data name="NewCallField_linkedCall" xml:space="preserve">
+    <value>Intervention liée</value>
+  </data>
+  <data name="NewCallField_dispatchOn" xml:space="preserve">
+    <value>Envoi programmé</value>
+  </data>
+  <data name="NewCallField_dispatchList" xml:space="preserve">
+    <value>Destinataires</value>
+  </data>
+  <data name="UnitStatusThresholdsLabel" xml:space="preserve">
+    <value>Minuteurs de statut des unités</value>
+  </data>
+  <data name="UnitStatusThresholdsHelp" xml:space="preserve">
+    <value>Met en évidence une unité sur le Big Board lorsqu'elle reste trop longtemps dans un statut — par exemple engagée depuis plus de quatre minutes sans avoir signalé son départ. Laissez les deux colonnes à 0 pour ne rien surveiller.</value>
+  </data>
+  <data name="UnitStatusThresholdsStatusColumn" xml:space="preserve">
+    <value>Statut</value>
+  </data>
+  <data name="UnitStatusThresholdsWarnColumn" xml:space="preserve">
+    <value>Avertir après (minutes)</value>
+  </data>
+  <data name="UnitStatusThresholdsAlertColumn" xml:space="preserve">
+    <value>Alerter après (minutes)</value>
+  </data>
+  <data name="UnitStatusBaseType_6" xml:space="preserve">
+    <value>Engagée</value>
+  </data>
+  <data name="UnitStatusBaseType_2" xml:space="preserve">
+    <value>En route</value>
+  </data>
+  <data name="UnitStatusBaseType_11" xml:space="preserve">
+    <value>En chemin</value>
+  </data>
+  <data name="UnitStatusBaseType_3" xml:space="preserve">
+    <value>Sur les lieux</value>
+  </data>
+  <data name="UnitStatusBaseType_9" xml:space="preserve">
+    <value>En attente</value>
+  </data>
+  <data name="UnitStatusBaseType_14" xml:space="preserve">
+    <value>Auprès du patient</value>
+  </data>
+  <data name="UnitStatusBaseType_12" xml:space="preserve">
+    <value>Transport</value>
+  </data>
+  <data name="UnitStatusBaseType_15" xml:space="preserve">
+    <value>À l'hôpital</value>
+  </data>
+  <data name="UnitStatusBaseType_8" xml:space="preserve">
+    <value>Retour</value>
+  </data>
 </root>

@@ -3,6 +3,9 @@ using Resgrid.Web.Services.Models.v4.UserDefinedFields;
 using System;
 using System.Collections.Generic;
 
+using Newtonsoft.Json;
+using Resgrid.Web.Services.Helpers;
+
 namespace Resgrid.Web.Services.Models.v4.Calls
 {
 	/// <summary>
@@ -171,8 +174,22 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		public string Type { get; set; }
 
 		/// <summary>
+		/// Current alarm level (1-based). Only moves above 1 when the call has been escalated through
+		/// a run card ("Strike Next Alarm"); clients show it so a dispatcher can see the call is
+		/// already running at a higher level before striking again.
+		/// </summary>
+		public int AlarmLevel { get; set; }
+
+		/// <summary>
+		/// The run card driving this call's dispatch, or null when no card matched. Clients use it to
+		/// decide whether escalation is available at all.
+		/// </summary>
+		public int? ActiveRunCardId { get; set; }
+
+		/// <summary>
 		/// When was the call Logged On in UTC time
 		/// </summary>
+		[JsonConverter(typeof(UtcDateTimeConverter))]
 		public DateTime LoggedOnUtc { get; set; }
 
 		/// <summary>
@@ -183,6 +200,7 @@ namespace Resgrid.Web.Services.Models.v4.Calls
 		/// <summary>
 		/// Dispatch On
 		/// </summary>
+		[JsonConverter(typeof(UtcDateTimeConverter))]
 		public DateTime? DispatchedOnUtc { get; set; }
 
 		/// <summary>

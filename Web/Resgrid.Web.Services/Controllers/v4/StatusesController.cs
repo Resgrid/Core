@@ -177,11 +177,15 @@ namespace Resgrid.Web.Services.Controllers.v4
 			customStateResult.Type = type;
 			customStateResult.StateId = stateDetail.CustomStateId;
 			customStateResult.Text = stateDetail.ButtonText;
-			customStateResult.BColor = stateDetail.ButtonColor;
+
+			// Resolve legacy bootstrap label classes ("label-success") to hex so clients never have to
+			// know about them; hex values pass through unchanged.
+			customStateResult.BColor = stateDetail.ButtonClassToColor();
 			customStateResult.Color = stateDetail.TextColor;
 			customStateResult.Gps = stateDetail.GpsRequired;
 			customStateResult.Note = stateDetail.NoteType;
 			customStateResult.Detail = stateDetail.DetailType;
+			customStateResult.BaseType = stateDetail.BaseType;
 
 			return customStateResult;
 		}

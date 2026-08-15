@@ -1,0 +1,636 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="DeleteStaticShiftHeader" xml:space="preserve">
+    <value>Διαγραφή Στατικής Βάρδιας</value>
+  </data>
+  <data name="EditShiftWarning" xml:space="preserve">
+    <value>Η επεξεργασία μιας στατικής βάρδιας θα διαγράψει όλες τις αναθέσεις ή δηλώσεις συμμετοχής για αυτή τη βάρδια και θα τις ανακατανείμει βάσει των νέων ρυθμίσεων. Αν υπάρχουν αναθέσεις ή δηλώσεις για αυτή τη βάρδια, θα αφαιρεθούν και θα εφαρμοστούν οι νέες ρυθμίσεις.</value>
+  </data>
+  <data name="EditStaticShiftHeader" xml:space="preserve">
+    <value>Επεξεργασία Στατικής Βάρδιας</value>
+  </data>
+  <data name="EndDateTime" xml:space="preserve">
+    <value>Ημερομηνία/Ώρα Λήξης</value>
+  </data>
+  <data name="ShiftColorNote" xml:space="preserve">
+    <value>Σημειώστε ότι το κείμενο στο Ημερολόγιο είναι μαύρο· λάβετέ το υπόψη όταν επιλέγετε χρώμα βάρδιας, καθώς το χρώμα θα χρησιμοποιηθεί ως φόντο</value>
+  </data>
+  <data name="ShiftEndNote" xml:space="preserve">
+    <value>Η ημερομηνία και ώρα λήξης της βάρδιας (δηλαδή επιστροφή στη βάση) όπου οι οντότητες που ανήκουν σε αυτή θεωρούνται διαθέσιμες.</value>
+  </data>
+  <data name="ShiftStartNote" xml:space="preserve">
+    <value>Η ημερομηνία και ώρα έναρξης της βάρδιας (δηλαδή έναρξη μετακίνησης) όπου οι οντότητες που ανήκουν σε αυτή θεωρούνται δεσμευμένες.</value>
+  </data>
+  <data name="StartDateTime" xml:space="preserve">
+    <value>Ημερομηνία/Ώρα Έναρξης</value>
+  </data>
+  <data name="ViewStaticShiftDayHeader" xml:space="preserve">
+    <value>Προβολή Ημέρας Στατικής Βάρδιας</value>
+  </data>
+  <!-- Index -->
+  <data name="ShiftsHeader" xml:space="preserve">
+    <value>Βάρδιες</value>
+  </data>
+  <data name="YourShiftsButton" xml:space="preserve">
+    <value>Οι Βάρδιες Σας</value>
+  </data>
+  <data name="ShiftStaffingButton" xml:space="preserve">
+    <value>Στελέχωση Βάρδιας</value>
+  </data>
+  <data name="RecurringGroupShifts" xml:space="preserve">
+    <value>Επαναλαμβανόμενες Ομαδικές Βάρδιες</value>
+  </data>
+  <data name="AddRecurringGroupShift" xml:space="preserve">
+    <value>Προσθήκη Επαναλαμβανόμενης Ομαδικής Βάρδιας</value>
+  </data>
+  <data name="NameColumn" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="TypeColumn" xml:space="preserve">
+    <value>Τύπος</value>
+  </data>
+  <data name="ScheduleColumn" xml:space="preserve">
+    <value>Πρόγραμμα</value>
+  </data>
+  <data name="GroupsColumn" xml:space="preserve">
+    <value>Ομάδες</value>
+  </data>
+  <data name="PersonnelColumn" xml:space="preserve">
+    <value>Προσωπικό</value>
+  </data>
+  <data name="AssignedType" xml:space="preserve">
+    <value>Ανατεθειμένη</value>
+  </data>
+  <data name="SignupType" xml:space="preserve">
+    <value>Δήλωση Συμμετοχής</value>
+  </data>
+  <data name="ManualSchedule" xml:space="preserve">
+    <value>Χειροκίνητο</value>
+  </data>
+  <data name="CustomSchedule" xml:space="preserve">
+    <value>Προσαρμοσμένο</value>
+  </data>
+  <data name="Schedule48_96" xml:space="preserve">
+    <value>48 σε υπηρεσία, 96 εκτός</value>
+  </data>
+  <data name="Schedule24_48" xml:space="preserve">
+    <value>24 σε υπηρεσία, 48 εκτός</value>
+  </data>
+  <data name="Schedule24_72" xml:space="preserve">
+    <value>24 σε υπηρεσία, 72 εκτός</value>
+  </data>
+  <data name="ViewCalendarButton" xml:space="preserve">
+    <value>Προβολή Ημερολογίου</value>
+  </data>
+  <data name="EditDetailsButton" xml:space="preserve">
+    <value>Επεξεργασία Λεπτομερειών</value>
+  </data>
+  <data name="EditCalendarButton" xml:space="preserve">
+    <value>Επεξεργασία Ημερολογίου</value>
+  </data>
+  <data name="EditGroupsButton" xml:space="preserve">
+    <value>Επεξεργασία Ομάδων</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Διαγραφή</value>
+  </data>
+  <data name="DeleteShiftWarning" xml:space="preserve">
+    <value>ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Αυτό θα διαγράψει οριστικά αυτή τη βάρδια. Είστε βέβαιοι ότι θέλετε να διαγράψετε τη βάρδια</value>
+  </data>
+  <data name="CalendarSectionHeader" xml:space="preserve">
+    <value>Ημερολόγιο</value>
+  </data>
+  <data name="AddStaticShift" xml:space="preserve">
+    <value>Προσθήκη Στατικής Βάρδιας</value>
+  </data>
+  <!-- NewShift -->
+  <data name="NewShiftHeader" xml:space="preserve">
+    <value>Νέα Βάρδια</value>
+  </data>
+  <data name="NewShiftWizardIntro" xml:space="preserve">
+    <value>Καλώς ήρθατε στον οδηγό νέας Βάρδιας. Αυτός ο οδηγός θα σας καθοδηγήσει στη δημιουργία νέας βάρδιας για το τμήμα σας. Παρακάτω ορίστε το όνομα, τον κωδικό και το προαιρετικό χρώμα της βάρδιας. Για να συνεχίσετε, κάντε κλικ στο κουμπί «Επόμενο» στην κάτω δεξιά γωνία.</value>
+  </data>
+  <data name="NameLabel" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="NamePlaceholder" xml:space="preserve">
+    <value>Όνομα της Βάρδιας</value>
+  </data>
+  <data name="NameHelp" xml:space="preserve">
+    <value>Για παράδειγμα («Βάρδια Α», «Βάρδια Β», «Βάρδια Γ»)</value>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>Κωδικός</value>
+  </data>
+  <data name="CodeHelp" xml:space="preserve">
+    <value>Παράδειγμα («Α», «Β», «Γ»)</value>
+  </data>
+  <data name="AssignmentTypeLabel" xml:space="preserve">
+    <value>Τύπος Ανάθεσης</value>
+  </data>
+  <data name="AssignmentTypeHelp" xml:space="preserve">
+    <value>Για ανατεθειμένη ορίζετε εσείς το προσωπικό της βάρδιας· για δήλωση συμμετοχής το προσωπικό δηλώνει μόνο του</value>
+  </data>
+  <data name="ColorLabel" xml:space="preserve">
+    <value>Χρώμα</value>
+  </data>
+  <data name="ScheduleTabIntro" xml:space="preserve">
+    <value>Παρακάτω ορίζετε ποιες ημέρες η βάρδια θα είναι σε υπηρεσία και την ώρα έναρξης της βάρδιας για την πρώτη ημέρα. Αν η βάρδιά σας είναι συνεχής, η ώρα έναρξης αφορά την πρώτη ημέρα της βάρδιας (δηλαδή την Ημέρα 1 ενός 48ωρου μπλοκ).</value>
+  </data>
+  <data name="StartTimeLabel" xml:space="preserve">
+    <value>Ώρα Έναρξης</value>
+  </data>
+  <data name="StartTimeHelp" xml:space="preserve">
+    <value>Πότε ξεκινά η βάρδια για την πρώτη ημέρα (ή τη μοναδική ημέρα)</value>
+  </data>
+  <data name="EndTimeLabel" xml:space="preserve">
+    <value>Ώρα Λήξης</value>
+  </data>
+  <data name="EndTimeHelp" xml:space="preserve">
+    <value>Πότε λήγει η βάρδια για την τελευταία ημέρα (ή τη μοναδική ημέρα)</value>
+  </data>
+  <data name="SlotsTabIntro" xml:space="preserve">
+    <value>Εδώ μπορείτε να διαμορφώσετε τους απαιτούμενους ρόλους για κάθε ομάδα του τμήματός σας για τη βάρδια. Κάντε κλικ στο κουμπί «Προσθήκη ομάδας στη βάρδια» για να προσθέσετε ομάδα στη βάρδια· η βάρδιά σας μπορεί να έχει πολλές ομάδες, τόσο σταθμού όσο και οργανωτικές. Αφού επιλέξετε την ομάδα (από την αριστερή αναπτυσσόμενη λίστα), μπορείτε να κάνετε κλικ στο κουμπί «Προσθήκη ρόλου στην Ομάδα» για να προσθέσετε τους απαιτούμενους ρόλους για την ομάδα.</value>
+  </data>
+  <data name="ShiftGroupColumn" xml:space="preserve">
+    <value>Ομάδα Βάρδιας</value>
+  </data>
+  <data name="ShiftRolesColumn" xml:space="preserve">
+    <value>Ρόλοι Βάρδιας</value>
+  </data>
+  <data name="AddGroupToShift" xml:space="preserve">
+    <value>Προσθήκη Ομάδας στη Βάρδια</value>
+  </data>
+  <data name="PersonnelTabIntro" xml:space="preserve">
+    <value>Τώρα επιλέξτε το προσωπικό που εργάζεται σε αυτή τη βάρδια για το τμήμα σας. Αυτό το προσωπικό θα καλύψει δυναμικά τη θέση ρόλου ομάδας βάσει της ομάδας στην οποία ανήκει, εφόσον έχουν οριστεί ρόλοι ομάδας βάρδιας.</value>
+  </data>
+  <data name="NonGroupPersonnelLabel" xml:space="preserve">
+    <value>Προσωπικό Εκτός Ομάδας</value>
+  </data>
+  <data name="NonGroupPersonnelHelp" xml:space="preserve">
+    <value>Προσωπικό που έχει ανατεθεί στη βάρδια αλλά δεν έχει ανατεθεί άμεσα σε σταθμό ή οργανωτική ομάδα (δηλαδή μετακινούμενοι ή εφεδρείες)</value>
+  </data>
+  <data name="FinishTabIntro" xml:space="preserve">
+    <value>Κάντε κλικ στο κουμπί ολοκλήρωσης παρακάτω για να δημιουργήσετε τη νέα σας βάρδια. Αν χρειαστεί να προσθέσετε περισσότερες ημέρες ή να αλλάξετε λεπτομέρειες, μπορείτε πάντα να επεξεργαστείτε τη βάρδια αργότερα από τη σελίδα λίστας Βαρδιών.</value>
+  </data>
+  <data name="WizardStart" xml:space="preserve">
+    <value>Έναρξη &gt;</value>
+  </data>
+  <data name="WizardSchedule" xml:space="preserve">
+    <value>Πρόγραμμα &gt;</value>
+  </data>
+  <data name="WizardSlots" xml:space="preserve">
+    <value>Θέσεις &gt;</value>
+  </data>
+  <data name="WizardPersonnel" xml:space="preserve">
+    <value>Προσωπικό &gt;</value>
+  </data>
+  <data name="WizardFinish" xml:space="preserve">
+    <value>Ολοκλήρωση</value>
+  </data>
+  <data name="WizardFirst" xml:space="preserve">
+    <value>Πρώτο</value>
+  </data>
+  <data name="WizardPrevious" xml:space="preserve">
+    <value>Προηγούμενο</value>
+  </data>
+  <data name="WizardNext" xml:space="preserve">
+    <value>Επόμενο</value>
+  </data>
+  <data name="ShiftNameRequired" xml:space="preserve">
+    <value>Το Όνομα Βάρδιας είναι υποχρεωτικό</value>
+  </data>
+  <data name="ShiftCodeRequired" xml:space="preserve">
+    <value>Ο Κωδικός Βάρδιας είναι υποχρεωτικός</value>
+  </data>
+  <data name="ShiftStartTimeRequired" xml:space="preserve">
+    <value>Η ώρα έναρξης της βάρδιας είναι υποχρεωτική.</value>
+  </data>
+  <!-- EditShiftDetails -->
+  <data name="EditShiftDetailsHeader" xml:space="preserve">
+    <value>Επεξεργασία Λεπτομερειών Βάρδιας</value>
+  </data>
+  <data name="CodePlaceholder" xml:space="preserve">
+    <value>Κωδικός Βάρδιας</value>
+  </data>
+  <data name="NonGroupPersonnelHelpEdit" xml:space="preserve">
+    <value>Προσωπικό που αποτελεί μέρος μιας βάρδιας αλλά δεν έχει ανατεθεί σε ομάδα (δηλαδή μετακινούμενοι ή περιφερόμενο προσωπικό)</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Ακύρωση</value>
+  </data>
+  <data name="UpdateShiftButton" xml:space="preserve">
+    <value>Ενημέρωση Βάρδιας</value>
+  </data>
+  <!-- EditShiftDays -->
+  <data name="EditShiftCalendarHeader" xml:space="preserve">
+    <value>Επεξεργασία Ημερολογίου Βάρδιας</value>
+  </data>
+  <data name="UpdateShiftDaysButton" xml:space="preserve">
+    <value>Ενημέρωση Ημερών Βάρδιας</value>
+  </data>
+  <!-- EditShiftGroups -->
+  <data name="EditShiftGroupsHeader" xml:space="preserve">
+    <value>Επεξεργασία Ομάδων Βάρδιας</value>
+  </data>
+  <data name="SaveShiftGroupsButton" xml:space="preserve">
+    <value>Αποθήκευση Ομάδων Βάρδιας</value>
+  </data>
+  <!-- ShiftCalendar -->
+  <data name="CalendarSuffix" xml:space="preserve">
+    <value>Ημερολόγιο</value>
+  </data>
+  <!-- ShiftStaffing -->
+  <data name="ShiftStaffingHeader" xml:space="preserve">
+    <value>Στελέχωση Βάρδιας</value>
+  </data>
+  <data name="ShiftLabel" xml:space="preserve">
+    <value>Βάρδια</value>
+  </data>
+  <data name="ShiftSelectHelp" xml:space="preserve">
+    <value>Επιλέξτε τη βάρδια για την οποία θα επεξεργαστείτε τη στελέχωση. Θα βλέπετε μόνο τις βάρδιες στις οποίες έχετε πρόσβαση (είστε Διαχειριστής Ομάδας ή Διαχειριστής Τμήματος)</value>
+  </data>
+  <data name="ShiftDayLabel" xml:space="preserve">
+    <value>Ημέρα Βάρδιας</value>
+  </data>
+  <data name="ShiftDayHelp" xml:space="preserve">
+    <value>Επιλέξτε την ημέρα για την οποία θα επεξεργαστείτε τη στελέχωση.</value>
+  </data>
+  <data name="NoteLabel" xml:space="preserve">
+    <value>Σημείωση</value>
+  </data>
+  <data name="NotePlaceholder" xml:space="preserve">
+    <value>Εισαγάγετε ελεύθερη σημείωση για τη βάρδια (π.χ. στελέχωση προσωπικού, αλλαγές στη μέση της βάρδιας κ.λπ.)</value>
+  </data>
+  <data name="AssignmentsLabel" xml:space="preserve">
+    <value>Αναθέσεις</value>
+  </data>
+  <data name="UnitsLabel" xml:space="preserve">
+    <value>Μονάδες</value>
+  </data>
+  <data name="SetShiftDayStaffingButton" xml:space="preserve">
+    <value>Ορισμός Στελέχωσης Ημέρας Βάρδιας</value>
+  </data>
+  <data name="SelectNonGroupPersonnel" xml:space="preserve">
+    <value>Επιλέξτε Προσωπικό Εκτός Ομάδας...</value>
+  </data>
+  <data name="SelectPersonnelForGroup" xml:space="preserve">
+    <value>Επιλέξτε Προσωπικό για την Ομάδα...</value>
+  </data>
+  <data name="SelectPerson" xml:space="preserve">
+    <value>Επιλέξτε Άτομο...</value>
+  </data>
+  <data name="NonGroupPersonnelStaffing" xml:space="preserve">
+    <value>Προσωπικό Εκτός Ομάδας</value>
+  </data>
+  <!-- YourShifts -->
+  <data name="YourShiftsHeader" xml:space="preserve">
+    <value>Οι Βάρδιες Σας</value>
+  </data>
+  <data name="ShiftColumn" xml:space="preserve">
+    <value>Βάρδια</value>
+  </data>
+  <data name="GroupColumn" xml:space="preserve">
+    <value>Ομάδα</value>
+  </data>
+  <data name="DayColumn" xml:space="preserve">
+    <value>Ημέρα</value>
+  </data>
+  <data name="ApprovedColumn" xml:space="preserve">
+    <value>Εγκεκριμένη</value>
+  </data>
+  <data name="StatusColumn" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="TimestampColumn" xml:space="preserve">
+    <value>Χρονική Σήμανση</value>
+  </data>
+  <data name="ApprovedNo" xml:space="preserve">
+    <value>Όχι</value>
+  </data>
+  <data name="ApprovedYes" xml:space="preserve">
+    <value>Ναι</value>
+  </data>
+  <data name="TradeComplete" xml:space="preserve">
+    <value>Η Ανταλλαγή Ολοκληρώθηκε</value>
+  </data>
+  <data name="TradeInProgress" xml:space="preserve">
+    <value>Ανταλλαγή σε Εξέλιξη</value>
+  </data>
+  <data name="Normal" xml:space="preserve">
+    <value>Κανονική</value>
+  </data>
+  <data name="For" xml:space="preserve">
+    <value>για</value>
+  </data>
+  <data name="DeclineShiftDayWarning" xml:space="preserve">
+    <value>ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Αυτό θα σας αφαιρέσει από αυτή τη βάρδια. Είστε βέβαιοι ότι θέλετε να απορρίψετε τη βάρδια</value>
+  </data>
+  <data name="DeclineShiftDay" xml:space="preserve">
+    <value>Απόρριψη Ημέρας Βάρδιας</value>
+  </data>
+  <data name="RequestTrade" xml:space="preserve">
+    <value>Αίτημα Ανταλλαγής</value>
+  </data>
+  <data name="FinishTrade" xml:space="preserve">
+    <value>Ολοκλήρωση Ανταλλαγής</value>
+  </data>
+  <data name="YourPendingTrades" xml:space="preserve">
+    <value>Οι Εκκρεμείς Ανταλλαγές Σας</value>
+  </data>
+  <data name="TimeColumn" xml:space="preserve">
+    <value>Ώρα</value>
+  </data>
+  <data name="ProcessTradeRequest" xml:space="preserve">
+    <value>Επεξεργασία Αιτήματος Ανταλλαγής</value>
+  </data>
+  <data name="Declined" xml:space="preserve">
+    <value>Απορρίφθηκε</value>
+  </data>
+  <data name="Accepted" xml:space="preserve">
+    <value>Έγινε Αποδεκτή</value>
+  </data>
+  <data name="Filled" xml:space="preserve">
+    <value>Καλύφθηκε</value>
+  </data>
+  <data name="TradeOffered" xml:space="preserve">
+    <value>Προτάθηκε Ανταλλαγή</value>
+  </data>
+  <!-- ViewShift / Signup -->
+  <data name="ViewShiftHeader" xml:space="preserve">
+    <value>Προβολή Βάρδιας</value>
+  </data>
+  <data name="ShiftStart" xml:space="preserve">
+    <value>Έναρξη Βάρδιας</value>
+  </data>
+  <data name="ShiftDayDetail" xml:space="preserve">
+    <value>Λεπτομέρειες Ημέρας Βάρδιας</value>
+  </data>
+  <data name="TypeLabel" xml:space="preserve">
+    <value>Τύπος:</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Κατάσταση:</value>
+  </data>
+  <data name="StartLabel" xml:space="preserve">
+    <value>Έναρξη:</value>
+  </data>
+  <data name="EndLabel" xml:space="preserve">
+    <value>Λήξη:</value>
+  </data>
+  <data name="Upcoming" xml:space="preserve">
+    <value>Προσεχής</value>
+  </data>
+  <data name="Completed" xml:space="preserve">
+    <value>Ολοκληρωμένη</value>
+  </data>
+  <data name="NoEndTime" xml:space="preserve">
+    <value>Χωρίς Ώρα Λήξης</value>
+  </data>
+  <data name="GroupsSectionHeader" xml:space="preserve">
+    <value>Ομάδες</value>
+  </data>
+  <data name="RoleColumn" xml:space="preserve">
+    <value>Ρόλος</value>
+  </data>
+  <data name="RequiredColumn" xml:space="preserve">
+    <value>Υποχρεωτικός</value>
+  </data>
+  <data name="OptionalColumn" xml:space="preserve">
+    <value>Προαιρετικός</value>
+  </data>
+  <data name="NeededColumn" xml:space="preserve">
+    <value>Απαιτούνται</value>
+  </data>
+  <data name="SignupsSectionHeader" xml:space="preserve">
+    <value>Δηλώσεις Συμμετοχής</value>
+  </data>
+  <data name="RolesColumn" xml:space="preserve">
+    <value>Ρόλοι</value>
+  </data>
+  <data name="TradesSectionHeader" xml:space="preserve">
+    <value>Ανταλλαγές</value>
+  </data>
+  <data name="TradeColumn" xml:space="preserve">
+    <value>Ανταλλαγή</value>
+  </data>
+  <data name="TradedWithFormat" xml:space="preserve">
+    <value>{0} αντάλλαξε με {1}</value>
+  </data>
+  <!-- Signup -->
+  <data name="ShiftSignupHeader" xml:space="preserve">
+    <value>Δήλωση Συμμετοχής σε Βάρδια</value>
+  </data>
+  <data name="DeleteShiftSignup" xml:space="preserve">
+    <value>Διαγραφή Δήλωσης Συμμετοχής σε Βάρδια</value>
+  </data>
+  <data name="SignupForShiftWith" xml:space="preserve">
+    <value>Δήλωση συμμετοχής στη Βάρδια με</value>
+  </data>
+  <!-- SignupSuccess -->
+  <data name="ShiftSignupSuccessHeader" xml:space="preserve">
+    <value>Επιτυχής Δήλωση Συμμετοχής σε Βάρδια</value>
+  </data>
+  <data name="SignupSuccessMessage" xml:space="preserve">
+    <value>Δηλώσατε επιτυχώς συμμετοχή σε αυτή την ημέρα βάρδιας. Αν θέλετε να δηλώσετε συμμετοχή σε περισσότερες ημέρες της βάρδιας, πρέπει να δηλώσετε συμμετοχή για κάθε ημέρα ξεχωριστά.</value>
+  </data>
+  <data name="StartsAtEndsAt" xml:space="preserve">
+    <value>Ξεκινά στις {0} και Λήγει στις {1}</value>
+  </data>
+  <data name="StartsAt" xml:space="preserve">
+    <value>Ξεκινά στις {0}</value>
+  </data>
+  <!-- RequestTrade -->
+  <data name="RequestTradeHeader" xml:space="preserve">
+    <value>Αίτημα Ανταλλαγής</value>
+  </data>
+  <data name="UsersToRequestLabel" xml:space="preserve">
+    <value>Χρήστες προς Αίτημα</value>
+  </data>
+  <data name="UsersToRequestHelp" xml:space="preserve">
+    <value>Κάντε κλικ μέσα στο πεδίο για να επιλέξετε σε ποιον θα ζητήσετε ανταλλαγή (εμφανίζονται μόνο χρήστες που πληρούν τις ανάγκες ρόλων της βάρδιας)</value>
+  </data>
+  <data name="SubmitTradeRequest" xml:space="preserve">
+    <value>Υποβολή Αιτήματος Ανταλλαγής</value>
+  </data>
+  <!-- ProcessTrade -->
+  <data name="ProcessTradeHeader" xml:space="preserve">
+    <value>Επεξεργασία Αιτήματος Ανταλλαγής</value>
+  </data>
+  <data name="DatesToTradeLabel" xml:space="preserve">
+    <value>Ημερομηνίες προς Ανταλλαγή</value>
+  </data>
+  <data name="DatesToTradeHelp" xml:space="preserve">
+    <value>Κάντε κλικ μέσα στο πεδίο για να επιλέξετε τις βάρδιες στις οποίες ήδη συμμετέχετε ώστε να ολοκληρωθεί η ανταλλαγή. Αν δεν ορίσετε ημέρα, πρόκειται για μη ισοσκελισμένη ανταλλαγή.</value>
+  </data>
+  <data name="NoteTradePlaceholder" xml:space="preserve">
+    <value>Μια σημείωση ή ενημέρωση για αυτή την ανταλλαγή</value>
+  </data>
+  <data name="RejectTradeRequest" xml:space="preserve">
+    <value>Απόρριψη Αιτήματος Ανταλλαγής</value>
+  </data>
+  <data name="RejectTradeConfirm" xml:space="preserve">
+    <value>Είστε βέβαιοι ότι θέλετε να απορρίψετε αυτό το αίτημα ανταλλαγής;</value>
+  </data>
+  <data name="ProposeTradeRequest" xml:space="preserve">
+    <value>Πρόταση Αιτήματος Ανταλλαγής</value>
+  </data>
+  <data name="StartsAtLabel" xml:space="preserve">
+    <value>Ξεκινά στις</value>
+  </data>
+  <!-- FinishTrade -->
+  <data name="FinalizeTradeHeader" xml:space="preserve">
+    <value>Οριστικοποίηση Ανταλλαγής</value>
+  </data>
+  <data name="DateColumn" xml:space="preserve">
+    <value>Ημερομηνία</value>
+  </data>
+  <data name="NoneValue" xml:space="preserve">
+    <value>Καμία</value>
+  </data>
+  <data name="FinalizeTradeButton" xml:space="preserve">
+    <value>Οριστικοποίηση Ανταλλαγής</value>
+  </data>
+  <!-- JS strings -->
+  <data name="ShiftRoleColumn" xml:space="preserve">
+    <value>Ρόλος Βάρδιας</value>
+  </data>
+  <data name="RolesCountColumn" xml:space="preserve">
+    <value>Πλήθος Ρόλων</value>
+  </data>
+  <data name="AddRoleToGroup" xml:space="preserve">
+    <value>Προσθήκη Ρόλου στην Ομάδα</value>
+  </data>
+  <data name="AddShiftRolesToGroup" xml:space="preserve">
+    <value>Προσθήκη Ρόλων Βάρδιας στην Ομάδα</value>
+  </data>
+  <data name="RemoveGroup" xml:space="preserve">
+    <value>Αφαίρεση Ομάδας</value>
+  </data>
+  <data name="RemoveRole" xml:space="preserve">
+    <value>Αφαίρεση Ρόλου</value>
+  </data>
+  <data name="RemoveRoleFromGroup" xml:space="preserve">
+    <value>Αφαίρεση αυτού του ρόλου από την ομάδα</value>
+  </data>
+  <data name="RoleCountRequired" xml:space="preserve">
+    <value>Το πλήθος ρόλων είναι υποχρεωτικό</value>
+  </data>
+</root>

@@ -1,0 +1,287 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <!-- Mapping Index -->
+  <data name="MappingHeader" xml:space="preserve">
+    <value>Χαρτογράφηση</value>
+  </data>
+  <data name="ManageLayers" xml:space="preserve">
+    <value>Διαχείριση Επιπέδων</value>
+  </data>
+  <data name="CustomMaps" xml:space="preserve">
+    <value>Προσαρμοσμένοι Χάρτες</value>
+  </data>
+  <data name="MapOptionsTitle" xml:space="preserve">
+    <value>Επιλογές Χάρτη</value>
+  </data>
+  <data name="ShowCalls" xml:space="preserve">
+    <value>Εμφάνιση Κλήσεων</value>
+  </data>
+  <data name="ShowPersonnel" xml:space="preserve">
+    <value>Εμφάνιση Προσωπικού</value>
+  </data>
+  <data name="ShowUnits" xml:space="preserve">
+    <value>Εμφάνιση Μονάδων</value>
+  </data>
+  <data name="ShowStations" xml:space="preserve">
+    <value>Εμφάνιση Σταθμών</value>
+  </data>
+  <data name="ShowGeofences" xml:space="preserve">
+    <value>Εμφάνιση Γεωφραχτών</value>
+  </data>
+  <data name="ShowPOIs" xml:space="preserve">
+    <value>Εμφάνιση Σημείων Ενδιαφέροντος</value>
+  </data>
+  <data name="Close" xml:space="preserve">
+    <value>Κλείσιμο</value>
+  </data>
+  <data name="Save" xml:space="preserve">
+    <value>Αποθήκευση</value>
+  </data>
+  <data name="Cancel" xml:space="preserve">
+    <value>Ακύρωση</value>
+  </data>
+  <!-- AddPOI -->
+  <data name="AddPOIPageTitle" xml:space="preserve">
+    <value>Προσθήκη Σημείου Ενδιαφέροντος</value>
+  </data>
+  <data name="AddPOIHeader" xml:space="preserve">
+    <value>Προσθήκη Σημείου Ενδιαφέροντος</value>
+  </data>
+  <data name="Latitude" xml:space="preserve">
+    <value>Γεωγραφικό Πλάτος</value>
+  </data>
+  <data name="LatitudeHelp" xml:space="preserve">
+    <value>Γεωγραφικό Πλάτος (Δεκαδική Σημειογραφία: π.χ. 39.1517)</value>
+  </data>
+  <data name="Longitude" xml:space="preserve">
+    <value>Γεωγραφικό Μήκος</value>
+  </data>
+  <data name="LongitudeHelp" xml:space="preserve">
+    <value>Γεωγραφικό Μήκος (Δεκαδική Σημειογραφία: π.χ. -119.4571)</value>
+  </data>
+  <data name="Note" xml:space="preserve">
+    <value>Σημείωση</value>
+  </data>
+  <!-- AddPOIType -->
+  <data name="AddPOITypePageTitle" xml:space="preserve">
+    <value>Προσθήκη Τύπου Σημείου Ενδιαφέροντος</value>
+  </data>
+  <data name="AddPOITypeHeader" xml:space="preserve">
+    <value>Προσθήκη Τύπου Σημείου Ενδιαφέροντος</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="IsDestination" xml:space="preserve">
+    <value>Είναι Προορισμός</value>
+  </data>
+  <data name="IsDestinationHelp" xml:space="preserve">
+    <value>Για να δηλωθεί πιθανός προορισμός για μονάδα/άτομο. Για παράδειγμα γραφείο, σημείο συγκέντρωσης, νοσοκομείο, σημείο πρόσβασης κ.λπ.</value>
+  </data>
+  <data name="Color" xml:space="preserve">
+    <value>Χρώμα</value>
+  </data>
+  <data name="Marker" xml:space="preserve">
+    <value>Δείκτης</value>
+  </data>
+  <data name="Icon" xml:space="preserve">
+    <value>Εικονίδιο</value>
+  </data>
+  <data name="None" xml:space="preserve">
+    <value>Κανένα</value>
+  </data>
+  <!-- EditLayer / NewLayer -->
+  <data name="EditLayerPageTitle" xml:space="preserve">
+    <value>Επεξεργασία Επιπέδου</value>
+  </data>
+  <data name="EditLayerHeader" xml:space="preserve">
+    <value>Επεξεργασία Επιπέδου</value>
+  </data>
+  <data name="NewLayerPageTitle" xml:space="preserve">
+    <value>Νέο Επίπεδο</value>
+  </data>
+  <data name="NewLayerHeader" xml:space="preserve">
+    <value>Νέο Επίπεδο</value>
+  </data>
+  <data name="IsVisibleByDefault" xml:space="preserve">
+    <value>Είναι Ορατό από Προεπιλογή</value>
+  </data>
+  <data name="IsVisibleByDefaultHelp" xml:space="preserve">
+    <value>Θέλετε αυτό το επίπεδο να είναι ορατό κάθε φορά που φορτώνει ένας χάρτης; Σημείωση: Πάρα πολλά επίπεδα ορατά από προεπιλογή περιπλέκουν τον χάρτη. Οι χρήστες μπορούν να ενεργοποιούν επίπεδα αν θέλουν να τα δουν στο στοιχείο ελέγχου χάρτη.</value>
+  </data>
+  <data name="IsSearchable" xml:space="preserve">
+    <value>Είναι Προορισμός</value>
+  </data>
+  <data name="IsSearchableHelp" xml:space="preserve">
+    <value>Αυτό θα επιτρέψει στην αναζήτηση διευθύνσεων να χρησιμοποιεί συντεταγμένες από αυτό το επίπεδο. Σημείωση: αν δεν έχετε αναζητήσιμα σημεία (πεδία κειμένου), μην το επισημάνετε ως αναζητήσιμο, καθώς μπορεί να επιβραδύνει τη διαβίβαση.</value>
+  </data>
+  <data name="LayerElements" xml:space="preserve">
+    <value>Στοιχεία Επιπέδου</value>
+  </data>
+  <data name="EditLayerButton" xml:space="preserve">
+    <value>Επεξεργασία Επιπέδου</value>
+  </data>
+  <data name="AddLayerButton" xml:space="preserve">
+    <value>Προσθήκη Επιπέδου</value>
+  </data>
+  <!-- ImportPOIs -->
+  <data name="ImportPOIsPageTitle" xml:space="preserve">
+    <value>Εισαγωγή Σημείων Ενδιαφέροντος</value>
+  </data>
+  <data name="ImportPOIsHeader" xml:space="preserve">
+    <value>Εισαγωγή Σημείων Ενδιαφέροντος</value>
+  </data>
+  <data name="Upload" xml:space="preserve">
+    <value>Μεταφόρτωση</value>
+  </data>
+  <data name="ImportPOIsButton" xml:space="preserve">
+    <value>Εισαγωγή Σημείων Ενδιαφέροντος</value>
+  </data>
+  <!-- Layers -->
+  <data name="LayersPageTitle" xml:space="preserve">
+    <value>Επίπεδα</value>
+  </data>
+  <data name="LayersHeader" xml:space="preserve">
+    <value>Επίπεδα</value>
+  </data>
+  <data name="NewLayer" xml:space="preserve">
+    <value>Νέο Επίπεδο</value>
+  </data>
+  <data name="ItemCount" xml:space="preserve">
+    <value>Πλήθος Στοιχείων</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Επεξεργασία</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Διαγραφή</value>
+  </data>
+  <!-- LiveRouting -->
+  <data name="LiveRoutingPageTitle" xml:space="preserve">
+    <value>Ζωντανή Πλοήγηση</value>
+  </data>
+  <data name="LiveRoutingHeader" xml:space="preserve">
+    <value>Ζωντανή Δρομολόγηση</value>
+  </data>
+  <!-- POIs -->
+  <data name="POIsPageTitle" xml:space="preserve">
+    <value>Σημεία Ενδιαφέροντος</value>
+  </data>
+  <data name="POIsHeader" xml:space="preserve">
+    <value>Σημεία Ενδιαφέροντος</value>
+  </data>
+  <data name="AddPOIType" xml:space="preserve">
+    <value>Προσθήκη Τύπου Σημείου Ενδιαφέροντος</value>
+  </data>
+  <data name="PointCount" xml:space="preserve">
+    <value>Πλήθος Σημείων</value>
+  </data>
+  <data name="View" xml:space="preserve">
+    <value>Προβολή</value>
+  </data>
+  <data name="Add" xml:space="preserve">
+    <value>Προσθήκη</value>
+  </data>
+  <data name="Import" xml:space="preserve">
+    <value>Εισαγωγή</value>
+  </data>
+  <data name="DeletePOITypeConfirm" xml:space="preserve">
+    <value>ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Αυτό θα διαγράψει οριστικά αυτόν τον Τύπο Σημείου Ενδιαφέροντος και όλες τις θέσεις του. Είστε βέβαιοι ότι θέλετε να διαγράψετε τον</value>
+  </data>
+  <data name="DeletePOITypeSuffix" xml:space="preserve">
+    <value>Τύπο Σημείου Ενδιαφέροντος;</value>
+  </data>
+  <!-- StationRouting -->
+  <data name="StationRoutingPageTitle" xml:space="preserve">
+    <value>Πλοήγηση Σταθμού</value>
+  </data>
+  <data name="StationRoutingHeader" xml:space="preserve">
+    <value>Δρομολόγηση Σταθμού</value>
+  </data>
+  <data name="DistanceLabel" xml:space="preserve">
+    <value>Απόσταση:</value>
+  </data>
+  <data name="DurationLabel" xml:space="preserve">
+    <value>Διάρκεια:</value>
+  </data>
+  <!-- ViewType -->
+  <data name="ViewTypePageTitle" xml:space="preserve">
+    <value>Προβολή Τύπου</value>
+  </data>
+  <data name="ViewTypeHeader" xml:space="preserve">
+    <value>Προβολή Τύπου</value>
+  </data>
+  <data name="TabMap" xml:space="preserve">
+    <value>Χάρτης</value>
+  </data>
+  <data name="TabInformation" xml:space="preserve">
+    <value>Πληροφορίες</value>
+  </data>
+  <data name="TabList" xml:space="preserve">
+    <value>Λίστα</value>
+  </data>
+  <data name="True" xml:space="preserve">
+    <value>Ναι</value>
+  </data>
+  <data name="False" xml:space="preserve">
+    <value>Όχι</value>
+  </data>
+</root>

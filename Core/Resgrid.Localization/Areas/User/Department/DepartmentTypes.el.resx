@@ -1,0 +1,312 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddNewCallTypeButtonAltText" xml:space="preserve">
+    <value>Προσθήκη νέου τύπου κλήσης</value>
+  </data>
+  <data name="CallPrioritiesHeader" xml:space="preserve">
+    <value>Προτεραιότητες Κλήσεων</value>
+  </data>
+  <data name="CallPriorityAlertSound" xml:space="preserve">
+    <value>Ήχος Ειδοποίησης</value>
+  </data>
+  <data name="CallPriorityIsDefault" xml:space="preserve">
+    <value>Είναι Προεπιλογή</value>
+  </data>
+  <data name="CallPriorityUsingCustomText" xml:space="preserve">
+    <value>Έχετε ενεργοποιήσει προσαρμοσμένες Προτεραιότητες Κλήσεων. Για να επιστρέψετε στις προεπιλεγμένες, θα χρειαστεί να διαγράψετε όλες τις προσαρμοσμένες. Η επεξεργασία μιας υπάρχουσας προτεραιότητας κλήσης θα την ενημερώσει για όλες τις κλήσεις που τη χρησιμοποίησαν.</value>
+  </data>
+  <data name="CallPriorityUsingDefaultText" xml:space="preserve">
+    <value>Χρησιμοποιείτε αυτή τη στιγμή τις Προεπιλεγμένες προτεραιότητες κλήσεων. Αν προσθέσετε οποιαδήποτε προσαρμοσμένη προτεραιότητα κλήσης, δεν θα μπορείτε πλέον να χρησιμοποιείτε τις προεπιλεγμένες προτεραιότητες κλήσεων (συμπεριλαμβανομένων των ήχων τους). Αν δεν ορίσετε προσαρμοσμένο ήχο για τις νέες σας προτεραιότητες κλήσεων, θα χρησιμοποιηθεί ο ήχος push και ο ήχος ειδοποίησης Υψηλής προτεραιότητας. Οι χρήστες με έκδοση v5 ή παλαιότερη της εφαρμογής Responder και v2 ή παλαιότερη της εφαρμογής Unit δεν υποστηρίζουν προσαρμοσμένες προτεραιότητες κλήσεων. Αν έχετε χρήστες σε αυτές τις εκδόσεις, συνιστούμε να μην δημιουργήσετε προσαρμοσμένες προτεραιότητες κλήσεων.</value>
+  </data>
+  <data name="CallTypeMapIconHeader" xml:space="preserve">
+    <value>Εικονίδιο Χάρτη Τύπου Κλήσης</value>
+  </data>
+  <data name="CallTypeMapIconLabel" xml:space="preserve">
+    <value>Εικονίδιο Χάρτη</value>
+  </data>
+  <data name="CallTypeNameHeader" xml:space="preserve">
+    <value>Όνομα Τύπου Κλήσης</value>
+  </data>
+  <data name="CallTypeNameLabel" xml:space="preserve">
+    <value>Όνομα Τύπου Κλήσης</value>
+  </data>
+  <data name="CallTypeNamePlaceholder" xml:space="preserve">
+    <value>Όνομα του Τύπου</value>
+  </data>
+  <data name="CallTypesHeader" xml:space="preserve">
+    <value>Τύποι Κλήσεων</value>
+  </data>
+  <data name="CertificationTypeNameLabel" xml:space="preserve">
+    <value>Όνομα Πιστοποίησης</value>
+  </data>
+  <data name="CertificationTypeNamePlaceholder" xml:space="preserve">
+    <value>Όνομα της Πιστοποίησης</value>
+  </data>
+  <data name="CertificationTypesDeleteWarning" xml:space="preserve">
+    <value>ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Αυτό θα διαγράψει οριστικά αυτόν τον Τύπο Πιστοποίησης. Είστε βέβαιοι ότι θέλετε να διαγράψετε τον τύπο</value>
+  </data>
+  <data name="CertificationTypesHeader" xml:space="preserve">
+    <value>Τύποι Πιστοποιήσεων</value>
+  </data>
+  <data name="CertificationTypesName" xml:space="preserve">
+    <value>Όνομα Τύπου</value>
+  </data>
+  <data name="DefaultUnitActionsLabel" xml:space="preserve">
+    <value>Προεπιλεγμένες Ενέργειες Μονάδας</value>
+  </data>
+  <data name="DeleteCallTypeWarning" xml:space="preserve">
+    <value>ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Αυτό θα διαγράψει οριστικά αυτόν τον τύπο κλήσης. Είστε βέβαιοι ότι θέλετε να διαγράψετε τον τύπο κλήσης</value>
+  </data>
+  <data name="DeleteDocumentTypesWarning" xml:space="preserve">
+    <value>ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Αυτό θα διαγράψει οριστικά αυτή την Κατηγορία Εγγράφων. Είστε βέβαιοι ότι θέλετε να διαγράψετε την κατηγορία</value>
+  </data>
+  <data name="DeleteNoteTypesWarning" xml:space="preserve">
+    <value>ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Αυτό θα διαγράψει οριστικά αυτόν τον τύπο σημείωσης. Είστε βέβαιοι ότι θέλετε να διαγράψετε τον τύπο σημείωσης</value>
+  </data>
+  <data name="DeleteUnitTypeWarning" xml:space="preserve">
+    <value>ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Αυτό θα διαγράψει οριστικά αυτόν τον τύπο μονάδας. Είστε βέβαιοι ότι θέλετε να διαγράψετε τον τύπο μονάδας</value>
+  </data>
+  <data name="DepartmentTypesHeader" xml:space="preserve">
+    <value>Τύποι Τμήματος</value>
+  </data>
+  <data name="DocumentTypeNameLabel" xml:space="preserve">
+    <value>Όνομα Κατηγορίας</value>
+  </data>
+  <data name="DocumentTypeNamePlaceholder" xml:space="preserve">
+    <value>Όνομα της νέας Κατηγορίας Εγγράφων (Τύπου)</value>
+  </data>
+  <data name="DocumentTypesHeader" xml:space="preserve">
+    <value>Κατηγορίες Εγγράφων</value>
+  </data>
+  <data name="EditCallPriorityHeader" xml:space="preserve">
+    <value>Επεξεργασία Προτεραιότητας Κλήσης</value>
+  </data>
+  <data name="EditCallTypeHeader" xml:space="preserve">
+    <value>Επεξεργασία Τύπου Κλήσης</value>
+  </data>
+  <data name="EditUnitTypeHeader" xml:space="preserve">
+    <value>Επεξεργασία Τύπου Μονάδας</value>
+  </data>
+  <data name="ManagedListOrderingHeader" xml:space="preserve">
+    <value>Διαχείριση Σειράς Λίστας</value>
+  </data>
+  <data name="NewCallPriorityButtonAlt" xml:space="preserve">
+    <value>Προσθήκη νέας προτεραιότητας κλήσης</value>
+  </data>
+  <data name="NewCallPriorityHeader" xml:space="preserve">
+    <value>Νέα Προτεραιότητα Κλήσης</value>
+  </data>
+  <data name="NewCallTypeButton" xml:space="preserve">
+    <value>Νέος Τύπος Κλήσης</value>
+  </data>
+  <data name="NewCertificationTypeHeader" xml:space="preserve">
+    <value>Νέος Τύπος Πιστοποίησης</value>
+  </data>
+  <data name="NewDocumentTypeHeader" xml:space="preserve">
+    <value>Νέα Κατηγορία Εγγράφων</value>
+  </data>
+  <data name="NewDocumentTypesHeader" xml:space="preserve">
+    <value>Νέα Κατηγορία Εγγράφων</value>
+  </data>
+  <data name="NewNoteTypesHeader" xml:space="preserve">
+    <value>Νέος Τύπος Σημείωσης</value>
+  </data>
+  <data name="NewUnitTypeHeader" xml:space="preserve">
+    <value>Νέος Τύπος Μονάδας</value>
+  </data>
+  <data name="NoteTypeNamePlaceholder" xml:space="preserve">
+    <value>Όνομα του Τύπου Σημείωσης (Κατηγορίας)</value>
+  </data>
+  <data name="NoteTypesHeader" xml:space="preserve">
+    <value>Τύποι Σημειώσεων</value>
+  </data>
+  <data name="NoteTypesName" xml:space="preserve">
+    <value>Τύπος Σημείωσης</value>
+  </data>
+  <data name="PriorityColorLabel" xml:space="preserve">
+    <value>Χρώμα Προτεραιότητας</value>
+  </data>
+  <data name="PriorityIsDefaultLabel" xml:space="preserve">
+    <value>Είναι Προεπιλογή</value>
+  </data>
+  <data name="PriorityNameLabel" xml:space="preserve">
+    <value>Όνομα Προτεραιότητας</value>
+  </data>
+  <data name="PriorityNameText" xml:space="preserve">
+    <value>Όνομα της Προτεραιότητας</value>
+  </data>
+  <data name="PriorityPersonnelLabel" xml:space="preserve">
+    <value>Αποστολή σε Προσωπικό</value>
+  </data>
+  <data name="PrioritySortLabel" xml:space="preserve">
+    <value>Σειρά Ταξινόμησης</value>
+  </data>
+  <data name="PrioritySoundLabel" xml:space="preserve">
+    <value>Ήχος Ειδοποίησης</value>
+  </data>
+  <data name="PriorityUnitsLabel" xml:space="preserve">
+    <value>Αποστολή σε Μονάδες</value>
+  </data>
+  <data name="UnitTypeActionsLabel" xml:space="preserve">
+    <value>Ενέργειες (Προσαρμοσμένες Καταστάσεις Μονάδας)</value>
+  </data>
+  <data name="UnitTypeMapIconLabel" xml:space="preserve">
+    <value>Εικονίδιο Χάρτη</value>
+  </data>
+  <data name="UnitTypeNameLabel" xml:space="preserve">
+    <value>Όνομα Τύπου Μονάδας</value>
+  </data>
+  <data name="UnitTypeNameText" xml:space="preserve">
+    <value>Όνομα του Τύπου Μονάδας</value>
+  </data>
+  <data name="UnitTypesHeader" xml:space="preserve">
+    <value>Τύποι Μονάδων</value>
+  </data>
+  <data name="ContactNoteTypesHeader" xml:space="preserve">
+    <value>Τύποι Σημειώσεων Επαφών</value>
+  </data>
+  <data name="NewContactNoteTypesHeader" xml:space="preserve">
+    <value>Προσθήκη Νέου Τύπου Σημείωσης Επαφής</value>
+  </data>
+  <data name="NewContactNoteTypes" xml:space="preserve">
+    <value>Νέος Τύπος Σημείωσης Επαφής</value>
+  </data>
+  <data name="ContactNoteTypesName" xml:space="preserve">
+    <value>Όνομα Τύπου Σημείωσης Επαφής</value>
+  </data>
+  <data name="DeleteContactNoteTypesWarning" xml:space="preserve">
+    <value>Είστε βέβαιοι ότι θέλετε να διαγράψετε τον τύπο σημείωσης επαφής με το όνομα;</value>
+  </data>
+  <data name="ContactNoteTypeNameLabel" xml:space="preserve">
+    <value>Όνομα Τύπου Σημείωσης Επαφής</value>
+  </data>
+  <data name="ContactNoteTypeNameText" xml:space="preserve">
+    <value>Το Όνομα του Τύπου Σημείωσης Επαφής</value>
+  </data>
+  <data name="ContactNoteTypeColorLabel" xml:space="preserve">
+    <value>Χρώμα Τύπου Σημείωσης Επαφής</value>
+  </data>
+  <data name="EditContactNoteTypeHeader" xml:space="preserve">
+    <value>Επεξεργασία Τύπου Σημείωσης Επαφής</value>
+  </data>
+  <data name="NewContactNoteTypeHeader" xml:space="preserve">
+    <value>Νέος Τύπος Σημείωσης Επαφής</value>
+  </data>
+</root>

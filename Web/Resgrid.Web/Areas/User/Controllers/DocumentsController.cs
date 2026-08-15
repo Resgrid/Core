@@ -16,7 +16,6 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Resgrid.Services;
 using System.Collections.Generic;
 using System.Linq;
-using NuGet.Packaging;
 
 namespace Resgrid.Web.Areas.User.Controllers
 {

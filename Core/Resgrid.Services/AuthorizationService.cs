@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.VisualBasic;
 using MongoDB.Driver;
 using Resgrid.Model;
+using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 
@@ -31,18 +33,27 @@ namespace Resgrid.Services
 		private readonly INotesService _notesService;
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IContactsService _contactsService;
+		private readonly IEventAggregator _eventAggregator;
 
 		private static string WhoCanViewUnitsCacheKey = "ViewUnitsSecurityMaxtix_{0}";
 		private static string WhoCanViewUnitLocationsCacheKey = "ViewUnitLocationsSecurityMaxtix_{0}";
 		private static string WhoCanViewPersonnelCacheKey = "ViewUsersSecurityMaxtix_{0}";
 		private static string WhoCanViewPersonnelLocationsCacheKey = "ViewUserLocationsSecurityMaxtix_{0}";
 
+		/// <summary>
+		/// Suppression window for the self-heal refresh below, so one stale matrix does not enqueue a
+		/// rebuild per entity per request.
+		/// </summary>
+		private static readonly TimeSpan StaleMatrixRefreshDebounce = TimeSpan.FromMinutes(2);
+		private static readonly ConcurrentDictionary<string, DateTime> LastStaleMatrixRefresh = new ConcurrentDictionary<string, DateTime>();
+
 		public AuthorizationService(IDepartmentsService departmentsService, IInvitesService invitesService,
 			ICallsService callsService, IMessageService messageService, IWorkLogsService workLogsService, ISubscriptionsService subscriptionsService,
 			IDepartmentGroupsService departmentGroupsService, IPersonnelRolesService personnelRolesService, IUnitsService unitsService,
 			IPermissionsService permissionsService, ICalendarService calendarService, IProtocolsService protocolsService,
 			IShiftsService shiftsService, ICustomStateService customStateService, ICertificationService certificationService,
-			IDocumentsService documentsService, INotesService notesService, ICacheProvider cacheProvider, IContactsService contactsService)
+			IDocumentsService documentsService, INotesService notesService, ICacheProvider cacheProvider, IContactsService contactsService,
+			IEventAggregator eventAggregator)
 		{
 			_departmentsService = departmentsService;
 			_invitesService = invitesService;
@@ -63,6 +74,43 @@ namespace Resgrid.Services
 			_notesService = notesService;
 			_cacheProvider = cacheProvider;
 			_contactsService = contactsService;
+			_eventAggregator = eventAggregator;
+		}
+
+		/// <summary>
+		/// The visibility matrix is a snapshot: entities created after it was built are simply absent,
+		/// and every matrix check treats "absent" as unrestricted. That is why a unit added yesterday is
+		/// visible to everyone and a user added to a group yesterday can see nothing -- the snapshot
+		/// never mentions either of them. Rather than guess, ask for a rebuild and answer this one
+		/// request permissively; the next request reads a correct matrix.
+		/// </summary>
+		private void RequestMatrixRefresh(int departmentId, SecurityCacheTypes type)
+		{
+			var key = $"{departmentId}_{(int)type}";
+			var now = DateTime.UtcNow;
+
+			var shouldSend = false;
+			LastStaleMatrixRefresh.AddOrUpdate(key, _ =>
+			{
+				shouldSend = true;
+				return now;
+			}, (_, last) =>
+			{
+				if (now - last < StaleMatrixRefreshDebounce)
+					return last;
+
+				shouldSend = true;
+				return now;
+			});
+
+			if (!shouldSend)
+				return;
+
+			_eventAggregator?.SendMessage<SecurityRefreshEvent>(new SecurityRefreshEvent
+			{
+				DepartmentId = departmentId,
+				Type = type
+			});
 		}
 		#endregion Private Members and Constructors
 
@@ -1319,8 +1367,11 @@ namespace Resgrid.Services
 			if (userToView == userId)
 				return true;
 
-			if (!matrix.Users.ContainsKey(userToView))
+			if (matrix.Users == null || !matrix.Users.ContainsKey(userToView))
+			{
+				RequestMatrixRefresh(departmentId, SecurityCacheTypes.WhoCanViewPersonnel);
 				return true;
+			}
 
 			var userViewList = matrix.Users[userToView];
 
@@ -1344,8 +1395,11 @@ namespace Resgrid.Services
 			if (userToView == userId)
 				return true;
 
-			if (!matrix.Users.ContainsKey(userToView))
+			if (matrix.Users == null || !matrix.Users.ContainsKey(userToView))
+			{
+				RequestMatrixRefresh(departmentId, SecurityCacheTypes.WhoCanViewPersonnelLocations);
 				return true;
+			}
 
 			var userViewList = matrix.Users[userToView];
 
@@ -1366,8 +1420,11 @@ namespace Resgrid.Services
 			if (matrix.EveryoneNoGroupLock)
 				return true;
 
-			if (!matrix.Units.ContainsKey(unitToView))
+			if (matrix.Units == null || !matrix.Units.ContainsKey(unitToView))
+			{
+				RequestMatrixRefresh(departmentId, SecurityCacheTypes.WhoCanViewUnits);
 				return true;
+			}
 
 			var userViewList = matrix.Units[unitToView];
 
@@ -1388,8 +1445,11 @@ namespace Resgrid.Services
 			if (matrix.EveryoneNoGroupLock)
 				return true;
 
-			if (!matrix.Units.ContainsKey(unitToView))
+			if (matrix.Units == null || !matrix.Units.ContainsKey(unitToView))
+			{
+				RequestMatrixRefresh(departmentId, SecurityCacheTypes.WhoCanViewUnitLocations);
 				return true;
+			}
 
 			var userViewList = matrix.Units[unitToView];
 

@@ -1,0 +1,303 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddCertification" xml:space="preserve">
+    <value>Προσθήκη Πιστοποίησης</value>
+  </data>
+  <data name="AddCertificationHeader" xml:space="preserve">
+    <value>Προσθήκη Πιστοποίησης</value>
+  </data>
+  <data name="AddCertificationHelp" xml:space="preserve">
+    <value>Εισαγάγετε τις παρακάτω πληροφορίες για να επεξεργαστείτε μια πιστοποίηση στο προφίλ σας. Παραδείγματα πιστοποιήσεων είναι πιστοποιήσεις EMT, ΚΑΡΠΑ/BLS, επικίνδυνων υλικών κ.λπ. Η παρακολούθηση των πιστοποιήσεων είναι χρήσιμη ώστε να ενημερώνονται/ανανεώνονται πριν λήξουν και το τμήμα να γνωρίζει ποιος είναι πιστοποιημένος για τι. Τα πεδία με &lt;span class="required"&gt;μπλε πλάγια γράμματα&lt;/span&gt; είναι υποχρεωτικά.</value>
+  </data>
+  <data name="AddScheduledReport" xml:space="preserve">
+    <value>Προσθήκη Προγραμματισμένης Αναφοράς</value>
+  </data>
+  <data name="AddStaffingSchedule" xml:space="preserve">
+    <value>Προσθήκη Προγράμματος Στελέχωσης</value>
+  </data>
+  <data name="CertificationDeleteWarning" xml:space="preserve">
+    <value>ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Αυτό θα διαγράψει οριστικά αυτή την πιστοποίηση. Είστε βέβαιοι ότι θέλετε να διαγράψετε την πιστοποίηση;</value>
+  </data>
+  <data name="CertificationId" xml:space="preserve">
+    <value>Αρ. Ταυτότητας \ Αρ. Πιστοποίησης</value>
+  </data>
+  <data name="CertificationIdPlaceholder" xml:space="preserve">
+    <value>Αρ. Ταυτότητας \ Αρ. Πιστοποίησης</value>
+  </data>
+  <data name="CertificationNamePlaceholder" xml:space="preserve">
+    <value>Όνομα Πιστοποίησης</value>
+  </data>
+  <data name="CertificationsHeader" xml:space="preserve">
+    <value>Πιστοποιήσεις</value>
+  </data>
+  <data name="ChangePassword" xml:space="preserve">
+    <value>Αλλαγή Κωδικού Πρόσβασης</value>
+  </data>
+  <data name="ChangePasswordHeader" xml:space="preserve">
+    <value>Αλλαγή Κωδικού Πρόσβασης για Χρήστη</value>
+  </data>
+  <data name="ChangePasswordInfo" xml:space="preserve">
+    <value>Εδώ μπορείτε να αλλάξετε χειροκίνητα τον κωδικό πρόσβασης ενός χρήστη στο σύστημα. Εισαγάγετε τον νέο κωδικό πρόσβασης και επιβεβαιώστε τον για να τον αλλάξετε. Οι κωδικοί πρόσβασης πρέπει να έχουν μήκος τουλάχιστον 6 χαρακτήρων. Σημειώστε ότι το Resgrid δεν θα ειδοποιήσει τον χρήστη για αυτή την αλλαγή κωδικού. Τα πεδία με &lt;span class="required"&gt;μπλε πλάγια γράμματα&lt;/span&gt; είναι υποχρεωτικά.</value>
+  </data>
+  <data name="ChangeStaffingTo" xml:space="preserve">
+    <value>Αλλαγή Στελέχωσης Σε</value>
+  </data>
+  <data name="ConfirmPassword" xml:space="preserve">
+    <value>Επιβεβαίωση Κωδικού Πρόσβασης</value>
+  </data>
+  <data name="ConfirmPasswordPlaceholder" xml:space="preserve">
+    <value>Επιβεβαιώστε τον Κωδικό Πρόσβασης για αυτόν τον Χρήστη</value>
+  </data>
+  <data name="DaysOfWeek" xml:space="preserve">
+    <value>Ημέρες της Εβδομάδας</value>
+  </data>
+  <data name="DepartmentCode" xml:space="preserve">
+    <value>Κωδικός Τμήματος</value>
+  </data>
+  <data name="DepartmentId" xml:space="preserve">
+    <value>Αναγνωριστικό Τμήματος</value>
+  </data>
+  <data name="EditCertificationInfo" xml:space="preserve">
+    <value>Εισαγάγετε τις παρακάτω πληροφορίες για να επεξεργαστείτε μια πιστοποίηση στο προφίλ σας. Παραδείγματα πιστοποιήσεων είναι πιστοποιήσεις EMT, ΚΑΡΠΑ/BLS, επικίνδυνων υλικών κ.λπ. Η παρακολούθηση των πιστοποιήσεων είναι χρήσιμη ώστε να ενημερώνονται/ανανεώνονται πριν λήξουν και το τμήμα να γνωρίζει ποιος είναι πιστοποιημένος για τι. Τα πεδία με &lt;span class="required"&gt;μπλε πλάγια γράμματα&lt;/span&gt; είναι υποχρεωτικά.</value>
+  </data>
+  <data name="EditCertificationsHeader" xml:space="preserve">
+    <value>Επεξεργασία Πιστοποίησης</value>
+  </data>
+  <data name="EditProfile" xml:space="preserve">
+    <value>Επεξεργασία Προφίλ</value>
+  </data>
+  <data name="EditScheduledReportHeader" xml:space="preserve">
+    <value>Επεξεργασία Προγραμματισμένης Αναφοράς</value>
+  </data>
+  <data name="EditStaffingScheduleHeader" xml:space="preserve">
+    <value>Επεξεργασία Προγράμματος Στελέχωσης</value>
+  </data>
+  <data name="EmailUser" xml:space="preserve">
+    <value>Αποστολή Email στον Χρήστη;</value>
+  </data>
+  <data name="EmailUserInfo" xml:space="preserve">
+    <value>Επιλέξτε αυτό το πλαίσιο αν θέλετε να σταλεί email στον χρήστη με το Όνομα Χρήστη και τον νέο Κωδικό Πρόσβασής του.</value>
+  </data>
+  <data name="RequirePasswordChange" xml:space="preserve">
+    <value>Απαίτηση Αλλαγής Κωδικού Πρόσβασης</value>
+  </data>
+  <data name="RequirePasswordChangeHelp" xml:space="preserve">
+    <value>Ο χρήστης θα υποχρεωθεί να αλλάξει τον κωδικό πρόσβασής του κατά την επόμενη σύνδεση.</value>
+  </data>
+  <data name="ExpiresOn" xml:space="preserve">
+    <value>Λήγει Στις</value>
+  </data>
+  <data name="ExpiresOnLabel" xml:space="preserve">
+    <value>Λήγει Στις</value>
+  </data>
+  <data name="IssuedByLabel" xml:space="preserve">
+    <value>Εκδόθηκε Από</value>
+  </data>
+  <data name="IssuedByPlaceholder" xml:space="preserve">
+    <value>Όνομα εκδούσας αρχής</value>
+  </data>
+  <data name="IssuedOnLabel" xml:space="preserve">
+    <value>Εκδόθηκε Στις</value>
+  </data>
+  <data name="JoinDepartment" xml:space="preserve">
+    <value>Σύνδεση με Τμήμα</value>
+  </data>
+  <data name="JoinDepartmentHeader" xml:space="preserve">
+    <value>Σύνδεση με Τμήμα</value>
+  </data>
+  <data name="JoinDepartmentInfo" xml:space="preserve">
+    <value>Πρέπει να δώσετε το τρέχον Αναγνωριστικό και Κωδικό Τμήματος για το Τμήμα Resgrid στο οποίο θέλετε να συνδεθείτε.</value>
+  </data>
+  <data name="NewPassword" xml:space="preserve">
+    <value>Νέος Κωδικός Πρόσβασης</value>
+  </data>
+  <data name="NewPasswordPlaceholder" xml:space="preserve">
+    <value>Νέος Κωδικός Πρόσβασης για αυτόν τον Χρήστη</value>
+  </data>
+  <data name="NewPasswordReq" xml:space="preserve">
+    <value>Οι κωδικοί πρόσβασης πρέπει να έχουν 8 χαρακτήρες ή περισσότερους και να περιλαμβάνουν ένα ψηφίο (αριθμό), ένα κεφαλαίο και ένα πεζό γράμμα</value>
+  </data>
+  <data name="NewScheduledReportHeader" xml:space="preserve">
+    <value>Νέα Προγραμματισμένη Αναφορά</value>
+  </data>
+  <data name="NewStaffingScheduleHeader" xml:space="preserve">
+    <value>Νέο Πρόγραμμα Στελέχωσης</value>
+  </data>
+  <data name="RemoveFromDepartmentWarning" xml:space="preserve">
+    <value>ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Αυτό θα σας αφαιρέσει από αυτό το τμήμα. Είστε βέβαιοι;</value>
+  </data>
+  <data name="RemoveYourself" xml:space="preserve">
+    <value>Αφαίρεση του Εαυτού Σας από το Τμήμα</value>
+  </data>
+  <data name="ReportDeliveryHeader" xml:space="preserve">
+    <value>Παράδοση Αναφορών</value>
+  </data>
+  <data name="ReportDeliverySchedulesHeader" xml:space="preserve">
+    <value>Προγράμματα Παράδοσης Αναφορών</value>
+  </data>
+  <data name="ReportToRun" xml:space="preserve">
+    <value>Αναφορά προς Εκτέλεση</value>
+  </data>
+  <data name="Schedules" xml:space="preserve">
+    <value>Προγράμματα</value>
+  </data>
+  <data name="SetAsActive" xml:space="preserve">
+    <value>Ορισμός ως Ενεργό</value>
+  </data>
+  <data name="SetAsActiveWarning" xml:space="preserve">
+    <value>ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Αυτό θα αλλάξει το τρέχον ενεργό τμήμα σας. Μπορείτε να είστε συνδεδεμένοι μόνο σε ένα τμήμα κάθε φορά. Είστε βέβαιοι;</value>
+  </data>
+  <data name="SetAsDefault" xml:space="preserve">
+    <value>Ορισμός ως Προεπιλογή</value>
+  </data>
+  <data name="SetAsDefaultWarning" xml:space="preserve">
+    <value>ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Αυτό θα αλλάξει το προεπιλεγμένο τμήμα σας. Αν θέλετε να δείτε αυτό το τμήμα, θα χρειαστεί να το ενεργοποιήσετε στη συνέχεια.</value>
+  </data>
+  <data name="SpecificDate" xml:space="preserve">
+    <value>Συγκεκριμένη Ημερομηνία</value>
+  </data>
+  <data name="SpecificDateTime" xml:space="preserve">
+    <value>Συγκεκριμένη Ημερομηνία και Ώρα</value>
+  </data>
+  <data name="StaffingSchedule" xml:space="preserve">
+    <value>Πρόγραμμα Στελέχωσης</value>
+  </data>
+  <data name="StaffingSchedulesHeader" xml:space="preserve">
+    <value>Πρόγραμμα Στελέχωσης</value>
+  </data>
+  <data name="TimeToRun" xml:space="preserve">
+    <value>Ώρα Εκτέλεσης</value>
+  </data>
+  <data name="ValidAreaLabel" xml:space="preserve">
+    <value>Περιοχή Ισχύος</value>
+  </data>
+  <data name="ValidAreaPlaceholder" xml:space="preserve">
+    <value>Περιοχή στην οποία ισχύει η πιστοποίηση</value>
+  </data>
+  <data name="YourDepartmentsHeader" xml:space="preserve">
+    <value>Τα Τμήματά Σας</value>
+  </data>
+
+  <!-- Password requirements box -->
+  <data name="PasswordRequirementsHeader" xml:space="preserve"><value>Απαιτήσεις Κωδικού Πρόσβασης</value></data>
+  <data name="PasswordRequirementsLength" xml:space="preserve"><value>Τουλάχιστον {0} χαρακτήρες</value></data>
+  <data name="PasswordRequirementsDigit" xml:space="preserve"><value>Τουλάχιστον ένα ψηφίο (αριθμός)</value></data>
+  <data name="PasswordRequirementsCase" xml:space="preserve"><value>Τουλάχιστον ένα κεφαλαίο και ένα πεζό γράμμα</value></data>
+</root>

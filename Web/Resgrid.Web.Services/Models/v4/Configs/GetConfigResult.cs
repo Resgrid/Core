@@ -87,6 +87,29 @@ namespace Resgrid.Web.Services.Models.v4.Configs
 		public string MapAttribution { get; set; }
 
 		/// <summary>
+		/// Latitude every map in every client should open on for this department. Resolved from the
+		/// department's configured map center, falling back to its address and finally to a system
+		/// default, so this is always populated.
+		/// </summary>
+		public double MapCenterLatitude { get; set; }
+
+		/// <summary>
+		/// Longitude every map in every client should open on for this department.
+		/// </summary>
+		public double MapCenterLongitude { get; set; }
+
+		/// <summary>
+		/// Zoom level to open department-wide maps at. Defaults to 9 when the department has not set one.
+		/// </summary>
+		public int MapCenterZoomLevel { get; set; }
+
+		/// <summary>
+		/// How long a unit may sit in a status before the board flags it, keyed by the status's canonical
+		/// base type. Empty means the department has configured no thresholds and nothing is highlighted.
+		/// </summary>
+		public List<UnitStatusThresholdData> UnitStatusThresholds { get; set; } = new List<UnitStatusThresholdData>();
+
+		/// <summary>
 		/// How many seconds to prevent a duplicate gps location from being logged for personnel
 		/// </summary>
 		public int PersonnelLocationStaleSeconds { get; set; }
@@ -162,4 +185,17 @@ namespace Resgrid.Web.Services.Models.v4.Configs
 		/// </summary>
 		public bool EnableModernApplicationSounds { get; set; }
 	}
+	/// <summary>One time-in-status threshold for the board's unit highlighting.</summary>
+	public class UnitStatusThresholdData
+	{
+		/// <summary>The ActionBaseTypes value this applies to.</summary>
+		public int BaseType { get; set; }
+
+		/// <summary>Seconds after which the unit is highlighted. 0 disables the warning.</summary>
+		public int WarnSeconds { get; set; }
+
+		/// <summary>Seconds after which the unit is escalated to a high-priority alert. 0 disables it.</summary>
+		public int AlertSeconds { get; set; }
+	}
+
 }

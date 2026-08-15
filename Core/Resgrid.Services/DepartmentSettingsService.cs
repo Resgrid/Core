@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,6 +31,8 @@ namespace Resgrid.Services
 		private static string DispatchRecommendationModeCacheKey = "DSetDispatchRecMode_{0}";
 		private static string DispatchRecommendationAutoDispatchCacheKey = "DSetDispatchRecAuto_{0}";
 		private static string DispatchRecommendationConfigCacheKey = "DSetDispatchRecConfig_{0}";
+		private static string NewCallFieldPolicyCacheKey = "DSetNewCallFieldPolicy_{0}";
+		private static string UnitStatusThresholdsCacheKey = "DSetUnitStatusThresholds_{0}";
 		private static TimeSpan LongCacheLength = TimeSpan.FromDays(14);
 		private static TimeSpan ThatsNotLongThisIsLongCacheLength = TimeSpan.FromDays(365);
 		private static TimeSpan TwoYearCacheLength = TimeSpan.FromDays(730);
@@ -286,6 +289,76 @@ namespace Resgrid.Services
 				return bool.Parse(settingValue.Setting);
 
 			return false;
+		}
+
+		public async Task<Coordinates> SaveMapCenterCoordinatesAsync(int departmentId, string latitude, string longitude, Address address,
+			CancellationToken cancellationToken = default(CancellationToken))
+		{
+			// Operator-supplied coordinates are authoritative. Someone who dropped a pin on the exact
+			// spot they want their boards centred on must never have it moved by a geocoder.
+			if (!String.IsNullOrWhiteSpace(latitude) && !String.IsNullOrWhiteSpace(longitude))
+			{
+				var sanitizedLatitude = StringHelpers.SanitizeCoordinatesString(latitude);
+				var sanitizedLongitude = StringHelpers.SanitizeCoordinatesString(longitude);
+
+				await SaveOrUpdateSettingAsync(departmentId, $"{sanitizedLatitude},{sanitizedLongitude}",
+					DepartmentSettingTypes.BigBoardMapCenterGpsCoordinates, cancellationToken);
+
+				if (double.TryParse(sanitizedLatitude, out var storedLatitude) && double.TryParse(sanitizedLongitude, out var storedLongitude))
+					return new Coordinates { Latitude = storedLatitude, Longitude = storedLongitude };
+
+				return null;
+			}
+
+			// Only one of the two filled in is an operator mid-edit, not an instruction to geocode.
+			// Leaving the stored value alone is the safe reading.
+			if (!String.IsNullOrWhiteSpace(latitude) || !String.IsNullOrWhiteSpace(longitude))
+				return null;
+
+			if (address == null || String.IsNullOrWhiteSpace(address.Address1))
+				return null;
+
+			var geocoded = await GeocodeAddressAsync(address);
+
+			if (geocoded == null)
+				return null;
+
+			await SaveOrUpdateSettingAsync(departmentId,
+				$"{geocoded.Latitude.Value.ToString(CultureInfo.InvariantCulture)},{geocoded.Longitude.Value.ToString(CultureInfo.InvariantCulture)}",
+				DepartmentSettingTypes.BigBoardMapCenterGpsCoordinates, cancellationToken);
+
+			return geocoded;
+		}
+
+		/// <summary>
+		/// Geocodes an address into coordinates, or null when the provider could not resolve it.
+		/// Failures are not fatal anywhere this is used -- the caller falls back to its own default.
+		/// </summary>
+		private async Task<Coordinates> GeocodeAddressAsync(Address address)
+		{
+			try
+			{
+				var result = await _geoLocationProvider.GetLatLonFromAddress(
+					$"{address.Address1} {address.City} {address.State} {address.PostalCode}");
+
+				if (String.IsNullOrWhiteSpace(result))
+					return null;
+
+				var parts = result.Split(char.Parse(","));
+
+				if (parts.Length != 2)
+					return null;
+
+				if (double.TryParse(parts[0], NumberStyles.Any, CultureInfo.InvariantCulture, out var latitude) &&
+					double.TryParse(parts[1], NumberStyles.Any, CultureInfo.InvariantCulture, out var longitude))
+					return new Coordinates { Latitude = latitude, Longitude = longitude };
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex, $"{nameof(GeocodeAddressAsync)} failed resolving a department address.");
+			}
+
+			return null;
 		}
 
 		public async Task<Coordinates> GetMapCenterCoordinatesAsync(Department department)
@@ -894,6 +967,102 @@ namespace Resgrid.Services
 			return await SaveOrUpdateSettingAsync(departmentId, enabled.ToString(), DepartmentSettingTypes.DispatchRecommendationAutoDispatch, cancellationToken);
 		}
 
+		public async Task<UnitStatusThresholds> GetUnitStatusThresholdsAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<string> getSetting()
+			{
+				var setting = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.UnitStatusThresholds);
+				return setting?.Setting ?? string.Empty;
+			}
+
+			string value;
+			if (Config.SystemBehaviorConfig.CacheEnabled && !bypassCache)
+				value = await _cacheProvider.RetrieveAsync<string>(string.Format(UnitStatusThresholdsCacheKey, departmentId), getSetting, LongCacheLength);
+			else
+				value = await getSetting();
+
+			if (!String.IsNullOrWhiteSpace(value))
+			{
+				try
+				{
+					var thresholds = ObjectSerialization.Deserialize<UnitStatusThresholds>(value);
+
+					if (thresholds != null)
+						return thresholds.Normalize();
+				}
+				catch (Exception)
+				{
+					// A corrupt blob falls back to "no highlighting", which is the pre-feature behaviour
+					// and can never make the board misleading.
+				}
+			}
+
+			return new UnitStatusThresholds();
+		}
+
+		public async Task<UnitStatusThresholds> SaveUnitStatusThresholdsAsync(int departmentId, UnitStatusThresholds thresholds,
+			CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var normalized = (thresholds ?? new UnitStatusThresholds()).Normalize();
+
+			if (normalized.IsEmpty)
+				await DeleteSettingAsync(departmentId, DepartmentSettingTypes.UnitStatusThresholds, cancellationToken);
+			else
+				await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(normalized),
+					DepartmentSettingTypes.UnitStatusThresholds, cancellationToken);
+
+			return normalized;
+		}
+
+		public async Task<NewCallFieldPolicy> GetNewCallFieldPolicyAsync(int departmentId, bool bypassCache = false)
+		{
+			async Task<string> getSetting()
+			{
+				var setting = await GetSettingByDepartmentIdType(departmentId, DepartmentSettingTypes.NewCallFieldPolicy);
+				return setting?.Setting ?? string.Empty;
+			}
+
+			string value;
+			if (Config.SystemBehaviorConfig.CacheEnabled && !bypassCache)
+				value = await _cacheProvider.RetrieveAsync<string>(string.Format(NewCallFieldPolicyCacheKey, departmentId), getSetting, LongCacheLength);
+			else
+				value = await getSetting();
+
+			if (!String.IsNullOrWhiteSpace(value))
+			{
+				try
+				{
+					var policy = ObjectSerialization.Deserialize<NewCallFieldPolicy>(value);
+
+					if (policy != null)
+						return policy.Normalize();
+				}
+				catch (Exception)
+				{
+					// A corrupt blob must never stop a department creating calls; fall back to stock
+					// behaviour (everything visible, nothing required).
+				}
+			}
+
+			return new NewCallFieldPolicy();
+		}
+
+		public async Task<NewCallFieldPolicy> SaveNewCallFieldPolicyAsync(int departmentId, NewCallFieldPolicy policy,
+			CancellationToken cancellationToken = default(CancellationToken))
+		{
+			var normalized = (policy ?? new NewCallFieldPolicy()).Normalize();
+
+			// Nothing worth storing means stock behaviour; drop the setting rather than persisting an
+			// empty blob that later readers have to interpret.
+			if (normalized.IsEmpty)
+				await DeleteSettingAsync(departmentId, DepartmentSettingTypes.NewCallFieldPolicy, cancellationToken);
+			else
+				await SaveOrUpdateSettingAsync(departmentId, ObjectSerialization.Serialize(normalized),
+					DepartmentSettingTypes.NewCallFieldPolicy, cancellationToken);
+
+			return normalized;
+		}
+
 		public async Task<DispatchRecommendationConfig> GetDispatchRecommendationConfigAsync(int departmentId, bool bypassCache = false)
 		{
 			async Task<string> getSetting()
@@ -1196,6 +1365,12 @@ namespace Resgrid.Services
 					break;
 				case DepartmentSettingTypes.DispatchRecommendationConfig:
 					cacheKey = string.Format(DispatchRecommendationConfigCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.NewCallFieldPolicy:
+					cacheKey = string.Format(NewCallFieldPolicyCacheKey, departmentId);
+					break;
+				case DepartmentSettingTypes.UnitStatusThresholds:
+					cacheKey = string.Format(UnitStatusThresholdsCacheKey, departmentId);
 					break;
 			}
 

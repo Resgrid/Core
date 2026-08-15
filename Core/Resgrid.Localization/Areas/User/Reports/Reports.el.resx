@@ -1,0 +1,743 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- ==================== Index page ==================== -->
+  <data name="ReportingTitle" xml:space="preserve">
+    <value>Αναφορές</value>
+  </data>
+  <data name="ViewReport" xml:space="preserve">
+    <value>Προβολή Αναφοράς</value>
+  </data>
+  <data name="Reports" xml:space="preserve">
+    <value>Αναφορές</value>
+  </data>
+
+  <!-- Personnel Status History Report (ActionLogs) -->
+  <data name="PersonnelStatusHistoryReportName" xml:space="preserve">
+    <value>Αναφορά Ιστορικού Κατάστασης Προσωπικού</value>
+  </data>
+  <data name="PersonnelStatusHistoryReportDescription" xml:space="preserve">
+    <value>Αυτή η αναφορά εμφανίζει όλο το ιστορικό κατάστασης (αρχεία ενεργειών) του επιλεγμένου προσωπικού</value>
+  </data>
+
+  <!-- Personnel Report -->
+  <data name="PersonnelReportName" xml:space="preserve">
+    <value>Αναφορά Προσωπικού</value>
+  </data>
+  <data name="PersonnelReportDescription" xml:space="preserve">
+    <value>Δείτε όλο το προσωπικό του τμήματός σας, τους ρόλους του και βασικά στοιχεία επικοινωνίας.</value>
+  </data>
+
+  <!-- Staffing Report -->
+  <data name="StaffingReportName" xml:space="preserve">
+    <value>Αναφορά Στελέχωσης</value>
+  </data>
+  <data name="StaffingReportDescription" xml:space="preserve">
+    <value>Δείτε όλο το προσωπικό και την τρέχουσα κατάστασή του, το επίπεδο στελέχωσης και την επόμενη προγραμματισμένη αλλαγή επιπέδου στελέχωσης.</value>
+  </data>
+
+  <!-- Certifications Report -->
+  <data name="CertificationsReportName" xml:space="preserve">
+    <value>Αναφορά Πιστοποιήσεων</value>
+  </data>
+  <data name="CertificationsReportDescription" xml:space="preserve">
+    <value>Δείτε όλες τις πιστοποιήσεις κάθε ατόμου στο τμήμα.</value>
+  </data>
+
+  <!-- Shift Readiness Report -->
+  <data name="ShiftReadinessReportName" xml:space="preserve">
+    <value>Αναφορά Ετοιμότητας Βαρδιών</value>
+  </data>
+  <data name="ShiftReadinessReportDescription" xml:space="preserve">
+    <value>Αυτή η αναφορά εμφανίζει την ετοιμότητα των επόμενων ημερών βάρδιας για κάθε βάρδια.</value>
+  </data>
+
+  <!-- Department YTD Activity Report -->
+  <data name="DepartmentActivityReportName" xml:space="preserve">
+    <value>Αναφορά Δραστηριότητας Τμήματος από Αρχή Έτους</value>
+  </data>
+  <data name="DepartmentActivityReportDescription" xml:space="preserve">
+    <value>Αυτή η αναφορά εμφανίζει τη δραστηριότητα κλήσεων, καταγραφών, εκπαιδεύσεων και προσωπικού του τμήματος σε αριθμούς από την αρχή του έτους.</value>
+  </data>
+
+  <!-- Personnel Log Hours Report -->
+  <data name="PersonnelHoursReportName" xml:space="preserve">
+    <value>Αναφορά Ωρών Καταγραφών Προσωπικού</value>
+  </data>
+  <data name="PersonnelHoursReportDescription" xml:space="preserve">
+    <value>Αυτή η αναφορά εμφανίζει τον αριθμό των ωρών που το προσωπικό του τμήματος εργάστηκε, εκπαιδεύτηκε και ανταποκρίθηκε σε κλήσεις, όπως καταγράφηκαν μέσω καταχωρίσεων καταγραφών (απολογιστικών αναφορών).</value>
+  </data>
+
+  <!-- Call Summary Report -->
+  <data name="CallSummaryReportName" xml:space="preserve">
+    <value>Αναφορά Σύνοψης Κλήσεων</value>
+  </data>
+  <data name="CallSummaryReportDescription" xml:space="preserve">
+    <value>Αυτή η αναφορά εμφανίζει λεπτομέρειες για όλες τις κλήσεις σε επιλεγμένο εύρος ημερομηνιών (π.χ. τύποι κλήσεων, καταστάσεις κλεισίματος κ.λπ.)</value>
+  </data>
+
+  <!-- Personnel Staffing History Report -->
+  <data name="PersonnelStaffingHistoryReportName" xml:space="preserve">
+    <value>Αναφορά Ιστορικού Στελέχωσης Προσωπικού</value>
+  </data>
+  <data name="PersonnelStaffingHistoryReportDescription" xml:space="preserve">
+    <value>Αυτή η αναφορά εμφανίζει όλο το ιστορικό στελέχωσης του επιλεγμένου προσωπικού</value>
+  </data>
+
+  <!-- Unit State History Report -->
+  <data name="UnitStateHistoryReportName" xml:space="preserve">
+    <value>Αναφορά Ιστορικού Καταστάσεων Μονάδων</value>
+  </data>
+  <data name="UnitStateHistoryReportDescription" xml:space="preserve">
+    <value>Εμφανίζει τις Καταστάσεις Μονάδων για μία μονάδα, όλες ή τις μονάδες μιας ομάδας για καθορισμένο από τον χρήστη χρονικό εύρος</value>
+  </data>
+
+  <!-- Active Calls and Resources Report -->
+  <data name="ActiveCallsResourcesReportName" xml:space="preserve">
+    <value>Αναφορά Ενεργών Κλήσεων και Πόρων</value>
+  </data>
+  <data name="ActiveCallsResourcesReportDescription" xml:space="preserve">
+    <value>Η αναφορά περιγράφει λεπτομερώς τις ανοιχτές κλήσεις κατά τη στιγμή της εκτέλεσής της και τυχόν μονάδες και προσωπικό που είναι συνδεδεμένα με αυτές τις κλήσεις</value>
+  </data>
+
+  <!-- ==================== Shared params / form labels ==================== -->
+  <data name="ReportStartTime" xml:space="preserve">
+    <value>Ώρα Έναρξης Αναφοράς</value>
+  </data>
+  <data name="ReportEndTime" xml:space="preserve">
+    <value>Ώρα Λήξης Αναφοράς</value>
+  </data>
+  <data name="RunReport" xml:space="preserve">
+    <value>Εκτέλεση Αναφοράς</value>
+  </data>
+  <data name="SelectType" xml:space="preserve">
+    <value>Τύπος</value>
+  </data>
+  <data name="GroupOrUsers" xml:space="preserve">
+    <value>Ομάδα ή Χρήστης/ες</value>
+  </data>
+  <data name="Group" xml:space="preserve">
+    <value>Ομάδα</value>
+  </data>
+  <data name="GroupLabel" xml:space="preserve">
+    <value>Ομάδα</value>
+  </data>
+  <data name="UsersLabel" xml:space="preserve">
+    <value>Χρήστης/ες</value>
+  </data>
+  <data name="UnitsLabel" xml:space="preserve">
+    <value>Μονάδες</value>
+  </data>
+  <data name="GroupOrUnits" xml:space="preserve">
+    <value>Ομάδα ή Μονάδα/ες</value>
+  </data>
+
+  <!-- ==================== Shared report table headers ==================== -->
+  <data name="IdHeader" xml:space="preserve">
+    <value>Αναγνωριστικό</value>
+  </data>
+  <data name="NameHeader" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="GroupHeader" xml:space="preserve">
+    <value>Ομάδα</value>
+  </data>
+  <data name="TotalHeader" xml:space="preserve">
+    <value>Σύνολο</value>
+  </data>
+  <data name="CountHeader" xml:space="preserve">
+    <value>Πλήθος</value>
+  </data>
+  <data name="TypeHeader" xml:space="preserve">
+    <value>Τύπος</value>
+  </data>
+  <data name="StateHeader" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="StatusHeader" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="TimestampHeader" xml:space="preserve">
+    <value>Χρονική Σήμανση</value>
+  </data>
+  <data name="NoteHeader" xml:space="preserve">
+    <value>Σημείωση</value>
+  </data>
+  <data name="HoursHeader" xml:space="preserve">
+    <value>Ώρες</value>
+  </data>
+  <data name="NumberHeader" xml:space="preserve">
+    <value>Αριθμός</value>
+  </data>
+  <data name="StartHeader" xml:space="preserve">
+    <value>Έναρξη</value>
+  </data>
+  <data name="EndHeader" xml:space="preserve">
+    <value>Λήξη</value>
+  </data>
+  <data name="DateHeader" xml:space="preserve">
+    <value>Ημερομηνία</value>
+  </data>
+  <data name="RolesHeader" xml:space="preserve">
+    <value>Ρόλοι</value>
+  </data>
+  <data name="LocationHeader" xml:space="preserve">
+    <value>Τοποθεσία</value>
+  </data>
+
+  <!-- ==================== ActionLogs / Personnel Status History Report ==================== -->
+  <data name="StatusChanges" xml:space="preserve">
+    <value>Αλλαγές Κατάστασης</value>
+  </data>
+  <data name="TotalStaffingChanges" xml:space="preserve">
+    <value>Σύνολο</value>
+  </data>
+
+  <!-- ==================== Call Summary Report ==================== -->
+  <data name="CallTypes" xml:space="preserve">
+    <value>Τύποι Κλήσεων</value>
+  </data>
+  <data name="CallStates" xml:space="preserve">
+    <value>Καταστάσεις Κλήσεων</value>
+  </data>
+  <data name="Calls" xml:space="preserve">
+    <value>Κλήσεις</value>
+  </data>
+  <data name="LoggedOnHeader" xml:space="preserve">
+    <value>Καταγράφηκε Στις</value>
+  </data>
+  <data name="ClosedOnHeader" xml:space="preserve">
+    <value>Έκλεισε Στις</value>
+  </data>
+  <data name="CallLengthHeader" xml:space="preserve">
+    <value>Διάρκεια Κλήσης</value>
+  </data>
+  <data name="OnSceneTimeHeader" xml:space="preserve">
+    <value>Χρόνος στο Σημείο</value>
+  </data>
+  <data name="UnitsHeader" xml:space="preserve">
+    <value>Μονάδες</value>
+  </data>
+  <data name="PersonnelHeader" xml:space="preserve">
+    <value>Προσωπικό</value>
+  </data>
+  <data name="OpenStatus" xml:space="preserve">
+    <value>Ανοιχτή</value>
+  </data>
+  <data name="PercentHeader" xml:space="preserve">
+    <value>%</value>
+  </data>
+
+  <!-- ==================== Certifications Report ==================== -->
+  <data name="CertificationsReportTitle" xml:space="preserve">
+    <value>Αναφορά Πιστοποιήσεων Resgrid</value>
+  </data>
+  <data name="CertNumberHeader" xml:space="preserve">
+    <value>Αριθμός</value>
+  </data>
+  <data name="IssuedByHeader" xml:space="preserve">
+    <value>Εκδόθηκε Από</value>
+  </data>
+  <data name="AreaHeader" xml:space="preserve">
+    <value>Περιοχή</value>
+  </data>
+  <data name="ExpiresHeader" xml:space="preserve">
+    <value>Λήγει</value>
+  </data>
+
+  <!-- ==================== Department Activity Report ==================== -->
+  <data name="YtdDepartmentActivityReportTitle" xml:space="preserve">
+    <value>Αναφορά Δραστηριότητας Τμήματος από Αρχή Έτους</value>
+  </data>
+  <data name="PersonnelResponseDetail" xml:space="preserve">
+    <value>Λεπτομέρειες Ανταπόκρισης Προσωπικού</value>
+  </data>
+  <data name="Trainings" xml:space="preserve">
+    <value>Εκπαιδεύσεις</value>
+  </data>
+  <data name="PersonnelTrainingDetail" xml:space="preserve">
+    <value>Λεπτομέρειες Εκπαίδευσης Προσωπικού</value>
+  </data>
+  <data name="DispatchedHeader" xml:space="preserve">
+    <value>Απεστάλη</value>
+  </data>
+  <data name="AttendedHeader" xml:space="preserve">
+    <value>Παρέστη</value>
+  </data>
+  <data name="January" xml:space="preserve">
+    <value>Ιανουάριος</value>
+  </data>
+  <data name="February" xml:space="preserve">
+    <value>Φεβρουάριος</value>
+  </data>
+  <data name="March" xml:space="preserve">
+    <value>Μάρτιος</value>
+  </data>
+  <data name="April" xml:space="preserve">
+    <value>Απρίλιος</value>
+  </data>
+  <data name="May" xml:space="preserve">
+    <value>Μάιος</value>
+  </data>
+  <data name="June" xml:space="preserve">
+    <value>Ιούνιος</value>
+  </data>
+  <data name="July" xml:space="preserve">
+    <value>Ιούλιος</value>
+  </data>
+  <data name="August" xml:space="preserve">
+    <value>Αύγουστος</value>
+  </data>
+  <data name="September" xml:space="preserve">
+    <value>Σεπτέμβριος</value>
+  </data>
+  <data name="October" xml:space="preserve">
+    <value>Οκτώβριος</value>
+  </data>
+  <data name="November" xml:space="preserve">
+    <value>Νοέμβριος</value>
+  </data>
+  <data name="December" xml:space="preserve">
+    <value>Δεκέμβριος</value>
+  </data>
+
+  <!-- ==================== Personnel Events Report ==================== -->
+  <data name="PersonnelEventsReportTitle" xml:space="preserve">
+    <value>Αναφορά Συμβάντων Προσωπικού Resgrid</value>
+  </data>
+  <data name="DestinationCallHeader" xml:space="preserve">
+    <value>Προορισμός\Κλήση</value>
+  </data>
+
+  <!-- ==================== Personnel Hours Reports ==================== -->
+  <data name="PersonnelHoursReportTitle" xml:space="preserve">
+    <value>Αναφορά Ωρών Προσωπικού</value>
+  </data>
+  <data name="PersonnelHoursDetailReportTitle" xml:space="preserve">
+    <value>Αναλυτική Αναφορά Ωρών Προσωπικού</value>
+  </data>
+  <data name="CallHours" xml:space="preserve">
+    <value>Ώρες Κλήσεων</value>
+  </data>
+  <data name="WorkHours" xml:space="preserve">
+    <value>Ώρες Εργασίας</value>
+  </data>
+  <data name="TrainingHours" xml:space="preserve">
+    <value>Ώρες Εκπαίδευσης</value>
+  </data>
+  <data name="WorkLogs" xml:space="preserve">
+    <value>Καταγραφές Εργασίας</value>
+  </data>
+
+  <!-- ==================== Personnel Report ==================== -->
+  <data name="PersonnelReportTitle" xml:space="preserve">
+    <value>Αναφορά Προσωπικού Resgrid</value>
+  </data>
+  <data name="UsernameHeader" xml:space="preserve">
+    <value>Όνομα Χρήστη</value>
+  </data>
+  <data name="EmailHeader" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="MobileNumberHeader" xml:space="preserve">
+    <value>Αριθμός Κινητού</value>
+  </data>
+  <data name="MailingAddressHeader" xml:space="preserve">
+    <value>Ταχυδρομική Διεύθυνση</value>
+  </data>
+
+  <!-- ==================== Personnel Staffing History Report ==================== -->
+  <data name="PersonnelStaffingHistoryReportTitle" xml:space="preserve">
+    <value>Αναφορά Ιστορικού Στελέχωσης Προσωπικού</value>
+  </data>
+  <data name="StaffingChanges" xml:space="preserve">
+    <value>Αλλαγές Στελέχωσης</value>
+  </data>
+  <data name="StaffingHeader" xml:space="preserve">
+    <value>Στελέχωση</value>
+  </data>
+  <data name="ScheduledHeader" xml:space="preserve">
+    <value>Προγραμματισμένη</value>
+  </data>
+
+  <!-- ==================== Staffing Report ==================== -->
+  <data name="StaffingReportTitle" xml:space="preserve">
+    <value>Αναφορά Στελέχωσης Resgrid</value>
+  </data>
+  <data name="StaffingTimestampHeader" xml:space="preserve">
+    <value>Χρονική Σήμανση Στελέχωσης</value>
+  </data>
+  <data name="NextChangeHeader" xml:space="preserve">
+    <value>Επόμενη Αλλαγή</value>
+  </data>
+  <data name="NextStaffingHeader" xml:space="preserve">
+    <value>Επόμενη Στελέχωση</value>
+  </data>
+  <data name="StaffingAvailable" xml:space="preserve">
+    <value>Διαθέσιμος</value>
+  </data>
+  <data name="StaffingDelayed" xml:space="preserve">
+    <value>Καθυστερημένος</value>
+  </data>
+  <data name="StaffingUnavailable" xml:space="preserve">
+    <value>Μη Διαθέσιμος</value>
+  </data>
+  <data name="StaffingCommitted" xml:space="preserve">
+    <value>Δεσμευμένος</value>
+  </data>
+  <data name="StaffingOnShift" xml:space="preserve">
+    <value>Σε Βάρδια</value>
+  </data>
+  <data name="StaffingUnknown" xml:space="preserve">
+    <value>Άγνωστη</value>
+  </data>
+
+  <!-- ==================== Unit Events Report ==================== -->
+  <data name="UnitEventsReportTitle" xml:space="preserve">
+    <value>Αναφορά Συμβάντων Μονάδων Resgrid</value>
+  </data>
+
+  <!-- ==================== Unit State History Report ==================== -->
+  <data name="UnitStateHistoryReportTitle" xml:space="preserve">
+    <value>Αναφορά Ιστορικού Καταστάσεων Μονάδων</value>
+  </data>
+  <data name="StateChanges" xml:space="preserve">
+    <value>Αλλαγές Κατάστασης</value>
+  </data>
+  <data name="TotalStatesHeader" xml:space="preserve">
+    <value>Σύνολο Καταστάσεων</value>
+  </data>
+
+  <!-- ==================== Upcoming Shift Readiness Report ==================== -->
+  <data name="UpcomingShiftReadinessReportTitle" xml:space="preserve">
+    <value>Αναφορά Ετοιμότητας Προσεχών Βαρδιών</value>
+  </data>
+  <data name="ShiftReadyLabel" xml:space="preserve">
+    <value>Έτοιμη</value>
+  </data>
+  <data name="ShiftNotReadyLabel" xml:space="preserve">
+    <value>Μη Έτοιμη</value>
+  </data>
+  <data name="RequiredHeader" xml:space="preserve">
+    <value>Υποχρεωτικοί</value>
+  </data>
+  <data name="OptionalHeader" xml:space="preserve">
+    <value>Προαιρετικοί</value>
+  </data>
+  <data name="DeltaHeader" xml:space="preserve">
+    <value>Διαφορά</value>
+  </data>
+  <data name="RoleHeader" xml:space="preserve">
+    <value>Ρόλος</value>
+  </data>
+  <data name="SignupNameHeader" xml:space="preserve">
+    <value>Όνομα Δήλωσης</value>
+  </data>
+
+  <!-- ==================== Active Calls and Resources Report ==================== -->
+  <data name="ActiveCallsResourcesReportTitle" xml:space="preserve">
+    <value>Αναφορά Ενεργών Κλήσεων και Πόρων</value>
+  </data>
+  <data name="CallNameHeader" xml:space="preserve">
+    <value>Όνομα Κλήσης</value>
+  </data>
+  <data name="UnitsOnCallHeader" xml:space="preserve">
+    <value>Μονάδες στην Κλήση</value>
+  </data>
+  <data name="PersonnelOnCallHeader" xml:space="preserve">
+    <value>Προσωπικό στην Κλήση</value>
+  </data>
+  <data name="UnitNameHeader" xml:space="preserve">
+    <value>Όνομα Μονάδας</value>
+  </data>
+  <data name="PersonNameHeader" xml:space="preserve">
+    <value>Όνομα Ατόμου</value>
+  </data>
+  <data name="GroupNameHeader" xml:space="preserve">
+    <value>Όνομα Ομάδας</value>
+  </data>
+  <data name="DispatchedOnHeader" xml:space="preserve">
+    <value>Απεστάλη Στις</value>
+  </data>
+  <data name="FourteenDayMarkHeader" xml:space="preserve">
+    <value>Ορόσημο 14 Ημερών</value>
+  </data>
+  <data name="TwentyOneDayMarkHeader" xml:space="preserve">
+    <value>Ορόσημο 21 Ημερών</value>
+  </data>
+
+  <!-- ==================== Log Report ==================== -->
+  <data name="LogReportTitle" xml:space="preserve">
+    <value>Καταγραφή Resgrid</value>
+  </data>
+  <data name="DistrictLabel" xml:space="preserve">
+    <value>Περιφέρεια</value>
+  </data>
+  <data name="DepartmentLabel" xml:space="preserve">
+    <value>Τμήμα</value>
+  </data>
+  <data name="TypeLabel" xml:space="preserve">
+    <value>Τύπος</value>
+  </data>
+  <data name="LoggedOnLabel" xml:space="preserve">
+    <value>Καταγράφηκε Στις</value>
+  </data>
+  <data name="LoggedByLabel" xml:space="preserve">
+    <value>Καταγράφηκε Από</value>
+  </data>
+  <data name="StartedOnLabel" xml:space="preserve">
+    <value>Ξεκίνησε Στις</value>
+  </data>
+  <data name="EndedOnLabel" xml:space="preserve">
+    <value>Έληξε Στις</value>
+  </data>
+  <data name="PersonnelLabel" xml:space="preserve">
+    <value>Προσωπικό</value>
+  </data>
+  <data name="NarrativeLabel" xml:space="preserve">
+    <value>Αφήγηση</value>
+  </data>
+  <data name="NotSupplied" xml:space="preserve">
+    <value>Δεν Δόθηκε</value>
+  </data>
+  <data name="WorkLogType" xml:space="preserve">
+    <value>Εργασία</value>
+  </data>
+  <data name="IdLabel" xml:space="preserve">
+    <value>Αναγνωριστικό</value>
+  </data>
+  <data name="StationHeader" xml:space="preserve">
+    <value>Σταθμός</value>
+  </data>
+  <data name="UnitsLabel" xml:space="preserve">
+    <value>Μονάδες</value>
+  </data>
+  <data name="ConditionLabel" xml:space="preserve">
+    <value>Κατάσταση</value>
+  </data>
+  <data name="CallNameLabel" xml:space="preserve">
+    <value>Όνομα Κλήσης</value>
+  </data>
+  <data name="CallTypeLabel" xml:space="preserve">
+    <value>Τύπος Κλήσης</value>
+  </data>
+  <data name="NoTypeLabel" xml:space="preserve">
+    <value>Χωρίς Τύπο</value>
+  </data>
+  <data name="PriorityLabel" xml:space="preserve">
+    <value>Προτεραιότητα</value>
+  </data>
+  <data name="CallAddressLabel" xml:space="preserve">
+    <value>Διεύθυνση Κλήσης</value>
+  </data>
+  <data name="DispatchedLabel" xml:space="preserve">
+    <value>Απεστάλη</value>
+  </data>
+  <data name="EnrouteLabel" xml:space="preserve">
+    <value>Καθ' Οδόν</value>
+  </data>
+  <data name="OnSceneLabel" xml:space="preserve">
+    <value>Στο Σημείο</value>
+  </data>
+  <data name="ReleasedLabel" xml:space="preserve">
+    <value>Αποδεσμεύτηκε</value>
+  </data>
+  <data name="InQuartersLabel" xml:space="preserve">
+    <value>Στη Βάση</value>
+  </data>
+  <data name="AuditHeader" xml:space="preserve">
+    <value>Έλεγχος</value>
+  </data>
+  <data name="TrainingCourseLabel" xml:space="preserve">
+    <value>Εκπαίδευση\Μάθημα</value>
+  </data>
+  <data name="CodeLabel" xml:space="preserve">
+    <value>Κωδικός</value>
+  </data>
+  <data name="InstructorsLabel" xml:space="preserve">
+    <value>Εκπαιδευτές</value>
+  </data>
+  <data name="AttendanceLabel" xml:space="preserve">
+    <value>Παρουσίες</value>
+  </data>
+  <data name="TotalTimeLabel" xml:space="preserve">
+    <value>Συνολικός Χρόνος</value>
+  </data>
+  <data name="MeetingTypeLabel" xml:space="preserve">
+    <value>Τύπος Σύσκεψης</value>
+  </data>
+  <data name="LogTypeLabel" xml:space="preserve">
+    <value>Τύπος Καταγραφής</value>
+  </data>
+  <data name="MeetingLogType" xml:space="preserve">
+    <value>Σύσκεψη</value>
+  </data>
+  <data name="LocationLabel" xml:space="preserve">
+    <value>Τοποθεσία</value>
+  </data>
+  <data name="PresidingLabel" xml:space="preserve">
+    <value>Προεδρεύων</value>
+  </data>
+  <data name="OtherAttendeesLabel" xml:space="preserve">
+    <value>Άλλοι Συμμετέχοντες</value>
+  </data>
+  <data name="MeetingMinutesLabel" xml:space="preserve">
+    <value>Πρακτικά Σύσκεψης</value>
+  </data>
+  <data name="CaseNumberLabel" xml:space="preserve">
+    <value>Αρ. Υπόθεσης</value>
+  </data>
+  <data name="OicLabel" xml:space="preserve">
+    <value>Επικεφαλής</value>
+  </data>
+  <data name="DestinationLabel" xml:space="preserve">
+    <value>Προορισμός</value>
+  </data>
+  <data name="PronouncedByLabel" xml:space="preserve">
+    <value>Διαπίστωση Από</value>
+  </data>
+  <data name="BodyLocationLabel" xml:space="preserve">
+    <value>Τοποθεσία Σορού</value>
+  </data>
+  <data name="CallIdLabel" xml:space="preserve">
+    <value>Αναγνωριστικό Κλήσης</value>
+  </data>
+  <data name="CallNumberLabel" xml:space="preserve">
+    <value>Αριθμός Κλήσης</value>
+  </data>
+  <data name="IncidentIdLabel" xml:space="preserve">
+    <value>Αναγνωριστικό Περιστατικού</value>
+  </data>
+  <data name="ReferenceIdLabel" xml:space="preserve">
+    <value>Αναγνωριστικό Αναφοράς</value>
+  </data>
+  <data name="NoneLabel" xml:space="preserve">
+    <value>Κανένα</value>
+  </data>
+  <data name="CallbackLogType" xml:space="preserve">
+    <value>Επανάκληση</value>
+  </data>
+
+  <!-- Event Attendance Report -->
+  <data name="EventAttendanceReportName" xml:space="preserve">
+    <value>Αναφορά Παρουσιών Συμβάντων</value>
+  </data>
+  <data name="EventAttendanceReportDescription" xml:space="preserve">
+    <value>Εμφανίζει τις ώρες παρουσίας εθελοντών/συμβάντων ανά άτομο με παρακολούθηση άφιξης/αναχώρησης.</value>
+  </data>
+  <data name="EventAttendanceReportTitle" xml:space="preserve">
+    <value>Αναφορά Παρουσιών Συμβάντων</value>
+  </data>
+  <data name="EventAttendanceHours" xml:space="preserve">
+    <value>Ώρες Παρουσίας σε Συμβάντα</value>
+  </data>
+  <data name="EventsAttendedHeader" xml:space="preserve">
+    <value>Συμβάντα με Παρουσία</value>
+  </data>
+  <data name="EventsMissedHeader" xml:space="preserve">
+    <value>Συμβάντα με Απουσία</value>
+  </data>
+  <data name="TotalHoursHeader" xml:space="preserve">
+    <value>Συνολικές Ώρες</value>
+  </data>
+  <data name="DetailsButton" xml:space="preserve">
+    <value>Λεπτομέρειες</value>
+  </data>
+  <data name="EventAttendanceDetailTitle" xml:space="preserve">
+    <value>Λεπτομέρειες Παρουσιών Συμβάντων</value>
+  </data>
+  <data name="EventHeader" xml:space="preserve">
+    <value>Συμβάν</value>
+  </data>
+  <data name="CheckInTimeHeader" xml:space="preserve">
+    <value>Ώρα Άφιξης</value>
+  </data>
+  <data name="CheckOutTimeHeader" xml:space="preserve">
+    <value>Ώρα Αναχώρησης</value>
+  </data>
+  <data name="DurationHeader" xml:space="preserve">
+    <value>Διάρκεια</value>
+  </data>
+  <data name="CheckInNoteHeader" xml:space="preserve">
+    <value>Σημείωση Άφιξης</value>
+  </data>
+  <data name="CheckOutNoteHeader" xml:space="preserve">
+    <value>Σημείωση Αναχώρησης</value>
+  </data>
+  <data name="CheckedInByHeader" xml:space="preserve">
+    <value>Δήλωση Άφιξης Από</value>
+  </data>
+  <data name="CheckedOutByHeader" xml:space="preserve">
+    <value>Δήλωση Αναχώρησης Από</value>
+  </data>
+  <data name="CheckInLocationHeader" xml:space="preserve">
+    <value>Τοποθεσία Άφιξης</value>
+  </data>
+  <data name="CheckOutLocationHeader" xml:space="preserve">
+    <value>Τοποθεσία Αναχώρησης</value>
+  </data>
+  <data name="NotCheckedOut" xml:space="preserve">
+    <value>Δεν έχει δηλωθεί αναχώρηση</value>
+  </data>
+  <data name="TotalTimeLabel" xml:space="preserve">
+    <value>Συνολικός Χρόνος</value>
+  </data>
+</root>

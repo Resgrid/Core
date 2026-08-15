@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
@@ -35,6 +35,7 @@ namespace Resgrid.Tests.Services
 			protected Mock<INotesService> _notesServiceMock;
 			protected Mock<ICacheProvider> _cacheProviderMock;
 			protected Mock<IContactsService> _contactsServiceMock;
+			protected Mock<IEventAggregator> _eventAggregatorMock;
 
 			protected with_the_authorization_service()
 			{
@@ -57,6 +58,7 @@ namespace Resgrid.Tests.Services
 				_notesServiceMock = new Mock<INotesService>();
 				_cacheProviderMock = new Mock<ICacheProvider>();
 				_contactsServiceMock = new Mock<IContactsService>();
+				_eventAggregatorMock = new Mock<IEventAggregator>();
 
 				_authorizationService = new AuthorizationService(
 					_departmentsServiceMock.Object,
@@ -77,7 +79,8 @@ namespace Resgrid.Tests.Services
 					_documentsServiceMock.Object,
 					_notesServiceMock.Object,
 					_cacheProviderMock.Object,
-					_contactsServiceMock.Object);
+					_contactsServiceMock.Object,
+					_eventAggregatorMock.Object);
 			}
 
 			/// <summary>

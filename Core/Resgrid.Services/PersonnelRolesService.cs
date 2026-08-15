@@ -3,6 +3,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Model;
+using Resgrid.Model.Events;
+using Resgrid.Model.Providers;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 
@@ -14,14 +16,33 @@ namespace Resgrid.Services
 		private readonly IPersonnelRoleUsersRepository _personnelRoleUsersRepository;
 		private readonly IDepartmentMembersRepository _departmentMemberRepository;
 		private readonly ISubscriptionsService _subscriptionsService;
+		private readonly IEventAggregator _eventAggregator;
 
 		public PersonnelRolesService(IPersonnelRolesRepository personnelRolesRepository, IPersonnelRoleUsersRepository personnelRoleUsersRepository,
-			ISubscriptionsService subscriptionsService, IDepartmentMembersRepository departmentMemberRepository)
+			ISubscriptionsService subscriptionsService, IDepartmentMembersRepository departmentMemberRepository,
+			IEventAggregator eventAggregator)
 		{
 			_personnelRolesRepository = personnelRolesRepository;
 			_personnelRoleUsersRepository = personnelRoleUsersRepository;
 			_subscriptionsService = subscriptionsService;
 			_departmentMemberRepository = departmentMemberRepository;
+			_eventAggregator = eventAggregator;
+		}
+
+		/// <summary>
+		/// The "department admins and select roles" permission modes resolve role membership into the
+		/// visibility matrices at build time, so a role change has to rebuild them or the user keeps
+		/// yesterday's visibility.
+		/// </summary>
+		private void SendRoleVisibilityRefresh(int departmentId)
+		{
+			if (departmentId <= 0)
+				return;
+
+			_eventAggregator?.SendMessage<SecurityRefreshEvent>(new SecurityRefreshEvent() { DepartmentId = departmentId, Type = SecurityCacheTypes.WhoCanViewUnits });
+			_eventAggregator?.SendMessage<SecurityRefreshEvent>(new SecurityRefreshEvent() { DepartmentId = departmentId, Type = SecurityCacheTypes.WhoCanViewUnitLocations });
+			_eventAggregator?.SendMessage<SecurityRefreshEvent>(new SecurityRefreshEvent() { DepartmentId = departmentId, Type = SecurityCacheTypes.WhoCanViewPersonnel });
+			_eventAggregator?.SendMessage<SecurityRefreshEvent>(new SecurityRefreshEvent() { DepartmentId = departmentId, Type = SecurityCacheTypes.WhoCanViewPersonnelLocations });
 		}
 
 		public async Task<List<PersonnelRole>> GetRolesForDepartmentAsync(int departmentId)
@@ -68,7 +89,10 @@ namespace Resgrid.Services
 		{
 			var role = await GetRoleByIdAsync(roleId);
 
-			return await _personnelRolesRepository.DeleteAsync(role, cancellationToken);
+			var result = await _personnelRolesRepository.DeleteAsync(role, cancellationToken);
+			SendRoleVisibilityRefresh(role?.DepartmentId ?? 0);
+
+			return result;
 		}
 
 		public async Task<bool> DeleteRoleUsersAsync(List<PersonnelRoleUser> users, CancellationToken cancellationToken = default(CancellationToken))
@@ -77,6 +101,8 @@ namespace Resgrid.Services
 			{
 				await _personnelRoleUsersRepository.DeleteAsync(user, cancellationToken);
 			}
+
+			SendRoleVisibilityRefresh(users?.FirstOrDefault()?.DepartmentId ?? 0);
 
 			return true;
 		}
@@ -117,6 +143,8 @@ namespace Resgrid.Services
 				await _personnelRoleUsersRepository.DeleteAsync(personnelRoleUser, cancellationToken);
 			}
 
+			SendRoleVisibilityRefresh(departmentId);
+
 			return true;
 		}
 
@@ -139,6 +167,8 @@ namespace Resgrid.Services
 					await _personnelRoleUsersRepository.InsertAsync(roleUser, cancellationToken);
 				}
 			}
+
+			SendRoleVisibilityRefresh(departmentId);
 
 			return true;
 		}

@@ -1,4 +1,4 @@
-var resgrid;
+﻿var resgrid;
 (function (resgrid) {
     var dispatch;
     (function (dispatch) {
@@ -339,7 +339,12 @@ var resgrid;
             addArchivedCall.foundLocation = foundLocation;
 
             function noLocation() {
-                map.panTo(new L.LatLng(-34.397, 150.644));
+                // Browser geolocation was denied or unavailable. Fall back to the department's
+                // configured map centre -- this used to pan to a hardcoded coordinate in Wollongong,
+                // Australia, which every department outside NSW saw as "the map is in the wrong place".
+                if (centerLat && centerLng) {
+                    map.panTo(new L.LatLng(centerLat, centerLng));
+                }
             }
             addArchivedCall.noLocation = noLocation;
 

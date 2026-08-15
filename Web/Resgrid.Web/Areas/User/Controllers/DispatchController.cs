@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
@@ -222,6 +222,40 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
+
+		/// <summary>
+		/// Adds a model error for every field the department's new-call policy requires but the form
+		/// left blank. Keyed to the form fields so the messages land next to the inputs.
+		/// </summary>
+		private async Task ApplyNewCallFieldPolicyAsync(NewCallView model, IFormCollection collection)
+		{
+			var policy = await _departmentSettingsService.GetNewCallFieldPolicyAsync(DepartmentId);
+
+			if (policy == null || policy.IsEmpty)
+				return;
+
+			var values = new NewCallFieldValues
+			{
+				Note = model.Call?.Notes,
+				Address = model.Call?.Address,
+				Geolocation = model.Call?.GeoLocationData,
+				What3Words = model.What3Word,
+				ContactName = model.Call?.ContactName,
+				ContactInfo = model.Call?.ContactNumber,
+				ExternalId = model.Call?.ExternalIdentifier,
+				IncidentId = model.Call?.IncidentNumber,
+				ReferenceId = model.Call?.ReferenceNumber,
+				DestinationPoiId = model.Call?.DestinationPoiId,
+				HasDispatchList = collection != null && collection.Keys.Any(x => x.StartsWith("dispatch", StringComparison.OrdinalIgnoreCase))
+			};
+
+			foreach (var violation in NewCallFieldPolicyValidator.Validate(policy, values))
+			{
+				ModelState.AddModelError($"NewCallField_{violation.Key}",
+					$"{violation.Key} is required by this department before a call can be created.");
+			}
+		}
+
 		[Authorize(Policy = ResgridResources.Call_Create)]
 		public async Task<IActionResult> NewCall(NewCallView model, IFormCollection collection, CancellationToken cancellationToken)
 		{
@@ -233,6 +267,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (model.Call?.DestinationPoiId.HasValue == true && model.Call.DestinationPoiId.Value > 0 && destinationPoi == null)
 				ModelState.AddModelError("Call.DestinationPoiId", _dispatchLocalizer["InvalidDestinationPoi"].Value);
+
+			// Same policy the apps apply and the v4 API enforces: a call-taker cannot forward an
+			// incident to the field until the information the crews need is on it. Departments with no
+			// policy configured are unaffected.
+			await ApplyNewCallFieldPolicyAsync(model, collection);
 
 			if (ModelState.IsValid)
 			{

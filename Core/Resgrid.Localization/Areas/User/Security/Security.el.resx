@@ -1,0 +1,383 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <!-- Security / Permissions page -->
+  <data name="SecurityPermissionsHeader" xml:space="preserve"><value>Ασφάλεια και Δικαιώματα</value></data>
+  <data name="SecurityPermissionsDescription" xml:space="preserve"><value>Εδώ μπορείτε να ορίσετε τα δικαιώματα του τμήματός σας, για παράδειγμα ποιοι χρήστες ή ρόλοι μπορούν να δημιουργούν κλήσεις ή ποιος είναι εξουσιοδοτημένος να δημιουργεί και να αφαιρεί χρήστες. Οι αλλαγές στα δικαιώματα θα τεθούν σε ισχύ κατά την επόμενη σύνδεση στη διαδικτυακή εφαρμογή Resgrid.</value></data>
+  <data name="AuditLogsButton" xml:space="preserve"><value>Αρχεία Ελέγχου</value></data>
+  <data name="PermissionColumn" xml:space="preserve"><value>Δικαίωμα</value></data>
+  <data name="NoteColumn" xml:space="preserve"><value>Σημείωση</value></data>
+  <data name="ValueColumn" xml:space="preserve"><value>Τιμή</value></data>
+  <data name="RolesColumn" xml:space="preserve"><value>Ρόλοι</value></data>
+
+  <!-- 2FA enforcement section on Security page -->
+  <data name="TwoFactorEnforcementHeader" xml:space="preserve"><value>Επιβολή Ελέγχου Ταυτότητας Δύο Παραγόντων (2FA)</value></data>
+  <data name="TwoFactorEnforcementDescription" xml:space="preserve"><value>Απαιτήστε 2FA μέσω εφαρμογής ελέγχου ταυτότητας για τους διαχειριστές. Όταν είναι ενεργοποιημένο, οι διαχειριστές που δεν έχουν ρυθμίσει 2FA θα ανακατευθύνονται για εγγραφή πριν αποκτήσουν πρόσβαση σε διαχειριστικές λειτουργίες.</value></data>
+  <data name="Require2FAForAdminsLabel" xml:space="preserve"><value>Απαίτηση 2FA για Διαχειριστές</value></data>
+  <data name="Require2FAForAdminsDescription" xml:space="preserve"><value>Ελέγχει ποιοι χρήστες διαχειριστικού επιπέδου πρέπει να εγγραφούν σε 2FA μέσω εφαρμογής ελέγχου ταυτότητας (Google Authenticator, Microsoft Authenticator, Authy κ.λπ.).</value></data>
+  <data name="Require2FADisabled" xml:space="preserve"><value>Απενεργοποιημένη (καμία απαίτηση)</value></data>
+  <data name="Require2FADeptAdmins" xml:space="preserve"><value>Διαχειριστές Τμήματος + Διαχειριστικός Χρήστης</value></data>
+  <data name="Require2FAAllAdmins" xml:space="preserve"><value>Διαχειριστές Τμήματος + Διαχειριστικός Χρήστης + Διαχειριστές Ομάδων</value></data>
+  <data name="Require2FASettingSaved" xml:space="preserve"><value>Η ρύθμιση επιβολής 2FA αποθηκεύτηκε.</value></data>
+  <data name="Require2FASettingFailed" xml:space="preserve"><value>Αποτυχία αποθήκευσης της ρύθμισης επιβολής 2FA.</value></data>
+  <data name="Require2FACannotEnableNoManagingUser2FA" xml:space="preserve"><value>Δεν είναι δυνατή η ενεργοποίηση της επιβολής 2FA: ο διαχειριστικός χρήστης αυτού του τμήματος δεν έχει ενεργοποιημένο τον έλεγχο ταυτότητας δύο παραγόντων στον λογαριασμό του. Ο διαχειριστικός χρήστης πρέπει να ενεργοποιήσει το 2FA πριν ενεργοποιηθεί αυτή η ρύθμιση.</value></data>
+  <data name="Require2FACannotEnableNoCurrentUser2FA" xml:space="preserve"><value>Δεν είναι δυνατή η ενεργοποίηση της επιβολής 2FA: δεν έχετε ενεργοποιημένο τον έλεγχο ταυτότητας δύο παραγόντων στον δικό σας λογαριασμό. Πρέπει να ενεργοποιήσετε το 2FA πριν το απαιτήσετε από άλλους.</value></data>
+  <data name="Require2FABothMustEnable" xml:space="preserve"><value>Δεν είναι δυνατή η ενεργοποίηση της επιβολής 2FA: ούτε εσείς ούτε ο διαχειριστικός χρήστης έχετε ενεργοποιημένο τον έλεγχο ταυτότητας δύο παραγόντων. Και οι δύο πρέπει να ενεργοποιήσουν το 2FA πριν ενεργοποιηθεί αυτή η ρύθμιση.</value></data>
+  <data name="Require2FASettingLocked" xml:space="preserve"><value>Αυτή η ρύθμιση είναι κλειδωμένη μέχρι να πληρούνται οι παραπάνω προϋποθέσεις.</value></data>
+
+  <!-- Permissions page table columns -->
+  <data name="PermissionNameColumn" xml:space="preserve"><value>Δικαίωμα</value></data>
+  <data name="PermissionNoteColumn" xml:space="preserve"><value>Σημείωση</value></data>
+  <data name="PermissionSelectionColumn" xml:space="preserve"><value>Επιλογή</value></data>
+  <data name="PermissionGroupOnlyColumn" xml:space="preserve"><value>Μόνο Ομάδα</value></data>
+  <data name="PermissionRolesColumn" xml:space="preserve"><value>Ρόλοι</value></data>
+  <data name="PermissionNoRoles" xml:space="preserve"><value>Χωρίς Ρόλους</value></data>
+  <data name="PermissionNA" xml:space="preserve"><value>Μ/Δ</value></data>
+
+  <!-- Permissions page header -->
+  <data name="BreadcrumbSecurity" xml:space="preserve"><value>Ασφάλεια και Δικαιώματα</value></data>
+  <data name="SecurityDescription" xml:space="preserve"><value>Εδώ μπορείτε να ορίσετε τα δικαιώματα του τμήματός σας, για παράδειγμα ποιοι χρήστες ή ρόλοι μπορούν να δημιουργούν κλήσεις ή ποιος είναι εξουσιοδοτημένος να δημιουργεί και να αφαιρεί χρήστες. Οι αλλαγές στα δικαιώματα θα τεθούν σε ισχύ κατά την επόμενη σύνδεση στη διαδικτυακή εφαρμογή Resgrid.</value></data>
+
+  <!-- Individual permission labels and notes -->
+  <data name="PermAddUsersLabel" xml:space="preserve"><value>Ποιος μπορεί να Προσθέτει Χρήστες</value></data>
+  <data name="PermAddUsersNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να προσθέτει χρήστες/προσωπικό στο τμήμα. Από προεπιλογή μόνο οι Διαχειριστές Τμήματος (και το διαχειριστικό μέλος) μπορούν να προσθέτουν χρήστες. Ωστόσο, μπορεί να επιτραπεί και στους Διαχειριστές Ομάδων να προσθέτουν χρήστες (περιορισμένα μόνο στην ομάδα της οποίας είναι διαχειριστές).</value></data>
+
+  <data name="PermRemoveUsersLabel" xml:space="preserve"><value>Ποιος μπορεί να Αφαιρεί Χρήστες</value></data>
+  <data name="PermRemoveUsersNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να αφαιρεί χρήστες/προσωπικό από το τμήμα. Από προεπιλογή μόνο οι Διαχειριστές Τμήματος (και το διαχειριστικό μέλος) μπορούν να αφαιρούν χρήστες. Ωστόσο, μπορεί να επιτραπεί και στους Διαχειριστές Ομάδων να αφαιρούν χρήστες (περιορισμένα μόνο στους χρήστες της ομάδας της οποίας είναι διαχειριστές).</value></data>
+
+  <data name="PermCreateCallLabel" xml:space="preserve"><value>Ποιος μπορεί να Δημιουργεί Κλήσεις</value></data>
+  <data name="PermCreateCallNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να δημιουργεί χειροκίνητα κλήσεις από το σύστημα Resgrid. Από προεπιλογή όλοι μπορούν να δημιουργούν κλήσεις.</value></data>
+
+  <data name="PermDeleteCallLabel" xml:space="preserve"><value>Ποιος μπορεί να Διαγράφει Κλήσεις</value></data>
+  <data name="PermDeleteCallNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να διαγράφει κλήσεις από το σύστημα Resgrid. Από προεπιλογή όλοι μπορούν να διαγράφουν κλήσεις.</value></data>
+
+  <data name="PermCloseCallLabel" xml:space="preserve"><value>Ποιος μπορεί να Κλείνει Κλήσεις</value></data>
+  <data name="PermCloseCallNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να κλείνει κλήσεις από το σύστημα Resgrid. Από προεπιλογή όλοι μπορούν να κλείνουν κλήσεις.</value></data>
+
+  <data name="PermAddCallDataLabel" xml:space="preserve"><value>Ποιος μπορεί να Προσθέτει Δεδομένα σε Κλήσεις</value></data>
+  <data name="PermAddCallDataNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να προσθέτει δεδομένα, όπως εικόνες, σημειώσεις και αρχεία, σε κλήσεις από το σύστημα Resgrid. Από προεπιλογή όλοι μπορούν να προσθέτουν δεδομένα σε κλήσεις.</value></data>
+
+  <data name="PermCreateTrainingLabel" xml:space="preserve"><value>Ποιος μπορεί να Δημιουργεί Εκπαιδεύσεις</value></data>
+  <data name="PermCreateTrainingNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να δημιουργεί εκπαιδεύσεις. Από προεπιλογή μόνο οι Διαχειριστές Τμήματος μπορούν να δημιουργούν εκπαιδεύσεις.</value></data>
+
+  <data name="PermCreateDocumentLabel" xml:space="preserve"><value>Ποιος μπορεί να Προσθέτει Έγγραφα</value></data>
+  <data name="PermCreateDocumentNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να προσθέτει έγγραφα. Από προεπιλογή όλοι μπορούν να προσθέτουν έγγραφα.</value></data>
+
+  <data name="PermCreateCalendarEntryLabel" xml:space="preserve"><value>Ποιος μπορεί να Δημιουργεί Καταχωρίσεις Ημερολογίου</value></data>
+  <data name="PermCreateCalendarEntryNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να δημιουργεί καταχωρίσεις ημερολογίου. Από προεπιλογή όλοι μπορούν να δημιουργούν καταχωρίσεις ημερολογίου.</value></data>
+
+  <data name="PermCreateNoteLabel" xml:space="preserve"><value>Ποιος μπορεί να Δημιουργεί Σημειώσεις</value></data>
+  <data name="PermCreateNoteNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να δημιουργεί σημειώσεις. Από προεπιλογή όλοι μπορούν να δημιουργούν σημειώσεις.</value></data>
+
+  <data name="PermCreateLogLabel" xml:space="preserve"><value>Ποιος μπορεί να Προσθέτει Καταχωρίσεις Καταγραφών</value></data>
+  <data name="PermCreateLogNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να προσθέτει καταχωρίσεις καταγραφών. Από προεπιλογή όλοι μπορούν να προσθέτουν καταχωρίσεις καταγραφών.</value></data>
+
+  <data name="PermCreateShiftLabel" xml:space="preserve"><value>Ποιος μπορεί να Δημιουργεί Βάρδιες</value></data>
+  <data name="PermCreateShiftNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να δημιουργεί και να επεξεργάζεται βάρδιες. Από προεπιλογή μόνο οι Διαχειριστές Τμήματος μπορούν να δημιουργούν και να επεξεργάζονται βάρδιες.</value></data>
+
+  <data name="PermViewPersonalInfoLabel" xml:space="preserve"><value>Ποιος μπορεί να Βλέπει Προσωπικές Πληροφορίες</value></data>
+  <data name="PermViewPersonalInfoNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να βλέπει προσωπικές πληροφορίες (PII) για το προσωπικό στο σύστημα. Για παράδειγμα: Διεύθυνση Email, Αριθμοί Τηλεφώνου κ.λπ. Από προεπιλογή όλοι μπορούν να βλέπουν αυτές τις πληροφορίες.</value></data>
+
+  <data name="PermAdjustInventoryLabel" xml:space="preserve"><value>Ποιος μπορεί να Προσαρμόζει το Απόθεμα</value></data>
+  <data name="PermAdjustInventoryNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να προσαρμόζει τα επίπεδα αποθέματος στο σύστημα. Από προεπιλογή όλοι μπορούν να προσαρμόζουν το απόθεμα.</value></data>
+
+  <data name="PermViewPersonnelLocationLabel" xml:space="preserve"><value>Ποιος μπορεί να βλέπει την Τοποθεσία του Προσωπικού</value></data>
+  <data name="PermViewPersonnelLocationNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να βλέπει την τοποθεσία του προσωπικού στους χάρτες. Για να περιορίσετε την επιλογή μόνο σε διαχειριστές ομάδων και ρόλους εντός ομάδας, πρέπει να επιλέξετε την επιλογή Μόνο Ομάδα.</value></data>
+
+  <data name="PermViewUnitLocationLabel" xml:space="preserve"><value>Ποιος μπορεί να βλέπει την Τοποθεσία των Μονάδων</value></data>
+  <data name="PermViewUnitLocationNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να βλέπει την τοποθεσία των μονάδων στους χάρτες. Για να περιορίσετε την επιλογή μόνο σε διαχειριστές ομάδων και ρόλους εντός ομάδας, πρέπει να επιλέξετε την επιλογή Μόνο Ομάδα.</value></data>
+
+  <data name="PermCreateMessageLabel" xml:space="preserve"><value>Ποιος μπορεί να στέλνει μηνύματα</value></data>
+  <data name="PermCreateMessageNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να δημιουργεί και να στέλνει μηνύματα (εσωτερική αλληλογραφία). Από προεπιλογή όλοι μπορούν να δημιουργούν και να στέλνουν μηνύματα.</value></data>
+
+  <data name="PermViewGroupsUsersLabel" xml:space="preserve"><value>Ποιος μπορεί να βλέπει χρήστες</value></data>
+  <data name="PermViewGroupsUsersNote" xml:space="preserve"><value>Από προεπιλογή όλοι οι χρήστες μπορούν να βλέπουν όλους τους άλλους χρήστες στο σύστημα. Αυτή η επιλογή σας επιτρέπει να περιορίσετε ποιος μπορεί να βλέπει χρήστες στο σύστημα.</value></data>
+
+  <data name="PermViewGroupsUnitsLabel" xml:space="preserve"><value>Ποιος μπορεί να βλέπει μονάδες</value></data>
+  <data name="PermViewGroupsUnitsNote" xml:space="preserve"><value>Από προεπιλογή όλοι οι χρήστες μπορούν να βλέπουν όλες τις μονάδες στο σύστημα. Αυτή η επιλογή σας επιτρέπει να περιορίσετε ποιος μπορεί να βλέπει μονάδες στο σύστημα.</value></data>
+
+  <data name="PermViewContactsLabel" xml:space="preserve"><value>Ποιος μπορεί να βλέπει Επαφές</value></data>
+  <data name="PermViewContactsNote" xml:space="preserve"><value>Από προεπιλογή όλοι οι χρήστες μπορούν να βλέπουν όλες τις επαφές στο σύστημα. Αυτή η επιλογή σας επιτρέπει να περιορίσετε ποιος μπορεί να βλέπει επαφές στο σύστημα. Αν ένας χρήστης δεν μπορεί να βλέπει Επαφές, δεν θα μπορεί επίσης να τις προσθέτει σε κλήση.</value></data>
+
+  <data name="PermEditContactsLabel" xml:space="preserve"><value>Ποιος μπορεί να επεξεργάζεται ή να δημιουργεί Επαφές</value></data>
+  <data name="PermEditContactsNote" xml:space="preserve"><value>Από προεπιλογή όλοι οι χρήστες μπορούν να δημιουργούν και να επεξεργάζονται επαφές στο σύστημα. Αυτή η επιλογή σας επιτρέπει να περιορίσετε ποιος μπορεί να δημιουργεί ή να επεξεργάζεται επαφές στο σύστημα.</value></data>
+
+  <data name="PermDeleteContactsLabel" xml:space="preserve"><value>Ποιος μπορεί να διαγράφει Επαφές</value></data>
+  <data name="PermDeleteContactsNote" xml:space="preserve"><value>Από προεπιλογή όλοι οι χρήστες μπορούν να διαγράφουν επαφές στο σύστημα. Αυτή η επιλογή σας επιτρέπει να περιορίσετε ποιος μπορεί να διαγράφει επαφές στο σύστημα.</value></data>
+
+  <data name="PermCreateWorkflowLabel" xml:space="preserve"><value>Ποιος μπορεί να Δημιουργεί/Επεξεργάζεται Ροές Εργασίας</value></data>
+  <data name="PermCreateWorkflowNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να δημιουργεί, να επεξεργάζεται και να διαγράφει ροές εργασίας και βήματα ροών εργασίας. Από προεπιλογή μόνο οι Διαχειριστές Τμήματος μπορούν να διαχειρίζονται ροές εργασίας.</value></data>
+
+  <data name="PermManageWorkflowCredentialsLabel" xml:space="preserve"><value>Ποιος μπορεί να Διαχειρίζεται Διαπιστευτήρια Ροών Εργασίας</value></data>
+  <data name="PermManageWorkflowCredentialsNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να δημιουργεί, να επεξεργάζεται και να διαγράφει κρυπτογραφημένα διαπιστευτήρια που χρησιμοποιούνται από ενέργειες ροών εργασίας (π.χ. κωδικούς SMTP, κλειδιά API). Από προεπιλογή μόνο οι Διαχειριστές Τμήματος μπορούν να διαχειρίζονται διαπιστευτήρια.</value></data>
+
+  <data name="PermViewWorkflowRunsLabel" xml:space="preserve"><value>Ποιος μπορεί να Βλέπει Εκτελέσεις Ροών Εργασίας</value></data>
+  <data name="PermViewWorkflowRunsNote" xml:space="preserve"><value>Αυτή η επιλογή καθορίζει ποιος μπορεί να βλέπει το ιστορικό εκτέλεσης ροών εργασίας, τα αρχεία εκτελέσεων και τους πίνακες υγείας. Από προεπιλογή μόνο οι Διαχειριστές Τμήματος μπορούν να βλέπουν εκτελέσεις ροών εργασίας.</value></data>
+
+  <!-- SSO / SCIM — Sso.cshtml page -->
+  <data name="SsoPageTitle" xml:space="preserve"><value>Ενιαία Σύνδεση (SSO) και SCIM</value></data>
+  <data name="SsoPageHeader" xml:space="preserve"><value>Ενιαία Σύνδεση και Παροχή Ταυτοτήτων</value></data>
+  <data name="SsoBreadcrumb" xml:space="preserve"><value>SSO / SCIM</value></data>
+  <data name="SsoSecurityPolicyButton" xml:space="preserve"><value>Πολιτική Ασφαλείας</value></data>
+  <data name="SsoAddOidcButton" xml:space="preserve"><value>Προσθήκη Διαμόρφωσης OIDC</value></data>
+  <data name="SsoAddSamlButton" xml:space="preserve"><value>Προσθήκη Διαμόρφωσης SAML 2.0</value></data>
+  <data name="SsoWhatIsSsoHeader" xml:space="preserve"><value>Τι είναι το SSO και το SCIM;</value></data>
+  <data name="SsoSingleSignOnHeader" xml:space="preserve"><value>Ενιαία Σύνδεση (SSO)</value></data>
+  <data name="SsoSingleSignOnDescription" xml:space="preserve"><value>Επιτρέψτε στα μέλη του τμήματος να συνδέονται με την υπάρχουσα εταιρική τους ταυτότητα (Microsoft Entra ID, Okta, Google Workspace κ.λπ.) αντί για ξεχωριστό κωδικό πρόσβασης Resgrid.</value></data>
+  <data name="SsoOidcDescription" xml:space="preserve"><value>OIDC — Σύγχρονο πρωτόκολλο, ιδανικό για Entra, Okta, Auth0, Google</value></data>
+  <data name="SsoSamlDescription" xml:space="preserve"><value>SAML 2.0 — Ευρέως υποστηριζόμενο από κυβερνητικούς και εταιρικούς παρόχους ταυτότητας</value></data>
+  <data name="SsoScimHeader" xml:space="preserve"><value>Παροχή SCIM 2.0</value></data>
+  <data name="SsoScimDescription" xml:space="preserve"><value>Συγχρονίστε αυτόματα χρήστες από τον πάροχο ταυτότητάς σας. Όταν εντάσσετε ή αποχωρεί προσωπικό στον εταιρικό σας κατάλογο, το Resgrid αντικατοπτρίζει αυτόματα αυτές τις αλλαγές — χωρίς χειροκίνητα βήματα πρόσκλησης/αφαίρεσης.</value></data>
+  <data name="SsoScimAutoCreate" xml:space="preserve"><value>Αυτόματη δημιουργία νέων μελών όταν προστίθενται στον πάροχο ταυτότητάς σας</value></data>
+  <data name="SsoScimAutoDisable" xml:space="preserve"><value>Απενεργοποίηση/αφαίρεση μελών κατά την κατάργηση παροχής</value></data>
+  <data name="SsoScimSyncNames" xml:space="preserve"><value>Διατήρηση ονομάτων και διευθύνσεων email σε συγχρονισμό</value></data>
+  <data name="SsoSecurityPolicyHeader" xml:space="preserve"><value>Πολιτική Ασφαλείας</value></data>
+  <data name="SsoSecurityPolicyDescription" xml:space="preserve"><value>Επιβάλετε ελέγχους συμμόρφωσης σε επίπεδο τμήματος παράλληλα με το SSO:</value></data>
+  <data name="SsoSecurityPolicyMandateMfa" xml:space="preserve"><value>Επιβολή MFA για όλα τα μέλη</value></data>
+  <data name="SsoSecurityPolicyRestrictLogin" xml:space="preserve"><value>Περιορισμός σύνδεσης μόνο μέσω SSO (απενεργοποίηση κωδικών πρόσβασης)</value></data>
+  <data name="SsoSecurityPolicyIpRestrict" xml:space="preserve"><value>Περιορισμός συνδέσεων σε συγκεκριμένα εύρη IP CIDR</value></data>
+  <data name="SsoSecurityPolicyPasswordRules" xml:space="preserve"><value>Ορισμός κανόνων λήξης και πολυπλοκότητας κωδικών πρόσβασης</value></data>
+  <data name="SsoSecurityPolicyDataClassification" xml:space="preserve"><value>Ταξινόμηση επιπέδου δεδομένων (Αδιαβάθμητα / CUI / Εμπιστευτικά)</value></data>
+  <data name="SsoDiscoveryUrlCalloutTitle" xml:space="preserve"><value>Διεύθυνση URL Ανακάλυψης Εφαρμογής Κινητών</value></data>
+  <data name="SsoDiscoveryUrlCalloutDescription" xml:space="preserve"><value>Η εφαρμογή Resgrid για κινητά χρησιμοποιεί αυτή τη διεύθυνση URL για να ανακαλύψει τις ρυθμίσεις SSO σας πριν εμφανίσει την οθόνη σύνδεσης. Μοιραστείτε την με την ομάδα κινητών σας αν χρειάζεται.</value></data>
+  <data name="SsoCopyButton" xml:space="preserve"><value>Αντιγραφή</value></data>
+  <data name="SsoCopiedToClipboard" xml:space="preserve"><value>Αντιγράφηκε στο πρόχειρο!</value></data>
+  <data name="SsoConfigurationsHeader" xml:space="preserve"><value>Διαμορφώσεις SSO</value></data>
+  <data name="SsoNoConfigurationsWarning" xml:space="preserve"><value>Δεν υπάρχουν ακόμη διαμορφώσεις SSO. Χρησιμοποιήστε τα παραπάνω κουμπιά για να προσθέσετε OIDC ή SAML 2.0.</value></data>
+  <data name="SsoTableColProvider" xml:space="preserve"><value>Πάροχος</value></data>
+  <data name="SsoTableColIdentifier" xml:space="preserve"><value>Αναγνωριστικό / Τελικό Σημείο</value></data>
+  <data name="SsoTableColStatus" xml:space="preserve"><value>Κατάσταση</value></data>
+  <data name="SsoTableColLocalLogin" xml:space="preserve"><value>Τοπική Σύνδεση</value></data>
+  <data name="SsoTableColAutoProvision" xml:space="preserve"><value>Αυτόματη Παροχή</value></data>
+  <data name="SsoTableColScim" xml:space="preserve"><value>SCIM</value></data>
+  <data name="SsoTableColCreated" xml:space="preserve"><value>Δημιουργήθηκε</value></data>
+  <data name="SsoTableColActions" xml:space="preserve"><value>Ενέργειες</value></data>
+  <data name="SsoStatusEnabled" xml:space="preserve"><value>Ενεργοποιημένη</value></data>
+  <data name="SsoStatusDisabled" xml:space="preserve"><value>Απενεργοποιημένη</value></data>
+  <data name="SsoLocalLoginYes" xml:space="preserve"><value>Ναι</value></data>
+  <data name="SsoLocalLoginSsoOnly" xml:space="preserve"><value>Μόνο SSO</value></data>
+  <data name="SsoAutoProvisionOn" xml:space="preserve"><value>Ενεργή</value></data>
+  <data name="SsoAutoProvisionOff" xml:space="preserve"><value>Ανενεργή</value></data>
+  <data name="SsoScimStatusActive" xml:space="preserve"><value>Ενεργό</value></data>
+  <data name="SsoScimStatusNoToken" xml:space="preserve"><value>Χωρίς Διακριτικό</value></data>
+  <data name="SsoScimStatusOff" xml:space="preserve"><value>Ανενεργό</value></data>
+  <data name="SsoEditButton" xml:space="preserve"><value>Επεξεργασία</value></data>
+  <data name="SsoScimSetupButton" xml:space="preserve"><value>SCIM</value></data>
+  <data name="SsoDeleteConfirmTitle" xml:space="preserve"><value>Επιβεβαίωση Διαγραφής</value></data>
+  <data name="SsoDeleteConfirmMessage" xml:space="preserve"><value>Είστε βέβαιοι ότι θέλετε να διαγράψετε τη διαμόρφωση SSO {0}; Αυτό δεν μπορεί να αναιρεθεί.</value></data>
+  <data name="SsoDeleteCancelButton" xml:space="preserve"><value>Ακύρωση</value></data>
+  <data name="SsoDeleteButton" xml:space="preserve"><value>Διαγραφή</value></data>
+
+  <!-- SSO / SCIM — SsoEdit.cshtml page -->
+  <data name="SsoEditPageTitleNew" xml:space="preserve"><value>Νέα Διαμόρφωση SSO</value></data>
+  <data name="SsoEditPageTitleEdit" xml:space="preserve"><value>Επεξεργασία Διαμόρφωσης SSO</value></data>
+  <data name="SsoEditBreadcrumbNew" xml:space="preserve"><value>Νέα</value></data>
+  <data name="SsoEditBreadcrumbEdit" xml:space="preserve"><value>Επεξεργασία</value></data>
+  <data name="SsoEditStep1Label" xml:space="preserve"><value>Βήμα 1</value></data>
+  <data name="SsoEditStep1Header" xml:space="preserve"><value>Πάροχος και Βασικές Ρυθμίσεις</value></data>
+  <data name="SsoEditProviderTypeLabel" xml:space="preserve"><value>Πρωτόκολλο Παρόχου Ταυτότητας</value></data>
+  <data name="SsoEditEnableLabel" xml:space="preserve"><value>Ενεργοποίηση αυτής της διαμόρφωσης SSO</value></data>
+  <data name="SsoEditEnableDescription" xml:space="preserve"><value>Μόνο μία διαμόρφωση ανά τύπο παρόχου είναι ενεργή κάθε φορά.</value></data>
+  <data name="SsoEditAllowLocalLoginLabel" xml:space="preserve"><value>Να επιτρέπεται τοπική σύνδεση με κωδικό πρόσβασης</value></data>
+  <data name="SsoEditAllowLocalLoginDescription" xml:space="preserve"><value>Όταν είναι επιλεγμένο, οι χρήστες μπορούν ακόμη να συνδέονται με όνομα χρήστη και κωδικό πρόσβασης επιπλέον του SSO. Απενεργοποιήστε το μαζί με τη σημαία Απαίτηση SSO της Πολιτικής Ασφαλείας για να επιβάλετε σύνδεση μόνο μέσω SSO.</value></data>
+  <data name="SsoEditAutoProvisionLabel" xml:space="preserve"><value>Αυτόματη παροχή νέων χρηστών</value></data>
+  <data name="SsoEditAutoProvisionDescription" xml:space="preserve"><value>Δημιουργήστε αυτόματα λογαριασμό Resgrid όταν ένας χρήστης ταυτοποιείται μέσω SSO για πρώτη φορά και δεν βρεθεί αντίστοιχο email. Αφήστε το ανενεργό για να απαιτείται πρώτα χειροκίνητη πρόσκληση.</value></data>
+  <data name="SsoEditScimEnableLabel" xml:space="preserve"><value>Ενεργοποίηση παροχής SCIM 2.0</value></data>
+  <data name="SsoEditScimEnableDescription" xml:space="preserve"><value>Επιτρέπει στον πάροχο ταυτότητάς σας να δημιουργεί/ενημερώνει/απενεργοποιεί αυτόματα μέλη. Μετά την αποθήκευση, μεταβείτε στη σελίδα Ρύθμισης SCIM για να δημιουργήσετε διακριτικό bearer.</value></data>
+  <data name="SsoEditDefaultRankLabel" xml:space="preserve"><value>Προεπιλεγμένος Βαθμός για Χρήστες Αυτόματης Παροχής</value></data>
+  <data name="SsoEditDefaultRankDescription" xml:space="preserve"><value>Προαιρετικό. Εφαρμόζεται μόνο όταν η Αυτόματη Παροχή δημιουργεί νέο μέλος.</value></data>
+  <data name="SsoEditStep2OidcLabel" xml:space="preserve"><value>Βήμα 2 — OIDC</value></data>
+  <data name="SsoEditStep2OidcHeader" xml:space="preserve"><value>Ρυθμίσεις OpenID Connect</value></data>
+  <data name="SsoEditOidcInfoAlert" xml:space="preserve"><value>Πού θα βρείτε αυτές τις τιμές: Στον πάροχο ταυτότητάς σας, καταχωρίστε το Resgrid ως Δημόσιο Πελάτη (PKCE, χωρίς απαίτηση μυστικού πελάτη για κινητά) ή Διαδικτυακή Εφαρμογή (με μυστικό για ροές διακομιστή). Αντιγράψτε το Client ID και τη διεύθυνση URL Εκδότη από την καταχωρισμένη εφαρμογή.</value></data>
+  <data name="SsoEditAuthorityLabel" xml:space="preserve"><value>Διεύθυνση URL Αρχής / Εκδότη</value></data>
+  <data name="SsoEditAuthorityPlaceholder" xml:space="preserve"><value>https://login.microsoftonline.com/{tenant-id}/v2.0</value></data>
+  <data name="SsoEditAuthorityDescription" xml:space="preserve"><value>Παραδείγματα: Entra ID: https://login.microsoftonline.com/{tenant-id}/v2.0 | Okta: https://{your-domain}.okta.com/oauth2/default | Google: https://accounts.google.com</value></data>
+  <data name="SsoEditClientIdLabel" xml:space="preserve"><value>Client ID</value></data>
+  <data name="SsoEditClientIdPlaceholder" xml:space="preserve"><value>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx</value></data>
+  <data name="SsoEditClientIdDescription" xml:space="preserve"><value>Το δημόσιο αναγνωριστικό πελάτη που εκχωρήθηκε από τον πάροχο ταυτότητάς σας. Ασφαλές για εμφάνιση — δεν είναι μυστικό.</value></data>
+  <data name="SsoEditClientSecretLabel" xml:space="preserve"><value>Client Secret</value></data>
+  <data name="SsoEditClientSecretStored" xml:space="preserve"><value>Το μυστικό αποθηκεύτηκε</value></data>
+  <data name="SsoEditClientSecretDescription" xml:space="preserve"><value>Κρυπτογραφημένο κατά την αποθήκευση με το κλειδί του τμήματός σας. Αφήστε το κενό αν χρησιμοποιείτε PKCE (κινητά/SPA — δεν απαιτείται μυστικό).</value></data>
+  <data name="SsoEditClientSecretKeepExisting" xml:space="preserve"><value>Αφήστε το κενό για να διατηρήσετε το υπάρχον μυστικό αμετάβλητο.</value></data>
+  <data name="SsoEditStep2SamlLabel" xml:space="preserve"><value>Βήμα 2 — SAML 2.0</value></data>
+  <data name="SsoEditStep2SamlHeader" xml:space="preserve"><value>Ρυθμίσεις SAML 2.0</value></data>
+  <data name="SsoEditSamlInfoAlert" xml:space="preserve"><value>Πού θα βρείτε αυτές τις τιμές: Στον πάροχο ταυτότητάς σας, δημιουργήστε νέα εφαρμογή SAML. Εισαγάγετε το SP Entity ID και τη διεύθυνση URL ACS που εμφανίζονται παρακάτω στον πάροχο ταυτότητάς σας και μετά επικολλήστε εδώ τη διεύθυνση URL μεταδεδομένων ή το πιστοποιητικό του παρόχου.</value></data>
+  <data name="SsoEditSpEntityIdLabel" xml:space="preserve"><value>SP Entity ID (εισαγάγετέ το στον πάροχο ταυτότητάς σας)</value></data>
+  <data name="SsoEditAcsUrlLabel" xml:space="preserve"><value>Διεύθυνση URL ACS (Assertion Consumer Service — εισαγάγετέ την στον πάροχο ταυτότητάς σας)</value></data>
+  <data name="SsoEditAcsUrlNote" xml:space="preserve"><value>Αυτή η διεύθυνση URL χρησιμοποιεί κρυπτογραφημένο διακριτικό τμήματος — δεν εκθέτει ποτέ τον απλό κωδικό του τμήματός σας.</value></data>
+  <data name="SsoEditEntityIdEditableLabel" xml:space="preserve"><value>SP Entity ID (επεξεργάσιμο)</value></data>
+  <data name="SsoEditEntityIdEditablePlaceholder" xml:space="preserve"><value>https://app.resgrid.com/saml/DEPT</value></data>
+  <data name="SsoEditEntityIdEditableNote" xml:space="preserve"><value>Πρέπει να ταιριάζει ακριβώς με ό,τι εισαγάγατε στον πάροχο ταυτότητας.</value></data>
+  <data name="SsoEditMetadataUrlLabel" xml:space="preserve"><value>Διεύθυνση URL Μεταδεδομένων Παρόχου Ταυτότητας</value></data>
+  <data name="SsoEditMetadataUrlPlaceholder" xml:space="preserve"><value>https://idp.example.com/metadata.xml</value></data>
+  <data name="SsoEditMetadataUrlNote" xml:space="preserve"><value>Το Resgrid θα ανακτά περιοδικά αυτή τη διεύθυνση URL ώστε να παραμένει ενημερωμένο με τα πιστοποιητικά του παρόχου ταυτότητας.</value></data>
+  <data name="SsoEditAcsUrlStoredLabel" xml:space="preserve"><value>Διεύθυνση URL ACS (αποθηκευμένη)</value></data>
+  <data name="SsoEditAcsUrlStoredNote" xml:space="preserve"><value>Συμπληρώνεται αυτόματα από την παραπάνω παραγόμενη διεύθυνση URL. Τροποποιήστε την μόνο αν διαμορφώσατε διαφορετική διεύθυνση URL ACS στον πάροχο ταυτότητάς σας.</value></data>
+  <data name="SsoEditIdpCertLabel" xml:space="preserve"><value>Πιστοποιητικό Υπογραφής Παρόχου Ταυτότητας (PEM)</value></data>
+  <data name="SsoEditIdpCertStored" xml:space="preserve"><value>Το πιστοποιητικό αποθηκεύτηκε</value></data>
+  <data name="SsoEditIdpCertNote" xml:space="preserve"><value>Κρυπτογραφημένο κατά την αποθήκευση. Αφήστε το κενό για να διατηρήσετε το υπάρχον πιστοποιητικό.</value></data>
+  <data name="SsoEditSigningKeyLabel" xml:space="preserve"><value>Κλειδί Υπογραφής SP (PEM, προαιρετικό)</value></data>
+  <data name="SsoEditSigningKeyStored" xml:space="preserve"><value>Το κλειδί αποθηκεύτηκε</value></data>
+  <data name="SsoEditSigningKeyNote" xml:space="preserve"><value>Κρυπτογραφημένο κατά την αποθήκευση. Αφήστε το κενό αν ο πάροχος ταυτότητάς σας δεν απαιτεί υπογεγραμμένα αιτήματα.</value></data>
+  <data name="SsoEditStep3Label" xml:space="preserve"><value>Βήμα 3</value></data>
+  <data name="SsoEditStep3Header" xml:space="preserve"><value>Αντιστοίχιση Χαρακτηριστικών</value></data>
+  <data name="SsoEditAttrMapDescription" xml:space="preserve"><value>Αντιστοιχίστε τα ονόματα αξιώσεων που στέλνει ο πάροχος ταυτότητάς σας στα πεδία χρήστη του Resgrid. Αφήστε το κενό για αυτόματη χρήση των τυπικών URI αξιώσεων. Η τιμή είναι το όνομα της αξίωσης όπως εκδίδεται από τον πάροχο ταυτότητάς σας.</value></data>
+  <data name="SsoEditAttrMapJsonLabel" xml:space="preserve"><value>JSON Αντιστοίχισης Χαρακτηριστικών</value></data>
+  <data name="SsoEditAttrMapJsonNote" xml:space="preserve"><value>Πρέπει να είναι έγκυρο JSON. Χρησιμοποιήστε τα κουμπιά γρήγορης συμπλήρωσης στα δεξιά.</value></data>
+  <data name="SsoEditQuickFillHeader" xml:space="preserve"><value>Προρυθμίσεις γρήγορης συμπλήρωσης</value></data>
+  <data name="SsoEditQuickFillDescription" xml:space="preserve"><value>Κάντε κλικ για αυτόματη συμπλήρωση του JSON αντιστοίχισης με γνωστές προεπιλογές για τον πάροχο ταυτότητάς σας.</value></data>
+  <data name="SsoEditFieldMappingHeader" xml:space="preserve"><value>Υποστηριζόμενα κλειδιά πεδίων Resgrid</value></data>
+  <data name="SsoEditFieldKeyColumn" xml:space="preserve"><value>Κλειδί</value></data>
+  <data name="SsoEditFieldDescColumn" xml:space="preserve"><value>Περιγραφή</value></data>
+  <data name="SsoEditFieldEmailDesc" xml:space="preserve"><value>Διεύθυνση email του χρήστη</value></data>
+  <data name="SsoEditFieldFirstNameDesc" xml:space="preserve"><value>Όνομα</value></data>
+  <data name="SsoEditFieldLastNameDesc" xml:space="preserve"><value>Επώνυμο</value></data>
+  <data name="SsoEditFieldSubjectDesc" xml:space="preserve"><value>Μοναδικό υποκείμενο παρόχου ταυτότητας (για σύνδεση λογαριασμού)</value></data>
+  <data name="SsoEditCreateButton" xml:space="preserve"><value>Δημιουργία Διαμόρφωσης</value></data>
+  <data name="SsoEditSaveButton" xml:space="preserve"><value>Αποθήκευση Αλλαγών</value></data>
+  <data name="SsoEditCancelButton" xml:space="preserve"><value>Ακύρωση</value></data>
+
+  <!-- SSO / SCIM — ScimSetup.cshtml page -->
+  <data name="ScimSetupPageTitle" xml:space="preserve"><value>Ρύθμιση SCIM 2.0</value></data>
+  <data name="ScimSetupPageHeader" xml:space="preserve"><value>Ρύθμιση Παροχής SCIM 2.0</value></data>
+  <data name="ScimSetupBreadcrumb" xml:space="preserve"><value>Ρύθμιση SCIM</value></data>
+  <data name="ScimSetupBackButton" xml:space="preserve"><value>Επιστροφή στο SSO</value></data>
+  <data name="ScimSetupTokenWarningTitle" xml:space="preserve"><value>Σημαντικό — Αντιγράψτε τώρα το Διακριτικό Bearer SCIM σας</value></data>
+  <data name="ScimSetupTokenWarningBody" xml:space="preserve"><value>Αυτό το διακριτικό εμφανίζεται μόνο μία φορά και δεν μπορεί να ανακτηθεί ξανά. Αντιγράψτε το αμέσως και επικολλήστε το στη διαμόρφωση SCIM του παρόχου ταυτότητάς σας. Αν το χάσετε, κάντε κλικ στην Εναλλαγή Διακριτικού για να δημιουργήσετε νέο.</value></data>
+  <data name="ScimSetupCopyTokenButton" xml:space="preserve"><value>Αντιγραφή Διακριτικού</value></data>
+  <data name="ScimSetupTokenEncryptedNote" xml:space="preserve"><value>Αυτό το διακριτικό αποθηκεύεται κρυπτογραφημένο στη βάση δεδομένων Resgrid με το κλειδί κρυπτογράφησης του τμήματός σας.</value></data>
+  <data name="ScimSetupStatusHeader" xml:space="preserve"><value>Κατάσταση SCIM</value></data>
+  <data name="ScimSetupStatusProvider" xml:space="preserve"><value>Πάροχος</value></data>
+  <data name="ScimSetupStatusEnabled" xml:space="preserve"><value>SCIM Ενεργοποιημένο</value></data>
+  <data name="ScimSetupStatusEnabledYes" xml:space="preserve"><value>Ναι</value></data>
+  <data name="ScimSetupStatusEnabledNo" xml:space="preserve"><value>Όχι</value></data>
+  <data name="ScimSetupStatusBearerToken" xml:space="preserve"><value>Διακριτικό Bearer</value></data>
+  <data name="ScimSetupStatusTokenConfigured" xml:space="preserve"><value>Διαμορφωμένο</value></data>
+  <data name="ScimSetupStatusTokenNotSet" xml:space="preserve"><value>Δεν Έχει Οριστεί</value></data>
+  <data name="ScimSetupRotateTokenButton" xml:space="preserve"><value>Εναλλαγή Διακριτικού SCIM</value></data>
+  <data name="ScimSetupGenerateTokenButton" xml:space="preserve"><value>Δημιουργία Διακριτικού SCIM</value></data>
+  <data name="ScimSetupRotateTokenNote" xml:space="preserve"><value>Η εναλλαγή δημιουργεί νέο διακριτικό και ακυρώνει το παλιό.</value></data>
+  <data name="ScimSetupRotateTokenConfirm" xml:space="preserve"><value>Είστε βέβαιοι; Οποιαδήποτε υπάρχουσα ενσωμάτωση SCIM θα σταματήσει να λειτουργεί μέχρι να ενημερώσετε το διακριτικό στον πάροχο ταυτότητάς σας.</value></data>
+  <data name="ScimSetupConnectorHeader" xml:space="preserve"><value>Ρυθμίσεις Συνδέσμου SCIM</value></data>
+  <data name="ScimSetupConnectorDescription" xml:space="preserve"><value>Εισαγάγετε αυτές τις τιμές στη διαμόρφωση παροχής SCIM του παρόχου ταυτότητάς σας.</value></data>
+  <data name="ScimSetupSettingColumn" xml:space="preserve"><value>Ρύθμιση</value></data>
+  <data name="ScimSetupValueColumn" xml:space="preserve"><value>Τιμή</value></data>
+  <data name="ScimSetupBaseUrlLabel" xml:space="preserve"><value>Βασική Διεύθυνση URL Συνδέσμου SCIM</value></data>
+  <data name="ScimSetupAuthMethodLabel" xml:space="preserve"><value>Μέθοδος Ελέγχου Ταυτότητας</value></data>
+  <data name="ScimSetupAuthHeaderLabel" xml:space="preserve"><value>Κεφαλίδα Εξουσιοδότησης</value></data>
+  <data name="ScimSetupCustomHeaderNameLabel" xml:space="preserve"><value>Όνομα Προσαρμοσμένης Κεφαλίδας</value></data>
+  <data name="ScimSetupCustomHeaderValueLabel" xml:space="preserve"><value>Τιμή Προσαρμοσμένης Κεφαλίδας</value></data>
+  <data name="ScimSetupSupportedResourcesLabel" xml:space="preserve"><value>Υποστηριζόμενοι Πόροι</value></data>
+  <data name="ScimSetupSupportedUpdateMethodLabel" xml:space="preserve"><value>Υποστηριζόμενη Μέθοδος Ενημέρωσης</value></data>
+  <data name="ScimSetupGuideHeader" xml:space="preserve"><value>Οδηγός Ρύθμισης Βήμα προς Βήμα</value></data>
+  <data name="ScimSetupTabOkta" xml:space="preserve"><value>Okta</value></data>
+  <data name="ScimSetupTabEntra" xml:space="preserve"><value>Microsoft Entra ID</value></data>
+  <data name="ScimSetupTabGoogle" xml:space="preserve"><value>Google Workspace</value></data>
+  <data name="ScimSetupTabGeneric" xml:space="preserve"><value>Άλλο / Γενικό</value></data>
+  <data name="ScimSetupGenericHeader" xml:space="preserve"><value>Οποιοσδήποτε πελάτης συμβατός με SCIM 2.0 μπορεί να διαμορφωθεί με τα ακόλουθα:</value></data>
+  <data name="ScimSetupFieldMappingHeader" xml:space="preserve"><value>Αντιστοίχιση πεδίων SCIM του Resgrid</value></data>
+  <data name="ScimSetupParamColumn" xml:space="preserve"><value>Παράμετρος</value></data>
+  <data name="ScimSetupScimFieldColumn" xml:space="preserve"><value>Πεδίο SCIM</value></data>
+  <data name="ScimSetupResgridEffectColumn" xml:space="preserve"><value>Επίδραση στο Resgrid</value></data>
+
+  <!-- SSO / SCIM — Sso.cshtml SCIM section (inline token + API reference) -->
+  <data name="SsoScimSectionHeader" xml:space="preserve"><value>Παροχή SCIM 2.0</value></data>
+  <data name="SsoScimApiReferenceHeader" xml:space="preserve"><value>Αναφορά API SCIM</value></data>
+  <data name="SsoScimApiReferenceDescription" xml:space="preserve"><value>Ο πάροχος ταυτότητάς σας καλεί αυτά τα τελικά σημεία χρησιμοποιώντας έλεγχο ταυτότητας HTTP Bearer Token. Όλα τα αιτήματα πρέπει να περιλαμβάνουν την κεφαλίδα εξουσιοδότησης και την κεφαλίδα αναγνωριστικού τμήματος που εμφανίζονται παρακάτω.</value></data>
+  <data name="SsoScimEndpointColumn" xml:space="preserve"><value>Τελικό Σημείο</value></data>
+  <data name="SsoScimMethodColumn" xml:space="preserve"><value>Μέθοδος</value></data>
+  <data name="SsoScimDescriptionColumn" xml:space="preserve"><value>Περιγραφή</value></data>
+  <data name="SsoScimBaseUrlLabel" xml:space="preserve"><value>Βασική Διεύθυνση URL</value></data>
+  <data name="SsoScimAuthHeaderLabel" xml:space="preserve"><value>Κεφαλίδα Εξουσιοδότησης</value></data>
+  <data name="SsoScimDeptHeaderLabel" xml:space="preserve"><value>Κεφαλίδα Τμήματος</value></data>
+  <data name="SsoScimDeptHeaderNote" xml:space="preserve"><value>Απαιτείται σε κάθε αίτημα ώστε το Resgrid να δρομολογεί στο σωστό τμήμα.</value></data>
+  <data name="SsoScimExampleRequestsHeader" xml:space="preserve"><value>Παραδείγματα Αιτημάτων</value></data>
+  <data name="SsoScimExampleListUsers" xml:space="preserve"><value>Λίστα χρηστών (GET)</value></data>
+  <data name="SsoScimExampleProvisionUser" xml:space="preserve"><value>Παροχή χρήστη (POST)</value></data>
+  <data name="SsoScimExampleDeactivateUser" xml:space="preserve"><value>Απενεργοποίηση χρήστη (PATCH)</value></data>
+  <data name="SsoScimExampleFullUpdate" xml:space="preserve"><value>Πλήρης ενημέρωση (PUT)</value></data>
+  <data name="SsoScimListUsersDesc" xml:space="preserve"><value>Λίστα / αναζήτηση χρηστών</value></data>
+  <data name="SsoScimGetUserDesc" xml:space="preserve"><value>Λήψη μεμονωμένου χρήστη βάσει αναγνωριστικού SCIM</value></data>
+  <data name="SsoScimCreateUserDesc" xml:space="preserve"><value>Δημιουργία (παροχή) νέου χρήστη</value></data>
+  <data name="SsoScimUpdateUserDesc" xml:space="preserve"><value>Πλήρης ενημέρωση (αντικατάσταση όλων των χαρακτηριστικών)</value></data>
+  <data name="SsoScimPatchUserDesc" xml:space="preserve"><value>Μερική ενημέρωση (π.χ. απενεργοποίηση)</value></data>
+  <data name="SsoScimDeleteUserDesc" xml:space="preserve"><value>Διαγραφή / κατάργηση παροχής χρήστη</value></data>
+  <data name="SsoScimListGroupsDesc" xml:space="preserve"><value>Λίστα ομάδων (μόνο για ανάγνωση)</value></data>
+  <data name="SsoScimProvisionTokenHeader" xml:space="preserve"><value>Παροχή Διακριτικού SCIM</value></data>
+  <data name="SsoScimProvisionTokenDescription" xml:space="preserve"><value>Δημιουργήστε ή εναλλάξτε το διακριτικό bearer που χρησιμοποιεί ο πάροχος ταυτότητάς σας για την ταυτοποίηση αιτημάτων SCIM. Το διακριτικό εμφανίζεται μόνο μία φορά — αντιγράψτε το πριν κλείσετε αυτό το παράθυρο.</value></data>
+  <data name="SsoScimProvisionTokenButton" xml:space="preserve"><value>Παροχή Διακριτικού</value></data>
+  <data name="SsoScimRotateTokenButton" xml:space="preserve"><value>Εναλλαγή Διακριτικού</value></data>
+  <data name="SsoScimTokenModalTitle" xml:space="preserve"><value>Διακριτικό Bearer SCIM</value></data>
+  <data name="SsoScimTokenModalWarning" xml:space="preserve"><value>Αυτό το διακριτικό εμφανίζεται μόνο μία φορά και δεν μπορεί να ανακτηθεί ξανά. Αντιγράψτε το τώρα και επικολλήστε το στη διαμόρφωση SCIM του παρόχου ταυτότητάς σας.</value></data>
+  <data name="SsoScimTokenModalRotateConfirm" xml:space="preserve"><value>Η εναλλαγή του διακριτικού θα ακυρώσει άμεσα το τρέχον διακριτικό. Οποιοσδήποτε ενεργός συγχρονισμός SCIM θα αποτύχει μέχρι να ενημερώσετε το διακριτικό στον πάροχο ταυτότητάς σας. Συνέχεια;</value></data>
+  <data name="SsoScimTokenModalProvisionConfirm" xml:space="preserve"><value>Αυτό θα δημιουργήσει νέο διακριτικό bearer SCIM για αυτή τη διαμόρφωση. Αντιγράψτε και φυλάξτε το με ασφάλεια — θα εμφανιστεί μόνο μία φορά. Συνέχεια;</value></data>
+  <data name="SsoScimTokenCopyButton" xml:space="preserve"><value>Αντιγραφή Διακριτικού</value></data>
+  <data name="SsoScimTokenEncryptedNote" xml:space="preserve"><value>Αποθηκεύεται κρυπτογραφημένο στη βάση δεδομένων Resgrid με το κλειδί του τμήματός σας.</value></data>
+  <data name="SsoScimFullSetupLink" xml:space="preserve"><value>Πλήρης Οδηγός Ρύθμισης SCIM</value></data>
+  <data name="SsoScimSetupPageNote" xml:space="preserve"><value>Για οδηγίες βήμα προς βήμα ανά πάροχο ταυτότητας (Okta, Microsoft Entra ID, Google Workspace) και διαχείριση διακριτικών, επισκεφθείτε τη σελίδα Ρύθμισης SCIM για κάθε διαμόρφωση.</value></data>
+
+  <!-- SSO / SCIM — SecurityPolicy.cshtml page -->
+  <data name="SecurityPolicyPageTitle" xml:space="preserve"><value>Πολιτική Ασφαλείας Τμήματος</value></data>
+  <data name="SecurityPolicyPageHeader" xml:space="preserve"><value>Πολιτική Ασφαλείας Τμήματος</value></data>
+  <data name="SecurityPolicyBreadcrumb" xml:space="preserve"><value>Πολιτική Ασφαλείας</value></data>
+  <data name="SecurityPolicyBackButton" xml:space="preserve"><value>Επιστροφή στο SSO</value></data>
+  <data name="SecurityPolicySaveSuccess" xml:space="preserve"><value>Η πολιτική ασφαλείας αποθηκεύτηκε με επιτυχία.</value></data>
+  <data name="SecurityPolicyNoSsoWarning" xml:space="preserve"><value>Δεν υπάρχει ενεργή διαμόρφωση SSO. Μπορείτε να διαμορφώσετε πολιτικές κωδικών πρόσβασης παρακάτω, αλλά η Απαίτηση SSO δεν μπορεί να ενεργοποιηθεί μέχρι να έχετε ενεργή διαμόρφωση SSO.</value></data>
+  <data name="SecurityPolicyConfigureSsoLink" xml:space="preserve"><value>Διαμόρφωση SSO →</value></data>
+  <data name="SecurityPolicyAuthControlsHeader" xml:space="preserve"><value>Έλεγχοι Ταυτοποίησης</value></data>
+  <data name="SecurityPolicyRequireMfaLabel" xml:space="preserve"><value>Απαίτηση MFA για όλα τα μέλη</value></data>
+  <data name="SecurityPolicyRequireMfaNote" xml:space="preserve"><value>Τα μέλη που δεν έχουν εγγραφεί σε MFA θα κληθούν να το κάνουν κατά την επόμενη σύνδεση.</value></data>
+  <data name="SecurityPolicyRequireSsoLabel" xml:space="preserve"><value>Απαίτηση SSO — απενεργοποίηση σύνδεσης με κωδικό πρόσβασης</value></data>
+  <data name="SecurityPolicyRequiresSsoConfig" xml:space="preserve"><value>Απαιτεί ενεργή διαμόρφωση SSO</value></data>
+  <data name="SecurityPolicyRequireSsoWarning" xml:space="preserve"><value>Προειδοποίηση: Η ενεργοποίηση αυτού αποκλείει όλες τις συνδέσεις με όνομα χρήστη/κωδικό πρόσβασης. Βεβαιωθείτε ότι τουλάχιστον ένας διαχειριστής έχει δοκιμάσει επιτυχώς τη σύνδεση SSO πριν την ενεργοποίηση.</value></data>
+  <data name="SecurityPolicySessionTimeoutLabel" xml:space="preserve"><value>Λήξη Συνεδρίας (λεπτά)</value></data>
+  <data name="SecurityPolicySessionTimeoutNote" xml:space="preserve"><value>0 = χρήση προεπιλογής συστήματος. 480 = 8 ώρες.</value></data>
+  <data name="SecurityPolicyMaxSessionsLabel" xml:space="preserve"><value>Μέγιστες Ταυτόχρονες Συνεδρίες ανά Χρήστη</value></data>
+  <data name="SecurityPolicyMaxSessionsNote" xml:space="preserve"><value>0 = απεριόριστες. Τα κυβερνητικά περιβάλλοντα συνήθως ορίζουν 1.</value></data>
+  <data name="SecurityPolicyIpRangesLabel" xml:space="preserve"><value>Επιτρεπόμενα Εύρη IP (CIDR)</value></data>
+  <data name="SecurityPolicyIpRangesNote" xml:space="preserve"><value>Ένα μπλοκ CIDR ανά γραμμή ή χωρισμένα με κόμμα. Κενό = να επιτρέπονται όλα. Οι συνδέσεις εκτός αυτών των ευρών θα απορρίπτονται.</value></data>
+  <data name="SecurityPolicyDataClassLabel" xml:space="preserve"><value>Επίπεδο Ταξινόμησης Δεδομένων</value></data>
+  <data name="SecurityPolicyDataClassNote" xml:space="preserve"><value>Χρησιμοποιείται για αναφορές συμμόρφωσης και αρχεία ελέγχου.</value></data>
+  <data name="SecurityPolicyPasswordHeader" xml:space="preserve"><value>Πολιτική Κωδικών Πρόσβασης</value></data>
+  <data name="SecurityPolicyPasswordInfoAlert" xml:space="preserve"><value>Οι πολιτικές κωδικών πρόσβασης ισχύουν μόνο για τοπικές συνδέσεις (εκτός SSO). Αν ενεργοποιήσετε την Απαίτηση SSO παραπάνω, αυτές οι ρυθμίσεις δεν έχουν αποτέλεσμα.</value></data>
+  <data name="SecurityPolicyPasswordExpirationLabel" xml:space="preserve"><value>Λήξη Κωδικού Πρόσβασης (ημέρες)</value></data>
+  <data name="SecurityPolicyPasswordExpirationNote" xml:space="preserve"><value>0 = οι κωδικοί πρόσβασης δεν λήγουν ποτέ. Το 90 είναι τυπικό για περιβάλλοντα CUI.</value></data>
+  <data name="SecurityPolicyMinPasswordLengthLabel" xml:space="preserve"><value>Ελάχιστο Μήκος Κωδικού Πρόσβασης</value></data>
+  <data name="SecurityPolicyMinPasswordLengthNote" xml:space="preserve"><value>Ελάχιστο 8 (προεπιλογή συστήματος). Οι πολιτικές τμήματος μπορούν μόνο να το αυξήσουν. Το NIST συνιστά 12+· το CUI απαιτεί 14+.</value></data>
+  <data name="SecurityPolicySystemComplexityHeader" xml:space="preserve"><value>Πολυπλοκότητα Κωδικού Πρόσβασης Επιβαλλόμενη από το Σύστημα</value></data>
+  <data name="SecurityPolicySystemComplexityNote" xml:space="preserve"><value>Όλοι οι λογαριασμοί Resgrid πρέπει να πληρούν το ακόλουθο πρότυπο πολυπλοκότητας κωδικού πρόσβασης. Αυτό δεν μπορεί να απενεργοποιηθεί από πολιτική τμήματος.</value></data>
+  <data name="SecurityPolicyComplexityRule1" xml:space="preserve"><value>Τουλάχιστον 8 χαρακτήρες (ή το παραπάνω ελάχιστο μήκος του τμήματος)</value></data>
+  <data name="SecurityPolicyComplexityRule2" xml:space="preserve"><value>Τουλάχιστον ένα ψηφίο (αριθμός)</value></data>
+  <data name="SecurityPolicyComplexityRule3" xml:space="preserve"><value>Τουλάχιστον ένα κεφαλαίο και ένα πεζό γράμμα</value></data>
+  <data name="SecurityPolicyPasswordComplexityLabel" xml:space="preserve"><value>Απαίτηση πολυπλοκότητας κωδικού πρόσβασης</value></data>
+  <data name="SecurityPolicyPasswordComplexityNote" xml:space="preserve"><value>Επιβάλλει τουλάχιστον ένα κεφαλαίο γράμμα, ένα ψηφίο και έναν ειδικό χαρακτήρα.</value></data>
+  <data name="SecurityPolicyQuickPresetsHeader" xml:space="preserve"><value>Γρήγορες προρυθμίσεις</value></data>
+  <data name="SecurityPolicyPresetGovernment" xml:space="preserve"><value>Κυβερνητικό / CUI</value></data>
+  <data name="SecurityPolicyPresetEnterprise" xml:space="preserve"><value>Τυπικό Εταιρικό</value></data>
+  <data name="SecurityPolicyPresetMinimal" xml:space="preserve"><value>Ελάχιστο</value></data>
+  <data name="SecurityPolicySaveButton" xml:space="preserve"><value>Αποθήκευση Πολιτικής Ασφαλείας</value></data>
+  <data name="SecurityPolicyCancelButton" xml:space="preserve"><value>Ακύρωση</value></data>
+  <data name="SecurityPolicyCannotEnableRequireSso" xml:space="preserve"><value>Δεν είναι δυνατή η ενεργοποίηση σύνδεσης μόνο μέσω SSO: δεν υπάρχει ενεργή διαμόρφωση SSO. Δημιουργήστε και ενεργοποιήστε πρώτα μια διαμόρφωση SSO.</value></data>
+
+  <!-- Password validation error messages (returned as keys by ValidatePasswordAgainstPolicyAsync) -->
+  <data name="PwdErrorEmpty" xml:space="preserve"><value>Ο κωδικός πρόσβασης δεν μπορεί να είναι κενός.</value></data>
+  <data name="PwdErrorNoDigit" xml:space="preserve"><value>Ο κωδικός πρόσβασης πρέπει να περιέχει τουλάχιστον ένα ψηφίο (αριθμό).</value></data>
+  <data name="PwdErrorNoUppercase" xml:space="preserve"><value>Ο κωδικός πρόσβασης πρέπει να περιέχει τουλάχιστον ένα κεφαλαίο γράμμα.</value></data>
+  <data name="PwdErrorNoLowercase" xml:space="preserve"><value>Ο κωδικός πρόσβασης πρέπει να περιέχει τουλάχιστον ένα πεζό γράμμα.</value></data>
+  <data name="PwdErrorTooShort" xml:space="preserve"><value>Ο κωδικός πρόσβασης πρέπει να έχει μήκος τουλάχιστον {0} χαρακτήρων.</value></data>
+  <data name="PwdMinLengthTooLow" xml:space="preserve"><value>Το ελάχιστο μήκος κωδικού πρόσβασης δεν μπορεί να είναι μικρότερο από την προεπιλογή του συστήματος των 8 χαρακτήρων.</value></data>
+  <data name="PermDeleteLogLabel" xml:space="preserve"><value>Διαγραφή Καταχωρίσεων Καταγραφών</value></data>
+  <data name="PermDeleteLogNote" xml:space="preserve"><value>Ποιος στο τμήμα σας επιτρέπεται να διαγράφει καταχωρίσεις καταγραφών</value></data>
+  <data name="PermUseCalendarSyncLabel" xml:space="preserve"><value>Χρήση Συγχρονισμού Ημερολογίου</value></data>
+  <data name="PermUseCalendarSyncNote" xml:space="preserve"><value>Ελέγχει ποιος μπορεί να ενεργοποιεί και να χρησιμοποιεί διευθύνσεις URL συνδρομής ημερολογίου για συγχρονισμό συμβάντων ημερολογίου Resgrid με εξωτερικές εφαρμογές ημερολογίου.</value></data>
+  <data name="PermDispatchAppLoginLabel" xml:space="preserve"><value>Σύνδεση στην Εφαρμογή Dispatch</value></data>
+  <data name="PermDispatchAppLoginNote" xml:space="preserve"><value>Ελέγχει ποιος μπορεί να συνδέεται στην εφαρμογή Dispatch. Το Dispatch εμφανίζει ιδιωτικές επικοινωνίες διοίκησης, μονάδων και ανταποκριτών για κάθε περιστατικό, οπότε περιορίστε το αν τα μέλη σας δεν είναι όλα διαβιβαστές.</value></data>
+  <data name="PermCommandAppLoginLabel" xml:space="preserve"><value>Σύνδεση στην Εφαρμογή Command</value></data>
+  <data name="PermCommandAppLoginNote" xml:space="preserve"><value>Ελέγχει ποιος μπορεί να ενεργεί ως διοικητής: να συνδέεται στην εφαρμογή IC, να εγκαθιστά διοίκηση περιστατικού σε μια κλήση και να βλέπει πίνακες διοίκησης. Ο περιορισμός αυτού πέρα από το «Όλοι» επιτρέπει επίσης στα άτομα που επιλέγετε να βοηθούν στη λειτουργία οποιουδήποτε πίνακα διοίκησης (ανάθεση και μετακίνηση πόρων, εκτέλεση χρονομέτρων και λογοδοσίας) χωρίς να κατέχουν θέση ICS σε αυτόν &amp;#8212; χρήσιμο για να βοηθούν οι διαβιβαστές στην εφαρμογή Dispatch. Όσο είναι ορισμένο σε «Όλοι», οι ενέργειες στον πίνακα παραμένουν περιορισμένες στον διοικητή περιστατικού και στους ανατεθειμένους ρόλους ICS.</value></data>
+</root>
+
+

@@ -1,0 +1,390 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!--
+    Microsoft ResX Schema
+
+    Version 2.0
+
+    The primary goals of this format is to allow a simple XML format
+    that is mostly human readable. The generation and parsing of the
+    various data types are done through the TypeConverter classes
+    associated with the data types.
+
+    Example:
+
+    ... ado.net/XML headers &amp; schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+
+    There are any number of "resheader" rows that contain simple
+    name/value pairs.
+
+    Each data row contains a name, and value. The row also contains a
+    type or mimetype. Type corresponds to a .NET class that support
+    text/value conversion through the TypeConverter architecture.
+    Classes that don't support this are serialized and stored with the
+    mimetype set.
+
+    The mimetype is used for serialized objects, and tells the
+    ResXResourceReader how to depersist the object. This is currently not
+    extensible. For a given mimetype the value must be set accordingly:
+
+    Note - application/x-microsoft.net.object.binary.base64 is the format
+    that the ResXResourceWriter will generate, however the reader can
+    read any of the formats listed below.
+
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="HomeLink" xml:space="preserve">
+    <value>Αρχική</value>
+  </data>
+  <data name="TrainingsLink" xml:space="preserve">
+    <value>Εκπαιδεύσεις</value>
+  </data>
+  <data name="NewTrainingHeader" xml:space="preserve">
+    <value>Νέα Εκπαίδευση</value>
+  </data>
+  <data name="AddTrainingButton" xml:space="preserve">
+    <value>Προσθήκη Εκπαίδευσης</value>
+  </data>
+  <data name="EditTrainingHeader" xml:space="preserve">
+    <value>Επεξεργασία Εκπαίδευσης</value>
+  </data>
+  <data name="SaveTrainingButton" xml:space="preserve">
+    <value>Αποθήκευση Εκπαίδευσης</value>
+  </data>
+  <data name="TrainingNameLabel" xml:space="preserve">
+    <value>Όνομα εκπαίδευσης</value>
+  </data>
+  <data name="DescriptionLabel" xml:space="preserve">
+    <value>Περιγραφή</value>
+  </data>
+  <data name="TrainingTextLabel" xml:space="preserve">
+    <value>Κείμενο Εκπαίδευσης</value>
+  </data>
+  <data name="MinimumScoreLabel" xml:space="preserve">
+    <value>Ελάχιστη Βαθμολογία</value>
+  </data>
+  <data name="DueDateLabel" xml:space="preserve">
+    <value>Ημερομηνία Λήξης</value>
+  </data>
+  <data name="ExistingAttachmentsLabel" xml:space="preserve">
+    <value>Υπάρχοντα Συνημμένα</value>
+  </data>
+  <data name="AddAttachmentsLabel" xml:space="preserve">
+    <value>Προσθήκη Συνημμένων</value>
+  </data>
+  <data name="AttachmentsLabel" xml:space="preserve">
+    <value>Συνημμένα</value>
+  </data>
+  <data name="CurrentlyAssignedLabel" xml:space="preserve">
+    <value>Τρέχουσες Αναθέσεις</value>
+  </data>
+  <data name="CurrentlyAssignedText" xml:space="preserve">
+    <value>{0} χρήστης/χρήστες έχουν ανατεθεί αυτή τη στιγμή σε αυτή την εκπαίδευση.</value>
+  </data>
+  <data name="AddAllPersonnelLabel" xml:space="preserve">
+    <value>Προσθήκη όλου του Προσωπικού</value>
+  </data>
+  <data name="AddGroupsLabel" xml:space="preserve">
+    <value>Προσθήκη Ομάδων</value>
+  </data>
+  <data name="AddRolesLabel" xml:space="preserve">
+    <value>Προσθήκη Ρόλων</value>
+  </data>
+  <data name="AddUsersLabel" xml:space="preserve">
+    <value>Προσθήκη Χρηστών</value>
+  </data>
+  <data name="GroupsToAddLabel" xml:space="preserve">
+    <value>Ομάδες προς Προσθήκη</value>
+  </data>
+  <data name="RolesToAddLabel" xml:space="preserve">
+    <value>Ρόλοι προς Προσθήκη</value>
+  </data>
+  <data name="UsersToAddLabel" xml:space="preserve">
+    <value>Χρήστες προς Προσθήκη</value>
+  </data>
+  <data name="QuestionsLabel" xml:space="preserve">
+    <value>Ερωτήσεις</value>
+  </data>
+  <data name="QuestionsHelpText" xml:space="preserve">
+    <value>Οι ερωτήσεις είναι προαιρετικές· αν θέλετε απλώς το προσωπικό σας να δει την εκπαίδευση, αυτό θα καταγραφεί χωρίς ερωτήσεις.</value>
+  </data>
+  <data name="QuestionColumn" xml:space="preserve">
+    <value>Ερώτηση</value>
+  </data>
+  <data name="AnswersColumn" xml:space="preserve">
+    <value>Απαντήσεις</value>
+  </data>
+  <data name="AddQuestionButton" xml:space="preserve">
+    <value>Προσθήκη Ερώτησης</value>
+  </data>
+  <data name="RemoveButton" xml:space="preserve">
+    <value>Αφαίρεση</value>
+  </data>
+  <data name="CorrectLabel" xml:space="preserve">
+    <value>Σωστή</value>
+  </data>
+  <data name="CancelButton" xml:space="preserve">
+    <value>Ακύρωση</value>
+  </data>
+  <data name="TrainingsHeader" xml:space="preserve">
+    <value>Εκπαιδεύσεις</value>
+  </data>
+  <data name="AddTrainingIndexButton" xml:space="preserve">
+    <value>Προσθήκη Εκπαίδευσης</value>
+  </data>
+  <data name="NameColumn" xml:space="preserve">
+    <value>Όνομα</value>
+  </data>
+  <data name="DescriptionColumn" xml:space="preserve">
+    <value>Περιγραφή</value>
+  </data>
+  <data name="DueDateColumn" xml:space="preserve">
+    <value>Ημερομηνία Λήξης</value>
+  </data>
+  <data name="ActionColumn" xml:space="preserve">
+    <value>Ενέργεια</value>
+  </data>
+  <data name="NoDueDate" xml:space="preserve">
+    <value>Χωρίς Ημερομηνία Λήξης</value>
+  </data>
+  <data name="ViewTrainingButton" xml:space="preserve">
+    <value>Προβολή Εκπαίδευσης</value>
+  </data>
+  <data name="TrainingCompleteButton" xml:space="preserve">
+    <value>Η Εκπαίδευση Ολοκληρώθηκε</value>
+  </data>
+  <data name="EditButton" xml:space="preserve">
+    <value>Επεξεργασία</value>
+  </data>
+  <data name="ReportButton" xml:space="preserve">
+    <value>Αναφορά</value>
+  </data>
+  <data name="DeleteButton" xml:space="preserve">
+    <value>Διαγραφή</value>
+  </data>
+  <data name="DeleteTrainingWarning" xml:space="preserve">
+    <value>ΠΡΟΕΙΔΟΠΟΙΗΣΗ: Αυτό θα διαγράψει οριστικά αυτή την εκπαίδευση. Είστε βέβαιοι ότι θέλετε να διαγράψετε την εκπαίδευση</value>
+  </data>
+  <data name="ViewTrainingHeader" xml:space="preserve">
+    <value>Προβολή Εκπαίδευσης</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Κατάσταση:</value>
+  </data>
+  <data name="ActiveLabel" xml:space="preserve">
+    <value>Ενεργή</value>
+  </data>
+  <data name="CreatedByLabel" xml:space="preserve">
+    <value>Δημιουργήθηκε Από:</value>
+  </data>
+  <data name="DueByLabel" xml:space="preserve">
+    <value>Προθεσμία:</value>
+  </data>
+  <data name="CreatedOnLabel" xml:space="preserve">
+    <value>Δημιουργήθηκε Στις:</value>
+  </data>
+  <data name="TrainingAttachmentsHeader" xml:space="preserve">
+    <value>Συνημμένα Εκπαίδευσης</value>
+  </data>
+  <data name="AttachmentsHelpText" xml:space="preserve">
+    <value>Παρακάτω είναι τα αρχεία (συνημμένα) αυτής της εκπαίδευσης. Κατεβάστε, ανοίξτε και μελετήστε όλα αυτά τα συνημμένα καθώς και το κείμενο της εκπαίδευσης. Πληροφορίες από αυτά τα συνημμένα μπορεί να αποτελέσουν ερωτήσεις στο κουίζ της εκπαίδευσης.</value>
+  </data>
+  <data name="TrainingFilesHeader" xml:space="preserve">
+    <value>Αρχεία εκπαίδευσης</value>
+  </data>
+  <data name="TrainingQuizHeader" xml:space="preserve">
+    <value>Κουίζ Εκπαίδευσης</value>
+  </data>
+  <data name="QuizHelpText" xml:space="preserve">
+    <value>Αυτή η εκπαίδευση διαθέτει κουίζ. Μελετήστε όλο το κείμενο της εκπαίδευσης και όλα τα συνημμένα πριν συμμετάσχετε στο κουίζ.</value>
+  </data>
+  <data name="TakeQuizButton" xml:space="preserve">
+    <value>Συμμετοχή στο Κουίζ</value>
+  </data>
+  <data name="QuizPageHeader" xml:space="preserve">
+    <value>Κουίζ Εκπαίδευσης</value>
+  </data>
+  <data name="TrainingBreadcrumb" xml:space="preserve">
+    <value>Εκπαίδευση</value>
+  </data>
+  <data name="StartTab" xml:space="preserve">
+    <value>Έναρξη &gt;</value>
+  </data>
+  <data name="QuestionTab" xml:space="preserve">
+    <value>Ερώτηση</value>
+  </data>
+  <data name="FinishTab" xml:space="preserve">
+    <value>Ολοκλήρωση</value>
+  </data>
+  <data name="QuizWelcomeText" xml:space="preserve">
+    <value>Καλώς ήρθατε στο κουίζ της εκπαίδευσης ({0}). Επιλέξτε τη σωστή απάντηση για κάθε ερώτηση. Πατήστε το κουμπί Επόμενο για να ξεκινήσετε το κουίζ.</value>
+  </data>
+  <data name="QuizFinishText" xml:space="preserve">
+    <value>Κάντε κλικ στο κουμπί ολοκλήρωσης παρακάτω για να υποβάλετε τις απαντήσεις του κουίζ. Μπορείτε να επιστρέψετε για να βεβαιωθείτε ότι απαντήσατε σε κάθε ερώτηση που θέλατε. Το κουίζ σας θα βαθμολογηθεί και το αποτέλεσμα θα εμφανιστεί στην αρχική σελίδα της εκπαίδευσης.</value>
+  </data>
+  <data name="FirstButton" xml:space="preserve">
+    <value>Πρώτη</value>
+  </data>
+  <data name="PreviousButton" xml:space="preserve">
+    <value>Προηγούμενη</value>
+  </data>
+  <data name="NextButton" xml:space="preserve">
+    <value>Επόμενη</value>
+  </data>
+  <data name="FinishButton" xml:space="preserve">
+    <value>Ολοκλήρωση</value>
+  </data>
+  <data name="TrainingReportHeader" xml:space="preserve">
+    <value>Αναφορά Εκπαίδευσης</value>
+  </data>
+  <data name="GroupColumn" xml:space="preserve">
+    <value>Ομάδα</value>
+  </data>
+  <data name="ViewedColumn" xml:space="preserve">
+    <value>Προβλήθηκε</value>
+  </data>
+  <data name="CompletedColumn" xml:space="preserve">
+    <value>Ολοκληρώθηκε</value>
+  </data>
+  <data name="ScoreColumn" xml:space="preserve">
+    <value>Βαθμολογία</value>
+  </data>
+  <data name="ResultColumn" xml:space="preserve">
+    <value>Αποτέλεσμα</value>
+  </data>
+  <data name="NotViewed" xml:space="preserve">
+    <value>Δεν Προβλήθηκε</value>
+  </data>
+  <data name="NotCompleted" xml:space="preserve">
+    <value>Δεν Ολοκληρώθηκε</value>
+  </data>
+  <data name="NoScore" xml:space="preserve">
+    <value>Χωρίς Βαθμολογία</value>
+  </data>
+  <data name="PassLabel" xml:space="preserve">
+    <value>Επιτυχία</value>
+  </data>
+  <data name="FailedLabel" xml:space="preserve">
+    <value>Αποτυχία</value>
+  </data>
+  <data name="CompleteLabel" xml:space="preserve">
+    <value>Ολοκληρωμένη</value>
+  </data>
+  <data name="PendingLabel" xml:space="preserve">
+    <value>Εκκρεμής</value>
+  </data>
+  <data name="ResetUserButton" xml:space="preserve">
+    <value>Επαναφορά Χρήστη</value>
+  </data>
+  <data name="SelectGroupsPlaceholder" xml:space="preserve">
+    <value>Επιλέξτε ομάδες...</value>
+  </data>
+  <data name="SelectRolesPlaceholder" xml:space="preserve">
+    <value>Επιλέξτε ρόλους...</value>
+  </data>
+  <data name="SelectUsersPlaceholder" xml:space="preserve">
+    <value>Επιλέξτε χρήστες...</value>
+  </data>
+  <data name="RemoveQuestionTooltip" xml:space="preserve">
+    <value>Αφαίρεση αυτής της ερώτησης</value>
+  </data>
+  <data name="RemoveAnswerTooltip" xml:space="preserve">
+    <value>Αφαίρεση αυτής της απάντησης από την ερώτηση</value>
+  </data>
+  <data name="AddAnswerButton" xml:space="preserve">
+    <value>Προσθήκη Απάντησης</value>
+  </data>
+  <data name="AnswerRequiredMessage" xml:space="preserve">
+    <value>Η απάντηση είναι υποχρεωτική</value>
+  </data>
+  <data name="AddQuestionTooltip" xml:space="preserve">
+    <value>Προσθήκη Ερώτησης</value>
+  </data>
+  <data name="AnswerTextColumn" xml:space="preserve">
+    <value>Κείμενο Απάντησης</value>
+  </data>
+</root>

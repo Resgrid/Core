@@ -76,7 +76,30 @@ namespace Resgrid.Services
 
 			_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = saved.DepartmentId });
 
+			// The unit visibility matrix is keyed by unit id and by station group; a new unit is absent
+			// from it and a re-stationed unit is filed under the wrong group until it is rebuilt.
+			SendUnitVisibilityRefresh(saved.DepartmentId);
+
 			return saved;
+		}
+
+		/// <summary>
+		/// Both unit matrices are derived from the department's unit list and each unit's station group,
+		/// so any unit create/update/delete invalidates both.
+		/// </summary>
+		private void SendUnitVisibilityRefresh(int departmentId)
+		{
+			_eventAggregator.SendMessage<SecurityRefreshEvent>(new SecurityRefreshEvent()
+			{
+				DepartmentId = departmentId,
+				Type = SecurityCacheTypes.WhoCanViewUnits
+			});
+
+			_eventAggregator.SendMessage<SecurityRefreshEvent>(new SecurityRefreshEvent()
+			{
+				DepartmentId = departmentId,
+				Type = SecurityCacheTypes.WhoCanViewUnitLocations
+			});
 		}
 
 		public async Task<UnitLog> SaveUnitLogAsync(UnitLog unitLog, CancellationToken cancellationToken = default(CancellationToken))
@@ -155,6 +178,7 @@ namespace Resgrid.Services
 				await _limitsService.InvalidateDepartmentsEntityLimitsCache(unit.DepartmentId);
 
 				_eventAggregator.SendMessage<DepartmentSettingsUpdateEvent>(new DepartmentSettingsUpdateEvent() { DepartmentId = unit.DepartmentId });
+				SendUnitVisibilityRefresh(unit.DepartmentId);
 
 				return true;
 			}

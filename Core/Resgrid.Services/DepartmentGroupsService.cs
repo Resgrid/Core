@@ -102,6 +102,7 @@ namespace Resgrid.Services
 
 			// Invalidate after the transaction commits so the cache is refreshed from the fully consistent state.
 			await InvalidateGroupInCache(saved.DepartmentGroupId);
+			SendGroupVisibilityRefresh(saved.DepartmentId);
 
 			return saved;
 		}
@@ -115,6 +116,23 @@ namespace Resgrid.Services
 		public async Task InvalidateGroupInCache(int groupId)
 		{
 			await _cacheProvider.RemoveAsync(string.Format(CacheKey, groupId));
+		}
+
+		/// <summary>
+		/// All four visibility matrices are derived from group membership and group-admin standing --
+		/// unit visibility through each unit's station group, personnel visibility through the member's
+		/// own group. Without this, a user added to a group keeps the visibility they had when the
+		/// matrix was last built, which is what made units vanish from the mobile apps.
+		/// </summary>
+		private void SendGroupVisibilityRefresh(int departmentId)
+		{
+			if (departmentId <= 0)
+				return;
+
+			_eventAggregator.SendMessage<SecurityRefreshEvent>(new SecurityRefreshEvent() { DepartmentId = departmentId, Type = SecurityCacheTypes.WhoCanViewUnits });
+			_eventAggregator.SendMessage<SecurityRefreshEvent>(new SecurityRefreshEvent() { DepartmentId = departmentId, Type = SecurityCacheTypes.WhoCanViewUnitLocations });
+			_eventAggregator.SendMessage<SecurityRefreshEvent>(new SecurityRefreshEvent() { DepartmentId = departmentId, Type = SecurityCacheTypes.WhoCanViewPersonnel });
+			_eventAggregator.SendMessage<SecurityRefreshEvent>(new SecurityRefreshEvent() { DepartmentId = departmentId, Type = SecurityCacheTypes.WhoCanViewPersonnelLocations });
 		}
 
 		public async Task<List<DepartmentGroup>> GetAllGroupsForDepartmentUnlimitedAsync(int departmentId)
@@ -242,6 +260,7 @@ namespace Resgrid.Services
 
 			await _departmentGroupsRepository.DeleteAsync(group, cancellationToken);
 			await InvalidateGroupInCache(groupId);
+			SendGroupVisibilityRefresh(group?.DepartmentId ?? 0);
 
 			return true;
 		}
@@ -293,6 +312,7 @@ namespace Resgrid.Services
 			var saved = await _departmentGroupsRepository.SaveOrUpdateAsync(departmentGroup, cancellationToken, true);
 
 			await InvalidateGroupInCache(departmentGroup.DepartmentGroupId);
+			SendGroupVisibilityRefresh(saved?.DepartmentId ?? departmentGroup.DepartmentId);
 
 			return saved;
 		}
@@ -309,6 +329,7 @@ namespace Resgrid.Services
 			}
 
 			await InvalidateGroupInCache(departmentGroup.DepartmentGroupId);
+			SendGroupVisibilityRefresh(departmentGroup.DepartmentId);
 
 			return true;
 		}
@@ -361,6 +382,8 @@ namespace Resgrid.Services
 				await InvalidateGroupInCache(membership.DepartmentGroupId);
 			}
 
+			SendGroupVisibilityRefresh(departmentId);
+
 			return true;
 		}
 
@@ -403,6 +426,7 @@ namespace Resgrid.Services
 			await _departmentGroupMembersRepository.SaveOrUpdateAsync(depMember, cancellationToken);
 
 			await InvalidateGroupInCache(depMember.DepartmentGroupId);
+			SendGroupVisibilityRefresh(depMember.DepartmentId);
 
 			return depMember;
 		}
@@ -504,6 +528,7 @@ namespace Resgrid.Services
 			await InvalidateGroupInCache(groupId);
 
 			_eventAggregator.SendMessage<UserAssignedToGroupEvent>(new UserAssignedToGroupEvent() { DepartmentId = departmentGroup.DepartmentId, UserId = userId, Group = departmentGroup });
+			SendGroupVisibilityRefresh(departmentGroup.DepartmentId);
 
 			return saved;
 		}
@@ -564,7 +589,12 @@ namespace Resgrid.Services
 
 		public async Task<bool> DeleteGroupMembersByGroupIdAsync(int groupId, int departmentId, CancellationToken cancellationToken = default(CancellationToken))
 		{
-			return await _departmentGroupMembersRepository.DeleteGroupMembersByGroupIdAsync(groupId, departmentId, cancellationToken);
+			var result = await _departmentGroupMembersRepository.DeleteGroupMembersByGroupIdAsync(groupId, departmentId, cancellationToken);
+
+			await InvalidateGroupInCache(groupId);
+			SendGroupVisibilityRefresh(departmentId);
+
+			return result;
 		}
 
 		public async Task<List<DepartmentGroupMember>> GetAllGroupAdminsByDepartmentIdAsync(int departmentId)

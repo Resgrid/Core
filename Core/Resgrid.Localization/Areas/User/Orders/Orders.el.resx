@@ -1,0 +1,388 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="ResourceOrdersHeader" xml:space="preserve">
+    <value>Παραγγελίες Πόρων</value>
+  </data>
+  <data name="UpdateSettingsButton" xml:space="preserve">
+    <value>Ενημέρωση Ρυθμίσεων</value>
+  </data>
+  <data name="CreateOrderButton" xml:space="preserve">
+    <value>Δημιουργία Παραγγελίας</value>
+  </data>
+  <data name="YourOrdersTab" xml:space="preserve">
+    <value>Οι Παραγγελίες Σας</value>
+  </data>
+  <data name="AvailableOrdersTab" xml:space="preserve">
+    <value>Διαθέσιμες Παραγγελίες</value>
+  </data>
+  <data name="CreatedLabel" xml:space="preserve">
+    <value>Δημιουργήθηκε</value>
+  </data>
+  <data name="FillPercentageLabel" xml:space="preserve">
+    <value>Ποσοστό Κάλυψης</value>
+  </data>
+  <data name="ClosedLabel" xml:space="preserve">
+    <value>Κλειστή</value>
+  </data>
+  <data name="FilledLabel" xml:space="preserve">
+    <value>Καλυμμένη</value>
+  </data>
+  <data name="OpenLabel" xml:space="preserve">
+    <value>Ανοιχτή</value>
+  </data>
+  <data name="ViewButton" xml:space="preserve">
+    <value>Προβολή</value>
+  </data>
+  <data name="LocationLabel" xml:space="preserve">
+    <value>Τοποθεσία</value>
+  </data>
+  <data name="DistanceLabel" xml:space="preserve">
+    <value>Απόσταση</value>
+  </data>
+  <data name="NewOrderHeader" xml:space="preserve">
+    <value>Νέα Παραγγελία</value>
+  </data>
+  <data name="TitleLabel" xml:space="preserve">
+    <value>Τίτλος</value>
+  </data>
+  <data name="TitlePlaceholder" xml:space="preserve">
+    <value>Σύντομος Τίτλος για την Παραγγελία</value>
+  </data>
+  <data name="SummaryLabel" xml:space="preserve">
+    <value>Σύνοψη</value>
+  </data>
+  <data name="SummaryPlaceholder" xml:space="preserve">
+    <value>Μια σύνοψη για την παραγγελία</value>
+  </data>
+  <data name="CloseOrderOnLabel" xml:space="preserve">
+    <value>Κλείσιμο Παραγγελίας Στις</value>
+  </data>
+  <data name="CloseOrderOnHelp" xml:space="preserve">
+    <value>Ο χρόνος μέχρι τον οποίο πρέπει να καλυφθεί η παραγγελία· ανάλογα με τον τύπο της, μπορεί να κλείσει αυτόματα εκείνη τη στιγμή.</value>
+  </data>
+  <data name="IncidentNumberLabel" xml:space="preserve">
+    <value>Αριθμός Περιστατικού</value>
+  </data>
+  <data name="IncidentNumberPlaceholder" xml:space="preserve">
+    <value>Αναγνωριστικό ή αριθμός περιστατικού</value>
+  </data>
+  <data name="IncidentNameLabel" xml:space="preserve">
+    <value>Όνομα Περιστατικού</value>
+  </data>
+  <data name="IncidentNamePlaceholder" xml:space="preserve">
+    <value>Όνομα του Περιστατικού</value>
+  </data>
+  <data name="IncidentAddressLabel" xml:space="preserve">
+    <value>Διεύθυνση Περιστατικού</value>
+  </data>
+  <data name="IncidentAddressPlaceholder" xml:space="preserve">
+    <value>Διεύθυνση του Περιστατικού, της Διοίκησης ή του Κέντρου Διοίκησης</value>
+  </data>
+  <data name="FinanceCodeLabel" xml:space="preserve">
+    <value>Οικονομικός Κωδικός</value>
+  </data>
+  <data name="FinanceCodePlaceholder" xml:space="preserve">
+    <value>Οικονομικός κωδικός για το περιστατικό ή την παραγγελία</value>
+  </data>
+  <data name="ContactNameLabel" xml:space="preserve">
+    <value>Όνομα Επαφής</value>
+  </data>
+  <data name="ContactNamePlaceholder" xml:space="preserve">
+    <value>Όνομα του σημείου επαφής για τη συνάντηση ή το περιστατικό</value>
+  </data>
+  <data name="ContactNumberLabel" xml:space="preserve">
+    <value>Αριθμός Επαφής</value>
+  </data>
+  <data name="ContactNumberPlaceholder" xml:space="preserve">
+    <value>Αριθμός του σημείου επαφής για τη συνάντηση ή το περιστατικό</value>
+  </data>
+  <data name="MeetupLocationLabel" xml:space="preserve">
+    <value>Τοποθεσία Συνάντησης</value>
+  </data>
+  <data name="MeetupLocationPlaceholder" xml:space="preserve">
+    <value>Τοποθεσία όπου θα συναντηθούν οι μονάδες από τις καλυμμένες παραγγελίες</value>
+  </data>
+  <data name="MeetupTimeLabel" xml:space="preserve">
+    <value>Ώρα Συνάντησης</value>
+  </data>
+  <data name="SpecialInstructionsLabel" xml:space="preserve">
+    <value>Ειδικές Οδηγίες</value>
+  </data>
+  <data name="SpecialInstructionsPlaceholder" xml:space="preserve">
+    <value>Τυχόν ειδικές οδηγίες ή απαιτήσεις για την παραγγελία</value>
+  </data>
+  <data name="AllowPartialFillsLabel" xml:space="preserve">
+    <value>Να Επιτρέπονται Μερικές Καλύψεις</value>
+  </data>
+  <data name="AllowPartialFillsHelp" xml:space="preserve">
+    <value>Επιτρέψτε σε ένα τμήμα να καλύψει μερικώς ένα στοιχείο παραγγελίας πόρων (αυτό επιτρέπει σε πολλαπλές μονάδες από πολλαπλά τμήματα να καλύψουν ένα στοιχείο)</value>
+  </data>
+  <data name="AutoAcceptFillsLabel" xml:space="preserve">
+    <value>Αυτόματη Αποδοχή Καλύψεων</value>
+  </data>
+  <data name="AutoAcceptFillsHelp" xml:space="preserve">
+    <value>Το σύστημα θα αποδέχεται αυτόματα τις καλύψεις (μερικές, βάσει της ρύθμισης Να Επιτρέπονται Μερικές Καλύψεις) κατά σειρά προτεραιότητας</value>
+  </data>
+  <data name="OrderItemsLabel" xml:space="preserve">
+    <value>Στοιχεία Παραγγελίας</value>
+  </data>
+  <data name="OrderItemsHelp" xml:space="preserve">
+    <value>Κάντε κλικ στο πράσινο κουμπί «Προσθήκη» για να προσθέσετε στοιχεία σε αυτή την παραγγελία· τα στοιχεία είναι ομάδες παρόμοιων μονάδων που θέλετε να αποτελέσουν μέρος της παραγγελίας.</value>
+  </data>
+  <data name="ResourceColumn" xml:space="preserve">
+    <value>Πόρος</value>
+  </data>
+  <data name="MinColumn" xml:space="preserve">
+    <value>Ελάχ.</value>
+  </data>
+  <data name="MaxColumn" xml:space="preserve">
+    <value>Μέγ.</value>
+  </data>
+  <data name="FinancialCodeColumn" xml:space="preserve">
+    <value>Οικονομικός Κωδικός</value>
+  </data>
+  <data name="SpecialNeedsColumn" xml:space="preserve">
+    <value>Ειδικές Ανάγκες</value>
+  </data>
+  <data name="RequirementsColumn" xml:space="preserve">
+    <value>Απαιτήσεις</value>
+  </data>
+  <data name="AddButton" xml:space="preserve">
+    <value>Προσθήκη</value>
+  </data>
+  <data name="CreateOrderButton2" xml:space="preserve">
+    <value>Δημιουργία Παραγγελίας</value>
+  </data>
+  <data name="OrderSettingsHeader" xml:space="preserve">
+    <value>Ρυθμίσεις Παραγγελιών Πόρων</value>
+  </data>
+  <data name="DoNotReceiveOrdersLabel" xml:space="preserve">
+    <value>Να Μην Λαμβάνονται Παραγγελίες</value>
+  </data>
+  <data name="DefaultOrderVisibilityLabel" xml:space="preserve">
+    <value>Προεπιλεγμένη Ορατότητα Παραγγελίας</value>
+  </data>
+  <data name="RangeForVisibilityLabel" xml:space="preserve">
+    <value>Εμβέλεια Ορατότητας (σε Μίλια)</value>
+  </data>
+  <data name="DefaultOrderManagerLabel" xml:space="preserve">
+    <value>Προεπιλεγμένος Χρήστης Διαχείρισης Παραγγελιών</value>
+  </data>
+  <data name="LimitOrderNotificationsLabel" xml:space="preserve">
+    <value>Περιορισμός Ειδοποιήσεων Παραγγελιών βάσει Στελέχωσης</value>
+  </data>
+  <data name="AllowedNotificationStaffingLabel" xml:space="preserve">
+    <value>Επιτρεπόμενο Επίπεδο Στελέχωσης για Ειδοποιήσεις</value>
+  </data>
+  <data name="AllowedDepartmentTypesLabel" xml:space="preserve">
+    <value>Επιτρεπόμενοι Τύποι Τμημάτων</value>
+  </data>
+  <data name="AutomaticallyAcceptFillsLabel" xml:space="preserve">
+    <value>Αυτόματη Αποδοχή Καλύψεων</value>
+  </data>
+  <data name="NotifyRolesLabel" xml:space="preserve">
+    <value>Ειδοποίηση Ρόλων</value>
+  </data>
+  <data name="RolesToNotifyLabel" xml:space="preserve">
+    <value>Ρόλοι προς Ειδοποίηση</value>
+  </data>
+  <data name="SaveSettingsButton" xml:space="preserve">
+    <value>Αποθήκευση Ρυθμίσεων</value>
+  </data>
+  <data name="FillOrderHeader" xml:space="preserve">
+    <value>Κάλυψη Παραγγελίας</value>
+  </data>
+  <data name="StatusLabel" xml:space="preserve">
+    <value>Κατάσταση:</value>
+  </data>
+  <data name="CreatedByLabel" xml:space="preserve">
+    <value>Δημιουργήθηκε από:</value>
+  </data>
+  <data name="IncidentLabel" xml:space="preserve">
+    <value>Περιστατικό:</value>
+  </data>
+  <data name="NumberIdLabel" xml:space="preserve">
+    <value>Αριθμός\Αναγνωριστικό:</value>
+  </data>
+  <data name="FinanceCodeDtLabel" xml:space="preserve">
+    <value>Οικονομικός Κωδικός:</value>
+  </data>
+  <data name="LastUpdatedLabel" xml:space="preserve">
+    <value>Τελευταία Ενημέρωση:</value>
+  </data>
+  <data name="CreatedDtLabel" xml:space="preserve">
+    <value>Δημιουργήθηκε:</value>
+  </data>
+  <data name="ContactNameDtLabel" xml:space="preserve">
+    <value>Όνομα Επαφής:</value>
+  </data>
+  <data name="ContactNumberDtLabel" xml:space="preserve">
+    <value>Αριθμός Επαφής:</value>
+  </data>
+  <data name="FillDtLabel" xml:space="preserve">
+    <value>Κάλυψη:</value>
+  </data>
+  <data name="FillPercentageText" xml:space="preserve">
+    <value>Αυτή η παραγγελία πόρων είναι</value>
+  </data>
+  <data name="FillPercentageText2" xml:space="preserve">
+    <value>καλυμμένη.</value>
+  </data>
+  <data name="FillsTab" xml:space="preserve">
+    <value>Καλύψεις</value>
+  </data>
+  <data name="ResourceDtLabel" xml:space="preserve">
+    <value>Πόρος:</value>
+  </data>
+  <data name="RequirementsDtLabel" xml:space="preserve">
+    <value>Απαιτήσεις:</value>
+  </data>
+  <data name="MinDtLabel" xml:space="preserve">
+    <value>Ελάχ.:</value>
+  </data>
+  <data name="MaxDtLabel" xml:space="preserve">
+    <value>Μέγ.:</value>
+  </data>
+  <data name="NeededDtLabel" xml:space="preserve">
+    <value>Απαιτούνται:</value>
+  </data>
+  <data name="FillOrderResultHeader" xml:space="preserve">
+    <value>Αποτέλεσμα Κάλυψης Παραγγελίας</value>
+  </data>
+  <data name="FillFailedHeader" xml:space="preserve">
+    <value>Η Κάλυψη Απέτυχε</value>
+  </data>
+  <data name="FillFailedMessage" xml:space="preserve">
+    <value>Παρουσιάστηκε σφάλμα κατά την προσπάθεια εκπλήρωσης του αιτήματός σας. Δείτε το παρακάτω σφάλμα για περισσότερες λεπτομέρειες.</value>
+  </data>
+  <data name="FillAcceptedHeader" xml:space="preserve">
+    <value>Η Κάλυψη Προστέθηκε και Έγινε Αποδεκτή</value>
+  </data>
+  <data name="FillAcceptedMessage" xml:space="preserve">
+    <value>Η κάλυψή σας προστέθηκε στο σύστημα και έγινε αυτόματα αποδεκτή.</value>
+  </data>
+  <data name="FillAcceptedWarning" xml:space="preserve">
+    <value>Ίσως θέλετε να επικοινωνήσετε με το Σημείο Επαφής της παραγγελίας για να διευκρινιστούν τυχόν άλλες λεπτομέρειες.</value>
+  </data>
+  <data name="FillProposedHeader" xml:space="preserve">
+    <value>Η Κάλυψη Προτάθηκε</value>
+  </data>
+  <data name="FillProposedMessage" xml:space="preserve">
+    <value>Η κάλυψή σας καταγράφηκε στο σύστημα και σημάνθηκε ως εκκρεμής. Ο δημιουργός του αιτήματος πόρων θα πρέπει να ελέγξει χειροκίνητα το αίτημα κάλυψής σας και να το εγκρίνει. Θα λάβετε ειδοποίηση όταν συμβεί αυτό.</value>
+  </data>
+  <data name="ViewOrderHeader" xml:space="preserve">
+    <value>Προβολή Παραγγελίας</value>
+  </data>
+  <data name="RequestToFillButton" xml:space="preserve">
+    <value>Αίτημα Κάλυψης Παραγγελίας</value>
+  </data>
+  <data name="OrdersLabel" xml:space="preserve">
+    <value>Παραγγελίες</value>
+  </data>
+  <data name="DepartmentColumn" xml:space="preserve">
+    <value>Τμήμα</value>
+  </data>
+  <data name="TimestampColumn" xml:space="preserve">
+    <value>Χρονική Σήμανση</value>
+  </data>
+  <data name="ContactColumn" xml:space="preserve">
+    <value>Επαφή</value>
+  </data>
+  <data name="NoteColumn" xml:space="preserve">
+    <value>Σημείωση</value>
+  </data>
+  <data name="UnitsColumn" xml:space="preserve">
+    <value>Μονάδες</value>
+  </data>
+  <data name="AcceptedLabel" xml:space="preserve">
+    <value>Αποδεκτή</value>
+  </data>
+  <data name="NotAcceptedLabel" xml:space="preserve">
+    <value>Μη Αποδεκτή</value>
+  </data>
+  <data name="PendingLabel" xml:space="preserve">
+    <value>Εκκρεμής</value>
+  </data>
+  <data name="AcceptButton" xml:space="preserve">
+    <value>Αποδοχή</value>
+  </data>
+  <data name="OrderSummaryHeader" xml:space="preserve">
+    <value>Σύνοψη Παραγγελίας</value>
+  </data>
+  <data name="SpecialInstructionsHeader" xml:space="preserve">
+    <value>Ειδικές Οδηγίες</value>
+  </data>
+  <data name="IncidentAddressHeader" xml:space="preserve">
+    <value>Διεύθυνση Περιστατικού</value>
+  </data>
+  <data name="MeetupHeader" xml:space="preserve">
+    <value>Συνάντηση</value>
+  </data>
+  <data name="MeetupLocationDtLabel" xml:space="preserve">
+    <value>Τοποθεσία:</value>
+  </data>
+  <data name="MeetupDateDtLabel" xml:space="preserve">
+    <value>Ημερομηνία:</value>
+  </data>
+  <data name="NotSuppliedLabel" xml:space="preserve">
+    <value>Δεν Δόθηκε</value>
+  </data>
+</root>

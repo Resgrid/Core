@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Newtonsoft.Json;
+using Resgrid.Web.Services.Helpers;
+
 namespace Resgrid.Web.Services.Models.v4.Units
 {
 	/// <summary>
@@ -108,18 +111,28 @@ namespace Resgrid.Web.Services.Models.v4.Units
 		public string CurrentStatus { get; set; }
 
 		/// <summary>
-		/// The current status/state of the Unit color
+		/// The current status/state of the Unit color, always a CSS hex colour ("#5CB85C").
 		/// </summary>
 		public string CurrentStatusColor { get; set; }
 
 		/// <summary>
-		/// The Timestamp of the status
+		/// The base type the unit's current custom status maps to (see <see cref="Resgrid.Model.ActionBaseTypes"/>),
+		/// or null when the status has no base type. Clients need this to answer "is this unit
+		/// available/responding/on scene" -- the status id itself is department-specific and the unit's
+		/// TypeId is the unit type, not a status.
+		/// </summary>
+		public int? CurrentStatusBaseType { get; set; }
+
+		/// <summary>
+		/// The Timestamp of the status, in the department's timezone.
 		/// </summary>
 		public DateTime CurrentStatusTimestamp { get; set; }
 
 		/// <summary>
-		/// The Timestamp of the status in UTC/GMT
+		/// The Timestamp of the status in UTC/GMT. Serialised with an explicit "Z" -- without it clients
+		/// parsed the value as local time and reported unit statuses hours stale.
 		/// </summary>
+		[JsonConverter(typeof(UtcDateTimeConverter))]
 		public DateTime CurrentStatusTimestampUtc { get; set; }
 
 		/// <summary>

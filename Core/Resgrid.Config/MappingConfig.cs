@@ -28,6 +28,7 @@ namespace Resgrid.Config
 		 ***********************************/
 		public static string UnitAppGoogleMapsKey = "";
 		public static string ResponderAppGoogleMapsKey = "";
+		public static string DispatchAppGoogleMapsKey = "";
 
 		/***********************************
 		 * OpenWeatherApi Keys
@@ -45,6 +46,7 @@ namespace Resgrid.Config
 		 ***********************************/
 		public static string UnitAppWhat3WordsKey = "";
 		public static string ResponderAppWhat3WordsKey = "";
+		public static string DispatchAppWhat3WordsKey = "";
 
 		/***********************************
 		 * Leaflet OSM Keys (used for Mapping and Map display)

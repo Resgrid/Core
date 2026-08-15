@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="RequiredModerationContext" xml:space="preserve"><value>Απαιτούνται τμήμα, αναφέρων και στοιχείο.</value></data>
+  <data name="RequestReopenedAudit" xml:space="preserve"><value>Το αίτημα άνοιξε ξανά μετά από νέα αναφορά.</value></data>
+  <data name="RequestOutsideScope" xml:space="preserve"><value>Αυτό το αίτημα βρίσκεται εκτός του πεδίου εποπτείας σας.</value></data>
+  <data name="OnlyPendingRequests" xml:space="preserve"><value>Μόνο εκκρεμή αιτήματα εποπτείας μπορούν να ολοκληρωθούν.</value></data>
+  <data name="ContentCouldNotBeRemoved" xml:space="preserve"><value>Δεν ήταν δυνατή η αφαίρεση του αναφερθέντος περιεχομένου.</value></data>
+  <data name="EvidenceOutsideScope" xml:space="preserve"><value>Αυτό το αποδεικτικό στοιχείο βρίσκεται εκτός του πεδίου εποπτείας σας.</value></data>
+  <data name="EvidenceDownloadedAudit" xml:space="preserve"><value>Λήφθηκε το πρωτότυπο αποδεικτικό στοιχείο.</value></data>
+  <data name="ChatMessageUnavailable" xml:space="preserve"><value>Το μήνυμα συνομιλίας δεν είναι διαθέσιμο ή δεν μπορεί να αναφερθεί.</value></data>
+  <data name="MessageUnavailable" xml:space="preserve"><value>Το μήνυμα δεν είναι διαθέσιμο ή δεν μπορεί να αναφερθεί.</value></data>
+  <data name="InvalidCallNoteId" xml:space="preserve"><value>Το αναγνωριστικό σημείωσης κλήσης δεν είναι έγκυρο.</value></data>
+  <data name="CallNoteUnavailable" xml:space="preserve"><value>Η σημείωση κλήσης δεν είναι διαθέσιμη ή δεν μπορεί να αναφερθεί.</value></data>
+  <data name="InvalidCallImageId" xml:space="preserve"><value>Το αναγνωριστικό εικόνας κλήσης δεν είναι έγκυρο.</value></data>
+  <data name="CallImageUnavailable" xml:space="preserve"><value>Η εικόνα κλήσης δεν είναι διαθέσιμη ή δεν μπορεί να αναφερθεί.</value></data>
+  <data name="ModeratedMessageSubject" xml:space="preserve"><value>Το περιεχόμενο αφαιρέθηκε από την εποπτεία</value></data>
+  <data name="ModeratedMessageBody" xml:space="preserve"><value>Αυτό το μήνυμα αφαιρέθηκε από την εποπτεία.</value></data>
+  <data name="ModeratedCallNote" xml:space="preserve"><value>Αυτή η σημείωση κλήσης αφαιρέθηκε από την εποπτεία.</value></data>
+  <data name="MessageRemovedByModeration" xml:space="preserve"><value>Αυτό το μήνυμα αφαιρέθηκε από την εποπτεία.</value></data>
+  <data name="CompletionContentRemoved" xml:space="preserve"><value>Το αναφερθέν περιεχόμενο αφαιρέθηκε.</value></data>
+  <data name="CompletionNoContentRemoved" xml:space="preserve"><value>Το αίτημα εξετάστηκε και δεν αφαιρέθηκε περιεχόμενο.</value></data>
+  <data name="CompletionAdminNoteHtml" xml:space="preserve"><value>&lt;br/&gt;&lt;br/&gt;&lt;strong&gt;Σημείωση διαχειριστή:&lt;/strong&gt; {0}</value></data>
+  <data name="CompletionSubject" xml:space="preserve"><value>Το Αίτημα Εποπτείας Ολοκληρώθηκε</value></data>
+  <data name="CompletionBody" xml:space="preserve"><value>Η αναφορά εποπτείας σας για {0} {1} ολοκληρώθηκε. {2}{3}</value></data>
+  <data name="SystemSenderName" xml:space="preserve"><value>Σύστημα</value></data>
+  <data name="ItemTypeChatMessage" xml:space="preserve"><value>Μήνυμα συνομιλίας</value></data>
+  <data name="ItemTypeMessage" xml:space="preserve"><value>Μήνυμα</value></data>
+  <data name="ItemTypeCallNote" xml:space="preserve"><value>Σημείωση κλήσης</value></data>
+  <data name="ItemTypeCallImage" xml:space="preserve"><value>Εικόνα κλήσης</value></data>
+  <data name="TabRequests" xml:space="preserve"><value>Αιτήματα</value></data>
+  <data name="TabReports" xml:space="preserve"><value>Αναφορές</value></data>
+  <data name="TabChatControls" xml:space="preserve"><value>Έλεγχοι συνομιλίας</value></data>
+  <data name="TabChatSettings" xml:space="preserve"><value>Ρυθμίσεις συνομιλίας</value></data>
+  <data name="TabChatExports" xml:space="preserve"><value>Εξαγωγές συνομιλίας</value></data>
+  <data name="ReportsDescription" xml:space="preserve"><value>Αναζητήστε νέα και ολοκληρωμένα αιτήματα εποπτείας βάσει του χρήστη που πρόσθεσε το περιεχόμενο ή του χρήστη που το ανέφερε.</value></data>
+  <data name="Status" xml:space="preserve"><value>Κατάσταση</value></data>
+  <data name="All" xml:space="preserve"><value>Όλα</value></data>
+  <data name="Pending" xml:space="preserve"><value>Εκκρεμή</value></data>
+  <data name="Completed" xml:space="preserve"><value>Ολοκληρωμένα</value></data>
+  <data name="ContentType" xml:space="preserve"><value>Τύπος περιεχομένου</value></data>
+  <data name="AddedByUserId" xml:space="preserve"><value>Αναγνωριστικό χρήστη που πρόσθεσε</value></data>
+  <data name="ReportedByUserId" xml:space="preserve"><value>Αναγνωριστικό χρήστη που ανέφερε</value></data>
+  <data name="From" xml:space="preserve"><value>Από</value></data>
+  <data name="To" xml:space="preserve"><value>Έως</value></data>
+  <data name="Refresh" xml:space="preserve"><value>Ανανέωση</value></data>
+  <data name="LoadingModerationRequests" xml:space="preserve"><value>Φόρτωση αιτημάτων εποπτείας…</value></data>
+  <data name="NoMatchingRequests" xml:space="preserve"><value>Κανένα αίτημα εποπτείας δεν ταιριάζει με αυτά τα φίλτρα.</value></data>
+  <data name="Item" xml:space="preserve"><value>Στοιχείο</value></data>
+  <data name="OriginalEvidence" xml:space="preserve"><value>Πρωτότυπο αποδεικτικό στοιχείο</value></data>
+  <data name="AddedBy" xml:space="preserve"><value>Προστέθηκε από</value></data>
+  <data name="Reports" xml:space="preserve"><value>Αναφορές</value></data>
+  <data name="Action" xml:space="preserve"><value>Ενέργεια</value></data>
+  <data name="ContentRemoved" xml:space="preserve"><value>Το περιεχόμενο αφαιρέθηκε</value></data>
+  <data name="NoAction" xml:space="preserve"><value>Καμία ενέργεια</value></data>
+  <data name="UnknownContentType" xml:space="preserve"><value>Άγνωστος τύπος περιεχομένου</value></data>
+  <data name="IdFormat" xml:space="preserve"><value>Αναγνωριστικό {0}</value></data>
+  <data name="CallFormat" xml:space="preserve"><value>Κλήση {0}</value></data>
+  <data name="DownloadRetainedEvidence" xml:space="preserve"><value>Λήψη διατηρημένων αποδεικτικών στοιχείων</value></data>
+  <data name="SystemOrUnknown" xml:space="preserve"><value>Σύστημα ή άγνωστο</value></data>
+  <data name="GroupFormat" xml:space="preserve"><value>ομάδα {0}</value></data>
+  <data name="CompletionNotePlaceholder" xml:space="preserve"><value>Σημείωση ολοκλήρωσης που αποστέλλεται στους χρήστες που ανέφεραν (προαιρετικό)</value></data>
+  <data name="RemoveContent" xml:space="preserve"><value>Αφαίρεση περιεχομένου</value></data>
+  <data name="CompleteNoAction" xml:space="preserve"><value>Ολοκλήρωση—καμία ενέργεια</value></data>
+  <data name="CompletedBy" xml:space="preserve"><value>Ολοκληρώθηκε από</value></data>
+  <data name="NoCompletionNote" xml:space="preserve"><value>Χωρίς σημείωση ολοκλήρωσης.</value></data>
+  <data name="HideAuditTrail" xml:space="preserve"><value>Απόκρυψη ίχνους ελέγχου</value></data>
+  <data name="AuditTrailCount" xml:space="preserve"><value>Ίχνος ελέγχου ({0})</value></data>
+  <data name="By" xml:space="preserve"><value>από</value></data>
+  <data name="NoNote" xml:space="preserve"><value>Χωρίς σημείωση.</value></data>
+  <data name="ActorReporter" xml:space="preserve"><value>Αναφέρων</value></data>
+  <data name="ActorDepartmentAdmin" xml:space="preserve"><value>Διαχειριστής τμήματος</value></data>
+  <data name="ActorGroupAdmin" xml:space="preserve"><value>Διαχειριστής ομάδας</value></data>
+  <data name="ActorLegacyImport" xml:space="preserve"><value>Παλαιά εισαγωγή</value></data>
+  <data name="UnknownRole" xml:space="preserve"><value>Άγνωστος ρόλος</value></data>
+  <data name="NoIp" xml:space="preserve"><value>Χωρίς διεύθυνση IP</value></data>
+  <data name="TraceFormat" xml:space="preserve"><value>ίχνος {0}</value></data>
+  <data name="NotAvailable" xml:space="preserve"><value>μη διαθέσιμο</value></data>
+  <data name="NoValue" xml:space="preserve"><value>—</value></data>
+  <data name="UnableLoadRequests" xml:space="preserve"><value>Δεν είναι δυνατή η φόρτωση αιτημάτων εποπτείας.</value></data>
+  <data name="UnableCompleteRequest" xml:space="preserve"><value>Δεν είναι δυνατή η ολοκλήρωση του αιτήματος εποπτείας.</value></data>
+  <data name="ReasonOther" xml:space="preserve"><value>Άλλο</value></data>
+  <data name="ReasonInappropriate" xml:space="preserve"><value>Ακατάλληλο περιεχόμενο</value></data>
+  <data name="ReasonHarassment" xml:space="preserve"><value>Παρενόχληση ή κακοποίηση</value></data>
+  <data name="ReasonSpam" xml:space="preserve"><value>Ανεπιθύμητο</value></data>
+  <data name="ReasonSensitiveInformation" xml:space="preserve"><value>Ευαίσθητες πληροφορίες</value></data>
+  <data name="ReasonPolicyViolation" xml:space="preserve"><value>Παραβίαση πολιτικής</value></data>
+  <data name="ActionReportSubmitted" xml:space="preserve"><value>Η αναφορά υποβλήθηκε</value></data>
+  <data name="ActionRequestReopened" xml:space="preserve"><value>Το αίτημα άνοιξε ξανά</value></data>
+  <data name="ActionCompletedNoAction" xml:space="preserve"><value>Ολοκληρώθηκε χωρίς ενέργεια</value></data>
+  <data name="ActionContentRemoved" xml:space="preserve"><value>Το περιεχόμενο αφαιρέθηκε</value></data>
+  <data name="ActionEvidenceDownloaded" xml:space="preserve"><value>Λήφθηκαν αποδεικτικά στοιχεία</value></data>
+  <data name="ModerationReportStatus" xml:space="preserve"><value>Κατάσταση αναφοράς εποπτείας</value></data>
+  <data name="ReportMessage" xml:space="preserve"><value>Αναφορά μηνύματος για εποπτεία</value></data>
+  <data name="Close" xml:space="preserve"><value>Κλείσιμο</value></data>
+  <data name="Cancel" xml:space="preserve"><value>Ακύρωση</value></data>
+  <data name="Report" xml:space="preserve"><value>Αναφορά</value></data>
+  <data name="CheckingReportStatus" xml:space="preserve"><value>Έλεγχος κατάστασης αναφοράς…</value></data>
+  <data name="StatusLabel" xml:space="preserve"><value>Κατάσταση</value></data>
+  <data name="ContentWasRemoved" xml:space="preserve"><value>Το περιεχόμενο αφαιρέθηκε</value></data>
+  <data name="NoContentWasRemoved" xml:space="preserve"><value>Δεν αφαιρέθηκε περιεχόμενο</value></data>
+  <data name="ModeratorNoteLabel" xml:space="preserve"><value>Σημείωση συντονιστή</value></data>
+  <data name="Reason" xml:space="preserve"><value>Αιτιολογία</value></data>
+  <data name="AddNoteOptional" xml:space="preserve"><value>Προσθέστε σημείωση (προαιρετικό)</value></data>
+  <data name="YourModerationReportIs" xml:space="preserve"><value>Η αναφορά εποπτείας σας είναι</value></data>
+  <data name="ReportForModeration" xml:space="preserve"><value>Αναφορά για εποπτεία</value></data>
+  <data name="WhyReviewMessage" xml:space="preserve"><value>Εξηγήστε γιατί πρέπει να εξεταστεί αυτό το μήνυμα</value></data>
+  <data name="ModerationReportSubmitted" xml:space="preserve"><value>Η αναφορά εποπτείας σας υποβλήθηκε.</value></data>
+  <data name="LegacyActionDeleteMessage" xml:space="preserve"><value>Διαγραφή μηνύματος</value></data>
+  <data name="LegacyActionMuteUser" xml:space="preserve"><value>Σίγαση χρήστη</value></data>
+  <data name="LegacyActionBanUser" xml:space="preserve"><value>Αποκλεισμός χρήστη</value></data>
+  <data name="LegacyActionUnbanUser" xml:space="preserve"><value>Άρση αποκλεισμού χρήστη</value></data>
+  <data name="LegacyActionLockChannel" xml:space="preserve"><value>Κλείδωμα καναλιού</value></data>
+  <data name="LegacyActionUnlockChannel" xml:space="preserve"><value>Ξεκλείδωμα καναλιού</value></data>
+  <data name="LegacyActionResolveFlag" xml:space="preserve"><value>Επίλυση αναφοράς</value></data>
+  <data name="ActionNumberFormat" xml:space="preserve"><value>Ενέργεια #{0}</value></data>
+  <data name="Loading" xml:space="preserve"><value>Φόρτωση…</value></data>
+  <data name="NoModerationActivity" xml:space="preserve"><value>Καμία δραστηριότητα εποπτείας.</value></data>
+  <data name="Target" xml:space="preserve"><value>Στόχος</value></data>
+  <data name="When" xml:space="preserve"><value>Πότε</value></data>
+  <data name="UnitFormat" xml:space="preserve"><value>Μονάδα {0}</value></data>
+  <data name="Previous" xml:space="preserve"><value>Προηγούμενη</value></data>
+  <data name="PageFormat" xml:space="preserve"><value>Σελίδα {0}</value></data>
+  <data name="Next" xml:space="preserve"><value>Επόμενη</value></data>
+  <data name="AllowImageAttachments" xml:space="preserve"><value>Να επιτρέπονται συνημμένες εικόνες</value></data>
+  <data name="AllowGifs" xml:space="preserve"><value>Να επιτρέπονται GIF</value></data>
+  <data name="AllowLocationSharing" xml:space="preserve"><value>Να επιτρέπεται κοινή χρήση τοποθεσίας</value></data>
+  <data name="UrgentOverridesMute" xml:space="preserve"><value>Τα επείγοντα μηνύματα παρακάμπτουν τη σίγαση</value></data>
+  <data name="AssistantEnabled" xml:space="preserve"><value>Ο βοηθός είναι ενεργοποιημένος</value></data>
+  <data name="MessageRetention" xml:space="preserve"><value>Διατήρηση μηνυμάτων (ημέρες, 0 = για πάντα)</value></data>
+  <data name="MaxAttachmentSize" xml:space="preserve"><value>Μέγιστο μέγεθος συνημμένου (MB)</value></data>
+  <data name="Saving" xml:space="preserve"><value>Αποθήκευση…</value></data>
+  <data name="SaveSettings" xml:space="preserve"><value>Αποθήκευση ρυθμίσεων</value></data>
+  <data name="Saved" xml:space="preserve"><value>Αποθηκεύτηκε</value></data>
+  <data name="FailedSaveSettings" xml:space="preserve"><value>Αποτυχία αποθήκευσης ρυθμίσεων εποπτείας.</value></data>
+  <data name="ExportQueued" xml:space="preserve"><value>Σε ουρά</value></data>
+  <data name="ExportRunning" xml:space="preserve"><value>Σε εξέλιξη</value></data>
+  <data name="ExportComplete" xml:space="preserve"><value>Ολοκληρώθηκε</value></data>
+  <data name="ExportFailed" xml:space="preserve"><value>Απέτυχε</value></data>
+  <data name="FailedRequestExport" xml:space="preserve"><value>Αποτυχία αιτήματος εξαγωγής συνομιλίας.</value></data>
+  <data name="Format" xml:space="preserve"><value>Μορφή</value></data>
+  <data name="StartDate" xml:space="preserve"><value>Ημερομηνία έναρξης</value></data>
+  <data name="EndDate" xml:space="preserve"><value>Ημερομηνία λήξης</value></data>
+  <data name="Requesting" xml:space="preserve"><value>Υποβολή αιτήματος…</value></data>
+  <data name="RequestExport" xml:space="preserve"><value>Αίτημα εξαγωγής</value></data>
+  <data name="Requested" xml:space="preserve"><value>Ζητήθηκε</value></data>
+  <data name="Range" xml:space="preserve"><value>Εύρος</value></data>
+  <data name="Download" xml:space="preserve"><value>Λήψη</value></data>
+  <data name="NoExportJobs" xml:space="preserve"><value>Καμία εργασία εξαγωγής.</value></data>
+  <data name="Now" xml:space="preserve"><value>Τώρα</value></data>
+  <data name="EvidenceFileNameFormat" xml:space="preserve"><value>moderation-evidence-{0}</value></data>
+  <data name="MessageDeleted" xml:space="preserve"><value>Αυτό το μήνυμα διαγράφηκε.</value></data>
+</root>

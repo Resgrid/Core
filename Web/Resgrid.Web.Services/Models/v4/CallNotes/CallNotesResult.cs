@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
+using Newtonsoft.Json;
+using Resgrid.Web.Services.Helpers;
+
 namespace Resgrid.Web.Services.Models.v4.CallNotes
 {
 	/// <summary>
@@ -60,6 +63,7 @@ namespace Resgrid.Web.Services.Models.v4.CallNotes
 		/// <summary>
 		/// Timestamp of when the note as added in Utc
 		/// </summary>
+		[JsonConverter(typeof(UtcDateTimeConverter))]
 		public DateTime TimestampUtc { get; set; }
 
 		/// <summary>

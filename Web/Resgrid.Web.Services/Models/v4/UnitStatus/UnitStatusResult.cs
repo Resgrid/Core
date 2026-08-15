@@ -1,5 +1,8 @@
 ﻿using System;
 
+using Newtonsoft.Json;
+using Resgrid.Web.Services.Helpers;
+
 namespace Resgrid.Web.Services.Models.v4.UnitStatus
 {
 	/// <summary>
@@ -56,6 +59,7 @@ namespace Resgrid.Web.Services.Models.v4.UnitStatus
 		/// <summary>
 		/// Timestamp in Utc of this Unit State
 		/// </summary>
+		[JsonConverter(typeof(UtcDateTimeConverter))]
 		public DateTime TimestampUtc { get; set; }
 
 		/// <summary>

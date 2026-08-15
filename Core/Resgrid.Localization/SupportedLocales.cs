@@ -19,6 +19,7 @@ namespace Resgrid.Localization
 							{"pl", "Polish"},                   //"pl-PL"
 							{"uk", "Ukrainian"},                //"uk-UA"
 							{"ar", "Arabic"},                   //"ar"
+							{"el", "Greek"},                    //"el-GR"
 						};
 
 		public static string[] GetSupportedCultures()

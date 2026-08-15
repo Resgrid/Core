@@ -13,7 +13,12 @@ namespace Resgrid.Workers.Framework.Logic
 {
 	public class SecurityLogic
 	{
-		private static TimeSpan Day30CacheLength = TimeSpan.FromDays(30);
+		/// <summary>
+		/// The matrix is a snapshot of units, groups, roles and memberships at build time; anything
+		/// created afterwards is missing from it. It is rebuilt on every input change now, so this is
+		/// only the backstop for a dropped queue message -- a day, not a month.
+		/// </summary>
+		private static TimeSpan MatrixCacheLength = TimeSpan.FromHours(24);
 		private static string WhoCanViewUnitsCacheKey = "ViewUnitsSecurityMaxtix_{0}";
 		private static string WhoCanViewUnitLocationsCacheKey = "ViewUnitLocationsSecurityMaxtix_{0}";
 		private static string WhoCanViewPersonnelCacheKey = "ViewUsersSecurityMaxtix_{0}";
@@ -60,7 +65,7 @@ namespace Resgrid.Workers.Framework.Logic
 				async Task<VisibilityPayloadUnits> getWhoCanViewUnits()
 				{
 					var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(item.DepartmentId, PermissionTypes.ViewGroupUnits);
-					var unitsPayload = new VisibilityPayloadUnits();
+					var unitsPayload = new VisibilityPayloadUnits() { GeneratedOn = DateTime.UtcNow };
 					var units = await _unitsService.GetUnitsForDepartmentAsync(item.DepartmentId);
 
 					if (permission == null || (permission.Action == (int)PermissionActions.Everyone && !permission.LockToGroup))
@@ -193,7 +198,7 @@ namespace Resgrid.Workers.Framework.Logic
 				if (Config.SystemBehaviorConfig.CacheEnabled)
 				{
 					await _cacheProvider.RemoveAsync(string.Format(WhoCanViewUnitsCacheKey, item.DepartmentId));
-					await _cacheProvider.RetrieveAsync(string.Format(WhoCanViewUnitsCacheKey, item.DepartmentId), getWhoCanViewUnits, Day30CacheLength);
+					await _cacheProvider.RetrieveAsync(string.Format(WhoCanViewUnitsCacheKey, item.DepartmentId), getWhoCanViewUnits, MatrixCacheLength);
 				}
 			}
 			else if (item.Type == SecurityCacheTypes.WhoCanViewUnitLocations)
@@ -201,7 +206,7 @@ namespace Resgrid.Workers.Framework.Logic
 				async Task<VisibilityPayloadUnits> getWhoCanViewUnitLocations()
 				{
 					var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(item.DepartmentId, PermissionTypes.CanSeeUnitLocations);
-					var unitsPayload = new VisibilityPayloadUnits();
+					var unitsPayload = new VisibilityPayloadUnits() { GeneratedOn = DateTime.UtcNow };
 					var units = await _unitsService.GetUnitsForDepartmentAsync(item.DepartmentId);
 
 					if (permission == null || (permission.Action == (int)PermissionActions.Everyone && !permission.LockToGroup))
@@ -334,7 +339,7 @@ namespace Resgrid.Workers.Framework.Logic
 				if (Config.SystemBehaviorConfig.CacheEnabled)
 				{
 					await _cacheProvider.RemoveAsync(string.Format(WhoCanViewUnitLocationsCacheKey, item.DepartmentId));
-					await _cacheProvider.RetrieveAsync(string.Format(WhoCanViewUnitLocationsCacheKey, item.DepartmentId), getWhoCanViewUnitLocations, Day30CacheLength);
+					await _cacheProvider.RetrieveAsync(string.Format(WhoCanViewUnitLocationsCacheKey, item.DepartmentId), getWhoCanViewUnitLocations, MatrixCacheLength);
 				}
 			}
 			else if (item.Type == SecurityCacheTypes.WhoCanViewPersonnel)
@@ -342,7 +347,7 @@ namespace Resgrid.Workers.Framework.Logic
 				async Task<VisibilityPayloadUsers> getWhoCanViewUsers()
 				{
 					var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(item.DepartmentId, PermissionTypes.ViewGroupUsers);
-					var usersPayload = new VisibilityPayloadUsers();
+					var usersPayload = new VisibilityPayloadUsers() { GeneratedOn = DateTime.UtcNow };
 					var allUsers = await _departmentMembersRepository.GetAllDepartmentMembersUnlimitedAsync(item.DepartmentId);
 
 					if (permission == null || (permission.Action == (int)PermissionActions.Everyone && !permission.LockToGroup))
@@ -481,7 +486,7 @@ namespace Resgrid.Workers.Framework.Logic
 				if (Config.SystemBehaviorConfig.CacheEnabled)
 				{
 					await _cacheProvider.RemoveAsync(string.Format(WhoCanViewPersonnelCacheKey, item.DepartmentId));
-					await _cacheProvider.RetrieveAsync(string.Format(WhoCanViewPersonnelCacheKey, item.DepartmentId), getWhoCanViewUsers, Day30CacheLength);
+					await _cacheProvider.RetrieveAsync(string.Format(WhoCanViewPersonnelCacheKey, item.DepartmentId), getWhoCanViewUsers, MatrixCacheLength);
 				}
 			}
 			else if (item.Type == SecurityCacheTypes.WhoCanViewPersonnelLocations)
@@ -489,7 +494,7 @@ namespace Resgrid.Workers.Framework.Logic
 				async Task<VisibilityPayloadUsers> getWhoCanViewUserLocations()
 				{
 					var permission = await _permissionsService.GetPermissionByDepartmentTypeAsync(item.DepartmentId, PermissionTypes.CanSeePersonnelLocations);
-					var usersPayload = new VisibilityPayloadUsers();
+					var usersPayload = new VisibilityPayloadUsers() { GeneratedOn = DateTime.UtcNow };
 					var allUsers = await _departmentMembersRepository.GetAllDepartmentMembersUnlimitedAsync(item.DepartmentId);
 
 					if (permission == null || (permission.Action == (int)PermissionActions.Everyone && !permission.LockToGroup))
@@ -628,7 +633,7 @@ namespace Resgrid.Workers.Framework.Logic
 				if (Config.SystemBehaviorConfig.CacheEnabled)
 				{
 					await _cacheProvider.RemoveAsync(string.Format(WhoCanViewPersonnelLocationsCacheKey, item.DepartmentId));
-					await _cacheProvider.RetrieveAsync(string.Format(WhoCanViewPersonnelLocationsCacheKey, item.DepartmentId), getWhoCanViewUserLocations, Day30CacheLength);
+					await _cacheProvider.RetrieveAsync(string.Format(WhoCanViewPersonnelLocationsCacheKey, item.DepartmentId), getWhoCanViewUserLocations, MatrixCacheLength);
 				}
 			}
 

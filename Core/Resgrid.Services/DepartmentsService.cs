@@ -254,6 +254,11 @@ namespace Resgrid.Services
 			dm.IsDisabled = false;
 
 			var saved = await _departmentMembersRepository.SaveOrUpdateAsync(dm, cancellationToken);
+
+			// The member row just changed its deleted/hidden/disabled flags and the department's user
+			// list gained a name back -- both are cached reads that would otherwise serve the old answer.
+			InvalidateDepartmentUsersInCache(departmentId);
+			InvalidateDepartmentMemberInCache(userId, departmentId);
 			SendMembershipVisibilityRefresh(departmentId);
 
 			return saved;
@@ -286,6 +291,11 @@ namespace Resgrid.Services
 			await _limitsService.InvalidateDepartmentsEntityLimitsCache(departmentId);
 
 			var saved = await _departmentMembersRepository.SaveOrUpdateAsync(dm, cancellationToken);
+
+			// A lookup for this user/department pair may already have been cached as "not a member",
+			// and the department's user list does not have the new name on it yet.
+			InvalidateDepartmentUsersInCache(departmentId);
+			InvalidateDepartmentMemberInCache(userId, departmentId);
 			SendMembershipVisibilityRefresh(departmentId);
 
 			return saved;

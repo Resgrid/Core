@@ -659,22 +659,39 @@ namespace Resgrid.Workers.Framework.Logic
 			return new Tuple<bool, string>(success, result);
 		}
 
+		/// <summary>
+		/// Every department is still attempted when one fails -- a single department with unusable
+		/// permission data must not cost the rest of the system its rebuild. The result reports whether
+		/// anything failed, so a caller can tell a clean sweep from a partial one; without that the
+		/// sweep looks successful no matter how many matrices were left stale.
+		/// </summary>
 		public async Task<Tuple<bool, string>> UpdatedCachedSecurityForAllDepartments()
 		{
-			bool success = true;
-			string result = String.Empty;
-
 			var departments = await _departmentsService.GetAllAsync();
+			var failures = new List<string>();
+
+			async Task rebuild(int departmentId, SecurityCacheTypes type)
+			{
+				var processed = await Process(new SecurityQueueItem() { DepartmentId = departmentId, Type = type });
+
+				if (processed == null || !processed.Item1)
+					failures.Add($"{departmentId}/{type}: {processed?.Item2}".Trim());
+			}
 
 			foreach (var department in departments)
 			{
-				await Process(new SecurityQueueItem() { DepartmentId = department.DepartmentId, Type = SecurityCacheTypes.WhoCanViewUnits });
-				await Process(new SecurityQueueItem() { DepartmentId = department.DepartmentId, Type = SecurityCacheTypes.WhoCanViewUnitLocations });
-				await Process(new SecurityQueueItem() { DepartmentId = department.DepartmentId, Type = SecurityCacheTypes.WhoCanViewPersonnel });
-				await Process(new SecurityQueueItem() { DepartmentId = department.DepartmentId, Type = SecurityCacheTypes.WhoCanViewPersonnelLocations });
+				await rebuild(department.DepartmentId, SecurityCacheTypes.WhoCanViewUnits);
+				await rebuild(department.DepartmentId, SecurityCacheTypes.WhoCanViewUnitLocations);
+				await rebuild(department.DepartmentId, SecurityCacheTypes.WhoCanViewPersonnel);
+				await rebuild(department.DepartmentId, SecurityCacheTypes.WhoCanViewPersonnelLocations);
 			}
 
-			return new Tuple<bool, string>(success, result);
+			if (!failures.Any())
+				return new Tuple<bool, string>(true, String.Empty);
+
+			// Capped: a system-wide outage would otherwise build a result string per department.
+			return new Tuple<bool, string>(false,
+				$"{failures.Count} security matrix rebuild(s) failed: {String.Join("; ", failures.Take(10))}");
 		}
 	}
 }

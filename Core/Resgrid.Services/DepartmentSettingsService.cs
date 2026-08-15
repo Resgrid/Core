@@ -304,7 +304,8 @@ namespace Resgrid.Services
 				await SaveOrUpdateSettingAsync(departmentId, $"{sanitizedLatitude},{sanitizedLongitude}",
 					DepartmentSettingTypes.BigBoardMapCenterGpsCoordinates, cancellationToken);
 
-				if (double.TryParse(sanitizedLatitude, out var storedLatitude) && double.TryParse(sanitizedLongitude, out var storedLongitude))
+				if (double.TryParse(sanitizedLatitude, NumberStyles.Any, CultureInfo.InvariantCulture, out var storedLatitude) &&
+					double.TryParse(sanitizedLongitude, NumberStyles.Any, CultureInfo.InvariantCulture, out var storedLongitude))
 					return new Coordinates { Latitude = storedLatitude, Longitude = storedLongitude };
 
 				return null;

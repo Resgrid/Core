@@ -228,6 +228,10 @@ namespace Resgrid.Web.Services.Controllers.v4
 		/// </summary>
 		private async Task PopulateMapCenterAsync(GetConfigResult result, int departmentId)
 		{
+			// Seeded first so an unauthenticated caller or a failed lookup still ships a usable center
+			// instead of 0,0 -- these are the same system defaults the settings service falls back to.
+			result.Data.MapCenterLatitude = 39.14086268299356;
+			result.Data.MapCenterLongitude = -119.7583809782715;
 			result.Data.MapCenterZoomLevel = 9;
 
 			if (departmentId <= 0)

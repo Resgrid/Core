@@ -5382,6 +5382,13 @@
              and marking them UTC would shift them the other way.
              </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Helpers.UtcDateTimeConverter.NormalizeToUtc(System.Object)">
+            <summary>
+            A JsonToken.Date comes back from the reader untouched, so whatever Kind the reader inferred
+            survives. Normalised the same way WriteJson does, otherwise a value only round-trips when
+            the reader happened to see a "Z".
+            </summary>
+        </member>
         <member name="P:Resgrid.Web.Services.Middleware.ResgridAuthenticationEvents.OnAuthenticationFailed">
             <summary>
             Gets or sets the on authentication failed.

@@ -53,7 +53,26 @@ namespace Resgrid.Workers.Framework.Logic
 			_authorizationService = Bootstrapper.GetKernel().Resolve<IAuthorizationService>();
 		}
 
+		/// <summary>
+		/// A rebuild that throws must not take the caller down with it. The all-departments sweep would
+		/// abandon every department after the failing one, and the queue handler has no catch of its
+		/// own -- a single department with unparsable permission data would stall the rest.
+		/// </summary>
 		public async Task<Tuple<bool, string>> Process(SecurityQueueItem item)
+		{
+			try
+			{
+				return await ProcessInternalAsync(item);
+			}
+			catch (Exception ex)
+			{
+				Resgrid.Framework.Logging.LogException(ex);
+
+				return new Tuple<bool, string>(false, ex.Message);
+			}
+		}
+
+		private async Task<Tuple<bool, string>> ProcessInternalAsync(SecurityQueueItem item)
 		{
 			bool success = true;
 			string result = String.Empty;

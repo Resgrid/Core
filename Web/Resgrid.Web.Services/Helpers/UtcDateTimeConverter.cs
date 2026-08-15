@@ -19,8 +19,49 @@ namespace Resgrid.Web.Services.Helpers
 	{
 		public UtcDateTimeConverter()
 		{
-			DateTimeStyles = System.Globalization.DateTimeStyles.AdjustToUniversal;
+			// AssumeUniversal is what makes a zone-less "2026-08-12T13:05:22" read back as the same
+			// instant. Without it AdjustToUniversal assumes *local* and shifts the value by whatever
+			// offset the server happens to run on.
+			DateTimeStyles = System.Globalization.DateTimeStyles.AssumeUniversal |
+							 System.Globalization.DateTimeStyles.AdjustToUniversal;
 			DateTimeFormat = "yyyy'-'MM'-'dd'T'HH':'mm':'ss'.'fff'Z'";
+			Culture = System.Globalization.CultureInfo.InvariantCulture;
+		}
+
+		public override object ReadJson(Newtonsoft.Json.JsonReader reader, Type objectType, object existingValue, Newtonsoft.Json.JsonSerializer serializer)
+		{
+			var underlyingType = Nullable.GetUnderlyingType(objectType) ?? objectType;
+
+			// The base converter reads with ParseExact against DateTimeFormat, so the "...fffZ" *write*
+			// format would reject every inbound string not written exactly that way -- the zone-less
+			// values the repositories produce, whole-second values, anything carrying an offset. Parse
+			// those here instead; the styles above are what make a zone-less value keep its instant.
+			if (reader.TokenType == Newtonsoft.Json.JsonToken.String && underlyingType == typeof(DateTime))
+			{
+				var dateText = reader.Value?.ToString();
+
+				if (!String.IsNullOrWhiteSpace(dateText))
+					return NormalizeToUtc(DateTime.Parse(dateText, Culture, DateTimeStyles));
+			}
+
+			return NormalizeToUtc(base.ReadJson(reader, objectType, existingValue, serializer));
+		}
+
+		/// <summary>
+		/// A JsonToken.Date comes back from the reader untouched, so whatever Kind the reader inferred
+		/// survives. Normalised the same way WriteJson does, otherwise a value only round-trips when
+		/// the reader happened to see a "Z".
+		/// </summary>
+		private static object NormalizeToUtc(object value)
+		{
+			if (value is DateTime dateTime && dateTime.Kind != DateTimeKind.Utc)
+			{
+				return dateTime.Kind == DateTimeKind.Unspecified
+					? DateTime.SpecifyKind(dateTime, DateTimeKind.Utc)
+					: dateTime.ToUniversalTime();
+			}
+
+			return value;
 		}
 
 		public override void WriteJson(Newtonsoft.Json.JsonWriter writer, object value, Newtonsoft.Json.JsonSerializer serializer)

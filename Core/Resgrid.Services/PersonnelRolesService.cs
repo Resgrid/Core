@@ -102,7 +102,13 @@ namespace Resgrid.Services
 				await _personnelRoleUsersRepository.DeleteAsync(user, cancellationToken);
 			}
 
-			SendRoleVisibilityRefresh(users?.FirstOrDefault()?.DepartmentId ?? 0);
+			// A single call can span departments, so every department represented in the list needs a
+			// rebuild -- refreshing only the first user's department leaves the rest on a stale matrix.
+			if (users != null)
+			{
+				foreach (var departmentId in users.Where(x => x != null).Select(x => x.DepartmentId).Distinct())
+					SendRoleVisibilityRefresh(departmentId);
+			}
 
 			return true;
 		}

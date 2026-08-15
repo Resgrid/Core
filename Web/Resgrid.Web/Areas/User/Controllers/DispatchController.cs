@@ -220,9 +220,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return View(model);
 		}
 
-		[HttpPost]
-		[ValidateAntiForgeryToken]
-
 		/// <summary>
 		/// Adds a model error for every field the department's new-call policy requires but the form
 		/// left blank. Keyed to the form fields so the messages land next to the inputs.
@@ -233,6 +230,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (policy == null || policy.IsEmpty)
 				return;
+
+			// The dispatch lists, protocols and linked calls are posted as one form key per selected
+			// item, and are only unpacked further down -- read the same keys here so the policy sees
+			// what was actually submitted instead of flagging every one of them as missing.
+			var keys = collection?.Keys?.ToList() ?? new List<string>();
+
+			bool HasKeyStartingWith(string prefix) => keys.Any(x => x.StartsWith(prefix, StringComparison.OrdinalIgnoreCase));
 
 			var values = new NewCallFieldValues
 			{
@@ -246,7 +250,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 				IncidentId = model.Call?.IncidentNumber,
 				ReferenceId = model.Call?.ReferenceNumber,
 				DestinationPoiId = model.Call?.DestinationPoiId,
-				HasDispatchList = collection != null && collection.Keys.Any(x => x.StartsWith("dispatch", StringComparison.OrdinalIgnoreCase))
+				IndoorMapZoneId = collection?["IndoorMapZoneId"].FirstOrDefault(),
+				// A pending protocol only counts when it is actually ticked, matching how the list is
+				// unpacked below.
+				HasProtocols = HasKeyStartingWith("activeProtocol_") ||
+							   keys.Any(x => x.StartsWith("pendingProtocol_", StringComparison.OrdinalIgnoreCase) && collection[x] == "1"),
+				HasLinkedCall = HasKeyStartingWith("linkedCall_"),
+				DispatchOn = model.ScheduleDispatchDate,
+				// Only the four prefixes the dispatch lists actually post. A bare "dispatch" prefix also
+				// swallows anything else the form happens to name that way.
+				HasDispatchList = HasKeyStartingWith("dispatchUser_") ||
+								  HasKeyStartingWith("dispatchGroup_") ||
+								  HasKeyStartingWith("dispatchUnit_") ||
+								  HasKeyStartingWith("dispatchRole_")
 			};
 
 			foreach (var violation in NewCallFieldPolicyValidator.Validate(policy, values))
@@ -256,6 +272,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			}
 		}
 
+		[HttpPost]
+		[ValidateAntiForgeryToken]
 		[Authorize(Policy = ResgridResources.Call_Create)]
 		public async Task<IActionResult> NewCall(NewCallView model, IFormCollection collection, CancellationToken cancellationToken)
 		{

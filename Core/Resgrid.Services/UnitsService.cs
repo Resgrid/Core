@@ -457,6 +457,7 @@ namespace Resgrid.Services
 				throw new ArgumentException("DepartmentGroupId cannot be null", "departmentGroupId");
 
 			var units = await _unitsRepository.GetAllUnitsByGroupIdAsync(departmentGroupId);
+			var touchedDepartmentIds = new HashSet<int>();
 
 			foreach (var unit in units)
 			{
@@ -464,8 +465,16 @@ namespace Resgrid.Services
 				unit.StationGroup = null;
 
 
-				await _unitsRepository.SaveOrUpdateAsync(unit, cancellationToken);
+				var saved = await _unitsRepository.SaveOrUpdateAsync(unit, cancellationToken);
+
+				if (saved != null)
+					touchedDepartmentIds.Add(saved.DepartmentId);
 			}
+
+			// Un-stationing a unit moves it out of its station group's bucket in both unit matrices;
+			// without a rebuild the group's old viewers keep seeing it.
+			foreach (var departmentId in touchedDepartmentIds)
+				SendUnitVisibilityRefresh(departmentId);
 
 			return true;
 		}

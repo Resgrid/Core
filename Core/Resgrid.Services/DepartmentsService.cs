@@ -253,7 +253,10 @@ namespace Resgrid.Services
 			dm.IsHidden = false;
 			dm.IsDisabled = false;
 
-			return await _departmentMembersRepository.SaveOrUpdateAsync(dm, cancellationToken);
+			var saved = await _departmentMembersRepository.SaveOrUpdateAsync(dm, cancellationToken);
+			SendMembershipVisibilityRefresh(departmentId);
+
+			return saved;
 		}
 
 		public async Task<DepartmentMember> AddExistingUserAsync(int departmentId, string userId, CancellationToken cancellationToken = default(CancellationToken))
@@ -282,7 +285,10 @@ namespace Resgrid.Services
 
 			await _limitsService.InvalidateDepartmentsEntityLimitsCache(departmentId);
 
-			return await _departmentMembersRepository.SaveOrUpdateAsync(dm, cancellationToken);
+			var saved = await _departmentMembersRepository.SaveOrUpdateAsync(dm, cancellationToken);
+			SendMembershipVisibilityRefresh(departmentId);
+
+			return saved;
 		}
 
 		/// <summary>
@@ -365,6 +371,7 @@ namespace Resgrid.Services
 				});
 
 				InvalidateDepartmentUsersInCache(d.DepartmentId);
+				SendMembershipVisibilityRefresh(d.DepartmentId);
 
 				return saved;
 			}

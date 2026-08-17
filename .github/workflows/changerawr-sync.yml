@@ -27,63 +27,76 @@ jobs:
       id: prepare_notes
       env:
         GH_TOKEN: ${{ github.token }}
+        PR_NUMBER: ${{ github.event.pull_request.number }}
+        PR_TITLE: ${{ github.event.pull_request.title }}
       run: |
-        set -eo pipefail
-        
-        # Function to extract release notes from PR body
-        extract_release_notes() {
-          local body="$1"
-          
-          # Remove "Summary by CodeRabbit" section and auto-generated comment line
-          local cleaned_body="$(printf '%s\n' "$body" \
-            | grep -v '<!-- end of auto-generated comment: release notes by coderabbit.ai -->' \
-            | awk '
-              BEGIN { skip=0 }
-              /^## Summary by CodeRabbit/ { skip=1; next }
-              /^## / && skip==1 { skip=0 }
-              skip==0 { print }
-            ')"
-          
-          # Try to extract content under "## Release Notes" heading
-          local notes="$(printf '%s\n' "$cleaned_body" \
-            | awk 'f && /^## /{exit} /^## Release Notes/{f=1; next} f')"
-          
-          # If no specific section found, use the entire cleaned body
-          if [ -z "$notes" ]; then
-            notes="$cleaned_body"
-          fi
-          
-          printf '%s\n' "$notes"
-        }
-        
-        echo "Fetching PR #${{ github.event.pull_request.number }} details..."
-        
+        set -euo pipefail
+
+        echo "Fetching PR #${PR_NUMBER} details..."
+
         # Fetch the PR body using GitHub CLI
-        PR_BODY=$(gh pr view "${{ github.event.pull_request.number }}" --json body --jq '.body' 2>/dev/null || echo "")
-        
-        NOTES=""
-        if [ -n "$PR_BODY" ]; then
-          echo "PR body found, extracting release notes..."
-          NOTES="$(extract_release_notes "$PR_BODY")"
-        fi
-        
-        # Fallback to PR title and recent commits if no body found
-        if [ -z "$NOTES" ] || [ "$NOTES" = "" ]; then
-          echo "No PR body found, using PR title and commits..."
-          NOTES="## ${{ github.event.pull_request.title }}"
+        PR_BODY="$(gh pr view "$PR_NUMBER" --json body --jq '.body' 2>/dev/null || echo "")"
+        export PR_BODY
+
+        # Strip CodeRabbit content and pull out the Release Notes section
+        NOTES="$(python3 <<'PY'
+        import os, re
+
+        body = os.environ.get("PR_BODY", "")
+
+        # 1. Drop the whole CodeRabbit auto-generated block (start marker .. end marker)
+        body = re.sub(
+            r"<!--\s*This is an auto-generated comment: release notes by coderabbit\.ai\s*-->"
+            r".*?"
+            r"<!--\s*end of auto-generated comment: release notes by coderabbit\.ai\s*-->",
+            "",
+            body,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+
+        # 2. Drop any remaining HTML comments (covers unpaired/renamed markers)
+        body = re.sub(r"<!--.*?-->", "", body, flags=re.DOTALL)
+
+        # 3. Drop a leftover "Summary by CodeRabbit" section: heading -> next h1/h2 or EOF
+        body = re.sub(
+            r"^#{1,6}\s*Summary by CodeRabbit\b.*?(?=^#{1,2}\s|\Z)",
+            "",
+            body,
+            flags=re.IGNORECASE | re.MULTILINE | re.DOTALL,
+        )
+
+        # 4. Prefer an explicit "Release Notes" section when the author wrote one
+        m = re.search(
+            r"^#{1,6}\s*Release Notes\s*$\n(?P<notes>.*?)(?=^#{1,2}\s|\Z)",
+            body,
+            flags=re.IGNORECASE | re.MULTILINE | re.DOTALL,
+        )
+        notes = m.group("notes") if m and m.group("notes").strip() else body
+
+        # Collapse runs of blank lines and trim
+        notes = re.sub(r"\n{3,}", "\n\n", notes).strip()
+        print(notes)
+        PY
+        )"
+
+        # Fallback to PR title and recent commits if nothing usable remains
+        if [ -z "${NOTES//[[:space:]]/}" ]; then
+          echo "No usable PR body found, using PR title and commits..."
+          NOTES="## ${PR_TITLE}"
           NOTES="$NOTES"$'\n\n'"$(git log -n 5 --pretty=format:'- %s')"
         fi
-        
-        # Save to file and environment
-        echo "$NOTES" > release_notes.txt
-        
-        # For multiline output, use delimiter
+
+        # Save to file and step output
+        printf '%s\n' "$NOTES" > release_notes.txt
+
+        # For multiline output, use a delimiter that cannot appear in the content
+        DELIM="RELEASE_NOTES_EOF_$(head -c 16 /dev/urandom | od -An -tx1 | tr -d ' \n')"
         {
-          echo 'RELEASE_NOTES<<EOF'
-          echo "$NOTES"
-          echo 'EOF'
+          echo "RELEASE_NOTES<<${DELIM}"
+          printf '%s\n' "$NOTES"
+          echo "${DELIM}"
         } >> "$GITHUB_OUTPUT"
-        
+
         echo "Release notes prepared:"
         cat release_notes.txt
     

@@ -17,7 +17,7 @@ namespace Resgrid.Repositories.DataRepository.Queries.DistributionLists
 		{
 			var query = _sqlConfiguration.SelectDListMembersByUserQuery
 				.ReplaceQueryParameters(_sqlConfiguration, _sqlConfiguration.SchemaName,
-					_sqlConfiguration.DistributionListsTable,
+					_sqlConfiguration.DistributionListMembersTable,
 					_sqlConfiguration.ParameterNotation,
 					new string[] { "%USERID%" },
 					new string[] { "UserId" });

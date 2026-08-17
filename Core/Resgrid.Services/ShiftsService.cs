@@ -106,6 +106,19 @@ namespace Resgrid.Services
 			return await _shiftsRepository.SaveOrUpdateAsync(shift, cancellationToken);
 		}
 
+		public async Task<Shift> UpdateShiftStartDayAsync(Shift shift, DateTime startDay, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (shift == null)
+				return null;
+
+			shift.StartDay = startDay;
+
+			// firstLevelOnly: Days, Groups, Personnel and Admins are each managed by their own
+			// methods. A cascading save would rewrite those child rows from whatever happens to be
+			// loaded on this instance, which is not what a StartDay update should touch.
+			return await _shiftsRepository.SaveOrUpdateAsync(shift, cancellationToken, true);
+		}
+
 		public async Task<List<ShiftGroup>> GetShiftGroupsForShift(int shiftId)
 		{
 			var groups = await _shiftGroupsRepository.GetShiftGroupsByShiftIdAsync(shiftId);
@@ -143,11 +156,19 @@ namespace Resgrid.Services
 
 		public async Task<bool> UpdateShiftDatesAsync(Shift shift, List<ShiftDay> days, CancellationToken cancellationToken = default(CancellationToken))
 		{
+			if (shift == null)
+				return false;
+
+			// A shift with no days yet deserializes with Days null rather than an empty collection,
+			// which is the normal state the first time days are added to a shift.
+			var existingDays = shift.Days ?? new List<ShiftDay>();
+			days = days ?? new List<ShiftDay>();
+
 			// Adding Days
 			foreach (var day in days)
 			{
 				// Don't re-add days already that are apart of the shift
-				if (!shift.Days.Any(x => x.Day.Day == day.Day.Day && x.Day.Month == day.Day.Month && x.Day.Year == day.Day.Year))
+				if (!existingDays.Any(x => x.Day.Day == day.Day.Day && x.Day.Month == day.Day.Month && x.Day.Year == day.Day.Year))
 				{
 					day.ShiftId = shift.ShiftId;
 					await _shiftDaysRepository.SaveOrUpdateAsync(day, cancellationToken);
@@ -155,7 +176,7 @@ namespace Resgrid.Services
 			}
 
 			// Removing Days
-			var daysToRemove = from sd in shift.Days
+			var daysToRemove = from sd in existingDays
 							   let day = days.FirstOrDefault(x => x.Day.Day == sd.Day.Day && x.Day.Month == sd.Day.Month && x.Day.Year == sd.Day.Year)
 							   where day == null
 							   select sd;
@@ -210,6 +231,9 @@ namespace Resgrid.Services
 		{
 			var trade = await GetShiftTradeByIdAsync(shiftTradeId);
 
+			if (trade?.Users == null)
+				return false;
+
 			var userTradeRequest = trade.Users.FirstOrDefault(x => x.UserId == userId);
 
 			if (userTradeRequest != null)
@@ -226,6 +250,9 @@ namespace Resgrid.Services
 		public async Task<bool> ProposeShiftDaysForTradeAsync(int shiftTradeId, string userId, string reason, List<int> signups, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			var trade = await GetShiftTradeByIdAsync(shiftTradeId);
+
+			if (trade?.Users == null)
+				return false;
 
 			var userTradeRequest = trade.Users.FirstOrDefault(x => x.UserId == userId);
 
@@ -709,6 +736,12 @@ namespace Resgrid.Services
 		public async Task<ShiftSignupTrade> GetShiftTradeByIdAsync(int shiftTradeId)
 		{
 			var trade = await _shiftSignupTradeRepository.GetByIdAsync(shiftTradeId);
+
+			// Without this the method throws on an unknown id instead of returning null, so callers
+			// have no way to handle a missing trade.
+			if (trade == null)
+				return null;
+
 			trade.Users = new List<ShiftSignupTradeUser>(await _shiftSignupTradeUserRepository.GetShiftSignupTradeUsersByTradeIdAsync(shiftTradeId));
 
 			return trade;

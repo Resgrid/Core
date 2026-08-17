@@ -182,9 +182,12 @@ export default function MapboxMapView({
   const layerIdsRef = useRef<string[]>([]);
   const sourceIdsRef = useRef<string[]>([]);
   const [styleReady, setStyleReady] = useState(false);
+  const [initError, setInitError] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
+
+    setInitError(null);
 
     const initializeMapAsync = async () => {
       if (!mapContainerRef.current) {
@@ -245,9 +248,25 @@ export default function MapboxMapView({
 
     let cleanupMap: (() => void) | undefined;
 
-    void initializeMapAsync().then((cleanup) => {
-      cleanupMap = cleanup;
-    });
+    void initializeMapAsync()
+      .then((cleanup) => {
+        cleanupMap = cleanup;
+      })
+      .catch((mapInitError: unknown) => {
+        // mapbox-gl is the largest chunk in the bundle, so its dynamic import is the one most
+        // likely to be in flight when the user navigates away or when a deploy rotates the
+        // hashed chunk names. Without this catch the rejection escapes as an unhandled promise
+        // rejection with no stack and no URL instead of a visible map error.
+        console.error('Failed to initialize the Mapbox map', mapInitError);
+
+        if (!cancelled) {
+          setInitError(
+            mapInitError instanceof Error && mapInitError.message.trim().length > 0
+              ? mapInitError.message
+              : 'Unable to load the map.',
+          );
+        }
+      });
 
     return () => {
       cancelled = true;
@@ -365,6 +384,10 @@ export default function MapboxMapView({
       layerIdsRef.current.push(...layerArtifacts.layerIds);
     }
   }, [layerVisibility, layers, styleReady]);
+
+  if (initError) {
+    return <div className="rg-error rg-map__message">{initError}</div>;
+  }
 
   return <div ref={mapContainerRef} className="rg-map__canvas" />;
 }

@@ -5,6 +5,7 @@ import 'leaflet/dist/leaflet.css';
 import {
   getLayerColor,
   getMarkerIconUrl,
+  getPoiIconClass,
   getPoiMarkerShapePath,
   isPoiMarker,
   type MapMarkerInfo,
@@ -17,6 +18,7 @@ interface MarkerState {
   longitude: number;
   title: string;
   imagePath: string;
+  poiImage: string;
   markerShape: string;
   color: string;
   markerType: number;
@@ -26,9 +28,7 @@ interface MarkerState {
 
 function createMarkerIcon(marker: MapMarkerInfo): L.Icon | L.DivIcon {
   if (isPoiMarker(marker)) {
-    const iconClass = typeof marker.ImagePath === 'string' && marker.ImagePath.length > 0
-      ? marker.ImagePath
-      : 'map-icon-map-pin';
+    const iconClass = getPoiIconClass(marker);
     const color = marker.Color || '#2563eb';
 
     return L.divIcon({
@@ -175,6 +175,7 @@ export default function LeafletMapView({
         !existingMarkerState ||
           existingMarkerState.title !== markerInfo.Title ||
           existingMarkerState.imagePath !== markerInfo.ImagePath ||
+          existingMarkerState.poiImage !== (markerInfo.PoiImage ?? '') ||
           existingMarkerState.markerShape !== (markerInfo.Marker ?? '') ||
           existingMarkerState.color !== (markerInfo.Color ?? '') ||
           existingMarkerState.markerType !== markerInfo.Type ||
@@ -193,6 +194,7 @@ export default function LeafletMapView({
           longitude: markerInfo.Longitude,
           title: markerInfo.Title,
           imagePath: markerInfo.ImagePath,
+          poiImage: markerInfo.PoiImage ?? '',
           markerShape: markerInfo.Marker ?? '',
           color: markerInfo.Color ?? '',
           markerType: markerInfo.Type,

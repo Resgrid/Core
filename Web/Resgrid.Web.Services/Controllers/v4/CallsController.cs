@@ -672,8 +672,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!string.IsNullOrWhiteSpace(newCallInput.What3Words))
 				call.W3W = newCallInput.What3Words;
 
-			if (!string.IsNullOrWhiteSpace(newCallInput.CallFormData))
-				call.CallFormData = newCallInput.CallFormData;
+			// Forms module is disabled: CallFormData is read-only now. The input property stays on the
+			// contract so older clients keep deserializing, but anything they send is dropped.
 
 			if (!string.IsNullOrWhiteSpace(newCallInput.IndoorMapZoneId))
 				call.IndoorMapZoneId = newCallInput.IndoorMapZoneId;
@@ -992,8 +992,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 			if (!string.IsNullOrWhiteSpace(editCallInput.What3Words))
 				call.W3W = editCallInput.What3Words;
 
-			if (!string.IsNullOrWhiteSpace(editCallInput.CallFormData))
-				call.CallFormData = editCallInput.CallFormData;
+			// Forms module is disabled: ignoring the posted value leaves whatever form data the call
+			// already carries intact, so an edit from an older client can't wipe or replace it.
 
 			if (editCallInput.DispatchOn.HasValue)
 			{

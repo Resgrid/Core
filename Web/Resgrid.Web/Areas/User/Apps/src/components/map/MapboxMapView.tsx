@@ -3,6 +3,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import {
   getLayerColor,
   getMarkerIconUrl,
+  getPoiIconClass,
   getPoiMarkerShapePath,
   isPoiMarker,
   type MapMarkerInfo,
@@ -19,6 +20,7 @@ interface MarkerState {
   longitude: number;
   title: string;
   imagePath: string;
+  poiImage: string;
   markerShape: string;
   color: string;
   markerType: number;
@@ -44,7 +46,7 @@ function createMarkerElement(markerInfo: MapMarkerInfo, hideLabels: boolean): HT
     markerShape.appendChild(path);
 
     const icon = document.createElement('span');
-    icon.className = `map-icon ${markerInfo.ImagePath || 'map-icon-map-pin'} rg-map__poi-marker-icon`;
+    icon.className = `map-icon ${getPoiIconClass(markerInfo)} rg-map__poi-marker-icon`;
     icon.setAttribute('aria-hidden', 'true');
 
     wrapper.appendChild(markerShape);
@@ -327,6 +329,7 @@ export default function MapboxMapView({
         !existingMarkerState ||
           existingMarkerState.title !== markerInfo.Title ||
           existingMarkerState.imagePath !== markerInfo.ImagePath ||
+          existingMarkerState.poiImage !== (markerInfo.PoiImage ?? '') ||
           existingMarkerState.markerShape !== (markerInfo.Marker ?? '') ||
           existingMarkerState.color !== (markerInfo.Color ?? '') ||
           existingMarkerState.markerType !== markerInfo.Type ||
@@ -353,6 +356,7 @@ export default function MapboxMapView({
           longitude: markerInfo.Longitude,
           title: markerInfo.Title,
           imagePath: markerInfo.ImagePath,
+          poiImage: markerInfo.PoiImage ?? '',
           markerShape: markerInfo.Marker ?? '',
           color: markerInfo.Color ?? '',
           markerType: markerInfo.Type,

@@ -650,7 +650,7 @@
     <script src="@Url.Content("~/lib/formBuilder/dist/form-render.min.js")" type="text/javascript"></script>
 
     <script type="text/javascript">
-        var newCallFormData = '@Html.Raw(Model.NewCallFormData)';
+        var newCallFormData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.NewCallFormData ?? string.Empty, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
         var osmTileUrl = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.TileUrl, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
         var osmTileAttribution = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(mapConfig.Attribution, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
         var nominatimUrl = '@Resgrid.Config.MappingConfig.NominatimUrl';
@@ -662,7 +662,6 @@
         <script type="text/javascript">
             var centerLat = @(Model.CenterCoordinates.Latitude.Value);
             var centerLng = @(Model.CenterCoordinates.Longitude.Value);
-            var newCallFormData = '@Html.Raw(Model.NewCallFormData)';
         </script>
     }
 

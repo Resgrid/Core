@@ -67,10 +67,15 @@
 {
   <script src="@Url.Content("~/lib/formBuilder/dist/form-render.min.js")" type="text/javascript"></script>
   <script>
+	// Form.Data is formBuilder JSON and carries its own backslash escapes ("6\" Hose"). Dropping it
+	// into a JS string literal makes the JS parser eat those escapes, so formRender's JSON.parse
+	// gets malformed JSON. Serializing produces a properly escaped literal instead.
+	var formTemplateData = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Form.Data ?? string.Empty, new Newtonsoft.Json.JsonSerializerSettings { StringEscapeHandling = Newtonsoft.Json.StringEscapeHandling.EscapeHtml }));
+
 	jQuery(function ($) {
 	  $('#fb-template').formRender({
         dataType: 'json',
-		formData: '@Html.Raw(Model.Form.Data)'
+		formData: formTemplateData
 	  });
 	});
   </script>

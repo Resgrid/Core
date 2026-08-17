@@ -16,6 +16,7 @@ using System.Linq;
 namespace Resgrid.Model
 {
 	//[JsonObject]
+	[BsonIgnoreExtraElements]
 	public class MapLayerData //: BsonDocument
 	{
 		[BsonElement("type")]

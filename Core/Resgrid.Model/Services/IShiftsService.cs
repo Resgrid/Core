@@ -30,6 +30,13 @@ namespace Resgrid.Model.Services
 		/// <returns>Task&lt;Shift&gt;.</returns>
 		Task<Shift> SaveShiftAsync(Shift shift, CancellationToken cancellationToken = default(CancellationToken));
 
+		/// <summary>Updates just the shift's start day, without cascading into its child collections.</summary>
+		/// <param name="shift">The shift.</param>
+		/// <param name="startDay">The day the shift starts on.</param>
+		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <returns>Task&lt;Shift&gt;.</returns>
+		Task<Shift> UpdateShiftStartDayAsync(Shift shift, DateTime startDay, CancellationToken cancellationToken = default(CancellationToken));
+
 
 		/// <summary>Updates the shift personnel.</summary>
 		/// <param name="shift">The shift.</param>

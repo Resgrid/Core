@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 namespace Resgrid.Model
 {
 	//[JsonObject]
+	[BsonIgnoreExtraElements]
 	public class MapLayerDataProperties
 	{
 		[BsonElement("shape")]

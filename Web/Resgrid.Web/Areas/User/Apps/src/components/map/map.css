@@ -112,6 +112,14 @@
   background: rgba(255, 255, 255, 0.72);
 }
 
+.rg-map__overlay--message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  text-align: center;
+}
+
 .rg-map__footer {
   display: flex;
   justify-content: flex-end;

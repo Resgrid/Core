@@ -142,17 +142,43 @@ jobs:
           });
           const pr = prs.data.find(p => p.merged_at);
           const fs = require('fs');
-          if (pr) {
-            const body = (pr.body || '')
-              .replace(/##\s*Summary by CodeRabbit[\s\S]*/i, '')
+
+          // Removes a leftover "Summary by CodeRabbit" section that survived
+          // marker stripping. Ends at the next heading or horizontal rule so a
+          // summary placed above the author's description cannot eat the body.
+          const stripSummarySection = (text) => {
+            const out = [];
+            let skip = false;
+            for (const line of text.split('\n')) {
+              if (/^#{1,6}\s*Summary by CodeRabbit\b/i.test(line)) { skip = true; continue; }
+              if (skip && (/^#{1,6}\s/.test(line) || /^-{3,}\s*$/.test(line))) skip = false;
+              if (!skip) out.push(line);
+            }
+            return out.join('\n');
+          };
+
+          const cleanBody = (raw) => {
+            let text = raw || '';
+            // 1. Drop the whole CodeRabbit auto-generated block (start marker .. end marker)
+            text = text.replace(
+              /<!--\s*This is an auto-generated comment: release notes by coderabbit\.ai\s*-->[\s\S]*?<!--\s*end of auto-generated comment: release notes by coderabbit\.ai\s*-->/gi,
+              ''
+            );
+            // 2. Drop any remaining HTML comments (covers unpaired/renamed markers)
+            text = text.replace(/<!--[\s\S]*?-->/g, '');
+            // 3. Drop a leftover CodeRabbit summary section
+            text = stripSummarySection(text);
+            // 4. Existing wording normalisation
+            text = text
               .replace(/^(#+\s*)(Pull Request Description|PR Description)\s*$/gim, '$1Summary')
               .replace(/Pull Request Description|PR Description/gi, 'Summary')
-              .replace(/\bPR\b/g, 'Release')
-              .trim() || 'No release notes provided.';
-            fs.writeFileSync('release_notes.md', body);
-          } else {
-            fs.writeFileSync('release_notes.md', 'No release notes provided.');
-          }
+              .replace(/\bPR\b/g, 'Release');
+            // 5. Collapse blank-line runs and trim
+            return text.replace(/\n{3,}/g, '\n\n').trim();
+          };
+
+          const body = pr ? cleanBody(pr.body) : '';
+          fs.writeFileSync('release_notes.md', body || 'No release notes provided.');
 
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v2

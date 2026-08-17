@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -7,7 +8,6 @@ using Microsoft.AspNetCore.SignalR;
 using Resgrid.Config;
 using Resgrid.Model;
 using Resgrid.Model.Services;
-using Resgrid.Web.ServicesCore.Helpers;
 
 namespace Resgrid.Web.Eventing.Hubs
 {
@@ -50,10 +50,25 @@ namespace Resgrid.Web.Eventing.Hubs
 			_chatPresenceService = chatPresenceService;
 		}
 
+		// ClaimsAuthorizationHelper reads IHttpContextAccessor.HttpContext, which is not flowed into
+		// hub invocations on every transport — it comes back null and NREs. HubCallerContext.User is
+		// the connection's authenticated principal and is the supported claim source inside a hub.
+		private int GetDepartmentId()
+		{
+			var claim = Context.User?.FindFirst(ClaimTypes.PrimaryGroupSid);
+
+			return claim != null && int.TryParse(claim.Value, out var departmentId) ? departmentId : 0;
+		}
+
+		private string GetUserId()
+		{
+			return Context.User?.FindFirst(ClaimTypes.PrimarySid)?.Value ?? String.Empty;
+		}
+
 		public override async Task OnConnectedAsync()
 		{
-			var departmentId = ClaimsAuthorizationHelper.GetDepartmentId();
-			var userId = ClaimsAuthorizationHelper.GetUserId();
+			var departmentId = GetDepartmentId();
+			var userId = GetUserId();
 
 			if (departmentId > 0 && !string.IsNullOrWhiteSpace(userId))
 			{
@@ -132,8 +147,8 @@ namespace Resgrid.Web.Eventing.Hubs
 
 		public async Task Connect()
 		{
-			var departmentId = ClaimsAuthorizationHelper.GetDepartmentId();
-			var userId = ClaimsAuthorizationHelper.GetUserId();
+			var departmentId = GetDepartmentId();
+			var userId = GetUserId();
 
 			if (departmentId <= 0 || string.IsNullOrWhiteSpace(userId))
 				return;
@@ -240,8 +255,8 @@ namespace Resgrid.Web.Eventing.Hubs
 		/// </summary>
 		private async Task<(ChatChannel Channel, string UserId)?> ResolveAccessibleChannelAsync(string channelId, int? asUnitId)
 		{
-			var departmentId = ClaimsAuthorizationHelper.GetDepartmentId();
-			var userId = ClaimsAuthorizationHelper.GetUserId();
+			var departmentId = GetDepartmentId();
+			var userId = GetUserId();
 
 			if (departmentId <= 0 || string.IsNullOrWhiteSpace(userId))
 				return null;
@@ -272,8 +287,8 @@ namespace Resgrid.Web.Eventing.Hubs
 
 		public async Task Heartbeat()
 		{
-			var departmentId = ClaimsAuthorizationHelper.GetDepartmentId();
-			var userId = ClaimsAuthorizationHelper.GetUserId();
+			var departmentId = GetDepartmentId();
+			var userId = GetUserId();
 
 			if (departmentId > 0 && !string.IsNullOrWhiteSpace(userId))
 				await _chatPresenceService.TouchAsync(departmentId, userId);
@@ -286,8 +301,8 @@ namespace Resgrid.Web.Eventing.Hubs
 		/// </summary>
 		public async Task SetActiveChannel(string channelId, int? asUnitId = null)
 		{
-			var departmentId = ClaimsAuthorizationHelper.GetDepartmentId();
-			var userId = ClaimsAuthorizationHelper.GetUserId();
+			var departmentId = GetDepartmentId();
+			var userId = GetUserId();
 
 			if (departmentId <= 0 || string.IsNullOrWhiteSpace(userId))
 				return;

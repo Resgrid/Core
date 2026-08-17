@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
@@ -8,7 +9,6 @@ using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 using Resgrid.Services;
 using Resgrid.Web.Eventing.Hubs.Models;
-using Resgrid.Web.ServicesCore.Helpers;
 
 namespace Resgrid.Web.Eventing.Hubs
 {
@@ -39,9 +39,19 @@ namespace Resgrid.Web.Eventing.Hubs
 			_departmentsService = departmentsService;
 		}
 
+		// ClaimsAuthorizationHelper reads IHttpContextAccessor.HttpContext, which is not flowed into
+		// hub invocations on every transport — it comes back null and NREs. HubCallerContext.User is
+		// the connection's authenticated principal and is the supported claim source inside a hub.
+		private int GetDepartmentId()
+		{
+			var claim = Context.User?.FindFirst(ClaimTypes.PrimaryGroupSid);
+
+			return claim != null && int.TryParse(claim.Value, out var departmentId) ? departmentId : 0;
+		}
+
 		public async Task GeolocationConnect()
 		{
-			var departmentId = ClaimsAuthorizationHelper.GetDepartmentId();
+			var departmentId = GetDepartmentId();
 
 			if (departmentId > 0)
 			{
@@ -86,7 +96,7 @@ namespace Resgrid.Web.Eventing.Hubs
 
 			if (unit != null)
 			{
-				if (unit.DepartmentId != ClaimsAuthorizationHelper.GetDepartmentId())
+				if (unit.DepartmentId != GetDepartmentId())
 					return;
 				
 				await Groups.AddToGroupAsync(Context.ConnectionId, $"UnitLocation_{unitId}");
@@ -99,7 +109,7 @@ namespace Resgrid.Web.Eventing.Hubs
 		{
 			var memberships = await _departmentsService.GetAllDepartmentsForUserAsync(userId);
 
-			if (memberships != null && memberships.Any(x => x.DepartmentId == ClaimsAuthorizationHelper.GetDepartmentId()))
+			if (memberships != null && memberships.Any(x => x.DepartmentId == GetDepartmentId()))
 			{
 				await Groups.AddToGroupAsync(Context.ConnectionId, $"PersonLocation_{userId}");
 

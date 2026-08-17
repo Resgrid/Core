@@ -221,6 +221,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpPost("CreateDirectMessage")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status403Forbidden)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
 		public async Task<ActionResult<ChatChannelCreatedResult>> CreateDirectMessage([FromBody] CreateDirectMessageInput input, CancellationToken cancellationToken)
 		{
@@ -237,7 +238,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return BadRequest();
 
 			var result = new ChatChannelCreatedResult();
-			var channel = await _chatChannelService.GetOrCreateDirectMessageChannelAsync(DepartmentId, UserId, input.TargetUserId, input.TargetUnitId, cancellationToken);
+			ChatChannel channel;
+
+			try
+			{
+				channel = await _chatChannelService.GetOrCreateDirectMessageChannelAsync(DepartmentId, UserId, input.TargetUserId, input.TargetUnitId, cancellationToken);
+			}
+			catch (UnauthorizedAccessException)
+			{
+				// The target user or unit is outside the caller's department. That is a denial, not a
+				// server fault, and the rest of this controller answers it with a 403.
+				return StatusCode(StatusCodes.Status403Forbidden);
+			}
 
 			if (channel != null)
 			{

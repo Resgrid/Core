@@ -6,6 +6,26 @@
   ViewBag.Title = "Resgrid | " + localizer["ViewShiftHeader"];
   Layout = "~/Areas/User/Views/Shared/_UserLayout.cshtml";
 }
+@functions {
+  // Signups outlive department membership, so a signup can name someone who is no longer in
+  // UserProfiles. Indexing straight into the dictionary turns that into a 500 on the page.
+  string GetSignupPersonName(string userId)
+  {
+    return Model.UserProfiles != null && Model.UserProfiles.TryGetValue(userId, out var profile)
+      ? profile.FullName.AsFirstNameLastName
+      : commonLocalizer["Unknown"].Value;
+  }
+
+  // PersonnelRoles only contains members who have at least one role assigned, and an entry can
+  // hold nulls when a role row points at a role that no longer exists.
+  string GetSignupRoleNames(string userId)
+  {
+    if (Model.PersonnelRoles == null || !Model.PersonnelRoles.TryGetValue(userId, out var roles) || roles == null)
+      return String.Empty;
+
+    return String.Join(", ", roles.Where(x => x != null).Select(x => x.Name));
+  }
+}
 @section Styles
 {
 
@@ -152,11 +172,9 @@
                       <tbody>
                         @foreach (var signup in Model.Signups.Where(x => x.DepartmentGroupId == group.DepartmentGroupId))
 						{
-						  var person = Model.UserProfiles[signup.UserId];
-						  var roles = Model.PersonnelRoles[signup.UserId];
                           <tr>
-                            <td>@person.FullName.AsFirstNameLastName</td>
-                            <td>@string.Join(", ", roles.Select(x => x.Name))</td>
+                            <td>@GetSignupPersonName(signup.UserId)</td>
+                            <td>@GetSignupRoleNames(signup.UserId)</td>
                           </tr>
 						}
                       </tbody>
@@ -171,24 +189,20 @@
                       <tbody>
                         @foreach (var signup in Model.Signups.Where(x => x.DepartmentGroupId == group.DepartmentGroupId && (x.Trade != null && x.Trade.IsTradeComplete())))
 						{
-						  var person = Model.UserProfiles[signup.UserId];
-						  UserProfile person2;
+						  var personName = GetSignupPersonName(signup.UserId);
 						  string message = String.Empty;
 
 						  if (!String.IsNullOrWhiteSpace(signup.Trade.UserId))
 						  {
-							person2 = Model.UserProfiles[signup.Trade.UserId];
-							message = String.Format(localizer["TradedWithFormat"].Value, person.FullName.AsFirstNameLastName, person2.FullName.AsFirstNameLastName);
+							message = String.Format(localizer["TradedWithFormat"].Value, personName, GetSignupPersonName(signup.Trade.UserId));
 						  }
-						  else if (signup.GetTradeType() == ShiftTradeTypes.Source)
+						  else if (signup.GetTradeType() == ShiftTradeTypes.Source && signup.Trade.TargetShiftSignup != null)
 						  {
-							person2 = Model.UserProfiles[signup.Trade.TargetShiftSignup.UserId];
-							message = String.Format(localizer["TradedWithFormat"].Value, person.FullName.AsFirstNameLastName, person2.FullName.AsFirstNameLastName);
+							message = String.Format(localizer["TradedWithFormat"].Value, personName, GetSignupPersonName(signup.Trade.TargetShiftSignup.UserId));
 						  }
-						  else if (signup.GetTradeType() == ShiftTradeTypes.Target)
+						  else if (signup.GetTradeType() == ShiftTradeTypes.Target && signup.Trade.SourceShiftSignup != null)
 						  {
-							person2 = Model.UserProfiles[signup.Trade.SourceShiftSignup.UserId];
-							message = String.Format(localizer["TradedWithFormat"].Value, person2.FullName.AsFirstNameLastName, person.FullName.AsFirstNameLastName);
+							message = String.Format(localizer["TradedWithFormat"].Value, GetSignupPersonName(signup.Trade.SourceShiftSignup.UserId), personName);
 						  }
 
                           <tr>

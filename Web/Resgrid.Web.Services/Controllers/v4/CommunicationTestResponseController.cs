@@ -8,6 +8,7 @@ using Resgrid.Web.Services.Twilio;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Twilio.AspNet.Core;
 using Twilio.TwiML;
 
 namespace Resgrid.Web.Services.Controllers.v4
@@ -114,11 +115,14 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		/// <summary>
-		/// Voice webhook endpoint - receives DTMF keypress callbacks
+		/// Voice webhook endpoint - receives DTMF keypress callbacks. Signature validated: this is the
+		/// one endpoint on the voice path that writes, so possession of a response token alone must not
+		/// be enough to mark a member as reached on a readiness report.
 		/// </summary>
 		[HttpPost("VoiceWebhook")]
 		[HttpGet("VoiceWebhook")]
 		[AllowAnonymous]
+		[ValidateRequest]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		public async Task<ContentResult> VoiceWebhook(string token, string Digits)
 		{

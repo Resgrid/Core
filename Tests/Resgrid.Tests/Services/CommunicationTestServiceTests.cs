@@ -6,12 +6,14 @@ using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
 using NUnit.Framework;
+using Resgrid.Config;
 using Resgrid.Framework.Testing;
 using Resgrid.Model;
 using Resgrid.Model.Messages;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 using Resgrid.Services;
 
@@ -36,6 +38,7 @@ namespace Resgrid.Tests.Services
 			protected Mock<IOutboundVoiceProvider> _outboundVoiceProviderMock;
 			protected Mock<IPhoneNumberProcesserProvider> _phoneNumberProcesserMock;
 			protected Mock<IQueueService> _queueServiceMock;
+			protected Mock<IUnitOfWork> _unitOfWorkMock;
 
 			protected Dictionary<Guid, CommunicationTestRun> _savedRuns;
 			protected List<CommunicationTestResult> _savedResults;
@@ -113,6 +116,7 @@ namespace Resgrid.Tests.Services
 				_outboundVoiceProviderMock = new Mock<IOutboundVoiceProvider>();
 				_phoneNumberProcesserMock = new Mock<IPhoneNumberProcesserProvider>();
 				_queueServiceMock = new Mock<IQueueService>();
+				_unitOfWorkMock = new Mock<IUnitOfWork>();
 
 				_savedRuns = new Dictionary<Guid, CommunicationTestRun>();
 				_savedResults = new List<CommunicationTestResult>();
@@ -138,7 +142,8 @@ namespace Resgrid.Tests.Services
 					_pushServiceMock.Object,
 					_outboundVoiceProviderMock.Object,
 					_phoneNumberProcesserMock.Object,
-					_queueServiceMock.Object
+					_queueServiceMock.Object,
+					_unitOfWorkMock.Object
 				);
 			}
 		}
@@ -404,6 +409,90 @@ namespace Resgrid.Tests.Services
 		}
 
 		[TestFixture]
+		public class when_saving_a_test_with_its_targets : with_the_communication_test_service
+		{
+			[Test]
+			public async Task should_commit_the_test_and_its_targets_together()
+			{
+				var testId = Guid.NewGuid();
+				var test = new CommunicationTest { CommunicationTestId = testId, DepartmentId = 1, Name = "Monthly Check" };
+
+				_communicationTestRepoMock
+					.Setup(x => x.SaveOrUpdateAsync(It.IsAny<CommunicationTest>(), It.IsAny<CancellationToken>(), true))
+					.ReturnsAsync((CommunicationTest t, CancellationToken c, bool f) => t);
+				_communicationTestTargetRepoMock
+					.Setup(x => x.SaveOrUpdateAsync(It.IsAny<CommunicationTestTarget>(), It.IsAny<CancellationToken>(), true))
+					.ReturnsAsync((CommunicationTestTarget t, CancellationToken c, bool f) => t);
+
+				var saved = await _communicationTestService.SaveTestWithTargetsAsync(test, 1, new List<CommunicationTestTarget>
+				{
+					new CommunicationTestTarget { TargetType = (int)CommunicationTestTargetType.Group, TargetId = "7" }
+				});
+
+				saved.Should().NotBeNull();
+				_unitOfWorkMock.Verify(x => x.CreateOrGetConnection(), Times.Once);
+				_unitOfWorkMock.Verify(x => x.CommitChanges(), Times.Once);
+				_unitOfWorkMock.Verify(x => x.DiscardChanges(), Times.Never);
+			}
+
+			[Test]
+			public async Task should_roll_back_the_test_when_replacing_its_targets_fails()
+			{
+				var testId = Guid.NewGuid();
+				var test = new CommunicationTest { CommunicationTestId = testId, DepartmentId = 1, Name = "Monthly Check" };
+
+				_communicationTestRepoMock
+					.Setup(x => x.SaveOrUpdateAsync(It.IsAny<CommunicationTest>(), It.IsAny<CancellationToken>(), true))
+					.ReturnsAsync((CommunicationTest t, CancellationToken c, bool f) => t);
+
+				// Targets are cleared before the replacements are written. Without the rollback the test
+				// would be left with no targets at all, which resolves to the whole department.
+				_communicationTestTargetRepoMock
+					.Setup(x => x.SaveOrUpdateAsync(It.IsAny<CommunicationTestTarget>(), It.IsAny<CancellationToken>(), true))
+					.ThrowsAsync(new InvalidOperationException("insert failed"));
+
+				var act = async () => await _communicationTestService.SaveTestWithTargetsAsync(test, 1, new List<CommunicationTestTarget>
+				{
+					new CommunicationTestTarget { TargetType = (int)CommunicationTestTargetType.Group, TargetId = "7" }
+				});
+
+				await act.Should().ThrowAsync<InvalidOperationException>();
+
+				_unitOfWorkMock.Verify(x => x.DiscardChanges(), Times.Once);
+				_unitOfWorkMock.Verify(x => x.CommitChanges(), Times.Never);
+			}
+
+			[Test]
+			public async Task should_stamp_the_saved_test_id_onto_targets_built_before_it_had_one()
+			{
+				var assignedId = Guid.NewGuid();
+				var test = new CommunicationTest { DepartmentId = 1, Name = "Monthly Check" };
+
+				_communicationTestRepoMock
+					.Setup(x => x.SaveOrUpdateAsync(It.IsAny<CommunicationTest>(), It.IsAny<CancellationToken>(), true))
+					.ReturnsAsync((CommunicationTest t, CancellationToken c, bool f) =>
+					{
+						t.CommunicationTestId = assignedId;
+						return t;
+					});
+
+				var written = new List<CommunicationTestTarget>();
+				_communicationTestTargetRepoMock
+					.Setup(x => x.SaveOrUpdateAsync(It.IsAny<CommunicationTestTarget>(), It.IsAny<CancellationToken>(), true))
+					.Callback<CommunicationTestTarget, CancellationToken, bool>((t, c, f) => written.Add(t))
+					.ReturnsAsync((CommunicationTestTarget t, CancellationToken c, bool f) => t);
+
+				// A new test has no id until it is saved, so the caller builds targets carrying Guid.Empty.
+				await _communicationTestService.SaveTestWithTargetsAsync(test, 1, new List<CommunicationTestTarget>
+				{
+					new CommunicationTestTarget { CommunicationTestId = Guid.Empty, TargetType = (int)CommunicationTestTargetType.User, TargetId = TestData.Users.TestUser1Id }
+				});
+
+				written.Should().OnlyContain(t => t.CommunicationTestId == assignedId);
+			}
+		}
+
+		[TestFixture]
 		public class when_targeting_a_test : with_the_communication_test_service
 		{
 			[Test]
@@ -524,6 +613,133 @@ namespace Resgrid.Tests.Services
 
 				run.TotalUsersTested.Should().Be(1);
 			}
+
+			[Test]
+			public async Task should_test_the_audience_the_run_started_with_when_targets_change_afterwards()
+			{
+				var testId = Guid.NewGuid();
+				_communicationTestRepoMock.Setup(x => x.GetByIdAsync(testId)).ReturnsAsync(new CommunicationTest
+				{
+					CommunicationTestId = testId,
+					DepartmentId = 1,
+					TestEmail = true,
+					ResponseWindowMinutes = 60,
+					Active = true
+				});
+
+				_communicationTestTargetRepoMock.Setup(x => x.GetTargetsByTestIdAsync(testId)).ReturnsAsync(new List<CommunicationTestTarget>
+				{
+					new CommunicationTestTarget { CommunicationTestId = testId, DepartmentId = 1, TargetType = (int)CommunicationTestTargetType.User, TargetId = TestData.Users.TestUser1Id }
+				});
+
+				_departmentsServiceMock.Setup(x => x.GetAllMembersForDepartmentAsync(1)).ReturnsAsync(new List<DepartmentMember>
+				{
+					new DepartmentMember { UserId = TestData.Users.TestUser1Id, DepartmentId = 1 },
+					new DepartmentMember { UserId = TestData.Users.TestUser2Id, DepartmentId = 1 }
+				});
+				_userProfileServiceMock.Setup(x => x.GetAllProfilesForDepartmentAsync(1, false)).ReturnsAsync(new Dictionary<string, UserProfile>());
+
+				SetupRunAndResultPersistence();
+
+				var run = await _communicationTestService.StartTestRunAsync(testId, 1, TestData.Users.TestUser1Id);
+
+				// The test is re-targeted while the run is still sitting on the queue. The report has to
+				// describe the audience the run was started for, so the worker must ignore the edit.
+				_communicationTestTargetRepoMock.Setup(x => x.GetTargetsByTestIdAsync(testId)).ReturnsAsync(new List<CommunicationTestTarget>
+				{
+					new CommunicationTestTarget { CommunicationTestId = testId, DepartmentId = 1, TargetType = (int)CommunicationTestTargetType.User, TargetId = TestData.Users.TestUser2Id }
+				});
+
+				var built = await _communicationTestService.BuildRunResultsAsync(run.CommunicationTestRunId);
+
+				built.TotalUsersTested.Should().Be(1);
+				_savedResults.Select(r => r.UserId).Should().BeEquivalentTo(new[] { TestData.Users.TestUser1Id });
+			}
+
+			[Test]
+			public async Task should_still_test_the_whole_department_when_targets_are_added_after_the_run_starts()
+			{
+				var testId = Guid.NewGuid();
+				_communicationTestRepoMock.Setup(x => x.GetByIdAsync(testId)).ReturnsAsync(new CommunicationTest
+				{
+					CommunicationTestId = testId,
+					DepartmentId = 1,
+					TestEmail = true,
+					ResponseWindowMinutes = 60,
+					Active = true
+				});
+
+				// Untargeted at start time, so the run covers everyone.
+				_communicationTestTargetRepoMock.Setup(x => x.GetTargetsByTestIdAsync(testId)).ReturnsAsync(new List<CommunicationTestTarget>());
+
+				_departmentsServiceMock.Setup(x => x.GetAllMembersForDepartmentAsync(1)).ReturnsAsync(new List<DepartmentMember>
+				{
+					new DepartmentMember { UserId = TestData.Users.TestUser1Id, DepartmentId = 1 },
+					new DepartmentMember { UserId = TestData.Users.TestUser2Id, DepartmentId = 1 }
+				});
+				_userProfileServiceMock.Setup(x => x.GetAllProfilesForDepartmentAsync(1, false)).ReturnsAsync(new Dictionary<string, UserProfile>());
+
+				SetupRunAndResultPersistence();
+
+				var run = await _communicationTestService.StartTestRunAsync(testId, 1, TestData.Users.TestUser1Id);
+
+				// Narrowing the test after the fact must not narrow a run that was already started.
+				_communicationTestTargetRepoMock.Setup(x => x.GetTargetsByTestIdAsync(testId)).ReturnsAsync(new List<CommunicationTestTarget>
+				{
+					new CommunicationTestTarget { CommunicationTestId = testId, DepartmentId = 1, TargetType = (int)CommunicationTestTargetType.User, TargetId = TestData.Users.TestUser1Id }
+				});
+
+				var built = await _communicationTestService.BuildRunResultsAsync(run.CommunicationTestRunId);
+
+				built.TotalUsersTested.Should().Be(2);
+			}
+
+			[Test]
+			public async Task should_fall_back_to_current_targeting_for_a_run_started_before_audience_snapshots()
+			{
+				var testId = Guid.NewGuid();
+				_communicationTestRepoMock.Setup(x => x.GetByIdAsync(testId)).ReturnsAsync(new CommunicationTest
+				{
+					CommunicationTestId = testId,
+					DepartmentId = 1,
+					TestEmail = true,
+					ResponseWindowMinutes = 60,
+					Active = true
+				});
+
+				_communicationTestTargetRepoMock.Setup(x => x.GetTargetsByTestIdAsync(testId)).ReturnsAsync(new List<CommunicationTestTarget>
+				{
+					new CommunicationTestTarget { CommunicationTestId = testId, DepartmentId = 1, TargetType = (int)CommunicationTestTargetType.User, TargetId = TestData.Users.TestUser2Id }
+				});
+
+				_departmentsServiceMock.Setup(x => x.GetAllMembersForDepartmentAsync(1)).ReturnsAsync(new List<DepartmentMember>
+				{
+					new DepartmentMember { UserId = TestData.Users.TestUser1Id, DepartmentId = 1 },
+					new DepartmentMember { UserId = TestData.Users.TestUser2Id, DepartmentId = 1 }
+				});
+				_userProfileServiceMock.Setup(x => x.GetAllProfilesForDepartmentAsync(1, false)).ReturnsAsync(new Dictionary<string, UserProfile>());
+
+				SetupRunAndResultPersistence();
+
+				// A Pending run as it looked before the snapshot column existed -- in flight across the
+				// deploy that added it. It still has to test the targeted people, not the department.
+				var run = new CommunicationTestRun
+				{
+					CommunicationTestRunId = Guid.NewGuid(),
+					CommunicationTestId = testId,
+					DepartmentId = 1,
+					StartedOn = DateTime.UtcNow,
+					Status = (int)CommunicationTestRunStatus.Pending,
+					RunCode = "CT-ABCD",
+					TargetedUserIds = null
+				};
+				_savedRuns[run.CommunicationTestRunId] = run;
+
+				var built = await _communicationTestService.BuildRunResultsAsync(run.CommunicationTestRunId);
+
+				built.TotalUsersTested.Should().Be(1);
+				_savedResults.Select(r => r.UserId).Should().BeEquivalentTo(new[] { TestData.Users.TestUser2Id });
+			}
 		}
 
 		[TestFixture]
@@ -627,9 +843,11 @@ namespace Resgrid.Tests.Services
 			[Test]
 			public async Task should_place_a_voice_call_carrying_the_response_token()
 			{
-				var result = SetupSingleResult(CommunicationTestChannel.Voice, "5551234567");
+				// ContactValue is the display form with the "+" stripped. The call has to normalise off
+				// the raw profile number, or every international voice test fails to parse.
+				var result = SetupSingleResult(CommunicationTestChannel.Voice, "15551234567");
 
-				_phoneNumberProcesserMock.Setup(x => x.Process("5551234567", null))
+				_phoneNumberProcesserMock.Setup(x => x.Process("+15551234567", null))
 					.Returns(new PhoneNumberResult { IsValid = true, InternationalNumber = "+15551234567" });
 
 				_outboundVoiceProviderMock
@@ -640,6 +858,42 @@ namespace Resgrid.Tests.Services
 
 				sent.Should().Be(1);
 				_outboundVoiceProviderMock.Verify(x => x.SendCommunicationTestCallAsync("+15551234567", result.ResponseToken), Times.Once);
+			}
+
+			[Test]
+			public async Task should_place_a_voice_call_on_the_home_number_when_the_profile_routes_there()
+			{
+				var result = SetupSingleResult(CommunicationTestChannel.Voice, "441632960123");
+
+				// Mobile calling off, home calling on: dispatch would ring the home number, so the test
+				// has to ring it too -- and off the raw value, not the "+"-stripped display form.
+				_userProfileServiceMock.Setup(x => x.GetAllProfilesForDepartmentAsync(1, false)).ReturnsAsync(new Dictionary<string, UserProfile>
+				{
+					{
+						TestData.Users.TestUser1Id,
+						new UserProfile
+						{
+							UserId = TestData.Users.TestUser1Id,
+							MobileNumber = "+15551234567",
+							HomeNumber = "+44 1632 960123",
+							VoiceCallMobile = false,
+							VoiceCallHome = true
+						}
+					}
+				});
+
+				_phoneNumberProcesserMock.Setup(x => x.Process("+44 1632 960123", null))
+					.Returns(new PhoneNumberResult { IsValid = true, InternationalNumber = "+441632960123" });
+
+				_outboundVoiceProviderMock
+					.Setup(x => x.SendCommunicationTestCallAsync("+441632960123", result.ResponseToken))
+					.ReturnsAsync(true);
+
+				var sent = await _communicationTestService.DeliverRunAsync(_runId);
+
+				sent.Should().Be(1);
+				_outboundVoiceProviderMock.Verify(x => x.SendCommunicationTestCallAsync("+441632960123", result.ResponseToken), Times.Once);
+				_outboundVoiceProviderMock.Verify(x => x.SendCommunicationTestCallAsync("+15551234567", It.IsAny<string>()), Times.Never);
 			}
 
 			[Test]
@@ -701,6 +955,100 @@ namespace Resgrid.Tests.Services
 				_emailServiceMock.Verify(
 					x => x.SendCommunicationTestEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()),
 					Times.Never);
+			}
+
+			[Test]
+			public async Task should_not_touch_a_provider_when_the_department_is_blocked_from_broadcasting()
+			{
+				// A communication test messages every member of a department, so an ungated run is the
+				// loudest thing a non-production environment can do.
+				const int blockedDepartmentId = 4242;
+				var wasBypassed = SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Remove(blockedDepartmentId);
+
+				try
+				{
+					var runId = Guid.NewGuid();
+					var testId = Guid.NewGuid();
+
+					_communicationTestRunRepoMock.Setup(x => x.GetByIdAsync(runId)).ReturnsAsync(new CommunicationTestRun
+					{
+						CommunicationTestRunId = runId,
+						CommunicationTestId = testId,
+						DepartmentId = blockedDepartmentId,
+						RunCode = "CT-A7X3",
+						Status = (int)CommunicationTestRunStatus.Running
+					});
+					_communicationTestRunRepoMock
+						.Setup(x => x.SaveOrUpdateAsync(It.IsAny<CommunicationTestRun>(), It.IsAny<CancellationToken>(), true))
+						.ReturnsAsync((CommunicationTestRun r, CancellationToken c, bool f) => r);
+
+					_communicationTestRepoMock.Setup(x => x.GetByIdAsync(testId)).ReturnsAsync(new CommunicationTest
+					{
+						CommunicationTestId = testId,
+						DepartmentId = blockedDepartmentId,
+						Name = "Monthly Check"
+					});
+
+					var results = new[]
+					{
+						CommunicationTestChannel.Email,
+						CommunicationTestChannel.Sms,
+						CommunicationTestChannel.Voice,
+						CommunicationTestChannel.Push
+					}.Select(channel => new CommunicationTestResult
+					{
+						CommunicationTestResultId = Guid.NewGuid(),
+						CommunicationTestRunId = runId,
+						DepartmentId = blockedDepartmentId,
+						UserId = TestData.Users.TestUser1Id,
+						Channel = (int)channel,
+						ContactValue = "user1@test.com",
+						SendAttempted = true,
+						ResponseToken = Guid.NewGuid().ToString("N")
+					}).ToList();
+
+					_communicationTestResultRepoMock.Setup(x => x.GetResultsByRunIdAsync(runId)).ReturnsAsync(results);
+					_communicationTestResultRepoMock
+						.Setup(x => x.SaveOrUpdateAsync(It.IsAny<CommunicationTestResult>(), It.IsAny<CancellationToken>(), true))
+						.ReturnsAsync((CommunicationTestResult r, CancellationToken c, bool f) => r);
+
+					_departmentsServiceMock.Setup(x => x.GetDepartmentByIdAsync(blockedDepartmentId, It.IsAny<bool>()))
+						.ReturnsAsync(new Department { DepartmentId = blockedDepartmentId, Name = "Blocked Dept" });
+					_departmentSettingsServiceMock.Setup(x => x.GetTextToCallNumberForDepartmentAsync(blockedDepartmentId)).ReturnsAsync("15550001111");
+					_userProfileServiceMock.Setup(x => x.GetAllProfilesForDepartmentAsync(blockedDepartmentId, false)).ReturnsAsync(new Dictionary<string, UserProfile>
+					{
+						{ TestData.Users.TestUser1Id, new UserProfile { UserId = TestData.Users.TestUser1Id, MembershipEmail = "user1@test.com", MobileNumber = "+15551234567", SendNotificationPush = true } }
+					});
+
+					_phoneNumberProcesserMock.Setup(x => x.Process(It.IsAny<string>(), null))
+						.Returns(new PhoneNumberResult { IsValid = true, InternationalNumber = "+15551234567" });
+
+					var sent = await _communicationTestService.DeliverRunAsync(runId);
+
+					sent.Should().Be(0);
+
+					_emailServiceMock.Verify(
+						x => x.SendCommunicationTestEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()),
+						Times.Never);
+					_smsServiceMock.Verify(
+						x => x.SendCommunicationTestAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<MobileCarriers>(), It.IsAny<int>()),
+						Times.Never);
+					_outboundVoiceProviderMock.Verify(
+						x => x.SendCommunicationTestCallAsync(It.IsAny<string>(), It.IsAny<string>()),
+						Times.Never);
+					_pushServiceMock.Verify(
+						x => x.PushNotification(It.IsAny<StandardPushMessage>(), It.IsAny<string>(), It.IsAny<UserProfile>()),
+						Times.Never);
+
+					// Recorded as attempted-and-failed rather than left unsent, otherwise the recovery
+					// sweep would keep re-processing a run that can never send.
+					results.Should().OnlyContain(r => !r.SendSucceeded && r.SentOn.HasValue);
+				}
+				finally
+				{
+					if (wasBypassed)
+						SystemBehaviorConfig.BypassDoNotBroadcastDepartments.Add(blockedDepartmentId);
+				}
 			}
 		}
 

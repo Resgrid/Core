@@ -153,5 +153,29 @@ namespace Resgrid.Tests.Web.Services
 			_communicationTestServiceMock.Verify(x => x.GetDepartmentIdByResponseTokenAsync(It.IsAny<string>()), Times.Never);
 			_departmentSettingsServiceMock.Verify(x => x.GetTtsLanguageForDepartmentAsync(It.IsAny<int>()), Times.Never);
 		}
+
+		[Test]
+		public void voice_webhook_should_require_validate_request()
+		{
+			// VoiceWebhook is the only anonymous endpoint on the voice path that writes. Without the
+			// signature check, anyone holding a response token could mark a member as reached.
+			typeof(CommunicationTestResponseController)
+				.GetMethod(nameof(CommunicationTestResponseController.VoiceWebhook))!
+				.CustomAttributes
+				.Should()
+				.Contain(attribute => attribute.AttributeType.Name == "ValidateRequestAttribute");
+		}
+
+		[Test]
+		public void email_confirm_should_not_require_validate_request()
+		{
+			// Reached by a recipient clicking a link in their inbox, not by Twilio -- there is no
+			// signature to validate, so the attribute must not creep onto it.
+			typeof(CommunicationTestResponseController)
+				.GetMethod(nameof(CommunicationTestResponseController.EmailConfirm))!
+				.CustomAttributes
+				.Should()
+				.NotContain(attribute => attribute.AttributeType.Name == "ValidateRequestAttribute");
+		}
 	}
 }

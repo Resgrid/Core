@@ -40,6 +40,15 @@ namespace Resgrid.Model
 
 		public int TotalResponses { get; set; }
 
+		/// <summary>
+		/// Snapshot of the audience this run was started for, taken from the test's targeting at
+		/// start time. A JSON array of user ids when the test was targeted, the JSON literal
+		/// <c>null</c> when it was untargeted (whole department), and a NULL column only for runs
+		/// created before snapshots existed. Frozen so that editing a test's targets while its run
+		/// is queued cannot change who that run tests.
+		/// </summary>
+		public string TargetedUserIds { get; set; }
+
 		[NotMapped]
 		[JsonIgnore]
 		public object IdValue

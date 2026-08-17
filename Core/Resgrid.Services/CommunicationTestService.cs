@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using Resgrid.Framework;
 using CommunicationTestMessages = Resgrid.Localization.Areas.User.CommunicationTest.CommunicationTestMessageCatalog;
 using Resgrid.Model;
@@ -11,6 +12,7 @@ using Resgrid.Model.Messages;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Queue;
 using Resgrid.Model.Repositories;
+using Resgrid.Model.Repositories.Queries;
 using Resgrid.Model.Services;
 
 namespace Resgrid.Services
@@ -38,6 +40,7 @@ namespace Resgrid.Services
 		private readonly IOutboundVoiceProvider _outboundVoiceProvider;
 		private readonly IPhoneNumberProcesserProvider _phoneNumberProcesser;
 		private readonly IQueueService _queueService;
+		private readonly IUnitOfWork _unitOfWork;
 
 		public CommunicationTestService(
 			ICommunicationTestRepository communicationTestRepository,
@@ -54,7 +57,8 @@ namespace Resgrid.Services
 			IPushService pushService,
 			IOutboundVoiceProvider outboundVoiceProvider,
 			IPhoneNumberProcesserProvider phoneNumberProcesser,
-			IQueueService queueService)
+			IQueueService queueService,
+			IUnitOfWork unitOfWork)
 		{
 			_communicationTestRepository = communicationTestRepository;
 			_communicationTestRunRepository = communicationTestRunRepository;
@@ -71,6 +75,7 @@ namespace Resgrid.Services
 			_outboundVoiceProvider = outboundVoiceProvider;
 			_phoneNumberProcesser = phoneNumberProcesser;
 			_queueService = queueService;
+			_unitOfWork = unitOfWork;
 		}
 
 		public async Task<IEnumerable<CommunicationTest>> GetTestsByDepartmentIdAsync(int departmentId)
@@ -156,6 +161,38 @@ namespace Resgrid.Services
 		}
 
 		/// <summary>
+		/// Saves a test and replaces its target set as one unit. Targeting is replaced by clearing
+		/// every existing row before writing the new ones, so a failure between the two halves leaves
+		/// the test with no targets -- which the resolver reads as "the whole department". A narrowly
+		/// targeted test silently widening to everyone is the worst way for this to fail, so both
+		/// halves commit together or not at all.
+		/// </summary>
+		public async Task<CommunicationTest> SaveTestWithTargetsAsync(CommunicationTest test, int departmentId, IEnumerable<CommunicationTestTarget> targets, CancellationToken cancellationToken = default)
+		{
+			if (test == null)
+				return null;
+
+			_unitOfWork.CreateOrGetConnection();
+			try
+			{
+				var saved = await SaveTestAsync(test, cancellationToken);
+
+				// SaveTargetsAsync stamps this id onto every row it writes, so a brand new test can
+				// have its targets built by the caller before the test itself has an id.
+				await SaveTargetsAsync(saved.CommunicationTestId, departmentId, targets, cancellationToken);
+
+				_unitOfWork.CommitChanges();
+
+				return saved;
+			}
+			catch
+			{
+				_unitOfWork.DiscardChanges();
+				throw;
+			}
+		}
+
+		/// <summary>
 		/// Resolves the user ids a test covers. Returns <c>null</c> when the test has no targeting,
 		/// meaning every member of the department is tested.
 		/// </summary>
@@ -209,6 +246,50 @@ namespace Resgrid.Services
 			return userIds;
 		}
 
+		/// <summary>
+		/// Serializes a resolved audience for storage on the run. An untargeted test is stored as the
+		/// JSON literal <c>null</c> rather than a NULL column, which is what lets the builder tell a
+		/// snapshot that says "whole department" apart from a run that has no snapshot at all.
+		/// </summary>
+		private static string SerializeTargetedUserIds(HashSet<string> targetedUserIds)
+		{
+			return JsonConvert.SerializeObject(targetedUserIds);
+		}
+
+		/// <summary>
+		/// Reads back the audience snapshot stored on a run. Returns false when the run has no usable
+		/// snapshot -- it predates snapshots, or its stored value is unreadable -- which means the
+		/// caller has to resolve the test's targeting itself.
+		/// </summary>
+		private static bool TryReadTargetedUserIds(string snapshot, out HashSet<string> targetedUserIds)
+		{
+			targetedUserIds = null;
+
+			if (string.IsNullOrWhiteSpace(snapshot))
+				return false;
+
+			try
+			{
+				var userIds = JsonConvert.DeserializeObject<List<string>>(snapshot);
+
+				// A snapshot of "null" is a real answer: the test was untargeted when the run started,
+				// so the run covers the whole department.
+				if (userIds == null)
+					return true;
+
+				// Rebuilt with the resolver's case-insensitive comparer -- a set built straight from
+				// deserialized values carries the default ordinal comparer, which would drop members
+				// whose stored id casing differs from their department membership row.
+				targetedUserIds = new HashSet<string>(userIds, StringComparer.OrdinalIgnoreCase);
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return false;
+			}
+		}
+
 		#endregion Targeting
 
 		public async Task<bool> CanStartOnDemandRunAsync(Guid communicationTestId)
@@ -227,7 +308,8 @@ namespace Resgrid.Services
 		/// <summary>
 		/// Claims the run and hands it to the worker. Nothing is built or sent here: a department of
 		/// any size is one result row insert and one provider round-trip per recipient per channel,
-		/// which the request thread that started the run cannot absorb.
+		/// which the request thread that started the run cannot absorb. The audience the run covers
+		/// is resolved and stored on the run, so the worker tests who the run was started for.
 		/// </summary>
 		public async Task<CommunicationTestRun> StartTestRunAsync(Guid communicationTestId, int departmentId, string initiatedByUserId, CancellationToken cancellationToken = default)
 		{
@@ -244,6 +326,12 @@ namespace Resgrid.Services
 
 			var runCode = GenerateRunCode();
 
+			// Freeze the audience with the run. Targeting can be edited between the run being queued
+			// and the worker picking it up, and a run has to test the people it was started for --
+			// otherwise the report describes an audience that was never actually tested. Resolving is
+			// a handful of membership reads, not the per-recipient work the worker does.
+			var targetedUserIds = await ResolveTargetedUserIdsAsync(communicationTestId, departmentId);
+
 			var run = new CommunicationTestRun
 			{
 				CommunicationTestId = communicationTestId,
@@ -253,7 +341,8 @@ namespace Resgrid.Services
 				Status = (int)CommunicationTestRunStatus.Pending,
 				RunCode = runCode,
 				TotalUsersTested = 0,
-				TotalResponses = 0
+				TotalResponses = 0,
+				TargetedUserIds = SerializeTargetedUserIds(targetedUserIds)
 			};
 
 			run = await _communicationTestRunRepository.SaveOrUpdateAsync(run, cancellationToken, true);
@@ -292,9 +381,9 @@ namespace Resgrid.Services
 		}
 
 		/// <summary>
-		/// Resolves the audience for a run and writes one result row per recipient per enabled
-		/// channel. No-ops when the run already has results, so a redelivered queue message cannot
-		/// double up the audience.
+		/// Writes one result row per recipient per enabled channel for the audience the run was
+		/// started with. No-ops when the run already has results, so a redelivered queue message
+		/// cannot double up the audience.
 		/// </summary>
 		public async Task<CommunicationTestRun> BuildRunResultsAsync(Guid communicationTestRunId, CancellationToken cancellationToken = default)
 		{
@@ -316,9 +405,14 @@ namespace Resgrid.Services
 			var members = await _departmentsService.GetAllMembersForDepartmentAsync(departmentId);
 			var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(departmentId);
 
-			// A targeted test only covers the resolved users. Intersecting against current department
-			// membership means a stale group/role/user target can never pull in someone who left.
-			var targetedUserIds = await ResolveTargetedUserIdsAsync(communicationTestId, departmentId);
+			// A targeted test only covers the audience snapshotted when the run started, so editing
+			// the test's targets while the run sat on the queue cannot change who it tests. A run
+			// created before snapshots existed has none and falls back to current targeting.
+			// Intersecting against current department membership means a stale group/role/user
+			// target can never pull in someone who left.
+			if (!TryReadTargetedUserIds(run.TargetedUserIds, out var targetedUserIds))
+				targetedUserIds = await ResolveTargetedUserIdsAsync(communicationTestId, departmentId);
+
 			if (targetedUserIds != null)
 				members = members.Where(m => targetedUserIds.Contains(m.UserId)).ToList();
 
@@ -384,8 +478,7 @@ namespace Resgrid.Services
 				{
 					// Honour the user's voice routing preference: the number we would really call for a
 					// dispatch is the number the test has to ring, otherwise the report proves nothing.
-					var useHome = profile != null && !profile.VoiceCallMobile && profile.VoiceCallHome
-						&& !string.IsNullOrWhiteSpace(profile.GetHomePhoneNumber());
+					var useHome = UsesHomeRoute(profile);
 
 					var voiceNumber = useHome ? profile?.GetHomePhoneNumber() : profile?.GetPhoneNumber();
 					var voiceVerified = useHome ? profile?.HomeNumberVerified : profile?.MobileNumberVerified;
@@ -447,7 +540,8 @@ namespace Resgrid.Services
 		/// <summary>
 		/// Sends the messages for every not-yet-sent result on a run and moves the run to
 		/// AwaitingResponses. Safe to call more than once: results that already have a SentOn are
-		/// skipped, so a run whose delivery was interrupted can be finished by the worker.
+		/// skipped, so a run whose delivery was interrupted can be finished by the worker. Sends
+		/// nothing when DoNotBroadcast is on and the run's department is not on the bypass list.
 		/// </summary>
 		public async Task<int> DeliverRunAsync(Guid communicationTestRunId, CancellationToken cancellationToken = default)
 		{
@@ -467,6 +561,14 @@ namespace Resgrid.Services
 			var departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(run.DepartmentId);
 			var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(run.DepartmentId);
 
+			// Every other outbound path honours the global broadcast kill switch, and a communication
+			// test is the one feature whose whole job is to message every member of a department -- so
+			// an ungated test run is the loudest thing a non-production environment can do. Result rows
+			// are still written and the run still finishes, the provider calls are all that is dropped.
+			var canTransmit = ConfigHelper.CanTransmit(run.DepartmentId);
+			if (!canTransmit)
+				Logging.LogInfo($"CommunicationTest: run {communicationTestRunId} sent nothing, DoNotBroadcast is on and department {run.DepartmentId} is not bypassed.");
+
 			int sent = 0;
 
 			foreach (var result in results)
@@ -478,43 +580,49 @@ namespace Resgrid.Services
 
 				bool succeeded = false;
 
-				// One channel failing for one person must never abort the rest of the run -- the
-				// report is the deliverable, and a thrown provider error would leave it half written.
-				try
+				// Blocked runs fall straight through to the stamp below with succeeded false. Leaving
+				// SentOn null instead would look like an interrupted delivery, and the recovery sweep
+				// would keep re-processing a run that can never send.
+				if (canTransmit)
 				{
-					// Every message is composed for the recipient, so it renders in THEIR language, not
-					// the language of whoever started the run or of the worker thread.
-					var culture = profile?.Language;
-
-					switch ((CommunicationTestChannel)result.Channel)
+					// One channel failing for one person must never abort the rest of the run -- the
+					// report is the deliverable, and a thrown provider error would leave it half written.
+					try
 					{
-						case CommunicationTestChannel.Email:
-							succeeded = await _emailService.SendCommunicationTestEmailAsync(
-								result.ContactValue,
-								profile?.FirstName ?? string.Empty,
-								department?.Name ?? "Your department",
-								test.Name,
-								BuildEmailConfirmUrl(result.ResponseToken),
-								culture);
-							break;
+						// Every message is composed for the recipient, so it renders in THEIR language, not
+						// the language of whoever started the run or of the worker thread.
+						var culture = profile?.Language;
 
-						case CommunicationTestChannel.Sms:
-							succeeded = await SendTestSmsAsync(result, profile, run.RunCode, test.Name, departmentNumber, run.DepartmentId);
-							break;
+						switch ((CommunicationTestChannel)result.Channel)
+						{
+							case CommunicationTestChannel.Email:
+								succeeded = await _emailService.SendCommunicationTestEmailAsync(
+									result.ContactValue,
+									profile?.FirstName ?? string.Empty,
+									department?.Name ?? "Your department",
+									test.Name,
+									BuildEmailConfirmUrl(result.ResponseToken),
+									culture);
+								break;
 
-						case CommunicationTestChannel.Voice:
-							succeeded = await SendTestVoiceAsync(result);
-							break;
+							case CommunicationTestChannel.Sms:
+								succeeded = await SendTestSmsAsync(result, profile, run.RunCode, test.Name, departmentNumber, run.DepartmentId);
+								break;
 
-						case CommunicationTestChannel.Push:
-							succeeded = await SendTestPushAsync(result, profile, department, test.Name);
-							break;
+							case CommunicationTestChannel.Voice:
+								succeeded = await SendTestVoiceAsync(result, profile);
+								break;
+
+							case CommunicationTestChannel.Push:
+								succeeded = await SendTestPushAsync(result, profile, department, test.Name);
+								break;
+						}
 					}
-				}
-				catch (Exception ex)
-				{
-					Logging.LogException(ex);
-					succeeded = false;
+					catch (Exception ex)
+					{
+						Logging.LogException(ex);
+						succeeded = false;
+					}
 				}
 
 				result.SendSucceeded = succeeded;
@@ -591,12 +699,31 @@ namespace Resgrid.Services
 			return await _smsService.SendCommunicationTestAsync(processed.InternationalNumber, body, departmentNumber, carrier, departmentId);
 		}
 
-		private async Task<bool> SendTestVoiceAsync(CommunicationTestResult result)
+		/// <summary>
+		/// Whether a test voice call routes to the home number rather than the mobile. Both the result
+		/// row and the call itself pick their number through here, so the number the report shows is
+		/// the number that was actually dialled.
+		/// </summary>
+		private static bool UsesHomeRoute(UserProfile profile)
 		{
-			if (string.IsNullOrWhiteSpace(result.ContactValue) || string.IsNullOrWhiteSpace(result.ResponseToken))
+			return profile != null && !profile.VoiceCallMobile && profile.VoiceCallHome
+				&& !string.IsNullOrWhiteSpace(profile.GetHomePhoneNumber());
+		}
+
+		private async Task<bool> SendTestVoiceAsync(CommunicationTestResult result, UserProfile profile)
+		{
+			if (string.IsNullOrWhiteSpace(result.ResponseToken))
 				return false;
 
-			var processed = _phoneNumberProcesser.Process(result.ContactValue);
+			// The stored ContactValue is the display form: GetPhoneNumber/GetHomePhoneNumber strip the
+			// leading "+", which leaves an international number unparseable and fails every non-US voice
+			// test as "not a valid sendable number". Normalise off the raw profile number instead, the
+			// same way the SMS path does.
+			var rawNumber = UsesHomeRoute(profile) ? profile?.HomeNumber : profile?.MobileNumber;
+			if (string.IsNullOrWhiteSpace(rawNumber))
+				return false;
+
+			var processed = _phoneNumberProcesser.Process(rawNumber);
 			if (processed == null || !processed.IsValid || string.IsNullOrWhiteSpace(processed.InternationalNumber))
 			{
 				Logging.LogInfo($"Communication test voice call skipped for user {result.UserId}: phone number is not a valid sendable number.");

@@ -1068,7 +1068,9 @@
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.CommunicationTestResponseController.VoiceWebhook(System.String,System.String)">
             <summary>
-            Voice webhook endpoint - receives DTMF keypress callbacks
+            Voice webhook endpoint - receives DTMF keypress callbacks. Signature validated: this is the
+            one endpoint on the voice path that writes, so possession of a response token alone must not
+            be enough to mark a member as reached on a readiness report.
             </summary>
         </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.CommunicationTestResponseController.ResolveVoiceContextAsync(System.String)">

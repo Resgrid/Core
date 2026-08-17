@@ -183,9 +183,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 			test.Active = input.Active;
 			test.ResponseWindowMinutes = input.ResponseWindowMinutes > 0 ? input.ResponseWindowMinutes : 60;
 
-			test = await _communicationTestService.SaveTestAsync(test, cancellationToken);
-
-			await _communicationTestService.SaveTargetsAsync(test.CommunicationTestId, DepartmentId,
+			test = await _communicationTestService.SaveTestWithTargetsAsync(test, DepartmentId,
 				BuildTargets(test.CommunicationTestId, DepartmentId, input), cancellationToken);
 
 			_eventAggregator.SendMessage<AuditEvent>(new AuditEvent

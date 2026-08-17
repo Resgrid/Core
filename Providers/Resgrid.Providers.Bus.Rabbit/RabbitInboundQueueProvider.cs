@@ -676,40 +676,58 @@ namespace Resgrid.Providers.Bus.Rabbit
 					var communicationTestQueueReceivedConsumer = new AsyncEventingBasicConsumer(_channel);
 					communicationTestQueueReceivedConsumer.ReceivedAsync += async (model, ea) =>
 					{
-						if (ea != null && ea.Body.Length > 0)
-						{
-							CommunicationTestQueueItem ctqi = null;
-							try
-							{
-								var body = ea.Body;
-								var message = Encoding.UTF8.GetString(body.ToArray());
-								ctqi = ObjectSerialization.Deserialize<CommunicationTestQueueItem>(message);
-							}
-							catch (Exception ex)
-							{
-								await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
-								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
-							}
+						if (ea == null)
+							return;
 
-							try
+						// An unprocessable delivery has to be settled, not ignored. Leaving it neither
+						// acked nor nacked holds a prefetch slot until the connection drops, and enough
+						// of them stall the consumer outright.
+						if (ea.Body.Length <= 0)
+						{
+							await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
+							Logging.LogInfo("CommunicationTest: dropping a queue delivery with an empty body.");
+							return;
+						}
+
+						CommunicationTestQueueItem ctqi = null;
+						try
+						{
+							var body = ea.Body;
+							var message = Encoding.UTF8.GetString(body.ToArray());
+							ctqi = ObjectSerialization.Deserialize<CommunicationTestQueueItem>(message);
+						}
+						catch (Exception ex)
+						{
+							await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
+							Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
+							return;
+						}
+
+						// Deserialization can hand back null without throwing -- a body of the literal
+						// "null" does exactly that. Same outcome as a parse failure: never processable,
+						// so drop it rather than leak it.
+						if (ctqi == null)
+						{
+							await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
+							Logging.LogInfo($"CommunicationTest: dropping a queue delivery that deserialized to null: {Encoding.UTF8.GetString(ea.Body.ToArray())}");
+							return;
+						}
+
+						try
+						{
+							if (CommunicationTestQueueReceived != null)
 							{
-								if (ctqi != null)
-								{
-									if (CommunicationTestQueueReceived != null)
-									{
-										await CommunicationTestQueueReceived.Invoke(ctqi);
-										await _channel.BasicAckAsync(ea.DeliveryTag, false);
-									}
-								}
+								await CommunicationTestQueueReceived.Invoke(ctqi);
+								await _channel.BasicAckAsync(ea.DeliveryTag, false);
 							}
-							catch (Exception ex)
-							{
-								Logging.LogException(ex);
-								if (await RetryQueueItem(ea, ex))
-									await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
-								else
-									await _channel.BasicNackAsync(ea.DeliveryTag, false, true);
-							}
+						}
+						catch (Exception ex)
+						{
+							Logging.LogException(ex);
+							if (await RetryQueueItem(ea, ex))
+								await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
+							else
+								await _channel.BasicNackAsync(ea.DeliveryTag, false, true);
 						}
 					};
 

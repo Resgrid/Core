@@ -141,10 +141,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.Test.ResponseWindowMinutes <= 0)
 				model.Test.ResponseWindowMinutes = 60;
 
-			var saved = await _communicationTestService.SaveTestAsync(model.Test, cancellationToken);
-
-			await _communicationTestService.SaveTargetsAsync(saved.CommunicationTestId, DepartmentId,
-				BuildTargets(saved.CommunicationTestId, model.SelectedGroupIds, model.SelectedRoleIds, model.SelectedUserIds), cancellationToken);
+			var saved = await _communicationTestService.SaveTestWithTargetsAsync(model.Test, DepartmentId,
+				BuildTargets(model.Test.CommunicationTestId, model.SelectedGroupIds, model.SelectedRoleIds, model.SelectedUserIds), cancellationToken);
 
 			_eventAggregator.SendMessage<AuditEvent>(new AuditEvent
 			{
@@ -250,9 +248,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			existing.ResponseWindowMinutes = model.Test.ResponseWindowMinutes > 0 ? model.Test.ResponseWindowMinutes : 60;
 			existing.UpdatedOn = DateTime.UtcNow;
 
-			await _communicationTestService.SaveTestAsync(existing, cancellationToken);
-
-			await _communicationTestService.SaveTargetsAsync(existing.CommunicationTestId, DepartmentId,
+			await _communicationTestService.SaveTestWithTargetsAsync(existing, DepartmentId,
 				BuildTargets(existing.CommunicationTestId, model.SelectedGroupIds, model.SelectedRoleIds, model.SelectedUserIds), cancellationToken);
 
 			_eventAggregator.SendMessage<AuditEvent>(new AuditEvent

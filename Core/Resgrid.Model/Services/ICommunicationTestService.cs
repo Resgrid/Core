@@ -25,6 +25,15 @@ namespace Resgrid.Model.Services
 		Task SaveTargetsAsync(Guid communicationTestId, int departmentId, IEnumerable<CommunicationTestTarget> targets, CancellationToken cancellationToken = default);
 
 		/// <summary>
+		/// Saves a test and replaces its target set in one transaction. Callers editing a test should
+		/// use this rather than the two calls separately: replacing targets clears them before writing
+		/// the new ones, so a failure between the halves would leave a targeted test covering the whole
+		/// department. The targets' own CommunicationTestId is ignored — the saved test's id is stamped
+		/// on, so a new test can have its targets built before it has an id.
+		/// </summary>
+		Task<CommunicationTest> SaveTestWithTargetsAsync(CommunicationTest test, int departmentId, IEnumerable<CommunicationTestTarget> targets, CancellationToken cancellationToken = default);
+
+		/// <summary>
 		/// Resolves the user ids a test covers, or <c>null</c> when the test is untargeted and
 		/// therefore covers every member of the department.
 		/// </summary>
@@ -33,8 +42,9 @@ namespace Resgrid.Model.Services
 		Task<bool> CanStartOnDemandRunAsync(Guid communicationTestId);
 
 		/// <summary>
-		/// Creates the run row in Pending and hands it to the worker over the bus. Returns as soon as
-		/// the run is claimed — no result rows are written and nothing is sent on this thread.
+		/// Creates the run row in Pending, snapshots the audience it covers onto the run, and hands it
+		/// to the worker over the bus. Returns as soon as the run is claimed — no result rows are
+		/// written and nothing is sent on this thread.
 		/// </summary>
 		Task<CommunicationTestRun> StartTestRunAsync(Guid communicationTestId, int departmentId, string initiatedByUserId, CancellationToken cancellationToken = default);
 
@@ -45,8 +55,9 @@ namespace Resgrid.Model.Services
 		Task ProcessRunAsync(Guid communicationTestRunId, CancellationToken cancellationToken = default);
 
 		/// <summary>
-		/// Resolves the run's audience and writes one result row per recipient per enabled channel,
-		/// moving the run to Running. No-ops when the run already has results.
+		/// Writes one result row per recipient per enabled channel for the audience snapshotted onto
+		/// the run when it was started, moving the run to Running. No-ops when the run already has
+		/// results.
 		/// </summary>
 		Task<CommunicationTestRun> BuildRunResultsAsync(Guid communicationTestRunId, CancellationToken cancellationToken = default);
 
@@ -59,6 +70,8 @@ namespace Resgrid.Model.Services
 		/// <summary>
 		/// Sends the messages for every not-yet-sent result on a run and moves the run to
 		/// AwaitingResponses. Idempotent per result, so an interrupted run can be finished later.
+		/// Honours the DoNotBroadcast kill switch: a blocked department's results are recorded as
+		/// failed sends and no provider is called.
 		/// </summary>
 		Task<int> DeliverRunAsync(Guid communicationTestRunId, CancellationToken cancellationToken = default);
 

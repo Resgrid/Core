@@ -124,9 +124,9 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-3 control-label">@localizer["Groups"]</label>
+                            <label class="col-sm-3 control-label" for="SelectedGroupIds">@localizer["Groups"]</label>
                             <div class="col-sm-9">
-                                <select class="form-control" name="SelectedGroupIds" multiple size="6">
+                                <select class="form-control" id="SelectedGroupIds" name="SelectedGroupIds" multiple size="6">
                                     @foreach (var group in Model.TargetOptions.Groups)
                                     {
                                         <option value="@group.DepartmentGroupId" selected="@(Model.SelectedGroupIds.Contains(group.DepartmentGroupId))">@group.Name</option>
@@ -135,9 +135,9 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-3 control-label">@localizer["Roles"]</label>
+                            <label class="col-sm-3 control-label" for="SelectedRoleIds">@localizer["Roles"]</label>
                             <div class="col-sm-9">
-                                <select class="form-control" name="SelectedRoleIds" multiple size="6">
+                                <select class="form-control" id="SelectedRoleIds" name="SelectedRoleIds" multiple size="6">
                                     @foreach (var role in Model.TargetOptions.Roles)
                                     {
                                         <option value="@role.PersonnelRoleId" selected="@(Model.SelectedRoleIds.Contains(role.PersonnelRoleId))">@role.Name</option>
@@ -146,9 +146,9 @@
                             </div>
                         </div>
                         <div class="form-group">
-                            <label class="col-sm-3 control-label">@localizer["Individuals"]</label>
+                            <label class="col-sm-3 control-label" for="SelectedUserIds">@localizer["Individuals"]</label>
                             <div class="col-sm-9">
-                                <select class="form-control" name="SelectedUserIds" multiple size="10">
+                                <select class="form-control" id="SelectedUserIds" name="SelectedUserIds" multiple size="10">
                                     @foreach (var person in Model.TargetOptions.Personnel)
                                     {
                                         <option value="@person.UserId" selected="@(Model.SelectedUserIds.Contains(person.UserId))">@person.Name</option>

@@ -58,6 +58,7 @@ namespace Resgrid.Web.Tts.Configuration
 			options.PiperModelDirectory = string.IsNullOrWhiteSpace(TtsConfig.PiperModelDirectory) ? options.PiperModelDirectory : TtsConfig.PiperModelDirectory;
 			options.FfmpegExecutable = string.IsNullOrWhiteSpace(TtsConfig.FfmpegExecutable) ? options.FfmpegExecutable : TtsConfig.FfmpegExecutable;
 			options.TempDirectory = string.IsNullOrWhiteSpace(TtsConfig.TempDirectory) ? options.TempDirectory : TtsConfig.TempDirectory;
+			options.TempDirectorySweepHours = TtsConfig.TempDirectorySweepHours;
 			options.CachePrefix = string.IsNullOrWhiteSpace(TtsConfig.CachePrefix) ? options.CachePrefix : TtsConfig.CachePrefix;
 			options.NormalizedSampleRate = TtsConfig.NormalizedSampleRate;
 			options.NormalizedChannels = TtsConfig.NormalizedChannels;

@@ -116,6 +116,7 @@ builder.Services.AddSingleton<IAudioProcessingService, AudioProcessingService>()
 builder.Services.AddSingleton<ITtsPlaybackUrlService, TtsPlaybackUrlService>();
 builder.Services.AddSingleton<ITtsService, TtsService>();
 builder.Services.AddHostedService<PromptWarmupHostedService>();
+builder.Services.AddHostedService<TempDirectorySweepHostedService>();
 
 var app = builder.Build();
 

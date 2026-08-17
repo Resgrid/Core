@@ -13453,5 +13453,22 @@
             Respects the provided cancellation token for timeout control.
             </summary>
         </member>
+        <member name="T:Resgrid.Web.Helpers.DispatchListHelper">
+            <summary>
+            Parsing for the pipe delimited DispatchList string clients send when creating or editing a call.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Helpers.DispatchListHelper.ResolveIds(System.Collections.Generic.IEnumerable{System.String},System.String,System.Func{System.String,System.Nullable{System.Int32}})">
+            <summary>
+            Pulls the ids out of a DispatchList for a single prefix ("G:", "R:" or "U:"). Clients are supposed
+            to send ids, but some send the display name instead (i.e. "R:PARAMÉDICO"), and one unparsable entry
+            used to throw out of the int.Parse projection and silently drop every id sharing that prefix. Each
+            entry is parsed on its own now and falls back to a name lookup before it's discarded.
+            </summary>
+            <param name="dispatchList">The already split DispatchList entries.</param>
+            <param name="prefix">The entry prefix to collect, i.e. "G:", "R:" or "U:".</param>
+            <param name="resolveByName">Looks up an id for an entry that isn't numeric, null when there's no match.</param>
+            <returns>The distinct ids found for that prefix, in the order they appeared.</returns>
+        </member>
     </members>
 </doc>

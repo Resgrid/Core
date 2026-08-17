@@ -55,7 +55,7 @@ namespace Resgrid.Web.Services.Models.v4.Mapping
 		/// <summary>
 		/// The POI-specific custom icon image name (only set for POI markers, Type=4).
 		/// New app versions should use this field instead of ImagePath for POI icons.
-		/// ImagePath is set to null for POI markers so old apps fall back to their default icon.
+		/// ImagePath carries the bitmap-asset name resolved by PoiIconHelper for clients that ship PNGs.
 		/// </summary>
 		public string PoiImage { get; set; }
 	}
@@ -72,7 +72,7 @@ namespace Resgrid.Web.Services.Models.v4.Mapping
 		/// <summary>
 		/// The POI-specific custom icon image name.
 		/// New app versions should use this field for POI type icons.
-		/// ImagePath is set to null so old apps fall back to their default icon.
+		/// ImagePath carries the bitmap-asset name resolved by PoiIconHelper for clients that ship PNGs.
 		/// </summary>
 		public string PoiImage { get; set; }
 	}

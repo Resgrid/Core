@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Resgrid.Model;
 using Resgrid.Model.Services;
 using Resgrid.Providers.Claims;
@@ -29,6 +30,17 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_callsService = callsService;
 			_authorizationService = authorizationService;
 			_departmentsService = departmentsService;
+		}
+
+		/// <summary>
+		/// The Forms module is disabled. Existing form data stays in the database and still renders
+		/// read-only on the call detail view, but no new form templates can be listed, created or
+		/// edited, and no new form data can be captured. The actions below are left intact so the
+		/// module can be turned back on by removing this override.
+		/// </summary>
+		public override void OnActionExecuting(ActionExecutingContext context)
+		{
+			context.Result = NotFound();
 		}
 
 		[HttpGet]

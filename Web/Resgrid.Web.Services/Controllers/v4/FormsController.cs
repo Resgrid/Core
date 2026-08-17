@@ -35,26 +35,18 @@ namespace Resgrid.Web.Services.Controllers.v4
 		[HttpGet("GetNewCallForm")]
 		[ProducesResponseType(StatusCodes.Status200OK)]
 		[Authorize(Policy = ResgridResources.Forms_View)]
-		public async Task<ActionResult<FormResult>> GetNewCallForm()
+		public Task<ActionResult<FormResult>> GetNewCallForm()
 		{
+			// Forms module is disabled. Reporting "no form configured" is the same shape clients
+			// already handle for departments that never built one, so shipped app versions stop
+			// offering call form entry without needing a release.
 			var result = new FormResult();
-			var form = await _formsService.GetNewCallFormByDepartmentIdAsync(DepartmentId);
-
-			if (form != null)
-			{
-				result.Data = ConvertFormResultData(form);
-				result.PageSize = 1;
-				result.Status = ResponseHelper.Success;
-			}
-			else
-			{
-				result.PageSize = 0;
-				result.Status = ResponseHelper.NotFound;
-			}
+			result.PageSize = 0;
+			result.Status = ResponseHelper.NotFound;
 
 			ResponseHelper.PopulateV4ResponseData(result);
 
-			return Ok(result);
+			return Task.FromResult<ActionResult<FormResult>>(Ok(result));
 		}
 
 		/// <summary>

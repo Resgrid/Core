@@ -62,7 +62,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly ITemplatesService _templatesService;
 		private readonly IPdfProvider _pdfProvider;
 		private readonly IProtocolsService _protocolsService;
-		private readonly IFormsService _formsService;
 		private readonly IShiftsService _shiftsService;
 		private readonly IContactsService _contactsService;
 		private readonly IMappingService _mappingService;
@@ -82,7 +81,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			Model.Services.IAuthorizationService authorizationService, IWorkLogsService workLogsService, IGeoLocationProvider geoLocationProvider,
 						IPersonnelRolesService personnelRolesService, IDepartmentSettingsService departmentSettingsService, IUserProfileService userProfileService,
 						IUnitsService unitsService, IActionLogsService actionLogsService, IEventAggregator eventAggregator, ICustomStateService customStateService,
-						ITemplatesService templatesService, IPdfProvider pdfProvider, IProtocolsService protocolsService, IFormsService formsService,
+						ITemplatesService templatesService, IPdfProvider pdfProvider, IProtocolsService protocolsService,
 						IShiftsService shiftsService, IContactsService contactsService, IMappingService mappingService,
 			IUserDefinedFieldsService userDefinedFieldsService, IUdfRenderingService udfRenderingService,
 			ICheckInTimerService checkInTimerService, IWeatherAlertService weatherAlertService,
@@ -109,7 +108,6 @@ namespace Resgrid.Web.Areas.User.Controllers
 			_templatesService = templatesService;
 			_pdfProvider = pdfProvider;
 			_protocolsService = protocolsService;
-			_formsService = formsService;
 			_shiftsService = shiftsService;
 			_contactsService = contactsService;
 			_mappingService = mappingService;
@@ -298,6 +296,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Call.DepartmentId = DepartmentId;
 				model.Call.Priority = (int)model.CallPriority;
 				model.Call.State = 0;
+
+				// Forms module is disabled. The hidden field is model-bound, so drop anything posted
+				// into it rather than trusting the client not to send form data.
+				model.Call.CallFormData = null;
 				model.Call.NatureOfCall = System.Net.WebUtility.HtmlDecode(model.Call.NatureOfCall);
 				model.Call.Notes = System.Net.WebUtility.HtmlDecode(model.Call.Notes);
 
@@ -1377,6 +1379,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Call.Priority = (int)model.CallPriority;
 				model.Call.State = 0;
 				model.Call.LoggedOn = model.Call.LoggedOn.ToUniversalTime();
+				model.Call.CallFormData = null;
 				model.Call.NatureOfCall = System.Net.WebUtility.HtmlDecode(model.Call.NatureOfCall);
 				model.Call.Notes = System.Net.WebUtility.HtmlDecode(model.Call.Notes);
 
@@ -3095,10 +3098,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			model.Call.ReportingUserId = UserId;
 
-			var form = await _formsService.GetNewCallFormByDepartmentIdAsync(DepartmentId);
-
-			if (form != null)
-				model.NewCallFormData = form.Data;
+			// Forms module is disabled: leaving NewCallFormData empty drops the call form button,
+			// its modal and the formRender call from the new/archived call views. Form data already
+			// on existing calls is untouched and still renders read-only on the call detail view.
 
 			model.Contacts = await _contactsService.GetAllContactsForDepartmentAsync(DepartmentId);
 			if (model.Contacts != null && model.Contacts.Any())
@@ -3150,9 +3152,8 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (templates != null)
 				model.CallTemplates = new SelectList(templates, "CallQuickTemplateId", "Name");
 
-			var form = await _formsService.GetNewCallFormByDepartmentIdAsync(DepartmentId);
-			if (form != null)
-				model.NewCallFormData = form.Data;
+			// Forms module is disabled, see FillNewCallView. UpdateCall never copies CallFormData
+			// from the posted model onto the stored call, so existing form data survives an edit.
 
 			var allUsers = await _departmentsService.GetAllUsersForDepartmentAsync(model.Department.DepartmentId);
 

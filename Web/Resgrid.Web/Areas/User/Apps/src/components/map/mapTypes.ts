@@ -15,6 +15,7 @@ export interface MapMarkerInfo {
   Title: string;
   zIndex: number;
   ImagePath: string;
+  PoiImage?: string;
   InfoWindowContent: string;
   Color: string;
   Type: number | string;
@@ -32,6 +33,7 @@ export interface PoiLayerInfo {
   Name: string;
   Color: string;
   ImagePath: string;
+  PoiImage?: string;
   Marker: string;
   IsDestination: boolean;
 }
@@ -120,6 +122,8 @@ export interface MapRendererProps {
 }
 
 const defaultPoiMarkerShape = 'MAP_PIN';
+const poiIconClassPrefix = 'map-icon-';
+const defaultPoiIconClass = 'map-icon-map-pin';
 
 const poiMarkerPaths: Record<string, string> = {
   MAP_PIN: 'M0-48c-9.8 0-17.7 7.8-17.7 17.4 0 15.5 17.7 30.6 17.7 30.6s17.7-15.4 17.7-30.6c0-9.6-7.9-17.4-17.7-17.4z',
@@ -204,7 +208,7 @@ function getMarkerTypeValue(marker: Pick<MapMarkerInfo, 'Type'>): number | null 
 }
 
 export function isPoiMarker(
-  marker: Pick<MapMarkerInfo, 'Type' | 'PoiTypeId' | 'LayerId' | 'ImagePath'>,
+  marker: Pick<MapMarkerInfo, 'Type' | 'PoiTypeId' | 'LayerId' | 'ImagePath' | 'PoiImage'>,
 ): boolean {
   if (getMarkerTypeValue(marker) === mapMarkerTypes.poi) {
     return true;
@@ -218,8 +222,23 @@ export function isPoiMarker(
     return true;
   }
 
-  return typeof marker.ImagePath === 'string'
-    && marker.ImagePath.trim().toLowerCase().startsWith('map-icon-');
+  return isPoiIconClass(getStringValue(marker.PoiImage, marker.ImagePath));
+}
+
+function isPoiIconClass(candidate: string): boolean {
+  return candidate.toLowerCase().startsWith(poiIconClassPrefix);
+}
+
+/**
+ * POI glyphs come from the map-icons web font, so the marker needs a "map-icon-*" class. The API
+ * carries that class in PoiImage; ImagePath holds a short PNG name ("hospital", "firstaid") for the
+ * apps that ship bitmap assets and is not a valid font class. Older API responses put the class in
+ * ImagePath, so that is still accepted when it looks like one.
+ */
+export function getPoiIconClass(marker: Pick<MapMarkerInfo, 'ImagePath' | 'PoiImage'>): string {
+  const candidate = getStringValue(marker.PoiImage, marker.ImagePath);
+
+  return isPoiIconClass(candidate) ? candidate : defaultPoiIconClass;
 }
 
 export function getPoiLayerId(layer: Pick<PoiLayerInfo, 'PoiTypeId'> | Pick<MapMarkerInfo, 'PoiTypeId' | 'LayerId'>): string {

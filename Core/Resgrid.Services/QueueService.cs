@@ -51,6 +51,14 @@ namespace Resgrid.Services
 			return true;
 		}
 
+		public async Task<bool> EnqueueCommunicationTestAsync(CommunicationTestQueueItem item, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			// Returns false rather than throwing: the run row is already saved as Pending, and the
+			// worker's recovery sweep picks up a run whose message never made it onto the bus. The
+			// caller decides whether a failed publish is worth surfacing.
+			return await _outboundQueueProvider.EnqueueCommunicationTest(item);
+		}
+
 		public async Task<QueueItem> GetPendingDeleteDepartmentQueueItemAsync(int departmentId)
 		{
 			var allItems = await _queueItemsRepository.GetAllAsync();

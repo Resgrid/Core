@@ -154,29 +154,49 @@ namespace Resgrid.Services
 			if (profile == null)
 				profile = await _userProfileService.GetProfileByUserIdAsync(userId);
 
-			if (profile != null && profile.SendNotificationPush)
-			{
-				string soundType = await GetSoundTypeAsync(message.DepartmentId, profile, PushSoundTypes.Notifiation, PushSoundTypes.ModernNotification);
+			// Nothing is sent when the user has push off, so say so rather than reporting success —
+			// a caller that reports delivery (the communication test) would otherwise claim a send
+			// that never left this method.
+			if (profile == null || !profile.SendNotificationPush)
+				return false;
 
-				try
+			string soundType = await GetSoundTypeAsync(message.DepartmentId, profile, PushSoundTypes.Notifiation, PushSoundTypes.ModernNotification);
+
+			// An event code supplied on the message wins, so a caller can round-trip its own
+			// identifier to the device (the communication test sends "CT:{responseToken}" and the
+			// Responder app posts that token back to confirm receipt). MessageId stays the default
+			// for ordinary notifications, preserving the existing "N{id}" codes.
+			var eventCode = !string.IsNullOrWhiteSpace(message.Id)
+				? message.Id
+				: string.Format("N{0}", message.MessageId);
+
+			bool delivered = false;
+
+			try
+			{
+				await _notificationProvider.SendAllNotifications(message.Title, message.SubTitle, userId, eventCode, soundType, true, 1, "#000000");
+				delivered = true;
+			}
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex);
+			}
+
+			try
+			{
+				if (!string.IsNullOrWhiteSpace(message.DepartmentCode))
 				{
-					await _notificationProvider.SendAllNotifications(message.Title, message.SubTitle, userId, string.Format("N{0}", message.MessageId), soundType, true, 1, "#000000");
-				}
-				catch (Exception ex)
-				{
-					Framework.Logging.LogException(ex);
-				}
-				try
-				{
-					if (!string.IsNullOrWhiteSpace(message.DepartmentCode))
-						await _novuProvider.SendUserNotification(message.Title, message.SubTitle, userId, message.DepartmentCode, string.Format("N{0}", message.MessageId), soundType);
-				}
-				catch (Exception ex)
-				{
-					Framework.Logging.LogException(ex);
+					// Novu is the only transport that reports back whether it accepted the message;
+					// the legacy provider returns void, so "didn't throw" is the best it can offer.
+					delivered |= await _novuProvider.SendUserNotification(message.Title, message.SubTitle, userId, message.DepartmentCode, eventCode, soundType);
 				}
 			}
-			return true;
+			catch (Exception ex)
+			{
+				Framework.Logging.LogException(ex);
+			}
+
+			return delivered;
 		}
 
 		/// <summary>

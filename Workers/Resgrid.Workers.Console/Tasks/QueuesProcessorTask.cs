@@ -52,6 +52,7 @@ namespace Resgrid.Workers.Console.Tasks
 			queue.SecurityRefreshEventQueueReceived += OnSecurityRefreshEventQueueReceived;
 			queue.WorkflowQueueReceived += OnWorkflowQueueReceived;
 			queue.ChatbotMessageQueueReceived += OnChatbotMessageReceived;
+			queue.CommunicationTestQueueReceived += OnCommunicationTestReceived;
 
 			try
 			{
@@ -223,6 +224,13 @@ namespace Resgrid.Workers.Console.Tasks
 			_logger.LogInformation($"{Name}: Chatbot Message Queue Received from {cmqi.From} for department {cmqi.DepartmentId}, starting processing...");
 			await ChatbotMessageLogic.ProcessChatbotMessageQueueItem(cmqi);
 			_logger.LogInformation($"{Name}: Finished processing chatbot message from {cmqi.From}.");
+		}
+
+		private async Task OnCommunicationTestReceived(CommunicationTestQueueItem ctqi)
+		{
+			_logger.LogInformation($"{Name}: Communication Test Queue Received for run {ctqi.CommunicationTestRunId} in department {ctqi.DepartmentId}, starting processing...");
+			await CommunicationTestLogic.ProcessCommunicationTestQueueItem(ctqi);
+			_logger.LogInformation($"{Name}: Finished processing communication test run {ctqi.CommunicationTestRunId}.");
 		}
 	}
 }

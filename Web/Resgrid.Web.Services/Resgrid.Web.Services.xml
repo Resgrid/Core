@@ -1060,9 +1060,25 @@
             Email confirmation endpoint - user clicks link with token to confirm receipt
             </summary>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CommunicationTestResponseController.VoiceCall(System.String)">
+            <summary>
+            Voice call entry point - Twilio fetches this when the communication test call is answered.
+            Plays the test prompt and gathers a keypress, which posts back to VoiceWebhook.
+            </summary>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.CommunicationTestResponseController.VoiceWebhook(System.String,System.String)">
             <summary>
-            Voice webhook endpoint - receives DTMF keypress callbacks
+            Voice webhook endpoint - receives DTMF keypress callbacks. Signature validated: this is the
+            one endpoint on the voice path that writes, so possession of a response token alone must not
+            be enough to mark a member as reached on a readiness report.
+            </summary>
+        </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.CommunicationTestResponseController.ResolveVoiceContextAsync(System.String)">
+            <summary>
+            What language the call speaks and which TTS voice reads it. The person being called picks
+            the language, not the department: a test proves reachability, and a member who set their
+            profile to Spanish is not reliably reached by an English recording. The department's TTS
+            language remains the fallback for members who never chose one.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Controllers.v4.CommunicationTestsController">
@@ -8783,6 +8799,22 @@
             Communication test definition data
             </summary>
         </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.CommunicationTestData.TargetGroupIds">
+            <summary>
+            Department group ids this test is limited to. All three target lists empty means the whole
+            department is tested.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.CommunicationTestData.TargetRoleIds">
+            <summary>
+            Personnel role ids this test is limited to.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.CommunicationTestData.TargetUserIds">
+            <summary>
+            Individual user ids this test is limited to.
+            </summary>
+        </member>
         <member name="T:Resgrid.Web.Services.Models.v4.CommunicationTests.GetCommunicationTestResult">
             <summary>
             Result of getting a single communication test
@@ -8801,6 +8833,19 @@
         <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.CommunicationTestResultData.Channel">
             <summary>
             Channel type (0=Sms, 1=Email, 2=Voice, 3=Push)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.CommunicationTestResultData.VerificationStatus">
+            <summary>
+            Contact verification state of this channel (0=Grandfathered, 1=Pending/Unverified, 2=Verified).
+            Always 2 for push, which has no verifiable contact method — read VerificationStatusText
+            instead of interpreting this value for the push channel.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.CommunicationTestResultData.VerificationStatusText">
+            <summary>
+            Display label for <see cref="P:Resgrid.Web.Services.Models.v4.CommunicationTests.CommunicationTestResultData.VerificationStatus"/>: "Verified", "Unverified",
+            "Grandfathered", or "N/A" for push. Supplied so every client shows the same wording.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.CommunicationTests.GetTestRunsResult">
@@ -8866,6 +8911,22 @@
         <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.SaveCommunicationTestInput.ResponseWindowMinutes">
             <summary>
             Response window in minutes (default 60)
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.SaveCommunicationTestInput.TargetGroupIds">
+            <summary>
+            Department group ids to limit this test to. Combined additively with TargetRoleIds and
+            TargetUserIds. Leave all three empty to test the entire department.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.SaveCommunicationTestInput.TargetRoleIds">
+            <summary>
+            Personnel role ids to limit this test to.
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.CommunicationTests.SaveCommunicationTestInput.TargetUserIds">
+            <summary>
+            Individual user ids to limit this test to.
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.CommunicationTests.SaveCommunicationTestResult">

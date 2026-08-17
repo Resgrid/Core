@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Resgrid.Web.Services.Models.v4.CommunicationTests;
 
 /// <summary>
@@ -54,4 +56,20 @@ public class SaveCommunicationTestInput
 	/// Response window in minutes (default 60)
 	/// </summary>
 	public int ResponseWindowMinutes { get; set; }
+
+	/// <summary>
+	/// Department group ids to limit this test to. Combined additively with TargetRoleIds and
+	/// TargetUserIds. Leave all three empty to test the entire department.
+	/// </summary>
+	public List<int> TargetGroupIds { get; set; } = new List<int>();
+
+	/// <summary>
+	/// Personnel role ids to limit this test to.
+	/// </summary>
+	public List<int> TargetRoleIds { get; set; } = new List<int>();
+
+	/// <summary>
+	/// Individual user ids to limit this test to.
+	/// </summary>
+	public List<string> TargetUserIds { get; set; } = new List<string>();
 }

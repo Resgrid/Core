@@ -1,51 +1,51 @@
-<?xml version="1.0" encoding="utf-8"?>
-<root>
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-    <xsd:element name="root" msdata:IsDataSet="true">
-      <xsd:complexType>
-        <xsd:choice maxOccurs="unbounded">
-          <xsd:element name="metadata">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
-              </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="assembly">
-            <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="data">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="resheader">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:choice>
-      </xsd:complexType>
-    </xsd:element>
-  </xsd:schema>
+<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:schema id="root">
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xs:element name="root" ns1:IsDataSet="true">
+      <xs:complexType>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="metadata">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" />
+              </xs:sequence>
+              <xs:attribute name="name" use="required" type="xsd:string" />
+              <xs:attribute name="type" type="xsd:string" />
+              <xs:attribute name="mimetype" type="xsd:string" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="assembly">
+            <xs:complexType>
+              <xs:attribute name="alias" type="xsd:string" />
+              <xs:attribute name="name" type="xsd:string" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="data">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
+              <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
+              <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="resheader">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" />
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
   </resheader>
@@ -59,150 +59,414 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="CommunicationTestModule" xml:space="preserve">
-    <value>Communication Tests</value>
+    <value>Testy łączności</value>
   </data>
   <data name="CommunicationTestsHeader" xml:space="preserve">
-    <value>Communication Tests</value>
+    <value>Testy łączności</value>
   </data>
   <data name="NewTest" xml:space="preserve">
-    <value>New Test</value>
+    <value>Nowy test</value>
   </data>
   <data name="EditTest" xml:space="preserve">
-    <value>Edit Test</value>
+    <value>Edytuj test</value>
   </data>
   <data name="DeleteTest" xml:space="preserve">
-    <value>Delete Test</value>
+    <value>Usuń test</value>
   </data>
   <data name="DeleteTestWarning" xml:space="preserve">
-    <value>Are you sure you want to delete this test?</value>
+    <value>Czy na pewno chcesz usunąć ten test?</value>
   </data>
   <data name="TestDefinitions" xml:space="preserve">
-    <value>Test Definitions</value>
+    <value>Definicje testów</value>
   </data>
   <data name="TestName" xml:space="preserve">
-    <value>Name</value>
+    <value>Nazwa</value>
   </data>
   <data name="TestDescription" xml:space="preserve">
-    <value>Description</value>
+    <value>Opis</value>
   </data>
   <data name="ScheduleType" xml:space="preserve">
-    <value>Schedule Type</value>
+    <value>Typ harmonogramu</value>
   </data>
   <data name="OnDemand" xml:space="preserve">
-    <value>On Demand</value>
+    <value>Na żądanie</value>
   </data>
   <data name="Weekly" xml:space="preserve">
-    <value>Weekly</value>
+    <value>Cotygodniowo</value>
   </data>
   <data name="Monthly" xml:space="preserve">
-    <value>Monthly</value>
+    <value>Comiesięcznie</value>
   </data>
   <data name="DaysOfWeek" xml:space="preserve">
-    <value>Days of Week</value>
+    <value>Dzień tygodnia</value>
   </data>
   <data name="DayOfMonth" xml:space="preserve">
-    <value>Day of Month</value>
+    <value>Dzień miesiąca (1-28)</value>
   </data>
   <data name="Time" xml:space="preserve">
-    <value>Time</value>
+    <value>Godzina</value>
   </data>
   <data name="ChannelsToTest" xml:space="preserve">
-    <value>Channels to Test</value>
+    <value>Kanały do przetestowania</value>
   </data>
   <data name="SMS" xml:space="preserve">
     <value>SMS</value>
   </data>
   <data name="Email" xml:space="preserve">
-    <value>Email</value>
+    <value>E-mail</value>
   </data>
   <data name="Voice" xml:space="preserve">
-    <value>Voice</value>
+    <value>Połączenie głosowe</value>
   </data>
   <data name="Push" xml:space="preserve">
     <value>Push</value>
   </data>
   <data name="Active" xml:space="preserve">
-    <value>Active</value>
+    <value>Aktywny</value>
   </data>
   <data name="Inactive" xml:space="preserve">
-    <value>Inactive</value>
+    <value>Nieaktywny</value>
   </data>
   <data name="ResponseWindow" xml:space="preserve">
-    <value>Response Window</value>
+    <value>Okno odpowiedzi</value>
   </data>
   <data name="ResponseWindowMinutes" xml:space="preserve">
-    <value>Response Window (minutes)</value>
+    <value>Okno odpowiedzi (minuty)</value>
   </data>
   <data name="CreateTest" xml:space="preserve">
-    <value>Create Test</value>
+    <value>Utwórz test</value>
   </data>
   <data name="SaveChanges" xml:space="preserve">
-    <value>Save Changes</value>
+    <value>Zapisz zmiany</value>
   </data>
   <data name="Cancel" xml:space="preserve">
-    <value>Cancel</value>
+    <value>Anuluj</value>
   </data>
   <data name="RecentTestRuns" xml:space="preserve">
-    <value>Recent Test Runs</value>
+    <value>Ostatnie uruchomienia</value>
   </data>
   <data name="RunNow" xml:space="preserve">
-    <value>Run Now</value>
+    <value>Uruchom teraz</value>
   </data>
   <data name="RunCode" xml:space="preserve">
-    <value>Run Code</value>
+    <value>Kod uruchomienia</value>
   </data>
   <data name="Started" xml:space="preserve">
-    <value>Started</value>
+    <value>Rozpoczęto</value>
   </data>
   <data name="Status" xml:space="preserve">
     <value>Status</value>
   </data>
   <data name="UsersTested" xml:space="preserve">
-    <value>Users Tested</value>
+    <value>Przetestowani użytkownicy</value>
   </data>
   <data name="Responses" xml:space="preserve">
-    <value>Responses</value>
+    <value>Odpowiedzi</value>
   </data>
   <data name="ViewReport" xml:space="preserve">
-    <value>View Report</value>
+    <value>Zobacz raport</value>
   </data>
   <data name="ReportHeader" xml:space="preserve">
-    <value>Communication Test Report</value>
+    <value>Raport testu łączności</value>
   </data>
   <data name="RunDetails" xml:space="preserve">
-    <value>Run Details</value>
+    <value>Szczegóły uruchomienia</value>
   </data>
   <data name="PerUserResults" xml:space="preserve">
-    <value>Per-User Results</value>
+    <value>Wyniki dla użytkowników</value>
   </data>
   <data name="User" xml:space="preserve">
-    <value>User</value>
+    <value>Użytkownik</value>
   </data>
   <data name="Contact" xml:space="preserve">
-    <value>Contact</value>
+    <value>Kontakt</value>
   </data>
   <data name="Carrier" xml:space="preserve">
-    <value>Carrier</value>
+    <value>Operator</value>
   </data>
   <data name="VerificationStatus" xml:space="preserve">
-    <value>Verification Status</value>
+    <value>Weryfikacja</value>
   </data>
   <data name="Responded" xml:space="preserve">
-    <value>Responded</value>
+    <value>Odpowiedział</value>
   </data>
   <data name="NoResponse" xml:space="preserve">
-    <value>No Response</value>
+    <value>Brak odpowiedzi</value>
   </data>
   <data name="NotSent" xml:space="preserve">
-    <value>Not Sent</value>
+    <value>Nie wysłano</value>
   </data>
   <data name="ResponseRate" xml:space="preserve">
-    <value>Response Rate</value>
+    <value>Wskaźnik odpowiedzi</value>
   </data>
   <data name="ThankYouResponse" xml:space="preserve">
-    <value>Your communication test response has been recorded. Thank you.</value>
+    <value>Twoja odpowiedź na test łączności została zapisana. Dziękujemy.</value>
   </data>
   <data name="TestResponseReceived" xml:space="preserve">
-    <value>Resgrid received your communication test response. Thank you.</value>
+    <value>Resgrid otrzymał Twoją odpowiedź na test łączności. Dziękujemy.</value>
+  </data>
+  <data name="MessageEmailBody" xml:space="preserve">
+    <value>Cześć {0},
+
+
+
+{1} przeprowadza test łączności ({2}), aby potwierdzić możliwość skontaktowania się z Tobą.
+
+
+
+To jest TEST. Nie ma żadnego zagrożenia i nie jest wymagane żadne działanie poza potwierdzeniem odbioru tej wiadomości.
+
+
+
+Kliknij poniższy link, aby potwierdzić odbiór tej wiadomości:
+
+{3}
+
+
+
+Zespół Resgrid</value>
+  </data>
+  <data name="MessageEmailSubject" xml:space="preserve">
+    <value>Test łączności Resgrid: {0}</value>
+  </data>
+  <data name="MessagePushBody" xml:space="preserve">
+    <value>{0}: to tylko test. Otwórz aplikację Resgrid Responder i potwierdź odbiór.</value>
+  </data>
+  <data name="MessagePushTitle" xml:space="preserve">
+    <value>Test łączności</value>
+  </data>
+  <data name="MessageSmsBody" xml:space="preserve">
+    <value>Test łączności Resgrid ({0}). To tylko test. Odpowiedz {1}, aby potwierdzić odbiór tej wiadomości.</value>
+  </data>
+  <data name="MessageSmsBodyNoName" xml:space="preserve">
+    <value>Test łączności Resgrid. To tylko test. Odpowiedz {0}, aby potwierdzić odbiór tej wiadomości.</value>
+  </data>
+  <data name="MessageVoiceGreeting" xml:space="preserve">
+    <value>To jest test łączności Resgrid. To tylko test. Nie ma żadnego zagrożenia.</value>
+  </data>
+  <data name="MessageVoiceNoResponse" xml:space="preserve">
+    <value>Nie otrzymano potwierdzenia. Do usłyszenia.</value>
+  </data>
+  <data name="MessageVoicePressOne" xml:space="preserve">
+    <value>Naciśnij 1, aby potwierdzić odbiór tego połączenia.</value>
+  </data>
+  <data name="MessageVoiceRecorded" xml:space="preserve">
+    <value>Dziękujemy. Twoja odpowiedź została zapisana.</value>
+  </data>
+  <data name="Channels" xml:space="preserve">
+    <value>Kanały</value>
+  </data>
+  <data name="ContactVerification" xml:space="preserve">
+    <value>Weryfikacja kontaktu</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Usuń</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Edytuj</value>
+  </data>
+  <data name="EmailContact" xml:space="preserve">
+    <value>Kontakt e-mail</value>
+  </data>
+  <data name="EmailEnabled" xml:space="preserve">
+    <value>E-mail włączony</value>
+  </data>
+  <data name="EmailVerification" xml:space="preserve">
+    <value>Weryfikacja e-mail</value>
+  </data>
+  <data name="Fri" xml:space="preserve">
+    <value>Pt</value>
+  </data>
+  <data name="Grandfathered" xml:space="preserve">
+    <value>Zachowany</value>
+  </data>
+  <data name="GrandfatheredHelp" xml:space="preserve">
+    <value>Sprzed wprowadzenia weryfikacji. Nadal używane, ale niepotwierdzone — poproś te osoby o weryfikację.</value>
+  </data>
+  <data name="Groups" xml:space="preserve">
+    <value>Grupy</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Strona główna</value>
+  </data>
+  <data name="Individuals" xml:space="preserve">
+    <value>Osoby</value>
+  </data>
+  <data name="MinutesShort" xml:space="preserve">
+    <value>min</value>
+  </data>
+  <data name="Mon" xml:space="preserve">
+    <value>Pn</value>
+  </data>
+  <data name="NameRequired" xml:space="preserve">
+    <value>Nazwa jest wymagana.</value>
+  </data>
+  <data name="NotApplicable" xml:space="preserve">
+    <value>Nd.</value>
+  </data>
+  <data name="NotApplicableHelp" xml:space="preserve">
+    <value>Push nie ma weryfikowalnej metody kontaktu — dostarczenie zależy od zarejestrowanego urządzenia.</value>
+  </data>
+  <data name="NotSentNoContact" xml:space="preserve">
+    <value>Nie wysłano (brak kontaktu)</value>
+  </data>
+  <data name="NotSentTurnedOff" xml:space="preserve">
+    <value>Nie wysłano (wyłączone)</value>
+  </data>
+  <data name="NotSentUnverified" xml:space="preserve">
+    <value>Nie wysłano (niezweryfikowany)</value>
+  </data>
+  <data name="OnlyOnDemandCanRun" xml:space="preserve">
+    <value>Ręcznie można uruchomić tylko testy na żądanie. Testy zaplanowane uruchamiają się automatycznie.</value>
+  </data>
+  <data name="OnlyOneMonthlyTest" xml:space="preserve">
+    <value>Dozwolony jest tylko jeden test miesięczny na oddział. Zamiast tego edytuj istniejący.</value>
+  </data>
+  <data name="OnlyOneWeeklyTest" xml:space="preserve">
+    <value>Dozwolony jest tylko jeden test tygodniowy na oddział. Zamiast tego edytuj istniejący.</value>
+  </data>
+  <data name="PreviewEmailHelp" xml:space="preserve">
+    <value>Kliknięcie linku jest potwierdzeniem. Link jest unikalny dla każdej osoby i jednorazowy.</value>
+  </data>
+  <data name="PreviewLanguageNote" xml:space="preserve">
+    <value>Wyświetlane tutaj w Twoim języku. Każda osoba otrzyma wiadomość w języku ustawionym w swoim profilu.</value>
+  </data>
+  <data name="PreviewPushHelp" xml:space="preserve">
+    <value>Wymaga aplikacji Resgrid Responder z zalogowanym kontem i włączonymi powiadomieniami. Otwarcie powiadomienia wyświetla w aplikacji przycisk potwierdzenia. Osoby bez zainstalowanej aplikacji są wykazywane jako brak odpowiedzi w kanale push.</value>
+  </data>
+  <data name="PreviewSmsHelp" xml:space="preserve">
+    <value>Odpowiadają kodem uruchomienia (dla każdego uruchomienia generowany jest nowy, np. {0}) na ten sam numer, z którego przyszła wiadomość. Reszta treści odpowiedzi nie ma znaczenia.</value>
+  </data>
+  <data name="PreviewVoiceHelp" xml:space="preserve">
+    <value>Połączenie odtwarza tę treść dwa razy, po czym się rozłącza. Naciśnięcie 1 potwierdza odbiór. Dzwoni na numer ustawiony w profilu danej osoby.</value>
+  </data>
+  <data name="PushEnabled" xml:space="preserve">
+    <value>Push włączone</value>
+  </data>
+  <data name="PushNotification" xml:space="preserve">
+    <value>Powiadomienie push</value>
+  </data>
+  <data name="PushVerification" xml:space="preserve">
+    <value>Weryfikacja push</value>
+  </data>
+  <data name="RateLimited" xml:space="preserve">
+    <value>Test na żądanie można uruchomić tylko raz na 48 godzin. Spróbuj ponownie później.</value>
+  </data>
+  <data name="Roles" xml:space="preserve">
+    <value>Role</value>
+  </data>
+  <data name="RunInProgressNotice" xml:space="preserve">
+    <value>To uruchomienie jest wciąż wysyłane. Wiadomości są wysyłane w tle — odśwież tę stronę za chwilę, aby zobaczyć wyniki.</value>
+  </data>
+  <data name="RunNowConfirm" xml:space="preserve">
+    <value>Uruchomić ten test łączności teraz?
+
+Zostanie wysłana prawdziwa wiadomość do każdego użytkownika objętego testem, na każdym włączonym kanale.
+
+- SMS: odpowiadają kodem uruchomienia widocznym w raporcie
+- E-mail: klikają link potwierdzający
+- Głos: automatyczne połączenie prosi o naciśnięcie 1
+- Push: wymaga aplikacji Resgrid Responder z zalogowanym kontem
+
+Wiadomości są wysyłane w tle, więc raport będzie się stopniowo wypełniał.</value>
+  </data>
+  <data name="Sat" xml:space="preserve">
+    <value>Sb</value>
+  </data>
+  <data name="Schedule" xml:space="preserve">
+    <value>Harmonogram</value>
+  </data>
+  <data name="Scope" xml:space="preserve">
+    <value>Zakres</value>
+  </data>
+  <data name="ScopeEveryone" xml:space="preserve">
+    <value>Wszyscy</value>
+  </data>
+  <data name="ScopeGroup" xml:space="preserve">
+    <value>1 grupa</value>
+  </data>
+  <data name="ScopeGroups" xml:space="preserve">
+    <value>Grupy: {0}</value>
+  </data>
+  <data name="ScopePeople" xml:space="preserve">
+    <value>Osoby: {0}</value>
+  </data>
+  <data name="ScopePerson" xml:space="preserve">
+    <value>1 osoba</value>
+  </data>
+  <data name="ScopeRole" xml:space="preserve">
+    <value>1 rola</value>
+  </data>
+  <data name="ScopeRoles" xml:space="preserve">
+    <value>Role: {0}</value>
+  </data>
+  <data name="SendFailed" xml:space="preserve">
+    <value>Wysyłka nieudana</value>
+  </data>
+  <data name="SmsCarrier" xml:space="preserve">
+    <value>Operator SMS</value>
+  </data>
+  <data name="SmsContact" xml:space="preserve">
+    <value>Kontakt SMS</value>
+  </data>
+  <data name="SmsEnabled" xml:space="preserve">
+    <value>SMS włączone</value>
+  </data>
+  <data name="SmsVerification" xml:space="preserve">
+    <value>Weryfikacja SMS</value>
+  </data>
+  <data name="Sun" xml:space="preserve">
+    <value>Nd</value>
+  </data>
+  <data name="TargetsUsersBanner" xml:space="preserve">
+    <value>Testy łączności są kierowane do użytkowników, a nie do jednostek. Do potwierdzenia powiadomienia push personel potrzebuje zainstalowanej aplikacji Resgrid Responder z zalogowanym kontem; SMS, e-mail i połączenie głosowe potwierdza się z telefonu lub skrzynki i nie wymagają aplikacji. Otwórz test, aby zobaczyć dokładnie, co otrzyma Twój personel.</value>
+  </data>
+  <data name="TestNameHeader" xml:space="preserve">
+    <value>Nazwa testu</value>
+  </data>
+  <data name="Thu" xml:space="preserve">
+    <value>Cz</value>
+  </data>
+  <data name="Tue" xml:space="preserve">
+    <value>Wt</value>
+  </data>
+  <data name="UnableToStart" xml:space="preserve">
+    <value>Nie udało się uruchomić testu. Może obowiązywać limit częstotliwości.</value>
+  </data>
+  <data name="Unverified" xml:space="preserve">
+    <value>Niezweryfikowany</value>
+  </data>
+  <data name="UnverifiedHelp" xml:space="preserve">
+    <value>Niepotwierdzone. Resgrid nie wyśle na te kanały.</value>
+  </data>
+  <data name="Verified" xml:space="preserve">
+    <value>Zweryfikowany</value>
+  </data>
+  <data name="VerifiedHelp" xml:space="preserve">
+    <value>Potwierdzone przez użytkownika. Resgrid wysyła na te kanały.</value>
+  </data>
+  <data name="VoiceCall" xml:space="preserve">
+    <value>Połączenie głosowe</value>
+  </data>
+  <data name="VoiceContact" xml:space="preserve">
+    <value>Kontakt głosowy</value>
+  </data>
+  <data name="VoiceEnabled" xml:space="preserve">
+    <value>Połączenia głosowe włączone</value>
+  </data>
+  <data name="VoiceVerification" xml:space="preserve">
+    <value>Weryfikacja głosowa</value>
+  </data>
+  <data name="Wed" xml:space="preserve">
+    <value>Śr</value>
+  </data>
+  <data name="WhatYourPeopleWillSee" xml:space="preserve">
+    <value>Co zobaczy Twój personel</value>
+  </data>
+  <data name="WhoToTest" xml:space="preserve">
+    <value>Kogo testować</value>
+  </data>
+  <data name="WhoToTestHelp" xml:space="preserve">
+    <value>Pozostaw wszystkie trzy listy puste, aby przetestować cały oddział. Wybory sumują się: każda osoba pasująca do wybranej grupy, roli lub nazwiska jest testowana raz.</value>
   </data>
 </root>

@@ -71,6 +71,16 @@ namespace Resgrid.Model.Services
 		Task<bool> EnqueueChatbotMessageAsync(ChatbotMessageQueueItem item, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
+		/// Hands a started communication test run to the worker, which builds the per-recipient
+		/// result rows and does the sending. Returns <c>false</c> if the publish failed; the run
+		/// stays Pending and the worker's recovery sweep will pick it up.
+		/// </summary>
+		/// <param name="item">The communication test queue item.</param>
+		/// <param name="cancellationToken">The cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+		/// <returns>Task&lt;System.Boolean&gt;.</returns>
+		Task<bool> EnqueueCommunicationTestAsync(CommunicationTestQueueItem item, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
 		/// Sets the queue item completed asynchronous.
 		/// </summary>
 		/// <param name="queueItemId">The queue item identifier.</param>

@@ -216,8 +216,20 @@ namespace Resgrid.Model.Services
 		/// <param name="toEmailAddress">The recipient email address.</param>
 		/// <param name="firstName">User's first name for personalisation.</param>
 		/// <param name="verificationCode">The numeric verification code to include in the email.</param>
-		Task<bool> SendEmailVerificationCodeAsync(string toEmailAddress, string firstName, string verificationCode);
+		Task<bool> SendEmailVerificationCodeAsync(string toEmailAddress, string firstName, string verificationCode, string culture = null);
 
-		Task<bool> SendGdprDataExportReadyAsync(string toEmailAddress, string firstName, string downloadUrl, DateTime expiresAt);
+		Task<bool> SendGdprDataExportReadyAsync(string toEmailAddress, string firstName, string downloadUrl, DateTime expiresAt, string culture = null);
+
+		/// <summary>
+		/// Sends a communication test email carrying the single-use confirmation link the recipient
+		/// clicks to record that the message arrived.
+		/// </summary>
+		/// <param name="toEmailAddress">The recipient email address.</param>
+		/// <param name="firstName">User's first name for personalisation.</param>
+		/// <param name="departmentName">The department running the test.</param>
+		/// <param name="testName">The name of the communication test.</param>
+		/// <param name="confirmUrl">The tokenised confirmation URL.</param>
+		/// <param name="culture">The recipient's preferred culture (UserProfile.Language); null falls back to English.</param>
+		Task<bool> SendCommunicationTestEmailAsync(string toEmailAddress, string firstName, string departmentName, string testName, string confirmUrl, string culture = null);
 	}
 }

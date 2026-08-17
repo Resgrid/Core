@@ -182,6 +182,7 @@ namespace Resgrid.Repositories.DataRepository
 			builder.RegisterType<CommunicationTestRepository>().As<ICommunicationTestRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CommunicationTestRunRepository>().As<ICommunicationTestRunRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<CommunicationTestResultRepository>().As<ICommunicationTestResultRepository>().InstancePerLifetimeScope();
+			builder.RegisterType<CommunicationTestTargetRepository>().As<ICommunicationTestTargetRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<WeatherAlertSourceRepository>().As<IWeatherAlertSourceRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<WeatherAlertRepository>().As<IWeatherAlertRepository>().InstancePerLifetimeScope();
 			builder.RegisterType<WeatherAlertZoneRepository>().As<IWeatherAlertZoneRepository>().InstancePerLifetimeScope();

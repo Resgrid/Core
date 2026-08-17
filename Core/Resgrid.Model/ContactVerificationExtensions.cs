@@ -25,6 +25,27 @@ namespace Resgrid.Model
 		/// </summary>
 		public static bool IsContactMethodAllowedForSending(this bool? verified)
 			=> verified != false;
+
+		/// <summary>
+		/// The label shown to users for a verification state. <see cref="ContactVerificationStatus.Pending"/>
+		/// reads as "Unverified" rather than "Pending": from an administrator's point of view the fact
+		/// that matters is that the channel is not verified and will not be sent to, not that a code
+		/// happens to be outstanding.
+		/// </summary>
+		public static string ToDisplayText(this ContactVerificationStatus status)
+		{
+			switch (status)
+			{
+				case ContactVerificationStatus.Verified:
+					return "Verified";
+				case ContactVerificationStatus.Pending:
+					return "Unverified";
+				case ContactVerificationStatus.Grandfathered:
+					return "Grandfathered";
+				default:
+					return "Unknown";
+			}
+		}
 	}
 }
 

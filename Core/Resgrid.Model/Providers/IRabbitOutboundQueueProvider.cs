@@ -22,6 +22,8 @@ namespace Resgrid.Model.Providers
 		Task<bool> EnqueuePersonnelLocationEvent(PersonnelLocationEvent personnelLocationEvent);
 		Task<bool> EnqueueWorkflowEvent(WorkflowQueueItem item);
 		Task<bool> EnqueueChatbotMessage(ChatbotMessageQueueItem chatbotMessageQueue);
+
+		Task<bool> EnqueueCommunicationTest(CommunicationTestQueueItem communicationTestQueue);
 		Task<bool> VerifyAndCreateClients();
 	}
 }

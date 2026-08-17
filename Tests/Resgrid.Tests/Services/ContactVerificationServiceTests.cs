@@ -108,7 +108,7 @@ namespace Resgrid.Tests.Services
 					.Callback<int, UserProfile, CancellationToken>((_, p, _) => savedProfile = p)
 					.ReturnsAsync(profile);
 				_emailServiceMock
-					.Setup(e => e.SendEmailVerificationCodeAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+					.Setup(e => e.SendEmailVerificationCodeAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
 					.ReturnsAsync(true);
 
 				var result = await _contactVerificationService.SendEmailVerificationCodeAsync("user1", 1);
@@ -143,7 +143,7 @@ namespace Resgrid.Tests.Services
 					.Callback<int, UserProfile, CancellationToken>((_, p, _) => savedProfile = p)
 					.ReturnsAsync(profile);
 				_emailServiceMock
-					.Setup(e => e.SendEmailVerificationCodeAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+					.Setup(e => e.SendEmailVerificationCodeAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
 					.ReturnsAsync(true);
 
 				var result = await _contactVerificationService.SendEmailVerificationCodeAsync("user1", 1);
@@ -171,7 +171,7 @@ namespace Resgrid.Tests.Services
 					.Setup(s => s.SaveProfileAsync(It.IsAny<int>(), It.IsAny<UserProfile>(), It.IsAny<CancellationToken>()))
 					.ReturnsAsync(profile);
 				_emailServiceMock
-					.Setup(e => e.SendEmailVerificationCodeAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
+					.Setup(e => e.SendEmailVerificationCodeAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
 					.ReturnsAsync(true);
 
 				var result = await _contactVerificationService.SendEmailVerificationCodeAsync("user1", 1);
@@ -196,7 +196,7 @@ namespace Resgrid.Tests.Services
 					.Setup(s => s.SaveProfileAsync(It.IsAny<int>(), It.IsAny<UserProfile>(), It.IsAny<CancellationToken>()))
 					.ReturnsAsync(profile);
 				_smsServiceMock
-					.Setup(s => s.SendSmsVerificationCodeAsync(phoneNumber, It.IsAny<string>(), It.IsAny<string>()))
+					.Setup(s => s.SendSmsVerificationCodeAsync(phoneNumber, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()))
 					.ReturnsAsync(true);
 
 				// Act
@@ -205,7 +205,7 @@ namespace Resgrid.Tests.Services
 				// Assert
 				result.Should().Be(ContactVerificationSendStatus.Sent);
 				_phoneNumberProcesserMock.Verify(p => p.Process(phoneNumber, null), Times.Once);
-				_smsServiceMock.Verify(s => s.SendSmsVerificationCodeAsync(phoneNumber, It.IsAny<string>(), "15555550123"), Times.Once);
+				_smsServiceMock.Verify(s => s.SendSmsVerificationCodeAsync(phoneNumber, It.IsAny<string>(), "15555550123", It.IsAny<string>()), Times.Once);
 			}
 
 			[Test]

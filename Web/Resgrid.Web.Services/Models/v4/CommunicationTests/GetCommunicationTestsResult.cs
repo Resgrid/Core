@@ -38,6 +38,22 @@ public class CommunicationTestData
 	public bool Active { get; set; }
 	public int ResponseWindowMinutes { get; set; }
 	public string CreatedOn { get; set; }
+
+	/// <summary>
+	/// Department group ids this test is limited to. All three target lists empty means the whole
+	/// department is tested.
+	/// </summary>
+	public List<int> TargetGroupIds { get; set; } = new List<int>();
+
+	/// <summary>
+	/// Personnel role ids this test is limited to.
+	/// </summary>
+	public List<int> TargetRoleIds { get; set; } = new List<int>();
+
+	/// <summary>
+	/// Individual user ids this test is limited to.
+	/// </summary>
+	public List<string> TargetUserIds { get; set; } = new List<string>();
 }
 
 /// <summary>

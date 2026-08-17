@@ -6,6 +6,7 @@ using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
 using Resgrid.Framework;
+using SystemMessagesResources = Resgrid.Localization.Areas.User.SystemMessages.SystemMessagesResources;
 
 namespace Resgrid.Services
 {
@@ -441,14 +442,14 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public async Task<bool> SendSmsVerificationCodeAsync(string toPhoneNumber, string verificationCode, string departmentNumber)
+		public async Task<bool> SendSmsVerificationCodeAsync(string toPhoneNumber, string verificationCode, string departmentNumber, string culture = null)
 		{
 			if (string.IsNullOrWhiteSpace(toPhoneNumber))
 				return false;
 
 			try
 			{
-				string messageBody = $"Your Resgrid verification code is: {verificationCode}. It expires in {Config.VerificationConfig.VerificationCodeExpiryMinutes} minutes.";
+				string messageBody = SystemMessagesResources.Get("VerificationCodeSmsBody", culture, verificationCode, Config.VerificationConfig.VerificationCodeExpiryMinutes);
 
 				// Always use direct provider send for verification — never email-to-SMS gateway,
 				// since we need deterministic delivery for security-critical codes.
@@ -462,6 +463,32 @@ namespace Resgrid.Services
 					false);
 
 				return true;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+				return false;
+			}
+		}
+
+		public async Task<bool> SendCommunicationTestAsync(string toPhoneNumber, string message, string departmentNumber, MobileCarriers carrier, int departmentId)
+		{
+			if (string.IsNullOrWhiteSpace(toPhoneNumber) || string.IsNullOrWhiteSpace(message))
+				return false;
+
+			try
+			{
+				// Direct provider send only. The recipient confirms the test by replying with the run
+				// code, and a reply is only routed back to us when the message came from our number --
+				// the email-to-SMS gateway path would deliver but leave the recipient unable to answer.
+				return await _textMessageProvider.SendTextMessage(
+					toPhoneNumber,
+					message,
+					departmentNumber,
+					carrier,
+					departmentId,
+					false,
+					false);
 			}
 			catch (Exception ex)
 			{

@@ -1,51 +1,51 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<root>
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
-    <xsd:element name="root" msdata:IsDataSet="true">
-      <xsd:complexType>
-        <xsd:choice maxOccurs="unbounded">
-          <xsd:element name="metadata">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" />
-              </xsd:sequence>
-              <xsd:attribute name="name" use="required" type="xsd:string" />
-              <xsd:attribute name="type" type="xsd:string" />
-              <xsd:attribute name="mimetype" type="xsd:string" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="assembly">
-            <xsd:complexType>
-              <xsd:attribute name="alias" type="xsd:string" />
-              <xsd:attribute name="name" type="xsd:string" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="data">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
-              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
-              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
-              <xsd:attribute ref="xml:space" />
-            </xsd:complexType>
-          </xsd:element>
-          <xsd:element name="resheader">
-            <xsd:complexType>
-              <xsd:sequence>
-                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
-              </xsd:sequence>
-              <xsd:attribute name="name" type="xsd:string" use="required" />
-            </xsd:complexType>
-          </xsd:element>
-        </xsd:choice>
-      </xsd:complexType>
-    </xsd:element>
-  </xsd:schema>
+<?xml version='1.0' encoding='utf-8'?>
+<root xmlns:ns1="urn:schemas-microsoft-com:xml-msdata" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:schema id="root">
+    <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xs:element name="root" ns1:IsDataSet="true">
+      <xs:complexType>
+        <xs:choice maxOccurs="unbounded">
+          <xs:element name="metadata">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" />
+              </xs:sequence>
+              <xs:attribute name="name" use="required" type="xsd:string" />
+              <xs:attribute name="type" type="xsd:string" />
+              <xs:attribute name="mimetype" type="xsd:string" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="assembly">
+            <xs:complexType>
+              <xs:attribute name="alias" type="xsd:string" />
+              <xs:attribute name="name" type="xsd:string" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="data">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+                <xs:element name="comment" type="xsd:string" minOccurs="0" ns1:Ordinal="2" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" ns1:Ordinal="1" />
+              <xs:attribute name="type" type="xsd:string" ns1:Ordinal="3" />
+              <xs:attribute name="mimetype" type="xsd:string" ns1:Ordinal="4" />
+              <xs:attribute ref="xml:space" />
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="resheader">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="value" type="xsd:string" minOccurs="0" ns1:Ordinal="1" />
+              </xs:sequence>
+              <xs:attribute name="name" type="xsd:string" use="required" />
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
   <resheader name="resmimetype">
     <value>text/microsoft-resx</value>
   </resheader>
@@ -86,10 +86,10 @@
     <value>Περιγραφή</value>
   </data>
   <data name="ScheduleType" xml:space="preserve">
-    <value>Τύπος Προγραμματισμού</value>
+    <value>Τύπος Προγράμματος</value>
   </data>
   <data name="OnDemand" xml:space="preserve">
-    <value>Κατά Παραγγελία</value>
+    <value>Κατ’ Απαίτηση</value>
   </data>
   <data name="Weekly" xml:space="preserve">
     <value>Εβδομαδιαία</value>
@@ -98,10 +98,10 @@
     <value>Μηνιαία</value>
   </data>
   <data name="DaysOfWeek" xml:space="preserve">
-    <value>Ημέρες της Εβδομάδας</value>
+    <value>Ημέρα Εβδομάδας</value>
   </data>
   <data name="DayOfMonth" xml:space="preserve">
-    <value>Ημέρα του Μήνα</value>
+    <value>Ημέρα Μήνα (1-28)</value>
   </data>
   <data name="Time" xml:space="preserve">
     <value>Ώρα</value>
@@ -143,7 +143,7 @@
     <value>Ακύρωση</value>
   </data>
   <data name="RecentTestRuns" xml:space="preserve">
-    <value>Πρόσφατες Εκτελέσεις Δοκιμών</value>
+    <value>Πρόσφατες Εκτελέσεις</value>
   </data>
   <data name="RunNow" xml:space="preserve">
     <value>Εκτέλεση Τώρα</value>
@@ -152,7 +152,7 @@
     <value>Κωδικός Εκτέλεσης</value>
   </data>
   <data name="Started" xml:space="preserve">
-    <value>Ξεκίνησε</value>
+    <value>Έναρξη</value>
   </data>
   <data name="Status" xml:space="preserve">
     <value>Κατάσταση</value>
@@ -179,13 +179,13 @@
     <value>Χρήστης</value>
   </data>
   <data name="Contact" xml:space="preserve">
-    <value>Επαφή</value>
+    <value>Επικοινωνία</value>
   </data>
   <data name="Carrier" xml:space="preserve">
     <value>Πάροχος</value>
   </data>
   <data name="VerificationStatus" xml:space="preserve">
-    <value>Κατάσταση Επαλήθευσης</value>
+    <value>Επαλήθευση</value>
   </data>
   <data name="Responded" xml:space="preserve">
     <value>Απάντησε</value>
@@ -204,5 +204,269 @@
   </data>
   <data name="TestResponseReceived" xml:space="preserve">
     <value>Το Resgrid έλαβε την απάντησή σας στη δοκιμή επικοινωνίας. Ευχαριστούμε.</value>
+  </data>
+  <data name="MessageEmailBody" xml:space="preserve">
+    <value>Γεια σας {0},
+
+
+
+Η υπηρεσία {1} εκτελεί δοκιμή επικοινωνίας ({2}) για να επιβεβαιώσει ότι μπορεί να επικοινωνήσει μαζί σας.
+
+
+
+Πρόκειται για ΔΟΚΙΜΗ. Δεν υπάρχει έκτακτη ανάγκη και δεν απαιτείται καμία ενέργεια πέραν της επιβεβαίωσης λήψης αυτού του email.
+
+
+
+Κάντε κλικ στον παρακάτω σύνδεσμο για να επιβεβαιώσετε τη λήψη αυτού του μηνύματος:
+
+{3}
+
+
+
+Η ομάδα του Resgrid</value>
+  </data>
+  <data name="MessageEmailSubject" xml:space="preserve">
+    <value>Δοκιμή επικοινωνίας Resgrid: {0}</value>
+  </data>
+  <data name="MessagePushBody" xml:space="preserve">
+    <value>{0}: πρόκειται μόνο για δοκιμή. Ανοίξτε την εφαρμογή Resgrid Responder και επιβεβαιώστε τη λήψη.</value>
+  </data>
+  <data name="MessagePushTitle" xml:space="preserve">
+    <value>Δοκιμή επικοινωνίας</value>
+  </data>
+  <data name="MessageSmsBody" xml:space="preserve">
+    <value>Δοκιμή επικοινωνίας Resgrid ({0}). Πρόκειται μόνο για δοκιμή. Απαντήστε {1} για να επιβεβαιώσετε τη λήψη αυτού του μηνύματος.</value>
+  </data>
+  <data name="MessageSmsBodyNoName" xml:space="preserve">
+    <value>Δοκιμή επικοινωνίας Resgrid. Πρόκειται μόνο για δοκιμή. Απαντήστε {0} για να επιβεβαιώσετε τη λήψη αυτού του μηνύματος.</value>
+  </data>
+  <data name="MessageVoiceGreeting" xml:space="preserve">
+    <value>Αυτή είναι μια δοκιμή επικοινωνίας Resgrid. Πρόκειται μόνο για δοκιμή. Δεν υπάρχει έκτακτη ανάγκη.</value>
+  </data>
+  <data name="MessageVoiceNoResponse" xml:space="preserve">
+    <value>Δεν ελήφθη επιβεβαίωση. Αντίο.</value>
+  </data>
+  <data name="MessageVoicePressOne" xml:space="preserve">
+    <value>Πατήστε 1 για να επιβεβαιώσετε τη λήψη αυτής της κλήσης.</value>
+  </data>
+  <data name="MessageVoiceRecorded" xml:space="preserve">
+    <value>Ευχαριστούμε. Η απάντησή σας καταγράφηκε.</value>
+  </data>
+  <data name="Channels" xml:space="preserve">
+    <value>Κανάλια</value>
+  </data>
+  <data name="ContactVerification" xml:space="preserve">
+    <value>Επαλήθευση Επικοινωνίας</value>
+  </data>
+  <data name="Delete" xml:space="preserve">
+    <value>Διαγραφή</value>
+  </data>
+  <data name="Edit" xml:space="preserve">
+    <value>Επεξεργασία</value>
+  </data>
+  <data name="EmailContact" xml:space="preserve">
+    <value>Επαφή Email</value>
+  </data>
+  <data name="EmailEnabled" xml:space="preserve">
+    <value>Email Ενεργό</value>
+  </data>
+  <data name="EmailVerification" xml:space="preserve">
+    <value>Επαλήθευση Email</value>
+  </data>
+  <data name="Fri" xml:space="preserve">
+    <value>Παρ</value>
+  </data>
+  <data name="Grandfathered" xml:space="preserve">
+    <value>Παλαιό Καθεστώς</value>
+  </data>
+  <data name="GrandfatheredHelp" xml:space="preserve">
+    <value>Προηγείται της επαλήθευσης. Εξακολουθεί να χρησιμοποιείται, αλλά χωρίς επιβεβαίωση — ζητήστε από αυτά τα μέλη να επαληθεύσουν.</value>
+  </data>
+  <data name="Groups" xml:space="preserve">
+    <value>Ομάδες</value>
+  </data>
+  <data name="Home" xml:space="preserve">
+    <value>Αρχική</value>
+  </data>
+  <data name="Individuals" xml:space="preserve">
+    <value>Άτομα</value>
+  </data>
+  <data name="MinutesShort" xml:space="preserve">
+    <value>λεπτά</value>
+  </data>
+  <data name="Mon" xml:space="preserve">
+    <value>Δευ</value>
+  </data>
+  <data name="NameRequired" xml:space="preserve">
+    <value>Το όνομα είναι υποχρεωτικό.</value>
+  </data>
+  <data name="NotApplicable" xml:space="preserve">
+    <value>Δ/Υ</value>
+  </data>
+  <data name="NotApplicableHelp" xml:space="preserve">
+    <value>Το push δεν έχει επαληθεύσιμο τρόπο επικοινωνίας — η παράδοση εξαρτάται από καταχωρημένη συσκευή.</value>
+  </data>
+  <data name="NotSentNoContact" xml:space="preserve">
+    <value>Δεν Στάλθηκε (Χωρίς Στοιχεία)</value>
+  </data>
+  <data name="NotSentTurnedOff" xml:space="preserve">
+    <value>Δεν Στάλθηκε (Απενεργοποιημένο)</value>
+  </data>
+  <data name="NotSentUnverified" xml:space="preserve">
+    <value>Δεν Στάλθηκε (Μη Επαληθευμένο)</value>
+  </data>
+  <data name="OnlyOnDemandCanRun" xml:space="preserve">
+    <value>Μόνο οι δοκιμές κατ’ απαίτηση μπορούν να ξεκινήσουν χειροκίνητα. Οι προγραμματισμένες εκτελούνται αυτόματα.</value>
+  </data>
+  <data name="OnlyOneMonthlyTest" xml:space="preserve">
+    <value>Επιτρέπεται μόνο μία μηνιαία δοκιμή ανά υπηρεσία. Επεξεργαστείτε την υπάρχουσα.</value>
+  </data>
+  <data name="OnlyOneWeeklyTest" xml:space="preserve">
+    <value>Επιτρέπεται μόνο μία εβδομαδιαία δοκιμή ανά υπηρεσία. Επεξεργαστείτε την υπάρχουσα.</value>
+  </data>
+  <data name="PreviewEmailHelp" xml:space="preserve">
+    <value>Το κλικ στον σύνδεσμο αποτελεί την επιβεβαίωση. Ο σύνδεσμος είναι μοναδικός ανά άτομο και μίας χρήσης.</value>
+  </data>
+  <data name="PreviewLanguageNote" xml:space="preserve">
+    <value>Εμφανίζεται εδώ στη γλώσσα σας. Κάθε άτομο λαμβάνει το μήνυμα στη γλώσσα που έχει οριστεί στο δικό του προφίλ.</value>
+  </data>
+  <data name="PreviewPushHelp" xml:space="preserve">
+    <value>Απαιτεί την εφαρμογή Resgrid Responder, συνδεδεμένη και με ενεργές ειδοποιήσεις. Ανοίγοντας την ειδοποίηση εμφανίζεται κουμπί επιβεβαίωσης στην εφαρμογή. Όσοι δεν έχουν την εφαρμογή εμφανίζονται ως χωρίς απάντηση στο κανάλι push.</value>
+  </data>
+  <data name="PreviewSmsHelp" xml:space="preserve">
+    <value>Απαντούν με τον κωδικό εκτέλεσης (για κάθε εκτέλεση δημιουργείται νέος, όπως {0}) στον ίδιο αριθμό από τον οποίο ήρθε το μήνυμα. Τα υπόλοιπα περιεχόμενα της απάντησης δεν έχουν σημασία.</value>
+  </data>
+  <data name="PreviewVoiceHelp" xml:space="preserve">
+    <value>Η κλήση εκφωνεί αυτό δύο φορές και μετά τερματίζει. Πατώντας 1 επιβεβαιώνεται η λήψη. Καλεί τον αριθμό που έχει οριστεί στο προφίλ τους.</value>
+  </data>
+  <data name="PushEnabled" xml:space="preserve">
+    <value>Push Ενεργό</value>
+  </data>
+  <data name="PushNotification" xml:space="preserve">
+    <value>Ειδοποίηση Push</value>
+  </data>
+  <data name="PushVerification" xml:space="preserve">
+    <value>Επαλήθευση Push</value>
+  </data>
+  <data name="RateLimited" xml:space="preserve">
+    <value>Μια δοκιμή κατ’ απαίτηση μπορεί να εκτελεστεί μόνο μία φορά κάθε 48 ώρες. Δοκιμάστε αργότερα.</value>
+  </data>
+  <data name="Roles" xml:space="preserve">
+    <value>Ρόλοι</value>
+  </data>
+  <data name="RunInProgressNotice" xml:space="preserve">
+    <value>Αυτή η εκτέλεση αποστέλλεται ακόμη. Τα μηνύματα φεύγουν στο παρασκήνιο — ανανεώστε τη σελίδα σε λίγο για να δείτε τα αποτελέσματα.</value>
+  </data>
+  <data name="RunNowConfirm" xml:space="preserve">
+    <value>Έναρξη αυτής της δοκιμής επικοινωνίας τώρα;
+
+Θα σταλεί πραγματικό μήνυμα σε κάθε χρήστη εντός του εύρους της δοκιμής, σε κάθε ενεργοποιημένο κανάλι.
+
+- SMS: απαντούν με τον κωδικό εκτέλεσης που εμφανίζεται στην αναφορά
+- Email: κάνουν κλικ σε σύνδεσμο επιβεβαίωσης
+- Φωνή: αυτόματη κλήση τούς ζητά να πατήσουν 1
+- Push: απαιτεί την εφαρμογή Resgrid Responder, συνδεδεμένη
+
+Τα μηνύματα φεύγουν στο παρασκήνιο, οπότε η αναφορά συμπληρώνεται σταδιακά.</value>
+  </data>
+  <data name="Sat" xml:space="preserve">
+    <value>Σαβ</value>
+  </data>
+  <data name="Schedule" xml:space="preserve">
+    <value>Πρόγραμμα</value>
+  </data>
+  <data name="Scope" xml:space="preserve">
+    <value>Εύρος</value>
+  </data>
+  <data name="ScopeEveryone" xml:space="preserve">
+    <value>Όλοι</value>
+  </data>
+  <data name="ScopeGroup" xml:space="preserve">
+    <value>1 ομάδα</value>
+  </data>
+  <data name="ScopeGroups" xml:space="preserve">
+    <value>{0} ομάδες</value>
+  </data>
+  <data name="ScopePeople" xml:space="preserve">
+    <value>{0} άτομα</value>
+  </data>
+  <data name="ScopePerson" xml:space="preserve">
+    <value>1 άτομο</value>
+  </data>
+  <data name="ScopeRole" xml:space="preserve">
+    <value>1 ρόλος</value>
+  </data>
+  <data name="ScopeRoles" xml:space="preserve">
+    <value>{0} ρόλοι</value>
+  </data>
+  <data name="SendFailed" xml:space="preserve">
+    <value>Αποτυχία Αποστολής</value>
+  </data>
+  <data name="SmsCarrier" xml:space="preserve">
+    <value>Πάροχος SMS</value>
+  </data>
+  <data name="SmsContact" xml:space="preserve">
+    <value>Επαφή SMS</value>
+  </data>
+  <data name="SmsEnabled" xml:space="preserve">
+    <value>SMS Ενεργό</value>
+  </data>
+  <data name="SmsVerification" xml:space="preserve">
+    <value>Επαλήθευση SMS</value>
+  </data>
+  <data name="Sun" xml:space="preserve">
+    <value>Κυρ</value>
+  </data>
+  <data name="TargetsUsersBanner" xml:space="preserve">
+    <value>Οι δοκιμές επικοινωνίας απευθύνονται σε χρήστες, όχι σε μονάδες. Το προσωπικό χρειάζεται την εφαρμογή Resgrid Responder εγκατεστημένη και συνδεδεμένη για να επιβεβαιώσει μια ειδοποίηση push· SMS, email και φωνητικές κλήσεις επιβεβαιώνονται από το τηλέφωνο ή το γραμματοκιβώτιο και δεν απαιτούν εφαρμογή. Ανοίξτε μια δοκιμή για να δείτε ακριβώς τι θα λάβει το προσωπικό σας.</value>
+  </data>
+  <data name="TestNameHeader" xml:space="preserve">
+    <value>Όνομα Δοκιμής</value>
+  </data>
+  <data name="Thu" xml:space="preserve">
+    <value>Πεμ</value>
+  </data>
+  <data name="Tue" xml:space="preserve">
+    <value>Τρι</value>
+  </data>
+  <data name="UnableToStart" xml:space="preserve">
+    <value>Δεν ήταν δυνατή η έναρξη της εκτέλεσης. Ενδέχεται να ισχύει όριο συχνότητας.</value>
+  </data>
+  <data name="Unverified" xml:space="preserve">
+    <value>Μη Επαληθευμένο</value>
+  </data>
+  <data name="UnverifiedHelp" xml:space="preserve">
+    <value>Δεν έχει επιβεβαιωθεί. Το Resgrid δεν θα στείλει σε αυτά τα κανάλια.</value>
+  </data>
+  <data name="Verified" xml:space="preserve">
+    <value>Επαληθευμένο</value>
+  </data>
+  <data name="VerifiedHelp" xml:space="preserve">
+    <value>Επιβεβαιωμένο από τον χρήστη. Το Resgrid στέλνει σε αυτά.</value>
+  </data>
+  <data name="VoiceCall" xml:space="preserve">
+    <value>Φωνητική Κλήση</value>
+  </data>
+  <data name="VoiceContact" xml:space="preserve">
+    <value>Επαφή Φωνής</value>
+  </data>
+  <data name="VoiceEnabled" xml:space="preserve">
+    <value>Φωνή Ενεργή</value>
+  </data>
+  <data name="VoiceVerification" xml:space="preserve">
+    <value>Επαλήθευση Φωνής</value>
+  </data>
+  <data name="Wed" xml:space="preserve">
+    <value>Τετ</value>
+  </data>
+  <data name="WhatYourPeopleWillSee" xml:space="preserve">
+    <value>Τι θα Δει το Προσωπικό σας</value>
+  </data>
+  <data name="WhoToTest" xml:space="preserve">
+    <value>Ποιους να Δοκιμάσετε</value>
+  </data>
+  <data name="WhoToTestHelp" xml:space="preserve">
+    <value>Αφήστε και τις τρεις λίστες κενές για να δοκιμάσετε ολόκληρη την υπηρεσία. Οι επιλογές προστίθενται: όποιος ταιριάζει σε επιλεγμένη ομάδα, ρόλο ή όνομα δοκιμάζεται μία φορά.</value>
   </data>
 </root>

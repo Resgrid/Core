@@ -33,6 +33,16 @@ namespace Resgrid.Providers.Bus.Rabbit
 			return await SendMessage(ServiceBusConfig.ChatbotProcessingQueueName, serializedObject);
 		}
 
+		public async Task<bool> EnqueueCommunicationTest(CommunicationTestQueueItem communicationTestQueue)
+		{
+			string serializedObject = ObjectSerialization.Serialize(communicationTestQueue);
+
+			// Publisher confirmation: losing this message silently strands the run with no results
+			// and no messages sent. The caller surfaces a failure so the run can be retried.
+			return await SendMessage(ServiceBusConfig.CommunicationTestQueueName, serializedObject,
+				requirePublisherConfirmation: true);
+		}
+
 		public async Task<bool> EnqueueMessage(MessageQueueItem messageQueue)
 		{
 			string serializedObject = ObjectSerialization.Serialize(messageQueue);

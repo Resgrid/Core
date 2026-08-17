@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -120,7 +120,8 @@ namespace Resgrid.Services
 							user.Email,
 							profile.FirstName,
 							downloadUrl,
-							request.TokenExpiresAt.Value);
+							request.TokenExpiresAt.Value,
+							profile.Language);
 					}
 				}
 				catch (Exception ex)

@@ -73,7 +73,7 @@ namespace Resgrid.Services
 
 			await _userProfileService.SaveProfileAsync(departmentId, profile, cancellationToken);
 
-			bool sent = await _emailService.SendEmailVerificationCodeAsync(emailAddress, profile.FirstName ?? string.Empty, code);
+			bool sent = await _emailService.SendEmailVerificationCodeAsync(emailAddress, profile.FirstName ?? string.Empty, code, profile.Language);
 
 			await WriteAuditAsync(userId, departmentId, ContactVerificationType.Email, sent, "Send", null, cancellationToken);
 
@@ -109,7 +109,7 @@ namespace Resgrid.Services
 
 			await _userProfileService.SaveProfileAsync(departmentId, profile, cancellationToken);
 
-			bool sent = await _smsService.SendSmsVerificationCodeAsync(mobileResult.InternationalNumber, code, departmentNumber);
+			bool sent = await _smsService.SendSmsVerificationCodeAsync(mobileResult.InternationalNumber, code, departmentNumber, profile.Language);
 
 			await WriteAuditAsync(userId, departmentId, ContactVerificationType.MobileNumber, sent, "Send", null, cancellationToken);
 

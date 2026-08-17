@@ -195,7 +195,9 @@ namespace Resgrid.Config
 		public static string SiteKey = "";
 
 		/// <summary>
-		/// A notice to display on the login page
+		/// A notice to display on the login page.
+		/// Legacy key, kept so existing on-prem configs keep working. New configs should set
+		/// NoticeConfig.LoginPageNotice instead; read through NoticeConfig.EffectiveLoginPageNotice.
 		/// </summary>
 		public static string LoginPageNotice = "";
 

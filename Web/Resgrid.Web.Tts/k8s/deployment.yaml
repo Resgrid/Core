@@ -25,6 +25,7 @@ data:
   RESGRID__TtsConfig__PiperModelDirectory: /usr/local/share/piper-voices
   RESGRID__TtsConfig__FfmpegExecutable: /usr/bin/ffmpeg
   RESGRID__TtsConfig__TempDirectory: /tmp/resgrid-tts
+  RESGRID__TtsConfig__TempDirectorySweepHours: "6"
   RESGRID__TtsConfig__CachePrefix: tts
   RESGRID__TtsConfig__PlaybackMemoryCacheMinutes: "60"
   RESGRID__TtsConfig__PlaybackCacheControlSeconds: "86400"

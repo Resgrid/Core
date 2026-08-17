@@ -101,7 +101,7 @@ namespace Resgrid.Web.Controllers
 			//RemoveCookies();
 
 			ViewData["ReturnUrl"] = returnUrl;
-			ViewData["LoginNotice"] = SystemBehaviorConfig.LoginPageNotice;
+			ViewData["LoginNotice"] = NoticeConfig.EffectiveLoginPageNotice;
 			return View();
 		}
 

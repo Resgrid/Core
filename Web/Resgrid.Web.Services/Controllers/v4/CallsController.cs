@@ -765,7 +765,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				try
 				{
-					var groupsToDispatch = dispatch.Where(x => x.StartsWith("G:")).Select(y => int.Parse(y.Replace("G:", "")));
+					var groupsToDispatch = DispatchListHelper.ResolveIds(dispatch,"G:",
+						name => groups.FirstOrDefault(x => string.Equals(x.Name?.Trim(), name, StringComparison.OrdinalIgnoreCase))?.DepartmentGroupId);
 					foreach (var group in groupsToDispatch)
 					{
 						if (groups.Any(x => x.DepartmentGroupId == group))
@@ -782,7 +783,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				try
 				{
-					var rolesToDispatch = dispatch.Where(x => x.StartsWith("R:")).Select(y => int.Parse(y.Replace("R:", "")));
+					var rolesToDispatch = DispatchListHelper.ResolveIds(dispatch,"R:",
+						name => roles.FirstOrDefault(x => string.Equals(x.Name?.Trim(), name, StringComparison.OrdinalIgnoreCase))?.PersonnelRoleId);
 					foreach (var role in rolesToDispatch)
 					{
 						if (roles.Any(x => x.PersonnelRoleId == role))
@@ -799,7 +801,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 				try
 				{
-					var unitsToDispatch = dispatch.Where(x => x.StartsWith("U:")).Select(y => int.Parse(y.Replace("U:", "")));
+					var unitsToDispatch = DispatchListHelper.ResolveIds(dispatch,"U:",
+						name => units.FirstOrDefault(x => string.Equals(x.Name?.Trim(), name, StringComparison.OrdinalIgnoreCase))?.UnitId);
 					foreach (var unit in unitsToDispatch)
 					{
 						if (units.Any(x => x.UnitId == unit))
@@ -1063,10 +1066,13 @@ namespace Resgrid.Web.Services.Controllers.v4
 			else
 			{
 				var dispatch = editCallInput.DispatchList.Split(char.Parse("|"));
-				var usersToDispatch = dispatch.Where(x => x.StartsWith("P:")).Select(y => y.Replace("P:", ""));
-				var groupsToDispatch = dispatch.Where(x => x.StartsWith("G:")).Select(y => int.Parse(y.Replace("G:", "")));
-				var rolesToDispatch = dispatch.Where(x => x.StartsWith("R:")).Select(y => int.Parse(y.Replace("R:", "")));
-				var unitsToDispatch = dispatch.Where(x => x.StartsWith("U:")).Select(y => int.Parse(y.Replace("U:", "")));
+				var usersToDispatch = dispatch.Where(x => x.StartsWith("P:")).Select(y => y.Replace("P:", "")).ToList();
+				var groupsToDispatch = DispatchListHelper.ResolveIds(dispatch,"G:",
+					name => groups.FirstOrDefault(x => string.Equals(x.Name?.Trim(), name, StringComparison.OrdinalIgnoreCase))?.DepartmentGroupId);
+				var rolesToDispatch = DispatchListHelper.ResolveIds(dispatch,"R:",
+					name => roles.FirstOrDefault(x => string.Equals(x.Name?.Trim(), name, StringComparison.OrdinalIgnoreCase))?.PersonnelRoleId);
+				var unitsToDispatch = DispatchListHelper.ResolveIds(dispatch,"U:",
+					name => units.FirstOrDefault(x => string.Equals(x.Name?.Trim(), name, StringComparison.OrdinalIgnoreCase))?.UnitId);
 
 				try
 				{

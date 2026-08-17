@@ -38,6 +38,16 @@ namespace Resgrid.Web.Tts.Configuration
 		[Required]
 		public string TempDirectory { get; set; } = Path.Combine(Path.GetTempPath(), "resgrid-tts");
 
+		/// <summary>
+		/// Age, in hours, at which an orphaned entry under <see cref="TempDirectory"/> is
+		/// deleted, and the interval the sweep runs on. Synthesis working directories are
+		/// removed in a finally block, so anything this old was left by a hard kill or a
+		/// delete that failed. Must stay well above <see cref="GenerationTimeoutSeconds"/>
+		/// so an in-flight job is never collected.
+		/// </summary>
+		[Range(1, 168)]
+		public int TempDirectorySweepHours { get; set; } = 6;
+
 		[Required]
 		public string CachePrefix { get; set; } = "tts2";
 

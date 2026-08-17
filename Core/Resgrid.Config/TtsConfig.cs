@@ -47,6 +47,14 @@ namespace Resgrid.Config
 		public static string PiperModelDirectory = "/usr/local/share/piper-voices";
 		public static string FfmpegExecutable = "ffmpeg";
 		public static string TempDirectory = "";
+
+		/// <summary>
+		/// Age, in hours, at which an orphaned entry under <see cref="TempDirectory"/> is
+		/// swept, and the interval the sweep runs on. Only entries left behind by a hard
+		/// kill or a failed delete get this old; keep it well above
+		/// <see cref="GenerationTimeoutSeconds"/> so in-flight jobs are never collected.
+		/// </summary>
+		public static int TempDirectorySweepHours = 6;
 		public static string CachePrefix = "tts2";
 		public static int NormalizedSampleRate = 8000;
 		public static int NormalizedChannels = 1;

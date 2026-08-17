@@ -297,6 +297,14 @@
 												{
 													var profile = Model.Profiles?.FirstOrDefault(p => p.UserId == tradeUser.UserId);
 													var userShift = tradeUser.Shifts?.FirstOrDefault();
+
+													// The controller reads one "selectedShift" value and discriminates on its shape:
+													// an offered signup id for a balanced swap, or the participant's user id for an
+													// unbalanced trade where nothing is given back.
+													var offeredShiftSignupId = userShift?.ShiftSignupId;
+													var selectedShiftValue = offeredShiftSignupId.HasValue
+														? offeredShiftSignupId.Value.ToString()
+														: tradeUser.UserId;
 													<tr>
 														<td>@(profile != null ? profile.FullName.AsFirstNameLastName : tradeUser.UserId)</td>
 														<td>
@@ -320,7 +328,18 @@
 															}
 														</td>
 														<td>
-															<input class="btn btn-primary" id="submit_button_@tradeUser.ShiftSignupTradeUserId" name="proposalId" type="submit" value="@tradeUser.ShiftSignupTradeUserId" onclick="this.value='@tradeUser.ShiftSignupTradeUserId';" />
+															@if (tradeUser.Offered && !tradeUser.Declined)
+															{
+																<button class="btn btn-primary" id="submit_button_@tradeUser.ShiftSignupTradeUserId" name="selectedShift" type="submit" value="@selectedShiftValue">@localizer["FinalizeTradeButton"]</button>
+															}
+															else if (tradeUser.Declined)
+															{
+																@localizer["Declined"]
+															}
+															else
+															{
+																@localizer["NoneValue"]
+															}
 														</td>
 													</tr>
 												}

@@ -215,7 +215,27 @@ export default function MapboxMapView({
       map.addControl(new mapboxgl.NavigationControl(), 'top-left');
       mapRef.current = map;
 
+      let styleLoaded = false;
+
+      // mapbox-gl reports an unreachable style URL or a rejected access token on this event rather
+      // than throwing, so without a listener a misconfigured department just gets a blank canvas.
+      // Only pre-load failures are fatal: once the style is up, transient tile errors must not
+      // replace a working map with an error overlay.
+      const handleMapError = (event: { error?: { message?: string } }) => {
+        console.error('Mapbox map error', event?.error ?? event);
+
+        if (cancelled || styleLoaded) {
+          return;
+        }
+
+        const message = event?.error?.message?.trim();
+        setInitError(message && message.length > 0 ? message : 'Unable to load the map.');
+      };
+
+      map.on('error', handleMapError);
+
       const handleStyleReady = () => {
+        styleLoaded = true;
         setStyleReady(true);
         map.resize();
       };
@@ -229,6 +249,7 @@ export default function MapboxMapView({
 
       if (cancelled) {
         window.removeEventListener('resize', resizeMap);
+        map.off('error', handleMapError);
         map.remove();
         mapRef.current = null;
         return;
@@ -236,6 +257,7 @@ export default function MapboxMapView({
 
       return () => {
         window.removeEventListener('resize', resizeMap);
+        map.off('error', handleMapError);
         clearLayerArtifacts(map, layerIdsRef.current, sourceIdsRef.current);
         layerIdsRef.current = [];
         sourceIdsRef.current = [];
@@ -385,9 +407,17 @@ export default function MapboxMapView({
     }
   }, [layerVisibility, layers, styleReady]);
 
-  if (initError) {
-    return <div className="rg-error rg-map__message">{initError}</div>;
-  }
-
-  return <div ref={mapContainerRef} className="rg-map__canvas" />;
+  // The container has to stay mounted through a failure. Swapping it out for the error nulls
+  // mapContainerRef, and the retry effect bails on its !mapContainerRef.current guard before
+  // React has re-rendered the cleared error, leaving a blank map that never recovers.
+  return (
+    <>
+      <div ref={mapContainerRef} className="rg-map__canvas" />
+      {initError && (
+        <div className="rg-map__overlay rg-map__overlay--message">
+          <div className="rg-error">{initError}</div>
+        </div>
+      )}
+    </>
+  );
 }

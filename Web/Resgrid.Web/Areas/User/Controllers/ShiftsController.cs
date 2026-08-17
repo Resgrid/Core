@@ -641,6 +641,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (fullShift != null)
 				model.Day.Shift = fullShift;
 
+			// Only GetShiftByIdAsync populates Groups; the shift carried by the day comes from a
+			// Dapper multi-map that leaves it null, and the view iterates it unguarded.
+			if (model.Day.Shift.Groups == null)
+				model.Day.Shift.Groups = new List<ShiftGroup>();
+
 			model.Roles = await _personnelRolesService.GetRolesForUserAsync(UserId, DepartmentId);
 			model.Needs = await _shiftsService.GetShiftDayNeedsAsync(shiftDayId);
 			model.Signups = await _shiftsService.GetShiftSignpsForShiftDayAsync(shiftDayId);
@@ -685,6 +690,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (fullShift != null)
 				model.Day.Shift = fullShift;
+
+			// Only GetShiftByIdAsync populates Groups; the shift carried by the day comes from a
+			// Dapper multi-map that leaves it null, and the view iterates it unguarded.
+			if (model.Day.Shift.Groups == null)
+				model.Day.Shift.Groups = new List<ShiftGroup>();
 
 			model.Roles = await _personnelRolesService.GetRolesForUserAsync(UserId, DepartmentId);
 			model.Needs = await _shiftsService.GetShiftDayNeedsAsync(shiftDayId);
@@ -876,6 +886,25 @@ namespace Resgrid.Web.Areas.User.Controllers
 			return RedirectToAction("YourShifts");
 		}
 
+		// Finishing a trade is the source signup owner picking which offer to accept; YourShifts only
+		// renders the link on the caller's own signups. GetShiftTradeByIdAsync goes through
+		// RepositoryBase.GetByIdAsync, which populates no navigation properties, so the source signup
+		// and its shift have to be loaded to check ownership and department.
+		private async Task<bool> CanUserFinishTradeAsync(ShiftSignupTrade trade)
+		{
+			if (trade == null)
+				return false;
+
+			var sourceSignup = trade.SourceShiftSignup ?? await _shiftsService.GetShiftSignupByIdAsync(trade.SourceShiftSignupId);
+
+			if (sourceSignup == null || !String.Equals(sourceSignup.UserId, UserId, StringComparison.OrdinalIgnoreCase))
+				return false;
+
+			var sourceShift = await _shiftsService.GetShiftByIdAsync(sourceSignup.ShiftId);
+
+			return sourceShift != null && sourceShift.DepartmentId == DepartmentId;
+		}
+
 		[HttpGet]
 		[Authorize(Policy = ResgridResources.Shift_View)]
 		public async Task<IActionResult> FinishTrade(int shiftSignupTradeId)
@@ -885,6 +914,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (model.Trade == null)
 				return RedirectToAction("YourShifts");
+
+			if (!await CanUserFinishTradeAsync(model.Trade))
+				return Unauthorized();
 
 			model.Profiles = await _userProfileService.GetSelectedUserProfilesAsync((model.Trade.Users ?? new List<ShiftSignupTradeUser>()).Select(x => x.UserId).ToList());
 
@@ -907,13 +939,30 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (tradeRequest == null)
 				return RedirectToAction("YourShifts");
 
+			// Authorize against the trade loaded from the database, never the one posted in the form.
+			if (!await CanUserFinishTradeAsync(tradeRequest))
+				return Unauthorized();
+
 			if (selectedShift != null)
 			{
 				Guid userId;
 
+				// Everything below is driven by a raw form value, so each branch has to resolve back to
+				// a participant this trade actually has on record. GetShiftTradeByIdAsync already loads
+				// Users along with each user's offered Shifts, so no extra round trip is needed.
+				var offeredUsers = (tradeRequest.Users ?? new List<ShiftSignupTradeUser>())
+					.Where(x => x.Offered && !x.Declined)
+					.ToList();
+
 				if (Guid.TryParse(selectedShift, out userId))
 				{
-					tradeRequest.UserId = userId.ToString();
+					// Unbalanced trade: the accepted user must be a participant who offered.
+					var acceptedUserId = userId.ToString();
+
+					if (!offeredUsers.Any(x => String.Equals(x.UserId, acceptedUserId, StringComparison.OrdinalIgnoreCase)))
+						return RedirectToAction("YourShifts");
+
+					tradeRequest.UserId = acceptedUserId;
 				}
 				else
 				{
@@ -921,11 +970,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 					if (!int.TryParse(selectedShift, out var targetShiftSignupId))
 						return RedirectToAction("YourShifts");
 
-					tradeRequest.TargetShiftSignupId = targetShiftSignupId;
+					// Without this the form could point the trade at any signup id in the system rather
+					// than one a participant actually put up for this trade.
+					var isOfferedShift = offeredUsers
+						.Where(x => x.Shifts != null)
+						.SelectMany(x => x.Shifts)
+						.Any(x => x.ShiftSignupId == targetShiftSignupId);
+
+					if (!isOfferedShift)
+						return RedirectToAction("YourShifts");
+
 					var shiftSignup = await _shiftsService.GetShiftSignupByIdAsync(targetShiftSignupId);
 
 					if (shiftSignup == null || !Guid.TryParse(shiftSignup.UserId, out userId))
 						return RedirectToAction("YourShifts");
+
+					tradeRequest.TargetShiftSignupId = targetShiftSignupId;
 				}
 
 				var shiftTradeFilled = new ShiftTradeFilledEvent();
@@ -1551,7 +1611,13 @@ namespace Resgrid.Web.Areas.User.Controllers
 			var shiftDayJson = new List<ShiftDayJson>();
 			var trade = await _shiftsService.GetShiftTradeByIdAsync(shiftTradeId);
 
-			if (trade?.SourceShiftSignup == null)
+			if (trade == null)
+				return Json(shiftDayJson);
+
+			// GetShiftTradeByIdAsync leaves SourceShiftSignup null, so it has to be loaded by id.
+			var sourceSignup = trade.SourceShiftSignup ?? await _shiftsService.GetShiftSignupByIdAsync(trade.SourceShiftSignupId);
+
+			if (sourceSignup == null)
 				return Json(shiftDayJson);
 
 			var signups = await _shiftsService.GetShiftSignupsForUserAsync(UserId);
@@ -1571,7 +1637,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 			{
 				var shiftDaySignups = await _shiftsService.GetShiftSignpsForShiftDayAsync(signup.ShiftSignupId);
 
-				if (!(from d in shiftDaySignups select d.UserId).Contains(trade.SourceShiftSignup.UserId))
+				if (!(from d in shiftDaySignups select d.UserId).Contains(sourceSignup.UserId))
 					validShiftDays.Add(signup);
 			}
 

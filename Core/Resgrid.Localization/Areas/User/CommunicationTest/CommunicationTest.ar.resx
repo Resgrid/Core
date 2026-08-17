@@ -205,26 +205,38 @@
   <data name="TestResponseReceived" xml:space="preserve">
     <value>تلقّى Resgrid ردك على اختبار الاتصال. شكرًا لك.</value>
   </data>
-  <data name="MessageEmailBody" xml:space="preserve">
-    <value>مرحبًا {0}،
-
-
-
-تُجري {1} اختبار اتصال ({2}) للتأكد من إمكانية الوصول إليك.
-
-
-
-هذا اختبار. لا توجد حالة طوارئ ولا يلزم اتخاذ أي إجراء سوى تأكيد استلامك لهذا البريد الإلكتروني.
-
-
-
-يرجى النقر على الرابط أدناه لتأكيد استلام هذه الرسالة:
-
-{3}
-
-
-
-فريق Resgrid</value>
+  <data name="MessageEmailPreheader" xml:space="preserve">
+    <value>اختبار اتصال</value>
+  </data>
+  <data name="MessageEmailGreeting" xml:space="preserve">
+    <value>مرحبًا {0}،</value>
+  </data>
+  <data name="MessageEmailIntro" xml:space="preserve">
+    <value>تُجري {0} اختبار اتصال ({1}) للتأكد من إمكانية الوصول إليك.</value>
+  </data>
+  <data name="MessageEmailDisclaimer" xml:space="preserve">
+    <value>هذا اختبار. لا توجد حالة طوارئ ولا يلزم اتخاذ أي إجراء سوى تأكيد استلامك لهذا البريد الإلكتروني.</value>
+  </data>
+  <data name="MessageEmailAction" xml:space="preserve">
+    <value>يرجى تأكيد استلامك لهذه الرسالة.</value>
+  </data>
+  <data name="MessageEmailButton" xml:space="preserve">
+    <value>تأكيد الاستلام</value>
+  </data>
+  <data name="MessageEmailTrouble" xml:space="preserve">
+    <value>إذا لم يعمل الزر أعلاه، فانسخ الرابط أدناه والصقه في متصفح الويب لديك.</value>
+  </data>
+  <data name="MessageEmailSignoff" xml:space="preserve">
+    <value>شكرًا،</value>
+  </data>
+  <data name="MessageEmailTeam" xml:space="preserve">
+    <value>فريق Resgrid</value>
+  </data>
+  <data name="MessageEmailDepartmentLabel" xml:space="preserve">
+    <value>القسم:</value>
+  </data>
+  <data name="MessageEmailTestLabel" xml:space="preserve">
+    <value>اسم الاختبار:</value>
   </data>
   <data name="MessageEmailSubject" xml:space="preserve">
     <value>اختبار اتصال Resgrid: {0}</value>

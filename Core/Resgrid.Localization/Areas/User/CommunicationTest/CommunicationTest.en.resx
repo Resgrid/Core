@@ -205,26 +205,38 @@
   <data name="TestResponseReceived" xml:space="preserve">
     <value>Resgrid received your communication test response. Thank you.</value>
   </data>
-  <data name="MessageEmailBody" xml:space="preserve">
-    <value>Hi {0},
-
-
-
-{1} is running a communication test ({2}) to confirm it can reach you.
-
-
-
-This is a TEST. There is no emergency and no response is required beyond confirming you got this email.
-
-
-
-Please click the link below to confirm you received this message:
-
-{3}
-
-
-
-The Resgrid Team</value>
+  <data name="MessageEmailPreheader" xml:space="preserve">
+    <value>Communication Test</value>
+  </data>
+  <data name="MessageEmailGreeting" xml:space="preserve">
+    <value>Hi {0},</value>
+  </data>
+  <data name="MessageEmailIntro" xml:space="preserve">
+    <value>{0} is running a communication test ({1}) to confirm it can reach you.</value>
+  </data>
+  <data name="MessageEmailDisclaimer" xml:space="preserve">
+    <value>This is a TEST. There is no emergency and no response is required beyond confirming you got this email.</value>
+  </data>
+  <data name="MessageEmailAction" xml:space="preserve">
+    <value>Please confirm you received this message.</value>
+  </data>
+  <data name="MessageEmailButton" xml:space="preserve">
+    <value>Confirm I Got This</value>
+  </data>
+  <data name="MessageEmailTrouble" xml:space="preserve">
+    <value>If you're having trouble with the button above, copy and paste the URL below into your web browser.</value>
+  </data>
+  <data name="MessageEmailSignoff" xml:space="preserve">
+    <value>Thanks,</value>
+  </data>
+  <data name="MessageEmailTeam" xml:space="preserve">
+    <value>The Resgrid Team</value>
+  </data>
+  <data name="MessageEmailDepartmentLabel" xml:space="preserve">
+    <value>Department:</value>
+  </data>
+  <data name="MessageEmailTestLabel" xml:space="preserve">
+    <value>Test Name:</value>
   </data>
   <data name="MessageEmailSubject" xml:space="preserve">
     <value>Resgrid Communication Test: {0}</value>

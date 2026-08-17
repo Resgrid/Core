@@ -42,6 +42,8 @@ namespace Resgrid.Model.Providers
 		Task<bool> SendReportDeliveryMail(string email, string subject, string messageBody, string sentOn,
 			string reportName, string attachmentFilename, byte[] attachmentData, string reportUrl);
 
+		Task<bool> SendCommunicationTestMail(string email, CommunicationTestEmailContent content);
+
 
 		// Internal Template Only Emails
 		Task<bool> SendDeleteDepartmentEmail(string requesterName, string departmentName, DateTime localCompletedOn, string sendingToPersonName, string email);

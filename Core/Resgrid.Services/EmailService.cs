@@ -779,15 +779,29 @@ namespace Resgrid.Services
 
 			try
 			{
-				using var mail = new MailMessage();
-				mail.To.Add(toEmailAddress);
-				mail.Subject = CommunicationTestMessages.BuildEmailSubject(testName, culture);
-				mail.From = new MailAddress(Config.OutboundEmailServerConfig.FromMail, "Resgrid");
-				mail.Body = CommunicationTestMessages.BuildEmailBody(firstName, departmentName, testName, confirmUrl, culture);
-				mail.IsBodyHtml = false;
+				// Sent through the template provider so it carries the same Resgrid chrome and
+				// clickable confirmation button as every other system email, rather than arriving as
+				// a wall of plain text with a URL the recipient has to copy by hand.
+				var content = new CommunicationTestEmailContent
+				{
+					Subject = CommunicationTestMessages.BuildEmailSubject(testName, culture),
+					Preheader = CommunicationTestMessages.BuildEmailPreheader(culture),
+					Greeting = CommunicationTestMessages.BuildEmailGreeting(firstName, culture),
+					Intro = CommunicationTestMessages.BuildEmailIntro(departmentName, testName, culture),
+					Disclaimer = CommunicationTestMessages.BuildEmailDisclaimer(culture),
+					Action = CommunicationTestMessages.BuildEmailAction(culture),
+					ButtonText = CommunicationTestMessages.BuildEmailButton(culture),
+					ConfirmUrl = confirmUrl,
+					TroubleText = CommunicationTestMessages.BuildEmailTrouble(culture),
+					Signoff = CommunicationTestMessages.BuildEmailSignoff(culture),
+					TeamName = CommunicationTestMessages.BuildEmailTeam(culture),
+					DepartmentLabel = CommunicationTestMessages.BuildEmailDepartmentLabel(culture),
+					DepartmentName = departmentName,
+					TestLabel = CommunicationTestMessages.BuildEmailTestLabel(culture),
+					TestName = testName
+				};
 
-				await _emailSender.SendEmail(mail);
-				return true;
+				return await _emailProvider.SendCommunicationTestMail(toEmailAddress, content);
 			}
 			catch (Exception ex)
 			{

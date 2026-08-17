@@ -1,5 +1,12 @@
 ARG BUILD_VERSION=3.5.0
 
+## Static ffmpeg/ffprobe sourced from a registry image rather than curl'd from
+## johnvansickle.com. That host has no CDN and regularly refuses or stalls
+## connections from GitHub Actions runners, which burned 5 x 300s retries per
+## build before failing. Registry pulls use the same transport as the base
+## images and are cached by buildx. Pinned to the multi-arch manifest digest.
+FROM mwader/static-ffmpeg:7.1@sha256:a8090df5f5608daef387e1b2e93b98aaacb4d92153ad904e7d715c725724fca4 AS ffmpeg
+
 #FROM mcr.microsoft.com/dotnet/runtime:9.0.3-noble-amd64 AS base
 FROM dhi.io/aspnetcore:9.0.16-debian13@sha256:961647e80202ce33fc06472dda4e7ae2d2bc56d819aee6742602f70047b13dc7 AS base
 ARG BUILD_VERSION
@@ -39,25 +46,17 @@ RUN set -eu; \
 		passwd \
 	&& rm -rf /var/lib/apt/lists/*
 
+COPY --from=ffmpeg /ffmpeg /usr/local/bin/ffmpeg
+COPY --from=ffmpeg /ffprobe /usr/local/bin/ffprobe
+## Fail loudly here rather than at runtime if the binaries are unusable.
 RUN set -eu; \
-	echo "Downloading FFmpeg" \
-	&& curl -fsSL --retry 5 --retry-delay 5 --retry-all-errors "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz" -o /tmp/ffmpeg.tar.xz \
-	&& curl -fsSL --retry 5 --retry-delay 5 --retry-all-errors "https://johnvansickle.com/ffmpeg/releases/ffmpeg-release-amd64-static.tar.xz.md5" -o /tmp/ffmpeg.tar.xz.md5 \
-	&& echo "$(awk '{print $1}' /tmp/ffmpeg.tar.xz.md5)  /tmp/ffmpeg.tar.xz" | md5sum -c - \
-	&& rm -f /tmp/ffmpeg.tar.xz.md5 \
-	&& xz -d /tmp/ffmpeg.tar.xz \
-	&& tar -xf /tmp/ffmpeg.tar -C /tmp \
-	&& mkdir -p /usr/local/bin \
-	&& ffmpeg_path=$(find /tmp -name 'ffmpeg' -type f -executable -not -path '*/lib/*' -print -quit) \
-	&& test -n "$ffmpeg_path" && cp "$ffmpeg_path" /usr/local/bin/ffmpeg \
-	&& ffprobe_path=$(find /tmp -name 'ffprobe' -type f -executable -not -path '*/lib/*' -print -quit) \
-	&& test -n "$ffprobe_path" && cp "$ffprobe_path" /usr/local/bin/ffprobe \
-	&& chmod +x /usr/local/bin/ffmpeg /usr/local/bin/ffprobe \
-	&& rm -rf /tmp/ffmpeg*
+	chmod +x /usr/local/bin/ffmpeg /usr/local/bin/ffprobe \
+	&& /usr/local/bin/ffmpeg -version > /dev/null \
+	&& /usr/local/bin/ffprobe -version > /dev/null
 
 RUN set -eu; \
 	echo "Downloading Piper ${PIPER_VERSION}" \
-	&& curl -fsSL --retry 5 --retry-delay 5 --retry-all-errors "https://github.com/rhasspy/piper/releases/download/${PIPER_VERSION}/piper_amd64.tar.gz" -o /tmp/piper.tar.gz \
+	&& curl -fsSL --retry 5 --retry-delay 5 --retry-all-errors --connect-timeout 15 --max-time 600 "https://github.com/rhasspy/piper/releases/download/${PIPER_VERSION}/piper_amd64.tar.gz" -o /tmp/piper.tar.gz \
 	&& tar -xzf /tmp/piper.tar.gz -C /tmp \
 	&& mv /tmp/piper/piper /usr/local/bin/piper \
 	&& chmod +x /usr/local/bin/piper \
@@ -82,8 +81,8 @@ RUN set -eu; \
 	; do \
 		name=$(basename "$f"); \
 		echo "Downloading Piper voice ${name}"; \
-		curl -fsSL --retry 5 --retry-delay 5 --retry-all-errors "https://huggingface.co/rhasspy/piper-voices/resolve/${PIPER_VOICES_REVISION}/${f}.onnx" -o "/usr/local/share/piper-voices/${name}.onnx"; \
-		curl -fsSL --retry 5 --retry-delay 5 --retry-all-errors "https://huggingface.co/rhasspy/piper-voices/resolve/${PIPER_VOICES_REVISION}/${f}.onnx.json" -o "/usr/local/share/piper-voices/${name}.onnx.json"; \
+		curl -fsSL --retry 5 --retry-delay 5 --retry-all-errors --connect-timeout 15 --max-time 600 "https://huggingface.co/rhasspy/piper-voices/resolve/${PIPER_VOICES_REVISION}/${f}.onnx" -o "/usr/local/share/piper-voices/${name}.onnx"; \
+		curl -fsSL --retry 5 --retry-delay 5 --retry-all-errors --connect-timeout 15 --max-time 600 "https://huggingface.co/rhasspy/piper-voices/resolve/${PIPER_VOICES_REVISION}/${f}.onnx.json" -o "/usr/local/share/piper-voices/${name}.onnx.json"; \
 	done
 
 RUN set -eu; \

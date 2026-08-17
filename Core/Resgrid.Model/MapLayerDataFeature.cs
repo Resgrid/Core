@@ -4,6 +4,12 @@ using Newtonsoft.Json;
 namespace Resgrid.Model
 {
 	//[JsonObject]
+	// BsonNoId: the Id property below is a GeoJSON feature id, not a Mongo document id. Without this
+	// the driver's NamedIdMemberConvention promotes it to the class id member, which historically
+	// persisted it as "_id" on the embedded document. BsonIgnoreExtraElements lets those older
+	// documents still deserialize.
+	[BsonNoId]
+	[BsonIgnoreExtraElements]
 	public class MapLayerDataFeature
 	{
 		[BsonElement("type")]

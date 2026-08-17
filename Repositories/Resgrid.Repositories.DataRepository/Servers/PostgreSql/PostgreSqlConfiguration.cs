@@ -1850,7 +1850,9 @@ namespace Resgrid.Repositories.DataRepository.Servers.SqlServer
 			CommunicationTestsTable = "CommunicationTests";
 			CommunicationTestRunsTable = "CommunicationTestRuns";
 			CommunicationTestResultsTable = "CommunicationTestResults";
+			CommunicationTestTargetsTable = "CommunicationTestTargets";
 			SelectActiveCommTestsByScheduleTypeQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE Active = true AND ScheduleType = %SCHEDULETYPE%";
+			SelectCommTestTargetsByTestIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE CommunicationTestId = %COMMTESTID%";
 			SelectCommTestRunsByTestIdQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE CommunicationTestId = %COMMTESTID% ORDER BY StartedOn DESC";
 			SelectCommTestRunByRunCodeQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE RunCode = %RUNCODE% LIMIT 1";
 			SelectOpenCommTestRunsQuery = "SELECT * FROM %SCHEMA%.%TABLENAME% WHERE Status IN (0, 1, 2)";

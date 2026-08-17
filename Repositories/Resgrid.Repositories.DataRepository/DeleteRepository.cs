@@ -208,6 +208,7 @@ namespace Resgrid.Repositories.DataRepository
 								-- Communication tests
 								DELETE FROM [dbo].[CommunicationTestResults] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[CommunicationTestRuns] WHERE DepartmentId = @DepartmentId
+								DELETE FROM [dbo].[CommunicationTestTargets] WHERE DepartmentId = @DepartmentId
 								DELETE FROM [dbo].[CommunicationTests] WHERE DepartmentId = @DepartmentId
 
 								-- Chatbot

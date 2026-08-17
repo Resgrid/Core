@@ -81,6 +81,18 @@ namespace Resgrid.Model.Services
 		/// <param name="toPhoneNumber">The E.164-formatted destination phone number.</param>
 		/// <param name="verificationCode">The numeric verification code.</param>
 		/// <param name="departmentNumber">The outbound department phone number.</param>
-		Task<bool> SendSmsVerificationCodeAsync(string toPhoneNumber, string verificationCode, string departmentNumber);
+		Task<bool> SendSmsVerificationCodeAsync(string toPhoneNumber, string verificationCode, string departmentNumber, string culture = null);
+
+		/// <summary>
+		/// Sends a communication test SMS. Always goes direct through the SMS provider (never the
+		/// email-to-SMS gateway) because the recipient replies with the run code on the same
+		/// number, and gateway-delivered messages cannot be replied to.
+		/// </summary>
+		/// <param name="toPhoneNumber">The E.164-formatted destination phone number.</param>
+		/// <param name="message">The message body, including the run code to reply with.</param>
+		/// <param name="departmentNumber">The outbound department phone number.</param>
+		/// <param name="carrier">The recipient's mobile carrier, when known.</param>
+		/// <param name="departmentId">The department identifier.</param>
+		Task<bool> SendCommunicationTestAsync(string toPhoneNumber, string message, string departmentNumber, MobileCarriers carrier, int departmentId);
 	}
 }

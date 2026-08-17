@@ -60,5 +60,10 @@ namespace Resgrid.Providers.Bus
 		{
 			return await _rabbitOutboundQueueProvider.EnqueueChatbotMessage(chatbotMessageQueue);
 		}
+
+		public async Task<bool> EnqueueCommunicationTest(CommunicationTestQueueItem communicationTestQueue)
+		{
+			return await _rabbitOutboundQueueProvider.EnqueueCommunicationTest(communicationTestQueue);
+		}
 	}
 }

@@ -12,6 +12,7 @@ using Resgrid.Web.Services.Models.v4;
 using Resgrid.Web.Services.Models.v4.CommunicationTests;
 using Resgrid.Web.ServicesCore.Helpers;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading;
@@ -56,29 +57,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			{
 				foreach (var test in tests)
 				{
-					result.Data.Add(new CommunicationTestData
-					{
-						Id = test.CommunicationTestId.ToString(),
-						Name = test.Name,
-						Description = test.Description,
-						ScheduleType = test.ScheduleType,
-						Sunday = test.Sunday,
-						Monday = test.Monday,
-						Tuesday = test.Tuesday,
-						Wednesday = test.Wednesday,
-						Thursday = test.Thursday,
-						Friday = test.Friday,
-						Saturday = test.Saturday,
-						DayOfMonth = test.DayOfMonth,
-						Time = test.Time,
-						TestSms = test.TestSms,
-						TestEmail = test.TestEmail,
-						TestVoice = test.TestVoice,
-						TestPush = test.TestPush,
-						Active = test.Active,
-						ResponseWindowMinutes = test.ResponseWindowMinutes,
-						CreatedOn = test.CreatedOn.ToString("O")
-					});
+					var data = BuildTestData(test);
+					ApplyTargets(data, await _communicationTestService.GetTargetsByTestIdAsync(test.CommunicationTestId));
+					result.Data.Add(data);
 				}
 			}
 
@@ -114,29 +95,8 @@ namespace Resgrid.Web.Services.Controllers.v4
 				return result;
 			}
 
-			result.Data = new CommunicationTestData
-			{
-				Id = test.CommunicationTestId.ToString(),
-				Name = test.Name,
-				Description = test.Description,
-				ScheduleType = test.ScheduleType,
-				Sunday = test.Sunday,
-				Monday = test.Monday,
-				Tuesday = test.Tuesday,
-				Wednesday = test.Wednesday,
-				Thursday = test.Thursday,
-				Friday = test.Friday,
-				Saturday = test.Saturday,
-				DayOfMonth = test.DayOfMonth,
-				Time = test.Time,
-				TestSms = test.TestSms,
-				TestEmail = test.TestEmail,
-				TestVoice = test.TestVoice,
-				TestPush = test.TestPush,
-				Active = test.Active,
-				ResponseWindowMinutes = test.ResponseWindowMinutes,
-				CreatedOn = test.CreatedOn.ToString("O")
-			};
+			result.Data = BuildTestData(test);
+			ApplyTargets(result.Data, await _communicationTestService.GetTargetsByTestIdAsync(test.CommunicationTestId));
 
 			result.PageSize = 1;
 			result.Status = ResponseHelper.Success;
@@ -224,6 +184,9 @@ namespace Resgrid.Web.Services.Controllers.v4
 			test.ResponseWindowMinutes = input.ResponseWindowMinutes > 0 ? input.ResponseWindowMinutes : 60;
 
 			test = await _communicationTestService.SaveTestAsync(test, cancellationToken);
+
+			await _communicationTestService.SaveTargetsAsync(test.CommunicationTestId, DepartmentId,
+				BuildTargets(test.CommunicationTestId, DepartmentId, input), cancellationToken);
 
 			_eventAggregator.SendMessage<AuditEvent>(new AuditEvent
 			{
@@ -453,6 +416,7 @@ namespace Resgrid.Web.Services.Controllers.v4
 						ContactValue = r.ContactValue,
 						ContactCarrier = r.ContactCarrier,
 						VerificationStatus = r.VerificationStatus,
+						VerificationStatusText = r.GetVerificationDisplayText(),
 						SendAttempted = r.SendAttempted,
 						SendSucceeded = r.SendSucceeded,
 						SentOn = r.SentOn?.ToString("O"),
@@ -491,6 +455,96 @@ namespace Resgrid.Web.Services.Controllers.v4
 			ResponseHelper.PopulateV4ResponseData(result);
 
 			return result;
+		}
+
+		private static CommunicationTestData BuildTestData(CommunicationTest test)
+		{
+			return new CommunicationTestData
+			{
+				Id = test.CommunicationTestId.ToString(),
+				Name = test.Name,
+				Description = test.Description,
+				ScheduleType = test.ScheduleType,
+				Sunday = test.Sunday,
+				Monday = test.Monday,
+				Tuesday = test.Tuesday,
+				Wednesday = test.Wednesday,
+				Thursday = test.Thursday,
+				Friday = test.Friday,
+				Saturday = test.Saturday,
+				DayOfMonth = test.DayOfMonth,
+				Time = test.Time,
+				TestSms = test.TestSms,
+				TestEmail = test.TestEmail,
+				TestVoice = test.TestVoice,
+				TestPush = test.TestPush,
+				Active = test.Active,
+				ResponseWindowMinutes = test.ResponseWindowMinutes,
+				CreatedOn = test.CreatedOn.ToString("O")
+			};
+		}
+
+		private static void ApplyTargets(CommunicationTestData data, IEnumerable<CommunicationTestTarget> targets)
+		{
+			if (data == null || targets == null)
+				return;
+
+			foreach (var target in targets)
+			{
+				switch ((CommunicationTestTargetType)target.TargetType)
+				{
+					case CommunicationTestTargetType.Group:
+						if (int.TryParse(target.TargetId, out var groupId))
+							data.TargetGroupIds.Add(groupId);
+						break;
+					case CommunicationTestTargetType.Role:
+						if (int.TryParse(target.TargetId, out var roleId))
+							data.TargetRoleIds.Add(roleId);
+						break;
+					case CommunicationTestTargetType.User:
+						data.TargetUserIds.Add(target.TargetId);
+						break;
+				}
+			}
+		}
+
+		private static List<CommunicationTestTarget> BuildTargets(Guid communicationTestId, int departmentId, SaveCommunicationTestInput input)
+		{
+			var targets = new List<CommunicationTestTarget>();
+
+			if (input == null)
+				return targets;
+
+			if (input.TargetGroupIds != null)
+			{
+				foreach (var groupId in input.TargetGroupIds)
+					targets.Add(NewTarget(communicationTestId, departmentId, CommunicationTestTargetType.Group, groupId.ToString()));
+			}
+
+			if (input.TargetRoleIds != null)
+			{
+				foreach (var roleId in input.TargetRoleIds)
+					targets.Add(NewTarget(communicationTestId, departmentId, CommunicationTestTargetType.Role, roleId.ToString()));
+			}
+
+			if (input.TargetUserIds != null)
+			{
+				foreach (var userId in input.TargetUserIds.Where(x => !string.IsNullOrWhiteSpace(x)))
+					targets.Add(NewTarget(communicationTestId, departmentId, CommunicationTestTargetType.User, userId));
+			}
+
+			return targets;
+		}
+
+		private static CommunicationTestTarget NewTarget(Guid communicationTestId, int departmentId, CommunicationTestTargetType type, string targetId)
+		{
+			return new CommunicationTestTarget
+			{
+				CommunicationTestId = communicationTestId,
+				DepartmentId = departmentId,
+				TargetType = (int)type,
+				TargetId = targetId
+			};
 		}
 	}
 }

@@ -32,6 +32,7 @@ namespace Resgrid.Providers.Bus.Rabbit
 		public Func<SecurityRefreshEvent, Task> SecurityRefreshEventQueueReceived;
 		public Func<Resgrid.Model.Queue.WorkflowQueueItem, Task> WorkflowQueueReceived;
 		public Func<ChatbotMessageQueueItem, Task> ChatbotMessageQueueReceived;
+		public Func<CommunicationTestQueueItem, Task> CommunicationTestQueueReceived;
 
 		public RabbitInboundQueueProvider()
 		{
@@ -668,6 +669,54 @@ namespace Resgrid.Providers.Bus.Rabbit
 							queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.ChatbotProcessingQueueName),
 							autoAck: false,
 							consumer: chatbotMessageQueueReceivedConsumer);
+				}
+
+				if (CommunicationTestQueueReceived != null)
+				{
+					var communicationTestQueueReceivedConsumer = new AsyncEventingBasicConsumer(_channel);
+					communicationTestQueueReceivedConsumer.ReceivedAsync += async (model, ea) =>
+					{
+						if (ea != null && ea.Body.Length > 0)
+						{
+							CommunicationTestQueueItem ctqi = null;
+							try
+							{
+								var body = ea.Body;
+								var message = Encoding.UTF8.GetString(body.ToArray());
+								ctqi = ObjectSerialization.Deserialize<CommunicationTestQueueItem>(message);
+							}
+							catch (Exception ex)
+							{
+								await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
+								Logging.LogException(ex, Encoding.UTF8.GetString(ea.Body.ToArray()));
+							}
+
+							try
+							{
+								if (ctqi != null)
+								{
+									if (CommunicationTestQueueReceived != null)
+									{
+										await CommunicationTestQueueReceived.Invoke(ctqi);
+										await _channel.BasicAckAsync(ea.DeliveryTag, false);
+									}
+								}
+							}
+							catch (Exception ex)
+							{
+								Logging.LogException(ex);
+								if (await RetryQueueItem(ea, ex))
+									await _channel.BasicNackAsync(ea.DeliveryTag, false, false);
+								else
+									await _channel.BasicNackAsync(ea.DeliveryTag, false, true);
+							}
+						}
+					};
+
+					String communicationTestQueueReceivedConsumerTag = await _channel.BasicConsumeAsync(
+							queue: RabbitConnection.SetQueueNameForEnv(ServiceBusConfig.CommunicationTestQueueName),
+							autoAck: false,
+							consumer: communicationTestQueueReceivedConsumer);
 				}
 			}
 		}

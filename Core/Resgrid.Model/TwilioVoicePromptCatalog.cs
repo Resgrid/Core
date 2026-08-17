@@ -32,6 +32,9 @@ namespace Resgrid.Model
 		public const string InvalidStaffingSelection = "Invalid staffing selection. Returning to the main menu.";
 		public const string NoStaffingSelection = "No staffing selection made. Returning to the main menu.";
 		public const string CommunicationTestRecorded = "Thank you. Your response has been recorded.";
+		public const string CommunicationTestGreeting = "This is a Resgrid communication test. This is only a test. There is no emergency.";
+		public const string CommunicationTestPressOne = "Press 1 to confirm you received this call.";
+		public const string CommunicationTestNoResponse = "No confirmation was received. Goodbye.";
 
 		public const string PleaseWaitForDispatch = "Please wait while we prepare your dispatch information.";
 
@@ -87,6 +90,9 @@ namespace Resgrid.Model
 				InvalidStaffingSelection,
 				NoStaffingSelection,
 				CommunicationTestRecorded,
+				CommunicationTestGreeting,
+				CommunicationTestPressOne,
+				CommunicationTestNoResponse,
 				PleaseWaitForDispatch
 			};
 		}

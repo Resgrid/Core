@@ -22,6 +22,7 @@
 		public static string SecurityRefreshQueueName = "securityrefreshtest";
 		public static string WorkflowQueueName = "workflowqueuetest";
 		public static string ChatbotProcessingQueueName = "chatbotprocessingtest";
+		public static string CommunicationTestQueueName = "communicationtesttest";
 #else
 		public static string CallBroadcastQueueName = "callbroadcast";
 		public static string MessageBroadcastQueueName = "messagebroadcast";
@@ -39,6 +40,7 @@
 		public static string SecurityRefreshQueueName = "securityrefresh";
 		public static string WorkflowQueueName = "workflowqueue";
 		public static string ChatbotProcessingQueueName = "chatbotprocessing";
+		public static string CommunicationTestQueueName = "communicationtest";
 #endif
 
 		#region Azure Service Bus Values

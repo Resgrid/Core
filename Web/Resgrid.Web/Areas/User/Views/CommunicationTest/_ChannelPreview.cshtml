@@ -1,0 +1,67 @@
+﻿@using Resgrid.Web.Areas.User.Models.CommunicationTests
+@model CommunicationTestPreview
+@inject IStringLocalizer<Resgrid.Localization.Areas.User.CommunicationTest.CommunicationTest> localizer
+
+@*
+    Shown on the new and edit screens so the administrator can brief their people before a test
+    goes out. The text comes from CommunicationTestMessageCatalog, the same source the sending
+    code uses, so this is the real message rather than a copy that can drift.
+*@
+<div class="ibox">
+    <div class="ibox-title">
+        <h5>@localizer["WhatYourPeopleWillSee"]</h5>
+    </div>
+    <div class="ibox-content">
+        <div class="alert alert-info">
+            @localizer["TargetsUsersBanner"]
+            <div style="margin-top:8px;">@localizer["PreviewLanguageNote"]</div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h4><i class="fa fa-comment"></i> @localizer["SMS"]</h4>
+                <blockquote data-preview-template="@Model.SmsBody">
+                    <span class="preview-text">@Model.SmsBody</span>
+                </blockquote>
+                <p class="help-block">
+                    @localizer["PreviewSmsHelp", Model.SampleRunCode]
+                </p>
+            </div>
+
+            <div class="col-md-6">
+                <h4><i class="fa fa-envelope"></i> @localizer["Email"]</h4>
+                <blockquote>
+                    <strong data-preview-template="@Model.EmailSubject"><span class="preview-text">@Model.EmailSubject</span></strong>
+                    <pre style="white-space:pre-wrap; background:none; border:none; padding:0;" data-preview-template="@Model.EmailBody"><span class="preview-text">@Model.EmailBody</span></pre>
+                </blockquote>
+                <p class="help-block">@localizer["PreviewEmailHelp"]</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <h4><i class="fa fa-phone"></i> @localizer["VoiceCall"]</h4>
+                <blockquote>
+                    @foreach (var prompt in Model.VoicePrompts)
+                    {
+                        <div>&ldquo;@prompt&rdquo;</div>
+                    }
+                </blockquote>
+                <p class="help-block">
+                    @localizer["PreviewVoiceHelp"]
+                </p>
+            </div>
+
+            <div class="col-md-6">
+                <h4><i class="fa fa-mobile"></i> @localizer["PushNotification"]</h4>
+                <blockquote>
+                    <strong>@Model.PushTitle</strong>
+                    <div data-preview-template="@Model.PushBody"><span class="preview-text">@Model.PushBody</span></div>
+                </blockquote>
+                <p class="help-block">
+                    @localizer["PreviewPushHelp"]
+                </p>
+            </div>
+        </div>
+    </div>
+</div>

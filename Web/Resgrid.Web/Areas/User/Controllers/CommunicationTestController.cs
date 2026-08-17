@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Resgrid.Framework;
+using CommunicationTestMessages = Resgrid.Localization.Areas.User.CommunicationTest.CommunicationTestMessageCatalog;
+using CommunicationTestResources = Resgrid.Localization.Areas.User.CommunicationTest.CommunicationTestResources;
 using Resgrid.Model;
 using Resgrid.Model.Events;
 using Resgrid.Model.Providers;
@@ -24,19 +26,22 @@ namespace Resgrid.Web.Areas.User.Controllers
 		private readonly IEventAggregator _eventAggregator;
 		private readonly IDepartmentGroupsService _departmentGroupsService;
 		private readonly IDepartmentsService _departmentsService;
+		private readonly IPersonnelRolesService _personnelRolesService;
 
 		public CommunicationTestController(
 			ICommunicationTestService communicationTestService,
 			IUserProfileService userProfileService,
 			IEventAggregator eventAggregator,
 			IDepartmentGroupsService departmentGroupsService,
-			IDepartmentsService departmentsService)
+			IDepartmentsService departmentsService,
+			IPersonnelRolesService personnelRolesService)
 		{
 			_communicationTestService = communicationTestService;
 			_userProfileService = userProfileService;
 			_eventAggregator = eventAggregator;
 			_departmentGroupsService = departmentGroupsService;
 			_departmentsService = departmentsService;
+			_personnelRolesService = personnelRolesService;
 		}
 
 		[HttpGet]
@@ -59,7 +64,15 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			var tests = await _communicationTestService.GetTestsByDepartmentIdAsync(DepartmentId);
 			if (tests != null)
+			{
 				model.Tests = tests.ToList();
+
+				foreach (var test in model.Tests)
+				{
+					var targets = await _communicationTestService.GetTargetsByTestIdAsync(test.CommunicationTestId);
+					model.TestScopes[test.CommunicationTestId.ToString()] = BuildScopeLabel(targets);
+				}
+			}
 
 			var runs = await _communicationTestService.GetRunsByDepartmentIdAsync(DepartmentId);
 			if (runs != null)
@@ -75,7 +88,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult New()
+		public async Task<IActionResult> New()
 		{
 			if (!ClaimsAuthorizationHelper.IsUserDepartmentAdmin())
 				return Unauthorized();
@@ -92,6 +105,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				}
 			};
 
+			model.TargetOptions = await BuildTargetOptionsAsync();
+			model.Preview = await BuildPreviewAsync();
+
 			return View(model);
 		}
 
@@ -104,14 +120,18 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (string.IsNullOrWhiteSpace(model.Test.Name))
 			{
-				ModelState.AddModelError("Test.Name", "Name is required.");
+				ModelState.AddModelError("Test.Name", CommunicationTestResources.GetCurrent("NameRequired"));
+				model.TargetOptions = await BuildTargetOptionsAsync();
+				model.Preview = await BuildPreviewAsync();
 				return View(model);
 			}
 
 			if (!await _communicationTestService.CanCreateScheduledTestAsync(DepartmentId, model.Test.ScheduleType))
 			{
-				var typeLabel = model.Test.ScheduleType == (int)CommunicationTestScheduleType.Weekly ? "weekly" : "monthly";
-				model.Message = $"Only one {typeLabel} test is allowed per department. Please edit the existing one instead.";
+				model.Message = CommunicationTestResources.GetCurrent(
+					model.Test.ScheduleType == (int)CommunicationTestScheduleType.Weekly ? "OnlyOneWeeklyTest" : "OnlyOneMonthlyTest");
+				model.TargetOptions = await BuildTargetOptionsAsync();
+				model.Preview = await BuildPreviewAsync();
 				return View(model);
 			}
 
@@ -122,6 +142,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 				model.Test.ResponseWindowMinutes = 60;
 
 			var saved = await _communicationTestService.SaveTestAsync(model.Test, cancellationToken);
+
+			await _communicationTestService.SaveTargetsAsync(saved.CommunicationTestId, DepartmentId,
+				BuildTargets(saved.CommunicationTestId, model.SelectedGroupIds, model.SelectedRoleIds, model.SelectedUserIds), cancellationToken);
 
 			_eventAggregator.SendMessage<AuditEvent>(new AuditEvent
 			{
@@ -152,6 +175,31 @@ namespace Resgrid.Web.Areas.User.Controllers
 				return Unauthorized();
 
 			var model = new EditCommunicationTestView { Test = test };
+			model.TargetOptions = await BuildTargetOptionsAsync();
+			model.Preview = await BuildPreviewAsync();
+
+			var targets = await _communicationTestService.GetTargetsByTestIdAsync(id);
+			if (targets != null)
+			{
+				foreach (var target in targets)
+				{
+					switch ((CommunicationTestTargetType)target.TargetType)
+					{
+						case CommunicationTestTargetType.Group:
+							if (int.TryParse(target.TargetId, out var groupId))
+								model.SelectedGroupIds.Add(groupId);
+							break;
+						case CommunicationTestTargetType.Role:
+							if (int.TryParse(target.TargetId, out var roleId))
+								model.SelectedRoleIds.Add(roleId);
+							break;
+						case CommunicationTestTargetType.User:
+							model.SelectedUserIds.Add(target.TargetId);
+							break;
+					}
+				}
+			}
+
 			return View(model);
 		}
 
@@ -172,9 +220,11 @@ namespace Resgrid.Web.Areas.User.Controllers
 			if (model.Test.ScheduleType != existing.ScheduleType &&
 				!await _communicationTestService.CanCreateScheduledTestAsync(DepartmentId, model.Test.ScheduleType, existing.CommunicationTestId))
 			{
-				var typeLabel = model.Test.ScheduleType == (int)CommunicationTestScheduleType.Weekly ? "weekly" : "monthly";
-				model.Message = $"Only one {typeLabel} test is allowed per department.";
+				model.Message = CommunicationTestResources.GetCurrent(
+					model.Test.ScheduleType == (int)CommunicationTestScheduleType.Weekly ? "OnlyOneWeeklyTest" : "OnlyOneMonthlyTest");
 				model.Test = existing;
+				model.TargetOptions = await BuildTargetOptionsAsync();
+				model.Preview = await BuildPreviewAsync();
 				return View(model);
 			}
 
@@ -201,6 +251,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 			existing.UpdatedOn = DateTime.UtcNow;
 
 			await _communicationTestService.SaveTestAsync(existing, cancellationToken);
+
+			await _communicationTestService.SaveTargetsAsync(existing.CommunicationTestId, DepartmentId,
+				BuildTargets(existing.CommunicationTestId, model.SelectedGroupIds, model.SelectedRoleIds, model.SelectedUserIds), cancellationToken);
 
 			_eventAggregator.SendMessage<AuditEvent>(new AuditEvent
 			{
@@ -267,21 +320,21 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 			if (test.ScheduleType != (int)CommunicationTestScheduleType.OnDemand)
 			{
-				TempData["Error"] = "Only on-demand tests can be started manually. Scheduled tests run automatically.";
+				TempData["Error"] = CommunicationTestResources.GetCurrent("OnlyOnDemandCanRun");
 				return RedirectToAction("Index");
 			}
 
 			// Check 48-hour rate limit for on-demand tests
 			if (!await _communicationTestService.CanStartOnDemandRunAsync(id))
 			{
-				TempData["Error"] = "An on-demand test can only be run once every 48 hours. Please try again later.";
+				TempData["Error"] = CommunicationTestResources.GetCurrent("RateLimited");
 				return RedirectToAction("Index");
 			}
 
 			var run = await _communicationTestService.StartTestRunAsync(id, DepartmentId, UserId, cancellationToken);
 			if (run == null)
 			{
-				TempData["Error"] = "Unable to start the test run. Rate limit may apply.";
+				TempData["Error"] = CommunicationTestResources.GetCurrent("UnableToStart");
 				return RedirectToAction("Index");
 			}
 
@@ -362,6 +415,126 @@ namespace Resgrid.Web.Areas.User.Controllers
 			};
 
 			return View(model);
+		}
+
+		private static string BuildScopeLabel(IEnumerable<CommunicationTestTarget> targets)
+		{
+			if (targets == null)
+				return CommunicationTestResources.GetCurrent("ScopeEveryone");
+
+			var targetList = targets.ToList();
+			if (targetList.Count == 0)
+				return CommunicationTestResources.GetCurrent("ScopeEveryone");
+
+			var parts = new List<string>();
+
+			var groups = targetList.Count(t => t.TargetType == (int)CommunicationTestTargetType.Group);
+			if (groups > 0)
+				parts.Add(groups == 1 ? CommunicationTestResources.GetCurrent("ScopeGroup") : CommunicationTestResources.GetCurrent("ScopeGroups", groups));
+
+			var roles = targetList.Count(t => t.TargetType == (int)CommunicationTestTargetType.Role);
+			if (roles > 0)
+				parts.Add(roles == 1 ? CommunicationTestResources.GetCurrent("ScopeRole") : CommunicationTestResources.GetCurrent("ScopeRoles", roles));
+
+			var users = targetList.Count(t => t.TargetType == (int)CommunicationTestTargetType.User);
+			if (users > 0)
+				parts.Add(users == 1 ? CommunicationTestResources.GetCurrent("ScopePerson") : CommunicationTestResources.GetCurrent("ScopePeople", users));
+
+			return parts.Count == 0 ? CommunicationTestResources.GetCurrent("ScopeEveryone") : string.Join(", ", parts);
+		}
+
+		/// <summary>
+		/// Renders the real per-channel message text for the "what your people will see" panel. The
+		/// test name is left as a placeholder the screen substitutes live, and the sample values
+		/// (name, run code, confirm link) stand in for what a real run generates per recipient.
+		/// </summary>
+		private async Task<CommunicationTestPreview> BuildPreviewAsync()
+		{
+			var department = await _departmentsService.GetDepartmentByIdAsync(DepartmentId);
+			var departmentName = string.IsNullOrWhiteSpace(department?.Name) ? "Your department" : department.Name;
+
+			var placeholder = CommunicationTestPreview.NamePlaceholder;
+			var sampleConfirmUrl = $"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/v4/CommunicationTestResponse/EmailConfirm?token=...";
+
+			// Previewed in the administrator's own language. Each recipient receives it in theirs, which
+			// the note under the panel says out loud so nobody assumes everyone gets this exact text.
+			var culture = System.Globalization.CultureInfo.CurrentUICulture.Name;
+
+			return new CommunicationTestPreview
+			{
+				SampleRunCode = CommunicationTestMessages.SampleRunCode,
+				SmsBody = CommunicationTestMessages.BuildSmsBody(placeholder, CommunicationTestMessages.SampleRunCode, culture),
+				EmailSubject = CommunicationTestMessages.BuildEmailSubject(placeholder, culture),
+				EmailBody = CommunicationTestMessages.BuildEmailBody("Alex", departmentName, placeholder, sampleConfirmUrl, culture),
+				VoicePrompts = CommunicationTestMessages.GetVoicePrompts(culture).ToList(),
+				PushTitle = CommunicationTestMessages.BuildPushTitle(culture),
+				PushBody = CommunicationTestMessages.BuildPushBody(placeholder, culture)
+			};
+		}
+
+		private async Task<CommunicationTestTargetOptions> BuildTargetOptionsAsync()
+		{
+			var options = new CommunicationTestTargetOptions();
+
+			var groups = await _departmentGroupsService.GetAllGroupsForDepartmentAsync(DepartmentId);
+			if (groups != null)
+				options.Groups = groups.OrderBy(g => g.Name).ToList();
+
+			var roles = await _personnelRolesService.GetAllRolesForDepartmentAsync(DepartmentId);
+			if (roles != null)
+				options.Roles = roles.OrderBy(r => r.Name).ToList();
+
+			var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(DepartmentId);
+			if (profiles != null)
+			{
+				options.Personnel = profiles.Values
+					.Select(p => new CommunicationTestPersonnelOption
+					{
+						UserId = p.UserId,
+						Name = $"{p.LastName}, {p.FirstName}".Trim(' ', ',')
+					})
+					.Where(p => !string.IsNullOrWhiteSpace(p.UserId))
+					.OrderBy(p => p.Name)
+					.ToList();
+			}
+
+			return options;
+		}
+
+		private List<CommunicationTestTarget> BuildTargets(Guid communicationTestId, List<int> groupIds, List<int> roleIds, List<string> userIds)
+		{
+			var targets = new List<CommunicationTestTarget>();
+
+			if (groupIds != null)
+			{
+				foreach (var groupId in groupIds)
+					targets.Add(NewTarget(communicationTestId, CommunicationTestTargetType.Group, groupId.ToString()));
+			}
+
+			if (roleIds != null)
+			{
+				foreach (var roleId in roleIds)
+					targets.Add(NewTarget(communicationTestId, CommunicationTestTargetType.Role, roleId.ToString()));
+			}
+
+			if (userIds != null)
+			{
+				foreach (var userId in userIds.Where(x => !string.IsNullOrWhiteSpace(x)))
+					targets.Add(NewTarget(communicationTestId, CommunicationTestTargetType.User, userId));
+			}
+
+			return targets;
+		}
+
+		private CommunicationTestTarget NewTarget(Guid communicationTestId, CommunicationTestTargetType type, string targetId)
+		{
+			return new CommunicationTestTarget
+			{
+				CommunicationTestId = communicationTestId,
+				DepartmentId = DepartmentId,
+				TargetType = (int)type,
+				TargetId = targetId
+			};
 		}
 	}
 }

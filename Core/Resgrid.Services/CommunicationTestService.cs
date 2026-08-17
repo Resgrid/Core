@@ -1,10 +1,15 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Resgrid.Framework;
+using CommunicationTestMessages = Resgrid.Localization.Areas.User.CommunicationTest.CommunicationTestMessageCatalog;
 using Resgrid.Model;
+using Resgrid.Model.Messages;
+using Resgrid.Model.Providers;
+using Resgrid.Model.Queue;
 using Resgrid.Model.Repositories;
 using Resgrid.Model.Services;
 
@@ -12,24 +17,60 @@ namespace Resgrid.Services
 {
 	public class CommunicationTestService : ICommunicationTestService
 	{
+		/// <summary>
+		/// How long a run is left alone before the recovery sweep will re-process it, so the sweep
+		/// cannot collide with a queue consumer that is still working through the same run.
+		/// </summary>
+		private static readonly TimeSpan RecoveryGracePeriod = TimeSpan.FromMinutes(30);
+
 		private readonly ICommunicationTestRepository _communicationTestRepository;
 		private readonly ICommunicationTestRunRepository _communicationTestRunRepository;
 		private readonly ICommunicationTestResultRepository _communicationTestResultRepository;
+		private readonly ICommunicationTestTargetRepository _communicationTestTargetRepository;
 		private readonly IDepartmentsService _departmentsService;
 		private readonly IUserProfileService _userProfileService;
+		private readonly IDepartmentGroupsService _departmentGroupsService;
+		private readonly IPersonnelRolesService _personnelRolesService;
+		private readonly IDepartmentSettingsService _departmentSettingsService;
+		private readonly ISmsService _smsService;
+		private readonly IEmailService _emailService;
+		private readonly IPushService _pushService;
+		private readonly IOutboundVoiceProvider _outboundVoiceProvider;
+		private readonly IPhoneNumberProcesserProvider _phoneNumberProcesser;
+		private readonly IQueueService _queueService;
 
 		public CommunicationTestService(
 			ICommunicationTestRepository communicationTestRepository,
 			ICommunicationTestRunRepository communicationTestRunRepository,
 			ICommunicationTestResultRepository communicationTestResultRepository,
+			ICommunicationTestTargetRepository communicationTestTargetRepository,
 			IDepartmentsService departmentsService,
-			IUserProfileService userProfileService)
+			IUserProfileService userProfileService,
+			IDepartmentGroupsService departmentGroupsService,
+			IPersonnelRolesService personnelRolesService,
+			IDepartmentSettingsService departmentSettingsService,
+			ISmsService smsService,
+			IEmailService emailService,
+			IPushService pushService,
+			IOutboundVoiceProvider outboundVoiceProvider,
+			IPhoneNumberProcesserProvider phoneNumberProcesser,
+			IQueueService queueService)
 		{
 			_communicationTestRepository = communicationTestRepository;
 			_communicationTestRunRepository = communicationTestRunRepository;
 			_communicationTestResultRepository = communicationTestResultRepository;
+			_communicationTestTargetRepository = communicationTestTargetRepository;
 			_departmentsService = departmentsService;
 			_userProfileService = userProfileService;
+			_departmentGroupsService = departmentGroupsService;
+			_personnelRolesService = personnelRolesService;
+			_departmentSettingsService = departmentSettingsService;
+			_smsService = smsService;
+			_emailService = emailService;
+			_pushService = pushService;
+			_outboundVoiceProvider = outboundVoiceProvider;
+			_phoneNumberProcesser = phoneNumberProcesser;
+			_queueService = queueService;
 		}
 
 		public async Task<IEnumerable<CommunicationTest>> GetTestsByDepartmentIdAsync(int departmentId)
@@ -70,6 +111,106 @@ namespace Resgrid.Services
 			return await _communicationTestRepository.DeleteAsync(test, cancellationToken);
 		}
 
+		#region Targeting
+
+		public async Task<IEnumerable<CommunicationTestTarget>> GetTargetsByTestIdAsync(Guid communicationTestId)
+		{
+			return await _communicationTestTargetRepository.GetTargetsByTestIdAsync(communicationTestId);
+		}
+
+		/// <summary>
+		/// Replaces the whole target set for a test. Passing an empty collection clears targeting,
+		/// which puts the test back to covering the entire department.
+		/// </summary>
+		public async Task SaveTargetsAsync(Guid communicationTestId, int departmentId, IEnumerable<CommunicationTestTarget> targets, CancellationToken cancellationToken = default)
+		{
+			var existing = await _communicationTestTargetRepository.GetTargetsByTestIdAsync(communicationTestId);
+			if (existing != null)
+			{
+				foreach (var target in existing)
+					await _communicationTestTargetRepository.DeleteAsync(target, cancellationToken);
+			}
+
+			if (targets == null)
+				return;
+
+			// De-duplicate so the same group/role/user selected twice doesn't create duplicate rows.
+			var seen = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+			foreach (var target in targets)
+			{
+				if (target == null || string.IsNullOrWhiteSpace(target.TargetId))
+					continue;
+
+				if (!seen.Add($"{target.TargetType}:{target.TargetId.Trim()}"))
+					continue;
+
+				await _communicationTestTargetRepository.SaveOrUpdateAsync(new CommunicationTestTarget
+				{
+					CommunicationTestId = communicationTestId,
+					DepartmentId = departmentId,
+					TargetType = target.TargetType,
+					TargetId = target.TargetId.Trim()
+				}, cancellationToken, true);
+			}
+		}
+
+		/// <summary>
+		/// Resolves the user ids a test covers. Returns <c>null</c> when the test has no targeting,
+		/// meaning every member of the department is tested.
+		/// </summary>
+		public async Task<HashSet<string>> ResolveTargetedUserIdsAsync(Guid communicationTestId, int departmentId)
+		{
+			var targets = await _communicationTestTargetRepository.GetTargetsByTestIdAsync(communicationTestId);
+			var targetList = targets?.ToList();
+
+			if (targetList == null || targetList.Count == 0)
+				return null;
+
+			var userIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+			foreach (var target in targetList)
+			{
+				if (string.IsNullOrWhiteSpace(target.TargetId))
+					continue;
+
+				switch ((CommunicationTestTargetType)target.TargetType)
+				{
+					case CommunicationTestTargetType.Group:
+						if (int.TryParse(target.TargetId, out var groupId))
+						{
+							var groupMembers = await _departmentGroupsService.GetAllMembersForGroupAsync(groupId);
+							if (groupMembers != null)
+							{
+								foreach (var member in groupMembers)
+									userIds.Add(member.UserId);
+							}
+						}
+						break;
+
+					case CommunicationTestTargetType.Role:
+						if (int.TryParse(target.TargetId, out var roleId))
+						{
+							var roleMembers = await _personnelRolesService.GetAllMembersOfRoleAsync(roleId);
+							if (roleMembers != null)
+							{
+								foreach (var member in roleMembers)
+									userIds.Add(member.UserId);
+							}
+						}
+						break;
+
+					case CommunicationTestTargetType.User:
+						userIds.Add(target.TargetId);
+						break;
+				}
+			}
+
+			return userIds;
+		}
+
+		#endregion Targeting
+
 		public async Task<bool> CanStartOnDemandRunAsync(Guid communicationTestId)
 		{
 			var existingRuns = await _communicationTestRunRepository.GetRunsByTestIdAsync(communicationTestId);
@@ -83,6 +224,11 @@ namespace Resgrid.Services
 			return mostRecent.StartedOn.AddHours(48) <= DateTime.UtcNow;
 		}
 
+		/// <summary>
+		/// Claims the run and hands it to the worker. Nothing is built or sent here: a department of
+		/// any size is one result row insert and one provider round-trip per recipient per channel,
+		/// which the request thread that started the run cannot absorb.
+		/// </summary>
 		public async Task<CommunicationTestRun> StartTestRunAsync(Guid communicationTestId, int departmentId, string initiatedByUserId, CancellationToken cancellationToken = default)
 		{
 			var test = await _communicationTestRepository.GetByIdAsync(communicationTestId);
@@ -104,7 +250,7 @@ namespace Resgrid.Services
 				DepartmentId = departmentId,
 				InitiatedByUserId = initiatedByUserId,
 				StartedOn = DateTime.UtcNow,
-				Status = (int)CommunicationTestRunStatus.Running,
+				Status = (int)CommunicationTestRunStatus.Pending,
 				RunCode = runCode,
 				TotalUsersTested = 0,
 				TotalResponses = 0
@@ -112,8 +258,69 @@ namespace Resgrid.Services
 
 			run = await _communicationTestRunRepository.SaveOrUpdateAsync(run, cancellationToken, true);
 
+			try
+			{
+				var enqueued = await _queueService.EnqueueCommunicationTestAsync(new CommunicationTestQueueItem
+				{
+					DepartmentId = departmentId,
+					CommunicationTestRunId = run.CommunicationTestRunId.ToString(),
+					CommunicationTestId = communicationTestId.ToString()
+				}, cancellationToken);
+
+				if (!enqueued)
+					Logging.LogInfo($"CommunicationTest: run {run.CommunicationTestRunId} could not be published to the bus; it stays Pending for the recovery sweep.");
+			}
+			catch (Exception ex)
+			{
+				// The run row is saved and Pending, so a broker outage delays the test rather than
+				// losing it -- DeliverPendingRunsAsync sweeps it up on the worker's next cycle.
+				Logging.LogException(ex);
+			}
+
+			return run;
+		}
+
+		/// <summary>
+		/// Worker-side entry point: builds the result rows for a Pending run, then delivers them.
+		/// Safe to call twice for the same run -- building is skipped once results exist and each
+		/// result is only sent once.
+		/// </summary>
+		public async Task ProcessRunAsync(Guid communicationTestRunId, CancellationToken cancellationToken = default)
+		{
+			await BuildRunResultsAsync(communicationTestRunId, cancellationToken);
+			await DeliverRunAsync(communicationTestRunId, cancellationToken);
+		}
+
+		/// <summary>
+		/// Resolves the audience for a run and writes one result row per recipient per enabled
+		/// channel. No-ops when the run already has results, so a redelivered queue message cannot
+		/// double up the audience.
+		/// </summary>
+		public async Task<CommunicationTestRun> BuildRunResultsAsync(Guid communicationTestRunId, CancellationToken cancellationToken = default)
+		{
+			var run = await _communicationTestRunRepository.GetByIdAsync(communicationTestRunId);
+			if (run == null)
+				return null;
+
+			var test = await _communicationTestRepository.GetByIdAsync(run.CommunicationTestId);
+			if (test == null)
+				return run;
+
+			var existingResults = await _communicationTestResultRepository.GetResultsByRunIdAsync(communicationTestRunId);
+			if (existingResults != null && existingResults.Any())
+				return run;
+
+			var communicationTestId = run.CommunicationTestId;
+			var departmentId = run.DepartmentId;
+
 			var members = await _departmentsService.GetAllMembersForDepartmentAsync(departmentId);
 			var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(departmentId);
+
+			// A targeted test only covers the resolved users. Intersecting against current department
+			// membership means a stale group/role/user target can never pull in someone who left.
+			var targetedUserIds = await ResolveTargetedUserIdsAsync(communicationTestId, departmentId);
+			if (targetedUserIds != null)
+				members = members.Where(m => targetedUserIds.Contains(m.UserId)).ToList();
 
 			int totalUsersTested = 0;
 
@@ -133,17 +340,13 @@ namespace Resgrid.Services
 						Channel = (int)CommunicationTestChannel.Email,
 						ContactValue = profile?.MembershipEmail,
 						VerificationStatus = (int)emailVerified.ToVerificationStatus(),
-						SendAttempted = emailVerified.IsContactMethodAllowedForSending(),
+						SendAttempted = emailVerified.IsContactMethodAllowedForSending()
+							&& !string.IsNullOrWhiteSpace(profile?.MembershipEmail)
+							&& IsEmailEnabled(profile),
 						SendSucceeded = false,
 						Responded = false,
 						ResponseToken = Guid.NewGuid().ToString("N")
 					};
-
-					if (result.SendAttempted && !string.IsNullOrWhiteSpace(result.ContactValue))
-					{
-						result.SendSucceeded = true;
-						result.SentOn = DateTime.UtcNow;
-					}
 
 					await _communicationTestResultRepository.SaveOrUpdateAsync(result, cancellationToken, true);
 					userHasResults = true;
@@ -165,17 +368,13 @@ namespace Resgrid.Services
 						ContactValue = profile?.GetPhoneNumber(),
 						ContactCarrier = carrierName,
 						VerificationStatus = (int)mobileVerified.ToVerificationStatus(),
-						SendAttempted = mobileVerified.IsContactMethodAllowedForSending(),
+						SendAttempted = mobileVerified.IsContactMethodAllowedForSending()
+							&& !string.IsNullOrWhiteSpace(profile?.GetPhoneNumber())
+							&& IsSmsEnabled(profile),
 						SendSucceeded = false,
 						Responded = false,
 						ResponseToken = Guid.NewGuid().ToString("N")
 					};
-
-					if (result.SendAttempted && !string.IsNullOrWhiteSpace(result.ContactValue))
-					{
-						result.SendSucceeded = true;
-						result.SentOn = DateTime.UtcNow;
-					}
 
 					await _communicationTestResultRepository.SaveOrUpdateAsync(result, cancellationToken, true);
 					userHasResults = true;
@@ -183,26 +382,29 @@ namespace Resgrid.Services
 
 				if (test.TestVoice)
 				{
-					var mobileVerified = profile?.MobileNumberVerified;
+					// Honour the user's voice routing preference: the number we would really call for a
+					// dispatch is the number the test has to ring, otherwise the report proves nothing.
+					var useHome = profile != null && !profile.VoiceCallMobile && profile.VoiceCallHome
+						&& !string.IsNullOrWhiteSpace(profile.GetHomePhoneNumber());
+
+					var voiceNumber = useHome ? profile?.GetHomePhoneNumber() : profile?.GetPhoneNumber();
+					var voiceVerified = useHome ? profile?.HomeNumberVerified : profile?.MobileNumberVerified;
+
 					var result = new CommunicationTestResult
 					{
 						CommunicationTestRunId = run.CommunicationTestRunId,
 						DepartmentId = departmentId,
 						UserId = member.UserId,
 						Channel = (int)CommunicationTestChannel.Voice,
-						ContactValue = profile?.GetPhoneNumber(),
-						VerificationStatus = (int)mobileVerified.ToVerificationStatus(),
-						SendAttempted = mobileVerified.IsContactMethodAllowedForSending(),
+						ContactValue = voiceNumber,
+						VerificationStatus = (int)voiceVerified.ToVerificationStatus(),
+						SendAttempted = voiceVerified.IsContactMethodAllowedForSending()
+							&& !string.IsNullOrWhiteSpace(voiceNumber)
+							&& profile != null && profile.VoiceForCall,
 						SendSucceeded = false,
 						Responded = false,
 						ResponseToken = Guid.NewGuid().ToString("N")
 					};
-
-					if (result.SendAttempted && !string.IsNullOrWhiteSpace(result.ContactValue))
-					{
-						result.SendSucceeded = true;
-						result.SentOn = DateTime.UtcNow;
-					}
 
 					await _communicationTestResultRepository.SaveOrUpdateAsync(result, cancellationToken, true);
 					userHasResults = true;
@@ -217,9 +419,10 @@ namespace Resgrid.Services
 						UserId = member.UserId,
 						Channel = (int)CommunicationTestChannel.Push,
 						VerificationStatus = (int)ContactVerificationStatus.Verified,
-						SendAttempted = true,
-						SendSucceeded = true,
-						SentOn = DateTime.UtcNow,
+						// The push service silently drops a notification when this opt-in is off, so
+						// gate here rather than reporting an attempt that never leaves the process.
+						SendAttempted = profile != null && profile.SendNotificationPush,
+						SendSucceeded = false,
 						Responded = false,
 						ResponseToken = Guid.NewGuid().ToString("N")
 					};
@@ -233,11 +436,222 @@ namespace Resgrid.Services
 			}
 
 			run.TotalUsersTested = totalUsersTested;
-			run.Status = (int)CommunicationTestRunStatus.AwaitingResponses;
+			run.Status = (int)CommunicationTestRunStatus.Running;
 			run = await _communicationTestRunRepository.SaveOrUpdateAsync(run, cancellationToken, true);
 
 			return run;
 		}
+
+		#region Delivery
+
+		/// <summary>
+		/// Sends the messages for every not-yet-sent result on a run and moves the run to
+		/// AwaitingResponses. Safe to call more than once: results that already have a SentOn are
+		/// skipped, so a run whose delivery was interrupted can be finished by the worker.
+		/// </summary>
+		public async Task<int> DeliverRunAsync(Guid communicationTestRunId, CancellationToken cancellationToken = default)
+		{
+			var run = await _communicationTestRunRepository.GetByIdAsync(communicationTestRunId);
+			if (run == null)
+				return 0;
+
+			var test = await _communicationTestRepository.GetByIdAsync(run.CommunicationTestId);
+			if (test == null)
+				return 0;
+
+			var results = await _communicationTestResultRepository.GetResultsByRunIdAsync(communicationTestRunId);
+			if (results == null)
+				return 0;
+
+			var department = await _departmentsService.GetDepartmentByIdAsync(run.DepartmentId);
+			var departmentNumber = await _departmentSettingsService.GetTextToCallNumberForDepartmentAsync(run.DepartmentId);
+			var profiles = await _userProfileService.GetAllProfilesForDepartmentAsync(run.DepartmentId);
+
+			int sent = 0;
+
+			foreach (var result in results)
+			{
+				if (!result.SendAttempted || result.SentOn.HasValue)
+					continue;
+
+				profiles.TryGetValue(result.UserId, out var profile);
+
+				bool succeeded = false;
+
+				// One channel failing for one person must never abort the rest of the run -- the
+				// report is the deliverable, and a thrown provider error would leave it half written.
+				try
+				{
+					// Every message is composed for the recipient, so it renders in THEIR language, not
+					// the language of whoever started the run or of the worker thread.
+					var culture = profile?.Language;
+
+					switch ((CommunicationTestChannel)result.Channel)
+					{
+						case CommunicationTestChannel.Email:
+							succeeded = await _emailService.SendCommunicationTestEmailAsync(
+								result.ContactValue,
+								profile?.FirstName ?? string.Empty,
+								department?.Name ?? "Your department",
+								test.Name,
+								BuildEmailConfirmUrl(result.ResponseToken),
+								culture);
+							break;
+
+						case CommunicationTestChannel.Sms:
+							succeeded = await SendTestSmsAsync(result, profile, run.RunCode, test.Name, departmentNumber, run.DepartmentId);
+							break;
+
+						case CommunicationTestChannel.Voice:
+							succeeded = await SendTestVoiceAsync(result);
+							break;
+
+						case CommunicationTestChannel.Push:
+							succeeded = await SendTestPushAsync(result, profile, department, test.Name);
+							break;
+					}
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+					succeeded = false;
+				}
+
+				result.SendSucceeded = succeeded;
+				result.SentOn = DateTime.UtcNow;
+
+				await _communicationTestResultRepository.SaveOrUpdateAsync(result, cancellationToken, true);
+
+				if (succeeded)
+					sent++;
+			}
+
+			if (run.Status == (int)CommunicationTestRunStatus.Pending || run.Status == (int)CommunicationTestRunStatus.Running)
+			{
+				run.Status = (int)CommunicationTestRunStatus.AwaitingResponses;
+				await _communicationTestRunRepository.SaveOrUpdateAsync(run, cancellationToken, true);
+			}
+
+			return sent;
+		}
+
+		/// <summary>
+		/// Recovery sweep for runs still sitting in Pending/Running. That is what a run looks like
+		/// when its queue message never reached the broker, or when the worker that was delivering it
+		/// died part-way through. Building and sending are both idempotent, so re-processing is safe.
+		/// </summary>
+		public async Task DeliverPendingRunsAsync(CancellationToken cancellationToken = default)
+		{
+			var openRuns = await _communicationTestRunRepository.GetOpenRunsAsync();
+			if (openRuns == null)
+				return;
+
+			foreach (var run in openRuns)
+			{
+				if (run.Status != (int)CommunicationTestRunStatus.Pending && run.Status != (int)CommunicationTestRunStatus.Running)
+					continue;
+
+				// Leave a run the worker may still be actively processing alone. Without this the sweep
+				// races the queue consumer on a freshly published run, and two builders that both see
+				// zero results would each write a full set of rows.
+				if (run.StartedOn.Add(RecoveryGracePeriod) > DateTime.UtcNow)
+					continue;
+
+				try
+				{
+					await ProcessRunAsync(run.CommunicationTestRunId, cancellationToken);
+				}
+				catch (Exception ex)
+				{
+					Logging.LogException(ex);
+				}
+			}
+		}
+
+		private async Task<bool> SendTestSmsAsync(CommunicationTestResult result, UserProfile profile, string runCode, string testName, string departmentNumber, int departmentId)
+		{
+			// The stored ContactValue is the display form (digits only). Providers need E.164, so
+			// normalise off the raw profile number the same way contact verification does -- an
+			// unnormalised number is rejected by Twilio/SignalWire with "Invalid 'To'".
+			var rawNumber = profile?.MobileNumber;
+			if (string.IsNullOrWhiteSpace(rawNumber))
+				return false;
+
+			var processed = _phoneNumberProcesser.Process(rawNumber);
+			if (processed == null || !processed.IsValid || string.IsNullOrWhiteSpace(processed.InternationalNumber))
+			{
+				Logging.LogInfo($"Communication test SMS skipped for user {result.UserId}: mobile number is not a valid sendable number (needs international format, e.g. +<country code><number>).");
+				return false;
+			}
+
+			var body = CommunicationTestMessages.BuildSmsBody(testName, runCode, profile?.Language);
+
+			var carrier = profile != null && profile.MobileCarrier > 0 ? (MobileCarriers)profile.MobileCarrier : MobileCarriers.None;
+
+			return await _smsService.SendCommunicationTestAsync(processed.InternationalNumber, body, departmentNumber, carrier, departmentId);
+		}
+
+		private async Task<bool> SendTestVoiceAsync(CommunicationTestResult result)
+		{
+			if (string.IsNullOrWhiteSpace(result.ContactValue) || string.IsNullOrWhiteSpace(result.ResponseToken))
+				return false;
+
+			var processed = _phoneNumberProcesser.Process(result.ContactValue);
+			if (processed == null || !processed.IsValid || string.IsNullOrWhiteSpace(processed.InternationalNumber))
+			{
+				Logging.LogInfo($"Communication test voice call skipped for user {result.UserId}: phone number is not a valid sendable number.");
+				return false;
+			}
+
+			return await _outboundVoiceProvider.SendCommunicationTestCallAsync(processed.InternationalNumber, result.ResponseToken);
+		}
+
+		private async Task<bool> SendTestPushAsync(CommunicationTestResult result, UserProfile profile, Department department, string testName)
+		{
+			if (profile == null || !profile.SendNotificationPush)
+				return false;
+
+			var message = new StandardPushMessage
+			{
+				Title = CommunicationTestMessages.BuildPushTitle(profile.Language),
+				SubTitle = CommunicationTestMessages.BuildPushBody(testName, profile.Language),
+				// The event code carries the response token to the device. The Responder app parses
+				// the "CT:" prefix, shows a confirm button, and posts the token back to
+				// CommunicationTests/RecordPushResponse — without it push has no way to be answered.
+				Id = CommunicationTestPushEventCode(result.ResponseToken),
+				DepartmentCode = department?.Code,
+				DepartmentId = result.DepartmentId
+			};
+
+			return await _pushService.PushNotification(message, result.UserId, profile);
+		}
+
+		/// <summary>
+		/// Push event code for a communication test. The "CT:" prefix is what the Responder app
+		/// matches on to show the confirm-receipt prompt, and the token after it is what the app
+		/// posts back. Changing either half breaks push confirmation, so both sides reference this
+		/// format rather than building the string inline.
+		/// </summary>
+		private static string CommunicationTestPushEventCode(string responseToken)
+		{
+			return $"CT:{responseToken}";
+		}
+
+		private static string BuildEmailConfirmUrl(string responseToken)
+		{
+			return $"{Config.SystemBehaviorConfig.ResgridApiBaseUrl}/api/v4/CommunicationTestResponse/EmailConfirm?token={Uri.EscapeDataString(responseToken ?? string.Empty)}";
+		}
+
+		// A channel counts as reachable when ANY of the per-event opt-ins for it is on. The test
+		// answers "can we get a message to this person at all", not "would this specific event type
+		// go out", so gating on a single flag would report false negatives.
+		private static bool IsSmsEnabled(UserProfile profile)
+			=> profile != null && (profile.SendSms || profile.SendMessageSms || profile.SendNotificationSms);
+
+		private static bool IsEmailEnabled(UserProfile profile)
+			=> profile != null && (profile.SendEmail || profile.SendMessageEmail || profile.SendNotificationEmail);
+
+		#endregion Delivery
 
 		public async Task<IEnumerable<CommunicationTestRun>> GetRunsByTestIdAsync(Guid communicationTestId)
 		{
@@ -266,13 +680,15 @@ namespace Resgrid.Services
 				return false;
 
 			var results = await _communicationTestResultRepository.GetResultsByRunIdAsync(run.CommunicationTestRunId);
-			var cleanPhone = fromPhoneNumber.Replace("+", "").Replace("-", "").Replace(" ", "").Replace("(", "").Replace(")", "");
+			var inboundDigits = DigitsOnly(fromPhoneNumber);
+
+			if (string.IsNullOrWhiteSpace(inboundDigits))
+				return false;
 
 			var matchingResult = results.FirstOrDefault(r =>
 				r.Channel == (int)CommunicationTestChannel.Sms &&
 				!r.Responded &&
-				r.ContactValue != null &&
-				r.ContactValue.Replace("+", "").Replace("-", "").Replace(" ", "").Replace("(", "").Replace(")", "") == cleanPhone);
+				IsSamePhoneNumber(r.ContactValue, inboundDigits));
 
 			if (matchingResult == null)
 				return false;
@@ -307,6 +723,21 @@ namespace Resgrid.Services
 
 			var result = await _communicationTestResultRepository.GetResultByResponseTokenAsync(responseToken);
 			return result?.DepartmentId;
+		}
+
+		public async Task<string> GetRecipientLanguageByResponseTokenAsync(string responseToken)
+		{
+			if (string.IsNullOrWhiteSpace(responseToken))
+				return null;
+
+			// The voice webhook only carries the token, so the person being called is identified by
+			// the result row it belongs to. Their profile language decides what the call says.
+			var result = await _communicationTestResultRepository.GetResultByResponseTokenAsync(responseToken);
+			if (result == null || string.IsNullOrWhiteSpace(result.UserId))
+				return null;
+
+			var profile = await _userProfileService.GetProfileByUserIdAsync(result.UserId);
+			return profile?.Language;
 		}
 
 		public async Task ProcessScheduledTestsAsync(CancellationToken cancellationToken = default)
@@ -385,6 +816,47 @@ namespace Resgrid.Services
 			var respondedUsers = allResults.Where(r => r.Responded).Select(r => r.UserId).Distinct().Count();
 			run.TotalResponses = respondedUsers;
 			await _communicationTestRunRepository.SaveOrUpdateAsync(run, CancellationToken.None, true);
+		}
+
+		private static string DigitsOnly(string value)
+		{
+			if (string.IsNullOrWhiteSpace(value))
+				return string.Empty;
+
+			var builder = new StringBuilder(value.Length);
+			foreach (var character in value)
+			{
+				if (char.IsDigit(character))
+					builder.Append(character);
+			}
+
+			return builder.ToString();
+		}
+
+		/// <summary>
+		/// Compares two phone numbers by their digits, tolerating a country code on one side only.
+		/// The stored contact value is the profile's display form while the inbound webhook reports
+		/// an E.164 number, so an exact compare would miss every international sender.
+		/// </summary>
+		private static bool IsSamePhoneNumber(string storedNumber, string inboundDigits)
+		{
+			var storedDigits = DigitsOnly(storedNumber);
+
+			if (string.IsNullOrWhiteSpace(storedDigits) || string.IsNullOrWhiteSpace(inboundDigits))
+				return false;
+
+			if (storedDigits == inboundDigits)
+				return true;
+
+			// Require a meaningful overlap before accepting a suffix match, otherwise short or
+			// partially entered numbers could match the wrong member of the department.
+			const int minimumSignificantDigits = 7;
+			var shortest = Math.Min(storedDigits.Length, inboundDigits.Length);
+			if (shortest < minimumSignificantDigits)
+				return false;
+
+			return storedDigits.EndsWith(inboundDigits, StringComparison.Ordinal)
+				|| inboundDigits.EndsWith(storedDigits, StringComparison.Ordinal);
 		}
 
 		private static string GenerateRunCode()

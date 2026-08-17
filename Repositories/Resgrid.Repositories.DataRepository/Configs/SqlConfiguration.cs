@@ -584,7 +584,9 @@ namespace Resgrid.Repositories.DataRepository.Configs
 		public string CommunicationTestsTable { get; set; }
 		public string CommunicationTestRunsTable { get; set; }
 		public string CommunicationTestResultsTable { get; set; }
+		public string CommunicationTestTargetsTable { get; set; }
 		public string SelectActiveCommTestsByScheduleTypeQuery { get; set; }
+		public string SelectCommTestTargetsByTestIdQuery { get; set; }
 		public string SelectCommTestRunsByTestIdQuery { get; set; }
 		public string SelectCommTestRunByRunCodeQuery { get; set; }
 		public string SelectOpenCommTestRunsQuery { get; set; }

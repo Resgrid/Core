@@ -2,6 +2,8 @@
 using System.IO;
 using System.Net.Mail;
 using Resgrid.Framework;
+using CommunicationTestMessages = Resgrid.Localization.Areas.User.CommunicationTest.CommunicationTestMessageCatalog;
+using SystemMessagesResources = Resgrid.Localization.Areas.User.SystemMessages.SystemMessagesResources;
 using Resgrid.Model;
 using Resgrid.Model.Providers;
 using Resgrid.Model.Services;
@@ -640,7 +642,7 @@ namespace Resgrid.Services
 					using (var mail = new MailMessage())
 					{
 						mail.To.Add(email);
-						mail.Subject = "Notification";
+						mail.Subject = SystemMessagesResources.Get("NotificationEmailSubject", profile?.Language);
 						mail.From = new MailAddress(Config.OutboundEmailServerConfig.FromMail, "Resgrid");
 
 						mail.Body = message;
@@ -678,7 +680,7 @@ namespace Resgrid.Services
 					using (var mail = new MailMessage())
 					{
 						mail.To.Add(email);
-						mail.Subject = "Calendar";
+						mail.Subject = SystemMessagesResources.Get("CalendarEmailSubject", profile?.Language);
 						mail.From = new MailAddress(Config.OutboundEmailServerConfig.FromMail, "Resgrid");
 
 						mail.Body = message;
@@ -720,7 +722,7 @@ namespace Resgrid.Services
 			return false;
 		}
 
-		public async Task<bool> SendEmailVerificationCodeAsync(string toEmailAddress, string firstName, string verificationCode)
+		public async Task<bool> SendEmailVerificationCodeAsync(string toEmailAddress, string firstName, string verificationCode, string culture = null)
 		{
 			if (string.IsNullOrWhiteSpace(toEmailAddress))
 				return false;
@@ -729,9 +731,9 @@ namespace Resgrid.Services
 			{
 				using var mail = new MailMessage();
 				mail.To.Add(toEmailAddress);
-				mail.Subject = "Resgrid Verification Code";
+				mail.Subject = SystemMessagesResources.Get("VerificationCodeEmailSubject", culture);
 				mail.From = new MailAddress(Config.OutboundEmailServerConfig.FromMail, "Resgrid");
-				mail.Body = $"Hi {firstName},\r\n\r\nYour Resgrid verification code is: {verificationCode}\r\n\r\nThis code expires in {Config.VerificationConfig.VerificationCodeExpiryMinutes} minutes. If you did not request this, please ignore this email.\r\n\r\nThe Resgrid Team";
+				mail.Body = SystemMessagesResources.Get("VerificationCodeEmailBody", culture, firstName, verificationCode, Config.VerificationConfig.VerificationCodeExpiryMinutes);
 				mail.IsBodyHtml = false;
 
 				await _emailSender.SendEmail(mail);
@@ -745,7 +747,7 @@ namespace Resgrid.Services
 			return false;
 		}
 
-		public async Task<bool> SendGdprDataExportReadyAsync(string toEmailAddress, string firstName, string downloadUrl, DateTime expiresAt)
+		public async Task<bool> SendGdprDataExportReadyAsync(string toEmailAddress, string firstName, string downloadUrl, DateTime expiresAt, string culture = null)
 		{
 			if (string.IsNullOrWhiteSpace(toEmailAddress))
 				return false;
@@ -754,9 +756,34 @@ namespace Resgrid.Services
 			{
 				using var mail = new MailMessage();
 				mail.To.Add(toEmailAddress);
-				mail.Subject = "Your Resgrid Data Export is Ready";
+				mail.Subject = SystemMessagesResources.Get("GdprExportReadySubject", culture);
 				mail.From = new MailAddress(Config.OutboundEmailServerConfig.FromMail, "Resgrid");
-				mail.Body = $"Hi {firstName},\r\n\r\nYour personal data export is ready for download.\r\n\r\nDownload link: {downloadUrl}\r\n\r\nThis link expires on {expiresAt:f} UTC. After this date the data will no longer be available.\r\n\r\nIf you did not request this, please contact support.\r\n\r\nThe Resgrid Team";
+				mail.Body = SystemMessagesResources.Get("GdprExportReadyBody", culture, firstName, downloadUrl, expiresAt);
+				mail.IsBodyHtml = false;
+
+				await _emailSender.SendEmail(mail);
+				return true;
+			}
+			catch (Exception ex)
+			{
+				Logging.LogException(ex);
+			}
+
+			return false;
+		}
+
+		public async Task<bool> SendCommunicationTestEmailAsync(string toEmailAddress, string firstName, string departmentName, string testName, string confirmUrl, string culture = null)
+		{
+			if (string.IsNullOrWhiteSpace(toEmailAddress))
+				return false;
+
+			try
+			{
+				using var mail = new MailMessage();
+				mail.To.Add(toEmailAddress);
+				mail.Subject = CommunicationTestMessages.BuildEmailSubject(testName, culture);
+				mail.From = new MailAddress(Config.OutboundEmailServerConfig.FromMail, "Resgrid");
+				mail.Body = CommunicationTestMessages.BuildEmailBody(firstName, departmentName, testName, confirmUrl, culture);
 				mail.IsBodyHtml = false;
 
 				await _emailSender.SendEmail(mail);

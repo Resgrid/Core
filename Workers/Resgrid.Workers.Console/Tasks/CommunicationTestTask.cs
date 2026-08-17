@@ -33,6 +33,11 @@ namespace Resgrid.Workers.Console.Tasks
 				_logger.LogInformation("CommunicationTest::Processing scheduled tests");
 				await communicationTestService.ProcessScheduledTestsAsync(cancellationToken);
 
+				// Picks up runs whose delivery was interrupted (process restart mid-send) so the
+				// remaining recipients still get their message instead of the run stalling.
+				_logger.LogInformation("CommunicationTest::Delivering pending runs");
+				await communicationTestService.DeliverPendingRunsAsync(cancellationToken);
+
 				_logger.LogInformation("CommunicationTest::Completing expired runs");
 				await communicationTestService.CompleteExpiredRunsAsync(cancellationToken);
 

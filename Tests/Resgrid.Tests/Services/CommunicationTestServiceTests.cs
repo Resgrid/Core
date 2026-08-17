@@ -262,6 +262,35 @@ namespace Resgrid.Tests.Services
 			}
 
 			[Test]
+			public async Task should_write_a_snapshot_value_for_an_untargeted_run_rather_than_leaving_the_column_null()
+			{
+				var testId = Guid.NewGuid();
+				_communicationTestRepoMock.Setup(x => x.GetByIdAsync(testId)).ReturnsAsync(new CommunicationTest
+				{
+					CommunicationTestId = testId,
+					DepartmentId = 1,
+					TestEmail = true,
+					ResponseWindowMinutes = 60,
+					Active = true
+				});
+
+				// No targets, so the resolved audience is null -- the whole department.
+				_communicationTestTargetRepoMock.Setup(x => x.GetTargetsByTestIdAsync(testId)).ReturnsAsync(new List<CommunicationTestTarget>());
+
+				SetupRunAndResultPersistence();
+
+				var run = await _communicationTestService.StartTestRunAsync(testId, 1, TestData.Users.TestUser1Id);
+
+				// An empty/NULL column is what marks a run as predating snapshots, which sends the
+				// builder back to the test's current targeting. An untargeted run therefore has to
+				// store a real value -- the JSON literal "null" -- so its snapshot still reads as
+				// "the whole department" after the test is re-targeted. Serializing to a null string
+				// here would silently reintroduce the drift this snapshot exists to prevent.
+				run.TargetedUserIds.Should().NotBeNullOrWhiteSpace();
+				run.TargetedUserIds.Should().Be("null");
+			}
+
+			[Test]
 			public async Task should_not_rebuild_results_for_a_run_that_already_has_them()
 			{
 				var testId = Guid.NewGuid();

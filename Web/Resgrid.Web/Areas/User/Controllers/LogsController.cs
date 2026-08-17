@@ -163,6 +163,9 @@ namespace Resgrid.Web.Areas.User.Controllers
 
 				if (model.LogType == LogTypes.Run)
 				{
+					// Times come off the form in the department's local time, everything is stored in UTC.
+					model.Call.LoggedOn = ConvertLogTimeToUtc(model.Call.LoggedOn, model.Department);
+
 					if (model.CallId == 0)
 					{
 						model.Call.DepartmentId = DepartmentId;
@@ -201,10 +204,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 					var endedOn = form["Log.EndedOn"];
 
 					if (!String.IsNullOrWhiteSpace(startedOn))
-						model.Log.StartedOn = DateTime.Parse(startedOn);
+						model.Log.StartedOn = ParseLogTimeToUtc(startedOn, model.Department);
 
 					if (!String.IsNullOrWhiteSpace(endedOn))
-						model.Log.EndedOn = DateTime.Parse(endedOn);
+						model.Log.EndedOn = ParseLogTimeToUtc(endedOn, model.Department);
 				}
 
 				if (model.LogType == LogTypes.Meeting)
@@ -213,10 +216,10 @@ namespace Resgrid.Web.Areas.User.Controllers
 					var endedOn = form["Log.EndedOn"];
 
 					if (!String.IsNullOrWhiteSpace(startedOn))
-						model.Log.StartedOn = DateTime.Parse(startedOn);
+						model.Log.StartedOn = ParseLogTimeToUtc(startedOn, model.Department);
 
 					if (!String.IsNullOrWhiteSpace(endedOn))
-						model.Log.EndedOn = DateTime.Parse(endedOn);
+						model.Log.EndedOn = ParseLogTimeToUtc(endedOn, model.Department);
 				}
 
 				if (model.LogType == LogTypes.Coroner)
@@ -228,7 +231,7 @@ namespace Resgrid.Web.Areas.User.Controllers
 					var coronerOthers = form["coronerOthers"];
 
 					if (!String.IsNullOrWhiteSpace(startedOn))
-						model.Log.StartedOn = DateTime.Parse(startedOn);
+						model.Log.StartedOn = ParseLogTimeToUtc(startedOn, model.Department);
 
 					if (!String.IsNullOrWhiteSpace(caseNumber))
 						model.Log.ExternalId = caseNumber;
@@ -254,19 +257,19 @@ namespace Resgrid.Web.Areas.User.Controllers
 					unit.UnitId = i;
 
 					if (!string.IsNullOrWhiteSpace(form["unit_dispatchtime_" + i]))
-						unit.Dispatched = DateTime.Parse(form["unit_dispatchtime_" + i]);
+						unit.Dispatched = ParseLogTimeToUtc(form["unit_dispatchtime_" + i], model.Department);
 
 					if (!string.IsNullOrWhiteSpace(form["unit_enroutetime_" + i]))
-						unit.Enroute = DateTime.Parse(form["unit_enroutetime_" + i]);
+						unit.Enroute = ParseLogTimeToUtc(form["unit_enroutetime_" + i], model.Department);
 
 					if (!string.IsNullOrWhiteSpace(form["unit_onscenetime_" + i]))
-						unit.OnScene = DateTime.Parse(form["unit_onscenetime_" + i]);
+						unit.OnScene = ParseLogTimeToUtc(form["unit_onscenetime_" + i], model.Department);
 
 					if (!string.IsNullOrWhiteSpace(form["unit_releasedtime_" + i]))
-						unit.Released = DateTime.Parse(form["unit_releasedtime_" + i]);
+						unit.Released = ParseLogTimeToUtc(form["unit_releasedtime_" + i], model.Department);
 
 					if (!string.IsNullOrWhiteSpace(form["unit_inquarterstime_" + i]))
-						unit.InQuarters = DateTime.Parse(form["unit_inquarterstime_" + i]);
+						unit.InQuarters = ParseLogTimeToUtc(form["unit_inquarterstime_" + i], model.Department);
 
 					model.Log.Units.Add(unit);
 
@@ -653,6 +656,24 @@ namespace Resgrid.Web.Areas.User.Controllers
 			};
 
 			return PartialView("_UnitLogBlockPartial", model);
+		}
+
+		/// <summary>
+		/// Log timestamps are typed into the form in the department's local time, but every date on
+		/// the Log (and the Call) is persisted as UTC and rendered back through TimeConverter. Without
+		/// this the entered time was stored verbatim and then shifted again on display.
+		/// </summary>
+		private static DateTime ParseLogTimeToUtc(string value, Department department)
+		{
+			return ConvertLogTimeToUtc(DateTime.Parse(value), department);
+		}
+
+		private static DateTime ConvertLogTimeToUtc(DateTime localTime, Department department)
+		{
+			if (department == null || String.IsNullOrWhiteSpace(department.TimeZone) || localTime == DateTime.MinValue)
+				return localTime;
+
+			return DateTimeHelpers.ConvertToUtc(localTime, department.TimeZone, true);
 		}
 
 		private async Task<NewLogView> PopulateLogViewModel(NewLogView model)

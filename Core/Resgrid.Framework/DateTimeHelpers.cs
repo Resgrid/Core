@@ -96,7 +96,12 @@ namespace Resgrid.Framework
 			return resultedDay;
 		}
 
-		public static DateTime ConvertToUtc(DateTime dateTime, string timeZone)
+		/// <summary>
+		/// Converts a local (department) time into UTC. When lenient is set, local times that are
+		/// ambiguous or skipped by a DST transition are resolved instead of throwing, which matters
+		/// for user typed timestamps (i.e. a 0130 log entry on the fall back day).
+		/// </summary>
+		public static DateTime ConvertToUtc(DateTime dateTime, string timeZone, bool lenient = false)
 		{
 			//var tzdbSource = NodaTime.TimeZones.TzdbDateTimeZoneSource.Default;
 			//var tzi = TimeZoneInfo.FindSystemTimeZoneById(IanaToWindows(timeZone));
@@ -112,7 +117,9 @@ namespace Resgrid.Framework
 				var ianaTz = TZConvert.WindowsToIana(timeZone);
 
 				var localTime = LocalDateTime.FromDateTime(dateTime);
-				var zonedDateTime = localTime.InZoneStrictly(DateTimeZoneProviders.Tzdb[ianaTz]);
+				var zonedDateTime = lenient
+					? localTime.InZoneLeniently(DateTimeZoneProviders.Tzdb[ianaTz])
+					: localTime.InZoneStrictly(DateTimeZoneProviders.Tzdb[ianaTz]);
 
 				return zonedDateTime.ToDateTimeUtc();
 			}

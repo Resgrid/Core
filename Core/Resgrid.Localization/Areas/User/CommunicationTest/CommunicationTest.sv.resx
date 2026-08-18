@@ -205,26 +205,38 @@
   <data name="TestResponseReceived" xml:space="preserve">
     <value>Resgrid har tagit emot ditt svar på kommunikationstestet. Tack.</value>
   </data>
-  <data name="MessageEmailBody" xml:space="preserve">
-    <value>Hej {0},
-
-
-
-{1} genomför ett kommunikationstest ({2}) för att bekräfta att de kan nå dig.
-
-
-
-Detta är ett TEST. Det föreligger ingen nödsituation och ingen åtgärd krävs utöver att bekräfta att du fått detta e-postmeddelande.
-
-
-
-Klicka på länken nedan för att bekräfta att du fått detta meddelande:
-
-{3}
-
-
-
-Resgrid-teamet</value>
+  <data name="MessageEmailPreheader" xml:space="preserve">
+    <value>Kommunikationstest</value>
+  </data>
+  <data name="MessageEmailGreeting" xml:space="preserve">
+    <value>Hej {0},</value>
+  </data>
+  <data name="MessageEmailIntro" xml:space="preserve">
+    <value>{0} genomför ett kommunikationstest ({1}) för att bekräfta att de kan nå dig.</value>
+  </data>
+  <data name="MessageEmailDisclaimer" xml:space="preserve">
+    <value>Detta är ett TEST. Det föreligger ingen nödsituation och ingen åtgärd krävs utöver att bekräfta att du fått detta e-postmeddelande.</value>
+  </data>
+  <data name="MessageEmailAction" xml:space="preserve">
+    <value>Bekräfta att du fått detta meddelande.</value>
+  </data>
+  <data name="MessageEmailButton" xml:space="preserve">
+    <value>Bekräfta mottagande</value>
+  </data>
+  <data name="MessageEmailTrouble" xml:space="preserve">
+    <value>Om knappen ovan inte fungerar, kopiera och klistra in webbadressen nedan i din webbläsare.</value>
+  </data>
+  <data name="MessageEmailSignoff" xml:space="preserve">
+    <value>Tack,</value>
+  </data>
+  <data name="MessageEmailTeam" xml:space="preserve">
+    <value>Resgrid-teamet</value>
+  </data>
+  <data name="MessageEmailDepartmentLabel" xml:space="preserve">
+    <value>Avdelning:</value>
+  </data>
+  <data name="MessageEmailTestLabel" xml:space="preserve">
+    <value>Testnamn:</value>
   </data>
   <data name="MessageEmailSubject" xml:space="preserve">
     <value>Resgrid kommunikationstest: {0}</value>

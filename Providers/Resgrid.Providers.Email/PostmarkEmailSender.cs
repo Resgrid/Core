@@ -76,7 +76,14 @@ namespace Resgrid.Providers.EmailProvider
 								to.Append("," + t);
 						}
 
-						var message = new PostmarkMessage(email.From, to.ToString(), email.Subject, StringHelpers.StripHtmlTagsCharArray(email.HtmlBody), email.HtmlBody);
+						// A composed plain text body reads properly; tag-stripping the HTML template is
+						// the fallback for callers that never built one and leaves the recipient with
+						// the chrome and the raw button markup flattened into prose.
+						var textBody = !String.IsNullOrWhiteSpace(email.TextBody)
+							? email.TextBody
+							: StringHelpers.StripHtmlTagsCharArray(email.HtmlBody);
+
+						var message = new PostmarkMessage(email.From, to.ToString(), email.Subject, textBody, email.HtmlBody);
 						var newClient = new PostmarkClient(Config.OutboundEmailServerConfig.PostmarkApiKey);
 
 						if (!String.IsNullOrWhiteSpace(email.AttachmentName) && email.AttachmentData.Length > 0)
@@ -189,8 +196,11 @@ namespace Resgrid.Providers.EmailProvider
 
 			if (!string.IsNullOrEmpty(email.HtmlBody) && !string.IsNullOrEmpty(email.TextBody))
 			{
+				// Order carries meaning in multipart/alternative: clients render the last part they
+				// understand, so plain text goes first and HTML last. Reversing these two lines
+				// shows every HTML-capable client the plain text version instead.
+				message.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(email.TextBody, new ContentType(ContentTypes.Text)));
 				message.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(email.HtmlBody, new ContentType(ContentTypes.Html)));
-				//message.AlternateViews.Add(AlternateView.CreateAlternateViewFromString(email.TextBody, new ContentType(ContentTypes.Text)));
 			}
 			else if (!string.IsNullOrEmpty(email.HtmlBody))
 			{

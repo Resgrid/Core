@@ -68,7 +68,8 @@ namespace Resgrid.Tests.Services
 				_callsService.Object,
 				Mock.Of<IEventAggregator>(),
 				_cacheProvider.Object,
-				Mock.Of<IUnitOfWork>());
+				Mock.Of<IUnitOfWork>(),
+				Mock.Of<IIncidentCommandService>());
 
 		private static IncidentCommand BuildCommand(IncidentCommandStatus status = IncidentCommandStatus.Active)
 			=> new IncidentCommand

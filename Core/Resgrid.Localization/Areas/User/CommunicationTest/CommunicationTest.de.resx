@@ -205,26 +205,38 @@
   <data name="TestResponseReceived" xml:space="preserve">
     <value>Resgrid hat Ihre Antwort auf den Kommunikationstest erhalten. Vielen Dank.</value>
   </data>
-  <data name="MessageEmailBody" xml:space="preserve">
-    <value>Hallo {0},
-
-
-
-{1} führt einen Kommunikationstest ({2}) durch, um zu prüfen, ob Sie erreichbar sind.
-
-
-
-Dies ist ein TEST. Es liegt kein Notfall vor und es ist keine Reaktion erforderlich, außer den Empfang dieser E-Mail zu bestätigen.
-
-
-
-Bitte klicken Sie auf den folgenden Link, um den Empfang zu bestätigen:
-
-{3}
-
-
-
-Ihr Resgrid-Team</value>
+  <data name="MessageEmailPreheader" xml:space="preserve">
+    <value>Kommunikationstest</value>
+  </data>
+  <data name="MessageEmailGreeting" xml:space="preserve">
+    <value>Hallo {0},</value>
+  </data>
+  <data name="MessageEmailIntro" xml:space="preserve">
+    <value>{0} führt einen Kommunikationstest ({1}) durch, um zu prüfen, ob Sie erreichbar sind.</value>
+  </data>
+  <data name="MessageEmailDisclaimer" xml:space="preserve">
+    <value>Dies ist ein TEST. Es liegt kein Notfall vor und es ist keine Reaktion erforderlich, außer den Empfang dieser E-Mail zu bestätigen.</value>
+  </data>
+  <data name="MessageEmailAction" xml:space="preserve">
+    <value>Bitte bestätigen Sie den Empfang dieser Nachricht.</value>
+  </data>
+  <data name="MessageEmailButton" xml:space="preserve">
+    <value>Empfang bestätigen</value>
+  </data>
+  <data name="MessageEmailTrouble" xml:space="preserve">
+    <value>Falls die Schaltfläche oben nicht funktioniert, kopieren Sie die folgende URL in Ihren Webbrowser.</value>
+  </data>
+  <data name="MessageEmailSignoff" xml:space="preserve">
+    <value>Danke,</value>
+  </data>
+  <data name="MessageEmailTeam" xml:space="preserve">
+    <value>Ihr Resgrid-Team</value>
+  </data>
+  <data name="MessageEmailDepartmentLabel" xml:space="preserve">
+    <value>Abteilung:</value>
+  </data>
+  <data name="MessageEmailTestLabel" xml:space="preserve">
+    <value>Testname:</value>
   </data>
   <data name="MessageEmailSubject" xml:space="preserve">
     <value>Resgrid-Kommunikationstest: {0}</value>

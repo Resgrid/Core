@@ -58,6 +58,16 @@
 		public static string RabbitUsername = "";
 		public static string RabbbitPassword = "";
 		public static string RabbbitExchange = "";
+
+		/// <summary>
+		/// Ceiling for a single serialized message body, in bytes. Sits under the broker's
+		/// max_message_size, which production reports as 16777216 (16MiB), leaving room to
+		/// shed payload before the broker refuses it. A body over max_message_size isn't
+		/// rejected cleanly, it closes the channel with a PRECONDITION_FAILED and takes the
+		/// connection's in-flight work with it. Keep this below whatever the brokers are
+		/// configured with; their config lives outside this repository.
+		/// </summary>
+		public static int MaxMessageSizeInBytes = 15 * 1024 * 1024;
 		#endregion RabbitMQ Bus Values
 	}
 

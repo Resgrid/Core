@@ -539,6 +539,60 @@ namespace Resgrid.Providers.EmailProvider
 			return false;
 		}
 
+		public async Task<bool> SendCommunicationTestMail(string email, CommunicationTestEmailContent content)
+		{
+			// The model is built before the try below, so without this a null content would throw past
+			// the catch that turns every other failure here into a recorded false. A send that cannot be
+			// composed is a failed send, same as one the provider rejects.
+			if (content == null)
+				return false;
+
+			// Every string arrives already rendered in the recipient's language -- the template only
+			// supplies the Resgrid chrome around them.
+			var templateModel = new Dictionary<string, object>
+			{
+				{ "preheader", content.Preheader },
+				{ "greeting", content.Greeting },
+				{ "intro", content.Intro },
+				{ "disclaimer", content.Disclaimer },
+				{ "department_label", content.DepartmentLabel },
+				{ "department_name", content.DepartmentName },
+				{ "test_label", content.TestLabel },
+				{ "test_name", content.TestName },
+				{ "action", content.Action },
+				{ "button_text", content.ButtonText },
+				{ "confirm_url", content.ConfirmUrl },
+				{ "trouble_text", content.TroubleText },
+				{ "signoff", content.Signoff },
+				{ "team_name", content.TeamName }
+			};
+
+			try
+			{
+				var template = Mustachio.Parser.Parse(GetTempate("CommunicationTest.html"));
+				var body = template(templateModel);
+
+				Email newEmail = new Email();
+				newEmail.HtmlBody = body;
+				newEmail.TextBody = content.TextBody;
+				newEmail.Sender = DONOTREPLY_EMAIL;
+				newEmail.To.Add(email);
+				newEmail.From = DONOTREPLY_EMAIL;
+				newEmail.Subject = content.Subject;
+
+				return await _emailSender.Send(newEmail);
+			}
+			catch (Exception ex)
+			{
+				// A test that cannot reach someone is the answer the run is looking for, so this is
+				// recorded as a failed send rather than thrown -- but it is still logged, because a
+				// template or provider fault would otherwise read as "the member is unreachable".
+				Logging.LogException(ex);
+			}
+
+			return false;
+		}
+
 		private string GetTempate(string templateName)
 		{
 			var assembly = typeof(PostmarkTemplateProvider).Assembly;

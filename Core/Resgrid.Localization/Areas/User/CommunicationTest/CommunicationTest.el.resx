@@ -205,26 +205,38 @@
   <data name="TestResponseReceived" xml:space="preserve">
     <value>Το Resgrid έλαβε την απάντησή σας στη δοκιμή επικοινωνίας. Ευχαριστούμε.</value>
   </data>
-  <data name="MessageEmailBody" xml:space="preserve">
-    <value>Γεια σας {0},
-
-
-
-Η υπηρεσία {1} εκτελεί δοκιμή επικοινωνίας ({2}) για να επιβεβαιώσει ότι μπορεί να επικοινωνήσει μαζί σας.
-
-
-
-Πρόκειται για ΔΟΚΙΜΗ. Δεν υπάρχει έκτακτη ανάγκη και δεν απαιτείται καμία ενέργεια πέραν της επιβεβαίωσης λήψης αυτού του email.
-
-
-
-Κάντε κλικ στον παρακάτω σύνδεσμο για να επιβεβαιώσετε τη λήψη αυτού του μηνύματος:
-
-{3}
-
-
-
-Η ομάδα του Resgrid</value>
+  <data name="MessageEmailPreheader" xml:space="preserve">
+    <value>Δοκιμή επικοινωνίας</value>
+  </data>
+  <data name="MessageEmailGreeting" xml:space="preserve">
+    <value>Γεια σας {0},</value>
+  </data>
+  <data name="MessageEmailIntro" xml:space="preserve">
+    <value>Η υπηρεσία {0} εκτελεί δοκιμή επικοινωνίας ({1}) για να επιβεβαιώσει ότι μπορεί να επικοινωνήσει μαζί σας.</value>
+  </data>
+  <data name="MessageEmailDisclaimer" xml:space="preserve">
+    <value>Πρόκειται για ΔΟΚΙΜΗ. Δεν υπάρχει έκτακτη ανάγκη και δεν απαιτείται καμία ενέργεια πέραν της επιβεβαίωσης λήψης αυτού του email.</value>
+  </data>
+  <data name="MessageEmailAction" xml:space="preserve">
+    <value>Επιβεβαιώστε ότι λάβατε αυτό το μήνυμα.</value>
+  </data>
+  <data name="MessageEmailButton" xml:space="preserve">
+    <value>Επιβεβαίωση λήψης</value>
+  </data>
+  <data name="MessageEmailTrouble" xml:space="preserve">
+    <value>Αν το παραπάνω κουμπί δεν λειτουργεί, αντιγράψτε και επικολλήστε την παρακάτω διεύθυνση URL στο πρόγραμμα περιήγησής σας.</value>
+  </data>
+  <data name="MessageEmailSignoff" xml:space="preserve">
+    <value>Ευχαριστούμε,</value>
+  </data>
+  <data name="MessageEmailTeam" xml:space="preserve">
+    <value>Η ομάδα του Resgrid</value>
+  </data>
+  <data name="MessageEmailDepartmentLabel" xml:space="preserve">
+    <value>Τμήμα:</value>
+  </data>
+  <data name="MessageEmailTestLabel" xml:space="preserve">
+    <value>Όνομα δοκιμής:</value>
   </data>
   <data name="MessageEmailSubject" xml:space="preserve">
     <value>Δοκιμή επικοινωνίας Resgrid: {0}</value>

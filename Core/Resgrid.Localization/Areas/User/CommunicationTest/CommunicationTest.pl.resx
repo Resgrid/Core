@@ -205,26 +205,38 @@
   <data name="TestResponseReceived" xml:space="preserve">
     <value>Resgrid otrzymał Twoją odpowiedź na test łączności. Dziękujemy.</value>
   </data>
-  <data name="MessageEmailBody" xml:space="preserve">
-    <value>Cześć {0},
-
-
-
-{1} przeprowadza test łączności ({2}), aby potwierdzić możliwość skontaktowania się z Tobą.
-
-
-
-To jest TEST. Nie ma żadnego zagrożenia i nie jest wymagane żadne działanie poza potwierdzeniem odbioru tej wiadomości.
-
-
-
-Kliknij poniższy link, aby potwierdzić odbiór tej wiadomości:
-
-{3}
-
-
-
-Zespół Resgrid</value>
+  <data name="MessageEmailPreheader" xml:space="preserve">
+    <value>Test łączności</value>
+  </data>
+  <data name="MessageEmailGreeting" xml:space="preserve">
+    <value>Cześć {0},</value>
+  </data>
+  <data name="MessageEmailIntro" xml:space="preserve">
+    <value>{0} przeprowadza test łączności ({1}), aby potwierdzić możliwość skontaktowania się z Tobą.</value>
+  </data>
+  <data name="MessageEmailDisclaimer" xml:space="preserve">
+    <value>To jest TEST. Nie ma żadnego zagrożenia i nie jest wymagane żadne działanie poza potwierdzeniem odbioru tej wiadomości.</value>
+  </data>
+  <data name="MessageEmailAction" xml:space="preserve">
+    <value>Potwierdź odbiór tej wiadomości.</value>
+  </data>
+  <data name="MessageEmailButton" xml:space="preserve">
+    <value>Potwierdź odbiór</value>
+  </data>
+  <data name="MessageEmailTrouble" xml:space="preserve">
+    <value>Jeśli powyższy przycisk nie działa, skopiuj i wklej poniższy adres URL do przeglądarki.</value>
+  </data>
+  <data name="MessageEmailSignoff" xml:space="preserve">
+    <value>Dziękujemy,</value>
+  </data>
+  <data name="MessageEmailTeam" xml:space="preserve">
+    <value>Zespół Resgrid</value>
+  </data>
+  <data name="MessageEmailDepartmentLabel" xml:space="preserve">
+    <value>Oddział:</value>
+  </data>
+  <data name="MessageEmailTestLabel" xml:space="preserve">
+    <value>Nazwa testu:</value>
   </data>
   <data name="MessageEmailSubject" xml:space="preserve">
     <value>Test łączności Resgrid: {0}</value>

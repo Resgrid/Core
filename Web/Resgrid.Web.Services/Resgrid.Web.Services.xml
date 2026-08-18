@@ -533,6 +533,16 @@
             <param name="input">Target user or unit for the direct message</param>
             <returns>ChatChannelCreatedResult with the existing or newly created channel</returns>
         </member>
+        <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.CreateIncidentCommanderLine(Resgrid.Web.Services.Models.v4.Chat.CreateIncidentCommanderLineInput,System.Threading.CancellationToken)">
+            <summary>
+            Finds or creates the caller's private line to the incident's current Incident Commander.
+            Addressed to the command role rather than to a person, so the conversation and its history
+            follow command transfers. Returns Failure when the call has no established command with a
+            current commander — clients keep the "Message the IC" action disabled until one exists.
+            </summary>
+            <param name="input">The call to reach command on, and optionally the unit to speak as</param>
+            <returns>ChatChannelCreatedResult with the existing or newly created commander line</returns>
+        </member>
         <member name="M:Resgrid.Web.Services.Controllers.v4.ChatController.CreateAdHocChannel(Resgrid.Web.Services.Models.v4.Chat.CreateAdHocChannelInput,System.Threading.CancellationToken)">
             <summary>
             Creates an ad-hoc group channel with an explicit member list.
@@ -7518,7 +7528,7 @@
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatChannelResultData.ChannelType">
             <summary>
-            Channel type (0 = DirectMessage, 1 = AdHocGroup, 2 = DepartmentDefault, 3 = GroupDefault, 4 = CustomLocked, 5 = Incident, 6 = IncidentLane, 7 = IncidentCommand, 8 = Chatbot, 9 = IncidentLeads, 10 = IncidentDispatch, 11 = UnitDispatch)
+            Channel type (0 = DirectMessage, 1 = AdHocGroup, 2 = DepartmentDefault, 3 = GroupDefault, 4 = CustomLocked, 5 = Incident, 6 = IncidentLane, 7 = IncidentCommand, 8 = Chatbot, 9 = IncidentLeads, 10 = IncidentDispatch, 11 = UnitDispatch, 12 = IncidentCommanderLine)
             </summary>
         </member>
         <member name="P:Resgrid.Web.Services.Models.v4.Chat.ChatChannelResultData.Name">
@@ -8169,6 +8179,21 @@
         <member name="P:Resgrid.Web.Services.Models.v4.Chat.CreateDirectMessageInput.TargetUnitId">
             <summary>
             Target unit for the DM (mutually exclusive with TargetUserId)
+            </summary>
+        </member>
+        <member name="T:Resgrid.Web.Services.Models.v4.Chat.CreateIncidentCommanderLineInput">
+            <summary>
+            Input to open the caller's private line to an incident's current commander ("Message the IC")
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.CreateIncidentCommanderLineInput.CallId">
+            <summary>
+            The call whose current Incident Commander should be messaged
+            </summary>
+        </member>
+        <member name="P:Resgrid.Web.Services.Models.v4.Chat.CreateIncidentCommanderLineInput.AsUnitId">
+            <summary>
+            Open the line as this unit rather than as the calling user (the caller must crew the unit)
             </summary>
         </member>
         <member name="T:Resgrid.Web.Services.Models.v4.Chat.CreateAdHocChannelInput">

@@ -34,6 +34,7 @@ namespace Resgrid.Tests.Services
 			protected Mock<IEventAggregator> _eventAggregatorMock;
 			protected Mock<ICacheProvider> _cacheProviderMock;
 			protected Mock<IUnitOfWork> _unitOfWorkMock;
+			protected Mock<IIncidentCommandService> _incidentCommandServiceMock;
 
 			protected with_the_chat_channel_service()
 			{
@@ -62,6 +63,7 @@ namespace Resgrid.Tests.Services
 				_eventAggregatorMock = new Mock<IEventAggregator>();
 				_cacheProviderMock = new Mock<ICacheProvider>();
 				_unitOfWorkMock = new Mock<IUnitOfWork>();
+				_incidentCommandServiceMock = new Mock<IIncidentCommandService>();
 
 				// Inserts/updates echo back the entity they were handed (repository contract).
 				_chatChannelRepositoryMock.Setup(x => x.InsertAsync(It.IsAny<ChatChannel>(), It.IsAny<CancellationToken>(), It.IsAny<bool>()))
@@ -98,7 +100,8 @@ namespace Resgrid.Tests.Services
 					_callsServiceMock.Object,
 					_eventAggregatorMock.Object,
 					_cacheProviderMock.Object,
-					_unitOfWorkMock.Object);
+					_unitOfWorkMock.Object,
+					_incidentCommandServiceMock.Object);
 			}
 		}
 

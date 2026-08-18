@@ -349,7 +349,7 @@ public class ChatChannelResultData
 	public string ChatChannelId { get; set; }
 
 	/// <summary>
-	/// Channel type (0 = DirectMessage, 1 = AdHocGroup, 2 = DepartmentDefault, 3 = GroupDefault, 4 = CustomLocked, 5 = Incident, 6 = IncidentLane, 7 = IncidentCommand, 8 = Chatbot, 9 = IncidentLeads, 10 = IncidentDispatch, 11 = UnitDispatch)
+	/// Channel type (0 = DirectMessage, 1 = AdHocGroup, 2 = DepartmentDefault, 3 = GroupDefault, 4 = CustomLocked, 5 = Incident, 6 = IncidentLane, 7 = IncidentCommand, 8 = Chatbot, 9 = IncidentLeads, 10 = IncidentDispatch, 11 = UnitDispatch, 12 = IncidentCommanderLine)
 	/// </summary>
 	public int ChannelType { get; set; }
 
@@ -1021,6 +1021,22 @@ public class CreateDirectMessageInput
 	/// Target unit for the DM (mutually exclusive with TargetUserId)
 	/// </summary>
 	public int? TargetUnitId { get; set; }
+}
+
+/// <summary>
+/// Input to open the caller's private line to an incident's current commander ("Message the IC")
+/// </summary>
+public class CreateIncidentCommanderLineInput
+{
+	/// <summary>
+	/// The call whose current Incident Commander should be messaged
+	/// </summary>
+	public int CallId { get; set; }
+
+	/// <summary>
+	/// Open the line as this unit rather than as the calling user (the caller must crew the unit)
+	/// </summary>
+	public int? AsUnitId { get; set; }
 }
 
 /// <summary>

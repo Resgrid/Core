@@ -205,26 +205,38 @@
   <data name="TestResponseReceived" xml:space="preserve">
     <value>Resgrid отримав вашу відповідь на тест зв’язку. Дякуємо.</value>
   </data>
-  <data name="MessageEmailBody" xml:space="preserve">
-    <value>Вітаємо, {0}!
-
-
-
-{1} проводить тест зв’язку ({2}), щоб підтвердити можливість зв’язатися з вами.
-
-
-
-Це ТЕСТ. Жодної надзвичайної ситуації немає, і не потрібно нічого робити, окрім підтвердження отримання цього листа.
-
-
-
-Натисніть посилання нижче, щоб підтвердити отримання цього повідомлення:
-
-{3}
-
-
-
-Команда Resgrid</value>
+  <data name="MessageEmailPreheader" xml:space="preserve">
+    <value>Тест зв’язку</value>
+  </data>
+  <data name="MessageEmailGreeting" xml:space="preserve">
+    <value>Вітаємо, {0}!</value>
+  </data>
+  <data name="MessageEmailIntro" xml:space="preserve">
+    <value>{0} проводить тест зв’язку ({1}), щоб підтвердити можливість зв’язатися з вами.</value>
+  </data>
+  <data name="MessageEmailDisclaimer" xml:space="preserve">
+    <value>Це ТЕСТ. Жодної надзвичайної ситуації немає, і не потрібно нічого робити, окрім підтвердження отримання цього листа.</value>
+  </data>
+  <data name="MessageEmailAction" xml:space="preserve">
+    <value>Підтвердьте отримання цього повідомлення.</value>
+  </data>
+  <data name="MessageEmailButton" xml:space="preserve">
+    <value>Підтвердити отримання</value>
+  </data>
+  <data name="MessageEmailTrouble" xml:space="preserve">
+    <value>Якщо кнопка вище не працює, скопіюйте та вставте наведене нижче посилання у свій браузер.</value>
+  </data>
+  <data name="MessageEmailSignoff" xml:space="preserve">
+    <value>Дякуємо,</value>
+  </data>
+  <data name="MessageEmailTeam" xml:space="preserve">
+    <value>Команда Resgrid</value>
+  </data>
+  <data name="MessageEmailDepartmentLabel" xml:space="preserve">
+    <value>Підрозділ:</value>
+  </data>
+  <data name="MessageEmailTestLabel" xml:space="preserve">
+    <value>Назва тесту:</value>
   </data>
   <data name="MessageEmailSubject" xml:space="preserve">
     <value>Тест зв’язку Resgrid: {0}</value>

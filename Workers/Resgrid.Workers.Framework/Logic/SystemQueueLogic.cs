@@ -39,13 +39,22 @@ namespace Resgrid.Workers.Framework.Logic
 						}
 						catch (Exception ex)
 						{
-
+							// Silently dropping this left the device permanently unregistered with no record
+							// of the attempt anywhere in the pipeline.
+							Logging.LogException(ex, "Failed to deserialize a PushRegistration queue item; the device will not receive pushes.");
 						}
 
-						if (data != null)
+						if (data == null)
+						{
+							Logging.LogWarning("PushRegistration queue item produced no PushUri; registration skipped.");
+						}
+						else
 						{
 							var pushService = Bootstrapper.GetKernel().Resolve<IPushService>();
 							var resgriterResult = await pushService.Register(data);
+
+							if (!resgriterResult)
+								Logging.LogError($"PushRegistration failed for user {data.UserId} (platform {data.PlatformType}, prefix '{data.PushLocation}', source '{data.Source}').");
 
 							pushService = null;
 						}

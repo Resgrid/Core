@@ -3,7 +3,7 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>Your Resgrid subscription has been canceled</title>
+    <title>Resgrid Communication Test</title>
     <!--
     The style block is collapsed on page load to save you some scrolling.
     Postmark automatically inlines all CSS properties for maximum email client
@@ -384,7 +384,7 @@
     </style>
 </head>
 <body>
-    <span class="preheader">Your subscription for Resgrid has recently been canceled. What would you like us to do?</span>
+    <span class="preheader">{{preheader}}</span>
     <table class="email-wrapper" width="100%" cellpadding="0" cellspacing="0">
         <tr>
             <td align="center">
@@ -403,8 +403,24 @@
                                 <!-- Body content -->
                                 <tr>
                                     <td class="content-cell">
-                                        <h1>Your Resgrid subscription has been canceled</h1>
-                                        <p>Thanks for using Resgrid. Your account will be downgraded automatically to the free plan. You've added a lot of data, so here are several options for you to consider going forward.</p>
+                                        <h1>{{greeting}}</h1>
+                                        <p>{{intro}}</p>
+                                        <p><strong>{{disclaimer}}</strong></p>
+                                        <table class="attributes" width="100%" cellpadding="0" cellspacing="0">
+                                            <tr>
+                                                <td class="attributes_content">
+                                                    <table width="100%" cellpadding="0" cellspacing="0">
+                                                        <tr>
+                                                            <td class="attributes_item"><strong>{{department_label}}</strong> {{department_name}}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="attributes_item"><strong>{{test_label}}</strong> {{test_name}}</td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <p>{{action}}</p>
                                         <!-- Action -->
                                         <table class="body-action" align="center" width="100%" cellpadding="0" cellspacing="0">
                                             <tr>
@@ -417,7 +433,7 @@
                                                                 <table border="0" cellspacing="0" cellpadding="0">
                                                                     <tr>
                                                                         <td>
-                                                                            <a href="{{action_url}}" class="button button--green" target="_blank">Upgrade your account</a>
+                                                                            <a href="{{confirm_url}}" class="button button--green" target="_blank">{{button_text}}</a>
                                                                         </td>
                                                                     </tr>
                                                                 </table>
@@ -427,37 +443,19 @@
                                                 </td>
                                             </tr>
                                         </table>
-                                        <p>If you're not ready to upgrade to a paying account, you have a few other options available to you&hellip;</p>
-                                        <table class="attributes" width="100%" cellpadding="0" cellspacing="0">
+                                        <p>
+                                            {{signoff}}
+                                            <br>{{team_name}}
+                                        </p>
+                                        <!-- Sub copy -->
+                                        <table class="body-sub">
                                             <tr>
-                                                <td class="attributes_content">
-                                                    <table width="100%" cellpadding="0" cellspacing="0">
-                                                        <tr>
-                                                            <td class="attributes_item">
-                                                                <strong><a href="{{subscriptions_url}}">Choose a new plan</a></strong> - If you want to choose another plan you can. Resgrid is flexible to your changing needs. Or if you want to continue on a free plan you can do that as well.
-                                                                <br>
-                                                                <br>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="attributes_item">
-                                                                <strong><a href="{{plans_url}}">Use the Free Plan</a></strong> - You can just continue to use Resgrid on the free plan. You can always upgrade at any time in the future and you still get all the great Resgrid benifits at no cost.<br>
-                                                                <br>
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td class="attributes_item"><strong><a href="{{help_url}}">Close your account</a></strong> - You can open a ticket with us to close your account and delete your data. Or, do nothing and we'll automatically  delete the data over the free limit for you in 90 days.</td>
-                                                        </tr>
-                                                    </table>
+                                                <td>
+                                                    <p class="sub">{{trouble_text}}</p>
+                                                    <p class="sub">{{confirm_url}}</p>
                                                 </td>
                                             </tr>
                                         </table>
-                                        <p>Regardless of your choice, we want to say thank you for trying Resgrid. We know it's an investment of your time, and we appreciate you using our system.</p>
-                                        <p>
-                                            Thanks,
-                                            <br>The Resgrid Team
-                                        </p>
-                                        <p><strong>P.S.</strong> If you have any questions or need any help, please don't hesitate to reach out. You can reply to this email or join us on live chat during business hours.</p>
                                     </td>
                                 </tr>
                             </table>

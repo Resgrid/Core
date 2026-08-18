@@ -35,7 +35,18 @@ namespace Resgrid.Model
 		/// dispatch when there is no incident to anchor the conversation. One per unit, provisioned the
 		/// first time the unit's operator lists channels.
 		/// </summary>
-		UnitDispatch = 11
+		UnitDispatch = 11,
+
+		/// <summary>
+		/// A private line to whoever is currently running an incident, opened from "Message the IC" on the
+		/// call's Command tab. Addressed to the command ROLE, not to a person: one channel per (call,
+		/// requester), with the commander side resolved live from the incident's current commander. That
+		/// distinction is the point — "messaging Mike" is a <see cref="DirectMessage"/> and follows Mike,
+		/// while "messaging the IC" stays with the incident, so a command transfer hands the running
+		/// conversation to the incoming commander with its history intact and drops it from the outgoing
+		/// one on their next access check. Only provisioned once a command has been established.
+		/// </summary>
+		IncidentCommanderLine = 12
 	}
 
 	/// <summary>Who a chat participant is: a person, a unit-shared identity ("Engine 6"), or the chatbot.</summary>

@@ -1121,6 +1121,12 @@ namespace Resgrid.Services
 				// Anyone on the incident can raise dispatch; no command standing required.
 				view.Chat.DispatchChannelId = channels.FirstOrDefault(c => c.ChannelType == (int)ChatChannelType.IncidentDispatch)?.ChatChannelId;
 
+				// The commander line is provisioned on demand (one per requester), so there is no id to
+				// hand back here — only whether the action is offerable at all.
+				view.Chat.CanMessageCommander = !view.Chat.IsFrozen
+					&& !string.IsNullOrWhiteSpace(command.CurrentCommanderUserId)
+					&& !isCommander;
+
 				if (isCommandStaff)
 					view.Chat.CommandChannelId = channels.FirstOrDefault(c => c.ChannelType == (int)ChatChannelType.IncidentCommand)?.ChatChannelId;
 

@@ -92,6 +92,15 @@ namespace Resgrid.Model
 
 		/// <summary>True once the incident is closed: the conversations are readable but frozen.</summary>
 		public bool IsFrozen { get; set; }
+
+		/// <summary>
+		/// Whether "Message the IC" is offerable: true only while a commander actually holds the incident.
+		/// The line is addressed to the command role, so with nobody in the seat there is no one to
+		/// address — clients keep the action disabled rather than opening a conversation into the void.
+		/// The caller for the commander themselves is left false; they have no reason to message the seat
+		/// they are sitting in.
+		/// </summary>
+		public bool CanMessageCommander { get; set; }
 	}
 
 	/// <summary>Contact card for a person relevant to a resource (commander or lane lead).</summary>

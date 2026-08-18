@@ -40,11 +40,15 @@ namespace Resgrid.Services
 		private readonly ICacheProvider _cacheProvider;
 		private readonly IUnitOfWork _unitOfWork;
 
+		// IncidentCommandService reaches back for channel provisioning through ServiceLocator, so this
+		// constructor edge does not close a resolution cycle.
+		private readonly IIncidentCommandService _incidentCommandService;
+
 		public ChatChannelService(IChatChannelRepository chatChannelRepository, IChatChannelMemberRepository chatChannelMemberRepository,
 			IChatChannelAccessRuleRepository chatChannelAccessRuleRepository, IChatDepartmentSettingRepository chatDepartmentSettingRepository,
 			IChatPermissionService chatPermissionService, IDepartmentsService departmentsService, IDepartmentGroupsService departmentGroupsService,
 			IUnitsService unitsService, IUserProfileService userProfileService, ICallsService callsService, IEventAggregator eventAggregator,
-			ICacheProvider cacheProvider, IUnitOfWork unitOfWork)
+			ICacheProvider cacheProvider, IUnitOfWork unitOfWork, IIncidentCommandService incidentCommandService)
 		{
 			_chatChannelRepository = chatChannelRepository;
 			_chatChannelMemberRepository = chatChannelMemberRepository;
@@ -59,6 +63,7 @@ namespace Resgrid.Services
 			_eventAggregator = eventAggregator;
 			_cacheProvider = cacheProvider;
 			_unitOfWork = unitOfWork;
+			_incidentCommandService = incidentCommandService;
 		}
 
 		public async Task<ChatChannel> GetChannelByIdAsync(string chatChannelId)
@@ -207,7 +212,7 @@ namespace Resgrid.Services
 						if (type != ChatChannelType.CustomLocked && type != ChatChannelType.Incident &&
 							type != ChatChannelType.IncidentLane && type != ChatChannelType.IncidentCommand &&
 							type != ChatChannelType.IncidentLeads && type != ChatChannelType.IncidentDispatch &&
-							type != ChatChannelType.UnitDispatch)
+							type != ChatChannelType.UnitDispatch && type != ChatChannelType.IncidentCommanderLine)
 							continue;
 
 						if (await _chatPermissionService.CanAccessChannelAsync(channel, userId, activeUnitId))
@@ -930,6 +935,83 @@ namespace Resgrid.Services
 			return saved;
 		}
 
+		public async Task<ChatChannel> EnsureIncidentCommanderLineAsync(int departmentId, int callId, string requesterUserId,
+			int? requesterUnitId, CancellationToken cancellationToken = default(CancellationToken))
+		{
+			if (callId <= 0 || (string.IsNullOrWhiteSpace(requesterUserId) && !requesterUnitId.HasValue))
+				return null;
+
+			// Addressed to the command role, so there has to be a role to address. Returning null here is
+			// what keeps the client's "Message the IC" button disabled until a command is established —
+			// otherwise the first message would sit in a channel with nobody on the other side.
+			var command = await _incidentCommandService.GetCommandForCallAsync(departmentId, callId);
+			if (command == null || string.IsNullOrWhiteSpace(command.CurrentCommanderUserId))
+				return null;
+
+			Unit requesterUnit = null;
+			if (requesterUnitId.HasValue)
+			{
+				requesterUnit = await _unitsService.GetUnitByIdAsync(requesterUnitId.Value);
+				if (requesterUnit == null || requesterUnit.DepartmentId != departmentId)
+					throw new UnauthorizedAccessException("The requesting unit does not belong to this department.");
+			}
+
+			var dmKey = BuildIncidentCommanderLineKey(callId, requesterUserId, requesterUnitId);
+			var prefix = await ResolveIncidentPrefixAsync(callId, command.Name);
+			var desiredName = await BuildIncidentCommanderLineChannelNameAsync(prefix, requesterUnit?.Name, requesterUserId);
+
+			var existing = await _chatChannelRepository.GetByDmKeyAsync(departmentId, dmKey);
+			if (existing != null)
+				return await ApplyProvisionedNameAsync(existing, desiredName, cancellationToken);
+
+			var channel = new ChatChannel
+			{
+				ChatChannelId = Guid.NewGuid().ToString(),
+				DepartmentId = departmentId,
+				ChannelType = (int)ChatChannelType.IncidentCommanderLine,
+				Name = desiredName,
+				CallId = callId,
+				IncidentCommandId = command.IncidentCommandId,
+				CreatedByUserId = requesterUserId,
+				CreatedOn = DateTime.UtcNow,
+				DmKey = dmKey
+			};
+
+			// Only the requester gets a member row. The commander side is deliberately implicit so the
+			// channel follows the role: see ChatPermissionService's IncidentCommanderLine cases.
+			var members = new List<ChatChannelMember>
+			{
+				requesterUnitId.HasValue
+					? NewMemberRow(channel, ChatParticipantType.Unit, null, requesterUnitId, requesterUnit?.Name, requesterUserId)
+					: NewMemberRow(channel, ChatParticipantType.User, requesterUserId, null, null, requesterUserId)
+			};
+
+			ChatChannel saved;
+			try
+			{
+				saved = await _chatChannelRepository.CreateDirectMessageChannelAsync(channel, members, cancellationToken);
+			}
+			catch (Exception)
+			{
+				var winner = await _chatChannelRepository.GetByDmKeyAsync(departmentId, dmKey);
+				if (winner != null)
+					return winner;
+
+				throw;
+			}
+
+			if (saved == null)
+				saved = await _chatChannelRepository.GetByDmKeyAsync(departmentId, dmKey);
+
+			if (saved != null && string.Equals(saved.ChatChannelId, channel.ChatChannelId, StringComparison.OrdinalIgnoreCase))
+			{
+				await _chatPermissionService.InvalidateChannelCacheAsync(saved.ChatChannelId);
+				PublishChannelEvent(saved, ChatEventKinds.ChannelProvisioned);
+			}
+
+			return saved;
+		}
+
 		public async Task EnsureIncidentChannelsAsync(IncidentCommand command, IEnumerable<CommandStructureNode> nodes, CancellationToken cancellationToken = default(CancellationToken))
 		{
 			if (command == null || command.CallId <= 0)
@@ -1220,6 +1302,43 @@ namespace Resgrid.Services
 		/// same one-channel-per-identity constraint, and the prefix keeps the keyspaces disjoint.
 		/// </summary>
 		private static string BuildUnitDispatchKey(int unitId) => $"unitdispatch:{unitId}";
+
+		/// <summary>
+		/// One commander line per (call, requester), riding the same (DepartmentId, DmKey) unique index.
+		/// Keyed on the CALL rather than on the commander: that is what lets command change hands without
+		/// forking the conversation or stranding its history on the outgoing commander.
+		/// </summary>
+		private static string BuildIncidentCommanderLineKey(int callId, string requesterUserId, int? requesterUnitId)
+			=> requesterUnitId.HasValue
+				? $"iccommander:{callId}|unit:{requesterUnitId.Value}"
+				: $"iccommander:{callId}|u:{requesterUserId?.ToLowerInvariant()}";
+
+		/// <summary>
+		/// Names the commander line. The requester is part of the name because the commander holds one of
+		/// these per requester — without it their channel list is a column of identical rows.
+		/// </summary>
+		private async Task<string> BuildIncidentCommanderLineChannelNameAsync(string prefix, string requesterUnitName, string requesterUserId)
+		{
+			var requester = requesterUnitName;
+
+			if (string.IsNullOrWhiteSpace(requester) && !string.IsNullOrWhiteSpace(requesterUserId))
+			{
+				try
+				{
+					var profile = await _userProfileService.GetProfileByUserIdAsync(requesterUserId);
+					requester = profile?.FullName?.AsFirstNameLastName;
+				}
+				catch (Exception ex)
+				{
+					// Naming is cosmetic next to provisioning — never let a profile lookup block the line.
+					Logging.LogException(ex);
+				}
+			}
+
+			return string.IsNullOrWhiteSpace(requester)
+				? $"{prefix} Incident Commander"
+				: $"{prefix} Incident Commander ({requester.Trim()})";
+		}
 
 		/// <summary>
 		/// The incident prefix every incident-scoped channel name starts with: the incident's own name when

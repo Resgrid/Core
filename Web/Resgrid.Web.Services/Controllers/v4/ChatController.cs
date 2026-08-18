@@ -271,6 +271,67 @@ namespace Resgrid.Web.Services.Controllers.v4
 		}
 
 		/// <summary>
+		/// Finds or creates the caller's private line to the incident's current Incident Commander.
+		/// Addressed to the command role rather than to a person, so the conversation and its history
+		/// follow command transfers. Returns Failure when the call has no established command with a
+		/// current commander — clients keep the "Message the IC" action disabled until one exists.
+		/// </summary>
+		/// <param name="input">The call to reach command on, and optionally the unit to speak as</param>
+		/// <returns>ChatChannelCreatedResult with the existing or newly created commander line</returns>
+		[HttpPost("CreateIncidentCommanderLine")]
+		[ProducesResponseType(StatusCodes.Status200OK)]
+		[ProducesResponseType(StatusCodes.Status400BadRequest)]
+		[ProducesResponseType(StatusCodes.Status403Forbidden)]
+		[ProducesResponseType(StatusCodes.Status404NotFound)]
+		public async Task<ActionResult<ChatChannelCreatedResult>> CreateIncidentCommanderLine([FromBody] CreateIncidentCommanderLineInput input, CancellationToken cancellationToken)
+		{
+			if (!await ChatEnabledAsync())
+				return NotFound();
+
+			if (!ModelState.IsValid)
+				return BadRequest();
+
+			if (input == null || input.CallId <= 0)
+				return BadRequest();
+
+			// Speaking as a unit has to be earned, not asserted — otherwise a caller could open (and post
+			// into) a commander line in another unit's name.
+			if (input.AsUnitId.HasValue && !await _chatPermissionService.CanSendAsUnitAsync(UserId, input.AsUnitId.Value, DepartmentId))
+				return StatusCode(StatusCodes.Status403Forbidden);
+
+			var result = new ChatChannelCreatedResult();
+			ChatChannel channel;
+
+			try
+			{
+				channel = await _chatChannelService.EnsureIncidentCommanderLineAsync(DepartmentId, input.CallId, UserId, input.AsUnitId, cancellationToken);
+			}
+			catch (UnauthorizedAccessException)
+			{
+				return StatusCode(StatusCodes.Status403Forbidden);
+			}
+
+			if (channel != null)
+			{
+				var member = await _chatChannelService.GetUserMembershipAsync(channel.ChatChannelId, UserId);
+
+				result.Data = ConvertChannelResultData(channel, member);
+				result.PageSize = 1;
+				result.Status = ResponseHelper.Created;
+			}
+			else
+			{
+				// No command established yet (or none with a current commander). Not an error: the incident
+				// simply has nobody to address.
+				result.PageSize = 0;
+				result.Status = ResponseHelper.Failure;
+			}
+
+			ResponseHelper.PopulateV4ResponseData(result);
+			return result;
+		}
+
+		/// <summary>
 		/// Creates an ad-hoc group channel with an explicit member list.
 		/// </summary>
 		/// <param name="input">Name and initial members of the channel</param>

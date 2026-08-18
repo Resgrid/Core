@@ -79,7 +79,13 @@ namespace Resgrid.Services
 				await _chatPresenceService.GetUsersActiveInChannelAsync(channel.DepartmentId, audience, channel.ChatChannelId),
 				StringComparer.OrdinalIgnoreCase);
 
-			var isDm = channel.ChannelType == (int)ChatChannelType.DirectMessage;
+			// The commander line is one-to-one, so it carries the DM deep-link prefix ("t:") rather than the
+			// group one — the apps route it to a conversation view, not a channel view.
+			var isDm = channel.ChannelType == (int)ChatChannelType.DirectMessage
+				|| channel.ChannelType == (int)ChatChannelType.IncidentCommanderLine;
+			var channelType = (ChatChannelType)channel.ChannelType;
+			var notifyIncidentCommandApp = ShouldNotifyIncidentCommandApp(channelType);
+			var notifyUnitApp = ShouldNotifyUnitApp(channelType);
 			var eventCode = $"{(isDm ? "t" : "g")}:{channel.ChatChannelId}";
 			var title = BuildTitle(channel, message, isDm, isUrgent);
 			var body = BuildPreview(message);
@@ -96,6 +102,8 @@ namespace Resgrid.Services
 			using (var throttler = new SemaphoreSlim(MaxConcurrentPushes))
 			{
 				var pushes = new List<Task>();
+				var suppressedActive = 0;
+				var suppressedPreference = 0;
 
 				foreach (var userId in audience)
 				{
@@ -103,20 +111,34 @@ namespace Resgrid.Services
 						continue;
 
 					if (activeUsers.Contains(userId))
+					{
+						suppressedActive++;
 						continue;
+					}
 
 					membersByUser.TryGetValue(userId, out var member);
 
 					if (!ShouldNotify(member, isUrgent, urgentOverridesMute, mentionedEveryone || mentionedUsers.Contains(userId)))
+					{
+						suppressedPreference++;
 						continue;
+					}
 
 					var unread = (int)Math.Max(0, channel.LastMessageSeq - (member?.LastReadSeq ?? 0));
 
-					pushes.Add(SendThrottledAsync(throttler, () => _pushService.PushChatMessage(pushMessage, userId, eventCode, Math.Max(unread, 1))));
+					pushes.Add(SendThrottledAsync(throttler, () => _pushService.PushChatMessage(pushMessage, userId, eventCode, Math.Max(unread, 1), notifyIncidentCommandApp)));
 				}
 
-				// Unit participants (DM to "Engine 6", unit invited to a group chat): alert the rig device.
-				foreach (var unitMember in memberRows.Where(m => m.ParticipantType == (int)ChatParticipantType.Unit && m.UnitId.HasValue && !m.RemovedOn.HasValue && !m.IsBanned))
+				// The fan-out runs detached from the request, so without this line an empty audience, a
+				// stale active-channel marker and a channel full of muted members are indistinguishable
+				// from "pushes were sent" when someone reports missing chat notifications.
+				Logging.LogInfo($"Chat push fan-out for channel {channel.ChatChannelId} (type {channel.ChannelType}, event {eventCode}): audience {audience.Count}, queued {pushes.Count}, suppressed active {suppressedActive}, suppressed by preference {suppressedPreference}, IC app {notifyIncidentCommandApp}, unit app {notifyUnitApp}.");
+
+				// Unit participants (DM to "Engine 6", unit invited to a group chat): alert the rig device,
+				// but only for the conversations the rig owns — see ShouldNotifyUnitApp.
+				foreach (var unitMember in notifyUnitApp
+					? memberRows.Where(m => m.ParticipantType == (int)ChatParticipantType.Unit && m.UnitId.HasValue && !m.RemovedOn.HasValue && !m.IsBanned)
+					: Enumerable.Empty<ChatChannelMember>())
 				{
 					if (message.SenderUnitId.HasValue && message.SenderUnitId.Value == unitMember.UnitId.Value)
 						continue;
@@ -133,6 +155,57 @@ namespace Resgrid.Services
 				}
 
 				await Task.WhenAll(pushes);
+			}
+		}
+
+		/// <summary>
+		/// Whether this channel's traffic may wake a recipient's IC app. The IC app is an incident device:
+		/// it carries incident conversations only, so department-wide, station, ad-hoc, custom and peer
+		/// chatter reaches the person on their Responder app instead of burying incident traffic on the
+		/// device they are commanding from. A plain user-to-user DM stays off the IC app deliberately —
+		/// "messaging Mike" and "messaging the IC" are different conversations, and the latter belongs to
+		/// the command role rather than to whoever currently holds it.
+		/// </summary>
+		private static bool ShouldNotifyIncidentCommandApp(ChatChannelType channelType)
+		{
+			switch (channelType)
+			{
+				case ChatChannelType.Incident:
+				case ChatChannelType.IncidentLane:
+				case ChatChannelType.IncidentCommand:
+				case ChatChannelType.IncidentLeads:
+				case ChatChannelType.IncidentDispatch:
+				case ChatChannelType.IncidentCommanderLine:
+					return true;
+
+				default:
+					return false;
+			}
+		}
+
+		/// <summary>
+		/// Whether this channel's traffic may wake a unit's rig device. A unit is woken by its own standing
+		/// dispatch line, by any incident channel it is working, and by a DM addressed to the unit identity
+		/// ("Engine 6") — that last one from any sender, because a unit has no Responder app of its own and
+		/// an unnotified DM would reach nobody. Department-wide, station, ad-hoc and custom channels are
+		/// excluded: the rig can read and post in them, but those members are notified as users.
+		/// </summary>
+		private static bool ShouldNotifyUnitApp(ChatChannelType channelType)
+		{
+			switch (channelType)
+			{
+				case ChatChannelType.DirectMessage:
+				case ChatChannelType.UnitDispatch:
+				case ChatChannelType.Incident:
+				case ChatChannelType.IncidentLane:
+				case ChatChannelType.IncidentCommand:
+				case ChatChannelType.IncidentLeads:
+				case ChatChannelType.IncidentDispatch:
+				case ChatChannelType.IncidentCommanderLine:
+					return true;
+
+				default:
+					return false;
 			}
 		}
 

@@ -58,6 +58,14 @@
 		public static string RabbitUsername = "";
 		public static string RabbbitPassword = "";
 		public static string RabbbitExchange = "";
+
+		/// <summary>
+		/// Ceiling for a single serialized message body, in bytes. Sits under the broker's
+		/// 16MB (16777216) max frame size with headroom for AMQP framing overhead. A publish
+		/// over the broker limit isn't rejected cleanly, it closes the channel with a
+		/// PRECONDITION_FAILED and takes the connection's in-flight work with it.
+		/// </summary>
+		public static int MaxMessageSizeInBytes = 15 * 1024 * 1024;
 		#endregion RabbitMQ Bus Values
 	}
 

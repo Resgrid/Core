@@ -32,8 +32,14 @@ namespace Resgrid.Services
 
 		public async Task<bool> Register(PushUri pushUri)
 		{
+			// A device that never lands its token on the Novu subscriber gets zero pushes forever, and every
+			// exit below used to be a bare `false` nobody inspected. Log each one: a missing registration
+			// is indistinguishable from a delivered-but-unseen push without it.
 			if (pushUri == null || string.IsNullOrWhiteSpace(pushUri.DeviceId) || string.IsNullOrWhiteSpace(pushUri.PushLocation))
+			{
+				Framework.Logging.LogWarning($"PushService.Register: incomplete registration (userId {pushUri?.UserId}, platform {pushUri?.PlatformType}, hasToken {!string.IsNullOrWhiteSpace(pushUri?.DeviceId)}, prefix '{pushUri?.PushLocation}'), skipped.");
 				return false;
+			}
 
 			var code = pushUri.PushLocation;
 			// IC app registrations target the IC-specific Novu subscriber, keeping its inbox/push separate from the Responder app.
@@ -42,20 +48,33 @@ namespace Resgrid.Services
 			if (isICApp)
 				await EnsureICUserSubscriber(pushUri, code);
 
+			bool registered;
+
 			// 1) iOS -> APNS
 			if (pushUri.PlatformType == (int)Platforms.iOS)
-				return isICApp
+			{
+				registered = isICApp
 					? await _novuProvider.UpdateICUserSubscriberApns(pushUri.UserId, code, pushUri.DeviceId)
 					: await _novuProvider.UpdateUserSubscriberApns(pushUri.UserId, code, pushUri.DeviceId);
-
+			}
 			// 2) Android -> FCM
-			if (pushUri.PlatformType == (int)Platforms.Android)
-				return isICApp
+			else if (pushUri.PlatformType == (int)Platforms.Android)
+			{
+				registered = isICApp
 					? await _novuProvider.UpdateICUserSubscriberFcm(pushUri.UserId, code, pushUri.DeviceId)
 					: await _novuProvider.UpdateUserSubscriberFcm(pushUri.UserId, code, pushUri.DeviceId);
-
+			}
 			// 3) TODO: Web Push (other platforms)
-			return false;
+			else
+			{
+				Framework.Logging.LogWarning($"PushService.Register: unsupported platform {pushUri.PlatformType} for user {pushUri.UserId} (prefix '{code}', IC {isICApp}), no push channel registered.");
+				return false;
+			}
+
+			if (!registered)
+				Framework.Logging.LogError($"PushService.Register: Novu rejected the credential write for user {pushUri.UserId} (platform {pushUri.PlatformType}, prefix '{code}', IC {isICApp}); subscriber will have no configured push channel.");
+
+			return registered;
 		}
 
 		public async Task<bool> UnRegister(PushUri pushUri)
@@ -245,7 +264,8 @@ namespace Resgrid.Services
 			return true;
 		}
 
-		public async Task<bool> PushChatMessage(StandardPushMessage message, string userId, string eventCode, int unreadCount, UserProfile profile = null)
+		public async Task<bool> PushChatMessage(StandardPushMessage message, string userId, string eventCode, int unreadCount,
+			bool includeIncidentCommandApp, UserProfile profile = null)
 		{
 			if (message == null || string.IsNullOrWhiteSpace(userId))
 				return false;
@@ -253,10 +273,24 @@ namespace Resgrid.Services
 			if (profile == null)
 				profile = await _userProfileService.GetProfileByUserIdAsync(userId);
 
-			if (profile == null || !profile.SendMessagePush)
+			// Both of these silently drop the push, and both are user/profile state rather than a fault —
+			// log them so "chat pushes aren't arriving" can be told apart from "the user turned them off".
+			if (profile == null)
+			{
+				Framework.Logging.LogWarning($"PushChatMessage: no user profile for {userId}, chat push dropped ({eventCode}).");
 				return false;
+			}
+
+			if (!profile.SendMessagePush)
+			{
+				Framework.Logging.LogInfo($"PushChatMessage: SendMessagePush disabled for {userId}, chat push dropped ({eventCode}).");
+				return false;
+			}
 
 			string soundType = await GetSoundTypeAsync(message.DepartmentId, profile, PushSoundTypes.Message, PushSoundTypes.ModernChat);
+
+			if (string.IsNullOrWhiteSpace(message.DepartmentCode))
+				Framework.Logging.LogWarning($"PushChatMessage: department {message.DepartmentId} has no Code, Novu chat push skipped for {userId} ({eventCode}).");
 
 			try
 			{
@@ -272,7 +306,13 @@ namespace Resgrid.Services
 				if (!string.IsNullOrWhiteSpace(message.DepartmentCode))
 				{
 					await _novuProvider.SendUserChatMessage(message.Title, message.SubTitle, userId, message.DepartmentCode, eventCode, soundType, unreadCount);
-					await _novuProvider.SendICUserChatMessage(message.Title, message.SubTitle, userId, message.DepartmentCode, eventCode, soundType, unreadCount);
+
+					// The IC app is an incident device: waking it for department, station, ad-hoc or peer
+					// traffic both buries incident chatter and errors out for every user who never installed
+					// it (that subscriber only exists after an IC-sourced registration). The caller gates it
+					// on the channel, so this only fires for incident conversations.
+					if (includeIncidentCommandApp)
+						await _novuProvider.SendICUserChatMessage(message.Title, message.SubTitle, userId, message.DepartmentCode, eventCode, soundType, unreadCount);
 				}
 			}
 			catch (Exception ex)

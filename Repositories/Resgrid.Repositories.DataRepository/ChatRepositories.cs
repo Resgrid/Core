@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
@@ -252,9 +252,14 @@ namespace Resgrid.Repositories.DataRepository
 				if (ids.Count == 0)
 					return new List<ChatChannel>();
 
+				// Dapper only rewrites an IN-list into individual bind variables on providers that
+				// lack array support. Npgsql has it, so Dapper binds the list as one array parameter
+				// and leaves the SQL untouched -- "IN @Ids" arrives at the server as "IN $1" and
+				// fails to parse. Postgres consumes the array directly with = ANY(); SQL Server
+				// still needs the IN form Dapper expands. Every list parameter below follows this.
 				var notation = _sqlConfiguration.ParameterNotation;
 				var sql = DataConfig.DatabaseType == DatabaseTypes.Postgres
-					? $"SELECT * FROM {_sqlConfiguration.SchemaName}.chatchannels WHERE chatchannelid IN {notation}Ids"
+					? $"SELECT * FROM {_sqlConfiguration.SchemaName}.chatchannels WHERE chatchannelid = ANY({notation}Ids)"
 					: $"SELECT * FROM {_sqlConfiguration.SchemaName}.[ChatChannels] WHERE [ChatChannelId] IN {notation}Ids";
 
 				var select = new Func<DbConnection, Task<IEnumerable<ChatChannel>>>(connection =>
@@ -910,7 +915,7 @@ namespace Resgrid.Repositories.DataRepository
 
 				var notation = _sqlConfiguration.ParameterNotation;
 				var sql = DataConfig.DatabaseType == DatabaseTypes.Postgres
-					? $"SELECT * FROM {_sqlConfiguration.SchemaName}.chatchannelmembers WHERE chatchannelid IN {notation}Ids AND removedon IS NULL"
+					? $"SELECT * FROM {_sqlConfiguration.SchemaName}.chatchannelmembers WHERE chatchannelid = ANY({notation}Ids) AND removedon IS NULL"
 					: $"SELECT * FROM {_sqlConfiguration.SchemaName}.[ChatChannelMembers] WHERE [ChatChannelId] IN {notation}Ids AND [RemovedOn] IS NULL";
 
 				var select = new Func<DbConnection, Task<IEnumerable<ChatChannelMember>>>(connection =>
@@ -1352,7 +1357,7 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					var fromClause = from.HasValue ? $" AND senton >= {notation}From" : string.Empty;
 					var toClause = to.HasValue ? $" AND senton <= {notation}To" : string.Empty;
-					sql = $"SELECT * FROM {_sqlConfiguration.SchemaName}.chatmessages WHERE departmentid = {notation}DepartmentId AND chatchannelid IN {notation}Ids AND deletedon IS NULL AND body ILIKE {notation}Query{fromClause}{toClause} ORDER BY senton DESC LIMIT {notation}PageSize OFFSET {notation}Offset";
+					sql = $"SELECT * FROM {_sqlConfiguration.SchemaName}.chatmessages WHERE departmentid = {notation}DepartmentId AND chatchannelid = ANY({notation}Ids) AND deletedon IS NULL AND body ILIKE {notation}Query{fromClause}{toClause} ORDER BY senton DESC LIMIT {notation}PageSize OFFSET {notation}Offset";
 				}
 				else
 				{
@@ -1472,13 +1477,13 @@ namespace Resgrid.Repositories.DataRepository
 				{
 					statements = new[]
 					{
-						$"DELETE FROM {_sqlConfiguration.SchemaName}.chatmessageedits WHERE chatmessageid IN @Ids",
-						$"DELETE FROM {_sqlConfiguration.SchemaName}.chatmessagereactions WHERE chatmessageid IN @Ids",
-						$"DELETE FROM {_sqlConfiguration.SchemaName}.chatmessagementions WHERE chatmessageid IN @Ids",
-						$"DELETE FROM {_sqlConfiguration.SchemaName}.chatmessageacks WHERE chatmessageid IN @Ids",
-						$"DELETE FROM {_sqlConfiguration.SchemaName}.chatattachments WHERE chatmessageid IN @Ids",
-						$"DELETE FROM {_sqlConfiguration.SchemaName}.chatmessageflags WHERE chatmessageid IN @Ids",
-						$"DELETE FROM {_sqlConfiguration.SchemaName}.chatmessages WHERE chatmessageid IN @Ids"
+						$"DELETE FROM {_sqlConfiguration.SchemaName}.chatmessageedits WHERE chatmessageid = ANY(@Ids)",
+						$"DELETE FROM {_sqlConfiguration.SchemaName}.chatmessagereactions WHERE chatmessageid = ANY(@Ids)",
+						$"DELETE FROM {_sqlConfiguration.SchemaName}.chatmessagementions WHERE chatmessageid = ANY(@Ids)",
+						$"DELETE FROM {_sqlConfiguration.SchemaName}.chatmessageacks WHERE chatmessageid = ANY(@Ids)",
+						$"DELETE FROM {_sqlConfiguration.SchemaName}.chatattachments WHERE chatmessageid = ANY(@Ids)",
+						$"DELETE FROM {_sqlConfiguration.SchemaName}.chatmessageflags WHERE chatmessageid = ANY(@Ids)",
+						$"DELETE FROM {_sqlConfiguration.SchemaName}.chatmessages WHERE chatmessageid = ANY(@Ids)"
 					};
 				}
 				else
@@ -1739,7 +1744,7 @@ namespace Resgrid.Repositories.DataRepository
 
 				var notation = _sqlConfiguration.ParameterNotation;
 				var sql = DataConfig.DatabaseType == DatabaseTypes.Postgres
-					? $"SELECT * FROM {_sqlConfiguration.SchemaName}.chatmessageedits WHERE chatmessageid IN {notation}Ids"
+					? $"SELECT * FROM {_sqlConfiguration.SchemaName}.chatmessageedits WHERE chatmessageid = ANY({notation}Ids)"
 					: $"SELECT * FROM {_sqlConfiguration.SchemaName}.[ChatMessageEdits] WHERE [ChatMessageId] IN {notation}Ids";
 
 				var select = new Func<DbConnection, Task<IEnumerable<ChatMessageEdit>>>(connection =>
@@ -1786,7 +1791,7 @@ namespace Resgrid.Repositories.DataRepository
 
 				var notation = _sqlConfiguration.ParameterNotation;
 				var sql = DataConfig.DatabaseType == DatabaseTypes.Postgres
-					? $"SELECT chatattachmentid, chatmessageid, chatchannelid, departmentid, filename, contenttype, size, sha256, uploadedbyuserid, uploadedon FROM {_sqlConfiguration.SchemaName}.chatattachments WHERE chatmessageid IN {notation}Ids"
+					? $"SELECT chatattachmentid, chatmessageid, chatchannelid, departmentid, filename, contenttype, size, sha256, uploadedbyuserid, uploadedon FROM {_sqlConfiguration.SchemaName}.chatattachments WHERE chatmessageid = ANY({notation}Ids)"
 					: $"SELECT [ChatAttachmentId], [ChatMessageId], [ChatChannelId], [DepartmentId], [FileName], [ContentType], [Size], [Sha256], [UploadedByUserId], [UploadedOn] FROM {_sqlConfiguration.SchemaName}.[ChatAttachments] WHERE [ChatMessageId] IN {notation}Ids";
 
 				var select = new Func<DbConnection, Task<IEnumerable<ChatAttachment>>>(connection =>
@@ -1833,7 +1838,7 @@ namespace Resgrid.Repositories.DataRepository
 
 				var notation = _sqlConfiguration.ParameterNotation;
 				var sql = DataConfig.DatabaseType == DatabaseTypes.Postgres
-					? $"SELECT * FROM {_sqlConfiguration.SchemaName}.chatmessagereactions WHERE chatmessageid IN {notation}Ids"
+					? $"SELECT * FROM {_sqlConfiguration.SchemaName}.chatmessagereactions WHERE chatmessageid = ANY({notation}Ids)"
 					: $"SELECT * FROM {_sqlConfiguration.SchemaName}.[ChatMessageReactions] WHERE [ChatMessageId] IN {notation}Ids";
 
 				var select = new Func<DbConnection, Task<IEnumerable<ChatMessageReaction>>>(connection =>

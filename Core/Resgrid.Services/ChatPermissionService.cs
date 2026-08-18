@@ -225,6 +225,15 @@ namespace Resgrid.Services
 						AddIfSet(userIds, dispatcherId);
 					break;
 
+				case ChatChannelType.IncidentCommanderLine:
+					// Requester side is an explicit member row; the commander side is resolved live from the
+					// call so a command transfer moves the conversation rather than copying it. Only the
+					// CURRENT commander — deliberately not EstablishedByUserId or the wider command staff,
+					// which is what separates this from the IncidentCommand channel.
+					await AddExplicitMemberAudienceAsync(channel, userIds);
+					AddIfSet(userIds, await GetCurrentCommanderUserIdAsync(channel.DepartmentId, channel.CallId.GetValueOrDefault()));
+					break;
+
 				default: // DirectMessage, AdHocGroup
 					await AddExplicitMemberAudienceAsync(channel, userIds);
 					break;
@@ -341,9 +350,42 @@ namespace Resgrid.Services
 						&& await CanSendAsUnitAsync(userId, owningUnitId.Value, channel.DepartmentId);
 				}
 
+				case ChatChannelType.IncidentCommanderLine:
+				{
+					// Whoever currently holds command, by virtue of holding it. An outgoing commander loses
+					// the line here on their next check — the history stays on the channel for the incoming
+					// one. Deliberately NOT widened to department admins or dispatch: this is a private line.
+					if (string.Equals(await GetCurrentCommanderUserIdAsync(channel.DepartmentId, channel.CallId.GetValueOrDefault()), userId, StringComparison.OrdinalIgnoreCase))
+						return true;
+
+					// Requester side, proven the same way DMs are — a unit's row only counts when the caller
+					// actually crews that unit.
+					if (await HasActiveMembershipAsync(channel.ChatChannelId, userId, null))
+						return true;
+
+					return activeUnitId.HasValue
+						&& await CanSendAsUnitAsync(userId, activeUnitId.Value, channel.DepartmentId)
+						&& await HasActiveMembershipAsync(channel.ChatChannelId, userId, activeUnitId);
+				}
+
 				default:
 					return false;
 			}
+		}
+
+		/// <summary>
+		/// The user currently running the incident, or null when no command is established. Single source
+		/// for every IncidentCommanderLine decision so the audience and the access check can never disagree
+		/// about who "the IC" is mid-transfer.
+		/// </summary>
+		private async Task<string> GetCurrentCommanderUserIdAsync(int departmentId, int callId)
+		{
+			if (callId <= 0)
+				return null;
+
+			var command = await _incidentCommandService.GetCommandForCallAsync(departmentId, callId);
+
+			return command?.CurrentCommanderUserId;
 		}
 
 		private async Task<bool> EvaluateModerateAsync(ChatChannel channel, string userId)
@@ -370,6 +412,7 @@ namespace Resgrid.Services
 				case ChatChannelType.IncidentCommand:
 				case ChatChannelType.IncidentLeads:
 				case ChatChannelType.IncidentDispatch:
+				case ChatChannelType.IncidentCommanderLine:
 					if (!channel.CallId.HasValue)
 						return false;
 

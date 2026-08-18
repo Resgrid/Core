@@ -20,6 +20,23 @@ namespace Resgrid.Services
 		private static readonly Func<QueueItem, bool> IsPendingDepartmentDeletion =
 			x => x.QueueType == (int)QueueTypes.DeleteDepartment && x.CompletedOn == null;
 
+		/// <summary>
+		/// Drops the avatar blob off every profile bound for a queue. Profiles are materialized
+		/// fresh per call (Dapper, or a Redis round-trip when cached) so this never mutates
+		/// shared state, and no queue consumer reads the image.
+		/// </summary>
+		private static void StripProfileImages(List<UserProfile> profiles)
+		{
+			if (profiles == null)
+				return;
+
+			foreach (var profile in profiles)
+			{
+				if (profile != null)
+					profile.Image = null;
+			}
+		}
+
 		private readonly IQueueItemsRepository _queueItemsRepository;
 		private readonly IOutboundQueueProvider _outboundQueueProvider;
 		private readonly IDepartmentSettingsService _departmentSettingsService;
@@ -165,6 +182,8 @@ namespace Resgrid.Services
 				//mqi.DepartmentTextNumber = departmentNumber;
 			}
 
+			StripProfileImages(mqi.Profiles);
+
 			return await _outboundQueueProvider.EnqueueMessage(mqi);
 		}
 
@@ -217,6 +236,13 @@ namespace Resgrid.Services
 
 			// We can't queue up any attachment data as it'll be too large.
 			cqi.Call.Attachments = null;
+
+			// Same story for the avatar blobs hanging off every profile. On the "dispatch a
+			// group/unit/role so send every profile in the department" path these are the only
+			// unbounded part of the payload and they've pushed the serialized message past
+			// RabbitMQ's 16MB frame limit, which kills the channel and the entire dispatch.
+			// Nothing downstream of the queue reads UserProfile.Image.
+			StripProfileImages(cqi.Profiles);
 
 			if (!await _outboundQueueProvider.EnqueueCall(cqi))
 				throw new InvalidOperationException("Failed to enqueue call broadcast for processing.");

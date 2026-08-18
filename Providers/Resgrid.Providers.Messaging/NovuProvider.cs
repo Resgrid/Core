@@ -130,7 +130,17 @@ namespace Resgrid.Providers.Messaging
 					request.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 					HttpResponseMessage response = await client.SendAsync(request);
 
-					return response.IsSuccessStatusCode;
+					// An unknown integrationIdentifier, an inactive integration or a malformed token all come
+					// back as a 4xx here. Swallowing that left the subscriber with no push channel and no clue.
+					if (!response.IsSuccessStatusCode)
+					{
+						var error = await response.Content.ReadAsStringAsync();
+						Logging.LogError($"Novu FCM credential write failed ({(int)response.StatusCode} {response.StatusCode}) subscriber '{id}' integration '{fcmId}': {error}");
+
+						return false;
+					}
+
+					return true;
 				}
 			}
 			catch (Exception e)
@@ -184,13 +194,22 @@ namespace Resgrid.Providers.Messaging
 
 					if (string.IsNullOrWhiteSpace(jsonContent))
 					{
+						Logging.LogWarning($"Novu APNS credential write skipped for subscriber '{id}': neither an apns nor an fcm integration identifier was supplied.");
 						return false;
 					}
 
 					request.Content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 					HttpResponseMessage response = await client.SendAsync(request);
 
-					return response.IsSuccessStatusCode;
+					if (!response.IsSuccessStatusCode)
+					{
+						var error = await response.Content.ReadAsStringAsync();
+						Logging.LogError($"Novu APNS credential write failed ({(int)response.StatusCode} {response.StatusCode}) subscriber '{id}' integration '{apnsId ?? fcmId}': {error}");
+
+						return false;
+					}
+
+					return true;
 				}
 			}
 			catch (Exception e)
@@ -351,7 +370,18 @@ namespace Resgrid.Providers.Messaging
 
 					var result = await httpClient.PostAsync("v1/events/trigger", content);
 
-					return result.IsSuccessStatusCode;
+					// A rejected trigger (unknown workflow identifier, unknown subscriber, bad payload) is a
+					// 4xx with a body explaining why. Returning the bare bool made every one of those silent,
+					// so a workflow that was never created in Novu looked exactly like a delivered push.
+					if (!result.IsSuccessStatusCode)
+					{
+						var error = await result.Content.ReadAsStringAsync();
+						Logging.LogError($"Novu trigger failed ({(int)result.StatusCode} {result.StatusCode}) workflow '{workflowIdentifier}' subscriber '{recipientId}' event '{eventCode}': {error}");
+
+						return false;
+					}
+
+					return true;
 				}
 			}
 			catch (Exception e)

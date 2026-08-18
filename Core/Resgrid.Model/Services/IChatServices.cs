@@ -124,6 +124,16 @@ namespace Resgrid.Model.Services
 		Task<ChatChannel> EnsureUnitDispatchChannelAsync(int departmentId, int unitId, CancellationToken cancellationToken = default(CancellationToken));
 
 		/// <summary>
+		/// Ensures the requester's private line to the incident's current commander ("Message the IC").
+		/// One channel per (call, requester); the requester is stamped as an explicit member row while the
+		/// commander side stays implicit, so a command transfer moves the conversation to the incoming
+		/// commander without touching its history. Returns null when the call has no established command
+		/// with a current commander — the button that calls this is expected to stay disabled until then.
+		/// </summary>
+		Task<ChatChannel> EnsureIncidentCommanderLineAsync(int departmentId, int callId, string requesterUserId,
+			int? requesterUnitId, CancellationToken cancellationToken = default(CancellationToken));
+
+		/// <summary>
 		/// Backfills every chat channel an ACTIVE incident should have — the call's incident channel, the
 		/// command and "All Leads" channels, and one per live lane — inserting only what is missing.
 		///

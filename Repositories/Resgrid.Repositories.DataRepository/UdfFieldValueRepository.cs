@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Resgrid.Config;
 using Resgrid.Framework;
 using Resgrid.Model;
 using Resgrid.Model.Repositories;
@@ -86,9 +87,13 @@ namespace Resgrid.Repositories.DataRepository
 					var schema = _sqlConfiguration.SchemaName;
 					var table = _sqlConfiguration.UdfFieldValuesTableName;
 
-					// Build an inline SQL statement that leverages Dapper's native IN-list expansion.
-					// The @EntityIds parameter is expanded by Dapper into the correct number of bind variables.
-					var sql = $"SELECT * FROM {schema}.{table} WHERE EntityType = @EntityType AND EntityId IN @EntityIds AND UdfDefinitionId = @UdfDefinitionId";
+					// Dapper only expands an IN-list into individual bind variables on providers without
+					// array support. Against Npgsql it binds the list as a single array parameter and
+					// leaves the SQL alone, so "IN @EntityIds" reaches the server as "IN $1" and fails
+					// to parse. Postgres takes the array directly via = ANY().
+					var sql = DataConfig.DatabaseType == DatabaseTypes.Postgres
+						? $"SELECT * FROM {schema}.{table} WHERE EntityType = @EntityType AND EntityId = ANY(@EntityIds) AND UdfDefinitionId = @UdfDefinitionId"
+						: $"SELECT * FROM {schema}.{table} WHERE EntityType = @EntityType AND EntityId IN @EntityIds AND UdfDefinitionId = @UdfDefinitionId";
 
 					return await x.QueryAsync<UdfFieldValue>(sql: sql,
 						param: new { EntityType = entityType, EntityIds = idList, UdfDefinitionId = definitionId },

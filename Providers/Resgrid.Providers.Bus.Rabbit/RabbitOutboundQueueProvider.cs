@@ -22,6 +22,19 @@ namespace Resgrid.Providers.Bus.Rabbit
 		{
 			string serializedObject = ObjectSerialization.Serialize(callQueue);
 
+			// Last line of defense before the broker kills the channel on an oversized frame.
+			// Profiles are the only unbounded piece of the payload and CallBroadcast refetches
+			// them from the database when they're absent, so shedding them costs a query and
+			// saves the dispatch. Losing the dispatch is not an acceptable alternative.
+			if (serializedObject.Length > ServiceBusConfig.MaxMessageSizeInBytes && callQueue?.Profiles != null)
+			{
+				Logging.LogWarning(
+					$"Call broadcast for call {callQueue.Call?.CallId} serialized to {serializedObject.Length} bytes, over the {ServiceBusConfig.MaxMessageSizeInBytes} byte limit. Dropping {callQueue.Profiles.Count} profiles; the broadcast worker will reload them.");
+
+				callQueue.Profiles = null;
+				serializedObject = ObjectSerialization.Serialize(callQueue);
+			}
+
 			return await SendMessage(ServiceBusConfig.CallBroadcastQueueName, serializedObject,
 				requirePublisherConfirmation: true);
 		}

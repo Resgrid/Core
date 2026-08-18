@@ -19,10 +19,14 @@ namespace Resgrid.Model.Services
 		Task<bool> PushCallUnit(StandardPushCall call, int unitId, DepartmentCallPriority priority = null);
 
 		/// <summary>
-		/// Realtime-chat push to a user across the Responder and IC app subscribers. EventCode is the
-		/// chat deep-link (t:{channelId} / g:{channelId}); unreadCount drives the app badge.
+		/// Realtime-chat push to a user's Responder app subscriber, and — only when
+		/// <paramref name="includeIncidentCommandApp"/> is set — to their IC app subscriber as well.
+		/// EventCode is the chat deep-link (t:{channelId} / g:{channelId}); unreadCount drives the app badge.
+		/// The caller decides IC eligibility because it depends on the channel, not the user: see
+		/// ChatNotificationService.
 		/// </summary>
-		Task<bool> PushChatMessage(StandardPushMessage message, string userId, string eventCode, int unreadCount, UserProfile profile = null);
+		Task<bool> PushChatMessage(StandardPushMessage message, string userId, string eventCode, int unreadCount,
+			bool includeIncidentCommandApp, UserProfile profile = null);
 
 		/// <summary>Realtime-chat push to a unit-device subscriber (Unit app on the rig).</summary>
 		Task<bool> PushChatMessageUnit(StandardPushMessage message, int unitId, string eventCode, int unreadCount);

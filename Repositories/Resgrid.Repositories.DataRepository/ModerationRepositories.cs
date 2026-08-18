@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
@@ -84,7 +84,7 @@ FROM {_sqlConfiguration.SchemaName}.[ModerationRequests] WHERE [DepartmentId] = 
 	r.completedbyuserid, r.completedon, r.adminnote
 FROM {_sqlConfiguration.SchemaName}.moderationrequests r
 WHERE r.departmentid = {notation}DepartmentId AND r.itemtype = {notation}ItemType
-	AND r.itemid IN {notation}ItemIds
+	AND r.itemid = ANY({notation}ItemIds)
 	AND EXISTS (SELECT 1 FROM {_sqlConfiguration.SchemaName}.moderationreports p
 		WHERE p.moderationrequestid = r.moderationrequestid AND p.reportedbyuserid = {notation}ReporterUserId)"
 					: $@"SELECT r.[ModerationRequestId], r.[DepartmentId], r.[ItemType], r.[ItemId], r.[CallId],
@@ -181,7 +181,7 @@ WHERE r.[DepartmentId] = {notation}DepartmentId AND r.[ItemType] = {notation}Ite
 								? $" AND rv.reportedbyuserid = {notation}ReportedByUserId"
 								: $" AND rv.[ReportedByUserId] = {notation}ReportedByUserId";
 						filters.Add(postgres
-							? $"EXISTS (SELECT 1 FROM {_sqlConfiguration.SchemaName}.moderationreports rv WHERE rv.moderationrequestid = r.moderationrequestid{requestedReporter} AND (rv.reportedbyuserid = {notation}ReporterUserId OR rv.reportergroupid IN {notation}VisibleGroupIds))"
+							? $"EXISTS (SELECT 1 FROM {_sqlConfiguration.SchemaName}.moderationreports rv WHERE rv.moderationrequestid = r.moderationrequestid{requestedReporter} AND (rv.reportedbyuserid = {notation}ReporterUserId OR rv.reportergroupid = ANY({notation}VisibleGroupIds)))"
 							: $"EXISTS (SELECT 1 FROM {_sqlConfiguration.SchemaName}.[ModerationReports] rv WHERE rv.[ModerationRequestId] = r.[ModerationRequestId]{requestedReporter} AND (rv.[ReportedByUserId] = {notation}ReporterUserId OR rv.[ReporterGroupId] IN {notation}VisibleGroupIds))");
 					}
 					else
@@ -292,7 +292,7 @@ OFFSET {notation}Offset ROWS FETCH NEXT {notation}PageSize ROWS ONLY";
 
 				var notation = _sqlConfiguration.ParameterNotation;
 				var sql = DataConfig.DatabaseType == DatabaseTypes.Postgres
-					? $"SELECT * FROM {_sqlConfiguration.SchemaName}.moderationreports WHERE moderationrequestid IN {notation}Ids ORDER BY moderationrequestid, reportedon"
+					? $"SELECT * FROM {_sqlConfiguration.SchemaName}.moderationreports WHERE moderationrequestid = ANY({notation}Ids) ORDER BY moderationrequestid, reportedon"
 					: $"SELECT * FROM {_sqlConfiguration.SchemaName}.[ModerationReports] WHERE [ModerationRequestId] IN {notation}Ids ORDER BY [ModerationRequestId], [ReportedOn]";
 
 				var select = new Func<DbConnection, Task<IEnumerable<ModerationReport>>>(connection =>
@@ -424,7 +424,7 @@ WHERE [ModerationRequestId] = {notation}ModerationRequestId ORDER BY [PerformedO
 	performedbyuserid, performedon, note, previousstatus, newstatus, actorrole, ipaddress,
 	useragent, traceid, servername, detailsjson, evidencetext, evidencemetadatajson
 FROM {_sqlConfiguration.SchemaName}.moderationactions
-WHERE moderationrequestid IN {notation}Ids ORDER BY moderationrequestid, performedon"
+WHERE moderationrequestid = ANY({notation}Ids) ORDER BY moderationrequestid, performedon"
 					: $@"SELECT [ModerationActionId], [ModerationRequestId], [DepartmentId], [ActionType],
 	[PerformedByUserId], [PerformedOn], [Note], [PreviousStatus], [NewStatus], [ActorRole], [IpAddress],
 	[UserAgent], [TraceId], [ServerName], [DetailsJson], [EvidenceText], [EvidenceMetadataJson]

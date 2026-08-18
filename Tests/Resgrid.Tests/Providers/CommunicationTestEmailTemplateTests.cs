@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -86,6 +86,20 @@ namespace Resgrid.Tests.Providers
 			sent.Should().NotBeNull();
 
 			return sent;
+		}
+
+		[Test]
+		public async Task a_null_content_should_be_a_failed_send_not_a_throw()
+		{
+			// The template model is assembled before the provider's try block, so a null content would
+			// escape the catch that records every other failure as a false.
+			var senderMock = new Mock<IEmailSender>();
+			var provider = new PostmarkTemplateProvider(senderMock.Object);
+
+			var result = await provider.SendCommunicationTestMail("member@example.com", null);
+
+			result.Should().BeFalse();
+			senderMock.Verify(x => x.Send(It.IsAny<Email>()), Times.Never);
 		}
 
 		[Test]

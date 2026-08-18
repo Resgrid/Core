@@ -35,6 +35,19 @@ namespace Resgrid.Providers.Bus.Rabbit
 				serializedObject = ObjectSerialization.Serialize(callQueue);
 			}
 
+			// Shedding profiles is the only lever, so re-measure rather than assume it was enough.
+			// An oversized publish doesn't fail on its own -- the broker answers PRECONDITION_FAILED
+			// and closes the channel, taking the connection's other in-flight work down with it.
+			// Refusing here keeps the damage to this one dispatch, and the caller already turns a
+			// false into a surfaced "failed to enqueue call broadcast" error.
+			if (serializedObject.Length > ServiceBusConfig.MaxMessageSizeInBytes)
+			{
+				Logging.LogError(
+					$"RabbitOutboundQueueProvider->EnqueueCall: call {callQueue?.Call?.CallId} serialized to {serializedObject.Length} bytes, over the {ServiceBusConfig.MaxMessageSizeInBytes} byte limit, with nothing left to shed. Not publishing.");
+
+				return false;
+			}
+
 			return await SendMessage(ServiceBusConfig.CallBroadcastQueueName, serializedObject,
 				requirePublisherConfirmation: true);
 		}

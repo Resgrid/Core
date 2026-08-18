@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -64,6 +64,9 @@ namespace Resgrid.Model.Services
 
 		/// <summary>A user's member row for a single channel (null if none); does not lazily create one.</summary>
 		Task<ChatChannelMember> GetUserMembershipAsync(string chatChannelId, string userId);
+
+		/// <summary>A unit's member row for a single channel (null if none); does not lazily create one.</summary>
+		Task<ChatChannelMember> GetUnitMembershipAsync(string chatChannelId, int unitId);
 
 		/// <summary>
 		/// Adds members. Enforcement inside: DirectMessage channels reject adds (InvalidOperationException),

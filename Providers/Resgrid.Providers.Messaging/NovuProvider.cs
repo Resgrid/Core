@@ -9,12 +9,90 @@ using Resgrid.Model.Providers;
 using Resgrid.Providers.Bus.Models;
 using SharpCompress.Common;
 using System.Text;
+using System.Text.RegularExpressions;
 
 
 namespace Resgrid.Providers.Messaging
 {
 	public class NovuProvider : INovuProvider
 	{
+		private const int MaxLoggedErrorBodyLength = 500;
+
+		/// <summary>
+		/// Anything long and opaque enough to be a credential rather than prose. Device tokens are the
+		/// reason this exists: a rejected credential write echoes the token back inside its validation
+		/// message, and FCM/APNS tokens are well over this length.
+		/// </summary>
+		private static readonly Regex OpaqueValuePattern = new Regex(@"[A-Za-z0-9_\-:\.]{20,}", RegexOptions.Compiled);
+
+		private static readonly Regex WhitespaceRunPattern = new Regex(@"\s+", RegexOptions.Compiled);
+
+		/// <summary>
+		/// Novu's error bodies are provider-controlled and unbounded, and the calls that produce them
+		/// carry device tokens and notification wording -- a validation failure echoes the rejected
+		/// payload straight back. Rather than trusting the body, pull the few diagnostic fields worth
+		/// having, redact anything token-shaped inside them and cap the result. A body that isn't the
+		/// shape we expect is reported by size alone; its content never reaches the log.
+		/// </summary>
+		private static string DescribeErrorBody(string body)
+		{
+			if (string.IsNullOrWhiteSpace(body))
+				return "<no body>";
+
+			var summary = ExtractDiagnosticFields(body);
+			if (string.IsNullOrWhiteSpace(summary))
+				return $"<unrecognized body, {body.Length} chars>";
+
+			summary = WhitespaceRunPattern.Replace(summary, " ").Trim();
+			summary = OpaqueValuePattern.Replace(summary, "<redacted>");
+
+			return summary.Length > MaxLoggedErrorBodyLength
+				? summary.Substring(0, MaxLoggedErrorBodyLength) + "..."
+				: summary;
+		}
+
+		/// <summary>
+		/// Whitelist, not blacklist: only these keys are ever read out of the body, so a field we have
+		/// not vetted cannot reach the log by being added on Novu's side.
+		/// </summary>
+		private static string? ExtractDiagnosticFields(string body)
+		{
+			try
+			{
+				var parsed = JToken.Parse(body);
+				var parts = new List<string>();
+
+				foreach (var name in new[] { "statusCode", "error", "message" })
+				{
+					var value = parsed.SelectToken(name);
+					if (value == null)
+						continue;
+
+					// class-validator returns message as an array of strings.
+					if (value.Type == JTokenType.Array)
+					{
+						var items = value.Children()
+							.Where(x => x.Type != JTokenType.Object && x.Type != JTokenType.Array)
+							.Select(x => x.ToString());
+
+						var joined = string.Join("; ", items);
+						if (!string.IsNullOrWhiteSpace(joined))
+							parts.Add($"{name}={joined}");
+					}
+					else if (value.Type != JTokenType.Object)
+					{
+						parts.Add($"{name}={value}");
+					}
+				}
+
+				return string.Join(" ", parts);
+			}
+			catch (JsonException)
+			{
+				return null;
+			}
+		}
+
 		private async Task<bool> CreateSubscriber(string id, int departmentId, string email, string firstName, string lastName, List<AdditionalData> data)
 		{
 			try
@@ -135,7 +213,7 @@ namespace Resgrid.Providers.Messaging
 					if (!response.IsSuccessStatusCode)
 					{
 						var error = await response.Content.ReadAsStringAsync();
-						Logging.LogError($"Novu FCM credential write failed ({(int)response.StatusCode} {response.StatusCode}) subscriber '{id}' integration '{fcmId}': {error}");
+						Logging.LogError($"Novu FCM credential write failed ({(int)response.StatusCode} {response.StatusCode}) subscriber '{id}' integration '{fcmId}': {DescribeErrorBody(error)}");
 
 						return false;
 					}
@@ -204,7 +282,7 @@ namespace Resgrid.Providers.Messaging
 					if (!response.IsSuccessStatusCode)
 					{
 						var error = await response.Content.ReadAsStringAsync();
-						Logging.LogError($"Novu APNS credential write failed ({(int)response.StatusCode} {response.StatusCode}) subscriber '{id}' integration '{apnsId ?? fcmId}': {error}");
+						Logging.LogError($"Novu APNS credential write failed ({(int)response.StatusCode} {response.StatusCode}) subscriber '{id}' integration '{apnsId ?? fcmId}': {DescribeErrorBody(error)}");
 
 						return false;
 					}
@@ -376,7 +454,7 @@ namespace Resgrid.Providers.Messaging
 					if (!result.IsSuccessStatusCode)
 					{
 						var error = await result.Content.ReadAsStringAsync();
-						Logging.LogError($"Novu trigger failed ({(int)result.StatusCode} {result.StatusCode}) workflow '{workflowIdentifier}' subscriber '{recipientId}' event '{eventCode}': {error}");
+						Logging.LogError($"Novu trigger failed ({(int)result.StatusCode} {result.StatusCode}) workflow '{workflowIdentifier}' subscriber '{recipientId}' event '{eventCode}': {DescribeErrorBody(error)}");
 
 						return false;
 					}

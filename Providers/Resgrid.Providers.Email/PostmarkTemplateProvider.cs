@@ -541,6 +541,12 @@ namespace Resgrid.Providers.EmailProvider
 
 		public async Task<bool> SendCommunicationTestMail(string email, CommunicationTestEmailContent content)
 		{
+			// The model is built before the try below, so without this a null content would throw past
+			// the catch that turns every other failure here into a recorded false. A send that cannot be
+			// composed is a failed send, same as one the provider rejects.
+			if (content == null)
+				return false;
+
 			// Every string arrives already rendered in the recipient's language -- the template only
 			// supplies the Resgrid chrome around them.
 			var templateModel = new Dictionary<string, object>
@@ -568,6 +574,7 @@ namespace Resgrid.Providers.EmailProvider
 
 				Email newEmail = new Email();
 				newEmail.HtmlBody = body;
+				newEmail.TextBody = content.TextBody;
 				newEmail.Sender = DONOTREPLY_EMAIL;
 				newEmail.To.Add(email);
 				newEmail.From = DONOTREPLY_EMAIL;

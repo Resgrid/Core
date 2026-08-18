@@ -313,7 +313,12 @@ namespace Resgrid.Web.Services.Controllers.v4
 
 			if (channel != null)
 			{
-				var member = await _chatChannelService.GetUserMembershipAsync(channel.ChatChannelId, UserId);
+				// A line opened as a unit gets one member row, and it is the unit's -- there is no user row
+				// to find. Looking the caller up by user id returns null, which silently reports the whole
+				// channel as unread with default notification settings every time the line is opened.
+				var member = input.AsUnitId.HasValue
+					? await _chatChannelService.GetUnitMembershipAsync(channel.ChatChannelId, input.AsUnitId.Value)
+					: await _chatChannelService.GetUserMembershipAsync(channel.ChatChannelId, UserId);
 
 				result.Data = ConvertChannelResultData(channel, member);
 				result.PageSize = 1;

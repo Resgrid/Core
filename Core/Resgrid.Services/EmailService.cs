@@ -798,7 +798,8 @@ namespace Resgrid.Services
 					DepartmentLabel = CommunicationTestMessages.BuildEmailDepartmentLabel(culture),
 					DepartmentName = departmentName,
 					TestLabel = CommunicationTestMessages.BuildEmailTestLabel(culture),
-					TestName = testName
+					TestName = testName,
+					TextBody = CommunicationTestMessages.BuildEmailBody(firstName, departmentName, testName, confirmUrl, culture)
 				};
 
 				return await _emailProvider.SendCommunicationTestMail(toEmailAddress, content);

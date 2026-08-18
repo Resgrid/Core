@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -459,6 +459,11 @@ namespace Resgrid.Services
 		public async Task<ChatChannelMember> GetUserMembershipAsync(string chatChannelId, string userId)
 		{
 			return await _chatChannelMemberRepository.GetUserMemberAsync(chatChannelId, userId);
+		}
+
+		public async Task<ChatChannelMember> GetUnitMembershipAsync(string chatChannelId, int unitId)
+		{
+			return await _chatChannelMemberRepository.GetUnitMemberAsync(chatChannelId, unitId);
 		}
 
 		public async Task<List<ChatChannelMember>> AddMembersAsync(string chatChannelId, List<string> userIds, string addedByUserId, CancellationToken cancellationToken = default(CancellationToken))
@@ -944,8 +949,14 @@ namespace Resgrid.Services
 			// Addressed to the command role, so there has to be a role to address. Returning null here is
 			// what keeps the client's "Message the IC" button disabled until a command is established —
 			// otherwise the first message would sit in a channel with nobody on the other side.
+			//
+			// Closing a command leaves CurrentCommanderUserId populated, so the seat looks filled long
+			// after anyone is sitting in it. The status check is what actually retires the line: matching
+			// EnsureIncidentChannelsAsync, a closed command provisions nothing, and reopening a reused
+			// line here would lift the archive freeze the close put on it.
 			var command = await _incidentCommandService.GetCommandForCallAsync(departmentId, callId);
-			if (command == null || string.IsNullOrWhiteSpace(command.CurrentCommanderUserId))
+			if (command == null || command.Status != (int)IncidentCommandStatus.Active ||
+			    string.IsNullOrWhiteSpace(command.CurrentCommanderUserId))
 				return null;
 
 			Unit requesterUnit = null;
@@ -960,9 +971,16 @@ namespace Resgrid.Services
 			var prefix = await ResolveIncidentPrefixAsync(callId, command.Name);
 			var desiredName = await BuildIncidentCommanderLineChannelNameAsync(prefix, requesterUnit?.Name, requesterUserId);
 
+			// The dm key is scoped to the call and the requester, not to the command, so a call that
+			// establishes a second command reuses this row. Same reason the command-scoped channels
+			// rebind: left alone it keeps the closed command's id and stays archived, invisible to
+			// both the new command's unarchive and its eventual close sweep.
 			var existing = await _chatChannelRepository.GetByDmKeyAsync(departmentId, dmKey);
 			if (existing != null)
-				return await ApplyProvisionedNameAsync(existing, desiredName, cancellationToken);
+			{
+				var rebound = await RebindCommandScopedChannelAsync(existing, command.IncidentCommandId, cancellationToken);
+				return await ApplyProvisionedNameAsync(rebound, desiredName, cancellationToken);
+			}
 
 			var channel = new ChatChannel
 			{

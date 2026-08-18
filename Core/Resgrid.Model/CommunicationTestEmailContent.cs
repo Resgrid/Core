@@ -1,4 +1,4 @@
-namespace Resgrid.Model
+﻿namespace Resgrid.Model
 {
 	/// <summary>
 	/// The already-localized wording of a communication test email, handed to the email provider so
@@ -52,5 +52,12 @@ namespace Resgrid.Model
 
 		/// <summary>Name of the communication test being run.</summary>
 		public string TestName { get; set; }
+
+		/// <summary>
+		/// The whole message rendered as plain text, sent alongside the HTML so a client that
+		/// cannot render HTML still gets readable wording and a pasteable confirmation URL
+		/// instead of tag-stripped template chrome.
+		/// </summary>
+		public string TextBody { get; set; }
 	}
 }

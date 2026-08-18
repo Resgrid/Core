@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -127,6 +127,21 @@ namespace Resgrid.Tests.Services
 				});
 			}
 
+			protected void GivenClosedCommandWithCommander(string userId)
+			{
+				_incidentCommandServiceMock.Setup(x => x.GetCommandForCallAsync(DepartmentId, CallId)).ReturnsAsync(new IncidentCommand
+				{
+					IncidentCommandId = CommandId,
+					DepartmentId = DepartmentId,
+					CallId = CallId,
+					Name = "Structure Fire",
+					CurrentCommanderUserId = userId,
+					EstablishedByUserId = TestData.Users.TestUser3Id,
+					Status = (int)IncidentCommandStatus.Closed,
+					ClosedOn = DateTime.UtcNow
+				});
+			}
+
 			protected void GivenNoCommand()
 			{
 				_incidentCommandServiceMock.Setup(x => x.GetCommandForCallAsync(DepartmentId, CallId)).ReturnsAsync((IncidentCommand)null);
@@ -166,6 +181,38 @@ namespace Resgrid.Tests.Services
 				var result = await _chatChannelService.EnsureIncidentCommanderLineAsync(DepartmentId, CallId, TestData.Users.TestUser1Id, null);
 
 				result.Should().BeNull("the seat is empty even though a command record exists");
+			}
+
+			[Test]
+			public async Task a_closed_command_should_not_provision_a_line()
+			{
+				// Closing a command does not clear CurrentCommanderUserId, so the "is the seat filled"
+				// check passes on a command nobody is running any more.
+				GivenClosedCommandWithCommander(TestData.Users.TestUser2Id);
+				_channelRepositoryMock.Setup(x => x.GetByDmKeyAsync(DepartmentId, It.IsAny<string>())).ReturnsAsync((ChatChannel)null);
+
+				var result = await _chatChannelService.EnsureIncidentCommanderLineAsync(DepartmentId, CallId, TestData.Users.TestUser1Id, null);
+
+				result.Should().BeNull("the incident is over even though the record still names a commander");
+				_channelRepositoryMock.Verify(x => x.CreateDirectMessageChannelAsync(It.IsAny<ChatChannel>(), It.IsAny<IEnumerable<ChatChannelMember>>(), It.IsAny<CancellationToken>()), Times.Never);
+			}
+
+			[Test]
+			public async Task a_closed_command_should_not_reopen_an_existing_line()
+			{
+				// The reuse path rebinds and unarchives, so a closed command reaching it would lift the
+				// archive freeze that closing the command put on the line.
+				GivenClosedCommandWithCommander(TestData.Users.TestUser2Id);
+
+				var existing = BuildCommanderLine();
+				existing.IsArchived = true;
+				_channelRepositoryMock.Setup(x => x.GetByDmKeyAsync(DepartmentId, It.IsAny<string>())).ReturnsAsync(existing);
+
+				var result = await _chatChannelService.EnsureIncidentCommanderLineAsync(DepartmentId, CallId, TestData.Users.TestUser1Id, null);
+
+				result.Should().BeNull();
+				existing.IsArchived.Should().BeTrue("the freeze the close applied has to survive");
+				_channelRepositoryMock.Verify(x => x.RebindToIncidentCommandAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()), Times.Never);
 			}
 
 			[Test]

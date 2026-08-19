@@ -712,7 +712,7 @@ namespace Resgrid.Services
 				if (recipients.Count == 1)
 				{
 					var sendingTo = recipients.FirstOrDefault();
-					spm.Id = $"T{sendingTo}";
+					spm.Id = $"T{sendingTo.UserId}";
 
 
 					if (!await CanSendToUser(sendingTo.UserId, departmentId))

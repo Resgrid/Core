@@ -712,16 +712,16 @@ namespace Resgrid.Services
 				if (recipients.Count == 1)
 				{
 					var sendingTo = recipients.FirstOrDefault();
-					spm.Id = $"T{sendingTo.UserId}";
 
+					if (sendingTo == null)
+						return false;
+
+					spm.Id = $"T{sendingTo.UserId}";
 
 					if (!await CanSendToUser(sendingTo.UserId, departmentId))
 						return false;
 
-					if (sendingTo != null)
-					{
-						await _pushService.PushChat(spm, sendingTo.UserId, sendingTo);
-					}
+					await _pushService.PushChat(spm, sendingTo.UserId, sendingTo);
 				}
 				else
 				{

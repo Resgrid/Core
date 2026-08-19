@@ -416,6 +416,17 @@ namespace Resgrid.Providers.Messaging
 											eventCode = eventCode,
 											customType = type
 										},
+										// expo-notifications on iOS only surfaces the top-level `body` custom key
+										// as content.data, and per the APNs spec custom keys belong beside `aps`,
+										// not inside it. The aps-nested eventCode/customType above stay for
+										// backward compatibility with already deployed apps.
+										body = new
+										{
+											eventCode = eventCode,
+											type = type
+										},
+										eventCode = eventCode,
+										type = type
 									},
 								},
 							},
@@ -431,7 +442,20 @@ namespace Resgrid.Providers.Messaging
 								["type"] = type,
 								["category"] = channelName,
 								["eventCode"] = eventCode,
-								["gcm.message_id"] = "123"
+								["gcm.message_id"] = "123",
+								// node-apn merges `payload` in as the custom data at the top level of the
+								// APNs JSON; the nested `body` key is the one expo-notifications on iOS
+								// exposes as content.data.
+								["payload"] = new Dictionary<string, object>
+								{
+									["body"] = new
+									{
+										eventCode = eventCode,
+										type = type
+									},
+									["eventCode"] = eventCode,
+									["type"] = type
+								},
 							},
 						},
 						to = new[]{ new
@@ -657,7 +681,12 @@ namespace Resgrid.Providers.Messaging
 					}
 				},
 				eventCode = eventCode,
-				type = type
+				type = type,
+				body = new ApnsCustomData
+				{
+					eventCode = eventCode,
+					type = type
+				}
 			};
 
 			var appleNotification = JsonConvert.SerializeObject(apnsPayload);

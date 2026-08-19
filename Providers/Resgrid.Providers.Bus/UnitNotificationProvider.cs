@@ -351,7 +351,12 @@ namespace Resgrid.Providers.Bus
 						}
 					},
 					eventCode = eventCode,
-					type = type
+					type = type,
+					body = new ApnsCustomData
+					{
+						eventCode = eventCode,
+						type = type
+					}
 				};
 
 				appleNotification = JsonConvert.SerializeObject(apnsPayload);

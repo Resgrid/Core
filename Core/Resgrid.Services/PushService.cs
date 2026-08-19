@@ -362,7 +362,7 @@ namespace Resgrid.Services
 				// Legacy Push Notifications (Azure)
 				try
 				{
-					await _notificationProvider.SendAllNotifications(call.SubTitle, call.Title, userId, string.Format("C{0}", call.CallId), soundType, true, call.ActiveCallCount, color);
+					await _notificationProvider.SendAllNotifications(call.Title, call.SubTitle, userId, string.Format("C{0}", call.CallId), soundType, true, call.ActiveCallCount, color);
 				}
 				catch (Exception ex)
 				{

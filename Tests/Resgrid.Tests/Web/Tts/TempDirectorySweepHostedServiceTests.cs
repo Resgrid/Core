@@ -70,6 +70,19 @@ namespace Resgrid.Tests.Web.Tts
 		}
 
 		[Test]
+		public void sweep_once_should_never_touch_the_persistent_piper_worker_root()
+		{
+			// Persistent Piper workers keep their output directories for the whole pod
+			// lifetime, so the root ages past the sweep cutoff while still in use.
+			var workerRoot = CreateWorkingDirectory(PiperWorkerFactory.WorkerRootDirectoryName, DateTime.UtcNow.AddHours(-48));
+
+			var removed = CreateService().SweepOnce();
+
+			removed.Should().Be(0);
+			Directory.Exists(workerRoot).Should().BeTrue();
+		}
+
+		[Test]
 		public void sweep_once_should_return_zero_when_the_temp_root_does_not_exist()
 		{
 			Directory.Delete(_tempRoot, recursive: true);

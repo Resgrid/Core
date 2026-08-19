@@ -38,6 +38,8 @@ namespace Resgrid.Model
 
 		public const string PleaseWaitForDispatch = "Please wait while we prepare your dispatch information.";
 
+		public const string PleaseWaitForInformation = "Please wait while we gather that information.";
+
 		public static string CallClosedByNumber(string callNumber) => $"This call, ID {callNumber}, has been closed. Goodbye.";
 
 		public static string RespondingToStation(string stationName) => $"You have been marked responding to {stationName}. Goodbye.";
@@ -93,7 +95,8 @@ namespace Resgrid.Model
 				CommunicationTestGreeting,
 				CommunicationTestPressOne,
 				CommunicationTestNoResponse,
-				PleaseWaitForDispatch
+				PleaseWaitForDispatch,
+				PleaseWaitForInformation
 			};
 		}
 	}

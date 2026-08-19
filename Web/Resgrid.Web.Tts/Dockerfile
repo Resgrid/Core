@@ -69,7 +69,7 @@ RUN set -eu; \
 RUN set -eu; \
 	mkdir -p /usr/local/share/piper-voices; \
 	for f in \
-		"en/en_US/ryan/high/en_US-ryan-high" \
+		"en/en_US/ryan/medium/en_US-ryan-medium" \
 		"es/es_MX/claude/high/es_MX-claude-high" \
 		"sv/sv_SE/nst/medium/sv_SE-nst-medium" \
 		"de/de_DE/thorsten/medium/de_DE-thorsten-medium" \

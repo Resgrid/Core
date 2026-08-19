@@ -32,6 +32,21 @@ namespace Resgrid.Web.Tts.Configuration
 		[Required]
 		public string PiperModelDirectory { get; set; } = "/usr/local/share/piper-voices";
 
+		/// <summary>
+		/// When true, synthesis goes through a pool of long-lived Piper processes (one
+		/// model load per process lifetime) instead of spawning a fresh process per
+		/// request. A failed or wedged worker is killed and respawned automatically;
+		/// a request retries once on a fresh worker before failing.
+		/// </summary>
+		public bool PiperPersistentProcessEnabled { get; set; } = true;
+
+		/// <summary>
+		/// Maximum concurrent persistent Piper workers per (model, speed) profile.
+		/// Each worker keeps its ONNX model resident in memory.
+		/// </summary>
+		[Range(1, 8)]
+		public int PiperMaxWorkersPerVoice { get; set; } = 2;
+
 		[Required]
 		public string FfmpegExecutable { get; set; } = "ffmpeg";
 
@@ -105,7 +120,8 @@ namespace Resgrid.Web.Tts.Configuration
 			"Invalid staffing selection. Returning to the main menu.",
 			"No staffing selection made. Returning to the main menu.",
 			"Thank you. Your response has been recorded.",
-			"Please wait while we prepare your dispatch information."
+			"Please wait while we prepare your dispatch information.",
+			"Please wait while we gather that information."
 		};
 	}
 }

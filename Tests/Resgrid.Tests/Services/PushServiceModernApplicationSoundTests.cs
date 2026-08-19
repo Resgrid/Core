@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using Resgrid.Config;
@@ -178,8 +178,8 @@ namespace Resgrid.Tests.Services
 			await _pushService.PushCall(call, UserId, profile);
 
 			_notificationProvider.Verify(x => x.SendAllNotifications(
-				call.SubTitle,
 				call.Title,
+				call.SubTitle,
 				UserId,
 				"C99",
 				((int)expectedSound).ToString(),

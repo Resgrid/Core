@@ -43,7 +43,13 @@
                     tracesSampleRate: @Resgrid.Config.ExternalErrorConfig.SentryPerfSampleRate,
                     // Safari masks injected extension scripts as webkit-masked-url://; those
                     // frames are browser-extension code, not ours.
-                    denyUrls: [/webkit-masked-url:\/\//i]
+                    denyUrls: [/webkit-masked-url:\/\//i],
+                    // jQuery 1.12 .trigger() of any event whose type is 'error' (DataTables
+                    // 'error.dt', bootstrapValidator 'error.field.bv'/'error.form.bv') bubbles to
+                    // window and invokes window.onerror with the jQuery.Event object itself, which
+                    // Sentry reports as "Object captured as exception with keys: ...". isTrigger
+                    // and rnamespace are jQuery.Event internals, so this only drops those events.
+                    ignoreErrors: [/^Object captured as exception with keys: .*\bisTrigger\b.*\brnamespace\b/]
                 });
             }
         </script>
